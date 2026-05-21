@@ -1,9 +1,10 @@
 """Centralized application settings via pydantic-settings."""
 
 from functools import lru_cache
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -16,20 +17,18 @@ class Settings(BaseSettings):
 
     env: str = Field("local")
     log_level: str = Field("INFO")
-    cors_allowed_origins: list[str] = Field(
+    # NoDecode: keep the raw env string so our CSV validator runs instead of
+    # pydantic-settings' default JSON decode (which would choke on
+    # "host1,host2"-style values).
+    cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: ["http://localhost:3000"]
     )
 
-    # === LLM ===
-    anthropic_api_key: str | None = None
+    # === LLM (via OpenAI-compatible relay station) ===
+    # All chat / image calls fan out through one relay (see app/core/llm_relay.py).
+    # v1.1's LiteLLM + per-vendor keys plan is replaced by this single endpoint.
     openai_api_key: str | None = None
-    google_api_key: str | None = None
-    litellm_base_url: str | None = None
-    litellm_api_key: str | None = None
-
-    # === ByteDance ===
-    volcengine_ak: str | None = None
-    volcengine_sk: str | None = None
+    openai_base_url: str = "https://api.openai.com/v1"  # override via env to relay
 
     # === Cloudflare ===
     cf_account_id: str | None = None
