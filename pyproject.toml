@@ -1,7 +1,7 @@
 [project]
 name = "lumira-backend"
 version = "0.1.0"
-description = "Lumira Atelier · Optical Co-Pilot Backend (FastAPI + Optiland + prysm + rayoptics + pgvector RAG)"
+description = "Lumira Atelier · Optical Co-Pilot Backend (FastAPI + Optiland + rayoptics + pgvector RAG)"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",
@@ -29,12 +29,12 @@ dev = [
 
 # Heavy optical libs live in optional groups so the Docker base image can
 # install them in a separate layer (BLAS / LAPACK / system deps).
+# prysm dropped — setuptools 82 removed pkg_resources which prysm 0.21 still
+# imports, and Optiland 0.6+ natively covers mtf / psf / zernike / wavefront.
 optical = [
-    "optiland>=0.5.9",
-    "prysm>=0.21",
+    "optiland>=0.6.0",
     "rayoptics>=0.9.5",
     "opticalglass>=1.1.0",
-    "setuptools>=82.0.1",
 ]
 
 [tool.ruff]
