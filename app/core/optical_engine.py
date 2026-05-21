@@ -110,6 +110,22 @@ def build_optic_for_scenario(
                     },
                 )
 
+        # Wide-field scenarios (smartphone-ultrawide, AR near-eye) and any
+        # heavily-scaled prescription can make Optiland's default "paraxial"
+        # ray aimer produce NaN guesses on the first pass — we observed:
+        #   ValueError: Initial ray aiming guess produced NaNs.
+        #   Consider using the 'robust' method instead.
+        # The "robust" aimer is iterative + bracketed, fast enough for our
+        # demo workload, and a safe default for everyone. Apply universally
+        # so the scenario logic stays simple.
+        try:
+            optic.ray_tracer.set_aiming("robust", max_iter=20, tol=1e-6)
+        except Exception as exc:
+            logger.warning(
+                "ray_aiming_robust_skipped",
+                extra={"scenario": scenario, "reason": str(exc)},
+            )
+
     return optic
 
 

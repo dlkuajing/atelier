@@ -7,8 +7,14 @@ import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import optical, rag, wizard
-from app.core.config import settings
+# Apply Optiland 0.6 runtime patches FIRST — before any other Optiland import
+# happens. See app/core/optiland_patches.py for the bug each one addresses.
+from app.core import optiland_patches as _optiland_patches  # noqa: I001
+
+_optiland_patches.apply_all()
+
+from app.api import optical, rag, wizard  # noqa: E402
+from app.core.config import settings  # noqa: E402
 
 
 logger = structlog.get_logger(__name__)
