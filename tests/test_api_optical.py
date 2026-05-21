@@ -149,8 +149,38 @@ def test_aberration_validates_parameters():
     assert r.status_code == 400
 
 
+def test_aberration_valid_input_returns_mtf_payload():
+    """Good input -> 200 + MTF curves + diffraction limit + spot RMS + Airy."""
+    r = client.post("/api/optical/aberration", json=_good_request())
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert "freq_lp_per_mm" in data
+    assert "fields" in data and len(data["fields"]) >= 1
+    assert "diff_limited" in data
+    assert "cutoff_freq_lp_per_mm" in data and data["cutoff_freq_lp_per_mm"] > 0
+    assert "airy_disc_diameter_um" in data and data["airy_disc_diameter_um"] > 0
+    assert "rms_spot_radius_um_by_field" in data
+    # MTF at DC = 1.0 for every field
+    for field in data["fields"]:
+        assert abs(field["sagittal"][0] - 1.0) < 0.01
+        assert abs(field["tangential"][0] - 1.0) < 0.01
+
+
 def test_layout_svg_validates_parameters():
     bad = _good_request()
     bad["f_number"] = 10.0
     r = client.post("/api/optical/layout-svg", json=bad)
     assert r.status_code == 400
+
+
+def test_layout_svg_valid_input_returns_svg_string():
+    """Good input -> 200 + non-trivial SVG content from Optiland draw()."""
+    r = client.post("/api/optical/layout-svg", json=_good_request())
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["format"] == "svg"
+    assert data["width_px"] > 0 and data["height_px"] > 0
+    svg = data["svg_content"]
+    assert "<svg" in svg
+    assert "</svg>" in svg
+    assert len(svg) > 5000  # real layout, not empty shell

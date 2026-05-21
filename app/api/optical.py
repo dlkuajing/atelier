@@ -7,10 +7,13 @@ Wave 2 (post-Optiland install): /raytrace, /aberration, /layout-svg implemented.
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 
+from app.core.aberration import MTFResult, compute_mtf
+from app.core.layout_svg import render_layout_svg
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import (
     ParaxialSummary,
     SurfaceDescriptor,
+    build_optic_for_scenario,
     raytrace_from_spec,
 )
 from app.core.parameter_guards import (
@@ -148,34 +151,65 @@ async def raytrace(req: OpticalSpecRequest) -> RaytraceResponse:
 
 @router.post(
     "/aberration",
-    status_code=status.HTTP_501_NOT_IMPLEMENTED,
-    responses={400: {"description": "Parameter guard violation"}},
+    response_model=MTFResult,
+    responses={
+        400: {"description": "Parameter guard violation"},
+        500: {"description": "Optiland engine failure"},
+    },
 )
-async def aberration(req: OpticalSpecRequest) -> dict:
-    """Compute MTF / PSF / Zernike via prysm.
+async def aberration(req: OpticalSpecRequest) -> MTFResult:
+    """Compute geometric MTF, spot RMS, and Airy disc via Optiland.
 
-    Wave 2 implementation.
+    PSF and Zernike are deferred to v2 polish; v1 demo needs MTF curves only.
     """
     _validate_or_400(req)
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Phase 2 wave 2: prysm integration pending",
-    )
+    try:
+        optic = build_optic_for_scenario(
+            scenario=req.scenario,
+            target_efl_mm=req.focal_length_mm,
+            target_f_number=req.f_number,
+        )
+        return compute_mtf(optic, wavelength_nm=req.wavelength_nm)
+    except (ValueError, RuntimeError) as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "aberration_compute_failure",
+                "scenario": req.scenario,
+                "message": str(e),
+            },
+        ) from e
 
 
 @router.post(
     "/layout-svg",
-    status_code=status.HTTP_501_NOT_IMPLEMENTED,
     response_model=LayoutSVG,
-    responses={400: {"description": "Parameter guard violation"}},
+    responses={
+        400: {"description": "Parameter guard violation"},
+        500: {"description": "Optiland engine failure"},
+    },
 )
 async def layout_svg(req: OpticalSpecRequest) -> LayoutSVG:
-    """Render 2D optical path SVG via rayoptics.
+    """Render the optic's 2D cross-section as an SVG.
 
-    Wave 2 implementation.
+    Uses Optiland's matplotlib-backed `draw()` and captures the result as
+    a self-contained SVG string. The frontend renders this alongside the
+    interactive R3F 3D scene.
     """
     _validate_or_400(req)
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Phase 2 wave 2: rayoptics integration pending",
-    )
+    try:
+        optic = build_optic_for_scenario(
+            scenario=req.scenario,
+            target_efl_mm=req.focal_length_mm,
+            target_f_number=req.f_number,
+        )
+        return render_layout_svg(optic)
+    except (ValueError, RuntimeError) as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "layout_render_failure",
+                "scenario": req.scenario,
+                "message": str(e),
+            },
+        ) from e
