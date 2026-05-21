@@ -40,16 +40,30 @@ primary_region = "sin"
 # HTTP service — exposes :8000 from the container to the public internet
 # at https://<app>.fly.dev. force_https redirects http → https.
 #
-# auto_stop_machines: Fly turns the VM off when idle, spins back up on the
-# next request (cold start ~5-8s). With min_machines_running = 0 that means
-# $0 when nobody's using the demo. For paid traffic, bump min to 1.
+# Lessons learned in production e2e (2026-05-21):
+#
+#   - cold start measured: ~100 s for fully idle VM
+#     (12 s uv bytecode compile + 8 s uvicorn boot + Optiland/scipy/numpy
+#     module imports). Fly's proxy gave up after 8 s (PM05) and returned
+#     503 to clients. With auto_stop_machines = "stop" + min_machines_running
+#     = 0 the first user after an idle period got a hard error rather than
+#     a slow response.
+#
+#   - Fix: keep ONE machine always running. Idle cost ≈ $5-8/month for the
+#     shared-cpu-2x size (Fly bills shared-cpu by RAM × time when machine
+#     is in started state). The second machine in the pool still auto-stops
+#     when idle so we still get most of the cost saving.
+#
+# If traffic stays so low even one machine is overkill, dial
+# `min_machines_running` back to 0 — but only after replacing the cold-
+# start hot path (e.g. pre-warming Optiland imports in a startup task).
 # ──────────────────────────────────────────────────────────────────────
 [http_service]
   internal_port = 8000
   force_https = true
   auto_stop_machines = "stop"
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ["app"]
 
 [[http_service.checks]]
