@@ -74,11 +74,18 @@ def _good_request() -> dict:
     }
 
 
-def test_raytrace_valid_input_passes_guards_returns_501():
-    """Good input passes parameter_guards then hits 501 (wave 2 placeholder)."""
+def test_raytrace_valid_input_returns_full_payload():
+    """Good input → 200 + paraxial summary + surfaces + ray paths."""
     r = client.post("/api/optical/raytrace", json=_good_request())
-    assert r.status_code == 501
-    assert "Phase 2 wave 2" in r.json()["detail"]
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert "paraxial" in data and "surfaces" in data and "trace" in data
+    assert abs(data["paraxial"]["effective_focal_length_mm"] - 7.0) < 0.01
+    assert data["paraxial"]["n_surfaces"] == len(data["surfaces"])
+    assert any(s["is_stop"] for s in data["surfaces"])
+    assert any(s["is_object"] for s in data["surfaces"])
+    assert any(s["is_image"] for s in data["surfaces"])
+    assert len(data["trace"]["sampled_paths"]) == 3
 
 
 def test_raytrace_efl_too_small_returns_400():
@@ -110,8 +117,8 @@ def test_raytrace_wrong_scenario_bounds_returns_400():
     assert r.status_code == 400
 
 
-def test_raytrace_dslr_prime_50mm_passes_guards():
-    """Same 50mm EFL is valid in DSLR scenario."""
+def test_raytrace_dslr_prime_50mm_returns_full_payload():
+    """Same 50mm EFL is valid in DSLR scenario — returns real ray trace."""
     r = client.post(
         "/api/optical/raytrace",
         json={
@@ -123,8 +130,11 @@ def test_raytrace_dslr_prime_50mm_passes_guards():
             "n_elements": 8,
         },
     )
-    # Passes guards → reaches placeholder 501
-    assert r.status_code == 501
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert abs(data["paraxial"]["effective_focal_length_mm"] - 50.0) < 0.05
+    # DSLR primes are longer than phone teles
+    assert data["paraxial"]["total_track_mm"] > 20.0
 
 
 # ---------------------------------------------------------------------------

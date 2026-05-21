@@ -8,6 +8,11 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
+from app.core.optical_engine import (
+    ParaxialSummary,
+    SurfaceDescriptor,
+    raytrace_from_spec,
+)
 from app.core.parameter_guards import (
     SCENARIO_BOUNDS,
     ParameterGuardError,
@@ -44,6 +49,12 @@ class SuggestResponse(BaseModel):
     fov_deg_range: tuple[float, float]
     image_height_mm_range: tuple[float, float]
     n_elements_range: tuple[int, int]
+
+
+class RaytraceResponse(BaseModel):
+    paraxial: ParaxialSummary
+    surfaces: list[SurfaceDescriptor]
+    trace: RayTraceResult
 
 
 # ---------------------------------------------------------------------------
@@ -102,20 +113,37 @@ def _validate_or_400(req: OpticalSpecRequest) -> None:
 
 @router.post(
     "/raytrace",
-    status_code=status.HTTP_501_NOT_IMPLEMENTED,
-    response_model=RayTraceResult,
-    responses={400: {"description": "Parameter guard violation"}},
+    response_model=RaytraceResponse,
+    responses={
+        400: {"description": "Parameter guard violation"},
+        500: {"description": "Optiland engine failure"},
+    },
 )
-async def raytrace(req: OpticalSpecRequest) -> RayTraceResult:
-    """Run optical ray trace via Optiland and return lens layout + ray paths.
+async def raytrace(req: OpticalSpecRequest) -> RaytraceResponse:
+    """Run optical ray trace via Optiland.
 
-    Wave 2 implementation. Currently validates input then returns 501.
+    Returns the paraxial summary, flattened surface descriptors, and sampled
+    chief + marginal ray paths — everything the frontend needs to render a
+    2D layout and report the realised f-number / EFL / EPD.
     """
     _validate_or_400(req)
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Phase 2 wave 2: Optiland integration pending (libs installing)",
-    )
+    try:
+        summary, surfaces, trace = raytrace_from_spec(
+            scenario=req.scenario,
+            target_efl_mm=req.focal_length_mm,
+            target_f_number=req.f_number,
+            wavelength_nm=req.wavelength_nm,
+        )
+    except (ValueError, RuntimeError) as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "optical_engine_failure",
+                "scenario": req.scenario,
+                "message": str(e),
+            },
+        ) from e
+    return RaytraceResponse(paraxial=summary, surfaces=surfaces, trace=trace)
 
 
 @router.post(
