@@ -1,0 +1,56 @@
+# LiteLLM proxy config for Lumira Atelier.
+#
+# Runs on a HK VPS so Cloudflare Workers (lumira frontend) and lumira-backend
+# can call a single OpenAI-compatible endpoint at low cross-border latency.
+#
+# Fallbacks honour the model selection from PROJECT.md §IV (Smart Layer):
+#   Opus 4.7 → Sonnet 4.6      (LLM main control + tool use; degrade on rate-limit)
+#   GPT-5.5  → Opus 4.7         (parameter JSON; degrade if OpenAI down)
+#   Gemini 3.1 Pro → Opus 4.7   (long-context reports; degrade if Google down)
+
+model_list:
+  - model_name: opus-4.7
+    litellm_params:
+      model: claude-opus-4-7
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: sonnet-4.6
+    litellm_params:
+      model: claude-sonnet-4-6
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: gpt-5.5
+    litellm_params:
+      model: gpt-5.5
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: gemini-3.1-pro
+    litellm_params:
+      model: gemini/gemini-3.1-pro
+      api_key: os.environ/GOOGLE_API_KEY
+
+  - model_name: gpt-image-2
+    litellm_params:
+      model: gpt-image-2
+      api_key: os.environ/OPENAI_API_KEY
+
+router_settings:
+  routing_strategy: simple-shuffle
+  num_retries: 2
+  timeout: 60
+  fallbacks:
+    - opus-4.7: ["sonnet-4.6"]
+    - gpt-5.5: ["opus-4.7"]
+    - gemini-3.1-pro: ["opus-4.7"]
+  context_window_fallbacks:
+    # If 1M Opus window not enough (rare), Gemini's 2M takes over.
+    - opus-4.7: ["gemini-3.1-pro"]
+
+litellm_settings:
+  drop_params: true
+  set_verbose: false
+  # Cache is owned by Cloudflare AI Gateway (edge); don't double-cache here.
+  cache: false
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

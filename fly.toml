@@ -1,0 +1,34 @@
+# Fly.io deployment config for lumira-atelier-backend.
+# Owner runs `flyctl launch --copy-config --no-deploy` then `flyctl deploy`
+# after writing real .env secrets — see OWNER-CHECKLIST.md §P1.
+
+app = "lumira-atelier-backend"
+primary_region = "hkg"   # Hong Kong — close to CN clients and HK LiteLLM proxy
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  ENV = "production"
+  LOG_LEVEL = "INFO"
+  CORS_ALLOWED_ORIGINS = "https://lumirahq.com,https://agent.lumirahq.com,https://lumira.com,https://agent.lumira.com"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"     # save cost when idle (cold start ~5s OK for first call)
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[http_service.checks]]
+  grace_period = "30s"
+  interval = "30s"
+  method = "GET"
+  timeout = "10s"
+  path = "/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 2
+  memory_mb = 2048                # Optiland + prysm + numpy/scipy needs ≥2GB
