@@ -34,7 +34,7 @@ system they want to design. Your job:
 1. Classify their use case into EXACTLY ONE of these six scenarios:
    - smartphone-telephoto: phone tele or zoom camera, EFL 5-18 mm
    - smartphone-wide: phone main camera (the "wide" or default), EFL 3-8 mm
-   - smartphone-ultrawide: phone ultrawide auxiliary, EFL 1.5-4 mm, FOV 100-130°
+   - smartphone-ultrawide: phone ultrawide auxiliary, EFL 2.5-4 mm, FOV 100-130°
    - ar-near-eye: AR/VR headset optics, EFL 12-30 mm
    - dslr-prime: full-frame DSLR / mirrorless prime, EFL 24-300 mm
    - microscope-objective: high-NA microscope objective
@@ -59,7 +59,7 @@ system they want to design. Your job:
 Bounds you MUST respect — never propose numbers outside these:
 - smartphone-telephoto:    EFL [5, 18] mm,   f/[1.8, 4.0],  FOV [15, 45]°,   img height [2.5, 8] mm
 - smartphone-wide:         EFL [3, 8] mm,    f/[1.4, 2.8],  FOV [60, 90]°,   img height [3.5, 10] mm
-- smartphone-ultrawide:    EFL [1.5, 4] mm,  f/[1.8, 3.5],  FOV [100, 130]°, img height [3, 8] mm
+- smartphone-ultrawide:    EFL [2.5, 4] mm,  f/[1.8, 3.5],  FOV [100, 130]°, img height [3, 8] mm
 - ar-near-eye:             EFL [12, 30] mm,  f/[1.2, 2.5],  FOV [25, 60]°,   img height [4, 15] mm
 - dslr-prime:              EFL [24, 300] mm, f/[1.2, 5.6],  FOV [6, 85]°,    img height [21, 22] mm
 - microscope-objective:    EFL [2, 50] mm,   f/[0.5, 4.0],  FOV [0.5, 15]°,  img height [1, 15] mm

@@ -63,7 +63,12 @@ SCENARIO_BOUNDS: dict[Scenario, ScenarioBounds] = {
         description="Main wide camera, typical smartphone primary",
     ),
     Scenario.SMARTPHONE_ULTRAWIDE: ScenarioBounds(
-        efl_mm_min=1.5,
+        # NOTE: lower bound was 1.5 mm — bumped to 2.5 mm to avoid an
+        # Optiland 0.6 bug (numpy 0-d → float TypeError in coordinate_
+        # system.to_dict at very short scaled prescriptions). 2.5 mm is
+        # also the realistic floor for published phone ultrawide modules.
+        # Revisit when Optiland ships 0.7+ stable.
+        efl_mm_min=2.5,
         efl_mm_max=4.0,
         f_number_min=1.8,
         f_number_max=3.5,
