@@ -137,7 +137,7 @@ async def raytrace(req: OpticalSpecRequest) -> RaytraceResponse:
             target_f_number=req.f_number,
             wavelength_nm=req.wavelength_nm,
         )
-    except (ValueError, RuntimeError) as e:
+    except Exception as e:  # noqa: BLE001 — Optiland leaks TypeError / IndexError
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
@@ -170,7 +170,7 @@ async def aberration(req: OpticalSpecRequest) -> MTFResult:
             target_f_number=req.f_number,
         )
         return compute_mtf(optic, wavelength_nm=req.wavelength_nm)
-    except (ValueError, RuntimeError) as e:
+    except Exception as e:  # noqa: BLE001 — Optiland leaks TypeError / IndexError
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
@@ -204,7 +204,7 @@ async def layout_svg(req: OpticalSpecRequest) -> LayoutSVG:
             target_f_number=req.f_number,
         )
         return render_layout_svg(optic)
-    except (ValueError, RuntimeError) as e:
+    except Exception as e:  # noqa: BLE001 — Optiland leaks TypeError / IndexError
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
