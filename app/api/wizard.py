@@ -333,3 +333,143 @@ async def generate_cover_image(req: CoverImageRequest) -> CoverImageResponse:
         model=PRIMARY_IMAGE,
         scenario=req.scenario,
     )
+
+
+# ---------------------------------------------------------------------------
+# Executive summary — claude-opus-4-7 writes the narrative paragraph that
+# opens the PDF data page. Bilingual single-call: returns both en + zh so the
+# frontend doesn't have to round-trip twice for the locale switcher.
+# ---------------------------------------------------------------------------
+
+
+_EXEC_SUMMARY_SYSTEM_PROMPT = """You are a senior optical engineer authoring
+the executive-summary paragraph that opens a Lumira Atelier PDF report.
+
+You're given the customer's design brief and the Optiland-computed result.
+
+Write a SHORT paragraph in BOTH English (80-120 words) AND Chinese (200-280
+characters). The Chinese version should NOT be a literal translation — it
+should be a natively-written paragraph for a Chinese reader. Cover, in any
+order:
+
+1. What was actually designed — call the scenario by its industry name
+2. The one or two facts that make this design credible — e.g. total track
+   under X mm beats a class benchmark, MTF cutoff matches the Airy limit,
+   element count sits in the published-design range
+3. The honest disclaimer — this is a starting point, not a finished lens
+4. (optional) One forward gesture — what work would come next
+
+Tone: confident, technical, honest. No marketing fluff, no fake humility,
+no "exciting" / "powerful" / "cutting-edge" filler. First sentence
+should land cleanly without throat-clearing.
+
+Reply ONLY with valid JSON in this exact shape — no markdown fences, no
+surrounding prose:
+
+{
+  "summary_en": "<80-120 words>",
+  "summary_zh": "<200-280 characters>"
+}
+"""
+
+
+class ExecutiveSummaryRequest(BaseModel):
+    scenario: Scenario
+    scenario_label_en: str = Field(..., min_length=1, max_length=100)
+    focal_length_mm: float = Field(..., gt=0)
+    f_number: float = Field(..., gt=0)
+    field_of_view_deg: float = Field(..., gt=0, le=180)
+    image_height_mm: float = Field(..., gt=0)
+    n_elements: int | None = Field(None, ge=2, le=30)
+    wavelength_nm: float = Field(550, gt=0)
+    total_track_mm: float = Field(..., gt=0)
+    airy_disc_diameter_um: float = Field(..., gt=0)
+    cutoff_freq_lp_per_mm: float = Field(..., gt=0)
+
+
+class ExecutiveSummaryResponse(BaseModel):
+    summary_en: str
+    summary_zh: str
+    model: str
+
+
+@router.post("/executive-summary", response_model=ExecutiveSummaryResponse)
+async def generate_executive_summary(
+    req: ExecutiveSummaryRequest,
+) -> ExecutiveSummaryResponse:
+    """Generate a bilingual executive-summary paragraph for the PDF report.
+
+    Fire-and-forget by the Wizard after Generate succeeds (similar to cover
+    image). If it lands before Download PDF, the report gets a polished
+    opening paragraph; if not, the report still ships (the section is
+    optional).
+    """
+    user_msg = (
+        f"Customer brief:\n"
+        f"- Scenario: {req.scenario_label_en} ({req.scenario.value})\n"
+        f"- Target focal length: {req.focal_length_mm:.2f} mm\n"
+        f"- Target f-number: f/{req.f_number:.2f}\n"
+        f"- Field of view: {req.field_of_view_deg:.1f}°\n"
+        f"- Image height: {req.image_height_mm:.2f} mm\n"
+        f"- Wavelength: {req.wavelength_nm:.0f} nm\n"
+    )
+    if req.n_elements:
+        user_msg += f"- Element count: {req.n_elements}\n"
+
+    user_msg += (
+        f"\nOptiland-computed result:\n"
+        f"- Total track length: {req.total_track_mm:.2f} mm\n"
+        f"- Airy disc diameter: {req.airy_disc_diameter_um:.2f} µm at "
+        f"λ={req.wavelength_nm:.0f} nm\n"
+        f"- Diffraction cutoff: {req.cutoff_freq_lp_per_mm:.0f} lp/mm\n"
+    )
+
+    client = get_async_client()
+    model = model_for_role("wizard.main")
+
+    try:
+        completion = await client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": _EXEC_SUMMARY_SYSTEM_PROMPT},
+                {"role": "user", "content": user_msg},
+            ],
+            max_tokens=600,
+            temperature=0.5,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail={
+                "error": "llm_relay_failure",
+                "message": str(e)[:300],
+                "model": model,
+            },
+        ) from e
+
+    raw = completion.choices[0].message.content or ""
+    cleaned = _strip_markdown_fences(raw)
+
+    try:
+        data = json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "llm_response_unparseable",
+                "raw": raw[:500],
+                "parse_error": str(e),
+            },
+        ) from e
+
+    if not isinstance(data, dict):
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": "llm_response_not_object", "got": str(type(data).__name__)},
+        )
+
+    return ExecutiveSummaryResponse(
+        summary_en=str(data.get("summary_en", "")).strip(),
+        summary_zh=str(data.get("summary_zh", "")).strip(),
+        model=model,
+    )
