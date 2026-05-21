@@ -7,7 +7,7 @@ import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import optical, rag
+from app.api import optical, rag, wizard
 from app.core.config import settings
 
 
@@ -41,6 +41,7 @@ app.add_middleware(
 
 app.include_router(optical.router, prefix="/api/optical", tags=["optical"])
 app.include_router(rag.router, prefix="/api/rag", tags=["rag"])
+app.include_router(wizard.router, prefix="/api/wizard", tags=["wizard"])
 
 
 @app.get("/health", tags=["meta"])
