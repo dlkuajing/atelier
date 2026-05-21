@@ -14,9 +14,12 @@
 
 app = "lumira-atelier-backend"
 
-# Hong Kong region — closest Fly.io PoP to the relay station (api.openbili.com)
-# and to mainland China visitors. Latency from CF Worker → Fly HKG ≈ 20-50ms.
-primary_region = "hkg"
+# Singapore region. Fly deprecated hkg in 2026 ("Region hkg is deprecated
+# and cannot have new resources provisioned"); sin is the recommended
+# replacement for Asia-Pacific. CF Worker → Fly SIN ≈ 40-70ms which is
+# still fine because the latency floor is the LLM relay round-trip
+# (api.openbili.com, ~200-400ms), not the Fly hop.
+primary_region = "sin"
 
 [build]
   dockerfile = "Dockerfile"
