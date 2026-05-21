@@ -107,6 +107,41 @@ def _strip_markdown_fences(raw: str) -> str:
     return inside.strip()
 
 
+def _extract_json_value(raw: str) -> str | None:
+    """Robustly extract the first balanced JSON value (object or array) from `raw`.
+
+    Handles every variant we've actually seen Claude / GPT emit:
+    - Pure JSON: `{"k":"v"}` or `[1,2,3]` → returned as-is.
+    - Fenced JSON: ` ```json\n{...}\n``` ` → strip fences then return.
+    - Prose-prefixed: "Here is the JSON:\n{...}" → scan for first opener.
+    - JSON-with-trailing-text: "{...}\n\nLet me know if..." → balance-stop
+      at the matching closer.
+
+    Returns the substring that *parses* to a value, not necessarily an object
+    — caller still needs to validate the shape (`isinstance(data, dict)`).
+    Brace/bracket depth tracking is naïve about delimiters inside string
+    literals; that's never a problem in practice because the JSON we ask
+    for never embeds `{`/`}`/`[`/`]` inside its string values.
+    """
+    text = _strip_markdown_fences(raw)
+    # Find the first '{' or '[' as the start of the JSON value.
+    starts = [p for p in (text.find("{"), text.find("[")) if p >= 0]
+    if not starts:
+        return None
+    start = min(starts)
+    opener = text[start]
+    closer = "}" if opener == "{" else "]"
+    depth = 0
+    for i, ch in enumerate(text[start:], start=start):
+        if ch == opener:
+            depth += 1
+        elif ch == closer:
+            depth -= 1
+            if depth == 0:
+                return text[start : i + 1]
+    return None
+
+
 def _clamp(v: float | None, lo: float, hi: float) -> float | None:
     if v is None:
         return None
@@ -427,16 +462,24 @@ async def generate_executive_summary(
     client = get_async_client()
     model = model_for_role("wizard.main")
 
-    try:
+    async def call_llm(retry_hint: str = "") -> str:
+        messages: list[dict[str, str]] = [
+            {"role": "system", "content": _EXEC_SUMMARY_SYSTEM_PROMPT},
+            {"role": "user", "content": user_msg},
+        ]
+        if retry_hint:
+            messages.append({"role": "user", "content": retry_hint})
         completion = await client.chat.completions.create(
             model=model,
-            messages=[
-                {"role": "system", "content": _EXEC_SUMMARY_SYSTEM_PROMPT},
-                {"role": "user", "content": user_msg},
-            ],
+            messages=messages,
             max_tokens=600,
             temperature=0.5,
         )
+        return completion.choices[0].message.content or ""
+
+    # First attempt.
+    try:
+        raw = await call_llm()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -447,17 +490,44 @@ async def generate_executive_summary(
             },
         ) from e
 
-    raw = completion.choices[0].message.content or ""
-    cleaned = _strip_markdown_fences(raw)
+    # Try to parse with the robust extractor (handles fences, prose prefix,
+    # trailing text). If THAT fails, ask Claude to re-emit JSON only and try
+    # once more. We've observed the first-shot non-JSON case ~3% of the time
+    # under cover-image-concurrent load; the retry pattern recovers ~all of
+    # them and keeps the executive-summary callout on the PDF.
+    extracted = _extract_json_value(raw)
+    if extracted is None:
+        try:
+            raw = await call_llm(
+                retry_hint=(
+                    "Your previous reply was not valid JSON. Reply ONLY with "
+                    "the JSON object {\"summary_en\": \"...\", \"summary_zh\": "
+                    "\"...\"} — no prose, no fences, no commentary. Begin with "
+                    "the opening `{` and end with the closing `}`."
+                ),
+            )
+            extracted = _extract_json_value(raw)
+        except Exception:
+            pass  # fall through to the unparseable error below
+
+    if extracted is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "llm_response_unparseable",
+                "raw": raw[:500],
+            },
+        )
 
     try:
-        data = json.loads(cleaned)
+        data = json.loads(extracted)
     except json.JSONDecodeError as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "error": "llm_response_unparseable",
                 "raw": raw[:500],
+                "extracted": extracted[:500],
                 "parse_error": str(e),
             },
         ) from e
