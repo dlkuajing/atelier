@@ -1,0 +1,146 @@
+"""Tests for /api/optical/* endpoints — Phase 2 wave 1 portion.
+
+Wave 2 endpoint tests (real /raytrace returning ray paths) live in
+test_optical_engine.py once Optiland is wired.
+"""
+
+from fastapi.testclient import TestClient
+
+from app.main import app
+
+
+client = TestClient(app)
+
+
+# ---------------------------------------------------------------------------
+# /api/optical/suggest/{scenario}
+# ---------------------------------------------------------------------------
+
+
+def test_suggest_smartphone_telephoto():
+    r = client.get("/api/optical/suggest/smartphone-telephoto")
+    assert r.status_code == 200
+    data = r.json()
+    assert data["scenario"] == "smartphone-telephoto"
+    assert "telephoto" in data["description"].lower()
+    lo, hi = data["efl_mm_range"]
+    assert 5.0 <= lo < hi <= 18.0
+    f_lo, f_hi = data["f_number_range"]
+    assert 1.0 <= f_lo < f_hi
+
+
+def test_suggest_dslr_prime():
+    r = client.get("/api/optical/suggest/dslr-prime")
+    assert r.status_code == 200
+    data = r.json()
+    assert data["scenario"] == "dslr-prime"
+    lo, hi = data["efl_mm_range"]
+    assert lo >= 24.0
+    assert hi >= 100.0
+
+
+def test_suggest_invalid_scenario_returns_422():
+    r = client.get("/api/optical/suggest/not-a-real-scenario")
+    assert r.status_code == 422  # pydantic enum validation
+
+
+def test_suggest_all_scenarios_respond_200():
+    for scenario in [
+        "smartphone-telephoto",
+        "smartphone-wide",
+        "smartphone-ultrawide",
+        "ar-near-eye",
+        "dslr-prime",
+        "microscope-objective",
+    ]:
+        r = client.get(f"/api/optical/suggest/{scenario}")
+        assert r.status_code == 200, f"failed for {scenario}: {r.text}"
+
+
+# ---------------------------------------------------------------------------
+# Parameter guard validation on /raytrace
+# ---------------------------------------------------------------------------
+
+
+def _good_request() -> dict:
+    return {
+        "scenario": "smartphone-telephoto",
+        "focal_length_mm": 7.0,
+        "f_number": 2.4,
+        "field_of_view_deg": 30.0,
+        "image_height_mm": 3.7,
+        "n_elements": 7,
+        "wavelength_nm": 550.0,
+    }
+
+
+def test_raytrace_valid_input_passes_guards_returns_501():
+    """Good input passes parameter_guards then hits 501 (wave 2 placeholder)."""
+    r = client.post("/api/optical/raytrace", json=_good_request())
+    assert r.status_code == 501
+    assert "Phase 2 wave 2" in r.json()["detail"]
+
+
+def test_raytrace_efl_too_small_returns_400():
+    """0.5mm EFL for phone tele = classic LLM hallucination → 400."""
+    bad = _good_request()
+    bad["focal_length_mm"] = 0.5
+    r = client.post("/api/optical/raytrace", json=bad)
+    assert r.status_code == 400
+    detail = r.json()["detail"]
+    assert detail["error"] == "parameter_guard_failed"
+    assert any("EFL" in v for v in detail["violations"])
+
+
+def test_raytrace_multiple_violations_aggregated():
+    bad = _good_request()
+    bad["focal_length_mm"] = 0.5
+    bad["f_number"] = 10.0
+    bad["field_of_view_deg"] = 170.0
+    r = client.post("/api/optical/raytrace", json=bad)
+    assert r.status_code == 400
+    assert len(r.json()["detail"]["violations"]) >= 3
+
+
+def test_raytrace_wrong_scenario_bounds_returns_400():
+    """50mm EFL is fine for DSLR prime but huge for smartphone telephoto."""
+    bad = _good_request()
+    bad["focal_length_mm"] = 50.0
+    r = client.post("/api/optical/raytrace", json=bad)
+    assert r.status_code == 400
+
+
+def test_raytrace_dslr_prime_50mm_passes_guards():
+    """Same 50mm EFL is valid in DSLR scenario."""
+    r = client.post(
+        "/api/optical/raytrace",
+        json={
+            "scenario": "dslr-prime",
+            "focal_length_mm": 50.0,
+            "f_number": 1.8,
+            "field_of_view_deg": 46.8,
+            "image_height_mm": 21.6,
+            "n_elements": 8,
+        },
+    )
+    # Passes guards → reaches placeholder 501
+    assert r.status_code == 501
+
+
+# ---------------------------------------------------------------------------
+# Aberration + layout-svg also enforce parameter_guards
+# ---------------------------------------------------------------------------
+
+
+def test_aberration_validates_parameters():
+    bad = _good_request()
+    bad["focal_length_mm"] = 0.5
+    r = client.post("/api/optical/aberration", json=bad)
+    assert r.status_code == 400
+
+
+def test_layout_svg_validates_parameters():
+    bad = _good_request()
+    bad["f_number"] = 10.0
+    r = client.post("/api/optical/layout-svg", json=bad)
+    assert r.status_code == 400

@@ -34,6 +34,7 @@ optical = [
     "prysm>=0.21",
     "rayoptics>=0.9.5",
     "opticalglass>=1.1.0",
+    "setuptools>=82.0.1",
 ]
 
 [tool.ruff]
