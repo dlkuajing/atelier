@@ -95,3 +95,101 @@ def depth_of_field_mm(
         else subject_distance_mm * (H - focal_length_mm) / far_denom
     )
     return (near, far)
+
+
+def aperture_diameter_mm(focal_length_mm: float, f_number: float) -> float:
+    """Entrance pupil diameter D = f / N. The LLM is forbidden to estimate this —
+    when the Wizard records f/# and EFL, the diameter MUST come from here."""
+    if focal_length_mm <= 0 or f_number <= 0:
+        raise ValueError("focal_length and f_number must be positive")
+    return focal_length_mm / f_number
+
+
+def refract_snell(
+    incident_angle_rad: float, n_incident: float, n_refracted: float
+) -> float:
+    """Snell's law: n1 * sin(θ1) = n2 * sin(θ2). Returns θ2 in radians.
+
+    Raises ValueError on total internal reflection (sin(θ2) > 1).
+    """
+    import math
+
+    if n_incident <= 0 or n_refracted <= 0:
+        raise ValueError("refractive indices must be positive")
+    sin_t2 = n_incident * math.sin(incident_angle_rad) / n_refracted
+    if abs(sin_t2) > 1.0:
+        raise ValueError(
+            f"total internal reflection: sin(θ2) = {sin_t2}, "
+            f"incident angle {math.degrees(incident_angle_rad):.2f}° exceeds critical "
+            f"angle for n1={n_incident}, n2={n_refracted}"
+        )
+    return math.asin(sin_t2)
+
+
+def critical_angle_deg(n_dense: float, n_rare: float) -> float:
+    """Critical angle for total internal reflection (n_dense > n_rare).
+    Below this incidence the ray refracts; above it, total internal reflection.
+    """
+    import math
+
+    if n_dense <= n_rare:
+        raise ValueError(
+            f"n_dense ({n_dense}) must be > n_rare ({n_rare}) for TIR to exist"
+        )
+    return math.degrees(math.asin(n_rare / n_dense))
+
+
+def paraxial_refraction_matrix(
+    radius_mm: float, n_incident: float, n_refracted: float
+) -> tuple[tuple[float, float], tuple[float, float]]:
+    """ABCD matrix for paraxial refraction at a single spherical surface.
+
+    [ 1                            0           ]
+    [ -(n2-n1)/(R*n2)         n1/n2           ]
+
+    Returns ((A, B), (C, D)). For a plane surface (radius=+∞), pass +math.inf.
+    """
+    import math
+
+    if n_incident <= 0 or n_refracted <= 0:
+        raise ValueError("refractive indices must be positive")
+    if math.isinf(radius_mm):
+        power = 0.0
+    else:
+        if radius_mm == 0:
+            raise ValueError("radius cannot be 0 (use math.inf for plane)")
+        power = (n_refracted - n_incident) / (radius_mm * n_refracted)
+    return ((1.0, 0.0), (-power, n_incident / n_refracted))
+
+
+def paraxial_translation_matrix(
+    distance_mm: float,
+) -> tuple[tuple[float, float], tuple[float, float]]:
+    """ABCD matrix for paraxial translation through a homogeneous medium.
+
+    [ 1   t ]
+    [ 0   1 ]
+    """
+    if distance_mm < 0:
+        raise ValueError("distance must be non-negative")
+    return ((1.0, distance_mm), (0.0, 1.0))
+
+
+def magnification(
+    object_distance_mm: float, image_distance_mm: float
+) -> float:
+    """Lateral magnification m = -s'/s. Negative = inverted image."""
+    if object_distance_mm <= 0:
+        raise ValueError("object_distance must be positive")
+    return -image_distance_mm / object_distance_mm
+
+
+def numerical_aperture(f_number: float, n_image_space: float = 1.0) -> float:
+    """NA = n * sin(θ_max) ≈ n / (2 * f/#) for moderate f/#.
+
+    For high-NA microscope objectives, NA = n * sin(arctan(1/(2N)))."""
+    import math
+
+    if f_number <= 0 or n_image_space <= 0:
+        raise ValueError("f_number and n_image_space must be positive")
+    return n_image_space * math.sin(math.atan(1.0 / (2.0 * f_number)))
