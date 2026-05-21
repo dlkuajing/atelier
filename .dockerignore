@@ -1,0 +1,41 @@
+# Keep the build context tiny so `flyctl deploy` uploads in seconds.
+# Everything the Dockerfile actually consumes lives in pyproject.toml,
+# uv.lock, .python-version, app/, and scripts/.
+
+# Python build / cache artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Local virtual environments (image creates its own /opt/venv via uv).
+.venv/
+venv/
+env/
+
+# Local secrets — Fly secrets vault takes over in production.
+.env
+.env.*
+!.env.example
+
+# IDE / OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Tests don't run in the production image. Local pytest uses tests/ from
+# the host; remove it from the build context to keep the image smaller.
+tests/
+
+# Planning / docs aren't shipped with the runtime.
+.planning/
+*.md
+!app/**/*.md
+
+# Git metadata
+.git/
+.gitignore

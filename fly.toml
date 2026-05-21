@@ -1,22 +1,50 @@
-# Fly.io deployment config for lumira-atelier-backend.
-# Owner runs `flyctl launch --copy-config --no-deploy` then `flyctl deploy`
-# after writing real .env secrets — see OWNER-CHECKLIST.md §P1.
+# Fly.io deployment config — Lumira Atelier Backend.
+#
+# Deploy runbook for the owner — see lumira-backend/DEPLOY.md for details.
+# Short version:
+#   $ cd lumira-backend
+#   $ flyctl auth login                                # one-time, opens browser
+#   $ flyctl launch --copy-config --no-deploy          # first time only
+#   $ flyctl secrets set OPENAI_API_KEY=sk-nex-...      \
+#                        OPENAI_BASE_URL=https://api.openbili.com/v1
+#   $ flyctl deploy
+#
+# After deploy you get a URL like https://lumira-atelier-backend.fly.dev.
+# Paste that URL into Cloudflare Worker's LUMIRA_BACKEND_URL secret.
 
 app = "lumira-atelier-backend"
-primary_region = "hkg"   # Hong Kong — close to CN clients and HK LiteLLM proxy
+
+# Hong Kong region — closest Fly.io PoP to the relay station (api.openbili.com)
+# and to mainland China visitors. Latency from CF Worker → Fly HKG ≈ 20-50ms.
+primary_region = "hkg"
 
 [build]
   dockerfile = "Dockerfile"
 
+# ──────────────────────────────────────────────────────────────────────
+# Environment variables baked into the image.
+# Secrets (API keys, DB passwords) go through `flyctl secrets set` — they
+# live in Fly's encrypted vault, not in this file.
+# ──────────────────────────────────────────────────────────────────────
 [env]
   ENV = "production"
   LOG_LEVEL = "INFO"
-  CORS_ALLOWED_ORIGINS = "https://lumirahq.com,https://agent.lumirahq.com,https://lumira.com,https://agent.lumira.com"
+  # Frontend lives on lumirahq.com (Cloudflare Worker). Add prod domains
+  # here so the FastAPI CORSMiddleware accepts the browser's Origin header.
+  CORS_ALLOWED_ORIGINS = "https://lumirahq.com,https://www.lumirahq.com,https://agent.lumirahq.com"
 
+# ──────────────────────────────────────────────────────────────────────
+# HTTP service — exposes :8000 from the container to the public internet
+# at https://<app>.fly.dev. force_https redirects http → https.
+#
+# auto_stop_machines: Fly turns the VM off when idle, spins back up on the
+# next request (cold start ~5-8s). With min_machines_running = 0 that means
+# $0 when nobody's using the demo. For paid traffic, bump min to 1.
+# ──────────────────────────────────────────────────────────────────────
 [http_service]
   internal_port = 8000
   force_https = true
-  auto_stop_machines = "stop"     # save cost when idle (cold start ~5s OK for first call)
+  auto_stop_machines = "stop"
   auto_start_machines = true
   min_machines_running = 0
   processes = ["app"]
@@ -28,7 +56,13 @@ primary_region = "hkg"   # Hong Kong — close to CN clients and HK LiteLLM prox
   timeout = "10s"
   path = "/health"
 
+# ──────────────────────────────────────────────────────────────────────
+# VM size — shared-cpu-2x, 2 GB RAM.
+# Optiland + numpy + scipy + rayoptics peak at ~1.2 GB during raytrace;
+# 2 GB gives headroom for concurrent requests. CPU intensive but the
+# bottleneck is the LLM relay round-trip, not the math.
+# ──────────────────────────────────────────────────────────────────────
 [[vm]]
   cpu_kind = "shared"
   cpus = 2
-  memory_mb = 2048                # Optiland + prysm + numpy/scipy needs ≥2GB
+  memory_mb = 2048
