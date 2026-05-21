@@ -19,7 +19,7 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.core.lens_system import Scenario
-from app.core.llm_relay import get_async_client, model_for_role
+from app.core.llm_relay import PRIMARY_IMAGE, get_async_client, model_for_role
 from app.core.parameter_guards import SCENARIO_BOUNDS
 
 
@@ -219,3 +219,117 @@ async def extract_scenario(req: ExtractScenarioRequest) -> ExtractScenarioRespon
                 "message": str(e)[:500],
             },
         ) from e
+
+
+# ---------------------------------------------------------------------------
+# Cover image generation — gpt-image-2 via relay
+# ---------------------------------------------------------------------------
+
+_COVER_PROMPT_PREFIX = (
+    "Cinematic macro photograph of a precision optical lens module cross-section. "
+    "Black void background, subtle photon-blue (#7dedff) and prism-amber (#ffb876) "
+    "rim-light highlights on glass element edges, sharp specular reflections, "
+    "studio lighting, abstract minimal architectural composition, premium "
+    "scientific-instrument aesthetic, ultra-sharp focus, no text, no logos, no "
+    "watermarks, no UI elements, photorealistic, 8k detail. Subject: "
+)
+
+_SCENARIO_COVER_HINTS: dict[Scenario, str] = {
+    Scenario.SMARTPHONE_TELEPHOTO: (
+        "a compact folded-periscope telephoto camera module from a flagship "
+        "smartphone, exposed lens stack visible through a transparent housing, "
+        "subtle prism reflections."
+    ),
+    Scenario.SMARTPHONE_WIDE: (
+        "a smartphone main wide-angle camera module, dense vertical lens "
+        "stack, large rear sensor visible, hint of OLED-glow background."
+    ),
+    Scenario.SMARTPHONE_ULTRAWIDE: (
+        "a smartphone ultrawide camera module, very wide-angle front element, "
+        "compact 6-element stack, glassy reflections."
+    ),
+    Scenario.AR_NEAR_EYE: (
+        "a freeform optical waveguide for an AR/VR headset, paper-thin glass "
+        "substrate with microscopic surface relief, ethereal light projection "
+        "from a micro-display."
+    ),
+    Scenario.DSLR_PRIME: (
+        "a full-frame mirrorless camera prime lens disassembled to show the "
+        "internal element stack, multi-coated glass, aperture diaphragm visible."
+    ),
+    Scenario.MICROSCOPE_OBJECTIVE: (
+        "a high-numerical-aperture microscope objective barrel cut open to "
+        "show its multi-element correction stack, immersion-oil meniscus on "
+        "front element."
+    ),
+}
+
+
+class CoverImageRequest(BaseModel):
+    scenario: Scenario
+    efl_mm: float | None = Field(None, gt=0)
+    f_number: float | None = Field(None, gt=0)
+    size: str = Field(
+        "1024x1024",
+        description="Image size — gpt-image-2 supports 1024x1024 / 1024x1536 / 1536x1024",
+    )
+
+
+class CoverImageResponse(BaseModel):
+    b64_png: str = Field(..., description="Base64-encoded PNG payload, no data: prefix")
+    revised_prompt: str | None = Field(
+        None, description="The prompt as rewritten by the image model (if it does)"
+    )
+    model: str
+    scenario: Scenario
+
+
+@router.post("/cover-image", response_model=CoverImageResponse)
+async def generate_cover_image(req: CoverImageRequest) -> CoverImageResponse:
+    """Generate a brand-aligned cover image for the Atelier PDF report.
+
+    Runs gpt-image-2 via the relay. Called fire-and-forget by the Wizard after
+    Generate succeeds; the PDF assembler embeds the result if it arrives in
+    time, otherwise falls back to the text-only cover.
+    """
+    prompt = _COVER_PROMPT_PREFIX + _SCENARIO_COVER_HINTS[req.scenario]
+    if req.efl_mm is not None and req.f_number is not None:
+        prompt += (
+            f" Approximate focal length {req.efl_mm:.1f} mm, "
+            f"aperture f/{req.f_number:.1f}."
+        )
+
+    client = get_async_client()
+    try:
+        response = await client.images.generate(
+            model=PRIMARY_IMAGE,
+            prompt=prompt,
+            size=req.size,
+            n=1,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail={
+                "error": "image_relay_failure",
+                "message": str(e)[:300],
+                "model": PRIMARY_IMAGE,
+            },
+        ) from e
+
+    if not response.data or not response.data[0].b64_json:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail={
+                "error": "image_relay_empty_response",
+                "model": PRIMARY_IMAGE,
+            },
+        )
+
+    item = response.data[0]
+    return CoverImageResponse(
+        b64_png=item.b64_json,
+        revised_prompt=getattr(item, "revised_prompt", None),
+        model=PRIMARY_IMAGE,
+        scenario=req.scenario,
+    )
