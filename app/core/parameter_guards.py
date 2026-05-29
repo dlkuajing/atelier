@@ -50,35 +50,40 @@ SCENARIO_BOUNDS: dict[Scenario, ScenarioBounds] = {
         description="Folded or upright telephoto module for smartphones, ~3x optical zoom",
     ),
     Scenario.SMARTPHONE_WIDE: ScenarioBounds(
-        efl_mm_min=3.0,
-        efl_mm_max=8.0,
-        f_number_min=1.4,
-        f_number_max=2.8,
-        fov_deg_min=60.0,
-        fov_deg_max=90.0,
-        image_height_mm_min=3.5,
-        image_height_mm_max=10.0,
-        n_elements_min=5,
-        n_elements_max=8,
-        description="Main wide camera, typical smartphone primary",
+        # Calibrated from v2-02's 15 real wide designs (manifest nominals, see
+        # scripts/compute_bounds_stats.py): EFL[2.50,3.90] F#[1.80,2.50]
+        # FOV[60.0,84.1] IMH[1.80,3.30], elements 3-5; ~5% engineering margin.
+        # Replaces the earlier hand-typed teardown estimate.
+        efl_mm_min=2.4,
+        efl_mm_max=4.1,
+        f_number_min=1.7,
+        f_number_max=2.6,
+        fov_deg_min=57.0,
+        fov_deg_max=88.0,
+        image_height_mm_min=1.7,
+        image_height_mm_max=3.5,
+        n_elements_min=3,
+        n_elements_max=6,
+        description="Main wide camera, smartphone primary (calibrated to 15 real designs)",
     ),
     Scenario.SMARTPHONE_ULTRAWIDE: ScenarioBounds(
-        # NOTE: lower bound was 1.5 mm — bumped to 2.5 mm to avoid an
-        # Optiland 0.6 bug (numpy 0-d → float TypeError in coordinate_
-        # system.to_dict at very short scaled prescriptions). 2.5 mm is
-        # also the realistic floor for published phone ultrawide modules.
-        # Revisit when Optiland ships 0.7+ stable.
-        efl_mm_min=2.5,
-        efl_mm_max=4.0,
-        f_number_min=1.8,
-        f_number_max=3.5,
-        fov_deg_min=100.0,
-        fov_deg_max=130.0,
-        image_height_mm_min=3.0,
-        image_height_mm_max=8.0,
-        n_elements_min=5,
-        n_elements_max=8,
-        description="Ultra-wide auxiliary, smartphone",
+        # Calibrated from v2-02's real wide-FOV designs. HONEST CAVEAT: this phase's
+        # ammo tops out at ~89.5° (only 2 designs: 2.8mm / F1.9 / 5-elem) — we have
+        # NO true 100°+ ultrawide data. Bounds center on those real samples with
+        # engineering margin across the wide→ultrawide transition. The previous
+        # 100–130° range was a hand-typed guess with zero backing data — removed.
+        # Revisit when real 100°+ ultrawide prescriptions are added.
+        efl_mm_min=2.6,
+        efl_mm_max=3.0,
+        f_number_min=1.7,
+        f_number_max=2.1,
+        fov_deg_min=85.0,
+        fov_deg_max=95.0,
+        image_height_mm_min=2.7,
+        image_height_mm_max=3.1,
+        n_elements_min=4,
+        n_elements_max=6,
+        description="Wide-FOV auxiliary, smartphone (limited ammo ~89.5°, no true 100°+ ultrawide yet)",
     ),
     Scenario.AR_NEAR_EYE: ScenarioBounds(
         efl_mm_min=12.0,
@@ -156,18 +161,15 @@ def validate_scenario_params(
 
     if not bounds.efl_mm_min <= efl_mm <= bounds.efl_mm_max:
         violations.append(
-            f"EFL {efl_mm}mm out of [{bounds.efl_mm_min}, {bounds.efl_mm_max}]mm "
-            f"for {scenario}"
+            f"EFL {efl_mm}mm out of [{bounds.efl_mm_min}, {bounds.efl_mm_max}]mm for {scenario}"
         )
     if not bounds.f_number_min <= f_number <= bounds.f_number_max:
         violations.append(
-            f"f/# {f_number} out of [{bounds.f_number_min}, {bounds.f_number_max}] "
-            f"for {scenario}"
+            f"f/# {f_number} out of [{bounds.f_number_min}, {bounds.f_number_max}] for {scenario}"
         )
     if not bounds.fov_deg_min <= fov_deg <= bounds.fov_deg_max:
         violations.append(
-            f"FOV {fov_deg}° out of [{bounds.fov_deg_min}, {bounds.fov_deg_max}]° "
-            f"for {scenario}"
+            f"FOV {fov_deg}° out of [{bounds.fov_deg_min}, {bounds.fov_deg_max}]° for {scenario}"
         )
     if not bounds.image_height_mm_min <= image_height_mm <= bounds.image_height_mm_max:
         violations.append(

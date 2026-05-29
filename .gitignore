@@ -14,7 +14,11 @@ venv/
 dist/
 build/
 .DS_Store
-# Crawled patents (large, not committed; produced by scripts/patent_crawler.py)
-data/
+# Crawled patents (large, not committed; produced by scripts/patent_crawler.py).
+# Leading-slash + /* scopes this to the backend-root data/ dir only, so the
+# version-controlled real-design ammo (data/zmx) stays tracked, and tests/data /
+# app/data (different paths) are unaffected.
+/data/*
+!/data/zmx/
 *.db
 *.sqlite

@@ -13,13 +13,14 @@ from app.core.rag.store import (
     LensPatentHit,
     LensPatentStore,
     MockLensPatentStore,
+    RealLensCaseStore,
     get_default_store,
 )
-
 
 __all__ = [
     "LensPatentHit",
     "LensPatentStore",
     "MockLensPatentStore",
+    "RealLensCaseStore",
     "get_default_store",
 ]

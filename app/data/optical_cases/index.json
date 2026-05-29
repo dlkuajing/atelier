@@ -1,0 +1,340 @@
+[
+  {
+    "case_id": "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",
+    "source_zmx": "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56.ZMX",
+    "scenario": "smartphone-wide",
+    "n_pieces": 3,
+    "n_imaging": 3,
+    "n_filter": 1,
+    "efl_mm": 2.7520649726193493,
+    "fnum": 2.45,
+    "fov_deg": 78.0,
+    "image_height_mm": 2.3,
+    "materials": [
+      "APL5014CL",
+      "OKP1",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 1.9283323192351542
+  },
+  {
+    "case_id": "3P_F2.5_FOV78.1_EFL2.8_IMH2.3_TTL4.33",
+    "source_zmx": "3P_F2.5_FOV78.1_EFL2.8_IMH2.3_TTL4.33.ZMX",
+    "scenario": "smartphone-wide",
+    "n_pieces": 3,
+    "n_imaging": 3,
+    "n_filter": 1,
+    "efl_mm": 2.7594554922315884,
+    "fnum": 2.45,
+    "fov_deg": 78.1,
+    "image_height_mm": 2.3,
+    "materials": [
+      "APL5014CL",
+      "SP3810",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 1.4480181345861234
+  },
+  {
+    "case_id": "4P_F1.9_FOV60.0_EFL3.7_IMH2.1_TTL6.00",
+    "source_zmx": "4P_F1.9_FOV60.0_EFL3.7_IMH2.1_TTL6.00.ZMX",
+    "scenario": "smartphone-wide",
+    "n_pieces": 4,
+    "n_imaging": 5,
+    "n_filter": 0,
+    "efl_mm": 3.7081115202350783,
+    "fnum": 1.8540557601175391,
+    "fov_deg": 60.0,
+    "image_height_mm": 2.1,
+    "materials": [
+      "APL5014CL",
+      "EP8000",
+      "H-LAK53A",
+      "OKP1"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 0.2192302766237326
+  },
+  {
+    "case_id": "4P_F1.9_FOV60.1_EFL3.7_IMH2.1_TTL6.00",
+    "source_zmx": "4P_F1.9_FOV60.1_EFL3.7_IMH2.1_TTL6.00.ZMX",
+    "scenario": "smartphone-wide",
+    "n_pieces": 4,
+    "n_imaging": 5,
+    "n_filter": 0,
+    "efl_mm": 3.7280943202584016,
+    "fnum": 1.8640471601292008,
+    "fov_deg": 60.1,
+    "image_height_mm": 2.1,
+    "materials": [
+      "EP8000",
+      "H-LAK51A",
+      "APL5014CL"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 0.759305952929768
+  },
+  {
+    "case_id": "4P_F2.2_FOV67.7_EFL2.6_IMH1.8_TTL3.58",
+    "source_zmx": "4P_F2.2_FOV67.7_EFL2.6_IMH1.8_TTL3.58.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 4,
+    "n_imaging": 4,
+    "n_filter": 1,
+    "efl_mm": 2.646059363229567,
+    "fnum": 2.2050494693579727,
+    "fov_deg": 67.7,
+    "image_height_mm": 1.8,
+    "materials": [
+      "APL5514",
+      "OKP1",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 1.7715139703679592
+  },
+  {
+    "case_id": "4P_F2.2_FOV68.0_EFL2.6_IMH1.8_TTL3.30",
+    "source_zmx": "4P_F2.2_FOV68.0_EFL2.6_IMH1.8_TTL3.30.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 4,
+    "n_imaging": 4,
+    "n_filter": 1,
+    "efl_mm": 2.646623656560969,
+    "fnum": 2.2055197138008076,
+    "fov_deg": 68.0,
+    "image_height_mm": 1.8,
+    "materials": [
+      "APL5514",
+      "EP6000",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 1.7932175600372695
+  },
+  {
+    "case_id": "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90",
+    "source_zmx": "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 4,
+    "n_imaging": 4,
+    "n_filter": 1,
+    "efl_mm": 2.8698407536184503,
+    "fnum": 2.190718132533168,
+    "fov_deg": 74.7,
+    "image_height_mm": 2.2,
+    "materials": [
+      "APL5014CL",
+      "OKP1"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 1.0399740131568846
+  },
+  {
+    "case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
+    "source_zmx": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34.ZMX",
+    "scenario": "smartphone-wide",
+    "n_pieces": 4,
+    "n_imaging": 4,
+    "n_filter": 1,
+    "efl_mm": 2.464526493931806,
+    "fnum": 2.05,
+    "fov_deg": 84.1,
+    "image_height_mm": 2.3,
+    "materials": [
+      "APL5514",
+      "EP8000",
+      "ZEONEX-K26R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 1.4189402427277642
+  },
+  {
+    "case_id": "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15",
+    "source_zmx": "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 2.9381518656434684,
+    "fnum": 1.8,
+    "fov_deg": 74.1,
+    "image_height_mm": 2.3,
+    "materials": [
+      "APL5014CL",
+      "EP8000",
+      "ZEONEX-K26R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 1.3155815739127072
+  },
+  {
+    "case_id": "5P_F1.9_FOV76.9_EFL3.6_IMH2.9_TTL4.30",
+    "source_zmx": "5P_F1.9_FOV76.9_EFL3.6_IMH2.9_TTL4.30.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 3.6232715195489194,
+    "fnum": 1.85,
+    "fov_deg": 76.9,
+    "image_height_mm": 2.9,
+    "materials": [
+      "APL5014CL",
+      "EP8000",
+      "OKP1",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 0.6464310985810906
+  },
+  {
+    "case_id": "5P_F1.9_FOV77.0_EFL3.6_IMH2.9_TTL4.30",
+    "source_zmx": "5P_F1.9_FOV77.0_EFL3.6_IMH2.9_TTL4.30.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 3.6300312980824048,
+    "fnum": 1.85,
+    "fov_deg": 77.0,
+    "image_height_mm": 2.9,
+    "materials": [
+      "APL5014CL",
+      "EP8000",
+      "OKP1",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 0.834202724511241
+  },
+  {
+    "case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "source_zmx": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29.zmx",
+    "scenario": "smartphone-ultrawide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 2.8119696121067594,
+    "fnum": 1.9104978237966628,
+    "fov_deg": 89.5,
+    "image_height_mm": 2.9,
+    "materials": [
+      "APL5014CL",
+      "EP8000",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 0.4274861466699864
+  },
+  {
+    "case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.33",
+    "source_zmx": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.33.zmx",
+    "scenario": "smartphone-ultrawide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 2.821208958641831,
+    "fnum": 1.9111215527772905,
+    "fov_deg": 89.5,
+    "image_height_mm": 2.9,
+    "materials": [
+      "APL5014CL",
+      "EP8000",
+      "APL5514",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 0.7574628086368346
+  },
+  {
+    "case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
+    "source_zmx": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 4,
+    "n_filter": 2,
+    "efl_mm": 2.6184010260972164,
+    "fnum": 1.9913006312910415,
+    "fov_deg": 71.0,
+    "image_height_mm": 1.9,
+    "materials": [
+      "D263T",
+      "APL5014CL",
+      "EP8000"
+    ],
+    "mtf_max_field_frac": 0.7,
+    "efl_error_pct": 0.7077317729698568
+  },
+  {
+    "case_id": "5P_F2.0_FOV78.7_EFL3.8_IMH3.3_TTL4.35",
+    "source_zmx": "5P_F2.0_FOV78.7_EFL3.8_IMH3.3_TTL4.35.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 3.8340254093512653,
+    "fnum": 2.05,
+    "fov_deg": 78.7,
+    "image_height_mm": 3.3,
+    "materials": [
+      "APL5014CL",
+      "OKP1",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 0.8954055092438296
+  },
+  {
+    "case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "source_zmx": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 3.8059043354343007,
+    "fnum": 2.05,
+    "fov_deg": 78.8,
+    "image_height_mm": 3.2,
+    "materials": [
+      "APL5014CL",
+      "OKP1",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 0.15537724827107663
+  },
+  {
+    "case_id": "5P_F2.0_FOV78.8_EFL3.9_IMH3.3_TTL4.35",
+    "source_zmx": "5P_F2.0_FOV78.8_EFL3.9_IMH3.3_TTL4.35.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "efl_mm": 3.851816173515491,
+    "fnum": 2.05,
+    "fov_deg": 78.8,
+    "image_height_mm": 3.3,
+    "materials": [
+      "APL5014CL",
+      "OKP1",
+      "ZEONEX-E48R",
+      "BK7"
+    ],
+    "mtf_max_field_frac": 1.0,
+    "efl_error_pct": 1.2354827303720177
+  }
+]

@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.core.aberration import MTFResult, compute_mtf
+from app.core.case_library import match_case
 from app.core.layout_svg import render_layout_svg
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import (
@@ -16,12 +17,12 @@ from app.core.optical_engine import (
     build_optic_for_scenario,
     raytrace_from_spec,
 )
+from app.core.optical_sample import OpticalSampleData
 from app.core.parameter_guards import (
     SCENARIO_BOUNDS,
     ParameterGuardError,
     validate_scenario_params,
 )
-
 
 router = APIRouter()
 
@@ -213,3 +214,48 @@ async def layout_svg(req: OpticalSpecRequest) -> LayoutSVG:
                 "message": str(e),
             },
         ) from e
+
+
+# ---------------------------------------------------------------------------
+# /match — v2-03: retrieve the nearest REAL design from the case library
+# ---------------------------------------------------------------------------
+
+
+@router.post(
+    "/match",
+    response_model=OpticalSampleData,
+    responses={
+        400: {"description": "Parameter guard violation"},
+        404: {"description": "No real case for this scenario"},
+    },
+)
+async def match(req: OpticalSpecRequest) -> OpticalSampleData:
+    """Retrieve the real production design nearest to the requested params.
+
+    Unlike /raytrace + /aberration + /layout-svg (which scale a textbook
+    reference design), this returns a **real** pre-computed design from the
+    v2-02 case library — its actual prescription, Optiland-verified MTF, and
+    2D layout, plus honest provenance metadata. Nearest match by weighted
+    (EFL / FOV / F#) distance within the requested scenario.
+    """
+    _validate_or_400(req)
+    case = match_case(
+        scenario=req.scenario,
+        efl_mm=req.focal_length_mm,
+        fnum=req.f_number,
+        fov_deg=req.field_of_view_deg,
+    )
+    if case is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "error": "no_real_case_for_scenario",
+                "scenario": req.scenario,
+                "message": (
+                    f"No real design in the case library for scenario "
+                    f"{req.scenario.value}. This phase ships smartphone "
+                    f"wide / ultrawide only."
+                ),
+            },
+        )
+    return case
