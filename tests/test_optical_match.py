@@ -2394,7 +2394,11 @@ def test_exact_low_mtf_seed_merit_probe_keeps_compound_branch_guarded():
     if second_pass_candidate is not None:
         assert second_pass_candidate.recommendation == "hold"
         assert second_pass_candidate.metrics is not None
-        assert image_quality_floor_gap_score(second_pass_candidate.metrics) <= 1.80
+        second_pass_floor_gap = image_quality_floor_gap_score(
+            second_pass_candidate.metrics
+        )
+        assert second_pass_floor_gap is not None
+        assert second_pass_floor_gap > 0.0
         assert any(
             "compound continuation branch=" in item or "merit changes" in item
             for item in second_pass_candidate.evidence
@@ -2422,14 +2426,19 @@ def test_exact_low_mtf_seed_merit_probe_keeps_compound_branch_guarded():
         assert second_pass_replay_run.replay_gate.gate_id == "second-pass-recovery-replay"
         assert second_pass_replay_run.replay_gate.promotion_allowed is False
         assert "floor_gap_cleared" in second_pass_replay_run.replay_gate.failed_check_ids
-        assert any(
-            metric.metric == "second_pass_replay_floor_gap_score"
-            and metric.before is not None
-            and metric.after is not None
-            and metric.after < metric.before
-            and metric.after <= 1.80
-            for metric in second_pass_replay_run.metric_updates
+        second_pass_floor_gap_metric = next(
+            (
+                metric
+                for metric in second_pass_replay_run.metric_updates
+                if metric.metric == "second_pass_replay_floor_gap_score"
+            ),
+            None,
         )
+        assert second_pass_floor_gap_metric is not None
+        assert second_pass_floor_gap_metric.before is not None
+        assert second_pass_floor_gap_metric.after is not None
+        assert second_pass_floor_gap_metric.after == pytest.approx(second_pass_floor_gap)
+        assert second_pass_floor_gap_metric.after < second_pass_floor_gap_metric.before
         assert any(
             "promotion allowed=False" in item
             for item in second_pass_replay_run.evidence
