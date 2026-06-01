@@ -1,6 +1,6 @@
 # Keep the build context tiny so `flyctl deploy` uploads in seconds.
 # Everything the Dockerfile actually consumes lives in pyproject.toml,
-# uv.lock, .python-version, app/, and scripts/.
+# uv.lock, .python-version, app/, scripts/, and data/.
 
 # Python build / cache artifacts
 __pycache__/

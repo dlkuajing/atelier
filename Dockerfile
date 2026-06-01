@@ -6,7 +6,8 @@
 #              so the optical group's bigger native deps still build cleanly).
 #  2. deps   — install runtime deps without the project source, so docker
 #              layer cache survives every code-only change.
-#  3. final  — copy app/ + scripts/, install the project itself, run uvicorn.
+#  3. final  — copy app/ + scripts/ + runtime data, install the project itself,
+#              run uvicorn.
 #
 # Optiland 0.6+ now covers MTF/PSF/Zernike natively — prysm and LiteLLM are
 # both gone (see .planning/STATE.md "反悔与修正记录" §修正 7 + §修正 9).
@@ -61,6 +62,7 @@ FROM deps AS final
 
 COPY app ./app
 COPY scripts ./scripts
+COPY data ./data
 
 # Install the project itself on top of the cached deps layer.
 RUN uv sync --frozen --no-dev --group optical
