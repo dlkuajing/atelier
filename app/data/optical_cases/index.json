@@ -35,7 +35,7 @@
       "ZEONEX-E48R",
       "BK7"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.85,
     "efl_error_pct": 1.4480181345861234
   },
   {
@@ -132,7 +132,7 @@
       "APL5014CL",
       "OKP1"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.9,
     "efl_error_pct": 1.0399740131568846
   },
   {
@@ -152,7 +152,7 @@
       "ZEONEX-K26R",
       "BK7"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.9,
     "efl_error_pct": 1.4189402427277642
   },
   {
@@ -193,7 +193,7 @@
       "ZEONEX-E48R",
       "BK7"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.9,
     "efl_error_pct": 0.6464310985810906
   },
   {
@@ -214,7 +214,7 @@
       "ZEONEX-E48R",
       "BK7"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.9,
     "efl_error_pct": 0.834202724511241
   },
   {
@@ -234,7 +234,7 @@
       "ZEONEX-E48R",
       "BK7"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.8,
     "efl_error_pct": 0.4274861466699864
   },
   {
@@ -255,7 +255,7 @@
       "ZEONEX-E48R",
       "BK7"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.85,
     "efl_error_pct": 0.7574628086368346
   },
   {
@@ -274,7 +274,7 @@
       "APL5014CL",
       "EP8000"
     ],
-    "mtf_max_field_frac": 0.7,
+    "mtf_max_field_frac": 0.8,
     "efl_error_pct": 0.7077317729698568
   },
   {

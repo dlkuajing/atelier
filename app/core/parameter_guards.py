@@ -50,16 +50,17 @@ SCENARIO_BOUNDS: dict[Scenario, ScenarioBounds] = {
         description="Folded or upright telephoto module for smartphones, ~3x optical zoom",
     ),
     Scenario.SMARTPHONE_WIDE: ScenarioBounds(
-        # Calibrated from v2-02's 15 real wide designs (manifest nominals, see
-        # scripts/compute_bounds_stats.py): EFL[2.50,3.90] F#[1.80,2.50]
-        # FOV[60.0,84.1] IMH[1.80,3.30], elements 3-5; ~5% engineering margin.
+        # Calibrated from v2-02's phone short-focus family. 15 wide designs cover
+        # FOV[60.0,84.1]; 2 adjacent wide-FOV seeds cover 89.5. v2-05 lets
+        # smartphone-wide requests cross-select those seeds, so the UI/backend
+        # bound is 90 rather than the old wide-only 88.
         # Replaces the earlier hand-typed teardown estimate.
         efl_mm_min=2.4,
         efl_mm_max=4.1,
         f_number_min=1.7,
         f_number_max=2.6,
         fov_deg_min=57.0,
-        fov_deg_max=88.0,
+        fov_deg_max=90.0,
         image_height_mm_min=1.7,
         image_height_mm_max=3.5,
         n_elements_min=3,

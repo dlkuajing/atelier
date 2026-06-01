@@ -30,6 +30,8 @@ apply_all()
 
 from optiland.fileio import load_zemax_file  # noqa: E402  (must follow apply_all)
 
+from app.core.mtf_fields import MTF_CANONICAL_FIELD_FRACS  # noqa: E402
+
 # data/zmx lives under the backend root: core -> app -> <root> / data / zmx
 ZMX_AMMO_DIR = Path(__file__).resolve().parents[2] / "data" / "zmx"
 
@@ -75,12 +77,6 @@ def load_normalized_zmx(path: str | Path):
     return optic
 
 
-# Canonical MTF field fractions (axis, mid, 0.7-zone, full) that lens datasheets
-# cite. 4 points keep GeometricMTF fast while covering the field; 0.7 is the
-# de-facto "image quality" zone for phone lenses.
-_MTF_FIELD_FRACS: tuple[float, ...] = (0.0, 0.5, 0.7, 1.0)
-
-
 def regularize_fields_to_angle(optic, full_fov_deg: float) -> None:
     """Switch the optic to ANGLE fields at standard MTF fractions (in place).
 
@@ -100,7 +96,7 @@ def regularize_fields_to_angle(optic, full_fov_deg: float) -> None:
     half = full_fov_deg / 2.0
     optic.set_field_type("angle")
     optic.fields.fields.clear()
-    for frac in _MTF_FIELD_FRACS:
+    for frac in MTF_CANONICAL_FIELD_FRACS:
         optic.add_field(y=half * frac)
     with contextlib.suppress(Exception):
         optic.ray_tracer.set_aiming("robust", max_iter=20)

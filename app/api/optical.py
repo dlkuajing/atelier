@@ -4,11 +4,21 @@ Phase 2 wave 1: parameter validation + /suggest endpoint live.
 Wave 2 (post-Optiland install): /raytrace, /aberration, /layout-svg implemented.
 """
 
-from fastapi import APIRouter, HTTPException, status
+import re
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Annotated
+
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
 
 from app.core.aberration import MTFResult, compute_mtf
-from app.core.case_library import match_case
+from app.core.case_library import (
+    build_sample_from_optic,
+    build_seed_intake_audit,
+    load_case_library,
+    match_case,
+)
 from app.core.layout_svg import render_layout_svg
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import (
@@ -17,14 +27,22 @@ from app.core.optical_engine import (
     build_optic_for_scenario,
     raytrace_from_spec,
 )
-from app.core.optical_sample import OpticalSampleData
+from app.core.optical_sample import OpticalSampleData, SeedAcquisitionBrief, SeedIntakeAudit
 from app.core.parameter_guards import (
     SCENARIO_BOUNDS,
     ParameterGuardError,
     validate_scenario_params,
 )
+from app.core.zmx_ingest import load_normalized_zmx
 
 router = APIRouter()
+
+_MAX_SEED_PREFLIGHT_BYTES = 2_000_000
+_CANDIDATE_NAME_RE = re.compile(
+    r"(?P<n>\d+)P_F(?P<fnum>\d+(?:\.\d+)?)_FOV(?P<fov>\d+(?:\.\d+)?)_"
+    r"EFL(?P<efl>\d+(?:\.\d+)?)_IMH(?P<imh>\d+(?:\.\d+)?)_TTL(?P<ttl>\d+(?:\.\d+)?)",
+    re.IGNORECASE,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -43,6 +61,10 @@ class OpticalSpecRequest(BaseModel):
     n_elements: int | None = Field(None, ge=2, le=20)
     wavelength_nm: float = Field(550.0, gt=0)
     object_distance_mm: float | None = Field(None, gt=0)
+    max_total_track_mm: float | None = Field(None, gt=0)
+    max_weight_g: float | None = Field(None, gt=0)
+    manufacturing_tier: str | None = None
+    priority: str | None = None
 
 
 class SuggestResponse(BaseModel):
@@ -59,6 +81,177 @@ class RaytraceResponse(BaseModel):
     paraxial: ParaxialSummary
     surfaces: list[SurfaceDescriptor]
     trace: RayTraceResult
+
+
+def _resolve_optional_float_window(
+    *,
+    target: float | None,
+    half_width: float,
+    floor: float,
+    explicit_lo: float | None,
+    explicit_hi: float | None,
+    label: str,
+) -> list[float]:
+    if target is None and explicit_lo is None and explicit_hi is None:
+        return []
+    if explicit_lo is not None and explicit_hi is not None:
+        if explicit_lo > explicit_hi:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "invalid_seed_preflight_bounds", "message": f"{label} low > high"},
+            )
+        return [round(explicit_lo, 4), round(explicit_hi, 4)]
+    if explicit_lo is not None or explicit_hi is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "invalid_seed_preflight_bounds",
+                "message": f"{label} requires both low and high bounds",
+            },
+        )
+    if target is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "invalid_seed_preflight_bounds",
+                "message": f"{label} target is required when explicit bounds are omitted",
+            },
+        )
+    return [round(max(floor, target - half_width), 4), round(target + half_width, 4)]
+
+
+def _resolve_optional_int_window(
+    *,
+    target: int | None,
+    half_width: int,
+    floor: int,
+    ceiling: int,
+    explicit_lo: int | None,
+    explicit_hi: int | None,
+    label: str,
+) -> list[int]:
+    if target is None and explicit_lo is None and explicit_hi is None:
+        return []
+    if explicit_lo is not None and explicit_hi is not None:
+        if explicit_lo > explicit_hi:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={"error": "invalid_seed_preflight_bounds", "message": f"{label} low > high"},
+            )
+        return [explicit_lo, explicit_hi]
+    if explicit_lo is not None or explicit_hi is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "invalid_seed_preflight_bounds",
+                "message": f"{label} requires both low and high bounds",
+            },
+        )
+    if target is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "invalid_seed_preflight_bounds",
+                "message": f"{label} target is required when explicit bounds are omitted",
+            },
+        )
+    return [max(floor, target - half_width), min(ceiling, target + half_width)]
+
+
+def _seed_preflight_brief(
+    *,
+    target_fov: float,
+    target_efl: float,
+    target_fnum: float,
+    min_fov: float,
+    required_field: float,
+    target_image_height: float | None,
+    image_height_lo: float | None,
+    image_height_hi: float | None,
+    target_elements: int | None,
+    element_count_lo: int | None,
+    element_count_hi: int | None,
+    max_total_track: float | None,
+) -> SeedAcquisitionBrief:
+    return SeedAcquisitionBrief(
+        target_regime="smartphone visible-light high-FOV main/wide camera",
+        priority="required_for_full_field_claim",
+        source_format="Zemax/Optiland-compatible visible-light prescription with material metadata",
+        target_fov_deg=target_fov,
+        minimum_fov_deg=min_fov,
+        target_efl_mm=target_efl,
+        efl_window_mm=[round(max(0.1, target_efl - 0.30), 4), round(target_efl + 0.30, 4)],
+        target_f_number=target_fnum,
+        f_number_window=[round(max(0.8, target_fnum - 0.20), 4), round(target_fnum + 0.25, 4)],
+        target_image_height_mm=target_image_height,
+        image_height_window_mm=_resolve_optional_float_window(
+            target=target_image_height,
+            half_width=0.35,
+            floor=0.1,
+            explicit_lo=image_height_lo,
+            explicit_hi=image_height_hi,
+            label="image-height window",
+        ),
+        target_n_elements=target_elements,
+        element_count_window=_resolve_optional_int_window(
+            target=target_elements,
+            half_width=1,
+            floor=3,
+            ceiling=8,
+            explicit_lo=element_count_lo,
+            explicit_hi=element_count_hi,
+            label="element-count window",
+        ),
+        max_total_track_mm=max_total_track,
+        required_mtf_field_frac=required_field,
+        validation_requirements=[
+            "visible-light wavelength set, not IR-only",
+            "finite sampled ray trace through the 1.0 field",
+            "MTF evaluates at 1.0 field without falling back below full field",
+            "materials resolve to refractive-index data used by the backend",
+            "element count and filter/cover plates can be classified from the prescription",
+        ],
+        rejection_filters=[
+            "IR-only or monochrome near-IR prescriptions",
+            "MTF max stable field below 1.0",
+            "missing stop, semi-aperture, material, or wavelength metadata",
+            "non-phone or non-visible-light optical scenario",
+        ],
+        rationale=[
+            "browser upload uses the same runtime seed-intake contract",
+            "full-field claim requires accepted seed evidence before promotion",
+        ],
+    )
+
+
+def _candidate_nominals(
+    *,
+    filename: str,
+    candidate_n_pieces: int | None,
+    candidate_efl: float | None,
+    candidate_fov: float | None,
+) -> tuple[int, float, float]:
+    match = _CANDIDATE_NAME_RE.search(filename)
+    if match is not None:
+        candidate_n_pieces = int(match.group("n"))
+        candidate_efl = float(match.group("efl"))
+        candidate_fov = float(match.group("fov"))
+    missing: list[str] = []
+    if candidate_n_pieces is None:
+        missing.append("candidate_n_pieces")
+    if candidate_efl is None:
+        missing.append("candidate_efl")
+    if candidate_fov is None:
+        missing.append("candidate_fov")
+    if missing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "missing_seed_candidate_nominals",
+                "message": f"missing {', '.join(missing)}",
+            },
+        )
+    return candidate_n_pieces, candidate_efl, candidate_fov
 
 
 # ---------------------------------------------------------------------------
@@ -216,6 +409,96 @@ async def layout_svg(req: OpticalSpecRequest) -> LayoutSVG:
         ) from e
 
 
+@router.post(
+    "/seed-intake/preflight",
+    response_model=SeedIntakeAudit,
+    responses={
+        400: {"description": "Invalid upload or seed-intake target"},
+        413: {"description": "Uploaded ZMX exceeds size limit"},
+        422: {"description": "Candidate ZMX could not be normalized or traced"},
+    },
+)
+async def seed_intake_preflight(
+    candidate_zmx: Annotated[UploadFile, File(..., description="Candidate ZMX file")],
+    target_fov: Annotated[float, Form(gt=0, le=180)] = 88.0,
+    target_efl: Annotated[float, Form(gt=0)] = 2.8,
+    target_fnum: Annotated[float, Form(gt=0)] = 1.9,
+    min_fov: Annotated[float, Form(gt=0, le=180)] = 85.0,
+    required_field: Annotated[float, Form(gt=0, le=1.0)] = 1.0,
+    target_image_height: Annotated[float | None, Form(gt=0)] = None,
+    image_height_lo: Annotated[float | None, Form(gt=0)] = None,
+    image_height_hi: Annotated[float | None, Form(gt=0)] = None,
+    target_elements: Annotated[int | None, Form(ge=3, le=8)] = None,
+    element_count_lo: Annotated[int | None, Form(ge=3, le=8)] = None,
+    element_count_hi: Annotated[int | None, Form(ge=3, le=8)] = None,
+    max_total_track: Annotated[float | None, Form(gt=0)] = None,
+    candidate_n_pieces: Annotated[int | None, Form(ge=3, le=8)] = None,
+    candidate_efl: Annotated[float | None, Form(gt=0)] = None,
+    candidate_fov: Annotated[float | None, Form(gt=0, le=180)] = None,
+) -> SeedIntakeAudit:
+    """Preflight one uploaded high-FOV seed candidate without persisting it."""
+    filename = Path(candidate_zmx.filename or "candidate.zmx").name
+    if not filename.lower().endswith(".zmx"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": "invalid_seed_file_type", "message": "candidate must be a .zmx file"},
+        )
+
+    content = await candidate_zmx.read()
+    if len(content) > _MAX_SEED_PREFLIGHT_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail={
+                "error": "seed_file_too_large",
+                "message": f"candidate exceeds {_MAX_SEED_PREFLIGHT_BYTES} bytes",
+            },
+        )
+
+    n_pieces, nominal_efl, nominal_fov = _candidate_nominals(
+        filename=filename,
+        candidate_n_pieces=candidate_n_pieces,
+        candidate_efl=candidate_efl,
+        candidate_fov=candidate_fov,
+    )
+    brief = _seed_preflight_brief(
+        target_fov=target_fov,
+        target_efl=target_efl,
+        target_fnum=target_fnum,
+        min_fov=min_fov,
+        required_field=required_field,
+        target_image_height=target_image_height,
+        image_height_lo=image_height_lo,
+        image_height_hi=image_height_hi,
+        target_elements=target_elements,
+        element_count_lo=element_count_lo,
+        element_count_hi=element_count_hi,
+        max_total_track=max_total_track,
+    )
+
+    try:
+        with TemporaryDirectory(prefix="lumira-seed-preflight-") as tmpdir:
+            candidate_path = Path(tmpdir) / filename
+            candidate_path.write_bytes(content)
+            optic = load_normalized_zmx(candidate_path)
+            candidate = build_sample_from_optic(
+                optic,
+                source_zmx=filename,
+                n_pieces=n_pieces,
+                nominal_efl_mm=nominal_efl,
+                nominal_fov_deg=nominal_fov,
+                source_path=candidate_path,
+            )
+    except Exception as e:  # noqa: BLE001 — candidate files fail in many parser/trace ways
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={"error": "seed_preflight_failed", "message": str(e)},
+        ) from e
+
+    cases = [sample for sample in load_case_library() if sample.metadata is not None]
+    cases.append(candidate)
+    return build_seed_intake_audit(cases=cases, brief=brief)
+
+
 # ---------------------------------------------------------------------------
 # /match — v2-03: retrieve the nearest REAL design from the case library
 # ---------------------------------------------------------------------------
@@ -235,8 +518,9 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
     Unlike /raytrace + /aberration + /layout-svg (which scale a textbook
     reference design), this returns a **real** pre-computed design from the
     v2-02 case library — its actual prescription, Optiland-verified MTF, and
-    2D layout, plus honest provenance metadata. Nearest match by weighted
-    (EFL / FOV / F#) distance within the requested scenario.
+    2D layout, plus honest provenance metadata. v2-05 scores full design intent:
+    EFL / FOV / F#, image height, element count, TTL, and coarse cost/performance
+    stance, then attaches `design_assessment` with deltas and tradeoffs.
     """
     _validate_or_400(req)
     case = match_case(
@@ -244,6 +528,12 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
         efl_mm=req.focal_length_mm,
         fnum=req.f_number,
         fov_deg=req.field_of_view_deg,
+        image_height_mm=req.image_height_mm,
+        n_elements=req.n_elements,
+        max_total_track_mm=req.max_total_track_mm,
+        max_weight_g=req.max_weight_g,
+        manufacturing_tier=req.manufacturing_tier,
+        priority=req.priority,
     )
     if case is None:
         raise HTTPException(

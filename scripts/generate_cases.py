@@ -40,7 +40,9 @@ def main() -> None:
                 nominal_fov_deg=a["nominal_fov_deg"],
             )
             case_id = fn.rsplit(".", 1)[0]
-            (CASES_DIR / f"{case_id}.json").write_text(sample.model_dump_json(indent=2))
+            (CASES_DIR / f"{case_id}.json").write_text(
+                sample.model_dump_json(indent=2, exclude_none=True)
+            )
             m = sample.metadata
             index.append(
                 {
