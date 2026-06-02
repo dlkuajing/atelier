@@ -1126,6 +1126,13 @@ def match_case(
         field_penalty = max(0.0, 1.0 - c.metadata.mtf_max_field_frac)
         return max(floor_penalty, field_penalty)
 
+    if performance_like:
+        quality_weight = 0.30
+    elif cost_like:
+        quality_weight = 0.05
+    else:
+        quality_weight = 0.22 if (image_height_mm is not None and image_height_mm <= 2.5) else 0.15
+
     weights = {
         "efl": 0.32,
         "fov": 0.24,
@@ -1134,7 +1141,7 @@ def match_case(
         "nel": 0.08 if (n_elements is not None or cost_like) else 0.0,
         "ttl": 0.12 if (max_total_track_mm is not None or cost_like) else 0.0,
         "mass": 0.10 if max_weight_g is not None else 0.0,
-        "quality": 0.30 if performance_like else 0.0,
+        "quality": quality_weight,
     }
     weights = _normalized_weights(weights)
 
@@ -1267,6 +1274,7 @@ def match_case(
         rationale.append(f"design priority '{priority}' adjusted the scoring weights")
     if manufacturing_tier is not None:
         rationale.append(f"manufacturing tier '{manufacturing_tier}' adjusted the scoring weights")
+    rationale.append("MTF/RMS floor evidence participated in seed scoring")
 
     if not include_design_assessment:
         return best.model_copy(update={"design_assessment": None}, deep=True)

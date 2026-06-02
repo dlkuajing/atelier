@@ -149,24 +149,22 @@ def test_acceptance_export_executes_case_verification_probe():
     assert case["acceptance_improvement_tasks"][0]["stage"] == "seed_ingestion"
 
 
-def test_acceptance_export_scopes_image_quality_probe_to_single_case():
+def test_acceptance_export_scopes_balanced_followups_to_single_case():
     report = build_report(case_names={"balanced_main_default"})
 
     task = next(
         item
         for item in report["tasks"]
-        if item["source_action_id"].startswith("image_quality_floor")
+        if item["source_action_id"].startswith("image_quality_probe")
     )
 
-    assert task["next_probe_command"] == (
-        "single-case replay: cd lumira-backend && uv run python "
+    assert task["next_probe_command"] is None
+    assert task["command_mode"] == "manual"
+    assert task["evidence_probe"] is None
+    assert task["case_verification_command"] == (
+        "cd lumira-backend && uv run python "
         "scripts/evaluate_design_agent.py "
         "--case balanced_main_default --json --fail-on-regression"
-    )
-    assert task["command_mode"] == "manual"
-    assert task["evidence_probe"]["next_probe_command"] == (
-        "cd lumira-backend && uv run python "
-        "scripts/evaluate_design_agent.py --fail-on-regression --json"
     )
 
 
