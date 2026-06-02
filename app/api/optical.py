@@ -4,10 +4,11 @@ Phase 2 wave 1: parameter validation + /suggest endpoint live.
 Wave 2 (post-Optiland install): /raytrace, /aberration, /layout-svg implemented.
 """
 
+import os
 import re
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
@@ -43,6 +44,7 @@ _CANDIDATE_NAME_RE = re.compile(
     r"EFL(?P<efl>\d+(?:\.\d+)?)_IMH(?P<imh>\d+(?:\.\d+)?)_TTL(?P<ttl>\d+(?:\.\d+)?)",
     re.IGNORECASE,
 )
+_SEED_ONLY_MODES = {"seed_only", "launch_seed_only", "fast_seed"}
 
 
 # ---------------------------------------------------------------------------
@@ -65,6 +67,7 @@ class OpticalSpecRequest(BaseModel):
     max_weight_g: float | None = Field(None, gt=0)
     manufacturing_tier: str | None = None
     priority: str | None = None
+    analysis_depth: Literal["full", "seed_only"] | None = None
 
 
 class SuggestResponse(BaseModel):
@@ -504,6 +507,14 @@ async def seed_intake_preflight(
 # ---------------------------------------------------------------------------
 
 
+def _include_design_assessment(req: OpticalSpecRequest) -> bool:
+    if req.analysis_depth == "full":
+        return True
+    if req.analysis_depth == "seed_only":
+        return False
+    return os.getenv("LUMIRA_MATCH_MODE", "").strip().lower() not in _SEED_ONLY_MODES
+
+
 @router.post(
     "/match",
     response_model=OpticalSampleData,
@@ -534,6 +545,7 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
         max_weight_g=req.max_weight_g,
         manufacturing_tier=req.manufacturing_tier,
         priority=req.priority,
+        include_design_assessment=_include_design_assessment(req),
     )
     if case is None:
         raise HTTPException(

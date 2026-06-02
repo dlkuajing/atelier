@@ -32,6 +32,10 @@ primary_region = "sin"
 [env]
   ENV = "production"
   LOG_LEVEL = "INFO"
+  # Launch mode: return the selected real seed payload quickly on production.
+  # Full design-assessment / optimizer evidence remains available by explicitly
+  # posting `analysis_depth="full"` and stays the default in CI/local.
+  LUMIRA_MATCH_MODE = "seed_only"
   # Frontend lives on lumirahq.com (Cloudflare Worker). Add prod domains
   # here so the FastAPI CORSMiddleware accepts the browser's Origin header.
   CORS_ALLOWED_ORIGINS = "https://lumirahq.com,https://www.lumirahq.com,https://agent.lumirahq.com"

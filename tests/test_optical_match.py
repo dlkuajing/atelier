@@ -33,6 +33,22 @@ def test_match_case_nearest_wide():
     assert abs(c.metadata.computed_efl_mm - 2.8) < 0.3
 
 
+def test_match_case_seed_only_skips_heavy_design_assessment():
+    c = match_case(
+        Scenario.SMARTPHONE_WIDE,
+        2.8,
+        2.4,
+        78.0,
+        image_height_mm=2.3,
+        include_design_assessment=False,
+    )
+    assert c is not None
+    assert c.metadata is not None
+    assert c.metadata.scenario == Scenario.SMARTPHONE_WIDE
+    assert c.design_assessment is None
+    assert c.mtf.freq_lp_per_mm
+
+
 def test_match_case_high_fov_wide_can_cross_select_ultrawide_seed():
     """Phone short-focus matching can use the 89.5° real seed for high-FOV main requests."""
     c = match_case(
@@ -2896,6 +2912,26 @@ def test_match_endpoint_returns_real_case():
             assert task_runs[2]["task_id"] in task_runs[1]["unlocked_tasks"]
     # real surfaces carry finite radii (sentinel 1e9 for planes, never inf/null)
     assert all(isinstance(s["radius_mm"], int | float) for s in d["surfaces"])
+
+
+def test_match_endpoint_seed_only_mode_returns_real_case_without_assessment(monkeypatch):
+    monkeypatch.setenv("LUMIRA_MATCH_MODE", "seed_only")
+    r = client.post(
+        "/api/optical/match",
+        json={
+            "scenario": "smartphone-wide",
+            "focal_length_mm": 2.8,
+            "f_number": 2.4,
+            "field_of_view_deg": 78.0,
+            "image_height_mm": 2.3,
+        },
+    )
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["metadata"]["source_zmx"].lower().endswith(".zmx")
+    assert d["metadata"]["scenario"] == "smartphone-wide"
+    assert d["design_assessment"] is None
+    assert d["mtf"]["freq_lp_per_mm"]
 
 
 def test_match_endpoint_accepts_90deg_wide_family_bound():

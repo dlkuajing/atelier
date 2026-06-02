@@ -1051,14 +1051,17 @@ def match_case(
     max_weight_g: float | None = None,
     manufacturing_tier: str | None = None,
     priority: str | None = None,
+    include_design_assessment: bool = True,
 ) -> OpticalSampleData | None:
     """Return the real case nearest to the user's full design intent.
 
     v2-03 only ranked (EFL / FOV / F#) inside one scenario bucket. v2-05 keeps
     the real-case seed strategy, but scores phone short-focus cases as one
     family and includes image height, element count, TTL, and coarse design
-    stance. The returned sample carries a `design_assessment` explaining the
-    match and its tradeoffs.
+    stance. By default the returned sample carries a `design_assessment`
+    explaining the match and its tradeoffs. Launch smoke paths can set
+    `include_design_assessment=False` to return only the selected real seed
+    payload without running the heavier optimizer/review evidence chain.
     """
     allowed = _candidate_scenarios(scenario)
     cases = [
@@ -1264,6 +1267,9 @@ def match_case(
         rationale.append(f"design priority '{priority}' adjusted the scoring weights")
     if manufacturing_tier is not None:
         rationale.append(f"manufacturing tier '{manufacturing_tier}' adjusted the scoring weights")
+
+    if not include_design_assessment:
+        return best.model_copy(update={"design_assessment": None}, deep=True)
 
     delta_efl = best.metadata.computed_efl_mm - efl_mm
     delta_fnum = best.paraxial.f_number - fnum
