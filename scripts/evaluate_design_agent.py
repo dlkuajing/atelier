@@ -356,6 +356,45 @@ def _full_field_recovery_replay_passes() -> Check:
     return check
 
 
+def _performance_tradeoff_policy_present() -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        assessment = sample.design_assessment
+        if assessment is None or assessment.draft_acceptance_gate is None:
+            return False, "performance tradeoff policy missing assessment"
+        policy = assessment.branch_selection_policy
+        coverage = {item.requirement_id: item for item in assessment.requirement_coverage}
+        f_number = coverage.get("f_number")
+        readiness = assessment.designer_readiness_rubric
+        gate = assessment.draft_acceptance_gate
+        ok = (
+            policy is not None
+            and policy.status == "strategy_resolution_required"
+            and policy.primary_candidate_id == "full-field-floor-clean-recovery-candidate"
+            and gate.status == "conditional"
+            and gate.required_next_actions
+            and "F-number / element-count waiver" in gate.required_next_actions[0]
+            and any("claiming F/1.80 compliance" in item for item in gate.forbidden_claims)
+            and f_number is not None
+            and f_number.status == "tradeoff"
+            and any(
+                "rejected exact-aperture seed=5P_F1.8_FOV74.1" in item
+                for item in f_number.evidence
+            )
+            and readiness is not None
+            and readiness.status == "conditional"
+            and not readiness.blockers
+        )
+        return (
+            ok,
+            (
+                "performance tradeoff policy "
+                f"{policy.status if policy else 'missing'}; gate={gate.status}"
+            ),
+        )
+
+    return check
+
+
 def _has_designer_readiness_rubric() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
@@ -4029,14 +4068,15 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _next_step_mentions("Benchmark"),
             _floor_aware_performance_seed_selected(),
             _full_field_recovery_replay_passes(),
+            _performance_tradeoff_policy_present(),
             _manufacturing_tier_is_scored(),
             _draft_quality_target(
-                level="blocked",
-                min_score=0.60,
-                acceptance_status="blocked",
-                closeout_fragment="aperture tradeoff",
+                level="conditional",
+                min_score=0.76,
+                acceptance_status="conditional",
+                closeout_fragment="F-number / element-count waiver",
             ),
-            _designer_readiness_target("blocked", 0.40),
+            _designer_readiness_target("conditional", 0.62),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),

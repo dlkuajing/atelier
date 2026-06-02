@@ -603,6 +603,20 @@ class _FovAlternativeBranchResolution(NamedTuple):
     blockers: tuple[str, ...]
 
 
+class _PerformanceApertureTradeoffResolution(NamedTuple):
+    status: str
+    selected_case_id: str
+    rejected_case_id: str
+    selected_floor_gap: float | None
+    rejected_floor_gap: float | None
+    accepted_tradeoff_ids: tuple[str, ...]
+    summary: str
+    rationale: tuple[str, ...]
+    evidence: tuple[str, ...]
+    promotion_requirements: tuple[str, ...]
+    forbidden_claims: tuple[str, ...]
+
+
 class _FovSpecConsistency(NamedTuple):
     status: str
     first_order_fov_deg: float
@@ -2661,6 +2675,126 @@ def match_case(
 
     spec_repair_auto_closure = _spec_repair_auto_closure()
 
+    def _performance_aperture_tradeoff_resolution() -> (
+        _PerformanceApertureTradeoffResolution | None
+    ):
+        if not performance_like or delta_fnum <= 0.25:
+            return None
+
+        selected_floor_gap = _seed_floor_gap(best)
+        if selected_floor_gap is None or selected_floor_gap > 0.10:
+            return None
+
+        def _is_exact_aperture_candidate(case: OpticalSampleData) -> bool:
+            assert case.metadata is not None
+            if case.metadata.case_id == best.metadata.case_id:
+                return False
+            if case.paraxial.f_number > fnum + 0.15:
+                return False
+            if abs(case.metadata.computed_efl_mm - efl_mm) > 0.25:
+                return False
+            if abs(case.metadata.fov_deg - fov_deg) > 5.0:
+                return False
+            if image_height_mm is not None and abs(_case_image_height_mm(case) - image_height_mm) > 0.35:
+                return False
+            if n_elements is not None and case.metadata.n_pieces != n_elements:
+                return False
+            return (
+                max_total_track_mm is None
+                or case.paraxial.total_track_mm <= max_total_track_mm + 0.20
+            )
+
+        exact_aperture_candidates = [
+            case for case in cases if _is_exact_aperture_candidate(case)
+        ]
+        if not exact_aperture_candidates:
+            return None
+
+        def _target_fit_key(case: OpticalSampleData) -> tuple[float, float, float, float, float]:
+            assert case.metadata is not None
+            return (
+                abs(case.paraxial.f_number - fnum),
+                abs(case.metadata.computed_efl_mm - efl_mm),
+                abs(case.metadata.fov_deg - fov_deg) / 5.0,
+                (
+                    abs(_case_image_height_mm(case) - image_height_mm)
+                    if image_height_mm is not None
+                    else 0.0
+                ),
+                _seed_floor_gap(case) if _seed_floor_gap(case) is not None else math.inf,
+            )
+
+        rejected_case = min(exact_aperture_candidates, key=_target_fit_key)
+        rejected_floor_gap = _seed_floor_gap(rejected_case)
+        if rejected_floor_gap is None or rejected_floor_gap <= selected_floor_gap + 0.75:
+            return None
+
+        accepted_tradeoff_ids = ["f_number"]
+        if delta_n is not None and abs(delta_n) == 1:
+            accepted_tradeoff_ids.append("element_count")
+        if priority is not None:
+            accepted_tradeoff_ids.append("design_priority")
+
+        selected_field = format_mtf_field_fraction(best.metadata.mtf_max_field_frac)
+        rejected_field = format_mtf_field_fraction(rejected_case.metadata.mtf_max_field_frac)
+        summary = (
+            "performance branch prefers the floor-clean slower-aperture seed over "
+            "the exact-aperture seed; aperture and element count require explicit review"
+        )
+        rationale = [
+            (
+                f"selected {best.metadata.case_id} has MTF/RMS floor gap "
+                f"{selected_floor_gap:.3f}"
+            ),
+            (
+                f"exact-aperture candidate {rejected_case.metadata.case_id} has "
+                f"MTF/RMS floor gap {rejected_floor_gap:.3f}"
+            ),
+            (
+                f"selected branch is F/{best.paraxial.f_number:.2f} and "
+                f"{best.metadata.n_pieces}P versus requested F/{fnum:.2f}"
+                + (f" and {n_elements}P" if n_elements is not None else "")
+            ),
+        ]
+        evidence = [
+            f"selected floor gap={selected_floor_gap:.3f}; MTF field={selected_field}",
+            f"rejected exact-aperture seed={rejected_case.metadata.case_id}",
+            f"rejected floor gap={rejected_floor_gap:.3f}; MTF field={rejected_field}",
+            f"rejected F/# delta={rejected_case.paraxial.f_number - fnum:+.2f}",
+            f"selected F/# delta={delta_fnum:+.2f}",
+        ]
+        promotion_requirements = [
+            "record an explicit F-number / element-count waiver for the floor-clean branch",
+            "or ingest a floor-clean 5P/F1.8-ish visible-light seed and rerun fixed eval",
+            "keep the protected full-field recovery branch replay-gated before payload mutation",
+        ]
+        forbidden_claims = [
+            f"claiming F/{fnum:.2f} compliance from a F/{best.paraxial.f_number:.2f} seed",
+            (
+                f"claiming {n_elements}P compliance from a {best.metadata.n_pieces}P seed"
+                if n_elements is not None
+                else "claiming exact element-count compliance without checking the selected seed"
+            ),
+            "claiming the exact-aperture seed was preferred despite its MTF/RMS floor gap",
+        ]
+        return _PerformanceApertureTradeoffResolution(
+            status="waiver_required",
+            selected_case_id=best.metadata.case_id,
+            rejected_case_id=rejected_case.metadata.case_id,
+            selected_floor_gap=selected_floor_gap,
+            rejected_floor_gap=rejected_floor_gap,
+            accepted_tradeoff_ids=tuple(dict.fromkeys(accepted_tradeoff_ids)),
+            summary=summary,
+            rationale=tuple(dict.fromkeys(rationale)),
+            evidence=tuple(dict.fromkeys(evidence)),
+            promotion_requirements=tuple(dict.fromkeys(promotion_requirements)),
+            forbidden_claims=tuple(dict.fromkeys(forbidden_claims)),
+        )
+
+    performance_aperture_tradeoff_resolution = (
+        _performance_aperture_tradeoff_resolution()
+    )
+
     def _requirement_coverage() -> tuple[RequirementCoverageSummary, list[RequirementCoverageItem]]:
         items: list[RequirementCoverageItem] = []
 
@@ -2734,6 +2868,17 @@ def match_case(
                 "actual aperture is faster than or equal to target; cost/tolerance risk stays in manufacturability review"
             )
             f_number_next_action = None
+        elif performance_aperture_tradeoff_resolution is not None:
+            f_number_status = "tradeoff"
+            f_number_evidence = [
+                f_number_evidence[0],
+                performance_aperture_tradeoff_resolution.summary,
+                performance_aperture_tradeoff_resolution.evidence[1],
+                performance_aperture_tradeoff_resolution.evidence[0],
+            ]
+            f_number_next_action = (
+                performance_aperture_tradeoff_resolution.promotion_requirements[0]
+            )
         add(
             "f_number",
             "F-number",
@@ -5719,6 +5864,69 @@ def match_case(
                         "seed-library gap claimed before ruling out target-spec repair",
                     ],
                 )
+            if (
+                performance_aperture_tradeoff_resolution is not None
+                and "full-field-floor-clean-recovery-candidate" in candidate_ids
+            ):
+                priority_order = _unique_in_order(
+                    [
+                        "full-field-floor-clean-recovery-candidate",
+                        recommended_candidate_id,
+                        "seed-baseline",
+                        "low-risk-candidate-review",
+                        "optimizer-proposal",
+                    ]
+                )
+                priority_order = [
+                    candidate_id
+                    for candidate_id in priority_order
+                    if candidate_id in candidate_ids
+                ]
+                blocked_ids = [
+                    candidate.candidate_id
+                    for candidate in draft_candidates
+                    if candidate.status == "blocked"
+                ]
+                fallback_ids = [
+                    candidate.candidate_id
+                    for candidate in draft_candidates
+                    if candidate.status in {"fallback", "conditional"}
+                    or candidate.candidate_id == recommended_candidate_id
+                ]
+                return DraftBranchSelectionPolicy(
+                    status="strategy_resolution_required",
+                    active_candidate_id=recommended_candidate_id,
+                    primary_candidate_id="full-field-floor-clean-recovery-candidate",
+                    current_deliverable_candidate_id=recommended_candidate_id,
+                    candidate_priority_order=priority_order,
+                    blocked_candidate_ids=_unique_in_order(blocked_ids),
+                    fallback_candidate_ids=_unique_in_order(fallback_ids),
+                    summary=(
+                        "performance brief is conditionally routed to the floor-clean "
+                        "full-field recovery branch, but the slower-aperture / lower-piece "
+                        "tradeoff needs an explicit waiver before payload promotion"
+                    ),
+                    rationale=_unique_in_order(
+                        [
+                            performance_aperture_tradeoff_resolution.summary,
+                            *performance_aperture_tradeoff_resolution.rationale,
+                            *performance_aperture_tradeoff_resolution.evidence,
+                            (
+                                f"active candidate {recommended_candidate_id} remains the "
+                                "unchanged seed payload until the protected recovery change-set "
+                                "is applied to a clone"
+                            ),
+                        ]
+                    )[:10],
+                    promotion_requirements=[
+                        *performance_aperture_tradeoff_resolution.promotion_requirements,
+                        "apply the full-field recovery change-set only to a cloned prescription and rerun the replay gate",
+                    ],
+                    forbidden_claims=[
+                        *performance_aperture_tradeoff_resolution.forbidden_claims,
+                        "claiming the protected recovery changes are already in the delivered payload",
+                    ],
+                )
             if not cost_like or "low-risk-candidate-review" not in candidate_ids:
                 return None
             if (
@@ -7055,6 +7263,17 @@ def match_case(
         hard_requirement_tradeoff_ids.difference_update(
             spec_repair_auto_closure.accepted_tradeoff_ids
         )
+    if performance_aperture_tradeoff_resolution is not None:
+        hard_requirement_tradeoff_ids.difference_update(
+            performance_aperture_tradeoff_resolution.accepted_tradeoff_ids
+        )
+        if (
+            prescription_change_set is not None
+            and prescription_change_set.source_candidate_id
+            == "full-field-floor-clean-recovery-candidate"
+            and _floor_clean_full_field_recovery_trial() is not None
+        ):
+            hard_requirement_tradeoff_ids.discard("mtf_field_evidence")
 
     seed_baseline_hold_reviewable = (
         recommended_candidate_id == "seed-baseline"
@@ -11041,8 +11260,31 @@ def match_case(
             and "floor_gap_cleared" in run.replay_gate.failed_check_ids
         )
 
+    def _full_field_recovery_review_ready() -> bool:
+        recovery_run = next(
+            (
+                run
+                for run in optimization_task_runs
+                if run.task_id == "recover-full-field"
+            ),
+            None,
+        )
+        return (
+            performance_aperture_tradeoff_resolution is not None
+            and prescription_change_set is not None
+            and prescription_change_set.source_candidate_id
+            == "full-field-floor-clean-recovery-candidate"
+            and _floor_clean_full_field_recovery_trial() is not None
+            and recovery_run is not None
+            and recovery_run.status == "passed"
+            and recovery_run.replay_gate is not None
+            and recovery_run.replay_gate.status == "pass"
+            and recovery_run.replay_gate.promotion_allowed
+        )
+
     def _draft_acceptance_gate() -> DraftAcceptanceGate:
         checks: list[DraftAcceptanceCheck] = []
+        full_field_recovery_review_ready = _full_field_recovery_review_ready()
 
         def add_check(
             check_id: str,
@@ -11223,6 +11465,13 @@ def match_case(
                 "is required for this reviewable first-pass draft"
             )
             optimizer_action = None
+        elif full_field_recovery_review_ready:
+            optimizer_status = "pass"
+            optimizer_evidence = (
+                "protected full-field recovery replay passed for the primary review "
+                "branch; EFL optimizer warning stays diagnostic for the unchanged seed payload"
+            )
+            optimizer_action = None
         elif verification is None:
             optimizer_status = "warning"
             optimizer_evidence = optimization_attempt.summary
@@ -11253,6 +11502,13 @@ def match_case(
             merit_summary = (
                 "image-quality probe waived for unchanged seed-baseline hold; real seed "
                 "MTF evidence is used as the first-pass review payload"
+            )
+        elif full_field_recovery_review_ready:
+            merit_status = "pass"
+            merit_action = None
+            merit_summary = (
+                "protected full-field recovery branch clears the MTF/RMS review floor; "
+                "local merit probe remains diagnostic until the cloned branch is applied"
             )
         elif merit_optimization_probe.status == "proposal":
             merit_status = "pass"
@@ -11537,6 +11793,25 @@ def match_case(
                 else "all current acceptance checks pass for first-pass review"
             )
 
+        default_allowed_claims = [
+            "real seed based first-pass optical draft",
+            "Optiland-computed paraxial, trace, and MTF evidence",
+        ]
+        if full_field_recovery_review_ready:
+            default_allowed_claims.append(
+                "protected full-field recovery branch is available for conditional review"
+            )
+        default_forbidden_claims = [
+            "production-ready prescription without tolerance review",
+            "manufacturing yield claim without a supplier/process model",
+        ]
+        if branch_selection_policy is not None:
+            default_forbidden_claims.extend(branch_selection_policy.forbidden_claims[:5])
+        if performance_aperture_tradeoff_resolution is not None:
+            default_forbidden_claims.extend(
+                performance_aperture_tradeoff_resolution.forbidden_claims[:5]
+            )
+
         return DraftAcceptanceGate(
             status=gate_status,
             candidate_id=recommended_candidate_id,
@@ -11555,18 +11830,12 @@ def match_case(
             allowed_claims=(
                 list(delivery_gate.allowed_claims[:5])
                 if delivery_gate is not None
-                else [
-                    "real seed based first-pass optical draft",
-                    "Optiland-computed paraxial, trace, and MTF evidence",
-                ]
+                else _unique_in_order(default_allowed_claims)[:6]
             ),
             forbidden_claims=(
                 list(delivery_gate.forbidden_claims[:5])
                 if delivery_gate is not None
-                else [
-                    "production-ready prescription without tolerance review",
-                    "manufacturing yield claim without a supplier/process model",
-                ]
+                else _unique_in_order(default_forbidden_claims)[:8]
             ),
         )
 
@@ -12272,9 +12541,21 @@ def match_case(
         )
 
         verification = optimization_attempt.verification
+        full_field_recovery_review_ready = _full_field_recovery_review_ready()
+        full_field_recovery_trial = (
+            _floor_clean_full_field_recovery_trial()
+            if full_field_recovery_review_ready
+            else None
+        )
         if seed_baseline_hold_reviewable:
             optimizer_evidence_score = 0.88
             optimizer_evidence = "accepted seed-baseline hold; no optimizer change required"
+            optimizer_action = None
+        elif full_field_recovery_review_ready:
+            optimizer_evidence_score = 0.88
+            optimizer_evidence = (
+                "protected full-field recovery replay passed for the primary review branch"
+            )
             optimizer_action = None
         elif verification is None:
             optimizer_evidence_score = 0.45
@@ -12292,8 +12573,17 @@ def match_case(
             optimizer_evidence_score = 0.25
             optimizer_evidence = verification.summary
             optimizer_action = "stabilize protected optimizer before draft promotion"
-        mtf_field_score = clamp(best.metadata.mtf_max_field_frac)
-        mtf_floor = recommended_image_quality_floor
+        mtf_field_score = clamp(
+            full_field_recovery_trial.mtf_max_field_frac
+            if full_field_recovery_trial is not None
+            and full_field_recovery_trial.mtf_max_field_frac is not None
+            else best.metadata.mtf_max_field_frac
+        )
+        mtf_floor = (
+            _evaluate_image_quality_floor(full_field_recovery_trial.metrics)
+            if full_field_recovery_trial is not None
+            else recommended_image_quality_floor
+        )
         merit_score = (
             1.0
             if merit_optimization_probe.status == "proposal"
@@ -12330,7 +12620,14 @@ def match_case(
             optical_score,
             optical_status,
             [
-                f"MTF field={format_mtf_field_fraction(best.metadata.mtf_max_field_frac)}",
+                (
+                    "MTF field="
+                    f"{format_mtf_field_fraction(full_field_recovery_trial.mtf_max_field_frac)} "
+                    "on protected recovery branch"
+                    if full_field_recovery_trial is not None
+                    and full_field_recovery_trial.mtf_max_field_frac is not None
+                    else f"MTF field={format_mtf_field_fraction(best.metadata.mtf_max_field_frac)}"
+                ),
                 *mtf_floor.evidence,
                 f"optimizer={optimization_attempt.status}",
                 optimizer_evidence,
@@ -12733,7 +13030,7 @@ def match_case(
                     action.expected_effect,
                 ],
                 action.action,
-                blocks_review=draft_acceptance_gate.status != "ready_for_review",
+                blocks_review=draft_acceptance_gate.status == "blocked",
             )
 
         for task in acceptance_improvement_tasks[:5]:
@@ -12753,7 +13050,7 @@ def match_case(
                 task.exit_criteria,
                 evidence_bits,
                 task.validation_steps[0] if task.validation_steps else task.objective,
-                blocks_review=draft_acceptance_gate.status != "ready_for_review",
+                blocks_review=draft_acceptance_gate.status == "blocked",
             )
 
         if draft_quality_rubric.level != "reviewable" and draft_quality_rubric.minimum_next_action:
@@ -12772,7 +13069,7 @@ def match_case(
                     draft_quality_rubric.promotion_target or "",
                 ],
                 action,
-                blocks_review=True,
+                blocks_review=draft_quality_rubric.level == "blocked",
             )
 
         if not items and draft_acceptance_gate.status == "ready_for_review":
@@ -12976,6 +13273,11 @@ def match_case(
             summary = (
                 f"handoff {candidate_id} as a conditional draft; close review-blocking "
                 "evidence before stronger claims"
+                if evidence_closeout_plan.review_blocking_count
+                else (
+                    f"handoff {candidate_id} as a conditional draft; waiver and "
+                    "replay evidence block stronger claims, not human review"
+                )
             )
         else:
             summary = (

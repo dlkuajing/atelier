@@ -2475,10 +2475,36 @@ def test_performance_priority_routes_away_from_low_mtf_exact_seed():
     assert "5P_F1.8_FOV74.1" not in c.metadata.case_id
     assert assessment.recommended_candidate_id == "seed-baseline"
     assert assessment.draft_acceptance_gate is not None
-    assert assessment.draft_acceptance_gate.status == "blocked"
+    assert assessment.draft_acceptance_gate.status == "conditional"
+    assert assessment.draft_acceptance_gate.required_next_actions == [
+        "record an explicit F-number / element-count waiver for the floor-clean branch"
+    ]
+    assert any(
+        "claiming F/1.80 compliance" in claim
+        for claim in assessment.draft_acceptance_gate.forbidden_claims
+    )
+    branch_policy = assessment.branch_selection_policy
+    assert branch_policy is not None
+    assert branch_policy.status == "strategy_resolution_required"
+    assert branch_policy.primary_candidate_id == "full-field-floor-clean-recovery-candidate"
+    assert any(
+        "exact-aperture candidate 5P_F1.8_FOV74.1" in item
+        for item in branch_policy.rationale
+    )
+    assert any(
+        "floor-clean 5P/F1.8-ish" in item
+        for item in branch_policy.promotion_requirements
+    )
     assert any("F/# differs" in warning for warning in assessment.warnings)
     assert any("element count differs" in warning for warning in assessment.warnings)
     assert any("0.9 field" in warning for warning in assessment.warnings)
+
+    coverage = {item.requirement_id: item for item in assessment.requirement_coverage}
+    assert coverage["f_number"].status == "tradeoff"
+    assert any(
+        "rejected exact-aperture seed=5P_F1.8_FOV74.1" in item
+        for item in coverage["f_number"].evidence
+    )
 
     scorecard = assessment.seed_selection_scorecard
     assert scorecard is not None
@@ -2490,9 +2516,10 @@ def test_performance_priority_routes_away_from_low_mtf_exact_seed():
     assert "floor gap 0.000" in metrics["quality"].actual
     assert "0.9 field" in metrics["quality"].actual
     assert metrics["quality"].status == "aligned"
+    assert any("F-number: 2.19 vs 1.80" in item for item in scorecard.accepted_tradeoffs)
     assert any("Element count: 4P vs 5P" in item for item in scorecard.accepted_tradeoffs)
     assert any("MTF field evidence: 0.9 field" in item for item in scorecard.accepted_tradeoffs)
-    assert "aperture tradeoff" in scorecard.next_action
+    assert "F-number / element-count waiver" in scorecard.next_action
 
     roles = {item.role: item for item in assessment.candidate_comparison}
     assert roles["best_match"].case_id == c.metadata.case_id
@@ -2595,6 +2622,11 @@ def test_performance_priority_routes_away_from_low_mtf_exact_seed():
         and metric.after == pytest.approx(0.0)
         for metric in recover_run.metric_updates
     )
+    assert assessment.draft_quality_rubric is not None
+    assert assessment.draft_quality_rubric.level == "conditional"
+    assert assessment.designer_readiness_rubric is not None
+    assert assessment.designer_readiness_rubric.status == "conditional"
+    assert not assessment.designer_readiness_rubric.blockers
 
 
 def test_match_case_none_for_telephoto():
