@@ -356,6 +356,79 @@ def _full_field_recovery_replay_passes() -> Check:
     return check
 
 
+def _performance_recovery_branch_policy_present() -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        assessment = sample.design_assessment
+        if assessment is None:
+            return False, "performance recovery branch policy missing assessment"
+        policy = assessment.branch_selection_policy
+        gate = assessment.draft_acceptance_gate
+        rows_by_id = {
+            row.candidate_id: row for row in assessment.strategy_tradeoff_matrix
+        }
+        recovery_row = rows_by_id.get("full-field-floor-clean-recovery-candidate")
+        seed_row = rows_by_id.get("seed-baseline")
+        branch_check = (
+            next(
+                (
+                    check
+                    for check in gate.checks
+                    if check.check_id == "branch_selection"
+                ),
+                None,
+            )
+            if gate is not None
+            else None
+        )
+        ok = (
+            policy is not None
+            and policy.status == "strategy_resolution_required"
+            and policy.primary_candidate_id
+            == "full-field-floor-clean-recovery-candidate"
+            and policy.active_candidate_id == "seed-baseline"
+            and policy.current_deliverable_candidate_id == "seed-baseline"
+            and policy.candidate_priority_order[:2]
+            == ["full-field-floor-clean-recovery-candidate", "seed-baseline"]
+            and any(
+                "F-number / element-count waiver" in item
+                or "slower-aperture tradeoff" in item
+                for item in policy.promotion_requirements
+            )
+            and any(
+                "floor-clean 5P/F1.8-ish visible-light seed" in item
+                or "4P-vs-requested-5P" in item
+                for item in policy.promotion_requirements
+            )
+            and any(
+                "delivered payload" in item
+                for item in policy.forbidden_claims
+            )
+            and recovery_row is not None
+            and recovery_row.priority_rank == 1
+            and "primary" in recovery_row.role_tags
+            and recovery_row.claim_status == "full_field_evidence_available"
+            and seed_row is not None
+            and {"active_payload", "current_deliverable", "recommended_payload"}.issubset(
+                set(seed_row.role_tags)
+            )
+            and branch_check is not None
+            and branch_check.status == "warning"
+            and branch_check.required_action is not None
+            and (
+                "F-number / element-count waiver" in branch_check.required_action
+                or "slower-aperture tradeoff" in branch_check.required_action
+            )
+            and gate is not None
+            and gate.status == "conditional"
+            and gate.candidate_id == "seed-baseline"
+        )
+        primary = policy.primary_candidate_id if policy is not None else "missing"
+        active = policy.active_candidate_id if policy is not None else "missing"
+        return ok, f"recovery policy primary={primary}, active={active}"
+
+    return check
+
+
 def _performance_tradeoff_policy_present() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
@@ -4213,6 +4286,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _next_step_mentions("Benchmark"),
             _floor_aware_performance_seed_selected(),
             _full_field_recovery_replay_passes(),
+            _performance_recovery_branch_policy_present(),
             _performance_tradeoff_policy_present(),
             _manufacturing_tier_is_scored(),
             _draft_quality_target(

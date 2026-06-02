@@ -5934,6 +5934,96 @@ def match_case(
                     ],
                 )
             if not cost_like or "low-risk-candidate-review" not in candidate_ids:
+                floor_clean_trial = _floor_clean_full_field_recovery_trial()
+                if (
+                    performance_like
+                    and floor_clean_trial is not None
+                    and "full-field-floor-clean-recovery-candidate" in candidate_ids
+                ):
+                    priority_order = _unique_in_order(
+                        [
+                            "full-field-floor-clean-recovery-candidate",
+                            recommended_candidate_id,
+                            "optimizer-proposal",
+                            "seed-baseline",
+                            "low-risk-candidate-review",
+                        ]
+                    )
+                    priority_order = [
+                        candidate_id
+                        for candidate_id in priority_order
+                        if candidate_id in candidate_ids
+                    ]
+                    blocked_ids = [
+                        candidate.candidate_id
+                        for candidate in draft_candidates
+                        if candidate.status == "blocked"
+                    ]
+                    fallback_ids = [
+                        candidate.candidate_id
+                        for candidate in draft_candidates
+                        if candidate.status in {"fallback", "conditional", "baseline"}
+                        and candidate.candidate_id
+                        != "full-field-floor-clean-recovery-candidate"
+                    ]
+                    metrics = floor_clean_trial.metrics
+                    recovery_quality = (
+                        f"MTF/RMS floor min={metrics.mtf_multiband_min_score:.3f}, "
+                        f"weighted={metrics.mtf_field_weighted_score:.3f}, "
+                        f"RMS={metrics.max_rms_spot_radius_um:.2f}um"
+                        if metrics is not None
+                        and metrics.mtf_multiband_min_score is not None
+                        and metrics.mtf_field_weighted_score is not None
+                        and metrics.max_rms_spot_radius_um is not None
+                        else "MTF/RMS floor clears on the recovery branch"
+                    )
+                    return DraftBranchSelectionPolicy(
+                        status="strategy_resolution_required",
+                        active_candidate_id=recommended_candidate_id,
+                        primary_candidate_id="full-field-floor-clean-recovery-candidate",
+                        current_deliverable_candidate_id=recommended_candidate_id,
+                        candidate_priority_order=priority_order,
+                        blocked_candidate_ids=_unique_in_order(blocked_ids),
+                        fallback_candidate_ids=_unique_in_order(fallback_ids),
+                        summary=(
+                            "performance intent should continue on the floor-clean "
+                            "full-field recovery branch, while the delivered seed "
+                            "payload stays frozen until aperture and element-count "
+                            "tradeoffs are signed"
+                        ),
+                        rationale=_unique_in_order(
+                            [
+                                "priority/manufacturing tier is performance-like",
+                                (
+                                    "full-field recovery candidate reaches "
+                                    f"{format_mtf_field_fraction(floor_clean_trial.mtf_max_field_frac or 0.0)} field"
+                                ),
+                                "full-field recovery floor gap=0.000",
+                                recovery_quality,
+                                (
+                                    "protected changes="
+                                    f"{_changes_label(floor_clean_trial.variable_changes)}"
+                                ),
+                                (
+                                    f"active candidate {recommended_candidate_id} remains "
+                                    "the current payload because the protected branch has "
+                                    "not been signed as the delivered prescription"
+                                ),
+                            ]
+                        )[:10],
+                        promotion_requirements=[
+                            "sign the slower-aperture tradeoff before replacing the seed payload",
+                            "sign the 4P-vs-requested-5P element-count tradeoff before replacing the seed payload",
+                            "apply the protected recovery change-set only to a cloned prescription",
+                            "rerun paraxial, 1.0-field MTF/RMS, manufacturability, and tolerance checks before promotion",
+                        ],
+                        forbidden_claims=[
+                            "delivered payload already contains the protected recovery changes",
+                            "original F/1.8 aperture is satisfied by the recovery branch",
+                            "requested 5P element count is satisfied by the 4P recovery branch",
+                            "production-ready performance claim before tolerance review",
+                        ],
+                    )
                 return None
             if (
                 candidate_proxy_branch_resolution is not None
