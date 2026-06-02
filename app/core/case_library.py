@@ -12509,11 +12509,68 @@ def match_case(
             if action.source_check_id == "optimizer_verification":
                 validation_steps.append("confirm protected optimizer verification status is passed")
             if action.source_check_id == "image_quality_floor":
+                floor_metrics = _recommended_candidate_metrics()
+                floor_gap = _image_quality_floor_gap_score(floor_metrics)
+                latest_quality_run = optimization_task_runs[-1] if optimization_task_runs else None
                 validation_steps.extend(
                     [
                         "rerun the image-quality recovery task and inspect MTF/RMS floor metrics",
                         "confirm draft_quality_rubric.optical_evidence is pass or has a signed waiver",
                     ]
+                )
+                task_evidence_probe = AcceptanceEvidenceProbe(
+                    probe_id="image-quality-floor-gap",
+                    status=(
+                        "satisfied"
+                        if recommended_image_quality_floor.status == "pass"
+                        else "gap"
+                    ),
+                    summary=(
+                        "recommended branch still has a first-pass MTF/RMS floor gap"
+                        if recommended_image_quality_floor.status != "pass"
+                        else "recommended branch clears the first-pass MTF/RMS floor"
+                    ),
+                    known_evidence=_unique_in_order(
+                        [
+                            f"candidate={draft_acceptance_gate.candidate_id or recommended_candidate_id}",
+                            f"normalized floor gap={floor_gap:.3f}"
+                            if floor_gap is not None
+                            else "normalized floor gap=missing",
+                            *recommended_image_quality_floor.evidence[:5],
+                            *recommended_image_quality_recovery_objective.evidence,
+                            *(
+                                [
+                                    f"latest task run={latest_quality_run.task_id}/{latest_quality_run.status}",
+                                    latest_quality_run.summary,
+                                ]
+                                if latest_quality_run is not None
+                                else []
+                            ),
+                        ]
+                    )[:10],
+                    missing_evidence=_unique_in_order(
+                        [
+                            *recommended_image_quality_floor.blockers,
+                            (
+                                "multiband min MTF >= "
+                                f"{_IMAGE_QUALITY_FLOOR_MIN_MTF:.2f}"
+                            ),
+                            (
+                                "field-weighted MTF >= "
+                                f"{_IMAGE_QUALITY_FLOOR_WEIGHTED_MTF:.2f}"
+                            ),
+                            (
+                                "max RMS spot radius <= "
+                                f"{_IMAGE_QUALITY_FLOOR_MAX_RMS_UM:.0f} um"
+                            ),
+                            "normalized MTF/RMS floor gap reaches 0.0",
+                            "draft_quality_rubric.optical_evidence is no longer blocker",
+                        ]
+                    )[:8],
+                    next_probe_command=(
+                        "cd lumira-backend && uv run python "
+                        "scripts/evaluate_design_agent.py --fail-on-regression --json"
+                    ),
                 )
             add_task(
                 task_id=f"resolve-{action.action_id}",

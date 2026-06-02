@@ -58,6 +58,24 @@ def _case_verification_command(case: EvalCase) -> str:
     )
 
 
+def _next_probe_command(
+    case: EvalCase,
+    probe: Any,
+    verification_command: str,
+) -> str | None:
+    if probe is None:
+        return None
+    command = probe.next_probe_command
+    if (
+        probe.probe_id == "image-quality-floor-gap"
+        and command
+        == "cd lumira-backend && uv run python "
+        "scripts/evaluate_design_agent.py --fail-on-regression --json"
+    ):
+        return f"single-case replay: {verification_command}"
+    return command
+
+
 def _task_packet(
     case: EvalCase,
     sample: OpticalSampleData,
@@ -65,8 +83,8 @@ def _task_packet(
 ) -> dict[str, Any]:
     assessment = sample.design_assessment
     probe = task.evidence_probe
-    next_command = probe.next_probe_command if probe is not None else None
     verification_command = _case_verification_command(case)
+    next_command = _next_probe_command(case, probe, verification_command)
     return {
         "eval_case": case.name,
         "matched_case_id": sample.metadata.case_id,

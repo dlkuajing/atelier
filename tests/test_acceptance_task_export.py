@@ -149,6 +149,27 @@ def test_acceptance_export_executes_case_verification_probe():
     assert case["acceptance_improvement_tasks"][0]["stage"] == "seed_ingestion"
 
 
+def test_acceptance_export_scopes_image_quality_probe_to_single_case():
+    report = build_report(case_names={"balanced_main_default"})
+
+    task = next(
+        item
+        for item in report["tasks"]
+        if item["source_action_id"].startswith("image_quality_floor")
+    )
+
+    assert task["next_probe_command"] == (
+        "single-case replay: cd lumira-backend && uv run python "
+        "scripts/evaluate_design_agent.py "
+        "--case balanced_main_default --json --fail-on-regression"
+    )
+    assert task["command_mode"] == "manual"
+    assert task["evidence_probe"]["next_probe_command"] == (
+        "cd lumira-backend && uv run python "
+        "scripts/evaluate_design_agent.py --fail-on-regression --json"
+    )
+
+
 def test_acceptance_export_reuses_case_verification_per_case(monkeypatch):
     calls = []
 
@@ -398,6 +419,7 @@ def test_acceptance_runner_summary_blocks_downstream_same_case_tasks():
         + runner["summary"]["case_verification_failure_count"]
         >= 2
     )
+    assert runner["summary"]["action_kinds"].get("local_probe_gap", 0) == 0
     assert runner["summary"]["upstream_blocked_count"] == 8
     assert (
         runner["summary"]["external_blocker_count"]

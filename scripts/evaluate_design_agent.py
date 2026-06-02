@@ -3797,6 +3797,40 @@ def _has_acceptance_improvement_tasks() -> Check:
     return check
 
 
+def _image_quality_floor_task_has_evidence_probe() -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        assessment = sample.design_assessment
+        if assessment is None:
+            return False, "image-quality floor task probe missing assessment"
+        tasks = [
+            task
+            for task in assessment.acceptance_improvement_tasks
+            if task.source_action_id.startswith("image_quality_floor")
+        ]
+        if not tasks:
+            return True, "no image-quality floor acceptance task required"
+        probes = [task.evidence_probe for task in tasks]
+        ok = all(
+            probe is not None
+            and probe.probe_id == "image-quality-floor-gap"
+            and probe.status in {"gap", "satisfied"}
+            and any("normalized floor gap=" in item for item in probe.known_evidence)
+            and any("review floor" in item for item in probe.known_evidence)
+            and any("dominant floor gap=" in item for item in probe.known_evidence)
+            and any("multiband min MTF" in item for item in probe.missing_evidence)
+            and any("field-weighted MTF" in item for item in probe.missing_evidence)
+            and any("max RMS spot radius" in item for item in probe.missing_evidence)
+            and probe.next_probe_command is not None
+            and "evaluate_design_agent.py --fail-on-regression --json"
+            in probe.next_probe_command
+            for probe in probes
+        )
+        statuses = [probe.status if probe is not None else "missing" for probe in probes]
+        return ok, f"image-quality floor probes {statuses}"
+
+    return check
+
+
 def _has_optimization_task_runs() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
@@ -3966,6 +4000,7 @@ _DESIGNER_PACKET_CHECKS: tuple[Check, ...] = (
     _has_draft_candidates(),
     _change_set_matches_optimizer_status(),
     _has_acceptance_improvement_tasks(),
+    _image_quality_floor_task_has_evidence_probe(),
     _has_optimization_task_queue(),
     _has_optimization_task_runs(),
     _has_draft_quality_rubric(),
