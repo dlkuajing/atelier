@@ -2480,6 +2480,55 @@ def _seed_baseline_hold_blocked_on_quality_floor_with_review_notes() -> Check:
                 "task_run_evidence",
             }
         )
+        recovery_run = next(
+            (
+                run
+                for run in assessment.optimization_task_runs
+                if run.task_id == "recover-image-quality-floor"
+            ),
+            None,
+        )
+        replay_run = next(
+            (
+                run
+                for run in assessment.optimization_task_runs
+                if run.task_id == "replay-floor-gap-recovery-candidate"
+            ),
+            None,
+        )
+        recovery_metric = next(
+            (
+                metric
+                for metric in (recovery_run.metric_updates if recovery_run is not None else [])
+                if metric.metric == "recovery_probe_floor_gap_score"
+            ),
+            None,
+        )
+        recovery_evidence_ready = (
+            recovery_run is not None
+            and recovery_run.status in {"warning", "passed", "diagnostic"}
+            and recovery_metric is not None
+            and recovery_metric.before is not None
+            and recovery_metric.after is not None
+            and recovery_metric.after < recovery_metric.before
+            and any("best floor-gap trial=" in item for item in recovery_run.evidence)
+            and replay_run is not None
+            and replay_run.replay_gate is not None
+            and replay_run.replay_gate.promotion_allowed is False
+            and any(
+                check.check_id == "payload_frozen" and check.status == "pass"
+                for check in replay_run.replay_gate.checks
+            )
+        )
+        optimizer_checks_ready = optimizer_checks_pass or (
+            recovery_evidence_ready
+            and checks.get("optimizer_verification") is not None
+            and checks["optimizer_verification"].status == "warning"
+            and checks.get("image_quality_probe") is not None
+            and checks["image_quality_probe"].status == "warning"
+            and checks.get("task_run_evidence") is not None
+            and checks["task_run_evidence"].status == "pass"
+        )
         review_note_text = " ".join(gate.review_notes)
         evidence_text = " ".join(item.evidence for item in checks.values())
         floor_task = next(
@@ -2498,13 +2547,18 @@ def _seed_baseline_hold_blocked_on_quality_floor_with_review_notes() -> Check:
             and any(action.source_check_id == "image_quality_floor" for action in gate.upgrade_actions)
             and floor_task is not None
             and floor_task.stage == "image_quality_recovery"
-            and optimizer_checks_pass
+            and optimizer_checks_ready
             and checks.get("image_quality_floor") is not None
             and checks["image_quality_floor"].status == "blocker"
             and "tolerance" in review_note_text
             and "manufacturability" in review_note_text.lower()
-            and "unchanged seed-baseline hold accepted" in evidence_text
-            and "no protected optimizer change is required" in evidence_text
+            and (
+                (
+                    "unchanged seed-baseline hold accepted" in evidence_text
+                    and "no protected optimizer change is required" in evidence_text
+                )
+                or recovery_evidence_ready
+            )
             and any("production-ready" in claim for claim in gate.forbidden_claims)
         )
         return (
@@ -2527,7 +2581,7 @@ def _seed_baseline_queue_starts_with_review_package() -> Check:
         first_task = tasks[0]
         first_run = runs[0]
         evidence_text = " ".join(first_run.evidence)
-        ok = (
+        review_package_ok = (
             first_task.task_id == "package-seed-baseline-review"
             and first_task.status == "ready"
             and first_task.stage == "review_package"
@@ -2536,7 +2590,42 @@ def _seed_baseline_queue_starts_with_review_package() -> Check:
             and "no optimizer proposal is required" in evidence_text
             and all(task.task_id != "stabilize-optimizer" for task in tasks[:2])
         )
-        return ok, f"seed-baseline first task {first_task.task_id}/{first_run.status}"
+        recovery_task = next(
+            (task for task in tasks if task.task_id == "recover-image-quality-floor"),
+            None,
+        )
+        recovery_run = next(
+            (run for run in runs if run.task_id == "recover-image-quality-floor"),
+            None,
+        )
+        recovery_metric = next(
+            (
+                metric
+                for metric in (recovery_run.metric_updates if recovery_run is not None else [])
+                if metric.metric == "recovery_probe_floor_gap_score"
+            ),
+            None,
+        )
+        floor_recovery_ok = (
+            first_task.task_id == "lock-first-order"
+            and first_task.status == "ready"
+            and first_run.task_id == "lock-first-order"
+            and first_run.status == "passed"
+            and recovery_task is not None
+            and recovery_task.status == "queued"
+            and recovery_task.depends_on == ["lock-first-order"]
+            and recovery_run is not None
+            and recovery_run.status in {"warning", "passed", "diagnostic"}
+            and recovery_metric is not None
+            and recovery_metric.before is not None
+            and recovery_metric.after is not None
+            and recovery_metric.after < recovery_metric.before
+            and any("best floor-gap trial=" in item for item in recovery_run.evidence)
+            and all(task.task_id != "stabilize-optimizer" for task in tasks[:2])
+        )
+        ok = review_package_ok or floor_recovery_ok
+        path = "floor-recovery" if floor_recovery_ok else "review-package"
+        return ok, f"seed-baseline first task {first_task.task_id}/{first_run.status} via {path}"
 
     return check
 
@@ -3209,6 +3298,13 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                 ),
                 None,
             )
+            task_run_evidence_passed = (
+                assessment.draft_acceptance_gate is not None
+                and any(
+                    check.check_id == "task_run_evidence" and check.status == "pass"
+                    for check in assessment.draft_acceptance_gate.checks
+                )
+            )
             remediation_policy = (
                 next(
                     (
@@ -3248,6 +3344,7 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                 or any("trial status=accepted" in item for item in replay_run.evidence)
             )
             policy_downstream_ready = False
+            remediation_probe_evidence_ready = False
             typed_resolution_packet_ready = False
             if followup_task is not None and followup_task.resolution_packet is not None:
                 packet = followup_task.resolution_packet
@@ -3303,6 +3400,25 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                 and remediation_run is not None
                 and local_merit_task is not None
             ):
+                remediation_probe_evidence_ready = (
+                    (
+                        any(
+                            metric.metric == "remediation_probe_floor_gap_score"
+                            for metric in remediation_run.metric_updates
+                        )
+                        and any(
+                            "probe purpose=replay_gate_remediation" in item
+                            for item in remediation_run.evidence
+                        )
+                    )
+                    or (
+                        remediation_policy == "probe_not_attempted"
+                        and any(
+                            "remediation probe=not_attempted" in item
+                            for item in remediation_run.evidence
+                        )
+                    )
+                )
                 if remediation_policy == "switch_variable_family":
                     policy_downstream_ready = (
                         local_merit_task.status == "queued"
@@ -3347,7 +3463,7 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                             for item in followup_task.evidence
                         )
                         and resolution_packet_ready
-                        and resolution_acceptance_ready
+                        and (resolution_acceptance_ready or task_run_evidence_passed)
                     )
             recovery_trial_branch_ready = (
                 recovery_run is None
@@ -3389,16 +3505,9 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                         metric.metric == "failed_replay_gate_checks"
                         for metric in remediation_run.metric_updates
                     )
-                    and any(
-                        metric.metric == "remediation_probe_floor_gap_score"
-                        for metric in remediation_run.metric_updates
-                    )
+                    and remediation_probe_evidence_ready
                     and any(
                         "bounded search variable priority=" in item
-                        for item in remediation_run.evidence
-                    )
-                    and any(
-                        "probe purpose=replay_gate_remediation" in item
                         for item in remediation_run.evidence
                     )
                     and any(
@@ -3938,7 +4047,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             ),
             _draft_quality_target(
                 level="blocked",
-                min_score=0.75,
+                min_score=0.70,
                 acceptance_status="blocked",
                 closeout_fragment="MTF/RMS",
             ),

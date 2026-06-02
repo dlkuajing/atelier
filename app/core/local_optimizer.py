@@ -3268,7 +3268,10 @@ def protected_rms_merit_probe(
         before_mtf_bands,
         before_max_rms_spot_radius_um,
     )
-    if not radius_changes:
+    seed_baseline_floor_recovery = (
+        purpose == "image_quality_floor_recovery" and bool(normalized_priority)
+    )
+    if not radius_changes and not seed_baseline_floor_recovery:
         return OptimizationMeritProbe(
             status="not_attempted",
             engine="optiland.least_squares",
@@ -3312,6 +3315,10 @@ def protected_rms_merit_probe(
         f"probe purpose={purpose}",
         f"ranking policy={ranking_policy}",
     ]
+    if seed_baseline_floor_recovery:
+        diagnostics.append(
+            "seed-baseline floor recovery enabled because first-order specs are already locked"
+        )
     if use_opd_assist:
         diagnostics.append(
             "OPD_difference operand enabled as wavefront guard "

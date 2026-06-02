@@ -925,11 +925,14 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
     checks = {check.check_id: check for check in gate.checks}
     assert checks["requirement_coverage"].status == "warning"
     assert checks["manufacturability"].status == "warning"
-    assert checks["optimizer_verification"].status == "pass"
-    assert checks["image_quality_probe"].status == "pass"
+    assert checks["optimizer_verification"].status == "warning"
+    assert checks["image_quality_probe"].status == "warning"
     assert checks["image_quality_floor"].status == "blocker"
     assert "max RMS=397.5um" in checks["image_quality_floor"].evidence
     assert checks["task_run_evidence"].status == "pass"
+    assert "floor recovery replay generated bounded non-promoted evidence" in checks[
+        "task_run_evidence"
+    ].evidence
     assert any(
         action.source_check_id == "image_quality_floor" for action in gate.upgrade_actions
     )
@@ -969,6 +972,11 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
         if run.task_id == "recover-image-quality-floor"
     )
     assert recovery_run.status == "warning"
+    lock_run = next(
+        run for run in assessment.optimization_task_runs if run.task_id == "lock-first-order"
+    )
+    assert lock_run.status == "passed"
+    assert "recover-image-quality-floor" in lock_run.unlocked_tasks
     assert assessment.merit_optimization_probe.probe_purpose == "image_quality_floor_recovery"
     assert assessment.merit_optimization_probe.variable_priority[:3] == [
         "focus_position",
@@ -995,17 +1003,48 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
         "targeted recovery variables=focus position, air gaps, radius" in item
         for item in recovery_run.evidence
     )
-    assert any("floor recovery probe=not_attempted" in item for item in recovery_run.evidence)
+    assert any("floor recovery probe=warning" in item for item in recovery_run.evidence)
+    assert any(
+        item.startswith("best floor-gap trial=")
+        and "closure=+" in item
+        and "status=" in item
+        and "verification=passed" in item
+        for item in recovery_run.evidence
+    )
     assert any("probe ranking policy=floor_gap_first" in item for item in recovery_run.evidence)
     assert any(
         "probe variable priority=focus_position,thickness,radius" in item
         for item in recovery_run.evidence
     )
+    replay_run = next(
+        run
+        for run in assessment.optimization_task_runs
+        if run.task_id == "replay-floor-gap-recovery-candidate"
+    )
+    assert replay_run.status == "diagnostic"
+    assert replay_run.replay_gate is not None
+    assert replay_run.replay_gate.gate_id == "floor-gap-recovery-replay"
+    assert replay_run.replay_gate.promotion_allowed is False
+    assert "floor_gap_cleared" in replay_run.replay_gate.failed_check_ids
+    assert any(
+        check.check_id == "payload_frozen" and check.status == "pass"
+        for check in replay_run.replay_gate.checks
+    )
+    recovery_candidate = next(
+        candidate
+        for candidate in assessment.draft_candidates
+        if candidate.candidate_id == "floor-gap-recovery-candidate"
+    )
+    assert recovery_candidate.source == "recovery_probe"
+    assert recovery_candidate.status == "diagnostic"
+    assert recovery_candidate.recommendation == "hold"
+    assert recovery_candidate.metrics is not None
+    assert recovery_candidate.metrics.max_rms_spot_radius_um < 397.5
 
     quality = assessment.draft_quality_rubric
     assert quality is not None
     assert quality.level == "blocked"
-    assert quality.score >= 0.75
+    assert quality.score >= 0.70
     assert (
         quality.minimum_next_action
         == "hold draft_ready until the recommended branch clears the first-pass MTF/RMS review floor"

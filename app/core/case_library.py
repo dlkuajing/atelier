@@ -7297,6 +7297,23 @@ def match_case(
         and not merit_optimization_probe.variable_changes
     )
 
+    seed_baseline_first_order_locked_for_floor_recovery = (
+        recommended_candidate_id == "seed-baseline"
+        and delivery_gate is None
+        and branch_selection_resolved
+        and prescription_change_set is None
+        and requirement_coverage_summary is not None
+        and requirement_coverage_summary.status in {"met", "tradeoff"}
+        and not hard_requirement_tradeoff_ids
+        and manufacturability_review.status != "blocked"
+        and best.metadata.mtf_max_field_frac >= 1.0
+        and not optimization_attempt.variable_changes
+        and abs(delta_efl) <= 0.10
+        and abs(delta_fnum) <= 0.10
+        and recommended_image_quality_floor.status == "blocker"
+        and merit_optimization_probe.probe_purpose == "image_quality_floor_recovery"
+    )
+
     optimizer_proposal_reviewable = (
         recommended_candidate_id == "optimizer-proposal"
         and delivery_gate is None
@@ -8300,7 +8317,10 @@ def match_case(
             )
             first_order_dependency = ["apply-protected-change-set"]
             first_order_candidate = prescription_change_set.source_candidate_id
-        elif optimization_attempt.status != "not_attempted":
+        elif (
+            optimization_attempt.status != "not_attempted"
+            and not seed_baseline_first_order_locked_for_floor_recovery
+        ):
             add(
                 "stabilize-optimizer",
                 recommended_candidate_id,
@@ -9169,7 +9189,11 @@ def match_case(
         )
 
     def _lock_first_order_run(task: OptimizationTask) -> OptimizationTaskRun:
-        active_metrics = optimization_attempt.after_metrics or optimization_attempt.before_metrics
+        active_metrics = (
+            optimization_attempt.after_metrics
+            or optimization_attempt.before_metrics
+            or seed_baseline_metrics
+        )
         active_efl = (
             active_metrics.effective_focal_length_mm if active_metrics is not None else None
         )
@@ -11201,6 +11225,24 @@ def match_case(
                 )
             ]
 
+        if first_ready.task_id == "lock-first-order":
+            lock_run = _lock_first_order_run(first_ready)
+            runs = [lock_run]
+            if lock_run.status == "passed":
+                if "recover-image-quality-floor" in lock_run.unlocked_tasks:
+                    recovery_task = _find_task("recover-image-quality-floor")
+                    if recovery_task is not None:
+                        recovery_run = _image_quality_floor_recovery_run(recovery_task)
+                        runs.append(recovery_run)
+                        _append_recovery_replay_run(runs, recovery_run)
+                if "local-merit-tuning" in lock_run.unlocked_tasks:
+                    merit_task = _find_task("local-merit-tuning")
+                    if merit_task is not None:
+                        merit_run = _local_merit_tuning_run(merit_task)
+                        runs.append(merit_run)
+                        _append_second_pass_replay_run(runs, merit_run)
+            return runs
+
         if first_ready.task_id == "stabilize-optimizer":
             return [
                 OptimizationTaskRun(
@@ -11264,6 +11306,48 @@ def match_case(
             and floor_metric.after is not None
             and floor_metric.after < floor_metric.before
             and "floor_gap_cleared" in run.replay_gate.failed_check_ids
+        )
+
+    def _is_informative_floor_recovery_hold(
+        runs: list[OptimizationTaskRun],
+    ) -> bool:
+        recovery_run = next(
+            (run for run in runs if run.task_id == "recover-image-quality-floor"),
+            None,
+        )
+        replay_run = next(
+            (run for run in runs if run.task_id == "replay-floor-gap-recovery-candidate"),
+            None,
+        )
+        if (
+            recovery_run is None
+            or replay_run is None
+            or recovery_run.status not in {"warning", "passed", "diagnostic"}
+            or replay_run.status not in {"warning", "diagnostic"}
+            or replay_run.replay_gate is None
+            or replay_run.replay_gate.promotion_allowed
+        ):
+            return False
+        recovery_metric = next(
+            (
+                metric
+                for metric in recovery_run.metric_updates
+                if metric.metric == "recovery_probe_floor_gap_score"
+            ),
+            None,
+        )
+        payload_frozen = any(
+            check.check_id == "payload_frozen" and check.status == "pass"
+            for check in replay_run.replay_gate.checks
+        )
+        return (
+            recovery_metric is not None
+            and recovery_metric.before is not None
+            and recovery_metric.after is not None
+            and recovery_metric.after < recovery_metric.before
+            and any("best floor-gap trial=" in item for item in recovery_run.evidence)
+            and "floor_gap_cleared" in replay_run.replay_gate.failed_check_ids
+            and payload_frozen
         )
 
     def _full_field_recovery_review_ready() -> bool:
@@ -11552,6 +11636,9 @@ def match_case(
 
         latest_run = optimization_task_runs[-1] if optimization_task_runs else None
         informative_second_pass_hold = _is_informative_second_pass_hold(latest_run)
+        informative_floor_recovery_hold = _is_informative_floor_recovery_hold(
+            optimization_task_runs
+        )
         if seed_baseline_hold_reviewable:
             run_status = "pass"
             run_evidence = (
@@ -11563,9 +11650,18 @@ def match_case(
             run_status = "warning"
             run_evidence = "no optimization task run evidence"
             run_action = "run at least one protected task before promotion"
-        elif latest_run.status == "passed" or informative_second_pass_hold:
+        elif (
+            latest_run.status == "passed"
+            or informative_second_pass_hold
+            or informative_floor_recovery_hold
+        ):
             run_status = "pass"
             run_evidence = f"{latest_run.task_id}/{latest_run.status}: {latest_run.summary}"
+            if informative_floor_recovery_hold and latest_run.status != "passed":
+                run_evidence = (
+                    "floor recovery replay generated bounded non-promoted evidence; "
+                    f"{run_evidence}"
+                )
             run_action = None
         elif latest_run.status in {"diagnostic", "warning"}:
             run_status = "warning"
@@ -11591,18 +11687,23 @@ def match_case(
             if check.check_id in {
                 "delivery_gate",
                 "branch_selection",
-                "optimizer_verification",
             }:
                 return True
+            if check.check_id == "optimizer_verification":
+                return not informative_floor_recovery_hold
             if check.check_id == "requirement_coverage":
                 return bool(hard_requirement_tradeoff_ids)
             if check.check_id == "image_quality_probe":
-                return not (optimizer_status == "pass" and best.metadata.mtf_max_field_frac >= 1.0)
+                return not (
+                    (optimizer_status == "pass" and best.metadata.mtf_max_field_frac >= 1.0)
+                    or informative_floor_recovery_hold
+                )
             if check.check_id == "image_quality_floor":
                 return True
             if check.check_id == "task_run_evidence":
                 return not (
                     informative_second_pass_hold
+                    or informative_floor_recovery_hold
                     or (
                         latest_run is not None
                         and latest_run.task_id == "asphere-guarded-audit"
