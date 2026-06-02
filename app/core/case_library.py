@@ -13079,7 +13079,14 @@ def match_case(
             level = "reviewable"
         else:
             level = "conditional"
-        weakest = min(dimensions, key=lambda item: item.score)
+        severity_rank = {"blocker": 0, "warning": 1, "pass": 2}
+        weakest = min(
+            dimensions,
+            key=lambda item: (
+                severity_rank.get(item.status, 3),
+                item.score,
+            ),
+        )
         promotion_actions: list[str] = []
         if level == "reviewable":
             promotion_target = (
