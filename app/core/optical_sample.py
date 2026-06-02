@@ -45,8 +45,7 @@ class CandidateComparison(BaseModel):
     role: str = Field(
         ...,
         description=(
-            "best_match / cost_variant / thin_variant / performance_variant / "
-            "nearby_alternative_N"
+            "best_match / cost_variant / thin_variant / performance_variant / nearby_alternative_N"
         ),
     )
     score: float = Field(..., ge=0.0, le=1.0)
@@ -573,6 +572,10 @@ class OptimizationMetricSnapshot(BaseModel):
     mtf_100lpmm_avg: float | None = None
     mtf_150lpmm_min: float | None = None
     mtf_150lpmm_avg: float | None = None
+    mtf_200lpmm_min: float | None = None
+    mtf_200lpmm_avg: float | None = None
+    mtf_250lpmm_min: float | None = None
+    mtf_250lpmm_avg: float | None = None
     mtf_multiband_min_score: float | None = None
     mtf_field_weighted_score: float | None = None
     max_rms_spot_radius_um: float | None = None
@@ -863,6 +866,10 @@ class OptimizationVerification(BaseModel):
     mtf_100lpmm_avg: float | None = None
     mtf_150lpmm_min: float | None = None
     mtf_150lpmm_avg: float | None = None
+    mtf_200lpmm_min: float | None = None
+    mtf_200lpmm_avg: float | None = None
+    mtf_250lpmm_min: float | None = None
+    mtf_250lpmm_avg: float | None = None
     mtf_multiband_min_score: float | None = None
     mtf_field_weighted_score: float | None = None
     max_rms_spot_radius_um: float | None = None
@@ -1064,9 +1071,7 @@ class SeedIntakeCandidate(BaseModel):
     source_zmx: str
     role: str = Field(
         ...,
-        description=(
-            "accepted / nearest_high_fov / best_stable_high_fov / nearest_full_field"
-        ),
+        description=("accepted / nearest_high_fov / best_stable_high_fov / nearest_full_field"),
     )
     fov_deg: float
     efl_mm: float

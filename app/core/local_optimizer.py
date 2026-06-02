@@ -94,8 +94,8 @@ _MERIT_FOCUS_POSITION_DELTAS_MM: tuple[float, ...] = (
     0.10,
     0.20,
 )
-_MTF_BANDS_LPMM: tuple[float, float, float] = (50.0, 100.0, 150.0)
-_MTF_BAND_WEIGHTS: tuple[float, float, float] = (0.25, 0.45, 0.30)
+_MTF_BANDS_LPMM: tuple[float, ...] = (50.0, 100.0, 150.0, 200.0, 250.0)
+_MTF_BAND_WEIGHTS: tuple[float, ...] = (0.18, 0.24, 0.24, 0.20, 0.14)
 _MTF_NON_REGRESSION_TOL = 0.002
 _FULL_FIELD_STOP_DELTAS_MM: tuple[float, ...] = (-0.08, -0.04, 0.04, 0.08)
 _FULL_FIELD_CHIEF_RAY_HEIGHT_DELTAS: tuple[float, ...] = (-0.10, 0.50)
@@ -137,12 +137,16 @@ class MtfBandMetrics:
     avg_100: float | None = None
     min_150: float | None = None
     avg_150: float | None = None
+    min_200: float | None = None
+    avg_200: float | None = None
+    min_250: float | None = None
+    avg_250: float | None = None
     multiband_min_score: float | None = None
     field_weighted_score: float | None = None
 
     @property
-    def min_values(self) -> tuple[float | None, float | None, float | None]:
-        return (self.min_50, self.min_100, self.min_150)
+    def min_values(self) -> tuple[float | None, ...]:
+        return (self.min_50, self.min_100, self.min_150, self.min_200, self.min_250)
 
 
 @dataclass(frozen=True)
@@ -616,6 +620,10 @@ def _floor_metric_snapshot(
         mtf_100lpmm_avg=mtf_bands.avg_100,
         mtf_150lpmm_min=mtf_bands.min_150,
         mtf_150lpmm_avg=mtf_bands.avg_150,
+        mtf_200lpmm_min=mtf_bands.min_200,
+        mtf_200lpmm_avg=mtf_bands.avg_200,
+        mtf_250lpmm_min=mtf_bands.min_250,
+        mtf_250lpmm_avg=mtf_bands.avg_250,
         mtf_multiband_min_score=mtf_bands.multiband_min_score,
         mtf_field_weighted_score=mtf_bands.field_weighted_score,
         max_rms_spot_radius_um=max_rms_spot_radius_um,
@@ -897,7 +905,7 @@ def _asphere_audit_trials(
                     if not mtf_non_regressed:
                         failed_gates.append("MTF field fraction regressed")
                     if not mtf_band_non_regressed:
-                        failed_gates.append("MTF 50/100/150 lp/mm regressed")
+                        failed_gates.append("MTF 50/100/150/200/250 lp/mm regressed")
                     if not field_weighted_non_regressed:
                         failed_gates.append("field-weighted MTF regressed")
                     if not efl_locked:
@@ -969,11 +977,7 @@ def _joint_asphere_merit_trials(
         return []
 
     merit_change = next(
-        (
-            change
-            for change in merit_variable_changes
-            if change.variable in {"radius", "thickness"}
-        ),
+        (change for change in merit_variable_changes if change.variable in {"radius", "thickness"}),
         None,
     )
     if merit_change is None:
@@ -1110,7 +1114,7 @@ def _joint_asphere_merit_trials(
                 if not mtf_non_regressed:
                     failed_gates.append("MTF field fraction regressed")
                 if not mtf_band_non_regressed:
-                    failed_gates.append("MTF 50/100/150 lp/mm regressed")
+                    failed_gates.append("MTF 50/100/150/200/250 lp/mm regressed")
                 if not field_weighted_non_regressed:
                     failed_gates.append("field-weighted MTF regressed")
                 if not efl_locked:
@@ -1344,7 +1348,7 @@ def _stop_position_replay_trials(
                     if not mtf_non_regressed:
                         failed_gates.append("MTF field fraction regressed")
                     if not mtf_band_non_regressed:
-                        failed_gates.append("MTF 50/100/150 lp/mm regressed")
+                        failed_gates.append("MTF 50/100/150/200/250 lp/mm regressed")
                     if not field_weighted_non_regressed:
                         failed_gates.append("field-weighted MTF regressed")
                     if not efl_locked:
@@ -1406,7 +1410,7 @@ def _stop_position_replay_trials(
                         *base_diagnostics,
                         f"finite RMS operand fields: {field_samples}",
                         f"stop-position replay delta={delta:+.3f} mm",
-                        f"MTF 50/100/150 lp/mm non-regressed={mtf_band_non_regressed}",
+                        f"MTF 50/100/150/200/250 lp/mm non-regressed={mtf_band_non_regressed}",
                         f"MTF field-weighted score non-regressed={field_weighted_non_regressed}",
                         f"image-quality floor gap closure={floor_gap_closure}",
                         f"promotion score={promotion_score:.3f}",
@@ -1635,7 +1639,7 @@ def _focus_position_replay_trials(
                     if not mtf_non_regressed:
                         failed_gates.append("MTF field fraction regressed")
                     if not mtf_band_non_regressed:
-                        failed_gates.append("MTF 50/100/150 lp/mm regressed")
+                        failed_gates.append("MTF 50/100/150/200/250 lp/mm regressed")
                     if not field_weighted_non_regressed:
                         failed_gates.append("field-weighted MTF regressed")
                     if not efl_locked:
@@ -1697,7 +1701,7 @@ def _focus_position_replay_trials(
                         *base_diagnostics,
                         f"finite RMS operand fields: {field_samples}",
                         f"focus-position replay delta={delta:+.3f} mm",
-                        f"MTF 50/100/150 lp/mm non-regressed={mtf_band_non_regressed}",
+                        f"MTF 50/100/150/200/250 lp/mm non-regressed={mtf_band_non_regressed}",
                         f"MTF field-weighted score non-regressed={field_weighted_non_regressed}",
                         f"image-quality floor gap closure={floor_gap_closure}",
                         f"promotion score={promotion_score:.3f}",
@@ -1858,9 +1862,7 @@ def _compound_continuation_replay_trials(
                     _apply_variable_change(optic, focus_change)
                     _apply_variable_change(optic, radius_change)
                     merit_after = (
-                        _asphere_prescreen_merit(optic, field_samples)
-                        if field_samples
-                        else None
+                        _asphere_prescreen_merit(optic, field_samples) if field_samples else None
                     )
                     after_paraxial = compute_paraxial_summary(optic)
                     verification = _verify_probe_optic(
@@ -1877,8 +1879,8 @@ def _compound_continuation_replay_trials(
                     )
                     after_rms = verification.max_rms_spot_radius_um
                     if after_rms is None:
-                        floor_gap_before, floor_gap_after, floor_gap_closure = (
-                            _floor_gap_closure(before_metrics, after_metrics)
+                        floor_gap_before, floor_gap_after, floor_gap_closure = _floor_gap_closure(
+                            before_metrics, after_metrics
                         )
                         trials.append(
                             _variable_trial(
@@ -1948,9 +1950,7 @@ def _compound_continuation_replay_trials(
                     )
                     if accepted:
                         trial_status = "accepted"
-                        trial_reason = (
-                            f"compound continuation {label} passed RMS/MTF/EFL gates"
-                        )
+                        trial_reason = f"compound continuation {label} passed RMS/MTF/EFL gates"
                     else:
                         failed_gates: list[str] = []
                         if verification.status != "passed":
@@ -1960,7 +1960,7 @@ def _compound_continuation_replay_trials(
                         if not mtf_non_regressed:
                             failed_gates.append("MTF field fraction regressed")
                         if not mtf_band_non_regressed:
-                            failed_gates.append("MTF 50/100/150 lp/mm regressed")
+                            failed_gates.append("MTF 50/100/150/200/250 lp/mm regressed")
                         if not field_weighted_non_regressed:
                             failed_gates.append("field-weighted MTF regressed")
                         if not efl_locked:
@@ -2025,7 +2025,7 @@ def _compound_continuation_replay_trials(
                             f"finite RMS operand fields: {field_samples}",
                             f"compound continuation branch={label}",
                             f"source focus trial status={focus_trial.status}",
-                            f"MTF 50/100/150 lp/mm non-regressed={mtf_band_non_regressed}",
+                            f"MTF 50/100/150/200/250 lp/mm non-regressed={mtf_band_non_regressed}",
                             f"MTF field-weighted score non-regressed={field_weighted_non_regressed}",
                             f"image-quality floor gap closure={floor_gap_closure}",
                             f"promotion score={promotion_score:.3f}",
@@ -2228,7 +2228,7 @@ def _compound_merit_replay(
                     if not mtf_non_regressed:
                         failed_gates.append("MTF field fraction regressed")
                     if not mtf_band_non_regressed:
-                        failed_gates.append("MTF 50/100/150 lp/mm regressed")
+                        failed_gates.append("MTF 50/100/150/200/250 lp/mm regressed")
                     if not field_weighted_non_regressed:
                         failed_gates.append("field-weighted MTF regressed")
                     if not efl_locked:
@@ -2477,6 +2477,10 @@ def _metric_snapshot(
         mtf_100lpmm_avg=bands.avg_100,
         mtf_150lpmm_min=bands.min_150,
         mtf_150lpmm_avg=bands.avg_150,
+        mtf_200lpmm_min=bands.min_200,
+        mtf_200lpmm_avg=bands.avg_200,
+        mtf_250lpmm_min=bands.min_250,
+        mtf_250lpmm_avg=bands.avg_250,
         mtf_multiband_min_score=bands.multiband_min_score,
         mtf_field_weighted_score=bands.field_weighted_score,
         max_rms_spot_radius_um=max_rms_spot_radius_um,
@@ -2540,7 +2544,7 @@ def _mtf_field_weighted_band_score(mtf, target_lpmm: float) -> float | None:
 
 
 def mtf_multiband_summary(mtf) -> MtfBandMetrics:
-    """Return conservative 50/100/150 lp/mm MTF metrics for proposal gating."""
+    """Return conservative 50/100/150/200/250 lp/mm MTF metrics for proposal gating."""
     min_values: list[float | None] = []
     avg_values: list[float | None] = []
     field_weighted_values: list[float | None] = []
@@ -2552,11 +2556,7 @@ def mtf_multiband_summary(mtf) -> MtfBandMetrics:
 
     score: float | None = None
     if all(value is not None for value in min_values):
-        score = sum(
-            value * weight
-            for value, weight in zip(min_values, _MTF_BAND_WEIGHTS, strict=True)
-            if value is not None
-        )
+        score = min(value for value in min_values if value is not None)
     field_weighted_score: float | None = None
     if all(value is not None for value in field_weighted_values):
         field_weighted_score = sum(
@@ -2572,6 +2572,10 @@ def mtf_multiband_summary(mtf) -> MtfBandMetrics:
         avg_100=avg_values[1],
         min_150=min_values[2],
         avg_150=avg_values[2],
+        min_200=min_values[3],
+        avg_200=avg_values[3],
+        min_250=min_values[4],
+        avg_250=avg_values[4],
         multiband_min_score=score,
         field_weighted_score=field_weighted_score,
     )
@@ -2588,6 +2592,10 @@ def mtf_bands_from_snapshot(snapshot: object | None) -> MtfBandMetrics:
         avg_100=getattr(snapshot, "mtf_100lpmm_avg", None),
         min_150=getattr(snapshot, "mtf_150lpmm_min", None),
         avg_150=getattr(snapshot, "mtf_150lpmm_avg", None),
+        min_200=getattr(snapshot, "mtf_200lpmm_min", None),
+        avg_200=getattr(snapshot, "mtf_200lpmm_avg", None),
+        min_250=getattr(snapshot, "mtf_250lpmm_min", None),
+        avg_250=getattr(snapshot, "mtf_250lpmm_avg", None),
         multiband_min_score=getattr(snapshot, "mtf_multiband_min_score", None),
         field_weighted_score=getattr(snapshot, "mtf_field_weighted_score", None),
     )
@@ -2679,6 +2687,10 @@ def _verify_probe_optic(
             mtf_100lpmm_avg=mtf_bands.avg_100,
             mtf_150lpmm_min=mtf_bands.min_150,
             mtf_150lpmm_avg=mtf_bands.avg_150,
+            mtf_200lpmm_min=mtf_bands.min_200,
+            mtf_200lpmm_avg=mtf_bands.avg_200,
+            mtf_250lpmm_min=mtf_bands.min_250,
+            mtf_250lpmm_avg=mtf_bands.avg_250,
             mtf_multiband_min_score=mtf_bands.multiband_min_score,
             mtf_field_weighted_score=mtf_bands.field_weighted_score,
             max_rms_spot_radius_um=max_rms,
@@ -2702,6 +2714,10 @@ def _verify_probe_optic(
             mtf_100lpmm_avg=mtf_bands.avg_100,
             mtf_150lpmm_min=mtf_bands.min_150,
             mtf_150lpmm_avg=mtf_bands.avg_150,
+            mtf_200lpmm_min=mtf_bands.min_200,
+            mtf_200lpmm_avg=mtf_bands.avg_200,
+            mtf_250lpmm_min=mtf_bands.min_250,
+            mtf_250lpmm_avg=mtf_bands.avg_250,
             mtf_multiband_min_score=mtf_bands.multiband_min_score,
             mtf_field_weighted_score=mtf_bands.field_weighted_score,
             max_rms_spot_radius_um=max_rms,
@@ -2721,6 +2737,10 @@ def _verify_probe_optic(
         mtf_100lpmm_avg=mtf_bands.avg_100,
         mtf_150lpmm_min=mtf_bands.min_150,
         mtf_150lpmm_avg=mtf_bands.avg_150,
+        mtf_200lpmm_min=mtf_bands.min_200,
+        mtf_200lpmm_avg=mtf_bands.avg_200,
+        mtf_250lpmm_min=mtf_bands.min_250,
+        mtf_250lpmm_avg=mtf_bands.avg_250,
         mtf_multiband_min_score=mtf_bands.multiband_min_score,
         mtf_field_weighted_score=mtf_bands.field_weighted_score,
         max_rms_spot_radius_um=max_rms,
@@ -2791,9 +2811,7 @@ def _verification_floor_gap(
     paraxial,
     verification: OptimizationVerification,
 ) -> float | None:
-    return image_quality_floor_gap_score(
-        _verification_metric_snapshot(paraxial, verification)
-    )
+    return image_quality_floor_gap_score(_verification_metric_snapshot(paraxial, verification))
 
 
 @lru_cache(maxsize=64)
@@ -2819,7 +2837,9 @@ def protected_edge_field_stability_scan(
                 for value in mtf.rms_spot_radius_um_by_field
                 if value is not None and math.isfinite(value)
             ]
-            edge_rms = mtf.rms_spot_radius_um_by_field[-1] if mtf.rms_spot_radius_um_by_field else None
+            edge_rms = (
+                mtf.rms_spot_radius_um_by_field[-1] if mtf.rms_spot_radius_um_by_field else None
+            )
             if _mtf_has_nan(mtf) or edge_rms is None or not math.isfinite(edge_rms):
                 points.append(
                     EdgeFieldStabilityPoint(
@@ -2916,11 +2936,7 @@ def _full_field_recovery_trial(
         if variable_family == "chief_ray_height":
             reason = f"{reason}; height delta={delta:+.3f}"
         variable_changes: list[OptimizationVariableChange] = []
-        if (
-            variable_family == "stop_position"
-            and before is not None
-            and after is not None
-        ):
+        if variable_family == "stop_position" and before is not None and after is not None:
             variable_changes.append(
                 OptimizationVariableChange(
                     variable="stop_position",
@@ -3060,9 +3076,7 @@ def _compound_full_field_recovery_trial(
             if floor_gap is not None and floor_gap <= 0.0:
                 reason = f"{reason}; image-quality floor cleared"
             elif floor_gap is not None and floor_gap > 0.0:
-                reason = (
-                    f"{reason}; image-quality floor gap remains {floor_gap:.3f}"
-                )
+                reason = f"{reason}; image-quality floor gap remains {floor_gap:.3f}"
         return FullFieldRecoveryTrial(
             variable_family="compound_field_extension",
             surface_index=-1,
@@ -3241,6 +3255,10 @@ def _before_metrics_from_values(
         mtf_100lpmm_avg=mtf_bands.avg_100,
         mtf_150lpmm_min=mtf_bands.min_150,
         mtf_150lpmm_avg=mtf_bands.avg_150,
+        mtf_200lpmm_min=mtf_bands.min_200,
+        mtf_200lpmm_avg=mtf_bands.avg_200,
+        mtf_250lpmm_min=mtf_bands.min_250,
+        mtf_250lpmm_avg=mtf_bands.avg_250,
         mtf_multiband_min_score=mtf_bands.multiband_min_score,
         mtf_field_weighted_score=mtf_bands.field_weighted_score,
         max_rms_spot_radius_um=max_rms_spot_radius_um,
@@ -3286,8 +3304,8 @@ def protected_rms_merit_probe(
         before_mtf_bands,
         before_max_rms_spot_radius_um,
     )
-    seed_baseline_floor_recovery = (
-        purpose == "image_quality_floor_recovery" and bool(normalized_priority)
+    seed_baseline_floor_recovery = purpose == "image_quality_floor_recovery" and bool(
+        normalized_priority
     )
     if not radius_changes and not seed_baseline_floor_recovery:
         return OptimizationMeritProbe(
@@ -3656,7 +3674,7 @@ def protected_rms_merit_probe(
                 if not mtf_non_regressed:
                     failed_gates.append("MTF field fraction regressed")
                 if not mtf_band_non_regressed:
-                    failed_gates.append("MTF 50/100/150 lp/mm regressed")
+                    failed_gates.append("MTF 50/100/150/200/250 lp/mm regressed")
                 if not field_weighted_non_regressed:
                     failed_gates.append("field-weighted MTF regressed")
                 if not efl_locked:
@@ -3726,7 +3744,7 @@ def protected_rms_merit_probe(
                 diagnostics=[
                     *diagnostics,
                     f"finite RMS operand fields: {field_samples}",
-                    f"MTF 50/100/150 lp/mm non-regressed={mtf_band_non_regressed}",
+                    f"MTF 50/100/150/200/250 lp/mm non-regressed={mtf_band_non_regressed}",
                     f"MTF field-weighted score non-regressed={field_weighted_non_regressed}",
                     f"image-quality floor gap closure={floor_gap_closure}",
                     f"promotion score={promotion_score:.3f}",
@@ -3839,8 +3857,7 @@ def protected_rms_merit_probe(
                 trial
                 for trial in candidate_trials
                 if trial.status == "accepted"
-                and trial.variable
-                in {"radius", "thickness", "stop_position", "focus_position"}
+                and trial.variable in {"radius", "thickness", "stop_position", "focus_position"}
             ],
             current_best_probe=best_probe,
             variable_candidates=structured_variable_candidates,

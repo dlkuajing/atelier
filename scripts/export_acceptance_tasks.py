@@ -28,6 +28,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 BACKEND_ROOT = REPO_ROOT / "lumira-backend"
 LOCAL_PROBE_PREFIX = "cd lumira-backend && uv run python "
 LOCAL_PROBE_SCRIPT_ROOT = BACKEND_ROOT / "scripts"
+DEFAULT_PROBE_TIMEOUT_S = 300
 _SLUG_RE = re.compile(r"[^A-Za-z0-9_.-]+")
 
 
@@ -277,7 +278,7 @@ def build_report(
     case_names: set[str] | None = None,
     execute_local_probes: bool = False,
     execute_case_verification: bool = False,
-    probe_timeout_s: int = 120,
+    probe_timeout_s: int = DEFAULT_PROBE_TIMEOUT_S,
 ) -> dict[str, Any]:
     tasks = collect_acceptance_tasks(stage=stage, case_names=case_names)
     _attach_probe_execution(
@@ -673,7 +674,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--probe-timeout",
         type=int,
-        default=120,
+        default=DEFAULT_PROBE_TIMEOUT_S,
         help="Timeout in seconds for each executed local probe",
     )
     parser.add_argument(

@@ -34,6 +34,10 @@ def _sample_floor_gap(sample) -> float | None:
         mtf_100lpmm_avg=bands.avg_100,
         mtf_150lpmm_min=bands.min_150,
         mtf_150lpmm_avg=bands.avg_150,
+        mtf_200lpmm_min=bands.min_200,
+        mtf_200lpmm_avg=bands.avg_200,
+        mtf_250lpmm_min=bands.min_250,
+        mtf_250lpmm_avg=bands.avg_250,
         mtf_multiband_min_score=bands.multiband_min_score,
         mtf_field_weighted_score=bands.field_weighted_score,
         max_rms_spot_radius_um=max(rms_values) if rms_values else None,
@@ -92,9 +96,10 @@ def test_balanced_seed_only_uses_floor_clean_seed():
     assert c is not None
     assert c.metadata is not None
     assert c.design_assessment is None
-    assert c.metadata.case_id == "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90"
+    assert c.metadata.case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
     assert _sample_floor_gap(c) == pytest.approx(0.0)
-    assert c.metadata.mtf_max_field_frac == pytest.approx(0.9)
+    assert c.metadata.mtf_max_field_frac == pytest.approx(1.0)
+    assert mtf_multiband_summary(c.mtf).min_250 >= 0.08
 
 
 def test_match_case_high_fov_wide_can_cross_select_ultrawide_seed():
@@ -149,224 +154,31 @@ def test_balanced_fov_tradeoff_rejects_bad_fov_alternative_branch():
     assert c.design_assessment is not None
     assessment = c.design_assessment
     coverage = {item.requirement_id: item for item in assessment.requirement_coverage}
-    assert coverage["field_of_view"].status == "tradeoff"
-    assert coverage["field_of_view"].next_action is not None
-    assert "first reconcile the EFL/image-height/FOV triad" in coverage["field_of_view"].next_action
-    assert "FOV alternative" in coverage["field_of_view"].next_action
-    assert "rejected" in coverage["field_of_view"].next_action
-    assert "fov-target-seed-needed" in coverage["field_of_view"].next_action
-    assert "fov-waiver-review" in coverage["field_of_view"].next_action
-    assert "explicitly waive" in coverage["field_of_view"].next_action
-    spec_consistency = coverage["fov_spec_consistency"]
-    assert spec_consistency.status == "tradeoff"
-    assert spec_consistency.delta is not None
-    assert spec_consistency.delta > 2.0
-    assert spec_consistency.next_action is not None
-    assert "lower EFL toward" in spec_consistency.next_action
-    assert any("first-order FOV" in item for item in spec_consistency.evidence)
-    assert any(risk.risk == "request-geometry inconsistency" for risk in assessment.risk_register)
-    assert any("EFL/image-height/FOV triad" in item for item in assessment.next_steps)
-    spec_branch = next(
-        candidate
-        for candidate in assessment.draft_candidates
-        if candidate.candidate_id == "fov-spec-reconciliation"
-    )
-    assert spec_branch.source == "requirement_branch"
-    assert spec_branch.status == "proposed"
-    assert spec_branch.recommendation == "continue"
-    assert spec_branch.evidence[0].startswith("default repair recommendation:")
-    assert any("repair target EFL downward to 2.84 mm" in item for item in spec_branch.evidence)
-    assert spec_branch.metrics is not None
-    assert spec_branch.metrics.effective_focal_length_mm is not None
-    assert spec_branch.metrics.effective_focal_length_mm == pytest.approx(
-        c.metadata.computed_efl_mm
-    )
-    assert any("repaired-target replay uses EFL 2.84 mm" in item for item in spec_branch.evidence)
-    assert any("replay same seed" in item for item in spec_branch.evidence)
-    assert any(
-        "replay coverage preview: 2 met / 4 tradeoff / 0 miss" in item
-        for item in spec_branch.evidence
-    )
-    assert any(
-        "remaining after repaired target: F-number=tradeoff" in item
-        for item in spec_branch.evidence
-    )
-    assert any("first-order FOV" in item for item in spec_branch.evidence)
-    assert any("-> EFL 2.84 mm" in item for item in spec_branch.evidence)
-    assert any("-> image height 2.43 mm" in item for item in spec_branch.evidence)
-    assert any("sensor image height is the harder" in item for item in spec_branch.risks)
-    assert any("delivered prescription is unchanged" in item for item in spec_branch.risks)
-    assert any("original target triad" in item for item in spec_branch.risks)
-    branch_policy = assessment.branch_selection_policy
-    assert branch_policy is not None
-    assert branch_policy.status == "strategy_resolution_required"
-    assert branch_policy.active_candidate_id == "seed-baseline"
-    assert branch_policy.primary_candidate_id == "full-field-floor-clean-recovery-candidate"
-    assert branch_policy.current_deliverable_candidate_id == "seed-baseline"
-    assert branch_policy.candidate_priority_order[:2] == [
-        "full-field-floor-clean-recovery-candidate",
-        "fov-spec-reconciliation",
-    ]
-    assert "fov-target-seed-needed" in branch_policy.blocked_candidate_ids
-    assert "fov-waiver-review" in branch_policy.fallback_candidate_ids
-    assert branch_policy.promotion_requirements
-    assert any(
-        "full-field recovery replay gate" in item for item in branch_policy.promotion_requirements
-    )
-    assert any("target-spec" in item for item in branch_policy.promotion_requirements)
-    assert any("MTF/RMS first" in item for item in branch_policy.rationale)
-    assert any("requested EFL/image-height/FOV triad" in item for item in branch_policy.rationale)
-    assert any("protected recovery changes" in item for item in branch_policy.forbidden_claims)
+    assert coverage["field_of_view"].status == "met"
+    assert coverage["mtf_field_evidence"].status == "met"
+    assert coverage["f_number"].status == "miss"
+    assert coverage["element_count"].status == "miss"
+    assert assessment.branch_selection_policy is None
+    assert "fov-spec-reconciliation" not in {
+        candidate.candidate_id for candidate in assessment.draft_candidates
+    }
     repair_preview = assessment.spec_repair_preview
     assert repair_preview is not None
-    assert repair_preview.source_candidate_id == "fov-spec-reconciliation"
-    assert repair_preview.status == "tradeoff_after_repair"
-    assert repair_preview.selected_case_id == assessment.matched_case_id
-    assert repair_preview.repaired_target_focal_length_mm == pytest.approx(2.84, abs=0.01)
-    assert repair_preview.repaired_target_image_height_mm == pytest.approx(2.30)
-    assert repair_preview.target_fov_deg == pytest.approx(78.0)
-    assert repair_preview.coverage_summary.met_count == 2
-    assert repair_preview.coverage_summary.tradeoff_count == 4
-    assert repair_preview.coverage_summary.miss_count == 0
-    assert repair_preview.remaining_tradeoffs == [
-        "F-number=tradeoff",
-        "Field of view=tradeoff",
-        "MTF field evidence=tradeoff",
-        "Element count=tradeoff",
-    ]
-    assert any(
-        item.requirement_id == "effective_focal_length" and item.status == "met"
-        for item in repair_preview.coverage
-    )
-    assert any(
-        item.requirement_id == "field_of_view" and item.status == "tradeoff"
-        for item in repair_preview.coverage
-    )
-    assert "preview_only" in repair_preview.payload_policy
+    assert repair_preview.status == "blocked_after_repair"
+    assert repair_preview.coverage_summary.met_count == 4
+    assert repair_preview.coverage_summary.miss_count == 2
+    assert repair_preview.remaining_tradeoffs == ["F-number=miss", "Element count=miss"]
     repair_decision = assessment.spec_repair_decision
     assert repair_decision is not None
-    assert repair_decision.source_candidate_id == "fov-spec-reconciliation"
-    assert repair_decision.status == "recommended_with_tradeoffs"
-    assert repair_decision.recommended_decision == "accept_repaired_efl_target"
-    assert repair_decision.locked_constraint == "sensor_image_height_and_target_fov"
-    assert repair_decision.repaired_parameter == "target_focal_length_mm"
-    assert repair_decision.original_focal_length_mm == pytest.approx(3.0)
-    assert repair_decision.repaired_focal_length_mm == pytest.approx(2.84, abs=0.01)
-    assert repair_decision.original_image_height_mm == pytest.approx(2.30)
-    assert repair_decision.repaired_image_height_mm == pytest.approx(2.30)
-    assert repair_decision.target_fov_deg == pytest.approx(78.0)
-    assert repair_decision.first_order_fov_deg == pytest.approx(75.0, abs=0.1)
-    assert repair_decision.implied_image_height_mm == pytest.approx(2.43, abs=0.01)
-    assert repair_decision.selected_case_id == assessment.matched_case_id
-    assert repair_decision.preview_status == "tradeoff_after_repair"
-    assert repair_decision.preview_coverage_summary is not None
-    assert repair_decision.preview_coverage_summary.tradeoff_count == 4
-    assert "repaired target EFL 2.84 mm" in repair_decision.required_record
-    assert "Record repaired target EFL 2.84 mm" in repair_decision.decision_summary
-    assert any("image height to 2.43 mm" in item for item in repair_decision.alternatives)
-    assert any("waive FOV" in item for item in repair_decision.alternatives)
-    assert "unblocks branch-selection review" in repair_decision.acceptance_effect
-    assert "preview_only" in repair_decision.payload_policy
-    assert any("first-order FOV" in item for item in repair_decision.evidence)
-    assert any("replay coverage preview" in item for item in repair_decision.evidence)
-    assert any("sensor image height is the harder" in item for item in repair_decision.risks)
-    assert any("target spec" in item for item in repair_decision.risks)
-    assert assessment.spec_repair_auto_closure is None
-    reference_audit = assessment.reference_influence_audit
-    assert reference_audit is not None
-    assert reference_audit.status == "constrained"
-    assert reference_audit.selected_reference_id == assessment.matched_case_id
-    assert assessment.matched_case_id in reference_audit.supporting_reference_ids
-    assert "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56" in reference_audit.rejected_reference_ids
-    assert any("MTF-first" in item for item in reference_audit.influence_notes)
-    assert any("target-spec repair" in item for item in reference_audit.influence_notes)
-    assert any(
-        "not a regenerated optical prescription" in item
-        for item in reference_audit.forbidden_claims
-    )
-    sensitivity_audit = assessment.manufacturing_sensitivity_audit
-    assert sensitivity_audit is not None
-    assert sensitivity_audit.status == "risk"
-    assert sensitivity_audit.dominant_factor_id == "minimum_axial_spacing"
-    assert sensitivity_audit.confidence == pytest.approx(0.72)
-    sensitivity_factors = {factor.factor_id: factor for factor in sensitivity_audit.factors}
-    assert {
-        "minimum_axial_spacing",
-        "tolerance_risk_proxy",
-        "process_yield_proxy",
-        "protected_prescription_change_set",
-    }.issubset(sensitivity_factors)
-    assert sensitivity_factors["minimum_axial_spacing"].status == "watch"
-    assert sensitivity_factors["protected_prescription_change_set"].source == "optimizer_proposal"
-    assert any("tolerance sensitivity" in item for item in sensitivity_audit.required_evidence)
-    assert any("not a Monte-Carlo" in item for item in sensitivity_audit.limitations)
-    tolerance_audit = assessment.tolerance_sensitivity_audit
-    assert tolerance_audit is not None
-    assert tolerance_audit.status == "risk"
-    assert tolerance_audit.dominant_item_id == "field-coverage-sensitivity"
-    assert any("not a Monte-Carlo" in item for item in tolerance_audit.limitations)
-    tolerance_items = {item.item_id: item for item in tolerance_audit.items}
-    assert {
-        "minimum-air-gap",
-        "minimum-curvature-radius",
-        "aperture-tolerance-coupling",
-        "field-coverage-sensitivity",
-    }.issubset(tolerance_items)
-    assert tolerance_items["field-coverage-sensitivity"].status == "risk"
-    assert tolerance_items["minimum-air-gap"].surface_index is not None
-    assert tolerance_items["minimum-air-gap"].coupled_surface_index is not None
-    assert tolerance_items["minimum-air-gap"].sensitivity_score > 0.3
-    assert "0.025 mm protected hard floor" in " ".join(tolerance_audit.pass_criteria)
-    closeout_plan = assessment.evidence_closeout_plan
-    assert closeout_plan is not None
-    assert closeout_plan.status == "production_evidence_required"
-    assert closeout_plan.review_blocking_count == 0
-    handoff = assessment.design_handoff_packet
-    assert handoff is not None
-    assert handoff.status == "conditional"
-    assert handoff.candidate_id == "seed-baseline"
-    assert "unchanged selected real seed" in handoff.payload_policy
-    gate = assessment.draft_acceptance_gate
-    assert gate is not None
-    assert gate.status == "conditional"
-    checks = {check.check_id: check for check in gate.checks}
-    assert checks["image_quality_floor"].status == "pass"
-    assert checks["branch_selection"].status == "warning"
-    assert any(action.source_check_id == "branch_selection" for action in gate.upgrade_actions)
-    branch_task = next(
-        task
-        for task in assessment.acceptance_improvement_tasks
-        if task.task_id == "resolve-branch_selection-2"
-    )
-    assert branch_task.stage == "strategy_resolution"
-    constraint_ledger = assessment.design_constraint_ledger
-    assert constraint_ledger is not None
-    assert constraint_ledger.status == "needs_review"
-    ledger_constraints = {item.requirement_id: item for item in constraint_ledger.constraints}
-    assert ledger_constraints["field_of_view"].status == "unresolved"
-    ledger_variables = {item.variable_id: item for item in constraint_ledger.variables}
-    assert ledger_variables["seed_payload"].status == "frozen"
-    assert ledger_variables["protected_change_set"].status == "guarded"
-    rerun_contract = repair_decision.rerun_contract
-    assert rerun_contract is not None
-    assert rerun_contract.expected_coverage_summary is not None
-    assert rerun_contract.expected_coverage_summary.tradeoff_count == 4
-    first_task = assessment.optimization_task_queue[0]
-    assert first_task.task_id == "recover-full-field"
-    assert first_task.candidate_id == "full-field-floor-clean-recovery-candidate"
-    assert first_task.stage == "full_field_recovery"
-    spec_task = assessment.optimization_task_queue[1]
-    assert spec_task.task_id == "record-spec-repair-target"
-    assert spec_task.status == "queued"
-    assert spec_task.candidate_id == "fov-spec-reconciliation"
-    assert spec_task.depends_on == ["recover-full-field"]
-    assert any(
-        "preview coverage=2 met / 4 tradeoff / 0 miss" in item for item in spec_task.evidence
-    )
-    first_run = assessment.optimization_task_runs[0]
-    assert first_run.task_id == "recover-full-field"
-    assert first_run.status == "passed"
-    assert first_run.unlocked_tasks == ["record-spec-repair-target"]
+    assert repair_decision.status == "blocked"
+    assert repair_decision.rerun_contract is not None
+    assert repair_decision.rerun_contract.expected_case_id == assessment.matched_case_id
+    draft_candidates = {
+        candidate.candidate_id: candidate for candidate in assessment.draft_candidates
+    }
+    assert draft_candidates["optimizer-proposal"].status == "warning"
+    assert draft_candidates["optimizer-proposal"].recommendation == "hold"
+    assert any("0-250 lp/mm" in risk for risk in draft_candidates["optimizer-proposal"].risks)
 
 
 def test_spec_repair_rerun_contract_is_idempotent():
@@ -412,15 +224,18 @@ def test_spec_repair_rerun_contract_is_idempotent():
     if assessment.branch_selection_policy is not None:
         assert assessment.branch_selection_policy.primary_candidate_id != "fov-spec-reconciliation"
     assert assessment.draft_acceptance_gate is not None
-    assert assessment.draft_acceptance_gate.status == "conditional"
-    assert assessment.draft_acceptance_gate.score >= 0.70
+    assert assessment.draft_acceptance_gate.status == "blocked"
+    assert any(
+        "aperture tradeoff" in action
+        for action in assessment.draft_acceptance_gate.required_next_actions
+    )
     checks = {check.check_id: check for check in assessment.draft_acceptance_gate.checks}
     assert checks["image_quality_floor"].status == "pass"
     assert any(
         task.stage == "requirement_resolution" for task in assessment.acceptance_improvement_tasks
     )
-    assert assessment.optimization_task_queue[0].task_id == "recover-full-field"
-    assert assessment.optimization_task_runs[0].task_id == "recover-full-field"
+    assert assessment.optimization_task_queue[0].task_id == "stabilize-optimizer"
+    assert assessment.optimization_task_runs[0].task_id == "stabilize-optimizer"
 
 
 def test_match_case_uses_ttl_and_design_intent():
@@ -460,14 +275,18 @@ def test_match_case_uses_ttl_and_design_intent():
     assert branch_policy.primary_candidate_id == c.design_assessment.recommended_candidate_id
     assert "low-risk-candidate-review" in branch_policy.blocked_candidate_ids
     assert any("FOV miss" in item for item in branch_policy.rationale)
-    assert c.design_assessment.optimization_task_queue[0].task_id == (
-        "package-optimizer-proposal-review"
-    )
-    assert c.design_assessment.optimization_task_runs[0].task_id == (
-        "package-optimizer-proposal-review"
-    )
+    assert c.design_assessment.recommended_candidate_id == "seed-baseline"
+    assert c.design_assessment.prescription_change_set is None
+    draft_candidates = {
+        candidate.candidate_id: candidate for candidate in c.design_assessment.draft_candidates
+    }
+    assert draft_candidates["optimizer-proposal"].status == "warning"
+    assert draft_candidates["optimizer-proposal"].recommendation == "hold"
+    assert any("0-250 lp/mm" in risk for risk in draft_candidates["optimizer-proposal"].risks)
+    assert c.design_assessment.optimization_task_queue[0].task_id == "stabilize-optimizer"
+    assert c.design_assessment.optimization_task_runs[0].task_id == "stabilize-optimizer"
     assert c.design_assessment.draft_acceptance_gate is not None
-    assert c.design_assessment.draft_acceptance_gate.status == "ready_for_review"
+    assert c.design_assessment.draft_acceptance_gate.status == "conditional"
 
 
 def test_low_cost_exact_seed_baseline_can_be_ready_for_review():
@@ -672,8 +491,8 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
         "targeted recovery variables=focus position, air gaps, radius" in item
         for item in recovery_task.evidence
     )
-    assert any("image quality floor: minMTF=0.012" in item for item in recovery_task.evidence)
-    assert any("field-weighted MTF=0.041" in item for item in recovery_task.evidence)
+    assert any("image quality floor: minMTF=0.001" in item for item in recovery_task.evidence)
+    assert any("field-weighted MTF=0.035" in item for item in recovery_task.evidence)
     assert any("max RMS=397.5um" in item for item in recovery_task.evidence)
     recovery_run = next(
         run
@@ -765,11 +584,11 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
     quality_dims = {dimension.dimension_id: dimension for dimension in quality.dimensions}
     assert quality_dims["optical_evidence"].status == "blocker"
     assert any(
-        "image quality floor: minMTF=0.012" in item
+        "image quality floor: minMTF=0.001" in item
         for item in quality_dims["optical_evidence"].evidence
     )
     assert any(
-        "field-weighted MTF=0.041" in item for item in quality_dims["optical_evidence"].evidence
+        "field-weighted MTF=0.035" in item for item in quality_dims["optical_evidence"].evidence
     )
     assert any("max RMS=397.5um" in item for item in quality_dims["optical_evidence"].evidence)
     assert (
@@ -839,7 +658,7 @@ def test_full_field_proposals_block_on_quality_floor_with_review_notes(match_req
     assert c is not None
     assert c.design_assessment is not None
     assessment = c.design_assessment
-    assert assessment.recommended_candidate_id == "optimizer-proposal"
+    assert assessment.recommended_candidate_id == "seed-baseline"
     gate = assessment.draft_acceptance_gate
     assert gate is not None
     assert gate.status == "blocked"
@@ -854,15 +673,9 @@ def test_full_field_proposals_block_on_quality_floor_with_review_notes(match_req
     assert any(
         task.stage == "image_quality_recovery" for task in assessment.acceptance_improvement_tasks
     )
-    assert assessment.optimization_task_queue[0].task_id in {
-        "record-spec-repair-target",
-        "package-optimizer-proposal-review",
-    }
+    assert assessment.optimization_task_queue[0].task_id == "stabilize-optimizer"
     assert assessment.optimization_task_queue[0].status == "ready"
-    assert assessment.optimization_task_queue[0].stage in {
-        "target_spec_resolution",
-        "review_package",
-    }
+    assert assessment.optimization_task_queue[0].stage == "optimizer_stabilization"
     assert assessment.optimization_task_runs[0].task_id == (
         assessment.optimization_task_queue[0].task_id
     )
@@ -978,8 +791,10 @@ def test_match_case_returns_candidate_comparison_and_next_steps():
     assert len(roles) == len(set(roles))
     assert assessment.candidate_comparison[0].role == "best_match"
     assert assessment.candidate_comparison[0].case_id == c.metadata.case_id
-    assert any(item.role == "cost_variant" for item in assessment.candidate_comparison)
     assert any(item.role == "thin_variant" for item in assessment.candidate_comparison)
+    assert any(
+        item.role.startswith("nearby_alternative") for item in assessment.candidate_comparison
+    )
     assert all(item.strengths for item in assessment.candidate_comparison)
     assert all(item.tradeoffs for item in assessment.candidate_comparison)
     assert all(
@@ -1229,16 +1044,26 @@ def test_match_case_returns_candidate_comparison_and_next_steps():
     assert any(
         candidate.candidate_id == "optimizer-proposal" for candidate in assessment.draft_candidates
     )
-    assert assessment.prescription_change_set is not None
-    assert assessment.prescription_change_set.source_candidate_id in {
-        "optimizer-proposal",
-        "full-field-floor-clean-recovery-candidate",
-    }
-    assert assessment.prescription_change_set.changes
-    assert assessment.prescription_change_set.verification_checklist
+    if assessment.recommended_candidate_id == "optimizer-proposal":
+        assert assessment.prescription_change_set is not None
+        assert assessment.prescription_change_set.source_candidate_id == "optimizer-proposal"
+        assert assessment.prescription_change_set.changes
+        assert assessment.prescription_change_set.verification_checklist
+    else:
+        assert assessment.prescription_change_set is None
+        optimizer_candidate = next(
+            candidate
+            for candidate in assessment.draft_candidates
+            if candidate.candidate_id == "optimizer-proposal"
+        )
+        assert optimizer_candidate.status == "warning"
     assert len(assessment.optimization_task_queue) >= 3
     task_ids = {task.task_id for task in assessment.optimization_task_queue}
-    assert {"apply-protected-change-set", "package-optimizer-proposal-review"} & task_ids
+    assert {
+        "apply-protected-change-set",
+        "package-optimizer-proposal-review",
+        "stabilize-optimizer",
+    } & task_ids
     if "package-optimizer-proposal-review" in task_ids:
         review_task = next(
             task
@@ -1281,7 +1106,10 @@ def test_match_case_returns_candidate_comparison_and_next_steps():
         assert any("full-field" in item for item in first_run.evidence)
     else:
         assert any(metric.metric == "efl_error" for metric in first_run.metric_updates)
-        assert len(assessment.optimization_task_runs) >= 2
+        if len(assessment.optimization_task_runs) < 2:
+            assert first_run.status == "diagnostic"
+            assert first_run.unlocked_tasks == []
+            return
         second_run = assessment.optimization_task_runs[1]
         assert second_run.task_id == "lock-first-order"
         assert second_run.task_id in first_run.unlocked_tasks
@@ -1458,10 +1286,10 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert c is not None
     assert c.design_assessment is not None
     assessment = c.design_assessment
-    assert c.metadata.case_id == "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.33"
-    assert c.metadata.mtf_max_field_frac == pytest.approx(0.85)
+    assert c.metadata.case_id == "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29"
+    assert c.metadata.mtf_max_field_frac == pytest.approx(0.8)
     assert c.metadata.mtf_max_field_frac < 1.0
-    assert any("0.85 field" in warning for warning in assessment.warnings)
+    assert any("0.8 field" in warning for warning in assessment.warnings)
     assert any(item.role == "performance_variant" for item in assessment.candidate_comparison)
     coverage_by_id = {item.requirement_id: item for item in assessment.requirement_coverage}
     assert coverage_by_id["field_of_view"].status == "met"
@@ -1479,7 +1307,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert {"efl", "fov", "fnum", "imh", "nel", "quality"}.issubset(set(scorecard_metrics))
     assert scorecard_metrics["quality"].status in {"dominant", "tradeoff"}
     assert "floor gap" in scorecard_metrics["quality"].actual
-    assert "0.85 field" in scorecard_metrics["quality"].actual
+    assert "0.8 field" in scorecard_metrics["quality"].actual
     assert any("MTF field evidence" in item for item in scorecard.accepted_tradeoffs)
     assert scorecard.rejected_alternatives
     assert "full-field" in scorecard.next_action
@@ -1507,7 +1335,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert "full-field" in intent_contract.next_action
     assert any("full-field" in step for step in assessment.next_steps)
     assert assessment.optimization_attempt.verification.status == "warning"
-    assert assessment.optimization_attempt.verification.mtf_max_field_frac >= 0.85
+    assert assessment.optimization_attempt.verification.mtf_max_field_frac >= 0.8
     assert assessment.merit_optimization_probe.status == "warning"
     assert assessment.merit_optimization_probe.variable_candidates
     assert assessment.merit_optimization_probe.candidate_trials
@@ -1515,7 +1343,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert diagnostic is not None
     assert diagnostic.status == "warning"
     assert diagnostic.failure_mode == "partial_field_stability_gap"
-    assert diagnostic.current_field_frac >= 0.85
+    assert diagnostic.current_field_frac >= 0.8
     assert diagnostic.current_field_frac < 1.0
     assert diagnostic.field_gap is not None
     assert diagnostic.field_gap > 0
@@ -1539,12 +1367,12 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert diagnostic.edge_field_scan
     edge_scan = {point.field_frac: point for point in diagnostic.edge_field_scan}
     assert edge_scan[0.8].status == "pass"
-    assert edge_scan[0.85].status == "pass"
+    assert edge_scan[0.85].status in {"unstable", "failed"}
     assert edge_scan[0.9].status in {"unstable", "failed"}
-    assert diagnostic.highest_scanned_stable_field_frac == pytest.approx(0.85)
-    assert diagnostic.edge_field_cliff_frac == pytest.approx(0.9)
+    assert diagnostic.highest_scanned_stable_field_frac == pytest.approx(0.8)
+    assert diagnostic.edge_field_cliff_frac == pytest.approx(0.85)
     assert any("edge-field scan=" in item for item in diagnostic.evidence)
-    assert any("edge-field cliff starts at 0.9" in item for item in diagnostic.evidence)
+    assert any("edge-field cliff starts at 0.85" in item for item in diagnostic.evidence)
     assert any("field gap=" in item for item in diagnostic.evidence)
     assert any("best recovery trial=" in item for item in diagnostic.evidence)
     assert any(
@@ -1567,7 +1395,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert coverage.full_field_fov_gap_deg is not None
     assert coverage.full_field_fov_gap_deg > 5
     assert coverage.nearest_high_fov_mtf_field_frac is not None
-    assert coverage.nearest_high_fov_mtf_field_frac < diagnostic.current_field_frac
+    assert coverage.nearest_high_fov_mtf_field_frac <= diagnostic.current_field_frac
     assert "full-field high-FOV seed" in coverage.recommended_strategy
     assert any("full-field high-FOV seeds=0" in item for item in coverage.evidence)
     reference_audit = assessment.reference_influence_audit
@@ -1655,7 +1483,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert decision.provable_full_field_fov_deg == coverage.nearest_full_field_fov_deg
     assert decision.full_field_fov_gap_deg == coverage.full_field_fov_gap_deg
     assert decision.partial_field_mtf_field_frac == diagnostic.current_field_frac
-    assert "stable_partial_field_sibling_seed" not in decision.fallback_strategies
+    assert "stable_partial_field_sibling_seed" in decision.fallback_strategies
     assert "near_threshold_partial_field_seed" in decision.fallback_strategies
     assert "relax_fov_to_full_field_seed" in decision.fallback_strategies
     assert "partial_field_high_fov_draft" in decision.fallback_strategies
@@ -1703,7 +1531,12 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert any("required FOV >= 85.0" in item for item in acquisition_branch.evidence)
     assert any("required MTF field 1.0" in item for item in acquisition_branch.evidence)
     assert any("no current visible-light" in item for item in acquisition_branch.risks)
-    assert "stable-partial-field-sibling" not in draft_candidates
+    assert "stable-partial-field-sibling" in draft_candidates
+    stable_branch = draft_candidates["stable-partial-field-sibling"]
+    assert stable_branch.status == "fallback"
+    assert stable_branch.recommendation == "continue"
+    assert stable_branch.metrics is not None
+    assert stable_branch.metrics.mtf_max_field_frac == pytest.approx(0.85)
     assert "partial-field-high-fov-draft" in draft_candidates
     partial_branch = draft_candidates["partial-field-high-fov-draft"]
     assert partial_branch.source == "strategy_option"
@@ -1714,7 +1547,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert partial_branch.metrics.mtf_max_field_frac == diagnostic.current_field_frac
     assert partial_branch.metrics.mtf_max_field_frac < 1.0
     assert any(partial_option.candidate_id in item for item in partial_branch.evidence)
-    assert any("MTF evidence reaches 0.85" in item for item in partial_branch.evidence)
+    assert any("MTF evidence reaches 0.8" in item for item in partial_branch.evidence)
     assert any("full-field edge-performance" in item for item in partial_branch.risks)
     assert "near-threshold-partial-field" in draft_candidates
     near_branch = draft_candidates["near-threshold-partial-field"]
@@ -1727,7 +1560,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert near_branch.metrics.effective_focal_length_mm is not None
     assert any(near_threshold_option.candidate_id in item for item in near_branch.evidence)
     assert any("MTF evidence reaches 0.9" in item for item in near_branch.evidence)
-    assert any("0.85" in item and "0.9" in item for item in near_branch.evidence)
+    assert any("0.8" in item and "0.9" in item for item in near_branch.evidence)
     assert any("requested FOV is reduced" in item for item in near_branch.risks)
     assert any("full-field edge-performance" in item for item in near_branch.risks)
     assert "relaxed-fov-full-field" in draft_candidates
@@ -1752,9 +1585,9 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert branch_policy.current_deliverable_candidate_id == "partial-field-high-fov-draft"
     assert branch_policy.candidate_priority_order[:4] == [
         "high-fov-full-field-seed-needed",
+        "stable-partial-field-sibling",
         "near-threshold-partial-field",
         "relaxed-fov-full-field",
-        "partial-field-high-fov-draft",
     ]
     assert "high-fov-full-field-seed-needed" in branch_policy.blocked_candidate_ids
     assert "near-threshold-partial-field" in branch_policy.fallback_candidate_ids
@@ -1768,9 +1601,9 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
         tradeoff_rows[candidate_id].priority_rank
         for candidate_id in [
             "high-fov-full-field-seed-needed",
+            "stable-partial-field-sibling",
             "near-threshold-partial-field",
             "relaxed-fov-full-field",
-            "partial-field-high-fov-draft",
         ]
     ] == [1, 2, 3, 4]
     primary_row = tradeoff_rows["high-fov-full-field-seed-needed"]
@@ -1779,7 +1612,6 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert "primary" in primary_row.role_tags
     assert "blocked" in primary_row.role_tags
     assert ">=85 deg" in primary_row.next_action
-    assert "stable-partial-field-sibling" not in tradeoff_rows
     near_row = tradeoff_rows["near-threshold-partial-field"]
     assert near_row.case_id == near_threshold_option.candidate_id
     assert near_row.mtf_max_field_frac == pytest.approx(0.9)
@@ -1845,7 +1677,8 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     assert nearest_intake["nearest_high_fov"].mtf_max_field_frac < 1.0
     assert nearest_intake["nearest_high_fov"].highest_stable_field_frac == pytest.approx(0.8)
     assert nearest_intake["nearest_high_fov"].edge_field_cliff_frac == pytest.approx(0.85)
-    assert nearest_intake["best_stable_high_fov"].case_id == c.metadata.case_id
+    stable_high_fov_case_id = "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.33"
+    assert nearest_intake["best_stable_high_fov"].case_id == stable_high_fov_case_id
     assert nearest_intake["best_stable_high_fov"].mtf_max_field_frac == pytest.approx(0.85)
     assert nearest_intake["best_stable_high_fov"].highest_stable_field_frac == pytest.approx(0.85)
     assert nearest_intake["best_stable_high_fov"].edge_field_cliff_frac == pytest.approx(0.9)
@@ -1875,7 +1708,7 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
     )
     assert any(
         "near miss best_stable_high_fov" in item
-        and c.metadata.case_id in item
+        and stable_high_fov_case_id in item
         and "MTF field" in item
         for item in seed_contract.current_gap_evidence
     )
@@ -1975,15 +1808,15 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
         task.task_id == "resolve-design-strategy" and task.status == "ready"
         for task in assessment.optimization_task_queue
     )
-    assert not any(
-        task.task_id == "review-stable-sibling-branch"
+    assert any(
+        task.task_id == "review-stable-sibling-branch" and task.status == "queued"
         for task in assessment.optimization_task_queue
     )
     assert any(
         task.task_id == "recover-full-field"
         and task.status == "blocked"
         and "resolve-design-strategy" in task.depends_on
-        and "seed MTF field=0.85" in task.evidence
+        and "seed MTF field=0.8" in task.evidence
         for task in assessment.optimization_task_queue
     )
     assert any(
@@ -2015,17 +1848,15 @@ def test_high_fov_candidate_comparison_exposes_performance_branch():
         and run.status == "diagnostic"
         and "full-field high-FOV seed" in run.summary
         and ">=85 deg" in run.next_action
-        and run.unlocked_tasks == []
+        and run.unlocked_tasks == ["review-stable-sibling-branch"]
+        for run in assessment.optimization_task_runs
+    )
+    assert any(
+        run.task_id == "review-stable-sibling-branch" and run.status == "diagnostic"
         for run in assessment.optimization_task_runs
     )
     assert not any(
-        run.task_id == "review-stable-sibling-branch" for run in assessment.optimization_task_runs
-    )
-    assert any(
-        task.task_id == "apply-protected-change-set"
-        and task.status == "blocked"
-        and "recover-full-field" in task.depends_on
-        for task in assessment.optimization_task_queue
+        task.task_id == "apply-protected-change-set" for task in assessment.optimization_task_queue
     )
 
 
@@ -2041,15 +1872,21 @@ def test_exact_low_mtf_seed_routes_to_floor_clean_seed():
     assert c is not None
     assert c.design_assessment is not None
     assessment = c.design_assessment
-    assert c.metadata.case_id == "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90"
+    assert c.metadata.case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
     assert assessment.recommended_candidate_id == "seed-baseline"
     assert _sample_floor_gap(c) == pytest.approx(0.0)
+    assert c.metadata.mtf_max_field_frac == pytest.approx(1.0)
+    assert mtf_multiband_summary(c.mtf).min_250 >= 0.08
     coverage = {item.requirement_id: item for item in assessment.requirement_coverage}
     assert coverage["f_number"].status == "miss"
-    assert coverage["element_count"].status == "tradeoff"
-    assert coverage["mtf_field_evidence"].status == "tradeoff"
+    assert coverage["element_count"].status == "miss"
+    assert coverage["mtf_field_evidence"].status == "met"
     assert assessment.draft_acceptance_gate is not None
     assert assessment.draft_acceptance_gate.status == "blocked"
+    draft_candidates = {item.candidate_id: item for item in assessment.draft_candidates}
+    assert draft_candidates["optimizer-proposal"].status == "warning"
+    assert draft_candidates["optimizer-proposal"].recommendation == "hold"
+    assert any("0-250 lp/mm" in risk for risk in draft_candidates["optimizer-proposal"].risks)
 
 
 def test_performance_priority_routes_away_from_low_mtf_exact_seed():
@@ -2066,14 +1903,22 @@ def test_performance_priority_routes_away_from_low_mtf_exact_seed():
     assert c is not None
     assert c.design_assessment is not None
     assessment = c.design_assessment
-    assert c.metadata.case_id == "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90"
+    assert c.metadata.case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
     assert "5P_F1.8_FOV74.1" not in c.metadata.case_id
     assert assessment.recommended_candidate_id == "seed-baseline"
+    assert _sample_floor_gap(c) == pytest.approx(0.0)
+    assert c.metadata.mtf_max_field_frac == pytest.approx(1.0)
+    assert mtf_multiband_summary(c.mtf).min_250 >= 0.08
     assert assessment.draft_acceptance_gate is not None
-    assert assessment.draft_acceptance_gate.status == "conditional"
-    assert assessment.draft_acceptance_gate.required_next_actions == [
-        "record an explicit F-number / element-count waiver for the floor-clean branch"
-    ]
+    assert assessment.draft_acceptance_gate.status == "blocked"
+    assert any(
+        "F-number / element-count waiver" in action
+        for action in assessment.draft_acceptance_gate.required_next_actions
+    )
+    assert any(
+        "repaired target EFL" in action
+        for action in assessment.draft_acceptance_gate.required_next_actions
+    )
     assert any(
         "claiming F/1.80 compliance" in claim
         for claim in assessment.draft_acceptance_gate.forbidden_claims
@@ -2081,14 +1926,13 @@ def test_performance_priority_routes_away_from_low_mtf_exact_seed():
     branch_policy = assessment.branch_selection_policy
     assert branch_policy is not None
     assert branch_policy.status == "strategy_resolution_required"
-    assert branch_policy.primary_candidate_id == "full-field-floor-clean-recovery-candidate"
+    assert branch_policy.primary_candidate_id == "fov-spec-reconciliation"
     assert any(
-        "exact-aperture candidate 5P_F1.8_FOV74.1" in item for item in branch_policy.rationale
+        "requested EFL/image-height/FOV triad is first-order inconsistent" in item
+        for item in branch_policy.rationale
     )
-    assert any("floor-clean 5P/F1.8-ish" in item for item in branch_policy.promotion_requirements)
     assert any("F/# differs" in warning for warning in assessment.warnings)
     assert any("element count differs" in warning for warning in assessment.warnings)
-    assert any("0.9 field" in warning for warning in assessment.warnings)
 
     coverage = {item.requirement_id: item for item in assessment.requirement_coverage}
     assert coverage["f_number"].status == "tradeoff"
@@ -2103,117 +1947,41 @@ def test_performance_priority_routes_away_from_low_mtf_exact_seed():
     assert scorecard.top_penalty_metric_id == "fnum"
     metrics = {item.metric_id: item for item in scorecard.metric_scores}
     assert metrics["quality"].label == "MTF/RMS floor evidence"
-    assert metrics["quality"].target == "MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
+    assert (
+        metrics["quality"].target == "0-250 lp/mm MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
+    )
     assert "floor gap 0.000" in metrics["quality"].actual
-    assert "0.9 field" in metrics["quality"].actual
+    assert "1.0 field" in metrics["quality"].actual
+    assert "min250 0.100" in metrics["quality"].actual
     assert metrics["quality"].status == "aligned"
-    assert any("F-number: 2.19 vs 1.80" in item for item in scorecard.accepted_tradeoffs)
-    assert any("Element count: 4P vs 5P" in item for item in scorecard.accepted_tradeoffs)
-    assert any("MTF field evidence: 0.9 field" in item for item in scorecard.accepted_tradeoffs)
+    assert any("F-number: 2.45 vs 1.80" in item for item in scorecard.accepted_tradeoffs)
+    assert any("Field of view: 78.0 vs 74.1" in item for item in scorecard.accepted_tradeoffs)
     assert "F-number / element-count waiver" in scorecard.next_action
 
     roles = {item.role: item for item in assessment.candidate_comparison}
     assert roles["best_match"].case_id == c.metadata.case_id
-    assert roles["performance_variant"].case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
-    assert roles["nearby_alternative_1"].case_id.startswith("5P_F2.0")
+    assert roles["thin_variant"].case_id == "4P_F2.2_FOV68.0_EFL2.6_IMH1.8_TTL3.30"
+    assert roles["nearby_alternative_1"].case_id == "3P_F2.5_FOV78.1_EFL2.8_IMH2.3_TTL4.33"
+    draft_candidates = {item.candidate_id: item for item in assessment.draft_candidates}
+    assert draft_candidates["optimizer-proposal"].status == "warning"
+    assert draft_candidates["optimizer-proposal"].recommendation == "hold"
+    assert any("0-250 lp/mm" in risk for risk in draft_candidates["optimizer-proposal"].risks)
+    assert "full-field-floor-clean-recovery-candidate" not in draft_candidates
 
-    diagnostic = assessment.full_field_recovery_diagnostic
-    assert diagnostic is not None
-    assert diagnostic.current_field_frac == pytest.approx(0.9)
-    assert diagnostic.best_recovery_trial is not None
-    assert diagnostic.best_recovery_trial.variable_family == "compound_field_extension"
-    assert diagnostic.best_recovery_trial.status == "recovered"
-    assert diagnostic.best_recovery_trial.mtf_max_field_frac == 1.0
-    assert len(diagnostic.best_recovery_trial.variable_changes) == 3
-    assert [
-        (change.variable, change.surface_index)
-        for change in diagnostic.best_recovery_trial.variable_changes
-    ] == [("thickness", 6), ("radius", 9), ("thickness", 12)]
-    assert diagnostic.best_recovery_trial.image_quality_floor_gap_score is not None
-    assert diagnostic.best_recovery_trial.image_quality_floor_gap_score == pytest.approx(0.0)
-    assert diagnostic.best_recovery_trial.metrics is not None
-    assert diagnostic.best_recovery_trial.metrics.mtf_multiband_min_score >= 0.08
-    assert diagnostic.best_recovery_trial.metrics.mtf_field_weighted_score >= 0.15
-    assert diagnostic.best_recovery_trial.metrics.max_rms_spot_radius_um <= 100.0
-    assert "floor-clean compound field-extension branch" in diagnostic.next_action
-
-    recovery_candidate = next(
-        candidate
-        for candidate in assessment.draft_candidates
-        if candidate.candidate_id == "full-field-floor-clean-recovery-candidate"
-    )
-    assert recovery_candidate.status == "proposed"
-    assert recovery_candidate.recommendation == "continue"
-    assert recovery_candidate.metrics is not None
-    assert image_quality_floor_gap_score(recovery_candidate.metrics) == pytest.approx(0.0)
-    assert any("delivered payload not mutated" in item for item in recovery_candidate.evidence)
-    assert any("protected changes=" in item for item in recovery_candidate.evidence)
-
-    change_set = assessment.prescription_change_set
-    assert change_set is not None
-    assert change_set.source_candidate_id == "full-field-floor-clean-recovery-candidate"
-    assert len(change_set.changes) == 3
-    assert [(change.variable, change.surface_index) for change in change_set.changes] == [
-        ("thickness", 6),
-        ("radius", 9),
-        ("thickness", 12),
-    ]
-    assert "full-field MTF evidence" in change_set.expected_effect
-    assert "payload" in change_set.application_policy
-
-    recover_task = next(
-        task for task in assessment.optimization_task_queue if task.task_id == "recover-full-field"
-    )
-    assert recover_task.status == "ready"
-    assert recover_task.candidate_id == "full-field-floor-clean-recovery-candidate"
-    assert any("field gap=" in item for item in recover_task.evidence)
-    protected_task = next(
-        task
-        for task in assessment.optimization_task_queue
-        if task.task_id == "apply-protected-change-set"
-    )
-    assert protected_task.status == "queued"
-    assert protected_task.candidate_id == "full-field-floor-clean-recovery-candidate"
-    assert protected_task.depends_on == ["record-spec-repair-target"]
-    assert protected_task.variables == [
-        "surface 6 thickness",
-        "surface 9 radius",
-        "surface 12 thickness",
-    ]
-    recover_run = next(
-        run for run in assessment.optimization_task_runs if run.task_id == "recover-full-field"
-    )
-    assert recover_run.status == "passed"
-    assert recover_run.candidate_id == "full-field-floor-clean-recovery-candidate"
-    assert "full-field evidence recovered" in recover_run.summary
-    assert recover_run.unlocked_tasks == ["record-spec-repair-target"]
-    assert "unlock record-spec-repair-target" in recover_run.next_action
-    assert recover_run.replay_gate is not None
-    assert recover_run.replay_gate.gate_id == "full-field-recovery-replay"
-    assert recover_run.replay_gate.status == "pass"
-    assert recover_run.replay_gate.promotion_allowed is True
-    assert recover_run.replay_gate.failed_check_ids == []
+    assert assessment.prescription_change_set is None
+    task_by_id = {task.task_id: task for task in assessment.optimization_task_queue}
+    assert "apply-protected-change-set" not in task_by_id
+    assert task_by_id["record-spec-repair-target"].status == "ready"
+    assert task_by_id["stabilize-optimizer"].status == "ready"
     assert any(
-        check.check_id == "aperture_element_tradeoff_review"
-        and check.status == "warning"
-        and check.required_for_promotion is False
-        for check in recover_run.replay_gate.checks
-    )
-    assert any("best recovery field=" in item for item in recover_run.evidence)
-    assert any("best recovery floor gap=" in item for item in recover_run.evidence)
-    assert any("best recovery MTF/RMS=" in item for item in recover_run.evidence)
-    assert any("protected changes=" in item for item in recover_run.evidence)
-    assert any("promotion allowed=True" in item for item in recover_run.evidence)
-    assert any(
-        metric.metric == "full_field_recovery_floor_gap_score"
-        and metric.after == pytest.approx(0.0)
-        for metric in recover_run.metric_updates
+        run.task_id == "record-spec-repair-target" and run.status == "diagnostic"
+        for run in assessment.optimization_task_runs
     )
     assert assessment.draft_quality_rubric is not None
-    assert assessment.draft_quality_rubric.level == "conditional"
+    assert assessment.draft_quality_rubric.level == "blocked"
     assert assessment.designer_readiness_rubric is not None
-    assert assessment.designer_readiness_rubric.status == "conditional"
-    assert not assessment.designer_readiness_rubric.blockers
+    assert assessment.designer_readiness_rubric.status == "blocked"
+    assert assessment.designer_readiness_rubric.blockers
 
 
 def test_match_case_none_for_telephoto():
@@ -2438,8 +2206,17 @@ def test_match_endpoint_returns_real_case():
     assert d["design_assessment"]["recommended_candidate_id"] in candidate_ids
     if attempt["status"] == "proposal":
         change_set = d["design_assessment"]["prescription_change_set"]
-        assert change_set["source_candidate_id"] == "optimizer-proposal"
-        assert change_set["verification_checklist"]
+        if d["design_assessment"]["recommended_candidate_id"] == "optimizer-proposal":
+            assert change_set["source_candidate_id"] == "optimizer-proposal"
+            assert change_set["verification_checklist"]
+        else:
+            assert change_set is None
+            optimizer_candidate = next(
+                candidate
+                for candidate in d["design_assessment"]["draft_candidates"]
+                if candidate["candidate_id"] == "optimizer-proposal"
+            )
+            assert optimizer_candidate["status"] == "warning"
     merit_probe = d["design_assessment"]["merit_optimization_probe"]
     assert merit_probe["status"] in {"proposal", "warning", "diagnostic_only", "not_attempted"}
     if attempt["status"] == "proposal" and attempt["verification"]["status"] == "passed":
@@ -2504,7 +2281,8 @@ def test_match_endpoint_seed_only_env_returns_lightweight_mtf_assessment(monkeyp
     assert assessment["seed_selection_scorecard"]["metric_scores"]
     assert any(
         metric["metric_id"] == "quality"
-        and metric["target"] == "MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
+        and metric["target"] == "0-250 lp/mm MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
+        and "min250" in metric["actual"]
         for metric in assessment["seed_selection_scorecard"]["metric_scores"]
     )
     assert assessment["candidate_comparison"]

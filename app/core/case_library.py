@@ -205,7 +205,7 @@ def _image_quality_recovery_objective(
                 higher_is_better=True,
             ),
             ["asphere coefficients", "stop position", "air gaps", "field weighting"],
-            "recover minimum 50/100/150 lp/mm MTF before raw RMS gains",
+            "recover minimum 50/100/150/200/250 lp/mm MTF before raw RMS gains",
         ),
         (
             "mtf_field_weighted_floor_gap",
@@ -329,7 +329,10 @@ def _evaluate_image_quality_floor(
             else "field-weighted MTF=missing"
         ),
         f"max RMS={max_rms:.1f}um" if max_rms is not None else "max RMS=missing",
-        ("review floor: multiband min MTF>=0.08; field-weighted MTF>=0.15; max RMS<=100um"),
+        (
+            "review floor: 50/100/150/200/250 lp/mm min MTF>=0.08; "
+            "field-weighted MTF>=0.15; max RMS<=100um"
+        ),
     ]
     blockers: list[str] = []
     if min_mtf is None or min_mtf < _IMAGE_QUALITY_FLOOR_MIN_MTF:
@@ -1104,6 +1107,10 @@ def match_case(
             mtf_100lpmm_avg=bands.avg_100,
             mtf_150lpmm_min=bands.min_150,
             mtf_150lpmm_avg=bands.avg_150,
+            mtf_200lpmm_min=bands.min_200,
+            mtf_200lpmm_avg=bands.avg_200,
+            mtf_250lpmm_min=bands.min_250,
+            mtf_250lpmm_avg=bands.avg_250,
             mtf_multiband_min_score=bands.multiband_min_score,
             mtf_field_weighted_score=bands.field_weighted_score,
             max_rms_spot_radius_um=max(rms_values) if rms_values else None,
@@ -1115,23 +1122,35 @@ def match_case(
     def _seed_quality_penalty(c: OpticalSampleData) -> float:
         assert c.metadata is not None
         floor_gap = _seed_floor_gap(c)
-        floor_penalty = 1.0 if floor_gap is None else min(max(floor_gap, 0.0) / 3.0, 1.0)
+        floor_penalty = 1.0 if floor_gap is None else min(max(floor_gap, 0.0), 1.0)
         field_penalty = max(0.0, 1.0 - c.metadata.mtf_max_field_frac)
         return max(floor_penalty, field_penalty)
 
+    def _seed_spec_guard_penalty(c: OpticalSampleData) -> float:
+        assert c.metadata is not None
+        penalty = 0.0
+        fov_miss = abs(c.metadata.fov_deg - fov_deg)
+        if fov_miss > 5.0:
+            penalty += 0.04 + (fov_miss - 5.0) / 20.0
+        if image_height_mm is not None:
+            image_height_miss = abs(_case_image_height_mm(c) - image_height_mm)
+            if image_height_miss > 0.35:
+                penalty += 0.04 + (image_height_miss - 0.35) / 2.0
+        return penalty
+
     if performance_like:
-        quality_weight = 0.30
+        quality_weight = 0.45
     elif cost_like:
-        quality_weight = 0.05
+        quality_weight = 0.25
     else:
-        quality_weight = 0.22 if (image_height_mm is not None and image_height_mm <= 2.5) else 0.15
+        quality_weight = 0.34 if (image_height_mm is not None and image_height_mm <= 2.5) else 0.24
 
     weights = {
-        "efl": 0.32,
-        "fov": 0.24,
-        "fnum": 0.18,
-        "imh": 0.12 if image_height_mm is not None else 0.0,
-        "nel": 0.08 if (n_elements is not None or cost_like) else 0.0,
+        "efl": 0.20,
+        "fov": 0.46,
+        "fnum": 0.05,
+        "imh": 0.30 if image_height_mm is not None else 0.0,
+        "nel": 0.02 if (n_elements is not None or cost_like) else 0.0,
         "ttl": 0.12 if (max_total_track_mm is not None or cost_like) else 0.0,
         "mass": 0.10 if max_weight_g is not None else 0.0,
         "quality": quality_weight,
@@ -1171,7 +1190,8 @@ def match_case(
 
     def _distance(c: OpticalSampleData, *, target_efl_mm: float = efl_mm) -> float:
         parts = _distance_parts(c, target_efl_mm=target_efl_mm)
-        return math.sqrt(sum(weights[k] * parts.get(k, 0.0) ** 2 for k in weights))
+        weighted_distance = math.sqrt(sum(weights[k] * parts.get(k, 0.0) ** 2 for k in weights))
+        return weighted_distance + _seed_spec_guard_penalty(c)
 
     distances: dict[str, float] = {}
     for case in cases:
@@ -1252,6 +1272,7 @@ def match_case(
         "ranked real phone short-focus cases by EFL, F/#, FOV, image height, elements, and TTL",
         f"selected {best.metadata.case_id} as the lowest weighted-distance seed",
         "compared alternate seeds for cost, TTL, and performance tradeoffs",
+        "applied a guard penalty for severe FOV or image-height mismatch",
     ]
     if best.metadata.scenario != scenario:
         rationale.append(
@@ -3250,7 +3271,7 @@ def match_case(
             if metric_id == "mass":
                 return f"<= {max_weight_g:.2f} g" if max_weight_g is not None else "not fixed"
             if metric_id == "quality":
-                return "MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
+                return "0-250 lp/mm MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
             return "active scoring metric"
 
         def _metric_actual(metric_id: str, candidate: OpticalSampleData) -> str:
@@ -3273,9 +3294,12 @@ def match_case(
             if metric_id == "quality":
                 gap = _seed_floor_gap(candidate)
                 gap_label = f"{gap:.3f}" if gap is not None else "missing"
+                bands = mtf_multiband_summary(candidate.mtf)
+                min_250 = f"; min250 {bands.min_250:.3f}" if bands.min_250 is not None else ""
                 return (
                     f"floor gap {gap_label}; "
                     f"{format_mtf_field_fraction(candidate.metadata.mtf_max_field_frac)} field"
+                    f"{min_250}"
                 )
             return "n/a"
 
@@ -3583,6 +3607,10 @@ def match_case(
         mtf_100lpmm_avg=before_mtf_bands.avg_100,
         mtf_150lpmm_min=before_mtf_bands.min_150,
         mtf_150lpmm_avg=before_mtf_bands.avg_150,
+        mtf_200lpmm_min=before_mtf_bands.min_200,
+        mtf_200lpmm_avg=before_mtf_bands.avg_200,
+        mtf_250lpmm_min=before_mtf_bands.min_250,
+        mtf_250lpmm_avg=before_mtf_bands.avg_250,
         mtf_multiband_min_score=before_mtf_bands.multiband_min_score,
         mtf_field_weighted_score=before_mtf_bands.field_weighted_score,
         max_rms_spot_radius_um=max(before_rms_values) if before_rms_values else None,
@@ -4939,10 +4967,17 @@ def match_case(
         optimizer_gate = optimization_attempt.verification
         merit_changes = _promoted_merit_changes()
         promoted_merit_branch = bool(merit_changes)
+        optimizer_metrics = (
+            merit_optimization_probe.after_metrics
+            if promoted_merit_branch
+            else optimization_attempt.after_metrics
+        )
+        optimizer_floor = _evaluate_image_quality_floor(optimizer_metrics)
         optimizer_recommended = (
             optimization_attempt.status == "proposal"
             and optimizer_gate is not None
             and optimizer_gate.status == "passed"
+            and optimizer_floor.status == "pass"
         )
         strategy_blocks_full_field_claim = design_strategy_decision is not None
         seed_metrics = seed_baseline_metrics
@@ -4978,6 +5013,10 @@ def match_case(
                 mtf_100lpmm_avg=bands.avg_100,
                 mtf_150lpmm_min=bands.min_150,
                 mtf_150lpmm_avg=bands.avg_150,
+                mtf_200lpmm_min=bands.min_200,
+                mtf_200lpmm_avg=bands.avg_200,
+                mtf_250lpmm_min=bands.min_250,
+                mtf_250lpmm_avg=bands.avg_250,
                 mtf_multiband_min_score=bands.multiband_min_score,
                 mtf_field_weighted_score=bands.field_weighted_score,
                 max_rms_spot_radius_um=max(rms_values) if rms_values else None,
@@ -5711,20 +5750,17 @@ def match_case(
             )
         if optimization_attempt.variable_changes:
             gate_status = optimizer_gate.status if optimizer_gate is not None else "not_run"
-            if gate_status == "passed":
+            if gate_status == "passed" and optimizer_floor.status == "pass":
                 status = "proposed"
-            elif gate_status == "warning":
+            elif gate_status in {"passed", "warning"}:
                 status = "warning"
             else:
                 status = "diagnostic"
-            metrics = (
-                merit_optimization_probe.after_metrics
-                if promoted_merit_branch
-                else optimization_attempt.after_metrics
-            )
+            metrics = optimizer_metrics
             evidence = [
                 _changes_label(optimization_attempt.variable_changes),
                 f"verification gate {gate_status}",
+                f"MTF/RMS floor {optimizer_floor.status}",
                 (
                     f"EFL miss improvement {optimization_attempt.improvement_efl_mm:.3f} mm"
                     if optimization_attempt.improvement_efl_mm is not None
@@ -5759,9 +5795,19 @@ def match_case(
                     metrics=metrics,
                     evidence=evidence,
                     risks=[
-                        optimizer_gate.summary
-                        if optimizer_gate is not None and optimizer_gate.status != "passed"
-                        else "proposal still requires full tolerancing before release"
+                        *(
+                            [
+                                "optimizer branch does not clear the 0-250 lp/mm MTF/RMS floor",
+                                *optimizer_floor.blockers[:2],
+                            ]
+                            if optimizer_floor.status != "pass"
+                            else []
+                        ),
+                        (
+                            optimizer_gate.summary
+                            if optimizer_gate is not None and optimizer_gate.status != "passed"
+                            else "proposal still requires full tolerancing before release"
+                        ),
                     ],
                 )
             )
@@ -6760,6 +6806,14 @@ def match_case(
         gate = optimization_attempt.verification
         merit_changes = _promoted_merit_changes()
         changes = [*optimization_attempt.variable_changes, *merit_changes]
+        optimizer_metrics = (
+            merit_optimization_probe.after_metrics
+            if merit_changes
+            else optimization_attempt.after_metrics
+        )
+        optimizer_floor = _evaluate_image_quality_floor(optimizer_metrics)
+        if gate is None or gate.status != "passed" or optimizer_floor.status != "pass":
+            return None
         checklist = [
             "apply the listed variable changes only to a cloned prescription",
             "recompute paraxial EFL, F-number, and total track after applying the delta",
@@ -7649,7 +7703,7 @@ def match_case(
             ),
             "mtf_multiband_non_regressed": (
                 ["asphere coefficients", "stop position", "air gaps"],
-                "recover 50/100/150 lp/mm MTF before replay promotion",
+                "recover 50/100/150/200/250 lp/mm MTF before replay promotion",
             ),
             "mtf_field_weighted_non_regressed": (
                 ["stop position", "air gaps", "asphere coefficients"],
@@ -8659,7 +8713,10 @@ def match_case(
                 "recover recommended-branch MTF/RMS before draft_ready promotion",
                 recommended_image_quality_recovery_objective.variables,
                 "first-order targets are locked on the recommended branch",
-                ("multiband min MTF>=0.08, field-weighted MTF>=0.15, and max RMS<=100um"),
+                (
+                    "50/100/150/200/250 lp/mm min MTF>=0.08, "
+                    "field-weighted MTF>=0.15, and max RMS<=100um"
+                ),
                 ("rerun bounded merit tuning and verify MTF/RMS floor without EFL/FOV/TTL drift"),
                 depends_on=["lock-first-order"],
                 evidence=_unique_in_order(
@@ -10123,7 +10180,7 @@ def match_case(
                         higher_is_better=True,
                     ),
                     interpretation=(
-                        f"weighted minimum MTF score "
+                        f"minimum MTF score across 50-250 lp/mm "
                         f"{before_bands.multiband_min_score:.3f}->"
                         f"{after_bands.multiband_min_score:.3f}"
                     ),
@@ -10155,6 +10212,8 @@ def match_case(
             ("mtf_50lpmm_min", "50", before_bands.min_50, after_bands.min_50),
             ("mtf_100lpmm_min", "100", before_bands.min_100, after_bands.min_100),
             ("mtf_150lpmm_min", "150", before_bands.min_150, after_bands.min_150),
+            ("mtf_200lpmm_min", "200", before_bands.min_200, after_bands.min_200),
+            ("mtf_250lpmm_min", "250", before_bands.min_250, after_bands.min_250),
         ):
             if before_value is None or after_value is None:
                 continue
@@ -10366,7 +10425,7 @@ def match_case(
                     *probe_evidence,
                     f"RMS non-worse={rms_passed}",
                     f"MTF field non-worse={mtf_field_passed}",
-                    f"MTF 50/100/150 lp/mm non-worse={mtf_band_passed}",
+                    f"MTF 50/100/150/200/250 lp/mm non-worse={mtf_band_passed}",
                     f"MTF field-weighted score non-worse={mtf_field_weighted_passed}",
                 ],
                 limit=16,
@@ -12079,6 +12138,11 @@ def match_case(
                 check.status not in {"warning", "blocker"}
                 or not check.required_action
                 or (check.status == "warning" and not _is_hard_warning(check))
+            ):
+                continue
+            if (
+                check.check_id == "task_run_evidence"
+                and recommended_image_quality_floor.status == "blocker"
             ):
                 continue
             action = check.required_action

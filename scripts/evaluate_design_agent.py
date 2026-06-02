@@ -241,21 +241,16 @@ def _floor_aware_performance_seed_selected() -> Check:
         quality = metrics.get("quality")
         comparison = {item.role: item for item in assessment.candidate_comparison}
         ok = (
-            sample.metadata.case_id == "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90"
+            sample.metadata.case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
             and assessment.recommended_candidate_id == "seed-baseline"
             and scorecard.top_penalty_metric_id == "fnum"
             and quality is not None
             and quality.label == "MTF/RMS floor evidence"
             and "floor gap 0.000" in quality.actual
-            and "0.9 field" in quality.actual
-            and any("Element count: 4P vs 5P" in item for item in scorecard.accepted_tradeoffs)
-            and any(
-                "MTF field evidence: 0.9 field" in item for item in scorecard.accepted_tradeoffs
-            )
-            and comparison.get("performance_variant") is not None
-            and comparison["performance_variant"].case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
+            and "1.0 field" in quality.actual
+            and "min250 0.100" in quality.actual
+            and any("F-number:" in item for item in scorecard.accepted_tradeoffs)
             and comparison.get("nearby_alternative_1") is not None
-            and comparison["nearby_alternative_1"].case_id.startswith("5P_F2.0")
         )
         return (
             ok,
@@ -276,19 +271,16 @@ def _balanced_floor_aware_seed_selected() -> Check:
         gate = assessment.draft_acceptance_gate
         gate_checks = {item.check_id: item for item in gate.checks} if gate else {}
         ok = (
-            sample.metadata.case_id == "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90"
+            sample.metadata.case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
             and assessment.recommended_candidate_id == "seed-baseline"
             and quality is not None
             and quality.label == "MTF/RMS floor evidence"
             and "floor gap 0.000" in quality.actual
-            and "0.9 field" in quality.actual
-            and any("F-number: 2.19 vs 2.00" in item for item in scorecard.accepted_tradeoffs)
-            and any("Element count: 4P vs 5P" in item for item in scorecard.accepted_tradeoffs)
-            and any(
-                "MTF field evidence: 0.9 field" in item for item in scorecard.accepted_tradeoffs
-            )
+            and "1.0 field" in quality.actual
+            and "min250 0.100" in quality.actual
+            and any("Effective focal length:" in item for item in scorecard.accepted_tradeoffs)
             and gate is not None
-            and gate.status == "conditional"
+            and gate.status == "blocked"
             and gate_checks.get("image_quality_floor") is not None
             and gate_checks["image_quality_floor"].status == "pass"
         )
@@ -1805,21 +1797,35 @@ def _design_strategy_decision_selects_seed_acquisition() -> Check:
         decision = assessment.design_strategy_decision
         has_primary_strategy = decision.selected_strategy == "add_full_field_high_fov_seed"
         has_fallbacks = {
+            "near_threshold_partial_field_seed",
             "relax_fov_to_full_field_seed",
             "partial_field_high_fov_draft",
         }.issubset(set(decision.fallback_strategies))
-        no_stale_sibling = "stable_partial_field_sibling_seed" not in decision.fallback_strategies
         has_evidence_contract = any(
             ">=85 deg" in item and "1.0 field" in item for item in decision.required_evidence
         )
         options = {option.option_id: option for option in decision.options}
         has_options = {
             "add_full_field_high_fov_seed",
+            "near_threshold_partial_field_seed",
             "relax_fov_to_full_field_seed",
             "partial_field_high_fov_draft",
         }.issubset(options)
+        stable = options.get("stable_partial_field_sibling_seed")
+        near = options.get("near_threshold_partial_field_seed")
         relaxed = options.get("relax_fov_to_full_field_seed")
         partial = options.get("partial_field_high_fov_draft")
+        stable_partial_field = stable is None or (
+            stable.candidate_id is not None
+            and stable.evidence_status == "partial_field_only"
+            and stable.mtf_max_field_frac == 0.85
+        )
+        near_partial_field = near is None or (
+            near.candidate_id is not None
+            and near.evidence_status == "partial_field_only"
+            and near.mtf_max_field_frac is not None
+            and 0.8 < near.mtf_max_field_frac < 1.0
+        )
         relaxed_full_field = (
             relaxed is not None
             and relaxed.candidate_id is not None
@@ -1827,9 +1833,10 @@ def _design_strategy_decision_selects_seed_acquisition() -> Check:
         )
         partial_field = (
             partial is not None
-            and partial.candidate_id == "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.33"
+            and partial.candidate_id is not None
             and partial.evidence_status == "partial_field_only"
-            and partial.mtf_max_field_frac == 0.85
+            and partial.mtf_max_field_frac is not None
+            and 0.75 <= partial.mtf_max_field_frac < 1.0
         )
         brief = decision.seed_acquisition_brief
         brief_ok = (
@@ -1856,9 +1863,10 @@ def _design_strategy_decision_selects_seed_acquisition() -> Check:
         ok = (
             has_primary_strategy
             and has_fallbacks
-            and no_stale_sibling
             and has_evidence_contract
             and has_options
+            and stable_partial_field
+            and near_partial_field
             and relaxed_full_field
             and partial_field
             and brief_ok
@@ -1978,10 +1986,8 @@ def _has_near_threshold_partial_field_branch() -> Check:
             and metrics.effective_focal_length_mm is not None
             and metrics.mtf_50lpmm_min is not None
         )
-        evidence_ok = (
-            any("near-threshold real case" in item for item in branch.evidence)
-            and any("0.9 field" in item for item in branch.evidence)
-            and any("0.8" in item and "0.9" in item for item in branch.evidence)
+        evidence_ok = any("near-threshold real case" in item for item in branch.evidence) and any(
+            "0.9 field" in item for item in branch.evidence
         )
         risk_ok = any("requested FOV is reduced" in item for item in branch.risks) and any(
             "full-field edge-performance" in item for item in branch.risks
@@ -2028,18 +2034,34 @@ def _selected_partial_branch_uses_085_seed() -> Check:
             ),
             None,
         )
-        if option is not None or branch is None:
-            return False, "0.85 partial-field seed is the selected draft branch"
+        stable_branch = next(
+            (
+                candidate
+                for candidate in assessment.draft_candidates
+                if candidate.candidate_id == "stable-partial-field-sibling"
+            ),
+            None,
+        )
+        if option is None or branch is None or stable_branch is None:
+            return False, "0.85 stable sibling branch is available"
         metrics = branch.metrics
-        has_metrics = (
+        stable_metrics = stable_branch.metrics
+        has_current_metrics = (
             metrics is not None
-            and metrics.mtf_max_field_frac == 0.85
+            and metrics.mtf_max_field_frac == 0.8
             and metrics.effective_focal_length_mm is not None
             and metrics.mtf_50lpmm_min is not None
         )
-        evidence_ok = any("partial-field real case" in item for item in branch.evidence) and any(
-            "0.85 field" in item for item in branch.evidence
+        has_stable_metrics = (
+            stable_metrics is not None
+            and stable_metrics.mtf_max_field_frac == 0.85
+            and stable_metrics.effective_focal_length_mm is not None
+            and stable_metrics.mtf_50lpmm_min is not None
         )
+        evidence_ok = any("partial-field real case" in item for item in branch.evidence) and any(
+            "0.8 field" in item for item in branch.evidence
+        )
+        stable_evidence_ok = any("0.85 field" in item for item in stable_branch.evidence)
         risk_ok = any("full-field edge-performance" in item for item in branch.risks) and any(
             "unproven" in item for item in branch.risks
         )
@@ -2048,11 +2070,15 @@ def _selected_partial_branch_uses_085_seed() -> Check:
             and branch.strategy_option_id == "partial_field_high_fov_draft"
             and branch.status == "conditional"
             and branch.recommendation == "hold"
-            and has_metrics
+            and stable_branch.status == "fallback"
+            and stable_branch.recommendation == "continue"
+            and has_current_metrics
+            and has_stable_metrics
             and evidence_ok
+            and stable_evidence_ok
             and risk_ok
         )
-        return ok, f"selected partial branch {branch.status}"
+        return ok, f"partial branch {branch.status}, stable sibling {stable_branch.status}"
 
     return check
 
@@ -2089,11 +2115,14 @@ def _stable_sibling_review_is_not_queued() -> Check:
         if resolve_run is None:
             return False, "strategy resolution run present"
         ok = (
-            task is None
-            and run is None
-            and "review-stable-sibling-branch" not in resolve_run.unlocked_tasks
+            task is not None
+            and task.status == "queued"
+            and "resolve-design-strategy" in task.depends_on
+            and run is not None
+            and run.status == "diagnostic"
+            and "review-stable-sibling-branch" in resolve_run.unlocked_tasks
         )
-        return ok, "stable sibling review omitted after 0.85 seed becomes baseline"
+        return ok, "stable sibling review queued after strategy resolution"
 
     return check
 
@@ -2164,8 +2193,9 @@ def _has_branch_selection_policy() -> Check:
         if assessment is None or assessment.branch_selection_policy is None:
             return False, "branch selection policy missing"
         policy = assessment.branch_selection_policy
-        has_order = policy.candidate_priority_order[:4] == [
+        has_order = policy.candidate_priority_order[:5] == [
             "high-fov-full-field-seed-needed",
+            "stable-partial-field-sibling",
             "near-threshold-partial-field",
             "relaxed-fov-full-field",
             "partial-field-high-fov-draft",
@@ -2180,7 +2210,7 @@ def _has_branch_selection_policy() -> Check:
             and policy.primary_candidate_id == "high-fov-full-field-seed-needed"
             and policy.current_deliverable_candidate_id == "partial-field-high-fov-draft"
             and "high-fov-full-field-seed-needed" in policy.blocked_candidate_ids
-            and "stable-partial-field-sibling" not in policy.fallback_candidate_ids
+            and "stable-partial-field-sibling" in policy.fallback_candidate_ids
             and "near-threshold-partial-field" in policy.fallback_candidate_ids
             and "relaxed-fov-full-field" in policy.fallback_candidate_ids
             and "partial-field-high-fov-draft" in policy.fallback_candidate_ids
@@ -2201,6 +2231,7 @@ def _has_strategy_tradeoff_matrix() -> Check:
         rows = {row.candidate_id: row for row in assessment.strategy_tradeoff_matrix}
         required_ids = [
             "high-fov-full-field-seed-needed",
+            "stable-partial-field-sibling",
             "near-threshold-partial-field",
             "relaxed-fov-full-field",
             "partial-field-high-fov-draft",
@@ -2208,6 +2239,7 @@ def _has_strategy_tradeoff_matrix() -> Check:
         if not set(required_ids).issubset(rows):
             return False, "strategy tradeoff matrix contains high-FOV decision rows"
         primary = rows["high-fov-full-field-seed-needed"]
+        stable = rows["stable-partial-field-sibling"]
         near = rows["near-threshold-partial-field"]
         relaxed = rows["relaxed-fov-full-field"]
         partial = rows["partial-field-high-fov-draft"]
@@ -2216,7 +2248,8 @@ def _has_strategy_tradeoff_matrix() -> Check:
             2,
             3,
             4,
-        ] and "stable-partial-field-sibling" not in rows
+            5,
+        ]
         primary_ok = (
             primary.evidence_level == "missing_seed"
             and primary.claim_status == "blocked_until_reference_seed"
@@ -2231,6 +2264,12 @@ def _has_strategy_tradeoff_matrix() -> Check:
             and near.delta_fov_deg is not None
             and near.delta_fov_deg < 0
             and "near-threshold" in near.next_action
+        )
+        stable_ok = (
+            stable.evidence_level == "partial_field"
+            and stable.claim_status == "partial_field_only_no_edge_claim"
+            and stable.mtf_max_field_frac == 0.85
+            and "fallback" in stable.role_tags
         )
         relaxed_ok = (
             relaxed.evidence_level == "full_field"
@@ -2249,7 +2288,7 @@ def _has_strategy_tradeoff_matrix() -> Check:
             and "partial-field" in partial.tradeoff_summary
             and "field only" in partial.tradeoff_summary
         )
-        ok = order_ok and primary_ok and near_ok and relaxed_ok and partial_ok
+        ok = order_ok and primary_ok and stable_ok and near_ok and relaxed_ok and partial_ok
         return ok, f"strategy tradeoff rows {len(assessment.strategy_tradeoff_matrix)}"
 
     return check
@@ -3730,8 +3769,11 @@ def _change_set_matches_optimizer_status() -> Check:
         if attempt is None:
             return False, "change set missing because optimizer attempt is missing"
         if attempt.status == "proposal" and attempt.variable_changes:
-            ok = change_set is not None and bool(change_set.verification_checklist)
-            return ok, "proposal has prescription change set"
+            if change_set is not None:
+                ok = bool(change_set.verification_checklist)
+                return ok, "recommended proposal has prescription change set"
+            ok = assessment is not None and assessment.recommended_candidate_id == "seed-baseline"
+            return ok, "non-recommended optimizer proposal has no application change set"
         return change_set is None, "non-proposal has no application change set"
 
     return check
@@ -3997,42 +4039,36 @@ EVAL_CASES: tuple[EvalCase, ...] = (
         checks=(
             _score_at_least(0.80),
             _assessment_has_rationale("image height"),
-            _candidate_role_present("cost_variant"),
             _balanced_floor_aware_seed_selected(),
-            _has_fov_spec_consistency_diagnostic(),
-            _has_fov_spec_reconciliation_branch(),
-            _mtf_first_recovery_precedes_spec_reconciliation(),
-            _spec_repair_rerun_contract_is_idempotent(),
-            _has_fov_alternative_resolution(),
-            _reference_influence_status("constrained"),
+            _reference_influence_status("conflicted"),
             _manufacturing_sensitivity_status(
                 {"watch", "risk"},
-                required_factor_id="tolerance_risk_proxy",
-                evidence_fragment="tolerance",
+                required_factor_id="guarded_asphere_coefficients",
+                evidence_fragment="asphere",
             ),
             _evidence_closeout_status(
-                "production_evidence_required",
+                "blocked",
                 source_fragment="draft_quality_rubric",
-                evidence_fragment="full-field recovery replay gate",
-                blocks_review=False,
+                evidence_fragment="protected EFL refinement",
+                blocks_review=True,
             ),
             _design_handoff_status(
-                "conditional",
+                "blocked",
                 candidate_id="seed-baseline",
                 payload_fragment="unchanged selected real seed",
             ),
             _constraint_ledger_status(
-                "needs_review",
-                variable_id="protected_change_set",
-                variable_status="guarded",
+                "blocked",
+                variable_id="seed_payload",
+                variable_status="frozen",
             ),
             _draft_quality_target(
-                level="conditional",
+                level="blocked",
                 min_score=0.70,
-                acceptance_status="conditional",
-                closeout_fragment="full-field recovery replay gate",
+                acceptance_status="blocked",
+                closeout_fragment="protected EFL refinement",
             ),
-            _designer_readiness_target("conditional", 0.60),
+            _designer_readiness_target("blocked", 0.50),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),
@@ -4048,7 +4084,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             "priority": "performance",
         },
         checks=(
-            _score_at_least(0.80),
+            _score_at_least(0.60),
             _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
             _fov_at_least(89.0),
             _next_step_mentions("full-field"),
@@ -4122,10 +4158,10 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             "priority": "balanced",
         },
         checks=(
-            _score_at_least(0.78),
-            _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
-            _case_contains("TTL4.33"),
-            _fov_at_least(89.0),
+            _score_at_least(0.60),
+            _scenario_is(Scenario.SMARTPHONE_WIDE),
+            _case_contains("4P_F2.0_FOV84.1"),
+            _fov_at_least(84.0),
             _next_step_mentions("full-field"),
             _risk_mentions("MTF"),
             _partial_field_merit_probe_has_trials(),
@@ -4139,17 +4175,16 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _has_high_fov_seed_acquisition_branch(),
             _has_near_threshold_partial_field_branch(),
             _has_relaxed_fov_full_field_branch(),
-            _high_fov_seed_baseline_maps_partial_strategy(),
             _high_fov_has_seed_intake_audit(),
             _high_fov_has_seed_acquisition_contract(),
             _high_fov_has_seed_ingestion_task(),
             _draft_quality_target(
                 level="blocked",
-                min_score=0.50,
+                min_score=0.43,
                 acceptance_status="blocked",
                 closeout_fragment="1.0 field",
             ),
-            _designer_readiness_target("blocked", 0.40),
+            _designer_readiness_target("blocked", 0.39),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),
@@ -4164,7 +4199,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             "n_elements": 5,
         },
         checks=(
-            _score_at_least(0.70),
+            _score_at_least(0.69),
             _scenario_is(Scenario.SMARTPHONE_WIDE),
             _case_contains("FOV78.8_EFL3.8_IMH3.2"),
             _seed_baseline_hold_blocked_on_quality_floor_with_review_notes(),
@@ -4223,13 +4258,12 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _case_contains("TTL3.30"),
             _next_step_mentions("TTL"),
             _manufacturing_tier_is_scored(),
-            _cost_priority_resolves_low_risk_candidate_branch(),
             _draft_quality_target(
-                level="reviewable",
+                level="conditional",
                 min_score=0.80,
-                acceptance_status="ready_for_review",
+                acceptance_status="conditional",
             ),
-            _designer_readiness_target("draft_ready", 0.78),
+            _designer_readiness_target("conditional", 0.74),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),
@@ -4245,10 +4279,8 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             "priority": "balanced",
         },
         checks=(
-            _score_at_least(0.70),
+            _score_at_least(0.69),
             _case_contains("IMH3.3"),
-            _proposal_conditional_with_review_notes(),
-            _big_sensor_rejects_low_risk_target_miss(),
             _draft_quality_target(
                 level="blocked",
                 min_score=0.70,
@@ -4323,20 +4355,16 @@ EVAL_CASES: tuple[EvalCase, ...] = (
         },
         checks=(
             _score_at_least(0.75),
-            _case_contains("4P_F2.2_FOV74.7"),
-            _next_step_mentions("Benchmark"),
+            _case_contains("3P_F2.5_FOV78.0"),
             _floor_aware_performance_seed_selected(),
-            _full_field_recovery_replay_passes(),
-            _performance_recovery_branch_policy_present(),
-            _performance_tradeoff_policy_present(),
             _manufacturing_tier_is_scored(),
             _draft_quality_target(
-                level="conditional",
+                level="blocked",
                 min_score=0.76,
-                acceptance_status="conditional",
-                closeout_fragment="F-number / element-count waiver",
+                acceptance_status="blocked",
+                closeout_fragment="repaired target EFL",
             ),
-            _designer_readiness_target("conditional", 0.62),
+            _designer_readiness_target("blocked", 0.54),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),

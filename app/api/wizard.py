@@ -558,8 +558,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             lines.append("  - Selection metric scores: " + "; ".join(metric_bits))
         if scorecard.accepted_tradeoffs:
             lines.append(
-                "  - Selection accepted tradeoffs: "
-                + "; ".join(scorecard.accepted_tradeoffs[:4])
+                "  - Selection accepted tradeoffs: " + "; ".join(scorecard.accepted_tradeoffs[:4])
             )
         if scorecard.rejected_alternatives:
             lines.append(
@@ -621,14 +620,9 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             ]
             lines.append("  - Intent hard constraints: " + "; ".join(hard_bits))
         if contract.conflict_flags:
-            lines.append(
-                "  - Intent conflicts: " + "; ".join(contract.conflict_flags[:4])
-            )
+            lines.append("  - Intent conflicts: " + "; ".join(contract.conflict_flags[:4]))
         if contract.inferred_assumptions:
-            lines.append(
-                "  - Intent assumptions: "
-                + "; ".join(contract.inferred_assumptions[:4])
-            )
+            lines.append("  - Intent assumptions: " + "; ".join(contract.inferred_assumptions[:4]))
         lines.append(f"  - Intent-safe interpretation: {contract.safe_interpretation}")
         lines.append(f"  - Intent next action: {contract.next_action}")
 
@@ -663,8 +657,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             )
         if audit.required_evidence:
             lines.append(
-                "  - Manufacturing required evidence: "
-                + "; ".join(audit.required_evidence[:4])
+                "  - Manufacturing required evidence: " + "; ".join(audit.required_evidence[:4])
             )
         if audit.limitations:
             lines.append("  - Sensitivity limitations: " + "; ".join(audit.limitations[:3]))
@@ -686,8 +679,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
         lines.append(f"  - Manufacturing clearance next action: {checklist.next_clearance_action}")
         if checklist.forbidden_claims:
             lines.append(
-                "  - Manufacturing forbidden claims: "
-                + "; ".join(checklist.forbidden_claims[:4])
+                "  - Manufacturing forbidden claims: " + "; ".join(checklist.forbidden_claims[:4])
             )
 
     if assessment.draft_acceptance_gate is not None:
@@ -766,9 +758,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
         if handoff.review_focus:
             lines.append("  - Handoff review focus: " + "; ".join(handoff.review_focus[:4]))
         if handoff.forbidden_claims:
-            lines.append(
-                "  - Handoff forbidden claims: " + "; ".join(handoff.forbidden_claims[:4])
-            )
+            lines.append("  - Handoff forbidden claims: " + "; ".join(handoff.forbidden_claims[:4]))
 
     if assessment.design_traceability_manifest is not None:
         manifest = assessment.design_traceability_manifest
@@ -786,16 +776,12 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             lines.append("  - Report sections: " + "; ".join(manifest.report_sections[:5]))
         if manifest.validation_evidence:
             lines.append(
-                "  - Traceability validation: "
-                + "; ".join(manifest.validation_evidence[:4])
+                "  - Traceability validation: " + "; ".join(manifest.validation_evidence[:4])
             )
         if manifest.replay_commands:
             lines.append(f"  - Traceability replay: {manifest.replay_commands[0]}")
         if manifest.forbidden_mutations:
-            lines.append(
-                "  - Forbidden mutations: "
-                + "; ".join(manifest.forbidden_mutations[:4])
-            )
+            lines.append("  - Forbidden mutations: " + "; ".join(manifest.forbidden_mutations[:4]))
 
     if assessment.design_constraint_ledger is not None:
         ledger = assessment.design_constraint_ledger
@@ -808,20 +794,15 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
         lines.append(f"  - Variable policy: {ledger.variable_policy_summary}")
         if ledger.constraints:
             constraint_bits = [
-                f"{item.requirement_id}={item.status}"
-                for item in ledger.constraints[:7]
+                f"{item.requirement_id}={item.status}" for item in ledger.constraints[:7]
             ]
             lines.append("  - Constraint states: " + "; ".join(constraint_bits))
         if ledger.variables:
-            variable_bits = [
-                f"{item.variable_id}={item.status}"
-                for item in ledger.variables[:5]
-            ]
+            variable_bits = [f"{item.variable_id}={item.status}" for item in ledger.variables[:5]]
             lines.append("  - Variable governance: " + "; ".join(variable_bits))
         if ledger.forbidden_actions:
             lines.append(
-                "  - Constraint forbidden actions: "
-                + "; ".join(ledger.forbidden_actions[:4])
+                "  - Constraint forbidden actions: " + "; ".join(ledger.forbidden_actions[:4])
             )
         lines.append(f"  - Constraint next action: {ledger.next_action}")
 
@@ -911,7 +892,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
                 )
             if gate.mtf_multiband_min_score is not None:
                 lines.append(
-                    f"  - Verified MTF 50/100/150 score: {gate.mtf_multiband_min_score:.3f}"
+                    f"  - Verified MTF 50/100/150/200/250 score: {gate.mtf_multiband_min_score:.3f}"
                 )
             if gate.mtf_field_weighted_score is not None:
                 lines.append(
@@ -1081,9 +1062,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
         if audit.data_gaps:
             lines.append("  - Reference data gaps: " + "; ".join(audit.data_gaps[:4]))
         if audit.rejected_reference_ids:
-            lines.append(
-                "  - Rejected references: " + ", ".join(audit.rejected_reference_ids[:4])
-            )
+            lines.append("  - Rejected references: " + ", ".join(audit.rejected_reference_ids[:4]))
         if audit.safe_next_action:
             lines.append(f"  - Reference-safe next action: {audit.safe_next_action}")
     if assessment.design_strategy_decision is not None:
@@ -1149,11 +1128,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             lines.append("  - Seed pass criteria: " + "; ".join(contract.pass_criteria[:4]))
         if contract.current_gap_evidence:
             prioritized_gap_evidence = [
-                *(
-                    item
-                    for item in contract.current_gap_evidence
-                    if item.startswith("near miss")
-                ),
+                *(item for item in contract.current_gap_evidence if item.startswith("near miss")),
                 *(
                     item
                     for item in contract.current_gap_evidence
@@ -1161,8 +1136,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
                 ),
             ]
             lines.append(
-                "  - Seed current gap evidence: "
-                + "; ".join(prioritized_gap_evidence[:4])
+                "  - Seed current gap evidence: " + "; ".join(prioritized_gap_evidence[:4])
             )
         if contract.fallback_paths:
             lines.append("  - Fallback paths: " + "; ".join(contract.fallback_paths[:3]))
@@ -1185,8 +1159,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
     if assessment.draft_quality_rubric is not None:
         rubric = assessment.draft_quality_rubric
         lines.append(
-            f"- Draft quality rubric: {rubric.level}; score={rubric.score:.3f}; "
-            f"{rubric.summary}"
+            f"- Draft quality rubric: {rubric.level}; score={rubric.score:.3f}; {rubric.summary}"
         )
         if rubric.weakest_dimension_id or rubric.minimum_next_action:
             lines.append(
@@ -1196,8 +1169,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             )
         if rubric.promotion_actions:
             lines.append(
-                "  - Quality promotion actions: "
-                + "; ".join(rubric.promotion_actions[:4])
+                "  - Quality promotion actions: " + "; ".join(rubric.promotion_actions[:4])
             )
         for dimension in rubric.dimensions[:5]:
             lines.append(
@@ -1229,9 +1201,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             if row.fov_deg is not None:
                 metrics.append(f"FOV={row.fov_deg:.1f} deg")
             if row.mtf_max_field_frac is not None:
-                metrics.append(
-                    f"MTF field={format_mtf_field_fraction(row.mtf_max_field_frac)}"
-                )
+                metrics.append(f"MTF field={format_mtf_field_fraction(row.mtf_max_field_frac)}")
             if row.efl_mm is not None:
                 metrics.append(f"EFL={row.efl_mm:.2f} mm")
             lines.append(
@@ -1264,9 +1234,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
         if decision.required_record:
             lines.append(f"  - Required record: {decision.required_record}")
         if decision.alternatives:
-            lines.append(
-                "  - Alternatives: " + "; ".join(decision.alternatives[:3])
-            )
+            lines.append("  - Alternatives: " + "; ".join(decision.alternatives[:3]))
         if decision.acceptance_effect:
             lines.append(f"  - Acceptance effect: {decision.acceptance_effect}")
         if decision.rerun_contract is not None:
@@ -1277,10 +1245,7 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
                 f"expected={contract.expected_case_id or 'unresolved'}"
             )
             if contract.validation_checks:
-                lines.append(
-                    "  - Rerun validation: "
-                    + "; ".join(contract.validation_checks[:4])
-                )
+                lines.append("  - Rerun validation: " + "; ".join(contract.validation_checks[:4]))
     if assessment.spec_repair_auto_closure is not None:
         closure = assessment.spec_repair_auto_closure
         lines.append(
@@ -1290,14 +1255,10 @@ def _format_design_assessment_for_summary(assessment: DesignAssessment) -> str:
             f"{closure.summary}"
         )
         if closure.accepted_tradeoff_ids:
-            lines.append(
-                "  - Auto-closed tradeoffs: "
-                + ", ".join(closure.accepted_tradeoff_ids)
-            )
+            lines.append("  - Auto-closed tradeoffs: " + ", ".join(closure.accepted_tradeoff_ids))
         if closure.forbidden_claims:
             lines.append(
-                "  - Auto-closure forbidden claims: "
-                + "; ".join(closure.forbidden_claims[:3])
+                "  - Auto-closure forbidden claims: " + "; ".join(closure.forbidden_claims[:3])
             )
     if assessment.draft_candidates:
         lines.append(f"- Recommended draft candidate: {assessment.recommended_candidate_id}")

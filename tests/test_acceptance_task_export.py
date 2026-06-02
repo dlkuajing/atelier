@@ -152,10 +152,16 @@ def test_acceptance_export_executes_case_verification_probe():
 def test_acceptance_export_scopes_balanced_followups_to_single_case():
     report = build_report(case_names={"balanced_main_default"})
 
+    assert report["tasks"]
+    assert {item["eval_case"] for item in report["tasks"]} == {"balanced_main_default"}
+    assert not any(
+        item["source_action_id"].startswith("image_quality_probe")
+        for item in report["tasks"]
+    )
     task = next(
         item
         for item in report["tasks"]
-        if item["source_action_id"].startswith("image_quality_probe")
+        if item["source_action_id"].startswith("task_run_evidence")
     )
 
     assert task["next_probe_command"] is None
