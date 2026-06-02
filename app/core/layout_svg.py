@@ -16,6 +16,7 @@ endpoint because:
 from __future__ import annotations
 
 import io
+import math
 import warnings
 
 import matplotlib
@@ -31,6 +32,42 @@ with warnings.catch_warnings():
     from optiland.optic import Optic  # noqa: E402
 
 
+def _finite_lens_positions(optic: Optic) -> list[float]:
+    try:
+        positions = list(getattr(optic.surfaces, "positions", []))
+    except Exception:
+        return []
+    flattened: list[float] = []
+    for value in positions:
+        try:
+            if hasattr(value, "flatten"):
+                flattened.extend(float(item) for item in value.flatten())
+            elif isinstance(value, (list, tuple)):
+                flattened.extend(float(item) for item in value)
+            else:
+                flattened.append(float(value))
+        except (TypeError, ValueError):
+            continue
+    # Surface 0 is the object plane in Optiland's stack. It may be infinity,
+    # a long finite object distance, or a sentinel; none of those should set
+    # the engineering drawing viewport for compact phone-camera lenses.
+    return [value for value in flattened[1:] if math.isfinite(value) and abs(value) < 1_000_000]
+
+
+def _frame_lens_stack(ax: object, optic: Optic) -> None:
+    positions = _finite_lens_positions(optic)
+    if len(positions) < 2:
+        return
+    min_z = min(positions)
+    max_z = max(positions)
+    span = max(max_z - min_z, 0.1)
+    margin = max(0.1, span * 0.08)
+    try:
+        ax.set_xlim(min_z - margin, max_z + margin)
+    except Exception:
+        return
+
+
 def render_layout_svg(
     optic: Optic,
     width_px: int = 1200,
@@ -43,7 +80,8 @@ def render_layout_svg(
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)
-        fig, _ax = optic.draw()
+        fig, ax = optic.draw()
+    _frame_lens_stack(ax, optic)
 
     # Resize to the requested viewport.
     fig.set_size_inches(width_px / dpi, height_px / dpi)

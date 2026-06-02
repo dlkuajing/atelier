@@ -2,7 +2,7 @@
 
 import pytest
 
-from app.core.layout_svg import render_layout_svg
+from app.core.layout_svg import _finite_lens_positions, render_layout_svg
 from app.core.lens_system import LayoutSVG, Scenario
 from app.core.optical_engine import build_optic_for_scenario
 
@@ -56,3 +56,10 @@ def test_svg_has_non_trivial_content(smartphone_tele_optic):
     svg = render_layout_svg(smartphone_tele_optic)
     # Empty SVGs are ~200 bytes; a real lens layout produces 10KB+.
     assert len(svg.svg_content) > 5000
+
+
+def test_layout_viewport_ignores_object_plane(smartphone_tele_optic):
+    positions = _finite_lens_positions(smartphone_tele_optic)
+    assert positions
+    assert min(positions) >= 0
+    assert max(positions) < 20

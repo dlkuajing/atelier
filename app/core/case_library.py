@@ -263,13 +263,9 @@ def _best_floor_gap_trial(
             if trial.image_quality_floor_gap_closure is not None
             else -math.inf
         )
-        promotion_score = (
-            trial.promotion_score if trial.promotion_score is not None else -math.inf
-        )
+        promotion_score = trial.promotion_score if trial.promotion_score is not None else -math.inf
         rms_improvement = (
-            trial.rms_improvement_um
-            if trial.rms_improvement_um is not None
-            else -math.inf
+            trial.rms_improvement_um if trial.rms_improvement_um is not None else -math.inf
         )
         gate_clean = (
             trial.verification_status == "passed"
@@ -333,10 +329,7 @@ def _evaluate_image_quality_floor(
             else "field-weighted MTF=missing"
         ),
         f"max RMS={max_rms:.1f}um" if max_rms is not None else "max RMS=missing",
-        (
-            "review floor: multiband min MTF>=0.08; "
-            "field-weighted MTF>=0.15; max RMS<=100um"
-        ),
+        ("review floor: multiband min MTF>=0.08; field-weighted MTF>=0.15; max RMS<=100um"),
     ]
     blockers: list[str] = []
     if min_mtf is None or min_mtf < _IMAGE_QUALITY_FLOOR_MIN_MTF:
@@ -753,10 +746,7 @@ def build_seed_intake_audit(
             result = (
                 case.metadata.mtf_max_field_frac,
                 None,
-                [
-                    "payload:"
-                    f"{format_mtf_field_fraction(case.metadata.mtf_max_field_frac)}"
-                ],
+                [f"payload:{format_mtf_field_fraction(case.metadata.mtf_max_field_frac)}"],
             )
             edge_stability_cache[case.metadata.case_id] = result
             return result
@@ -773,8 +763,7 @@ def build_seed_intake_audit(
             first_cliff = point.field_frac
             break
         evidence = [
-            f"{format_mtf_field_fraction(point.field_frac)}:{point.status}"
-            for point in scan
+            f"{format_mtf_field_fraction(point.field_frac)}:{point.status}" for point in scan
         ]
         result = (highest_stable, first_cliff, evidence)
         edge_stability_cache[case.metadata.case_id] = result
@@ -791,9 +780,7 @@ def build_seed_intake_audit(
                 f"EFL {case.metadata.computed_efl_mm:.2f} outside {efl_lo:.2f}-{efl_hi:.2f} mm"
             )
         if not fnum_lo <= case.paraxial.f_number <= fnum_hi:
-            reasons.append(
-                f"F/# {case.paraxial.f_number:.2f} outside {fnum_lo:.2f}-{fnum_hi:.2f}"
-            )
+            reasons.append(f"F/# {case.paraxial.f_number:.2f} outside {fnum_lo:.2f}-{fnum_hi:.2f}")
         if (
             image_height_lo is not None
             and image_height_hi is not None
@@ -815,7 +802,9 @@ def build_seed_intake_audit(
             brief.max_total_track_mm is not None
             and case.paraxial.total_track_mm > brief.max_total_track_mm
         ):
-            reasons.append(f"TTL {case.paraxial.total_track_mm:.2f} > {brief.max_total_track_mm:.2f} mm")
+            reasons.append(
+                f"TTL {case.paraxial.total_track_mm:.2f} > {brief.max_total_track_mm:.2f} mm"
+            )
         if case.metadata.mtf_max_field_frac < brief.required_mtf_field_frac:
             reasons.append(
                 "MTF field "
@@ -878,9 +867,7 @@ def build_seed_intake_audit(
         assert case.metadata is not None
         highest_stable, _, _ = _edge_stability(case)
         stable_field = (
-            highest_stable
-            if highest_stable is not None
-            else case.metadata.mtf_max_field_frac
+            highest_stable if highest_stable is not None else case.metadata.mtf_max_field_frac
         )
         return (
             stable_field,
@@ -1830,7 +1817,10 @@ def match_case(
         assert leader.metadata is not None
         selected_risk = _candidate_review_risk_for_sample(selected)
         leader_risk = _candidate_review_risk_for_sample(leader)
-        if leader.metadata.case_id == selected.metadata.case_id or leader_risk + 0.03 >= selected_risk:
+        if (
+            leader.metadata.case_id == selected.metadata.case_id
+            or leader_risk + 0.03 >= selected_risk
+        ):
             return None
         return selected, leader, selected_risk, leader_risk
 
@@ -1858,9 +1848,7 @@ def match_case(
                 f"EFL miss {candidate.metadata.computed_efl_mm - efl_mm:+.2f} mm exceeds 0.25 mm"
             )
         if abs(candidate.paraxial.f_number - fnum) > 0.25:
-            blockers.append(
-                f"F/# miss {candidate.paraxial.f_number - fnum:+.2f} exceeds 0.25"
-            )
+            blockers.append(f"F/# miss {candidate.paraxial.f_number - fnum:+.2f} exceeds 0.25")
         if abs(candidate.metadata.fov_deg - fov_deg) > 5.0:
             blockers.append(
                 f"FOV miss {candidate.metadata.fov_deg - fov_deg:+.1f} deg exceeds 5.0 deg"
@@ -1872,7 +1860,9 @@ def match_case(
                 blockers.append(f"image-height miss {imh_delta:+.2f} mm exceeds 0.35 mm")
         if max_total_track_mm is not None:
             ttl_over = candidate.paraxial.total_track_mm - max_total_track_mm
-            evidence.append(f"TTL margin {max_total_track_mm - candidate.paraxial.total_track_mm:+.2f} mm")
+            evidence.append(
+                f"TTL margin {max_total_track_mm - candidate.paraxial.total_track_mm:+.2f} mm"
+            )
             if ttl_over > 0.20:
                 blockers.append(f"TTL exceeds package by {ttl_over:+.2f} mm")
         if candidate.metadata.mtf_max_field_frac < 1.0:
@@ -1978,8 +1968,7 @@ def match_case(
                 )
             elif abs(candidate_imh_delta) > 0.20:
                 evidence.append(
-                    "alternative image height remains a tradeoff at "
-                    f"{candidate_imh_delta:+.2f} mm"
+                    f"alternative image height remains a tradeoff at {candidate_imh_delta:+.2f} mm"
                 )
 
         if candidate_n_delta is not None:
@@ -2236,9 +2225,7 @@ def match_case(
         replay_delta_efl = replay_best.metadata.computed_efl_mm - repaired_efl
         replay_delta_fov = replay_best.metadata.fov_deg - fov_deg
         replay_delta_fnum = replay_best.paraxial.f_number - fnum
-        replay_delta_imh = (
-            replay_imh - image_height_mm if image_height_mm is not None else None
-        )
+        replay_delta_imh = replay_imh - image_height_mm if image_height_mm is not None else None
         replay_delta_n = (
             replay_best.metadata.n_pieces - n_elements if n_elements is not None else None
         )
@@ -2385,9 +2372,7 @@ def match_case(
         tradeoff_count = sum(item.status == "tradeoff" for item in replay_coverage)
         miss_count = sum(item.status == "miss" for item in replay_coverage)
         unresolved = [
-            f"{item.label}={item.status}"
-            for item in replay_coverage
-            if item.status != "met"
+            f"{item.label}={item.status}" for item in replay_coverage if item.status != "met"
         ]
         replay_status = (
             "ready_after_repair"
@@ -2431,11 +2416,7 @@ def match_case(
             "branch selection is recorded and the full assessment is regenerated"
         )
         coverage_summary = RequirementCoverageSummary(
-            status=(
-                "blocked"
-                if miss_count
-                else ("tradeoff" if tradeoff_count else "met")
-            ),
+            status=("blocked" if miss_count else ("tradeoff" if tradeoff_count else "met")),
             met_count=met_count,
             tradeoff_count=tradeoff_count,
             miss_count=miss_count,
@@ -2545,11 +2526,7 @@ def match_case(
                     if image_height_mm is not None
                     else ""
                 )
-                + (
-                    f", {n_elements}P"
-                    if n_elements is not None
-                    else ""
-                )
+                + (f", {n_elements}P" if n_elements is not None else "")
                 + f", scenario {scenario.value}"
             ),
             validation_checks=[
@@ -2709,7 +2686,10 @@ def match_case(
                 return False
             if abs(case.metadata.fov_deg - fov_deg) > 5.0:
                 return False
-            if image_height_mm is not None and abs(_case_image_height_mm(case) - image_height_mm) > 0.35:
+            if (
+                image_height_mm is not None
+                and abs(_case_image_height_mm(case) - image_height_mm) > 0.35
+            ):
                 return False
             if n_elements is not None and case.metadata.n_pieces != n_elements:
                 return False
@@ -2718,9 +2698,7 @@ def match_case(
                 or case.paraxial.total_track_mm <= max_total_track_mm + 0.20
             )
 
-        exact_aperture_candidates = [
-            case for case in cases if _is_exact_aperture_candidate(case)
-        ]
+        exact_aperture_candidates = [case for case in cases if _is_exact_aperture_candidate(case)]
         if not exact_aperture_candidates:
             return None
 
@@ -2756,10 +2734,7 @@ def match_case(
             "the exact-aperture seed; aperture and element count require explicit review"
         )
         rationale = [
-            (
-                f"selected {best.metadata.case_id} has MTF/RMS floor gap "
-                f"{selected_floor_gap:.3f}"
-            ),
+            (f"selected {best.metadata.case_id} has MTF/RMS floor gap {selected_floor_gap:.3f}"),
             (
                 f"exact-aperture candidate {rejected_case.metadata.case_id} has "
                 f"MTF/RMS floor gap {rejected_floor_gap:.3f}"
@@ -2805,9 +2780,7 @@ def match_case(
             forbidden_claims=tuple(dict.fromkeys(forbidden_claims)),
         )
 
-    performance_aperture_tradeoff_resolution = (
-        _performance_aperture_tradeoff_resolution()
-    )
+    performance_aperture_tradeoff_resolution = _performance_aperture_tradeoff_resolution()
 
     def _requirement_coverage() -> tuple[RequirementCoverageSummary, list[RequirementCoverageItem]]:
         items: list[RequirementCoverageItem] = []
@@ -2890,9 +2863,9 @@ def match_case(
                 performance_aperture_tradeoff_resolution.evidence[1],
                 performance_aperture_tradeoff_resolution.evidence[0],
             ]
-            f_number_next_action = (
-                performance_aperture_tradeoff_resolution.promotion_requirements[0]
-            )
+            f_number_next_action = performance_aperture_tradeoff_resolution.promotion_requirements[
+                0
+            ]
         add(
             "f_number",
             "F-number",
@@ -2919,11 +2892,7 @@ def match_case(
                 f"weighted score component={weights.get('fov', 0.0):.2f}",
                 f"selected scenario={best.metadata.scenario.value}",
             ],
-            next_action=(
-                _fov_alternative_next_action()
-                if abs(delta_fov) > 2.0
-                else None
-            ),
+            next_action=(_fov_alternative_next_action() if abs(delta_fov) > 2.0 else None),
         )
         if (
             fov_spec_consistency is not None
@@ -3263,11 +3232,7 @@ def match_case(
             if metric_id == "fnum":
                 return f"F/{fnum:.2f}"
             if metric_id == "imh":
-                return (
-                    f"{image_height_mm:.2f} mm"
-                    if image_height_mm is not None
-                    else "not fixed"
-                )
+                return f"{image_height_mm:.2f} mm" if image_height_mm is not None else "not fixed"
             if metric_id == "nel":
                 return f"{n_elements}P" if n_elements is not None else f"lowest available {n_lo}P"
             if metric_id == "ttl":
@@ -3277,11 +3242,7 @@ def match_case(
                     else f"shortest available {t_lo:.2f} mm"
                 )
             if metric_id == "mass":
-                return (
-                    f"<= {max_weight_g:.2f} g"
-                    if max_weight_g is not None
-                    else "not fixed"
-                )
+                return f"<= {max_weight_g:.2f} g" if max_weight_g is not None else "not fixed"
             if metric_id == "quality":
                 return "floor gap 0.0 with full-field MTF evidence"
             return "active scoring metric"
@@ -3655,9 +3616,7 @@ def match_case(
     def _prioritize_seed_gap_evidence(values: list[str]) -> list[str]:
         unique_values = _unique_in_order(values)
         near_misses = [item for item in unique_values if item.startswith("near miss")]
-        supporting_context = [
-            item for item in unique_values if not item.startswith("near miss")
-        ]
+        supporting_context = [item for item in unique_values if not item.startswith("near miss")]
         return [*near_misses, *supporting_context]
 
     def _build_full_field_recovery_diagnostic() -> FullFieldRecoveryDiagnostic | None:
@@ -3782,9 +3741,7 @@ def match_case(
                     )
             else:
                 recommended_family = best_recovery_trial.variable_family
-                next_action = (
-                    "replay the recovered full-field branch under the MTF/RMS floor gate"
-                )
+                next_action = "replay the recovered full-field branch under the MTF/RMS floor gate"
 
         evidence = [
             (f"stable MTF field={format_mtf_field_fraction(current_field)}; target=1.0"),
@@ -4056,8 +4013,7 @@ def match_case(
                 case
                 for case in cases
                 if case.metadata is not None
-                and case.metadata.case_id
-                != library_coverage_diagnostic.nearest_high_fov_case_id
+                and case.metadata.case_id != library_coverage_diagnostic.nearest_high_fov_case_id
                 and case.metadata.fov_deg >= _ULTRAWIDE_FOV_MIN - 1.0
                 and case.metadata.fov_deg < fov_deg
                 and case.metadata.mtf_max_field_frac < 1.0
@@ -4093,7 +4049,10 @@ def match_case(
                 f"{stable_sibling_case.metadata.case_id} reaches "
                 f"{format_mtf_field_fraction(stable_sibling_field)} field"
             )
-        if near_threshold_partial_case is not None and near_threshold_partial_case.metadata is not None:
+        if (
+            near_threshold_partial_case is not None
+            and near_threshold_partial_case.metadata is not None
+        ):
             rationale.append(
                 "near-threshold partial-field fallback exists: "
                 f"{near_threshold_partial_case.metadata.case_id} at "
@@ -4141,9 +4100,7 @@ def match_case(
             if partial_field is not None
             else f"partial_field_high_fov_draft: keep {partial_fov:.1f} deg geometry with incomplete field evidence"
         )
-        primary_required_evidence = (
-            "ingest at least one >=85 deg visible-light seed with finite ray trace and MTF at 1.0 field"
-        )
+        primary_required_evidence = "ingest at least one >=85 deg visible-light seed with finite ray trace and MTF at 1.0 field"
         stable_sibling_required_evidence = (
             "review the more edge-stable high-FOV sibling as a partial-field trade study; "
             "keep 1.0-field claims forbidden"
@@ -4232,7 +4189,10 @@ def match_case(
                     ],
                 )
             )
-        if near_threshold_partial_case is not None and near_threshold_partial_case.metadata is not None:
+        if (
+            near_threshold_partial_case is not None
+            and near_threshold_partial_case.metadata is not None
+        ):
             near_threshold_fov_gap = fov_deg - near_threshold_partial_case.metadata.fov_deg
             options.append(
                 DesignStrategyOption(
@@ -4456,14 +4416,10 @@ def match_case(
 
     def _candidate_review_risk_value(candidate: CandidateComparison) -> float:
         tolerance = (
-            candidate.tolerance_risk_score
-            if candidate.tolerance_risk_score is not None
-            else 1.0
+            candidate.tolerance_risk_score if candidate.tolerance_risk_score is not None else 1.0
         )
         process = (
-            candidate.process_yield_score
-            if candidate.process_yield_score is not None
-            else 1.0
+            candidate.process_yield_score if candidate.process_yield_score is not None else 1.0
         )
         return tolerance * 0.45 + process * 0.55
 
@@ -4972,7 +4928,9 @@ def match_case(
             if fnum_delta > 0.15:
                 risks.append(f"aperture is slower by {fnum_delta:+.2f} F/#")
             elif fnum_delta < -0.15:
-                risks.append(f"aperture is faster by {fnum_delta:+.2f} F/#; tolerance/cost review needed")
+                risks.append(
+                    f"aperture is faster by {fnum_delta:+.2f} F/#; tolerance/cost review needed"
+                )
             if imh_delta is not None and abs(imh_delta) > 0.20:
                 risks.append(f"image height differs by {imh_delta:+.2f} mm")
             if case.metadata.mtf_max_field_frac < 1.0:
@@ -5249,8 +5207,7 @@ def match_case(
             selected_gap = best.metadata.fov_deg - fov_deg
             fov_resolution = fov_alternative_branch_resolution
             fov_blocked = (
-                fov_resolution is not None
-                and fov_resolution.status == "rejected_for_target_fit"
+                fov_resolution is not None and fov_resolution.status == "rejected_for_target_fit"
             )
             candidates.append(
                 DraftCandidate(
@@ -5276,11 +5233,7 @@ def match_case(
                         f"alternative FOV delta {fov_gap:+.1f} deg",
                         "MTF evidence reaches "
                         f"{format_mtf_field_fraction(fov_alternative_case.metadata.mtf_max_field_frac)} field",
-                        *(
-                            list(fov_resolution.evidence[:2])
-                            if fov_resolution is not None
-                            else []
-                        ),
+                        *(list(fov_resolution.evidence[:2]) if fov_resolution is not None else []),
                     ],
                     risks=(
                         list(fov_resolution.blockers[:4])
@@ -5368,8 +5321,7 @@ def match_case(
                 f"minimum FOV {brief.minimum_fov_deg:.1f} deg",
                 f"EFL window {brief.efl_window_mm[0]:.2f}-{brief.efl_window_mm[1]:.2f} mm",
                 f"F/# window {brief.f_number_window[0]:.2f}-{brief.f_number_window[1]:.2f}",
-                "required MTF field "
-                f"{format_mtf_field_fraction(brief.required_mtf_field_frac)}",
+                f"required MTF field {format_mtf_field_fraction(brief.required_mtf_field_frac)}",
             ]
             if brief.image_height_window_mm:
                 evidence.append(
@@ -5464,14 +5416,11 @@ def match_case(
             and stable_sibling_case.metadata is not None
             and stable_sibling_option.mtf_max_field_frac is not None
         ):
-            stable_field_label = format_mtf_field_fraction(
-                stable_sibling_option.mtf_max_field_frac
-            )
+            stable_field_label = format_mtf_field_fraction(stable_sibling_option.mtf_max_field_frac)
             current_edge_field = (
                 full_field_recovery_diagnostic.highest_scanned_stable_field_frac
                 if full_field_recovery_diagnostic is not None
-                and full_field_recovery_diagnostic.highest_scanned_stable_field_frac
-                is not None
+                and full_field_recovery_diagnostic.highest_scanned_stable_field_frac is not None
                 else best.metadata.mtf_max_field_frac
             )
             current_edge_label = format_mtf_field_fraction(current_edge_field)
@@ -5579,7 +5528,7 @@ def match_case(
                             f"{design_strategy_decision.target_fov_deg - near_threshold_case.metadata.fov_deg:.1f} deg"
                         ),
                         (
-                            f"candidate remains below the { _ULTRAWIDE_FOV_MIN:.1f} deg "
+                            f"candidate remains below the {_ULTRAWIDE_FOV_MIN:.1f} deg "
                             "full-field seed-acquisition threshold"
                             if near_threshold_case.metadata.fov_deg < _ULTRAWIDE_FOV_MIN
                             else "candidate still lacks full-field MTF evidence"
@@ -5825,6 +5774,107 @@ def match_case(
                         promotion_requirements=[],
                         forbidden_claims=list(spec_repair_auto_closure.forbidden_claims[:4]),
                     )
+                floor_clean_trial = _floor_clean_full_field_recovery_trial()
+                if (
+                    floor_clean_trial is not None
+                    and not cost_like
+                    and "full-field-floor-clean-recovery-candidate" in candidate_ids
+                ):
+                    priority_order = _unique_in_order(
+                        [
+                            "full-field-floor-clean-recovery-candidate",
+                            "fov-spec-reconciliation",
+                            recommended_candidate_id,
+                            "fov-waiver-review",
+                            "fov-target-seed-needed",
+                            "optimizer-proposal",
+                            "seed-baseline",
+                        ]
+                    )
+                    priority_order = [
+                        candidate_id
+                        for candidate_id in priority_order
+                        if candidate_id in candidate_ids
+                    ]
+                    blocked_ids = [
+                        candidate.candidate_id
+                        for candidate in draft_candidates
+                        if candidate.status == "blocked"
+                    ]
+                    fallback_ids = [
+                        candidate.candidate_id
+                        for candidate in draft_candidates
+                        if candidate.status in {"fallback", "conditional", "baseline"}
+                        and candidate.candidate_id != "full-field-floor-clean-recovery-candidate"
+                    ]
+                    metrics = floor_clean_trial.metrics
+                    recovery_quality = (
+                        f"MTF/RMS floor min={metrics.mtf_multiband_min_score:.3f}, "
+                        f"weighted={metrics.mtf_field_weighted_score:.3f}, "
+                        f"RMS={metrics.max_rms_spot_radius_um:.2f}um"
+                        if metrics is not None
+                        and metrics.mtf_multiband_min_score is not None
+                        and metrics.mtf_field_weighted_score is not None
+                        and metrics.max_rms_spot_radius_um is not None
+                        else "MTF/RMS floor clears on the recovery branch"
+                    )
+                    return DraftBranchSelectionPolicy(
+                        status="strategy_resolution_required",
+                        active_candidate_id=recommended_candidate_id,
+                        primary_candidate_id="full-field-floor-clean-recovery-candidate",
+                        current_deliverable_candidate_id=recommended_candidate_id,
+                        candidate_priority_order=priority_order,
+                        blocked_candidate_ids=_unique_in_order(blocked_ids),
+                        fallback_candidate_ids=_unique_in_order(fallback_ids),
+                        summary=(
+                            "MTF-first review order: close the floor-clean 1.0-field "
+                            "recovery branch before recording the target-spec repair "
+                            "decision or promoting any payload change"
+                        ),
+                        rationale=_unique_in_order(
+                            [
+                                "user priority is MTF/RMS first for the phone main-camera draft",
+                                (
+                                    "full-field recovery candidate reaches "
+                                    f"{format_mtf_field_fraction(floor_clean_trial.mtf_max_field_frac or 0.0)} field"
+                                ),
+                                "full-field recovery floor gap=0.000",
+                                recovery_quality,
+                                (
+                                    "protected changes="
+                                    f"{_changes_label(floor_clean_trial.variable_changes)}"
+                                ),
+                                "requested EFL/image-height/FOV triad still needs a recorded target-spec decision after MTF recovery",
+                                *(
+                                    list(fov_spec_repair_replay.evidence[:3])
+                                    if fov_spec_repair_replay is not None
+                                    else []
+                                ),
+                                (
+                                    f"active candidate {recommended_candidate_id} remains "
+                                    "the current payload because the protected branch has "
+                                    "not been signed as the delivered prescription"
+                                ),
+                            ]
+                        )[:10],
+                        promotion_requirements=[
+                            "run the full-field recovery replay gate before target-spec closeout",
+                            (
+                                fov_spec_default_repair[1]
+                                if fov_spec_default_repair is not None
+                                else "record a repaired target EFL or image height, or explicitly waive the original FOV target"
+                            ),
+                            "sign the slower-aperture and 4P-vs-requested-5P tradeoffs before replacing the seed payload",
+                            "apply the protected recovery change-set only to a cloned prescription",
+                            "rerun paraxial, 1.0-field MTF/RMS, manufacturability, and tolerance checks before promotion",
+                        ],
+                        forbidden_claims=[
+                            "delivered payload already contains the protected recovery changes",
+                            "original target EFL, image height, and FOV claimed as simultaneously satisfied",
+                            "target-spec repair recorded before the MTF-first recovery evidence is closed",
+                            "production-ready performance claim before tolerance review",
+                        ],
+                    )
                 priority_order = _unique_in_order(
                     [
                         "fov-spec-reconciliation",
@@ -5923,9 +5973,7 @@ def match_case(
                     ]
                 )
                 priority_order = [
-                    candidate_id
-                    for candidate_id in priority_order
-                    if candidate_id in candidate_ids
+                    candidate_id for candidate_id in priority_order if candidate_id in candidate_ids
                 ]
                 blocked_ids = [
                     candidate.candidate_id
@@ -6002,8 +6050,7 @@ def match_case(
                         candidate.candidate_id
                         for candidate in draft_candidates
                         if candidate.status in {"fallback", "conditional", "baseline"}
-                        and candidate.candidate_id
-                        != "full-field-floor-clean-recovery-candidate"
+                        and candidate.candidate_id != "full-field-floor-clean-recovery-candidate"
                     ]
                     metrics = floor_clean_trial.metrics
                     recovery_quality = (
@@ -6114,7 +6161,9 @@ def match_case(
                     "seed-baseline",
                 ]
             )
-            priority_order = [candidate_id for candidate_id in priority_order if candidate_id in candidate_ids]
+            priority_order = [
+                candidate_id for candidate_id in priority_order if candidate_id in candidate_ids
+            ]
             return DraftBranchSelectionPolicy(
                 status="strategy_resolution_required",
                 active_candidate_id=recommended_candidate_id,
@@ -6238,16 +6287,11 @@ def match_case(
 
         candidates_by_id = {candidate.candidate_id: candidate for candidate in draft_candidates}
         options_by_id = (
-            {
-                option.option_id: option
-                for option in design_strategy_decision.options
-            }
+            {option.option_id: option for option in design_strategy_decision.options}
             if design_strategy_decision is not None
             else {}
         )
-        cases_by_id = {
-            case.metadata.case_id: case for case in cases if case.metadata is not None
-        }
+        cases_by_id = {case.metadata.case_id: case for case in cases if case.metadata is not None}
         ordered_ids = (
             list(branch_selection_policy.candidate_priority_order)
             if branch_selection_policy is not None
@@ -6430,7 +6474,10 @@ def match_case(
                 return branch_selection_policy.promotion_requirements[0]
             if candidate.risks:
                 return candidate.risks[0]
-            if branch_selection_policy is not None and branch_selection_policy.promotion_requirements:
+            if (
+                branch_selection_policy is not None
+                and branch_selection_policy.promotion_requirements
+            ):
                 return branch_selection_policy.promotion_requirements[0]
             return candidate.summary
 
@@ -6465,13 +6512,9 @@ def match_case(
                     recommendation=candidate.recommendation,
                     case_id=case_id,
                     fov_deg=actual_fov,
-                    delta_fov_deg=(
-                        actual_fov - fov_deg if actual_fov is not None else None
-                    ),
+                    delta_fov_deg=(actual_fov - fov_deg if actual_fov is not None else None),
                     efl_mm=actual_efl,
-                    delta_efl_mm=(
-                        actual_efl - efl_mm if actual_efl is not None else None
-                    ),
+                    delta_efl_mm=(actual_efl - efl_mm if actual_efl is not None else None),
                     f_number=actual_f_number,
                     image_height_mm=actual_image_height,
                     total_track_mm=actual_total_track,
@@ -6757,9 +6800,7 @@ def match_case(
                 f"S{first_asphere.surface_index}:c{first_asphere.coefficient_index}",
             ]
             if first_asphere.edge_sag_delta_um is not None:
-                asphere_evidence.append(
-                    f"edge sag delta={first_asphere.edge_sag_delta_um:.2f} um"
-                )
+                asphere_evidence.append(f"edge sag delta={first_asphere.edge_sag_delta_um:.2f} um")
             if first_asphere.edge_slope_delta_mrad is not None:
                 asphere_evidence.append(
                     f"edge slope delta={first_asphere.edge_slope_delta_mrad:.2f} mrad"
@@ -6820,7 +6861,11 @@ def match_case(
         if actionable_factors:
             required_evidence.extend(factor.next_action for factor in actionable_factors[:5])
             factor_ids = {factor.factor_id for factor in actionable_factors}
-            if {"tolerance_risk_proxy", "minimum_axial_spacing", "minimum_curvature_radius"} & factor_ids:
+            if {
+                "tolerance_risk_proxy",
+                "minimum_axial_spacing",
+                "minimum_curvature_radius",
+            } & factor_ids:
                 required_evidence.append(
                     "run first-order tolerance sensitivity or Monte Carlo replay before release claims"
                 )
@@ -6838,7 +6883,9 @@ def match_case(
                 )
 
         if audit_status == "clear":
-            summary = "clear: first-pass geometry, tolerance, and process proxies are low sensitivity"
+            summary = (
+                "clear: first-pass geometry, tolerance, and process proxies are low sensitivity"
+            )
             confidence = 0.86
             safe_next_action = (
                 "carry current manufacturing pass evidence into review; no immediate sensitivity "
@@ -6905,8 +6952,7 @@ def match_case(
 
         def _owner_for_factor(factor_id: str) -> str:
             if any(
-                key in factor_id
-                for key in ("process", "yield", "material", "mass", "supplier")
+                key in factor_id for key in ("process", "yield", "material", "mass", "supplier")
             ):
                 return "manufacturing_engineer"
             if "asphere" in factor_id or "curvature" in factor_id:
@@ -7027,7 +7073,11 @@ def match_case(
         def _item_status_for_factor(factor: ManufacturingSensitivityFactor) -> str:
             if factor.status == "blocked":
                 return "blocked"
-            if factor.factor_id in {"process_yield_proxy", "material_diversity", "mass_proxy_budget"}:
+            if factor.factor_id in {
+                "process_yield_proxy",
+                "material_diversity",
+                "mass_proxy_budget",
+            }:
                 return "external_evidence_required"
             return "ready"
 
@@ -7101,7 +7151,9 @@ def match_case(
             "do not apply protected optimizer/asphere edits without replaying clearance gates",
         ]
         if checklist_status == "blocked":
-            forbidden_claims.append("do not hand off as manufacturing-review-ready until blockers close")
+            forbidden_claims.append(
+                "do not hand off as manufacturing-review-ready until blockers close"
+            )
         return ManufacturingClearanceChecklist(
             status=checklist_status,
             summary=summary,
@@ -7164,9 +7216,7 @@ def match_case(
         finite_surfaces = [
             surface
             for surface in best.surfaces
-            if math.isfinite(surface.z_mm)
-            and abs(surface.z_mm) < 1e8
-            and not surface.is_object
+            if math.isfinite(surface.z_mm) and abs(surface.z_mm) < 1e8 and not surface.is_object
         ]
         gap_candidates: list[tuple[float, int, int]] = []
         for before, after in zip(finite_surfaces, finite_surfaces[1:], strict=False):
@@ -7570,8 +7620,8 @@ def match_case(
         replay_gate_recommended_variables,
         replay_gate_remediation_actions,
     ) = _replay_gate_remediation_for_checks(replay_gate_failed_check_ids)
-    replay_gate_requires_remediation = (
-        floor_gap_recovery_trial is not None and bool(replay_gate_failed_check_ids)
+    replay_gate_requires_remediation = floor_gap_recovery_trial is not None and bool(
+        replay_gate_failed_check_ids
     )
     remediation_base_variables = tuple(
         replay_gate_recommended_variables
@@ -7626,9 +7676,7 @@ def match_case(
                 remediation_probe_before.total_track_mm if remediation_probe_before else None
             ),
             before_mtf_max_field_frac=(
-                remediation_probe_before.mtf_max_field_frac
-                if remediation_probe_before
-                else None
+                remediation_probe_before.mtf_max_field_frac if remediation_probe_before else None
             ),
             before_mtf_bands=mtf_bands_from_snapshot(remediation_probe_before),
             before_max_rms_spot_radius_um=(
@@ -7647,8 +7695,7 @@ def match_case(
     )
     if remediation_optimization_probe is not None:
         rationale.append(
-            "ran replay-gate remediation probe: "
-            f"{remediation_optimization_probe.status}"
+            f"ran replay-gate remediation probe: {remediation_optimization_probe.status}"
         )
 
     def _remediation_variable_key(variable: str) -> str:
@@ -7659,7 +7706,12 @@ def match_case(
             return "radius"
         if normalized in {"stop position", "stop"}:
             return "stop_position"
-        if normalized in {"focus position", "image plane", "image plane position", "back focal distance"}:
+        if normalized in {
+            "focus position",
+            "image plane",
+            "image plane position",
+            "back focal distance",
+        }:
             return "focus_position"
         if normalized in {"asphere", "asphere coefficient", "asphere coefficients"}:
             return "asphere_coefficient"
@@ -7785,9 +7837,7 @@ def match_case(
                 remediation_probe_before.total_track_mm if remediation_probe_before else None
             ),
             before_mtf_max_field_frac=(
-                remediation_probe_before.mtf_max_field_frac
-                if remediation_probe_before
-                else None
+                remediation_probe_before.mtf_max_field_frac if remediation_probe_before else None
             ),
             before_mtf_bands=mtf_bands_from_snapshot(remediation_probe_before),
             before_max_rms_spot_radius_um=(
@@ -7883,9 +7933,7 @@ def match_case(
         ]
         failed_checks = ", ".join(replay_gate_failed_check_ids) or "none"
         base_family_label = (
-            ", ".join(remediation_base_variables)
-            if remediation_base_variables
-            else "none"
+            ", ".join(remediation_base_variables) if remediation_base_variables else "none"
         )
         if seed_intake_audit is not None:
             seed_command = seed_intake_audit.candidate_preflight_command
@@ -7929,8 +7977,7 @@ def match_case(
             seed_status = "manual_required"
             seed_next_check = "rerun fixed eval case after seed or clone evidence is available"
             seed_evidence = (
-                f"case={best.metadata.case_id} "
-                f"FOV={fov_deg:.1f} EFL={efl_mm:.2f} F#={fnum:.2f}"
+                f"case={best.metadata.case_id} FOV={fov_deg:.1f} EFL={efl_mm:.2f} F#={fnum:.2f}"
             )
         alternate_evidence = (
             [
@@ -7983,8 +8030,7 @@ def match_case(
             [
                 "resolution packet=remediation-policy-block",
                 (
-                    "resolution path=stronger-seed; preflight="
-                    f"{seed_command}"
+                    f"resolution path=stronger-seed; preflight={seed_command}"
                     if seed_command
                     else f"resolution path=stronger-seed; target={seed_evidence}"
                 ),
@@ -8082,10 +8128,20 @@ def match_case(
         spec_repair_branch_review_required = (
             branch_selection_policy is not None
             and branch_selection_policy.status == "strategy_resolution_required"
-            and branch_selection_policy.primary_candidate_id == "fov-spec-reconciliation"
+            and branch_selection_policy.primary_candidate_id
+            in {
+                "fov-spec-reconciliation",
+                "full-field-floor-clean-recovery-candidate",
+            }
             and spec_repair_preview is not None
             and spec_repair_decision is not None
             and design_strategy_decision is None
+        )
+        mtf_first_spec_repair_closeout = (
+            spec_repair_branch_review_required
+            and branch_selection_policy is not None
+            and branch_selection_policy.primary_candidate_id
+            == "full-field-floor-clean-recovery-candidate"
         )
         local_merit_dependencies = ["lock-first-order"]
         local_merit_status = "queued"
@@ -8103,6 +8159,64 @@ def match_case(
                 else "RMS target must be recomputed on the active branch"
             )
         ]
+
+        def add_spec_repair_target_task(
+            *,
+            status: str,
+            objective: str,
+            entry_condition: str,
+            depends_on: list[str] | None = None,
+            evidence_prefix: list[str] | None = None,
+        ) -> None:
+            preview = spec_repair_preview
+            policy = branch_selection_policy
+            decision = spec_repair_decision
+            contract = decision.rerun_contract if decision is not None else None
+            if preview is None:
+                return
+            add(
+                "record-spec-repair-target",
+                "fov-spec-reconciliation",
+                "target_spec_resolution",
+                status,
+                objective,
+                ["target EFL", "image height", "FOV waiver", "branch selection"],
+                entry_condition,
+                (
+                    "default repaired target is recorded, or image-height repair / "
+                    "FOV waiver is explicitly chosen"
+                ),
+                "repaired-target replay coverage + rerun contract + recorded branch-selection decision",
+                depends_on=depends_on,
+                evidence=_unique_in_order(
+                    [
+                        *(evidence_prefix or []),
+                        policy.summary if policy is not None else "",
+                        *(policy.promotion_requirements if policy is not None else []),
+                        (
+                            f"default repaired EFL={preview.repaired_target_focal_length_mm:.2f} mm; "
+                            f"image height={preview.repaired_target_image_height_mm:.2f} mm; "
+                            f"FOV={preview.target_fov_deg:.1f} deg"
+                            if preview.repaired_target_image_height_mm is not None
+                            else (
+                                f"default repaired EFL={preview.repaired_target_focal_length_mm:.2f} mm; "
+                                f"FOV={preview.target_fov_deg:.1f} deg"
+                            )
+                        ),
+                        (
+                            "preview coverage="
+                            f"{preview.coverage_summary.met_count} met / "
+                            f"{preview.coverage_summary.tradeoff_count} tradeoff / "
+                            f"{preview.coverage_summary.miss_count} miss"
+                        ),
+                        decision.decision_summary if decision is not None else "",
+                        contract.query_summary if contract is not None else "",
+                        *(contract.validation_checks if contract is not None else []),
+                        *preview.remaining_tradeoffs,
+                        *preview.evidence,
+                    ]
+                ),
+            )
 
         if strategy_blocks_full_field:
             add(
@@ -8188,14 +8302,8 @@ def match_case(
                     depends_on=["resolve-design-strategy"],
                     evidence=_unique_in_order(
                         [
-                            (
-                                "strategy option="
-                                f"{stable_sibling_strategy_option.option_id}"
-                            ),
-                            (
-                                "sibling candidate="
-                                f"{stable_sibling_strategy_option.candidate_id}"
-                            ),
+                            (f"strategy option={stable_sibling_strategy_option.option_id}"),
+                            (f"sibling candidate={stable_sibling_strategy_option.candidate_id}"),
                             (
                                 "sibling scanned field="
                                 f"{format_mtf_field_fraction(stable_sibling_strategy_option.mtf_max_field_frac)}"
@@ -8210,61 +8318,15 @@ def match_case(
                     ),
                 )
 
-        if spec_repair_branch_review_required:
-            preview = spec_repair_preview
-            policy = branch_selection_policy
-            decision = spec_repair_decision
-            contract = decision.rerun_contract if decision is not None else None
-            add(
-                "record-spec-repair-target",
-                "fov-spec-reconciliation",
-                "target_spec_resolution",
-                "ready",
-                (
+        if spec_repair_branch_review_required and not mtf_first_spec_repair_closeout:
+            add_spec_repair_target_task(
+                status="ready",
+                objective=(
                     "record the repaired target decision before promoting the "
                     "optimizer-first payload branch"
                 ),
-                ["target EFL", "image height", "FOV waiver", "branch selection"],
-                "spec-repair preview is available and branch selection is unresolved",
-                (
-                    "default repaired target is recorded, or image-height repair / "
-                    "FOV waiver is explicitly chosen"
-                ),
-                "repaired-target replay coverage + rerun contract + recorded branch-selection decision",
-                evidence=_unique_in_order(
-                    [
-                        policy.summary if policy is not None else "",
-                        *(
-                            policy.promotion_requirements
-                            if policy is not None
-                            else []
-                        ),
-                        (
-                            f"default repaired EFL={preview.repaired_target_focal_length_mm:.2f} mm; "
-                            f"image height={preview.repaired_target_image_height_mm:.2f} mm; "
-                            f"FOV={preview.target_fov_deg:.1f} deg"
-                            if preview.repaired_target_image_height_mm is not None
-                            else (
-                                f"default repaired EFL={preview.repaired_target_focal_length_mm:.2f} mm; "
-                                f"FOV={preview.target_fov_deg:.1f} deg"
-                            )
-                        ),
-                        (
-                            "preview coverage="
-                            f"{preview.coverage_summary.met_count} met / "
-                            f"{preview.coverage_summary.tradeoff_count} tradeoff / "
-                            f"{preview.coverage_summary.miss_count} miss"
-                        ),
-                        decision.decision_summary if decision is not None else "",
-                        contract.query_summary if contract is not None else "",
-                        *(
-                            contract.validation_checks
-                            if contract is not None
-                            else []
-                        ),
-                        *preview.remaining_tradeoffs,
-                        *preview.evidence,
-                    ]
+                entry_condition=(
+                    "spec-repair preview is available and branch selection is unresolved"
                 ),
             )
 
@@ -8281,7 +8343,9 @@ def match_case(
                 "candidate comparison + manufacturability proxy + requirement coverage",
                 evidence=_unique_in_order(
                     [
-                        branch_selection_policy.summary if branch_selection_policy is not None else "",
+                        branch_selection_policy.summary
+                        if branch_selection_policy is not None
+                        else "",
                         *(
                             branch_selection_policy.rationale
                             if branch_selection_policy is not None
@@ -8305,7 +8369,9 @@ def match_case(
                 if strategy_blocks_full_field
                 else "MTF or optimizer verification does not currently prove the 1.0 field"
             )
-            recovery_stop_condition = "MTF evaluates without NaN at 1.0 field and ray trace remains finite"
+            recovery_stop_condition = (
+                "MTF evaluates without NaN at 1.0 field and ray trace remains finite"
+            )
             if full_field_recovery_change_set_selected and floor_clean_full_field_trial is not None:
                 recovery_candidate_id = "full-field-floor-clean-recovery-candidate"
                 recovery_variables = _unique_in_order(
@@ -8314,9 +8380,7 @@ def match_case(
                         for change in floor_clean_full_field_trial.variable_changes
                     ]
                 )
-                recovery_entry_condition = (
-                    "floor-clean compound field-extension trial is available as a structured change-set"
-                )
+                recovery_entry_condition = "floor-clean compound field-extension trial is available as a structured change-set"
                 recovery_stop_condition = (
                     "full-field recovery replay gate passes with floor gap 0.0 and payload frozen"
                 )
@@ -8346,6 +8410,23 @@ def match_case(
                 depends_on=["resolve-design-strategy"] if strategy_blocks_full_field else [],
                 evidence=_unique_in_order(recovery_evidence),
             )
+
+            if spec_repair_branch_review_required and mtf_first_spec_repair_closeout:
+                add_spec_repair_target_task(
+                    status="queued",
+                    objective=(
+                        "record the repaired target decision after the MTF-first "
+                        "full-field recovery replay closes"
+                    ),
+                    entry_condition=(
+                        "full-field recovery replay gate has passed and MTF-first "
+                        "branch evidence is recorded"
+                    ),
+                    depends_on=["recover-full-field"],
+                    evidence_prefix=[
+                        "MTF-first order: recover-full-field precedes target-spec recording"
+                    ],
+                )
 
         if seed_baseline_hold_reviewable:
             add(
@@ -8398,9 +8479,14 @@ def match_case(
                 and not full_field_recovery_change_set_selected
             )
             blocked_by_branch_review = cost_yield_branch_review_required
+            blocked_by_mtf_first_spec_record = mtf_first_spec_repair_closeout
             change_set_status = (
                 "queued"
-                if blocked_by_branch_review or waiting_for_full_field_replay
+                if (
+                    blocked_by_branch_review
+                    or waiting_for_full_field_replay
+                    or blocked_by_mtf_first_spec_record
+                )
                 else ("blocked" if blocked_by_full_field else "ready")
             )
             add(
@@ -8417,9 +8503,13 @@ def match_case(
                     "candidate proxy branch review is complete"
                     if blocked_by_branch_review
                     else (
-                        "full-field recovery replay gate has passed"
-                        if waiting_for_full_field_replay or blocked_by_full_field
-                        else "verification gate passed on the protected optimizer proposal"
+                        "MTF-first recovery replay and target-spec record are complete"
+                        if blocked_by_mtf_first_spec_record
+                        else (
+                            "full-field recovery replay gate has passed"
+                            if waiting_for_full_field_replay or blocked_by_full_field
+                            else "verification gate passed on the protected optimizer proposal"
+                        )
                     )
                 ),
                 "post-apply EFL, F-number, TTL, ray trace, and MTF stay inside the checked bounds",
@@ -8428,9 +8518,13 @@ def match_case(
                     ["resolve-candidate-proxy-branch"]
                     if blocked_by_branch_review
                     else (
-                        ["recover-full-field"]
-                        if blocked_by_full_field or waiting_for_full_field_replay
-                        else []
+                        ["record-spec-repair-target"]
+                        if blocked_by_mtf_first_spec_record
+                        else (
+                            ["recover-full-field"]
+                            if blocked_by_full_field or waiting_for_full_field_replay
+                            else []
+                        )
                     )
                 ),
                 evidence=[
@@ -8495,14 +8589,8 @@ def match_case(
                 "recover recommended-branch MTF/RMS before draft_ready promotion",
                 recommended_image_quality_recovery_objective.variables,
                 "first-order targets are locked on the recommended branch",
-                (
-                    "multiband min MTF>=0.08, field-weighted MTF>=0.15, "
-                    "and max RMS<=100um"
-                ),
-                (
-                    "rerun bounded merit tuning and verify MTF/RMS floor without "
-                    "EFL/FOV/TTL drift"
-                ),
+                ("multiband min MTF>=0.08, field-weighted MTF>=0.15, and max RMS<=100um"),
+                ("rerun bounded merit tuning and verify MTF/RMS floor without EFL/FOV/TTL drift"),
                 depends_on=["lock-first-order"],
                 evidence=_unique_in_order(
                     [
@@ -8571,17 +8659,13 @@ def match_case(
                         evidence=_unique_in_order(
                             [
                                 "replay gate=floor-gap-recovery-replay",
-                                (
-                                    "failed checks="
-                                    f"{', '.join(replay_gate_failed_check_ids)}"
-                                ),
+                                (f"failed checks={', '.join(replay_gate_failed_check_ids)}"),
                                 (
                                     "remediation variable priority="
                                     f"{', '.join(remediation_variables)}"
                                 ),
                                 (
-                                    "policy downstream variables="
-                                    f"{', '.join(downstream_variables)}"
+                                    f"policy downstream variables={', '.join(downstream_variables)}"
                                     if downstream_variables
                                     else "policy downstream variables=none"
                                 ),
@@ -8636,9 +8720,7 @@ def match_case(
                             resolution_packet=resolution_packet,
                         )
                     local_merit_dependencies = ["remediate-recovery-replay-gate"]
-                    local_merit_status = (
-                        "queued" if remediation_downstream_unlocked else "blocked"
-                    )
+                    local_merit_status = "queued" if remediation_downstream_unlocked else "blocked"
                     local_merit_variables = downstream_variables
                     local_merit_evidence = _unique_in_order(
                         [
@@ -8648,8 +8730,7 @@ def match_case(
                                 f"{', '.join(remediation_variables)}"
                             ),
                             (
-                                "policy-selected variables="
-                                f"{', '.join(downstream_variables)}"
+                                f"policy-selected variables={', '.join(downstream_variables)}"
                                 if downstream_variables
                                 else "policy-selected variables=none"
                             ),
@@ -9094,14 +9175,18 @@ def match_case(
         elif any(check.status == "fail" for check in required_checks):
             status = "fail"
             summary = "recovery replay gate blocks promotion until failed checks clear"
-            next_action = remediation_actions[0] if remediation_actions else (
-                "rerun guarded replay after closing failed floor, MTF, RMS, or lock checks"
+            next_action = (
+                remediation_actions[0]
+                if remediation_actions
+                else ("rerun guarded replay after closing failed floor, MTF, RMS, or lock checks")
             )
         else:
             status = "blocked"
             summary = "recovery replay gate is waiting for required replay evidence"
-            next_action = remediation_actions[0] if remediation_actions else (
-                "collect missing replay evidence before promotion"
+            next_action = (
+                remediation_actions[0]
+                if remediation_actions
+                else ("collect missing replay evidence before promotion")
             )
         return OptimizationReplayGate(
             gate_id="floor-gap-recovery-replay",
@@ -9144,9 +9229,7 @@ def match_case(
         floor_gap = trial.image_quality_floor_gap_score
         efl_delta_abs = abs(trial.efl_delta_mm) if trial.efl_delta_mm is not None else None
         ttl_delta_abs = (
-            abs(trial.total_track_delta_mm)
-            if trial.total_track_delta_mm is not None
-            else None
+            abs(trial.total_track_delta_mm) if trial.total_track_delta_mm is not None else None
         )
         metrics = trial.metrics
         checks = [
@@ -9172,8 +9255,7 @@ def match_case(
                 unit="field",
                 evidence=[
                     (
-                        "recovered field="
-                        f"{format_mtf_field_fraction(trial.mtf_max_field_frac)}"
+                        f"recovered field={format_mtf_field_fraction(trial.mtf_max_field_frac)}"
                         if trial.mtf_max_field_frac is not None
                         else "recovered field unavailable"
                     )
@@ -9272,11 +9354,7 @@ def match_case(
             ),
         ]
         required_checks = [check for check in checks if check.required_for_promotion]
-        failed_check_ids = [
-            check.check_id
-            for check in required_checks
-            if check.status != "pass"
-        ]
+        failed_check_ids = [check.check_id for check in required_checks if check.status != "pass"]
         promotion_allowed = not failed_check_ids
         status = "pass" if promotion_allowed else "fail"
         summary = (
@@ -9457,9 +9535,7 @@ def match_case(
                     after=after_gap,
                     unit=None,
                     direction=_metric_direction(before_gap, after_gap, higher_is_better=False),
-                    interpretation=(
-                        "normalized MTF/RMS floor gap; lower is closer to draft_ready"
-                    ),
+                    interpretation=("normalized MTF/RMS floor gap; lower is closer to draft_ready"),
                 )
             )
         probe_before_gap = _image_quality_floor_gap_score(merit_optimization_probe.before_metrics)
@@ -9511,7 +9587,7 @@ def match_case(
                         direction="diagnostic",
                         interpretation=interpretation,
                     )
-        )
+                )
         passed = floor.status == "pass"
         status = "passed" if passed else ("warning" if floor.status == "blocker" else "diagnostic")
         if passed:
@@ -9527,10 +9603,7 @@ def match_case(
         next_action = (
             f"unlock {', '.join(unlocked)} after MTF/RMS floor recovery; {recovery_objective.next_action}"
             if unlocked
-            else (
-                floor.action
-                or recovery_objective.next_action
-            )
+            else (floor.action or recovery_objective.next_action)
         )
         recovery_hint = (
             recovery_objective.next_action
@@ -9636,17 +9709,13 @@ def match_case(
                 f"replay gate={replay_gate.status}",
                 f"promotion allowed={replay_gate.promotion_allowed}",
                 f"required gate checks={len([check for check in replay_gate.checks if check.required_for_promotion])}",
-                (
-                    "failed replay checks="
-                    f"{', '.join(replay_gate.failed_check_ids) or 'none'}"
-                ),
+                (f"failed replay checks={', '.join(replay_gate.failed_check_ids) or 'none'}"),
                 (
                     "recommended replay variables="
                     f"{', '.join(replay_gate.recommended_variables) or 'none'}"
                 ),
                 (
-                    "remediation action="
-                    f"{replay_gate.remediation_actions[0]}"
+                    f"remediation action={replay_gate.remediation_actions[0]}"
                     if replay_gate.remediation_actions
                     else "remediation action=none"
                 ),
@@ -9656,7 +9725,9 @@ def match_case(
         if remediation_task is not None and replay_gate.failed_check_ids:
             unlocked = [remediation_task.task_id]
         else:
-            unlocked = ["local-merit-tuning"] if _find_task("local-merit-tuning") is not None else []
+            unlocked = (
+                ["local-merit-tuning"] if _find_task("local-merit-tuning") is not None else []
+            )
         replay_next_action = (
             replay_gate.remediation_actions[0]
             if replay_gate.remediation_actions
@@ -9666,9 +9737,7 @@ def match_case(
             task_id=task.task_id,
             candidate_id=task.candidate_id,
             status="diagnostic",
-            summary=(
-                "floor-gap recovery candidate is queued for guarded replay before promotion"
-            ),
+            summary=("floor-gap recovery candidate is queued for guarded replay before promotion"),
             metric_updates=metric_updates,
             unlocked_tasks=unlocked,
             next_action=(
@@ -9682,7 +9751,9 @@ def match_case(
 
     def _recovery_replay_remediation_run(task: OptimizationTask) -> OptimizationTaskRun:
         replay_gate = _recovery_replay_gate(floor_gap_recovery_trial)
-        variables = list(remediation_base_variables) or replay_gate.recommended_variables or task.variables
+        variables = (
+            list(remediation_base_variables) or replay_gate.recommended_variables or task.variables
+        )
         remediation_action = (
             replay_gate.remediation_actions[0]
             if replay_gate.remediation_actions
@@ -9696,9 +9767,7 @@ def match_case(
                 after=0.0,
                 unit="count",
                 direction="diagnostic",
-                interpretation=(
-                    "required replay checks that must clear before recovery promotion"
-                ),
+                interpretation=("required replay checks that must clear before recovery promotion"),
             ),
             OptimizationMetricUpdate(
                 metric="remediation_variable_priority_count",
@@ -9706,9 +9775,7 @@ def match_case(
                 after=float(len(variables)),
                 unit="count",
                 direction="diagnostic",
-                interpretation=(
-                    "variable families routed into the next bounded search"
-                ),
+                interpretation=("variable families routed into the next bounded search"),
             ),
         ]
         probe_evidence = ["remediation probe=not_attempted"]
@@ -9769,8 +9836,7 @@ def match_case(
                 *[
                     item
                     for item in probe.diagnostics
-                    if item.startswith("ranking policy=")
-                    or item.startswith("variable priority:")
+                    if item.startswith("ranking policy=") or item.startswith("variable priority:")
                 ][:2],
             ]
         local_merit_task = _find_task("local-merit-tuning")
@@ -9790,9 +9856,7 @@ def match_case(
             task_id=task.task_id,
             candidate_id=task.candidate_id,
             status="diagnostic",
-            summary=(
-                "replay-gate remediation routes the next bounded search variable priority"
-            ),
+            summary=("replay-gate remediation routes the next bounded search variable priority"),
             metric_updates=metric_updates,
             unlocked_tasks=unlocked,
             next_action=(
@@ -9844,9 +9908,7 @@ def match_case(
                     after=float(len(replay_gate_failed_check_ids)),
                     unit="count",
                     direction="diagnostic",
-                    interpretation=(
-                        "replay-gate checks still blocking policy-driven promotion"
-                    ),
+                    interpretation=("replay-gate checks still blocking policy-driven promotion"),
                 )
             ],
             unlocked_tasks=[],
@@ -10113,8 +10175,7 @@ def match_case(
                     )
                 else:
                     selected_variable = (
-                        "variable=compound "
-                        f"{_changes_label(active_merit_probe.variable_changes)}"
+                        f"variable=compound {_changes_label(active_merit_probe.variable_changes)}"
                     )
             eligible_variables = [
                 f"{candidate.variable} S{candidate.surface_index}"
@@ -10264,17 +10325,11 @@ def match_case(
             if recommended_candidate is not None and recommended_candidate.metrics is not None
             else optimization_attempt.after_metrics
         )
-        after = (
-            second_pass_candidate.metrics
-            if second_pass_candidate is not None
-            else None
-        )
+        after = second_pass_candidate.metrics if second_pass_candidate is not None else None
         before_gap = _image_quality_floor_gap_score(before)
         after_gap = _image_quality_floor_gap_score(after)
         gap_closure = (
-            before_gap - after_gap
-            if before_gap is not None and after_gap is not None
-            else None
+            before_gap - after_gap if before_gap is not None and after_gap is not None else None
         )
 
         before_bands = mtf_bands_from_snapshot(before)
@@ -10461,18 +10516,12 @@ def match_case(
             ),
         ]
         required_checks = [check for check in checks if check.required_for_promotion]
-        failed_check_ids = [
-            check.check_id
-            for check in required_checks
-            if check.status != "pass"
-        ]
+        failed_check_ids = [check.check_id for check in required_checks if check.status != "pass"]
         recommended_variables, remediation_actions = _replay_gate_remediation_for_checks(
             failed_check_ids
         )
         if "mtf_field_non_regressed" in failed_check_ids:
-            recommended_variables = _unique_in_order(
-                [*recommended_variables, "full-field MTF"]
-            )
+            recommended_variables = _unique_in_order([*recommended_variables, "full-field MTF"])
             remediation_actions = _unique_in_order(
                 [
                     *remediation_actions,
@@ -10599,8 +10648,7 @@ def match_case(
                         higher_is_better=higher_is_better,
                     ),
                     interpretation=(
-                        "second-pass replay metric compared with the current "
-                        "recommended branch"
+                        "second-pass replay metric compared with the current recommended branch"
                     ),
                 )
             )
@@ -10830,9 +10878,7 @@ def match_case(
                     ),
                     metric_updates=[],
                     unlocked_tasks=(
-                        ["review-stable-sibling-branch"]
-                        if stable_sibling_task is not None
-                        else []
+                        ["review-stable-sibling-branch"] if stable_sibling_task is not None else []
                     ),
                     next_action=(
                         decision.required_evidence[0]
@@ -10982,21 +11028,9 @@ def match_case(
                             *first_ready.evidence,
                             decision.decision_summary if decision is not None else "",
                             contract.query_summary if contract is not None else "",
-                            *(
-                                contract.validation_checks
-                                if contract is not None
-                                else []
-                            ),
-                            *(
-                                preview.evidence
-                                if preview is not None
-                                else []
-                            ),
-                            *(
-                                preview.risks
-                                if preview is not None
-                                else []
-                            ),
+                            *(contract.validation_checks if contract is not None else []),
+                            *(preview.evidence if preview is not None else []),
+                            *(preview.risks if preview is not None else []),
                         ],
                         limit=24,
                     ),
@@ -11189,8 +11223,7 @@ def match_case(
             replay_gate = _full_field_recovery_replay_gate(recovery_trial)
             after_field = (
                 recovery_trial.mtf_max_field_frac
-                if recovery_trial is not None
-                and recovery_trial.mtf_max_field_frac is not None
+                if recovery_trial is not None and recovery_trial.mtf_max_field_frac is not None
                 else None
             )
             if after_field is None:
@@ -11209,7 +11242,9 @@ def match_case(
                     else best.metadata.mtf_max_field_frac
                 )
             )
-            passed = replay_gate.promotion_allowed or (after_field >= 1.0 and gate_status == "passed")
+            passed = replay_gate.promotion_allowed or (
+                after_field >= 1.0 and gate_status == "passed"
+            )
             status = "passed" if passed else "warning"
             unlocked = _unlocked_tasks_after(first_ready.task_id, passed=passed)
             metric_updates = [
@@ -11319,8 +11354,7 @@ def match_case(
                             (
                                 "protected changes="
                                 f"{_changes_label(recovery_trial.variable_changes)}"
-                                if recovery_trial is not None
-                                and recovery_trial.variable_changes
+                                if recovery_trial is not None and recovery_trial.variable_changes
                                 else ""
                             ),
                             (
@@ -11481,11 +11515,7 @@ def match_case(
 
     def _full_field_recovery_review_ready() -> bool:
         recovery_run = next(
-            (
-                run
-                for run in optimization_task_runs
-                if run.task_id == "recover-full-field"
-            ),
+            (run for run in optimization_task_runs if run.task_id == "recover-full-field"),
             None,
         )
         return (
@@ -11658,10 +11688,7 @@ def match_case(
                     "fov_alternative_review",
                     "FOV alternative review",
                     "pass",
-                    (
-                        f"{fov_resolution.summary}: "
-                        + "; ".join(fov_resolution.blockers[:2])
-                    ),
+                    (f"{fov_resolution.summary}: " + "; ".join(fov_resolution.blockers[:2])),
                     None,
                 )
             else:
@@ -11788,8 +11815,7 @@ def match_case(
             run_evidence = f"{latest_run.task_id}/{latest_run.status}: {latest_run.summary}"
             if informative_floor_recovery_hold and latest_run.status != "passed":
                 run_evidence = (
-                    "floor recovery replay generated bounded non-promoted evidence; "
-                    f"{run_evidence}"
+                    f"floor recovery replay generated bounded non-promoted evidence; {run_evidence}"
                 )
             run_action = None
         elif latest_run.status in {"diagnostic", "warning"}:
@@ -12138,9 +12164,7 @@ def match_case(
         conflict_flags: list[str] = []
         for item in hard_constraints:
             if item.status == "miss":
-                conflict_flags.append(
-                    f"{item.requirement_id} misses target {item.target}"
-                )
+                conflict_flags.append(f"{item.requirement_id} misses target {item.target}")
             elif item.status == "tradeoff" and item.negotiability == "explicit_review_required":
                 conflict_flags.append(
                     f"{item.requirement_id} requires explicit review before exact-brief claims"
@@ -12199,8 +12223,7 @@ def match_case(
             normalized_bits.append(f"manufacturing={manufacturing_tier}")
 
         has_critical_miss = any(
-            item.status == "miss" and item.priority == "critical"
-            for item in hard_constraints
+            item.status == "miss" and item.priority == "critical" for item in hard_constraints
         )
         if has_critical_miss or draft_acceptance_gate.status == "blocked":
             status_value = "blocked"
@@ -12232,11 +12255,7 @@ def match_case(
         )
         if next_action is None:
             next_action = next(
-                (
-                    action
-                    for action in draft_acceptance_gate.required_next_actions[:1]
-                    if action
-                ),
+                (action for action in draft_acceptance_gate.required_next_actions[:1] if action),
                 "review the intent contract before changing seed or optimizer targets",
             )
 
@@ -12358,10 +12377,7 @@ def match_case(
                     seed_intake_audit.missing_evidence
                     if seed_intake_audit is not None
                     else [
-                        (
-                            f"visible-light prescription with FOV >= "
-                            f"{brief.minimum_fov_deg:.1f} deg"
-                        ),
+                        (f"visible-light prescription with FOV >= {brief.minimum_fov_deg:.1f} deg"),
                         "finite sampled ray trace through the 1.0 field",
                         "MTF evaluates at 1.0 field without fallback",
                         "materials resolve to backend refractive-index data",
@@ -12472,10 +12488,7 @@ def match_case(
                 validation_steps = _unique_in_order(
                     [
                         *validation_steps,
-                        *(
-                            path.next_check
-                            for path in active_resolution_packet.paths[:4]
-                        ),
+                        *(path.next_check for path in active_resolution_packet.paths[:4]),
                     ]
                 )
                 task_exit_criteria = _unique_in_order(
@@ -12492,20 +12505,12 @@ def match_case(
                     ]
                 )
                 next_probe_command = next(
-                    (
-                        path.command
-                        for path in active_resolution_packet.paths
-                        if path.command
-                    ),
+                    (path.command for path in active_resolution_packet.paths if path.command),
                     "rerun the linked remediation task and fixed design-agent eval",
                 )
                 task_evidence_probe = AcceptanceEvidenceProbe(
                     probe_id="remediation-resolution-packet",
-                    status=(
-                        "gap"
-                        if task_status == "external_evidence_required"
-                        else "satisfied"
-                    ),
+                    status=("gap" if task_status == "external_evidence_required" else "satisfied"),
                     summary=(
                         "typed remediation resolution packet defines the evidence "
                         "needed before task-run promotion can pass"
@@ -12529,9 +12534,7 @@ def match_case(
                 task_evidence_probe = AcceptanceEvidenceProbe(
                     probe_id="image-quality-floor-gap",
                     status=(
-                        "satisfied"
-                        if recommended_image_quality_floor.status == "pass"
-                        else "gap"
+                        "satisfied" if recommended_image_quality_floor.status == "pass" else "gap"
                     ),
                     summary=(
                         "recommended branch still has a first-pass MTF/RMS floor gap"
@@ -12559,18 +12562,9 @@ def match_case(
                     missing_evidence=_unique_in_order(
                         [
                             *recommended_image_quality_floor.blockers,
-                            (
-                                "multiband min MTF >= "
-                                f"{_IMAGE_QUALITY_FLOOR_MIN_MTF:.2f}"
-                            ),
-                            (
-                                "field-weighted MTF >= "
-                                f"{_IMAGE_QUALITY_FLOOR_WEIGHTED_MTF:.2f}"
-                            ),
-                            (
-                                "max RMS spot radius <= "
-                                f"{_IMAGE_QUALITY_FLOOR_MAX_RMS_UM:.0f} um"
-                            ),
+                            (f"multiband min MTF >= {_IMAGE_QUALITY_FLOOR_MIN_MTF:.2f}"),
+                            (f"field-weighted MTF >= {_IMAGE_QUALITY_FLOOR_WEIGHTED_MTF:.2f}"),
+                            (f"max RMS spot radius <= {_IMAGE_QUALITY_FLOOR_MAX_RMS_UM:.0f} um"),
                             "normalized MTF/RMS floor gap reaches 0.0",
                             "draft_quality_rubric.optical_evidence is no longer blocker",
                         ]
@@ -12802,11 +12796,7 @@ def match_case(
             requirement_status = (
                 "blocker"
                 if requirement_coverage_summary.status == "blocked"
-                else (
-                    "warning"
-                    if requirement_coverage_summary.status == "tradeoff"
-                    else "pass"
-                )
+                else ("warning" if requirement_coverage_summary.status == "tradeoff" else "pass")
             )
             requirement_action = next(
                 (
@@ -12836,9 +12826,7 @@ def match_case(
         verification = optimization_attempt.verification
         full_field_recovery_review_ready = _full_field_recovery_review_ready()
         full_field_recovery_trial = (
-            _floor_clean_full_field_recovery_trial()
-            if full_field_recovery_review_ready
-            else None
+            _floor_clean_full_field_recovery_trial() if full_field_recovery_review_ready else None
         )
         if seed_baseline_hold_reviewable:
             optimizer_evidence_score = 0.88
@@ -13000,8 +12988,7 @@ def match_case(
             )
         )
         latest_run_is_nonblocking_branch_review = (
-            latest_run is not None
-            and latest_run.task_id == "review-stable-sibling-branch"
+            latest_run is not None and latest_run.task_id == "review-stable-sibling-branch"
         )
         workflow_action = (
             None
@@ -13019,9 +13006,9 @@ def match_case(
                     and branch_selection_policy.status == "strategy_resolution_required"
                     and design_strategy_decision.required_evidence
                     else (
-                    draft_acceptance_gate.required_next_actions[0]
-                    if draft_acceptance_gate.required_next_actions
-                    else None
+                        draft_acceptance_gate.required_next_actions[0]
+                        if draft_acceptance_gate.required_next_actions
+                        else None
                     )
                 )
             )
@@ -13295,11 +13282,7 @@ def match_case(
                     f"manufacturing-sensitivity-{index}-{_slug(evidence_item)}",
                     2,
                     f"manufacturing_sensitivity_audit.{factor.factor_id if factor else source_factor}",
-                    (
-                        "blocked"
-                        if manufacturing_sensitivity_audit.status == "blocked"
-                        else "ready"
-                    ),
+                    ("blocked" if manufacturing_sensitivity_audit.status == "blocked" else "ready"),
                     _owner_for_requirement(evidence_item, "manufacturing_engineer"),
                     evidence_item,
                     "production manufacturability and yield claims",
@@ -13397,9 +13380,7 @@ def match_case(
         items.sort(key=lambda item: (item.priority, item.item_id))
         visible_items = items[:8]
         review_blocking_count = sum(item.blocks_review for item in visible_items)
-        production_blocking_count = sum(
-            item.blocks_production_claims for item in visible_items
-        )
+        production_blocking_count = sum(item.blocks_production_claims for item in visible_items)
         external_dependency_count = sum(
             item.status == "external_evidence_required" for item in visible_items
         )
@@ -13451,7 +13432,9 @@ def match_case(
     evidence_closeout_plan = _evidence_closeout_plan()
 
     def _design_handoff_packet() -> DesignHandoffPacket:
-        candidate_id = draft_acceptance_gate.candidate_id or recommended_candidate_id or "seed-baseline"
+        candidate_id = (
+            draft_acceptance_gate.candidate_id or recommended_candidate_id or "seed-baseline"
+        )
         if draft_acceptance_gate.status == "ready_for_review":
             handoff_status = "ready_for_review"
         elif draft_acceptance_gate.status == "blocked":
@@ -13580,9 +13563,7 @@ def match_case(
                 )
             )
         else:
-            summary = (
-                f"do not hand off {candidate_id} as a reviewable draft until blockers close"
-            )
+            summary = f"do not hand off {candidate_id} as a reviewable draft until blockers close"
 
         next_decision = next(
             (
@@ -13618,7 +13599,8 @@ def match_case(
             "selected_real_seed"
             if delivered_candidate_id == "seed-baseline"
             else "selected_real_seed_with_protected_change_set"
-            if delivered_candidate_id == "optimizer-proposal" and prescription_change_set is not None
+            if delivered_candidate_id == "optimizer-proposal"
+            and prescription_change_set is not None
             else "selected_real_seed_with_review_branch"
         )
         validation_evidence = _unique_in_order(
@@ -13633,11 +13615,7 @@ def match_case(
                     if draft_acceptance_gate is not None
                     else []
                 ),
-                *(
-                    [f"delivery gate: {delivery_gate.status}"]
-                    if delivery_gate is not None
-                    else []
-                ),
+                *([f"delivery gate: {delivery_gate.status}"] if delivery_gate is not None else []),
                 f"constraint ledger: {design_constraint_ledger.status}",
             ]
         )
@@ -13724,9 +13702,13 @@ def match_case(
             if status == "locked":
                 return "preserve this requirement during any local optimization"
             if status == "accepted_tradeoff":
-                return "keep the tradeoff visible as a review note; do not silently relabel it as met"
+                return (
+                    "keep the tradeoff visible as a review note; do not silently relabel it as met"
+                )
             if status == "unresolved":
-                return "requires explicit design decision or external evidence before stronger claims"
+                return (
+                    "requires explicit design decision or external evidence before stronger claims"
+                )
             return "track as contextual evidence; do not use it as a release claim"
 
         constraints = [
@@ -13743,9 +13725,7 @@ def match_case(
             for item in requirement_coverage
         ]
         locked_count = sum(item.status == "locked" for item in constraints)
-        accepted_tradeoff_count = sum(
-            item.status == "accepted_tradeoff" for item in constraints
-        )
+        accepted_tradeoff_count = sum(item.status == "accepted_tradeoff" for item in constraints)
         unresolved_count = sum(item.status == "unresolved" for item in constraints)
 
         tasks_by_id = {task.task_id: task for task in optimization_task_queue}
@@ -13985,9 +13965,7 @@ def match_case(
             )
 
         intent_conflict_count = (
-            len(design_intent_contract.conflict_flags)
-            if design_intent_contract is not None
-            else 0
+            len(design_intent_contract.conflict_flags) if design_intent_contract is not None else 0
         )
         if design_intent_contract is None:
             brief_score = 0.20
@@ -14089,9 +14067,7 @@ def match_case(
             + 0.55 * (optical_dimension.score if optical_dimension else 0.0)
         )
         optical_statuses = {
-            item.status
-            for item in [requirement_dimension, optical_dimension]
-            if item is not None
+            item.status for item in [requirement_dimension, optical_dimension] if item is not None
         }
         optical_fit_status = (
             "blocker"
@@ -14119,8 +14095,13 @@ def match_case(
             optical_fit_action,
         )
 
-        verification = optimization_attempt.verification if optimization_attempt is not None else None
-        if draft_acceptance_gate.status == "ready_for_review" and recommended_candidate_id == "seed-baseline":
+        verification = (
+            optimization_attempt.verification if optimization_attempt is not None else None
+        )
+        if (
+            draft_acceptance_gate.status == "ready_for_review"
+            and recommended_candidate_id == "seed-baseline"
+        ):
             optimizer_score = 0.90
             optimizer_status = "pass"
             optimizer_evidence = [

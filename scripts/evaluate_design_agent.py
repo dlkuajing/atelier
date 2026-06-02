@@ -214,7 +214,10 @@ def _has_seed_selection_scorecard() -> Check:
             and {"efl", "fov", "fnum"}.issubset(metric_ids)
             and 0.99 <= active_weights <= 1.01
             and contribution_sum >= 0.0
-            and all(item.status in {"dominant", "tradeoff", "aligned"} for item in scorecard.metric_scores)
+            and all(
+                item.status in {"dominant", "tradeoff", "aligned"}
+                for item in scorecard.metric_scores
+            )
             and bool(scorecard.summary)
             and bool(scorecard.next_action)
             and bool(scorecard.rejected_alternatives)
@@ -247,12 +250,10 @@ def _floor_aware_performance_seed_selected() -> Check:
             and "0.9 field" in quality.actual
             and any("Element count: 4P vs 5P" in item for item in scorecard.accepted_tradeoffs)
             and any(
-                "MTF field evidence: 0.9 field" in item
-                for item in scorecard.accepted_tradeoffs
+                "MTF field evidence: 0.9 field" in item for item in scorecard.accepted_tradeoffs
             )
             and comparison.get("performance_variant") is not None
-            and comparison["performance_variant"].case_id
-            == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
+            and comparison["performance_variant"].case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
             and comparison.get("nearby_alternative_1") is not None
             and comparison["nearby_alternative_1"].case_id.startswith("5P_F2.0")
         )
@@ -284,8 +285,7 @@ def _balanced_floor_aware_seed_selected() -> Check:
             and any("F-number: 2.19 vs 2.00" in item for item in scorecard.accepted_tradeoffs)
             and any("Element count: 4P vs 5P" in item for item in scorecard.accepted_tradeoffs)
             and any(
-                "MTF field evidence: 0.9 field" in item
-                for item in scorecard.accepted_tradeoffs
+                "MTF field evidence: 0.9 field" in item for item in scorecard.accepted_tradeoffs
             )
             and gate is not None
             and gate.status == "conditional"
@@ -349,7 +349,7 @@ def _full_field_recovery_replay_passes() -> Check:
             and protected_task is not None
             and protected_task.status == "queued"
             and protected_task.candidate_id == "full-field-floor-clean-recovery-candidate"
-            and protected_task.depends_on == ["recover-full-field"]
+            and protected_task.depends_on == ["record-spec-repair-target"]
             and recover_run is not None
             and recover_run.status == "passed"
             and recover_run.candidate_id == "full-field-floor-clean-recovery-candidate"
@@ -357,7 +357,7 @@ def _full_field_recovery_replay_passes() -> Check:
             and recover_run.replay_gate.gate_id == "full-field-recovery-replay"
             and recover_run.replay_gate.status == "pass"
             and recover_run.replay_gate.promotion_allowed is True
-            and recover_run.unlocked_tasks == ["apply-protected-change-set"]
+            and recover_run.unlocked_tasks == ["record-spec-repair-target"]
             and any("best recovery field=" in item for item in recover_run.evidence)
             and any("best recovery floor gap=" in item for item in recover_run.evidence)
             and any("best recovery MTF/RMS=" in item for item in recover_run.evidence)
@@ -400,18 +400,12 @@ def _performance_recovery_branch_policy_present() -> Check:
             return False, "performance recovery branch policy missing assessment"
         policy = assessment.branch_selection_policy
         gate = assessment.draft_acceptance_gate
-        rows_by_id = {
-            row.candidate_id: row for row in assessment.strategy_tradeoff_matrix
-        }
+        rows_by_id = {row.candidate_id: row for row in assessment.strategy_tradeoff_matrix}
         recovery_row = rows_by_id.get("full-field-floor-clean-recovery-candidate")
         seed_row = rows_by_id.get("seed-baseline")
         branch_check = (
             next(
-                (
-                    check
-                    for check in gate.checks
-                    if check.check_id == "branch_selection"
-                ),
+                (check for check in gate.checks if check.check_id == "branch_selection"),
                 None,
             )
             if gate is not None
@@ -420,26 +414,20 @@ def _performance_recovery_branch_policy_present() -> Check:
         ok = (
             policy is not None
             and policy.status == "strategy_resolution_required"
-            and policy.primary_candidate_id
-            == "full-field-floor-clean-recovery-candidate"
+            and policy.primary_candidate_id == "full-field-floor-clean-recovery-candidate"
             and policy.active_candidate_id == "seed-baseline"
             and policy.current_deliverable_candidate_id == "seed-baseline"
             and policy.candidate_priority_order[:2]
             == ["full-field-floor-clean-recovery-candidate", "seed-baseline"]
             and any(
-                "F-number / element-count waiver" in item
-                or "slower-aperture tradeoff" in item
+                "F-number / element-count waiver" in item or "slower-aperture tradeoff" in item
                 for item in policy.promotion_requirements
             )
             and any(
-                "floor-clean 5P/F1.8-ish visible-light seed" in item
-                or "4P-vs-requested-5P" in item
+                "floor-clean 5P/F1.8-ish visible-light seed" in item or "4P-vs-requested-5P" in item
                 for item in policy.promotion_requirements
             )
-            and any(
-                "delivered payload" in item
-                for item in policy.forbidden_claims
-            )
+            and any("delivered payload" in item for item in policy.forbidden_claims)
             and recovery_row is not None
             and recovery_row.priority_rank == 1
             and "primary" in recovery_row.role_tags
@@ -487,8 +475,7 @@ def _performance_tradeoff_policy_present() -> Check:
             and f_number is not None
             and f_number.status == "tradeoff"
             and any(
-                "rejected exact-aperture seed=5P_F1.8_FOV74.1" in item
-                for item in f_number.evidence
+                "rejected exact-aperture seed=5P_F1.8_FOV74.1" in item for item in f_number.evidence
             )
             and readiness is not None
             and readiness.status == "conditional"
@@ -615,12 +602,9 @@ def _has_fov_spec_consistency_diagnostic() -> Check:
             None,
         )
         has_risk = any(
-            risk.risk == "request-geometry inconsistency"
-            for risk in assessment.risk_register
+            risk.risk == "request-geometry inconsistency" for risk in assessment.risk_register
         )
-        has_next_step = any(
-            "EFL/image-height/FOV triad" in step for step in assessment.next_steps
-        )
+        has_next_step = any("EFL/image-height/FOV triad" in step for step in assessment.next_steps)
         ok = (
             item is not None
             and item.status == "tradeoff"
@@ -674,7 +658,7 @@ def _has_fov_spec_reconciliation_branch() -> Check:
     return check
 
 
-def _fov_spec_reconciliation_is_primary() -> Check:
+def _mtf_first_recovery_precedes_spec_reconciliation() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
         if assessment is None or assessment.branch_selection_policy is None:
@@ -688,21 +672,27 @@ def _fov_spec_reconciliation_is_primary() -> Check:
         runs = assessment.optimization_task_runs
         first_task = tasks[0] if tasks else None
         first_run = runs[0] if runs else None
+        spec_task = next(
+            (task for task in tasks if task.task_id == "record-spec-repair-target"),
+            None,
+        )
         ok = (
             policy.status == "strategy_resolution_required"
             and policy.active_candidate_id == assessment.recommended_candidate_id
-            and policy.primary_candidate_id == "fov-spec-reconciliation"
+            and policy.primary_candidate_id == "full-field-floor-clean-recovery-candidate"
             and policy.current_deliverable_candidate_id == assessment.recommended_candidate_id
-            and policy.candidate_priority_order[:1] == ["fov-spec-reconciliation"]
+            and policy.candidate_priority_order[:2]
+            == ["full-field-floor-clean-recovery-candidate", "fov-spec-reconciliation"]
             and "fov-target-seed-needed" in policy.blocked_candidate_ids
             and "fov-waiver-review" in policy.fallback_candidate_ids
             and bool(policy.promotion_requirements)
             and any(
-                "target-spec decision is recorded" in item
-                for item in policy.promotion_requirements
+                "full-field recovery replay gate" in item for item in policy.promotion_requirements
             )
+            and any("target-spec" in item for item in policy.promotion_requirements)
+            and any("MTF/RMS first" in item for item in policy.rationale)
             and any("requested EFL/image-height/FOV triad" in item for item in policy.rationale)
-            and any("optimizer-first branch accepted" in item for item in policy.forbidden_claims)
+            and any("protected recovery changes" in item for item in policy.forbidden_claims)
             and preview is not None
             and preview.source_candidate_id == "fov-spec-reconciliation"
             and preview.status == "tradeoff_after_repair"
@@ -756,27 +746,27 @@ def _fov_spec_reconciliation_is_primary() -> Check:
                 for item in rerun_contract.validation_checks
             )
             and any(
-                "target_focal_length_mm=2.84" in item
-                for item in rerun_contract.validation_checks
+                "target_focal_length_mm=2.84" in item for item in rerun_contract.validation_checks
             )
             and first_task is not None
-            and first_task.task_id == "record-spec-repair-target"
-            and first_task.candidate_id == "fov-spec-reconciliation"
-            and first_task.stage == "target_spec_resolution"
+            and first_task.task_id == "recover-full-field"
+            and first_task.candidate_id == "full-field-floor-clean-recovery-candidate"
+            and first_task.stage == "full_field_recovery"
+            and spec_task is not None
+            and spec_task.status == "queued"
+            and spec_task.candidate_id == "fov-spec-reconciliation"
+            and spec_task.depends_on == ["recover-full-field"]
             and any(
                 "preview coverage=2 met / 4 tradeoff / 0 miss" in item
-                for item in first_task.evidence
+                for item in spec_task.evidence
             )
-            and any(
-                task.task_id == "recover-full-field"
-                for task in tasks
-            )
+            and any(task.task_id == "recover-full-field" for task in tasks)
             and first_run is not None
-            and first_run.task_id == "record-spec-repair-target"
-            and first_run.status == "diagnostic"
-            and first_run.next_action == decision.required_record
+            and first_run.task_id == "recover-full-field"
+            and first_run.status == "passed"
+            and first_run.unlocked_tasks == ["record-spec-repair-target"]
         )
-        return ok, f"spec reconciliation policy {policy.primary_candidate_id}"
+        return ok, f"MTF-first policy {policy.primary_candidate_id}"
 
     return check
 
@@ -806,12 +796,8 @@ def _spec_repair_rerun_contract_is_idempotent() -> Check:
 
         rerun_assessment = rerun.design_assessment
         branch_policy = rerun_assessment.branch_selection_policy
-        coverage_ids = {
-            item.requirement_id for item in rerun_assessment.requirement_coverage
-        }
-        candidate_ids = {
-            candidate.candidate_id for candidate in rerun_assessment.draft_candidates
-        }
+        coverage_ids = {item.requirement_id for item in rerun_assessment.requirement_coverage}
+        candidate_ids = {candidate.candidate_id for candidate in rerun_assessment.draft_candidates}
         first_task = (
             rerun_assessment.optimization_task_queue[0]
             if rerun_assessment.optimization_task_queue
@@ -824,9 +810,7 @@ def _spec_repair_rerun_contract_is_idempotent() -> Check:
         )
         rerun_gate = rerun_assessment.draft_acceptance_gate
         rerun_checks = (
-            {item.check_id: item for item in rerun_gate.checks}
-            if rerun_gate is not None
-            else {}
+            {item.check_id: item for item in rerun_gate.checks} if rerun_gate is not None else {}
         )
         ok = (
             rerun.metadata.case_id == contract.expected_case_id
@@ -1442,9 +1426,7 @@ def _tolerance_sensitivity_status(
         if assessment is None or assessment.tolerance_sensitivity_audit is None:
             return False, "tolerance sensitivity audit missing"
         audit = assessment.tolerance_sensitivity_audit
-        dominant_ok = (
-            dominant_item_id is None or audit.dominant_item_id == dominant_item_id
-        )
+        dominant_ok = dominant_item_id is None or audit.dominant_item_id == dominant_item_id
         return (
             audit.status in expected and dominant_ok and len(audit.items) >= min_items,
             (
@@ -1476,16 +1458,14 @@ def _has_manufacturing_clearance_checklist() -> Check:
             "blocked",
         }
         counts_ok = (
-            checklist.review_blocking_count
-            == sum(1 for item in items if item.blocks_review)
+            checklist.review_blocking_count == sum(1 for item in items if item.blocks_review)
             and checklist.production_blocking_count
             == sum(1 for item in items if item.blocks_production_claims)
             and checklist.external_dependency_count
             == sum(1 for item in items if item.status == "external_evidence_required")
         )
-        dominant_ok = (
-            (not items and checklist.dominant_item_id is None)
-            or (checklist.dominant_item_id in item_ids)
+        dominant_ok = (not items and checklist.dominant_item_id is None) or (
+            checklist.dominant_item_id in item_ids
         )
         items_ok = all(
             item.status in allowed_item_statuses
@@ -2003,9 +1983,8 @@ def _has_near_threshold_partial_field_branch() -> Check:
             and any("0.9 field" in item for item in branch.evidence)
             and any("0.8" in item and "0.9" in item for item in branch.evidence)
         )
-        risk_ok = (
-            any("requested FOV is reduced" in item for item in branch.risks)
-            and any("full-field edge-performance" in item for item in branch.risks)
+        risk_ok = any("requested FOV is reduced" in item for item in branch.risks) and any(
+            "full-field edge-performance" in item for item in branch.risks
         )
         ok = (
             option.candidate_id == "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34"
@@ -2058,13 +2037,11 @@ def _selected_partial_branch_uses_085_seed() -> Check:
             and metrics.effective_focal_length_mm is not None
             and metrics.mtf_50lpmm_min is not None
         )
-        evidence_ok = (
-            any("partial-field real case" in item for item in branch.evidence)
-            and any("0.85 field" in item for item in branch.evidence)
+        evidence_ok = any("partial-field real case" in item for item in branch.evidence) and any(
+            "0.85 field" in item for item in branch.evidence
         )
-        risk_ok = (
-            any("full-field edge-performance" in item for item in branch.risks)
-            and any("unproven" in item for item in branch.risks)
+        risk_ok = any("full-field edge-performance" in item for item in branch.risks) and any(
+            "unproven" in item for item in branch.risks
         )
         ok = (
             branch.source == "strategy_option"
@@ -2234,10 +2211,12 @@ def _has_strategy_tradeoff_matrix() -> Check:
         near = rows["near-threshold-partial-field"]
         relaxed = rows["relaxed-fov-full-field"]
         partial = rows["partial-field-high-fov-draft"]
-        order_ok = (
-            [rows[item].priority_rank for item in required_ids] == [1, 2, 3, 4]
-            and "stable-partial-field-sibling" not in rows
-        )
+        order_ok = [rows[item].priority_rank for item in required_ids] == [
+            1,
+            2,
+            3,
+            4,
+        ] and "stable-partial-field-sibling" not in rows
         primary_ok = (
             primary.evidence_level == "missing_seed"
             and primary.claim_status == "blocked_until_reference_seed"
@@ -2563,9 +2542,7 @@ def _high_fov_has_seed_acquisition_contract() -> Check:
             and "MTF field" in text
             and "near miss nearest_full_field" in text
             and len(contract.current_gap_evidence) >= 2
-            and contract.current_gap_evidence[0].startswith(
-                "near miss nearest_high_fov"
-            )
+            and contract.current_gap_evidence[0].startswith("near miss nearest_high_fov")
             and any(
                 item.startswith("near miss nearest_full_field")
                 for item in contract.current_gap_evidence[:3]
@@ -2695,7 +2672,9 @@ def _seed_baseline_hold_blocked_on_quality_floor_with_review_notes() -> Check:
             and gate.status == "blocked"
             and gate.score >= 0.50
             and bool(gate.review_notes)
-            and any(action.source_check_id == "image_quality_floor" for action in gate.upgrade_actions)
+            and any(
+                action.source_check_id == "image_quality_floor" for action in gate.upgrade_actions
+            )
             and floor_task is not None
             and floor_task.stage == "image_quality_recovery"
             and optimizer_checks_ready
@@ -2957,9 +2936,7 @@ def _merit_probe_proposal_has_quality_gate() -> Check:
             or probe.after_metrics.max_rms_spot_radius_um is None
         ):
             return False, "proposal merit probe missing RMS metric snapshots"
-        accepted_trials = [
-            trial for trial in probe.candidate_trials if trial.status == "accepted"
-        ]
+        accepted_trials = [trial for trial in probe.candidate_trials if trial.status == "accepted"]
         gate_clean_trial = any(
             trial.rms_improvement_um is not None
             and probe.rms_improvement_um is not None
@@ -2975,8 +2952,7 @@ def _merit_probe_proposal_has_quality_gate() -> Check:
             for trial in accepted_trials
         )
         rms_snapshot_improved = (
-            probe.after_metrics.max_rms_spot_radius_um
-            < probe.before_metrics.max_rms_spot_radius_um
+            probe.after_metrics.max_rms_spot_radius_um < probe.before_metrics.max_rms_spot_radius_um
         )
         ok = (
             probe.rms_improvement_um is not None
@@ -3159,10 +3135,7 @@ def _second_pass_compound_continuation_gap_at_most(max_gap: float) -> Check:
             and has_compound_continuation
         )
         source = "replay verdict" if replay_run is not None else "local merit"
-        return ok, (
-            f"second-pass compound continuation {source} gap "
-            f"{after_gap} <= {max_gap:.3f}"
-        )
+        return ok, (f"second-pass compound continuation {source} gap {after_gap} <= {max_gap:.3f}")
 
     return check
 
@@ -3189,8 +3162,7 @@ def _local_merit_floor_gap_evidence_uses_accepted_trial() -> Check:
             for item in run.evidence
         )
         raw_max_evidence = any(
-            item.startswith("best image-quality floor gap closure=")
-            for item in run.evidence
+            item.startswith("best image-quality floor gap closure=") for item in run.evidence
         )
         ok = accepted_evidence and not raw_max_evidence
         return ok, "local-merit floor-gap evidence uses accepted trial, not raw max"
@@ -3215,8 +3187,7 @@ def _second_pass_recovery_candidate_gap_at_most(max_gap: float) -> Check:
             return False, "second-pass recovery candidate missing"
         gap = image_quality_floor_gap_score(candidate.metrics)
         has_compound_evidence = any(
-            "S14 focus_position 0.1540->0.0540" in item
-            and "S4 radius 4.9395->4.9889" in item
+            "S14 focus_position 0.1540->0.0540" in item and "S4 radius 4.9395->4.9889" in item
             for item in candidate.evidence
         )
         ok = (
@@ -3271,17 +3242,14 @@ def _second_pass_asphere_audit_present() -> Check:
         if run is None:
             return False, "local-merit-tuning run missing"
         has_second_pass_source = any(
-            "merit probe source=second-pass-continuation-probe" in item
-            for item in run.evidence
+            "merit probe source=second-pass-continuation-probe" in item for item in run.evidence
         )
         has_audit_trials = any(
-            "asphere audit trials=" in item
-            and "asphere audit trials=0" not in item
+            "asphere audit trials=" in item and "asphere audit trials=0" not in item
             for item in run.evidence
         )
         has_prescreen = any(
-            item.startswith("asphere prescreen trials=")
-            and item != "asphere prescreen trials=0"
+            item.startswith("asphere prescreen trials=") and item != "asphere prescreen trials=0"
             for item in run.evidence
         )
         ok = has_second_pass_source and has_audit_trials and has_prescreen
@@ -3484,12 +3452,9 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                 ),
                 None,
             )
-            task_run_evidence_passed = (
-                assessment.draft_acceptance_gate is not None
-                and any(
-                    check.check_id == "task_run_evidence" and check.status == "pass"
-                    for check in assessment.draft_acceptance_gate.checks
-                )
+            task_run_evidence_passed = assessment.draft_acceptance_gate is not None and any(
+                check.check_id == "task_run_evidence" and check.status == "pass"
+                for check in assessment.draft_acceptance_gate.checks
             )
             remediation_policy = (
                 next(
@@ -3516,13 +3481,9 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                 else ""
             )
             probe = assessment.merit_optimization_probe
-            accepted_floor_gap_trial_available = (
-                probe is not None
-                and any(
-                    trial.status == "accepted"
-                    and trial.image_quality_floor_gap_closure is not None
-                    for trial in probe.candidate_trials
-                )
+            accepted_floor_gap_trial_available = probe is not None and any(
+                trial.status == "accepted" and trial.image_quality_floor_gap_closure is not None
+                for trial in probe.candidate_trials
             )
             accepted_floor_gap_replay_selected = (
                 not accepted_floor_gap_trial_available
@@ -3573,8 +3534,7 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                     for item in resolution_acceptance_task.required_inputs
                 )
                 and any(
-                    "policy changes to" in item
-                    for item in resolution_acceptance_task.exit_criteria
+                    "policy changes to" in item for item in resolution_acceptance_task.exit_criteria
                 )
                 and resolution_acceptance_task.evidence_probe is not None
                 and resolution_acceptance_task.evidence_probe.probe_id
@@ -3587,22 +3547,19 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                 and local_merit_task is not None
             ):
                 remediation_probe_evidence_ready = (
-                    (
-                        any(
-                            metric.metric == "remediation_probe_floor_gap_score"
-                            for metric in remediation_run.metric_updates
-                        )
-                        and any(
-                            "probe purpose=replay_gate_remediation" in item
-                            for item in remediation_run.evidence
-                        )
+                    any(
+                        metric.metric == "remediation_probe_floor_gap_score"
+                        for metric in remediation_run.metric_updates
                     )
-                    or (
-                        remediation_policy == "probe_not_attempted"
-                        and any(
-                            "remediation probe=not_attempted" in item
-                            for item in remediation_run.evidence
-                        )
+                    and any(
+                        "probe purpose=replay_gate_remediation" in item
+                        for item in remediation_run.evidence
+                    )
+                ) or (
+                    remediation_policy == "probe_not_attempted"
+                    and any(
+                        "remediation probe=not_attempted" in item
+                        for item in remediation_run.evidence
                     )
                 )
                 if remediation_policy == "switch_variable_family":
@@ -3640,13 +3597,11 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                         and followup_task is not None
                         and followup_task.status == "queued"
                         and followup_task.depends_on == ["remediate-recovery-replay-gate"]
-                        and "resolve-remediation-policy-block"
-                        in remediation_run.unlocked_tasks
+                        and "resolve-remediation-policy-block" in remediation_run.unlocked_tasks
                         and followup_run is not None
                         and followup_run.status == "diagnostic"
                         and any(
-                            "do not resume local merit" in item
-                            for item in followup_task.evidence
+                            "do not resume local merit" in item for item in followup_task.evidence
                         )
                         and resolution_packet_ready
                         and (resolution_acceptance_ready or task_run_evidence_passed)
@@ -3696,9 +3651,7 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                         "bounded search variable priority=" in item
                         for item in remediation_run.evidence
                     )
-                    and any(
-                        "remediation policy=" in item for item in remediation_run.evidence
-                    )
+                    and any("remediation policy=" in item for item in remediation_run.evidence)
                     and bool(policy_action)
                     and remediation_run.next_action.startswith(policy_action)
                     and any(
@@ -3706,8 +3659,7 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                         for item in remediation_run.evidence
                     )
                     and any(
-                        check.check_id == "floor_gap_cleared"
-                        and check.required_for_promotion
+                        check.check_id == "floor_gap_cleared" and check.required_for_promotion
                         for check in replay_run.replay_gate.checks
                     )
                     and any(
@@ -3720,33 +3672,29 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                     )
                 )
             )
-            run_ready = (
-                not lock_passed
-                or (
-                    recovery_run is not None
-                    and recovery_run.status in {"warning", "passed", "diagnostic"}
-                    and any(
-                        metric.metric == "image_quality_floor_gap_score"
-                        for metric in recovery_run.metric_updates
-                    )
-                    and any(
-                        metric.metric == "recovery_probe_floor_gap_score"
-                        for metric in recovery_run.metric_updates
-                    )
-                    and any(
-                        metric.metric == "mtf_multiband_floor_gap"
-                        for metric in recovery_run.metric_updates
-                    )
-                    and any(
-                        metric.metric == "max_rms_floor_gap"
-                        for metric in recovery_run.metric_updates
-                    )
-                    and any("dominant floor gap=" in item for item in recovery_run.evidence)
-                    and any("targeted recovery variables=" in item for item in recovery_run.evidence)
-                    and any("floor recovery probe=" in item for item in recovery_run.evidence)
-                    and any("probe ranking policy=" in item for item in recovery_run.evidence)
-                    and recovery_trial_branch_ready
+            run_ready = not lock_passed or (
+                recovery_run is not None
+                and recovery_run.status in {"warning", "passed", "diagnostic"}
+                and any(
+                    metric.metric == "image_quality_floor_gap_score"
+                    for metric in recovery_run.metric_updates
                 )
+                and any(
+                    metric.metric == "recovery_probe_floor_gap_score"
+                    for metric in recovery_run.metric_updates
+                )
+                and any(
+                    metric.metric == "mtf_multiband_floor_gap"
+                    for metric in recovery_run.metric_updates
+                )
+                and any(
+                    metric.metric == "max_rms_floor_gap" for metric in recovery_run.metric_updates
+                )
+                and any("dominant floor gap=" in item for item in recovery_run.evidence)
+                and any("targeted recovery variables=" in item for item in recovery_run.evidence)
+                and any("floor recovery probe=" in item for item in recovery_run.evidence)
+                and any("probe ranking policy=" in item for item in recovery_run.evidence)
+                and recovery_trial_branch_ready
             )
             ok = (
                 optical_dimension.status == "blocker"
@@ -3756,11 +3704,7 @@ def _image_quality_floor_gates_low_mtf() -> Check:
                 and run_ready
             )
             return ok, "low image-quality floor queues/runs recovery after first-order lock"
-        ok = (
-            optical_dimension.status != "blocker"
-            and has_floor_evidence
-            and recovery_task is None
-        )
+        ok = optical_dimension.status != "blocker" and has_floor_evidence and recovery_task is None
         return ok, "image-quality floor clears blocker threshold"
 
     return check
@@ -3858,8 +3802,7 @@ def _image_quality_floor_task_has_evidence_probe() -> Check:
             and any("field-weighted MTF" in item for item in probe.missing_evidence)
             and any("max RMS spot radius" in item for item in probe.missing_evidence)
             and probe.next_probe_command is not None
-            and "evaluate_design_agent.py --fail-on-regression --json"
-            in probe.next_probe_command
+            and "evaluate_design_agent.py --fail-on-regression --json" in probe.next_probe_command
             for probe in probes
         )
         statuses = [probe.status if probe is not None else "missing" for probe in probes]
@@ -3921,37 +3864,26 @@ def _has_draft_quality_rubric() -> Check:
             "workflow_closure",
             "claim_safety",
         }
-        scores_valid = (
-            0.0 <= rubric.score <= 1.0
-            and all(0.0 <= dimension.score <= 1.0 for dimension in rubric.dimensions)
+        scores_valid = 0.0 <= rubric.score <= 1.0 and all(
+            0.0 <= dimension.score <= 1.0 for dimension in rubric.dimensions
         )
         statuses_valid = all(
-            dimension.status in {"pass", "warning", "blocker"}
-            and dimension.evidence
+            dimension.status in {"pass", "warning", "blocker"} and dimension.evidence
             for dimension in rubric.dimensions
         )
         gate = assessment.draft_acceptance_gate
         level_matches_gate = (
             gate is None
-            or (
-                gate.status == "ready_for_review"
-                and rubric.level in {"reviewable", "blocked"}
-            )
-            or (
-                gate.status == "conditional"
-                and rubric.level in {"conditional", "blocked"}
-            )
+            or (gate.status == "ready_for_review" and rubric.level in {"reviewable", "blocked"})
+            or (gate.status == "conditional" and rubric.level in {"conditional", "blocked"})
             or (gate.status == "blocked" and rubric.level == "blocked")
         )
-        closeout_valid = (
-            bool(rubric.promotion_target)
-            and (
-                rubric.level == "reviewable"
-                or (
-                    rubric.weakest_dimension_id in dimension_ids
-                    and bool(rubric.minimum_next_action)
-                    and bool(rubric.promotion_actions)
-                )
+        closeout_valid = bool(rubric.promotion_target) and (
+            rubric.level == "reviewable"
+            or (
+                rubric.weakest_dimension_id in dimension_ids
+                and bool(rubric.minimum_next_action)
+                and bool(rubric.promotion_actions)
             )
         )
         ok = (
@@ -3991,9 +3923,7 @@ def _draft_quality_target(
         else:
             closeout_ok = bool(rubric.minimum_next_action) and bool(rubric.promotion_actions)
         if closeout_fragment is not None:
-            closeout_ok = closeout_ok and closeout_fragment in (
-                rubric.minimum_next_action or ""
-            )
+            closeout_ok = closeout_ok and closeout_fragment in (rubric.minimum_next_action or "")
         ok = level_ok and score_ok and acceptance_ok and closeout_ok
         return (
             ok,
@@ -4071,7 +4001,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _balanced_floor_aware_seed_selected(),
             _has_fov_spec_consistency_diagnostic(),
             _has_fov_spec_reconciliation_branch(),
-            _fov_spec_reconciliation_is_primary(),
+            _mtf_first_recovery_precedes_spec_reconciliation(),
             _spec_repair_rerun_contract_is_idempotent(),
             _has_fov_alternative_resolution(),
             _reference_influence_status("constrained"),
@@ -4083,7 +4013,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _evidence_closeout_status(
                 "production_evidence_required",
                 source_fragment="draft_quality_rubric",
-                evidence_fragment="repaired target EFL",
+                evidence_fragment="full-field recovery replay gate",
                 blocks_review=False,
             ),
             _design_handoff_status(
@@ -4100,7 +4030,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
                 level="conditional",
                 min_score=0.70,
                 acceptance_status="conditional",
-                closeout_fragment="repaired target EFL",
+                closeout_fragment="full-field recovery replay gate",
             ),
             _designer_readiness_target("conditional", 0.60),
             *_DESIGNER_PACKET_CHECKS,
@@ -4450,7 +4380,9 @@ def _task_packet(task: Any) -> dict[str, Any]:
     }
 
 
-def _row_packet(item: EvalCase, sample: OpticalSampleData | None, failures: list[str]) -> dict[str, Any]:
+def _row_packet(
+    item: EvalCase, sample: OpticalSampleData | None, failures: list[str]
+) -> dict[str, Any]:
     if sample is None:
         return {
             "eval_case": item.name,
@@ -4468,9 +4400,7 @@ def _row_packet(item: EvalCase, sample: OpticalSampleData | None, failures: list
         "failures": failures,
         "matched_case_id": sample.metadata.case_id if sample.metadata else None,
         "score": assessment.score if assessment else None,
-        "recommended_candidate_id": (
-            assessment.recommended_candidate_id if assessment else None
-        ),
+        "recommended_candidate_id": (assessment.recommended_candidate_id if assessment else None),
         "designer_readiness": (
             {
                 "status": readiness.status,
@@ -4750,8 +4680,7 @@ def main(argv: list[str] | None = None) -> int:
         if assessment.draft_quality_rubric is not None:
             rubric = assessment.draft_quality_rubric
             closeout = (
-                f", weakest={rubric.weakest_dimension_id}, "
-                f"next={rubric.minimum_next_action}"
+                f", weakest={rubric.weakest_dimension_id}, next={rubric.minimum_next_action}"
                 if rubric.minimum_next_action
                 else ""
             )
