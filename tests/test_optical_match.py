@@ -2103,7 +2103,7 @@ def test_performance_priority_routes_away_from_low_mtf_exact_seed():
     assert scorecard.top_penalty_metric_id == "fnum"
     metrics = {item.metric_id: item for item in scorecard.metric_scores}
     assert metrics["quality"].label == "MTF/RMS floor evidence"
-    assert metrics["quality"].target == "floor gap 0.0 with full-field MTF evidence"
+    assert metrics["quality"].target == "MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
     assert "floor gap 0.000" in metrics["quality"].actual
     assert "0.9 field" in metrics["quality"].actual
     assert metrics["quality"].status == "aligned"
@@ -2483,7 +2483,7 @@ def test_match_endpoint_returns_real_case():
     assert all(isinstance(s["radius_mm"], int | float) for s in d["surfaces"])
 
 
-def test_match_endpoint_seed_only_mode_returns_real_case_without_assessment(monkeypatch):
+def test_match_endpoint_seed_only_env_returns_lightweight_mtf_assessment(monkeypatch):
     monkeypatch.setenv("LUMIRA_MATCH_MODE", "seed_only")
     r = client.post(
         "/api/optical/match",
@@ -2493,6 +2493,38 @@ def test_match_endpoint_seed_only_mode_returns_real_case_without_assessment(monk
             "f_number": 2.4,
             "field_of_view_deg": 78.0,
             "image_height_mm": 2.3,
+        },
+    )
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["metadata"]["source_zmx"].lower().endswith(".zmx")
+    assert d["metadata"]["scenario"] == "smartphone-wide"
+    assessment = d["design_assessment"]
+    assert assessment is not None
+    assert assessment["seed_selection_scorecard"]["metric_scores"]
+    assert any(
+        metric["metric_id"] == "quality"
+        and metric["target"] == "MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
+        for metric in assessment["seed_selection_scorecard"]["metric_scores"]
+    )
+    assert assessment["candidate_comparison"]
+    assert assessment["manufacturability_review"] is not None
+    assert assessment["optimization_attempt"] is None
+    assert any("analysis_depth='full'" in step for step in assessment["next_steps"])
+    assert d["mtf"]["freq_lp_per_mm"]
+
+
+def test_match_endpoint_explicit_seed_only_returns_real_case_without_assessment(monkeypatch):
+    monkeypatch.setenv("LUMIRA_MATCH_MODE", "seed_only")
+    r = client.post(
+        "/api/optical/match",
+        json={
+            "scenario": "smartphone-wide",
+            "focal_length_mm": 2.8,
+            "f_number": 2.4,
+            "field_of_view_deg": 78.0,
+            "image_height_mm": 2.3,
+            "analysis_depth": "seed_only",
         },
     )
     assert r.status_code == 200, r.text

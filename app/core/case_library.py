@@ -1039,6 +1039,7 @@ def match_case(
     manufacturing_tier: str | None = None,
     priority: str | None = None,
     include_design_assessment: bool = True,
+    lightweight_design_assessment: bool = False,
 ) -> OpticalSampleData | None:
     """Return the real case nearest to the user's full design intent.
 
@@ -1049,6 +1050,11 @@ def match_case(
     explaining the match and its tradeoffs. Launch smoke paths can set
     `include_design_assessment=False` to return only the selected real seed
     payload without running the heavier optimizer/review evidence chain.
+
+    `lightweight_design_assessment=True` still skips the protected optimizer
+    and replay gates, but returns the MTF-first seed scorecard, requirement
+    coverage, manufacturability proxy, and candidate comparison so production
+    seed-only mode is not just a naked nearest-neighbor payload.
     """
     allowed = _candidate_scenarios(scenario)
     cases = [
@@ -1263,7 +1269,7 @@ def match_case(
         rationale.append(f"manufacturing tier '{manufacturing_tier}' adjusted the scoring weights")
     rationale.append("MTF/RMS floor evidence participated in seed scoring")
 
-    if not include_design_assessment:
+    if not include_design_assessment and not lightweight_design_assessment:
         return best.model_copy(update={"design_assessment": None}, deep=True)
 
     delta_efl = best.metadata.computed_efl_mm - efl_mm
@@ -3244,7 +3250,7 @@ def match_case(
             if metric_id == "mass":
                 return f"<= {max_weight_g:.2f} g" if max_weight_g is not None else "not fixed"
             if metric_id == "quality":
-                return "floor gap 0.0 with full-field MTF evidence"
+                return "MTF/RMS floor gap 0.0; prefer 1.0-field evidence"
             return "active scoring metric"
 
         def _metric_actual(metric_id: str, candidate: OpticalSampleData) -> str:
@@ -3498,6 +3504,70 @@ def match_case(
     candidate_comparison = [
         _candidate_comparison(candidate, role) for candidate, role in selected_candidates
     ]
+
+    if lightweight_design_assessment:
+        selected_floor_gap = _seed_floor_gap(best)
+
+        def _lightweight_next_steps() -> list[str]:
+            steps: list[str] = []
+            if selected_floor_gap is None or selected_floor_gap > 0:
+                steps.append(
+                    "recover the first-pass MTF/RMS floor before treating this seed as draft-ready"
+                )
+            elif best.metadata.mtf_max_field_frac < 1.0:
+                steps.append(
+                    "close 1.0-field MTF evidence before making full-field edge-performance claims"
+                )
+            if requirement_coverage_summary.status != "met":
+                steps.append(requirement_coverage_summary.summary)
+            if abs(delta_fnum) > 0.25:
+                steps.append("record the F-number tradeoff before promoting the selected seed")
+            if delta_n is not None and delta_n != 0:
+                steps.append("record the element-count tradeoff before promoting the selected seed")
+            steps.append(
+                "rerun with analysis_depth='full' for protected optimizer and replay-gate evidence"
+            )
+            return _unique_strings_in_order(steps)[:5]
+
+        lightweight_rationale = _unique_strings_in_order(
+            [
+                *rationale,
+                (
+                    "seed-only lightweight assessment skipped protected optimizer and replay "
+                    "gates; use analysis_depth='full' for mutation evidence"
+                ),
+            ]
+        )
+        assessment = DesignAssessment(
+            matched_case_id=best.metadata.case_id,
+            score=score,
+            normalized_distance=distance,
+            seed_selection_scorecard=seed_selection_scorecard,
+            target_focal_length_mm=efl_mm,
+            target_f_number=fnum,
+            target_fov_deg=fov_deg,
+            target_image_height_mm=image_height_mm,
+            target_n_elements=n_elements,
+            target_total_track_mm=max_total_track_mm,
+            priority=priority,
+            manufacturing_tier=manufacturing_tier,
+            delta_efl_mm=delta_efl,
+            delta_f_number=delta_fnum,
+            delta_fov_deg=delta_fov,
+            delta_image_height_mm=delta_imh,
+            delta_n_elements=delta_n,
+            delta_total_track_mm=delta_ttl,
+            warnings=warnings_out,
+            rationale=lightweight_rationale,
+            candidate_comparison=candidate_comparison,
+            requirement_coverage_summary=requirement_coverage_summary,
+            requirement_coverage=requirement_coverage,
+            manufacturability_review=manufacturability_review,
+            next_steps=_lightweight_next_steps(),
+            recommended_candidate_id="seed-baseline",
+        )
+        return best.model_copy(update={"design_assessment": assessment}, deep=True)
+
     before_rms_values = [
         value for value in best.mtf.rms_spot_radius_um_by_field if math.isfinite(value)
     ]

@@ -507,12 +507,14 @@ async def seed_intake_preflight(
 # ---------------------------------------------------------------------------
 
 
-def _include_design_assessment(req: OpticalSpecRequest) -> bool:
+def _assessment_mode(req: OpticalSpecRequest) -> Literal["full", "lightweight", "none"]:
     if req.analysis_depth == "full":
-        return True
+        return "full"
     if req.analysis_depth == "seed_only":
-        return False
-    return os.getenv("LUMIRA_MATCH_MODE", "").strip().lower() not in _SEED_ONLY_MODES
+        return "none"
+    if os.getenv("LUMIRA_MATCH_MODE", "").strip().lower() in _SEED_ONLY_MODES:
+        return "lightweight"
+    return "full"
 
 
 @router.post(
@@ -534,6 +536,7 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
     stance, then attaches `design_assessment` with deltas and tradeoffs.
     """
     _validate_or_400(req)
+    assessment_mode = _assessment_mode(req)
     case = match_case(
         scenario=req.scenario,
         efl_mm=req.focal_length_mm,
@@ -545,7 +548,8 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
         max_weight_g=req.max_weight_g,
         manufacturing_tier=req.manufacturing_tier,
         priority=req.priority,
-        include_design_assessment=_include_design_assessment(req),
+        include_design_assessment=assessment_mode != "none",
+        lightweight_design_assessment=assessment_mode == "lightweight",
     )
     if case is None:
         raise HTTPException(
