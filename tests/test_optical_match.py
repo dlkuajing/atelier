@@ -488,6 +488,10 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
     assert recovery_task.variables[:3] == ["focus position", "air gaps", "radius"]
     assert any("dominant floor gap=max_rms_floor_gap" in item for item in recovery_task.evidence)
     assert any(
+        "floor component gaps=" in item and "mtf_250lpmm_floor_gap" in item
+        for item in recovery_task.evidence
+    )
+    assert any(
         "targeted recovery variables=focus position, air gaps, radius" in item
         for item in recovery_task.evidence
     )
@@ -522,6 +526,7 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
         metric.metric == "recovery_probe_floor_gap_score" for metric in recovery_run.metric_updates
     )
     assert any(metric.metric == "mtf_multiband_floor_gap" for metric in recovery_run.metric_updates)
+    assert any(metric.metric == "mtf_250lpmm_floor_gap" for metric in recovery_run.metric_updates)
     assert any(
         metric.metric == "mtf_field_weighted_floor_gap" for metric in recovery_run.metric_updates
     )
@@ -532,6 +537,10 @@ def test_relaxed_full_field_seed_baseline_blocks_low_image_quality_floor():
         for item in recovery_run.evidence
     )
     assert any("floor recovery probe=warning" in item for item in recovery_run.evidence)
+    assert any(
+        "floor component gaps=" in item and "mtf_250lpmm_floor_gap" in item
+        for item in recovery_run.evidence
+    )
     best_floor_gap_evidence = [
         item for item in recovery_run.evidence if item.startswith("best floor-gap trial=")
     ]

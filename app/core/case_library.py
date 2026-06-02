@@ -37,6 +37,7 @@ from app.core.image_quality_floor import (
 from app.core.image_quality_floor import (
     IMAGE_QUALITY_FLOOR_WEIGHTED_MTF as _IMAGE_QUALITY_FLOOR_WEIGHTED_MTF,
 )
+from app.core.image_quality_floor import image_quality_floor_components
 from app.core.image_quality_floor import (
     image_quality_floor_gap_score as _image_quality_floor_gap_score,
 )
@@ -160,19 +161,6 @@ class ImageQualityRecoveryObjective(NamedTuple):
     next_action: str
 
 
-def _floor_gap_component_score(
-    metric_value: float | None,
-    target: float,
-    *,
-    higher_is_better: bool,
-) -> float:
-    if metric_value is None:
-        return 1.0
-    if higher_is_better:
-        return max(0.0, (target - metric_value) / target)
-    return max(0.0, (metric_value - target) / target)
-
-
 def _image_quality_recovery_objective(
     metrics: OptimizationMetricSnapshot | None,
 ) -> ImageQualityRecoveryObjective:
@@ -196,51 +184,62 @@ def _image_quality_recovery_objective(
             next_action="collect MTF/RMS metrics before selecting a recovery variable family",
         )
 
-    components = [
-        (
-            "mtf_multiband_floor_gap",
-            _floor_gap_component_score(
-                metrics.mtf_multiband_min_score,
-                _IMAGE_QUALITY_FLOOR_MIN_MTF,
-                higher_is_better=True,
-            ),
-            ["asphere coefficients", "stop position", "air gaps", "field weighting"],
-            "recover minimum 50/100/150/200/250 lp/mm MTF before raw RMS gains",
-        ),
-        (
-            "mtf_field_weighted_floor_gap",
-            _floor_gap_component_score(
-                metrics.mtf_field_weighted_score,
-                _IMAGE_QUALITY_FLOOR_WEIGHTED_MTF,
-                higher_is_better=True,
-            ),
-            ["stop position", "air gaps", "asphere coefficients", "field weighting"],
-            "recover field-weighted MTF before accepting local RMS-only improvements",
-        ),
-        (
-            "max_rms_floor_gap",
-            _floor_gap_component_score(
-                metrics.max_rms_spot_radius_um,
-                _IMAGE_QUALITY_FLOOR_MAX_RMS_UM,
-                higher_is_better=False,
-            ),
-            ["focus position", "air gaps", "radius", "stop position", "asphere coefficients"],
-            "reduce max RMS while preserving MTF non-regression and EFL lock",
-        ),
-    ]
-    component_id, normalized_gap, variables, action = max(
-        components,
-        key=lambda item: item[1],
-    )
+    components = image_quality_floor_components(metrics)
+    if not components:
+        return ImageQualityRecoveryObjective(
+            dominant_component="unavailable",
+            normalized_gap=None,
+            variables=default_variables,
+            evidence=[
+                "dominant floor gap=unavailable",
+                f"targeted recovery variables={', '.join(default_variables)}",
+                "recovery objective=collect MTF/RMS metrics before bounded tuning",
+            ],
+            next_action="collect MTF/RMS metrics before selecting a recovery variable family",
+        )
+
+    dominant = components[0]
+    component_id = dominant.component_id
+    normalized_gap = dominant.normalized_gap
+    if component_id in {"mtf_200lpmm_floor_gap", "mtf_250lpmm_floor_gap"}:
+        variables = [
+            "asphere coefficients",
+            "stop position",
+            "field weighting",
+            "air gaps",
+            "focus position",
+        ]
+        action = (
+            "recover high-frequency 200/250 lp/mm MTF before accepting RMS-only "
+            "or aperture/element-count claims"
+        )
+    elif component_id.startswith("mtf_") and component_id != "mtf_field_weighted_floor_gap":
+        variables = ["asphere coefficients", "stop position", "air gaps", "field weighting"]
+        action = "recover minimum 50/100/150/200/250 lp/mm MTF before raw RMS gains"
+    elif component_id == "mtf_field_weighted_floor_gap":
+        variables = ["stop position", "air gaps", "asphere coefficients", "field weighting"]
+        action = "recover field-weighted MTF before accepting local RMS-only improvements"
+    elif component_id == "max_rms_floor_gap":
+        variables = ["focus position", "air gaps", "radius", "stop position", "asphere coefficients"]
+        action = "reduce max RMS while preserving MTF non-regression and EFL lock"
+    else:
+        variables = default_variables
+        action = "recover the dominant MTF/RMS floor component before draft promotion"
+
     if math.isclose(normalized_gap, 0.0, abs_tol=1e-9):
         component_id = "none"
         action = "maintain MTF/RMS floor while continuing packaging and tolerance review"
+        variables = ["focus position", "air gaps", "radius"]
+    component_ladder = ", ".join(
+        f"{component.component_id}:{component.normalized_gap:.3f}" for component in components
+    )
     return ImageQualityRecoveryObjective(
         dominant_component=component_id,
         normalized_gap=round(normalized_gap, 3),
         variables=variables,
         evidence=[
             f"dominant floor gap={component_id} normalized={normalized_gap:.3f}",
+            f"floor component gaps={component_ladder}",
             f"targeted recovery variables={', '.join(variables)}",
             f"recovery objective={action}",
         ],
@@ -9713,6 +9712,27 @@ def match_case(
                         unit="um" if metric_name == "max_rms_floor_gap" else None,
                         direction="diagnostic",
                         interpretation=interpretation,
+                    )
+                )
+            for component in image_quality_floor_components(metrics):
+                if component.component_id in {
+                    "mtf_multiband_floor_gap",
+                    "mtf_field_weighted_floor_gap",
+                    "max_rms_floor_gap",
+                }:
+                    continue
+                metric_updates.append(
+                    OptimizationMetricUpdate(
+                        metric=component.component_id,
+                        before=component.metric_value,
+                        after=component.target_value,
+                        unit=None,
+                        direction="diagnostic",
+                        interpretation=(
+                            f"{component.label} normalized floor gap "
+                            f"{component.normalized_gap:.3f}; target "
+                            f"{component.target_value:.3f}"
+                        ),
                     )
                 )
         passed = floor.status == "pass"
