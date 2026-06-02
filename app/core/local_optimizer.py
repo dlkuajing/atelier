@@ -598,6 +598,13 @@ def _floor_gap_closure(
     return before_gap, after_gap, round(before_gap - after_gap, 3)
 
 
+def _remaining_floor_gap(metrics: object | None) -> float | None:
+    gap = image_quality_floor_gap_score(metrics)
+    if gap is None or not math.isfinite(gap):
+        return None
+    return gap
+
+
 def _floor_metric_snapshot(
     mtf_bands: MtfBandMetrics,
     max_rms_spot_radius_um: float | None,
@@ -961,8 +968,15 @@ def _joint_asphere_merit_trials(
     if joint_baseline_metrics.max_rms_spot_radius_um is None:
         return []
 
-    merit_change = merit_variable_changes[0]
-    if merit_change.variable not in {"radius", "thickness"}:
+    merit_change = next(
+        (
+            change
+            for change in merit_variable_changes
+            if change.variable in {"radius", "thickness"}
+        ),
+        None,
+    )
+    if merit_change is None:
         return []
 
     ranked_asphere_trials = sorted(
@@ -987,7 +1001,11 @@ def _joint_asphere_merit_trials(
             optic = _load_probe_optic(source_zmx, nominal_fov_deg)
             _apply_radius_changes(optic, radius_changes)
             _apply_baseline_variable_changes(optic, baseline_variable_changes)
-            coupled_written = _apply_variable_change(optic, merit_change)
+            coupled_written = merit_change.after
+            for change in merit_variable_changes:
+                written_change = _apply_variable_change(optic, change)
+                if change is merit_change:
+                    coupled_written = written_change
             field_samples = _finite_merit_field_samples(optic)
             merit_before = _asphere_prescreen_merit(optic, field_samples) if field_samples else None
             written = _set_asphere_coefficient(
@@ -3836,7 +3854,14 @@ def protected_rms_merit_probe(
             best_probe = compound_probe
 
     if best_probe is not None:
-        if best_probe.status == "warning":
+        remaining_gap = _remaining_floor_gap(best_probe.after_metrics)
+        run_asphere_audit = best_probe.status == "warning" or (
+            purpose == "replay_gate_remediation"
+            and remaining_gap is not None
+            and remaining_gap > 0.0
+            and bool(asphere_candidates)
+        )
+        if run_asphere_audit:
             asphere_prescreen_rows = _asphere_prescreen_candidates(
                 source_zmx=source_zmx,
                 nominal_fov_deg=nominal_fov_deg,
@@ -3869,6 +3894,16 @@ def protected_rms_merit_probe(
             )
             candidate_trials.extend([*asphere_trials, *joint_trials])
             audit_diagnostics = [
+                (
+                    "asphere audit trigger=remaining_floor_gap"
+                    if best_probe.status != "warning"
+                    else "asphere audit trigger=warning_probe"
+                ),
+                (
+                    f"asphere audit remaining floor gap={remaining_gap:.3f}"
+                    if remaining_gap is not None
+                    else "asphere audit remaining floor gap unavailable"
+                ),
                 f"asphere prescreen trials={len(asphere_prescreen_rows)}",
                 f"asphere audit trials={len(asphere_trials)}",
                 f"joint asphere-merit audit trials={len(joint_trials)}",

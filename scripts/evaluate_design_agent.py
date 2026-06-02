@@ -3104,6 +3104,41 @@ def _second_pass_replay_task_is_queued() -> Check:
     return check
 
 
+def _second_pass_asphere_audit_present() -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        assessment = sample.design_assessment
+        if assessment is None:
+            return False, "assessment missing"
+        run = next(
+            (
+                item
+                for item in assessment.optimization_task_runs
+                if item.task_id == "local-merit-tuning"
+            ),
+            None,
+        )
+        if run is None:
+            return False, "local-merit-tuning run missing"
+        has_second_pass_source = any(
+            "merit probe source=second-pass-continuation-probe" in item
+            for item in run.evidence
+        )
+        has_audit_trials = any(
+            "asphere audit trials=" in item
+            and "asphere audit trials=0" not in item
+            for item in run.evidence
+        )
+        has_prescreen = any(
+            item.startswith("asphere prescreen trials=")
+            and item != "asphere prescreen trials=0"
+            for item in run.evidence
+        )
+        ok = has_second_pass_source and has_audit_trials and has_prescreen
+        return ok, "second-pass remediation runs guarded asphere audit"
+
+    return check
+
+
 def _second_pass_replay_run_has_verdict(max_gap: float) -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
@@ -3883,6 +3918,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
                 closeout_fragment="MTF/RMS",
             ),
             _floor_gap_recovery_closure_at_least(0.30),
+            _second_pass_asphere_audit_present(),
             _designer_readiness_target("blocked", 0.50),
             *_DESIGNER_PACKET_CHECKS,
         ),
