@@ -1829,7 +1829,7 @@ def match_case(
     candidate_proxy_case_opportunity = _candidate_proxy_case_opportunity()
 
     def _candidate_proxy_branch_resolution() -> _CandidateProxyBranchResolution | None:
-        if not cost_like or candidate_proxy_case_opportunity is None:
+        if candidate_proxy_case_opportunity is None:
             return None
 
         selected, candidate, selected_risk, candidate_risk = candidate_proxy_case_opportunity
@@ -5624,30 +5624,61 @@ def match_case(
             and proxy_selected_risk is not None
             and proxy_candidate_risk is not None
         ):
+            proxy_rejected_for_target_fit = (
+                candidate_proxy_branch_resolution is not None
+                and candidate_proxy_branch_resolution.status == "rejected_for_target_fit"
+                and candidate_proxy_branch_resolution.candidate_case_id
+                == proxy_review_candidate.case_id
+            )
             candidates.append(
                 DraftCandidate(
                     candidate_id="low-risk-candidate-review",
                     source="candidate_proxy",
-                    status="fallback",
-                    recommendation="continue" if cost_like else "hold",
+                    status="blocked" if proxy_rejected_for_target_fit else "fallback",
+                    recommendation=(
+                        "reject"
+                        if proxy_rejected_for_target_fit
+                        else "continue"
+                        if cost_like
+                        else "hold"
+                    ),
                     summary=(
-                        "review lower-risk real seed before freezing the prescription "
-                        f"when manufacturability, cost, or yield dominates: "
-                        f"{proxy_review_candidate.case_id}"
+                        candidate_proxy_branch_resolution.summary
+                        if proxy_rejected_for_target_fit
+                        else (
+                            "review lower-risk real seed before freezing the prescription "
+                            f"when manufacturability, cost, or yield dominates: "
+                            f"{proxy_review_candidate.case_id}"
+                        )
                     ),
                     metrics=metrics_for_case(proxy_review_case),
-                    evidence=[
-                        f"candidate role {proxy_review_candidate.role}",
-                        f"case {proxy_review_candidate.case_id}",
-                        f"review risk {proxy_candidate_risk:.2f} vs selected {proxy_selected_risk:.2f}",
-                        (
-                            f"tolerance {proxy_review_candidate.tolerance_risk_level}; "
-                            f"process/yield {proxy_review_candidate.process_yield_level}"
-                        ),
-                    ],
+                    evidence=_unique_in_order(
+                        [
+                            f"candidate role {proxy_review_candidate.role}",
+                            f"case {proxy_review_candidate.case_id}",
+                            f"review risk {proxy_candidate_risk:.2f} vs selected {proxy_selected_risk:.2f}",
+                            (
+                                f"tolerance {proxy_review_candidate.tolerance_risk_level}; "
+                                f"process/yield {proxy_review_candidate.process_yield_level}"
+                            ),
+                            *(
+                                candidate_proxy_branch_resolution.evidence
+                                if proxy_rejected_for_target_fit
+                                else []
+                            ),
+                        ]
+                    )[:8],
                     risks=[
-                        *proxy_review_candidate.tradeoffs[:2],
-                        "lower review-risk branch may sacrifice optical target fit",
+                        *(
+                            candidate_proxy_branch_resolution.blockers
+                            if proxy_rejected_for_target_fit
+                            else proxy_review_candidate.tradeoffs[:2]
+                        ),
+                        (
+                            "lower review-risk branch is rejected for target fit"
+                            if proxy_rejected_for_target_fit
+                            else "lower review-risk branch may sacrifice optical target fit"
+                        ),
                     ],
                 )
             )

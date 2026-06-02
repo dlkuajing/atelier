@@ -2274,6 +2274,47 @@ def _cost_priority_resolves_low_risk_candidate_branch() -> Check:
     return check
 
 
+def _big_sensor_rejects_low_risk_target_miss() -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        assessment = sample.design_assessment
+        if assessment is None or assessment.draft_acceptance_gate is None:
+            return False, "big-sensor proxy rejection missing assessment"
+        branch = next(
+            (
+                candidate
+                for candidate in assessment.draft_candidates
+                if candidate.candidate_id == "low-risk-candidate-review"
+            ),
+            None,
+        )
+        proxy_check = next(
+            (
+                item
+                for item in assessment.draft_acceptance_gate.checks
+                if item.check_id == "candidate_proxy_review"
+            ),
+            None,
+        )
+        gap = image_quality_floor_gap_score(branch.metrics) if branch and branch.metrics else None
+        ok = (
+            branch is not None
+            and branch.source == "candidate_proxy"
+            and branch.status == "blocked"
+            and branch.recommendation == "reject"
+            and gap == 0.0
+            and any("EFL miss" in item for item in branch.risks)
+            and any("image-height miss" in item for item in branch.risks)
+            and proxy_check is not None
+            and proxy_check.status == "pass"
+            and "rejected" in proxy_check.evidence
+            and assessment.recommended_candidate_id == "optimizer-proposal"
+        )
+        status = branch.status if branch is not None else "missing"
+        return ok, f"big-sensor low-risk proxy branch {status}, gap={gap}"
+
+    return check
+
+
 def _mass_budget_is_scored() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
@@ -4208,6 +4249,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _score_at_least(0.90),
             _case_contains("IMH3.3"),
             _proposal_conditional_with_review_notes(),
+            _big_sensor_rejects_low_risk_target_miss(),
             _draft_quality_target(
                 level="blocked",
                 min_score=0.70,
