@@ -251,9 +251,9 @@ def _floor_aware_performance_seed_selected() -> Check:
             and assessment.recommended_candidate_id == "seed-baseline"
             and quality is not None
             and quality.label == "MTF/RMS floor evidence"
-            and "floor gap 0.976" in quality.actual
+            and "floor gap 0.938" in quality.actual
             and "1.0 field" in quality.actual
-            and "min250 0.002" in quality.actual
+            and "min250 0.005" in quality.actual
             and coverage.get("f_number") is not None
             and coverage["f_number"].status == "met"
             and gate is not None
@@ -289,9 +289,9 @@ def _balanced_floor_aware_seed_selected() -> Check:
             and assessment.recommended_candidate_id == "seed-baseline"
             and quality is not None
             and quality.label == "MTF/RMS floor evidence"
-            and "floor gap 0.976" in quality.actual
+            and "floor gap 0.938" in quality.actual
             and "1.0 field" in quality.actual
-            and "min250 0.002" in quality.actual
+            and "min250 0.005" in quality.actual
             and any("Field of view:" in item for item in scorecard.accepted_tradeoffs)
             and gate is not None
             and gate.status == "blocked"
@@ -4117,12 +4117,14 @@ EVAL_CASES: tuple[EvalCase, ...] = (
         checks=(
             _score_at_least(0.69),
             _scenario_is(Scenario.SMARTPHONE_WIDE),
-            # World-flip: routing steers off the broken IMH3.2 near-duplicate
-            # (max RMS ~1200um) onto the healthy IMH3.3 sibling; still blocked, on
-            # the high-frequency MTF floor now, not blown-up RMS. The heavy RMS
-            # recovery/replay flow no longer fires, so the shared review-package
-            # queue check is dropped and the honest hold is asserted directly.
-            _case_contains("FOV78.7_EFL3.8_IMH3.3"),
+            # E1-02 vignette-robust metrology exonerates this exact seed: its
+            # former max RMS ~1200um was a vignette-artifact tail, not real
+            # aberration (true max RMS ~6.3um, 1.0 field). Routing now selects it
+            # exactly; it stays blocked only on the aperture-limited high-frequency
+            # MTF floor, not blown-up RMS. The heavy RMS recovery/replay flow no
+            # longer fires, so the shared review-package queue check is dropped and
+            # the honest hold is asserted directly.
+            _case_contains("FOV78.8_EFL3.8_IMH3.2"),
             _seed_baseline_hold_blocked_on_quality_floor_with_review_notes(),
             _manufacturing_sensitivity_status(
                 {"watch", "risk"},

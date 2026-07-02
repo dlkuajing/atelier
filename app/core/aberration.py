@@ -54,6 +54,57 @@ class MTFResult(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+# Vignette-robust metrology (E1-02). Production phone-lens edge fields vignette a
+# large pupil fraction, and Optiland's ZMX reader drops vignette *decentering*
+# (VDX/VDY) on ingest (keeps only compression VCX/VCY). The pupil grid therefore
+# samples rays the physical lens would block; those trace to extreme positions and
+# corrupt both the RMS (mean-square dominated by the tail) and the geometric MTF.
+# Per field we drop non-finite rays and clip rays beyond median + k*MAD of the
+# radius about the median centroid, so the surviving rays reflect the light that
+# actually passes. Percentile clipping was rejected in the E1-02 threshold sweep
+# (it left the artifact seeds at 3000+ um); the median/MAD estimator preserves the
+# bulk spot and only trims the artifact tail.
+_SPOT_MAD_CLIP_K = 5.0
+_SPOT_MAD_SCALE = 1.4826  # normal-consistency: k is in robust sigma units
+_SPOT_MIN_VALID_RAYS = 6
+
+
+def _robust_clip_spot_data(geometric_mtf) -> None:
+    """Trim vignette-artifact rays in a GeometricMTF's traced spot data in place.
+
+    Both `rms_spot_radius()` and `_generate_mtf_data()` read the same per-field
+    spot coordinates, so clipping here cleans the RMS and the MTF consistently.
+    A fully-vignetted field (fewer than `_SPOT_MIN_VALID_RAYS` finite rays) keeps
+    only its finite rays without further clipping — the near-dark edge is reported
+    honestly rather than fabricated.
+    """
+    for field_data in geometric_mtf.data:
+        for spot in field_data:
+            x = np.asarray(spot.x, dtype=float)
+            y = np.asarray(spot.y, dtype=float)
+            finite = np.isfinite(x) & np.isfinite(y)
+            if int(finite.sum()) < _SPOT_MIN_VALID_RAYS:
+                keep = finite
+            else:
+                xf, yf = x[finite], y[finite]
+                center_x, center_y = np.median(xf), np.median(yf)
+                radius = np.hypot(x - center_x, y - center_y)
+                radius_finite = radius[finite]
+                median_r = np.median(radius_finite)
+                mad = np.median(np.abs(radius_finite - median_r)) * _SPOT_MAD_SCALE
+                threshold = median_r + _SPOT_MAD_CLIP_K * max(mad, 1e-12)
+                keep = finite & (radius <= threshold)
+                if int(keep.sum()) < _SPOT_MIN_VALID_RAYS:
+                    keep = finite
+            spot.x = x[keep]
+            spot.y = y[keep]
+            intensity = getattr(spot, "intensity", None)
+            if intensity is not None:
+                intensity_arr = np.asarray(intensity, dtype=float)
+                if intensity_arr.shape == keep.shape:
+                    spot.intensity = intensity_arr[keep]
+
+
 def _to_list(arr) -> list[float]:
     """Coerce a numpy array (any shape) to a flat python list of floats."""
     return [float(x) for x in np.asarray(arr).flatten()]
@@ -81,6 +132,10 @@ def compute_mtf(
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)
         m = opt_mtf.GeometricMTF(optic, num_rays=num_rays)
+        # Drop vignette-artifact rays, then recompute the MTF from the cleaned
+        # spot data (rms_spot_radius() below reads the same clipped data).
+        _robust_clip_spot_data(m)
+        m.mtf, m.diff_limited_mtf = m._generate_mtf_data()
 
     freq = _to_list(m.freq)
     mtf_arr = np.asarray(m.mtf)  # (n_fields, 2, n_freq) where 2 = (sagittal, tangential)
