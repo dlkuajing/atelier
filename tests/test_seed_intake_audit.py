@@ -64,13 +64,18 @@ def test_high_fov_seed_intake_audit_reports_current_gap():
     # corrected even-asphere sag lets edge rays trace one field step further.
     assert nearest["nearest_high_fov"]["highest_stable_field_frac"] == pytest.approx(0.85)
     assert nearest["nearest_high_fov"]["edge_field_cliff_frac"] == pytest.approx(0.9)
-    assert nearest["best_stable_high_fov"]["case_id"].endswith("TTL4.33")
-    assert nearest["best_stable_high_fov"]["mtf_max_field_frac"] == pytest.approx(0.85)
-    assert nearest["best_stable_high_fov"]["highest_stable_field_frac"] == pytest.approx(0.85)
-    assert nearest["best_stable_high_fov"]["edge_field_cliff_frac"] == pytest.approx(0.9)
-    assert "0.85:pass" in nearest["best_stable_high_fov"]["edge_field_evidence"]
+    # E2-01 batch 1: best_stable_high_fov is now a real >=85 deg full-field(1.0)
+    # patent seed (US20170003482A1, 91 deg, all edge fields stable) -- the
+    # evidence-layer blocker is cleared. It still is NOT accepted for THIS
+    # acquisition window (EFL/F#/image-height/element-count all out of range), so
+    # accepted_seed_count stays 0 and the audit still reports a targeted gap.
+    assert nearest["best_stable_high_fov"]["case_id"] == "US20170003482A1"
+    assert nearest["best_stable_high_fov"]["mtf_max_field_frac"] == pytest.approx(1.0)
+    assert nearest["best_stable_high_fov"]["highest_stable_field_frac"] == pytest.approx(1.0)
+    assert nearest["best_stable_high_fov"]["edge_field_cliff_frac"] is None
+    assert "1.0:pass" in nearest["best_stable_high_fov"]["edge_field_evidence"]
     assert any("MTF field" in item for item in nearest["nearest_high_fov"]["miss_reasons"])
-    assert any("FOV" in item for item in nearest["nearest_full_field"]["miss_reasons"])
+    assert any("outside" in item for item in nearest["best_stable_high_fov"]["miss_reasons"])
     assert "--image-height-lo 2.55" in report["next_probe_command"]
     assert "--element-count-hi 6" in report["next_probe_command"]
     assert "--candidate-zmx /path/to/candidate.zmx" in report["candidate_preflight_command"]
@@ -104,8 +109,13 @@ def test_seed_intake_cli_matches_runtime_assessment_contract():
     )
     assert sample is not None
     assert sample.design_assessment is not None
-    runtime_audit = sample.design_assessment.seed_intake_audit
-    assert runtime_audit is not None
+    # E2-01 batch 1: with real full-field high-FOV evidence in the library the 88
+    # deg request routes through the covered path, so the runtime assessment no
+    # longer embeds a seed_intake_audit -- the gap-only acquisition scaffolding
+    # (strategy decision + runtime audit) stood down. The standalone CLI probe
+    # stays available and still audits a specific acquisition window.
+    assert sample.design_assessment.seed_intake_audit is None
+    assert sample.design_assessment.design_strategy_decision is None
 
     args = _parse_args(
         [
@@ -135,15 +145,16 @@ def test_seed_intake_cli_matches_runtime_assessment_contract():
     )
 
     cli_report = _audit(args)
-    runtime_report = runtime_audit.model_dump(mode="json")
 
-    assert cli_report["status"] == runtime_report["status"]
-    assert cli_report["known_evidence"] == runtime_report["known_evidence"]
-    assert cli_report["missing_evidence"] == runtime_report["missing_evidence"]
-    assert cli_report["nearest_candidates"] == runtime_report["nearest_candidates"]
-    assert cli_report["next_probe_command"] == runtime_report["next_probe_command"]
-    assert (
-        cli_report["candidate_preflight_command"] == runtime_report["candidate_preflight_command"]
+    # The window has real full-field high-FOV evidence in the library but no seed
+    # that fits the exact EFL/F#/image-height/element envelope, so the targeted
+    # acquisition probe still reports a gap with zero accepted candidates.
+    assert cli_report["status"] == "gap"
+    assert cli_report["accepted_seed_count"] == 0
+    assert cli_report["full_field_seed_count"] > 0
+    assert cli_report["high_fov_seed_count"] > 0
+    assert any(
+        "accepted high-FOV full-field seeds=0" in item for item in cli_report["known_evidence"]
     )
 
 
@@ -183,11 +194,14 @@ def test_seed_intake_audit_can_preflight_raw_candidate_zmx(tmp_path):
 
     report = _audit(args)
 
-    assert len(load_case_library()) == 17
-    assert report["total_seed_count"] == 18
-    assert report["high_fov_seed_count"] == 3
+    # E2-01 batch 1: 39-seed library + 1 preflight candidate = 40 visible seeds,
+    # 9 high-FOV (8 in-library + the candidate). Accepted stays 0: the candidate
+    # is 0.85 field and no seed fits the full-field acquisition window.
+    assert len(load_case_library()) == 39
+    assert report["total_seed_count"] == 40
+    assert report["high_fov_seed_count"] == 9
     assert report["accepted_seed_count"] == 0
-    assert any("total visible phone seeds=18" in item for item in report["known_evidence"])
+    assert any("total visible phone seeds=40" in item for item in report["known_evidence"])
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
 
 
@@ -224,8 +238,9 @@ def test_seed_intake_preflight_endpoint_audits_uploaded_zmx():
     assert response.status_code == 200
     report = response.json()
     assert report["status"] == "gap"
-    assert report["total_seed_count"] == 18
-    assert report["high_fov_seed_count"] == 3
+    # E2-01 batch 1: 39-seed library + 1 uploaded candidate = 40 seeds, 9 high-FOV.
+    assert report["total_seed_count"] == 40
+    assert report["high_fov_seed_count"] == 9
     assert report["accepted_seed_count"] == 0
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
     uploaded = next(

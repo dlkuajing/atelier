@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import scripts.export_acceptance_tasks as acceptance_export
 from scripts.export_acceptance_tasks import (
@@ -23,59 +24,31 @@ def test_acceptance_export_has_no_stale_remediation_resolution_packets():
     assert report["tasks"] == []
 
 
-def test_acceptance_export_keeps_seed_intake_probe_runnable():
-    report = build_report(
-        stage="seed_ingestion",
-        case_names={"high_fov_main_uses_89deg_seed"},
-    )
-
-    assert report["summary"]["task_count"] == 1
-    task = report["tasks"][0]
-    assert task["task_id"] == "ingest-high-fov-full-field-seed"
-    assert task["status"] == "external_evidence_required"
-    assert task["command_mode"] == "local_probe"
-    assert "audit_seed_intake.py" in task["next_probe_command"]
-    assert task["case_verification_command"] == (
-        "cd lumira-backend && uv run python scripts/evaluate_design_agent.py "
-        "--case high_fov_main_uses_89deg_seed --json --fail-on-regression"
-    )
-    assert task["case_verification_command_mode"] == "local_probe"
-    assert task["case_verification_execution"] == {
-        "executed": False,
-        "reason": "not_requested",
-    }
-    assert task["evidence_probe"]["probe_id"] == "high-fov-full-field-seed-intake"
-    assert task["probe_execution"] == {
-        "executed": False,
-        "reason": "not_requested",
-    }
-
-
-def test_acceptance_export_executes_seed_intake_local_probe():
+def test_seed_ingestion_export_empty_after_evidence_layer_cleared():
+    # E2-01 batch 1: the library now carries real >=85deg full-field(1.0) evidence
+    # (US20170003482A1 / US8908290B1), so no eval case emits a seed-ingestion
+    # acceptance task -- the external-seed acquisition export is legitimately empty
+    # (blocker resolved at the evidence layer, not hidden). Regression guard that
+    # the machinery stays dissolved; the seed-task packet/runner logic remains
+    # covered by the inline-data tests below.
     report = build_report(
         stage="seed_ingestion",
         case_names={"high_fov_main_uses_89deg_seed"},
         execute_local_probes=True,
+        execute_case_verification=True,
     )
-
-    assert report["summary"]["task_count"] == 1
-    assert report["summary"]["executed_probe_count"] == 1
-    assert report["summary"]["failed_probe_count"] == 0
-    task = report["tasks"][0]
-    execution = task["probe_execution"]
-    assert execution["executed"] is True
-    assert execution["timed_out"] is False
-    assert execution["exit_code"] == 0
-    assert execution["json_parse_error"] is None
-    assert execution["stdout_json"]["status"] == "gap"
-    assert execution["stdout_json"]["missing_evidence"]
+    assert report["summary"]["task_count"] == 0
+    assert report["tasks"] == []
+    assert report["summary"]["executed_probe_count"] == 0
+    assert report["summary"]["executed_verification_count"] == 0
 
 
 def test_acceptance_export_writes_artifacts(tmp_path):
+    # Covered world: the high-FOV case's follow-ups are internal manual tasks
+    # (recover full-field, etc.), not a seed-acquisition probe. Artifact writing is
+    # exercised against those real tasks.
     report = build_report(
-        stage="seed_ingestion",
         case_names={"high_fov_main_uses_89deg_seed"},
-        execute_local_probes=True,
     )
 
     artifacts = write_artifacts(report, tmp_path, split_tasks=True)
@@ -85,22 +58,22 @@ def test_acceptance_export_writes_artifacts(tmp_path):
     assert report_path.exists()
     saved_report = json.loads(report_path.read_text())
     assert saved_report["summary"]["artifacts"]["report"] == str(report_path)
-    assert len(saved_report["summary"]["artifacts"]["tasks"]) == 1
-    task_path = tmp_path / "tasks" / (
-        "001-high_fov_main_uses_89deg_seed-ingest-high-fov-full-field-seed.json"
+    assert saved_report["summary"]["task_count"] == 4
+    task_paths = saved_report["summary"]["artifacts"]["tasks"]
+    assert len(task_paths) == 4
+    saved_task = json.loads(Path(task_paths[0]).read_text())
+    assert saved_task["task_id"].startswith("resolve-")
+    assert (
+        "evaluate_design_agent.py --case high_fov_main_uses_89deg_seed"
+        in saved_task["case_verification_command"]
     )
-    assert saved_report["summary"]["artifacts"]["tasks"] == [str(task_path)]
-    saved_task = json.loads(task_path.read_text())
-    assert saved_task["task_id"] == "ingest-high-fov-full-field-seed"
-    assert "evaluate_design_agent.py --case" in saved_task["case_verification_command"]
-    assert saved_task["probe_execution"]["stdout_json"]["status"] == "gap"
 
 
 def test_acceptance_export_writes_runner_summary_artifact(tmp_path):
+    # Covered world: no external seed blocker, so the runner is manual-followup
+    # ready rather than blocked on external evidence.
     report = build_report(
-        stage="seed_ingestion",
         case_names={"high_fov_main_uses_89deg_seed"},
-        execute_local_probes=True,
         execute_case_verification=True,
     )
 
@@ -117,19 +90,20 @@ def test_acceptance_export_writes_runner_summary_artifact(tmp_path):
     saved_runner = json.loads(runner_path.read_text())
     assert saved_report["summary"]["artifacts"]["runner_summary"] == str(runner_path)
     assert saved_report["runner_summary"] == saved_runner
-    assert saved_runner["summary"]["runner_status"] == "blocked_on_external_evidence"
-    assert saved_runner["summary"]["external_blocker_count"] == 1
+    assert saved_runner["summary"]["runner_status"] == "manual_followup_ready"
+    assert saved_runner["summary"]["external_blocker_count"] == 0
 
 
 def test_acceptance_export_executes_case_verification_probe():
+    # Covered world: the high-FOV follow-ups are internal manual tasks; case
+    # verification runs the eval for the case (which passes) per task.
     report = build_report(
-        stage="seed_ingestion",
         case_names={"high_fov_main_uses_89deg_seed"},
         execute_case_verification=True,
     )
 
-    assert report["summary"]["task_count"] == 1
-    assert report["summary"]["executed_verification_count"] == 1
+    assert report["summary"]["task_count"] == 4
+    assert report["summary"]["executed_verification_count"] == 4
     assert report["summary"]["failed_verification_count"] == 0
     task = report["tasks"][0]
     execution = task["case_verification_execution"]
@@ -146,7 +120,7 @@ def test_acceptance_export_executes_case_verification_probe():
     case = execution["stdout_json"]["cases"][0]
     assert case["eval_case"] == "high_fov_main_uses_89deg_seed"
     assert case["acceptance"]["status"] == "blocked"
-    assert case["acceptance_improvement_tasks"][0]["stage"] == "seed_ingestion"
+    assert case["acceptance_improvement_tasks"][0]["stage"] == "requirement_resolution"
 
 
 def test_acceptance_export_scopes_balanced_followups_to_single_case():
@@ -370,41 +344,33 @@ def test_acceptance_runner_status_prefers_external_blocker_over_verification_noi
     assert runner["summary"]["external_blocker_count"] == 1
 
 
-def test_acceptance_runner_summary_prioritizes_external_seed_gap():
+def test_acceptance_runner_summary_has_no_external_seed_gap_after_evidence_cleared():
+    # E2-01 batch 1: the seed-acquisition blocker is resolved at the evidence
+    # layer, so the high-FOV case's runner is manual-followup ready -- there is no
+    # external-evidence gap to prioritize. The runner's external-gap and
+    # upstream-blocking logic stays covered by the inline-data tests below.
     report = build_report(
-        stage="seed_ingestion",
         case_names={"high_fov_main_uses_89deg_seed"},
-        execute_local_probes=True,
         execute_case_verification=True,
     )
 
     runner = build_runner_summary(report)
 
-    assert runner["summary"]["runner_status"] == "blocked_on_external_evidence"
-    assert runner["summary"]["action_kinds"] == {"external_evidence_gap": 1}
-    assert runner["summary"]["top_action_kind"] == "external_evidence_gap"
-    action = runner["next_actions"][0]
-    assert action["eval_case"] == "high_fov_main_uses_89deg_seed"
-    assert action["task_id"] == "ingest-high-fov-full-field-seed"
-    assert action["probe_result_status"] == "gap"
-    assert action["case_verification_passed"] is True
-    assert "audit_seed_intake.py" in action["next_probe_command"]
-    request = action["evidence_request"]
-    assert request["accepted_seed_count"] == 0
-    assert request["required_mtf_field_frac"] == 1.0
-    assert any("FOV >= 85.0" in item for item in request["required_inputs"])
-    assert any("MTF evaluates at 1.0 field" in item for item in request["missing_evidence"])
-    assert any("nearest high-FOV seed" in item for item in request["known_evidence"])
-    assert request["blocked_claims"] == [
-        "full-field edge-performance claim",
-        "production-ready optical prescription",
-        "full replacement of optical designer review for this high-FOV case",
-    ]
-    assert "candidate.zmx" in request["candidate_preflight_command"]
-    assert request["nearest_candidates"][0]["role"] == "nearest_high_fov"
+    assert runner["summary"]["runner_status"] == "manual_followup_ready"
+    assert runner["summary"]["external_blocker_count"] == 0
+    assert runner["summary"]["upstream_blocked_count"] == 0
+    assert runner["summary"]["action_kinds"] == {"manual_followup": 4}
+    assert runner["summary"]["top_action_kind"] == "manual_followup"
+    assert all(
+        action["action_kind"] == "manual_followup" for action in runner["next_actions"]
+    )
 
 
-def test_acceptance_runner_summary_blocks_downstream_same_case_tasks():
+def test_acceptance_runner_has_no_upstream_seed_blocking_after_evidence_cleared():
+    # E2-01 batch 1: with the seed-acquisition blocker resolved at the evidence
+    # layer, no external-evidence task exists, so no case's downstream tasks are
+    # blocked on an upstream seed gap. The runner's external-gap / upstream-
+    # blocking logic stays covered by the inline-data tests above.
     report = build_report(
         case_names={
             "high_fov_main_uses_89deg_seed",
@@ -412,47 +378,16 @@ def test_acceptance_runner_summary_blocks_downstream_same_case_tasks():
             "balanced_main_default",
             "performance_full_field_seed_blocks_low_mtf",
         },
-        execute_local_probes=True,
         execute_case_verification=True,
     )
 
     runner = build_runner_summary(report)
 
-    assert runner["summary"]["runner_status"] == "blocked_on_external_evidence"
-    assert runner["summary"]["action_kinds"]["blocked_by_upstream_evidence"] == 8
-    assert runner["summary"]["external_blocker_count"] >= 2
-    assert (
-        runner["summary"]["manual_followup_count"]
-        + runner["summary"]["case_verification_failure_count"]
-        >= 2
-    )
-    assert runner["summary"]["action_kinds"].get("local_probe_gap", 0) == 0
-    assert runner["summary"]["upstream_blocked_count"] == 8
-    assert (
-        runner["summary"]["external_blocker_count"]
-        + runner["summary"]["manual_followup_count"]
-        + runner["summary"]["upstream_blocked_count"]
-        + runner["summary"]["case_verification_failure_count"]
-        == runner["summary"]["task_count"]
-    )
-    blocked = [
-        action
+    assert runner["summary"]["external_blocker_count"] == 0
+    assert runner["summary"]["upstream_blocked_count"] == 0
+    assert runner["summary"]["task_count"] > 0
+    assert not any(
+        action["action_kind"] == "blocked_by_upstream_evidence"
         for action in runner["next_actions"]
-        if action["action_kind"] == "blocked_by_upstream_evidence"
-    ]
-    assert {item["eval_case"] for item in blocked} == {
-        "high_fov_main_uses_89deg_seed",
-        "ui_high_fov_default_request_stays_blocked",
-    }
-    assert {item["original_action_kind"] for item in blocked} <= {
-        "manual_followup",
-        "case_verification_failed",
-    }
-    assert all(
-        item["blocked_by"]["task_id"] == "ingest-high-fov-full-field-seed"
-        for item in blocked
     )
-    assert all(
-        item["blocked_by"]["evidence_request"]["accepted_seed_count"] == 0
-        for item in blocked
-    )
+    assert all(action.get("blocked_by") is None for action in runner["next_actions"])

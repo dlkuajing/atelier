@@ -10,6 +10,9 @@ directory (idmxs_index.jsonl + *.zmx), and for every candidate:
     artifact,
   * scores the image-quality floor (max RMS / min 50 lp/mm MTF / floor gap),
   * validates the embodiment (nominal focal vs backend-computed EFL),
+  * with --declared-specs, runs the full-embodiment cross-validation gate
+    (zmx-computed vs patent-declared across ALL embodiments; see
+    cross_validate_embodiments -- the standard gate for batch 2+),
   * categorises main-wide / telephoto / fisheye, and
   * emits ZMX_AMMO-shaped manifest entries.
 
@@ -29,6 +32,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sys
 import warnings
 from pathlib import Path
@@ -43,6 +47,8 @@ from app.core.optical_sample import OptimizationMetricSnapshot  # noqa: E402
 from app.core.zmx_ingest import load_normalized_zmx  # noqa: E402
 
 EMBODIMENT_EFL_TOL_PCT = 5.0
+EMBODIMENT_FOV_TOL_DEG = 3.0
+EMBODIMENT_TTL_TOL_PCT = 10.0
 FISHEYE_FOV_DEG = 110.0
 TELEPHOTO_EFL_MM = 5.0
 TELEPHOTO_FOV_DEG = 50.0
@@ -130,6 +136,97 @@ def _category(efl: float, fov: float) -> str:
     return "main_wide"
 
 
+def _ttl_ratio_from_notes(notes: str) -> float | None:
+    """Pull a TL/ImgH (or TTL/ImgH) ratio out of a declared-embodiment note.
+
+    Many patents state only the track-to-image-height ratio, not an absolute TTL,
+    so ratio x computed image height is the only apples-to-apples TTL check.
+    """
+    if not notes:
+        return None
+    for pattern in (r"TL\s*/\s*ImgH\s*=\s*([0-9.]+)", r"TTL\s*/\s*ImgH\s*=\s*([0-9.]+)"):
+        match = re.search(pattern, notes)
+        if match:
+            return float(match.group(1))
+    return None
+
+
+def cross_validate_embodiments(computed: dict, embodiments: list[dict]) -> dict:
+    """Full-embodiment cross-validation gate (institutionalized from E2-01 batch 1).
+
+    Compares zmx-computed prescription values against patent-declared specs across
+    EVERY declared embodiment, not just embodiment 1. The embodiment-1-only
+    shortcut produced false negatives -- e.g. a genuine 91 deg full-field seed read
+    as a 40 deg lens because only Table 1 was compared -- so the gate must scan the
+    whole embodiment set and attribute the design to its best match.
+
+    ``computed`` carries efl / fov / nel / ttl / imgh. Verdict PASS requires,
+    against the single best-matching embodiment: EFL within EMBODIMENT_EFL_TOL_PCT,
+    FOV (vs 2 x declared HFOV) within EMBODIMENT_FOV_TOL_DEG, and element count
+    exactly equal. TTL is compared to the declared absolute value, or to a TL/ImgH
+    ratio x computed image height when only the ratio is stated; a TTL-only miss is
+    CAVEAT_TTL, never FAIL. No core (EFL/FOV/element) match is FAIL.
+    """
+    best = None
+    for emb in embodiments:
+        f_mm = emb.get("f_mm")
+        hfov = emb.get("hfov_deg")
+        n_elements = emb.get("n_elements")
+        ttl_mm = emb.get("ttl_mm")
+        efl_diff = abs(computed["efl"] - f_mm) / f_mm * 100.0 if f_mm else None
+        declared_fov = 2.0 * hfov if hfov is not None else None
+        fov_diff = abs(computed["fov"] - declared_fov) if declared_fov is not None else None
+        nel_match = (n_elements == computed["nel"]) if n_elements is not None else None
+        ttl_diff_pct = None
+        if ttl_mm:
+            ttl_diff_pct = abs(computed["ttl"] - ttl_mm) / ttl_mm * 100.0
+        elif computed.get("imgh"):
+            ratio = _ttl_ratio_from_notes(emb.get("notes", ""))
+            if ratio:
+                declared_ttl = ratio * computed["imgh"]
+                ttl_diff_pct = abs(computed["ttl"] - declared_ttl) / declared_ttl * 100.0
+        efl_ok = efl_diff is not None and efl_diff <= EMBODIMENT_EFL_TOL_PCT
+        fov_ok = fov_diff is not None and fov_diff <= EMBODIMENT_FOV_TOL_DEG
+        core_ok = efl_ok and fov_ok and bool(nel_match)
+        ttl_ok = ttl_diff_pct is None or ttl_diff_pct <= EMBODIMENT_TTL_TOL_PCT
+        # Rank: core matches first, then smallest combined EFL+FOV error. Guard the
+        # 0.0-is-falsy trap so a perfect (0.0) diff is not demoted to "missing".
+        rank = (
+            0 if core_ok else 1,
+            (efl_diff if efl_diff is not None else 99.0)
+            + (fov_diff if fov_diff is not None else 99.0),
+        )
+        record = {
+            "embodiment": emb.get("embodiment"),
+            "efl_diff_pct": round(efl_diff, 2) if efl_diff is not None else None,
+            "fov_diff_deg": round(fov_diff, 2) if fov_diff is not None else None,
+            "declared_fov_deg": declared_fov,
+            "n_elements_declared": n_elements,
+            "nel_match": nel_match,
+            "ttl_diff_pct": round(ttl_diff_pct, 2) if ttl_diff_pct is not None else None,
+            "core_ok": core_ok,
+            "ttl_ok": ttl_ok,
+        }
+        if best is None or rank < best[0]:
+            best = (rank, record)
+    if best is None:
+        return {"verdict": "NO_SPEC", "matched_embodiment": None}
+    record = best[1]
+    if record["core_ok"] and record["ttl_ok"]:
+        verdict = "PASS"
+    elif record["core_ok"]:
+        verdict = "CAVEAT_TTL"
+    else:
+        verdict = "FAIL"
+    return {"verdict": verdict, "matched_embodiment": record["embodiment"], **record}
+
+
+def _load_declared_specs(path: Path) -> dict[str, list[dict]]:
+    """patent -> declared embodiments, from lens-data-staging/patent_declared_specs.json."""
+    data = json.loads(path.read_text())
+    return {p["patent"]: p.get("embodiments", []) for p in data.get("patents", [])}
+
+
 def _manifest_entry(patent: str, sample, imh_mm: float | None) -> dict:
     m = sample.metadata
     return {
@@ -153,7 +250,7 @@ def _cluster_key(rec: dict) -> tuple:
     )
 
 
-def analyse(staging_dir: Path) -> dict:
+def analyse(staging_dir: Path, declared_specs: dict[str, list[dict]] | None = None) -> dict:
     idmxs = staging_dir / "idmxs"
     index = {}
     with (idmxs / "idmxs_index.jsonl").open() as fh:
@@ -208,6 +305,17 @@ def analyse(staging_dir: Path) -> dict:
                     "manifest": _manifest_entry(patent, sample, imh),
                 }
             )
+            if declared_specs is not None and patent in declared_specs:
+                computed = {
+                    "efl": efl,
+                    "fov": m.fov_deg,
+                    "nel": m.n_imaging,
+                    "ttl": sample.paraxial.total_track_mm,
+                    "imgh": imh if imh is not None else efl * math.tan(math.radians(m.fov_deg / 2.0)),
+                }
+                rec["cross_validation"] = cross_validate_embodiments(
+                    computed, declared_specs[patent]
+                )
         except Exception as exc:  # noqa: BLE001
             rec.update({"status": "build_failed", "error": f"{type(exc).__name__}: {str(exc)[:120]}"})
         records.append(rec)
@@ -244,6 +352,23 @@ def analyse(staging_dir: Path) -> dict:
         "near_dup_clusters": dup_clusters,
         "cross_dups_with_existing_17": cross_dups,
     }
+    cross_validated = [r for r in ok if "cross_validation" in r]
+    if cross_validated:
+        summary["cross_validation"] = {
+            "by_verdict": dict(
+                Counter(r["cross_validation"]["verdict"] for r in cross_validated)
+            ),
+            "failed": [
+                r["patent"]
+                for r in cross_validated
+                if r["cross_validation"]["verdict"] == "FAIL"
+            ],
+            "ttl_caveat": [
+                r["patent"]
+                for r in cross_validated
+                if r["cross_validation"]["verdict"] == "CAVEAT_TTL"
+            ],
+        }
     return {"summary": summary, "records": records}
 
 
@@ -253,15 +378,28 @@ def main() -> None:
     parser.add_argument("--report-out", type=Path)
     parser.add_argument("--manifest-out", type=Path)
     parser.add_argument("--category", default=None, help="filter manifest to a category")
+    parser.add_argument(
+        "--declared-specs",
+        type=Path,
+        default=None,
+        help="patent_declared_specs.json for the full-embodiment cross-validation gate",
+    )
     args = parser.parse_args()
 
-    result = analyse(args.staging_dir)
+    declared_specs = _load_declared_specs(args.declared_specs) if args.declared_specs else None
+    result = analyse(args.staging_dir, declared_specs=declared_specs)
     s = result["summary"]
     print("=== E2-01 intake QC (robust E1-02 metric) ===")
     print(f"candidates={s['total_candidates']} ok={s['ok']} build_failed={s['build_failed']}")
     print(f"by_category={s['by_category']} floor_clean={s['floor_clean']}/{s['ok']}")
     print(f"embodiment_flagged({len(s['embodiment_flagged'])})={s['embodiment_flagged']}")
     print(f"near_dup_clusters={len(s['near_dup_clusters'])} cross_dups_with_17={s['cross_dups_with_existing_17']}")
+    if "cross_validation" in s:
+        cv = s["cross_validation"]
+        print(
+            f"cross_validation by_verdict={cv['by_verdict']} "
+            f"FAIL={cv['failed']} CAVEAT_TTL={cv['ttl_caveat']}"
+        )
 
     if args.report_out:
         args.report_out.write_text(json.dumps(result, indent=2, default=str))

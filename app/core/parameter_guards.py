@@ -50,41 +50,49 @@ SCENARIO_BOUNDS: dict[Scenario, ScenarioBounds] = {
         description="Folded or upright telephoto module for smartphones, ~3x optical zoom",
     ),
     Scenario.SMARTPHONE_WIDE: ScenarioBounds(
-        # Calibrated from v2-02's phone short-focus family. 15 wide designs cover
-        # FOV[60.0,84.1]; 2 adjacent wide-FOV seeds cover 89.5. v2-05 lets
-        # smartphone-wide requests cross-select those seeds, so the UI/backend
-        # bound is 90 rather than the old wide-only 88.
-        # Replaces the earlier hand-typed teardown estimate.
+        # E2-01 batch 1: re-derived by scripts/compute_bounds_stats.py from the 31
+        # smartphone-wide ammo designs (17 v2-02 + 14 patent seeds that passed the
+        # full-embodiment patent cross-validation gate). Continuous params follow
+        # the min-5%/max+5% statistical derivation; the n_elements upper bound (8)
+        # is the real 8P seed US20170045714A1 -- no single-point extreme remains
+        # after US10007086B2 (11P) was deferred for a geometry check, so no manual
+        # clamp is needed. n_elements_min stays 3 as the accessibility floor
+        # (backed by real 3P seeds). Revisit the element ceiling if 9P+ evidence
+        # thickens. fov_max held at 90 so wide requests still cross-select the
+        # 89.5 deg boundary seeds.
         efl_mm_min=2.4,
-        efl_mm_max=4.1,
-        f_number_min=1.7,
-        f_number_max=2.6,
+        efl_mm_max=5.2,
+        f_number_min=1.5,
+        f_number_max=3.0,
         fov_deg_min=57.0,
         fov_deg_max=90.0,
         image_height_mm_min=1.7,
-        image_height_mm_max=3.5,
+        image_height_mm_max=4.7,
         n_elements_min=3,
-        n_elements_max=6,
-        description="Main wide camera, smartphone primary (calibrated to 15 real designs)",
+        n_elements_max=8,
+        description="Main wide camera, smartphone primary (calibrated to 31 real designs)",
     ),
     Scenario.SMARTPHONE_ULTRAWIDE: ScenarioBounds(
-        # Calibrated from v2-02's real wide-FOV designs. HONEST CAVEAT: this phase's
-        # ammo tops out at ~89.5° (only 2 designs: 2.8mm / F1.9 / 5-elem) — we have
-        # NO true 100°+ ultrawide data. Bounds center on those real samples with
-        # engineering margin across the wide→ultrawide transition. The previous
-        # 100–130° range was a hand-typed guess with zero backing data — removed.
-        # Revisit when real 100°+ ultrawide prescriptions are added.
-        efl_mm_min=2.6,
-        efl_mm_max=3.0,
-        f_number_min=1.7,
-        f_number_max=2.1,
+        # E2-01 batch 1: re-derived from the 8 smartphone-ultrawide ammo designs
+        # (2 v2-02 89.5 deg + 6 patent seeds that passed the full-embodiment
+        # patent cross-validation gate, up to 100 deg US10330891B2). Every FOV is
+        # patent-declared-and-verified. Continuous params follow the min-5%/max+5%
+        # statistical derivation; the earlier "no true 100 deg+ ultrawide" caveat
+        # is retired. n_elements is 5-7 by pure statistical derivation -- the whole
+        # ultrawide pool is 5P+, and a 3-4P ultrawide would be a no-evidence zone
+        # (per team-lead ratification, evidence-density consistency). Revisit if
+        # <5P or 9P+ ultrawide evidence appears.
+        efl_mm_min=2.3,
+        efl_mm_max=4.1,
+        f_number_min=1.8,
+        f_number_max=2.4,
         fov_deg_min=85.0,
-        fov_deg_max=95.0,
-        image_height_mm_min=2.7,
-        image_height_mm_max=3.1,
-        n_elements_min=4,
-        n_elements_max=6,
-        description="Wide-FOV auxiliary, smartphone (limited ammo ~89.5°, no true 100°+ ultrawide yet)",
+        fov_deg_max=105.0,
+        image_height_mm_min=2.5,
+        image_height_mm_max=4.2,
+        n_elements_min=5,
+        n_elements_max=7,
+        description="Wide-FOV auxiliary, smartphone (calibrated to 8 real designs, up to 100 deg)",
     ),
     Scenario.AR_NEAR_EYE: ScenarioBounds(
         efl_mm_min=12.0,

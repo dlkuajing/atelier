@@ -34,9 +34,10 @@ def test_build_one_real_sample_roundtrip():
     assert reloaded.metadata.materials  # non-empty real material names
 
 
-def test_load_all_17_cases_valid():
+def test_load_all_cases_valid():
     cases = load_case_library()
-    assert len(cases) == 17
+    # E2-01 batch 1: 17 GGG seeds + 22 gate-passing patent seeds.
+    assert len(cases) == 39
     for c in cases:
         assert isinstance(c, OpticalSampleData)
         assert c.metadata is not None

@@ -12293,6 +12293,18 @@ def match_case(
             "production-ready prescription without tolerance review",
             "manufacturing yield claim without a supplier/process model",
         ]
+        # E2-01 batch 1 (team-lead ruling): on the covered path the gap-path
+        # delivery gate (which carried the full-field forbidden) is gone. A
+        # delivered winner that only proves <1.0 field must STILL explicitly forbid
+        # full-field edge-performance claims -- the audience is an expert, so keep
+        # the explicit defense line, not just the composite blocked/tradeoff signals.
+        if (
+            library_coverage_diagnostic is not None
+            and library_coverage_diagnostic.status == "covered"
+            and best.metadata is not None
+            and best.metadata.mtf_max_field_frac < 1.0
+        ):
+            default_forbidden_claims.append("full-field edge-performance claim")
         if branch_selection_policy is not None:
             default_forbidden_claims.extend(branch_selection_policy.forbidden_claims[:5])
         if performance_aperture_tradeoff_resolution is not None:

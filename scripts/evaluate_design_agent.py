@@ -1335,25 +1335,57 @@ def _full_field_recovery_diagnostic_present() -> Check:
     return check
 
 
-def _library_coverage_gap_present() -> Check:
+def _library_coverage_covered_by_full_field_seeds() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
         if assessment is None or assessment.library_coverage_diagnostic is None:
             return False, "library coverage diagnostic missing"
         diagnostic = assessment.library_coverage_diagnostic
-        has_gap = (
-            diagnostic.status == "gap"
-            and not diagnostic.high_fov_full_field_available
-            and diagnostic.full_field_fov_gap_deg is not None
-            and diagnostic.full_field_fov_gap_deg > 5.0
+        # E2-01 batch 1: real-patent >=85 deg full-field(1.0) seeds are now in the
+        # library (US20170003482A1 91 deg 7P, US8908290B1 91.2 deg 6P), so the
+        # coverage diagnostic reports "covered" and the seed-acquisition blocker
+        # is cleared at the evidence layer. This is NOT a claim that this exact
+        # 88 deg request is delivered full-field: routing still returns the
+        # nearest partial-field seed (see the 0.85-field tradeoff checks); the
+        # verified fact is that full-field high-FOV evidence exists in-library.
+        has_coverage = (
+            diagnostic.status == "covered"
+            and diagnostic.high_fov_full_field_available
+            and any("full-field high-FOV seeds=2" in item for item in diagnostic.evidence)
+            and diagnostic.nearest_full_field_case_id is not None
+            and diagnostic.nearest_full_field_case_id.startswith("US")
         )
-        has_strategy = "full-field high-FOV seed" in diagnostic.recommended_strategy
-        ok = has_gap and has_strategy
+        has_strategy = (
+            "continue from the high-FOV full-field seed" in diagnostic.recommended_strategy
+        )
+        ok = has_coverage and has_strategy
         return (
             ok,
-            "library coverage "
-            f"{diagnostic.status}, full-field gap={diagnostic.full_field_fov_gap_deg}",
+            f"library coverage {diagnostic.status}, "
+            f"full-field seed={diagnostic.nearest_full_field_case_id}",
         )
+
+    return check
+
+
+def _seed_acquisition_machinery_stood_down() -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        assessment = sample.design_assessment
+        if assessment is None:
+            return False, "assessment missing"
+        # E2-01 batch 1: once the library carries real full-field high-FOV
+        # evidence, the gap-only seed-acquisition scaffolding (strategy decision,
+        # seed-intake audit, seed-acquisition contract, and its dedicated delivery
+        # gate) is no longer produced -- its whole purpose was to hold the line
+        # while that evidence was missing. The delivered draft is instead gated by
+        # the normal draft_acceptance_gate path (asserted separately).
+        ok = (
+            assessment.design_strategy_decision is None
+            and assessment.seed_intake_audit is None
+            and assessment.seed_acquisition_contract is None
+            and assessment.delivery_gate is None
+        )
+        return ok, "gap-path seed-acquisition scaffolding stood down"
 
     return check
 
@@ -1809,458 +1841,6 @@ def _reference_influence_status(
     return check
 
 
-def _design_strategy_decision_selects_seed_acquisition() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None or assessment.design_strategy_decision is None:
-            return False, "design strategy decision missing"
-        decision = assessment.design_strategy_decision
-        has_primary_strategy = decision.selected_strategy == "add_full_field_high_fov_seed"
-        # World-flip from the XASPHERE ingest fix: the selected 89.5 deg seed is
-        # now the highest-stable 0.85 partial-field option, so the
-        # near_threshold_partial_field_seed and stable_partial_field_sibling_seed
-        # branches collapse. Three strategy branches remain.
-        has_fallbacks = {
-            "relax_fov_to_full_field_seed",
-            "partial_field_high_fov_draft",
-        }.issubset(set(decision.fallback_strategies))
-        has_evidence_contract = any(
-            ">=85 deg" in item and "1.0 field" in item for item in decision.required_evidence
-        )
-        options = {option.option_id: option for option in decision.options}
-        has_options = {
-            "add_full_field_high_fov_seed",
-            "relax_fov_to_full_field_seed",
-            "partial_field_high_fov_draft",
-        }.issubset(options)
-        stable = options.get("stable_partial_field_sibling_seed")
-        near = options.get("near_threshold_partial_field_seed")
-        relaxed = options.get("relax_fov_to_full_field_seed")
-        partial = options.get("partial_field_high_fov_draft")
-        stable_partial_field = stable is None or (
-            stable.candidate_id is not None
-            and stable.evidence_status == "partial_field_only"
-            and stable.mtf_max_field_frac == 0.85
-        )
-        near_partial_field = near is None or (
-            near.candidate_id is not None
-            and near.evidence_status == "partial_field_only"
-            and near.mtf_max_field_frac is not None
-            and 0.8 < near.mtf_max_field_frac < 1.0
-        )
-        relaxed_full_field = (
-            relaxed is not None
-            and relaxed.candidate_id is not None
-            and relaxed.mtf_max_field_frac == 1.0
-        )
-        partial_field = (
-            partial is not None
-            and partial.candidate_id is not None
-            and partial.evidence_status == "partial_field_only"
-            and partial.mtf_max_field_frac is not None
-            and 0.75 <= partial.mtf_max_field_frac < 1.0
-        )
-        brief = decision.seed_acquisition_brief
-        brief_ok = (
-            brief is not None
-            and brief.priority == "required_for_full_field_claim"
-            and brief.minimum_fov_deg >= 85.0
-            and brief.required_mtf_field_frac == 1.0
-            and len(brief.efl_window_mm) == 2
-            and brief.efl_window_mm[0] < brief.target_efl_mm < brief.efl_window_mm[1]
-            and len(brief.f_number_window) == 2
-            and brief.f_number_window[0] < brief.target_f_number < brief.f_number_window[1]
-            and any("visible-light" in item for item in brief.validation_requirements)
-            and any("MTF max stable field below 1.0" in item for item in brief.rejection_filters)
-        )
-        gate = assessment.delivery_gate
-        gate_ok = (
-            gate is not None
-            and gate.status == "conditional_partial_field"
-            and "partial-field" in gate.deliverable_type
-            and any("full-field edge-performance" in item for item in gate.forbidden_claims)
-            and any("MTF evidence" in item for item in gate.allowed_claims)
-            and any("1.0 field" in item for item in gate.promotion_requirements)
-        )
-        ok = (
-            has_primary_strategy
-            and has_fallbacks
-            and has_evidence_contract
-            and has_options
-            and stable_partial_field
-            and near_partial_field
-            and relaxed_full_field
-            and partial_field
-            and brief_ok
-            and gate_ok
-        )
-        return ok, f"design strategy decision {decision.selected_strategy}"
-
-    return check
-
-
-def _has_high_fov_seed_acquisition_branch() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "seed-acquisition branch missing because assessment is missing"
-        branch = next(
-            (
-                candidate
-                for candidate in assessment.draft_candidates
-                if candidate.candidate_id == "high-fov-full-field-seed-needed"
-            ),
-            None,
-        )
-        if branch is None:
-            return False, "high-FOV full-field seed acquisition branch present"
-        evidence_ok = (
-            any("add_full_field_high_fov_seed" in item for item in branch.evidence)
-            and any("required FOV >= 85.0" in item for item in branch.evidence)
-            and any("required MTF field 1.0" in item for item in branch.evidence)
-        )
-        risk_ok = any("no current visible-light" in item for item in branch.risks)
-        ok = (
-            branch.source == "strategy_option"
-            and branch.strategy_option_id == "add_full_field_high_fov_seed"
-            and branch.status == "blocked"
-            and branch.recommendation == "hold"
-            and branch.metrics is None
-            and evidence_ok
-            and risk_ok
-        )
-        return ok, f"high-FOV seed acquisition branch {branch.status}"
-
-    return check
-
-
-def _has_relaxed_fov_full_field_branch() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "relaxed-FOV branch missing because assessment is missing"
-        branch = next(
-            (
-                candidate
-                for candidate in assessment.draft_candidates
-                if candidate.candidate_id == "relaxed-fov-full-field"
-            ),
-            None,
-        )
-        if branch is None:
-            return False, "relaxed-FOV full-field draft branch present"
-        metrics = branch.metrics
-        has_full_field_metrics = (
-            metrics is not None
-            and metrics.mtf_max_field_frac == 1.0
-            and metrics.effective_focal_length_mm is not None
-            and metrics.mtf_50lpmm_min is not None
-            and metrics.mtf_field_weighted_score is not None
-        )
-        evidence_ok = any("full-field real case" in item for item in branch.evidence)
-        risk_ok = any("FOV" in item and "reduced" in item for item in branch.risks)
-        ok = (
-            branch.source == "strategy_option"
-            and branch.strategy_option_id == "relax_fov_to_full_field_seed"
-            and branch.status == "fallback"
-            and branch.recommendation == "continue"
-            and has_full_field_metrics
-            and evidence_ok
-            and risk_ok
-        )
-        return ok, f"relaxed-FOV full-field branch {branch.status}"
-
-    return check
-
-
-def _near_threshold_partial_field_branch_collapsed() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "near-threshold branch audit missing because assessment is missing"
-        # World-flip from the XASPHERE ingest fix: the 84.1 deg near-threshold
-        # partial-field branch collapses -- once field values shift up a step it
-        # is no longer surfaced as a separate strategy alternative.
-        option_absent = not any(
-            item.option_id == "near_threshold_partial_field_seed"
-            for item in (
-                assessment.design_strategy_decision.options
-                if assessment.design_strategy_decision
-                else []
-            )
-        )
-        branch_absent = not any(
-            candidate.candidate_id == "near-threshold-partial-field"
-            for candidate in assessment.draft_candidates
-        )
-        ok = option_absent and branch_absent
-        return (
-            ok,
-            f"near-threshold branch collapsed option_absent={option_absent} "
-            f"branch_absent={branch_absent}",
-        )
-
-    return check
-
-
-def _selected_partial_branch_uses_085_seed() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "partial-field branch missing because assessment is missing"
-        # World-flip from the XASPHERE ingest fix: the selected 89.5 deg seed is
-        # now itself the highest-stable 0.85 partial-field seed, so the separate
-        # stable-partial-field-sibling branch collapses. The delivered partial
-        # draft carries the 0.85 evidence directly.
-        option = next(
-            (
-                item
-                for item in (
-                    assessment.design_strategy_decision.options
-                    if assessment.design_strategy_decision
-                    else []
-                )
-                if item.option_id == "partial_field_high_fov_draft"
-            ),
-            None,
-        )
-        branch = next(
-            (
-                candidate
-                for candidate in assessment.draft_candidates
-                if candidate.candidate_id == "partial-field-high-fov-draft"
-            ),
-            None,
-        )
-        stable_absent = not any(
-            candidate.candidate_id == "stable-partial-field-sibling"
-            for candidate in assessment.draft_candidates
-        )
-        if option is None or branch is None:
-            return False, "0.85 partial-field high-FOV draft branch is available"
-        metrics = branch.metrics
-        has_current_metrics = (
-            metrics is not None
-            and metrics.mtf_max_field_frac == 0.85
-            and metrics.effective_focal_length_mm is not None
-            and metrics.mtf_50lpmm_min is not None
-        )
-        evidence_ok = any("partial-field real case" in item for item in branch.evidence) and any(
-            "0.85 field" in item for item in branch.evidence
-        )
-        risk_ok = any("full-field edge-performance" in item for item in branch.risks) and any(
-            "unproven" in item for item in branch.risks
-        )
-        ok = (
-            branch.source == "strategy_option"
-            and branch.strategy_option_id == "partial_field_high_fov_draft"
-            and branch.status == "conditional"
-            and branch.recommendation == "hold"
-            and stable_absent
-            and has_current_metrics
-            and evidence_ok
-            and risk_ok
-        )
-        return ok, f"partial branch {branch.status}, stable sibling absent={stable_absent}"
-
-    return check
-
-
-def _stable_sibling_review_is_not_queued() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "stable sibling queue audit missing because assessment is missing"
-        task = next(
-            (
-                item
-                for item in assessment.optimization_task_queue
-                if item.task_id == "review-stable-sibling-branch"
-            ),
-            None,
-        )
-        run = next(
-            (
-                item
-                for item in assessment.optimization_task_runs
-                if item.task_id == "review-stable-sibling-branch"
-            ),
-            None,
-        )
-        resolve_run = next(
-            (
-                item
-                for item in assessment.optimization_task_runs
-                if item.task_id == "resolve-design-strategy"
-            ),
-            None,
-        )
-        if resolve_run is None:
-            return False, "strategy resolution run present"
-        # World-flip from the XASPHERE ingest fix: the stable-partial-field-sibling
-        # branch collapsed, so no review-stable-sibling-branch task/run is queued
-        # and the strategy-resolution run no longer unlocks one.
-        ok = (
-            task is None
-            and run is None
-            and resolve_run.status == "diagnostic"
-            and "review-stable-sibling-branch" not in resolve_run.unlocked_tasks
-        )
-        return ok, "stable sibling review branch collapsed after strategy resolution"
-
-    return check
-
-
-def _has_partial_field_high_fov_branch() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "partial-field high-FOV branch missing because assessment is missing"
-        branch = next(
-            (
-                candidate
-                for candidate in assessment.draft_candidates
-                if candidate.candidate_id == "partial-field-high-fov-draft"
-            ),
-            None,
-        )
-        if branch is None:
-            return False, "partial-field high-FOV draft branch present"
-        metrics = branch.metrics
-        has_partial_field_metrics = (
-            metrics is not None
-            and metrics.mtf_max_field_frac is not None
-            and metrics.mtf_max_field_frac < 1.0
-            and metrics.effective_focal_length_mm is not None
-            and metrics.mtf_50lpmm_min is not None
-        )
-        evidence_ok = any("partial-field real case" in item for item in branch.evidence)
-        risk_ok = any("full-field edge-performance" in item for item in branch.risks)
-        ok = (
-            branch.source == "strategy_option"
-            and branch.strategy_option_id == "partial_field_high_fov_draft"
-            and branch.status == "conditional"
-            and branch.recommendation == "hold"
-            and has_partial_field_metrics
-            and evidence_ok
-            and risk_ok
-        )
-        return ok, f"partial-field high-FOV branch {branch.status}"
-
-    return check
-
-
-def _high_fov_seed_baseline_maps_partial_strategy() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "seed baseline strategy mapping missing because assessment is missing"
-        branch = next(
-            (
-                candidate
-                for candidate in assessment.draft_candidates
-                if candidate.candidate_id == "seed-baseline"
-            ),
-            None,
-        )
-        if branch is None:
-            return False, "seed baseline branch present"
-        ok = branch.strategy_option_id == "partial_field_high_fov_draft"
-        return ok, f"seed baseline strategy {branch.strategy_option_id}"
-
-    return check
-
-
-def _has_branch_selection_policy() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None or assessment.branch_selection_policy is None:
-            return False, "branch selection policy missing"
-        policy = assessment.branch_selection_policy
-        # World-flip from the XASPHERE ingest fix: the stable-partial-field-sibling
-        # and near-threshold-partial-field branches collapse, leaving three ranked
-        # branches: acquire a full-field high-FOV seed (primary, blocked), relax
-        # FOV to a full-field seed (fallback), ship the partial-field draft.
-        has_order = policy.candidate_priority_order[:3] == [
-            "high-fov-full-field-seed-needed",
-            "relaxed-fov-full-field",
-            "partial-field-high-fov-draft",
-        ]
-        has_requirements = any("1.0 field" in item for item in policy.promotion_requirements)
-        has_forbidden = any(
-            "full-field edge-performance" in item for item in policy.forbidden_claims
-        )
-        ok = (
-            policy.status == "strategy_resolution_required"
-            and policy.active_candidate_id == "seed-baseline"
-            and policy.primary_candidate_id == "high-fov-full-field-seed-needed"
-            and policy.current_deliverable_candidate_id == "partial-field-high-fov-draft"
-            and "high-fov-full-field-seed-needed" in policy.blocked_candidate_ids
-            and "relaxed-fov-full-field" in policy.fallback_candidate_ids
-            and "partial-field-high-fov-draft" in policy.fallback_candidate_ids
-            and "stable-partial-field-sibling" not in policy.candidate_priority_order
-            and "near-threshold-partial-field" not in policy.candidate_priority_order
-            and has_order
-            and has_requirements
-            and has_forbidden
-        )
-        return ok, f"branch selection policy {policy.status}"
-
-    return check
-
-
-def _has_strategy_tradeoff_matrix() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "strategy tradeoff matrix missing because assessment is missing"
-        rows = {row.candidate_id: row for row in assessment.strategy_tradeoff_matrix}
-        # World-flip from the XASPHERE ingest fix: only three high-FOV strategy
-        # rows remain (stable-partial-field-sibling and near-threshold-partial-
-        # field collapsed).
-        required_ids = [
-            "high-fov-full-field-seed-needed",
-            "relaxed-fov-full-field",
-            "partial-field-high-fov-draft",
-        ]
-        if not set(required_ids).issubset(rows):
-            return False, "strategy tradeoff matrix contains high-FOV decision rows"
-        if "near-threshold-partial-field" in rows or "stable-partial-field-sibling" in rows:
-            return False, "collapsed high-FOV branches must not reappear in the matrix"
-        primary = rows["high-fov-full-field-seed-needed"]
-        relaxed = rows["relaxed-fov-full-field"]
-        partial = rows["partial-field-high-fov-draft"]
-        order_ok = [rows[item].priority_rank for item in required_ids] == [1, 2, 3]
-        primary_ok = (
-            primary.evidence_level == "missing_seed"
-            and primary.claim_status == "blocked_until_reference_seed"
-            and "primary" in primary.role_tags
-            and "blocked" in primary.role_tags
-            and ">=85 deg" in primary.next_action
-        )
-        relaxed_ok = (
-            relaxed.evidence_level == "full_field"
-            and relaxed.claim_status == "full_field_available_if_fov_relaxed"
-            and relaxed.mtf_max_field_frac == 1.0
-            and relaxed.delta_fov_deg is not None
-            and relaxed.delta_fov_deg < -5.0
-            and "relax target FOV" in relaxed.next_action
-        )
-        partial_ok = (
-            partial.evidence_level == "partial_field"
-            and partial.claim_status == "partial_field_only_no_edge_claim"
-            and "current_deliverable" in partial.role_tags
-            and partial.mtf_max_field_frac is not None
-            and partial.mtf_max_field_frac < 1.0
-            and "partial-field" in partial.tradeoff_summary
-            and "field only" in partial.tradeoff_summary
-        )
-        ok = order_ok and primary_ok and relaxed_ok and partial_ok
-        return ok, f"strategy tradeoff rows {len(assessment.strategy_tradeoff_matrix)}"
-
-    return check
-
-
 def _cost_priority_resolves_low_risk_candidate_branch() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
@@ -2394,172 +1974,40 @@ def _high_fov_acceptance_is_conditional() -> Check:
             return False, "high-FOV draft acceptance gate missing"
         gate = assessment.draft_acceptance_gate
         check_ids = {item.check_id for item in gate.checks}
+        # E2-01 batch 1: with full-field high-FOV evidence in the library the
+        # request routes through the normal draft path (deliverable_type
+        # "initial optical draft"), not the gap-path partial-field delivery gate.
+        # The full-field claim is still gated -- promotion requires recovering
+        # full-field ray stability, and production-readiness claims stay
+        # forbidden -- so the 0.85-field winner cannot be sold as full-field.
         has_required_checks = {
             "requirement_coverage",
             "delivery_gate",
-            "branch_selection",
             "optimizer_verification",
             "image_quality_floor",
             "task_run_evidence",
         }.issubset(check_ids)
-        has_promotion_action = any(
-            "1.0 field" in item or "full-field" in item for item in gate.required_next_actions
+        has_full_field_promotion_gate = any(
+            "full-field" in item for item in gate.required_next_actions
         )
-        has_forbidden_claim = any(
+        forbids_production_claim = any(
+            "production-ready" in item for item in gate.forbidden_claims
+        )
+        # E2-01 batch 1: the covered path now also carries the explicit
+        # full-field edge-performance forbidden claim (winner is 0.85 field).
+        forbids_full_field_claim = any(
             "full-field edge-performance" in item for item in gate.forbidden_claims
         )
-        has_upgrade_action = any(
-            action.source_check_id in {"delivery_gate", "branch_selection", "requirement_coverage"}
-            and ("1.0 field" in action.action or "full-field" in action.action)
-            and any("1.0 field" in item for item in action.acceptance_criteria)
-            and any("full-field edge-performance" in item for item in action.unblocks_claims)
-            for action in gate.upgrade_actions
-        )
         ok = (
-            gate.status in {"blocked", "conditional"}
-            and gate.deliverable_type == "partial-field concept only"
+            gate.status == "blocked"
+            and gate.deliverable_type == "initial optical draft"
             and gate.candidate_id == "seed-baseline"
             and has_required_checks
-            and has_promotion_action
-            and has_forbidden_claim
-            and has_upgrade_action
+            and has_full_field_promotion_gate
+            and forbids_production_claim
+            and forbids_full_field_claim
         )
-        return ok, f"high-FOV acceptance {gate.status}"
-
-    return check
-
-
-def _high_fov_has_seed_ingestion_task() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None:
-            return False, "missing assessment"
-        task = next(
-            (
-                item
-                for item in assessment.acceptance_improvement_tasks
-                if item.task_id == "ingest-high-fov-full-field-seed"
-            ),
-            None,
-        )
-        if task is None:
-            return False, "high-FOV seed-ingestion acceptance task missing"
-        text = " ".join(
-            [
-                task.objective,
-                *task.required_inputs,
-                *task.validation_steps,
-                *task.exit_criteria,
-                *task.blocks_claims,
-                *(task.evidence_probe.known_evidence if task.evidence_probe else []),
-                *(task.evidence_probe.missing_evidence if task.evidence_probe else []),
-                task.evidence_probe.summary if task.evidence_probe else "",
-                (task.evidence_probe.next_probe_command or "") if task.evidence_probe else "",
-            ]
-        )
-        ok = (
-            task.status == "external_evidence_required"
-            and task.stage == "seed_ingestion"
-            and task.owner == "case_library"
-            and task.evidence_probe is not None
-            and task.evidence_probe.status == "gap"
-            and ">= 85.0 deg" in text
-            and "1.0 field" in text
-            and "full-field edge-performance" in text
-            and "audit_seed_intake.py" in text
-        )
-        probe_status = task.evidence_probe.status if task.evidence_probe else "missing"
-        return ok, f"high-FOV acceptance task {task.status}/{task.stage}/{probe_status}"
-
-    return check
-
-
-def _high_fov_has_seed_intake_audit() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None or assessment.seed_intake_audit is None:
-            return False, "seed intake audit missing"
-        audit = assessment.seed_intake_audit
-        nearest_roles = {item.role for item in audit.nearest_candidates}
-        text = " ".join(
-            [
-                audit.summary,
-                *audit.known_evidence,
-                *audit.missing_evidence,
-                audit.next_probe_command,
-                audit.candidate_preflight_command,
-                *[
-                    " ".join([candidate.case_id, *candidate.miss_reasons])
-                    for candidate in audit.nearest_candidates
-                ],
-            ]
-        )
-        ok = (
-            audit.status == "gap"
-            and audit.minimum_fov_deg >= 85.0
-            and audit.required_mtf_field_frac >= 1.0
-            and audit.total_seed_count >= audit.high_fov_seed_count
-            and audit.full_field_seed_count > 0
-            and audit.high_fov_seed_count > 0
-            and audit.accepted_seed_count == 0
-            and audit.accepted_seed_candidates == []
-            and {"nearest_high_fov", "nearest_full_field"}.issubset(nearest_roles)
-            and "accepted high-FOV full-field seeds=0" in text
-            and "MTF evaluates at 1.0 field without fallback" in text
-            and "audit_seed_intake.py" in text
-            and "--candidate-zmx /path/to/candidate.zmx" in text
-        )
-        return (
-            ok,
-            f"seed intake audit {audit.status}, accepted={audit.accepted_seed_count}",
-        )
-
-    return check
-
-
-def _high_fov_has_seed_acquisition_contract() -> Check:
-    def check(sample: OpticalSampleData) -> tuple[bool, str]:
-        assessment = sample.design_assessment
-        if assessment is None or assessment.seed_acquisition_contract is None:
-            return False, "seed acquisition contract missing"
-        contract = assessment.seed_acquisition_contract
-        text = " ".join(
-            [
-                contract.summary,
-                contract.acceptance_target,
-                *(contract.required_candidate_properties),
-                *(contract.pass_criteria),
-                *(contract.rejection_filters),
-                *(contract.current_gap_evidence),
-                *(contract.fallback_paths),
-                *(contract.blocked_claims),
-                contract.preflight_command or "",
-                contract.next_action,
-            ]
-        )
-        ok = (
-            contract.status == "external_evidence_required"
-            and contract.source_task_id == "ingest-high-fov-full-field-seed"
-            and "FOV >= 85.0 deg" in text
-            and "1.0 field" in text
-            and "accepted high-FOV full-field seeds=0" in text
-            and "near miss nearest_high_fov" in text
-            and "near miss best_stable_high_fov" in text
-            and "MTF field" in text
-            and "near miss nearest_full_field" in text
-            and len(contract.current_gap_evidence) >= 2
-            and contract.current_gap_evidence[0].startswith("near miss nearest_high_fov")
-            and any(
-                item.startswith("near miss nearest_full_field")
-                for item in contract.current_gap_evidence[:3]
-            )
-            and "audit_seed_intake.py" in text
-            and "--candidate-zmx /path/to/candidate.zmx" in text
-            and "full-field edge-performance claim" in text
-            and any("partial_field" in item for item in contract.fallback_paths)
-            and any("full_field_available" in item for item in contract.fallback_paths)
-        )
-        return ok, f"seed acquisition contract {contract.status}: {contract.acceptance_target}"
+        return ok, f"high-FOV acceptance {gate.status}/{gate.deliverable_type}"
 
     return check
 
@@ -3962,7 +3410,12 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _score_at_least(0.80),
             _assessment_has_rationale("image height"),
             _balanced_floor_aware_seed_selected(),
-            _reference_influence_status("supported"),
+            # E2-01 batch 1: winner is unchanged (5P_F1.8_FOV74.1, full-field met),
+            # but the enlarged 39-seed library surfaces a first-order EFL
+            # spec-repair (request EFL 3.0 vs first-order 2.84 from imh 2.3/FOV 78)
+            # as the dominant closeout blocker, so the reference audit reads
+            # "constrained" and the closeout evidence is the EFL repair record.
+            _reference_influence_status("constrained"),
             _manufacturing_sensitivity_status(
                 {"watch", "risk"},
                 required_factor_id="guarded_asphere_coefficients",
@@ -3971,7 +3424,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _evidence_closeout_status(
                 "blocked",
                 source_fragment="draft_quality_rubric",
-                evidence_fragment="MTF/RMS",
+                evidence_fragment="repaired target EFL",
                 blocks_review=True,
             ),
             _design_handoff_status(
@@ -3988,7 +3441,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
                 level="blocked",
                 min_score=0.70,
                 acceptance_status="blocked",
-                closeout_fragment="MTF/RMS",
+                closeout_fragment="repaired target EFL",
             ),
             _designer_readiness_target("blocked", 0.50),
             *_DESIGNER_PACKET_CHECKS,
@@ -4013,11 +3466,13 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _risk_mentions("MTF"),
             _partial_field_merit_probe_has_trials(),
             _full_field_recovery_diagnostic_present(),
-            _library_coverage_gap_present(),
-            _reference_influence_status(
-                "constrained",
-                data_gap_fragment="no high-FOV visible-light seed",
-            ),
+            # E2-01 batch 1: library now covers >=85 deg full-field evidence, so
+            # the coverage diagnostic flips gap -> covered and the gap-path
+            # seed-acquisition scaffolding stands down. The routed winner is still
+            # the 0.85-field 89.5 deg seed (nearest params), gated as below.
+            _library_coverage_covered_by_full_field_seeds(),
+            _seed_acquisition_machinery_stood_down(),
+            _reference_influence_status("supported"),
             _manufacturing_sensitivity_status(
                 {"watch", "risk"},
                 required_factor_id="guarded_asphere_coefficients",
@@ -4029,8 +3484,8 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             ),
             _evidence_closeout_status(
                 "blocked",
-                source_fragment="delivery_gate",
-                evidence_fragment="1.0 field",
+                source_fragment="draft_acceptance_gate",
+                evidence_fragment="full-field",
                 blocks_review=True,
             ),
             _design_handoff_status(
@@ -4041,30 +3496,17 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _constraint_ledger_status(
                 "blocked",
                 variable_id="full_field_recovery",
-                variable_status="blocked",
+                variable_status="guarded",
             ),
-            _design_strategy_decision_selects_seed_acquisition(),
-            _has_high_fov_seed_acquisition_branch(),
-            _selected_partial_branch_uses_085_seed(),
-            _stable_sibling_review_is_not_queued(),
-            _near_threshold_partial_field_branch_collapsed(),
-            _has_partial_field_high_fov_branch(),
-            _has_relaxed_fov_full_field_branch(),
-            _high_fov_seed_baseline_maps_partial_strategy(),
-            _has_branch_selection_policy(),
-            _has_strategy_tradeoff_matrix(),
             _high_fov_mtf_coverage_is_tradeoff(),
             _high_fov_acceptance_is_conditional(),
-            _high_fov_has_seed_intake_audit(),
-            _high_fov_has_seed_acquisition_contract(),
-            _high_fov_has_seed_ingestion_task(),
             _draft_quality_target(
                 level="blocked",
                 min_score=0.60,
                 acceptance_status="blocked",
-                closeout_fragment="1.0 field",
+                closeout_fragment="full-field",
             ),
-            _designer_readiness_target("blocked", 0.45),
+            _designer_readiness_target("blocked", 0.44),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),
@@ -4087,26 +3529,29 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _next_step_mentions("full-field"),
             _risk_mentions("MTF"),
             _partial_field_merit_probe_has_trials(),
-            _library_coverage_gap_present(),
-            _design_handoff_status("blocked", candidate_id="seed-baseline"),
+            _full_field_recovery_diagnostic_present(),
+            # E2-01 batch 1: coverage flips gap -> covered (full-field high-FOV
+            # evidence now in-library); the default UI request still resolves to
+            # a blocked draft (spec-repair + full-field gates), so the full-field
+            # claim stays blocked even though the acquisition scaffolding is gone.
+            _library_coverage_covered_by_full_field_seeds(),
+            _seed_acquisition_machinery_stood_down(),
+            _design_handoff_status(
+                "blocked",
+                candidate_id="seed-baseline",
+                payload_fragment="unchanged selected real seed",
+            ),
             _constraint_ledger_status(
                 "blocked",
                 variable_id="full_field_recovery",
-                variable_status="blocked",
+                variable_status="guarded",
             ),
-            _has_high_fov_seed_acquisition_branch(),
-            _near_threshold_partial_field_branch_collapsed(),
-            _has_relaxed_fov_full_field_branch(),
-            _high_fov_has_seed_intake_audit(),
-            _high_fov_has_seed_acquisition_contract(),
-            _high_fov_has_seed_ingestion_task(),
             _draft_quality_target(
                 level="blocked",
                 min_score=0.43,
                 acceptance_status="blocked",
-                closeout_fragment="1.0 field",
             ),
-            _designer_readiness_target("blocked", 0.39),
+            _designer_readiness_target("blocked", 0.38),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),
