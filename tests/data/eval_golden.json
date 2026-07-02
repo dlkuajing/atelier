@@ -1,0 +1,17 @@
+{
+  "balanced_main_default": {
+    "quality_floor_gap": "0.938",
+    "quality_min250": "0.005",
+    "selected_case_id": "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
+  },
+  "performance_full_field_seed_blocks_low_mtf": {
+    "quality_floor_gap": "0.938",
+    "quality_min250": "0.005",
+    "selected_case_id": "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
+  },
+  "relaxed_full_field_fallback_blocks_low_mtf": {
+    "quality_floor_gap": "0.929",
+    "quality_min250": "0.023",
+    "selected_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30"
+  }
+}
