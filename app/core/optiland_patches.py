@@ -80,18 +80,26 @@ def _patch_zemax_xasphere_reader() -> None:
     polynomial). The normalization radius (XDAT 2) is 1.0 across every ammo
     file, so the XDAT polynomial coefficients map 1:1 onto even-asphere params.
 
-    Mapping (verified against real XDAT rows):
-      XDAT 1   = term-count flag        -> ignored
-      XDAT 2   = normalization radius   -> verified == 1.0, ignored
-      XDAT 3   = conic                  -> data["conic"]
-      XDAT 4+k = r^(2(k+1)) coefficient -> data["param_k"]  (k=0..7 = r^2..r^16)
-    surf_type XASPHERE is then reported as ``even_asphere`` so the converter's
-    even_asphere branch (param_0..7 + conic) consumes them. We truncate to 8
-    terms to match Optiland's even_asphere capacity; EFL-within-2% is verified
-    per file in tests/test_zmx_ingest.py.
+    Mapping (verified against raw UTF-16 ZMX blocks, cross-checked against the
+    EVENASPH PARM/CONI layout; see .planning/quick/260702-xasphere-ingest-fidelity):
+      XDAT 1     = polynomial term count N -> ignored (length flows from rows)
+      XDAT 2     = normalization radius    -> asserted == 1.0 (fail loud)
+      XDAT (3+i) = r^(2(i+1)) coefficient  -> data["param_i"]  (i = 0..N-1)
+      conic      = standard CONI row       -> handled by the stock parser
+    surf_type XASPHERE is then reported as ``even_asphere``. The previous
+    mapping (XDAT 3 -> conic, XDAT 4..11 -> param_0..7) shifted every
+    coefficient one even order AND truncated 10-term files to 8 terms — the
+    dropped terms are O(1) at the clear-aperture edge, which silently destroyed
+    off-axis image quality on all 9 XASPHERE seeds while leaving paraxial EFL
+    (r -> 0) untouched, so the EFL<2% ingest gate never caught it.
+
+    The stock ``_configure_surface_coefficients`` hardcodes param_0..7 for
+    even_asphere, so it is also patched below to consume every param_k present
+    (>= 8), keeping 10-term XASPHERE polynomials intact.
 
     Remove when Optiland ships native XASPHERE support (>= 0.7?).
     """
+    from optiland.fileio.zemax.reader.converter import ZemaxToOpticConverter
     from optiland.fileio.zemax.reader.parser import ZemaxDataParser
 
     if getattr(ZemaxDataParser, "_xasphere_patched", False):
@@ -106,11 +114,17 @@ def _patch_zemax_xasphere_reader() -> None:
             val = float(data[2])
         except (ValueError, IndexError):
             return
-        if idx == 3:
-            self._current_surf_data["conic"] = val
-        elif 4 <= idx <= 11:  # XDAT 4..11 -> param_0..param_7 (r^2..r^16)
-            self._current_surf_data[f"param_{idx - 4}"] = val
-        # idx 1 (term count) and idx 2 (norm radius == 1.0) intentionally ignored
+        if idx == 1:
+            return  # term count; actual length flows from the coefficient rows
+        if idx == 2:
+            if abs(val - 1.0) > 1e-9:
+                raise ValueError(
+                    f"XASPHERE normalization radius {val} != 1.0 is not "
+                    "supported; coefficients would need r_norm^(2i) rescaling"
+                )
+            return
+        # XDAT (3+i) -> param_i, i.e. the r^(2(i+1)) even-asphere coefficient
+        self._current_surf_data[f"param_{idx - 3}"] = val
 
     def _patched_read_surf_type(self, data: list) -> None:
         if len(data) > 1 and data[1] == "XASPHERE":
@@ -122,9 +136,23 @@ def _patch_zemax_xasphere_reader() -> None:
         _orig_init(self, filename)
         self._operand_table["XDAT"] = self._read_xdat
 
+    _orig_configure_coeffs = ZemaxToOpticConverter._configure_surface_coefficients
+
+    def _patched_configure_coeffs(self, data: dict):
+        if data["type"] == "even_asphere":
+            param_indices = [
+                int(key.removeprefix("param_"))
+                for key in data
+                if key.startswith("param_") and key.removeprefix("param_").isdigit()
+            ]
+            n_terms = max(8, max(param_indices) + 1 if param_indices else 0)
+            return [data.get(f"param_{k}", 0.0) for k in range(n_terms)]
+        return _orig_configure_coeffs(self, data)
+
     ZemaxDataParser._read_xdat = _read_xdat
     ZemaxDataParser._read_surf_type = _patched_read_surf_type
     ZemaxDataParser.__init__ = _patched_init
+    ZemaxToOpticConverter._configure_surface_coefficients = _patched_configure_coeffs
     ZemaxDataParser._xasphere_patched = True
 
 

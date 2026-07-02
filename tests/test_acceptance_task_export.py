@@ -158,15 +158,18 @@ def test_acceptance_export_scopes_balanced_followups_to_single_case():
         item["source_action_id"].startswith("image_quality_probe")
         for item in report["tasks"]
     )
+    # World-flip from the XASPHERE ingest fix: the balanced default is now blocked
+    # on the high-frequency MTF floor, so its single follow-up is the
+    # image_quality_floor recovery task (a scoped local replay) rather than a
+    # task_run_evidence probe. The follow-up stays scoped to the single case.
     task = next(
         item
         for item in report["tasks"]
-        if item["source_action_id"].startswith("task_run_evidence")
+        if item["source_action_id"].startswith("image_quality_floor")
     )
 
-    assert task["next_probe_command"] is None
     assert task["command_mode"] == "manual"
-    assert task["evidence_probe"] is None
+    assert "balanced_main_default" in task["next_probe_command"]
     assert task["case_verification_command"] == (
         "cd lumira-backend && uv run python "
         "scripts/evaluate_design_agent.py "

@@ -144,6 +144,18 @@ _PLANE_RADIUS_SENTINEL = 1e9
 # divide we also calibrate parameter_guards bounds to (Plan 03).
 _ULTRAWIDE_FOV_MIN = 85.0
 
+# Routing floor-violation thresholds. After the XASPHERE ingest fix the library
+# is image-quality healthy (max real RMS ~40 um, min-50lp/mm MTF >= ~0.2, floor
+# gap <= ~1.2); only the two genuinely-broken ingest seeds blow past these
+# (RMS ~1200/4700 um, floor gap ~12/47). Routing hard-penalises seeds beyond
+# these limits; everything else is decided by parameter proximity. These gate
+# routing seed selection only -- the review scorecard and optimizer/replay
+# gates keep the full continuous 200/250 lp/mm evidence.
+_SEED_ROUTING_MAX_RMS_UM = 100.0
+_SEED_ROUTING_MIN_MTF_50 = 0.08
+_SEED_ROUTING_FLOOR_GAP_LIMIT = 3.0
+_SEED_ROUTING_FIELD_TIEBREAK = 0.15
+
 
 class ImageQualityFloorResult(NamedTuple):
     score: float
@@ -865,16 +877,49 @@ def build_seed_intake_audit(
         default=None,
     )
 
-    def _stable_high_fov_sort_key(case: OpticalSampleData) -> tuple[float, float, float]:
+    def _case_floor_gap(case: OpticalSampleData) -> float:
+        assert case.metadata is not None
+        bands = mtf_multiband_summary(case.mtf)
+        rms_values = [v for v in case.mtf.rms_spot_radius_um_by_field if math.isfinite(v)]
+        metrics = OptimizationMetricSnapshot(
+            effective_focal_length_mm=case.metadata.computed_efl_mm,
+            f_number=case.paraxial.f_number,
+            total_track_mm=case.paraxial.total_track_mm,
+            mtf_max_field_frac=case.metadata.mtf_max_field_frac,
+            mtf_50lpmm_min=bands.min_50,
+            mtf_50lpmm_avg=bands.avg_50,
+            mtf_100lpmm_min=bands.min_100,
+            mtf_100lpmm_avg=bands.avg_100,
+            mtf_150lpmm_min=bands.min_150,
+            mtf_150lpmm_avg=bands.avg_150,
+            mtf_200lpmm_min=bands.min_200,
+            mtf_200lpmm_avg=bands.avg_200,
+            mtf_250lpmm_min=bands.min_250,
+            mtf_250lpmm_avg=bands.avg_250,
+            mtf_multiband_min_score=bands.multiband_min_score,
+            mtf_field_weighted_score=bands.field_weighted_score,
+            max_rms_spot_radius_um=max(rms_values) if rms_values else None,
+        )
+        gap = _image_quality_floor_gap_score(metrics)
+        return gap if gap is not None else math.inf
+
+    def _stable_high_fov_sort_key(case: OpticalSampleData) -> tuple[float, float, float, float]:
         assert case.metadata is not None
         highest_stable, _, _ = _edge_stability(case)
         stable_field = (
             highest_stable if highest_stable is not None else case.metadata.mtf_max_field_frac
         )
+        # Deterministic tie-break when stability/field/FOV are equal (the two
+        # 89.5 deg seeds tie at 0.85 stable / 0.9 cliff after the XASPHERE fix):
+        # prefer the seed closest to clearing the image-quality review floor
+        # (lowest floor gap = better high-frequency MTF). Higher key wins, so we
+        # negate the gap. This keeps best_stable_high_fov meaningful and stable
+        # rather than depending on library iteration order.
         return (
             stable_field,
             case.metadata.mtf_max_field_frac,
             -abs(case.metadata.fov_deg - brief.target_fov_deg),
+            -_case_floor_gap(case),
         )
 
     best_stable_high_fov = max(
@@ -1118,12 +1163,39 @@ def match_case(
         seed_floor_gap_cache[c.metadata.case_id] = gap
         return gap
 
+    def _seed_has_floor_violation(c: OpticalSampleData) -> bool:
+        """Whether a seed is a *real* image-quality floor violation.
+
+        A violation means the mid-frequency MTF has collapsed or the spot
+        geometry has blown up (unusable optics). This is distinct from the
+        continuous 200/250 lp/mm floor-gap gradient: after the XASPHERE ingest
+        fix the whole library is image-quality healthy, and that gradient is
+        dominated by high-frequency geometric MTF which structurally favours
+        slow apertures (aperture physics, not a design defect). Routing must not
+        treat it as a gradient, so only genuine violations are detected here.
+        The full 200/250 lp/mm evidence stays in the review scorecard and the
+        optimizer promotion / replay gates (unchanged).
+        """
+        assert c.metadata is not None
+        rms_values = [v for v in c.mtf.rms_spot_radius_um_by_field if math.isfinite(v)]
+        max_rms = max(rms_values) if rms_values else None
+        if max_rms is None or max_rms > _SEED_ROUTING_MAX_RMS_UM:
+            return True
+        if mtf_multiband_summary(c.mtf).min_50 < _SEED_ROUTING_MIN_MTF_50:
+            return True
+        floor_gap = _seed_floor_gap(c)
+        return floor_gap is None or floor_gap > _SEED_ROUTING_FLOOR_GAP_LIMIT
+
     def _seed_quality_penalty(c: OpticalSampleData) -> float:
         assert c.metadata is not None
-        floor_gap = _seed_floor_gap(c)
-        floor_penalty = 1.0 if floor_gap is None else min(max(floor_gap, 0.0), 1.0)
+        # Threshold gate, not a gradient: a real floor violation dominates the
+        # distance so a broken seed never wins over a healthy one (even an exact
+        # parameter match); healthy seeds are separated by parameter proximity
+        # with only a light full-field tiebreak.
         field_penalty = max(0.0, 1.0 - c.metadata.mtf_max_field_frac)
-        return max(floor_penalty, field_penalty)
+        if _seed_has_floor_violation(c):
+            return 1.0
+        return _SEED_ROUTING_FIELD_TIEBREAK * field_penalty
 
     def _seed_spec_guard_penalty(c: OpticalSampleData) -> float:
         assert c.metadata is not None

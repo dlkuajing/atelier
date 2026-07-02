@@ -60,8 +60,10 @@ def test_high_fov_seed_intake_audit_reports_current_gap():
     assert any("1.0" in item for item in report["missing_evidence"])
     nearest = {item["role"]: item for item in report["nearest_candidates"]}
     assert nearest["nearest_high_fov"]["mtf_max_field_frac"] < 1.0
-    assert nearest["nearest_high_fov"]["highest_stable_field_frac"] == pytest.approx(0.8)
-    assert nearest["nearest_high_fov"]["edge_field_cliff_frac"] == pytest.approx(0.85)
+    # 0.8/0.85 -> 0.85/0.9 after the XASPHERE coefficient-mapping fix:
+    # corrected even-asphere sag lets edge rays trace one field step further.
+    assert nearest["nearest_high_fov"]["highest_stable_field_frac"] == pytest.approx(0.85)
+    assert nearest["nearest_high_fov"]["edge_field_cliff_frac"] == pytest.approx(0.9)
     assert nearest["best_stable_high_fov"]["case_id"].endswith("TTL4.33")
     assert nearest["best_stable_high_fov"]["mtf_max_field_frac"] == pytest.approx(0.85)
     assert nearest["best_stable_high_fov"]["highest_stable_field_frac"] == pytest.approx(0.85)

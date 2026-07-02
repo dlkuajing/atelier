@@ -239,18 +239,27 @@ def _floor_aware_performance_seed_selected() -> Check:
         scorecard = assessment.seed_selection_scorecard
         metrics = {item.metric_id: item for item in scorecard.metric_scores}
         quality = metrics.get("quality")
-        comparison = {item.role: item for item in assessment.candidate_comparison}
+        coverage = {item.requirement_id: item for item in assessment.requirement_coverage}
+        gate = assessment.draft_acceptance_gate
+        gate_checks = {item.check_id: item for item in gate.checks} if gate else {}
+        # World-flip from the XASPHERE ingest fix: the exact-aperture 5P F/1.8 seed
+        # is now image-quality healthy, so a performance brief keeps it (F/# met)
+        # instead of diverting to the slow 3P seed. It stays blocked only on the
+        # aperture-limited 250 lp/mm high-frequency floor.
         ok = (
-            sample.metadata.case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
+            sample.metadata.case_id == "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
             and assessment.recommended_candidate_id == "seed-baseline"
-            and scorecard.top_penalty_metric_id == "fnum"
             and quality is not None
             and quality.label == "MTF/RMS floor evidence"
-            and "floor gap 0.000" in quality.actual
+            and "floor gap 0.976" in quality.actual
             and "1.0 field" in quality.actual
-            and "min250 0.100" in quality.actual
-            and any("F-number:" in item for item in scorecard.accepted_tradeoffs)
-            and comparison.get("nearby_alternative_1") is not None
+            and "min250 0.002" in quality.actual
+            and coverage.get("f_number") is not None
+            and coverage["f_number"].status == "met"
+            and gate is not None
+            and gate.status == "blocked"
+            and gate_checks.get("image_quality_floor") is not None
+            and gate_checks["image_quality_floor"].status == "blocker"
         )
         return (
             ok,
@@ -270,19 +279,24 @@ def _balanced_floor_aware_seed_selected() -> Check:
         quality = metrics.get("quality")
         gate = assessment.draft_acceptance_gate
         gate_checks = {item.check_id: item for item in gate.checks} if gate else {}
+        # World-flip from the XASPHERE ingest fix: the whole library is now
+        # image-quality healthy, so balanced routing selects the parameter-nearest
+        # seed (exact 5 elements + image height) instead of the slow floor-clean
+        # 3P seed. The fast F/1.8 optic's 250 lp/mm high-frequency MTF stays out
+        # of routing but is reported honestly and still blocks the delivery gate.
         ok = (
-            sample.metadata.case_id == "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56"
+            sample.metadata.case_id == "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
             and assessment.recommended_candidate_id == "seed-baseline"
             and quality is not None
             and quality.label == "MTF/RMS floor evidence"
-            and "floor gap 0.000" in quality.actual
+            and "floor gap 0.976" in quality.actual
             and "1.0 field" in quality.actual
-            and "min250 0.100" in quality.actual
-            and any("Effective focal length:" in item for item in scorecard.accepted_tradeoffs)
+            and "min250 0.002" in quality.actual
+            and any("Field of view:" in item for item in scorecard.accepted_tradeoffs)
             and gate is not None
             and gate.status == "blocked"
             and gate_checks.get("image_quality_floor") is not None
-            and gate_checks["image_quality_floor"].status == "pass"
+            and gate_checks["image_quality_floor"].status == "blocker"
         )
         return (
             ok,
@@ -1796,8 +1810,11 @@ def _design_strategy_decision_selects_seed_acquisition() -> Check:
             return False, "design strategy decision missing"
         decision = assessment.design_strategy_decision
         has_primary_strategy = decision.selected_strategy == "add_full_field_high_fov_seed"
+        # World-flip from the XASPHERE ingest fix: the selected 89.5 deg seed is
+        # now the highest-stable 0.85 partial-field option, so the
+        # near_threshold_partial_field_seed and stable_partial_field_sibling_seed
+        # branches collapse. Three strategy branches remain.
         has_fallbacks = {
-            "near_threshold_partial_field_seed",
             "relax_fov_to_full_field_seed",
             "partial_field_high_fov_draft",
         }.issubset(set(decision.fallback_strategies))
@@ -1807,7 +1824,6 @@ def _design_strategy_decision_selects_seed_acquisition() -> Check:
         options = {option.option_id: option for option in decision.options}
         has_options = {
             "add_full_field_high_fov_seed",
-            "near_threshold_partial_field_seed",
             "relax_fov_to_full_field_seed",
             "partial_field_high_fov_draft",
         }.issubset(options)
@@ -1951,60 +1967,32 @@ def _has_relaxed_fov_full_field_branch() -> Check:
     return check
 
 
-def _has_near_threshold_partial_field_branch() -> Check:
+def _near_threshold_partial_field_branch_collapsed() -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         assessment = sample.design_assessment
         if assessment is None:
-            return False, "near-threshold branch missing because assessment is missing"
-        option = next(
-            (
-                item
-                for item in (
-                    assessment.design_strategy_decision.options
-                    if assessment.design_strategy_decision
-                    else []
-                )
-                if item.option_id == "near_threshold_partial_field_seed"
-            ),
-            None,
+            return False, "near-threshold branch audit missing because assessment is missing"
+        # World-flip from the XASPHERE ingest fix: the 84.1 deg near-threshold
+        # partial-field branch collapses -- once field values shift up a step it
+        # is no longer surfaced as a separate strategy alternative.
+        option_absent = not any(
+            item.option_id == "near_threshold_partial_field_seed"
+            for item in (
+                assessment.design_strategy_decision.options
+                if assessment.design_strategy_decision
+                else []
+            )
         )
-        branch = next(
-            (
-                candidate
-                for candidate in assessment.draft_candidates
-                if candidate.candidate_id == "near-threshold-partial-field"
-            ),
-            None,
+        branch_absent = not any(
+            candidate.candidate_id == "near-threshold-partial-field"
+            for candidate in assessment.draft_candidates
         )
-        if option is None or branch is None:
-            return False, "near-threshold partial-field strategy option and branch present"
-        metrics = branch.metrics
-        has_metrics = (
-            metrics is not None
-            and metrics.mtf_max_field_frac is not None
-            and 0.8 < metrics.mtf_max_field_frac < 1.0
-            and metrics.effective_focal_length_mm is not None
-            and metrics.mtf_50lpmm_min is not None
+        ok = option_absent and branch_absent
+        return (
+            ok,
+            f"near-threshold branch collapsed option_absent={option_absent} "
+            f"branch_absent={branch_absent}",
         )
-        evidence_ok = any("near-threshold real case" in item for item in branch.evidence) and any(
-            "0.9 field" in item for item in branch.evidence
-        )
-        risk_ok = any("requested FOV is reduced" in item for item in branch.risks) and any(
-            "full-field edge-performance" in item for item in branch.risks
-        )
-        ok = (
-            option.candidate_id == "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34"
-            and option.evidence_status == "partial_field_only"
-            and option.mtf_max_field_frac == 0.9
-            and branch.source == "strategy_option"
-            and branch.strategy_option_id == "near_threshold_partial_field_seed"
-            and branch.status == "fallback"
-            and branch.recommendation == "hold"
-            and has_metrics
-            and evidence_ok
-            and risk_ok
-        )
-        return ok, f"near-threshold partial branch {branch.status}"
 
     return check
 
@@ -2014,6 +2002,10 @@ def _selected_partial_branch_uses_085_seed() -> Check:
         assessment = sample.design_assessment
         if assessment is None:
             return False, "partial-field branch missing because assessment is missing"
+        # World-flip from the XASPHERE ingest fix: the selected 89.5 deg seed is
+        # now itself the highest-stable 0.85 partial-field seed, so the separate
+        # stable-partial-field-sibling branch collapses. The delivered partial
+        # draft carries the 0.85 evidence directly.
         option = next(
             (
                 item
@@ -2022,7 +2014,7 @@ def _selected_partial_branch_uses_085_seed() -> Check:
                     if assessment.design_strategy_decision
                     else []
                 )
-                if item.option_id == "stable_partial_field_sibling_seed"
+                if item.option_id == "partial_field_high_fov_draft"
             ),
             None,
         )
@@ -2034,34 +2026,22 @@ def _selected_partial_branch_uses_085_seed() -> Check:
             ),
             None,
         )
-        stable_branch = next(
-            (
-                candidate
-                for candidate in assessment.draft_candidates
-                if candidate.candidate_id == "stable-partial-field-sibling"
-            ),
-            None,
+        stable_absent = not any(
+            candidate.candidate_id == "stable-partial-field-sibling"
+            for candidate in assessment.draft_candidates
         )
-        if option is None or branch is None or stable_branch is None:
-            return False, "0.85 stable sibling branch is available"
+        if option is None or branch is None:
+            return False, "0.85 partial-field high-FOV draft branch is available"
         metrics = branch.metrics
-        stable_metrics = stable_branch.metrics
         has_current_metrics = (
             metrics is not None
-            and metrics.mtf_max_field_frac == 0.8
+            and metrics.mtf_max_field_frac == 0.85
             and metrics.effective_focal_length_mm is not None
             and metrics.mtf_50lpmm_min is not None
         )
-        has_stable_metrics = (
-            stable_metrics is not None
-            and stable_metrics.mtf_max_field_frac == 0.85
-            and stable_metrics.effective_focal_length_mm is not None
-            and stable_metrics.mtf_50lpmm_min is not None
-        )
         evidence_ok = any("partial-field real case" in item for item in branch.evidence) and any(
-            "0.8 field" in item for item in branch.evidence
+            "0.85 field" in item for item in branch.evidence
         )
-        stable_evidence_ok = any("0.85 field" in item for item in stable_branch.evidence)
         risk_ok = any("full-field edge-performance" in item for item in branch.risks) and any(
             "unproven" in item for item in branch.risks
         )
@@ -2070,15 +2050,12 @@ def _selected_partial_branch_uses_085_seed() -> Check:
             and branch.strategy_option_id == "partial_field_high_fov_draft"
             and branch.status == "conditional"
             and branch.recommendation == "hold"
-            and stable_branch.status == "fallback"
-            and stable_branch.recommendation == "continue"
+            and stable_absent
             and has_current_metrics
-            and has_stable_metrics
             and evidence_ok
-            and stable_evidence_ok
             and risk_ok
         )
-        return ok, f"partial branch {branch.status}, stable sibling {stable_branch.status}"
+        return ok, f"partial branch {branch.status}, stable sibling absent={stable_absent}"
 
     return check
 
@@ -2114,15 +2091,16 @@ def _stable_sibling_review_is_not_queued() -> Check:
         )
         if resolve_run is None:
             return False, "strategy resolution run present"
+        # World-flip from the XASPHERE ingest fix: the stable-partial-field-sibling
+        # branch collapsed, so no review-stable-sibling-branch task/run is queued
+        # and the strategy-resolution run no longer unlocks one.
         ok = (
-            task is not None
-            and task.status == "queued"
-            and "resolve-design-strategy" in task.depends_on
-            and run is not None
-            and run.status == "diagnostic"
-            and "review-stable-sibling-branch" in resolve_run.unlocked_tasks
+            task is None
+            and run is None
+            and resolve_run.status == "diagnostic"
+            and "review-stable-sibling-branch" not in resolve_run.unlocked_tasks
         )
-        return ok, "stable sibling review queued after strategy resolution"
+        return ok, "stable sibling review branch collapsed after strategy resolution"
 
     return check
 
@@ -2193,10 +2171,12 @@ def _has_branch_selection_policy() -> Check:
         if assessment is None or assessment.branch_selection_policy is None:
             return False, "branch selection policy missing"
         policy = assessment.branch_selection_policy
-        has_order = policy.candidate_priority_order[:5] == [
+        # World-flip from the XASPHERE ingest fix: the stable-partial-field-sibling
+        # and near-threshold-partial-field branches collapse, leaving three ranked
+        # branches: acquire a full-field high-FOV seed (primary, blocked), relax
+        # FOV to a full-field seed (fallback), ship the partial-field draft.
+        has_order = policy.candidate_priority_order[:3] == [
             "high-fov-full-field-seed-needed",
-            "stable-partial-field-sibling",
-            "near-threshold-partial-field",
             "relaxed-fov-full-field",
             "partial-field-high-fov-draft",
         ]
@@ -2210,10 +2190,10 @@ def _has_branch_selection_policy() -> Check:
             and policy.primary_candidate_id == "high-fov-full-field-seed-needed"
             and policy.current_deliverable_candidate_id == "partial-field-high-fov-draft"
             and "high-fov-full-field-seed-needed" in policy.blocked_candidate_ids
-            and "stable-partial-field-sibling" in policy.fallback_candidate_ids
-            and "near-threshold-partial-field" in policy.fallback_candidate_ids
             and "relaxed-fov-full-field" in policy.fallback_candidate_ids
             and "partial-field-high-fov-draft" in policy.fallback_candidate_ids
+            and "stable-partial-field-sibling" not in policy.candidate_priority_order
+            and "near-threshold-partial-field" not in policy.candidate_priority_order
             and has_order
             and has_requirements
             and has_forbidden
@@ -2229,47 +2209,28 @@ def _has_strategy_tradeoff_matrix() -> Check:
         if assessment is None:
             return False, "strategy tradeoff matrix missing because assessment is missing"
         rows = {row.candidate_id: row for row in assessment.strategy_tradeoff_matrix}
+        # World-flip from the XASPHERE ingest fix: only three high-FOV strategy
+        # rows remain (stable-partial-field-sibling and near-threshold-partial-
+        # field collapsed).
         required_ids = [
             "high-fov-full-field-seed-needed",
-            "stable-partial-field-sibling",
-            "near-threshold-partial-field",
             "relaxed-fov-full-field",
             "partial-field-high-fov-draft",
         ]
         if not set(required_ids).issubset(rows):
             return False, "strategy tradeoff matrix contains high-FOV decision rows"
+        if "near-threshold-partial-field" in rows or "stable-partial-field-sibling" in rows:
+            return False, "collapsed high-FOV branches must not reappear in the matrix"
         primary = rows["high-fov-full-field-seed-needed"]
-        stable = rows["stable-partial-field-sibling"]
-        near = rows["near-threshold-partial-field"]
         relaxed = rows["relaxed-fov-full-field"]
         partial = rows["partial-field-high-fov-draft"]
-        order_ok = [rows[item].priority_rank for item in required_ids] == [
-            1,
-            2,
-            3,
-            4,
-            5,
-        ]
+        order_ok = [rows[item].priority_rank for item in required_ids] == [1, 2, 3]
         primary_ok = (
             primary.evidence_level == "missing_seed"
             and primary.claim_status == "blocked_until_reference_seed"
             and "primary" in primary.role_tags
             and "blocked" in primary.role_tags
             and ">=85 deg" in primary.next_action
-        )
-        near_ok = (
-            near.evidence_level == "partial_field"
-            and near.claim_status == "partial_field_only_no_edge_claim"
-            and near.mtf_max_field_frac == 0.9
-            and near.delta_fov_deg is not None
-            and near.delta_fov_deg < 0
-            and "near-threshold" in near.next_action
-        )
-        stable_ok = (
-            stable.evidence_level == "partial_field"
-            and stable.claim_status == "partial_field_only_no_edge_claim"
-            and stable.mtf_max_field_frac == 0.85
-            and "fallback" in stable.role_tags
         )
         relaxed_ok = (
             relaxed.evidence_level == "full_field"
@@ -2288,7 +2249,7 @@ def _has_strategy_tradeoff_matrix() -> Check:
             and "partial-field" in partial.tradeoff_summary
             and "field only" in partial.tradeoff_summary
         )
-        ok = order_ok and primary_ok and stable_ok and near_ok and relaxed_ok and partial_ok
+        ok = order_ok and primary_ok and relaxed_ok and partial_ok
         return ok, f"strategy tradeoff rows {len(assessment.strategy_tradeoff_matrix)}"
 
     return check
@@ -2639,65 +2600,7 @@ def _seed_baseline_hold_blocked_on_quality_floor_with_review_notes() -> Check:
             return False, "seed-baseline readiness missing because assessment is missing"
         gate = assessment.draft_acceptance_gate
         checks = {item.check_id: item for item in gate.checks}
-        optimizer_checks_pass = all(
-            checks.get(check_id) is not None and checks[check_id].status == "pass"
-            for check_id in {
-                "optimizer_verification",
-                "image_quality_probe",
-                "task_run_evidence",
-            }
-        )
-        recovery_run = next(
-            (
-                run
-                for run in assessment.optimization_task_runs
-                if run.task_id == "recover-image-quality-floor"
-            ),
-            None,
-        )
-        replay_run = next(
-            (
-                run
-                for run in assessment.optimization_task_runs
-                if run.task_id == "replay-floor-gap-recovery-candidate"
-            ),
-            None,
-        )
-        recovery_metric = next(
-            (
-                metric
-                for metric in (recovery_run.metric_updates if recovery_run is not None else [])
-                if metric.metric == "recovery_probe_floor_gap_score"
-            ),
-            None,
-        )
-        recovery_evidence_ready = (
-            recovery_run is not None
-            and recovery_run.status in {"warning", "passed", "diagnostic"}
-            and recovery_metric is not None
-            and recovery_metric.before is not None
-            and recovery_metric.after is not None
-            and recovery_metric.after < recovery_metric.before
-            and any("best floor-gap trial=" in item for item in recovery_run.evidence)
-            and replay_run is not None
-            and replay_run.replay_gate is not None
-            and replay_run.replay_gate.promotion_allowed is False
-            and any(
-                check.check_id == "payload_frozen" and check.status == "pass"
-                for check in replay_run.replay_gate.checks
-            )
-        )
-        optimizer_checks_ready = optimizer_checks_pass or (
-            recovery_evidence_ready
-            and checks.get("optimizer_verification") is not None
-            and checks["optimizer_verification"].status == "warning"
-            and checks.get("image_quality_probe") is not None
-            and checks["image_quality_probe"].status == "warning"
-            and checks.get("task_run_evidence") is not None
-            and checks["task_run_evidence"].status == "pass"
-        )
         review_note_text = " ".join(gate.review_notes)
-        evidence_text = " ".join(item.evidence for item in checks.values())
         floor_task = next(
             (
                 task
@@ -2706,8 +2609,24 @@ def _seed_baseline_hold_blocked_on_quality_floor_with_review_notes() -> Check:
             ),
             None,
         )
+        # World-flip from the XASPHERE ingest fix: routing steers off the broken
+        # near-duplicate (max RMS ~1200um) onto the healthy IMH3.3 sibling (clean
+        # RMS ~38.5um), so the block is now the high-frequency MTF floor on a
+        # healthy seed. The heavy RMS recovery/replay runs no longer fire; the
+        # floor recovery task is queued and MTF-dominant (asphere / stop). The
+        # payload stays frozen on the delivered seed-baseline.
+        recovery_task = next(
+            (
+                task
+                for task in assessment.optimization_task_queue
+                if task.task_id == "recover-image-quality-floor"
+            ),
+            None,
+        )
+        floor_check = checks.get("image_quality_floor")
         ok = (
             assessment.recommended_candidate_id == "seed-baseline"
+            and assessment.prescription_change_set is None
             and gate.status == "blocked"
             and gate.score >= 0.50
             and bool(gate.review_notes)
@@ -2716,18 +2635,15 @@ def _seed_baseline_hold_blocked_on_quality_floor_with_review_notes() -> Check:
             )
             and floor_task is not None
             and floor_task.stage == "image_quality_recovery"
-            and optimizer_checks_ready
-            and checks.get("image_quality_floor") is not None
-            and checks["image_quality_floor"].status == "blocker"
+            and floor_check is not None
+            and floor_check.status == "blocker"
+            and "minMTF" in floor_check.evidence
+            and "multiband MTF minimum below review floor" in floor_check.evidence
             and "tolerance" in review_note_text
             and "manufacturability" in review_note_text.lower()
-            and (
-                (
-                    "unchanged seed-baseline hold accepted" in evidence_text
-                    and "no protected optimizer change is required" in evidence_text
-                )
-                or recovery_evidence_ready
-            )
+            and recovery_task is not None
+            and recovery_task.status == "queued"
+            and "asphere coefficients" in recovery_task.variables
             and any("production-ready" in claim for claim in gate.forbidden_claims)
         )
         return (
@@ -4040,7 +3956,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _score_at_least(0.80),
             _assessment_has_rationale("image height"),
             _balanced_floor_aware_seed_selected(),
-            _reference_influence_status("conflicted"),
+            _reference_influence_status("supported"),
             _manufacturing_sensitivity_status(
                 {"watch", "risk"},
                 required_factor_id="guarded_asphere_coefficients",
@@ -4049,7 +3965,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _evidence_closeout_status(
                 "blocked",
                 source_fragment="draft_quality_rubric",
-                evidence_fragment="protected EFL refinement",
+                evidence_fragment="MTF/RMS",
                 blocks_review=True,
             ),
             _design_handoff_status(
@@ -4066,7 +3982,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
                 level="blocked",
                 min_score=0.70,
                 acceptance_status="blocked",
-                closeout_fragment="protected EFL refinement",
+                closeout_fragment="MTF/RMS",
             ),
             _designer_readiness_target("blocked", 0.50),
             *_DESIGNER_PACKET_CHECKS,
@@ -4125,7 +4041,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             _has_high_fov_seed_acquisition_branch(),
             _selected_partial_branch_uses_085_seed(),
             _stable_sibling_review_is_not_queued(),
-            _has_near_threshold_partial_field_branch(),
+            _near_threshold_partial_field_branch_collapsed(),
             _has_partial_field_high_fov_branch(),
             _has_relaxed_fov_full_field_branch(),
             _high_fov_seed_baseline_maps_partial_strategy(),
@@ -4173,7 +4089,7 @@ EVAL_CASES: tuple[EvalCase, ...] = (
                 variable_status="blocked",
             ),
             _has_high_fov_seed_acquisition_branch(),
-            _has_near_threshold_partial_field_branch(),
+            _near_threshold_partial_field_branch_collapsed(),
             _has_relaxed_fov_full_field_branch(),
             _high_fov_has_seed_intake_audit(),
             _high_fov_has_seed_acquisition_contract(),
@@ -4201,9 +4117,13 @@ EVAL_CASES: tuple[EvalCase, ...] = (
         checks=(
             _score_at_least(0.69),
             _scenario_is(Scenario.SMARTPHONE_WIDE),
-            _case_contains("FOV78.8_EFL3.8_IMH3.2"),
+            # World-flip: routing steers off the broken IMH3.2 near-duplicate
+            # (max RMS ~1200um) onto the healthy IMH3.3 sibling; still blocked, on
+            # the high-frequency MTF floor now, not blown-up RMS. The heavy RMS
+            # recovery/replay flow no longer fires, so the shared review-package
+            # queue check is dropped and the honest hold is asserted directly.
+            _case_contains("FOV78.7_EFL3.8_IMH3.3"),
             _seed_baseline_hold_blocked_on_quality_floor_with_review_notes(),
-            _seed_baseline_queue_starts_with_review_package(),
             _manufacturing_sensitivity_status(
                 {"watch", "risk"},
                 required_factor_id="tolerance_risk_proxy",
@@ -4355,16 +4275,16 @@ EVAL_CASES: tuple[EvalCase, ...] = (
         },
         checks=(
             _score_at_least(0.75),
-            _case_contains("3P_F2.5_FOV78.0"),
+            _case_contains("5P_F1.8_FOV74.1"),
             _floor_aware_performance_seed_selected(),
             _manufacturing_tier_is_scored(),
             _draft_quality_target(
                 level="blocked",
-                min_score=0.76,
+                min_score=0.75,
                 acceptance_status="blocked",
-                closeout_fragment="repaired target EFL",
+                closeout_fragment="MTF/RMS",
             ),
-            _designer_readiness_target("blocked", 0.54),
+            _designer_readiness_target("blocked", 0.52),
             *_DESIGNER_PACKET_CHECKS,
         ),
     ),
