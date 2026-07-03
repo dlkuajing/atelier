@@ -1,5 +1,11 @@
 # Lumira Atelier · Backend
 
+> **Standalone repo since 2026-07-03.** Extracted from `dlkuajing/lumira`
+> (`lumira-backend/` subtree, full history preserved). Production still
+> deploys from the lumira repo; this repo is the R&D mainline.
+> Note: `pyproject.toml` package name remains `lumira-backend` until a
+> dedicated rename+relock task.
+
 Python FastAPI backend for the Lumira Atelier Optical Co-Pilot. Owns the heavy
 work that can't (or shouldn't) run on Cloudflare Workers:
 
