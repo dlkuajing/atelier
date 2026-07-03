@@ -20,6 +20,7 @@ from app.core.case_library import (
     load_case_library,
     match_case,
 )
+from app.core.engines import get_deep_engine
 from app.core.layout_svg import render_layout_svg
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import (
@@ -84,6 +85,12 @@ class RaytraceResponse(BaseModel):
     paraxial: ParaxialSummary
     surfaces: list[SurfaceDescriptor]
     trace: RayTraceResult
+
+
+class EnginesResponse(BaseModel):
+    available: bool
+    default_engine: str
+    engines: list[dict[str, object]]
 
 
 def _resolve_optional_float_window(
@@ -260,6 +267,18 @@ def _candidate_nominals(
 # ---------------------------------------------------------------------------
 # /suggest — used by Wizard step 2 to populate sensible default ranges
 # ---------------------------------------------------------------------------
+
+
+@router.get("/engines", response_model=EnginesResponse)
+async def engines() -> EnginesResponse:
+    """Return the current deep-engine inventory and runtime availability."""
+    engine = get_deep_engine()
+    description = engine.describe()
+    return EnginesResponse(
+        available=engine.is_available(),
+        default_engine=engine.name,
+        engines=[description],
+    )
 
 
 @router.get("/suggest/{scenario}", response_model=SuggestResponse)
