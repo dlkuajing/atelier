@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Mapping
+from collections.abc import AsyncIterator, Mapping
 from dataclasses import dataclass, replace
 from enum import StrEnum
 from uuid import uuid4
@@ -18,6 +18,9 @@ class JobStatus(StrEnum):
     RUNNING = "running"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
+
+
+TERMINAL_JOB_STATUSES = frozenset({JobStatus.SUCCEEDED, JobStatus.FAILED})
 
 
 class JobNotFoundError(KeyError):
@@ -42,6 +45,8 @@ class JobStore:
     def __init__(self) -> None:
         self._jobs: dict[str, JobRecord] = {}
         self._tasks: dict[str, asyncio.Task[None]] = {}
+        self._single_seat = asyncio.Semaphore(1)
+        self._subscribers: dict[str, set[asyncio.Queue[JobRecord]]] = {}
 
     def submit(self, engine: DeepEngine, payload: Mapping[str, object]) -> str:
         """Create a job and schedule the engine submission on the running event loop."""
@@ -54,6 +59,7 @@ class JobStore:
             payload=payload_copy,
         )
         self._tasks[job_id] = asyncio.create_task(self._run(job_id, engine, payload_copy))
+        self._publish(job_id)
         return job_id
 
     def get(self, job_id: str) -> JobRecord:
@@ -88,6 +94,29 @@ class JobStore:
             raise TimeoutError(f"job did not finish within {timeout} seconds: {job_id}") from None
         return self.get(job_id)
 
+    async def events(self, job_id: str) -> AsyncIterator[JobRecord]:
+        """Yield the current snapshot and each later status change for one job."""
+        self.get(job_id)
+        queue: asyncio.Queue[JobRecord] = asyncio.Queue()
+        self._subscribers.setdefault(job_id, set()).add(queue)
+        try:
+            record = self.get(job_id)
+            yield record
+            if record.status in TERMINAL_JOB_STATUSES:
+                return
+
+            while True:
+                record = await queue.get()
+                yield record
+                if record.status in TERMINAL_JOB_STATUSES:
+                    return
+        finally:
+            subscribers = self._subscribers.get(job_id)
+            if subscribers is not None:
+                subscribers.discard(queue)
+                if not subscribers:
+                    self._subscribers.pop(job_id, None)
+
     def _task(self, job_id: str) -> asyncio.Task[None]:
         try:
             return self._tasks[job_id]
@@ -100,23 +129,30 @@ class JobStore:
         engine: DeepEngine,
         payload: Mapping[str, object],
     ) -> None:
-        self._replace(job_id, status=JobStatus.RUNNING)
-        try:
-            result = await asyncio.to_thread(engine.submit, payload)
-        except Exception as exc:  # noqa: BLE001 - engines surface adapter/runtime failures.
+        async with self._single_seat:
+            self._replace(job_id, status=JobStatus.RUNNING)
+            try:
+                result = await asyncio.to_thread(engine.submit, payload)
+            except Exception as exc:  # noqa: BLE001 - engines surface adapter/runtime failures.
+                self._replace(
+                    job_id,
+                    status=JobStatus.FAILED,
+                    result=None,
+                    error=f"{type(exc).__name__}: {exc}",
+                )
+                return
             self._replace(
                 job_id,
-                status=JobStatus.FAILED,
-                result=None,
-                error=f"{type(exc).__name__}: {exc}",
+                status=JobStatus.SUCCEEDED,
+                result=dict(result),
+                error=None,
             )
-            return
-        self._replace(
-            job_id,
-            status=JobStatus.SUCCEEDED,
-            result=dict(result),
-            error=None,
-        )
 
     def _replace(self, job_id: str, **changes: object) -> None:
         self._jobs[job_id] = replace(self.get(job_id), **changes)
+        self._publish(job_id)
+
+    def _publish(self, job_id: str) -> None:
+        record = self.get(job_id)
+        for queue in self._subscribers.get(job_id, ()):
+            queue.put_nowait(record)

@@ -4,13 +4,16 @@ Phase 2 wave 1: parameter validation + /suggest endpoint live.
 Wave 2 (post-Optiland install): /raytrace, /aberration, /layout-svg implemented.
 """
 
+import json
 import os
 import re
+from collections.abc import AsyncIterator
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from app.core.aberration import MTFResult, compute_mtf
@@ -21,6 +24,7 @@ from app.core.case_library import (
     match_case,
 )
 from app.core.engines import get_deep_engine
+from app.core.job_store import JobNotFoundError, JobRecord, JobStatus, JobStore
 from app.core.layout_svg import render_layout_svg
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import (
@@ -38,6 +42,7 @@ from app.core.parameter_guards import (
 from app.core.zmx_ingest import load_normalized_zmx
 
 router = APIRouter()
+job_store = JobStore()
 
 _MAX_SEED_PREFLIGHT_BYTES = 2_000_000
 _CANDIDATE_NAME_RE = re.compile(
@@ -91,6 +96,19 @@ class EnginesResponse(BaseModel):
     available: bool
     default_engine: str
     engines: list[dict[str, object]]
+
+
+class JobSubmitRequest(BaseModel):
+    payload: dict[str, object] = Field(default_factory=dict)
+
+
+class JobResponse(BaseModel):
+    job_id: str
+    engine: str
+    status: JobStatus
+    payload: dict[str, object]
+    result: dict[str, object] | None = None
+    error: str | None = None
 
 
 def _resolve_optional_float_window(
@@ -264,6 +282,47 @@ def _candidate_nominals(
     return candidate_n_pieces, candidate_efl, candidate_fov
 
 
+def _job_response(record: JobRecord) -> JobResponse:
+    return JobResponse(
+        job_id=record.job_id,
+        engine=record.engine,
+        status=record.status,
+        payload=dict(record.payload),
+        result=dict(record.result) if record.result is not None else None,
+        error=record.error,
+    )
+
+
+def _job_or_404(job_id: str) -> JobRecord:
+    try:
+        return job_store.get(job_id)
+    except JobNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "job_id": job_id},
+        ) from exc
+
+
+def _job_event_payload(record: JobRecord) -> dict[str, object]:
+    return {
+        "job_id": record.job_id,
+        "engine": record.engine,
+        "status": record.status.value,
+        "result": dict(record.result) if record.result is not None else None,
+        "error": record.error,
+    }
+
+
+def _sse_event(record: JobRecord) -> str:
+    payload = json.dumps(_job_event_payload(record), separators=(",", ":"))
+    return f"event: {record.status.value}\ndata: {payload}\n\n"
+
+
+async def _job_event_stream(job_id: str) -> AsyncIterator[str]:
+    async for record in job_store.events(job_id):
+        yield _sse_event(record)
+
+
 # ---------------------------------------------------------------------------
 # /suggest — used by Wizard step 2 to populate sensible default ranges
 # ---------------------------------------------------------------------------
@@ -279,6 +338,26 @@ async def engines() -> EnginesResponse:
         default_engine=engine.name,
         engines=[description],
     )
+
+
+@router.post("/jobs", response_model=JobResponse, status_code=status.HTTP_202_ACCEPTED)
+async def submit_job(req: JobSubmitRequest) -> JobResponse:
+    """Queue one deep-engine job for background execution."""
+    job_id = job_store.submit(get_deep_engine(), req.payload)
+    return _job_response(job_store.get(job_id))
+
+
+@router.get("/jobs/{job_id}", response_model=JobResponse)
+async def get_job(job_id: str) -> JobResponse:
+    """Return the latest background job snapshot."""
+    return _job_response(_job_or_404(job_id))
+
+
+@router.get("/jobs/{job_id}/events")
+async def job_events(job_id: str) -> StreamingResponse:
+    """Stream status changes for one background job as server-sent events."""
+    _job_or_404(job_id)
+    return StreamingResponse(_job_event_stream(job_id), media_type="text/event-stream")
 
 
 @router.get("/suggest/{scenario}", response_model=SuggestResponse)

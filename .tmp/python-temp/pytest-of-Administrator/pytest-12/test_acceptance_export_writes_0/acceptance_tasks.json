@@ -24,12 +24,12 @@
     "executed_verification_count": 0,
     "failed_verification_count": 0,
     "artifacts": {
-      "report": "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-9\\test_acceptance_export_writes_0\\acceptance_tasks.json",
+      "report": "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-12\\test_acceptance_export_writes_0\\acceptance_tasks.json",
       "tasks": [
-        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-9\\test_acceptance_export_writes_0\\tasks\\001-high_fov_main_uses_89deg_seed-resolve-requirement_coverage-1.json",
-        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-9\\test_acceptance_export_writes_0\\tasks\\002-high_fov_main_uses_89deg_seed-resolve-optimizer_verification-2.json",
-        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-9\\test_acceptance_export_writes_0\\tasks\\003-high_fov_main_uses_89deg_seed-resolve-image_quality_floor-4.json",
-        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-9\\test_acceptance_export_writes_0\\tasks\\004-high_fov_main_uses_89deg_seed-resolve-image_quality_probe-3.json"
+        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-12\\test_acceptance_export_writes_0\\tasks\\001-high_fov_main_uses_89deg_seed-resolve-requirement_coverage-1.json",
+        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-12\\test_acceptance_export_writes_0\\tasks\\002-high_fov_main_uses_89deg_seed-resolve-optimizer_verification-2.json",
+        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-12\\test_acceptance_export_writes_0\\tasks\\003-high_fov_main_uses_89deg_seed-resolve-image_quality_floor-4.json",
+        "D:\\atelier-loop\\.tmp\\python-temp\\pytest-of-Administrator\\pytest-12\\test_acceptance_export_writes_0\\tasks\\004-high_fov_main_uses_89deg_seed-resolve-image_quality_probe-3.json"
       ]
     }
   },
