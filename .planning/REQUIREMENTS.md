@@ -37,6 +37,12 @@
 - [ ] **UI-02**: 长任务进度流：SSE 推送 CODE V 优化任务进度（与 LLM token 流分端点，避免队头阻塞）
 - [ ] **UI-03**: 双语呈现：现有双语执行摘要接入界面，术语向决策者做平实转译
 
+### DATA — 手机镜头专利底库规模化（说服力基础）
+
+- [ ] **DATA-01**: 同步 109 颗手机镜头 ZMX（lens-data-staging/，另一台电脑）进仓库并过 QC intake 流水线入库
+- [ ] **DATA-02**: 手机镜头专利规模化采集：patent_crawler（USPTO/Espacenet 双源）定向手机镜头设计专利（3P-7P，Largan/Sunny/舜宇/玉晶光等大厂 + 高引用），批量走 e2_intake QC 门 + 双源验证
+- [ ] **DATA-03**: 底库规模目标：可路由 seed 总量 ≥500 颗（专利 seed 为主要来源，约 ≥370；主公 2026-07-03 定调），全部通过 audit_seed_intake 审计 + eval golden 回归，采集按批次滚动（复用 E2 批次模式）
+
 ### OPS — 演示可靠性
 
 - [ ] **OPS-01**: 一键启动：单命令拉起后端 + 前端，演示机可靠复现
@@ -47,7 +53,6 @@
 
 - **SHOW-04**: 优化收敛可视化（merit function 随迭代下降曲线）— 叙事加强项，不阻塞首次彩排
 - **SHOW-05**: 完整 Monte Carlo 良率分布图 — top-N 敏感度表验证受众反应后再深化
-- **DATA-01**: 同步 109 颗手机镜头 ZMX（lens-data-staging/，另一台电脑）扩充底库
 
 ## Out of Scope
 
@@ -60,7 +65,35 @@
 
 ## Traceability
 
-<!-- 由 roadmap 填充：REQ-ID → Phase 映射 -->
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| ENGINE-01 | Phase 1 | Pending |
+| DATA-01 | Phase 2 | Pending |
+| DATA-02 | Phase 2 | Pending |
+| ENGINE-02 | Phase 3 | Pending |
+| ANLZ-01 | Phase 4 | Pending |
+| ANLZ-02 | Phase 4 | Pending |
+| ANLZ-03 | Phase 4 | Pending |
+| ANLZ-04 | Phase 4 | Pending |
+| ENGINE-03 | Phase 5 | Pending |
+| SEED-01 | Phase 6 | Pending |
+| SEED-02 | Phase 6 | Pending |
+| SEED-03 | Phase 6 | Pending |
+| DATA-03 | Phase 6 | Pending |
+| ENGINE-04 | Phase 7 | Pending |
+| ENGINE-05 | Phase 7 | Pending |
+| SHOW-01 | Phase 7 | Pending |
+| SHOW-02 | Phase 7 | Pending |
+| SHOW-03 | Phase 7 | Pending |
+| UI-01 | Phase 8 | Pending |
+| UI-02 | Phase 8 | Pending |
+| UI-03 | Phase 8 | Pending |
+| OPS-01 | Phase 9 | Pending |
+| OPS-02 | Phase 9 | Pending |
+| OPS-03 | Phase 9 | Pending |
+
+Coverage: 24/24 v1 requirements mapped.
 
 ---
-*Last updated: 2026-07-03 after initial definition*
+*Last updated: 2026-07-03 after roadmap revision (added DATA phase)*
+</content>
