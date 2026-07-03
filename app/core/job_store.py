@@ -1,0 +1,122 @@
+"""In-memory background job store for deep-engine tasks."""
+
+from __future__ import annotations
+
+import asyncio
+from collections.abc import Mapping
+from dataclasses import dataclass, replace
+from enum import StrEnum
+from uuid import uuid4
+
+from app.core.engines import DeepEngine
+
+
+class JobStatus(StrEnum):
+    """Lifecycle states for one in-memory background job."""
+
+    QUEUED = "queued"
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+
+
+class JobNotFoundError(KeyError):
+    """Raised when a job id is not present in the in-memory store."""
+
+
+@dataclass(frozen=True)
+class JobRecord:
+    """Serializable snapshot of one background job."""
+
+    job_id: str
+    engine: str
+    status: JobStatus
+    payload: dict[str, object]
+    result: dict[str, object] | None = None
+    error: str | None = None
+
+
+class JobStore:
+    """Run deep-engine submissions in asyncio background tasks and keep snapshots."""
+
+    def __init__(self) -> None:
+        self._jobs: dict[str, JobRecord] = {}
+        self._tasks: dict[str, asyncio.Task[None]] = {}
+
+    def submit(self, engine: DeepEngine, payload: Mapping[str, object]) -> str:
+        """Create a job and schedule the engine submission on the running event loop."""
+        payload_copy = dict(payload)
+        job_id = uuid4().hex
+        self._jobs[job_id] = JobRecord(
+            job_id=job_id,
+            engine=engine.name,
+            status=JobStatus.QUEUED,
+            payload=payload_copy,
+        )
+        self._tasks[job_id] = asyncio.create_task(self._run(job_id, engine, payload_copy))
+        return job_id
+
+    def get(self, job_id: str) -> JobRecord:
+        """Return the latest snapshot for a job."""
+        try:
+            return self._jobs[job_id]
+        except KeyError as exc:
+            raise JobNotFoundError(job_id) from exc
+
+    def status(self, job_id: str) -> JobStatus:
+        """Return a job's current status."""
+        return self.get(job_id).status
+
+    def result(self, job_id: str) -> dict[str, object] | None:
+        """Return a succeeded job's result, if available."""
+        result = self.get(job_id).result
+        return dict(result) if result is not None else None
+
+    def error(self, job_id: str) -> str | None:
+        """Return a failed job's error string, if available."""
+        return self.get(job_id).error
+
+    async def wait(self, job_id: str, *, timeout: float | None = None) -> JobRecord:
+        """Wait for one job's background task and return its final snapshot."""
+        task = self._task(job_id)
+        try:
+            if timeout is None:
+                await task
+            else:
+                await asyncio.wait_for(task, timeout=timeout)
+        except TimeoutError:
+            raise TimeoutError(f"job did not finish within {timeout} seconds: {job_id}") from None
+        return self.get(job_id)
+
+    def _task(self, job_id: str) -> asyncio.Task[None]:
+        try:
+            return self._tasks[job_id]
+        except KeyError as exc:
+            raise JobNotFoundError(job_id) from exc
+
+    async def _run(
+        self,
+        job_id: str,
+        engine: DeepEngine,
+        payload: Mapping[str, object],
+    ) -> None:
+        self._replace(job_id, status=JobStatus.RUNNING)
+        try:
+            result = await asyncio.to_thread(engine.submit, payload)
+        except Exception as exc:  # noqa: BLE001 - engines surface adapter/runtime failures.
+            self._replace(
+                job_id,
+                status=JobStatus.FAILED,
+                result=None,
+                error=f"{type(exc).__name__}: {exc}",
+            )
+            return
+        self._replace(
+            job_id,
+            status=JobStatus.SUCCEEDED,
+            result=dict(result),
+            error=None,
+        )
+
+    def _replace(self, job_id: str, **changes: object) -> None:
+        self._jobs[job_id] = replace(self.get(job_id), **changes)

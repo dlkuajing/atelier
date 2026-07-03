@@ -12,6 +12,7 @@ from app.core.engines.registry import (
     get_engine,
     register_engine,
 )
+from app.core.engines.sleep import SleepEngine
 
 __all__ = [
     "CODE_V_ENGINE_NAME",
@@ -20,6 +21,7 @@ __all__ = [
     "DeepEngine",
     "EngineRegistry",
     "NullDeepEngine",
+    "SleepEngine",
     "find_code_v_executable",
     "get_deep_engine",
     "get_engine",
