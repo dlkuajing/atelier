@@ -1,0 +1,55 @@
+# gsd-loop · cost_envelope 配置模板
+# ─────────────────────────────────────────────────────────────────────────────
+# 落地位置：复制到被挂载项目的 .planning/loop/loop-config.toml
+# 每轮循环开始时被 cost_envelope.sh 重新读取 → 主公可在循环运行中直接改、立即生效
+# （对应 CLAUDE.md「可配置行为优先运行时动态配置」）
+#
+# 解析约束：cost_envelope.sh 用纯 bash 3.2 + 仅识别 `key = value` 扁平行，
+#           不支持嵌套 / 数组 / 多行字符串。section 头 [xxx] 仅作注释分组，被忽略。
+# ─────────────────────────────────────────────────────────────────────────────
+
+[meta]
+# 整个 envelope 的总开关。false = 不强制任何上限（仅 spike/POC 临时用）。
+# CLAUDE.md §2.3：卡口默认开启、需主动关闭 → 默认 true。
+enabled = true
+
+# ─── 真预算：rate-limit 窗口 % ───────────────────────────────────────────────
+# codex 走 ChatGPT Pro 订阅、不按 token 计费 → 唯一真实稀缺资源是配额窗口。
+# 值来自 codex 自己写的 rollout 文件 rate_limits.{primary,secondary}.used_percent。
+# 循环和主公自己用 codex 共吃同一配额，留足余量给主公交互。0 = 关闭该闸。
+[budget]
+rate_limit_primary_max_percent = 80    # 5 小时窗（300min）用量达此 % 即停
+rate_limit_secondary_max_percent = 90  # 7 天窗（10080min）用量达此 % 即停
+
+# ─── 硬护栏：免测量、永远可强制（MVP 先只靠这层）────────────────────────────
+[proxy]
+max_rounds = 8                  # 单次调用最多转几轮（旧 demo 的 MAX=4 泛化）。最可靠的限制器。
+max_daily_rounds = 24           # 单自然日累计轮数（跨日重置）。0 = 关闭。
+max_retries_per_round = 1       # 单个失败任务重试 codex 几次后放弃（autoevolve 先例=1）。
+wall_clock_budget_minutes = 120 # 单次调用总墙钟分钟。0 = 关闭。
+per_round_timeout_seconds = 1800 # 单轮 codex 子进程硬杀（纯 bash watchdog，不依赖 gtimeout）。
+
+# ─── token 遥测：仅用于报告 + 异常熔断，不当美元预算 ────────────────────────
+[telemetry]
+token_anomaly_multiplier = 3.0  # 某轮 token 超过历史中位数此倍数 → 异常熔断（需 ≥3 轮基线才生效）。0 = 关闭。
+token_soft_cap_per_round = 0    # 单轮 token 软警戒（仅告警，不杀）。0 = 关闭（默认安全姿态）。
+
+# ─── 项目侧（orchestrator.sh 读，非 cost_envelope）──────────────────────────
+[project]
+test_command = "PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest -q > .planning/loop/gate-last.log 2>&1"  # 确定性成败 gate：退出码 0=过。直接用 venv python（不经 uv：沙箱内 uv 会撞缓存 ACL/网络，失败的 sync 还会剥掉 venv）。PYTHONUTF8=1 必带（GBK 炸 42 测试）；输出捕获进簿记目录供失败诊断。
+backlog_file = ".planning/loop/backlog.md"           # 发现源：markdown 勾选清单，- [ ] 待办 / - [x] 完成 / - [!] 失败
+forbidden_paths_file = ".planning/loop/forbidden-paths.txt"  # 黑名单：碰到即整轮回退（确定性，非靠 prompt）
+allowed_paths_file = ".planning/loop/allowed-paths.txt"      # 白名单：若有真实 glob 行，则变更必须全部命中，否则整轮回退（最强 MVP 保证；留空=不启用）
+secret_patterns_file = ".planning/loop/secret-patterns.txt"  # 密钥泄漏扫描：新增行命中即整轮回退
+branch_guard = true                        # true = 拒绝在 main/master 上跑（防直推主线）
+codex_sandbox = "danger-full-access"       # 主公元决策(2026-07-03)：loop 内 codex=绝对执行层，沙箱断网致能力残缺
+                                           # （uv sync 撞网络拒绝/缓存 ACL，失败的 sync 剥掉 .venv → gate 假红）。
+                                           # 无文件/网络隔离，护栏仅剩事后围栏（fence/secret/revert，只覆盖 worktree 内）。
+                                           # 白名单另一档 workspace-write = 引擎默认（事前隔离+事后围栏双层）。
+commit_prefix = "loop:"                    # 每轮原子提交的 message 前缀
+
+# ─── 控制 ────────────────────────────────────────────────────────────────────
+[control]
+cooldown_seconds_between_rounds = 2  # 轮间 sleep，避开 RPM 争用（autoevolve _MIN_CALL_INTERVAL=2.0）。
+on_cap_hit = "stop"                  # 触顶行为：stop=干净退出，下次调度才重启 ｜ pause=调度继续转但不干活。
+                                     # 主公已定：stop。
