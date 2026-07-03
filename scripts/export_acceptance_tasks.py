@@ -24,8 +24,11 @@ from app.core.case_library import match_case  # noqa: E402
 from app.core.optical_sample import AcceptanceImprovementTask, OpticalSampleData  # noqa: E402
 from scripts.evaluate_design_agent import EVAL_CASES, EvalCase  # noqa: E402
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-BACKEND_ROOT = REPO_ROOT / "lumira-backend"
+# Backend root = the directory holding app/ and scripts/. Resolving one level
+# up from this file works in both layouts: <monorepo>/lumira-backend/scripts/
+# and <atelier-repo>/scripts/. The "cd lumira-backend &&" command prefix is a
+# display/contract string only; probe execution uses BACKEND_ROOT as cwd.
+BACKEND_ROOT = Path(__file__).resolve().parents[1]
 LOCAL_PROBE_PREFIX = "cd lumira-backend && uv run python "
 LOCAL_PROBE_SCRIPT_ROOT = BACKEND_ROOT / "scripts"
 DEFAULT_PROBE_TIMEOUT_S = 300
