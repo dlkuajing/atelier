@@ -1,0 +1,114 @@
+{
+  "summary": {
+    "runner_status": "manual_followup_ready",
+    "task_count": 4,
+    "action_kinds": {
+      "manual_followup": 4
+    },
+    "external_blocker_count": 0,
+    "manual_followup_count": 4,
+    "upstream_blocked_count": 0,
+    "local_probe_failure_count": 0,
+    "case_verification_failure_count": 0,
+    "top_action_kind": "manual_followup"
+  },
+  "next_actions": [
+    {
+      "action_kind": "manual_followup",
+      "eval_case": "high_fov_main_uses_89deg_seed",
+      "task_id": "resolve-requirement_coverage-1",
+      "priority": 3,
+      "stage": "requirement_resolution",
+      "owner": "optical_design",
+      "status": "ready",
+      "execution_state": "ready_for_agent_or_designer",
+      "objective": "recover full-field ray stability or use a full-field fallback seed",
+      "probe_result_status": null,
+      "case_verification_passed": true,
+      "next_probe_command": null,
+      "case_verification_command": "cd lumira-backend && uv run python scripts/evaluate_design_agent.py --case high_fov_main_uses_89deg_seed --json --fail-on-regression",
+      "evidence_request": null
+    },
+    {
+      "action_kind": "manual_followup",
+      "eval_case": "high_fov_main_uses_89deg_seed",
+      "task_id": "resolve-optimizer_verification-2",
+      "priority": 4,
+      "stage": "optimizer_verification",
+      "owner": "optimizer",
+      "status": "ready",
+      "execution_state": "ready_for_agent_or_designer",
+      "objective": "resolve optimizer verification warning before applying changes",
+      "probe_result_status": null,
+      "case_verification_passed": true,
+      "next_probe_command": null,
+      "case_verification_command": "cd lumira-backend && uv run python scripts/evaluate_design_agent.py --case high_fov_main_uses_89deg_seed --json --fail-on-regression",
+      "evidence_request": null
+    },
+    {
+      "action_kind": "manual_followup",
+      "eval_case": "high_fov_main_uses_89deg_seed",
+      "task_id": "resolve-image_quality_floor-4",
+      "priority": 5,
+      "stage": "image_quality_recovery",
+      "owner": "optimizer",
+      "status": "ready",
+      "execution_state": "waiting_for_probe_evidence",
+      "objective": "hold draft_ready until the recommended branch clears the first-pass MTF/RMS review floor",
+      "probe_result_status": "gap",
+      "case_verification_passed": true,
+      "next_probe_command": "single-case replay: cd lumira-backend && uv run python scripts/evaluate_design_agent.py --case high_fov_main_uses_89deg_seed --json --fail-on-regression",
+      "case_verification_command": "cd lumira-backend && uv run python scripts/evaluate_design_agent.py --case high_fov_main_uses_89deg_seed --json --fail-on-regression",
+      "evidence_request": {
+        "required_inputs": [
+          "source check=image_quality_floor",
+          "current candidate=seed-baseline",
+          "recover full-field ray stability or use a full-field fallback seed",
+          "resolve optimizer verification warning before applying changes"
+        ],
+        "known_evidence": [
+          "candidate=seed-baseline",
+          "normalized floor gap=0.937",
+          "image quality floor: minMTF=0.005",
+          "field-weighted MTF=0.261",
+          "max RMS=5.0um",
+          "review floor: 50/100/150/200/250 lp/mm min MTF>=0.08; field-weighted MTF>=0.15; max RMS<=100um",
+          "multiband MTF minimum below review floor",
+          "dominant floor gap=mtf_100lpmm_floor_gap normalized=0.937",
+          "floor component gaps=mtf_100lpmm_floor_gap:0.937, mtf_multiband_floor_gap:0.937, mtf_250lpmm_floor_gap:0.865, mtf_200lpmm_floor_gap:0.147, mtf_50lpmm_floor_gap:0.000, mtf_150lpmm_floor_gap:0.000, mtf_field_weighted_floor_gap:0.000, max_rms_floor_gap:0.000",
+          "targeted recovery variables=asphere coefficients, stop position, air gaps, field weighting"
+        ],
+        "missing_evidence": [
+          "multiband MTF minimum below review floor",
+          "multiband min MTF >= 0.08",
+          "field-weighted MTF >= 0.15",
+          "max RMS spot radius <= 100 um",
+          "normalized MTF/RMS floor gap reaches 0.0",
+          "draft_quality_rubric.optical_evidence is no longer blocker"
+        ],
+        "blocked_claims": [],
+        "candidate_preflight_command": null,
+        "next_probe_command": "cd lumira-backend && uv run python scripts/evaluate_design_agent.py --fail-on-regression --json",
+        "nearest_candidates": [],
+        "accepted_seed_count": null,
+        "required_mtf_field_frac": null
+      }
+    },
+    {
+      "action_kind": "manual_followup",
+      "eval_case": "high_fov_main_uses_89deg_seed",
+      "task_id": "resolve-image_quality_probe-3",
+      "priority": 7,
+      "stage": "merit_tuning",
+      "owner": "optimizer",
+      "status": "ready",
+      "execution_state": "ready_for_agent_or_designer",
+      "objective": "continue merit tuning or keep the seed baseline as the accepted payload",
+      "probe_result_status": null,
+      "case_verification_passed": true,
+      "next_probe_command": null,
+      "case_verification_command": "cd lumira-backend && uv run python scripts/evaluate_design_agent.py --case high_fov_main_uses_89deg_seed --json --fail-on-regression",
+      "evidence_request": null
+    }
+  ]
+}
