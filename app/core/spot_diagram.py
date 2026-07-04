@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import inspect
 import math
 import warnings
+from importlib import metadata as importlib_metadata
 from typing import Literal
 
 import numpy as np
 from pydantic import BaseModel, Field
+
+from app.core.provenance import ProvenanceSource
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
@@ -17,6 +21,8 @@ with warnings.catch_warnings():
 
 SpotCoordinates = Literal["global", "local"]
 SpotReference = Literal["chief_ray", "centroid"]
+_EXPECTED_OPTILAND_VERSION = "0.6.0"
+_EXPECTED_CENTER_SPOTS_PARAMETERS = ("self", "data")
 
 
 class SpotWavelengthData(BaseModel):
@@ -48,6 +54,7 @@ class SpotFieldData(BaseModel):
 class SpotDiagramResult(BaseModel):
     """Multi-field, multi-wavelength spot diagram payload."""
 
+    provenance: ProvenanceSource = ProvenanceSource.OPTILAND_RAYTRACE
     coordinates: SpotCoordinates
     reference: SpotReference
     distribution: str
@@ -82,6 +89,26 @@ def _to_float_list(value, *, name: str) -> list[float]:
 def _spot_radius_um(value, *, name: str) -> float:
     arr = _to_finite_array(value, name=name)
     return float(arr[0]) * 1000.0
+
+
+def _installed_optiland_version() -> str:
+    return importlib_metadata.version("optiland")
+
+
+def _assert_center_spots_api_supported() -> None:
+    version = _installed_optiland_version()
+    if version != _EXPECTED_OPTILAND_VERSION:
+        raise RuntimeError(
+            "Optiland version guard blocked private SpotDiagram._center_spots use: "
+            f"expected {_EXPECTED_OPTILAND_VERSION}, got {version}"
+        )
+
+    parameters = tuple(inspect.signature(OptilandSpotDiagram._center_spots).parameters)
+    if parameters != _EXPECTED_CENTER_SPOTS_PARAMETERS:
+        raise RuntimeError(
+            "Optiland private SpotDiagram._center_spots signature changed for "
+            f"version {version}: expected {_EXPECTED_CENTER_SPOTS_PARAMETERS}, got {parameters}"
+        )
 
 
 def _wavelength_arg(wavelengths_nm: list[float] | None) -> str | list[float]:
@@ -120,6 +147,8 @@ def compute_spot_diagram(
     """
     if num_rings < 1:
         raise ValueError("num_rings must be at least 1")
+
+    _assert_center_spots_api_supported()
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)

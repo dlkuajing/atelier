@@ -3808,6 +3808,7 @@ def _cached_wavefront_summary(source_zmx: str, nominal_fov_deg: float) -> dict[s
     min_strehl = metrics.min_strehl_ratio
     return {
         "status": "available",
+        "provenance": metrics.provenance.value,
         "wavelength_nm": metrics.wavelength_nm,
         "field_count": len(metrics.fields),
         "max_rms_wavefront_error_waves": max_rms,

@@ -8,6 +8,8 @@ from typing import Literal
 import numpy as np
 from pydantic import BaseModel, Field
 
+from app.core.provenance import ProvenanceSource
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
     from optiland.analysis import Distortion, FieldCurvature
@@ -20,6 +22,7 @@ DistortionModel = Literal["f-tan", "f-theta"]
 class FieldAnalysisResult(BaseModel):
     """Serializable field curvature and distortion curves for one wavelength."""
 
+    provenance: ProvenanceSource = ProvenanceSource.OPTILAND_RAYTRACE
     field_fraction: list[float] = Field(..., description="Normalized field axis, 0 to 1")
     field_coordinate: list[float] = Field(
         ...,

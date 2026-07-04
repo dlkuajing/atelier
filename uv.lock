@@ -191,7 +191,7 @@ dev = [
 ]
 optical = [
     { name = "opticalglass", specifier = ">=1.1.0" },
-    { name = "optiland", specifier = ">=0.6.0" },
+    { name = "optiland", specifier = "==0.6.0" },
     { name = "rayoptics", specifier = ">=0.9.5" },
 ]
 
