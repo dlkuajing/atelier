@@ -9,6 +9,8 @@ from typing import Literal
 import numpy as np
 from pydantic import BaseModel, Field
 
+from app.core.provenance import ProvenanceSource
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
     from optiland.analysis.spot_diagram import SpotDiagram as OptilandSpotDiagram
@@ -48,6 +50,7 @@ class SpotFieldData(BaseModel):
 class SpotDiagramResult(BaseModel):
     """Multi-field, multi-wavelength spot diagram payload."""
 
+    provenance: ProvenanceSource = ProvenanceSource.OPTILAND_RAYTRACE
     coordinates: SpotCoordinates
     reference: SpotReference
     distribution: str

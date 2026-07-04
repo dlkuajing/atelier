@@ -21,11 +21,19 @@ _optiland_patches.apply_all()
 from app.api import optical, rag, wizard  # noqa: E402
 from app.core.config import settings  # noqa: E402
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
+from app.core.provenance import ProvenanceSource  # noqa: E402
 
 
 logger = structlog.get_logger(__name__)
 WEB_ROOT = Path(__file__).resolve().parent / "web"
 templates = Jinja2Templates(directory=WEB_ROOT / "templates")
+ANALYSIS_PROVENANCE_BADGES = (
+    {"label": "Paraxial", "source": ProvenanceSource.THIN_LENS_ANALYTIC.value},
+    {"label": "MTF", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
+    {"label": "Spot", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
+    {"label": "Field", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
+    {"label": "Wavefront", "source": ProvenanceSource.OPTILAND_WAVEFRONT.value},
+)
 
 
 def _format_float(value: float | None) -> str:
@@ -134,6 +142,7 @@ async def root(request: Request) -> HTMLResponse:
                 ("Analysis", "#analysis"),
                 ("API", "/docs"),
             ),
+            "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
         },
     )
 
@@ -156,6 +165,7 @@ async def wizard_confirm(
             "scenario_label": extraction.scenario.value.replace("-", " ").title(),
             "reasoning": extraction.reasoning,
             "parameters": _format_parameter_rows(extraction),
+            "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
         },
     )
 

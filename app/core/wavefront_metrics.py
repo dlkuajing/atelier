@@ -9,6 +9,8 @@ from typing import Literal
 import numpy as np
 from pydantic import BaseModel, Field
 
+from app.core.provenance import ProvenanceSource
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
     from optiland.optic import Optic
@@ -52,6 +54,7 @@ class WavefrontFieldMetric(BaseModel):
 class WavefrontMetricsResult(BaseModel):
     """Serializable wavefront metrics for a single wavelength across fields."""
 
+    provenance: ProvenanceSource = ProvenanceSource.OPTILAND_WAVEFRONT
     wavelength_nm: float = Field(..., gt=0)
     num_rays: int = Field(..., ge=2)
     distribution: str
