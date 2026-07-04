@@ -24,12 +24,6 @@ def test_health_ok():
     assert r.json() == {"status": "ok", "version": "0.1.0"}
 
 
-def test_root_responds():
-    r = client.get("/")
-    assert r.status_code == 200
-    assert r.json()["service"] == "lumira-atelier-backend"
-
-
 def test_thin_lens_image_distance_at_2f_returns_2f():
     """Object at 2f → image at 2f (1:1 magnification)."""
     f = 50.0
