@@ -33,6 +33,7 @@ with warnings.catch_warnings():
     )
 
 from app.core.lens_system import RayPath, RayTraceResult, Scenario
+from app.core.provenance import ProvenanceSource
 
 
 logger = logging.getLogger(__name__)
@@ -135,6 +136,7 @@ def build_optic_for_scenario(
 
 
 class ParaxialSummary(BaseModel):
+    provenance: ProvenanceSource = ProvenanceSource.THIN_LENS_ANALYTIC
     effective_focal_length_mm: float
     f_number: float
     entrance_pupil_diameter_mm: float

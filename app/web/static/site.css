@@ -281,6 +281,72 @@ button:focus-visible {
   gap: 12px;
 }
 
+.source-strip {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.28fr) 1fr;
+  gap: 18px;
+  align-items: start;
+  margin-top: clamp(22px, 4vw, 42px);
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.source-strip-heading h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.45rem, 3vw, 2.15rem);
+  line-height: 1.05;
+}
+
+.source-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.source-badge {
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 12px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.74);
+  font-size: 0.86rem;
+}
+
+.source-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0, 168, 168, 0.14);
+}
+
+.source-badge[data-provenance="thin-lens-analytic"]::before {
+  background: var(--brass);
+  box-shadow: 0 0 0 3px rgba(181, 132, 56, 0.16);
+}
+
+.source-badge[data-provenance="optiland-wavefront"]::before {
+  background: var(--red);
+  box-shadow: 0 0 0 3px rgba(199, 67, 45, 0.13);
+}
+
+.source-artifact {
+  font-weight: 700;
+}
+
+.source-name {
+  color: var(--muted);
+  font-family: "Cascadia Mono", "Consolas", monospace;
+  font-size: 0.74rem;
+}
+
 .optical-bench {
   position: relative;
   min-height: 560px;
@@ -396,5 +462,9 @@ button:focus-visible {
   .parameter-table {
     display: block;
     overflow-x: auto;
+  }
+
+  .source-strip {
+    grid-template-columns: 1fr;
   }
 }

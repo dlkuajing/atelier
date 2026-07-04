@@ -20,6 +20,7 @@ import numpy as np
 from pydantic import BaseModel, Field
 
 from app.core.optical_calc import airy_disk_diameter_um
+from app.core.provenance import ProvenanceSource
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
@@ -39,6 +40,7 @@ class MTFFieldData(BaseModel):
 
 
 class MTFResult(BaseModel):
+    provenance: ProvenanceSource = ProvenanceSource.OPTILAND_RAYTRACE
     freq_lp_per_mm: list[float] = Field(..., description="Shared X axis — spatial frequency")
     fields: list[MTFFieldData]
     diff_limited: list[float] = Field(..., description="Diffraction-limited MTF (theoretical upper bound)")

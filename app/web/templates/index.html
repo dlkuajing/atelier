@@ -49,6 +49,21 @@
           <div class="ray ray-three" aria-hidden="true"></div>
         </aside>
       </section>
+
+      <section class="source-strip" id="analysis" aria-label="Analysis provenance">
+        <div class="source-strip-heading">
+          <p class="eyebrow">Analysis provenance</p>
+          <h2>Computation sources</h2>
+        </div>
+        <div class="source-badges">
+          {% for badge in analysis_provenance_badges %}
+            <span class="source-badge" data-provenance="{{ badge.source }}">
+              <span class="source-artifact">{{ badge.label }}</span>
+              <span class="source-name">{{ badge.source }}</span>
+            </span>
+          {% endfor %}
+        </div>
+      </section>
     </main>
   </body>
 </html>

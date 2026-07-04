@@ -61,6 +61,21 @@
           <a class="button-link secondary" href="/">Edit requirement</a>
           <button type="button">Continue</button>
         </div>
+
+        <section class="source-strip" aria-label="Analysis provenance">
+          <div class="source-strip-heading">
+            <p class="eyebrow">Analysis provenance</p>
+            <h2>Computation sources</h2>
+          </div>
+          <div class="source-badges">
+            {% for badge in analysis_provenance_badges %}
+              <span class="source-badge" data-provenance="{{ badge.source }}">
+                <span class="source-artifact">{{ badge.label }}</span>
+                <span class="source-name">{{ badge.source }}</span>
+              </span>
+            {% endfor %}
+          </div>
+        </section>
       </section>
     </main>
   </body>
