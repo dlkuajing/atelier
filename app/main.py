@@ -1,12 +1,13 @@
 """FastAPI app entrypoint."""
 
+import json
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
 import structlog
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -20,12 +21,25 @@ _optiland_patches.apply_all()
 
 from app.api import optical, rag, wizard  # noqa: E402
 from app.core.config import settings  # noqa: E402
+from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
 
 
 logger = structlog.get_logger(__name__)
 WEB_ROOT = Path(__file__).resolve().parent / "web"
 templates = Jinja2Templates(directory=WEB_ROOT / "templates")
+_JOB_PROGRESS_PERCENT = {
+    JobStatus.QUEUED: 10,
+    JobStatus.RUNNING: 55,
+    JobStatus.SUCCEEDED: 100,
+    JobStatus.FAILED: 100,
+}
+_JOB_STATUS_MESSAGES = {
+    JobStatus.QUEUED: "Waiting for the deep optical engine seat.",
+    JobStatus.RUNNING: "Engine is computing the optical design package.",
+    JobStatus.SUCCEEDED: "Design task completed.",
+    JobStatus.FAILED: "Design task failed.",
+}
 
 
 def _format_float(value: float | None) -> str:
@@ -82,6 +96,26 @@ def _format_parameter_rows(
             "bounds": f"{bounds.n_elements_min}-{bounds.n_elements_max}",
         },
     )
+
+
+def _job_progress_context(record: JobRecord) -> dict[str, object]:
+    result = dict(record.result) if record.result is not None else None
+    return {
+        "product_name": "Atelier",
+        "job_id": record.job_id,
+        "engine": record.engine,
+        "status": record.status.value,
+        "status_label": record.status.value.replace("-", " ").replace("_", " ").title(),
+        "status_message": _JOB_STATUS_MESSAGES[record.status],
+        "progress_percent": _JOB_PROGRESS_PERCENT[record.status],
+        "payload": dict(record.payload),
+        "result": result,
+        "has_result": result is not None,
+        "result_json": json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True)
+        if result is not None
+        else "",
+        "error": record.error,
+    }
 
 
 @asynccontextmanager
@@ -166,3 +200,15 @@ async def wizard_confirm_alias(
     requirement: Annotated[str, Form(min_length=3, max_length=2000)],
 ) -> HTMLResponse:
     return await wizard_confirm(request, requirement)
+
+
+@app.get("/jobs/{job_id}", response_class=HTMLResponse, tags=["web"])
+async def job_progress(request: Request, job_id: str) -> HTMLResponse:
+    try:
+        record = optical.job_store.get(job_id)
+    except JobNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "job_id": job_id},
+        ) from exc
+    return templates.TemplateResponse(request, "job_progress.html", _job_progress_context(record))
