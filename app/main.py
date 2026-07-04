@@ -2,10 +2,14 @@
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import structlog
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 # Apply Optiland 0.6 runtime patches FIRST — before any other Optiland import
 # happens. See app/core/optiland_patches.py for the bug each one addresses.
@@ -18,6 +22,8 @@ from app.core.config import settings  # noqa: E402
 
 
 logger = structlog.get_logger(__name__)
+WEB_ROOT = Path(__file__).resolve().parent / "web"
+templates = Jinja2Templates(directory=WEB_ROOT / "templates")
 
 
 @asynccontextmanager
@@ -45,6 +51,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/static", StaticFiles(directory=WEB_ROOT / "static"), name="static")
+
 app.include_router(optical.router, prefix="/api/optical", tags=["optical"])
 app.include_router(rag.router, prefix="/api/rag", tags=["rag"])
 app.include_router(wizard.router, prefix="/api/wizard", tags=["wizard"])
@@ -55,10 +63,18 @@ async def health() -> dict[str, str]:
     return {"status": "ok", "version": "0.1.0"}
 
 
-@app.get("/", tags=["meta"])
-async def root() -> dict[str, str]:
-    return {
-        "service": "lumira-atelier-backend",
-        "version": "0.1.0",
-        "docs": "/docs",
-    }
+@app.get("/", response_class=HTMLResponse, tags=["web"])
+async def root(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+        request,
+        "index.html",
+        {
+            "product_name": "Atelier",
+            "nav_items": (
+                ("Workbench", "#request"),
+                ("Library", "#library"),
+                ("Analysis", "#analysis"),
+                ("API", "/docs"),
+            ),
+        },
+    )
