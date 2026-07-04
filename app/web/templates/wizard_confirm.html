@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product_name }} Wizard Scenario Confirmation</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="/">Workbench</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+
+    <main class="shell shell-narrow">
+      <section class="confirmation" aria-labelledby="wizard-confirm-title">
+        <p class="eyebrow">Wizard scenario confirmation</p>
+        <h1 id="wizard-confirm-title">Confirm extracted scenario</h1>
+
+        <div class="brief-block">
+          <span class="brief-label">Requirement</span>
+          <p>{{ requirement }}</p>
+        </div>
+
+        <section class="scenario-result" data-scenario="{{ scenario }}" aria-label="Extracted scenario">
+          <div>
+            <span class="brief-label">Scenario</span>
+            <h2>{{ scenario_label }}</h2>
+          </div>
+          {% if reasoning %}
+            <p>{{ reasoning }}</p>
+          {% endif %}
+        </section>
+
+        <table class="parameter-table" aria-label="Extracted parameters and clamped bounds">
+          <thead>
+            <tr>
+              <th scope="col">Parameter</th>
+              <th scope="col">Extracted value</th>
+              <th scope="col">Clamped bounds</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in parameters %}
+              <tr data-field="{{ row.key }}">
+                <th scope="row">{{ row.label }}</th>
+                <td>{{ row.value }}</td>
+                <td>{{ row.bounds }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="confirmation-actions">
+          <a class="button-link secondary" href="/">Edit requirement</a>
+          <button type="button">Continue</button>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
