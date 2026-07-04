@@ -65,6 +65,10 @@ def test_real_case_field_curvature_values_are_finite_and_reasonable(real_phone_f
     assert max(abs(v) for v in sagittal) < 0.1
     assert max(tangential) - min(tangential) > 0.005
     assert max(abs(t - s) for t, s in zip(tangential[1:], sagittal[1:], strict=False)) > 0.005
+    # This known real design separates the T/S labels at the edge field.
+    assert tangential[-1] > 0.015
+    assert sagittal[-1] < -0.005
+    assert tangential[-1] - sagittal[-1] > 0.02
 
 
 def test_real_case_distortion_pct_values_are_reasonable(real_phone_field_analysis):
