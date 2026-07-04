@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product_name }} Design Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="/">Workbench</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+
+    <main class="shell shell-narrow">
+      <section
+        class="result-summary"
+        data-result-summary
+        data-scenario="{{ scenario }}"
+        data-summary-model="{{ summary.model }}"
+        aria-labelledby="result-summary-title"
+      >
+        <p class="eyebrow">Optical design result</p>
+        <h1 id="result-summary-title">Design result</h1>
+
+        <section class="scenario-result" aria-label="Result scenario">
+          <div>
+            <span class="brief-label">Scenario</span>
+            <h2>{{ scenario_label }}</h2>
+          </div>
+          <p>{{ summary.model }}</p>
+        </section>
+
+        <div class="summary-grid" aria-label="Bilingual executive summary">
+          <section
+            class="summary-panel summary-en"
+            lang="en"
+            data-summary-lang="en"
+            aria-labelledby="summary-en-title"
+          >
+            <span class="brief-label">English</span>
+            <h2 id="summary-en-title">Executive Summary</h2>
+            <p>{{ summary.summary_en }}</p>
+          </section>
+
+          <section
+            class="summary-panel summary-zh"
+            lang="zh-Hans"
+            data-summary-lang="zh"
+            aria-labelledby="summary-zh-title"
+          >
+            <span class="brief-label">Chinese</span>
+            <h2 id="summary-zh-title">执行摘要</h2>
+            <p>{{ summary.summary_zh }}</p>
+          </section>
+        </div>
+
+        {% if summary.fallback_reason %}
+          <p class="summary-fallback" data-summary-fallback="{{ summary.fallback_reason }}">
+            {{ summary.fallback_reason }}
+          </p>
+        {% endif %}
+
+        <dl class="metrics-grid" aria-label="Result metrics">
+          {% for label, value in metrics %}
+            <div>
+              <dt>{{ label }}</dt>
+              <dd>{{ value }}</dd>
+            </div>
+          {% endfor %}
+        </dl>
+      </section>
+    </main>
+  </body>
+</html>
