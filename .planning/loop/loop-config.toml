@@ -26,8 +26,8 @@ rate_limit_secondary_max_percent = 90  # 7 天窗（10080min）用量达此 % �
 max_rounds = 8                  # 单次调用最多转几轮（旧 demo 的 MAX=4 泛化）。最可靠的限制器。
 max_daily_rounds = 24           # 单自然日累计轮数（跨日重置）。0 = 关闭。
 max_retries_per_round = 1       # 单个失败任务重试 codex 几次后放弃（autoevolve 先例=1）。
-wall_clock_budget_minutes = 120 # 单次调用总墙钟分钟。0 = 关闭。
-per_round_timeout_seconds = 1800 # 单轮 codex 子进程硬杀（纯 bash watchdog，不依赖 gtimeout）。
+wall_clock_budget_minutes = 150 # 单次调用总墙钟分钟。0 = 关闭。
+per_round_timeout_seconds = 5400 # 单轮 codex 子进程硬杀（纯 bash watchdog，不依赖 gtimeout）。
 
 # ─── token 遥测：仅用于报告 + 异常熔断，不当美元预算 ────────────────────────
 [telemetry]
@@ -36,7 +36,7 @@ token_soft_cap_per_round = 0    # 单轮 token 软警戒（仅告警，不杀）
 
 # ─── 项目侧（orchestrator.sh 读，非 cost_envelope）──────────────────────────
 [project]
-test_command = "PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest -q > .planning/loop/gate-last.log 2>&1"  # 确定性成败 gate：退出码 0=过。直接用 venv python（不经 uv：沙箱内 uv 会撞缓存 ACL/网络，失败的 sync 还会剥掉 venv）。PYTHONUTF8=1 必带（GBK 炸 42 测试）；输出捕获进簿记目录供失败诊断。
+test_command = "PATH=\"$HOME/.local/bin:$PATH\" PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest -q > .planning/loop/gate-last.log 2>&1"  # 确定性成败 gate：退出码 0=过。直接用 venv python（不经 uv：沙箱内 uv 会撞缓存 ACL/网络，失败的 sync 还会剥掉 venv）。PYTHONUTF8=1 必带（GBK 炸 42 测试）；输出捕获进簿记目录供失败诊断。
 backlog_file = ".planning/loop/backlog.md"           # 发现源：markdown 勾选清单，- [ ] 待办 / - [x] 完成 / - [!] 失败
 forbidden_paths_file = ".planning/loop/forbidden-paths.txt"  # 黑名单：碰到即整轮回退（确定性，非靠 prompt）
 allowed_paths_file = ".planning/loop/allowed-paths.txt"      # 白名单：若有真实 glob 行，则变更必须全部命中，否则整轮回退（最强 MVP 保证；留空=不启用）
