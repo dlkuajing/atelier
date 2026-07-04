@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 from optiland.visualization.system.utils import transform
 
+from app.core import spot_diagram as spot_diagram_module
 from app.core.spot_diagram import SpotDiagramResult, compute_spot_diagram
 from app.core.zmx_ingest import (
     ZMX_AMMO_DIR,
@@ -20,6 +21,13 @@ from tests.data.zmx_manifest import ZMX_AMMO
 _NUM_RINGS = 3
 _FIELD_INDEX = 2
 _WAVELENGTH_INDEX = 1
+
+
+def test_center_spots_private_api_guard_rejects_unexpected_optiland_version(monkeypatch):
+    monkeypatch.setattr(spot_diagram_module, "_installed_optiland_version", lambda: "0.7.0")
+
+    with pytest.raises(RuntimeError, match="Optiland version"):
+        spot_diagram_module._assert_center_spots_api_supported()
 
 
 @pytest.fixture(scope="module")
