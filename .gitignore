@@ -22,3 +22,7 @@ build/
 !/data/zmx/
 *.db
 *.sqlite
+
+# loop/codex 运行时临时目录（曾误入 commit，2026-07-04 清除）
+.tmp/
+.verify-tmp/
