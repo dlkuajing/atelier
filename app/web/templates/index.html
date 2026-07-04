@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product_name }} Optical Design Agent</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        {% for label, href in nav_items %}
+          <a href="{{ href }}">{{ label }}</a>
+        {% endfor %}
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="workspace" aria-labelledby="home-title">
+        <div class="request-panel" id="request">
+          <p class="eyebrow">Optical design agent</p>
+          <h1 id="home-title">{{ product_name }}</h1>
+          <form class="requirement-form" action="/wizard/confirm" method="post">
+            <label for="lens-requirement">Natural language requirement</label>
+            <textarea
+              id="lens-requirement"
+              name="requirement"
+              rows="7"
+              placeholder="Describe the target lens: sensor size, FOV, f-number, total track, and priority tradeoffs."
+            ></textarea>
+            <div class="form-actions">
+              <button type="submit">Draft design</button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="optical-bench" aria-label="Optical layout preview">
+          <div class="axis" aria-hidden="true"></div>
+          <div class="lens lens-a" aria-hidden="true"></div>
+          <div class="lens lens-b" aria-hidden="true"></div>
+          <div class="lens lens-c" aria-hidden="true"></div>
+          <div class="sensor" aria-hidden="true"></div>
+          <div class="ray ray-one" aria-hidden="true"></div>
+          <div class="ray ray-two" aria-hidden="true"></div>
+          <div class="ray ray-three" aria-hidden="true"></div>
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>
