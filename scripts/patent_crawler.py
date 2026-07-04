@@ -8,10 +8,10 @@ Usage:
     # Dry run (no network — schema validation + sample records)
     uv run python scripts/patent_crawler.py --dry-run --out data/sample.jsonl
 
-    # Real USPTO search (PatentsView; no auth required)
+    # Real USPTO search (Patent Public Search anonymous session; no credentials)
     uv run python scripts/patent_crawler.py --source uspto \\
-        --query "telephoto lens largan" --limit 20 \\
-        --out data/uspto-largan.jsonl
+        --profile smartphone --limit 30 \\
+        --out data/patents/uspto-smartphone-batch1.jsonl
 
     # Real Espacenet search (needs EPO_OPS_KEY / EPO_OPS_SECRET in env)
     uv run python scripts/patent_crawler.py --source espacenet \\
@@ -37,8 +37,10 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import html
 import json
 import os
+import re
 import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -46,6 +48,15 @@ from pathlib import Path
 
 import httpx
 import structlog
+
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from app.core.patent_crawl_config import (  # noqa: E402
+    SMARTPHONE_LENS_PROFILE,
+    has_three_to_seven_p_keyword,
+)
+from app.core.patent_crawl_schema import validate_patent_record  # noqa: E402
 
 
 logger = structlog.get_logger(__name__)
@@ -71,60 +82,220 @@ class PatentRecord:
 
 
 # ---------------------------------------------------------------------------
-# USPTO — PatentsView API (free, no auth)
+# USPTO -- Patent Public Search anonymous API
 # ---------------------------------------------------------------------------
 
-USPTO_SEARCH_URL = "https://api.patentsview.org/patents/query"
+PPUBS_BASE_URL = "https://ppubs.uspto.gov"
+PPUBS_SESSION_URL = f"{PPUBS_BASE_URL}/api/users/me/session"
+PPUBS_SEARCH_URL = f"{PPUBS_BASE_URL}/api/searches/generic"
+PPUBS_TEXT_URL = f"{PPUBS_BASE_URL}/api/patents/html"
+PPUBS_DATABASE_FILTERS = (
+    {"databaseName": "USPAT"},
+    {"databaseName": "US-PGPUB"},
+    {"databaseName": "USOCR"},
+)
+
+
+async def _ppubs_access_token(client: httpx.AsyncClient) -> str:
+    response = await client.post(
+        PPUBS_SESSION_URL,
+        content="-1",
+        headers={"Content-Type": "application/json"},
+    )
+    response.raise_for_status()
+    token = response.headers.get("x-access-token")
+    if not token:
+        raise RuntimeError("USPTO PPUBS did not return an anonymous access token")
+    return token
+
+
+async def _ppubs_search_docs(
+    client: httpx.AsyncClient,
+    token: str,
+    query: str,
+    page_size: int,
+) -> list[dict]:
+    payload = {
+        "cursorMarker": "*",
+        "databaseFilters": list(PPUBS_DATABASE_FILTERS),
+        "fields": [
+            "documentId",
+            "patentNumber",
+            "title",
+            "datePublished",
+            "inventors",
+            "pageCount",
+            "type",
+        ],
+        "op": "OR",
+        "pageSize": page_size,
+        "q": query,
+        "searchType": 0,
+        "sort": "date_publ desc",
+    }
+    response = await client.post(
+        PPUBS_SEARCH_URL,
+        json=payload,
+        headers={"Accept": "application/json", "x-access-token": token},
+    )
+    response.raise_for_status()
+    return response.json().get("docs", [])
+
+
+async def _ppubs_patent_html(
+    client: httpx.AsyncClient,
+    token: str,
+    document_id: str,
+    source_type: str,
+) -> str:
+    for attempt in range(4):
+        response = await client.get(
+            f"{PPUBS_TEXT_URL}/{document_id}",
+            params={"source": source_type, "requestToken": token},
+            headers={"Accept": "text/html", "x-access-token": token},
+        )
+        if response.status_code != 429:
+            response.raise_for_status()
+            return response.text
+        await asyncio.sleep(5 * (attempt + 1))
+    response.raise_for_status()
+    return response.text
+
+
+def _strip_html(value: str) -> str:
+    text = re.sub(r"<maths.*?</maths>", " ", value, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html.unescape(text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _section_text(page_html: str, heading: str) -> str:
+    match = re.search(
+        rf"<h3[^>]*>\s*{re.escape(heading)}\s*</h3>\s*<p>(.*?)</p>",
+        page_html,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    return _strip_html(match.group(1)) if match else ""
+
+
+def _labeled_text(page_html: str, label: str) -> str:
+    match = re.search(
+        rf">\s*{re.escape(label)}:\s*</p>\s*<p[^>]*>(.*?)</p>",
+        page_html,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if not match:
+        return ""
+    text = _strip_html(match.group(1))
+    return re.sub(r"\s+\([^)]*\)$", "", text).strip()
+
+
+def _classification_codes(page_html: str) -> list[str]:
+    marker = re.search(
+        r"<h3[^>]*>\s*Publication Classification\s*</h3>(.*?)(?:</section>|<h3)",
+        page_html,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    block = marker.group(1) if marker else page_html
+    codes = re.findall(r"\b[A-HY]\d{2}[A-Z]\s?\d+/\d+\b", _strip_html(block))
+    return sorted(set(code.replace(" ", "") for code in codes))
+
+
+def _claim_excerpt(page_html: str) -> str:
+    text = _section_text(page_html, "Claims")
+    return text[:1200].strip()
+
+
+def _ppubs_record_from_doc(doc: dict, page_html: str) -> PatentRecord:
+    document_id = str(doc.get("documentId") or "")
+    assignee = _labeled_text(page_html, "Assignee") or _labeled_text(page_html, "Applicant")
+    return PatentRecord(
+        id=document_id,
+        title=str(doc.get("title") or ""),
+        abstract=_section_text(page_html, "Abstract"),
+        claim_excerpt=_claim_excerpt(page_html),
+        inventors=[str(doc.get("inventors") or "").strip()],
+        assignee=assignee,
+        ipc_classes=_classification_codes(page_html),
+        filing_date=_labeled_text(page_html, "Filed") or str(doc.get("datePublished") or ""),
+        source="uspto",
+        source_url=f"{PPUBS_BASE_URL}/dirsearch-public/print/downloadPdf/{document_id}",
+    )
+
+
+async def _records_for_uspto_query(
+    client: httpx.AsyncClient,
+    token: str,
+    query: str,
+    page_size: int,
+    max_records: int | None = None,
+) -> list[PatentRecord]:
+    docs = await _ppubs_search_docs(client, token, query, page_size)
+    records: list[PatentRecord] = []
+    for doc in docs:
+        if max_records is not None and len(records) >= max_records:
+            break
+        document_id = str(doc.get("documentId") or "")
+        source_type = str(doc.get("type") or "")
+        if not document_id or not source_type:
+            continue
+        try:
+            page_html = await _ppubs_patent_html(client, token, document_id, source_type)
+            record = _ppubs_record_from_doc(doc, page_html)
+            validate_patent_record(asdict(record))
+        except Exception as exc:
+            logger.warning("uspto_record_skipped", document_id=document_id, error=str(exc))
+            continue
+        records.append(record)
+        await asyncio.sleep(0.8)
+    return records
 
 
 async def search_uspto(query: str, limit: int) -> list[PatentRecord]:
-    """Search USPTO PatentsView for free-text query in title + abstract."""
-    payload = {
-        "q": {
-            "_or": [
-                {"_text_phrase": {"patent_title": query}},
-                {"_text_phrase": {"patent_abstract": query}},
-            ]
-        },
-        "f": [
-            "patent_number",
-            "patent_title",
-            "patent_abstract",
-            "inventors",
-            "assignees",
-            "cpcs",
-            "patent_date",
-        ],
-        "o": {"per_page": limit},
-    }
+    """Search USPTO Patent Public Search for a free-text query."""
     async with httpx.AsyncClient(timeout=60) as client:
-        r = await client.post(USPTO_SEARCH_URL, json=payload)
-        r.raise_for_status()
-        data = r.json()
+        token = await _ppubs_access_token(client)
+        page_size = min(max(limit, 50), 100)
+        return (
+            await _records_for_uspto_query(client, token, query, page_size, max_records=limit)
+        )[:limit]
 
-    records: list[PatentRecord] = []
-    for p in data.get("patents", []):
-        pn = p.get("patent_number", "")
-        records.append(
-            PatentRecord(
-                id=f"US{pn}",
-                title=p.get("patent_title", ""),
-                abstract=p.get("patent_abstract", ""),
-                claim_excerpt="",  # PatentsView basic API doesn't ship full claims
-                inventors=[
-                    f"{i.get('inventor_first_name', '')} {i.get('inventor_last_name', '')}".strip()
-                    for i in p.get("inventors", [])
-                ],
-                assignee=(p.get("assignees") or [{}])[0].get(
-                    "assignee_organization", ""
-                ),
-                ipc_classes=[c.get("cpc_subgroup_id", "") for c in (p.get("cpcs") or [])],
-                filing_date=p.get("patent_date"),
-                source="uspto",
-                source_url=f"https://patents.google.com/patent/US{pn}",
-            )
-        )
-    return records
+
+async def search_uspto_smartphone(limit: int) -> list[PatentRecord]:
+    """Run the DATA-02a smartphone-lens query profile against USPTO."""
+    records_by_id: dict[str, PatentRecord] = {}
+    async with httpx.AsyncClient(timeout=60) as client:
+        token = await _ppubs_access_token(client)
+        for query in SMARTPHONE_LENS_PROFILE.uspto_queries:
+            needed = max(limit - len(records_by_id), 0)
+            if needed == 0:
+                break
+            for record in await _records_for_uspto_query(
+                client,
+                token,
+                query,
+                page_size=50,
+                max_records=max(needed, 5),
+            ):
+                records_by_id.setdefault(record.id, record)
+            hits = [
+                record
+                for record in records_by_id.values()
+                if has_three_to_seven_p_keyword(
+                    "\n".join((record.title, record.abstract, record.claim_excerpt))
+                )
+            ]
+            if len(hits) >= limit:
+                break
+
+    records = list(records_by_id.values())
+    hits = [
+        record
+        for record in records
+        if has_three_to_seven_p_keyword("\n".join((record.title, record.abstract, record.claim_excerpt)))
+    ]
+    misses = [record for record in records if record not in hits]
+    return (hits + misses)[:limit]
 
 
 # ---------------------------------------------------------------------------
@@ -282,7 +453,9 @@ def _write_jsonl(records: list[PatentRecord], out_path: Path) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
         for r in records:
-            f.write(json.dumps(asdict(r), ensure_ascii=False) + "\n")
+            data = asdict(r)
+            validate_patent_record(data)
+            f.write(json.dumps(data, ensure_ascii=False) + "\n")
     logger.info("wrote_jsonl", path=str(out_path), count=len(records))
 
 
@@ -292,7 +465,11 @@ async def _async_main(args: argparse.Namespace) -> int:
         return 0
 
     if args.source == "uspto":
-        records = await search_uspto(args.query, args.limit)
+        if args.profile == "smartphone" and not args.query:
+            records = await search_uspto_smartphone(args.limit)
+        else:
+            query = args.query or SMARTPHONE_LENS_PROFILE.uspto_queries[0]
+            records = await search_uspto(query, args.limit)
     elif args.source == "espacenet":
         key = os.environ.get("EPO_OPS_KEY")
         secret = os.environ.get("EPO_OPS_SECRET")
@@ -308,7 +485,7 @@ async def _async_main(args: argparse.Namespace) -> int:
         return 2
 
     if not records:
-        logger.warning("no_records_found", query=args.query)
+        logger.warning("no_records_found", query=args.query, profile=args.profile)
         return 1
 
     _write_jsonl(records, Path(args.out))
@@ -322,7 +499,13 @@ def main() -> int:
     parser.add_argument(
         "--source", choices=["uspto", "espacenet"], default="uspto"
     )
-    parser.add_argument("--query", default="telephoto lens")
+    parser.add_argument(
+        "--profile",
+        choices=["smartphone", "custom"],
+        default="smartphone",
+        help="Use the DATA-02a smartphone lens query profile unless --query is supplied",
+    )
+    parser.add_argument("--query", default=None)
     parser.add_argument("--limit", type=int, default=20)
     parser.add_argument(
         "--out",
