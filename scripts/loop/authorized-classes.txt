@@ -1,0 +1,23 @@
+# ============================================================================
+# authorized-classes.txt — 无人值守授权清单（红线3「按开关」状态 · 主公 ONLY）
+# ============================================================================
+# 一行一个 class-id = 主公授权该【工作面类】无人值守（配合全局
+# ~/.claude/loop-control/state.json 的 active=true 构成 AND 门）运行。
+# 红线3 元决策：「按下/调整无人值守开关」= 唯一永不能交给 loop 自己决定的判断
+# （让 loop 自己决定要不要被监管 = 监管失效）。故本文件【物理 only-主公写】。
+#
+# 【当前空 = 零类被授权无人值守 = 默认全 attended（安全，出厂状态）】。
+#
+# ★唯一合法写者 = 主公：直接编辑本文件加一行 class-id + `git commit`（attended）。
+#   git log = 授权审计链（谁授权了什么、何时）。
+# ★AI 绝不写本文件（物理三重 + 消费侧 fail-closed，见 redline.source.yaml 的
+#   authz-list 条目 + 两层授权契约 authorization.schema.md）：
+#   - Claude Edit/Write → redline-paths.txt 锁本文件 → redline-guard exit2；
+#   - codex 任何写（含 sed -i）→ forbidden-paths.txt 锁 → check_fence 命中 → revert；
+#   - 消费方 authz.sh 仅认已提交-clean + 围栏条目自洽，篡改即 fail-closed。
+#
+# active（~/.claude/loop-control/state.json·全局）= loop 开关，与本「类授权」正交：
+#   AND 门——active=true(主公翻) AND class∈本清单(主公授权) 才无人值守。
+# ----------------------------------------------------------------------------
+# 授权的 class-id（一行一个；# 注释 / 空行忽略）：
+# （空——主公尚未授权任何类无人值守）
