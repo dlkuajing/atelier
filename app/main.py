@@ -1,12 +1,13 @@
 """FastAPI app entrypoint."""
 
+import json
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
 import structlog
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -20,6 +21,8 @@ _optiland_patches.apply_all()
 
 from app.api import optical, rag, wizard  # noqa: E402
 from app.core.config import settings  # noqa: E402
+from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
+from app.core.lens_system import Scenario  # noqa: E402
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
 from app.core.provenance import ProvenanceSource  # noqa: E402
 
@@ -27,6 +30,18 @@ from app.core.provenance import ProvenanceSource  # noqa: E402
 logger = structlog.get_logger(__name__)
 WEB_ROOT = Path(__file__).resolve().parent / "web"
 templates = Jinja2Templates(directory=WEB_ROOT / "templates")
+_JOB_PROGRESS_PERCENT = {
+    JobStatus.QUEUED: 10,
+    JobStatus.RUNNING: 55,
+    JobStatus.SUCCEEDED: 100,
+    JobStatus.FAILED: 100,
+}
+_JOB_STATUS_MESSAGES = {
+    JobStatus.QUEUED: "Waiting for the deep optical engine seat.",
+    JobStatus.RUNNING: "Engine is computing the optical design package.",
+    JobStatus.SUCCEEDED: "Design task completed.",
+    JobStatus.FAILED: "Design task failed.",
+}
 ANALYSIS_PROVENANCE_BADGES = (
     {"label": "Paraxial", "source": ProvenanceSource.THIN_LENS_ANALYTIC.value},
     {"label": "MTF", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
@@ -90,6 +105,26 @@ def _format_parameter_rows(
             "bounds": f"{bounds.n_elements_min}-{bounds.n_elements_max}",
         },
     )
+
+
+def _job_progress_context(record: JobRecord) -> dict[str, object]:
+    result = dict(record.result) if record.result is not None else None
+    return {
+        "product_name": "Atelier",
+        "job_id": record.job_id,
+        "engine": record.engine,
+        "status": record.status.value,
+        "status_label": record.status.value.replace("-", " ").replace("_", " ").title(),
+        "status_message": _JOB_STATUS_MESSAGES[record.status],
+        "progress_percent": _JOB_PROGRESS_PERCENT[record.status],
+        "payload": dict(record.payload),
+        "result": result,
+        "has_result": result is not None,
+        "result_json": json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True)
+        if result is not None
+        else "",
+        "error": record.error,
+    }
 
 
 @asynccontextmanager
@@ -176,3 +211,67 @@ async def wizard_confirm_alias(
     requirement: Annotated[str, Form(min_length=3, max_length=2000)],
 ) -> HTMLResponse:
     return await wizard_confirm(request, requirement)
+
+
+@app.post("/results/summary", response_class=HTMLResponse, tags=["web"])
+@app.post("/wizard/summary", response_class=HTMLResponse, include_in_schema=False)
+async def result_summary(
+    request: Request,
+    scenario: Annotated[Scenario, Form()],
+    scenario_label_en: Annotated[str, Form(min_length=1, max_length=100)],
+    focal_length_mm: Annotated[float, Form(gt=0)],
+    f_number: Annotated[float, Form(gt=0)],
+    field_of_view_deg: Annotated[float, Form(gt=0, le=180)],
+    image_height_mm: Annotated[float, Form(gt=0)],
+    total_track_mm: Annotated[float, Form(gt=0)],
+    airy_disc_diameter_um: Annotated[float, Form(gt=0)],
+    cutoff_freq_lp_per_mm: Annotated[float, Form(gt=0)],
+    n_elements: Annotated[int | None, Form(ge=2, le=30)] = None,
+    wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
+) -> HTMLResponse:
+    summary = await wizard.generate_executive_summary(
+        wizard.ExecutiveSummaryRequest(
+            scenario=scenario,
+            scenario_label_en=scenario_label_en,
+            focal_length_mm=focal_length_mm,
+            f_number=f_number,
+            field_of_view_deg=field_of_view_deg,
+            image_height_mm=image_height_mm,
+            n_elements=n_elements,
+            wavelength_nm=wavelength_nm,
+            total_track_mm=total_track_mm,
+            airy_disc_diameter_um=airy_disc_diameter_um,
+            cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+        )
+    )
+    return templates.TemplateResponse(
+        request,
+        "result_summary.html",
+        {
+            "product_name": "Atelier",
+            "scenario_label": scenario_label_en,
+            "scenario": scenario.value,
+            "summary": summary,
+            "metrics": (
+                ("Focal length", f"{focal_length_mm:.2f} mm"),
+                ("F-number", f"f/{f_number:.2f}"),
+                ("Field of view", f"{field_of_view_deg:.1f} deg"),
+                ("Image height", f"{image_height_mm:.2f} mm"),
+                ("Total track", f"{total_track_mm:.2f} mm"),
+                ("Airy diameter", f"{airy_disc_diameter_um:.2f} um"),
+                ("Cutoff", f"{cutoff_freq_lp_per_mm:.0f} lp/mm"),
+            ),
+        },
+    )
+
+
+@app.get("/jobs/{job_id}", response_class=HTMLResponse, tags=["web"])
+async def job_progress(request: Request, job_id: str) -> HTMLResponse:
+    try:
+        record = optical.job_store.get(job_id)
+    except JobNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "job_id": job_id},
+        ) from exc
+    return templates.TemplateResponse(request, "job_progress.html", _job_progress_context(record))

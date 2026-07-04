@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product_name }} Task Progress</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="/">Workbench</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+
+    <main class="shell shell-narrow">
+      <section
+        class="job-progress"
+        data-job-progress
+        data-job-id="{{ job_id }}"
+        data-events-url="/api/optical/jobs/{{ job_id }}/events"
+        aria-labelledby="job-progress-title"
+      >
+        <p class="eyebrow">Deep engine task</p>
+        <h1 id="job-progress-title">Task progress</h1>
+
+        <div class="job-summary">
+          <div>
+            <span class="brief-label">Job</span>
+            <code>{{ job_id }}</code>
+          </div>
+          <div>
+            <span class="brief-label">Engine</span>
+            <strong id="job-engine">{{ engine }}</strong>
+          </div>
+          <div>
+            <span class="brief-label">Status</span>
+            <strong id="job-status" data-status="{{ status }}">{{ status_label }}</strong>
+          </div>
+        </div>
+
+        <div class="progress-panel" role="status" aria-live="polite">
+          <progress id="job-progress-meter" max="100" value="{{ progress_percent }}">
+            {{ progress_percent }}%
+          </progress>
+          <div class="progress-track" aria-hidden="true">
+            <div
+              class="progress-fill"
+              id="job-progress-bar"
+              style="width: {{ progress_percent }}%;"
+            ></div>
+          </div>
+          <output id="job-progress-label">{{ progress_percent }}%</output>
+          <p id="job-status-detail">{{ status_message }}</p>
+        </div>
+
+        <section class="job-result" id="job-result-panel" {% if not has_result %}hidden{% endif %}>
+          <span class="brief-label">Result</span>
+          <pre id="job-result">{{ result_json }}</pre>
+        </section>
+
+        <section class="job-error" id="job-error-panel" {% if not error %}hidden{% endif %}>
+          <span class="brief-label">Error</span>
+          <p id="job-error">{{ error or "" }}</p>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      (() => {
+        const root = document.querySelector("[data-job-progress]");
+        if (!root || !("EventSource" in window)) {
+          return;
+        }
+
+        const statusEl = document.getElementById("job-status");
+        const detailEl = document.getElementById("job-status-detail");
+        const meterEl = document.getElementById("job-progress-meter");
+        const barEl = document.getElementById("job-progress-bar");
+        const labelEl = document.getElementById("job-progress-label");
+        const resultPanel = document.getElementById("job-result-panel");
+        const resultEl = document.getElementById("job-result");
+        const errorPanel = document.getElementById("job-error-panel");
+        const errorEl = document.getElementById("job-error");
+        const progressByStatus = {
+          queued: 10,
+          running: 55,
+          succeeded: 100,
+          failed: 100,
+        };
+        const messageByStatus = {
+          queued: "Waiting for the deep optical engine seat.",
+          running: "Engine is computing the optical design package.",
+          succeeded: "Design task completed.",
+          failed: "Design task failed.",
+        };
+
+        const labelFor = (status) =>
+          status.replace(/[-_]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+        const render = (payload) => {
+          const status = payload.status || "queued";
+          const progress = progressByStatus[status] || 0;
+
+          statusEl.textContent = labelFor(status);
+          statusEl.dataset.status = status;
+          detailEl.textContent = messageByStatus[status] || "Task state updated.";
+          meterEl.value = progress;
+          barEl.style.width = `${progress}%`;
+          labelEl.textContent = `${progress}%`;
+
+          if (payload.result) {
+            resultEl.textContent = JSON.stringify(payload.result, null, 2);
+            resultPanel.hidden = false;
+          }
+          if (payload.error) {
+            errorEl.textContent = payload.error;
+            errorPanel.hidden = false;
+          }
+          if (status === "succeeded" || status === "failed") {
+            source.close();
+          }
+        };
+
+        const source = new EventSource(root.dataset.eventsUrl);
+        ["queued", "running", "succeeded", "failed"].forEach((eventName) => {
+          source.addEventListener(eventName, (event) => {
+            render(JSON.parse(event.data));
+          });
+        });
+        source.onerror = () => {
+          detailEl.textContent = "Connection interrupted. Refresh to load the latest snapshot.";
+        };
+      })();
+    </script>
+  </body>
+</html>
