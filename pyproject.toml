@@ -1,5 +1,5 @@
 [project]
-name = "lumira-backend"
+name = "atelier"
 version = "0.1.0"
 description = "Lumira Atelier · Optical Co-Pilot Backend (FastAPI + Optiland + rayoptics + pgvector RAG)"
 requires-python = ">=3.12"
