@@ -14,7 +14,7 @@
 - [~] **Phase 2: 专利底库规模化采集**（进行中：采集管线+QC 就绪，USPTO 三批 94 颗候选入库 PR #5/#13；DATA-01 待主公同步 staging ZMX） - 同步 109 颗 staging ZMX + 双源专利定向采集入库，为规模验收打底（可与 Phase 1/3 并行）
 - [x] **Phase 3: 通用后台任务层**（2026-07-04 夜车批次1，PR #1） - 假引擎（SleepEngine）验证异步任务 + SSE 进度流 + 单席位信号量
 - [x] **Phase 4: 专家分析补全**（2026-07-04/05 批次2+3，PR #2/#3/#10 含数值锚点与版本守卫） - 点列图/场曲畸变/处方表/波前误差 RMS·Strehl，不依赖 CODE V
-- [~] **Phase 5: ZMX↔CODE V 互通 Spike**（2026-07-05 批次5，PR #16）- 探测/批处理链路/导入实算真 IMH 全通（EFL 偏差 0.035%）；spike 关键发现：CODE V 11.5 无原生 ZMX 导出（WRL 只出 .seq），回程闭环留待设计决策（自研 seq→ZMX 或 DB 读数重建），四项保真基线与调用机制已入库（.planning/loop/codev-*.md）
+- [x] **Phase 5: ZMX↔CODE V 互通 Spike**（2026-07-05 批次5+6）- 探测/批处理链路/导入实算真 IMH/DB 读数重建 ZMX 全通；CODE V 11.5 无原生 ZMX 导出（WRL 只出 .seq），已采用 04a 数据库读数 + 04b 自研 ZMX writer 关闭回程闭环；`US20170003482A1.zmx` 往返四项保真全过（EFL 偏差 `3.19e-13%`，逐面 nd/vd 无 mismatch，非球面项数保持 S1-S15 各 8 项，VDX/VDY 未丢失），证据见 `.planning/loop/codev-roundtrip-report.md`
 - [ ] **Phase 6: 专利 seed 可路由化与底库规模验收** - 真 IMH 实算、路由重锚、eval golden 重锚、底库规模门（≥500 可路由 seed，专利 seed 为主要来源）关闭
 - [~] **Phase 7: CODE V 引擎适配器与深度成果展示**（SHOW-03 溯源标注已完成 PR #8；余项待 CODE V 安装） - 真实 .seq 批处理适配器 + 优化前后对比 + 公差敏感度 + 溯源标注
 - [x] **Phase 8: 演示前端**（批次3+4：骨架/输入流/SSE进度/双语摘要/结果页整合叙事，PR #4/#7/#11） - 本地服务 + 浏览器界面，覆盖需求到 CODE V 成果全叙事
@@ -70,9 +70,9 @@
 **Depends on**: Phase 1 (需要引擎抽象作为集成点；实际验证需 CODE V 已安装)
 **Requirements**: ENGINE-03
 **Success Criteria** (what must be TRUE):
-  1. 至少一个专利 seed ZMX 案例完成 CODE V 往返，导出结果可被现有 zmx_ingest 正常解析
-  2. 往返前后 EFL 误差 <2%，且逐面玻璃 nd/vd 数值差异、非球面项数差异被明确记录（非仅"能解析"）
-  3. 渐晕字段（VDX/VDY）在往返后未丢失
+  1. 实测结论（2026-07-05）：`US20170003482A1.zmx` 已完成 CODE V 导入 → 04a 数据库读数 → 04b 重建 `exported.zmx`，导出结果可被现有 `zmx_ingest` 正常解析
+  2. 实测结论（2026-07-05）：往返 EFL 误差 `3.19e-13%`（<2%），逐面玻璃 nd/vd 无 mismatch，非球面项数保持 S1-S15 各 8 项
+  3. 实测结论（2026-07-05）：渐晕字段 `VDX=(0,0,0)`、`VDY=(0,0,0)` 在往返后未丢失
   4. CODE V 实际调用方式（可执行文件/CLI 参数/输出格式）已从安装后的 Macro-PLUS 手册确认并记录，不再依赖二手资料假设
 **Plans**: TBD
 
@@ -131,7 +131,7 @@ Phases execute in numeric order with one parallel branch: 1 and 2 can start toge
 | 2. 专利底库规模化采集 | 0/TBD | Not started | - |
 | 3. 通用后台任务层 | 0/TBD | Not started | - |
 | 4. 专家分析补全 | 0/TBD | Not started | - |
-| 5. ZMX↔CODE V 互通 Spike | 0/TBD | Not started | - |
+| 5. ZMX↔CODE V 互通 Spike | 0/TBD | Completed | 2026-07-05 |
 | 6. 专利 seed 可路由化与底库规模验收 | 0/TBD | Not started | - |
 | 7. CODE V 引擎适配器与深度成果展示 | 0/TBD | Not started | - |
 | 8. 演示前端 | 0/TBD | Not started | - |

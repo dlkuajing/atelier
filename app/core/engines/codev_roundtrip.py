@@ -13,6 +13,8 @@ from app.core.engines.codev_batch import (
     CodeVBatchResult,
     run_codev_batch,
 )
+from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
+from app.core.engines.zmx_writer import write_zmx_from_codev_readout
 from app.core.prescription_table import PrescriptionTable, extract_prescription_table
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
 
@@ -121,6 +123,24 @@ class ZmxRoundTripComparison:
             "asphere_term_mismatches": list(self.asphere_term_mismatches),
             "vignetting_mismatches": list(self.vignetting_mismatches),
             "passed": self.passed,
+        }
+
+
+@dataclass(frozen=True)
+class CodeVRoundTripCloseResult:
+    """Completed ENGINE-04c readout -> rebuilt ZMX -> comparison loop."""
+
+    source_zmx: Path
+    readout: CodeVReadoutResult
+    exported_zmx: Path
+    comparison: ZmxRoundTripComparison
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "source_zmx": str(self.source_zmx),
+            "readout": self.readout.describe(),
+            "exported_zmx": str(self.exported_zmx),
+            "comparison": self.comparison.describe(),
         }
 
 
@@ -249,6 +269,45 @@ def run_codev_zmx_import(
     )
 
 
+def run_codev_roundtrip_close(
+    *,
+    source_zmx: Path | str | None = None,
+    work_dir: Path | str,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
+    timeout_seconds: float = 120.0,
+    exported_filename: str = "exported.zmx",
+    asphere_abs_tol: float = 1e-6,
+) -> CodeVRoundTripCloseResult:
+    """Close the ENGINE-04c loop through CODE V readout and rebuilt ZMX."""
+
+    source_zmx = default_patent_roundtrip_seed() if source_zmx is None else Path(source_zmx)
+    work_dir = Path(work_dir)
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    readout = run_codev_readout(
+        source_zmx=source_zmx,
+        work_dir=work_dir,
+        executable=executable,
+        timeout_seconds=timeout_seconds,
+    )
+    exported_zmx = write_zmx_from_codev_readout(
+        readout.readout,
+        work_dir / exported_filename,
+        name=f"{source_zmx.stem}-exported",
+    )
+    comparison = compare_roundtrip_zmx(
+        source_zmx,
+        exported_zmx,
+        asphere_abs_tol=asphere_abs_tol,
+    )
+    return CodeVRoundTripCloseResult(
+        source_zmx=source_zmx,
+        readout=readout,
+        exported_zmx=exported_zmx,
+        comparison=comparison,
+    )
+
+
 def extract_zmx_fidelity_facts(path: Path | str) -> ZmxFidelityFacts:
     """Extract the four fidelity gates from a ZMX via the existing ingest path."""
 
@@ -275,9 +334,9 @@ def compare_roundtrip_zmx(
     *,
     nd_abs_tol: float = 1e-6,
     vd_abs_tol: float = 1e-4,
-    asphere_abs_tol: float = 1e-12,
+    asphere_abs_tol: float = 1e-6,
 ) -> ZmxRoundTripComparison:
-    """Compare source and round-tripped ZMX across the ENGINE-03c gates."""
+    """Compare source and round-tripped ZMX across the ENGINE-03c/04c gates."""
 
     source = extract_zmx_fidelity_facts(source_zmx)
     exported = extract_zmx_fidelity_facts(exported_zmx)

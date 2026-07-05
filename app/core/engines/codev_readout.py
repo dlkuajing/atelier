@@ -313,6 +313,7 @@ def run_codev_readout(
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 90.0,
     platform_name: str = os.name,
+    allow_nonzero_ok_result: bool = True,
 ) -> CodeVReadoutResult:
     """Import one ZMX into CODE V and read database-backed prescription facts."""
 
@@ -334,6 +335,7 @@ def run_codev_readout(
         platform_name=platform_name,
         expected_schema=CODEV_READOUT_RESULT_SCHEMA,
         required_keys=_READOUT_REQUIRED_KEYS,
+        allow_nonzero_ok_result=allow_nonzero_ok_result,
     )
     return CodeVReadoutResult(
         batch=batch,

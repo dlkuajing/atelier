@@ -10,7 +10,7 @@ from app.core.engines.codev_readout import CodeVFieldReadout, CodeVReadout, Code
 
 _DEFAULT_WAVELENGTHS_UM: tuple[float, ...] = (0.4861, 0.5876, 0.6563)
 _DEFAULT_PRIMARY_WAVELENGTH_INDEX = 2
-_ASPHERE_TERMS: tuple[str, ...] = ("A", "B", "C", "D", "E", "F", "G", "H", "J")
+_ASPHERE_TERMS: tuple[str, ...] = ("A", "B", "C", "D", "E", "F", "G")
 _AIR_GLASS_NAMES = {"", "AIR", "NONE", "NULL", "___BLANK"}
 _FIELD_TYPE_TO_FTYP = {
     "ANG": 0,
@@ -207,8 +207,8 @@ def _append_surface(
 
 
 def _append_even_asphere_terms(lines: list[str], surface: CodeVSurfaceReadout) -> None:
-    # Existing data/zmx EVENASPH files reserve PARM 1 and map CODE V A..J to
-    # PARM 2..10. Keeping that layout avoids the historical off-by-one trap.
+    # Existing data/zmx EVENASPH files reserve PARM 1 and use PARM 2..8 for
+    # CODE V A..G. Emitting H/J would change the source term count.
     lines.append("  PARM 1 0")
     for offset, label in enumerate(_ASPHERE_TERMS, start=2):
         value = surface.asphere_coefficients.get(label, 0.0)

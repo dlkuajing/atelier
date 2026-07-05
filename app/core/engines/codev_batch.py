@@ -275,8 +275,14 @@ def run_codev_batch(
     platform_name: str = os.name,
     expected_schema: str = CODEV_BATCH_RESULT_SCHEMA,
     required_keys: Iterable[str] = _BATCH_REQUIRED_KEYS,
+    allow_nonzero_ok_result: bool = False,
 ) -> CodeVBatchResult:
-    """Run CODE V in batch mode and parse only the explicit result file."""
+    """Run CODE V in batch mode and parse only the explicit result file.
+
+    ``allow_nonzero_ok_result`` only accepts a non-zero process return code
+    after the explicit result file passes schema, required-key, and status
+    validation.
+    """
 
     executable = Path(executable)
     sequence_path = Path(sequence_path)
@@ -362,7 +368,7 @@ def run_codev_batch(
                     "result_created_this_run": True,
                 },
             )
-        if process.returncode != 0:
+        if process.returncode != 0 and not allow_nonzero_ok_result:
             raise CodeVBatchError(
                 _classify_error(data.values(), stdout_text, stderr_text, listing_tail),
                 "CODE V batch exited with a non-zero returncode despite an ok result file",
