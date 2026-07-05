@@ -142,7 +142,11 @@ def write_trivial_sequence(sequence_path: Path | str, result_path: Path | str) -
     return sequence_path
 
 
-def parse_codev_result_file(result_path: Path | str) -> dict[str, str]:
+def parse_codev_result_file(
+    result_path: Path | str,
+    *,
+    expected_schema: str = CODEV_BATCH_RESULT_SCHEMA,
+) -> dict[str, str]:
     """Parse the explicit CODE V result TSV exported by ``BUF EXP``."""
 
     result_path = Path(result_path)
@@ -173,13 +177,13 @@ def parse_codev_result_file(result_path: Path | str) -> dict[str, str]:
             )
         data[parts[0].strip()] = "\t".join(parts[1:]).strip()
 
-    if data.get("schema") != CODEV_BATCH_RESULT_SCHEMA:
+    if data.get("schema") != expected_schema:
         raise CodeVBatchError(
             "failure",
             "CODE V result file has an unexpected schema",
             details={
                 "result_path": str(result_path),
-                "expected_schema": CODEV_BATCH_RESULT_SCHEMA,
+                "expected_schema": expected_schema,
                 "actual_schema": data.get("schema"),
             },
         )
@@ -222,6 +226,7 @@ def run_codev_batch(
     timeout_seconds: float = 30.0,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
+    expected_schema: str = CODEV_BATCH_RESULT_SCHEMA,
 ) -> CodeVBatchResult:
     """Run CODE V in batch mode and parse only the explicit result file."""
 
@@ -275,7 +280,7 @@ def run_codev_batch(
     listing_tail = _read_tail(listing_path)
 
     if result_path.is_file():
-        data = parse_codev_result_file(result_path)
+        data = parse_codev_result_file(result_path, expected_schema=expected_schema)
         if data.get("status") != "ok":
             raise CodeVBatchError(
                 _classify_error(data.values(), stdout_text, stderr_text, listing_tail),
