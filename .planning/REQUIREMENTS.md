@@ -14,9 +14,9 @@
 
 ### SEED — 专利 seed 可路由化（E2 头号工单）
 
-- [ ] **SEED-01**: 专利 seed 真 IMH 实算（CODE V 或 Optiland 实算，替换 case_id token 缺失导致的 0.0）
-- [ ] **SEED-02**: 路由重锚：match_case 用实算 IMH 重建距离度量，专利 seed 变为可路由
-- [ ] **SEED-03**: eval golden 重锚：evaluate_design_agent 回归集更新并通过 --fail-on-regression
+- [x] **SEED-01**: 专利 seed 真 IMH 实算（CODE V 或 Optiland 实算，替换 case_id token 缺失导致的 0.0）
+- [x] **SEED-02**: 路由重锚：match_case 用实算 IMH 重建距离度量，专利 seed 变为可路由
+- [x] **SEED-03**: eval golden 重锚：evaluate_design_agent 回归集更新并通过 --fail-on-regression
 
 ### ANLZ — 专家可信度分析补全（不依赖 CODE V）
 
@@ -76,9 +76,9 @@
 | ANLZ-03 | Phase 4 | ✓ 批次2 |
 | ANLZ-04 | Phase 4 | ✓ 批次2 |
 | ENGINE-03 | Phase 5 | ✓ 批次5+6（04c DB读数重建 ZMX 闭环；四项保真 PASS） |
-| SEED-01 | Phase 6 | Pending |
-| SEED-02 | Phase 6 | Pending |
-| SEED-03 | Phase 6 | Pending |
+| SEED-01 | Phase 6 | ✓ 批次7 PR #22（CODE V 实算+物理自检） |
+| SEED-02 | Phase 6 | ✓ 批次7 PR #22（差分断言防自证） |
+| SEED-03 | Phase 6 | ✓ 批次7 PR #22（22 颗全覆盖+物理锚） |
 | DATA-03 | Phase 6 | Pending |
 | ENGINE-04 | Phase 7 | Pending |
 | ENGINE-05 | Phase 7 | Pending |

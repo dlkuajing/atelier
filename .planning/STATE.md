@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 ## Current Position
 
-Phase: 完成 1/3/4/5/8，进行中 2/7/9，待启 6；主公 2026-07-05 裁定：①staging ZMX 不可得→规模门全靠 USPTO 采集（原料池 159/500+）②Phase 9 彩排两段式（AI 自主彩排零瑕疵→主公终验）③连续发车授权（批次免逐批 ratify）
+Phase: 完成 1/3/4/5/8，Phase 6 判据1-3 完成（余规模门），进行中 2/7/9；主公 2026-07-05 裁定：①staging ZMX 不可得→规模全靠 USPTO 采集（原料池 224/500+，Largan 占比偏高待多样化）②Phase 9 彩排两段式③连续发车授权
 Plan: 夜车模式（gsd-loop 垂直切片）替代 phase-plan 执行
-Status: 六批次 27 切片 + 车道b 采集已合 main(a69fac8)，测试 131→334
-Last activity: 2026-07-05 — ENGINE-04c 闭环验收：US20170003482A1.zmx → CODE V 导入 → 04a 读数 → 04b 重建 exported.zmx → compare_roundtrip_zmx，四项保真 PASS
+Status: 七批次 31 切片 + 车道b 两批采集已合 main(6410550)，测试 131→388
+Last activity: 2026-07-06 — 批次7收官（可路由化三件套，E2 头号死结解开）；审查闸拦截高危数据事故（US10031318B2 半视场错读 1.71→实算 3.92743）；采集批次5 入库（池 224）
 
-Progress: [█████░░░░░] ~50%（按 24 需求中 14 完成/2 部分计）
+Progress: [██████░░░░] ~65%（按 24 需求中 18 完成/1 部分计）
 
 ## Performance Metrics
 
