@@ -25,16 +25,22 @@ def test_rebase_seed_imh_uses_mocked_codev_readout_and_writes_report(tmp_path: P
                     "case_id": "US100",
                     "source_zmx": "US100.zmx",
                     "image_height_mm": 1.0,
+                    "efl_mm": 1.2345678,
+                    "fov_deg": 90.0,
                 },
                 {
                     "case_id": "US200",
                     "source_zmx": "US200.zmx",
                     "image_height_mm": 2.0,
+                    "efl_mm": 2.5,
+                    "fov_deg": 90.0,
                 },
                 {
                     "case_id": "not-a-patent",
                     "source_zmx": "not-a-patent.zmx",
                     "image_height_mm": 9.0,
+                    "efl_mm": 9.0,
+                    "fov_deg": 90.0,
                 },
             ],
             indent=2,
@@ -74,8 +80,71 @@ def test_rebase_seed_imh_uses_mocked_codev_readout_and_writes_report(tmp_path: P
 
     report = report_path.read_text(encoding="utf-8")
     assert "SEED-01a 真 IMH 重锚报告" in report
-    assert "| US100 | 1.000000 | 1.234568 | +0.234568 |" in report
-    assert "| US200 | 2.000000 | 2.500000 | +0.500000 |" in report
+    assert "| US100 | updated | 1.000000 | 1.234568 | 1.234568 | 1.234568 | 0.00% | +0.234568 |" in report
+    assert "| US200 | updated | 2.000000 | 2.500000 | 2.500000 | 2.500000 | 0.00% | +0.500000 |" in report
+    assert "### Anomalies" in report
+    assert "- None." in report
+
+
+def test_rebase_seed_imh_rejects_physical_anchor_anomaly_and_appends_report(
+    tmp_path: Path,
+) -> None:
+    index_path = tmp_path / "index.json"
+    zmx_dir = tmp_path / "zmx"
+    report_path = tmp_path / "seed-imh-rebase-report.md"
+    zmx_dir.mkdir()
+    (zmx_dir / "US_BAD.zmx").write_text("fake", encoding="ascii")
+    index_path.write_text(
+        json.dumps(
+            [
+                {
+                    "case_id": "US_BAD",
+                    "source_zmx": "US_BAD.zmx",
+                    "image_height_mm": 3.9,
+                    "efl_mm": 4.8,
+                    "fov_deg": 78.4,
+                },
+            ],
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    report_path.write_text(
+        "# SEED-01a 真 IMH 重锚报告\n\n"
+        "| case_id | old image_height_mm | CODE V IMH mm | delta mm |\n"
+        "|---|---:|---:|---:|\n"
+        "| US_BAD | 3.900000 | 1.700000 | -2.200000 |\n",
+        encoding="utf-8",
+    )
+
+    def fake_readout_runner(**kwargs: object) -> SimpleNamespace:
+        return SimpleNamespace(
+            batch=SimpleNamespace(duration_seconds=0.01),
+            readout=SimpleNamespace(image_height_y_mm=1.7),
+        )
+
+    rows = rebase_seed_imh(
+        index_path=index_path,
+        zmx_dir=zmx_dir,
+        report_path=report_path,
+        work_root=tmp_path / "work",
+        readout_runner=fake_readout_runner,
+        generated_at=datetime(2026, 7, 6, tzinfo=UTC),
+    )
+
+    rewritten = json.loads(index_path.read_text(encoding="utf-8"))
+    assert rewritten[0]["image_height_mm"] == pytest.approx(3.9)
+    assert rows[0].status == "failed"
+    assert rows[0].written_image_height_mm == pytest.approx(3.9)
+    assert rows[0].first_order_deviation_pct > 25.0
+
+    report = report_path.read_text(encoding="utf-8")
+    assert "| US_BAD | 3.900000 | 1.700000 | -2.200000 |" in report
+    assert "## Run 2026-07-06T00:00:00+00:00" in report
+    assert "| US_BAD | failed |" in report
+    assert "index value retained" in report
+    assert report.count("| US_BAD | 3.900000 | 1.700000 | -2.200000 |") == 1
 
 
 def test_case_image_height_prefers_metadata_then_index_then_case_id(

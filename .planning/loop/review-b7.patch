@@ -1,0 +1,1183 @@
+diff --git a/.planning/loop/seed-eval-rebase-report.md b/.planning/loop/seed-eval-rebase-report.md
+new file mode 100644
+index 0000000..996df8c
+--- /dev/null
++++ b/.planning/loop/seed-eval-rebase-report.md
+@@ -0,0 +1,36 @@
++# SEED-03a eval golden rebase report
++
++Date: 2026-07-05
++
++## Scope
++
++Extended the fixed design-agent regression set so `scripts/evaluate_design_agent.py`
++covers reanchored patent seeds after the real-IMH and routing rebases.
++
++## Golden patent seeds
++
++Five patent seed briefs were added to `scripts/e2_golden.py`,
++`tests/data/eval_golden.json`, and `scripts/evaluate_design_agent.py`:
++
++| Eval case | Patent seed | Reason |
++|---|---:|---|
++| `patent_wide_8p_low_f_number_reanchor` | `US20170045714A1` | Wide 8P, low F/# 1.75, FOV 70.4, IMH 2.91317; covers high element count / fast wide seed. |
++| `patent_ultrawide_7p_full_field_reanchor` | `US20170003482A1` | Ultrawide 7P, FOV 91.0, IMH 3.62257, full-field MTF coverage; anchors the high-FOV full-field evidence path. |
++| `patent_ultrawide_6p_fast_reanchor` | `US20180143405A1` | Ultrawide 6P, F/# 1.86, FOV 95.0, IMH 3.26503; covers fast ultrawide partial-field evidence. |
++| `patent_ultrawide_6p_extreme_fov_reanchor` | `US10330891B2` | Ultrawide 6P, FOV 100.0, short EFL 2.41636, IMH 2.97599; covers extreme-FOV routing after IMH reanchor. |
++| `patent_wide_6p_full_field_reanchor` | `US9651759B2` | Wide 6P, FOV 82.0, IMH 2.94563, full-field MTF coverage; covers the wide/full-field patent seed class. |
++
++`US8908290B1` was probed but not used: its exact brief routed to
++`US20170003482A1`, so it is not a stable self-reanchor golden. The accepted
++patent golden entries require `source_case_id == selected_case_id`.
++
++## Verification
++
++- Regenerated `tests/data/eval_golden.json` with
++  `PYTHONUTF8=1 ./.venv/Scripts/python.exe scripts/e2_golden.py`.
++- `PYTHONUTF8=1 ./.venv/Scripts/python.exe scripts/evaluate_design_agent.py --fail-on-regression --json`
++  passed: 13/13 eval cases, 0 failures.
++- Slice pytest passed and was written to `.planning/loop/gate-last.log`:
++  `PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest -q tests/test_eval_golden_seeds.py`.
++
++No full pytest run was performed for this slice.
+diff --git a/.planning/loop/seed-imh-rebase-report.md b/.planning/loop/seed-imh-rebase-report.md
+new file mode 100644
+index 0000000..9f502be
+--- /dev/null
++++ b/.planning/loop/seed-imh-rebase-report.md
+@@ -0,0 +1,32 @@
++# SEED-01a 真 IMH 重锚报告
++
++- Generated: 2026-07-05T14:36:50+00:00
++- Source ZMX glob: `data/zmx/US*.zmx`
++- Readout path: `app.core.engines.codev_readout.run_codev_readout`
++- Updated index: `app/data/optical_cases/index.json`
++- Seed count: 22
++
++| case_id | old image_height_mm | CODE V IMH mm | delta mm |
++|---|---:|---:|---:|
++| US10031318B2 | 3.926000 | 1.709930 | -2.216070 |
++| US10281683B2 | 4.019000 | 3.986220 | -0.032780 |
++| US10310222B2 | 3.614000 | 3.481380 | -0.132620 |
++| US10330891B2 | 2.880000 | 2.975990 | +0.095990 |
++| US20140111876A1 | 3.223000 | 3.290350 | +0.067350 |
++| US20140118844A1 | 2.881000 | 2.952730 | +0.071730 |
++| US20150338607A1 | 3.020000 | 3.060190 | +0.040190 |
++| US20170003482A1 | 3.685000 | 3.622570 | -0.062430 |
++| US20170045714A1 | 2.801000 | 2.913170 | +0.112170 |
++| US20180143405A1 | 3.354000 | 3.265030 | -0.088970 |
++| US20210165194A1 | 2.629000 | 2.532970 | -0.096030 |
++| US8310767B2 | 2.231000 | 2.280810 | +0.049810 |
++| US8908290B1 | 4.034000 | 4.123460 | +0.089460 |
++| US9063319B1 | 3.851000 | 3.825190 | -0.025810 |
++| US9195030B2 | 3.375000 | 3.412610 | +0.037610 |
++| US9201216B2 | 2.942000 | 2.968630 | +0.026630 |
++| US9239447B1 | 3.035000 | 3.095750 | +0.060750 |
++| US9304295B2 | 2.913000 | 2.836850 | -0.076150 |
++| US9316811B2 | 3.795000 | 3.766650 | -0.028350 |
++| US9557532B2 | 2.904000 | 2.932540 | +0.028540 |
++| US9651759B2 | 2.848000 | 2.945630 | +0.097630 |
++| US9810880B2 | 4.449000 | 4.451270 | +0.002270 |
+diff --git a/app/core/case_library.py b/app/core/case_library.py
+index 734bc89..a6ad1bf 100644
+--- a/app/core/case_library.py
++++ b/app/core/case_library.py
+@@ -17,6 +17,7 @@ Two real-design quirks are handled here (verified during ingest):
+ from __future__ import annotations
+ 
+ import contextlib
++import json
+ import math
+ import re
+ import warnings
+@@ -561,18 +562,78 @@ _IMH_RE = re.compile(r"_IMH(?P<imh>\d+(?:\.\d+)?)")
+ 
+ 
+ def _case_image_height_mm(case: OpticalSampleData) -> float:
+-    """Recover nominal image height from the case id.
++    """Recover nominal image height from metadata/index, with case-id fallback.
+ 
+     v2-02 wrote image height to index.json but not to each generated case JSON.
+-    Avoid rewriting 17 large payloads here; the source filename is already the
+-    manifest's canonical design-intent string (e.g. ..._IMH2.3_...).
++    Avoid rewriting large payloads here; when metadata lacks an explicit value,
++    use the compact index manifest before falling back to legacy `_IMH` tokens.
+     """
+     if case.metadata is None:
+         return 0.0
++    metadata_image_height = _positive_finite_float(
++        getattr(case.metadata, "image_height_mm", None)
++    )
++    if metadata_image_height is not None:
++        return metadata_image_height
++
++    indexed_image_heights = _case_index_image_height_mm_by_id()
++    source_zmx = getattr(case.metadata, "source_zmx", None)
++    for key in (
++        case.metadata.case_id,
++        source_zmx,
++        Path(source_zmx).stem if isinstance(source_zmx, str) and source_zmx else None,
++    ):
++        if isinstance(key, str) and key in indexed_image_heights:
++            return indexed_image_heights[key]
++
+     match = _IMH_RE.search(case.metadata.case_id)
+     return float(match.group("imh")) if match else 0.0
+ 
+ 
++@lru_cache(maxsize=1)
++def _case_index_image_height_mm_by_id() -> dict[str, float]:
++    """Load image heights from the compact case index without hydrating payloads."""
++
++    index_path = CASES_DIR / "index.json"
++    if not index_path.is_file():
++        return {}
++    try:
++        records = json.loads(index_path.read_text(encoding="utf-8"))
++    except (OSError, ValueError, TypeError):
++        return {}
++    if not isinstance(records, list):
++        return {}
++
++    values: dict[str, float] = {}
++    for record in records:
++        if not isinstance(record, dict):
++            continue
++        image_height = _positive_finite_float(record.get("image_height_mm"))
++        if image_height is None:
++            continue
++        case_id = record.get("case_id")
++        source_zmx = record.get("source_zmx")
++        keys = [case_id, source_zmx]
++        if isinstance(source_zmx, str) and source_zmx:
++            keys.append(Path(source_zmx).stem)
++        for key in keys:
++            if isinstance(key, str) and key:
++                values[key] = image_height
++    return values
++
++
++def _positive_finite_float(value: object) -> float | None:
++    if value is None:
++        return None
++    try:
++        number = float(value)
++    except (TypeError, ValueError):
++        return None
++    if math.isfinite(number) and number > 0.0:
++        return number
++    return None
++
++
+ class _MassProxy(NamedTuple):
+     estimated_mass_g: float
+     envelope_diameter_mm: float
+diff --git a/app/core/optical_sample.py b/app/core/optical_sample.py
+index 747335b..345a126 100644
+--- a/app/core/optical_sample.py
++++ b/app/core/optical_sample.py
+@@ -29,6 +29,7 @@ class CaseMetadata(BaseModel):
+     n_filter: int = Field(..., description="Flat IR-filter / cover-glass plates")
+     materials: list[str] = Field(..., description="Distinct real material names used (datasheet)")
+     fov_deg: float = Field(..., description="Nominal full FOV from the manifest")
++    image_height_mm: float | None = Field(None, description="Nominal image height from index.json")
+     nominal_efl_mm: float = Field(..., description="Design-nominal EFL from filename")
+     computed_efl_mm: float = Field(..., description="Optiland-recomputed EFL")
+     efl_error_pct: float = Field(..., description="abs(computed-nominal)/nominal*100")
+diff --git a/app/data/optical_cases/index.json b/app/data/optical_cases/index.json
+index 96ee068..ca1a42a 100644
+--- a/app/data/optical_cases/index.json
++++ b/app/data/optical_cases/index.json
+@@ -347,7 +347,7 @@
+     "efl_mm": 3.9700724301365704,
+     "fnum": 1.75,
+     "fov_deg": 70.4,
+-    "image_height_mm": 2.801,
++    "image_height_mm": 2.91317,
+     "materials": [],
+     "mtf_max_field_frac": 0.9,
+     "efl_error_pct": 0.0018244366894259898
+@@ -362,7 +362,7 @@
+     "efl_mm": 3.6212546768437344,
+     "fnum": 2.32,
+     "fov_deg": 91.0,
+-    "image_height_mm": 3.685,
++    "image_height_mm": 3.62257,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.007033329017795344
+@@ -377,7 +377,7 @@
+     "efl_mm": 3.0730259620372222,
+     "fnum": 1.86,
+     "fov_deg": 95.0,
+-    "image_height_mm": 3.354,
++    "image_height_mm": 3.26503,
+     "materials": [],
+     "mtf_max_field_frac": 0.85,
+     "efl_error_pct": 0.000844843385039743
+@@ -392,7 +392,7 @@
+     "efl_mm": 3.0346666685303636,
+     "fnum": 2.2,
+     "fov_deg": 90.0,
+-    "image_height_mm": 3.035,
++    "image_height_mm": 3.09575,
+     "materials": [],
+     "mtf_max_field_frac": 0.5,
+     "efl_error_pct": 0.010982914979787286
+@@ -407,7 +407,7 @@
+     "efl_mm": 3.9503106187671486,
+     "fnum": 2.0,
+     "fov_deg": 91.2,
+-    "image_height_mm": 4.034,
++    "image_height_mm": 4.12346,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.007863766256922547
+@@ -422,7 +422,7 @@
+     "efl_mm": 2.416363087162025,
+     "fnum": 2.08,
+     "fov_deg": 100.0,
+-    "image_height_mm": 2.88,
++    "image_height_mm": 2.97599,
+     "materials": [],
+     "mtf_max_field_frac": 0.85,
+     "efl_error_pct": 0.015028442136807377
+@@ -437,7 +437,7 @@
+     "efl_mm": 4.609118820611516,
+     "fnum": 1.8,
+     "fov_deg": 76.2,
+-    "image_height_mm": 3.614,
++    "image_height_mm": 3.48138,
+     "materials": [],
+     "mtf_max_field_frac": 0.5,
+     "efl_error_pct": 0.002578012833936537
+@@ -452,7 +452,7 @@
+     "efl_mm": 4.7060280846869285,
+     "fnum": 1.68,
+     "fov_deg": 81.0,
+-    "image_height_mm": 4.019,
++    "image_height_mm": 3.98622,
+     "materials": [],
+     "mtf_max_field_frac": 0.5,
+     "efl_error_pct": 0.0005967846776042025
+@@ -467,7 +467,7 @@
+     "efl_mm": 4.15614620787279,
+     "fnum": 1.6,
+     "fov_deg": 72.0,
+-    "image_height_mm": 3.02,
++    "image_height_mm": 3.06019,
+     "materials": [],
+     "mtf_max_field_frac": 0.5,
+     "efl_error_pct": 0.0035179950141980693
+@@ -482,7 +482,7 @@
+     "efl_mm": 3.276723748250681,
+     "fnum": 2.2,
+     "fov_deg": 82.0,
+-    "image_height_mm": 2.848,
++    "image_height_mm": 2.94563,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.008430019814437348
+@@ -497,7 +497,7 @@
+     "efl_mm": 3.267339835211636,
+     "fnum": 2.1,
+     "fov_deg": 84.0,
+-    "image_height_mm": 2.942,
++    "image_height_mm": 2.96863,
+     "materials": [],
+     "mtf_max_field_frac": 0.9,
+     "efl_error_pct": 0.01040205728913877
+@@ -512,7 +512,7 @@
+     "efl_mm": 3.483129410172271,
+     "fnum": 2.4,
+     "fov_deg": 79.2,
+-    "image_height_mm": 2.881,
++    "image_height_mm": 2.95273,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.003715480111142198
+@@ -527,7 +527,7 @@
+     "efl_mm": 3.5589382816824586,
+     "fnum": 2.5,
+     "fov_deg": 78.6,
+-    "image_height_mm": 2.913,
++    "image_height_mm": 2.83685,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.0017341477252468952
+@@ -542,7 +542,7 @@
+     "efl_mm": 2.938699312802613,
+     "fnum": 2.9,
+     "fov_deg": 74.4,
+-    "image_height_mm": 2.231,
++    "image_height_mm": 2.28081,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.010230935603510849
+@@ -557,7 +557,7 @@
+     "efl_mm": 2.408597272589865,
+     "fnum": 2.0,
+     "fov_deg": 95.0,
+-    "image_height_mm": 2.629,
++    "image_height_mm": 2.53297,
+     "materials": [],
+     "mtf_max_field_frac": 0.5,
+     "efl_error_pct": 0.016717617689291354
+@@ -572,7 +572,7 @@
+     "efl_mm": 4.993623501307038,
+     "fnum": 2.25,
+     "fov_deg": 83.4,
+-    "image_height_mm": 4.449,
++    "image_height_mm": 4.45127,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.007539020684055795
+@@ -587,7 +587,7 @@
+     "efl_mm": 4.1480292587139544,
+     "fnum": 2.3,
+     "fov_deg": 70.0,
+-    "image_height_mm": 2.904,
++    "image_height_mm": 2.93254,
+     "materials": [],
+     "mtf_max_field_frac": 1.0,
+     "efl_error_pct": 0.00070536918888044
+@@ -602,7 +602,7 @@
+     "efl_mm": 4.814305490041285,
+     "fnum": 2.05,
+     "fov_deg": 78.4,
+-    "image_height_mm": 3.926,
++    "image_height_mm": 1.70993,
+     "materials": [],
+     "mtf_max_field_frac": 0.75,
+     "efl_error_pct": 0.0063458670811151596
+@@ -617,7 +617,7 @@
+     "efl_mm": 4.755822580770405,
+     "fnum": 2.25,
+     "fov_deg": 78.0,
+-    "image_height_mm": 3.851,
++    "image_height_mm": 3.82519,
+     "materials": [],
+     "mtf_max_field_frac": 0.75,
+     "efl_error_pct": 0.003730429554140257
+@@ -632,7 +632,7 @@
+     "efl_mm": 4.185145707870191,
+     "fnum": 2.07,
+     "fov_deg": 75.2,
+-    "image_height_mm": 3.223,
++    "image_height_mm": 3.29035,
+     "materials": [],
+     "mtf_max_field_frac": 0.9,
+     "efl_error_pct": 0.003481669538629293
+@@ -647,7 +647,7 @@
+     "efl_mm": 4.840528787850848,
+     "fnum": 2.2,
+     "fov_deg": 76.2,
+-    "image_height_mm": 3.795,
++    "image_height_mm": 3.76665,
+     "materials": [],
+     "mtf_max_field_frac": 0.75,
+     "efl_error_pct": 0.0097337770946618
+@@ -662,9 +662,9 @@
+     "efl_mm": 4.212827138701165,
+     "fnum": 2.24,
+     "fov_deg": 77.4,
+-    "image_height_mm": 3.375,
++    "image_height_mm": 3.41261,
+     "materials": [],
+     "mtf_max_field_frac": 0.85,
+     "efl_error_pct": 0.004103045308212222
+   }
+-]
+\ No newline at end of file
++]
+diff --git a/scripts/e2_golden.py b/scripts/e2_golden.py
+index 3ed49c0..63d90d8 100644
+--- a/scripts/e2_golden.py
++++ b/scripts/e2_golden.py
+@@ -43,6 +43,36 @@ GOLDEN_BRIEFS: dict[str, dict] = {
+         "scenario": "SMARTPHONE_WIDE", "efl_mm": 3.8059, "fnum": 2.05, "fov_deg": 78.8,
+         "image_height_mm": 3.2, "n_elements": 5,
+     },
++    "patent_wide_8p_low_f_number_reanchor": {
++        "source_case_id": "US20170045714A1",
++        "scenario": "SMARTPHONE_WIDE", "efl_mm": 3.9700724301365704, "fnum": 1.75,
++        "fov_deg": 70.4, "image_height_mm": 2.91317, "n_elements": 8,
++        "priority": "balanced",
++    },
++    "patent_ultrawide_7p_full_field_reanchor": {
++        "source_case_id": "US20170003482A1",
++        "scenario": "SMARTPHONE_ULTRAWIDE", "efl_mm": 3.6212546768437344, "fnum": 2.32,
++        "fov_deg": 91.0, "image_height_mm": 3.62257, "n_elements": 7,
++        "priority": "balanced",
++    },
++    "patent_ultrawide_6p_fast_reanchor": {
++        "source_case_id": "US20180143405A1",
++        "scenario": "SMARTPHONE_ULTRAWIDE", "efl_mm": 3.0730259620372222, "fnum": 1.86,
++        "fov_deg": 95.0, "image_height_mm": 3.26503, "n_elements": 6,
++        "priority": "performance",
++    },
++    "patent_ultrawide_6p_extreme_fov_reanchor": {
++        "source_case_id": "US10330891B2",
++        "scenario": "SMARTPHONE_ULTRAWIDE", "efl_mm": 2.416363087162025, "fnum": 2.08,
++        "fov_deg": 100.0, "image_height_mm": 2.97599, "n_elements": 6,
++        "priority": "balanced",
++    },
++    "patent_wide_6p_full_field_reanchor": {
++        "source_case_id": "US9651759B2",
++        "scenario": "SMARTPHONE_WIDE", "efl_mm": 3.276723748250681, "fnum": 2.2,
++        "fov_deg": 82.0, "image_height_mm": 2.94563, "n_elements": 6,
++        "priority": "balanced",
++    },
+ }
+ 
+ _FLOOR_GAP_RE = re.compile(r"floor gap ([0-9.]+)")
+@@ -64,9 +94,12 @@ def compute_golden() -> dict:
+     golden: dict[str, dict] = {}
+     for name, brief in GOLDEN_BRIEFS.items():
+         kwargs = dict(brief)
++        source_case_id = kwargs.pop("source_case_id", None)
+         kwargs["scenario"] = getattr(Scenario, kwargs["scenario"])
+         sample = match_case(**kwargs)
+         entry: dict = {"selected_case_id": sample.metadata.case_id}
++        if source_case_id is not None:
++            entry["source_case_id"] = source_case_id
+         actual = _quality_actual(sample.design_assessment)
+         if actual:
+             gap = _FLOOR_GAP_RE.search(actual)
+diff --git a/scripts/evaluate_design_agent.py b/scripts/evaluate_design_agent.py
+index 3ca68c0..ea1953c 100644
+--- a/scripts/evaluate_design_agent.py
++++ b/scripts/evaluate_design_agent.py
+@@ -25,7 +25,7 @@ from typing import Any
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+ 
+-from app.core.case_library import match_case  # noqa: E402
++from app.core.case_library import _case_image_height_mm, match_case  # noqa: E402
+ from app.core.image_quality_floor import image_quality_floor_gap_score  # noqa: E402
+ from app.core.lens_system import Scenario  # noqa: E402
+ from app.core.optical_sample import OpticalSampleData  # noqa: E402
+@@ -42,6 +42,13 @@ from app.core.zmx_ingest import (  # noqa: E402
+ # .planning/quick/260702-e2-01-batch0-intake-infra/PLAN.md.
+ _EVAL_GOLDEN_PATH = Path(__file__).resolve().parents[1] / "tests" / "data" / "eval_golden.json"
+ _EVAL_GOLDEN: dict[str, dict] = json.loads(_EVAL_GOLDEN_PATH.read_text())
++PATENT_GOLDEN_CASE_NAMES: tuple[str, ...] = (
++    "patent_wide_8p_low_f_number_reanchor",
++    "patent_ultrawide_7p_full_field_reanchor",
++    "patent_ultrawide_6p_fast_reanchor",
++    "patent_ultrawide_6p_extreme_fov_reanchor",
++    "patent_wide_6p_full_field_reanchor",
++)
+ 
+ Check = Callable[[OpticalSampleData], tuple[bool, str]]
+ 
+@@ -69,6 +76,23 @@ def _case_contains(fragment: str) -> Check:
+     return check
+ 
+ 
++def _golden_case_selected(golden_name: str) -> Check:
++    def check(sample: OpticalSampleData) -> tuple[bool, str]:
++        expected = _EVAL_GOLDEN[golden_name]["selected_case_id"]
++        case_id = sample.metadata.case_id if sample.metadata else ""
++        return case_id == expected, f"case {case_id} == golden {expected}"
++
++    return check
++
++
++def _selected_case_is_patent() -> Check:
++    def check(sample: OpticalSampleData) -> tuple[bool, str]:
++        case_id = sample.metadata.case_id if sample.metadata else ""
++        return case_id.startswith("US"), f"selected case {case_id} is patent seed"
++
++    return check
++
++
+ def _scenario_is(scenario: Scenario) -> Check:
+     def check(sample: OpticalSampleData) -> tuple[bool, str]:
+         got = sample.metadata.scenario if sample.metadata else None
+@@ -85,6 +109,14 @@ def _fov_at_least(value: float) -> Check:
+     return check
+ 
+ 
++def _image_height_at_least(value: float) -> Check:
++    def check(sample: OpticalSampleData) -> tuple[bool, str]:
++        image_height = _case_image_height_mm(sample)
++        return image_height >= value, f"image height {image_height:.2f} >= {value:.2f}"
++
++    return check
++
++
+ def _ttl_at_most(value: float) -> Check:
+     def check(sample: OpticalSampleData) -> tuple[bool, str]:
+         ttl = sample.paraxial.total_track_mm
+@@ -3751,6 +3783,111 @@ EVAL_CASES: tuple[EvalCase, ...] = (
+             *_DESIGNER_PACKET_CHECKS,
+         ),
+     ),
++    EvalCase(
++        name="patent_wide_8p_low_f_number_reanchor",
++        request={
++            "scenario": Scenario.SMARTPHONE_WIDE,
++            "efl_mm": 3.9700724301365704,
++            "fnum": 1.75,
++            "fov_deg": 70.4,
++            "image_height_mm": 2.91317,
++            "n_elements": 8,
++            "priority": "balanced",
++        },
++        checks=(
++            _score_at_least(0.85),
++            _selected_case_is_patent(),
++            _golden_case_selected("patent_wide_8p_low_f_number_reanchor"),
++            _scenario_is(Scenario.SMARTPHONE_WIDE),
++            _image_height_at_least(2.9),
++            _has_requirement_coverage(),
++            _has_seed_selection_scorecard(),
++        ),
++    ),
++    EvalCase(
++        name="patent_ultrawide_7p_full_field_reanchor",
++        request={
++            "scenario": Scenario.SMARTPHONE_ULTRAWIDE,
++            "efl_mm": 3.6212546768437344,
++            "fnum": 2.32,
++            "fov_deg": 91.0,
++            "image_height_mm": 3.62257,
++            "n_elements": 7,
++            "priority": "balanced",
++        },
++        checks=(
++            _score_at_least(0.85),
++            _selected_case_is_patent(),
++            _golden_case_selected("patent_ultrawide_7p_full_field_reanchor"),
++            _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
++            _image_height_at_least(3.6),
++            _has_requirement_coverage(),
++            _has_seed_selection_scorecard(),
++        ),
++    ),
++    EvalCase(
++        name="patent_ultrawide_6p_fast_reanchor",
++        request={
++            "scenario": Scenario.SMARTPHONE_ULTRAWIDE,
++            "efl_mm": 3.0730259620372222,
++            "fnum": 1.86,
++            "fov_deg": 95.0,
++            "image_height_mm": 3.26503,
++            "n_elements": 6,
++            "priority": "performance",
++        },
++        checks=(
++            _score_at_least(0.85),
++            _selected_case_is_patent(),
++            _golden_case_selected("patent_ultrawide_6p_fast_reanchor"),
++            _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
++            _image_height_at_least(3.2),
++            _has_requirement_coverage(),
++            _has_seed_selection_scorecard(),
++        ),
++    ),
++    EvalCase(
++        name="patent_ultrawide_6p_extreme_fov_reanchor",
++        request={
++            "scenario": Scenario.SMARTPHONE_ULTRAWIDE,
++            "efl_mm": 2.416363087162025,
++            "fnum": 2.08,
++            "fov_deg": 100.0,
++            "image_height_mm": 2.97599,
++            "n_elements": 6,
++            "priority": "balanced",
++        },
++        checks=(
++            _score_at_least(0.85),
++            _selected_case_is_patent(),
++            _golden_case_selected("patent_ultrawide_6p_extreme_fov_reanchor"),
++            _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
++            _image_height_at_least(2.9),
++            _has_requirement_coverage(),
++            _has_seed_selection_scorecard(),
++        ),
++    ),
++    EvalCase(
++        name="patent_wide_6p_full_field_reanchor",
++        request={
++            "scenario": Scenario.SMARTPHONE_WIDE,
++            "efl_mm": 3.276723748250681,
++            "fnum": 2.2,
++            "fov_deg": 82.0,
++            "image_height_mm": 2.94563,
++            "n_elements": 6,
++            "priority": "balanced",
++        },
++        checks=(
++            _score_at_least(0.85),
++            _selected_case_is_patent(),
++            _golden_case_selected("patent_wide_6p_full_field_reanchor"),
++            _scenario_is(Scenario.SMARTPHONE_WIDE),
++            _image_height_at_least(2.9),
++            _has_requirement_coverage(),
++            _has_seed_selection_scorecard(),
++        ),
++    ),
+ )
+ 
+ 
+diff --git a/scripts/rebase_seed_imh.py b/scripts/rebase_seed_imh.py
+new file mode 100644
+index 0000000..bbfc10c
+--- /dev/null
++++ b/scripts/rebase_seed_imh.py
+@@ -0,0 +1,271 @@
++"""Rebase patent seed image heights from CODE V database readouts."""
++
++from __future__ import annotations
++
++import argparse
++import json
++import math
++import os
++import sys
++import tempfile
++from collections.abc import Callable, Sequence
++from dataclasses import dataclass
++from datetime import UTC, datetime
++from pathlib import Path
++
++REPO_ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(REPO_ROOT))
++
++from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE
++from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
++
++INDEX_PATH = REPO_ROOT / "app" / "data" / "optical_cases" / "index.json"
++ZMX_DIR = REPO_ROOT / "data" / "zmx"
++REPORT_PATH = REPO_ROOT / ".planning" / "loop" / "seed-imh-rebase-report.md"
++
++
++@dataclass(frozen=True)
++class SeedImhRebaseRow:
++    case_id: str
++    source_zmx: str
++    old_image_height_mm: float
++    measured_image_height_mm: float
++    delta_mm: float
++    duration_seconds: float | None
++
++
++ReadoutRunner = Callable[..., CodeVReadoutResult]
++
++
++def rebase_seed_imh(
++    *,
++    index_path: Path | str = INDEX_PATH,
++    zmx_dir: Path | str = ZMX_DIR,
++    report_path: Path | str = REPORT_PATH,
++    work_root: Path | str | None = None,
++    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
++    timeout_seconds: float = 90.0,
++    readout_runner: ReadoutRunner = run_codev_readout,
++    generated_at: datetime | None = None,
++) -> list[SeedImhRebaseRow]:
++    """Read US seed IMH values through CODE V, update index.json, and write a report."""
++
++    index_path = Path(index_path)
++    zmx_dir = Path(zmx_dir)
++    report_path = Path(report_path)
++
++    if work_root is None:
++        with tempfile.TemporaryDirectory(prefix="seed-imh-rebase-") as tmp:
++            return _rebase_seed_imh_in_work_root(
++                index_path=index_path,
++                zmx_dir=zmx_dir,
++                report_path=report_path,
++                work_root=Path(tmp),
++                executable=executable,
++                timeout_seconds=timeout_seconds,
++                readout_runner=readout_runner,
++                generated_at=generated_at,
++            )
++
++    return _rebase_seed_imh_in_work_root(
++        index_path=index_path,
++        zmx_dir=zmx_dir,
++        report_path=report_path,
++        work_root=Path(work_root),
++        executable=executable,
++        timeout_seconds=timeout_seconds,
++        readout_runner=readout_runner,
++        generated_at=generated_at,
++    )
++
++
++def _rebase_seed_imh_in_work_root(
++    *,
++    index_path: Path,
++    zmx_dir: Path,
++    report_path: Path,
++    work_root: Path,
++    executable: Path | str | os.PathLike[str],
++    timeout_seconds: float,
++    readout_runner: ReadoutRunner,
++    generated_at: datetime | None,
++) -> list[SeedImhRebaseRow]:
++    records = _load_index(index_path)
++    patent_entries = _patent_seed_entries(records, zmx_dir)
++    work_root.mkdir(parents=True, exist_ok=True)
++
++    rows: list[SeedImhRebaseRow] = []
++    for entry, zmx_path in patent_entries:
++        case_id = _required_text(entry, "case_id")
++        old_image_height = _required_float(entry, "image_height_mm")
++        seed_work_dir = work_root / zmx_path.stem
++        seed_work_dir.mkdir(parents=True, exist_ok=True)
++
++        result = readout_runner(
++            source_zmx=zmx_path,
++            work_dir=seed_work_dir,
++            executable=executable,
++            timeout_seconds=timeout_seconds,
++        )
++        measured_image_height = _positive_float(
++            result.readout.image_height_y_mm,
++            label=f"{zmx_path.name} CODE V image_height_y_mm",
++        )
++        entry["image_height_mm"] = round(measured_image_height, 6)
++        rows.append(
++            SeedImhRebaseRow(
++                case_id=case_id,
++                source_zmx=zmx_path.name,
++                old_image_height_mm=old_image_height,
++                measured_image_height_mm=measured_image_height,
++                delta_mm=measured_image_height - old_image_height,
++                duration_seconds=getattr(result.batch, "duration_seconds", None),
++            )
++        )
++
++    _write_index(index_path, records)
++    _write_report(
++        report_path,
++        rows,
++        index_path=index_path,
++        zmx_dir=zmx_dir,
++        generated_at=generated_at or datetime.now(UTC),
++    )
++    return rows
++
++
++def _load_index(index_path: Path) -> list[dict[str, object]]:
++    records = json.loads(index_path.read_text(encoding="utf-8"))
++    if not isinstance(records, list):
++        raise ValueError(f"case index must be a list: {index_path}")
++    if not all(isinstance(record, dict) for record in records):
++        raise ValueError(f"case index records must be JSON objects: {index_path}")
++    return records
++
++
++def _write_index(index_path: Path, records: Sequence[dict[str, object]]) -> None:
++    index_path.write_text(
++        json.dumps(list(records), ensure_ascii=False, indent=2) + "\n",
++        encoding="utf-8",
++    )
++
++
++def _patent_seed_entries(
++    records: list[dict[str, object]],
++    zmx_dir: Path,
++) -> list[tuple[dict[str, object], Path]]:
++    zmx_paths = sorted(zmx_dir.glob("US*.zmx"), key=lambda path: path.name)
++    if not zmx_paths:
++        raise ValueError(f"no patent seed ZMX files found under {zmx_dir}")
++
++    by_source = {
++        _required_text(record, "source_zmx"): record
++        for record in records
++        if isinstance(record.get("source_zmx"), str)
++    }
++    by_case_id = {
++        _required_text(record, "case_id"): record
++        for record in records
++        if isinstance(record.get("case_id"), str)
++    }
++    entries: list[tuple[dict[str, object], Path]] = []
++    missing: list[str] = []
++    for zmx_path in zmx_paths:
++        entry = by_source.get(zmx_path.name) or by_case_id.get(zmx_path.stem)
++        if entry is None:
++            missing.append(zmx_path.name)
++            continue
++        entries.append((entry, zmx_path))
++    if missing:
++        raise ValueError(f"patent seed ZMX files missing from index: {', '.join(missing)}")
++    return entries
++
++
++def _write_report(
++    report_path: Path,
++    rows: Sequence[SeedImhRebaseRow],
++    *,
++    index_path: Path,
++    zmx_dir: Path,
++    generated_at: datetime,
++) -> None:
++    report_path.parent.mkdir(parents=True, exist_ok=True)
++    lines = [
++        "# SEED-01a 真 IMH 重锚报告",
++        "",
++        f"- Generated: {generated_at.astimezone(UTC).isoformat(timespec='seconds')}",
++        f"- Source ZMX glob: `{_repo_relative(zmx_dir)}/US*.zmx`",
++        "- Readout path: `app.core.engines.codev_readout.run_codev_readout`",
++        f"- Updated index: `{_repo_relative(index_path)}`",
++        f"- Seed count: {len(rows)}",
++        "",
++        "| case_id | old image_height_mm | CODE V IMH mm | delta mm |",
++        "|---|---:|---:|---:|",
++    ]
++    for row in rows:
++        lines.append(
++            "| "
++            f"{row.case_id} | "
++            f"{row.old_image_height_mm:.6f} | "
++            f"{row.measured_image_height_mm:.6f} | "
++            f"{row.delta_mm:+.6f} |"
++        )
++    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
++
++
++def _repo_relative(path: Path) -> str:
++    try:
++        return path.resolve().relative_to(REPO_ROOT).as_posix()
++    except ValueError:
++        return path.as_posix()
++
++
++def _required_text(record: dict[str, object], key: str) -> str:
++    value = record.get(key)
++    if not isinstance(value, str) or not value:
++        raise ValueError(f"case index record missing text field {key!r}")
++    return value
++
++
++def _required_float(record: dict[str, object], key: str) -> float:
++    return _positive_float(record.get(key), label=f"case index field {key!r}")
++
++
++def _positive_float(value: object, *, label: str) -> float:
++    try:
++        number = float(value)
++    except (TypeError, ValueError) as exc:
++        raise ValueError(f"{label} must be numeric, got {value!r}") from exc
++    if not math.isfinite(number) or number <= 0.0:
++        raise ValueError(f"{label} must be positive, got {number!r}")
++    return number
++
++
++def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--index", type=Path, default=INDEX_PATH)
++    parser.add_argument("--zmx-dir", type=Path, default=ZMX_DIR)
++    parser.add_argument("--report", type=Path, default=REPORT_PATH)
++    parser.add_argument("--work-dir", type=Path, default=None)
++    parser.add_argument("--executable", type=Path, default=DEFAULT_CODEV_EXECUTABLE)
++    parser.add_argument("--timeout-seconds", type=float, default=90.0)
++    return parser.parse_args(argv)
++
++
++def main(argv: Sequence[str] | None = None) -> int:
++    args = _parse_args(argv)
++    rows = rebase_seed_imh(
++        index_path=args.index,
++        zmx_dir=args.zmx_dir,
++        report_path=args.report,
++        work_root=args.work_dir,
++        executable=args.executable,
++        timeout_seconds=args.timeout_seconds,
++    )
++    print(f"rebased {len(rows)} patent seed image heights")
++    print(f"report: {args.report}")
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tests/data/eval_golden.json b/tests/data/eval_golden.json
+index 8a10bd0..9ce98e8 100644
+--- a/tests/data/eval_golden.json
++++ b/tests/data/eval_golden.json
+@@ -4,6 +4,36 @@
+     "quality_min250": "0.005",
+     "selected_case_id": "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
+   },
++  "patent_ultrawide_6p_extreme_fov_reanchor": {
++    "quality_floor_gap": "0.000",
++    "quality_min250": "0.132",
++    "selected_case_id": "US10330891B2",
++    "source_case_id": "US10330891B2"
++  },
++  "patent_ultrawide_6p_fast_reanchor": {
++    "quality_floor_gap": "0.379",
++    "quality_min250": "0.087",
++    "selected_case_id": "US20180143405A1",
++    "source_case_id": "US20180143405A1"
++  },
++  "patent_ultrawide_7p_full_field_reanchor": {
++    "quality_floor_gap": "0.976",
++    "quality_min250": "0.014",
++    "selected_case_id": "US20170003482A1",
++    "source_case_id": "US20170003482A1"
++  },
++  "patent_wide_6p_full_field_reanchor": {
++    "quality_floor_gap": "0.136",
++    "quality_min250": "0.069",
++    "selected_case_id": "US9651759B2",
++    "source_case_id": "US9651759B2"
++  },
++  "patent_wide_8p_low_f_number_reanchor": {
++    "quality_floor_gap": "0.186",
++    "quality_min250": "0.070",
++    "selected_case_id": "US20170045714A1",
++    "source_case_id": "US20170045714A1"
++  },
+   "performance_full_field_seed_blocks_low_mtf": {
+     "quality_floor_gap": "0.938",
+     "quality_min250": "0.005",
+diff --git a/tests/test_eval_golden_seeds.py b/tests/test_eval_golden_seeds.py
+new file mode 100644
+index 0000000..2e42873
+--- /dev/null
++++ b/tests/test_eval_golden_seeds.py
+@@ -0,0 +1,48 @@
++from __future__ import annotations
++
++import json
++
++from scripts.evaluate_design_agent import (
++    EVAL_CASES,
++    PATENT_GOLDEN_CASE_NAMES,
++    _EVAL_GOLDEN,
++    main,
++)
++
++
++def test_eval_golden_contains_reanchored_patent_seeds():
++    eval_case_names = {case.name for case in EVAL_CASES}
++
++    assert len(PATENT_GOLDEN_CASE_NAMES) >= 5
++    assert set(PATENT_GOLDEN_CASE_NAMES).issubset(_EVAL_GOLDEN)
++    assert set(PATENT_GOLDEN_CASE_NAMES).issubset(eval_case_names)
++
++    for case_name in PATENT_GOLDEN_CASE_NAMES:
++        entry = _EVAL_GOLDEN[case_name]
++        assert entry["source_case_id"].startswith("US")
++        assert entry["selected_case_id"] == entry["source_case_id"]
++        assert float(entry["quality_floor_gap"]) >= 0.0
++        assert float(entry["quality_min250"]) >= 0.0
++
++
++def test_patent_golden_fail_on_regression_case_runs(capsys):
++    exit_code = main(
++        [
++            "--case",
++            "patent_ultrawide_6p_extreme_fov_reanchor",
++            "--json",
++            "--fail-on-regression",
++        ]
++    )
++
++    captured = capsys.readouterr()
++    report = json.loads(captured.out)
++
++    assert exit_code == 0
++    assert report["summary"] == {
++        "case_count": 1,
++        "passed_count": 1,
++        "failed_count": 0,
++        "all_passed": True,
++    }
++    assert report["cases"][0]["matched_case_id"] == "US10330891B2"
+diff --git a/tests/test_seed_imh_rebase.py b/tests/test_seed_imh_rebase.py
+new file mode 100644
+index 0000000..363013d
+--- /dev/null
++++ b/tests/test_seed_imh_rebase.py
+@@ -0,0 +1,130 @@
++from __future__ import annotations
++
++import json
++from datetime import UTC, datetime
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++
++from app.core import case_library
++from scripts.rebase_seed_imh import rebase_seed_imh
++
++
++def test_rebase_seed_imh_uses_mocked_codev_readout_and_writes_report(tmp_path: Path) -> None:
++    index_path = tmp_path / "index.json"
++    zmx_dir = tmp_path / "zmx"
++    report_path = tmp_path / "seed-imh-rebase-report.md"
++    zmx_dir.mkdir()
++    (zmx_dir / "US100.zmx").write_text("fake", encoding="ascii")
++    (zmx_dir / "US200.zmx").write_text("fake", encoding="ascii")
++    index_path.write_text(
++        json.dumps(
++            [
++                {
++                    "case_id": "US100",
++                    "source_zmx": "US100.zmx",
++                    "image_height_mm": 1.0,
++                },
++                {
++                    "case_id": "US200",
++                    "source_zmx": "US200.zmx",
++                    "image_height_mm": 2.0,
++                },
++                {
++                    "case_id": "not-a-patent",
++                    "source_zmx": "not-a-patent.zmx",
++                    "image_height_mm": 9.0,
++                },
++            ],
++            indent=2,
++        )
++        + "\n",
++        encoding="utf-8",
++    )
++    measured = {"US100.zmx": 1.2345678, "US200.zmx": 2.5}
++    calls: list[tuple[Path, Path]] = []
++
++    def fake_readout_runner(**kwargs: object) -> SimpleNamespace:
++        source_zmx = Path(kwargs["source_zmx"])
++        work_dir = Path(kwargs["work_dir"])
++        calls.append((source_zmx, work_dir))
++        return SimpleNamespace(
++            batch=SimpleNamespace(duration_seconds=0.01),
++            readout=SimpleNamespace(image_height_y_mm=measured[source_zmx.name]),
++        )
++
++    rows = rebase_seed_imh(
++        index_path=index_path,
++        zmx_dir=zmx_dir,
++        report_path=report_path,
++        work_root=tmp_path / "work",
++        readout_runner=fake_readout_runner,
++        generated_at=datetime(2026, 7, 5, tzinfo=UTC),
++    )
++
++    rewritten = json.loads(index_path.read_text(encoding="utf-8"))
++    by_id = {record["case_id"]: record for record in rewritten}
++    assert by_id["US100"]["image_height_mm"] == pytest.approx(1.234568)
++    assert by_id["US200"]["image_height_mm"] == pytest.approx(2.5)
++    assert by_id["not-a-patent"]["image_height_mm"] == pytest.approx(9.0)
++    assert [row.case_id for row in rows] == ["US100", "US200"]
++    assert [call[0].name for call in calls] == ["US100.zmx", "US200.zmx"]
++    assert calls[0][1].name == "US100"
++
++    report = report_path.read_text(encoding="utf-8")
++    assert "SEED-01a 真 IMH 重锚报告" in report
++    assert "| US100 | 1.000000 | 1.234568 | +0.234568 |" in report
++    assert "| US200 | 2.000000 | 2.500000 | +0.500000 |" in report
++
++
++def test_case_image_height_prefers_metadata_then_index_then_case_id(
++    monkeypatch: pytest.MonkeyPatch,
++    tmp_path: Path,
++) -> None:
++    cases_dir = tmp_path / "cases"
++    cases_dir.mkdir()
++    (cases_dir / "index.json").write_text(
++        json.dumps(
++            [
++                {
++                    "case_id": "US_INDEX",
++                    "source_zmx": "US_INDEX.zmx",
++                    "image_height_mm": 3.75,
++                },
++                {
++                    "case_id": "US_SOURCE",
++                    "source_zmx": "US_SOURCE.zmx",
++                    "image_height_mm": 4.25,
++                },
++            ]
++        ),
++        encoding="utf-8",
++    )
++    monkeypatch.setattr(case_library, "CASES_DIR", cases_dir)
++    case_library._case_index_image_height_mm_by_id.cache_clear()
++
++    metadata_case = SimpleNamespace(
++        metadata=SimpleNamespace(
++            case_id="US_INDEX_IMH1.0",
++            source_zmx="US_INDEX.zmx",
++            image_height_mm=5.5,
++        )
++    )
++    index_case = SimpleNamespace(
++        metadata=SimpleNamespace(case_id="US_INDEX_IMH1.0", source_zmx="US_INDEX.zmx")
++    )
++    source_index_case = SimpleNamespace(
++        metadata=SimpleNamespace(case_id="missing-id", source_zmx="US_SOURCE.zmx")
++    )
++    fallback_case = SimpleNamespace(
++        metadata=SimpleNamespace(case_id="LEGACY_IMH2.6_TTL4.0", source_zmx="legacy.zmx")
++    )
++
++    try:
++        assert case_library._case_image_height_mm(metadata_case) == pytest.approx(5.5)
++        assert case_library._case_image_height_mm(index_case) == pytest.approx(3.75)
++        assert case_library._case_image_height_mm(source_index_case) == pytest.approx(4.25)
++        assert case_library._case_image_height_mm(fallback_case) == pytest.approx(2.6)
++    finally:
++        case_library._case_index_image_height_mm_by_id.cache_clear()
+diff --git a/tests/test_seed_routing.py b/tests/test_seed_routing.py
+new file mode 100644
+index 0000000..2b333fc
+--- /dev/null
++++ b/tests/test_seed_routing.py
+@@ -0,0 +1,45 @@
++from __future__ import annotations
++
++import pytest
++
++from app.api.optical import OpticalSpecRequest
++from app.core.case_library import match_case
++from app.core.lens_system import Scenario
++
++
++def test_us_patent_seed_routes_with_rebased_index_image_height() -> None:
++    spec = OpticalSpecRequest(
++        scenario=Scenario.SMARTPHONE_ULTRAWIDE,
++        focal_length_mm=3.62,
++        f_number=2.32,
++        field_of_view_deg=91.0,
++        image_height_mm=3.62257,
++        n_elements=7,
++        analysis_depth="seed_only",
++    )
++
++    sample = match_case(
++        spec.scenario,
++        spec.focal_length_mm,
++        spec.f_number,
++        spec.field_of_view_deg,
++        image_height_mm=spec.image_height_mm,
++        n_elements=spec.n_elements,
++        include_design_assessment=True,
++        lightweight_design_assessment=True,
++    )
++
++    assert sample is not None
++    assert sample.metadata is not None
++    assert sample.design_assessment is not None
++    assert sample.metadata.case_id == "US20170003482A1"
++    assert sample.design_assessment.matched_case_id == "US20170003482A1"
++
++    candidate = next(
++        item
++        for item in sample.design_assessment.candidate_comparison
++        if item.case_id == "US20170003482A1"
++    )
++    assert candidate.role == "best_match"
++    assert candidate.image_height_mm == pytest.approx(3.62257)
++    assert candidate.image_height_mm > 0.0

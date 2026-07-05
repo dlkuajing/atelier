@@ -1,36 +1,37 @@
 # SEED-03a eval golden rebase report
 
-Date: 2026-07-05
+Date: 2026-07-06
 
 ## Scope
 
-Extended the fixed design-agent regression set so `scripts/evaluate_design_agent.py`
-covers reanchored patent seeds after the real-IMH and routing rebases.
+`scripts/e2_golden.py` now expands patent golden briefs directly from
+`app/data/optical_cases/index.json`, so all 22 reanchored `US*` seeds are covered
+instead of the previous hand-picked five. The generated golden file has 25 briefs:
+3 existing baseline briefs plus 22 patent reanchor briefs.
 
-## Golden patent seeds
+The five original patent golden names are preserved for compatibility with
+`scripts/evaluate_design_agent.py`; the other patent seeds use
+`patent_<case_id>_reanchor` names.
 
-Five patent seed briefs were added to `scripts/e2_golden.py`,
-`tests/data/eval_golden.json`, and `scripts/evaluate_design_agent.py`:
+## Patent coverage
 
-| Eval case | Patent seed | Reason |
-|---|---:|---|
-| `patent_wide_8p_low_f_number_reanchor` | `US20170045714A1` | Wide 8P, low F/# 1.75, FOV 70.4, IMH 2.91317; covers high element count / fast wide seed. |
-| `patent_ultrawide_7p_full_field_reanchor` | `US20170003482A1` | Ultrawide 7P, FOV 91.0, IMH 3.62257, full-field MTF coverage; anchors the high-FOV full-field evidence path. |
-| `patent_ultrawide_6p_fast_reanchor` | `US20180143405A1` | Ultrawide 6P, F/# 1.86, FOV 95.0, IMH 3.26503; covers fast ultrawide partial-field evidence. |
-| `patent_ultrawide_6p_extreme_fov_reanchor` | `US10330891B2` | Ultrawide 6P, FOV 100.0, short EFL 2.41636, IMH 2.97599; covers extreme-FOV routing after IMH reanchor. |
-| `patent_wide_6p_full_field_reanchor` | `US9651759B2` | Wide 6P, FOV 82.0, IMH 2.94563, full-field MTF coverage; covers the wide/full-field patent seed class. |
-
-`US8908290B1` was probed but not used: its exact brief routed to
-`US20170003482A1`, so it is not a stable self-reanchor golden. The accepted
-patent golden entries require `source_case_id == selected_case_id`.
+- Patent source seeds covered: 22/22.
+- Self-selected exact briefs: 18/22.
+- Non-self selected exact briefs recorded as source -> selected:
+  - `US8908290B1` -> `US20170003482A1`
+  - `US10310222B2` -> `US10031318B2`
+  - `US20140111876A1` -> `US9195030B2`
+  - `US9316811B2` -> `US9063319B1`
+- Physical anchor gate: every patent index IMH is checked against
+  `EFL*tan(FOV/2)` with a <=25% deviation limit; latest probe max was 2.94%
+  (`US10330891B2`).
 
 ## Verification
 
 - Regenerated `tests/data/eval_golden.json` with
-  `PYTHONUTF8=1 ./.venv/Scripts/python.exe scripts/e2_golden.py`.
-- `PYTHONUTF8=1 ./.venv/Scripts/python.exe scripts/evaluate_design_agent.py --fail-on-regression --json`
-  passed: 13/13 eval cases, 0 failures.
-- Slice pytest passed and was written to `.planning/loop/gate-last.log`:
-  `PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest -q tests/test_eval_golden_seeds.py`.
+  `PYTHONUTF8=1 .\.venv\Scripts\python.exe scripts\e2_golden.py`.
+- Slice pytest passed:
+  `PYTHONUTF8=1 .\.venv\Scripts\python.exe -m pytest tests/test_seed_imh_rebase.py tests/test_seed_routing.py tests/test_eval_golden_seeds.py tests/test_codev_readout.py -q`
+- Result: 57 passed, 120 Optiland deprecation warnings.
 
 No full pytest run was performed for this slice.

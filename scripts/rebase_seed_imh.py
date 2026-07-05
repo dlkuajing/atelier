@@ -12,6 +12,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Literal
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
@@ -22,16 +23,24 @@ from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
 INDEX_PATH = REPO_ROOT / "app" / "data" / "optical_cases" / "index.json"
 ZMX_DIR = REPO_ROOT / "data" / "zmx"
 REPORT_PATH = REPO_ROOT / ".planning" / "loop" / "seed-imh-rebase-report.md"
+FIRST_ORDER_DEVIATION_LIMIT = 0.25
+
+SeedImhRebaseStatus = Literal["updated", "verified", "failed"]
 
 
 @dataclass(frozen=True)
 class SeedImhRebaseRow:
     case_id: str
     source_zmx: str
+    status: SeedImhRebaseStatus
     old_image_height_mm: float
     measured_image_height_mm: float
+    written_image_height_mm: float
+    first_order_image_height_mm: float
+    first_order_deviation_pct: float
     delta_mm: float
     duration_seconds: float | None
+    anomaly: str | None = None
 
 
 ReadoutRunner = Callable[..., CodeVReadoutResult]
@@ -50,9 +59,9 @@ def rebase_seed_imh(
 ) -> list[SeedImhRebaseRow]:
     """Read US seed IMH values through CODE V, update index.json, and write a report."""
 
-    index_path = Path(index_path)
-    zmx_dir = Path(zmx_dir)
-    report_path = Path(report_path)
+    index_path = Path(index_path).resolve()
+    zmx_dir = Path(zmx_dir).resolve()
+    report_path = Path(report_path).resolve()
 
     if work_root is None:
         with tempfile.TemporaryDirectory(prefix="seed-imh-rebase-") as tmp:
@@ -71,7 +80,7 @@ def rebase_seed_imh(
         index_path=index_path,
         zmx_dir=zmx_dir,
         report_path=report_path,
-        work_root=Path(work_root),
+        work_root=Path(work_root).resolve(),
         executable=executable,
         timeout_seconds=timeout_seconds,
         readout_runner=readout_runner,
@@ -98,6 +107,8 @@ def _rebase_seed_imh_in_work_root(
     for entry, zmx_path in patent_entries:
         case_id = _required_text(entry, "case_id")
         old_image_height = _required_float(entry, "image_height_mm")
+        efl_mm = _required_float(entry, "efl_mm")
+        fov_deg = _required_float(entry, "fov_deg")
         seed_work_dir = work_root / zmx_path.stem
         seed_work_dir.mkdir(parents=True, exist_ok=True)
 
@@ -111,15 +122,43 @@ def _rebase_seed_imh_in_work_root(
             result.readout.image_height_y_mm,
             label=f"{zmx_path.name} CODE V image_height_y_mm",
         )
-        entry["image_height_mm"] = round(measured_image_height, 6)
+        first_order_image_height = _first_order_image_height_mm(efl_mm=efl_mm, fov_deg=fov_deg)
+        deviation_pct = _relative_deviation_pct(
+            measured=measured_image_height,
+            expected=first_order_image_height,
+        )
+        anomaly: str | None = None
+        status: SeedImhRebaseStatus
+        written_image_height = old_image_height
+        if deviation_pct > FIRST_ORDER_DEVIATION_LIMIT * 100.0:
+            status = "failed"
+            anomaly = (
+                "CODE V IMH differs from first-order EFL*tan(HFOV) by "
+                f"{deviation_pct:.2f}% (> {FIRST_ORDER_DEVIATION_LIMIT * 100:.0f}%); "
+                "index value retained"
+            )
+        else:
+            written_image_height = round(measured_image_height, 6)
+            entry["image_height_mm"] = written_image_height
+            status = "verified" if math.isclose(
+                written_image_height,
+                old_image_height,
+                rel_tol=0.0,
+                abs_tol=1e-6,
+            ) else "updated"
         rows.append(
             SeedImhRebaseRow(
                 case_id=case_id,
                 source_zmx=zmx_path.name,
+                status=status,
                 old_image_height_mm=old_image_height,
                 measured_image_height_mm=measured_image_height,
+                written_image_height_mm=written_image_height,
+                first_order_image_height_mm=first_order_image_height,
+                first_order_deviation_pct=deviation_pct,
                 delta_mm=measured_image_height - old_image_height,
                 duration_seconds=getattr(result.batch, "duration_seconds", None),
+                anomaly=anomaly,
             )
         )
 
@@ -190,27 +229,75 @@ def _write_report(
     generated_at: datetime,
 ) -> None:
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    lines = [
-        "# SEED-01a 真 IMH 重锚报告",
+    run_lines = [
+        f"## Run {generated_at.astimezone(UTC).isoformat(timespec='seconds')}",
         "",
-        f"- Generated: {generated_at.astimezone(UTC).isoformat(timespec='seconds')}",
         f"- Source ZMX glob: `{_repo_relative(zmx_dir)}/US*.zmx`",
         "- Readout path: `app.core.engines.codev_readout.run_codev_readout`",
         f"- Updated index: `{_repo_relative(index_path)}`",
         f"- Seed count: {len(rows)}",
+        f"- First-order guard: fail when |CODE V IMH - EFL*tan(HFOV)| > "
+        f"{FIRST_ORDER_DEVIATION_LIMIT * 100:.0f}%",
         "",
-        "| case_id | old image_height_mm | CODE V IMH mm | delta mm |",
-        "|---|---:|---:|---:|",
+        (
+            "| case_id | status | old image_height_mm | CODE V IMH mm | "
+            "written image_height_mm | first-order mm | first-order deviation | delta mm |"
+        ),
+        "|---|---|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
-        lines.append(
+        run_lines.append(
             "| "
             f"{row.case_id} | "
+            f"{row.status} | "
             f"{row.old_image_height_mm:.6f} | "
             f"{row.measured_image_height_mm:.6f} | "
+            f"{row.written_image_height_mm:.6f} | "
+            f"{row.first_order_image_height_mm:.6f} | "
+            f"{row.first_order_deviation_pct:.2f}% | "
             f"{row.delta_mm:+.6f} |"
         )
-    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    run_lines.extend(["", "### Anomalies", ""])
+    failed_rows = [row for row in rows if row.status == "failed"]
+    if failed_rows:
+        run_lines.extend(
+            [
+                "| case_id | measured IMH mm | retained IMH mm | first-order mm | deviation | action |",
+                "|---|---:|---:|---:|---:|---|",
+            ]
+        )
+        for row in failed_rows:
+            run_lines.append(
+                "| "
+                f"{row.case_id} | "
+                f"{row.measured_image_height_mm:.6f} | "
+                f"{row.old_image_height_mm:.6f} | "
+                f"{row.first_order_image_height_mm:.6f} | "
+                f"{row.first_order_deviation_pct:.2f}% | "
+                f"{row.anomaly or 'index value retained'} |"
+            )
+    else:
+        run_lines.append("- None.")
+
+    run_text = "\n".join(run_lines) + "\n"
+    if report_path.exists() and report_path.read_text(encoding="utf-8").strip():
+        existing = report_path.read_text(encoding="utf-8").rstrip()
+        report_path.write_text(f"{existing}\n\n---\n\n{run_text}", encoding="utf-8")
+        return
+
+    report_path.write_text(f"# SEED-01a 真 IMH 重锚报告\n\n{run_text}", encoding="utf-8")
+
+
+def _first_order_image_height_mm(*, efl_mm: float, fov_deg: float) -> float:
+    return _positive_float(
+        efl_mm * math.tan(math.radians(fov_deg / 2.0)),
+        label="first-order EFL*tan(HFOV) image height",
+    )
+
+
+def _relative_deviation_pct(*, measured: float, expected: float) -> float:
+    expected = _positive_float(expected, label="expected first-order image height")
+    return abs(measured - expected) / expected * 100.0
 
 
 def _repo_relative(path: Path) -> str:
