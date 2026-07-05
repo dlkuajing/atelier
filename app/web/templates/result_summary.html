@@ -97,6 +97,7 @@
                   data-analysis-artifact="{{ card.artifact }}"
                   data-provenance="{{ card.source }}"
                   data-available="{{ 'true' if card.available else 'false' }}"
+                  data-partial="{{ 'true' if card.partial else 'false' }}"
                 >
                   <div class="analysis-card-heading">
                     <span class="source-badge" data-provenance="{{ card.source }}">

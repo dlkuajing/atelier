@@ -167,6 +167,7 @@ def _analysis_card(
     summary: str,
     detail: str,
     available: bool,
+    partial: bool = False,
 ) -> dict[str, object]:
     return {
         "artifact": artifact,
@@ -175,6 +176,7 @@ def _analysis_card(
         "summary": summary,
         "detail": detail,
         "available": available,
+        "partial": partial,
     }
 
 
@@ -217,6 +219,7 @@ def _analysis_cards(sample: OpticalSampleData | None) -> tuple[dict[str, object]
         )
 
     rms_values = _finite_float_values(sample.mtf.rms_spot_radius_um_by_field)
+    has_spot_diagram = sample.spot_diagram is not None
     spot_summary = (
         f"MTF-linked RMS spot evidence across {len(rms_values)} fields."
         if rms_values
@@ -283,7 +286,8 @@ def _analysis_cards(sample: OpticalSampleData | None) -> tuple[dict[str, object]
             ),
             summary=spot_summary,
             detail=spot_detail,
-            available=True,
+            available=has_spot_diagram,
+            partial=not has_spot_diagram and bool(rms_values),
         ),
         _analysis_card(
             artifact="field-analysis",
@@ -359,6 +363,20 @@ def _job_progress_context(record: JobRecord) -> dict[str, object]:
         else "",
         "error": record.error,
     }
+
+
+def _result_progress_context(job_id: str | None) -> dict[str, object]:
+    normalized_job_id = job_id.strip() if job_id is not None else ""
+    if not normalized_job_id:
+        return {
+            "job_id": "inline-result",
+            "status": JobStatus.SUCCEEDED.value,
+            "status_label": "Succeeded",
+            "status_message": _JOB_STATUS_MESSAGES[JobStatus.SUCCEEDED],
+            "progress_percent": _JOB_PROGRESS_PERCENT[JobStatus.SUCCEEDED],
+        }
+
+    return _job_progress_context(optical.job_store.get(normalized_job_id))
 
 
 @asynccontextmanager
@@ -460,11 +478,19 @@ async def result_summary(
     total_track_mm: Annotated[float, Form(gt=0)],
     airy_disc_diameter_um: Annotated[float, Form(gt=0)],
     cutoff_freq_lp_per_mm: Annotated[float, Form(gt=0)],
-    n_elements: Annotated[int | None, Form(ge=2, le=30)] = None,
+    n_elements: Annotated[int | None, Form(ge=2, le=20)] = None,
     wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
     requirement: Annotated[str | None, Form(max_length=2000)] = None,
     job_id: Annotated[str | None, Form(max_length=100)] = None,
 ) -> HTMLResponse:
+    try:
+        progress = _result_progress_context(job_id)
+    except JobNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "job_id": job_id},
+        ) from exc
+
     sample = await _result_sample(
         scenario=scenario,
         focal_length_mm=focal_length_mm,
@@ -521,13 +547,7 @@ async def result_summary(
             "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
             "layout_svg": sample.layout_svg.svg_content if sample is not None else "",
             "has_layout_svg": sample is not None,
-            "progress": {
-                "job_id": job_id or "inline-result",
-                "status": "succeeded",
-                "status_label": "Succeeded",
-                "status_message": "Design task completed.",
-                "progress_percent": 100,
-            },
+            "progress": progress,
         },
     )
 

@@ -1,6 +1,7 @@
 """Integrated web result page contract tests."""
 
 import json
+import re
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi.testclient import TestClient
@@ -8,6 +9,7 @@ from fastapi.testclient import TestClient
 from app import main
 from app.core.aberration import MTFFieldData, MTFResult
 from app.core.field_analysis import FieldAnalysisResult
+from app.core.job_store import JobNotFoundError, JobRecord, JobStatus
 from app.core.lens_system import LayoutSVG, RayPath, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary, SurfaceDescriptor
 from app.core.optical_sample import CaseMetadata, OpticalSampleData
@@ -23,6 +25,28 @@ def _mock_chat_response(content: str) -> MagicMock:
     completion = MagicMock()
     completion.choices = [MagicMock(message=MagicMock(content=content))]
     return completion
+
+
+def _stub_summary_generation(
+    mock_get_client,
+    *,
+    summary_en: str = "Integrated result narrative with optical evidence.",
+    summary_zh: str = "\u7ed3\u679c\u9875\u5df2\u4e32\u8d77\u5b8c\u6574\u53d9\u4e8b\u3002",
+) -> str:
+    mock_client = AsyncMock()
+    mock_client.chat.completions.create = AsyncMock(
+        return_value=_mock_chat_response(
+            json.dumps(
+                {
+                    "summary_en": summary_en,
+                    "summary_zh": summary_zh,
+                },
+                ensure_ascii=False,
+            )
+        )
+    )
+    mock_get_client.return_value = mock_client
+    return summary_zh
 
 
 def _summary_form_payload() -> dict[str, object]:
@@ -41,6 +65,30 @@ def _summary_form_payload() -> dict[str, object]:
         "requirement": "Design a compact wide phone camera with credible analysis.",
         "job_id": "job-ui-04a",
     }
+
+
+def _job_record(
+    *,
+    job_id: str = "job-ui-04a",
+    status: JobStatus = JobStatus.SUCCEEDED,
+) -> JobRecord:
+    return JobRecord(
+        job_id=job_id,
+        engine="sleep",
+        status=status,
+        payload={"case_id": "demo"},
+        result={"case_id": "demo"} if status is JobStatus.SUCCEEDED else None,
+    )
+
+
+def _install_job_store(monkeypatch, record: JobRecord) -> None:
+    class StaticJobStore:
+        def get(self, job_id: str) -> JobRecord:
+            if job_id != record.job_id:
+                raise JobNotFoundError(job_id)
+            return record
+
+    monkeypatch.setattr(main.optical, "job_store", StaticJobStore())
 
 
 def _sample_payload() -> OpticalSampleData:
@@ -180,20 +228,8 @@ def test_result_page_integrates_full_narrative_from_optical_sample(
     mock_get_client,
     monkeypatch,
 ):
-    summary_zh = "\u7ed3\u679c\u9875\u5df2\u4e32\u8d77\u5b8c\u6574\u53d9\u4e8b\u3002"
-    mock_client = AsyncMock()
-    mock_client.chat.completions.create = AsyncMock(
-        return_value=_mock_chat_response(
-            json.dumps(
-                {
-                    "summary_en": "Integrated result narrative with optical evidence.",
-                    "summary_zh": summary_zh,
-                },
-                ensure_ascii=False,
-            )
-        )
-    )
-    mock_get_client.return_value = mock_client
+    summary_zh = _stub_summary_generation(mock_get_client)
+    _install_job_store(monkeypatch, _job_record())
 
     seen: dict[str, object] = {}
 
@@ -251,3 +287,65 @@ def test_result_page_integrates_full_narrative_from_optical_sample(
     assert req.scenario == Scenario.SMARTPHONE_WIDE
     assert req.analysis_depth == "seed_only"
     assert req.max_total_track_mm == 4.35
+
+
+def test_result_page_rejects_n_elements_above_optical_spec_limit():
+    payload = _summary_form_payload()
+    payload["n_elements"] = 21
+
+    response = client.post("/results/summary", data=payload)
+
+    assert response.status_code == 422
+    assert "n_elements" in response.text
+
+
+@patch("app.api.wizard.get_async_client")
+def test_result_page_marks_missing_spot_diagram_as_unavailable_partial(
+    mock_get_client,
+    monkeypatch,
+):
+    _stub_summary_generation(mock_get_client)
+    _install_job_store(monkeypatch, _job_record())
+
+    async def fake_match(_req):
+        return _sample_payload().model_copy(update={"spot_diagram": None})
+
+    monkeypatch.setattr(main.optical, "match", fake_match)
+
+    response = client.post("/results/summary", data=_summary_form_payload())
+
+    assert response.status_code == 200, response.text
+    assert re.search(
+        r'data-analysis-artifact="spot-diagram".*?'
+        r'data-available="false".*?'
+        r'data-partial="true"',
+        response.text,
+        re.S,
+    )
+    assert "MTF-linked RMS spot evidence" in response.text
+
+
+@patch("app.api.wizard.get_async_client")
+def test_result_page_uses_job_store_status_when_job_id_is_present(
+    mock_get_client,
+    monkeypatch,
+):
+    _stub_summary_generation(mock_get_client)
+    _install_job_store(monkeypatch, _job_record(job_id="job-running", status=JobStatus.RUNNING))
+
+    async def fake_match(_req):
+        return _sample_payload()
+
+    monkeypatch.setattr(main.optical, "match", fake_match)
+    payload = _summary_form_payload()
+    payload["job_id"] = "job-running"
+
+    response = client.post("/results/summary", data=payload)
+
+    assert response.status_code == 200, response.text
+    html = response.text
+    assert 'data-job-id="job-running"' in html
+    assert 'data-status="running"' in html
+    assert "Running" in html
+    assert 'style="width: 55%;"' in html
+    assert "Engine is computing the optical design package." in html
