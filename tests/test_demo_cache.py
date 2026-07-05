@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import AsyncMock
 
 from fastapi.testclient import TestClient
@@ -10,15 +11,19 @@ from app.api import optical as optical_api
 from app.api import wizard
 from app.core.aberration import MTFFieldData, MTFResult
 from app.core.demo_cache import (
+    DEMO_CACHE_ANALYSIS_FINGERPRINT,
     DemoAnalysisBundle,
+    build_demo_cache_bundle,
+    build_demo_cache_bundle_for_case,
     demo_cache_key,
     load_demo_cache_bundle_for_request,
+    source_zmx_sha256,
     write_demo_cache_bundle,
 )
 from app.core.field_analysis import FieldAnalysisResult
 from app.core.lens_system import LayoutSVG, RayPath, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary
-from app.core.optical_sample import CaseMetadata, OpticalSampleData
+from app.core.optical_sample import CaseMetadata, DesignAssessment, OpticalSampleData
 from app.core.provenance import ProvenanceSource
 from app.core.spot_diagram import SpotDiagramResult, SpotFieldData, SpotWavelengthData
 from app.core.wavefront_metrics import WavefrontFieldMetric, WavefrontMetricsResult
@@ -44,7 +49,7 @@ def _request_payload() -> dict[str, object]:
 def _paraxial() -> ParaxialSummary:
     return ParaxialSummary(
         effective_focal_length_mm=2.71,
-        f_number=2.5,
+        f_number=2.45,
         entrance_pupil_diameter_mm=1.08,
         exit_pupil_diameter_mm=1.0,
         total_track_mm=4.44,
@@ -178,17 +183,48 @@ def _bundle() -> DemoAnalysisBundle:
     )
     sample = _sample()
     assert sample.metadata is not None
+    source_sha = source_zmx_sha256(sample.metadata.source_zmx)
     return DemoAnalysisBundle(
-        cache_key=demo_cache_key(request),
+        cache_key=demo_cache_key(
+            request,
+            source_case_id=sample.metadata.case_id,
+            source_zmx_sha256=source_sha,
+        ),
+        analysis_fingerprint=DEMO_CACHE_ANALYSIS_FINGERPRINT,
         generated_at_utc="2026-07-05T00:00:00+00:00",
         source_case_id=sample.metadata.case_id,
         source_zmx=sample.metadata.source_zmx,
+        source_zmx_sha256=source_sha,
         request=request,
         sample=sample,
         spot_diagram=_spot(),
         field_analysis=_field(),
         wavefront=_wavefront(),
     )
+
+
+def _assessment() -> DesignAssessment:
+    return DesignAssessment(
+        matched_case_id="3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",
+        score=0.98,
+        normalized_distance=0.02,
+        target_focal_length_mm=2.7,
+        target_f_number=2.5,
+        target_fov_deg=78.0,
+        target_image_height_mm=2.3,
+        target_n_elements=3,
+        delta_efl_mm=0.01,
+        delta_f_number=-0.05,
+        delta_fov_deg=0.0,
+        rationale=["cache hit reattached request-specific assessment"],
+    )
+
+
+def test_gitignore_allows_demo_cache_outputs():
+    gitignore = Path(".gitignore").read_text(encoding="utf-8")
+
+    assert "!/data/demo_cache/" in gitignore
+    assert "!/data/demo_cache/**" in gitignore
 
 
 def test_demo_cache_round_trip_preserves_analysis_provenance(tmp_path):
@@ -210,6 +246,73 @@ def test_demo_cache_round_trip_preserves_analysis_provenance(tmp_path):
     for artefact in artefacts:
         payload = artefact.model_dump(mode="json")
         assert payload["provenance"] in {source.value for source in ProvenanceSource}
+
+
+def test_precompute_request_uses_nominal_f_number_from_case_id(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.demo_cache._compute_analysis_family",
+        lambda _sample: (_spot(), _field(), _wavefront()),
+    )
+    sample = _sample()
+    bundle = build_demo_cache_bundle(sample=sample)
+
+    assert bundle.request.f_number == 2.5
+    assert sample.paraxial.f_number == 2.45
+    assert bundle.cache_key == demo_cache_key(
+        bundle.request,
+        source_case_id=bundle.source_case_id,
+        source_zmx_sha256=bundle.source_zmx_sha256,
+    )
+
+
+def test_precompute_case_lookup_preserves_decimal_case_id_without_suffix(monkeypatch):
+    sample = _sample()
+    assert sample.metadata is not None
+    monkeypatch.setattr("app.core.demo_cache.load_case_library", lambda: [sample])
+    monkeypatch.setattr(
+        "app.core.demo_cache._compute_analysis_family",
+        lambda _sample: (_spot(), _field(), _wavefront()),
+    )
+
+    bundle = build_demo_cache_bundle_for_case(sample.metadata.case_id)
+
+    assert bundle.source_case_id == sample.metadata.case_id
+
+
+def test_demo_cache_tolerance_lookup_accepts_nominal_f_number_alias(tmp_path):
+    bundle = _bundle()
+    cached_request = bundle.request.model_copy(update={"f_number": 2.45})
+    cached_bundle = bundle.model_copy(
+        update={
+            "request": cached_request,
+            "cache_key": demo_cache_key(
+                cached_request,
+                source_case_id=bundle.source_case_id,
+                source_zmx_sha256=bundle.source_zmx_sha256,
+            ),
+        },
+        deep=True,
+    )
+
+    write_demo_cache_bundle(cached_bundle, cache_dir=tmp_path)
+    loaded = load_demo_cache_bundle_for_request(bundle.request, cache_dir=tmp_path)
+
+    assert loaded is not None
+    assert loaded.request.f_number == 2.45
+
+
+def test_demo_cache_stale_source_or_analysis_fingerprint_is_miss(tmp_path):
+    bundle = _bundle()
+
+    stale_source_dir = tmp_path / "stale-source"
+    stale_source = bundle.model_copy(update={"source_zmx_sha256": "0" * 64}, deep=True)
+    write_demo_cache_bundle(stale_source, cache_dir=stale_source_dir)
+    assert load_demo_cache_bundle_for_request(bundle.request, cache_dir=stale_source_dir) is None
+
+    stale_analysis_dir = tmp_path / "stale-analysis"
+    stale_analysis = bundle.model_copy(update={"analysis_fingerprint": "stale"}, deep=True)
+    write_demo_cache_bundle(stale_analysis, cache_dir=stale_analysis_dir)
+    assert load_demo_cache_bundle_for_request(bundle.request, cache_dir=stale_analysis_dir) is None
 
 
 def test_match_endpoint_cache_hit_and_fallback_return_same_payload(monkeypatch):
@@ -235,6 +338,47 @@ def test_match_endpoint_cache_hit_and_fallback_return_same_payload(monkeypatch):
     fallback_json = fallback.json()
     for key in ("paraxial", "trace", "mtf", "layout_svg", "metadata"):
         assert hit_json[key] == fallback_json[key]
+
+
+def test_match_endpoint_cache_hit_full_mode_reattaches_design_assessment(monkeypatch):
+    bundle = _bundle()
+    assessed_sample = bundle.sample.model_copy(
+        update={"design_assessment": _assessment()},
+        deep=True,
+    )
+    calls: list[dict[str, object]] = []
+
+    monkeypatch.setattr(optical_api, "load_demo_cache_bundle_for_request", lambda request: bundle)
+
+    def _match_case(**kwargs):
+        calls.append(kwargs)
+        return assessed_sample
+
+    monkeypatch.setattr(optical_api, "match_case", _match_case)
+
+    payload = _request_payload()
+    payload["analysis_depth"] = "full"
+    response = client.post("/api/optical/match", json=payload)
+
+    assert response.status_code == 200, response.text
+    assert response.headers["X-Demo-Cache"] == "hit"
+    assert response.json()["design_assessment"]["matched_case_id"] == bundle.source_case_id
+    assert calls == [
+        {
+            "scenario": Scenario.SMARTPHONE_WIDE,
+            "efl_mm": 2.7,
+            "fnum": 2.5,
+            "fov_deg": 78.0,
+            "image_height_mm": 2.3,
+            "n_elements": 3,
+            "max_total_track_mm": None,
+            "max_weight_g": None,
+            "manufacturing_tier": None,
+            "priority": None,
+            "include_design_assessment": True,
+            "lightweight_design_assessment": False,
+        }
+    ]
 
 
 def test_full_demo_cache_api_cache_hit_and_fallback_return_same_bundle(monkeypatch):

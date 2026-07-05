@@ -621,6 +621,60 @@ def _assessment_mode(req: OpticalSpecRequest) -> Literal["full", "lightweight", 
     return "full"
 
 
+def _match_case_for_request(
+    req: OpticalSpecRequest,
+    *,
+    assessment_mode: Literal["full", "lightweight", "none"],
+) -> OpticalSampleData | None:
+    return match_case(
+        scenario=req.scenario,
+        efl_mm=req.focal_length_mm,
+        fnum=req.f_number,
+        fov_deg=req.field_of_view_deg,
+        image_height_mm=req.image_height_mm,
+        n_elements=req.n_elements,
+        max_total_track_mm=req.max_total_track_mm,
+        max_weight_g=req.max_weight_g,
+        manufacturing_tier=req.manufacturing_tier,
+        priority=req.priority,
+        include_design_assessment=assessment_mode != "none",
+        lightweight_design_assessment=assessment_mode == "lightweight",
+    )
+
+
+def _no_real_case_error(req: OpticalSpecRequest) -> HTTPException:
+    return HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={
+            "error": "no_real_case_for_scenario",
+            "scenario": req.scenario,
+            "message": (
+                f"No real design in the case library for scenario "
+                f"{req.scenario.value}. This phase ships smartphone "
+                f"wide / ultrawide only."
+            ),
+        },
+    )
+
+
+def _cached_match_sample(
+    req: OpticalSpecRequest,
+    cached: DemoAnalysisBundle,
+    *,
+    assessment_mode: Literal["full", "lightweight", "none"],
+) -> OpticalSampleData:
+    if assessment_mode == "none":
+        return cached.sample.model_copy(update={"design_assessment": None}, deep=True)
+
+    assessed = _match_case_for_request(req, assessment_mode=assessment_mode)
+    if assessed is None:
+        raise _no_real_case_error(req)
+    return cached.sample.model_copy(
+        update={"design_assessment": assessed.design_assessment},
+        deep=True,
+    )
+
+
 @router.post(
     "/match",
     response_model=OpticalSampleData,
@@ -640,6 +694,7 @@ async def match(req: OpticalSpecRequest, response: Response) -> OpticalSampleDat
     stance, then attaches `design_assessment` with deltas and tradeoffs.
     """
     _validate_or_400(req)
+    assessment_mode = _assessment_mode(req)
     cache_request = demo_cache_request(
         scenario=req.scenario,
         focal_length_mm=req.focal_length_mm,
@@ -656,37 +711,12 @@ async def match(req: OpticalSpecRequest, response: Response) -> OpticalSampleDat
     cached = load_demo_cache_bundle_for_request(cache_request)
     if cached is not None:
         response.headers["X-Demo-Cache"] = "hit"
-        return cached.sample
+        return _cached_match_sample(req, cached, assessment_mode=assessment_mode)
 
     response.headers["X-Demo-Cache"] = "miss"
-    assessment_mode = _assessment_mode(req)
-    case = match_case(
-        scenario=req.scenario,
-        efl_mm=req.focal_length_mm,
-        fnum=req.f_number,
-        fov_deg=req.field_of_view_deg,
-        image_height_mm=req.image_height_mm,
-        n_elements=req.n_elements,
-        max_total_track_mm=req.max_total_track_mm,
-        max_weight_g=req.max_weight_g,
-        manufacturing_tier=req.manufacturing_tier,
-        priority=req.priority,
-        include_design_assessment=assessment_mode != "none",
-        lightweight_design_assessment=assessment_mode == "lightweight",
-    )
+    case = _match_case_for_request(req, assessment_mode=assessment_mode)
     if case is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "error": "no_real_case_for_scenario",
-                "scenario": req.scenario,
-                "message": (
-                    f"No real design in the case library for scenario "
-                    f"{req.scenario.value}. This phase ships smartphone "
-                    f"wide / ultrawide only."
-                ),
-            },
-        )
+        raise _no_real_case_error(req)
     return case
 
 
