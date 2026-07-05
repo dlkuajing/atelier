@@ -14,6 +14,7 @@ from app.core.aberration import MTFResult
 from app.core.field_analysis import FieldAnalysisResult
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary, SurfaceDescriptor
+from app.core.provenance import ProvenanceSource
 from app.core.spot_diagram import SpotDiagramResult
 from app.core.wavefront_metrics import WavefrontMetricsResult
 
@@ -583,6 +584,48 @@ class OptimizationMetricSnapshot(BaseModel):
     mtf_multiband_min_score: float | None = None
     mtf_field_weighted_score: float | None = None
     max_rms_spot_radius_um: float | None = None
+
+
+class CodeVRefinementMetricSnapshot(BaseModel):
+    """Metric packet emitted by the CODE V AUT refinement run."""
+
+    provenance: ProvenanceSource = ProvenanceSource.CODEV_RUN
+    efl_y_mm: float
+    max_lateral_color_um: float
+    max_rms_spot_diameter_um: float
+    max_rms_wavefront_error_waves: float
+    max_distortion_pct: float
+
+
+class CodeVToleranceSensitivityRow(BaseModel):
+    """One top-N tolerance sensitivity row sourced from CODE V."""
+
+    provenance: ProvenanceSource = ProvenanceSource.CODEV_RUN
+    rank: int = Field(..., ge=1)
+    parameter_name: str
+    perturbation: str
+    mtf_drop: float = Field(..., ge=0.0)
+
+
+class CodeVRefinementComparison(BaseModel):
+    """Seed vs CODE V refined comparison carried inside optical_sample payloads."""
+
+    source_zmx: str
+    optimization_status: str
+    glass_policy: str
+    thickness_policy: str
+    optimized_readout_path: str | None = None
+    optimized_zmx_filename: str
+    before: CodeVRefinementMetricSnapshot
+    after: CodeVRefinementMetricSnapshot
+    efl_deviation_pct: float
+    seed_mtf: MTFResult | None = None
+    refined_mtf: MTFResult | None = None
+    tolerance_sensitivity_top_n: list[CodeVToleranceSensitivityRow] = Field(
+        default_factory=list
+    )
+    cross_validation_status: str = "rebuilt-zmx-ingested"
+    cross_validation_provenance: str = "codev-cross-validated"
 
 
 class DraftCandidate(BaseModel):
@@ -1302,6 +1345,7 @@ class OpticalSampleData(BaseModel):
     spot_diagram: SpotDiagramResult | None = None
     field_analysis: FieldAnalysisResult | None = None
     wavefront: WavefrontMetricsResult | None = None
+    codev_optimization: CodeVRefinementComparison | None = None
     # Optional for backward-compat: pre-v2-02 consumers don't pass metadata.
     metadata: CaseMetadata | None = None
     # Present when a real design was selected for a specific user request.

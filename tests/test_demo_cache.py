@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 from pathlib import Path
 from unittest.mock import AsyncMock
 
@@ -246,6 +247,78 @@ def test_demo_cache_round_trip_preserves_analysis_provenance(tmp_path):
     for artefact in artefacts:
         payload = artefact.model_dump(mode="json")
         assert payload["provenance"] in {source.value for source in ProvenanceSource}
+
+
+def test_precompute_codev_artifact_includes_run_evidence_and_refined_mtf(monkeypatch):
+    precompute = importlib.import_module("scripts.precompute_demo_cache")
+    bundle = _bundle()
+    evidence = {
+        "run_started_at_utc": "2026-07-06T00:00:00+00:00",
+        "codev_executable": "D:/CODEV115/codev.exe",
+        "codev_version": "11.5.27302.701",
+        "returncode": 1,
+        "duration_seconds": 12.3,
+        "source_zmx_sha256": "a" * 64,
+        "sequence_sha256": "b" * 64,
+        "result_sha256": "c" * 64,
+        "optimized_readout_sha256": "d" * 64,
+        "optimized_zmx_sha256": "e" * 64,
+    }
+
+    class FakeSummary:
+        def describe(self):
+            return {
+                "source_zmx": bundle.source_zmx,
+                "optimization_status": "aut_completed",
+                "glass_policy": "glass-not-varied",
+                "thickness_policy": "MNT/MNE/MXT/MNA bounded in AUT",
+                "optimized_readout_path": "atelier_codev_optimized_readout.tsv",
+                "optimized_zmx_filename": "optimized.zmx",
+                "before": {
+                    "efl_y_mm": 2.7,
+                    "max_lateral_color_um": 1.0,
+                    "max_rms_spot_diameter_um": 10.0,
+                    "max_rms_wavefront_error_waves": 0.2,
+                    "max_distortion_pct": 1.0,
+                },
+                "after": {
+                    "efl_y_mm": 2.7,
+                    "max_lateral_color_um": 0.5,
+                    "max_rms_spot_diameter_um": 6.0,
+                    "max_rms_wavefront_error_waves": 0.1,
+                    "max_distortion_pct": 0.8,
+                },
+                "efl_deviation_pct": 0.0,
+                "tolerance_sensitivity_top_n": [],
+            }
+
+    class FakeResult:
+        summary = FakeSummary()
+        ingested_efl_mm = 2.7
+
+    monkeypatch.setattr(
+        precompute,
+        "_refined_mtf_payload",
+        lambda _bundle, _result: _mtf().model_dump(mode="json"),
+    )
+    monkeypatch.setattr(
+        precompute,
+        "_codev_run_evidence",
+        lambda **_kwargs: evidence,
+    )
+
+    artifact = precompute._codev_artifact_from_result(
+        bundle=bundle,
+        result=FakeResult(),
+        run_started_at_utc="2026-07-06T00:00:00+00:00",
+    )
+
+    assert artifact["artifact_schema"] == "atelier-demo-codev-artifact-v1"
+    assert artifact["run_evidence"] == evidence
+    assert artifact["seed_mtf"]["provenance"] == "optiland-raytrace"
+    assert artifact["refined_mtf"]["provenance"] == "optiland-raytrace"
+    assert artifact["before"]["max_rms_spot_diameter_um"] == 10.0
+    assert artifact["after"]["max_rms_spot_diameter_um"] == 6.0
 
 
 def test_precompute_request_uses_nominal_f_number_from_case_id(monkeypatch):
