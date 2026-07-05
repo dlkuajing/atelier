@@ -20,6 +20,8 @@ build/
 # app/data (different paths) are unaffected.
 /data/*
 !/data/zmx/
+!/data/demo_cache/
+!/data/demo_cache/**
 *.db
 *.sqlite
 

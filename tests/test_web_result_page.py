@@ -233,7 +233,7 @@ def test_result_page_integrates_full_narrative_from_optical_sample(
 
     seen: dict[str, object] = {}
 
-    async def fake_match(req):
+    async def fake_match(req, response=None):
         seen["request"] = req
         return _sample_payload()
 
@@ -307,7 +307,7 @@ def test_result_page_marks_missing_spot_diagram_as_unavailable_partial(
     _stub_summary_generation(mock_get_client)
     _install_job_store(monkeypatch, _job_record())
 
-    async def fake_match(_req):
+    async def fake_match(req, response=None):
         return _sample_payload().model_copy(update={"spot_diagram": None})
 
     monkeypatch.setattr(main.optical, "match", fake_match)
@@ -333,7 +333,7 @@ def test_result_page_uses_job_store_status_when_job_id_is_present(
     _stub_summary_generation(mock_get_client)
     _install_job_store(monkeypatch, _job_record(job_id="job-running", status=JobStatus.RUNNING))
 
-    async def fake_match(_req):
+    async def fake_match(req, response=None):
         return _sample_payload()
 
     monkeypatch.setattr(main.optical, "match", fake_match)

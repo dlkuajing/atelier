@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Annotated
 
 import structlog
-from fastapi import FastAPI, Form, HTTPException, Request, status
+from fastapi import FastAPI, Form, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -24,6 +24,7 @@ _optiland_patches.apply_all()
 
 from app.api import optical, rag, wizard  # noqa: E402
 from app.core.config import settings  # noqa: E402
+from app.core.demo_cache import demo_cache_request, load_demo_cache_bundle_for_request  # noqa: E402
 from app.core.field_analysis import compute_field_analysis  # noqa: E402
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
@@ -502,7 +503,8 @@ async def _result_sample(
 ) -> OpticalSampleData | None:
     try:
         sample = await optical.match(
-            optical.OpticalSpecRequest(
+            response=Response(),
+            req=optical.OpticalSpecRequest(
                 scenario=scenario,
                 focal_length_mm=focal_length_mm,
                 f_number=f_number,
@@ -670,7 +672,7 @@ async def result_summary(
             detail={"error": "job_not_found", "job_id": job_id},
         ) from exc
 
-    sample = await _result_sample(
+    cache_request = demo_cache_request(
         scenario=scenario,
         focal_length_mm=focal_length_mm,
         f_number=f_number,
@@ -678,8 +680,35 @@ async def result_summary(
         image_height_mm=image_height_mm,
         n_elements=n_elements,
         wavelength_nm=wavelength_nm,
-        total_track_mm=total_track_mm,
     )
+    cached = load_demo_cache_bundle_for_request(cache_request)
+    demo_cache_status = "miss"
+    design_assessment = None
+    if cached is not None:
+        demo_cache_status = "hit"
+        sample = cached.sample
+        focal_length_mm = sample.paraxial.effective_focal_length_mm
+        f_number = sample.paraxial.f_number
+        total_track_mm = sample.paraxial.total_track_mm
+        airy_disc_diameter_um = sample.mtf.airy_disc_diameter_um
+        cutoff_freq_lp_per_mm = sample.mtf.cutoff_freq_lp_per_mm
+        if sample.metadata is not None:
+            scenario_label_en = sample.metadata.scenario.value.replace("-", " ").title()
+            n_elements = sample.metadata.n_pieces
+        design_assessment = sample.design_assessment
+    else:
+        sample = await _result_sample(
+            scenario=scenario,
+            focal_length_mm=focal_length_mm,
+            f_number=f_number,
+            field_of_view_deg=field_of_view_deg,
+            image_height_mm=image_height_mm,
+            n_elements=n_elements,
+            wavelength_nm=wavelength_nm,
+            total_track_mm=total_track_mm,
+        )
+        if sample is not None:
+            design_assessment = sample.design_assessment
     summary = await wizard.generate_executive_summary(
         wizard.ExecutiveSummaryRequest(
             scenario=scenario,
@@ -693,6 +722,7 @@ async def result_summary(
             total_track_mm=total_track_mm,
             airy_disc_diameter_um=airy_disc_diameter_um,
             cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+            design_assessment=design_assessment,
         )
     )
     return templates.TemplateResponse(
@@ -702,6 +732,7 @@ async def result_summary(
             "product_name": "Atelier",
             "scenario_label": scenario_label_en,
             "scenario": scenario.value,
+            "demo_cache_status": demo_cache_status,
             "requirement": requirement,
             "summary": summary,
             "target_metrics": (

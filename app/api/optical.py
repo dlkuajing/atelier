@@ -12,7 +12,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, Form, HTTPException, Response, UploadFile, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -22,6 +22,12 @@ from app.core.case_library import (
     build_seed_intake_audit,
     load_case_library,
     match_case,
+)
+from app.core.demo_cache import (
+    DemoAnalysisBundle,
+    compute_demo_cache_bundle_for_request,
+    demo_cache_request,
+    load_demo_cache_bundle_for_request,
 )
 from app.core.engines import get_deep_engine
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus, JobStore
@@ -615,27 +621,12 @@ def _assessment_mode(req: OpticalSpecRequest) -> Literal["full", "lightweight", 
     return "full"
 
 
-@router.post(
-    "/match",
-    response_model=OpticalSampleData,
-    responses={
-        400: {"description": "Parameter guard violation"},
-        404: {"description": "No real case for this scenario"},
-    },
-)
-async def match(req: OpticalSpecRequest) -> OpticalSampleData:
-    """Retrieve the real production design nearest to the requested params.
-
-    Unlike /raytrace + /aberration + /layout-svg (which scale a textbook
-    reference design), this returns a **real** pre-computed design from the
-    v2-02 case library — its actual prescription, Optiland-verified MTF, and
-    2D layout, plus honest provenance metadata. v2-05 scores full design intent:
-    EFL / FOV / F#, image height, element count, TTL, and coarse cost/performance
-    stance, then attaches `design_assessment` with deltas and tradeoffs.
-    """
-    _validate_or_400(req)
-    assessment_mode = _assessment_mode(req)
-    case = match_case(
+def _match_case_for_request(
+    req: OpticalSpecRequest,
+    *,
+    assessment_mode: Literal["full", "lightweight", "none"],
+) -> OpticalSampleData | None:
+    return match_case(
         scenario=req.scenario,
         efl_mm=req.focal_length_mm,
         fnum=req.f_number,
@@ -649,17 +640,125 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
         include_design_assessment=assessment_mode != "none",
         lightweight_design_assessment=assessment_mode == "lightweight",
     )
+
+
+def _no_real_case_error(req: OpticalSpecRequest) -> HTTPException:
+    return HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail={
+            "error": "no_real_case_for_scenario",
+            "scenario": req.scenario,
+            "message": (
+                f"No real design in the case library for scenario "
+                f"{req.scenario.value}. This phase ships smartphone "
+                f"wide / ultrawide only."
+            ),
+        },
+    )
+
+
+def _cached_match_sample(
+    req: OpticalSpecRequest,
+    cached: DemoAnalysisBundle,
+    *,
+    assessment_mode: Literal["full", "lightweight", "none"],
+) -> OpticalSampleData:
+    if assessment_mode == "none":
+        return cached.sample.model_copy(update={"design_assessment": None}, deep=True)
+
+    assessed = _match_case_for_request(req, assessment_mode=assessment_mode)
+    if assessed is None:
+        raise _no_real_case_error(req)
+    return cached.sample.model_copy(
+        update={"design_assessment": assessed.design_assessment},
+        deep=True,
+    )
+
+
+@router.post(
+    "/match",
+    response_model=OpticalSampleData,
+    responses={
+        400: {"description": "Parameter guard violation"},
+        404: {"description": "No real case for this scenario"},
+    },
+)
+async def match(req: OpticalSpecRequest, response: Response) -> OpticalSampleData:
+    """Retrieve the real production design nearest to the requested params.
+
+    Unlike /raytrace + /aberration + /layout-svg (which scale a textbook
+    reference design), this returns a **real** pre-computed design from the
+    v2-02 case library — its actual prescription, Optiland-verified MTF, and
+    2D layout, plus honest provenance metadata. v2-05 scores full design intent:
+    EFL / FOV / F#, image height, element count, TTL, and coarse cost/performance
+    stance, then attaches `design_assessment` with deltas and tradeoffs.
+    """
+    _validate_or_400(req)
+    assessment_mode = _assessment_mode(req)
+    cache_request = demo_cache_request(
+        scenario=req.scenario,
+        focal_length_mm=req.focal_length_mm,
+        f_number=req.f_number,
+        field_of_view_deg=req.field_of_view_deg,
+        image_height_mm=req.image_height_mm,
+        n_elements=req.n_elements,
+        wavelength_nm=req.wavelength_nm,
+        max_total_track_mm=req.max_total_track_mm,
+        max_weight_g=req.max_weight_g,
+        manufacturing_tier=req.manufacturing_tier,
+        priority=req.priority,
+    )
+    cached = load_demo_cache_bundle_for_request(cache_request)
+    if cached is not None:
+        response.headers["X-Demo-Cache"] = "hit"
+        return _cached_match_sample(req, cached, assessment_mode=assessment_mode)
+
+    response.headers["X-Demo-Cache"] = "miss"
+    case = _match_case_for_request(req, assessment_mode=assessment_mode)
     if case is None:
+        raise _no_real_case_error(req)
+    return case
+
+
+@router.post(
+    "/demo-cache",
+    response_model=DemoAnalysisBundle,
+    responses={
+        400: {"description": "Parameter guard violation"},
+        404: {"description": "No real case for this scenario"},
+    },
+)
+async def demo_cache(req: OpticalSpecRequest, response: Response) -> DemoAnalysisBundle:
+    """Return the complete demo analysis family, preferring precomputed cache."""
+
+    _validate_or_400(req)
+    cache_request = demo_cache_request(
+        scenario=req.scenario,
+        focal_length_mm=req.focal_length_mm,
+        f_number=req.f_number,
+        field_of_view_deg=req.field_of_view_deg,
+        image_height_mm=req.image_height_mm,
+        n_elements=req.n_elements,
+        wavelength_nm=req.wavelength_nm,
+        max_total_track_mm=req.max_total_track_mm,
+        max_weight_g=req.max_weight_g,
+        manufacturing_tier=req.manufacturing_tier,
+        priority=req.priority,
+    )
+    cached = load_demo_cache_bundle_for_request(cache_request)
+    if cached is not None:
+        response.headers["X-Demo-Cache"] = "hit"
+        return cached
+
+    response.headers["X-Demo-Cache"] = "miss"
+    try:
+        return compute_demo_cache_bundle_for_request(cache_request)
+    except ValueError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "error": "no_real_case_for_scenario",
                 "scenario": req.scenario,
-                "message": (
-                    f"No real design in the case library for scenario "
-                    f"{req.scenario.value}. This phase ships smartphone "
-                    f"wide / ultrawide only."
-                ),
+                "message": str(exc),
             },
-        )
-    return case
+        ) from exc
