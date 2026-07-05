@@ -1,5 +1,6 @@
 """Web wizard flow contract tests."""
 
+from html.parser import HTMLParser
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi.testclient import TestClient
@@ -14,6 +15,45 @@ def _mock_chat_response(content: str) -> MagicMock:
     completion = MagicMock()
     completion.choices = [MagicMock(message=MagicMock(content=content))]
     return completion
+
+
+class _HiddenInputParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.in_summary_form = False
+        self.action: str | None = None
+        self.method: str | None = None
+        self.button_types: list[str] = []
+        self.fields: dict[str, str] = {}
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr = {name: value or "" for name, value in attrs}
+        if tag == "form" and attr.get("data-confirmation-form") == "result-summary":
+            self.in_summary_form = True
+            self.action = attr.get("action")
+            self.method = attr.get("method")
+            return
+
+        if not self.in_summary_form:
+            return
+
+        if tag == "input" and attr.get("type") == "hidden":
+            self.fields[attr["name"]] = attr.get("value", "")
+        if tag == "button":
+            self.button_types.append(attr.get("type", "submit"))
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "form" and self.in_summary_form:
+            self.in_summary_form = False
+
+
+def _hidden_summary_fields(html: str) -> _HiddenInputParser:
+    parser = _HiddenInputParser()
+    parser.feed(html)
+    assert parser.action == "/results/summary"
+    assert parser.method == "post"
+    assert "submit" in parser.button_types
+    return parser
 
 
 def test_homepage_form_posts_to_wizard_confirmation():
@@ -69,6 +109,35 @@ def test_wizard_form_submission_renders_scenario_parameters_and_clamped_bounds(
     assert "2.5-8.0 mm" in html
     assert ">9<" in html
     assert ">5-9<" in html
+
+    form = _hidden_summary_fields(html)
+    assert {
+        "scenario",
+        "scenario_label_en",
+        "focal_length_mm",
+        "f_number",
+        "field_of_view_deg",
+        "image_height_mm",
+        "n_elements",
+        "wavelength_nm",
+        "total_track_mm",
+        "airy_disc_diameter_um",
+        "cutoff_freq_lp_per_mm",
+        "requirement",
+        "job_id",
+    }.issubset(form.fields)
+    assert form.fields["scenario"] == "smartphone-telephoto"
+    assert form.fields["scenario_label_en"] == "Smartphone Telephoto"
+    assert float(form.fields["focal_length_mm"]) == 18.0
+    assert float(form.fields["f_number"]) == 1.8
+    assert float(form.fields["field_of_view_deg"]) == 45.0
+    assert float(form.fields["image_height_mm"]) == 2.5
+    assert int(form.fields["n_elements"]) == 9
+    assert float(form.fields["wavelength_nm"]) > 0.0
+    assert float(form.fields["total_track_mm"]) > 0.0
+    assert float(form.fields["airy_disc_diameter_um"]) > 0.0
+    assert float(form.fields["cutoff_freq_lp_per_mm"]) > 0.0
+    assert form.fields["requirement"] == requirement
 
     call_args = mock_client.chat.completions.create.call_args
     messages = call_args.kwargs["messages"]

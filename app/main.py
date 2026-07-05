@@ -2,8 +2,10 @@
 
 import json
 import math
+import warnings
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, redirect_stdout, suppress
+from io import StringIO
 from pathlib import Path
 from typing import Annotated
 
@@ -22,11 +24,20 @@ _optiland_patches.apply_all()
 
 from app.api import optical, rag, wizard  # noqa: E402
 from app.core.config import settings  # noqa: E402
+from app.core.field_analysis import compute_field_analysis  # noqa: E402
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
+from app.core.optical_calc import airy_disk_diameter_um  # noqa: E402
 from app.core.optical_sample import OpticalSampleData  # noqa: E402
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
 from app.core.provenance import ProvenanceSource  # noqa: E402
+from app.core.spot_diagram import compute_spot_diagram  # noqa: E402
+from app.core.wavefront_metrics import compute_wavefront_metrics  # noqa: E402
+from app.core.zmx_ingest import (  # noqa: E402
+    ZMX_AMMO_DIR,
+    load_normalized_zmx,
+    regularize_fields_to_angle,
+)
 
 
 logger = structlog.get_logger(__name__)
@@ -51,6 +62,8 @@ ANALYSIS_PROVENANCE_BADGES = (
     {"label": "Field", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
     {"label": "Wavefront", "source": ProvenanceSource.OPTILAND_WAVEFRONT.value},
 )
+_RESULT_ANALYSIS_WAVELENGTH_NM = 587.6
+_SUMMARY_FALLBACK_WAVELENGTH_NM = 550.0
 
 
 def _format_float(value: float | None) -> str:
@@ -106,6 +119,107 @@ def _format_parameter_rows(
             else "Not specified",
             "bounds": f"{bounds.n_elements_min}-{bounds.n_elements_max}",
         },
+    )
+
+
+def _resolved_float(value: float | None, lo: float, hi: float) -> float:
+    return float(value) if value is not None else (lo + hi) / 2.0
+
+
+def _resolved_int(value: int | None, lo: int, hi: int) -> int:
+    return int(value) if value is not None else round((lo + hi) / 2)
+
+
+def _fallback_total_track_mm(
+    *,
+    focal_length_mm: float,
+    image_height_mm: float,
+    n_elements: int,
+) -> float:
+    element_stack_allowance = 0.12 * n_elements
+    return max(
+        focal_length_mm + 0.5,
+        image_height_mm + 1.0,
+        focal_length_mm + element_stack_allowance,
+    )
+
+
+def _diffraction_cutoff_lp_per_mm(*, wavelength_nm: float, f_number: float) -> float:
+    wavelength_mm = wavelength_nm * 1e-6
+    return 1.0 / (wavelength_mm * f_number)
+
+
+def _summary_field(name: str, value: object) -> dict[str, str]:
+    return {"name": name, "value": str(value)}
+
+
+async def _summary_form_fields(
+    *,
+    extraction: wizard.ExtractScenarioResponse,
+    requirement: str,
+) -> tuple[dict[str, str], ...]:
+    bounds = SCENARIO_BOUNDS[extraction.scenario]
+    focal_length_mm = _resolved_float(
+        extraction.focal_length_mm, bounds.efl_mm_min, bounds.efl_mm_max
+    )
+    f_number = _resolved_float(extraction.f_number, bounds.f_number_min, bounds.f_number_max)
+    field_of_view_deg = _resolved_float(
+        extraction.field_of_view_deg, bounds.fov_deg_min, bounds.fov_deg_max
+    )
+    image_height_mm = _resolved_float(
+        extraction.image_height_mm,
+        bounds.image_height_mm_min,
+        bounds.image_height_mm_max,
+    )
+    n_elements = _resolved_int(
+        extraction.n_elements,
+        bounds.n_elements_min,
+        bounds.n_elements_max,
+    )
+
+    wavelength_nm = _SUMMARY_FALLBACK_WAVELENGTH_NM
+    total_track_mm = _fallback_total_track_mm(
+        focal_length_mm=focal_length_mm,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+    )
+    airy_disc_diameter_um = airy_disk_diameter_um(wavelength_nm, f_number)
+    cutoff_freq_lp_per_mm = _diffraction_cutoff_lp_per_mm(
+        wavelength_nm=wavelength_nm,
+        f_number=f_number,
+    )
+
+    sample = await _result_sample(
+        scenario=extraction.scenario,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+        total_track_mm=None,
+        enrich_analysis=False,
+    )
+    if sample is not None:
+        wavelength_nm = _RESULT_ANALYSIS_WAVELENGTH_NM
+        total_track_mm = sample.paraxial.total_track_mm
+        airy_disc_diameter_um = sample.mtf.airy_disc_diameter_um
+        cutoff_freq_lp_per_mm = sample.mtf.cutoff_freq_lp_per_mm
+
+    return (
+        _summary_field("scenario", extraction.scenario.value),
+        _summary_field("scenario_label_en", extraction.scenario.value.replace("-", " ").title()),
+        _summary_field("focal_length_mm", focal_length_mm),
+        _summary_field("f_number", f_number),
+        _summary_field("field_of_view_deg", field_of_view_deg),
+        _summary_field("image_height_mm", image_height_mm),
+        _summary_field("n_elements", n_elements),
+        _summary_field("wavelength_nm", wavelength_nm),
+        _summary_field("total_track_mm", total_track_mm),
+        _summary_field("airy_disc_diameter_um", airy_disc_diameter_um),
+        _summary_field("cutoff_freq_lp_per_mm", cutoff_freq_lp_per_mm),
+        _summary_field("requirement", requirement),
+        _summary_field("job_id", ""),
     )
 
 
@@ -316,6 +430,64 @@ def _analysis_cards(sample: OpticalSampleData | None) -> tuple[dict[str, object]
     )
 
 
+def _load_result_analysis_optic(sample: OpticalSampleData):
+    if sample.metadata is None or not sample.metadata.source_zmx:
+        return None
+
+    source_path = ZMX_AMMO_DIR / sample.metadata.source_zmx
+    if not source_path.exists():
+        return None
+
+    with warnings.catch_warnings(), redirect_stdout(StringIO()):
+        warnings.simplefilter("ignore")
+        optic = load_normalized_zmx(source_path)
+        regularize_fields_to_angle(optic, sample.metadata.fov_deg)
+    return optic
+
+
+def _enrich_result_sample_analysis(sample: OpticalSampleData) -> OpticalSampleData:
+    if (
+        sample.spot_diagram is not None
+        and sample.field_analysis is not None
+        and sample.wavefront is not None
+    ):
+        return sample
+
+    optic = None
+    with suppress(Exception):
+        optic = _load_result_analysis_optic(sample)
+    if optic is None:
+        return sample
+
+    updates: dict[str, object] = {}
+    if sample.spot_diagram is None:
+        with suppress(Exception):
+            updates["spot_diagram"] = compute_spot_diagram(
+                optic,
+                fields=[(0.0, 0.0), (0.0, 0.5)],
+                wavelengths_nm=[_RESULT_ANALYSIS_WAVELENGTH_NM],
+                num_rings=3,
+            )
+    if sample.field_analysis is None:
+        with suppress(Exception):
+            updates["field_analysis"] = compute_field_analysis(
+                optic,
+                wavelength_nm=_RESULT_ANALYSIS_WAVELENGTH_NM,
+                num_points=32,
+            )
+    if sample.wavefront is None:
+        with suppress(Exception):
+            updates["wavefront"] = compute_wavefront_metrics(
+                optic,
+                fields=[(0.0, 0.0)],
+                wavelength_nm=_RESULT_ANALYSIS_WAVELENGTH_NM,
+                num_rays=6,
+                num_zernike_terms=2,
+            )
+
+    return sample.model_copy(update=updates) if updates else sample
+
+
 async def _result_sample(
     *,
     scenario: Scenario,
@@ -325,10 +497,11 @@ async def _result_sample(
     image_height_mm: float,
     n_elements: int | None,
     wavelength_nm: float,
-    total_track_mm: float,
+    total_track_mm: float | None,
+    enrich_analysis: bool = True,
 ) -> OpticalSampleData | None:
     try:
-        return await optical.match(
+        sample = await optical.match(
             optical.OpticalSpecRequest(
                 scenario=scenario,
                 focal_length_mm=focal_length_mm,
@@ -341,6 +514,7 @@ async def _result_sample(
                 analysis_depth="seed_only",
             )
         )
+        return _enrich_result_sample_analysis(sample) if enrich_analysis else sample
     except HTTPException:
         return None
 
@@ -442,6 +616,10 @@ async def wizard_confirm(
     extraction = await wizard.extract_scenario(
         wizard.ExtractScenarioRequest(user_input=requirement)
     )
+    summary_form_fields = await _summary_form_fields(
+        extraction=extraction,
+        requirement=requirement,
+    )
     return templates.TemplateResponse(
         request,
         "wizard_confirm.html",
@@ -452,6 +630,7 @@ async def wizard_confirm(
             "scenario_label": extraction.scenario.value.replace("-", " ").title(),
             "reasoning": extraction.reasoning,
             "parameters": _format_parameter_rows(extraction),
+            "summary_form_fields": summary_form_fields,
             "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
         },
     )
