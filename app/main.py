@@ -1,6 +1,7 @@
 """FastAPI app entrypoint."""
 
 import json
+import math
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -23,6 +24,7 @@ from app.api import optical, rag, wizard  # noqa: E402
 from app.core.config import settings  # noqa: E402
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
+from app.core.optical_sample import OpticalSampleData  # noqa: E402
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
 from app.core.provenance import ProvenanceSource  # noqa: E402
 
@@ -107,6 +109,242 @@ def _format_parameter_rows(
     )
 
 
+def _source_value(source: object) -> str:
+    return source.value if hasattr(source, "value") else str(source)
+
+
+def _finite_float_values(values: list[float]) -> list[float]:
+    return [value for value in values if math.isfinite(value)]
+
+
+def _metric_rows(
+    *,
+    sample: OpticalSampleData | None,
+    focal_length_mm: float,
+    f_number: float,
+    field_of_view_deg: float,
+    image_height_mm: float,
+    total_track_mm: float,
+    airy_disc_diameter_um: float,
+    cutoff_freq_lp_per_mm: float,
+) -> tuple[tuple[str, str], ...]:
+    if sample is None:
+        return (
+            ("Focal length", f"{focal_length_mm:.2f} mm"),
+            ("F-number", f"f/{f_number:.2f}"),
+            ("Field of view", f"{field_of_view_deg:.1f} deg"),
+            ("Image height", f"{image_height_mm:.2f} mm"),
+            ("Total track", f"{total_track_mm:.2f} mm"),
+            ("Airy diameter", f"{airy_disc_diameter_um:.2f} um"),
+            ("Cutoff", f"{cutoff_freq_lp_per_mm:.0f} lp/mm"),
+        )
+
+    paraxial = sample.paraxial
+    return (
+        ("Focal length", f"{paraxial.effective_focal_length_mm:.2f} mm"),
+        ("F-number", f"f/{paraxial.f_number:.2f}"),
+        ("Surfaces", str(paraxial.n_surfaces)),
+        ("Sampled rays", str(sample.trace.n_rays)),
+        ("Total track", f"{paraxial.total_track_mm:.2f} mm"),
+        ("Airy diameter", f"{sample.mtf.airy_disc_diameter_um:.2f} um"),
+        ("Cutoff", f"{sample.mtf.cutoff_freq_lp_per_mm:.0f} lp/mm"),
+    )
+
+
+def _sample_case_label(sample: OpticalSampleData | None) -> str:
+    if sample is None:
+        return "No matched optical_sample payload"
+    if sample.metadata is not None:
+        return f"{sample.metadata.case_id} / {sample.metadata.source_zmx}"
+    return sample.trace.assembly_name
+
+
+def _analysis_card(
+    *,
+    artifact: str,
+    title: str,
+    source: object,
+    summary: str,
+    detail: str,
+    available: bool,
+    partial: bool = False,
+) -> dict[str, object]:
+    return {
+        "artifact": artifact,
+        "title": title,
+        "source": _source_value(source),
+        "summary": summary,
+        "detail": detail,
+        "available": available,
+        "partial": partial,
+    }
+
+
+def _analysis_cards(sample: OpticalSampleData | None) -> tuple[dict[str, object], ...]:
+    if sample is None:
+        unavailable = "Matched optical_sample payload is unavailable for this result."
+        return (
+            _analysis_card(
+                artifact="mtf",
+                title="MTF",
+                source=ProvenanceSource.OPTILAND_RAYTRACE,
+                summary=unavailable,
+                detail="No MTF payload was returned.",
+                available=False,
+            ),
+            _analysis_card(
+                artifact="spot-diagram",
+                title="Spot diagram",
+                source=ProvenanceSource.OPTILAND_RAYTRACE,
+                summary=unavailable,
+                detail="No spot payload was returned.",
+                available=False,
+            ),
+            _analysis_card(
+                artifact="field-analysis",
+                title="Field curvature / distortion",
+                source=ProvenanceSource.OPTILAND_RAYTRACE,
+                summary=unavailable,
+                detail="No field analysis payload was returned.",
+                available=False,
+            ),
+            _analysis_card(
+                artifact="wavefront",
+                title="Wavefront",
+                source=ProvenanceSource.OPTILAND_WAVEFRONT,
+                summary=unavailable,
+                detail="No wavefront payload was returned.",
+                available=False,
+            ),
+        )
+
+    rms_values = _finite_float_values(sample.mtf.rms_spot_radius_um_by_field)
+    has_spot_diagram = sample.spot_diagram is not None
+    spot_summary = (
+        f"MTF-linked RMS spot evidence across {len(rms_values)} fields."
+        if rms_values
+        else "MTF payload returned no finite RMS spot values."
+    )
+    spot_detail = (
+        f"Max RMS spot radius {max(rms_values):.2f} um."
+        if rms_values
+        else "No finite spot radius could be summarized."
+    )
+    if sample.spot_diagram is not None:
+        spot_summary = (
+            f"{sample.spot_diagram.field_count} fields x "
+            f"{sample.spot_diagram.wavelength_count} wavelengths."
+        )
+        spot_detail = (
+            f"{sample.spot_diagram.distribution} distribution, "
+            f"{sample.spot_diagram.reference} reference."
+        )
+
+    field_summary = "Field analysis payload is not attached to this optical_sample."
+    field_detail = "The result page keeps the field-curvature/distortion slot visible."
+    if sample.field_analysis is not None:
+        field_summary = (
+            f"{len(sample.field_analysis.field_fraction)} points, "
+            f"{sample.field_analysis.field_unit} field axis."
+        )
+        field_detail = f"{sample.field_analysis.distortion_model} distortion model."
+
+    wavefront_summary = "Wavefront payload is not attached to this optical_sample."
+    wavefront_detail = "The wavefront slot is reserved for Optiland wavefront metrics."
+    if sample.wavefront is not None:
+        strehl_values = [
+            field.strehl_ratio
+            for field in sample.wavefront.fields
+            if math.isfinite(field.strehl_ratio)
+        ]
+        wavefront_summary = (
+            f"{len(sample.wavefront.fields)} fields at "
+            f"{sample.wavefront.wavelength_nm:.1f} nm."
+        )
+        wavefront_detail = (
+            f"Minimum Strehl {min(strehl_values):.3f}."
+            if strehl_values
+            else "No finite Strehl value could be summarized."
+        )
+
+    return (
+        _analysis_card(
+            artifact="mtf",
+            title="MTF",
+            source=sample.mtf.provenance,
+            summary=f"{len(sample.mtf.fields)} fields, {len(sample.mtf.freq_lp_per_mm)} samples.",
+            detail=f"Diffraction cutoff {sample.mtf.cutoff_freq_lp_per_mm:.0f} lp/mm.",
+            available=True,
+        ),
+        _analysis_card(
+            artifact="spot-diagram",
+            title="Spot diagram",
+            source=(
+                sample.spot_diagram.provenance
+                if sample.spot_diagram is not None
+                else sample.mtf.provenance
+            ),
+            summary=spot_summary,
+            detail=spot_detail,
+            available=has_spot_diagram,
+            partial=not has_spot_diagram and bool(rms_values),
+        ),
+        _analysis_card(
+            artifact="field-analysis",
+            title="Field curvature / distortion",
+            source=(
+                sample.field_analysis.provenance
+                if sample.field_analysis is not None
+                else ProvenanceSource.OPTILAND_RAYTRACE
+            ),
+            summary=field_summary,
+            detail=field_detail,
+            available=sample.field_analysis is not None,
+        ),
+        _analysis_card(
+            artifact="wavefront",
+            title="Wavefront",
+            source=(
+                sample.wavefront.provenance
+                if sample.wavefront is not None
+                else ProvenanceSource.OPTILAND_WAVEFRONT
+            ),
+            summary=wavefront_summary,
+            detail=wavefront_detail,
+            available=sample.wavefront is not None,
+        ),
+    )
+
+
+async def _result_sample(
+    *,
+    scenario: Scenario,
+    focal_length_mm: float,
+    f_number: float,
+    field_of_view_deg: float,
+    image_height_mm: float,
+    n_elements: int | None,
+    wavelength_nm: float,
+    total_track_mm: float,
+) -> OpticalSampleData | None:
+    try:
+        return await optical.match(
+            optical.OpticalSpecRequest(
+                scenario=scenario,
+                focal_length_mm=focal_length_mm,
+                f_number=f_number,
+                field_of_view_deg=field_of_view_deg,
+                image_height_mm=image_height_mm,
+                n_elements=n_elements,
+                wavelength_nm=wavelength_nm,
+                max_total_track_mm=total_track_mm,
+                analysis_depth="seed_only",
+            )
+        )
+    except HTTPException:
+        return None
+
+
 def _job_progress_context(record: JobRecord) -> dict[str, object]:
     result = dict(record.result) if record.result is not None else None
     return {
@@ -125,6 +363,20 @@ def _job_progress_context(record: JobRecord) -> dict[str, object]:
         else "",
         "error": record.error,
     }
+
+
+def _result_progress_context(job_id: str | None) -> dict[str, object]:
+    normalized_job_id = job_id.strip() if job_id is not None else ""
+    if not normalized_job_id:
+        return {
+            "job_id": "inline-result",
+            "status": JobStatus.SUCCEEDED.value,
+            "status_label": "Succeeded",
+            "status_message": _JOB_STATUS_MESSAGES[JobStatus.SUCCEEDED],
+            "progress_percent": _JOB_PROGRESS_PERCENT[JobStatus.SUCCEEDED],
+        }
+
+    return _job_progress_context(optical.job_store.get(normalized_job_id))
 
 
 @asynccontextmanager
@@ -226,9 +478,29 @@ async def result_summary(
     total_track_mm: Annotated[float, Form(gt=0)],
     airy_disc_diameter_um: Annotated[float, Form(gt=0)],
     cutoff_freq_lp_per_mm: Annotated[float, Form(gt=0)],
-    n_elements: Annotated[int | None, Form(ge=2, le=30)] = None,
+    n_elements: Annotated[int | None, Form(ge=2, le=20)] = None,
     wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
+    requirement: Annotated[str | None, Form(max_length=2000)] = None,
+    job_id: Annotated[str | None, Form(max_length=100)] = None,
 ) -> HTMLResponse:
+    try:
+        progress = _result_progress_context(job_id)
+    except JobNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "job_id": job_id},
+        ) from exc
+
+    sample = await _result_sample(
+        scenario=scenario,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+        total_track_mm=total_track_mm,
+    )
     summary = await wizard.generate_executive_summary(
         wizard.ExecutiveSummaryRequest(
             scenario=scenario,
@@ -251,16 +523,31 @@ async def result_summary(
             "product_name": "Atelier",
             "scenario_label": scenario_label_en,
             "scenario": scenario.value,
+            "requirement": requirement,
             "summary": summary,
-            "metrics": (
+            "target_metrics": (
                 ("Focal length", f"{focal_length_mm:.2f} mm"),
                 ("F-number", f"f/{f_number:.2f}"),
                 ("Field of view", f"{field_of_view_deg:.1f} deg"),
                 ("Image height", f"{image_height_mm:.2f} mm"),
-                ("Total track", f"{total_track_mm:.2f} mm"),
-                ("Airy diameter", f"{airy_disc_diameter_um:.2f} um"),
-                ("Cutoff", f"{cutoff_freq_lp_per_mm:.0f} lp/mm"),
+                ("Elements", str(n_elements) if n_elements is not None else "Not specified"),
             ),
+            "metrics": _metric_rows(
+                sample=sample,
+                focal_length_mm=focal_length_mm,
+                f_number=f_number,
+                field_of_view_deg=field_of_view_deg,
+                image_height_mm=image_height_mm,
+                total_track_mm=total_track_mm,
+                airy_disc_diameter_um=airy_disc_diameter_um,
+                cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+            ),
+            "sample_case_label": _sample_case_label(sample),
+            "analysis_cards": _analysis_cards(sample),
+            "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
+            "layout_svg": sample.layout_svg.svg_content if sample is not None else "",
+            "has_layout_svg": sample is not None,
+            "progress": progress,
         },
     )
 
