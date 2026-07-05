@@ -22,6 +22,9 @@ build/
 !/data/zmx/
 !/data/demo_cache/
 !/data/demo_cache/**
+!/data/patents/
+/data/patents/*
+!/data/patents/uspto-smartphone-batch*.jsonl
 *.db
 *.sqlite
 
