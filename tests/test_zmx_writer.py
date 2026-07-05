@@ -1,11 +1,17 @@
 from __future__ import annotations
 
 import math
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
-from app.core.engines.codev_readout import CodeVFieldReadout, CodeVReadout, CodeVSurfaceReadout
+from app.core.engines.codev_readout import (
+    CodeVFieldReadout,
+    CodeVReadout,
+    CodeVSurfaceReadout,
+    CodeVWavelengthReadout,
+)
 from app.core.engines.zmx_writer import build_zmx_from_codev_readout, write_zmx_from_codev_readout
 from app.core.zmx_ingest import load_normalized_zmx
 
@@ -14,32 +20,45 @@ def _manual_readout() -> CodeVReadout:
     return CodeVReadout(
         source_zmx="manual-lens.zmx",
         units="MM",
+        aperture_type="FNO",
+        f_number=2.4,
+        entrance_pupil_diameter_mm=4.2,
         num_surfaces=3,
         num_fields=2,
+        num_wavelengths=2,
         num_zooms=1,
         stop_surface=1,
         field_type="RIH",
-        reference_wavelength_index=2,
+        reference_wavelength_index=1,
         image_height_y_mm=3.0,
         surfaces=(
             CodeVSurfaceReadout(
                 index=1,
                 radius_y_mm=20.0,
                 thickness_mm=2.0,
+                semi_diameter_mm=1.1,
                 glass="BK7",
                 nd=1.5168,
                 vd=64.17,
                 surface_type="ASP",
                 is_stop=True,
-                asphere_coefficients={"K": -0.2, "A": 1.0e-4, "B": -2.0e-6},
+                asphere_coefficients={
+                    "K": -0.2,
+                    "A": 1.0e-4,
+                    "B": -2.0e-6,
+                    "G": 3.0e-12,
+                    "H": 0.0,
+                    "J": 0.0,
+                },
             ),
             CodeVSurfaceReadout(
                 index=2,
                 radius_y_mm=-20.0,
                 thickness_mm=20.0,
-                glass=None,
-                nd=1.0,
-                vd=0.0,
+                semi_diameter_mm=2.2,
+                glass="___BLANK",
+                nd=1.62,
+                vd=30.0,
                 surface_type="SPH",
                 is_stop=False,
                 asphere_coefficients={},
@@ -48,6 +67,7 @@ def _manual_readout() -> CodeVReadout:
                 index=3,
                 radius_y_mm=0.0,
                 thickness_mm=0.0,
+                semi_diameter_mm=3.3,
                 glass="___BLANK",
                 nd=1.0,
                 vd=0.0,
@@ -78,11 +98,15 @@ def _manual_readout() -> CodeVReadout:
                 vlx=-0.1,
             ),
         ),
+        wavelengths=(
+            CodeVWavelengthReadout(index=1, wavelength_um=0.555, weight=1.0),
+            CodeVWavelengthReadout(index=2, wavelength_um=0.65, weight=0.107),
+        ),
     )
 
 
 def test_build_zmx_from_codev_readout_emits_zemax_tokens() -> None:
-    text = build_zmx_from_codev_readout(_manual_readout(), f_number=2.4)
+    text = build_zmx_from_codev_readout(_manual_readout())
 
     assert text.startswith("VERS 191028")
     assert "\r\n" in text
@@ -91,16 +115,23 @@ def test_build_zmx_from_codev_readout_emits_zemax_tokens() -> None:
     assert "MODE SEQ\r\n" in text
     assert "UNIT MM X W X CM MR CPMM\r\n" in text
     assert "FNUM 2.4 0\r\n" in text
-    assert "FTYP 3 0 2 3 0 0 0 2\r\n" in text
-    assert "WAVM 2 0.5876 1\r\n" in text
+    assert "FTYP 3 0 2 2 0 0 0 2\r\n" in text
+    assert "WAVM 1 0.555 1\r\n" in text
+    assert "WAVM 2 0.65 0.107\r\n" in text
+    assert "PWAV 1\r\n" in text
     assert "SURF 0\r\n" in text
     assert "SURF 1\r\n  STOP\r\n  TYPE EVENASPH\r\n" in text
     assert "  CURV 0.05 0 0 0 0 \"\"\r\n" in text
     assert "  GLAS BK7 0 0 1.5168 64.17 0 0 0 0 0 0 \r\n" in text
+    assert "  GLAS ___BLANK 1 0 1.62 30 0 0 0 0 0 0 \r\n" in text
     assert "  CONI -0.2\r\n" in text
     assert "  PARM 1 0\r\n" in text
     assert "  PARM 2 0.0001\r\n" in text
     assert "  PARM 3 -2e-06\r\n" in text
+    assert "  PARM 8 3e-12\r\n" in text
+    assert "  DIAM 1.1 0 0 0 1 \"\"\r\n" in text
+    assert "  DIAM 2.2 0 0 0 1 \"\"\r\n" in text
+    assert "  DIAM 3.3 0 0 0 1 \"\"\r\n" in text
     assert "VDXN 0 0.05\r\n" in text
     assert "VDYN 0 0.2\r\n" in text
     assert "VCXN 0 0.15\r\n" in text
@@ -113,7 +144,6 @@ def test_write_zmx_from_codev_readout_roundtrips_through_normalized_ingest(
     output_path = write_zmx_from_codev_readout(
         _manual_readout(),
         tmp_path / "manual-lens.zmx",
-        f_number=2.4,
     )
 
     raw = output_path.read_bytes()
@@ -129,16 +159,46 @@ def test_write_zmx_from_codev_readout_roundtrips_through_normalized_ingest(
 
 
 def test_write_zmx_from_codev_readout_can_emit_entrance_pupil_diameter() -> None:
-    text = build_zmx_from_codev_readout(
-        _manual_readout(),
-        f_number=None,
-        entrance_pupil_diameter_mm=4.2,
-    )
+    readout = replace(_manual_readout(), aperture_type="EPD")
+    text = build_zmx_from_codev_readout(readout)
 
     assert "ENPD 4.2\r\n" in text
     assert "FNUM" not in text
 
 
 def test_build_zmx_from_codev_readout_rejects_missing_aperture() -> None:
-    with pytest.raises(ValueError, match="Either f_number or entrance_pupil"):
-        build_zmx_from_codev_readout(_manual_readout(), f_number=None)
+    readout = replace(_manual_readout(), f_number=None)
+
+    with pytest.raises(ValueError, match="missing f_number"):
+        build_zmx_from_codev_readout(readout)
+
+
+def test_build_zmx_from_codev_readout_rejects_missing_surface_diameter() -> None:
+    readout = _manual_readout()
+    surfaces = (
+        replace(readout.surfaces[0], semi_diameter_mm=None),
+        *readout.surfaces[1:],
+    )
+
+    with pytest.raises(ValueError, match="semi_diameter_mm"):
+        build_zmx_from_codev_readout(replace(readout, surfaces=surfaces))
+
+
+def test_build_zmx_from_codev_readout_rejects_missing_wavelength_table() -> None:
+    readout = replace(_manual_readout(), wavelengths=(), num_wavelengths=0)
+
+    with pytest.raises(ValueError, match="wavelength table"):
+        build_zmx_from_codev_readout(readout)
+
+
+def test_build_zmx_from_codev_readout_rejects_nonzero_h_j_asphere_terms() -> None:
+    readout = _manual_readout()
+    coefficients = dict(readout.surfaces[0].asphere_coefficients)
+    coefficients["H"] = 1.0e-14
+    surfaces = (replace(readout.surfaces[0], asphere_coefficients=coefficients), *readout.surfaces[1:])
+
+    with pytest.raises(ValueError) as error:
+        build_zmx_from_codev_readout(replace(readout, surfaces=surfaces))
+
+    assert error.value.args[1]["surface_index"] == 1
+    assert error.value.args[1]["unsupported_coefficients"] == {"H": 1.0e-14}

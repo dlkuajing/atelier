@@ -11,7 +11,7 @@ from app.core.engines.codev_roundtrip import (
 )
 
 
-def test_real_codev_readout_rebuilds_zmx_and_passes_four_fidelity_gates(
+def test_real_codev_readout_rebuilds_zmx_and_passes_five_fidelity_gates(
     tmp_path: Path,
 ) -> None:
     assert DEFAULT_CODEV_EXECUTABLE.is_file(), "CODE V executable is required for ENGINE-04c"
@@ -31,3 +31,9 @@ def test_real_codev_readout_rebuilds_zmx_and_passes_four_fidelity_gates(
     assert comparison.source.asphere_term_counts == comparison.exported.asphere_term_counts
     assert comparison.source.vignetting["VDX"] == comparison.exported.vignetting["VDX"]
     assert comparison.source.vignetting["VDY"] == comparison.exported.vignetting["VDY"]
+    assert comparison.source.vignetting["VCX"] == comparison.exported.vignetting["VCX"]
+    assert comparison.source.vignetting["VCY"] == comparison.exported.vignetting["VCY"]
+    assert comparison.source.f_number == pytest.approx(comparison.exported.f_number)
+    assert comparison.exported.wavelength_count == result.readout.readout.num_wavelengths
+    assert comparison.describe()["source_wavelength_count"] == comparison.source.wavelength_count
+    assert comparison.describe()["exported_wavelength_count"] == comparison.exported.wavelength_count

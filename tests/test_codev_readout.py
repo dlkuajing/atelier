@@ -37,8 +37,12 @@ def _write_readout_result(path: Path) -> None:
         ("status", "ok"),
         ("source_zmx", "US20170003482A1.zmx"),
         ("units", "M"),
+        ("aperture_type", "FNO"),
+        ("f_number", "2.32"),
+        ("entrance_pupil_diameter_mm", "1.56"),
         ("num_surfaces", "2"),
         ("num_fields", "2"),
+        ("num_wavelengths", "2"),
         ("num_zooms", "1"),
         ("stop_surface", "1"),
         ("field_type", "RIH"),
@@ -46,6 +50,7 @@ def _write_readout_result(path: Path) -> None:
         ("image_height_y_mm", "3.62257"),
         ("surface.1.radius_y_mm", "1.25"),
         ("surface.1.thickness_mm", "0.45"),
+        ("surface.1.semi_diameter_mm", "1.10"),
         ("surface.1.glass", "___BLANK"),
         ("surface.1.nd", "1.544"),
         ("surface.1.vd", "55.9"),
@@ -63,6 +68,7 @@ def _write_readout_result(path: Path) -> None:
         ("surface.1.asphere.J", "0"),
         ("surface.2.radius_y_mm", "0"),
         ("surface.2.thickness_mm", "0.75"),
+        ("surface.2.semi_diameter_mm", "2.20"),
         ("surface.2.glass", ""),
         ("surface.2.nd", "1.0"),
         ("surface.2.vd", "0"),
@@ -78,6 +84,10 @@ def _write_readout_result(path: Path) -> None:
         ("surface.2.asphere.G", "0"),
         ("surface.2.asphere.H", "0"),
         ("surface.2.asphere.J", "0"),
+        ("wavelength.1.wavelength_nm", "555"),
+        ("wavelength.1.weight", "1"),
+        ("wavelength.2.wavelength_nm", "650"),
+        ("wavelength.2.weight", "0.107"),
         ("field.1.definition_type", "RIH"),
         ("field.1.x", "0"),
         ("field.1.y", "0"),
@@ -96,16 +106,6 @@ def _write_readout_result(path: Path) -> None:
     path.write_text("\n".join(f"{key}\t{value}" for key, value in rows) + "\n", encoding="utf-8")
 
 
-def _is_nonzero_ok_result_failure(exc: CodeVBatchError) -> bool:
-    data = exc.details.get("data")
-    return (
-        exc.kind == "failure"
-        and isinstance(data, dict)
-        and data.get("status") == "ok"
-        and exc.details.get("returncode") not in (0, None)
-    )
-
-
 def test_readout_sequence_imports_zmx_and_reads_database_items(tmp_path: Path) -> None:
     source_zmx = default_patent_roundtrip_seed()
     result_path = tmp_path / "readout.tsv"
@@ -120,7 +120,14 @@ def test_readout_sequence_imports_zmx_and_reads_database_items(tmp_path: Path) -
     assert "(IND S^s W^refw)" in sequence
     assert "(TYP SUR S^s)" in sequence
     assert "(STO)" in sequence
+    assert "(TYP APE)" in sequence
+    assert "(FNO)" in sequence
+    assert "(EPD)" in sequence
     assert "(TYP FLD)" in sequence
+    assert "(NUM W)" in sequence
+    assert "(MAP S^s)" in sequence
+    assert "(WL W^w)" in sequence
+    assert "(WTW Z1 W^w)" in sequence
     assert "(YRI F^f Z1)" in sequence
     assert "(VUY F^f Z1)" in sequence
     assert "(VLY F^f Z1)" in sequence
@@ -138,17 +145,25 @@ def test_parse_codev_readout_file_builds_structured_model(tmp_path: Path) -> Non
     readout = parse_codev_readout_file(result_path)
 
     assert readout.source_zmx == "US20170003482A1.zmx"
+    assert readout.aperture_type == "FNO"
+    assert readout.f_number == pytest.approx(2.32)
+    assert readout.entrance_pupil_diameter_mm == pytest.approx(1.56)
     assert readout.image_height_y_mm == pytest.approx(3.62257)
     assert readout.stop_surface == 1
     assert len(readout.surfaces) == 2
     assert readout.surfaces[0].glass == "___BLANK"
+    assert readout.surfaces[0].semi_diameter_mm == pytest.approx(1.10)
     assert readout.surfaces[0].nd == pytest.approx(1.544)
     assert readout.surfaces[0].vd == pytest.approx(55.9)
     assert readout.surfaces[0].surface_type == "ASP"
     assert readout.surfaces[0].is_stop is True
     assert readout.surfaces[0].asphere_coefficients["A"] == pytest.approx(0.001)
     assert readout.surfaces[0].asphere_coefficients["B"] == pytest.approx(-2e-05)
+    assert readout.surfaces[0].asphere_coefficients["H"] == pytest.approx(0.0)
     assert readout.surfaces[1].glass is None
+    assert len(readout.wavelengths) == 2
+    assert readout.wavelengths[0].wavelength_um == pytest.approx(0.555)
+    assert readout.wavelengths[1].weight == pytest.approx(0.107)
     assert len(readout.fields) == 2
     assert readout.fields[1].definition_type == "RIH"
     assert readout.fields[1].y == pytest.approx(3.62257)
@@ -175,7 +190,7 @@ def test_mock_codev_readout_reuses_batch_runner(monkeypatch, tmp_path: Path) -> 
 
     class FakePopen:
         pid = 4321
-        returncode = 0
+        returncode = 1
 
         def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
             calls.append(command)
@@ -199,9 +214,44 @@ def test_mock_codev_readout_reuses_batch_runner(monkeypatch, tmp_path: Path) -> 
 
     assert calls == [[str(executable), "/B", "atelier_codev_readout.seq"]]
     assert result.batch.data["schema"] == CODEV_READOUT_RESULT_SCHEMA
+    assert result.batch.returncode == 1
     assert result.readout.num_surfaces == 2
     assert result.readout.surfaces[0].surface_type == "ASP"
     assert result.readout.fields[1].y == pytest.approx(3.62257)
+
+
+def test_codev_readout_rejects_returncode_outside_empirical_ok_set(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 4322
+        returncode = 2
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            _write_readout_result(_result_path_from_sequence(sequence_path))
+            return "screen output", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_readout(
+            source_zmx=default_patent_roundtrip_seed(),
+            work_dir=tmp_path,
+            executable=executable,
+        )
+
+    assert error.value.kind == "failure"
+    assert error.value.details["returncode"] == 2
+    assert error.value.details["allowed_returncodes"] == [0, 1]
+    assert error.value.details["data"]["status"] == "ok"
 
 
 @pytest.mark.skipif(not DEFAULT_CODEV_EXECUTABLE.is_file(), reason="CODE V is not installed here")
@@ -215,13 +265,15 @@ def test_real_codev_readout_patent_seed_smoke(tmp_path: Path) -> None:
     except CodeVBatchError as exc:
         if exc.kind == "no_license":
             pytest.skip(f"CODE V license unavailable: {exc.message}")
-        if _is_nonzero_ok_result_failure(exc):
-            pytest.skip(f"CODE V returned non-zero after writing ok result: {exc.details}")
         raise
     except subprocess.SubprocessError as exc:
         pytest.skip(f"CODE V subprocess unavailable: {exc}")
 
     assert result.readout.source_zmx == default_patent_roundtrip_seed().name
     assert result.readout.image_height_y_mm == pytest.approx(3.685, rel=0.03)
+    assert result.readout.aperture_type in {"FNO", "EPD"}
+    assert result.readout.f_number is not None
+    assert result.readout.wavelengths
     assert result.readout.surfaces
+    assert all(surface.semi_diameter_mm is not None for surface in result.readout.surfaces)
     assert any(surface.asphere_coefficients for surface in result.readout.surfaces)

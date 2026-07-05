@@ -13,10 +13,10 @@ from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchErr
 from app.core.engines.codev_roundtrip import (
     CODEV_ROUNDTRIP_RESULT_SCHEMA,
     DEFAULT_PATENT_ROUNDTRIP_SEED,
-    _parse_vignetting,
     build_zmx_import_sequence,
     compare_roundtrip_zmx,
     default_patent_roundtrip_seed,
+    extract_zmx_fidelity_facts,
     run_codev_zmx_import,
 )
 
@@ -201,7 +201,12 @@ def test_compare_roundtrip_zmx_records_required_fidelity_items(tmp_path: Path) -
     assert comparison.source.asphere_term_counts
     assert comparison.source.vignetting["VDX"] == (0.0, 0.0, 0.0)
     assert comparison.source.vignetting["VDY"] == (0.0, 0.0, 0.0)
+    assert comparison.source.vignetting["VCX"] == (0.0, 0.0, 0.0)
+    assert comparison.source.vignetting["VCY"] == (0.0, 0.0, 0.0)
+    assert comparison.source.f_number == pytest.approx(2.3199999999999998)
+    assert comparison.source.wavelength_count == 24
     assert comparison.describe()["efl_within_2pct"] is True
+    assert comparison.describe()["source_wavelength_count"] == 24
 
 
 def test_compare_roundtrip_zmx_fails_when_glass_row_changes(tmp_path: Path) -> None:
@@ -246,7 +251,21 @@ def test_compare_roundtrip_zmx_fails_when_vignetting_changes(tmp_path: Path) -> 
     assert comparison.vignetting_mismatches
 
 
-def test_roundtrip_report_records_four_gates() -> None:
+def test_compare_roundtrip_zmx_fails_when_vignetting_compression_changes(tmp_path: Path) -> None:
+    source_zmx = default_patent_roundtrip_seed()
+    exported_zmx = _mutated_export(
+        tmp_path,
+        "VCXN 0 0 0",
+        "VCXN 0 0.2 0",
+    )
+
+    comparison = compare_roundtrip_zmx(source_zmx, exported_zmx)
+
+    assert not comparison.passed
+    assert comparison.vignetting_mismatches
+
+
+def test_roundtrip_report_records_five_gates() -> None:
     backend_root = Path(__file__).resolve().parents[1]
     report = backend_root / ".planning" / "loop" / "codev-roundtrip-report.md"
 
@@ -257,6 +276,9 @@ def test_roundtrip_report_records_four_gates() -> None:
     assert "nd/vd" in text
     assert "非球面" in text
     assert "VDX/VDY" in text
+    assert "VCX/VCY" in text
+    assert "FNUM" in text
+    assert "wavelength" in text
 
 
 @pytest.mark.skipif(not DEFAULT_CODEV_EXECUTABLE.is_file(), reason="CODE V is not installed here")
@@ -289,5 +311,5 @@ def test_parse_vignetting_survives_lf_checkout(tmp_path: Path) -> None:
     lf_copy = tmp_path / source.name
     lf_copy.write_bytes(source.read_bytes().replace(b"\r\n", b"\n"))
 
-    assert _parse_vignetting(lf_copy) == _parse_vignetting(source)
-    assert _parse_vignetting(lf_copy)["VDX"] == (0.0, 0.0, 0.0)
+    assert extract_zmx_fidelity_facts(lf_copy).vignetting == extract_zmx_fidelity_facts(source).vignetting
+    assert extract_zmx_fidelity_facts(lf_copy).vignetting["VDX"] == (0.0, 0.0, 0.0)

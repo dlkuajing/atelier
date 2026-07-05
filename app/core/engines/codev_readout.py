@@ -24,14 +24,19 @@ _READOUT_REQUIRED_KEYS = (
     "status",
     "source_zmx",
     "units",
+    "aperture_type",
+    "f_number",
+    "entrance_pupil_diameter_mm",
     "num_surfaces",
     "num_fields",
+    "num_wavelengths",
     "num_zooms",
     "stop_surface",
     "field_type",
     "reference_wavelength_index",
     "image_height_y_mm",
 )
+_READOUT_OK_RETURNCODES = {0, 1}
 _ASPHERE_COEFFICIENT_LABELS = ("K", "A", "B", "C", "D", "E", "F", "G", "H", "J")
 _FIELD_COORDINATE_BY_TYPE = {
     "OBJ": ("XOB", "YOB"),
@@ -48,6 +53,7 @@ class CodeVSurfaceReadout:
     index: int
     radius_y_mm: float | None
     thickness_mm: float | None
+    semi_diameter_mm: float | None
     glass: str | None
     nd: float | None
     vd: float | None
@@ -60,12 +66,29 @@ class CodeVSurfaceReadout:
             "index": self.index,
             "radius_y_mm": self.radius_y_mm,
             "thickness_mm": self.thickness_mm,
+            "semi_diameter_mm": self.semi_diameter_mm,
             "glass": self.glass,
             "nd": self.nd,
             "vd": self.vd,
             "surface_type": self.surface_type,
             "is_stop": self.is_stop,
             "asphere_coefficients": self.asphere_coefficients,
+        }
+
+
+@dataclass(frozen=True)
+class CodeVWavelengthReadout:
+    """Per-wavelength value and analysis weight read from CODE V."""
+
+    index: int
+    wavelength_um: float
+    weight: float
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "index": self.index,
+            "wavelength_um": self.wavelength_um,
+            "weight": self.weight,
         }
 
 
@@ -101,8 +124,12 @@ class CodeVReadout:
 
     source_zmx: str
     units: str
+    aperture_type: str
+    f_number: float | None
+    entrance_pupil_diameter_mm: float | None
     num_surfaces: int
     num_fields: int
+    num_wavelengths: int
     num_zooms: int
     stop_surface: int
     field_type: str
@@ -110,13 +137,18 @@ class CodeVReadout:
     image_height_y_mm: float
     surfaces: tuple[CodeVSurfaceReadout, ...]
     fields: tuple[CodeVFieldReadout, ...]
+    wavelengths: tuple[CodeVWavelengthReadout, ...]
 
     def describe(self) -> dict[str, object]:
         return {
             "source_zmx": self.source_zmx,
             "units": self.units,
+            "aperture_type": self.aperture_type,
+            "f_number": self.f_number,
+            "entrance_pupil_diameter_mm": self.entrance_pupil_diameter_mm,
             "num_surfaces": self.num_surfaces,
             "num_fields": self.num_fields,
+            "num_wavelengths": self.num_wavelengths,
             "num_zooms": self.num_zooms,
             "stop_surface": self.stop_surface,
             "field_type": self.field_type,
@@ -124,6 +156,7 @@ class CodeVReadout:
             "image_height_y_mm": self.image_height_y_mm,
             "surfaces": [surface.describe() for surface in self.surfaces],
             "fields": [field.describe() for field in self.fields],
+            "wavelengths": [wavelength.describe() for wavelength in self.wavelengths],
         }
 
 
@@ -164,9 +197,11 @@ def build_codev_readout_sequence(
         "^refw == (REF)",
         "^numsur == (NUM S)",
         "^numfld == (NUM F)",
+        "^numwav == (NUM W)",
         "^numz == (NUM Z)",
         "^stop == (STO)",
         "^units == (DIM)",
+        "^apetype == (TYP APE)",
         "^field_type == (TYP FLD)",
         "^maximh == 0",
         "FOR ^f 1 ^numfld",
@@ -181,8 +216,12 @@ def build_codev_readout_sequence(
     _append_put_row(lines, '"status"', '"ok"')
     _append_put_row(lines, '"source_zmx"', f'"{source_zmx.name}"')
     _append_put_row(lines, '"units"', "^units")
+    _append_put_row(lines, '"aperture_type"', "^apetype")
+    _append_put_row(lines, '"f_number"', "(FNO)")
+    _append_put_row(lines, '"entrance_pupil_diameter_mm"', "(EPD)")
     _append_put_row(lines, '"num_surfaces"', "^numsur")
     _append_put_row(lines, '"num_fields"', "^numfld")
+    _append_put_row(lines, '"num_wavelengths"', "^numwav")
     _append_put_row(lines, '"num_zooms"', "^numz")
     _append_put_row(lines, '"stop_surface"', "^stop")
     _append_put_row(lines, '"field_type"', "^field_type")
@@ -238,6 +277,7 @@ def build_codev_readout_sequence(
     )
     _append_dynamic_surface_row(lines, ".radius_y_mm", "(RDY S^s)")
     _append_dynamic_surface_row(lines, ".thickness_mm", "(THI S^s)")
+    _append_dynamic_surface_row(lines, ".semi_diameter_mm", "(MAP S^s)")
     _append_dynamic_surface_row(lines, ".glass", "^glass")
     _append_dynamic_surface_row(lines, ".nd", "^nd")
     _append_dynamic_surface_row(lines, ".vd", "^vd")
@@ -245,6 +285,17 @@ def build_codev_readout_sequence(
     _append_dynamic_surface_row(lines, ".is_stop", "^isstop")
     for label in _ASPHERE_COEFFICIENT_LABELS:
         _append_dynamic_surface_row(lines, f".asphere.{label}", f"^coef{label}")
+    lines.append("END FOR")
+
+    lines.extend(
+        [
+            "FOR ^w 1 ^numwav",
+            '  ^wavelength_prefix == "wavelength."',
+            "  ^wavelength_prefix == CONCAT(^wavelength_prefix, NUM_TO_STR(^w))",
+        ]
+    )
+    _append_dynamic_wavelength_row(lines, ".wavelength_nm", "(WL W^w)")
+    _append_dynamic_wavelength_row(lines, ".weight", "(WTW Z1 W^w)")
     lines.append("END FOR")
 
     lines.extend(
@@ -313,7 +364,6 @@ def run_codev_readout(
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 90.0,
     platform_name: str = os.name,
-    allow_nonzero_ok_result: bool = True,
 ) -> CodeVReadoutResult:
     """Import one ZMX into CODE V and read database-backed prescription facts."""
 
@@ -335,8 +385,19 @@ def run_codev_readout(
         platform_name=platform_name,
         expected_schema=CODEV_READOUT_RESULT_SCHEMA,
         required_keys=_READOUT_REQUIRED_KEYS,
-        allow_nonzero_ok_result=allow_nonzero_ok_result,
+        allow_nonzero_ok_result=True,
     )
+    if batch.returncode not in _READOUT_OK_RETURNCODES:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V readout exited with an unsupported returncode despite an ok result file",
+            details={
+                "returncode": batch.returncode,
+                "allowed_returncodes": sorted(_READOUT_OK_RETURNCODES),
+                "data": batch.data,
+                "result_path": str(batch.result_path),
+            },
+        )
     return CodeVReadoutResult(
         batch=batch,
         source_zmx=source_zmx,
@@ -376,13 +437,18 @@ def parse_codev_readout_data(data: Mapping[str, str]) -> CodeVReadout:
 
     num_surfaces = _required_int(data, "num_surfaces")
     num_fields = _required_int(data, "num_fields")
+    num_wavelengths = _required_int(data, "num_wavelengths")
     stop_surface = _required_int(data, "stop_surface")
     field_type = _required_text(data, "field_type")
     return CodeVReadout(
         source_zmx=_required_text(data, "source_zmx"),
         units=_required_text(data, "units"),
+        aperture_type=_required_text(data, "aperture_type"),
+        f_number=_required_float(data, "f_number"),
+        entrance_pupil_diameter_mm=_required_float(data, "entrance_pupil_diameter_mm"),
         num_surfaces=num_surfaces,
         num_fields=num_fields,
+        num_wavelengths=num_wavelengths,
         num_zooms=_required_int(data, "num_zooms"),
         stop_surface=stop_surface,
         field_type=field_type,
@@ -395,6 +461,10 @@ def parse_codev_readout_data(data: Mapping[str, str]) -> CodeVReadout:
         fields=tuple(
             _parse_field(data, field_index, default_field_type=field_type)
             for field_index in range(1, num_fields + 1)
+        ),
+        wavelengths=tuple(
+            _parse_wavelength(data, wavelength_index)
+            for wavelength_index in range(1, num_wavelengths + 1)
         ),
     )
 
@@ -416,6 +486,7 @@ def _parse_surface(
         index=surface_index,
         radius_y_mm=_required_float(data, f"{prefix}.radius_y_mm"),
         thickness_mm=_required_float(data, f"{prefix}.thickness_mm"),
+        semi_diameter_mm=_required_float(data, f"{prefix}.semi_diameter_mm"),
         glass=_optional_text(data.get(f"{prefix}.glass")),
         nd=_optional_float(data.get(f"{prefix}.nd")),
         vd=_optional_float(data.get(f"{prefix}.vd")),
@@ -444,6 +515,16 @@ def _parse_field(
     )
 
 
+def _parse_wavelength(data: Mapping[str, str], wavelength_index: int) -> CodeVWavelengthReadout:
+    prefix = f"wavelength.{wavelength_index}"
+    wavelength_nm = _required_float(data, f"{prefix}.wavelength_nm")
+    return CodeVWavelengthReadout(
+        index=wavelength_index,
+        wavelength_um=wavelength_nm / 1000.0,
+        weight=_required_float(data, f"{prefix}.weight"),
+    )
+
+
 def _append_put_row(lines: list[str], key: str, value: str) -> None:
     lines.append(f"BUF PUT B1 I^row J1 {key}")
     lines.append(f"BUF PUT B1 I^row J2 {value}")
@@ -459,6 +540,13 @@ def _append_dynamic_surface_row(lines: list[str], suffix: str, value: str) -> No
 
 def _append_dynamic_field_row(lines: list[str], suffix: str, value: str) -> None:
     lines.append(f'  ^key == CONCAT(^field_prefix, "{suffix}")')
+    lines.append("  BUF PUT B1 I^row J1 ^key")
+    lines.append(f"  BUF PUT B1 I^row J2 {value}")
+    lines.append("  ^row == ^row+1")
+
+
+def _append_dynamic_wavelength_row(lines: list[str], suffix: str, value: str) -> None:
+    lines.append(f'  ^key == CONCAT(^wavelength_prefix, "{suffix}")')
     lines.append("  BUF PUT B1 I^row J1 ^key")
     lines.append(f"  BUF PUT B1 I^row J2 {value}")
     lines.append("  ^row == ^row+1")
