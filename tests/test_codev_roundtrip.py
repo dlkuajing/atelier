@@ -247,7 +247,8 @@ def test_compare_roundtrip_zmx_fails_when_vignetting_changes(tmp_path: Path) -> 
 
 
 def test_roundtrip_report_records_four_gates() -> None:
-    report = Path(".planning/loop/codev-roundtrip-report.md")
+    backend_root = Path(__file__).resolve().parents[1]
+    report = backend_root / ".planning" / "loop" / "codev-roundtrip-report.md"
 
     assert report.is_file()
     text = report.read_text(encoding="utf-8")
