@@ -11,11 +11,13 @@ from app.core.engines.codev_roundtrip import (
 )
 
 
+@pytest.mark.skipif(
+    not DEFAULT_CODEV_EXECUTABLE.is_file(),
+    reason="real CODE V installation required for the ENGINE-04c closure smoke",
+)
 def test_real_codev_readout_rebuilds_zmx_and_passes_five_fidelity_gates(
     tmp_path: Path,
 ) -> None:
-    assert DEFAULT_CODEV_EXECUTABLE.is_file(), "CODE V executable is required for ENGINE-04c"
-
     result = run_codev_roundtrip_close(work_dir=tmp_path, timeout_seconds=120.0)
     comparison = result.comparison
 
