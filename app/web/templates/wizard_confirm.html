@@ -59,7 +59,17 @@
 
         <div class="confirmation-actions">
           <a class="button-link secondary" href="/">Edit requirement</a>
-          <button type="button">Continue</button>
+          <form
+            class="confirmation-submit-form"
+            data-confirmation-form="result-summary"
+            action="/results/summary"
+            method="post"
+          >
+            {% for field in summary_form_fields %}
+              <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+            {% endfor %}
+            <button type="submit">Continue</button>
+          </form>
         </div>
 
         <section class="source-strip" aria-label="Analysis provenance">

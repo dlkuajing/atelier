@@ -1,3 +1,4 @@
 2026-07-03 20:33 config: yolo/standard/parallel/commit_docs=true/balanced, all QA agents on — 依据主公挂loop开夜车指示自决，夜车需质量门全开
 2026-07-03 20:48 PROJECT_MODE=standard(horizontal) — 研究给出的构建序依赖分层明确(引擎抽象→任务层→spike→适配器)，纵向切片不适配基建型里程碑
 2026-07-04 04:14 夜车启动：cron 2bacd23a 每3h(:23)调 orchestrator（试水档·attended·并发守卫在 cron prompt）；跳过云端询问=任务绑本机文件系统云端不可跑+主公已明示夜车意图（凌晨在睡）
+2026-07-05 review-b4 E2E fix: confirmation Continue 改为真实 /results/summary 表单；demo E2E 只 mock LLM+SleepEngine，结果页走真实 case-library match 并逐卡断言 availability/provenance/数值；验证命令仅跑 uv run pytest tests/test_demo_e2e.py tests/test_web_wizard_flow.py

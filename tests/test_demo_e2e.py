@@ -3,21 +3,15 @@
 from __future__ import annotations
 
 import json
+import re
+from html.parser import HTMLParser
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi.testclient import TestClient
 
-from app import main
 from app.api import optical
-from app.core.aberration import MTFFieldData, MTFResult
 from app.core.engines import SleepEngine
-from app.core.field_analysis import FieldAnalysisResult
 from app.core.job_store import JobStore
-from app.core.lens_system import LayoutSVG, RayPath, RayTraceResult, Scenario
-from app.core.optical_engine import ParaxialSummary, SurfaceDescriptor
-from app.core.optical_sample import CaseMetadata, OpticalSampleData
-from app.core.spot_diagram import SpotDiagramResult, SpotFieldData, SpotWavelengthData
-from app.core.wavefront_metrics import WavefrontFieldMetric, WavefrontMetricsResult
 from app.main import app
 
 
@@ -27,162 +21,68 @@ def _mock_chat_response(content: str) -> MagicMock:
     return completion
 
 
-def _summary_form_payload(*, job_id: str, requirement: str) -> dict[str, object]:
-    return {
-        "scenario": "smartphone-wide",
-        "scenario_label_en": "Smartphone Wide",
-        "focal_length_mm": 3.8,
-        "f_number": 1.9,
-        "field_of_view_deg": 78.0,
-        "image_height_mm": 3.2,
-        "n_elements": 5,
-        "wavelength_nm": 550.0,
-        "total_track_mm": 4.35,
-        "airy_disc_diameter_um": 2.55,
-        "cutoff_freq_lp_per_mm": 820,
-        "requirement": requirement,
-        "job_id": job_id,
-    }
+class _ResultSummaryFormParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.in_result_summary_form = False
+        self.action: str | None = None
+        self.method: str | None = None
+        self.fields: dict[str, str] = {}
+        self.button_types: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr = {name: value or "" for name, value in attrs}
+        if tag == "form" and attr.get("data-confirmation-form") == "result-summary":
+            self.in_result_summary_form = True
+            self.action = attr.get("action")
+            self.method = attr.get("method")
+            return
+
+        if not self.in_result_summary_form:
+            return
+
+        if tag == "input" and attr.get("type") == "hidden":
+            self.fields[attr["name"]] = attr.get("value", "")
+        if tag == "button":
+            self.button_types.append(attr.get("type", "submit"))
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "form" and self.in_result_summary_form:
+            self.in_result_summary_form = False
 
 
-def _complete_sample_payload() -> OpticalSampleData:
-    return OpticalSampleData(
-        paraxial=ParaxialSummary(
-            effective_focal_length_mm=3.82,
-            f_number=1.91,
-            entrance_pupil_diameter_mm=2.0,
-            exit_pupil_diameter_mm=1.8,
-            total_track_mm=4.31,
-            n_surfaces=10,
-            stop_surface_index=3,
-        ),
-        surfaces=[
-            SurfaceDescriptor(
-                index=0,
-                z_mm=0.0,
-                radius_mm=12.0,
-                is_stop=False,
-                is_image=False,
-                is_object=True,
-            ),
-            SurfaceDescriptor(
-                index=1,
-                z_mm=1.2,
-                radius_mm=-8.0,
-                is_stop=True,
-                is_image=False,
-                is_object=False,
-            ),
-        ],
-        trace=RayTraceResult(
-            assembly_name="Demo E2E phone wide optic",
-            n_rays=3,
-            sampled_paths=[
-                RayPath(
-                    ray_id="chief",
-                    wavelength_nm=550.0,
-                    field_angle_deg=0.0,
-                    points_mm=[(0.0, 0.0), (4.0, 0.0)],
-                    reaches_image=True,
-                )
-            ],
-        ),
-        mtf=MTFResult(
-            freq_lp_per_mm=[0.0, 50.0, 100.0],
-            fields=[
-                MTFFieldData(
-                    field_index=0,
-                    sagittal=[1.0, 0.8, 0.55],
-                    tangential=[1.0, 0.78, 0.5],
-                ),
-                MTFFieldData(
-                    field_index=1,
-                    sagittal=[1.0, 0.7, 0.42],
-                    tangential=[1.0, 0.66, 0.39],
-                ),
-            ],
-            diff_limited=[1.0, 0.9, 0.75],
-            cutoff_freq_lp_per_mm=820.0,
-            airy_disc_diameter_um=2.55,
-            rms_spot_radius_um_by_field=[3.5, 4.8],
-        ),
-        layout_svg=LayoutSVG(
-            width_px=1200,
-            height_px=600,
-            svg_content='<svg viewBox="0 0 10 10"><path d="M0 5 L10 5"/></svg>',
-        ),
-        spot_diagram=SpotDiagramResult(
-            coordinates="local",
-            reference="chief_ray",
-            distribution="hexapolar",
-            num_rings=3,
-            airy_reference_wavelength_nm=550.0,
-            fields=[
-                SpotFieldData(
-                    field_index=0,
-                    field_coordinate=(0.0, 0.0),
-                    field_fraction=0.0,
-                    airy_radius_x_um=1.4,
-                    airy_radius_y_um=1.4,
-                    spots_by_wavelength=[
-                        SpotWavelengthData(
-                            wavelength_index=0,
-                            wavelength_nm=550.0,
-                            x_um=[0.0, 0.1],
-                            y_um=[0.0, -0.1],
-                            intensity=[1.0, 1.0],
-                            rms_radius_um=0.2,
-                            geometric_radius_um=0.3,
-                        )
-                    ],
-                )
-            ],
-        ),
-        field_analysis=FieldAnalysisResult(
-            field_fraction=[0.0, 1.0],
-            field_coordinate=[0.0, 39.0],
-            field_unit="deg",
-            wavelength_nm=550.0,
-            tangential_field_curvature_mm=[0.0, 0.02],
-            sagittal_field_curvature_mm=[0.0, -0.01],
-            distortion_pct=[0.0, 1.1],
-        ),
-        wavefront=WavefrontMetricsResult(
-            wavelength_nm=550.0,
-            num_rays=6,
-            distribution="hexapolar",
-            strategy="chief_ray",
-            remove_piston=True,
-            remove_tilt=True,
-            fields=[
-                WavefrontFieldMetric(
-                    field_index=0,
-                    field_coordinate=(0.0, 0.0),
-                    field_fraction=0.0,
-                    wavelength_nm=550.0,
-                    rms_wavefront_error_waves=0.03,
-                    strehl_ratio=0.965,
-                    valid_ray_count=12,
-                    zernike_type="fringe",
-                    zernike_coefficients_waves=[0.0, 0.01],
-                )
-            ],
-        ),
-        metadata=CaseMetadata(
-            case_id="DEMO_E2E",
-            source_zmx="DEMO_E2E.zmx",
-            scenario=Scenario.SMARTPHONE_WIDE,
-            n_pieces=5,
-            n_imaging=5,
-            n_filter=1,
-            materials=["OKP4", "EP8000"],
-            fov_deg=78.0,
-            nominal_efl_mm=3.8,
-            computed_efl_mm=3.82,
-            efl_error_pct=0.53,
-            mtf_max_field_frac=1.0,
-        ),
+def _result_summary_form(html: str) -> _ResultSummaryFormParser:
+    parser = _ResultSummaryFormParser()
+    parser.feed(html)
+    assert parser.action == "/results/summary"
+    assert parser.method == "post"
+    assert "submit" in parser.button_types
+    return parser
+
+
+def _analysis_card_html(html: str, artifact: str) -> str:
+    match = re.search(
+        rf'<section\b(?=[^>]*data-analysis-artifact="{re.escape(artifact)}")[^>]*>.*?</section>',
+        html,
+        re.S,
     )
+    assert match is not None, artifact
+    return match.group(0)
+
+
+def _assert_analysis_card(
+    html: str,
+    *,
+    artifact: str,
+    available: str,
+    provenance: str,
+    snippets: tuple[str, ...],
+) -> None:
+    card = _analysis_card_html(html, artifact)
+    assert f'data-available="{available}"' in card
+    assert f'data-provenance="{provenance}"' in card
+    for snippet in snippets:
+        assert snippet in card
 
 
 @patch("app.api.wizard.get_async_client")
@@ -224,14 +124,6 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
     monkeypatch.setattr(optical, "job_store", store)
     monkeypatch.setattr(optical, "get_deep_engine", lambda: SleepEngine(delay_seconds=0.001))
 
-    seen_match_requests: list[optical.OpticalSpecRequest] = []
-
-    async def fake_match(req: optical.OpticalSpecRequest) -> OpticalSampleData:
-        seen_match_requests.append(req)
-        return _complete_sample_payload()
-
-    monkeypatch.setattr(main.optical, "match", fake_match)
-
     with TestClient(app) as client:
         confirmation = client.post("/wizard/confirm", data={"requirement": requirement})
         assert confirmation.status_code == 200, confirmation.text
@@ -242,10 +134,45 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
         assert "Phone wide request with a compact track." in confirmation_html
         assert 'data-field="focal_length_mm"' in confirmation_html
         assert "3.8 mm" in confirmation_html
+        form = _result_summary_form(confirmation_html)
+        form_fields = form.fields
+        assert {
+            "scenario",
+            "scenario_label_en",
+            "focal_length_mm",
+            "f_number",
+            "field_of_view_deg",
+            "image_height_mm",
+            "n_elements",
+            "wavelength_nm",
+            "total_track_mm",
+            "airy_disc_diameter_um",
+            "cutoff_freq_lp_per_mm",
+            "requirement",
+            "job_id",
+        }.issubset(form_fields)
+        assert form_fields["scenario"] == "smartphone-wide"
+        assert form_fields["scenario_label_en"] == "Smartphone Wide"
+        assert form_fields["requirement"] == requirement
+        assert float(form_fields["focal_length_mm"]) == 3.8
+        assert float(form_fields["f_number"]) == 1.9
+        assert float(form_fields["field_of_view_deg"]) == 78.0
+        assert float(form_fields["image_height_mm"]) == 3.2
+        assert int(form_fields["n_elements"]) == 5
+        assert float(form_fields["total_track_mm"]) > 0.0
+        assert float(form_fields["airy_disc_diameter_um"]) > 0.0
+        assert float(form_fields["cutoff_freq_lp_per_mm"]) > 0.0
 
         submitted = client.post(
             "/api/optical/jobs",
-            json={"payload": {"case_id": "DEMO_E2E", "requirement": requirement}},
+            json={
+                "payload": {
+                    "scenario": form_fields["scenario"],
+                    "requirement": form_fields["requirement"],
+                    "focal_length_mm": float(form_fields["focal_length_mm"]),
+                    "total_track_mm": float(form_fields["total_track_mm"]),
+                }
+            },
         )
         assert submitted.status_code == 202, submitted.text
         job_id = submitted.json()["job_id"]
@@ -259,12 +186,11 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
         assert f'"job_id":"{job_id}"' in sse_body
         assert '"engine":"sleep"' in sse_body
         assert '"status":"succeeded"' in sse_body
-        assert '"case_id":"DEMO_E2E"' in sse_body
+        assert '"scenario":"smartphone-wide"' in sse_body
 
-        result = client.post(
-            "/results/summary",
-            data=_summary_form_payload(job_id=job_id, requirement=requirement),
-        )
+        result_form_fields = dict(form_fields)
+        result_form_fields["job_id"] = job_id
+        result = client.post(form.action, data=result_form_fields)
 
     assert result.status_code == 200, result.text
     html = result.text
@@ -278,16 +204,46 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
     assert "Smartphone Wide" in html
 
     assert 'data-narrative-section="analysis-suite"' in html
-    for artifact in (
-        "layout-svg",
-        "mtf",
-        "spot-diagram",
-        "field-analysis",
-        "wavefront",
-    ):
-        assert f'data-analysis-artifact="{artifact}"' in html
+    _assert_analysis_card(
+        html,
+        artifact="layout-svg",
+        available="true",
+        provenance="optiland-raytrace",
+        snippets=("<svg", "Ray path layout"),
+    )
+    _assert_analysis_card(
+        html,
+        artifact="mtf",
+        available="true",
+        provenance="optiland-raytrace",
+        snippets=("4 fields, 256 samples.", "Diffraction cutoff 830 lp/mm."),
+    )
+    _assert_analysis_card(
+        html,
+        artifact="spot-diagram",
+        available="true",
+        provenance="optiland-raytrace",
+        snippets=("2 fields x 1 wavelengths.", "hexapolar distribution"),
+    )
+    _assert_analysis_card(
+        html,
+        artifact="field-analysis",
+        available="true",
+        provenance="optiland-raytrace",
+        snippets=("32 points, deg field axis.", "f-tan distortion model."),
+    )
+    _assert_analysis_card(
+        html,
+        artifact="wavefront",
+        available="true",
+        provenance="optiland-wavefront",
+        snippets=("1 fields at 587.6 nm.", "Minimum Strehl 0.000."),
+    )
     assert "<svg" in html
-    assert "DEMO_E2E / DEMO_E2E.zmx" in html
+    assert (
+        "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30 / "
+        "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30.zmx"
+    ) in html
     for source in (
         "thin-lens-analytic",
         "optiland-raytrace",
@@ -306,13 +262,9 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
     assert 'data-summary-lang="zh"' in html
     assert summary_zh in html
 
-    assert len(seen_match_requests) == 1
-    assert seen_match_requests[0].scenario == Scenario.SMARTPHONE_WIDE
-    assert seen_match_requests[0].analysis_depth == "seed_only"
-    assert seen_match_requests[0].max_total_track_mm == 4.35
-
     assert mock_client.chat.completions.create.await_count == 2
     extraction_messages = mock_client.chat.completions.create.call_args_list[0].kwargs["messages"]
     summary_messages = mock_client.chat.completions.create.call_args_list[1].kwargs["messages"]
     assert extraction_messages[1]["content"] == requirement
     assert "Scenario: Smartphone Wide (smartphone-wide)" in summary_messages[1]["content"]
+    assert "Total track length: 4.30 mm" in summary_messages[1]["content"]
