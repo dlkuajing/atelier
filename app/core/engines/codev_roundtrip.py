@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import codecs
 import math
 import os
 from dataclasses import dataclass
@@ -398,12 +399,18 @@ def _parse_vignetting(path: Path) -> dict[str, tuple[float, ...]]:
 
 
 def _read_zmx_text(path: Path) -> str:
-    for encoding in ("utf-16", "utf-16-le", "utf-8-sig", "latin-1"):
-        try:
-            return path.read_text(encoding=encoding)
-        except (OSError, UnicodeError):
-            continue
-    return path.read_text(errors="ignore")
+    # BOM-based dispatch: blind utf-16 attempts on even-length ASCII files
+    # "succeed" into CJK mojibake (no exception), silently dropping every
+    # VDX/VDY token. Bit us on CI where LF checkout made the file even-sized.
+    raw = path.read_bytes()
+    if raw.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+        return raw.decode("utf-16")
+    if raw.startswith(codecs.BOM_UTF8):
+        return raw.decode("utf-8-sig")
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw.decode("latin-1")
 
 
 def _float_tokens(tokens: list[str]) -> list[float]:

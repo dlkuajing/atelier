@@ -13,6 +13,7 @@ from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchErr
 from app.core.engines.codev_roundtrip import (
     CODEV_ROUNDTRIP_RESULT_SCHEMA,
     DEFAULT_PATENT_ROUNDTRIP_SEED,
+    _parse_vignetting,
     build_zmx_import_sequence,
     compare_roundtrip_zmx,
     default_patent_roundtrip_seed,
@@ -278,3 +279,14 @@ def test_real_codev_import_patent_seed_smoke(tmp_path: Path) -> None:
     assert result.command_export_path.is_file()
     assert result.efl_y_mm == pytest.approx(3.621, rel=0.02)
     assert result.max_image_height_y_mm == pytest.approx(3.685, rel=0.03)
+
+
+def test_parse_vignetting_survives_lf_checkout(tmp_path: Path) -> None:
+    """CI regression: LF checkout made the ASCII seed even-sized, and the old
+    blind utf-16 decode turned it into mojibake with zero VDX/VDY tokens."""
+    source = default_patent_roundtrip_seed()
+    lf_copy = tmp_path / source.name
+    lf_copy.write_bytes(source.read_bytes().replace(b"\r\n", b"\n"))
+
+    assert _parse_vignetting(lf_copy) == _parse_vignetting(source)
+    assert _parse_vignetting(lf_copy)["VDX"] == (0.0, 0.0, 0.0)
