@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 ## Current Position
 
-Phase: 完成 1/3/4/8，部分完成 5（spike 进程闭环），进行中 2/7/9；下一决策点=ZMX 回程导出方案（CODE V 11.5 无原生导出），下一阻塞点=attended 彩排(Phase 9)
+Phase: 完成 1/3/4/5/8，进行中 2/7/9；Phase 5 已用 04a 数据库读数 + 04b ZMX 重建关闭 CODE V 回程闭环，下一阻塞点=attended 彩排(Phase 9)
 Plan: 夜车模式（gsd-loop 垂直切片）替代 phase-plan 执行
 Status: 五批次 23 切片已合 main(f9d1431)，测试 131→319
-Last activity: 2026-07-05 — 批次5收官（CODE V 互通 spike 三片：探测/批处理/往返保真），审查闸 8 条修复 + CI 两轮 fix-forward（utf-16 编码陷阱/证据报告入库）
+Last activity: 2026-07-05 — ENGINE-04c 闭环验收：US20170003482A1.zmx → CODE V 导入 → 04a 读数 → 04b 重建 exported.zmx → compare_roundtrip_zmx，四项保真 PASS
 
 Progress: [█████░░░░░] ~50%（按 24 需求中 14 完成/2 部分计）
 
@@ -57,7 +57,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- CODE V installation is an external dependency owned by 主公; Phase 5 (ZMX↔CODE V spike) cannot be empirically validated until CODE V is installed. Phases 1-4 must remain fully executable without it.
+- Phase 5 已在本机 CODE V 11.5 实测关闭；后续 Phase 7 仍需保持无 CODE V 环境可降级，真实深引擎成果只在演示机/预计算路径依赖 CODE V。
 - CODE V's authoritative Macro-PLUS CLI/output-format details are gated behind a licensed docs portal — must be read from the installed manual during Phase 5, not assumed from secondary sources.
 - COM fallback path (if batch mode proves insufficient) has no verified Python+CODE V sample anywhere — would need a dedicated research pass if triggered.
 - DATA-01 external dependency: 109 手机镜头 ZMX 位于另一台电脑（lens-data-staging/），需主公先行同步至可访问位置，Phase 2 无法自行解除此依赖。

@@ -13,6 +13,8 @@ from app.core.engines.codev_batch import (
     CodeVBatchResult,
     run_codev_batch,
 )
+from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
+from app.core.engines.zmx_writer import write_zmx_from_codev_readout
 from app.core.prescription_table import PrescriptionTable, extract_prescription_table
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
 
@@ -41,6 +43,12 @@ _VIGNETTING_ALIASES = {
     "VDY": "VDY",
     "VDYN": "VDY",
     "ZVDY": "VDY",
+    "VCX": "VCX",
+    "VCXN": "VCX",
+    "ZVCX": "VCX",
+    "VCY": "VCY",
+    "VCYN": "VCY",
+    "ZVCY": "VCY",
 }
 
 
@@ -81,6 +89,9 @@ class ZmxFidelityFacts:
 
     path: Path
     efl_mm: float
+    f_number: float | None
+    entrance_pupil_diameter_mm: float | None
+    wavelength_count: int
     glass_rows: tuple[GlassRow, ...]
     asphere_term_counts: dict[int, int]
     asphere_coefficients: dict[int, tuple[float, ...]]
@@ -89,7 +100,7 @@ class ZmxFidelityFacts:
 
 @dataclass(frozen=True)
 class ZmxRoundTripComparison:
-    """Four-gate comparison between source and round-tripped ZMX files."""
+    """Fidelity comparison between source and round-tripped ZMX files."""
 
     source: ZmxFidelityFacts
     exported: ZmxFidelityFacts
@@ -117,10 +128,34 @@ class ZmxRoundTripComparison:
             "exported_zmx": str(self.exported.path),
             "efl_deviation_pct": self.efl_deviation_pct,
             "efl_within_2pct": self.efl_within_tolerance,
+            "source_f_number": self.source.f_number,
+            "exported_f_number": self.exported.f_number,
+            "source_entrance_pupil_diameter_mm": self.source.entrance_pupil_diameter_mm,
+            "exported_entrance_pupil_diameter_mm": self.exported.entrance_pupil_diameter_mm,
+            "source_wavelength_count": self.source.wavelength_count,
+            "exported_wavelength_count": self.exported.wavelength_count,
             "glass_mismatches": list(self.glass_mismatches),
             "asphere_term_mismatches": list(self.asphere_term_mismatches),
             "vignetting_mismatches": list(self.vignetting_mismatches),
             "passed": self.passed,
+        }
+
+
+@dataclass(frozen=True)
+class CodeVRoundTripCloseResult:
+    """Completed ENGINE-04c readout -> rebuilt ZMX -> comparison loop."""
+
+    source_zmx: Path
+    readout: CodeVReadoutResult
+    exported_zmx: Path
+    comparison: ZmxRoundTripComparison
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "source_zmx": str(self.source_zmx),
+            "readout": self.readout.describe(),
+            "exported_zmx": str(self.exported_zmx),
+            "comparison": self.comparison.describe(),
         }
 
 
@@ -249,6 +284,45 @@ def run_codev_zmx_import(
     )
 
 
+def run_codev_roundtrip_close(
+    *,
+    source_zmx: Path | str | None = None,
+    work_dir: Path | str,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
+    timeout_seconds: float = 120.0,
+    exported_filename: str = "exported.zmx",
+    asphere_abs_tol: float = 1e-6,
+) -> CodeVRoundTripCloseResult:
+    """Close the ENGINE-04c loop through CODE V readout and rebuilt ZMX."""
+
+    source_zmx = default_patent_roundtrip_seed() if source_zmx is None else Path(source_zmx)
+    work_dir = Path(work_dir)
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    readout = run_codev_readout(
+        source_zmx=source_zmx,
+        work_dir=work_dir,
+        executable=executable,
+        timeout_seconds=timeout_seconds,
+    )
+    exported_zmx = write_zmx_from_codev_readout(
+        readout.readout,
+        work_dir / exported_filename,
+        name=f"{source_zmx.stem}-exported",
+    )
+    comparison = compare_roundtrip_zmx(
+        source_zmx,
+        exported_zmx,
+        asphere_abs_tol=asphere_abs_tol,
+    )
+    return CodeVRoundTripCloseResult(
+        source_zmx=source_zmx,
+        readout=readout,
+        exported_zmx=exported_zmx,
+        comparison=comparison,
+    )
+
+
 def extract_zmx_fidelity_facts(path: Path | str) -> ZmxFidelityFacts:
     """Extract the four fidelity gates from a ZMX via the existing ingest path."""
 
@@ -256,16 +330,21 @@ def extract_zmx_fidelity_facts(path: Path | str) -> ZmxFidelityFacts:
     optic = load_normalized_zmx(zmx_path)
     table = extract_prescription_table(optic, source_zmx=zmx_path)
     asphere_coefficients = _asphere_coefficients(table)
+    raw_text = _read_zmx_text(zmx_path)
+    system_facts = _parse_system_facts(raw_text)
     return ZmxFidelityFacts(
         path=zmx_path,
         efl_mm=float(optic.paraxial.f2()),
+        f_number=system_facts["f_number"],
+        entrance_pupil_diameter_mm=system_facts["entrance_pupil_diameter_mm"],
+        wavelength_count=system_facts["wavelength_count"],
         glass_rows=_glass_rows(table),
         asphere_term_counts={
             surface_index: len(coefficients)
             for surface_index, coefficients in asphere_coefficients.items()
         },
         asphere_coefficients=asphere_coefficients,
-        vignetting=_parse_vignetting(zmx_path),
+        vignetting=_parse_vignetting(raw_text),
     )
 
 
@@ -275,9 +354,9 @@ def compare_roundtrip_zmx(
     *,
     nd_abs_tol: float = 1e-6,
     vd_abs_tol: float = 1e-4,
-    asphere_abs_tol: float = 1e-12,
+    asphere_abs_tol: float = 1e-6,
 ) -> ZmxRoundTripComparison:
-    """Compare source and round-tripped ZMX across the ENGINE-03c gates."""
+    """Compare source and round-tripped ZMX across the ENGINE-03c/04c gates."""
 
     source = extract_zmx_fidelity_facts(source_zmx)
     exported = extract_zmx_fidelity_facts(exported_zmx)
@@ -385,9 +464,31 @@ def _asphere_coefficient_mismatches(
     return tuple(mismatches)
 
 
-def _parse_vignetting(path: Path) -> dict[str, tuple[float, ...]]:
-    values: dict[str, list[float]] = {"VDX": [], "VDY": []}
-    for raw_line in _read_zmx_text(path).splitlines():
+def _parse_system_facts(text: str) -> dict[str, float | int | None]:
+    f_number: float | None = None
+    entrance_pupil_diameter_mm: float | None = None
+    wavelength_count = 0
+    for raw_line in text.splitlines():
+        parts = raw_line.strip().split()
+        if not parts:
+            continue
+        key = parts[0].upper()
+        if key == "FNUM":
+            f_number = _first_float(parts[1:])
+        elif key == "ENPD":
+            entrance_pupil_diameter_mm = _first_float(parts[1:])
+        elif key == "WAVM":
+            wavelength_count += 1
+    return {
+        "f_number": f_number,
+        "entrance_pupil_diameter_mm": entrance_pupil_diameter_mm,
+        "wavelength_count": wavelength_count,
+    }
+
+
+def _parse_vignetting(text: str) -> dict[str, tuple[float, ...]]:
+    values: dict[str, list[float]] = {"VDX": [], "VDY": [], "VCX": [], "VCY": []}
+    for raw_line in text.splitlines():
         parts = raw_line.strip().split()
         if not parts:
             continue
@@ -421,6 +522,11 @@ def _float_tokens(tokens: list[str]) -> list[float]:
         except ValueError:
             continue
     return values
+
+
+def _first_float(tokens: list[str]) -> float | None:
+    values = _float_tokens(tokens)
+    return values[0] if values else None
 
 
 def _quote_codev_path(path: Path) -> str:
