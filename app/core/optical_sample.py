@@ -597,6 +597,16 @@ class CodeVRefinementMetricSnapshot(BaseModel):
     max_distortion_pct: float
 
 
+class CodeVToleranceSensitivityRow(BaseModel):
+    """One top-N tolerance sensitivity row sourced from CODE V."""
+
+    provenance: ProvenanceSource = ProvenanceSource.CODEV_RUN
+    rank: int = Field(..., ge=1)
+    parameter_name: str
+    perturbation: str
+    mtf_drop: float = Field(..., ge=0.0)
+
+
 class CodeVRefinementComparison(BaseModel):
     """Seed vs CODE V refined comparison carried inside optical_sample payloads."""
 
@@ -611,6 +621,9 @@ class CodeVRefinementComparison(BaseModel):
     efl_deviation_pct: float
     seed_mtf: MTFResult | None = None
     refined_mtf: MTFResult | None = None
+    tolerance_sensitivity_top_n: list[CodeVToleranceSensitivityRow] = Field(
+        default_factory=list
+    )
     cross_validation_status: str = "rebuilt-zmx-ingested"
     cross_validation_provenance: str = "codev-cross-validated"
 

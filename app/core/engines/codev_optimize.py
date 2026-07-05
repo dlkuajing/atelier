@@ -32,6 +32,11 @@ _OPTIMIZE_RESULT_NAME = "atelier_codev_optimize.tsv"
 _OPTIMIZED_READOUT_NAME = "atelier_codev_optimized_readout.tsv"
 _OPTIMIZED_ZMX_NAME = "optimized.zmx"
 _OPTIMIZE_OK_RETURNCODES = {0, 1}
+_DEFAULT_TOLERANCE_TOP_N = 5
+_DEFAULT_TOLERANCE_MTF_FREQUENCY_LPMM = 100.0
+_DEFAULT_TOLERANCE_RADIUS_DELTA_FRACTION = 0.005
+_DEFAULT_TOLERANCE_THICKNESS_DELTA_MM = 0.005
+_DEFAULT_TOLERANCE_NRD = 32
 _OPTIMIZE_REQUIRED_KEYS = (
     "schema",
     "status",
@@ -77,6 +82,30 @@ class CodeVOptimizationMetrics:
 
 
 @dataclass(frozen=True)
+class CodeVToleranceSensitivity:
+    """One CODE V MTF sensitivity probe row emitted by the tolerance block."""
+
+    rank: int
+    parameter_name: str
+    perturbation: str
+    mtf_drop: float
+    nominal_mtf: float | None = None
+    perturbed_mtf: float | None = None
+    provenance: str = "codev-run"
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "rank": self.rank,
+            "parameter_name": self.parameter_name,
+            "perturbation": self.perturbation,
+            "mtf_drop": self.mtf_drop,
+            "nominal_mtf": self.nominal_mtf,
+            "perturbed_mtf": self.perturbed_mtf,
+            "provenance": self.provenance,
+        }
+
+
+@dataclass(frozen=True)
 class CodeVOptimizeSummary:
     """Structured metrics and policy flags parsed from the AUT result TSV."""
 
@@ -89,6 +118,9 @@ class CodeVOptimizeSummary:
     before: CodeVOptimizationMetrics
     after: CodeVOptimizationMetrics
     efl_deviation_pct: float
+    tolerance_sensitivity: tuple[CodeVToleranceSensitivity, ...] = ()
+    tolerance_metric: str = "MTF drop after CODE V perturbation replay"
+    tolerance_provenance: str = "codev-run"
 
     def describe(self) -> dict[str, object]:
         return {
@@ -101,6 +133,11 @@ class CodeVOptimizeSummary:
             "before": self.before.describe(),
             "after": self.after.describe(),
             "efl_deviation_pct": self.efl_deviation_pct,
+            "tolerance_metric": self.tolerance_metric,
+            "tolerance_provenance": self.tolerance_provenance,
+            "tolerance_sensitivity_top_n": [
+                item.describe() for item in self.tolerance_sensitivity
+            ],
         }
 
 
@@ -152,6 +189,11 @@ def build_codev_optimize_sequence(
     min_air_gap_mm: float = 0.001,
     lateral_color_weight: float = 0.01,
     rms_spot_weight: float = 0.001,
+    tolerance_top_n: int = _DEFAULT_TOLERANCE_TOP_N,
+    tolerance_mtf_frequency_lpmm: float = _DEFAULT_TOLERANCE_MTF_FREQUENCY_LPMM,
+    tolerance_radius_delta_fraction: float = _DEFAULT_TOLERANCE_RADIUS_DELTA_FRACTION,
+    tolerance_thickness_delta_mm: float = _DEFAULT_TOLERANCE_THICKNESS_DELTA_MM,
+    tolerance_nrd: int = _DEFAULT_TOLERANCE_NRD,
 ) -> str:
     """Build a CODE V sequence that imports a ZMX, runs AUT, and exports TSVs."""
 
@@ -163,6 +205,11 @@ def build_codev_optimize_sequence(
     _validate_nonnegative(min_air_gap_mm, "min_air_gap_mm")
     _validate_positive(lateral_color_weight, "lateral_color_weight")
     _validate_positive(rms_spot_weight, "rms_spot_weight")
+    _validate_positive_int(tolerance_top_n, "tolerance_top_n")
+    _validate_positive(tolerance_mtf_frequency_lpmm, "tolerance_mtf_frequency_lpmm")
+    _validate_positive(tolerance_radius_delta_fraction, "tolerance_radius_delta_fraction")
+    _validate_positive(tolerance_thickness_delta_mm, "tolerance_thickness_delta_mm")
+    _validate_positive_int(tolerance_nrd, "tolerance_nrd")
 
     source_zmx = Path(source_zmx)
     result_path = Path(result_path)
@@ -218,6 +265,14 @@ def build_codev_optimize_sequence(
     for prefix in ("before", "after"):
         _append_metric_rows(lines, prefix)
     _append_put_row(lines, '"efl_deviation_pct"', "^efl_deviation_pct")
+    _append_tolerance_sensitivity_rows(
+        lines,
+        top_n=tolerance_top_n,
+        mtf_frequency_lpmm=tolerance_mtf_frequency_lpmm,
+        radius_delta_fraction=tolerance_radius_delta_fraction,
+        thickness_delta_mm=tolerance_thickness_delta_mm,
+        nrd=tolerance_nrd,
+    )
     lines.extend(
         [
             f"BUF EXP B1 {_quote_codev_path(result_path)}",
@@ -379,6 +434,69 @@ def parse_codev_optimize_data(data: Mapping[str, str]) -> CodeVOptimizeSummary:
         before=_parse_metrics(data, "before"),
         after=_parse_metrics(data, "after"),
         efl_deviation_pct=_required_float(data, "efl_deviation_pct"),
+        tolerance_sensitivity=_parse_tolerance_sensitivity(data),
+        tolerance_metric=data.get(
+            "tolerance.metric",
+            "MTF drop after CODE V perturbation replay",
+        ),
+        tolerance_provenance=data.get("tolerance.provenance", "codev-run"),
+    )
+
+
+def _parse_tolerance_sensitivity(
+    data: Mapping[str, str],
+) -> tuple[CodeVToleranceSensitivity, ...]:
+    count_text = data.get("tolerance.count", "").strip()
+    if not count_text:
+        return ()
+    try:
+        count = int(float(count_text))
+    except ValueError as exc:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V tolerance data contains a non-integer count",
+            details={"key": "tolerance.count", "value": count_text},
+        ) from exc
+    if count <= 0:
+        return ()
+
+    top_n = _optional_positive_int(data, "tolerance.top_n") or _DEFAULT_TOLERANCE_TOP_N
+    items: list[CodeVToleranceSensitivity] = []
+    for index in range(1, count + 1):
+        prefix = f"tolerance.{index}"
+        parameter_name = _required_text(data, f"{prefix}.parameter_name")
+        perturbation = _required_text(data, f"{prefix}.perturbation")
+        mtf_drop = _required_float(data, f"{prefix}.mtf_drop")
+        if mtf_drop < 0:
+            raise CodeVBatchError(
+                "failure",
+                "CODE V tolerance data contains a negative MTF drop",
+                details={"key": f"{prefix}.mtf_drop", "value": mtf_drop},
+            )
+        items.append(
+            CodeVToleranceSensitivity(
+                rank=index,
+                parameter_name=parameter_name,
+                perturbation=perturbation,
+                mtf_drop=mtf_drop,
+                nominal_mtf=_optional_float(data, f"{prefix}.nominal_mtf"),
+                perturbed_mtf=_optional_float(data, f"{prefix}.perturbed_mtf"),
+                provenance=data.get("tolerance.provenance", "codev-run"),
+            )
+        )
+
+    ranked = sorted(items, key=lambda item: (-item.mtf_drop, item.parameter_name))
+    return tuple(
+        CodeVToleranceSensitivity(
+            rank=rank,
+            parameter_name=item.parameter_name,
+            perturbation=item.perturbation,
+            mtf_drop=item.mtf_drop,
+            nominal_mtf=item.nominal_mtf,
+            perturbed_mtf=item.perturbed_mtf,
+            provenance=item.provenance,
+        )
+        for rank, item in enumerate(ranked[:top_n], start=1)
     )
 
 
@@ -426,6 +544,20 @@ def _metric_function_block() -> list[str]:
         "  END IF",
         "END FOR",
         "END FCT ^max",
+        "FCT @mtfmin(NUM ^freq, NUM ^nrd)",
+        "LCL NUM ^freq ^nrd ^f ^xout(6) ^yout(6) ^xmtf ^ymtf ^value ^min",
+        "^min == 1",
+        "FOR ^f 1 (NUM F)",
+        "  ^xmtf == MTF_1FLD(1,^f,^freq,0,^nrd,^xout,'DIF','SIN')",
+        "  ^ymtf == MTF_1FLD(1,^f,^freq,90,^nrd,^yout,'DIF','SIN')",
+        "  IF ^xmtf >= 0 and ^ymtf >= 0",
+        "    ^value == (^xmtf+^ymtf)/2",
+        "    IF ^value < ^min",
+        "      ^min == ^value",
+        "    END IF",
+        "  END IF",
+        "END FOR",
+        "END FCT ^min",
         "FCT @wfewav(NUM ^dummy)",
         "LCL NUM ^dummy ^f ^ok ^rwe(10,26) ^value ^max",
         "^max == 0",
@@ -482,6 +614,133 @@ def _append_metric_rows(lines: list[str], prefix: str) -> None:
         f"^{prefix}_max_rms_wavefront_error_waves",
     )
     _append_put_row(lines, f'"{prefix}.max_distortion_pct"', f"^{prefix}_max_distortion_pct")
+
+
+def _append_tolerance_sensitivity_rows(
+    lines: list[str],
+    *,
+    top_n: int,
+    mtf_frequency_lpmm: float,
+    radius_delta_fraction: float,
+    thickness_delta_mm: float,
+    nrd: int,
+) -> None:
+    _append_put_row(lines, '"tolerance.schema"', '"atelier-codev-tolerance-v1"')
+    _append_put_row(
+        lines,
+        '"tolerance.metric"',
+        '"MTF drop after CODE V perturbation replay"',
+    )
+    _append_put_row(lines, '"tolerance.provenance"', '"codev-run"')
+    _append_put_row(lines, '"tolerance.top_n"', str(top_n))
+    _append_put_row(
+        lines,
+        '"tolerance.mtf_frequency_lpmm"',
+        _fmt_number(mtf_frequency_lpmm),
+    )
+    lines.extend(
+        [
+            "^tolerance_count == 0",
+            f"^tol_freq == {_fmt_number(mtf_frequency_lpmm)}",
+            f"^tol_radius_fraction == {_fmt_number(radius_delta_fraction)}",
+            f"^tol_thickness_delta == {_fmt_number(thickness_delta_mm)}",
+            f"^tol_nrd == {nrd}",
+            "^tol_nominal_mtf == @mtfmin(^tol_freq,^tol_nrd)",
+            "TIN SI 0",
+            "TOR",
+            "  OUT N",
+            "  FRE FA ZA ^tol_freq",
+            "  AZI FA ZA 0",
+            "  SNS",
+            "  WBF B2 PER",
+            "  CHT N",
+            "  NRD ^tol_nrd",
+            "GO",
+            "BUF DEL B2",
+            "FOR ^s 1 (NUM S)",
+            "  ^radius_nominal == (RDY S^s)",
+            "  IF ABSF(^radius_nominal) > 1.0E-9",
+            "    ^tol_delta == ABSF(^radius_nominal)*^tol_radius_fraction",
+            "    IF ^tol_delta < 1.0E-6",
+            "      ^tol_delta == 1.0E-6",
+            "    END IF",
+            "    ^perturbed_value == ^radius_nominal + ^tol_delta",
+            "    RDY S^s ^perturbed_value",
+            "    ^tol_perturbed_mtf == @mtfmin(^tol_freq,^tol_nrd)",
+            "    RDY S^s ^radius_nominal",
+            "    ^tol_drop == ^tol_nominal_mtf - ^tol_perturbed_mtf",
+            "    IF ^tol_drop < 0",
+            "      ^tol_drop == 0",
+            "    END IF",
+            '    ^parameter_name == "surface."',
+            "    ^parameter_name == CONCAT(^parameter_name, NUM_TO_STR(^s))",
+            '    ^parameter_name == CONCAT(^parameter_name, ".radius_y_mm")',
+            "    ^perturbation == NUM_TO_STR(^tol_delta)",
+            '    ^perturbation == CONCAT("+", ^perturbation)',
+            '    ^perturbation == CONCAT(^perturbation, " mm")',
+        ]
+    )
+    _append_dynamic_tolerance_candidate(lines)
+    lines.extend(
+        [
+            "  END IF",
+            "  ^thickness_nominal == (THI S^s)",
+            "  IF ^thickness_nominal > 1.0E-9",
+            "    ^tol_delta == ^tol_thickness_delta",
+            "    ^perturbed_value == ^thickness_nominal + ^tol_delta",
+            "    THI S^s ^perturbed_value",
+            "    ^tol_perturbed_mtf == @mtfmin(^tol_freq,^tol_nrd)",
+            "    THI S^s ^thickness_nominal",
+            "    ^tol_drop == ^tol_nominal_mtf - ^tol_perturbed_mtf",
+            "    IF ^tol_drop < 0",
+            "      ^tol_drop == 0",
+            "    END IF",
+            '    ^parameter_name == "surface."',
+            "    ^parameter_name == CONCAT(^parameter_name, NUM_TO_STR(^s))",
+            '    ^parameter_name == CONCAT(^parameter_name, ".thickness_mm")',
+            "    ^perturbation == NUM_TO_STR(^tol_delta)",
+            '    ^perturbation == CONCAT("+", ^perturbation)',
+            '    ^perturbation == CONCAT(^perturbation, " mm")',
+        ]
+    )
+    _append_dynamic_tolerance_candidate(lines)
+    lines.extend(
+        [
+            "  END IF",
+            "END FOR",
+        ]
+    )
+    _append_put_row(lines, '"tolerance.count"', "^tolerance_count")
+
+
+def _append_dynamic_tolerance_candidate(lines: list[str]) -> None:
+    lines.extend(
+        [
+            "    ^tolerance_count == ^tolerance_count+1",
+            '    ^tolerance_prefix == "tolerance."',
+            "    ^tolerance_prefix == CONCAT(^tolerance_prefix, NUM_TO_STR(^tolerance_count))",
+            "    ^key == CONCAT(^tolerance_prefix, \".parameter_name\")",
+            "    BUF PUT B1 I^row J1 ^key",
+            "    BUF PUT B1 I^row J2 ^parameter_name",
+            "    ^row == ^row+1",
+            "    ^key == CONCAT(^tolerance_prefix, \".perturbation\")",
+            "    BUF PUT B1 I^row J1 ^key",
+            "    BUF PUT B1 I^row J2 ^perturbation",
+            "    ^row == ^row+1",
+            "    ^key == CONCAT(^tolerance_prefix, \".mtf_drop\")",
+            "    BUF PUT B1 I^row J1 ^key",
+            "    BUF PUT B1 I^row J2 ^tol_drop",
+            "    ^row == ^row+1",
+            "    ^key == CONCAT(^tolerance_prefix, \".nominal_mtf\")",
+            "    BUF PUT B1 I^row J1 ^key",
+            "    BUF PUT B1 I^row J2 ^tol_nominal_mtf",
+            "    ^row == ^row+1",
+            "    ^key == CONCAT(^tolerance_prefix, \".perturbed_mtf\")",
+            "    BUF PUT B1 I^row J1 ^key",
+            "    BUF PUT B1 I^row J2 ^tol_perturbed_mtf",
+            "    ^row == ^row+1",
+        ]
+    )
 
 
 def _optimized_readout_block(*, source_name: str) -> list[str]:
@@ -680,6 +939,48 @@ def _required_float(data: Mapping[str, str], key: str) -> float:
         raise CodeVBatchError(
             "failure",
             "CODE V optimize data contains a non-finite value",
+            details={"key": key, "value": value},
+        )
+    return numeric
+
+
+def _optional_float(data: Mapping[str, str], key: str) -> float | None:
+    value = data.get(key, "").strip()
+    if not value:
+        return None
+    try:
+        numeric = float(value)
+    except ValueError as exc:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V optimize data contains a non-numeric value",
+            details={"key": key, "value": value},
+        ) from exc
+    if not math.isfinite(numeric):
+        raise CodeVBatchError(
+            "failure",
+            "CODE V optimize data contains a non-finite value",
+            details={"key": key, "value": value},
+        )
+    return numeric
+
+
+def _optional_positive_int(data: Mapping[str, str], key: str) -> int | None:
+    value = data.get(key, "").strip()
+    if not value:
+        return None
+    try:
+        numeric = int(float(value))
+    except ValueError as exc:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V optimize data contains a non-integer value",
+            details={"key": key, "value": value},
+        ) from exc
+    if numeric < 1:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V optimize data contains a non-positive integer value",
             details={"key": key, "value": value},
         )
     return numeric

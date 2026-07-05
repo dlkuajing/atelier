@@ -268,6 +268,10 @@ def _format_signed_waves(value: float | None) -> str:
     return "Unavailable" if value is None else f"{value:+.3f} waves"
 
 
+def _format_mtf_drop(value: float) -> str:
+    return f"{value:.4f}"
+
+
 def _mtf_mean_curve(mtf: MTFResult) -> list[float]:
     if not mtf.fields:
         return []
@@ -362,6 +366,30 @@ def _codev_metric(
     }
 
 
+def _codev_tolerance_context(comparison: CodeVRefinementComparison) -> dict[str, object]:
+    rows = tuple(
+        {
+            "rank": item.rank,
+            "parameter_name": item.parameter_name,
+            "perturbation": item.perturbation,
+            "mtf_drop": _format_mtf_drop(item.mtf_drop),
+            "source": _source_value(item.provenance),
+        }
+        for item in comparison.tolerance_sensitivity_top_n
+    )
+    return {
+        "available": bool(rows),
+        "rows": rows,
+        "source": ProvenanceSource.CODEV_RUN.value,
+        "metric": "MTF drop",
+        "note": (
+            "Ranked by CODE V perturbation replay after TOR sensitivity setup."
+            if rows
+            else "No CODE V tolerance sensitivity rows are attached to this result."
+        ),
+    }
+
+
 def _codev_comparison_context(sample: OpticalSampleData | None) -> dict[str, object]:
     if sample is None or sample.codev_optimization is None:
         return {
@@ -430,6 +458,7 @@ def _codev_comparison_context(sample: OpticalSampleData | None) -> dict[str, obj
                 source=cross_source,
             ),
         ),
+        "tolerance_table": _codev_tolerance_context(comparison),
     }
 
 

@@ -758,6 +758,57 @@ button:focus-visible {
   margin-top: 12px;
 }
 
+.tolerance-table {
+  display: grid;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.82);
+}
+
+.tolerance-table h3 {
+  margin: 0;
+  color: var(--carbon);
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.tolerance-table p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.tolerance-table table {
+  width: 100%;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.tolerance-table th,
+.tolerance-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.tolerance-table thead th {
+  color: var(--muted);
+  background: rgba(37, 37, 37, 0.05);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.tolerance-table tbody tr:last-child th,
+.tolerance-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .optical-bench {
   position: relative;
   min-height: 560px;

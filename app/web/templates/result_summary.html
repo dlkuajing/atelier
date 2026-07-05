@@ -199,6 +199,48 @@
                 {% endfor %}
               </dl>
             </div>
+
+            <section
+              class="tolerance-table"
+              data-codev-tolerance-table
+              data-available="{{ 'true' if codev_comparison.tolerance_table.available else 'false' }}"
+              data-provenance="{{ codev_comparison.tolerance_table.source }}"
+              aria-labelledby="tolerance-table-title"
+            >
+              <div class="analysis-card-heading">
+                <span class="source-badge" data-provenance="{{ codev_comparison.tolerance_table.source }}">
+                  <span class="source-artifact">Tolerance sensitivity</span>
+                  <span class="source-name">{{ codev_comparison.tolerance_table.source }}</span>
+                </span>
+                <h3 id="tolerance-table-title">公差敏感度 Top-N</h3>
+              </div>
+              <p>{{ codev_comparison.tolerance_table.note }}</p>
+              {% if codev_comparison.tolerance_table.available %}
+                <table aria-label="CODE V tolerance sensitivity top-N">
+                  <thead>
+                    <tr>
+                      <th scope="col">Rank</th>
+                      <th scope="col">Parameter</th>
+                      <th scope="col">Perturbation</th>
+                      <th scope="col">MTF drop</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in codev_comparison.tolerance_table.rows %}
+                      <tr
+                        data-tolerance-rank="{{ row.rank }}"
+                        data-provenance="{{ row.source }}"
+                      >
+                        <th scope="row">{{ row.rank }}</th>
+                        <td>{{ row.parameter_name }}</td>
+                        <td>{{ row.perturbation }}</td>
+                        <td>{{ row.mtf_drop }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% endif %}
+            </section>
           {% endif %}
         </section>
 
