@@ -23,13 +23,18 @@ from app.core import optiland_patches as _optiland_patches  # noqa: I001
 _optiland_patches.apply_all()
 
 from app.api import optical, rag, wizard  # noqa: E402
+from app.core.aberration import MTFResult  # noqa: E402
 from app.core.config import settings  # noqa: E402
-from app.core.demo_cache import demo_cache_request, load_demo_cache_bundle_for_request  # noqa: E402
+from app.core.demo_cache import (  # noqa: E402
+    DemoAnalysisBundle,
+    demo_cache_request,
+    load_demo_cache_bundle_for_request,
+)
 from app.core.field_analysis import compute_field_analysis  # noqa: E402
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
 from app.core.optical_calc import airy_disk_diameter_um  # noqa: E402
-from app.core.optical_sample import OpticalSampleData  # noqa: E402
+from app.core.optical_sample import CodeVRefinementComparison, OpticalSampleData  # noqa: E402
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
 from app.core.provenance import ProvenanceSource  # noqa: E402
 from app.core.spot_diagram import compute_spot_diagram  # noqa: E402
@@ -230,6 +235,202 @@ def _source_value(source: object) -> str:
 
 def _finite_float_values(values: list[float]) -> list[float]:
     return [value for value in values if math.isfinite(value)]
+
+
+def _sample_from_cached_bundle(cached: DemoAnalysisBundle) -> OpticalSampleData:
+    sample = cached.sample
+    updates: dict[str, object] = {}
+    if sample.spot_diagram is None:
+        updates["spot_diagram"] = cached.spot_diagram
+    if sample.field_analysis is None:
+        updates["field_analysis"] = cached.field_analysis
+    if sample.wavefront is None:
+        updates["wavefront"] = cached.wavefront
+    if sample.codev_optimization is None and cached.codev_artifact is not None:
+        with suppress(Exception):
+            updates["codev_optimization"] = CodeVRefinementComparison.model_validate(
+                cached.codev_artifact
+            )
+    return sample.model_copy(update=updates, deep=True) if updates else sample
+
+
+def _percent_reduction(before: float, after: float) -> float | None:
+    if not math.isfinite(before) or not math.isfinite(after) or before <= 0:
+        return None
+    return (before - after) / before * 100.0
+
+
+def _format_optional_pct(value: float | None) -> str:
+    return "Unavailable" if value is None else f"{value:.1f}%"
+
+
+def _format_signed_waves(value: float | None) -> str:
+    return "Unavailable" if value is None else f"{value:+.3f} waves"
+
+
+def _mtf_mean_curve(mtf: MTFResult) -> list[float]:
+    if not mtf.fields:
+        return []
+    field = mtf.fields[0]
+    return [
+        (sagittal + tangential) / 2.0
+        for sagittal, tangential in zip(field.sagittal, field.tangential, strict=False)
+        if math.isfinite(sagittal) and math.isfinite(tangential)
+    ]
+
+
+def _mtf_polyline_points(
+    *,
+    freqs: list[float],
+    values: list[float],
+    max_freq: float,
+    width: int,
+    height: int,
+    pad: int,
+) -> str:
+    points: list[str] = []
+    plot_width = width - pad * 2
+    plot_height = height - pad * 2
+    for freq, value in zip(freqs, values, strict=False):
+        if not math.isfinite(freq) or not math.isfinite(value):
+            continue
+        x = pad + max(0.0, min(freq, max_freq)) / max_freq * plot_width
+        y = pad + (1.0 - max(0.0, min(value, 1.0))) * plot_height
+        points.append(f"{x:.1f},{y:.1f}")
+    return " ".join(points)
+
+
+def _mtf_overlay_svg(seed_mtf: MTFResult, refined_mtf: MTFResult) -> str:
+    width = 420
+    height = 180
+    pad = 24
+    seed_values = _mtf_mean_curve(seed_mtf)
+    refined_values = _mtf_mean_curve(refined_mtf)
+    freqs = _finite_float_values(seed_mtf.freq_lp_per_mm)
+    count = min(len(freqs), len(seed_values), len(refined_values))
+    if count < 2:
+        return ""
+    freqs = freqs[:count]
+    seed_values = seed_values[:count]
+    refined_values = refined_values[:count]
+    max_freq = max(freqs)
+    if max_freq <= 0:
+        return ""
+    seed_points = _mtf_polyline_points(
+        freqs=freqs,
+        values=seed_values,
+        max_freq=max_freq,
+        width=width,
+        height=height,
+        pad=pad,
+    )
+    refined_points = _mtf_polyline_points(
+        freqs=freqs,
+        values=refined_values,
+        max_freq=max_freq,
+        width=width,
+        height=height,
+        pad=pad,
+    )
+    return (
+        f'<svg viewBox="0 0 {width} {height}" role="img" '
+        'aria-label="MTF curve overlay">'
+        f'<line class="mtf-axis" x1="{pad}" y1="{height - pad}" '
+        f'x2="{width - pad}" y2="{height - pad}"></line>'
+        f'<line class="mtf-axis" x1="{pad}" y1="{pad}" '
+        f'x2="{pad}" y2="{height - pad}"></line>'
+        f'<polyline class="mtf-curve mtf-curve-seed" points="{seed_points}"></polyline>'
+        f'<polyline class="mtf-curve mtf-curve-refined" points="{refined_points}"></polyline>'
+        "</svg>"
+    )
+
+
+def _codev_metric(
+    *,
+    key: str,
+    label: str,
+    value: str,
+    detail: str,
+    source: object,
+) -> dict[str, object]:
+    return {
+        "key": key,
+        "label": label,
+        "value": value,
+        "detail": detail,
+        "source": _source_value(source),
+    }
+
+
+def _codev_comparison_context(sample: OpticalSampleData | None) -> dict[str, object]:
+    if sample is None or sample.codev_optimization is None:
+        return {
+            "available": False,
+            "reason": "No CODE V refinement artifact is attached to this optical_sample.",
+        }
+
+    comparison = sample.codev_optimization
+    seed_mtf = comparison.seed_mtf or sample.mtf
+    refined_mtf = comparison.refined_mtf
+    mtf_svg = _mtf_overlay_svg(seed_mtf, refined_mtf) if refined_mtf is not None else ""
+    spot_shrink_pct = _percent_reduction(
+        comparison.before.max_rms_spot_diameter_um,
+        comparison.after.max_rms_spot_diameter_um,
+    )
+    wavefront_delta = (
+        comparison.after.max_rms_wavefront_error_waves
+        - comparison.before.max_rms_wavefront_error_waves
+    )
+    codev_source = comparison.after.provenance
+    cross_source = comparison.cross_validation_provenance
+    return {
+        "available": True,
+        "source_zmx": comparison.source_zmx,
+        "optimized_zmx": comparison.optimized_zmx_filename,
+        "status": comparison.optimization_status.replace("_", " "),
+        "mtf_available": bool(mtf_svg),
+        "mtf_svg": mtf_svg,
+        "mtf_summary": (
+            f"Overlay uses field {seed_mtf.fields[0].field_index} and "
+            f"{len(seed_mtf.freq_lp_per_mm)} frequency samples."
+            if seed_mtf.fields
+            else "MTF overlay data is unavailable."
+        ),
+        "badges": (
+            {"label": "Seed MTF trace", "source": _source_value(seed_mtf.provenance)},
+            {"label": "CODE V AUT run", "source": _source_value(codev_source)},
+            {"label": "Rebuilt ZMX verified", "source": cross_source},
+        ),
+        "metrics": (
+            _codev_metric(
+                key="spot-rms-shrink-pct",
+                label="Spot RMS shrink",
+                value=_format_optional_pct(spot_shrink_pct),
+                detail=(
+                    f"{comparison.before.max_rms_spot_diameter_um:.2f} -> "
+                    f"{comparison.after.max_rms_spot_diameter_um:.2f} um diameter"
+                ),
+                source=codev_source,
+            ),
+            _codev_metric(
+                key="wavefront-rms-delta",
+                label="Wavefront RMS delta",
+                value=_format_signed_waves(wavefront_delta),
+                detail=(
+                    f"{comparison.before.max_rms_wavefront_error_waves:.3f} -> "
+                    f"{comparison.after.max_rms_wavefront_error_waves:.3f} waves"
+                ),
+                source=codev_source,
+            ),
+            _codev_metric(
+                key="efl-cross-check",
+                label="CODE V cross-check",
+                value=f"{comparison.efl_deviation_pct:.4f}% EFL drift",
+                detail=comparison.cross_validation_status.replace("-", " "),
+                source=cross_source,
+            ),
+        ),
+    }
 
 
 def _metric_rows(
@@ -686,7 +887,7 @@ async def result_summary(
     design_assessment = None
     if cached is not None:
         demo_cache_status = "hit"
-        sample = cached.sample
+        sample = _sample_from_cached_bundle(cached)
         focal_length_mm = sample.paraxial.effective_focal_length_mm
         f_number = sample.paraxial.f_number
         total_track_mm = sample.paraxial.total_track_mm
@@ -755,6 +956,7 @@ async def result_summary(
             "sample_case_label": _sample_case_label(sample),
             "analysis_cards": _analysis_cards(sample),
             "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
+            "codev_comparison": _codev_comparison_context(sample),
             "layout_svg": sample.layout_svg.svg_content if sample is not None else "",
             "has_layout_svg": sample is not None,
             "progress": progress,

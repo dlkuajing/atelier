@@ -133,6 +133,76 @@
         </section>
 
         <section
+          class="codev-compare"
+          data-codev-compare
+          data-available="{{ 'true' if codev_comparison.available else 'false' }}"
+          aria-labelledby="codev-compare-title"
+        >
+          <div class="section-heading">
+            <p class="eyebrow">Optimization comparison</p>
+            <h2 id="codev-compare-title">种子 vs CODE V 精修</h2>
+            {% if codev_comparison.available %}
+              <p>
+                {{ codev_comparison.source_zmx }} refined into
+                {{ codev_comparison.optimized_zmx }}; status
+                {{ codev_comparison.status }}.
+              </p>
+            {% else %}
+              <p>{{ codev_comparison.reason }}</p>
+            {% endif %}
+          </div>
+
+          {% if codev_comparison.available %}
+            <div class="source-badges compare-source-badges">
+              {% for badge in codev_comparison.badges %}
+                <span class="source-badge" data-provenance="{{ badge.source }}">
+                  <span class="source-artifact">{{ badge.label }}</span>
+                  <span class="source-name">{{ badge.source }}</span>
+                </span>
+              {% endfor %}
+            </div>
+
+            <div class="compare-layout">
+              <figure
+                class="mtf-overlay"
+                data-compare-artifact="mtf-overlay"
+                data-provenance="optiland-raytrace"
+                data-validation-provenance="codev-cross-validated"
+              >
+                <figcaption>MTF curve overlay</figcaption>
+                {% if codev_comparison.mtf_available %}
+                  {{ codev_comparison.mtf_svg | safe }}
+                {% else %}
+                  <p class="analysis-empty">Refined MTF payload is not attached.</p>
+                {% endif %}
+                <p>{{ codev_comparison.mtf_summary }}</p>
+                <div class="mtf-legend" aria-label="MTF legend">
+                  <span class="legend-item legend-seed">Seed</span>
+                  <span class="legend-item legend-refined">CODE V refined</span>
+                </div>
+              </figure>
+
+              <dl class="compare-metrics" aria-label="CODE V refinement metrics">
+                {% for metric in codev_comparison.metrics %}
+                  <div
+                    data-compare-metric="{{ metric.key }}"
+                    data-provenance="{{ metric.source }}"
+                  >
+                    <dt>{{ metric.label }}</dt>
+                    <dd>{{ metric.value }}</dd>
+                    <p>{{ metric.detail }}</p>
+                    <span class="source-badge" data-provenance="{{ metric.source }}">
+                      <span class="source-artifact">{{ metric.label }}</span>
+                      <span class="source-name">{{ metric.source }}</span>
+                    </span>
+                  </div>
+                {% endfor %}
+              </dl>
+            </div>
+          {% endif %}
+        </section>
+
+        <section
           class="job-progress result-progress"
           data-result-progress
           data-job-id="{{ progress.job_id }}"
