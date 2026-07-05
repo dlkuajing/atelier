@@ -9,9 +9,9 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 ## Current Position
 
-Phase: 完成 1/3/4/5/8，进行中 2/7/9；Phase 5 已用 04a 数据库读数 + 04b ZMX 重建关闭 CODE V 回程闭环，下一阻塞点=attended 彩排(Phase 9)
+Phase: 完成 1/3/4/5/8，进行中 2/7/9，待启 6；主公 2026-07-05 裁定：①staging ZMX 不可得→规模门全靠 USPTO 采集（原料池 159/500+）②Phase 9 彩排两段式（AI 自主彩排零瑕疵→主公终验）③连续发车授权（批次免逐批 ratify）
 Plan: 夜车模式（gsd-loop 垂直切片）替代 phase-plan 执行
-Status: 五批次 23 切片已合 main(f9d1431)，测试 131→319
+Status: 六批次 27 切片 + 车道b 采集已合 main(a69fac8)，测试 131→334
 Last activity: 2026-07-05 — ENGINE-04c 闭环验收：US20170003482A1.zmx → CODE V 导入 → 04a 读数 → 04b 重建 exported.zmx → compare_roundtrip_zmx，四项保真 PASS
 
 Progress: [█████░░░░░] ~50%（按 24 需求中 14 完成/2 部分计）
