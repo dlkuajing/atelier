@@ -2,22 +2,16 @@
 
 from __future__ import annotations
 
-import os
-import shutil
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 
 from app.core.engines.base import DeepEngine
-from app.core.engines.null import NullDeepEngine
-
-CODE_V_EXECUTABLE_ENV_VARS = (
-    "CODEV_EXECUTABLE",
-    "CODE_V_EXECUTABLE",
-    "CODEV_EXE",
-    "CODE_V_EXE",
+from app.core.engines.codev import (
+    CODE_V_ENGINE_NAME,
+    CODE_V_EXECUTABLE_NAMES,
+    probe_code_v_installation,
 )
-CODE_V_EXECUTABLE_NAMES = ("codev.exe", "codev", "cv.exe")
-CODE_V_ENGINE_NAME = "codev"
+from app.core.engines.null import NullDeepEngine
 
 
 def _engine_key(name: str) -> str:
@@ -26,41 +20,25 @@ def _engine_key(name: str) -> str:
         raise ValueError("engine name must contain at least one alphanumeric character")
     return key
 
-
-def _existing_file(path: str | os.PathLike[str]) -> Path | None:
-    candidate = Path(path).expanduser()
-    if candidate.is_file():
-        return candidate
-    return None
-
-
 def find_code_v_executable(
     *,
     env: Mapping[str, str] | None = None,
     search_path: str | None = None,
     executable_names: Sequence[str] = CODE_V_EXECUTABLE_NAMES,
+    scan_registry: bool = True,
+    common_roots: Sequence[Path | str] | None = None,
 ) -> Path | None:
-    """Find a CODE V executable from explicit env vars or PATH.
-
-    The real CODE V adapter lands later; this probe only answers whether a
-    plausible executable is present so the registry can fall back cleanly.
-    """
-    runtime_env = env if env is not None else os.environ
-    for env_var in CODE_V_EXECUTABLE_ENV_VARS:
-        value = runtime_env.get(env_var)
-        if not value:
-            continue
-        executable = _existing_file(value)
-        if executable is not None:
-            return executable
+    """Find the CODE V executable via the installation probe."""
+    installation = probe_code_v_installation(
+        env=env,
+        search_path=search_path,
+        executable_names=executable_names,
+        scan_registry=scan_registry,
+        common_roots=common_roots,
+    )
+    if installation is None:
         return None
-
-    path_value = search_path if search_path is not None else runtime_env.get("PATH")
-    for executable_name in executable_names:
-        found = shutil.which(executable_name, path=path_value)
-        if found:
-            return Path(found)
-    return None
+    return installation.codev_executable
 
 
 class EngineRegistry:
@@ -98,26 +76,30 @@ class EngineRegistry:
         env: Mapping[str, str] | None = None,
         search_path: str | None = None,
         executable_names: Sequence[str] = CODE_V_EXECUTABLE_NAMES,
+        scan_registry: bool = True,
+        common_roots: Sequence[Path | str] | None = None,
         code_v_engine_name: str = CODE_V_ENGINE_NAME,
     ) -> DeepEngine:
-        executable = find_code_v_executable(
+        installation = probe_code_v_installation(
             env=env,
             search_path=search_path,
             executable_names=executable_names,
+            scan_registry=scan_registry,
+            common_roots=common_roots,
         )
-        if executable is None:
+        if installation is None:
             return NullDeepEngine(reason="code_v_executable_not_found")
 
         engine = self.get(code_v_engine_name)
         if engine is None:
             return NullDeepEngine(
                 reason="code_v_engine_not_registered",
-                details={"executable": str(executable)},
+                details={"installation": installation.describe()},
             )
         if not engine.is_available():
             return NullDeepEngine(
                 reason="code_v_engine_unavailable",
-                details={"engine": engine.name, "executable": str(executable)},
+                details={"engine": engine.name, "installation": installation.describe()},
             )
         return engine
 

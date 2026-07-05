@@ -8,6 +8,9 @@ from app.main import app
 client = TestClient(app)
 
 _CODE_V_ENV_VARS = (
+    "CODEV_HOME",
+    "CODE_V_HOME",
+    "CV_EXEC",
     "CODEV_EXECUTABLE",
     "CODE_V_EXECUTABLE",
     "CODEV_EXE",
@@ -18,6 +21,7 @@ _CODE_V_ENV_VARS = (
 def _clear_code_v_runtime(monkeypatch) -> None:
     for env_var in _CODE_V_ENV_VARS:
         monkeypatch.delenv(env_var, raising=False)
+    monkeypatch.setenv("CODEV_HOME", "Z:/definitely-missing-code-v")
     monkeypatch.setenv("PATH", "")
 
 
