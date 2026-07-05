@@ -6,7 +6,7 @@
 ## 北极星
 
 专家级展示论证：资深光学设计师看了不能觉得"比不过"。非商用，不管侵权。
-执行路线已切换为 .planning/ROADMAP.md 九阶段（2026-07-03 立项）：Phase 1/3/4/8 完成、2/7/9 进行中、5/6/7 余项待 CODE V。推进方式=gsd-loop 多车道夜车（见 .planning/decisions.log）。
+执行路线已切换为 .planning/ROADMAP.md 九阶段（2026-07-03 立项）：Phase 1/3/4/8 完成、5 部分完成（CODE V 11.5 已装于 D:\CODEV115，spike 进程闭环，无原生 ZMX 导出待方案）、2/6/7/9 进行中/待推进。推进方式=gsd-loop 多车道夜车（见 .planning/decisions.log）。
 
 ## 与 lumira 官网的关系（drift 契约）
 
