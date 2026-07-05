@@ -83,7 +83,7 @@ class CodeVOptimizationMetrics:
 
 @dataclass(frozen=True)
 class CodeVToleranceSensitivity:
-    """One CODE V MTF sensitivity probe row emitted by the tolerance block."""
+    """One CODE V perturbation replay row emitted by the sensitivity block."""
 
     rank: int
     parameter_name: str
@@ -119,7 +119,7 @@ class CodeVOptimizeSummary:
     after: CodeVOptimizationMetrics
     efl_deviation_pct: float
     tolerance_sensitivity: tuple[CodeVToleranceSensitivity, ...] = ()
-    tolerance_metric: str = "MTF drop after CODE V perturbation replay"
+    tolerance_metric: str = "CODE V perturbation replay MTF drop"
     tolerance_provenance: str = "codev-run"
 
     def describe(self) -> dict[str, object]:
@@ -437,7 +437,7 @@ def parse_codev_optimize_data(data: Mapping[str, str]) -> CodeVOptimizeSummary:
         tolerance_sensitivity=_parse_tolerance_sensitivity(data),
         tolerance_metric=data.get(
             "tolerance.metric",
-            "MTF drop after CODE V perturbation replay",
+            "CODE V perturbation replay MTF drop",
         ),
         tolerance_provenance=data.get("tolerance.provenance", "codev-run"),
     )
@@ -629,7 +629,7 @@ def _append_tolerance_sensitivity_rows(
     _append_put_row(
         lines,
         '"tolerance.metric"',
-        '"MTF drop after CODE V perturbation replay"',
+        '"CODE V perturbation replay MTF drop"',
     )
     _append_put_row(lines, '"tolerance.provenance"', '"codev-run"')
     _append_put_row(lines, '"tolerance.top_n"', str(top_n))
@@ -646,20 +646,22 @@ def _append_tolerance_sensitivity_rows(
             f"^tol_thickness_delta == {_fmt_number(thickness_delta_mm)}",
             f"^tol_nrd == {nrd}",
             "^tol_nominal_mtf == @mtfmin(^tol_freq,^tol_nrd)",
-            "TIN SI 0",
-            "TOR",
-            "  OUT N",
-            "  FRE FA ZA ^tol_freq",
-            "  AZI FA ZA 0",
-            "  SNS",
-            "  WBF B2 PER",
-            "  CHT N",
-            "  NRD ^tol_nrd",
-            "GO",
-            "BUF DEL B2",
-            "FOR ^s 1 (NUM S)",
+            "^tol_stop == (STO)",
+            "^tol_nsurf == (NUM S)",
+            "FOR ^s 1 ^tol_nsurf",
+            "  ^tol_surface_type == (TYP SUR S^s)",
+            "  ^tol_candidate_surface == 1",
+            "  IF ^s = ^tol_stop",
+            "    ^tol_candidate_surface == 0",
+            "  END IF",
+            "  IF ^s = ^tol_nsurf",
+            "    ^tol_candidate_surface == 0",
+            "  END IF",
+            '  IF ^tol_surface_type = "DUM"',
+            "    ^tol_candidate_surface == 0",
+            "  END IF",
             "  ^radius_nominal == (RDY S^s)",
-            "  IF ABSF(^radius_nominal) > 1.0E-9",
+            "  IF ^tol_candidate_surface = 1 and ABSF(^radius_nominal) > 1.0E-9 and ABSF(^radius_nominal) < 1.0E9",
             "    ^tol_delta == ABSF(^radius_nominal)*^tol_radius_fraction",
             "    IF ^tol_delta < 1.0E-6",
             "      ^tol_delta == 1.0E-6",
@@ -685,7 +687,7 @@ def _append_tolerance_sensitivity_rows(
         [
             "  END IF",
             "  ^thickness_nominal == (THI S^s)",
-            "  IF ^thickness_nominal > 1.0E-9",
+            "  IF ^tol_candidate_surface = 1 and ^thickness_nominal > 1.0E-9",
             "    ^tol_delta == ^tol_thickness_delta",
             "    ^perturbed_value == ^thickness_nominal + ^tol_delta",
             "    THI S^s ^perturbed_value",
@@ -778,8 +780,8 @@ def _optimized_readout_block(*, source_name: str) -> list[str]:
     _append_put_row(lines, '"source_zmx"', f'"{source_name}"')
     _append_put_row(lines, '"units"', "^units")
     _append_put_row(lines, '"aperture_type"', "^apetype")
-    _append_put_row(lines, '"f_number"', "(FNO)")
-    _append_put_row(lines, '"entrance_pupil_diameter_mm"', "(EPD)")
+    _append_put_row(lines, '"f_number"', "ABSF((FNO))")
+    _append_put_row(lines, '"entrance_pupil_diameter_mm"', "ABSF((EPD))")
     _append_put_row(lines, '"num_surfaces"', "^numsur")
     _append_put_row(lines, '"num_fields"', "^numfld")
     _append_put_row(lines, '"num_wavelengths"', "^numwav")
@@ -837,7 +839,12 @@ def _optimized_readout_block(*, source_name: str) -> list[str]:
     )
     _append_dynamic_surface_row(lines, ".radius_y_mm", "(RDY S^s)")
     _append_dynamic_surface_row(lines, ".thickness_mm", "(THI S^s)")
-    _append_dynamic_surface_row(lines, ".semi_diameter_mm", "(MAP S^s)")
+    _append_dynamic_surface_positive_row(
+        lines,
+        ".semi_diameter_mm",
+        "(MAP S^s)",
+        variable_name="semi_diameter_mm",
+    )
     _append_dynamic_surface_row(lines, ".glass", "^glass")
     _append_dynamic_surface_row(lines, ".nd", "^nd")
     _append_dynamic_surface_row(lines, ".vd", "^vd")
@@ -900,6 +907,21 @@ def _append_dynamic_surface_row(lines: list[str], suffix: str, value: str) -> No
     lines.append("  BUF PUT B1 I^row J1 ^key")
     lines.append(f"  BUF PUT B1 I^row J2 {value}")
     lines.append("  ^row == ^row+1")
+
+
+def _append_dynamic_surface_positive_row(
+    lines: list[str],
+    suffix: str,
+    value: str,
+    *,
+    variable_name: str,
+    floor: float = 1.0e-6,
+) -> None:
+    lines.append(f"  ^{variable_name} == ABSF({value})")
+    lines.append(f"  IF ^{variable_name} < {_fmt_number(floor)}")
+    lines.append(f"    ^{variable_name} == {_fmt_number(floor)}")
+    lines.append("  END IF")
+    _append_dynamic_surface_row(lines, suffix, f"^{variable_name}")
 
 
 def _append_dynamic_field_row(lines: list[str], suffix: str, value: str) -> None:

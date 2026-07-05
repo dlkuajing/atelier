@@ -167,7 +167,7 @@
                 class="mtf-overlay"
                 data-compare-artifact="mtf-overlay"
                 data-provenance="optiland-raytrace"
-                data-validation-provenance="codev-cross-validated"
+                data-validation-provenance="{{ codev_comparison.cross_validation_source }}"
               >
                 <figcaption>MTF curve overlay</figcaption>
                 {% if codev_comparison.mtf_available %}
@@ -202,21 +202,21 @@
 
             <section
               class="tolerance-table"
-              data-codev-tolerance-table
-              data-available="{{ 'true' if codev_comparison.tolerance_table.available else 'false' }}"
-              data-provenance="{{ codev_comparison.tolerance_table.source }}"
+              data-codev-perturbation-table
+              data-available="{{ 'true' if codev_comparison.perturbation_table.available else 'false' }}"
+              data-provenance="{{ codev_comparison.perturbation_table.source }}"
               aria-labelledby="tolerance-table-title"
             >
               <div class="analysis-card-heading">
-                <span class="source-badge" data-provenance="{{ codev_comparison.tolerance_table.source }}">
-                  <span class="source-artifact">Tolerance sensitivity</span>
-                  <span class="source-name">{{ codev_comparison.tolerance_table.source }}</span>
+                <span class="source-badge" data-provenance="{{ codev_comparison.perturbation_table.source }}">
+                  <span class="source-artifact">Perturbation replay</span>
+                  <span class="source-name">{{ codev_comparison.perturbation_table.source }}</span>
                 </span>
-                <h3 id="tolerance-table-title">公差敏感度 Top-N</h3>
+                <h3 id="tolerance-table-title">CODE V 扰动敏感度</h3>
               </div>
-              <p>{{ codev_comparison.tolerance_table.note }}</p>
-              {% if codev_comparison.tolerance_table.available %}
-                <table aria-label="CODE V tolerance sensitivity top-N">
+              <p>{{ codev_comparison.perturbation_table.note }}</p>
+              {% if codev_comparison.perturbation_table.available %}
+                <table aria-label="CODE V perturbation replay sensitivity">
                   <thead>
                     <tr>
                       <th scope="col">Rank</th>
@@ -226,7 +226,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for row in codev_comparison.tolerance_table.rows %}
+                    {% for row in codev_comparison.perturbation_table.rows %}
                       <tr
                         data-tolerance-rank="{{ row.rank }}"
                         data-provenance="{{ row.source }}"

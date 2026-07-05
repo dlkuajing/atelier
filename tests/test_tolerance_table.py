@@ -44,7 +44,7 @@ def _optimize_rows() -> list[tuple[str, str]]:
         ("after.max_distortion_pct", "1.1"),
         ("efl_deviation_pct", "0.0022"),
         ("tolerance.schema", "atelier-codev-tolerance-v1"),
-        ("tolerance.metric", "MTF drop after CODE V perturbation replay"),
+        ("tolerance.metric", "CODE V perturbation replay MTF drop"),
         ("tolerance.provenance", "codev-run"),
         ("tolerance.top_n", "2"),
         ("tolerance.count", "3"),
@@ -73,7 +73,7 @@ def _write_optimize_result(path: Path) -> None:
     )
 
 
-def test_optimize_sequence_appends_tor_sensitivity_buf_export(tmp_path: Path) -> None:
+def test_optimize_sequence_appends_perturbation_replay_buf_export(tmp_path: Path) -> None:
     sequence = build_codev_optimize_sequence(
         source_zmx=default_optimize_seed(),
         result_path=tmp_path / "result.tsv",
@@ -82,10 +82,17 @@ def test_optimize_sequence_appends_tor_sensitivity_buf_export(tmp_path: Path) ->
         tolerance_mtf_frequency_lpmm=120.0,
     )
 
-    assert "TOR" in sequence
-    assert "SNS" in sequence
-    assert "WBF B2 PER" in sequence
     assert "MTF_1FLD" in sequence
+    assert "perturbation replay" in sequence
+    assert "TOR" not in sequence
+    assert "SNS" not in sequence
+    assert "WBF B2 PER" not in sequence
+    assert "^tol_stop == (STO)" in sequence
+    assert "FOR ^s 1 ^tol_nsurf" in sequence
+    assert "IF ^s = ^tol_stop" in sequence
+    assert "IF ^s = ^tol_nsurf" in sequence
+    assert 'IF ^tol_surface_type = "DUM"' in sequence
+    assert "ABSF(^radius_nominal) < 1.0E9" in sequence
     assert '"tolerance.schema"' in sequence
     assert '"tolerance.count"' in sequence
     assert '".parameter_name"' in sequence
@@ -100,7 +107,7 @@ def test_parse_codev_optimize_file_returns_top_n_tolerance_rows(tmp_path: Path) 
 
     summary = parse_codev_optimize_file(result_path)
 
-    assert summary.tolerance_metric == "MTF drop after CODE V perturbation replay"
+    assert summary.tolerance_metric == "CODE V perturbation replay MTF drop"
     assert summary.tolerance_provenance == "codev-run"
     assert [row.parameter_name for row in summary.tolerance_sensitivity] == [
         "surface.2.radius_y_mm",
@@ -133,6 +140,18 @@ def test_result_page_renders_codev_tolerance_table(monkeypatch: pytest.MonkeyPat
             "provenance": "codev-run",
         },
     ]
+    codev_artifact["run_evidence"] = {
+        "run_started_at_utc": "2026-07-06T00:00:00+00:00",
+        "codev_executable": "D:/CODEV115/codev.exe",
+        "codev_version": "11.5.27302.701",
+        "returncode": 1,
+        "duration_seconds": 12.3,
+        "source_zmx_sha256": "a" * 64,
+        "sequence_sha256": "b" * 64,
+        "result_sha256": "c" * 64,
+        "optimized_readout_sha256": "d" * 64,
+        "optimized_zmx_sha256": "e" * 64,
+    }
     bundle = bundle.model_copy(update={"codev_artifact": codev_artifact}, deep=True)
     monkeypatch.setattr("app.main.load_demo_cache_bundle_for_request", lambda _request: bundle)
     monkeypatch.setattr(
@@ -150,8 +169,8 @@ def test_result_page_renders_codev_tolerance_table(monkeypatch: pytest.MonkeyPat
 
     assert response.status_code == 200, response.text
     html = response.text
-    assert "公差敏感度 Top-N" in html
-    assert "data-codev-tolerance-table" in html
+    assert "CODE V 扰动敏感度" in html
+    assert "data-codev-perturbation-table" in html
     assert 'data-provenance="codev-run"' in html
     assert "surface.2.radius_y_mm" in html
     assert "+0.031 mm" in html

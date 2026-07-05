@@ -181,8 +181,28 @@ def test_optimize_sequence_imports_zmx_runs_aut_and_exports_readout(tmp_path: Pa
     assert "GCH" not in sequence
     assert f'"{CODEV_OPTIMIZE_RESULT_SCHEMA}"' in sequence
     assert f'"{CODEV_READOUT_RESULT_SCHEMA}"' in sequence
+    assert 'BUF PUT B1 I^row J1 "f_number"\nBUF PUT B1 I^row J2 ABSF((FNO))' in sequence
+    assert "^semi_diameter_mm == ABSF((MAP S^s))" in sequence
+    assert "IF ^semi_diameter_mm < 1e-06" in sequence
     assert "BUF EXP B1" in sequence
     assert "optimized_zmx_filename" in sequence
+
+
+def test_optimize_sequence_captures_before_before_aut_and_after_after_go(tmp_path: Path) -> None:
+    sequence = build_codev_optimize_sequence(
+        source_zmx=default_optimize_seed(),
+        result_path=tmp_path / "result.tsv",
+        optimized_readout_path=tmp_path / "optimized-readout.tsv",
+    )
+    lines = sequence.splitlines()
+
+    before_index = lines.index("^before_max_rms_spot_diameter_um == @rmssum(1)")
+    aut_index = lines.index("AUT")
+    go_index = lines.index("GO")
+    after_index = lines.index("^after_max_rms_spot_diameter_um == @rmssum(1)")
+
+    assert before_index < aut_index
+    assert go_index < after_index
 
 
 def test_parse_codev_optimize_file_builds_structured_metrics(tmp_path: Path) -> None:

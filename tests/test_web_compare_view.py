@@ -45,6 +45,7 @@ def _summary_form_payload() -> dict[str, object]:
 
 def _mtf(*, refined: bool = False) -> MTFResult:
     if refined:
+        freqs = [0.0, 80.0, 160.0, 240.0]
         fields = [
             MTFFieldData(
                 field_index=0,
@@ -54,6 +55,7 @@ def _mtf(*, refined: bool = False) -> MTFResult:
         ]
         rms = [2.0]
     else:
+        freqs = [0.0, 50.0, 100.0, 150.0]
         fields = [
             MTFFieldData(
                 field_index=0,
@@ -63,7 +65,7 @@ def _mtf(*, refined: bool = False) -> MTFResult:
         ]
         rms = [5.0]
     return MTFResult(
-        freq_lp_per_mm=[0.0, 50.0, 100.0, 150.0],
+        freq_lp_per_mm=freqs,
         fields=fields,
         diff_limited=[1.0, 0.9, 0.78, 0.63],
         cutoff_freq_lp_per_mm=810.0,
@@ -192,8 +194,23 @@ def _sample() -> OpticalSampleData:
     )
 
 
-def _codev_artifact() -> dict[str, object]:
+def _run_evidence() -> dict[str, object]:
     return {
+        "run_started_at_utc": "2026-07-06T00:00:00+00:00",
+        "codev_executable": "D:/CODEV115/codev.exe",
+        "codev_version": "11.5.27302.701",
+        "returncode": 1,
+        "duration_seconds": 12.3,
+        "source_zmx_sha256": "a" * 64,
+        "sequence_sha256": "b" * 64,
+        "result_sha256": "c" * 64,
+        "optimized_readout_sha256": "d" * 64,
+        "optimized_zmx_sha256": "e" * 64,
+    }
+
+
+def _codev_artifact(*, include_run_evidence: bool = False) -> dict[str, object]:
+    artifact = {
         "source_zmx": "US20170003482A1.zmx",
         "optimization_status": "aut_completed",
         "glass_policy": "glass-not-varied",
@@ -220,9 +237,12 @@ def _codev_artifact() -> dict[str, object]:
         "cross_validation_status": "rebuilt-zmx-ingested",
         "cross_validation_provenance": "codev-cross-validated",
     }
+    if include_run_evidence:
+        artifact["run_evidence"] = _run_evidence()
+    return artifact
 
 
-def _bundle() -> DemoAnalysisBundle:
+def _bundle(*, include_run_evidence: bool = False) -> DemoAnalysisBundle:
     request = demo_cache_request(
         scenario=Scenario.SMARTPHONE_WIDE,
         focal_length_mm=3.6,
@@ -244,11 +264,20 @@ def _bundle() -> DemoAnalysisBundle:
         spot_diagram=_spot(),
         field_analysis=_field(),
         wavefront=_wavefront(),
-        codev_artifact=_codev_artifact(),
+        codev_artifact=_codev_artifact(include_run_evidence=include_run_evidence),
     )
 
 
-def test_result_page_renders_seed_vs_codev_refinement_from_cached_fixture(monkeypatch):
+def _metric_provenance(html: str, metric: str) -> str:
+    match = re.search(
+        rf'data-compare-metric="{metric}"\s+data-provenance="([^"]+)"',
+        html,
+    )
+    assert match is not None
+    return match.group(1)
+
+
+def test_result_page_renders_fixture_refinement_as_optiland_estimate(monkeypatch):
     monkeypatch.setattr("app.main.load_demo_cache_bundle_for_request", lambda _request: _bundle())
     monkeypatch.setattr(
         "app.main.wizard.generate_executive_summary",
@@ -274,6 +303,8 @@ def test_result_page_renders_seed_vs_codev_refinement_from_cached_fixture(monkey
     assert 'class="mtf-curve mtf-curve-seed"' in html
     assert 'class="mtf-curve mtf-curve-refined"' in html
     assert "MTF curve overlay" in html
+    assert re.search(r'class="mtf-curve mtf-curve-refined" points="[^"]*396\.0,', html)
+    assert "seed/refined frequency samples 4/4" in html
 
     assert 'data-compare-metric="spot-rms-shrink-pct"' in html
     assert "60.0%" in html
@@ -284,20 +315,41 @@ def test_result_page_renders_seed_vs_codev_refinement_from_cached_fixture(monkey
     assert 'data-compare-metric="efl-cross-check"' in html
     assert "0.0008% EFL drift" in html
 
-    for source in (
-        "optiland-raytrace",
-        "codev-run",
-        "codev-cross-validated",
-    ):
+    for source in ("optiland-raytrace", "optiland-estimate"):
         assert f'data-provenance="{source}"' in html
+    assert 'data-provenance="codev-run"' not in html
+    assert 'data-validation-provenance="optiland-estimate"' in html
 
     for metric in (
         "spot-rms-shrink-pct",
         "wavefront-rms-delta",
         "efl-cross-check",
     ):
-        assert re.search(
-            rf'data-compare-metric="{metric}".*?data-provenance="[^"]+"',
-            html,
-            re.S,
-        )
+        assert _metric_provenance(html, metric) == "optiland-estimate"
+
+
+def test_result_page_marks_codev_run_only_when_run_evidence_is_present(monkeypatch):
+    monkeypatch.setattr(
+        "app.main.load_demo_cache_bundle_for_request",
+        lambda _request: _bundle(include_run_evidence=True),
+    )
+    monkeypatch.setattr(
+        "app.main.wizard.generate_executive_summary",
+        AsyncMock(
+            return_value=wizard.ExecutiveSummaryResponse(
+                summary_en="Cached CODE V comparison summary.",
+                summary_zh="缓存的 CODE V 对比摘要。",
+                model="test-model",
+            )
+        ),
+    )
+
+    response = client.post("/results/summary", data=_summary_form_payload())
+
+    assert response.status_code == 200, response.text
+    html = response.text
+    assert 'data-provenance="codev-run"' in html
+    assert 'data-validation-provenance="codev-cross-validated"' in html
+    assert _metric_provenance(html, "spot-rms-shrink-pct") == "codev-run"
+    assert _metric_provenance(html, "wavefront-rms-delta") == "codev-run"
+    assert _metric_provenance(html, "efl-cross-check") == "codev-cross-validated"
