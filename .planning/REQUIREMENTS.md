@@ -8,7 +8,7 @@
 
 - [x] **ENGINE-01**: 可插拔计算引擎抽象（Protocol/ABC + 注册表 + NullDeepEngine 默认），运行时探测 CODE V 可用性，无 CODE V 环境全链路降级纯 Optiland（CI/其他开发机测试可过）
 - [x] **ENGINE-02**: 通用后台任务层：内存 JobStore + asyncio 任务 + 单席位信号量（防止双重占用 CODE V license），先用假引擎（SleepEngine）验证全部管线
-- [ ] **ENGINE-03**: ZMX↔CODE V 互通 spike：导入专利 seed ZMX → CODE V 实算 → 导出回 ZMX → 过现有 ingest 比对指标一致性（非球面系数/玻璃目录/渐晕三大雷区必须逐项核对）
+- [~] **ENGINE-03**: ZMX↔CODE V 互通 spike：导入专利 seed ZMX → CODE V 实算 → 导出回 ZMX → 过现有 ingest 比对指标一致性（非球面系数/玻璃目录/渐晕三大雷区必须逐项核对）
 - [ ] **ENGINE-04**: CODE V 引擎适配器：.seq 宏生成 → 批量调起（subprocess）→ 结构化输出解析（宏内显式输出，不刮日志）→ 硬超时 + CPU 心跳（防隐形挂起）→ 逐项结果验证（退出码 0 不可信）
 - [ ] **ENGINE-05**: CODE V 产物回灌：优化结果转 ZMX 走现有 zmx_ingest 流水线入库（ZMX 为唯一真相源，不造第二条数据路径）
 
@@ -75,7 +75,7 @@
 | ANLZ-02 | Phase 4 | ✓ 批次2 |
 | ANLZ-03 | Phase 4 | ✓ 批次2 |
 | ANLZ-04 | Phase 4 | ✓ 批次2 |
-| ENGINE-03 | Phase 5 | Pending |
+| ENGINE-03 | Phase 5 | Partial（进程闭环 PR #16；回程待 ZMX 导出方案） |
 | SEED-01 | Phase 6 | Pending |
 | SEED-02 | Phase 6 | Pending |
 | SEED-03 | Phase 6 | Pending |
