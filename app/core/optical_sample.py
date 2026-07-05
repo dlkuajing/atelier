@@ -29,6 +29,7 @@ class CaseMetadata(BaseModel):
     n_filter: int = Field(..., description="Flat IR-filter / cover-glass plates")
     materials: list[str] = Field(..., description="Distinct real material names used (datasheet)")
     fov_deg: float = Field(..., description="Nominal full FOV from the manifest")
+    image_height_mm: float | None = Field(None, description="Nominal image height from index.json")
     nominal_efl_mm: float = Field(..., description="Design-nominal EFL from filename")
     computed_efl_mm: float = Field(..., description="Optiland-recomputed EFL")
     efl_error_pct: float = Field(..., description="abs(computed-nominal)/nominal*100")

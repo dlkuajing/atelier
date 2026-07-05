@@ -17,6 +17,7 @@ Two real-design quirks are handled here (verified during ingest):
 from __future__ import annotations
 
 import contextlib
+import json
 import math
 import re
 import warnings
@@ -561,16 +562,76 @@ _IMH_RE = re.compile(r"_IMH(?P<imh>\d+(?:\.\d+)?)")
 
 
 def _case_image_height_mm(case: OpticalSampleData) -> float:
-    """Recover nominal image height from the case id.
+    """Recover nominal image height from metadata/index, with case-id fallback.
 
     v2-02 wrote image height to index.json but not to each generated case JSON.
-    Avoid rewriting 17 large payloads here; the source filename is already the
-    manifest's canonical design-intent string (e.g. ..._IMH2.3_...).
+    Avoid rewriting large payloads here; when metadata lacks an explicit value,
+    use the compact index manifest before falling back to legacy `_IMH` tokens.
     """
     if case.metadata is None:
         return 0.0
+    metadata_image_height = _positive_finite_float(
+        getattr(case.metadata, "image_height_mm", None)
+    )
+    if metadata_image_height is not None:
+        return metadata_image_height
+
+    indexed_image_heights = _case_index_image_height_mm_by_id()
+    source_zmx = getattr(case.metadata, "source_zmx", None)
+    for key in (
+        case.metadata.case_id,
+        source_zmx,
+        Path(source_zmx).stem if isinstance(source_zmx, str) and source_zmx else None,
+    ):
+        if isinstance(key, str) and key in indexed_image_heights:
+            return indexed_image_heights[key]
+
     match = _IMH_RE.search(case.metadata.case_id)
     return float(match.group("imh")) if match else 0.0
+
+
+@lru_cache(maxsize=1)
+def _case_index_image_height_mm_by_id() -> dict[str, float]:
+    """Load image heights from the compact case index without hydrating payloads."""
+
+    index_path = CASES_DIR / "index.json"
+    if not index_path.is_file():
+        return {}
+    try:
+        records = json.loads(index_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return {}
+    if not isinstance(records, list):
+        return {}
+
+    values: dict[str, float] = {}
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        image_height = _positive_finite_float(record.get("image_height_mm"))
+        if image_height is None:
+            continue
+        case_id = record.get("case_id")
+        source_zmx = record.get("source_zmx")
+        keys = [case_id, source_zmx]
+        if isinstance(source_zmx, str) and source_zmx:
+            keys.append(Path(source_zmx).stem)
+        for key in keys:
+            if isinstance(key, str) and key:
+                values[key] = image_height
+    return values
+
+
+def _positive_finite_float(value: object) -> float | None:
+    if value is None:
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    if math.isfinite(number) and number > 0.0:
+        return number
+    return None
 
 
 class _MassProxy(NamedTuple):
