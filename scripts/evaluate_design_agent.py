@@ -25,7 +25,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app.core.case_library import match_case  # noqa: E402
+from app.core.case_library import _case_image_height_mm, match_case  # noqa: E402
 from app.core.image_quality_floor import image_quality_floor_gap_score  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
 from app.core.optical_sample import OpticalSampleData  # noqa: E402
@@ -42,6 +42,13 @@ from app.core.zmx_ingest import (  # noqa: E402
 # .planning/quick/260702-e2-01-batch0-intake-infra/PLAN.md.
 _EVAL_GOLDEN_PATH = Path(__file__).resolve().parents[1] / "tests" / "data" / "eval_golden.json"
 _EVAL_GOLDEN: dict[str, dict] = json.loads(_EVAL_GOLDEN_PATH.read_text())
+PATENT_GOLDEN_CASE_NAMES: tuple[str, ...] = (
+    "patent_wide_8p_low_f_number_reanchor",
+    "patent_ultrawide_7p_full_field_reanchor",
+    "patent_ultrawide_6p_fast_reanchor",
+    "patent_ultrawide_6p_extreme_fov_reanchor",
+    "patent_wide_6p_full_field_reanchor",
+)
 
 Check = Callable[[OpticalSampleData], tuple[bool, str]]
 
@@ -69,6 +76,23 @@ def _case_contains(fragment: str) -> Check:
     return check
 
 
+def _golden_case_selected(golden_name: str) -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        expected = _EVAL_GOLDEN[golden_name]["selected_case_id"]
+        case_id = sample.metadata.case_id if sample.metadata else ""
+        return case_id == expected, f"case {case_id} == golden {expected}"
+
+    return check
+
+
+def _selected_case_is_patent() -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        case_id = sample.metadata.case_id if sample.metadata else ""
+        return case_id.startswith("US"), f"selected case {case_id} is patent seed"
+
+    return check
+
+
 def _scenario_is(scenario: Scenario) -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         got = sample.metadata.scenario if sample.metadata else None
@@ -81,6 +105,14 @@ def _fov_at_least(value: float) -> Check:
     def check(sample: OpticalSampleData) -> tuple[bool, str]:
         fov = sample.metadata.fov_deg if sample.metadata else 0.0
         return fov >= value, f"case FOV {fov:.1f} >= {value:.1f}"
+
+    return check
+
+
+def _image_height_at_least(value: float) -> Check:
+    def check(sample: OpticalSampleData) -> tuple[bool, str]:
+        image_height = _case_image_height_mm(sample)
+        return image_height >= value, f"image height {image_height:.2f} >= {value:.2f}"
 
     return check
 
@@ -3749,6 +3781,111 @@ EVAL_CASES: tuple[EvalCase, ...] = (
             ),
             _designer_readiness_target("blocked", 0.52),
             *_DESIGNER_PACKET_CHECKS,
+        ),
+    ),
+    EvalCase(
+        name="patent_wide_8p_low_f_number_reanchor",
+        request={
+            "scenario": Scenario.SMARTPHONE_WIDE,
+            "efl_mm": 3.9700724301365704,
+            "fnum": 1.75,
+            "fov_deg": 70.4,
+            "image_height_mm": 2.91317,
+            "n_elements": 8,
+            "priority": "balanced",
+        },
+        checks=(
+            _score_at_least(0.85),
+            _selected_case_is_patent(),
+            _golden_case_selected("patent_wide_8p_low_f_number_reanchor"),
+            _scenario_is(Scenario.SMARTPHONE_WIDE),
+            _image_height_at_least(2.9),
+            _has_requirement_coverage(),
+            _has_seed_selection_scorecard(),
+        ),
+    ),
+    EvalCase(
+        name="patent_ultrawide_7p_full_field_reanchor",
+        request={
+            "scenario": Scenario.SMARTPHONE_ULTRAWIDE,
+            "efl_mm": 3.6212546768437344,
+            "fnum": 2.32,
+            "fov_deg": 91.0,
+            "image_height_mm": 3.62257,
+            "n_elements": 7,
+            "priority": "balanced",
+        },
+        checks=(
+            _score_at_least(0.85),
+            _selected_case_is_patent(),
+            _golden_case_selected("patent_ultrawide_7p_full_field_reanchor"),
+            _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
+            _image_height_at_least(3.6),
+            _has_requirement_coverage(),
+            _has_seed_selection_scorecard(),
+        ),
+    ),
+    EvalCase(
+        name="patent_ultrawide_6p_fast_reanchor",
+        request={
+            "scenario": Scenario.SMARTPHONE_ULTRAWIDE,
+            "efl_mm": 3.0730259620372222,
+            "fnum": 1.86,
+            "fov_deg": 95.0,
+            "image_height_mm": 3.26503,
+            "n_elements": 6,
+            "priority": "performance",
+        },
+        checks=(
+            _score_at_least(0.85),
+            _selected_case_is_patent(),
+            _golden_case_selected("patent_ultrawide_6p_fast_reanchor"),
+            _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
+            _image_height_at_least(3.2),
+            _has_requirement_coverage(),
+            _has_seed_selection_scorecard(),
+        ),
+    ),
+    EvalCase(
+        name="patent_ultrawide_6p_extreme_fov_reanchor",
+        request={
+            "scenario": Scenario.SMARTPHONE_ULTRAWIDE,
+            "efl_mm": 2.416363087162025,
+            "fnum": 2.08,
+            "fov_deg": 100.0,
+            "image_height_mm": 2.97599,
+            "n_elements": 6,
+            "priority": "balanced",
+        },
+        checks=(
+            _score_at_least(0.85),
+            _selected_case_is_patent(),
+            _golden_case_selected("patent_ultrawide_6p_extreme_fov_reanchor"),
+            _scenario_is(Scenario.SMARTPHONE_ULTRAWIDE),
+            _image_height_at_least(2.9),
+            _has_requirement_coverage(),
+            _has_seed_selection_scorecard(),
+        ),
+    ),
+    EvalCase(
+        name="patent_wide_6p_full_field_reanchor",
+        request={
+            "scenario": Scenario.SMARTPHONE_WIDE,
+            "efl_mm": 3.276723748250681,
+            "fnum": 2.2,
+            "fov_deg": 82.0,
+            "image_height_mm": 2.94563,
+            "n_elements": 6,
+            "priority": "balanced",
+        },
+        checks=(
+            _score_at_least(0.85),
+            _selected_case_is_patent(),
+            _golden_case_selected("patent_wide_6p_full_field_reanchor"),
+            _scenario_is(Scenario.SMARTPHONE_WIDE),
+            _image_height_at_least(2.9),
+            _has_requirement_coverage(),
+            _has_seed_selection_scorecard(),
         ),
     ),
 )

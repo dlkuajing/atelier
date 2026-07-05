@@ -43,6 +43,36 @@ GOLDEN_BRIEFS: dict[str, dict] = {
         "scenario": "SMARTPHONE_WIDE", "efl_mm": 3.8059, "fnum": 2.05, "fov_deg": 78.8,
         "image_height_mm": 3.2, "n_elements": 5,
     },
+    "patent_wide_8p_low_f_number_reanchor": {
+        "source_case_id": "US20170045714A1",
+        "scenario": "SMARTPHONE_WIDE", "efl_mm": 3.9700724301365704, "fnum": 1.75,
+        "fov_deg": 70.4, "image_height_mm": 2.91317, "n_elements": 8,
+        "priority": "balanced",
+    },
+    "patent_ultrawide_7p_full_field_reanchor": {
+        "source_case_id": "US20170003482A1",
+        "scenario": "SMARTPHONE_ULTRAWIDE", "efl_mm": 3.6212546768437344, "fnum": 2.32,
+        "fov_deg": 91.0, "image_height_mm": 3.62257, "n_elements": 7,
+        "priority": "balanced",
+    },
+    "patent_ultrawide_6p_fast_reanchor": {
+        "source_case_id": "US20180143405A1",
+        "scenario": "SMARTPHONE_ULTRAWIDE", "efl_mm": 3.0730259620372222, "fnum": 1.86,
+        "fov_deg": 95.0, "image_height_mm": 3.26503, "n_elements": 6,
+        "priority": "performance",
+    },
+    "patent_ultrawide_6p_extreme_fov_reanchor": {
+        "source_case_id": "US10330891B2",
+        "scenario": "SMARTPHONE_ULTRAWIDE", "efl_mm": 2.416363087162025, "fnum": 2.08,
+        "fov_deg": 100.0, "image_height_mm": 2.97599, "n_elements": 6,
+        "priority": "balanced",
+    },
+    "patent_wide_6p_full_field_reanchor": {
+        "source_case_id": "US9651759B2",
+        "scenario": "SMARTPHONE_WIDE", "efl_mm": 3.276723748250681, "fnum": 2.2,
+        "fov_deg": 82.0, "image_height_mm": 2.94563, "n_elements": 6,
+        "priority": "balanced",
+    },
 }
 
 _FLOOR_GAP_RE = re.compile(r"floor gap ([0-9.]+)")
@@ -64,9 +94,12 @@ def compute_golden() -> dict:
     golden: dict[str, dict] = {}
     for name, brief in GOLDEN_BRIEFS.items():
         kwargs = dict(brief)
+        source_case_id = kwargs.pop("source_case_id", None)
         kwargs["scenario"] = getattr(Scenario, kwargs["scenario"])
         sample = match_case(**kwargs)
         entry: dict = {"selected_case_id": sample.metadata.case_id}
+        if source_case_id is not None:
+            entry["source_case_id"] = source_case_id
         actual = _quality_actual(sample.design_assessment)
         if actual:
             gap = _FLOOR_GAP_RE.search(actual)

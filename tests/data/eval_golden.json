@@ -4,6 +4,36 @@
     "quality_min250": "0.005",
     "selected_case_id": "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
   },
+  "patent_ultrawide_6p_extreme_fov_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.132",
+    "selected_case_id": "US10330891B2",
+    "source_case_id": "US10330891B2"
+  },
+  "patent_ultrawide_6p_fast_reanchor": {
+    "quality_floor_gap": "0.379",
+    "quality_min250": "0.087",
+    "selected_case_id": "US20180143405A1",
+    "source_case_id": "US20180143405A1"
+  },
+  "patent_ultrawide_7p_full_field_reanchor": {
+    "quality_floor_gap": "0.976",
+    "quality_min250": "0.014",
+    "selected_case_id": "US20170003482A1",
+    "source_case_id": "US20170003482A1"
+  },
+  "patent_wide_6p_full_field_reanchor": {
+    "quality_floor_gap": "0.136",
+    "quality_min250": "0.069",
+    "selected_case_id": "US9651759B2",
+    "source_case_id": "US9651759B2"
+  },
+  "patent_wide_8p_low_f_number_reanchor": {
+    "quality_floor_gap": "0.186",
+    "quality_min250": "0.070",
+    "selected_case_id": "US20170045714A1",
+    "source_case_id": "US20170045714A1"
+  },
   "performance_full_field_seed_blocks_low_mtf": {
     "quality_floor_gap": "0.938",
     "quality_min250": "0.005",
