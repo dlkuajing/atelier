@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 
 ## Current Position
 
-Phase: 1 of 9 (引擎抽象与降级)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-07-03 — Roadmap revised: inserted Phase 2 (专利底库规模化采集, DATA-01/02), folded DATA-03 scale gate into seed-routability phase (now Phase 6). 9 phases, 24 v1 requirements mapped, 100% coverage.
+Phase: 完成 1/3/4/8，进行中 2/7/9（详见 ROADMAP 勾选）；下一阻塞点=CODE V 安装(Phase 5/6/7) 与 attended 彩排(Phase 9)
+Plan: 夜车模式（gsd-loop 垂直切片）替代 phase-plan 执行
+Status: 四批次 20 切片已合 main(7649531)，测试 131→291
+Last activity: 2026-07-05 — 批次4收官（一键启动/预缓存/结果页整合/E2E/多样性专利），质量闸抓10条CONFIRMED全修复
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█████░░░░░] ~50%（按 24 需求中 14 完成/2 部分计）
 
 ## Performance Metrics
 
@@ -73,6 +73,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-03
-Stopped at: Roadmap revised (DATA phase inserted); ready for `/gsd:plan-phase 1`
+Last session: 2026-07-05
+Stopped at: 状态回写补账；夜车 backlog 已空待批次5蒸馏
 Resume file: None
