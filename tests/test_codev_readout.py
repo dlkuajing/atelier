@@ -124,11 +124,22 @@ def test_readout_sequence_imports_zmx_and_reads_database_items(tmp_path: Path) -
     assert "(FNO)" in sequence
     assert "(EPD)" in sequence
     assert "(TYP FLD)" in sequence
+    assert "^pi == 4*ATANF(1)" in sequence
+    assert "^deg_to_rad == ^pi/180" in sequence
+    assert "^efy == ABSF((EFY))" in sequence
+    assert 'IF ^field_type = "ANG"' in sequence
+    assert "^field_angle_y == (YAN F^f Z1)" in sequence
+    assert "^field_angle_y_rad == ^field_angle_y * ^deg_to_rad" in sequence
+    assert "^yh == ^efy * TANF(^field_angle_y_rad)" in sequence
+    assert 'ELS IF ^field_type = "IMG"' in sequence
+    assert "(YIM F^f Z1)" in sequence
     assert "(NUM W)" in sequence
     assert "(MAP S^s)" in sequence
     assert "(WL W^w)" in sequence
     assert "(WTW Z1 W^w)" in sequence
     assert "(YRI F^f Z1)" in sequence
+    assert sequence.index("FOR ^f 1 ^numfld") < sequence.index('"image_height_y_mm"')
+    assert sequence.index("ABSF(^yh) > ^maximh") < sequence.index('"image_height_y_mm"')
     assert "(VUY F^f Z1)" in sequence
     assert "(VLY F^f Z1)" in sequence
     assert "(VUX F^f Z1)" in sequence

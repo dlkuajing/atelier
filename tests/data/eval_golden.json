@@ -4,6 +4,138 @@
     "quality_min250": "0.005",
     "selected_case_id": "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
   },
+  "patent_ultrawide_6p_extreme_fov_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.132",
+    "selected_case_id": "US10330891B2",
+    "source_case_id": "US10330891B2"
+  },
+  "patent_ultrawide_6p_fast_reanchor": {
+    "quality_floor_gap": "0.379",
+    "quality_min250": "0.087",
+    "selected_case_id": "US20180143405A1",
+    "source_case_id": "US20180143405A1"
+  },
+  "patent_ultrawide_7p_full_field_reanchor": {
+    "quality_floor_gap": "0.976",
+    "quality_min250": "0.014",
+    "selected_case_id": "US20170003482A1",
+    "source_case_id": "US20170003482A1"
+  },
+  "patent_us10031318b2_reanchor": {
+    "quality_floor_gap": "0.974",
+    "quality_min250": "0.002",
+    "selected_case_id": "US10031318B2",
+    "source_case_id": "US10031318B2"
+  },
+  "patent_us10281683b2_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.185",
+    "selected_case_id": "US10281683B2",
+    "source_case_id": "US10281683B2"
+  },
+  "patent_us10310222b2_reanchor": {
+    "quality_floor_gap": "0.974",
+    "quality_min250": "0.002",
+    "selected_case_id": "US10031318B2",
+    "source_case_id": "US10310222B2"
+  },
+  "patent_us20140111876a1_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.127",
+    "selected_case_id": "US9195030B2",
+    "source_case_id": "US20140111876A1"
+  },
+  "patent_us20140118844a1_reanchor": {
+    "quality_floor_gap": "0.513",
+    "quality_min250": "0.039",
+    "selected_case_id": "US20140118844A1",
+    "source_case_id": "US20140118844A1"
+  },
+  "patent_us20150338607a1_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.364",
+    "selected_case_id": "US20150338607A1",
+    "source_case_id": "US20150338607A1"
+  },
+  "patent_us20210165194a1_reanchor": {
+    "quality_floor_gap": "0.916",
+    "quality_min250": "0.007",
+    "selected_case_id": "US20210165194A1",
+    "source_case_id": "US20210165194A1"
+  },
+  "patent_us8310767b2_reanchor": {
+    "quality_floor_gap": "0.822",
+    "quality_min250": "0.022",
+    "selected_case_id": "US8310767B2",
+    "source_case_id": "US8310767B2"
+  },
+  "patent_us8908290b1_reanchor": {
+    "quality_floor_gap": "0.976",
+    "quality_min250": "0.014",
+    "selected_case_id": "US20170003482A1",
+    "source_case_id": "US8908290B1"
+  },
+  "patent_us9063319b1_reanchor": {
+    "quality_floor_gap": "0.989",
+    "quality_min250": "0.001",
+    "selected_case_id": "US9063319B1",
+    "source_case_id": "US9063319B1"
+  },
+  "patent_us9195030b2_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.127",
+    "selected_case_id": "US9195030B2",
+    "source_case_id": "US9195030B2"
+  },
+  "patent_us9201216b2_reanchor": {
+    "quality_floor_gap": "0.479",
+    "quality_min250": "0.042",
+    "selected_case_id": "US9201216B2",
+    "source_case_id": "US9201216B2"
+  },
+  "patent_us9239447b1_reanchor": {
+    "quality_floor_gap": "0.760",
+    "quality_min250": "0.138",
+    "selected_case_id": "US9239447B1",
+    "source_case_id": "US9239447B1"
+  },
+  "patent_us9304295b2_reanchor": {
+    "quality_floor_gap": "0.728",
+    "quality_min250": "0.024",
+    "selected_case_id": "US9304295B2",
+    "source_case_id": "US9304295B2"
+  },
+  "patent_us9316811b2_reanchor": {
+    "quality_floor_gap": "0.989",
+    "quality_min250": "0.001",
+    "selected_case_id": "US9063319B1",
+    "source_case_id": "US9316811B2"
+  },
+  "patent_us9557532b2_reanchor": {
+    "quality_floor_gap": "0.661",
+    "quality_min250": "0.027",
+    "selected_case_id": "US9557532B2",
+    "source_case_id": "US9557532B2"
+  },
+  "patent_us9810880b2_reanchor": {
+    "quality_floor_gap": "0.326",
+    "quality_min250": "0.054",
+    "selected_case_id": "US9810880B2",
+    "source_case_id": "US9810880B2"
+  },
+  "patent_wide_6p_full_field_reanchor": {
+    "quality_floor_gap": "0.136",
+    "quality_min250": "0.069",
+    "selected_case_id": "US9651759B2",
+    "source_case_id": "US9651759B2"
+  },
+  "patent_wide_8p_low_f_number_reanchor": {
+    "quality_floor_gap": "0.186",
+    "quality_min250": "0.070",
+    "selected_case_id": "US20170045714A1",
+    "source_case_id": "US20170045714A1"
+  },
   "performance_full_field_seed_blocks_low_mtf": {
     "quality_floor_gap": "0.938",
     "quality_min250": "0.005",
