@@ -11,8 +11,11 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from app.core.aberration import MTFResult
+from app.core.field_analysis import FieldAnalysisResult
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary, SurfaceDescriptor
+from app.core.spot_diagram import SpotDiagramResult
+from app.core.wavefront_metrics import WavefrontMetricsResult
 
 
 class CaseMetadata(BaseModel):
@@ -1295,6 +1298,9 @@ class OpticalSampleData(BaseModel):
     trace: RayTraceResult
     mtf: MTFResult
     layout_svg: LayoutSVG
+    spot_diagram: SpotDiagramResult | None = None
+    field_analysis: FieldAnalysisResult | None = None
+    wavefront: WavefrontMetricsResult | None = None
     # Optional for backward-compat: pre-v2-02 consumers don't pass metadata.
     metadata: CaseMetadata | None = None
     # Present when a real design was selected for a specific user request.
