@@ -21,6 +21,7 @@ _optiland_patches.apply_all()
 
 from app.api import optical, rag, wizard  # noqa: E402
 from app.core.config import settings  # noqa: E402
+from app.core.demo_cache import demo_cache_request, load_demo_cache_bundle_for_request  # noqa: E402
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
@@ -229,6 +230,31 @@ async def result_summary(
     n_elements: Annotated[int | None, Form(ge=2, le=30)] = None,
     wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
 ) -> HTMLResponse:
+    cache_request = demo_cache_request(
+        scenario=scenario,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+    )
+    cached = load_demo_cache_bundle_for_request(cache_request)
+    demo_cache_status = "miss"
+    design_assessment = None
+    if cached is not None:
+        demo_cache_status = "hit"
+        sample = cached.sample
+        focal_length_mm = sample.paraxial.effective_focal_length_mm
+        f_number = sample.paraxial.f_number
+        total_track_mm = sample.paraxial.total_track_mm
+        airy_disc_diameter_um = sample.mtf.airy_disc_diameter_um
+        cutoff_freq_lp_per_mm = sample.mtf.cutoff_freq_lp_per_mm
+        if sample.metadata is not None:
+            scenario_label_en = sample.metadata.scenario.value.replace("-", " ").title()
+            n_elements = sample.metadata.n_pieces
+        design_assessment = sample.design_assessment
+
     summary = await wizard.generate_executive_summary(
         wizard.ExecutiveSummaryRequest(
             scenario=scenario,
@@ -242,6 +268,7 @@ async def result_summary(
             total_track_mm=total_track_mm,
             airy_disc_diameter_um=airy_disc_diameter_um,
             cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+            design_assessment=design_assessment,
         )
     )
     return templates.TemplateResponse(
@@ -251,6 +278,7 @@ async def result_summary(
             "product_name": "Atelier",
             "scenario_label": scenario_label_en,
             "scenario": scenario.value,
+            "demo_cache_status": demo_cache_status,
             "summary": summary,
             "metrics": (
                 ("Focal length", f"{focal_length_mm:.2f} mm"),

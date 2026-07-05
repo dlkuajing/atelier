@@ -12,7 +12,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, Form, HTTPException, Response, UploadFile, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -22,6 +22,12 @@ from app.core.case_library import (
     build_seed_intake_audit,
     load_case_library,
     match_case,
+)
+from app.core.demo_cache import (
+    DemoAnalysisBundle,
+    compute_demo_cache_bundle_for_request,
+    demo_cache_request,
+    load_demo_cache_bundle_for_request,
 )
 from app.core.engines import get_deep_engine
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus, JobStore
@@ -623,7 +629,7 @@ def _assessment_mode(req: OpticalSpecRequest) -> Literal["full", "lightweight", 
         404: {"description": "No real case for this scenario"},
     },
 )
-async def match(req: OpticalSpecRequest) -> OpticalSampleData:
+async def match(req: OpticalSpecRequest, response: Response) -> OpticalSampleData:
     """Retrieve the real production design nearest to the requested params.
 
     Unlike /raytrace + /aberration + /layout-svg (which scale a textbook
@@ -634,6 +640,25 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
     stance, then attaches `design_assessment` with deltas and tradeoffs.
     """
     _validate_or_400(req)
+    cache_request = demo_cache_request(
+        scenario=req.scenario,
+        focal_length_mm=req.focal_length_mm,
+        f_number=req.f_number,
+        field_of_view_deg=req.field_of_view_deg,
+        image_height_mm=req.image_height_mm,
+        n_elements=req.n_elements,
+        wavelength_nm=req.wavelength_nm,
+        max_total_track_mm=req.max_total_track_mm,
+        max_weight_g=req.max_weight_g,
+        manufacturing_tier=req.manufacturing_tier,
+        priority=req.priority,
+    )
+    cached = load_demo_cache_bundle_for_request(cache_request)
+    if cached is not None:
+        response.headers["X-Demo-Cache"] = "hit"
+        return cached.sample
+
+    response.headers["X-Demo-Cache"] = "miss"
     assessment_mode = _assessment_mode(req)
     case = match_case(
         scenario=req.scenario,
@@ -663,3 +688,47 @@ async def match(req: OpticalSpecRequest) -> OpticalSampleData:
             },
         )
     return case
+
+
+@router.post(
+    "/demo-cache",
+    response_model=DemoAnalysisBundle,
+    responses={
+        400: {"description": "Parameter guard violation"},
+        404: {"description": "No real case for this scenario"},
+    },
+)
+async def demo_cache(req: OpticalSpecRequest, response: Response) -> DemoAnalysisBundle:
+    """Return the complete demo analysis family, preferring precomputed cache."""
+
+    _validate_or_400(req)
+    cache_request = demo_cache_request(
+        scenario=req.scenario,
+        focal_length_mm=req.focal_length_mm,
+        f_number=req.f_number,
+        field_of_view_deg=req.field_of_view_deg,
+        image_height_mm=req.image_height_mm,
+        n_elements=req.n_elements,
+        wavelength_nm=req.wavelength_nm,
+        max_total_track_mm=req.max_total_track_mm,
+        max_weight_g=req.max_weight_g,
+        manufacturing_tier=req.manufacturing_tier,
+        priority=req.priority,
+    )
+    cached = load_demo_cache_bundle_for_request(cache_request)
+    if cached is not None:
+        response.headers["X-Demo-Cache"] = "hit"
+        return cached
+
+    response.headers["X-Demo-Cache"] = "miss"
+    try:
+        return compute_demo_cache_bundle_for_request(cache_request)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "error": "no_real_case_for_scenario",
+                "scenario": req.scenario,
+                "message": str(exc),
+            },
+        ) from exc
