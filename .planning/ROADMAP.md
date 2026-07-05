@@ -10,15 +10,15 @@
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: 引擎抽象与降级** - 可插拔计算引擎接口 + NullDeepEngine + 运行时探测，全链路无 CODE V 可跑通
-- [ ] **Phase 2: 专利底库规模化采集** - 同步 109 颗 staging ZMX + 双源专利定向采集入库，为规模验收打底（可与 Phase 1/3 并行）
-- [ ] **Phase 3: 通用后台任务层** - 假引擎（SleepEngine）验证异步任务 + SSE 进度流 + 单席位信号量
-- [ ] **Phase 4: 专家分析补全** - 点列图/场曲畸变/处方表/波前误差 RMS·Strehl，不依赖 CODE V
+- [x] **Phase 1: 引擎抽象与降级**（2026-07-04 夜车批次1，PR #1） - 可插拔计算引擎接口 + NullDeepEngine + 运行时探测，全链路无 CODE V 可跑通
+- [~] **Phase 2: 专利底库规模化采集**（进行中：采集管线+QC 就绪，USPTO 三批 94 颗候选入库 PR #5/#13；DATA-01 待主公同步 staging ZMX） - 同步 109 颗 staging ZMX + 双源专利定向采集入库，为规模验收打底（可与 Phase 1/3 并行）
+- [x] **Phase 3: 通用后台任务层**（2026-07-04 夜车批次1，PR #1） - 假引擎（SleepEngine）验证异步任务 + SSE 进度流 + 单席位信号量
+- [x] **Phase 4: 专家分析补全**（2026-07-04/05 批次2+3，PR #2/#3/#10 含数值锚点与版本守卫） - 点列图/场曲畸变/处方表/波前误差 RMS·Strehl，不依赖 CODE V
 - [ ] **Phase 5: ZMX↔CODE V 互通 Spike** - 专利 seed ZMX 实算往返，非球面/玻璃/渐晕三项一致性核对
 - [ ] **Phase 6: 专利 seed 可路由化与底库规模验收** - 真 IMH 实算、路由重锚、eval golden 重锚、底库规模门（≥500 可路由 seed，专利 seed 为主要来源）关闭
-- [ ] **Phase 7: CODE V 引擎适配器与深度成果展示** - 真实 .seq 批处理适配器 + 优化前后对比 + 公差敏感度 + 溯源标注
-- [ ] **Phase 8: 演示前端** - 本地服务 + 浏览器界面，覆盖需求到 CODE V 成果全叙事
-- [ ] **Phase 9: 一键启动与演示彩排** - 单命令拉起 + 预缓存 + 完整彩排（里程碑验收）
+- [~] **Phase 7: CODE V 引擎适配器与深度成果展示**（SHOW-03 溯源标注已完成 PR #8；余项待 CODE V 安装） - 真实 .seq 批处理适配器 + 优化前后对比 + 公差敏感度 + 溯源标注
+- [x] **Phase 8: 演示前端**（批次3+4：骨架/输入流/SSE进度/双语摘要/结果页整合叙事，PR #4/#7/#11） - 本地服务 + 浏览器界面，覆盖需求到 CODE V 成果全叙事
+- [~] **Phase 9: 一键启动与演示彩排**（一键启动+预缓存机制+全叙事E2E已完成 PR #12/#14；真人彩排与 CODE V 侧内容待 attended） - 单命令拉起 + 预缓存 + 完整彩排（里程碑验收）
 
 ## Phase Details
 
