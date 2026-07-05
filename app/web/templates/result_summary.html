@@ -18,9 +18,10 @@
       </nav>
     </header>
 
-    <main class="shell shell-narrow">
+    <main class="shell">
       <section
-        class="result-summary"
+        class="result-summary result-page"
+        data-result-page
         data-result-summary
         data-scenario="{{ scenario }}"
         data-summary-model="{{ summary.model }}"
@@ -30,43 +31,189 @@
         <p class="eyebrow">Optical design result</p>
         <h1 id="result-summary-title">Design result</h1>
 
-        <section class="scenario-result" aria-label="Result scenario">
+        <section
+          class="scenario-result"
+          data-narrative-section="scenario-confirmation"
+          aria-label="Scenario confirmation"
+        >
           <div>
             <span class="brief-label">Scenario</span>
             <h2>{{ scenario_label }}</h2>
           </div>
-          <p>{{ summary.model }}</p>
+          <p>
+            {% if requirement %}
+              {{ requirement }}
+            {% else %}
+              Confirmed scenario and target parameters for this optical result.
+            {% endif %}
+          </p>
         </section>
 
-        <div class="summary-grid" aria-label="Bilingual executive summary">
-          <section
-            class="summary-panel summary-en"
-            lang="en"
-            data-summary-lang="en"
-            aria-labelledby="summary-en-title"
-          >
-            <span class="brief-label">English</span>
-            <h2 id="summary-en-title">Executive Summary</h2>
-            <p>{{ summary.summary_en }}</p>
-          </section>
+        <dl class="metrics-grid target-metrics" aria-label="Confirmed target metrics">
+          {% for label, value in target_metrics %}
+            <div>
+              <dt>{{ label }}</dt>
+              <dd>{{ value }}</dd>
+            </div>
+          {% endfor %}
+        </dl>
 
-          <section
-            class="summary-panel summary-zh"
-            lang="zh-Hans"
-            data-summary-lang="zh"
-            aria-labelledby="summary-zh-title"
-          >
-            <span class="brief-label">Chinese</span>
-            <h2 id="summary-zh-title">执行摘要</h2>
-            <p>{{ summary.summary_zh }}</p>
-          </section>
-        </div>
+        <section
+          class="analysis-suite"
+          data-narrative-section="analysis-suite"
+          aria-labelledby="analysis-suite-title"
+        >
+          <div class="section-heading">
+            <p class="eyebrow">Analysis package</p>
+            <h2 id="analysis-suite-title">Optical analysis full stack</h2>
+            <p>{{ sample_case_label }}</p>
+          </div>
 
-        {% if summary.fallback_reason %}
-          <p class="summary-fallback" data-summary-fallback="{{ summary.fallback_reason }}">
-            {{ summary.fallback_reason }}
-          </p>
-        {% endif %}
+          <div class="analysis-layout">
+            <section
+              class="analysis-visual"
+              data-analysis-artifact="layout-svg"
+              data-provenance="optiland-raytrace"
+              data-available="{{ 'true' if has_layout_svg else 'false' }}"
+              aria-labelledby="layout-svg-title"
+            >
+              <div class="analysis-card-heading">
+                <span class="source-badge" data-provenance="optiland-raytrace">
+                  <span class="source-artifact">Optical path SVG</span>
+                  <span class="source-name">optiland-raytrace</span>
+                </span>
+                <h3 id="layout-svg-title">Ray path layout</h3>
+              </div>
+              {% if has_layout_svg %}
+                <div class="layout-svg-frame">
+                  {{ layout_svg | safe }}
+                </div>
+              {% else %}
+                <p class="analysis-empty">No SVG payload was returned for this result.</p>
+              {% endif %}
+            </section>
+
+            <div class="analysis-card-grid">
+              {% for card in analysis_cards %}
+                <section
+                  class="analysis-card"
+                  data-analysis-artifact="{{ card.artifact }}"
+                  data-provenance="{{ card.source }}"
+                  data-available="{{ 'true' if card.available else 'false' }}"
+                  data-partial="{{ 'true' if card.partial else 'false' }}"
+                >
+                  <div class="analysis-card-heading">
+                    <span class="source-badge" data-provenance="{{ card.source }}">
+                      <span class="source-artifact">{{ card.title }}</span>
+                      <span class="source-name">{{ card.source }}</span>
+                    </span>
+                  </div>
+                  <h3>{{ card.title }}</h3>
+                  <p>{{ card.summary }}</p>
+                  <p class="analysis-detail">{{ card.detail }}</p>
+                </section>
+              {% endfor %}
+            </div>
+          </div>
+
+          <section class="source-strip" aria-label="Analysis provenance">
+            <div class="source-strip-heading">
+              <p class="eyebrow">Traceability</p>
+              <h2>Computation sources</h2>
+            </div>
+            <div class="source-badges">
+              {% for badge in analysis_provenance_badges %}
+                <span class="source-badge" data-provenance="{{ badge.source }}">
+                  <span class="source-artifact">{{ badge.label }}</span>
+                  <span class="source-name">{{ badge.source }}</span>
+                </span>
+              {% endfor %}
+            </div>
+          </section>
+        </section>
+
+        <section
+          class="job-progress result-progress"
+          data-result-progress
+          data-job-id="{{ progress.job_id }}"
+          aria-labelledby="result-progress-title"
+        >
+          <p class="eyebrow">Deep engine task</p>
+          <h2 id="result-progress-title">Task progress</h2>
+
+          <div class="job-summary">
+            <div>
+              <span class="brief-label">Job</span>
+              <code>{{ progress.job_id }}</code>
+            </div>
+            <div>
+              <span class="brief-label">Status</span>
+              <strong id="job-status" data-status="{{ progress.status }}">
+                {{ progress.status_label }}
+              </strong>
+            </div>
+            <div>
+              <span class="brief-label">Result</span>
+              <strong>{{ progress.progress_percent }}%</strong>
+            </div>
+          </div>
+
+          <div class="progress-panel" role="status" aria-live="polite">
+            <progress id="job-progress-meter" max="100" value="{{ progress.progress_percent }}">
+              {{ progress.progress_percent }}%
+            </progress>
+            <div class="progress-track" aria-hidden="true">
+              <div
+                class="progress-fill"
+                id="job-progress-bar"
+                style="width: {{ progress.progress_percent }}%;"
+              ></div>
+            </div>
+            <output id="job-progress-label">{{ progress.progress_percent }}%</output>
+            <p id="job-status-detail">{{ progress.status_message }}</p>
+          </div>
+        </section>
+
+        <section
+          class="bilingual-summary"
+          data-narrative-section="bilingual-summary"
+          aria-labelledby="bilingual-summary-title"
+        >
+          <div class="section-heading">
+            <p class="eyebrow">Bilingual summary</p>
+            <h2 id="bilingual-summary-title">Executive readout</h2>
+          </div>
+
+          <div class="summary-grid" aria-label="Bilingual executive summary">
+            <section
+              class="summary-panel summary-en"
+              lang="en"
+              data-summary-lang="en"
+              aria-labelledby="summary-en-title"
+            >
+              <span class="brief-label">English</span>
+              <h2 id="summary-en-title">Executive Summary</h2>
+              <p>{{ summary.summary_en }}</p>
+            </section>
+
+            <section
+              class="summary-panel summary-zh"
+              lang="zh-Hans"
+              data-summary-lang="zh"
+              aria-labelledby="summary-zh-title"
+            >
+              <span class="brief-label">Chinese</span>
+              <h2 id="summary-zh-title">执行摘要</h2>
+              <p>{{ summary.summary_zh }}</p>
+            </section>
+          </div>
+
+          {% if summary.fallback_reason %}
+            <p class="summary-fallback" data-summary-fallback="{{ summary.fallback_reason }}">
+              {{ summary.fallback_reason }}
+            </p>
+          {% endif %}
+        </section>
 
         <dl class="metrics-grid" aria-label="Result metrics">
           {% for label, value in metrics %}
