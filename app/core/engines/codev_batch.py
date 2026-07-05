@@ -14,7 +14,9 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Literal
 
-DEFAULT_CODEV_EXECUTABLE = Path("D:/CODEV115/codev.exe")
+from app.core.engines.codev import probe_code_v_installation
+
+_FALLBACK_CODEV_EXECUTABLE = Path("D:/CODEV115/codev.exe")
 CODEV_BATCH_RESULT_SCHEMA = "atelier-codev-batch-v1"
 
 CodeVBatchErrorKind = Literal["failure", "timeout", "no_license"]
@@ -22,9 +24,15 @@ CodeVBatchErrorKind = Literal["failure", "timeout", "no_license"]
 _TRIVIAL_SEQUENCE_NAME = "atelier_codev_trivial.seq"
 _TRIVIAL_RESULT_NAME = "atelier_codev_trivial.tsv"
 _OUTPUT_TAIL_CHARS = 4000
+_REAP_TIMEOUT_SECONDS = 5.0
+_BATCH_REQUIRED_KEYS = ("schema", "status")
+_TRIVIAL_REQUIRED_KEYS = ("schema", "status", "engine", "contract")
 _LICENSE_MARKERS = (
+    "flexlm",
     "license",
+    "license checkout",
     "licence",
+    "lmgrd",
     "sentinel",
     "security key",
     "checkout",
@@ -43,6 +51,34 @@ _LICENSE_FAILURE_MARKERS = (
     "unable",
     "unavailable",
 )
+
+
+class _LazyDefaultCodeVExecutable(os.PathLike[str]):
+    """Resolve the default CODE V executable only when a caller needs it."""
+
+    def __fspath__(self) -> str:
+        return str(resolve_default_codev_executable())
+
+    def __str__(self) -> str:
+        return str(resolve_default_codev_executable())
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}({resolve_default_codev_executable()!s})"
+
+    def is_file(self) -> bool:
+        return resolve_default_codev_executable().is_file()
+
+
+DEFAULT_CODEV_EXECUTABLE = _LazyDefaultCodeVExecutable()
+
+
+def resolve_default_codev_executable() -> Path:
+    """Resolve CODE V through the 03a installation probe, then fall back."""
+
+    installation = probe_code_v_installation()
+    if installation is not None and installation.codev_executable is not None:
+        return installation.codev_executable
+    return _FALLBACK_CODEV_EXECUTABLE
 
 
 class CodeVBatchError(RuntimeError):
@@ -146,6 +182,7 @@ def parse_codev_result_file(
     result_path: Path | str,
     *,
     expected_schema: str = CODEV_BATCH_RESULT_SCHEMA,
+    required_keys: Iterable[str] = (),
 ) -> dict[str, str]:
     """Parse the explicit CODE V result TSV exported by ``BUF EXP``."""
 
@@ -187,13 +224,24 @@ def parse_codev_result_file(
                 "actual_schema": data.get("schema"),
             },
         )
+    missing_keys = tuple(key for key in required_keys if not data.get(key))
+    if missing_keys:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V result file is missing required fields",
+            details={
+                "result_path": str(result_path),
+                "missing_keys": list(missing_keys),
+                "present_keys": sorted(data),
+            },
+        )
     return data
 
 
 def run_trivial_codev_batch(
     *,
     work_dir: Path | str,
-    executable: Path | str = DEFAULT_CODEV_EXECUTABLE,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 30.0,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
@@ -203,8 +251,6 @@ def run_trivial_codev_batch(
     work_dir = Path(work_dir)
     sequence_path = work_dir / _TRIVIAL_SEQUENCE_NAME
     result_path = work_dir / _TRIVIAL_RESULT_NAME
-    if result_path.exists():
-        result_path.unlink()
     write_trivial_sequence(sequence_path, result_path)
     return run_codev_batch(
         sequence_path=sequence_path,
@@ -214,6 +260,7 @@ def run_trivial_codev_batch(
         timeout_seconds=timeout_seconds,
         env=env,
         platform_name=platform_name,
+        required_keys=_TRIVIAL_REQUIRED_KEYS,
     )
 
 
@@ -221,12 +268,13 @@ def run_codev_batch(
     *,
     sequence_path: Path | str,
     result_path: Path | str,
-    executable: Path | str = DEFAULT_CODEV_EXECUTABLE,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     work_dir: Path | str | None = None,
     timeout_seconds: float = 30.0,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
     expected_schema: str = CODEV_BATCH_RESULT_SCHEMA,
+    required_keys: Iterable[str] = _BATCH_REQUIRED_KEYS,
 ) -> CodeVBatchResult:
     """Run CODE V in batch mode and parse only the explicit result file."""
 
@@ -248,6 +296,7 @@ def run_codev_batch(
             details={"sequence_path": str(sequence_path)},
         )
 
+    stale_result_deleted = _delete_stale_result(result_path)
     sequence_arg = (
         sequence_path.name
         if _same_directory(sequence_path.parent, work_dir)
@@ -255,11 +304,26 @@ def run_codev_batch(
     )
     command = [str(executable), "/B", sequence_arg]
     started_at = time.monotonic()
-    process = _popen_codev(command, work_dir=work_dir, env=env, platform_name=platform_name)
+    try:
+        process = _popen_codev(command, work_dir=work_dir, env=env, platform_name=platform_name)
+    except OSError as exc:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V batch process could not be started",
+            details={
+                "command": command,
+                "executable": str(executable),
+                "work_dir": str(work_dir),
+                "stale_result_deleted": stale_result_deleted,
+                "exception_type": type(exc).__name__,
+                "error": str(exc),
+            },
+        ) from exc
     try:
         stdout, stderr = process.communicate(timeout=timeout_seconds)
     except subprocess.TimeoutExpired as exc:
         kill_details = _kill_process_tree(process, platform_name=platform_name)
+        reap_details = _reap_process_after_kill(process)
         raise CodeVBatchError(
             "timeout",
             "CODE V batch run exceeded its hard timeout",
@@ -270,6 +334,7 @@ def run_codev_batch(
                 "stdout_tail": _tail(_coerce_output(exc.stdout)),
                 "stderr_tail": _tail(_coerce_output(exc.stderr)),
                 "kill": kill_details,
+                "reap": reap_details,
             },
         ) from exc
 
@@ -280,7 +345,11 @@ def run_codev_batch(
     listing_tail = _read_tail(listing_path)
 
     if result_path.is_file():
-        data = parse_codev_result_file(result_path, expected_schema=expected_schema)
+        data = parse_codev_result_file(
+            result_path,
+            expected_schema=expected_schema,
+            required_keys=required_keys,
+        )
         if data.get("status") != "ok":
             raise CodeVBatchError(
                 _classify_error(data.values(), stdout_text, stderr_text, listing_tail),
@@ -290,6 +359,22 @@ def run_codev_batch(
                     "returncode": process.returncode,
                     "data": data,
                     "result_path": str(result_path),
+                    "result_created_this_run": True,
+                },
+            )
+        if process.returncode != 0:
+            raise CodeVBatchError(
+                _classify_error(data.values(), stdout_text, stderr_text, listing_tail),
+                "CODE V batch exited with a non-zero returncode despite an ok result file",
+                details={
+                    "command": command,
+                    "returncode": process.returncode,
+                    "data": data,
+                    "result_path": str(result_path),
+                    "result_created_this_run": True,
+                    "stdout_tail": _tail(stdout_text),
+                    "stderr_tail": _tail(stderr_text),
+                    "listing_tail": listing_tail,
                 },
             )
         return CodeVBatchResult(
@@ -309,11 +394,30 @@ def run_codev_batch(
             "command": command,
             "returncode": process.returncode,
             "result_path": str(result_path),
+            "stale_result_deleted": stale_result_deleted,
             "stdout_tail": _tail(stdout_text),
             "stderr_tail": _tail(stderr_text),
             "listing_tail": listing_tail,
         },
     )
+
+
+def _delete_stale_result(result_path: Path) -> bool:
+    if not result_path.exists():
+        return False
+    try:
+        result_path.unlink()
+    except OSError as exc:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V stale result file could not be removed before launch",
+            details={
+                "result_path": str(result_path),
+                "exception_type": type(exc).__name__,
+                "error": str(exc),
+            },
+        ) from exc
+    return True
 
 
 def _popen_codev(
@@ -346,21 +450,68 @@ def _kill_process_tree(process, *, platform_name: str) -> dict[str, object]:
                 timeout=10,
             )
         except Exception as exc:  # noqa: BLE001 - timeout cleanup must surface diagnostics.
-            return {"method": "taskkill", "pid": process.pid, "error": str(exc)}
+            return {
+                "method": "taskkill",
+                "pid": process.pid,
+                "error": str(exc),
+                "fallback": _kill_single_process(process),
+            }
 
-        return {
+        details: dict[str, object] = {
             "method": "taskkill",
             "pid": process.pid,
             "returncode": completed.returncode,
             "stdout_tail": _tail(_coerce_output(completed.stdout)),
             "stderr_tail": _tail(_coerce_output(completed.stderr)),
         }
+        if completed.returncode != 0:
+            details["fallback"] = _kill_single_process(process)
+        return details
 
+    return _kill_single_process(process)
+
+
+def _kill_single_process(process) -> dict[str, object]:
     try:
         process.kill()
     except Exception as exc:  # noqa: BLE001 - best-effort cleanup after hard timeout.
         return {"method": "kill", "pid": process.pid, "error": str(exc)}
     return {"method": "kill", "pid": process.pid}
+
+
+def _reap_process_after_kill(process) -> dict[str, object]:
+    try:
+        stdout, stderr = process.communicate(timeout=_REAP_TIMEOUT_SECONDS)
+        return {
+            "method": "communicate",
+            "pid": process.pid,
+            "returncode": process.returncode,
+            "stdout_tail": _tail(_coerce_output(stdout)),
+            "stderr_tail": _tail(_coerce_output(stderr)),
+        }
+    except subprocess.TimeoutExpired as exc:
+        details: dict[str, object] = {
+            "method": "communicate",
+            "pid": process.pid,
+            "timeout_seconds": _REAP_TIMEOUT_SECONDS,
+            "stdout_tail": _tail(_coerce_output(exc.stdout)),
+            "stderr_tail": _tail(_coerce_output(exc.stderr)),
+        }
+    except Exception as exc:  # noqa: BLE001 - cleanup diagnostics must not mask timeout.
+        details = {
+            "method": "communicate",
+            "pid": process.pid,
+            "exception_type": type(exc).__name__,
+            "error": str(exc),
+        }
+
+    wait = getattr(process, "wait", None)
+    if callable(wait):
+        try:
+            details["wait_returncode"] = wait(timeout=_REAP_TIMEOUT_SECONDS)
+        except Exception as exc:  # noqa: BLE001 - best-effort handle release.
+            details["wait_error"] = str(exc)
+    return details
 
 
 def _quote_codev_path(path: Path) -> str:

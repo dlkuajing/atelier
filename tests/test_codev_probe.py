@@ -6,7 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from app.core.engines import EngineRegistry, NullDeepEngine, probe_code_v_installation
+from app.core.engines import EngineRegistry, NullDeepEngine, codev_batch, probe_code_v_installation
+from app.core.engines.codev import CodeVInstallation
 
 
 @dataclass(frozen=True)
@@ -93,6 +94,32 @@ def test_registry_degrades_when_codev_home_is_invalid(tmp_path: Path) -> None:
 
     assert isinstance(engine, NullDeepEngine)
     assert engine.describe()["reason"] == "code_v_executable_not_found"
+
+
+def test_default_codev_executable_resolves_through_probe(monkeypatch, tmp_path: Path) -> None:
+    home = _make_codev_home(tmp_path)
+
+    def fake_probe_code_v_installation() -> CodeVInstallation:
+        return CodeVInstallation(
+            home=home,
+            source="test",
+            executables={"codev.exe": home / "codev.exe"},
+        )
+
+    monkeypatch.setattr(codev_batch, "probe_code_v_installation", fake_probe_code_v_installation)
+
+    assert Path(codev_batch.DEFAULT_CODEV_EXECUTABLE) == home / "codev.exe"
+
+
+def test_default_codev_executable_falls_back_when_probe_misses(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    fallback = tmp_path / "fallback" / "codev.exe"
+    monkeypatch.setattr(codev_batch, "probe_code_v_installation", lambda: None)
+    monkeypatch.setattr(codev_batch, "_FALLBACK_CODEV_EXECUTABLE", fallback)
+
+    assert Path(codev_batch.DEFAULT_CODEV_EXECUTABLE) == fallback
 
 
 @pytest.mark.skipif(not Path("D:/CODEV115").is_dir(), reason="CODE V is not installed here")

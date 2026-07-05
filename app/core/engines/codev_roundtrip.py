@@ -22,6 +22,17 @@ EFL_REL_TOLERANCE_PCT = 2.0
 _ROUNDTRIP_SEQUENCE_NAME = "atelier_codev_zmx_import.seq"
 _ROUNDTRIP_RESULT_NAME = "atelier_codev_zmx_import.tsv"
 _ROUNDTRIP_COMMAND_EXPORT_NAME = "atelier_codev_roundtrip_export.seq"
+_ROUNDTRIP_REQUIRED_KEYS = (
+    "schema",
+    "status",
+    "source_zmx",
+    "efl_y_mm",
+    "max_image_height_y_mm",
+    "num_surfaces",
+    "num_fields",
+    "native_zmx_export",
+    "command_export_path",
+)
 _VIGNETTING_ALIASES = {
     "VDX": "VDX",
     "VDXN": "VDX",
@@ -71,6 +82,7 @@ class ZmxFidelityFacts:
     efl_mm: float
     glass_rows: tuple[GlassRow, ...]
     asphere_term_counts: dict[int, int]
+    asphere_coefficients: dict[int, tuple[float, ...]]
     vignetting: dict[str, tuple[float, ...]]
 
 
@@ -199,7 +211,7 @@ def run_codev_zmx_import(
     *,
     source_zmx: Path | str,
     work_dir: Path | str,
-    executable: Path | str = DEFAULT_CODEV_EXECUTABLE,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 90.0,
     platform_name: str = os.name,
 ) -> CodeVZmxImportResult:
@@ -210,7 +222,7 @@ def run_codev_zmx_import(
     sequence_path = work_dir / _ROUNDTRIP_SEQUENCE_NAME
     result_path = work_dir / _ROUNDTRIP_RESULT_NAME
     command_export_path = work_dir / _ROUNDTRIP_COMMAND_EXPORT_NAME
-    for stale in (result_path, command_export_path):
+    for stale in (command_export_path,):
         if stale.exists():
             stale.unlink()
     write_zmx_import_sequence(
@@ -227,6 +239,7 @@ def run_codev_zmx_import(
         timeout_seconds=timeout_seconds,
         platform_name=platform_name,
         expected_schema=CODEV_ROUNDTRIP_RESULT_SCHEMA,
+        required_keys=_ROUNDTRIP_REQUIRED_KEYS,
     )
     return CodeVZmxImportResult(
         batch=batch,
@@ -241,11 +254,16 @@ def extract_zmx_fidelity_facts(path: Path | str) -> ZmxFidelityFacts:
     zmx_path = Path(path)
     optic = load_normalized_zmx(zmx_path)
     table = extract_prescription_table(optic, source_zmx=zmx_path)
+    asphere_coefficients = _asphere_coefficients(table)
     return ZmxFidelityFacts(
         path=zmx_path,
         efl_mm=float(optic.paraxial.f2()),
         glass_rows=_glass_rows(table),
-        asphere_term_counts=_asphere_term_counts(table),
+        asphere_term_counts={
+            surface_index: len(coefficients)
+            for surface_index, coefficients in asphere_coefficients.items()
+        },
+        asphere_coefficients=asphere_coefficients,
         vignetting=_parse_vignetting(zmx_path),
     )
 
@@ -256,6 +274,7 @@ def compare_roundtrip_zmx(
     *,
     nd_abs_tol: float = 1e-6,
     vd_abs_tol: float = 1e-4,
+    asphere_abs_tol: float = 1e-12,
 ) -> ZmxRoundTripComparison:
     """Compare source and round-tripped ZMX across the ENGINE-03c gates."""
 
@@ -276,6 +295,11 @@ def compare_roundtrip_zmx(
             "surface",
             source.asphere_term_counts,
             exported.asphere_term_counts,
+        )
+        + _asphere_coefficient_mismatches(
+            source.asphere_coefficients,
+            exported.asphere_coefficients,
+            abs_tol=asphere_abs_tol,
         ),
         vignetting_mismatches=_dict_mismatches("vignetting", source.vignetting, exported.vignetting),
     )
@@ -292,9 +316,9 @@ def _glass_rows(table: PrescriptionTable) -> tuple[GlassRow, ...]:
     return tuple(rows)
 
 
-def _asphere_term_counts(table: PrescriptionTable) -> dict[int, int]:
+def _asphere_coefficients(table: PrescriptionTable) -> dict[int, tuple[float, ...]]:
     return {
-        surface.index: len(surface.asphere_coefficients)
+        surface.index: tuple(surface.asphere_coefficients)
         for surface in table.surfaces
         if surface.asphere_coefficients
     }
@@ -333,6 +357,30 @@ def _dict_mismatches(
     for key in sorted(set(source) | set(exported), key=str):
         if source.get(key) != exported.get(key):
             mismatches.append(f"{label} {key}: {source.get(key)!r} -> {exported.get(key)!r}")
+    return tuple(mismatches)
+
+
+def _asphere_coefficient_mismatches(
+    source: dict[int, tuple[float, ...]],
+    exported: dict[int, tuple[float, ...]],
+    *,
+    abs_tol: float,
+) -> tuple[str, ...]:
+    mismatches: list[str] = []
+    for surface_index in sorted(set(source) | set(exported)):
+        source_coefficients = source.get(surface_index, ())
+        exported_coefficients = exported.get(surface_index, ())
+        if len(source_coefficients) != len(exported_coefficients):
+            continue
+        for coefficient_index, (left, right) in enumerate(
+            zip(source_coefficients, exported_coefficients, strict=True),
+            start=1,
+        ):
+            if abs(left - right) > abs_tol:
+                mismatches.append(
+                    f"surface {surface_index} coefficient {coefficient_index}: "
+                    f"{left:.8g} -> {right:.8g}"
+                )
     return tuple(mismatches)
 
 
