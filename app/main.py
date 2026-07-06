@@ -1053,6 +1053,25 @@ def _submit_executive_summary_job(payload: Mapping[str, object]) -> str:
     return optical.job_store.submit(ExecutiveSummaryEngine(), payload)
 
 
+def _persist_summary_job_id(result_job_id: object, summary_job_id: str) -> None:
+    if not summary_job_id or not isinstance(result_job_id, str) or not result_job_id:
+        return
+    if not hasattr(optical.job_store, "update_result"):
+        return
+    try:
+        record = optical.job_store.get(result_job_id)
+    except JobNotFoundError:
+        return
+    if (
+        not _is_result_summary_job(record)
+        or record.status is not JobStatus.SUCCEEDED
+        or record.result is None
+        or record.result.get("summary_job_id") == summary_job_id
+    ):
+        return
+    optical.job_store.update_result(result_job_id, {"summary_job_id": summary_job_id})
+
+
 async def _compute_result_summary_job(payload: Mapping[str, object]) -> dict[str, object]:
     scenario = _result_payload_scenario(payload)
     scenario_label_en = str(payload["scenario_label_en"])
@@ -1204,6 +1223,7 @@ def _result_summary_context(
         and isinstance(summary_job_payload, Mapping)
     ):
         summary_job_id = _submit_executive_summary_job(summary_job_payload)
+        _persist_summary_job_id(progress.get("job_id"), summary_job_id)
 
     focal_length_mm = float(resolved["focal_length_mm"])
     f_number = float(resolved["f_number"])

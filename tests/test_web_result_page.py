@@ -278,8 +278,10 @@ def test_confirmation_continue_submits_result_job_and_result_page_is_reachable(m
         assert progress.status_code == 200, progress.text
         assert f'data-job-id="{job_id}"' in progress.text
         assert f'data-events-url="/api/optical/jobs/{job_id}/events"' in progress.text
+        assert f'data-poll-url="/api/optical/jobs/{job_id}"' in progress.text
         assert f'data-result-url="/results/{job_id}"' in progress.text
         assert "new EventSource" in progress.text
+        assert "window.setTimeout(poll, 2000)" in progress.text
         assert "job-progress-bar" in progress.text
         assert "window.location.assign" in progress.text
 
@@ -288,11 +290,18 @@ def test_confirmation_continue_submits_result_job_and_result_page_is_reachable(m
             assert streamed.headers["content-type"].startswith("text/event-stream")
             sse_body = "".join(streamed.iter_text())
 
+        poll_response = local_client.get(
+            f"/api/optical/jobs/{job_id}",
+            headers={"Accept": "application/json"},
+        )
         result = local_client.get(f"/results/{job_id}")
 
     assert "event: succeeded" in sse_body
     assert f'"job_id":"{job_id}"' in sse_body
     assert '"engine":"result-summary"' in sse_body
+    assert poll_response.status_code == 200, poll_response.text
+    assert poll_response.json()["job_id"] == job_id
+    assert poll_response.json()["status"] == "succeeded"
     assert seen["payload"]["job_type"] == "result-summary"
     assert seen["payload"]["scenario"] == "smartphone-wide"
     assert result.status_code == 200, result.text
@@ -396,12 +405,62 @@ def test_result_page_cache_miss_defers_executive_summary(monkeypatch):
     assert 'data-summary-events-url="/api/optical/jobs/summary-job-1/events"' in html
     assert 'data-summary-poll-url="/api/optical/jobs/summary-job-1"' in html
     assert "new EventSource" in html
+    assert "SUMMARY_TIMEOUT_MS = 90000" in html
+    assert "executive_summary_timeout" in html
     assert "Executive summary is being generated." in html
     assert seen["summary_payload"]["job_type"] == "executive-summary"
     request_payload = seen["summary_payload"]["request"]
     assert request_payload["scenario"] == "smartphone-wide"
     assert request_payload["total_track_mm"] == 4.35
     assert generate_summary.await_count == 0
+
+
+def test_result_page_reuses_persisted_executive_summary_job(monkeypatch):
+    store = JobStore()
+    result_job_id = "result-job-reuse"
+    result_payload = _mock_result_job_payload(_summary_form_payload())
+    result_payload["summary_status"] = "pending"
+    result_payload["summary_job_payload"] = {
+        "job_type": "executive-summary",
+        "request": {
+            "scenario": "smartphone-wide",
+            "scenario_label_en": "Smartphone Wide",
+            "focal_length_mm": 3.8,
+            "f_number": 1.9,
+            "field_of_view_deg": 78.0,
+            "image_height_mm": 3.2,
+            "n_elements": 5,
+            "wavelength_nm": 550.0,
+            "total_track_mm": 4.35,
+            "airy_disc_diameter_um": 2.55,
+            "cutoff_freq_lp_per_mm": 820,
+        },
+    }
+    store._jobs[result_job_id] = JobRecord(
+        job_id=result_job_id,
+        engine="result-summary",
+        status=JobStatus.SUCCEEDED,
+        payload={"job_type": "result-summary"},
+        result=result_payload,
+    )
+    monkeypatch.setattr(main.optical, "job_store", store)
+    submitted: list[dict[str, object]] = []
+
+    def fake_submit(payload):
+        submitted.append(dict(payload))
+        return f"summary-job-{len(submitted)}"
+
+    monkeypatch.setattr(main, "_submit_executive_summary_job", fake_submit)
+
+    first = client.get(f"/results/{result_job_id}")
+    second = client.get(f"/results/{result_job_id}")
+
+    assert first.status_code == 200, first.text
+    assert second.status_code == 200, second.text
+    assert len(submitted) == 1
+    assert store.get(result_job_id).result["summary_job_id"] == "summary-job-1"
+    assert 'data-summary-job-id="summary-job-1"' in first.text
+    assert 'data-summary-job-id="summary-job-1"' in second.text
 
 
 def test_result_page_rejects_n_elements_above_optical_spec_limit():

@@ -6,6 +6,7 @@ the parser against representative LLM outputs and confirm scenario bounds
 clamp the proposed numerics.
 """
 
+import asyncio
 import json
 import math
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -13,8 +14,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from app.api.wizard import (
+    ExecutiveSummaryRequest,
     ExtractScenarioRequest,
     ExtractScenarioResponse,
+    generate_executive_summary,
     _strip_markdown_fences,
     extract_scenario,
     parse_llm_scenario_response,
@@ -169,6 +172,44 @@ async def test_extract_scenario_preserves_explicit_in_bounds_numbers(mock_get_cl
     assert "explicitly supplied" in messages[0]["content"]
 
 
+@pytest.mark.asyncio
+@patch("app.api.wizard.get_async_client")
+async def test_extract_scenario_does_not_override_range_expressions(mock_get_client):
+    """Range-like values are not single explicit targets, so the LLM selection stays."""
+    mock_client = AsyncMock()
+    mock_client.chat.completions.create = AsyncMock(
+        return_value=_mock_chat_response(
+            json.dumps(
+                {
+                    "scenario": "smartphone-wide",
+                    "focal_length_mm": 3.0,
+                    "f_number": 2.1,
+                    "field_of_view_deg": 87.5,
+                    "image_height_mm": 3.0,
+                    "n_elements": 6,
+                    "reasoning": "Phone wide request with ranged constraints.",
+                }
+            )
+        )
+    )
+    mock_get_client.return_value = mock_client
+
+    response = await extract_scenario(
+        ExtractScenarioRequest(
+            user_input=(
+                "Phone wide: EFL 3.2 mm, FOV 80-90 deg, "
+                "f/1.8-2.4, image height 3~5 mm."
+            )
+        )
+    )
+
+    assert response.scenario == Scenario.SMARTPHONE_WIDE
+    assert response.focal_length_mm == 3.2
+    assert response.f_number == 2.1
+    assert response.field_of_view_deg == 87.5
+    assert response.image_height_mm == 3.0
+
+
 def test_parse_clamps_f_number():
     raw = json.dumps(
         {"scenario": "smartphone-telephoto", "f_number": 0.5}
@@ -233,3 +274,39 @@ def test_parse_with_markdown_fences():
     r = parse_llm_scenario_response(raw)
     assert r.scenario == Scenario.AR_NEAR_EYE
     assert r.focal_length_mm == 18.0
+
+
+@pytest.mark.asyncio
+@patch("app.api.wizard.get_async_client")
+async def test_generate_executive_summary_times_out_to_deterministic_fallback(
+    mock_get_client,
+    monkeypatch,
+):
+    async def slow_create(**_kwargs):
+        await asyncio.sleep(1.0)
+        return _mock_chat_response('{"summary_en":"late","summary_zh":"late"}')
+
+    mock_client = MagicMock()
+    mock_client.chat.completions.create = slow_create
+    mock_get_client.return_value = mock_client
+    monkeypatch.setattr("app.api.wizard._EXEC_SUMMARY_LLM_TIMEOUT_SECONDS", 0.01)
+
+    response = await generate_executive_summary(
+        ExecutiveSummaryRequest(
+            scenario=Scenario.SMARTPHONE_WIDE,
+            scenario_label_en="Smartphone Wide",
+            focal_length_mm=3.2,
+            f_number=2.0,
+            field_of_view_deg=82.0,
+            image_height_mm=3.0,
+            n_elements=6,
+            wavelength_nm=550.0,
+            total_track_mm=4.5,
+            airy_disc_diameter_um=2.7,
+            cutoff_freq_lp_per_mm=900.0,
+        )
+    )
+
+    assert response.fallback_reason == "llm_timeout_after_0.01s"
+    assert response.model.startswith("deterministic-fallback:")
+    assert "not a production-ready prescription" in response.summary_en

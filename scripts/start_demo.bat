@@ -14,11 +14,8 @@ if not exist ".env" (
   exit /b 1
 )
 
-set "HAS_OPENAI_API_KEY="
-for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do (
-  if /i "%%A"=="OPENAI_API_KEY" if not "%%B"=="" set "HAS_OPENAI_API_KEY=1"
-)
-if not defined HAS_OPENAI_API_KEY (
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$line = Get-Content -LiteralPath '.env' | Where-Object { $_ -match '^\s*OPENAI_API_KEY\s*=' } | Select-Object -Last 1; if ($null -eq $line) { exit 1 }; $value = ($line -split '=', 2)[1].Trim().Trim([char]34).Trim([char]39).Trim(); if ([string]::IsNullOrWhiteSpace($value)) { exit 1 }; exit 0"
+if errorlevel 1 (
   echo OPENAI_API_KEY is missing or empty in .env.
   echo Edit .env and set OPENAI_API_KEY before starting the demo.
   exit /b 1

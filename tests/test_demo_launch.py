@@ -175,6 +175,30 @@ def test_start_demo_preflight_requires_nonempty_openai_key(tmp_path):
     assert "OPENAI_API_KEY is missing or empty in .env." in output
 
 
+@pytest.mark.skipif(os.name != "nt", reason="start_demo.bat preflight runs on Windows")
+@pytest.mark.parametrize(
+    "env_text",
+    [
+        'OPENAI_API_KEY=""\n',
+        'OPENAI_API_KEY="   "\n',
+        "OPENAI_API_KEY='   '\n",
+        "OPENAI_API_KEY=   \n",
+    ],
+)
+def test_start_demo_bat_preflight_rejects_quoted_or_whitespace_openai_key(
+    tmp_path,
+    env_text,
+):
+    demo_root = _copy_launchers(tmp_path)
+    (demo_root / ".env").write_text(env_text, encoding="ascii")
+
+    result = _run_preflight(demo_root)
+
+    output = result.stdout + result.stderr
+    assert result.returncode == 1
+    assert "OPENAI_API_KEY is missing or empty in .env." in output
+
+
 def test_start_demo_launcher_serves_health_and_homepage(tmp_path):
     if not (ROOT / ".env").is_file():
         pytest.skip("start_demo preflight requires a local .env file")

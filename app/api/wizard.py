@@ -13,6 +13,7 @@ quietly raise it to 5mm and continue.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 import unicodedata
@@ -154,8 +155,17 @@ def _clamp(v: float | None, lo: float, hi: float) -> float | None:
     return max(lo, min(hi, float(v)))
 
 
-_NUMERIC_VALUE = r"(?P<value>[+-]?(?:\d+(?:\.\d*)?|\.\d+))"
+_PLAIN_NUMERIC_VALUE = r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)"
+_NUMERIC_VALUE = rf"(?P<value>{_PLAIN_NUMERIC_VALUE})"
 _OPTIONAL_SEPARATOR = r"\s*(?:=|:|为|是|约|about|around|~)?\s*"
+_RANGE_TAIL_RE = re.compile(
+    rf"^\s*(?:-|–|—|~|〜|～|to\b|through\b|至|到)\s*{_PLAIN_NUMERIC_VALUE}",
+    re.IGNORECASE,
+)
+_RANGE_HEAD_RE = re.compile(
+    rf"{_PLAIN_NUMERIC_VALUE}\s*(?:-|–|—|~|〜|～|to\b|through\b|至|到)\s*$",
+    re.IGNORECASE,
+)
 _EXPLICIT_NUMERIC_PATTERNS: dict[str, tuple[re.Pattern[str], ...]] = {
     "focal_length_mm": (
         re.compile(
@@ -204,11 +214,18 @@ _EXPLICIT_NUMERIC_PATTERNS: dict[str, tuple[re.Pattern[str], ...]] = {
 }
 
 
+def _match_has_range_expression(text: str, match: re.Match[str]) -> bool:
+    start, end = match.span("value")
+    return bool(_RANGE_TAIL_RE.search(text[end:]) or _RANGE_HEAD_RE.search(text[:start]))
+
+
 def _first_explicit_number(text: str, patterns: tuple[re.Pattern[str], ...]) -> float | None:
     for pattern in patterns:
         match = pattern.search(text)
         if match is None:
             continue
+        if _match_has_range_expression(text, match):
+            return None
         try:
             return float(match.group("value"))
         except ValueError:
@@ -502,6 +519,7 @@ surrounding prose:
   "summary_zh": "<200-280 characters>"
 }
 """
+_EXEC_SUMMARY_LLM_TIMEOUT_SECONDS = 60.0
 
 
 class ExecutiveSummaryRequest(BaseModel):
@@ -1494,9 +1512,23 @@ async def generate_executive_summary(
         )
         return completion.choices[0].message.content or ""
 
+    async def call_llm_with_timeout(retry_hint: str = "") -> str:
+        return await asyncio.wait_for(
+            call_llm(retry_hint),
+            timeout=_EXEC_SUMMARY_LLM_TIMEOUT_SECONDS,
+        )
+
     # First attempt.
     try:
-        raw = await call_llm()
+        raw = await call_llm_with_timeout()
+    except TimeoutError:
+        return _deterministic_executive_summary(
+            req,
+            model=model,
+            fallback_reason=(
+                f"llm_timeout_after_{_EXEC_SUMMARY_LLM_TIMEOUT_SECONDS:g}s"
+            ),
+        )
     except Exception as e:
         return _deterministic_executive_summary(
             req,
@@ -1512,7 +1544,7 @@ async def generate_executive_summary(
     extracted = _extract_json_value(raw)
     if extracted is None:
         try:
-            raw = await call_llm(
+            raw = await call_llm_with_timeout(
                 retry_hint=(
                     "Your previous reply was not valid JSON. Reply ONLY with "
                     'the JSON object {"summary_en": "...", "summary_zh": '
@@ -1521,6 +1553,14 @@ async def generate_executive_summary(
                 ),
             )
             extracted = _extract_json_value(raw)
+        except TimeoutError:
+            return _deterministic_executive_summary(
+                req,
+                model=model,
+                fallback_reason=(
+                    f"llm_timeout_after_{_EXEC_SUMMARY_LLM_TIMEOUT_SECONDS:g}s"
+                ),
+            )
         except Exception:
             pass  # fall through to the unparseable error below
 

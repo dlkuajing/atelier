@@ -354,6 +354,38 @@
         const enEl = document.getElementById("summary-en-text");
         const zhEl = document.getElementById("summary-zh-text");
         const fallbackEl = document.getElementById("summary-fallback");
+        const SUMMARY_POLL_INTERVAL_MS = 900;
+        const SUMMARY_TIMEOUT_MS = 90000;
+        const startedAt = Date.now();
+        let source = null;
+        let timeoutTimer = null;
+
+        const clearTimeoutGuard = () => {
+          if (timeoutTimer) {
+            window.clearTimeout(timeoutTimer);
+            timeoutTimer = null;
+          }
+        };
+
+        const renderTimeoutFallback = () => {
+          if (root.dataset.summaryStatus !== "pending") {
+            return false;
+          }
+          enEl.textContent = (
+            "Executive summary timed out after 90 seconds. The optical data and "
+            "computed analysis package are available below."
+          );
+          zhEl.textContent = "执行摘要 90 秒内未返回；光学数据与实算分析包已在下方可用。";
+          fallbackEl.textContent = "executive_summary_timeout";
+          fallbackEl.dataset.summaryFallback = "executive_summary_timeout";
+          fallbackEl.hidden = false;
+          root.dataset.summaryStatus = "timeout";
+          if (source) {
+            source.close();
+          }
+          clearTimeoutGuard();
+          return true;
+        };
 
         const renderSummary = (summary) => {
           if (!summary) {
@@ -375,6 +407,7 @@
             fallbackEl.hidden = true;
           }
           root.dataset.summaryStatus = "ready";
+          clearTimeoutGuard();
           return true;
         };
 
@@ -384,6 +417,7 @@
             fallbackEl.dataset.summaryFallback = fallbackEl.textContent;
             fallbackEl.hidden = false;
             root.dataset.summaryStatus = "failed";
+            clearTimeoutGuard();
             return true;
           }
           return renderSummary(payload.result && payload.result.summary);
@@ -391,6 +425,10 @@
 
         const poll = async () => {
           if (!root.dataset.summaryPollUrl || root.dataset.summaryStatus !== "pending") {
+            return;
+          }
+          if (Date.now() - startedAt >= SUMMARY_TIMEOUT_MS) {
+            renderTimeoutFallback();
             return;
           }
           try {
@@ -403,11 +441,13 @@
           } catch {
             // Keep the optical result visible; the summary can arrive on the next poll.
           }
-          window.setTimeout(poll, 900);
+          window.setTimeout(poll, SUMMARY_POLL_INTERVAL_MS);
         };
 
+        timeoutTimer = window.setTimeout(renderTimeoutFallback, SUMMARY_TIMEOUT_MS);
+
         if ("EventSource" in window && root.dataset.summaryEventsUrl) {
-          const source = new EventSource(root.dataset.summaryEventsUrl);
+          source = new EventSource(root.dataset.summaryEventsUrl);
           source.addEventListener("succeeded", (event) => {
             if (renderJob(JSON.parse(event.data))) {
               source.close();
