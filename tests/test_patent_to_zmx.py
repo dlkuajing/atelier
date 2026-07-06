@@ -100,6 +100,20 @@ def test_parse_patent_prescriptions_extracts_all_embodiments() -> None:
     assert prescriptions[1].surfaces[2].asphere_coefficients["A"] == pytest.approx(-6.6789e-5)
 
 
+def test_parse_patent_prescriptions_skips_narrative_embodiment_references() -> None:
+    text = (
+        "The image capturing unit according to the 1st embodiment has f = 1.00 mm, "
+        "Fno = 2.00, HFOV = 30.0 deg. The detailed optical data follow. "
+        + PRESCRIPTION_TEXT
+    )
+
+    prescriptions = parse_patent_prescriptions(text, patent_id="US-NARRATIVE-A1")
+
+    assert len(prescriptions) == 1
+    assert prescriptions[0].embodiment == "1st Embodiment"
+    assert prescriptions[0].focal_length_mm == pytest.approx(12.99)
+
+
 @pytest.mark.parametrize(
     "meta_line",
     [
@@ -212,6 +226,38 @@ def test_convert_candidate_writes_each_embodiment_with_e_suffix_without_network(
     assert (tmp_path / "US-MULTI-A1-e2.zmx").is_file()
     assert attempts[0].zmx_path.endswith("US-MULTI-A1-e1.zmx")
     assert attempts[1].zmx_path.endswith("US-MULTI-A1-e2.zmx")
+
+
+def test_convert_candidate_keeps_later_embodiments_after_parse_failure(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    broken_first = PRESCRIPTION_TEXT.replace("3 Lens 2", "6 Lens 2", 1)
+
+    async def fake_fetch_patent_html(_client: object, _token: str, patent_id: str) -> str:
+        assert patent_id == "US-PARTIAL-A1"
+        return broken_first + "\n" + SECOND_PRESCRIPTION_TEXT
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch_patent_html)
+    candidate = patent_to_zmx.PatentCandidate(
+        patent_id="US-PARTIAL-A1",
+        title="partial embodiment fixture",
+        source_url="local-fixture",
+        pool_path=tmp_path / "pool.jsonl",
+        line_number=1,
+    )
+
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(object(), "local-token", candidate, tmp_path)
+    )
+
+    assert [attempt.status for attempt in attempts] == ["failed", "success"]
+    assert "surface table index break" in attempts[0].reason
+    assert attempts[0].embodiment == "1st Embodiment"
+    assert attempts[1].embodiment == "EXAMPLE 2"
+    assert not (tmp_path / "US-PARTIAL-A1-e1.zmx").exists()
+    assert (tmp_path / "US-PARTIAL-A1-e2.zmx").is_file()
+    assert attempts[1].zmx_path.endswith("US-PARTIAL-A1-e2.zmx")
 
 
 def test_parse_patent_prescription_rejects_unsupported_high_order_asphere_terms() -> None:

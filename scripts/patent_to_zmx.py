@@ -144,6 +144,14 @@ class ConversionAttempt:
     coverage: dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass(frozen=True)
+class _PrescriptionParseAttempt:
+    embodiment_number: int
+    embodiment: str
+    prescription: PatentPrescription | None = None
+    error: Exception | None = None
+
+
 def normalize_patent_text(value: str) -> str:
     """Return PPUBS HTML/plain text normalized for deterministic regex parsing."""
 
@@ -185,13 +193,49 @@ def parse_patent_prescription(raw_text: str, *, patent_id: str = "") -> PatentPr
 def parse_patent_prescriptions(raw_text: str, *, patent_id: str = "") -> list[PatentPrescription]:
     """Parse every USPTO embodiment/example prescription table in ``raw_text``."""
 
+    attempts = _parse_prescription_attempts(raw_text, patent_id=patent_id)
+    prescriptions: list[PatentPrescription] = []
+    for attempt in attempts:
+        if attempt.error is not None:
+            raise attempt.error
+        if attempt.prescription is None:
+            raise PatentParseError(f"{attempt.embodiment} did not produce a prescription")
+        prescriptions.append(attempt.prescription)
+    return prescriptions
+
+
+def _parse_prescription_attempts(
+    raw_text: str,
+    *,
+    patent_id: str = "",
+) -> list[_PrescriptionParseAttempt]:
+    """Parse embodiment tables independently so one bad table does not hide later ones."""
+
     text = normalize_patent_text(raw_text)
     metas = _find_embodiment_metas(text)
-    prescriptions: list[PatentPrescription] = []
-    for index, meta in enumerate(metas):
-        section_end = metas[index + 1].start if index + 1 < len(metas) else len(text)
-        prescriptions.append(_parse_prescription_at_meta(text, meta, section_end, patent_id))
-    return prescriptions
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, meta in enumerate(metas, start=1):
+        next_meta_index = index
+        section_end = metas[next_meta_index].start if next_meta_index < len(metas) else len(text)
+        try:
+            prescription = _parse_prescription_at_meta(text, meta, section_end, patent_id)
+        except Exception as exc:  # noqa: BLE001 - surfaced as a per-embodiment failure
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=index,
+                    embodiment=meta.embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=meta.embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
 
 
 def _parse_prescription_at_meta(
@@ -370,7 +414,7 @@ async def _convert_candidate(
 ) -> list[ConversionAttempt]:
     try:
         page_html = await _fetch_patent_html(client, token, candidate.patent_id)
-        prescriptions = parse_patent_prescriptions(page_html, patent_id=candidate.patent_id)
+        parse_attempts = _parse_prescription_attempts(page_html, patent_id=candidate.patent_id)
     except Exception as exc:  # noqa: BLE001 - report per-patent failure reason
         return [
             ConversionAttempt(
@@ -382,9 +426,33 @@ async def _convert_candidate(
         ]
 
     attempts: list[ConversionAttempt] = []
-    for embodiment_number, prescription in enumerate(prescriptions, start=1):
+    for parse_attempt in parse_attempts:
+        if parse_attempt.error is not None:
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="failed",
+                    reason=f"{type(parse_attempt.error).__name__}: {parse_attempt.error}",
+                    embodiment=parse_attempt.embodiment,
+                )
+            )
+            continue
+        if parse_attempt.prescription is None:
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="failed",
+                    reason="PatentParseError: embodiment did not produce a prescription",
+                    embodiment=parse_attempt.embodiment,
+                )
+            )
+            continue
+
+        prescription = parse_attempt.prescription
         output_path = output_dir / (
-            f"{_safe_stem(candidate.patent_id)}-e{embodiment_number}.zmx"
+            f"{_safe_stem(candidate.patent_id)}-e{parse_attempt.embodiment_number}.zmx"
         )
         try:
             trace_audit = write_patent_zmx(prescription, output_path)
@@ -453,7 +521,9 @@ def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
         next_start = label_matches[index + 1].start() if index + 1 < len(label_matches) else len(text)
         window = text[match.start() : min(next_start, match.start() + 900)]
         surface_start = re.search(r"\b0\s+Object\b", window, flags=re.IGNORECASE)
-        meta_window = window[: surface_start.start()] if surface_start else window[:350]
+        if surface_start is None:
+            continue
+        meta_window = window[: surface_start.start()]
         try:
             focal_length, focal_end = _extract_meta_number(
                 meta_window,
