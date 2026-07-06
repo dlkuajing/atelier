@@ -78,6 +78,16 @@ class JobStore:
         result = self.get(job_id).result
         return dict(result) if result is not None else None
 
+    def update_result(self, job_id: str, updates: Mapping[str, object]) -> JobRecord:
+        """Merge fields into an existing result snapshot and publish the update."""
+        record = self.get(job_id)
+        if record.result is None:
+            raise ValueError(f"job has no result to update: {job_id}")
+        result = dict(record.result)
+        result.update(dict(updates))
+        self._replace(job_id, result=result)
+        return self.get(job_id)
+
     def error(self, job_id: str) -> str | None:
         """Return a failed job's error string, if available."""
         return self.get(job_id).error

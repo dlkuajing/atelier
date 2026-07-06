@@ -1,9 +1,10 @@
 """FastAPI app entrypoint."""
 
+import asyncio
 import json
 import math
 import warnings
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Mapping
 from contextlib import asynccontextmanager, redirect_stdout, suppress
 from io import StringIO
 from pathlib import Path
@@ -12,7 +13,7 @@ from typing import Annotated
 import structlog
 from fastapi import FastAPI, Form, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -34,7 +35,11 @@ from app.core.field_analysis import compute_field_analysis  # noqa: E402
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
 from app.core.optical_calc import airy_disk_diameter_um  # noqa: E402
-from app.core.optical_sample import CodeVRefinementComparison, OpticalSampleData  # noqa: E402
+from app.core.optical_sample import (  # noqa: E402
+    CodeVRefinementComparison,
+    DesignAssessment,
+    OpticalSampleData,
+)
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
 from app.core.provenance import ProvenanceSource  # noqa: E402
 from app.core.spot_diagram import compute_spot_diagram  # noqa: E402
@@ -67,6 +72,54 @@ ANALYSIS_PROVENANCE_BADGES = (
     {"label": "Spot", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
     {"label": "Field", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
     {"label": "Wavefront", "source": ProvenanceSource.OPTILAND_WAVEFRONT.value},
+)
+EXAMPLE_REQUIREMENTS = (
+    {
+        "label": "Sample ultrawide",
+        "fields": (
+            {"name": "scenario", "value": "smartphone-ultrawide"},
+            {"name": "scenario_label_en", "value": "Smartphone Ultrawide"},
+            {"name": "focal_length_mm", "value": "3.621"},
+            {"name": "f_number", "value": "2.32"},
+            {"name": "field_of_view_deg", "value": "91.0"},
+            {"name": "image_height_mm", "value": "3.6863"},
+            {"name": "n_elements", "value": "7"},
+            {"name": "wavelength_nm", "value": "550.0"},
+            {"name": "total_track_mm", "value": "5.395"},
+            {"name": "airy_disc_diameter_um", "value": "3.11344"},
+            {"name": "cutoff_freq_lp_per_mm", "value": "783.69906"},
+            {
+                "name": "requirement",
+                "value": (
+                    "Sample request: smartphone ultrawide camera, 3.621 mm EFL, "
+                    "f/2.32, 91.0 deg FOV, 3.6863 mm image height, 7 elements."
+                ),
+            },
+        ),
+    },
+    {
+        "label": "Sample wide",
+        "fields": (
+            {"name": "scenario", "value": "smartphone-wide"},
+            {"name": "scenario_label_en", "value": "Smartphone Wide"},
+            {"name": "focal_length_mm", "value": "2.7"},
+            {"name": "f_number", "value": "2.5"},
+            {"name": "field_of_view_deg", "value": "78.0"},
+            {"name": "image_height_mm", "value": "2.3"},
+            {"name": "n_elements", "value": "3"},
+            {"name": "wavelength_nm", "value": "550.0"},
+            {"name": "total_track_mm", "value": "3.563803397328498"},
+            {"name": "airy_disc_diameter_um", "value": "3.355"},
+            {"name": "cutoff_freq_lp_per_mm", "value": "727.272727"},
+            {
+                "name": "requirement",
+                "value": (
+                    "Sample request: smartphone wide camera, 2.7 mm EFL, f/2.5, "
+                    "78.0 deg FOV, 2.3 mm image height, 3 elements."
+                ),
+            },
+        ),
+    },
 )
 _RESULT_ANALYSIS_WAVELENGTH_NM = 587.6
 _SUMMARY_FALLBACK_WAVELENGTH_NM = 550.0
@@ -815,6 +868,7 @@ async def _result_sample(
 
 def _job_progress_context(record: JobRecord) -> dict[str, object]:
     result = dict(record.result) if record.result is not None else None
+    result_url = f"/results/{record.job_id}" if _is_result_summary_job(record) else ""
     return {
         "product_name": "Atelier",
         "job_id": record.job_id,
@@ -830,6 +884,8 @@ def _job_progress_context(record: JobRecord) -> dict[str, object]:
         if result is not None
         else "",
         "error": record.error,
+        "result_url": result_url,
+        "has_result_url": bool(result_url),
     }
 
 
@@ -845,6 +901,379 @@ def _result_progress_context(job_id: str | None) -> dict[str, object]:
         }
 
     return _job_progress_context(optical.job_store.get(normalized_job_id))
+
+
+def _is_result_summary_job(record: JobRecord) -> bool:
+    return record.payload.get("job_type") == "result-summary"
+
+
+def _result_job_payload(
+    *,
+    scenario: Scenario,
+    scenario_label_en: str,
+    focal_length_mm: float,
+    f_number: float,
+    field_of_view_deg: float,
+    image_height_mm: float,
+    total_track_mm: float,
+    airy_disc_diameter_um: float,
+    cutoff_freq_lp_per_mm: float,
+    n_elements: int | None,
+    wavelength_nm: float,
+    requirement: str | None,
+) -> dict[str, object]:
+    return {
+        "job_type": "result-summary",
+        "scenario": scenario.value,
+        "scenario_label_en": scenario_label_en,
+        "focal_length_mm": focal_length_mm,
+        "f_number": f_number,
+        "field_of_view_deg": field_of_view_deg,
+        "image_height_mm": image_height_mm,
+        "total_track_mm": total_track_mm,
+        "airy_disc_diameter_um": airy_disc_diameter_um,
+        "cutoff_freq_lp_per_mm": cutoff_freq_lp_per_mm,
+        "n_elements": n_elements,
+        "wavelength_nm": wavelength_nm,
+        "requirement": requirement,
+    }
+
+
+def _result_payload_scenario(payload: Mapping[str, object]) -> Scenario:
+    value = payload.get("scenario")
+    if isinstance(value, Scenario):
+        return value
+    return Scenario(str(value))
+
+
+def _optional_int(value: object) -> int | None:
+    if value in {None, ""}:
+        return None
+    return int(value)
+
+
+def _executive_summary_request(
+    *,
+    scenario: Scenario,
+    scenario_label_en: str,
+    focal_length_mm: float,
+    f_number: float,
+    field_of_view_deg: float,
+    image_height_mm: float,
+    n_elements: int | None,
+    wavelength_nm: float,
+    total_track_mm: float,
+    airy_disc_diameter_um: float,
+    cutoff_freq_lp_per_mm: float,
+    design_assessment: DesignAssessment | None,
+) -> wizard.ExecutiveSummaryRequest:
+    return wizard.ExecutiveSummaryRequest(
+        scenario=scenario,
+        scenario_label_en=scenario_label_en,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+        total_track_mm=total_track_mm,
+        airy_disc_diameter_um=airy_disc_diameter_um,
+        cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+        design_assessment=design_assessment,
+    )
+
+
+def _summary_job_payload(req: wizard.ExecutiveSummaryRequest) -> dict[str, object]:
+    return {
+        "job_type": "executive-summary",
+        "request": req.model_dump(mode="json"),
+    }
+
+
+def _pending_executive_summary() -> wizard.ExecutiveSummaryResponse:
+    return wizard.ExecutiveSummaryResponse(
+        summary_en=(
+            "Executive summary is being generated. The optical data and computed "
+            "analysis package are already available below."
+        ),
+        summary_zh="执行摘要正在生成；光学数据与实算分析包已先行渲染在下方。",
+        model="pending",
+        fallback_reason="executive_summary_pending",
+    )
+
+
+def _cached_executive_summary(cached: DemoAnalysisBundle | None) -> wizard.ExecutiveSummaryResponse | None:
+    if cached is None or not isinstance(cached.executive_summary, Mapping):
+        return None
+    with suppress(Exception):
+        return wizard.ExecutiveSummaryResponse.model_validate(cached.executive_summary)
+    return None
+
+
+async def _compute_executive_summary_job(payload: Mapping[str, object]) -> dict[str, object]:
+    request_payload = payload.get("request")
+    if not isinstance(request_payload, Mapping):
+        raise ValueError("executive summary job has invalid request payload")
+    summary = await wizard.generate_executive_summary(
+        wizard.ExecutiveSummaryRequest.model_validate(request_payload)
+    )
+    return {
+        "job_type": "executive-summary",
+        "summary": summary.model_dump(mode="json"),
+    }
+
+
+class ExecutiveSummaryEngine:
+    """JobStore-compatible worker for deferred result-page LLM summaries."""
+
+    name = "executive-summary"
+
+    def is_available(self) -> bool:
+        return True
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "name": self.name,
+            "engine": "ExecutiveSummaryEngine",
+            "available": True,
+            "capabilities": ["web-executive-summary"],
+        }
+
+    def submit(self, payload: Mapping[str, object]) -> Mapping[str, object]:
+        return asyncio.run(_compute_executive_summary_job(payload))
+
+
+def _submit_executive_summary_job(payload: Mapping[str, object]) -> str:
+    if not hasattr(optical.job_store, "submit"):
+        return ""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return ""
+    return optical.job_store.submit(ExecutiveSummaryEngine(), payload)
+
+
+def _persist_summary_job_id(result_job_id: object, summary_job_id: str) -> None:
+    if not summary_job_id or not isinstance(result_job_id, str) or not result_job_id:
+        return
+    if not hasattr(optical.job_store, "update_result"):
+        return
+    try:
+        record = optical.job_store.get(result_job_id)
+    except JobNotFoundError:
+        return
+    if (
+        not _is_result_summary_job(record)
+        or record.status is not JobStatus.SUCCEEDED
+        or record.result is None
+        or record.result.get("summary_job_id") == summary_job_id
+    ):
+        return
+    optical.job_store.update_result(result_job_id, {"summary_job_id": summary_job_id})
+
+
+async def _compute_result_summary_job(payload: Mapping[str, object]) -> dict[str, object]:
+    scenario = _result_payload_scenario(payload)
+    scenario_label_en = str(payload["scenario_label_en"])
+    focal_length_mm = float(payload["focal_length_mm"])
+    f_number = float(payload["f_number"])
+    field_of_view_deg = float(payload["field_of_view_deg"])
+    image_height_mm = float(payload["image_height_mm"])
+    total_track_mm = float(payload["total_track_mm"])
+    airy_disc_diameter_um = float(payload["airy_disc_diameter_um"])
+    cutoff_freq_lp_per_mm = float(payload["cutoff_freq_lp_per_mm"])
+    n_elements = _optional_int(payload.get("n_elements"))
+    wavelength_nm = float(payload.get("wavelength_nm", 550.0))
+    requirement = payload.get("requirement")
+    requirement_text = str(requirement) if requirement not in {None, ""} else None
+
+    cache_request = demo_cache_request(
+        scenario=scenario,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+    )
+    cached = load_demo_cache_bundle_for_request(cache_request)
+    demo_cache_status = "miss"
+    design_assessment = None
+    codev_artifact: dict[str, object] | None = None
+    if cached is not None:
+        demo_cache_status = "hit"
+        sample = _sample_from_cached_bundle(cached)
+        focal_length_mm = sample.paraxial.effective_focal_length_mm
+        f_number = sample.paraxial.f_number
+        total_track_mm = sample.paraxial.total_track_mm
+        airy_disc_diameter_um = sample.mtf.airy_disc_diameter_um
+        cutoff_freq_lp_per_mm = sample.mtf.cutoff_freq_lp_per_mm
+        if sample.metadata is not None:
+            scenario_label_en = sample.metadata.scenario.value.replace("-", " ").title()
+            n_elements = sample.metadata.n_pieces
+        design_assessment = sample.design_assessment
+        codev_artifact = cached.codev_artifact
+    else:
+        sample = await _result_sample(
+            scenario=scenario,
+            focal_length_mm=focal_length_mm,
+            f_number=f_number,
+            field_of_view_deg=field_of_view_deg,
+            image_height_mm=image_height_mm,
+            n_elements=n_elements,
+            wavelength_nm=wavelength_nm,
+            total_track_mm=total_track_mm,
+        )
+        if sample is not None:
+            design_assessment = sample.design_assessment
+
+    summary_request = _executive_summary_request(
+        scenario=scenario,
+        scenario_label_en=scenario_label_en,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+        total_track_mm=total_track_mm,
+        airy_disc_diameter_um=airy_disc_diameter_um,
+        cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+        design_assessment=design_assessment,
+    )
+    summary = _cached_executive_summary(cached)
+    summary_status = "cached" if summary is not None else "pending"
+    if summary is None:
+        summary = _pending_executive_summary()
+
+    return {
+        "job_type": "result-summary",
+        "scenario": scenario.value,
+        "scenario_label_en": scenario_label_en,
+        "requirement": requirement_text,
+        "demo_cache_status": demo_cache_status,
+        "resolved": {
+            "focal_length_mm": focal_length_mm,
+            "f_number": f_number,
+            "field_of_view_deg": field_of_view_deg,
+            "image_height_mm": image_height_mm,
+            "n_elements": n_elements,
+            "wavelength_nm": wavelength_nm,
+            "total_track_mm": total_track_mm,
+            "airy_disc_diameter_um": airy_disc_diameter_um,
+            "cutoff_freq_lp_per_mm": cutoff_freq_lp_per_mm,
+        },
+        "summary_status": summary_status,
+        "summary_job_payload": _summary_job_payload(summary_request)
+        if summary_status == "pending"
+        else None,
+        "summary": summary.model_dump(mode="json"),
+        "sample": sample.model_dump(mode="json") if sample is not None else None,
+        "codev_artifact": codev_artifact,
+    }
+
+
+class ResultSummaryEngine:
+    """JobStore-compatible worker for the web result summary computation."""
+
+    name = "result-summary"
+
+    def is_available(self) -> bool:
+        return True
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "name": self.name,
+            "engine": "ResultSummaryEngine",
+            "available": True,
+            "capabilities": ["web-result-summary"],
+        }
+
+    def submit(self, payload: Mapping[str, object]) -> Mapping[str, object]:
+        return asyncio.run(_compute_result_summary_job(payload))
+
+
+def _result_summary_context(
+    *,
+    result: Mapping[str, object],
+    progress: Mapping[str, object],
+) -> dict[str, object]:
+    resolved = result["resolved"]
+    if not isinstance(resolved, Mapping):
+        raise ValueError("result summary job has invalid resolved payload")
+
+    sample_payload = result.get("sample")
+    sample = (
+        OpticalSampleData.model_validate(sample_payload)
+        if isinstance(sample_payload, Mapping)
+        else None
+    )
+    summary_payload = result["summary"]
+    if not isinstance(summary_payload, Mapping):
+        raise ValueError("result summary job has invalid summary payload")
+    summary = wizard.ExecutiveSummaryResponse.model_validate(summary_payload)
+    scenario = Scenario(str(result["scenario"]))
+    codev_artifact = result.get("codev_artifact")
+    summary_status = str(result.get("summary_status") or "ready")
+    summary_job_id = str(result.get("summary_job_id") or "")
+    summary_job_payload = result.get("summary_job_payload")
+    if (
+        summary_status == "pending"
+        and not summary_job_id
+        and isinstance(summary_job_payload, Mapping)
+    ):
+        summary_job_id = _submit_executive_summary_job(summary_job_payload)
+        _persist_summary_job_id(progress.get("job_id"), summary_job_id)
+
+    focal_length_mm = float(resolved["focal_length_mm"])
+    f_number = float(resolved["f_number"])
+    field_of_view_deg = float(resolved["field_of_view_deg"])
+    image_height_mm = float(resolved["image_height_mm"])
+    total_track_mm = float(resolved["total_track_mm"])
+    airy_disc_diameter_um = float(resolved["airy_disc_diameter_um"])
+    cutoff_freq_lp_per_mm = float(resolved["cutoff_freq_lp_per_mm"])
+    n_elements = _optional_int(resolved.get("n_elements"))
+    return {
+        "product_name": "Atelier",
+        "scenario_label": str(result["scenario_label_en"]),
+        "scenario": scenario.value,
+        "demo_cache_status": str(result["demo_cache_status"]),
+        "requirement": result.get("requirement"),
+        "summary": summary,
+        "summary_status": summary_status,
+        "summary_job_id": summary_job_id,
+        "summary_events_url": f"/api/optical/jobs/{summary_job_id}/events"
+        if summary_job_id
+        else "",
+        "summary_poll_url": f"/api/optical/jobs/{summary_job_id}" if summary_job_id else "",
+        "target_metrics": (
+            ("Focal length", f"{focal_length_mm:.2f} mm"),
+            ("F-number", f"f/{f_number:.2f}"),
+            ("Field of view", f"{field_of_view_deg:.1f} deg"),
+            ("Image height", f"{image_height_mm:.2f} mm"),
+            ("Elements", str(n_elements) if n_elements is not None else "Not specified"),
+        ),
+        "metrics": _metric_rows(
+            sample=sample,
+            focal_length_mm=focal_length_mm,
+            f_number=f_number,
+            field_of_view_deg=field_of_view_deg,
+            image_height_mm=image_height_mm,
+            total_track_mm=total_track_mm,
+            airy_disc_diameter_um=airy_disc_diameter_um,
+            cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+        ),
+        "sample_case_label": _sample_case_label(sample),
+        "analysis_cards": _analysis_cards(sample),
+        "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
+        "codev_comparison": _codev_comparison_context(
+            sample,
+            codev_artifact if isinstance(codev_artifact, dict) else None,
+        ),
+        "layout_svg": sample.layout_svg.svg_content if sample is not None else "",
+        "has_layout_svg": sample is not None,
+        "progress": dict(progress),
+    }
 
 
 @asynccontextmanager
@@ -897,6 +1326,7 @@ async def root(request: Request) -> HTMLResponse:
                 ("Analysis", "#analysis"),
                 ("API", "/docs"),
             ),
+            "example_requirements": EXAMPLE_REQUIREMENTS,
             "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
         },
     )
@@ -964,45 +1394,8 @@ async def result_summary(
             detail={"error": "job_not_found", "job_id": job_id},
         ) from exc
 
-    cache_request = demo_cache_request(
-        scenario=scenario,
-        focal_length_mm=focal_length_mm,
-        f_number=f_number,
-        field_of_view_deg=field_of_view_deg,
-        image_height_mm=image_height_mm,
-        n_elements=n_elements,
-        wavelength_nm=wavelength_nm,
-    )
-    cached = load_demo_cache_bundle_for_request(cache_request)
-    demo_cache_status = "miss"
-    design_assessment = None
-    if cached is not None:
-        demo_cache_status = "hit"
-        sample = _sample_from_cached_bundle(cached)
-        focal_length_mm = sample.paraxial.effective_focal_length_mm
-        f_number = sample.paraxial.f_number
-        total_track_mm = sample.paraxial.total_track_mm
-        airy_disc_diameter_um = sample.mtf.airy_disc_diameter_um
-        cutoff_freq_lp_per_mm = sample.mtf.cutoff_freq_lp_per_mm
-        if sample.metadata is not None:
-            scenario_label_en = sample.metadata.scenario.value.replace("-", " ").title()
-            n_elements = sample.metadata.n_pieces
-        design_assessment = sample.design_assessment
-    else:
-        sample = await _result_sample(
-            scenario=scenario,
-            focal_length_mm=focal_length_mm,
-            f_number=f_number,
-            field_of_view_deg=field_of_view_deg,
-            image_height_mm=image_height_mm,
-            n_elements=n_elements,
-            wavelength_nm=wavelength_nm,
-            total_track_mm=total_track_mm,
-        )
-        if sample is not None:
-            design_assessment = sample.design_assessment
-    summary = await wizard.generate_executive_summary(
-        wizard.ExecutiveSummaryRequest(
+    result = await _compute_result_summary_job(
+        _result_job_payload(
             scenario=scenario,
             scenario_label_en=scenario_label_en,
             focal_length_mm=focal_length_mm,
@@ -1014,47 +1407,82 @@ async def result_summary(
             total_track_mm=total_track_mm,
             airy_disc_diameter_um=airy_disc_diameter_um,
             cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
-            design_assessment=design_assessment,
+            requirement=requirement,
         )
     )
     return templates.TemplateResponse(
         request,
         "result_summary.html",
-        {
-            "product_name": "Atelier",
-            "scenario_label": scenario_label_en,
-            "scenario": scenario.value,
-            "demo_cache_status": demo_cache_status,
-            "requirement": requirement,
-            "summary": summary,
-            "target_metrics": (
-                ("Focal length", f"{focal_length_mm:.2f} mm"),
-                ("F-number", f"f/{f_number:.2f}"),
-                ("Field of view", f"{field_of_view_deg:.1f} deg"),
-                ("Image height", f"{image_height_mm:.2f} mm"),
-                ("Elements", str(n_elements) if n_elements is not None else "Not specified"),
-            ),
-            "metrics": _metric_rows(
-                sample=sample,
-                focal_length_mm=focal_length_mm,
-                f_number=f_number,
-                field_of_view_deg=field_of_view_deg,
-                image_height_mm=image_height_mm,
-                total_track_mm=total_track_mm,
-                airy_disc_diameter_um=airy_disc_diameter_um,
-                cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
-            ),
-            "sample_case_label": _sample_case_label(sample),
-            "analysis_cards": _analysis_cards(sample),
-            "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
-            "codev_comparison": _codev_comparison_context(
-                sample,
-                cached.codev_artifact if cached is not None else None,
-            ),
-            "layout_svg": sample.layout_svg.svg_content if sample is not None else "",
-            "has_layout_svg": sample is not None,
-            "progress": progress,
-        },
+        _result_summary_context(result=result, progress=progress),
+    )
+
+
+@app.post("/jobs", include_in_schema=False, tags=["web"])
+async def submit_result_job(
+    scenario: Annotated[Scenario, Form()],
+    scenario_label_en: Annotated[str, Form(min_length=1, max_length=100)],
+    focal_length_mm: Annotated[float, Form(gt=0)],
+    f_number: Annotated[float, Form(gt=0)],
+    field_of_view_deg: Annotated[float, Form(gt=0, le=180)],
+    image_height_mm: Annotated[float, Form(gt=0)],
+    total_track_mm: Annotated[float, Form(gt=0)],
+    airy_disc_diameter_um: Annotated[float, Form(gt=0)],
+    cutoff_freq_lp_per_mm: Annotated[float, Form(gt=0)],
+    n_elements: Annotated[int | None, Form(ge=2, le=20)] = None,
+    wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
+    requirement: Annotated[str | None, Form(max_length=2000)] = None,
+) -> RedirectResponse:
+    payload = _result_job_payload(
+        scenario=scenario,
+        scenario_label_en=scenario_label_en,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        total_track_mm=total_track_mm,
+        airy_disc_diameter_um=airy_disc_diameter_um,
+        cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+        requirement=requirement,
+    )
+    job_id = optical.job_store.submit(ResultSummaryEngine(), payload)
+    return RedirectResponse(
+        url=f"/jobs/{job_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@app.get("/results/{job_id}", response_class=HTMLResponse, tags=["web"])
+async def result_summary_from_job(request: Request, job_id: str) -> HTMLResponse:
+    try:
+        record = optical.job_store.get(job_id)
+    except JobNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "job_id": job_id},
+        ) from exc
+    if not _is_result_summary_job(record):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "result_not_found", "job_id": job_id},
+        )
+    if record.status is not JobStatus.SUCCEEDED or record.result is None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "error": "result_not_ready",
+                "job_id": job_id,
+                "status": record.status.value,
+            },
+        )
+    return templates.TemplateResponse(
+        request,
+        "result_summary.html",
+        _result_summary_context(
+            result=record.result,
+            progress=_job_progress_context(record),
+        ),
     )
 
 

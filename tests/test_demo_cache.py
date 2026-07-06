@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import importlib
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -21,6 +22,7 @@ from app.core.demo_cache import (
     source_zmx_sha256,
     write_demo_cache_bundle,
 )
+from app.core.engines.codev_batch import resolve_default_codev_executable
 from app.core.field_analysis import FieldAnalysisResult
 from app.core.lens_system import LayoutSVG, RayPath, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary
@@ -172,6 +174,14 @@ def _wavefront() -> WavefrontMetricsResult:
     )
 
 
+def _executive_summary() -> dict[str, object]:
+    return wizard.ExecutiveSummaryResponse(
+        summary_en="Cached metric summary.",
+        summary_zh="\u7f13\u5b58\u6307\u6807\u6458\u8981\u3002",
+        model="test-cache",
+    ).model_dump(mode="json")
+
+
 def _bundle() -> DemoAnalysisBundle:
     request = optical_api.demo_cache_request(
         scenario=Scenario.SMARTPHONE_WIDE,
@@ -201,6 +211,7 @@ def _bundle() -> DemoAnalysisBundle:
         spot_diagram=_spot(),
         field_analysis=_field(),
         wavefront=_wavefront(),
+        executive_summary=_executive_summary(),
     )
 
 
@@ -247,6 +258,27 @@ def test_demo_cache_round_trip_preserves_analysis_provenance(tmp_path):
     for artefact in artefacts:
         payload = artefact.model_dump(mode="json")
         assert payload["provenance"] in {source.value for source in ProvenanceSource}
+
+
+def test_ultrawide_precomputed_cache_is_reachable_with_real_image_height():
+    request = optical_api.demo_cache_request(
+        scenario=Scenario.SMARTPHONE_ULTRAWIDE,
+        focal_length_mm=3.621,
+        f_number=2.32,
+        field_of_view_deg=91.0,
+        image_height_mm=3.6863,
+        n_elements=7,
+        wavelength_nm=550.0,
+    )
+
+    loaded = load_demo_cache_bundle_for_request(request)
+
+    assert loaded is not None
+    assert loaded.source_case_id == "US20170003482A1"
+    assert loaded.request.image_height_mm == 3.6863
+    assert loaded.request.image_height_mm != 1.0
+    if resolve_default_codev_executable().is_file():
+        assert loaded.codev_artifact is not None
 
 
 def test_precompute_codev_artifact_includes_run_evidence_and_refined_mtf(monkeypatch):
@@ -321,6 +353,30 @@ def test_precompute_codev_artifact_includes_run_evidence_and_refined_mtf(monkeyp
     assert artifact["after"]["max_rms_spot_diameter_um"] == 6.0
 
 
+def test_precompute_attaches_executive_summary(monkeypatch):
+    precompute = importlib.import_module("scripts.precompute_demo_cache")
+    bundle = _bundle().model_copy(update={"executive_summary": None}, deep=True)
+    summary = wizard.ExecutiveSummaryResponse(
+        summary_en="Precomputed executive summary.",
+        summary_zh="\u9884\u8ba1\u7b97\u6267\u884c\u6458\u8981\u3002",
+        model="test-precompute",
+    )
+    seen: dict[str, object] = {}
+
+    async def fake_generate(req):
+        seen["request"] = req
+        return summary
+
+    monkeypatch.setattr(precompute.wizard, "generate_executive_summary", fake_generate)
+
+    enriched = asyncio.run(precompute._with_executive_summary(bundle))
+
+    assert enriched.executive_summary == summary.model_dump(mode="json")
+    req = seen["request"]
+    assert req.scenario == Scenario.SMARTPHONE_WIDE
+    assert req.total_track_mm == bundle.sample.paraxial.total_track_mm
+
+
 def test_precompute_request_uses_nominal_f_number_from_case_id(monkeypatch):
     monkeypatch.setattr(
         "app.core.demo_cache._compute_analysis_family",
@@ -336,6 +392,19 @@ def test_precompute_request_uses_nominal_f_number_from_case_id(monkeypatch):
         source_case_id=bundle.source_case_id,
         source_zmx_sha256=bundle.source_zmx_sha256,
     )
+
+
+def test_precompute_request_uses_index_image_height_for_patent_case(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.demo_cache._compute_analysis_family",
+        lambda _sample: (_spot(), _field(), _wavefront()),
+    )
+
+    bundle = build_demo_cache_bundle_for_case("US20170003482A1")
+
+    assert bundle.request.scenario == Scenario.SMARTPHONE_ULTRAWIDE
+    assert bundle.request.image_height_mm == 3.6863
+    assert bundle.request.image_height_mm != 1.0
 
 
 def test_precompute_case_lookup_preserves_decimal_case_id_without_suffix(monkeypatch):
@@ -477,14 +546,10 @@ def test_full_demo_cache_api_cache_hit_and_fallback_return_same_bundle(monkeypat
 def test_result_summary_page_prefers_cached_metrics(monkeypatch):
     bundle = _bundle()
     monkeypatch.setattr("app.main.load_demo_cache_bundle_for_request", lambda request: bundle)
-    summary = wizard.ExecutiveSummaryResponse(
-        summary_en="Cached metric summary.",
-        summary_zh="\u7f13\u5b58\u6307\u6807\u6458\u8981\u3002",
-        model="test-model",
-    )
+    generate_summary = AsyncMock(side_effect=AssertionError("result page synchronously awaited LLM"))
     monkeypatch.setattr(
         "app.main.wizard.generate_executive_summary",
-        AsyncMock(return_value=summary),
+        generate_summary,
     )
 
     response = client.post(
@@ -504,4 +569,6 @@ def test_result_summary_page_prefers_cached_metrics(monkeypatch):
     assert "4.44 mm" in html
     assert "8.88 um" in html
     assert "777 lp/mm" in html
+    assert "Cached metric summary." in html
     assert "99.00 mm" not in html
+    assert generate_summary.await_count == 0

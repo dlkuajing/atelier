@@ -289,6 +289,10 @@
         <section
           class="bilingual-summary"
           data-narrative-section="bilingual-summary"
+          data-summary-status="{{ summary_status }}"
+          data-summary-job-id="{{ summary_job_id }}"
+          data-summary-events-url="{{ summary_events_url }}"
+          data-summary-poll-url="{{ summary_poll_url }}"
           aria-labelledby="bilingual-summary-title"
         >
           <div class="section-heading">
@@ -305,7 +309,7 @@
             >
               <span class="brief-label">English</span>
               <h2 id="summary-en-title">Executive Summary</h2>
-              <p>{{ summary.summary_en }}</p>
+              <p id="summary-en-text">{{ summary.summary_en }}</p>
             </section>
 
             <section
@@ -316,15 +320,18 @@
             >
               <span class="brief-label">Chinese</span>
               <h2 id="summary-zh-title">执行摘要</h2>
-              <p>{{ summary.summary_zh }}</p>
+              <p id="summary-zh-text">{{ summary.summary_zh }}</p>
             </section>
           </div>
 
-          {% if summary.fallback_reason %}
-            <p class="summary-fallback" data-summary-fallback="{{ summary.fallback_reason }}">
-              {{ summary.fallback_reason }}
-            </p>
-          {% endif %}
+          <p
+            class="summary-fallback"
+            id="summary-fallback"
+            data-summary-fallback="{{ summary.fallback_reason or '' }}"
+            {% if not summary.fallback_reason %}hidden{% endif %}
+          >
+            {{ summary.fallback_reason or "" }}
+          </p>
         </section>
 
         <dl class="metrics-grid" aria-label="Result metrics">
@@ -337,5 +344,127 @@
         </dl>
       </section>
     </main>
+    <script>
+      (() => {
+        const root = document.querySelector('[data-narrative-section="bilingual-summary"]');
+        if (!root || root.dataset.summaryStatus !== "pending") {
+          return;
+        }
+
+        const enEl = document.getElementById("summary-en-text");
+        const zhEl = document.getElementById("summary-zh-text");
+        const fallbackEl = document.getElementById("summary-fallback");
+        const SUMMARY_POLL_INTERVAL_MS = 900;
+        const SUMMARY_TIMEOUT_MS = 90000;
+        const startedAt = Date.now();
+        let source = null;
+        let timeoutTimer = null;
+
+        const clearTimeoutGuard = () => {
+          if (timeoutTimer) {
+            window.clearTimeout(timeoutTimer);
+            timeoutTimer = null;
+          }
+        };
+
+        const renderTimeoutFallback = () => {
+          if (root.dataset.summaryStatus !== "pending") {
+            return false;
+          }
+          enEl.textContent = (
+            "Executive summary timed out after 90 seconds. The optical data and " +
+            "computed analysis package are available below."
+          );
+          zhEl.textContent = "执行摘要 90 秒内未返回；光学数据与实算分析包已在下方可用。";
+          fallbackEl.textContent = "executive_summary_timeout";
+          fallbackEl.dataset.summaryFallback = "executive_summary_timeout";
+          fallbackEl.hidden = false;
+          root.dataset.summaryStatus = "timeout";
+          if (source) {
+            source.close();
+          }
+          clearTimeoutGuard();
+          return true;
+        };
+
+        const renderSummary = (summary) => {
+          if (!summary) {
+            return false;
+          }
+          if (summary.summary_en) {
+            enEl.textContent = summary.summary_en;
+          }
+          if (summary.summary_zh) {
+            zhEl.textContent = summary.summary_zh;
+          }
+          if (summary.fallback_reason) {
+            fallbackEl.textContent = summary.fallback_reason;
+            fallbackEl.dataset.summaryFallback = summary.fallback_reason;
+            fallbackEl.hidden = false;
+          } else {
+            fallbackEl.textContent = "";
+            fallbackEl.dataset.summaryFallback = "";
+            fallbackEl.hidden = true;
+          }
+          root.dataset.summaryStatus = "ready";
+          clearTimeoutGuard();
+          return true;
+        };
+
+        const renderJob = (payload) => {
+          if (payload.status === "failed") {
+            fallbackEl.textContent = payload.error || "executive_summary_failed";
+            fallbackEl.dataset.summaryFallback = fallbackEl.textContent;
+            fallbackEl.hidden = false;
+            root.dataset.summaryStatus = "failed";
+            clearTimeoutGuard();
+            return true;
+          }
+          return renderSummary(payload.result && payload.result.summary);
+        };
+
+        const poll = async () => {
+          if (!root.dataset.summaryPollUrl || root.dataset.summaryStatus !== "pending") {
+            return;
+          }
+          if (Date.now() - startedAt >= SUMMARY_TIMEOUT_MS) {
+            renderTimeoutFallback();
+            return;
+          }
+          try {
+            const response = await fetch(root.dataset.summaryPollUrl, {
+              headers: { Accept: "application/json" },
+            });
+            if (response.ok && renderJob(await response.json())) {
+              return;
+            }
+          } catch {
+            // Keep the optical result visible; the summary can arrive on the next poll.
+          }
+          window.setTimeout(poll, SUMMARY_POLL_INTERVAL_MS);
+        };
+
+        timeoutTimer = window.setTimeout(renderTimeoutFallback, SUMMARY_TIMEOUT_MS);
+
+        if ("EventSource" in window && root.dataset.summaryEventsUrl) {
+          source = new EventSource(root.dataset.summaryEventsUrl);
+          source.addEventListener("succeeded", (event) => {
+            if (renderJob(JSON.parse(event.data))) {
+              source.close();
+            }
+          });
+          source.addEventListener("failed", (event) => {
+            renderJob(JSON.parse(event.data));
+            source.close();
+          });
+          source.onerror = () => {
+            source.close();
+            poll();
+          };
+          return;
+        }
+        poll();
+      })();
+    </script>
   </body>
 </html>

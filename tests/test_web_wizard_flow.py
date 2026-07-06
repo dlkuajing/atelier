@@ -50,7 +50,7 @@ class _HiddenInputParser(HTMLParser):
 def _hidden_summary_fields(html: str) -> _HiddenInputParser:
     parser = _HiddenInputParser()
     parser.feed(html)
-    assert parser.action == "/results/summary"
+    assert parser.action == "/jobs"
     assert parser.method == "post"
     assert "submit" in parser.button_types
     return parser
@@ -63,6 +63,12 @@ def test_homepage_form_posts_to_wizard_confirmation():
     assert 'class="requirement-form"' in response.text
     assert 'action="/wizard/confirm"' in response.text
     assert 'method="post"' in response.text
+    assert "Sample ultrawide" in response.text
+    assert "Sample wide" in response.text
+    assert 'data-example-requirement' in response.text
+    assert 'action="/jobs"' in response.text
+    assert 'name="image_height_mm" value="3.6863"' in response.text
+    assert 'name="wavelength_nm" value="550.0"' in response.text
 
 
 @patch("app.api.wizard.get_async_client")

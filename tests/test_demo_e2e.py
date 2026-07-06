@@ -10,7 +10,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi.testclient import TestClient
 
 from app.api import optical
-from app.core.engines import SleepEngine
 from app.core.job_store import JobStore
 from app.main import app
 
@@ -54,7 +53,7 @@ class _ResultSummaryFormParser(HTMLParser):
 def _result_summary_form(html: str) -> _ResultSummaryFormParser:
     parser = _ResultSummaryFormParser()
     parser.feed(html)
-    assert parser.action == "/results/summary"
+    assert parser.action == "/jobs"
     assert parser.method == "post"
     assert "submit" in parser.button_types
     return parser
@@ -122,7 +121,6 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
 
     store = JobStore()
     monkeypatch.setattr(optical, "job_store", store)
-    monkeypatch.setattr(optical, "get_deep_engine", lambda: SleepEngine(delay_seconds=0.001))
 
     with TestClient(app) as client:
         confirmation = client.post("/wizard/confirm", data={"requirement": requirement})
@@ -163,19 +161,17 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
         assert float(form_fields["airy_disc_diameter_um"]) > 0.0
         assert float(form_fields["cutoff_freq_lp_per_mm"]) > 0.0
 
-        submitted = client.post(
-            "/api/optical/jobs",
-            json={
-                "payload": {
-                    "scenario": form_fields["scenario"],
-                    "requirement": form_fields["requirement"],
-                    "focal_length_mm": float(form_fields["focal_length_mm"]),
-                    "total_track_mm": float(form_fields["total_track_mm"]),
-                }
-            },
-        )
-        assert submitted.status_code == 202, submitted.text
-        job_id = submitted.json()["job_id"]
+        submitted = client.post(form.action, data=form_fields, follow_redirects=False)
+        assert submitted.status_code == 303, submitted.text
+        location = submitted.headers["location"]
+        assert location.startswith("/jobs/")
+        job_id = location.rsplit("/", 1)[1]
+
+        progress = client.get(location)
+        assert progress.status_code == 200, progress.text
+        assert f'data-job-id="{job_id}"' in progress.text
+        assert f'data-result-url="/results/{job_id}"' in progress.text
+        assert "window.location.assign" in progress.text
 
         with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
             assert streamed.status_code == 200
@@ -184,13 +180,20 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
 
         assert "event: succeeded" in sse_body
         assert f'"job_id":"{job_id}"' in sse_body
-        assert '"engine":"sleep"' in sse_body
+        assert '"engine":"result-summary"' in sse_body
         assert '"status":"succeeded"' in sse_body
         assert '"scenario":"smartphone-wide"' in sse_body
 
-        result_form_fields = dict(form_fields)
-        result_form_fields["job_id"] = job_id
-        result = client.post(form.action, data=result_form_fields)
+        result = client.get(f"/results/{job_id}")
+        assert result.status_code == 200, result.text
+        summary_job_match = re.search(r'data-summary-job-id="([^"]+)"', result.text)
+        assert summary_job_match is not None
+        summary_job_id = summary_job_match.group(1)
+
+        with client.stream("GET", f"/api/optical/jobs/{summary_job_id}/events") as streamed:
+            assert streamed.status_code == 200
+            assert streamed.headers["content-type"].startswith("text/event-stream")
+            summary_sse_body = "".join(streamed.iter_text())
 
     assert result.status_code == 200, result.text
     html = result.text
@@ -258,9 +261,15 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
 
     assert 'data-narrative-section="bilingual-summary"' in html
     assert 'data-summary-lang="en"' in html
-    assert summary_en in html
     assert 'data-summary-lang="zh"' in html
-    assert summary_zh in html
+    assert 'data-summary-status="pending"' in html
+    assert f'data-summary-job-id="{summary_job_id}"' in html
+    assert "executive_summary_pending" in html
+    summary_event = re.search(r"event: succeeded\ndata: (.+)", summary_sse_body)
+    assert summary_event is not None
+    summary_payload = json.loads(summary_event.group(1))
+    assert summary_payload["result"]["summary"]["summary_en"] == summary_en
+    assert summary_payload["result"]["summary"]["summary_zh"] == summary_zh
 
     assert mock_client.chat.completions.create.await_count == 2
     extraction_messages = mock_client.chat.completions.create.call_args_list[0].kwargs["messages"]

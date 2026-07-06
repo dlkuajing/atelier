@@ -12,7 +12,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from app.core.case_library import load_case_library, match_case
+from app.core.case_library import _case_image_height_mm, load_case_library, match_case
 from app.core.field_analysis import FieldAnalysisResult, compute_field_analysis
 from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
@@ -24,7 +24,10 @@ ROOT = Path(__file__).resolve().parents[2]
 DEMO_CACHE_DIR = ROOT / "data" / "demo_cache"
 DEMO_CACHE_SCHEMA_VERSION = 2
 DEMO_CACHE_ANALYSIS_VERSION = "optiland-demo-analysis-v2"
-DEFAULT_DEMO_CASE_IDS = ("3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",)
+DEFAULT_DEMO_CASE_IDS = (
+    "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",
+    "US20170003482A1",
+)
 
 _IMH_RE = re.compile(r"_IMH(?P<imh>\d+(?:\.\d+)?)")
 _FNUM_RE = re.compile(r"(?:^|_)F(?P<fnum>\d+(?:\.\d+)?)(?=_FOV|_)")
@@ -83,6 +86,10 @@ class DemoAnalysisBundle(BaseModel):
     spot_diagram: SpotDiagramResult
     field_analysis: FieldAnalysisResult
     wavefront: WavefrontMetricsResult
+    executive_summary: dict[str, Any] | None = Field(
+        None,
+        description="Precomputed bilingual executive summary for fast result-page playback.",
+    )
     codev_artifact: dict[str, Any] | None = Field(
         None,
         description="Reserved slot for future CODE V output using the same cache address.",
@@ -248,12 +255,13 @@ def _request_from_sample(sample: OpticalSampleData) -> DemoCacheRequest:
     if sample.metadata is None:
         raise ValueError("demo cache sample requires metadata")
     case_id = sample.metadata.case_id
+    image_height_mm = _case_image_height_mm(sample) or _image_height_from_case_id(case_id)
     return DemoCacheRequest(
         scenario=sample.metadata.scenario,
         focal_length_mm=sample.metadata.nominal_efl_mm,
         f_number=_nominal_f_number_from_case_id(case_id) or sample.paraxial.f_number,
         field_of_view_deg=sample.metadata.fov_deg,
-        image_height_mm=_image_height_from_case_id(case_id),
+        image_height_mm=image_height_mm,
         n_elements=sample.metadata.n_pieces,
         wavelength_nm=550.0,
     )
@@ -277,12 +285,18 @@ def _source_zmx_path(sample: OpticalSampleData) -> Path:
 
 
 def source_zmx_sha256(source_zmx: str | Path) -> str:
-    """Return the SHA-256 digest for a source ZMX file."""
+    """Return an EOL-insensitive SHA-256 digest for a source ZMX file.
+
+    ZMX files have no eol gitattribute, so Windows (autocrlf) and Ubuntu CI
+    check out different bytes for the same blob. Hashing raw bytes made every
+    Windows-generated cache bundle read as stale on CI. Normalize CRLF before
+    hashing so the fingerprint tracks content, not platform.
+    """
 
     path = Path(source_zmx)
     if not path.is_absolute():
         path = ZMX_AMMO_DIR / path
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _source_zmx_sha256_for_sample(sample: OpticalSampleData) -> str:

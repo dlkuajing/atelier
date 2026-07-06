@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from app import main
 from app.core.aberration import MTFFieldData, MTFResult
 from app.core.field_analysis import FieldAnalysisResult
-from app.core.job_store import JobNotFoundError, JobRecord, JobStatus
+from app.core.job_store import JobNotFoundError, JobRecord, JobStatus, JobStore
 from app.core.lens_system import LayoutSVG, RayPath, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary, SurfaceDescriptor
 from app.core.optical_sample import CaseMetadata, OpticalSampleData
@@ -223,12 +223,100 @@ def _sample_payload() -> OpticalSampleData:
     )
 
 
+def _mock_result_job_payload(payload: dict[str, object]) -> dict[str, object]:
+    return {
+        "job_type": "result-summary",
+        "scenario": payload["scenario"],
+        "scenario_label_en": payload["scenario_label_en"],
+        "requirement": payload.get("requirement"),
+        "demo_cache_status": "miss",
+        "resolved": {
+            "focal_length_mm": float(payload["focal_length_mm"]),
+            "f_number": float(payload["f_number"]),
+            "field_of_view_deg": float(payload["field_of_view_deg"]),
+            "image_height_mm": float(payload["image_height_mm"]),
+            "n_elements": int(payload["n_elements"]),
+            "wavelength_nm": float(payload["wavelength_nm"]),
+            "total_track_mm": float(payload["total_track_mm"]),
+            "airy_disc_diameter_um": float(payload["airy_disc_diameter_um"]),
+            "cutoff_freq_lp_per_mm": float(payload["cutoff_freq_lp_per_mm"]),
+        },
+        "summary": {
+            "summary_en": "Mocked job result summary.",
+            "summary_zh": "\u6a21\u62df\u4efb\u52a1\u7ed3\u679c\u6458\u8981\u3002",
+            "model": "mock-result-worker",
+            "fallback_reason": None,
+        },
+        "sample": None,
+        "codev_artifact": None,
+    }
+
+
+def test_confirmation_continue_submits_result_job_and_result_page_is_reachable(monkeypatch):
+    store = JobStore()
+    monkeypatch.setattr(main.optical, "job_store", store)
+    seen: dict[str, object] = {}
+
+    async def fake_compute(payload):
+        seen["payload"] = dict(payload)
+        return _mock_result_job_payload(dict(payload))
+
+    monkeypatch.setattr(main, "_compute_result_summary_job", fake_compute)
+
+    with TestClient(app) as local_client:
+        submitted = local_client.post(
+            "/jobs",
+            data=_summary_form_payload(),
+            follow_redirects=False,
+        )
+        assert submitted.status_code == 303, submitted.text
+        location = submitted.headers["location"]
+        assert location.startswith("/jobs/")
+        job_id = location.rsplit("/", 1)[1]
+
+        progress = local_client.get(location)
+        assert progress.status_code == 200, progress.text
+        assert f'data-job-id="{job_id}"' in progress.text
+        assert f'data-events-url="/api/optical/jobs/{job_id}/events"' in progress.text
+        assert f'data-poll-url="/api/optical/jobs/{job_id}"' in progress.text
+        assert f'data-result-url="/results/{job_id}"' in progress.text
+        assert "new EventSource" in progress.text
+        assert "window.setTimeout(poll, 2000)" in progress.text
+        assert "job-progress-bar" in progress.text
+        assert "window.location.assign" in progress.text
+
+        with local_client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+            assert streamed.status_code == 200
+            assert streamed.headers["content-type"].startswith("text/event-stream")
+            sse_body = "".join(streamed.iter_text())
+
+        poll_response = local_client.get(
+            f"/api/optical/jobs/{job_id}",
+            headers={"Accept": "application/json"},
+        )
+        result = local_client.get(f"/results/{job_id}")
+
+    assert "event: succeeded" in sse_body
+    assert f'"job_id":"{job_id}"' in sse_body
+    assert '"engine":"result-summary"' in sse_body
+    assert poll_response.status_code == 200, poll_response.text
+    assert poll_response.json()["job_id"] == job_id
+    assert poll_response.json()["status"] == "succeeded"
+    assert seen["payload"]["job_type"] == "result-summary"
+    assert seen["payload"]["scenario"] == "smartphone-wide"
+    assert result.status_code == 200, result.text
+    assert "Design result" in result.text
+    assert 'data-result-summary' in result.text
+    assert f'data-job-id="{job_id}"' in result.text
+    assert "Mocked job result summary." in result.text
+
+
 @patch("app.api.wizard.get_async_client")
 def test_result_page_integrates_full_narrative_from_optical_sample(
     mock_get_client,
     monkeypatch,
 ):
-    summary_zh = _stub_summary_generation(mock_get_client)
+    mock_get_client.side_effect = AssertionError("result page synchronously awaited LLM")
     _install_job_store(monkeypatch, _job_record())
 
     seen: dict[str, object] = {}
@@ -279,14 +367,100 @@ def test_result_page_integrates_full_narrative_from_optical_sample(
 
     assert 'data-narrative-section="bilingual-summary"' in html
     assert 'data-summary-lang="en"' in html
-    assert "Integrated result narrative with optical evidence." in html
     assert 'data-summary-lang="zh"' in html
-    assert summary_zh in html
+    assert 'data-summary-status="pending"' in html
+    assert "Executive summary is being generated." in html
+    assert "executive_summary_pending" in html
+    assert mock_get_client.call_count == 0
 
     req = seen["request"]
     assert req.scenario == Scenario.SMARTPHONE_WIDE
     assert req.analysis_depth == "seed_only"
     assert req.max_total_track_mm == 4.35
+
+
+def test_result_page_cache_miss_defers_executive_summary(monkeypatch):
+    seen: dict[str, object] = {}
+
+    async def fake_match(req, response=None):
+        return _sample_payload()
+
+    def fake_submit(payload):
+        seen["summary_payload"] = dict(payload)
+        return "summary-job-1"
+
+    generate_summary = AsyncMock(side_effect=AssertionError("render path awaited LLM"))
+    monkeypatch.setattr(main.optical, "match", fake_match)
+    monkeypatch.setattr(main, "_submit_executive_summary_job", fake_submit)
+    monkeypatch.setattr(main.wizard, "generate_executive_summary", generate_summary)
+
+    payload = _summary_form_payload()
+    payload["job_id"] = ""
+    response = client.post("/results/summary", data=payload)
+
+    assert response.status_code == 200, response.text
+    html = response.text
+    assert 'data-summary-status="pending"' in html
+    assert 'data-summary-job-id="summary-job-1"' in html
+    assert 'data-summary-events-url="/api/optical/jobs/summary-job-1/events"' in html
+    assert 'data-summary-poll-url="/api/optical/jobs/summary-job-1"' in html
+    assert "new EventSource" in html
+    assert "SUMMARY_TIMEOUT_MS = 90000" in html
+    assert "executive_summary_timeout" in html
+    assert "Executive summary is being generated." in html
+    assert seen["summary_payload"]["job_type"] == "executive-summary"
+    request_payload = seen["summary_payload"]["request"]
+    assert request_payload["scenario"] == "smartphone-wide"
+    assert request_payload["total_track_mm"] == 4.35
+    assert generate_summary.await_count == 0
+
+
+def test_result_page_reuses_persisted_executive_summary_job(monkeypatch):
+    store = JobStore()
+    result_job_id = "result-job-reuse"
+    result_payload = _mock_result_job_payload(_summary_form_payload())
+    result_payload["summary_status"] = "pending"
+    result_payload["summary_job_payload"] = {
+        "job_type": "executive-summary",
+        "request": {
+            "scenario": "smartphone-wide",
+            "scenario_label_en": "Smartphone Wide",
+            "focal_length_mm": 3.8,
+            "f_number": 1.9,
+            "field_of_view_deg": 78.0,
+            "image_height_mm": 3.2,
+            "n_elements": 5,
+            "wavelength_nm": 550.0,
+            "total_track_mm": 4.35,
+            "airy_disc_diameter_um": 2.55,
+            "cutoff_freq_lp_per_mm": 820,
+        },
+    }
+    store._jobs[result_job_id] = JobRecord(
+        job_id=result_job_id,
+        engine="result-summary",
+        status=JobStatus.SUCCEEDED,
+        payload={"job_type": "result-summary"},
+        result=result_payload,
+    )
+    monkeypatch.setattr(main.optical, "job_store", store)
+    submitted: list[dict[str, object]] = []
+
+    def fake_submit(payload):
+        submitted.append(dict(payload))
+        return f"summary-job-{len(submitted)}"
+
+    monkeypatch.setattr(main, "_submit_executive_summary_job", fake_submit)
+
+    first = client.get(f"/results/{result_job_id}")
+    second = client.get(f"/results/{result_job_id}")
+
+    assert first.status_code == 200, first.text
+    assert second.status_code == 200, second.text
+    assert len(submitted) == 1
+    assert store.get(result_job_id).result["summary_job_id"] == "summary-job-1"
+    assert 'data-summary-job-id="summary-job-1"' in first.text
+    assert 'data-summary-job-id="summary-job-1"' in second.text
 
 
 def test_result_page_rejects_n_elements_above_optical_spec_limit():

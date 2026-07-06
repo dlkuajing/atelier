@@ -24,6 +24,8 @@
         data-job-progress
         data-job-id="{{ job_id }}"
         data-events-url="/api/optical/jobs/{{ job_id }}/events"
+        data-poll-url="/api/optical/jobs/{{ job_id }}"
+        data-result-url="{{ result_url }}"
         aria-labelledby="job-progress-title"
       >
         <p class="eyebrow">Deep engine task</p>
@@ -74,7 +76,7 @@
     <script>
       (() => {
         const root = document.querySelector("[data-job-progress]");
-        if (!root || !("EventSource" in window)) {
+        if (!root) {
           return;
         }
 
@@ -99,6 +101,10 @@
           succeeded: "Design task completed.",
           failed: "Design task failed.",
         };
+        let source = null;
+        let pollTimer = null;
+        let polling = false;
+        let stopped = false;
 
         const labelFor = (status) =>
           status.replace(/[-_]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -123,18 +129,65 @@
             errorPanel.hidden = false;
           }
           if (status === "succeeded" || status === "failed") {
-            source.close();
+            stopped = true;
+            if (pollTimer) {
+              window.clearTimeout(pollTimer);
+            }
+            if (source) {
+              source.close();
+            }
+            if (status === "succeeded" && root.dataset.resultUrl) {
+              window.location.assign(root.dataset.resultUrl);
+            }
           }
         };
 
-        const source = new EventSource(root.dataset.eventsUrl);
+        const schedulePoll = () => {
+          if (!stopped) {
+            pollTimer = window.setTimeout(poll, 2000);
+          }
+        };
+
+        const poll = async () => {
+          if (!root.dataset.pollUrl || stopped) {
+            return;
+          }
+          try {
+            const response = await fetch(root.dataset.pollUrl, {
+              headers: { Accept: "application/json" },
+            });
+            if (response.ok) {
+              render(await response.json());
+            }
+          } catch {
+            // Keep polling; the job snapshot endpoint is the SSE fallback path.
+          }
+          schedulePoll();
+        };
+
+        const startPolling = () => {
+          if (polling || stopped) {
+            return;
+          }
+          polling = true;
+          detailEl.textContent = "Connection interrupted. Polling the latest job snapshot.";
+          poll();
+        };
+
+        if (!("EventSource" in window)) {
+          startPolling();
+          return;
+        }
+
+        source = new EventSource(root.dataset.eventsUrl);
         ["queued", "running", "succeeded", "failed"].forEach((eventName) => {
           source.addEventListener(eventName, (event) => {
             render(JSON.parse(event.data));
           });
         });
         source.onerror = () => {
-          detailEl.textContent = "Connection interrupted. Refresh to load the latest snapshot.";
+          source.close();
+          startPolling();
         };
       })();
     </script>
