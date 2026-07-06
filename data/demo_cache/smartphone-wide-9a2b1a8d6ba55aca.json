@@ -2,7 +2,7 @@
   "cache_schema_version": 2,
   "cache_key": "smartphone-wide-9a2b1a8d6ba55aca",
   "analysis_fingerprint": "ea0390ba2704364e02a0578286d38de0bdc129a0df3ec70dd077fa1f55539a21",
-  "generated_at_utc": "2026-07-05T03:06:34.374768+00:00",
+  "generated_at_utc": "2026-07-06T13:38:47.452264+00:00",
   "source": "demo-precompute",
   "source_case_id": "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",
   "source_zmx": "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56.ZMX",
@@ -4748,5 +4748,11 @@
         ]
       }
     ]
+  },
+  "executive_summary": {
+    "summary_en": "This is a smartphone wide-angle module targeting f = 2.75 mm at f/2.45 over a 78° full field, delivered as a three-element starting layout. The Optiland solve lands total track at 3.56 mm, which sits comfortably inside the sub-4 mm envelope typical of production smartphone wide optics, and the 3.51 µm Airy disc with a 695 lp/mm diffraction cutoff is consistent with the stop and wavelength specified. Three elements is below the count of shipping smartphone wides, so this prescription is a first-order seed for aberration budgeting and tolerancing, not a manufacturing-ready design. Expect additional aspheres and a stray-light plan before it earns a place on a sensor.",
+    "summary_zh": "本方案针对手机广角模组,焦距 2.75 mm、光圈 f/2.45、全视场 78°,以三片式结构作为起点布局。Optiland 计算得到的总长为 3.56 mm,落在量产手机广角常见的 4 mm 以内包络中;550 nm 波长下艾里斑直径 3.51 µm、衍射截止频率 695 lp/mm,与所设光阑及波段自洽,说明一阶结构没有过约束。需要指出的是,当前主流手机广角普遍采用五到七片非球面,三片结构只能作为像差预算与公差分析的种子方案,而非可直接投产的处方。后续应引入更多非球面自由度,并规划杂散光与鬼像抑制,才能进入量产评估阶段。",
+    "model": "claude-opus-4-7",
+    "fallback_reason": null
   }
 }
