@@ -4,16 +4,20 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import contextlib
 import html
 import json
 import math
 import re
 import sys
+import unicodedata
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import httpx
+import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -32,6 +36,10 @@ from scripts.patent_crawler import _ppubs_access_token, _ppubs_patent_html  # no
 DEFAULT_POOL_GLOB = "uspto-smartphone-batch*.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "data" / "zmx-staging"
 DEFAULT_REPORT_PATH = ROOT / ".planning" / "loop" / "patent2zmx-spike-report.md"
+TRACE_WAVELENGTH_UM = 0.5876
+TRACE_PROVISIONAL_SEMI_DIAMETER_MM = 100.0
+TRACE_APERTURE_CLEARANCE = 1.02
+MIN_TRACE_SEMI_DIAMETER_MM = 0.05
 SUPPORTED_ASPHERE_ORDERS = {4, 6, 8, 10, 12, 14, 16}
 ASPHERE_ORDER_TO_CODEV = {
     4: "A",
@@ -96,6 +104,17 @@ class PatentPrescription:
         return self.focal_length_mm * math.tan(math.radians(self.hfov_deg))
 
 
+@dataclass(frozen=True)
+class TraceApertureAudit:
+    semi_diameters_mm: dict[int, float]
+    real_image_height_mm: float
+    sanity_image_height_mm: float
+    measured_surfaces: tuple[int, ...]
+    interpolated_surfaces: tuple[int, ...]
+    finite_final_rays: int
+    total_rays: int
+
+
 @dataclass
 class ConversionAttempt:
     patent_id: str
@@ -104,6 +123,8 @@ class ConversionAttempt:
     reason: str
     zmx_path: str = ""
     efl_mm: float | None = None
+    real_image_height_mm: float | None = None
+    sanity_image_height_mm: float | None = None
     coverage: dict[str, Any] = field(default_factory=dict)
 
 
@@ -112,7 +133,7 @@ def normalize_patent_text(value: str) -> str:
 
     text = re.sub(r"<maths.*?</maths>", " ", value, flags=re.DOTALL | re.IGNORECASE)
     text = re.sub(r"<[^>]+>", " ", text)
-    text = html.unescape(text)
+    text = unicodedata.normalize("NFKC", html.unescape(text))
     replacements = {
         "\u2212": "-",
         "\u2010": "-",
@@ -172,17 +193,21 @@ def parse_patent_prescription(raw_text: str, *, patent_id: str = "") -> PatentPr
     )
 
 
-def build_readout_from_prescription(prescription: PatentPrescription) -> CodeVReadout:
+def build_readout_from_prescription(
+    prescription: PatentPrescription,
+    *,
+    semi_diameters_mm: dict[int, float] | None = None,
+    image_height_y_mm: float | None = None,
+) -> CodeVReadout:
     """Build the existing CODE V readout DTO consumed by ``zmx_writer``."""
 
-    semi_diameter = _derived_clear_aperture_mm(prescription)
     stop_surface = _stop_surface_index(prescription.surfaces)
     surfaces = tuple(
         CodeVSurfaceReadout(
             index=surface.index,
             radius_y_mm=_finite_or_zero(surface.radius_mm),
             thickness_mm=_finite_or_zero(surface.thickness_mm),
-            semi_diameter_mm=semi_diameter,
+            semi_diameter_mm=_surface_semi_diameter_for_readout(surface, semi_diameters_mm),
             glass="___BLANK" if surface.nd and surface.nd > 1.000001 else None,
             nd=surface.nd,
             vd=surface.vd,
@@ -232,7 +257,9 @@ def build_readout_from_prescription(prescription: PatentPrescription) -> CodeVRe
         stop_surface=stop_surface,
         field_type="ANG",
         reference_wavelength_index=2,
-        image_height_y_mm=prescription.image_height_mm,
+        image_height_y_mm=(
+            image_height_y_mm if image_height_y_mm is not None else prescription.image_height_mm
+        ),
         surfaces=surfaces,
         fields=fields,
         wavelengths=wavelengths,
@@ -303,16 +330,11 @@ async def _convert_candidate(
     candidate: PatentCandidate,
     output_dir: Path,
 ) -> ConversionAttempt:
+    output_path = output_dir / f"{_safe_stem(candidate.patent_id)}.zmx"
     try:
         page_html = await _fetch_patent_html(client, token, candidate.patent_id)
         prescription = parse_patent_prescription(page_html, patent_id=candidate.patent_id)
-        readout = build_readout_from_prescription(prescription)
-        output_path = output_dir / f"{_safe_stem(candidate.patent_id)}.zmx"
-        write_zmx_from_codev_readout(
-            readout,
-            output_path,
-            name=_safe_stem(candidate.patent_id),
-        )
+        trace_audit = write_patent_zmx(prescription, output_path)
         optic = load_normalized_zmx(output_path)
         efl = float(optic.paraxial.f2())
         if not math.isfinite(efl):
@@ -324,9 +346,13 @@ async def _convert_candidate(
             reason="parsed and ingested",
             zmx_path=str(output_path.relative_to(ROOT)),
             efl_mm=efl,
-            coverage=_coverage(prescription),
+            real_image_height_mm=trace_audit.real_image_height_mm,
+            sanity_image_height_mm=trace_audit.sanity_image_height_mm,
+            coverage=_coverage(prescription, trace_audit=trace_audit),
         )
     except Exception as exc:  # noqa: BLE001 - report per-patent failure reason
+        with contextlib.suppress(FileNotFoundError):
+            output_path.unlink()
         return ConversionAttempt(
             patent_id=candidate.patent_id,
             title=candidate.title,
@@ -352,11 +378,21 @@ async def _fetch_patent_html(client: httpx.AsyncClient, token: str, patent_id: s
 
 def _find_first_embodiment_meta(text: str) -> re.Match[str]:
     number = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
+    embodiment = (
+        r"(?P<embodiment>"
+        r"\d+(?:st|nd|rd|th)\s+Embodiment|"
+        r"Embodiment\s+\d+|"
+        r"(?:First|Second|Third|Fourth|Fifth|Sixth|Seventh|Eighth|Ninth|Tenth)\s+"
+        r"Embodiment|"
+        r"EXAMPLE\s+\d+"
+        r")"
+    )
     pattern = re.compile(
-        rf"(?P<embodiment>\d+(?:st|nd|rd|th)\s+Embodiment)\s+"
-        rf"f\s*=\s*(?P<f>{number})\s*mm,?\s+"
-        rf"Fno\s*=\s*(?P<fno>{number}),?\s+"
-        rf"HFOV\s*=\s*(?P<hfov>{number})\s*deg",
+        rf"{embodiment}\s+"
+        rf"(?:f|focal\s+length)\s*=\s*(?P<f>{number})\s*(?:mm)?[,;]?\s+"
+        rf"(?:F\s*no\.?|FNO|F-number|F\s*/\s*#?)\s*=\s*(?P<fno>{number})[,;]?\s+"
+        rf"(?:HFOV|Half\s+FOV|Half\s+Field\s+of\s+View)\s*=\s*(?P<hfov>{number})"
+        rf"\s*(?:deg|degree|degrees)?",
         flags=re.IGNORECASE,
     )
     match = pattern.search(text)
@@ -498,6 +534,9 @@ def _find_coefficients_end(text: str, coeff_start: int) -> int:
         r"\s(?:\(\d+\)|\[\d+\])\s+In Table\b",
         r"\bIn Table\s+\d+[A-Z]?,\s+k represents\b",
         r"\b2nd\s+Embodiment\b",
+        r"\bEmbodiment\s+2\b",
+        r"\bSecond\s+Embodiment\b",
+        r"\bEXAMPLE\s+2\b",
     )
     ends = [
         match.start()
@@ -599,11 +638,15 @@ def _parse_number(token: str) -> float:
     return value
 
 
-def _coverage(prescription: PatentPrescription) -> dict[str, Any]:
+def _coverage(
+    prescription: PatentPrescription,
+    *,
+    trace_audit: TraceApertureAudit | None = None,
+) -> dict[str, Any]:
     surfaces = prescription.surfaces
     asphere_surfaces = [surface for surface in surfaces if surface.asphere_coefficients]
     glass_rows = [surface for surface in surfaces if surface.nd is not None and surface.vd is not None]
-    return {
+    coverage = {
         "surfaces": len(surfaces),
         "r": f"{sum(surface.radius_mm is not None for surface in surfaces)}/{len(surfaces)}",
         "d": f"{sum(surface.thickness_mm is not None for surface in surfaces)}/{len(surfaces)}",
@@ -612,9 +655,21 @@ def _coverage(prescription: PatentPrescription) -> dict[str, Any]:
         "f_mm": prescription.focal_length_mm,
         "f_number": prescription.f_number,
         "hfov_deg": prescription.hfov_deg,
-        "image_height_mm": prescription.image_height_mm,
-        "semi_diameter_policy": "derived clear aperture from f/Fno/HFOV",
+        "sanity_image_height_mm": prescription.image_height_mm,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
     }
+    if trace_audit is not None:
+        coverage.update(
+            {
+                "real_image_height_mm": trace_audit.real_image_height_mm,
+                "aperture_interpolated_surfaces": ",".join(
+                    str(index) for index in trace_audit.interpolated_surfaces
+                )
+                or "none",
+                "finite_final_rays": f"{trace_audit.finite_final_rays}/{trace_audit.total_rays}",
+            }
+        )
+    return coverage
 
 
 def _write_report(
@@ -631,18 +686,27 @@ def _write_report(
         f"- target_successes: {target_successes}",
         f"- attempts: {len(attempts)}",
         f"- successes: {len(successes)}",
+        f"- success_rate: {len(successes)}/{len(attempts)} ({(len(successes) / len(attempts) * 100 if attempts else 0.0):.1f}%)",
+        f"- rechecked_failures: {len(attempts) - len(successes)}",
         "- source: local data/patents/uspto-smartphone-batch*.jsonl + USPTO PPUBS HTML",
-        "- parser: deterministic first-embodiment table parse; no numeric LLM fill",
-        "- clear_aperture: derived from parsed f/Fno/HFOV only for ZMX DIAM/MEMA metadata",
+        "- parser: deterministic NFKC-normalized embodiment table parse; no numeric LLM fill",
+        "- clear_aperture: ZMX -> zmx_ingest/Optiland real-ray sampled per-surface envelope; f*tan(HFOV) is sanity-only",
+        "- imh: Optiland edge-field finite-ray image height persisted in report and ZMX tail comments",
         "",
         "## Per-patent attempts",
         "",
-        "| patent | status | zmx | efl_mm | field coverage | reason |",
-        "|---|---|---|---:|---|---|",
+        "| patent | status | zmx | efl_mm | real_imh_mm | f_tan_sanity_mm | field coverage | reason |",
+        "|---|---|---|---:|---:|---:|---|---|",
     ]
     for attempt in attempts:
         coverage = _format_coverage(attempt.coverage)
         efl = "" if attempt.efl_mm is None else f"{attempt.efl_mm:.6g}"
+        real_imh = (
+            "" if attempt.real_image_height_mm is None else f"{attempt.real_image_height_mm:.6g}"
+        )
+        sanity_imh = (
+            "" if attempt.sanity_image_height_mm is None else f"{attempt.sanity_image_height_mm:.6g}"
+        )
         lines.append(
             "| "
             + " | ".join(
@@ -651,6 +715,8 @@ def _write_report(
                     attempt.status,
                     _md_cell(attempt.zmx_path),
                     efl,
+                    real_imh,
+                    sanity_imh,
                     _md_cell(coverage),
                     _md_cell(attempt.reason),
                 )
@@ -672,8 +738,168 @@ def _format_coverage(coverage: dict[str, Any]) -> str:
         "f_mm",
         "f_number",
         "hfov_deg",
+        "real_image_height_mm",
+        "sanity_image_height_mm",
+        "finite_final_rays",
+        "aperture_interpolated_surfaces",
     )
     return "; ".join(f"{key}={coverage[key]}" for key in keys if key in coverage)
+
+
+def write_patent_zmx(
+    prescription: PatentPrescription,
+    output_path: Path,
+) -> TraceApertureAudit:
+    """Write a final patent ZMX after real-ray surface aperture auditing."""
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = output_path.with_name(f".{output_path.name}.trace-tmp")
+    provisional_readout = build_readout_from_prescription(prescription)
+    try:
+        write_zmx_from_codev_readout(
+            provisional_readout,
+            temp_path,
+            name=_safe_stem(prescription.patent_id),
+        )
+        trace_audit = _trace_surface_apertures(temp_path, prescription)
+        final_readout = build_readout_from_prescription(
+            prescription,
+            semi_diameters_mm=trace_audit.semi_diameters_mm,
+            image_height_y_mm=trace_audit.real_image_height_mm,
+        )
+        write_zmx_from_codev_readout(
+            final_readout,
+            temp_path,
+            name=_safe_stem(prescription.patent_id),
+        )
+        _append_zmx_tail_comments(temp_path, trace_audit)
+        temp_path.replace(output_path)
+        return trace_audit
+    except Exception:
+        with contextlib.suppress(FileNotFoundError):
+            temp_path.unlink()
+        raise
+
+
+def _trace_surface_apertures(
+    output_path: Path,
+    prescription: PatentPrescription,
+) -> TraceApertureAudit:
+    optic = load_normalized_zmx(output_path)
+    samples = _trace_aperture_samples()
+    h_x = np.array([sample[0] for sample in samples], dtype=float)
+    h_y = np.array([sample[1] for sample in samples], dtype=float)
+    p_x = np.array([sample[2] for sample in samples], dtype=float)
+    p_y = np.array([sample[3] for sample in samples], dtype=float)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        rays = optic.trace_generic(h_x, h_y, p_x, p_y, TRACE_WAVELENGTH_UM)
+
+    measured: dict[int, float] = {}
+    surface_indices = sorted(surface.index for surface in prescription.surfaces)
+    for surface_index in surface_indices:
+        if surface_index >= len(optic.surfaces.surfaces):
+            continue
+        surface = optic.surfaces.surfaces[surface_index]
+        x = np.asarray(getattr(surface, "x", []), dtype=float)
+        y = np.asarray(getattr(surface, "y", []), dtype=float)
+        radius = np.sqrt(x * x + y * y)
+        finite = radius[np.isfinite(radius)]
+        if finite.size:
+            measured[surface_index] = float(np.max(finite))
+
+    semi_diameters, interpolated = _interpolate_missing_surface_apertures(
+        measured,
+        surface_indices,
+    )
+    semi_diameters = {
+        index: max(MIN_TRACE_SEMI_DIAMETER_MM, value * TRACE_APERTURE_CLEARANCE)
+        for index, value in semi_diameters.items()
+    }
+
+    real_image_height = _edge_field_image_height(rays, samples)
+    finite_final = int(np.isfinite(np.asarray(rays.y, dtype=float)).sum())
+
+    return TraceApertureAudit(
+        semi_diameters_mm=semi_diameters,
+        real_image_height_mm=real_image_height,
+        sanity_image_height_mm=prescription.image_height_mm,
+        measured_surfaces=tuple(sorted(measured)),
+        interpolated_surfaces=tuple(interpolated),
+        finite_final_rays=finite_final,
+        total_rays=len(samples),
+    )
+
+
+def _trace_aperture_samples() -> list[tuple[float, float, float, float]]:
+    return [
+        (0.0, 0.0, 0.0, 0.0),
+        (0.0, 0.0, 0.0, 1.0),
+        (0.0, 1.0, 0.0, 0.0),
+        (0.0, 1.0, 0.0, 1.0),
+        (0.0, 1.0, 0.0, -1.0),
+    ]
+
+
+def _edge_field_image_height(rays: Any, samples: list[tuple[float, float, float, float]]) -> float:
+    y = np.asarray(rays.y, dtype=float)
+    edge_indices = [
+        index
+        for index, sample in enumerate(samples)
+        if math.isclose(sample[1], 1.0, abs_tol=1e-12)
+    ]
+    edge_y = np.abs(y[edge_indices])
+    finite = edge_y[np.isfinite(edge_y)]
+    if finite.size:
+        return float(np.max(finite))
+    raise PatentParseError("full-field real rays did not reach image surface")
+
+
+def _interpolate_missing_surface_apertures(
+    measured: dict[int, float],
+    surface_indices: list[int],
+) -> tuple[dict[int, float], list[int]]:
+    if not measured:
+        raise PatentParseError("real-ray trace produced no finite surface heights")
+
+    result: dict[int, float] = {}
+    interpolated: list[int] = []
+    measured_indices = sorted(measured)
+    for index in surface_indices:
+        if index in measured:
+            result[index] = measured[index]
+            continue
+        interpolated.append(index)
+        lower = max((candidate for candidate in measured_indices if candidate < index), default=None)
+        upper = min((candidate for candidate in measured_indices if candidate > index), default=None)
+        if lower is not None and upper is not None:
+            ratio = (index - lower) / (upper - lower)
+            result[index] = measured[lower] + (measured[upper] - measured[lower]) * ratio
+        elif lower is not None:
+            result[index] = measured[lower]
+        elif upper is not None:
+            result[index] = measured[upper]
+        else:
+            raise PatentParseError(f"surface {index} aperture could not be interpolated")
+    return result, interpolated
+
+
+def _append_zmx_tail_comments(output_path: Path, trace_audit: TraceApertureAudit) -> None:
+    comments = [
+        f"! ATELIER_REAL_IMH_MM {_fmt_comment_number(trace_audit.real_image_height_mm)}",
+        f"! ATELIER_FTAN_IMH_SANITY_MM {_fmt_comment_number(trace_audit.sanity_image_height_mm)}",
+        f"! ATELIER_APERTURE_POLICY Optiland real-ray per-surface envelope; clearance={TRACE_APERTURE_CLEARANCE:.3g}",
+        "! ATELIER_APERTURE_INTERPOLATED_SURFACES "
+        + (",".join(str(index) for index in trace_audit.interpolated_surfaces) or "none"),
+    ]
+    with output_path.open("ab") as handle:
+        for comment in comments:
+            handle.write((comment + "\r\n").encode("ascii"))
+
+
+def _fmt_comment_number(value: float) -> str:
+    return f"{value:.10g}"
 
 
 def _md_cell(value: str) -> str:
@@ -713,10 +939,13 @@ def _stop_surface_index(surfaces: list[PatentSurface]) -> int:
     return surfaces[0].index
 
 
-def _derived_clear_aperture_mm(prescription: PatentPrescription) -> float:
-    image_height = abs(prescription.image_height_mm)
-    entrance_radius = prescription.focal_length_mm / (2.0 * prescription.f_number)
-    return max(1.0, image_height * 1.1, entrance_radius * 1.2)
+def _surface_semi_diameter_for_readout(
+    surface: PatentSurface,
+    semi_diameters_mm: dict[int, float] | None,
+) -> float:
+    if semi_diameters_mm is not None and surface.index in semi_diameters_mm:
+        return semi_diameters_mm[surface.index]
+    return TRACE_PROVISIONAL_SEMI_DIAMETER_MM
 
 
 def _finite_or_zero(value: float | None) -> float:
