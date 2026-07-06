@@ -185,6 +185,15 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
         assert '"scenario":"smartphone-wide"' in sse_body
 
         result = client.get(f"/results/{job_id}")
+        assert result.status_code == 200, result.text
+        summary_job_match = re.search(r'data-summary-job-id="([^"]+)"', result.text)
+        assert summary_job_match is not None
+        summary_job_id = summary_job_match.group(1)
+
+        with client.stream("GET", f"/api/optical/jobs/{summary_job_id}/events") as streamed:
+            assert streamed.status_code == 200
+            assert streamed.headers["content-type"].startswith("text/event-stream")
+            summary_sse_body = "".join(streamed.iter_text())
 
     assert result.status_code == 200, result.text
     html = result.text
@@ -252,9 +261,15 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
 
     assert 'data-narrative-section="bilingual-summary"' in html
     assert 'data-summary-lang="en"' in html
-    assert summary_en in html
     assert 'data-summary-lang="zh"' in html
-    assert summary_zh in html
+    assert 'data-summary-status="pending"' in html
+    assert f'data-summary-job-id="{summary_job_id}"' in html
+    assert "executive_summary_pending" in html
+    summary_event = re.search(r"event: succeeded\ndata: (.+)", summary_sse_body)
+    assert summary_event is not None
+    summary_payload = json.loads(summary_event.group(1))
+    assert summary_payload["result"]["summary"]["summary_en"] == summary_en
+    assert summary_payload["result"]["summary"]["summary_zh"] == summary_zh
 
     assert mock_client.chat.completions.create.await_count == 2
     extraction_messages = mock_client.chat.completions.create.call_args_list[0].kwargs["messages"]

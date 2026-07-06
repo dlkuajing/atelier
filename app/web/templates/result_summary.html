@@ -289,6 +289,10 @@
         <section
           class="bilingual-summary"
           data-narrative-section="bilingual-summary"
+          data-summary-status="{{ summary_status }}"
+          data-summary-job-id="{{ summary_job_id }}"
+          data-summary-events-url="{{ summary_events_url }}"
+          data-summary-poll-url="{{ summary_poll_url }}"
           aria-labelledby="bilingual-summary-title"
         >
           <div class="section-heading">
@@ -305,7 +309,7 @@
             >
               <span class="brief-label">English</span>
               <h2 id="summary-en-title">Executive Summary</h2>
-              <p>{{ summary.summary_en }}</p>
+              <p id="summary-en-text">{{ summary.summary_en }}</p>
             </section>
 
             <section
@@ -316,15 +320,18 @@
             >
               <span class="brief-label">Chinese</span>
               <h2 id="summary-zh-title">执行摘要</h2>
-              <p>{{ summary.summary_zh }}</p>
+              <p id="summary-zh-text">{{ summary.summary_zh }}</p>
             </section>
           </div>
 
-          {% if summary.fallback_reason %}
-            <p class="summary-fallback" data-summary-fallback="{{ summary.fallback_reason }}">
-              {{ summary.fallback_reason }}
-            </p>
-          {% endif %}
+          <p
+            class="summary-fallback"
+            id="summary-fallback"
+            data-summary-fallback="{{ summary.fallback_reason or '' }}"
+            {% if not summary.fallback_reason %}hidden{% endif %}
+          >
+            {{ summary.fallback_reason or "" }}
+          </p>
         </section>
 
         <dl class="metrics-grid" aria-label="Result metrics">
@@ -337,5 +344,87 @@
         </dl>
       </section>
     </main>
+    <script>
+      (() => {
+        const root = document.querySelector('[data-narrative-section="bilingual-summary"]');
+        if (!root || root.dataset.summaryStatus !== "pending") {
+          return;
+        }
+
+        const enEl = document.getElementById("summary-en-text");
+        const zhEl = document.getElementById("summary-zh-text");
+        const fallbackEl = document.getElementById("summary-fallback");
+
+        const renderSummary = (summary) => {
+          if (!summary) {
+            return false;
+          }
+          if (summary.summary_en) {
+            enEl.textContent = summary.summary_en;
+          }
+          if (summary.summary_zh) {
+            zhEl.textContent = summary.summary_zh;
+          }
+          if (summary.fallback_reason) {
+            fallbackEl.textContent = summary.fallback_reason;
+            fallbackEl.dataset.summaryFallback = summary.fallback_reason;
+            fallbackEl.hidden = false;
+          } else {
+            fallbackEl.textContent = "";
+            fallbackEl.dataset.summaryFallback = "";
+            fallbackEl.hidden = true;
+          }
+          root.dataset.summaryStatus = "ready";
+          return true;
+        };
+
+        const renderJob = (payload) => {
+          if (payload.status === "failed") {
+            fallbackEl.textContent = payload.error || "executive_summary_failed";
+            fallbackEl.dataset.summaryFallback = fallbackEl.textContent;
+            fallbackEl.hidden = false;
+            root.dataset.summaryStatus = "failed";
+            return true;
+          }
+          return renderSummary(payload.result && payload.result.summary);
+        };
+
+        const poll = async () => {
+          if (!root.dataset.summaryPollUrl || root.dataset.summaryStatus !== "pending") {
+            return;
+          }
+          try {
+            const response = await fetch(root.dataset.summaryPollUrl, {
+              headers: { Accept: "application/json" },
+            });
+            if (response.ok && renderJob(await response.json())) {
+              return;
+            }
+          } catch {
+            // Keep the optical result visible; the summary can arrive on the next poll.
+          }
+          window.setTimeout(poll, 900);
+        };
+
+        if ("EventSource" in window && root.dataset.summaryEventsUrl) {
+          const source = new EventSource(root.dataset.summaryEventsUrl);
+          source.addEventListener("succeeded", (event) => {
+            if (renderJob(JSON.parse(event.data))) {
+              source.close();
+            }
+          });
+          source.addEventListener("failed", (event) => {
+            renderJob(JSON.parse(event.data));
+            source.close();
+          });
+          source.onerror = () => {
+            source.close();
+            poll();
+          };
+          return;
+        }
+        poll();
+      })();
+    </script>
   </body>
 </html>

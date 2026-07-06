@@ -264,6 +264,11 @@ def _bundle(*, include_run_evidence: bool = False) -> DemoAnalysisBundle:
         spot_diagram=_spot(),
         field_analysis=_field(),
         wavefront=_wavefront(),
+        executive_summary=wizard.ExecutiveSummaryResponse(
+            summary_en="Cached CODE V comparison summary.",
+            summary_zh="缓存的 CODE V 对比摘要。",
+            model="test-model",
+        ).model_dump(mode="json"),
         codev_artifact=_codev_artifact(include_run_evidence=include_run_evidence),
     )
 

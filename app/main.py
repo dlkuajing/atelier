@@ -35,7 +35,11 @@ from app.core.field_analysis import compute_field_analysis  # noqa: E402
 from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
 from app.core.optical_calc import airy_disk_diameter_um  # noqa: E402
-from app.core.optical_sample import CodeVRefinementComparison, OpticalSampleData  # noqa: E402
+from app.core.optical_sample import (  # noqa: E402
+    CodeVRefinementComparison,
+    DesignAssessment,
+    OpticalSampleData,
+)
 from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
 from app.core.provenance import ProvenanceSource  # noqa: E402
 from app.core.spot_diagram import compute_spot_diagram  # noqa: E402
@@ -900,6 +904,107 @@ def _optional_int(value: object) -> int | None:
     return int(value)
 
 
+def _executive_summary_request(
+    *,
+    scenario: Scenario,
+    scenario_label_en: str,
+    focal_length_mm: float,
+    f_number: float,
+    field_of_view_deg: float,
+    image_height_mm: float,
+    n_elements: int | None,
+    wavelength_nm: float,
+    total_track_mm: float,
+    airy_disc_diameter_um: float,
+    cutoff_freq_lp_per_mm: float,
+    design_assessment: DesignAssessment | None,
+) -> wizard.ExecutiveSummaryRequest:
+    return wizard.ExecutiveSummaryRequest(
+        scenario=scenario,
+        scenario_label_en=scenario_label_en,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+        total_track_mm=total_track_mm,
+        airy_disc_diameter_um=airy_disc_diameter_um,
+        cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+        design_assessment=design_assessment,
+    )
+
+
+def _summary_job_payload(req: wizard.ExecutiveSummaryRequest) -> dict[str, object]:
+    return {
+        "job_type": "executive-summary",
+        "request": req.model_dump(mode="json"),
+    }
+
+
+def _pending_executive_summary() -> wizard.ExecutiveSummaryResponse:
+    return wizard.ExecutiveSummaryResponse(
+        summary_en=(
+            "Executive summary is being generated. The optical data and computed "
+            "analysis package are already available below."
+        ),
+        summary_zh="执行摘要正在生成；光学数据与实算分析包已先行渲染在下方。",
+        model="pending",
+        fallback_reason="executive_summary_pending",
+    )
+
+
+def _cached_executive_summary(cached: DemoAnalysisBundle | None) -> wizard.ExecutiveSummaryResponse | None:
+    if cached is None or not isinstance(cached.executive_summary, Mapping):
+        return None
+    with suppress(Exception):
+        return wizard.ExecutiveSummaryResponse.model_validate(cached.executive_summary)
+    return None
+
+
+async def _compute_executive_summary_job(payload: Mapping[str, object]) -> dict[str, object]:
+    request_payload = payload.get("request")
+    if not isinstance(request_payload, Mapping):
+        raise ValueError("executive summary job has invalid request payload")
+    summary = await wizard.generate_executive_summary(
+        wizard.ExecutiveSummaryRequest.model_validate(request_payload)
+    )
+    return {
+        "job_type": "executive-summary",
+        "summary": summary.model_dump(mode="json"),
+    }
+
+
+class ExecutiveSummaryEngine:
+    """JobStore-compatible worker for deferred result-page LLM summaries."""
+
+    name = "executive-summary"
+
+    def is_available(self) -> bool:
+        return True
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "name": self.name,
+            "engine": "ExecutiveSummaryEngine",
+            "available": True,
+            "capabilities": ["web-executive-summary"],
+        }
+
+    def submit(self, payload: Mapping[str, object]) -> Mapping[str, object]:
+        return asyncio.run(_compute_executive_summary_job(payload))
+
+
+def _submit_executive_summary_job(payload: Mapping[str, object]) -> str:
+    if not hasattr(optical.job_store, "submit"):
+        return ""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return ""
+    return optical.job_store.submit(ExecutiveSummaryEngine(), payload)
+
+
 async def _compute_result_summary_job(payload: Mapping[str, object]) -> dict[str, object]:
     scenario = _result_payload_scenario(payload)
     scenario_label_en = str(payload["scenario_label_en"])
@@ -955,22 +1060,25 @@ async def _compute_result_summary_job(payload: Mapping[str, object]) -> dict[str
         if sample is not None:
             design_assessment = sample.design_assessment
 
-    summary = await wizard.generate_executive_summary(
-        wizard.ExecutiveSummaryRequest(
-            scenario=scenario,
-            scenario_label_en=scenario_label_en,
-            focal_length_mm=focal_length_mm,
-            f_number=f_number,
-            field_of_view_deg=field_of_view_deg,
-            image_height_mm=image_height_mm,
-            n_elements=n_elements,
-            wavelength_nm=wavelength_nm,
-            total_track_mm=total_track_mm,
-            airy_disc_diameter_um=airy_disc_diameter_um,
-            cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
-            design_assessment=design_assessment,
-        )
+    summary_request = _executive_summary_request(
+        scenario=scenario,
+        scenario_label_en=scenario_label_en,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        wavelength_nm=wavelength_nm,
+        total_track_mm=total_track_mm,
+        airy_disc_diameter_um=airy_disc_diameter_um,
+        cutoff_freq_lp_per_mm=cutoff_freq_lp_per_mm,
+        design_assessment=design_assessment,
     )
+    summary = _cached_executive_summary(cached)
+    summary_status = "cached" if summary is not None else "pending"
+    if summary is None:
+        summary = _pending_executive_summary()
+
     return {
         "job_type": "result-summary",
         "scenario": scenario.value,
@@ -988,6 +1096,10 @@ async def _compute_result_summary_job(payload: Mapping[str, object]) -> dict[str
             "airy_disc_diameter_um": airy_disc_diameter_um,
             "cutoff_freq_lp_per_mm": cutoff_freq_lp_per_mm,
         },
+        "summary_status": summary_status,
+        "summary_job_payload": _summary_job_payload(summary_request)
+        if summary_status == "pending"
+        else None,
         "summary": summary.model_dump(mode="json"),
         "sample": sample.model_dump(mode="json") if sample is not None else None,
         "codev_artifact": codev_artifact,
@@ -1035,6 +1147,15 @@ def _result_summary_context(
     summary = wizard.ExecutiveSummaryResponse.model_validate(summary_payload)
     scenario = Scenario(str(result["scenario"]))
     codev_artifact = result.get("codev_artifact")
+    summary_status = str(result.get("summary_status") or "ready")
+    summary_job_id = str(result.get("summary_job_id") or "")
+    summary_job_payload = result.get("summary_job_payload")
+    if (
+        summary_status == "pending"
+        and not summary_job_id
+        and isinstance(summary_job_payload, Mapping)
+    ):
+        summary_job_id = _submit_executive_summary_job(summary_job_payload)
 
     focal_length_mm = float(resolved["focal_length_mm"])
     f_number = float(resolved["f_number"])
@@ -1051,6 +1172,12 @@ def _result_summary_context(
         "demo_cache_status": str(result["demo_cache_status"]),
         "requirement": result.get("requirement"),
         "summary": summary,
+        "summary_status": summary_status,
+        "summary_job_id": summary_job_id,
+        "summary_events_url": f"/api/optical/jobs/{summary_job_id}/events"
+        if summary_job_id
+        else "",
+        "summary_poll_url": f"/api/optical/jobs/{summary_job_id}" if summary_job_id else "",
         "target_metrics": (
             ("Focal length", f"{focal_length_mm:.2f} mm"),
             ("F-number", f"f/{f_number:.2f}"),

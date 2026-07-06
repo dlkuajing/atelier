@@ -307,7 +307,7 @@ def test_result_page_integrates_full_narrative_from_optical_sample(
     mock_get_client,
     monkeypatch,
 ):
-    summary_zh = _stub_summary_generation(mock_get_client)
+    mock_get_client.side_effect = AssertionError("result page synchronously awaited LLM")
     _install_job_store(monkeypatch, _job_record())
 
     seen: dict[str, object] = {}
@@ -358,14 +358,50 @@ def test_result_page_integrates_full_narrative_from_optical_sample(
 
     assert 'data-narrative-section="bilingual-summary"' in html
     assert 'data-summary-lang="en"' in html
-    assert "Integrated result narrative with optical evidence." in html
     assert 'data-summary-lang="zh"' in html
-    assert summary_zh in html
+    assert 'data-summary-status="pending"' in html
+    assert "Executive summary is being generated." in html
+    assert "executive_summary_pending" in html
+    assert mock_get_client.call_count == 0
 
     req = seen["request"]
     assert req.scenario == Scenario.SMARTPHONE_WIDE
     assert req.analysis_depth == "seed_only"
     assert req.max_total_track_mm == 4.35
+
+
+def test_result_page_cache_miss_defers_executive_summary(monkeypatch):
+    seen: dict[str, object] = {}
+
+    async def fake_match(req, response=None):
+        return _sample_payload()
+
+    def fake_submit(payload):
+        seen["summary_payload"] = dict(payload)
+        return "summary-job-1"
+
+    generate_summary = AsyncMock(side_effect=AssertionError("render path awaited LLM"))
+    monkeypatch.setattr(main.optical, "match", fake_match)
+    monkeypatch.setattr(main, "_submit_executive_summary_job", fake_submit)
+    monkeypatch.setattr(main.wizard, "generate_executive_summary", generate_summary)
+
+    payload = _summary_form_payload()
+    payload["job_id"] = ""
+    response = client.post("/results/summary", data=payload)
+
+    assert response.status_code == 200, response.text
+    html = response.text
+    assert 'data-summary-status="pending"' in html
+    assert 'data-summary-job-id="summary-job-1"' in html
+    assert 'data-summary-events-url="/api/optical/jobs/summary-job-1/events"' in html
+    assert 'data-summary-poll-url="/api/optical/jobs/summary-job-1"' in html
+    assert "new EventSource" in html
+    assert "Executive summary is being generated." in html
+    assert seen["summary_payload"]["job_type"] == "executive-summary"
+    request_payload = seen["summary_payload"]["request"]
+    assert request_payload["scenario"] == "smartphone-wide"
+    assert request_payload["total_track_mm"] == 4.35
+    assert generate_summary.await_count == 0
 
 
 def test_result_page_rejects_n_elements_above_optical_spec_limit():

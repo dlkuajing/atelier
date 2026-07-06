@@ -7,6 +7,7 @@ Run:
 from __future__ import annotations
 
 import argparse
+import asyncio
 import contextlib
 import hashlib
 import json
@@ -19,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from app.api import wizard  # noqa: E402
 from app.core.aberration import compute_mtf  # noqa: E402
 from app.core.demo_cache import (  # noqa: E402
     DEFAULT_DEMO_CASE_IDS,
@@ -76,6 +78,43 @@ def _source_zmx_path(bundle: DemoAnalysisBundle) -> Path:
     if not path.is_file():
         raise FileNotFoundError(f"source ZMX not found: {path}")
     return path
+
+
+def _executive_summary_request(bundle: DemoAnalysisBundle) -> wizard.ExecutiveSummaryRequest:
+    sample = bundle.sample
+    metadata = sample.metadata
+    scenario = metadata.scenario if metadata is not None else bundle.request.scenario
+    scenario_label_en = scenario.value.replace("-", " ").title()
+    return wizard.ExecutiveSummaryRequest(
+        scenario=scenario,
+        scenario_label_en=scenario_label_en,
+        focal_length_mm=sample.paraxial.effective_focal_length_mm,
+        f_number=sample.paraxial.f_number,
+        field_of_view_deg=metadata.fov_deg if metadata is not None else bundle.request.field_of_view_deg,
+        image_height_mm=bundle.request.image_height_mm,
+        n_elements=metadata.n_pieces if metadata is not None else bundle.request.n_elements,
+        wavelength_nm=bundle.request.wavelength_nm,
+        total_track_mm=sample.paraxial.total_track_mm,
+        airy_disc_diameter_um=sample.mtf.airy_disc_diameter_um,
+        cutoff_freq_lp_per_mm=sample.mtf.cutoff_freq_lp_per_mm,
+        design_assessment=sample.design_assessment,
+    )
+
+
+async def _with_executive_summary(bundle: DemoAnalysisBundle) -> DemoAnalysisBundle:
+    request = _executive_summary_request(bundle)
+    try:
+        summary = await wizard.generate_executive_summary(request)
+    except Exception as exc:  # noqa: BLE001 - precompute must still write offline bundles.
+        summary = wizard._deterministic_executive_summary(
+            request,
+            model="precompute-fallback",
+            fallback_reason=f"executive_summary_precompute_failure: {type(exc).__name__}",
+        )
+    return bundle.model_copy(
+        update={"executive_summary": summary.model_dump(mode="json")},
+        deep=True,
+    )
 
 
 def _codev_run_evidence(
@@ -205,6 +244,7 @@ def main() -> int:
 
     for case_id in case_ids:
         bundle = build_demo_cache_bundle_for_case(case_id)
+        bundle = asyncio.run(_with_executive_summary(bundle))
         codev_status = "skipped:requested"
         if not args.skip_codev:
             bundle, codev_status = _with_codev_artifact(bundle)

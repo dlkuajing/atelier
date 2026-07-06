@@ -83,6 +83,10 @@ class DemoAnalysisBundle(BaseModel):
     spot_diagram: SpotDiagramResult
     field_analysis: FieldAnalysisResult
     wavefront: WavefrontMetricsResult
+    executive_summary: dict[str, Any] | None = Field(
+        None,
+        description="Precomputed bilingual executive summary for fast result-page playback.",
+    )
     codev_artifact: dict[str, Any] | None = Field(
         None,
         description="Reserved slot for future CODE V output using the same cache address.",
