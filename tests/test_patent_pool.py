@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import json
 import re
+from collections import Counter
 from pathlib import Path
 
+import httpx
 import pytest
 
+import scripts.patent_crawler as patent_crawler
 from scripts.patent_crawler import (
     PatentRecord,
     family_fingerprint,
@@ -86,7 +89,7 @@ def test_family_fingerprint_normalizes_assignee_title_and_f_fno_values() -> None
     assert family_fingerprint(base) != family_fingerprint(different_f_number)
 
 
-def test_pool_filter_skips_family_fingerprint_duplicates() -> None:
+def test_pool_filter_marks_family_fingerprint_duplicates_without_skipping() -> None:
     existing = [_fixture_record("US1000010A1", assignee="Sunny Optical Technology Group")]
     duplicate = _fixture_record(
         "US1000011A1",
@@ -103,8 +106,12 @@ def test_pool_filter_skips_family_fingerprint_duplicates() -> None:
 
     accepted, stats = filter_patent_records_by_pool([duplicate, fresh], existing)
 
-    assert [record.id for record in accepted] == ["US1000012A1"]
-    assert stats.family_duplicate_skipped == 1
+    assert [record.id for record in accepted] == ["US1000011A1", "US1000012A1"]
+    assert duplicate.family_hint is not None
+    assert "near_duplicate_of=US1000010A1" in duplicate.family_hint
+    assert fresh.family_hint is None
+    assert stats.family_hint_tagged == 1
+    assert stats.family_duplicate_skipped == 0
     assert stats.assignee_quota_skipped == 0
 
 
@@ -140,6 +147,55 @@ def test_pool_filter_skips_assignee_when_quota_would_exceed_thirty_percent() -> 
     assert [record.id for record in accepted] == ["US2000101A1"]
     assert stats.assignee_quota_skipped == 1
     assert stats.family_duplicate_skipped == 0
+
+
+async def test_uspto_record_skipped_logs_exception_status_and_skips_failure_sleep(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    events: list[tuple[str, dict[str, object]]] = []
+    sleep_calls: list[float] = []
+
+    class FakeLogger:
+        def warning(self, event: str, **kwargs: object) -> None:
+            events.append((event, kwargs))
+
+    async def fail_fetch(
+        _client: object,
+        _token: str,
+        _document_id: str,
+        _source_type: str,
+    ) -> str:
+        request = httpx.Request("GET", "https://ppubs.example.test/html")
+        response = httpx.Response(503, request=request)
+        raise httpx.HTTPStatusError("", request=request, response=response)
+
+    async def fake_sleep(seconds: float) -> None:
+        sleep_calls.append(seconds)
+
+    monkeypatch.setattr(patent_crawler, "logger", FakeLogger())
+    monkeypatch.setattr(patent_crawler, "_ppubs_patent_html", fail_fetch)
+    monkeypatch.setattr(patent_crawler.asyncio, "sleep", fake_sleep)
+
+    reason_counts: Counter[str] = Counter()
+    record = await patent_crawler._record_for_ppubs_doc(
+        object(),
+        "token",
+        {"documentId": "US-FAIL-A1", "type": "US-PGPUB"},
+        skip_reason_counts=reason_counts,
+    )
+
+    assert record is None
+    assert sleep_calls == []
+    assert reason_counts == Counter({"http_503": 1})
+    assert len(events) == 1
+    event, payload = events[0]
+    assert event == "uspto_record_skipped"
+    assert payload["document_id"] == "US-FAIL-A1"
+    assert payload["stage"] == "fetch"
+    assert payload["error"]
+    assert payload["error_type"] == "HTTPStatusError"
+    assert payload["http_status"] == 503
+    assert payload["failure_reason"] == "http_503"
 
 
 def test_uspto_batch7_report_records_query_stats() -> None:

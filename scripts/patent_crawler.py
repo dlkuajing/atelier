@@ -98,12 +98,14 @@ class PatentRecord:
     filing_date: str | None
     source: str
     source_url: str
+    family_hint: str | None = None
 
 
 @dataclass
 class CrawlFilterStats:
     seen: int = 0
     accepted: int = 0
+    family_hint_tagged: int = 0
     family_duplicate_skipped: int = 0
     assignee_quota_skipped: int = 0
 
@@ -241,6 +243,25 @@ def _assignee_key(record: PatentRecord | Mapping[str, Any]) -> str:
     return _normalize_assignee(value) if isinstance(value, str) else ""
 
 
+def _record_id(record: PatentRecord | Mapping[str, Any]) -> str:
+    value = _record_mapping(record).get("id")
+    return str(value).strip() if value is not None else ""
+
+
+def _family_hint_value(fingerprint: FamilyFingerprint, matched_record_id: str) -> str:
+    assignee, title, focal_bin, fno_bin = fingerprint
+    parts = [f"near_duplicate_of={matched_record_id or 'unknown'}"]
+    if assignee:
+        parts.append(f"assignee={assignee}")
+    if title:
+        parts.append(f"title={title[:80]}")
+    if focal_bin is not None:
+        parts.append(f"f_bin={focal_bin}")
+    if fno_bin is not None:
+        parts.append(f"fno_bin={fno_bin}")
+    return "; ".join(parts)
+
+
 def _would_exceed_assignee_quota(
     assignee: str,
     assignee_counts: Counter[str],
@@ -264,9 +285,11 @@ def filter_patent_records_by_pool(
     max_assignee_share: float = ASSIGNEE_QUOTA_FRACTION,
     quota_min_pool_size: int = ASSIGNEE_QUOTA_MIN_POOL_SIZE,
 ) -> tuple[list[PatentRecord], CrawlFilterStats]:
-    """Apply all-pool family fingerprint dedupe and assignee share quota."""
+    """Apply all-pool family hints and assignee share quota."""
     stats = CrawlFilterStats()
-    fingerprints = {family_fingerprint(record) for record in existing_records}
+    fingerprints: dict[FamilyFingerprint, str] = {}
+    for record in existing_records:
+        fingerprints.setdefault(family_fingerprint(record), _record_id(record))
     assignee_counts = Counter(
         assignee for record in existing_records if (assignee := _assignee_key(record))
     )
@@ -276,9 +299,10 @@ def filter_patent_records_by_pool(
     for record in records:
         stats.seen += 1
         fingerprint = family_fingerprint(record)
-        if fingerprint in fingerprints:
-            stats.family_duplicate_skipped += 1
-            continue
+        duplicate_of = fingerprints.get(fingerprint)
+        record.family_hint = (
+            _family_hint_value(fingerprint, duplicate_of) if duplicate_of is not None else None
+        )
 
         assignee = _assignee_key(record)
         if _would_exceed_assignee_quota(
@@ -293,7 +317,10 @@ def filter_patent_records_by_pool(
 
         accepted.append(record)
         stats.accepted += 1
-        fingerprints.add(fingerprint)
+        if record.family_hint is not None:
+            stats.family_hint_tagged += 1
+        else:
+            fingerprints.setdefault(fingerprint, _record_id(record))
         if assignee:
             assignee_counts[assignee] += 1
         total_count += 1
@@ -425,6 +452,45 @@ async def _ppubs_patent_html(
     return response.text
 
 
+def _exception_diagnostics(exc: Exception) -> dict[str, Any]:
+    response = getattr(exc, "response", None)
+    status_code = getattr(response, "status_code", None)
+    http_status = status_code if isinstance(status_code, int) else None
+    error = str(exc).strip() or repr(exc)
+    if http_status is not None:
+        failure_reason = f"http_{http_status}"
+    elif isinstance(exc, httpx.TimeoutException):
+        failure_reason = "timeout"
+    elif isinstance(exc, httpx.RequestError):
+        failure_reason = "request_error"
+    else:
+        failure_reason = type(exc).__name__
+    return {
+        "error": error,
+        "error_type": type(exc).__name__,
+        "http_status": http_status,
+        "failure_reason": failure_reason,
+    }
+
+
+def _record_skip(
+    document_id: str,
+    exc: Exception,
+    *,
+    stage: str,
+    skip_reason_counts: Counter[str] | None,
+) -> None:
+    diagnostics = _exception_diagnostics(exc)
+    if skip_reason_counts is not None:
+        skip_reason_counts[diagnostics["failure_reason"]] += 1
+    logger.warning(
+        "uspto_record_skipped",
+        document_id=document_id,
+        stage=stage,
+        **diagnostics,
+    )
+
+
 def _strip_html(value: str) -> str:
     text = re.sub(r"<maths.*?</maths>", " ", value, flags=re.DOTALL | re.IGNORECASE)
     text = re.sub(r"<[^>]+>", " ", text)
@@ -490,6 +556,8 @@ async def _record_for_ppubs_doc(
     client: httpx.AsyncClient,
     token: str,
     doc: dict[str, Any],
+    *,
+    skip_reason_counts: Counter[str] | None = None,
 ) -> PatentRecord | None:
     document_id = str(doc.get("documentId") or "")
     source_type = str(doc.get("type") or "")
@@ -497,12 +565,28 @@ async def _record_for_ppubs_doc(
         return None
     try:
         page_html = await _ppubs_patent_html(client, token, document_id, source_type)
+    except Exception as exc:
+        _record_skip(
+            document_id,
+            exc,
+            stage="fetch",
+            skip_reason_counts=skip_reason_counts,
+        )
+        return None
+
+    await asyncio.sleep(0.8)
+
+    try:
         record = _ppubs_record_from_doc(doc, page_html)
         validate_patent_record(asdict(record))
     except Exception as exc:
-        logger.warning("uspto_record_skipped", document_id=document_id, error=str(exc))
+        _record_skip(
+            document_id,
+            exc,
+            stage="parse",
+            skip_reason_counts=skip_reason_counts,
+        )
         return None
-    await asyncio.sleep(0.8)
     return record
 
 
@@ -511,12 +595,19 @@ async def _records_from_ppubs_docs(
     token: str,
     docs: list[dict[str, Any]],
     max_records: int | None = None,
+    *,
+    skip_reason_counts: Counter[str] | None = None,
 ) -> list[PatentRecord]:
     records: list[PatentRecord] = []
     for doc in docs:
         if max_records is not None and len(records) >= max_records:
             break
-        record = await _record_for_ppubs_doc(client, token, doc)
+        record = await _record_for_ppubs_doc(
+            client,
+            token,
+            doc,
+            skip_reason_counts=skip_reason_counts,
+        )
         if record is not None:
             records.append(record)
     return records
@@ -633,6 +724,7 @@ def _next_ipc_cursor_class(cursor: Mapping[str, Any]) -> tuple[int, str] | None:
 def _add_stats(total: CrawlFilterStats, current: CrawlFilterStats) -> None:
     total.seen += current.seen
     total.accepted += current.accepted
+    total.family_hint_tagged += current.family_hint_tagged
     total.family_duplicate_skipped += current.family_duplicate_skipped
     total.assignee_quota_skipped += current.assignee_quota_skipped
 
@@ -649,6 +741,7 @@ async def search_uspto_ipc_sweep(
     accepted_ids: set[str] = set()
     pool_records: list[PatentRecord | Mapping[str, Any]] = list(existing_records or [])
     total_stats = CrawlFilterStats()
+    record_skip_reasons: Counter[str] = Counter()
 
     cursor = _load_ipc_cursor(cursor_path)
     async with httpx.AsyncClient(timeout=60) as client:
@@ -667,7 +760,12 @@ async def search_uspto_ipc_sweep(
                 page_size,
                 cursor_marker=cursor_marker,
             )
-            page_records = await _records_from_ppubs_docs(client, token, page.docs)
+            page_records = await _records_from_ppubs_docs(
+                client,
+                token,
+                page.docs,
+                skip_reason_counts=record_skip_reasons,
+            )
             page_records = [record for record in page_records if record.id not in accepted_ids]
             filtered, stats = filter_patent_records_by_pool(page_records, pool_records)
             _add_stats(total_stats, stats)
@@ -695,8 +793,10 @@ async def search_uspto_ipc_sweep(
         "ipc_sweep_finished",
         accepted=len(accepted),
         seen=total_stats.seen,
+        family_hint_tagged=total_stats.family_hint_tagged,
         family_duplicate_skipped=total_stats.family_duplicate_skipped,
         assignee_quota_skipped=total_stats.assignee_quota_skipped,
+        record_skip_reasons=dict(sorted(record_skip_reasons.items())),
         cursor_path=str(cursor_path),
     )
     return accepted[:limit]
@@ -875,6 +975,7 @@ def _apply_pool_filters_for_output(
         "crawl_filters_applied",
         seen=stats.seen,
         accepted=stats.accepted,
+        family_hint_tagged=stats.family_hint_tagged,
         family_duplicate_skipped=stats.family_duplicate_skipped,
         assignee_quota_skipped=stats.assignee_quota_skipped,
         existing_pool_count=len(existing_records),
