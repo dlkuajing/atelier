@@ -216,45 +216,30 @@ def test_balanced_fov_tradeoff_rejects_bad_fov_alternative_branch():
     assert coverage["f_number"].status == "met"
     assert coverage["element_count"].status == "met"
     assert assessment.branch_selection_policy is not None
-    # E2-01 batch 1: the enlarged 39-seed library surfaces the request's
-    # first-order EFL/image-height/FOV inconsistency (EFL 3.0 vs first-order
-    # 2.84 for image height 2.30 / FOV 78) more strongly, so the branch policy now
-    # leads with the fov-spec-reconciliation repair rather than resolving straight
-    # to the seed baseline. The winner is unchanged and the bad closer-FOV
-    # alternative is still rejected (asserted below).
-    assert assessment.branch_selection_policy.status == "strategy_resolution_required"
-    assert assessment.branch_selection_policy.primary_candidate_id == "fov-spec-reconciliation"
+    # DATA-06c intake gives staged patent seeds real positive IMH values, so the
+    # image-height normalization range no longer pushes this minor first-order
+    # inconsistency into a strategy fork. The policy resolves to the delivered
+    # seed baseline while keeping the FOV repair as a review-note preview.
+    assert assessment.branch_selection_policy.status == "resolved"
+    assert assessment.branch_selection_policy.primary_candidate_id == "seed-baseline"
     repair_preview = assessment.spec_repair_preview
     assert repair_preview is not None
     assert repair_preview.status == "tradeoff_after_repair"
-    # E2-01 batch 1: the repaired-target replay now ranks 4P_F2.2_FOV74.7 first
-    # (still a real GGG seed, no miss), so the preview carries more tradeoffs than
-    # the pre-batch single-FOV note. NOTE: the enlarged pool includes patent seeds
-    # whose runtime image height is 0.0 (case_id has no IMH token; see
-    # _case_image_height_mm), which widens the image-height normalization range and
-    # perturbs these secondary preview rankings. Delivered winner is unchanged.
-    assert repair_preview.coverage_summary.met_count == 2
-    assert repair_preview.coverage_summary.tradeoff_count == 4
+    assert repair_preview.coverage_summary.met_count == 5
+    assert repair_preview.coverage_summary.tradeoff_count == 1
     assert repair_preview.coverage_summary.miss_count == 0
     assert repair_preview.remaining_tradeoffs == [
-        "F-number=tradeoff",
         "Field of view=tradeoff",
-        "MTF field evidence=tradeoff",
-        "Element count=tradeoff",
     ]
     repair_decision = assessment.spec_repair_decision
     assert repair_decision is not None
     assert repair_decision.status == "recommended_with_tradeoffs"
     assert repair_decision.rerun_contract is not None
-    # E2-01 batch 1: the repaired-target replay ranks 4P_F2.2_FOV74.7 first, so the
-    # rerun contract points there -- distinct from the delivered winner
-    # (5P_F1.8_FOV74.1). Same imh-normalization perturbation noted above; delivery
-    # is unchanged, only the advisory repaired-target ranking differs.
     assert (
         repair_decision.rerun_contract.expected_case_id
-        == "4P_F2.2_FOV74.7_EFL2.9_IMH2.2_TTL3.90"
+        == "5P_F1.8_FOV74.1_EFL2.9_IMH2.3_TTL4.15"
     )
-    assert repair_decision.rerun_contract.expected_case_id != assessment.matched_case_id
+    assert repair_decision.rerun_contract.expected_case_id == assessment.matched_case_id
     draft_candidates = {
         candidate.candidate_id: candidate for candidate in assessment.draft_candidates
     }
@@ -321,11 +306,11 @@ def test_spec_repair_rerun_contract_is_idempotent():
     assert any(
         task.stage == "requirement_resolution" for task in assessment.acceptance_improvement_tasks
     )
-    # E2-01 batch 1: the repaired-target rerun's exact seed reaches 0.85 field, so
-    # full-field recovery now leads the optimization queue ahead of optimizer
-    # stabilization.
-    assert assessment.optimization_task_queue[0].task_id == "recover-full-field"
-    assert assessment.optimization_task_runs[0].task_id == "recover-full-field"
+    # DATA-06c IMH anchoring keeps the repaired-target rerun on the same exact
+    # seed baseline; the first actionable queue item is optimizer stabilization,
+    # with image-quality recovery dependent on the first-order lock.
+    assert assessment.optimization_task_queue[0].task_id == "stabilize-optimizer"
+    assert assessment.optimization_task_runs[0].task_id == "stabilize-optimizer"
 
 
 def test_match_case_uses_ttl_and_design_intent():

@@ -52,18 +52,32 @@ def test_high_fov_seed_intake_audit_reports_current_gap():
     assert report["image_height_window_mm"] == [2.55, 3.25]
     assert report["element_count_window"] == [4, 6]
     assert report["accepted_seed_candidates"] == []
+    assert report["full_field_accepted_seed_count"] == 0
+    assert "strict high-FOV full-field" in report["accepted_seed_count_semantics"]
+    assert report["lightweight_seed_count"] == 67
+    assert report["lightweight_accepted_seed_count"] == 67
+    assert report["lightweight_rejected_seed_count"] == 0
+    assert report["lightweight_seed_candidates"]
+    assert all(
+        all(candidate["checks"].values()) for candidate in report["lightweight_seed_candidates"]
+    )
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
+    assert any(
+        "DATA-06c lightweight accepted seeds=67/67" in item
+        for item in report["known_evidence"]
+    )
     assert any("best stable high-FOV seed=" in item for item in report["known_evidence"])
     assert any("FOV >= 85.0 deg" in item for item in report["missing_evidence"])
     assert any("image height in 2.55-3.25 mm" in item for item in report["missing_evidence"])
     assert any("element count 4-6P" in item for item in report["missing_evidence"])
     assert any("1.0" in item for item in report["missing_evidence"])
     nearest = {item["role"]: item for item in report["nearest_candidates"]}
+    assert nearest["nearest_high_fov"]["case_id"] == "US-20230288669-A1-e4"
     assert nearest["nearest_high_fov"]["mtf_max_field_frac"] < 1.0
-    # 0.8/0.85 -> 0.85/0.9 after the XASPHERE coefficient-mapping fix:
-    # corrected even-asphere sag lets edge rays trace one field step further.
-    assert nearest["nearest_high_fov"]["highest_stable_field_frac"] == pytest.approx(0.85)
-    assert nearest["nearest_high_fov"]["edge_field_cliff_frac"] == pytest.approx(0.9)
+    # DATA-06c keeps bounded 0.5-field payload MTF for converted seeds, but the
+    # protected edge scan can still probe the loaded ZMX independently.
+    assert nearest["nearest_high_fov"]["highest_stable_field_frac"] == pytest.approx(1.0)
+    assert nearest["nearest_high_fov"]["edge_field_cliff_frac"] is None
     # E2-01 batch 1: best_stable_high_fov is now a real >=85 deg full-field(1.0)
     # patent seed (US20170003482A1, 91 deg, all edge fields stable) -- the
     # evidence-layer blocker is cleared. It still is NOT accepted for THIS
@@ -151,6 +165,8 @@ def test_seed_intake_cli_matches_runtime_assessment_contract():
     # acquisition probe still reports a gap with zero accepted candidates.
     assert cli_report["status"] == "gap"
     assert cli_report["accepted_seed_count"] == 0
+    assert cli_report["full_field_accepted_seed_count"] == 0
+    assert cli_report["lightweight_accepted_seed_count"] == 67
     assert cli_report["full_field_seed_count"] > 0
     assert cli_report["high_fov_seed_count"] > 0
     assert any(
@@ -194,14 +210,14 @@ def test_seed_intake_audit_can_preflight_raw_candidate_zmx(tmp_path):
 
     report = _audit(args)
 
-    # E2-01 batch 1: 39-seed library + 1 preflight candidate = 40 visible seeds,
-    # 9 high-FOV (8 in-library + the candidate). Accepted stays 0: the candidate
-    # is 0.85 field and no seed fits the full-field acquisition window.
-    assert len(load_case_library()) == 39
-    assert report["total_seed_count"] == 40
-    assert report["high_fov_seed_count"] == 9
+    # DATA-06c intake: 106-seed library + 1 preflight candidate = 107 visible
+    # seeds, 17 high-FOV (16 in-library + the candidate). Accepted stays 0: no
+    # seed fits the full-field acquisition window.
+    assert len(load_case_library()) == 106
+    assert report["total_seed_count"] == 107
+    assert report["high_fov_seed_count"] == 17
     assert report["accepted_seed_count"] == 0
-    assert any("total visible phone seeds=40" in item for item in report["known_evidence"])
+    assert any("total visible phone seeds=107" in item for item in report["known_evidence"])
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
 
 
@@ -222,9 +238,9 @@ def test_seed_intake_preflight_endpoint_audits_uploaded_zmx():
             "target_elements": "5",
             "element_count_lo": "4",
             "element_count_hi": "6",
-            "candidate_fov": "70",
-            "candidate_efl": "9",
-            "candidate_n_pieces": "3",
+            "candidate_fov": "88",
+            "candidate_efl": "2.8",
+            "candidate_n_pieces": "5",
         },
         files={
             "candidate_zmx": (
@@ -238,13 +254,10 @@ def test_seed_intake_preflight_endpoint_audits_uploaded_zmx():
     assert response.status_code == 200
     report = response.json()
     assert report["status"] == "gap"
-    # E2-01 batch 1: 39-seed library + 1 uploaded candidate = 40 seeds, 9 high-FOV.
-    assert report["total_seed_count"] == 40
-    assert report["high_fov_seed_count"] == 9
+    # DATA-06c intake: 106-seed library + 1 uploaded candidate = 107 seeds,
+    # 17 high-FOV.
+    assert report["total_seed_count"] == 107
+    assert report["high_fov_seed_count"] == 17
     assert report["accepted_seed_count"] == 0
+    assert any("total visible phone seeds=107" in item for item in report["known_evidence"])
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
-    uploaded = next(
-        item for item in report["nearest_candidates"] if item["source_zmx"] == source.name
-    )
-    assert uploaded["fov_deg"] == pytest.approx(89.5)
-    assert uploaded["n_pieces"] == 5

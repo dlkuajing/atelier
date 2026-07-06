@@ -12,7 +12,7 @@ import re
 import sys
 import unicodedata
 import warnings
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -40,7 +40,8 @@ TRACE_WAVELENGTH_UM = 0.5876
 TRACE_PROVISIONAL_SEMI_DIAMETER_MM = 100.0
 TRACE_APERTURE_CLEARANCE = 1.02
 MIN_TRACE_SEMI_DIAMETER_MM = 0.05
-SUPPORTED_ASPHERE_ORDERS = {4, 6, 8, 10, 12, 14, 16}
+NUMBER_PATTERN = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
+SUPPORTED_ASPHERE_ORDERS = {4, 6, 8, 10, 12, 14, 16, 18, 20}
 ASPHERE_ORDER_TO_CODEV = {
     4: "A",
     6: "B",
@@ -49,7 +50,11 @@ ASPHERE_ORDER_TO_CODEV = {
     12: "E",
     14: "F",
     16: "G",
+    18: "H",
+    20: "J",
 }
+XASPHERE_WRITABLE_TERMS = ("A", "B", "C", "D", "E", "F", "G", "H", "J")
+XASPHERE_HIGH_TERMS = {"H", "J"}
 MATERIAL_TOKENS = {
     "PLASTIC",
     "GLASS",
@@ -105,6 +110,16 @@ class PatentPrescription:
 
 
 @dataclass(frozen=True)
+class _EmbodimentMeta:
+    embodiment: str
+    start: int
+    end: int
+    focal_length_mm: float
+    f_number: float
+    hfov_deg: float
+
+
+@dataclass(frozen=True)
 class TraceApertureAudit:
     semi_diameters_mm: dict[int, float]
     real_image_height_mm: float
@@ -121,11 +136,20 @@ class ConversionAttempt:
     title: str
     status: str
     reason: str
+    embodiment: str = ""
     zmx_path: str = ""
     efl_mm: float | None = None
     real_image_height_mm: float | None = None
     sanity_image_height_mm: float | None = None
     coverage: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class _PrescriptionParseAttempt:
+    embodiment_number: int
+    embodiment: str
+    prescription: PatentPrescription | None = None
+    error: Exception | None = None
 
 
 def normalize_patent_text(value: str) -> str:
@@ -163,12 +187,71 @@ def normalize_patent_text(value: str) -> str:
 def parse_patent_prescription(raw_text: str, *, patent_id: str = "") -> PatentPrescription:
     """Parse the first USPTO embodiment prescription table in ``raw_text``."""
 
+    return parse_patent_prescriptions(raw_text, patent_id=patent_id)[0]
+
+
+def parse_patent_prescriptions(raw_text: str, *, patent_id: str = "") -> list[PatentPrescription]:
+    """Parse every USPTO embodiment/example prescription table in ``raw_text``."""
+
+    attempts = _parse_prescription_attempts(raw_text, patent_id=patent_id)
+    prescriptions: list[PatentPrescription] = []
+    for attempt in attempts:
+        if attempt.error is not None:
+            raise attempt.error
+        if attempt.prescription is None:
+            raise PatentParseError(f"{attempt.embodiment} did not produce a prescription")
+        prescriptions.append(attempt.prescription)
+    return prescriptions
+
+
+def _parse_prescription_attempts(
+    raw_text: str,
+    *,
+    patent_id: str = "",
+) -> list[_PrescriptionParseAttempt]:
+    """Parse embodiment tables independently so one bad table does not hide later ones."""
+
     text = normalize_patent_text(raw_text)
-    meta = _find_first_embodiment_meta(text)
-    coeff_start = _find_required(text, "Aspheric Coefficients", meta.end())
-    surface_table = _surface_table_text(text, meta.end(), coeff_start)
+    metas = _find_embodiment_metas(text)
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, meta in enumerate(metas, start=1):
+        next_meta_index = index
+        section_end = metas[next_meta_index].start if next_meta_index < len(metas) else len(text)
+        try:
+            prescription = _parse_prescription_at_meta(text, meta, section_end, patent_id)
+        except Exception as exc:  # noqa: BLE001 - surfaced as a per-embodiment failure
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=index,
+                    embodiment=meta.embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=meta.embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_prescription_at_meta(
+    text: str,
+    meta: _EmbodimentMeta,
+    section_end: int,
+    patent_id: str,
+) -> PatentPrescription:
+    coeff_start = _find_required_before(text, "Aspheric Coefficients", meta.end, section_end)
+    surface_table = _surface_table_text(text, meta.end, coeff_start)
     surfaces = _parse_surface_table(surface_table)
-    coefficients, unsupported = _parse_asphere_coefficients(text, coeff_start)
+    coefficients, unsupported = _parse_asphere_coefficients(
+        text,
+        coeff_start,
+        section_end=section_end,
+    )
     if unsupported:
         raise PatentParseError(
             "unsupported nonzero high-order asphere terms: " + ", ".join(unsupported[:8])
@@ -184,10 +267,10 @@ def parse_patent_prescription(raw_text: str, *, patent_id: str = "") -> PatentPr
 
     return PatentPrescription(
         patent_id=patent_id,
-        embodiment=meta.group("embodiment"),
-        focal_length_mm=_parse_number(meta.group("f")),
-        f_number=_parse_number(meta.group("fno")),
-        hfov_deg=_parse_number(meta.group("hfov")),
+        embodiment=meta.embodiment,
+        focal_length_mm=meta.focal_length_mm,
+        f_number=meta.f_number,
+        hfov_deg=meta.hfov_deg,
         surfaces=optical_surfaces,
         unsupported_asphere_terms=unsupported,
     )
@@ -314,10 +397,9 @@ async def run_conversion(
         for candidate in candidates:
             if len(attempts) >= max_attempts or successes >= target_successes:
                 break
-            attempt = await _convert_candidate(client, token, candidate, output_dir)
-            attempts.append(attempt)
-            if attempt.status == "success":
-                successes += 1
+            candidate_attempts = await _convert_candidate(client, token, candidate, output_dir)
+            attempts.extend(candidate_attempts)
+            successes += sum(attempt.status == "success" for attempt in candidate_attempts)
             await asyncio.sleep(0.25)
 
     _write_report(report_path, attempts, target_successes=target_successes)
@@ -329,36 +411,82 @@ async def _convert_candidate(
     token: str,
     candidate: PatentCandidate,
     output_dir: Path,
-) -> ConversionAttempt:
-    output_path = output_dir / f"{_safe_stem(candidate.patent_id)}.zmx"
+) -> list[ConversionAttempt]:
     try:
         page_html = await _fetch_patent_html(client, token, candidate.patent_id)
-        prescription = parse_patent_prescription(page_html, patent_id=candidate.patent_id)
-        trace_audit = write_patent_zmx(prescription, output_path)
-        optic = load_normalized_zmx(output_path)
-        efl = float(optic.paraxial.f2())
-        if not math.isfinite(efl):
-            raise PatentParseError("generated ZMX loaded but EFL was not finite")
-        return ConversionAttempt(
-            patent_id=candidate.patent_id,
-            title=candidate.title,
-            status="success",
-            reason="parsed and ingested",
-            zmx_path=str(output_path.relative_to(ROOT)),
-            efl_mm=efl,
-            real_image_height_mm=trace_audit.real_image_height_mm,
-            sanity_image_height_mm=trace_audit.sanity_image_height_mm,
-            coverage=_coverage(prescription, trace_audit=trace_audit),
-        )
+        parse_attempts = _parse_prescription_attempts(page_html, patent_id=candidate.patent_id)
     except Exception as exc:  # noqa: BLE001 - report per-patent failure reason
-        with contextlib.suppress(FileNotFoundError):
-            output_path.unlink()
-        return ConversionAttempt(
-            patent_id=candidate.patent_id,
-            title=candidate.title,
-            status="failed",
-            reason=f"{type(exc).__name__}: {exc}",
+        return [
+            ConversionAttempt(
+                patent_id=candidate.patent_id,
+                title=candidate.title,
+                status="failed",
+                reason=f"{type(exc).__name__}: {exc}",
+            )
+        ]
+
+    attempts: list[ConversionAttempt] = []
+    for parse_attempt in parse_attempts:
+        if parse_attempt.error is not None:
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="failed",
+                    reason=f"{type(parse_attempt.error).__name__}: {parse_attempt.error}",
+                    embodiment=parse_attempt.embodiment,
+                )
+            )
+            continue
+        if parse_attempt.prescription is None:
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="failed",
+                    reason="PatentParseError: embodiment did not produce a prescription",
+                    embodiment=parse_attempt.embodiment,
+                )
+            )
+            continue
+
+        prescription = parse_attempt.prescription
+        output_path = output_dir / (
+            f"{_safe_stem(candidate.patent_id)}-e{parse_attempt.embodiment_number}.zmx"
         )
+        try:
+            trace_audit = write_patent_zmx(prescription, output_path)
+            optic = load_normalized_zmx(output_path)
+            efl = float(optic.paraxial.f2())
+            if not math.isfinite(efl):
+                raise PatentParseError("generated ZMX loaded but EFL was not finite")
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="success",
+                    reason="parsed and ingested",
+                    embodiment=prescription.embodiment,
+                    zmx_path=_display_path(output_path),
+                    efl_mm=efl,
+                    real_image_height_mm=trace_audit.real_image_height_mm,
+                    sanity_image_height_mm=trace_audit.sanity_image_height_mm,
+                    coverage=_coverage(prescription, trace_audit=trace_audit),
+                )
+            )
+        except Exception as exc:  # noqa: BLE001 - report per-embodiment failure reason
+            with contextlib.suppress(FileNotFoundError):
+                output_path.unlink()
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="failed",
+                    reason=f"{type(exc).__name__}: {exc}",
+                    embodiment=prescription.embodiment,
+                )
+            )
+    return attempts
 
 
 async def _fetch_patent_html(client: httpx.AsyncClient, token: str, patent_id: str) -> str:
@@ -376,29 +504,73 @@ async def _fetch_patent_html(client: httpx.AsyncClient, token: str, patent_id: s
     raise PatentParseError("USPTO HTML unavailable (" + "; ".join(errors) + ")")
 
 
-def _find_first_embodiment_meta(text: str) -> re.Match[str]:
-    number = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
-    embodiment = (
+def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
+    label_pattern = re.compile(
         r"(?P<embodiment>"
         r"\d+(?:st|nd|rd|th)\s+Embodiment|"
         r"Embodiment\s+\d+|"
         r"(?:First|Second|Third|Fourth|Fifth|Sixth|Seventh|Eighth|Ninth|Tenth)\s+"
         r"Embodiment|"
-        r"EXAMPLE\s+\d+"
-        r")"
+        r"(?:Working\s+)?Example(?:\s+No\.?)?\s+\d+"
+        r")",
+        flags=re.IGNORECASE,
     )
+    label_matches = list(label_pattern.finditer(text))
+    metas: list[_EmbodimentMeta] = []
+    for index, match in enumerate(label_matches):
+        next_start = label_matches[index + 1].start() if index + 1 < len(label_matches) else len(text)
+        window = text[match.start() : min(next_start, match.start() + 900)]
+        surface_start = re.search(r"\b0\s+Object\b", window, flags=re.IGNORECASE)
+        if surface_start is None:
+            continue
+        meta_window = window[: surface_start.start()]
+        try:
+            focal_length, focal_end = _extract_meta_number(
+                meta_window,
+                r"effective\s+focal\s+length|focal\s+length|EFL|(?<![A-Za-z])f(?![A-Za-z/#])",
+                "focal length",
+            )
+            f_number, fno_end = _extract_meta_number(
+                meta_window,
+                r"F\s*no\.?|FNO|F-number|F\s*number|F\s*/\s*#?|F/#|F\s*#",
+                "F number",
+            )
+            hfov, hfov_end = _extract_meta_number(
+                meta_window,
+                r"HFOV|Half\s+FOV|Half\s+Field\s+of\s+View|"
+                r"Half\s+Angle\s+of\s+View|Half\s+View\s+Angle|Semi\s+Field\s+Angle",
+                "HFOV",
+            )
+        except PatentParseError:
+            continue
+        metas.append(
+            _EmbodimentMeta(
+                embodiment=match.group("embodiment"),
+                start=match.start(),
+                end=match.start() + max(focal_end, fno_end, hfov_end),
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=hfov,
+            )
+        )
+    if not metas:
+        raise PatentParseError("embodiment f/Fno/HFOV line not found")
+    return metas
+
+
+def _extract_meta_number(
+    text: str,
+    label_pattern: str,
+    field_name: str,
+) -> tuple[float, int]:
     pattern = re.compile(
-        rf"{embodiment}\s+"
-        rf"(?:f|focal\s+length)\s*=\s*(?P<f>{number})\s*(?:mm)?[,;]?\s+"
-        rf"(?:F\s*no\.?|FNO|F-number|F\s*/\s*#?)\s*=\s*(?P<fno>{number})[,;]?\s+"
-        rf"(?:HFOV|Half\s+FOV|Half\s+Field\s+of\s+View)\s*=\s*(?P<hfov>{number})"
-        rf"\s*(?:deg|degree|degrees)?",
+        rf"(?:{label_pattern})\s*(?:\([^)]*\))?\s*(?:=|:)?\s*(?P<value>{NUMBER_PATTERN})",
         flags=re.IGNORECASE,
     )
     match = pattern.search(text)
     if match is None:
-        raise PatentParseError("first embodiment f/Fno/HFOV line not found")
-    return match
+        raise PatentParseError(f"{field_name} not found in embodiment metadata")
+    return _parse_number(match.group("value")), match.end()
 
 
 def _surface_table_text(text: str, start: int, coeff_start: int) -> str:
@@ -479,8 +651,12 @@ def _parse_surface_table(table_text: str) -> list[PatentSurface]:
 def _parse_asphere_coefficients(
     text: str,
     coeff_start: int,
+    *,
+    section_end: int | None = None,
 ) -> tuple[dict[int, dict[str, float]], list[str]]:
     end = _find_coefficients_end(text, coeff_start)
+    if section_end is not None:
+        end = min(end, section_end)
     coeff_text = text[coeff_start:end]
     blocks = re.split(r"\bSurface\s+#\s+", coeff_text, flags=re.IGNORECASE)[1:]
     if not blocks:
@@ -695,8 +871,8 @@ def _write_report(
         "",
         "## Per-patent attempts",
         "",
-        "| patent | status | zmx | efl_mm | real_imh_mm | f_tan_sanity_mm | field coverage | reason |",
-        "|---|---|---|---:|---:|---:|---|---|",
+        "| patent | embodiment | status | zmx | efl_mm | real_imh_mm | f_tan_sanity_mm | field coverage | reason |",
+        "|---|---|---|---|---:|---:|---:|---|---|",
     ]
     for attempt in attempts:
         coverage = _format_coverage(attempt.coverage)
@@ -712,6 +888,7 @@ def _write_report(
             + " | ".join(
                 (
                     _md_cell(attempt.patent_id),
+                    _md_cell(attempt.embodiment),
                     attempt.status,
                     _md_cell(attempt.zmx_path),
                     efl,
@@ -756,7 +933,7 @@ def write_patent_zmx(
     temp_path = output_path.with_name(f".{output_path.name}.trace-tmp")
     provisional_readout = build_readout_from_prescription(prescription)
     try:
-        write_zmx_from_codev_readout(
+        _write_patent_readout_zmx(
             provisional_readout,
             temp_path,
             name=_safe_stem(prescription.patent_id),
@@ -767,7 +944,7 @@ def write_patent_zmx(
             semi_diameters_mm=trace_audit.semi_diameters_mm,
             image_height_y_mm=trace_audit.real_image_height_mm,
         )
-        write_zmx_from_codev_readout(
+        _write_patent_readout_zmx(
             final_readout,
             temp_path,
             name=_safe_stem(prescription.patent_id),
@@ -779,6 +956,107 @@ def write_patent_zmx(
         with contextlib.suppress(FileNotFoundError):
             temp_path.unlink()
         raise
+
+
+def _write_patent_readout_zmx(
+    readout: CodeVReadout,
+    output_path: Path,
+    *,
+    name: str,
+) -> Path:
+    xasphere_coefficients = _xasphere_surface_coefficients(readout)
+    if not xasphere_coefficients:
+        return write_zmx_from_codev_readout(readout, output_path, name=name)
+
+    base_readout = _readout_without_xasphere_high_terms(readout)
+    path = write_zmx_from_codev_readout(base_readout, output_path, name=name)
+    _rewrite_high_order_aspheres_as_xdat(path, xasphere_coefficients)
+    return path
+
+
+def _xasphere_surface_coefficients(readout: CodeVReadout) -> dict[int, dict[str, float]]:
+    result: dict[int, dict[str, float]] = {}
+    for surface in readout.surfaces:
+        if any(abs(surface.asphere_coefficients.get(label, 0.0)) > 0.0 for label in XASPHERE_HIGH_TERMS):
+            result[surface.index] = dict(surface.asphere_coefficients)
+    return result
+
+
+def _readout_without_xasphere_high_terms(readout: CodeVReadout) -> CodeVReadout:
+    surfaces = []
+    for surface in readout.surfaces:
+        coefficients = dict(surface.asphere_coefficients)
+        for label in XASPHERE_HIGH_TERMS:
+            coefficients[label] = 0.0
+        surfaces.append(replace(surface, asphere_coefficients=coefficients))
+    return replace(readout, surfaces=tuple(surfaces))
+
+
+def _rewrite_high_order_aspheres_as_xdat(
+    output_path: Path,
+    xasphere_coefficients: dict[int, dict[str, float]],
+) -> None:
+    lines = output_path.read_text(encoding="ascii").splitlines()
+    rewritten: list[str] = []
+    index = 0
+    while index < len(lines):
+        surf_match = re.fullmatch(r"SURF\s+(\d+)", lines[index].strip())
+        if surf_match is None or int(surf_match.group(1)) not in xasphere_coefficients:
+            rewritten.append(lines[index])
+            index += 1
+            continue
+
+        surface_index = int(surf_match.group(1))
+        block = [lines[index]]
+        index += 1
+        while index < len(lines) and not re.fullmatch(r"SURF\s+\d+", lines[index].strip()):
+            block.append(lines[index])
+            index += 1
+        rewritten.extend(
+            _xasphere_surface_block(block, xasphere_coefficients[surface_index])
+        )
+    output_path.write_bytes(("\r\n".join(rewritten) + "\r\n").encode("ascii"))
+
+
+def _xasphere_surface_block(block: list[str], coefficients: dict[str, float]) -> list[str]:
+    result: list[str] = []
+    inserted_xdat = False
+    for line in block:
+        stripped = line.strip()
+        if stripped == "TYPE EVENASPH":
+            result.append("  TYPE XASPHERE")
+            continue
+        if re.fullmatch(r"PARM\s+\d+\s+.+", stripped):
+            if not inserted_xdat:
+                result.extend(_xdat_lines(coefficients))
+                inserted_xdat = True
+            continue
+        if stripped.startswith("DISZ ") and not inserted_xdat:
+            result.extend(_xdat_lines(coefficients))
+            inserted_xdat = True
+        result.append(line)
+    return result
+
+
+def _xdat_lines(coefficients: dict[str, float]) -> list[str]:
+    lines = [
+        "  XDAT 1 10 0 0 1 0 0 \"\"",
+        "  XDAT 2 1 0 0 1 0 0 \"\"",
+        "  XDAT 3 0 0 0 1 0 0 \"\"",
+    ]
+    for xdat_index, label in enumerate(XASPHERE_WRITABLE_TERMS, start=4):
+        value = coefficients.get(label, 0.0)
+        lines.append(f"  XDAT {xdat_index} {_fmt_zmx_number(value)} 0 0 1 0 0 \"\"")
+    return lines
+
+
+def _fmt_zmx_number(value: float) -> str:
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise ValueError(f"ZMX numeric value must be finite: {value!r}")
+    if abs(numeric) < 1e-15:
+        numeric = 0.0
+    return f"{numeric:.15g}"
 
 
 def _trace_surface_apertures(
@@ -906,10 +1184,23 @@ def _md_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", " ").strip()
 
 
+def _display_path(path: Path) -> str:
+    with contextlib.suppress(ValueError):
+        return str(path.relative_to(ROOT))
+    return str(path)
+
+
 def _find_required(text: str, needle: str, start: int) -> int:
     index = text.lower().find(needle.lower(), start)
     if index < 0:
         raise PatentParseError(f"{needle!r} section not found")
+    return index
+
+
+def _find_required_before(text: str, needle: str, start: int, end: int) -> int:
+    index = text.lower().find(needle.lower(), start, end)
+    if index < 0:
+        raise PatentParseError(f"{needle!r} section not found in embodiment")
     return index
 
 

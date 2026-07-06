@@ -15,6 +15,7 @@ Run:  cd lumira-backend && uv run python scripts/e2_golden.py
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 import warnings
@@ -28,6 +29,10 @@ from app.core.lens_system import Scenario  # noqa: E402
 
 GOLDEN_PATH = Path(__file__).resolve().parents[1] / "tests" / "data" / "eval_golden.json"
 INDEX_PATH = Path(__file__).resolve().parents[1] / "app" / "data" / "optical_cases" / "index.json"
+ZMX_DIR = Path(__file__).resolve().parents[1] / "data" / "zmx"
+ZMX_REAL_IMH_MAX_DEVIATION = 0.02
+_REAL_IMH_RE = re.compile(r"^!\s*ATELIER_REAL_IMH_MM\s+([-+0-9.eE]+)", re.MULTILINE)
+_FTAN_IMH_RE = re.compile(r"^!\s*ATELIER_FTAN_IMH_SANITY_MM\s+([-+0-9.eE]+)", re.MULTILINE)
 
 # Briefs whose routing winner + quality evidence are golden-ised. Kept in sync
 # with the eval's EvalCase requests (same source briefs).
@@ -56,24 +61,93 @@ _LEGACY_PATENT_GOLDEN_NAMES = {
 }
 
 
-def _golden_name_for_patent(case_id: str) -> str:
+def _golden_name_for_case(case_id: str) -> str:
+    if not case_id.startswith("US"):
+        return f"seed_{case_id.lower()}_reanchor"
     return _LEGACY_PATENT_GOLDEN_NAMES.get(case_id, f"patent_{case_id.lower()}_reanchor")
 
 
-def _patent_golden_briefs() -> dict[str, dict]:
+def _finite_float(value: object) -> float:
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError(f"expected finite float, got {value!r}")
+    return number
+
+
+def _first_order_image_height_mm(record: dict) -> float | None:
+    try:
+        efl_mm = _finite_float(record["efl_mm"])
+        fov_deg = _finite_float(record["fov_deg"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    first_order_imh = efl_mm * math.tan(math.radians(fov_deg / 2.0))
+    if not math.isfinite(first_order_imh) or first_order_imh == 0.0:
+        return None
+    return first_order_imh
+
+
+def _zmx_tail_number(source_zmx: str, pattern: re.Pattern[str]) -> float | None:
+    path = ZMX_DIR / source_zmx
+    if not path.exists():
+        return None
+    match = pattern.search(path.read_text(encoding="utf-8", errors="ignore"))
+    if match is None:
+        return None
+    return _finite_float(match.group(1))
+
+
+def _case_anchor_metadata(record: dict) -> dict:
+    case_id = str(record["case_id"])
+    source_zmx = str(record["source_zmx"])
+    image_height_mm = _finite_float(record["image_height_mm"])
+    first_order_imh = _first_order_image_height_mm(record)
+    first_order_deviation = (
+        abs(image_height_mm - first_order_imh) / abs(first_order_imh)
+        if first_order_imh is not None
+        else None
+    )
+    zmx_real_imh = _zmx_tail_number(source_zmx, _REAL_IMH_RE)
+    zmx_real_deviation = None
+    anchor_source = "index:image_height_mm"
+    if zmx_real_imh is not None:
+        if zmx_real_imh <= 0.0:
+            raise ValueError(f"{case_id} has non-positive ATELIER_REAL_IMH_MM: {zmx_real_imh}")
+        zmx_real_deviation = abs(image_height_mm - zmx_real_imh) / zmx_real_imh
+        if zmx_real_deviation > ZMX_REAL_IMH_MAX_DEVIATION:
+            raise ValueError(
+                f"{case_id} index image_height_mm={image_height_mm:.9g} diverges from "
+                f"ATELIER_REAL_IMH_MM={zmx_real_imh:.9g} by "
+                f"{zmx_real_deviation:.3%}"
+            )
+        anchor_source = "zmx_tail:ATELIER_REAL_IMH_MM"
+    return {
+        "source_case_id": case_id,
+        "image_height_anchor_source": anchor_source,
+        "zmx_real_image_height_mm": zmx_real_imh,
+        "zmx_real_image_height_deviation_frac": zmx_real_deviation,
+        "first_order_image_height_mm": first_order_imh,
+        "first_order_image_height_deviation_frac": first_order_deviation,
+        "zmx_ftan_image_height_sanity_mm": _zmx_tail_number(source_zmx, _FTAN_IMH_RE),
+    }
+
+
+def _case_golden_briefs() -> tuple[dict[str, dict], dict[str, dict]]:
     records = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
     if not isinstance(records, list):
         raise ValueError(f"case index must be a list: {INDEX_PATH}")
 
     briefs: dict[str, dict] = {}
+    metadata_by_name: dict[str, dict] = {}
     for record in records:
         if not isinstance(record, dict):
             continue
         case_id = record.get("case_id")
-        if not isinstance(case_id, str) or not case_id.startswith("US"):
+        if not isinstance(case_id, str):
             continue
         scenario = Scenario(str(record["scenario"]))
-        briefs[_golden_name_for_patent(case_id)] = {
+        name = _golden_name_for_case(case_id)
+        metadata_by_name[name] = _case_anchor_metadata(record)
+        briefs[name] = {
             "source_case_id": case_id,
             "scenario": scenario.name,
             "efl_mm": float(record["efl_mm"]),
@@ -83,12 +157,17 @@ def _patent_golden_briefs() -> dict[str, dict]:
             "n_elements": int(record["n_pieces"]),
             "priority": "performance" if float(record["fnum"]) < 2.0 else "balanced",
         }
-    return briefs
+    return briefs, metadata_by_name
 
 
-PATENT_GOLDEN_BRIEFS = _patent_golden_briefs()
-PATENT_GOLDEN_CASE_NAMES = tuple(PATENT_GOLDEN_BRIEFS)
-GOLDEN_BRIEFS: dict[str, dict] = {**_BASE_GOLDEN_BRIEFS, **PATENT_GOLDEN_BRIEFS}
+CASE_GOLDEN_BRIEFS, CASE_GOLDEN_METADATA = _case_golden_briefs()
+CASE_GOLDEN_CASE_NAMES = tuple(CASE_GOLDEN_BRIEFS)
+PATENT_GOLDEN_CASE_NAMES = tuple(
+    name
+    for name in CASE_GOLDEN_CASE_NAMES
+    if CASE_GOLDEN_BRIEFS[name]["source_case_id"].startswith("US")
+)
+GOLDEN_BRIEFS: dict[str, dict] = {**_BASE_GOLDEN_BRIEFS, **CASE_GOLDEN_BRIEFS}
 
 _FLOOR_GAP_RE = re.compile(r"floor gap ([0-9.]+)")
 _MIN250_RE = re.compile(r"min250 ([0-9.]+)")
@@ -114,6 +193,7 @@ def compute_golden() -> dict:
         entry: dict = {"selected_case_id": sample.metadata.case_id}
         if source_case_id is not None:
             entry["source_case_id"] = source_case_id
+            entry.update(CASE_GOLDEN_METADATA.get(name, {}))
         actual = _quality_actual(sample.design_assessment)
         if actual:
             gap = _FLOOR_GAP_RE.search(actual)
