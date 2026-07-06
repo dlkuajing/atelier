@@ -22,11 +22,23 @@ from app.core.case_library import CASES_DIR, build_sample_from_optic  # noqa: E4
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx  # noqa: E402
 from tests.data.zmx_manifest import ZMX_AMMO  # noqa: E402
 
+SEED_IMH_OVERRIDES_PATH = (
+    Path(__file__).resolve().parents[1] / "tests" / "data" / "seed_imh_overrides.json"
+)
+
+
+def _load_seed_imh_overrides() -> dict[str, float]:
+    if not SEED_IMH_OVERRIDES_PATH.exists():
+        return {}
+    records = json.loads(SEED_IMH_OVERRIDES_PATH.read_text(encoding="utf-8"))
+    return {str(case_id): float(value) for case_id, value in records.items()}
+
 
 def main() -> None:
     CASES_DIR.mkdir(parents=True, exist_ok=True)
     index: list[dict] = []
     errors: list[tuple[str, str]] = []
+    seed_imh_overrides = _load_seed_imh_overrides()
 
     for a in ZMX_AMMO:
         fn = a["filename"]
@@ -38,29 +50,34 @@ def main() -> None:
                 n_pieces=a["n_pieces"],
                 nominal_efl_mm=a["nominal_efl_mm"],
                 nominal_fov_deg=a["nominal_fov_deg"],
+                lightweight_artifacts=a.get("intake_batch") == "DATA-06c",
             )
             case_id = fn.rsplit(".", 1)[0]
             (CASES_DIR / f"{case_id}.json").write_text(
                 sample.model_dump_json(indent=2, exclude_none=True)
             )
             m = sample.metadata
-            index.append(
-                {
-                    "case_id": case_id,
-                    "source_zmx": fn,
-                    "scenario": m.scenario.value,
-                    "n_pieces": m.n_pieces,
-                    "n_imaging": m.n_imaging,
-                    "n_filter": m.n_filter,
-                    "efl_mm": sample.paraxial.effective_focal_length_mm,
-                    "fnum": sample.paraxial.f_number,
-                    "fov_deg": m.fov_deg,
-                    "image_height_mm": a["nominal_imh_mm"],
-                    "materials": m.materials,
-                    "mtf_max_field_frac": m.mtf_max_field_frac,
-                    "efl_error_pct": m.efl_error_pct,
-                }
-            )
+            image_height_mm = seed_imh_overrides.get(case_id, a["nominal_imh_mm"])
+            index_entry = {
+                "case_id": case_id,
+                "source_zmx": fn,
+                "scenario": m.scenario.value,
+                "n_pieces": m.n_pieces,
+                "n_imaging": m.n_imaging,
+                "n_filter": m.n_filter,
+                "efl_mm": sample.paraxial.effective_focal_length_mm,
+                "fnum": sample.paraxial.f_number,
+                "fov_deg": m.fov_deg,
+                "image_height_mm": image_height_mm,
+                "materials": m.materials,
+                "mtf_max_field_frac": m.mtf_max_field_frac,
+                "efl_error_pct": m.efl_error_pct,
+            }
+            if a.get("intake_batch") is not None:
+                index_entry["intake_batch"] = a["intake_batch"]
+            if a.get("image_height_source") is not None:
+                index_entry["image_height_source"] = a["image_height_source"]
+            index.append(index_entry)
             print(
                 f"  OK {case_id[:42]:42} EFL_err={m.efl_error_pct:4.1f}% "
                 f"mtf_to={m.mtf_max_field_frac} img={m.n_imaging} flt={m.n_filter} "

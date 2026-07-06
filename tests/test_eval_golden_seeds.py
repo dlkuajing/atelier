@@ -8,7 +8,11 @@ import pytest
 
 from app.core.case_library import match_case
 from app.core.lens_system import Scenario
-from scripts.e2_golden import GOLDEN_BRIEFS, PATENT_GOLDEN_CASE_NAMES
+from scripts.e2_golden import (
+    GOLDEN_BRIEFS,
+    PATENT_GOLDEN_CASE_NAMES,
+    PHYSICAL_ANCHOR_MAX_DEVIATION,
+)
 from scripts.evaluate_design_agent import (
     EVAL_CASES,
     _EVAL_GOLDEN,
@@ -23,15 +27,23 @@ INDEX_BY_CASE_ID = {
     for record in INDEX_RECORDS
     if isinstance(record, dict) and str(record.get("case_id", "")).startswith("US")
 }
+DATA06C_GOLDEN_SOURCE_CASE_IDS = {
+    "US-12416791-B2-e3",
+    "US-20200003996-A1-e3",
+    "US-20250383531-A1-e7",
+}
 
 
 def test_eval_golden_contains_reanchored_patent_seeds():
     eval_case_names = {case.name for case in EVAL_CASES}
 
-    assert len(PATENT_GOLDEN_CASE_NAMES) == 22
+    assert len(PATENT_GOLDEN_CASE_NAMES) == 25
     assert set(PATENT_GOLDEN_CASE_NAMES).issubset(_EVAL_GOLDEN)
     assert set(EVAL_PATENT_GOLDEN_CASE_NAMES).issubset(PATENT_GOLDEN_CASE_NAMES)
     assert set(EVAL_PATENT_GOLDEN_CASE_NAMES).issubset(eval_case_names)
+    assert DATA06C_GOLDEN_SOURCE_CASE_IDS.issubset(
+        {GOLDEN_BRIEFS[name]["source_case_id"] for name in PATENT_GOLDEN_CASE_NAMES}
+    )
 
     for case_name in PATENT_GOLDEN_CASE_NAMES:
         entry = _EVAL_GOLDEN[case_name]
@@ -64,7 +76,7 @@ def test_each_reanchored_patent_index_imh_has_physical_anchor(case_name: str) ->
     first_order = float(record["efl_mm"]) * math.tan(math.radians(float(record["fov_deg"]) / 2.0))
     deviation = abs(float(record["image_height_mm"]) - first_order) / first_order
 
-    assert deviation <= 0.25
+    assert deviation <= PHYSICAL_ANCHOR_MAX_DEVIATION
 
 
 def test_patent_golden_fail_on_regression_case_runs(capsys):

@@ -22,6 +22,24 @@
     "selected_case_id": "US20170003482A1",
     "source_case_id": "US20170003482A1"
   },
+  "patent_us-12416791-b2-e3_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.507",
+    "selected_case_id": "US-12416791-B2-e3",
+    "source_case_id": "US-12416791-B2-e3"
+  },
+  "patent_us-20200003996-a1-e3_reanchor": {
+    "quality_floor_gap": "0.238",
+    "quality_min250": "0.061",
+    "selected_case_id": "US-20200003996-A1-e3",
+    "source_case_id": "US-20200003996-A1-e3"
+  },
+  "patent_us-20250383531-a1-e7_reanchor": {
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.185",
+    "selected_case_id": "US-20250383531-A1-e7",
+    "source_case_id": "US-20250383531-A1-e7"
+  },
   "patent_us10031318b2_reanchor": {
     "quality_floor_gap": "0.974",
     "quality_min250": "0.002",

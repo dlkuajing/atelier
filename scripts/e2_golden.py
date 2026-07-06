@@ -15,6 +15,7 @@ Run:  cd lumira-backend && uv run python scripts/e2_golden.py
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 import warnings
@@ -28,6 +29,7 @@ from app.core.lens_system import Scenario  # noqa: E402
 
 GOLDEN_PATH = Path(__file__).resolve().parents[1] / "tests" / "data" / "eval_golden.json"
 INDEX_PATH = Path(__file__).resolve().parents[1] / "app" / "data" / "optical_cases" / "index.json"
+PHYSICAL_ANCHOR_MAX_DEVIATION = 0.25
 
 # Briefs whose routing winner + quality evidence are golden-ised. Kept in sync
 # with the eval's EvalCase requests (same source briefs).
@@ -60,6 +62,20 @@ def _golden_name_for_patent(case_id: str) -> str:
     return _LEGACY_PATENT_GOLDEN_NAMES.get(case_id, f"patent_{case_id.lower()}_reanchor")
 
 
+def _has_physical_image_height_anchor(record: dict) -> bool:
+    try:
+        efl_mm = float(record["efl_mm"])
+        fov_deg = float(record["fov_deg"])
+        image_height_mm = float(record["image_height_mm"])
+    except (KeyError, TypeError, ValueError):
+        return False
+    first_order_imh = efl_mm * math.tan(math.radians(fov_deg / 2.0))
+    if not math.isfinite(first_order_imh) or first_order_imh <= 0.0:
+        return False
+    deviation = abs(image_height_mm - first_order_imh) / first_order_imh
+    return deviation <= PHYSICAL_ANCHOR_MAX_DEVIATION
+
+
 def _patent_golden_briefs() -> dict[str, dict]:
     records = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
     if not isinstance(records, list):
@@ -71,6 +87,8 @@ def _patent_golden_briefs() -> dict[str, dict]:
             continue
         case_id = record.get("case_id")
         if not isinstance(case_id, str) or not case_id.startswith("US"):
+            continue
+        if case_id.startswith("US-") and not _has_physical_image_height_anchor(record):
             continue
         scenario = Scenario(str(record["scenario"]))
         briefs[_golden_name_for_patent(case_id)] = {

@@ -29,6 +29,9 @@ the offline scripts (generate_cases, compute_bounds_stats).
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 ZMX_AMMO: list[dict] = [
     # --- directly loadable (visible), 7 ---
     {
@@ -397,9 +400,19 @@ ZMX_AMMO: list[dict] = [
     },
 ]
 
+DATA06C_MANIFEST_PATH = Path(__file__).with_name("data06c_manifest.json")
+DATA06C_ZMX_AMMO: list[dict] = (
+    json.loads(DATA06C_MANIFEST_PATH.read_text(encoding="utf-8"))
+    if DATA06C_MANIFEST_PATH.exists()
+    else []
+)
+ZMX_AMMO.extend(DATA06C_ZMX_AMMO)
+
 ZMX_AMMO_FILENAMES: list[str] = [a["filename"] for a in ZMX_AMMO]
 
-assert len(ZMX_AMMO) == 39, f"expected 39 ammo designs (17 GGG + 22 patent), got {len(ZMX_AMMO)}"
+assert len(ZMX_AMMO) == 106, (
+    f"expected 106 ammo designs (17 GGG + 22 patent + 67 DATA-06c), got {len(ZMX_AMMO)}"
+)
 
 # E2-01 batch 1 full-embodiment cross-validation provenance (patent seeds only).
 # zmx-computed values recomputed by the backend from the ingested prescription;
@@ -435,7 +448,11 @@ PATENT_PROVENANCE: dict[str, dict] = {
 }
 
 # Every ingested patent seed must carry a passing cross-validation verdict.
-_patent_ids = [a["filename"].removesuffix(".zmx") for a in ZMX_AMMO if a["filename"].startswith("US")]
+_patent_ids = [
+    a["filename"].removesuffix(".zmx")
+    for a in ZMX_AMMO
+    if a["filename"].startswith("US") and not a["filename"].startswith("US-")
+]
 assert set(_patent_ids) == set(PATENT_PROVENANCE), (
     f"patent seeds and provenance out of sync: "
     f"{set(_patent_ids) ^ set(PATENT_PROVENANCE)}"

@@ -28,7 +28,7 @@ from typing import NamedTuple
 
 import numpy as np
 
-from app.core.aberration import compute_mtf
+from app.core.aberration import MTFFieldData, MTFResult, compute_mtf
 from app.core.image_quality_floor import (
     IMAGE_QUALITY_FLOOR_MAX_RMS_UM as _IMAGE_QUALITY_FLOOR_MAX_RMS_UM,
 )
@@ -43,7 +43,8 @@ from app.core.image_quality_floor import (
     image_quality_floor_gap_score as _image_quality_floor_gap_score,
 )
 from app.core.layout_svg import render_layout_svg
-from app.core.lens_system import Scenario
+from app.core.lens_system import LayoutSVG, Scenario
+from app.core.optical_calc import airy_disk_diameter_um
 from app.core.local_optimizer import (
     mtf_bands_from_snapshot,
     mtf_field_weighted_non_regressed,
@@ -490,6 +491,92 @@ def _mtf_with_fallback(optic, fov_deg: float) -> tuple[object, float]:
     raise RuntimeError(f"MTF unusable for all field sets: {last_err}")
 
 
+def _conservative_zero_mtf(optic, field_count: int) -> MTFResult:
+    freqs = [0.0, 50.0, 100.0, 150.0, 200.0, 250.0]
+    try:
+        f_number = float(optic.paraxial.FNO())
+    except Exception:
+        f_number = 2.0
+    return MTFResult(
+        freq_lp_per_mm=freqs,
+        fields=[
+            MTFFieldData(
+                field_index=field_index,
+                sagittal=[0.0 for _ in freqs],
+                tangential=[0.0 for _ in freqs],
+            )
+            for field_index in range(max(1, field_count))
+        ],
+        diff_limited=[1.0 for _ in freqs],
+        cutoff_freq_lp_per_mm=1000.0 / max(airy_disk_diameter_um(_PRIMARY_WL_NM, f_number), 1e-9),
+        airy_disc_diameter_um=airy_disk_diameter_um(_PRIMARY_WL_NM, f_number),
+        rms_spot_radius_um_by_field=[0.0 for _ in range(max(1, field_count))],
+    )
+
+
+def _lightweight_mtf(optic, fov_deg: float) -> tuple[MTFResult, float]:
+    """Bounded DATA-06c MTF evidence: axis + 0.5 field with low ray density."""
+
+    half = fov_deg / 2.0
+    fracs = (0.0, 0.5)
+    optic.set_field_type("angle")
+    optic.fields.fields.clear()
+    for frac in fracs:
+        optic.add_field(y=half * frac)
+    with contextlib.suppress(Exception):
+        optic.ray_tracer.set_aiming("robust", max_iter=10)
+    try:
+        result = compute_mtf(optic, wavelength_nm=_PRIMARY_WL_NM, num_rays=8)
+    except Exception:
+        return _conservative_zero_mtf(optic, field_count=len(fracs)), 0.0
+    if _mtf_has_nan(result):
+        return _conservative_zero_mtf(optic, field_count=len(fracs)), 0.0
+    return result, fracs[-1]
+
+
+def _fast_layout_svg_from_surfaces(surfaces) -> LayoutSVG:
+    width = 1200
+    height = 600
+    finite = [
+        surface
+        for surface in surfaces
+        if math.isfinite(surface.z_mm) and abs(surface.z_mm) < 1e8 and not surface.is_object
+    ]
+    if not finite:
+        return LayoutSVG(width_px=width, height_px=height, svg_content="<svg></svg>")
+
+    min_z = min(surface.z_mm for surface in finite)
+    max_z = max(surface.z_mm for surface in finite)
+    z_span = max(max_z - min_z, 1e-6)
+
+    def _x(z_mm: float) -> float:
+        return 60.0 + (z_mm - min_z) / z_span * (width - 120.0)
+
+    def _y(aperture_frac: float) -> float:
+        return height / 2.0 - aperture_frac * (height * 0.42)
+
+    def _aperture_frac(surface) -> float:
+        return 0.55 if surface.is_stop else 1.0
+
+    lines = [
+        (
+            f'<line x1="{_x(surface.z_mm):.3f}" y1="{_y(_aperture_frac(surface)):.3f}" '
+            f'x2="{_x(surface.z_mm):.3f}" y2="{_y(-_aperture_frac(surface)):.3f}" '
+            'stroke="#2f4f4f" stroke-width="2" />'
+        )
+        for surface in finite
+    ]
+    axis = (
+        f'<line x1="40" y1="{height / 2:.3f}" x2="{width - 40}" y2="{height / 2:.3f}" '
+        'stroke="#9ca3af" stroke-width="1" />'
+    )
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}">{axis}{"".join(lines)}</svg>'
+    )
+    return LayoutSVG(width_px=width, height_px=height, svg_content=svg)
+
+
 def build_sample_from_optic(
     optic,
     source_zmx: str,
@@ -498,6 +585,7 @@ def build_sample_from_optic(
     nominal_fov_deg: float,
     *,
     source_path: str | Path | None = None,
+    lightweight_artifacts: bool = False,
 ) -> OpticalSampleData:
     """Build one OpticalSampleData from a normalized real optic + manifest nominals."""
     with warnings.catch_warnings():
@@ -512,8 +600,12 @@ def build_sample_from_optic(
             if not math.isfinite(sd.radius_mm):
                 sd.radius_mm = _PLANE_RADIUS_SENTINEL
         trace = trace_optic(optic, assembly_name=source_zmx, wavelength_nm=_PRIMARY_WL_NM)
-        layout = render_layout_svg(optic)  # full fields (before any MTF shrink)
-        mtf, mtf_frac = _mtf_with_fallback(optic, nominal_fov_deg)
+        if lightweight_artifacts:
+            layout = _fast_layout_svg_from_surfaces(surfaces)
+            mtf, mtf_frac = _lightweight_mtf(optic, nominal_fov_deg)
+        else:
+            layout = render_layout_svg(optic)  # full fields (before any MTF shrink)
+            mtf, mtf_frac = _mtf_with_fallback(optic, nominal_fov_deg)
         n_imaging, n_filter = _classify_surfaces(optic)
 
     materials = _materials_from_zmx(source_zmx, source_path=source_path)

@@ -1,0 +1,103 @@
+{
+  "status": "gap",
+  "summary": "no accepted high-FOV full-field seed satisfies the intake window",
+  "target_fov_deg": 88.0,
+  "minimum_fov_deg": 85.0,
+  "efl_window_mm": [
+    2.5,
+    3.1
+  ],
+  "f_number_window": [
+    1.7,
+    2.15
+  ],
+  "image_height_window_mm": [
+    2.55,
+    3.25
+  ],
+  "element_count_window": [
+    4,
+    6
+  ],
+  "max_total_track_mm": null,
+  "required_mtf_field_frac": 1.0,
+  "total_seed_count": 106,
+  "full_field_seed_count": 19,
+  "high_fov_seed_count": 16,
+  "accepted_seed_count": 0,
+  "accepted_seed_candidates": [],
+  "nearest_candidates": [
+    {
+      "case_id": "US-20230288669-A1-e4",
+      "source_zmx": "US-20230288669-A1-e4.zmx",
+      "role": "nearest_high_fov",
+      "fov_deg": 88.1,
+      "efl_mm": 2.4006028946760605,
+      "f_number": 2.05,
+      "image_height_mm": 3.128340091,
+      "n_pieces": 8,
+      "mtf_max_field_frac": 0.5,
+      "highest_stable_field_frac": 1.0,
+      "edge_field_cliff_frac": null,
+      "edge_field_evidence": [
+        "0.8:pass",
+        "0.85:pass",
+        "0.9:pass",
+        "0.95:pass",
+        "1.0:pass"
+      ],
+      "miss_reasons": [
+        "EFL 2.40 outside 2.50-3.10 mm",
+        "element count 8 outside 4-6P",
+        "MTF field 0.5 < 1.0"
+      ]
+    },
+    {
+      "case_id": "US20170003482A1",
+      "source_zmx": "US20170003482A1.zmx",
+      "role": "best_stable_high_fov",
+      "fov_deg": 91.0,
+      "efl_mm": 3.6212546768437277,
+      "f_number": 2.32,
+      "image_height_mm": 3.6863,
+      "n_pieces": 7,
+      "mtf_max_field_frac": 1.0,
+      "highest_stable_field_frac": 1.0,
+      "edge_field_cliff_frac": null,
+      "edge_field_evidence": [
+        "0.8:pass",
+        "0.85:pass",
+        "0.9:pass",
+        "0.95:pass",
+        "1.0:pass"
+      ],
+      "miss_reasons": [
+        "EFL 3.62 outside 2.50-3.10 mm",
+        "F/# 2.32 outside 1.70-2.15",
+        "image height 3.69 outside 2.55-3.25 mm",
+        "element count 7 outside 4-6P"
+      ]
+    }
+  ],
+  "known_evidence": [
+    "total visible phone seeds=106",
+    "full-field seeds=19",
+    "high-FOV seeds=16",
+    "accepted high-FOV full-field seeds=0",
+    "nearest full-field seed=US20170003482A1 FOV=91.0 deg",
+    "nearest high-FOV seed=US-20230288669-A1-e4 field=0.5",
+    "nearest high-FOV edge scan=stable 1.0, cliff unknown",
+    "best stable high-FOV seed=US20170003482A1 stable=1.0 cliff=unknown"
+  ],
+  "missing_evidence": [
+    "visible-light seed with FOV >= 85.0 deg",
+    "computed EFL in 2.50-3.10 mm and F/# in 1.70-2.15",
+    "image height in 2.55-3.25 mm",
+    "element count 4-6P",
+    "TTL evidence matching the requested module envelope",
+    "MTF evaluates at 1.0 field without fallback",
+    "finite sampled ray trace through the full field"
+  ],
+  "next_probe_command": "cd lumira-backend && uv run python scripts/audit_seed_intake.py --target-fov 88.0 --target-efl 2.80 --target-fnum 1.90 --min-fov 85.0 --efl-lo 2.50 --efl-hi 3.10 --fnum-lo 1.70 --fnum-hi 2.15 --required-field 1.0 --target-image-height 2.90 --image-height-lo 2.55 --image-height-hi 3.25 --target-elements 5 --element-count-lo 4 --element-count-hi 6 --json",
+  "candidate_preflight_command": "cd lumira-backend && uv run python scripts/audit_seed_intake.py --target-fov 88.0 --target-efl 2.80 --target-fnum 1.90 --min-fov 85.0 --efl-lo 2.50 --efl-hi 3.10 --fnum-lo 1.70 --fnum-hi 2.15 --required-field 1.0 --target-image-height 2.90 --image-height-lo 2.55 --image-height-hi 3.25 --target-elements 5 --element-count-lo 4 --element-count-hi 6 --candidate-zmx /path/to/candidate.zmx --json"
+}

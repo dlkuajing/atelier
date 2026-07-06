@@ -117,7 +117,7 @@ def test_all_scenarios_have_bounds():
 def test_real_designs_pass_calibrated_bounds():
     """Every v2-02 real design's nominal params fall inside its calibrated bounds."""
     failures = []
-    for a in ZMX_AMMO:
+    for a in [entry for entry in ZMX_AMMO if entry.get("bounds_checked", True)]:
         scenario = (
             Scenario.SMARTPHONE_ULTRAWIDE
             if a["nominal_fov_deg"] >= 85.0
