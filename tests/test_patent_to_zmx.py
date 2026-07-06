@@ -45,6 +45,16 @@ XASPHERE_TEXT = PRESCRIPTION_TEXT.replace(
     "A16= 1.0E-10 -- A18= 2.5E-12 -3.5E-12 A20= 4.5E-14 -5.5E-14",
 )
 
+THREE_COLUMN_MATERIAL_TEXT = PRESCRIPTION_TEXT.replace(
+    "Glass 1.835 42.7 55.43",
+    "Plastic 1.634 1.660 20.4",
+    1,
+).replace(
+    "Plastic 1.541 47.2 -55.65",
+    "Glass 1.508 1.517 64.2",
+    1,
+)
+
 
 def test_parse_patent_prescription_extracts_surface_and_asphere_fields() -> None:
     prescription = parse_patent_prescription(PRESCRIPTION_TEXT, patent_id="US-EXAMPLE-A1")
@@ -79,6 +89,28 @@ def test_parse_patent_prescription_extracts_surface_and_asphere_fields() -> None
     assert image.label == "Image"
     assert image.thickness_mm == 0.0
     assert prescription.image_height_mm == pytest.approx(12.99 * math.tan(math.radians(20.0)))
+
+
+def test_parse_patent_prescription_uses_d_line_columns_when_material_table_has_reference_index() -> None:
+    prescription = parse_patent_prescription(
+        THREE_COLUMN_MATERIAL_TEXT,
+        patent_id="US-THREE-COLUMN-A1",
+    )
+
+    first_lens = prescription.surfaces[1]
+    assert first_lens.nd == pytest.approx(1.660)
+    assert first_lens.vd == pytest.approx(20.4)
+
+    filter_surface = prescription.surfaces[2]
+    assert filter_surface.nd == pytest.approx(1.517)
+    assert filter_surface.vd == pytest.approx(64.2)
+
+
+def test_parse_patent_prescription_rejects_unphysical_material_indices() -> None:
+    text = PRESCRIPTION_TEXT.replace("Glass 1.835 42.7 55.43", "Glass 1.835 1.66", 1)
+
+    with pytest.raises(PatentParseError, match="outside physical bounds"):
+        parse_patent_prescription(text, patent_id="US-BAD-MATERIAL-A1")
 
 
 def test_parse_patent_prescriptions_extracts_all_embodiments() -> None:
@@ -258,6 +290,45 @@ def test_convert_candidate_keeps_later_embodiments_after_parse_failure(
     assert not (tmp_path / "US-PARTIAL-A1-e1.zmx").exists()
     assert (tmp_path / "US-PARTIAL-A1-e2.zmx").is_file()
     assert attempts[1].zmx_path.endswith("US-PARTIAL-A1-e2.zmx")
+
+
+def test_convert_candidate_skips_formal_index_embodiments_but_not_staging_files(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_fetch_patent_html(_client: object, _token: str, patent_id: str) -> str:
+        assert patent_id == "US-MULTI-A1"
+        return MULTI_EMBODIMENT_TEXT
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch_patent_html)
+    candidate = patent_to_zmx.PatentCandidate(
+        patent_id="US-MULTI-A1",
+        title="multi embodiment fixture",
+        source_url="local-fixture",
+        pool_path=tmp_path / "pool.jsonl",
+        line_number=1,
+    )
+    formal_index = tmp_path / "index.json"
+    formal_index.write_text(
+        '[{"case_id": "US-MULTI-A1-e2", "source_zmx": "US-MULTI-A1-e2.zmx"}]',
+        encoding="utf-8",
+    )
+    (tmp_path / "US-MULTI-A1-e1.zmx").write_text("stale staging artifact", encoding="ascii")
+
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "local-token",
+            candidate,
+            tmp_path,
+            formal_case_stems=patent_to_zmx.load_formal_case_stems(formal_index),
+        )
+    )
+
+    assert [attempt.status for attempt in attempts] == ["success", "skipped"]
+    assert attempts[1].reason == "formal case index already contains this patent embodiment"
+    assert (tmp_path / "US-MULTI-A1-e1.zmx").read_text(encoding="ascii") != "stale staging artifact"
+    assert not (tmp_path / "US-MULTI-A1-e2.zmx").exists()
 
 
 def test_parse_patent_prescription_rejects_unsupported_high_order_asphere_terms() -> None:

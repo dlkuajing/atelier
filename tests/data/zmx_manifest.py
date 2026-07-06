@@ -400,7 +400,11 @@ ZMX_AMMO: list[dict] = [
     },
 ]
 
-DATA06_MANIFEST_NAMES = ("data06c_manifest.json", "data06f_manifest.json")
+DATA06_MANIFEST_NAMES = (
+    "data06c_manifest.json",
+    "data06f_manifest.json",
+    "data06f_b11_manifest.json",
+)
 DATA06_ZMX_AMMO: list[dict] = []
 for manifest_name in DATA06_MANIFEST_NAMES:
     manifest_path = Path(__file__).with_name(manifest_name)
@@ -410,12 +414,12 @@ ZMX_AMMO.extend(DATA06_ZMX_AMMO)
 
 ZMX_AMMO_FILENAMES: list[str] = [a["filename"] for a in ZMX_AMMO]
 
-assert len(DATA06_ZMX_AMMO) == 106, (
-    f"expected 106 converted DATA-06 designs (67 DATA-06c + 39 DATA-06f), "
+assert len(DATA06_ZMX_AMMO) == 118, (
+    f"expected 118 converted DATA-06 designs (67 DATA-06c + 39 DATA-06f + 12 B11), "
     f"got {len(DATA06_ZMX_AMMO)}"
 )
-assert len(ZMX_AMMO) == 145, (
-    f"expected 145 ammo designs (17 GGG + 22 patent + 106 DATA-06), got {len(ZMX_AMMO)}"
+assert len(ZMX_AMMO) == 157, (
+    f"expected 157 ammo designs (17 GGG + 22 patent + 118 DATA-06), got {len(ZMX_AMMO)}"
 )
 
 # E2-01 batch 1 full-embodiment cross-validation provenance (patent seeds only).

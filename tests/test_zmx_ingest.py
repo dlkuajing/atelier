@@ -17,7 +17,7 @@ from tests.data.zmx_manifest import ZMX_AMMO
 
 
 def test_manifest_has_entries():
-    assert len(ZMX_AMMO) == 145
+    assert len(ZMX_AMMO) == 157
     for a in ZMX_AMMO:
         assert a["nominal_efl_mm"] > 0, a
         assert a["filename"]
@@ -27,11 +27,13 @@ def test_manifest_has_entries():
 def test_data06c_manifest_increases_library_and_has_real_image_height():
     data06c = [a for a in ZMX_AMMO if a.get("intake_batch") == "DATA-06c"]
     data06f = [a for a in ZMX_AMMO if a.get("intake_batch") == "DATA-06f"]
+    data06f_b11 = [a for a in ZMX_AMMO if a.get("intake_batch") == "DATA-06f-b11"]
     data06 = [a for a in ZMX_AMMO if str(a.get("intake_batch", "")).startswith("DATA-06")]
 
     assert len(data06c) == 67
     assert len(data06f) == 39
-    assert len(data06) == 106
+    assert len(data06f_b11) == 12
+    assert len(data06) == 118
     assert all(a["nominal_imh_mm"] > 0.0 for a in data06)
 
 

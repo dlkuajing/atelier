@@ -67,3 +67,24 @@ EFL/F-number/image-height/element/full-field window.
 
 DATA-06g should continue from the DATA-06f cursor after `US-12298484-B2` and
 convert the next <=80 remaining candidates.
+
+## Batch 11 review fix addendum
+
+- material repair promoted: `US-12541079-B2-e2.zmx` and
+  `US-12541079-B2-e5.zmx` were regenerated from USPTO PPUBS full text after the
+  three-column material parser fix. Their case JSON, `index.json`, manifest
+  entries, IMH overrides, and eval golden anchors were refreshed.
+- corrected material aperture: e2 lens rows now use `nd=1.669/vd=19.5` and e5
+  lens rows use `nd=1.660/vd=20.4`; both use filter `nd=1.517/vd=64.2`.
+- missed cursor backfill: the prior staging-based skip漏掉
+  `US-20240201471-A1` and `US-20240192468-A1`. After switching skip policy to
+  formal case-index membership only, 12 successful ZMX artifacts were promoted:
+  `US-20240201471-A1-e1`..`e11` plus `US-20240192468-A1-e1`.
+- failed backfill embodiment: `US-20240192468-A1-e2` timed out during Optiland
+  real-ray aperture tracing; only `.trace-tmp` existed, so it was not promoted.
+- post-fix library size: `tests.data.zmx_manifest.ZMX_AMMO` and
+  `app/data/optical_cases/index.json` now contain 157 cases; DATA-06 converted
+  seeds now total 118.
+- physical guard scan: 145 formal ZMX files scanned after material repair and
+  157 formal ZMX files scanned after backfill; both scans found 0 nd/vd
+  violations.

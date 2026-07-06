@@ -12,7 +12,7 @@
     "baseline_patent_candidate_hit_rate_percent": 26.7
   },
   "selection": {
-    "method": "ordered load_patent_pool; exclude prior DATA-06b2 sample and existing data/zmx or data/zmx-staging ZMX patent stems; resume after DATA-06d cursor; take first <=80",
+    "method": "ordered load_patent_pool; exclude prior DATA-06b2 sample and patent embodiment stems already present in app/data/optical_cases/index.json; ignore data/zmx-staging; resume after DATA-06d cursor; take first <=80",
     "pool_count_patents": 354,
     "prior_seed_sample_excluded": 60,
     "existing_zmx_patent_id_count": 86,
@@ -580,7 +580,52 @@
         "attempts": 1,
         "successes": 0
       }
-    ]
+    ],
+    "staging_skip_policy": "ignored; only formal case index membership may skip a patent embodiment",
+    "review_fix_backfill": {
+      "updated_at": "2026-07-06T23:23:00+08:00",
+      "reason": "Batch 11 review found line 17/18 candidates skipped only because ignored staging ZMX existed.",
+      "backfilled_patents": [
+        {
+          "patent_id": "US-20240201471-A1",
+          "pool_file": "uspto-smartphone-batch5.jsonl",
+          "line_number": 17,
+          "successes_promoted": 11,
+          "failures": 0,
+          "promoted_case_ids": [
+            "US-20240201471-A1-e1",
+            "US-20240201471-A1-e2",
+            "US-20240201471-A1-e3",
+            "US-20240201471-A1-e4",
+            "US-20240201471-A1-e5",
+            "US-20240201471-A1-e6",
+            "US-20240201471-A1-e7",
+            "US-20240201471-A1-e8",
+            "US-20240201471-A1-e9",
+            "US-20240201471-A1-e10",
+            "US-20240201471-A1-e11"
+          ]
+        },
+        {
+          "patent_id": "US-20240192468-A1",
+          "pool_file": "uspto-smartphone-batch5.jsonl",
+          "line_number": 18,
+          "successes_promoted": 1,
+          "failures": 1,
+          "promoted_case_ids": [
+            "US-20240192468-A1-e1"
+          ],
+          "failure_reasons": [
+            "US-20240192468-A1 e2 timed out during Optiland real-ray aperture trace; only .trace-tmp produced, no formal ZMX promoted."
+          ]
+        }
+      ],
+      "next_cursor_unchanged": {
+        "after_patent_id": "US-12298484-B2",
+        "after_pool_file": "uspto-smartphone-batch6.jsonl",
+        "after_line_number": 44
+      }
+    }
   },
   "results": {
     "embodiment_attempts": 248,

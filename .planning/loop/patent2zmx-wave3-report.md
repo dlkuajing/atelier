@@ -23,6 +23,34 @@
 - started_at: 2026-07-06T20:54:55+08:00
 - elapsed_seconds: 1202.7
 
+## Batch 11 review fix addendum
+
+- fix_time: 2026-07-06T23:23:00+08:00
+- material_parser_fix: `scripts/patent_to_zmx.py` now detects material rows with
+  reference-wavelength index / d-line index / Abbe number columns. When three
+  numeric material columns are present and the first two are plausible refractive
+  indices, conversion uses the d-line `nd` and Abbe `vd`.
+- permanent_guard: conversion rejects any material row with `nd` outside
+  `[1.3, 2.2]` or `vd` outside `[10, 100]` before writing/ingesting ZMX.
+- US-12541079-B2 reconvert: re-fetched USPTO PPUBS full text and regenerated
+  affected e2/e5 artifacts. e2 now writes lens `1.669/19.5` and filter
+  `1.517/64.2`; e5 now writes lens `1.660/20.4` and filter `1.517/64.2`.
+- physical_guard_scan_before_backfill: scanned 145 formal `data/zmx/*.zmx`
+  files after the e2/e5 repair; violations=0.
+- staging_skip_fix: future conversion selection/skip logic is formal-index
+  based. `data/zmx-staging` is ignored; only an embodiment stem already present
+  in `app/data/optical_cases/index.json` may be skipped.
+- missed_backfill_US-20240201471-A1: pool `uspto-smartphone-batch5.jsonl` line
+  17, promoted 11/11 embodiments (`e1`..`e11`) into `data/zmx` and case library.
+- missed_backfill_US-20240192468-A1: pool `uspto-smartphone-batch5.jsonl` line
+  18, promoted `e1`; `e2` timed out during Optiland real-ray aperture trace and
+  left only `.trace-tmp`, so no formal ZMX was promoted for `e2`.
+- physical_guard_scan_after_backfill: scanned 157 formal `data/zmx/*.zmx`
+  files after补转; violations=0.
+- cursor_update: `data/patents/convert-cursor.json` records the formal-index
+  skip policy and the two backfilled candidates; next cursor remains after
+  `US-12298484-B2`.
+
 ## Yield summary
 
 - patent_candidates_attempted: 80
