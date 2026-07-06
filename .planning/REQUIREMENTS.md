@@ -9,8 +9,8 @@
 - [x] **ENGINE-01**: 可插拔计算引擎抽象（Protocol/ABC + 注册表 + NullDeepEngine 默认），运行时探测 CODE V 可用性，无 CODE V 环境全链路降级纯 Optiland（CI/其他开发机测试可过）
 - [x] **ENGINE-02**: 通用后台任务层：内存 JobStore + asyncio 任务 + 单席位信号量（防止双重占用 CODE V license），先用假引擎（SleepEngine）验证全部管线
 - [x] **ENGINE-03**: ZMX↔CODE V 互通 spike：导入专利 seed ZMX → CODE V 实算 → 04a 数据库读数 → 04b 重建 ZMX → 过现有 ingest 比对指标一致性（EFL、逐面 nd/vd、非球面项数、渐晕 VDX/VDY 已逐项核对）
-- [ ] **ENGINE-04**: CODE V 引擎适配器：.seq 宏生成 → 批量调起（subprocess）→ 结构化输出解析（宏内显式输出，不刮日志）→ 硬超时 + CPU 心跳（防隐形挂起）→ 逐项结果验证（退出码 0 不可信）
-- [ ] **ENGINE-05**: CODE V 产物回灌：优化结果转 ZMX 走现有 zmx_ingest 流水线入库（ZMX 为唯一真相源，不造第二条数据路径）
+- [x] **ENGINE-04**: CODE V 引擎适配器：.seq 宏生成 → 批量调起（subprocess）→ 结构化输出解析（宏内显式输出，不刮日志）→ 硬超时 + CPU 心跳（防隐形挂起）→ 逐项结果验证（退出码 0 不可信）
+- [x] **ENGINE-05**: CODE V 产物回灌：优化结果转 ZMX 走现有 zmx_ingest 流水线入库（ZMX 为唯一真相源，不造第二条数据路径）
 
 ### SEED — 专利 seed 可路由化（E2 头号工单）
 
@@ -27,8 +27,8 @@
 
 ### SHOW — CODE V 深度成果展示（依赖 ENGINE）
 
-- [ ] **SHOW-01**: 优化前后对比视图：Optiland 种子 vs CODE V 精修结果（MTF 曲线叠加 / 点列图收缩 / RMS 波前增量）— 双受众最高杠杆特性
-- [ ] **SHOW-02**: 公差敏感度摘要：从 CODE V 批处理输出提取 top-N 敏感参数表 — 设计师可信度的压舱石
+- [x] **SHOW-01**: 优化前后对比视图：Optiland 种子 vs CODE V 精修结果（MTF 曲线叠加 / 点列图收缩 / RMS 波前增量）— 双受众最高杠杆特性
+- [x] **SHOW-02**: 公差敏感度摘要：从 CODE V 批处理输出提取 top-N 敏感参数表 — 设计师可信度的压舱石
 - [x] **SHOW-03**: "经 CODE V 交叉验证"背书标识 + 数据溯源标注（每个数字标明来源：实算追迹 / CODE V 运行，LLM 永不碰数值的架构事实要在界面上可见）
 
 ### UI — 演示前端（本地服务 + 浏览器）
@@ -79,11 +79,11 @@
 | SEED-01 | Phase 6 | ✓ 批次7 PR #22（CODE V 实算+物理自检） |
 | SEED-02 | Phase 6 | ✓ 批次7 PR #22（差分断言防自证） |
 | SEED-03 | Phase 6 | ✓ 批次7 PR #22（22 颗全覆盖+物理锚） |
-| DATA-03 | Phase 6 | Pending |
-| ENGINE-04 | Phase 7 | Pending |
-| ENGINE-05 | Phase 7 | Pending |
-| SHOW-01 | Phase 7 | Pending |
-| SHOW-02 | Phase 7 | Pending |
+| DATA-03 | Phase 6 | Partial（原料池 224；转换器 spike 通并 CODE V 实机确认，PR #25；放量=多实施例解析+XASPHERE） |
+| ENGINE-04 | Phase 7 | ✓ 批次5-8 PR #16/#19/#24（批跑+三态+硬超时+returncode白名单） |
+| ENGINE-05 | Phase 7 | ✓ 批次8 PR #24（readout→zmx_writer→zmx_ingest 单一路径） |
+| SHOW-01 | Phase 7 | ✓ 批次8 PR #24（并排对比+溯源 run 证据推导） |
+| SHOW-02 | Phase 7 | ✓ 批次8 PR #24（扰动敏感度诚实命名+flat过滤） |
 | SHOW-03 | Phase 7 | ✓ 批次3 |
 | UI-01 | Phase 8 | ✓ 批次2/3 |
 | UI-02 | Phase 8 | ✓ 批次3 |
