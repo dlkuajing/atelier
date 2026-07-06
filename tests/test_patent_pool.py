@@ -67,7 +67,7 @@ def test_uspto_smartphone_patent_pool_is_large_and_globally_unique() -> None:
     records = _load_patent_pool()
     patent_numbers = [_patent_number(record) for record in records]
 
-    assert len(records) >= 354
+    assert len(records) >= 414
     assert len(set(patent_numbers)) == len(patent_numbers)
 
 
@@ -110,9 +110,39 @@ def test_pool_filter_marks_family_fingerprint_duplicates_without_skipping() -> N
     assert duplicate.family_hint is not None
     assert "near_duplicate_of=US1000010A1" in duplicate.family_hint
     assert fresh.family_hint is None
+    assert stats.id_duplicate_skipped == 0
     assert stats.family_hint_tagged == 1
     assert stats.family_duplicate_skipped == 0
     assert stats.assignee_quota_skipped == 0
+
+
+def test_pool_filter_skips_exact_patent_id_duplicates() -> None:
+    existing = [
+        _fixture_record(
+            "US-1000010-A1",
+            assignee="Independent Optics",
+            title="Compact Lens Module",
+            optical_text="f/Fno/HFOV = 4.10/2.10/50.0",
+        )
+    ]
+    duplicate_id = _fixture_record(
+        "US1000010A1",
+        assignee="Different Assignee",
+        title="Different Lens Title",
+        optical_text="f/Fno/HFOV = 8.20/1.80/32.0",
+    )
+    fresh = _fixture_record(
+        "US1000011A1",
+        assignee="Another Optics",
+        title="Seven Piece Camera Lens",
+        optical_text="f/Fno/HFOV = 5.10/2.20/55.0",
+    )
+
+    accepted, stats = filter_patent_records_by_pool([duplicate_id, fresh], existing)
+
+    assert [record.id for record in accepted] == ["US1000011A1"]
+    assert stats.id_duplicate_skipped == 1
+    assert stats.family_hint_tagged == 0
 
 
 def test_pool_filter_skips_assignee_when_quota_would_exceed_thirty_percent() -> None:

@@ -105,6 +105,7 @@ class PatentRecord:
 class CrawlFilterStats:
     seen: int = 0
     accepted: int = 0
+    id_duplicate_skipped: int = 0
     family_hint_tagged: int = 0
     family_duplicate_skipped: int = 0
     assignee_quota_skipped: int = 0
@@ -248,6 +249,10 @@ def _record_id(record: PatentRecord | Mapping[str, Any]) -> str:
     return str(value).strip() if value is not None else ""
 
 
+def _canonical_record_id(record: PatentRecord | Mapping[str, Any]) -> str:
+    return re.sub(r"[^A-Z0-9]", "", _record_id(record).upper())
+
+
 def _family_hint_value(fingerprint: FamilyFingerprint, matched_record_id: str) -> str:
     assignee, title, focal_bin, fno_bin = fingerprint
     parts = [f"near_duplicate_of={matched_record_id or 'unknown'}"]
@@ -287,6 +292,9 @@ def filter_patent_records_by_pool(
 ) -> tuple[list[PatentRecord], CrawlFilterStats]:
     """Apply all-pool family hints and assignee share quota."""
     stats = CrawlFilterStats()
+    known_ids = {
+        record_id for record in existing_records if (record_id := _canonical_record_id(record))
+    }
     fingerprints: dict[FamilyFingerprint, str] = {}
     for record in existing_records:
         fingerprints.setdefault(family_fingerprint(record), _record_id(record))
@@ -298,6 +306,11 @@ def filter_patent_records_by_pool(
 
     for record in records:
         stats.seen += 1
+        record_id = _canonical_record_id(record)
+        if record_id and record_id in known_ids:
+            stats.id_duplicate_skipped += 1
+            continue
+
         fingerprint = family_fingerprint(record)
         duplicate_of = fingerprints.get(fingerprint)
         record.family_hint = (
@@ -321,6 +334,8 @@ def filter_patent_records_by_pool(
             stats.family_hint_tagged += 1
         else:
             fingerprints.setdefault(fingerprint, _record_id(record))
+        if record_id:
+            known_ids.add(record_id)
         if assignee:
             assignee_counts[assignee] += 1
         total_count += 1
@@ -724,6 +739,7 @@ def _next_ipc_cursor_class(cursor: Mapping[str, Any]) -> tuple[int, str] | None:
 def _add_stats(total: CrawlFilterStats, current: CrawlFilterStats) -> None:
     total.seen += current.seen
     total.accepted += current.accepted
+    total.id_duplicate_skipped += current.id_duplicate_skipped
     total.family_hint_tagged += current.family_hint_tagged
     total.family_duplicate_skipped += current.family_duplicate_skipped
     total.assignee_quota_skipped += current.assignee_quota_skipped
@@ -793,6 +809,7 @@ async def search_uspto_ipc_sweep(
         "ipc_sweep_finished",
         accepted=len(accepted),
         seen=total_stats.seen,
+        id_duplicate_skipped=total_stats.id_duplicate_skipped,
         family_hint_tagged=total_stats.family_hint_tagged,
         family_duplicate_skipped=total_stats.family_duplicate_skipped,
         assignee_quota_skipped=total_stats.assignee_quota_skipped,
@@ -975,6 +992,7 @@ def _apply_pool_filters_for_output(
         "crawl_filters_applied",
         seen=stats.seen,
         accepted=stats.accepted,
+        id_duplicate_skipped=stats.id_duplicate_skipped,
         family_hint_tagged=stats.family_hint_tagged,
         family_duplicate_skipped=stats.family_duplicate_skipped,
         assignee_quota_skipped=stats.assignee_quota_skipped,
