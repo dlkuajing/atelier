@@ -14,6 +14,8 @@ quietly raise it to 5mm and continue.
 from __future__ import annotations
 
 import json
+import re
+import unicodedata
 
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
@@ -43,6 +45,9 @@ system they want to design. Your job:
 2. If the user mentioned numbers (focal length, f-number, field of view,
    image height, lens element count), extract them. Otherwise leave them null
    and we'll fill in sensible defaults from the scenario.
+   If an explicitly supplied focal length/EFL, f-number, FOV, or image height
+   is inside the chosen scenario's bounds, copy that number exactly; do not
+   round it, reinterpret it, or replace it with a nearby plausible value.
 
 3. Reply ONLY with valid JSON in this exact shape — no markdown fences,
    no surrounding prose:
@@ -149,6 +154,98 @@ def _clamp(v: float | None, lo: float, hi: float) -> float | None:
     return max(lo, min(hi, float(v)))
 
 
+_NUMERIC_VALUE = r"(?P<value>[+-]?(?:\d+(?:\.\d*)?|\.\d+))"
+_OPTIONAL_SEPARATOR = r"\s*(?:=|:|为|是|约|about|around|~)?\s*"
+_EXPLICIT_NUMERIC_PATTERNS: dict[str, tuple[re.Pattern[str], ...]] = {
+    "focal_length_mm": (
+        re.compile(
+            rf"(?:\bEFL\b|\beffective\s+focal\s+length\b|\bfocal\s+length\b|等效焦距|焦距)"
+            rf"{_OPTIONAL_SEPARATOR}{_NUMERIC_VALUE}\s*(?:mm|毫米)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            rf"{_NUMERIC_VALUE}\s*(?:mm|毫米)\s*"
+            rf"(?:\bEFL\b|\bfocal\s+length\b|等效焦距|焦距)",
+            re.IGNORECASE,
+        ),
+    ),
+    "f_number": (
+        re.compile(rf"\bf\s*/\s*{_NUMERIC_VALUE}\b", re.IGNORECASE),
+        re.compile(
+            rf"(?:\bf-number\b|\bf\s*number\b|\bf/#|\bf\s*#|\bfno\b|F数|f数|光圈|aperture)"
+            rf"{_OPTIONAL_SEPARATOR}(?:f\s*/\s*)?{_NUMERIC_VALUE}\b",
+            re.IGNORECASE,
+        ),
+    ),
+    "field_of_view_deg": (
+        re.compile(
+            rf"(?:\bFOV\b|\bfield\s+of\s+view\b|视场角|视场|视角)"
+            rf"{_OPTIONAL_SEPARATOR}{_NUMERIC_VALUE}\s*(?:deg(?:rees?)?|°|度)?",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            rf"{_NUMERIC_VALUE}\s*(?:deg(?:rees?)?|°|度)\s*"
+            rf"(?:\bFOV\b|\bfield\s+of\s+view\b|视场角|视场|视角)",
+            re.IGNORECASE,
+        ),
+    ),
+    "image_height_mm": (
+        re.compile(
+            rf"(?:\bIMH\b|\bimage\s+height\b|\bhalf\s+image\s+height\b|半像高|像高)"
+            rf"{_OPTIONAL_SEPARATOR}{_NUMERIC_VALUE}\s*(?:mm|毫米)\b",
+            re.IGNORECASE,
+        ),
+        re.compile(
+            rf"{_NUMERIC_VALUE}\s*(?:mm|毫米)\s*"
+            rf"(?:\bIMH\b|\bimage\s+height\b|\bhalf\s+image\s+height\b|半像高|像高)",
+            re.IGNORECASE,
+        ),
+    ),
+}
+
+
+def _first_explicit_number(text: str, patterns: tuple[re.Pattern[str], ...]) -> float | None:
+    for pattern in patterns:
+        match = pattern.search(text)
+        if match is None:
+            continue
+        try:
+            return float(match.group("value"))
+        except ValueError:
+            return None
+    return None
+
+
+def _explicit_numeric_overrides(user_input: str, scenario: Scenario) -> dict[str, float]:
+    """Extract explicit user numerics and keep only values inside scenario bounds."""
+    text = unicodedata.normalize("NFKC", user_input)
+    bounds = SCENARIO_BOUNDS[scenario]
+    ranges = {
+        "focal_length_mm": (bounds.efl_mm_min, bounds.efl_mm_max),
+        "f_number": (bounds.f_number_min, bounds.f_number_max),
+        "field_of_view_deg": (bounds.fov_deg_min, bounds.fov_deg_max),
+        "image_height_mm": (bounds.image_height_mm_min, bounds.image_height_mm_max),
+    }
+    overrides: dict[str, float] = {}
+    for field, patterns in _EXPLICIT_NUMERIC_PATTERNS.items():
+        value = _first_explicit_number(text, patterns)
+        if value is None:
+            continue
+        lo, hi = ranges[field]
+        if lo <= value <= hi:
+            overrides[field] = value
+    return overrides
+
+
+def _apply_explicit_numeric_overrides(
+    response: ExtractScenarioResponse, user_input: str
+) -> ExtractScenarioResponse:
+    overrides = _explicit_numeric_overrides(user_input, response.scenario)
+    if not overrides:
+        return response
+    return response.model_copy(update=overrides)
+
+
 def parse_llm_scenario_response(raw_text: str) -> ExtractScenarioResponse:
     """Parse the LLM's JSON output and clamp every numeric field to the
     scenario's allowed range. Raises ValueError on unparseable JSON or
@@ -242,7 +339,8 @@ async def extract_scenario(req: ExtractScenarioRequest) -> ExtractScenarioRespon
     raw = completion.choices[0].message.content or ""
 
     try:
-        return parse_llm_scenario_response(raw)
+        parsed = parse_llm_scenario_response(raw)
+        return _apply_explicit_numeric_overrides(parsed, req.user_input)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

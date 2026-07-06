@@ -8,15 +8,24 @@ clamp the proposed numerics.
 
 import json
 import math
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from app.api.wizard import (
+    ExtractScenarioRequest,
     ExtractScenarioResponse,
     _strip_markdown_fences,
+    extract_scenario,
     parse_llm_scenario_response,
 )
 from app.core.lens_system import Scenario
+
+
+def _mock_chat_response(content: str) -> MagicMock:
+    completion = MagicMock()
+    completion.choices = [MagicMock(message=MagicMock(content=content))]
+    return completion
 
 
 # ---------------------------------------------------------------------------
@@ -116,6 +125,48 @@ def test_parse_clamps_efl_above_max_to_max():
     )
     r = parse_llm_scenario_response(raw)
     assert r.focal_length_mm == 18.0
+
+
+@pytest.mark.asyncio
+@patch("app.api.wizard.get_async_client")
+async def test_extract_scenario_preserves_explicit_in_bounds_numbers(mock_get_client):
+    """Mocked LLM mutates explicit specs; endpoint post-check restores them."""
+    mock_client = AsyncMock()
+    mock_client.chat.completions.create = AsyncMock(
+        return_value=_mock_chat_response(
+            json.dumps(
+                {
+                    "scenario": "smartphone-telephoto",
+                    "focal_length_mm": 12.0,
+                    "f_number": 3.5,
+                    "field_of_view_deg": 44.0,
+                    "image_height_mm": 7.5,
+                    "n_elements": 7,
+                    "reasoning": "Phone telephoto request.",
+                }
+            )
+        )
+    )
+    mock_get_client.return_value = mock_client
+
+    response = await extract_scenario(
+        ExtractScenarioRequest(
+            user_input=(
+                "Phone telephoto: EFL 7.0 mm, f/2.4, FOV 30 deg, "
+                "image height 3.7 mm."
+            )
+        )
+    )
+
+    assert response.scenario == Scenario.SMARTPHONE_TELEPHOTO
+    assert response.focal_length_mm == 7.0
+    assert response.f_number == 2.4
+    assert response.field_of_view_deg == 30.0
+    assert response.image_height_mm == 3.7
+    assert response.n_elements == 7
+
+    messages = mock_client.chat.completions.create.call_args.kwargs["messages"]
+    assert "explicitly supplied" in messages[0]["content"]
 
 
 def test_parse_clamps_f_number():
