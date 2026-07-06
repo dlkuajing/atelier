@@ -285,12 +285,18 @@ def _source_zmx_path(sample: OpticalSampleData) -> Path:
 
 
 def source_zmx_sha256(source_zmx: str | Path) -> str:
-    """Return the SHA-256 digest for a source ZMX file."""
+    """Return an EOL-insensitive SHA-256 digest for a source ZMX file.
+
+    ZMX files have no eol gitattribute, so Windows (autocrlf) and Ubuntu CI
+    check out different bytes for the same blob. Hashing raw bytes made every
+    Windows-generated cache bundle read as stale on CI. Normalize CRLF before
+    hashing so the fingerprint tracks content, not platform.
+    """
 
     path = Path(source_zmx)
     if not path.is_absolute():
         path = ZMX_AMMO_DIR / path
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _source_zmx_sha256_for_sample(sample: OpticalSampleData) -> str:
