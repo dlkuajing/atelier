@@ -9,7 +9,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PATENT_DIR = ROOT / "data/patents"
-REPORT_PATH = ROOT / ".planning/loop/uspto-b5-report.md"
+REPORT_PATH = ROOT / ".planning/loop/uspto-b6-report.md"
 
 
 def _patent_number(record: dict[str, object]) -> str:
@@ -37,18 +37,18 @@ def test_uspto_smartphone_patent_pool_is_large_and_globally_unique() -> None:
     records = _load_patent_pool()
     patent_numbers = [_patent_number(record) for record in records]
 
-    assert len(records) >= 224
+    assert len(records) >= 289
     assert len(set(patent_numbers)) == len(patent_numbers)
 
 
-def test_uspto_batch5_report_records_query_stats() -> None:
+def test_uspto_batch6_report_records_query_stats() -> None:
     if not REPORT_PATH.is_file():
-        pytest.skip("DATA-05b collection report is optional outside the collection worktree")
+        pytest.skip("DATA-05c collection report is optional outside the collection worktree")
 
     text = REPORT_PATH.read_text(encoding="utf-8")
 
-    assert "DATA-05b" in text
-    assert "uspto-smartphone-batch5.jsonl" in text
+    assert "DATA-05c" in text
+    assert "uspto-smartphone-batch6.jsonl" in text
     assert "查询词" in text
     assert "命中率" in text
     assert "去重数" in text
