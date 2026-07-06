@@ -50,7 +50,7 @@ class _HiddenInputParser(HTMLParser):
 def _hidden_summary_fields(html: str) -> _HiddenInputParser:
     parser = _HiddenInputParser()
     parser.feed(html)
-    assert parser.action == "/results/summary"
+    assert parser.action == "/jobs"
     assert parser.method == "post"
     assert "submit" in parser.button_types
     return parser

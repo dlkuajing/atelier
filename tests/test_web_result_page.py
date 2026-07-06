@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from app import main
 from app.core.aberration import MTFFieldData, MTFResult
 from app.core.field_analysis import FieldAnalysisResult
-from app.core.job_store import JobNotFoundError, JobRecord, JobStatus
+from app.core.job_store import JobNotFoundError, JobRecord, JobStatus, JobStore
 from app.core.lens_system import LayoutSVG, RayPath, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary, SurfaceDescriptor
 from app.core.optical_sample import CaseMetadata, OpticalSampleData
@@ -221,6 +221,85 @@ def _sample_payload() -> OpticalSampleData:
             mtf_max_field_frac=1.0,
         ),
     )
+
+
+def _mock_result_job_payload(payload: dict[str, object]) -> dict[str, object]:
+    return {
+        "job_type": "result-summary",
+        "scenario": payload["scenario"],
+        "scenario_label_en": payload["scenario_label_en"],
+        "requirement": payload.get("requirement"),
+        "demo_cache_status": "miss",
+        "resolved": {
+            "focal_length_mm": float(payload["focal_length_mm"]),
+            "f_number": float(payload["f_number"]),
+            "field_of_view_deg": float(payload["field_of_view_deg"]),
+            "image_height_mm": float(payload["image_height_mm"]),
+            "n_elements": int(payload["n_elements"]),
+            "wavelength_nm": float(payload["wavelength_nm"]),
+            "total_track_mm": float(payload["total_track_mm"]),
+            "airy_disc_diameter_um": float(payload["airy_disc_diameter_um"]),
+            "cutoff_freq_lp_per_mm": float(payload["cutoff_freq_lp_per_mm"]),
+        },
+        "summary": {
+            "summary_en": "Mocked job result summary.",
+            "summary_zh": "\u6a21\u62df\u4efb\u52a1\u7ed3\u679c\u6458\u8981\u3002",
+            "model": "mock-result-worker",
+            "fallback_reason": None,
+        },
+        "sample": None,
+        "codev_artifact": None,
+    }
+
+
+def test_confirmation_continue_submits_result_job_and_result_page_is_reachable(monkeypatch):
+    store = JobStore()
+    monkeypatch.setattr(main.optical, "job_store", store)
+    seen: dict[str, object] = {}
+
+    async def fake_compute(payload):
+        seen["payload"] = dict(payload)
+        return _mock_result_job_payload(dict(payload))
+
+    monkeypatch.setattr(main, "_compute_result_summary_job", fake_compute)
+
+    with TestClient(app) as local_client:
+        submitted = local_client.post(
+            "/jobs",
+            data=_summary_form_payload(),
+            follow_redirects=False,
+        )
+        assert submitted.status_code == 303, submitted.text
+        location = submitted.headers["location"]
+        assert location.startswith("/jobs/")
+        job_id = location.rsplit("/", 1)[1]
+
+        progress = local_client.get(location)
+        assert progress.status_code == 200, progress.text
+        assert f'data-job-id="{job_id}"' in progress.text
+        assert f'data-events-url="/api/optical/jobs/{job_id}/events"' in progress.text
+        assert f'data-result-url="/results/{job_id}"' in progress.text
+        assert "new EventSource" in progress.text
+        assert "job-progress-bar" in progress.text
+        assert "window.location.assign" in progress.text
+
+        with local_client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+            assert streamed.status_code == 200
+            assert streamed.headers["content-type"].startswith("text/event-stream")
+            sse_body = "".join(streamed.iter_text())
+
+        result = local_client.get(f"/results/{job_id}")
+
+    assert "event: succeeded" in sse_body
+    assert f'"job_id":"{job_id}"' in sse_body
+    assert '"engine":"result-summary"' in sse_body
+    assert seen["payload"]["job_type"] == "result-summary"
+    assert seen["payload"]["scenario"] == "smartphone-wide"
+    assert result.status_code == 200, result.text
+    assert "Design result" in result.text
+    assert 'data-result-summary' in result.text
+    assert f'data-job-id="{job_id}"' in result.text
+    assert "Mocked job result summary." in result.text
 
 
 @patch("app.api.wizard.get_async_client")

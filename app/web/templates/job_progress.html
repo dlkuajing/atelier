@@ -24,6 +24,7 @@
         data-job-progress
         data-job-id="{{ job_id }}"
         data-events-url="/api/optical/jobs/{{ job_id }}/events"
+        data-result-url="{{ result_url }}"
         aria-labelledby="job-progress-title"
       >
         <p class="eyebrow">Deep engine task</p>
@@ -124,6 +125,9 @@
           }
           if (status === "succeeded" || status === "failed") {
             source.close();
+            if (status === "succeeded" && root.dataset.resultUrl) {
+              window.location.assign(root.dataset.resultUrl);
+            }
           }
         };
 
