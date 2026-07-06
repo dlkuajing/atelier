@@ -400,18 +400,22 @@ ZMX_AMMO: list[dict] = [
     },
 ]
 
-DATA06C_MANIFEST_PATH = Path(__file__).with_name("data06c_manifest.json")
-DATA06C_ZMX_AMMO: list[dict] = (
-    json.loads(DATA06C_MANIFEST_PATH.read_text(encoding="utf-8"))
-    if DATA06C_MANIFEST_PATH.exists()
-    else []
-)
-ZMX_AMMO.extend(DATA06C_ZMX_AMMO)
+DATA06_MANIFEST_NAMES = ("data06c_manifest.json", "data06f_manifest.json")
+DATA06_ZMX_AMMO: list[dict] = []
+for manifest_name in DATA06_MANIFEST_NAMES:
+    manifest_path = Path(__file__).with_name(manifest_name)
+    if manifest_path.exists():
+        DATA06_ZMX_AMMO.extend(json.loads(manifest_path.read_text(encoding="utf-8")))
+ZMX_AMMO.extend(DATA06_ZMX_AMMO)
 
 ZMX_AMMO_FILENAMES: list[str] = [a["filename"] for a in ZMX_AMMO]
 
-assert len(ZMX_AMMO) == 106, (
-    f"expected 106 ammo designs (17 GGG + 22 patent + 67 DATA-06c), got {len(ZMX_AMMO)}"
+assert len(DATA06_ZMX_AMMO) == 106, (
+    f"expected 106 converted DATA-06 designs (67 DATA-06c + 39 DATA-06f), "
+    f"got {len(DATA06_ZMX_AMMO)}"
+)
+assert len(ZMX_AMMO) == 145, (
+    f"expected 145 ammo designs (17 GGG + 22 patent + 106 DATA-06), got {len(ZMX_AMMO)}"
 )
 
 # E2-01 batch 1 full-embodiment cross-validation provenance (patent seeds only).

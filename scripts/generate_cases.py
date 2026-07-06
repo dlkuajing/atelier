@@ -50,7 +50,7 @@ def main() -> None:
                 n_pieces=a["n_pieces"],
                 nominal_efl_mm=a["nominal_efl_mm"],
                 nominal_fov_deg=a["nominal_fov_deg"],
-                lightweight_artifacts=a.get("intake_batch") == "DATA-06c",
+                lightweight_artifacts=str(a.get("intake_batch", "")).startswith("DATA-06"),
             )
             case_id = fn.rsplit(".", 1)[0]
             (CASES_DIR / f"{case_id}.json").write_text(

@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CASE_INDEX_PATH = ROOT / "app" / "data" / "optical_cases" / "index.json"
 CASE_JSON_DIR = ROOT / "app" / "data" / "optical_cases"
 DATA_ZMX_DIR = ROOT / "data" / "zmx"
-DATA06C_BATCH_ID = "DATA-06c"
+LIGHTWEIGHT_INTAKE_BATCH_PREFIX = "DATA-06"
 
 sys.path.insert(0, str(ROOT))
 
@@ -336,7 +336,7 @@ def _lightweight_seed_audit(cases: list, index_records: dict[str, dict]) -> dict
         if case.metadata is not None and case.metadata.case_id in index_records
     }
     for case_id, record in index_records.items():
-        if record.get("intake_batch") != DATA06C_BATCH_ID:
+        if not str(record.get("intake_batch", "")).startswith(LIGHTWEIGHT_INTAKE_BATCH_PREFIX):
             continue
         case = by_case_id.get(case_id)
         if case is None:
@@ -380,13 +380,13 @@ def _audit(args: argparse.Namespace) -> dict:
     report["full_field_accepted_seed_count"] = report["accepted_seed_count"]
     report["accepted_seed_count_semantics"] = (
         "accepted_seed_count is the strict high-FOV full-field acquisition-window gate; "
-        f"{DATA06C_BATCH_ID} lightweight seeds with bounded <=0.5 payload MTF are counted "
+        f"{LIGHTWEIGHT_INTAKE_BATCH_PREFIX} lightweight seeds with bounded <=0.5 payload MTF are counted "
         "under lightweight_accepted_seed_count instead."
     )
     report["known_evidence"] = [
         *report["known_evidence"],
         (
-            f"{DATA06C_BATCH_ID} lightweight accepted seeds="
+            f"{LIGHTWEIGHT_INTAKE_BATCH_PREFIX} lightweight accepted seeds="
             f"{lightweight['lightweight_accepted_seed_count']}/"
             f"{lightweight['lightweight_seed_count']}"
         ),
