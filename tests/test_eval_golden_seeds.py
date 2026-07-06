@@ -48,8 +48,10 @@ def test_eval_golden_contains_reanchored_case_library():
     source_case_ids = {
         CASE_GOLDEN_BRIEFS[name]["source_case_id"] for name in CASE_GOLDEN_CASE_NAMES
     }
-    data06c_case_ids = {
-        record["case_id"] for record in INDEX_RECORDS if record.get("intake_batch") == "DATA-06c"
+    data06_case_ids = {
+        record["case_id"]
+        for record in INDEX_RECORDS
+        if str(record.get("intake_batch", "")).startswith("DATA-06")
     }
     first_order_outliers = {
         record["case_id"]
@@ -58,11 +60,11 @@ def test_eval_golden_contains_reanchored_case_library():
         and (_first_order_deviation(record) or 0.0) > 0.25
     }
 
-    assert len(INDEX_RECORDS) == 106
-    assert len(CASE_GOLDEN_CASE_NAMES) == 106
+    assert len(INDEX_RECORDS) == 157
+    assert len(CASE_GOLDEN_CASE_NAMES) == 157
     assert source_case_ids == set(INDEX_BY_CASE_ID)
-    assert data06c_case_ids.issubset(source_case_ids)
-    assert len(first_order_outliers) == 64
+    assert data06_case_ids.issubset(source_case_ids)
+    assert len(first_order_outliers) == 83
     assert first_order_outliers.issubset(source_case_ids)
     assert set(CASE_GOLDEN_CASE_NAMES).issubset(_EVAL_GOLDEN)
     assert set(EVAL_PATENT_GOLDEN_CASE_NAMES).issubset(CASE_GOLDEN_CASE_NAMES)

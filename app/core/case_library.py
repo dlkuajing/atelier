@@ -515,7 +515,7 @@ def _conservative_zero_mtf(optic, field_count: int) -> MTFResult:
 
 
 def _lightweight_mtf(optic, fov_deg: float) -> tuple[MTFResult, float]:
-    """Bounded DATA-06c MTF evidence: axis + 0.5 field with low ray density."""
+    """Bounded DATA-06 MTF evidence: axis + 0.5 field with low ray density."""
 
     half = fov_deg / 2.0
     fracs = (0.0, 0.5)
@@ -714,6 +714,38 @@ def _case_index_image_height_mm_by_id() -> dict[str, float]:
     return values
 
 
+@lru_cache(maxsize=1)
+def _case_index_payload_edge_seed_ids() -> set[str]:
+    """DATA-06 post-c waves keep payload-bounded MTF; do not rescan every audit."""
+
+    index_path = CASES_DIR / "index.json"
+    if not index_path.is_file():
+        return set()
+    try:
+        records = json.loads(index_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return set()
+    if not isinstance(records, list):
+        return set()
+
+    values: set[str] = set()
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        batch = str(record.get("intake_batch", ""))
+        if not batch.startswith("DATA-06") or batch == "DATA-06c":
+            continue
+        case_id = record.get("case_id")
+        source_zmx = record.get("source_zmx")
+        keys = [case_id, source_zmx]
+        if isinstance(source_zmx, str) and source_zmx:
+            keys.append(Path(source_zmx).stem)
+        for key in keys:
+            if isinstance(key, str) and key:
+                values.add(key)
+    return values
+
+
 def _positive_finite_float(value: object) -> float | None:
     if value is None:
         return None
@@ -901,6 +933,7 @@ def build_seed_intake_audit(
     element_hi = brief.element_count_window[1] if brief.element_count_window else None
     auditable_cases = [case for case in cases if case.metadata is not None]
     edge_stability_cache: dict[str, tuple[float | None, float | None, list[str]]] = {}
+    payload_edge_seed_ids = _case_index_payload_edge_seed_ids()
 
     def _edge_stability(
         case: OpticalSampleData,
@@ -914,6 +947,23 @@ def build_seed_intake_audit(
                 case.metadata.mtf_max_field_frac,
                 None,
                 [f"payload:{format_mtf_field_fraction(case.metadata.mtf_max_field_frac)}"],
+            )
+            edge_stability_cache[case.metadata.case_id] = result
+            return result
+        source_zmx = case.metadata.source_zmx
+        payload_keys = (
+            case.metadata.case_id,
+            source_zmx,
+            Path(source_zmx).stem if source_zmx else "",
+        )
+        if any(key in payload_edge_seed_ids for key in payload_keys):
+            result = (
+                case.metadata.mtf_max_field_frac,
+                None,
+                [
+                    f"payload:{format_mtf_field_fraction(case.metadata.mtf_max_field_frac)}",
+                    "index:intake_batch=DATA-06 payload-bounded",
+                ],
             )
             edge_stability_cache[case.metadata.case_id] = result
             return result

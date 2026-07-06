@@ -1,0 +1,644 @@
+{
+  "version": 1,
+  "task": "DATA-06f",
+  "wave": "wave3",
+  "updated_at": "2026-07-06T21:14:57+08:00",
+  "pool_glob": "data/patents/uspto-smartphone-batch*.jsonl",
+  "prior_wave": {
+    "task": "DATA-06d",
+    "wave": "wave2",
+    "cursor": "data/patents/convert-cursor.json",
+    "after_patent_id": "US-20240231053-A1",
+    "baseline_patent_candidate_hit_rate_percent": 26.7
+  },
+  "selection": {
+    "method": "ordered load_patent_pool; exclude prior DATA-06b2 sample and patent embodiment stems already present in app/data/optical_cases/index.json; ignore data/zmx-staging; resume after DATA-06d cursor; take first <=80",
+    "pool_count_patents": 354,
+    "prior_seed_sample_excluded": 60,
+    "existing_zmx_patent_id_count": 86,
+    "available_after_exclusions": 246,
+    "limit": 80,
+    "attempted_patent_count": 80,
+    "attempted_patents": [
+      {
+        "patent_id": "US-12007536-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 19,
+        "attempts": 12,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-11971527-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 20,
+        "attempts": 10,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-11940597-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 21,
+        "attempts": 8,
+        "successes": 3
+      },
+      {
+        "patent_id": "US-20240061217-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 22,
+        "attempts": 11,
+        "successes": 8
+      },
+      {
+        "patent_id": "US-11906710-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 23,
+        "attempts": 11,
+        "successes": 11
+      },
+      {
+        "patent_id": "US-11846759-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 24,
+        "attempts": 11,
+        "successes": 8
+      },
+      {
+        "patent_id": "US-12158566-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 28,
+        "attempts": 7,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20240061215-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 30,
+        "attempts": 7,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-11828910-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 31,
+        "attempts": 12,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20230375803-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 32,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-11815662-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 33,
+        "attempts": 7,
+        "successes": 1
+      },
+      {
+        "patent_id": "US-11668898-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 34,
+        "attempts": 11,
+        "successes": 4
+      },
+      {
+        "patent_id": "US-20220099944-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 36,
+        "attempts": 12,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20220066146-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 37,
+        "attempts": 7,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20210132344-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 39,
+        "attempts": 10,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20200233184-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 41,
+        "attempts": 9,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-10649183-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 42,
+        "attempts": 4,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-10598906-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 43,
+        "attempts": 1,
+        "successes": 1
+      },
+      {
+        "patent_id": "US-10444475-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 45,
+        "attempts": 8,
+        "successes": 1
+      },
+      {
+        "patent_id": "US-20190271833-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 46,
+        "attempts": 4,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-10338351-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 47,
+        "attempts": 10,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260147257-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 48,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12541079-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 49,
+        "attempts": 8,
+        "successes": 2
+      },
+      {
+        "patent_id": "US-12468121-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 50,
+        "attempts": 10,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260169262-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 51,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12578550-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 53,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12571987-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 54,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260029620-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 55,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20250327997-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 56,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12386154-B2",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 57,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20250155675-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 58,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20250155701-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 59,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20240369807-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 60,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20240184082-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 61,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20240176104-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 62,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20240118520-A1",
+        "pool_file": "uspto-smartphone-batch5.jsonl",
+        "line_number": 64,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12669685-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 1,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260160982-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 2,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260153712-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 3,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260140349-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 4,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260110880-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 5,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12591117-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 6,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260086334-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 7,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260086330-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 8,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260072253-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 9,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260063874-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 10,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260063870-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 11,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12560782-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 12,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12554102-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 13,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260043988-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 14,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12345855-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 15,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12306467-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 16,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12292550-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 17,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12287461-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 18,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20250116846-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 19,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12242033-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 20,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12493169-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 21,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12399348-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 22,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12320958-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 23,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12235419-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 24,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12235415-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 25,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12210213-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 26,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12197039-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 27,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12169324-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 28,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12147088-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 29,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12135409-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 30,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12124009-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 31,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12124006-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 32,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12656577-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 33,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12656578-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 34,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260147189-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 35,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12625349-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 36,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260110881-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 37,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260093094-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 38,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12607828-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 39,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260036791-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 40,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-20260009980-A1",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 41,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12461345-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 42,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12429676-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 43,
+        "attempts": 1,
+        "successes": 0
+      },
+      {
+        "patent_id": "US-12298484-B2",
+        "pool_file": "uspto-smartphone-batch6.jsonl",
+        "line_number": 44,
+        "attempts": 1,
+        "successes": 0
+      }
+    ],
+    "staging_skip_policy": "ignored; only formal case index membership may skip a patent embodiment",
+    "review_fix_backfill": {
+      "updated_at": "2026-07-06T23:23:00+08:00",
+      "reason": "Batch 11 review found line 17/18 candidates skipped only because ignored staging ZMX existed.",
+      "backfilled_patents": [
+        {
+          "patent_id": "US-20240201471-A1",
+          "pool_file": "uspto-smartphone-batch5.jsonl",
+          "line_number": 17,
+          "successes_promoted": 11,
+          "failures": 0,
+          "promoted_case_ids": [
+            "US-20240201471-A1-e1",
+            "US-20240201471-A1-e2",
+            "US-20240201471-A1-e3",
+            "US-20240201471-A1-e4",
+            "US-20240201471-A1-e5",
+            "US-20240201471-A1-e6",
+            "US-20240201471-A1-e7",
+            "US-20240201471-A1-e8",
+            "US-20240201471-A1-e9",
+            "US-20240201471-A1-e10",
+            "US-20240201471-A1-e11"
+          ]
+        },
+        {
+          "patent_id": "US-20240192468-A1",
+          "pool_file": "uspto-smartphone-batch5.jsonl",
+          "line_number": 18,
+          "successes_promoted": 1,
+          "failures": 1,
+          "promoted_case_ids": [
+            "US-20240192468-A1-e1"
+          ],
+          "failure_reasons": [
+            "US-20240192468-A1 e2 timed out during Optiland real-ray aperture trace; only .trace-tmp produced, no formal ZMX promoted."
+          ]
+        }
+      ],
+      "next_cursor_unchanged": {
+        "after_patent_id": "US-12298484-B2",
+        "after_pool_file": "uspto-smartphone-batch6.jsonl",
+        "after_line_number": 44
+      }
+    }
+  },
+  "results": {
+    "embodiment_attempts": 248,
+    "successes": 39,
+    "failures": 209,
+    "patent_candidate_hits": 9,
+    "patent_candidate_hit_rate_percent": 11.2,
+    "delta_vs_26_7_baseline_percentage_points": -15.4,
+    "elapsed_seconds": 1202.7
+  },
+  "next_cursor": {
+    "after_patent_id": "US-12298484-B2",
+    "after_pool_file": "uspto-smartphone-batch6.jsonl",
+    "after_line_number": 44
+  }
+}

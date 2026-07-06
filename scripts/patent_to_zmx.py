@@ -36,10 +36,13 @@ from scripts.patent_crawler import _ppubs_access_token, _ppubs_patent_html  # no
 DEFAULT_POOL_GLOB = "uspto-smartphone-batch*.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "data" / "zmx-staging"
 DEFAULT_REPORT_PATH = ROOT / ".planning" / "loop" / "patent2zmx-spike-report.md"
+DEFAULT_CASE_INDEX_PATH = ROOT / "app" / "data" / "optical_cases" / "index.json"
 TRACE_WAVELENGTH_UM = 0.5876
 TRACE_PROVISIONAL_SEMI_DIAMETER_MM = 100.0
 TRACE_APERTURE_CLEARANCE = 1.02
 MIN_TRACE_SEMI_DIAMETER_MM = 0.05
+ND_PHYSICAL_RANGE = (1.3, 2.2)
+VD_PHYSICAL_RANGE = (10.0, 100.0)
 NUMBER_PATTERN = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
 SUPPORTED_ASPHERE_ORDERS = {4, 6, 8, 10, 12, 14, 16, 18, 20}
 ASPHERE_ORDER_TO_CODEV = {
@@ -284,6 +287,7 @@ def build_readout_from_prescription(
 ) -> CodeVReadout:
     """Build the existing CODE V readout DTO consumed by ``zmx_writer``."""
 
+    _validate_prescription_materials(prescription)
     stop_surface = _stop_surface_index(prescription.surfaces)
     surfaces = tuple(
         CodeVSurfaceReadout(
@@ -377,6 +381,34 @@ def load_patent_pool(pool_dir: Path, pattern: str = DEFAULT_POOL_GLOB) -> list[P
     return candidates
 
 
+def load_formal_case_stems(index_path: Path = DEFAULT_CASE_INDEX_PATH) -> frozenset[str]:
+    """Load formally ingested case/ZMX stems from the runtime case index."""
+
+    if not index_path.exists():
+        return frozenset()
+    records = json.loads(index_path.read_text(encoding="utf-8"))
+    if not isinstance(records, list):
+        raise PatentParseError(f"case index must be a list: {index_path}")
+
+    stems: set[str] = set()
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        for key in ("case_id", "source_zmx"):
+            value = record.get(key)
+            if isinstance(value, str) and value.strip():
+                stems.add(Path(value).stem)
+    return frozenset(stems)
+
+
+def _formal_case_contains_embodiment(
+    formal_case_stems: frozenset[str] | set[str],
+    patent_id: str,
+    embodiment_number: int,
+) -> bool:
+    return f"{_safe_stem(patent_id)}-e{embodiment_number}" in formal_case_stems
+
+
 async def run_conversion(
     *,
     pool_dir: Path,
@@ -384,12 +416,16 @@ async def run_conversion(
     report_path: Path,
     target_successes: int,
     max_attempts: int,
+    case_index_path: Path | None = DEFAULT_CASE_INDEX_PATH,
 ) -> list[ConversionAttempt]:
     """Fetch USPTO HTML, parse prescriptions, write ZMX files, and report attempts."""
 
     candidates = load_patent_pool(pool_dir)
     attempts: list[ConversionAttempt] = []
     successes = 0
+    formal_case_stems = (
+        load_formal_case_stems(case_index_path) if case_index_path is not None else frozenset()
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     async with httpx.AsyncClient(timeout=60) as client:
@@ -397,7 +433,13 @@ async def run_conversion(
         for candidate in candidates:
             if len(attempts) >= max_attempts or successes >= target_successes:
                 break
-            candidate_attempts = await _convert_candidate(client, token, candidate, output_dir)
+            candidate_attempts = await _convert_candidate(
+                client,
+                token,
+                candidate,
+                output_dir,
+                formal_case_stems=formal_case_stems,
+            )
             attempts.extend(candidate_attempts)
             successes += sum(attempt.status == "success" for attempt in candidate_attempts)
             await asyncio.sleep(0.25)
@@ -411,6 +453,8 @@ async def _convert_candidate(
     token: str,
     candidate: PatentCandidate,
     output_dir: Path,
+    *,
+    formal_case_stems: frozenset[str] | set[str] | None = None,
 ) -> list[ConversionAttempt]:
     try:
         page_html = await _fetch_patent_html(client, token, candidate.patent_id)
@@ -426,6 +470,7 @@ async def _convert_candidate(
         ]
 
     attempts: list[ConversionAttempt] = []
+    formal_case_stems = formal_case_stems or frozenset()
     for parse_attempt in parse_attempts:
         if parse_attempt.error is not None:
             attempts.append(
@@ -451,6 +496,21 @@ async def _convert_candidate(
             continue
 
         prescription = parse_attempt.prescription
+        if _formal_case_contains_embodiment(
+            formal_case_stems,
+            candidate.patent_id,
+            parse_attempt.embodiment_number,
+        ):
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="skipped",
+                    reason="formal case index already contains this patent embodiment",
+                    embodiment=prescription.embodiment,
+                )
+            )
+            continue
         output_path = output_dir / (
             f"{_safe_stem(candidate.patent_id)}-e{parse_attempt.embodiment_number}.zmx"
         )
@@ -626,10 +686,7 @@ def _parse_surface_table(table_text: str) -> list[PatentSurface]:
         if pos < len(tokens) and _material_token(tokens[pos]):
             material = tokens[pos]
             pos += 1
-            nd, pos = _consume_optional_number(tokens, pos)
-            vd, pos = _consume_optional_number(tokens, pos)
-            if pos < len(tokens) and not _is_next_surface_index(tokens[pos], index + 1):
-                _, pos = _consume_optional_number(tokens, pos)
+            nd, vd, pos = _consume_material_indices(tokens, pos, surface_index=index)
         surfaces.append(
             PatentSurface(
                 index=index,
@@ -788,6 +845,77 @@ def _consume_optional_number(tokens: list[str], pos: int) -> tuple[float | None,
         return None, pos
 
 
+def _consume_material_indices(
+    tokens: list[str],
+    pos: int,
+    *,
+    surface_index: int,
+) -> tuple[float | None, float | None, int]:
+    values: list[float] = []
+    while (
+        pos < len(tokens)
+        and len(values) < 3
+        and not _is_next_surface_index(tokens[pos], surface_index + 1)
+    ):
+        token = tokens[pos]
+        if _is_empty_value(token):
+            pos += 1
+            continue
+        try:
+            values.append(_parse_number(token))
+        except PatentParseError:
+            break
+        pos += 1
+
+    has_reference_nd_column = (
+        len(values) >= 3
+        and _is_physical_nd(values[0])
+        and _is_physical_nd(values[1])
+        and _is_physical_vd(values[2])
+    )
+    if has_reference_nd_column:
+        nd = values[1]
+        vd = values[2]
+    else:
+        nd = values[0] if values else None
+        vd = values[1] if len(values) >= 2 else None
+    _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+    return nd, vd, pos
+
+
+def _validate_prescription_materials(prescription: PatentPrescription) -> None:
+    for surface in prescription.surfaces:
+        _validate_material_indices(surface_index=surface.index, nd=surface.nd, vd=surface.vd)
+
+
+def _validate_material_indices(
+    *,
+    surface_index: int,
+    nd: float | None,
+    vd: float | None,
+) -> None:
+    if nd is None and vd is None:
+        return
+    if nd is None or vd is None:
+        raise PatentParseError(
+            f"surface {surface_index} material has incomplete nd/vd: nd={nd}, vd={vd}"
+        )
+    if not _is_physical_nd(nd) or not _is_physical_vd(vd):
+        raise PatentParseError(
+            f"surface {surface_index} material nd/vd outside physical bounds: "
+            f"nd={nd:.9g} allowed [{ND_PHYSICAL_RANGE[0]}, {ND_PHYSICAL_RANGE[1]}], "
+            f"vd={vd:.9g} allowed [{VD_PHYSICAL_RANGE[0]}, {VD_PHYSICAL_RANGE[1]}]"
+        )
+
+
+def _is_physical_nd(value: float) -> bool:
+    return ND_PHYSICAL_RANGE[0] <= value <= ND_PHYSICAL_RANGE[1]
+
+
+def _is_physical_vd(value: float) -> bool:
+    return VD_PHYSICAL_RANGE[0] <= value <= VD_PHYSICAL_RANGE[1]
+
+
 def _distance_value(token: str, *, field_name: str) -> float | None:
     stripped = _strip_parens(token)
     upper = stripped.upper()
@@ -929,6 +1057,7 @@ def write_patent_zmx(
 ) -> TraceApertureAudit:
     """Write a final patent ZMX after real-ray surface aperture auditing."""
 
+    _validate_prescription_materials(prescription)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = output_path.with_name(f".{output_path.name}.trace-tmp")
     provisional_readout = build_readout_from_prescription(prescription)
@@ -1270,6 +1399,12 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT_PATH)
     parser.add_argument("--target-successes", type=int, default=5)
     parser.add_argument("--max-attempts", type=int, default=40)
+    parser.add_argument(
+        "--case-index",
+        type=Path,
+        default=DEFAULT_CASE_INDEX_PATH,
+        help="Formal case index used to skip already ingested patent embodiments.",
+    )
     args = parser.parse_args()
 
     attempts = asyncio.run(
@@ -1279,6 +1414,7 @@ def main() -> int:
             report_path=args.report,
             target_successes=args.target_successes,
             max_attempts=args.max_attempts,
+            case_index_path=args.case_index,
         )
     )
     successes = sum(attempt.status == "success" for attempt in attempts)
