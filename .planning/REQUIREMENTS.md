@@ -79,7 +79,7 @@
 | SEED-01 | Phase 6 | ✓ 批次7 PR #22（CODE V 实算+物理自检） |
 | SEED-02 | Phase 6 | ✓ 批次7 PR #22（差分断言防自证） |
 | SEED-03 | Phase 6 | ✓ 批次7 PR #22（22 颗全覆盖+物理锚） |
-| DATA-03 | Phase 6 | Partial（原料池 224；转换器 spike 通并 CODE V 实机确认，PR #25；放量=多实施例解析+XASPHERE） |
+| DATA-03 | Phase 6 | Partial（可路由案例 106=PR #29；池 354 扩至 2000-3000=主公 2026-07-06 裁定；产率 26.7%） |
 | ENGINE-04 | Phase 7 | ✓ 批次5-8 PR #16/#19/#24（批跑+三态+硬超时+returncode白名单） |
 | ENGINE-05 | Phase 7 | ✓ 批次8 PR #24（readout→zmx_writer→zmx_ingest 单一路径） |
 | SHOW-01 | Phase 7 | ✓ 批次8 PR #24（并排对比+溯源 run 证据推导） |
