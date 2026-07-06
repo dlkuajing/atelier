@@ -36,6 +36,16 @@
               <button type="submit">Draft design</button>
             </div>
           </form>
+          <div class="example-requirements" aria-label="Sample requirements">
+            {% for example in example_requirements %}
+              <form class="example-form" action="/jobs" method="post" data-example-requirement>
+                {% for field in example.fields %}
+                  <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+                {% endfor %}
+                <button class="example-button" type="submit">{{ example.label }}</button>
+              </form>
+            {% endfor %}
+          </div>
         </div>
 
         <aside class="optical-bench" aria-label="Optical layout preview">

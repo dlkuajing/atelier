@@ -12,7 +12,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from app.core.case_library import load_case_library, match_case
+from app.core.case_library import _case_image_height_mm, load_case_library, match_case
 from app.core.field_analysis import FieldAnalysisResult, compute_field_analysis
 from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
@@ -24,7 +24,10 @@ ROOT = Path(__file__).resolve().parents[2]
 DEMO_CACHE_DIR = ROOT / "data" / "demo_cache"
 DEMO_CACHE_SCHEMA_VERSION = 2
 DEMO_CACHE_ANALYSIS_VERSION = "optiland-demo-analysis-v2"
-DEFAULT_DEMO_CASE_IDS = ("3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",)
+DEFAULT_DEMO_CASE_IDS = (
+    "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",
+    "US20170003482A1",
+)
 
 _IMH_RE = re.compile(r"_IMH(?P<imh>\d+(?:\.\d+)?)")
 _FNUM_RE = re.compile(r"(?:^|_)F(?P<fnum>\d+(?:\.\d+)?)(?=_FOV|_)")
@@ -252,12 +255,13 @@ def _request_from_sample(sample: OpticalSampleData) -> DemoCacheRequest:
     if sample.metadata is None:
         raise ValueError("demo cache sample requires metadata")
     case_id = sample.metadata.case_id
+    image_height_mm = _case_image_height_mm(sample) or _image_height_from_case_id(case_id)
     return DemoCacheRequest(
         scenario=sample.metadata.scenario,
         focal_length_mm=sample.metadata.nominal_efl_mm,
         f_number=_nominal_f_number_from_case_id(case_id) or sample.paraxial.f_number,
         field_of_view_deg=sample.metadata.fov_deg,
-        image_height_mm=_image_height_from_case_id(case_id),
+        image_height_mm=image_height_mm,
         n_elements=sample.metadata.n_pieces,
         wavelength_nm=550.0,
     )

@@ -1,8 +1,8 @@
 {
   "cache_schema_version": 2,
-  "cache_key": "smartphone-ultrawide-1348c0813eaff674",
+  "cache_key": "smartphone-ultrawide-d0f39dc8b86a7553",
   "analysis_fingerprint": "ea0390ba2704364e02a0578286d38de0bdc129a0df3ec70dd077fa1f55539a21",
-  "generated_at_utc": "2026-07-05T19:34:32.120004+00:00",
+  "generated_at_utc": "2026-07-06T10:26:20.171613+00:00",
   "source": "demo-precompute",
   "source_case_id": "US20170003482A1",
   "source_zmx": "US20170003482A1.zmx",
@@ -12,7 +12,7 @@
     "focal_length_mm": 3.621,
     "f_number": 2.32,
     "field_of_view_deg": 91.0,
-    "image_height_mm": 1.0,
+    "image_height_mm": 3.6863,
     "n_elements": 7,
     "wavelength_nm": 550.0
   },
@@ -4885,6 +4885,12 @@
       }
     ]
   },
+  "executive_summary": {
+    "summary_en": "This is a smartphone ultrawide module computed to a 3.62 mm effective focal length at f/2.32, covering a 91° diagonal field onto a 3.69 mm image height with seven elements. The 5.39 mm total track sits within the envelope of published mobile ultrawide prescriptions, and the 3.33 µm Airy disc at 550 nm implies a 734 lp/mm diffraction cutoff — consistent with sensors in the 1.0–1.2 µm pixel class. Element count and TTL/IH ratio both fall inside the range typical of shipping designs. Treat this as a physically credible starting point for tolerance study and full multi-wavelength optimization, not a manufacture-ready prescription.",
+    "summary_zh": "本方案针对手机超广角模组，计算得到有效焦距 3.62 mm、光圈 f/2.32、对角视场 91°、像高 3.69 mm，采用七片式结构，与量产超广角镜头的典型配置一致。总长 5.39 mm、TTL/IH 比值处于公开专利数据的合理区间内；550 nm 下艾里斑直径 3.33 µm，对应衍射截止频率 734 lp/mm，可匹配 1.0–1.2 µm 像元尺寸的主流传感器。需要说明的是，当前结果基于单波长与理想面型评估，尚未考虑色差校正、相对照度、畸变控制及公差敏感度等实际约束。建议将该方案作为后续多波长优化、非球面系数细化与公差分析的起点，而非可直接投产的最终结构。",
+    "model": "claude-opus-4-7",
+    "fallback_reason": null
+  },
   "codev_artifact": {
     "source_zmx": "US20170003482A1.zmx",
     "optimization_status": "aut_completed",
@@ -9651,7 +9657,7 @@
     "cross_validation_provenance": "codev-cross-validated",
     "ingested_efl_mm": 3.6212025618893824,
     "run_evidence": {
-      "run_started_at_utc": "2026-07-05T19:34:32.133943+00:00",
+      "run_started_at_utc": "2026-07-06T10:26:51.645292+00:00",
       "codev_executable": "D:\\CODEV115\\codev.exe",
       "codev_version": "11.5.27302.701",
       "codev_installation": {
@@ -9708,9 +9714,9 @@
         ]
       },
       "returncode": 1,
-      "duration_seconds": 5.297000000020489,
+      "duration_seconds": 6.35999999998603,
       "source_zmx_sha256": "ba30d55e36f96c45a04c1c76bbb82d3ff193617f06e4b21a885b433749c5102a",
-      "sequence_sha256": "4a8ad4d9429aa1a370f0a0792a1ae7fac6ce62d1714b807ce79335832f46e2dc",
+      "sequence_sha256": "4c91c3fcadcc4a1a3d487178ff54f623d3dcdd8085fac5611e4ce40ca44c2da9",
       "result_sha256": "c7bef5260256db4cb17de53de66b7dfb9b9c6ac700d1f9e16ae753ac69ab87b8",
       "optimized_readout_sha256": "8b9b4485c14b510f0fa3a99669485708c2d754358fe13eda13083f93dbafec0d",
       "optimized_zmx_sha256": "3357ab354dc384de52d7f7b8f4d9bfd0eb4ec1667e14b38d727f10aec6ac2231",

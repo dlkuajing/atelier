@@ -73,6 +73,54 @@ ANALYSIS_PROVENANCE_BADGES = (
     {"label": "Field", "source": ProvenanceSource.OPTILAND_RAYTRACE.value},
     {"label": "Wavefront", "source": ProvenanceSource.OPTILAND_WAVEFRONT.value},
 )
+EXAMPLE_REQUIREMENTS = (
+    {
+        "label": "Sample ultrawide",
+        "fields": (
+            {"name": "scenario", "value": "smartphone-ultrawide"},
+            {"name": "scenario_label_en", "value": "Smartphone Ultrawide"},
+            {"name": "focal_length_mm", "value": "3.621"},
+            {"name": "f_number", "value": "2.32"},
+            {"name": "field_of_view_deg", "value": "91.0"},
+            {"name": "image_height_mm", "value": "3.6863"},
+            {"name": "n_elements", "value": "7"},
+            {"name": "wavelength_nm", "value": "550.0"},
+            {"name": "total_track_mm", "value": "5.395"},
+            {"name": "airy_disc_diameter_um", "value": "3.11344"},
+            {"name": "cutoff_freq_lp_per_mm", "value": "783.69906"},
+            {
+                "name": "requirement",
+                "value": (
+                    "Sample request: smartphone ultrawide camera, 3.621 mm EFL, "
+                    "f/2.32, 91.0 deg FOV, 3.6863 mm image height, 7 elements."
+                ),
+            },
+        ),
+    },
+    {
+        "label": "Sample wide",
+        "fields": (
+            {"name": "scenario", "value": "smartphone-wide"},
+            {"name": "scenario_label_en", "value": "Smartphone Wide"},
+            {"name": "focal_length_mm", "value": "2.7"},
+            {"name": "f_number", "value": "2.5"},
+            {"name": "field_of_view_deg", "value": "78.0"},
+            {"name": "image_height_mm", "value": "2.3"},
+            {"name": "n_elements", "value": "3"},
+            {"name": "wavelength_nm", "value": "550.0"},
+            {"name": "total_track_mm", "value": "3.563803397328498"},
+            {"name": "airy_disc_diameter_um", "value": "3.355"},
+            {"name": "cutoff_freq_lp_per_mm", "value": "727.272727"},
+            {
+                "name": "requirement",
+                "value": (
+                    "Sample request: smartphone wide camera, 2.7 mm EFL, f/2.5, "
+                    "78.0 deg FOV, 2.3 mm image height, 3 elements."
+                ),
+            },
+        ),
+    },
+)
 _RESULT_ANALYSIS_WAVELENGTH_NM = 587.6
 _SUMMARY_FALLBACK_WAVELENGTH_NM = 550.0
 _CODEV_ESTIMATE_SOURCE = "optiland-estimate"
@@ -1258,6 +1306,7 @@ async def root(request: Request) -> HTMLResponse:
                 ("Analysis", "#analysis"),
                 ("API", "/docs"),
             ),
+            "example_requirements": EXAMPLE_REQUIREMENTS,
             "analysis_provenance_badges": ANALYSIS_PROVENANCE_BADGES,
         },
     )

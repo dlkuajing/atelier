@@ -4,17 +4,21 @@ from __future__ import annotations
 
 import os
 import signal
+import shutil
 import socket
 import subprocess
 import time
 import urllib.request
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 HEALTH_TIMEOUT_SECONDS = 120.0
 HOME_MARKERS = (
     "<title>Atelier Optical Design Agent</title>",
     'class="requirement-form"',
+    "Sample ultrawide",
     "Natural language requirement",
     "Analysis provenance",
 )
@@ -30,6 +34,32 @@ def _launcher_command() -> list[str]:
     if os.name == "nt":
         return ["cmd.exe", "/c", str(ROOT / "scripts" / "start_demo.bat")]
     return ["sh", str(ROOT / "scripts" / "start_demo.sh")]
+
+
+def _copy_launchers(tmp_path: Path) -> Path:
+    root = tmp_path / "demo-root"
+    scripts = root / "scripts"
+    scripts.mkdir(parents=True)
+    shutil.copy2(ROOT / "scripts" / "start_demo.bat", scripts / "start_demo.bat")
+    shutil.copy2(ROOT / "scripts" / "start_demo.sh", scripts / "start_demo.sh")
+    return root
+
+
+def _native_launcher_command(root: Path) -> list[str]:
+    if os.name == "nt":
+        return ["cmd.exe", "/c", str(root / "scripts" / "start_demo.bat")]
+    return ["sh", str(root / "scripts" / "start_demo.sh")]
+
+
+def _run_preflight(root: Path) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        _native_launcher_command(root),
+        cwd=root,
+        capture_output=True,
+        text=True,
+        timeout=10,
+        check=False,
+    )
 
 
 def _fetch(path: str, port: int) -> tuple[int, str, str]:
@@ -114,9 +144,41 @@ def test_windows_launcher_is_ascii_crlf_and_anchors_to_script_dir():
     assert b"\n" not in content.replace(b"\r\n", b"")
     content.decode("ascii")
     assert b'cd /d "%~dp0"' in content
+    assert b"OPENAI_API_KEY" in content
+
+
+def test_start_demo_shell_launchers_check_openai_api_key():
+    assert "OPENAI_API_KEY" in (ROOT / "scripts" / "start_demo.sh").read_text(
+        encoding="utf-8"
+    )
+
+
+def test_start_demo_preflight_requires_env_file(tmp_path):
+    demo_root = _copy_launchers(tmp_path)
+
+    result = _run_preflight(demo_root)
+
+    output = result.stdout + result.stderr
+    assert result.returncode == 1
+    assert "Missing .env file." in output
+    assert "OPENAI_API_KEY" in output
+
+
+def test_start_demo_preflight_requires_nonempty_openai_key(tmp_path):
+    demo_root = _copy_launchers(tmp_path)
+    (demo_root / ".env").write_text("OPENAI_API_KEY=\n", encoding="ascii")
+
+    result = _run_preflight(demo_root)
+
+    output = result.stdout + result.stderr
+    assert result.returncode == 1
+    assert "OPENAI_API_KEY is missing or empty in .env." in output
 
 
 def test_start_demo_launcher_serves_health_and_homepage(tmp_path):
+    if not (ROOT / ".env").is_file():
+        pytest.skip("start_demo preflight requires a local .env file")
+
     port = _unused_port()
     env = os.environ.copy()
     env["HOST"] = "127.0.0.1"

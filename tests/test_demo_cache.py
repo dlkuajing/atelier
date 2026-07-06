@@ -22,6 +22,7 @@ from app.core.demo_cache import (
     source_zmx_sha256,
     write_demo_cache_bundle,
 )
+from app.core.engines.codev_batch import resolve_default_codev_executable
 from app.core.field_analysis import FieldAnalysisResult
 from app.core.lens_system import LayoutSVG, RayPath, RayTraceResult, Scenario
 from app.core.optical_engine import ParaxialSummary
@@ -259,6 +260,27 @@ def test_demo_cache_round_trip_preserves_analysis_provenance(tmp_path):
         assert payload["provenance"] in {source.value for source in ProvenanceSource}
 
 
+def test_ultrawide_precomputed_cache_is_reachable_with_real_image_height():
+    request = optical_api.demo_cache_request(
+        scenario=Scenario.SMARTPHONE_ULTRAWIDE,
+        focal_length_mm=3.621,
+        f_number=2.32,
+        field_of_view_deg=91.0,
+        image_height_mm=3.6863,
+        n_elements=7,
+        wavelength_nm=550.0,
+    )
+
+    loaded = load_demo_cache_bundle_for_request(request)
+
+    assert loaded is not None
+    assert loaded.source_case_id == "US20170003482A1"
+    assert loaded.request.image_height_mm == 3.6863
+    assert loaded.request.image_height_mm != 1.0
+    if resolve_default_codev_executable().is_file():
+        assert loaded.codev_artifact is not None
+
+
 def test_precompute_codev_artifact_includes_run_evidence_and_refined_mtf(monkeypatch):
     precompute = importlib.import_module("scripts.precompute_demo_cache")
     bundle = _bundle()
@@ -370,6 +392,19 @@ def test_precompute_request_uses_nominal_f_number_from_case_id(monkeypatch):
         source_case_id=bundle.source_case_id,
         source_zmx_sha256=bundle.source_zmx_sha256,
     )
+
+
+def test_precompute_request_uses_index_image_height_for_patent_case(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.demo_cache._compute_analysis_family",
+        lambda _sample: (_spot(), _field(), _wavefront()),
+    )
+
+    bundle = build_demo_cache_bundle_for_case("US20170003482A1")
+
+    assert bundle.request.scenario == Scenario.SMARTPHONE_ULTRAWIDE
+    assert bundle.request.image_height_mm == 3.6863
+    assert bundle.request.image_height_mm != 1.0
 
 
 def test_precompute_case_lookup_preserves_decimal_case_id_without_suffix(monkeypatch):
