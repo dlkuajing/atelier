@@ -52,7 +52,20 @@ def test_high_fov_seed_intake_audit_reports_current_gap():
     assert report["image_height_window_mm"] == [2.55, 3.25]
     assert report["element_count_window"] == [4, 6]
     assert report["accepted_seed_candidates"] == []
+    assert report["full_field_accepted_seed_count"] == 0
+    assert "strict high-FOV full-field" in report["accepted_seed_count_semantics"]
+    assert report["lightweight_seed_count"] == 67
+    assert report["lightweight_accepted_seed_count"] == 67
+    assert report["lightweight_rejected_seed_count"] == 0
+    assert report["lightweight_seed_candidates"]
+    assert all(
+        all(candidate["checks"].values()) for candidate in report["lightweight_seed_candidates"]
+    )
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
+    assert any(
+        "DATA-06c lightweight accepted seeds=67/67" in item
+        for item in report["known_evidence"]
+    )
     assert any("best stable high-FOV seed=" in item for item in report["known_evidence"])
     assert any("FOV >= 85.0 deg" in item for item in report["missing_evidence"])
     assert any("image height in 2.55-3.25 mm" in item for item in report["missing_evidence"])
@@ -152,6 +165,8 @@ def test_seed_intake_cli_matches_runtime_assessment_contract():
     # acquisition probe still reports a gap with zero accepted candidates.
     assert cli_report["status"] == "gap"
     assert cli_report["accepted_seed_count"] == 0
+    assert cli_report["full_field_accepted_seed_count"] == 0
+    assert cli_report["lightweight_accepted_seed_count"] == 67
     assert cli_report["full_field_seed_count"] > 0
     assert cli_report["high_fov_seed_count"] > 0
     assert any(

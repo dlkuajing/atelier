@@ -14,11 +14,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+ROOT = Path(__file__).resolve().parents[1]
+CASE_INDEX_PATH = ROOT / "app" / "data" / "optical_cases" / "index.json"
+CASE_JSON_DIR = ROOT / "app" / "data" / "optical_cases"
+DATA_ZMX_DIR = ROOT / "data" / "zmx"
+DATA06C_BATCH_ID = "DATA-06c"
+
+sys.path.insert(0, str(ROOT))
 
 from app.core.case_library import (  # noqa: E402
     build_sample_from_optic,
@@ -34,6 +41,7 @@ _CANDIDATE_NAME_RE = re.compile(
     r"EFL(?P<efl>\d+(?:\.\d+)?)_IMH(?P<imh>\d+(?:\.\d+)?)_TTL(?P<ttl>\d+(?:\.\d+)?)",
     re.IGNORECASE,
 )
+_SURF_RE = re.compile(r"^SURF\s+\d+", re.MULTILINE)
 
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -250,11 +258,141 @@ def _load_candidate_samples(args: argparse.Namespace) -> list:
     ]
 
 
+def _index_by_case_id() -> dict[str, dict]:
+    records = json.loads(CASE_INDEX_PATH.read_text(encoding="utf-8"))
+    if not isinstance(records, list):
+        raise ValueError(f"case index must be a list: {CASE_INDEX_PATH}")
+    return {
+        str(record["case_id"]): record
+        for record in records
+        if isinstance(record, dict) and isinstance(record.get("case_id"), str)
+    }
+
+
+def _count_zmx_surfaces(source_zmx: str) -> int | None:
+    path = DATA_ZMX_DIR / source_zmx
+    if not path.exists():
+        return None
+    return len(_SURF_RE.findall(path.read_text(encoding="utf-8", errors="ignore")))
+
+
+def _count_case_json_surfaces(case_id: str) -> int | None:
+    path = CASE_JSON_DIR / f"{case_id}.json"
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    surfaces = payload.get("surfaces")
+    return len(surfaces) if isinstance(surfaces, list) else None
+
+
+def _finite_positive(value: object) -> bool:
+    return isinstance(value, (int, float)) and math.isfinite(float(value)) and float(value) > 0.0
+
+
+def _lightweight_seed_gate(case, index_record: dict) -> dict:
+    assert case.metadata is not None
+    case_id = case.metadata.case_id
+    source_zmx = case.metadata.source_zmx
+    zmx_surface_count = _count_zmx_surfaces(source_zmx)
+    json_surface_count = _count_case_json_surfaces(case_id)
+    image_height_mm = index_record.get("image_height_mm")
+    checks = {
+        "loaded": True,
+        "paraxial_finite_positive": all(
+            _finite_positive(value)
+            for value in (
+                case.paraxial.effective_focal_length_mm,
+                case.paraxial.f_number,
+                case.paraxial.total_track_mm,
+            )
+        ),
+        "image_height_positive": _finite_positive(image_height_mm),
+        "surface_count_matches_zmx": (
+            zmx_surface_count is not None
+            and json_surface_count is not None
+            and zmx_surface_count == json_surface_count
+        ),
+    }
+    return {
+        "case_id": case_id,
+        "source_zmx": source_zmx,
+        "status": "accepted" if all(checks.values()) else "rejected",
+        "checks": checks,
+        "image_height_mm": image_height_mm,
+        "paraxial_efl_mm": case.paraxial.effective_focal_length_mm,
+        "paraxial_f_number": case.paraxial.f_number,
+        "paraxial_total_track_mm": case.paraxial.total_track_mm,
+        "json_surface_count": json_surface_count,
+        "zmx_surface_count": zmx_surface_count,
+        "mtf_max_field_frac": case.metadata.mtf_max_field_frac,
+    }
+
+
+def _lightweight_seed_audit(cases: list, index_records: dict[str, dict]) -> dict:
+    rows = []
+    by_case_id = {
+        case.metadata.case_id: case
+        for case in cases
+        if case.metadata is not None and case.metadata.case_id in index_records
+    }
+    for case_id, record in index_records.items():
+        if record.get("intake_batch") != DATA06C_BATCH_ID:
+            continue
+        case = by_case_id.get(case_id)
+        if case is None:
+            rows.append(
+                {
+                    "case_id": case_id,
+                    "source_zmx": record.get("source_zmx"),
+                    "status": "rejected",
+                    "checks": {
+                        "loaded": False,
+                        "paraxial_finite_positive": False,
+                        "image_height_positive": _finite_positive(record.get("image_height_mm")),
+                        "surface_count_matches_zmx": False,
+                    },
+                    "image_height_mm": record.get("image_height_mm"),
+                }
+            )
+            continue
+        rows.append(_lightweight_seed_gate(case, record))
+
+    accepted = [row for row in rows if row["status"] == "accepted"]
+    rejected = [row for row in rows if row["status"] != "accepted"]
+    return {
+        "lightweight_seed_gate": "loaded + finite positive paraxial + IMH>0 + JSON surface count == ZMX SURF count",
+        "lightweight_seed_count": len(rows),
+        "lightweight_accepted_seed_count": len(accepted),
+        "lightweight_rejected_seed_count": len(rejected),
+        "lightweight_seed_candidates": accepted[:5],
+        "lightweight_rejected_seed_candidates": rejected[:5],
+    }
+
+
 def _audit(args: argparse.Namespace) -> dict:
     cases = [sample for sample in load_case_library() if sample.metadata is not None]
     cases.extend(_load_candidate_samples(args))
+    index_records = _index_by_case_id()
     audit = build_seed_intake_audit(cases=cases, brief=_brief_from_args(args))
-    return audit.model_dump(mode="json")
+    report = audit.model_dump(mode="json")
+    lightweight = _lightweight_seed_audit(cases, index_records)
+    report.update(lightweight)
+    report["full_field_accepted_seed_count"] = report["accepted_seed_count"]
+    report["accepted_seed_count_semantics"] = (
+        "accepted_seed_count is the strict high-FOV full-field acquisition-window gate; "
+        f"{DATA06C_BATCH_ID} lightweight seeds with bounded <=0.5 payload MTF are counted "
+        "under lightweight_accepted_seed_count instead."
+    )
+    report["known_evidence"] = [
+        *report["known_evidence"],
+        (
+            f"{DATA06C_BATCH_ID} lightweight accepted seeds="
+            f"{lightweight['lightweight_accepted_seed_count']}/"
+            f"{lightweight['lightweight_seed_count']}"
+        ),
+        f"lightweight gate={lightweight['lightweight_seed_gate']}",
+    ]
+    return report
 
 
 def _print_text(report: dict) -> None:
@@ -279,6 +417,14 @@ def _print_text(report: dict) -> None:
     print("known_evidence:")
     for item in report["known_evidence"]:
         print(f"  - {item}")
+    if "accepted_seed_count_semantics" in report:
+        print(f"accepted_seed_count_semantics: {report['accepted_seed_count_semantics']}")
+    if "lightweight_seed_count" in report:
+        print(
+            "lightweight_seed_gate: "
+            f"{report['lightweight_accepted_seed_count']}/"
+            f"{report['lightweight_seed_count']} accepted"
+        )
     print("missing_evidence:")
     for item in report["missing_evidence"] or ["none"]:
         print(f"  - {item}")
