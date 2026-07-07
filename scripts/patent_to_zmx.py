@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import contextlib
+import hashlib
 import html
 import json
 import math
@@ -12,6 +13,7 @@ import re
 import sys
 import unicodedata
 import warnings
+from collections import Counter
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
@@ -44,6 +46,9 @@ MIN_TRACE_SEMI_DIAMETER_MM = 0.05
 ND_PHYSICAL_RANGE = (1.3, 2.2)
 VD_PHYSICAL_RANGE = (10.0, 100.0)
 NUMBER_PATTERN = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
+PRESCRIPTION_FINGERPRINT_SURFACES = 8
+PRESCRIPTION_FINGERPRINT_QUANTUM_MM = 0.001
+DUPLICATE_PRESCRIPTION_DETAIL = "prescription fingerprint|duplicate_prescription"
 SUPPORTED_ASPHERE_ORDERS = {4, 6, 8, 10, 12, 14, 16, 18, 20}
 ASPHERE_ORDER_TO_CODEV = {
     4: "A",
@@ -279,6 +284,20 @@ def _parse_prescription_at_meta(
     )
 
 
+def prescription_fingerprint(prescription: PatentPrescription) -> str:
+    """Hash the first eight surface radius/thickness pairs for duplicate screening."""
+
+    sequence = [
+        (
+            _fingerprint_value(surface.radius_mm),
+            _fingerprint_value(surface.thickness_mm),
+        )
+        for surface in prescription.surfaces[:PRESCRIPTION_FINGERPRINT_SURFACES]
+    ]
+    payload = json.dumps(sequence, separators=(",", ":"), sort_keys=True)
+    return hashlib.sha256(payload.encode("ascii")).hexdigest()[:16]
+
+
 def build_readout_from_prescription(
     prescription: PatentPrescription,
     *,
@@ -422,6 +441,7 @@ async def run_conversion(
 
     candidates = load_patent_pool(pool_dir)
     attempts: list[ConversionAttempt] = []
+    seen_prescription_fingerprints: set[str] = set()
     successes = 0
     formal_case_stems = (
         load_formal_case_stems(case_index_path) if case_index_path is not None else frozenset()
@@ -439,6 +459,7 @@ async def run_conversion(
                 candidate,
                 output_dir,
                 formal_case_stems=formal_case_stems,
+                seen_prescription_fingerprints=seen_prescription_fingerprints,
             )
             attempts.extend(candidate_attempts)
             successes += sum(attempt.status == "success" for attempt in candidate_attempts)
@@ -455,6 +476,7 @@ async def _convert_candidate(
     output_dir: Path,
     *,
     formal_case_stems: frozenset[str] | set[str] | None = None,
+    seen_prescription_fingerprints: set[str] | None = None,
 ) -> list[ConversionAttempt]:
     try:
         page_html = await _fetch_patent_html(client, token, candidate.patent_id)
@@ -496,6 +518,24 @@ async def _convert_candidate(
             continue
 
         prescription = parse_attempt.prescription
+        fingerprint = prescription_fingerprint(prescription)
+        if seen_prescription_fingerprints is not None:
+            if fingerprint in seen_prescription_fingerprints:
+                attempts.append(
+                    ConversionAttempt(
+                        patent_id=candidate.patent_id,
+                        title=candidate.title,
+                        status="duplicate_prescription",
+                        reason=(
+                            "duplicate_prescription: "
+                            f"{DUPLICATE_PRESCRIPTION_DETAIL} {fingerprint}"
+                        ),
+                        embodiment=prescription.embodiment,
+                        coverage=_coverage(prescription),
+                    )
+                )
+                continue
+            seen_prescription_fingerprints.add(fingerprint)
         if _formal_case_contains_embodiment(
             formal_case_stems,
             candidate.patent_id,
@@ -942,6 +982,14 @@ def _parse_number(token: str) -> float:
     return value
 
 
+def _fingerprint_value(value: float | None) -> str | int:
+    if value is None:
+        return "none"
+    if math.isinf(value):
+        return "inf" if value > 0 else "-inf"
+    return int(round(value / PRESCRIPTION_FINGERPRINT_QUANTUM_MM))
+
+
 def _coverage(
     prescription: PatentPrescription,
     *,
@@ -984,6 +1032,7 @@ def _write_report(
 ) -> None:
     report_path.parent.mkdir(parents=True, exist_ok=True)
     successes = [attempt for attempt in attempts if attempt.status == "success"]
+    failure_reason_counts = _failure_reason_counts(attempts)
     lines = [
         "# DATA-06a patent-to-ZMX spike report",
         "",
@@ -992,6 +1041,12 @@ def _write_report(
         f"- successes: {len(successes)}",
         f"- success_rate: {len(successes)}/{len(attempts)} ({(len(successes) / len(attempts) * 100 if attempts else 0.0):.1f}%)",
         f"- rechecked_failures: {len(attempts) - len(successes)}",
+        "- failure_reason_counts:",
+        *(
+            [f"  - {reason}: {count}" for reason, count in sorted(failure_reason_counts.items())]
+            if failure_reason_counts
+            else ["  - none: 0"]
+        ),
         "- source: local data/patents/uspto-smartphone-batch*.jsonl + USPTO PPUBS HTML",
         "- parser: deterministic NFKC-normalized embodiment table parse; no numeric LLM fill",
         "- clear_aperture: ZMX -> zmx_ingest/Optiland real-ray sampled per-surface envelope; f*tan(HFOV) is sanity-only",
@@ -1029,6 +1084,23 @@ def _write_report(
             + " |"
         )
     report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _failure_reason_counts(attempts: list[ConversionAttempt]) -> Counter[str]:
+    counts: Counter[str] = Counter()
+    for attempt in attempts:
+        if attempt.status == "success":
+            continue
+        if attempt.status == "duplicate_prescription":
+            counts["duplicate_prescription"] += 1
+            continue
+        reason = attempt.reason.strip()
+        if not reason:
+            counts["unknown"] += 1
+            continue
+        match = re.match(r"([A-Za-z_][A-Za-z0-9_.]*)(?::|$)", reason)
+        counts[match.group(1) if match else reason.split(maxsplit=1)[0]] += 1
+    return counts
 
 
 def _format_coverage(coverage: dict[str, Any]) -> str:

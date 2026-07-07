@@ -15,6 +15,7 @@ from scripts.patent_to_zmx import (
     build_readout_from_prescription,
     parse_patent_prescription,
     parse_patent_prescriptions,
+    prescription_fingerprint,
     write_patent_zmx,
 )
 
@@ -336,3 +337,126 @@ def test_parse_patent_prescription_rejects_unsupported_high_order_asphere_terms(
 
     with pytest.raises(PatentParseError, match="unsupported nonzero high-order"):
         parse_patent_prescription(text, patent_id="US-UNSUPPORTED-A1")
+
+
+def test_prescription_fingerprint_uses_first_eight_radius_thickness_values() -> None:
+    base = parse_patent_prescription(PRESCRIPTION_TEXT, patent_id="US-FP-A1")
+    meta_changed = parse_patent_prescription(
+        PRESCRIPTION_TEXT.replace("f = 12.99 mm", "f = 13.49 mm", 1),
+        patent_id="US-FP-A2",
+    )
+    radius_changed = parse_patent_prescription(
+        PRESCRIPTION_TEXT.replace("43.6006", "44.6006", 1),
+        patent_id="US-FP-A3",
+    )
+
+    fingerprint = prescription_fingerprint(base)
+
+    assert len(fingerprint) == 16
+    assert fingerprint == prescription_fingerprint(meta_changed)
+    assert fingerprint != prescription_fingerprint(radius_changed)
+
+
+def test_convert_candidate_skips_duplicate_prescription_without_writing_zmx(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_dir = tmp_path / "zmx"
+    seen_prescription_fingerprints: set[str] = set()
+
+    class FakeParaxial:
+        def f2(self) -> float:
+            return 12.34
+
+    class FakeOptic:
+        paraxial = FakeParaxial()
+
+    async def fake_fetch(_client: object, _token: str, _patent_id: str) -> str:
+        return PRESCRIPTION_TEXT
+
+    def fake_write(
+        _prescription: patent_to_zmx.PatentPrescription,
+        output_path: Path,
+    ) -> patent_to_zmx.TraceApertureAudit:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text("fake zmx", encoding="ascii")
+        return patent_to_zmx.TraceApertureAudit(
+            semi_diameters_mm={},
+            real_image_height_mm=1.0,
+            sanity_image_height_mm=2.0,
+            measured_surfaces=(),
+            interpolated_surfaces=(),
+            finite_final_rays=1,
+            total_rays=1,
+        )
+
+    monkeypatch.setattr(patent_to_zmx, "ROOT", tmp_path)
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch)
+    monkeypatch.setattr(patent_to_zmx, "write_patent_zmx", fake_write)
+    monkeypatch.setattr(patent_to_zmx, "load_normalized_zmx", lambda _path: FakeOptic())
+
+    first = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "token",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-DUP-A1",
+                title="first",
+                source_url="",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            output_dir,
+            seen_prescription_fingerprints=seen_prescription_fingerprints,
+        )
+    )
+    second = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "token",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-DUP-A2",
+                title="second",
+                source_url="",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=2,
+            ),
+            output_dir,
+            seen_prescription_fingerprints=seen_prescription_fingerprints,
+        )
+    )
+
+    assert [attempt.status for attempt in first] == ["success"]
+    assert [attempt.status for attempt in second] == ["duplicate_prescription"]
+    assert "prescription fingerprint" in second[0].reason
+    assert (output_dir / "US-DUP-A1-e1.zmx").is_file()
+    assert not (output_dir / "US-DUP-A2-e1.zmx").exists()
+
+
+def test_patent_to_zmx_report_includes_failure_reason_counts(tmp_path: Path) -> None:
+    report_path = tmp_path / "report.md"
+
+    patent_to_zmx._write_report(
+        report_path,
+        [
+            patent_to_zmx.ConversionAttempt(
+                patent_id="US-FAIL-A1",
+                title="parse failure",
+                status="failed",
+                reason="PatentParseError: no embodiment table",
+            ),
+            patent_to_zmx.ConversionAttempt(
+                patent_id="US-DUP-A1",
+                title="duplicate",
+                status="duplicate_prescription",
+                reason="duplicate_prescription: prescription fingerprint abc123",
+            ),
+        ],
+        target_successes=1,
+    )
+
+    report = report_path.read_text(encoding="utf-8")
+
+    assert "- failure_reason_counts:" in report
+    assert "  - PatentParseError: 1" in report
+    assert "  - duplicate_prescription: 1" in report

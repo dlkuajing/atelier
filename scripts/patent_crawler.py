@@ -39,12 +39,17 @@ import argparse
 import asyncio
 import html
 import json
+import math
 import os
 import re
 import sys
+import unicodedata
+from collections import Counter
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import httpx
 import structlog
@@ -60,6 +65,20 @@ from app.core.patent_crawl_schema import validate_patent_record  # noqa: E402
 
 
 logger = structlog.get_logger(__name__)
+
+DEFAULT_PATENT_POOL_DIR = Path("data/patents")
+PATENT_POOL_PATTERN = "uspto-smartphone-batch*.jsonl"
+DEFAULT_CURSOR_PATH = DEFAULT_PATENT_POOL_DIR / "crawl-cursor.json"
+IPC_SWEEP_CLASSES: tuple[str, ...] = (
+    "G02B13/0045",
+    "G02B9/60",
+    "G02B9/62",
+    "G02B9/64",
+)
+ASSIGNEE_QUOTA_FRACTION = 0.30
+ASSIGNEE_QUOTA_MIN_POOL_SIZE = 10
+F_FINGERPRINT_TOLERANCE_MM = 0.1
+FNO_FINGERPRINT_TOLERANCE = 0.05
 
 
 # ---------------------------------------------------------------------------
@@ -79,6 +98,267 @@ class PatentRecord:
     filing_date: str | None
     source: str
     source_url: str
+    family_hint: str | None = None
+
+
+@dataclass
+class CrawlFilterStats:
+    seen: int = 0
+    accepted: int = 0
+    id_duplicate_skipped: int = 0
+    family_hint_tagged: int = 0
+    family_duplicate_skipped: int = 0
+    assignee_quota_skipped: int = 0
+
+
+# ---------------------------------------------------------------------------
+# Pool filters: family fingerprint dedupe + assignee quota
+# ---------------------------------------------------------------------------
+
+
+FamilyFingerprint = tuple[str, str, int | None, int | None]
+
+
+def _record_mapping(record: PatentRecord | Mapping[str, Any]) -> Mapping[str, Any]:
+    if isinstance(record, PatentRecord):
+        return asdict(record)
+    return record
+
+
+def _normalize_words(value: str) -> str:
+    text = unicodedata.normalize("NFKC", html.unescape(value)).casefold()
+    text = re.sub(r"[^a-z0-9]+", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _normalize_title(value: str) -> str:
+    return _normalize_words(value)
+
+
+def _normalize_assignee(value: str) -> str:
+    text = _normalize_words(value)
+    text = re.sub(
+        r"\b(?:co|corp|corporation|inc|incorporated|ltd|limited|company|"
+        r"technology|technologies|group)\b",
+        " ",
+        text,
+    )
+    text = re.sub(r"\s+", " ", text).strip()
+    if "largan precision" in text:
+        return "largan precision"
+    if "zhejiang sunny" in text or "sunny optical" in text or "sunny optics" in text:
+        return "sunny optical"
+    if "genius electronic" in text or "gseo" in text:
+        return "genius electronic optical"
+    if "aac" in text:
+        return "aac optics"
+    if "samsung electro" in text:
+        return "samsung electro mechanics"
+    return text
+
+
+def _record_text_for_numbers(record: PatentRecord | Mapping[str, Any]) -> str:
+    data = _record_mapping(record)
+    parts: list[str] = []
+    for key in ("title", "abstract", "claim_excerpt"):
+        value = data.get(key)
+        if isinstance(value, str):
+            parts.append(value)
+    return "\n".join(parts)
+
+
+def _parse_float_token(value: str) -> float | None:
+    try:
+        parsed = float(value)
+    except ValueError:
+        return None
+    return parsed if math.isfinite(parsed) else None
+
+
+def _first_number(patterns: tuple[str, ...], text: str) -> float | None:
+    for pattern in patterns:
+        match = re.search(pattern, text, flags=re.IGNORECASE)
+        if match:
+            value = _parse_float_token(match.group("value"))
+            if value is not None:
+                return value
+    return None
+
+
+def _extract_f_fno(text: str) -> tuple[float | None, float | None]:
+    compact = re.sub(r"\s+", " ", text)
+    combined = re.search(
+        r"\bf\s*/\s*f\s*no\.?(?:\s*/\s*h?fov)?\s*[:=]\s*"
+        r"(?P<f>\d+(?:\.\d+)?)\s*/\s*(?P<fno>\d+(?:\.\d+)?)",
+        compact,
+        flags=re.IGNORECASE,
+    )
+    if combined:
+        return _parse_float_token(combined.group("f")), _parse_float_token(
+            combined.group("fno")
+        )
+
+    focal_length = _first_number(
+        (
+            r"\bfocal\s+length\s*(?:of|is|=|:)?\s*(?P<value>\d+(?:\.\d+)?)\s*mm\b",
+            r"\befl\s*(?:of|around|is|=|:)?\s*(?P<value>\d+(?:\.\d+)?)\s*mm\b",
+            r"\bf\s*(?:=|:)\s*(?P<value>\d+(?:\.\d+)?)\s*mm\b",
+        ),
+        compact,
+    )
+    f_number = _first_number(
+        (
+            r"\bf\s*/\s*#\s*(?:of|is|=|:)?\s*(?P<value>\d+(?:\.\d+)?)\b",
+            r"\bf\s*no\.?\s*(?:of|is|=|:)?\s*(?P<value>\d+(?:\.\d+)?)\b",
+            r"\bfno\s*(?:of|is|=|:)?\s*(?P<value>\d+(?:\.\d+)?)\b",
+            r"\bf[-\s]?number\s*(?:of|is|=|:)?\s*(?P<value>\d+(?:\.\d+)?)\b",
+            r"\bf\s*/\s*(?P<value>\d+(?:\.\d+)?)\b",
+        ),
+        compact,
+    )
+    return focal_length, f_number
+
+
+def _quantize(value: float | None, tolerance: float) -> int | None:
+    if value is None:
+        return None
+    return int(math.floor(value / tolerance + 0.5))
+
+
+def family_fingerprint(record: PatentRecord | Mapping[str, Any]) -> FamilyFingerprint:
+    """Build a near-duplicate family fingerprint from assignee, title, f, and Fno."""
+    data = _record_mapping(record)
+    title = data.get("title")
+    assignee = data.get("assignee")
+    focal_length, f_number = _extract_f_fno(_record_text_for_numbers(record))
+    return (
+        _normalize_assignee(assignee if isinstance(assignee, str) else ""),
+        _normalize_title(title if isinstance(title, str) else ""),
+        _quantize(focal_length, F_FINGERPRINT_TOLERANCE_MM),
+        _quantize(f_number, FNO_FINGERPRINT_TOLERANCE),
+    )
+
+
+def _assignee_key(record: PatentRecord | Mapping[str, Any]) -> str:
+    value = _record_mapping(record).get("assignee")
+    return _normalize_assignee(value) if isinstance(value, str) else ""
+
+
+def _record_id(record: PatentRecord | Mapping[str, Any]) -> str:
+    value = _record_mapping(record).get("id")
+    return str(value).strip() if value is not None else ""
+
+
+def _canonical_record_id(record: PatentRecord | Mapping[str, Any]) -> str:
+    return re.sub(r"[^A-Z0-9]", "", _record_id(record).upper())
+
+
+def _family_hint_value(fingerprint: FamilyFingerprint, matched_record_id: str) -> str:
+    assignee, title, focal_bin, fno_bin = fingerprint
+    parts = [f"near_duplicate_of={matched_record_id or 'unknown'}"]
+    if assignee:
+        parts.append(f"assignee={assignee}")
+    if title:
+        parts.append(f"title={title[:80]}")
+    if focal_bin is not None:
+        parts.append(f"f_bin={focal_bin}")
+    if fno_bin is not None:
+        parts.append(f"fno_bin={fno_bin}")
+    return "; ".join(parts)
+
+
+def _would_exceed_assignee_quota(
+    assignee: str,
+    assignee_counts: Counter[str],
+    total_count: int,
+    *,
+    max_share: float,
+    min_pool_size: int,
+) -> bool:
+    if not assignee:
+        return False
+    projected_total = total_count + 1
+    if projected_total < min_pool_size:
+        return False
+    return (assignee_counts[assignee] + 1) / projected_total > max_share
+
+
+def filter_patent_records_by_pool(
+    records: list[PatentRecord],
+    existing_records: list[PatentRecord | Mapping[str, Any]],
+    *,
+    max_assignee_share: float = ASSIGNEE_QUOTA_FRACTION,
+    quota_min_pool_size: int = ASSIGNEE_QUOTA_MIN_POOL_SIZE,
+) -> tuple[list[PatentRecord], CrawlFilterStats]:
+    """Apply all-pool family hints and assignee share quota."""
+    stats = CrawlFilterStats()
+    known_ids = {
+        record_id for record in existing_records if (record_id := _canonical_record_id(record))
+    }
+    fingerprints: dict[FamilyFingerprint, str] = {}
+    for record in existing_records:
+        fingerprints.setdefault(family_fingerprint(record), _record_id(record))
+    assignee_counts = Counter(
+        assignee for record in existing_records if (assignee := _assignee_key(record))
+    )
+    total_count = len(existing_records)
+    accepted: list[PatentRecord] = []
+
+    for record in records:
+        stats.seen += 1
+        record_id = _canonical_record_id(record)
+        if record_id and record_id in known_ids:
+            stats.id_duplicate_skipped += 1
+            continue
+
+        fingerprint = family_fingerprint(record)
+        duplicate_of = fingerprints.get(fingerprint)
+        record.family_hint = (
+            _family_hint_value(fingerprint, duplicate_of) if duplicate_of is not None else None
+        )
+
+        assignee = _assignee_key(record)
+        if _would_exceed_assignee_quota(
+            assignee,
+            assignee_counts,
+            total_count,
+            max_share=max_assignee_share,
+            min_pool_size=quota_min_pool_size,
+        ):
+            stats.assignee_quota_skipped += 1
+            continue
+
+        accepted.append(record)
+        stats.accepted += 1
+        if record.family_hint is not None:
+            stats.family_hint_tagged += 1
+        else:
+            fingerprints.setdefault(fingerprint, _record_id(record))
+        if record_id:
+            known_ids.add(record_id)
+        if assignee:
+            assignee_counts[assignee] += 1
+        total_count += 1
+
+    return accepted, stats
+
+
+def load_patent_pool_records(
+    pool_dir: Path = DEFAULT_PATENT_POOL_DIR,
+    *,
+    pattern: str = PATENT_POOL_PATTERN,
+    exclude: Path | None = None,
+) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    excluded = exclude.resolve() if exclude is not None else None
+    for path in sorted(pool_dir.glob(pattern)):
+        if excluded is not None and path.resolve() == excluded:
+            continue
+        with path.open(encoding="utf-8") as handle:
+            for line in handle:
+                if line.strip():
+                    records.append(json.loads(line))
+    return records
 
 
 # ---------------------------------------------------------------------------
@@ -96,6 +376,12 @@ PPUBS_DATABASE_FILTERS = (
 )
 
 
+@dataclass(frozen=True)
+class PpubsSearchPage:
+    docs: list[dict[str, Any]]
+    next_cursor: str | None
+
+
 async def _ppubs_access_token(client: httpx.AsyncClient) -> str:
     response = await client.post(
         PPUBS_SESSION_URL,
@@ -109,14 +395,15 @@ async def _ppubs_access_token(client: httpx.AsyncClient) -> str:
     return token
 
 
-async def _ppubs_search_docs(
+async def _ppubs_search_page(
     client: httpx.AsyncClient,
     token: str,
     query: str,
     page_size: int,
-) -> list[dict]:
+    cursor_marker: str = "*",
+) -> PpubsSearchPage:
     payload = {
-        "cursorMarker": "*",
+        "cursorMarker": cursor_marker,
         "databaseFilters": list(PPUBS_DATABASE_FILTERS),
         "fields": [
             "documentId",
@@ -139,7 +426,25 @@ async def _ppubs_search_docs(
         headers={"Accept": "application/json", "x-access-token": token},
     )
     response.raise_for_status()
-    return response.json().get("docs", [])
+    payload_json = response.json()
+    docs = payload_json.get("docs", [])
+    next_cursor = (
+        payload_json.get("nextCursorMarker")
+        or payload_json.get("nextCursorMark")
+        or payload_json.get("cursorMark")
+    )
+    if not isinstance(next_cursor, str) or not next_cursor or next_cursor == cursor_marker:
+        next_cursor = None
+    return PpubsSearchPage(docs=docs, next_cursor=next_cursor)
+
+
+async def _ppubs_search_docs(
+    client: httpx.AsyncClient,
+    token: str,
+    query: str,
+    page_size: int,
+) -> list[dict]:
+    return (await _ppubs_search_page(client, token, query, page_size)).docs
 
 
 async def _ppubs_patent_html(
@@ -160,6 +465,45 @@ async def _ppubs_patent_html(
         await asyncio.sleep(5 * (attempt + 1))
     response.raise_for_status()
     return response.text
+
+
+def _exception_diagnostics(exc: Exception) -> dict[str, Any]:
+    response = getattr(exc, "response", None)
+    status_code = getattr(response, "status_code", None)
+    http_status = status_code if isinstance(status_code, int) else None
+    error = str(exc).strip() or repr(exc)
+    if http_status is not None:
+        failure_reason = f"http_{http_status}"
+    elif isinstance(exc, httpx.TimeoutException):
+        failure_reason = "timeout"
+    elif isinstance(exc, httpx.RequestError):
+        failure_reason = "request_error"
+    else:
+        failure_reason = type(exc).__name__
+    return {
+        "error": error,
+        "error_type": type(exc).__name__,
+        "http_status": http_status,
+        "failure_reason": failure_reason,
+    }
+
+
+def _record_skip(
+    document_id: str,
+    exc: Exception,
+    *,
+    stage: str,
+    skip_reason_counts: Counter[str] | None,
+) -> None:
+    diagnostics = _exception_diagnostics(exc)
+    if skip_reason_counts is not None:
+        skip_reason_counts[diagnostics["failure_reason"]] += 1
+    logger.warning(
+        "uspto_record_skipped",
+        document_id=document_id,
+        stage=stage,
+        **diagnostics,
+    )
 
 
 def _strip_html(value: str) -> str:
@@ -223,6 +567,67 @@ def _ppubs_record_from_doc(doc: dict, page_html: str) -> PatentRecord:
     )
 
 
+async def _record_for_ppubs_doc(
+    client: httpx.AsyncClient,
+    token: str,
+    doc: dict[str, Any],
+    *,
+    skip_reason_counts: Counter[str] | None = None,
+) -> PatentRecord | None:
+    document_id = str(doc.get("documentId") or "")
+    source_type = str(doc.get("type") or "")
+    if not document_id or not source_type:
+        return None
+    try:
+        page_html = await _ppubs_patent_html(client, token, document_id, source_type)
+    except Exception as exc:
+        _record_skip(
+            document_id,
+            exc,
+            stage="fetch",
+            skip_reason_counts=skip_reason_counts,
+        )
+        return None
+
+    await asyncio.sleep(0.8)
+
+    try:
+        record = _ppubs_record_from_doc(doc, page_html)
+        validate_patent_record(asdict(record))
+    except Exception as exc:
+        _record_skip(
+            document_id,
+            exc,
+            stage="parse",
+            skip_reason_counts=skip_reason_counts,
+        )
+        return None
+    return record
+
+
+async def _records_from_ppubs_docs(
+    client: httpx.AsyncClient,
+    token: str,
+    docs: list[dict[str, Any]],
+    max_records: int | None = None,
+    *,
+    skip_reason_counts: Counter[str] | None = None,
+) -> list[PatentRecord]:
+    records: list[PatentRecord] = []
+    for doc in docs:
+        if max_records is not None and len(records) >= max_records:
+            break
+        record = await _record_for_ppubs_doc(
+            client,
+            token,
+            doc,
+            skip_reason_counts=skip_reason_counts,
+        )
+        if record is not None:
+            records.append(record)
+    return records
+
+
 async def _records_for_uspto_query(
     client: httpx.AsyncClient,
     token: str,
@@ -231,24 +636,7 @@ async def _records_for_uspto_query(
     max_records: int | None = None,
 ) -> list[PatentRecord]:
     docs = await _ppubs_search_docs(client, token, query, page_size)
-    records: list[PatentRecord] = []
-    for doc in docs:
-        if max_records is not None and len(records) >= max_records:
-            break
-        document_id = str(doc.get("documentId") or "")
-        source_type = str(doc.get("type") or "")
-        if not document_id or not source_type:
-            continue
-        try:
-            page_html = await _ppubs_patent_html(client, token, document_id, source_type)
-            record = _ppubs_record_from_doc(doc, page_html)
-            validate_patent_record(asdict(record))
-        except Exception as exc:
-            logger.warning("uspto_record_skipped", document_id=document_id, error=str(exc))
-            continue
-        records.append(record)
-        await asyncio.sleep(0.8)
-    return records
+    return await _records_from_ppubs_docs(client, token, docs, max_records=max_records)
 
 
 async def search_uspto(query: str, limit: int) -> list[PatentRecord]:
@@ -296,6 +684,139 @@ async def search_uspto_smartphone(limit: int) -> list[PatentRecord]:
     ]
     misses = [record for record in records if record not in hits]
     return (hits + misses)[:limit]
+
+
+def _ipc_sweep_query(ipc_class: str) -> str:
+    return (
+        f'"{ipc_class}" AND '
+        '("optical imaging lens assembly" OR "imaging lens assembly" OR "camera optical lens")'
+    )
+
+
+def _load_ipc_cursor(cursor_path: Path) -> dict[str, Any]:
+    if cursor_path.is_file():
+        with cursor_path.open(encoding="utf-8") as handle:
+            cursor = json.load(handle)
+    else:
+        cursor = {}
+
+    ipc_classes = list(cursor.get("ipc_classes") or IPC_SWEEP_CLASSES)
+    cursor_by_ipc = cursor.get("cursor_by_ipc")
+    if not isinstance(cursor_by_ipc, dict):
+        cursor_by_ipc = {}
+    exhausted = cursor.get("exhausted")
+    if not isinstance(exhausted, list):
+        exhausted = []
+    return {
+        "ipc_classes": ipc_classes,
+        "class_index": int(cursor.get("class_index") or 0) % len(ipc_classes),
+        "cursor_by_ipc": {
+            ipc: str(cursor_by_ipc.get(ipc) or "*") for ipc in ipc_classes
+        },
+        "exhausted": [str(item) for item in exhausted if str(item) in ipc_classes],
+    }
+
+
+def _save_ipc_cursor(cursor_path: Path, cursor: Mapping[str, Any]) -> None:
+    cursor_path.parent.mkdir(parents=True, exist_ok=True)
+    with cursor_path.open("w", encoding="utf-8") as handle:
+        json.dump(dict(cursor), handle, ensure_ascii=False, indent=2, sort_keys=True)
+        handle.write("\n")
+
+
+def _next_ipc_cursor_class(cursor: Mapping[str, Any]) -> tuple[int, str] | None:
+    ipc_classes = list(cursor["ipc_classes"])
+    exhausted = set(cursor["exhausted"])
+    start_index = int(cursor["class_index"]) % len(ipc_classes)
+    for offset in range(len(ipc_classes)):
+        index = (start_index + offset) % len(ipc_classes)
+        ipc_class = ipc_classes[index]
+        if ipc_class not in exhausted:
+            return index, ipc_class
+    return None
+
+
+def _add_stats(total: CrawlFilterStats, current: CrawlFilterStats) -> None:
+    total.seen += current.seen
+    total.accepted += current.accepted
+    total.id_duplicate_skipped += current.id_duplicate_skipped
+    total.family_hint_tagged += current.family_hint_tagged
+    total.family_duplicate_skipped += current.family_duplicate_skipped
+    total.assignee_quota_skipped += current.assignee_quota_skipped
+
+
+async def search_uspto_ipc_sweep(
+    limit: int,
+    *,
+    cursor_path: Path = DEFAULT_CURSOR_PATH,
+    existing_records: list[PatentRecord | Mapping[str, Any]] | None = None,
+    page_size: int = 50,
+) -> list[PatentRecord]:
+    """Sweep configured IPC classes one page at a time, resuming from cursor_path."""
+    accepted: list[PatentRecord] = []
+    accepted_ids: set[str] = set()
+    pool_records: list[PatentRecord | Mapping[str, Any]] = list(existing_records or [])
+    total_stats = CrawlFilterStats()
+    record_skip_reasons: Counter[str] = Counter()
+
+    cursor = _load_ipc_cursor(cursor_path)
+    async with httpx.AsyncClient(timeout=60) as client:
+        token = await _ppubs_access_token(client)
+        while len(accepted) < limit:
+            next_class = _next_ipc_cursor_class(cursor)
+            if next_class is None:
+                break
+
+            class_index, ipc_class = next_class
+            cursor_marker = cursor["cursor_by_ipc"].get(ipc_class, "*")
+            page = await _ppubs_search_page(
+                client,
+                token,
+                _ipc_sweep_query(ipc_class),
+                page_size,
+                cursor_marker=cursor_marker,
+            )
+            page_records = await _records_from_ppubs_docs(
+                client,
+                token,
+                page.docs,
+                skip_reason_counts=record_skip_reasons,
+            )
+            page_records = [record for record in page_records if record.id not in accepted_ids]
+            filtered, stats = filter_patent_records_by_pool(page_records, pool_records)
+            _add_stats(total_stats, stats)
+
+            for record in filtered:
+                accepted.append(record)
+                accepted_ids.add(record.id)
+                pool_records.append(record)
+                if len(accepted) >= limit:
+                    break
+
+            if page.next_cursor is None:
+                exhausted = set(cursor["exhausted"])
+                exhausted.add(ipc_class)
+                cursor["exhausted"] = sorted(exhausted)
+            else:
+                cursor["cursor_by_ipc"][ipc_class] = page.next_cursor
+            cursor["class_index"] = (class_index + 1) % len(cursor["ipc_classes"])
+            _save_ipc_cursor(cursor_path, cursor)
+
+            if not page.docs and page.next_cursor is None:
+                continue
+
+    logger.info(
+        "ipc_sweep_finished",
+        accepted=len(accepted),
+        seen=total_stats.seen,
+        id_duplicate_skipped=total_stats.id_duplicate_skipped,
+        family_hint_tagged=total_stats.family_hint_tagged,
+        family_duplicate_skipped=total_stats.family_duplicate_skipped,
+        assignee_quota_skipped=total_stats.assignee_quota_skipped,
+        record_skip_reasons=dict(sorted(record_skip_reasons.items())),
+        cursor_path=str(cursor_path),
+    )
+    return accepted[:limit]
 
 
 # ---------------------------------------------------------------------------
@@ -459,18 +980,55 @@ def _write_jsonl(records: list[PatentRecord], out_path: Path) -> None:
     logger.info("wrote_jsonl", path=str(out_path), count=len(records))
 
 
+def _apply_pool_filters_for_output(
+    records: list[PatentRecord],
+    *,
+    out_path: Path,
+    pool_dir: Path,
+) -> list[PatentRecord]:
+    existing_records = load_patent_pool_records(pool_dir, exclude=out_path)
+    filtered, stats = filter_patent_records_by_pool(records, existing_records)
+    logger.info(
+        "crawl_filters_applied",
+        seen=stats.seen,
+        accepted=stats.accepted,
+        id_duplicate_skipped=stats.id_duplicate_skipped,
+        family_hint_tagged=stats.family_hint_tagged,
+        family_duplicate_skipped=stats.family_duplicate_skipped,
+        assignee_quota_skipped=stats.assignee_quota_skipped,
+        existing_pool_count=len(existing_records),
+    )
+    return filtered
+
+
 async def _async_main(args: argparse.Namespace) -> int:
     if args.dry_run:
         _write_jsonl(dry_run_records(), Path(args.out))
         return 0
 
+    out_path = Path(args.out)
+    pool_dir = Path(args.pool_dir)
+
     if args.source == "uspto":
-        if args.profile == "smartphone" and not args.query:
+        if args.ipc_sweep:
+            existing_records = load_patent_pool_records(pool_dir, exclude=out_path)
+            records = await search_uspto_ipc_sweep(
+                args.limit,
+                cursor_path=Path(args.cursor_file),
+                existing_records=existing_records,
+                page_size=args.page_size,
+            )
+        elif args.profile == "smartphone" and not args.query:
             records = await search_uspto_smartphone(args.limit)
         else:
             query = args.query or SMARTPHONE_LENS_PROFILE.uspto_queries[0]
             records = await search_uspto(query, args.limit)
+        if not args.ipc_sweep:
+            records = _apply_pool_filters_for_output(records, out_path=out_path, pool_dir=pool_dir)
     elif args.source == "espacenet":
+        if args.ipc_sweep:
+            logger.error("ipc_sweep_requires_uspto_source")
+            return 2
         key = os.environ.get("EPO_OPS_KEY")
         secret = os.environ.get("EPO_OPS_SECRET")
         if not key or not secret:
@@ -488,7 +1046,7 @@ async def _async_main(args: argparse.Namespace) -> int:
         logger.warning("no_records_found", query=args.query, profile=args.profile)
         return 1
 
-    _write_jsonl(records, Path(args.out))
+    _write_jsonl(records, out_path)
     return 0
 
 
@@ -510,6 +1068,27 @@ def main() -> int:
     parser.add_argument(
         "--out",
         default=f"data/patents-{datetime.now():%Y%m%d-%H%M%S}.jsonl",
+    )
+    parser.add_argument(
+        "--pool-dir",
+        default=str(DEFAULT_PATENT_POOL_DIR),
+        help="Existing JSONL pool used for family fingerprint dedupe and assignee quotas",
+    )
+    parser.add_argument(
+        "--ipc-sweep",
+        action="store_true",
+        help="Sweep configured IPC classes page by page with a persistent cursor",
+    )
+    parser.add_argument(
+        "--cursor-file",
+        default=str(DEFAULT_CURSOR_PATH),
+        help="JSON cursor file for --ipc-sweep resume state",
+    )
+    parser.add_argument(
+        "--page-size",
+        type=int,
+        default=50,
+        help="USPTO page size for --ipc-sweep",
     )
     parser.add_argument(
         "--dry-run",
