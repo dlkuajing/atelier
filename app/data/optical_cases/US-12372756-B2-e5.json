@@ -1,0 +1,439 @@
+{
+  "paraxial": {
+    "provenance": "thin-lens-analytic",
+    "effective_focal_length_mm": 10.860497041451328,
+    "f_number": 2.83,
+    "entrance_pupil_diameter_mm": 3.8376314634103634,
+    "exit_pupil_diameter_mm": 2.6515657092635596,
+    "total_track_mm": 11.286999999999999,
+    "n_surfaces": 16,
+    "stop_surface_index": 1
+  },
+  "surfaces": [
+    {
+      "index": 0,
+      "z_mm": -1000000000.0,
+      "radius_mm": 1000000000.0,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": true
+    },
+    {
+      "index": 1,
+      "z_mm": 0.0,
+      "radius_mm": 1000000000.0,
+      "is_stop": true,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 2,
+      "z_mm": -0.599,
+      "radius_mm": 3.3879999999999995,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 3,
+      "z_mm": 1.2530000000000001,
+      "radius_mm": -7.010000000000016,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 4,
+      "z_mm": 1.5750000000000002,
+      "radius_mm": -2.7289999999999965,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 5,
+      "z_mm": 3.736,
+      "radius_mm": -19.840000000000003,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 6,
+      "z_mm": 3.786,
+      "radius_mm": 5.268000000000007,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 7,
+      "z_mm": 5.006,
+      "radius_mm": 16.772999999999985,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 8,
+      "z_mm": 4.8740000000000006,
+      "radius_mm": 1000000000.0,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 9,
+      "z_mm": 5.157000000000001,
+      "radius_mm": -154.05900000000005,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 10,
+      "z_mm": 5.348000000000001,
+      "radius_mm": 11.223999999999995,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 11,
+      "z_mm": 5.7860000000000005,
+      "radius_mm": -112.56500000000001,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 12,
+      "z_mm": 6.173,
+      "radius_mm": 12.747000000000007,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 13,
+      "z_mm": 7.673,
+      "radius_mm": 1000000000.0,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 14,
+      "z_mm": 7.973,
+      "radius_mm": 1000000000.0,
+      "is_stop": false,
+      "is_image": false,
+      "is_object": false
+    },
+    {
+      "index": 15,
+      "z_mm": 10.687999999999999,
+      "radius_mm": 1000000000.0,
+      "is_stop": false,
+      "is_image": true,
+      "is_object": false
+    }
+  ],
+  "trace": {
+    "assembly_name": "US-12372756-B2-e5.zmx",
+    "n_rays": 3,
+    "sampled_paths": [
+      {
+        "ray_id": "chief-axial",
+        "wavelength_nm": 587.6,
+        "field_angle_deg": 0.0,
+        "points_mm": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            -0.599,
+            -0.07779651690643496
+          ],
+          [
+            1.2530000000000001,
+            0.09289605679117627
+          ],
+          [
+            1.5750000000000002,
+            0.13642038655248273
+          ],
+          [
+            3.736,
+            0.36068127578880427
+          ],
+          [
+            3.786,
+            0.36836797739906796
+          ],
+          [
+            5.006,
+            0.44749471358717097
+          ],
+          [
+            4.8740000000000006,
+            0.43096598812537085
+          ],
+          [
+            5.157000000000001,
+            0.46640257377453337
+          ],
+          [
+            5.348000000000001,
+            0.48104514315077446
+          ],
+          [
+            5.7860000000000005,
+            0.5491431048244184
+          ],
+          [
+            6.173,
+            0.5866007488127198
+          ],
+          [
+            7.673,
+            0.8685594244764742
+          ],
+          [
+            7.973,
+            0.9057344521172571
+          ],
+          [
+            10.687999999999999,
+            1.4160796550686523
+          ]
+        ],
+        "reaches_image": true
+      },
+      {
+        "ray_id": "marginal-upper",
+        "wavelength_nm": 587.6,
+        "field_angle_deg": 0.0,
+        "points_mm": [
+          [
+            0.0,
+            1.9188157317051817
+          ],
+          [
+            -0.599,
+            1.9188157317051817
+          ],
+          [
+            1.2530000000000001,
+            1.548853760163529
+          ],
+          [
+            1.5750000000000002,
+            1.410710026634948
+          ],
+          [
+            3.736,
+            1.236976746016736
+          ],
+          [
+            3.786,
+            1.2287915097716124
+          ],
+          [
+            5.006,
+            0.9953538233088576
+          ],
+          [
+            4.8740000000000006,
+            1.0321003489636775
+          ],
+          [
+            5.157000000000001,
+            0.9533180250219042
+          ],
+          [
+            5.348000000000001,
+            0.9217452792803684
+          ],
+          [
+            5.7860000000000005,
+            0.8253192130186547
+          ],
+          [
+            6.173,
+            0.7744270148434382
+          ],
+          [
+            7.673,
+            0.5094093469989152
+          ],
+          [
+            7.973,
+            0.47446791771243035
+          ],
+          [
+            10.687999999999999,
+            -0.005214061086156185
+          ]
+        ],
+        "reaches_image": true
+      },
+      {
+        "ray_id": "marginal-lower",
+        "wavelength_nm": 587.6,
+        "field_angle_deg": 0.0,
+        "points_mm": [
+          [
+            0.0,
+            -1.9188157317051817
+          ],
+          [
+            -0.599,
+            -1.9188157317051817
+          ],
+          [
+            1.2530000000000001,
+            -1.548853760163529
+          ],
+          [
+            1.5750000000000002,
+            -1.410710026634948
+          ],
+          [
+            3.736,
+            -1.236976746016736
+          ],
+          [
+            3.786,
+            -1.2287915097716124
+          ],
+          [
+            5.006,
+            -0.9953538233088576
+          ],
+          [
+            4.8740000000000006,
+            -1.0321003489636775
+          ],
+          [
+            5.157000000000001,
+            -0.9533180250219042
+          ],
+          [
+            5.348000000000001,
+            -0.9217452792803684
+          ],
+          [
+            5.7860000000000005,
+            -0.8253192130186547
+          ],
+          [
+            6.173,
+            -0.7744270148434382
+          ],
+          [
+            7.673,
+            -0.5094093469989152
+          ],
+          [
+            7.973,
+            -0.47446791771243035
+          ],
+          [
+            10.687999999999999,
+            0.005214061086156185
+          ]
+        ],
+        "reaches_image": true
+      }
+    ],
+    "rms_spot_radius_um": {},
+    "has_vignetting": false
+  },
+  "mtf": {
+    "provenance": "optiland-raytrace",
+    "freq_lp_per_mm": [
+      0.0,
+      50.0,
+      100.0,
+      150.0,
+      200.0,
+      250.0
+    ],
+    "fields": [
+      {
+        "field_index": 0,
+        "sagittal": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "field_index": 1,
+        "sagittal": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tangential": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "diff_limited": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "cutoff_freq_lp_per_mm": 246.4574501859216,
+    "airy_disc_diameter_um": 4.05749552,
+    "rms_spot_radius_um_by_field": [
+      0.0,
+      0.0
+    ]
+  },
+  "layout_svg": {
+    "format": "svg",
+    "width_px": 1200,
+    "height_px": 600,
+    "svg_content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"600\" viewBox=\"0 0 1200 600\"><line x1=\"40\" y1=\"300.000\" x2=\"1160\" y2=\"300.000\" stroke=\"#9ca3af\" stroke-width=\"1\" /><line x1=\"117.315\" y1=\"161.400\" x2=\"117.315\" y2=\"438.600\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"60.000\" y1=\"48.000\" x2=\"60.000\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"237.209\" y1=\"48.000\" x2=\"237.209\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"268.020\" y1=\"48.000\" x2=\"268.020\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"474.796\" y1=\"48.000\" x2=\"474.796\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"479.580\" y1=\"48.000\" x2=\"479.580\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"596.316\" y1=\"48.000\" x2=\"596.316\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"583.686\" y1=\"48.000\" x2=\"583.686\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"610.765\" y1=\"48.000\" x2=\"610.765\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"629.040\" y1=\"48.000\" x2=\"629.040\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"670.951\" y1=\"48.000\" x2=\"670.951\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"707.981\" y1=\"48.000\" x2=\"707.981\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"851.509\" y1=\"48.000\" x2=\"851.509\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"880.214\" y1=\"48.000\" x2=\"880.214\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /><line x1=\"1140.000\" y1=\"48.000\" x2=\"1140.000\" y2=\"552.000\" stroke=\"#2f4f4f\" stroke-width=\"2\" /></svg>"
+  },
+  "metadata": {
+    "case_id": "US-12372756-B2-e5",
+    "source_zmx": "US-12372756-B2-e5.zmx",
+    "scenario": "smartphone-wide",
+    "n_pieces": 5,
+    "n_imaging": 5,
+    "n_filter": 1,
+    "materials": [],
+    "fov_deg": 14.8,
+    "nominal_efl_mm": 10.860497041451328,
+    "computed_efl_mm": 10.860497041451328,
+    "efl_error_pct": 0.0,
+    "mtf_max_field_frac": 0.0
+  }
+}
