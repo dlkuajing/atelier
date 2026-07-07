@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-07-03)
 
 **Core value:** 资深光学设计师看了演示产出不能觉得"比不过"——专家级可信度是唯一不可失守的东西
-**Current focus:** Phase 1 (引擎抽象与降级)
+**Current focus:** Phase 9 两段式彩排终验 + Phase 6 规模门放量
 
 ## Current Position
 
-Phase: 完成 1/3/4/5/7/8，Phase 6 余规模门（可路由案例 106，原料池 354→主公裁定扩至 2000-3000，转换产率 26.7%=spike 3.7 倍），进行中 2/9；Phase 9 首轮 AI 彩排完成（2 必修雷修复中=车道c 批次10）
+Phase: 完成 1/3/4/5/7/8，Phase 6 余规模门（案例库 157，原料池 614+→主公裁定扩至 2000-3000，转换产率 26.7%=spike 3.7 倍），进行中 2/9；Phase 9 两段式彩排第一段完成（三遍彩排零瑕疵，待主公终验）
 Plan: 夜车模式（gsd-loop 垂直切片）替代 phase-plan 执行
-Status: 九批次 40 切片已合 main(798c5fd)，测试 131→690，案例库 39→106 颗
-Last activity: 2026-07-06 — 批次9收官：多实施例+XASPHERE 放量/67 颗批量入库（案例库 106）/golden 全库覆盖；采集批次6+7（池 354，Largan 36%）；提速改造（三车道+班车+天花板 97）
+Status: 批次10 修复随 PR #31 合入，wide 预存摘要随 PR #32 合入；全量 gate 707 passed（gate-b10-final），案例库 39→157 颗，原料池 614+
+Last activity: 2026-07-07 — 批次10/PR #31 关闭首轮彩排 R1-R5 必修雷（任务层主叙事、摘要渲染、显式数值保真、黄金路径、预检）；PR #32 补齐 wide 预缓存摘要；三遍彩排零瑕疵，等待主公终验
 
-Progress: [████████░░] ~82%（余：规模门放量、演示雷修复、终验彩排）
+Progress: [█████████░] ~90%（余：规模门放量、主公终验彩排）
 
 ## Performance Metrics
 
@@ -73,6 +73,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-05
-Stopped at: 状态回写补账；夜车 backlog 已空待批次5蒸馏
+Last session: 2026-07-07
+Stopped at: DOCS-01a 状态回写；Phase 9 第一段彩排完成，待主公终验
 Resume file: None

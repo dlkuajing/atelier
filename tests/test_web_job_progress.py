@@ -42,4 +42,8 @@ def test_unknown_job_progress_page_returns_404():
         response = client.get("/jobs/missing")
 
     assert response.status_code == 404
-    assert response.json()["detail"] == {"error": "job_not_found", "job_id": "missing"}
+    assert response.headers["content-type"].startswith("text/html")
+    assert 'data-error-page' in response.text
+    assert 'data-status-code="404"' in response.text
+    assert "missing" in response.text
+    assert "Return home" in response.text

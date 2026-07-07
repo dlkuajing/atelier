@@ -47,7 +47,7 @@
 
 - [x] **OPS-01**: 一键启动：单命令拉起后端 + 前端，演示机可靠复现
 - [x] **OPS-02**（机制完成：缓存/回退/失效指纹；CODE V 产物接入后复用）: 演示结果预缓存：所有演示案例的 CODE V 深度成果预先算好落盘，现场绝不实时依赖 license/网络（CODE V 是溯源背书，不是现场算力）
-- [~] **OPS-03**（全叙事 E2E 自动化已过；attended 真人彩排待主公）: 完整演示彩排：核心叙事从头到尾跑通不翻车，含降级预案（里程碑验收标准）
+- [x] **OPS-03**（两段式第一段完成：三遍彩排零瑕疵；第二段待主公终验）: 完整演示彩排：核心叙事从头到尾跑通不翻车，含降级预案（里程碑验收标准）
 
 ## v2 Requirements (deferred)
 
@@ -79,7 +79,7 @@
 | SEED-01 | Phase 6 | ✓ 批次7 PR #22（CODE V 实算+物理自检） |
 | SEED-02 | Phase 6 | ✓ 批次7 PR #22（差分断言防自证） |
 | SEED-03 | Phase 6 | ✓ 批次7 PR #22（22 颗全覆盖+物理锚） |
-| DATA-03 | Phase 6 | Partial（可路由案例 106=PR #29；池 354 扩至 2000-3000=主公 2026-07-06 裁定；产率 26.7%） |
+| DATA-03 | Phase 6 | Partial（案例库 157；池 354 扩至 2000-3000=主公 2026-07-06 裁定；产率 26.7%） |
 | ENGINE-04 | Phase 7 | ✓ 批次5-8 PR #16/#19/#24（批跑+三态+硬超时+returncode白名单） |
 | ENGINE-05 | Phase 7 | ✓ 批次8 PR #24（readout→zmx_writer→zmx_ingest 单一路径） |
 | SHOW-01 | Phase 7 | ✓ 批次8 PR #24（并排对比+溯源 run 证据推导） |
@@ -90,10 +90,10 @@
 | UI-03 | Phase 8 | ✓ 批次3 |
 | OPS-01 | Phase 9 | ✓ 批次4 |
 | OPS-02 | Phase 9 | ✓ 批次4(机制) |
-| OPS-03 | Phase 9 | ◐ 批次4(E2E) |
+| OPS-03 | Phase 9 | ✓ 批次10/PR #31+#32（两段式第一段：三遍彩排零瑕疵；待主公终验） |
 
 Coverage: 24/24 v1 requirements mapped.
 
 ---
-*Last updated: 2026-07-05 after ENGINE-04c roundtrip closure*
+*Last updated: 2026-07-07 after DOCS-01a rehearsal status writeback*
 </content>

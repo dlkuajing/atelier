@@ -12,10 +12,13 @@ from typing import Annotated
 
 import structlog
 from fastapi import FastAPI, Form, HTTPException, Request, Response, status
+from fastapi.exception_handlers import http_exception_handler, request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Apply Optiland 0.6 runtime patches FIRST — before any other Optiland import
 # happens. See app/core/optiland_patches.py for the bug each one addresses.
@@ -143,6 +146,80 @@ _CODEV_RUN_SHA_KEYS = (
     "optimized_readout_sha256",
     "optimized_zmx_sha256",
 )
+_HTTP_422_UNPROCESSABLE_CONTENT = 422
+_WEB_ERROR_COPY = {
+    status.HTTP_404_NOT_FOUND: {
+        "title": "Page not found",
+        "message_en": "We could not find that page or design result.",
+        "message_zh": "没有找到这个页面或设计结果。",
+    },
+    _HTTP_422_UNPROCESSABLE_CONTENT: {
+        "title": "Check the form",
+        "message_en": "One or more fields need a valid value before Atelier can continue.",
+        "message_zh": "表单里有字段需要修正，Atelier 才能继续。",
+    },
+    status.HTTP_500_INTERNAL_SERVER_ERROR: {
+        "title": "Something went wrong",
+        "message_en": "Atelier hit an internal error while preparing this page.",
+        "message_zh": "Atelier 准备这个页面时遇到内部错误。",
+    },
+}
+_WEB_ERROR_FALLBACK_COPY = {
+    "title": "Request needs attention",
+    "message_en": "Atelier could not complete this page request.",
+    "message_zh": "Atelier 暂时无法完成这个页面请求。",
+}
+
+
+def _is_api_request(request: Request) -> bool:
+    path = request.url.path
+    return path == "/api" or path.startswith("/api/")
+
+
+def _format_error_detail(detail: object) -> str:
+    if isinstance(detail, Mapping):
+        error = detail.get("error")
+        job_id = detail.get("job_id")
+        if error and job_id:
+            return f"{error}: {job_id}"
+        return ", ".join(f"{key}: {value}" for key, value in detail.items())
+    if detail:
+        return str(detail)
+    return ""
+
+
+def _format_validation_errors(exc: RequestValidationError) -> str:
+    items: list[str] = []
+    for error in exc.errors()[:4]:
+        loc = error.get("loc", ())
+        field = ".".join(
+            str(part)
+            for part in loc
+            if part not in {"body", "query", "path", "form"}
+        )
+        message = str(error.get("msg", "Invalid value"))
+        items.append(f"{field or 'request'}: {message}")
+    return "; ".join(items)
+
+
+def _web_error_response(
+    request: Request,
+    status_code: int,
+    *,
+    detail: str = "",
+) -> HTMLResponse:
+    copy = _WEB_ERROR_COPY.get(status_code, _WEB_ERROR_FALLBACK_COPY)
+    return templates.TemplateResponse(
+        request,
+        "error.html",
+        {
+            "product_name": "Atelier",
+            "status_code": status_code,
+            "detail": detail,
+            **copy,
+        },
+        status_code=status_code,
+    )
 
 
 def _format_float(value: float | None) -> str:
@@ -1302,6 +1379,46 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory=WEB_ROOT / "static"), name="static")
+
+
+@app.exception_handler(StarletteHTTPException)
+async def web_http_exception_handler(
+    request: Request,
+    exc: StarletteHTTPException,
+) -> Response:
+    if _is_api_request(request):
+        return await http_exception_handler(request, exc)
+    return _web_error_response(
+        request,
+        exc.status_code,
+        detail=_format_error_detail(exc.detail),
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def web_validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError,
+) -> Response:
+    if _is_api_request(request):
+        return await request_validation_exception_handler(request, exc)
+    return _web_error_response(
+        request,
+        _HTTP_422_UNPROCESSABLE_CONTENT,
+        detail=_format_validation_errors(exc),
+    )
+
+
+@app.exception_handler(Exception)
+async def web_unhandled_exception_handler(request: Request, exc: Exception) -> Response:
+    if _is_api_request(request):
+        return PlainTextResponse("Internal Server Error", status_code=500)
+    logger.exception("web_unhandled_exception", path=request.url.path)
+    return _web_error_response(
+        request,
+        status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
 
 app.include_router(optical.router, prefix="/api/optical", tags=["optical"])
 app.include_router(rag.router, prefix="/api/rag", tags=["rag"])
