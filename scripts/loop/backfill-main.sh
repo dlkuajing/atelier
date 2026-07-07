@@ -31,7 +31,9 @@ for LANE in ${LANES}; do
     echo "${TAG} SKIP worktree 不存在"
     continue
   fi
-  if [ -f "${LANE}/.planning/loop/.orchestrator.lock" ]; then
+  # 锁是【目录】 .orchestrator.lock/pid（atomic mkdir 锁），必须用 -e 而非 -f
+  # （-f 对目录判 false → 会漏检活跃锁、误在驱动器 mid-round 时合并，2026-07-07 实测踩坑）。
+  if [ -e "${LANE}/.planning/loop/.orchestrator.lock" ]; then
     echo "${TAG} SKIP loop 正在跑（.orchestrator.lock 存在）"
     continue
   fi

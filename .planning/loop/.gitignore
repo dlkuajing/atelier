@@ -1,0 +1,12 @@
+# 每轮重生的 loop 运行产物 —— 永不入库（防泄漏进 main 造成跨车道合并撞车）。
+# 证据类报告（*-report.md / *-audit.json / review-*.md/.patch / loop-config.toml）
+# 不在此列，仍正常跟踪（@accept 锚指着它们）。
+round-*
+*.err
+*.msg
+*.prompt.txt
+loop-state.env
+LOOP-STOP
+gate-last.log
+gate-*.log
+.orchestrator.lock/
