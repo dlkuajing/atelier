@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ status_code }} {{ title }} | {{ product_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="/">Workbench</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+
+    <main class="shell shell-narrow">
+      <section
+        class="error-page"
+        data-error-page
+        data-status-code="{{ status_code }}"
+        aria-labelledby="error-title"
+      >
+        <p class="eyebrow">Atelier notice</p>
+        <h1 id="error-title">{{ status_code }} {{ title }}</h1>
+        <div class="error-copy">
+          <p>{{ message_en }}</p>
+          <p lang="zh-Hans">{{ message_zh }}</p>
+        </div>
+        {% if detail %}
+          <p class="error-detail">{{ detail }}</p>
+        {% endif %}
+        <div class="error-actions">
+          <a class="button-link" href="/">Return home / 返回首页</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

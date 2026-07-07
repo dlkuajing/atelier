@@ -413,6 +413,51 @@ button:focus-visible {
   line-height: 1.55;
 }
 
+.error-page {
+  display: grid;
+  gap: 22px;
+}
+
+.error-page h1 {
+  max-width: 720px;
+  font-size: clamp(2.8rem, 9vw, 6.2rem);
+}
+
+.error-copy,
+.error-detail {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.82);
+}
+
+.error-copy {
+  display: grid;
+  gap: 10px;
+}
+
+.error-copy p,
+.error-detail {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.error-copy p[lang="zh-Hans"] {
+  line-height: 1.9;
+}
+
+.error-detail {
+  color: var(--red);
+  overflow-wrap: anywhere;
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .result-summary {
   display: grid;
   gap: 24px;
