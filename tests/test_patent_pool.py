@@ -67,7 +67,7 @@ def test_uspto_smartphone_patent_pool_is_large_and_globally_unique() -> None:
     records = _load_patent_pool()
     patent_numbers = [_patent_number(record) for record in records]
 
-    assert len(records) >= 414
+    assert len(records) >= 514
     assert len(set(patent_numbers)) == len(patent_numbers)
 
 
