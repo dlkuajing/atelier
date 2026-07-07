@@ -14,12 +14,25 @@ if not exist ".env" (
   exit /b 1
 )
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$line = Get-Content -LiteralPath '.env' | Where-Object { $_ -match '^\s*OPENAI_API_KEY\s*=' } | Select-Object -Last 1; if ($null -eq $line) { exit 1 }; $value = ($line -split '=', 2)[1].Trim().Trim([char]34).Trim([char]39).Trim(); if ([string]::IsNullOrWhiteSpace($value)) { exit 1 }; exit 0"
-if errorlevel 1 (
+REM Pure-batch .env key check: sandboxed loop gates run with a stripped PATH
+REM where powershell.exe is not resolvable, so no external tools here.
+set "OPENAI_KEY_VALUE="
+for /f "usebackq tokens=1,* delims==" %%A in (".env") do (
+  for /f "tokens=* delims= " %%K in ("%%A") do (
+    if /i "%%K"=="OPENAI_API_KEY" set "OPENAI_KEY_VALUE=%%B"
+  )
+)
+if defined OPENAI_KEY_VALUE set "OPENAI_KEY_VALUE=%OPENAI_KEY_VALUE:"=%"
+if defined OPENAI_KEY_VALUE set "OPENAI_KEY_VALUE=%OPENAI_KEY_VALUE:'=%"
+if defined OPENAI_KEY_VALUE (
+  for /f "tokens=* delims= " %%V in ("%OPENAI_KEY_VALUE%") do set "OPENAI_KEY_VALUE=%%V"
+)
+if not defined OPENAI_KEY_VALUE (
   echo OPENAI_API_KEY is missing or empty in .env.
   echo Edit .env and set OPENAI_API_KEY before starting the demo.
   exit /b 1
 )
+set "OPENAI_KEY_VALUE="
 
 set "PYTHON_EXE=%CD%\.venv\Scripts\python.exe"
 if not exist "%PYTHON_EXE%" set "PYTHON_EXE=python"
