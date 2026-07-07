@@ -36,7 +36,7 @@ token_soft_cap_per_round = 0    # 单轮 token 软警戒（仅告警，不杀）
 
 # ─── 项目侧（orchestrator.sh 读，非 cost_envelope）──────────────────────────
 [project]
-test_command = "PATH=\"$HOME/.local/bin:$PATH\" PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest -q > .planning/loop/gate-last.log 2>&1"  # 确定性成败 gate：退出码 0=过。直接用 venv python（不经 uv：沙箱内 uv 会撞缓存 ACL/网络，失败的 sync 还会剥掉 venv）。PYTHONUTF8=1 必带（GBK 炸 42 测试）；输出捕获进簿记目录供失败诊断。
+test_command = "PATH=\"$HOME/.local/bin:$PATH\" PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest -q -n 8 > .planning/loop/gate-last.log 2>&1"  # 确定性成败 gate：退出码 0=过。直接用 venv python（不经 uv：沙箱内 uv 会撞缓存 ACL/网络，失败的 sync 还会剥掉 venv）。PYTHONUTF8=1 必带（GBK 炸 42 测试）；输出捕获进簿记目录供失败诊断。-n 8=pytest-xdist 并行（2026-07-07 实测 17m20s→6m40s，单 gate 内存 ~4.1GB=均值 500MB/worker；勿改 -n auto——32 核×Optiland 峰值 1.2GB/proc 会耗尽 32GB 内存，多车道 gate 并发时更甚）。
 backlog_file = ".planning/loop/backlog.md"           # 发现源：markdown 勾选清单，- [ ] 待办 / - [x] 完成 / - [!] 失败
 forbidden_paths_file = ".planning/loop/forbidden-paths.txt"  # 黑名单：碰到即整轮回退（确定性，非靠 prompt）
 allowed_paths_file = ".planning/loop/allowed-paths.txt"      # 白名单：若有真实 glob 行，则变更必须全部命中，否则整轮回退（最强 MVP 保证；留空=不启用）
