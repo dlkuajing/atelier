@@ -18,7 +18,7 @@
 - [~] **Phase 6: 专利 seed 可路由化与底库规模验收**（判据1-3 完成 2026-07-06 批次7，PR #22）- 22 颗专利 seed 真 IMH 实算重锚（CODE V 读数+一阶物理自检门，最大偏差 2.94%）/ 路由重锚（含 IMH 差分断言）/ eval golden 全 22 颗覆盖+物理锚；余判据4=规模门 ≥500 可路由 seed（原料池 224，需专利→案例转换流水线放量）
 - [x] **Phase 7: CODE V 引擎适配器与深度成果展示**（2026-07-06 批次8，PR #24；SHOW-03 先期 PR #8）- AUT 优化适配器（EFL 锁定/玻璃冻结，US20170003482A1 实测 RMS spot ↓61%/横向色差 ↓92%/波前 ↓86%）+ 并排对比视图（MTF 双频轴叠加）+ CODE V 扰动敏感度 top-N 表 + 溯源从产物 run 证据推导（夹具/降级禁标 codev-run）；优化产物 readout→zmx_writer→zmx_ingest 单一路径；真实预缓存产物入库支持断网演示
 - [x] **Phase 8: 演示前端**（批次3+4：骨架/输入流/SSE进度/双语摘要/结果页整合叙事，PR #4/#7/#11） - 本地服务 + 浏览器界面，覆盖需求到 CODE V 成果全叙事
-- [~] **Phase 9: 一键启动与演示彩排**（一键启动+预缓存机制+全叙事E2E已完成 PR #12/#14；真人彩排与 CODE V 侧内容待 attended） - 单命令拉起 + 预缓存 + 完整彩排（里程碑验收）
+- [~] **Phase 9: 一键启动与演示彩排**（一键启动+预缓存机制+全叙事E2E已完成 PR #12/#14；两段式彩排第一段完成：三遍彩排零瑕疵，待主公终验） - 单命令拉起 + 预缓存 + 完整彩排（里程碑验收）
 
 ## Phase Details
 
@@ -117,7 +117,7 @@
 **Success Criteria** (what must be TRUE):
   1. 单条命令即可同时拉起后端与前端服务，无需手动分步操作
   2. 演示案例的 CODE V 深度成果已预先算好落盘，现场断网/无 license 时仍可展示完整叙事
-  3. 核心演示叙事从头到尾完整跑通至少一次不翻车，且降级路径（无 CODE V）被显式演练过
+  3. 两段式彩排第一段已完成：核心演示叙事三遍彩排零瑕疵，含降级路径显式演练；第二段待主公终验
 **Plans**: TBD
 
 ## Progress
@@ -135,4 +135,4 @@ Phases execute in numeric order with one parallel branch: 1 and 2 can start toge
 | 6. 专利 seed 可路由化与底库规模验收 | 0/TBD | Not started | - |
 | 7. CODE V 引擎适配器与深度成果展示 | 0/TBD | Not started | - |
 | 8. 演示前端 | 0/TBD | Not started | - |
-| 9. 一键启动与演示彩排 | 0/TBD | Not started | - |
+| 9. 一键启动与演示彩排 | 0/TBD | In progress（第一段彩排完成，待主公终验） | - |
