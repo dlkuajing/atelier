@@ -109,6 +109,12 @@ class GeneratedCandidate(BaseModel):
     def is_target_converged(self) -> bool:   # 派生只读，不可单独伪造
         return self.mode is GenerationMode.TARGET_CONVERGED
 
+# 每个 mode 实际朝 target 优化/收敛的 field 集合（per-field provenance · codex 轮5）
+CONVERGED_FIELDS: dict[GenerationMode, frozenset[str]] = {
+    GenerationMode.RETRIEVED:        frozenset(),                               # 检索不优化任何维
+    GenerationMode.TARGET_CONVERGED: frozenset({"efl", "fnum", "imh", "fov"}),  # = §10 Mode3 六接缝优化维；TTL 不在接缝
+}
+
 # 阶段二：打分后的最终候选（CandidateSet 消费此型）
 class ScoredCandidate(BaseModel):
     generated: GeneratedCandidate
@@ -118,9 +124,12 @@ class ScoredCandidate(BaseModel):
     def _enforce_consistency(self):          # raise 非 assert
         if self.scorecard.mode is not self.generated.mode:
             raise ValueError("scorecard.mode != generated.mode")
+        conv = CONVERGED_FIELDS[self.generated.mode]     # per-field，非全局 bool
         for dev in self.scorecard.target_deviations:
-            if dev.converged_toward_target != self.generated.is_target_converged:
-                raise ValueError("converged_toward_target 与 mode 不一致")
+            if dev.converged_toward_target != (dev.field in conv):
+                raise ValueError(
+                    f"{dev.field} converged 与 mode {self.generated.mode} 优化维不一致"
+                )
         return self
 
     @property
@@ -135,11 +144,12 @@ class ScoredCandidate(BaseModel):
 ```python
 class TargetDeviation(BaseModel):
     field: str                        # efl/fov/fnum/imh/ttl
-    target: float | None              # None = 未约束
+    constraint_kind: Literal["exact", "ceiling", "floor", "unconstrained"]
+    target: float | None              # exact=目标值 / ceiling=上限 / floor=下限 / unconstrained=None
     achieved: float
-    abs_deviation: float
-    rel_deviation_pct: float | None
-    converged_toward_target: bool     # 由所属 candidate.mode 派生填充，非独立可设
+    violation: float                  # exact:|a-t| ; ceiling:max(0,a-limit) ; floor:max(0,limit-a) ; unconstr:0
+    rel_violation: float | None       # violation/|target|（unconstrained=None）
+    converged_toward_target: bool     # per-field：field ∈ CONVERGED_FIELDS[mode]（§5.2）
 
 class ScorecardRow(BaseModel):
     candidate_id: str
@@ -158,7 +168,7 @@ class RankResult(BaseModel):
     missing_metrics: list[str]        # 缺失维名（报告透明）
 ```
 
-> **codex 轮1+2 修正**：一致性校验（`scorecard.mode == generated.mode`、`converged_toward_target == is_target_converged`）在 §5.2 `ScoredCandidate` validator 做（`raise` 非 `assert`）。像质每 metric 用 `MetricValue{value, status: available|unavailable}` 承载，RI 缺失 → `status=unavailable`（fail closed，见 §7-D/E），杜绝静默假值。
+> **codex 轮1+2+5 修正**：一致性校验（`scorecard.mode == generated.mode`、每个 `converged_toward_target == (field ∈ CONVERGED_FIELDS[mode])` per-field）在 §5.2 `ScoredCandidate` validator 做（`raise` 非 `assert`）。`TargetDeviation` 带 `constraint_kind`——**TTL/mass 是 ceiling**（低于上限 `violation=0` 不罚，`case_library.py:1466-1471`），EFL/FOV/F#/IMH 是 exact，避免"短 TTL 被当偏离扣分"。像质每 metric 用 `MetricValue{value, status}`，RI 缺失 → unavailable（fail closed，§7-D/E）。
 
 ### 5.4 CandidateSet
 
@@ -193,7 +203,7 @@ class CandidateSet(BaseModel):
 1. **mode 钉死于 generator（运行时不可绕过）**：`generate` 是基类模板方法，标 `@final`（静态检查）**且** `__init_subclass__` 在子类 `__dict__` 出现 `generate` 时 `raise TypeError`（运行时防覆盖——Python 无真 final，仅约定不够）；`generate` 返回前用显式 `raise ValueError` 校验每颗 `mode == cls.mode`（非 `assert`）。只有 Mode3 generator 能产 `TARGET_CONVERGED`。检索 seed 无法被标成"优化到 target"。
 2. **无 pass/fail 字段**：`ScorecardRow` 无合格判定字段，AI 越权代判也无处可写。良品判断只能是资深人工动作。
 3. **honesty_banner 派生强制**：`CandidateSet.modes_present` 与 `honesty_banner` 均为 `computed_field`（从 `candidates` 派生、调用方不可传入）；整批不含 `TARGET_CONVERGED` 时 `honesty_banner` 自动返回固定常量 `NO_TARGET_CONVERGED_BANNER`。
-4. **mode 一致校验**：`scorecard.mode == candidate.mode`、`converged_toward_target == is_target_converged` 由 `Candidate` validator `raise` 校验（不变量间不自相矛盾）。
+4. **mode 一致校验（per-field · codex 轮5）**：`scorecard.mode == generated.mode`、每个 `converged_toward_target == (field ∈ CONVERGED_FIELDS[mode])` 由 §5.2 `ScoredCandidate` validator `raise` 校验（TARGET_CONVERGED 只对实际优化维标收敛，TTL 等未优化维恒 false）。
 
 ## 6. Generator 契约
 
@@ -254,7 +264,7 @@ class CandidateGenerator(ABC):
 
 `score_candidate(candidate, target) -> ScorecardRow` 是**纯函数**，只从 `candidate.payload` 与 `candidate.optical_extras`（generator 预算的 RI 等）消费，不自行触碰 optic/ZMX。
 
-**A. Target 偏差**（5 维）：从 payload 提 achieved（EFL/F#/TTL ← `paraxial`；IMH ← `metadata`；FOV ← 优先 `metadata.fov_deg`（`optical_sample.py:32`），缺则由 EFL+IMH 反算），算 abs/rel 偏差；`converged_toward_target` 由 `candidate.mode` 派生。target=None → 标"未约束"、不计入排序。
+**A. Target 偏差**（5 维）：从 payload 提 achieved（EFL/F#/TTL ← `paraxial`；IMH ← `metadata`；FOV ← 优先 `metadata.fov_deg`（`optical_sample.py:32`），缺则由 EFL+IMH 反算）。按 `constraint_kind` 算 `violation`：**exact**（EFL/FOV/F#/IMH）`|achieved−target|`；**ceiling**（TTL/mass）`max(0, achieved−上限)`——低于上限 `violation=0` 不罚（`case_library.py:1466-1471`）；**unconstrained**（target=None）不计入。`converged_toward_target` 由 `field ∈ CONVERGED_FIELDS[mode]` **per-field** 派生（§5.2）。
 
 **B. 像质摘要 `ImageQualityMetrics`**（全取现有真算度量）：
 - MTF：代表频率点（复用 `MTFResult` 频率栅格）× 视场 {0, 0.5, 0.8, 1.0} 的 sag/tan + 衍射截止 lp/mm
@@ -271,7 +281,7 @@ class CandidateGenerator(ABC):
 **E. 排序 `RankResult`（建议排序 ≠ 合格判定 · codex 轮2+3 精化）**：
 - 每 metric 用 `MetricValue{value, status: available|unavailable}`；unavailable 不参与加权、不填默认值。
 - **必需维 + coverage gate（codex 轮3+4 fail-closed）**：必需维 = 像质的 {MTF}（恒必需）+ **受约束的** target 维中的 {EFL, FOV}（`target=None` 的维**不算必需、不进 denominator**——闭合 target=None 语义）。`coverage_pct = 可用必需维 / 必需维总数`。**应有却 unavailable 的必需维存在 或 coverage_pct < 阈值(默认 0.8) → `status="withheld"`、`score=None`**（杜绝稀疏数据高分假象）；`missing_metrics` 列缺失维。（例：EFL `target=None` 但 FOV+MTF 可用 → `ranked`；MTF unavailable → `withheld`。）
-- **target 偏差归一化**：每维 `norm = min(rel_deviation / tol_field, 1.0)`（tol：EFL/FOV/IMH/TTL 5% · F# 8%，可配）；`target=None` 维不计入。
+- **target 偏差归一化**：每维 `norm = min(rel_violation / tol_field, 1.0)`（tol：EFL/FOV/IMH/TTL 5% · F# 8%，可配）；ceiling 维低于上限 `rel_violation=0 → norm=0`（**不罚短 TTL**）；`target=None`/unconstrained 维不计入。
 - 达 coverage 时 `score = w_dev·(1−mean(可用 norm)) + w_iq·mean(可用像质归一)`（默认 w 各 0.5；分母只计 available）。
 - **RI 缺失**：`ri.status=unavailable` → 不入 w_iq、报告标 "RI unavailable(N/M)"；整批 RI 全缺 → 报告级醒目告警。
 - 报告对每候选输出 `score`(或 withheld) + `coverage_pct` + `missing_metrics`。**独立于**检索距离。排第一 ≠ 合格。
@@ -290,7 +300,7 @@ class CandidateGenerator(ABC):
   - `ScoredCandidate` 中 `scorecard.mode != generated.mode` → validator `raise`；
   - `ScorecardRow` 无合格字段（结构断言）。
 - **rank helper 一致性**（轮2 补）：`rank_seeds` top-4 == 现有 `candidate_comparison`（重构不改行为）；N>4 稳定。
-- **rank 覆盖/RI 边界**（轮2+3+4 补）：应有必需维 unavailable → `status=withheld`+`score=None`+`missing_metrics` 非空；**EFL `target=None` 但 FOV+MTF 可用 → `ranked`**（受约束必需维闭合）；**MTF unavailable → `withheld`**；RI 缺失、极端偏差、整批 RI 全缺（报告告警）等路径。
+- **约束方向 + rank 覆盖/RI 边界**（轮2-5 补）：**TTL ceiling**（短 TTL `violation=0` 不罚、超上限才罚）；**per-field converged**（RETRIEVED 全维 false；TARGET_CONVERGED 仅 efl/fov/fnum/imh=true 而 **ttl=false** → §5.2 validator 校验）；应有必需维 unavailable → `withheld`；EFL `target=None` 但 FOV+MTF 可用 → `ranked`；MTF unavailable → `withheld`；RI 缺失、极端偏差、整批 RI 全缺（报告告警）等路径。
 - **降级测试**：无 CODE V 跑通 Mode1，全链路绿。
 - **RI 数值锚**：已知渐晕系数 seed → RI 边缘值交叉验证（防假绿）。
 - **@accept 锚**（夜车切片用）：每切片挂确定性验收命令，如 `test -f <report> && pytest tests/test_orchestration_*.py`。
@@ -298,6 +308,8 @@ class CandidateGenerator(ABC):
 ## 10. Mode3 接口锚（③ 六接缝 · file:line）
 
 接入 Mode3 需 ③ 落地（`codev_optimize.py`，主公专门 session）：
+
+> **Mode3 优化维 = `{EFL, F#, IMH, FOV}`**（下列 1-3 接缝对应；**TTL 不在接缝** → per-field converged 对 TTL=false，见 §5.2 `CONVERGED_FIELDS`）。将来若加 TTL 优化接缝，同步扩 `CONVERGED_FIELDS[TARGET_CONVERGED]`。
 
 1. **EFL 解锁朝 target**：`codev_optimize.py:230` `EFL = ^baseline_efl_y_mm` → `EFL = {target_efl_mm}`
 2. **玻璃可变**：`codev_optimize.py:257` `glass-not-varied` → varied；AUT 块加 `CHG GL`
@@ -360,3 +372,6 @@ class CandidateGenerator(ABC):
 1. `[major]` §4 数据流仍残留 SeedRefineGenerator(Mode2)"枚举保留扩展点" → 从数据流删除，明确 Mode2 不在 registry/枚举/数据流出现（仅 §6.3 记为未来议题）。
 2. `[major]` RankResult coverage gate 对 `target=None` 不闭合 → §7-E 精化：必需维 = MTF + **受约束的** EFL/FOV（target=None 维不进 denominator）；§9 加 target=None ranked/withheld oracle。
 3. `[minor]` §7-D RI 锚 stale（`lens_system.py:203` 实为 n_surfaces）→ 改 `:240`。
+
+**轮 5（codex adversarial-review · 2026-07-08 · verdict: needs-attention · 1 major 新问题）**——亲验代码后**采纳**（根因修复，主公裁定）：
+1. `[major]` TargetDeviation 把 TTL 当对称 target（短 TTL 被扣分）+ converged 全局 bool（Mode3 会把没优化的 TTL 标已收敛）→ **根因修复**：§5.3 `TargetDeviation` 加 `constraint_kind`(exact/ceiling/floor/unconstrained)，TTL/mass=ceiling 低于上限不罚（`case_library.py:1466-1471`）；§5.2 加 `CONVERGED_FIELDS[mode]` **per-field convergence**（TARGET_CONVERGED 只 efl/fnum/imh/fov=true，TTL=false）；§7-A/§7-E 用 `violation`/`rel_violation`；§9/§10 补 oracle 与 Mode3 优化维。一次覆盖 TTL + 未来 F#/IMH 同类。
