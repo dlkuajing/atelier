@@ -38,6 +38,43 @@ class Scenario(StrEnum):
 
 
 # ---------------------------------------------------------------------------
+# Seed scenario classification (FOV + EFL -> smartphone module family)
+# ---------------------------------------------------------------------------
+
+# 85° is the wide/ultrawide divide we also calibrate parameter_guards bounds to
+# (Plan 03). Real ammo maxes at ~89.5° (no true 100°+ ultrawide).
+_ULTRAWIDE_FOV_MIN = 85.0
+
+# Telephoto discriminator: a long-focus phone module is the physical pair of a
+# long focal length AND a narrow field. EFL is the primary signature (a short-EFL
+# lens is never a tele module even at a narrow field, e.g. a cropped main cam).
+# The 5.0mm floor lines up with parameter_guards SMARTPHONE_TELEPHOTO.efl_mm_min
+# (and SMARTPHONE_WIDE.efl_mm_max=5.2, so the wide/tele split sits at ~5.0mm); the
+# 45° ceiling matches SMARTPHONE_TELEPHOTO.fov_deg_max. Seeds narrower than the
+# 15° request floor still classify tele (they leave the wide pool) even though no
+# in-guard request can reach them. Not a bounds change -> no /agent slider drift.
+_TELEPHOTO_EFL_MIN = 5.0
+_TELEPHOTO_FOV_MAX = 45.0
+
+
+def _classify_scenario(fov_deg: float, efl_mm: float) -> Scenario:
+    """Bucket a real seed into its smartphone module family from (FOV, EFL).
+
+    `fov_deg` is the nominal full field angle; `efl_mm` is the Optiland-recomputed
+    focal length (== index.json `efl_mm`), so every callsite — case-library intake,
+    the load-time scenario override, the RAG retrieval store, and the golden-brief
+    generator — keys on the identical pair. Telephoto is the long-focus family
+    (long EFL, narrow field); the remaining short-focus seeds split wide vs
+    ultrawide on the FOV divide.
+    """
+    if efl_mm >= _TELEPHOTO_EFL_MIN and fov_deg <= _TELEPHOTO_FOV_MAX:
+        return Scenario.SMARTPHONE_TELEPHOTO
+    if fov_deg >= _ULTRAWIDE_FOV_MIN:
+        return Scenario.SMARTPHONE_ULTRAWIDE
+    return Scenario.SMARTPHONE_WIDE
+
+
+# ---------------------------------------------------------------------------
 # Surface geometry
 # ---------------------------------------------------------------------------
 

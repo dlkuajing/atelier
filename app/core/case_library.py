@@ -43,7 +43,12 @@ from app.core.image_quality_floor import (
     image_quality_floor_gap_score as _image_quality_floor_gap_score,
 )
 from app.core.layout_svg import render_layout_svg
-from app.core.lens_system import LayoutSVG, Scenario
+from app.core.lens_system import (
+    LayoutSVG,
+    Scenario,
+    _classify_scenario,
+    _ULTRAWIDE_FOV_MIN,
+)
 from app.core.optical_calc import airy_disk_diameter_um
 from app.core.local_optimizer import (
     mtf_bands_from_snapshot,
@@ -142,20 +147,9 @@ _PRIMARY_WL_NM = 587.6  # d-line, matches zmx_ingest wavelength regularization
 # float('inf') -> null, which then fails reload; 1e9 mm reads as effectively flat.
 _PLANE_RADIUS_SENTINEL = 1e9
 
-# Real ammo maxes at ~89.5° (no true 100°+ ultrawide); 85° is the wide/ultrawide
-# divide we also calibrate parameter_guards bounds to (Plan 03).
-_ULTRAWIDE_FOV_MIN = 85.0
-
-# Telephoto discriminator: a long-focus phone module is the physical pair of a
-# long focal length AND a narrow field. EFL is the primary signature (a short-EFL
-# lens is never a tele module even at a narrow field, e.g. a cropped main cam).
-# The 5.0mm floor lines up with parameter_guards SMARTPHONE_TELEPHOTO.efl_mm_min
-# (and SMARTPHONE_WIDE.efl_mm_max=5.2, so the wide/tele split sits at ~5.0mm); the
-# 45° ceiling matches SMARTPHONE_TELEPHOTO.fov_deg_max. Seeds narrower than the
-# 15° request floor still classify tele (they leave the wide pool) even though no
-# in-guard request can reach them. Not a bounds change → no /agent slider drift.
-_TELEPHOTO_EFL_MIN = 5.0
-_TELEPHOTO_FOV_MAX = 45.0
+# Seed scenario classification (_classify_scenario, _ULTRAWIDE_FOV_MIN, and the
+# telephoto thresholds) lives in lens_system alongside the Scenario enum so the
+# lightweight RAG store can share it without importing this heavy module.
 
 # Routing floor-violation thresholds. After the XASPHERE ingest fix the library
 # is image-quality healthy (max real RMS ~40 um, min-50lp/mm MTF >= ~0.2, floor
@@ -390,23 +384,6 @@ def _safe(value) -> float:
     """numpy-array-shaped scalar -> python float (optiland 0.6 / numpy 2.x)."""
     arr = np.asarray(value).flatten()
     return float(arr[0]) if arr.size else 0.0
-
-
-def _classify_scenario(fov_deg: float, efl_mm: float) -> Scenario:
-    """Bucket a real seed into its smartphone module family from (FOV, EFL).
-
-    `fov_deg` is the nominal full field angle; `efl_mm` is the Optiland-recomputed
-    focal length (== index.json `efl_mm`), so every callsite — intake, load-time
-    override, and the golden-brief generator — keys on the identical pair.
-    Telephoto is the long-focus family (long EFL, narrow field); the remaining
-    short-focus seeds split wide vs ultrawide on the FOV divide. See
-    `_TELEPHOTO_EFL_MIN` / `_TELEPHOTO_FOV_MAX` for the guard-aligned thresholds.
-    """
-    if efl_mm >= _TELEPHOTO_EFL_MIN and fov_deg <= _TELEPHOTO_FOV_MAX:
-        return Scenario.SMARTPHONE_TELEPHOTO
-    if fov_deg >= _ULTRAWIDE_FOV_MIN:
-        return Scenario.SMARTPHONE_ULTRAWIDE
-    return Scenario.SMARTPHONE_WIDE
 
 
 def _classify_surfaces(optic) -> tuple[int, int]:

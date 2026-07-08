@@ -259,6 +259,69 @@ def test_real_store_empty_for_scenario_without_cases(tmp_path):
     assert hits == []  # no telephoto cases in the index
 
 
+def _tiny_index_with_stale_telephoto(tmp_path):
+    """A genuine long-focus record frozen as smartphone-wide in the index — the
+    pre-fix state that made RAG telephoto search return nothing."""
+    idx = tmp_path / "index.json"
+    idx.write_text(
+        json.dumps(
+            [
+                {
+                    "case_id": "wide-main",
+                    "scenario": "smartphone-wide",
+                    "n_pieces": 5,
+                    "n_imaging": 5,
+                    "n_filter": 1,
+                    "efl_mm": 3.9,
+                    "fnum": 2.0,
+                    "fov_deg": 84.0,
+                    "image_height_mm": 3.3,
+                    "materials": ["ZEONEX-E48R"],
+                },
+                {
+                    "case_id": "tele-frozen-as-wide",
+                    "scenario": "smartphone-wide",  # stale label; (EFL 12, FOV 20) => telephoto
+                    "n_pieces": 6,
+                    "n_imaging": 6,
+                    "n_filter": 1,
+                    "efl_mm": 12.0,
+                    "fnum": 2.8,
+                    "fov_deg": 20.0,
+                    "image_height_mm": 3.7,
+                    "materials": ["BK7"],
+                },
+            ]
+        )
+    )
+    return idx
+
+
+def test_real_store_derives_telephoto_from_stale_index(tmp_path):
+    """RAG retrieval re-derives scenario from (FOV, EFL): a long-focus record
+    frozen as smartphone-wide is retrievable under smartphone-telephoto and no
+    longer pollutes the smartphone-wide pool."""
+    store = RealLensCaseStore(index_path=_tiny_index_with_stale_telephoto(tmp_path))
+    tele = store.search_by_params(
+        efl_mm=12.0, fnum=2.8, fov_deg=20.0, scenario=Scenario.SMARTPHONE_TELEPHOTO, top_k=5
+    )
+    assert [h.id for h in tele] == ["tele-frozen-as-wide"]
+    wide = store.search_by_params(
+        efl_mm=3.9, fnum=2.0, fov_deg=84.0, scenario=Scenario.SMARTPHONE_WIDE, top_k=5
+    )
+    assert [h.id for h in wide] == ["wide-main"]  # telephoto seed left the wide pool
+
+
+def test_real_store_committed_index_has_telephoto_hits():
+    """End-to-end on the committed index.json: telephoto retrieval is non-empty
+    (was empty pre-fix because every seed was frozen wide/ultrawide)."""
+    store = RealLensCaseStore()
+    hits = store.search_by_params(
+        efl_mm=12.0, fnum=2.8, fov_deg=20.0, scenario=Scenario.SMARTPHONE_TELEPHOTO, top_k=3
+    )
+    assert hits
+    assert all(h.id for h in hits)
+
+
 def test_factory_uses_real_when_index_present():
     """With the committed case index, the default store is the real one."""
     get_default_store.cache_clear()
