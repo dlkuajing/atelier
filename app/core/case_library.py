@@ -43,7 +43,12 @@ from app.core.image_quality_floor import (
     image_quality_floor_gap_score as _image_quality_floor_gap_score,
 )
 from app.core.layout_svg import render_layout_svg
-from app.core.lens_system import LayoutSVG, Scenario
+from app.core.lens_system import (
+    LayoutSVG,
+    Scenario,
+    _classify_scenario,
+    _ULTRAWIDE_FOV_MIN,
+)
 from app.core.optical_calc import airy_disk_diameter_um
 from app.core.local_optimizer import (
     mtf_bands_from_snapshot,
@@ -142,9 +147,9 @@ _PRIMARY_WL_NM = 587.6  # d-line, matches zmx_ingest wavelength regularization
 # float('inf') -> null, which then fails reload; 1e9 mm reads as effectively flat.
 _PLANE_RADIUS_SENTINEL = 1e9
 
-# Real ammo maxes at ~89.5° (no true 100°+ ultrawide); 85° is the wide/ultrawide
-# divide we also calibrate parameter_guards bounds to (Plan 03).
-_ULTRAWIDE_FOV_MIN = 85.0
+# Seed scenario classification (_classify_scenario, _ULTRAWIDE_FOV_MIN, and the
+# telephoto thresholds) lives in lens_system alongside the Scenario enum so the
+# lightweight RAG store can share it without importing this heavy module.
 
 # Routing floor-violation thresholds. After the XASPHERE ingest fix the library
 # is image-quality healthy (max real RMS ~40 um, min-50lp/mm MTF >= ~0.2, floor
@@ -381,12 +386,6 @@ def _safe(value) -> float:
     return float(arr[0]) if arr.size else 0.0
 
 
-def _classify_scenario(fov_deg: float) -> Scenario:
-    if fov_deg >= _ULTRAWIDE_FOV_MIN:
-        return Scenario.SMARTPHONE_ULTRAWIDE
-    return Scenario.SMARTPHONE_WIDE
-
-
 def _classify_surfaces(optic) -> tuple[int, int]:
     """Count imaging elements vs flat filter/cover-glass plates.
 
@@ -615,7 +614,7 @@ def build_sample_from_optic(
     metadata = CaseMetadata(
         case_id=source_zmx.rsplit(".", 1)[0],
         source_zmx=source_zmx,
-        scenario=_classify_scenario(nominal_fov_deg),
+        scenario=_classify_scenario(nominal_fov_deg, computed_efl),
         n_pieces=n_pieces,
         n_imaging=n_imaging,
         n_filter=n_filter,
@@ -638,14 +637,26 @@ def build_sample_from_optic(
 
 @lru_cache(maxsize=1)
 def load_case_library() -> list[OpticalSampleData]:
-    """Load all generated case JSON (cached). Excludes index.json."""
+    """Load all generated case JSON (cached). Excludes index.json.
+
+    The seed's `scenario` is (re)derived from its stored (FOV, EFL) at load time
+    rather than trusted from the persisted label. The generated JSON predates the
+    multi-tier `_classify_scenario`, so ~115 genuine long-focus seeds were frozen
+    as `smartphone-wide`; deriving here makes `_classify_scenario` the single
+    source of truth for routing without a 343-file data migration (E-telephoto).
+    """
     if not CASES_DIR.exists():
         return []
     cases: list[OpticalSampleData] = []
     for fp in sorted(CASES_DIR.glob("*.json")):
         if fp.name == "index.json":
             continue
-        cases.append(OpticalSampleData.model_validate_json(fp.read_text()))
+        sample = OpticalSampleData.model_validate_json(fp.read_text())
+        if sample.metadata is not None:
+            sample.metadata.scenario = _classify_scenario(
+                sample.metadata.fov_deg, sample.metadata.computed_efl_mm
+            )
+        cases.append(sample)
     return cases
 
 

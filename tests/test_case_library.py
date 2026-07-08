@@ -9,7 +9,12 @@ Goal gates (BRIEF §5):
 
 import warnings
 
-from app.core.case_library import build_sample_from_optic, load_case_library
+from app.core.case_library import (
+    _classify_scenario,
+    build_sample_from_optic,
+    load_case_library,
+)
+from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
 from tests.data.zmx_manifest import ZMX_AMMO
@@ -41,7 +46,28 @@ def test_load_all_cases_valid():
     for c in cases:
         assert isinstance(c, OpticalSampleData)
         assert c.metadata is not None
-        assert c.metadata.scenario.value in ("smartphone-wide", "smartphone-ultrawide")
+        assert c.metadata.scenario.value in (
+            "smartphone-telephoto",
+            "smartphone-wide",
+            "smartphone-ultrawide",
+        )
+
+
+def test_telephoto_tier_is_populated_after_reclassification():
+    """The FOV+EFL taxonomy re-labels genuine long-focus seeds as telephoto,
+    so the routable telephoto pool is no longer empty (was the 404 root cause)."""
+    cases = load_case_library()
+    telephoto = [
+        c
+        for c in cases
+        if c.metadata is not None
+        and c.metadata.scenario is Scenario.SMARTPHONE_TELEPHOTO
+    ]
+    assert len(telephoto) == 115
+    # Every telephoto seed must satisfy the guard-aligned classifier contract.
+    for c in telephoto:
+        assert c.metadata.computed_efl_mm >= 5.0
+        assert c.metadata.fov_deg <= 45.0
 
 
 def test_at_least_one_full_chain():
@@ -53,6 +79,28 @@ def test_at_least_one_full_chain():
     assert len(c.trace.sampled_paths) > 0
     assert "svg" in c.layout_svg.svg_content.lower()
     assert c.paraxial.effective_focal_length_mm > 0
+
+
+def test_classify_scenario_tiers():
+    """Multi-tier (FOV+EFL) classification: EFL is the telephoto discriminator so
+    a short-EFL narrow-field seed stays wide, not tele."""
+    T = Scenario.SMARTPHONE_TELEPHOTO
+    W = Scenario.SMARTPHONE_WIDE
+    U = Scenario.SMARTPHONE_ULTRAWIDE
+    cases = [
+        # (fov_deg, efl_mm, expected)
+        (20.0, 12.0, T),   # long EFL, narrow field → telephoto
+        (45.0, 5.0, T),    # inclusive boundary (fov<=45 and efl>=5)
+        (8.7, 22.7, T),    # deep tele below the 15deg request floor (US-...578-e1)
+        (35.1, 3.93, W),   # telephoto FOV but wide EFL (US-11933948-e8) → wide
+        (78.0, 3.0, W),    # main wide
+        (30.0, 4.99, W),   # just below the 5mm EFL floor → wide
+        (45.1, 8.0, W),    # just above the 45deg tele ceiling, sub-85 → wide
+        (90.0, 2.8, U),    # ultrawide
+        (85.0, 3.5, U),    # ultrawide FOV floor
+    ]
+    for fov, efl, expected in cases:
+        assert _classify_scenario(fov, efl) is expected, (fov, efl, expected)
 
 
 def test_all_cases_efl_within_2pct():
