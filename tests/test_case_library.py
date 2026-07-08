@@ -36,8 +36,8 @@ def test_build_one_real_sample_roundtrip():
 
 def test_load_all_cases_valid():
     cases = load_case_library()
-    # DATA-06: 17 GGG + 22 curated patent seeds + 118 converted patent seeds.
-    assert len(cases) == 157
+    # 17 GGG + 22 curated patent seeds + 118 DATA-06 + 186 DATA-09d1 seeds.
+    assert len(cases) == 343
     for c in cases:
         assert isinstance(c, OpticalSampleData)
         assert c.metadata is not None

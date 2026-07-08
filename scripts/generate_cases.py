@@ -25,6 +25,11 @@ from tests.data.zmx_manifest import ZMX_AMMO  # noqa: E402
 SEED_IMH_OVERRIDES_PATH = (
     Path(__file__).resolve().parents[1] / "tests" / "data" / "seed_imh_overrides.json"
 )
+LIGHTWEIGHT_INTAKE_BATCH_PREFIXES = ("DATA-06", "DATA-09d1")
+
+
+def _uses_lightweight_artifacts(entry: dict) -> bool:
+    return str(entry.get("intake_batch", "")).startswith(LIGHTWEIGHT_INTAKE_BATCH_PREFIXES)
 
 
 def _load_seed_imh_overrides() -> dict[str, float]:
@@ -50,7 +55,7 @@ def main() -> None:
                 n_pieces=a["n_pieces"],
                 nominal_efl_mm=a["nominal_efl_mm"],
                 nominal_fov_deg=a["nominal_fov_deg"],
-                lightweight_artifacts=str(a.get("intake_batch", "")).startswith("DATA-06"),
+                lightweight_artifacts=_uses_lightweight_artifacts(a),
             )
             case_id = fn.rsplit(".", 1)[0]
             (CASES_DIR / f"{case_id}.json").write_text(

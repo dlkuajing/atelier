@@ -219,7 +219,7 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
         artifact="mtf",
         available="true",
         provenance="optiland-raytrace",
-        snippets=("4 fields, 256 samples.", "Diffraction cutoff 830 lp/mm."),
+        snippets=("4 fields, 256 samples.", "Diffraction cutoff 920 lp/mm."),
     )
     _assert_analysis_card(
         html,
@@ -244,8 +244,8 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
     )
     assert "<svg" in html
     assert (
-        "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30 / "
-        "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30.zmx"
+        "5P_F1.9_FOV77.0_EFL3.6_IMH2.9_TTL4.30 / "
+        "5P_F1.9_FOV77.0_EFL3.6_IMH2.9_TTL4.30.zmx"
     ) in html
     for source in (
         "thin-lens-analytic",

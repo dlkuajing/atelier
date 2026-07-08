@@ -515,7 +515,7 @@ def _conservative_zero_mtf(optic, field_count: int) -> MTFResult:
 
 
 def _lightweight_mtf(optic, fov_deg: float) -> tuple[MTFResult, float]:
-    """Bounded DATA-06 MTF evidence: axis + 0.5 field with low ray density."""
+    """Bounded intake MTF evidence: axis + 0.5 field with low ray density."""
 
     half = fov_deg / 2.0
     fracs = (0.0, 0.5)
@@ -716,7 +716,7 @@ def _case_index_image_height_mm_by_id() -> dict[str, float]:
 
 @lru_cache(maxsize=1)
 def _case_index_payload_edge_seed_ids() -> set[str]:
-    """DATA-06 post-c waves keep payload-bounded MTF; do not rescan every audit."""
+    """Payload-bounded intake waves keep lightweight MTF; do not rescan every audit."""
 
     index_path = CASES_DIR / "index.json"
     if not index_path.is_file():
@@ -733,7 +733,11 @@ def _case_index_payload_edge_seed_ids() -> set[str]:
         if not isinstance(record, dict):
             continue
         batch = str(record.get("intake_batch", ""))
-        if not batch.startswith("DATA-06") or batch == "DATA-06c":
+        is_payload_bounded = (
+            (batch.startswith("DATA-06") and batch != "DATA-06c")
+            or batch.startswith("DATA-09d1")
+        )
+        if not is_payload_bounded:
             continue
         case_id = record.get("case_id")
         source_zmx = record.get("source_zmx")
@@ -962,7 +966,7 @@ def build_seed_intake_audit(
                 None,
                 [
                     f"payload:{format_mtf_field_fraction(case.metadata.mtf_max_field_frac)}",
-                    "index:intake_batch=DATA-06 payload-bounded",
+                    "index:intake_batch payload-bounded",
                 ],
             )
             edge_stability_cache[case.metadata.case_id] = result
