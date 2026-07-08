@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-07-03)
 Phase: 完成 1/3/4/5/7/8，Phase 6 余规模门（案例库 157，原料池 614+→主公裁定扩至 2000-3000，转换产率 26.7%=spike 3.7 倍），进行中 2/9；Phase 9 两段式彩排第一段完成（三遍彩排零瑕疵，待主公终验）
 Plan: 夜车模式（gsd-loop 垂直切片）替代 phase-plan 执行
 Status: 批次10 修复随 PR #31 合入，wide 预存摘要随 PR #32 合入；全量 gate 707 passed（gate-b10-final），案例库 39→157 颗，原料池 614+
-Last activity: 2026-07-08 — Quick 260708: 修复长焦404结构选型缺陷（_classify_scenario 多档化 EFL≥5&FOV≤45→telephoto + 加载时派生真值来源；115 seed 重标 telephoto；golden 重生成；全量 1442 passed；对抗审查 0 confirmed）commit 08e24d0
+Last activity: 2026-07-08 — Quick 260708: 修复长焦404结构选型缺陷（_classify_scenario 多档化 EFL≥5&FOV≤45→telephoto + 加载时派生真值来源；115 seed 重标 telephoto；golden 重生成；对抗审查 0 confirmed；commit 08e24d0）+ RAG 同修（RealLensCaseStore 同法派生，分类器上移 lens_system 共享家，telephoto 检索从空→真实 seed；commit 9193801）；全量 1444 passed
 
 Progress: [█████████░] ~90%（余：规模门放量、主公终验彩排）
 
@@ -66,7 +66,7 @@ None yet.
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
-| 260708-telephoto-routing | 修复长焦404：_classify_scenario 多档化+加载时派生，115 seed 重标 telephoto，请求不再 404 | 2026-07-08 | 08e24d0 | [260708-telephoto-routing](./quick/260708-telephoto-routing/) |
+| 260708-telephoto-routing | 修复长焦404：_classify_scenario 多档化+加载时派生，115 seed 重标 telephoto，光路请求不再 404；RAG 同修（telephoto 检索从空→真实 seed，分类器上移 lens_system 共享家） | 2026-07-08 | 08e24d0, 9193801 | [260708-telephoto-routing](./quick/260708-telephoto-routing/) |
 
 ## Deferred Items
 

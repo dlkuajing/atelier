@@ -38,6 +38,10 @@ commit: 08e24d0
 2. 真值来源 = 加载时派生（非数据迁移）。
 3. TTL-normalization 副作用：直接上线 + 重锚 2 测试。
 
+## RAG 追加一场（同 session 主公追加，commit 9193801）
+- `RealLensCaseStore.__init__` 加载时同法按 (FOV, EFL) 派生 scenario → telephoto 专利检索从"空"→返回真实长焦 seed（US-12372756 系列）。
+- `_classify_scenario` + 阈值 **上移至 `lens_system.py`**（Scenario 枚举旁的共享家），避免轻量可换的 RAG 模块为一个分类器 import 重量级 optical engine；`case_library` re-export，e2_golden/测试 import 不变。
+- +2 测试（stale-telephoto fixture + 真实索引 smoke）；全量 **1444 passed**；RAG 分布 wide197/ultra31/tele115 与光路路由一致。
+
 ## Follow-ups (out of scope)
-- RAG 专利检索（`rag/store.py`）读 index.json 的 stale scenario → telephoto 检索返回空（主公已知/接受 no-data-diff 后果）。
-- 按 drift 双打契约 cherry-pick 回 `lumira/lumira-backend`。
+- 按 drift 双打契约 cherry-pick 回 `lumira/lumira-backend`（本仓 derive-at-load 手法，lumira 侧需对应落地）。
