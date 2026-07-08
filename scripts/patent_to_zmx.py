@@ -34,7 +34,6 @@ from app.core.engines.zmx_writer import write_zmx_from_codev_readout  # noqa: E4
 from app.core.zmx_ingest import load_normalized_zmx  # noqa: E402
 from scripts.patent_crawler import _ppubs_access_token, _ppubs_patent_html  # noqa: E402
 
-
 DEFAULT_POOL_GLOB = "uspto-smartphone-batch*.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "data" / "zmx-staging"
 DEFAULT_REPORT_PATH = ROOT / ".planning" / "loop" / "patent2zmx-spike-report.md"
@@ -93,7 +92,6 @@ MATERIAL_TOKENS = {
     "IR",
     "IR-CUT",
     "CEMENT",
-    "CEMENTED",
 }
 SURFACE_TYPE_TOKENS = {"ASP", "ASPH", "SPH", "SPHERICAL"}
 
@@ -242,7 +240,13 @@ def _parse_prescription_attempts(
     """Parse embodiment tables independently so one bad table does not hide later ones."""
 
     text = normalize_patent_text(raw_text)
-    metas = _find_embodiment_metas(text)
+    try:
+        metas = _find_embodiment_metas(text)
+    except PatentParseError:
+        attempts = _parse_fujifilm_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
+        raise
     attempts: list[_PrescriptionParseAttempt] = []
     for index, meta in enumerate(metas, start=1):
         next_meta_index = index
@@ -304,6 +308,335 @@ def _parse_prescription_at_meta(
         surfaces=optical_surfaces,
         unsupported_asphere_terms=unsupported,
     )
+
+
+_FUJIFILM_BASIC_TABLE_PATTERN = re.compile(
+    r"\bTABLE-US-\d+\s+TABLE\s+\d+\s+Example\s+(?P<example>\d+)\s+"
+    r"Sn\s+R\s+D\s+Nd\s+\S+\s+\S+\s+SG(?:\s+ED)?\s+",
+    flags=re.IGNORECASE,
+)
+_FUJIFILM_INLINE_TABLE_PATTERN = re.compile(
+    rf"\bTABLE-US-\d+\s+TABLE\s+\d+\s+Example\s+(?P<example>\d+)\s+"
+    rf"Basic\s+Lens\s+Data\s+f\s*=\s*(?P<f>{NUMBER_PATTERN})\s*,?\s+"
+    rf"BF\s*=\s*(?P<bf>{NUMBER_PATTERN})\s*,?\s+2\S*\s*=\s*"
+    rf"(?P<full_angle>{NUMBER_PATTERN})\s*,?\s+FNo\.?\s*=\s*"
+    rf"(?P<fno>{NUMBER_PATTERN})\s+Si\s+Ri\s+Di\s+Ndj\s+\S+\s+",
+    flags=re.IGNORECASE,
+)
+
+
+def _parse_fujifilm_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse Fujifilm basic-lens/specification table pairs."""
+
+    basic_matches = list(_FUJIFILM_BASIC_TABLE_PATTERN.finditer(text))
+    if not basic_matches:
+        return _parse_fujifilm_inline_table_attempts(text, patent_id=patent_id)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, basic_match in enumerate(basic_matches, start=1):
+        example_number = int(basic_match.group("example"))
+        embodiment = f"Example {example_number}"
+        next_basic_start = (
+            basic_matches[index].start() if index < len(basic_matches) else len(text)
+        )
+        try:
+            spec_match = _fujifilm_spec_match(
+                text,
+                example_number=example_number,
+                start=basic_match.end(),
+                end=next_basic_start,
+            )
+            surfaces = _parse_fujifilm_surface_table(
+                text[basic_match.end() : spec_match.start()],
+                example_number=example_number,
+            )
+            coefficients = _parse_fujifilm_asphere_coefficients(
+                text,
+                example_number=example_number,
+                start=spec_match.end(),
+                end=next_basic_start,
+            )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+                    surface.surface_type = "ASP"
+            if surfaces:
+                surfaces.append(
+                    PatentSurface(
+                        index=surfaces[-1].index + 1,
+                        label="Image",
+                        radius_mm=0.0,
+                        thickness_mm=0.0,
+                        material=None,
+                        nd=None,
+                        vd=None,
+                        surface_type=None,
+                    )
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=_parse_number(spec_match.group("f")),
+                f_number=_parse_number(spec_match.group("fno")),
+                hfov_deg=_parse_number(spec_match.group("full_angle")) / 2.0,
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - kept as a per-example failure
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=index,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_fujifilm_inline_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse older Fujifilm tables whose specs are embedded in the basic table heading."""
+
+    inline_matches = list(_FUJIFILM_INLINE_TABLE_PATTERN.finditer(text))
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, inline_match in enumerate(inline_matches, start=1):
+        example_number = int(inline_match.group("example"))
+        embodiment = f"Example {example_number}"
+        next_start = inline_matches[index].start() if index < len(inline_matches) else len(text)
+        try:
+            asphere_match = _fujifilm_asphere_header_match(
+                text,
+                example_number=example_number,
+                start=inline_match.end(),
+                end=next_start,
+            )
+            surface_end = asphere_match.start() if asphere_match is not None else next_start
+            surfaces = _parse_fujifilm_surface_table(
+                text[inline_match.end() : surface_end],
+                example_number=example_number,
+            )
+            coefficients = _parse_fujifilm_asphere_coefficients(
+                text,
+                example_number=example_number,
+                start=inline_match.end(),
+                end=next_start,
+            )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+                    surface.surface_type = "ASP"
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=_parse_number(inline_match.group("f")),
+                f_number=_parse_number(inline_match.group("fno")),
+                hfov_deg=_parse_number(inline_match.group("full_angle")) / 2.0,
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - kept as a per-example failure
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=index,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _fujifilm_spec_match(
+    text: str,
+    *,
+    example_number: int,
+    start: int,
+    end: int,
+) -> re.Match[str]:
+    pattern = re.compile(
+        rf"\bTABLE-US-\d+\s+TABLE\s+\d+\s+Example\s+{example_number}\s+"
+        rf"f\s+(?P<f>{NUMBER_PATTERN})\s+Bf\s+(?P<bf>{NUMBER_PATTERN})\s+"
+        rf"FNo\.?\s+(?P<fno>{NUMBER_PATTERN})\s+2\S*\s+"
+        rf"(?P<full_angle>{NUMBER_PATTERN})",
+        flags=re.IGNORECASE,
+    )
+    match = pattern.search(text, start, end)
+    if match is None:
+        raise PatentParseError(f"Fujifilm Example {example_number} specification table not found")
+    return match
+
+
+def _parse_fujifilm_surface_table(
+    table_text: str,
+    *,
+    example_number: int,
+) -> list[PatentSurface]:
+    tokens = _tokenize_fujifilm_table(table_text)
+    starts = [
+        (pos, marker)
+        for pos, token in enumerate(tokens)
+        if (marker := _fujifilm_surface_marker(token)) is not None
+    ]
+    if not starts:
+        raise PatentParseError(f"Fujifilm Example {example_number} surface table had no rows")
+
+    surfaces: list[PatentSurface] = []
+    expected_index = 1
+    for row_index, (pos, marker) in enumerate(starts):
+        surface_index, is_stop, is_asphere = marker
+        if surface_index != expected_index:
+            raise PatentParseError(
+                "Fujifilm surface table index break: "
+                f"expected {expected_index}, found {surface_index}"
+            )
+        row_end = starts[row_index + 1][0] if row_index + 1 < len(starts) else len(tokens)
+        row = tokens[pos + 1 : row_end]
+        row_is_stop = is_stop or any(_strip_parens(token).upper() == "ST" for token in row)
+        row = [token for token in row if _strip_parens(token).upper() != "ST"]
+        if len(row) < 2:
+            if row_index + 1 < len(starts):
+                raise PatentParseError(f"Fujifilm surface {surface_index} row is incomplete")
+            row = [*row, "0"]
+        radius = _distance_value(row[0], field_name=f"surface {surface_index} radius")
+        thickness = _distance_value(row[1], field_name=f"surface {surface_index} thickness")
+        nd = vd = None
+        if len(row) >= 4:
+            try:
+                candidate_nd = _parse_number(row[2])
+                candidate_vd = _parse_number(row[3])
+            except PatentParseError:
+                candidate_nd = candidate_vd = None
+            if (
+                candidate_nd is not None
+                and candidate_vd is not None
+                and _is_physical_nd(candidate_nd)
+                and _is_physical_vd(candidate_vd)
+            ):
+                nd = candidate_nd
+                vd = candidate_vd
+        _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label="Stop" if row_is_stop else f"Surface {surface_index}",
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material="Glass" if nd is not None else None,
+                nd=nd,
+                vd=vd,
+                surface_type="ASP" if is_asphere else None,
+            )
+        )
+        expected_index += 1
+    return surfaces
+
+
+def _fujifilm_asphere_header_match(
+    text: str,
+    *,
+    example_number: int,
+    start: int,
+    end: int,
+) -> re.Match[str] | None:
+    pattern = re.compile(
+        rf"\bTABLE-US-\d+\s+TABLE\s+\d+\s+Example\s+{example_number}\s+"
+        rf"(?:Sn|Aspherical\s+Surface\s+Coefficient\s+Si)\s+",
+        flags=re.IGNORECASE,
+    )
+    return pattern.search(text, start, end)
+
+
+def _parse_fujifilm_asphere_coefficients(
+    text: str,
+    *,
+    example_number: int,
+    start: int,
+    end: int,
+) -> dict[int, dict[str, float]]:
+    match = _fujifilm_asphere_header_match(
+        text,
+        example_number=example_number,
+        start=start,
+        end=end,
+    )
+    if match is None:
+        return {}
+    body = text[match.end() : end]
+    cutoffs = [
+        cutoff.start()
+        for pattern in (r"\bExample\s+\d+\s+\[\d+\]", r"\s\[\d+\]\s")
+        if (cutoff := re.search(pattern, body))
+    ]
+    if cutoffs:
+        body = body[: min(cutoffs)]
+    tokens = _tokenize_coefficients(body)
+    pos = 0
+    surface_ids: list[int] = []
+    while pos < len(tokens) and tokens[pos].isdigit():
+        surface_ids.append(int(tokens[pos]))
+        pos += 1
+    if not surface_ids:
+        raise PatentParseError(f"Fujifilm Example {example_number} asphere table had no Sn row")
+
+    coefficients: dict[int, dict[str, float]] = {}
+    while pos < len(tokens):
+        label = tokens[pos].upper().rstrip("=")
+        pos += 1
+        if label == "=":
+            continue
+        if pos < len(tokens) and tokens[pos] == "=":
+            pos += 1
+        values: list[float] = []
+        for _surface_id in surface_ids:
+            if pos >= len(tokens):
+                raise PatentParseError(
+                    f"Fujifilm Example {example_number} asphere row {label} is incomplete"
+                )
+            values.append(_parse_number(tokens[pos]))
+            pos += 1
+        if label in {"K", "KA"}:
+            codev_label = "K"
+        else:
+            order_match = re.fullmatch(r"A(\d+)", label)
+            if order_match is None:
+                continue
+            order = int(order_match.group(1))
+            if order not in SUPPORTED_ASPHERE_ORDERS:
+                unsupported = [
+                    f"S{surface_id}:A{order}={value:.3g}"
+                    for surface_id, value in zip(surface_ids, values, strict=True)
+                    if abs(value) > 0.0
+                ]
+                if unsupported:
+                    raise PatentParseError(
+                        "unsupported nonzero Fujifilm asphere terms: "
+                        + ", ".join(unsupported[:8])
+                    )
+                continue
+            codev_label = ASPHERE_ORDER_TO_CODEV[order]
+        for surface_id, value in zip(surface_ids, values, strict=True):
+            coefficients.setdefault(surface_id, {})[codev_label] = value
+    return coefficients
 
 
 def prescription_fingerprint(prescription: PatentPrescription) -> str:
@@ -852,6 +1185,12 @@ def _tokenize_table(text: str) -> list[str]:
 def _tokenize_coefficients(text: str) -> list[str]:
     text = _normalize_decimal_commas(text)
     text = text.replace("=", " = ")
+    text = re.sub(r"(?<!\d),(?!\d)", " ", text)
+    return [token.strip() for token in text.split() if token.strip()]
+
+
+def _tokenize_fujifilm_table(text: str) -> list[str]:
+    text = _normalize_decimal_commas(text)
     text = re.sub(r"(?<!\d),(?!\d)", " ", text)
     return [token.strip() for token in text.split() if token.strip()]
 
@@ -1463,6 +1802,17 @@ def _is_empty_value(token: str) -> bool:
 
 def _is_next_surface_index(token: str, expected: int) -> bool:
     return token.isdigit() and int(token) == expected
+
+
+def _fujifilm_surface_marker(token: str) -> tuple[int, bool, bool] | None:
+    match = re.fullmatch(r"(?P<asphere>\*)?(?P<index>\d+)(?P<stop>\(St\))?", token, re.I)
+    if match is None:
+        return None
+    return (
+        int(match.group("index")),
+        bool(match.group("stop")),
+        bool(match.group("asphere")),
+    )
 
 
 def _stop_surface_index(surfaces: list[PatentSurface]) -> int:
