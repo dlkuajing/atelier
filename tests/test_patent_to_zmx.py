@@ -106,6 +106,39 @@ A4 -1.4397107E-03 8.7627361E-04
 [0001] trailing narrative.
 """
 
+AAC_RAYTECH_COMPACT_TEXT = """
+TABLE-US-00001 TABLE 1 R d nd νd S1 Infinity d0= -0.460
+R1 5.316 d1= 1.600 nd1 1.4959 ν1 81.65
+R2 -24.225 d2= 0.030
+R3 626.915 d3= 0.412 nd2 1.6700 ν2 19.39
+R4 34.369 d4= 0.092
+R5 3.324 d5= 0.853 nd3 1.5444 ν3 55.82
+R6 2.183 d6= 1.500
+R7 Infinity d7= 6.982 nd4 1.5891 ν4 61.25
+R8 Infinity d8= 6.500
+R9 Infinity d9= 0.210 ndg 1.5168 νg 64.17
+R10 Infinity d10= 0.807 [0076] narrative definitions follow.
+TABLE-US-00002 TABLE 2 Conic constant Aspheric coefficient k A4 A6 A8 A10 A12
+R1 -9.5839E-01 3.0795E-03 -5.0356E-04 8.2246E-04 -8.7499E-04 5.7935E-04
+R2 5.5038E+00 2.5011E-02 -7.0471E-03 -1.4091E-02 2.3707E-02 -1.7833E-02
+Conic constant Aspheric coefficient k A14 A16 A18 A20 A22
+R1 -9.5839E-01 -2.6080E-04 8.2927E-05 -1.8914E-05 3.1033E-06 -3.6308E-07
+R2 5.5038E+00 8.1728E-03 -2.5055E-03 5.3547E-04 -8.1113E-05 8.6956E-06
+TABLE-US-00003 TABLE 3 R d nd vd S1 Infinity d0= -1.012
+R1 3.982 d1= 1.297 nd1 1.4959 vd1 81.64
+R2 36.568 d2= 0.036
+TABLE-US-00004 TABLE 4 Conic constant Aspheric coefficient k A4 A6
+R1 -5.3865E-01 3.3646E-03 -9.3315E-04
+TABLE-US-00005 TABLE 5 Parameters 1.sup.st 2.sup.nd and conditions
+D/TTL 0.16 0.12
+f 18.269 16.282
+Fno 2.871 2.871
+TTL 18.986 17.746
+IH 3.575 3.575
+FOV 21.79° 24.47°
+[0146] trailing narrative.
+"""
+
 
 def test_parse_patent_prescription_extracts_surface_and_asphere_fields() -> None:
     prescription = parse_patent_prescription(PRESCRIPTION_TEXT, patent_id="US-EXAMPLE-A1")
@@ -357,6 +390,42 @@ def test_fujifilm_inline_tables_fail_loud_on_odd_asphere_terms() -> None:
     assert attempts[0].prescription is None
     assert isinstance(attempts[0].error, PatentParseError)
     assert "unsupported nonzero Fujifilm asphere terms" in str(attempts[0].error)
+
+
+def test_parse_patent_prescriptions_accepts_aac_raytech_compact_tables() -> None:
+    prescriptions = parse_patent_prescriptions(
+        AAC_RAYTECH_COMPACT_TEXT,
+        patent_id="US-AAC-RAYTECH-FIXTURE-A1",
+    )
+
+    assert [prescription.embodiment for prescription in prescriptions] == [
+        "AAC Raytech example 1",
+        "AAC Raytech example 2",
+    ]
+
+    first = prescriptions[0]
+    assert first.focal_length_mm == pytest.approx(18.269)
+    assert first.f_number == pytest.approx(2.871)
+    assert first.hfov_deg == pytest.approx(21.79 / 2.0)
+    assert len(first.surfaces) == 12
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[0].radius_mm == math.inf
+    assert first.surfaces[0].thickness_mm == pytest.approx(-0.460)
+
+    first_lens = first.surfaces[1]
+    assert first_lens.label == "Surface R1"
+    assert first_lens.nd == pytest.approx(1.4959)
+    assert first_lens.vd == pytest.approx(81.65)
+    assert first_lens.surface_type == "ASP"
+    assert first_lens.asphere_coefficients["K"] == pytest.approx(-0.95839)
+    assert first_lens.asphere_coefficients["A"] == pytest.approx(3.0795e-3)
+    assert first_lens.asphere_coefficients["H"] == pytest.approx(-1.8914e-5)
+    assert first_lens.asphere_coefficients["A22"] == pytest.approx(-3.6308e-7)
+
+    second = prescriptions[1]
+    assert second.focal_length_mm == pytest.approx(16.282)
+    assert second.hfov_deg == pytest.approx(24.47 / 2.0)
+    assert second.surfaces[1].asphere_coefficients["B"] == pytest.approx(-9.3315e-4)
 
 
 def test_convert_candidate_writes_each_embodiment_with_e_suffix_without_network(

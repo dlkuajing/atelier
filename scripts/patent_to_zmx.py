@@ -180,6 +180,14 @@ class _PrescriptionParseAttempt:
     error: Exception | None = None
 
 
+@dataclass(frozen=True)
+class _PatentTableBlock:
+    number: int
+    text: str
+    start: int
+    end: int
+
+
 def normalize_patent_text(value: str) -> str:
     """Return PPUBS HTML/plain text normalized for deterministic regex parsing."""
 
@@ -244,6 +252,9 @@ def _parse_prescription_attempts(
         metas = _find_embodiment_metas(text)
     except PatentParseError:
         attempts = _parse_fujifilm_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
+        attempts = _parse_aac_raytech_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
         raise
@@ -637,6 +648,388 @@ def _parse_fujifilm_asphere_coefficients(
         for surface_id, value in zip(surface_ids, values, strict=True):
             coefficients.setdefault(surface_id, {})[codev_label] = value
     return coefficients
+
+
+_PATENT_TABLE_BLOCK_PATTERN = re.compile(
+    r"\bTABLE-US-\d+\s+TABLE\s+(?P<number>\d+)\s+",
+    flags=re.IGNORECASE,
+)
+_AAC_RAYTECH_SURFACE_HEADER_PATTERN = re.compile(
+    r"\bR\s+d\s+nd\s+(?:vd|νd)\s+(?:S1|ST)\b",
+    flags=re.IGNORECASE,
+)
+
+
+def _parse_aac_raytech_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse AAC/Raytech compact R/d surface tables plus detached summary metadata."""
+
+    blocks = _patent_table_blocks(text)
+    surface_blocks: list[tuple[int, _PatentTableBlock, re.Match[str]]] = []
+    for block_index, block in enumerate(blocks):
+        header_match = _AAC_RAYTECH_SURFACE_HEADER_PATTERN.search(block.text)
+        if header_match is not None:
+            surface_blocks.append((block_index, block, header_match))
+    if not surface_blocks:
+        return []
+
+    metas = _aac_raytech_summary_metas(blocks)
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, (block_index, block, header_match) in enumerate(
+        surface_blocks,
+        start=1,
+    ):
+        embodiment = f"AAC Raytech example {embodiment_number}"
+        try:
+            meta = metas.get(embodiment_number)
+            if meta is None:
+                raise PatentParseError(
+                    "AAC Raytech summary metadata did not contain f/F number/FOV "
+                    f"for example {embodiment_number}"
+                )
+            surfaces, surface_index_by_label = _parse_aac_raytech_surface_table(
+                block.text[header_match.start() :],
+                example_number=embodiment_number,
+            )
+            coefficients: dict[int, dict[str, float]] = {}
+            if block_index + 1 < len(blocks):
+                coefficients = _parse_aac_raytech_asphere_table(
+                    blocks[block_index + 1].text,
+                    surface_index_by_label=surface_index_by_label,
+                )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+                    surface.surface_type = "ASP"
+            if surfaces:
+                surfaces.append(
+                    PatentSurface(
+                        index=surfaces[-1].index + 1,
+                        label="Image",
+                        radius_mm=0.0,
+                        thickness_mm=0.0,
+                        material=None,
+                        nd=None,
+                        vd=None,
+                        surface_type=None,
+                    )
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=meta.focal_length_mm,
+                f_number=meta.f_number,
+                hfov_deg=meta.hfov_deg,
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - kept as a per-example failure
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _patent_table_blocks(text: str) -> list[_PatentTableBlock]:
+    matches = list(_PATENT_TABLE_BLOCK_PATTERN.finditer(text))
+    blocks: list[_PatentTableBlock] = []
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        blocks.append(
+            _PatentTableBlock(
+                number=int(match.group("number")),
+                text=text[match.start() : end],
+                start=match.start(),
+                end=end,
+            )
+        )
+    return blocks
+
+
+def _aac_raytech_summary_metas(blocks: list[_PatentTableBlock]) -> dict[int, _EmbodimentMeta]:
+    metas: dict[int, _EmbodimentMeta] = {}
+    narrative_full_fovs: list[float] = []
+    narrative_image_heights: list[float] = []
+    for block in blocks:
+        if re.search(r"Aspheric|Aspherical", block.text, flags=re.IGNORECASE) is None:
+            continue
+        narrative_full_fovs.extend(
+            _aac_summary_row_values(block.text, {"FOV"}, cut_narrative=False)
+        )
+        narrative_image_heights.extend(
+            _aac_summary_row_values(block.text, {"IH", "IMGHT", "IMAGEHEIGHT"}, cut_narrative=False)
+        )
+
+    for block in blocks:
+        focal_lengths = _aac_summary_row_values(block.text, {"F"}, cut_narrative=True)
+        f_numbers = _aac_summary_row_values(
+            block.text,
+            {"FNO", "F-NUMBER", "FNUMBER"},
+            cut_narrative=True,
+        )
+        full_fovs = _aac_summary_row_values(block.text, {"FOV"}, cut_narrative=True)
+        image_heights = _aac_summary_row_values(
+            block.text,
+            {"IH", "IMGHT", "IMAGEHEIGHT"},
+            cut_narrative=True,
+        )
+        if not focal_lengths or not f_numbers or (not full_fovs and not image_heights):
+            if not focal_lengths or not f_numbers:
+                continue
+            full_fovs = narrative_full_fovs
+            image_heights = narrative_image_heights
+            if not full_fovs and not image_heights:
+                continue
+        count = min(
+            len(focal_lengths),
+            len(f_numbers),
+            len(full_fovs) if full_fovs else len(image_heights),
+        )
+        for index in range(count):
+            if full_fovs:
+                hfov = full_fovs[index] / 2.0
+            else:
+                hfov = math.degrees(math.atan(image_heights[index] / focal_lengths[index]))
+            metas.setdefault(
+                index + 1,
+                _EmbodimentMeta(
+                    embodiment=f"AAC Raytech example {index + 1}",
+                    start=block.start,
+                    end=block.end,
+                    focal_length_mm=focal_lengths[index],
+                    f_number=f_numbers[index],
+                    hfov_deg=hfov,
+                ),
+            )
+    return metas
+
+
+def _aac_summary_row_values(
+    table_text: str,
+    labels: set[str],
+    *,
+    cut_narrative: bool = False,
+) -> list[float]:
+    source = _cut_aac_table_narrative(table_text) if cut_narrative else table_text
+    tokens = _tokenize_aac_raytech_table(source)
+    normalized_labels = {_aac_summary_label(label) for label in labels}
+    for pos, token in enumerate(tokens):
+        if _aac_summary_label(token) not in normalized_labels:
+            continue
+        values: list[float] = []
+        value_pos = pos + 1
+        while value_pos < len(tokens):
+            try:
+                values.append(_parse_aac_number(tokens[value_pos]))
+            except PatentParseError:
+                if values:
+                    break
+            value_pos += 1
+        if values:
+            return values
+    return []
+
+
+def _parse_aac_raytech_surface_table(
+    table_text: str,
+    *,
+    example_number: int,
+) -> tuple[list[PatentSurface], dict[str, int]]:
+    body = _cut_aac_table_narrative(table_text)
+    tokens = _tokenize_aac_raytech_table(body)
+    stop_pos = next(
+        (pos for pos, token in enumerate(tokens) if token.upper() in {"S1", "ST"}),
+        None,
+    )
+    if stop_pos is None or stop_pos + 1 >= len(tokens):
+        raise PatentParseError(f"AAC Raytech example {example_number} stop row not found")
+
+    row_starts = [
+        (pos, label)
+        for pos, token in enumerate(tokens)
+        if (label := _aac_surface_label(token)) is not None
+    ]
+    if not row_starts:
+        raise PatentParseError(f"AAC Raytech example {example_number} surface rows not found")
+
+    first_surface_pos = row_starts[0][0]
+    stop_row = tokens[stop_pos + 2 : first_surface_pos]
+    surfaces = [
+        PatentSurface(
+            index=1,
+            label="Stop",
+            radius_mm=_distance_value(tokens[stop_pos + 1], field_name="stop radius"),
+            thickness_mm=_aac_distance_after_label(stop_row, "d0", field_name="stop thickness"),
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    ]
+    surface_index_by_label: dict[str, int] = {}
+    for row_index, (pos, label) in enumerate(row_starts):
+        row_end = row_starts[row_index + 1][0] if row_index + 1 < len(row_starts) else len(tokens)
+        row = tokens[pos + 1 : row_end]
+        if not row:
+            raise PatentParseError(f"AAC Raytech {label} row is incomplete")
+        surface_index = len(surfaces) + 1
+        thickness = _aac_distance_after_label(
+            row[1:],
+            f"d{label[1:]}",
+            field_name=f"{label} thickness",
+        )
+        nd, vd = _aac_material_indices(row, surface_index=surface_index)
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=f"Surface {label}",
+                radius_mm=_distance_value(row[0], field_name=f"{label} radius"),
+                thickness_mm=thickness,
+                material="Glass" if nd is not None else None,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+        surface_index_by_label[label.upper()] = surface_index
+    return surfaces, surface_index_by_label
+
+
+def _parse_aac_raytech_asphere_table(
+    table_text: str,
+    *,
+    surface_index_by_label: dict[str, int],
+) -> dict[int, dict[str, float]]:
+    if re.search(r"Aspheric|Aspherical", table_text, flags=re.IGNORECASE) is None:
+        return {}
+
+    tokens = _tokenize_aac_raytech_table(_cut_aac_table_narrative(table_text))
+    coefficients: dict[int, dict[str, float]] = {}
+    current_labels: list[str] = []
+    pos = 0
+    while pos < len(tokens):
+        token = tokens[pos]
+        if token.upper() == "K":
+            current_labels = ["K"]
+            pos += 1
+            while pos < len(tokens) and re.fullmatch(r"A\d+", tokens[pos], re.IGNORECASE):
+                current_labels.append(tokens[pos].upper())
+                pos += 1
+            continue
+
+        surface_label = _aac_surface_label(token)
+        if surface_label is None or not current_labels:
+            pos += 1
+            continue
+
+        values: list[float] = []
+        pos += 1
+        for _label in current_labels:
+            if pos >= len(tokens):
+                raise PatentParseError(f"AAC Raytech {surface_label} asphere row is incomplete")
+            values.append(_parse_aac_number(tokens[pos]))
+            pos += 1
+        surface_index = surface_index_by_label.get(surface_label.upper())
+        if surface_index is None:
+            continue
+        for label, value in zip(current_labels, values, strict=True):
+            codev_label = _aac_codev_asphere_label(label, value, surface_label)
+            if codev_label is not None:
+                coefficients.setdefault(surface_index, {})[codev_label] = value
+    return coefficients
+
+
+def _aac_distance_after_label(
+    tokens: list[str],
+    label: str,
+    *,
+    field_name: str,
+) -> float | None:
+    label_upper = label.upper()
+    for pos, token in enumerate(tokens[:-1]):
+        if token.upper() == label_upper:
+            return _distance_value(tokens[pos + 1], field_name=field_name)
+    for token in tokens:
+        try:
+            return _distance_value(token, field_name=field_name)
+        except PatentParseError:
+            continue
+    raise PatentParseError(f"{field_name} is not numeric")
+
+
+def _aac_material_indices(
+    row: list[str],
+    *,
+    surface_index: int,
+) -> tuple[float | None, float | None]:
+    nd = vd = None
+    for pos, token in enumerate(row[:-1]):
+        if re.fullmatch(r"nd\w*", token, flags=re.IGNORECASE):
+            nd = _parse_aac_number(row[pos + 1])
+        if re.fullmatch(r"(?:v|ν)d?\w*", token, flags=re.IGNORECASE):
+            vd = _parse_aac_number(row[pos + 1])
+    _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+    return nd, vd
+
+
+def _aac_codev_asphere_label(
+    label: str,
+    value: float,
+    surface_label: str,
+) -> str | None:
+    if label == "K":
+        return "K"
+    order_match = re.fullmatch(r"A(\d+)", label, flags=re.IGNORECASE)
+    if order_match is None:
+        return None
+    order = int(order_match.group(1))
+    if order not in SUPPORTED_ASPHERE_ORDERS:
+        if abs(value) > 0.0:
+            raise PatentParseError(
+                f"unsupported nonzero AAC Raytech asphere term: {surface_label}:A{order}={value:.3g}"
+            )
+        return None
+    return ASPHERE_ORDER_TO_CODEV[order]
+
+
+def _tokenize_aac_raytech_table(text: str) -> list[str]:
+    text = _normalize_decimal_commas(text)
+    text = text.replace("=", " ")
+    text = text.replace("°", "")
+    return [token.strip(";,|") for token in text.split() if token.strip(";,|")]
+
+
+def _cut_aac_table_narrative(text: str) -> str:
+    return re.split(r"\s\[\d+\]\s", text, maxsplit=1)[0]
+
+
+def _aac_surface_label(token: str) -> str | None:
+    match = re.fullmatch(r"R(?!p)(\d+)", token, flags=re.IGNORECASE)
+    return f"R{match.group(1)}" if match is not None else None
+
+
+def _aac_summary_label(token: str) -> str:
+    return re.sub(r"[^A-Z0-9-]+", "", token.upper())
+
+
+def _parse_aac_number(token: str) -> float:
+    if token == "/" or _is_empty_value(token):
+        return 0.0
+    return _parse_number(token.rstrip("°"))
 
 
 def prescription_fingerprint(prescription: PatentPrescription) -> str:
