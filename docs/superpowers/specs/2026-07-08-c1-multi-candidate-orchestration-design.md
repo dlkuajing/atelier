@@ -23,7 +23,7 @@
 
 | 决策点 | 结论 |
 |---|---|
-| **范围** | 可插拔编排 harness（Mode1/2 现建，Mode3 留插槽给 ③）。良品率先作 baseline floor，③ 落地后 Mode3 插入触发真 go/no-go。C1 与 ③ 并行不阻塞。 |
+| **范围** | 可插拔编排 harness（**Mode1 现建**；Mode2 第一里程碑不实现，见 §6.3；Mode3 留插槽给 ③）。良品率先作 baseline floor，③ 落地后 Mode3 插入触发真 go/no-go。C1 与 ③ 并行不阻塞。 |
 | **判定边界** | AI 只出**量化 scorecard + 建议排序**，**不下"合格/良品"判定**。良品率由资深看报告人工判（[EXPERT] 红线）。 |
 | **架构** | 方案 A：独立编排模块 `app/core/orchestration/` + 离线 batch 报告优先，API/Web 后置（避免 ahead-of-consumer）。 |
 
@@ -48,9 +48,9 @@
 ```
 app/core/orchestration/
   __init__.py
-  candidate.py      # Candidate / CandidateSet / ScorecardRow 等数据模型（Pydantic）
-  generators.py     # CandidateGenerator 抽象 + Retrieval / SeedRefine / TargetConverged
-  scorecard.py      # 纯函数 score_candidate(candidate, target) -> ScorecardRow
+  candidate.py      # GeneratedCandidate / ScoredCandidate / CandidateSet / ScorecardRow（Pydantic）
+  generators.py     # CandidateGenerator 抽象 + Retrieval / TargetConverged(空插槽)（Mode2 不实现）
+  scorecard.py      # 纯函数 score_candidate(generated, target) -> ScorecardRow
   orchestrator.py   # orchestrate(spec, target, *, n, modes) -> CandidateSet
 app/core/relative_illumination.py   # RI 补算（供 scorecard 调）
 scripts/c1_orchestrate.py           # 离线 batch：需求集 → CandidateSet → scorecard 报告(MD+JSON)
@@ -66,12 +66,13 @@ tests/test_relative_illumination.py
 ```
 spec(客户需求) + target(EFL/FOV/F#/IMH/TTL…)
   → orchestrator.orchestrate(spec, target, n, modes)
-      ├─ RetrievalGenerator(Mode1)      ──复用──▶ case_library 排序逻辑(薄只读入口 rank_cases)
+      ├─ RetrievalGenerator(Mode1)      ──复用──▶ rank_seeds 共享 ranking helper(§6.2)
       ├─ SeedRefineGenerator(Mode2)       ─未实现▶ 第一里程碑不做（枚举保留扩展点，见 §6.3）
       └─ TargetConvergedGenerator(Mode3) ─空插槽▶ ③落地后填
-      → scorecard.score_candidate(每颗, target)     # 纯量化，无 pass/fail
-      → 建议排序(target偏差 + 像质加权，可解释)
-  → CandidateSet{ candidates[], modes_present, honesty_banner, summary }
+      每 generator 产 GeneratedCandidate（无 scorecard）
+      → score_candidate(generated, target) 产 ScorecardRow（纯量化，无 pass/fail）
+      → 组装 ScoredCandidate（generated+scorecard）+ 建议排序(可用维加权，可解释)
+  → CandidateSet{ candidates: list[ScoredCandidate], modes_present(派生), honesty_banner(派生), summary }
   → scripts/c1_orchestrate.py 渲染离线 scorecard 报告(Markdown + JSON)
 ```
 
@@ -84,28 +85,48 @@ spec(客户需求) + target(EFL/FOV/F#/IMH/TTL…)
 ```python
 class GenerationMode(StrEnum):
     RETRIEVED        = "retrieved"         # Mode1 检索现成 seed，零优化
-    SEED_REFINED     = "seed-refined"      # Mode2 seed 离线精修（EFL锁自身·玻璃不变·非target收敛）
+    SEED_REFINED     = "seed-refined"      # Mode2 保留枚举·M1 不发出·将来实现须标"仅 EFL 维 target refinement"
     TARGET_CONVERGED = "target-converged"  # Mode3 ③落地后真朝客户 target 收敛
 ```
 
-### 5.2 Candidate
+### 5.2 GeneratedCandidate → ScoredCandidate（两阶段 · codex 轮2 修正）
+
+**codex 轮2 修正**：原 `Candidate` 把 `scorecard` 设必填、但 scorecard 是对候选打分才产生的——契约**成环**（无法构造有效 Candidate）。拆两阶段打破环：
 
 ```python
-class Candidate(BaseModel):
+# 阶段一：generator 输出（无 scorecard）
+class GeneratedCandidate(BaseModel):
     candidate_id: str
     mode: GenerationMode          # 必填，由 generator 构造时钉死
     source_case_id: str | None    # 检索来源 seed
     payload: OpticalSampleData    # 复用现有统一 payload（光路/MTF/点列/波前/…）
     optical_extras: OpticalExtras # generator 阶段用 optic 算的、payload 缺失的量（RI 等）
-    scorecard: ScorecardRow
     generation_notes: list[str]   # 诚实注记，如 "检索最近邻 seed，未朝 target 优化"
 
     @property
     def is_target_converged(self) -> bool:   # 派生只读，不可单独伪造
         return self.mode is GenerationMode.TARGET_CONVERGED
+
+# 阶段二：打分后的最终候选（CandidateSet 消费此型）
+class ScoredCandidate(BaseModel):
+    generated: GeneratedCandidate
+    scorecard: ScorecardRow
+
+    @model_validator(mode="after")
+    def _enforce_consistency(self):          # raise 非 assert
+        if self.scorecard.mode is not self.generated.mode:
+            raise ValueError("scorecard.mode != generated.mode")
+        for dev in self.scorecard.target_deviations:
+            if dev.converged_toward_target != self.generated.is_target_converged:
+                raise ValueError("converged_toward_target 与 mode 不一致")
+        return self
+
+    @property
+    def mode(self) -> GenerationMode:
+        return self.generated.mode
 ```
 
-> `OpticalExtras` 承载 generator 阶段（有 optic）算出、但现有 `OpticalSampleData` payload 里没有的量（首要是 RI；见 §7-D）。`score_candidate` 纯函数只消费 `payload + optical_extras`，不自行触碰 optic。
+> `OpticalExtras` 承载 generator 阶段（有 optic）算出、但现有 `OpticalSampleData` payload 里没有的量（首要是 RI；见 §7-D）。`score_candidate(generated, target)` 纯函数只消费 `generated.payload + generated.optical_extras`，不自行触碰 optic。
 
 ### 5.3 ScorecardRow（纯量化，无 pass/fail 字段）
 
@@ -129,7 +150,7 @@ class ScorecardRow(BaseModel):
     # ↑ 无 verdict / 合格 / passed 字段
 ```
 
-> **codex 轮1 修正**：`Candidate` 的 model_validator 校验 `scorecard.mode == self.mode` 且每个 `target_deviations[*].converged_toward_target == self.is_target_converged`（一致性硬校验，`raise` 非 `assert`）。`image_quality.ri` 允许 `None`（RI fail closed，见 §7-D）。
+> **codex 轮1+2 修正**：一致性校验（`scorecard.mode == generated.mode`、`converged_toward_target == is_target_converged`）在 §5.2 `ScoredCandidate` validator 做（`raise` 非 `assert`）。像质每 metric 用 `MetricValue{value, status: available|unavailable}` 承载，RI 缺失 → `status=unavailable`（fail closed，见 §7-D/E），杜绝静默假值。
 
 ### 5.4 CandidateSet
 
@@ -141,7 +162,7 @@ NO_TARGET_CONVERGED_BANNER = (
 
 class CandidateSet(BaseModel):
     target: TargetSpec
-    candidates: list[Candidate]       # 已按 rank 排序
+    candidates: list[ScoredCandidate] # 已按 rank 排序
     summary: CandidateSetSummary
 
     @computed_field   # 派生，不接受外部传入 —— 调用方无法塞 TARGET_CONVERGED 跳过 banner
@@ -161,7 +182,7 @@ class CandidateSet(BaseModel):
 
 ### 5.5 诚实不变量（类型/校验层钉死，不靠人自觉 · codex 轮1 加固）
 
-1. **mode 钉死于 generator（不可绕过）**：`generate` 是基类 **concrete final 模板方法**、只开放 `_generate`（子类无法覆盖）；返回前用显式 `raise ValueError` 校验每颗 `candidate.mode == cls.mode`（非 `assert`，`-O` 下不消失）。只有 Mode3 generator 能产 `TARGET_CONVERGED`。检索 seed 无法被标成"优化到 target"。
+1. **mode 钉死于 generator（运行时不可绕过）**：`generate` 是基类模板方法，标 `@final`（静态检查）**且** `__init_subclass__` 在子类 `__dict__` 出现 `generate` 时 `raise TypeError`（运行时防覆盖——Python 无真 final，仅约定不够）；`generate` 返回前用显式 `raise ValueError` 校验每颗 `mode == cls.mode`（非 `assert`）。只有 Mode3 generator 能产 `TARGET_CONVERGED`。检索 seed 无法被标成"优化到 target"。
 2. **无 pass/fail 字段**：`ScorecardRow` 无合格判定字段，AI 越权代判也无处可写。良品判断只能是资深人工动作。
 3. **honesty_banner 派生强制**：`CandidateSet.modes_present` 与 `honesty_banner` 均为 `computed_field`（从 `candidates` 派生、调用方不可传入）；整批不含 `TARGET_CONVERGED` 时 `honesty_banner` 自动返回固定常量 `NO_TARGET_CONVERGED_BANNER`。
 4. **mode 一致校验**：`scorecard.mode == candidate.mode`、`converged_toward_target == is_target_converged` 由 `Candidate` validator `raise` 校验（不变量间不自相矛盾）。
@@ -171,29 +192,40 @@ class CandidateSet(BaseModel):
 ### 6.1 抽象基类
 
 ```python
+from typing import final
+
 class CandidateGenerator(ABC):
     mode: ClassVar[GenerationMode]
 
-    @abstractmethod
-    def _generate(self, spec, target, *, n) -> list[Candidate]: ...   # 子类只实现这个
+    def __init_subclass__(cls, **kw):        # 运行时防覆盖 generate（Python 无真 final）
+        super().__init_subclass__(**kw)
+        if "generate" in cls.__dict__:
+            raise TypeError(f"{cls.__name__} 不得覆盖 final 方法 generate；请实现 _generate")
 
-    def generate(self, spec, target, *, n) -> list[Candidate]:        # concrete final，子类不覆盖
+    @abstractmethod
+    def _generate(self, spec, target, *, n) -> list[GeneratedCandidate]: ...   # 子类只实现这个
+
+    @final                                    # 静态检查器拦覆盖
+    def generate(self, spec, target, *, n) -> list[GeneratedCandidate]:
         candidates = self._generate(spec, target, n=n)
         for c in candidates:
-            if c.mode is not type(self).mode:                        # 显式 raise，-O 下不消失
+            if c.mode is not type(self).mode:                    # 显式 raise，-O 下不消失
                 raise ValueError(
                     f"{type(self).__name__} 产出 mode={c.mode} != 声明 {type(self).mode}"
                 )
         return candidates
 ```
 
-> **codex 轮1 修正**：`generate` 改成基类 **concrete final 模板方法**、只开放 `_generate` abstractmethod（子类无法覆盖 `generate` 绕过 mode 校验）；mode 校验用显式 `raise ValueError`（不是 `assert`，`python -O` 下不消失）。
+> **codex 轮1+2 修正**：`generate` 返回 `GeneratedCandidate`（无 scorecard，打破契约成环，见 §5.2）；`@final`（静态检查）**加** `__init_subclass__`（运行时拦子类覆盖）双保险——Python 普通方法无运行时 final 语义，仅注释拦不住覆盖绕过；mode 校验用 `raise ValueError` 非 `assert`。
 
 ### 6.2 RetrievalGenerator（Mode1，第一里程碑主力）
 
-- **复用不重写**：在 `case_library` 加薄只读入口 `rank_cases(spec, n) -> list[(case_id, distance, role)]`，暴露现有排序（复用 `1426-1436` 权重、`1469-1487` 距离，不碰打分算法）。
-- 对每个 ranked case_id 调现有 payload 组装完整 `OpticalSampleData`，包成 `Candidate(mode=RETRIEVED)`。
+**codex 轮2 修正**：现有排序/距离/role 选择嵌在 `match_case` 局部逻辑里、候选被 `selected_candidates[:4]` 硬截断——"加薄只读入口"太乐观（会在"复制排序=drift"与"抓 4 副产品=无法 N>4"间二选一）。正确做法：
+
+- **先抽共享 ranking helper**：把 `match_case` 内排序/距离/role 选择抽成纯函数 `rank_seeds(spec) -> list[RankedCase(case_id, distance, score, role, distance_parts)]`（返回**全部** ranked、不截断）；`match_case` 与 `RetrievalGenerator` **同消费**它（唯一真相源，杜绝双份 drift）。
+- `RetrievalGenerator` 取 `rank_seeds(spec)[:n]`，对每 case_id 组装 `GeneratedCandidate(mode=RETRIEVED)`。
 - 角色语义沿用：best_match / cost_variant / thin_variant / performance_variant / nearby_alternative_N。
+- **测试断言**：top-4 与现有 `candidate_comparison` 一致（重构不改行为）；N>4 有稳定 `nearby_alternative_N`。
 - **无 CODE V 依赖**（检索 + Optiland）。
 
 ### 6.3 SeedRefineGenerator（Mode2 = `SEED_REFINED`）——**第一里程碑不实现**
@@ -230,7 +262,12 @@ class CandidateGenerator(ABC):
 
 **D. RI（相对照度）**（`app/core/relative_illumination.py`）：`RI(field) = cos⁴θ × 边缘光束渐晕因子`。**codex 轮1 修正**：payload/`RayTraceResult` 只有 `has_vignetting` bool（`lens_system.py:203`）、**无持久化渐晕系数**——RI 须在 **generator 阶段用 optic 对象**（复用/重建 optic 光追）计算，存入 `candidate.optical_extras.ri`，`score_candidate` 纯函数从此消费。能力仍是现有渐晕+光追（**非新引擎**），只是 compute 位置在有 optic 的 generator、不是 payload 纯提取。缺 optic/算不出时 **fail closed**（`ri=None` + 标 `unavailable`，不猜、不静默降级）。
 
-**E. 排序 `rank_score`（建议排序 ≠ 合格判定）**：`rank_score = w_dev·(1−归一化 target 偏差) + w_iq·像质综合`（默认各 0.5，可配）。**独立于**检索距离。`rank_explanation` 文字透明。排第一 ≠ 合格，只是"建议资深优先看"。
+**E. 排序 `rank_score`（建议排序 ≠ 合格判定 · codex 轮2 精化）**：
+- 每 metric 用 `MetricValue{value, status: available|unavailable}`；**任何 unavailable 不参与加权、不填默认值**（fail closed 防假绿）。
+- **target 偏差归一化**：每维 `norm = min(rel_deviation / tol_field, 1.0)`（`tol_field` 固定容差：EFL/FOV/IMH/TTL 5% · F# 8%，可配）；`target=None` 维不计入。
+- `rank_score = w_dev·(1−mean(可用 norm)) + w_iq·mean(可用像质归一)`（默认 w 各 0.5，可配；分母只计 available 维）。
+- **RI 缺失**：`ri.status=unavailable` → 不入 w_iq、报告 banner 标 "RI unavailable(N/M)"；若**整批** RI 全缺（optic 重建普遍失败）→ 报告级**醒目告警**，不给"看似完整"的排序假象。
+- **独立于**检索距离。`rank_explanation` 列参与的可用维+权重。排第一 ≠ 合格。
 
 ## 8. 降级能力（CLAUDE.md 硬约束）
 
@@ -240,11 +277,14 @@ class CandidateGenerator(ABC):
 
 - **单测**：每 generator、scorecard 纯函数、orchestrator、RI 计算。
 - **诚实不变量测试**（可信度承重）：
-  - 让 `RetrievalGenerator._generate` 产 `mode=TARGET_CONVERGED` → `generate` 模板方法 `raise ValueError`（并验证 `python -O` 下仍 raise）；
+  - `_generate` 产 `mode=TARGET_CONVERGED` → `generate` `raise ValueError`（并验证 `python -O` 下仍 raise）；
+  - **子类定义 `generate` → `__init_subclass__` `raise TypeError`**（覆盖绕过路径，轮2 补）；
   - `CandidateSet` 全 `RETRIEVED` → `honesty_banner` 自动为 `NO_TARGET_CONVERGED_BANNER`（派生、无法置空）；
-  - `scorecard.mode != candidate.mode` → `Candidate` validator `raise`；
+  - `ScoredCandidate` 中 `scorecard.mode != generated.mode` → validator `raise`；
   - `ScorecardRow` 无合格字段（结构断言）。
-- **降级测试**：无 CODE V 环境跑通 Mode1（+Mode2 Optiland），全链路绿。
+- **rank helper 一致性**（轮2 补）：`rank_seeds` top-4 == 现有 `candidate_comparison`（重构不改行为）；N>4 稳定。
+- **rank_score/RI 边界**（轮2 补）：RI 缺失、`target=None`、极端偏差三路径；整批 RI 全缺 → 报告告警而非假绿。
+- **降级测试**：无 CODE V 跑通 Mode1，全链路绿。
 - **RI 数值锚**：已知渐晕系数 seed → RI 边缘值交叉验证（防假绿）。
 - **@accept 锚**（夜车切片用）：每切片挂确定性验收命令，如 `test -f <report> && pytest tests/test_orchestration_*.py`。
 
@@ -264,7 +304,7 @@ class CandidateGenerator(ABC):
 **候选产出/评分**：
 - `/match` 端点单候选返回：`app/api/optical.py:686-720`
 - 匹配核心 `match_case`：`app/core/case_library.py:1283-1547`
-- 内部已产 4 角色候选（未暴露）：`app/core/case_library.py:1511-1545`
+- 内部已产 4 角色候选（`selected_candidates[:4]` 硬截断、未暴露）：`app/core/case_library.py:1511-1545` → 需抽 `rank_seeds` 共享 helper（§6.2），match_case 与 RetrievalGenerator 同消费
 - 权重（FOV 0.46 / IMH 0.30 / quality 0.24-0.45 …）：`app/core/case_library.py:1426-1436`
 - 统一 payload `OpticalSampleData`：`app/core/optical_sample.py:1337-1352`；`CaseMetadata.fov_deg`：`optical_sample.py:32`
 - 真算度量：MTF `aberration.py:121-180`、场曲/畸变 `field_analysis.py:79-150`、波前 `wavefront_metrics.py:1-150`、点列 `compute_spot_diagram spot_diagram.py:131-233`
@@ -279,7 +319,7 @@ class CandidateGenerator(ABC):
 |---|---|
 | [EXPERT] 良品判断权在资深 | ScorecardRow 无 pass/fail 字段（不变量 2）+ 良品率人工判 |
 | LLM 禁碰坐标 | 所有 generator 纯确定性（检索/Optiland/CODE V），零 LLM 参与数值 |
-| 无 CODE V 全链路降级 | 第一里程碑 Mode1(+Mode2 Optiland) 无 CODE V，CI 绿（§8） |
+| 无 CODE V 全链路降级 | 第一里程碑 Mode1 only 无 CODE V，CI 绿（§8） |
 | 可信度不可失守 | provenance 诚实三不变量 + honesty_banner（§5.5） |
 | 不 ahead-of-consumer | 离线报告优先，Web/API 后置等资深反馈 |
 
@@ -296,3 +336,10 @@ class CandidateGenerator(ABC):
 2. `[major]` Mode2 语义反（实为 `protected_efl_refinement` `local_optimizer.py:3974` 朝 `target_efl_mm`）→ §6.3 第一里程碑不实现 Mode2，`SEED_REFINED` 枚举保留扩展点。
 3. `[major]` scorecard 输入契约不匹配 payload → §5.2 加 `optical_extras`；§7-D RI 移 generator 阶段用 optic 算 + fail closed；FOV 字段改 `metadata.fov_deg`。
 4. `[minor]` §10/§11 事实锚不准 → 全部改精确 symbol:line（`protected_efl_refinement:3974`/`fov_deg:32`/`compute_spot_diagram:131-233`/`delivered_candidate_id:14042`/RI checklist +9263/9266/9267）。
+
+**轮 2（codex adversarial-review · 2026-07-08 · verdict: needs-attention）**——5 findings（2 blocker+2 major+1 minor），亲验后**全采纳**：
+1. `[blocker]` Candidate/Scorecard 契约成环 → §5.2 拆两阶段 `GeneratedCandidate`→`score_candidate`→`ScoredCandidate`（一致性 validator 在 ScoredCandidate）。
+2. `[blocker]` `generate` 可被子类覆盖（Python 无运行时 final）→ §6.1 加 `__init_subclass__` 运行时拦覆盖 + `@final` 静态；§9 补覆盖绕过测试。
+3. `[major]` Mode2 残留矛盾 → §2/§5.1/§9/§12 全文清为 Mode1 only，`SEED_REFINED` 注释改。
+4. `[major]` `rank_cases` 非薄入口（排序嵌 match_case + 硬截断 `[:4]`）→ §6.2 改为先抽共享 `rank_seeds` helper，match_case 与 RetrievalGenerator 同消费。
+5. `[minor]` rank_score/RI fail-closed 边界未定义 → §5.3/§7-E 加 `MetricValue.status`、归一化容差、RI 缺失处理（整批缺 → 报告告警防假绿）。
