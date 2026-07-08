@@ -4,7 +4,7 @@
 - **状态**：设计定稿（attended 四段认可，待主公复审 → 转实施）
 - **里程碑**：Phase 10 探路阶 · 第一里程碑
 - **北极星语境**：量产设计产出引擎（生成-验证分工）——AI 批量产候选，资深设计师快速筛判"哪些合格/可用"；良品率 = go/no-go 闸。**可信度不可失守**：AI 只多产不越权定夺，良品率判断权在资深（[EXPERT] 红线）。
-- **基线仓库版本**：origin/main = `cba8f89`（案例库 343；分支 `data/09efg-353-intake`=353 待合）
+- **基线仓库版本**：origin/main = `000ef97`（案例库 343；含 PR#43 长焦 404 修复=multi-tier classify；分支 `data/09efg-353-intake`=353 待 rebase 合）
 
 ---
 
@@ -41,7 +41,7 @@
 - ❌ 不做 API/Web 界面（等资深用过报告反馈再定）。
 - ❌ 不下良品合格判定（红线）。
 - ❌ **第一里程碑不实现 Mode2** SeedRefineGenerator（现有 `protected_efl_refinement` 语义是"仅 EFL 朝 target"，纳入会复杂化 provenance 诚实模型；枚举保留作扩展点，见 §6.3）。
-- ❌ 不碰长焦 404 分类 bug（`case_library.py:384`，另一 session owns）。
+- ❌ 不重复长焦 404 修复（已由 **PR#43** 合入 main = multi-tier classify；telephoto 现可路由 → Mode1 检索**利好**，`case_library.py` 分类锚以最新代码为准）。
 
 ## 4. 架构总览与模块布局
 
@@ -309,7 +309,7 @@ class CandidateGenerator(ABC):
 - 统一 payload `OpticalSampleData`：`app/core/optical_sample.py:1337-1352`；`CaseMetadata.fov_deg`：`optical_sample.py:32`
 - 真算度量：MTF `aberration.py:121-180`、场曲/畸变 `field_analysis.py:79-150`、波前 `wavefront_metrics.py:1-150`、点列 `compute_spot_diagram spot_diagram.py:131-233`
 - **RI 缺失**：payload 无渐晕系数（`RayTraceResult.has_vignetting` bool，`lens_system.py:203`），仅 checklist 文案提及（`case_library.py:4952,5189,9263,9266,9267`）→ RI 须 generator 阶段用 optic 算（§7-D）
-- 长焦分类 bug（不碰）：`case_library.py:384-387`（FOV≥85° 二分）
+- 长焦分类**已修**（PR#43 multi-tier classify，取代原 `case_library.py:384` FOV≥85° 二分）→ telephoto 可路由，Mode1 覆盖 telephoto scenario
 
 **③ blocker**：见 §10。CODE V 硬依赖：`codev_optimize.py:317` `run_codev_optimize`；`codev_batch.py:19` `D:/CODEV115/codev.exe`。Optiland-only 精修（**仅 EFL 朝 target**）：`protected_efl_refinement` `local_optimizer.py:3974`（operand `f2 target=target_efl_mm` `:4072`；调用传用户 `efl_mm` `case_library.py:3899`）。
 
