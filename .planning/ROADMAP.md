@@ -19,6 +19,7 @@
 - [x] **Phase 7: CODE V 引擎适配器与深度成果展示**（2026-07-06 批次8，PR #24；SHOW-03 先期 PR #8）- AUT 优化适配器（EFL 锁定/玻璃冻结，US20170003482A1 实测 RMS spot ↓61%/横向色差 ↓92%/波前 ↓86%）+ 并排对比视图（MTF 双频轴叠加）+ CODE V 扰动敏感度 top-N 表 + 溯源从产物 run 证据推导（夹具/降级禁标 codev-run）；优化产物 readout→zmx_writer→zmx_ingest 单一路径；真实预缓存产物入库支持断网演示
 - [x] **Phase 8: 演示前端**（批次3+4：骨架/输入流/SSE进度/双语摘要/结果页整合叙事，PR #4/#7/#11） - 本地服务 + 浏览器界面，覆盖需求到 CODE V 成果全叙事
 - [~] **Phase 9: 一键启动与演示彩排**（一键启动+预缓存机制+全叙事E2E已完成 PR #12/#14；两段式彩排第一段完成：三遍彩排零瑕疵，待主公终验） - 单命令拉起 + 预缓存 + 完整彩排（里程碑验收）
+- [ ] **Phase 10: 量产设计产出引擎探路（C1 多产编排 + 良品率 go/no-go 闸）**（2026-07-08 北极星转向探路阶，非完整里程碑） - 建"朝客户 target 收敛 + 落地交付"的优化编排（现状 AUT 锁 seed 自身焦距/玻璃不变/产物仅离线展示），对给定需求批量产出量产级候选；请资深设计师实测筛一批，量化"值得看一眼率（良品率）"作为整个"设计引擎"北极星的 go/no-go 闸
 
 ## Phase Details
 
@@ -120,10 +121,21 @@
   3. 两段式彩排第一段已完成：核心演示叙事三遍彩排零瑕疵，含降级路径显式演练；第二段待主公终验
 **Plans**: TBD
 
+### Phase 10: 量产设计产出引擎探路（C1 多产编排 + 良品率 go/no-go 闸）
+**Goal**: 验证"AI 多产量产级候选 + 资深筛判"这个产出-判断分工是否成立——核心是量化 AI 候选良品率（值得资深看一眼/接近可用率），作为北极星转向的 go/no-go 闸
+**Depends on**: Phase 7（CODE V 优化适配器）, Phase 6（可路由 seed）
+**Requirements**: TBD（探路阶，闸过后再正式立 requirements 与完整里程碑）
+**Success Criteria** (what must be TRUE):
+  1. 优化编排能对给定客户 target（EFL/FOV/像质）批量产出朝 target 收敛的候选（不再锁 seed 自身焦距、材料可参与），而非仅锁 seed 焦距做像质微调
+  2. 候选携带资深判断所需依据（至少分频 MTF + 真公差敏感度/良率〔接 CODE V TOR〕 + 相对照度），支撑"快速筛判"
+  3. 至少一位资深光学设计师实测筛一批候选，量化良品率，形成 go/no-go 结论
+**Plans**: TBD
+**Note**: 里程碑级转向的探路阶，非完整里程碑。良品率闸过→启动完整 new-milestone（重写 PROJECT.md 定位/用户/Out of Scope + 重排路线图）；不过→回看模型/seed/优化，不 sink 完整规划成本。量产"合格/可用"真值判断权在资深设计师（[EXPERT] 红线，不可 AI 代填）。
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order with one parallel branch: 1 and 2 can start together → 3, 4 (after 1) → 5 (after 1) → 6 (after 5 and 2) → 7 (after 3 and 5) → 8 (after 4 and 7) → 9 (after 8)
+Phases execute in numeric order with one parallel branch: 1 and 2 can start together → 3, 4 (after 1) → 5 (after 1) → 6 (after 5 and 2) → 7 (after 3 and 5) → 8 (after 4 and 7) → 9 (after 8)；Phase 10 探路阶 after 6+7（北极星转向 go/no-go 闸）
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -136,3 +148,4 @@ Phases execute in numeric order with one parallel branch: 1 and 2 can start toge
 | 7. CODE V 引擎适配器与深度成果展示 | 0/TBD | Not started | - |
 | 8. 演示前端 | 0/TBD | Not started | - |
 | 9. 一键启动与演示彩排 | 0/TBD | In progress（第一段彩排完成，待主公终验） | - |
+| 10. 量产设计产出引擎探路 | 0/TBD | Not started | - |
