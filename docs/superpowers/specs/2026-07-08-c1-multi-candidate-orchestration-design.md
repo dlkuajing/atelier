@@ -67,8 +67,8 @@ tests/test_relative_illumination.py
 spec(客户需求) + target(EFL/FOV/F#/IMH/TTL…)
   → orchestrator.orchestrate(spec, target, n, modes)
       ├─ RetrievalGenerator(Mode1)      ──复用──▶ rank_seeds 共享 ranking helper(§6.2)
-      ├─ SeedRefineGenerator(Mode2)       ─未实现▶ 第一里程碑不做（枚举保留扩展点，见 §6.3）
       └─ TargetConvergedGenerator(Mode3) ─空插槽▶ ③落地后填
+      （Mode2/SeedRefineGenerator 不在 registry/枚举/数据流出现；仅 §6.3 记为未来议题）
       每 generator 产 GeneratedCandidate（无 scorecard）
       → score_candidate(generated, target) 产 ScorecardRow（纯量化，无 pass/fail）
       → 组装 ScoredCandidate（generated+scorecard）+ 建议排序(可用维加权，可解释)
@@ -266,11 +266,11 @@ class CandidateGenerator(ABC):
 
 **C. 可制造性 proxy `ManufacturabilityProxy`**（`is_proxy=True` 硬标）：TTL / 片数 / 玻璃类型(普通 vs 特殊高折射) / 非球面复杂度(项数·面数) / CRA(主光线角·传感器匹配，几何可算)。强制 `note="非真公差良率(无 Monte-Carlo/补偿器/TOR，C2=CODE V 未接)，仅几何+材料 proxy"`。
 
-**D. RI（相对照度）**（`app/core/relative_illumination.py`）：`RI(field) = cos⁴θ × 边缘光束渐晕因子`。**codex 轮1 修正**：payload/`RayTraceResult` 只有 `has_vignetting` bool（`lens_system.py:203`）、**无持久化渐晕系数**——RI 须在 **generator 阶段用 optic 对象**（复用/重建 optic 光追）计算，存入 `candidate.optical_extras.ri`，`score_candidate` 纯函数从此消费。能力仍是现有渐晕+光追（**非新引擎**），只是 compute 位置在有 optic 的 generator、不是 payload 纯提取。缺 optic/算不出时 **fail closed**（`ri=None` + 标 `unavailable`，不猜、不静默降级）。
+**D. RI（相对照度）**（`app/core/relative_illumination.py`）：`RI(field) = cos⁴θ × 边缘光束渐晕因子`。**codex 轮1 修正**：payload/`RayTraceResult` 只有 `has_vignetting` bool（`lens_system.py:240`）、**无持久化渐晕系数**——RI 须在 **generator 阶段用 optic 对象**（复用/重建 optic 光追）计算，存入 `candidate.optical_extras.ri`，`score_candidate` 纯函数从此消费。能力仍是现有渐晕+光追（**非新引擎**），只是 compute 位置在有 optic 的 generator、不是 payload 纯提取。缺 optic/算不出时 **fail closed**（`ri=None` + 标 `unavailable`，不猜、不静默降级）。
 
 **E. 排序 `RankResult`（建议排序 ≠ 合格判定 · codex 轮2+3 精化）**：
 - 每 metric 用 `MetricValue{value, status: available|unavailable}`；unavailable 不参与加权、不填默认值。
-- **必需维 + coverage gate（codex 轮3 fail-closed）**：必需维 = target 偏差的 {EFL, FOV} + 像质的 {MTF}；`coverage_pct = 可用必需维 / 必需维总数`。**缺任一必需维 或 coverage_pct < 阈值(默认 0.8) → `status="withheld"`、`score=None`**（不给排序分，杜绝稀疏数据高分假象）；`missing_metrics` 列缺失维。
+- **必需维 + coverage gate（codex 轮3+4 fail-closed）**：必需维 = 像质的 {MTF}（恒必需）+ **受约束的** target 维中的 {EFL, FOV}（`target=None` 的维**不算必需、不进 denominator**——闭合 target=None 语义）。`coverage_pct = 可用必需维 / 必需维总数`。**应有却 unavailable 的必需维存在 或 coverage_pct < 阈值(默认 0.8) → `status="withheld"`、`score=None`**（杜绝稀疏数据高分假象）；`missing_metrics` 列缺失维。（例：EFL `target=None` 但 FOV+MTF 可用 → `ranked`；MTF unavailable → `withheld`。）
 - **target 偏差归一化**：每维 `norm = min(rel_deviation / tol_field, 1.0)`（tol：EFL/FOV/IMH/TTL 5% · F# 8%，可配）；`target=None` 维不计入。
 - 达 coverage 时 `score = w_dev·(1−mean(可用 norm)) + w_iq·mean(可用像质归一)`（默认 w 各 0.5；分母只计 available）。
 - **RI 缺失**：`ri.status=unavailable` → 不入 w_iq、报告标 "RI unavailable(N/M)"；整批 RI 全缺 → 报告级醒目告警。
@@ -290,7 +290,7 @@ class CandidateGenerator(ABC):
   - `ScoredCandidate` 中 `scorecard.mode != generated.mode` → validator `raise`；
   - `ScorecardRow` 无合格字段（结构断言）。
 - **rank helper 一致性**（轮2 补）：`rank_seeds` top-4 == 现有 `candidate_comparison`（重构不改行为）；N>4 稳定。
-- **rank 覆盖/RI 边界**（轮2+3 补）：缺必需维 → `status=withheld`+`score=None`+`missing_metrics` 非空（非稀疏高分假象）；RI 缺失、`target=None`、极端偏差、整批 RI 全缺（报告告警）四路径。
+- **rank 覆盖/RI 边界**（轮2+3+4 补）：应有必需维 unavailable → `status=withheld`+`score=None`+`missing_metrics` 非空；**EFL `target=None` 但 FOV+MTF 可用 → `ranked`**（受约束必需维闭合）；**MTF unavailable → `withheld`**；RI 缺失、极端偏差、整批 RI 全缺（报告告警）等路径。
 - **降级测试**：无 CODE V 跑通 Mode1，全链路绿。
 - **RI 数值锚**：已知渐晕系数 seed → RI 边缘值交叉验证（防假绿）。
 - **@accept 锚**（夜车切片用）：每切片挂确定性验收命令，如 `test -f <report> && pytest tests/test_orchestration_*.py`。
@@ -355,3 +355,8 @@ class CandidateGenerator(ABC):
 1. `[major]` `SEED_REFINED` 扩展点与全局 `converged_toward_target` 互锁（无法表达"仅 EFL 维收敛"）→ §5.1/§6.3/§3 **删除 SEED_REFINED 枚举**，`GenerationMode` 只留 `RETRIEVED`+`TARGET_CONVERGED`；将来 Mode2 须先设计 per-field 收敛表。
 2. `[major]` rank_score 排除 unavailable 会给稀疏数据高分（非真 fail-closed）→ §5.3/§7-E 改 `RankResult{score, status, coverage_pct, missing_metrics}`：缺必需维/coverage<0.8 → `withheld`。
 3. `[minor]` §10/§11 锚随 000ef97 漂移 → 按 codex 复核的实际行号更新（match_case:1294 / 权重:1430-1447 / has_vignetting:240 / delivered:14053-14054 / RI checklist:4963,5200,9274,9277,9278 / efl_mm 调用:3907-3911）。
+
+**轮 4（codex adversarial-review · 2026-07-08 · verdict: needs-attention）**——3 findings（2 major+1 minor），均为轮3 修订的收尾残留（非新深层问题），**全采纳**：
+1. `[major]` §4 数据流仍残留 SeedRefineGenerator(Mode2)"枚举保留扩展点" → 从数据流删除，明确 Mode2 不在 registry/枚举/数据流出现（仅 §6.3 记为未来议题）。
+2. `[major]` RankResult coverage gate 对 `target=None` 不闭合 → §7-E 精化：必需维 = MTF + **受约束的** EFL/FOV（target=None 维不进 denominator）；§9 加 target=None ranked/withheld oracle。
+3. `[minor]` §7-D RI 锚 stale（`lens_system.py:203` 实为 n_surfaces）→ 改 `:240`。
