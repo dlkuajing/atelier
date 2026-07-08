@@ -19,7 +19,6 @@ from scripts.patent_to_zmx import (
     write_patent_zmx,
 )
 
-
 PRESCRIPTION_TEXT = """
 TABLE-US-00001 TABLE 1A 1st Embodiment f = 12.99 mm, Fno = 1.71,
 HFOV = 20.0 deg. Surface # Curvature Radius Thickness Material Index Abbe #
@@ -43,7 +42,10 @@ MULTI_EMBODIMENT_TEXT = PRESCRIPTION_TEXT + "\n" + SECOND_PRESCRIPTION_TEXT
 
 XASPHERE_TEXT = PRESCRIPTION_TEXT.replace(
     "A16= 1.0E-10 --",
-    "A16= 1.0E-10 -- A18= 2.5E-12 -3.5E-12 A20= 4.5E-14 -5.5E-14",
+    "A16= 1.0E-10 -- A18= 2.5E-12 -3.5E-12 "
+    "A20= 4.5E-14 -5.5E-14 A22= 6.5E-12 -7.5E-12 "
+    "A24= 8.5E-12 -9.5E-12 A26= 1.5E-12 -2.5E-12 "
+    "A28= 3.5E-12 -4.5E-12 A30= 5.5E-12 -6.5E-12",
 )
 
 THREE_COLUMN_MATERIAL_TEXT = PRESCRIPTION_TEXT.replace(
@@ -55,6 +57,87 @@ THREE_COLUMN_MATERIAL_TEXT = PRESCRIPTION_TEXT.replace(
     "Glass 1.508 1.517 64.2",
     1,
 )
+
+LARGAN_COMPONENT_TEXT = """
+TABLE-US-00001 TABLE 1 1st Embodiment f = 2.89 mm, Fno = 2.30,
+HFOV = 38.0 deg. Surface # Curvature Radius Thickness Material Index Abbe #
+Focal Length 0 Object Plano Infinity 1 Ape. Plano -0.075 Stop
+2 Lens 1 1.741 ASP 0.334 Plastic 1.536 58.3 7.92
+3 2.758 ASP 0.105 4 Lens 2 1.865 ASP 0.295 Plastic 1.639
+18,4 5.61 5 IR-cut Piano 0.110 Glass 1.517 64.2 -- filter
+6 Prism Plano 0.365 Glass 1.517 64.2 -- 7 Image Plano --
+TABLE-US-00002 TABLE 2 Aspheric Coefficients Surface # 2 3 4
+k= -1.0 2.0 -3.0 A4= -1.0E-02 -2.0E-02 -3.0E-02
+A22= 1.0E-12 -2.0E-12 3.0E-12 A30= 4.0E-15 -5.0E-15 6.0E-15
+-- [0001] In Table 2, k represents the conic coefficient.
+"""
+
+FUJIFILM_TABLE_TEXT = """
+TABLE-US-00001 TABLE 1 Example 1 Sn R D Nd νd θgF SG
+1 10.0000 1.0000 1.50000 50.00 0.54000 2.50
+2 -20.0000 0.5000
+3(St) Infinity 0.2000
+4 30.0000 1.1000 1.60000 40.00 0.56000 3.00
+5 -40.0000 2.0000
+TABLE-US-00002 TABLE 2 Example 1 f 8.00 Bf 2.00 FNo. 2.80 2ω[°] 50.00
+TABLE-US-00003 TABLE 3 Example 2 Sn R D Nd νd θgF SG ED
+1 9.0000 1.1000 1.51000 52.00 0.54000 2.50
+*2 -18.0000 0.6000 1.61000 42.00 0.56000 3.00 4.20
+*3 25.0000 2.1000 4.30
+TABLE-US-00004 TABLE 4 Example 2 f 9.00 Bf 2.10 FNo. 3.10 2ω[°] 40.00
+TABLE-US-00005 TABLE 5 Example 2 Sn 2 3 KA 1.0000000E+00 -1.0000000E+00
+A4 1.0000000E-06 2.0000000E-06 A6 -3.0000000E-09 -4.0000000E-09
+A8 5.0000000E-12 6.0000000E-12 A10 -7.0000000E-15 -8.0000000E-15
+[0001] trailing narrative.
+"""
+
+FUJIFILM_INLINE_ODD_ASPHERE_TEXT = """
+TABLE-US-00001 TABLE 1 Example 1 Basic Lens Data f = 14.47, BF = 13.30,
+2ω = 89.0, FNo. = 2.88 Si Ri Di Ndj νdj
+1 45.470 1.28 1.57135 53.0
+2 13.366 5.87
+*3 34.115 2.50 1.58312 59.4
+*4 8.652 4.36
+5 Infinity 0.00
+TABLE-US-00002 TABLE 2 Example 1 Aspherical Surface Coefficient Si 3 4
+K 0.0000000E+00 0.0000000E+00
+A3 1.0465349E-03 -2.0064589E-04
+A4 -1.4397107E-03 8.7627361E-04
+[0001] trailing narrative.
+"""
+
+AAC_RAYTECH_COMPACT_TEXT = """
+TABLE-US-00001 TABLE 1 R d nd νd S1 Infinity d0= -0.460
+R1 5.316 d1= 1.600 nd1 1.4959 ν1 81.65
+R2 -24.225 d2= 0.030
+R3 626.915 d3= 0.412 nd2 1.6700 ν2 19.39
+R4 34.369 d4= 0.092
+R5 3.324 d5= 0.853 nd3 1.5444 ν3 55.82
+R6 2.183 d6= 1.500
+R7 Infinity d7= 6.982 nd4 1.5891 ν4 61.25
+R8 Infinity d8= 6.500
+R9 Infinity d9= 0.210 ndg 1.5168 νg 64.17
+R10 Infinity d10= 0.807 [0076] narrative definitions follow.
+TABLE-US-00002 TABLE 2 Conic constant Aspheric coefficient k A4 A6 A8 A10 A12
+R1 -9.5839E-01 3.0795E-03 -5.0356E-04 8.2246E-04 -8.7499E-04 5.7935E-04
+R2 5.5038E+00 2.5011E-02 -7.0471E-03 -1.4091E-02 2.3707E-02 -1.7833E-02
+Conic constant Aspheric coefficient k A14 A16 A18 A20 A22
+R1 -9.5839E-01 -2.6080E-04 8.2927E-05 -1.8914E-05 3.1033E-06 -3.6308E-07
+R2 5.5038E+00 8.1728E-03 -2.5055E-03 5.3547E-04 -8.1113E-05 8.6956E-06
+TABLE-US-00003 TABLE 3 R d nd vd S1 Infinity d0= -1.012
+R1 3.982 d1= 1.297 nd1 1.4959 vd1 81.64
+R2 36.568 d2= 0.036
+TABLE-US-00004 TABLE 4 Conic constant Aspheric coefficient k A4 A6
+R1 -5.3865E-01 3.3646E-03 -9.3315E-04
+TABLE-US-00005 TABLE 5 Parameters 1.sup.st 2.sup.nd and conditions
+D/TTL 0.16 0.12
+f 18.269 16.282
+Fno 2.871 2.871
+TTL 18.986 17.746
+IH 3.575 3.575
+FOV 21.79° 24.47°
+[0146] trailing narrative.
+"""
 
 
 def test_parse_patent_prescription_extracts_surface_and_asphere_fields() -> None:
@@ -220,6 +303,8 @@ def test_write_patent_zmx_emits_xasphere_xdat_for_a18_a20(tmp_path: Path) -> Non
     asphere = prescription.surfaces[2]
     assert asphere.asphere_coefficients["H"] == pytest.approx(2.5e-12)
     assert asphere.asphere_coefficients["J"] == pytest.approx(4.5e-14)
+    assert asphere.asphere_coefficients["A22"] == pytest.approx(6.5e-12)
+    assert asphere.asphere_coefficients["A30"] == pytest.approx(5.5e-12)
 
     output_path = tmp_path / "xasphere.zmx"
     write_patent_zmx(prescription, output_path)
@@ -230,6 +315,117 @@ def test_write_patent_zmx_emits_xasphere_xdat_for_a18_a20(tmp_path: Path) -> Non
     assert "TYPE XASPHERE" in zmx_text
     assert "XDAT 11 2.5e-12 0 0 1 0 0" in zmx_text
     assert "XDAT 12 4.5e-14 0 0 1 0 0" in zmx_text
+    assert "XDAT 13 6.5e-12 0 0 1 0 0" in zmx_text
+    assert "XDAT 17 5.5e-12 0 0 1 0 0" in zmx_text
+
+
+def test_parse_patent_prescription_accepts_largan_component_rows() -> None:
+    prescription = parse_patent_prescription(
+        LARGAN_COMPONENT_TEXT,
+        patent_id="US-LARGAN-FIXTURE-A1",
+    )
+
+    assert len(prescription.surfaces) == 7
+    assert prescription.surfaces[0].label == "Ape."
+    assert prescription.surfaces[0].radius_mm == 0.0
+    assert prescription.surfaces[3].vd == pytest.approx(18.4)
+
+    ir_cut = prescription.surfaces[4]
+    assert ir_cut.label == "IR-cut"
+    assert ir_cut.radius_mm == 0.0
+    assert ir_cut.nd == pytest.approx(1.517)
+    assert ir_cut.vd == pytest.approx(64.2)
+
+    prism = prescription.surfaces[5]
+    assert prism.label == "Prism"
+    assert prism.radius_mm == 0.0
+    assert prism.nd == pytest.approx(1.517)
+    assert prism.vd == pytest.approx(64.2)
+
+    assert prescription.surfaces[1].asphere_coefficients["A22"] == pytest.approx(1.0e-12)
+    assert prescription.surfaces[1].asphere_coefficients["A30"] == pytest.approx(4.0e-15)
+
+
+def test_parse_patent_prescriptions_accepts_fujifilm_table_pairs() -> None:
+    prescriptions = parse_patent_prescriptions(
+        FUJIFILM_TABLE_TEXT,
+        patent_id="US-FUJIFILM-FIXTURE-A1",
+    )
+
+    assert [prescription.embodiment for prescription in prescriptions] == [
+        "Example 1",
+        "Example 2",
+    ]
+
+    first = prescriptions[0]
+    assert first.focal_length_mm == pytest.approx(8.0)
+    assert first.f_number == pytest.approx(2.8)
+    assert first.hfov_deg == pytest.approx(25.0)
+    assert len(first.surfaces) == 6
+    assert first.surfaces[2].label == "Stop"
+    assert first.surfaces[2].radius_mm == math.inf
+    assert first.surfaces[-1].label == "Image"
+
+    second = prescriptions[1]
+    assert second.hfov_deg == pytest.approx(20.0)
+    assert second.surfaces[1].surface_type == "ASP"
+    assert second.surfaces[1].nd == pytest.approx(1.61)
+    assert second.surfaces[1].vd == pytest.approx(42.0)
+    assert second.surfaces[1].asphere_coefficients["K"] == pytest.approx(1.0)
+    assert second.surfaces[1].asphere_coefficients["A"] == pytest.approx(1.0e-6)
+    assert second.surfaces[1].asphere_coefficients["B"] == pytest.approx(-3.0e-9)
+    assert second.surfaces[1].asphere_coefficients["D"] == pytest.approx(-7.0e-15)
+    assert second.surfaces[2].asphere_coefficients["K"] == pytest.approx(-1.0)
+    assert second.surfaces[2].asphere_coefficients["A"] == pytest.approx(2.0e-6)
+
+
+def test_fujifilm_inline_tables_fail_loud_on_odd_asphere_terms() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        FUJIFILM_INLINE_ODD_ASPHERE_TEXT,
+        patent_id="US-FUJIFILM-ODD-A1",
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].embodiment == "Example 1"
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert "unsupported nonzero Fujifilm asphere terms" in str(attempts[0].error)
+
+
+def test_parse_patent_prescriptions_accepts_aac_raytech_compact_tables() -> None:
+    prescriptions = parse_patent_prescriptions(
+        AAC_RAYTECH_COMPACT_TEXT,
+        patent_id="US-AAC-RAYTECH-FIXTURE-A1",
+    )
+
+    assert [prescription.embodiment for prescription in prescriptions] == [
+        "AAC Raytech example 1",
+        "AAC Raytech example 2",
+    ]
+
+    first = prescriptions[0]
+    assert first.focal_length_mm == pytest.approx(18.269)
+    assert first.f_number == pytest.approx(2.871)
+    assert first.hfov_deg == pytest.approx(21.79 / 2.0)
+    assert len(first.surfaces) == 12
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[0].radius_mm == math.inf
+    assert first.surfaces[0].thickness_mm == pytest.approx(-0.460)
+
+    first_lens = first.surfaces[1]
+    assert first_lens.label == "Surface R1"
+    assert first_lens.nd == pytest.approx(1.4959)
+    assert first_lens.vd == pytest.approx(81.65)
+    assert first_lens.surface_type == "ASP"
+    assert first_lens.asphere_coefficients["K"] == pytest.approx(-0.95839)
+    assert first_lens.asphere_coefficients["A"] == pytest.approx(3.0795e-3)
+    assert first_lens.asphere_coefficients["H"] == pytest.approx(-1.8914e-5)
+    assert first_lens.asphere_coefficients["A22"] == pytest.approx(-3.6308e-7)
+
+    second = prescriptions[1]
+    assert second.focal_length_mm == pytest.approx(16.282)
+    assert second.hfov_deg == pytest.approx(24.47 / 2.0)
+    assert second.surfaces[1].asphere_coefficients["B"] == pytest.approx(-9.3315e-4)
 
 
 def test_convert_candidate_writes_each_embodiment_with_e_suffix_without_network(
@@ -333,7 +529,7 @@ def test_convert_candidate_skips_formal_index_embodiments_but_not_staging_files(
 
 
 def test_parse_patent_prescription_rejects_unsupported_high_order_asphere_terms() -> None:
-    text = PRESCRIPTION_TEXT.replace("A16= 1.0E-10 --", "A22= 1.0E-10 --")
+    text = PRESCRIPTION_TEXT.replace("A16= 1.0E-10 --", "A32= 1.0E-10 --")
 
     with pytest.raises(PatentParseError, match="unsupported nonzero high-order"):
         parse_patent_prescription(text, patent_id="US-UNSUPPORTED-A1")

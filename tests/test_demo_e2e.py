@@ -219,7 +219,7 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
         artifact="mtf",
         available="true",
         provenance="optiland-raytrace",
-        snippets=("4 fields, 256 samples.", "Diffraction cutoff 920 lp/mm."),
+        snippets=("4 fields, 256 samples.", "Diffraction cutoff 830 lp/mm."),
     )
     _assert_analysis_card(
         html,
@@ -244,8 +244,8 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
     )
     assert "<svg" in html
     assert (
-        "5P_F1.9_FOV77.0_EFL3.6_IMH2.9_TTL4.30 / "
-        "5P_F1.9_FOV77.0_EFL3.6_IMH2.9_TTL4.30.zmx"
+        "5P_F2.0_FOV78.7_EFL3.8_IMH3.3_TTL4.35 / "
+        "5P_F2.0_FOV78.7_EFL3.8_IMH3.3_TTL4.35.zmx"
     ) in html
     for source in (
         "thin-lens-analytic",
@@ -276,4 +276,4 @@ def test_demo_e2e_runs_full_narrative_contract(mock_get_client, monkeypatch):
     summary_messages = mock_client.chat.completions.create.call_args_list[1].kwargs["messages"]
     assert extraction_messages[1]["content"] == requirement
     assert "Scenario: Smartphone Wide (smartphone-wide)" in summary_messages[1]["content"]
-    assert "Total track length: 4.30 mm" in summary_messages[1]["content"]
+    assert "Total track length: 4.35 mm" in summary_messages[1]["content"]
