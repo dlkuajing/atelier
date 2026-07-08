@@ -650,8 +650,8 @@ def _no_real_case_error(req: OpticalSpecRequest) -> HTTPException:
             "scenario": req.scenario,
             "message": (
                 f"No real design in the case library for scenario "
-                f"{req.scenario.value}. This phase ships smartphone "
-                f"wide / ultrawide only."
+                f"{req.scenario.value}. The library ships smartphone "
+                f"telephoto / wide / ultrawide modules."
             ),
         },
     )

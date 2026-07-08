@@ -146,6 +146,17 @@ _PLANE_RADIUS_SENTINEL = 1e9
 # divide we also calibrate parameter_guards bounds to (Plan 03).
 _ULTRAWIDE_FOV_MIN = 85.0
 
+# Telephoto discriminator: a long-focus phone module is the physical pair of a
+# long focal length AND a narrow field. EFL is the primary signature (a short-EFL
+# lens is never a tele module even at a narrow field, e.g. a cropped main cam).
+# The 5.0mm floor lines up with parameter_guards SMARTPHONE_TELEPHOTO.efl_mm_min
+# (and SMARTPHONE_WIDE.efl_mm_max=5.2, so the wide/tele split sits at ~5.0mm); the
+# 45° ceiling matches SMARTPHONE_TELEPHOTO.fov_deg_max. Seeds narrower than the
+# 15° request floor still classify tele (they leave the wide pool) even though no
+# in-guard request can reach them. Not a bounds change → no /agent slider drift.
+_TELEPHOTO_EFL_MIN = 5.0
+_TELEPHOTO_FOV_MAX = 45.0
+
 # Routing floor-violation thresholds. After the XASPHERE ingest fix the library
 # is image-quality healthy (max real RMS ~40 um, min-50lp/mm MTF >= ~0.2, floor
 # gap <= ~1.2); only the two genuinely-broken ingest seeds blow past these
@@ -381,7 +392,18 @@ def _safe(value) -> float:
     return float(arr[0]) if arr.size else 0.0
 
 
-def _classify_scenario(fov_deg: float) -> Scenario:
+def _classify_scenario(fov_deg: float, efl_mm: float) -> Scenario:
+    """Bucket a real seed into its smartphone module family from (FOV, EFL).
+
+    `fov_deg` is the nominal full field angle; `efl_mm` is the Optiland-recomputed
+    focal length (== index.json `efl_mm`), so every callsite — intake, load-time
+    override, and the golden-brief generator — keys on the identical pair.
+    Telephoto is the long-focus family (long EFL, narrow field); the remaining
+    short-focus seeds split wide vs ultrawide on the FOV divide. See
+    `_TELEPHOTO_EFL_MIN` / `_TELEPHOTO_FOV_MAX` for the guard-aligned thresholds.
+    """
+    if efl_mm >= _TELEPHOTO_EFL_MIN and fov_deg <= _TELEPHOTO_FOV_MAX:
+        return Scenario.SMARTPHONE_TELEPHOTO
     if fov_deg >= _ULTRAWIDE_FOV_MIN:
         return Scenario.SMARTPHONE_ULTRAWIDE
     return Scenario.SMARTPHONE_WIDE
@@ -615,7 +637,7 @@ def build_sample_from_optic(
     metadata = CaseMetadata(
         case_id=source_zmx.rsplit(".", 1)[0],
         source_zmx=source_zmx,
-        scenario=_classify_scenario(nominal_fov_deg),
+        scenario=_classify_scenario(nominal_fov_deg, computed_efl),
         n_pieces=n_pieces,
         n_imaging=n_imaging,
         n_filter=n_filter,
@@ -638,14 +660,26 @@ def build_sample_from_optic(
 
 @lru_cache(maxsize=1)
 def load_case_library() -> list[OpticalSampleData]:
-    """Load all generated case JSON (cached). Excludes index.json."""
+    """Load all generated case JSON (cached). Excludes index.json.
+
+    The seed's `scenario` is (re)derived from its stored (FOV, EFL) at load time
+    rather than trusted from the persisted label. The generated JSON predates the
+    multi-tier `_classify_scenario`, so ~115 genuine long-focus seeds were frozen
+    as `smartphone-wide`; deriving here makes `_classify_scenario` the single
+    source of truth for routing without a 343-file data migration (E-telephoto).
+    """
     if not CASES_DIR.exists():
         return []
     cases: list[OpticalSampleData] = []
     for fp in sorted(CASES_DIR.glob("*.json")):
         if fp.name == "index.json":
             continue
-        cases.append(OpticalSampleData.model_validate_json(fp.read_text()))
+        sample = OpticalSampleData.model_validate_json(fp.read_text())
+        if sample.metadata is not None:
+            sample.metadata.scenario = _classify_scenario(
+                sample.metadata.fov_deg, sample.metadata.computed_efl_mm
+            )
+        cases.append(sample)
     return cases
 
 

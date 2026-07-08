@@ -24,7 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 warnings.simplefilter("ignore")
 
-from app.core.case_library import match_case  # noqa: E402
+from app.core.case_library import _classify_scenario, match_case  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
 
 GOLDEN_PATH = Path(__file__).resolve().parents[1] / "tests" / "data" / "eval_golden.json"
@@ -144,7 +144,12 @@ def _case_golden_briefs() -> tuple[dict[str, dict], dict[str, dict]]:
         case_id = record.get("case_id")
         if not isinstance(case_id, str):
             continue
-        scenario = Scenario(str(record["scenario"]))
+        # Derive scenario from the classifier (single source of truth), not the
+        # baked index.json label — the generated data predates the telephoto tier
+        # so its stored `scenario` freezes long-focus seeds as wide. Keying on the
+        # same (fov, efl) pair as load_case_library keeps golden briefs and the
+        # runtime routing pool in lockstep (index.efl_mm == computed_efl_mm).
+        scenario = _classify_scenario(float(record["fov_deg"]), float(record["efl_mm"]))
         name = _golden_name_for_case(case_id)
         metadata_by_name[name] = _case_anchor_metadata(record)
         briefs[name] = {
