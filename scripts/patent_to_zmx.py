@@ -49,7 +49,6 @@ NUMBER_PATTERN = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
 PRESCRIPTION_FINGERPRINT_SURFACES = 8
 PRESCRIPTION_FINGERPRINT_QUANTUM_MM = 0.001
 DUPLICATE_PRESCRIPTION_DETAIL = "prescription fingerprint|duplicate_prescription"
-SUPPORTED_ASPHERE_ORDERS = {4, 6, 8, 10, 12, 14, 16, 18, 20}
 ASPHERE_ORDER_TO_CODEV = {
     4: "A",
     6: "B",
@@ -60,9 +59,30 @@ ASPHERE_ORDER_TO_CODEV = {
     16: "G",
     18: "H",
     20: "J",
+    22: "A22",
+    24: "A24",
+    26: "A26",
+    28: "A28",
+    30: "A30",
 }
-XASPHERE_WRITABLE_TERMS = ("A", "B", "C", "D", "E", "F", "G", "H", "J")
-XASPHERE_HIGH_TERMS = {"H", "J"}
+SUPPORTED_ASPHERE_ORDERS = set(ASPHERE_ORDER_TO_CODEV)
+XASPHERE_WRITABLE_TERMS = (
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "J",
+    "A22",
+    "A24",
+    "A26",
+    "A28",
+    "A30",
+)
+XASPHERE_HIGH_TERMS = set(XASPHERE_WRITABLE_TERMS[7:])
 MATERIAL_TOKENS = {
     "PLASTIC",
     "GLASS",
@@ -72,6 +92,8 @@ MATERIAL_TOKENS = {
     "CG",
     "IR",
     "IR-CUT",
+    "CEMENT",
+    "CEMENTED",
 }
 SURFACE_TYPE_TOKENS = {"ASP", "ASPH", "SPH", "SPHERICAL"}
 
@@ -820,15 +842,22 @@ def _find_coefficients_end(text: str, coeff_start: int) -> int:
 
 
 def _tokenize_table(text: str) -> list[str]:
-    text = text.replace("(", " ").replace(")", " ").replace(",", " ")
+    text = _normalize_decimal_commas(text)
+    text = text.replace("(", " ").replace(")", " ")
+    text = re.sub(r"(?<!\d),(?!\d)", " ", text)
     text = text.replace("=", " = ")
     return [token.strip() for token in text.split() if token.strip()]
 
 
 def _tokenize_coefficients(text: str) -> list[str]:
+    text = _normalize_decimal_commas(text)
     text = text.replace("=", " = ")
-    text = text.replace(",", " ")
+    text = re.sub(r"(?<!\d),(?!\d)", " ", text)
     return [token.strip() for token in text.split() if token.strip()]
+
+
+def _normalize_decimal_commas(text: str) -> str:
+    return re.sub(r"(?<=\d),(?=\d)", ".", text)
 
 
 def _consume_surface_label(tokens: list[str], pos: int) -> tuple[str, int]:
@@ -840,10 +869,16 @@ def _consume_surface_label(tokens: list[str], pos: int) -> tuple[str, int]:
         return f"Lens {tokens[pos + 1]}", pos + 2
     if upper in {"APE.", "APE"} and pos + 1 < len(tokens) and tokens[pos + 1].upper() == "STOP":
         return "Ape. Stop", pos + 2
+    if upper in {"APE.", "APE"}:
+        return "Ape.", pos + 1
     if upper == "IR-CUT" and pos + 1 < len(tokens) and tokens[pos + 1].upper() == "FILTER":
         return "IR-cut filter", pos + 2
+    if upper in {"IR-CUT", "IRCUT"}:
+        return "IR-cut", pos + 1
     if upper == "COVER" and pos + 1 < len(tokens) and tokens[pos + 1].upper() == "GLASS":
         return "Cover glass", pos + 2
+    if upper == "PRISM":
+        return "Prism", pos + 1
     if upper in {"OBJECT", "IMAGE", "STOP", "FILTER", "COVER"}:
         return token, pos + 1
     return "", pos
@@ -959,7 +994,7 @@ def _is_physical_vd(value: float) -> bool:
 def _distance_value(token: str, *, field_name: str) -> float | None:
     stripped = _strip_parens(token)
     upper = stripped.upper()
-    if upper == "PLANO":
+    if upper in {"PLANO", "PIANO"}:
         return 0.0
     if upper in {"INFINITY", "INF"}:
         return math.inf
@@ -972,7 +1007,16 @@ def _distance_value(token: str, *, field_name: str) -> float | None:
 
 
 def _parse_number(token: str) -> float:
-    cleaned = _strip_parens(token).replace(",", "").replace("−", "-")
+    cleaned = _strip_parens(token).replace("−", "-")
+    if "," in cleaned:
+        if "." not in cleaned and re.fullmatch(
+            r"[-+]?\d+,\d+(?:E[-+]?\d+)?",
+            cleaned,
+            re.I,
+        ):
+            cleaned = cleaned.replace(",", ".")
+        else:
+            cleaned = cleaned.replace(",", "")
     cleaned = cleaned.rstrip(".;")
     if not re.fullmatch(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?", cleaned, re.I):
         raise PatentParseError(f"not a number: {token}")

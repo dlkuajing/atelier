@@ -43,7 +43,10 @@ MULTI_EMBODIMENT_TEXT = PRESCRIPTION_TEXT + "\n" + SECOND_PRESCRIPTION_TEXT
 
 XASPHERE_TEXT = PRESCRIPTION_TEXT.replace(
     "A16= 1.0E-10 --",
-    "A16= 1.0E-10 -- A18= 2.5E-12 -3.5E-12 A20= 4.5E-14 -5.5E-14",
+    "A16= 1.0E-10 -- A18= 2.5E-12 -3.5E-12 "
+    "A20= 4.5E-14 -5.5E-14 A22= 6.5E-12 -7.5E-12 "
+    "A24= 8.5E-12 -9.5E-12 A26= 1.5E-12 -2.5E-12 "
+    "A28= 3.5E-12 -4.5E-12 A30= 5.5E-12 -6.5E-12",
 )
 
 THREE_COLUMN_MATERIAL_TEXT = PRESCRIPTION_TEXT.replace(
@@ -55,6 +58,20 @@ THREE_COLUMN_MATERIAL_TEXT = PRESCRIPTION_TEXT.replace(
     "Glass 1.508 1.517 64.2",
     1,
 )
+
+LARGAN_COMPONENT_TEXT = """
+TABLE-US-00001 TABLE 1 1st Embodiment f = 2.89 mm, Fno = 2.30,
+HFOV = 38.0 deg. Surface # Curvature Radius Thickness Material Index Abbe #
+Focal Length 0 Object Plano Infinity 1 Ape. Plano -0.075 Stop
+2 Lens 1 1.741 ASP 0.334 Plastic 1.536 58.3 7.92
+3 2.758 ASP 0.105 4 Lens 2 1.865 ASP 0.295 Plastic 1.639
+18,4 5.61 5 IR-cut Piano 0.110 Glass 1.517 64.2 -- filter
+6 Prism Plano 0.365 Glass 1.517 64.2 -- 7 Image Plano --
+TABLE-US-00002 TABLE 2 Aspheric Coefficients Surface # 2 3 4
+k= -1.0 2.0 -3.0 A4= -1.0E-02 -2.0E-02 -3.0E-02
+A22= 1.0E-12 -2.0E-12 3.0E-12 A30= 4.0E-15 -5.0E-15 6.0E-15
+-- [0001] In Table 2, k represents the conic coefficient.
+"""
 
 
 def test_parse_patent_prescription_extracts_surface_and_asphere_fields() -> None:
@@ -220,6 +237,8 @@ def test_write_patent_zmx_emits_xasphere_xdat_for_a18_a20(tmp_path: Path) -> Non
     asphere = prescription.surfaces[2]
     assert asphere.asphere_coefficients["H"] == pytest.approx(2.5e-12)
     assert asphere.asphere_coefficients["J"] == pytest.approx(4.5e-14)
+    assert asphere.asphere_coefficients["A22"] == pytest.approx(6.5e-12)
+    assert asphere.asphere_coefficients["A30"] == pytest.approx(5.5e-12)
 
     output_path = tmp_path / "xasphere.zmx"
     write_patent_zmx(prescription, output_path)
@@ -230,6 +249,35 @@ def test_write_patent_zmx_emits_xasphere_xdat_for_a18_a20(tmp_path: Path) -> Non
     assert "TYPE XASPHERE" in zmx_text
     assert "XDAT 11 2.5e-12 0 0 1 0 0" in zmx_text
     assert "XDAT 12 4.5e-14 0 0 1 0 0" in zmx_text
+    assert "XDAT 13 6.5e-12 0 0 1 0 0" in zmx_text
+    assert "XDAT 17 5.5e-12 0 0 1 0 0" in zmx_text
+
+
+def test_parse_patent_prescription_accepts_largan_component_rows() -> None:
+    prescription = parse_patent_prescription(
+        LARGAN_COMPONENT_TEXT,
+        patent_id="US-LARGAN-FIXTURE-A1",
+    )
+
+    assert len(prescription.surfaces) == 7
+    assert prescription.surfaces[0].label == "Ape."
+    assert prescription.surfaces[0].radius_mm == 0.0
+    assert prescription.surfaces[3].vd == pytest.approx(18.4)
+
+    ir_cut = prescription.surfaces[4]
+    assert ir_cut.label == "IR-cut"
+    assert ir_cut.radius_mm == 0.0
+    assert ir_cut.nd == pytest.approx(1.517)
+    assert ir_cut.vd == pytest.approx(64.2)
+
+    prism = prescription.surfaces[5]
+    assert prism.label == "Prism"
+    assert prism.radius_mm == 0.0
+    assert prism.nd == pytest.approx(1.517)
+    assert prism.vd == pytest.approx(64.2)
+
+    assert prescription.surfaces[1].asphere_coefficients["A22"] == pytest.approx(1.0e-12)
+    assert prescription.surfaces[1].asphere_coefficients["A30"] == pytest.approx(4.0e-15)
 
 
 def test_convert_candidate_writes_each_embodiment_with_e_suffix_without_network(
@@ -333,7 +381,7 @@ def test_convert_candidate_skips_formal_index_embodiments_but_not_staging_files(
 
 
 def test_parse_patent_prescription_rejects_unsupported_high_order_asphere_terms() -> None:
-    text = PRESCRIPTION_TEXT.replace("A16= 1.0E-10 --", "A22= 1.0E-10 --")
+    text = PRESCRIPTION_TEXT.replace("A16= 1.0E-10 --", "A32= 1.0E-10 --")
 
     with pytest.raises(PatentParseError, match="unsupported nonzero high-order"):
         parse_patent_prescription(text, patent_id="US-UNSUPPORTED-A1")
