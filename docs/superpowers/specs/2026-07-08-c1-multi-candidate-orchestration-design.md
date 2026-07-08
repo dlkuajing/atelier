@@ -1,7 +1,7 @@
 # C1 多产编排 + 良品率 Scorecard — 设计文档
 
 - **日期**：2026-07-08
-- **状态**：设计定稿（attended 四段认可，待主公复审 → 转实施）
+- **状态**：设计定稿（attended 四段认可 + codex 6 轮对抗审收敛至 0 blocker / 0 major，2026-07-08）
 - **里程碑**：Phase 10 探路阶 · 第一里程碑
 - **北极星语境**：量产设计产出引擎（生成-验证分工）——AI 批量产候选，资深设计师快速筛判"哪些合格/可用"；良品率 = go/no-go 闸。**可信度不可失守**：AI 只多产不越权定夺，良品率判断权在资深（[EXPERT] 红线）。
 - **基线仓库版本**：origin/main = `000ef97`（案例库 343；含 PR#43 长焦 404 修复=multi-tier classify；分支 `data/09efg-353-intake`=353 待 rebase 合）
@@ -252,7 +252,7 @@ class CandidateGenerator(ABC):
 
 **决定（codex 轮3 收紧）**：第一里程碑**不实现** SeedRefineGenerator，且**不预留 `SEED_REFINED` 枚举**——它的"仅 EFL 维朝 target"与全局 `converged_toward_target`(bool) 模型**矛盾**（会逼后续实现要么失败要么撒谎）。harness M1 = **Mode1（RetrievalGenerator）+ Mode3 空插槽**，`GenerationMode` 只有 `RETRIEVED` 与 `TARGET_CONVERGED`，无矛盾。
 
-> 将来若需 Mode2：**先**把 `converged_toward_target` 改成 **per-field 收敛策略表**（RETRIEVED 全 false、SEED_REFINED 仅 efl true、TARGET_CONVERGED 按实际优化维），**再**引入枚举——届时另设计，不在本 spec 预埋矛盾锚。
+> 将来若需 Mode2（**基于现有 per-field 模型扩展，非重做**——per-field convergence 已是现状，见 §5.2 `CONVERGED_FIELDS`）：新增 `SEED_REFINED` 枚举 + `CONVERGED_FIELDS[SEED_REFINED]=frozenset({"efl"})`（仅 EFL 维朝 target），并同步补 §5.2 validator / §7-E rank / §9 测试即可。
 
 ### 6.4 TargetConvergedGenerator（Mode3，空插槽 = ③ 接口锚）
 
@@ -359,7 +359,7 @@ class CandidateGenerator(ABC):
 **轮 2（codex adversarial-review · 2026-07-08 · verdict: needs-attention）**——5 findings（2 blocker+2 major+1 minor），亲验后**全采纳**：
 1. `[blocker]` Candidate/Scorecard 契约成环 → §5.2 拆两阶段 `GeneratedCandidate`→`score_candidate`→`ScoredCandidate`（一致性 validator 在 ScoredCandidate）。
 2. `[blocker]` `generate` 可被子类覆盖（Python 无运行时 final）→ §6.1 加 `__init_subclass__` 运行时拦覆盖 + `@final` 静态；§9 补覆盖绕过测试。
-3. `[major]` Mode2 残留矛盾 → §2/§5.1/§9/§12 全文清为 Mode1 only，`SEED_REFINED` 注释改。
+3. `[major]` Mode2 残留矛盾 → §2/§5.1/§9/§12 全文清为 Mode1 only（`SEED_REFINED` 当时仅改注释、暂留为扩展点；**轮3 进一步完全删除该枚举** superseded 此条，见轮3 记录）。
 4. `[major]` `rank_cases` 非薄入口（排序嵌 match_case + 硬截断 `[:4]`）→ §6.2 改为先抽共享 `rank_seeds` helper，match_case 与 RetrievalGenerator 同消费。
 5. `[minor]` rank_score/RI fail-closed 边界未定义 → §5.3/§7-E 加 `MetricValue.status`、归一化容差、RI 缺失处理（整批缺 → 报告告警防假绿）。
 
@@ -375,3 +375,9 @@ class CandidateGenerator(ABC):
 
 **轮 5（codex adversarial-review · 2026-07-08 · verdict: needs-attention · 1 major 新问题）**——亲验代码后**采纳**（根因修复，主公裁定）：
 1. `[major]` TargetDeviation 把 TTL 当对称 target（短 TTL 被扣分）+ converged 全局 bool（Mode3 会把没优化的 TTL 标已收敛）→ **根因修复**：§5.3 `TargetDeviation` 加 `constraint_kind`(exact/ceiling/floor/unconstrained)，TTL/mass=ceiling 低于上限不罚（`case_library.py:1466-1471`）；§5.2 加 `CONVERGED_FIELDS[mode]` **per-field convergence**（TARGET_CONVERGED 只 efl/fnum/imh/fov=true，TTL=false）；§7-A/§7-E 用 `violation`/`rel_violation`；§9/§10 补 oracle 与 Mode3 优化维。一次覆盖 TTL + 未来 F#/IMH 同类。
+
+**轮 6（codex adversarial-review 闭合复核 · 2026-07-08 · 0 blocker + 0 major = 收敛）**——仅 1 medium + 1 low 文档残留，已修：
+1. `[medium]` §6.3 未来 Mode2 路径仍写"先改 per-field"（轮5 已引入 per-field，过时）→ 改为"基于现有 `CONVERGED_FIELDS` 扩展"。
+2. `[low]` §14 轮2 记录与轮3 删除枚举表述冲突 → 注明轮3 superseded。
+
+**收敛判定**：blocker 轨迹 `1→2→0→0→0→0`，major 轨迹 `2→2→2→2→1→0`。深层结构缺陷（契约成环 / Python-final 幻觉 / 约束方向）逐轮挖净，轮6 归零。**spec 达成"无大问题、可转实施"。**
