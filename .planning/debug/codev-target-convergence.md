@@ -42,7 +42,7 @@ note: "本 session 由主公 attended 驱动，非自主 session-manager 循环�
 
 ## Current Focus
 
-- **status: 设计层收敛（2026-07-09）**——7 轮 Codex+5棱镜对抗，spec v8 定稿。轮7 2/5 棱镜判 design-converged，余为纯传播影子已补净。设计脊梁+经验 parking(E1-E8) 双方确认攻不动。
+- **status: 设计层收敛定案（2026-07-09 · 双方一致）**——8 轮 Codex+5棱镜对抗，spec **v9** 定稿。**轮8 收敛确认：workflow 5/5 棱镜 design-converged + Codex 终审 approve（design-converged, no material findings）**。设计脊梁+经验 parking(E1-E8) 双方 8 轮确认攻不动。**待主公 ratify → 转闸2 Step-0 探针。**
 - hypothesis: 见上（接缝1+3 使 AUT 朝客户 target 收敛；EFL 唯一真优化维，F#/IMH 经验测定/构造）
 - next_action: **待主公 ratify v8** → 闸2 Step-0 CODE V 行为探针（真机定 E1-E8：FNO锁F#/ANG场IMH漂/DIX-DIY err/(FNO)读值/rel-1.0场/AUT收敛标志/复现/渐晕重解）→ 探针回灌经验落地版 → 改宏
 - test: （闸2 后）最小闸条件展开：Seed-1 baseline-lock+Stage A+天花板臂 3 run 出首信号，A 通过才展开 B/C+Seed-2；三快照量 EFL/F#/IMH/FOV/像质 vs target + fail-closed
