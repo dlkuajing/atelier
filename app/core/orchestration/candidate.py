@@ -230,6 +230,18 @@ class OpticalExtras(BaseModel):
         None,
         description="按视场点(如 '0.0'/'0.5'/'0.7'/'1.0')的相对照度；None=本 generator 未提供 RI",
     )
+    codev_post_aut: dict[str, float | str | None] | None = Field(
+        None,
+        description=(
+            "Mode3（TargetConvergedGenerator）专属：CODE V `run_codev_target_standard` "
+            "preferred 配置的 post_aut 快照数字 + autovig/AUT 误差诊断（真机裸出，非"
+            "score_candidate 消费——打分口径保持 payload/Optiland 一致性，见"
+            "generators.py `_codev_post_aut_snapshot`）。只作为离线报告 provenance 区"
+            "如实展示的 side-channel；CODE V 裁瞳(vignetted pupil)口径与 payload 侧"
+            "Optiland 满口径口径不可直接横比，报告须如实标注。None=本 generator 未提供"
+            "（如 RetrievalGenerator）。"
+        ),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -263,9 +275,16 @@ class GeneratedCandidate(BaseModel):
 CONVERGED_FIELDS: MappingProxyType[GenerationMode, frozenset[str]] = MappingProxyType(
     {
         GenerationMode.RETRIEVED: frozenset(),  # 检索不优化任何维
-        GenerationMode.TARGET_CONVERGED: frozenset(
-            {"efl", "fnum", "imh", "fov"}
-        ),  # = §10 Mode3 六接缝优化维；TTL 不在接缝
+        # 缩窄（真接入时按实际能力收紧，2026-07-10 · TargetConvergedGenerator 填实）：
+        # spec §10 原文把 Mode3 优化维定义为 {EFL, F#, IMH, FOV}（六接缝对应），但
+        # `codev_optimize.run_codev_target_standard`（③ 标准入口）目前只有接缝1
+        # （EFL 解锁朝 target，真机 E1 验证）实际达标；接缝3a 是 FNO 模式锁 native F#
+        # （"保持"不是"朝 target 收敛"）；IMH/FOV 的 Stage C 场重建完全未落地。虚标
+        # F#/IMH/FOV 为已收敛 = 撒谎（违反诚实不变量，见本文件 docstring 不变量4 与
+        # generators.py::TargetConvergedGenerator 接入警示段）。
+        # 将来 Stage B（F# 真优化，需宽视场 CRA 前置工程）/ Stage C（IMH/FOV 场重建）
+        # 落地时，按该字段实际达标的那一刻扩这张表（同步 §10 file:line 接缝清单）。
+        GenerationMode.TARGET_CONVERGED: frozenset({"efl"}),
     }
 )
 

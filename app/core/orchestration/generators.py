@@ -8,10 +8,19 @@
 
 from __future__ import annotations
 
+import math
+import tempfile
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
+from pathlib import Path
 from typing import ClassVar, final
 
-from app.core.case_library import cases_for_scenario, rank_seeds
+import structlog
+
+from app.core.case_library import build_sample_from_optic, cases_for_scenario, rank_seeds
+from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
+from app.core.engines.codev_optimize import run_codev_target_standard
+from app.core.engines.seed_target_score import SeedTargetScore, score_seed_target_match
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     GeneratedCandidate,
@@ -19,6 +28,9 @@ from app.core.orchestration.candidate import (
     OpticalExtras,
     TargetSpec,
 )
+from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
+
+logger = structlog.get_logger(__name__)
 
 # Deferred import (inside `_generate`, not module top-level): `relative_illumination`
 # imports `app.core.orchestration.candidate.MetricValue`, which forces loading this
@@ -173,43 +185,172 @@ class RetrievalGenerator(CandidateGenerator):
 
 
 # ---------------------------------------------------------------------------
-# 6.4 TargetConvergedGenerator（Mode3，空插槽 = ③ 接口锚）
+# 6.4 TargetConvergedGenerator（Mode3，③ 真接入 · 2026-07-10）
 # ---------------------------------------------------------------------------
+
+#: 真机成本控制（③ 每颗 seed = {asphere,both} × autovig 阶梯，单颗数十秒到
+#: 数分钟）：无论调用方请求多大的 `n`，Mode3 每次编排最多真机跑这么多颗
+#: seed。不是"产出候选数上限"（每颗 seed 若跑通只产 1 颗候选），是"愿意为
+#: 这次编排花多少次 CODE V 批跑"的硬顶。
+_TARGET_MAX_SEEDS = 2
+
+#: seed-target 匹配 band 的机器排序权重（数字越小=越优先尝试），镜像
+#: `seed_target_score.py` 的分桶语义（lt5 < 5to15 < 15to30 < gt30）。
+_BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
+
+
+def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | str | None]:
+    """从 `run_codev_target_standard` 某配置的原始 dict 里摘出 CODE V 真机
+    快照数字（post_aut 三快照 + autovig/AUT 误差诊断），供
+    `OpticalExtras.codev_post_aut` 存放——纯诊断 side-channel，不参与打分
+    （`score_candidate` 只读 payload/optical_extras.ri_by_field，不读这里，
+    见 `candidate.py::OpticalExtras.codev_post_aut` docstring）。缺失/非数
+    一律 `None`，不猜测（fail closed，同 `codev_optimize._standard_config_rms`
+    的风格）。"""
+
+    def _float(key: str) -> float | None:
+        raw = config.get(key)
+        if raw is None:
+            return None
+        try:
+            value = float(str(raw))
+        except (TypeError, ValueError):
+            return None
+        return value if math.isfinite(value) else None
+
+    def _text(key: str) -> str | None:
+        raw = config.get(key)
+        return str(raw) if raw is not None else None
+
+    err_f_ratio: float | None = None
+    termination: str | None = None
+    aut_error_trace = config.get("aut_error_trace")
+    if isinstance(aut_error_trace, Mapping):
+        raw_ratio = aut_error_trace.get("err_f_ratio")
+        if isinstance(raw_ratio, int | float) and math.isfinite(float(raw_ratio)):
+            err_f_ratio = float(raw_ratio)
+        raw_termination = aut_error_trace.get("termination")
+        termination = str(raw_termination) if raw_termination is not None else None
+
+    return {
+        "post_aut.efl_y_mm": _float("post_aut.efl_y_mm"),
+        "post_aut.max_rms_spot_diameter_um": _float("post_aut.max_rms_spot_diameter_um"),
+        "post_aut.max_rms_wavefront_error_waves": _float(
+            "post_aut.max_rms_wavefront_error_waves"
+        ),
+        "post_aut.max_distortion_pct": _float("post_aut.max_distortion_pct"),
+        "post_aut.fno": _float("post_aut.fno"),
+        "post_aut.maximh_mm": _float("post_aut.maximh_mm"),
+        "efl_target_deviation_pct": _float("efl_target_deviation_pct"),
+        "aut_converged": _text("aut_converged"),
+        "autovig.edge_used": _float("autovig.edge_used"),
+        "err_f_ratio": err_f_ratio,
+        "aut_termination": termination,
+    }
+
+
+def _mode3_generation_notes(
+    *,
+    seed: OpticalSampleData,
+    match: SeedTargetScore,
+    preferred: str,
+    preferred_reason: str,
+    config: Mapping[str, object],
+    provenance: Mapping[str, object],
+) -> list[str]:
+    """诚实 provenance 注记（离线报告/资深读的第一手线索），非量产判定。"""
+    assert seed.metadata is not None
+    glass_model_label = "unknown"
+    raw_glass_model = provenance.get("glass_model")
+    if isinstance(raw_glass_model, Mapping):
+        glass_model_label = str(raw_glass_model.get(preferred, "unknown"))
+    edge_used = config.get("autovig.edge_used", "N/A")
+    return [
+        "Mode3：③ target 优化标准入口（codev_optimize.run_codev_target_standard），"
+        f"seed={seed.metadata.case_id}",
+        f"seed-target 匹配 band={match.band}（score={match.score:.2f}, "
+        f"ΔEFL={match.delta_efl_pct:+.1f}%；{match.evidence_note}）",
+        f"preferred 配置=\"{preferred}\"（{preferred_reason}）",
+        f"玻璃 provenance（preferred=\"{preferred}\"）：{glass_model_label}",
+        f"渐晕 edge_used（preferred 配置，autovig 裁瞳量）={edge_used}",
+        "CONVERGED_FIELDS[TARGET_CONVERGED] 已缩窄为 {efl}：F# 现状锁 native（非达"
+        "target）、IMH/FOV Stage C 场重建未落地——本候选 5 维 target-deviation 中"
+        "只有 efl 标 converged=True，其余如实标 False（见 candidate.py "
+        "CONVERGED_FIELDS 缩窄注记）",
+        "optical_extras.ri_by_field 恒 unavailable：优化后 ZMX 落在临时目录，不在"
+        "ZMX_AMMO_DIR 内，现有 RI 复算管线（relative_illumination.py）按"
+        "`ZMX_AMMO_DIR / source_zmx` 解析路径找不到该文件（已知限制，非本铲修复"
+        "范围）",
+        "optical_extras.codev_post_aut 携带 CODE V 侧真机快照数字（裁瞳口径），"
+        "与本候选 payload 的 Optiland 满口径口径不可直接横比，见字段 docstring",
+    ]
 
 
 class TargetConvergedGenerator(CandidateGenerator):
-    """Mode3（③落地后真朝客户 target 收敛），本铲空插槽（§6.4）。
+    """Mode3（③落地后真朝客户 target 收敛），真接入（§6.4，2026-07-10）。
 
-    第一里程碑：`_generate` 恒返回 `[]`（orchestrator 跳过 → 触发
-    `honesty_banner`）。③ 依赖 CODE V（硬依赖），未接时跳过——不破坏无
-    CODE V 降级（§8）。
+    ③ 依赖 CODE V（硬依赖）：`DEFAULT_CODEV_EXECUTABLE` 不可用时 `_generate`
+    返回 `[]`（降级语义保留，不破坏无 CODE V 全链路，§8）。`spec.efl_mm`
+    是必填检索/优化锚点：`None` 时同样返回 `[]`（Mode3 无 target EFL 无法
+    定义"朝哪收敛"，与 `RetrievalGenerator` 的 fail-fast `raise` 不同——这里
+    是"本 mode 对这条需求不适用"的正常降级，不是调用方传参错误）。
 
-    docstring 写死 ③ 接入契约（= §10 六接缝，作主公 ③ session 的接口
-    锚）。Mode3 优化维 = `{EFL, F#, IMH, FOV}`（下列 1-3 接缝对应；
-    **TTL 不在接缝**——per-field converged 对 TTL 恒 false，见
-    `candidate.py::CONVERGED_FIELDS`）。
+    **流程**：
+    1. `cases_for_scenario(spec.scenario)` 取场景池，过滤出
+       `metadata.source_zmx` 在 `ZMX_AMMO_DIR` 下真实存在的 seed。
+    2. 每颗候选 seed 用 `seed_target_score.score_seed_target_match`
+       （seed 原生 EFL ← `payload.paraxial.effective_focal_length_mm` vs
+       `spec.efl_mm`）打分，按 band 优先、band 内按 score 升序排序，取前
+       `min(n, _TARGET_MAX_SEEDS)` 颗——真机成本控制（每颗 seed 一次
+       `run_codev_target_standard` 批跑，数十秒到数分钟）。
+    3. 每颗 seed 跑 `codev_optimize.run_codev_target_standard`
+       （`emit_optimized_zmx=True`，标准 {asphere,both} 双配置并跑取优，
+       §10 接缝 1/2/3a）。单颗 seed 报 `CodeVBatchError`（tooling-blocked/
+       timeout/no_license 等）→ 跳过该 seed（结构化日志留痕），不炸整个
+       generator（不炸其余 seed，也不炸 `orchestrate` 的其它 mode）。
+    4. `preferred` 配置的 `optimized_zmx_path` 现算 payload：
+       `zmx_ingest.load_normalized_zmx` → `case_library.build_sample_from_optic`
+       （仓里现有"单 ZMX → OpticalSampleData"管线，`app/api/optical.py` 的
+       seed-preflight 端点同款用法）。`nominal_efl_mm=spec.efl_mm`（客户
+       target，① EFL 已收敛）；`nominal_fov_deg=seed.metadata.fov_deg`
+       （seed 原生 FOV——Stage C 场重建未落地，FOV 未真朝 target 收敛，不
+       能虚标 target FOV 当 nominal）；`n_pieces=seed.metadata.n_pieces`
+       （AUT 优化不改变元件数）。**已知风险（真机验证，见任务报告）**：
+       `even_asphere` 满口径追迹在部分优化后 ZMX 上可能数值异常——整段
+       `load_normalized_zmx`+`build_sample_from_optic` 包在 try/except 里，
+       任何异常都 fail closed：该颗 seed 的候选**不产出**（跳过，不用假
+       数据填充 payload 的必填字段），结构化日志记录原因，继续下一颗
+       seed，不炸整个 generator。
+    5. CODE V 侧真机数字（post_aut 快照/edge_used/err_f_ratio/AUT 终止措
+       辞）无论 Optiland payload 是否算出，都摘进
+       `optical_extras.codev_post_aut`（`_codev_post_aut_snapshot`）——这些
+       数字来自已经成功落盘的 tsv 读数，与 Optiland 二次追迹是否成功无关；
+       `score_candidate` 不消费它（打分口径保持 payload/Optiland 一致
+       性），只在离线报告的 provenance 区如实展示（`scripts/c1_orchestrate.py`）。
 
-    六接缝（§10，file:line）：
-    1. EFL 解锁朝 target：`codev_optimize.py:230`
-       `EFL = ^baseline_efl_y_mm` → `EFL = {target_efl_mm}`
-    2. 玻璃可变：`codev_optimize.py:257` `glass-not-varied` → varied；
-       AUT 块加 `CHG GL`
-    3. merit 加客户操作数：`codev_optimize.py:200-236` 加 F#/IMH/FOV
-       操作数（现仅横向色差 + RMS 点列）
-    4. `applied_to_payload` 真置 `True`：`local_optimizer.py`
-       （~9 处硬编码 False）
+    **诚实红线**：`CONVERGED_FIELDS[TARGET_CONVERGED]` 已缩窄为
+    `frozenset({"efl"})`（`candidate.py`，2026-07-10）——F#/IMH/FOV 现状不
+    达 target（F# 只锁 native，IMH/FOV Stage C 未落地），虚标为已收敛 =
+    撒谎，违反诚实不变量。TTL 从未在优化维内。
+
+    六接缝原文（§10，作后续 Stage B/C session 的接口锚，未落地部分保留
+    file:line）：
+    1. EFL 解锁朝 target——已落地：`codev_optimize.py`
+       `build_codev_target_sequence` 内 `EFL = {target_efl_mm}`（真机 E1
+       验证）。
+    2. 玻璃可变——已落地：`extra_dof="both"` 走塑料域 GLA 边界（`codev_
+       optimize.py` "玻璃可变域修复"章节，commit 7b504c6）。
+    3. merit 加客户操作数——部分落地：3a F# 走 FNO 模式锁 native（真机 E1
+       实测）；IMH/FOV 操作数未加（Stage C 场重建，未落地）。
+    4. `applied_to_payload` 真置 `True`：`local_optimizer.py`（~9 处硬编码
+       False，未落地——本 generator 走独立 payload 现算路径，不经
+       `local_optimizer`，该接缝仍待 case_library 侧收口）。
     5. verification checklist → 自动 apply：`case_library.py:7080` +
-       `:7139`（现 "not applied to delivered payload"）
+       `:7139`（现 "not applied to delivered payload"，未落地）。
     6. payload delivery 落地：`case_library.py:14053`
        `delivered_candidate_id` / `:14054` `delivered_payload` 状态机
-
-    **现状警示（2026-07-09 attended spike 结论，见 project memory
-    project-optimize-spike-setup-not-fundamental）**：`codev_optimize.py`
-    的 `run_codev_target_standard` 已备接缝 1（EFL 解锁）、接缝 2（玻璃
-    可变）、接缝 3a（FNO 锁 native F#），但 F#/IMH/FOV 尚未按客户 target
-    验证达标。**真接入 Mode3 时，`CONVERGED_FIELDS[TARGET_CONVERGED]`
-    必须按实际能力缩窄为 `frozenset({"efl"})`**——F#/IMH/FOV 现状不达
-    target，虚标为已收敛 = 撒谎（违反诚实不变量）。
+       （未落地——本 generator 产出的候选走 C1 报告，不经这条 delivery
+       状态机）。
     """
 
     mode: ClassVar[GenerationMode] = GenerationMode.TARGET_CONVERGED
@@ -217,4 +358,174 @@ class TargetConvergedGenerator(CandidateGenerator):
     def _generate(
         self, spec: TargetSpec, target: TargetSpec, *, n: int
     ) -> list[GeneratedCandidate]:
-        return []
+        if spec.efl_mm is None:
+            logger.info(
+                "mode3_skipped_no_efl_target",
+                scenario=spec.scenario.value,
+                reason="TargetConvergedGenerator 需要 spec.efl_mm 作为优化锚点",
+            )
+            return []
+        if not DEFAULT_CODEV_EXECUTABLE.is_file():
+            logger.info(
+                "mode3_skipped_no_codev",
+                scenario=spec.scenario.value,
+                reason="CODE V 不可用（DEFAULT_CODEV_EXECUTABLE 不存在），降级跳过",
+            )
+            return []
+
+        scored_seeds = self._rank_seeds_by_target_match(spec)
+        if not scored_seeds:
+            logger.info(
+                "mode3_skipped_no_scoreable_seeds",
+                scenario=spec.scenario.value,
+                efl_mm=spec.efl_mm,
+            )
+            return []
+
+        num_seeds = min(n, _TARGET_MAX_SEEDS, len(scored_seeds))
+        selected = scored_seeds[:num_seeds]
+
+        candidates: list[GeneratedCandidate] = []
+        with tempfile.TemporaryDirectory(prefix="atelier-c1-mode3-") as tmpdir_str:
+            tmpdir = Path(tmpdir_str)
+            for seed, match in selected:
+                assert seed.metadata is not None
+                candidate = self._candidate_for_seed(
+                    seed=seed,
+                    match=match,
+                    spec=spec,
+                    work_dir=tmpdir / seed.metadata.case_id,
+                )
+                if candidate is not None:
+                    candidates.append(candidate)
+        return candidates
+
+    @staticmethod
+    def _rank_seeds_by_target_match(
+        spec: TargetSpec,
+    ) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
+        """场景池 → 过滤出 ZMX 真实存在的 seed → seed-target EFL 距离打分 →
+        按 band 优先、band 内 score 升序排序。`spec.efl_mm` 保证非 None（调
+        用方 `_generate` 已 guard）。"""
+        assert spec.efl_mm is not None
+        scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
+        for case in cases_for_scenario(spec.scenario):
+            if case.metadata is None or not case.metadata.source_zmx:
+                continue
+            source_path = ZMX_AMMO_DIR / case.metadata.source_zmx
+            if not source_path.is_file():
+                continue
+            seed_efl_mm = case.paraxial.effective_focal_length_mm
+            if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
+                continue
+            try:
+                match = score_seed_target_match(seed_efl_mm, spec.efl_mm)
+            except ValueError:
+                continue
+            scored.append((case, match))
+        scored.sort(key=lambda item: (_BAND_RANK[item[1].band], item[1].score))
+        return scored
+
+    @staticmethod
+    def _candidate_for_seed(
+        *,
+        seed: OpticalSampleData,
+        match: SeedTargetScore,
+        spec: TargetSpec,
+        work_dir: Path,
+    ) -> GeneratedCandidate | None:
+        """一颗 seed 的完整 ③ 批跑 + payload 现算，失败一律 `None`（fail
+        closed，调用方跳过、不炸整个 generator）。"""
+        assert spec.efl_mm is not None
+        assert seed.metadata is not None
+        source_zmx_path = ZMX_AMMO_DIR / seed.metadata.source_zmx
+
+        try:
+            result = run_codev_target_standard(
+                source_zmx=source_zmx_path,
+                work_dir=work_dir,
+                target_efl_mm=spec.efl_mm,
+                emit_optimized_zmx=True,
+                timeout_seconds=180.0,
+                num_fields=3,
+            )
+        except CodeVBatchError as exc:
+            logger.warning(
+                "mode3_seed_codev_failed",
+                case_id=seed.metadata.case_id,
+                kind=exc.kind,
+                message=exc.message,
+            )
+            return None
+
+        preferred = result.get("preferred")
+        preferred_reason = str(result.get("preferred_reason", ""))
+        configs = result.get("configs")
+        if not isinstance(preferred, str) or not isinstance(configs, Mapping):
+            logger.warning(
+                "mode3_seed_no_preferred_config",
+                case_id=seed.metadata.case_id,
+                reason=preferred_reason,
+            )
+            return None
+        config = configs.get(preferred)
+        if not isinstance(config, Mapping) or "error" in config:
+            logger.warning(
+                "mode3_seed_preferred_config_errored",
+                case_id=seed.metadata.case_id,
+                preferred=preferred,
+            )
+            return None
+
+        optimized_zmx_path_raw = config.get("optimized_zmx_path")
+        if not optimized_zmx_path_raw:
+            logger.warning(
+                "mode3_seed_zmx_rebuild_unavailable",
+                case_id=seed.metadata.case_id,
+                preferred=preferred,
+                zmx_rebuild_error=config.get("zmx_rebuild_error"),
+            )
+            return None
+        optimized_zmx_path = Path(str(optimized_zmx_path_raw))
+
+        try:
+            optic = load_normalized_zmx(optimized_zmx_path)
+            payload = build_sample_from_optic(
+                optic,
+                source_zmx=optimized_zmx_path.name,
+                n_pieces=seed.metadata.n_pieces,
+                nominal_efl_mm=spec.efl_mm,
+                nominal_fov_deg=seed.metadata.fov_deg,
+                source_path=optimized_zmx_path,
+            )
+        except Exception as exc:  # noqa: BLE001 - Optiland 满口径追迹在优化后 ZMX 上可能数值异常（even_asphere），fail closed 逐颗 seed 隔离，不炸整个 generator
+            logger.warning(
+                "mode3_seed_payload_build_failed",
+                case_id=seed.metadata.case_id,
+                preferred=preferred,
+                error=f"{type(exc).__name__}: {exc}",
+            )
+            return None
+
+        provenance_raw = result.get("provenance")
+        provenance = provenance_raw if isinstance(provenance_raw, Mapping) else {}
+        from app.core.relative_illumination import compute_relative_illumination
+
+        return GeneratedCandidate(
+            candidate_id=f"{seed.metadata.case_id}::target-converged-{preferred}",
+            mode=GenerationMode.TARGET_CONVERGED,
+            source_case_id=seed.metadata.case_id,
+            payload=payload,
+            optical_extras=OpticalExtras(
+                ri_by_field=compute_relative_illumination(payload),
+                codev_post_aut=_codev_post_aut_snapshot(config),
+            ),
+            generation_notes=_mode3_generation_notes(
+                seed=seed,
+                match=match,
+                preferred=preferred,
+                preferred_reason=preferred_reason,
+                config=config,
+                provenance=provenance,
+            ),
+        )

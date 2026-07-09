@@ -27,9 +27,14 @@ from typing import ClassVar
 import pytest
 
 from app.core.case_library import _candidate_scenarios, load_case_library, match_case
+from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
+from app.core.engines.seed_target_score import SeedTargetScore
 from app.core.lens_system import Scenario
 from app.core.mtf_fields import MTF_CANONICAL_FIELD_FRACS, format_mtf_field_fraction
+from app.core.optical_sample import OpticalSampleData
+from app.core.orchestration import generators as generators_module
 from app.core.orchestration.candidate import (
+    CandidateSet,
     GeneratedCandidate,
     GenerationMode,
     OpticalExtras,
@@ -40,6 +45,8 @@ from app.core.orchestration.generators import (
     RetrievalGenerator,
     TargetConvergedGenerator,
 )
+from app.core.orchestration.orchestrator import orchestrate
+from app.core.zmx_ingest import ZMX_AMMO_DIR
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -289,17 +296,357 @@ def test_retrieval_generator_unknown_scenario_family_returns_empty_when_pool_emp
 
 
 # ---------------------------------------------------------------------------
-# TargetConvergedGenerator — empty-slot stub (§6.4, §8)
+# TargetConvergedGenerator — Mode3 真接入 (§6.4, §8, 2026-07-10)
 # ---------------------------------------------------------------------------
-
-
-def test_target_converged_generator_returns_empty_mode3_not_wired():
-    generator = TargetConvergedGenerator()
-    spec = _wide_target_spec()
-    result = generator.generate(spec, spec, n=4)
-    assert result == []
 
 
 def test_target_converged_generator_mode_class_var():
     assert TargetConvergedGenerator.mode is GenerationMode.TARGET_CONVERGED
     assert RetrievalGenerator.mode is GenerationMode.RETRIEVED
+
+
+def test_target_converged_generator_returns_empty_when_efl_target_missing():
+    """Mode3 无 target EFL 无法定义"朝哪收敛"——正常降级（`[]`），不是调用方
+    传参错误（与 RetrievalGenerator 的 fail-fast `raise` 不同）。"""
+    generator = TargetConvergedGenerator()
+    spec = TargetSpec(scenario=Scenario.SMARTPHONE_WIDE, fov_deg=78.0, fnum=2.4)
+    assert generator.generate(spec, spec, n=4) == []
+
+
+def test_target_converged_generator_returns_empty_when_codev_unavailable(
+    monkeypatch, tmp_path: Path
+):
+    """CODE V 硬依赖不可用 → 降级返回 `[]`，不破坏无 CODE V 全链路（§8）。"""
+    monkeypatch.setattr(
+        generators_module, "DEFAULT_CODEV_EXECUTABLE", tmp_path / "no-codev-here.exe"
+    )
+    generator = TargetConvergedGenerator()
+    spec = _wide_target_spec()
+    assert generator.generate(spec, spec, n=4) == []
+
+
+def _real_case_with_zmx() -> OpticalSampleData:
+    for case in load_case_library():
+        if case.metadata is not None and (ZMX_AMMO_DIR / case.metadata.source_zmx).is_file():
+            return case
+    raise AssertionError("case library has no case with an on-disk source ZMX")
+
+
+def _fake_match(*, band: str = "lt5", score: float = 2.0, delta_pct: float = 2.0) -> SeedTargetScore:
+    return SeedTargetScore(
+        delta_efl_pct=delta_pct, abs_delta_efl_pct=abs(delta_pct), score=score, band=band
+    )
+
+
+def _fake_standard_result(
+    *, optimized_zmx_path: str | None, preferred: str = "asphere"
+) -> dict[str, object]:
+    return {
+        "schema": "atelier-codev-target-standard-v1",
+        "preferred": preferred,
+        "preferred_reason": "mock preferred (unit test)",
+        "configs": {
+            "asphere": {
+                "optimized_zmx_path": optimized_zmx_path if preferred == "asphere" else None,
+                "post_aut.efl_y_mm": "3.797",
+                "post_aut.max_rms_spot_diameter_um": "12.3",
+                "post_aut.max_rms_wavefront_error_waves": "0.04",
+                "post_aut.max_distortion_pct": "3.1",
+                "post_aut.fno": "2.3",
+                "post_aut.maximh_mm": "3.3",
+                "efl_target_deviation_pct": "0.01",
+                "aut_converged": "1",
+                "autovig.edge_used": "0.0",
+                "aut_error_trace": {"err_f_ratio": 0.09, "termination": "normal_completion"},
+            },
+            "both": {
+                "optimized_zmx_path": optimized_zmx_path if preferred == "both" else None,
+                "post_aut.efl_y_mm": "3.798",
+                "post_aut.max_rms_spot_diameter_um": "9.1",
+                "post_aut.max_rms_wavefront_error_waves": "0.03",
+                "post_aut.max_distortion_pct": "2.9",
+                "post_aut.fno": "2.3",
+                "post_aut.maximh_mm": "3.3",
+                "efl_target_deviation_pct": "0.02",
+                "aut_converged": "1",
+                "autovig.edge_used": "0.2",
+                "aut_error_trace": {"err_f_ratio": 0.12, "termination": "normal_completion"},
+            },
+        },
+        "provenance": {
+            "vignetting_search": "autovig",
+            "glass_model": {
+                "asphere": "glass-frozen",
+                "both": "fictitious-within-plastic-GLA(default)",
+            },
+            "quality_note": "mock provenance for unit test",
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# `_candidate_for_seed` — unit-level (mocked CODE V, real Optiland payload build)
+# ---------------------------------------------------------------------------
+
+
+def test_candidate_for_seed_returns_none_on_codev_batch_error(tmp_path: Path, monkeypatch):
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+
+    def _boom(**kwargs):  # noqa: ANN003
+        raise CodeVBatchError("timeout", "mock CODE V timeout")
+
+    monkeypatch.setattr(generators_module, "run_codev_target_standard", _boom)
+    result = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        work_dir=tmp_path / "work",
+    )
+    assert result is None
+
+
+def test_candidate_for_seed_returns_none_when_no_preferred_config(tmp_path: Path, monkeypatch):
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: {  # noqa: ANN003
+            "preferred": None,
+            "preferred_reason": "两配置均报 CodeVBatchError",
+            "configs": {"asphere": {"error": {"kind": "timeout"}}, "both": {"error": {"kind": "timeout"}}},
+            "provenance": {},
+        },
+    )
+    result = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        work_dir=tmp_path / "work",
+    )
+    assert result is None
+
+
+def test_candidate_for_seed_returns_none_when_zmx_rebuild_unavailable(tmp_path: Path, monkeypatch):
+    """`optimized_zmx_path` 为 None（如 H/J 系数非零，zmx_writer fail-open）
+    → 该 seed 不产候选，不用假数据填 payload。"""
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=None),  # noqa: ANN003
+    )
+    result = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        work_dir=tmp_path / "work",
+    )
+    assert result is None
+
+
+def test_candidate_for_seed_payload_build_failure_is_fail_closed(tmp_path: Path, monkeypatch):
+    """`load_normalized_zmx`/`build_sample_from_optic` 炸（模拟 even_asphere
+    数值异常等）→ fail closed，不产候选，不炸调用方。"""
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    bogus_zmx = tmp_path / "not-a-real-zmx.zmx"
+    bogus_zmx.write_text("this is not valid ZMX content", encoding="ascii")
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=str(bogus_zmx)),  # noqa: ANN003
+    )
+    result = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        work_dir=tmp_path / "work",
+    )
+    assert result is None
+
+
+def test_candidate_for_seed_success_path_produces_target_converged_candidate(
+    tmp_path: Path, monkeypatch
+):
+    """Success path: mocks only the CODE V layer (`run_codev_target_standard`);
+    the optimized-ZMX rebuild pipeline (`load_normalized_zmx` +
+    `build_sample_from_optic`) runs for real against an existing on-disk case
+    ZMX's *content*, copied to a filename that does not collide with anything
+    under `ZMX_AMMO_DIR` — mirroring the real generator's actual optimized-ZMX
+    filenames (`{stem}_target{efl}..._optimized.zmx`, never a bare ammo-dir
+    name) so the RI-unavailable assertion below exercises the genuine
+    `ZMX_AMMO_DIR`-lookup-miss path, not an accidental filename collision."""
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    stand_in_zmx = tmp_path / f"{seed.metadata.case_id}_target3.797_optimized.zmx"
+    stand_in_zmx.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=str(stand_in_zmx)),  # noqa: ANN003
+    )
+    spec = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed, match=_fake_match(), spec=spec, work_dir=tmp_path / "work"
+    )
+
+    assert candidate is not None
+    assert candidate.mode is GenerationMode.TARGET_CONVERGED
+    assert candidate.source_case_id == seed.metadata.case_id
+    assert candidate.candidate_id == f"{seed.metadata.case_id}::target-converged-asphere"
+    assert candidate.payload is not None
+    # CODE V 真机数字如实摘入 codev_post_aut（诊断 side-channel，非打分输入）
+    extras = candidate.optical_extras
+    assert extras.codev_post_aut is not None
+    assert extras.codev_post_aut["post_aut.max_rms_spot_diameter_um"] == pytest.approx(12.3)
+    assert extras.codev_post_aut["err_f_ratio"] == pytest.approx(0.09)
+    assert extras.codev_post_aut["aut_termination"] == "normal_completion"
+    # RI 结构性存在但恒 unavailable（优化后 ZMX 不在 ZMX_AMMO_DIR 下，已知限制）
+    assert extras.ri_by_field is not None
+    assert all(m.status == "unavailable" for m in extras.ri_by_field.values())
+    joined_notes = " ".join(candidate.generation_notes)
+    assert "band=lt5" in joined_notes
+    assert "preferred" in joined_notes
+
+
+# ---------------------------------------------------------------------------
+# `_generate` — seed selection + per-seed isolation (§9)
+# ---------------------------------------------------------------------------
+
+
+def test_generate_isolates_single_seed_failure_and_keeps_survivor(monkeypatch, tmp_path: Path):
+    """一颗 seed 失败（`_candidate_for_seed` 返回 `None`）不炸整个
+    generator——另一颗仍能出候选。"""
+    seed_a = load_case_library()[0]
+    seed_b = load_case_library()[1]
+    assert seed_a.metadata is not None and seed_b.metadata is not None
+    survivor = GeneratedCandidate(
+        candidate_id="survivor",
+        mode=GenerationMode.TARGET_CONVERGED,
+        source_case_id=seed_b.metadata.case_id,
+        payload=seed_b,
+        optical_extras=OpticalExtras(),
+        generation_notes=["mock survivor"],
+    )
+
+    monkeypatch.setattr(
+        generators_module,
+        "DEFAULT_CODEV_EXECUTABLE",
+        Path(__file__),  # any real file — `.is_file()` True
+    )
+    monkeypatch.setattr(
+        TargetConvergedGenerator,
+        "_rank_seeds_by_target_match",
+        staticmethod(lambda spec: [(seed_a, _fake_match()), (seed_b, _fake_match())]),
+    )
+
+    calls: list[str] = []
+
+    def _fake_candidate_for_seed(*, seed, match, spec, work_dir):  # noqa: ANN001
+        calls.append(seed.metadata.case_id)
+        if seed is seed_a:
+            return None
+        return survivor
+
+    monkeypatch.setattr(
+        TargetConvergedGenerator, "_candidate_for_seed", staticmethod(_fake_candidate_for_seed)
+    )
+
+    spec = TargetSpec(scenario=Scenario.SMARTPHONE_WIDE, efl_mm=3.797, fnum=2.3)
+    result = TargetConvergedGenerator().generate(spec, spec, n=4)
+
+    assert len(calls) == 2  # both seeds attempted — first's failure didn't short-circuit
+    assert result == [survivor]
+
+
+def test_generate_caps_seed_count_at_max_regardless_of_n(monkeypatch):
+    """真机成本控制：即便 `n` 请求更大，Mode3 每次编排最多真机跑
+    `_TARGET_MAX_SEEDS` 颗 seed。"""
+    cases = [c for c in load_case_library() if c.metadata is not None][:5]
+    assert len(cases) == 5
+
+    monkeypatch.setattr(generators_module, "DEFAULT_CODEV_EXECUTABLE", Path(__file__))
+    monkeypatch.setattr(
+        TargetConvergedGenerator,
+        "_rank_seeds_by_target_match",
+        staticmethod(lambda spec: [(c, _fake_match()) for c in cases]),
+    )
+    attempted: list[str] = []
+
+    def _fake_candidate_for_seed(*, seed, match, spec, work_dir):  # noqa: ANN001
+        attempted.append(seed.metadata.case_id)
+        return None
+
+    monkeypatch.setattr(
+        TargetConvergedGenerator, "_candidate_for_seed", staticmethod(_fake_candidate_for_seed)
+    )
+
+    spec = TargetSpec(scenario=Scenario.SMARTPHONE_WIDE, efl_mm=3.797, fnum=2.3)
+    TargetConvergedGenerator().generate(spec, spec, n=10)
+    assert len(attempted) == generators_module._TARGET_MAX_SEEDS
+
+
+# ---------------------------------------------------------------------------
+# Real CODE V end-to-end (task report requirement — actual machine run,
+# `-k real` opt-in, matches the repo's `test_real_*` real-machine convention)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.skipif(
+    not DEFAULT_CODEV_EXECUTABLE.is_file(),
+    reason="real CODE V installation required for the Mode3 end-to-end smoke",
+)
+def test_real_target_converged_generator_orchestrate_end_to_end():
+    """真机端到端：`orchestrate()` 全 modes 开，target EFL=3.797mm /
+    FOV=78deg / F#=2.3（wide 场景，池内实测甜区附近，见
+    `.planning/loop/opt3-final-handoff-2026-07-09.md` §三）。如实打印
+    Mode3 是否产出候选、banner 状态、provenance——不预设 payload 现算一定
+    躲过 even_asphere 溢出风险（该风险的真实表现是本测试要观测的对象，不是
+    要断言掉的噪声）。"""
+    target = TargetSpec(
+        scenario=Scenario.SMARTPHONE_WIDE,
+        efl_mm=3.797,
+        fov_deg=78.0,
+        fnum=2.3,
+    )
+    result = orchestrate(target, target, n=4)
+
+    print(f"[real e2e] modes_present={sorted(m.value for m in result.modes_present)}")
+    print(f"[real e2e] honesty_banner={result.honesty_banner!r}")
+    print(f"[real e2e] summary.notes={result.summary.notes}")
+    for sc in result.candidates:
+        if sc.mode is GenerationMode.TARGET_CONVERGED:
+            print(f"[real e2e] TARGET_CONVERGED candidate_id={sc.scorecard.candidate_id}")
+            for note in sc.generated.generation_notes:
+                print(f"[real e2e]   note: {note}")
+            print(f"[real e2e]   codev_post_aut={sc.generated.optical_extras.codev_post_aut}")
+            efl_dev = next(d for d in sc.scorecard.target_deviations if d.field == "efl")
+            print(
+                f"[real e2e]   efl converged={efl_dev.converged_toward_target} "
+                f"achieved={efl_dev.achieved} target={efl_dev.target}"
+            )
+
+    # Honest assertion set: Mode3 may legitimately produce zero candidates if
+    # every selected seed's payload rebuild hits the known even_asphere risk
+    # (or CODE V itself times out/errors on this host) — that is itself a
+    # valid, fail-closed outcome, not a test failure. What must always hold:
+    # `orchestrate` never raises, RETRIEVED still works regardless, and *if*
+    # a TARGET_CONVERGED candidate is present, the banner disappears and its
+    # EFL deviation is genuinely marked converged with real CODE V numbers
+    # attached.
+    assert isinstance(result, CandidateSet)
+    assert any(sc.mode is GenerationMode.RETRIEVED for sc in result.candidates)
+    if GenerationMode.TARGET_CONVERGED in result.modes_present:
+        assert result.honesty_banner is None
+        tc = next(sc for sc in result.candidates if sc.mode is GenerationMode.TARGET_CONVERGED)
+        efl_dev = next(d for d in tc.scorecard.target_deviations if d.field == "efl")
+        assert efl_dev.converged_toward_target is True
+        assert tc.generated.optical_extras.codev_post_aut is not None
+    else:
+        print(
+            "[real e2e] Mode3 produced 0 candidates this run (all selected seeds "
+            "fail-closed, or CODE V unavailable/errored) — see notes above for why"
+        )

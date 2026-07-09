@@ -1272,6 +1272,34 @@ def test_target_standard_missing_rms_is_fail_closed(
     assert result["preferred"] == "both"
 
 
+def test_target_standard_zero_rms_is_fail_closed(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """CODE V 宏 `@rmssum`（FCT 定义见 `_metric_function_block`）以 `^max==0`
+    起始，只在 `SPOTDATA` 返回 `^err=0`（追迹成功）的场次才更新 `^max`；若
+    某配置全部场次 `SPOTDATA` 都 `^err!=0`（追迹失败），`^max` 原样保留初值
+    0 并被写出为 `post_aut.max_rms_spot_diameter_um="0"`——这是"追迹全失败"
+    的哨兵值，不是"零误差"的真优值（物理上 RMS 点列径精确为 0 不存在，衍射
+    极限设下界 >0）。rms="0" 的配置不得凭这个假优值赢过真实收敛 rms="5.0"
+    的配置。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="0"),
+                "both": _standard_config_result(converged="1", rms="5.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "both"
+    assert "不可用" in result["preferred_reason"]
+    assert result["configs"]["asphere"]["post_aut.max_rms_spot_diameter_um"] == "0"
+
+
 def test_target_standard_both_errors_preferred_is_none(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
