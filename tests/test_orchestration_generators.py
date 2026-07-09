@@ -384,6 +384,120 @@ def _fake_standard_result(
     }
 
 
+def _fov_variant_pair() -> tuple[OpticalSampleData, OpticalSampleData]:
+    """Two synthetic seeds sharing one real on-disk ZMX + identical EFL/F#/
+    image-height, differing only in native FOV (36 deg vs 78 deg) and
+    `case_id` — the exact real-machine-exposed failure shape
+    (fix/mode3-seed-fov-prefilter, 2026-07-10): stage 2's EFL-only score
+    ties the two, so only stage 1's FOV-weighted `rank_seeds` distance can
+    tell them apart."""
+    base = _real_case_with_zmx()
+    assert base.metadata is not None
+
+    narrow = base.model_copy(deep=True)
+    assert narrow.metadata is not None
+    narrow.metadata.case_id = f"{base.metadata.case_id}-fovtest-narrow"
+    narrow.metadata.fov_deg = 36.0
+
+    wide = base.model_copy(deep=True)
+    assert wide.metadata is not None
+    wide.metadata.case_id = f"{base.metadata.case_id}-fovtest-wide"
+    wide.metadata.fov_deg = 78.0
+
+    return narrow, wide
+
+
+# ---------------------------------------------------------------------------
+# `_rank_seeds_by_target_match` — FOV 近邻预筛（fix/mode3-seed-fov-prefilter，
+# 2026-07-10）
+# ---------------------------------------------------------------------------
+
+
+def test_rank_seeds_by_target_match_prefers_fov_near_seed_when_fov_constrained(monkeypatch):
+    """真机实锤复现的最小案例：同 EFL-band 两颗 seed，FOV 36 deg vs 78 deg。
+    stage 2（EFL-only）单独打分二者打平；target fov=78 时 stage 1 的 FOV
+    近邻预筛必须把 78 deg 那颗排到最前——特意把 36 deg 那颗放在
+    `cases_for_scenario` 返回列表最前面，若 stage 1 没生效，稳定排序会让
+    36 deg 那颗（错的那颗）留在最前，测试才有意义。"""
+    narrow_fov, wide_fov = _fov_variant_pair()
+    assert narrow_fov.metadata is not None and wide_fov.metadata is not None
+    monkeypatch.setattr(
+        generators_module, "cases_for_scenario", lambda scenario: [narrow_fov, wide_fov]  # noqa: ARG005
+    )
+    spec = TargetSpec(
+        scenario=Scenario.SMARTPHONE_WIDE,
+        efl_mm=narrow_fov.paraxial.effective_focal_length_mm,
+        fov_deg=78.0,
+        fnum=narrow_fov.paraxial.f_number,
+    )
+    scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+    case_ids = [case.metadata.case_id for case, _ in scored if case.metadata is not None]
+    assert case_ids[0] == wide_fov.metadata.case_id
+
+
+def test_rank_seeds_by_target_match_degrades_to_efl_only_when_fov_unconstrained(monkeypatch):
+    """`spec.fov_deg is None`（§7-E unconstrained）→ stage 1 跳过，退化为纯
+    EFL 排序（原行为）：两颗 seed EFL 相同打平，stable sort 保留
+    `cases_for_scenario` 原始顺序——本测试把 36 deg（对 target fov=78 而言
+    错配）那颗放在池子最前面，验证退化路径确实没做 FOV 近邻过滤（否则会
+    像上一测试一样选中 78 deg 那颗，掩盖了"未过滤"这件事）。"""
+    narrow_fov, wide_fov = _fov_variant_pair()
+    assert narrow_fov.metadata is not None and wide_fov.metadata is not None
+    monkeypatch.setattr(
+        generators_module, "cases_for_scenario", lambda scenario: [narrow_fov, wide_fov]  # noqa: ARG005
+    )
+    spec = TargetSpec(
+        scenario=Scenario.SMARTPHONE_WIDE,
+        efl_mm=narrow_fov.paraxial.effective_focal_length_mm,
+        fov_deg=None,
+        fnum=narrow_fov.paraxial.f_number,
+    )
+    scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+    case_ids = [case.metadata.case_id for case, _ in scored if case.metadata is not None]
+    assert case_ids[0] == narrow_fov.metadata.case_id  # 退化路径未做 FOV 过滤
+    assert wide_fov.metadata.case_id in case_ids  # 两颗都还在（没被 stage 1 剔除）
+
+
+def test_candidate_for_seed_notes_flag_fov_unfiltered_selection_when_fov_unconstrained(
+    tmp_path: Path, monkeypatch
+):
+    """`spec.fov_deg is None` 时诚实降级注记：generation_notes 必须出现"未做
+    FOV 近邻过滤"字样，不能静默；`fov_deg` 有值时不应出现这条注记。见
+    `_mode3_generation_notes` 的 `fov_prefiltered` 参数。"""
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+
+    unconstrained_zmx = tmp_path / f"{seed.metadata.case_id}_target3.797_optimized.zmx"
+    unconstrained_zmx.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=str(unconstrained_zmx)),  # noqa: ANN003
+    )
+    spec_unconstrained = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed, match=_fake_match(), spec=spec_unconstrained, work_dir=tmp_path / "work-a"
+    )
+    assert candidate is not None
+    assert any("未做 FOV 近邻过滤" in note for note in candidate.generation_notes)
+
+    constrained_zmx = tmp_path / f"{seed.metadata.case_id}_target3.797_optimized2.zmx"
+    constrained_zmx.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=str(constrained_zmx)),  # noqa: ANN003
+    )
+    spec_constrained = TargetSpec(
+        scenario=seed.metadata.scenario, efl_mm=3.797, fov_deg=seed.metadata.fov_deg, fnum=2.3
+    )
+    candidate_constrained = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed, match=_fake_match(), spec=spec_constrained, work_dir=tmp_path / "work-b"
+    )
+    assert candidate_constrained is not None
+    assert not any("未做 FOV 近邻过滤" in note for note in candidate_constrained.generation_notes)
+
+
 # ---------------------------------------------------------------------------
 # `_candidate_for_seed` — unit-level (mocked CODE V, real Optiland payload build)
 # ---------------------------------------------------------------------------
