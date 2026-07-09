@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import os
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -740,6 +741,119 @@ _TARGET_REQUIRED_KEYS = (
 )
 
 
+# ---------------------------------------------------------------------------
+# AUT 误差函数轨迹诊断（诚实性修复 · 灾难案例实锤）：CODE V AUT 的 IMP 终止判
+# 据只看相邻两 cycle 的改善速率，不看绝对量级——真机灾难案例
+# （scratch_diag/dof_work/atelier_codev_target_A.19.lis）cycle0 ERR. F. =
+# 128.15953160，一路爆炸到末 cycle ERR. F. = 0.154263E+06（×1204），末行仍报
+# "Normal AUTO Completion - System improvement less than IMP"；现有
+# aut_converged（EFL-hit 代理）完全抓不到这类假阳性。本节把 .lis 里逐 cycle
+# 的 ERR. F./ABERR F./CONST F. 与终止行原文如实解析出来，供 scorecard/资深
+# 看——只出数字，绝不下"假阳性/良品"判定（[EXPERT] 红线，见 AGENTS.md 北极星
+# 条款）。纯读文本、fail-open：解析失败不能反过来炸掉 run_codev_target 的主
+# 流程（TSV 数值契约才是主线，.lis 只是诊断性 side-channel）。
+# ---------------------------------------------------------------------------
+
+_AUT_CYCLE_BLOCK_RE = re.compile(
+    r"ABERR\s+F\.\s*=\s*(?P<aberr>[-+0-9.EeDd]+)\s*\r?\n"
+    r"\s*CONST\s+F\.\s*=\s*(?P<const>[-+0-9.EeDd]+)\s*\r?\n"
+    r"\s*ERR\.\s*F\.\s*=\s*(?P<err>[-+0-9.EeDd]+)"
+)
+
+# (原文短语, 归一化关键词) —— 短语原文照抄 CODE V 输出（含大小写/标点），来自
+# scratch_diag/ 下真实 .lis 样本穷举（多颗 seed、多种 extra_dof 配置）。找不
+# 到匹配的终止措辞 → termination=None（未知/新措辞不硬猜）。
+_AUT_TERMINATION_KEYWORDS: tuple[tuple[str, str], ...] = (
+    ("Normal AUTO Completion - System improvement less than IMP", "normal_completion"),
+    ("Normal AUTO Completion - Unstable Condition", "unstable_condition"),
+    ("Normal AUTO Completion - Maximum cycle limit reached", "max_cycle_limit"),
+    ("Abnormal AUTO Completion - Irrecoverable Condition", "irrecoverable_condition"),
+    (
+        "Abnormal AUTO Completion - Unable to scale up Pupil and Field specifications",
+        "unable_to_scale_pupil_field",
+    ),
+)
+_AUT_TERMINATION_RE = re.compile(
+    "|".join(re.escape(phrase) for phrase, _keyword in _AUT_TERMINATION_KEYWORDS)
+)
+_AUT_TERMINATION_LOOKUP: dict[str, str] = dict(_AUT_TERMINATION_KEYWORDS)
+
+_AUT_ERROR_TRACE_EMPTY: dict[str, float | str | None] = {
+    "err_f_first": None,
+    "err_f_last": None,
+    "aberr_f_last": None,
+    "const_f_last": None,
+    "err_f_ratio": None,
+    "termination": None,
+}
+
+
+def _parse_aut_float(token: str) -> float | None:
+    """CODE V 一般用 E 记号；容错接受 Fortran D 记号。转换失败 → None（单个
+    token 解析失败不该炸掉整条诊断轨迹）。"""
+    try:
+        return float(token.replace("D", "E").replace("d", "e"))
+    except ValueError:
+        return None
+
+
+def parse_aut_error_trace(listing_text: str) -> dict[str, float | str | None]:
+    """从 CODE V AUT ``.lis`` 清单文本解析逐 cycle 误差函数轨迹（纯诊断字段，
+    不做良品/假阳性判定——判断权在资深设计师，见 AGENTS.md 北极星 [EXPERT] 红
+    线）。
+
+    Returns a dict with:
+      - err_f_first: cycle 0 的 ``ERR. F.``
+      - err_f_last: 最后一个 cycle 的 ``ERR. F.``
+      - aberr_f_last / const_f_last: 最后一个 cycle 的 ``ABERR F.`` / ``CONST F.``
+      - err_f_ratio: ``err_f_last / err_f_first``（``err_f_first`` 为 0 或缺失
+        → None）
+      - termination: 终止行关键词（见 ``_AUT_TERMINATION_KEYWORDS``），文本里
+        一个都没识别到 → None
+
+    找不到任何 ``ABERR F./CONST F./ERR. F.`` 三行组 → 全字段 None（fail-open：
+    诊断性质，找不到不代表调用方数据有误，不抛异常）。
+    """
+
+    blocks = list(_AUT_CYCLE_BLOCK_RE.finditer(listing_text))
+    if not blocks:
+        return dict(_AUT_ERROR_TRACE_EMPTY)
+
+    first_block, last_block = blocks[0], blocks[-1]
+    err_f_first = _parse_aut_float(first_block.group("err"))
+    err_f_last = _parse_aut_float(last_block.group("err"))
+    aberr_f_last = _parse_aut_float(last_block.group("aberr"))
+    const_f_last = _parse_aut_float(last_block.group("const"))
+
+    err_f_ratio: float | None = None
+    if err_f_first is not None and err_f_last is not None and err_f_first != 0:
+        err_f_ratio = err_f_last / err_f_first
+
+    term_matches = _AUT_TERMINATION_RE.findall(listing_text)
+    termination = _AUT_TERMINATION_LOOKUP.get(term_matches[-1]) if term_matches else None
+
+    return {
+        "err_f_first": err_f_first,
+        "err_f_last": err_f_last,
+        "aberr_f_last": aberr_f_last,
+        "const_f_last": const_f_last,
+        "err_f_ratio": err_f_ratio,
+        "termination": termination,
+    }
+
+
+def _safe_aut_error_trace(listing_path: Path | None) -> dict[str, float | str | None] | None:
+    """读 + 解析 ``.lis`` 的 fail-open 包装：读不到文件/解析抛任何异常 → None
+    （诊断字段绝不影响 ``run_codev_target`` 的主 TSV 契约）。"""
+    if listing_path is None:
+        return None
+    try:
+        listing_text = listing_path.read_text(encoding="utf-8", errors="replace")
+        return parse_aut_error_trace(listing_text)
+    except Exception:  # noqa: BLE001 - 诊断 side-channel，任何异常都不外泄给主流程
+        return None
+
+
 def run_codev_target(
     *,
     source_zmx: Path | str,
@@ -752,8 +866,15 @@ def run_codev_target(
     timeout_seconds: float = 180.0,
     platform_name: str = os.name,
     **sequence_options: object,
-) -> dict[str, str]:
-    """Run one target-mode AUT and return the parsed three-snapshot data dict."""
+) -> dict[str, object]:
+    """Run one target-mode AUT and return the parsed three-snapshot data dict.
+
+    ``"aut_error_trace"`` is an additive diagnostic key (see
+    ``parse_aut_error_trace``): the raw AUT cycle-by-cycle ERR. F. progression
+    read from the run's ``.lis`` listing, exposed alongside the TSV-derived
+    fields. It never affects the TSV-based contract above it — a missing or
+    unparseable listing just yields ``None``.
+    """
 
     source_zmx = Path(source_zmx)
     work_dir = Path(work_dir).resolve()  # 绝对路径：CODE V BUF EXP 相对路径会二次拼接失败
@@ -774,7 +895,9 @@ def run_codev_target(
         expected_schema=TARGET_RESULT_SCHEMA, required_keys=_TARGET_REQUIRED_KEYS,
         allow_nonzero_ok_result=True,
     )
-    return dict(batch.data)
+    data: dict[str, object] = dict(batch.data)
+    data["aut_error_trace"] = _safe_aut_error_trace(batch.listing_path)
+    return data
 
 
 # 自动渐晕搜索（主公 2026-07-09 ratify 的 ray-setup 方案）：宽+快种子导入丢
@@ -805,7 +928,7 @@ def run_codev_target_autovig(
     timeout_seconds: float = 180.0,
     platform_name: str = os.name,
     **sequence_options: object,
-) -> dict[str, str]:
+) -> dict[str, object]:
     """Climb `vig_ladder` from 0, return the FIRST target run whose AUT converges
     (EFL dev<2%) — i.e. the minimal off-axis 渐晕 needed — preserving F#. Annotates
     the returned dict with autovig.edge_used / autovig.converged / autovig.trace so
@@ -819,11 +942,11 @@ def run_codev_target_autovig(
     blocked) when EVERY rung fails to produce parseable data."""
 
     trace: list[str] = []
-    best: dict[str, str] | None = None
+    best: dict[str, object] | None = None
     best_dev = float("inf")
     last_error: CodeVBatchError | None = None
 
-    def _trial(edge: float, vig: list[float] | None) -> tuple[dict[str, str] | None, bool]:
+    def _trial(edge: float, vig: list[float] | None) -> tuple[dict[str, object] | None, bool]:
         nonlocal best, best_dev, last_error
         try:
             data = run_codev_target(
@@ -846,12 +969,12 @@ def run_codev_target_autovig(
             best_dev, best = dev, data
         return data, conv
 
-    def _annotate(data: dict[str, str], edge: float, converged: bool) -> dict[str, str]:
+    def _annotate(data: dict[str, object], edge: float, converged: bool) -> dict[str, object]:
         return {**data, "autovig.edge_used": _fmt_number(edge),
                 "autovig.converged": "1" if converged else "0",
                 "autovig.trace": " ".join(trace)}
 
-    def _blocked_or_best(edge: float) -> dict[str, str]:
+    def _blocked_or_best(edge: float) -> dict[str, object]:
         if best is None and last_error is not None:
             raise last_error  # 全无可用数据 → tooling-blocked（保持既有语义）
         return _annotate(dict(best) if best is not None else {}, edge, False)

@@ -21,6 +21,7 @@ from app.core.engines.codev_optimize import (
     build_codev_optimize_sequence,
     build_codev_target_sequence,
     default_optimize_seed,
+    parse_aut_error_trace,
     parse_codev_optimize_file,
     run_codev_optimize,
     run_codev_target,
@@ -750,6 +751,222 @@ def _buf_exp_paths_from_sequence_single(sequence_path: Path) -> list[Path]:
     matches = re.findall(r'BUF EXP B1 "([^"]+)"', sequence)
     assert len(matches) == 1  # target 模式单 BUF EXP
     return [Path(m) for m in matches]
+
+
+# ===========================================================================
+# parse_aut_error_trace（AUT 误差函数轨迹诊断）单测：内联 fixture 摘录自真实
+# .lis 样本，未经删改数值（仅省略了中间的 Parameter 逐行清单，不影响
+# ABERR/CONST/ERR 三行组的解析）。
+#   - 灾难案例来源：scratch_diag/dof_work/atelier_codev_target_A.19.lis
+#     （cycle 0 与 cycle 22，行号约 668-673 / 6096-6103 / 6297）
+#   - 健康案例来源：scratch_diag/glc_fix_work/glc_fix_both_gla.lis
+#     （cycle 0 与 cycle 13，行号约 668-672 / 3765-3769 / 3966）
+#   - Unstable 案例来源：scratch_diag/autovig_work/atelier_codev_target_A.1.lis
+#     （cycle 10 重复块，行号约 1040-1089）
+# ===========================================================================
+
+_DISASTER_LIS_EXCERPT = """\
+ CYCLE NUMBER 0:
+
+  ABERR F. =        0.23586894
+  CONST F. =      127.92366266
+  ERR. F.  =      128.15953160
+
+  OPD     0.38636451     0.03869299     0.08639244
+  WAV     0.40688146     0.04147835     0.09106934
+
+ CYCLE NUMBER 22:
+
+  ABERR F. =        8.03888494
+  CONST F. =      0.154255E+06
+  ERR. F.  =      0.154263E+06       (change =     -0.110267E+01)
+
+  OPD    11.14247810     6.93271640     1.68243607
+  WAV    12.35508170     7.55339870     1.72979320
+
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   6.05847E+00   1.000E-02   3.671E+03
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.88052E+02   1.000E-03   1.506E+05
+
+     Normal AUTO Completion - System improvement less than IMP
+AUT> GO
+"""
+
+_HEALTHY_LIS_EXCERPT = """\
+ CYCLE NUMBER 0:
+
+  ABERR F. =        0.23586894
+  CONST F. =      127.92366266
+  ERR. F.  =      128.15953160
+
+ CYCLE NUMBER 13:
+
+  ABERR F. =        0.17323803
+  CONST F. =       26.95327543
+  ERR. F.  =       27.12651346       (change =       -0.01919572)
+
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.61726E-01   1.000E-02   2.616E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   4.93333E+00   1.000E-03   2.434E+01
+
+     Normal AUTO Completion - System improvement less than IMP
+AUT> GO
+"""
+
+_NO_SIGNAL_LIS_EXCERPT = """\
+CODE V> IN CV_MACRO:ZEMAXOS_TO_CV "seed.zmx"
+CODE V> DEF VAR SA
+CODE V> AUT
+AUT> SUR N
+AUT> CHG SA
+AUT> WFR Y
+"""
+
+_UNSTABLE_LIS_EXCERPT = """\
+ CYCLE NUMBER 10:
+
+  ABERR F. =        6.93276207
+  CONST F. =     1225.65241337
+  ERR. F.  =     1232.58517544       (change =        3.23274194)
+
+  OPD     0.51589472     0.64104172     7.93588616
+  WAV     0.59888159     0.72541838    14.96124586
+
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      4.738699     0.000000     0.013967     6.032188     0.475900    -3.118203
+
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   5.26337E+00   4.73870E+00  -5.247E-01   4.378E+00
+  Mn CT S2                                                          -7.390E+00
+
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.56807E+00   1.000E-02   2.459E+02
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.13012E+01   1.000E-03   9.798E+02
+
+     Normal AUTO Completion - Unstable Condition
+AUT> GO
+"""
+
+
+def test_parse_aut_error_trace_disaster_case_flags_extreme_ratio() -> None:
+    """真机灾难案例：IMP 只看相邻 cycle 改善速率，ERR. F. 从 cycle0 的
+    128.15953160 爆炸到末 cycle 的 0.154263E+06（约 ×1204），末行仍报
+    "System improvement less than IMP"——aut_converged（EFL-hit 代理）完全
+    抓不到这类假阳性，本函数如实暴露数字（不下判定）。"""
+    trace = parse_aut_error_trace(_DISASTER_LIS_EXCERPT)
+    assert trace["err_f_first"] == pytest.approx(128.15953160)
+    assert trace["err_f_last"] == pytest.approx(154263.0)
+    assert trace["aberr_f_last"] == pytest.approx(8.03888494)
+    assert trace["const_f_last"] == pytest.approx(154255.0)
+    assert trace["err_f_ratio"] == pytest.approx(1203.68, rel=1e-3)
+    assert trace["termination"] == "normal_completion"
+
+
+def test_parse_aut_error_trace_healthy_case_ratio_below_one() -> None:
+    """健康案例对照：同一 seed 起点 128.15953160，真实收敛到 27.12651346，
+    ratio<1，与灾难案例（ratio>1000）虽终止措辞完全相同（都是 "System
+    improvement less than IMP"）但 ratio 天差地别——这正是本诊断字段存在
+    的意义：终止措辞本身分辨不出假阳性。"""
+    trace = parse_aut_error_trace(_HEALTHY_LIS_EXCERPT)
+    assert trace["err_f_first"] == pytest.approx(128.15953160)
+    assert trace["err_f_last"] == pytest.approx(27.12651346)
+    assert trace["err_f_ratio"] == pytest.approx(0.21166, rel=1e-3)
+    assert trace["termination"] == "normal_completion"
+
+
+def test_parse_aut_error_trace_no_cycle_data_returns_all_none() -> None:
+    """找不到任何 ABERR/CONST/ERR. F. 三行组（例如进程在第一个 cycle 完成前
+    被杀）→ 全字段 None，fail-open，不抛异常。"""
+    trace = parse_aut_error_trace(_NO_SIGNAL_LIS_EXCERPT)
+    assert trace == {
+        "err_f_first": None,
+        "err_f_last": None,
+        "aberr_f_last": None,
+        "const_f_last": None,
+        "err_f_ratio": None,
+        "termination": None,
+    }
+
+
+def test_parse_aut_error_trace_unstable_termination_keyword() -> None:
+    """真机 "Unstable Condition" 终止措辞归一化为 unstable_condition；单
+    cycle 场景下 err_f_first == err_f_last，ratio == 1.0。"""
+    trace = parse_aut_error_trace(_UNSTABLE_LIS_EXCERPT)
+    assert trace["err_f_first"] == pytest.approx(1232.58517544)
+    assert trace["err_f_last"] == pytest.approx(1232.58517544)
+    assert trace["err_f_ratio"] == pytest.approx(1.0)
+    assert trace["termination"] == "unstable_condition"
+
+
+def test_mock_run_codev_target_includes_aut_error_trace(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """listing_path 可读时，run_codev_target 把 parse_aut_error_trace 的结果
+    以 "aut_error_trace" 键附加进返回 dict（真机 .lis 同源样本，见上方单测）。
+    listing 必须在 FakePopen.communicate() 期间才写出——run_codev_batch 用运行
+    前后快照 diff 认领清单文件，运行前已存在的裸名 .lis 会被当作 stale 删除。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 4322
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            _write_target_result(result_path)
+            sequence_path.with_suffix(".lis").write_text(
+                _HEALTHY_LIS_EXCERPT, encoding="utf-8"
+            )
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+    )
+    trace = data["aut_error_trace"]
+    assert trace is not None
+    assert trace["err_f_first"] == pytest.approx(128.15953160)
+    assert trace["err_f_last"] == pytest.approx(27.12651346)
+    assert trace["termination"] == "normal_completion"
+
+
+def test_mock_run_codev_target_aut_error_trace_none_without_listing(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """没有任何 .lis 清单文件（listing_path 认领结果为 None，例如 CODE V 版本
+    差异下未产出清单）→ aut_error_trace 键仍存在，值为 None——诊断字段
+    fail-open，绝不影响 run_codev_target 主 TSV 契约（其余键照常齐全）。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 4323
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            _write_target_result(result_path)
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+    )
+    assert data["aut_error_trace"] is None
+    assert data["mode"] == "target"  # 主契约不受影响
 
 
 # ===========================================================================
