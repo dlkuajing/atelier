@@ -437,8 +437,8 @@ CODE V> VLX 0 0.2 0.2
  
  
 CODE V> AUT
-     AUT                                                                               9-Jul-26  19H  4M 17S
-                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  1S
+     AUT                                                                               9-Jul-26  19H 35M 59S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S
      WARNING - CODE V places the reference sphere at the exit pupil.  However,
                the aberrations of this lens make the OPD data (and any quantity
                that depends upon OPD data) very sensitive to the exact value of
@@ -3257,8 +3257,8 @@ CODE V> BUF PUT B1 I^row J1 "efl_target_deviation_pct"
 CODE V> BUF PUT B1 I^row J2 ^efl_target_dev_pct
 CODE V> BUF PUT B1 I^row J1 "aut_converged"
 CODE V> BUF PUT B1 I^row J2 ^aut_converged
-CODE V> BUF EXP B1 "D:\atelier-opt3\.planning\loop\candidates-2026-07-09\US20170045714A1\both\atelier_codev_target_A.tsv"
-     Buffer B1 exported to file atelier_codev_target_A.tsv
+CODE V> BUF EXP B1 "D:\atelier-opt3\scratch_diag\vigtoken_smoke\both\atelier_codev_target_A_vig020.tsv"
+     Buffer B1 exported to file atelier_codev_target_A_vig020.tsv
 CODE V> BUF DEL B1
 CODE V> BUF PUT B1 I^row J1 "schema"
       Created new worksheet B1.
@@ -4065,9 +4065,10 @@ CODE V>   BUF PUT B1 I^row J1 ^key
 CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
 CODE V>   BUF PUT B1 I^row J1 ^key
 CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
-CODE V> BUF EXP B1 "D:\atelier-opt3\.planning\loop\candidates-2026-07-09\US20170045714A1\both\atelier_codev_target_A_vig0.20_optimized_readout.tsv"
-     ERROR - Unable to open file.
-     WARNING - Sequence aborted
-CODE V> EXIT
-     EXI                                                                               9-Jul-26  19H  4M 57S
-                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M 41S
+CODE V> BUF EXP B1 "D:\atelier-opt3\scratch_diag\vigtoken_smoke\both\atelier_codev_target_A_vig020_optimized_readout.tsv"
+     Buffer B1 exported to file atelier_codev_target_A_vig020_optimized_readout.tsv
+CODE V> BUF DEL B1
+CODE V> OUT YES
+CODE V> EXI YES
+     EXI                                                                               9-Jul-26  19H 36M 39S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M 40S

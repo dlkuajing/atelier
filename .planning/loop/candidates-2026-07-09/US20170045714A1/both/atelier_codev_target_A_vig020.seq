@@ -80,6 +80,10 @@ FOR ^s 1 (NUM S)
     FC S^s 0
     GC S^s 0
   END IF
+  ^probe_nd == ABSF((IND S^s W1))
+  IF ^probe_nd > 1.05
+    GLC S^s 0
+  END IF
 END FOR
 ^seed_baseline_efl_y_mm == ABSF((EFY))
 ^seed_baseline_max_lateral_color_um == @lcum(1)
@@ -144,6 +148,7 @@ AUT
   MXC 25
   MNC 3
   IMP 0.001
+  GLA 1.4200:68.00 1.5170:64.20 1.5445:55.90 1.6510:21.50 1.6900:18.00
 GO
 ^post_aut_efl_y_mm == ABSF((EFY))
 ^post_aut_max_lateral_color_um == @lcum(1)
@@ -278,7 +283,7 @@ BUF PUT B1 I^row J2 ^efl_target_dev_pct
 BUF PUT B1 I^row J1 "aut_converged"
 BUF PUT B1 I^row J2 ^aut_converged
 ^row == ^row+1
-BUF EXP B1 "D:\atelier-opt3\.planning\loop\candidates-2026-07-09\US20170045714A1\asphere\atelier_codev_target_A.tsv"
+BUF EXP B1 "D:\atelier-opt3\scratch_diag\vigtoken_smoke\both\atelier_codev_target_A_vig020.tsv"
 BUF DEL B1
 ^row == 1
 ^refw == (REF)
@@ -531,7 +536,7 @@ FOR ^f 1 ^numfld
   BUF PUT B1 I^row J2 (VLX F^f Z1)
   ^row == ^row+1
 END FOR
-BUF EXP B1 "D:\atelier-opt3\.planning\loop\candidates-2026-07-09\US20170045714A1\asphere\atelier_codev_target_A_vig0.20_optimized_readout.tsv"
+BUF EXP B1 "D:\atelier-opt3\scratch_diag\vigtoken_smoke\both\atelier_codev_target_A_vig020_optimized_readout.tsv"
 BUF DEL B1
 OUT YES
 EXI YES
