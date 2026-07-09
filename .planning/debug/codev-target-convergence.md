@@ -59,6 +59,15 @@ note: "本 session 由主公 attended 驱动，非自主 session-manager 循环�
 - **已修 bug**：`codev_batch` subprocess `text=True` 读 CODE V 非 UTF-8 输出崩 reader 线程→管道满→hang（改二进制读，24 测绿）。
 - **待办 finding**：Stage B 显式 `FNO` 命令致宽视场主光线追迹失败(需 CRA/ray-aiming)；部分 dashed staging seed AUT hang(tooling-blocked)。
 
+## 诊断：EFL 收敛"拉不动"=SETUP 非本征（2026-07-09 · 决定性）
+
+主公令诊断 conv=0 seed 为何 EFL 拉不动。AUT .lis + 决定性对照实验：
+- **EFL 约束是硬的、active**（.lis：`EFL target 5.263 value 4.699 active **`）——非软约束被淹没。
+- **从 CYCLE 0 就 `RAY ERROR: REFL 4/14`（全反射）** + `Ray aiming not used` + `Frozen Thickness Violations`——快镜头(F/1.68)边缘光线 TIR → merit 从起点残废 → 拉不动 EFL。手册(LensSystemSetupRM p41)证："resetting the vignetting may be necessary"、优化时需 reference ray aiming。
+- **决定性对照（US10281683B2 同 seed 同 target 只差光阑）**：原生 F/1.68 → dev 9.52% conv=❌；**缩到 EPD 1.5(F/3.1) → dev 0.00% conv=✅ 完美收敛**。
+- **结论**：**"拉不动"100% 是 AUT/导入 setup 问题（边缘 ray TIR 挡住 merit），不是本征**。AUT 拉 EFL 的能力完全在。naive-macro 的低收敛率是 setup 假象。
+- **对 go/no-go**：crux（可靠 EFL 收敛）是**可解工程问题**（光阑/渐晕/ray-aiming setup），非研究墙——探路阶展望改善。真良品率须在**修好 ray setup 的宏**上重测。
+
 ## Evidence
 
 - 2026-07-08: 本地 main 曾落后 origin/main 21 commit，已 pull 对齐至 7177325；spike worktree D:\atelier-opt3 从此切出。
