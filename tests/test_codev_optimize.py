@@ -14,6 +14,7 @@ from app.core.engines.codev_optimize import (
     CODEV_OPTIMIZE_RESULT_SCHEMA,
     DEFAULT_OPTIMIZE_SEED,
     TARGET_RESULT_SCHEMA,
+    _autovig_profile,
     build_codev_optimize_sequence,
     build_codev_target_sequence,
     default_optimize_seed,
@@ -22,7 +23,6 @@ from app.core.engines.codev_optimize import (
     run_codev_target,
     run_codev_target_autovig,
 )
-from app.core.engines.codev_optimize import _autovig_profile
 from app.core.engines.codev_readout import CODEV_READOUT_RESULT_SCHEMA
 
 
@@ -514,6 +514,77 @@ def test_mock_autovig_no_clip_when_native_converges(
     assert data["autovig.converged"] == "1"
     assert data["autovig.trace"].startswith("e0.00") and data["autovig.trace"].endswith("c1")
     assert "e0.20" not in data["autovig.trace"]  # 首轮即返回
+
+
+def _autovig_flood_popen(*, always_timeout: bool):
+    """FakePopen: rung-0 (无 VUY) 超时(模拟 TIR flood)；有 VUY 的级写收敛结果。
+    always_timeout=True 时每级都超时（模拟彻底 tooling-blocked）。"""
+
+    class FakePopen:
+        pid = 5555
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+            self.communicate_calls = 0
+
+        def communicate(self, timeout: float | None = None) -> tuple[bytes, bytes]:
+            self.communicate_calls += 1
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            seq = sequence_path.read_text(encoding="ascii")
+            has_vig = re.search(r"^VUY ", seq, re.MULTILINE) is not None
+            if always_timeout or not has_vig:  # rung-0 flood → 超时
+                if self.communicate_calls == 1:
+                    raise subprocess.TimeoutExpired(self.command, timeout, output=b"flood")
+                self.returncode = -9
+                return b"drained", b""
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            m = re.search(r"^VUY ([\d. ]+)$", seq, re.MULTILINE)
+            edge = max(float(x) for x in m.group(1).split())
+            _write_target_result(result_path, converged="1", dev="0.5", edge=str(edge))
+            return b"", b""
+
+    return FakePopen
+
+
+def test_mock_autovig_climbs_past_rung0_timeout(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """rung-0 (v=0) TIR-flood 超时被吞，注入 num_fields 后续爬渐晕并收敛。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", _autovig_flood_popen(always_timeout=False))
+    monkeypatch.setattr(
+        codev_batch.subprocess, "run",
+        lambda command, **kw: subprocess.CompletedProcess(command, 0, stdout=b"", stderr=b""),
+    )
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=0.01, platform_name="nt",
+        num_fields=3, vig_ladder=(0.0, 0.2, 0.3),
+    )
+    assert data["autovig.converged"] == "1"
+    assert data["autovig.edge_used"] == "0.2"  # rung-0 超时后首个收敛渐晕
+    assert data["autovig.trace"].startswith("e0.00:timeout")
+
+
+def test_mock_autovig_all_rungs_timeout_reraises_blocked(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """每级都超时且无可用数据 → 重抛 CodeVBatchError（保持 tooling-blocked 语义）。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", _autovig_flood_popen(always_timeout=True))
+    monkeypatch.setattr(
+        codev_batch.subprocess, "run",
+        lambda command, **kw: subprocess.CompletedProcess(command, 0, stdout=b"", stderr=b""),
+    )
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target_autovig(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+            stage="A", executable=executable, timeout_seconds=0.01, platform_name="nt",
+            num_fields=3, vig_ladder=(0.0, 0.2, 0.3),
+        )
+    assert error.value.kind == "timeout"
 
 
 def test_mock_run_codev_target_parses_three_snapshots(

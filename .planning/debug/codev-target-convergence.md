@@ -75,7 +75,7 @@ note: "本 session 由主公 attended 驱动，非自主 session-manager 循环�
 - **收敛机制=已修好且可靠**：**甜区(+12%) 4/4 可追迹 seed 全收敛**（vs naive 旧 1/5）——US10281683B2 渐晕0.3/dev1.9%、US20140111876A1 渐晕0.2/0.72%、US20170003482A1 渐晕0/~0、US20170045714A1 渐晕0.3/1.2%；baseline-lock 4/4；天花板(+35%) 1/4 收敛（负对照成立，收敛半径真实）。**setup 假象已除，crux(可靠 EFL 收敛到客户 target)确认=可解工程，非研究墙。**
 - **★但真良品率(冻结玻璃)依然低★**（[EXPERT] 判，裸数字）：收敛≠好设计。甜区收敛臂像质多数灾难——US10281683B2 RMS 16→153µm/WFE 0.2→8.2 波/畸变→8.2%；US20170045714A1 RMS 10→**553µm**/WFE→**49.6 波**；仅 US20170003482A1(原生收敛渐晕0) RMS→23.6µm/WFE→0.50 波 勉强"值得看"。**且 RMS 是在裁掉 20-30% 离轴瞳后测的=已偏乐观。**
 - **结论（去掉 setup 噪声后的真信号）**：③ **machinery 可靠**、**naive 冻结玻璃良品率仍低**——指向下一杠杆（接缝2 玻璃可变 / 非球面 DOF / seed-target 匹配），与 spike 早前 "machinery通·naive良品率低" 一致但现在是**真值**（非 setup 低估）。良品率 go/no-go 最终判在资深。
-- **tooling 残留**：US20180143405A1 全 4 臂 timeout（180s 硬超时）+ reader 线程 UnicodeDecodeError（`subprocess._readerthread` text=True 解码非 UTF-8 崩）——疑似"改二进制读"修复未覆盖此路径 or dashed staging seed AUT hang，pre-existing 待办，非本次回归（baseline-lock 单跑即 timeout）。
+- **tooling 修复（2026-07-09 · 主公 ratify 三项之一）**：US20180143405A1 全 4 臂 timeout 的真根因=**该 seed 在 v=0 时 S14 TIR flood**（.lis 洪水般 `ERROR - Total reflection at surface 14`，AUT 每轮重追失败光栅→CPU 拖过 180s），而 autovig rung-0(v=0) 超时把整个搜索 abort → 全臂 blocked。两修：① `codev_batch._kill_process_tree` 的 taskkill 由 text=True 改二进制读（中文 Windows taskkill 打 GBK 0xb3 会让 reader 线程 UnicodeDecodeError 崩，清理超时进程树时观测；`_coerce_output` errors='replace' 兜底）；② `run_codev_target_autovig` 加 `num_fields` 注入 + **每级超时/失败即吞并续爬**（rung-0 flood 超时不再 abort，高渐晕裁掉 TIR→跑得快）。**真机验证：US20180143405A1 recovered**（`e0.00:timeout e0.30:4.4% e0.50:4.9% e0.70:conv✅ dev~0 RMS 86µm`）——**甜区收敛 4/5→5/5**（该 seed 需重渐晕 0.7=弃 70% 离轴瞳，edge_used 已上报供资深判）。33 测绿+ruff 绿。
 
 ## 诊断 v2（2026-07-09 · 真机证伪 checkpoint 假设，根因更深）
 

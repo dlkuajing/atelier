@@ -451,11 +451,14 @@ def _popen_codev(
 def _kill_process_tree(process, *, platform_name: str) -> dict[str, object]:
     if platform_name == "nt":
         try:
+            # 二进制读（不加 text=True）：中文 Windows 上 taskkill 打印 GBK 信息（如
+            # "成功: 已终止 …" 的 0xb3 字节），text=True 会让 subprocess.run 的 reader
+            # 线程 UnicodeDecodeError 崩（清理 CODE V 超时进程树时观测到）。字节交给
+            # _coerce_output 后期 errors='replace' 解码，永不崩。
             completed = subprocess.run(
                 ["taskkill", "/F", "/T", "/PID", str(process.pid)],
                 capture_output=True,
                 check=False,
-                text=True,
                 timeout=10,
             )
         except Exception as exc:  # noqa: BLE001 - timeout cleanup must surface diagnostics.

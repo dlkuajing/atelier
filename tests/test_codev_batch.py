@@ -301,6 +301,50 @@ def test_mock_subprocess_timeout_uses_windows_taskkill(monkeypatch, tmp_path: Pa
     assert instances[0].communicate_calls == 2
 
 
+def test_mock_subprocess_timeout_taskkill_gbk_output_does_not_crash(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """中文 Windows：taskkill 输出 GBK 字节，二进制读 + errors='replace' 不崩。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 9999
+        returncode = None
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.communicate_calls = 0
+
+        def communicate(self, timeout: float | None = None) -> tuple[bytes, bytes]:
+            self.communicate_calls += 1
+            if self.communicate_calls == 1:
+                raise subprocess.TimeoutExpired(self.command, timeout, output=b"partial")
+            self.returncode = -9
+            return b"drained", b""
+
+    def fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+        assert "text" not in kwargs and "encoding" not in kwargs  # 二进制读
+        # 模拟中文 Windows taskkill 成功信息（GBK），含非 UTF-8 字节 0xb3
+        return subprocess.CompletedProcess(
+            command, 0, stdout="成功: 已终止 PID 9999".encode("gbk"), stderr=b""
+        )
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    monkeypatch.setattr(codev_batch.subprocess, "run", fake_run)
+
+    with pytest.raises(CodeVBatchError) as error:
+        run_trivial_codev_batch(
+            work_dir=tmp_path, executable=executable,
+            timeout_seconds=0.01, platform_name="nt",
+        )
+
+    assert error.value.kind == "timeout"
+    assert error.value.details["kill"]["method"] == "taskkill"
+    assert error.value.details["kill"]["returncode"] == 0
+    # 未崩，tail 是 str（GBK 字节被 errors='replace' 安全解码）
+    assert isinstance(error.value.details["kill"]["stdout_tail"], str)
+
+
 def test_mock_subprocess_timeout_falls_back_to_kill_when_taskkill_fails(
     monkeypatch,
     tmp_path: Path,

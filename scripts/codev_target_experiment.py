@@ -23,7 +23,6 @@ from app.core.engines.codev_batch import (  # noqa: E402
     run_codev_batch,
 )
 from app.core.engines.codev_optimize import (  # noqa: E402
-    _fmt_number,
     _quote_codev_path,
     default_optimize_seed,
     run_codev_target_autovig,
@@ -34,7 +33,7 @@ SWEET_FACTOR = 1.12   # 甜区偏移 +12%（探针证 +12% 可收敛）
 CEILING_FACTOR = 1.35  # 天花板臂 +35%（负向对照）
 TIMEOUT = 180.0
 _FO_SCHEMA = "atelier-codev-firstorder-v1"
-_FO_REQUIRED = ("schema", "status", "efl", "fno", "maximh")
+_FO_REQUIRED = ("schema", "status", "efl", "fno", "maximh", "num_fields")
 
 
 def _first_order_seq(source_zmx: Path, result_path: Path) -> str:
@@ -57,12 +56,14 @@ def _first_order_seq(source_zmx: Path, result_path: Path) -> str:
         "    ^maximh == ABSF(^yh)",
         "  END IF",
         "END FOR",
+        "^numf == (NUM F)",
         '^row == 1',
         'BUF PUT B1 I^row J1 "schema"', 'BUF PUT B1 I^row J2 "atelier-codev-firstorder-v1"', '^row == ^row+1',
         'BUF PUT B1 I^row J1 "status"', 'BUF PUT B1 I^row J2 "ok"', '^row == ^row+1',
         'BUF PUT B1 I^row J1 "efl"', "BUF PUT B1 I^row J2 ^efy", '^row == ^row+1',
         'BUF PUT B1 I^row J1 "fno"', "BUF PUT B1 I^row J2 ^fno", '^row == ^row+1',
         'BUF PUT B1 I^row J1 "maximh"', "BUF PUT B1 I^row J2 ^maximh", '^row == ^row+1',
+        'BUF PUT B1 I^row J1 "num_fields"', "BUF PUT B1 I^row J2 ^numf", '^row == ^row+1',
         f"BUF EXP B1 {_quote_codev_path(result_path)}",
         "BUF DEL B1", "OUT YES", "EXI YES", "",
     ])
@@ -82,10 +83,11 @@ def read_first_order(seed: Path, work_dir: Path, executable) -> dict[str, float]
         return None
     efl = float(b.data["efl"])
     # 导入自检（spec §4.1）：EFL 非有限/超合理界(手机镜头 ~1-30mm) → 导入退化，判 tooling-blocked
-    if not (efl == efl) or abs(efl) > 1.0e3 or abs(efl) < 1.0e-3:
+    if efl != efl or abs(efl) > 1.0e3 or abs(efl) < 1.0e-3:  # noqa: PLR0124 - NaN 自检
         print(f"[exp] {seed.name}: 导入自检失败 EFL={efl:.4g}(非物理) → tooling-blocked，排除")
         return None
-    return {"efl": efl, "fno": float(b.data["fno"]), "maximh": float(b.data["maximh"])}
+    return {"efl": efl, "fno": float(b.data["fno"]), "maximh": float(b.data["maximh"]),
+            "num_fields": int(float(b.data["num_fields"]))}
 
 
 @dataclass
@@ -117,15 +119,16 @@ def run_matrix(seed: Path, work_dir: Path, executable) -> list[RunRow]:
     print(f"[exp] {seed.name}: seed EFL={efl:.4f} F#={fno:.3f} IMH={fo['maximh']:.4f} "
           f"→ sweet {sweet:.4f} / ceiling {ceiling:.4f}")
     plan = [
-        ("baseline-lock", dict(target_efl_mm=lock, stage="baseline-lock")),
-        ("A(甜区)", dict(target_efl_mm=sweet, stage="A")),
-        ("B(甜区+F#)", dict(target_efl_mm=sweet, target_f_number=fno, stage="B")),
-        ("天花板(+35%)", dict(target_efl_mm=ceiling, stage="ceiling")),
+        ("baseline-lock", {"target_efl_mm": lock, "stage": "baseline-lock"}),
+        ("A(甜区)", {"target_efl_mm": sweet, "stage": "A"}),
+        ("B(甜区+F#)", {"target_efl_mm": sweet, "target_f_number": fno, "stage": "B"}),
+        ("天花板(+35%)", {"target_efl_mm": ceiling, "stage": "ceiling"}),
     ]
     for arm, kw in plan:
         try:
             data = run_codev_target_autovig(source_zmx=seed, work_dir=work_dir,
-                                            executable=executable, timeout_seconds=TIMEOUT, **kw)
+                                            executable=executable, timeout_seconds=TIMEOUT,
+                                            num_fields=int(fo["num_fields"]), **kw)
             rows.append(RunRow(seed.name, arm, data))
             print(f"[exp]   {arm}: EFL→{_g(data,'post_aut.efl_y_mm'):.4f} "
                   f"dev%={_g(data,'efl_target_deviation_pct'):.3g} conv={data.get('aut_converged')} "

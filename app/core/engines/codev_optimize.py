@@ -678,6 +678,7 @@ def run_codev_target_autovig(
     target_imh_mm: float | None = None,
     stage: str = "A",
     vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
+    num_fields: int | None = None,
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 180.0,
     platform_name: str = os.name,
@@ -687,20 +688,32 @@ def run_codev_target_autovig(
     (EFL dev<2%) — i.e. the minimal off-axis 渐晕 needed — preserving F#. Annotates
     the returned dict with autovig.edge_used / autovig.converged / autovig.trace so
     资深 sees how much aperture was clipped to converge. If none converge, returns the
-    min-deviation trial. num_fields is learned from the first (v=0) run."""
+    min-deviation trial.
+
+    Resilient to per-rung timeout/failure: a rung that errors (e.g. rung-0 v=0 flooding
+    TIR → hard timeout) is recorded and the search keeps climbing (higher 渐晕 clips the
+    TIR → the rung runs fast). num_fields is learned from the rung-0 run, or injected
+    (needed to keep climbing when rung-0 itself times out). Only re-raises (tooling-
+    blocked) when EVERY rung fails to produce parseable data."""
 
     trace: list[str] = []
     best: dict[str, str] | None = None
     best_dev = float("inf")
+    last_error: CodeVBatchError | None = None
 
-    def _trial(edge: float, vig: list[float] | None) -> tuple[dict[str, str], bool]:
-        nonlocal best, best_dev
-        data = run_codev_target(
-            source_zmx=source_zmx, work_dir=work_dir, target_efl_mm=target_efl_mm,
-            target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
-            executable=executable, timeout_seconds=timeout_seconds,
-            platform_name=platform_name, vignetting=vig, **sequence_options,
-        )
+    def _trial(edge: float, vig: list[float] | None) -> tuple[dict[str, str] | None, bool]:
+        nonlocal best, best_dev, last_error
+        try:
+            data = run_codev_target(
+                source_zmx=source_zmx, work_dir=work_dir, target_efl_mm=target_efl_mm,
+                target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
+                executable=executable, timeout_seconds=timeout_seconds,
+                platform_name=platform_name, vignetting=vig, **sequence_options,
+            )
+        except CodeVBatchError as exc:
+            last_error = exc
+            trace.append(f"e{edge:.2f}:{exc.kind}")
+            return None, False
         try:
             dev = float(data.get("efl_target_deviation_pct", "nan"))
         except ValueError:
@@ -716,22 +729,31 @@ def run_codev_target_autovig(
                 "autovig.converged": "1" if converged else "0",
                 "autovig.trace": " ".join(trace)}
 
+    def _blocked_or_best(edge: float) -> dict[str, str]:
+        if best is None and last_error is not None:
+            raise last_error  # 全无可用数据 → tooling-blocked（保持既有语义）
+        return _annotate(dict(best) if best is not None else {}, edge, False)
+
     # Rung 0 (always first): no 渐晕 — native-convergence check + learns field count.
     data, conv = _trial(0.0, None)
-    if conv:
+    if conv and data is not None:
         return _annotate(data, 0.0, True)
-    num_fields = int(float(data.get("num_fields", "0") or "0"))
-    # Climb the nonzero rungs; return the minimal 渐晕 that converges.
+    nf = num_fields
+    if nf is None and data is not None:
+        nf = int(float(data.get("num_fields", "0") or "0"))
+    if not nf or nf <= 1:
+        return _blocked_or_best(0.0)  # rung0 超时/失败且未注入 nf，或单场种子
+    # Climb the nonzero rungs; return the minimal 渐晕 that converges. 每级超时/失败即续爬。
     last_edge = 0.0
     for edge in (e for e in vig_ladder if e > 0):
-        vig = _autovig_profile(edge, num_fields)
+        vig = _autovig_profile(edge, nf)
         if vig is None:
             break  # 单场种子：离轴裁剪无从帮忙（TIR 若在轴上）
         last_edge = edge
         data, conv = _trial(edge, vig)
-        if conv:
+        if conv and data is not None:
             return _annotate(data, edge, True)
-    return _annotate(dict(best) if best is not None else {}, last_edge, False)
+    return _blocked_or_best(last_edge)
 
 
 def parse_codev_optimize_file(result_path: Path | str) -> CodeVOptimizeSummary:
