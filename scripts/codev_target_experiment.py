@@ -26,7 +26,7 @@ from app.core.engines.codev_optimize import (  # noqa: E402
     _fmt_number,
     _quote_codev_path,
     default_optimize_seed,
-    run_codev_target,
+    run_codev_target_autovig,
 )
 from app.core.zmx_ingest import ZMX_AMMO_DIR  # noqa: E402
 
@@ -124,11 +124,12 @@ def run_matrix(seed: Path, work_dir: Path, executable) -> list[RunRow]:
     ]
     for arm, kw in plan:
         try:
-            data = run_codev_target(source_zmx=seed, work_dir=work_dir, executable=executable,
-                                    timeout_seconds=TIMEOUT, **kw)
+            data = run_codev_target_autovig(source_zmx=seed, work_dir=work_dir,
+                                            executable=executable, timeout_seconds=TIMEOUT, **kw)
             rows.append(RunRow(seed.name, arm, data))
             print(f"[exp]   {arm}: EFL→{_g(data,'post_aut.efl_y_mm'):.4f} "
-                  f"dev%={_g(data,'efl_target_deviation_pct'):.3g} conv={data.get('aut_converged')}")
+                  f"dev%={_g(data,'efl_target_deviation_pct'):.3g} conv={data.get('aut_converged')} "
+                  f"渐晕={data.get('autovig.edge_used')} [{data.get('autovig.trace','')}]")
         except CodeVBatchError as exc:
             rows.append(RunRow(seed.name, arm, {"error": f"{exc.kind}: {exc.message}"}))
             print(f"[exp]   {arm}: INVALID/tooling ({exc.kind})")
@@ -143,14 +144,17 @@ def write_report(all_rows: list[RunRow], report_path: Path) -> None:
         "- **探针边界**：机器只出客观数字；**三色 verdict / 良品率由资深填**（[EXPERT] 红线，AI 不代判）。",
         "- **收敛=机器客观**（EFL 落 target 2% 内）；**像质好坏=资深判**（畸变/RMS 倍率是裸数字）。",
         "- **玻璃冻结**（接缝2 隔离）：像质劣化含'冻结玻璃只动曲率/厚度'的本征代价。",
+        "- **渐晕列 = 自动搜到的最小离轴裁剪 fraction**（ray-setup 修复，2026-07-09 主公 ratify）："
+        "宽+快种子导入丢 ray-aiming→离轴边缘 TIR，须裁掉才能优化；F# 不变。**渐晕越大=越多边缘光被弃，"
+        "RMS/畸变数字越'取巧'，须连同渐晕量一起判**。edge=0=原生可收敛无需裁。",
         "",
-        "| seed | 臂 | EFL seed→post (target,偏差%,conv) | F# | IMH | RMS点列 seed→post(µm,×) | 波前(waves) | 畸变%(×) | **资深verdict** |",
-        "|---|---|---|---|---|---|---|---|---|",
+        "| seed | 臂 | EFL seed→post (target,偏差%,conv) | 渐晕 | F# | IMH | RMS点列 seed→post(µm,×) | 波前(waves) | 畸变%(×) | **资深verdict** |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for r in all_rows:
         d = r.data
         if "error" in d:
-            L.append(f"| {r.seed} | {r.arm} | INVALID/tooling: {d['error']} | | | | | | ☐ |")
+            L.append(f"| {r.seed} | {r.arm} | INVALID/tooling: {d['error']} | | | | | | | ☐ |")
             continue
         s_efl, p_efl = _g(d, "seed_baseline.efl_y_mm"), _g(d, "post_aut.efl_y_mm")
         tgt, dev, conv = _g(d, "target.efl_mm"), _g(d, "efl_target_deviation_pct"), d.get("aut_converged")
@@ -160,9 +164,12 @@ def write_report(all_rows: list[RunRow], report_path: Path) -> None:
         s_wfe, p_wfe = _g(d, "seed_baseline.max_rms_wavefront_error_waves"), _g(d, "post_aut.max_rms_wavefront_error_waves")
         s_dis, p_dis = _g(d, "seed_baseline.max_distortion_pct"), _g(d, "post_aut.max_distortion_pct")
         conv_mark = "✅" if str(conv) == "1" else "❌"
+        edge = d.get("autovig.edge_used", "?")
+        vig_conv = str(d.get("autovig.converged", "")) == "1"
+        edge_cell = f"{edge}" + ("" if vig_conv or edge in ("0", "?") else "(未收敛)")
         L.append(
             f"| {r.seed} | {r.arm} | {s_efl:.3f}→{p_efl:.3f} "
-            f"(t{tgt:.3f},{dev:.2g}%,{conv_mark}) | {s_fno:.2f}→{p_fno:.2f} | {s_imh:.3f}→{p_imh:.3f} | "
+            f"(t{tgt:.3f},{dev:.2g}%,{conv_mark}) | {edge_cell} | {s_fno:.2f}→{p_fno:.2f} | {s_imh:.3f}→{p_imh:.3f} | "
             f"{s_spot:.2f}→{p_spot:.2f}(×{_ratio(p_spot,s_spot):.2f}) | "
             f"{s_wfe:.3f}→{p_wfe:.3f}(×{_ratio(p_wfe,s_wfe):.2f}) | "
             f"{s_dis:.2f}→{p_dis:.2f}(×{_ratio(p_dis,s_dis):.2f}) | ☐ |"

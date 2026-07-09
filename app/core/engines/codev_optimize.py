@@ -459,6 +459,30 @@ def _extra_dof_block(extra_dof: str) -> list[str]:
     return lines
 
 
+def _validate_vignetting(vignetting: list[float] | None) -> None:
+    if vignetting is None:
+        return
+    if not vignetting:
+        raise ValueError("vignetting must be a non-empty list or None")
+    for v in vignetting:
+        numeric = float(v)
+        if not math.isfinite(numeric) or numeric < 0 or numeric >= 1:
+            raise ValueError(f"vignetting fraction must be in [0,1): {v!r}")
+
+
+def _vignetting_edge(vignetting: list[float] | None) -> float:
+    """Representative edge (max) vignetting fraction for provenance; 0 if none."""
+    return max(vignetting) if vignetting else 0.0
+
+
+def _vignetting_block(vignetting: list[float]) -> list[str]:
+    """Set per-field 渐晕 factors (VUY/VLY/VUX/VLX), positional over fields F1..Fn.
+    Clips the outer entrance-pupil fraction so TIR-ing marginal rays leave the
+    optimization ray grid. Does NOT change F# (defined by the stop aperture)."""
+    values = " ".join(_fmt_number(v) for v in vignetting)
+    return [f"{cmd} {values}" for cmd in ("VUY", "VLY", "VUX", "VLX")]
+
+
 def build_codev_target_sequence(
     *,
     source_zmx: Path | str,
@@ -468,6 +492,7 @@ def build_codev_target_sequence(
     target_imh_mm: float | None = None,
     stage: str = "A",
     extra_dof: str = "none",
+    vignetting: list[float] | None = None,
     max_cycles: int = 25,
     min_cycles: int = 3,
     lateral_color_weight: float = 0.01,
@@ -479,13 +504,19 @@ def build_codev_target_sequence(
 ) -> str:
     """Build target-mode sequence: import seed, capture 3 snapshots, pull EFL to
     客户 target (seam 1), lock F# via FNO mode (seam 3a, E1 实测锁), keep merit
-    (lat color + RMS spot). Stage A=EFL only; B=+F#; C(IMH 场重建)另做。"""
+    (lat color + RMS spot). Stage A=EFL only; B=+F#; C(IMH 场重建)另做。
+
+    vignetting: 可选 per-field 渐晕裁剪 fraction（0≤v<1，clip 掉的入瞳半径比例）。
+    ZMX->CV 导入丢弃 ray-aiming/渐晕 → 宽+快种子离轴边缘光线 TIR 毒化优化光栅；
+    渐晕裁掉这些光线让 AUT 光栅可追迹（**不改 F#**，F# 由光阑定）。由
+    run_codev_target_autovig 自动搜最小收敛渐晕。诊断见 .planning/debug/codev-target-convergence.md。"""
 
     _validate_positive(target_efl_mm, "target_efl_mm")
     if target_f_number is not None:
         _validate_positive(target_f_number, "target_f_number")
     if target_imh_mm is not None:
         _validate_positive(target_imh_mm, "target_imh_mm")
+    _validate_vignetting(vignetting)
     _validate_positive_int(max_cycles, "max_cycles")
     _validate_positive_int(min_cycles, "min_cycles")
 
@@ -506,7 +537,10 @@ def build_codev_target_sequence(
     # seam 3a: F# 走 FNO 模式（E1 实测：AUT 每轮重解 EPD 锁 F#）
     if target_f_number is not None:
         lines.append(f"FNO {_fmt_number(target_f_number)}")
-    # 快照2 config_pre_aut（客户配置后、优化前）
+    # ray setup fix: 渐晕裁剪优化光栅（导入后丢 ray-aiming 致离轴 TIR 的修复）
+    if vignetting is not None:
+        lines += _vignetting_block(vignetting)
+    # 快照2 config_pre_aut（客户配置后、优化前——含 F#/渐晕 setup）
     lines += _capture_target_snapshot("config_pre_aut")
     # AUT: seam 1 EFL->target + 既有 merit（横向色差 + RMS 点列）
     lines += [
@@ -544,6 +578,7 @@ def build_codev_target_sequence(
         "IF ^efl_target_dev_pct < 2.0",
         "  ^aut_converged == 1",
         "END IF",
+        "^numf_out == (NUM F)",
         "^row == 1",
     ]
     _append_put_row(lines, '"schema"', f'"{TARGET_RESULT_SCHEMA}"')
@@ -551,6 +586,8 @@ def build_codev_target_sequence(
     _append_put_row(lines, '"mode"', '"target"')
     _append_put_row(lines, '"stage"', f'"{stage}"')
     _append_put_row(lines, '"source_zmx"', f'"{source_zmx.name}"')
+    _append_put_row(lines, '"num_fields"', "^numf_out")
+    _append_put_row(lines, '"vignetting_edge"', _fmt_number(_vignetting_edge(vignetting)))
     _append_put_row(lines, '"target.efl_mm"', "^target_efl")
     if target_f_number is not None:
         _append_put_row(lines, '"target.f_number"', _fmt_number(target_f_number))
@@ -616,6 +653,85 @@ def run_codev_target(
         allow_nonzero_ok_result=True,
     )
     return dict(batch.data)
+
+
+# 自动渐晕搜索（主公 2026-07-09 ratify 的 ray-setup 方案）：宽+快种子导入丢
+# ray-aiming → 离轴边缘 TIR 毒化优化光栅。搜最小离轴渐晕让 AUT 收敛，保 native F#。
+# edge_used 作为质量 provenance 上报（渐晕越大=越多边缘光被弃=收敛越"取巧"，供资深判）。
+_DEFAULT_VIG_LADDER: tuple[float, ...] = (0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7)
+
+
+def _autovig_profile(edge: float, num_fields: int) -> list[float] | None:
+    """On-axis 场不裁（居中系统轴上不渐晕），离轴场均匀裁 `edge`。edge==0 或单场
+    → None（走默认零渐晕路径）。TIR 是离轴宽角光线，probe_field 已证离轴-only 即收敛。"""
+    if edge <= 0 or num_fields <= 1:
+        return None
+    return [0.0] + [float(edge)] * (num_fields - 1)
+
+
+def run_codev_target_autovig(
+    *,
+    source_zmx: Path | str,
+    work_dir: Path | str,
+    target_efl_mm: float,
+    target_f_number: float | None = None,
+    target_imh_mm: float | None = None,
+    stage: str = "A",
+    vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
+    timeout_seconds: float = 180.0,
+    platform_name: str = os.name,
+    **sequence_options: object,
+) -> dict[str, str]:
+    """Climb `vig_ladder` from 0, return the FIRST target run whose AUT converges
+    (EFL dev<2%) — i.e. the minimal off-axis 渐晕 needed — preserving F#. Annotates
+    the returned dict with autovig.edge_used / autovig.converged / autovig.trace so
+    资深 sees how much aperture was clipped to converge. If none converge, returns the
+    min-deviation trial. num_fields is learned from the first (v=0) run."""
+
+    trace: list[str] = []
+    best: dict[str, str] | None = None
+    best_dev = float("inf")
+
+    def _trial(edge: float, vig: list[float] | None) -> tuple[dict[str, str], bool]:
+        nonlocal best, best_dev
+        data = run_codev_target(
+            source_zmx=source_zmx, work_dir=work_dir, target_efl_mm=target_efl_mm,
+            target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
+            executable=executable, timeout_seconds=timeout_seconds,
+            platform_name=platform_name, vignetting=vig, **sequence_options,
+        )
+        try:
+            dev = float(data.get("efl_target_deviation_pct", "nan"))
+        except ValueError:
+            dev = float("nan")
+        conv = str(data.get("aut_converged")) == "1"
+        trace.append(f"e{edge:.2f}:dev{dev:.3g}:c{int(conv)}")
+        if not math.isnan(dev) and dev < best_dev:
+            best_dev, best = dev, data
+        return data, conv
+
+    def _annotate(data: dict[str, str], edge: float, converged: bool) -> dict[str, str]:
+        return {**data, "autovig.edge_used": _fmt_number(edge),
+                "autovig.converged": "1" if converged else "0",
+                "autovig.trace": " ".join(trace)}
+
+    # Rung 0 (always first): no 渐晕 — native-convergence check + learns field count.
+    data, conv = _trial(0.0, None)
+    if conv:
+        return _annotate(data, 0.0, True)
+    num_fields = int(float(data.get("num_fields", "0") or "0"))
+    # Climb the nonzero rungs; return the minimal 渐晕 that converges.
+    last_edge = 0.0
+    for edge in (e for e in vig_ladder if e > 0):
+        vig = _autovig_profile(edge, num_fields)
+        if vig is None:
+            break  # 单场种子：离轴裁剪无从帮忙（TIR 若在轴上）
+        last_edge = edge
+        data, conv = _trial(edge, vig)
+        if conv:
+            return _annotate(data, edge, True)
+    return _annotate(dict(best) if best is not None else {}, last_edge, False)
 
 
 def parse_codev_optimize_file(result_path: Path | str) -> CodeVOptimizeSummary:

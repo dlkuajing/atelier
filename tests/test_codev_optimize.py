@@ -20,7 +20,9 @@ from app.core.engines.codev_optimize import (
     parse_codev_optimize_file,
     run_codev_optimize,
     run_codev_target,
+    run_codev_target_autovig,
 )
+from app.core.engines.codev_optimize import _autovig_profile
 from app.core.engines.codev_readout import CODEV_READOUT_RESULT_SCHEMA
 
 
@@ -391,10 +393,18 @@ def test_target_param_validation_rejects_nonpositive() -> None:
         )
 
 
-def _write_target_result(path: Path) -> None:
+def _write_target_result(
+    path: Path,
+    *,
+    converged: str = "1",
+    dev: str = "0.001",
+    num_fields: str = "3",
+    edge: str = "0",
+) -> None:
     rows = [
         ("schema", TARGET_RESULT_SCHEMA), ("status", "ok"),
         ("mode", "target"), ("stage", "A"), ("source_zmx", DEFAULT_OPTIMIZE_SEED),
+        ("num_fields", num_fields), ("vignetting_edge", edge),
         ("target.efl_mm", "4.057"),
     ]
     for snap, efl, fno, imh, spot, wfe, dist in [
@@ -409,8 +419,101 @@ def _write_target_result(path: Path) -> None:
             (f"{snap}.max_distortion_pct", dist),
             (f"{snap}.fno", fno), (f"{snap}.epd", "1.56"), (f"{snap}.maximh_mm", imh),
         ]
-    rows += [("efl_target_deviation_pct", "0.001"), ("aut_converged", "1")]
+    rows += [("efl_target_deviation_pct", dev), ("aut_converged", converged)]
     path.write_text("\n".join(f"{k}\t{v}" for k, v in rows) + "\n", encoding="utf-8")
+
+
+def test_autovig_profile_on_axis_unvignetted() -> None:
+    assert _autovig_profile(0.0, 3) is None  # edge 0 -> 无渐晕默认路径
+    assert _autovig_profile(0.5, 1) is None  # 单场无从裁
+    assert _autovig_profile(0.5, 3) == [0.0, 0.5, 0.5]  # 轴上不裁，离轴均匀
+    assert _autovig_profile(0.4, 4) == [0.0, 0.4, 0.4, 0.4]
+
+
+def test_target_vignetting_injects_factors_and_provenance() -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+        target_efl_mm=4.0, vignetting=[0.0, 0.5, 0.5],
+    )
+    for cmd in ("VUY", "VLY", "VUX", "VLX"):
+        assert f"{cmd} 0 0.5 0.5" in seq  # per-field positional 渐晕注入
+    assert '"num_fields"' in seq  # 场数出参供 autovig 学习
+    assert '"vignetting_edge"' in seq
+
+
+def test_target_no_vignetting_is_zero_regression() -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"), target_efl_mm=4.0,
+    )
+    assert "\nVUY " not in seq  # 默认路径不注入渐晕（零回归）
+    assert "\nVLY " not in seq
+
+
+def test_target_vignetting_validation_rejects_out_of_range() -> None:
+    for bad in ([1.0], [-0.1], []):
+        with pytest.raises(ValueError):
+            build_codev_target_sequence(
+                source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+                target_efl_mm=4.0, vignetting=bad,
+            )
+
+
+def _autovig_fake_popen(edge_converges_at: float):
+    """FakePopen writing conv=1 only when injected 渐晕 edge >= threshold."""
+
+    class FakePopen:
+        pid = 4321
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            seq = sequence_path.read_text(encoding="ascii")
+            m = re.search(r"^VUY ([\d. ]+)$", seq, re.MULTILINE)
+            edge = max(float(x) for x in m.group(1).split()) if m else 0.0
+            conv = "1" if edge >= edge_converges_at else "0"
+            dev = "0.5" if conv == "1" else "9.0"
+            _write_target_result(result_path, converged=conv, dev=dev, edge=str(edge))
+            return "ignored", ""
+
+    return FakePopen
+
+
+def test_mock_autovig_climbs_to_minimal_converging_edge(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", _autovig_fake_popen(0.30))
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=12.0,
+        vig_ladder=(0.0, 0.2, 0.3, 0.4),
+    )
+    assert data["autovig.converged"] == "1"
+    assert data["autovig.edge_used"] == "0.3"  # 最小收敛裁剪
+    assert "e0.00:dev9" in data["autovig.trace"]
+    assert "e0.30" in data["autovig.trace"]
+    assert "e0.40" not in data["autovig.trace"]  # 命中即停，不多裁
+
+
+def test_mock_autovig_no_clip_when_native_converges(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", _autovig_fake_popen(0.0))
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=12.0,
+        vig_ladder=(0.0, 0.2, 0.3),
+    )
+    assert data["autovig.edge_used"] == "0"  # 原生收敛不裁
+    assert data["autovig.converged"] == "1"
+    assert data["autovig.trace"].startswith("e0.00") and data["autovig.trace"].endswith("c1")
+    assert "e0.20" not in data["autovig.trace"]  # 首轮即返回
 
 
 def test_mock_run_codev_target_parses_three_snapshots(

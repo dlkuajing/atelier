@@ -68,6 +68,26 @@ note: "本 session 由主公 attended 驱动，非自主 session-manager 循环�
 - **结论**：**"拉不动"100% 是 AUT/导入 setup 问题（边缘 ray TIR 挡住 merit），不是本征**。AUT 拉 EFL 的能力完全在。naive-macro 的低收敛率是 setup 假象。
 - **对 go/no-go**：crux（可靠 EFL 收敛）是**可解工程问题**（光阑/渐晕/ray-aiming setup），非研究墙——探路阶展望改善。真良品率须在**修好 ray setup 的宏**上重测。
 
+## 真良品率重测（2026-07-09 · 自动渐晕修好 ray-setup 后 · 主公 ratify 方案）
+
+`run_codev_target_autovig`（宏加 `vignetting` 参数 + Python 爬梯搜最小收敛离轴渐晕，保 F#）重跑 5 seed × 4 臂（报告 `.planning/loop/codev-target-experiment-report-autovig.md`）：
+
+- **收敛机制=已修好且可靠**：**甜区(+12%) 4/4 可追迹 seed 全收敛**（vs naive 旧 1/5）——US10281683B2 渐晕0.3/dev1.9%、US20140111876A1 渐晕0.2/0.72%、US20170003482A1 渐晕0/~0、US20170045714A1 渐晕0.3/1.2%；baseline-lock 4/4；天花板(+35%) 1/4 收敛（负对照成立，收敛半径真实）。**setup 假象已除，crux(可靠 EFL 收敛到客户 target)确认=可解工程，非研究墙。**
+- **★但真良品率(冻结玻璃)依然低★**（[EXPERT] 判，裸数字）：收敛≠好设计。甜区收敛臂像质多数灾难——US10281683B2 RMS 16→153µm/WFE 0.2→8.2 波/畸变→8.2%；US20170045714A1 RMS 10→**553µm**/WFE→**49.6 波**；仅 US20170003482A1(原生收敛渐晕0) RMS→23.6µm/WFE→0.50 波 勉强"值得看"。**且 RMS 是在裁掉 20-30% 离轴瞳后测的=已偏乐观。**
+- **结论（去掉 setup 噪声后的真信号）**：③ **machinery 可靠**、**naive 冻结玻璃良品率仍低**——指向下一杠杆（接缝2 玻璃可变 / 非球面 DOF / seed-target 匹配），与 spike 早前 "machinery通·naive良品率低" 一致但现在是**真值**（非 setup 低估）。良品率 go/no-go 最终判在资深。
+- **tooling 残留**：US20180143405A1 全 4 臂 timeout（180s 硬超时）+ reader 线程 UnicodeDecodeError（`subprocess._readerthread` text=True 解码非 UTF-8 崩）——疑似"改二进制读"修复未覆盖此路径 or dashed staging seed AUT hang，pre-existing 待办，非本次回归（baseline-lock 单跑即 timeout）。
+
+## 诊断 v2（2026-07-09 · 真机证伪 checkpoint 假设，根因更深）
+
+主公 checkpoint 假设"reset vignetting + SET VIG"修收敛 → 真机实测**证伪**：
+
+- **控制种子 US10281683B2 = 宽角快镜**：ZMX `FNUM 1.68`(像方 F#)、`FTYP` 角度场、`YFLN 0/20/40.5°`、`VDYN/VDXN/... 全 0`(**设计本身零渐晕**)、**无 `DIAM`**(无物理孔径)。其 Zemax 形态靠 **ray aiming** 维持宽+快光束物理性；`ZEMAXOS_TO_CV` 导入丢弃 ray-aiming/渐晕/MEMA → CODE V 追全瞳 → **离轴边缘光线在 S4/S14 TIR**(`RAY ERROR: REFL 4`)。
+- **`SET VIG`/`SET VIY` = no-op**(真机 dev 9.97%＝baseline 逐位相同)：零渐晕+无用户孔径→无可裁剪基准。`SET APE`/`SET CAP`+`SET VIG` 仅部分改善(6.76%/7.92% 仍不收敛)——孔径由已失败 reference ray 派生=循环。
+- **真 lever = 显式渐晕因子裁剪优化光栅**(真机实测，**F# 全程保持 1.68 不变**——渐晕裁的是优化 ray grid≠光圈)：`VUY/VLY/VUX/VLX 0.40 全场`→**conv✅ dev~0**；`0 0.50 0.50`(仅离轴 2/3 场)→**conv✅ dev~0**(**证 TIR=离轴宽角光线**，on-axis F1 裁剪=0 仍收敛)；`0.30` 离轴 / `0.20` 全场→不足未收敛。
+- **结论**：机制(AUT 拉 EFL→target)光线可追迹时可靠；native-F# 收敛**可达**。但渐晕量须 per-seed 有原则地定——种子无渐晕/孔径/ray-aiming 数据可派生→**无 seed-data 驱动的自动量**。**checkpoint 假设的实质修正，方法论 fork 待主公裁**(固定标准化渐晕 / 自动搜索至光线追迹 / 孔径分级 optimize)。
+- **像质另议**([EXPERT])：+12% EFL 冻结玻璃即便收敛 RMS 点列 56–232µm、畸变 8–10%——良品率判分项，非本收敛机制问题。
+- 探针留痕：`scratch_diag/probe_setvig.py`(SET VIG no-op)、`probe_field.py`(渐晕 lever+离轴定位)、`probe_ape.py`(SET APE/CAP+无 DIAM)。
+
 ## Evidence
 
 - 2026-07-08: 本地 main 曾落后 origin/main 21 commit，已 pull 对齐至 7177325；spike worktree D:\atelier-opt3 从此切出。
