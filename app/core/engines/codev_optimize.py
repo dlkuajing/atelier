@@ -1268,8 +1268,18 @@ def _standard_config_converged(result: Mapping[str, object]) -> int:
 
 
 def _standard_config_rms(result: Mapping[str, object]) -> float:
-    """Fail-closed：post_aut RMS 点列缺失/非数/非有限一律当 +inf（排到最
-    后，不当"更优"——缺数据不能反而赢）。"""
+    """Fail-closed：post_aut RMS 点列缺失/非数/非有限/非正一律当 +inf（排到
+    最后，不当"更优"——缺数据不能反而赢）。
+
+    非正（``<= 0.0``）同样 fail-closed，不只是缺失/非数/非有限：CODE V 宏
+    ``@rmssum``（见本文件 ``_metric_function_block`` 的 ``FCT @rmssum``
+    定义）以 ``^max == 0`` 起始，只在 ``SPOTDATA`` 返回 ``^err = 0``（追迹
+    成功）的场次才更新 ``^max``；若某配置全部场次 ``SPOTDATA`` 都返回
+    ``^err != 0``（追迹失败），``^max`` 原样保留初值 0 并被当作
+    ``post_aut.max_rms_spot_diameter_um=0.0`` 写出——这是"追迹全失败"的
+    哨兵值，不是"零误差"的真优值。物理上 RMS 点列径精确为 0（或负）不存
+    在（衍射极限设下界 >0），必须当缺失处理，否则追迹失败的配置会顶着假
+    的完美 RMS 赢过真正收敛的配置。"""
     raw = result.get("post_aut.max_rms_spot_diameter_um")
     if raw is None:
         return float("inf")
@@ -1277,7 +1287,9 @@ def _standard_config_rms(result: Mapping[str, object]) -> float:
         value = float(str(raw))
     except (TypeError, ValueError):
         return float("inf")
-    return value if math.isfinite(value) else float("inf")
+    if not math.isfinite(value) or value <= 0.0:
+        return float("inf")
+    return value
 
 
 def _standard_config_rank(result: Mapping[str, object]) -> tuple[int, int, float]:
@@ -1286,6 +1298,14 @@ def _standard_config_rank(result: Mapping[str, object]) -> tuple[int, int, float
     if "error" in result:
         return (1, 1, float("inf"))
     return (0, 0 if _standard_config_converged(result) else 1, _standard_config_rms(result))
+
+
+def _rms_display(rms: float) -> str:
+    """reason 文案用：`_standard_config_rms` fail-closed 出的 `+inf` 哨兵
+    不能原样格式成 `infµm`——那会让读者误以为 CODE V 真的测出了无穷大
+    RMS，而实情是"RMS 不可用（缺失/非数/非有限/非正），fail-closed 落后"。
+    如实转述二者之一。"""
+    return "不可用（缺失/非法/非正，fail-closed 落后）" if math.isinf(rms) else f"{rms:.4g}µm"
 
 
 def _select_preferred(
@@ -1318,12 +1338,12 @@ def _select_preferred(
         )
     if best_rms != second_rms:
         return best, (
-            f'"{best}" post_aut.max_rms_spot_diameter_um={best_rms:.4g}µm 小于 '
-            f'"{second}" 的 {second_rms:.4g}µm'
+            f'"{best}" post_aut.max_rms_spot_diameter_um={_rms_display(best_rms)} 优于 '
+            f'"{second}" 的 {_rms_display(second_rms)}'
         )
     return best, (
         f"aut_converged 与 post_aut RMS spot 均打平（converged={best_conv}, "
-        f'rms={best_rms:.4g}），按固定优先序取 "{best}"'
+        f'rms={_rms_display(best_rms)}），按固定优先序取 "{best}"'
     )
 
 

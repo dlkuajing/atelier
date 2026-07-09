@@ -159,11 +159,16 @@ def test_generation_mode_string_values():
 
 def test_converged_fields_matches_spec():
     assert CONVERGED_FIELDS[GenerationMode.RETRIEVED] == frozenset()
-    assert CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED] == frozenset(
-        {"efl", "fnum", "imh", "fov"}
-    )
+    # 真接入缩窄（2026-07-10）：③ 现状仅 EFL 真收敛（`run_codev_target_standard`
+    # 接缝1）；F# 只锁 native（接缝3a，非达 target）、IMH/FOV Stage C 场重建未
+    # 落地——虚标为已收敛=撒谎，见 candidate.py CONVERGED_FIELDS 注记。
+    assert CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED] == frozenset({"efl"})
     # TTL 恒不在收敛维内（Mode3 六接缝不含 TTL，§10）
     assert "ttl" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
+    # F#/IMH/FOV 现状均未达标（Stage B/C 未落地），不得标已收敛
+    assert "fnum" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
+    assert "imh" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
+    assert "fov" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
 
 
 def test_converged_fields_is_immutable():

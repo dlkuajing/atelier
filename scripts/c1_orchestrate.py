@@ -31,6 +31,7 @@ from app.core.lens_system import Scenario  # noqa: E402
 from app.core.orchestration.candidate import (  # noqa: E402
     CandidateSet,
     MetricValue,
+    OpticalExtras,
     ScoredCandidate,
     TargetDeviation,
     TargetSpec,
@@ -201,6 +202,51 @@ _IMAGE_QUALITY_ROWS: tuple[tuple[str, str], ...] = (
 )
 
 
+_CODEV_POST_AUT_ROWS: tuple[tuple[str, str], ...] = (
+    ("post_aut EFL_y (mm)", "post_aut.efl_y_mm"),
+    ("post_aut RMS 点列径 (um)", "post_aut.max_rms_spot_diameter_um"),
+    ("post_aut RMS 波前 (waves)", "post_aut.max_rms_wavefront_error_waves"),
+    ("post_aut 畸变 (%)", "post_aut.max_distortion_pct"),
+    ("post_aut F#", "post_aut.fno"),
+    ("post_aut 半像高 (mm)", "post_aut.maximh_mm"),
+    ("EFL target 偏差 (%)", "efl_target_deviation_pct"),
+    ("aut_converged", "aut_converged"),
+    ("渐晕 edge_used", "autovig.edge_used"),
+    ("AUT err_f_ratio（末/初）", "err_f_ratio"),
+    ("AUT 终止措辞", "aut_termination"),
+)
+
+
+def _fmt_codev_value(value: float | str | None) -> str:
+    if value is None:
+        return "N/A"
+    if isinstance(value, float):
+        return f"{value:.4g}"
+    return _md_safe(str(value))
+
+
+def _render_codev_post_aut(extras: OpticalExtras) -> list[str]:
+    """Mode3 专属 provenance 区（`OpticalExtras.codev_post_aut`）：CODE V
+    真机快照数字，裁瞳口径，不参与本报告任何排序/打分——只供资深核对
+    provenance。`None`（RetrievalGenerator 等未提供）时不渲染这一节。"""
+    if extras.codev_post_aut is None:
+        return []
+    lines = [
+        "**CODE V 真机快照（post_aut，裁瞳口径 · provenance only）**",
+        "",
+        "> 以下数字来自 CODE V `run_codev_target_standard` preferred 配置的批跑读数，"
+        "**裁瞳（vignetted pupil）口径**，与下方 target 偏差/像质摘要的 Optiland "
+        "满口径口径不可直接横比，仅供资深核对 provenance——不参与本报告任何排序/打分。",
+        "",
+        "| 项 | 值 |",
+        "|---|---|",
+    ]
+    for label, key in _CODEV_POST_AUT_ROWS:
+        lines.append(f"| {label} | {_fmt_codev_value(extras.codev_post_aut.get(key))} |")
+    lines.append("")
+    return lines
+
+
 def _render_candidate(index: int, sc: ScoredCandidate) -> list[str]:
     row = sc.scorecard
     gen = sc.generated
@@ -210,6 +256,8 @@ def _render_candidate(index: int, sc: ScoredCandidate) -> list[str]:
     lines.append("- generation_notes:")
     lines.extend(f"  - {_md_safe(note)}" for note in gen.generation_notes)
     lines.append("")
+
+    lines += _render_codev_post_aut(gen.optical_extras)
 
     lines.append("**Target 偏差（5 维）**")
     lines.append("")

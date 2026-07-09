@@ -24,6 +24,7 @@ from typing import ClassVar
 import pytest
 
 from app.core.lens_system import Scenario
+from app.core.orchestration import generators as generators_module
 from app.core.orchestration import orchestrator
 from app.core.orchestration.candidate import (
     NO_TARGET_CONVERGED_BANNER,
@@ -48,12 +49,23 @@ def _wide_target_spec() -> TargetSpec:
     return TargetSpec(scenario=Scenario.SMARTPHONE_WIDE, **_WIDE_REQUEST)
 
 
+@pytest.fixture
+def no_codev(monkeypatch, tmp_path: Path):
+    """Force `TargetConvergedGenerator` (Mode3) to see CODE V as unavailable,
+    regardless of whether the host machine actually has a real install (this
+    dev box does, at `D:\\CODEV115`) — keeps RETRIEVED-focused orchestrator
+    tests deterministic and fast instead of triggering real multi-minute
+    CODE V batch runs. Mode3's real (mocked-CODE-V) behavior has its own
+    dedicated tests in `test_orchestration_generators.py`."""
+    monkeypatch.setattr(generators_module, "DEFAULT_CODEV_EXECUTABLE", tmp_path / "no-codev.exe")
+
+
 # ---------------------------------------------------------------------------
 # End-to-end: real case library, n=4 (§9)
 # ---------------------------------------------------------------------------
 
 
-def test_orchestrate_end_to_end_real_case_library_produces_4_retrieved_with_banner():
+def test_orchestrate_end_to_end_real_case_library_produces_4_retrieved_with_banner(no_codev):
     target = _wide_target_spec()
     result = orchestrate(target, target, n=4)
 
@@ -63,7 +75,7 @@ def test_orchestrate_end_to_end_real_case_library_produces_4_retrieved_with_bann
     assert result.summary.candidate_count == 4
     assert result.summary.mode_counts == {GenerationMode.RETRIEVED: 4}
     assert result.summary.ranked_count + result.summary.withheld_count == 4
-    # Mode3 空插槽 -> 全批 RETRIEVED -> honesty_banner 自动为固定常量
+    # 无 CODE V -> Mode3 降级返回 [] -> 全批 RETRIEVED -> honesty_banner 固定常量
     assert result.honesty_banner == NO_TARGET_CONVERGED_BANNER
     assert result.target is target
 
@@ -73,15 +85,19 @@ def test_orchestrate_end_to_end_real_case_library_produces_4_retrieved_with_bann
 # ---------------------------------------------------------------------------
 
 
-def test_orchestrate_modes_filter_to_target_converged_only_yields_no_candidates():
+def test_orchestrate_modes_filter_to_target_converged_only_yields_no_candidates(no_codev):
+    # `no_codev` forces Mode3's CODE V hard-dependency off, so this stays a
+    # deterministic "modes filter" test (not a real-CODE-V integration run) —
+    # Mode3's real-mocked behavior is covered separately in
+    # `test_orchestration_generators.py`.
     target = _wide_target_spec()
     result = orchestrate(target, target, n=4, modes=[GenerationMode.TARGET_CONVERGED])
     assert result.candidates == []
     assert result.summary.candidate_count == 0
-    assert result.summary.notes == []  # Mode3 空插槽合法返回 [] ，不是错误
+    assert result.summary.notes == []  # 无 CODE V 合法降级返回 [] ，不是错误
 
 
-def test_orchestrate_modes_filter_never_instantiates_excluded_generator(monkeypatch):
+def test_orchestrate_modes_filter_never_instantiates_excluded_generator(monkeypatch, no_codev):
     def _boom(self, spec, target, *, n):  # noqa: ANN001
         raise RuntimeError("RetrievalGenerator should not run when excluded by modes filter")
 
@@ -90,6 +106,85 @@ def test_orchestrate_modes_filter_never_instantiates_excluded_generator(monkeypa
     result = orchestrate(target, target, n=4, modes=[GenerationMode.TARGET_CONVERGED])
     assert result.candidates == []
     assert result.summary.notes == []  # RetrievalGenerator 从未跑过 -> 无错误记录
+
+
+# ---------------------------------------------------------------------------
+# Mode3 success path — full `orchestrate()` round trip with mocked CODE V
+# layer only (real `score_candidate` + `ScoredCandidate` validator + banner)
+# ---------------------------------------------------------------------------
+
+
+def test_orchestrate_target_converged_success_clears_banner_and_round_trips_validator(
+    monkeypatch, tmp_path: Path
+):
+    from app.core.case_library import load_case_library
+    from app.core.zmx_ingest import ZMX_AMMO_DIR
+
+    seed = next(
+        c
+        for c in load_case_library()
+        if c.metadata is not None and (ZMX_AMMO_DIR / c.metadata.source_zmx).is_file()
+    )
+    assert seed.metadata is not None
+    stand_in_zmx = tmp_path / f"{seed.metadata.case_id}_target3.797_optimized.zmx"
+    stand_in_zmx.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+
+    monkeypatch.setattr(generators_module, "DEFAULT_CODEV_EXECUTABLE", Path(__file__))
+    monkeypatch.setattr(generators_module, "cases_for_scenario", lambda scenario: [seed])
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: {  # noqa: ANN003
+            "preferred": "asphere",
+            "preferred_reason": "mock preferred (unit test)",
+            "configs": {
+                "asphere": {
+                    "optimized_zmx_path": str(stand_in_zmx),
+                    "post_aut.efl_y_mm": "3.797",
+                    "post_aut.max_rms_spot_diameter_um": "12.3",
+                    "post_aut.max_rms_wavefront_error_waves": "0.04",
+                    "post_aut.max_distortion_pct": "3.1",
+                    "post_aut.fno": "2.3",
+                    "post_aut.maximh_mm": "3.3",
+                    "efl_target_deviation_pct": "0.01",
+                    "aut_converged": "1",
+                    "autovig.edge_used": "0.0",
+                    "aut_error_trace": {"err_f_ratio": 0.09, "termination": "normal_completion"},
+                },
+                "both": {"error": {"kind": "no_license", "detail": "mock skip"}},
+            },
+            "provenance": {"glass_model": {"asphere": "glass-frozen", "both": "n/a"}},
+        },
+    )
+
+    target = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    result = orchestrate(target, target, n=4, modes=[GenerationMode.TARGET_CONVERGED])
+
+    assert GenerationMode.TARGET_CONVERGED in result.modes_present
+    assert result.honesty_banner is None  # banner 消失：批内含 TARGET_CONVERGED
+    assert len(result.candidates) == 1
+    row = result.candidates[0].scorecard
+    assert row.mode is GenerationMode.TARGET_CONVERGED
+
+    efl_dev = next(d for d in row.target_deviations if d.field == "efl")
+    assert efl_dev.converged_toward_target is True
+    # 其余维（fnum/imh/fov/ttl，凡有产出）如实标 False——CONVERGED_FIELDS 缩窄
+    # 为 {efl} 后，validator（ScoredCandidate._enforce_consistency）本身就会在
+    # 任何字段不一致时 raise；这里直接断言 orchestrate 的真实产出没有撒谎。
+    for field in ("fnum", "imh", "fov", "ttl"):
+        dev = next((d for d in row.target_deviations if d.field == field), None)
+        if dev is not None:
+            assert dev.converged_toward_target is False
+
+    # CODE V 真机快照 provenance 区渲染进离线报告（scripts/c1_orchestrate.py）
+    from scripts.c1_orchestrate import render_markdown
+
+    md_text = render_markdown("mode3-smoke", result)
+    assert "CODE V 真机快照" in md_text
+    assert "12.3" in md_text  # post_aut RMS 点列径
+    assert "裁瞳" in md_text
+    assert result.honesty_banner is None
+    assert "[诚实告警]" not in md_text
 
 
 def test_orchestrate_modes_dedupes_and_preserves_order():
@@ -192,7 +287,7 @@ def test_orchestrate_summary_flags_when_ri_missing_across_whole_batch(monkeypatc
 # ---------------------------------------------------------------------------
 
 
-def test_orchestrate_isolates_single_generator_failure(monkeypatch):
+def test_orchestrate_isolates_single_generator_failure(monkeypatch, no_codev):
     def _boom(self, spec, target, *, n):  # noqa: ANN001
         raise RuntimeError("simulated generator crash")
 
@@ -217,7 +312,7 @@ def test_orchestrate_isolates_single_generator_failure(monkeypatch):
 # ---------------------------------------------------------------------------
 
 
-def test_c1_orchestrate_script_smoke(tmp_path: Path):
+def test_c1_orchestrate_script_smoke(tmp_path: Path, no_codev):
     from scripts.c1_orchestrate import main
 
     out_dir = tmp_path / "c1_report"
@@ -243,7 +338,7 @@ def test_c1_orchestrate_script_smoke(tmp_path: Path):
     assert len(roundtripped.candidates) == 2
 
 
-def test_c1_orchestrate_script_with_custom_requirements_file(tmp_path: Path):
+def test_c1_orchestrate_script_with_custom_requirements_file(tmp_path: Path, no_codev):
     from scripts.c1_orchestrate import main
 
     reqs = [
@@ -275,7 +370,7 @@ def test_c1_orchestrate_script_with_custom_requirements_file(tmp_path: Path):
 # ---------------------------------------------------------------------------
 
 
-def test_c1_orchestrate_markdown_safe_against_embedded_pipe_and_newline(tmp_path: Path):
+def test_c1_orchestrate_markdown_safe_against_embedded_pipe_and_newline(tmp_path: Path, no_codev):
     """Regression: a free-form requirement field (or a generation note) that
     contains a literal newline or '|' must not split a Markdown table row
     into extra rows / extra columns."""
@@ -322,7 +417,9 @@ def test_c1_orchestrate_markdown_safe_against_embedded_pipe_and_newline(tmp_path
 # ---------------------------------------------------------------------------
 
 
-def test_c1_orchestrate_main_returns_nonzero_when_generator_fails(tmp_path: Path, monkeypatch):
+def test_c1_orchestrate_main_returns_nonzero_when_generator_fails(
+    tmp_path: Path, monkeypatch, no_codev
+):
     """Regression: `main` previously always returned 0 even when every
     requirement's generator crashed and produced zero candidates. The report
     files must still land on disk (fail loud via exit code, not by
