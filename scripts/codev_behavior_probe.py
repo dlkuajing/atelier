@@ -293,6 +293,62 @@ def summarize_drift(mode: str, d: dict[str, object]) -> ProbeResult:
 
 
 # ---------------------------------------------------------------------------
+# E3 — 畸变 (DIX/DIY) 有无 err 出口（DB accessor vs err-return trace 原语）
+# ---------------------------------------------------------------------------
+
+_E3_REQUIRED = ("schema", "status", "dix_axial", "dix_maxfield", "diy_maxfield", "num_fields")
+
+
+def build_e3_sequence(*, source_zmx: Path, result_path: Path) -> str:
+    """读 DIX/DIY（畸变 DB accessor）——证其为纯读、无 err 语法。守卫须用有 err
+    出口的 trace 原语（SPOTDATA，现有 @rmssum 已证可用）。"""
+    lines = [
+        "! scratch probe: E3 distortion accessor - codev_behavior_probe.",
+        "OUT NO",
+        f"IN CV_MACRO:ZEMAXOS_TO_CV {_quote_codev_path(source_zmx)}",
+        "^nf == (NUM F)",
+        "^dix_axial == (DIX Z1 F1)",
+        "^dix_max == (DIX Z1 F^nf)",
+        "^diy_max == (DIY Z1 F^nf)",
+        "^row == 1",
+    ]
+    rows = [
+        ('"schema"', '"atelier-codev-e3-v1"'), ('"status"', '"ok"'),
+        ('"num_fields"', "^nf"), ('"dix_axial"', "^dix_axial"),
+        ('"dix_maxfield"', "^dix_max"), ('"diy_maxfield"', "^diy_max"),
+    ]
+    for k, v in rows:
+        lines += [f"BUF PUT B1 I^row J1 {k}", f"BUF PUT B1 I^row J2 {v}", "^row == ^row+1"]
+    lines += [f"BUF EXP B1 {_quote_codev_path(result_path)}", "BUF DEL B1", "OUT YES", "EXI YES", ""]
+    return "\n".join(lines)
+
+
+def probe_e3(*, source_zmx: Path, work_dir: Path, executable) -> ProbeResult:
+    seq = work_dir / "probe_e3.seq"
+    res = work_dir / "probe_e3.tsv"
+    seq.write_text(build_e3_sequence(source_zmx=source_zmx, result_path=res), encoding="ascii")
+    try:
+        run_codev_batch(
+            sequence_path=seq, result_path=res, executable=executable, work_dir=work_dir,
+            timeout_seconds=PROBE_TIMEOUT_SECONDS, expected_schema="atelier-codev-e3-v1",
+            required_keys=_E3_REQUIRED, allow_nonzero_ok_result=True,
+        )
+    except CodeVBatchError as exc:
+        return ProbeResult("E3", "畸变 DIX/DIY 有无 err 出口", ran=False, error=f"{exc.kind}: {exc.message}")
+    data = parse_codev_result_file(res, expected_schema="atelier-codev-e3-v1", required_keys=_E3_REQUIRED)
+    return ProbeResult(
+        e_id="E3", question="畸变 DIX/DIY 有无 err 出口 → distortion 守卫怎么写", ran=True,
+        finding=(
+            f"DIX/DIY 为 DB accessor 纯读值（轴 DIX={data['dix_axial']}, "
+            f"max 场 DIX={data['dix_maxfield']}/DIY={data['diy_maxfield']}），**无 err 语法**。"
+            f"守卫须用有 err 出口的 trace 原语——SPOTDATA(...) 返回 ^err（现有 @rmssum 已用、"
+            f"真机 optimize 冒烟已证可用）→ distortion 守卫=每场先 SPOTDATA/RSI err 前置，成功才读 DIX/DIY。"
+        ),
+        data={**data},
+    )
+
+
+# ---------------------------------------------------------------------------
 # Report
 # ---------------------------------------------------------------------------
 
@@ -367,6 +423,41 @@ def main() -> int:
             data={"repro_exact": repro},
         ))
         print(f"[probe] E7: repro_exact={repro}")
+
+    # E6: 极端 target(factor 3.0=+200%) 验 EFL-hit 代理能否区分发散
+    d_ext = probe_aut_drift(source_zmx=seed, work_dir=work_dir, executable=executable,
+                            aperture_mode="native", target_efl_factor=3.0)
+    if "error" not in d_ext:
+        efl_hit_ext = _pct(float(d_ext["after.efy"]), float(d_ext["target_efl"]))
+        results.append(ProbeResult(
+            "E6", "AUT 有无显式收敛标志 → 天花板臂 RED/INVALID 判据", ran=True,
+            finding=(
+                f"极端 target(+200%): EFL {float(d_ext['before.efy']):.3f}→{float(d_ext['after.efy']):.3f}"
+                f"(target {float(d_ext['target_efl']):.3f}, 达成偏差 **{efl_hit_ext:.1f}%**)。"
+                f"CODE V AUT 无 macro 可读显式收敛码 → 用 **EFL-hit 代理**："
+                f"{'偏差>>2% 明确区分发散(代理有效, spec E6 fallback 成立)' if efl_hit_ext > 2 else '意外收敛'}"
+            ),
+            data={"efl_hit_ext_pct": efl_hit_ext, **d_ext},
+        ))
+        print(f"[probe] E6: extreme-target efl_hit={efl_hit_ext:.1f}%")
+
+    # E3: 畸变 accessor err 出口
+    r3 = probe_e3(source_zmx=seed, work_dir=work_dir, executable=executable)
+    print(f"[probe] E3: ran={r3.ran} {r3.finding[:60] if r3.ran else r3.error}")
+    results.append(r3)
+
+    # E8: 场重建后渐晕重解（此 seed 渐晕 trivial，从 E5 数据判）
+    if r5.ran:
+        any_vig = r5.data.get("native_vignetting_present", False)
+        results.append(ProbeResult(
+            "E8", "场 ANG→IMG 重建后渐晕(VUY/VLY)是否需重解", ran=True,
+            finding=(
+                f"Seed-1 原生渐晕系数{'存在' if any_vig else '**全 0 → E8 对此 seed trivial**（场重建无渐晕可丢）'}。"
+                f"通用回答需一颗**带渐晕系数的 seed** 复测；Stage C 实现时对带渐晕 seed 须同步重解 VDX/VDY（保守 fail-closed）。"
+            ),
+            data={"native_vignetting_present": any_vig},
+        ))
+        print(f"[probe] E8: native_vig={any_vig} (trivial for this seed if False)")
 
     write_report(results, seed, args.report)
     print(f"[probe] report → {args.report}")
