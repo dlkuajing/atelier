@@ -1,7 +1,7 @@
 # ③优化落地最小可行性 Spike — 接缝设计 Spec
 
-- **日期**：2026-07-08（v9 修订 2026-07-09）
-- **状态**：设计草案 **v9**（Codex + 5 棱镜对抗轮1-8）；**轮8 收敛确认：workflow 5/5 棱镜全判 design-converged**，Codex 唯一 1 条 A（constructed-IMH 口径 2 处残留传播）已 v9 全文单一真相补净。**设计层收敛，待主公 ratify → 转闸2 Step-0 探针**
+- **日期**：2026-07-08（v10 经验落地版 2026-07-09）
+- **状态**：**v10 经验落地版**（设计层轮1-8 收敛：workflow 5/5 判 design-converged + Codex approve；**闸2 Step-0 探针已真机定死 E1-E8**，§3.5 回灌）。核心物理全部真机证实，go-signal：EFL 拉 +12% 收敛 0.04%。**下一步：实现完整宏改造 + 实验矩阵出良品率数据。**
 - **里程碑语境**：Phase 10 探路阶 · 北极星（量产设计产出引擎）go/no-go 命门
 - **基线**：origin/main `7177325`；worktree `D:\atelier-opt3` @ `spike/codev-target-convergence`；GSD session `.planning/debug/codev-target-convergence.md`
 - **范围**：C1 §10 六接缝中的 **接缝1（EFL 解锁朝 target）+ 接缝3（客户 F#/IMH 目标）**。不碰接缝4-6。
@@ -72,7 +72,24 @@
 | **E7** | AUT 同 seed 同 target 是否逐位可复现 | 同参跑两次比对 post_aut.efl | 确定性→复现规则可轻；非确定性→§5 复现定向到 2% 阈附近 |
 | **E8** | Stage C 场 ANG→IMG 重建后，seed 原生渐晕系数(VUY/VLY/VUX/VLX)/主光线是否随场重定位失配、是否需重解 | 小 seed 读原生 VUY/VLY→构造 ANG→IMG 重建→比对重建前后渐晕系数/主光线足迹 | 失配→Stage C 场重建须**同步重解渐晕(VDX/VDY)**并写死重解步骤（呼应 codebase 已知雷区 E1-02）；一致→记录可沿用 |
 
-探针产出 `.planning/loop/codev-behavior-probe-report.md`。**E1-E8 结果是设计定稿的输入**（部分分支现"待探针定"，探针后收敛）。
+探针产出 `.planning/loop/codev-behavior-probe-report.md`。**E1-E8 结果是设计定稿的输入**。
+
+### 3.5 探针实测结论（经验落地 · 2026-07-09 · Seed-1 US20170003482A1，`scripts/codev_behavior_probe.py`）
+
+**E1-E8 已全部真机定死**（D:\CODEV115），"待探针定"分支收敛为：
+
+| E# | 实测 | 落地决策 |
+|---|---|---|
+| **E1** | **FNO 模式 AUT 每轮重解 EPD、锁死 F#（漂 0%）**；EPD 模式 F# 随 EFL 漂 +12% | **F# 手柄=FNO 模式**（F# 达 target=constructed；代价=EPD 重解 +12%，须测像质连带）。**取"锁"支。** |
+| **E2** | ANG 场 IMH 随 EFL **漂 +12%**（IMH∝EFL 证实） | pre-Stage-C IMH=`source=measured` 实测漂移；Stage C 场重建为 yim 后锚 target。**§2.1 定** |
+| **E3** | DIX/DIY=DB accessor 纯读值、**无 err 语法**；SPOTDATA(...) 返回 `^err`（现有 @rmssum 真机已证） | **distortion 守卫=每场先 SPOTDATA/RSI 取 `^err` 前置，成功才读 DIX/DIY**。§4.4.3 写死此判据。 |
+| **E4** | EPD 模式 (FNO) 读活算值 2.60=EFY/EPD；FNO 模式读 2.32=锁定活值 | **F# 一律用 `EFL_real/EPD_real` 活算 + 交叉核对 (FNO)**（§2.1 手柄栏）。安全路径证实。 |
+| **E5** | Seed-1 field_type=**ANG**、3 场、aperture=FNO、原生渐晕全 0 | 必需场用"绝对像高 `\|yh_mm\|` 最大场"机器定义（§4.4.1）；ANG→IMG 重建走 §5.3 折算。 |
+| **E6** | CODE V AUT **无 macro 可读显式收敛码**；极端 target(+200%) EFL 只够到偏差 58.6%=明确不收敛 | **`aut_converged` 用 EFL-hit 代理**（`aut_diverged := \|post−target\|/target ≥ 2%`），天花板臂 RED 用 `\|post−target\|` 曲线。**§3-E6 无标志支/§4.4.5 落地。** |
+| **E7** | 两次 after.efy **逐位一致**（AUT 确定性） | 复现规则可轻；§5.4 定向到 2% 阈附近即可。 |
+| **E8** | Seed-1 原生渐晕**全 0=trivial**（无系数可丢） | **通用回答待带渐晕 seed 复测**；Stage C 对带渐晕 seed 须同步重解 VDX/VDY（保守 fail-closed）。**Seed-2 若带渐晕须补测。** |
+
+**go-signal（探针级·机制非良品率）**：EFL 拉 +12% 到 ≠seed target **收敛，达成偏差 0.04%**——③"解锁 EFL 朝 target"核心机制真机验通；且 +12% 收敛 / +200% 不收敛=**收敛半径**概念成立。⚠️ 探针跑 minimal AUT（无 merit 操作数），**测机制/物理、未测像质**；良品率须完整实验矩阵（真宏 + 三快照 + 像质度量 + 资深判）出。
 - **探针自身失败兜底（轮5）**：任一 Ex 探测 run 本身 INVALID/崩溃/超时（如 E3 构造失败场把 CODE V 打崩、scratch 导入失败）→ 该 Ex 记 `probe-blocked、未知留未知`，对应设计分支**保守取 fail-closed 支**（distortion 不计 validity / IMH 标经验漂移不锚），派生"probe-tooling debug"为已识别下一 blocker，不阻塞其余 Ex。
 - **探针↔正式 run 环境一致性（轮5）**：探针的 seed 导入(`IN ZEMAXOS_TO_CV`)、CODE V 可执行版本、aperture 模式与场定义须与正式 Stage run **同源**（同 codev_optimize 宏骨架的 scratch 变体）；probe-report 记配置指纹供正式 run 比对。
 
@@ -242,4 +259,8 @@ target 模式 required_keys **按 stage 分**（防 A/B 被强制全三 target �
 
 - **轮8（收敛确认，主公令再跑1轮）**（codex R8 + 5 棱镜）：**workflow 5/5 棱镜全判 design-converged**；Codex 唯一 1 条 A=constructed-IMH 口径 2 处残留（§5.3 分桶②"IMH 实追迹出容差→RED"、§1.2 no-go"IMH 不达"）→ v9 grep 全文一次性扫净、单一真相（§1.1/§1.2/§5.3/§6.3 constructed IMH 一律"构造+可实追迹、畸变裸数字非硬阈"）。余 1 C（§6.3 孤儿 2% 常量）随 Fix C 收口。
 
-**状态（设计层收敛 · 8 轮）**：**轮8 达成收敛**——workflow 5/5 判 converged，Codex 单条传播残留 v9 补净。8 轮双方一致确认：**设计脊梁 + 经验 parking(E1-E8) 攻不动**；剩余精度（§4.4.2 确切容差、状态机边缘）属实现期，须闸2 拿真码 + E1-E8 探针实测收口，非更多散文轮次（继续加轮只会互找传播影子=假绿）。**待主公 ratify → 转闸2 Step-0 探针（真机定 E1-E8）→ 探针回灌经验落地版**。
+**状态（设计层收敛 · 8 轮）**：**轮8 达成收敛**——workflow 5/5 判 converged，Codex 单条传播残留 v9 补净。8 轮双方一致确认：**设计脊梁 + 经验 parking(E1-E8) 攻不动**。
+
+- **闸2 Step-0 探针（2026-07-09 · 主公 ratify 后执行）**：`scripts/codev_behavior_probe.py` scratch 动态探针真机跑 D:\CODEV115，**E1-E8 全部定死**（§3.5 回灌）。关键：E1 FNO 模式锁 F#（取"锁"支=constructed）、E2 ANG 场 IMH 漂 +12%、E3 DIX/DIY 无 err→SPOTDATA 守卫、E6 无显式收敛码→EFL-hit 代理、E7 确定性、E8 此 seed trivial（待带渐晕 seed 复测）。**go-signal**：EFL 拉 +12% 收敛 0.04%=③核心机制真机验通（机制级、未测良品率）。**→ v10 经验落地版**。
+
+**下一步**：实现完整宏改造（加法式三 target 参数 + 三快照 + fail-closed + FNO 锁 F# + SPOTDATA 畸变守卫 + EFL-hit aut_converged 代理）+ mock 层测试 + 跑实验矩阵 → 出资深 go/no-go 报告（**良品率**，[EXPERT] 判）。

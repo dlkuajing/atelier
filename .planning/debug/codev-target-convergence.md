@@ -42,9 +42,10 @@ note: "本 session 由主公 attended 驱动，非自主 session-manager 循环�
 
 ## Current Focus
 
-- **status: 设计层收敛定案（2026-07-09 · 双方一致）**——8 轮 Codex+5棱镜对抗，spec **v9** 定稿。**轮8 收敛确认：workflow 5/5 棱镜 design-converged + Codex 终审 approve（design-converged, no material findings）**。设计脊梁+经验 parking(E1-E8) 双方 8 轮确认攻不动。**待主公 ratify → 转闸2 Step-0 探针。**
+- **status: 闸2 Step-0 探针完成 · v10 经验落地版（2026-07-09）**——8 轮对抗设计层收敛（workflow 5/5 + Codex approve）后，主公 ratify 转闸2 Step-0；`scripts/codev_behavior_probe.py` 真机跑 D:\CODEV115 **E1-E8 全定死**（§3.5 回灌）。**go-signal：EFL 拉 +12% 收敛 0.04%=③核心机制真机验通**（机制级、未测良品率）。
 - hypothesis: 见上（接缝1+3 使 AUT 朝客户 target 收敛；EFL 唯一真优化维，F#/IMH 经验测定/构造）
-- next_action: **待主公 ratify v8** → 闸2 Step-0 CODE V 行为探针（真机定 E1-E8：FNO锁F#/ANG场IMH漂/DIX-DIY err/(FNO)读值/rel-1.0场/AUT收敛标志/复现/渐晕重解）→ 探针回灌经验落地版 → 改宏
+- **探针关键结论**：E1 FNO 模式锁 F#（取"锁"支=constructed）｜E2 ANG 场 IMH 漂+12%｜E3 DIX/DIY 无 err→SPOTDATA 守卫｜E4 (FNO) 活算安全｜E5 ANG/FNO/渐晕0｜E6 无收敛码→EFL-hit 代理｜E7 确定性｜E8 此 seed trivial
+- next_action: **实现完整宏改造**（加法式三 target 参数 + 三快照 + fail-closed + FNO 锁 F# + SPOTDATA 畸变守卫 + EFL-hit aut_converged + per-stage 契约，零回归保 7 测）+ mock 层测试 + 跑实验矩阵 → 资深 go/no-go 报告（良品率，[EXPERT] 判）
 - test: （闸2 后）最小闸条件展开：Seed-1 baseline-lock+Stage A+天花板臂 3 run 出首信号，A 通过才展开 B/C+Seed-2；三快照量 EFL/F#/IMH/FOV/像质 vs target + fail-closed
 - expecting: **EFL 是唯一确定真优化收敛维**（落 target 2% 内+移动达阈+方向对）；**F# 与 IMH 均经验测定、须实测漂移/达成，不假设构造即达≈0**（轮2-3 修正）；像质裸倍率数字，值不值得看由资深填（AI 不判良品）
 
