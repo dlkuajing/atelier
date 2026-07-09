@@ -112,6 +112,20 @@ def test_zero_or_negative_target_efl_raises() -> None:
         score_seed_target_match(seed_efl_mm=4.0, target_efl_mm=-1.0)
 
 
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf")])
+def test_non_finite_seed_efl_raises(bad: float) -> None:
+    # NaN 在 `<= 0` 比较下恒 False、+inf > 0——单靠符号校验会静默穿透，
+    # 污染 delta/score/band；非有限值必须与非正值一样在入口 ValueError。
+    with pytest.raises(ValueError):
+        score_seed_target_match(seed_efl_mm=bad, target_efl_mm=4.0)
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf")])
+def test_non_finite_target_efl_raises(bad: float) -> None:
+    with pytest.raises(ValueError):
+        score_seed_target_match(seed_efl_mm=4.0, target_efl_mm=bad)
+
+
 # ---------------------------------------------------------------------------
 # evidence_note
 # ---------------------------------------------------------------------------

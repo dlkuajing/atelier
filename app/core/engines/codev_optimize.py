@@ -13,6 +13,7 @@ from app.core.engines.codev_batch import (
     DEFAULT_CODEV_EXECUTABLE,
     CodeVBatchError,
     CodeVBatchResult,
+    ensure_buf_exp_safe_filename,
     parse_codev_result_file,
     run_codev_batch,
 )
@@ -432,7 +433,7 @@ def _capture_target_snapshot(prefix: str) -> list[str]:
 def _append_target_snapshot_rows(lines: list[str], prefix: str) -> None:
     _append_metric_rows(lines, prefix)  # efl + 4 metrics
     _append_put_row(lines, f'"{prefix}.fno"', f"^{prefix}_fno")
-    _append_put_row(lines, f'"{prefix}.epd"', f"^{prefix}_epd")
+    _append_put_row(lines, f'"{prefix}.epd_mm"', f"^{prefix}_epd")
     _append_put_row(lines, f'"{prefix}.maximh_mm"', f"^{prefix}_maximh")
 
 
@@ -766,7 +767,7 @@ _TARGET_REQUIRED_KEYS = (
     "schema", "status", "mode", "stage", "target.efl_mm",
     "seed_baseline.efl_y_mm", "seed_baseline.fno", "seed_baseline.maximh_mm",
     "config_pre_aut.efl_y_mm", "config_pre_aut.fno", "config_pre_aut.maximh_mm",
-    "post_aut.efl_y_mm", "post_aut.fno", "post_aut.epd", "post_aut.maximh_mm",
+    "post_aut.efl_y_mm", "post_aut.fno", "post_aut.epd_mm", "post_aut.maximh_mm",
     "post_aut.max_rms_spot_diameter_um", "post_aut.max_rms_wavefront_error_waves",
     "post_aut.max_distortion_pct",
     "efl_target_deviation_pct", "aut_converged",
@@ -897,7 +898,7 @@ def _safe_aut_error_trace(listing_path: Path | None) -> dict[str, float | str | 
 
 
 def _fmt_edge_filename_token(edge: float) -> str:
-    """渐晕 edge 的**不含小数点**文件名消歧后缀，如 edge=0.2 -> ``"_vig020"``。
+    """渐晕 edge 的**不含小数点**文件名消歧后缀，如 edge=0.2 -> ``"_vig0200"``。
 
     真机实锤（2026-07-09 隔离探针，见 .planning/debug 与本次修复的诊断记
     录）：CODE V ``BUF EXP`` 对形如 ``"..._vig0.20_optimized_readout.tsv"``
@@ -913,11 +914,14 @@ def _fmt_edge_filename_token(edge: float) -> str:
     run_codev_batch`` 文档字符串里已有的".seq 文件名 stem 不要以 .<数字> 结
     尾"警告是同一个 CODE V 文件名解析怪癖的更普遍情形（不止 .seq stem，任何
     经 BUF EXP 打开的路径都会中招）。因此渐晕 edge 一律编码成不含小数点、定
-    宽 3 位的百分位整数，从根上规避这个怪癖，而不是逐个文件名踩坑。"""
+    宽 4 位的千分位整数（0.1% 分辨率，如 0.2 -> ``0200``、0.204 -> ``0204``），
+    从根上规避这个怪癖，而不是逐个文件名踩坑。0.1% 分辨率之下仍碰撞的输入
+    （如 0.2 与 0.2004）由 ``run_codev_target_autovig`` 的已用 token 集合兜底
+    （重复即 ValueError，绝不静默覆写前一 rung 的产物）。"""
     edge = float(edge)
     if not math.isfinite(edge) or edge < 0:
         raise ValueError(f"edge must be finite and non-negative: {edge!r}")
-    return f"_vig{round(edge * 100):03d}"
+    return f"_vig{round(edge * 1000):04d}"
 
 
 def _vignetting_filename_token(vignetting: object) -> str:
@@ -1007,11 +1011,32 @@ def run_codev_target(
     )
     seq = work_dir / f"atelier_codev_target_{stage}{filename_token}.seq"
     res = work_dir / f"atelier_codev_target_{stage}{filename_token}.tsv"
-    optimized_readout_path = (
-        work_dir / _target_optimized_readout_filename(stage, filename_token)
-        if emit_optimized_zmx
-        else None
-    )
+    optimized_readout_path: Path | None = None
+    optimized_zmx_out: Path | None = None
+    if emit_optimized_zmx:
+        optimized_readout_path = work_dir / _target_optimized_readout_filename(
+            stage, filename_token
+        )
+        # 机制守卫：readout 是宏尾第二个 BUF EXP 打开的路径，但不经
+        # run_codev_batch（那里只守卫 seq/主 TSV）——危险文件名（如带小数点的
+        # stage/rung tag 拼出 "..._vig0.20_optimized_readout.tsv"）必须在这里
+        # 提前 ValueError，否则 CODE V 真机上静默中止宏尾、readout 永不落盘
+        # （fail-open 只留 zmx_rebuild_error，病灶极难归因）。注意
+        # optimized_zmx_out **刻意不守卫**：它由 zmx_writer Python 侧落盘、
+        # 不经 CODE V 打开，文件名带小数点（如 "_target3.797_"）是合法的。
+        ensure_buf_exp_safe_filename(
+            optimized_readout_path, role="optimized_readout_path"
+        )
+        optimized_zmx_out = work_dir / _target_optimized_zmx_filename(
+            source_zmx, target_efl_mm, filename_token
+        )
+        # 批跑前清理同名陈旧产物（对齐 baseline run_codev_optimize 的清理模式）：
+        # 本轮宏尾 readout 导出若失败（如 BUF EXP 拒开文件中止宏），fail-open 的
+        # 重建管线绝不能认领上一轮遗留的 readout/ZMX 伪装"成功"——宁可如实报
+        # zmx_rebuild_error。
+        for stale in (optimized_readout_path, optimized_zmx_out):
+            if stale.exists():
+                stale.unlink()
     seq.write_text(
         build_codev_target_sequence(
             source_zmx=source_zmx, result_path=res, target_efl_mm=target_efl_mm,
@@ -1031,16 +1056,28 @@ def run_codev_target(
     data: dict[str, object] = dict(batch.data)
     data["aut_error_trace"] = _safe_aut_error_trace(batch.listing_path)
     data["optimized_zmx_path"] = None
+    returncode_ok = batch.returncode in _OPTIMIZE_OK_RETURNCODES
+    if not returncode_ok:
+        # 如实上报（诚实不变量）：主 TSV 三快照数字是真实读到的，仍然返回；
+        # 但越界 returncode 意味着宏尾完整性存疑，把真实 returncode 附带上报。
+        data["batch_returncode"] = batch.returncode
     if emit_optimized_zmx:
-        assert optimized_readout_path is not None
+        assert optimized_readout_path is not None and optimized_zmx_out is not None
+        if not returncode_ok:
+            # ZMX 重建侧拒绝（fail-open，不炸主 TSV 契约）：越界 returncode 下
+            # 宏尾第二个 BUF EXP（readout 导出）是否完整执行不可信，拒绝据其
+            # 重建 optimized ZMX。
+            data["zmx_rebuild_error"] = (
+                f"batch returncode {batch.returncode} outside allowed "
+                f"{sorted(_OPTIMIZE_OK_RETURNCODES)}; macro-tail integrity uncertain, "
+                "refusing to rebuild optimized ZMX from the readout"
+            )
+            return data
         try:
             optimized_readout = parse_codev_readout_file(optimized_readout_path)
-            zmx_filename = _target_optimized_zmx_filename(
-                source_zmx, target_efl_mm, filename_token
-            )
             optimized_zmx_path = write_zmx_from_codev_readout(
                 optimized_readout,
-                work_dir / zmx_filename,
+                optimized_zmx_out,
                 name=f"{source_zmx.stem}-target-{stage}-optimized",
             )
             optic = load_normalized_zmx(optimized_zmx_path)
@@ -1116,20 +1153,33 @@ def run_codev_target_autovig(
     best: dict[str, object] | None = None
     best_dev = float("inf")
     best_edge = 0.0
+    first_error: CodeVBatchError | None = None
     last_error: CodeVBatchError | None = None
+    used_rung_tokens: set[str] = set()
 
     def _trial(edge: float, vig: list[float] | None) -> tuple[dict[str, object] | None, bool]:
-        nonlocal best, best_dev, best_edge, last_error
+        nonlocal best, best_dev, best_edge, first_error, last_error
+        rung_token = _fmt_edge_filename_token(edge)
+        if rung_token in used_rung_tokens:
+            # 0.1% token 分辨率之下仍碰撞的 ladder 输入：静默覆写会让 rung 产物
+            # 归属混叠（真机踩坑同源病灶），直接拒绝。
+            raise ValueError(
+                f"vig_ladder produces duplicate filename token {rung_token!r} at "
+                f"edge={edge!r}; rungs would silently overwrite each other's files"
+            )
+        used_rung_tokens.add(rung_token)
         try:
             data = run_codev_target(
                 source_zmx=source_zmx, work_dir=work_dir, target_efl_mm=target_efl_mm,
                 target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
                 executable=executable, timeout_seconds=timeout_seconds,
                 platform_name=platform_name, vignetting=vig,
-                rung_filename_tag=_fmt_edge_filename_token(edge),
+                rung_filename_tag=rung_token,
                 emit_optimized_zmx=emit_optimized_zmx, **sequence_options,
             )
         except CodeVBatchError as exc:
+            if first_error is None:
+                first_error = exc
             last_error = exc
             trace.append(f"e{edge:.2f}:{exc.kind}")
             return None, False
@@ -1151,6 +1201,14 @@ def run_codev_target_autovig(
     def _blocked_or_best(edge: float) -> dict[str, object]:
         if best is None:
             if last_error is not None:
+                # 全无可用数据 → tooling-blocked（保持既有语义：仍抛 last_error
+                # 本体/类型，调用方按 kind 分流不受影响）；details 加法式附上
+                # 逐 rung trace（edge→kind/dev 摘要）与首个 rung 错误的 kind，
+                # 异常路径不再丢失整条 ladder 的过程线索。
+                last_error.details["autovig_trace"] = list(trace)
+                last_error.details["first_error_kind"] = (
+                    first_error.kind if first_error is not None else None
+                )
                 raise last_error  # 全无可用数据 → tooling-blocked（保持既有语义）
             # 所有 rung 都返回了数据但 dev 全 NaN（never < best_dev）：无可归属的
             # best，退回末次尝试的 edge。
@@ -1167,7 +1225,12 @@ def run_codev_target_autovig(
         return _annotate(data, 0.0, True)
     nf = num_fields
     if nf is None and data is not None:
-        nf = int(float(data.get("num_fields", "0") or "0"))
+        try:
+            nf = int(float(data.get("num_fields", "0") or "0"))
+        except (TypeError, ValueError):
+            # 畸形 num_fields（与上方 dev 解析同风格容错）：回退 None——不注入
+            # 场数，无法构造离轴渐晕 profile 时走下方兜底返回，不炸整条 ladder。
+            nf = None
     if not nf or nf <= 1:
         return _blocked_or_best(0.0)  # rung0 超时/失败且未注入 nf，或单场种子
     # Climb the nonzero rungs; return the minimal 渐晕 that converges. 每级超时/失败即续爬。
@@ -1184,9 +1247,9 @@ def run_codev_target_autovig(
 
 
 # ===========================================================================
-# 标准打包入口（C1 Mode3 接入锚 · spec §10 六接缝之 1/2/3a）：asphere/both 两
-# 配置并跑 + 数值排序取 preferred，双份数据全保留。加法式：全新函数，不动
-# 上面任何既有函数（零回归）。
+# 标准打包入口（C1 Mode3 接入锚 · spec §10 六接缝之 1/2/3a）：asphere/both 双
+# 配置全跑（串行）+ 数值排序取 preferred，双份数据全保留。加法式：全新函数，
+# 不动上面任何既有函数（零回归）。
 # ===========================================================================
 
 STANDARD_RESULT_SCHEMA = "atelier-codev-target-standard-v1"
@@ -1229,25 +1292,30 @@ def _select_preferred(
     configs: Mapping[str, Mapping[str, object]],
 ) -> tuple[str | None, str]:
     """两配置按 `_standard_config_rank` 排序取 preferred；两配置都报错时
-    返回 (None, 原因)。判定规则见 `run_codev_target_standard` docstring。"""
+    返回 (None, 原因)。判定规则见 `run_codev_target_standard` docstring。
 
-    ranked = sorted(
-        _STANDARD_EXTRA_DOF_CONFIGS,
-        key=lambda name: _standard_config_rank(configs[name]),
-    )
+    rank 元组每配置只计算一次，排序与 reason 措辞都从同一元组派生——排序
+    走一套计算、reason 再独立重算一套的双路结构，一旦两路对 fail-closed 边界
+    的处理有丝毫不一致，reason 就会与实际排序矛盾（说谎的 provenance），
+    故此处刻意收敛为单一数据源。"""
+
+    ranks = {
+        name: _standard_config_rank(configs[name]) for name in _STANDARD_EXTRA_DOF_CONFIGS
+    }
+    ranked = sorted(_STANDARD_EXTRA_DOF_CONFIGS, key=ranks.__getitem__)
     best, second = ranked[0], ranked[1]
-    if "error" in configs[best]:
+    best_errored, best_not_conv, best_rms = ranks[best]
+    second_errored, second_not_conv, second_rms = ranks[second]
+    if best_errored:
         return None, "两配置均报 CodeVBatchError（tooling-blocked），无可用结果"
-    if "error" in configs[second]:
+    if second_errored:
         return best, f'"{second}" 配置报 CodeVBatchError，"{best}" 为唯一可用结果'
-    best_conv = _standard_config_converged(configs[best])
-    second_conv = _standard_config_converged(configs[second])
+    best_conv = 1 - best_not_conv
+    second_conv = 1 - second_not_conv
     if best_conv != second_conv:
         return best, (
             f'"{best}" aut_converged={best_conv} 优于 "{second}" aut_converged={second_conv}'
         )
-    best_rms = _standard_config_rms(configs[best])
-    second_rms = _standard_config_rms(configs[second])
     if best_rms != second_rms:
         return best, (
             f'"{best}" post_aut.max_rms_spot_diameter_um={best_rms:.4g}µm 小于 '
@@ -1293,7 +1361,7 @@ def run_codev_target_standard(
 
     真机结论（主公 2026-07-09 attended 验证）：`extra_dof` ∈ {asphere,both}
     互有胜负（both 在 5 颗 seed 中 3 胜 2 负），无法静态判定哪个配置更优。
-    因此标准配置 = 两配置并跑（asphere=纯非球面 DOF；both=非球面+塑料域
+    因此标准配置 = 双配置全跑（串行；asphere=纯非球面 DOF；both=非球面+塑料域
     玻璃 DOF），按数值指标排序取 preferred，**双份数据全部保留**——不丢弃
     "输"的那份，资深设计师可能仍要看两份对比。
 
@@ -1327,12 +1395,24 @@ def run_codev_target_standard(
          "preferred": "asphere" | "both" | None,
          "preferred_reason": str,
          "provenance": {"vignetting_search": "autovig",
-                        "glass_model": "fictitious-within-plastic-GLA",
+                        "glass_model": {"asphere": "glass-frozen",  # 从不设玻璃变量
+                                        "both": "fictitious-within-plastic-GLA(default)"
+                                                | "fictitious-within-custom-GLA"},
+                        "gla_hull": [...],  # 仅自定义 bounds 时出现：实际注入
+                                            # AUT GLA 的凸包角点字符串列表
                         "quality_note": "..."}}
     """
 
     work_dir = Path(work_dir)
+    # Fail-fast 前置校验（0 真机成本）：standard 恒跑 "both" 配置，glass 路径必然
+    # 消费 bounds——非法 bounds 与其等整条 asphere autovig ladder 真机批跑完、爬到
+    # both 配置构建 sequence 时才炸，不如入口立即 ValueError，不进配置循环。
+    # 凸包角点同时供 provenance.gla_hull 使用（与实际注入 AUT GLA 的角点同源）。
+    gla_hull = _glass_map_hull(
+        DEFAULT_GLASS_BOUNDS_ND_VD if glass_bounds_nd_vd is None else glass_bounds_nd_vd
+    )
     configs: dict[str, dict[str, object]] = {}
+    # 串行——CODE V 单实例/单 license seat 硬约束，勿并行化。
     for extra_dof in _STANDARD_EXTRA_DOF_CONFIGS:
         try:
             data = run_codev_target_autovig(
@@ -1354,19 +1434,32 @@ def run_codev_target_standard(
             configs[extra_dof] = {"error": {"kind": exc.kind, "detail": exc.message}}
 
     preferred, preferred_reason = _select_preferred(configs)
+    # provenance 按 config 如实生成（诚实语义：标签必须与该配置实际跑法一致）：
+    # asphere 配置全程不设玻璃变量（无 GLC/GLA）→ "glass-frozen"；both 配置的
+    # 玻璃模型标签从实际生效的 bounds 派生，且自定义 bounds 时附上实际注入
+    # AUT GLA 的凸包角点字符串（gla_hull），供资深核对可变域本身。顶层只留
+    # vignetting_search/quality_note 这两个对两配置同真的共性字段。
+    both_glass_model = (
+        "fictitious-within-plastic-GLA(default)"
+        if glass_bounds_nd_vd is None
+        else "fictitious-within-custom-GLA"
+    )
+    provenance: dict[str, object] = {
+        "vignetting_search": "autovig",
+        "glass_model": {"asphere": "glass-frozen", "both": both_glass_model},
+        "quality_note": (
+            "RMS measured on vignetted pupil (edge_used); preferred is numeric "
+            "ordering, NOT a yield/quality judgment (EXPERT red line)"
+        ),
+    }
+    if glass_bounds_nd_vd is not None:
+        provenance["gla_hull"] = gla_hull
     return {
         "schema": STANDARD_RESULT_SCHEMA,
         "configs": configs,
         "preferred": preferred,
         "preferred_reason": preferred_reason,
-        "provenance": {
-            "vignetting_search": "autovig",
-            "glass_model": "fictitious-within-plastic-GLA",
-            "quality_note": (
-                "RMS measured on vignetted pupil (edge_used); preferred is numeric "
-                "ordering, NOT a yield/quality judgment (EXPERT red line)"
-            ),
-        },
+        "provenance": provenance,
     }
 
 

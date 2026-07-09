@@ -464,6 +464,61 @@ def test_mock_subprocess_timeout_taskkill_gbk_output_does_not_crash(
     assert isinstance(error.value.details["kill"]["stdout_tail"], str)
 
 
+def test_mock_subprocess_timeout_listing_read_oserror_still_raises_timeout(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """timeout 分支的 .lis 诊断读取遇 OSError（如刚被杀、尚未退出的 CODE V 进程
+    树仍锁着清单 → PermissionError）必须 fail-open 返回空串：主异常仍是
+    CodeVBatchError('timeout')，绝不被诊断读取的 PermissionError 替换。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 6666
+        returncode = None
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+            self.communicate_calls = 0
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            self.communicate_calls += 1
+            if self.communicate_calls == 1:
+                # 模拟 CODE V 在超时前写出了清单文件（随后进程被杀，文件被锁）
+                (Path(self.kwargs["cwd"]) / "atelier_codev_trivial.lis").write_text(
+                    "partial listing", encoding="utf-8"
+                )
+                raise subprocess.TimeoutExpired(self.command, timeout, output="partial")
+            self.returncode = -9
+            return "drained", ""
+
+    def fake_run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(command, 0, stdout="killed", stderr="")
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    monkeypatch.setattr(codev_batch.subprocess, "run", fake_run)
+
+    real_read_text = Path.read_text
+
+    def locked_lis_read_text(self: Path, *args: object, **kwargs: object) -> str:
+        if self.suffix == ".lis":
+            raise PermissionError(f"file is locked by another process: {self}")
+        return real_read_text(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", locked_lis_read_text)
+
+    with pytest.raises(CodeVBatchError) as error:
+        run_trivial_codev_batch(
+            work_dir=tmp_path,
+            executable=executable,
+            timeout_seconds=0.01,
+            platform_name="nt",
+        )
+
+    assert error.value.kind == "timeout"  # 主异常未被 PermissionError 替换
+    assert error.value.details["listing_tail"] == ""  # 诊断读取 fail-open 为空串
+
+
 def test_mock_subprocess_timeout_falls_back_to_kill_when_taskkill_fails(
     monkeypatch,
     tmp_path: Path,
@@ -516,6 +571,56 @@ def test_mock_subprocess_timeout_falls_back_to_kill_when_taskkill_fails(
     assert error.value.details["kill"]["fallback"]["method"] == "kill"
     assert instance is not None
     assert instance.killed is True
+
+
+# ---------------------------------------------------------------------------
+# BUF EXP 危险文件名机制守卫（真机实锤模式：basename 里 ".<数字>" 段内混有
+# 非数字内容 → CODE V "ERROR - Unable to open file." 中止整条宏）
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "dangerous",
+    [
+        "atelier_vig0.20_readout.tsv",  # 真机灾难原型：.20 后还有 _readout
+        "a_target3.797_optimized_readout.tsv",  # EFL 小数 token 混进 CODE V 路径
+        "foo.2a.tsv",  # 数字后混字母的杂交段
+    ],
+)
+def test_ensure_buf_exp_safe_filename_rejects_dangerous(dangerous: str) -> None:
+    with pytest.raises(ValueError, match="Unable to open file"):
+        codev_batch.ensure_buf_exp_safe_filename(dangerous)
+
+
+@pytest.mark.parametrize(
+    "legal",
+    [
+        "atelier_codev_target_A.tsv",  # 普通扩展名（点后是字母）
+        "atelier_codev_target_A_vig0200.seq",  # 无小数点 token（修复后的正规形态）
+        "atelier_codev_target_A_vig0200_optimized_readout.tsv",
+        "v0.20.tsv",  # 隔离实验证实：小数点后到扩展名之间只剩纯数字 → CODE V 不报错
+        "atelier_codev_trivial.lis",
+    ],
+)
+def test_ensure_buf_exp_safe_filename_accepts_legal(legal: str) -> None:
+    codev_batch.ensure_buf_exp_safe_filename(legal)  # 不应抛
+
+
+def test_run_codev_batch_rejects_dangerous_sequence_and_result_names(tmp_path: Path) -> None:
+    """守卫在 run_codev_batch 入口最前（先于 executable/seq 存在性检查）：
+    危险文件名立即 ValueError，绝不发起 CODE V 进程让宏静默中止。"""
+    safe_seq = tmp_path / "ok.seq"
+    safe_res = tmp_path / "ok.tsv"
+    with pytest.raises(ValueError, match="sequence_path"):
+        run_codev_batch(
+            sequence_path=tmp_path / "bad_vig0.20_x.seq", result_path=safe_res,
+            executable=tmp_path / "missing_codev.exe",
+        )
+    with pytest.raises(ValueError, match="result_path"):
+        run_codev_batch(
+            sequence_path=safe_seq, result_path=tmp_path / "bad_vig0.20_readout.tsv",
+            executable=tmp_path / "missing_codev.exe",
+        )
 
 
 @pytest.mark.skipif(not DEFAULT_CODEV_EXECUTABLE.is_file(), reason="CODE V is not installed here")

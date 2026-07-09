@@ -138,8 +138,8 @@ def probe_static_readout(*, source_zmx: Path, work_dir: Path, executable) -> Pro
 
 _DRIFT_REQUIRED = (
     "schema", "status", "aperture_mode", "target_efl_factor",
-    "before.efy", "before.fno", "before.epd", "before.maximh",
-    "after.efy", "after.fno", "after.epd", "after.maximh",
+    "before.efy", "before.fno", "before.epd_mm", "before.maximh",
+    "after.efy", "after.fno", "after.epd_mm", "after.maximh",
 )
 
 
@@ -213,15 +213,15 @@ def build_aut_drift_sequence(
         ('"aperture_mode"', f'"{aperture_mode}"'),
         ('"target_efl_factor"', f'"{target_efl_factor:.6f}"'),
         ('"seed.fno"', "^seed_fno"),
-        ('"seed.epd"', "^seed_epd"),
+        ('"seed.epd_mm"', "^seed_epd"),
         ('"before.efy"', "^before_efy"),
         ('"before.fno"', "^before_fno"),
-        ('"before.epd"', "^before_epd"),
+        ('"before.epd_mm"', "^before_epd"),
         ('"before.maximh"', "^before_maximh"),
         ('"target_efl"', "^target_efl"),
         ('"after.efy"', "^after_efy"),
         ('"after.fno"', "^after_fno"),
-        ('"after.epd"', "^after_epd"),
+        ('"after.epd_mm"', "^after_epd"),
         ('"after.maximh"', "^after_maximh"),
     ]
     for key, val in rows:
@@ -270,7 +270,7 @@ def summarize_drift(mode: str, d: dict[str, object]) -> ProbeResult:
         return ProbeResult(f"E1/{mode}", "AUT 拉 EFL 时 F#/IMH 漂不漂", ran=False, error=str(d["error"]))
     b_efy, a_efy = float(d["before.efy"]), float(d["after.efy"])
     b_fno, a_fno = float(d["before.fno"]), float(d["after.fno"])
-    b_epd, a_epd = float(d["before.epd"]), float(d["after.epd"])
+    b_epd, a_epd = float(d["before.epd_mm"]), float(d["after.epd_mm"])
     b_imh, a_imh = float(d["before.maximh"]), float(d["after.maximh"])
     tgt = float(d["target_efl"])
     efl_hit = _pct(a_efy, tgt)

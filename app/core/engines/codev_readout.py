@@ -543,7 +543,7 @@ def _append_put_row(lines: list[str], key: str, value: str) -> None:
 
 def _append_dynamic_surface_row(lines: list[str], suffix: str, value: str) -> None:
     lines.append(f'  ^key == CONCAT(^surface_prefix, "{suffix}")')
-    lines.append(f"  BUF PUT B1 I^row J1 ^key")
+    lines.append("  BUF PUT B1 I^row J1 ^key")
     lines.append(f"  BUF PUT B1 I^row J2 {value}")
     lines.append("  ^row == ^row+1")
 

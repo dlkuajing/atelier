@@ -9,8 +9,13 @@ from pathlib import Path
 import pytest
 
 from app.core.engines import codev_batch, codev_optimize
-from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
+from app.core.engines.codev_batch import (
+    DEFAULT_CODEV_EXECUTABLE,
+    CodeVBatchError,
+    ensure_buf_exp_safe_filename,
+)
 from app.core.engines.codev_optimize import (
+    _TARGET_REQUIRED_KEYS,
     CODEV_OPTIMIZE_RESULT_SCHEMA,
     DEFAULT_GLASS_BOUNDS_ND_VD,
     DEFAULT_OPTIMIZE_SEED,
@@ -536,6 +541,19 @@ def test_target_sequence_custom_glass_bounds_override_default() -> None:
     assert f"  GLA {' '.join(default_corners)}" not in seq
 
 
+def test_target_sequence_epd_key_carries_mm_unit_suffix() -> None:
+    """EPD 是毫米量纲，结果键必须带 `_mm` 后缀（仓库单位后缀约定）；旧的无
+    后缀键 `.epd` 不得再出现——宏出参与 required-keys 契约同步锁死。"""
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"), target_efl_mm=4.0,
+    )
+    for snap in ("seed_baseline", "config_pre_aut", "post_aut"):
+        assert f'"{snap}.epd_mm"' in seq
+        assert f'"{snap}.epd"' not in seq
+    assert "post_aut.epd_mm" in _TARGET_REQUIRED_KEYS
+    assert "post_aut.epd" not in _TARGET_REQUIRED_KEYS
+
+
 def _write_target_result(
     path: Path,
     *,
@@ -560,7 +578,7 @@ def _write_target_result(
             (f"{snap}.max_rms_spot_diameter_um", spot),
             (f"{snap}.max_rms_wavefront_error_waves", wfe),
             (f"{snap}.max_distortion_pct", dist),
-            (f"{snap}.fno", fno), (f"{snap}.epd", "1.56"), (f"{snap}.maximh_mm", imh),
+            (f"{snap}.fno", fno), (f"{snap}.epd_mm", "1.56"), (f"{snap}.maximh_mm", imh),
         ]
     rows += [("efl_target_deviation_pct", dev), ("aut_converged", converged)]
     path.write_text("\n".join(f"{k}\t{v}" for k, v in rows) + "\n", encoding="utf-8")
@@ -772,6 +790,100 @@ def test_mock_autovig_fallback_edge_used_matches_best_not_last_tried(
     assert data["autovig.converged"] == "0"
     assert data["autovig.edge_used"] == "0.2"  # best 的 edge，不是最后尝试的 0.3
     assert float(data["efl_target_deviation_pct"]) == pytest.approx(1.5)
+
+
+def test_mock_autovig_duplicate_rung_token_collision_raises(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """0.1% token 分辨率之下仍碰撞的 ladder 输入（0.2 与 0.2004 同为 _vig0200）：
+    绝不静默覆写前一 rung 的产物——命中已用 token 集合立即 ValueError。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", _autovig_fake_popen(9.9))  # 永不收敛
+    with pytest.raises(ValueError, match="duplicate filename token"):
+        run_codev_target_autovig(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+            stage="A", executable=executable, timeout_seconds=12.0,
+            num_fields=3, vig_ladder=(0.0, 0.2, 0.2004),
+        )
+
+
+def test_mock_autovig_malformed_num_fields_does_not_crash_ladder(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """rung0 返回畸形 num_fields（如 "***"）时不炸整条 ladder：与 dev 解析同风格
+    容错回退 None（不注入场数），走 rung0 数据兜底返回——修复前 int(float("***"))
+    直接 ValueError 炸穿 autovig。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 7302
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            _write_target_result(result_path, converged="0", dev="7.7", num_fields="***")
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=12.0, vig_ladder=(0.0, 0.2, 0.3),
+    )
+    assert data["autovig.converged"] == "0"
+    assert data["autovig.edge_used"] == "0"  # 场数不可学 → 未爬非零 rung，兜底 rung0
+    assert float(data["efl_target_deviation_pct"]) == pytest.approx(7.7)
+
+
+def test_mock_autovig_all_rungs_fail_details_carry_trace_and_first_error(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """全灭异常路径不再丢过程线索：rung0 报 failure（结果文件未产出）、rung1 报
+    timeout——全灭 raise 时仍抛 last_error 类型（timeout，保持既有分流兼容），但
+    details 加法式附 autovig_trace（逐 rung edge→kind 摘要）与 first_error_kind
+    （首错 = failure），供事后归因整条 ladder 的失败形态。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 7303
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+            self.communicate_calls = 0
+
+        def communicate(self, timeout: float | None = None) -> tuple[bytes, bytes]:
+            self.communicate_calls += 1
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            seq = sequence_path.read_text(encoding="ascii")
+            has_vig = re.search(r"^VUY ", seq, re.MULTILINE) is not None
+            if not has_vig:
+                return b"", b""  # rung0：不产出结果文件 → CodeVBatchError("failure")
+            if self.communicate_calls == 1:
+                raise subprocess.TimeoutExpired(self.command, timeout, output=b"flood")
+            self.returncode = -9
+            return b"drained", b""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    monkeypatch.setattr(
+        codev_batch.subprocess, "run",
+        lambda command, **kw: subprocess.CompletedProcess(command, 0, stdout=b"", stderr=b""),
+    )
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target_autovig(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+            stage="A", executable=executable, timeout_seconds=0.01, platform_name="nt",
+            num_fields=3, vig_ladder=(0.0, 0.2),
+        )
+    assert error.value.kind == "timeout"  # 仍抛 last_error 类型（既有语义零回归）
+    assert error.value.details["first_error_kind"] == "failure"
+    assert error.value.details["autovig_trace"] == ["e0.00:failure", "e0.20:timeout"]
 
 
 def test_mock_run_codev_target_parses_three_snapshots(
@@ -1200,8 +1312,85 @@ def test_target_standard_schema_and_provenance_present(
     assert result["schema"] == STANDARD_RESULT_SCHEMA
     assert set(result["configs"]) == {"asphere", "both"}
     assert result["provenance"]["vignetting_search"] == "autovig"
-    assert result["provenance"]["glass_model"] == "fictitious-within-plastic-GLA"
+    # glass_model 按 config 如实分开（诚实语义）：asphere 配置从不设玻璃变量
+    # → "glass-frozen"；both 配置未传自定义 bounds → 默认塑料域标签。
+    assert result["provenance"]["glass_model"] == {
+        "asphere": "glass-frozen",
+        "both": "fictitious-within-plastic-GLA(default)",
+    }
+    assert "gla_hull" not in result["provenance"]  # 默认 bounds 不附 hull 角点
     assert "EXPERT" in result["provenance"]["quality_note"]
+
+
+def test_target_standard_custom_glass_bounds_provenance_carries_hull(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """自定义 glass bounds 时 provenance 必须如实标注 custom 并附上实际注入
+    AUT GLA 的凸包角点字符串（与 _glass_map_hull 同源），供资深核对可变域。"""
+    custom_bounds = [(1.50, 40.0), (1.60, 20.0), (1.55, 70.0)]
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="10.0"),
+                "both": _standard_config_result(converged="1", rms="11.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        glass_bounds_nd_vd=custom_bounds,
+    )
+    assert result["provenance"]["glass_model"] == {
+        "asphere": "glass-frozen",
+        "both": "fictitious-within-custom-GLA",
+    }
+    assert result["provenance"]["gla_hull"] == _glass_map_hull(custom_bounds)
+
+
+def test_target_standard_full_tie_takes_fixed_priority_order(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """aut_converged 与 RMS 完全打平 → 按固定优先序取 asphere；reason 与排序
+    从同一 rank 元组派生（消除双路计算分叉），措辞必须与打平事实一致。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="15.0"),
+                "both": _standard_config_result(converged="1", rms="15.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "asphere"
+    assert "固定优先序" in result["preferred_reason"]
+    assert "converged=1" in result["preferred_reason"]
+
+
+def test_target_standard_invalid_glass_bounds_fail_fast(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """入口前置校验（0 真机成本）：standard 恒跑 both 配置，glass 路径必然消费
+    bounds——非法 bounds 必须在入口立即 ValueError，不进配置循环烧真机批跑（修复
+    前要等 asphere 整条 autovig ladder 跑完、爬到 both 构建 sequence 时才炸）。"""
+    calls: list[str] = []
+
+    def _spy(*, extra_dof: str = "none", **_ignored: object) -> dict[str, str]:
+        calls.append(extra_dof)
+        return _standard_config_result(converged="1", rms="10.0")
+
+    monkeypatch.setattr(codev_optimize, "run_codev_target_autovig", _spy)
+    with pytest.raises(ValueError):
+        run_codev_target_standard(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+            glass_bounds_nd_vd=[(1.50, 40.0), (1.60, 20.0)],  # <3 个点，无法构成凸多边形
+        )
+    assert calls == []  # fail-fast：未进任何配置的 autovig 调用
 
 
 # ===========================================================================
@@ -1289,21 +1478,59 @@ def test_vignetting_filename_token_empty_for_none_or_empty() -> None:
 
 
 def test_vignetting_filename_token_uses_max_edge() -> None:
-    assert codev_optimize._vignetting_filename_token([0.0, 0.3, 0.3]) == "_vig030"
+    assert codev_optimize._vignetting_filename_token([0.0, 0.3, 0.3]) == "_vig0300"
 
 
 def test_fmt_edge_filename_token_is_decimal_free() -> None:
     """真机实锤（2026-07-09）：CODE V BUF EXP 对文件名中"小数点后还跟更多
     非数字字符再到扩展名"的路径报 ERROR - Unable to open file. 并中止整条
     宏——见 _fmt_edge_filename_token 文档字符串。消歧后缀必须不含小数点。"""
-    assert codev_optimize._fmt_edge_filename_token(0.0) == "_vig000"
-    assert codev_optimize._fmt_edge_filename_token(0.2) == "_vig020"
-    assert codev_optimize._fmt_edge_filename_token(0.7) == "_vig070"
+    assert codev_optimize._fmt_edge_filename_token(0.0) == "_vig0000"
+    assert codev_optimize._fmt_edge_filename_token(0.2) == "_vig0200"
+    assert codev_optimize._fmt_edge_filename_token(0.7) == "_vig0700"
     assert "." not in codev_optimize._fmt_edge_filename_token(0.13)
     with pytest.raises(ValueError):
         codev_optimize._fmt_edge_filename_token(-0.1)
     with pytest.raises(ValueError):
         codev_optimize._fmt_edge_filename_token(float("nan"))
+
+
+def test_fmt_edge_filename_token_permille_resolution_disambiguates() -> None:
+    """token 分辨率提到 0.1%（千分位定宽 4 位）：细化 ladder 里相差 <1% 的两个
+    edge（0.2 与 0.204）必须拿到不同 token——旧的 1% 分辨率（round(edge*100)）
+    会把两者都编成 _vig020，rung 产物互相静默覆写。"""
+    assert codev_optimize._fmt_edge_filename_token(0.204) == "_vig0204"
+    assert codev_optimize._fmt_edge_filename_token(0.2) != codev_optimize._fmt_edge_filename_token(
+        0.204
+    )
+
+
+def test_run_codev_target_rejects_buf_exp_hazard_readout_filename(tmp_path: Path) -> None:
+    """机制守卫（不再只靠 token 生成侧自律）：带小数点的 rung tag 拼出的
+    readout 文件名（"..._vig0.20_optimized_readout.tsv"）是 CODE V BUF EXP
+    真机实锤的 "Unable to open file" 危险模式——必须在 Python 侧构造路径时
+    立即 ValueError，不落 seq、不发起任何 CODE V 进程（此处未 mock Popen，
+    若守卫失效测试会因缺 executable 报 CodeVBatchError 而非 ValueError）。"""
+    with pytest.raises(ValueError, match="optimized_readout_path"):
+        run_codev_target(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path,
+            target_efl_mm=4.057, stage="A", executable=tmp_path / "codev.exe",
+            timeout_seconds=12.0, emit_optimized_zmx=True, rung_filename_tag="_vig0.20",
+        )
+    assert list(tmp_path.glob("*.seq")) == []  # 守卫先于 seq 落盘
+
+
+def test_run_codev_target_dangerous_shaped_zmx_output_name_is_exempt() -> None:
+    """守卫只管 CODE V 会打开的路径：优化后 ZMX（zmx_writer Python 落盘、不经
+    CODE V）文件名天然含小数点（"_target4.057_"），必须豁免——由
+    test_mock_run_codev_target_emit_optimized_zmx_rebuilds_and_ingests 的
+    文件名断言回归锁定；此处锁定 readout 文件名生成器本身对合法 token 安全。"""
+    safe_readout = codev_optimize._target_optimized_readout_filename("A", "_vig0200")
+    ensure_buf_exp_safe_filename(safe_readout)  # 合法 token 不误伤
+    dangerous_zmx = codev_optimize._target_optimized_zmx_filename(
+        default_optimize_seed(), 4.057, "_vig0200"
+    )
+    assert ".057_" in dangerous_zmx  # 危险形状确实存在，但该路径不经守卫
 
 
 def test_mock_run_codev_target_default_optimized_zmx_path_is_none(
@@ -1354,6 +1581,7 @@ def test_mock_run_codev_target_emit_optimized_zmx_rebuilds_and_ingests(
 
     assert data["mode"] == "target"  # 主契约不受影响
     assert "zmx_rebuild_error" not in data
+    assert "batch_returncode" not in data  # returncode ∈ {0,1} 时不附带上报（零回归）
     assert data["optimized_zmx_path"] is not None
     zmx_path = Path(data["optimized_zmx_path"])
     assert zmx_path.is_file()
@@ -1384,6 +1612,89 @@ def test_mock_run_codev_target_emit_optimized_zmx_rebuild_failure_is_fail_open(
     assert data["optimized_zmx_path"] is None
     assert "zmx_rebuild_error" in data
     assert "EVENASPH" in data["zmx_rebuild_error"]
+
+
+def test_mock_run_codev_target_stale_readout_is_not_claimed(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """批跑前陈旧产物清理（对齐 baseline run_codev_optimize）：上一轮遗留的同名
+    optimized readout/ZMX 必须先 unlink——当本轮宏"主 tsv 成功但 readout 未导出"
+    （真机原型：BUF EXP 拒开文件中止宏尾）时，重建管线不得认领陈旧 readout 伪装
+    成功，而应如实报 zmx_rebuild_error。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    stale_readout = tmp_path / "atelier_codev_target_A_optimized_readout.tsv"
+    _write_optimized_readout(stale_readout)  # 完全合法的旧 readout，最具迷惑性
+    stale_zmx = tmp_path / f"{default_optimize_seed().stem}_target4.057_optimized.zmx"
+    stale_zmx.write_text("! stale optimized zmx from a previous run\n", encoding="ascii")
+
+    class FakePopen:
+        pid = 7304
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            result_path, _readout_path = _buf_exp_paths_from_target_sequence_pair(sequence_path)
+            _write_target_result(result_path)  # 主 tsv 成功，但**不写**新 readout
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+        emit_optimized_zmx=True,
+    )
+    assert data["mode"] == "target"  # 主 TSV 契约不受影响
+    assert data["optimized_zmx_path"] is None
+    assert "zmx_rebuild_error" in data  # 如实报错，而非认领旧 readout 的静默"成功"
+    assert not stale_readout.exists()  # 陈旧 readout 已在批跑前清理
+    assert not stale_zmx.exists()  # 陈旧 optimized ZMX 同样清理，且未被重建重写
+
+
+def test_mock_run_codev_target_out_of_range_returncode_refuses_zmx_rebuild(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """returncode 闸：越界 returncode（∉ _OPTIMIZE_OK_RETURNCODES）意味着宏尾完
+    整性存疑。主 tsv 三快照数字是真实读到的仍如实返回，且 batch_returncode 字段
+    如实上报；只有 ZMX 重建侧拒绝（即便 readout 文件看似齐全合法）。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 7305
+        returncode = 5  # ∉ _OPTIMIZE_OK_RETURNCODES {0, 1}
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            result_path, readout_path = _buf_exp_paths_from_target_sequence_pair(sequence_path)
+            _write_target_result(result_path)
+            _write_optimized_readout(readout_path)  # readout 看似齐全，仍应拒建
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+        emit_optimized_zmx=True,
+    )
+    # 行为一：主 tsv 数据仍返回 + batch_returncode 如实上报
+    assert data["mode"] == "target"
+    assert data["aut_converged"] == "1"
+    assert float(data["post_aut.efl_y_mm"]) == pytest.approx(4.0570)
+    assert data["batch_returncode"] == 5
+    # 行为二：ZMX 重建侧拒绝（fail-open 进 zmx_rebuild_error，不炸主契约）
+    assert data["optimized_zmx_path"] is None
+    assert "zmx_rebuild_error" in data
+    assert "returncode 5" in data["zmx_rebuild_error"]
 
 
 def test_mock_autovig_emit_optimized_zmx_uses_distinct_filenames_per_rung(
@@ -1442,15 +1753,15 @@ def test_mock_autovig_emit_optimized_zmx_uses_distinct_filenames_per_rung(
     assert len(set(results)) == len(results) == 3
     assert len(set(readouts)) == len(readouts) == 3
 
-    # rung0 (edge=0.0) is no longer bare-named: explicit "_vig000" token.
+    # rung0 (edge=0.0) is no longer bare-named: explicit "_vig0000" token.
     rung0_seq = seen[0][1]
-    assert "_vig000" in rung0_seq.name
+    assert "_vig0000" in rung0_seq.name
 
     # Accepted rung (edge=0.27) is the one whose data/zmx is actually returned.
     zmx_path = Path(data["optimized_zmx_path"])
     assert zmx_path.is_file()
-    assert "_vig027" in zmx_path.name
-    assert "_vig013" not in zmx_path.name and "_vig000" not in zmx_path.name
+    assert "_vig0270" in zmx_path.name
+    assert "_vig0130" not in zmx_path.name and "_vig0000" not in zmx_path.name
 
 
 def test_target_standard_passes_emit_optimized_zmx_through_to_autovig(

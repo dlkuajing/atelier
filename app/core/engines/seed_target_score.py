@@ -55,6 +55,7 @@ CODE V `run_codev_target_autovig`（stage="A"，仅拉 EFL，extra_dof="asphere"
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Literal
 
@@ -106,19 +107,21 @@ def score_seed_target_match(seed_efl_mm: float, target_efl_mm: float) -> SeedTar
     """按 seed 原生 EFL 与 target EFL 的距离打分（heuristic，非良品判定）。
 
     Args:
-        seed_efl_mm: seed 原生（优化前）EFL，单位 mm，须 > 0。
-        target_efl_mm: 目标 EFL，单位 mm，须 > 0。
+        seed_efl_mm: seed 原生（优化前）EFL，单位 mm，须为有限正数。
+        target_efl_mm: 目标 EFL，单位 mm，须为有限正数。
 
     Returns:
         SeedTargetScore，含带符号/绝对偏移百分比、heuristic 分数与机器分桶。
 
     Raises:
-        ValueError: seed_efl_mm 或 target_efl_mm <= 0。
+        ValueError: seed_efl_mm 或 target_efl_mm 非有限（NaN/±inf）或 <= 0。
     """
-    if seed_efl_mm <= 0:
-        raise ValueError(f"seed_efl_mm must be > 0, got {seed_efl_mm}")
-    if target_efl_mm <= 0:
-        raise ValueError(f"target_efl_mm must be > 0, got {target_efl_mm}")
+    # NaN/inf 在 `<= 0` 比较下会静默穿透（NaN 所有比较均 False；+inf > 0），
+    # 一路污染 delta/score/band——非有限值必须与非正值一样在入口就炸。
+    if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
+        raise ValueError(f"seed_efl_mm must be finite and > 0, got {seed_efl_mm}")
+    if not math.isfinite(target_efl_mm) or target_efl_mm <= 0:
+        raise ValueError(f"target_efl_mm must be finite and > 0, got {target_efl_mm}")
 
     delta_efl_pct = (target_efl_mm - seed_efl_mm) / seed_efl_mm * 100.0
     abs_delta_efl_pct = abs(delta_efl_pct)
