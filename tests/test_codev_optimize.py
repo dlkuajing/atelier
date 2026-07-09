@@ -13,10 +13,13 @@ from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchErr
 from app.core.engines.codev_optimize import (
     CODEV_OPTIMIZE_RESULT_SCHEMA,
     DEFAULT_OPTIMIZE_SEED,
+    TARGET_RESULT_SCHEMA,
     build_codev_optimize_sequence,
+    build_codev_target_sequence,
     default_optimize_seed,
     parse_codev_optimize_file,
     run_codev_optimize,
+    run_codev_target,
 )
 from app.core.engines.codev_readout import CODEV_READOUT_RESULT_SCHEMA
 
@@ -323,3 +326,129 @@ def test_real_codev_optimize_patent_seed_smoke(tmp_path: Path) -> None:
     assert result.optimized_zmx.name == "optimized.zmx"
     assert result.optimized_zmx.is_file()
     assert math.isfinite(result.ingested_efl_mm)
+
+
+# ---------------------------------------------------------------------------
+# Target-mode (spike ③优化落地) tests — EFL->target + FNO 锁 F# + 三快照
+# ---------------------------------------------------------------------------
+
+_TARGET_SNAPSHOTS = ("seed_baseline", "config_pre_aut", "post_aut")
+
+
+def test_target_sequence_structure_stage_b() -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(),
+        result_path=Path("r.tsv"),
+        target_efl_mm=4.057,
+        target_f_number=2.4,
+        stage="B",
+    )
+    assert "EFL = 4.057" in seq  # seam 1: EFL -> target (非 ^baseline)
+    assert "^baseline_efl_y_mm" not in seq  # target 模式不锚 seed 自身焦距
+    assert "FNO 2.4" in seq  # seam 3a: FNO 锁 F#（E1 实测）
+    for snap in _TARGET_SNAPSHOTS:  # 三快照
+        assert f"^{snap}_efl_y_mm == ABSF((EFY))" in seq
+        assert f'"{snap}.max_distortion_pct"' in seq
+    assert f'"{TARGET_RESULT_SCHEMA}"' in seq
+    assert '"mode"' in seq and '"target"' in seq
+    assert '"stage"' in seq
+    assert '"aut_converged"' in seq
+    assert '"target.f_number"' in seq
+
+
+def test_target_stage_a_omits_fno() -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+        target_efl_mm=4.0, stage="A",
+    )
+    assert "EFL = 4" in seq
+    assert "\nFNO " not in seq  # Stage A 不设 F#（seed_hold）
+    assert '"target.f_number"' not in seq
+
+
+def test_target_mode_does_not_touch_baseline_sequence() -> None:
+    """零回归 sanity：baseline build 仍锚 seed 自身焦距，未被 target 改动污染。"""
+    base = build_codev_optimize_sequence(
+        source_zmx=default_optimize_seed(),
+        result_path=Path("r.tsv"),
+        optimized_readout_path=Path("ro.tsv"),
+    )
+    assert "EFL = ^baseline_efl_y_mm" in base  # baseline 口径不变
+    assert TARGET_RESULT_SCHEMA not in base  # baseline 不带 target schema
+
+
+def test_target_param_validation_rejects_nonpositive() -> None:
+    for bad in (0.0, -1.0):
+        with pytest.raises(ValueError):
+            build_codev_target_sequence(
+                source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+                target_efl_mm=bad,
+            )
+    with pytest.raises(ValueError):
+        build_codev_target_sequence(
+            source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+            target_efl_mm=4.0, target_f_number=-2.0,
+        )
+
+
+def _write_target_result(path: Path) -> None:
+    rows = [
+        ("schema", TARGET_RESULT_SCHEMA), ("status", "ok"),
+        ("mode", "target"), ("stage", "A"), ("source_zmx", DEFAULT_OPTIMIZE_SEED),
+        ("target.efl_mm", "4.057"),
+    ]
+    for snap, efl, fno, imh, spot, wfe, dist in [
+        ("seed_baseline", "3.6225", "2.32", "3.686", "9.57", "0.365", "2.01"),
+        ("config_pre_aut", "3.6225", "2.32", "3.686", "9.57", "0.365", "2.01"),
+        ("post_aut", "4.0570", "2.32", "4.128", "23.10", "0.474", "8.39"),
+    ]:
+        rows += [
+            (f"{snap}.efl_y_mm", efl), (f"{snap}.max_lateral_color_um", "3.0"),
+            (f"{snap}.max_rms_spot_diameter_um", spot),
+            (f"{snap}.max_rms_wavefront_error_waves", wfe),
+            (f"{snap}.max_distortion_pct", dist),
+            (f"{snap}.fno", fno), (f"{snap}.epd", "1.56"), (f"{snap}.maximh_mm", imh),
+        ]
+    rows += [("efl_target_deviation_pct", "0.001"), ("aut_converged", "1")]
+    path.write_text("\n".join(f"{k}\t{v}" for k, v in rows) + "\n", encoding="utf-8")
+
+
+def test_mock_run_codev_target_parses_three_snapshots(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 4321
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            _write_target_result(result_path)
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+    )
+    assert data["mode"] == "target"
+    assert data["aut_converged"] == "1"
+    assert float(data["seed_baseline.efl_y_mm"]) == pytest.approx(3.6225)
+    assert float(data["post_aut.efl_y_mm"]) == pytest.approx(4.0570)
+    # 三快照像质数据齐全
+    assert float(data["post_aut.max_rms_spot_diameter_um"]) == pytest.approx(23.10)
+    assert float(data["post_aut.max_distortion_pct"]) == pytest.approx(8.39)
+
+
+def _buf_exp_paths_from_sequence_single(sequence_path: Path) -> list[Path]:
+    sequence = sequence_path.read_text(encoding="ascii")
+    matches = re.findall(r'BUF EXP B1 "([^"]+)"', sequence)
+    assert len(matches) == 1  # target 模式单 BUF EXP
+    return [Path(m) for m in matches]

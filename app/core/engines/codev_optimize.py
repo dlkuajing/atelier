@@ -395,6 +395,202 @@ def run_codev_optimize(
     )
 
 
+# ===========================================================================
+# Target-mode (spike ③优化落地): EFL->客户 target + FNO 锁 F#(E1 实测) + 三快照
+# 加法式：全新函数，不触碰 baseline build_codev_optimize_sequence（零回归）。
+# spec: docs/superpowers/specs/2026-07-08-codev-target-convergence-spike-design.md
+# ===========================================================================
+
+TARGET_RESULT_SCHEMA = "atelier-codev-target-v1"
+_TARGET_SNAPSHOTS = ("seed_baseline", "config_pre_aut", "post_aut")
+
+
+def _capture_target_snapshot(prefix: str) -> list[str]:
+    """Capture efl + 4 像质度量 + fno/epd/maximh for one snapshot."""
+    lines = list(_capture_metric_variables(prefix))  # efl + lat/spot/wfe/dist
+    lines += [
+        f"^{prefix}_fno == ABSF((FNO))",
+        f"^{prefix}_epd == ABSF((EPD))",
+        f"^{prefix}_ftyp == (TYP FLD)",
+        f"^{prefix}_maximh == 0",
+        "FOR ^f 1 (NUM F)",
+        "  ^yh == (YRI F^f Z1)",
+        f'  IF ^{prefix}_ftyp = "ANG"',
+        f"    ^yh == ^{prefix}_efl_y_mm * TANF((YAN F^f Z1)*4*ATANF(1)/180)",
+        f'  ELS IF ^{prefix}_ftyp = "IMG"',
+        "    ^yh == (YIM F^f Z1)",
+        "  END IF",
+        f"  IF ABSF(^yh) > ^{prefix}_maximh",
+        f"    ^{prefix}_maximh == ABSF(^yh)",
+        "  END IF",
+        "END FOR",
+    ]
+    return lines
+
+
+def _append_target_snapshot_rows(lines: list[str], prefix: str) -> None:
+    _append_metric_rows(lines, prefix)  # efl + 4 metrics
+    _append_put_row(lines, f'"{prefix}.fno"', f"^{prefix}_fno")
+    _append_put_row(lines, f'"{prefix}.epd"', f"^{prefix}_epd")
+    _append_put_row(lines, f'"{prefix}.maximh_mm"', f"^{prefix}_maximh")
+
+
+def build_codev_target_sequence(
+    *,
+    source_zmx: Path | str,
+    result_path: Path | str,
+    target_efl_mm: float,
+    target_f_number: float | None = None,
+    target_imh_mm: float | None = None,
+    stage: str = "A",
+    max_cycles: int = 25,
+    min_cycles: int = 3,
+    lateral_color_weight: float = 0.01,
+    rms_spot_weight: float = 0.001,
+    min_center_thickness_mm: float = 0.025,
+    min_edge_thickness_mm: float = 0.025,
+    max_center_thickness_mm: float = 10.0,
+    min_air_gap_mm: float = 0.001,
+) -> str:
+    """Build target-mode sequence: import seed, capture 3 snapshots, pull EFL to
+    客户 target (seam 1), lock F# via FNO mode (seam 3a, E1 实测锁), keep merit
+    (lat color + RMS spot). Stage A=EFL only; B=+F#; C(IMH 场重建)另做。"""
+
+    _validate_positive(target_efl_mm, "target_efl_mm")
+    if target_f_number is not None:
+        _validate_positive(target_f_number, "target_f_number")
+    if target_imh_mm is not None:
+        _validate_positive(target_imh_mm, "target_imh_mm")
+    _validate_positive_int(max_cycles, "max_cycles")
+    _validate_positive_int(min_cycles, "min_cycles")
+
+    source_zmx = Path(source_zmx)
+    result_path = Path(result_path)
+
+    lines: list[str] = [
+        "! target-mode: EFL->target + FNO-lock F# + 3 snapshots. codev_optimize.",
+        *_metric_function_block(),
+        "OUT NO",
+        f"IN CV_MACRO:ZEMAXOS_TO_CV {_quote_codev_path(source_zmx)}",
+        "DEF VAR SA",
+        # 快照1 seed_baseline（配置前，仅对照）
+        *_capture_target_snapshot("seed_baseline"),
+    ]
+    # seam 3a: F# 走 FNO 模式（E1 实测：AUT 每轮重解 EPD 锁 F#）
+    if target_f_number is not None:
+        lines.append(f"FNO {_fmt_number(target_f_number)}")
+    # 快照2 config_pre_aut（客户配置后、优化前）
+    lines += _capture_target_snapshot("config_pre_aut")
+    # AUT: seam 1 EFL->target + 既有 merit（横向色差 + RMS 点列）
+    lines += [
+        "AUT",
+        "  SUR N",
+        "  CHG SA",
+        "  WFR Y",
+        "  WTF FA 10",
+        f"  EFL = {_fmt_number(target_efl_mm)}",
+        "  @atelier_latcolor == @lcum(1)",
+        "  @atelier_latcolor = 0",
+        f"  WTC {_fmt_number(lateral_color_weight)}",
+        "  @atelier_rmsspot == @rmssum(1)",
+        "  @atelier_rmsspot = 0",
+        f"  WTC {_fmt_number(rms_spot_weight)}",
+        f"  MNT {_fmt_number(min_center_thickness_mm)}",
+        f"  MNE {_fmt_number(min_edge_thickness_mm)}",
+        f"  MXT {_fmt_number(max_center_thickness_mm)}",
+        f"  MNA {_fmt_number(min_air_gap_mm)}",
+        f"  MXC {max_cycles}",
+        f"  MNC {min_cycles}",
+        "  IMP 0.001",
+        "GO",
+    ]
+    # 快照3 post_aut（优化后）
+    lines += _capture_target_snapshot("post_aut")
+    # EFL 达成偏差 + aut_converged 代理（E6：无显式收敛码→EFL-hit）
+    lines += [
+        f"^target_efl == {_fmt_number(target_efl_mm)}",
+        "^efl_target_dev_pct == 0",
+        "IF ABSF(^target_efl) > 1.0E-12",
+        "  ^efl_target_dev_pct == ABSF((^post_aut_efl_y_mm-^target_efl)/^target_efl)*100",
+        "END IF",
+        "^aut_converged == 0",
+        "IF ^efl_target_dev_pct < 2.0",
+        "  ^aut_converged == 1",
+        "END IF",
+        "^row == 1",
+    ]
+    _append_put_row(lines, '"schema"', f'"{TARGET_RESULT_SCHEMA}"')
+    _append_put_row(lines, '"status"', '"ok"')
+    _append_put_row(lines, '"mode"', '"target"')
+    _append_put_row(lines, '"stage"', f'"{stage}"')
+    _append_put_row(lines, '"source_zmx"', f'"{source_zmx.name}"')
+    _append_put_row(lines, '"target.efl_mm"', "^target_efl")
+    if target_f_number is not None:
+        _append_put_row(lines, '"target.f_number"', _fmt_number(target_f_number))
+    if target_imh_mm is not None:
+        _append_put_row(lines, '"target.imh_mm"', _fmt_number(target_imh_mm))
+    for snap in _TARGET_SNAPSHOTS:
+        _append_target_snapshot_rows(lines, snap)
+    _append_put_row(lines, '"efl_target_deviation_pct"', "^efl_target_dev_pct")
+    _append_put_row(lines, '"aut_converged"', "^aut_converged")
+    lines += [
+        f"BUF EXP B1 {_quote_codev_path(result_path)}",
+        "BUF DEL B1",
+        "OUT YES",
+        "EXI YES",
+        "",
+    ]
+    return "\n".join(lines)
+
+
+_TARGET_REQUIRED_KEYS = (
+    "schema", "status", "mode", "stage", "target.efl_mm",
+    "seed_baseline.efl_y_mm", "seed_baseline.fno", "seed_baseline.maximh_mm",
+    "config_pre_aut.efl_y_mm", "config_pre_aut.fno", "config_pre_aut.maximh_mm",
+    "post_aut.efl_y_mm", "post_aut.fno", "post_aut.epd", "post_aut.maximh_mm",
+    "post_aut.max_rms_spot_diameter_um", "post_aut.max_rms_wavefront_error_waves",
+    "post_aut.max_distortion_pct",
+    "efl_target_deviation_pct", "aut_converged",
+)
+
+
+def run_codev_target(
+    *,
+    source_zmx: Path | str,
+    work_dir: Path | str,
+    target_efl_mm: float,
+    target_f_number: float | None = None,
+    target_imh_mm: float | None = None,
+    stage: str = "A",
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
+    timeout_seconds: float = 180.0,
+    platform_name: str = os.name,
+    **sequence_options: object,
+) -> dict[str, str]:
+    """Run one target-mode AUT and return the parsed three-snapshot data dict."""
+
+    source_zmx = Path(source_zmx)
+    work_dir = Path(work_dir).resolve()  # 绝对路径：CODE V BUF EXP 相对路径会二次拼接失败
+    work_dir.mkdir(parents=True, exist_ok=True)
+    seq = work_dir / f"atelier_codev_target_{stage}.seq"
+    res = work_dir / f"atelier_codev_target_{stage}.tsv"
+    seq.write_text(
+        build_codev_target_sequence(
+            source_zmx=source_zmx, result_path=res, target_efl_mm=target_efl_mm,
+            target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
+            **sequence_options,
+        ),
+        encoding="ascii",
+    )
+    batch = run_codev_batch(
+        sequence_path=seq, result_path=res, executable=executable, work_dir=work_dir,
+        timeout_seconds=timeout_seconds, platform_name=platform_name,
+        expected_schema=TARGET_RESULT_SCHEMA, required_keys=_TARGET_REQUIRED_KEYS,
+        allow_nonzero_ok_result=True,
+    )
+    return dict(batch.data)
+
+
 def parse_codev_optimize_file(result_path: Path | str) -> CodeVOptimizeSummary:
     """Parse an AUT optimization TSV exported by ``BUF EXP``."""
 
