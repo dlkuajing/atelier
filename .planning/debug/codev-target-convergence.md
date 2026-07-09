@@ -86,6 +86,26 @@ ray-setup 修好后，arm A(甜区+12%) × 5 seed × extra_dof∈{none,asphere,b
 - ⚠️ **edge 混淆**：auto-vig 各 config 收敛 edge 不同，RMS 在被裁瞳上测（edge 越大越乐观），故最干净对照是同-edge seed；结论对混淆稳健（同-edge 亦成立）。
 - go/no-go 净结论：③ **收敛=已解**（5/5）；**quality 有真杠杆(asphere)但未达量产**；**两个可解工程 blocker=修 GLC 玻璃变量 + seed-target 匹配**。良品率判仍在资深([EXPERT])。
 
+## GLC 玻璃变量修复（2026-07-09 · 自主 loop 第 1 铲 · systematic-debugging 全链）
+
+**根因（真机证据链，非猜测）**：`GLC S^s 0` 把玻璃转 fictitious glass（GLN=nd + GLV=nF-nC 两变量/面）后，CODE V **自动**套默认 `GLA NFK5 NSK16 NLAF2 SF4` 边界——Schott **矿物玻璃**四边形，完全不适配塑料手机镜头。证据（dof_work/*.lis）：US20170003482A1 both 臂 S14 nd 1.535→**1.718**（塑料不可实现，且在默认多边形内部自由移动未触界）；ERR.F. 128→154263（**×1204 爆炸**，CONST.F.:ABERR.F.≈19000:1）却报 `Normal AUTO Completion`（IMP 判据只看改善速率=假阳性）；约束 thrashing + 求导扰动引发 RAY ERROR REFL/MISS。手册证实（Optimization RM p.91-94：GLA 默认约束自动加于所有玻璃变量面、角点是 Schott 玻璃、官方示例 p.157 永远自定义 GLA；LensSetupRM p.419-424：GLC 转 fictitious、私有目录玻璃不可转）。
+
+**修复（commit 本节之后）**：`_glass_map_hull` 把 (nd,vd) 角点集变换到 **(nd, nF-nC) 玻璃图平面**算凸包（单调链，无 scipy），extra_dof∈{glass,both} 时 AUT 块注入自定义塑料域 `GLA`（冒号格式 `nd:vd`）；默认 `DEFAULT_GLASS_BOUNDS_ND_VD` 覆盖 PMMA/COC/APEL/PS/PC/OKP4/OKP4HT/EP + seed 初值 (1.5170,64.2) + 余量角，凸包恰 5 顶点；可参数覆盖（`glass_bounds_nd_vd`）。**通用陷阱（真机踩坑）：CODE V 的 GLA 凸性检查在 (nd, nF-nC) 平面做，不是 (nd,vd)**——(nd,vd) 平面的凸四边形经非线性变换 nF-nC=(nd-1)/vd 后可能非凸（`ERROR - Corner points must form a convex polygon`）；默认 Schott 四角恰好两个平面都凸，掩盖此陷阱。Python 侧排凸序后真机语法 100% 通过（5 seed × 全 rung 零报错）。
+
+**真机验证**：假设探针（同 seed 同 target 同 edge0.5 只差 GLA）：US20170003482A1 both RMS 343→**12.99µm**（追平 asphere 13.0，WFE 0.205<0.29、畸变 7.9%<9.3%）、ERR.F. 128→27 正常收敛、8 面玻璃全落界、13 cycle 快于 22。5-seed 矩阵（autovig ladder, +12%）：
+
+| seed | asphere RMS | both旧(灾难) | both修复后 | 界内 |
+|---|---|---|---|---|
+| US10281683B2 | 62.0 | 273.7 | 83.7 (+35%) | 4/7 |
+| US20140111876A1 | 178.9 | 234.5 | **35.8 (-80%)** | 7/7 |
+| US20170003482A1 | 13.0 | 343.2 | **8.7 (-33%)** | 6/8 |
+| US20170045714A1 | 142.9 | 494.7 | **65.4 (-54%)** | 8/9 |
+| US20180143405A1 | 113.4 | 190.4(conv0) | 342.1 (退化) | 7/7 |
+
+**净结论**：灾难态消除、5/5 EFL 收敛、3/5 RMS 较 asphere 再降 33-80%；**非全面 both≥asphere**——US20180143405A1（最难 seed，需弃 70% 瞳）陷像质差局部极小（旧代码该 seed 连 EFL 都不收敛，修复后收敛但像质差=高维搜索空间问题，与 GLA 修复正交）。**工程决策（loop 自决留痕）：C1 编排对每 seed 并跑 {asphere, both} 取优**（多产候选=北极星形态，不死磕单配置）。30 测绿（含真机冒烟）+ ruff 绿 + 全仓 1502 passed。
+
+**新发现待办（转 backlog）**：① GLA 是软约束（4/5 seed 有 1-3 面终值轻微越界）→ 落真实玻璃（GLASSFIT.SEQ / Glass Expert，手册 LensSetupRM p.423 / Optimization RM Ch.9）时收口；产出 ZMX 玻璃仍是 fictitious（在塑料域内）→ scorecard 须如实标注 provenance。② timeout 孤儿 CODE V 进程疑似串扰后续 run（US10281683B2 e0.3 的 .lis 内容尾部出现在 e0.5.tsv；tsv 内部 source_zmx/edge 字段核对确认最终数据未污染）→ 排 tooling 工单。③ ERR.F. 爆炸仍报 Normal Completion 的假阳性（IMP 判据缺陷）→ 考虑抓 ERR.F./ABERR.F./CONST.F. 进 tsv 供 scorecard 诚实展示。
+
 ## 真良品率重测（2026-07-09 · 自动渐晕修好 ray-setup 后 · 主公 ratify 方案）
 
 `run_codev_target_autovig`（宏加 `vignetting` 参数 + Python 爬梯搜最小收敛离轴渐晕，保 F#）重跑 5 seed × 4 臂（报告 `.planning/loop/codev-target-experiment-report-autovig.md`）：
