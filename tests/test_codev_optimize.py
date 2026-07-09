@@ -12,9 +12,11 @@ from app.core.engines import codev_batch
 from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
 from app.core.engines.codev_optimize import (
     CODEV_OPTIMIZE_RESULT_SCHEMA,
+    DEFAULT_GLASS_BOUNDS_ND_VD,
     DEFAULT_OPTIMIZE_SEED,
     TARGET_RESULT_SCHEMA,
     _autovig_profile,
+    _glass_map_hull,
     build_codev_optimize_sequence,
     build_codev_target_sequence,
     default_optimize_seed,
@@ -391,6 +393,126 @@ def test_target_param_validation_rejects_nonpositive() -> None:
             source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
             target_efl_mm=4.0, target_f_number=-2.0,
         )
+
+
+# ---------------------------------------------------------------------------
+# GLC 玻璃变量修复 — 塑料域 GLA 边界（真机证实 both≥asphere，见
+# .planning/debug/codev-target-convergence.md + scratch_diag/probe_glc_fix.py）
+# ---------------------------------------------------------------------------
+
+_PLASTIC_MATERIALS_ND_VD = {
+    "PMMA": (1.4918, 57.4),
+    "COC": (1.531, 56.0),
+    "APEL": (1.5445, 55.9),
+    "PS": (1.5905, 30.9),
+    "PC": (1.5855, 29.9),
+    "OKP4": (1.607, 27.0),
+    "OKP4HT": (1.632, 23.0),
+    "EP": (1.651, 21.5),
+}
+_SEED_ND_VD = (1.5170, 64.2)  # US20170003482A1 等专利 seed 的玻璃初值
+
+
+def _glass_map_nfnc(nd: float, vd: float) -> float:
+    return (nd - 1.0) / vd
+
+
+def _point_in_glass_map_hull(nd: float, vd: float, corners: list[str]) -> bool:
+    """独立于 _glass_map_hull 内部实现的 point-in-convex-polygon 验证：把
+    'nd:vd' 冒号角点解析回 (nd, nF-nC) 平面（与 CODE V GLA 凸性检查同一平
+    面），对每条边做同号 cross-product 测试。边界上（cross≈0）视为在内。"""
+    poly = []
+    for corner in corners:
+        nd_text, vd_text = corner.split(":")
+        c_nd, c_vd = float(nd_text), float(vd_text)
+        poly.append((c_nd, _glass_map_nfnc(c_nd, c_vd)))
+    point = (nd, _glass_map_nfnc(nd, vd))
+    signs = []
+    for i in range(len(poly)):
+        a, b = poly[i], poly[(i + 1) % len(poly)]
+        signs.append((b[0] - a[0]) * (point[1] - a[1]) - (b[1] - a[1]) * (point[0] - a[0]))
+    return all(s >= -1e-9 for s in signs) or all(s <= 1e-9 for s in signs)
+
+
+def test_default_glass_bounds_hull_has_3_to_5_vertices() -> None:
+    corners = _glass_map_hull(DEFAULT_GLASS_BOUNDS_ND_VD)
+    assert 3 <= len(corners) <= 5
+    for corner in corners:
+        nd_text, vd_text = corner.split(":")
+        assert math.isfinite(float(nd_text))
+        assert math.isfinite(float(vd_text))
+
+
+def test_default_glass_bounds_hull_contains_all_plastics_and_seed() -> None:
+    corners = _glass_map_hull(DEFAULT_GLASS_BOUNDS_ND_VD)
+    all_points = {**_PLASTIC_MATERIALS_ND_VD, "seed(1.5170,64.2)": _SEED_ND_VD}
+    for name, (nd, vd) in all_points.items():
+        assert _point_in_glass_map_hull(nd, vd, corners), f"{name} outside default GLA hull"
+
+
+def test_glass_map_hull_rejects_too_few_points() -> None:
+    with pytest.raises(ValueError):
+        _glass_map_hull([(1.5, 50.0), (1.6, 30.0)])
+
+
+def test_glass_map_hull_rejects_collinear_points() -> None:
+    # 相同 nd、不同 vd -> (nd, nF-nC) 平面上是一条垂直线，凸包退化为 2 点。
+    with pytest.raises(ValueError):
+        _glass_map_hull([(1.5, 50.0), (1.5, 55.0), (1.5, 60.0)])
+
+
+def test_glass_map_hull_rejects_more_than_five_vertices() -> None:
+    # 6 个互不相邻、彼此都在凸包上的点（正六边形式散布） -> 凸包 6 顶点。
+    hexagon = [
+        (1.45, 80.0),
+        (1.50, 20.0),
+        (1.55, 15.0),
+        (1.60, 22.0),
+        (1.65, 60.0),
+        (1.62, 90.0),
+    ]
+    with pytest.raises(ValueError):
+        _glass_map_hull(hexagon)
+
+
+@pytest.mark.parametrize("extra_dof", ["glass", "both"])
+def test_target_sequence_injects_gla_for_glass_variable_modes(extra_dof: str) -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+        target_efl_mm=4.0, extra_dof=extra_dof,
+    )
+    expected_corners = _glass_map_hull(DEFAULT_GLASS_BOUNDS_ND_VD)
+    gla_line = f"  GLA {' '.join(expected_corners)}"
+    assert gla_line in seq
+    lines = seq.splitlines()
+    aut_index = lines.index("AUT")
+    go_index = next(i for i in range(aut_index, len(lines)) if lines[i] == "GO")
+    gla_index = lines.index(gla_line)
+    assert aut_index < gla_index < go_index  # GLA 必须在本次 AUT...GO 块内
+
+
+@pytest.mark.parametrize("extra_dof", ["none", "asphere"])
+def test_target_sequence_omits_gla_without_glass_variables(extra_dof: str) -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+        target_efl_mm=4.0, extra_dof=extra_dof,
+    )
+    assert "GLA " not in seq
+    assert "\nGLA" not in seq
+
+
+def test_target_sequence_custom_glass_bounds_override_default() -> None:
+    custom_bounds = [(1.50, 40.0), (1.60, 20.0), (1.55, 70.0)]
+    custom_corners = _glass_map_hull(custom_bounds)
+    default_corners = _glass_map_hull(DEFAULT_GLASS_BOUNDS_ND_VD)
+    assert custom_corners != default_corners  # sanity: fixture is actually distinct
+
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+        target_efl_mm=4.0, extra_dof="both", glass_bounds_nd_vd=custom_bounds,
+    )
+    assert f"  GLA {' '.join(custom_corners)}" in seq
+    assert f"  GLA {' '.join(default_corners)}" not in seq
 
 
 def _write_target_result(

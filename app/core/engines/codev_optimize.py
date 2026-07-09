@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 import os
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -459,6 +459,112 @@ def _extra_dof_block(extra_dof: str) -> list[str]:
     return lines
 
 
+# ---------------------------------------------------------------------------
+# 玻璃可变域修复（GLC 负杠杆 → 正杠杆，真机证实，见 .planning/debug/
+# codev-target-convergence.md「下一杠杆」章节 + scratch_diag/probe_glc_fix.py）：
+# `GLC S^s 0` 只声明"该面玻璃可变"，CODE V AUT 默认套的可变域是内置 Schott
+# 矿物玻璃四角 NFK5/NSK16/NLAF2/SF4——手机镜头是塑料镜片，AUT 把玻璃拉出该
+# 矿物域外的不可实现区，误差函数爆炸（US20170003482A1 both 模式 RMS 343µm 灾
+# 难案例）。修复：在 AUT 块内注入自定义塑料域 GLA 边界，把玻璃变量约束在
+# 可注塑折射率/色散范围内。
+#
+# ★ 凸性陷阱（真机踩坑）★：CODE V 的 GLA 角点凸性检查不在 (nd, vd) 笛卡尔平
+# 面做，而在玻璃图标准平面 (nd, nF-nC) 做，其中 nF-nC = (nd-1)/vd 是非线性变
+# 换。一个在 (nd, vd) 里凸的四边形，变换后完全可能不凸（某点落入其余三点凸
+# 包内部），导致 CODE V 报 "ERROR - Corner points must form a convex
+# polygon."。所以角点必须先做 (nd, nF-nC) 变换、在该平面算凸包、按凸序排列，
+# Python 侧排好凸序即语法在 CODE V 侧永不炸。
+# ---------------------------------------------------------------------------
+
+# 常见光学塑料 (nd, vd) 锚点 + 专利 seed 初值锚点 + 两个探边余量角点（低折射高
+# 阿贝 / 高折射低阿贝），凸包顶点数经验证恰为 5（PMMA 类角点 tuple 顺序无关，
+# _glass_map_hull 会重新按凸序排列）。任何改动都必须重跑
+# `_glass_map_hull(DEFAULT_GLASS_BOUNDS_ND_VD)` 确认顶点数仍在 3-5 且仍覆盖
+# 全部材料点（test_codev_optimize.py 有回归测试）。
+DEFAULT_GLASS_BOUNDS_ND_VD: tuple[tuple[float, float], ...] = (
+    (1.4918, 57.4),  # PMMA
+    (1.531, 56.0),  # COC
+    (1.5445, 55.9),  # APEL
+    (1.5905, 30.9),  # PS
+    (1.5855, 29.9),  # PC
+    (1.607, 27.0),  # OKP4
+    (1.632, 23.0),  # OKP4HT
+    (1.651, 21.5),  # EP（高折射光学塑料）
+    (1.5170, 64.2),  # 专利 seed（US20170003482A1 等）玻璃初值锚点，必须落在域内
+    (1.42, 68.0),  # 探边余量：低折射/高阿贝角（比现有塑料更宽松）
+    (1.69, 18.0),  # 探边余量：高折射/低阿贝角（比现有塑料更宽松）
+)
+
+
+def _glass_map_hull(bounds_nd_vd: Sequence[tuple[float, float]]) -> list[str]:
+    """把 (nd,vd) 点集变换到 CODE V GLA 实际做凸性检查的 (nd, nF-nC) 玻璃图
+    平面（nF-nC=(nd-1)/vd），算 2D 凸包（自实现 cross-product 单调链，不引入
+    scipy——保持本模块轻依赖），返回按凸序排列的 GLA 冒号格式角点字符串
+    （`f"{nd:.4f}:{vd:.2f}"`，用原始 (nd,vd) 而非变换后坐标，因凸包顶点本就
+    是输入点子集，逐点变换可逆）。
+
+    CODE V GLA 接受 3-5 个角点；凸包顶点数不在该范围视为不可用配置直接报错
+    （宁可 Python 侧提前炸，也不要把非法角点数丢给 CODE V 猜）。<3 点或点集
+    在该平面内共线（凸包退化为一条线段）同样 ValueError。"""
+
+    points: list[tuple[float, float, float]] = []  # (x=nd, y=nF-nC, vd_orig)
+    seen: set[tuple[float, float]] = set()
+    for nd, vd in bounds_nd_vd:
+        nd = float(nd)
+        vd = float(vd)
+        if not math.isfinite(nd) or nd <= 1.0:
+            raise ValueError(f"glass bound nd must be finite and > 1.0: {nd!r}")
+        if not math.isfinite(vd) or vd <= 0:
+            raise ValueError(f"glass bound vd must be finite and positive: {vd!r}")
+        key = (nd, vd)
+        if key in seen:
+            continue
+        seen.add(key)
+        points.append((nd, (nd - 1.0) / vd, vd))
+    if len(points) < 3:
+        raise ValueError(
+            f"glass bounds need at least 3 distinct (nd,vd) points, got {len(points)}"
+        )
+
+    # 2D 叉积只读 (x=nd, y=nF-nC) 两维；点为 3-tuple（末位 vd 仅供输出），
+    # 用 Sequence[float] 直收整点，省去每次调用的 [:2] 切片。
+    def _cross(o: Sequence[float], a: Sequence[float], b: Sequence[float]) -> float:
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+    points.sort(key=lambda p: (p[0], p[1]))
+    lower: list[tuple[float, float, float]] = []
+    for p in points:
+        while len(lower) >= 2 and _cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    upper: list[tuple[float, float, float]] = []
+    for p in reversed(points):
+        while len(upper) >= 2 and _cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    hull = lower[:-1] + upper[:-1]
+
+    if len(hull) < 3:
+        raise ValueError(
+            "glass bounds are collinear in the (nd, nF-nC) glass-map plane; "
+            "no convex polygon can be formed"
+        )
+    if len(hull) > 5:
+        raise ValueError(
+            f"glass bounds convex hull has {len(hull)} vertices; "
+            "CODE V GLA accepts at most 5 corner points"
+        )
+    return [f"{nd:.4f}:{vd:.2f}" for nd, _y, vd in hull]
+
+
+# Import-time sanity check: 默认边界必须直接可用（凸包顶点数 3-5），改动
+# DEFAULT_GLASS_BOUNDS_ND_VD 时若破坏这个断言，模块加载即炸，而不是等到某次
+# CODE V 批跑才发现。
+assert 3 <= len(_glass_map_hull(DEFAULT_GLASS_BOUNDS_ND_VD)) <= 5, (
+    "DEFAULT_GLASS_BOUNDS_ND_VD convex hull must have 3-5 vertices for CODE V GLA"
+)
+
+
 def _validate_vignetting(vignetting: list[float] | None) -> None:
     if vignetting is None:
         return
@@ -493,6 +599,7 @@ def build_codev_target_sequence(
     stage: str = "A",
     extra_dof: str = "none",
     vignetting: list[float] | None = None,
+    glass_bounds_nd_vd: Sequence[tuple[float, float]] | None = None,
     max_cycles: int = 25,
     min_cycles: int = 3,
     lateral_color_weight: float = 0.01,
@@ -509,7 +616,16 @@ def build_codev_target_sequence(
     vignetting: 可选 per-field 渐晕裁剪 fraction（0≤v<1，clip 掉的入瞳半径比例）。
     ZMX->CV 导入丢弃 ray-aiming/渐晕 → 宽+快种子离轴边缘光线 TIR 毒化优化光栅；
     渐晕裁掉这些光线让 AUT 光栅可追迹（**不改 F#**，F# 由光阑定）。由
-    run_codev_target_autovig 自动搜最小收敛渐晕。诊断见 .planning/debug/codev-target-convergence.md。"""
+    run_codev_target_autovig 自动搜最小收敛渐晕。诊断见 .planning/debug/codev-target-convergence.md。
+
+    glass_bounds_nd_vd: extra_dof∈{glass,both} 时，AUT 块内 GLA 塑料可变域边界
+    的 (nd,vd) 点集（None 用 DEFAULT_GLASS_BOUNDS_ND_VD）。真机证实 CODE V AUT
+    对 `GLC S^s 0` 声明的玻璃变量默认套内置 Schott 矿物玻璃四角
+    （NFK5/NSK16/NLAF2/SF4），不适配塑料手机镜头，会把玻璃拉到不可实现区致
+    误差函数爆炸（US20170003482A1 both 模式 RMS 343µm 灾难案例）；注入塑料域
+    GLA 边界后同 seed RMS 收敛到 12.99µm（追平纯非球面 13.0µm）。extra_dof∈
+    {none,asphere} 时不注入（没有玻璃变量，GLA 无意义）。角点凸性检查见
+    _glass_map_hull 文档字符串（(nd, nF-nC) 平面陷阱）。"""
 
     _validate_positive(target_efl_mm, "target_efl_mm")
     if target_f_number is not None:
@@ -543,7 +659,7 @@ def build_codev_target_sequence(
     # 快照2 config_pre_aut（客户配置后、优化前——含 F#/渐晕 setup）
     lines += _capture_target_snapshot("config_pre_aut")
     # AUT: seam 1 EFL->target + 既有 merit（横向色差 + RMS 点列）
-    lines += [
+    aut_lines = [
         "AUT",
         "  SUR N",
         "  CHG SA",
@@ -563,8 +679,14 @@ def build_codev_target_sequence(
         f"  MXC {max_cycles}",
         f"  MNC {min_cycles}",
         "  IMP 0.001",
-        "GO",
     ]
+    if extra_dof in ("glass", "both"):
+        # GLC 玻璃变量修复（真机证实）：塑料域 GLA 边界替换 CODE V 默认矿物
+        # 玻璃四角，见模块顶部「玻璃可变域修复」章节。
+        bounds = DEFAULT_GLASS_BOUNDS_ND_VD if glass_bounds_nd_vd is None else glass_bounds_nd_vd
+        aut_lines.append(f"  GLA {' '.join(_glass_map_hull(bounds))}")
+    aut_lines.append("GO")
+    lines += aut_lines
     # 快照3 post_aut（优化后）
     lines += _capture_target_snapshot("post_aut")
     # EFL 达成偏差 + aut_converged 代理（E6：无显式收敛码→EFL-hit）
