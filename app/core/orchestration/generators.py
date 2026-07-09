@@ -198,6 +198,18 @@ _TARGET_MAX_SEEDS = 2
 #: `seed_target_score.py` 的分桶语义（lt5 < 5to15 < 15to30 < gt30）。
 _BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
 
+#: Stage-1（FOV 近邻预筛）候选池宽度（fix/mode3-seed-fov-prefilter，
+#: 2026-07-10）。真机实锤：`_rank_seeds_by_target_match` 曾只按 EFL-only 的
+#: `score_seed_target_match`（N=24 真机数据边界）排序，选中 FOV 36° 的 seed
+#: 去优化 FOV 78° 的 target（violation 53.8%——scorecard 如实暴露但候选本身
+#: 注定不良配，见任务报告）。`case_library.rank_seeds` 是路由层唯一真相源
+#: 的多维规格距离（FOV 权重 0.46 主导 / IMH 0.30 / EFL 0.20，见其 `weights`
+#: dict），stage 1 先用它把场景池收窄到这么多颗规格最近邻 seed，stage 2
+#: 才在这个邻域内按 EFL 收敛风险重排序（§ `_rank_seeds_by_target_match`
+#: docstring）。K=10 是 `_TARGET_MAX_SEEDS`（2）的 5 倍留白：宽到 stage 2
+#: 仍有真实候选可选，窄到不会把远 FOV 的 seed 重新放回候选池。
+_FOV_PREFILTER_TOP_K = 10
+
 
 def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | str | None]:
     """从 `run_codev_target_standard` 某配置的原始 dict 里摘出 CODE V 真机
@@ -257,15 +269,22 @@ def _mode3_generation_notes(
     preferred_reason: str,
     config: Mapping[str, object],
     provenance: Mapping[str, object],
+    fov_prefiltered: bool,
 ) -> list[str]:
-    """诚实 provenance 注记（离线报告/资深读的第一手线索），非量产判定。"""
+    """诚实 provenance 注记（离线报告/资深读的第一手线索），非量产判定。
+
+    `fov_prefiltered`：`_rank_seeds_by_target_match` 是否跑了 stage 1
+    FOV 近邻预筛（`spec.fov_deg is not None`）。`False` 时 seed 选择退化为
+    纯 EFL 收敛风险排序（原行为）——诚实注明，不静默掩盖"这颗候选没做 FOV
+    近邻过滤"这件事。
+    """
     assert seed.metadata is not None
     glass_model_label = "unknown"
     raw_glass_model = provenance.get("glass_model")
     if isinstance(raw_glass_model, Mapping):
         glass_model_label = str(raw_glass_model.get(preferred, "unknown"))
     edge_used = config.get("autovig.edge_used", "N/A")
-    return [
+    notes = [
         "Mode3：③ target 优化标准入口（codev_optimize.run_codev_target_standard），"
         f"seed={seed.metadata.case_id}",
         f"seed-target 匹配 band={match.band}（score={match.score:.2f}, "
@@ -284,6 +303,13 @@ def _mode3_generation_notes(
         "optical_extras.codev_post_aut 携带 CODE V 侧真机快照数字（裁瞳口径），"
         "与本候选 payload 的 Optiland 满口径口径不可直接横比，见字段 docstring",
     ]
+    if not fov_prefiltered:
+        notes.append(
+            "seed 选择未做 FOV 近邻过滤（target FOV 未约束，spec.fov_deg=None）："
+            "本候选仅按 EFL 收敛风险排序选中，未验证与 target FOV 的规格接近度"
+            "（fix/mode3-seed-fov-prefilter，2026-07-10）"
+        )
+    return notes
 
 
 class TargetConvergedGenerator(CandidateGenerator):
@@ -298,9 +324,14 @@ class TargetConvergedGenerator(CandidateGenerator):
     **流程**：
     1. `cases_for_scenario(spec.scenario)` 取场景池，过滤出
        `metadata.source_zmx` 在 `ZMX_AMMO_DIR` 下真实存在的 seed。
-    2. 每颗候选 seed 用 `seed_target_score.score_seed_target_match`
-       （seed 原生 EFL ← `payload.paraxial.effective_focal_length_mm` vs
-       `spec.efl_mm`）打分，按 band 优先、band 内按 score 升序排序，取前
+    2. `_rank_seeds_by_target_match` 两段式排序（fix/mode3-seed-fov-
+       prefilter，2026-07-10，闭合 FOV 盲区——见其 docstring 的真机实锤
+       细节）：`spec.fov_deg` 非 None 时先用 `case_library.rank_seeds`
+       （多维规格距离，FOV 权重主导）收窄到前 `_FOV_PREFILTER_TOP_K` 颗
+       近邻，再用 `seed_target_score.score_seed_target_match`（seed 原生
+       EFL ← `payload.paraxial.effective_focal_length_mm` vs `spec.efl_mm`）
+       在邻域内按 band 优先、band 内 score 升序重排；`spec.fov_deg is None`
+       时退化为纯 EFL 排序（原行为，诚实降级）。取前
        `min(n, _TARGET_MAX_SEEDS)` 颗——真机成本控制（每颗 seed 一次
        `run_codev_target_standard` 批跑，数十秒到数分钟）。
     3. 每颗 seed 跑 `codev_optimize.run_codev_target_standard`
@@ -404,17 +435,65 @@ class TargetConvergedGenerator(CandidateGenerator):
     def _rank_seeds_by_target_match(
         spec: TargetSpec,
     ) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
-        """场景池 → 过滤出 ZMX 真实存在的 seed → seed-target EFL 距离打分 →
-        按 band 优先、band 内 score 升序排序。`spec.efl_mm` 保证非 None（调
-        用方 `_generate` 已 guard）。"""
+        """场景池 → 过滤出 ZMX 真实存在的 seed → 两段式排序（不合成新权重，
+        复用两个已验证排序器，各管各最有依据的一段）：
+
+        1. **FOV 近邻预筛**（`spec.fov_deg` 非 None 时）：`case_library.
+           rank_seeds`——路由层唯一真相源的多维规格距离（FOV 权重 0.46
+           主导 / IMH 0.30 / EFL 0.20）——把 ZMX 真实存在的场景池收窄到距离
+           最近的前 `_FOV_PREFILTER_TOP_K` 颗。闭合的正是 FOV 盲区：EFL 单
+           维打分对"seed 原生 FOV 36° vs target FOV 78°"这种规格错配视而
+           不见，rank_seeds 的全维距离能看见。
+        2. **EFL 收敛风险重排**：在 stage 1 收窄后的邻域内（或 `spec.
+           fov_deg is None` 时的整个 ZMX-backed 池——见下），按
+           `seed_target_score.score_seed_target_match`（EFL 收敛风险代理，
+           N=24 真机数据依据，见该模块 docstring）分 band 优先、band 内
+           score 升序排序。
+
+        `sorted`/`list.sort` 是稳定排序：stage 2 分数打平（如两颗 seed EFL
+        相同）时保留 stage 1 的距离序（FOV 更近的排前面）——这是 tie-break
+        的机制，不是额外发明的第三个权重。
+
+        `spec.fov_deg is None`（target FOV 未约束，§7-E unconstrained 语义）
+        时 `rank_seeds` 的检索排序查询没有"不检索这一维"的语义（同
+        `RetrievalGenerator` docstring）：跳过 stage 1，退化为纯 stage 2
+        （2026-07-10 前唯一路径）。调用方 `_generate` 通过
+        `_mode3_generation_notes` 如实注明"FOV 未约束，seed 选择未做 FOV
+        近邻过滤"——诚实降级，不是 bug。
+
+        `spec.efl_mm` 保证非 None（调用方 `_generate` 已 guard）。
+        """
         assert spec.efl_mm is not None
-        scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
+        zmx_backed_cases: list[OpticalSampleData] = []
         for case in cases_for_scenario(spec.scenario):
             if case.metadata is None or not case.metadata.source_zmx:
                 continue
             source_path = ZMX_AMMO_DIR / case.metadata.source_zmx
             if not source_path.is_file():
                 continue
+            zmx_backed_cases.append(case)
+        if not zmx_backed_cases:
+            return []
+
+        pool = zmx_backed_cases
+        if spec.fov_deg is not None:
+            seed_ranking = rank_seeds(
+                zmx_backed_cases,
+                efl_mm=spec.efl_mm,
+                fov_deg=spec.fov_deg,
+                fnum=spec.fnum,
+                image_height_mm=spec.image_height_mm,
+                n_elements=spec.n_elements,
+                max_total_track_mm=spec.max_total_track_mm,
+                max_weight_g=spec.max_weight_g,
+                manufacturing_tier=spec.manufacturing_tier,
+                priority=spec.priority,
+            )
+            pool = seed_ranking.ranked_cases[:_FOV_PREFILTER_TOP_K]
+
+        scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
+        for case in pool:
+            assert case.metadata is not None
             seed_efl_mm = case.paraxial.effective_focal_length_mm
             if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
                 continue
@@ -525,6 +604,7 @@ class TargetConvergedGenerator(CandidateGenerator):
                 match=match,
                 preferred=preferred,
                 preferred_reason=preferred_reason,
+                fov_prefiltered=spec.fov_deg is not None,
                 config=config,
                 provenance=provenance,
             ),
