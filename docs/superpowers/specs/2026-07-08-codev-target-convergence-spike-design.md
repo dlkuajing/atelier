@@ -1,7 +1,7 @@
 # ③优化落地最小可行性 Spike — 接缝设计 Spec
 
-- **日期**：2026-07-08（v8 修订 2026-07-09）
-- **状态**：设计草案 **v8**（Codex + 5 棱镜对抗轮1-7；轮7 **2/5 棱镜判 design-converged**，余 3 条 A 全为轮6 修复的传播影子=2 处、零新设计内容，已传播补净）；**设计层收敛，待主公 ratify → 转闸2 Step-0 探针**
+- **日期**：2026-07-08（v9 修订 2026-07-09）
+- **状态**：设计草案 **v9**（Codex + 5 棱镜对抗轮1-8）；**轮8 收敛确认：workflow 5/5 棱镜全判 design-converged**，Codex 唯一 1 条 A（constructed-IMH 口径 2 处残留传播）已 v9 全文单一真相补净。**设计层收敛，待主公 ratify → 转闸2 Step-0 探针**
 - **里程碑语境**：Phase 10 探路阶 · 北极星（量产设计产出引擎）go/no-go 命门
 - **基线**：origin/main `7177325`；worktree `D:\atelier-opt3` @ `spike/codev-target-convergence`；GSD session `.planning/debug/codev-target-convergence.md`
 - **范围**：C1 §10 六接缝中的 **接缝1（EFL 解锁朝 target）+ 接缝3（客户 F#/IMH 目标）**。不碰接缝4-6。
@@ -18,7 +18,7 @@
 
 ### 1.1 判定分层（[EXPERT] 红线 · 轮2 M5 + 轮3 强化）
 
-**关键区分（轮4 收敛）**：**几何 target 达成度**（EFL/F#/IMH 是否落各自预设容差）是**客观量**——脚本可 emit `*_converged` bool，与"值不值得看一眼"无关。**像质好坏**（RMS/畸变多大算灾难）是[EXPERT]维——脚本**只出裸倍率数字、不设任何阈 bool**，资深判。两者本质不同：前者是"打没打中几何靶"，后者是"打中了但成品好不好"。
+**关键区分（轮4 收敛）**：**几何 target 达成度**（EFL/F# 是否落各自预设容差；**IMH 见 §6.3 constructed 口径=构造+可实追迹，非 2% 硬阈**）是**客观量**——脚本可 emit `*_converged` bool，与"值不值得看一眼"无关。**像质好坏**（RMS/畸变多大算灾难）是[EXPERT]维——脚本**只出裸倍率数字、不设任何阈 bool**，资深判。两者本质不同：前者是"打没打中几何靶"，后者是"打中了但成品好不好"。
 
 | 层 | 谁 emit | 内容 |
 |---|---|---|
@@ -32,7 +32,7 @@
 - **窄域 GREEN 解锁的具体下一步**（§5.1 外推边界内）：→ **小规模扩样闸（≥1 长焦 + ≥1 异 F# 族）**，**非**直接解锁完整 harness。窄域证据只支撑"最易族机制非零"，扩样闸才桥到全族决策。
 - **资深 go/no-go 决策框架**（供资深、非机器 verdict，§8）：三态北极星裁决对齐 §5.3——
   - **go 充分条件**：≥1 seed Stage C 真成功（validity 全过 + `imh_field_valid` + **constructed IMH 构造锚定近轴 target 且真实主光线可实追迹**〔口径见 §6.3，畸变裸数字不作 go 硬阈〕 + EFL 收敛）+ 甜区双 seed EFL 收敛 + 可收敛半径覆盖客户常见偏移。
-  - **no-go 触发（统一句式"真跑负结果=no-go、无数据=blocked"）**：Stage C **真跑(b 桶)但全 RED**（IMH 不达/像质崩）/ 甜区 EFL 都不收敛 / **天花板臂真跑出数据且出现 RED→发散拐点/像质不达的负结果**（轮6-7 限定：**排除**天花板臂 INVALID/回退 INVALID/tooling-blocked=证据缺失、**及意外GREEN=正向证据**——均非 no-go、走 blocked 支）。
+  - **no-go 触发（统一句式"真跑负结果=no-go、无数据=blocked"）**：Stage C **真跑(b 桶)但全 RED**（EFL 不收敛/资深判像质崩；**constructed IMH 构造失败=INVALID 非 RED、畸变不进此判**）/ 甜区 EFL 都不收敛 / **天花板臂真跑出数据且出现 RED→发散拐点/像质不达的负结果**（轮6-7 限定：**排除**天花板臂 INVALID/回退 INVALID/tooling-blocked=证据缺失、**及意外GREEN=正向证据**——均非 no-go、走 blocked 支）。
   - **blocked（≠no-go，轮5-7 对齐）**：Stage C 全 `imh_field_valid=0`（工具链阻塞）/ 天花板臂 tooling-blocked / **天花板臂全程意外GREEN、scope 耗尽仍未拿到 RED 拐点（可收敛半径上界证据缺失、下界已确证≥所测最远偏移，轮7）** → 派生对应 debug 为已识别下一 blocker，非 no-go（EFL+F# partial 仍成立）。
   - **mixed 跨 seed（轮6）**：两 seed Stage C 结局混合（如 seed-1 defer + seed-2 (b)RED）→ 按 seed 分别裁决；整体 go 仍需 ≥1 seed 真成功；**无真成功且含 ≥1 真 RED → no-go，含 defer 支同时派生 field-conversion debug**。
 
@@ -138,7 +138,7 @@ target 模式 required_keys **按 stage 分**（防 A/B 被强制全三 target �
 | **C** | +场重建 target IMH（E2/E5/E8）；ANG→IMG 折算**由 target FOV+target EFL 同源导出**，禁 seed 角度×seed EFL |
 
 **Stage C 硬约束 + defer/RED 分桶（轮3-4）**：
-- **分桶判据机器化（轮4-5 · validity 闸先行）**："宏产没产出 IMH 数"不可靠（`^maximh` 预初始化 0、失败仍写 `image_height_y_mm=0`）。改用**宏侧显式 reconstruction-success 标志**：场重建块 emit `imh_field_valid`（成功锚定 target 场计数>0 且实追迹 `actual_imh_mm>0` 有限→1，否则 0）作 required_key。**判桶顺序（先 validity 后光学 · 轮5：防工具链失败误判 RED）**：① `validity_pass=False`（必需场/ray/WFE/distortion/E8 守卫任一失败）或 `imh_field_valid=0` → **INVALID/tooling-blocked（带 reason），非 RED**；② `imh_field_valid=1 且 validity 全过`后，IMH 实追迹出容差/像质崩 → **(b) RED**；③ NaN/缺键 → INVALID（第三条明确路径）。"fiddly"= `imh_field_valid=0`（工具链），不是自由声明、也不吞光学 RED。
+- **分桶判据机器化（轮4-5 · validity 闸先行）**："宏产没产出 IMH 数"不可靠（`^maximh` 预初始化 0、失败仍写 `image_height_y_mm=0`）。改用**宏侧显式 reconstruction-success 标志**：场重建块 emit `imh_field_valid`（成功锚定 target 场计数>0 且实追迹 `actual_imh_mm>0` 有限→1，否则 0）作 required_key。**判桶顺序（先 validity 后光学 · 轮5：防工具链失败误判 RED）**：① `validity_pass=False`（必需场/ray/WFE/distortion/E8 守卫任一失败）或 `imh_field_valid=0` → **INVALID/tooling-blocked（带 reason），非 RED**；② `imh_field_valid=1 且 validity 全过`后，**EFL 不收敛 或 资深判像质崩** → **(b) RED**（轮8 口径统一：constructed IMH 已由 ① `imh_field_valid`+validity 兜住，**畸变裸数字不进此 RED 判**、不用含畸变实追迹落 2% 硬阈）；③ NaN/缺键 → INVALID（第三条明确路径）。"fiddly"= `imh_field_valid=0`（工具链），不是自由声明、也不吞光学 RED。
 - **(a) fiddly-defer** = **场转换工具链阻塞**：对"target convergence go/no-go"= **blocked/未解（非 go）**；至多派生"field-conversion debug spike candidate"作为**已识别的下一 blocker**。**禁称 conditional go**（轮4 Codex R4-C3：与 §1.2 no-go 触发自相矛盾）。A/B 结果单独命名"EFL(+F#) partial signal"。
 - **(b) Stage C 有效(imh_field_valid=1 + validity_pass)但 EFL 不收敛 / 资深判像质崩** → RED 负结果，不被 defer 掩盖。（constructed IMH 构造失败/不可追迹=INVALID 走①，非 (b)——IMH 不进 (b) 的"不达"，它是构造维。）
 - 整体 **GREEN 要求 ≥1 seed Stage C 真成功**：场转换 + 真实 ray 覆盖 + 必过证据①派生FOV合理②必需场追迹成功③**constructed IMH 构造成功锚定近轴 target + 该场真实主光线可实追迹（validity，distortion-insensitive；轮7：非含畸变实测落 2% 硬阈，与 §6.3 单一口径）**④**逐场物理视场角取 AUT 后实追迹主光线角（real chief ray，RSI 真实落点反算），禁用注入折算锚反算**（折算/校验同源无畸变会自抵消致假绿）；报告分列"注入折算像高"与"实追迹像高"，**差即畸变项仅裸数字交资深，不作 go/GREEN 硬阈**。
@@ -152,7 +152,7 @@ target 模式 required_keys **按 stage 分**（防 A/B 被强制全三 target �
 
 1. **前置 fail-closed（§4.4）**：INVALID 出局。
 2. **EFL 收敛 `efl_converged`**：`|post_aut.efl−target|/target < 2%` **且**方向对（朝 target 移动）。**（轮4：删"移动阈=应移动量1/3"——在 ≥10% 偏移的所有臂上数值恒不 binding=零判别力假守卫；≥10% 偏移下"落 target 2% 内"已隐含 EFL 真移动 ≥8%。**注**：通用 Mode3 客户可选任意 target，届时需一般移动判据，非本 spike 受控矩阵之责。）**天花板臂 partial-move**：`efl_converged` 只认"落 target 2% 内"。
-3. **F#/IMH 几何达成 `f_number_converged`/`imh_converged`**（客观 bool，非像质判定 §1.1）：落**预设几何容差**内→converged=true。容差预定死：**F# 默认 8%、IMH 默认 2%**（run 前可改，不得留空——留空该维 fail-closed 判 INVALID）。
+3. **F#/IMH 几何达成 `f_number_converged`/`imh_converged`**（客观 bool，非像质判定 §1.1）：**F# 落预设容差（默认 8%）→ converged**。**constructed IMH（本 spike 唯一 IMH 情形=Stage C）见下方 constructed 子条口径（构造锚定近轴 target + 可实追迹，非含畸变 2% 硬阈）**；`IMH 默认 2%` 仅为 measured-IMH-targeted 情形的 legacy 参考常量（本 spike Stage C 不消费此硬阈）。容差 run 前可改、留空 fail-closed。
    - **constructed IMH 的 imh_converged 口径（轮5-6 调和）**：Stage C IMH 是 `source=constructed`（设 yim=target）。其 `imh_converged` **不是**"含畸变实追迹像高落 2% 硬阈"（轮6：那会把正常 barrel 畸变的真实镜头误判/误弹），而是 **"构造成功锚定 target 近轴像高 + 该场真实主光线可追迹（validity）"**——即构造守住且真实。**畸变项（实追迹像高 vs 近轴 target 之差）另出裸数字键**，喂资深报告（§6.4）、不进 imh_converged 硬阈、不进 validity。**自抵消假绿由 source-gate 挡（轮5）**：constructed 维不计 GREEN attainment，故 imh_converged=构造+可追迹 恒真也不冒领优化收敛、不虚抬 GREEN。（`^maximh=efy·tanF` 近轴仅作场排序/注入折算报告列，非达成硬阈源。）
    - **source 感知（轮5 major · 构造维≠优化达成）**：converged bool 的 **GREEN 达成贡献 gate 在 `source ∈ {optimized, measured}`**。`source=constructed`（Stage C IMH 设 yim=target、FNO-lock F#——由构造恒真、零优化信息）的维，converged 仅作**"几何 pin + 实追迹验证其守住"标注、不计入 GREEN attainment**（与 §4.5 `seed_hold 不计 achieved` 同构）。防"1 维优化 + 2 维构造 pin 伪装成三维达成"。
    - **per-stage 通过谓词（轮5 major · 消未定义"A 通过"/"甜区 GREEN"）**：`Stage A 通过 := efl_converged=true`（不看 seed_hold 的 F#/IMH）；`封顶 YELLOW` 仅当 **status=applied 且 converged=false** 的维触发（seed_hold 维豁免，与 §4.5 一致）；整体 GREEN 要求"所有 **applied 且 source∈{optimized,measured}** 维 converged=true + Stage C 真成功 + validity_pass"。converged 进 §4.5 per-dim 对象、允许 `not_applicable`（seed_hold 维）。
@@ -240,4 +240,6 @@ target 模式 required_keys **按 stage 分**（防 A/B 被强制全三 target �
   - `[A]` §6.3 constructed-IMH 口径（构造+可实追迹、畸变裸数字非硬阈）未传导到 §1.1/§1.2/§5.3 → 三处统一为 §6.3 单一口径（否则 2~4% barrel 畸变真实镜头在 go-gate 被误判假 no-go）。
   - `[A]` §5.2 新增"意外GREEN"终态未进 §1.2 裁决格 + 无终止 → §1.2 no-go#3 排除意外GREEN(正向证据)、blocked 补此支、§5.2 加 k=2 终止收口。
 
-**状态（设计层收敛）**：**轮7 达成收敛判定**——2/5 棱镜判收敛，余 A 已证为纯传播影子（非新设计），v8 传播补净。7 轮双方一致确认：**设计脊梁 + 经验 parking(E1-E8) 攻不动**；剩余精度（§4.4.2 确切容差、状态机边缘）属实现期，须闸2 拿真码 + E1-E8 探针实测收口，非更多散文轮次。**待主公 ratify → 转闸2 Step-0 探针（真机定 E1-E8）→ 探针回灌经验落地版**。
+- **轮8（收敛确认，主公令再跑1轮）**（codex R8 + 5 棱镜）：**workflow 5/5 棱镜全判 design-converged**；Codex 唯一 1 条 A=constructed-IMH 口径 2 处残留（§5.3 分桶②"IMH 实追迹出容差→RED"、§1.2 no-go"IMH 不达"）→ v9 grep 全文一次性扫净、单一真相（§1.1/§1.2/§5.3/§6.3 constructed IMH 一律"构造+可实追迹、畸变裸数字非硬阈"）。余 1 C（§6.3 孤儿 2% 常量）随 Fix C 收口。
+
+**状态（设计层收敛 · 8 轮）**：**轮8 达成收敛**——workflow 5/5 判 converged，Codex 单条传播残留 v9 补净。8 轮双方一致确认：**设计脊梁 + 经验 parking(E1-E8) 攻不动**；剩余精度（§4.4.2 确切容差、状态机边缘）属实现期，须闸2 拿真码 + E1-E8 探针实测收口，非更多散文轮次（继续加轮只会互找传播影子=假绿）。**待主公 ratify → 转闸2 Step-0 探针（真机定 E1-E8）→ 探针回灌经验落地版**。
