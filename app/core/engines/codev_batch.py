@@ -433,12 +433,15 @@ def _popen_codev(
     env: Mapping[str, str] | None,
     platform_name: str,
 ):
+    # 二进制读（text=False）：CODE V 偶发非 UTF-8 输出（如 cp1252 的 0xb3=³）会让
+    # communicate 的 reader 线程 UnicodeDecodeError 崩溃 → stdout 管道填满 → CODE V
+    # 写阻塞挂死 → 超时（观测到的真机制）。改读原始字节永不在 reader 线程 decode，
+    # stdout/stderr 仅作诊断（结果走 BUF EXP 文件），由 _coerce_output 后期 errors='replace' 解码。
     popen_kwargs: dict[str, object] = {
         "cwd": str(work_dir),
         "env": dict(env) if env is not None else None,
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
-        "text": True,
     }
     if platform_name == "nt" and hasattr(subprocess, "CREATE_NEW_PROCESS_GROUP"):
         popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP

@@ -32,3 +32,4 @@ build/
 .tmp/
 .verify-tmp/
 scratch_probe/
+scratch_experiment/

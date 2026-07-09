@@ -49,6 +49,16 @@ note: "本 session 由主公 attended 驱动，非自主 session-manager 循环�
 - test: （闸2 后）最小闸条件展开：Seed-1 baseline-lock+Stage A+天花板臂 3 run 出首信号，A 通过才展开 B/C+Seed-2；三快照量 EFL/F#/IMH/FOV/像质 vs target + fail-closed
 - expecting: **EFL 是唯一确定真优化收敛维**（落 target 2% 内+移动达阈+方向对）；**F# 与 IMH 均经验测定、须实测漂移/达成，不假设构造即达≈0**（轮2-3 修正）；像质裸倍率数字，值不值得看由资深填（AI 不判良品）
 
+## 实验矩阵 go/no-go 数据（2026-07-09 · 机器客观，良品率判断留资深）
+
+`scripts/codev_target_experiment.py` 跑 5 颗原始专利 seed × (baseline-lock + Stage A/B 甜区 + 天花板)：
+- **收敛率（机器客观）**：Stage A 甜区 +12% → **仅 1/5 seed 干净收敛**（US20170003482A1 dev~0）；3 颗 conv=0(dev 4-10%)；1 颗 tooling-blocked(hang)。
+- **收敛半径**：Seed-1 +12% 收敛 / +35% 不收敛（dev 12%）。
+- **像质（裸数字，资深判）**：即便 Seed-1 收敛，畸变 2%→8.4%、RMS ×2.5（冻结玻璃下）；多颗 seed 像质灾难(RMS 100-370µm)。
+- **诚实信号**：**裸冻结玻璃 ③（只动曲率/厚度、玻璃冻结）良品率低**——收敛率不高、成功也劣化到量产线下，指向需玻璃可变(接缝2)/更多 DOF(非球面)/更好 seed-target 匹配。**machinery 通、naive 良品率低**=决定性 go/no-go 数据。
+- **已修 bug**：`codev_batch` subprocess `text=True` 读 CODE V 非 UTF-8 输出崩 reader 线程→管道满→hang（改二进制读，24 测绿）。
+- **待办 finding**：Stage B 显式 `FNO` 命令致宽视场主光线追迹失败(需 CRA/ray-aiming)；部分 dashed staging seed AUT hang(tooling-blocked)。
+
 ## Evidence
 
 - 2026-07-08: 本地 main 曾落后 origin/main 21 commit，已 pull 对齐至 7177325；spike worktree D:\atelier-opt3 从此切出。
