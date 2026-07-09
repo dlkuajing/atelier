@@ -435,6 +435,30 @@ def _append_target_snapshot_rows(lines: list[str], prefix: str) -> None:
     _append_put_row(lines, f'"{prefix}.maximh_mm"', f"^{prefix}_maximh")
 
 
+def _extra_dof_block(extra_dof: str) -> list[str]:
+    """加优化变量（DOF 实验 · 主公授权解锁接缝2/非球面）：
+    extra_dof ∈ none|asphere|glass|both。非球面系数 AC..JC(4-20阶) / 玻璃 GLC，
+    per-surface 循环设变量（CODE V 语法：`<X>C S^s 0` 非球面、`GLC S^s 0` 玻璃）。"""
+    if extra_dof not in ("none", "asphere", "glass", "both"):
+        raise ValueError(f"extra_dof must be none|asphere|glass|both: {extra_dof!r}")
+    if extra_dof == "none":
+        return []
+    lines = ["FOR ^s 1 (NUM S)"]
+    if extra_dof in ("asphere", "both"):
+        lines.append('  IF (TYP SUR S^s) = "ASP"')
+        lines += [f"    {c}C S^s 0" for c in ("A", "B", "C", "D", "E", "F", "G", "H", "J")]
+        lines.append("  END IF")
+    if extra_dof in ("glass", "both"):
+        lines += [
+            "  ^probe_nd == ABSF((IND S^s W1))",
+            "  IF ^probe_nd > 1.05",  # 真玻璃（非空气 nd≈1）才设玻璃变量
+            "    GLC S^s 0",
+            "  END IF",
+        ]
+    lines.append("END FOR")
+    return lines
+
+
 def build_codev_target_sequence(
     *,
     source_zmx: Path | str,
@@ -443,6 +467,7 @@ def build_codev_target_sequence(
     target_f_number: float | None = None,
     target_imh_mm: float | None = None,
     stage: str = "A",
+    extra_dof: str = "none",
     max_cycles: int = 25,
     min_cycles: int = 3,
     lateral_color_weight: float = 0.01,
@@ -472,7 +497,9 @@ def build_codev_target_sequence(
         *_metric_function_block(),
         "OUT NO",
         f"IN CV_MACRO:ZEMAXOS_TO_CV {_quote_codev_path(source_zmx)}",
-        "DEF VAR SA",
+        "DEF VAR SA",  # 默认变量集=曲率+厚度（非球面/玻璃冻结）
+        # 加 DOF 实验（接缝2 玻璃可变 / 非球面系数放开 · 主公授权）
+        *_extra_dof_block(extra_dof),
         # 快照1 seed_baseline（配置前，仅对照）
         *_capture_target_snapshot("seed_baseline"),
     ]
