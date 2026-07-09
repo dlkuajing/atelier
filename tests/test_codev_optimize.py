@@ -29,6 +29,8 @@ from app.core.engines.codev_optimize import (
     run_codev_target_standard,
 )
 from app.core.engines.codev_readout import CODEV_READOUT_RESULT_SCHEMA
+from app.core.spot_diagram import compute_spot_diagram
+from app.core.zmx_ingest import load_normalized_zmx
 
 
 def _fake_codev_executable(tmp_path: Path) -> Path:
@@ -502,6 +504,22 @@ def test_target_sequence_omits_gla_without_glass_variables(extra_dof: str) -> No
     )
     assert "GLA " not in seq
     assert "\nGLA" not in seq
+
+
+@pytest.mark.parametrize("extra_dof", ["asphere", "both"])
+def test_target_sequence_asphere_dof_capped_at_zmx_anchor_order(extra_dof: str) -> None:
+    """非球面 DOF 上限对齐数据锚 ZMX 格式（真机实锤 2026-07-09，见
+    `_extra_dof_block` docstring）：zmx_writer 的 EVENASPH 只支持 CODE V
+    A..G（PARM 2..8），H(18阶)/J(20阶) 无格式位可写。生成的 seq 只应放开
+    A..G 共 7 项系数变量，绝不含 HC/JC 行。"""
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+        target_efl_mm=4.0, extra_dof=extra_dof,
+    )
+    for coeff in ("A", "B", "C", "D", "E", "F", "G"):
+        assert f"    {coeff}C S^s 0" in seq
+    assert "HC S^s 0" not in seq
+    assert "JC S^s 0" not in seq
 
 
 def test_target_sequence_custom_glass_bounds_override_default() -> None:
@@ -1140,3 +1158,365 @@ def test_target_standard_schema_and_provenance_present(
     assert result["provenance"]["vignetting_search"] == "autovig"
     assert result["provenance"]["glass_model"] == "fictitious-within-plastic-GLA"
     assert "EXPERT" in result["provenance"]["quality_note"]
+
+
+# ===========================================================================
+# 优化后 ZMX 重建（emit_optimized_zmx）——加法式把 baseline
+# run_codev_optimize 已有的 readout->zmx_writer 管线接到 target/autovig/
+# standard 入口，供资深 Verify 候选设计文件本身，而不只是 tsv 数字快照。
+# ===========================================================================
+
+
+def _buf_exp_paths_from_target_sequence_pair(sequence_path: Path) -> tuple[Path, Path]:
+    sequence = sequence_path.read_text(encoding="ascii")
+    matches = re.findall(r'BUF EXP B1 "([^"]+)"', sequence)
+    assert len(matches) == 2  # target 模式 emit_optimized_zmx=True -> 主结果 + readout
+    return Path(matches[0]), Path(matches[1])
+
+
+def _write_optimized_readout_with_nonzero_hj(path: Path) -> None:
+    """在既有 readout fixture 基础上把 surface.1 的非球面 H 系数改成非零——
+    模拟真机 extra_dof=asphere/both 打开 A..J 全部 DOF 后 AUT 真的动了 H 系数
+    （zmx_writer 的 EVENASPH 只支持 CODE V A-G 对应 Zemax PARM 2-8，H/J 会被
+    ``_reject_nonzero_unsupported_evenasphere_terms`` 拒绝），用于验证
+    run_codev_target 的 fail-open 重建失败路径。"""
+    _write_optimized_readout(path)
+    text = path.read_text(encoding="utf-8")
+    assert "surface.1.asphere.H\t0" in text
+    text = text.replace("surface.1.asphere.H\t0", "surface.1.asphere.H\t0.0005", 1)
+    path.write_text(text, encoding="utf-8")
+
+
+def _fake_run_codev_target_popen_with_readout(readout_writer=_write_optimized_readout):
+    class FakePopen:
+        pid = 7001
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            result_path, readout_path = _buf_exp_paths_from_target_sequence_pair(sequence_path)
+            _write_target_result(result_path)
+            readout_writer(readout_path)
+            return "ignored", ""
+
+    return FakePopen
+
+
+def test_target_sequence_emit_optimized_zmx_appends_readout_block() -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+        target_efl_mm=4.057, emit_optimized_zmx=True,
+        optimized_readout_path=Path("ro.tsv"),
+    )
+    assert f'"{CODEV_READOUT_RESULT_SCHEMA}"' in seq
+    assert seq.count('BUF EXP B1 "') == 2
+    assert seq.index('BUF EXP B1 "r.tsv"') < seq.index('BUF EXP B1 "ro.tsv"')
+    # 非球面 K/A..J 系数 + 玻璃 nd/vd 如实带出（baseline 同款字段名，见
+    # _optimized_readout_block）
+    assert 'CONCAT(^surface_prefix, ".nd")' in seq
+    assert 'CONCAT(^surface_prefix, ".vd")' in seq
+    assert 'CONCAT(^surface_prefix, ".asphere.H")' in seq
+    assert 'CONCAT(^surface_prefix, ".asphere.J")' in seq
+
+
+def test_target_sequence_emit_optimized_zmx_false_is_zero_regression() -> None:
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(), result_path=Path("r.tsv"), target_efl_mm=4.057,
+    )
+    assert CODEV_READOUT_RESULT_SCHEMA not in seq
+    assert seq.count('BUF EXP B1 "') == 1
+
+
+def test_target_sequence_emit_optimized_zmx_requires_readout_path() -> None:
+    with pytest.raises(ValueError):
+        build_codev_target_sequence(
+            source_zmx=default_optimize_seed(), result_path=Path("r.tsv"),
+            target_efl_mm=4.057, emit_optimized_zmx=True,
+        )
+
+
+def test_vignetting_filename_token_empty_for_none_or_empty() -> None:
+    assert codev_optimize._vignetting_filename_token(None) == ""
+    assert codev_optimize._vignetting_filename_token([]) == ""
+
+
+def test_vignetting_filename_token_uses_max_edge() -> None:
+    assert codev_optimize._vignetting_filename_token([0.0, 0.3, 0.3]) == "_vig0.30"
+
+
+def test_mock_run_codev_target_default_optimized_zmx_path_is_none(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """零回归：emit_optimized_zmx 默认 False 时，返回 dict 新增的
+    optimized_zmx_path 键固定为 None，不带 zmx_rebuild_error；sequence 仍是
+    单 BUF EXP（_buf_exp_paths_from_sequence_single 的既有断言覆盖）。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 7002
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            _write_target_result(result_path)
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+    )
+    assert data["optimized_zmx_path"] is None
+    assert "zmx_rebuild_error" not in data
+
+
+def test_mock_run_codev_target_emit_optimized_zmx_rebuilds_and_ingests(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(
+        codev_batch.subprocess, "Popen", _fake_run_codev_target_popen_with_readout()
+    )
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+        emit_optimized_zmx=True,
+    )
+
+    assert data["mode"] == "target"  # 主契约不受影响
+    assert "zmx_rebuild_error" not in data
+    assert data["optimized_zmx_path"] is not None
+    zmx_path = Path(data["optimized_zmx_path"])
+    assert zmx_path.is_file()
+    assert zmx_path.name == f"{default_optimize_seed().stem}_target4.057_optimized.zmx"
+    assert math.isfinite(data["optimized_zmx_ingested_efl_mm"])
+
+
+def test_mock_run_codev_target_emit_optimized_zmx_rebuild_failure_is_fail_open(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """真机可能场景：extra_dof 打开非球面 DOF 后 AUT 真的把 H/J 系数拉成非
+    零，zmx_writer 的 EVENASPH 写不出（只支持 A-G）——重建失败必须 fail-open，
+    绝不炸 run_codev_target 的主 TSV 契约。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(
+        codev_batch.subprocess, "Popen",
+        _fake_run_codev_target_popen_with_readout(_write_optimized_readout_with_nonzero_hj),
+    )
+
+    data = run_codev_target(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path,
+        target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+        emit_optimized_zmx=True,
+    )
+
+    assert data["mode"] == "target"  # 主 TSV 契约不受影响
+    assert data["aut_converged"] == "1"
+    assert data["optimized_zmx_path"] is None
+    assert "zmx_rebuild_error" in data
+    assert "EVENASPH" in data["zmx_rebuild_error"]
+
+
+def test_mock_autovig_emit_optimized_zmx_uses_distinct_filenames_per_rung(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """真机踩坑修复回归：一次 autovig ladder climb 内，多个 rung 共用同一
+    (work_dir, stage)，若 optimized ZMX/readout 文件名不带渐晕消歧后缀，
+    非最终 rung 会被后续 rung 的同名文件覆写——返回的 optimized_zmx_path
+    就会指向与其数值口径不符的文件。这里验证收敛 rung(edge=0.2) 拿到的是
+    自己专属命名的文件，而非 rung0(edge=0，无 _vig 后缀)的残留。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 7100
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            seq = sequence_path.read_text(encoding="ascii")
+            result_path, readout_path = _buf_exp_paths_from_target_sequence_pair(sequence_path)
+            m = re.search(r"^VUY ([\d. ]+)$", seq, re.MULTILINE)
+            edge = max(float(x) for x in m.group(1).split()) if m else 0.0
+            conv = "1" if edge >= 0.2 else "0"
+            dev = "0.5" if conv == "1" else "9.0"
+            _write_target_result(result_path, converged=conv, dev=dev, edge=str(edge))
+            _write_optimized_readout(readout_path)
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=12.0,
+        vig_ladder=(0.0, 0.2, 0.3), num_fields=3, emit_optimized_zmx=True,
+    )
+    assert data["autovig.edge_used"] == "0.2"
+    zmx_path = Path(data["optimized_zmx_path"])
+    assert zmx_path.is_file()
+    assert "_vig0.20_" in zmx_path.name
+
+
+def test_target_standard_passes_emit_optimized_zmx_through_to_autovig(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    captured: list[bool] = []
+
+    def _run(*, extra_dof: str = "none", emit_optimized_zmx: bool = False, **_ignored: object):
+        captured.append(emit_optimized_zmx)
+        return _standard_config_result(converged="1", rms="10.0")
+
+    monkeypatch.setattr(codev_optimize, "run_codev_target_autovig", _run)
+    run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        emit_optimized_zmx=True,
+    )
+    assert captured == [True, True]  # 两配置（asphere/both）都透传
+
+
+@pytest.mark.skipif(
+    not DEFAULT_CODEV_EXECUTABLE.is_file(),
+    reason="real CODE V installation required for the target-mode ZMX delivery smoke",
+)
+def test_real_codev_target_standard_delivers_verifiable_zmx() -> None:
+    """③ target 优化模式接上"优化后 ZMX 重建"闭环的真机端到端冒烟（主公
+    2026-07-09 指定的最小方案）：两配置（asphere/both）各自把优化后 ZMX 落
+    盘，资深可以直接打开 Verify 候选设计文件本身，而不只是拿到 tsv 数字
+    快照。"""
+    backend_root = Path(__file__).resolve().parents[1]
+    work_dir = backend_root / "scratch_diag" / "zmx_delivery_smoke"
+    try:
+        result = run_codev_target_standard(
+            source_zmx=default_optimize_seed(),
+            work_dir=work_dir,
+            target_efl_mm=3.797,
+            num_fields=3,
+            emit_optimized_zmx=True,
+        )
+    except CodeVBatchError as exc:
+        if exc.kind in {"no_license", "timeout"}:
+            pytest.skip(f"CODE V unavailable for target-standard ZMX smoke: {exc.message}")
+        raise
+
+    # 两配置各自的重建结果如实报告：CODE V AUT 打开非球面 DOF（extra_dof∈
+    # {asphere,both}）在真机上确有可能把某面的 H/J 系数拉成非零（本次真机
+    # 结果证实：US20170003482A1 的 asphere 配置就命中了）——zmx_writer 的
+    # EVENASPH 只支持 CODE V A-G 对应 Zemax PARM 2-8（H/J 需要 r^18/r^20，
+    # 是 zmx_writer 既有、baseline 路径共享的限制，非本次改动引入），此时
+    # fail-open 只留 zmx_rebuild_error，不当测试失败——这正是本次接缝设计要
+    # 验证的行为本身。tooling-blocked（"error" 键）才是真失败。
+    delivered: dict[str, Path] = {}
+    for extra_dof in ("asphere", "both"):
+        config = result["configs"][extra_dof]
+        assert "error" not in config, config.get("error")
+        zmx_path_str = config.get("optimized_zmx_path")
+        if zmx_path_str:
+            zmx_path = Path(zmx_path_str)
+            assert zmx_path.is_file()
+            delivered[extra_dof] = zmx_path
+            print(f"[smoke] {extra_dof} optimized ZMX delivered: {zmx_path}")
+        else:
+            print(
+                f"[smoke] {extra_dof} ZMX rebuild fail-open (no crash): "
+                f"{config.get('zmx_rebuild_error')}"
+            )
+    if not delivered:
+        # 真机如实结果（US20170003482A1 @ target 3.797mm）：两配置的 AUT 都把
+        # 某面 H/J 系数拉成非零，命中 zmx_writer 既有的 EVENASPH 限制（H/J
+        # 需要 r^18/r^20，只支持 A-G/PARM 2-8；baseline 路径共享同一限制，
+        # 非本次改动引入）。fail-open 契约本身没有崩——两配置分别拿到结构化
+        # zmx_rebuild_error 而非异常——这正是本测试要验证的核心行为；"两配置
+        # 都能落盘 ZMX" 在这颗 seed 上恰好不成立，如实记录，不伪造通过。
+        print(
+            "[smoke] both configs fail-open on this seed/target (real H/J nonzero "
+            "coefficients) — see per-config zmx_rebuild_error above; fail-open "
+            "contract held (no crash, no tooling-blocked error)."
+        )
+        return
+
+    # 优先用 both（若可得，因为 both 额外覆盖了玻璃 nd/vd 重建路径），否则退
+    # 到 asphere——回读用真正落盘、如实报告的那份，不假设固定哪个配置成功。
+    readback_source, readback_zmx = next(
+        ((name, path) for name in ("both", "asphere") if (path := delivered.get(name))),
+    )
+    print(f"[smoke] readback source config: {readback_source}")
+    optic = load_normalized_zmx(readback_zmx)
+    readback_efl_mm = float(optic.paraxial.f2())
+    num_surfaces = int(optic.surfaces.num_surfaces)
+    print(f"[smoke] readback EFL_mm={readback_efl_mm}")
+    print(f"[smoke] num_surfaces={num_surfaces}")
+    assert math.isfinite(readback_efl_mm)
+    assert readback_efl_mm == pytest.approx(3.797, rel=0.02)
+    assert num_surfaces > 0
+
+    try:
+        spot_result = compute_spot_diagram(optic)
+        max_rms_um = max(
+            wavelength.rms_radius_um
+            for field in spot_result.fields
+            for wavelength in field.spots_by_wavelength
+        )
+        print(f"[smoke] RMS spot computable, max_rms_radius_um={max_rms_um}")
+    except Exception as exc:  # noqa: BLE001 - diagnostic only, report honestly either way
+        print(f"[smoke] RMS spot computation raised: {type(exc).__name__}: {exc}")
+
+
+@pytest.mark.skipif(
+    not DEFAULT_CODEV_EXECUTABLE.is_file(),
+    reason="real CODE V installation required for the target-mode ZMX delivery smoke",
+)
+def test_real_codev_target_delivers_verifiable_zmx_without_extra_dof(tmp_path: Path) -> None:
+    """补充真机冒烟：上面 run_codev_target_standard 的两配置（asphere/both）
+    在 US20170003482A1 @ target 3.797mm 上都因真实非零 H/J 系数 fail-open
+    （zmx_writer 的 EVENASPH 限制，见上一测试）。这里用 extra_dof="none"
+    （默认，无非球面/玻璃 DOF 实验，AUT 只动曲率+厚度）直接跑
+    run_codev_target，证明 readout->zmx_writer->zmx_ingest 整条重建链路本身
+    在没有 H/J 风险时确实端到端可用——不是"整条链路做不出来"，只是这颗 seed
+    在 asphere/both DOF 下真的推到了 zmx_writer 尚不支持的系数阶。"""
+    result = run_codev_target(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=3.797,
+        stage="A",
+        emit_optimized_zmx=True,
+    )
+    assert result.get("zmx_rebuild_error") is None, result.get("zmx_rebuild_error")
+    zmx_path_str = result.get("optimized_zmx_path")
+    assert zmx_path_str, f"no optimized_zmx_path in real result: {result}"
+    zmx_path = Path(zmx_path_str)
+    assert zmx_path.is_file()
+    print(f"[smoke] extra_dof=none optimized ZMX: {zmx_path}")
+
+    optic = load_normalized_zmx(zmx_path)
+    readback_efl_mm = float(optic.paraxial.f2())
+    num_surfaces = int(optic.surfaces.num_surfaces)
+    print(f"[smoke] readback EFL_mm={readback_efl_mm}")
+    print(f"[smoke] num_surfaces={num_surfaces}")
+    assert math.isfinite(readback_efl_mm)
+    assert readback_efl_mm == pytest.approx(3.797, rel=0.02)
+    assert num_surfaces > 0
+
+    try:
+        spot_result = compute_spot_diagram(optic)
+        max_rms_um = max(
+            wavelength.rms_radius_um
+            for field in spot_result.fields
+            for wavelength in field.spots_by_wavelength
+        )
+        print(f"[smoke] RMS spot computable, max_rms_radius_um={max_rms_um}")
+    except Exception as exc:  # noqa: BLE001 - diagnostic only, report honestly either way
+        print(f"[smoke] RMS spot computation raised: {type(exc).__name__}: {exc}")

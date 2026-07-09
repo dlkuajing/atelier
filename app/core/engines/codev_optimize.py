@@ -438,8 +438,18 @@ def _append_target_snapshot_rows(lines: list[str], prefix: str) -> None:
 
 def _extra_dof_block(extra_dof: str) -> list[str]:
     """加优化变量（DOF 实验 · 主公授权解锁接缝2/非球面）：
-    extra_dof ∈ none|asphere|glass|both。非球面系数 AC..JC(4-20阶) / 玻璃 GLC，
-    per-surface 循环设变量（CODE V 语法：`<X>C S^s 0` 非球面、`GLC S^s 0` 玻璃）。"""
+    extra_dof ∈ none|asphere|glass|both。非球面系数 AC..GC(4-16阶) / 玻璃 GLC，
+    per-surface 循环设变量（CODE V 语法：`<X>C S^s 0` 非球面、`GLC S^s 0` 玻璃）。
+
+    非球面系数上限对齐数据锚 ZMX 格式（真机实锤 2026-07-09）：数据锚
+    zmx_writer 的 EVENASPH 只保留 PARM 1 + PARM 2..8 对应 CODE V A..G
+    （4-16 阶），H(18阶)/J(20阶) 无格式位可写。原先 DOF 放到 A..J 全部 9 项，
+    真机跑 US20170003482A1 asphere/both 后 H/J 系数被 AUT 拉成非零
+    （~1e-6 量级），触发 zmx_writer 的
+    `_reject_nonzero_unsupported_evenasphere_terms` fail-open——候选设计
+    ZMX 重建直接拿不到文件。收紧到 A..G 让优化产物天然落在锚格式可表达域
+    内；H/J 对应的 18/20 阶项对手机镜头这类小视场系统像差贡献本就极小，
+    收紧不改变可达的优化空间上限。"""
     if extra_dof not in ("none", "asphere", "glass", "both"):
         raise ValueError(f"extra_dof must be none|asphere|glass|both: {extra_dof!r}")
     if extra_dof == "none":
@@ -447,7 +457,7 @@ def _extra_dof_block(extra_dof: str) -> list[str]:
     lines = ["FOR ^s 1 (NUM S)"]
     if extra_dof in ("asphere", "both"):
         lines.append('  IF (TYP SUR S^s) = "ASP"')
-        lines += [f"    {c}C S^s 0" for c in ("A", "B", "C", "D", "E", "F", "G", "H", "J")]
+        lines += [f"    {c}C S^s 0" for c in ("A", "B", "C", "D", "E", "F", "G")]
         lines.append("  END IF")
     if extra_dof in ("glass", "both"):
         lines += [
@@ -609,6 +619,8 @@ def build_codev_target_sequence(
     min_edge_thickness_mm: float = 0.025,
     max_center_thickness_mm: float = 10.0,
     min_air_gap_mm: float = 0.001,
+    emit_optimized_zmx: bool = False,
+    optimized_readout_path: Path | str | None = None,
 ) -> str:
     """Build target-mode sequence: import seed, capture 3 snapshots, pull EFL to
     客户 target (seam 1), lock F# via FNO mode (seam 3a, E1 实测锁), keep merit
@@ -626,7 +638,15 @@ def build_codev_target_sequence(
     误差函数爆炸（US20170003482A1 both 模式 RMS 343µm 灾难案例）；注入塑料域
     GLA 边界后同 seed RMS 收敛到 12.99µm（追平纯非球面 13.0µm）。extra_dof∈
     {none,asphere} 时不注入（没有玻璃变量，GLA 无意义）。角点凸性检查见
-    _glass_map_hull 文档字符串（(nd, nF-nC) 平面陷阱）。"""
+    _glass_map_hull 文档字符串（(nd, nF-nC) 平面陷阱）。
+
+    emit_optimized_zmx: 加法式接缝（③ 优化落地"资深可 Verify"闭环，见
+    run_codev_target 文档字符串）——为 True 时宏尾在主结果 BUF EXP 之后追加
+    baseline `run_codev_optimize` 同款 `_optimized_readout_block`（本文件内
+    定义，DB 读数直出：非球面 K/A..J 系数、玻璃 nd/vd、渐晕等如实带出，无论
+    extra_dof 动了什么），导出到 optimized_readout_path 的第二个 BUF EXP。
+    False（默认）时宏尾与改动前逐字节一致——零回归。optimized_readout_path
+    在 emit_optimized_zmx=True 时必填（否则 ValueError）。"""
 
     _validate_positive(target_efl_mm, "target_efl_mm")
     if target_f_number is not None:
@@ -636,6 +656,8 @@ def build_codev_target_sequence(
     _validate_vignetting(vignetting)
     _validate_positive_int(max_cycles, "max_cycles")
     _validate_positive_int(min_cycles, "min_cycles")
+    if emit_optimized_zmx and optimized_readout_path is None:
+        raise ValueError("optimized_readout_path is required when emit_optimized_zmx=True")
 
     source_zmx = Path(source_zmx)
     result_path = Path(result_path)
@@ -723,6 +745,16 @@ def build_codev_target_sequence(
     lines += [
         f"BUF EXP B1 {_quote_codev_path(result_path)}",
         "BUF DEL B1",
+    ]
+    if emit_optimized_zmx:
+        # 加法式：读数块/第二 BUF EXP 只在 emit_optimized_zmx=True 时出现，
+        # 默认路径（False）宏尾与改动前逐字节一致。
+        lines += [
+            *_optimized_readout_block(source_name=source_zmx.name),
+            f"BUF EXP B1 {_quote_codev_path(Path(optimized_readout_path))}",  # type: ignore[arg-type]
+            "BUF DEL B1",
+        ]
+    lines += [
         "OUT YES",
         "EXI YES",
         "",
@@ -854,6 +886,43 @@ def _safe_aut_error_trace(listing_path: Path | None) -> dict[str, float | str | 
         return None
 
 
+# ---------------------------------------------------------------------------
+# 优化后 ZMX 重建（③ target 模式接上"资深可 Verify"闭环）：把 baseline
+# run_codev_optimize 已有的 readout→zmx_writer 重建管线加法式移植到 target
+# 模式。target 模式没有单一"before/after"——它有 seed_baseline/config_pre_aut/
+# post_aut 三快照 + autovig 多 rung 重跑，因此文件名需要跨 rung 消歧（同一
+# work_dir/stage 在一次 ladder climb 内会被 run_codev_target 反复调用，只有
+# vignetting 逐级改变）：见 run_codev_target_autovig 文档字符串。
+# ---------------------------------------------------------------------------
+
+
+def _vignetting_filename_token(vignetting: object) -> str:
+    """人类可读的消歧后缀，折叠 autovig 每 rung 唯一的渐晕 edge 到文件名——
+    没有它，同一 ladder climb 内多个 rung 会用同一对 (work_dir, stage) 反复
+    覆写同名 optimized ZMX/readout 文件：若某个非最终 rung 恰好是数值上最优
+    的 ``best``（见 run_codev_target_autovig 的 fail-open 兜底路径），但磁盘
+    上文件已被后续、数值更差的 rung 覆写，返回的 ``optimized_zmx_path`` 就会
+    指向与其数值口径不符的文件——资深 Verify 时看到的设计和数字对不上。"""
+    if not vignetting:
+        return ""
+    try:
+        edge = max(float(v) for v in vignetting)  # type: ignore[union-attr]
+    except (TypeError, ValueError):
+        return ""
+    return f"_vig{edge:.2f}"
+
+
+def _target_optimized_readout_filename(stage: str, vignetting_token: str) -> str:
+    return f"atelier_codev_target_{stage}{vignetting_token}_optimized_readout.tsv"
+
+
+def _target_optimized_zmx_filename(
+    source_zmx: Path, target_efl_mm: float, vignetting_token: str
+) -> str:
+    efl_token = f"{target_efl_mm:.6g}"
+    return f"{source_zmx.stem}_target{efl_token}{vignetting_token}_optimized.zmx"
+
+
 def run_codev_target(
     *,
     source_zmx: Path | str,
@@ -865,6 +934,7 @@ def run_codev_target(
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 180.0,
     platform_name: str = os.name,
+    emit_optimized_zmx: bool = False,
     **sequence_options: object,
 ) -> dict[str, object]:
     """Run one target-mode AUT and return the parsed three-snapshot data dict.
@@ -874,6 +944,19 @@ def run_codev_target(
     read from the run's ``.lis`` listing, exposed alongside the TSV-derived
     fields. It never affects the TSV-based contract above it — a missing or
     unparseable listing just yields ``None``.
+
+    ``emit_optimized_zmx`` (加法式接缝，默认 False=零回归)：为 True 时追加
+    baseline 同款 readout 块（本文件 ``_optimized_readout_block``，DB 读数
+    直出——非球面 K/A..J 系数、玻璃 nd/vd 如实带出，无论 extra_dof 动了什么
+    自由度）、解析、经 ``zmx_writer.write_zmx_from_codev_readout`` 重建 ZMX 落
+    盘 ``work_dir``，再用 ``zmx_ingest.load_normalized_zmx`` 回读验证 EFL 有
+    限。任一环节失败（最典型：extra_dof 打开非球面 DOF 后 AUT 把 H/J 系数拉
+    成非零——``zmx_writer`` 的 EVENASPH 只支持 CODE V A-G 对应 Zemax
+    PARM 2-8，见其 ``_reject_nonzero_unsupported_evenasphere_terms``，H/J 需要
+    r^18/r^20 不受支持）都 fail-open：只把 ``"zmx_rebuild_error"`` 字符串塞进
+    返回 dict，绝不炸这里的主 TSV 契约。成功时返回 dict 含
+    ``"optimized_zmx_path"``（绝对路径字符串）与
+    ``"optimized_zmx_ingested_efl_mm"``；未启用/失败时前者为 ``None``。
     """
 
     source_zmx = Path(source_zmx)
@@ -881,10 +964,18 @@ def run_codev_target(
     work_dir.mkdir(parents=True, exist_ok=True)
     seq = work_dir / f"atelier_codev_target_{stage}.seq"
     res = work_dir / f"atelier_codev_target_{stage}.tsv"
+    vignetting_token = _vignetting_filename_token(sequence_options.get("vignetting"))
+    optimized_readout_path = (
+        work_dir / _target_optimized_readout_filename(stage, vignetting_token)
+        if emit_optimized_zmx
+        else None
+    )
     seq.write_text(
         build_codev_target_sequence(
             source_zmx=source_zmx, result_path=res, target_efl_mm=target_efl_mm,
             target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
+            emit_optimized_zmx=emit_optimized_zmx,
+            optimized_readout_path=optimized_readout_path,
             **sequence_options,
         ),
         encoding="ascii",
@@ -897,6 +988,30 @@ def run_codev_target(
     )
     data: dict[str, object] = dict(batch.data)
     data["aut_error_trace"] = _safe_aut_error_trace(batch.listing_path)
+    data["optimized_zmx_path"] = None
+    if emit_optimized_zmx:
+        assert optimized_readout_path is not None
+        try:
+            optimized_readout = parse_codev_readout_file(optimized_readout_path)
+            zmx_filename = _target_optimized_zmx_filename(
+                source_zmx, target_efl_mm, vignetting_token
+            )
+            optimized_zmx_path = write_zmx_from_codev_readout(
+                optimized_readout,
+                work_dir / zmx_filename,
+                name=f"{source_zmx.stem}-target-{stage}-optimized",
+            )
+            optic = load_normalized_zmx(optimized_zmx_path)
+            ingested_efl_mm = float(optic.paraxial.f2())
+            if not math.isfinite(ingested_efl_mm):
+                raise ValueError(
+                    "optimized ZMX was rebuilt but zmx_ingest returned a "
+                    f"non-finite EFL: {ingested_efl_mm!r}"
+                )
+            data["optimized_zmx_path"] = str(optimized_zmx_path)
+            data["optimized_zmx_ingested_efl_mm"] = ingested_efl_mm
+        except Exception as exc:  # noqa: BLE001 - rebuild is additive/fail-open, must never break the TSV contract
+            data["zmx_rebuild_error"] = f"{type(exc).__name__}: {exc}"
     return data
 
 
@@ -927,6 +1042,7 @@ def run_codev_target_autovig(
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 180.0,
     platform_name: str = os.name,
+    emit_optimized_zmx: bool = False,
     **sequence_options: object,
 ) -> dict[str, object]:
     """Climb `vig_ladder` from 0, return the FIRST target run whose AUT converges
@@ -939,7 +1055,18 @@ def run_codev_target_autovig(
     TIR → hard timeout) is recorded and the search keeps climbing (higher 渐晕 clips the
     TIR → the rung runs fast). num_fields is learned from the rung-0 run, or injected
     (needed to keep climbing when rung-0 itself times out). Only re-raises (tooling-
-    blocked) when EVERY rung fails to produce parseable data."""
+    blocked) when EVERY rung fails to produce parseable data.
+
+    ``emit_optimized_zmx`` (加法式，默认 False)：透传给 **每个** rung 的
+    ``run_codev_target`` 调用，而非只在最终采纳的 rung 上启用——取舍原因：
+    readout/ZMX 重建只是同一次 CODE V 批跑宏尾多几行 ``BUF PUT``/``BUF EXP``，
+    不是额外的进程发起（真正昂贵的是 `/B` 子进程启动+ZMX 导入+AUT，readout
+    在同一进程内几乎零成本）；若只想给"最终采纳"那个 rung 重建，需要在判定
+    收敛后对同一配置重新跑一次 CODE V（多一次进程调用，真实变慢），得不偿
+    失。副作用：非最终 rung 也会在 work_dir 落一份（不同渐晕 edge 消歧命名，
+    见 ``_vignetting_filename_token``）ZMX，多余但无害，只是磁盘上多几个文
+    件；返回 dict 里的 ``optimized_zmx_path`` 只对应最终被 ``_annotate``/
+    ``_blocked_or_best`` 采纳的那次 rung。"""
 
     trace: list[str] = []
     best: dict[str, object] | None = None
@@ -953,7 +1080,8 @@ def run_codev_target_autovig(
                 source_zmx=source_zmx, work_dir=work_dir, target_efl_mm=target_efl_mm,
                 target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
                 executable=executable, timeout_seconds=timeout_seconds,
-                platform_name=platform_name, vignetting=vig, **sequence_options,
+                platform_name=platform_name, vignetting=vig,
+                emit_optimized_zmx=emit_optimized_zmx, **sequence_options,
             )
         except CodeVBatchError as exc:
             last_error = exc
@@ -1089,6 +1217,7 @@ def run_codev_target_standard(
     num_fields: int | None = None,
     vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
     glass_bounds_nd_vd: Sequence[tuple[float, float]] | None = None,
+    emit_optimized_zmx: bool = False,
 ) -> dict[str, object]:
     """C1 Mode3（TargetConvergedGenerator）③ 优化标准打包入口。
 
@@ -1128,10 +1257,18 @@ def run_codev_target_standard(
     返回值不是"良品/合格"判定——量产可用性判断权与 [EXPERT] 背书始终在资
     深设计师手里（AGENTS.md 北极星条款），本函数只做数值排序。
 
+    emit_optimized_zmx（加法式，默认 False=零回归）：为 True 时两配置
+    （asphere/both，各自独立 work_dir/extra_dof 子目录，互不覆写）各自透传
+    进 `run_codev_target_autovig`，各自把优化后 ZMX 重建落盘——preferred 与
+    "输"的一份都各自拿到自己的 `optimized_zmx_path`，资深两份都能 Verify。
+    重建失败 fail-open（见 run_codev_target 文档字符串），只在该配置的
+    `configs[...]["zmx_rebuild_error"]` 留痕，不影响 preferred 排序。
+
     Returns:
         {"schema": STANDARD_RESULT_SCHEMA,
          "configs": {"asphere": {...}, "both": {...}},  # 各为
-             run_codev_target_autovig 的原始返回 dict，或
+             run_codev_target_autovig 的原始返回 dict（emit_optimized_zmx=True
+             时含 optimized_zmx_path / 可能的 zmx_rebuild_error），或
              {"error": {"kind": ..., "detail": ...}}（该配置报错时）
          "preferred": "asphere" | "both" | None,
          "preferred_reason": str,
@@ -1156,6 +1293,7 @@ def run_codev_target_standard(
                 timeout_seconds=timeout_seconds,
                 extra_dof=extra_dof,
                 glass_bounds_nd_vd=glass_bounds_nd_vd,
+                emit_optimized_zmx=emit_optimized_zmx,
             )
             configs[extra_dof] = dict(data)
         except CodeVBatchError as exc:
