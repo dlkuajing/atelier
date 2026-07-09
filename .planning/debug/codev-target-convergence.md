@@ -68,6 +68,24 @@ note: "本 session 由主公 attended 驱动，非自主 session-manager 循环�
 - **结论**：**"拉不动"100% 是 AUT/导入 setup 问题（边缘 ray TIR 挡住 merit），不是本征**。AUT 拉 EFL 的能力完全在。naive-macro 的低收敛率是 setup 假象。
 - **对 go/no-go**：crux（可靠 EFL 收敛）是**可解工程问题**（光阑/渐晕/ray-aiming setup），非研究墙——探路阶展望改善。真良品率须在**修好 ray setup 的宏**上重测。
 
+## 下一杠杆实验：解冻玻璃/非球面（2026-07-09 · 主公 ratify 三项之三）
+
+ray-setup 修好后，arm A(甜区+12%) × 5 seed × extra_dof∈{none,asphere,both}，auto-vig 保 F#（`scratch_diag/probe_dof.py`）：
+
+| seed | none RMS/WFE | asphere RMS/WFE | both RMS/WFE |
+|---|---|---|---|
+| US10281683B2 | 153/8.2 (e0.3) | **62/2.0** (e0.7) | 274/13.7 (e0.3) |
+| US20140111876A1 | 381/5.2 (e0.3) | **179/2.0** (e0.3) | 235/4.6 (e0.3) |
+| US20170003482A1 | 24/0.50 (e0) | **13/0.29** (e0) | 343/8.7 (e0.5) |
+| US20170045714A1 | 553/49.6 (e0.3) | **143/6.5** (e0.5) | 495/2.1 (e0.5) |
+| US20180143405A1 | 135/10.1 (e0.5) | **113/1.2** (e0.3) | 190/6.8 (e0.7,conv❌) |
+
+- **★非球面(asphere)是真杠杆★**：RMS 一致下降 ~2-4×、WFE 大降（同 edge 对照最干净：US20140111876A1 e0.3 381→179；US20170003482A1 e0=0 24→13；US20180143405A1 asphere 用更轻 clip 反更好）。**收敛不受损（5/5）**。
+- **★玻璃可变(both=asphere+glass)反而更差★**：多数 both > asphere 甚至 > none（US20170003482A1 both 343=×14 灾难、US20180143405A1 both 不收敛）——**坐实已知"玻璃 GLC 实现问题"待办**：GLC 让 AUT 把（model）玻璃拉到不可实现值，害像质+害收敛。**glass 变量当前是负杠杆，须修 GLC 才能用（接缝2 真正落地前置）。**
+- **但即便 asphere，naive-seed 仍多数偏软**（RMS 62-179µm；仅 seed-target 良配的 US20170003482A1 达 13µm/0.29 波≈接近可用）——**指向 crux 从"收敛"移到"quality"：非球面已榨、玻璃待修、剩 seed-target 匹配是最大剩余杠杆**。
+- ⚠️ **edge 混淆**：auto-vig 各 config 收敛 edge 不同，RMS 在被裁瞳上测（edge 越大越乐观），故最干净对照是同-edge seed；结论对混淆稳健（同-edge 亦成立）。
+- go/no-go 净结论：③ **收敛=已解**（5/5）；**quality 有真杠杆(asphere)但未达量产**；**两个可解工程 blocker=修 GLC 玻璃变量 + seed-target 匹配**。良品率判仍在资深([EXPERT])。
+
 ## 真良品率重测（2026-07-09 · 自动渐晕修好 ray-setup 后 · 主公 ratify 方案）
 
 `run_codev_target_autovig`（宏加 `vignetting` 参数 + Python 爬梯搜最小收敛离轴渐晕，保 F#）重跑 5 seed × 4 臂（报告 `.planning/loop/codev-target-experiment-report-autovig.md`）：
