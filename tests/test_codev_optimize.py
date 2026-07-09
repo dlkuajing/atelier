@@ -8,12 +8,13 @@ from pathlib import Path
 
 import pytest
 
-from app.core.engines import codev_batch
+from app.core.engines import codev_batch, codev_optimize
 from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
 from app.core.engines.codev_optimize import (
     CODEV_OPTIMIZE_RESULT_SCHEMA,
     DEFAULT_GLASS_BOUNDS_ND_VD,
     DEFAULT_OPTIMIZE_SEED,
+    STANDARD_RESULT_SCHEMA,
     TARGET_RESULT_SCHEMA,
     _autovig_profile,
     _glass_map_hull,
@@ -24,6 +25,7 @@ from app.core.engines.codev_optimize import (
     run_codev_optimize,
     run_codev_target,
     run_codev_target_autovig,
+    run_codev_target_standard,
 )
 from app.core.engines.codev_readout import CODEV_READOUT_RESULT_SCHEMA
 
@@ -748,3 +750,176 @@ def _buf_exp_paths_from_sequence_single(sequence_path: Path) -> list[Path]:
     matches = re.findall(r'BUF EXP B1 "([^"]+)"', sequence)
     assert len(matches) == 1  # target 模式单 BUF EXP
     return [Path(m) for m in matches]
+
+
+# ===========================================================================
+# run_codev_target_standard（C1 Mode3 标准打包入口）mock 测试：monkeypatch
+# codev_optimize.run_codev_target_autovig 本体（模块级全局名，patch 后本函数
+# 内部调用即生效），不触碰 subprocess/CODE V。
+# ===========================================================================
+
+
+def _standard_config_result(*, converged: str, rms: str | None) -> dict[str, str]:
+    data = {"aut_converged": converged, "autovig.edge_used": "0.3", "autovig.converged": converged}
+    if rms is not None:
+        data["post_aut.max_rms_spot_diameter_um"] = rms
+    return data
+
+
+def _fake_autovig(results: dict[str, dict[str, str] | CodeVBatchError]):
+    # 只按 extra_dof 分派；其余 kwargs（source_zmx/work_dir/target_* 等）都由
+    # run_codev_target_standard 以关键字传入，一律吞进 _ignored，不参与判定。
+    def _run(*, extra_dof: str = "none", **_ignored: object) -> dict[str, str]:
+        outcome = results[extra_dof]
+        if isinstance(outcome, CodeVBatchError):
+            raise outcome
+        return dict(outcome)
+
+    return _run
+
+
+def test_target_standard_prefers_both_when_lower_rms(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="20.0"),
+                "both": _standard_config_result(converged="1", rms="13.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "both"
+    assert "13" in result["preferred_reason"]
+    assert result["configs"]["asphere"]["post_aut.max_rms_spot_diameter_um"] == "20.0"
+
+
+def test_target_standard_prefers_asphere_when_lower_rms(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="12.99"),
+                "both": _standard_config_result(converged="1", rms="343.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "asphere"
+
+
+def test_target_standard_survivor_preferred_when_one_config_errors(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    err = CodeVBatchError("timeout", "boom", details={"x": 1})
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="15.0"),
+                "both": err,
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "asphere"
+    assert result["configs"]["both"]["error"]["kind"] == "timeout"
+    assert result["configs"]["both"]["error"]["detail"] == "boom"
+    assert "post_aut.max_rms_spot_diameter_um" in result["configs"]["asphere"]
+
+
+def test_target_standard_both_not_converged_compares_by_rms(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="0", rms="80.0"),
+                "both": _standard_config_result(converged="0", rms="60.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "both"
+
+
+def test_target_standard_missing_rms_is_fail_closed(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                # asphere 缺 RMS key（fail-closed 当 +inf），即便 both 数值本身很差，
+                # 仍应排到 both 之后——缺数据不能反而"赢"。
+                "asphere": _standard_config_result(converged="1", rms=None),
+                "both": _standard_config_result(converged="1", rms="500.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "both"
+
+
+def test_target_standard_both_errors_preferred_is_none(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": CodeVBatchError("timeout", "a boom"),
+                "both": CodeVBatchError("failure", "b boom"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] is None
+    assert result["configs"]["asphere"]["error"]["kind"] == "timeout"
+    assert result["configs"]["both"]["error"]["kind"] == "failure"
+
+
+def test_target_standard_schema_and_provenance_present(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="10.0"),
+                "both": _standard_config_result(converged="1", rms="11.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["schema"] == STANDARD_RESULT_SCHEMA
+    assert set(result["configs"]) == {"asphere", "both"}
+    assert result["provenance"]["vignetting_search"] == "autovig"
+    assert result["provenance"]["glass_model"] == "fictitious-within-plastic-GLA"
+    assert "EXPERT" in result["provenance"]["quality_note"]

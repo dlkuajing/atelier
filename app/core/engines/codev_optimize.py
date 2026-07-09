@@ -878,6 +878,183 @@ def run_codev_target_autovig(
     return _blocked_or_best(last_edge)
 
 
+# ===========================================================================
+# 标准打包入口（C1 Mode3 接入锚 · spec §10 六接缝之 1/2/3a）：asphere/both 两
+# 配置并跑 + 数值排序取 preferred，双份数据全保留。加法式：全新函数，不动
+# 上面任何既有函数（零回归）。
+# ===========================================================================
+
+STANDARD_RESULT_SCHEMA = "atelier-codev-target-standard-v1"
+_STANDARD_EXTRA_DOF_CONFIGS: tuple[str, ...] = ("asphere", "both")
+
+
+def _standard_config_converged(result: Mapping[str, object]) -> int:
+    """Fail-closed：aut_converged 缺失/非法值一律当 0（不给"已收敛"背书）。"""
+    raw = result.get("aut_converged")
+    if raw is None:
+        return 0
+    try:
+        return 1 if int(float(str(raw))) == 1 else 0
+    except (TypeError, ValueError):
+        return 0
+
+
+def _standard_config_rms(result: Mapping[str, object]) -> float:
+    """Fail-closed：post_aut RMS 点列缺失/非数/非有限一律当 +inf（排到最
+    后，不当"更优"——缺数据不能反而赢）。"""
+    raw = result.get("post_aut.max_rms_spot_diameter_um")
+    if raw is None:
+        return float("inf")
+    try:
+        value = float(str(raw))
+    except (TypeError, ValueError):
+        return float("inf")
+    return value if math.isfinite(value) else float("inf")
+
+
+def _standard_config_rank(result: Mapping[str, object]) -> tuple[int, int, float]:
+    """越小越优：(是否报错, 是否未收敛, RMS)。报错的配置永远排最后；同为
+    未报错时按 aut_converged 分层，同层再比 RMS。"""
+    if "error" in result:
+        return (1, 1, float("inf"))
+    return (0, 0 if _standard_config_converged(result) else 1, _standard_config_rms(result))
+
+
+def _select_preferred(
+    configs: Mapping[str, Mapping[str, object]],
+) -> tuple[str | None, str]:
+    """两配置按 `_standard_config_rank` 排序取 preferred；两配置都报错时
+    返回 (None, 原因)。判定规则见 `run_codev_target_standard` docstring。"""
+
+    ranked = sorted(
+        _STANDARD_EXTRA_DOF_CONFIGS,
+        key=lambda name: _standard_config_rank(configs[name]),
+    )
+    best, second = ranked[0], ranked[1]
+    if "error" in configs[best]:
+        return None, "两配置均报 CodeVBatchError（tooling-blocked），无可用结果"
+    if "error" in configs[second]:
+        return best, f'"{second}" 配置报 CodeVBatchError，"{best}" 为唯一可用结果'
+    best_conv = _standard_config_converged(configs[best])
+    second_conv = _standard_config_converged(configs[second])
+    if best_conv != second_conv:
+        return best, (
+            f'"{best}" aut_converged={best_conv} 优于 "{second}" aut_converged={second_conv}'
+        )
+    best_rms = _standard_config_rms(configs[best])
+    second_rms = _standard_config_rms(configs[second])
+    if best_rms != second_rms:
+        return best, (
+            f'"{best}" post_aut.max_rms_spot_diameter_um={best_rms:.4g}µm 小于 '
+            f'"{second}" 的 {second_rms:.4g}µm'
+        )
+    return best, (
+        f"aut_converged 与 post_aut RMS spot 均打平（converged={best_conv}, "
+        f'rms={best_rms:.4g}），按固定优先序取 "{best}"'
+    )
+
+
+def run_codev_target_standard(
+    *,
+    source_zmx: Path | str,
+    work_dir: Path | str,
+    target_efl_mm: float,
+    target_f_number: float | None = None,
+    target_imh_mm: float | None = None,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
+    timeout_seconds: float = 180.0,
+    num_fields: int | None = None,
+    vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
+    glass_bounds_nd_vd: Sequence[tuple[float, float]] | None = None,
+) -> dict[str, object]:
+    """C1 Mode3（TargetConvergedGenerator）③ 优化标准打包入口。
+
+    spec 锚：docs/superpowers/specs/2026-07-08-c1-multi-candidate-orchestration
+    -design.md §10「Mode3 接口锚（③ 六接缝）」。Mode3 优化维 =
+    {EFL, F#, IMH, FOV}（spec §10 顶部按语；TTL 不在优化维，见 spec §5.2
+    `CONVERGED_FIELDS`）。本函数落地六接缝中的：
+
+      - 接缝1 EFL 解锁朝 target：`build_codev_target_sequence` 内
+        `EFL = {target_efl_mm}`（真机 E1 验证）。
+      - 接缝2 玻璃可变：`extra_dof="both"` 走塑料域 GLA 边界（见模块「玻璃
+        可变域修复」章节；凸性陷阱已修，commit 7b504c6）。
+      - 接缝3a F# 锁：FNO 模式（真机 E1 实测锁）。
+
+    未落地：IMH/FOV（Stage C 场重建；`target_imh_mm` 目前仅透传进三快照
+    读数，AUT merit 未加 IMH/FOV 操作数）。接缝4-6（applied_to_payload 真
+    置 True / verification checklist 自动 apply / payload delivery 落地）
+    不属本函数，分别在 `local_optimizer.py` / `case_library.py` 侧。
+
+    真机结论（主公 2026-07-09 attended 验证）：`extra_dof` ∈ {asphere,both}
+    互有胜负（both 在 5 颗 seed 中 3 胜 2 负），无法静态判定哪个配置更优。
+    因此标准配置 = 两配置并跑（asphere=纯非球面 DOF；both=非球面+塑料域
+    玻璃 DOF），按数值指标排序取 preferred，**双份数据全部保留**——不丢弃
+    "输"的那份，资深设计师可能仍要看两份对比。
+
+    preferred 判定规则（纯数值排序，非良品判定，写死不可绕过）：
+      1. 任一配置抛 `CodeVBatchError`（tooling-blocked）排最后；两配置都
+         抛错 → `preferred=None`。
+      2. 比较 `aut_converged`（EFL 达成 target 偏差<2%，"1">"0"）；缺失/
+         非法值 fail-closed 当 0（不给"已收敛"背书）。
+      3. `aut_converged` 打平则比 `post_aut.max_rms_spot_diameter_um`，小
+         者优；缺失/NaN/非有限 fail-closed 当 +inf（排到最后，不当
+         "更优"）。
+      4. 仍打平（如两者 RMS 都缺失）→ 固定优先序取 "asphere"（更简单、无
+         玻璃可变风险的配置）。
+
+    返回值不是"良品/合格"判定——量产可用性判断权与 [EXPERT] 背书始终在资
+    深设计师手里（AGENTS.md 北极星条款），本函数只做数值排序。
+
+    Returns:
+        {"schema": STANDARD_RESULT_SCHEMA,
+         "configs": {"asphere": {...}, "both": {...}},  # 各为
+             run_codev_target_autovig 的原始返回 dict，或
+             {"error": {"kind": ..., "detail": ...}}（该配置报错时）
+         "preferred": "asphere" | "both" | None,
+         "preferred_reason": str,
+         "provenance": {"vignetting_search": "autovig",
+                        "glass_model": "fictitious-within-plastic-GLA",
+                        "quality_note": "..."}}
+    """
+
+    work_dir = Path(work_dir)
+    configs: dict[str, dict[str, object]] = {}
+    for extra_dof in _STANDARD_EXTRA_DOF_CONFIGS:
+        try:
+            data = run_codev_target_autovig(
+                source_zmx=source_zmx,
+                work_dir=work_dir / extra_dof,
+                target_efl_mm=target_efl_mm,
+                target_f_number=target_f_number,
+                target_imh_mm=target_imh_mm,
+                vig_ladder=vig_ladder,
+                num_fields=num_fields,
+                executable=executable,
+                timeout_seconds=timeout_seconds,
+                extra_dof=extra_dof,
+                glass_bounds_nd_vd=glass_bounds_nd_vd,
+            )
+            configs[extra_dof] = dict(data)
+        except CodeVBatchError as exc:
+            configs[extra_dof] = {"error": {"kind": exc.kind, "detail": exc.message}}
+
+    preferred, preferred_reason = _select_preferred(configs)
+    return {
+        "schema": STANDARD_RESULT_SCHEMA,
+        "configs": configs,
+        "preferred": preferred,
+        "preferred_reason": preferred_reason,
+        "provenance": {
+            "vignetting_search": "autovig",
+            "glass_model": "fictitious-within-plastic-GLA",
+            "quality_note": (
+                "RMS measured on vignetted pupil (edge_used); preferred is numeric "
+                "ordering, NOT a yield/quality judgment (EXPERT red line)"
+            ),
+        },
+    }
+
+
 def parse_codev_optimize_file(result_path: Path | str) -> CodeVOptimizeSummary:
     """Parse an AUT optimization TSV exported by ``BUF EXP``."""
 
