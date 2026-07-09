@@ -8,6 +8,7 @@ the CODE V listing/log output for successful results.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import time
 from collections.abc import Iterable, Mapping
@@ -282,11 +283,27 @@ def run_codev_batch(
     ``allow_nonzero_ok_result`` only accepts a non-zero process return code
     after the explicit result file passes schema, required-key, and status
     validation.
+
+    命名约定警告：``sequence_path`` 的文件名 stem 不要以 ``.<数字>`` 结尾
+    （例如 ``foo_e0.3.seq``）——CODE V 会把这个尾缀当成自己的清单版本号剥离，
+    同 root 多次 run 时会在磁盘上撞到同一份 ``.lis`` 清单并触发滚动重命名
+    （裸名 -> ``.1.lis`` -> ``.2.lis`` -> ...）。这不影响 ``BUF EXP`` 导出的
+    数值结果（走绝对路径显式契约），但会让清单认领更容易撞车。数值 tag 建
+    议写成不含小数点的形式（如 ``e030``）。
+
+    更致命的一档由机制守卫兜底（非提醒）：basename 里 ``.<数字>`` 段内混有
+    非数字内容（如 ``..._vig0.20_readout.tsv``）会让 CODE V 打开路径时直接
+    中止整条宏——入口对 ``sequence_path``/``result_path`` 调
+    ``ensure_buf_exp_safe_filename``，命中立即 ValueError。
     """
 
     executable = Path(executable)
     sequence_path = Path(sequence_path)
     result_path = Path(result_path)
+    # 机制守卫（非命名约定提醒）：CODE V 打开这两个路径，危险文件名会让宏
+    # 静默中止（BUF EXP 拿不到导出）——Python 侧提前炸，见 ensure_buf_exp_safe_filename。
+    ensure_buf_exp_safe_filename(sequence_path, role="sequence_path")
+    ensure_buf_exp_safe_filename(result_path, role="result_path")
     work_dir = sequence_path.parent if work_dir is None else Path(work_dir)
 
     if not executable.is_file():
@@ -303,6 +320,9 @@ def run_codev_batch(
         )
 
     stale_result_deleted = _delete_stale_result(result_path)
+    bare_listing_guess = sequence_path.with_suffix(".lis")
+    stale_listing_deleted = _delete_stale_listing(bare_listing_guess)
+    listing_snapshot_before = _snapshot_lis_files(sequence_path.parent)
     sequence_arg = (
         sequence_path.name
         if _same_directory(sequence_path.parent, work_dir)
@@ -321,6 +341,7 @@ def run_codev_batch(
                 "executable": str(executable),
                 "work_dir": str(work_dir),
                 "stale_result_deleted": stale_result_deleted,
+                "stale_listing_deleted": stale_listing_deleted,
                 "exception_type": type(exc).__name__,
                 "error": str(exc),
             },
@@ -330,6 +351,7 @@ def run_codev_batch(
     except subprocess.TimeoutExpired as exc:
         kill_details = _kill_process_tree(process, platform_name=platform_name)
         reap_details = _reap_process_after_kill(process)
+        timeout_listing_path = _claim_listing_path(listing_snapshot_before, bare_listing_guess)
         raise CodeVBatchError(
             "timeout",
             "CODE V batch run exceeded its hard timeout",
@@ -341,14 +363,17 @@ def run_codev_batch(
                 "stderr_tail": _tail(_coerce_output(exc.stderr)),
                 "kill": kill_details,
                 "reap": reap_details,
+                "listing_tail": _read_tail(timeout_listing_path)
+                if timeout_listing_path is not None
+                else "",
             },
         ) from exc
 
     duration_seconds = time.monotonic() - started_at
     stdout_text = _coerce_output(stdout)
     stderr_text = _coerce_output(stderr)
-    listing_path = sequence_path.with_suffix(".lis")
-    listing_tail = _read_tail(listing_path)
+    listing_path = _claim_listing_path(listing_snapshot_before, bare_listing_guess)
+    listing_tail = _read_tail(listing_path) if listing_path is not None else ""
 
     if result_path.is_file():
         data = parse_codev_result_file(
@@ -390,7 +415,7 @@ def run_codev_batch(
             returncode=process.returncode,
             duration_seconds=duration_seconds,
             data=data,
-            listing_path=listing_path if listing_path.exists() else None,
+            listing_path=listing_path,
         )
 
     raise CodeVBatchError(
@@ -401,6 +426,7 @@ def run_codev_batch(
             "returncode": process.returncode,
             "result_path": str(result_path),
             "stale_result_deleted": stale_result_deleted,
+            "stale_listing_deleted": stale_listing_deleted,
             "stdout_tail": _tail(stdout_text),
             "stderr_tail": _tail(stderr_text),
             "listing_tail": listing_tail,
@@ -426,6 +452,63 @@ def _delete_stale_result(result_path: Path) -> bool:
     return True
 
 
+def _delete_stale_listing(listing_path: Path) -> bool:
+    """尽力删除按文件名猜测的裸名 .lis（启动前对称清理）。
+
+    清单文件仅供诊断（数值结果走 ``BUF EXP`` 显式导出，不受影响），删除失败
+    不应阻断主流程——与 ``_delete_stale_result`` 不同，这里是 best-effort。
+    """
+    if not listing_path.exists():
+        return False
+    try:
+        listing_path.unlink()
+    except OSError:
+        return False
+    return True
+
+
+def _snapshot_lis_files(directory: Path) -> dict[Path, tuple[int, int]]:
+    """对目录下所有 ``*.lis`` 拍 (mtime_ns, size) 快照，供事后 diff 认领。"""
+
+    snapshot: dict[Path, tuple[int, int]] = {}
+    try:
+        candidates = list(directory.glob("*.lis"))
+    except OSError:
+        return snapshot
+    for candidate in candidates:
+        try:
+            stat_result = candidate.stat()
+        except OSError:
+            continue
+        snapshot[candidate] = (stat_result.st_mtime_ns, stat_result.st_size)
+    return snapshot
+
+
+def _claim_listing_path(
+    snapshot_before: Mapping[Path, tuple[int, int]],
+    fallback: Path,
+) -> Path | None:
+    """认领本次 run 新增/变更的 .lis 清单文件（快照 diff，取代按文件名猜测）。
+
+    CODE V 会把 seq 文件名末尾形如 ``.<数字>`` 的 token 当自己的清单版本号
+    剥离（见 ``run_codev_batch`` docstring），导致同 root 多次 run 时
+    ``.lis`` 在磁盘上滚动重命名（裸名 -> ``.1.lis`` -> ``.2.lis`` -> ...），
+    与 Python 侧 ``sequence_path.with_suffix(".lis")`` 的按名猜测错位。这里
+    改为运行前后快照 diff：谁在本次 run 期间被新建或修改，谁就是本次的清单
+    （多个变更时取 mtime 最新者）；diff 为空时回退旧的按名猜测以保持兼容。
+
+    扫描目录取 ``fallback.parent``——与运行前快照天然同目录，无需调用方另传。
+    """
+
+    snapshot_after = _snapshot_lis_files(fallback.parent)
+    changed = [path for path, meta in snapshot_after.items() if snapshot_before.get(path) != meta]
+    if changed:
+        return max(changed, key=lambda path: snapshot_after[path][0])
+    if fallback.exists():
+        return fallback
+    return None
+
+
 def _popen_codev(
     command: list[str],
     *,
@@ -433,12 +516,15 @@ def _popen_codev(
     env: Mapping[str, str] | None,
     platform_name: str,
 ):
+    # 二进制读（text=False）：CODE V 偶发非 UTF-8 输出（如 cp1252 的 0xb3=³）会让
+    # communicate 的 reader 线程 UnicodeDecodeError 崩溃 → stdout 管道填满 → CODE V
+    # 写阻塞挂死 → 超时（观测到的真机制）。改读原始字节永不在 reader 线程 decode，
+    # stdout/stderr 仅作诊断（结果走 BUF EXP 文件），由 _coerce_output 后期 errors='replace' 解码。
     popen_kwargs: dict[str, object] = {
         "cwd": str(work_dir),
         "env": dict(env) if env is not None else None,
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
-        "text": True,
     }
     if platform_name == "nt" and hasattr(subprocess, "CREATE_NEW_PROCESS_GROUP"):
         popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
@@ -448,11 +534,14 @@ def _popen_codev(
 def _kill_process_tree(process, *, platform_name: str) -> dict[str, object]:
     if platform_name == "nt":
         try:
+            # 二进制读（不加 text=True）：中文 Windows 上 taskkill 打印 GBK 信息（如
+            # "成功: 已终止 …" 的 0xb3 字节），text=True 会让 subprocess.run 的 reader
+            # 线程 UnicodeDecodeError 崩（清理 CODE V 超时进程树时观测到）。字节交给
+            # _coerce_output 后期 errors='replace' 解码，永不崩。
             completed = subprocess.run(
                 ["taskkill", "/F", "/T", "/PID", str(process.pid)],
                 capture_output=True,
                 check=False,
-                text=True,
                 timeout=10,
             )
         except Exception as exc:  # noqa: BLE001 - timeout cleanup must surface diagnostics.
@@ -520,6 +609,33 @@ def _reap_process_after_kill(process) -> dict[str, object]:
     return details
 
 
+# CODE V 危险文件名机制守卫（真机实锤，隔离对照实验见 codev_optimize.
+# _fmt_edge_filename_token 文档字符串）：basename 里"小数点后跟数字、且同一
+# 点分段内还有非数字内容"（如 "..._vig0.20_readout.tsv" 的 ".20_readout" 段）
+# 会让 CODE V 打开该路径时报 "ERROR - Unable to open file." 并中止整条宏
+# （BUF EXP 导出静默拿不到）。纯数字段后直接接扩展名（"...v0.20.tsv"）、合法
+# 扩展名（.tsv/.seq/.lis——点后是字母）与无小数点的 token（"_vig0200"）均安全。
+# 正则语义：一个点分段以数字开头、但段内混有非数字字符 → 危险。
+_BUF_EXP_HAZARD_RE = re.compile(r"\.\d[^.]*[^.\d]")
+
+
+def ensure_buf_exp_safe_filename(path: Path | str, *, role: str = "path") -> None:
+    """Reject basenames CODE V refuses to open — Python 侧提前 ValueError，
+    不让 CODE V 到真机批跑时才静默中止宏（见 `_BUF_EXP_HAZARD_RE` 注释）。
+
+    只守卫会传给 CODE V 宏 / ``BUF EXP`` 打开的路径；纯 Python 落盘、不经
+    CODE V 打开的文件（如 zmx_writer 重建的 ``*_target3.797_*.zmx``）不适用
+    本守卫，勿对它们调用。
+    """
+    name = Path(path).name
+    if _BUF_EXP_HAZARD_RE.search(name):
+        raise ValueError(
+            f"CODE V-unsafe {role} filename {name!r}: a '.<digits>' infix followed by "
+            "non-extension content makes CODE V abort the macro with "
+            "'ERROR - Unable to open file.' (use a dot-free token such as '_vig0200')"
+        )
+
+
 def _quote_codev_path(path: Path) -> str:
     value = str(path)
     if any(char in value for char in ('"', "\r", "\n")):
@@ -556,9 +672,16 @@ def _classify_error(
 
 
 def _read_tail(path: Path) -> str:
-    if not path.is_file():
+    # 诊断用途 fail-open：清单文件可能被刚被杀、尚未退出的 CODE V 进程树锁住
+    # （PermissionError 等 OSError）。读不到就返回空串，绝不让诊断读取把
+    # timeout/failure 主异常替换成 PermissionError（保护所有调用点，尤其
+    # run_codev_batch 的 timeout 分支）。
+    try:
+        if not path.is_file():
+            return ""
+        return _tail(path.read_text(encoding="utf-8", errors="replace"))
+    except OSError:
         return ""
-    return _tail(path.read_text(encoding="utf-8", errors="replace"))
 
 
 def _tail(value: str, limit: int = _OUTPUT_TAIL_CHARS) -> str:

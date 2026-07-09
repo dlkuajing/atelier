@@ -1,0 +1,4001 @@
+  
+  
+                                   Welcome to
+  
+                                   C O D E   V
+  
+                                PC  Version 11.5
+                                   Build 27302701
+  
+                                    9-Jul-2026
+  
+                            A proprietary product of
+  
+                              SYNOPSYS, INC
+                              Pasadena, California
+  
+CODE V> OUT NO
+     Radius input/output mode
+  
+    Lens data created by Zemax version 200706
+  
+    Zemax command MODE ignored
+    ZEMAX NOTE 0 table5
+    Zemax command PFIL ignored
+    Zemax command LANG ignored
+     WARNING - Glass catalog list not used.
+     WARNING - Ray aiming not used.
+     WARNING - Pupil shift for ray aiming not used.
+    Zemax command SDMA ignored
+    Zemax command OMMA ignored
+    Zemax command HYPR ignored
+     WARNING - Vignetting angles not used.
+    Zemax command POLS ignored
+    Zemax command GLRS ignored
+    Zemax command GSTD ignored
+    Zemax command NSCD ignored
+    Zemax command COFN ignored
+    Zemax command COFN ignored
+  
+     Surface pointer = OBJ
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 1
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 2
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 3
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 4
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 5
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 6
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 7
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 8
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 9
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 10
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 11
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 12
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 13
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 14
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 15
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 16
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 17
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = IMG
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     WARNING - Please check the converted lens carefully.
+               Some information will not be converted.
+               Changes in either CODE V or ZEMAX may invalidate
+               the converted information.
+               Due to differences between CODE V and ZEMAX ray
+               aiming and vignetting factors, it is recommended
+               that you set vignetting for the converted system.
+  
+               A concise listing of conversion warnings appears
+               in the Tabbed Output Window 'Info' tab and in the
+               Command Window.
+  
+CODE V> DEF VAR SA
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+CODE V>     AC S^s 0
+CODE V>     BC S^s 0
+CODE V>     CC S^s 0
+CODE V>     DC S^s 0
+CODE V>     EC S^s 0
+CODE V>     FC S^s 0
+CODE V>     GC S^s 0
+CODE V>     GLC S^s 0
+ 
+ 
+ 
+ 
+CODE V> AUT
+     AUT                                                                               9-Jul-26  19H  2M 35S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S
+     ***Defocussing frozen to eliminate redundant variable
+AUT>   SUR N
+AUT>   CHG SA
+AUT>   WFR Y
+AUT>   WTF FA 10
+AUT>   EFL = 3.797
+AUT>   @atelier_latcolor == @lcum(1)
+AUT>   @atelier_latcolor = 0
+AUT>   WTC 0.01
+AUT>   @atelier_rmsspot == @rmssum(1)
+AUT>   @atelier_rmsspot = 0
+AUT>   WTC 0.001
+AUT>   MNT 0.025
+AUT>   MNE 0.025
+AUT>   MXT 10
+AUT>   MNA 0.001
+AUT>   MXC 25
+AUT>   MNC 3
+AUT>   IMP 0.001
+AUT>   GLA 1.4200:68.00 1.5170:64.20 1.5445:55.90 1.6510:21.50 1.6900:18.00
+AUT> GO
+ -------------------------------------------------------------------------------
+  
+       USER CONSTRAINT DEFINITIONS
+            @atelier_rmsspot == @rmssum(1)
+  
+            @atelier_latcolor == @lcum(1)
+  
+  
+  
+       POTENTIALLY ACTIVE SPECIFIC CONSTRAINTS
+         EFL                                  =       3.797000
+         @ATELIER_LATCOLOR                    =       0.000000     (WTC =    0.01000)
+         @ATELIER_RMSSPOT                     =       0.000000     (WTC =    0.00100)
+  
+       GENERAL CONSTRAINTS
+         MXT      10.000000
+         MNT       0.025000
+         MNE       0.025000
+         MNA       0.001000
+         MAE       0.002500
+         GLA               1.42:68.  1.517:64.2  1.5445:55.9  1.651:21.5  1.69:18.
+  
+       ERROR FUNCTION CONSTRUCTION
+         WFR        Y
+         WTW       1          1          1
+         WTA       0.000000
+         DEL       0.220000
+         WTX F1   10.000000
+         WTX F2   10.000000
+         WTX F3   10.000000
+         WTY F1   10.000000
+         WTY F2   10.000000
+         WTY F3   10.000000
+  
+       CONVERGENCE CONTROLS
+         MXC        25
+         MNC         3
+         TAR       0.000000
+         IMP       0.001000
+  
+       OUTPUT CONTROLS
+         SUR NO
+         CHG S0..18
+  
+     Recommendations for most stable convergence:
+  
+       Use object space aperture specifications:
+       - NAO for finite conjugate systems
+       - EPD for infinite conjugate systems
+  
+       VARIABLE LIST
+  
+         NO      PARAMETERS *
+          1      CUY S1       CUY S2
+          2      CUY S2       CUY S4
+          3      CUY S4       CUY S5       CUY S6       CUY S7
+          4      CUY S5       CUY S6
+          5      CUY S6       CUY S7
+          6      CUY S7       CUY S8
+          7      CUY S8       CUY S9       CUY S10       CUY S11       CUY S12       CUY S13
+          8      CUY S9       CUY S10
+          9      CUY S10       CUY S11       CUY S12       CUY S13
+         10      CUY S11       CUY S12
+         11      CUY S12       CUY S13
+         12      CUY S13       CUY S14
+         13      CUY S14       CUY S15
+         14      CUY S15
+         15      A   S1
+         16      A   S2
+         17      A   S3
+         18      A   S4
+         19      A   S5
+         20      A   S6
+         21      A   S7
+         22      A   S8
+         23      A   S9
+         24      A   S10
+         25      A   S11
+         26      A   S12
+         27      A   S13
+         28      A   S14
+         29      A   S15
+         30      B   S1
+         31      B   S2
+         32      B   S3
+         33      B   S4
+         34      B   S5
+         35      B   S6
+         36      B   S7
+         37      B   S8
+         38      B   S9
+         39      B   S10
+         40      B   S11
+         41      B   S12
+         42      B   S13
+         43      B   S14
+         44      B   S15
+         45      C   S1
+         46      C   S2
+         47      C   S3
+         48      C   S4
+         49      C   S5
+         50      C   S6
+         51      C   S7
+         52      C   S8
+         53      C   S9
+         54      C   S10
+         55      C   S11
+         56      C   S12
+         57      C   S13
+         58      C   S14
+         59      C   S15
+         60      D   S1
+         61      D   S2
+         62      D   S3
+         63      D   S4
+         64      D   S5
+         65      D   S6
+         66      D   S7
+         67      D   S8
+         68      D   S9
+         69      D   S10
+         70      D   S11
+         71      D   S12
+         72      D   S13
+         73      D   S14
+         74      D   S15
+         75      E   S1
+         76      E   S2
+         77      E   S3
+         78      E   S4
+         79      E   S5
+         80      E   S6
+         81      E   S7
+         82      E   S8
+         83      E   S9
+         84      E   S10
+         85      E   S11
+         86      E   S12
+         87      E   S13
+         88      E   S14
+         89      E   S15
+         90      F   S1
+         91      F   S2
+         92      F   S3
+         93      F   S4
+         94      F   S5
+         95      F   S6
+         96      F   S7
+         97      F   S8
+         98      F   S9
+         99      F   S10
+        100      F   S11
+        101      F   S12
+        102      F   S13
+        103      F   S14
+        104      F   S15
+        105      G   S1
+        106      G   S2
+        107      G   S3
+        108      G   S4
+        109      G   S5
+        110      G   S6
+        111      G   S7
+        112      G   S8
+        113      G   S9
+        114      G   S10
+        115      G   S11
+        116      G   S12
+        117      G   S13
+        118      G   S14
+        119      G   S15
+        120      THI S2
+        121      THI S3
+        122      THI S5
+        123      THI S7
+        124      THI S9
+        125      THI S11
+        126      THI S13
+        127      THI S15
+        128      THI S17
+        129      GLN S1
+        130      GLV S1
+        131      GLN S4
+        132      GLV S4
+        133      GLN S6
+        134      GLV S6
+        135      GLN S8
+        136      GLV S8
+        137      GLN S10
+        138      GLV S10
+        139      GLN S12
+        140      GLV S12
+        141      GLN S14
+        142      GLV S14
+        143      GLN S16
+        144      GLV S16
+  
+     * Multiple entries on a line are composite variables.
+     Composite variables are either program-generated bendings
+     or user-requested couplings.
+  
+     144 VARIABLES
+  
+     144 CONSTRAINTS CAN BE ACTIVE
+  
+     RELATIVE TIME PER CYCLE IS 1185.2 UNITS
+     WARNING - The macro function SPOTDATA is not supported on multiple threads.
+               CODE V will set the multiple processor setting (MPP) to 1 to prevent errors.
+               Please refer to the CODE V Setup and Operation Reference Manual for a complete list
+               of pre-defined macro functions that are currently limited to running on a single thread.
+  
+ CYCLE NUMBER 0:
+  
+  ABERR F. =        0.29908822
+  CONST F. =      129.45408181
+  ERR. F.  =      129.75317003
+  
+  OPD     0.38636451     0.16151580     0.27478034
+  WAV     0.40688146     0.17565341     0.29907660
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                2.97619048E-01      0.00E+00
+  CUY S2                3.01114122E-01      0.00E+00
+  CUY S4                4.64252553E-01      0.00E+00
+  CUY S5                5.71755289E-02      0.00E+00
+  CUY S6                1.33014099E-01      0.00E+00
+  CUY S7                2.70855905E-01      0.00E+00
+  CUY S8                3.59285740E-02      0.00E+00
+  CUY S9               -2.09336404E-01      0.00E+00
+  CUY S10              -5.70125428E-01      0.00E+00
+  CUY S11              -2.83045570E-01      0.00E+00
+  CUY S12               5.44959128E-01      0.00E+00
+  CUY S13               2.14316331E-01      0.00E+00
+  CUY S14               6.33312223E-01      0.00E+00
+  CUY S15               9.22509225E-01      0.00E+00
+  A   S1               -2.03450000E-02      0.00E+00
+  A   S2               -1.06220000E-01      0.00E+00
+  A   S3                0.00000000E+00      0.00E+00
+  A   S4               -1.12260000E-01      0.00E+00
+  A   S5               -6.38950000E-02      0.00E+00
+  A   S6               -1.30850000E-02      0.00E+00
+  A   S7                7.19730000E-03      0.00E+00
+  A   S8               -4.96610000E-02      0.00E+00
+  A   S9               -9.93470000E-02      0.00E+00
+  A   S10              -7.42580000E-02      0.00E+00
+  A   S11              -1.52140000E-01      0.00E+00
+  A   S12               5.34730000E-02      0.00E+00
+  A   S13               6.37650000E-02      0.00E+00
+  A   S14              -1.84750000E-01      0.00E+00
+  A   S15              -1.34770000E-01      0.00E+00
+  B   S1                4.34820000E-02      0.00E+00
+  B   S2                1.15500000E-01      0.00E+00
+  B   S3                0.00000000E+00      0.00E+00
+  B   S4                8.02540000E-02      0.00E+00
+  B   S5               -1.09580000E-01      0.00E+00
+  B   S6               -1.28070000E-02      0.00E+00
+  B   S7               -2.43050000E-03      0.00E+00
+  B   S8               -1.11040000E-02      0.00E+00
+  B   S9               -2.33340000E-01      0.00E+00
+  B   S10               6.60020000E-02      0.00E+00
+  B   S11               1.82190000E-01      0.00E+00
+  B   S12              -4.84250000E-02      0.00E+00
+  B   S13              -4.25360000E-02      0.00E+00
+  B   S14               5.09800000E-02      0.00E+00
+  B   S15               5.68240000E-02      0.00E+00
+  C   S1               -3.71390000E-02      0.00E+00
+  C   S2                8.16320000E-03      0.00E+00
+  C   S3                0.00000000E+00      0.00E+00
+  C   S4               -1.37310000E-01      0.00E+00
+  C   S5                1.11700000E-01      0.00E+00
+  C   S6                3.90270000E-03      0.00E+00
+  C   S7               -1.05530000E-02      0.00E+00
+  C   S8               -1.73230000E-02      0.00E+00
+  C   S9                6.94740000E-01      0.00E+00
+  C   S10               2.21870000E-01      0.00E+00
+  C   S11              -7.99560000E-02      0.00E+00
+  C   S12               1.92030000E-02      0.00E+00
+  C   S13               1.11020000E-02      0.00E+00
+  C   S14              -7.21470000E-03      0.00E+00
+  C   S15              -1.61220000E-02      0.00E+00
+  D   S1                2.10720000E-02      0.00E+00
+  D   S2               -1.64010000E-01      0.00E+00
+  D   S3                0.00000000E+00      0.00E+00
+  D   S4                1.95770000E-02      0.00E+00
+  D   S5               -8.75440000E-02      0.00E+00
+  D   S6               -3.93060000E-02      0.00E+00
+  D   S7               -8.97450000E-03      0.00E+00
+  D   S8               -5.52000000E-03      0.00E+00
+  D   S9               -9.09710000E-01      0.00E+00
+  D   S10              -2.40710000E-01      0.00E+00
+  D   S11               2.21860000E-02      0.00E+00
+  D   S12              -5.81160000E-03      0.00E+00
+  D   S13              -1.74750000E-03      0.00E+00
+  D   S14               6.76380000E-04      0.00E+00
+  D   S15               2.66210000E-03      0.00E+00
+  E   S1                3.39790000E-03      0.00E+00
+  E   S2                1.92070000E-01      0.00E+00
+  E   S3                0.00000000E+00      0.00E+00
+  E   S4                2.06890000E-01      0.00E+00
+  E   S5                1.35220000E-02      0.00E+00
+  E   S6                2.06350000E-02      0.00E+00
+  E   S7                7.47790000E-06      0.00E+00
+  E   S8                1.30200000E-02      0.00E+00
+  E   S9                6.99020000E-01      0.00E+00
+  E   S10               9.70430000E-02      0.00E+00
+  E   S11              -4.84220000E-03      0.00E+00
+  E   S12               1.00840000E-03      0.00E+00
+  E   S13               1.57690000E-04      0.00E+00
+  E   S14              -4.88560000E-05      0.00E+00
+  E   S15              -2.44170000E-04      0.00E+00
+  F   S1               -5.81580000E-03      0.00E+00
+  F   S2               -8.49090000E-02      0.00E+00
+  F   S3                0.00000000E+00      0.00E+00
+  F   S4               -2.42240000E-01      0.00E+00
+  F   S5               -2.07390000E-02      0.00E+00
+  F   S6               -1.11330000E-02      0.00E+00
+  F   S7                0.00000000E+00      0.00E+00
+  F   S8                0.00000000E+00      0.00E+00
+  F   S9               -3.01840000E-01      0.00E+00
+  F   S10              -1.41960000E-02      0.00E+00
+  F   S11               5.62030000E-04      0.00E+00
+  F   S12              -6.78750000E-05      0.00E+00
+  F   S13              -6.00190000E-06      0.00E+00
+  F   S14               2.53580000E-06      0.00E+00
+  F   S15               1.15510000E-05      0.00E+00
+  G   S1                0.00000000E+00      0.00E+00
+  G   S2                0.00000000E+00      0.00E+00
+  G   S3                0.00000000E+00      0.00E+00
+  G   S4                0.00000000E+00      0.00E+00
+  G   S5                0.00000000E+00      0.00E+00
+  G   S6                0.00000000E+00      0.00E+00
+  G   S7                0.00000000E+00      0.00E+00
+  G   S8                0.00000000E+00      0.00E+00
+  G   S9                5.55780000E-02      0.00E+00
+  G   S10               0.00000000E+00      0.00E+00
+  G   S11               0.00000000E+00      0.00E+00
+  G   S12               0.00000000E+00      0.00E+00
+  G   S13               0.00000000E+00      0.00E+00
+  G   S14              -6.35550000E-08      0.00E+00
+  G   S15              -2.19720000E-07      0.00E+00
+  THI S2                8.60000000E-02      0.00E+00
+  THI S3               -1.70000000E-02      0.00E+00
+  THI S5                5.00000000E-02      0.00E+00
+  THI S7                3.05000000E-01      0.00E+00
+  THI S9                1.62000000E-01      0.00E+00
+  THI S11               5.10000000E-02      0.00E+00
+  THI S13               5.18000000E-01      0.00E+00
+  THI S15               6.10000000E-01      0.00E+00
+  THI S17               1.69000000E-01      0.00E+00
+  GLN S1                1.54400000E+00      0.00E+00
+  GLV S1                9.73166369E-03      0.00E+00
+  GLN S4                1.54400000E+00      0.00E+00
+  GLV S4                9.73166369E-03      0.00E+00
+  GLN S6                1.63900000E+00      0.00E+00
+  GLV S6                2.71914894E-02      0.00E+00
+  GLN S8                1.54400000E+00      0.00E+00
+  GLV S8                9.73166369E-03      0.00E+00
+  GLN S10               1.63900000E+00      0.00E+00
+  GLV S10               2.71914894E-02      0.00E+00
+  GLN S12               1.54400000E+00      0.00E+00
+  GLV S12               9.73166369E-03      0.00E+00
+  GLN S14               1.53499900E+00      0.00E+00
+  GLV S14               9.60500898E-03      0.00E+00
+  GLN S16               1.51699900E+00      0.00E+00
+  GLV S16               8.05294393E-03      0.00E+00
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.622518     0.000000     0.148083     5.226000     0.306555    -2.730948
+  
+  Specific Constraints:        target        value         diff      active (**)
+  EFL                    =   3.79700E+00   3.62252E+00  -1.745E-01    **
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   6.15114E-01   1.000E-02   3.784E+01
+  @ATELIER_RMSSPOT       =   0.00000E+00   9.57171E+00   1.000E-03   9.162E+01
+  
+  Constraints added:      EFL (=)                     GL C S6 (<)
+                          GL C S10 (<)                Mn CT S3 (>)
+  Constraints added:      GL C S1 (<)                 GL C S12 (<)
+                          GL C S14 (<)                GL A S16 (<)
+  Constraints released:   GL A S16 (<)
+  Constraints added:      GL B S14 (<)
+  Constraints released:   GL C S14 (<)
+  
+ CYCLE NUMBER 1:
+  
+  ABERR F. =        0.42288024
+  CONST F. =       61.24489379
+  ERR. F.  =       61.66777403       (change =      -68.08539600)
+  
+  OPD     0.03441496     0.67179111     0.05386402
+  WAV     0.05963706     0.78079817     0.06614226
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00341788E-01      2.72E-03
+  CUY S2                3.12476663E-01      1.14E-02
+  CUY S4                4.75933409E-01      1.17E-02
+  CUY S5                6.04848141E-02      3.31E-03
+  CUY S6                1.36970763E-01      3.96E-03
+  CUY S7                2.73247376E-01      2.39E-03
+  CUY S8                3.40505978E-02     -1.88E-03
+  CUY S9               -2.10456354E-01     -1.12E-03
+  CUY S10              -5.71361521E-01     -1.24E-03
+  CUY S11              -2.82930427E-01      1.15E-04
+  CUY S12               5.52169101E-01      7.21E-03
+  CUY S13               2.19557584E-01      5.24E-03
+  CUY S14               5.94116544E-01     -3.92E-02
+  CUY S15               9.66677005E-01      4.42E-02
+  A   S1               -2.02307948E-02      1.14E-04
+  A   S2               -1.06257854E-01     -3.79E-05
+  A   S3                3.21084966E-14      3.21E-14
+  A   S4               -1.12098704E-01      1.61E-04
+  A   S5               -6.40463121E-02     -1.51E-04
+  A   S6               -1.26972772E-02      3.88E-04
+  A   S7                6.95414324E-03     -2.43E-04
+  A   S8               -5.00114802E-02     -3.50E-04
+  A   S9               -9.85562442E-02      7.91E-04
+  A   S10              -7.47137969E-02     -4.56E-04
+  A   S11              -1.51853014E-01      2.87E-04
+  A   S12               5.36317593E-02      1.59E-04
+  A   S13               6.36530142E-02     -1.12E-04
+  A   S14              -1.84745360E-01      4.64E-06
+  A   S15              -1.34742489E-01      2.75E-05
+  B   S1                4.30922568E-02     -3.90E-04
+  B   S2                1.15947040E-01      4.47E-04
+  B   S3                7.55801879E-15      7.56E-15
+  B   S4                7.99386526E-02     -3.15E-04
+  B   S5               -1.09321053E-01      2.59E-04
+  B   S6               -1.26716185E-02      1.35E-04
+  B   S7               -2.28498977E-03      1.46E-04
+  B   S8               -1.14492838E-02     -3.45E-04
+  B   S9               -2.32912407E-01      4.28E-04
+  B   S10               6.58048089E-02     -1.97E-04
+  B   S11               1.82287874E-01      9.79E-05
+  B   S12              -4.83671155E-02      5.79E-05
+  B   S13              -4.25448044E-02     -8.80E-06
+  B   S14               5.09799485E-02     -5.15E-08
+  B   S15               5.68238520E-02     -1.48E-07
+  C   S1               -3.75233131E-02     -3.84E-04
+  C   S2                8.68932487E-03      5.26E-04
+  C   S3               -9.73189805E-14     -9.73E-14
+  C   S4               -1.37494563E-01     -1.85E-04
+  C   S5                1.11524838E-01     -1.75E-04
+  C   S6                5.47186785E-03      1.57E-03
+  C   S7               -1.04961146E-02      5.69E-05
+  C   S8               -1.72505030E-02      7.25E-05
+  C   S9                6.94793688E-01      5.37E-05
+  C   S10               2.21845125E-01     -2.49E-05
+  C   S11              -7.99647333E-02     -8.73E-06
+  C   S12               1.92102047E-02      7.20E-06
+  C   S13               1.11017416E-02     -2.58E-07
+  C   S14              -7.21474580E-03     -4.58E-08
+  C   S15              -1.61219923E-02      7.68E-09
+  D   S1                2.16349030E-02      5.63E-04
+  D   S2               -1.64438256E-01     -4.28E-04
+  D   S3                9.69100802E-14      9.69E-14
+  D   S4                2.32633207E-02      3.69E-03
+  D   S5               -8.86772981E-02     -1.13E-03
+  D   S6               -4.46710877E-02     -5.37E-03
+  D   S7               -8.35896281E-03      6.16E-04
+  D   S8               -4.20383517E-03      1.32E-03
+  D   S9               -9.09949966E-01     -2.40E-04
+  D   S10              -2.40681945E-01      2.81E-05
+  D   S11               2.21720586E-02     -1.39E-05
+  D   S12              -5.81105996E-03      5.40E-07
+  D   S13              -1.74748000E-03      2.00E-08
+  D   S14               6.76372230E-04     -7.77E-09
+  D   S15               2.66210408E-03      4.08E-09
+  E   S1                3.39790000E-03      2.13E-17
+  E   S2                1.92070000E-01      0.00E+00
+  E   S3                4.42145316E-20      4.42E-20
+  E   S4                2.06890000E-01      0.00E+00
+  E   S5                1.35220000E-02      1.73E-18
+  E   S6                2.06350000E-02     -1.04E-17
+  E   S7                7.47790000E-06      3.47E-18
+  E   S8                1.30200000E-02      5.20E-18
+  E   S9                6.99020000E-01     -1.11E-16
+  E   S10               9.70430000E-02      1.39E-17
+  E   S11              -4.84276714E-03     -5.67E-07
+  E   S12               1.00840929E-03      9.29E-09
+  E   S13               1.57695800E-04      5.80E-09
+  E   S14              -4.88570747E-05     -1.07E-09
+  E   S15              -2.44169383E-04      6.17E-10
+  F   S1               -5.81580000E-03      8.67E-18
+  F   S2               -8.49090000E-02      0.00E+00
+  F   S3                1.36502246E-20      1.37E-20
+  F   S4               -2.42240000E-01      0.00E+00
+  F   S5               -2.07390000E-02      0.00E+00
+  F   S6               -1.11330000E-02     -5.20E-18
+  F   S7                3.56279821E-18      3.56E-18
+  F   S8                3.32998992E-18      3.33E-18
+  F   S9               -3.01840000E-01     -5.55E-17
+  F   S10              -1.41960000E-02     -8.67E-18
+  F   S11               5.62726326E-04      6.96E-07
+  F   S12              -6.78839030E-05     -8.90E-09
+  F   S13              -6.00091079E-06      9.89E-10
+  F   S14               2.53566040E-06     -1.40E-10
+  F   S15               1.15491152E-05     -1.88E-09
+  G   S1                3.23898834E-18      3.24E-18
+  G   S2               -5.94847210E-19     -5.95E-19
+  G   S3                5.98784295E-21      5.99E-21
+  G   S4                2.79964293E-19      2.80E-19
+  G   S5                7.52147101E-19      7.52E-19
+  G   S6               -2.02648609E-18     -2.03E-18
+  G   S7                2.16367805E-18      2.16E-18
+  G   S8                1.96213039E-18      1.96E-18
+  G   S9                5.55780000E-02     -3.47E-17
+  G   S10              -1.42532083E-04     -1.43E-04
+  G   S11               4.35881608E-07      4.36E-07
+  G   S12              -3.08958762E-09     -3.09E-09
+  G   S13               3.03450567E-10      3.03E-10
+  G   S14              -6.35542994E-08      7.01E-13
+  G   S15              -2.19723496E-07     -3.50E-12
+  THI S2                6.94231515E-02     -1.66E-02
+  THI S3                1.00000000E-03      1.80E-02
+  THI S5                5.19527628E-02      1.95E-03
+  THI S7                3.03318111E-01     -1.68E-03
+  THI S9                1.63192350E-01      1.19E-03
+  THI S11               6.96907716E-02      1.87E-02
+  THI S13               5.31011335E-01      1.30E-02
+  THI S15               6.31881681E-01      2.19E-02
+  THI S17               1.90881681E-01      2.19E-02
+  GLN S1                1.54610852E+00      2.11E-03
+  GLV S1                1.00508108E-02      3.19E-04
+  GLN S4                1.54425822E+00      2.58E-04
+  GLV S4                1.02745652E-02      5.43E-04
+  GLN S6                1.63900000E+00     -3.16E-13
+  GLV S6                2.79648769E-02      7.73E-04
+  GLN S8                1.54008861E+00     -3.91E-03
+  GLV S8                9.76408127E-03      3.24E-05
+  GLN S10               1.63900000E+00     -1.90E-12
+  GLV S10               2.79648769E-02      7.73E-04
+  GLN S12               1.55010501E+00      6.11E-03
+  GLV S12               1.08215306E-02      1.09E-03
+  GLN S14               1.54268174E+00      7.68E-03
+  GLV S14               9.62902330E-03      2.40E-05
+  GLN S16               1.51699900E+00     -3.06E-14
+  GLV S16               9.33323110E-03      1.28E-03
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.796955     0.000000     0.147804     5.282470     0.288628    -2.613507
+  
+  Active Constraints -   7:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79695E+00  -4.539E-05   3.159E-07
+  GL C S1                                                            2.172E-09
+  GL C S6                                                            6.394E-09
+  GL C S10                                                           4.709E-08
+  GL C S12                                                           1.979E-09
+  GL B S14                                                           7.233E-10
+  Mn CT S3                                                          -1.574E-08
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   3.64398E-01   1.000E-02   1.328E+01
+  @ATELIER_RMSSPOT       =   0.00000E+00   6.92577E+00   1.000E-03   4.797E+01
+  
+  Constraints released:   GL C S6 (<)                 GL C S10 (<)
+                          GL C S12 (<)                Mn CT S3 (>)
+  
+  Singular variable no. 17 will move only to satisfy constraints.
+  Singular variable no. 32 will move only to satisfy constraints.
+  Singular variable no. 47 will move only to satisfy constraints.
+  Singular variable no. 62 will move only to satisfy constraints.
+  Singular variable no. 75 will move only to satisfy constraints.
+  Singular variable no. 76 will move only to satisfy constraints.
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 78 will move only to satisfy constraints.
+  Singular variable no. 79 will move only to satisfy constraints.
+  Singular variable no. 80 will move only to satisfy constraints.
+  Singular variable no. 81 will move only to satisfy constraints.
+  Singular variable no. 82 will move only to satisfy constraints.
+  Singular variable no. 90 will move only to satisfy constraints.
+  Singular variable no. 91 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no. 93 will move only to satisfy constraints.
+  Singular variable no. 94 will move only to satisfy constraints.
+  Singular variable no. 95 will move only to satisfy constraints.
+  Singular variable no. 96 will move only to satisfy constraints.
+  Singular variable no. 97 will move only to satisfy constraints.
+  Singular variable no.105 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  Singular variable no.109 will move only to satisfy constraints.
+  Singular variable no.110 will move only to satisfy constraints.
+  Singular variable no.112 will move only to satisfy constraints.
+  Constraints released:   GL C S6 (<)                 GL C S10 (<)
+                          GL C S12 (<)                Mn CT S3 (>)
+  
+  Singular variable no. 17 will move only to satisfy constraints.
+  Singular variable no. 32 will move only to satisfy constraints.
+  Singular variable no. 47 will move only to satisfy constraints.
+  Singular variable no. 62 will move only to satisfy constraints.
+  Singular variable no. 75 will move only to satisfy constraints.
+  Singular variable no. 76 will move only to satisfy constraints.
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 78 will move only to satisfy constraints.
+  Singular variable no. 79 will move only to satisfy constraints.
+  Singular variable no. 80 will move only to satisfy constraints.
+  Singular variable no. 81 will move only to satisfy constraints.
+  Singular variable no. 82 will move only to satisfy constraints.
+  Singular variable no. 90 will move only to satisfy constraints.
+  Singular variable no. 91 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no. 93 will move only to satisfy constraints.
+  Singular variable no. 94 will move only to satisfy constraints.
+  Singular variable no. 95 will move only to satisfy constraints.
+  Singular variable no. 96 will move only to satisfy constraints.
+  Singular variable no. 97 will move only to satisfy constraints.
+  Singular variable no.105 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  Singular variable no.109 will move only to satisfy constraints.
+  Singular variable no.110 will move only to satisfy constraints.
+  Singular variable no.112 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 2:
+  
+  ABERR F. =        0.11439576
+  CONST F. =       21.89231280
+  ERR. F.  =       22.00670856       (change =      -39.66106547)
+  
+  OPD     0.03383272     0.15196486     0.04684060
+  WAV     0.06297052     0.20843462     0.06838164
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00221858E-01     -1.20E-04
+  CUY S2                3.12927133E-01      4.50E-04
+  CUY S4                4.77166123E-01      1.23E-03
+  CUY S5                6.10657184E-02      5.81E-04
+  CUY S6                1.37939195E-01      9.68E-04
+  CUY S7                2.74340601E-01      1.09E-03
+  CUY S8                3.42080483E-02      1.57E-04
+  CUY S9               -2.10252122E-01      2.04E-04
+  CUY S10              -5.71128966E-01      2.33E-04
+  CUY S11              -2.82769136E-01      1.61E-04
+  CUY S12               5.52621359E-01      4.52E-04
+  CUY S13               2.20138970E-01      5.81E-04
+  CUY S14               5.91648024E-01     -2.47E-03
+  CUY S15               9.68231574E-01      1.55E-03
+  A   S1               -1.97362615E-02      4.95E-04
+  A   S2               -1.05584944E-01      6.73E-04
+  A   S3                3.21084966E-14      0.00E+00
+  A   S4               -1.12665526E-01     -5.67E-04
+  A   S5               -6.37586608E-02      2.88E-04
+  A   S6               -1.22176451E-02      4.80E-04
+  A   S7                6.83315090E-03     -1.21E-04
+  A   S8               -5.02299710E-02     -2.18E-04
+  A   S9               -9.80885043E-02      4.68E-04
+  A   S10              -7.47814788E-02     -6.77E-05
+  A   S11              -1.51900936E-01     -4.79E-05
+  A   S12               5.36284933E-02     -3.27E-06
+  A   S13               6.36949555E-02      4.19E-05
+  A   S14              -1.84746879E-01     -1.52E-06
+  A   S15              -1.34730960E-01      1.15E-05
+  B   S1                4.35111299E-02      4.19E-04
+  B   S2                1.16319294E-01      3.72E-04
+  B   S3               -3.25859361E-10     -3.26E-10
+  B   S4                7.96386406E-02     -3.00E-04
+  B   S5               -1.08941862E-01      3.79E-04
+  B   S6               -1.26223319E-02      4.93E-05
+  B   S7               -2.35659619E-03     -7.16E-05
+  B   S8               -1.14784772E-02     -2.92E-05
+  B   S9               -2.32830617E-01      8.18E-05
+  B   S10               6.57476273E-02     -5.72E-05
+  B   S11               1.82274832E-01     -1.30E-05
+  B   S12              -4.83674106E-02     -2.95E-07
+  B   S13              -4.25369502E-02      7.85E-06
+  B   S14               5.09798900E-02     -5.85E-08
+  B   S15               5.68243702E-02      5.18E-07
+  C   S1               -3.68386647E-02      6.85E-04
+  C   S2                9.00305005E-03      3.14E-04
+  C   S3                1.30981471E-09      1.31E-09
+  C   S4               -1.37688131E-01     -1.94E-04
+  C   S5                1.11422821E-01     -1.02E-04
+  C   S6                5.46447491E-03     -7.39E-06
+  C   S7               -1.03843886E-02      1.12E-04
+  C   S8               -1.72952210E-02     -4.47E-05
+  C   S9                6.94776539E-01     -1.71E-05
+  C   S10               2.21839186E-01     -5.94E-06
+  C   S11              -7.99682600E-02     -3.53E-06
+  C   S12               1.92102728E-02      6.81E-08
+  C   S13               1.11017769E-02      3.53E-08
+  C   S14              -7.21474873E-03     -2.93E-09
+  C   S15              -1.61219682E-02      2.41E-08
+  D   S1                2.07985867E-02     -8.36E-04
+  D   S2               -1.64103166E-01      3.35E-04
+  D   S3                1.32067831E-09      1.32E-09
+  D   S4                2.32733192E-02      1.00E-05
+  D   S5               -9.05075198E-02     -1.83E-03
+  D   S6               -4.44559600E-02      2.15E-04
+  D   S7               -8.03700504E-03      3.22E-04
+  D   S8               -4.26934723E-03     -6.55E-05
+  D   S9               -9.09958419E-01     -8.45E-06
+  D   S10              -2.40673801E-01      8.14E-06
+  D   S11               2.21709683E-02     -1.09E-06
+  D   S12              -5.81095902E-03      1.01E-07
+  D   S13              -1.74748046E-03     -4.67E-10
+  D   S14               6.76372051E-04     -1.79E-10
+  D   S15               2.66210527E-03      1.19E-09
+  E   S1                3.39790001E-03      5.40E-12
+  E   S2                1.92070000E-01      4.51E-12
+  E   S3                3.67998042E-16      3.68E-16
+  E   S4                2.06890000E-01      5.37E-12
+  E   S5                1.35220000E-02     -1.42E-11
+  E   S6                2.06350000E-02      3.84E-12
+  E   S7                7.47802535E-06      1.25E-10
+  E   S8                1.30199998E-02     -1.71E-10
+  E   S9                6.99016322E-01     -3.68E-06
+  E   S10               9.70487778E-02      5.78E-06
+  E   S11              -4.84313177E-03     -3.65E-07
+  E   S12               1.00844145E-03      3.22E-08
+  E   S13               1.57695654E-04     -1.46E-10
+  E   S14              -4.88570877E-05     -1.30E-11
+  E   S15              -2.44169322E-04      6.13E-11
+  F   S1               -5.81580000E-03      2.06E-12
+  F   S2               -8.49090000E-02      3.85E-13
+  F   S3               -2.02482439E-16     -2.02E-16
+  F   S4               -2.42240000E-01      2.16E-12
+  F   S5               -2.07390000E-02     -4.40E-12
+  F   S6               -1.11330000E-02      6.14E-13
+  F   S7                5.65171753E-11      5.65E-11
+  F   S8               -9.34854204E-11     -9.35E-11
+  F   S9               -3.01841206E-01     -1.21E-06
+  F   S10              -1.41924584E-02      3.54E-06
+  F   S11               5.62596676E-04     -1.30E-07
+  F   S12              -6.78801140E-05      3.79E-09
+  F   S13              -6.00093021E-06     -1.94E-11
+  F   S14               2.53565929E-06     -1.11E-12
+  F   S15               1.15491186E-05      3.34E-12
+  G   S1                7.09152599E-13      7.09E-13
+  G   S2                1.94181748E-12      1.94E-12
+  G   S3               -7.79057686E-17     -7.79E-17
+  G   S4               -9.60974614E-13     -9.61E-13
+  G   S5               -1.22533713E-12     -1.23E-12
+  G   S6               -3.64348165E-14     -3.64E-14
+  G   S7                1.38019088E-04      1.38E-04
+  G   S8               -4.67117827E-11     -4.67E-11
+  G   S9                5.55779496E-02     -5.04E-08
+  G   S10              -1.40503735E-04      2.03E-06
+  G   S11               3.90124703E-07     -4.58E-08
+  G   S12              -2.65182571E-09      4.38E-10
+  G   S13               3.01117573E-10     -2.33E-12
+  G   S14              -6.35544119E-08     -1.12E-13
+  G   S15              -2.19723322E-07      1.74E-13
+  THI S2                7.05905780E-02      1.17E-03
+  THI S3                1.83456497E-03      8.35E-04
+  THI S5                5.20191265E-02      6.64E-05
+  THI S7                3.03299385E-01     -1.87E-05
+  THI S9                1.62971079E-01     -2.21E-04
+  THI S11               6.85796423E-02     -1.11E-03
+  THI S13               5.29835110E-01     -1.18E-03
+  THI S15               6.33084400E-01      1.20E-03
+  THI S17               1.92084400E-01      1.20E-03
+  GLN S1                1.54648977E+00      3.81E-04
+  GLV S1                1.01243348E-02      7.35E-05
+  GLN S4                1.54427709E+00      1.89E-05
+  GLV S4                1.02247587E-02     -4.98E-05
+  GLN S6                1.63872672E+00     -2.73E-04
+  GLV S6                2.80441975E-02      7.93E-05
+  GLN S8                1.54163834E+00      1.55E-03
+  GLV S8                9.75250221E-03     -1.16E-05
+  GLN S10               1.63827106E+00     -7.29E-04
+  GLV S10               2.79886910E-02      2.38E-05
+  GLN S12               1.55059822E+00      4.93E-04
+  GLV S12               1.10847745E-02      2.63E-04
+  GLN S14               1.54250786E+00     -1.74E-04
+  GLV S14               9.61835250E-03     -1.07E-05
+  GLN S16               1.51489564E+00     -2.10E-03
+  GLV S16               8.88269186E-03     -4.51E-04
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.797000     0.000000     0.144316     5.283214     0.289825    -2.607013
+  
+  Active Constraints -   3:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -1.513E-09   9.074E-07
+  GL C S1                                                            7.078E-09
+  GL B S14                                                           7.410E-09
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   3.34020E-01   1.000E-02   1.116E+01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.27649E+00   1.000E-03   1.074E+01
+  
+  Constraints released:   GL B S14 (<)
+  Constraints added:      GL C S6 (<)                 Mn ET S2 (>)
+  
+ CYCLE NUMBER 3:
+  
+  ABERR F. =        0.10037488
+  CONST F. =       18.22717180
+  ERR. F.  =       18.32754668       (change =       -3.67916187)
+  
+  OPD     0.04538957     0.12927580     0.07473953
+  WAV     0.06857459     0.15289109     0.08952147
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00100263E-01     -1.22E-04
+  CUY S2                3.12773214E-01     -1.54E-04
+  CUY S4                4.77077865E-01     -8.83E-05
+  CUY S5                6.10208077E-02     -4.49E-05
+  CUY S6                1.37877865E-01     -6.13E-05
+  CUY S7                2.74271872E-01     -6.87E-05
+  CUY S8                3.41533899E-02     -5.47E-05
+  CUY S9               -2.10220899E-01      3.12E-05
+  CUY S10              -5.71113351E-01      1.56E-05
+  CUY S11              -2.83159483E-01     -3.90E-04
+  CUY S12               5.51598951E-01     -1.02E-03
+  CUY S13               2.18808491E-01     -1.33E-03
+  CUY S14               5.96960999E-01      5.31E-03
+  CUY S15               9.78146319E-01      9.91E-03
+  A   S1               -1.97439461E-02     -7.68E-06
+  A   S2               -1.05605838E-01     -2.09E-05
+  A   S3               -1.48345923E-02     -1.48E-02
+  A   S4               -1.12599077E-01      6.64E-05
+  A   S5               -6.38034867E-02     -4.48E-05
+  A   S6               -1.22261253E-02     -8.48E-06
+  A   S7                6.84143076E-03      8.28E-06
+  A   S8               -5.01425276E-02      8.74E-05
+  A   S9               -9.81867879E-02     -9.83E-05
+  A   S10              -7.46728169E-02      1.09E-04
+  A   S11              -1.51918086E-01     -1.72E-05
+  A   S12               5.37137099E-02      8.52E-05
+  A   S13               6.36513430E-02     -4.36E-05
+  A   S14              -1.84745175E-01      1.70E-06
+  A   S15              -1.34752138E-01     -2.12E-05
+  B   S1                4.35035271E-02     -7.60E-06
+  B   S2                1.16310191E-01     -9.10E-06
+  B   S3               -2.57205104E-02     -2.57E-02
+  B   S4                7.95999722E-02     -3.87E-05
+  B   S5               -1.09272804E-01     -3.31E-04
+  B   S6               -1.26318621E-02     -9.53E-06
+  B   S7               -2.34681138E-03      9.78E-06
+  B   S8               -1.14971202E-02     -1.86E-05
+  B   S9               -2.32881378E-01     -5.08E-05
+  B   S10               6.57502689E-02      2.64E-06
+  B   S11               1.82275019E-01      1.86E-07
+  B   S12              -4.83707219E-02     -3.31E-06
+  B   S13              -4.25353505E-02      1.60E-06
+  B   S14               5.09798379E-02     -5.21E-08
+  B   S15               5.68232111E-02     -1.16E-06
+  C   S1               -3.68459254E-02     -7.26E-06
+  C   S2                9.05582486E-03      5.28E-05
+  C   S3               -4.45442764E-02     -4.45E-02
+  C   S4               -1.37759978E-01     -7.18E-05
+  C   S5                1.11450872E-01      2.81E-05
+  C   S6                5.52829184E-03      6.38E-05
+  C   S7               -1.05510039E-02     -1.67E-04
+  C   S8               -1.73141029E-02     -1.89E-05
+  C   S9                6.94783078E-01      6.54E-06
+  C   S10               2.21835600E-01     -3.59E-06
+  C   S11              -7.99677352E-02      5.25E-07
+  C   S12               1.92095396E-02     -7.33E-07
+  C   S13               1.11018576E-02      8.07E-08
+  C   S14              -7.21475772E-03     -8.99E-09
+  C   S15              -1.61219515E-02      1.68E-08
+  D   S1                2.08071437E-02      8.56E-06
+  D   S2               -1.63994498E-01      1.09E-04
+  D   S3                1.68762101E-02      1.69E-02
+  D   S4                2.31797624E-02     -9.36E-05
+  D   S5               -9.04736183E-02      3.39E-05
+  D   S6               -4.44809675E-02     -2.50E-05
+  D   S7               -8.08981458E-03     -5.28E-05
+  D   S8               -4.29457233E-03     -2.52E-05
+  D   S9               -9.09954583E-01      3.84E-06
+  D   S10              -2.40676066E-01     -2.26E-06
+  D   S11               2.21711975E-02      2.29E-07
+  D   S12              -5.81101947E-03     -6.04E-08
+  D   S13              -1.74746945E-03      1.10E-08
+  D   S14               6.76371284E-04     -7.67E-10
+  D   S15               2.66210681E-03      1.54E-09
+  E   S1                3.39105183E-03     -6.85E-06
+  E   S2                1.92095079E-01      2.51E-05
+  E   S3                3.51967204E-09      3.52E-09
+  E   S4                2.06523160E-01     -3.67E-04
+  E   S5                1.35396283E-02      1.76E-05
+  E   S6                2.06131578E-02     -2.18E-05
+  E   S7               -1.86123881E-05     -2.61E-05
+  E   S8                1.30130272E-02     -6.97E-06
+  E   S9                6.99018983E-01      2.66E-06
+  E   S10               9.70474917E-02     -1.29E-06
+  E   S11              -4.84304680E-03      8.50E-08
+  E   S12               1.00843349E-03     -7.95E-09
+  E   S13               1.57696458E-04      8.04E-10
+  E   S14              -4.88571588E-05     -7.11E-11
+  E   S15              -2.44169204E-04      1.18E-10
+  F   S1               -5.82290778E-03     -7.11E-06
+  F   S2               -8.57332489E-02     -8.24E-04
+  F   S3                1.94016482E-09      1.94E-09
+  F   S4               -2.42519797E-01     -2.80E-04
+  F   S5               -2.06787045E-02      6.03E-05
+  F   S6               -1.11596696E-02     -2.67E-05
+  F   S7                9.64897928E-06      9.65E-06
+  F   S8               -2.00567696E-05     -2.01E-05
+  F   S9               -3.01839548E-01      1.66E-06
+  F   S10              -1.41931998E-02     -7.41E-07
+  F   S11               5.62626794E-04      3.01E-08
+  F   S12              -6.78814047E-05     -1.29E-09
+  F   S13              -6.00088529E-06      4.49E-11
+  F   S14               2.53565227E-06     -7.02E-12
+  F   S15               1.15491289E-05      1.03E-11
+  G   S1                2.14116796E-09      2.14E-09
+  G   S2                2.14242552E-09      2.14E-09
+  G   S3                2.14048667E-09      2.14E-09
+  G   S4                2.13953467E-09      2.14E-09
+  G   S5                2.13925851E-09      2.14E-09
+  G   S6               -2.18247688E-05     -2.18E-05
+  G   S7                1.59074539E-04      2.11E-05
+  G   S8               -1.60083045E-05     -1.60E-05
+  G   S9                5.55790476E-02      1.10E-06
+  G   S10              -1.40945459E-04     -4.42E-07
+  G   S11               3.95723296E-07      5.60E-09
+  G   S12              -2.86409355E-09     -2.12E-10
+  G   S13               2.80459668E-10     -2.07E-11
+  G   S14              -6.35550661E-08     -6.54E-13
+  G   S15              -2.19722584E-07      7.38E-13
+  THI S2                7.04878322E-02     -1.03E-04
+  THI S3                1.74410790E-03     -9.05E-05
+  THI S5                5.19192784E-02     -9.98E-05
+  THI S7                3.03284372E-01     -1.50E-05
+  THI S9                1.61664093E-01     -1.31E-03
+  THI S11               6.64419360E-02     -2.14E-03
+  THI S13               5.28667185E-01     -1.17E-03
+  THI S15               6.31312198E-01     -1.77E-03
+  THI S17               1.90312198E-01     -1.77E-03
+  GLN S1                1.54633103E+00     -1.59E-04
+  GLV S1                1.00937212E-02     -3.06E-05
+  GLN S4                1.54424770E+00     -2.94E-05
+  GLV S4                1.03613757E-02      1.37E-04
+  GLN S6                1.63874779E+00      2.11E-05
+  GLV S6                2.79162385E-02     -1.28E-04
+  GLN S8                1.54121549E+00     -4.23E-04
+  GLV S8                9.77016647E-03      1.77E-05
+  GLN S10               1.63849408E+00      2.23E-04
+  GLV S10               2.79356099E-02     -5.31E-05
+  GLN S12               1.55053816E+00     -6.01E-05
+  GLV S12               1.12806940E-02      1.96E-04
+  GLN S14               1.54183256E+00     -6.75E-04
+  GLV S14               9.59777565E-03     -2.06E-05
+  GLN S16               1.50100731E+00     -1.39E-02
+  GLV S16               9.28642545E-03      4.04E-04
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.796975     0.000000     0.146696     5.276521     0.289729    -2.597208
+  
+  Active Constraints -   4:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79697E+00  -2.503E-05  -1.162E-06
+  GL C S1                                                            3.627E-06
+  GL C S6                                                            1.083E-06
+  Mn ET S2                                                          -6.737E-09
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.34927E-01   1.000E-02   1.821E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   4.05051E+00   1.000E-03   1.641E+01
+  
+  Constraints released:   GL C S1 (<)                 GL C S6 (<)
+                          Mn ET S2 (>)
+  Constraints released:   GL C S1 (<)                 GL C S6 (<)
+                          Mn ET S2 (>)
+  
+ CYCLE NUMBER 4:
+  
+  ABERR F. =        0.10301982
+  CONST F. =       34.09657655
+  ERR. F.  =       34.19959637       (change =       15.87204969)
+  
+  OPD     0.04053106     0.13489667     0.07437577
+  WAV     0.06304787     0.16267855     0.08869906
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00357323E-01      2.57E-04
+  CUY S2                3.12711177E-01     -6.20E-05
+  CUY S4                4.76781104E-01     -2.97E-04
+  CUY S5                6.10341431E-02      1.33E-05
+  CUY S6                1.37894732E-01      1.69E-05
+  CUY S7                2.74298106E-01      2.62E-05
+  CUY S8                3.41537701E-02      3.80E-07
+  CUY S9               -2.10246970E-01     -2.61E-05
+  CUY S10              -5.71137960E-01     -2.46E-05
+  CUY S11              -2.83113674E-01      4.58E-05
+  CUY S12               5.51656949E-01      5.80E-05
+  CUY S13               2.18821556E-01      1.31E-05
+  CUY S14               5.96635037E-01     -3.26E-04
+  CUY S15               9.77701414E-01     -4.45E-04
+  A   S1               -1.97410112E-02      2.93E-06
+  A   S2               -1.05599179E-01      6.66E-06
+  A   S3               -6.73796505E-03      8.10E-03
+  A   S4               -1.12614437E-01     -1.54E-05
+  A   S5               -6.37949351E-02      8.55E-06
+  A   S6               -1.22242359E-02      1.89E-06
+  A   S7                6.83950925E-03     -1.92E-06
+  A   S8               -5.01555633E-02     -1.30E-05
+  A   S9               -9.81782964E-02      8.49E-06
+  A   S10              -7.46856295E-02     -1.28E-05
+  A   S11              -1.51909465E-01      8.62E-06
+  A   S12               5.37149983E-02      1.29E-06
+  A   S13               6.36539945E-02      2.65E-06
+  A   S14              -1.84746783E-01     -1.61E-06
+  A   S15              -1.34747128E-01      5.01E-06
+  B   S1                4.35063243E-02      2.80E-06
+  B   S2                1.16323444E-01      1.33E-05
+  B   S3               -1.15418598E-02      1.42E-02
+  B   S4                7.96111052E-02      1.11E-05
+  B   S5               -1.09259839E-01      1.30E-05
+  B   S6               -1.26296452E-02      2.22E-06
+  B   S7               -2.34939058E-03     -2.58E-06
+  B   S8               -1.14933666E-02      3.75E-06
+  B   S9               -2.32872459E-01      8.92E-06
+  B   S10               6.57438163E-02     -6.45E-06
+  B   S11               1.82274675E-01     -3.44E-07
+  B   S12              -4.83687693E-02      1.95E-06
+  B   S13              -4.25343747E-02      9.76E-07
+  B   S14               5.09797707E-02     -6.72E-08
+  B   S15               5.68235653E-02      3.54E-07
+  C   S1               -3.68433000E-02      2.63E-06
+  C   S2                9.03096632E-03     -2.49E-05
+  C   S3               -4.93612926E-02     -4.82E-03
+  C   S4               -1.37736897E-01      2.31E-05
+  C   S5                1.11444411E-01     -6.46E-06
+  C   S6                5.52034121E-03     -7.95E-06
+  C   S7               -1.05482436E-02      2.76E-06
+  C   S8               -1.73098922E-02      4.21E-06
+  C   S9                6.94781929E-01     -1.15E-06
+  C   S10               2.21834600E-01     -1.00E-06
+  C   S11              -7.99678865E-02     -1.51E-07
+  C   S12               1.92102152E-02      6.76E-07
+  C   S13               1.11018826E-02      2.50E-08
+  C   S14              -7.21476109E-03     -3.37E-09
+  C   S15              -1.61219420E-02      9.42E-09
+  D   S1                2.08041563E-02     -2.99E-06
+  D   S2               -1.64031889E-01     -3.74E-05
+  D   S3                1.36957425E-02     -3.18E-03
+  D   S4                2.32045684E-02      2.48E-05
+  D   S5               -9.04806697E-02     -7.05E-06
+  D   S6               -4.44751869E-02      5.78E-06
+  D   S7               -8.08761497E-03      2.20E-06
+  D   S8               -4.29252000E-03      2.05E-06
+  D   S9               -9.09954909E-01     -3.27E-07
+  D   S10              -2.40675900E-01      1.66E-07
+  D   S11               2.21711664E-02     -3.11E-08
+  D   S12              -5.81101507E-03      4.40E-09
+  D   S13              -1.74746896E-03      4.96E-10
+  D   S14               6.76371287E-04      3.30E-12
+  D   S15               2.66210681E-03     -2.30E-12
+  E   S1                3.39166234E-03      6.11E-07
+  E   S2                1.92063317E-01     -3.18E-05
+  E   S3                3.21406199E-09     -3.06E-10
+  E   S4                2.06563876E-01      4.07E-05
+  E   S5                1.35380678E-02     -1.56E-06
+  E   S6                2.06148127E-02      1.65E-06
+  E   S7               -1.67245448E-05      1.89E-06
+  E   S8                1.30145309E-02      1.50E-06
+  E   S9                6.99018846E-01     -1.37E-07
+  E   S10               9.70475647E-02      7.31E-08
+  E   S11              -4.84305391E-03     -7.11E-09
+  E   S12               1.00843386E-03      3.64E-10
+  E   S13               1.57696471E-04      1.21E-11
+  E   S14              -4.88571568E-05      1.99E-12
+  E   S15              -2.44169207E-04     -3.15E-12
+  F   S1               -5.82247142E-03      4.36E-07
+  F   S2               -8.56672575E-02      6.60E-05
+  F   S3                1.82397985E-09     -1.16E-10
+  F   S4               -2.42506206E-01      1.36E-05
+  F   S5               -2.06816620E-02     -2.96E-06
+  F   S6               -1.11584791E-02      1.19E-06
+  F   S7                8.27255886E-06     -1.38E-06
+  F   S8               -1.91568193E-05      9.00E-07
+  F   S9               -3.01839646E-01     -9.80E-08
+  F   S10              -1.41931558E-02      4.40E-08
+  F   S11               5.62623679E-04     -3.11E-09
+  F   S12              -6.78813516E-05      5.31E-11
+  F   S13              -6.00088372E-06      1.57E-12
+  F   S14               2.53565245E-06      1.83E-13
+  F   S15               1.15491287E-05     -2.00E-13
+  G   S1                2.01299058E-09     -1.28E-10
+  G   S2                2.01424472E-09     -1.28E-10
+  G   S3                2.01230562E-09     -1.28E-10
+  G   S4                2.01135299E-09     -1.28E-10
+  G   S5                2.01107855E-09     -1.28E-10
+  G   S6               -1.71590924E-05      4.67E-06
+  G   S7                1.58017306E-04     -1.06E-06
+  G   S8               -1.52969884E-05      7.11E-07
+  G   S9                5.55789821E-02     -6.55E-08
+  G   S10              -1.40917702E-04      2.78E-08
+  G   S11               3.94053921E-07     -1.67E-09
+  G   S12              -2.85610275E-09      7.99E-12
+  G   S13               2.86585922E-10      6.13E-12
+  G   S14              -6.35550447E-08      2.14E-14
+  G   S15              -2.19722604E-07     -1.98E-14
+  THI S2                7.04941197E-02      6.29E-06
+  THI S3                1.74933035E-03      5.22E-06
+  THI S5                5.19250003E-02      5.72E-06
+  THI S7                3.03289864E-01      5.49E-06
+  THI S9                1.61697636E-01      3.35E-05
+  THI S11               6.64727576E-02      3.08E-05
+  THI S13               5.28683572E-01      1.64E-05
+  THI S15               6.31331412E-01      1.92E-05
+  THI S17               1.90331412E-01      1.92E-05
+  GLN S1                1.54633411E+00      3.08E-06
+  GLV S1                1.00964969E-02      2.78E-06
+  GLN S4                1.54425028E+00      2.58E-06
+  GLV S4                1.03585578E-02     -2.82E-06
+  GLN S6                1.63874175E+00     -6.04E-06
+  GLV S6                2.79189907E-02      2.75E-06
+  GLN S8                1.54122679E+00      1.13E-05
+  GLV S8                9.76992546E-03     -2.41E-07
+  GLN S10               1.63847963E+00     -1.44E-05
+  GLV S10               2.79364580E-02      8.48E-07
+  GLN S12               1.55057991E+00      4.18E-05
+  GLV S12               1.12786043E-02     -2.09E-06
+  GLN S14               1.54184948E+00      1.69E-05
+  GLV S14               9.59672107E-03     -1.05E-06
+  GLN S16               1.50143121E+00      4.24E-04
+  GLV S16               9.28156687E-03     -4.86E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.796999     0.000000     0.146531     5.276644     0.289747    -2.597448
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -1.155E-06  -7.587E-06
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   2.38549E-02   1.000E-02   5.691E-02
+  @ATELIER_RMSSPOT       =   0.00000E+00   5.83435E+00   1.000E-03   3.404E+01
+  
+  Constraints added:      GL C S1 (<)                 Mn ET S2 (>)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.105 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  Singular variable no.109 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 5:
+  
+  ABERR F. =        0.08585455
+  CONST F. =       24.55906877
+  ERR. F.  =       24.64492332       (change =       -9.55467305)
+  
+  OPD     0.04178918     0.09812146     0.06919716
+  WAV     0.06166250     0.13297996     0.08110295
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00015448E-01     -3.42E-04
+  CUY S2                3.12521478E-01     -1.90E-04
+  CUY S4                4.76876479E-01      9.54E-05
+  CUY S5                6.09913428E-02     -4.28E-05
+  CUY S6                1.37847326E-01     -4.74E-05
+  CUY S7                2.74135282E-01     -1.63E-04
+  CUY S8                3.40115588E-02     -1.42E-04
+  CUY S9               -2.10269468E-01     -2.25E-05
+  CUY S10              -5.71164102E-01     -2.61E-05
+  CUY S11              -2.83136372E-01     -2.27E-05
+  CUY S12               5.51600767E-01     -5.62E-05
+  CUY S13               2.18790304E-01     -3.13E-05
+  CUY S14               5.96866435E-01      2.31E-04
+  CUY S15               9.77300083E-01     -4.01E-04
+  A   S1               -1.97445220E-02     -3.51E-06
+  A   S2               -1.05623301E-01     -2.41E-05
+  A   S3               -3.55931431E-03      3.18E-03
+  A   S4               -1.12588513E-01      2.59E-05
+  A   S5               -6.38265202E-02     -3.16E-05
+  A   S6               -1.22059469E-02      1.83E-05
+  A   S7                6.84210802E-03      2.60E-06
+  A   S8               -5.01223149E-02      3.32E-05
+  A   S9               -9.82294620E-02     -5.12E-05
+  A   S10              -7.46767354E-02      8.89E-06
+  A   S11              -1.51918635E-01     -9.17E-06
+  A   S12               5.37116276E-02     -3.37E-06
+  A   S13               6.36489588E-02     -5.04E-06
+  A   S14              -1.84743603E-01      3.18E-06
+  A   S15              -1.34755475E-01     -8.35E-06
+  B   S1                4.35324200E-02      2.61E-05
+  B   S2                1.16288158E-01     -3.53E-05
+  B   S3               -5.96208643E-03      5.58E-03
+  B   S4                7.95947911E-02     -1.63E-05
+  B   S5               -1.09288599E-01     -2.88E-05
+  B   S6               -1.26324709E-02     -2.83E-06
+  B   S7               -2.34557434E-03      3.82E-06
+  B   S8               -1.14997727E-02     -6.41E-06
+  B   S9               -2.32890834E-01     -1.84E-05
+  B   S10               6.57316844E-02     -1.21E-05
+  B   S11               1.82269518E-01     -5.16E-06
+  B   S12              -4.83694848E-02     -7.16E-07
+  B   S13              -4.25351152E-02     -7.40E-07
+  B   S14               5.09799294E-02      1.59E-07
+  B   S15               5.68230366E-02     -5.29E-07
+  C   S1               -3.68156668E-02      2.76E-05
+  C   S2                9.07287713E-03      4.19E-05
+  C   S3               -7.68553353E-02     -2.75E-02
+  C   S4               -1.37777412E-01     -4.05E-05
+  C   S5                1.11453245E-01      8.83E-06
+  C   S6                5.53232608E-03      1.20E-05
+  C   S7               -1.05541684E-02     -5.92E-06
+  C   S8               -1.73187470E-02     -8.85E-06
+  C   S9                6.94783539E-01      1.61E-06
+  C   S10               2.21822386E-01     -1.22E-05
+  C   S11              -7.99688840E-02     -9.98E-07
+  C   S12               1.92100490E-02     -1.66E-07
+  C   S13               1.11033740E-02      1.49E-06
+  C   S14              -7.21475004E-03      1.10E-08
+  C   S15              -1.61219752E-02     -3.31E-08
+  D   S1                2.08320927E-02      2.79E-05
+  D   S2               -1.63971474E-01      6.04E-05
+  D   S3               -2.17470464E-02     -3.54E-02
+  D   S4                2.31660923E-02     -3.85E-05
+  D   S5               -9.04708984E-02      9.77E-06
+  D   S6               -4.44859498E-02     -1.08E-05
+  D   S7               -8.09261225E-03     -5.00E-06
+  D   S8               -4.29561670E-03     -3.10E-06
+  D   S9               -9.09954511E-01      3.98E-07
+  D   S10              -2.40697124E-01     -2.12E-05
+  D   S11               2.21709096E-02     -2.57E-07
+  D   S12              -5.81106235E-03     -4.73E-08
+  D   S13              -1.74748223E-03     -1.33E-08
+  D   S14               6.76372184E-04      8.97E-10
+  D   S15               2.66210459E-03     -2.22E-09
+  E   S1                3.42177791E-03      3.01E-05
+  E   S2                1.92105133E-01      4.18E-05
+  E   S3                3.21406447E-09      2.48E-15
+  E   S4                2.06500936E-01     -6.29E-05
+  E   S5                1.35016381E-02     -3.64E-05
+  E   S6                2.06127374E-02     -2.08E-06
+  E   S7               -2.11858863E-05     -4.46E-06
+  E   S8                1.30123958E-02     -2.14E-06
+  E   S9                6.99019007E-01      1.61E-07
+  E   S10               9.70553611E-02      7.80E-06
+  E   S11              -4.84313012E-03     -7.62E-08
+  E   S12               1.00841663E-03     -1.72E-08
+  E   S13               1.57695641E-04     -8.29E-10
+  E   S14              -4.88570780E-05      7.88E-11
+  E   S15              -2.44169363E-04     -1.56E-10
+  F   S1               -5.79040205E-03      3.21E-05
+  F   S2               -8.59229902E-02     -2.56E-04
+  F   S3                1.82398010E-09      2.49E-16
+  F   S4               -2.42522421E-01     -1.62E-05
+  F   S5               -2.06781616E-02      3.50E-06
+  F   S6               -1.11599098E-02     -1.43E-06
+  F   S7                1.01509009E-05      1.88E-06
+  F   S8               -2.03357117E-05     -1.18E-06
+  F   S9               -3.01839529E-01      1.17E-07
+  F   S10              -1.41911036E-02      2.05E-06
+  F   S11               5.62599142E-04     -2.45E-08
+  F   S12              -6.78979816E-05     -1.66E-08
+  F   S13              -6.00095439E-06     -7.07E-11
+  F   S14               2.53565979E-06      7.34E-12
+  F   S15               1.15491172E-05     -1.15E-11
+  G   S1                2.02266235E-09      9.67E-12
+  G   S2                2.01361163E-09     -6.33E-13
+  G   S3                2.01230587E-09      2.43E-16
+  G   S4                2.01222085E-09      8.68E-13
+  G   S5                2.00612934E-09     -4.95E-12
+  G   S6               -2.36293070E-05     -6.47E-06
+  G   S7                1.59345854E-04      1.33E-06
+  G   S8               -1.61971722E-05     -9.00E-07
+  G   S9                5.55790611E-02      7.89E-08
+  G   S10              -1.40134352E-04      7.83E-07
+  G   S11               3.95847122E-07      1.79E-09
+  G   S12              -2.14410274E-09      7.12E-10
+  G   S13               2.79764304E-10     -6.82E-12
+  G   S14              -6.35543334E-08      7.11E-13
+  G   S15              -2.19723488E-07     -8.84E-13
+  THI S2                6.99983690E-02     -4.96E-04
+  THI S3                1.46850684E-03     -2.81E-04
+  THI S5                5.18305314E-02     -9.45E-05
+  THI S7                3.03212243E-01     -7.76E-05
+  THI S9                1.61583193E-01     -1.14E-04
+  THI S11               6.62180078E-02     -2.55E-04
+  THI S13               5.28168526E-01     -5.15E-04
+  THI S15               6.31334527E-01      3.12E-06
+  THI S17               1.90334528E-01      3.12E-06
+  GLN S1                1.54641157E+00      7.75E-05
+  GLV S1                1.01092529E-02      1.28E-05
+  GLN S4                1.54430282E+00      5.25E-05
+  GLV S4                1.03651746E-02      6.62E-06
+  GLN S6                1.63853529E+00     -2.06E-04
+  GLV S6                2.79111827E-02     -7.81E-06
+  GLN S8                1.54123021E+00      3.42E-06
+  GLV S8                9.77069968E-03      7.74E-07
+  GLN S10               1.63830161E+00     -1.78E-04
+  GLV S10               2.79340205E-02     -2.44E-06
+  GLN S12               1.55009801E+00     -4.82E-04
+  GLV S12               1.12861938E-02      7.59E-06
+  GLN S14               1.54224365E+00      3.94E-04
+  GLV S14               9.61440225E-03      1.77E-05
+  GLN S16               1.49668816E+00     -4.74E-03
+  GLV S16               9.29860652E-03      1.70E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.796998     0.000000     0.146944     5.274814     0.289192    -2.597704
+  
+  Active Constraints -   3:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -1.895E-06   4.016E-06
+  GL C S1                                                            1.249E-06
+  Mn ET S2                                                          -3.348E-08
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   8.06592E-02   1.000E-02   6.506E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   4.88963E+00   1.000E-03   2.391E+01
+  
+  Constraints added:      GL C S6 (<)                 GL C S12 (<)
+                          GL C S14 (<)                Mn CT S3 (>)
+  Constraints added:      GL B S14 (<)
+  Constraints released:   GL C S14 (<)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  Constraints released:   GL C S14 (<)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 6:
+  
+  ABERR F. =        0.05428519
+  CONST F. =       14.39542484
+  ERR. F.  =       14.44971003       (change =      -10.19521329)
+  
+  OPD     0.03189338     0.05362737     0.03661584
+  WAV     0.04834465     0.08574792     0.05251261
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00309685E-01      2.94E-04
+  CUY S2                3.15768437E-01      3.25E-03
+  CUY S4                4.80603276E-01      3.73E-03
+  CUY S5                6.17055104E-02      7.14E-04
+  CUY S6                1.38522313E-01      6.75E-04
+  CUY S7                2.75125108E-01      9.90E-04
+  CUY S8                3.44085125E-02      3.97E-04
+  CUY S9               -2.09974608E-01      2.95E-04
+  CUY S10              -5.70872590E-01      2.92E-04
+  CUY S11              -2.83229349E-01     -9.30E-05
+  CUY S12               5.52255554E-01      6.55E-04
+  CUY S13               2.20163812E-01      1.37E-03
+  CUY S14               5.96782535E-01     -8.39E-05
+  CUY S15               9.70862851E-01     -6.44E-03
+  A   S1               -1.96784958E-02      6.60E-05
+  A   S2               -1.05639616E-01     -1.63E-05
+  A   S3               -8.15972478E-02     -7.80E-02
+  A   S4               -1.12561582E-01      2.69E-05
+  A   S5               -6.38139148E-02      1.26E-05
+  A   S6               -1.22242436E-02     -1.83E-05
+  A   S7                6.86041628E-03      1.83E-05
+  A   S8               -5.01274043E-02     -5.09E-06
+  A   S9               -9.80546266E-02      1.75E-04
+  A   S10              -7.46764848E-02      2.51E-07
+  A   S11              -1.51945281E-01     -2.66E-05
+  A   S12               5.36891850E-02     -2.24E-05
+  A   S13               6.35733405E-02     -7.56E-05
+  A   S14              -1.84745337E-01     -1.73E-06
+  A   S15              -1.34740483E-01      1.50E-05
+  B   S1                4.34153579E-02     -1.17E-04
+  B   S2                1.16306989E-01      1.88E-05
+  B   S3               -7.39277822E-02     -6.80E-02
+  B   S4                7.96737227E-02      7.89E-05
+  B   S5               -1.09130010E-01      1.59E-04
+  B   S6               -1.27002426E-02     -6.78E-05
+  B   S7               -2.32384753E-03      2.17E-05
+  B   S8               -1.15592986E-02     -5.95E-05
+  B   S9               -2.32821250E-01      6.96E-05
+  B   S10               6.57353497E-02      3.67E-06
+  B   S11               1.82239387E-01     -3.01E-05
+  B   S12              -4.83712502E-02     -1.77E-06
+  B   S13              -4.25368635E-02     -1.75E-06
+  B   S14               5.09798053E-02     -1.24E-07
+  B   S15               5.68236457E-02      6.09E-07
+  C   S1               -3.72422100E-02     -4.27E-04
+  C   S2                9.66618051E-03      5.93E-04
+  C   S3               -5.67778454E-03      7.12E-02
+  C   S4               -1.37593442E-01      1.84E-04
+  C   S5                1.11741515E-01      2.88E-04
+  C   S6                5.48807438E-03     -4.43E-05
+  C   S7               -1.05465126E-02      7.66E-06
+  C   S8               -1.73757577E-02     -5.70E-05
+  C   S9                6.94792350E-01      8.81E-06
+  C   S10               2.21833500E-01      1.11E-05
+  C   S11              -7.99809354E-02     -1.21E-05
+  C   S12               1.92100722E-02      2.32E-08
+  C   S13               1.11028270E-02     -5.47E-07
+  C   S14              -7.21476110E-03     -1.11E-08
+  C   S15              -1.61219411E-02      3.40E-08
+  D   S1                2.14445020E-02      6.12E-04
+  D   S2               -1.61590870E-01      2.38E-03
+  D   S3                3.56331363E-01      3.78E-01
+  D   S4                2.35942361E-02      4.28E-04
+  D   S5               -9.02464728E-02      2.24E-04
+  D   S6               -4.43200943E-02      1.66E-04
+  D   S7               -8.09564595E-03     -3.03E-06
+  D   S8               -4.33928179E-03     -4.37E-05
+  D   S9               -9.09952942E-01      1.57E-06
+  D   S10              -2.40686365E-01      1.08E-05
+  D   S11               2.21683625E-02     -2.55E-06
+  D   S12              -5.81163770E-03     -5.75E-07
+  D   S13              -1.74747828E-03      3.95E-09
+  D   S14               6.76371126E-04     -1.06E-09
+  D   S15               2.66210687E-03      2.28E-09
+  E   S1                4.37133933E-03      9.50E-04
+  E   S2                1.93840464E-01      1.74E-03
+  E   S3                3.21406447E-09      8.98E-22
+  E   S4                2.07883538E-01      1.38E-03
+  E   S5                1.36538575E-02      1.52E-04
+  E   S6                2.08483309E-02      2.36E-04
+  E   S7               -1.66683781E-05      4.52E-06
+  E   S8                1.29783813E-02     -3.40E-05
+  E   S9                6.99020595E-01      1.59E-06
+  E   S10               9.70476438E-02     -7.72E-06
+  E   S11              -4.84360440E-03     -4.74E-07
+  E   S12               1.00840192E-03     -1.47E-08
+  E   S13               1.57696216E-04      5.75E-10
+  E   S14              -4.88571841E-05     -1.06E-10
+  E   S15              -2.44169197E-04      1.66E-10
+  F   S1               -5.65998834E-03      1.30E-04
+  F   S2               -8.89211238E-02     -3.00E-03
+  F   S3                1.82398010E-09      8.21E-23
+  F   S4               -2.40298902E-01      2.22E-03
+  F   S5               -2.09672142E-02     -2.89E-04
+  F   S6               -1.09516500E-02      2.08E-04
+  F   S7                2.01244623E-05      9.97E-06
+  F   S8               -4.79520362E-05     -2.76E-05
+  F   S9               -3.01838100E-01      1.43E-06
+  F   S10              -1.41971512E-02     -6.05E-06
+  F   S11               5.62521204E-04     -7.79E-08
+  F   S12              -6.78891086E-05      8.87E-09
+  F   S13              -6.00088257E-06      7.18E-11
+  F   S14               2.53564873E-06     -1.11E-11
+  F   S15               1.15491299E-05      1.27E-11
+  G   S1               -3.98302854E-04     -3.98E-04
+  G   S2                2.01361163E-09      9.06E-20
+  G   S3                2.01230587E-09      8.81E-23
+  G   S4                2.01222085E-09     -1.95E-19
+  G   S5                6.96383845E-04      6.96E-04
+  G   S6                9.55333179E-05      1.19E-04
+  G   S7                1.87627533E-04      2.83E-05
+  G   S8               -3.93564135E-05     -2.32E-05
+  G   S9                5.55800251E-02      9.64E-07
+  G   S10              -1.43839571E-04     -3.71E-06
+  G   S11               3.77047678E-07     -1.88E-08
+  G   S12              -2.37810044E-09     -2.34E-10
+  G   S13               2.88567762E-10      8.80E-12
+  G   S14              -6.35555265E-08     -1.19E-12
+  G   S15              -2.19722478E-07      1.01E-12
+  THI S2                7.00556748E-02      5.73E-05
+  THI S3                1.00000000E-03     -4.69E-04
+  THI S5                5.15294497E-02     -3.01E-04
+  THI S7                3.02973395E-01     -2.39E-04
+  THI S9                1.62928960E-01      1.35E-03
+  THI S11               6.50898349E-02     -1.13E-03
+  THI S13               5.29043585E-01      8.75E-04
+  THI S15               6.34061418E-01      2.73E-03
+  THI S17               1.93061418E-01      2.73E-03
+  GLN S1                1.54636869E+00     -4.29E-05
+  GLV S1                1.01009842E-02     -8.27E-06
+  GLN S4                1.54313174E+00     -1.17E-03
+  GLV S4                1.02769415E-02     -8.82E-05
+  GLN S6                1.63926929E+00      7.34E-04
+  GLV S6                2.80168100E-02      1.06E-04
+  GLN S8                1.53987094E+00     -1.36E-03
+  GLV S8                9.76631100E-03     -4.39E-06
+  GLN S10               1.63822202E+00     -7.96E-05
+  GLV S10               2.79472357E-02      1.32E-05
+  GLN S12               1.55038908E+00      2.91E-04
+  GLV S12               1.08763134E-02     -4.10E-04
+  GLN S14               1.54254129E+00      2.98E-04
+  GLV S14               9.62040417E-03      6.00E-06
+  GLN S16               1.48455183E+00     -1.21E-02
+  GLV S16               9.22748841E-03     -7.11E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.797000     0.000000     0.146618     5.277682     0.289262    -2.611600
+  
+  Active Constraints -   7:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -1.356E-07   2.346E-07
+  GL C S1                                                            2.757E-09
+  GL C S6                                                            1.481E-09
+  GL C S12                                                           4.335E-09
+  GL B S14                                                           1.122E-09
+  Mn ET S2                                                          -2.860E-11
+  Mn CT S3                                                          -1.093E-08
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.40476E-01   1.000E-02   1.973E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.52450E+00   1.000E-03   1.242E+01
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+  
+  Constraints released:   GL C S6 (<)                 Mn ET S2 (>)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  Constraints released:   GL C S6 (<)                 Mn ET S2 (>)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 7:
+  
+  ABERR F. =        0.05025052
+  CONST F. =       12.46193146
+  ERR. F.  =       12.51218198       (change =       -1.93752805)
+  
+  OPD     0.03153469     0.05106827     0.03500060
+  WAV     0.04787284     0.07492213     0.04917425
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00201980E-01     -1.08E-04
+  CUY S2                3.15773521E-01      5.08E-06
+  CUY S4                4.80655627E-01      5.24E-05
+  CUY S5                6.16589822E-02     -4.65E-05
+  CUY S6                1.38492762E-01     -2.96E-05
+  CUY S7                2.75130952E-01      5.84E-06
+  CUY S8                3.44361893E-02      2.77E-05
+  CUY S9               -2.10013624E-01     -3.90E-05
+  CUY S10              -5.70909914E-01     -3.73E-05
+  CUY S11              -2.83273970E-01     -4.46E-05
+  CUY S12               5.51947880E-01     -3.08E-04
+  CUY S13               2.19839754E-01     -3.24E-04
+  CUY S14               5.96695872E-01     -8.67E-05
+  CUY S15               9.70397923E-01     -4.65E-04
+  A   S1               -1.99129272E-02     -2.34E-04
+  A   S2               -1.05502386E-01      1.37E-04
+  A   S3               -2.83461925E-02      5.33E-02
+  A   S4               -1.12581819E-01     -2.02E-05
+  A   S5               -6.40677921E-02     -2.54E-04
+  A   S6               -1.21267518E-02      9.75E-05
+  A   S7                6.87223611E-03      1.18E-05
+  A   S8               -4.96311762E-02      4.96E-04
+  A   S9               -9.79716154E-02      8.30E-05
+  A   S10              -7.46682254E-02      8.26E-06
+  A   S11              -1.51949506E-01     -4.22E-06
+  A   S12               5.36893429E-02      1.58E-07
+  A   S13               6.35793966E-02      6.06E-06
+  A   S14              -1.84745870E-01     -5.32E-07
+  A   S15              -1.34737505E-01      2.98E-06
+  B   S1                4.34186964E-02      3.34E-06
+  B   S2                1.16030853E-01     -2.76E-04
+  B   S3                1.93243931E-02      9.33E-02
+  B   S4                7.97398658E-02      6.61E-05
+  B   S5               -1.08040408E-01      1.09E-03
+  B   S6               -1.24212876E-02      2.79E-04
+  B   S7               -2.47256588E-03     -1.49E-04
+  B   S8               -1.23220977E-02     -7.63E-04
+  B   S9               -2.32737064E-01      8.42E-05
+  B   S10               6.57371955E-02      1.85E-06
+  B   S11               1.82227740E-01     -1.16E-05
+  B   S12              -4.83707384E-02      5.12E-07
+  B   S13              -4.25370143E-02     -1.51E-07
+  B   S14               5.09797644E-02     -4.09E-08
+  B   S15               5.68237996E-02      1.54E-07
+  C   S1               -3.72300704E-02      1.21E-05
+  C   S2                9.58250189E-03     -8.37E-05
+  C   S3                1.41969468E-01      1.48E-01
+  C   S4               -1.37430359E-01      1.63E-04
+  C   S5                1.11695927E-01     -4.56E-05
+  C   S6                5.51063945E-03      2.26E-05
+  C   S7               -1.05575892E-02     -1.11E-05
+  C   S8               -1.73668441E-02      8.91E-06
+  C   S9                6.94676925E-01     -1.15E-04
+  C   S10               2.21833453E-01     -4.72E-08
+  C   S11              -7.99963200E-02     -1.54E-05
+  C   S12               1.92101480E-02      7.58E-08
+  C   S13               1.11028389E-02      1.20E-08
+  C   S14              -7.21476469E-03     -3.60E-09
+  C   S15              -1.61219314E-02      9.74E-09
+  D   S1                2.14229485E-02     -2.16E-05
+  D   S2               -1.61727027E-01     -1.36E-04
+  D   S3                4.01781990E-01      4.55E-02
+  D   S4                2.37990758E-02      2.05E-04
+  D   S5               -9.03239065E-02     -7.74E-05
+  D   S6               -4.43225282E-02     -2.43E-06
+  D   S7               -8.06548804E-03      3.02E-05
+  D   S8               -4.33306449E-03      6.22E-06
+  D   S9               -9.09994544E-01     -4.16E-05
+  D   S10              -2.40690603E-01     -4.24E-06
+  D   S11               2.21683595E-02     -2.99E-09
+  D   S12              -5.81154717E-03      9.05E-08
+  D   S13              -1.74747651E-03      1.77E-09
+  D   S14               6.76370788E-04     -3.39E-10
+  D   S15               2.66210756E-03      6.87E-10
+  E   S1                4.34647385E-03     -2.49E-05
+  E   S2                1.93419660E-01     -4.21E-04
+  E   S3                3.21406447E-09      0.00E+00
+  E   S4                2.07819804E-01     -6.37E-05
+  E   S5                1.33673402E-02     -2.87E-04
+  E   S6                2.07990950E-02     -4.92E-05
+  E   S7               -2.57418633E-05     -9.07E-06
+  E   S8                1.29829456E-02      4.56E-06
+  E   S9                6.99007849E-01     -1.27E-05
+  E   S10               9.70444753E-02     -3.17E-06
+  E   S11              -4.84350961E-03      9.48E-08
+  E   S12               1.00839740E-03     -4.52E-09
+  E   S13               1.57696429E-04      2.13E-10
+  E   S14              -4.88572177E-05     -3.36E-11
+  E   S15              -2.44169145E-04      5.15E-11
+  F   S1               -5.68117637E-03     -2.12E-05
+  F   S2               -8.88775750E-02      4.35E-05
+  F   S3                1.82398010E-09      0.00E+00
+  F   S4               -2.40725009E-01     -4.26E-04
+  F   S5               -2.06801340E-02      2.87E-04
+  F   S6               -1.10523473E-02     -1.01E-04
+  F   S7                1.09727059E-05     -9.15E-06
+  F   S8               -4.47697107E-05      3.18E-06
+  F   S9               -3.01842589E-01     -4.49E-06
+  F   S10              -1.42009215E-02     -3.77E-06
+  F   S11               5.62568063E-04      4.69E-08
+  F   S12              -6.78903908E-05     -1.28E-09
+  F   S13              -6.00085780E-06      2.48E-11
+  F   S14               2.53564553E-06     -3.20E-12
+  F   S15               1.15491339E-05      4.03E-12
+  G   S1               -5.14029391E-04     -1.16E-04
+  G   S2                2.01361164E-09      2.88E-18
+  G   S3                2.01230587E-09      6.74E-22
+  G   S4                2.01222086E-09      2.97E-18
+  G   S5                5.61488314E-04     -1.35E-04
+  G   S6               -2.18161064E-05     -1.17E-04
+  G   S7                1.82197485E-04     -5.43E-06
+  G   S8               -3.72642314E-05      2.09E-06
+  G   S9                5.55778795E-02     -2.15E-06
+  G   S10              -1.46371612E-04     -2.53E-06
+  G   S11               4.00738910E-07      2.37E-08
+  G   S12              -2.48845430E-09     -1.10E-10
+  G   S13               2.91484326E-10      2.92E-12
+  G   S14              -6.35558668E-08     -3.40E-13
+  G   S15              -2.19722153E-07      3.24E-13
+  THI S2                7.03505180E-02      2.95E-04
+  THI S3                1.00000000E-03      6.51E-19
+  THI S5                5.14890012E-02     -4.04E-05
+  THI S7                3.02977465E-01      4.07E-06
+  THI S9                1.63067458E-01      1.38E-04
+  THI S11               6.51837582E-02      9.39E-05
+  THI S13               5.29118964E-01      7.54E-05
+  THI S15               6.34093306E-01      3.19E-05
+  THI S17               1.93093306E-01      3.19E-05
+  GLN S1                1.54641016E+00      4.15E-05
+  GLV S1                1.01089805E-02      8.00E-06
+  GLN S4                1.54295193E+00     -1.80E-04
+  GLV S4                1.02621097E-02     -1.48E-05
+  GLN S6                1.63921530E+00     -5.40E-05
+  GLV S6                2.80338139E-02      1.70E-05
+  GLN S8                1.53992317E+00      5.22E-05
+  GLV S8                9.76438501E-03     -1.93E-06
+  GLN S10               1.63813928E+00     -8.27E-05
+  GLV S10               2.79513650E-02      4.13E-06
+  GLN S12               1.55053488E+00      1.46E-04
+  GLV S12               1.09044309E-02      2.81E-05
+  GLN S14               1.54252026E+00     -2.10E-05
+  GLV S14               9.61911369E-03     -1.29E-06
+  GLN S16               1.48496178E+00      4.10E-04
+  GLV S16               9.34919797E-03      1.22E-04
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.796999     0.000000     0.147181     5.278280     0.289568    -2.612709
+  
+  Active Constraints -   5:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -5.894E-07   2.007E-07
+  GL C S1                                                            3.439E-09
+  GL C S12                                                           3.907E-09
+  GL B S14                                                           4.262E-10
+  Mn CT S3                                                          -1.896E-08
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.11724E-01   1.000E-02   1.248E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.34869E+00   1.000E-03   1.121E+01
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+  
+  Constraints released:   GL C S1 (<)                 GL B S14 (<)
+                          Mn CT S3 (>)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 8:
+  
+  ABERR F. =        0.05044491
+  CONST F. =       11.93179786
+  ERR. F.  =       11.98224277       (change =       -0.52993920)
+  
+  OPD     0.03152581     0.04974256     0.03489740
+  WAV     0.04785329     0.07634488     0.04963495
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00206166E-01      4.19E-06
+  CUY S2                3.15761364E-01     -1.22E-05
+  CUY S4                4.80640370E-01     -1.53E-05
+  CUY S5                6.16623123E-02      3.33E-06
+  CUY S6                1.38498389E-01      5.63E-06
+  CUY S7                2.75138523E-01      7.57E-06
+  CUY S8                3.44388056E-02      2.62E-06
+  CUY S9               -2.10016111E-01     -2.49E-06
+  CUY S10              -5.70915605E-01     -5.69E-06
+  CUY S11              -2.83278664E-01     -4.69E-06
+  CUY S12               5.51945462E-01     -2.42E-06
+  CUY S13               2.19839169E-01     -5.85E-07
+  CUY S14               5.96709668E-01      1.38E-05
+  CUY S15               9.70390887E-01     -7.04E-06
+  A   S1               -1.99114976E-02      1.43E-06
+  A   S2               -1.05504674E-01     -2.29E-06
+  A   S3               -2.82565280E-02      8.97E-05
+  A   S4               -1.12577318E-01      4.50E-06
+  A   S5               -6.40672065E-02      5.86E-07
+  A   S6               -1.21272188E-02     -4.67E-07
+  A   S7                6.87125445E-03     -9.82E-07
+  A   S8               -4.96322534E-02     -1.08E-06
+  A   S9               -9.79747624E-02     -3.15E-06
+  A   S10              -7.46688288E-02     -6.03E-07
+  A   S11              -1.51949147E-01      3.59E-07
+  A   S12               5.36889800E-02     -3.63E-07
+  A   S13               6.35797164E-02      3.20E-07
+  A   S14              -1.84745286E-01      5.83E-07
+  A   S15              -1.34738377E-01     -8.72E-07
+  B   S1                4.34176909E-02     -1.01E-06
+  B   S2                1.16031779E-01      9.26E-07
+  B   S3                1.94103821E-02      8.60E-05
+  B   S4                7.97384162E-02     -1.45E-06
+  B   S5               -1.08041427E-01     -1.02E-06
+  B   S6               -1.24217212E-02     -4.34E-07
+  B   S7               -2.47221715E-03      3.49E-07
+  B   S8               -1.23216203E-02      4.77E-07
+  B   S9               -2.32737818E-01     -7.54E-07
+  B   S10               6.57364857E-02     -7.10E-07
+  B   S11               1.82227890E-01      1.50E-07
+  B   S12              -4.83708246E-02     -8.63E-08
+  B   S13              -4.25369538E-02      6.05E-08
+  B   S14               5.09797903E-02      2.59E-08
+  B   S15               5.68237127E-02     -8.69E-08
+  C   S1               -3.72309772E-02     -9.07E-07
+  C   S2                9.58518372E-03      2.68E-06
+  C   S3                1.42105616E-01      1.36E-04
+  C   S4               -1.37433032E-01     -2.67E-06
+  C   S5                1.11688640E-01     -7.29E-06
+  C   S6                5.51317728E-03      2.54E-06
+  C   S7               -1.05587284E-02     -1.14E-06
+  C   S8               -1.73653558E-02      1.49E-06
+  C   S9                6.94677266E-01      3.42E-07
+  C   S10               2.21834982E-01      1.53E-06
+  C   S11              -7.99962919E-02      2.81E-08
+  C   S12               1.92101310E-02     -1.71E-08
+  C   S13               1.11028557E-02      1.68E-08
+  C   S14              -7.21476298E-03      1.71E-09
+  C   S15              -1.61219369E-02     -5.49E-09
+  D   S1                2.14258725E-02      2.92E-06
+  D   S2               -1.61724756E-01      2.27E-06
+  D   S3                4.01858407E-01      7.64E-05
+  D   S4                2.37935984E-02     -5.48E-06
+  D   S5               -9.03278545E-02     -3.95E-06
+  D   S6               -4.43220290E-02      4.99E-07
+  D   S7               -8.06570458E-03     -2.17E-07
+  D   S8               -4.33235639E-03      7.08E-07
+  D   S9               -9.09994320E-01      2.25E-07
+  D   S10              -2.40691103E-01     -5.01E-07
+  D   S11               2.21683777E-02      1.82E-08
+  D   S12              -5.81155047E-03     -3.30E-09
+  D   S13              -1.74747804E-03     -1.53E-09
+  D   S14               6.76370921E-04      1.34E-10
+  D   S15               2.66210721E-03     -3.46E-10
+  E   S1                4.34407410E-03     -2.40E-06
+  E   S2                1.93422546E-01      2.89E-06
+  E   S3                3.21406447E-09      3.85E-23
+  E   S4                2.07827183E-01      7.38E-06
+  E   S5                1.33641771E-02     -3.16E-06
+  E   S6                2.07996519E-02      5.57E-07
+  E   S7               -2.60546122E-05     -3.13E-07
+  E   S8                1.29833657E-02      4.20E-07
+  E   S9                6.99008000E-01      1.51E-07
+  E   S10               9.70440170E-02     -4.58E-07
+  E   S11              -4.84352007E-03     -1.05E-08
+  E   S12               1.00839933E-03      1.93E-09
+  E   S13               1.57696223E-04     -2.06E-10
+  E   S14              -4.88572062E-05      1.15E-11
+  E   S15              -2.44169169E-04     -2.36E-11
+  F   S1               -5.68470895E-03     -3.53E-06
+  F   S2               -8.88610256E-02      1.65E-05
+  F   S3                1.82398010E-09     -1.74E-23
+  F   S4               -2.40714573E-01      1.04E-05
+  F   S5               -2.06820674E-02     -1.93E-06
+  F   S6               -1.10518098E-02      5.37E-07
+  F   S7                1.07486870E-05     -2.24E-07
+  F   S8               -4.45097724E-05      2.60E-07
+  F   S9               -3.01842487E-01      1.02E-07
+  F   S10              -1.42008114E-02      1.10E-07
+  F   S11               5.62564519E-04     -3.54E-09
+  F   S12              -6.78902682E-05      1.23E-10
+  F   S13              -6.00087220E-06     -1.44E-11
+  F   S14               2.53564658E-06      1.04E-12
+  F   S15               1.15491322E-05     -1.72E-12
+  G   S1               -5.10031996E-04      4.00E-06
+  G   S2                8.77050581E-06      8.77E-06
+  G   S3                2.01230587E-09      0.00E+00
+  G   S4                2.01222086E-09      1.43E-19
+  G   S5                5.58522047E-04     -2.97E-06
+  G   S6               -2.12855190E-05      5.31E-07
+  G   S7                1.82027548E-04     -1.70E-07
+  G   S8               -3.70924659E-05      1.72E-07
+  G   S9                5.55779487E-02      6.92E-08
+  G   S10              -1.46229379E-04      1.42E-07
+  G   S11               3.99563176E-07     -1.18E-09
+  G   S12              -2.57931852E-09     -9.09E-11
+  G   S13               2.90218714E-10     -1.27E-12
+  G   S14              -6.35557678E-08      9.90E-14
+  G   S15              -2.19722283E-07     -1.30E-13
+  THI S2                7.03446281E-02     -5.89E-06
+  THI S3                1.04194735E-03      4.19E-05
+  THI S5                5.14922611E-02      3.26E-06
+  THI S7                3.02983626E-01      6.16E-06
+  THI S9                1.63055599E-01     -1.19E-05
+  THI S11               6.51678707E-02     -1.59E-05
+  THI S13               5.29089379E-01     -2.96E-05
+  THI S15               6.34069652E-01     -2.37E-05
+  THI S17               1.93069652E-01     -2.37E-05
+  GLN S1                1.54640539E+00     -4.77E-06
+  GLV S1                1.01082043E-02     -7.76E-07
+  GLN S4                1.54296201E+00      1.01E-05
+  GLV S4                1.02624879E-02      3.78E-07
+  GLN S6                1.63922948E+00      1.42E-05
+  GLV S6                2.80333085E-02     -5.05E-07
+  GLN S8                1.53991297E+00     -1.02E-05
+  GLV S8                9.76443712E-03      5.21E-08
+  GLN S10               1.63815619E+00      1.69E-05
+  GLV S10               2.79512006E-02     -1.64E-07
+  GLN S12               1.55053783E+00      2.96E-06
+  GLV S12               1.09050008E-02      5.70E-07
+  GLN S14               1.54256145E+00      4.12E-05
+  GLV S14               9.63987742E-03      2.08E-05
+  GLN S16               1.48492386E+00     -3.79E-05
+  GLV S16               9.35025511E-03      1.06E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.796999     0.000000     0.147237     5.278245     0.289563    -2.612669
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -5.275E-07  -1.785E-04
+  GL C S12                                                           5.073E-06
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.10745E-01   1.000E-02   1.226E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.27190E+00   1.000E-03   1.071E+01
+ RAY ERROR: MISS  3
+     Derivative scaled for variable 120
+ RAY ERROR: MISS  3
+     Derivative scaled for variable 137
+ RAY ERROR: MISS  3
+  
+  Constraints released:   GL C S12 (<)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+  Constraints released:   GL C S12 (<)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 9:
+  
+  ABERR F. =        0.05044387
+  CONST F. =       12.01491597
+  ERR. F.  =       12.06535984       (change =        0.08311707)
+  
+  OPD     0.03152553     0.04974452     0.03489717
+  WAV     0.04785176     0.07634146     0.04963371
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00206162E-01     -3.06E-09
+  CUY S2                3.15761393E-01      2.84E-08
+  CUY S4                4.80640400E-01      2.97E-08
+  CUY S5                6.16623098E-02     -2.56E-09
+  CUY S6                1.38498386E-01     -3.32E-09
+  CUY S7                2.75138493E-01     -2.96E-08
+  CUY S8                3.44387891E-02     -1.65E-08
+  CUY S9               -2.10016094E-01      1.70E-08
+  CUY S10              -5.70915586E-01      1.83E-08
+  CUY S11              -2.83278655E-01      9.07E-09
+  CUY S12               5.51945458E-01     -3.55E-09
+  CUY S13               2.19839155E-01     -1.37E-08
+  CUY S14               5.96709620E-01     -4.79E-08
+  CUY S15               9.70390920E-01      3.35E-08
+  A   S1               -1.99114989E-02     -1.29E-09
+  A   S2               -1.05504672E-01      1.20E-09
+  A   S3               -2.82563449E-02      1.83E-07
+  A   S4               -1.12577319E-01     -1.05E-09
+  A   S5               -6.40671971E-02      9.36E-09
+  A   S6               -1.21272233E-02     -4.50E-09
+  A   S7                6.87125527E-03      8.26E-10
+  A   S8               -4.96322455E-02      7.92E-09
+  A   S9               -9.79747601E-02      2.28E-09
+  A   S10              -7.46688250E-02      3.78E-09
+  A   S11              -1.51949149E-01     -2.22E-09
+  A   S12               5.36889806E-02      5.36E-10
+  A   S13               6.35797151E-02     -1.35E-09
+  A   S14              -1.84745286E-01     -5.62E-11
+  A   S15              -1.34738377E-01      2.42E-10
+  B   S1                4.34176948E-02      3.88E-09
+  B   S2                1.16031760E-01     -1.98E-08
+  B   S3                1.94105579E-02      1.76E-07
+  B   S4                7.97384268E-02      1.06E-08
+  B   S5               -1.08041424E-01      2.48E-09
+  B   S6               -1.24217155E-02      5.67E-09
+  B   S7               -2.47221948E-03     -2.33E-09
+  B   S8               -1.23216222E-02     -1.94E-09
+  B   S9               -2.32737817E-01      1.43E-09
+  B   S10               6.57364875E-02      1.80E-09
+  B   S11               1.82227889E-01     -1.17E-09
+  B   S12              -4.83708245E-02      1.51E-10
+  B   S13              -4.25369541E-02     -3.44E-10
+  B   S14               5.09797903E-02     -4.49E-12
+  B   S15               5.68237127E-02      1.47E-11
+  C   S1               -3.72309719E-02      5.31E-09
+  C   S2                9.58517640E-03     -7.31E-09
+  C   S3                1.42105894E-01      2.78E-07
+  C   S4               -1.37433021E-01      1.03E-08
+  C   S5                1.11688642E-01      1.22E-09
+  C   S6                5.51317652E-03     -7.68E-10
+  C   S7               -1.05587280E-02      4.26E-10
+  C   S8               -1.73653563E-02     -5.18E-10
+  C   S9                6.94677265E-01     -1.74E-09
+  C   S10               2.21834982E-01     -3.95E-10
+  C   S11              -7.99962926E-02     -6.67E-10
+  C   S12               1.92101310E-02      5.62E-11
+  C   S13               1.11028557E-02     -3.96E-12
+  C   S14              -7.21476298E-03     -3.91E-13
+  C   S15              -1.61219369E-02      9.90E-13
+  D   S1                2.14258715E-02     -9.63E-10
+  D   S2               -1.61724808E-01     -5.25E-08
+  D   S3                4.01858563E-01      1.56E-07
+  D   S4                2.37936095E-02      1.11E-08
+  D   S5               -9.03278517E-02      2.76E-09
+  D   S6               -4.43220325E-02     -3.56E-09
+  D   S7               -8.06570306E-03      1.52E-09
+  D   S8               -4.33235688E-03     -4.89E-10
+  D   S9               -9.09994320E-01     -6.34E-10
+  D   S10              -2.40691103E-01      4.14E-10
+  D   S11               2.21683777E-02     -4.58E-11
+  D   S12              -5.81155046E-03      1.06E-11
+  D   S13              -1.74747804E-03      3.71E-13
+  D   S14               6.76370921E-04     -3.63E-14
+  D   S15               2.66210721E-03      7.17E-14
+  E   S1                4.34407566E-03      1.55E-09
+  E   S2                1.93422625E-01      7.85E-08
+  E   S3                3.21406447E-09      0.00E+00
+  E   S4                2.07827171E-01     -1.27E-08
+  E   S5                1.33641824E-02      5.26E-09
+  E   S6                2.07996462E-02     -5.71E-09
+  E   S7               -2.60536536E-05      9.59E-10
+  E   S8                1.29833652E-02     -4.64E-10
+  E   S9                6.99007999E-01     -2.48E-10
+  E   S10               9.70440171E-02      1.47E-10
+  E   S11              -4.84352006E-03      5.99E-12
+  E   S12               1.00839933E-03     -4.72E-13
+  E   S13               1.57696223E-04      3.09E-14
+  E   S14              -4.88572062E-05     -3.56E-15
+  E   S15              -2.44169169E-04      5.46E-15
+  F   S1               -5.68470766E-03      1.30E-09
+  F   S2               -8.88610389E-02     -1.33E-08
+  F   S3                1.82398010E-09      0.00E+00
+  F   S4               -2.40714597E-01     -2.42E-08
+  F   S5               -2.06820421E-02      2.53E-08
+  F   S6               -1.10518245E-02     -1.47E-08
+  F   S7                1.07503494E-05      1.66E-09
+  F   S8               -4.45102486E-05     -4.76E-10
+  F   S9               -3.01842487E-01     -1.20E-10
+  F   S10              -1.42008114E-02     -4.69E-11
+  F   S11               5.62564522E-04      2.07E-12
+  F   S12              -6.78902683E-05     -9.88E-14
+  F   S13              -6.00087219E-06      3.20E-15
+  F   S14               2.53564658E-06     -3.63E-16
+  F   S15               1.15491322E-05      4.31E-16
+  G   S1               -5.10033014E-04     -1.02E-09
+  G   S2                8.79949681E-06      2.90E-08
+  G   S3                2.01230587E-09      0.00E+00
+  G   S4                1.48513559E-07      1.47E-07
+  G   S5                5.58559662E-04      3.76E-08
+  G   S6               -2.12730259E-05      1.25E-08
+  G   S7                1.82030337E-04      2.79E-09
+  G   S8               -3.70929740E-05     -5.08E-10
+  G   S9                5.55779487E-02     -6.24E-11
+  G   S10              -1.46229407E-04     -2.73E-11
+  G   S11               3.99563932E-07      7.56E-13
+  G   S12              -2.57930238E-09      1.61E-14
+  G   S13               2.90219069E-10      3.55E-16
+  G   S14              -6.35557678E-08     -3.82E-17
+  G   S15              -2.19722283E-07      3.49E-17
+  THI S2                7.03446209E-02     -7.13E-09
+  THI S3                1.04194023E-03     -7.12E-09
+  THI S5                5.14922423E-02     -1.88E-08
+  THI S7                3.02983621E-01     -4.57E-09
+  THI S9                1.63055606E-01      7.89E-09
+  THI S11               6.51679073E-02      3.66E-08
+  THI S13               5.29089442E-01      6.31E-08
+  THI S15               6.34069694E-01      4.23E-08
+  THI S17               1.93069694E-01      4.23E-08
+  GLN S1                1.54640543E+00      4.82E-08
+  GLV S1                1.01082051E-02      7.97E-10
+  GLN S4                1.54296200E+00     -3.16E-09
+  GLV S4                1.02624872E-02     -7.50E-10
+  GLN S6                1.63922941E+00     -6.48E-08
+  GLV S6                2.80333099E-02      1.44E-09
+  GLN S8                1.53991300E+00      3.21E-08
+  GLV S8                9.76443682E-03     -2.93E-10
+  GLN S10               1.63815620E+00      1.52E-08
+  GLV S10               2.79512010E-02      3.84E-10
+  GLN S12               1.55053782E+00     -1.43E-08
+  GLV S12               1.09050044E-02      3.56E-09
+  GLN S14               1.54256142E+00     -3.31E-08
+  GLV S14               9.63987724E-03     -1.82E-10
+  GLN S16               1.48492412E+00      2.61E-07
+  GLV S16               9.35022435E-03     -3.08E-08
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.796999     0.000000     0.147237     5.278245     0.289563    -2.612669
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -5.261E-07  -4.701E-04
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.10745E-01   1.000E-02   1.226E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.28458E+00   1.000E-03   1.079E+01
+  
+  Constraints added:      GL C S1 (<)                 GL C S6 (<)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.106 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  Constraints released:   GL C S6 (<)
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  Singular variable no.108 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 10:
+  
+  ABERR F. =        0.05171871
+  CONST F. =       11.70412011
+  ERR. F.  =       11.75583882       (change =       -0.30952102)
+  
+  OPD     0.03200188     0.04924140     0.03595136
+  WAV     0.04866251     0.07955783     0.05108940
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00197662E-01     -8.50E-06
+  CUY S2                3.15735355E-01     -2.60E-05
+  CUY S4                4.80625036E-01     -1.54E-05
+  CUY S5                6.16697372E-02      7.43E-06
+  CUY S6                1.38511353E-01      1.30E-05
+  CUY S7                2.75147720E-01      9.23E-06
+  CUY S8                3.44387895E-02      3.95E-10
+  CUY S9               -2.10018894E-01     -2.80E-06
+  CUY S10              -5.70919881E-01     -4.29E-06
+  CUY S11              -2.83272815E-01      5.84E-06
+  CUY S12               5.51955825E-01      1.04E-05
+  CUY S13               2.19842276E-01      3.12E-06
+  CUY S14               5.96705636E-01     -3.98E-06
+  CUY S15               9.70396531E-01      5.61E-06
+  A   S1               -1.99146248E-02     -3.13E-06
+  A   S2               -1.05500213E-01      4.46E-06
+  A   S3               -2.82295587E-02      2.68E-05
+  A   S4               -1.12579336E-01     -2.02E-06
+  A   S5               -6.40700112E-02     -2.81E-06
+  A   S6               -1.21267013E-02      5.22E-07
+  A   S7                6.87300809E-03      1.75E-06
+  A   S8               -4.96335227E-02     -1.28E-06
+  A   S9               -9.79704482E-02      4.31E-06
+  A   S10              -7.46716930E-02     -2.87E-06
+  A   S11              -1.51948324E-01      8.25E-07
+  A   S12               5.36883204E-02     -6.60E-07
+  A   S13               6.35801566E-02      4.42E-07
+  A   S14              -1.84746496E-01     -1.21E-06
+  A   S15              -1.34738273E-01      1.04E-07
+  B   S1                4.34168484E-02     -8.46E-07
+  B   S2                1.16032547E-01      7.87E-07
+  B   S3                1.94362448E-02      2.57E-05
+  B   S4                7.97370827E-02     -1.34E-06
+  B   S5               -1.08037019E-01      4.40E-06
+  B   S6               -1.24223309E-02     -6.15E-07
+  B   S7               -2.47169918E-03      5.20E-07
+  B   S8               -1.23161105E-02      5.51E-06
+  B   S9               -2.32733229E-01      4.59E-06
+  B   S10               6.57353132E-02     -1.17E-06
+  B   S11               1.82228043E-01      1.54E-07
+  B   S12              -4.83709933E-02     -1.69E-07
+  B   S13              -4.25369240E-02      3.02E-08
+  B   S14               5.09796682E-02     -1.22E-07
+  B   S15               5.68237519E-02      3.92E-08
+  C   S1               -3.72316844E-02     -7.12E-07
+  C   S2                9.58710413E-03      1.93E-06
+  C   S3                1.42146556E-01      4.07E-05
+  C   S4               -1.37435739E-01     -2.72E-06
+  C   S5                1.11702050E-01      1.34E-05
+  C   S6                5.51855548E-03      5.38E-06
+  C   S7               -1.05611221E-02     -2.39E-06
+  C   S8               -1.73618573E-02      3.50E-06
+  C   S9                6.94677693E-01      4.29E-07
+  C   S10               2.21833461E-01     -1.52E-06
+  C   S11              -7.99962636E-02      2.90E-08
+  C   S12               1.92101073E-02     -2.37E-08
+  C   S13               1.11028700E-02      1.43E-08
+  C   S14              -7.21475813E-03      4.85E-09
+  C   S15              -1.61219296E-02      7.30E-09
+  D   S1                2.14233283E-02     -2.54E-06
+  D   S2               -1.61723312E-01      1.50E-06
+  D   S3                4.01881358E-01      2.28E-05
+  D   S4                2.37877329E-02     -5.88E-06
+  D   S5               -9.03345892E-02     -6.74E-06
+  D   S6               -4.43210179E-02      1.01E-06
+  D   S7               -8.06618273E-03     -4.80E-07
+  D   S8               -4.33102486E-03      1.33E-06
+  D   S9               -9.09994036E-01      2.85E-07
+  D   S10              -2.40691420E-01     -3.16E-07
+  D   S11               2.21683969E-02      1.92E-08
+  D   S12              -5.81155437E-03     -3.90E-09
+  D   S13              -1.74747531E-03      2.73E-09
+  D   S14               6.76371764E-04      8.43E-10
+  D   S15               2.66210689E-03     -3.21E-10
+  E   S1                4.34291531E-03     -1.16E-06
+  E   S2                1.93419469E-01     -3.16E-06
+  E   S3                3.21406447E-09      0.00E+00
+  E   S4                2.07856928E-01      2.98E-05
+  E   S5                1.33609900E-02     -3.19E-06
+  E   S6                2.08004491E-02      8.03E-07
+  E   S7               -2.64013419E-05     -3.48E-07
+  E   S8                1.29840322E-02      6.67E-07
+  E   S9                6.99008194E-01      1.94E-07
+  E   S10               9.70438472E-02     -1.70E-07
+  E   S11              -4.84349483E-03      2.52E-08
+  E   S12               1.00839309E-03     -6.24E-09
+  E   S13               1.57696573E-04      3.50E-10
+  E   S14              -4.88571340E-05      7.22E-11
+  E   S15              -2.44169282E-04     -1.13E-10
+  F   S1               -5.68601797E-03     -1.31E-06
+  F   S2               -8.88548943E-02      6.14E-06
+  F   S3                1.82398010E-09      0.00E+00
+  F   S4               -2.40694818E-01      1.98E-05
+  F   S5               -2.06846217E-02     -2.58E-06
+  F   S6               -1.10510539E-02      7.71E-07
+  F   S7                1.04907712E-05     -2.60E-07
+  F   S8               -4.41318327E-05      3.78E-07
+  F   S9               -3.01842362E-01      1.26E-07
+  F   S10              -1.42009474E-02     -1.36E-07
+  F   S11               5.62574604E-04      1.01E-08
+  F   S12              -6.78905033E-05     -2.35E-10
+  F   S13              -6.00082458E-06      4.76E-11
+  F   S14               2.53565259E-06      6.02E-12
+  F   S15               1.15491216E-05     -1.06E-11
+  G   S1               -5.11900163E-04     -1.87E-06
+  G   S2                1.97073935E-05      1.09E-05
+  G   S3                2.01230587E-09     -3.17E-20
+  G   S4                1.48513559E-07      2.17E-17
+  G   S5                5.55503107E-04     -3.06E-06
+  G   S6               -2.17529804E-05     -4.80E-07
+  G   S7                1.81811691E-04     -2.19E-07
+  G   S8               -3.68937428E-05      1.99E-07
+  G   S9                5.55780312E-02      8.26E-08
+  G   S10              -1.46308229E-04     -7.88E-08
+  G   S11               4.03894772E-07      4.33E-09
+  G   S12              -2.60757311E-09     -2.83E-11
+  G   S13               2.95056619E-10      4.84E-12
+  G   S14              -6.35552504E-08      5.17E-13
+  G   S15              -2.19723119E-07     -8.36E-13
+  THI S2                7.03534024E-02      8.78E-06
+  THI S3                1.05092318E-03      8.98E-06
+  THI S5                5.14951394E-02      2.90E-06
+  THI S7                3.02988603E-01      4.98E-06
+  THI S9                1.63064292E-01      8.69E-06
+  THI S11               6.51406762E-02     -2.72E-05
+  THI S13               5.29060463E-01     -2.90E-05
+  THI S15               6.34029496E-01     -4.02E-05
+  THI S17               1.93029496E-01     -4.02E-05
+  GLN S1                1.54640082E+00     -4.62E-06
+  GLV S1                1.01071793E-02     -1.03E-06
+  GLN S4                1.54296539E+00      3.38E-06
+  GLV S4                1.02629168E-02      4.30E-07
+  GLN S6                1.63923641E+00      7.00E-06
+  GLV S6                2.80325652E-02     -7.45E-07
+  GLN S8                1.53990652E+00     -6.48E-06
+  GLV S8                9.76452274E-03      8.59E-08
+  GLN S10               1.63813879E+00     -1.74E-05
+  GLV S10               2.79509308E-02     -2.70E-07
+  GLN S12               1.55053584E+00     -1.98E-06
+  GLV S12               1.09073032E-02      2.30E-06
+  GLN S14               1.54265692E+00      9.55E-05
+  GLV S14               9.67491881E-03      3.50E-05
+  GLN S16               1.48502907E+00      1.05E-04
+  GLV S16               9.35202503E-03      1.80E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.797000     0.000000     0.147297     5.278183     0.289572    -2.612463
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -7.263E-09  -1.520E-03
+  GL C S1                                                            2.812E-06
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.38778E-01   1.000E-02   1.926E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.12701E+00   1.000E-03   9.778E+00
+ RAY ERROR: MISS  3
+     Derivative scaled for variable  14
+ RAY ERROR: REFL 13
+     Derivative scaled for variable 117
+ RAY ERROR: MISS  3
+     Derivative scaled for variable 135
+ RAY ERROR: MISS  3
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 11:
+  
+  ABERR F. =        0.05171690
+  CONST F. =       11.70457576
+  ERR. F.  =       11.75629266       (change =        0.00045384)
+  
+  OPD     0.03200177     0.04924030     0.03595028
+  WAV     0.04866517     0.07955199     0.05108686
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00197666E-01      4.38E-09
+  CUY S2                3.15735375E-01      1.97E-08
+  CUY S4                4.80625050E-01      1.48E-08
+  CUY S5                6.16697362E-02     -9.93E-10
+  CUY S6                1.38511351E-01     -1.38E-09
+  CUY S7                2.75147714E-01     -5.74E-09
+  CUY S8                3.44387866E-02     -2.84E-09
+  CUY S9               -2.10018891E-01      3.56E-09
+  CUY S10              -5.70919877E-01      4.73E-09
+  CUY S11              -2.83272818E-01     -2.65E-09
+  CUY S12               5.51955815E-01     -9.37E-09
+  CUY S13               2.19842266E-01     -9.43E-09
+  CUY S14               5.96705602E-01     -3.45E-08
+  CUY S15               9.70396452E-01     -7.89E-08
+  A   S1               -1.99146236E-02      1.21E-09
+  A   S2               -1.05500214E-01     -1.29E-09
+  A   S3               -2.82294025E-02      1.56E-07
+  A   S4               -1.12579335E-01      1.39E-09
+  A   S5               -6.40700102E-02      1.04E-09
+  A   S6               -1.21267023E-02     -1.01E-09
+  A   S7                6.87300737E-03     -7.22E-10
+  A   S8               -4.96335202E-02      2.41E-09
+  A   S9               -9.79704496E-02     -1.36E-09
+  A   S10              -7.46716918E-02      1.16E-09
+  A   S11              -1.51948325E-01     -1.49E-09
+  A   S12               5.36883208E-02      3.87E-10
+  A   S13               6.35801562E-02     -3.88E-10
+  A   S14              -1.84746496E-01      8.01E-11
+  A   S15              -1.34738273E-01     -2.46E-10
+  B   S1                4.34168498E-02      1.41E-09
+  B   S2                1.16032543E-01     -3.51E-09
+  B   S3                1.94363962E-02      1.51E-07
+  B   S4                7.97370861E-02      3.42E-09
+  B   S5               -1.08037021E-01     -1.71E-09
+  B   S6               -1.24223293E-02      1.62E-09
+  B   S7               -2.47170005E-03     -8.72E-10
+  B   S8               -1.23161109E-02     -4.35E-10
+  B   S9               -2.32733229E-01     -2.81E-10
+  B   S10               6.57353139E-02      6.60E-10
+  B   S11               1.82228042E-01     -3.22E-10
+  B   S12              -4.83709932E-02      8.53E-11
+  B   S13              -4.25369241E-02     -1.10E-10
+  B   S14               5.09796682E-02      7.23E-12
+  B   S15               5.68237519E-02     -1.26E-11
+  C   S1               -3.72316829E-02      1.52E-09
+  C   S2                9.58710081E-03     -3.32E-09
+  C   S3                1.42146796E-01      2.40E-07
+  C   S4               -1.37435735E-01      4.31E-09
+  C   S5                1.11702049E-01     -3.06E-10
+  C   S6                5.51855504E-03     -4.47E-10
+  C   S7               -1.05611219E-02      2.35E-10
+  C   S8               -1.73618576E-02     -2.78E-10
+  C   S9                6.94677693E-01     -6.26E-10
+  C   S10               2.21833462E-01      3.38E-10
+  C   S11              -7.99962638E-02     -1.17E-10
+  C   S12               1.92101073E-02      2.06E-11
+  C   S13               1.11028700E-02     -3.67E-12
+  C   S14              -7.21475813E-03     -2.45E-13
+  C   S15              -1.61219296E-02     -3.21E-13
+  D   S1                2.14233291E-02      8.81E-10
+  D   S2               -1.61723321E-01     -9.46E-09
+  D   S3                4.01881492E-01      1.34E-07
+  D   S4                2.37877388E-02      5.87E-09
+  D   S5               -9.03345879E-02      1.33E-09
+  D   S6               -4.43210187E-02     -7.98E-10
+  D   S7               -8.06618241E-03      3.22E-10
+  D   S8               -4.33102508E-03     -2.15E-10
+  D   S9               -9.09994036E-01     -2.98E-10
+  D   S10              -2.40691419E-01      2.90E-10
+  D   S11               2.21683969E-02     -2.19E-11
+  D   S12              -5.81155436E-03      4.00E-12
+  D   S13              -1.74747531E-03     -2.33E-13
+  D   S14               6.76371764E-04     -2.95E-14
+  D   S15               2.66210689E-03      1.07E-13
+  E   S1                4.34291647E-03      1.16E-09
+  E   S2                1.93419474E-01      5.51E-09
+  E   S3                3.21406447E-09      0.00E+00
+  E   S4                2.07856924E-01     -3.96E-09
+  E   S5                1.33609923E-02      2.33E-09
+  E   S6                2.08004481E-02     -1.01E-09
+  E   S7               -2.64010329E-05      3.09E-10
+  E   S8                1.29840320E-02     -1.79E-10
+  E   S9                6.99008193E-01     -1.51E-10
+  E   S10               9.70438473E-02      1.42E-10
+  E   S11              -4.84349484E-03     -5.99E-12
+  E   S12               1.00839309E-03      5.16E-13
+  E   S13               1.57696573E-04     -2.02E-14
+  E   S14              -4.88571340E-05     -3.16E-15
+  E   S15              -2.44169282E-04      8.10E-15
+  F   S1               -5.68601681E-03      1.16E-09
+  F   S2               -8.88549061E-02     -1.18E-08
+  F   S3                1.82398010E-09      0.00E+00
+  F   S4               -2.40694826E-01     -8.23E-09
+  F   S5               -2.06846179E-02      3.80E-09
+  F   S6               -1.10510551E-02     -1.17E-09
+  F   S7                1.04910762E-05      3.05E-10
+  F   S8               -4.41319859E-05     -1.53E-10
+  F   S9               -3.01842362E-01     -8.26E-11
+  F   S10              -1.42009474E-02      6.42E-11
+  F   S11               5.62574602E-04     -2.18E-12
+  F   S12              -6.78905032E-05      9.25E-14
+  F   S13              -6.00082458E-06     -1.80E-15
+  F   S14               2.53565259E-06     -3.32E-16
+  F   S15               1.15491216E-05      6.17E-16
+  G   S1               -5.11899103E-04      1.06E-09
+  G   S2                1.97416364E-05      3.42E-08
+  G   S3                2.01230587E-09      0.00E+00
+  G   S4               -5.76371266E-07     -7.25E-07
+  G   S5                5.55507979E-04      4.87E-09
+  G   S6               -2.17511117E-05      1.87E-09
+  G   S7                1.81811929E-04      2.38E-10
+  G   S8               -3.68938896E-05     -1.47E-10
+  G   S9                5.55780312E-02     -4.67E-11
+  G   S10              -1.46308196E-04      3.33E-11
+  G   S11               4.03893897E-07     -8.75E-13
+  G   S12              -2.60755713E-09      1.60E-14
+  G   S13               2.95057027E-10      4.08E-16
+  G   S14              -6.35552504E-08     -3.53E-17
+  G   S15              -2.19723119E-07      4.81E-17
+  THI S2                7.03533929E-02     -9.45E-09
+  THI S3                1.05091347E-03     -9.72E-09
+  THI S5                5.14951265E-02     -1.29E-08
+  THI S7                3.02988599E-01     -4.44E-09
+  THI S9                1.63064285E-01     -7.18E-09
+  THI S11               6.51406946E-02      1.84E-08
+  THI S13               5.29060490E-01      2.64E-08
+  THI S15               6.34029521E-01      2.56E-08
+  THI S17               1.93029521E-01      2.56E-08
+  GLN S1                1.54640082E+00      7.39E-09
+  GLV S1                1.01071807E-02      1.42E-09
+  GLN S4                1.54296539E+00     -2.25E-09
+  GLV S4                1.02629161E-02     -7.52E-10
+  GLN S6                1.63923638E+00     -2.72E-08
+  GLV S6                2.80325664E-02      1.14E-09
+  GLN S8                1.53990651E+00     -1.31E-08
+  GLV S8                9.76452257E-03     -1.63E-10
+  GLN S10               1.63813880E+00      6.89E-09
+  GLV S10               2.79509311E-02      3.16E-10
+  GLN S12               1.55053583E+00     -7.00E-09
+  GLV S12               1.09072992E-02     -3.93E-09
+  GLN S14               1.54265690E+00     -2.65E-08
+  GLV S14               9.67491859E-03     -2.26E-10
+  GLN S16               1.48502870E+00     -3.63E-07
+  GLV S16               9.35201873E-03     -6.29E-09
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.797000     0.000000     0.147297     5.278183     0.289572    -2.612464
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -7.286E-09  -1.059E-03
+  GL C S1                                                            1.503E-04
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.38782E-01   1.000E-02   1.926E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.12706E+00   1.000E-03   9.779E+00
+ RAY ERROR: MISS  3
+     Derivative scaled for variable  13
+ RAY ERROR: MISS  3
+     Derivative scaled for variable 135
+ RAY ERROR: MISS  3
+     Derivative scaled for variable 139
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+ RAY ERROR: MISS  3
+  
+  Singular variable no. 77 will move only to satisfy constraints.
+  Singular variable no. 92 will move only to satisfy constraints.
+  Singular variable no.107 will move only to satisfy constraints.
+  
+ CYCLE NUMBER 12:
+  
+  ABERR F. =        0.05171818
+  CONST F. =       11.70516528
+  ERR. F.  =       11.75688346       (change =        0.00059080)
+  
+  OPD     0.03200289     0.04924035     0.03595197
+  WAV     0.04866958     0.07955256     0.05108757
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00197662E-01     -3.82E-09
+  CUY S2                3.15735351E-01     -2.37E-08
+  CUY S4                4.80625033E-01     -1.73E-08
+  CUY S5                6.16697414E-02      5.23E-09
+  CUY S6                1.38511361E-01      9.29E-09
+  CUY S7                2.75147723E-01      9.28E-09
+  CUY S8                3.44387863E-02     -2.80E-10
+  CUY S9               -2.10018896E-01     -5.05E-09
+  CUY S10              -5.70919883E-01     -6.29E-09
+  CUY S11              -2.83272817E-01      6.58E-10
+  CUY S12               5.51955796E-01     -1.90E-08
+  CUY S13               2.19842250E-01     -1.68E-08
+  CUY S14               5.96705574E-01     -2.73E-08
+  CUY S15               9.70396484E-01      3.17E-08
+  A   S1               -1.99146248E-02     -1.16E-09
+  A   S2               -1.05500213E-01      1.26E-09
+  A   S3               -2.82291535E-02      2.49E-07
+  A   S4               -1.12579336E-01     -1.37E-09
+  A   S5               -6.40700146E-02     -4.47E-09
+  A   S6               -1.21267006E-02      1.71E-09
+  A   S7                6.87300814E-03      7.73E-10
+  A   S8               -4.96335216E-02     -1.40E-09
+  A   S9               -9.79704467E-02      2.88E-09
+  A   S10              -7.46716938E-02     -1.98E-09
+  A   S11              -1.51948324E-01      9.39E-10
+  A   S12               5.36883203E-02     -5.00E-10
+  A   S13               6.35801570E-02      8.01E-10
+  A   S14              -1.84746496E-01     -5.19E-11
+  A   S15              -1.34738273E-01      2.10E-10
+  B   S1                4.34168487E-02     -1.06E-09
+  B   S2                1.16032545E-01      1.39E-09
+  B   S3                1.94369596E-02      5.63E-07
+  B   S4                7.97370844E-02     -1.70E-09
+  B   S5               -1.08037020E-01      1.62E-09
+  B   S6               -1.24223300E-02     -7.35E-10
+  B   S7               -2.47169956E-03      4.92E-10
+  B   S8               -1.23161079E-02      3.06E-09
+  B   S9               -2.32733228E-01      1.88E-09
+  B   S10               6.57353128E-02     -1.10E-09
+  B   S11               1.82228043E-01      2.16E-10
+  B   S12              -4.83709933E-02     -1.18E-10
+  B   S13              -4.25369240E-02      5.03E-11
+  B   S14               5.09796682E-02     -4.13E-12
+  B   S15               5.68237519E-02      1.23E-11
+  C   S1               -3.72316839E-02     -1.01E-09
+  C   S2                9.58710312E-03      2.31E-09
+  C   S3                1.42147688E-01      8.92E-07
+  C   S4               -1.37435737E-01     -2.76E-09
+  C   S5                1.11702054E-01      4.27E-09
+  C   S6                5.51855764E-03      2.61E-09
+  C   S7               -1.05611233E-02     -1.45E-09
+  C   S8               -1.73618555E-02      2.09E-09
+  C   S9                6.94677693E-01      4.06E-10
+  C   S10               2.21833461E-01     -6.85E-10
+  C   S11              -7.99962637E-02      4.98E-11
+  C   S12               1.92101073E-02     -2.40E-11
+  C   S13               1.11028700E-02      2.96E-12
+  C   S14              -7.21475813E-03      1.33E-13
+  C   S15              -1.61219296E-02      8.10E-13
+  D   S1                2.14233279E-02     -1.25E-09
+  D   S2               -1.61723318E-01      2.82E-09
+  D   S3                4.01881996E-01      5.03E-07
+  D   S4                2.37877342E-02     -4.62E-09
+  D   S5               -9.03345934E-02     -5.51E-09
+  D   S6               -4.43210170E-02      1.69E-09
+  D   S7               -8.06618318E-03     -7.70E-10
+  D   S8               -4.33102399E-03      1.09E-09
+  D   S9               -9.09994036E-01      2.17E-10
+  D   S10              -2.40691420E-01     -3.19E-10
+  D   S11               2.21683969E-02      1.74E-11
+  D   S12              -5.81155437E-03     -4.72E-12
+  D   S13              -1.74747531E-03      2.50E-13
+  D   S14               6.76371764E-04      7.82E-14
+  D   S15               2.66210689E-03     -4.64E-13
+  E   S1                4.34291529E-03     -1.18E-09
+  E   S2                1.93419466E-01     -8.56E-09
+  E   S3                3.21406447E-09      0.00E+00
+  E   S4                2.07856947E-01      2.30E-08
+  E   S5                1.33609874E-02     -4.91E-09
+  E   S6                2.08004497E-02      1.62E-09
+  E   S7               -2.64016559E-05     -6.23E-10
+  E   S8                1.29840328E-02      7.41E-10
+  E   S9                6.99008194E-01      1.21E-10
+  E   S10               9.70438471E-02     -1.58E-10
+  E   S11              -4.84349483E-03      6.01E-12
+  E   S12               1.00839309E-03     -7.29E-13
+  E   S13               1.57696573E-04      2.47E-14
+  E   S14              -4.88571340E-05      9.92E-15
+  E   S15              -2.44169282E-04     -3.28E-14
+  F   S1               -5.68601804E-03     -1.24E-09
+  F   S2               -8.88548992E-02      6.90E-09
+  F   S3                1.82398010E-09      0.00E+00
+  F   S4               -2.40694803E-01      2.35E-08
+  F   S5               -2.06846232E-02     -5.33E-09
+  F   S6               -1.10510534E-02      1.68E-09
+  F   S7                1.04905314E-05     -5.45E-10
+  F   S8               -4.41314607E-05      5.25E-10
+  F   S9               -3.01842362E-01      6.83E-11
+  F   S10              -1.42009475E-02     -8.27E-11
+  F   S11               5.62574604E-04      2.01E-12
+  F   S12              -6.78905033E-05     -9.56E-14
+  F   S13              -6.00082458E-06      2.56E-15
+  F   S14               2.53565259E-06      1.06E-15
+  F   S15               1.15491216E-05     -2.51E-15
+  G   S1               -5.11900382E-04     -1.28E-09
+  G   S2                1.97758828E-05      3.42E-08
+  G   S3                2.01230587E-09      0.00E+00
+  G   S4               -1.30177159E-06     -7.25E-07
+  G   S5                5.55501496E-04     -6.48E-09
+  G   S6               -2.17518824E-05     -7.71E-10
+  G   S7                1.81811440E-04     -4.89E-10
+  G   S8               -3.68935130E-05      3.77E-10
+  G   S9                5.55780312E-02      3.91E-11
+  G   S10              -1.46308238E-04     -4.18E-11
+  G   S11               4.03894572E-07      6.75E-13
+  G   S12              -2.60757091E-09     -1.38E-14
+  G   S13               2.95056119E-10     -9.08E-16
+  G   S14              -6.35552503E-08      1.11E-16
+  G   S15              -2.19723119E-07     -1.92E-16
+  THI S2                7.03532783E-02     -1.15E-07
+  THI S3                1.05092009E-03      6.62E-09
+  THI S5                5.14951308E-02      4.26E-09
+  THI S7                3.02988603E-01      4.02E-09
+  THI S9                1.63064294E-01      9.69E-09
+  THI S11               6.51406633E-02     -3.13E-08
+  THI S13               5.29060461E-01     -2.86E-08
+  THI S15               6.34029479E-01     -4.28E-08
+  THI S17               1.93029479E-01     -4.28E-08
+  GLN S1                1.54640082E+00     -7.14E-09
+  GLV S1                1.01071794E-02     -1.38E-09
+  GLN S4                1.54296541E+00      2.05E-08
+  GLV S4                1.02629198E-02      3.70E-09
+  GLN S6                1.63923639E+00      1.06E-08
+  GLV S6                2.80325637E-02     -2.67E-09
+  GLN S8                1.53990649E+00     -1.73E-08
+  GLV S8                9.76452281E-03      2.41E-10
+  GLN S10               1.63813879E+00     -8.81E-09
+  GLV S10               2.79509302E-02     -8.56E-10
+  GLN S12               1.55053586E+00      3.07E-08
+  GLV S12               1.09073015E-02      2.30E-09
+  GLN S14               1.54265695E+00      5.31E-08
+  GLV S14               9.67492756E-03      8.97E-09
+  GLN S16               1.48502893E+00      2.23E-07
+  GLV S16               9.35202362E-03      4.89E-09
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.797000     0.000000     0.147297     5.278183     0.289572    -2.612463
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -7.490E-09   9.072E-06
+  GL C S1                                                            6.212E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.38804E-01   1.000E-02   1.927E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.12706E+00   1.000E-03   9.779E+00
+  
+ CYCLE NUMBER 12:
+  
+  ABERR F. =        0.05171818
+  CONST F. =       11.70516528
+  ERR. F.  =       11.75688346       (change =        0.00059080)
+  
+  OPD     0.03200289     0.04924035     0.03595197
+  WAV     0.04866958     0.07955256     0.05108757
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                3.00197662E-01      0.00E+00
+  CUY S2                3.15735351E-01      0.00E+00
+  CUY S4                4.80625033E-01      0.00E+00
+  CUY S5                6.16697414E-02      0.00E+00
+  CUY S6                1.38511361E-01      0.00E+00
+  CUY S7                2.75147723E-01      0.00E+00
+  CUY S8                3.44387863E-02      0.00E+00
+  CUY S9               -2.10018896E-01      0.00E+00
+  CUY S10              -5.70919883E-01      0.00E+00
+  CUY S11              -2.83272817E-01      0.00E+00
+  CUY S12               5.51955796E-01      0.00E+00
+  CUY S13               2.19842250E-01      0.00E+00
+  CUY S14               5.96705574E-01      0.00E+00
+  CUY S15               9.70396484E-01      0.00E+00
+  A   S1               -1.99146248E-02      0.00E+00
+  A   S2               -1.05500213E-01      0.00E+00
+  A   S3               -2.82291535E-02      0.00E+00
+  A   S4               -1.12579336E-01      0.00E+00
+  A   S5               -6.40700146E-02      0.00E+00
+  A   S6               -1.21267006E-02      0.00E+00
+  A   S7                6.87300814E-03      0.00E+00
+  A   S8               -4.96335216E-02      0.00E+00
+  A   S9               -9.79704467E-02      0.00E+00
+  A   S10              -7.46716938E-02      0.00E+00
+  A   S11              -1.51948324E-01      0.00E+00
+  A   S12               5.36883203E-02      0.00E+00
+  A   S13               6.35801570E-02      0.00E+00
+  A   S14              -1.84746496E-01      0.00E+00
+  A   S15              -1.34738273E-01      0.00E+00
+  B   S1                4.34168487E-02      0.00E+00
+  B   S2                1.16032545E-01      0.00E+00
+  B   S3                1.94369596E-02      0.00E+00
+  B   S4                7.97370844E-02      0.00E+00
+  B   S5               -1.08037020E-01      0.00E+00
+  B   S6               -1.24223300E-02      0.00E+00
+  B   S7               -2.47169956E-03      0.00E+00
+  B   S8               -1.23161079E-02      0.00E+00
+  B   S9               -2.32733228E-01      0.00E+00
+  B   S10               6.57353128E-02      0.00E+00
+  B   S11               1.82228043E-01      0.00E+00
+  B   S12              -4.83709933E-02      0.00E+00
+  B   S13              -4.25369240E-02      0.00E+00
+  B   S14               5.09796682E-02      0.00E+00
+  B   S15               5.68237519E-02      0.00E+00
+  C   S1               -3.72316839E-02      0.00E+00
+  C   S2                9.58710312E-03      0.00E+00
+  C   S3                1.42147688E-01      0.00E+00
+  C   S4               -1.37435737E-01      0.00E+00
+  C   S5                1.11702054E-01      0.00E+00
+  C   S6                5.51855764E-03      0.00E+00
+  C   S7               -1.05611233E-02      0.00E+00
+  C   S8               -1.73618555E-02      0.00E+00
+  C   S9                6.94677693E-01      0.00E+00
+  C   S10               2.21833461E-01      0.00E+00
+  C   S11              -7.99962637E-02      0.00E+00
+  C   S12               1.92101073E-02      0.00E+00
+  C   S13               1.11028700E-02      0.00E+00
+  C   S14              -7.21475813E-03      0.00E+00
+  C   S15              -1.61219296E-02      0.00E+00
+  D   S1                2.14233279E-02      0.00E+00
+  D   S2               -1.61723318E-01      0.00E+00
+  D   S3                4.01881996E-01      0.00E+00
+  D   S4                2.37877342E-02      0.00E+00
+  D   S5               -9.03345934E-02      0.00E+00
+  D   S6               -4.43210170E-02      0.00E+00
+  D   S7               -8.06618318E-03      0.00E+00
+  D   S8               -4.33102399E-03      0.00E+00
+  D   S9               -9.09994036E-01      0.00E+00
+  D   S10              -2.40691420E-01      0.00E+00
+  D   S11               2.21683969E-02      0.00E+00
+  D   S12              -5.81155437E-03      0.00E+00
+  D   S13              -1.74747531E-03      0.00E+00
+  D   S14               6.76371764E-04      0.00E+00
+  D   S15               2.66210689E-03      0.00E+00
+  E   S1                4.34291529E-03      0.00E+00
+  E   S2                1.93419466E-01      0.00E+00
+  E   S3                3.21406447E-09      0.00E+00
+  E   S4                2.07856947E-01      0.00E+00
+  E   S5                1.33609874E-02      0.00E+00
+  E   S6                2.08004497E-02      0.00E+00
+  E   S7               -2.64016559E-05      0.00E+00
+  E   S8                1.29840328E-02      0.00E+00
+  E   S9                6.99008194E-01      0.00E+00
+  E   S10               9.70438471E-02      0.00E+00
+  E   S11              -4.84349483E-03      0.00E+00
+  E   S12               1.00839309E-03      0.00E+00
+  E   S13               1.57696573E-04      0.00E+00
+  E   S14              -4.88571340E-05      0.00E+00
+  E   S15              -2.44169282E-04      0.00E+00
+  F   S1               -5.68601804E-03      0.00E+00
+  F   S2               -8.88548992E-02      0.00E+00
+  F   S3                1.82398010E-09      0.00E+00
+  F   S4               -2.40694803E-01      0.00E+00
+  F   S5               -2.06846232E-02      0.00E+00
+  F   S6               -1.10510534E-02      0.00E+00
+  F   S7                1.04905314E-05      0.00E+00
+  F   S8               -4.41314607E-05      0.00E+00
+  F   S9               -3.01842362E-01      0.00E+00
+  F   S10              -1.42009475E-02      0.00E+00
+  F   S11               5.62574604E-04      0.00E+00
+  F   S12              -6.78905033E-05      0.00E+00
+  F   S13              -6.00082458E-06      0.00E+00
+  F   S14               2.53565259E-06      0.00E+00
+  F   S15               1.15491216E-05      0.00E+00
+  G   S1               -5.11900382E-04      0.00E+00
+  G   S2                1.97758828E-05      0.00E+00
+  G   S3                2.01230587E-09      0.00E+00
+  G   S4               -1.30177159E-06      0.00E+00
+  G   S5                5.55501496E-04      0.00E+00
+  G   S6               -2.17518824E-05      0.00E+00
+  G   S7                1.81811440E-04      0.00E+00
+  G   S8               -3.68935130E-05      0.00E+00
+  G   S9                5.55780312E-02      0.00E+00
+  G   S10              -1.46308238E-04      0.00E+00
+  G   S11               4.03894572E-07      0.00E+00
+  G   S12              -2.60757091E-09      0.00E+00
+  G   S13               2.95056119E-10      0.00E+00
+  G   S14              -6.35552503E-08      0.00E+00
+  G   S15              -2.19723119E-07      0.00E+00
+  THI S2                7.03532783E-02      0.00E+00
+  THI S3                1.05092009E-03      0.00E+00
+  THI S5                5.14951308E-02      0.00E+00
+  THI S7                3.02988603E-01      0.00E+00
+  THI S9                1.63064294E-01      0.00E+00
+  THI S11               6.51406633E-02      0.00E+00
+  THI S13               5.29060461E-01      0.00E+00
+  THI S15               6.34029479E-01      0.00E+00
+  THI S17               1.93029479E-01      0.00E+00
+  GLN S1                1.54640082E+00      0.00E+00
+  GLV S1                1.01071794E-02      0.00E+00
+  GLN S4                1.54296541E+00      0.00E+00
+  GLV S4                1.02629198E-02      0.00E+00
+  GLN S6                1.63923639E+00      0.00E+00
+  GLV S6                2.80325637E-02      0.00E+00
+  GLN S8                1.53990649E+00      0.00E+00
+  GLV S8                9.76452281E-03      0.00E+00
+  GLN S10               1.63813879E+00      0.00E+00
+  GLV S10               2.79509302E-02      0.00E+00
+  GLN S12               1.55053586E+00      0.00E+00
+  GLV S12               1.09073015E-02      0.00E+00
+  GLN S14               1.54265695E+00      0.00E+00
+  GLV S14               9.67492756E-03      0.00E+00
+  GLN S16               1.48502893E+00      0.00E+00
+  GLV S16               9.35202362E-03      0.00E+00
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      3.797000     0.000000     0.147297     5.278183     0.289572    -2.612463
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   3.79700E+00   3.79700E+00  -7.490E-09   9.072E-06
+  GL C S1                                                            6.212E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.38804E-01   1.000E-02   1.927E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.12706E+00   1.000E-03   9.779E+00
+  
+     Normal AUTO Completion - Unstable Condition
+AUT> GO
+ 
+ 
+CODE V> BUF PUT B1 I^row J1 "schema"
+      Created new worksheet B1.
+CODE V> BUF PUT B1 I^row J2 "atelier-codev-target-v1"
+CODE V> BUF PUT B1 I^row J1 "status"
+CODE V> BUF PUT B1 I^row J2 "ok"
+CODE V> BUF PUT B1 I^row J1 "mode"
+CODE V> BUF PUT B1 I^row J2 "target"
+CODE V> BUF PUT B1 I^row J1 "stage"
+CODE V> BUF PUT B1 I^row J2 "A"
+CODE V> BUF PUT B1 I^row J1 "source_zmx"
+CODE V> BUF PUT B1 I^row J2 "US20170003482A1.zmx"
+CODE V> BUF PUT B1 I^row J1 "num_fields"
+CODE V> BUF PUT B1 I^row J2 ^numf_out
+CODE V> BUF PUT B1 I^row J1 "vignetting_edge"
+CODE V> BUF PUT B1 I^row J2 0
+CODE V> BUF PUT B1 I^row J1 "target.efl_mm"
+CODE V> BUF PUT B1 I^row J2 ^target_efl
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.fno"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_fno
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.epd"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_epd
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_maximh
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_fno
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.epd"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_epd
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "post_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "post_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_fno
+CODE V> BUF PUT B1 I^row J1 "post_aut.epd"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_epd
+CODE V> BUF PUT B1 I^row J1 "post_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "efl_target_deviation_pct"
+CODE V> BUF PUT B1 I^row J2 ^efl_target_dev_pct
+CODE V> BUF PUT B1 I^row J1 "aut_converged"
+CODE V> BUF PUT B1 I^row J2 ^aut_converged
+CODE V> BUF EXP B1 "D:\atelier-opt3\.planning\loop\candidates-2026-07-09\US20170003482A1\both\atelier_codev_target_A.tsv"
+     Buffer B1 exported to file atelier_codev_target_A.tsv
+CODE V> BUF DEL B1
+CODE V> BUF PUT B1 I^row J1 "schema"
+      Created new worksheet B1.
+CODE V> BUF PUT B1 I^row J2 "atelier-codev-readout-v1"
+CODE V> BUF PUT B1 I^row J1 "status"
+CODE V> BUF PUT B1 I^row J2 "ok"
+CODE V> BUF PUT B1 I^row J1 "source_zmx"
+CODE V> BUF PUT B1 I^row J2 "US20170003482A1.zmx"
+CODE V> BUF PUT B1 I^row J1 "units"
+CODE V> BUF PUT B1 I^row J2 ^units
+CODE V> BUF PUT B1 I^row J1 "aperture_type"
+CODE V> BUF PUT B1 I^row J2 ^apetype
+CODE V> BUF PUT B1 I^row J1 "f_number"
+CODE V> BUF PUT B1 I^row J2 ABSF((FNO))
+CODE V> BUF PUT B1 I^row J1 "entrance_pupil_diameter_mm"
+CODE V> BUF PUT B1 I^row J2 ABSF((EPD))
+CODE V> BUF PUT B1 I^row J1 "num_surfaces"
+CODE V> BUF PUT B1 I^row J2 ^numsur
+CODE V> BUF PUT B1 I^row J1 "num_fields"
+CODE V> BUF PUT B1 I^row J2 ^numfld
+CODE V> BUF PUT B1 I^row J1 "num_wavelengths"
+CODE V> BUF PUT B1 I^row J2 ^numwav
+CODE V> BUF PUT B1 I^row J1 "num_zooms"
+CODE V> BUF PUT B1 I^row J2 ^numz
+CODE V> BUF PUT B1 I^row J1 "stop_surface"
+CODE V> BUF PUT B1 I^row J2 ^stop
+CODE V> BUF PUT B1 I^row J1 "field_type"
+CODE V> BUF PUT B1 I^row J2 ^field_type
+CODE V> BUF PUT B1 I^row J1 "reference_wavelength_index"
+CODE V> BUF PUT B1 I^row J2 ^refw
+CODE V> BUF PUT B1 I^row J1 "image_height_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^maximh
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^semi_diameter_mm
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WL W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WTW Z1 W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WL W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WTW Z1 W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WL W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WTW Z1 W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_x
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_y
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_x
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_y
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_x
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_y
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
+CODE V> BUF EXP B1 "D:\atelier-opt3\.planning\loop\candidates-2026-07-09\US20170003482A1\both\atelier_codev_target_A_optimized_readout.tsv"
+     Buffer B1 exported to file atelier_codev_target_A_optimized_readout.tsv
+CODE V> BUF DEL B1
+CODE V> OUT YES
+CODE V> EXI YES
+     EXI                                                                               9-Jul-26  19H  3M  0S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M 25S

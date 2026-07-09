@@ -1,0 +1,537 @@
+! target-mode: EFL->target + FNO-lock F# + 3 snapshots. codev_optimize.
+FCT @lcum(NUM ^dummy)
+LCL NUM ^dummy ^f ^wshort ^wlong ^x1 ^x2 ^y1 ^y2 ^value ^max
+^max == 0
+^wshort == 1
+^wlong == (NUM W)
+FOR ^f 1 (NUM F)
+  ^x1 == (X F^f Z1 R1 W^wshort SI)
+  ^y1 == (Y F^f Z1 R1 W^wshort SI)
+  ^x2 == (X F^f Z1 R1 W^wlong SI)
+  ^y2 == (Y F^f Z1 R1 W^wlong SI)
+  ^value == SQRTF((^x1-^x2)**2 + (^y1-^y2)**2)*1000
+  IF ^value > ^max
+    ^max == ^value
+  END IF
+END FOR
+END FCT ^max
+FCT @rmssum(NUM ^dummy)
+LCL NUM ^dummy ^f ^spot(10) ^err ^value ^max
+^max == 0
+FOR ^f 1 (NUM F)
+  ^err == SPOTDATA(1,^f,1,0.01,'CEN',0,0,^spot)
+  IF ^err = 0
+    ^value == ^spot(1)*1000
+    IF ^value > ^max
+      ^max == ^value
+    END IF
+  END IF
+END FOR
+END FCT ^max
+FCT @mtfmin(NUM ^freq, NUM ^nrd)
+LCL NUM ^freq ^nrd ^f ^xout(6) ^yout(6) ^xmtf ^ymtf ^value ^min
+^min == 1
+FOR ^f 1 (NUM F)
+  ^xmtf == MTF_1FLD(1,^f,^freq,0,^nrd,^xout,'DIF','SIN')
+  ^ymtf == MTF_1FLD(1,^f,^freq,90,^nrd,^yout,'DIF','SIN')
+  IF ^xmtf >= 0 and ^ymtf >= 0
+    ^value == (^xmtf+^ymtf)/2
+    IF ^value < ^min
+      ^min == ^value
+    END IF
+  END IF
+END FOR
+END FCT ^min
+FCT @wfewav(NUM ^dummy)
+LCL NUM ^dummy ^f ^ok ^rwe(10,26) ^value ^max
+^max == 0
+^ok == RMSWE(1,0,60,^rwe,'NOM')
+IF ^ok >= 0
+  FOR ^f 1 (NUM F)
+    ^value == ABSF(^rwe(1,^f))
+    IF ^value > ^max
+      ^max == ^value
+    END IF
+  END FOR
+END IF
+END FCT ^max
+FCT @dstpct(NUM ^dummy)
+LCL NUM ^dummy ^f ^dx ^dy ^value ^max
+^max == 0
+FOR ^f 1 (NUM F)
+  ^dx == (DIX Z1 F^f)
+  ^dy == (DIY Z1 F^f)
+  ^value == SQRTF(^dx*^dx + ^dy*^dy)*100
+  IF ^value > ^max
+    ^max == ^value
+  END IF
+END FOR
+END FCT ^max
+OUT NO
+IN CV_MACRO:ZEMAXOS_TO_CV "D:\atelier-opt3\data\zmx\US20170045714A1.zmx"
+DEF VAR SA
+FOR ^s 1 (NUM S)
+  IF (TYP SUR S^s) = "ASP"
+    AC S^s 0
+    BC S^s 0
+    CC S^s 0
+    DC S^s 0
+    EC S^s 0
+    FC S^s 0
+    GC S^s 0
+  END IF
+END FOR
+^seed_baseline_efl_y_mm == ABSF((EFY))
+^seed_baseline_max_lateral_color_um == @lcum(1)
+^seed_baseline_max_rms_spot_diameter_um == @rmssum(1)
+^seed_baseline_max_rms_wavefront_error_waves == @wfewav(1)
+^seed_baseline_max_distortion_pct == @dstpct(1)
+^seed_baseline_fno == ABSF((FNO))
+^seed_baseline_epd == ABSF((EPD))
+^seed_baseline_ftyp == (TYP FLD)
+^seed_baseline_maximh == 0
+FOR ^f 1 (NUM F)
+  ^yh == (YRI F^f Z1)
+  IF ^seed_baseline_ftyp = "ANG"
+    ^yh == ^seed_baseline_efl_y_mm * TANF((YAN F^f Z1)*4*ATANF(1)/180)
+  ELS IF ^seed_baseline_ftyp = "IMG"
+    ^yh == (YIM F^f Z1)
+  END IF
+  IF ABSF(^yh) > ^seed_baseline_maximh
+    ^seed_baseline_maximh == ABSF(^yh)
+  END IF
+END FOR
+VUY 0 0.2 0.2
+VLY 0 0.2 0.2
+VUX 0 0.2 0.2
+VLX 0 0.2 0.2
+^config_pre_aut_efl_y_mm == ABSF((EFY))
+^config_pre_aut_max_lateral_color_um == @lcum(1)
+^config_pre_aut_max_rms_spot_diameter_um == @rmssum(1)
+^config_pre_aut_max_rms_wavefront_error_waves == @wfewav(1)
+^config_pre_aut_max_distortion_pct == @dstpct(1)
+^config_pre_aut_fno == ABSF((FNO))
+^config_pre_aut_epd == ABSF((EPD))
+^config_pre_aut_ftyp == (TYP FLD)
+^config_pre_aut_maximh == 0
+FOR ^f 1 (NUM F)
+  ^yh == (YRI F^f Z1)
+  IF ^config_pre_aut_ftyp = "ANG"
+    ^yh == ^config_pre_aut_efl_y_mm * TANF((YAN F^f Z1)*4*ATANF(1)/180)
+  ELS IF ^config_pre_aut_ftyp = "IMG"
+    ^yh == (YIM F^f Z1)
+  END IF
+  IF ABSF(^yh) > ^config_pre_aut_maximh
+    ^config_pre_aut_maximh == ABSF(^yh)
+  END IF
+END FOR
+AUT
+  SUR N
+  CHG SA
+  WFR Y
+  WTF FA 10
+  EFL = 3.797
+  @atelier_latcolor == @lcum(1)
+  @atelier_latcolor = 0
+  WTC 0.01
+  @atelier_rmsspot == @rmssum(1)
+  @atelier_rmsspot = 0
+  WTC 0.001
+  MNT 0.025
+  MNE 0.025
+  MXT 10
+  MNA 0.001
+  MXC 25
+  MNC 3
+  IMP 0.001
+GO
+^post_aut_efl_y_mm == ABSF((EFY))
+^post_aut_max_lateral_color_um == @lcum(1)
+^post_aut_max_rms_spot_diameter_um == @rmssum(1)
+^post_aut_max_rms_wavefront_error_waves == @wfewav(1)
+^post_aut_max_distortion_pct == @dstpct(1)
+^post_aut_fno == ABSF((FNO))
+^post_aut_epd == ABSF((EPD))
+^post_aut_ftyp == (TYP FLD)
+^post_aut_maximh == 0
+FOR ^f 1 (NUM F)
+  ^yh == (YRI F^f Z1)
+  IF ^post_aut_ftyp = "ANG"
+    ^yh == ^post_aut_efl_y_mm * TANF((YAN F^f Z1)*4*ATANF(1)/180)
+  ELS IF ^post_aut_ftyp = "IMG"
+    ^yh == (YIM F^f Z1)
+  END IF
+  IF ABSF(^yh) > ^post_aut_maximh
+    ^post_aut_maximh == ABSF(^yh)
+  END IF
+END FOR
+^target_efl == 3.797
+^efl_target_dev_pct == 0
+IF ABSF(^target_efl) > 1.0E-12
+  ^efl_target_dev_pct == ABSF((^post_aut_efl_y_mm-^target_efl)/^target_efl)*100
+END IF
+^aut_converged == 0
+IF ^efl_target_dev_pct < 2.0
+  ^aut_converged == 1
+END IF
+^numf_out == (NUM F)
+^row == 1
+BUF PUT B1 I^row J1 "schema"
+BUF PUT B1 I^row J2 "atelier-codev-target-v1"
+^row == ^row+1
+BUF PUT B1 I^row J1 "status"
+BUF PUT B1 I^row J2 "ok"
+^row == ^row+1
+BUF PUT B1 I^row J1 "mode"
+BUF PUT B1 I^row J2 "target"
+^row == ^row+1
+BUF PUT B1 I^row J1 "stage"
+BUF PUT B1 I^row J2 "A"
+^row == ^row+1
+BUF PUT B1 I^row J1 "source_zmx"
+BUF PUT B1 I^row J2 "US20170045714A1.zmx"
+^row == ^row+1
+BUF PUT B1 I^row J1 "num_fields"
+BUF PUT B1 I^row J2 ^numf_out
+^row == ^row+1
+BUF PUT B1 I^row J1 "vignetting_edge"
+BUF PUT B1 I^row J2 0.2
+^row == ^row+1
+BUF PUT B1 I^row J1 "target.efl_mm"
+BUF PUT B1 I^row J2 ^target_efl
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.efl_y_mm"
+BUF PUT B1 I^row J2 ^seed_baseline_efl_y_mm
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_lateral_color_um"
+BUF PUT B1 I^row J2 ^seed_baseline_max_lateral_color_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_rms_spot_diameter_um"
+BUF PUT B1 I^row J2 ^seed_baseline_max_rms_spot_diameter_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_rms_wavefront_error_waves"
+BUF PUT B1 I^row J2 ^seed_baseline_max_rms_wavefront_error_waves
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_distortion_pct"
+BUF PUT B1 I^row J2 ^seed_baseline_max_distortion_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.fno"
+BUF PUT B1 I^row J2 ^seed_baseline_fno
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.epd"
+BUF PUT B1 I^row J2 ^seed_baseline_epd
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.maximh_mm"
+BUF PUT B1 I^row J2 ^seed_baseline_maximh
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.efl_y_mm"
+BUF PUT B1 I^row J2 ^config_pre_aut_efl_y_mm
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_lateral_color_um"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_lateral_color_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_rms_spot_diameter_um"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_spot_diameter_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_rms_wavefront_error_waves"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_wavefront_error_waves
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_distortion_pct"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_distortion_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.fno"
+BUF PUT B1 I^row J2 ^config_pre_aut_fno
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.epd"
+BUF PUT B1 I^row J2 ^config_pre_aut_epd
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.maximh_mm"
+BUF PUT B1 I^row J2 ^config_pre_aut_maximh
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.efl_y_mm"
+BUF PUT B1 I^row J2 ^post_aut_efl_y_mm
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_lateral_color_um"
+BUF PUT B1 I^row J2 ^post_aut_max_lateral_color_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_rms_spot_diameter_um"
+BUF PUT B1 I^row J2 ^post_aut_max_rms_spot_diameter_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_rms_wavefront_error_waves"
+BUF PUT B1 I^row J2 ^post_aut_max_rms_wavefront_error_waves
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_distortion_pct"
+BUF PUT B1 I^row J2 ^post_aut_max_distortion_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.fno"
+BUF PUT B1 I^row J2 ^post_aut_fno
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.epd"
+BUF PUT B1 I^row J2 ^post_aut_epd
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.maximh_mm"
+BUF PUT B1 I^row J2 ^post_aut_maximh
+^row == ^row+1
+BUF PUT B1 I^row J1 "efl_target_deviation_pct"
+BUF PUT B1 I^row J2 ^efl_target_dev_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "aut_converged"
+BUF PUT B1 I^row J2 ^aut_converged
+^row == ^row+1
+BUF EXP B1 "D:\atelier-opt3\scratch_diag\vigtoken_smoke\asphere\atelier_codev_target_A_vig020.tsv"
+BUF DEL B1
+^row == 1
+^refw == (REF)
+^numsur == (NUM S)
+^numfld == (NUM F)
+^numwav == (NUM W)
+^numz == (NUM Z)
+^stop == (STO)
+^units == (DIM)
+^apetype == (TYP APE)
+^field_type == (TYP FLD)
+^maximh == 0
+^pi == 4*ATANF(1)
+^deg_to_rad == ^pi/180
+^efy == ABSF((EFY))
+FOR ^f 1 ^numfld
+  ^yh == (YRI F^f Z1)
+  IF ^field_type = "ANG"
+    ^field_angle_y == (YAN F^f Z1)
+    ^field_angle_y_rad == ^field_angle_y * ^deg_to_rad
+    ^yh == ^efy * TANF(^field_angle_y_rad)
+  ELS IF ^field_type = "IMG"
+    ^yh == (YIM F^f Z1)
+  END IF
+  IF ABSF(^yh) > ^maximh
+    ^maximh == ABSF(^yh)
+  END IF
+END FOR
+BUF PUT B1 I^row J1 "schema"
+BUF PUT B1 I^row J2 "atelier-codev-readout-v1"
+^row == ^row+1
+BUF PUT B1 I^row J1 "status"
+BUF PUT B1 I^row J2 "ok"
+^row == ^row+1
+BUF PUT B1 I^row J1 "source_zmx"
+BUF PUT B1 I^row J2 "US20170045714A1.zmx"
+^row == ^row+1
+BUF PUT B1 I^row J1 "units"
+BUF PUT B1 I^row J2 ^units
+^row == ^row+1
+BUF PUT B1 I^row J1 "aperture_type"
+BUF PUT B1 I^row J2 ^apetype
+^row == ^row+1
+BUF PUT B1 I^row J1 "f_number"
+BUF PUT B1 I^row J2 ABSF((FNO))
+^row == ^row+1
+BUF PUT B1 I^row J1 "entrance_pupil_diameter_mm"
+BUF PUT B1 I^row J2 ABSF((EPD))
+^row == ^row+1
+BUF PUT B1 I^row J1 "num_surfaces"
+BUF PUT B1 I^row J2 ^numsur
+^row == ^row+1
+BUF PUT B1 I^row J1 "num_fields"
+BUF PUT B1 I^row J2 ^numfld
+^row == ^row+1
+BUF PUT B1 I^row J1 "num_wavelengths"
+BUF PUT B1 I^row J2 ^numwav
+^row == ^row+1
+BUF PUT B1 I^row J1 "num_zooms"
+BUF PUT B1 I^row J2 ^numz
+^row == ^row+1
+BUF PUT B1 I^row J1 "stop_surface"
+BUF PUT B1 I^row J2 ^stop
+^row == ^row+1
+BUF PUT B1 I^row J1 "field_type"
+BUF PUT B1 I^row J2 ^field_type
+^row == ^row+1
+BUF PUT B1 I^row J1 "reference_wavelength_index"
+BUF PUT B1 I^row J2 ^refw
+^row == ^row+1
+BUF PUT B1 I^row J1 "image_height_y_mm"
+BUF PUT B1 I^row J2 ^maximh
+^row == ^row+1
+FOR ^s 1 ^numsur
+  ^surface_prefix == "surface."
+  ^surface_prefix == CONCAT(^surface_prefix, NUM_TO_STR(^s))
+  ^surf_type == (TYP SUR S^s)
+  ^glass == (GLA S^s)
+  ^nd == ABSF((IND S^s W^refw))
+  ^vd == 0
+  IF (NUM W) >= 3
+    ^n1 == ABSF((IND S^s W1))
+    ^nl == ABSF((IND S^s WL))
+    ^diffn == ^nl - ^n1
+    IF ABSF(^diffn) > 1.0E-12
+      ^vd == (^nd - 1) / ^diffn
+    END IF
+  END IF
+  ^isstop == 0
+  IF ^s = ^stop
+    ^isstop == 1
+  END IF
+  ^coefK == 0
+  ^coefA == 0
+  ^coefB == 0
+  ^coefC == 0
+  ^coefD == 0
+  ^coefE == 0
+  ^coefF == 0
+  ^coefG == 0
+  ^coefH == 0
+  ^coefJ == 0
+  IF ^surf_type = "ASP"
+    ^coefK == (K S^s)
+    ^coefA == (A S^s)
+    ^coefB == (B S^s)
+    ^coefC == (C S^s)
+    ^coefD == (D S^s)
+    ^coefE == (E S^s)
+    ^coefF == (F S^s)
+    ^coefG == (G S^s)
+    ^coefH == (H S^s)
+    ^coefJ == (J S^s)
+  ELS IF ^surf_type = "CON"
+    ^coefK == (K S^s)
+  END IF
+  ^key == CONCAT(^surface_prefix, ".radius_y_mm")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (RDY S^s)
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".thickness_mm")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (THI S^s)
+  ^row == ^row+1
+  ^semi_diameter_mm == ABSF((MAP S^s))
+  IF ^semi_diameter_mm < 1e-06
+    ^semi_diameter_mm == 1e-06
+  END IF
+  ^key == CONCAT(^surface_prefix, ".semi_diameter_mm")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^semi_diameter_mm
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".glass")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^glass
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".nd")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^nd
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".vd")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^vd
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".surface_type")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^surf_type
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".is_stop")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^isstop
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.K")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefK
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.A")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefA
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.B")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefB
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.C")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefC
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.D")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefD
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.E")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefE
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.F")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefF
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.G")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefG
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.H")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefH
+  ^row == ^row+1
+  ^key == CONCAT(^surface_prefix, ".asphere.J")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^coefJ
+  ^row == ^row+1
+END FOR
+FOR ^w 1 ^numwav
+  ^wavelength_prefix == "wavelength."
+  ^wavelength_prefix == CONCAT(^wavelength_prefix, NUM_TO_STR(^w))
+  ^key == CONCAT(^wavelength_prefix, ".wavelength_nm")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (WL W^w)
+  ^row == ^row+1
+  ^key == CONCAT(^wavelength_prefix, ".weight")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (WTW Z1 W^w)
+  ^row == ^row+1
+END FOR
+FOR ^f 1 ^numfld
+  ^field_prefix == "field."
+  ^field_prefix == CONCAT(^field_prefix, NUM_TO_STR(^f))
+  ^field_x == 0
+  ^field_y == 0
+  IF ^field_type = "OBJ"
+    ^field_x == (XOB F^f Z1)
+    ^field_y == (YOB F^f Z1)
+  ELS IF ^field_type = "IMG"
+    ^field_x == (XIM F^f Z1)
+    ^field_y == (YIM F^f Z1)
+  ELS IF ^field_type = "ANG"
+    ^field_x == (XAN F^f Z1)
+    ^field_y == (YAN F^f Z1)
+  ELS
+    ^field_x == (XRI F^f Z1)
+    ^field_y == (YRI F^f Z1)
+  END IF
+  ^key == CONCAT(^field_prefix, ".definition_type")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^field_type
+  ^row == ^row+1
+  ^key == CONCAT(^field_prefix, ".x")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^field_x
+  ^row == ^row+1
+  ^key == CONCAT(^field_prefix, ".y")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 ^field_y
+  ^row == ^row+1
+  ^key == CONCAT(^field_prefix, ".vuy")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (VUY F^f Z1)
+  ^row == ^row+1
+  ^key == CONCAT(^field_prefix, ".vly")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (VLY F^f Z1)
+  ^row == ^row+1
+  ^key == CONCAT(^field_prefix, ".vux")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (VUX F^f Z1)
+  ^row == ^row+1
+  ^key == CONCAT(^field_prefix, ".vlx")
+  BUF PUT B1 I^row J1 ^key
+  BUF PUT B1 I^row J2 (VLX F^f Z1)
+  ^row == ^row+1
+END FOR
+BUF EXP B1 "D:\atelier-opt3\scratch_diag\vigtoken_smoke\asphere\atelier_codev_target_A_vig020_optimized_readout.tsv"
+BUF DEL B1
+OUT YES
+EXI YES
