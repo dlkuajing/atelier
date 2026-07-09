@@ -1,4 +1,12 @@
-# ③ 优化落地 · 自主 loop 进度 digest（2026-07-09）
+# ③ 优化落地 · 自主 loop 进度 digest（2026-07-09，续 07-10）
+
+> **07-10 追记（主公授权"按工程最佳实践自主推进"后）**：
+> 1. **PR #45 已合 main（0ea7650，PR CI 31m51s 绿 + main CI 绿，AI Release Authority 全 gate）**——③ 全部成果落主线。合并前对抗审查（8 finder 角度 + recall verify）：18 候选 15 CONFIRMED/3 PLAUSIBLE/0 REFUTED，13 项修复入 d421d2b（含 stale readout 认领事故残余、returncode 闸、BUF EXP 危险文件名机制守卫、provenance per-config 如实、NaN 穿透、epd_mm schema）；维护类 5 项记 backlog。
+> 2. **vig token 真相二纠**：非"覆写混叠"而是 CODE V 拒写含 `.20_` 中缀文件名 → 受影响 rung ZMX 从未落盘（fail-open 静默吞）；修复后候选 2 两配置 ZMX 已交付（归属一致 0.03%）。
+> 3. **C1 harness M1 实施中（feat/c1-orchestration-m1，spec a309f3b 已定稿=执行既定方案）**：C1-a rank_seeds 抽取（行为逐位不变，golden 未翻转，1119 保护网绿）→ C1-b 骨架+诚实不变量（-O 下 raise 实测）→ C1-c scorecard+RI（全库零渐晕声明 → RI=纯 cos⁴θ 数据现状如实钉死）→ C1-d orchestrator+离线报告（banner 置顶+资深留白节）。69 orchestration 测试绿，全仓回归跑批中。
+> 4. 下一步：C1 批次审查闸 → PR → merge；然后 Mode3 真接入（CONVERGED_FIELDS 缩窄 {"efl"}）与三个交接工程铲（Stage B CRA / 落真实玻璃 / 良品率矩阵扩充）。
+
+
 
 > Orchestrator：Fable 5（无人值守 loop）；executor：Sonnet subagents。
 > 真值来源：真机 tsv/.lis + pytest + git（非 AI 自报）。良品率/合格判定不在本报告（[EXPERT] 红线）。

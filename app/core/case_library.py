@@ -21,7 +21,7 @@ import json
 import math
 import re
 import warnings
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from functools import lru_cache
 from pathlib import Path
 from typing import NamedTuple
@@ -913,6 +913,18 @@ def _candidate_scenarios(scenario: Scenario) -> set[Scenario]:
     return {scenario}
 
 
+def cases_for_scenario(scenario: Scenario) -> list[OpticalSampleData]:
+    """Public case-pool filter: `load_case_library()` narrowed to `scenario`'s
+    `_candidate_scenarios` family. Shared by `match_case` (below) and C1
+    orchestration's `RetrievalGenerator` (`orchestration/generators.py`) so
+    the two never drift on what counts as "this scenario's candidate pool"
+    (previously duplicated inline in both places, verbatim)."""
+    allowed = _candidate_scenarios(scenario)
+    return [
+        c for c in load_case_library() if c.metadata is not None and c.metadata.scenario in allowed
+    ]
+
+
 def _norm_delta(target: float, value: float, lo: float, hi: float) -> float:
     return 0.0 if hi == lo else (target - value) / (hi - lo)
 
@@ -921,6 +933,11 @@ def _normalized_weights(weights: dict[str, float]) -> dict[str, float]:
     active = {k: v for k, v in weights.items() if v > 0}
     total = sum(active.values())
     return {k: v / total for k, v in active.items()} if total else {}
+
+
+def _score_from_distance(value: float) -> float:
+    """Map a weighted normalized distance to a bounded [0, 1] match score."""
+    return max(0.0, min(1.0, 1.0 / (1.0 + value)))
 
 
 def _unique_strings_in_order(values: Sequence[str]) -> list[str]:
@@ -1291,42 +1308,85 @@ def build_seed_intake_audit(
     )
 
 
-def match_case(
-    scenario: Scenario,
-    efl_mm: float,
-    fnum: float,
-    fov_deg: float,
+class RankedCase(NamedTuple):
+    """One case's read-out from `rank_seeds`, full pool, no truncation.
+
+    `role` mirrors the `CandidateComparison.role` contract (best_match /
+    cost_variant / thin_variant / performance_variant / nearby_alternative)
+    but is never numbered here -- `nearby_alternative_N` disambiguation is a
+    presentation concern of the top-4 `selected_candidates` view, applied by
+    the consumer (see `SeedRanking.selected_candidates` / `match_case`).
+    """
+
+    case_id: str
+    distance: float
+    score: float
+    role: str
+    distance_parts: dict[str, float]
+
+
+class SeedRanking(NamedTuple):
+    """Full result of `rank_seeds`: the pure ranking plus everything
+    `match_case` needs to rebuild its historical local scope.
+
+    `match_case`'s ~13k lines downstream of the original inline ranking
+    block call back into the distance/weight/penalty machinery repeatedly
+    (re-ranking at an alternate target EFL, re-scoring a specific candidate,
+    reading the active weights/mass proxies/priority flags). Rather than
+    duplicate that machinery, `rank_seeds` hands the live closures and raw
+    pieces back out so `match_case` can rebind them to its old local names
+    unchanged (see C1 spec 6.2 / C1-a extraction notes).
+    """
+
+    ranked: list[RankedCase]
+    ranked_cases: list[OpticalSampleData]
+    distances: dict[str, float]
+    weights: dict[str, float]
+    mass_proxies: dict[str, _MassProxy]
+    cost_like: bool
+    performance_like: bool
+    manufacturing_tier_normalized: str
+    n_lo: int
+    t_lo: float
+    best: OpticalSampleData
+    cost_seed: OpticalSampleData
+    thin_seed: OpticalSampleData
+    performance_seed: OpticalSampleData
+    selected_candidates: list[tuple[OpticalSampleData, str]]
+    distance_fn: Callable[..., float]
+    distance_parts_fn: Callable[..., dict[str, float]]
+    seed_floor_gap_fn: Callable[[OpticalSampleData], float | None]
+
+
+def rank_seeds(
+    cases: Sequence[OpticalSampleData],
     *,
+    efl_mm: float,
+    fov_deg: float,
+    fnum: float,
     image_height_mm: float | None = None,
     n_elements: int | None = None,
     max_total_track_mm: float | None = None,
     max_weight_g: float | None = None,
     manufacturing_tier: str | None = None,
     priority: str | None = None,
-    include_design_assessment: bool = True,
-    lightweight_design_assessment: bool = False,
-) -> OpticalSampleData | None:
-    """Return the real case nearest to the user's full design intent.
+) -> SeedRanking:
+    """Rank a seed pool against one design intent (shared `match_case` core).
 
-    v2-03 only ranked (EFL / FOV / F#) inside one scenario bucket. v2-05 keeps
-    the real-case seed strategy, but scores phone short-focus cases as one
-    family and includes image height, element count, TTL, and coarse design
-    stance. By default the returned sample carries a `design_assessment`
-    explaining the match and its tradeoffs. Launch smoke paths can set
-    `include_design_assessment=False` to return only the selected real seed
-    payload without running the heavier optimizer/review evidence chain.
+    Scores every case in `cases` by a weighted normalized distance across
+    EFL / FOV / F# / image height / element count / TTL / mass / MTF-quality
+    floor -- exactly the v2-05 `match_case` scoring model. Pure function: no
+    I/O, no randomness, no mutation of `cases`.
 
-    `lightweight_design_assessment=True` still skips the protected optimizer
-    and replay gates, but returns the MTF-first seed scorecard, requirement
-    coverage, manufacturability proxy, and candidate comparison so production
-    seed-only mode is not just a naked nearest-neighbor payload.
+    Extracted verbatim from `match_case` (C1 spec 6.2, C1-a pre-refactor);
+    the numeric logic is unchanged, this is a pure move + parameterization.
+    Returns the full ranking (uncapped, role-annotated -- `SeedRanking.ranked`)
+    plus the raw pieces `match_case` reconstructs its downstream local scope
+    from (see `SeedRanking`).
     """
-    allowed = _candidate_scenarios(scenario)
-    cases = [
-        c for c in load_case_library() if c.metadata is not None and c.metadata.scenario in allowed
-    ]
+    cases = list(cases)
     if not cases:
-        return None
+        raise ValueError("rank_seeds requires a non-empty case pool")
 
     efls = [c.metadata.computed_efl_mm for c in cases]
     fovs = [c.metadata.fov_deg for c in cases]
@@ -1477,29 +1537,37 @@ def match_case(
             parts["quality"] = _seed_quality_penalty(c)
         return parts
 
-    def _distance(c: OpticalSampleData, *, target_efl_mm: float = efl_mm) -> float:
-        parts = _distance_parts(c, target_efl_mm=target_efl_mm)
+    def _distance_from_parts(c: OpticalSampleData, parts: dict[str, float]) -> float:
         weighted_distance = math.sqrt(sum(weights[k] * parts.get(k, 0.0) ** 2 for k in weights))
         return weighted_distance + _seed_spec_guard_penalty(c)
 
+    def _distance(c: OpticalSampleData, *, target_efl_mm: float = efl_mm) -> float:
+        parts = _distance_parts(c, target_efl_mm=target_efl_mm)
+        return _distance_from_parts(c, parts)
+
+    # Precompute parts once per case alongside its distance (`_distance_from_parts`
+    # factored out so this loop and `_distance` share the same weighted-sum math,
+    # not two copies of it). `ranked` below used to re-walk the whole pool through
+    # `_distance_parts` a second time just to populate `RankedCase.distance_parts`
+    # (+44ms/call on the full library; the only consumer of that second pass is
+    # `SeedRanking.ranked`, currently read only by tests) — caching here means
+    # `ranked`'s build below is a pure dict lookup instead of a second O(n) scan.
     distances: dict[str, float] = {}
+    distance_parts_by_id: dict[str, dict[str, float]] = {}
     for case in cases:
         assert case.metadata is not None
-        distances[case.metadata.case_id] = _distance(case)
+        case_id = case.metadata.case_id
+        parts = _distance_parts(case)  # default target_efl_mm=efl_mm, matches `_distance(case)`
+        distance_parts_by_id[case_id] = parts
+        distances[case_id] = _distance_from_parts(case, parts)
 
     def _case_distance(c: OpticalSampleData) -> float:
         assert c.metadata is not None
         return distances[c.metadata.case_id]
 
-    def _score_from_distance(value: float) -> float:
-        return max(0.0, min(1.0, 1.0 / (1.0 + value)))
-
-    ranked = sorted(cases, key=_case_distance)
-    best = ranked[0]
+    ranked_cases = sorted(cases, key=_case_distance)
+    best = ranked_cases[0]
     assert best.metadata is not None
-    distance = _case_distance(best)
-    score = _score_from_distance(distance)
-    imh = _case_image_height_mm(best)
 
     cost_seed = min(
         cases,
@@ -1519,17 +1587,23 @@ def match_case(
         ),
     )
 
-    selected_candidates: list[tuple[OpticalSampleData, str]] = []
+    # Priority-ordered "first assignment wins" selection, unchanged from the
+    # original inline `_append_candidate` sequence. Because it always walks
+    # every case in `ranked_cases` at the end (dedup no-ops for anything
+    # already claimed), `selection_order` ends up holding every case exactly
+    # once with its role decided -- capturing it *before* the historical
+    # top-4 truncation is what makes the full, uncapped `ranked` output below
+    # possible without re-deriving the priority logic a second time.
+    selection_order: list[tuple[OpticalSampleData, str]] = []
+    claimed_ids: set[str] = set()
 
     def _append_candidate(candidate: OpticalSampleData, role: str) -> None:
         assert candidate.metadata is not None
         case_id = candidate.metadata.case_id
-        if any(
-            existing.metadata and existing.metadata.case_id == case_id
-            for existing, _ in selected_candidates
-        ):
+        if case_id in claimed_ids:
             return
-        selected_candidates.append((candidate, role))
+        claimed_ids.add(case_id)
+        selection_order.append((candidate, role))
 
     _append_candidate(best, "best_match")
     if cost_like:
@@ -1544,9 +1618,12 @@ def match_case(
         (performance_seed, "performance_variant"),
     ):
         _append_candidate(candidate, role)
-    for candidate in ranked:
+    for candidate in ranked_cases:
         _append_candidate(candidate, "nearby_alternative")
-    selected_candidates = selected_candidates[:4]
+
+    role_by_case_id = {c.metadata.case_id: role for c, role in selection_order}
+
+    selected_candidates = selection_order[:4]
     nearby_alternative_index = 0
     disambiguated_candidates: list[tuple[OpticalSampleData, str]] = []
     for candidate, role in selected_candidates:
@@ -1555,6 +1632,119 @@ def match_case(
             role = f"nearby_alternative_{nearby_alternative_index}"
         disambiguated_candidates.append((candidate, role))
     selected_candidates = disambiguated_candidates
+
+    ranked: list[RankedCase] = []
+    for c in ranked_cases:
+        case_id = c.metadata.case_id
+        case_distance = distances[case_id]
+        ranked.append(
+            RankedCase(
+                case_id=case_id,
+                distance=case_distance,
+                score=_score_from_distance(case_distance),
+                role=role_by_case_id[case_id],
+                distance_parts=distance_parts_by_id[case_id],
+            )
+        )
+
+    return SeedRanking(
+        ranked=ranked,
+        ranked_cases=ranked_cases,
+        distances=distances,
+        weights=weights,
+        mass_proxies=mass_proxies,
+        cost_like=cost_like,
+        performance_like=performance_like,
+        manufacturing_tier_normalized=tier,
+        n_lo=n_lo,
+        t_lo=t_lo,
+        best=best,
+        cost_seed=cost_seed,
+        thin_seed=thin_seed,
+        performance_seed=performance_seed,
+        selected_candidates=selected_candidates,
+        distance_fn=_distance,
+        distance_parts_fn=_distance_parts,
+        seed_floor_gap_fn=_seed_floor_gap,
+    )
+
+
+def match_case(
+    scenario: Scenario,
+    efl_mm: float,
+    fnum: float,
+    fov_deg: float,
+    *,
+    image_height_mm: float | None = None,
+    n_elements: int | None = None,
+    max_total_track_mm: float | None = None,
+    max_weight_g: float | None = None,
+    manufacturing_tier: str | None = None,
+    priority: str | None = None,
+    include_design_assessment: bool = True,
+    lightweight_design_assessment: bool = False,
+) -> OpticalSampleData | None:
+    """Return the real case nearest to the user's full design intent.
+
+    v2-03 only ranked (EFL / FOV / F#) inside one scenario bucket. v2-05 keeps
+    the real-case seed strategy, but scores phone short-focus cases as one
+    family and includes image height, element count, TTL, and coarse design
+    stance. By default the returned sample carries a `design_assessment`
+    explaining the match and its tradeoffs. Launch smoke paths can set
+    `include_design_assessment=False` to return only the selected real seed
+    payload without running the heavier optimizer/review evidence chain.
+
+    `lightweight_design_assessment=True` still skips the protected optimizer
+    and replay gates, but returns the MTF-first seed scorecard, requirement
+    coverage, manufacturability proxy, and candidate comparison so production
+    seed-only mode is not just a naked nearest-neighbor payload.
+    """
+    cases = cases_for_scenario(scenario)
+    if not cases:
+        return None
+
+    seed_ranking = rank_seeds(
+        cases,
+        efl_mm=efl_mm,
+        fov_deg=fov_deg,
+        fnum=fnum,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        max_total_track_mm=max_total_track_mm,
+        max_weight_g=max_weight_g,
+        manufacturing_tier=manufacturing_tier,
+        priority=priority,
+    )
+    weights = seed_ranking.weights
+    mass_proxies = seed_ranking.mass_proxies
+    cost_like = seed_ranking.cost_like
+    performance_like = seed_ranking.performance_like
+    tier = seed_ranking.manufacturing_tier_normalized
+    # `p` mirrors `rank_seeds`' internal `(priority or "balanced").lower()`;
+    # trivially recomputed here (pure function of the already-available
+    # `priority` param) rather than added to `SeedRanking` for one string.
+    p = (priority or "balanced").lower()
+    n_lo = seed_ranking.n_lo
+    t_lo = seed_ranking.t_lo
+    distances = seed_ranking.distances
+    _distance = seed_ranking.distance_fn
+    _distance_parts = seed_ranking.distance_parts_fn
+    _seed_floor_gap = seed_ranking.seed_floor_gap_fn
+
+    def _case_distance(c: OpticalSampleData) -> float:
+        assert c.metadata is not None
+        return distances[c.metadata.case_id]
+
+    ranked = seed_ranking.ranked_cases
+    best = seed_ranking.best
+    assert best.metadata is not None
+    distance = _case_distance(best)
+    score = _score_from_distance(distance)
+    imh = _case_image_height_mm(best)
+
+    cost_seed = seed_ranking.cost_seed
+    performance_seed = seed_ranking.performance_seed
+    selected_candidates = seed_ranking.selected_candidates
 
     warnings_out: list[str] = []
     rationale: list[str] = [

@@ -21,7 +21,7 @@ import numpy as np
 from optiland.optimization import LeastSquares, OptimizationProblem
 from optiland.solves.thickness import ChiefRayHeightThicknessSolve
 
-from app.core.aberration import compute_mtf
+from app.core.aberration import compute_mtf, mtf_values_at_index, nearest_mtf_freq_index
 from app.core.image_quality_floor import image_quality_floor_gap_score
 from app.core.mtf_fields import MTF_FIELD_FALLBACK_SETS, format_mtf_field_fraction
 from app.core.optical_engine import compute_paraxial_summary, trace_optic
@@ -2488,20 +2488,20 @@ def _metric_snapshot(
 
 
 def mtf_band_summary(mtf, target_lpmm: float = 100.0) -> tuple[float | None, float | None]:
-    """Return min/avg MTF near a target spatial frequency across fields and S/T."""
-    if not mtf.freq_lp_per_mm or not mtf.fields:
+    """Return min/avg MTF near a target spatial frequency across fields and S/T.
+
+    Behavior unchanged (promotion-gate dependents) — the nearest-frequency
+    lookup + per-field finite-value extraction now shares
+    `aberration.nearest_mtf_freq_index` / `aberration.mtf_values_at_index`
+    with orchestration's `scorecard._representative_mtf` (previously a
+    second inline copy of the same pattern); the `("sagittal", "tangential")`
+    fields-outer/orientations-inner iteration order is preserved exactly, so
+    `values` — and therefore `min`/`sum` — are bit-identical to before.
+    """
+    idx = nearest_mtf_freq_index(mtf, target_lpmm)
+    if idx is None:
         return None, None
-    idx = min(
-        range(len(mtf.freq_lp_per_mm)),
-        key=lambda i: abs(mtf.freq_lp_per_mm[i] - target_lpmm),
-    )
-    values: list[float] = []
-    for field in mtf.fields:
-        for curve in (field.sagittal, field.tangential):
-            if idx < len(curve):
-                value = curve[idx]
-                if math.isfinite(value):
-                    values.append(value)
+    values = mtf_values_at_index(mtf, idx, ("sagittal", "tangential"))
     if not values:
         return None, None
     return min(values), sum(values) / len(values)
