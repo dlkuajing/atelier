@@ -84,6 +84,7 @@ a41b9ee feat: seed-target 匹配打分模块（N=24 真机矩阵 heuristic 固�
 6. **US20180143405A1 边缘性矛盾**：曾 e0.7 recovered（RMS 86µm），本轮连一阶读数都 60s 超时，三度不稳定。如实记录，不下结论。
 7. **打分 heuristic N=24**：描述性拟合、同数据验证、精度 ±1 桶；仅 EFL 维、Stage A only。扩池后应重标定。
 8. **边缘 seed 重复性**：US20170045714A1 三跑 RMS 12.6/71/188µm（收敛阈值边缘抖动）；US20180143405A1 时好时坏三度记录。**重复性维度未进 scorecard**——建议 C1 编排对候选跑 ≥2 次取分布。
+8a. **autovig 细化 rung 的 ZMX 消歧缺陷（tooling 残留）**：emit_optimized_zmx 的 vig 文件名 token 对 ladder 外细化 rung（如 0.2）未生效 → per-rung 同名覆盖混叠。候选2 目录曾落盘归属存疑的 ZMX（回读 EFL 偏 2.7-3.1%，无法确认对应采纳 rung），已按返回 dict 的 fail-open 判定从交付目录移除（.lis/.seq/.tsv 主读数保留）。候选1（采纳 rung=0，无混叠可能）不受影响。修复=细化 rung 一并带 token，排 backlog。
 9. **spike 分支未合 main**：全部成果在 spike/codev-target-convergence，合并决策在主公（涉及 C1 实施路径单议）。
 10. **全仓终版判据**：1551 passed, 3 skipped（净增 49 测试，零回归，含真机冒烟）。
 
