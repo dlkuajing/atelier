@@ -253,6 +253,21 @@ def test_retrieval_generator_n_greater_than_4_has_stable_nearby_alternative_numb
     assert sorted(nearby_indices) == list(range(1, len(nearby_indices) + 1))
 
 
+def test_retrieval_generator_raises_when_efl_or_fov_is_none():
+    """Mode1 检索层仍要求 efl_mm/fov_deg 确定值——`TargetSpec.efl_mm`/
+    `fov_deg` 放宽到 `float | None` 是 §7-E scorecard 打分层的 unconstrained
+    语义，不下沉进 `rank_seeds` 的检索排序查询（没有"不检索这一维"的
+    语义）；`None` 时 fail-fast，而不是猜一个默认值。"""
+    generator = RetrievalGenerator()
+    spec_no_efl = TargetSpec(scenario=Scenario.SMARTPHONE_WIDE, fov_deg=78.0, fnum=2.4)
+    with pytest.raises(ValueError, match="efl_mm/fov_deg"):
+        generator.generate(spec_no_efl, spec_no_efl, n=4)
+
+    spec_no_fov = TargetSpec(scenario=Scenario.SMARTPHONE_WIDE, efl_mm=2.8, fnum=2.4)
+    with pytest.raises(ValueError, match="efl_mm/fov_deg"):
+        generator.generate(spec_no_fov, spec_no_fov, n=4)
+
+
 def test_retrieval_generator_unknown_scenario_family_returns_empty_when_pool_empty():
     # AR near-eye has no seeds in the smartphone case library family; the
     # generator must fail closed (empty list), not raise, when the filtered

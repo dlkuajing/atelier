@@ -14,6 +14,7 @@ ECharts on the frontend consumes the flat shape:
 
 from __future__ import annotations
 
+import math
 import warnings
 
 import numpy as np
@@ -49,6 +50,43 @@ class MTFResult(BaseModel):
     rms_spot_radius_um_by_field: list[float] = Field(
         ..., description="RMS geometric spot radius per field, in microns"
     )
+
+
+# ---------------------------------------------------------------------------
+# Shared MTF query helpers — nearest-frequency lookup used by both
+# `local_optimizer.mtf_band_summary` (optimizer promotion gating) and
+# orchestration's `scorecard._representative_mtf` (previously duplicated
+# inline, verbatim, in both places — kept here since both already import
+# `MTFResult` from this module).
+# ---------------------------------------------------------------------------
+
+
+def nearest_mtf_freq_index(mtf: MTFResult, target_lpmm: float) -> int | None:
+    """Index into `mtf.freq_lp_per_mm` nearest `target_lpmm`. `None` when the
+    MTF result carries no frequency samples or no fields."""
+    if not mtf.freq_lp_per_mm or not mtf.fields:
+        return None
+    return min(
+        range(len(mtf.freq_lp_per_mm)),
+        key=lambda i: abs(mtf.freq_lp_per_mm[i] - target_lpmm),
+    )
+
+
+def mtf_values_at_index(mtf: MTFResult, idx: int, orientations: tuple[str, ...]) -> list[float]:
+    """Finite MTF values across all fields at frequency index `idx`, for the
+    given `orientations` (`"sagittal"` / `"tangential"`, any subset/order).
+    Iterates fields-outer, orientations-inner — same nesting as the original
+    inline duplicates, so a caller reproducing their old value order/summation
+    gets bit-identical results."""
+    values: list[float] = []
+    for field in mtf.fields:
+        for orientation in orientations:
+            curve = getattr(field, orientation)
+            if idx < len(curve):
+                value = curve[idx]
+                if math.isfinite(value):
+                    values.append(value)
+    return values
 
 
 # ---------------------------------------------------------------------------

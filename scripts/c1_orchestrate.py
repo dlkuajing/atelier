@@ -111,6 +111,14 @@ def _fmt_optional(value: float | int | None) -> str:
     return "(unconstrained)" if value is None else str(value)
 
 
+def _md_safe(value: str) -> str:
+    """Collapse newlines and escape pipes so a free-form string (user-JSON
+    requirement fields like `manufacturing_tier`/`priority`/`label`,
+    generation notes, or a batch-summary note that may embed a multi-line
+    generator exception message) can't break Markdown table/list structure."""
+    return "; ".join(value.splitlines()).replace("|", "\\|")
+
+
 def _fmt_deviation_row(dev: TargetDeviation) -> str:
     target_str = "unconstrained" if dev.target is None else f"{dev.target:.3f}"
     rel_str = "N/A" if dev.rel_violation is None else f"{dev.rel_violation:.1%}"
@@ -122,23 +130,25 @@ def _fmt_deviation_row(dev: TargetDeviation) -> str:
 
 
 def _render_requirement_echo(label: str, target: TargetSpec) -> list[str]:
+    tier = _md_safe(target.manufacturing_tier) if target.manufacturing_tier else "(unspecified)"
+    priority = _md_safe(target.priority) if target.priority else "(unspecified)"
     return [
-        f"# C1 候选报告 — {label}",
+        f"# C1 候选报告 — {_md_safe(label)}",
         "",
         "## 需求回显",
         "",
         "| 字段 | 值 |",
         "|---|---|",
         f"| scenario | {target.scenario.value} |",
-        f"| efl_mm | {target.efl_mm} |",
-        f"| fov_deg | {target.fov_deg} |",
+        f"| efl_mm | {_fmt_optional(target.efl_mm)} |",
+        f"| fov_deg | {_fmt_optional(target.fov_deg)} |",
         f"| fnum | {target.fnum} |",
         f"| image_height_mm | {_fmt_optional(target.image_height_mm)} |",
         f"| max_total_track_mm | {_fmt_optional(target.max_total_track_mm)} |",
         f"| n_elements | {_fmt_optional(target.n_elements)} |",
         f"| max_weight_g | {_fmt_optional(target.max_weight_g)} |",
-        f"| manufacturing_tier | {target.manufacturing_tier or '(unspecified)'} |",
-        f"| priority | {target.priority or '(unspecified)'} |",
+        f"| manufacturing_tier | {tier} |",
+        f"| priority | {priority} |",
         "",
     ]
 
@@ -171,7 +181,7 @@ def _render_summary(candidate_set: CandidateSet) -> list[str]:
     ]
     if s.notes:
         lines.append("**备注：**")
-        lines.extend(f"- {note}" for note in s.notes)
+        lines.extend(f"- {_md_safe(note)}" for note in s.notes)
         lines.append("")
     return lines
 
@@ -198,7 +208,7 @@ def _render_candidate(index: int, sc: ScoredCandidate) -> list[str]:
 
     lines.append(f"- provenance: mode=`{row.mode.value}` source_case_id=`{gen.source_case_id or '(none)'}`")
     lines.append("- generation_notes:")
-    lines.extend(f"  - {note}" for note in gen.generation_notes)
+    lines.extend(f"  - {_md_safe(note)}" for note in gen.generation_notes)
     lines.append("")
 
     lines.append("**Target 偏差（5 维）**")
@@ -226,7 +236,7 @@ def _render_candidate(index: int, sc: ScoredCandidate) -> list[str]:
     lines.append(f"- 非球面项数: {_fmt_metric(mfg.aspheric_term_count)}")
     lines.append(f"- 非球面面数: {_fmt_metric(mfg.aspheric_surface_count)}")
     lines.append(f"- 主光线角 (deg): {_fmt_metric(mfg.chief_ray_angle_deg)}")
-    lines.append(f"- **{mfg.note}**")
+    lines.append(f"- **{_md_safe(mfg.note)}**")
     lines.append("")
 
     lines.append("**排序结果**")
@@ -290,7 +300,30 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="需求集 JSON 文件（列表，每项是 TargetSpec 字段 + 可选 label）；省略则用内置 demo 需求",
     )
     parser.add_argument("--n", type=int, default=DEFAULT_N, help=f"每条需求产出候选数（默认 {DEFAULT_N}）")
+    parser.add_argument(
+        "--min-coverage",
+        type=float,
+        default=None,
+        dest="min_coverage_pct",
+        help=(
+            "必需维覆盖率下限，覆盖 score_candidate 的 min_coverage_pct（§7-E 可配"
+            "旋钮，见 scorecard.py `_rank` docstring）；省略则用其内建默认（当前 80%）"
+        ),
+    )
     return parser.parse_args(argv)
+
+
+def _requirement_failed(candidate_set: CandidateSet) -> bool:
+    """A requirement counts as a hard failure when its generator crashed
+    (recorded by `orchestrate`'s isolation strategy as a
+    "mode=... generator=... 失败" note) or it produced zero candidates
+    outright — either way the report has nothing (or nothing trustworthy)
+    for a reviewer. The .md/.json still get written either way (fail loud on
+    stdout/exit code, not by withholding the report)."""
+    s = candidate_set.summary
+    if s.candidate_count == 0:
+        return True
+    return any("generator=" in note and "失败" in note for note in s.notes)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -299,10 +332,13 @@ def main(argv: list[str] | None = None) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
 
     index_lines = ["# C1 编排批量报告索引", ""]
+    any_failed = False
     for i, req in enumerate(requirements, start=1):
         label = _requirement_label(req, i)
         target = _target_spec_from_requirement(req)
-        candidate_set = orchestrate(target, target, n=args.n)
+        candidate_set = orchestrate(
+            target, target, n=args.n, min_coverage_pct=args.min_coverage_pct
+        )
 
         md_path = args.out / f"report_{i:02d}.md"
         json_path = args.out / f"report_{i:02d}.json"
@@ -314,12 +350,23 @@ def main(argv: list[str] | None = None) -> int:
         index_lines.append(f"- `{md_path.name}` / `{json_path.name}` — {label}")
 
         s = candidate_set.summary
+        failed = _requirement_failed(candidate_set)
+        any_failed = any_failed or failed
+        status_tag = "[FAIL]" if failed else "[OK]"
         print(
-            f"[{i}/{len(requirements)}] {label}: {s.candidate_count} candidates "
+            f"{status_tag} [{i}/{len(requirements)}] {label}: {s.candidate_count} candidates "
             f"({s.ranked_count} ranked, {s.withheld_count} withheld) -> {md_path}"
         )
 
     (args.out / "index.md").write_text("\n".join(index_lines) + "\n", encoding="utf-8")
+
+    if any_failed:
+        print(
+            "[FAIL] 至少一条需求产 0 候选或触发 generator 错误——报告已照常落盘，"
+            "见上方 [FAIL] 行 / 各 report_*.json 的 summary.notes",
+            file=sys.stderr,
+        )
+        return 1
     return 0
 
 

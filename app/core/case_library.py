@@ -913,6 +913,18 @@ def _candidate_scenarios(scenario: Scenario) -> set[Scenario]:
     return {scenario}
 
 
+def cases_for_scenario(scenario: Scenario) -> list[OpticalSampleData]:
+    """Public case-pool filter: `load_case_library()` narrowed to `scenario`'s
+    `_candidate_scenarios` family. Shared by `match_case` (below) and C1
+    orchestration's `RetrievalGenerator` (`orchestration/generators.py`) so
+    the two never drift on what counts as "this scenario's candidate pool"
+    (previously duplicated inline in both places, verbatim)."""
+    allowed = _candidate_scenarios(scenario)
+    return [
+        c for c in load_case_library() if c.metadata is not None and c.metadata.scenario in allowed
+    ]
+
+
 def _norm_delta(target: float, value: float, lo: float, hi: float) -> float:
     return 0.0 if hi == lo else (target - value) / (hi - lo)
 
@@ -1525,15 +1537,29 @@ def rank_seeds(
             parts["quality"] = _seed_quality_penalty(c)
         return parts
 
-    def _distance(c: OpticalSampleData, *, target_efl_mm: float = efl_mm) -> float:
-        parts = _distance_parts(c, target_efl_mm=target_efl_mm)
+    def _distance_from_parts(c: OpticalSampleData, parts: dict[str, float]) -> float:
         weighted_distance = math.sqrt(sum(weights[k] * parts.get(k, 0.0) ** 2 for k in weights))
         return weighted_distance + _seed_spec_guard_penalty(c)
 
+    def _distance(c: OpticalSampleData, *, target_efl_mm: float = efl_mm) -> float:
+        parts = _distance_parts(c, target_efl_mm=target_efl_mm)
+        return _distance_from_parts(c, parts)
+
+    # Precompute parts once per case alongside its distance (`_distance_from_parts`
+    # factored out so this loop and `_distance` share the same weighted-sum math,
+    # not two copies of it). `ranked` below used to re-walk the whole pool through
+    # `_distance_parts` a second time just to populate `RankedCase.distance_parts`
+    # (+44ms/call on the full library; the only consumer of that second pass is
+    # `SeedRanking.ranked`, currently read only by tests) — caching here means
+    # `ranked`'s build below is a pure dict lookup instead of a second O(n) scan.
     distances: dict[str, float] = {}
+    distance_parts_by_id: dict[str, dict[str, float]] = {}
     for case in cases:
         assert case.metadata is not None
-        distances[case.metadata.case_id] = _distance(case)
+        case_id = case.metadata.case_id
+        parts = _distance_parts(case)  # default target_efl_mm=efl_mm, matches `_distance(case)`
+        distance_parts_by_id[case_id] = parts
+        distances[case_id] = _distance_from_parts(case, parts)
 
     def _case_distance(c: OpticalSampleData) -> float:
         assert c.metadata is not None
@@ -1569,15 +1595,14 @@ def rank_seeds(
     # top-4 truncation is what makes the full, uncapped `ranked` output below
     # possible without re-deriving the priority logic a second time.
     selection_order: list[tuple[OpticalSampleData, str]] = []
+    claimed_ids: set[str] = set()
 
     def _append_candidate(candidate: OpticalSampleData, role: str) -> None:
         assert candidate.metadata is not None
         case_id = candidate.metadata.case_id
-        if any(
-            existing.metadata and existing.metadata.case_id == case_id
-            for existing, _ in selection_order
-        ):
+        if case_id in claimed_ids:
             return
+        claimed_ids.add(case_id)
         selection_order.append((candidate, role))
 
     _append_candidate(best, "best_match")
@@ -1618,7 +1643,7 @@ def rank_seeds(
                 distance=case_distance,
                 score=_score_from_distance(case_distance),
                 role=role_by_case_id[case_id],
-                distance_parts=_distance_parts(c),
+                distance_parts=distance_parts_by_id[case_id],
             )
         )
 
@@ -1674,10 +1699,7 @@ def match_case(
     coverage, manufacturability proxy, and candidate comparison so production
     seed-only mode is not just a naked nearest-neighbor payload.
     """
-    allowed = _candidate_scenarios(scenario)
-    cases = [
-        c for c in load_case_library() if c.metadata is not None and c.metadata.scenario in allowed
-    ]
+    cases = cases_for_scenario(scenario)
     if not cases:
         return None
 

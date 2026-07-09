@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import MappingProxyType
 from typing import ClassVar
 
 import pytest
@@ -105,6 +106,13 @@ def test_orchestrate_unregistered_mode_raises():
         orchestrate(target, target, n=4, modes=["not-a-real-mode"])  # type: ignore[list-item]
 
 
+def test_registry_is_immutable():
+    """`_REGISTRY` is a `MappingProxyType` — consistency hardening alongside
+    `candidate.py::CONVERGED_FIELDS`; runtime in-place mutation must raise."""
+    with pytest.raises(TypeError):
+        orchestrator._REGISTRY[GenerationMode.RETRIEVED] = RetrievalGenerator
+
+
 # ---------------------------------------------------------------------------
 # Ranking: ranked-desc-by-score first, withheld sinks to the bottom (§7-E)
 # ---------------------------------------------------------------------------
@@ -129,7 +137,13 @@ class _MixedRankGenerator(CandidateGenerator):
 
 
 def test_orchestrate_ranked_sorted_desc_and_withheld_sinks_to_bottom(monkeypatch):
-    monkeypatch.setitem(orchestrator._REGISTRY, GenerationMode.RETRIEVED, _MixedRankGenerator)
+    # `_REGISTRY` is now a `MappingProxyType` (immutable) — swap the whole
+    # module attribute instead of `monkeypatch.setitem`.
+    monkeypatch.setattr(
+        orchestrator,
+        "_REGISTRY",
+        MappingProxyType({**orchestrator._REGISTRY, GenerationMode.RETRIEVED: _MixedRankGenerator}),
+    )
     target = _wide_target_spec()
     result = orchestrate(target, target, n=3, modes=[GenerationMode.RETRIEVED])
 
@@ -158,7 +172,15 @@ class _AllRIUnavailableGenerator(CandidateGenerator):
 
 
 def test_orchestrate_summary_flags_when_ri_missing_across_whole_batch(monkeypatch):
-    monkeypatch.setitem(orchestrator._REGISTRY, GenerationMode.RETRIEVED, _AllRIUnavailableGenerator)
+    # `_REGISTRY` is now a `MappingProxyType` (immutable) — swap the whole
+    # module attribute instead of `monkeypatch.setitem`.
+    monkeypatch.setattr(
+        orchestrator,
+        "_REGISTRY",
+        MappingProxyType(
+            {**orchestrator._REGISTRY, GenerationMode.RETRIEVED: _AllRIUnavailableGenerator}
+        ),
+    )
     target = _wide_target_spec()
     result = orchestrate(target, target, n=3, modes=[GenerationMode.RETRIEVED])
     assert result.summary.ri_missing_count == result.summary.candidate_count
@@ -245,3 +267,76 @@ def test_c1_orchestrate_script_with_custom_requirements_file(tmp_path: Path):
     md_files = sorted(out_dir.glob("report_*.md"))
     assert len(md_files) == 1
     assert "自定义主摄" in md_files[0].read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# Markdown safety against embedded '|'/newline in notes / requirement-echo
+# values (§13 report rendering)
+# ---------------------------------------------------------------------------
+
+
+def test_c1_orchestrate_markdown_safe_against_embedded_pipe_and_newline(tmp_path: Path):
+    """Regression: a free-form requirement field (or a generation note) that
+    contains a literal newline or '|' must not split a Markdown table row
+    into extra rows / extra columns."""
+    from scripts.c1_orchestrate import main
+
+    reqs = [
+        {
+            "label": "边界情况\n第二行 | 有管道符",
+            "scenario": Scenario.SMARTPHONE_WIDE.value,
+            "efl_mm": 2.8,
+            "fov_deg": 78.0,
+            "fnum": 2.4,
+            "image_height_mm": 3.3,
+            "manufacturing_tier": "tier-A\ntier-B | risky",
+            "priority": "cost\nurgent",
+        }
+    ]
+    reqs_path = tmp_path / "reqs.json"
+    reqs_path.write_text(json.dumps(reqs, ensure_ascii=False), encoding="utf-8")
+    out_dir = tmp_path / "md_safety_report"
+
+    exit_code = main(["--out", str(out_dir), "--requirements", str(reqs_path), "--n", "1"])
+    assert exit_code == 0
+
+    md_text = (out_dir / "report_01.md").read_text(encoding="utf-8")
+    assert md_text.startswith("# C1 候选报告 — 边界情况; 第二行 \\| 有管道符")
+
+    table_start = md_text.index("| 字段 | 值 |")
+    table_block = md_text[table_start:].split("\n\n", 1)[0]
+    table_rows = [ln for ln in table_block.splitlines() if ln.startswith("|")]
+    # header + separator + 10 field rows; a raw embedded '\n' in
+    # manufacturing_tier/priority would have split into extra rows.
+    assert len(table_rows) == 12
+
+    tier_row = next(r for r in table_rows if r.startswith("| manufacturing_tier"))
+    assert tier_row == "| manufacturing_tier | tier-A; tier-B \\| risky |"
+    priority_row = next(r for r in table_rows if r.startswith("| priority"))
+    assert priority_row == "| priority | cost; urgent |"
+
+
+# ---------------------------------------------------------------------------
+# main() exit code reflects generator failure / zero-candidate requirements
+# (§13 report caller contract)
+# ---------------------------------------------------------------------------
+
+
+def test_c1_orchestrate_main_returns_nonzero_when_generator_fails(tmp_path: Path, monkeypatch):
+    """Regression: `main` previously always returned 0 even when every
+    requirement's generator crashed and produced zero candidates. The report
+    files must still land on disk (fail loud via exit code, not by
+    withholding output)."""
+    from scripts.c1_orchestrate import main
+
+    def _boom(self, spec, target, *, n):  # noqa: ANN001
+        raise RuntimeError("simulated total generator wipeout")
+
+    monkeypatch.setattr(RetrievalGenerator, "_generate", _boom)
+
+    out_dir = tmp_path / "failed_report"
+    exit_code = main(["--out", str(out_dir), "--n", "2"])
+
+    assert exit_code == 1
+    assert (out_dir / "report_01.md").exists()
+    assert (out_dir / "index.md").exists()

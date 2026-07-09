@@ -19,6 +19,7 @@ import math
 
 import pytest
 
+from app.core import relative_illumination
 from app.core.case_library import load_case_library
 from app.core.mtf_fields import MTF_CANONICAL_FIELD_FRACS, format_mtf_field_fraction
 from app.core.optical_sample import OpticalSampleData
@@ -138,3 +139,40 @@ def test_ri_result_always_covers_canonical_field_keys():
     ri = compute_relative_illumination(case)
     expected_keys = {format_mtf_field_fraction(f) for f in MTF_CANONICAL_FIELD_FRACS}
     assert set(ri.keys()) == expected_keys
+
+
+# ---------------------------------------------------------------------------
+# Cache: transient failures never memoized; keyed off file stat (§7-D)
+# ---------------------------------------------------------------------------
+
+
+def test_ri_transient_failure_not_cached_permanently(monkeypatch):
+    """Regression: a transient compute failure (all-unavailable) must not be
+    memoized — a later call with identical args (same file, unchanged) must
+    retry instead of replaying the stale failure forever. Previously the
+    plain `(source_zmx, fov_deg)`-keyed `lru_cache` cached every result
+    (including all-unavailable ones) permanently."""
+    case = _anchor_case()
+    assert case.metadata is not None
+
+    calls = {"n": 0}
+    real_compute = relative_illumination._compute_ri_by_field
+
+    def _flaky(source_zmx: str, fov_deg: float):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return relative_illumination._empty_result()
+        return real_compute(source_zmx, fov_deg)
+
+    monkeypatch.setattr(relative_illumination, "_compute_ri_by_field", _flaky)
+    # Clear any pre-existing memoized entry from earlier tests in this module
+    # (same anchor case + fov_deg + file stat would otherwise short-circuit).
+    relative_illumination._compute_ri_by_field_cached_impl.cache_clear()
+
+    first = compute_relative_illumination(case)
+    assert calls["n"] == 1
+    assert all(m.status == "unavailable" for m in first.values())
+
+    second = compute_relative_illumination(case)
+    assert calls["n"] == 2  # not served from cache -> genuinely retried
+    assert any(m.status == "available" for m in second.values())

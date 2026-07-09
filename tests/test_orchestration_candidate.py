@@ -166,6 +166,12 @@ def test_converged_fields_matches_spec():
     assert "ttl" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
 
 
+def test_converged_fields_is_immutable():
+    """诚实不变量真值表运行时不可被绕过类型层改写（`MappingProxyType`）。"""
+    with pytest.raises(TypeError):
+        CONVERGED_FIELDS[GenerationMode.RETRIEVED] = frozenset({"efl"})
+
+
 # ---------------------------------------------------------------------------
 # GeneratedCandidate
 # ---------------------------------------------------------------------------

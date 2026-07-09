@@ -132,16 +132,58 @@ def _compute_ri_by_field(source_zmx: str, fov_deg: float) -> dict[str, MetricVal
     return result
 
 
+class _RIComputeAllUnavailable(Exception):  # noqa: N818 - internal cache-bypass sentinel, not an error type callers see
+    """Internal sentinel: raised (never returned) when every field ends up
+    'unavailable'. `functools.lru_cache` never caches a call that raises, so
+    this keeps a transient load/trace failure from being memoized permanently
+    — `_compute_ri_by_field_cached` below catches it and returns the
+    (uncached) empty result, letting a later call with the same args retry."""
+
+    def __init__(self, result: tuple[tuple[str, float | None, str], ...]) -> None:
+        self.result = result
+
+
 @lru_cache(maxsize=512)
+def _compute_ri_by_field_cached_impl(
+    source_zmx: str, fov_deg: float, mtime_ns: int, size: int
+) -> tuple[tuple[str, float | None, str], ...]:
+    """Memoized core compute, keyed by `(source_zmx, fov_deg, mtime_ns,
+    size)` — the file stat is part of the key so a ZMX rewrite (intake
+    re-run, patent-seed correction, ...) invalidates stale entries
+    automatically instead of silently replaying a computation against the
+    old file contents. `mtime_ns`/`size` are supplied by the caller
+    (`_compute_ri_by_field_cached`), which stats the file *before* this
+    memoized call so the key always reflects the current file."""
+    computed = _compute_ri_by_field(source_zmx, fov_deg)
+    result = tuple((key, metric.value, metric.status) for key, metric in computed.items())
+    if all(status == "unavailable" for _, _, status in result):
+        raise _RIComputeAllUnavailable(result)
+    return result
+
+
 def _compute_ri_by_field_cached(
     source_zmx: str, fov_deg: float
 ) -> tuple[tuple[str, float | None, str], ...]:
-    """Memoized core compute, keyed by the (source_zmx, fov_deg) pair that
-    fully determines the result. Pure/deterministic — safe to cache; avoids
-    redundant ZMX reloads when the same seed appears across multiple
-    orchestrator calls (e.g. `RetrievalGenerator` invoked for several `n`)."""
-    computed = _compute_ri_by_field(source_zmx, fov_deg)
-    return tuple((key, metric.value, metric.status) for key, metric in computed.items())
+    """Public cache entry point. Stats `source_zmx` before computing so the
+    cache key reflects the file's current contents, and never memoizes an
+    all-unavailable result (a transient load/trace failure) — a subsequent
+    call with the same args retries instead of replaying a stale failure
+    forever. Avoids redundant ZMX reloads when the same seed appears across
+    multiple orchestrator calls (e.g. `RetrievalGenerator` invoked for
+    several `n`)."""
+    try:
+        stat = (ZMX_AMMO_DIR / source_zmx).stat()
+    except OSError:
+        # File missing/inaccessible: `_compute_ri_by_field` would fail closed
+        # on this too, but we can't form a cache key without a stat — skip
+        # the cache entirely rather than caching under a fake key.
+        return tuple((key, metric.value, metric.status) for key, metric in _empty_result().items())
+    try:
+        return _compute_ri_by_field_cached_impl(
+            source_zmx, fov_deg, stat.st_mtime_ns, stat.st_size
+        )
+    except _RIComputeAllUnavailable as exc:
+        return exc.result
 
 
 def compute_relative_illumination(sample: OpticalSampleData) -> dict[str, MetricValue]:

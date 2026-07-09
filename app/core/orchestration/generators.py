@@ -11,7 +11,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import ClassVar, final
 
-from app.core.case_library import _candidate_scenarios, load_case_library, rank_seeds
+from app.core.case_library import cases_for_scenario, rank_seeds
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     GeneratedCandidate,
@@ -95,6 +95,12 @@ class RetrievalGenerator(CandidateGenerator):
     （C1-c）用重建的 optic 光追填（`relative_illumination.py`），逐候选
     fail closed——单颗 RI 算不出不拖垮整批检索。无 CODE V 依赖（检索 +
     Optiland）。
+
+    `spec.efl_mm` / `spec.fov_deg` 是本 generator 的必填检索维——虽然
+    `TargetSpec.efl_mm`/`fov_deg` 在类型层是 `float | None`（§7-E scorecard
+    打分允许 target=None=unconstrained），但 `rank_seeds` 的检索排序查询
+    没有"不检索这一维"的语义。二者为 `None` 时 `_generate` 直接
+    `raise ValueError`（诚实 fail-fast，不静默降级成某个猜测默认值）。
     """
 
     mode: ClassVar[GenerationMode] = GenerationMode.RETRIEVED
@@ -106,13 +112,14 @@ class RetrievalGenerator(CandidateGenerator):
 
         if n <= 0:
             raise ValueError(f"n must be positive, got {n}")
+        if spec.efl_mm is None or spec.fov_deg is None:
+            raise ValueError(
+                "RetrievalGenerator (Mode1) 检索需要 efl_mm/fov_deg（rank_seeds 检索排序"
+                "查询必填维）；target=None 的 unconstrained 语义只在 scorecard 打分层"
+                "可达（§7-E TargetSpec docstring），不下沉进 Mode1 检索契约"
+            )
 
-        allowed = _candidate_scenarios(spec.scenario)
-        cases = [
-            c
-            for c in load_case_library()
-            if c.metadata is not None and c.metadata.scenario in allowed
-        ]
+        cases = cases_for_scenario(spec.scenario)
         if not cases:
             return []
 

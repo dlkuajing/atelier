@@ -25,7 +25,8 @@ TargetConvergedGenerator}`（§4/§6）。Mode2 不在 registry（§6.3）。
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
+from types import MappingProxyType
 
 from app.core.orchestration.candidate import (
     CandidateSet,
@@ -45,11 +46,18 @@ from app.core.orchestration.scorecard import score_candidate
 # monkeypatch a class's `_generate` in place (`monkeypatch.setattr(
 # RetrievalGenerator, "_generate", ...)`) and have that reflected here without
 # a separate injection seam, since dict lookup resolves the class fresh on
-# every `orchestrate()` call.
-_REGISTRY: dict[GenerationMode, type[CandidateGenerator]] = {
-    GenerationMode.RETRIEVED: RetrievalGenerator,
-    GenerationMode.TARGET_CONVERGED: TargetConvergedGenerator,
-}
+# every `orchestrate()` call. `MappingProxyType` (not a plain dict) so this
+# registry can't be mutated in place at runtime — consistency hardening
+# alongside `candidate.py::CONVERGED_FIELDS`. Tests that need a different
+# mode->generator mapping swap the whole module attribute
+# (`monkeypatch.setattr(orchestrator, "_REGISTRY", MappingProxyType({...}))`)
+# instead of `monkeypatch.setitem`.
+_REGISTRY: MappingProxyType[GenerationMode, type[CandidateGenerator]] = MappingProxyType(
+    {
+        GenerationMode.RETRIEVED: RetrievalGenerator,
+        GenerationMode.TARGET_CONVERGED: TargetConvergedGenerator,
+    }
+)
 
 DEFAULT_N = 4
 
@@ -60,6 +68,9 @@ def orchestrate(
     *,
     n: int = DEFAULT_N,
     modes: Iterable[GenerationMode] | None = None,
+    rel_tolerances: Mapping[str, float] | None = None,
+    rank_weights: Mapping[str, float] | None = None,
+    min_coverage_pct: float | None = None,
 ) -> CandidateSet:
     """Run every registered (or explicitly selected) generator against
     `spec`, score each produced candidate against `target`, and return a
@@ -75,6 +86,12 @@ def orchestrate(
     restricts (and dedupes, order-preserving) which generators run —
     generators outside the selection are never instantiated, so their
     failures (if any) never surface.
+
+    `rel_tolerances` / `rank_weights` / `min_coverage_pct` pass straight
+    through to `score_candidate` (§7-E tunables, `scorecard.py` `_rank`
+    docstring). `None` (the default for all three) leaves `score_candidate`'s
+    own default in place — every existing caller that doesn't pass these is
+    unaffected.
     """
     selected_modes = (
         list(_REGISTRY.keys()) if modes is None else list(dict.fromkeys(modes))
@@ -82,6 +99,14 @@ def orchestrate(
     unknown = [m for m in selected_modes if m not in _REGISTRY]
     if unknown:
         raise ValueError(f"orchestrate: unregistered generation mode(s): {unknown}")
+
+    score_kwargs: dict[str, Mapping[str, float] | float] = {}
+    if rel_tolerances is not None:
+        score_kwargs["rel_tolerances"] = rel_tolerances
+    if rank_weights is not None:
+        score_kwargs["rank_weights"] = rank_weights
+    if min_coverage_pct is not None:
+        score_kwargs["min_coverage_pct"] = min_coverage_pct
 
     scored: list[ScoredCandidate] = []
     errors: list[str] = []
@@ -93,7 +118,7 @@ def orchestrate(
             generator = generator_cls()
             generated_candidates = generator.generate(spec, target, n=n)
             for generated in generated_candidates:
-                scorecard = score_candidate(generated, target)
+                scorecard = score_candidate(generated, target, **score_kwargs)
                 batch.append(ScoredCandidate(generated=generated, scorecard=scorecard))
         except Exception as exc:  # noqa: BLE001 - isolate this mode's failure (fail-open, recorded below), never sink the whole batch
             errors.append(

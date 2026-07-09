@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
+from types import MappingProxyType
 from typing import Literal
 
 from pydantic import BaseModel, Field, computed_field, model_validator
@@ -55,15 +56,21 @@ class TargetSpec(BaseModel):
     关键字参数一一对齐），scorecard（C1-c）用同一实例的 5 维做 §7-A
     target-deviation 基准。
 
-    `efl_mm` / `fov_deg` / `fnum` 为 exact 目标；`image_height_mm` 为 exact
+    `efl_mm` / `fov_deg` 为 exact 目标，均可选=unconstrained（§7-E，
+    `target=None` 的维不进 `_rank` 必需维分母——同 `image_height_mm` 既有
+    语义）。但 `RetrievalGenerator`（Mode1 检索，`generators.py`）对二者仍
+    fail-fast 必填：`rank_seeds` 的检索排序查询没有"不检索这一维"的语义，
+    None 时直接 `raise ValueError`（诚实 fail-fast，不猜默认值）——这两层
+    看似矛盾实为分工：scorecard 打分层允许 unconstrained，Mode1 检索层
+    要求确定的查询锚点。`fnum` 恒必填 exact。`image_height_mm` 为 exact
     （IMH，可选=unconstrained）；`max_total_track_mm` 为 ceiling（TTL，
     §5.3 constraint_kind，低于上限不罚，`case_library.py:1466-1471`）。
     末四个字段是检索专用旋钮（`rank_seeds` 消费），不进入 §7-A 5 维打分。
     """
 
     scenario: Scenario
-    efl_mm: float = Field(..., gt=0)
-    fov_deg: float = Field(..., gt=0, le=180)
+    efl_mm: float | None = Field(None, gt=0)
+    fov_deg: float | None = Field(None, gt=0, le=180)
     fnum: float = Field(..., gt=0)
     image_height_mm: float | None = Field(None, gt=0)
     max_total_track_mm: float | None = Field(None, gt=0)
@@ -221,7 +228,7 @@ class OpticalExtras(BaseModel):
 
     ri_by_field: dict[str, MetricValue] | None = Field(
         None,
-        description="按视场点(如 '0.0'/'0.5'/'0.8'/'1.0')的相对照度；None=本 generator 未提供 RI",
+        description="按视场点(如 '0.0'/'0.5'/'0.7'/'1.0')的相对照度；None=本 generator 未提供 RI",
     )
 
 
@@ -250,13 +257,17 @@ class GeneratedCandidate(BaseModel):
         return self.mode is GenerationMode.TARGET_CONVERGED
 
 
-# 每个 mode 实际朝 target 优化/收敛的 field 集合（per-field provenance · codex 轮5）
-CONVERGED_FIELDS: dict[GenerationMode, frozenset[str]] = {
-    GenerationMode.RETRIEVED: frozenset(),  # 检索不优化任何维
-    GenerationMode.TARGET_CONVERGED: frozenset(
-        {"efl", "fnum", "imh", "fov"}
-    ),  # = §10 Mode3 六接缝优化维；TTL 不在接缝
-}
+# 每个 mode 实际朝 target 优化/收敛的 field 集合（per-field provenance · codex 轮5）。
+# `MappingProxyType`（不是裸 dict）——诚实不变量真值表运行时不可被绕过类型层
+# 改写（`ScoredCandidate._enforce_consistency` 校验就靠这张表当唯一真相源）。
+CONVERGED_FIELDS: MappingProxyType[GenerationMode, frozenset[str]] = MappingProxyType(
+    {
+        GenerationMode.RETRIEVED: frozenset(),  # 检索不优化任何维
+        GenerationMode.TARGET_CONVERGED: frozenset(
+            {"efl", "fnum", "imh", "fov"}
+        ),  # = §10 Mode3 六接缝优化维；TTL 不在接缝
+    }
+)
 
 
 class ScoredCandidate(BaseModel):
