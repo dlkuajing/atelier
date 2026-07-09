@@ -28,6 +28,7 @@ import pytest
 
 from app.core.case_library import _candidate_scenarios, load_case_library, match_case
 from app.core.lens_system import Scenario
+from app.core.mtf_fields import MTF_CANONICAL_FIELD_FRACS, format_mtf_field_fraction
 from app.core.orchestration.candidate import (
     GeneratedCandidate,
     GenerationMode,
@@ -205,7 +206,11 @@ def test_retrieval_generator_top4_matches_match_case_candidate_comparison():
         assert c.source_case_id is not None
         assert c.payload is not None
         assert c.generation_notes[0] == "检索最近邻 seed，未朝 target 优化"
-        assert c.optical_extras.ri_by_field is None  # C1-b 骨架：RI 未实现
+        # C1-c: RI 已接进 generator 阶段（relative_illumination.py），恒产出
+        # 全部 canonical field 的 key（值可用/不可用取决于该 case 的实际光追结果）。
+        assert c.optical_extras.ri_by_field is not None
+        expected_keys = {format_mtf_field_fraction(f) for f in MTF_CANONICAL_FIELD_FRACS}
+        assert set(c.optical_extras.ri_by_field.keys()) == expected_keys
 
 
 def test_retrieval_generator_n_less_than_4_is_prefix_of_top4():

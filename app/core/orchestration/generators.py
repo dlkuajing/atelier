@@ -20,6 +20,12 @@ from app.core.orchestration.candidate import (
     TargetSpec,
 )
 
+# Deferred import (inside `_generate`, not module top-level): `relative_illumination`
+# imports `app.core.orchestration.candidate.MetricValue`, which forces loading this
+# package's `__init__.py` — which imports `generators` (this module) — a genuine
+# import cycle if done eagerly at module scope. Lazy import breaks it (both modules
+# are fully initialized by the time `_generate` actually runs).
+
 # ---------------------------------------------------------------------------
 # 6.1 CandidateGenerator 抽象基类
 # ---------------------------------------------------------------------------
@@ -85,8 +91,10 @@ class RetrievalGenerator(CandidateGenerator):
 
     只吃 `spec` 做检索排序查询（`target` 参数按 §6.1 抽象契约接收但不使
     用——Mode1 没有"朝 target 收敛"这回事，`target` 是下游 scorecard 的
-    打分基准，不是 Mode1 的生成输入）。本铲 `optical_extras` 恒空（ri
-    未实现，C1-c 填）。无 CODE V 依赖（检索 + Optiland）。
+    打分基准，不是 Mode1 的生成输入）。`optical_extras.ri_by_field`
+    （C1-c）用重建的 optic 光追填（`relative_illumination.py`），逐候选
+    fail closed——单颗 RI 算不出不拖垮整批检索。无 CODE V 依赖（检索 +
+    Optiland）。
     """
 
     mode: ClassVar[GenerationMode] = GenerationMode.RETRIEVED
@@ -94,6 +102,8 @@ class RetrievalGenerator(CandidateGenerator):
     def _generate(
         self, spec: TargetSpec, target: TargetSpec, *, n: int
     ) -> list[GeneratedCandidate]:
+        from app.core.relative_illumination import compute_relative_illumination
+
         if n <= 0:
             raise ValueError(f"n must be positive, got {n}")
 
@@ -145,7 +155,7 @@ class RetrievalGenerator(CandidateGenerator):
                     mode=GenerationMode.RETRIEVED,
                     source_case_id=case_id,
                     payload=case,
-                    optical_extras=OpticalExtras(),
+                    optical_extras=OpticalExtras(ri_by_field=compute_relative_illumination(case)),
                     generation_notes=[
                         "检索最近邻 seed，未朝 target 优化",
                         f"role={role}",

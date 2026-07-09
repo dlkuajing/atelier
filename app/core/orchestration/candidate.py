@@ -137,14 +137,29 @@ class ImageQualityMetrics(BaseModel):
 
 
 class ManufacturabilityProxy(BaseModel):
-    """可制造性 proxy（§7-C）。`is_proxy` 硬标非真公差良率。"""
+    """可制造性 proxy（§7-C）。`is_proxy` 硬标非真公差良率。
+
+    C1-c 实施偏离（见 scorecard.py 实现说明）：`aspheric_term_count` /
+    `aspheric_surface_count` 在 C1-b 骨架里是必填 `int`，但 payload 的
+    `SurfaceDescriptor`（`optical_engine.py`）不携带 `aspheric_coeffs`/
+    `conic`——这两个量结构性地无法从 `generated.payload + optical_extras`
+    算出（§7 纯函数契约不碰 optic/ZMX）。硬编码 0 会是撒谎（库内案例全部
+    含非球面），因此改为 `MetricValue`，`score_candidate` 恒标
+    `unavailable`（fail closed），不猜测。`has_special_glass` 保持 `bool`
+    ——可从 `metadata.materials` + `zmx_materials.lookup_nd_vd` 的真实数据表
+    确定性推导，不属于同一缺口。
+    """
 
     is_proxy: Literal[True] = True
     total_track_mm: float
     n_pieces: int
     has_special_glass: bool
-    aspheric_term_count: int = Field(..., ge=0)
-    aspheric_surface_count: int = Field(..., ge=0)
+    aspheric_term_count: MetricValue = Field(
+        ..., description="非球面系数项数（跨所有非球面面求和）；payload 无持久化系数，恒 unavailable"
+    )
+    aspheric_surface_count: MetricValue = Field(
+        ..., description="非球面面数；payload 无持久化 conic/系数，恒 unavailable"
+    )
     chief_ray_angle_deg: MetricValue = Field(
         ..., description="主光线角 vs 传感器 CRA 匹配（几何可算）"
     )

@@ -79,8 +79,8 @@ def _dummy_manufacturability() -> ManufacturabilityProxy:
         total_track_mm=_CASE.paraxial.total_track_mm,
         n_pieces=_CASE.metadata.n_pieces if _CASE.metadata else 5,
         has_special_glass=False,
-        aspheric_term_count=4,
-        aspheric_surface_count=6,
+        aspheric_term_count=_metric(4),
+        aspheric_surface_count=_metric(6),
         chief_ray_angle_deg=_metric(),
     )
 
