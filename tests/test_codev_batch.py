@@ -196,6 +196,125 @@ def test_stale_result_file_is_deleted_before_batch_launch(monkeypatch, tmp_path:
     assert not result_path.exists()
 
 
+def test_pre_run_cleanup_deletes_stale_bare_listing_before_launch(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """启动前对称清理:同 stem 残留的裸名 .lis 会被删掉,不会被误认领为本次清单。"""
+    executable = _fake_codev_executable(tmp_path)
+    sequence_path = tmp_path / "probe.seq"
+    result_path = tmp_path / "probe.tsv"
+    sequence_path.write_text(build_trivial_sequence(result_path), encoding="ascii")
+
+    bare_listing = sequence_path.with_suffix(".lis")
+    bare_listing.write_text("STALE PREVIOUS RUN LISTING", encoding="utf-8")
+
+    class FakePopen:
+        pid = 5002
+        returncode = 0
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            # 本次 run 正常收尾,不产生新的 .lis(无碰撞场景)
+            _write_success_result(result_path)
+            return "", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    result = run_codev_batch(
+        sequence_path=sequence_path,
+        result_path=result_path,
+        executable=executable,
+        work_dir=tmp_path,
+    )
+
+    assert not bare_listing.exists()  # 启动前已被清理
+    assert result.listing_path is None  # 旧内容未被认领
+
+
+def test_listing_snapshot_diff_claims_rolled_lis_after_root_collision(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """模拟 CODE V 对同 root 的清单滚动重命名（见 run_codev_batch docstring）。
+
+    两次 run 用不同 seq 文件名（Python 视角 stem 不同，各自的 with_suffix(".lis")
+    猜测互不相同），但 CODE V 内部会把结尾的 ``.<数字>`` token 当版本号剥离，
+    实际把清单都写进同一份裸名 root .lis——第二次 run 前只删自己的猜测名，
+    删不掉第一次残留的裸名文件；第二次 run 写入(RUN=B)会"碰撞"覆盖到同一个
+    裸名文件里，快照 diff 必须认领碰撞后的内容(RUN=B)，而不是第一次的内容
+    (RUN=A) 或者(由于文件名对不上)完全认领失败。
+    """
+    executable = _fake_codev_executable(tmp_path)
+    # CODE V 剥离 ".0" / ".3" 尾缀后，两次 run 实际落到同一个裸名 root .lis
+    root_lis = tmp_path / "US10281683B2_both_fixed_e0.lis"
+
+    sequence_path_1 = tmp_path / "US10281683B2_both_fixed_e0.0.seq"
+    result_path_1 = tmp_path / "result_a.tsv"
+    sequence_path_1.write_text(build_trivial_sequence(result_path_1), encoding="ascii")
+    assert sequence_path_1.with_suffix(".lis") != root_lis  # 猜测名与实际碰撞名不同
+
+    run1_listing_content = "RUN=A\n"
+
+    class FakePopenRun1:
+        pid = 5003
+        returncode = 0
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            root_lis.write_text(run1_listing_content, encoding="utf-8")
+            _write_success_result(result_path_1)
+            return "", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopenRun1)
+
+    result_1 = run_codev_batch(
+        sequence_path=sequence_path_1,
+        result_path=result_path_1,
+        executable=executable,
+        work_dir=tmp_path,
+    )
+
+    assert result_1.listing_path == root_lis
+    assert result_1.listing_path.read_text(encoding="utf-8") == run1_listing_content
+
+    sequence_path_2 = tmp_path / "US10281683B2_both_fixed_e0.3.seq"
+    result_path_2 = tmp_path / "result_b.tsv"
+    sequence_path_2.write_text(build_trivial_sequence(result_path_2), encoding="ascii")
+    assert sequence_path_2.with_suffix(".lis") != root_lis
+
+    # 第二次 run 前的残留仍是第一次的 RUN=A(不同 stem 的对称清理删不到它)
+    assert root_lis.read_text(encoding="utf-8") == run1_listing_content
+
+    run2_listing_content = "RUN=B replaced with a much longer marker for size diff\n"
+
+    class FakePopenRun2:
+        pid = 5004
+        returncode = 0
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            root_lis.write_text(run2_listing_content, encoding="utf-8")  # 碰撞覆盖
+            _write_success_result(result_path_2)
+            return "", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopenRun2)
+
+    result_2 = run_codev_batch(
+        sequence_path=sequence_path_2,
+        result_path=result_path_2,
+        executable=executable,
+        work_dir=tmp_path,
+    )
+
+    assert result_2.listing_path == root_lis
+    assert result_2.listing_path.read_text(encoding="utf-8") == run2_listing_content
+
+
 def test_mock_subprocess_no_license_is_structured(monkeypatch, tmp_path: Path) -> None:
     executable = _fake_codev_executable(tmp_path)
 
