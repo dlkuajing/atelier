@@ -730,6 +730,50 @@ def test_mock_autovig_all_rungs_timeout_reraises_blocked(
     assert error.value.kind == "timeout"
 
 
+def test_mock_autovig_fallback_edge_used_matches_best_not_last_tried(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """归属一致性回归：当整条 ladder 都不收敛时，``_blocked_or_best`` 上报的
+    ``autovig.edge_used`` 必须是实际被返回的 ``best`` 数据自己的 edge，而不是
+    ladder 爬到的"最后一个尝试过的" edge——两者在"偏差最小的 rung 不是最后一
+    个尝试的 rung"时会不一致（此处 edge=0.2 的偏差比 edge=0.3 更小，但 ladder
+    仍会继续爬到 0.3 才耗尽，因为 0.2 本身没有收敛）。修复前，返回的
+    ``autovig.edge_used`` 会错报为 "0.3"，但实际返回的三快照数字/文件名都来
+    自 edge=0.2 的那次调用——资深看到的"渐晕量"和"实际候选设计"对不上。"""
+    executable = _fake_codev_executable(tmp_path)
+    dev_by_edge = {0.0: "5.0", 0.2: "1.5", 0.3: "3.0"}  # 0.2 最小, 但非最终 rung
+
+    class FakePopen:
+        pid = 7200
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            seq = sequence_path.read_text(encoding="ascii")
+            m = re.search(r"^VUY ([\d. ]+)$", seq, re.MULTILINE)
+            edge = max(float(x) for x in m.group(1).split()) if m else 0.0
+            _write_target_result(
+                result_path, converged="0", dev=dev_by_edge[edge], edge=str(edge)
+            )
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=12.0,
+        vig_ladder=(0.0, 0.2, 0.3), num_fields=3,
+    )
+    assert data["autovig.converged"] == "0"
+    assert data["autovig.edge_used"] == "0.2"  # best 的 edge，不是最后尝试的 0.3
+    assert float(data["efl_target_deviation_pct"]) == pytest.approx(1.5)
+
+
 def test_mock_run_codev_target_parses_three_snapshots(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -1245,7 +1289,21 @@ def test_vignetting_filename_token_empty_for_none_or_empty() -> None:
 
 
 def test_vignetting_filename_token_uses_max_edge() -> None:
-    assert codev_optimize._vignetting_filename_token([0.0, 0.3, 0.3]) == "_vig0.30"
+    assert codev_optimize._vignetting_filename_token([0.0, 0.3, 0.3]) == "_vig030"
+
+
+def test_fmt_edge_filename_token_is_decimal_free() -> None:
+    """真机实锤（2026-07-09）：CODE V BUF EXP 对文件名中"小数点后还跟更多
+    非数字字符再到扩展名"的路径报 ERROR - Unable to open file. 并中止整条
+    宏——见 _fmt_edge_filename_token 文档字符串。消歧后缀必须不含小数点。"""
+    assert codev_optimize._fmt_edge_filename_token(0.0) == "_vig000"
+    assert codev_optimize._fmt_edge_filename_token(0.2) == "_vig020"
+    assert codev_optimize._fmt_edge_filename_token(0.7) == "_vig070"
+    assert "." not in codev_optimize._fmt_edge_filename_token(0.13)
+    with pytest.raises(ValueError):
+        codev_optimize._fmt_edge_filename_token(-0.1)
+    with pytest.raises(ValueError):
+        codev_optimize._fmt_edge_filename_token(float("nan"))
 
 
 def test_mock_run_codev_target_default_optimized_zmx_path_is_none(
@@ -1332,11 +1390,17 @@ def test_mock_autovig_emit_optimized_zmx_uses_distinct_filenames_per_rung(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     """真机踩坑修复回归：一次 autovig ladder climb 内，多个 rung 共用同一
-    (work_dir, stage)，若 optimized ZMX/readout 文件名不带渐晕消歧后缀，
-    非最终 rung 会被后续 rung 的同名文件覆写——返回的 optimized_zmx_path
-    就会指向与其数值口径不符的文件。这里验证收敛 rung(edge=0.2) 拿到的是
-    自己专属命名的文件，而非 rung0(edge=0，无 _vig 后缀)的残留。"""
+    (work_dir, stage)，若 .seq/.tsv/optimized ZMX/readout 文件名不带渐晕消歧
+    后缀，非最终 rung 会被后续 rung 的同名文件覆写——返回的 optimized_zmx_path
+    就会指向与其数值口径不符的文件（真机原始现象：US20170045714A1 @ target
+    3.797mm，采纳 rung edge=0.2，CODE V BUF EXP 对旧的 "_vig0.20_..." 命名报
+    ERROR - Unable to open file. 直接中止，readout/ZMX 从未落盘）。
+
+    用非默认 ladder 的"细化"值（0.13/0.27/0.41，均不是常见的 0.1 步进刻度）
+    验证消歧对任意 edge 值都成立，不只是默认 ladder 里的几个值；同时验证
+    rung0（edge=0）自己也拿到了显式、非空的专属命名（不再是裸名）。"""
     executable = _fake_codev_executable(tmp_path)
+    seen: list[tuple[float, Path, Path, Path]] = []
 
     class FakePopen:
         pid = 7100
@@ -1352,7 +1416,8 @@ def test_mock_autovig_emit_optimized_zmx_uses_distinct_filenames_per_rung(
             result_path, readout_path = _buf_exp_paths_from_target_sequence_pair(sequence_path)
             m = re.search(r"^VUY ([\d. ]+)$", seq, re.MULTILINE)
             edge = max(float(x) for x in m.group(1).split()) if m else 0.0
-            conv = "1" if edge >= 0.2 else "0"
+            seen.append((edge, sequence_path, result_path, readout_path))
+            conv = "1" if edge >= 0.27 else "0"
             dev = "0.5" if conv == "1" else "9.0"
             _write_target_result(result_path, converged=conv, dev=dev, edge=str(edge))
             _write_optimized_readout(readout_path)
@@ -1363,12 +1428,29 @@ def test_mock_autovig_emit_optimized_zmx_uses_distinct_filenames_per_rung(
     data = run_codev_target_autovig(
         source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
         stage="A", executable=executable, timeout_seconds=12.0,
-        vig_ladder=(0.0, 0.2, 0.3), num_fields=3, emit_optimized_zmx=True,
+        vig_ladder=(0.0, 0.13, 0.27, 0.41), num_fields=3, emit_optimized_zmx=True,
     )
-    assert data["autovig.edge_used"] == "0.2"
+    assert data["autovig.edge_used"] == "0.27"
+
+    # Exactly 3 rungs ran (0.0, 0.13, 0.27 — climb stops at first convergence,
+    # 0.41 never tried), and each rung's .seq/.tsv/readout are pairwise distinct.
+    assert [edge for edge, *_ in seen] == [0.0, 0.13, 0.27]
+    seqs = [p for _, p, _, _ in seen]
+    results = [p for _, _, p, _ in seen]
+    readouts = [p for _, _, _, p in seen]
+    assert len(set(seqs)) == len(seqs) == 3
+    assert len(set(results)) == len(results) == 3
+    assert len(set(readouts)) == len(readouts) == 3
+
+    # rung0 (edge=0.0) is no longer bare-named: explicit "_vig000" token.
+    rung0_seq = seen[0][1]
+    assert "_vig000" in rung0_seq.name
+
+    # Accepted rung (edge=0.27) is the one whose data/zmx is actually returned.
     zmx_path = Path(data["optimized_zmx_path"])
     assert zmx_path.is_file()
-    assert "_vig0.20_" in zmx_path.name
+    assert "_vig027" in zmx_path.name
+    assert "_vig013" not in zmx_path.name and "_vig000" not in zmx_path.name
 
 
 def test_target_standard_passes_emit_optimized_zmx_through_to_autovig(

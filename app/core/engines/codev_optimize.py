@@ -896,20 +896,44 @@ def _safe_aut_error_trace(listing_path: Path | None) -> dict[str, float | str | 
 # ---------------------------------------------------------------------------
 
 
+def _fmt_edge_filename_token(edge: float) -> str:
+    """渐晕 edge 的**不含小数点**文件名消歧后缀，如 edge=0.2 -> ``"_vig020"``。
+
+    真机实锤（2026-07-09 隔离探针，见 .planning/debug 与本次修复的诊断记
+    录）：CODE V ``BUF EXP`` 对形如 ``"..._vig0.20_optimized_readout.tsv"``
+    这类"文件名中段小数点后还跟着更多非数字字符、再到扩展名"的路径会报
+    ``ERROR - Unable to open file.`` 并中止整条宏（``WARNING - Sequence
+    aborted``）——真实产线案例 US20170045714A1 @ target 3.797mm、edge=0.2 收
+    敛命中：readout 导出整段失败，下游 ``parse_codev_readout_file`` 找不到
+    文件，fail-open 吞掉异常，最终该 rung 的 optimized ZMX **完全没有落
+    盘**（不是"被覆写"，是从未被导出）。隔离对照实验（同一 seed，仅改文件
+    名）证实：``"...v0.20.tsv"``（小数点后到扩展名之间只剩纯数字）不报错，
+    ``"...vig0.20_readout.tsv"``（小数点后还有字母/下划线）必报错；纯数字
+    的 ``"...vig020_readout.tsv"`` 同样不报错。这与 ``codev_batch.
+    run_codev_batch`` 文档字符串里已有的".seq 文件名 stem 不要以 .<数字> 结
+    尾"警告是同一个 CODE V 文件名解析怪癖的更普遍情形（不止 .seq stem，任何
+    经 BUF EXP 打开的路径都会中招）。因此渐晕 edge 一律编码成不含小数点、定
+    宽 3 位的百分位整数，从根上规避这个怪癖，而不是逐个文件名踩坑。"""
+    edge = float(edge)
+    if not math.isfinite(edge) or edge < 0:
+        raise ValueError(f"edge must be finite and non-negative: {edge!r}")
+    return f"_vig{round(edge * 100):03d}"
+
+
 def _vignetting_filename_token(vignetting: object) -> str:
-    """人类可读的消歧后缀，折叠 autovig 每 rung 唯一的渐晕 edge 到文件名——
-    没有它，同一 ladder climb 内多个 rung 会用同一对 (work_dir, stage) 反复
-    覆写同名 optimized ZMX/readout 文件：若某个非最终 rung 恰好是数值上最优
-    的 ``best``（见 run_codev_target_autovig 的 fail-open 兜底路径），但磁盘
-    上文件已被后续、数值更差的 rung 覆写，返回的 ``optimized_zmx_path`` 就会
-    指向与其数值口径不符的文件——资深 Verify 时看到的设计和数字对不上。"""
+    """从 ``vignetting`` 派生消歧后缀（见 ``_fmt_edge_filename_token`` 的 CODE
+    V BUF EXP 怪癖说明）。``None``/空列表 -> ``""``（保持零回归：未经
+    autovig、不带渐晕的普通 ``run_codev_target`` 调用文件名不变）。autovig 的
+    每个 rung（含 edge=0）改走 ``run_codev_target`` 的 ``rung_filename_tag``
+    参数显式指定，不再依赖本函数对 ``vignetting=None`` 的处理——那条路径本
+    身的光学行为（是否发 VUY/VLY/VUX/VLX 命令）不因文件名消歧而改变。"""
     if not vignetting:
         return ""
     try:
         edge = max(float(v) for v in vignetting)  # type: ignore[union-attr]
     except (TypeError, ValueError):
         return ""
-    return f"_vig{edge:.2f}"
+    return _fmt_edge_filename_token(edge)
 
 
 def _target_optimized_readout_filename(stage: str, vignetting_token: str) -> str:
@@ -935,6 +959,7 @@ def run_codev_target(
     timeout_seconds: float = 180.0,
     platform_name: str = os.name,
     emit_optimized_zmx: bool = False,
+    rung_filename_tag: str | None = None,
     **sequence_options: object,
 ) -> dict[str, object]:
     """Run one target-mode AUT and return the parsed three-snapshot data dict.
@@ -945,6 +970,18 @@ def run_codev_target(
     fields. It never affects the TSV-based contract above it — a missing or
     unparseable listing just yields ``None``.
 
+    ``rung_filename_tag`` (加法式，默认 ``None``)：显式指定本次调用产出的
+    ``.seq``/``.tsv``/readout/optimized ZMX 的消歧后缀，覆盖从
+    ``sequence_options["vignetting"]`` 派生的默认值（见
+    ``_vignetting_filename_token``）。``run_codev_target_autovig`` 用它给
+    **每个** rung（含 edge=0）都传一个显式、不含小数点的 tag（见
+    ``_fmt_edge_filename_token``），使同一 ``(work_dir, stage)`` 下的多次
+    ladder-climb 调用互不覆写、rung 归属可确认——这只影响文件名，不改变
+    ``vignetting`` kwarg 本身传给 ``build_codev_target_sequence`` 的光学行为
+    （edge=0 的 rung 仍是 ``vignetting=None``，不发 VUY/VLY/VUX/VLX 命令，
+    数值零回归）。未传（``None``）时保持原有行为：不带渐晕的普通调用文件名
+    不变，带渐晕的调用退回 ``_vignetting_filename_token`` 派生的后缀。
+
     ``emit_optimized_zmx`` (加法式接缝，默认 False=零回归)：为 True 时追加
     baseline 同款 readout 块（本文件 ``_optimized_readout_block``，DB 读数
     直出——非球面 K/A..J 系数、玻璃 nd/vd 如实带出，无论 extra_dof 动了什么
@@ -953,8 +990,9 @@ def run_codev_target(
     限。任一环节失败（最典型：extra_dof 打开非球面 DOF 后 AUT 把 H/J 系数拉
     成非零——``zmx_writer`` 的 EVENASPH 只支持 CODE V A-G 对应 Zemax
     PARM 2-8，见其 ``_reject_nonzero_unsupported_evenasphere_terms``，H/J 需要
-    r^18/r^20 不受支持）都 fail-open：只把 ``"zmx_rebuild_error"`` 字符串塞进
-    返回 dict，绝不炸这里的主 TSV 契约。成功时返回 dict 含
+    r^18/r^20 不受支持；或 CODE V BUF EXP 因文件名含小数点拒开文件，见
+    ``_fmt_edge_filename_token``）都 fail-open：只把 ``"zmx_rebuild_error"``
+    字符串塞进返回 dict，绝不炸这里的主 TSV 契约。成功时返回 dict 含
     ``"optimized_zmx_path"``（绝对路径字符串）与
     ``"optimized_zmx_ingested_efl_mm"``；未启用/失败时前者为 ``None``。
     """
@@ -962,11 +1000,15 @@ def run_codev_target(
     source_zmx = Path(source_zmx)
     work_dir = Path(work_dir).resolve()  # 绝对路径：CODE V BUF EXP 相对路径会二次拼接失败
     work_dir.mkdir(parents=True, exist_ok=True)
-    seq = work_dir / f"atelier_codev_target_{stage}.seq"
-    res = work_dir / f"atelier_codev_target_{stage}.tsv"
-    vignetting_token = _vignetting_filename_token(sequence_options.get("vignetting"))
+    filename_token = (
+        rung_filename_tag
+        if rung_filename_tag is not None
+        else _vignetting_filename_token(sequence_options.get("vignetting"))
+    )
+    seq = work_dir / f"atelier_codev_target_{stage}{filename_token}.seq"
+    res = work_dir / f"atelier_codev_target_{stage}{filename_token}.tsv"
     optimized_readout_path = (
-        work_dir / _target_optimized_readout_filename(stage, vignetting_token)
+        work_dir / _target_optimized_readout_filename(stage, filename_token)
         if emit_optimized_zmx
         else None
     )
@@ -994,7 +1036,7 @@ def run_codev_target(
         try:
             optimized_readout = parse_codev_readout_file(optimized_readout_path)
             zmx_filename = _target_optimized_zmx_filename(
-                source_zmx, target_efl_mm, vignetting_token
+                source_zmx, target_efl_mm, filename_token
             )
             optimized_zmx_path = write_zmx_from_codev_readout(
                 optimized_readout,
@@ -1063,24 +1105,28 @@ def run_codev_target_autovig(
     不是额外的进程发起（真正昂贵的是 `/B` 子进程启动+ZMX 导入+AUT，readout
     在同一进程内几乎零成本）；若只想给"最终采纳"那个 rung 重建，需要在判定
     收敛后对同一配置重新跑一次 CODE V（多一次进程调用，真实变慢），得不偿
-    失。副作用：非最终 rung 也会在 work_dir 落一份（不同渐晕 edge 消歧命名，
-    见 ``_vignetting_filename_token``）ZMX，多余但无害，只是磁盘上多几个文
-    件；返回 dict 里的 ``optimized_zmx_path`` 只对应最终被 ``_annotate``/
-    ``_blocked_or_best`` 采纳的那次 rung。"""
+    失。每个 rung（**含 edge=0**）都经 ``rung_filename_tag=_fmt_edge_filename_
+    token(edge)`` 拿到显式、不含小数点的专属文件名（``.seq``/``.tsv``/
+    readout/ZMX 全部消歧，见 ``_fmt_edge_filename_token`` 的 CODE V BUF EXP
+    "Unable to open file" 怪癖说明），同一 ``(work_dir, stage)`` 内多个 rung
+    之间不再互相覆写；返回 dict 里的 ``optimized_zmx_path`` 只对应最终被
+    ``_annotate``/``_blocked_or_best`` 采纳的那次 rung 自己的文件。"""
 
     trace: list[str] = []
     best: dict[str, object] | None = None
     best_dev = float("inf")
+    best_edge = 0.0
     last_error: CodeVBatchError | None = None
 
     def _trial(edge: float, vig: list[float] | None) -> tuple[dict[str, object] | None, bool]:
-        nonlocal best, best_dev, last_error
+        nonlocal best, best_dev, best_edge, last_error
         try:
             data = run_codev_target(
                 source_zmx=source_zmx, work_dir=work_dir, target_efl_mm=target_efl_mm,
                 target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
                 executable=executable, timeout_seconds=timeout_seconds,
                 platform_name=platform_name, vignetting=vig,
+                rung_filename_tag=_fmt_edge_filename_token(edge),
                 emit_optimized_zmx=emit_optimized_zmx, **sequence_options,
             )
         except CodeVBatchError as exc:
@@ -1094,7 +1140,7 @@ def run_codev_target_autovig(
         conv = str(data.get("aut_converged")) == "1"
         trace.append(f"e{edge:.2f}:dev{dev:.3g}:c{int(conv)}")
         if not math.isnan(dev) and dev < best_dev:
-            best_dev, best = dev, data
+            best_dev, best, best_edge = dev, data, edge
         return data, conv
 
     def _annotate(data: dict[str, object], edge: float, converged: bool) -> dict[str, object]:
@@ -1103,9 +1149,17 @@ def run_codev_target_autovig(
                 "autovig.trace": " ".join(trace)}
 
     def _blocked_or_best(edge: float) -> dict[str, object]:
-        if best is None and last_error is not None:
-            raise last_error  # 全无可用数据 → tooling-blocked（保持既有语义）
-        return _annotate(dict(best) if best is not None else {}, edge, False)
+        if best is None:
+            if last_error is not None:
+                raise last_error  # 全无可用数据 → tooling-blocked（保持既有语义）
+            # 所有 rung 都返回了数据但 dev 全 NaN（never < best_dev）：无可归属的
+            # best，退回末次尝试的 edge。
+            return _annotate({}, edge, False)
+        # 归属一致性：非收敛兜底路径上报 best 数据自己的 edge（best_edge），而
+        # 不是 ladder 爬到的"最后一个尝试过的" edge——否则 autovig.edge_used 会
+        # 和实际返回的 optimized_zmx_path/三快照数字对不上（best 可能来自更早、
+        # 偏差更小的某个 rung，ladder 之后仍继续爬到了更高、更差的 edge 才耗尽）。
+        return _annotate(dict(best), best_edge, False)
 
     # Rung 0 (always first): no 渐晕 — native-convergence check + learns field count.
     data, conv = _trial(0.0, None)
