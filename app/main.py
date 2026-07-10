@@ -36,7 +36,12 @@ from app.core.demo_cache import (  # noqa: E402
     load_demo_cache_bundle_for_request,
 )
 from app.core.field_analysis import compute_field_analysis  # noqa: E402
-from app.core.job_store import JobNotFoundError, JobRecord, JobStatus  # noqa: E402
+from app.core.job_store import (  # noqa: E402
+    CODEV_SEAT_LANE,
+    JobNotFoundError,
+    JobRecord,
+    JobStatus,
+)
 from app.core.lens_system import Scenario  # noqa: E402
 from app.core.optical_calc import airy_disk_diameter_um  # noqa: E402
 from app.core.optical_sample import (  # noqa: E402
@@ -1444,9 +1449,16 @@ class CandidateOrchestrationEngine:
     surfaces the degradation) — that is the honest degraded path per the
     North Star, so this engine must never pre-gate submission on CODE V
     availability the way a hard `DeepEngine` dependency check normally would.
+
+    `seat_lane = CODEV_SEAT_LANE`: a C1 batch runs real CODE V for minutes
+    (Mode3). On the dedicated codev lane it serializes against other CODE V
+    work (single-instance iron rule) without occupying the default lane's
+    seat — the instant demo path (ResultSummaryEngine / ExecutiveSummaryEngine)
+    keeps running while a candidate batch computes.
     """
 
     name = "candidate-orchestration"
+    seat_lane = CODEV_SEAT_LANE
 
     def is_available(self) -> bool:
         return True
