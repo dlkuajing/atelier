@@ -3,6 +3,7 @@
 import asyncio
 import json
 import math
+import re
 import warnings
 from collections.abc import AsyncIterator, Mapping
 from contextlib import asynccontextmanager, redirect_stdout, suppress
@@ -2199,8 +2200,11 @@ async def result_summary_from_job(request: Request, job_id: str) -> HTMLResponse
     )
 
 
-@app.get("/candidates/{job_id}", response_class=HTMLResponse, tags=["web"])
-async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
+def _load_succeeded_candidate_set_record(job_id: str) -> JobRecord:
+    """Shared job lookup + status gate for every `/candidates/{job_id}*`
+    route (HTML render, xlsx export, per-candidate zip bundle) — unknown job
+    or wrong engine -> 404, still queued/running -> 409, so all three
+    surfaces fail identically instead of drifting apart."""
     try:
         record = optical.job_store.get(job_id)
     except JobNotFoundError as exc:
@@ -2222,6 +2226,27 @@ async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
                 "status": record.status.value,
             },
         )
+    return record
+
+
+def _candidate_set_from_record(record: JobRecord) -> orchestration.CandidateSet:
+    assert record.result is not None  # guaranteed by _load_succeeded_candidate_set_record
+    candidate_set_payload = record.result.get("candidate_set")
+    if not isinstance(candidate_set_payload, Mapping):
+        raise ValueError("candidate orchestration job has invalid candidate_set payload")
+    return orchestration.CandidateSet.model_validate(candidate_set_payload)
+
+
+def _safe_download_filename(value: str) -> str:
+    """Collapse anything outside a conservative filename-safe charset (a
+    `candidate_id` embeds `::` — invalid in a Windows filename) into `_`, so
+    a suggested download name is safe on every OS the demo runs on."""
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", value)
+
+
+@app.get("/candidates/{job_id}", response_class=HTMLResponse, tags=["web"])
+async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
+    record = _load_succeeded_candidate_set_record(job_id)
     return templates.TemplateResponse(
         request,
         "candidate_set.html",
@@ -2229,6 +2254,54 @@ async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
             result=record.result,
             progress=_job_progress_context(record),
         ),
+    )
+
+
+@app.get("/candidates/{job_id}/export.xlsx", include_in_schema=False, tags=["web"])
+async def candidate_set_export_xlsx(job_id: str) -> Response:
+    """P17 sub-item 2 ①: spec-sheet xlsx for the whole candidate set — built
+    from the exact same validated `CandidateSet` the HTML page renders (no
+    second computation)."""
+    record = _load_succeeded_candidate_set_record(job_id)
+    candidate_set = _candidate_set_from_record(record)
+    assert record.result is not None
+    requirement = record.result.get("requirement")
+    workbook_bytes = orchestration.build_candidate_set_workbook(
+        candidate_set,
+        job_id=job_id,
+        requirement=str(requirement) if requirement not in {None, ""} else None,
+    )
+    filename = _safe_download_filename(f"atelier-candidates-{job_id}.xlsx")
+    return Response(
+        content=workbook_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@app.get("/candidates/{job_id}/{candidate_id}/bundle.zip", include_in_schema=False, tags=["web"])
+async def candidate_bundle_zip(job_id: str, candidate_id: str) -> Response:
+    """P17 sub-item 2 ②: one candidate's ZMX + reproduction .seq + README
+    download bundle, built from the same validated `CandidateSet` (no second
+    computation) — see `app.core.orchestration.export` for the fail-closed
+    contract when the underlying ZMX/.seq isn't resolvable."""
+    record = _load_succeeded_candidate_set_record(job_id)
+    candidate_set = _candidate_set_from_record(record)
+    scored = next(
+        (sc for sc in candidate_set.candidates if sc.scorecard.candidate_id == candidate_id),
+        None,
+    )
+    if scored is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "candidate_not_found", "job_id": job_id, "candidate_id": candidate_id},
+        )
+    zip_bytes = orchestration.build_candidate_bundle_zip(scored, target=candidate_set.target)
+    filename = _safe_download_filename(f"atelier-candidate-{candidate_id}.zip")
+    return Response(
+        content=zip_bytes,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
 

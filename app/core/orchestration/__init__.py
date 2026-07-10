@@ -29,6 +29,10 @@ from app.core.orchestration.candidate import (
     TargetDeviation,
     TargetSpec,
 )
+from app.core.orchestration.export import (
+    build_candidate_bundle_zip,
+    build_candidate_set_workbook,
+)
 from app.core.orchestration.generators import (
     CandidateGenerator,
     RetrievalGenerator,
@@ -56,6 +60,8 @@ __all__ = [
     "TargetConvergedGenerator",
     "TargetDeviation",
     "TargetSpec",
+    "build_candidate_bundle_zip",
+    "build_candidate_set_workbook",
     "orchestrate",
     "score_candidate",
 ]

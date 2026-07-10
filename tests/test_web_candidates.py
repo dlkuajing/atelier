@@ -12,9 +12,12 @@ fixture (mirrors the fixture-building conventions in
 
 from __future__ import annotations
 
+import io
 import re
+import zipfile
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import openpyxl
 from fastapi.testclient import TestClient
 
 from app.api import optical
@@ -784,6 +787,107 @@ def test_candidate_submit_accepts_omitted_wizard_only_fields(monkeypatch):
         job_id = response.headers["location"].rsplit("/", 1)[1]
         with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
             "".join(streamed.iter_text())
+
+
+# ---------------------------------------------------------------------------
+# P17 sub-item 2: spec-sheet export (xlsx workbook + per-candidate zip bundle)
+# ---------------------------------------------------------------------------
+
+
+def _submitted_candidate_set_job_id(client: TestClient) -> str:
+    submitted = client.post("/candidates", data=_candidate_form_payload(), follow_redirects=False)
+    job_id = submitted.headers["location"].rsplit("/", 1)[1]
+    with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+        "".join(streamed.iter_text())
+    return job_id
+
+
+def test_candidate_set_page_links_to_export_and_bundle_downloads(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_full_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        job_id = _submitted_candidate_set_job_id(client)
+        result = client.get(f"/candidates/{job_id}")
+
+    assert result.status_code == 200, result.text
+    html = result.text
+    assert f'href="/candidates/{job_id}/export.xlsx"' in html
+    assert f'href="/candidates/{job_id}/{_RETRIEVED_ID}/bundle.zip"' in html
+    assert f'href="/candidates/{job_id}/{_TARGET_CONVERGED_ID}/bundle.zip"' in html
+
+
+def test_candidate_set_export_xlsx_matches_page_values(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_full_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        job_id = _submitted_candidate_set_job_id(client)
+        response = client.get(f"/candidates/{job_id}/export.xlsx")
+
+    assert response.status_code == 200, response.text
+    assert response.headers["content-type"].startswith(
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    assert "attachment" in response.headers["content-disposition"]
+
+    wb = openpyxl.load_workbook(io.BytesIO(response.content))
+    assert wb.sheetnames == ["Summary", "Candidates"]
+    candidates_rows = list(wb["Candidates"].iter_rows(values_only=True))
+    header = candidates_rows[0]
+    candidate_id_idx = header.index("candidate_id")
+    rank_score_idx = header.index("rank_score")
+    ids = {row[candidate_id_idx] for row in candidates_rows[1:]}
+    # Same candidate ids as rendered on the page (_full_candidate_set fixture).
+    assert ids == {_RETRIEVED_ID, _TARGET_CONVERGED_ID}
+    for row in candidates_rows[1:]:
+        if row[candidate_id_idx] == _RETRIEVED_ID:
+            assert row[rank_score_idx] == 0.812  # same value the page shows as "score=0.812"
+
+
+def test_candidate_bundle_zip_download_for_known_candidate(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_full_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        job_id = _submitted_candidate_set_job_id(client)
+        response = client.get(f"/candidates/{job_id}/{_RETRIEVED_ID}/bundle.zip")
+
+    assert response.status_code == 200, response.text
+    assert response.headers["content-type"].startswith("application/zip")
+    assert "attachment" in response.headers["content-disposition"]
+    with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
+        assert "README.txt" in zf.namelist()
+
+
+def test_candidate_bundle_zip_404_for_unknown_candidate_id(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_retrieval_only_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        job_id = _submitted_candidate_set_job_id(client)
+        response = client.get(f"/candidates/{job_id}/does-not-exist/bundle.zip")
+
+    assert response.status_code == 404, response.text
+
+
+def test_candidate_export_routes_404_for_unknown_job():
+    store = JobStore()
+    with TestClient(app) as client, patch.object(optical, "job_store", store):
+        assert client.get("/candidates/does-not-exist/export.xlsx").status_code == 404
+        assert client.get("/candidates/does-not-exist/some-id/bundle.zip").status_code == 404
 
 
 # ---------------------------------------------------------------------------

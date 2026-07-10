@@ -156,6 +156,11 @@
               {% for note in summary.notes %}<li>{{ note }}</li>{% endfor %}
             </ul>
           {% endif %}
+          <a
+            class="button-link"
+            data-export-workbook
+            href="/candidates/{{ job_id }}/export.xlsx"
+          >导出规格书（.xlsx，全批次）</a>
         </section>
 
         {% if candidates %}
@@ -180,6 +185,12 @@
 
                 <p class="candidate-provenance">
                   Source seed: <code>{{ candidate.source_case_id }}</code>
+                  &mdash;
+                  <a
+                    class="button-link"
+                    data-export-bundle
+                    href="/candidates/{{ job_id }}/{{ candidate.candidate_id }}/bundle.zip"
+                  >下载 ZMX + 复现 .seq（.zip）</a>
                 </p>
 
                 <div class="candidate-visuals">
