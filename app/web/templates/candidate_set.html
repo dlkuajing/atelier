@@ -120,6 +120,55 @@
                   Source seed: <code>{{ candidate.source_case_id }}</code>
                 </p>
 
+                <div class="candidate-visuals">
+                  <section
+                    class="candidate-layout"
+                    data-candidate-layout
+                    data-provenance="optiland-raytrace"
+                    data-available="{{ 'true' if candidate.visuals.has_layout_svg else 'false' }}"
+                    aria-label="Ray path layout"
+                  >
+                    <div class="analysis-card-heading">
+                      <span class="source-badge" data-provenance="optiland-raytrace">
+                        <span class="source-artifact">Optical path SVG</span>
+                        <span class="source-name">optiland-raytrace</span>
+                      </span>
+                    </div>
+                    {% if candidate.visuals.has_layout_svg %}
+                      <div class="layout-svg-frame">
+                        {{ candidate.visuals.layout_svg | safe }}
+                      </div>
+                    {% else %}
+                      <p class="analysis-empty" data-layout-empty>No SVG payload was returned for this candidate.</p>
+                    {% endif %}
+                  </section>
+
+                  <figure
+                    class="candidate-mtf"
+                    data-candidate-mtf
+                    data-provenance="{{ candidate.visuals.mtf_provenance }}"
+                    data-available="{{ 'true' if candidate.visuals.has_mtf else 'false' }}"
+                  >
+                    <div class="analysis-card-heading">
+                      <span class="source-badge" data-provenance="{{ candidate.visuals.mtf_provenance }}">
+                        <span class="source-artifact">MTF curves</span>
+                        <span class="source-name">{{ candidate.visuals.mtf_provenance }}</span>
+                      </span>
+                    </div>
+                    {% if candidate.visuals.has_mtf %}
+                      {{ candidate.visuals.mtf_svg | safe }}
+                      <div class="mtf-legend" aria-label="MTF field legend">
+                        {% for item in candidate.visuals.mtf_legend %}
+                          <span class="legend-item legend-{{ item.css }}">{{ item.label }}</span>
+                        {% endfor %}
+                      </div>
+                      <figcaption>{{ candidate.visuals.mtf_caption }}</figcaption>
+                    {% else %}
+                      <p class="analysis-empty" data-mtf-empty>No plottable MTF payload was returned for this candidate.</p>
+                    {% endif %}
+                  </figure>
+                </div>
+
                 <ul class="candidate-notes" aria-label="Generation provenance notes">
                   {% for note in candidate.generation_notes %}<li>{{ note }}</li>{% endfor %}
                 </ul>
@@ -138,7 +187,7 @@
                         {% for row in candidate.codev_post_aut.rows %}
                           <tr>
                             <th scope="row">{{ row.label }}</th>
-                            <td>{{ row.value }}</td>
+                            <td class="num{% if row.value == 'N/A' %} value-na{% endif %}">{{ row.value }}</td>
                           </tr>
                         {% endfor %}
                       </tbody>
@@ -163,10 +212,10 @@
                       <tr data-deviation-field="{{ dev.field }}" data-converged="{{ 'true' if dev.converged else 'false' }}">
                         <th scope="row">{{ dev.field }}</th>
                         <td>{{ dev.constraint_kind }}</td>
-                        <td>{{ dev.target }}</td>
-                        <td>{{ dev.achieved }}</td>
-                        <td>{{ dev.violation }}</td>
-                        <td>{{ dev.rel_violation }}</td>
+                        <td class="num">{{ dev.target }}</td>
+                        <td class="num">{{ dev.achieved }}</td>
+                        <td class="num">{{ dev.violation }}</td>
+                        <td class="num{% if dev.rel_violation == 'N/A' %} value-na{% endif %}">{{ dev.rel_violation }}</td>
                         <td>{{ dev.converged_label }}</td>
                       </tr>
                     {% endfor %}
@@ -178,7 +227,7 @@
                     {% for row in candidate.image_quality %}
                       <tr>
                         <th scope="row">{{ row.label }}</th>
-                        <td>{{ row.value }}</td>
+                        <td class="num{% if row.value == 'N/A' %} value-na{% endif %}">{{ row.value }}</td>
                       </tr>
                     {% endfor %}
                   </tbody>
@@ -190,9 +239,9 @@
                     <li>TTL: {{ candidate.manufacturability.total_track_mm }} mm</li>
                     <li>Element count: {{ candidate.manufacturability.n_pieces }}</li>
                     <li>Special glass: {{ candidate.manufacturability.has_special_glass }}</li>
-                    <li>Aspheric term count: {{ candidate.manufacturability.aspheric_term_count }}</li>
-                    <li>Aspheric surface count: {{ candidate.manufacturability.aspheric_surface_count }}</li>
-                    <li>Chief ray angle (deg): {{ candidate.manufacturability.chief_ray_angle_deg }}</li>
+                    <li>Aspheric term count: {% if candidate.manufacturability.aspheric_term_count == 'N/A' %}<span class="value-na">N/A</span>{% else %}{{ candidate.manufacturability.aspheric_term_count }}{% endif %}</li>
+                    <li>Aspheric surface count: {% if candidate.manufacturability.aspheric_surface_count == 'N/A' %}<span class="value-na">N/A</span>{% else %}{{ candidate.manufacturability.aspheric_surface_count }}{% endif %}</li>
+                    <li>Chief ray angle (deg): {% if candidate.manufacturability.chief_ray_angle_deg == 'N/A' %}<span class="value-na">N/A</span>{% else %}{{ candidate.manufacturability.chief_ray_angle_deg }}{% endif %}</li>
                   </ul>
                   <p class="manufacturability-note">{{ candidate.manufacturability.note }}</p>
                 </div>
