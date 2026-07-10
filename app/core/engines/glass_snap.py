@@ -1,91 +1,151 @@
-"""Deterministic offline matching from fictitious glass to real catalog entries."""
+"""Deterministic offline proposals from fictitious glass to catalog entries.
+
+This module deliberately does not authorize a CODE V material write-back.  Its
+temporary metric and tolerance only rank and annotate proposals pending
+same-spectral-definition, per-element calibration on the licensed runtime.
+"""
 
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Iterable
 from dataclasses import dataclass
 
-# Distance is measured in the (Nd, dn=(Nd-1)/Vd) plane.  A match at or below
-# this limit is accepted; a farther nearest neighbour is reported but not snapped.
+from app.core.zmx_materials import MATERIAL_ND_VD
+
 DEFAULT_SNAP_TOLERANCE = 0.01
+DEFAULT_DISPERSION_WEIGHT = 1.0
+PLASTIC_GLASS_NAMES = (
+    "ZEONEX-E48R",
+    "OKP1",
+    "EP8000",
+    "APL5014CL",
+    "SP3810",
+)
+
+
+@dataclass(frozen=True)
+class CatalogEntry:
+    """One versioned catalog identity; glass names alone are not unique."""
+
+    catalog_id: str
+    glass_name: str
+    version: str
+    nd: float
+    vd: float
 
 
 @dataclass(frozen=True)
 class SnapResult:
-    """Nearest-catalog result; ``glass_name=None`` means fail-closed."""
+    """Nearest proposal with its complete catalog identity."""
 
-    glass_name: str | None
-    nd: float | None
-    vd: float | None
+    entry: CatalogEntry | None
     distance: float | None
     delta_nd: float | None
     delta_dn: float | None
     tolerance: float = DEFAULT_SNAP_TOLERANCE
 
     @property
-    def snapped(self) -> bool:
-        return self.glass_name is not None
+    def within_tolerance(self) -> bool:
+        """Whether the proposal meets the uncalibrated Atelier threshold."""
+
+        return self.entry is not None and self.distance is not None and self.distance <= self.tolerance
+
+
+def build_plastic_catalog() -> tuple[CatalogEntry, ...]:
+    """Build the explicitly allow-listed five-entry offline plastic catalog."""
+
+    return tuple(
+        CatalogEntry("atelier-plastics", name, "zmx-materials-v1", *MATERIAL_ND_VD[name])
+        for name in PLASTIC_GLASS_NAMES
+    )
 
 
 def snap_glass(
     nd: float,
     vd: float,
-    catalog: Mapping[str, tuple[float, float]],
+    catalog: Iterable[CatalogEntry],
     *,
-    disp_factor: float = 1.0,
+    spectral_definition: str,
+    catalog_spectral_definition: str,
+    dispersion_weight: float = DEFAULT_DISPERSION_WEIGHT,
 ) -> SnapResult:
-    """Return the nearest real glass when it is within the acceptance tolerance.
+    """Return the nearest catalog proposal in the Atelier metric.
 
-    The metric mirrors CODE V's ``GLASSFIT`` matching coordinates::
-
-        sqrt((Nd_target - Nd_catalog)**2
-             + (disp_factor * (dn_target - dn_catalog))**2)
-
-    where ``dn = (Nd - 1) / Vd``. Invalid inputs raise ``ValueError`` rather
-    than silently producing a match. An empty catalog, or a nearest neighbour
-    beyond ``DEFAULT_SNAP_TOLERANCE``, returns an unsnapped result.
+    Target and catalog values are comparable only when their non-empty spectral
+    definition provenance strings are identical.  Every malformed input raises
+    ``ValueError`` and invalidates the whole operation.  The result is a proposal,
+    never permission to write a glass name into CODE V.
     """
-    target_nd = _validate_nd_vd(nd, vd, label="target")[0]
-    target_vd = float(vd)
-    weight = float(disp_factor)
-    if not math.isfinite(weight) or weight < 0:
-        raise ValueError("disp_factor must be finite and non-negative")
+
+    target_nd, target_vd = _validate_nd_vd(nd, vd, label="target")
+    target_provenance = _validate_text(spectral_definition, label="target spectral definition")
+    catalog_provenance = _validate_text(
+        catalog_spectral_definition, label="catalog spectral definition"
+    )
+    if target_provenance != catalog_provenance:
+        raise ValueError("target and catalog spectral definitions must match")
+    weight = _validate_weight(dispersion_weight)
+
+    try:
+        entries = tuple(catalog)
+    except TypeError as exc:
+        raise ValueError("catalog must be an iterable of CatalogEntry") from exc
+    validated: list[CatalogEntry] = []
+    identities: set[tuple[str, str, str]] = set()
+    for position, entry in enumerate(entries):
+        if not isinstance(entry, CatalogEntry):
+            raise ValueError(f"catalog entry {position} must be a CatalogEntry")
+        catalog_id = _validate_text(entry.catalog_id, label=f"catalog entry {position} catalog_id")
+        glass_name = _validate_text(entry.glass_name, label=f"catalog entry {position} glass_name")
+        version = _validate_text(entry.version, label=f"catalog entry {position} version")
+        entry_nd, entry_vd = _validate_nd_vd(
+            entry.nd, entry.vd, label=f"catalog entry {position}"
+        )
+        identity = (catalog_id, glass_name, version)
+        if identity in identities:
+            raise ValueError(f"duplicate catalog identity: {identity!r}")
+        identities.add(identity)
+        validated.append(CatalogEntry(catalog_id, glass_name, version, entry_nd, entry_vd))
+
+    if not validated:
+        return SnapResult(None, None, None, None)
 
     target_dn = (target_nd - 1.0) / target_vd
-    nearest: tuple[float, str, float, float, float, float] | None = None
-    for name, values in catalog.items():
-        if not isinstance(name, str) or not name.strip():
-            raise ValueError("catalog glass names must be non-empty strings")
-        try:
-            catalog_nd, catalog_vd = values
-        except (TypeError, ValueError) as exc:
-            raise ValueError(f"catalog entry {name!r} must be an (nd, vd) pair") from exc
-        catalog_nd, catalog_vd = _validate_nd_vd(
-            catalog_nd, catalog_vd, label=f"catalog entry {name!r}"
-        )
-        delta_nd = target_nd - catalog_nd
-        delta_dn = target_dn - (catalog_nd - 1.0) / catalog_vd
+    candidates: list[tuple[float, tuple[str, str, str], CatalogEntry, float, float]] = []
+    for entry in validated:
+        delta_nd = target_nd - entry.nd
+        delta_dn = target_dn - (entry.nd - 1.0) / entry.vd
         distance = math.hypot(delta_nd, weight * delta_dn)
-        candidate = (distance, name, catalog_nd, catalog_vd, delta_nd, delta_dn)
-        if nearest is None or candidate[:2] < nearest[:2]:
-            nearest = candidate
+        identity = (entry.catalog_id, entry.glass_name, entry.version)
+        candidates.append((distance, identity, entry, delta_nd, delta_dn))
 
-    if nearest is None:
-        return SnapResult(None, None, None, None, None, None)
-
-    distance, name, catalog_nd, catalog_vd, delta_nd, delta_dn = nearest
-    within_tolerance = distance <= DEFAULT_SNAP_TOLERANCE or math.isclose(
-        distance, DEFAULT_SNAP_TOLERANCE, rel_tol=0.0, abs_tol=1e-12
-    )
-    if not within_tolerance:
-        return SnapResult(None, catalog_nd, catalog_vd, distance, delta_nd, delta_dn)
-    return SnapResult(name, catalog_nd, catalog_vd, distance, delta_nd, delta_dn)
+    distance, _, entry, delta_nd, delta_dn = min(candidates, key=lambda candidate: candidate[:2])
+    return SnapResult(entry, distance, delta_nd, delta_dn)
 
 
-def _validate_nd_vd(nd: float, vd: float, *, label: str) -> tuple[float, float]:
-    numeric_nd = float(nd)
-    numeric_vd = float(vd)
+def _validate_text(value: object, *, label: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{label} must be a non-empty string")
+    return value.strip()
+
+
+def _validate_weight(value: object) -> float:
+    try:
+        weight = float(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError) as exc:
+        raise ValueError("dispersion_weight must be finite and non-negative") from exc
+    if not math.isfinite(weight) or weight < 0:
+        raise ValueError("dispersion_weight must be finite and non-negative")
+    return weight
+
+
+def _validate_nd_vd(nd: object, vd: object, *, label: str) -> tuple[float, float]:
+    try:
+        numeric_nd = float(nd)  # type: ignore[arg-type]
+        numeric_vd = float(vd)  # type: ignore[arg-type]
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{label} nd/vd must be numeric") from exc
     if not math.isfinite(numeric_nd) or numeric_nd <= 1.0:
         raise ValueError(f"{label} nd must be finite and greater than 1")
     if not math.isfinite(numeric_vd) or numeric_vd <= 0:
