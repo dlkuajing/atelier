@@ -85,7 +85,14 @@ def _zmx_glass_names_by_surface(path: Path) -> dict[int, str]:
             continue
         parts = line.split()
         if len(parts) >= 2:
-            names[current_surface] = parts[1].strip('"')
+            name = parts[1].strip('"')
+            # Strip the CODE V model-glass marker appended by
+            # scripts/repair_legacy_zmx_glass.py (keeps the display name equal
+            # to the real trade name, e.g. APL5014CL_14_BLANK -> APL5014CL_14).
+            # The plain Zemax "___BLANK" placeholder is left untouched.
+            if name != "___BLANK":
+                name = name.removesuffix("_BLANK")
+            names[current_surface] = name
     return names
 
 
