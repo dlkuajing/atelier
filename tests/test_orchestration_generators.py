@@ -627,6 +627,81 @@ def test_candidate_for_seed_success_path_produces_target_converged_candidate(
 
 
 # ---------------------------------------------------------------------------
+# `_codev_post_aut_snapshot` — 0.0 追迹全失败哨兵归 None（诚实红线）
+# 哨兵结案：`codev_optimize._standard_config_rms` docstring（宏累加器 ^max=0
+# 起始，全场次追迹失败原样写出 0.0——不是真实零误差）。
+# ---------------------------------------------------------------------------
+
+
+def _sentinel_snapshot_config(**overrides: object) -> dict[str, object]:
+    config: dict[str, object] = {
+        "post_aut.efl_y_mm": "3.797",
+        "post_aut.max_rms_spot_diameter_um": "0.0",
+        "post_aut.max_rms_wavefront_error_waves": "0",
+        "post_aut.max_distortion_pct": "0.000",
+        "post_aut.fno": "2.3",
+        "post_aut.maximh_mm": "3.3",
+        "efl_target_deviation_pct": "0.0",
+        "aut_converged": "0",
+        "autovig.edge_used": "0.0",
+        "aut_error_trace": {"err_f_ratio": 1.0, "termination": "trace_failed"},
+    }
+    config.update(overrides)
+    return config
+
+
+def test_codev_post_aut_snapshot_maps_trace_failed_zero_sentinels_to_none():
+    snapshot = generators_module._codev_post_aut_snapshot(_sentinel_snapshot_config())
+    # 质量三键的 0.0 = 追迹全失败哨兵 → None（web/离线报告渲染 N/A，不是 "0"）
+    assert snapshot["post_aut.max_rms_spot_diameter_um"] is None
+    assert snapshot["post_aut.max_rms_wavefront_error_waves"] is None
+    assert snapshot["post_aut.max_distortion_pct"] is None
+    # 0.0 合法的键原样保留（edge_used=0 = 无渐晕裁切；EFL 偏差可以就是 0）
+    assert snapshot["autovig.edge_used"] == pytest.approx(0.0)
+    assert snapshot["efl_target_deviation_pct"] == pytest.approx(0.0)
+    # 非哨兵键不受影响
+    assert snapshot["post_aut.efl_y_mm"] == pytest.approx(3.797)
+    assert snapshot["post_aut.fno"] == pytest.approx(2.3)
+    assert snapshot["post_aut.maximh_mm"] == pytest.approx(3.3)
+
+
+def test_codev_post_aut_snapshot_sentinel_mapping_is_per_key():
+    """真机可见形态：同一快照 distortion=43.86（真实测量）与 rms=0.0（哨兵）
+    并存——映射逐键独立，不因一键哨兵抹掉别键的真实数字。"""
+    snapshot = generators_module._codev_post_aut_snapshot(
+        _sentinel_snapshot_config(**{"post_aut.max_distortion_pct": "43.86"})
+    )
+    assert snapshot["post_aut.max_rms_spot_diameter_um"] is None
+    assert snapshot["post_aut.max_rms_wavefront_error_waves"] is None
+    assert snapshot["post_aut.max_distortion_pct"] == pytest.approx(43.86)
+
+
+def test_codev_post_aut_snapshot_legit_nonzero_quality_values_pass_through():
+    snapshot = generators_module._codev_post_aut_snapshot(
+        _sentinel_snapshot_config(
+            **{
+                "post_aut.max_rms_spot_diameter_um": "12.3",
+                "post_aut.max_rms_wavefront_error_waves": "0.04",
+                "post_aut.max_distortion_pct": "3.1",
+            }
+        )
+    )
+    assert snapshot["post_aut.max_rms_spot_diameter_um"] == pytest.approx(12.3)
+    assert snapshot["post_aut.max_rms_wavefront_error_waves"] == pytest.approx(0.04)
+    assert snapshot["post_aut.max_distortion_pct"] == pytest.approx(3.1)
+
+
+def test_codev_post_aut_none_renders_na_in_both_report_paths():
+    """哨兵归 None 后，两条渲染路径（web candidate_set 页 + 离线 c1 报告）都
+    必须把 None 显示为 N/A——资深永远不会看到假 "0"。"""
+    from app.main import _fmt_codev_value as web_fmt
+    from scripts.c1_orchestrate import _fmt_codev_value as offline_fmt
+
+    assert web_fmt(None) == "N/A"
+    assert offline_fmt(None) == "N/A"
+
+
+# ---------------------------------------------------------------------------
 # `_generate` — seed selection + per-seed isolation (§9)
 # ---------------------------------------------------------------------------
 

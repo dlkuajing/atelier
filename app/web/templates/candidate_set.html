@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product_name }} Candidate Set</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="/">Workbench</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section
+        class="candidate-set result-page"
+        data-candidate-set-page
+        data-scenario="{{ scenario }}"
+        aria-labelledby="candidate-set-title"
+      >
+        <p class="eyebrow">C1 candidate orchestration</p>
+        <h1 id="candidate-set-title">Candidate set</h1>
+        <p class="candidate-set-byline">
+          Job <code>{{ job_id }}</code>
+          {% if requirement %} &mdash; {{ requirement }}{% endif %}
+        </p>
+
+        {% if honesty_banner %}
+          <blockquote class="honesty-banner" data-honesty-banner role="alert">
+            <span class="honesty-banner-label">Honesty notice</span>
+            <p>{{ honesty_banner }}</p>
+          </blockquote>
+        {% endif %}
+
+        <section class="requirement-echo" aria-label="Requirement echo">
+          <div class="section-heading">
+            <p class="eyebrow">Requirement echo</p>
+            <h2>Target spec</h2>
+          </div>
+          <table class="parameter-table" aria-label="Target spec echo">
+            <thead>
+              <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in requirement_rows %}
+                <tr>
+                  <th scope="row">{{ row.label }}</th>
+                  <td>{{ row.value }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+
+        <section class="batch-summary" data-batch-summary aria-label="Batch summary">
+          <div class="section-heading">
+            <p class="eyebrow">Batch summary</p>
+            <h2>{{ summary.candidate_count }} candidate{{ '' if summary.candidate_count == 1 else 's' }}</h2>
+          </div>
+          <div class="mode-badges" aria-label="Modes present">
+            {% for badge in mode_badges %}
+              <span class="mode-badge" data-mode="{{ badge.mode }}">
+                <span class="mode-badge-label">{{ badge.label }}</span>
+                <span class="mode-badge-count">{{ badge.count }}</span>
+              </span>
+            {% endfor %}
+          </div>
+          <dl class="metrics-grid batch-metrics" aria-label="Batch counts">
+            <div>
+              <dt>Ranked</dt>
+              <dd data-batch-ranked-count>{{ summary.ranked_count }}</dd>
+            </div>
+            <div>
+              <dt>Withheld</dt>
+              <dd data-batch-withheld-count>{{ summary.withheld_count }}</dd>
+            </div>
+            <div>
+              <dt>RI available</dt>
+              <dd>{{ summary.ri_available_label }}</dd>
+            </div>
+          </dl>
+          {% if summary.notes %}
+            <ul class="batch-notes">
+              {% for note in summary.notes %}<li>{{ note }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+        </section>
+
+        {% if candidates %}
+          <section class="candidate-list" aria-label="Candidates">
+            {% for candidate in candidates %}
+              <article
+                class="candidate-card"
+                data-candidate-card
+                data-candidate-id="{{ candidate.candidate_id }}"
+                data-mode="{{ candidate.mode }}"
+                data-rank-status="{{ candidate.rank_status }}"
+              >
+                <div class="candidate-card-heading">
+                  <span class="mode-badge" data-mode="{{ candidate.mode }}">
+                    <span class="mode-badge-label">{{ candidate.mode_label }}</span>
+                  </span>
+                  <span class="rank-badge" data-rank-status="{{ candidate.rank_status }}">
+                    {{ candidate.rank_status_label }}
+                  </span>
+                  <h3>{{ candidate.candidate_id }}</h3>
+                </div>
+
+                <p class="candidate-provenance">
+                  Source seed: <code>{{ candidate.source_case_id }}</code>
+                </p>
+
+                <ul class="candidate-notes" aria-label="Generation provenance notes">
+                  {% for note in candidate.generation_notes %}<li>{{ note }}</li>{% endfor %}
+                </ul>
+
+                {% if candidate.codev_post_aut %}
+                  <section class="codev-provenance" data-codev-provenance aria-label="CODE V post-AUT provenance">
+                    <p class="provenance-caveat">{{ candidate.codev_post_aut.caveat }}</p>
+                    <table class="parameter-table" aria-label="CODE V post-AUT snapshot">
+                      <thead>
+                        <tr>
+                          <th scope="col">Item</th>
+                          <th scope="col">Value</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for row in candidate.codev_post_aut.rows %}
+                          <tr>
+                            <th scope="row">{{ row.label }}</th>
+                            <td>{{ row.value }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </section>
+                {% endif %}
+
+                <table class="parameter-table deviation-table" aria-label="Target deviation (5 dimensions)">
+                  <thead>
+                    <tr>
+                      <th scope="col">Field</th>
+                      <th scope="col">Constraint</th>
+                      <th scope="col">Target</th>
+                      <th scope="col">Achieved</th>
+                      <th scope="col">Deviation</th>
+                      <th scope="col">Rel. deviation</th>
+                      <th scope="col">Converged toward target</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for dev in candidate.deviations %}
+                      <tr data-deviation-field="{{ dev.field }}" data-converged="{{ 'true' if dev.converged else 'false' }}">
+                        <th scope="row">{{ dev.field }}</th>
+                        <td>{{ dev.constraint_kind }}</td>
+                        <td>{{ dev.target }}</td>
+                        <td>{{ dev.achieved }}</td>
+                        <td>{{ dev.violation }}</td>
+                        <td>{{ dev.rel_violation }}</td>
+                        <td>{{ dev.converged_label }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+                <table class="parameter-table image-quality-table" aria-label="Image quality summary">
+                  <tbody>
+                    {% for row in candidate.image_quality %}
+                      <tr>
+                        <th scope="row">{{ row.label }}</th>
+                        <td>{{ row.value }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+                <div class="manufacturability-proxy" aria-label="Manufacturability proxy">
+                  <p class="brief-label">Manufacturability proxy</p>
+                  <ul>
+                    <li>TTL: {{ candidate.manufacturability.total_track_mm }} mm</li>
+                    <li>Element count: {{ candidate.manufacturability.n_pieces }}</li>
+                    <li>Special glass: {{ candidate.manufacturability.has_special_glass }}</li>
+                    <li>Aspheric term count: {{ candidate.manufacturability.aspheric_term_count }}</li>
+                    <li>Aspheric surface count: {{ candidate.manufacturability.aspheric_surface_count }}</li>
+                    <li>Chief ray angle (deg): {{ candidate.manufacturability.chief_ray_angle_deg }}</li>
+                  </ul>
+                  <p class="manufacturability-note">{{ candidate.manufacturability.note }}</p>
+                </div>
+
+                <div class="rank-result" data-rank-result data-rank-status="{{ candidate.rank_status }}">
+                  {% if candidate.rank_status == "ranked" %}
+                    <p>status=ranked, score={{ candidate.rank_score }}, coverage={{ candidate.rank_coverage_pct }}</p>
+                  {% else %}
+                    <p data-withheld-reason>status=withheld, coverage={{ candidate.rank_coverage_pct }}, missing_metrics={{ candidate.rank_missing_metrics }}</p>
+                  {% endif %}
+                  <p>{{ candidate.rank_explanation }}</p>
+                </div>
+              </article>
+            {% endfor %}
+          </section>
+        {% else %}
+          <p class="analysis-empty" data-empty-candidate-set>
+            No candidates were produced for this requirement — every registered generator
+            returned zero candidates or failed (see batch notes above). This is a degraded
+            state, not a design outcome; re-run or widen the requirement.
+          </p>
+        {% endif %}
+
+        <section class="expert-grid" data-expert-grid aria-label="Expert verdict grid (left blank)">
+          <div class="section-heading">
+            <p class="eyebrow">[EXPERT] verdict &mdash; left blank</p>
+            <h2>良品率判定（[EXPERT] 留白 — AI 不代判）</h2>
+            <p>以下判定由资深填写：每候选 值得细看 / 不值得 / 需补数据 —— AI 不代判。</p>
+          </div>
+          <table class="parameter-table expert-table" aria-label="Expert verdict grid">
+            <thead>
+              <tr>
+                <th scope="col">Candidate ID</th>
+                <th scope="col">值得细看</th>
+                <th scope="col">不值得</th>
+                <th scope="col">需补数据</th>
+                <th scope="col">备注</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in expert_rows %}
+                <tr data-expert-row data-candidate-id="{{ row.candidate_id }}">
+                  <th scope="row"><code>{{ row.candidate_id }}</code></th>
+                  <td class="expert-cell" data-expert-cell></td>
+                  <td class="expert-cell" data-expert-cell></td>
+                  <td class="expert-cell" data-expert-cell></td>
+                  <td class="expert-cell" data-expert-cell></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

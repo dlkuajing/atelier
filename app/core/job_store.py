@@ -27,6 +27,20 @@ class JobNotFoundError(KeyError):
     """Raised when a job id is not present in the in-memory store."""
 
 
+#: Lane every engine runs on unless it declares a `seat_lane` attribute (or the
+#: caller passes an explicit `lane` to `submit`). Preserves the pre-lane
+#: behavior for every existing engine: same lane = one shared serialized seat.
+DEFAULT_SEAT_LANE = "default"
+
+#: Lane shared by everything that drives a real CODE V process. CODE V is a
+#: single-instance tool on the demo machine (iron rule): a C1 orchestration
+#: batch and a raw `/api/optical/jobs` deep job must serialize against each
+#: other on this lane — while staying off the default lane so multi-minute
+#: CODE V work never freezes the instant demo path (ResultSummaryEngine /
+#: ExecutiveSummaryEngine jobs keep their own seat).
+CODEV_SEAT_LANE = "codev"
+
+
 @dataclass(frozen=True)
 class JobRecord:
     """Serializable snapshot of one background job."""
@@ -40,25 +54,54 @@ class JobRecord:
 
 
 class JobStore:
-    """Run deep-engine submissions in asyncio background tasks and keep snapshots."""
+    """Run deep-engine submissions in asyncio background tasks and keep snapshots.
+
+    Seats are per lane: jobs on the same lane run strictly serialized (one
+    semaphore seat per lane — the CODE V single-instance iron rule lives on
+    the `CODEV_SEAT_LANE`), while jobs on different lanes run concurrently, so
+    a multi-minute CODE V batch cannot freeze the sub-second demo lane.
+    """
 
     def __init__(self) -> None:
         self._jobs: dict[str, JobRecord] = {}
         self._tasks: dict[str, asyncio.Task[None]] = {}
-        self._single_seat = asyncio.Semaphore(1)
+        self._seats: dict[str, asyncio.Semaphore] = {}
         self._subscribers: dict[str, set[asyncio.Queue[JobRecord]]] = {}
 
-    def submit(self, engine: DeepEngine, payload: Mapping[str, object]) -> str:
-        """Create a job and schedule the engine submission on the running event loop."""
+    def _seat(self, lane: str) -> asyncio.Semaphore:
+        seat = self._seats.get(lane)
+        if seat is None:
+            seat = asyncio.Semaphore(1)
+            self._seats[lane] = seat
+        return seat
+
+    def submit(
+        self,
+        engine: DeepEngine,
+        payload: Mapping[str, object],
+        *,
+        lane: str | None = None,
+    ) -> str:
+        """Create a job and schedule the engine submission on the running event loop.
+
+        The seat lane resolves in order: explicit `lane` argument (boundary
+        code that resolves engines it does not own, e.g. the raw
+        `/api/optical/jobs` path pinning probe-resolved CODE V engines to
+        `CODEV_SEAT_LANE`) > the engine's own `seat_lane` attribute >
+        `DEFAULT_SEAT_LANE`.
+        """
         payload_copy = dict(payload)
         job_id = uuid4().hex
+        resolved_lane = lane if lane is not None else getattr(engine, "seat_lane", DEFAULT_SEAT_LANE)
         self._jobs[job_id] = JobRecord(
             job_id=job_id,
             engine=engine.name,
             status=JobStatus.QUEUED,
             payload=payload_copy,
         )
-        self._tasks[job_id] = asyncio.create_task(self._run(job_id, engine, payload_copy))
+        self._tasks[job_id] = asyncio.create_task(
+            self._run(job_id, engine, payload_copy, resolved_lane)
+        )
         self._publish(job_id)
         return job_id
 
@@ -138,8 +181,9 @@ class JobStore:
         job_id: str,
         engine: DeepEngine,
         payload: Mapping[str, object],
+        lane: str,
     ) -> None:
-        async with self._single_seat:
+        async with self._seat(lane):
             self._replace(job_id, status=JobStatus.RUNNING)
             try:
                 result = await asyncio.to_thread(engine.submit, payload)

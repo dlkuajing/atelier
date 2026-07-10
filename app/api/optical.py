@@ -30,7 +30,13 @@ from app.core.demo_cache import (
     load_demo_cache_bundle_for_request,
 )
 from app.core.engines import get_deep_engine
-from app.core.job_store import JobNotFoundError, JobRecord, JobStatus, JobStore
+from app.core.job_store import (
+    CODEV_SEAT_LANE,
+    JobNotFoundError,
+    JobRecord,
+    JobStatus,
+    JobStore,
+)
 from app.core.layout_svg import render_layout_svg
 from app.core.lens_system import LayoutSVG, RayTraceResult, Scenario
 from app.core.optical_engine import (
@@ -349,7 +355,18 @@ async def engines() -> EnginesResponse:
 @router.post("/jobs", response_model=JobResponse, status_code=status.HTTP_202_ACCEPTED)
 async def submit_job(req: JobSubmitRequest) -> JobResponse:
     """Queue one deep-engine job for background execution."""
-    job_id = job_store.submit(get_deep_engine(), req.payload)
+    engine = get_deep_engine()
+    # An *available* probe-resolved deep engine runs a real CODE V process, so
+    # pin it to the shared codev seat lane: it must serialize against C1
+    # candidate-orchestration batches (CODE V single-instance iron rule) and
+    # must not occupy the default lane's seat (which the instant demo path's
+    # ResultSummaryEngine / ExecutiveSummaryEngine jobs rely on). The explicit
+    # `lane=` override is used because the registry resolves engines this
+    # route does not own (test fakes are frozen dataclasses — unstampable).
+    # NullDeepEngine (unavailable sentinel; submit raises immediately) stays
+    # on the default lane.
+    lane = CODEV_SEAT_LANE if engine.is_available() else None
+    job_id = job_store.submit(engine, req.payload, lane=lane)
     return _job_response(job_store.get(job_id))
 
 
