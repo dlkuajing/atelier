@@ -373,10 +373,10 @@ def _mode3_generation_notes(
         "target）、IMH/FOV Stage C 场重建未落地——本候选 5 维 target-deviation 中"
         "只有 efl 标 converged=True，其余如实标 False（见 candidate.py "
         "CONVERGED_FIELDS 缩窄注记）",
-        "optical_extras.ri_by_field 恒 unavailable：优化后 ZMX 落在临时目录，不在"
-        "ZMX_AMMO_DIR 内，现有 RI 复算管线（relative_illumination.py）按"
-        "`ZMX_AMMO_DIR / source_zmx` 解析路径找不到该文件（已知限制，非本铲修复"
-        "范围）",
+        "optical_extras.ri_by_field 按优化后 ZMX 显式路径实算（P17-4 接线，"
+        "relative_illumination.py 的 zmx_path 参数）——loop3 遗留#4（临时目录致"
+        "RI 复算结构性 miss）已闭合；追迹失败时仍 fail-closed 全 unavailable，"
+        "不猜值",
         "optical_extras.codev_post_aut 携带 CODE V 侧真机快照数字（裁瞳口径），"
         "与本候选 payload 的 Optiland 满口径口径不可直接横比，见字段 docstring",
     ]
@@ -770,7 +770,14 @@ class TargetConvergedGenerator(CandidateGenerator):
             source_case_id=seed.metadata.case_id,
             payload=payload,
             optical_extras=OpticalExtras(
-                ri_by_field=compute_relative_illumination(payload),
+                # P17-4 接线：优化后 ZMX 落在本次批跑的临时目录（不在
+                # ZMX_AMMO_DIR 下），`payload.metadata.source_zmx` 只有文件名、
+                # 默认解析必然 miss —— 显式把真实路径递给 RI 复算（此刻文件
+                # 仍存在：还在 `_generate` 的 TemporaryDirectory 上下文内）。
+                # 追迹失败仍 fail-closed 全 unavailable，不猜值。
+                ri_by_field=compute_relative_illumination(
+                    payload, zmx_path=optimized_zmx_path
+                ),
                 codev_post_aut=_codev_post_aut_snapshot(config),
             ),
             generation_notes=_mode3_generation_notes(
