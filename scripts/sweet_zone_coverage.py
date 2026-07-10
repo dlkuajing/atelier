@@ -1,0 +1,793 @@
+"""Phase 11 — 甜区覆盖率热图（sweet-zone coverage sweep）。
+
+背景与目的
+----------
+真机交叉矩阵（`.planning/loop/seed-target-matching-report.md`，N=24）锁定了
+seed→target EFL 收敛的方向不对称：缩焦（ΔEFL%<0）12/12 全收敛，最深 -35.6%
+仍收；拉焦（ΔEFL%>0）自 +25.1% 起首次收敛失败。这条边界喂进了
+`app/core/engines/seed_target_score.py` 的分桶 heuristic，但"库内现有 436
+颗可路由 seed，到底能覆盖多少典型客户 spec"从未算过——这正是良品率
+go/no-go 闸选题集的前置量化缺口。
+
+本脚本对 wide / telephoto / ultrawide 三场景各铺 EFL×F#×FOV×IMH 网格，每个
+格点用生产 Mode3 (`TargetConvergedGenerator`) 同款两段式排序（stage 1
+`case_library.rank_seeds` FOV/IMH 近邻预筛 → stage 2
+`seed_target_score.score_seed_target_match` EFL band 排序，见
+`app/core/orchestration/generators.py::_rank_seeds_by_target_match`
+docstring）算出"库内最佳匹配"，按 ΔEFL%=(target-native)/native 是否落在
+[-15%, 0]（主口径"甜区"）分类，产出覆盖率数字、空洞清单、markdown 热图报告
+与良品率闸选题集 JSON。
+
+刻意不做的事
+------------
+- 不改 `case_library.py` / `seed_target_score.py` / eval golden——纯只读复用
+  现成两段式排序，不发明新权重。
+- 不直接 import `app.core.orchestration.generators`——那个模块顶层 import
+  `codev_optimize.run_codev_target_standard`（CODE V 批跑路径），本脚本要求
+  "无 CODE V 依赖、可离线重跑"，避免耦合一个只为拿两个常量/一段排序逻辑的
+  重依赖模块。两段式排序在本文件本地重实现（`_rank_pool_by_target`），语义
+  与 `_rank_seeds_by_target_match` 逐步对齐，仅去掉了 Mode3 特有的真机批跑
+  经济性约束（`_TARGET_MAX_SEEDS`——那是"愿意为一次编排花几次 CODE V 批跑"
+  的硬顶，与"库内是否存在好匹配"这个覆盖率问题无关）。
+- 不合成/估算缺失维度：seed 缺 IMH（`_case_image_height_mm` 回落到 0.0
+  sentinel）或缺 FOV（结构上不应发生，仍防御性检查）时，该格点归入
+  `missing_dimension` 桶，不参与甜区/miss 判定，如实在报告里量化。
+
+用法
+----
+    uv run python scripts/sweet_zone_coverage.py
+    uv run python scripts/sweet_zone_coverage.py --efl-points 6 --fov-points 6
+
+默认网格密度（5 EFL × 3 F# × 5 FOV × 4 IMH = 300 格点/场景，3 场景共 900
+格点）经验测算全脚本运行在一分钟量级（`rank_seeds` 单次调用在 302 颗 wide/
+ultrawide 家族池上 ~0.08s，134 颗 tele 池上 ~0.045s）。
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import sys
+import time
+from collections.abc import Sequence
+from dataclasses import dataclass
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from app.core.case_library import (  # noqa: E402
+    _case_image_height_mm,
+    cases_for_scenario,
+    rank_seeds,
+)
+from app.core.engines.seed_target_score import (  # noqa: E402
+    SeedTargetScore,
+    score_seed_target_match,
+)
+from app.core.lens_system import Scenario  # noqa: E402
+from app.core.optical_sample import OpticalSampleData  # noqa: E402
+from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
+from app.core.zmx_ingest import ZMX_AMMO_DIR  # noqa: E402
+
+# ---------------------------------------------------------------------------
+# 判据常量
+# ---------------------------------------------------------------------------
+
+#: 主口径"甜区"：最佳 seed 的 ΔEFL% 落在此闭区间才算「甜区原料」覆盖（任务
+#: 简报给定，非本脚本自定）。
+SWEET_ZONE_DELTA_EFL_PCT: tuple[float, float] = (-15.0, 0.0)
+
+#: 宽松参考带（任务简报给定），仅作参考口径，不作为覆盖率主数字。
+LOOSE_BAND_DELTA_EFL_PCT: tuple[float, float] = (-35.0, 10.0)
+
+#: stage 1（`rank_seeds` FOV/IMH 近邻预筛）收窄到的候选池宽度。镜像
+#: `app/core/orchestration/generators.py::_FOV_PREFILTER_TOP_K`（写死本文件
+#: 生产实际值 2026-07-10，而非 import 该私有常量——见模块 docstring "刻意不
+#: 做的事"）。
+FOV_PREFILTER_TOP_K = 10
+
+#: seed-target band 的机器排序权重，镜像
+#: `app/core/orchestration/generators.py::_BAND_RANK`。
+_BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
+
+_SCENARIOS: tuple[Scenario, ...] = (
+    Scenario.SMARTPHONE_WIDE,
+    Scenario.SMARTPHONE_TELEPHOTO,
+    Scenario.SMARTPHONE_ULTRAWIDE,
+)
+
+DEFAULT_REPORT_PATH = REPO_ROOT / ".planning" / "loop" / "sweet-zone-coverage-report.md"
+DEFAULT_TOPIC_SET_PATH = REPO_ROOT / ".planning" / "loop" / "sweet-zone-topic-set.json"
+
+
+# ---------------------------------------------------------------------------
+# 网格
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class GridResolution:
+    """每维网格点数。EFL/FOV 权重最大（甜区判据即 EFL；stage1 FOV 权重
+    0.46 主导），给更高密度；F# 对甜区判据零影响、对 stage1 影响权重仅
+    0.05，3 点（min/mid/max）足够体现"F# 基本不改变覆盖结论"这件事本身。"""
+
+    efl: int = 5
+    fnum: int = 3
+    fov: int = 5
+    imh: int = 4
+
+
+DEFAULT_GRID_RESOLUTION = GridResolution()
+
+
+@dataclass(frozen=True)
+class GridPoint:
+    scenario: Scenario
+    efl_mm: float
+    fnum: float
+    fov_deg: float
+    image_height_mm: float | None
+
+
+def _linspace(lo: float, hi: float, n: int) -> list[float]:
+    """n=1 时退化为区间中点；n>1 时含端点均匀取 n 个值。纯手写（不依赖
+    numpy）避免给这个离线小脚本添加不必要的依赖面。"""
+    if n < 1:
+        raise ValueError(f"grid resolution must be >= 1, got {n}")
+    if n == 1:
+        return [(lo + hi) / 2.0]
+    step = (hi - lo) / (n - 1)
+    return [lo + i * step for i in range(n)]
+
+
+def build_grid(
+    scenario: Scenario, resolution: GridResolution = DEFAULT_GRID_RESOLUTION
+) -> list[GridPoint]:
+    """场景边界（`parameter_guards.SCENARIO_BOUNDS`，非本脚本编造）×网格
+    密度 → 全量 EFL×F#×FOV×IMH 交叉网格。四维各自独立取值（不做 EFL/FOV/IMH
+    的近轴一致性推导 IMH=EFL*tan(HFOV/2)——`rank_seeds`/`TargetSpec` 本身
+    也不强制这条关系，见模块 docstring 的诚实降级立场：不发明生产代码没有
+    的约束）。"""
+    bounds = SCENARIO_BOUNDS[scenario]
+    efl_values = _linspace(bounds.efl_mm_min, bounds.efl_mm_max, resolution.efl)
+    fnum_values = _linspace(bounds.f_number_min, bounds.f_number_max, resolution.fnum)
+    fov_values = _linspace(bounds.fov_deg_min, bounds.fov_deg_max, resolution.fov)
+    imh_values = _linspace(bounds.image_height_mm_min, bounds.image_height_mm_max, resolution.imh)
+    return [
+        GridPoint(scenario=scenario, efl_mm=efl, fnum=fnum, fov_deg=fov, image_height_mm=imh)
+        for efl in efl_values
+        for fnum in fnum_values
+        for fov in fov_values
+        for imh in imh_values
+    ]
+
+
+# ---------------------------------------------------------------------------
+# 候选池（ZMX-backed，镜像 `_rank_seeds_by_target_match` 的可路由过滤）
+# ---------------------------------------------------------------------------
+
+
+def _zmx_backed_pool(scenario: Scenario) -> list[OpticalSampleData]:
+    """`cases_for_scenario(scenario)` 收窄到 `metadata.source_zmx` 在
+    `ZMX_AMMO_DIR` 下真实存在的 seed——与
+    `TargetConvergedGenerator._rank_seeds_by_target_match` 第一步过滤逐字
+    一致（那才是 Mode3 实际会路由到的候选池；未落盘 ZMX 的 seed 无法
+    `run_codev_target_standard`，纳入统计会虚报覆盖率）。"""
+    pool: list[OpticalSampleData] = []
+    for case in cases_for_scenario(scenario):
+        if case.metadata is None or not case.metadata.source_zmx:
+            continue
+        if not (ZMX_AMMO_DIR / case.metadata.source_zmx).is_file():
+            continue
+        pool.append(case)
+    return pool
+
+
+# ---------------------------------------------------------------------------
+# 两段式匹配（本地重实现，语义镜像
+# `TargetConvergedGenerator._rank_seeds_by_target_match`）
+# ---------------------------------------------------------------------------
+
+
+def _rank_pool_by_target(
+    pool: Sequence[OpticalSampleData],
+    grid_point: GridPoint,
+    *,
+    top_k: int = FOV_PREFILTER_TOP_K,
+) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
+    """stage 1：`rank_seeds` 全维规格距离（FOV 权重主导）收窄到最近 `top_k`
+    颗；stage 2：在收窄邻域内按 `score_seed_target_match` band 优先、band
+    内 score 升序重排。`list.sort` 稳定排序，stage2 打平时保留 stage1 的
+    距离序——同 `_rank_seeds_by_target_match` 的 tie-break 语义。"""
+    if not pool:
+        return []
+
+    seed_ranking = rank_seeds(
+        list(pool),
+        efl_mm=grid_point.efl_mm,
+        fov_deg=grid_point.fov_deg,
+        fnum=grid_point.fnum,
+        image_height_mm=grid_point.image_height_mm,
+    )
+    narrowed = seed_ranking.ranked_cases[:top_k]
+
+    scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
+    for case in narrowed:
+        assert case.metadata is not None
+        seed_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(seed_efl_mm, grid_point.efl_mm)
+        except ValueError:
+            continue
+        scored.append((case, match))
+    scored.sort(key=lambda item: (_BAND_RANK[item[1].band], item[1].score))
+    return scored
+
+
+def _best_whole_pool_efl_match(
+    pool: Sequence[OpticalSampleData], target_efl_mm: float
+) -> tuple[OpticalSampleData, SeedTargetScore] | None:
+    """整池（跳过 stage1 FOV/IMH 收窄）最佳 EFL band 匹配——用来把"漏斗把
+    好 seed 挡在外面"（`funnel_caused_miss`）和"库里真没有好 EFL 匹配"
+    （真空洞）分开，指导补库方向：前者是排序/K 值调参问题，后者才需要真的
+    去买新 seed。"""
+    best: tuple[OpticalSampleData, SeedTargetScore] | None = None
+    for case in pool:
+        assert case.metadata is not None
+        seed_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(seed_efl_mm, target_efl_mm)
+        except ValueError:
+            continue
+        key = (_BAND_RANK[match.band], match.score)
+        if best is None or key < (_BAND_RANK[best[1].band], best[1].score):
+            best = (case, match)
+    return best
+
+
+def _in_band(value: float, band: tuple[float, float]) -> bool:
+    lo, hi = band
+    return lo <= value <= hi
+
+
+# ---------------------------------------------------------------------------
+# 格点评估
+# ---------------------------------------------------------------------------
+
+CoverageLabel = str  # "sweet_zone" | "loose_band" | "miss" | "missing_dimension" | "no_seed_available"
+
+
+@dataclass(frozen=True)
+class MatchResult:
+    grid_point: GridPoint
+    coverage: CoverageLabel
+    seed_case_id: str | None = None
+    seed_native_efl_mm: float | None = None
+    delta_efl_pct: float | None = None
+    band: str | None = None
+    imh_data_real: bool | None = None
+    fov_data_real: bool | None = None
+    whole_pool_best_delta_efl_pct: float | None = None
+    whole_pool_best_case_id: str | None = None
+    funnel_caused_miss: bool = False
+
+
+def evaluate_grid_point(
+    pool: Sequence[OpticalSampleData],
+    grid_point: GridPoint,
+    *,
+    top_k: int = FOV_PREFILTER_TOP_K,
+) -> MatchResult:
+    """一个格点的完整判定：两段式选出"库内最佳匹配"，按 ΔEFL% 分类，附带
+    缺维 fail-closed 降级与漏斗/真空洞区分标记。"""
+    if not pool:
+        return MatchResult(grid_point=grid_point, coverage="no_seed_available")
+
+    whole_pool_best = _best_whole_pool_efl_match(pool, grid_point.efl_mm)
+    whole_pool_best_delta = whole_pool_best[1].delta_efl_pct if whole_pool_best else None
+    whole_pool_best_case_id = (
+        whole_pool_best[0].metadata.case_id
+        if whole_pool_best and whole_pool_best[0].metadata is not None
+        else None
+    )
+
+    scored = _rank_pool_by_target(pool, grid_point, top_k=top_k)
+    if not scored:
+        # stage1 收窄后没有任何候选给出有限正 EFL 的合法打分（schema 上
+        # 不应发生，防御性 fail-closed，不炸整个 sweep）。
+        return MatchResult(
+            grid_point=grid_point,
+            coverage="no_seed_available",
+            whole_pool_best_delta_efl_pct=whole_pool_best_delta,
+            whole_pool_best_case_id=whole_pool_best_case_id,
+        )
+
+    seed, match = scored[0]
+    assert seed.metadata is not None
+
+    imh_real = _case_image_height_mm(seed) > 0.0
+    fov_real = math.isfinite(seed.metadata.fov_deg) and seed.metadata.fov_deg > 0.0
+
+    if not (imh_real and fov_real):
+        coverage: CoverageLabel = "missing_dimension"
+    elif _in_band(match.delta_efl_pct, SWEET_ZONE_DELTA_EFL_PCT):
+        coverage = "sweet_zone"
+    elif _in_band(match.delta_efl_pct, LOOSE_BAND_DELTA_EFL_PCT):
+        coverage = "loose_band"
+    else:
+        coverage = "miss"
+
+    funnel_caused_miss = False
+    if (
+        coverage not in ("sweet_zone",)
+        and whole_pool_best is not None
+        and _in_band(whole_pool_best[1].delta_efl_pct, SWEET_ZONE_DELTA_EFL_PCT)
+    ):
+        funnel_caused_miss = True
+
+    return MatchResult(
+        grid_point=grid_point,
+        coverage=coverage,
+        seed_case_id=seed.metadata.case_id,
+        seed_native_efl_mm=seed.paraxial.effective_focal_length_mm,
+        delta_efl_pct=match.delta_efl_pct,
+        band=match.band,
+        imh_data_real=imh_real,
+        fov_data_real=fov_real,
+        whole_pool_best_delta_efl_pct=whole_pool_best_delta,
+        whole_pool_best_case_id=whole_pool_best_case_id,
+        funnel_caused_miss=funnel_caused_miss,
+    )
+
+
+# ---------------------------------------------------------------------------
+# 聚合
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class ScenarioSummary:
+    scenario: Scenario
+    total_points: int
+    sweet_zone: int
+    loose_band: int
+    miss: int
+    missing_dimension: int
+    no_seed_available: int
+    funnel_caused_miss: int = 0
+
+    def _pct(self, count: int) -> float:
+        return count / self.total_points * 100.0 if self.total_points else 0.0
+
+    @property
+    def sweet_zone_pct(self) -> float:
+        return self._pct(self.sweet_zone)
+
+    @property
+    def loose_band_or_better_pct(self) -> float:
+        return self._pct(self.sweet_zone + self.loose_band)
+
+    @property
+    def miss_pct(self) -> float:
+        return self._pct(self.miss)
+
+    @property
+    def missing_dimension_pct(self) -> float:
+        return self._pct(self.missing_dimension)
+
+
+def summarize(results: Sequence[MatchResult], scenario: Scenario) -> ScenarioSummary:
+    total = len(results)
+    return ScenarioSummary(
+        scenario=scenario,
+        total_points=total,
+        sweet_zone=sum(1 for r in results if r.coverage == "sweet_zone"),
+        loose_band=sum(1 for r in results if r.coverage == "loose_band"),
+        miss=sum(1 for r in results if r.coverage == "miss"),
+        missing_dimension=sum(1 for r in results if r.coverage == "missing_dimension"),
+        no_seed_available=sum(1 for r in results if r.coverage == "no_seed_available"),
+        funnel_caused_miss=sum(1 for r in results if r.funnel_caused_miss),
+    )
+
+
+# ---------------------------------------------------------------------------
+# 良品率闸选题集（JSON，仅甜区覆盖点）
+# ---------------------------------------------------------------------------
+
+
+def build_topic_set(results: Sequence[MatchResult]) -> list[dict[str, object]]:
+    topics: list[dict[str, object]] = []
+    for r in results:
+        if r.coverage != "sweet_zone":
+            continue
+        gp = r.grid_point
+        topics.append(
+            {
+                "scenario": gp.scenario.value,
+                "efl_mm": round(gp.efl_mm, 4),
+                "fnum": round(gp.fnum, 4),
+                "fov_deg": round(gp.fov_deg, 4),
+                "image_height_mm": round(gp.image_height_mm, 4)
+                if gp.image_height_mm is not None
+                else None,
+                "seed_case_id": r.seed_case_id,
+                "seed_native_efl_mm": round(r.seed_native_efl_mm, 4)
+                if r.seed_native_efl_mm is not None
+                else None,
+                "delta_efl_pct": round(r.delta_efl_pct, 4) if r.delta_efl_pct is not None else None,
+                "band": r.band,
+            }
+        )
+    return topics
+
+
+# ---------------------------------------------------------------------------
+# markdown 热图（EFL 行 × FOV 列，格子=该(EFL,FOV)切片下 F#×IMH 子网格的
+# 甜区覆盖率）
+# ---------------------------------------------------------------------------
+
+
+def _heat_symbol(pct: float) -> str:
+    if pct >= 90.0:
+        return "█"  # full block
+    if pct >= 60.0:
+        return "▓"  # dark shade
+    if pct >= 30.0:
+        return "▒"  # medium shade
+    if pct > 0.0:
+        return "░"  # light shade
+    return "·"  # middle dot
+
+
+def render_heatmap_table(results: Sequence[MatchResult]) -> str:
+    if not results:
+        return "_(no grid points)_"
+    efl_values = sorted({r.grid_point.efl_mm for r in results})
+    fov_values = sorted({r.grid_point.fov_deg for r in results})
+
+    header = "| EFL \\ FOV | " + " | ".join(f"{fov:.1f}" for fov in fov_values) + " |"
+    separator = "|---|" + "---|" * len(fov_values)
+    lines = [header, separator]
+    for efl in efl_values:
+        cells = []
+        for fov in fov_values:
+            subset = [
+                r
+                for r in results
+                if r.grid_point.efl_mm == efl and r.grid_point.fov_deg == fov
+            ]
+            covered = sum(1 for r in subset if r.coverage == "sweet_zone")
+            pct = covered / len(subset) * 100.0 if subset else 0.0
+            cells.append(f"{_heat_symbol(pct)} {pct:.0f}%")
+        lines.append(f"| {efl:.2f}mm | " + " | ".join(cells) + " |")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# 空洞清单 / 定向补库
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class EflHole:
+    efl_mm: float
+    total_points: int
+    sweet_zone_points: int
+    avg_delta_efl_pct: float | None
+    funnel_caused_miss_points: int
+    true_gap_points: int
+
+
+def _efl_holes(results: Sequence[MatchResult]) -> list[EflHole]:
+    """按 EFL 网格值聚合（跨 F#/FOV/IMH 子网格），列出甜区覆盖率为 0 的
+    EFL 切片——这些是"这个焦距段库里完全没有能打的种子"的直接量化，供
+    Phase 12 定向补库方向参考。"""
+    efl_values = sorted({r.grid_point.efl_mm for r in results})
+    holes: list[EflHole] = []
+    for efl in efl_values:
+        subset = [r for r in results if r.grid_point.efl_mm == efl]
+        sweet = sum(1 for r in subset if r.coverage == "sweet_zone")
+        if sweet > 0:
+            continue
+        deltas = [r.delta_efl_pct for r in subset if r.delta_efl_pct is not None]
+        avg_delta = sum(deltas) / len(deltas) if deltas else None
+        funnel = sum(1 for r in subset if r.funnel_caused_miss)
+        non_funnel_non_sweet = sum(
+            1 for r in subset if r.coverage != "sweet_zone" and not r.funnel_caused_miss
+        )
+        holes.append(
+            EflHole(
+                efl_mm=efl,
+                total_points=len(subset),
+                sweet_zone_points=sweet,
+                avg_delta_efl_pct=avg_delta,
+                funnel_caused_miss_points=funnel,
+                true_gap_points=non_funnel_non_sweet,
+            )
+        )
+    return holes
+
+
+# ---------------------------------------------------------------------------
+# markdown 报告
+# ---------------------------------------------------------------------------
+
+
+def _render_scenario_section(
+    scenario: Scenario,
+    results: Sequence[MatchResult],
+    pool_size: int,
+    resolution: GridResolution,
+) -> str:
+    summary = summarize(results, scenario)
+    bounds = SCENARIO_BOUNDS[scenario]
+    holes = _efl_holes(results)
+
+    lines = [
+        f"## {scenario.value}",
+        "",
+        f"- 候选池（ZMX-backed）：{pool_size} 颗",
+        (
+            f"- 网格边界：EFL [{bounds.efl_mm_min}, {bounds.efl_mm_max}]mm × "
+            f"F# [{bounds.f_number_min}, {bounds.f_number_max}] × "
+            f"FOV [{bounds.fov_deg_min}, {bounds.fov_deg_max}]deg × "
+            f"IMH [{bounds.image_height_mm_min}, {bounds.image_height_mm_max}]mm"
+        ),
+        (
+            f"- 网格密度：{resolution.efl}×{resolution.fnum}×{resolution.fov}×{resolution.imh} = "
+            f"{summary.total_points} 格点"
+        ),
+        "",
+        "| 判据 | 格点数 | 占比 |",
+        "|---|---:|---:|",
+        f"| 甜区 ΔEFL∈[-15%,0]（主口径） | {summary.sweet_zone} | {summary.sweet_zone_pct:.1f}% |",
+        f"| 宽松带或以上 ΔEFL∈[-35%,+10]（参考口径） | {summary.sweet_zone + summary.loose_band} | {summary.loose_band_or_better_pct:.1f}% |",
+        f"| miss（超出宽松带） | {summary.miss} | {summary.miss_pct:.1f}% |",
+        f"| 因缺维无法判断 | {summary.missing_dimension} | {summary.missing_dimension_pct:.1f}% |",
+        f"| 池内无合法候选（no_seed_available） | {summary.no_seed_available} | {summary._pct(summary.no_seed_available):.1f}% |",
+        f"| 其中漏斗致 miss（whole-pool 有甜区解，两段式未选中） | {summary.funnel_caused_miss} | {summary._pct(summary.funnel_caused_miss):.1f}% |",
+        "",
+        "### 覆盖率热图（行=EFL, 列=FOV；格子=该切片 F#×IMH 子网格的甜区覆盖率）",
+        "",
+        render_heatmap_table(results),
+        "",
+    ]
+
+    if holes:
+        lines.append("### 空洞清单（该 EFL 切片甜区覆盖率=0%）")
+        lines.append("")
+        lines.append(
+            "| target EFL(mm) | 格点数 | 平均 ΔEFL%(最佳匹配) | 漏斗致 miss | 真空洞(库内确无甜区解) |"
+        )
+        lines.append("|---:|---:|---:|---:|---:|")
+        for hole in holes:
+            avg_delta_str = f"{hole.avg_delta_efl_pct:+.1f}%" if hole.avg_delta_efl_pct is not None else "N/A"
+            lines.append(
+                f"| {hole.efl_mm:.2f} | {hole.total_points} | {avg_delta_str} | "
+                f"{hole.funnel_caused_miss_points} | {hole.true_gap_points} |"
+            )
+        lines.append("")
+        true_gap_holes = [h for h in holes if h.true_gap_points > 0]
+        if true_gap_holes:
+            efl_span = ", ".join(f"{h.efl_mm:.2f}mm" for h in true_gap_holes)
+            lines.append(
+                f"**定向补库建议**：{scenario.value} 场景在 target EFL ≈ {efl_span} "
+                "附近，库内即使不做 FOV/IMH 收窄也找不到 ΔEFL 落甜区的原生 seed"
+                "——这是真实的原料空洞，建议 Phase 12 USPTO 补库优先定向这些 "
+                "EFL 段（按上表平均 ΔEFL% 的方向：负值=需要更长焦的 seed 补入，"
+                "正值=需要更短焦的 seed 补入）。"
+            )
+        else:
+            lines.append(
+                "**定向补库建议**：本场景空洞 EFL 切片的 miss 全部标记为"
+                "「漏斗致 miss」——whole-pool 里其实存在甜区内的 EFL 匹配，"
+                "只是被 stage1 FOV/IMH 近邻预筛（top "
+                f"{FOV_PREFILTER_TOP_K}）挡在候选池外。这不是缺 seed，是排序"
+                "参数需要复核（e.g. 放宽 top_k 或重新评估 FOV 权重），不建议"
+                "在这个方向上补库。"
+            )
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def render_report(
+    all_results: dict[Scenario, list[MatchResult]],
+    pool_sizes: dict[Scenario, int],
+    resolution: GridResolution,
+    *,
+    elapsed_seconds: float,
+    imh_completeness: dict[Scenario, tuple[int, int]],
+) -> str:
+    total_points = sum(len(r) for r in all_results.values())
+    total_sweet = sum(
+        summarize(results, scenario).sweet_zone for scenario, results in all_results.items()
+    )
+
+    lines = [
+        "# 甜区覆盖率热图报告（Phase 11）",
+        "",
+        f"生成脚本：`scripts/sweet_zone_coverage.py`（确定性、无 CODE V 依赖，"
+        f"运行耗时 {elapsed_seconds:.1f}s，共 {total_points} 格点）",
+        "",
+        "## 判据定义",
+        "",
+        "- **甜区（主口径）**：两段式匹配选出的库内最佳 seed，"
+        f"ΔEFL%=(target-native)/native ∈ [{SWEET_ZONE_DELTA_EFL_PCT[0]:.0f}%, "
+        f"{SWEET_ZONE_DELTA_EFL_PCT[1]:.0f}%]（真机 N=24 实锤：缩焦方向 12/12 "
+        "全收敛，最深 -35.6% 仍收；本判据取更保守的 -15% 下界留安全边际）。",
+        f"- **宽松带（参考口径）**：ΔEFL% ∈ [{LOOSE_BAND_DELTA_EFL_PCT[0]:.0f}%, "
+        f"{LOOSE_BAND_DELTA_EFL_PCT[1]:.0f}%]，含拉焦方向真机实测的最后收敛点"
+        "（+25.1% 起首次失败，此处 +10% 留安全边际）。",
+        "- **两段式匹配**：镜像生产 Mode3 "
+        "`TargetConvergedGenerator._rank_seeds_by_target_match`"
+        "（`app/core/orchestration/generators.py`）——stage 1 "
+        "`case_library.rank_seeds` 全维规格距离（FOV 权重 0.46 主导）收窄到 "
+        f"top {FOV_PREFILTER_TOP_K} 颗近邻，stage 2 "
+        "`seed_target_score.score_seed_target_match` 在邻域内按 EFL 收敛风险"
+        " band 重排，取第一名为「库内最佳匹配」。这就是真实客户请求会被路由"
+        "到的那颗 seed，不是理论最优 EFL 匹配。",
+        "- **漏斗致 miss vs 真空洞**：额外算了一次跳过 stage1、直接在整场景"
+        "池里找 EFL band 最优的匹配（`whole_pool_best`）。若两段式选中的"
+        "结果 miss，但 whole-pool 最优其实落甜区——标记 `funnel_caused_miss`"
+        "，说明问题在排序/参数而非库内缺料；否则才是需要补库的真空洞。",
+        "- **网格定义**：per-scenario 独立 EFL×F#×FOV×IMH 网格，边界取自 "
+        "`app/core/parameter_guards.SCENARIO_BOUNDS`（非本脚本编造）。四维"
+        "独立均匀取值，**不**做 IMH=EFL·tan(HFOV/2) 的近轴一致性推导——生产"
+        "`rank_seeds`/`TargetSpec` 本身也不强制这条关系，这里如实复刻现状，"
+        "不额外发明约束（已知限制，见文末）。",
+        f"- **网格密度**：{resolution.efl}(EFL)×{resolution.fnum}(F#)×"
+        f"{resolution.fov}(FOV)×{resolution.imh}(IMH) = "
+        f"{resolution.efl * resolution.fnum * resolution.fov * resolution.imh} "
+        "格点/场景。",
+        "",
+        "## 三场景覆盖率总览",
+        "",
+        "| 场景 | 候选池 | 格点数 | 甜区% | 宽松带或以上% | 缺维格点 |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for scenario in _SCENARIOS:
+        results = all_results.get(scenario, [])
+        summary = summarize(results, scenario)
+        lines.append(
+            f"| {scenario.value} | {pool_sizes.get(scenario, 0)} | {summary.total_points} | "
+            f"{summary.sweet_zone_pct:.1f}% | {summary.loose_band_or_better_pct:.1f}% | "
+            f"{summary.missing_dimension} |"
+        )
+    lines.append("")
+    lines.append(
+        f"良品率闸选题集（甜区覆盖点，见 `sweet-zone-topic-set.json`）共 {total_sweet} 条。"
+    )
+    lines.append("")
+
+    lines.append("## 库数据完整性核验（IMH 维度）")
+    lines.append("")
+    lines.append(
+        "`_case_image_height_mm`（`case_library.py`）在 metadata 直接字段缺失时会"
+        "回落到 index.json 紧凑清单、再回落到 case_id 里的legacy `_IMH` token、"
+        "最终回落到 0.0 sentinel（\"无数据\"标记，AGENTS.md 记录的已知问题）。"
+        "本脚本对 ZMX-backed 候选池逐颗核验解析结果："
+    )
+    lines.append("")
+    lines.append("| 场景 | 候选池 | 解析出真实 IMH(>0) | 回落到 0.0 sentinel |")
+    lines.append("|---|---:|---:|---:|")
+    for scenario in _SCENARIOS:
+        real, total = imh_completeness.get(scenario, (0, 0))
+        lines.append(f"| {scenario.value} | {total} | {real} | {total - real} |")
+    lines.append("")
+
+    for scenario in _SCENARIOS:
+        results = all_results.get(scenario, [])
+        lines.append(
+            _render_scenario_section(
+                scenario, results, pool_sizes.get(scenario, 0), resolution
+            )
+        )
+
+    lines.append("## 已知限制")
+    lines.append("")
+    lines.append(
+        "- 甜区判据只看 ΔEFL%（真机 N=24 数据唯一强证据的维度，见 "
+        "`seed_target_score.py` docstring 的伪信号排雷清单）；F#/IMH/TTL 的"
+        "收敛风险未被真机验证过，本报告的\"覆盖\"不代表 F#/IMH 也会真收敛"
+        "——量产可用判定仍在 [EXPERT] 手里。"
+    )
+    lines.append(
+        "- wide 与 ultrawide 共享同一个 302 颗候选池（`_candidate_scenarios` "
+        "的 `_PHONE_SHORT_FOCUS` 家族分组，生产现状行为，非本脚本发明）——"
+        "两个场景的覆盖率数字因此不是完全独立的两个样本。"
+    )
+    lines.append(
+        "- EFL×F#×FOV×IMH 四维独立网格不强制近轴一致性（IMH 应约等于 "
+        "EFL·tan(HFOV/2)），会包含一些物理上不典型的组合；这忠实复现了"
+        "生产 `rank_seeds`/`TargetSpec` 本身对这四个字段的处理方式（同样"
+        "不做一致性校验），未额外引入或修复这个既有限制。"
+    )
+    lines.append(
+        "- 网格密度是覆盖率数字的采样分辨率，不是穷举；数字应读作\"在这个"
+        "采样密度下观测到的覆盖率\"，边界附近的精确覆盖率会随密度提升而"
+        "小幅浮动。"
+    )
+    lines.append("")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+
+def _imh_completeness_for_pool(pool: Sequence[OpticalSampleData]) -> tuple[int, int]:
+    real = sum(1 for case in pool if _case_image_height_mm(case) > 0.0)
+    return real, len(pool)
+
+
+def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--efl-points", type=int, default=DEFAULT_GRID_RESOLUTION.efl)
+    parser.add_argument("--fnum-points", type=int, default=DEFAULT_GRID_RESOLUTION.fnum)
+    parser.add_argument("--fov-points", type=int, default=DEFAULT_GRID_RESOLUTION.fov)
+    parser.add_argument("--imh-points", type=int, default=DEFAULT_GRID_RESOLUTION.imh)
+    parser.add_argument("--report-path", type=Path, default=DEFAULT_REPORT_PATH)
+    parser.add_argument("--topic-set-path", type=Path, default=DEFAULT_TOPIC_SET_PATH)
+    return parser.parse_args(argv)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    args = _parse_args(argv)
+    resolution = GridResolution(
+        efl=args.efl_points, fnum=args.fnum_points, fov=args.fov_points, imh=args.imh_points
+    )
+
+    t_start = time.perf_counter()
+    all_results: dict[Scenario, list[MatchResult]] = {}
+    pool_sizes: dict[Scenario, int] = {}
+    imh_completeness: dict[Scenario, tuple[int, int]] = {}
+    all_topics: list[dict[str, object]] = []
+
+    for scenario in _SCENARIOS:
+        pool = _zmx_backed_pool(scenario)
+        pool_sizes[scenario] = len(pool)
+        imh_completeness[scenario] = _imh_completeness_for_pool(pool)
+        grid = build_grid(scenario, resolution)
+        results = [evaluate_grid_point(pool, gp) for gp in grid]
+        all_results[scenario] = results
+        all_topics.extend(build_topic_set(results))
+        print(
+            f"{scenario.value}: pool={len(pool)} grid_points={len(grid)}",
+            file=sys.stderr,
+        )
+
+    elapsed = time.perf_counter() - t_start
+
+    report_text = render_report(
+        all_results,
+        pool_sizes,
+        resolution,
+        elapsed_seconds=elapsed,
+        imh_completeness=imh_completeness,
+    )
+    args.report_path.parent.mkdir(parents=True, exist_ok=True)
+    args.report_path.write_text(report_text, encoding="utf-8")
+
+    args.topic_set_path.parent.mkdir(parents=True, exist_ok=True)
+    args.topic_set_path.write_text(
+        json.dumps(all_topics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+    print(f"report written: {args.report_path}")
+    print(f"topic set written: {args.topic_set_path} ({len(all_topics)} sweet-zone topics)")
+    print(f"elapsed: {elapsed:.1f}s")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
