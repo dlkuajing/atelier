@@ -1965,15 +1965,15 @@
   "metadata": {
     "case_id": "US-12443014-B2-e2",
     "source_zmx": "US-12443014-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-telephoto",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
     "materials": [],
     "fov_deg": 19.0,
-    "nominal_efl_mm": 22.910989695983204,
+    "nominal_efl_mm": 22.910989696,
     "computed_efl_mm": 22.910989695983204,
-    "efl_error_pct": 0.0,
+    "efl_error_pct": 7.331516663508156e-11,
     "mtf_max_field_frac": 0.5
   }
 }

@@ -17,7 +17,7 @@ from tests.data.zmx_manifest import ZMX_AMMO
 
 
 def test_manifest_has_entries():
-    assert len(ZMX_AMMO) == 353
+    assert len(ZMX_AMMO) == 361
     for a in ZMX_AMMO:
         assert a["nominal_efl_mm"] > 0, a
         assert a["filename"]

@@ -425,15 +425,15 @@
   "metadata": {
     "case_id": "US-12372756-B2-e10",
     "source_zmx": "US-12372756-B2-e10.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-telephoto",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
     "materials": [],
     "fov_deg": 15.1,
-    "nominal_efl_mm": 10.69328631096567,
+    "nominal_efl_mm": 10.693286311,
     "computed_efl_mm": 10.69328631096567,
-    "efl_error_pct": 0.0,
+    "efl_error_pct": 3.210413644581338e-10,
     "mtf_max_field_frac": 0.0
   }
 }

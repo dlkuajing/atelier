@@ -1985,15 +1985,15 @@
   "metadata": {
     "case_id": "US-20260160979-A1-e9",
     "source_zmx": "US-20260160979-A1-e9.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-telephoto",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
     "materials": [],
     "fov_deg": 17.8,
-    "nominal_efl_mm": 14.57146683974314,
+    "nominal_efl_mm": 14.57146684,
     "computed_efl_mm": 14.57146683974314,
-    "efl_error_pct": 0.0,
+    "efl_error_pct": 1.762756113992137e-9,
     "mtf_max_field_frac": 0.5
   }
 }

@@ -77,7 +77,7 @@
     "zmx_real_image_height_mm": 1.2372216
   },
   "patent_us-10921568-b2-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 0.8689345657651703,
+    "first_order_image_height_deviation_frac": 0.8689345658089053,
     "first_order_image_height_mm": 2.286497602129502,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
@@ -85,7 +85,7 @@
     "selected_case_id": "US-12429675-B2-e7",
     "source_case_id": "US-10921568-B2-e2",
     "zmx_ftan_image_height_sanity_mm": 2.282074971,
-    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_deviation_frac": 3.3368840415195054e-10,
     "zmx_real_image_height_mm": 0.2996808011
   },
   "patent_us-10921568-b2-e7_reanchor": {
@@ -111,6 +111,18 @@
     "zmx_ftan_image_height_sanity_mm": 3.32458467,
     "zmx_real_image_height_deviation_frac": 0.0,
     "zmx_real_image_height_mm": 3.085837722
+  },
+  "patent_us-11262555-b2-e2_reanchor": {
+    "first_order_image_height_deviation_frac": 0.4864096666674373,
+    "first_order_image_height_mm": 4.520699248629713,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.338",
+    "selected_case_id": "US-11262555-B2-e2",
+    "source_case_id": "US-11262555-B2-e2",
+    "zmx_ftan_image_height_sanity_mm": 4.520504398,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 2.321787434
   },
   "patent_us-11668898-b2-e10_reanchor": {
     "first_order_image_height_deviation_frac": 0.013612007808041457,
@@ -293,15 +305,15 @@
     "zmx_real_image_height_mm": 2.675108177
   },
   "patent_us-11899172-b2-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 0.654770844159722,
+    "first_order_image_height_deviation_frac": 0.6547708445693744,
     "first_order_image_height_mm": 1.2205470261467377,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
-    "quality_floor_gap": "2.000",
-    "quality_min250": "0.000",
-    "selected_case_id": "US-11899172-B2-e5",
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.403",
+    "selected_case_id": "US-20200057277-A1-e1",
     "source_case_id": "US-11899172-B2-e5",
     "zmx_ftan_image_height_sanity_mm": 2.785657074,
-    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_deviation_frac": 1.1866100132808702e-09,
     "zmx_real_image_height_mm": 0.4213684195
   },
   "patent_us-11906710-b2-e10_reanchor": {
@@ -1409,7 +1421,7 @@
     "zmx_real_image_height_mm": 5.14784738
   },
   "patent_us-12429675-b2-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 0.00952755004375634,
+    "first_order_image_height_deviation_frac": 0.00952754963223359,
     "first_order_image_height_mm": 0.7289998542936741,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
@@ -1417,7 +1429,7 @@
     "selected_case_id": "US-12429675-B2-e7",
     "source_case_id": "US-12429675-B2-e7",
     "zmx_ftan_image_height_sanity_mm": 3.545448267,
-    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_deviation_frac": 4.154812686251314e-10,
     "zmx_real_image_height_mm": 0.7220542717
   },
   "patent_us-12429675-b2-e8_reanchor": {
@@ -1685,8 +1697,8 @@
     "zmx_real_image_height_mm": 0.6605280652
   },
   "patent_us-12571987-b2-e1_reanchor": {
-    "first_order_image_height_deviation_frac": 1.1338129633127685,
-    "first_order_image_height_mm": 1.3876201639543588,
+    "first_order_image_height_deviation_frac": 1.133812963273596,
+    "first_order_image_height_mm": 1.3876201639798327,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.863",
     "quality_min250": "0.011",
@@ -1697,8 +1709,8 @@
     "zmx_real_image_height_mm": 2.960921894
   },
   "patent_us-12571987-b2-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0164273261161076,
-    "first_order_image_height_mm": 1.0448971806280112,
+    "first_order_image_height_deviation_frac": 1.0164273262393733,
+    "first_order_image_height_mm": 1.0448971805641358,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.564",
     "quality_min250": "0.056",
@@ -1709,8 +1721,8 @@
     "zmx_real_image_height_mm": 2.106959228
   },
   "patent_us-12571987-b2-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0109471005828004,
-    "first_order_image_height_mm": 1.047218866368827,
+    "first_order_image_height_deviation_frac": 1.0109471006797563,
+    "first_order_image_height_mm": 1.0472188663183364,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.175",
@@ -1721,8 +1733,8 @@
     "zmx_real_image_height_mm": 2.105901743
   },
   "patent_us-12571987-b2-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0184893283439433,
-    "first_order_image_height_mm": 1.0464283344678094,
+    "first_order_image_height_deviation_frac": 1.0184893284412633,
+    "first_order_image_height_mm": 1.0464283344173566,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.317",
@@ -1733,8 +1745,8 @@
     "zmx_real_image_height_mm": 2.112204426
   },
   "patent_us-12571987-b2-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0399125522291626,
-    "first_order_image_height_mm": 1.3867652968303346,
+    "first_order_image_height_deviation_frac": 1.0399125523047288,
+    "first_order_image_height_mm": 1.3867652967789634,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.801",
     "quality_min250": "0.035",
@@ -1745,8 +1757,8 @@
     "zmx_real_image_height_mm": 2.828879936
   },
   "patent_us-12571987-b2-e6_reanchor": {
-    "first_order_image_height_deviation_frac": 1.030559506199222,
-    "first_order_image_height_mm": 2.0793347597594365,
+    "first_order_image_height_deviation_frac": 1.0305595062081736,
+    "first_order_image_height_mm": 2.07933475975027,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "1.226",
     "quality_min250": "0.011",
@@ -1757,8 +1769,8 @@
     "zmx_real_image_height_mm": 4.222212963
   },
   "patent_us-12571987-b2-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0308820025810121,
-    "first_order_image_height_mm": 2.079016444891448,
+    "first_order_image_height_deviation_frac": 1.0308820026691627,
+    "first_order_image_height_mm": 2.079016444801208,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.962",
     "quality_min250": "0.012",
@@ -1769,8 +1781,8 @@
     "zmx_real_image_height_mm": 4.222237081
   },
   "patent_us-12571987-b2-e8_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0201320854725788,
-    "first_order_image_height_mm": 2.089441200084981,
+    "first_order_image_height_deviation_frac": 1.0201320855693414,
+    "first_order_image_height_mm": 2.0894411999848983,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.142",
@@ -1936,9 +1948,21 @@
     "zmx_real_image_height_deviation_frac": 0.0,
     "zmx_real_image_height_mm": 4.591701204
   },
+  "patent_us-20200057277-a1-e1_reanchor": {
+    "first_order_image_height_deviation_frac": 0.006142894387758409,
+    "first_order_image_height_mm": 1.0012504840209673,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.403",
+    "selected_case_id": "US-20200057277-A1-e1",
+    "source_case_id": "US-20200057277-A1-e1",
+    "zmx_ftan_image_height_sanity_mm": 1.0,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 1.00740106
+  },
   "patent_us-20210364737-a1-e1_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0249455063981432,
-    "first_order_image_height_mm": 1.2895016704151216,
+    "first_order_image_height_deviation_frac": 1.0249455064121993,
+    "first_order_image_height_mm": 1.2895016704061706,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -1949,8 +1973,8 @@
     "zmx_real_image_height_mm": 2.611170613
   },
   "patent_us-20210364737-a1-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 1.026335019218197,
-    "first_order_image_height_mm": 1.2900327888566776,
+    "first_order_image_height_deviation_frac": 1.0263350191653016,
+    "first_order_image_height_mm": 1.2900327888903527,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -1961,8 +1985,8 @@
     "zmx_real_image_height_mm": 2.614038616
   },
   "patent_us-20210364737-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.2581873820254723,
-    "first_order_image_height_mm": 1.297535537273208,
+    "first_order_image_height_deviation_frac": 1.2581873820411473,
+    "first_order_image_height_mm": 1.2975355372642012,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -1973,8 +1997,8 @@
     "zmx_real_image_height_mm": 2.930078378
   },
   "patent_us-20210364737-a1-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 0.8516321649469132,
-    "first_order_image_height_mm": 1.2896995192716725,
+    "first_order_image_height_deviation_frac": 0.8516321649786447,
+    "first_order_image_height_mm": 1.2896995192495708,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -1985,8 +2009,8 @@
     "zmx_real_image_height_mm": 2.388049113
   },
   "patent_us-20210364737-a1-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 0.8642482127771275,
-    "first_order_image_height_mm": 1.2961537709618698,
+    "first_order_image_height_deviation_frac": 0.8642482127902148,
+    "first_order_image_height_mm": 1.2961537709527706,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -1997,8 +2021,8 @@
     "zmx_real_image_height_mm": 2.416352351
   },
   "patent_us-20210364737-a1-e6_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0008151343464327,
-    "first_order_image_height_mm": 1.2960863197624102,
+    "first_order_image_height_deviation_frac": 1.0008151343604785,
+    "first_order_image_height_mm": 1.2960863197533115,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -2009,8 +2033,8 @@
     "zmx_real_image_height_mm": 2.593229124
   },
   "patent_us-20210364737-a1-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 0.9976422152230229,
-    "first_order_image_height_mm": 1.2962498205470225,
+    "first_order_image_height_deviation_frac": 0.9976422152370465,
+    "first_order_image_height_mm": 1.2962498205379227,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -2021,8 +2045,8 @@
     "zmx_real_image_height_mm": 2.589443363
   },
   "patent_us-20210364737-a1-e8_reanchor": {
-    "first_order_image_height_deviation_frac": 0.9836188697908085,
-    "first_order_image_height_mm": 1.296006442140326,
+    "first_order_image_height_deviation_frac": 0.983618869804734,
+    "first_order_image_height_mm": 1.2960064421312276,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -2033,8 +2057,8 @@
     "zmx_real_image_height_mm": 2.570782834
   },
   "patent_us-20210364737-a1-e9_reanchor": {
-    "first_order_image_height_deviation_frac": 0.9938850113665,
-    "first_order_image_height_mm": 1.2962295625206102,
+    "first_order_image_height_deviation_frac": 0.9938850113804972,
+    "first_order_image_height_mm": 1.2962295625115106,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.924",
     "quality_min250": "0.006",
@@ -2045,8 +2069,8 @@
     "zmx_real_image_height_mm": 2.584532696
   },
   "patent_us-20210364762-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.2773406616768685,
-    "first_order_image_height_mm": 1.4475424636613925,
+    "first_order_image_height_deviation_frac": 1.2773406616665701,
+    "first_order_image_height_mm": 1.4475424636679384,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.654",
     "quality_min250": "0.076",
@@ -2057,8 +2081,8 @@
     "zmx_real_image_height_mm": 3.296547312
   },
   "patent_us-20210364762-a1-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 1.2706299949787148,
-    "first_order_image_height_mm": 1.5343613625753496,
+    "first_order_image_height_deviation_frac": 1.270629994958346,
+    "first_order_image_height_mm": 1.5343613625891137,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.654",
     "quality_min250": "0.076",
@@ -2069,20 +2093,20 @@
     "zmx_real_image_height_mm": 3.483966933
   },
   "patent_us-20210364763-a1-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 0.3617346306034498,
-    "first_order_image_height_mm": 1.4357162105886814,
+    "first_order_image_height_deviation_frac": 0.36173463025358465,
+    "first_order_image_height_mm": 1.435716210585067,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
-    "quality_floor_gap": "1.002",
-    "quality_min250": "0.098",
-    "selected_case_id": "US-12353055-B2-e1",
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.403",
+    "selected_case_id": "US-20200057277-A1-e1",
     "source_case_id": "US-20210364763-A1-e5",
     "zmx_ftan_image_height_sanity_mm": 3.28,
-    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_deviation_frac": 5.456324047459217e-10,
     "zmx_real_image_height_mm": 0.9163679375
   },
   "patent_us-20210364765-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.3185556880164921,
-    "first_order_image_height_mm": 1.377359511141181,
+    "first_order_image_height_deviation_frac": 1.318555687994653,
+    "first_order_image_height_mm": 1.3773595111541548,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.059",
     "quality_min250": "0.114",
@@ -2093,8 +2117,8 @@
     "zmx_real_image_height_mm": 3.193484729
   },
   "patent_us-20210364765-a1-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 1.065812906334464,
-    "first_order_image_height_mm": 1.3775771011371782,
+    "first_order_image_height_deviation_frac": 1.0658129063150052,
+    "first_order_image_height_mm": 1.377577101150154,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.059",
     "quality_min250": "0.114",
@@ -2105,8 +2129,8 @@
     "zmx_real_image_height_mm": 2.845816555
   },
   "patent_us-20210373297-a1-e11_reanchor": {
-    "first_order_image_height_deviation_frac": 0.6769480748869043,
-    "first_order_image_height_mm": 1.9951490836862333,
+    "first_order_image_height_deviation_frac": 0.6769480748861009,
+    "first_order_image_height_mm": 1.9951490836871892,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.448",
     "quality_min250": "0.105",
@@ -2117,8 +2141,8 @@
     "zmx_real_image_height_mm": 3.345761415
   },
   "patent_us-20210373297-a1-e1_reanchor": {
-    "first_order_image_height_deviation_frac": 0.014401710333171438,
-    "first_order_image_height_mm": 1.6946833128222742,
+    "first_order_image_height_deviation_frac": 0.014401710329227296,
+    "first_order_image_height_mm": 1.6946833128288634,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "1.002",
     "quality_min250": "0.098",
@@ -2129,8 +2153,8 @@
     "zmx_real_image_height_mm": 1.719089651
   },
   "patent_us-20210389571-a1-e1_reanchor": {
-    "first_order_image_height_deviation_frac": 0.7498846187556192,
-    "first_order_image_height_mm": 0.7086916627005284,
+    "first_order_image_height_deviation_frac": 0.7498846187704744,
+    "first_order_image_height_mm": 0.7086916626945121,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.897",
     "quality_min250": "0.009",
@@ -2141,8 +2165,8 @@
     "zmx_real_image_height_mm": 1.24012864
   },
   "patent_us-20210389571-a1-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 0.8723975051869285,
-    "first_order_image_height_mm": 0.7152935326445499,
+    "first_order_image_height_deviation_frac": 0.8723975051993837,
+    "first_order_image_height_mm": 0.7152935326397917,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.238",
     "quality_min250": "0.061",
@@ -2153,8 +2177,8 @@
     "zmx_real_image_height_mm": 1.339313826
   },
   "patent_us-20210389571-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 0.9735605809430516,
-    "first_order_image_height_mm": 0.7037105399300003,
+    "first_order_image_height_deviation_frac": 0.9735605809399608,
+    "first_order_image_height_mm": 0.7037105399311024,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.897",
     "quality_min250": "0.009",
@@ -2165,8 +2189,8 @@
     "zmx_real_image_height_mm": 1.388815382
   },
   "patent_us-20210389571-a1-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 0.9255096432600584,
-    "first_order_image_height_mm": 0.72971202814705,
+    "first_order_image_height_deviation_frac": 0.9255096432733464,
+    "first_order_image_height_mm": 0.7297120281420143,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.238",
     "quality_min250": "0.061",
@@ -2177,8 +2201,8 @@
     "zmx_real_image_height_mm": 1.405067547
   },
   "patent_us-20210389571-a1-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 0.9469900892874961,
-    "first_order_image_height_mm": 0.6979966562117044,
+    "first_order_image_height_deviation_frac": 0.9469900892978387,
+    "first_order_image_height_mm": 0.6979966562079966,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.897",
     "quality_min250": "0.009",
@@ -2189,8 +2213,8 @@
     "zmx_real_image_height_mm": 1.358992572
   },
   "patent_us-20210389571-a1-e6_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0177744547321994,
-    "first_order_image_height_mm": 0.6645225291931647,
+    "first_order_image_height_deviation_frac": 1.0177744547289644,
+    "first_order_image_height_mm": 0.66452252919423,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.897",
     "quality_min250": "0.009",
@@ -2201,8 +2225,8 @@
     "zmx_real_image_height_mm": 1.340856584
   },
   "patent_us-20210389571-a1-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 1.263427815812772,
-    "first_order_image_height_mm": 0.599273208327577,
+    "first_order_image_height_deviation_frac": 1.2634278158166588,
+    "first_order_image_height_mm": 0.599273208326548,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.109",
@@ -2213,8 +2237,8 @@
     "zmx_real_image_height_mm": 1.356411649
   },
   "patent_us-20210389572-a1-e1_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0479840375177942,
-    "first_order_image_height_mm": 1.21346466401763,
+    "first_order_image_height_deviation_frac": 1.0479840375501317,
+    "first_order_image_height_mm": 1.2134646639984696,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.768",
     "quality_min250": "0.036",
@@ -2225,8 +2249,8 @@
     "zmx_real_image_height_mm": 2.485156262
   },
   "patent_us-20210389572-a1-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 0.9871830045110809,
-    "first_order_image_height_mm": 1.2138683938641492,
+    "first_order_image_height_deviation_frac": 0.9871830045424583,
+    "first_order_image_height_mm": 1.2138683938449824,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "1.105",
     "quality_min250": "0.054",
@@ -2237,8 +2261,8 @@
     "zmx_real_image_height_mm": 2.412178642
   },
   "patent_us-20210389572-a1-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0355836976767452,
-    "first_order_image_height_mm": 1.1175186584547128,
+    "first_order_image_height_deviation_frac": 1.0355836976704074,
+    "first_order_image_height_mm": 1.1175186584581922,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.768",
     "quality_min250": "0.036",
@@ -2249,8 +2273,8 @@
     "zmx_real_image_height_mm": 2.274802763
   },
   "patent_us-20210389572-a1-e6_reanchor": {
-    "first_order_image_height_deviation_frac": 1.088032904604369,
-    "first_order_image_height_mm": 1.1149638158796709,
+    "first_order_image_height_deviation_frac": 1.0880329046025536,
+    "first_order_image_height_mm": 1.1149638158806403,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.768",
     "quality_min250": "0.036",
@@ -2261,8 +2285,8 @@
     "zmx_real_image_height_mm": 2.328081135
   },
   "patent_us-20210389572-a1-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0689096874855588,
-    "first_order_image_height_mm": 1.1145228430934566,
+    "first_order_image_height_deviation_frac": 1.0689096874837603,
+    "first_order_image_height_mm": 1.1145228430944256,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "1.105",
     "quality_min250": "0.054",
@@ -2273,8 +2297,8 @@
     "zmx_real_image_height_mm": 2.305847107
   },
   "patent_us-20210389572-a1-e8_reanchor": {
-    "first_order_image_height_deviation_frac": 0.4266478862216304,
-    "first_order_image_height_mm": 1.1156834600690886,
+    "first_order_image_height_deviation_frac": 0.4266478862258877,
+    "first_order_image_height_mm": 1.1156834600657592,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.496",
     "quality_min250": "0.040",
@@ -2285,8 +2309,8 @@
     "zmx_real_image_height_mm": 1.59168745
   },
   "patent_us-20220011544-a1-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 1.4618054621262038,
-    "first_order_image_height_mm": 1.304202011651644,
+    "first_order_image_height_deviation_frac": 1.461805462128563,
+    "first_order_image_height_mm": 1.304202011650394,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.426",
@@ -2297,8 +2321,8 @@
     "zmx_real_image_height_mm": 3.210691636
   },
   "patent_us-20220011544-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.4303552292464796,
-    "first_order_image_height_mm": 1.3229343600922314,
+    "first_order_image_height_deviation_frac": 1.4303552292487165,
+    "first_order_image_height_mm": 1.3229343600910137,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.412",
@@ -2309,8 +2333,8 @@
     "zmx_real_image_height_mm": 3.21520044
   },
   "patent_us-20220011544-a1-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 1.717489030830169,
-    "first_order_image_height_mm": 1.3062791344241664,
+    "first_order_image_height_deviation_frac": 1.717489030851517,
+    "first_order_image_height_mm": 1.3062791344139046,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.984",
     "quality_min250": "0.001",
@@ -2369,8 +2393,8 @@
     "zmx_real_image_height_mm": 2.89917799
   },
   "patent_us-20220050269-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.2737807040823703,
-    "first_order_image_height_mm": 0.9093712196112889,
+    "first_order_image_height_deviation_frac": 1.2737807040858664,
+    "first_order_image_height_mm": 0.9093712196098906,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.065",
     "quality_min250": "0.096",
@@ -2381,8 +2405,8 @@
     "zmx_real_image_height_mm": 2.067710732
   },
   "patent_us-20220050269-a1-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 1.2203198569570506,
-    "first_order_image_height_mm": 0.9087587586435888,
+    "first_order_image_height_deviation_frac": 1.2203198569604647,
+    "first_order_image_height_mm": 0.9087587586421915,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.065",
     "quality_min250": "0.096",
@@ -2729,8 +2753,8 @@
     "zmx_real_image_height_mm": 2.871506367
   },
   "patent_us-20240176104-a1-e1_reanchor": {
-    "first_order_image_height_deviation_frac": 1.1338129633127685,
-    "first_order_image_height_mm": 1.3876201639543588,
+    "first_order_image_height_deviation_frac": 1.133812963273596,
+    "first_order_image_height_mm": 1.3876201639798327,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.863",
     "quality_min250": "0.011",
@@ -2741,8 +2765,8 @@
     "zmx_real_image_height_mm": 2.960921894
   },
   "patent_us-20240176104-a1-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0164273261161076,
-    "first_order_image_height_mm": 1.0448971806280112,
+    "first_order_image_height_deviation_frac": 1.0164273262393733,
+    "first_order_image_height_mm": 1.0448971805641358,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.564",
     "quality_min250": "0.056",
@@ -2753,8 +2777,8 @@
     "zmx_real_image_height_mm": 2.106959228
   },
   "patent_us-20240176104-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0109471005828004,
-    "first_order_image_height_mm": 1.047218866368827,
+    "first_order_image_height_deviation_frac": 1.0109471006797563,
+    "first_order_image_height_mm": 1.0472188663183364,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.175",
@@ -2765,8 +2789,8 @@
     "zmx_real_image_height_mm": 2.105901743
   },
   "patent_us-20240176104-a1-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0184893283439433,
-    "first_order_image_height_mm": 1.0464283344678094,
+    "first_order_image_height_deviation_frac": 1.0184893284412633,
+    "first_order_image_height_mm": 1.0464283344173566,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.317",
@@ -2777,8 +2801,8 @@
     "zmx_real_image_height_mm": 2.112204426
   },
   "patent_us-20240176104-a1-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0399125522291626,
-    "first_order_image_height_mm": 1.3867652968303346,
+    "first_order_image_height_deviation_frac": 1.0399125523047288,
+    "first_order_image_height_mm": 1.3867652967789634,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.801",
     "quality_min250": "0.035",
@@ -2789,8 +2813,8 @@
     "zmx_real_image_height_mm": 2.828879936
   },
   "patent_us-20240176104-a1-e6_reanchor": {
-    "first_order_image_height_deviation_frac": 1.030559506199222,
-    "first_order_image_height_mm": 2.0793347597594365,
+    "first_order_image_height_deviation_frac": 1.0305595062081736,
+    "first_order_image_height_mm": 2.07933475975027,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "1.226",
     "quality_min250": "0.011",
@@ -2801,8 +2825,8 @@
     "zmx_real_image_height_mm": 4.222212963
   },
   "patent_us-20240176104-a1-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0308820025810121,
-    "first_order_image_height_mm": 2.079016444891448,
+    "first_order_image_height_deviation_frac": 1.0308820026691627,
+    "first_order_image_height_mm": 2.079016444801208,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.962",
     "quality_min250": "0.012",
@@ -2813,8 +2837,8 @@
     "zmx_real_image_height_mm": 4.222237081
   },
   "patent_us-20240176104-a1-e8_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0201320854725788,
-    "first_order_image_height_mm": 2.089441200084981,
+    "first_order_image_height_deviation_frac": 1.0201320855693414,
+    "first_order_image_height_mm": 2.0894411999848983,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.142",
@@ -2825,7 +2849,7 @@
     "zmx_real_image_height_mm": 4.220947209
   },
   "patent_us-20240176110-a1-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 0.00952755004375634,
+    "first_order_image_height_deviation_frac": 0.00952754963223359,
     "first_order_image_height_mm": 0.7289998542936741,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
@@ -2833,7 +2857,7 @@
     "selected_case_id": "US-12429675-B2-e7",
     "source_case_id": "US-20240176110-A1-e7",
     "zmx_ftan_image_height_sanity_mm": 3.545448267,
-    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_deviation_frac": 4.154812686251314e-10,
     "zmx_real_image_height_mm": 0.7220542717
   },
   "patent_us-20240176110-a1-e8_reanchor": {
@@ -3065,8 +3089,8 @@
     "zmx_real_image_height_mm": 2.701859955
   },
   "patent_us-20240369807-a1-e1_reanchor": {
-    "first_order_image_height_deviation_frac": 1.1338129633127685,
-    "first_order_image_height_mm": 1.3876201639543588,
+    "first_order_image_height_deviation_frac": 1.133812963273596,
+    "first_order_image_height_mm": 1.3876201639798327,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.863",
     "quality_min250": "0.011",
@@ -3077,8 +3101,8 @@
     "zmx_real_image_height_mm": 2.960921894
   },
   "patent_us-20240369807-a1-e2_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0164273261161076,
-    "first_order_image_height_mm": 1.0448971806280112,
+    "first_order_image_height_deviation_frac": 1.0164273262393733,
+    "first_order_image_height_mm": 1.0448971805641358,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.564",
     "quality_min250": "0.056",
@@ -3089,8 +3113,8 @@
     "zmx_real_image_height_mm": 2.106959228
   },
   "patent_us-20240369807-a1-e3_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0109471005828004,
-    "first_order_image_height_mm": 1.047218866368827,
+    "first_order_image_height_deviation_frac": 1.0109471006797563,
+    "first_order_image_height_mm": 1.0472188663183364,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.175",
@@ -3101,8 +3125,8 @@
     "zmx_real_image_height_mm": 2.105901743
   },
   "patent_us-20240369807-a1-e4_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0184893283439433,
-    "first_order_image_height_mm": 1.0464283344678094,
+    "first_order_image_height_deviation_frac": 1.0184893284412633,
+    "first_order_image_height_mm": 1.0464283344173566,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.317",
@@ -3113,8 +3137,8 @@
     "zmx_real_image_height_mm": 2.112204426
   },
   "patent_us-20240369807-a1-e5_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0399125522291626,
-    "first_order_image_height_mm": 1.3867652968303346,
+    "first_order_image_height_deviation_frac": 1.0399125523047288,
+    "first_order_image_height_mm": 1.3867652967789634,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.801",
     "quality_min250": "0.035",
@@ -3125,8 +3149,8 @@
     "zmx_real_image_height_mm": 2.828879936
   },
   "patent_us-20240369807-a1-e6_reanchor": {
-    "first_order_image_height_deviation_frac": 1.030559506199222,
-    "first_order_image_height_mm": 2.0793347597594365,
+    "first_order_image_height_deviation_frac": 1.0305595062081736,
+    "first_order_image_height_mm": 2.07933475975027,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "1.226",
     "quality_min250": "0.011",
@@ -3137,8 +3161,8 @@
     "zmx_real_image_height_mm": 4.222212963
   },
   "patent_us-20240369807-a1-e7_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0308820025810121,
-    "first_order_image_height_mm": 2.079016444891448,
+    "first_order_image_height_deviation_frac": 1.0308820026691627,
+    "first_order_image_height_mm": 2.079016444801208,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.962",
     "quality_min250": "0.012",
@@ -3149,8 +3173,8 @@
     "zmx_real_image_height_mm": 4.222237081
   },
   "patent_us-20240369807-a1-e8_reanchor": {
-    "first_order_image_height_deviation_frac": 1.0201320854725788,
-    "first_order_image_height_mm": 2.089441200084981,
+    "first_order_image_height_deviation_frac": 1.0201320855693414,
+    "first_order_image_height_mm": 2.0894411999848983,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
     "quality_floor_gap": "0.000",
     "quality_min250": "0.142",
@@ -3164,9 +3188,9 @@
     "first_order_image_height_deviation_frac": 0.39576126518246807,
     "first_order_image_height_mm": 1.3695869799706004,
     "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
-    "quality_floor_gap": "0.238",
-    "quality_min250": "0.061",
-    "selected_case_id": "US-20200003996-A1-e3",
+    "quality_floor_gap": "0.000",
+    "quality_min250": "0.403",
+    "selected_case_id": "US-20200057277-A1-e1",
     "source_case_id": "US-20250004254-A1-e7",
     "zmx_ftan_image_height_sanity_mm": 3.197818136,
     "zmx_real_image_height_deviation_frac": 2.4167506865650896e-10,
@@ -3615,6 +3639,78 @@
     "zmx_ftan_image_height_sanity_mm": 2.610103548,
     "zmx_real_image_height_deviation_frac": 0.0,
     "zmx_real_image_height_mm": 1.429880848
+  },
+  "patent_us-20260126622-a1-e1_reanchor": {
+    "first_order_image_height_deviation_frac": 0.03065573469818205,
+    "first_order_image_height_mm": 2.452628602256065,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.480",
+    "quality_min250": "0.042",
+    "selected_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
+    "source_case_id": "US-20260126622-A1-e1",
+    "zmx_ftan_image_height_sanity_mm": 2.436676689,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 2.527815734
+  },
+  "patent_us-20260126622-a1-e2_reanchor": {
+    "first_order_image_height_deviation_frac": 16.397497558283888,
+    "first_order_image_height_mm": 2.4071095667468434,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.990",
+    "quality_min250": "0.046",
+    "selected_case_id": "US-20260126622-A1-e2",
+    "source_case_id": "US-20260126622-A1-e2",
+    "zmx_ftan_image_height_sanity_mm": 2.394333216,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 41.87768281
+  },
+  "patent_us-20260126622-a1-e3_reanchor": {
+    "first_order_image_height_deviation_frac": 0.020464046282127137,
+    "first_order_image_height_mm": 2.4475204355308446,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.480",
+    "quality_min250": "0.042",
+    "selected_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
+    "source_case_id": "US-20260126622-A1-e3",
+    "zmx_ftan_image_height_sanity_mm": 2.436073725,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 2.497606607
+  },
+  "patent_us-20260126622-a1-e4_reanchor": {
+    "first_order_image_height_deviation_frac": 0.016592654017482493,
+    "first_order_image_height_mm": 2.4491929940280506,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.480",
+    "quality_min250": "0.042",
+    "selected_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
+    "source_case_id": "US-20260126622-A1-e4",
+    "zmx_ftan_image_height_sanity_mm": 2.43244143,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 2.489831606
+  },
+  "patent_us-20260126622-a1-e5_reanchor": {
+    "first_order_image_height_deviation_frac": 0.04757385554933647,
+    "first_order_image_height_mm": 2.4482385556053163,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.089",
+    "quality_min250": "0.073",
+    "selected_case_id": "US-20260126622-A1-e5",
+    "source_case_id": "US-20260126622-A1-e5",
+    "zmx_ftan_image_height_sanity_mm": 2.441790821,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 2.564710703
+  },
+  "patent_us-20260126622-a1-e6_reanchor": {
+    "first_order_image_height_deviation_frac": 0.01351285206460725,
+    "first_order_image_height_mm": 2.516728940864619,
+    "image_height_anchor_source": "zmx_tail:ATELIER_REAL_IMH_MM",
+    "quality_floor_gap": "0.480",
+    "quality_min250": "0.042",
+    "selected_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
+    "source_case_id": "US-20260126622-A1-e6",
+    "zmx_ftan_image_height_sanity_mm": 2.506787362,
+    "zmx_real_image_height_deviation_frac": 0.0,
+    "zmx_real_image_height_mm": 2.482720755
   },
   "patent_us-20260133409-a1-e1_reanchor": {
     "first_order_image_height_deviation_frac": 0.7252105430271933,

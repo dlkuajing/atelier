@@ -485,15 +485,15 @@
   "metadata": {
     "case_id": "US-20250298222-A1-e5",
     "source_zmx": "US-20250298222-A1-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-telephoto",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
     "materials": [],
     "fov_deg": 21.0,
-    "nominal_efl_mm": 6.143450410253567,
+    "nominal_efl_mm": 6.14345041,
     "computed_efl_mm": 6.143450410253567,
-    "efl_error_pct": 0.0,
+    "efl_error_pct": 4.127435370941791e-9,
     "mtf_max_field_frac": 0.0
   }
 }
