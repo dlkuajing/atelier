@@ -1146,7 +1146,7 @@ def _sekonix_surface_signature(block_text: str) -> bool:
     has_header = ("RDY" in upper and "THI" in upper) or (
         "Y RADIUS" in upper and "THICKNESS" in upper
     )
-    has_rows = re.search(r"\b(?:OBJECT|FOCAL OBJECT)\b", upper) is not None
+    has_rows = re.search(r"\bOBJECT\b", upper) is not None
     return has_header and has_rows
 
 
@@ -1200,9 +1200,10 @@ def _parse_sekonix_surface_table(
             )
             continue
 
-        type_tokens: list[str] = []
+        is_asphere = False
         while row and _SEKONIX_TYPE_RE.fullmatch(row[0]):
-            type_tokens.append(row.pop(0).lower())
+            if row.pop(0).lower() in {"asphere", "aspheric", "aspherical", "qcon"}:
+                is_asphere = True
         if len(row) < 2:
             raise PatentParseError(f"SEKONIX surface {raw_label} row is incomplete")
         radius = _sekonix_distance(row[0], field_name=f"{raw_label} radius")
@@ -1235,7 +1236,6 @@ def _parse_sekonix_surface_table(
                 material = "Glass"
         _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
         surface_index = len(surfaces) + 1
-        is_asphere = any(token in {"asphere", "aspheric", "aspherical", "qcon"} for token in type_tokens)
         surface = PatentSurface(
             index=surface_index,
             label="Stop" if label in {"STOP", "STO"} else f"Surface {raw_label}",
@@ -1285,10 +1285,9 @@ def _parse_sekonix_asphere_table(
     *,
     index_by_label: dict[str, int],
 ) -> dict[int, dict[str, float]]:
-    body = block_text.replace("Qcon Coefficient", "Qcon_Coefficient")
-    tokens = body.split()
+    tokens = block_text.split()
     coefficients: dict[int, dict[str, float]] = {}
-    if "QCON_COEFFICIENT" in body.upper():
+    if "QCON COEFFICIENT" in block_text.upper():
         # US-12619054-B2, Mathematical Expression 1, and US-12498545-B2,
         # Mathematical Expression 1, define the departure as
         # ``u^4 * sum(a_m * Q_m^con(u^2))`` with ``u=r/r_n``.  Those Forbes
