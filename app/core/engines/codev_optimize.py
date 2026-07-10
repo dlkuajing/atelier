@@ -1054,6 +1054,33 @@ def run_codev_target(
         allow_nonzero_ok_result=True,
     )
     data: dict[str, object] = dict(batch.data)
+    # Fail-fast 预检（数据病灶防线，真机实锤 2026-07-10）：seed_baseline 是导入
+    # 后、任何配置/AUT 之前的 CODE V 直读快照。EFL 非有限或 |EFL| >= 1e30
+    # （CODE V 垃圾哨兵——全空气系统实测 EFY=1e35）说明种子进 CODE V 时玻璃根本
+    # 没解析（GLAS 名不在目录且非 model glass，ZEMAXOS_TO_CV 静默置为空气）。
+    # 立即抛可归因错误，而不是让 AUT 在零光焦度系统上跑完整条 autovig ladder、
+    # 最后以 "zmx_rebuild_error: non-finite EFL: -inf" 伪装成重建问题（根因诊断
+    # 见 tests/test_zmx_glass_resolvability.py 与 scripts/repair_legacy_zmx_glass.py）。
+    baseline_efl_text = str(data.get("seed_baseline.efl_y_mm", ""))
+    try:
+        baseline_efl = float(baseline_efl_text)
+    except ValueError:
+        baseline_efl = None
+    if baseline_efl is not None and (
+        not math.isfinite(baseline_efl) or abs(baseline_efl) >= 1e30
+    ):
+        raise CodeVBatchError(
+            "failure",
+            "seed imported into CODE V with unresolved glass (all-air system): "
+            f"baseline EFL {baseline_efl_text!r}; check the source ZMX GLAS lines "
+            "carry explicit model-glass nd/vd or CODE-V-resolvable catalog names "
+            "(see scripts/repair_legacy_zmx_glass.py)",
+            details={
+                "source_zmx": str(source_zmx),
+                "seed_baseline_efl_y_mm": baseline_efl_text,
+                "sentinel_threshold": 1e30,
+            },
+        )
     data["aut_error_trace"] = _safe_aut_error_trace(batch.listing_path)
     data["optimized_zmx_path"] = None
     returncode_ok = batch.returncode in _OPTIMIZE_OK_RETURNCODES

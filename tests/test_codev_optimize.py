@@ -927,6 +927,49 @@ def _buf_exp_paths_from_sequence_single(sequence_path: Path) -> list[Path]:
     return [Path(m) for m in matches]
 
 
+def test_mock_run_codev_target_rejects_all_air_seed_baseline(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """导入即全空气的种子（玻璃未解析，CODE V EFY 哨兵 1e35）必须立即抛可归因
+    的 CodeVBatchError，而不是带着垃圾三快照继续跑 autovig ladder、最后以
+    zmx_rebuild_error 伪装成 ZMX 重建问题（真机根因 2026-07-10，见
+    scripts/repair_legacy_zmx_glass.py）。"""
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 4322
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            _write_target_result(result_path)
+            # 全空气系统：CODE V 对不可解析玻璃静默置空气，EFY 读数为垃圾哨兵。
+            text = result_path.read_text(encoding="utf-8")
+            result_path.write_text(
+                text.replace("seed_baseline.efl_y_mm\t3.6225",
+                             "seed_baseline.efl_y_mm\t1.000000e+35"),
+                encoding="utf-8",
+            )
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path,
+            target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+        )
+    assert error.value.kind == "failure"
+    assert "unresolved glass" in error.value.message
+    assert "all-air" in error.value.message
+    assert error.value.details["seed_baseline_efl_y_mm"] == "1.000000e+35"
+
+
 # ===========================================================================
 # parse_aut_error_trace（AUT 误差函数轨迹诊断）单测：内联 fixture 摘录自真实
 # .lis 样本，未经删改数值（仅省略了中间的 Parameter 逐行清单，不影响
