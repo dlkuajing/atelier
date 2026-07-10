@@ -260,6 +260,9 @@ def _parse_prescription_attempts(
         attempts = _parse_sunny_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_sekonix_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         raise
     attempts: list[_PrescriptionParseAttempt] = []
     for index, meta in enumerate(metas, start=1):
@@ -1038,6 +1041,356 @@ def _parse_aac_number(token: str) -> float:
     if token == "/" or _is_empty_value(token):
         return 0.0
     return _parse_number(token.rstrip("°"))
+
+
+# ---------------------------------------------------------------------------
+# SEKONIX fallback family.  Its publications pair an odd-numbered surface
+# table with the following even-numbered coefficient table.  Three surface
+# headings are in circulation: RDY/THI/Nd/Vd, Sphere/Asphere with Y Radius,
+# and Qcon Asphere with a compact numeric Glass Code.
+# ---------------------------------------------------------------------------
+
+_SEKONIX_ROW_RE = re.compile(r"^(?:\d+|S\d+|STOP:?|STO:?|IMAGE:?|IMG:?)$", re.IGNORECASE)
+_SEKONIX_TYPE_RE = re.compile(r"^(?:sphere|asphere|spherical|aspheric(?:al)?|qcon)$", re.I)
+_SEKONIX_RANGE_META_RE = re.compile(
+    r"\b(?:FOV|HFOV|Fno|F\s*number|effective\s+focal\s+(?:length|distance)|f)\b"
+    r"[^.;]{0,80}(?:<|>|\u2264|\u2265)",
+    re.IGNORECASE,
+)
+
+
+def _parse_sekonix_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse SEKONIX odd/even prescription table pairs independently."""
+
+    blocks = _patent_table_blocks(text)
+    surface_blocks = [
+        (index, block)
+        for index, block in enumerate(blocks)
+        if block.number % 2 == 1 and _sekonix_surface_signature(block.text)
+    ]
+    if not surface_blocks:
+        return []
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, (block_index, block) in enumerate(surface_blocks, start=1):
+        embodiment = f"SEKONIX embodiment {embodiment_number}"
+        next_start = (
+            surface_blocks[embodiment_number][1].start
+            if embodiment_number < len(surface_blocks)
+            else len(text)
+        )
+        try:
+            surfaces, index_by_label = _parse_sekonix_surface_table(
+                block.text,
+                embodiment_number=embodiment_number,
+            )
+            coefficients: dict[int, dict[str, float]] = {}
+            if block_index + 1 < len(blocks):
+                coefficient_block = blocks[block_index + 1]
+                if coefficient_block.number == block.number + 1:
+                    coefficients = _parse_sekonix_asphere_table(
+                        coefficient_block.text,
+                        index_by_label=index_by_label,
+                    )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+                    surface.surface_type = "ASP"
+            meta = _sekonix_meta_for_span(text[block.start:next_start])
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=meta.focal_length_mm,
+                f_number=meta.f_number,
+                hfov_deg=meta.hfov_deg,
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - per-embodiment fail-loud ledger
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _sekonix_surface_signature(block_text: str) -> bool:
+    upper = block_text.upper()
+    has_header = ("RDY" in upper and "THI" in upper) or (
+        "Y RADIUS" in upper and "THICKNESS" in upper
+    )
+    has_rows = re.search(r"\b(?:OBJECT|FOCAL OBJECT)\b", upper) is not None
+    return has_header and has_rows
+
+
+def _parse_sekonix_surface_table(
+    block_text: str,
+    *,
+    embodiment_number: int,
+) -> tuple[list[PatentSurface], dict[str, int]]:
+    tokens = block_text.split()
+    object_pos = next(
+        (pos for pos, token in enumerate(tokens) if token.upper() == "OBJECT"),
+        None,
+    )
+    if object_pos is None:
+        raise PatentParseError(f"SEKONIX embodiment {embodiment_number} object row not found")
+    tokens = tokens[object_pos + 1 :]
+    row_starts = [
+        (pos, token.rstrip(":"))
+        for pos, token in enumerate(tokens)
+        if _SEKONIX_ROW_RE.fullmatch(token)
+    ]
+    if not row_starts:
+        raise PatentParseError(f"SEKONIX embodiment {embodiment_number} surface rows not found")
+
+    glass_code_header = "GLASS CODE" in block_text.upper()
+    surfaces: list[PatentSurface] = []
+    index_by_label: dict[str, int] = {}
+    for row_number, (pos, raw_label) in enumerate(row_starts):
+        row_end = row_starts[row_number + 1][0] if row_number + 1 < len(row_starts) else len(tokens)
+        row = [token for token in tokens[pos + 1 : row_end] if not _is_empty_value(token)]
+        label = raw_label.upper()
+        if label in {"IMAGE", "IMG"}:
+            row = [token for token in row if not _SEKONIX_TYPE_RE.fullmatch(token)]
+            radius = _sekonix_distance(row[0], field_name=f"{label} radius") if row else 0.0
+            thickness = (
+                _sekonix_distance(row[1], field_name=f"{label} thickness")
+                if len(row) > 1
+                else 0.0
+            )
+            surfaces.append(
+                PatentSurface(
+                    index=len(surfaces) + 1,
+                    label="Image",
+                    radius_mm=radius,
+                    thickness_mm=thickness,
+                    material=None,
+                    nd=None,
+                    vd=None,
+                    surface_type=None,
+                )
+            )
+            continue
+
+        type_tokens: list[str] = []
+        while row and _SEKONIX_TYPE_RE.fullmatch(row[0]):
+            type_tokens.append(row.pop(0).lower())
+        if len(row) < 2:
+            raise PatentParseError(f"SEKONIX surface {raw_label} row is incomplete")
+        radius = _sekonix_distance(row[0], field_name=f"{raw_label} radius")
+        thickness = _sekonix_distance(row[1], field_name=f"{raw_label} thickness")
+        tail = row[2:]
+        nd = vd = None
+        material = None
+        if glass_code_header and tail:
+            glass_code = next((token for token in tail if _sekonix_glass_code(token)), None)
+            if glass_code is not None:
+                nd, vd = _sekonix_glass_code(glass_code) or (None, None)
+                material = glass_code
+            elif any(re.search(r"[A-Za-z]", token) for token in tail[:-1]):
+                named = next(token for token in tail[:-1] if re.search(r"[A-Za-z]", token))
+                raise PatentParseError(f"SEKONIX Glass Code cannot be split deterministically: {named}")
+        elif len(tail) >= 2:
+            candidates = []
+            for token in tail:
+                try:
+                    candidates.append(_parse_number(token))
+                except PatentParseError:
+                    continue
+            if len(candidates) >= 2 and _is_physical_nd(candidates[0]) and _is_physical_vd(candidates[1]):
+                nd, vd = candidates[:2]
+                material = "Glass"
+        _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
+        surface_index = len(surfaces) + 1
+        is_asphere = any(token in {"asphere", "aspheric", "aspherical", "qcon"} for token in type_tokens)
+        surface = PatentSurface(
+            index=surface_index,
+            label="Stop" if label in {"STOP", "STO"} else f"Surface {raw_label}",
+            radius_mm=radius,
+            thickness_mm=thickness,
+            material=material,
+            nd=nd,
+            vd=vd,
+            surface_type="ASP" if is_asphere else None,
+        )
+        surfaces.append(surface)
+        index_by_label[label] = surface_index
+        if label.startswith("S") and label[1:].isdigit():
+            index_by_label[label[1:]] = surface_index
+
+    if len(surfaces) < 4:
+        raise PatentParseError(
+            f"SEKONIX embodiment {embodiment_number} surface table too short: {len(surfaces)} rows"
+        )
+    return surfaces, index_by_label
+
+
+def _sekonix_distance(token: str, *, field_name: str) -> float:
+    if token.lower() in {"infinite", "infinity", "inf"}:
+        return math.inf
+    try:
+        return _sekonix_number(token)
+    except PatentParseError as exc:
+        raise PatentParseError(f"SEKONIX {field_name} is not numeric: {token}") from exc
+
+
+def _sekonix_glass_code(token: str) -> tuple[float, float] | None:
+    match = re.fullmatch(r"(?P<nd>\d{3})000\.(?P<vd>\d{4})", token)
+    if match is None:
+        return None
+    return 1.0 + int(match.group("nd")) / 1000.0, int(match.group("vd")) / 100.0
+
+
+def _sekonix_number(token: str) -> float:
+    """Accept the ``3.36681.E+02`` numeric spelling emitted by PPUBS."""
+
+    return _parse_number(re.sub(r"\.E(?=[+-]?\d+$)", "E", token, flags=re.IGNORECASE))
+
+
+def _parse_sekonix_asphere_table(
+    block_text: str,
+    *,
+    index_by_label: dict[str, int],
+) -> dict[int, dict[str, float]]:
+    body = block_text.replace("Qcon Coefficient", "Qcon_Coefficient")
+    tokens = body.split()
+    coefficients: dict[int, dict[str, float]] = {}
+    if "QCON_COEFFICIENT" in body.upper():
+        current_surfaces: list[str] = []
+        pos = 0
+        while pos < len(tokens):
+            if tokens[pos].lower() == "surface":
+                pos += 1
+                current_surfaces = []
+                while pos < len(tokens) and _SEKONIX_ROW_RE.fullmatch(tokens[pos]):
+                    current_surfaces.append(tokens[pos].rstrip(":").upper())
+                    pos += 1
+                continue
+            label = tokens[pos].upper()
+            order = None
+            if label == "K":
+                codev_label = "K"
+            else:
+                match = re.fullmatch(r"(\d+)(?:TH|ST|ND|RD)", label)
+                if match is None or pos + 1 >= len(tokens) or tokens[pos + 1] != "Qcon_Coefficient":
+                    pos += 1
+                    continue
+                order = int(match.group(1))
+                codev_label = ASPHERE_ORDER_TO_CODEV.get(order)
+                pos += 1
+            pos += 1
+            values: list[float] = []
+            for _surface in current_surfaces:
+                if pos >= len(tokens):
+                    raise PatentParseError(f"SEKONIX {label} coefficient row is incomplete")
+                values.append(0.0 if _is_empty_value(tokens[pos]) else _sekonix_number(tokens[pos]))
+                pos += 1
+            for surface_label, value in zip(current_surfaces, values, strict=True):
+                if order is not None and codev_label is None:
+                    if abs(value) > 0.0:
+                        raise PatentParseError(
+                            "unsupported nonzero SEKONIX Qcon asphere term: "
+                            f"{surface_label}:{order}th={value:.3g}"
+                        )
+                    continue
+                surface_index = index_by_label.get(surface_label)
+                if surface_index is not None:
+                    coefficients.setdefault(surface_index, {})[codev_label] = value
+        return coefficients
+
+    header_pos = next(
+        (
+            pos
+            for pos, token in enumerate(tokens)
+            if token.upper() == "K"
+            and pos + 1 < len(tokens)
+            and re.fullmatch(r"A\d+", tokens[pos + 1], re.IGNORECASE)
+        ),
+        None,
+    )
+    if header_pos is None:
+        return coefficients
+    labels: list[str] = []
+    while header_pos < len(tokens) and re.fullmatch(r"K|A\d+", tokens[header_pos], re.I):
+        labels.append(tokens[header_pos].upper())
+        header_pos += 1
+    pos = header_pos
+    while pos < len(tokens):
+        surface_match = re.fullmatch(r"S(\d+)", tokens[pos], re.I)
+        if surface_match is None:
+            pos += 1
+            continue
+        surface_label = surface_match.group(1)
+        pos += 1
+        for label in labels:
+            if pos >= len(tokens):
+                raise PatentParseError(f"SEKONIX S{surface_label} asphere row is incomplete")
+            value = 0.0 if _is_empty_value(tokens[pos]) else _sekonix_number(tokens[pos])
+            pos += 1
+            if label == "K":
+                codev_label = "K"
+            else:
+                patent_order = int(label[1:])
+                codev_order = 2 * (patent_order - 1)
+                codev_label = ASPHERE_ORDER_TO_CODEV.get(codev_order)
+                if codev_label is None:
+                    if abs(value) > 0.0:
+                        raise PatentParseError(
+                            "unsupported nonzero SEKONIX asphere term: "
+                            f"S{surface_label}:{label}={value:.3g}"
+                        )
+                    continue
+            surface_index = index_by_label.get(surface_label)
+            if surface_index is not None:
+                coefficients.setdefault(surface_index, {})[codev_label] = value
+    return coefficients
+
+
+def _sekonix_meta_for_span(span: str) -> _SunnyMeta:
+    exact_patterns = {
+        "efl": (
+            rf"(?<![/A-Za-z0-9])f\s*=\s*(?P<value>{NUMBER_PATTERN})\s*mm",
+            rf"effective focal (?:length|distance)[^.;=]{{0,80}}(?:=|\bis)\s*(?P<value>{NUMBER_PATTERN})\s*mm",
+        ),
+        "fno": (
+            rf"\bFno\s*=\s*(?P<value>{NUMBER_PATTERN})",
+            rf"\bF\s*number\s+Fno[^.;=]{{0,50}}=\s*(?P<value>{NUMBER_PATTERN})",
+        ),
+        "fov": (rf"\bFOV\s*=\s*(?P<value>{NUMBER_PATTERN})\s*°?",),
+    }
+    found: dict[str, float | None] = {"efl": None, "fno": None, "fov": None}
+    for meta_field, patterns in exact_patterns.items():
+        for pattern in patterns:
+            match = re.search(pattern, span, flags=re.IGNORECASE)
+            if match is not None:
+                found[meta_field] = _parse_number(match.group("value"))
+                break
+    missing = [field for field, value in found.items() if value is None]
+    if missing:
+        qualifier = " (range-only metadata is not an instance value)" if _SEKONIX_RANGE_META_RE.search(span) else ""
+        raise PatentParseError(
+            "SEKONIX embodiment metadata lacks exact instance " + "/".join(missing) + qualifier
+        )
+    return _SunnyMeta(
+        focal_length_mm=found["efl"],
+        f_number=found["fno"],
+        hfov_deg=found["fov"] / 2.0,
+    )
 
 
 # ---------------------------------------------------------------------------
