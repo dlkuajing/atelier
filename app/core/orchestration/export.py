@@ -43,6 +43,7 @@ from datetime import UTC, datetime
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
+from app.core.case_library import load_case_library
 from app.core.engines.codev_optimize import _autovig_profile, build_codev_target_sequence
 from app.core.orchestration.candidate import (
     CandidateSet,
@@ -289,15 +290,23 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
 
 def _resolve_seed_zmx_path(sc: ScoredCandidate):
     """Resolve the *original seed's* ZMX (not the Mode3 optimized result) —
-    `case_id` is derived as `source_zmx.rsplit(".", 1)[0]` everywhere in this
-    codebase (`case_library.build_sample_from_optic`), so this reconstruction
-    is exact, not a guess. Used as the reproduction `.seq`'s `source_zmx`
-    input."""
+    used as the reproduction `.seq`'s `source_zmx` input.
+
+    **Exact-case contract（CI 红修根因，2026-07-11）**：不得从 `case_id` 合成
+    文件名（旧实现 `f"{case_id}.zmx"` 硬编码小写扩展名——`data/zmx/` 实际是
+    混合大小写：5 颗 `.ZMX` / 437 颗 `.zmx`。Windows 文件系统大小写不敏感把
+    这个 bug 完全掩蔽，Ubuntu CI 大小写敏感立即 miss）。唯一可靠的精确文件
+    名是 seed case 自己的 `metadata.source_zmx`（全库 442/442 与磁盘逐字符
+    一致，本地审计核验）——按 `source_case_id` 回查 case library 取它。
+    `load_case_library` 是 LRU 缓存，线性扫一遍是内存操作。"""
     case_id = sc.generated.source_case_id
     if not case_id:
         return None
-    path = ZMX_AMMO_DIR / f"{case_id}.zmx"
-    return path if path.is_file() else None
+    for case in load_case_library():
+        if case.metadata is not None and case.metadata.case_id == case_id:
+            path = ZMX_AMMO_DIR / case.metadata.source_zmx
+            return path if path.is_file() else None
+    return None  # seed not in the library -> fail closed, never guess a filename
 
 
 def _mode3_preferred_config(candidate_id: str) -> str | None:

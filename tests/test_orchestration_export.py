@@ -12,6 +12,7 @@ when provenance is complete and fails closed otherwise.
 from __future__ import annotations
 
 import io
+import os
 import zipfile
 
 import openpyxl
@@ -34,6 +35,7 @@ from app.core.orchestration.candidate import (
     TargetSpec,
 )
 from app.core.orchestration.export import (
+    _resolve_seed_zmx_path,
     build_candidate_bundle_zip,
     build_candidate_set_workbook,
 )
@@ -408,6 +410,32 @@ def test_bundle_zip_reconstructs_mode3_reproduction_seq_when_provenance_complete
     assert seq_text.strip()  # non-empty macro text
     assert f"{target.efl_mm}" in seq_text or f"{target.efl_mm:.6f}" in seq_text
     assert "reproduction.seq: included" in readme
+
+
+def test_seed_zmx_resolution_matches_disk_name_exactly():
+    """CI 红修根因钉死（2026-07-11，run 29130312114）：`data/zmx/` 扩展名
+    混合大小写（5 颗 `.ZMX` / 437 颗 `.zmx`），本 fixture 的 seed 恰是
+    `.ZMX` 之一。旧实现从 `case_id` 合成 `f"{case_id}.zmx"`——Windows 大小写
+    不敏感文件系统上 `is_file()` 照样为真（本地绿），Ubuntu CI 大小写敏感
+    直接 miss（CI 红）。本测试用**精确目录清单比对**（大小写敏感，两个平台
+    行为一致），Windows 上也能抓住任何重新引入的合成文件名。"""
+    sc = _target_converged_candidate()
+    path = _resolve_seed_zmx_path(sc)
+    assert path is not None, "seed ZMX must resolve via the library's exact source_zmx"
+    assert path.name in os.listdir(ZMX_AMMO_DIR), (
+        f"resolved name {path.name!r} must exact-match a directory entry "
+        "(case-sensitive comparison — Windows' case-insensitive is_file() must "
+        "not mask a wrong-case synthesized filename)"
+    )
+    # And it must be the seed's own recorded filename, not a guess.
+    assert sc.generated.source_case_id is not None
+    seed_case = next(
+        c
+        for c in load_case_library()
+        if c.metadata is not None and c.metadata.case_id == sc.generated.source_case_id
+    )
+    assert seed_case.metadata is not None
+    assert path.name == seed_case.metadata.source_zmx
 
 
 def test_bundle_zip_seq_fails_closed_without_edge_used():
