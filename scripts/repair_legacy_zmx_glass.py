@@ -71,11 +71,12 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app.core.zmx_materials import lookup_nd_vd  # noqa: E402
+from app.core.zmx_materials import _CODEV_MODEL_GLASS_MARKER_RE, lookup_nd_vd  # noqa: E402
 
 ZMX_DIR = Path(__file__).resolve().parents[1] / "data" / "zmx"
 
@@ -120,7 +121,7 @@ def encode_zmx_text(text: str, encoding_tag: str) -> bytes:
     return text.encode("latin-1")
 
 
-def iter_glas_lines(text: str):
+def iter_glas_lines(text: str) -> Iterator[tuple[int, list[str]]]:
     """Yield ``(line_number, tokens)`` for every GLAS line (1-based numbering)."""
     for line_number, line in enumerate(text.splitlines(), start=1):
         stripped = line.strip()
@@ -132,26 +133,61 @@ def _fmt_number(value: float) -> str:
     return f"{float(value):.15g}"
 
 
+def _inline_nd_vd(tokens: list[str]) -> tuple[float, float] | None:
+    try:
+        return float(tokens[4]), float(tokens[5])
+    except (IndexError, ValueError):
+        return None
+
+
+def _inline_matches_table(tokens: list[str], name: str) -> bool:
+    real = lookup_nd_vd(name)  # strips the marker via _canon
+    inline = _inline_nd_vd(tokens)
+    if real is None or inline is None:
+        return False
+    return abs(inline[0] - real[0]) <= 1e-9 and abs(inline[1] - real[1]) <= 1e-9
+
+
 def glas_line_needs_repair(tokens: list[str]) -> bool:
-    """A GLAS row needs repair iff it names a catalog glass (model_flag=0) that
-    the real CODE V machine cannot resolve (not in the verified allowlist)."""
+    """Verdict-aligned with tests/test_zmx_glass_resolvability.py: a GLAS row
+    needs repair iff the gate would flag it AND the repair can fix it.
+
+    - marker-suffixed name: only a wrong model_flag / drifted inline nd-vd
+      needs normalizing (never re-suffix — idempotency);
+    - bare name + model_flag=0: defective unless in the real-machine verified
+      CODE V allowlist;
+    - bare name + model_flag=1: ALSO defective — ZEMAXOS_TO_CV keys on the
+      "BLANK" substring, not the flag (real-machine verified: imports as air);
+    - named glass with any other flag: unrecognized encoding, refuse loudly
+      (raise) rather than silently disagree with the gate.
+    """
     if len(tokens) < 6 or tokens[0] != "GLAS":
         return False
     name, flag = tokens[1], tokens[2]
     if name.upper() == "MIRROR" or name == "___BLANK":
         return False
-    return flag == "0" and name not in CODEV_RESOLVABLE_GLASS_NAMES
+    if _CODEV_MODEL_GLASS_MARKER_RE.search(name):
+        return flag != "1" or not _inline_matches_table(tokens, name)
+    if flag == "0":
+        return name not in CODEV_RESOLVABLE_GLASS_NAMES
+    if flag == "1":
+        return True
+    raise ValueError(
+        f"unrecognized GLAS encoding for named glass {name!r} (model_flag={flag!r}); "
+        "refusing to guess a repair"
+    )
 
 
 def repair_glas_line(line: str) -> tuple[str, bool]:
     """Rewrite one GLAS line to explicit model glass, preserving whitespace.
 
-    Only four tokens change: the name gains the ``_BLANK`` marker (what
-    actually makes CODE V's importer treat the row as model glass — verified
-    substring match, see module docstring), model_flag 0 -> 1 (documentation
-    of intent; CODE V ignores it), and the placeholder nd/vd -> the datasheet
-    values from ``lookup_nd_vd`` (the Optiland fallback's own table). Raises
-    if the material is unknown — never invents an index.
+    At most four tokens change: the name gains the ``_BLANK`` marker unless it
+    already carries it (never a second suffix — idempotent by construction;
+    the marker is what makes CODE V's importer treat the row as model glass,
+    verified substring match, see module docstring), model_flag -> 1
+    (documentation of intent; CODE V ignores it), and the inline nd/vd -> the
+    datasheet values from ``lookup_nd_vd`` (the Optiland fallback's own
+    table). Raises if the material is unknown — never invents an index.
     """
     parts = re.split(r"(\s+)", line)
     token_slots = [i for i, part in enumerate(parts) if part and not part.isspace()]
@@ -166,7 +202,8 @@ def repair_glas_line(line: str) -> tuple[str, bool]:
             "app.core.zmx_materials.MATERIAL_ND_VD; refusing to invent nd/vd"
         )
     nd, vd = real
-    parts[token_slots[1]] = f"{name}{CODEV_MODEL_GLASS_MARKER}"
+    if not _CODEV_MODEL_GLASS_MARKER_RE.search(name):
+        parts[token_slots[1]] = f"{name}{CODEV_MODEL_GLASS_MARKER}"
     parts[token_slots[2]] = "1"
     parts[token_slots[4]] = _fmt_number(nd)
     parts[token_slots[5]] = _fmt_number(vd)

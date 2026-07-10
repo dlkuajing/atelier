@@ -42,7 +42,9 @@ from scripts.repair_legacy_zmx_glass import (
     CODEV_MODEL_GLASS_MARKER,
     CODEV_RESOLVABLE_GLASS_NAMES,
     decode_zmx_text,
+    glas_line_needs_repair,
     iter_glas_lines,
+    repair_glas_line,
 )
 
 ND_RANGE = (1.3, 2.2)  # mirrors scripts/e2_intake.py::_looks_like_index
@@ -82,9 +84,18 @@ def _glas_row_problem(tokens: list[str]) -> str | None:
         if not (math.isfinite(vd) and VD_RANGE[0] <= vd <= VD_RANGE[1]):
             return f"model glass vd {vd!r} outside {VD_RANGE}: {' '.join(tokens)}"
         if name != "___BLANK":
-            # Repaired legacy form: inline values must equal the datasheet
-            # table the Optiland fallback resolves (lookup strips the marker),
-            # else the two engines silently compute on different materials.
+            # Repaired legacy form: canonical encoding is model_flag=1 —
+            # CODE V keys on the BLANK substring either way, but real Zemax
+            # reads flag=0 as catalog-name semantics (unresolvable -> air),
+            # so a marker name with any other flag is a defective hybrid.
+            if flag != "1":
+                return (
+                    f"marker-suffixed model glass {name!r} must carry "
+                    f"model_flag=1, got {flag!r}: {' '.join(tokens)}"
+                )
+            # Inline values must equal the datasheet table the Optiland
+            # fallback resolves (lookup strips the marker), else the two
+            # engines silently compute on different materials.
             real = lookup_nd_vd(name)
             if real is None:
                 return (
@@ -145,3 +156,53 @@ def test_every_glas_row_is_codev_resolvable() -> None:
             for name, problems in sorted(offenders.items())
         )
     )
+
+
+def test_repair_appends_marker_to_bare_flag1_named_model_glass() -> None:
+    """裸商品名 + model_flag=1 仍被 CODE V 导入为空气（真机判定：宏按名字符串
+    的 "BLANK" 子串选 model-glass 分支，不看 flag）——修复必须补上标记并把
+    nd/vd 归一到数据表（W7a）。"""
+    line = "  GLAS APL5014CL_14 1 0 1.5 40 0 0 1 0 0 0 \r\n"
+    fixed, changed = repair_glas_line(line)
+    assert changed
+    assert fixed == "  GLAS APL5014CL_14_BLANK 1 0 1.544 56 0 0 1 0 0 0 \r\n"
+
+
+def test_repair_fixes_flag_without_renaming_marked_names() -> None:
+    """已带标记但 flag=0 的行：只归一 flag（与 nd/vd），绝不二次加后缀（W7b）。"""
+    line = "  GLAS OKP1_14_BLANK 0 0 1.636 22.5 0 0 0 0 0 0 \r\n"
+    fixed, changed = repair_glas_line(line)
+    assert changed
+    assert fixed == "  GLAS OKP1_14_BLANK 1 0 1.636 22.5 0 0 0 0 0 0 \r\n"
+    assert fixed.count("_BLANK") == 1
+
+
+def test_repair_is_idempotent() -> None:
+    line = "  GLAS ZEONEX-E48R_14 0 0 1.5 40 0 0 1 0 0 0 \r\n"
+    once, changed_once = repair_glas_line(line)
+    twice, changed_twice = repair_glas_line(once)
+    assert changed_once and not changed_twice
+    assert twice == once
+    assert once.count("_BLANK") == 1
+
+
+def test_repair_verdict_agrees_with_gate_verdict() -> None:
+    """`--check`（glas_line_needs_repair）与本模块 gate（_glas_row_problem）
+    对同一输入的判定必须一致，且修复产物必然过 gate（W7c）。"""
+    rows = [
+        "GLAS APL5014CL_14 0 0 1.5 40 0 0 1 0 0 0",  # flag0 不可解析
+        "GLAS APL5014CL_14 1 0 1.5 40 0 0 1 0 0 0",  # 裸 flag1 商品名
+        "GLAS OKP1_14_BLANK 0 0 1.636 22.5 0 0 0 0 0 0",  # 标记名 + 错 flag
+        "GLAS OKP1_14_BLANK 1 0 1.6 22.5 0 0 0 0 0 0",  # 标记名 + nd 偏离数据表
+        "GLAS OKP1_14_BLANK 1 0 1.636 22.5 0 0 0 0 0 0",  # 已修复态
+        "GLAS ___BLANK 1 0 1.656 18.4 0 0 0 0 0 0",  # 专利管线约定
+        "GLAS ___BLANK 2 3 1.545 56 0 0 0 0 0 0",  # glass pickup（既有库内形态）
+        "GLAS BK7 0 0 1.5 40 0 0 0 0 0 0",  # 真机验证目录可解析名
+        "GLAS MIRROR 0 0 0 0 0 0 0 0 0 0",  # 反射面
+    ]
+    for row in rows:
+        tokens = row.split()
+        gate_flags = _glas_row_problem(tokens) is not None
+        assert glas_line_needs_repair(tokens) == gate_flags, row
+        fixed, _changed = repair_glas_line(row)
+        assert _glas_row_problem(fixed.split()) is None, fixed
