@@ -27,6 +27,7 @@ from app.core import optiland_patches as _optiland_patches  # noqa: I001
 _optiland_patches.apply_all()
 
 from app.api import optical, rag, wizard  # noqa: E402
+from app.core import orchestration  # noqa: E402
 from app.core.aberration import MTFResult  # noqa: E402
 from app.core.config import settings  # noqa: E402
 from app.core.demo_cache import (  # noqa: E402
@@ -52,7 +53,6 @@ from app.core.zmx_ingest import (  # noqa: E402
     load_normalized_zmx,
     regularize_fields_to_angle,
 )
-
 
 logger = structlog.get_logger(__name__)
 WEB_ROOT = Path(__file__).resolve().parent / "web"
@@ -945,7 +945,12 @@ async def _result_sample(
 
 def _job_progress_context(record: JobRecord) -> dict[str, object]:
     result = dict(record.result) if record.result is not None else None
-    result_url = f"/results/{record.job_id}" if _is_result_summary_job(record) else ""
+    if _is_result_summary_job(record):
+        result_url = f"/results/{record.job_id}"
+    elif _is_candidate_orchestration_job(record):
+        result_url = f"/candidates/{record.job_id}"
+    else:
+        result_url = ""
     return {
         "product_name": "Atelier",
         "job_id": record.job_id,
@@ -982,6 +987,10 @@ def _result_progress_context(job_id: str | None) -> dict[str, object]:
 
 def _is_result_summary_job(record: JobRecord) -> bool:
     return record.payload.get("job_type") == "result-summary"
+
+
+def _is_candidate_orchestration_job(record: JobRecord) -> bool:
+    return record.payload.get("job_type") == "candidate-orchestration"
 
 
 def _result_job_payload(
@@ -1027,6 +1036,12 @@ def _optional_int(value: object) -> int | None:
     if value in {None, ""}:
         return None
     return int(value)
+
+
+def _optional_float(value: object) -> float | None:
+    if value in {None, ""}:
+        return None
+    return float(value)
 
 
 def _executive_summary_request(
@@ -1353,6 +1368,296 @@ def _result_summary_context(
     }
 
 
+# ---------------------------------------------------------------------------
+# C1 candidate orchestration (Mode1 retrieval + Mode3 CODE V target-converged)
+# ---------------------------------------------------------------------------
+
+
+def _target_spec_from_candidate_payload(payload: Mapping[str, object]) -> orchestration.TargetSpec:
+    """Map the wizard-confirmed form fields onto `TargetSpec`.
+
+    The wizard flow only ever produces EFL / FOV / F# / image-height / element
+    count (see `_summary_form_fields`) — it has no notion of a customer TTL
+    ceiling, weight budget, manufacturing tier, or priority. Those fields stay
+    honestly `None` rather than being backfilled from the wizard's own derived
+    `total_track_mm` (a nominal *achieved* estimate for the mid-bound scenario
+    point, not a customer-specified ceiling) — silently promoting an estimate
+    into a hard constraint would be exactly the kind of unearned precision the
+    North Star forbids.
+    """
+    return orchestration.TargetSpec(
+        scenario=_result_payload_scenario(payload),
+        efl_mm=_optional_float(payload.get("focal_length_mm")),
+        fov_deg=_optional_float(payload.get("field_of_view_deg")),
+        fnum=float(payload["f_number"]),
+        image_height_mm=_optional_float(payload.get("image_height_mm")),
+        max_total_track_mm=None,
+        n_elements=_optional_int(payload.get("n_elements")),
+        max_weight_g=None,
+        manufacturing_tier=None,
+        priority=None,
+    )
+
+
+def _candidate_job_payload(
+    *,
+    scenario: Scenario,
+    focal_length_mm: float,
+    f_number: float,
+    field_of_view_deg: float,
+    image_height_mm: float,
+    n_elements: int | None,
+    requirement: str | None,
+) -> dict[str, object]:
+    return {
+        "job_type": "candidate-orchestration",
+        "scenario": scenario.value,
+        "focal_length_mm": focal_length_mm,
+        "f_number": f_number,
+        "field_of_view_deg": field_of_view_deg,
+        "image_height_mm": image_height_mm,
+        "n_elements": n_elements,
+        "requirement": requirement,
+    }
+
+
+def _compute_candidate_job(payload: Mapping[str, object]) -> dict[str, object]:
+    scenario = _result_payload_scenario(payload)
+    target = _target_spec_from_candidate_payload(payload)
+    candidate_set = orchestration.orchestrate(target, target, n=4)
+    requirement = payload.get("requirement")
+    return {
+        "job_type": "candidate-orchestration",
+        "scenario": scenario.value,
+        "requirement": str(requirement) if requirement not in {None, ""} else None,
+        "candidate_set": candidate_set.model_dump(mode="json"),
+    }
+
+
+class CandidateOrchestrationEngine:
+    """JobStore-compatible worker for the C1 multi-candidate orchestration
+    (Mode1 retrieval + Mode3 CODE V target-converged).
+
+    `is_available()` is unconditionally `True`: Mode3 degrades *internally*
+    when CODE V is not present (`TargetConvergedGenerator` returns `[]`, the
+    batch falls back to Mode1-only, and `CandidateSet.honesty_banner`
+    surfaces the degradation) — that is the honest degraded path per the
+    North Star, so this engine must never pre-gate submission on CODE V
+    availability the way a hard `DeepEngine` dependency check normally would.
+    """
+
+    name = "candidate-orchestration"
+
+    def is_available(self) -> bool:
+        return True
+
+    def describe(self) -> dict[str, object]:
+        return {
+            "name": self.name,
+            "engine": "CandidateOrchestrationEngine",
+            "available": True,
+            "capabilities": ["web-candidate-orchestration"],
+        }
+
+    def submit(self, payload: Mapping[str, object]) -> Mapping[str, object]:
+        return _compute_candidate_job(payload)
+
+
+def _mode_label(mode: orchestration.GenerationMode) -> str:
+    return {
+        orchestration.GenerationMode.RETRIEVED: "Retrieved (Mode1)",
+        orchestration.GenerationMode.TARGET_CONVERGED: "Target-converged (Mode3)",
+    }[mode]
+
+
+def _fmt_metric(metric: orchestration.MetricValue, *, precision: int = 3) -> str:
+    if metric.status == "unavailable" or metric.value is None:
+        return "N/A"
+    return f"{metric.value:.{precision}f}"
+
+
+def _fmt_optional_target(value: float | None, *, precision: int = 3) -> str:
+    return "(unconstrained)" if value is None else f"{value:.{precision}f}"
+
+
+_CANDIDATE_IMAGE_QUALITY_ROWS: tuple[tuple[str, str], ...] = (
+    ("MTF sag (representative freq, cross-field conservative)", "mtf_sag"),
+    ("MTF tan (representative freq, cross-field conservative)", "mtf_tan"),
+    ("Diffraction cutoff (lp/mm)", "diffraction_cutoff_lp_per_mm"),
+    ("RMS spot radius max (um)", "rms_spot_radius_max_um"),
+    ("RMS spot radius mean (um)", "rms_spot_radius_mean_um"),
+    ("Min Strehl ratio", "min_strehl_ratio"),
+    ("RMS wavefront error (waves)", "rms_wavefront_error_waves"),
+    ("Field curvature tangential peak delta (mm)", "field_curvature_tangential_delta_mm"),
+    ("Field curvature sagittal peak delta (mm)", "field_curvature_sagittal_delta_mm"),
+    ("Max distortion (%)", "max_distortion_pct"),
+    ("Relative illumination (worst field)", "relative_illumination"),
+)
+
+_CANDIDATE_CODEV_POST_AUT_ROWS: tuple[tuple[str, str], ...] = (
+    ("post_aut EFL_y (mm)", "post_aut.efl_y_mm"),
+    ("post_aut RMS spot diameter (um)", "post_aut.max_rms_spot_diameter_um"),
+    ("post_aut RMS wavefront error (waves)", "post_aut.max_rms_wavefront_error_waves"),
+    ("post_aut distortion (%)", "post_aut.max_distortion_pct"),
+    ("post_aut F#", "post_aut.fno"),
+    ("post_aut half image height (mm)", "post_aut.maximh_mm"),
+    ("EFL target deviation (%)", "efl_target_deviation_pct"),
+    ("aut_converged", "aut_converged"),
+    ("Vignetting edge_used", "autovig.edge_used"),
+    ("AUT err_f_ratio (final/initial)", "err_f_ratio"),
+    ("AUT termination", "aut_termination"),
+)
+
+_CANDIDATE_CODEV_POST_AUT_CAVEAT = (
+    "裁瞳口径快照，不可与满口径直接横比 —— 以下数字来自 CODE V "
+    "run_codev_target_standard preferred 配置的批跑读数，裁瞳（vignetted pupil）"
+    "口径，与上方 target 偏差/像质摘要的 Optiland 满口径不可直接横比，仅供资深"
+    "核对 provenance —— 不参与本页任何排序/打分。"
+)
+
+
+def _fmt_codev_value(value: object) -> str:
+    if value is None:
+        return "N/A"
+    if isinstance(value, float):
+        return f"{value:.4g}"
+    return str(value)
+
+
+def _candidate_codev_post_aut_context(
+    extras: orchestration.OpticalExtras,
+) -> dict[str, object] | None:
+    if extras.codev_post_aut is None:
+        return None
+    return {
+        "caveat": _CANDIDATE_CODEV_POST_AUT_CAVEAT,
+        "rows": [
+            {"label": label, "value": _fmt_codev_value(extras.codev_post_aut.get(key))}
+            for label, key in _CANDIDATE_CODEV_POST_AUT_ROWS
+        ],
+    }
+
+
+def _candidate_deviation_row(dev: orchestration.TargetDeviation) -> dict[str, object]:
+    return {
+        "field": dev.field,
+        "constraint_kind": dev.constraint_kind,
+        "target": _fmt_optional_target(dev.target),
+        "achieved": f"{dev.achieved:.3f}",
+        "violation": f"{dev.violation:.3f}",
+        "rel_violation": "N/A" if dev.rel_violation is None else f"{dev.rel_violation:.1%}",
+        "converged": dev.converged_toward_target,
+        "converged_label": "Yes" if dev.converged_toward_target else "No",
+    }
+
+
+def _candidate_manufacturability_context(
+    mfg: orchestration.ManufacturabilityProxy,
+) -> dict[str, object]:
+    return {
+        "total_track_mm": f"{mfg.total_track_mm:.3f}",
+        "n_pieces": mfg.n_pieces,
+        "has_special_glass": "Yes" if mfg.has_special_glass else "No",
+        "aspheric_term_count": _fmt_metric(mfg.aspheric_term_count, precision=0),
+        "aspheric_surface_count": _fmt_metric(mfg.aspheric_surface_count, precision=0),
+        "chief_ray_angle_deg": _fmt_metric(mfg.chief_ray_angle_deg),
+        "note": mfg.note,
+    }
+
+
+def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, object]:
+    row = sc.scorecard
+    gen = sc.generated
+    rank = row.rank
+    return {
+        "candidate_id": row.candidate_id,
+        "mode": row.mode.value,
+        "mode_label": _mode_label(row.mode),
+        "source_case_id": gen.source_case_id or "(none)",
+        "generation_notes": list(gen.generation_notes),
+        "codev_post_aut": _candidate_codev_post_aut_context(gen.optical_extras),
+        "deviations": [_candidate_deviation_row(dev) for dev in row.target_deviations],
+        "image_quality": [
+            {"label": label, "value": _fmt_metric(getattr(row.image_quality, attr))}
+            for label, attr in _CANDIDATE_IMAGE_QUALITY_ROWS
+        ],
+        "manufacturability": _candidate_manufacturability_context(row.manufacturability),
+        "rank_status": rank.status,
+        "rank_status_label": "Ranked" if rank.status == "ranked" else "Withheld",
+        "rank_score": f"{rank.score:.3f}" if rank.score is not None else None,
+        "rank_coverage_pct": f"{rank.coverage_pct:.0%}",
+        "rank_missing_metrics": ", ".join(rank.missing_metrics) or "(none)",
+        "rank_explanation": row.rank_explanation,
+    }
+
+
+def _candidate_mode_badges(
+    summary: orchestration.CandidateSetSummary,
+) -> list[dict[str, object]]:
+    return [
+        {"mode": mode.value, "label": _mode_label(mode), "count": count}
+        for mode, count in summary.mode_counts.items()
+    ]
+
+
+def _candidate_requirement_rows(target: orchestration.TargetSpec) -> list[dict[str, str]]:
+    return [
+        {"label": "Scenario", "value": target.scenario.value},
+        {"label": "EFL (mm)", "value": _fmt_optional_target(target.efl_mm)},
+        {"label": "FOV (deg)", "value": _fmt_optional_target(target.fov_deg, precision=1)},
+        {"label": "F-number", "value": f"{target.fnum:.3f}"},
+        {"label": "Image height (mm)", "value": _fmt_optional_target(target.image_height_mm)},
+        {
+            "label": "Max total track (mm)",
+            "value": _fmt_optional_target(target.max_total_track_mm),
+        },
+        {
+            "label": "Element count",
+            "value": "(unconstrained)" if target.n_elements is None else str(target.n_elements),
+        },
+        {"label": "Max weight (g)", "value": _fmt_optional_target(target.max_weight_g)},
+        {"label": "Manufacturing tier", "value": target.manufacturing_tier or "(unspecified)"},
+        {"label": "Priority", "value": target.priority or "(unspecified)"},
+    ]
+
+
+def _candidate_set_context(
+    *,
+    result: Mapping[str, object],
+    progress: Mapping[str, object],
+) -> dict[str, object]:
+    candidate_set_payload = result.get("candidate_set")
+    if not isinstance(candidate_set_payload, Mapping):
+        raise ValueError("candidate orchestration job has invalid candidate_set payload")
+    candidate_set = orchestration.CandidateSet.model_validate(candidate_set_payload)
+    summary = candidate_set.summary
+    ri_available = summary.candidate_count - summary.ri_missing_count
+    ri_available_label = (
+        f"{ri_available}/{summary.candidate_count}" if summary.candidate_count else "0/0"
+    )
+    requirement = result.get("requirement")
+    return {
+        "product_name": "Atelier",
+        "scenario": str(result.get("scenario", candidate_set.target.scenario.value)),
+        "requirement": str(requirement) if requirement not in {None, ""} else None,
+        "job_id": progress.get("job_id", ""),
+        "honesty_banner": candidate_set.honesty_banner,
+        "requirement_rows": _candidate_requirement_rows(candidate_set.target),
+        "summary": {
+            "candidate_count": summary.candidate_count,
+            "ranked_count": summary.ranked_count,
+            "withheld_count": summary.withheld_count,
+            "ri_available_label": ri_available_label,
+            "notes": list(summary.notes),
+        },
+        "mode_badges": _candidate_mode_badges(summary),
+        "candidates": [_candidate_card_context(sc) for sc in candidate_set.candidates],
+        "expert_rows": [
+            {"candidate_id": sc.scorecard.candidate_id} for sc in candidate_set.candidates
+        ],
+    }
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     logger.info("lumira_backend_starting", env=settings.env, version="0.1.0")
@@ -1570,6 +1875,42 @@ async def submit_result_job(
     )
 
 
+@app.post("/candidates", include_in_schema=False, tags=["web"])
+async def submit_candidate_job(
+    scenario: Annotated[Scenario, Form()],
+    scenario_label_en: Annotated[str, Form(min_length=1, max_length=100)],
+    focal_length_mm: Annotated[float, Form(gt=0)],
+    f_number: Annotated[float, Form(gt=0)],
+    field_of_view_deg: Annotated[float, Form(gt=0, le=180)],
+    image_height_mm: Annotated[float, Form(gt=0)],
+    total_track_mm: Annotated[float, Form(gt=0)],
+    airy_disc_diameter_um: Annotated[float, Form(gt=0)],
+    cutoff_freq_lp_per_mm: Annotated[float, Form(gt=0)],
+    n_elements: Annotated[int | None, Form(ge=2, le=20)] = None,
+    wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
+    requirement: Annotated[str | None, Form(max_length=2000)] = None,
+) -> RedirectResponse:
+    # `scenario_label_en` / `total_track_mm` / `airy_disc_diameter_um` /
+    # `cutoff_freq_lp_per_mm` / `wavelength_nm` are accepted (not used) so this
+    # route can share the exact same hidden-field form as `/jobs` — the
+    # wizard_confirm page posts the identical confirmed-parameters form to
+    # either endpoint via a second submit button's `formaction`.
+    payload = _candidate_job_payload(
+        scenario=scenario,
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+        requirement=requirement,
+    )
+    job_id = optical.job_store.submit(CandidateOrchestrationEngine(), payload)
+    return RedirectResponse(
+        url=f"/jobs/{job_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
 @app.get("/results/{job_id}", response_class=HTMLResponse, tags=["web"])
 async def result_summary_from_job(request: Request, job_id: str) -> HTMLResponse:
     try:
@@ -1597,6 +1938,39 @@ async def result_summary_from_job(request: Request, job_id: str) -> HTMLResponse
         request,
         "result_summary.html",
         _result_summary_context(
+            result=record.result,
+            progress=_job_progress_context(record),
+        ),
+    )
+
+
+@app.get("/candidates/{job_id}", response_class=HTMLResponse, tags=["web"])
+async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
+    try:
+        record = optical.job_store.get(job_id)
+    except JobNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "job_id": job_id},
+        ) from exc
+    if not _is_candidate_orchestration_job(record):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "candidate_set_not_found", "job_id": job_id},
+        )
+    if record.status is not JobStatus.SUCCEEDED or record.result is None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "error": "result_not_ready",
+                "job_id": job_id,
+                "status": record.status.value,
+            },
+        )
+    return templates.TemplateResponse(
+        request,
+        "candidate_set.html",
+        _candidate_set_context(
             result=record.result,
             progress=_job_progress_context(record),
         ),
