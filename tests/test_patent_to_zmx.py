@@ -34,8 +34,7 @@ A16= 1.0E-10 -- [0141] In Table 1B, k represents the conic coefficient.
 
 SECOND_PRESCRIPTION_TEXT = PRESCRIPTION_TEXT.replace(
     "1st Embodiment f = 12.99 mm, Fno = 1.71,\nHFOV = 20.0 deg.",
-    "EXAMPLE 2: effective focal length = 13.50 mm; F/# = 1.80; "
-    "Half Angle of View = 21.0 degrees.",
+    "EXAMPLE 2: effective focal length = 13.50 mm; F/# = 1.80; Half Angle of View = 21.0 degrees.",
 ).replace("-5.6789E-05", "-6.6789E-05", 1)
 
 MULTI_EMBODIMENT_TEXT = PRESCRIPTION_TEXT + "\n" + SECOND_PRESCRIPTION_TEXT
@@ -106,6 +105,92 @@ A4 -1.4397107E-03 8.7627361E-04
 [0001] trailing narrative.
 """
 
+SUNNY_OBJ_STO_TEXT = """
+TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
+number Surface type curvature Thickness index Abbe number coefficient
+OBJ spherical infinite infinite STO spherical infinite -0.3784
+S1 aspheric 2.0348 0.6638 1.55 56.1 -0.1992
+S2 aspheric 9.8057 0.1729 17.3022
+S3 aspheric 13.4651 0.2785 1.67 19.2 83.5117
+S4 aspheric 4.2040 0.4639 8.1278
+S5 spherical infinite 0.2963 1.52 64.2
+S6 spherical infinite 0.3417 S7 spherical infinite (61) narrative follows.
+TABLE-US-00002 TABLE 2 Surface number A4 A6 A8
+S1 4.3347E-03 1.0409E-03 9.0835E-03
+S2 -2.9093E-02 2.3320E-02 -4.1072E-02
+Surface number A10 A12
+S1 -3.4351E-02 6.4565E-02
+S2 1.1577E-01 -2.3430E-01 (63) narrative follows.
+TABLE-US-00003 TABLE 3 f1(mm) 4.57 f(mm) 5.04 f2(mm) -9.13 TTL(mm) 6.14
+f3(mm) 16.02 ImgH(mm) 4.75 f4(mm) 6.17 Semi-FOV(°) 42.2 f5(mm) -3.45
+f/EPD 2.02 (67) FIG. 2 A illustrates a longitudinal aberration curve.
+TABLE-US-00004 TABLE 4 Material Surface Radius of Refractive Conic
+number Surface type curvature Thickness index Abbe number coefficient
+OBJ spherical infinite infinite STO spherical infinite -0.4000
+S1 aspheric 2.1000 0.7000 1.55 56.1 -0.2000
+S2 aspheric 9.9000 0.1800 17.0000
+S3 aspheric 13.5000 0.2800 1.67 19.2 83.0000
+S4 aspheric 4.3000 0.4700 8.0000
+S5 spherical infinite 0.3000 1.52 64.2
+S6 spherical infinite 0.3500 S7 spherical infinite (71) narrative follows.
+TABLE-US-00005 TABLE 5 Surface number A4 A6 A8
+S1 4.4000E-03 1.1000E-03 9.1000E-03
+S2 -3.0000E-02 2.4000E-02 -4.2000E-02 (72) narrative follows.
+TABLE-US-00006 TABLE 6 f1(mm) 4.60 f(mm) 5.08 f2(mm) -9.20 TTL(mm) 6.20
+f3(mm) 16.10 ImgH(mm) 4.75 f4(mm) 6.20 Semi-FOV(°) 41.9 f5(mm) -3.50
+f/EPD 2.03 (73) trailing narrative.
+"""
+
+SUNNY_NARRATIVE_META_TEXT = """
+TABLE-US-00001 TABLE 1 Material Surface Surface Radius of Thickness/
+Refractive Abbe Focal Conic number type curvature Distance index number
+length coefficient OBJ Spherical Infinite Infinite STO Spherical Infinite
+-0.6200 S1 Aspheric 1.9014 0.7452 1.56 58.4 4.96 0.2654
+S2 Aspheric 5.1228 0.1082 -0.8412
+S3 Aspheric 12.1489 0.2500 1.67 20.4 -11.13 6.2245
+S4 Aspheric 4.5711 0.1070 0.6997
+S5 Spherical Infinite 0.2100 1.52 64.2
+S6 Spherical Infinite 0.1638 S7 Spherical Infinite (52) In this example,
+a total effective focal length f of the optical imaging lens assembly
+satisfies f=4.26 mm, half of a maximal field-of-view Semi-FOV of the
+optical imaging lens assembly satisfies Semi-FOV=43.7°, and an aperture
+value Fno of the optical imaging lens assembly satisfies Fno=1.48.
+(53) In example 1, the object-side surface and the image-side surface of
+any one of the lenses are aspheric. Table 2 below shows coefficients.
+TABLE-US-00002 TABLE 2 Surface number A4 A6
+S1 4.3347E-03 1.0409E-03
+S2 -2.9093E-02 2.3320E-02 (54) trailing narrative.
+"""
+
+ABILITY_OPTO_TEXT = """
+first embodiment of the invention. The parameters of the lenses of the
+first embodiment are listed in Table 1 and Table 2.
+TABLE-US-00001 TABLE 1 f = 3.03968 mm; f/HEP = 1.6; HAF = 50.0010 deg
+Focal Thickness Refractive Abbe length Surface Radius of curvature (mm)
+(mm) Material index number (mm) 0 Object plane infinity
+1 1.sup.st lens 4.01438621 0.750 plastic 1.514 56.80 -9.24529
+2 2.040696375 3.602 3 Aperture plane -0.412
+4 2.sup.nd lens 2.45222384 0.895 plastic 1.565 58.00 6.33819
+5 6.705898264 0.561
+6 3 .sup.rd lens 16.39663088 0.932 plastic 1.565 58.00 7.93877
+7 -6.073735083 0.656
+8 Infrared rays 1E+18 0.200 BK7_SCH 1.517 64.20 filter
+9 1E+18 0.412 10 Image plane 1E+18 0 Reference wavelength: 555 nm.
+TABLE-US-00002 TABLE 2 Coefficients of the aspheric surfaces
+Surface 1 2 4 k -1.882119E-01 -1.927558E+00 -6.483417E+00
+A4 7.686381E-04 3.070422E-02 5.439775E-02
+A6 4.630306E-04 -3.565153E-03 -7.980567E-03
+Surface 5 6 7 k 1.766123E+01 -5.000000E+01 -3.544648E+01
+A4 7.241691E-03 -2.985209E-02 -6.315366E-02
+A6 -8.359563E-03 -7.175713E-03 6.038040E-03
+(111) The detail parameters of the first embodiment are listed in Table 1.
+"""
+
+ABILITY_CORRUPT_EXPONENT_TEXT = ABILITY_OPTO_TEXT.replace(
+    "A6 4.630306E-04 -3.565153E-03 -7.980567E-03",
+    "A6 4.630306 IE-04 -3.565153E-03 -7.980567E-03",
+)
+
 AAC_RAYTECH_COMPACT_TEXT = """
 TABLE-US-00001 TABLE 1 R d nd νd S1 Infinity d0= -0.460
 R1 5.316 d1= 1.600 nd1 1.4959 ν1 81.65
@@ -175,7 +260,9 @@ def test_parse_patent_prescription_extracts_surface_and_asphere_fields() -> None
     assert prescription.image_height_mm == pytest.approx(12.99 * math.tan(math.radians(20.0)))
 
 
-def test_parse_patent_prescription_uses_d_line_columns_when_material_table_has_reference_index() -> None:
+def test_parse_patent_prescription_uses_d_line_columns_when_material_table_has_reference_index() -> (
+    None
+):
     prescription = parse_patent_prescription(
         THREE_COLUMN_MATERIAL_TEXT,
         patent_id="US-THREE-COLUMN-A1",
@@ -219,8 +306,7 @@ def test_parse_patent_prescriptions_extracts_all_embodiments() -> None:
 def test_parse_patent_prescriptions_skips_narrative_embodiment_references() -> None:
     text = (
         "The image capturing unit according to the 1st embodiment has f = 1.00 mm, "
-        "Fno = 2.00, HFOV = 30.0 deg. The detailed optical data follow. "
-        + PRESCRIPTION_TEXT
+        "Fno = 2.00, HFOV = 30.0 deg. The detailed optical data follow. " + PRESCRIPTION_TEXT
     )
 
     prescriptions = parse_patent_prescriptions(text, patent_id="US-NARRATIVE-A1")
@@ -275,7 +361,9 @@ def test_build_readout_does_not_use_ftan_image_height_for_surface_diameters() ->
     forbidden_global = prescription.image_height_mm * 1.1
 
     assert readout.surfaces
-    assert all(surface.semi_diameter_mm != pytest.approx(forbidden_global) for surface in readout.surfaces)
+    assert all(
+        surface.semi_diameter_mm != pytest.approx(forbidden_global) for surface in readout.surfaces
+    )
 
 
 def test_write_patent_zmx_persists_real_imh_and_real_ray_surface_diameters(
@@ -426,6 +514,117 @@ def test_parse_patent_prescriptions_accepts_aac_raytech_compact_tables() -> None
     assert second.focal_length_mm == pytest.approx(16.282)
     assert second.hfov_deg == pytest.approx(24.47 / 2.0)
     assert second.surfaces[1].asphere_coefficients["B"] == pytest.approx(-9.3315e-4)
+
+
+def test_parse_patent_prescriptions_accepts_sunny_obj_sto_tables() -> None:
+    prescriptions = parse_patent_prescriptions(
+        SUNNY_OBJ_STO_TEXT,
+        patent_id="US-SUNNY-FIXTURE-A1",
+    )
+
+    assert [prescription.embodiment for prescription in prescriptions] == [
+        "Sunny embodiment 1",
+        "Sunny embodiment 2",
+    ]
+
+    first = prescriptions[0]
+    assert first.focal_length_mm == pytest.approx(5.04)
+    assert first.f_number == pytest.approx(2.02)
+    assert first.hfov_deg == pytest.approx(42.2)
+    # OBJ row skipped; STO + S1..S7 = 8 surfaces.
+    assert len(first.surfaces) == 8
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[0].radius_mm == math.inf
+    assert first.surfaces[0].thickness_mm == pytest.approx(-0.3784)
+
+    lens1 = first.surfaces[1]
+    assert lens1.label == "Surface S1"
+    assert lens1.radius_mm == pytest.approx(2.0348)
+    assert lens1.nd == pytest.approx(1.55)
+    assert lens1.vd == pytest.approx(56.1)
+    assert lens1.surface_type == "ASP"
+    # Conic from the surface table plus A4..A12 from the split-header
+    # asphere table.
+    assert lens1.asphere_coefficients["K"] == pytest.approx(-0.1992)
+    assert lens1.asphere_coefficients["A"] == pytest.approx(4.3347e-3)
+    assert lens1.asphere_coefficients["D"] == pytest.approx(-3.4351e-2)
+    assert lens1.asphere_coefficients["E"] == pytest.approx(6.4565e-2)
+
+    air_surface = first.surfaces[2]
+    assert air_surface.nd is None
+    assert air_surface.asphere_coefficients["K"] == pytest.approx(17.3022)
+
+    ir_filter = first.surfaces[5]
+    assert ir_filter.nd == pytest.approx(1.52)
+    assert ir_filter.vd == pytest.approx(64.2)
+
+    second = prescriptions[1]
+    assert second.focal_length_mm == pytest.approx(5.08)
+    assert second.f_number == pytest.approx(2.03)
+    assert second.hfov_deg == pytest.approx(41.9)
+
+
+def test_parse_sunny_narrative_meta_and_focal_length_column() -> None:
+    prescriptions = parse_patent_prescriptions(
+        SUNNY_NARRATIVE_META_TEXT,
+        patent_id="US-SUNNY-FIXTURE-A2",
+    )
+
+    assert len(prescriptions) == 1
+    first = prescriptions[0]
+    # Metadata from the anchored "In this example, ..." narrative sentence.
+    assert first.focal_length_mm == pytest.approx(4.26)
+    assert first.f_number == pytest.approx(1.48)
+    assert first.hfov_deg == pytest.approx(43.7)
+
+    # The per-element Focal-length column (4.96) is skipped; the trailing
+    # value is the conic.
+    lens1 = first.surfaces[1]
+    assert lens1.nd == pytest.approx(1.56)
+    assert lens1.vd == pytest.approx(58.4)
+    assert lens1.asphere_coefficients["K"] == pytest.approx(0.2654)
+
+
+def test_parse_patent_prescription_accepts_ability_opto_tables() -> None:
+    prescription = parse_patent_prescription(
+        ABILITY_OPTO_TEXT,
+        patent_id="US-ABILITY-FIXTURE-A1",
+    )
+
+    # Meta from "f = 3.03968 mm; f/HEP = 1.6; HAF = 50.0010 deg".
+    assert prescription.focal_length_mm == pytest.approx(3.03968)
+    assert prescription.f_number == pytest.approx(1.6)
+    assert prescription.hfov_deg == pytest.approx(50.0010)
+
+    surfaces = {surface.index: surface for surface in prescription.surfaces}
+    lens1 = surfaces[1]
+    assert lens1.label == "Lens 1"
+    assert lens1.nd == pytest.approx(1.514)
+    assert lens1.vd == pytest.approx(56.80)
+    # Ordinal marker split across tokens ("3 .sup.rd lens") still resolves.
+    assert surfaces[6].label == "Lens 3"
+    assert surfaces[3].label == "Ape. Stop"
+    assert surfaces[3].radius_mm == 0.0
+    assert surfaces[3].thickness_mm == pytest.approx(-0.412)
+
+    ir_filter = surfaces[8]
+    assert ir_filter.label == "IR-cut filter"
+    # Named model glass ("BK7_SCH") with explicit nd/vd is kept.
+    assert ir_filter.nd == pytest.approx(1.517)
+    assert ir_filter.vd == pytest.approx(64.20)
+
+    # "Surface 1 2 4" header without "#" still parses coefficients.
+    assert lens1.asphere_coefficients["K"] == pytest.approx(-1.882119e-1)
+    assert lens1.asphere_coefficients["A"] == pytest.approx(7.686381e-4)
+    assert surfaces[7].asphere_coefficients["B"] == pytest.approx(6.038040e-3)
+
+
+def test_ability_opto_ocr_corrupt_exponent_fails_loud() -> None:
+    with pytest.raises(PatentParseError, match="OCR-corrupted exponent"):
+        parse_patent_prescription(
+            ABILITY_CORRUPT_EXPONENT_TEXT,
+            patent_id="US-ABILITY-FIXTURE-A2",
+        )
 
 
 def test_convert_candidate_writes_each_embodiment_with_e_suffix_without_network(

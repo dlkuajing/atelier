@@ -144,3 +144,71 @@ underlying trace-hang and token-degradation issues so the stock
 3. **4 pre-existing library designs hang `build_sample_from_optic`** even on the lightweight path (`US-11940597-B2-e1`, `US-11940597-B2-e2`, `US-20240192468-A1-e1`, `US-10921568-B2-e1`) -- now safely routed around by `scripts/generate_cases.py`'s new timeout+reuse fallback, but the underlying numerical hang is unfixed.
 4. **Full-suite completion verification**: recommend a supervised complete run of `pytest -q -n 8 -k "not real"` before merge (see "Test results" above).
 5. **0 telephoto seeds found this batch** -- if telephoto breadth is a near-term priority, a future batch should title-filter the unmined pool more aggressively (this batch's title-keyword-priority ordering only tagged 7/644 candidates as telephoto/ultrawide-looking; most patent titles are generic "OPTICAL IMAGING LENS ASSEMBLY").
+
+
+---
+
+# DATA-10b parser-family expansion (Sunny Optics + Ability Opto, 361 -> 436)
+
+## Summary
+
+- mode: format census over the DATA-10a failure pool -> deterministic parser expansion for the top-2 implementable families -> live re-conversion -> six-gate intake (same gates as DATA-10a incl. the plausibility envelope) -> full regeneration/reanchor
+- case_library_count_before: 361
+- case_library_count_after: **436** (+75)
+- scenario delta: wide 206->224 (+18), telephoto 119->134 (+15), **ultrawide 36->78 (+42, more than doubled)**
+- manifest: `tests/data/data10b_manifest.json` (75 records); ledger: `.planning/loop/seed-intake-10b-ledger.json`; conversion report: `.planning/loop/patent2zmx-10b-report.json`
+
+## Format census (step 1)
+
+Assignee census of the 105 DATA-10a "no supported table format" failures, plus format inspection of ~31 fetched HTML samples across 9 families:
+
+| family | unmined pool | verdict |
+|---|---:|---|
+| LARGAN | 172 | **dead pool** -- remaining patents are mechanical (lens barrels, spacer rings, light-blocking sheets), no prescriptions (6/6 samples) |
+| AAC/Raytech | 124 | already covered (DATA-09g); remaining failures are zoom/periscope variants (fail-loud by design) |
+| **Sunny Optics** | **111** | **implemented** -- consistent OBJ/STO/S-row surface tables, real prescriptions in all 6 samples |
+| Genius | 30 | not attempted (timebox; smaller than Sunny/Ability) |
+| Samsung | 28 | dead pool -- no text tables at all (4/4 samples) |
+| **Ability Opto** | **27** | **implemented** -- near-primary format with f/HEP+HAF metadata and ordinal lens rows (3/3 samples) |
+| Corephotonics | 23 | dead pool -- system-architecture patents with parameter-RANGE tables, no prescriptions |
+| SEKONIX / NEWMAX | 18 / 15 | not attempted (timebox) |
+
+## Parser changes (step 2, commit 2ea51e5)
+
+**Sunny fallback parser** (pattern-follows the DATA-09g AAC precedent; wired after the AAC fallback in `_parse_prescription_attempts`): OBJ/STO/S-row surface tables (both "aspheric" and "Aspheric surface" type columns, optional per-element Focal-length column, surface-table conic mapped to the K coefficient), split-header "Surface number A4 ..." asphere tables, and four metadata styles: (a) per-embodiment label tables (`f(mm) 5.04 ... Semi-FOV(deg) 42.2 ... f/EPD 2.02`), (b) columnar "parameter f f1 ... HFOV ... numerical value ..." tables, (c) consolidated per-example row tables including per-example f/EPD rows inside conditional-expression tables, (d) embodiment-tagged narrative sentences ("In Example N, a total effective focal length f ... is 3.36 mm, an aperture number Fno ... is 2.27"). Fno from f/EPD is the definition of the working F-number (both operands published) -- a deterministic transform, not a fill.
+
+**Metadata binding integrity**: the first backtest exposed a real off-by-one (embodiment N trailing summary leaked into embodiment N+1 pre-table span, assigning N values to N+1). Fixed by anchoring narrative extraction to embodiment-TAGGED sentences ("In Example N," -- comma required, rejecting cross-references like "as in example 1.") searched document-wide, with untagged "In this example," windows clamped at the first different-numbered tagged anchor. A conditional-expression cut also prevents the last embodiment document-tail span from first-matching example 1 values out of "Conditional/Example 1 2 3..." summary tables (observed: emb6 of US-10996439 would have taken 1.20 instead of its own 1.55 -- instead the f/EPD row of that table is now consumed as a proper per-example consolidated source).
+
+**Ability extensions to the primary parser**: f/HEP + HAF metadata labels, ordinal lens rows ("1.sup.st lens"/"3 .sup.rd lens" -> "Lens N"), Aperture/Infrared-rays labels, "plane" as plano synonym, named-model-glass acceptance gated on a physical nd/vd pair (BK7_SCH 1.517 64.20), the "Coefficients of the aspheric surfaces" heading, "Surface 1 2 4" coefficient blocks without "#", and image-row trailing-residue tolerance.
+
+**Two fail-closed OCR-integrity guards** (both triggered by real corrupt tables during backtest, both would otherwise ingest silently wrong numbers): (1) bare exponent fragments ("1.88094 IE-05" -- mantissa would be kept as a coefficient, a ~1e5x error); (2) per-row numeric overflow ("-1.5703 51E+00" -- one number split into two shifts the whole row). Also honest-rejected: US-12196921-B2 has an OCR-corrupted published vd column (1.92 where 19.2 is physically required) -- all 6 embodiments fail loud rather than ingest an impossible material.
+
+## Conversion + intake (step 3)
+
+- patents attempted: 135 (111 Sunny + 27 Ability, minus pre-excluded hangs); embodiment conversion successes: 92 from 22 patents
+- six-gate + plausibility intake: **75 accepted, 17 rejected** -- 11 fisheye-class FOV 142-162deg (over the ratified 135deg smartphone plausibility ceiling), 2 negative ATELIER_FTAN_IMH_SANITY_MM, 2 near-duplicates, 2 lightweight-build >90s timeouts
+- remaining failure buckets (honest, from the conversion report): 79 embodiments "full-field real rays did not reach image surface" (genuine trace failures), ~105 "metadata missing Fno/Semi-FOV" (partially unpublished values, partially a further Sunny sub-variant -- backlog), 20 "S6 value not numeric: P" (Sunny periscope/prism rows, 2 patents -- backlog), 18 "S2 value not numeric: Spherical" (residual row-shape variant -- backlog), 24 non-prescription
+- three NEW hang-prone patents excluded and quantified: US-12235519-B2, US-12181639-B2 (real-ray trace hangs), US-12372750-B2 (~3.5 min/embodiment ultra-slow; timebox exclusion) -- same pathology as the DATA-10a five
+
+## Golden reanchor (step 3)
+
+- tests/data/eval_golden.json: 439 briefs (was 364; +75 new case-anchored briefs)
+- routing-winner flips: **6**, all legitimate (three to new DATA-10b seeds -- US-10444475-B2-e1, US-12210213-B2-e3 (x2), US-12124010-B2-e3 (x2) -- and one sibling-embodiment shift US-20210389572-A1 e6->e7)
+- no >2% ATELIER_REAL_IMH_MM deviations (the golden script enforces this gate itself)
+- hardcoded count reanchors per the twice-established precedent (bd25ed0, DATA-10a d7df1f6): library 361->436, telephoto 119->134, first-order outliers 270->313, lightweight seeds 322->397, high-FOV 37->79 / totals 362->437 -- all values computed from the regenerated index, not guessed
+
+## Test results (step 4)
+
+- parser suite: 29/29 green (25 pre-existing + 4 new family fixtures); ruff clean
+- quick slice (test_case_library, test_zmx_ingest, test_eval_golden_seeds, test_patent_to_zmx): 1355 passed in 39s
+- full mock suite minus tests/test_seed_intake_audit.py: run to completion (result in the wave report)
+- **tests/test_seed_intake_audit.py hang (recorded per instructions)**: test_high_fov_seed_intake_audit_reports_current_gap ran >7 minutes without completing and was killed. Root cause: the build_seed_intake_audit protected edge-field scan now probes 78 high-FOV seeds (was 36 pre-10b), and some new DATA-10b seeds are ultra-slow to edge-probe (same Optiland slow-trace pathology as the conversion hangs). All 4 audit-calling tests in the file are affected. The 5 count assertions in the file were still reanchored (436/437/79/397). **RESOLVED same-day (commit follows this section)**: (1) DATA-10 waves added to the payload-bounded intake-batch set in `_case_index_payload_edge_seed_ids` -- their payload mtf_max_field_frac comes from the same bounded lightweight-build intake as DATA-09d1, so live-rescanning all 83 DATA-10 seeds each audit was both redundant and the hang vector; (2) defensive per-seed EDGE_SCAN_TIMEOUT_S=30s daemon-thread bound (generate_cases.py BUILD_TIMEOUT_S precedent; calibration: healthy live scans 1.5-3.3s, so ~10x margin) with timed-out/crashed probes recorded honestly as probe-timeout/probe-error evidence, never fabricated as pass or fail. After the fix: audit file 5/5 passed in 1:55, full-library audit 27.5s wall with 0 probe-timeouts, and the FULL mock suite with no exclusions ran to completion green: 1454 passed / 1 skipped / 0 failed in 15:03.
+
+## Honest remainder ledger
+
+1. Sunny metadata sub-variant behind ~105 "missing Fno/Semi-FOV" embodiment failures (some genuinely unpublished; a sample-driven census of the residual would separate the two).
+2. Sunny periscope/prism "P-row" tables (2 patents, telephoto-relevant) and the residual "S2 Spherical" row-shape variant (18 rows).
+3. 8 total hang-prone patents excluded from mining across 10a+10b; root cause in the Optiland real-ray trace unfixed.
+4. ~~tests/test_seed_intake_audit.py runtime pathology~~ (resolved same-day, see Test results above).
+5. Dead pools with evidence: LARGAN remainder (mechanical), Samsung (image-only), Corephotonics (range tables) -- ~223 patents that no parser work can convert.
+6. Not-yet-attempted small families: Genius (30), SEKONIX (18), NEWMAX (15).

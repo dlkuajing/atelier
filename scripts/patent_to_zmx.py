@@ -257,6 +257,9 @@ def _parse_prescription_attempts(
         attempts = _parse_aac_raytech_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_sunny_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         raise
     attempts: list[_PrescriptionParseAttempt] = []
     for index, meta in enumerate(metas, start=1):
@@ -289,7 +292,15 @@ def _parse_prescription_at_meta(
     section_end: int,
     patent_id: str,
 ) -> PatentPrescription:
-    coeff_start = _find_required_before(text, "Aspheric Coefficients", meta.end, section_end)
+    coeff_start = _find_required_before_any(
+        text,
+        # Ability Opto (DATA-10b family expansion) titles the block
+        # "Coefficients of the aspheric surfaces" instead of the primary
+        # "Aspheric Coefficients" heading.
+        ("Aspheric Coefficients", "Coefficients of the aspheric surfaces"),
+        meta.end,
+        section_end,
+    )
     surface_table = _surface_table_text(text, meta.end, coeff_start)
     surfaces = _parse_surface_table(surface_table)
     coefficients, unsupported = _parse_asphere_coefficients(
@@ -351,9 +362,7 @@ def _parse_fujifilm_table_attempts(
     for index, basic_match in enumerate(basic_matches, start=1):
         example_number = int(basic_match.group("example"))
         embodiment = f"Example {example_number}"
-        next_basic_start = (
-            basic_matches[index].start() if index < len(basic_matches) else len(text)
-        )
+        next_basic_start = basic_matches[index].start() if index < len(basic_matches) else len(text)
         try:
             spec_match = _fujifilm_spec_match(
                 text,
@@ -640,8 +649,7 @@ def _parse_fujifilm_asphere_coefficients(
                 ]
                 if unsupported:
                     raise PatentParseError(
-                        "unsupported nonzero Fujifilm asphere terms: "
-                        + ", ".join(unsupported[:8])
+                        "unsupported nonzero Fujifilm asphere terms: " + ", ".join(unsupported[:8])
                     )
                 continue
             codev_label = ASPHERE_ORDER_TO_CODEV[order]
@@ -1032,6 +1040,600 @@ def _parse_aac_number(token: str) -> float:
     return _parse_number(token.rstrip("°"))
 
 
+# ---------------------------------------------------------------------------
+# Sunny Optics (Zhejiang Sunny Optics / Sunny Optical) fallback family
+# (DATA-10b parser expansion). Modern Sunny prescriptions use OBJ/STO/S<n>
+# surface tables ("OBJ spherical infinite infinite / STO spherical infinite
+# -0.38 / S1 aspheric R T [nd vd] [conic] ..."), column-oriented asphere
+# tables headed "Surface number A4 A6 ...", and one of three metadata styles:
+# a per-embodiment table (f(mm)/Semi-FOV(deg)/f/EPD rows), one consolidated
+# all-embodiments table (rows of per-example values), or narrative sentences
+# ("satisfies Semi-FOV=43.7deg", "Fno ... is 2.27").
+# ---------------------------------------------------------------------------
+
+_SUNNY_ROW_KEY_RE = re.compile(r"^(?:OBJ|STO|S\d+)$")
+_SUNNY_SURFACE_TYPE_RE = re.compile(r"^(?:spherical|aspheric(?:al)?)$", re.IGNORECASE)
+_SUNNY_NARRATIVE_CUT_RE = re.compile(r"\s(?:\(\d+\)|\[\d+\])\s")
+
+
+@dataclass(frozen=True)
+class _SunnyMeta:
+    focal_length_mm: float | None = None
+    f_number: float | None = None
+    hfov_deg: float | None = None
+    epd_mm: float | None = None
+
+    def merged_with(self, other: _SunnyMeta) -> _SunnyMeta:
+        return _SunnyMeta(
+            focal_length_mm=(
+                self.focal_length_mm if self.focal_length_mm is not None else other.focal_length_mm
+            ),
+            f_number=self.f_number if self.f_number is not None else other.f_number,
+            hfov_deg=self.hfov_deg if self.hfov_deg is not None else other.hfov_deg,
+            epd_mm=self.epd_mm if self.epd_mm is not None else other.epd_mm,
+        )
+
+
+def _parse_sunny_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse Sunny Optics OBJ/STO surface tables plus detached metadata."""
+
+    blocks = _patent_table_blocks(text)
+    surface_blocks: list[tuple[int, _PatentTableBlock]] = []
+    for block_index, block in enumerate(blocks):
+        if _sunny_surface_block_signature(block.text):
+            surface_blocks.append((block_index, block))
+    if not surface_blocks:
+        return []
+
+    consolidated = _sunny_consolidated_meta_rows(blocks)
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, (_block_index, block) in enumerate(surface_blocks, start=1):
+        embodiment = f"Sunny embodiment {embodiment_number}"
+        next_surface_start = (
+            surface_blocks[embodiment_number][1].start
+            if embodiment_number < len(surface_blocks)
+            else len(text)
+        )
+        try:
+            surfaces, index_by_row_key = _parse_sunny_surface_table(
+                block.text,
+                embodiment_number=embodiment_number,
+            )
+            coefficients = _parse_sunny_asphere_blocks(
+                blocks,
+                span_start=block.end,
+                span_end=next_surface_start,
+                index_by_row_key=index_by_row_key,
+            )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+                    surface.surface_type = "ASP"
+            # The span starts at the surface block itself: the "In this
+            # example, ... f ... is 3.36 mm" summary sentence lives in the
+            # surface block's trailing narrative (before the next TABLE-US
+            # marker), and none of the metadata labels can occur inside the
+            # OBJ/STO/S-row table body itself.
+            meta = _sunny_meta_for_embodiment(
+                text,
+                embodiment_number=embodiment_number,
+                table_span=(block.start, next_surface_start),
+                consolidated=consolidated,
+            )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=meta[0],
+                f_number=meta[1],
+                hfov_deg=meta[2],
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - kept as a per-embodiment failure
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _sunny_surface_block_signature(block_text: str) -> bool:
+    body = _cut_sunny_table_narrative(block_text)
+    tokens = body.split()
+    has_obj = "OBJ" in tokens
+    s_rows = sum(1 for token in tokens if re.fullmatch(r"S\d+", token))
+    has_type = any(_SUNNY_SURFACE_TYPE_RE.fullmatch(token) for token in tokens)
+    return has_obj and has_type and s_rows >= 3
+
+
+def _cut_sunny_table_narrative(text: str) -> str:
+    return _SUNNY_NARRATIVE_CUT_RE.split(text, maxsplit=1)[0]
+
+
+def _cut_sunny_conditional_tail(text: str) -> str:
+    """Drop conditional-expression summary tables from a metadata span.
+
+    Those tables ("TABLE 13 Conditional/Example 1 2 3 ..." with rows like
+    "f/EPD 1.37 1.42 ...") list per-EXAMPLE values, so a naive first-match in
+    the last embodiment's span (which runs to the end of the document) would
+    silently assign example 1's value to example N.
+    """
+
+    match = re.search(
+        r"\bConditional\s*/\s*(?:Example|Embodiment)|\bTABLE\s+\d+\s+Conditional|"
+        r"\bconditional\s+expressions?\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+    return text[: match.start()] if match is not None else text
+
+
+def _sunny_distance(token: str, *, field_name: str) -> float:
+    if token.lower() in {"infinite", "infinity", "inf"}:
+        return math.inf
+    try:
+        return _parse_number(token)
+    except PatentParseError as exc:
+        raise PatentParseError(f"Sunny {field_name} is not numeric: {token}") from exc
+
+
+def _parse_sunny_surface_table(
+    block_text: str,
+    *,
+    embodiment_number: int,
+) -> tuple[list[PatentSurface], dict[str, int]]:
+    body = _cut_sunny_table_narrative(block_text)
+    tokens = [token for token in body.split() if token]
+    row_starts = [
+        (pos, token) for pos, token in enumerate(tokens) if _SUNNY_ROW_KEY_RE.fullmatch(token)
+    ]
+    if not row_starts:
+        raise PatentParseError(
+            f"Sunny embodiment {embodiment_number} surface table had no OBJ/STO/S rows"
+        )
+
+    surfaces: list[PatentSurface] = []
+    index_by_row_key: dict[str, int] = {}
+    for row_pos, (pos, row_key) in enumerate(row_starts):
+        row_end = row_starts[row_pos + 1][0] if row_pos + 1 < len(row_starts) else len(tokens)
+        row = tokens[pos + 1 : row_end]
+        if row and _SUNNY_SURFACE_TYPE_RE.fullmatch(row[0]):
+            surface_type_token = row[0].lower()
+            row = row[1:]
+            # Two-token variant: "Aspheric surface" / "Spherical surface".
+            if row and row[0].lower() == "surface":
+                row = row[1:]
+        else:
+            surface_type_token = ""
+        if row_key == "OBJ":
+            continue
+
+        values = [
+            _sunny_distance(token, field_name=f"{row_key} value")
+            for token in row
+            if not _is_empty_value(token)
+        ]
+        if not values:
+            raise PatentParseError(f"Sunny {row_key} row had no numeric values")
+        radius = values[0]
+        thickness = values[1] if len(values) >= 2 else 0.0
+        rest = values[2:]
+        nd = vd = None
+        if len(rest) >= 2 and _is_physical_nd(rest[0]) and _is_physical_vd(rest[1]):
+            nd, vd = rest[0], rest[1]
+            rest = rest[2:]
+        # Some Sunny tables add a per-element Focal-length column between the
+        # Abbe number and the Conic coefficient (header "... Abbe Focal Conic
+        # number length coefficient"). Column order is fixed, so with two
+        # trailing values the last one is the conic and the first (the element
+        # focal length) is redundant derived data we do not need.
+        conic = rest[-1] if rest else None
+        if len(rest) > 2:
+            raise PatentParseError(
+                f"Sunny {row_key} row has unexpected extra values: {rest[:-1]!r}"
+            )
+        _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
+
+        surface_index = len(surfaces) + 1
+        surface = PatentSurface(
+            index=surface_index,
+            label="Stop" if row_key == "STO" else f"Surface {row_key}",
+            radius_mm=radius,
+            thickness_mm=thickness,
+            material="Glass" if nd is not None else None,
+            nd=nd,
+            vd=vd,
+            surface_type="ASP" if surface_type_token == "aspheric" else None,
+        )
+        if conic is not None and abs(conic) > 0.0:
+            surface.asphere_coefficients["K"] = conic
+        surfaces.append(surface)
+        index_by_row_key[row_key] = surface_index
+
+    if len(surfaces) < 4:
+        raise PatentParseError(
+            f"Sunny embodiment {embodiment_number} surface table too short: {len(surfaces)} rows"
+        )
+    return surfaces, index_by_row_key
+
+
+def _parse_sunny_asphere_blocks(
+    blocks: list[_PatentTableBlock],
+    *,
+    span_start: int,
+    span_end: int,
+    index_by_row_key: dict[str, int],
+) -> dict[int, dict[str, float]]:
+    coefficients: dict[int, dict[str, float]] = {}
+    for block in blocks:
+        if block.start < span_start or block.start >= span_end:
+            continue
+        _parse_sunny_asphere_block_into(
+            block.text,
+            index_by_row_key=index_by_row_key,
+            coefficients=coefficients,
+        )
+    return coefficients
+
+
+def _parse_sunny_asphere_block_into(
+    block_text: str,
+    *,
+    index_by_row_key: dict[str, int],
+    coefficients: dict[int, dict[str, float]],
+) -> None:
+    body = _cut_sunny_table_narrative(block_text)
+    tokens = [token for token in body.split() if token]
+    pos = 0
+    labels: list[str] = []
+    while pos < len(tokens):
+        token = tokens[pos]
+        if token == "Surface" and pos + 1 < len(tokens) and tokens[pos + 1] == "number":
+            pos += 2
+            labels = []
+            while pos < len(tokens) and re.fullmatch(r"[AK]\d*", tokens[pos], re.IGNORECASE):
+                labels.append(tokens[pos].upper())
+                pos += 1
+            continue
+        row_match = re.fullmatch(r"S\d+", token)
+        if row_match is None or not labels:
+            pos += 1
+            continue
+        row_key = token
+        pos += 1
+        values: list[float] = []
+        for label in labels:
+            if pos >= len(tokens):
+                raise PatentParseError(f"Sunny asphere row {row_key} is incomplete at {label}")
+            raw = tokens[pos]
+            if _CORRUPT_EXPONENT_RE.fullmatch(raw):
+                raise PatentParseError(
+                    f"OCR-corrupted exponent token in Sunny asphere table: {raw!r}"
+                )
+            if _is_empty_value(raw):
+                values.append(0.0)
+            else:
+                values.append(_parse_number(raw))
+            pos += 1
+        if pos < len(tokens) and re.fullmatch(NUMBER_PATTERN, tokens[pos], re.IGNORECASE):
+            raise PatentParseError(
+                f"Sunny asphere row {row_key} has more values than headers: {tokens[pos]!r}"
+            )
+        surface_index = index_by_row_key.get(row_key)
+        if surface_index is None:
+            continue
+        for label, value in zip(labels, values, strict=True):
+            if label == "K":
+                coefficients.setdefault(surface_index, {})["K"] = value
+                continue
+            order = int(label[1:])
+            if order not in SUPPORTED_ASPHERE_ORDERS:
+                if abs(value) > 0.0:
+                    raise PatentParseError(
+                        f"unsupported nonzero Sunny asphere term: {row_key}:{label}={value:.3g}"
+                    )
+                continue
+            coefficients.setdefault(surface_index, {})[ASPHERE_ORDER_TO_CODEV[order]] = value
+
+
+_SUNNY_DEG_PAREN = r"\(\s*(?:°|˚|deg\.?)\s*\)"
+# Table-style labels: only valid inside the embodiment's own table span
+# (surface-block end .. next surface-block start). Narrative-style sentences
+# ("satisfies Semi-FOV=43.7", "Fno ... is 2.27") describe the embodiment they
+# INTRODUCE, i.e. the one whose tables follow, so they may only be searched in
+# the span BEFORE the surface block -- mixing the two would let embodiment
+# i+1's narrative leak into embodiment i's metadata.
+_SUNNY_TABLE_META_PATTERNS: dict[str, tuple[str, ...]] = {
+    "efl": (rf"(?<![A-Za-z0-9/])f\s*\(mm\)\s*(?P<value>{NUMBER_PATTERN})",),
+    "fno": (rf"f\s*/\s*EPD\s*=?\s*(?P<value>{NUMBER_PATTERN})",),
+    "hfov": (
+        rf"Semi-FOV\s*{_SUNNY_DEG_PAREN}\s*(?P<value>{NUMBER_PATTERN})",
+        rf"HFOV\s*{_SUNNY_DEG_PAREN}\s*(?P<value>{NUMBER_PATTERN})",
+    ),
+    "epd": (rf"EPD\s*\(mm\)\s*(?P<value>{NUMBER_PATTERN})",),
+}
+_SUNNY_NARRATIVE_META_PATTERNS: dict[str, tuple[str, ...]] = {
+    "efl": (
+        r"total effective focal length[^.;=]{0,90}?(?:=|\bis\b)\s*(?:about\s+)?"
+        rf"(?P<value>{NUMBER_PATTERN})\s*mm",
+        # "satisfies f=4.26 mm" -- the lookbehind rejects ratio forms like
+        # "R2/f=0.85" and per-element "f1=", and the mm suffix is mandatory.
+        rf"(?<![A-Za-z0-9/])f\s*=\s*(?P<value>{NUMBER_PATTERN})\s*mm",
+    ),
+    "fno": (
+        rf"f\s*/\s*EPD\s*=\s*(?P<value>{NUMBER_PATTERN})",
+        rf"\bFno\s*=\s*(?P<value>{NUMBER_PATTERN})",
+        rf"\bFno\b[^.;=]{{0,90}}?\bis:?\s+(?:about\s+)?(?P<value>{NUMBER_PATTERN})",
+    ),
+    "hfov": (
+        rf"Semi-FOV\s*=\s*(?P<value>{NUMBER_PATTERN})",
+        rf"HFOV\s*=\s*(?P<value>{NUMBER_PATTERN})",
+        rf"Semi-FOV\b[^.;=]{{0,90}}?\bis\s+(?:about\s+)?(?P<value>{NUMBER_PATTERN})",
+    ),
+    "epd": (),
+}
+# Columnar per-embodiment variant: "parameter f f1 ... ImgH HFOV (mm) ... (°)
+# numerical value 1.38 -2.47 ... 80.1" -- header labels map positionally onto
+# the value row (unit tokens are skipped).
+_SUNNY_COLUMNAR_META_RE = re.compile(
+    rf"\bparameter\s+(?P<header>(?:\S+\s+)+?)numerical\s+value\s+"
+    rf"(?P<values>(?:{NUMBER_PATTERN}\s*)+)",
+    flags=re.IGNORECASE,
+)
+
+
+def _sunny_columnar_meta(span_text: str) -> _SunnyMeta:
+    match = _SUNNY_COLUMNAR_META_RE.search(span_text)
+    if match is None:
+        return _SunnyMeta()
+    labels = [
+        token
+        for token in match.group("header").split()
+        if not token.startswith("(") and not token.endswith(")")
+    ]
+    values = [
+        _parse_number(token)
+        for token in match.group("values").split()
+        if re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
+    ]
+    if len(labels) != len(values):
+        return _SunnyMeta()
+    by_label = {label.upper(): value for label, value in zip(labels, values, strict=True)}
+    return _SunnyMeta(
+        focal_length_mm=by_label.get("F"),
+        f_number=by_label.get("FNO") or by_label.get("F/EPD"),
+        hfov_deg=by_label.get("HFOV") or by_label.get("SEMI-FOV"),
+        epd_mm=by_label.get("EPD"),
+    )
+
+
+def _sunny_meta_from_span(text: str, patterns: dict[str, tuple[str, ...]]) -> _SunnyMeta:
+    found: dict[str, float | None] = {"efl": None, "fno": None, "hfov": None, "epd": None}
+    for meta_field, field_patterns in patterns.items():
+        for pattern in field_patterns:
+            match = re.search(pattern, text, flags=re.IGNORECASE)
+            if match is not None:
+                found[meta_field] = _parse_number(match.group("value"))
+                break
+    return _SunnyMeta(
+        focal_length_mm=found["efl"],
+        f_number=found["fno"],
+        hfov_deg=found["hfov"],
+        epd_mm=found["epd"],
+    )
+
+
+_SUNNY_CONSOLIDATED_LABELS: dict[str, tuple[str, ...]] = {
+    "efl": (r"(?<![A-Za-z0-9/])f\s*\(mm\)",),
+    "fno": (r"f\s*/\s*EPD", r"\bFno\b"),
+    "hfov": (
+        rf"Semi-FOV\s*{_SUNNY_DEG_PAREN}",
+        rf"HFOV\s*{_SUNNY_DEG_PAREN}",
+    ),
+    "epd": (r"\bEPD\s*\(mm\)",),
+}
+
+
+def _sunny_consolidated_meta_rows(blocks: list[_PatentTableBlock]) -> dict[str, list[float]]:
+    """Collect per-example value rows from a consolidated Sunny parameter table."""
+
+    rows: dict[str, list[float]] = {}
+    for block in blocks:
+        body = _cut_sunny_table_narrative(block.text)
+        if re.search(r"\bconditional\s+expressions?\b", body, flags=re.IGNORECASE) is not None:
+            # Conditional-expression summary tables list per-embodiment values;
+            # the only metadata field they reliably carry is the working
+            # F-number as an "f/EPD" row.
+            match = re.search(
+                rf"f\s*/\s*EPD\s+((?:{NUMBER_PATTERN}\s*)+)",
+                body,
+                flags=re.IGNORECASE,
+            )
+            if match is not None and "fno" not in rows:
+                values = [
+                    _parse_number(token)
+                    for token in match.group(1).split()
+                    if re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
+                ]
+                if len(values) >= 2:
+                    rows["fno"] = values
+            continue
+        if re.search(r"\bparameters?\b", body, flags=re.IGNORECASE) is None:
+            continue
+        if re.search(r"\bConditional\b", body, flags=re.IGNORECASE) is not None:
+            continue
+        for meta_field, label_patterns in _SUNNY_CONSOLIDATED_LABELS.items():
+            if meta_field in rows:
+                continue
+            for label_pattern in label_patterns:
+                match = re.search(
+                    rf"{label_pattern}\s*((?:{NUMBER_PATTERN}\s*)+)",
+                    body,
+                    flags=re.IGNORECASE,
+                )
+                if match is None:
+                    continue
+                values = [
+                    _parse_number(token)
+                    for token in match.group(1).split()
+                    if re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
+                ]
+                if len(values) >= 2:
+                    rows[meta_field] = values
+                    break
+    return rows
+
+
+_SUNNY_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+    "tenth",
+    "eleventh",
+    "twelfth",
+)
+
+
+_SUNNY_ANY_TAGGED_ANCHOR_RE = re.compile(
+    r"\bIn\s+(?:the\s+)?(?:example|embodiment)\s+(?P<num>\d+)\s*,"
+    r"|\bIn\s+the\s+(?P<numth>\d+)(?:st|nd|rd|th)\s+(?:embodiment|example)\s*,"
+    r"|\bIn\s+(?:the\s+)?(?P<word>first|second|third|fourth|fifth|sixth|seventh|eighth|ninth"
+    r"|tenth|eleventh|twelfth)\s+(?:embodiment|example)\s*,",
+    flags=re.IGNORECASE,
+)
+
+
+def _sunny_tagged_anchor_number(match: re.Match[str]) -> int | None:
+    if match.group("num") is not None:
+        return int(match.group("num"))
+    if match.group("numth") is not None:
+        return int(match.group("numth"))
+    word = match.group("word")
+    if word is not None:
+        return _SUNNY_ORDINALS.index(word.lower()) + 1
+    return None
+
+
+def _sunny_anchored_narrative_windows(
+    text: str,
+    span: tuple[int, int],
+    embodiment_number: int,
+) -> list[str]:
+    """Bounded windows after 'In Example N,' / 'In the Nth embodiment,' anchors.
+
+    Sunny summary sentences ("In Example 1, a total effective focal length f
+    ... is 6.52 mm, ... Fno ... is 2.27") can sit AFTER the embodiment's
+    surface table or BEFORE it as a section intro, so tagged anchors are
+    searched over the whole document -- the embodiment tag itself guarantees
+    correct binding (an untagged span search produced an off-by-one value
+    assignment during the DATA-10b backtest). The trailing comma excludes
+    cross-references like "as in example 1.". The untagged self-referential
+    form ("In this example, ...") is only trusted inside this embodiment's own
+    table span, clamped at the first tagged anchor so a following embodiment's
+    intro can never leak in.
+    """
+
+    ordinal = (
+        _SUNNY_ORDINALS[embodiment_number - 1]
+        if embodiment_number <= len(_SUNNY_ORDINALS)
+        else None
+    )
+    tagged_patterns = [
+        rf"\bIn\s+(?:the\s+)?example\s+{embodiment_number}\s*,",
+        rf"\bIn\s+(?:the\s+)?embodiment\s+{embodiment_number}\s*,",
+        rf"\bIn\s+the\s+{embodiment_number}(?:st|nd|rd|th)\s+(?:embodiment|example)\s*,",
+    ]
+    if ordinal is not None:
+        tagged_patterns.append(rf"\bIn\s+(?:the\s+)?{ordinal}\s+(?:embodiment|example)\s*,")
+    windows: list[str] = []
+    for pattern in tagged_patterns:
+        for match in re.finditer(pattern, text, flags=re.IGNORECASE):
+            windows.append(text[match.end() : match.end() + 1200])
+
+    span_text = text[span[0] : span[1]]
+    # Clamp the self-referential search at the first tagged anchor belonging
+    # to a DIFFERENT embodiment (same-numbered tagged sentences, e.g. the
+    # "In example 2, the ... surfaces are aspheric" geometry note, are fine).
+    self_ref_region = span_text
+    for match in _SUNNY_ANY_TAGGED_ANCHOR_RE.finditer(span_text):
+        number = _sunny_tagged_anchor_number(match)
+        if number is not None and number != embodiment_number:
+            self_ref_region = span_text[: match.start()]
+            break
+    for match in re.finditer(
+        r"\bIn\s+this\s+(?:example|embodiment)\s*,", self_ref_region, flags=re.IGNORECASE
+    ):
+        windows.append(self_ref_region[match.end() : match.end() + 1200])
+    # Lowest-priority fallback: the whole clamped span. Some Sunny sections
+    # end with an unanchored summary ("... and f=6.06 mm; HFOV=20.5deg; TTL=
+    # 5.68 mm; Fno is: 2.63.") before the next example's tagged intro; the
+    # different-embodiment clamp above already guarantees the span contains
+    # only THIS embodiment's tables and trailing narrative.
+    windows.append(self_ref_region)
+    return windows
+
+
+def _sunny_meta_for_embodiment(
+    text: str,
+    *,
+    embodiment_number: int,
+    table_span: tuple[int, int],
+    consolidated: dict[str, list[float]],
+) -> tuple[float, float, float]:
+    table_text = _cut_sunny_conditional_tail(text[table_span[0] : table_span[1]])
+    meta = _sunny_meta_from_span(table_text, _SUNNY_TABLE_META_PATTERNS)
+    meta = meta.merged_with(_sunny_columnar_meta(table_text))
+    for window in _sunny_anchored_narrative_windows(text, table_span, embodiment_number):
+        meta = meta.merged_with(
+            _sunny_meta_from_span(
+                _cut_sunny_conditional_tail(window), _SUNNY_NARRATIVE_META_PATTERNS
+            )
+        )
+
+    def _consolidated_value(field: str) -> float | None:
+        values = consolidated.get(field)
+        if values is not None and len(values) >= embodiment_number:
+            return values[embodiment_number - 1]
+        return None
+
+    efl = meta.focal_length_mm if meta.focal_length_mm is not None else _consolidated_value("efl")
+    fno = meta.f_number if meta.f_number is not None else _consolidated_value("fno")
+    hfov = meta.hfov_deg if meta.hfov_deg is not None else _consolidated_value("hfov")
+    epd = meta.epd_mm if meta.epd_mm is not None else _consolidated_value("epd")
+    if fno is None and efl is not None and epd is not None and epd > 0.0:
+        # f/EPD is the definition of the working F-number; both operands are
+        # published numbers, so this is a deterministic transform, not a fill.
+        fno = efl / epd
+    missing = [
+        name for name, value in (("f", efl), ("Fno", fno), ("Semi-FOV", hfov)) if value is None
+    ]
+    if missing:
+        raise PatentParseError(
+            f"Sunny embodiment {embodiment_number} metadata missing: {', '.join(missing)}"
+        )
+    return efl, fno, hfov
+
+
 def prescription_fingerprint(prescription: PatentPrescription) -> str:
     """Hash the first eight surface radius/thickness pairs for duplicate screening."""
 
@@ -1275,8 +1877,7 @@ async def _convert_candidate(
                         title=candidate.title,
                         status="duplicate_prescription",
                         reason=(
-                            "duplicate_prescription: "
-                            f"{DUPLICATE_PRESCRIPTION_DETAIL} {fingerprint}"
+                            f"duplicate_prescription: {DUPLICATE_PRESCRIPTION_DETAIL} {fingerprint}"
                         ),
                         embodiment=prescription.embodiment,
                         coverage=_coverage(prescription),
@@ -1366,7 +1967,9 @@ def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
     label_matches = list(label_pattern.finditer(text))
     metas: list[_EmbodimentMeta] = []
     for index, match in enumerate(label_matches):
-        next_start = label_matches[index + 1].start() if index + 1 < len(label_matches) else len(text)
+        next_start = (
+            label_matches[index + 1].start() if index + 1 < len(label_matches) else len(text)
+        )
         window = text[match.start() : min(next_start, match.start() + 900)]
         surface_start = re.search(r"\b0\s+Object\b", window, flags=re.IGNORECASE)
         if surface_start is None:
@@ -1380,13 +1983,16 @@ def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
             )
             f_number, fno_end = _extract_meta_number(
                 meta_window,
-                r"F\s*no\.?|FNO|F-number|F\s*number|F\s*/\s*#?|F/#|F\s*#",
+                # f/HEP (Ability Opto: focal length over entrance pupil) must
+                # precede the generic F/ alternative so the specific label wins.
+                r"F\s*/\s*HEP|F\s*no\.?|FNO|F-number|F\s*number|F\s*/\s*#?|F/#|F\s*#",
                 "F number",
             )
             hfov, hfov_end = _extract_meta_number(
                 meta_window,
                 r"HFOV|Half\s+FOV|Half\s+Field\s+of\s+View|"
-                r"Half\s+Angle\s+of\s+View|Half\s+View\s+Angle|Semi\s+Field\s+Angle",
+                r"Half\s+Angle\s+of\s+View|Half\s+View\s+Angle|Semi\s+Field\s+Angle|"
+                r"HAF",
                 "HFOV",
             )
         except PatentParseError:
@@ -1438,6 +2044,14 @@ def _surface_table_text(text: str, start: int, coeff_start: int) -> str:
     ]
     if cutoff_matches:
         table_region = table_region[: min(cutoff_matches)]
+    # Ability Opto rows label lenses with PPUBS ordinal markup ("1.sup.st lens",
+    # "3 .sup.rd lens"). Rewrite to the primary parser's "Lens N" convention.
+    table_region = re.sub(
+        r"\b(\d+)\s*\.\s*sup\s*\.\s*(?:st|nd|rd|th)\s+lens\b",
+        r"Lens \1",
+        table_region,
+        flags=re.IGNORECASE,
+    )
     return table_region
 
 
@@ -1453,6 +2067,12 @@ def _parse_surface_table(table_text: str) -> list[PatentSurface]:
             continue
         index = int(token)
         if index != expected_index:
+            if surfaces and "IMAGE" in surfaces[-1].label.upper():
+                # Ability Opto image rows carry trailing residue ("Image plane
+                # 1E+18 0") whose final token would otherwise read as a bogus
+                # surface index. Once the image surface is parsed the
+                # prescription is complete; stop instead of failing.
+                break
             raise PatentParseError(
                 f"surface table index break: expected {expected_index}, found {index}"
             )
@@ -1471,7 +2091,9 @@ def _parse_surface_table(table_text: str) -> list[PatentSurface]:
         material = None
         nd = None
         vd = None
-        if pos < len(tokens) and _material_token(tokens[pos]):
+        if pos < len(tokens) and (
+            _material_token(tokens[pos]) or _named_glass_with_indices(tokens, pos)
+        ):
             material = tokens[pos]
             pos += 1
             nd, vd, pos = _consume_material_indices(tokens, pos, surface_index=index)
@@ -1503,7 +2125,10 @@ def _parse_asphere_coefficients(
     if section_end is not None:
         end = min(end, section_end)
     coeff_text = text[coeff_start:end]
-    blocks = re.split(r"\bSurface\s+#\s+", coeff_text, flags=re.IGNORECASE)[1:]
+    # Primary tables head each block "Surface # 1 2 3"; Ability Opto omits the
+    # "#" ("Surface 1 2 4 5 6"). Capital-S with a following digit keeps the
+    # narrative "surface 0 - 10 indicates ..." from splitting a junk block.
+    blocks = re.split(r"\bSurface\s+#\s+|\bSurface\s+(?=\d)", coeff_text)[1:]
     if not blocks:
         raise PatentParseError("aspheric coefficient table had no Surface # block")
 
@@ -1527,8 +2152,9 @@ def _parse_asphere_coefficients(
                 pos += 1
             if label in {"K", "K="}:
                 for surface_id in surface_ids:
-                    value, pos = _consume_optional_number(tokens, pos)
+                    value, pos = _consume_coefficient_number(tokens, pos)
                     coefficients.setdefault(surface_id, {})["K"] = value or 0.0
+                _reject_row_value_overflow(tokens, pos, label="K")
                 continue
             order_match = re.fullmatch(r"A(\d+)", label.rstrip("="))
             if order_match is None:
@@ -1536,8 +2162,9 @@ def _parse_asphere_coefficients(
             order = int(order_match.group(1))
             values: list[float] = []
             for _surface_id in surface_ids:
-                value, pos = _consume_optional_number(tokens, pos)
+                value, pos = _consume_coefficient_number(tokens, pos)
                 values.append(value or 0.0)
+            _reject_row_value_overflow(tokens, pos, label=f"A{order}")
             if order in SUPPORTED_ASPHERE_ORDERS:
                 codev_label = ASPHERE_ORDER_TO_CODEV[order]
                 for surface_id, value in zip(surface_ids, values, strict=True):
@@ -1547,6 +2174,50 @@ def _parse_asphere_coefficients(
                     if abs(value) > 0.0:
                         unsupported.append(f"S{surface_id}:A{order}={value:.3g}")
     return coefficients, unsupported
+
+
+_CORRUPT_EXPONENT_RE = re.compile(r"^[A-Za-z]*E[-+]\d+$")
+
+
+def _consume_coefficient_number(tokens: list[str], pos: int) -> tuple[float | None, int]:
+    """Consume one coefficient value, failing loud on OCR-corrupted exponents.
+
+    PPUBS OCR occasionally splits "1.88094E-05" into "1.88094 IE-05". The old
+    permissive consume would keep the mantissa as the coefficient (a ~1e5x
+    error) and silently zero-fill the rest of the row. Any bare exponent
+    fragment is proof the row is corrupt, so the embodiment must fail rather
+    than ingest invented numbers.
+    """
+
+    value, new_pos = _consume_optional_number(tokens, pos)
+    if new_pos < len(tokens) and _CORRUPT_EXPONENT_RE.fullmatch(tokens[new_pos]):
+        raise PatentParseError(
+            f"OCR-corrupted exponent token in aspheric table: {tokens[new_pos]!r}"
+        )
+    return value, new_pos
+
+
+def _reject_row_value_overflow(tokens: list[str], pos: int, *, label: str) -> None:
+    """Fail loud when a coefficient row has more numeric values than surfaces.
+
+    Overflow means a value was split ("−1.5703 51E+00") or a column slipped,
+    so every assignment in the row is suspect -- misalignment must never be
+    ingested silently.
+    """
+
+    if pos >= len(tokens):
+        return
+    token = tokens[pos]
+    if re.fullmatch(r"A\d+=?|K=?", token, flags=re.IGNORECASE):
+        return
+    # Raw-token match only: paren/bracket-wrapped paragraph markers like
+    # "(65)" must not count as row values (paren-stripping _parse_number
+    # would accept them).
+    if not re.fullmatch(NUMBER_PATTERN, token, flags=re.IGNORECASE):
+        return
+    raise PatentParseError(
+        f"aspheric row {label} has more numeric values than surfaces: extra {token!r}"
+    )
 
 
 def _find_coefficients_end(text: str, coeff_start: int) -> int:
@@ -1603,6 +2274,14 @@ def _consume_surface_label(tokens: list[str], pos: int) -> tuple[str, int]:
         return "Ape. Stop", pos + 2
     if upper in {"APE.", "APE"}:
         return "Ape.", pos + 1
+    if upper == "APERTURE":
+        # Ability Opto: "Aperture plane -0.412" -- the stop row with a plano
+        # radius column ("plane") and its thickness.
+        return "Ape. Stop", pos + 1
+    if upper == "INFRARED" and pos + 1 < len(tokens) and tokens[pos + 1].upper() == "RAYS":
+        return "IR-cut filter", pos + 2
+    if upper == "INFRARED":
+        return "IR-cut filter", pos + 1
     if upper == "IR-CUT" and pos + 1 < len(tokens) and tokens[pos + 1].upper() == "FILTER":
         return "IR-cut filter", pos + 2
     if upper in {"IR-CUT", "IRCUT"}:
@@ -1726,7 +2405,7 @@ def _is_physical_vd(value: float) -> bool:
 def _distance_value(token: str, *, field_name: str) -> float | None:
     stripped = _strip_parens(token)
     upper = stripped.upper()
-    if upper in {"PLANO", "PIANO"}:
+    if upper in {"PLANO", "PIANO", "PLANE"}:
         return 0.0
     if upper in {"INFINITY", "INF"}:
         return math.inf
@@ -1773,7 +2452,9 @@ def _coverage(
 ) -> dict[str, Any]:
     surfaces = prescription.surfaces
     asphere_surfaces = [surface for surface in surfaces if surface.asphere_coefficients]
-    glass_rows = [surface for surface in surfaces if surface.nd is not None and surface.vd is not None]
+    glass_rows = [
+        surface for surface in surfaces if surface.nd is not None and surface.vd is not None
+    ]
     coverage = {
         "surfaces": len(surfaces),
         "r": f"{sum(surface.radius_mm is not None for surface in surfaces)}/{len(surfaces)}",
@@ -1840,7 +2521,9 @@ def _write_report(
             "" if attempt.real_image_height_mm is None else f"{attempt.real_image_height_mm:.6g}"
         )
         sanity_imh = (
-            "" if attempt.sanity_image_height_mm is None else f"{attempt.sanity_image_height_mm:.6g}"
+            ""
+            if attempt.sanity_image_height_mm is None
+            else f"{attempt.sanity_image_height_mm:.6g}"
         )
         lines.append(
             "| "
@@ -1954,7 +2637,9 @@ def _write_patent_readout_zmx(
 def _xasphere_surface_coefficients(readout: CodeVReadout) -> dict[int, dict[str, float]]:
     result: dict[int, dict[str, float]] = {}
     for surface in readout.surfaces:
-        if any(abs(surface.asphere_coefficients.get(label, 0.0)) > 0.0 for label in XASPHERE_HIGH_TERMS):
+        if any(
+            abs(surface.asphere_coefficients.get(label, 0.0)) > 0.0 for label in XASPHERE_HIGH_TERMS
+        ):
             result[surface.index] = dict(surface.asphere_coefficients)
     return result
 
@@ -1989,9 +2674,7 @@ def _rewrite_high_order_aspheres_as_xdat(
         while index < len(lines) and not re.fullmatch(r"SURF\s+\d+", lines[index].strip()):
             block.append(lines[index])
             index += 1
-        rewritten.extend(
-            _xasphere_surface_block(block, xasphere_coefficients[surface_index])
-        )
+        rewritten.extend(_xasphere_surface_block(block, xasphere_coefficients[surface_index]))
     output_path.write_bytes(("\r\n".join(rewritten) + "\r\n").encode("ascii"))
 
 
@@ -2017,13 +2700,13 @@ def _xasphere_surface_block(block: list[str], coefficients: dict[str, float]) ->
 
 def _xdat_lines(coefficients: dict[str, float]) -> list[str]:
     lines = [
-        "  XDAT 1 10 0 0 1 0 0 \"\"",
-        "  XDAT 2 1 0 0 1 0 0 \"\"",
-        "  XDAT 3 0 0 0 1 0 0 \"\"",
+        '  XDAT 1 10 0 0 1 0 0 ""',
+        '  XDAT 2 1 0 0 1 0 0 ""',
+        '  XDAT 3 0 0 0 1 0 0 ""',
     ]
     for xdat_index, label in enumerate(XASPHERE_WRITABLE_TERMS, start=4):
         value = coefficients.get(label, 0.0)
-        lines.append(f"  XDAT {xdat_index} {_fmt_zmx_number(value)} 0 0 1 0 0 \"\"")
+        lines.append(f'  XDAT {xdat_index} {_fmt_zmx_number(value)} 0 0 1 0 0 ""')
     return lines
 
 
@@ -2100,9 +2783,7 @@ def _trace_aperture_samples() -> list[tuple[float, float, float, float]]:
 def _edge_field_image_height(rays: Any, samples: list[tuple[float, float, float, float]]) -> float:
     y = np.asarray(rays.y, dtype=float)
     edge_indices = [
-        index
-        for index, sample in enumerate(samples)
-        if math.isclose(sample[1], 1.0, abs_tol=1e-12)
+        index for index, sample in enumerate(samples) if math.isclose(sample[1], 1.0, abs_tol=1e-12)
     ]
     edge_y = np.abs(y[edge_indices])
     finite = edge_y[np.isfinite(edge_y)]
@@ -2126,8 +2807,12 @@ def _interpolate_missing_surface_apertures(
             result[index] = measured[index]
             continue
         interpolated.append(index)
-        lower = max((candidate for candidate in measured_indices if candidate < index), default=None)
-        upper = min((candidate for candidate in measured_indices if candidate > index), default=None)
+        lower = max(
+            (candidate for candidate in measured_indices if candidate < index), default=None
+        )
+        upper = min(
+            (candidate for candidate in measured_indices if candidate > index), default=None
+        )
         if lower is not None and upper is not None:
             ratio = (index - lower) / (upper - lower)
             result[index] = measured[lower] + (measured[upper] - measured[lower]) * ratio
@@ -2181,8 +2866,46 @@ def _find_required_before(text: str, needle: str, start: int, end: int) -> int:
     return index
 
 
+def _find_required_before_any(
+    text: str,
+    needles: tuple[str, ...],
+    start: int,
+    end: int,
+) -> int:
+    """Return the earliest occurrence of any needle in [start, end)."""
+
+    hits = [
+        index for needle in needles if (index := text.lower().find(needle.lower(), start, end)) >= 0
+    ]
+    if not hits:
+        raise PatentParseError(f"{needles[0]!r} section not found in embodiment")
+    return min(hits)
+
+
 def _material_token(token: str) -> bool:
     return _strip_parens(token).upper() in MATERIAL_TOKENS
+
+
+def _named_glass_with_indices(tokens: list[str], pos: int) -> bool:
+    """True when a named-glass token (e.g. Ability Opto "BK7_SCH") is directly
+    followed by a physically plausible nd/vd pair.
+
+    Deterministic: requires BOTH follower tokens to parse and land inside the
+    nd [1.3, 2.2] / vd [10, 100] physical windows, so an arbitrary word is
+    never mistaken for a material without real refractive data behind it.
+    """
+
+    token = _strip_parens(tokens[pos])
+    if not token or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", token):
+        return False
+    if pos + 2 >= len(tokens):
+        return False
+    try:
+        nd = _parse_number(tokens[pos + 1])
+        vd = _parse_number(tokens[pos + 2])
+    except PatentParseError:
+        return False
+    return _is_physical_nd(nd) and _is_physical_vd(vd)
 
 
 def _strip_parens(token: str) -> str:

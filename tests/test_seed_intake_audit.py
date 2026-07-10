@@ -54,8 +54,8 @@ def test_high_fov_seed_intake_audit_reports_current_gap():
     assert report["accepted_seed_candidates"] == []
     assert report["full_field_accepted_seed_count"] == 0
     assert "strict high-FOV full-field" in report["accepted_seed_count_semantics"]
-    assert report["lightweight_seed_count"] == 322
-    assert report["lightweight_accepted_seed_count"] == 322
+    assert report["lightweight_seed_count"] == 397
+    assert report["lightweight_accepted_seed_count"] == 397
     assert report["lightweight_rejected_seed_count"] == 0
     assert report["lightweight_seed_candidates"]
     assert all(
@@ -63,7 +63,7 @@ def test_high_fov_seed_intake_audit_reports_current_gap():
     )
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
     assert any(
-        "lightweight accepted seeds=322/322" in item
+        "lightweight accepted seeds=397/397" in item
         for item in report["known_evidence"]
     )
     assert any("best stable high-FOV seed=" in item for item in report["known_evidence"])
@@ -166,7 +166,7 @@ def test_seed_intake_cli_matches_runtime_assessment_contract():
     assert cli_report["status"] == "gap"
     assert cli_report["accepted_seed_count"] == 0
     assert cli_report["full_field_accepted_seed_count"] == 0
-    assert cli_report["lightweight_accepted_seed_count"] == 322
+    assert cli_report["lightweight_accepted_seed_count"] == 397
     assert cli_report["full_field_seed_count"] > 0
     assert cli_report["high_fov_seed_count"] > 0
     assert any(
@@ -210,14 +210,14 @@ def test_seed_intake_audit_can_preflight_raw_candidate_zmx(tmp_path):
 
     report = _audit(args)
 
-    # DATA-10a intake: 361-seed library + 1 preflight candidate = 362 visible
-    # seeds, 37 high-FOV (36 in-library + the candidate). Accepted stays 0: no
+    # DATA-10b intake: 436-seed library + 1 preflight candidate = 437 visible
+    # seeds, 79 high-FOV (78 in-library + the candidate). Accepted stays 0: no
     # seed fits the full-field acquisition window.
-    assert len(load_case_library()) == 361
-    assert report["total_seed_count"] == 362
-    assert report["high_fov_seed_count"] == 37
+    assert len(load_case_library()) == 436
+    assert report["total_seed_count"] == 437
+    assert report["high_fov_seed_count"] == 79
     assert report["accepted_seed_count"] == 0
-    assert any("total visible phone seeds=362" in item for item in report["known_evidence"])
+    assert any("total visible phone seeds=437" in item for item in report["known_evidence"])
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
 
 
@@ -254,10 +254,10 @@ def test_seed_intake_preflight_endpoint_audits_uploaded_zmx():
     assert response.status_code == 200
     report = response.json()
     assert report["status"] == "gap"
-    # DATA-10a intake: 361-seed library + 1 uploaded candidate = 362 seeds,
-    # 37 high-FOV.
-    assert report["total_seed_count"] == 362
-    assert report["high_fov_seed_count"] == 37
+    # DATA-10b intake: 436-seed library + 1 uploaded candidate = 437 seeds,
+    # 79 high-FOV.
+    assert report["total_seed_count"] == 437
+    assert report["high_fov_seed_count"] == 79
     assert report["accepted_seed_count"] == 0
-    assert any("total visible phone seeds=362" in item for item in report["known_evidence"])
+    assert any("total visible phone seeds=437" in item for item in report["known_evidence"])
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
