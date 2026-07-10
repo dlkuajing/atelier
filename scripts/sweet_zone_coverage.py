@@ -229,32 +229,64 @@ def _rank_pool_by_target(
     return scored
 
 
-def _best_whole_pool_efl_match(
-    pool: Sequence[OpticalSampleData], target_efl_mm: float
-) -> tuple[OpticalSampleData, SeedTargetScore] | None:
-    """整池（跳过 stage1 FOV/IMH 收窄）最佳 EFL band 匹配——用来把"漏斗把
-    好 seed 挡在外面"（`funnel_caused_miss`）和"库里真没有好 EFL 匹配"
-    （真空洞）分开，指导补库方向：前者是排序/K 值调参问题，后者才需要真的
-    去买新 seed。"""
-    best: tuple[OpticalSampleData, SeedTargetScore] | None = None
+def _in_band(value: float, band: tuple[float, float]) -> bool:
+    lo, hi = band
+    return lo <= value <= hi
+
+
+@dataclass(frozen=True)
+class EflBandMaterial:
+    """target EFL 在场景池内的「EFL 维原料」存在性扫描结果。
+
+    对池内每颗合法正 EFL seed 直接算 ΔEFL%=(target-native)/native，统计闭
+    区间 `SWEET_ZONE_DELTA_EFL_PCT` 内的全部 seed——存在任意一颗即「EFL 维
+    有原料」。**不是 band-rank 第一名判定**（对抗审 BLOCKER 1 修复）：
+    band-rank 会让"更近的轻微拉焦 seed"压过"稍远的带内缩焦 seed"，把有原料
+    误判成真空洞（真库反例：wide target 5.2mm，US-10120164-B2-e6 ΔEFL
+    +0.38% 按 band-rank 排第一，掩盖了带内的 US-11719917-B2-e6 -3.06%）。
+
+    `min_fov_mismatch_deg`：带内 seed 与 target FOV 的最小绝对失配（纯数据，
+    不设阈值不加权）。EFL 有料 ≠ 可用原料——Mode3 现状只有 EFL 真收敛
+    （`CONVERGED_FIELDS={"efl"}`，见 candidate.py），FOV 靠 seed 原生匹配，
+    带内 seed 可能 FOV 差 30°，候选虽诚实但规格错配。
+    """
+
+    in_band_count: int
+    min_fov_mismatch_deg: float | None
+    min_fov_mismatch_case_id: str | None
+
+
+def _efl_band_material(
+    pool: Sequence[OpticalSampleData], target_efl_mm: float, target_fov_deg: float
+) -> EflBandMaterial:
+    """EFL 维原料存在性扫描（见 `EflBandMaterial` docstring）。ΔEFL% 复用
+    `score_seed_target_match`（与两段式排序同一公式源，不重写算式）。"""
+    in_band_count = 0
+    min_mismatch: float | None = None
+    min_case_id: str | None = None
     for case in pool:
         assert case.metadata is not None
         seed_efl_mm = case.paraxial.effective_focal_length_mm
         if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
             continue
         try:
-            match = score_seed_target_match(seed_efl_mm, target_efl_mm)
+            delta_pct = score_seed_target_match(seed_efl_mm, target_efl_mm).delta_efl_pct
         except ValueError:
             continue
-        key = (_BAND_RANK[match.band], match.score)
-        if best is None or key < (_BAND_RANK[best[1].band], best[1].score):
-            best = (case, match)
-    return best
-
-
-def _in_band(value: float, band: tuple[float, float]) -> bool:
-    lo, hi = band
-    return lo <= value <= hi
+        if not _in_band(delta_pct, SWEET_ZONE_DELTA_EFL_PCT):
+            continue
+        in_band_count += 1
+        seed_fov = case.metadata.fov_deg
+        if math.isfinite(seed_fov):
+            mismatch = abs(seed_fov - target_fov_deg)
+            if min_mismatch is None or mismatch < min_mismatch:
+                min_mismatch = mismatch
+                min_case_id = case.metadata.case_id
+    return EflBandMaterial(
+        in_band_count=in_band_count,
+        min_fov_mismatch_deg=min_mismatch,
+        min_fov_mismatch_case_id=min_case_id,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -274,8 +306,15 @@ class MatchResult:
     band: str | None = None
     imh_data_real: bool | None = None
     fov_data_real: bool | None = None
-    whole_pool_best_delta_efl_pct: float | None = None
-    whole_pool_best_case_id: str | None = None
+    #: EFL 维原料存在性扫描（`_efl_band_material`）：池内 ΔEFL 落甜区闭区间
+    #: 的 seed 总数 + 这些带内 seed 与 target FOV 的最小绝对失配。
+    efl_band_seed_count: int = 0
+    efl_band_min_fov_mismatch_deg: float | None = None
+    efl_band_min_fov_mismatch_case_id: str | None = None
+    #: 严格口径（对抗审 BLOCKER 2 修复）：**仅** `coverage == "miss"` 且
+    #: EFL 维有原料（存在性扫描 in_band_count > 0）时为 True。loose_band /
+    #: missing_dimension 一律 False——报告口径"其中漏斗致 miss"必须真的是
+    #: miss 的子集。
     funnel_caused_miss: bool = False
 
 
@@ -286,17 +325,11 @@ def evaluate_grid_point(
     top_k: int = FOV_PREFILTER_TOP_K,
 ) -> MatchResult:
     """一个格点的完整判定：两段式选出"库内最佳匹配"，按 ΔEFL% 分类，附带
-    缺维 fail-closed 降级与漏斗/真空洞区分标记。"""
+    缺维 fail-closed 降级与漏斗/真空洞区分标记（存在性扫描口径）。"""
     if not pool:
         return MatchResult(grid_point=grid_point, coverage="no_seed_available")
 
-    whole_pool_best = _best_whole_pool_efl_match(pool, grid_point.efl_mm)
-    whole_pool_best_delta = whole_pool_best[1].delta_efl_pct if whole_pool_best else None
-    whole_pool_best_case_id = (
-        whole_pool_best[0].metadata.case_id
-        if whole_pool_best and whole_pool_best[0].metadata is not None
-        else None
-    )
+    material = _efl_band_material(pool, grid_point.efl_mm, grid_point.fov_deg)
 
     scored = _rank_pool_by_target(pool, grid_point, top_k=top_k)
     if not scored:
@@ -305,8 +338,9 @@ def evaluate_grid_point(
         return MatchResult(
             grid_point=grid_point,
             coverage="no_seed_available",
-            whole_pool_best_delta_efl_pct=whole_pool_best_delta,
-            whole_pool_best_case_id=whole_pool_best_case_id,
+            efl_band_seed_count=material.in_band_count,
+            efl_band_min_fov_mismatch_deg=material.min_fov_mismatch_deg,
+            efl_band_min_fov_mismatch_case_id=material.min_fov_mismatch_case_id,
         )
 
     seed, match = scored[0]
@@ -324,13 +358,7 @@ def evaluate_grid_point(
     else:
         coverage = "miss"
 
-    funnel_caused_miss = False
-    if (
-        coverage not in ("sweet_zone",)
-        and whole_pool_best is not None
-        and _in_band(whole_pool_best[1].delta_efl_pct, SWEET_ZONE_DELTA_EFL_PCT)
-    ):
-        funnel_caused_miss = True
+    funnel_caused_miss = coverage == "miss" and material.in_band_count > 0
 
     return MatchResult(
         grid_point=grid_point,
@@ -341,8 +369,9 @@ def evaluate_grid_point(
         band=match.band,
         imh_data_real=imh_real,
         fov_data_real=fov_real,
-        whole_pool_best_delta_efl_pct=whole_pool_best_delta,
-        whole_pool_best_case_id=whole_pool_best_case_id,
+        efl_band_seed_count=material.in_band_count,
+        efl_band_min_fov_mismatch_deg=material.min_fov_mismatch_deg,
+        efl_band_min_fov_mismatch_case_id=material.min_fov_mismatch_case_id,
         funnel_caused_miss=funnel_caused_miss,
     )
 
@@ -361,7 +390,10 @@ class ScenarioSummary:
     miss: int
     missing_dimension: int
     no_seed_available: int
+    #: 严格口径：miss 且 EFL 维有原料（存在性扫描），恒 <= miss。
     funnel_caused_miss: int = 0
+    #: 真空洞：miss 且 EFL 存在性扫描无带内 seed（需要补库的那种缺料）。
+    true_gap: int = 0
 
     def _pct(self, count: int) -> float:
         return count / self.total_points * 100.0 if self.total_points else 0.0
@@ -394,6 +426,9 @@ def summarize(results: Sequence[MatchResult], scenario: Scenario) -> ScenarioSum
         missing_dimension=sum(1 for r in results if r.coverage == "missing_dimension"),
         no_seed_available=sum(1 for r in results if r.coverage == "no_seed_available"),
         funnel_caused_miss=sum(1 for r in results if r.funnel_caused_miss),
+        true_gap=sum(
+            1 for r in results if r.coverage == "miss" and r.efl_band_seed_count == 0
+        ),
     )
 
 
@@ -486,8 +521,16 @@ class CellHole:
     total_points: int
     avg_delta_efl_pct: float | None
     nearest_miss_delta_efl_pct: float | None
+    #: 严格口径：miss 且 EFL 维有原料。
     funnel_caused_miss_points: int
+    #: miss 且 EFL 存在性扫描无带内 seed。
     true_gap_points: int
+    #: EFL 维原料存在性扫描（切片内所有格点共享同一 target EFL/FOV/池，值
+    #: 恒一致）：带内 seed 数 + 带内 seed 最小 |FOV 失配|（纯数据列，不设
+    #: 阈值不加权——"EFL 有料但最近的 FOV 差 X°"是漏斗调优与补库的真输入）。
+    efl_band_seed_count: int = 0
+    efl_band_min_fov_mismatch_deg: float | None = None
+    efl_band_min_fov_mismatch_case_id: str | None = None
 
 
 def _nearest_boundary_distance_pct(delta_efl_pct: float) -> float:
@@ -526,9 +569,12 @@ def _cell_holes(results: Sequence[MatchResult]) -> list[CellHole]:
                 min(_nearest_boundary_distance_pct(d) for d in deltas) if deltas else None
             )
             funnel = sum(1 for r in subset if r.funnel_caused_miss)
-            non_funnel_non_sweet = sum(
-                1 for r in subset if r.coverage != "sweet_zone" and not r.funnel_caused_miss
+            true_gap = sum(
+                1 for r in subset if r.coverage == "miss" and r.efl_band_seed_count == 0
             )
+            # 切片内所有格点共享同一 target EFL/FOV/池 → 存在性扫描结果一致，
+            # 取第一个格点的值即可。
+            probe = subset[0]
             holes.append(
                 CellHole(
                     efl_mm=efl,
@@ -537,7 +583,10 @@ def _cell_holes(results: Sequence[MatchResult]) -> list[CellHole]:
                     avg_delta_efl_pct=avg_delta,
                     nearest_miss_delta_efl_pct=nearest,
                     funnel_caused_miss_points=funnel,
-                    true_gap_points=non_funnel_non_sweet,
+                    true_gap_points=true_gap,
+                    efl_band_seed_count=probe.efl_band_seed_count,
+                    efl_band_min_fov_mismatch_deg=probe.efl_band_min_fov_mismatch_deg,
+                    efl_band_min_fov_mismatch_case_id=probe.efl_band_min_fov_mismatch_case_id,
                 )
             )
     return holes
@@ -580,7 +629,8 @@ def _render_scenario_section(
         f"| miss（超出宽松带） | {summary.miss} | {summary.miss_pct:.1f}% |",
         f"| 因缺维无法判断 | {summary.missing_dimension} | {summary.missing_dimension_pct:.1f}% |",
         f"| 池内无合法候选（no_seed_available） | {summary.no_seed_available} | {summary._pct(summary.no_seed_available):.1f}% |",
-        f"| 其中漏斗致 miss（whole-pool 有甜区解，两段式未选中） | {summary.funnel_caused_miss} | {summary._pct(summary.funnel_caused_miss):.1f}% |",
+        f"| miss 中漏斗致 miss（严格：miss 且 EFL 维有原料） | {summary.funnel_caused_miss} | {summary._pct(summary.funnel_caused_miss):.1f}% |",
+        f"| miss 中真空洞（EFL 存在性扫描无带内 seed） | {summary.true_gap} | {summary._pct(summary.true_gap):.1f}% |",
         "",
         "### 覆盖率热图（行=EFL, 列=FOV；格子=该切片 F#×IMH 子网格的甜区覆盖率）",
         "",
@@ -596,9 +646,10 @@ def _render_scenario_section(
         lines.append("")
         lines.append(
             "| target EFL(mm) | target FOV(deg) | 格点数 | 最近 miss 距甜区边界 | "
-            "平均 ΔEFL%(最佳匹配) | 漏斗致 miss | 真空洞(库内确无甜区解) |"
+            "平均 ΔEFL%(最佳匹配) | EFL带内seed数 | 带内seed最小\\|FOV失配\\|(deg) | "
+            "漏斗致 miss(严格) | 真空洞 |"
         )
-        lines.append("|---:|---:|---:|---:|---:|---:|---:|")
+        lines.append("|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
         for hole in sorted(holes, key=lambda h: (h.efl_mm, h.fov_deg)):
             avg_delta_str = (
                 f"{hole.avg_delta_efl_pct:+.1f}%" if hole.avg_delta_efl_pct is not None else "N/A"
@@ -608,9 +659,15 @@ def _render_scenario_section(
                 if hole.nearest_miss_delta_efl_pct is not None
                 else "N/A"
             )
+            mismatch_str = (
+                f"{hole.efl_band_min_fov_mismatch_deg:.1f}"
+                if hole.efl_band_min_fov_mismatch_deg is not None
+                else "N/A"
+            )
             lines.append(
                 f"| {hole.efl_mm:.2f} | {hole.fov_deg:.1f} | {hole.total_points} | "
                 f"{nearest_str} | {avg_delta_str} | "
+                f"{hole.efl_band_seed_count} | {mismatch_str} | "
                 f"{hole.funnel_caused_miss_points} | {hole.true_gap_points} |"
             )
         lines.append("")
@@ -620,26 +677,47 @@ def _render_scenario_section(
             true_gap_efls = sorted({h.efl_mm for h in true_gap_holes})
             efl_span = ", ".join(f"{efl:.2f}mm" for efl in true_gap_efls)
             lines.append(
-                f"**定向补库建议**：{scenario.value} 场景在 target EFL ≈ {efl_span} "
-                f"（合计 {len(true_gap_holes)} 个 (EFL,FOV) 切片）附近，库内即使不做 "
-                "FOV/IMH 收窄也找不到 ΔEFL 落甜区的原生 seed——这是真实的原料"
-                "空洞，建议 Phase 12 USPTO 补库优先定向这些 EFL 段（按上表平均 "
-                "ΔEFL% 的方向：负值=需要更长焦的 seed 补入，正值=需要更短焦的 "
-                "seed 补入）。"
+                f"**EFL 维真空洞**：{scenario.value} 场景在 target EFL ≈ {efl_span} "
+                f"（合计 {len(true_gap_holes)} 个 (EFL,FOV) 切片）附近，EFL 存在性"
+                "扫描找不到 ΔEFL 落甜区的原生 seed——这是 EFL 维的真实原料空洞，"
+                "建议 Phase 12 USPTO 补库优先定向这些 EFL 段（按上表平均 ΔEFL% "
+                "的方向：负值=需要更长焦的 seed 补入，正值=需要更短焦的 seed "
+                "补入）。"
             )
-            if len(true_gap_holes) < len(holes):
+            lines.append("")
+
+        # (c) 补库动机重写：EFL 维无真空洞时（或除真空洞外的切片），补库/调优
+        # 的真输入是 FOV 匹配质量——按带内 seed 最小 |FOV 失配| 从大到小列出
+        # 最差的切片（纯数据排序，不设阈值不加权）。
+        fov_quality_holes = sorted(
+            (h for h in holes if h.efl_band_min_fov_mismatch_deg is not None),
+            key=lambda h: -(h.efl_band_min_fov_mismatch_deg or 0.0),
+        )
+        if fov_quality_holes:
+            if not true_gap_holes:
                 lines.append(
-                    f"其余 {len(holes) - len(true_gap_holes)} 个空洞切片全部标记为"
-                    "漏斗致 miss（见下），不建议在那些切片上补库。"
+                    "**定向补库建议（FOV 匹配质量口径）**：EFL 维无真空洞——每个"
+                    "空洞切片的 target EFL 在池内都有 ΔEFL∈[-15%,0] 的带内 seed"
+                    "（存在性扫描）。但 EFL 有料 ≠ 可用原料：Mode3 现状只有 EFL "
+                    "真收敛（CONVERGED_FIELDS={\"efl\"}），FOV 靠 seed 原生匹配，"
+                    "带内 seed 的 FOV 失配直接决定候选的规格接近度。补库动机应改为"
+                    "「改善 FOV 匹配质量」，按带内 seed 最小 |FOV 失配| 最大的切片"
+                    "定向（同时这些切片也是漏斗调优铲——放宽 top_k / 复核 FOV 权重"
+                    "——的选点依据）："
                 )
-        else:
-            lines.append(
-                "**定向补库建议**：本场景全部空洞切片都标记为「漏斗致 miss」"
-                "——whole-pool 里其实存在甜区内的 EFL 匹配，只是被 stage1 "
-                f"FOV/IMH 近邻预筛（top {FOV_PREFILTER_TOP_K}）挡在候选池外。"
-                "这不是缺 seed，是两段式排序的参数需要复核（e.g. 放宽 top_k 或"
-                "重新评估 FOV 权重），不建议在这个方向上补库。"
-            )
+            else:
+                lines.append(
+                    "**FOV 匹配质量（全部空洞切片）**：除上述 EFL 维真空洞外，"
+                    "其余切片 EFL 维有原料但 FOV 失配如下（失配大的切片=补库改善 "
+                    "FOV 匹配质量 / 漏斗调优的选点依据）："
+                )
+            for hole in fov_quality_holes[:5]:
+                lines.append(
+                    f"- EFL {hole.efl_mm:.2f}mm / FOV {hole.fov_deg:.1f}°：带内 "
+                    f"{hole.efl_band_seed_count} 颗 seed，最小 |FOV 失配| = "
+                    f"{hole.efl_band_min_fov_mismatch_deg:.1f}°"
+                    f"（{hole.efl_band_min_fov_mismatch_case_id}）"
+                )
         lines.append("")
     else:
         lines.append("### 空洞清单")
@@ -655,7 +733,6 @@ def render_report(
     pool_sizes: dict[Scenario, int],
     resolution: GridResolution,
     *,
-    elapsed_seconds: float,
     imh_completeness: dict[Scenario, tuple[int, int]],
 ) -> str:
     total_points = sum(len(r) for r in all_results.values())
@@ -667,7 +744,8 @@ def render_report(
         "# 甜区覆盖率热图报告（Phase 11）",
         "",
         f"生成脚本：`scripts/sweet_zone_coverage.py`（确定性、无 CODE V 依赖，"
-        f"运行耗时 {elapsed_seconds:.1f}s，共 {total_points} 格点）",
+        f"共 {total_points} 格点；运行耗时打印在脚本 stdout，属非确定性字段，"
+        "不入报告——报告 byte-for-byte 可再生）",
         "",
         "## 判据定义",
         "",
@@ -686,10 +764,18 @@ def render_report(
         "`seed_target_score.score_seed_target_match` 在邻域内按 EFL 收敛风险"
         " band 重排，取第一名为「库内最佳匹配」。这就是真实客户请求会被路由"
         "到的那颗 seed，不是理论最优 EFL 匹配。",
-        "- **漏斗致 miss vs 真空洞**：额外算了一次跳过 stage1、直接在整场景"
-        "池里找 EFL band 最优的匹配（`whole_pool_best`）。若两段式选中的"
-        "结果 miss，但 whole-pool 最优其实落甜区——标记 `funnel_caused_miss`"
-        "，说明问题在排序/参数而非库内缺料；否则才是需要补库的真空洞。",
+        "- **漏斗致 miss vs 真空洞（存在性扫描口径）**：对场景池每颗合法正 "
+        "EFL seed 直接算 ΔEFL%，闭区间 [-15%, 0] 内存在任意一颗即「EFL 维有"
+        "原料」（真存在性扫描，不是 band-rank 第一名判定——后者会让更近的轻微"
+        "拉焦 seed 掩盖稍远的带内缩焦 seed）。**仅对 coverage=miss 的格点**"
+        "判定：miss 且有原料 = `funnel_caused_miss`（排序/参数问题，两段式"
+        "漏斗把带内 seed 挡在外面）；miss 且无原料 = 真空洞（需要补库的缺料）。"
+        "loose_band 不计入漏斗口径。",
+        "- **EFL 有料 ≠ 可用原料**：Mode3 现状只有 EFL 真收敛"
+        "（`CONVERGED_FIELDS={\"efl\"}`），FOV 靠 seed 原生匹配——EFL 带内 "
+        "seed 可能 FOV 差几十度，候选虽诚实但规格错配。因此空洞清单额外给出"
+        "每个切片「EFL 带内 seed 的最小 |FOV 失配|」纯数据列（不设阈值、不加"
+        "权），这是漏斗调优铲和补库决策的真输入。",
         "- **网格定义**：per-scenario 独立 EFL×F#×FOV×IMH 网格，边界取自 "
         "`app/core/parameter_guards.SCENARIO_BOUNDS`（非本脚本编造）。四维"
         "独立均匀取值，**不**做 IMH=EFL·tan(HFOV/2) 的近轴一致性推导——生产"
@@ -702,8 +788,8 @@ def render_report(
         "",
         "## 三场景覆盖率总览",
         "",
-        "| 场景 | 候选池 | 格点数 | 甜区% | 宽松带或以上% | 缺维格点 |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| 场景 | 候选池 | 格点数 | 甜区% | 宽松带或以上% | miss | 漏斗致 miss(严格) | 真空洞 | 缺维格点 |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for scenario in _SCENARIOS:
         results = all_results.get(scenario, [])
@@ -711,6 +797,7 @@ def render_report(
         lines.append(
             f"| {scenario.value} | {pool_sizes.get(scenario, 0)} | {summary.total_points} | "
             f"{summary.sweet_zone_pct:.1f}% | {summary.loose_band_or_better_pct:.1f}% | "
+            f"{summary.miss} | {summary.funnel_caused_miss} | {summary.true_gap} | "
             f"{summary.missing_dimension} |"
         )
     lines.append("")
@@ -824,7 +911,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         all_results,
         pool_sizes,
         resolution,
-        elapsed_seconds=elapsed,
         imh_completeness=imh_completeness,
     )
     args.report_path.parent.mkdir(parents=True, exist_ok=True)

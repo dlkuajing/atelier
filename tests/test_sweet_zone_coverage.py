@@ -27,6 +27,7 @@ from scripts.sweet_zone_coverage import (
     GridResolution,
     MatchResult,
     ScenarioSummary,
+    _efl_band_material,
     _linspace,
     _rank_pool_by_target,
     _zmx_backed_pool,
@@ -285,22 +286,19 @@ def test_evaluate_grid_point_flags_missing_dimension_when_imh_unreal():
 
 
 def test_evaluate_grid_point_funnel_caused_miss_flag():
-    """top_k=1 时 stage1 只留 narrow_fov（EFL 远，miss），但整池（wide_fov）
-    其实有个甜区内的 EFL 匹配——必须标 funnel_caused_miss=True，不能把"漏斗
-    窄"和"库真没有"混为一谈。"""
+    """top_k=1 时 stage1 只留 narrow_fov（EFL 远，miss），但池内 wide_fov
+    其实有个甜区带内的 EFL 匹配（存在性扫描可见）——必须标
+    funnel_caused_miss=True，不能把"漏斗窄"和"库真没有"混为一谈。"""
     narrow_fov, wide_fov = _fov_variant_pair()
     assert narrow_fov.metadata is not None and wide_fov.metadata is not None
     wide_fov.metadata.computed_efl_mm = narrow_fov.metadata.computed_efl_mm
     wide_fov.paraxial.effective_focal_length_mm = narrow_fov.paraxial.effective_focal_length_mm
 
-    # narrow_fov 保持原生 EFL；target 定在离 narrow_fov 很远（miss）但离
-    # wide_fov（EFL 现在同 narrow_fov，所以其实两者 EFL 相同——改用 F# 来分
-    # 出 stage1 排序即可，这里简化：直接把 target FOV 设为 78，使 stage1
-    # top_k=1 只留 wide_fov（FOV 更近），narrow_fov 被踢出；反向验证「stage1
-    # 收窄不会误伤」不是本测试目的，故改用 top_k=1 + target fov=36 迫使
-    # narrow_fov 独占 top1，同时把 narrow_fov 的 EFL 错配、wide_fov 的 EFL
-    # 甜区匹配，构造"whole-pool 有解但漏斗未选中"的确定性反例。
-    narrow_fov.metadata.computed_efl_mm *= 2.5  # 远离 target -> narrow_fov 会 miss
+    # target FOV=36 + top_k=1 迫使 narrow_fov 独占 stage1 top1；同时把
+    # narrow_fov 的 EFL 拉远（×2.5 → ΔEFL=-60%，超出宽松带 = miss）、
+    # wide_fov 的 EFL 恰好命中 target（ΔEFL=0%，带内）——构造"池内有带内
+    # seed 但漏斗未选中"的确定性反例。
+    narrow_fov.metadata.computed_efl_mm *= 2.5
     narrow_fov.paraxial.effective_focal_length_mm *= 2.5
 
     pool = [narrow_fov, wide_fov]
@@ -312,9 +310,116 @@ def test_evaluate_grid_point_funnel_caused_miss_flag():
         image_height_mm=None,
     )
     result = evaluate_grid_point(pool, grid_point, top_k=1)
-    assert result.coverage != "sweet_zone"
+    assert result.coverage == "miss"
     assert result.funnel_caused_miss is True
-    assert result.whole_pool_best_case_id == wide_fov.metadata.case_id
+    # 存在性扫描字段：带内只有 wide_fov 一颗（narrow_fov ΔEFL=-60% 不在带内），
+    # 最小 |FOV 失配| = |78 - 36| = 42。
+    assert result.efl_band_seed_count == 1
+    assert result.efl_band_min_fov_mismatch_case_id == wide_fov.metadata.case_id
+    assert result.efl_band_min_fov_mismatch_deg == pytest.approx(42.0)
+
+
+def test_funnel_caused_miss_false_for_loose_band_even_with_in_band_material():
+    """对抗审 BLOCKER 2 回归锚：funnel_caused_miss 仅在 coverage=="miss" 时
+    成立。构造 top pick 落 loose_band（ΔEFL=+8%）而池内另有带内 seed
+    （ΔEFL≈-2.9%）被 top_k=1 漏斗挡在外面的情形——旧实现
+    （`coverage not in ("sweet_zone",)`）会把这种 loose_band 也标 funnel，
+    污染"其中漏斗致 miss"口径。"""
+    narrow_fov, wide_fov = _fov_variant_pair()
+    assert narrow_fov.metadata is not None and wide_fov.metadata is not None
+
+    target_efl = narrow_fov.paraxial.effective_focal_length_mm
+    # narrow_fov：native = target/1.08 → ΔEFL = +8%（loose_band，非 miss）
+    narrow_native = target_efl / 1.08
+    narrow_fov.paraxial.effective_focal_length_mm = narrow_native
+    narrow_fov.metadata.computed_efl_mm = narrow_native
+    # wide_fov：native = target/0.97 → ΔEFL ≈ -2.91%（甜区带内）
+    wide_native = target_efl / 0.97
+    wide_fov.paraxial.effective_focal_length_mm = wide_native
+    wide_fov.metadata.computed_efl_mm = wide_native
+
+    pool = [narrow_fov, wide_fov]
+    grid_point = GridPoint(
+        scenario=narrow_fov.metadata.scenario,
+        efl_mm=target_efl,
+        fnum=narrow_fov.paraxial.f_number,
+        fov_deg=36.0,  # 迫使 stage1 top_k=1 选中 narrow_fov（loose_band 那颗）
+        image_height_mm=None,
+    )
+    result = evaluate_grid_point(pool, grid_point, top_k=1)
+    assert result.coverage == "loose_band"
+    assert result.efl_band_seed_count == 1  # 带内原料确实存在（wide_fov）
+    assert result.funnel_caused_miss is False  # 但 loose_band 不计入漏斗口径
+
+
+# ---------------------------------------------------------------------------
+# `_efl_band_material` — EFL 维原料存在性扫描（对抗审 BLOCKER 1 回归锚）
+# ---------------------------------------------------------------------------
+
+
+def test_efl_band_material_finds_in_band_seed_behind_closer_positive_delta():
+    """对抗审 BLOCKER 1 描述的确切反例形状：池里同时有"更近的轻微拉焦
+    seed"（ΔEFL=+0.38%，band-rank 第一）和"稍远的带内缩焦 seed"
+    （ΔEFL≈-3.06%）。band-rank 第一名判定会被前者掩盖判成无原料；存在性
+    扫描必须报告带内原料存在。"""
+    base = _real_case_with_zmx()
+    assert base.metadata is not None
+    target_efl = 5.2
+
+    near_pull = base.model_copy(deep=True)
+    assert near_pull.metadata is not None
+    near_pull.metadata.case_id = "SWZ-NEAR-PULL"
+    near_pull_native = target_efl / 1.0038  # ΔEFL ≈ +0.38%（带外，正向）
+    near_pull.paraxial.effective_focal_length_mm = near_pull_native
+    near_pull.metadata.computed_efl_mm = near_pull_native
+
+    in_band = base.model_copy(deep=True)
+    assert in_band.metadata is not None
+    in_band.metadata.case_id = "SWZ-IN-BAND"
+    in_band_native = target_efl / 0.9694  # ΔEFL ≈ -3.06%（带内）
+    in_band.paraxial.effective_focal_length_mm = in_band_native
+    in_band.metadata.computed_efl_mm = in_band_native
+    in_band.metadata.fov_deg = 60.0
+
+    material = _efl_band_material([near_pull, in_band], target_efl, 75.0)
+    assert material.in_band_count == 1
+    assert material.min_fov_mismatch_case_id == "SWZ-IN-BAND"
+    assert material.min_fov_mismatch_deg == pytest.approx(15.0)
+
+
+def test_efl_band_material_empty_pool_reports_no_material():
+    material = _efl_band_material([], 4.0, 75.0)
+    assert material.in_band_count == 0
+    assert material.min_fov_mismatch_deg is None
+    assert material.min_fov_mismatch_case_id is None
+
+
+@pytest.mark.parametrize(
+    ("scenario", "target_efl_mm", "anchor_case_id", "anchor_delta_pct"),
+    [
+        # 对抗审报告给出的三个真库反例（band-rank 第一名判定漏判、存在性扫描
+        # 应报有原料的格点），作回归锚：
+        (Scenario.SMARTPHONE_WIDE, 5.2, "US-11719917-B2-e6", -3.0577),
+        (Scenario.SMARTPHONE_TELEPHOTO, 11.5, "US-20210364737-A1-e8", -4.2596),
+        (Scenario.SMARTPHONE_ULTRAWIDE, 3.2, "US-12210213-B2-e3", -1.6911),
+    ],
+)
+def test_efl_band_material_real_library_counterexample_anchors(
+    scenario: Scenario, target_efl_mm: float, anchor_case_id: str, anchor_delta_pct: float
+):
+    pool = _zmx_backed_pool(scenario)
+    anchor = next(
+        (c for c in pool if c.metadata is not None and c.metadata.case_id == anchor_case_id),
+        None,
+    )
+    assert anchor is not None, f"anchor seed {anchor_case_id} missing from {scenario} pool"
+    native = anchor.paraxial.effective_focal_length_mm
+    delta = (target_efl_mm - native) / native * 100.0
+    assert delta == pytest.approx(anchor_delta_pct, abs=0.01)
+    assert SWEET_ZONE_DELTA_EFL_PCT[0] <= delta <= SWEET_ZONE_DELTA_EFL_PCT[1]
+
+    material = _efl_band_material(pool, target_efl_mm, 75.0)
+    assert material.in_band_count >= 1  # 存在性扫描必须看见带内原料
 
 
 # ---------------------------------------------------------------------------
@@ -354,19 +459,26 @@ def test_summarize_counts_and_percentages():
         MatchResult(grid_point=_gp(), coverage="sweet_zone"),
         MatchResult(grid_point=_gp(), coverage="sweet_zone"),
         MatchResult(grid_point=_gp(), coverage="loose_band"),
-        MatchResult(grid_point=_gp(), coverage="miss"),
+        # miss + 带内原料 = 漏斗致 miss（严格口径）
+        MatchResult(
+            grid_point=_gp(), coverage="miss", efl_band_seed_count=3, funnel_caused_miss=True
+        ),
+        # miss + 无带内原料 = 真空洞
+        MatchResult(grid_point=_gp(), coverage="miss", efl_band_seed_count=0),
         MatchResult(grid_point=_gp(), coverage="missing_dimension"),
         MatchResult(grid_point=_gp(), coverage="no_seed_available"),
     ]
     summary = summarize(results, Scenario.SMARTPHONE_WIDE)
     assert isinstance(summary, ScenarioSummary)
-    assert summary.total_points == 6
+    assert summary.total_points == 7
     assert summary.sweet_zone == 2
     assert summary.loose_band == 1
-    assert summary.miss == 1
+    assert summary.miss == 2
     assert summary.missing_dimension == 1
     assert summary.no_seed_available == 1
-    assert summary.sweet_zone_pct == pytest.approx(2 / 6 * 100.0)
+    assert summary.funnel_caused_miss == 1
+    assert summary.true_gap == 1
+    assert summary.sweet_zone_pct == pytest.approx(2 / 7 * 100.0)
 
 
 def test_summarize_empty_results_does_not_divide_by_zero():
