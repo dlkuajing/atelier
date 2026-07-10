@@ -214,20 +214,19 @@ def _parse_per(rows: list[list[str]]) -> tuple[TorPerformanceRow, ...]:
             continue
         if len(row) != 17:
             raise ValueError("PER data row has unexpected column count")
-        values = tuple(float(value) for value in row[9:17])
-        numeric_values = (
-            float(row[4]),
-            float(row[5]),
-            float(row[7]),
-            *values,
-        )
-        if not all(math.isfinite(value) for value in numeric_values):
+        frequency = float(row[4])
+        azimuth = float(row[5])
+        design = float(row[7])
+        probability_columns = tuple(float(value) for value in row[9:17])
+        if not all(
+            math.isfinite(value) for value in (frequency, azimuth, design, *probability_columns)
+        ):
             raise ValueError("PER numeric values must be finite")
         parsed.append(
             TorPerformanceRow(
-                zoom=int(row[0]), field=int(row[1]), frequency_lp_per_mm=float(row[4]),
-                azimuth_deg=float(row[5]), criterion=row[8], design=float(row[7]),
-                probability_columns=values,
+                zoom=int(row[0]), field=int(row[1]), frequency_lp_per_mm=frequency,
+                azimuth_deg=azimuth, criterion=row[8], design=design,
+                probability_columns=probability_columns,
             )
         )
     if not parsed:
