@@ -1,0 +1,13 @@
+11-Jul-2026	04:04:38	2017                                                                            	Polychromatic Modulation Transfer Function        
+
+	Lens file name:	 
+	Fringe wavelength:	546.1
+	Scalar   probability density function:	1-D Uniform  
+	Decenter probability density function:	2-D Gaussian 	0.135335
+	Cylinder probability density function:	2-D Uniform  
+
+		Relative Field							Design + tolerances				Changes
+Eval Zoom	Eval Field	X	Y	Frequency	Azimuth	Weight	Design	Criterion	50.0D0%	84.1D0%	97.7D0%	99.9D0%	50.0D0%	84.1D0%	97.7D0%	99.9D0%
+1	1	0	0	100	90	1	0.0698749	MTF	5.08389	0.10232	-4.87925	-9.86083	5.01402	0.0324453	-4.94913	-9.9307
+1	2	0	1	100	90	1	0.450508	MTF	-31.166	-61.7589	-92.3517	-122.945	-31.6165	-62.2094	-92.8022	-123.395
+1	3	0	0.618083	100	90	1	0.025728	MTF	100.927	1.07844	-98.77	-198.618	100.901	1.05271	-98.7957	-198.644
