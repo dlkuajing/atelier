@@ -173,6 +173,6 @@ def test_verification_closed_model_rejects_unknown_and_nonfinite():
     with pytest.raises(ValidationError):
         SnapVerification(source_was_fictitious=True, aut_completed=True, ledger=(), snapshots=(), forged=True)
     with pytest.raises(ValidationError):
-        _snapshot("before-fictitious").model_copy(update={"efl_mm": float("nan")}).model_validate(
+        SnapshotMetrics.model_validate(
             {**_snapshot("before-fictitious").model_dump(), "efl_mm": float("nan")}
         )

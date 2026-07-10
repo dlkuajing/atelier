@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import StrEnum
 from pathlib import Path
 from typing import Annotated
@@ -169,7 +169,7 @@ def propose_material_snaps(
             catalog_spectral_definition=catalog_spectral_definition,
             dispersion_weight=dispersion_weight,
         )
-        result = SnapResult(raw.entry, raw.distance, raw.delta_nd, raw.delta_dn, tolerance)
+        result = replace(raw, tolerance=tolerance)
         within = result.within_tolerance
         proposals.append(
             SnapProposal(
@@ -339,7 +339,12 @@ class SnapVerification(BaseModel):
     @computed_field
     @property
     def material_identity(self) -> MaterialIdentity:
-        if any(not x.readback_matches or x.readback_catalog_identity != x.planned_catalog_identity for x in self.ledger):
+        ledger_conflict = any(
+            not item.readback_matches
+            or item.readback_catalog_identity != item.planned_catalog_identity
+            for item in self.ledger
+        )
+        if ledger_conflict:
             return MaterialIdentity.CATALOG_CONFLICT
         if (
             self.source_was_fictitious
@@ -360,7 +365,7 @@ def configuration_fingerprint(payload: dict[str, object]) -> str:
 
 
 def _is_glass(name: str | None, nd: float | None) -> bool:
-    return bool(name and name.strip().upper() not in _AIR_NAMES and nd and nd > 1.05)
+    return bool(name and name.strip().upper() not in _AIR_NAMES and nd is not None and nd > 1.05)
 
 
 def _positive_finite(value: float | None) -> bool:
