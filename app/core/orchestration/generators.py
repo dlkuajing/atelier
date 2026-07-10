@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import tempfile
 from abc import ABC, abstractmethod
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import ClassVar, final
 
@@ -210,6 +210,58 @@ _BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
 #: 仍有真实候选可选，窄到不会把远 FOV 的 seed 重新放回候选池。
 _FOV_PREFILTER_TOP_K = 10
 
+#: `score_seed_target_match` 的两档"EFL 已经很接近"分桶（P11 甜区覆盖率
+#: 漏斗调优，2026-07-11），供 `_fov_bounded_efl_close_extras` 甜区召回补齐
+#: 使用——直接复用 `seed_target_score.py` 已有的 N=24 真机标定分桶边界
+#: （score<15），不发明新阈值。
+_EFL_CLOSE_BANDS_FOR_RECALL: frozenset[str] = frozenset({"lt5", "5to15"})
+
+
+def _stage2_sort_key(
+    case: OpticalSampleData, match: SeedTargetScore, target_fov_deg: float | None
+) -> tuple[int, float, float, str]:
+    """Stage 2 排序全键（对抗审 MINOR 修复，2026-07-11）。
+
+    主键不变：band 优先（`_BAND_RANK`）、band 内 score 升序——既有 N=24
+    真机依据的 EFL 收敛风险排序语义原样保留。新增两级显式 tie-break 终键：
+    |FOV 失配|（同 band 同 score 时 FOV 更近者优先，与 stage 1 的 FOV 主导
+    距离语义方向一致）、case_id（字典序，最终裁决键）。
+
+    动机：旧实现同 band/同 score 时由 `cases_for_scenario`/索引文件顺序经
+    stable sort 隐式裁决——库重排会改变 top-2，即改变 CODE V 真机对象。
+    显式全键保证"输入集合相同即输出相同"（置换不变，见
+    test_rank_seeds_by_target_match_output_invariant_under_pool_permutation）。
+
+    `target_fov_deg is None`（FOV unconstrained 降级路径）时 FOV 键恒
+    0.0（无失配可言），tie 落到 case_id 终键。
+    """
+    assert case.metadata is not None
+    fov_mismatch = (
+        abs(case.metadata.fov_deg - target_fov_deg) if target_fov_deg is not None else 0.0
+    )
+    return (_BAND_RANK[match.band], match.score, fov_mismatch, case.metadata.case_id)
+
+
+def _score_cases_for_target(
+    cases: Sequence[OpticalSampleData], target_efl_mm: float
+) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
+    """对一组 case 逐颗跑 `score_seed_target_match`，非法 EFL（非有限/非正/
+    打分 raise）静默跳过（与 `_rank_seeds_by_target_match` 既有过滤语义
+    一致）。不排序——调用方自选排序键。"""
+    scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
+    for case in cases:
+        if case.metadata is None:
+            continue
+        seed_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(seed_efl_mm, target_efl_mm)
+        except ValueError:
+            continue
+        scored.append((case, match))
+    return scored
+
 
 #: post_aut 质量三键的 0.0 是"追迹全失败"哨兵，不是真实测量值：CODE V 宏累加器
 #: （`codev_optimize._metric_function_block` 的 `FCT @rmssum` 等）以 `^max == 0`
@@ -335,6 +387,100 @@ def _mode3_generation_notes(
             "（fix/mode3-seed-fov-prefilter，2026-07-10）"
         )
     return notes
+
+
+def _fov_bounded_efl_close_extras(
+    primary: Sequence[OpticalSampleData],
+    pool: Sequence[OpticalSampleData],
+    *,
+    target_efl_mm: float,
+    target_fov_deg: float,
+) -> list[OpticalSampleData]:
+    """P11 甜区覆盖率漏斗调优（2026-07-11，对抗审 BLOCKER 修复版）：
+    stage 1b 甜区召回补齐。
+
+    实锤（`scripts/sweet_zone_coverage.py` 量化，PR#60）：两段式匹配把场景
+    池收窄到 `rank_seeds` 全维距离 top-`_FOV_PREFILTER_TOP_K`（FOV 权重
+    0.46 主导）后，wide/tele/uw 三场景分别有 88/300、135/300、51/300 格点
+    因为"库内存在 EFL 甜区带内 seed，但它没进 top-K"而 miss（存在性扫描口
+    径的 `efl_material_exists_but_not_selected`，三场景 EFL 维真空洞均=0，
+    证明这是漏斗宽度问题，不是库缺料）。
+
+    本函数在 stage 1 之后、stage 2 之前，把"EFL 距离已经很近
+    （`score_seed_target_match` band ∈ `_EFL_CLOSE_BANDS_FOR_RECALL`，直接
+    复用其 N=24 真机标定分桶，不发明新阈值）但被 top-K 挡在外面"的 seed
+    纳入候选，**FOV 上限锚定旧路径真机席位**：
+
+        cap = 旧路径（primary-only）按 stage 2 全键排序后真正会送 CODE V
+              的前 `_TARGET_MAX_SEEDS` 颗（"旧席位"）的最差 |FOV 失配|
+
+    **安全证明**（对抗审 BLOCKER：第一版 cap 取 primary 全体最差 |FOV
+    失配|，可被 top-10 内单颗 FOV 离群点撑大——合成反例 9 颗 78° + 1 颗
+    20° → cap=58° → FOV 36° 的 lt5 extra 被纳入且 EFL score 碾压 primary
+    = PR#48 盲区回归。现版本锚点消除该路径）：
+
+    1. 旧路径 CODE V 席位 = stage 2 全键排序后 primary 的前
+       `_TARGET_MAX_SEEDS` 颗；
+    2. 任何 extra 的 |FOV 失配| ≤ cap = 旧席位的最差 |FOV 失配|；
+    3. 新路径最终席位 ⊆（旧席位按序前缀）∪（满足 2 的 extras）——extras
+       只能把 primary 成员向后挤，primary 成员间的 stage 2 相对序不变
+       （同一排序键）；
+    4. 故新席位的最差 |FOV 失配| ≤ 旧席位的最差 |FOV 失配|：**结构上不可能
+       比旧路径实际送真机的 seed 更差**。这是"不比旧路径最终胜者差"的强
+       声明，不是第一版"不比 primary 最差成员差"（可被离群点偷换）的弱
+       声明。
+
+    退化边界（对抗审同条指出，接受为 fail-safe 方向）：旧席位全部精确贴合
+    target FOV 时 cap→0，召回补齐退化为空——宁可少召回，不可回退 FOV，见
+    test_fov_bounded_efl_close_extras_all_tight_seats_give_zero_cap_no_extras。
+
+    量化验证（改后复测数字见 `.planning/loop/mode3-funnel-tuning-report.md`
+    与重新生成的 `sweet-zone-coverage-report.md`；报告同时含独立安全指标：
+    新旧路径最终 top-1/top-2 席位的 |FOV 失配| 回退分布）。
+
+    Args:
+        primary: stage 1（`rank_seeds` top-K）已选中的候选，用于确定旧路径
+            席位（cap 锚点）与去重。
+        pool: 场景全池（ZMX-backed），补齐候选从这里筛选。
+        target_efl_mm / target_fov_deg: 与 `_rank_seeds_by_target_match`
+            同源的 target 值。
+
+    Returns:
+        `primary` 之外、满足 band+FOV 上限的补齐候选（未排序——调用方与
+        `primary` 拼接后交给 stage 2 统一按全键重排，不在本函数内二次
+        排序，避免和 stage 2 的排序语义打架）。
+    """
+    primary_ids = {c.metadata.case_id for c in primary if c.metadata is not None}
+
+    scored_primary = _score_cases_for_target(primary, target_efl_mm)
+    scored_primary.sort(key=lambda item: _stage2_sort_key(item[0], item[1], target_fov_deg))
+    old_codev_seats = scored_primary[:_TARGET_MAX_SEEDS]
+    fov_cap = max(
+        (
+            abs(case.metadata.fov_deg - target_fov_deg)
+            for case, _ in old_codev_seats
+            if case.metadata is not None
+        ),
+        default=0.0,
+    )
+
+    extras: list[OpticalSampleData] = []
+    for case in pool:
+        if case.metadata is None or case.metadata.case_id in primary_ids:
+            continue
+        native_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(native_efl_mm) or native_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(native_efl_mm, target_efl_mm)
+        except ValueError:
+            continue
+        if match.band not in _EFL_CLOSE_BANDS_FOR_RECALL:
+            continue
+        if abs(case.metadata.fov_deg - target_fov_deg) > fov_cap:
+            continue
+        extras.append(case)
+    return extras
 
 
 class TargetConvergedGenerator(CandidateGenerator):
@@ -466,23 +612,29 @@ class TargetConvergedGenerator(CandidateGenerator):
         1. **FOV 近邻预筛**（`spec.fov_deg` 非 None 时）：`case_library.
            rank_seeds`——路由层唯一真相源的多维规格距离（FOV 权重 0.46
            主导 / IMH 0.30 / EFL 0.20）——把 ZMX 真实存在的场景池收窄到距离
-           最近的前 `_FOV_PREFILTER_TOP_K` 颗。闭合的正是 FOV 盲区：EFL 单
-           维打分对"seed 原生 FOV 36° vs target FOV 78°"这种规格错配视而
-           不见，rank_seeds 的全维距离能看见。
-        2. **EFL 收敛风险重排**：在 stage 1 收窄后的邻域内（或 `spec.
+           最近的前 `_FOV_PREFILTER_TOP_K` 颗（stage 1 primary）。闭合的正
+           是 FOV 盲区：EFL 单维打分对"seed 原生 FOV 36° vs target FOV
+           78°"这种规格错配视而不见，rank_seeds 的全维距离能看见。
+        1b. **甜区召回补齐**（`_fov_bounded_efl_close_extras`，P11 甜区覆盖
+           率漏斗调优，2026-07-11，对抗审 BLOCKER 修复版）：stage 1 primary
+           之外，把"EFL 已经很接近但被 top-K 挡在外面"的 seed 纳入候选，
+           |FOV 失配| 上限锚定**旧路径真机席位**（primary-only stage 2 排序
+           后的前 `_TARGET_MAX_SEEDS` 颗）的最差 |FOV 失配|——结构保证新
+           路径最终席位的最差 FOV 失配不劣于旧路径（安全证明见该函数
+           docstring）。量化证实这类 seed 是三场景 miss 的主因（EFL 维真
+           空洞=0）。
+        2. **EFL 收敛风险重排**：在 stage 1+1b 候选池内（或 `spec.
            fov_deg is None` 时的整个 ZMX-backed 池——见下），按
-           `seed_target_score.score_seed_target_match`（EFL 收敛风险代理，
-           N=24 真机数据依据，见该模块 docstring）分 band 优先、band 内
-           score 升序排序。
-
-        `sorted`/`list.sort` 是稳定排序：stage 2 分数打平（如两颗 seed EFL
-        相同）时保留 stage 1 的距离序（FOV 更近的排前面）——这是 tie-break
-        的机制，不是额外发明的第三个权重。
+           `_stage2_sort_key` 全键排序：band 优先、band 内 score 升序
+           （`seed_target_score.score_seed_target_match`，EFL 收敛风险
+           代理，N=24 真机数据依据）为主键；|FOV 失配|、case_id 为显式
+           tie-break 终键（对抗审 MINOR：消除库文件顺序的隐式裁决，
+           置换不变）。
 
         `spec.fov_deg is None`（target FOV 未约束，§7-E unconstrained 语义）
         时 `rank_seeds` 的检索排序查询没有"不检索这一维"的语义（同
-        `RetrievalGenerator` docstring）：跳过 stage 1，退化为纯 stage 2
-        （2026-07-10 前唯一路径）。调用方 `_generate` 通过
+        `RetrievalGenerator` docstring）：跳过 stage 1 与 1b，退化为纯
+        stage 2（2026-07-10 前唯一路径）。调用方 `_generate` 通过
         `_mode3_generation_notes` 如实注明"FOV 未约束，seed 选择未做 FOV
         近邻过滤"——诚实降级，不是 bug。
 
@@ -514,20 +666,17 @@ class TargetConvergedGenerator(CandidateGenerator):
                 manufacturing_tier=spec.manufacturing_tier,
                 priority=spec.priority,
             )
-            pool = seed_ranking.ranked_cases[:_FOV_PREFILTER_TOP_K]
+            primary = seed_ranking.ranked_cases[:_FOV_PREFILTER_TOP_K]
+            extras = _fov_bounded_efl_close_extras(
+                primary,
+                zmx_backed_cases,
+                target_efl_mm=spec.efl_mm,
+                target_fov_deg=spec.fov_deg,
+            )
+            pool = primary + extras
 
-        scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
-        for case in pool:
-            assert case.metadata is not None
-            seed_efl_mm = case.paraxial.effective_focal_length_mm
-            if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
-                continue
-            try:
-                match = score_seed_target_match(seed_efl_mm, spec.efl_mm)
-            except ValueError:
-                continue
-            scored.append((case, match))
-        scored.sort(key=lambda item: (_BAND_RANK[item[1].band], item[1].score))
+        scored = _score_cases_for_target(pool, spec.efl_mm)
+        scored.sort(key=lambda item: _stage2_sort_key(item[0], item[1], spec.fov_deg))
         return scored
 
     @staticmethod

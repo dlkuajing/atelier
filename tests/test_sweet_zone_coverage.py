@@ -285,10 +285,13 @@ def test_evaluate_grid_point_flags_missing_dimension_when_imh_unreal():
     assert result.imh_data_real is False
 
 
-def test_evaluate_grid_point_funnel_caused_miss_flag():
+def test_evaluate_grid_point_efl_material_exists_but_not_selected_flag():
     """top_k=1 时 stage1 只留 narrow_fov（EFL 远，miss），但池内 wide_fov
     其实有个甜区带内的 EFL 匹配（存在性扫描可见）——必须标
-    funnel_caused_miss=True，不能把"漏斗窄"和"库真没有"混为一谈。"""
+    efl_material_exists_but_not_selected=True，不能把"没选它"和"库真没有"
+    混为一谈（中性命名，对抗审 MINOR：不断言"应由放宽漏斗恢复"）。stage 1b
+    的席位锚 cap 在此场景为 0（席位=narrow_fov 自身，FOV 失配 0），
+    wide_fov（失配 42°）不会被补齐——如实保持 miss。"""
     narrow_fov, wide_fov = _fov_variant_pair()
     assert narrow_fov.metadata is not None and wide_fov.metadata is not None
     wide_fov.metadata.computed_efl_mm = narrow_fov.metadata.computed_efl_mm
@@ -311,7 +314,7 @@ def test_evaluate_grid_point_funnel_caused_miss_flag():
     )
     result = evaluate_grid_point(pool, grid_point, top_k=1)
     assert result.coverage == "miss"
-    assert result.funnel_caused_miss is True
+    assert result.efl_material_exists_but_not_selected is True
     # 存在性扫描字段：带内只有 wide_fov 一颗（narrow_fov ΔEFL=-60% 不在带内），
     # 最小 |FOV 失配| = |78 - 36| = 42。
     assert result.efl_band_seed_count == 1
@@ -319,12 +322,12 @@ def test_evaluate_grid_point_funnel_caused_miss_flag():
     assert result.efl_band_min_fov_mismatch_deg == pytest.approx(42.0)
 
 
-def test_funnel_caused_miss_false_for_loose_band_even_with_in_band_material():
-    """对抗审 BLOCKER 2 回归锚：funnel_caused_miss 仅在 coverage=="miss" 时
-    成立。构造 top pick 落 loose_band（ΔEFL=+8%）而池内另有带内 seed
-    （ΔEFL≈-2.9%）被 top_k=1 漏斗挡在外面的情形——旧实现
-    （`coverage not in ("sweet_zone",)`）会把这种 loose_band 也标 funnel，
-    污染"其中漏斗致 miss"口径。"""
+def test_efl_material_flag_false_for_loose_band_even_with_in_band_material():
+    """PR#60 对抗审 BLOCKER 2 回归锚：efl_material_exists_but_not_selected
+    仅在 coverage=="miss" 时成立。构造 top pick 落 loose_band（ΔEFL=+8%）而
+    池内另有带内 seed（ΔEFL≈-2.9%）未被选中的情形——旧实现
+    （`coverage not in ("sweet_zone",)`）会把这种 loose_band 也计入，
+    污染严格 miss 子集口径。"""
     narrow_fov, wide_fov = _fov_variant_pair()
     assert narrow_fov.metadata is not None and wide_fov.metadata is not None
 
@@ -349,7 +352,7 @@ def test_funnel_caused_miss_false_for_loose_band_even_with_in_band_material():
     result = evaluate_grid_point(pool, grid_point, top_k=1)
     assert result.coverage == "loose_band"
     assert result.efl_band_seed_count == 1  # 带内原料确实存在（wide_fov）
-    assert result.funnel_caused_miss is False  # 但 loose_band 不计入漏斗口径
+    assert result.efl_material_exists_but_not_selected is False  # loose_band 不计入
 
 
 # ---------------------------------------------------------------------------
@@ -459,9 +462,12 @@ def test_summarize_counts_and_percentages():
         MatchResult(grid_point=_gp(), coverage="sweet_zone"),
         MatchResult(grid_point=_gp(), coverage="sweet_zone"),
         MatchResult(grid_point=_gp(), coverage="loose_band"),
-        # miss + 带内原料 = 漏斗致 miss（严格口径）
+        # miss + 带内原料 = EFL 有料未选中（严格 miss 子集口径）
         MatchResult(
-            grid_point=_gp(), coverage="miss", efl_band_seed_count=3, funnel_caused_miss=True
+            grid_point=_gp(),
+            coverage="miss",
+            efl_band_seed_count=3,
+            efl_material_exists_but_not_selected=True,
         ),
         # miss + 无带内原料 = 真空洞
         MatchResult(grid_point=_gp(), coverage="miss", efl_band_seed_count=0),
@@ -476,7 +482,7 @@ def test_summarize_counts_and_percentages():
     assert summary.miss == 2
     assert summary.missing_dimension == 1
     assert summary.no_seed_available == 1
-    assert summary.funnel_caused_miss == 1
+    assert summary.efl_material_exists_but_not_selected == 1
     assert summary.true_gap == 1
     assert summary.sweet_zone_pct == pytest.approx(2 / 7 * 100.0)
 
@@ -527,3 +533,51 @@ def test_loose_band_bounds_are_superset_of_sweet_zone_bounds():
     loose_lo, loose_hi = LOOSE_BAND_DELTA_EFL_PCT
     assert loose_lo <= sweet_lo
     assert loose_hi >= sweet_hi
+
+
+# ---------------------------------------------------------------------------
+# 生产等价校验（对抗审 MAJOR"镜像循环论证"修复）：本脚本的两段式本地重实现
+# 必须与生产 `TargetConvergedGenerator._rank_seeds_by_target_match` 在真实
+# 库数据 + 场景边界网格抽样（3 场景 × 18 = 54 格点 ≥ 50）上逐格点、逐名次
+# 完全一致——镜像 drift（cap 语义/排序键/过滤条件任一处不同步）会被立即
+# 抓住，覆盖率报告的数字才有资格代表生产行为。
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "scenario",
+    [Scenario.SMARTPHONE_WIDE, Scenario.SMARTPHONE_TELEPHOTO, Scenario.SMARTPHONE_ULTRAWIDE],
+)
+def test_rank_pool_by_target_matches_production_rank_seeds_by_target_match(scenario: Scenario):
+    from app.core.orchestration.candidate import TargetSpec
+    from app.core.orchestration.generators import TargetConvergedGenerator
+
+    pool = _zmx_backed_pool(scenario)
+    assert pool, f"{scenario} ZMX-backed pool unexpectedly empty"
+    grid = build_grid(scenario, GridResolution(efl=3, fnum=2, fov=3, imh=1))
+    assert len(grid) == 18  # 3 场景合计 54 格点 >= 50（对抗审要求的抽样规模）
+
+    for gp in grid:
+        script_scored = _rank_pool_by_target(pool, gp)
+        spec = TargetSpec(
+            scenario=scenario,
+            efl_mm=gp.efl_mm,
+            fov_deg=gp.fov_deg,
+            fnum=gp.fnum,
+            image_height_mm=gp.image_height_mm,
+        )
+        production_scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+        script_readout = [
+            (case.metadata.case_id, match.band, match.score)
+            for case, match in script_scored
+            if case.metadata is not None
+        ]
+        production_readout = [
+            (case.metadata.case_id, match.band, match.score)
+            for case, match in production_scored
+            if case.metadata is not None
+        ]
+        assert script_readout == production_readout, (
+            f"mirror drift at grid point {gp}: script={script_readout[:3]}... "
+            f"production={production_readout[:3]}..."
+        )

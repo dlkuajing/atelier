@@ -49,10 +49,10 @@
     "fnum": 1.5,
     "fov_deg": 65.25,
     "image_height_mm": 1.7,
-    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
-    "seed_native_efl_mm": 2.6184,
-    "delta_efl_pct": -8.341,
-    "band": "5to15"
+    "seed_case_id": "US-12248126-B2-e3",
+    "seed_native_efl_mm": 2.4388,
+    "delta_efl_pct": -1.5919,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -102,12 +102,23 @@
     "scenario": "smartphone-wide",
     "efl_mm": 2.4,
     "fnum": 1.5,
-    "fov_deg": 81.75,
-    "image_height_mm": 1.7,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -2.6182,
-    "band": "lt5"
+    "fov_deg": 73.5,
+    "image_height_mm": 2.7,
+    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
+    "seed_native_efl_mm": 2.6184,
+    "delta_efl_pct": -8.341,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 1.5,
+    "fov_deg": 73.5,
+    "image_height_mm": 3.7,
+    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
+    "seed_native_efl_mm": 2.6184,
+    "delta_efl_pct": -8.341,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-wide",
@@ -115,10 +126,10 @@
     "fnum": 1.5,
     "fov_deg": 81.75,
     "image_height_mm": 2.7,
-    "seed_case_id": "US-20260126622-A1-e1",
-    "seed_native_efl_mm": 2.6049,
-    "delta_efl_pct": -7.8675,
-    "band": "5to15"
+    "seed_case_id": "US-20230288669-A1-e1",
+    "seed_native_efl_mm": 2.4032,
+    "delta_efl_pct": -0.1319,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -135,11 +146,22 @@
     "scenario": "smartphone-wide",
     "efl_mm": 2.4,
     "fnum": 1.5,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 1.5,
     "fov_deg": 90.0,
     "image_height_mm": 1.7,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -2.6182,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
     "band": "lt5"
   },
   {
@@ -159,6 +181,17 @@
     "fnum": 1.5,
     "fov_deg": 90.0,
     "image_height_mm": 3.7,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 1.5,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.7,
     "seed_case_id": "US-20230288669-A1-e4",
     "seed_native_efl_mm": 2.4006,
     "delta_efl_pct": -0.0251,
@@ -214,10 +247,10 @@
     "fnum": 2.25,
     "fov_deg": 65.25,
     "image_height_mm": 1.7,
-    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
-    "seed_native_efl_mm": 2.6184,
-    "delta_efl_pct": -8.341,
-    "band": "5to15"
+    "seed_case_id": "US-12248126-B2-e3",
+    "seed_native_efl_mm": 2.4388,
+    "delta_efl_pct": -1.5919,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -267,12 +300,23 @@
     "scenario": "smartphone-wide",
     "efl_mm": 2.4,
     "fnum": 2.25,
-    "fov_deg": 81.75,
-    "image_height_mm": 1.7,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -2.6182,
-    "band": "lt5"
+    "fov_deg": 73.5,
+    "image_height_mm": 2.7,
+    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
+    "seed_native_efl_mm": 2.6184,
+    "delta_efl_pct": -8.341,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 2.25,
+    "fov_deg": 73.5,
+    "image_height_mm": 3.7,
+    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
+    "seed_native_efl_mm": 2.6184,
+    "delta_efl_pct": -8.341,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-wide",
@@ -280,10 +324,10 @@
     "fnum": 2.25,
     "fov_deg": 81.75,
     "image_height_mm": 2.7,
-    "seed_case_id": "US-20260126622-A1-e1",
-    "seed_native_efl_mm": 2.6049,
-    "delta_efl_pct": -7.8675,
-    "band": "5to15"
+    "seed_case_id": "US-20230288669-A1-e1",
+    "seed_native_efl_mm": 2.4032,
+    "delta_efl_pct": -0.1319,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -300,11 +344,22 @@
     "scenario": "smartphone-wide",
     "efl_mm": 2.4,
     "fnum": 2.25,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 2.25,
     "fov_deg": 90.0,
     "image_height_mm": 1.7,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -2.6182,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
     "band": "lt5"
   },
   {
@@ -324,6 +379,17 @@
     "fnum": 2.25,
     "fov_deg": 90.0,
     "image_height_mm": 3.7,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 2.25,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.7,
     "seed_case_id": "US-20230288669-A1-e4",
     "seed_native_efl_mm": 2.4006,
     "delta_efl_pct": -0.0251,
@@ -379,10 +445,10 @@
     "fnum": 3.0,
     "fov_deg": 65.25,
     "image_height_mm": 1.7,
-    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
-    "seed_native_efl_mm": 2.6184,
-    "delta_efl_pct": -8.341,
-    "band": "5to15"
+    "seed_case_id": "US-12248126-B2-e3",
+    "seed_native_efl_mm": 2.4388,
+    "delta_efl_pct": -1.5919,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -432,12 +498,23 @@
     "scenario": "smartphone-wide",
     "efl_mm": 2.4,
     "fnum": 3.0,
-    "fov_deg": 81.75,
-    "image_height_mm": 1.7,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -2.6182,
-    "band": "lt5"
+    "fov_deg": 73.5,
+    "image_height_mm": 2.7,
+    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
+    "seed_native_efl_mm": 2.6184,
+    "delta_efl_pct": -8.341,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 3.0,
+    "fov_deg": 73.5,
+    "image_height_mm": 3.7,
+    "seed_case_id": "5P_F2.0_FOV71.0_EFL2.6_IMH1.9_TTL4.26",
+    "seed_native_efl_mm": 2.6184,
+    "delta_efl_pct": -8.341,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-wide",
@@ -445,10 +522,10 @@
     "fnum": 3.0,
     "fov_deg": 81.75,
     "image_height_mm": 2.7,
-    "seed_case_id": "US-20260126622-A1-e1",
-    "seed_native_efl_mm": 2.6049,
-    "delta_efl_pct": -7.8675,
-    "band": "5to15"
+    "seed_case_id": "US-20230288669-A1-e1",
+    "seed_native_efl_mm": 2.4032,
+    "delta_efl_pct": -0.1319,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -465,11 +542,22 @@
     "scenario": "smartphone-wide",
     "efl_mm": 2.4,
     "fnum": 3.0,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 3.0,
     "fov_deg": 90.0,
     "image_height_mm": 1.7,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -2.6182,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
     "band": "lt5"
   },
   {
@@ -496,6 +584,39 @@
   },
   {
     "scenario": "smartphone-wide",
+    "efl_mm": 2.4,
+    "fnum": 3.0,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.7,
+    "seed_case_id": "US-20230288669-A1-e4",
+    "seed_native_efl_mm": 2.4006,
+    "delta_efl_pct": -0.0251,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 1.5,
+    "fov_deg": 57.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12650578-B2-e5",
+    "seed_native_efl_mm": 3.1286,
+    "delta_efl_pct": -0.9157,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 1.5,
+    "fov_deg": 57.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-12650578-B2-e5",
+    "seed_native_efl_mm": 3.1286,
+    "delta_efl_pct": -0.9157,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
     "efl_mm": 3.1,
     "fnum": 1.5,
     "fov_deg": 57.0,
@@ -521,6 +642,28 @@
     "efl_mm": 3.1,
     "fnum": 1.5,
     "fov_deg": 65.25,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-11927729-B2-e8",
+    "seed_native_efl_mm": 3.5756,
+    "delta_efl_pct": -13.3015,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 1.5,
+    "fov_deg": 65.25,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11927729-B2-e8",
+    "seed_native_efl_mm": 3.5756,
+    "delta_efl_pct": -13.3015,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 1.5,
+    "fov_deg": 65.25,
     "image_height_mm": 3.7,
     "seed_case_id": "US-12650578-B2-e5",
     "seed_native_efl_mm": 3.1286,
@@ -531,33 +674,11 @@
     "scenario": "smartphone-wide",
     "efl_mm": 3.1,
     "fnum": 1.5,
-    "fov_deg": 73.5,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US-11906710-B2-e4",
-    "seed_native_efl_mm": 3.5189,
-    "delta_efl_pct": -11.9053,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.1,
-    "fnum": 1.5,
-    "fov_deg": 73.5,
-    "image_height_mm": 3.7,
-    "seed_case_id": "US-11906710-B2-e2",
-    "seed_native_efl_mm": 3.645,
-    "delta_efl_pct": -14.9514,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.1,
-    "fnum": 1.5,
     "fov_deg": 81.75,
-    "image_height_mm": 1.7,
-    "seed_case_id": "US-12174456-B2-e3",
-    "seed_native_efl_mm": 3.1714,
-    "delta_efl_pct": -2.2528,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11668898-B2-e1",
+    "seed_native_efl_mm": 3.182,
+    "delta_efl_pct": -2.577,
     "band": "lt5"
   },
   {
@@ -565,11 +686,22 @@
     "efl_mm": 3.1,
     "fnum": 1.5,
     "fov_deg": 81.75,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US9201216B2",
-    "seed_native_efl_mm": 3.2673,
-    "delta_efl_pct": -5.1216,
-    "band": "5to15"
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-12174456-B2-e2",
+    "seed_native_efl_mm": 3.177,
+    "delta_efl_pct": -2.4238,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 1.5,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -577,9 +709,20 @@
     "fnum": 1.5,
     "fov_deg": 90.0,
     "image_height_mm": 1.7,
-    "seed_case_id": "US-12174456-B2-e3",
-    "seed_native_efl_mm": 3.1714,
-    "delta_efl_pct": -2.2528,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 1.5,
+    "fov_deg": 90.0,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
     "band": "lt5"
   },
   {
@@ -588,10 +731,32 @@
     "fnum": 1.5,
     "fov_deg": 90.0,
     "image_height_mm": 4.7,
-    "seed_case_id": "US-12210213-B2-e5",
-    "seed_native_efl_mm": 3.6136,
-    "delta_efl_pct": -14.2123,
-    "band": "5to15"
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 2.25,
+    "fov_deg": 57.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12650578-B2-e5",
+    "seed_native_efl_mm": 3.1286,
+    "delta_efl_pct": -0.9157,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 2.25,
+    "fov_deg": 57.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-12650578-B2-e5",
+    "seed_native_efl_mm": 3.1286,
+    "delta_efl_pct": -0.9157,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -620,6 +785,28 @@
     "efl_mm": 3.1,
     "fnum": 2.25,
     "fov_deg": 65.25,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-11927729-B2-e8",
+    "seed_native_efl_mm": 3.5756,
+    "delta_efl_pct": -13.3015,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 2.25,
+    "fov_deg": 65.25,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11927729-B2-e8",
+    "seed_native_efl_mm": 3.5756,
+    "delta_efl_pct": -13.3015,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 2.25,
+    "fov_deg": 65.25,
     "image_height_mm": 3.7,
     "seed_case_id": "US-12650578-B2-e5",
     "seed_native_efl_mm": 3.1286,
@@ -630,33 +817,11 @@
     "scenario": "smartphone-wide",
     "efl_mm": 3.1,
     "fnum": 2.25,
-    "fov_deg": 73.5,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US-11906710-B2-e4",
-    "seed_native_efl_mm": 3.5189,
-    "delta_efl_pct": -11.9053,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.1,
-    "fnum": 2.25,
-    "fov_deg": 73.5,
-    "image_height_mm": 3.7,
-    "seed_case_id": "US-11906710-B2-e2",
-    "seed_native_efl_mm": 3.645,
-    "delta_efl_pct": -14.9514,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.1,
-    "fnum": 2.25,
     "fov_deg": 81.75,
-    "image_height_mm": 1.7,
-    "seed_case_id": "US-12174456-B2-e3",
-    "seed_native_efl_mm": 3.1714,
-    "delta_efl_pct": -2.2528,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11668898-B2-e1",
+    "seed_native_efl_mm": 3.182,
+    "delta_efl_pct": -2.577,
     "band": "lt5"
   },
   {
@@ -664,11 +829,22 @@
     "efl_mm": 3.1,
     "fnum": 2.25,
     "fov_deg": 81.75,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US9201216B2",
-    "seed_native_efl_mm": 3.2673,
-    "delta_efl_pct": -5.1216,
-    "band": "5to15"
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-12174456-B2-e2",
+    "seed_native_efl_mm": 3.177,
+    "delta_efl_pct": -2.4238,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 2.25,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -676,9 +852,20 @@
     "fnum": 2.25,
     "fov_deg": 90.0,
     "image_height_mm": 1.7,
-    "seed_case_id": "US-12174456-B2-e3",
-    "seed_native_efl_mm": 3.1714,
-    "delta_efl_pct": -2.2528,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 2.25,
+    "fov_deg": 90.0,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
     "band": "lt5"
   },
   {
@@ -687,10 +874,32 @@
     "fnum": 2.25,
     "fov_deg": 90.0,
     "image_height_mm": 4.7,
-    "seed_case_id": "US-12210213-B2-e5",
-    "seed_native_efl_mm": 3.6136,
-    "delta_efl_pct": -14.2123,
-    "band": "5to15"
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 3.0,
+    "fov_deg": 57.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12650578-B2-e5",
+    "seed_native_efl_mm": 3.1286,
+    "delta_efl_pct": -0.9157,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 3.0,
+    "fov_deg": 57.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-12650578-B2-e5",
+    "seed_native_efl_mm": 3.1286,
+    "delta_efl_pct": -0.9157,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -719,6 +928,28 @@
     "efl_mm": 3.1,
     "fnum": 3.0,
     "fov_deg": 65.25,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-11927729-B2-e8",
+    "seed_native_efl_mm": 3.5756,
+    "delta_efl_pct": -13.3015,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 3.0,
+    "fov_deg": 65.25,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11927729-B2-e8",
+    "seed_native_efl_mm": 3.5756,
+    "delta_efl_pct": -13.3015,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 3.0,
+    "fov_deg": 65.25,
     "image_height_mm": 3.7,
     "seed_case_id": "US-12650578-B2-e5",
     "seed_native_efl_mm": 3.1286,
@@ -729,33 +960,11 @@
     "scenario": "smartphone-wide",
     "efl_mm": 3.1,
     "fnum": 3.0,
-    "fov_deg": 73.5,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US-11906710-B2-e4",
-    "seed_native_efl_mm": 3.5189,
-    "delta_efl_pct": -11.9053,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.1,
-    "fnum": 3.0,
-    "fov_deg": 73.5,
-    "image_height_mm": 3.7,
-    "seed_case_id": "US-11906710-B2-e2",
-    "seed_native_efl_mm": 3.645,
-    "delta_efl_pct": -14.9514,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.1,
-    "fnum": 3.0,
     "fov_deg": 81.75,
-    "image_height_mm": 1.7,
-    "seed_case_id": "US-12174456-B2-e3",
-    "seed_native_efl_mm": 3.1714,
-    "delta_efl_pct": -2.2528,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11668898-B2-e1",
+    "seed_native_efl_mm": 3.182,
+    "delta_efl_pct": -2.577,
     "band": "lt5"
   },
   {
@@ -763,11 +972,22 @@
     "efl_mm": 3.1,
     "fnum": 3.0,
     "fov_deg": 81.75,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US9201216B2",
-    "seed_native_efl_mm": 3.2673,
-    "delta_efl_pct": -5.1216,
-    "band": "5to15"
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-12174456-B2-e2",
+    "seed_native_efl_mm": 3.177,
+    "delta_efl_pct": -2.4238,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 3.0,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -775,9 +995,20 @@
     "fnum": 3.0,
     "fov_deg": 90.0,
     "image_height_mm": 1.7,
-    "seed_case_id": "US-12174456-B2-e3",
-    "seed_native_efl_mm": 3.1714,
-    "delta_efl_pct": -2.2528,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.1,
+    "fnum": 3.0,
+    "fov_deg": 90.0,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
     "band": "lt5"
   },
   {
@@ -786,31 +1017,9 @@
     "fnum": 3.0,
     "fov_deg": 90.0,
     "image_height_mm": 4.7,
-    "seed_case_id": "US-12210213-B2-e5",
-    "seed_native_efl_mm": 3.6136,
-    "delta_efl_pct": -14.2123,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.8,
-    "fnum": 1.5,
-    "fov_deg": 65.25,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US20170045714A1",
-    "seed_native_efl_mm": 3.9701,
-    "delta_efl_pct": -4.2839,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-wide",
-    "efl_mm": 3.8,
-    "fnum": 1.5,
-    "fov_deg": 65.25,
-    "image_height_mm": 3.7,
-    "seed_case_id": "US20170045714A1",
-    "seed_native_efl_mm": 3.9701,
-    "delta_efl_pct": -4.2839,
+    "seed_case_id": "US-12174456-B2-e5",
+    "seed_native_efl_mm": 3.1009,
+    "delta_efl_pct": -0.0299,
     "band": "lt5"
   },
   {
@@ -819,6 +1028,28 @@
     "fnum": 1.5,
     "fov_deg": 73.5,
     "image_height_mm": 3.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 1.5,
+    "fov_deg": 81.75,
+    "image_height_mm": 1.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 1.5,
+    "fov_deg": 81.75,
+    "image_height_mm": 2.7,
     "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
     "seed_native_efl_mm": 3.8059,
     "delta_efl_pct": -0.1551,
@@ -838,23 +1069,45 @@
   {
     "scenario": "smartphone-wide",
     "efl_mm": 3.8,
-    "fnum": 2.25,
-    "fov_deg": 65.25,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US20170045714A1",
-    "seed_native_efl_mm": 3.9701,
-    "delta_efl_pct": -4.2839,
+    "fnum": 1.5,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
     "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
     "efl_mm": 3.8,
-    "fnum": 2.25,
-    "fov_deg": 65.25,
-    "image_height_mm": 3.7,
-    "seed_case_id": "US20170045714A1",
-    "seed_native_efl_mm": 3.9701,
-    "delta_efl_pct": -4.2839,
+    "fnum": 1.5,
+    "fov_deg": 90.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US8908290B1",
+    "seed_native_efl_mm": 3.9503,
+    "delta_efl_pct": -3.805,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 1.5,
+    "fov_deg": 90.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US8908290B1",
+    "seed_native_efl_mm": 3.9503,
+    "delta_efl_pct": -3.805,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 1.5,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
     "band": "lt5"
   },
   {
@@ -863,6 +1116,28 @@
     "fnum": 2.25,
     "fov_deg": 73.5,
     "image_height_mm": 3.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 2.25,
+    "fov_deg": 81.75,
+    "image_height_mm": 1.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 2.25,
+    "fov_deg": 81.75,
+    "image_height_mm": 2.7,
     "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
     "seed_native_efl_mm": 3.8059,
     "delta_efl_pct": -0.1551,
@@ -882,23 +1157,45 @@
   {
     "scenario": "smartphone-wide",
     "efl_mm": 3.8,
-    "fnum": 3.0,
-    "fov_deg": 65.25,
-    "image_height_mm": 2.7,
-    "seed_case_id": "US20170045714A1",
-    "seed_native_efl_mm": 3.9701,
-    "delta_efl_pct": -4.2839,
+    "fnum": 2.25,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
     "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
     "efl_mm": 3.8,
-    "fnum": 3.0,
-    "fov_deg": 65.25,
-    "image_height_mm": 3.7,
-    "seed_case_id": "US20170045714A1",
-    "seed_native_efl_mm": 3.9701,
-    "delta_efl_pct": -4.2839,
+    "fnum": 2.25,
+    "fov_deg": 90.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US8908290B1",
+    "seed_native_efl_mm": 3.9503,
+    "delta_efl_pct": -3.805,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 2.25,
+    "fov_deg": 90.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US8908290B1",
+    "seed_native_efl_mm": 3.9503,
+    "delta_efl_pct": -3.805,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 2.25,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
     "band": "lt5"
   },
   {
@@ -917,7 +1214,73 @@
     "efl_mm": 3.8,
     "fnum": 3.0,
     "fov_deg": 81.75,
+    "image_height_mm": 1.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 3.0,
+    "fov_deg": 81.75,
+    "image_height_mm": 2.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 3.0,
+    "fov_deg": 81.75,
     "image_height_mm": 3.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 3.0,
+    "fov_deg": 81.75,
+    "image_height_mm": 4.7,
+    "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
+    "seed_native_efl_mm": 3.8059,
+    "delta_efl_pct": -0.1551,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 3.0,
+    "fov_deg": 90.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US8908290B1",
+    "seed_native_efl_mm": 3.9503,
+    "delta_efl_pct": -3.805,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 3.0,
+    "fov_deg": 90.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US8908290B1",
+    "seed_native_efl_mm": 3.9503,
+    "delta_efl_pct": -3.805,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 3.8,
+    "fnum": 3.0,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.7,
     "seed_case_id": "5P_F2.0_FOV78.8_EFL3.8_IMH3.2_TTL4.30",
     "seed_native_efl_mm": 3.8059,
     "delta_efl_pct": -0.1551,
@@ -929,10 +1292,32 @@
     "fnum": 1.5,
     "fov_deg": 65.25,
     "image_height_mm": 4.7,
-    "seed_case_id": "US9063319B1",
-    "seed_native_efl_mm": 4.7558,
-    "delta_efl_pct": -5.3791,
-    "band": "5to15"
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 1.5,
+    "fov_deg": 73.5,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 1.5,
+    "fov_deg": 73.5,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -940,9 +1325,9 @@
     "fnum": 1.5,
     "fov_deg": 73.5,
     "image_height_mm": 3.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -951,9 +1336,31 @@
     "fnum": 1.5,
     "fov_deg": 73.5,
     "image_height_mm": 4.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 1.5,
+    "fov_deg": 81.75,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 1.5,
+    "fov_deg": 81.75,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -962,9 +1369,9 @@
     "fnum": 1.5,
     "fov_deg": 81.75,
     "image_height_mm": 3.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -973,6 +1380,28 @@
     "fnum": 1.5,
     "fov_deg": 81.75,
     "image_height_mm": 4.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 1.5,
+    "fov_deg": 90.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -2.3867,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 1.5,
+    "fov_deg": 90.0,
+    "image_height_mm": 2.7,
     "seed_case_id": "US-12105260-B2-e3",
     "seed_native_efl_mm": 4.61,
     "delta_efl_pct": -2.3867,
@@ -995,10 +1424,32 @@
     "fnum": 2.25,
     "fov_deg": 65.25,
     "image_height_mm": 4.7,
-    "seed_case_id": "US9063319B1",
-    "seed_native_efl_mm": 4.7558,
-    "delta_efl_pct": -5.3791,
-    "band": "5to15"
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 2.25,
+    "fov_deg": 73.5,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 2.25,
+    "fov_deg": 73.5,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -1006,9 +1457,9 @@
     "fnum": 2.25,
     "fov_deg": 73.5,
     "image_height_mm": 3.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -1017,9 +1468,31 @@
     "fnum": 2.25,
     "fov_deg": 73.5,
     "image_height_mm": 4.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 2.25,
+    "fov_deg": 81.75,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 2.25,
+    "fov_deg": 81.75,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -1028,9 +1501,9 @@
     "fnum": 2.25,
     "fov_deg": 81.75,
     "image_height_mm": 3.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -1039,6 +1512,28 @@
     "fnum": 2.25,
     "fov_deg": 81.75,
     "image_height_mm": 4.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 2.25,
+    "fov_deg": 90.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -2.3867,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 2.25,
+    "fov_deg": 90.0,
+    "image_height_mm": 2.7,
     "seed_case_id": "US-12105260-B2-e3",
     "seed_native_efl_mm": 4.61,
     "delta_efl_pct": -2.3867,
@@ -1061,10 +1556,21 @@
     "fnum": 3.0,
     "fov_deg": 65.25,
     "image_height_mm": 4.7,
-    "seed_case_id": "US9063319B1",
-    "seed_native_efl_mm": 4.7558,
-    "delta_efl_pct": -5.3791,
-    "band": "5to15"
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 3.0,
+    "fov_deg": 73.5,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US10310222B2",
+    "seed_native_efl_mm": 4.6091,
+    "delta_efl_pct": -2.3675,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
@@ -1072,9 +1578,9 @@
     "fnum": 3.0,
     "fov_deg": 73.5,
     "image_height_mm": 3.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -1083,9 +1589,31 @@
     "fnum": 3.0,
     "fov_deg": 73.5,
     "image_height_mm": 4.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 3.0,
+    "fov_deg": 81.75,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 3.0,
+    "fov_deg": 81.75,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -1094,9 +1622,9 @@
     "fnum": 3.0,
     "fov_deg": 81.75,
     "image_height_mm": 3.7,
-    "seed_case_id": "US10281683B2",
-    "seed_native_efl_mm": 4.706,
-    "delta_efl_pct": -4.378,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
     "band": "lt5"
   },
   {
@@ -1105,6 +1633,28 @@
     "fnum": 3.0,
     "fov_deg": 81.75,
     "image_height_mm": 4.7,
+    "seed_case_id": "US-12345855-B2-e4",
+    "seed_native_efl_mm": 4.5111,
+    "delta_efl_pct": -0.2456,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 3.0,
+    "fov_deg": 90.0,
+    "image_height_mm": 1.7,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -2.3867,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 4.5,
+    "fnum": 3.0,
+    "fov_deg": 90.0,
+    "image_height_mm": 2.7,
     "seed_case_id": "US-12105260-B2-e3",
     "seed_native_efl_mm": 4.61,
     "delta_efl_pct": -2.3867,
@@ -1125,66 +1675,176 @@
     "scenario": "smartphone-wide",
     "efl_mm": 5.2,
     "fnum": 1.5,
-    "fov_deg": 73.5,
-    "image_height_mm": 1.7,
-    "seed_case_id": "US-11262555-B2-e2",
-    "seed_native_efl_mm": 5.6802,
-    "delta_efl_pct": -8.4547,
-    "band": "5to15"
+    "fov_deg": 57.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
     "efl_mm": 5.2,
     "fnum": 1.5,
-    "fov_deg": 81.75,
+    "fov_deg": 57.0,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 1.5,
+    "fov_deg": 65.25,
     "image_height_mm": 1.7,
-    "seed_case_id": "US-11262555-B2-e2",
-    "seed_native_efl_mm": 5.6802,
-    "delta_efl_pct": -8.4547,
-    "band": "5to15"
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 1.5,
+    "fov_deg": 65.25,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 1.5,
+    "fov_deg": 65.25,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
     "efl_mm": 5.2,
     "fnum": 2.25,
-    "fov_deg": 73.5,
-    "image_height_mm": 1.7,
-    "seed_case_id": "US-11262555-B2-e2",
-    "seed_native_efl_mm": 5.6802,
-    "delta_efl_pct": -8.4547,
-    "band": "5to15"
+    "fov_deg": 57.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
     "efl_mm": 5.2,
     "fnum": 2.25,
-    "fov_deg": 81.75,
+    "fov_deg": 57.0,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 2.25,
+    "fov_deg": 65.25,
     "image_height_mm": 1.7,
-    "seed_case_id": "US-11262555-B2-e2",
-    "seed_native_efl_mm": 5.6802,
-    "delta_efl_pct": -8.4547,
-    "band": "5to15"
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 2.25,
+    "fov_deg": 65.25,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 2.25,
+    "fov_deg": 65.25,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
     "efl_mm": 5.2,
     "fnum": 3.0,
-    "fov_deg": 73.5,
-    "image_height_mm": 1.7,
-    "seed_case_id": "US-11262555-B2-e2",
-    "seed_native_efl_mm": 5.6802,
-    "delta_efl_pct": -8.4547,
-    "band": "5to15"
+    "fov_deg": 57.0,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-wide",
     "efl_mm": 5.2,
     "fnum": 3.0,
-    "fov_deg": 81.75,
+    "fov_deg": 57.0,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 3.0,
+    "fov_deg": 65.25,
     "image_height_mm": 1.7,
-    "seed_case_id": "US-11262555-B2-e2",
-    "seed_native_efl_mm": 5.6802,
-    "delta_efl_pct": -8.4547,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 3.0,
+    "fov_deg": 65.25,
+    "image_height_mm": 2.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-wide",
+    "efl_mm": 5.2,
+    "fnum": 3.0,
+    "fov_deg": 65.25,
+    "image_height_mm": 3.7,
+    "seed_case_id": "US-11719917-B2-e6",
+    "seed_native_efl_mm": 5.364,
+    "delta_efl_pct": -3.0577,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 1.8,
+    "fov_deg": 15.0,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-20210389572-A1-e1",
+    "seed_native_efl_mm": 5.872,
+    "delta_efl_pct": -14.8506,
     "band": "5to15"
   },
   {
@@ -1214,6 +1874,28 @@
     "efl_mm": 5.0,
     "fnum": 1.8,
     "fov_deg": 22.5,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-20210389572-A1-e1",
+    "seed_native_efl_mm": 5.872,
+    "delta_efl_pct": -14.8506,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 1.8,
+    "fov_deg": 22.5,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-20210364765-A1-e3",
+    "seed_native_efl_mm": 5.8525,
+    "delta_efl_pct": -14.5668,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 1.8,
+    "fov_deg": 22.5,
     "image_height_mm": 8.0,
     "seed_case_id": "US-11933948-B2-e6",
     "seed_native_efl_mm": 5.0427,
@@ -1237,9 +1919,9 @@
     "fnum": 1.8,
     "fov_deg": 30.0,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-12282142-B2-e3",
-    "seed_native_efl_mm": 5.1962,
-    "delta_efl_pct": -3.7759,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
     "band": "lt5"
   },
   {
@@ -1270,10 +1952,10 @@
     "fnum": 1.8,
     "fov_deg": 37.5,
     "image_height_mm": 2.5,
-    "seed_case_id": "US-20260140349-A1-e4",
-    "seed_native_efl_mm": 5.5559,
-    "delta_efl_pct": -10.0058,
-    "band": "5to15"
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1281,9 +1963,9 @@
     "fnum": 1.8,
     "fov_deg": 37.5,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-12210142-B2-e5",
-    "seed_native_efl_mm": 5.1006,
-    "delta_efl_pct": -1.9723,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
     "band": "lt5"
   },
   {
@@ -1314,10 +1996,10 @@
     "fnum": 1.8,
     "fov_deg": 45.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "US-20260140349-A1-e4",
-    "seed_native_efl_mm": 5.5559,
-    "delta_efl_pct": -10.0058,
-    "band": "5to15"
+    "seed_case_id": "US-12282142-B2-e3",
+    "seed_native_efl_mm": 5.1962,
+    "delta_efl_pct": -3.7759,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1351,6 +2033,17 @@
     "seed_native_efl_mm": 5.0427,
     "delta_efl_pct": -0.846,
     "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 2.9,
+    "fov_deg": 15.0,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-20210389572-A1-e1",
+    "seed_native_efl_mm": 5.872,
+    "delta_efl_pct": -14.8506,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1379,6 +2072,28 @@
     "efl_mm": 5.0,
     "fnum": 2.9,
     "fov_deg": 22.5,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-20210389572-A1-e1",
+    "seed_native_efl_mm": 5.872,
+    "delta_efl_pct": -14.8506,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 2.9,
+    "fov_deg": 22.5,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-20210364765-A1-e3",
+    "seed_native_efl_mm": 5.8525,
+    "delta_efl_pct": -14.5668,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 2.9,
+    "fov_deg": 22.5,
     "image_height_mm": 8.0,
     "seed_case_id": "US-11933948-B2-e6",
     "seed_native_efl_mm": 5.0427,
@@ -1402,9 +2117,9 @@
     "fnum": 2.9,
     "fov_deg": 30.0,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-12282142-B2-e3",
-    "seed_native_efl_mm": 5.1962,
-    "delta_efl_pct": -3.7759,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
     "band": "lt5"
   },
   {
@@ -1435,10 +2150,10 @@
     "fnum": 2.9,
     "fov_deg": 37.5,
     "image_height_mm": 2.5,
-    "seed_case_id": "US-20260140349-A1-e4",
-    "seed_native_efl_mm": 5.5559,
-    "delta_efl_pct": -10.0058,
-    "band": "5to15"
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1446,9 +2161,9 @@
     "fnum": 2.9,
     "fov_deg": 37.5,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-12210142-B2-e5",
-    "seed_native_efl_mm": 5.1006,
-    "delta_efl_pct": -1.9723,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
     "band": "lt5"
   },
   {
@@ -1479,10 +2194,10 @@
     "fnum": 2.9,
     "fov_deg": 45.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "US-20260140349-A1-e4",
-    "seed_native_efl_mm": 5.5559,
-    "delta_efl_pct": -10.0058,
-    "band": "5to15"
+    "seed_case_id": "US-12282142-B2-e3",
+    "seed_native_efl_mm": 5.1962,
+    "delta_efl_pct": -3.7759,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1516,6 +2231,17 @@
     "seed_native_efl_mm": 5.0427,
     "delta_efl_pct": -0.846,
     "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 15.0,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-20210389572-A1-e1",
+    "seed_native_efl_mm": 5.872,
+    "delta_efl_pct": -14.8506,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1544,6 +2270,28 @@
     "efl_mm": 5.0,
     "fnum": 4.0,
     "fov_deg": 22.5,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-20210389572-A1-e1",
+    "seed_native_efl_mm": 5.872,
+    "delta_efl_pct": -14.8506,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 22.5,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-20210364765-A1-e3",
+    "seed_native_efl_mm": 5.8525,
+    "delta_efl_pct": -14.5668,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 22.5,
     "image_height_mm": 8.0,
     "seed_case_id": "US-11933948-B2-e6",
     "seed_native_efl_mm": 5.0427,
@@ -1567,6 +2315,83 @@
     "fnum": 4.0,
     "fov_deg": 30.0,
     "image_height_mm": 4.3333,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 30.0,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 30.0,
+    "image_height_mm": 8.0,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 37.5,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 37.5,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 37.5,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 37.5,
+    "image_height_mm": 8.0,
+    "seed_case_id": "US-11933948-B2-e6",
+    "seed_native_efl_mm": 5.0427,
+    "delta_efl_pct": -0.846,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 5.0,
+    "fnum": 4.0,
+    "fov_deg": 45.0,
+    "image_height_mm": 2.5,
     "seed_case_id": "US-12282142-B2-e3",
     "seed_native_efl_mm": 5.1962,
     "delta_efl_pct": -3.7759,
@@ -1576,83 +2401,6 @@
     "scenario": "smartphone-telephoto",
     "efl_mm": 5.0,
     "fnum": 4.0,
-    "fov_deg": 30.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-11933948-B2-e6",
-    "seed_native_efl_mm": 5.0427,
-    "delta_efl_pct": -0.846,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 5.0,
-    "fnum": 4.0,
-    "fov_deg": 30.0,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-11933948-B2-e6",
-    "seed_native_efl_mm": 5.0427,
-    "delta_efl_pct": -0.846,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 5.0,
-    "fnum": 4.0,
-    "fov_deg": 37.5,
-    "image_height_mm": 2.5,
-    "seed_case_id": "US-20260140349-A1-e4",
-    "seed_native_efl_mm": 5.5559,
-    "delta_efl_pct": -10.0058,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 5.0,
-    "fnum": 4.0,
-    "fov_deg": 37.5,
-    "image_height_mm": 4.3333,
-    "seed_case_id": "US-12210142-B2-e5",
-    "seed_native_efl_mm": 5.1006,
-    "delta_efl_pct": -1.9723,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 5.0,
-    "fnum": 4.0,
-    "fov_deg": 37.5,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-11933948-B2-e6",
-    "seed_native_efl_mm": 5.0427,
-    "delta_efl_pct": -0.846,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 5.0,
-    "fnum": 4.0,
-    "fov_deg": 37.5,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-11933948-B2-e6",
-    "seed_native_efl_mm": 5.0427,
-    "delta_efl_pct": -0.846,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 5.0,
-    "fnum": 4.0,
-    "fov_deg": 45.0,
-    "image_height_mm": 2.5,
-    "seed_case_id": "US-20260140349-A1-e4",
-    "seed_native_efl_mm": 5.5559,
-    "delta_efl_pct": -10.0058,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 5.0,
-    "fnum": 4.0,
     "fov_deg": 45.0,
     "image_height_mm": 4.3333,
     "seed_case_id": "US-12210142-B2-e5",
@@ -1686,6 +2434,61 @@
     "scenario": "smartphone-telephoto",
     "efl_mm": 8.25,
     "fnum": 1.8,
+    "fov_deg": 15.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 15.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 15.0,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 15.0,
+    "image_height_mm": 8.0,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 22.5,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
     "fov_deg": 22.5,
     "image_height_mm": 6.1667,
     "seed_case_id": "US-12416792-B2-e12",
@@ -1699,6 +2502,28 @@
     "fnum": 1.8,
     "fov_deg": 22.5,
     "image_height_mm": 8.0,
+    "seed_case_id": "US-12416792-B2-e12",
+    "seed_native_efl_mm": 8.5736,
+    "delta_efl_pct": -3.7748,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 30.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12416792-B2-e12",
+    "seed_native_efl_mm": 8.5736,
+    "delta_efl_pct": -3.7748,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 30.0,
+    "image_height_mm": 4.3333,
     "seed_case_id": "US-12416792-B2-e12",
     "seed_native_efl_mm": 8.5736,
     "delta_efl_pct": -3.7748,
@@ -1732,9 +2557,9 @@
     "fnum": 1.8,
     "fov_deg": 37.5,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1743,9 +2568,31 @@
     "fnum": 1.8,
     "fov_deg": 37.5,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 45.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 1.8,
+    "fov_deg": 45.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1754,9 +2601,9 @@
     "fnum": 1.8,
     "fov_deg": 45.0,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1765,10 +2612,65 @@
     "fnum": 1.8,
     "fov_deg": 45.0,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 15.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 15.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 15.0,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 15.0,
+    "image_height_mm": 8.0,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 22.5,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1787,6 +2689,28 @@
     "fnum": 2.9,
     "fov_deg": 22.5,
     "image_height_mm": 8.0,
+    "seed_case_id": "US-12416792-B2-e12",
+    "seed_native_efl_mm": 8.5736,
+    "delta_efl_pct": -3.7748,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 30.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12416792-B2-e12",
+    "seed_native_efl_mm": 8.5736,
+    "delta_efl_pct": -3.7748,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 30.0,
+    "image_height_mm": 4.3333,
     "seed_case_id": "US-12416792-B2-e12",
     "seed_native_efl_mm": 8.5736,
     "delta_efl_pct": -3.7748,
@@ -1820,9 +2744,9 @@
     "fnum": 2.9,
     "fov_deg": 37.5,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1831,9 +2755,31 @@
     "fnum": 2.9,
     "fov_deg": 37.5,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 45.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 2.9,
+    "fov_deg": 45.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1842,9 +2788,9 @@
     "fnum": 2.9,
     "fov_deg": 45.0,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1853,10 +2799,65 @@
     "fnum": 2.9,
     "fov_deg": 45.0,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 15.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 15.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 15.0,
+    "image_height_mm": 6.1667,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 15.0,
+    "image_height_mm": 8.0,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 22.5,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12372756-B2-e3",
+    "seed_native_efl_mm": 9.6718,
+    "delta_efl_pct": -14.7002,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1875,6 +2876,28 @@
     "fnum": 4.0,
     "fov_deg": 22.5,
     "image_height_mm": 8.0,
+    "seed_case_id": "US-12416792-B2-e12",
+    "seed_native_efl_mm": 8.5736,
+    "delta_efl_pct": -3.7748,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 30.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12416792-B2-e12",
+    "seed_native_efl_mm": 8.5736,
+    "delta_efl_pct": -3.7748,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 30.0,
+    "image_height_mm": 4.3333,
     "seed_case_id": "US-12416792-B2-e12",
     "seed_native_efl_mm": 8.5736,
     "delta_efl_pct": -3.7748,
@@ -1908,9 +2931,9 @@
     "fnum": 4.0,
     "fov_deg": 37.5,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1919,9 +2942,31 @@
     "fnum": 4.0,
     "fov_deg": 37.5,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 45.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 8.25,
+    "fnum": 4.0,
+    "fov_deg": 45.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1930,9 +2975,9 @@
     "fnum": 4.0,
     "fov_deg": 45.0,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
     "band": "lt5"
   },
   {
@@ -1941,9 +2986,20 @@
     "fnum": 4.0,
     "fov_deg": 45.0,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-12416792-B2-e12",
-    "seed_native_efl_mm": 8.5736,
-    "delta_efl_pct": -3.7748,
+    "seed_case_id": "US-11719917-B2-e3",
+    "seed_native_efl_mm": 8.482,
+    "delta_efl_pct": -2.735,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 11.5,
+    "fnum": 1.8,
+    "fov_deg": 15.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
     "band": "lt5"
   },
   {
@@ -1952,10 +3008,10 @@
     "fnum": 1.8,
     "fov_deg": 15.0,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-20260160979-A1-e1",
-    "seed_native_efl_mm": 12.9842,
-    "delta_efl_pct": -11.4306,
-    "band": "5to15"
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1963,10 +3019,21 @@
     "fnum": 1.8,
     "fov_deg": 15.0,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e1",
-    "seed_native_efl_mm": 12.9842,
-    "delta_efl_pct": -11.4306,
-    "band": "5to15"
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 11.5,
+    "fnum": 2.9,
+    "fov_deg": 15.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1974,10 +3041,10 @@
     "fnum": 2.9,
     "fov_deg": 15.0,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-20260160979-A1-e1",
-    "seed_native_efl_mm": 12.9842,
-    "delta_efl_pct": -11.4306,
-    "band": "5to15"
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1985,10 +3052,21 @@
     "fnum": 2.9,
     "fov_deg": 15.0,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e1",
-    "seed_native_efl_mm": 12.9842,
-    "delta_efl_pct": -11.4306,
-    "band": "5to15"
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-telephoto",
+    "efl_mm": 11.5,
+    "fnum": 4.0,
+    "fov_deg": 15.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -1996,10 +3074,10 @@
     "fnum": 4.0,
     "fov_deg": 15.0,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-20260160979-A1-e1",
-    "seed_native_efl_mm": 12.9842,
-    "delta_efl_pct": -11.4306,
-    "band": "5to15"
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -2007,10 +3085,10 @@
     "fnum": 4.0,
     "fov_deg": 15.0,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e1",
-    "seed_native_efl_mm": 12.9842,
-    "delta_efl_pct": -11.4306,
-    "band": "5to15"
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -2018,31 +3096,9 @@
     "fnum": 4.0,
     "fov_deg": 15.0,
     "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e1",
-    "seed_native_efl_mm": 12.9842,
-    "delta_efl_pct": -11.4306,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 1.8,
-    "fov_deg": 15.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e7",
-    "seed_native_efl_mm": 14.8783,
-    "delta_efl_pct": -0.8624,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 1.8,
-    "fov_deg": 15.0,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e7",
-    "seed_native_efl_mm": 14.8783,
-    "delta_efl_pct": -0.8624,
+    "seed_case_id": "US-20210364737-A1-e8",
+    "seed_native_efl_mm": 12.0116,
+    "delta_efl_pct": -4.2596,
     "band": "lt5"
   },
   {
@@ -2051,50 +3107,6 @@
     "fnum": 1.8,
     "fov_deg": 22.5,
     "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e7",
-    "seed_native_efl_mm": 14.8783,
-    "delta_efl_pct": -0.8624,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 1.8,
-    "fov_deg": 22.5,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-12436366-B2-e7",
-    "seed_native_efl_mm": 15.8042,
-    "delta_efl_pct": -6.6706,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 1.8,
-    "fov_deg": 30.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-12436366-B2-e7",
-    "seed_native_efl_mm": 15.8042,
-    "delta_efl_pct": -6.6706,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 2.9,
-    "fov_deg": 15.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e7",
-    "seed_native_efl_mm": 14.8783,
-    "delta_efl_pct": -0.8624,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 2.9,
-    "fov_deg": 15.0,
-    "image_height_mm": 8.0,
     "seed_case_id": "US-20260160979-A1-e7",
     "seed_native_efl_mm": 14.8783,
     "delta_efl_pct": -0.8624,
@@ -2114,50 +3126,6 @@
   {
     "scenario": "smartphone-telephoto",
     "efl_mm": 14.75,
-    "fnum": 2.9,
-    "fov_deg": 22.5,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-12436366-B2-e7",
-    "seed_native_efl_mm": 15.8042,
-    "delta_efl_pct": -6.6706,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 2.9,
-    "fov_deg": 30.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-12436366-B2-e7",
-    "seed_native_efl_mm": 15.8042,
-    "delta_efl_pct": -6.6706,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 4.0,
-    "fov_deg": 15.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e7",
-    "seed_native_efl_mm": 14.8783,
-    "delta_efl_pct": -0.8624,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 4.0,
-    "fov_deg": 15.0,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e7",
-    "seed_native_efl_mm": 14.8783,
-    "delta_efl_pct": -0.8624,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
     "fnum": 4.0,
     "fov_deg": 22.5,
     "image_height_mm": 6.1667,
@@ -2165,28 +3133,6 @@
     "seed_native_efl_mm": 14.8783,
     "delta_efl_pct": -0.8624,
     "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 4.0,
-    "fov_deg": 22.5,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-12436366-B2-e7",
-    "seed_native_efl_mm": 15.8042,
-    "delta_efl_pct": -6.6706,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-telephoto",
-    "efl_mm": 14.75,
-    "fnum": 4.0,
-    "fov_deg": 30.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-12436366-B2-e7",
-    "seed_native_efl_mm": 15.8042,
-    "delta_efl_pct": -6.6706,
-    "band": "5to15"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -2203,34 +3149,34 @@
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 1.8,
-    "fov_deg": 15.0,
+    "fov_deg": 22.5,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 1.8,
-    "fov_deg": 15.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "fov_deg": 30.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 1.8,
-    "fov_deg": 15.0,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "fov_deg": 30.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -2247,34 +3193,34 @@
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 2.9,
-    "fov_deg": 15.0,
+    "fov_deg": 22.5,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 2.9,
-    "fov_deg": 15.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "fov_deg": 30.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 2.9,
-    "fov_deg": 15.0,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "fov_deg": 30.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
@@ -2291,52 +3237,74 @@
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 4.0,
-    "fov_deg": 15.0,
+    "fov_deg": 22.5,
     "image_height_mm": 4.3333,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 4.0,
-    "fov_deg": 15.0,
-    "image_height_mm": 6.1667,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "fov_deg": 30.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-telephoto",
     "efl_mm": 18.0,
     "fnum": 4.0,
-    "fov_deg": 15.0,
-    "image_height_mm": 8.0,
-    "seed_case_id": "US-20260160979-A1-e8",
-    "seed_native_efl_mm": 19.8403,
-    "delta_efl_pct": -9.2756,
-    "band": "5to15"
+    "fov_deg": 30.0,
+    "image_height_mm": 4.3333,
+    "seed_case_id": "US-12443014-B2-e4",
+    "seed_native_efl_mm": 18.7456,
+    "delta_efl_pct": -3.9775,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 2.3,
     "fnum": 1.8,
-    "fov_deg": 85.0,
+    "fov_deg": 90.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -6.6758,
-    "band": "5to15"
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 2.3,
     "fnum": 1.8,
     "fov_deg": 90.0,
-    "image_height_mm": 2.5,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 1.8,
+    "fov_deg": 90.0,
+    "image_height_mm": 3.6333,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 1.8,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.2,
     "seed_case_id": "US-20260126622-A1-e5",
     "seed_native_efl_mm": 2.3011,
     "delta_efl_pct": -0.0461,
@@ -2370,9 +3338,20 @@
     "fnum": 1.8,
     "fov_deg": 95.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US-20230288669-A1-e4",
-    "seed_native_efl_mm": 2.4006,
-    "delta_efl_pct": -4.1907,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 1.8,
+    "fov_deg": 95.0,
+    "image_height_mm": 4.2,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
     "band": "lt5"
   },
   {
@@ -2414,9 +3393,9 @@
     "fnum": 1.8,
     "fov_deg": 100.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US10330891B2",
-    "seed_native_efl_mm": 2.4164,
-    "delta_efl_pct": -4.8156,
+    "seed_case_id": "US20210165194A1",
+    "seed_native_efl_mm": 2.4086,
+    "delta_efl_pct": -4.5087,
     "band": "lt5"
   },
   {
@@ -2467,19 +3446,41 @@
     "scenario": "smartphone-ultrawide",
     "efl_mm": 2.3,
     "fnum": 2.1,
-    "fov_deg": 85.0,
+    "fov_deg": 90.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -6.6758,
-    "band": "5to15"
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 2.3,
     "fnum": 2.1,
     "fov_deg": 90.0,
-    "image_height_mm": 2.5,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 2.1,
+    "fov_deg": 90.0,
+    "image_height_mm": 3.6333,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 2.1,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.2,
     "seed_case_id": "US-20260126622-A1-e5",
     "seed_native_efl_mm": 2.3011,
     "delta_efl_pct": -0.0461,
@@ -2513,9 +3514,20 @@
     "fnum": 2.1,
     "fov_deg": 95.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US-20230288669-A1-e4",
-    "seed_native_efl_mm": 2.4006,
-    "delta_efl_pct": -4.1907,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 2.1,
+    "fov_deg": 95.0,
+    "image_height_mm": 4.2,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
     "band": "lt5"
   },
   {
@@ -2557,9 +3569,9 @@
     "fnum": 2.1,
     "fov_deg": 100.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US10330891B2",
-    "seed_native_efl_mm": 2.4164,
-    "delta_efl_pct": -4.8156,
+    "seed_case_id": "US20210165194A1",
+    "seed_native_efl_mm": 2.4086,
+    "delta_efl_pct": -4.5087,
     "band": "lt5"
   },
   {
@@ -2610,19 +3622,41 @@
     "scenario": "smartphone-ultrawide",
     "efl_mm": 2.3,
     "fnum": 2.4,
-    "fov_deg": 85.0,
+    "fov_deg": 90.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "4P_F2.0_FOV84.1_EFL2.5_IMH2.3_TTL3.34",
-    "seed_native_efl_mm": 2.4645,
-    "delta_efl_pct": -6.6758,
-    "band": "5to15"
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 2.3,
     "fnum": 2.4,
     "fov_deg": 90.0,
-    "image_height_mm": 2.5,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 2.4,
+    "fov_deg": 90.0,
+    "image_height_mm": 3.6333,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 2.4,
+    "fov_deg": 90.0,
+    "image_height_mm": 4.2,
     "seed_case_id": "US-20260126622-A1-e5",
     "seed_native_efl_mm": 2.3011,
     "delta_efl_pct": -0.0461,
@@ -2656,9 +3690,20 @@
     "fnum": 2.4,
     "fov_deg": 95.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US-20230288669-A1-e4",
-    "seed_native_efl_mm": 2.4006,
-    "delta_efl_pct": -4.1907,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.3,
+    "fnum": 2.4,
+    "fov_deg": 95.0,
+    "image_height_mm": 4.2,
+    "seed_case_id": "US-20260126622-A1-e5",
+    "seed_native_efl_mm": 2.3011,
+    "delta_efl_pct": -0.0461,
     "band": "lt5"
   },
   {
@@ -2700,9 +3745,9 @@
     "fnum": 2.4,
     "fov_deg": 100.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US10330891B2",
-    "seed_native_efl_mm": 2.4164,
-    "delta_efl_pct": -4.8156,
+    "seed_case_id": "US20210165194A1",
+    "seed_native_efl_mm": 2.4086,
+    "delta_efl_pct": -4.5087,
     "band": "lt5"
   },
   {
@@ -2766,9 +3811,9 @@
     "fnum": 1.8,
     "fov_deg": 85.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
+    "seed_case_id": "US-20260126622-A1-e3",
+    "seed_native_efl_mm": 2.8071,
+    "delta_efl_pct": -2.0351,
     "band": "lt5"
   },
   {
@@ -2777,9 +3822,20 @@
     "fnum": 1.8,
     "fov_deg": 85.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US-11668898-B2-e5",
-    "seed_native_efl_mm": 3.1698,
-    "delta_efl_pct": -13.2428,
+    "seed_case_id": "US-20260126622-A1-e3",
+    "seed_native_efl_mm": 2.8071,
+    "delta_efl_pct": -2.0351,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.75,
+    "fnum": 1.8,
+    "fov_deg": 85.0,
+    "image_height_mm": 4.2,
+    "seed_case_id": "US-12174456-B2-e4",
+    "seed_native_efl_mm": 3.0783,
+    "delta_efl_pct": -10.6646,
     "band": "5to15"
   },
   {
@@ -2810,10 +3866,10 @@
     "fnum": 1.8,
     "fov_deg": 90.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US9239447B1",
-    "seed_native_efl_mm": 3.0347,
-    "delta_efl_pct": -9.3805,
-    "band": "5to15"
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -2821,10 +3877,10 @@
     "fnum": 1.8,
     "fov_deg": 90.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -2865,64 +3921,31 @@
     "fnum": 1.8,
     "fov_deg": 95.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 1.8,
-    "fov_deg": 100.0,
-    "image_height_mm": 2.5,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 1.8,
-    "fov_deg": 100.0,
-    "image_height_mm": 3.0667,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 1.8,
-    "fov_deg": 100.0,
-    "image_height_mm": 3.6333,
-    "seed_case_id": "US9239447B1",
-    "seed_native_efl_mm": 3.0347,
-    "delta_efl_pct": -9.3805,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 1.8,
-    "fov_deg": 100.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 1.8,
-    "fov_deg": 105.0,
-    "image_height_mm": 3.0667,
     "seed_case_id": "US-11668898-B2-e6",
     "seed_native_efl_mm": 2.8357,
     "delta_efl_pct": -3.0215,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.75,
+    "fnum": 1.8,
+    "fov_deg": 100.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.75,
+    "fnum": 1.8,
+    "fov_deg": 100.0,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
     "band": "lt5"
   },
   {
@@ -2942,9 +3965,9 @@
     "fnum": 2.1,
     "fov_deg": 85.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
+    "seed_case_id": "US-20260126622-A1-e3",
+    "seed_native_efl_mm": 2.8071,
+    "delta_efl_pct": -2.0351,
     "band": "lt5"
   },
   {
@@ -2953,9 +3976,20 @@
     "fnum": 2.1,
     "fov_deg": 85.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US-11668898-B2-e5",
-    "seed_native_efl_mm": 3.1698,
-    "delta_efl_pct": -13.2428,
+    "seed_case_id": "US-20260126622-A1-e3",
+    "seed_native_efl_mm": 2.8071,
+    "delta_efl_pct": -2.0351,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.75,
+    "fnum": 2.1,
+    "fov_deg": 85.0,
+    "image_height_mm": 4.2,
+    "seed_case_id": "US-12174456-B2-e4",
+    "seed_native_efl_mm": 3.0783,
+    "delta_efl_pct": -10.6646,
     "band": "5to15"
   },
   {
@@ -2986,10 +4020,10 @@
     "fnum": 2.1,
     "fov_deg": 90.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US9239447B1",
-    "seed_native_efl_mm": 3.0347,
-    "delta_efl_pct": -9.3805,
-    "band": "5to15"
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -2997,10 +4031,10 @@
     "fnum": 2.1,
     "fov_deg": 90.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3041,64 +4075,31 @@
     "fnum": 2.1,
     "fov_deg": 95.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.1,
-    "fov_deg": 100.0,
-    "image_height_mm": 2.5,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.1,
-    "fov_deg": 100.0,
-    "image_height_mm": 3.0667,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.1,
-    "fov_deg": 100.0,
-    "image_height_mm": 3.6333,
-    "seed_case_id": "US9239447B1",
-    "seed_native_efl_mm": 3.0347,
-    "delta_efl_pct": -9.3805,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.1,
-    "fov_deg": 100.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.1,
-    "fov_deg": 105.0,
-    "image_height_mm": 3.0667,
     "seed_case_id": "US-11668898-B2-e6",
     "seed_native_efl_mm": 2.8357,
     "delta_efl_pct": -3.0215,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.75,
+    "fnum": 2.1,
+    "fov_deg": 100.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.75,
+    "fnum": 2.1,
+    "fov_deg": 100.0,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
     "band": "lt5"
   },
   {
@@ -3118,9 +4119,9 @@
     "fnum": 2.4,
     "fov_deg": 85.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
+    "seed_case_id": "US-20260126622-A1-e3",
+    "seed_native_efl_mm": 2.8071,
+    "delta_efl_pct": -2.0351,
     "band": "lt5"
   },
   {
@@ -3129,9 +4130,20 @@
     "fnum": 2.4,
     "fov_deg": 85.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US-11668898-B2-e5",
-    "seed_native_efl_mm": 3.1698,
-    "delta_efl_pct": -13.2428,
+    "seed_case_id": "US-20260126622-A1-e3",
+    "seed_native_efl_mm": 2.8071,
+    "delta_efl_pct": -2.0351,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 2.75,
+    "fnum": 2.4,
+    "fov_deg": 85.0,
+    "image_height_mm": 4.2,
+    "seed_case_id": "US-12174456-B2-e4",
+    "seed_native_efl_mm": 3.0783,
+    "delta_efl_pct": -10.6646,
     "band": "5to15"
   },
   {
@@ -3162,10 +4174,10 @@
     "fnum": 2.4,
     "fov_deg": 90.0,
     "image_height_mm": 3.6333,
-    "seed_case_id": "US9239447B1",
-    "seed_native_efl_mm": 3.0347,
-    "delta_efl_pct": -9.3805,
-    "band": "5to15"
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3173,10 +4185,10 @@
     "fnum": 2.4,
     "fov_deg": 90.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3217,61 +4229,6 @@
     "fnum": 2.4,
     "fov_deg": 95.0,
     "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.4,
-    "fov_deg": 100.0,
-    "image_height_mm": 2.5,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.4,
-    "fov_deg": 100.0,
-    "image_height_mm": 3.0667,
-    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
-    "seed_native_efl_mm": 2.812,
-    "delta_efl_pct": -2.2038,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.4,
-    "fov_deg": 100.0,
-    "image_height_mm": 3.6333,
-    "seed_case_id": "US9239447B1",
-    "seed_native_efl_mm": 3.0347,
-    "delta_efl_pct": -9.3805,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.4,
-    "fov_deg": 100.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US20180143405A1",
-    "seed_native_efl_mm": 3.073,
-    "delta_efl_pct": -10.5117,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 2.75,
-    "fnum": 2.4,
-    "fov_deg": 105.0,
-    "image_height_mm": 3.0667,
     "seed_case_id": "US-11668898-B2-e6",
     "seed_native_efl_mm": 2.8357,
     "delta_efl_pct": -3.0215,
@@ -3279,25 +4236,25 @@
   },
   {
     "scenario": "smartphone-ultrawide",
-    "efl_mm": 3.2,
-    "fnum": 1.8,
-    "fov_deg": 85.0,
+    "efl_mm": 2.75,
+    "fnum": 2.4,
+    "fov_deg": 100.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "US9651759B2",
-    "seed_native_efl_mm": 3.2767,
-    "delta_efl_pct": -2.3415,
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
     "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
-    "efl_mm": 3.2,
-    "fnum": 1.8,
-    "fov_deg": 85.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US20170003482A1",
-    "seed_native_efl_mm": 3.6213,
-    "delta_efl_pct": -11.6328,
-    "band": "5to15"
+    "efl_mm": 2.75,
+    "fnum": 2.4,
+    "fov_deg": 100.0,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "5P_F1.9_FOV89.5_EFL2.8_IMH2.9_TTL4.29",
+    "seed_native_efl_mm": 2.812,
+    "delta_efl_pct": -2.2038,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3347,28 +4304,6 @@
     "scenario": "smartphone-ultrawide",
     "efl_mm": 3.2,
     "fnum": 2.1,
-    "fov_deg": 85.0,
-    "image_height_mm": 2.5,
-    "seed_case_id": "US9201216B2",
-    "seed_native_efl_mm": 3.2673,
-    "delta_efl_pct": -2.061,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 3.2,
-    "fnum": 2.1,
-    "fov_deg": 85.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US20170003482A1",
-    "seed_native_efl_mm": 3.6213,
-    "delta_efl_pct": -11.6328,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 3.2,
-    "fnum": 2.1,
     "fov_deg": 100.0,
     "image_height_mm": 4.2,
     "seed_case_id": "US-12210213-B2-e3",
@@ -3397,28 +4332,6 @@
     "seed_native_efl_mm": 3.255,
     "delta_efl_pct": -1.6911,
     "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 3.2,
-    "fnum": 2.4,
-    "fov_deg": 85.0,
-    "image_height_mm": 2.5,
-    "seed_case_id": "US9201216B2",
-    "seed_native_efl_mm": 3.2673,
-    "delta_efl_pct": -2.061,
-    "band": "lt5"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 3.2,
-    "fnum": 2.4,
-    "fov_deg": 85.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US20170003482A1",
-    "seed_native_efl_mm": 3.6213,
-    "delta_efl_pct": -11.6328,
-    "band": "5to15"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3469,6 +4382,28 @@
     "efl_mm": 3.65,
     "fnum": 1.8,
     "fov_deg": 100.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 3.65,
+    "fnum": 1.8,
+    "fov_deg": 100.0,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 3.65,
+    "fnum": 1.8,
+    "fov_deg": 100.0,
     "image_height_mm": 3.6333,
     "seed_case_id": "US-12210213-B2-e4",
     "seed_native_efl_mm": 3.6549,
@@ -3492,10 +4427,10 @@
     "fnum": 1.8,
     "fov_deg": 105.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "US-20250155701-A1-e5",
-    "seed_native_efl_mm": 4.0651,
-    "delta_efl_pct": -10.2117,
-    "band": "5to15"
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3503,10 +4438,10 @@
     "fnum": 1.8,
     "fov_deg": 105.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "US-12210213-B2-e1",
-    "seed_native_efl_mm": 3.9579,
-    "delta_efl_pct": -7.7803,
-    "band": "5to15"
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3546,6 +4481,28 @@
     "efl_mm": 3.65,
     "fnum": 2.1,
     "fov_deg": 100.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 3.65,
+    "fnum": 2.1,
+    "fov_deg": 100.0,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 3.65,
+    "fnum": 2.1,
+    "fov_deg": 100.0,
     "image_height_mm": 3.6333,
     "seed_case_id": "US-12210213-B2-e4",
     "seed_native_efl_mm": 3.6549,
@@ -3569,10 +4526,10 @@
     "fnum": 2.1,
     "fov_deg": 105.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "US-20250155701-A1-e5",
-    "seed_native_efl_mm": 4.0651,
-    "delta_efl_pct": -10.2117,
-    "band": "5to15"
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3580,10 +4537,10 @@
     "fnum": 2.1,
     "fov_deg": 105.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "US-12210213-B2-e1",
-    "seed_native_efl_mm": 3.9579,
-    "delta_efl_pct": -7.7803,
-    "band": "5to15"
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3623,6 +4580,28 @@
     "efl_mm": 3.65,
     "fnum": 2.4,
     "fov_deg": 100.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 3.65,
+    "fnum": 2.4,
+    "fov_deg": 100.0,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 3.65,
+    "fnum": 2.4,
+    "fov_deg": 100.0,
     "image_height_mm": 3.6333,
     "seed_case_id": "US-12210213-B2-e4",
     "seed_native_efl_mm": 3.6549,
@@ -3646,10 +4625,10 @@
     "fnum": 2.4,
     "fov_deg": 105.0,
     "image_height_mm": 2.5,
-    "seed_case_id": "US-20250155701-A1-e5",
-    "seed_native_efl_mm": 4.0651,
-    "delta_efl_pct": -10.2117,
-    "band": "5to15"
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3657,10 +4636,10 @@
     "fnum": 2.4,
     "fov_deg": 105.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "US-12210213-B2-e1",
-    "seed_native_efl_mm": 3.9579,
-    "delta_efl_pct": -7.7803,
-    "band": "5to15"
+    "seed_case_id": "US-12210213-B2-e4",
+    "seed_native_efl_mm": 3.6549,
+    "delta_efl_pct": -0.1333,
+    "band": "lt5"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3683,6 +4662,28 @@
     "seed_native_efl_mm": 3.6549,
     "delta_efl_pct": -0.1333,
     "band": "lt5"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 4.1,
+    "fnum": 1.8,
+    "fov_deg": 85.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -11.0635,
+    "band": "5to15"
+  },
+  {
+    "scenario": "smartphone-ultrawide",
+    "efl_mm": 4.1,
+    "fnum": 1.8,
+    "fov_deg": 85.0,
+    "image_height_mm": 3.0667,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -11.0635,
+    "band": "5to15"
   },
   {
     "scenario": "smartphone-ultrawide",
@@ -3698,34 +4699,23 @@
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 4.1,
-    "fnum": 1.8,
-    "fov_deg": 95.0,
-    "image_height_mm": 3.6333,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
+    "fnum": 2.1,
+    "fov_deg": 85.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -11.0635,
     "band": "5to15"
   },
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 4.1,
-    "fnum": 1.8,
-    "fov_deg": 100.0,
+    "fnum": 2.1,
+    "fov_deg": 85.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 4.1,
-    "fnum": 1.8,
-    "fov_deg": 100.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -11.0635,
     "band": "5to15"
   },
   {
@@ -3742,34 +4732,23 @@
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 4.1,
-    "fnum": 2.1,
-    "fov_deg": 95.0,
-    "image_height_mm": 3.6333,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
+    "fnum": 2.4,
+    "fov_deg": 85.0,
+    "image_height_mm": 2.5,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -11.0635,
     "band": "5to15"
   },
   {
     "scenario": "smartphone-ultrawide",
     "efl_mm": 4.1,
-    "fnum": 2.1,
-    "fov_deg": 100.0,
+    "fnum": 2.4,
+    "fov_deg": 85.0,
     "image_height_mm": 3.0667,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 4.1,
-    "fnum": 2.1,
-    "fov_deg": 100.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
+    "seed_case_id": "US-12105260-B2-e3",
+    "seed_native_efl_mm": 4.61,
+    "delta_efl_pct": -11.0635,
     "band": "5to15"
   },
   {
@@ -3781,39 +4760,6 @@
     "seed_case_id": "US-12105260-B2-e3",
     "seed_native_efl_mm": 4.61,
     "delta_efl_pct": -11.0635,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 4.1,
-    "fnum": 2.4,
-    "fov_deg": 95.0,
-    "image_height_mm": 3.6333,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 4.1,
-    "fnum": 2.4,
-    "fov_deg": 100.0,
-    "image_height_mm": 3.0667,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
-    "band": "5to15"
-  },
-  {
-    "scenario": "smartphone-ultrawide",
-    "efl_mm": 4.1,
-    "fnum": 2.4,
-    "fov_deg": 100.0,
-    "image_height_mm": 4.2,
-    "seed_case_id": "US-11846759-B2-e3",
-    "seed_native_efl_mm": 4.3715,
-    "delta_efl_pct": -6.2116,
     "band": "5to15"
   }
 ]
