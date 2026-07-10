@@ -145,3 +145,16 @@ def test_newmax_missing_inline_glass_indices_fails_closed() -> None:
     assert attempt.prescription is None
     assert isinstance(attempt.error, PatentParseError)
 
+
+
+def test_newmax_alphabetic_letters_beyond_f_are_ambiguous_and_fail_loud() -> None:
+    # US-10101561-B2 Equation 1 skips the letter F and names the h^14 term G,
+    # while its printed table uses positional A..F.  A table letter beyond F is
+    # therefore ambiguous between the two lettering schemes (positional
+    # G=h^16 vs equation G=h^14) and a nonzero value must not be mapped.
+    with pytest.raises(PatentParseError, match="ambiguous NEWMAX alphabetic coefficient"):
+        patent_to_zmx._newmax_codev_asphere_label("G", 1.0e-6, "3")
+
+
+def test_newmax_alphabetic_letters_beyond_f_with_zero_value_are_skipped() -> None:
+    assert patent_to_zmx._newmax_codev_asphere_label("G", 0.0, "3") is None

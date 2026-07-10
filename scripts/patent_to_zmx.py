@@ -530,8 +530,20 @@ def _newmax_codev_asphere_label(label: str, value: float, surface_label: str) ->
         return "K"
     # US-10101561-B2, Equation 1 (Google Patents, verbatim term sequence):
     # ``A h^4 + B h^6 + C h^8 + D h^10 + E h^12 + G h^14 + ...``.
-    # Thus alphabetic NEWMAX A/B/C/... are r^4/r^6/r^8/... monomials.
+    # The published coefficient table prints its sixth row as ``F`` while the
+    # equation names that h^14 term ``G`` (the letter F is skipped in the
+    # equation).  Table rows A..F therefore map positionally to h^4..h^14 --
+    # but any table letter beyond F is ambiguous between the two lettering
+    # schemes (positional G=h^16 vs equation G=h^14), so nonzero values there
+    # must fail loud rather than risk an order-shift (E1-01 incident class).
     if len(label) == 1 and "A" <= label <= "Z":
+        if label > "F":
+            if abs(value) > 0.0:
+                raise PatentParseError(
+                    "ambiguous NEWMAX alphabetic coefficient beyond F "
+                    f"(equation lettering skips F): surface {surface_label}:{label}={value:.3g}"
+                )
+            return None
         order = 4 + 2 * (ord(label) - ord("A"))
     else:
         order_match = re.fullmatch(r"A(\d+)", label)
