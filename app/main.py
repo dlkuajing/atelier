@@ -50,6 +50,7 @@ from app.core.optical_sample import (  # noqa: E402
     DesignAssessment,
     OpticalSampleData,
 )
+from app.core.orchestration import formatting  # noqa: E402
 from app.core.parameter_guards import (  # noqa: E402
     SCENARIO_BOUNDS,
     ParameterGuardError,
@@ -1441,6 +1442,32 @@ def _candidate_job_payload(
     }
 
 
+def _validate_finite_form_numbers_or_400(**fields: float | None) -> None:
+    """P17 对抗审 M1：拒绝任何非有限（inf/-inf/NaN）表单数值进入候选 job。
+
+    为什么需要在 pydantic 之外补一层：`Form(gt=0)` 对 `inf` 判真（inf > 0），
+    真机探针实证 `max_total_track_mm=inf` 曾拿到 303 直进 job payload /
+    `TargetSpec` / 页面 / xlsx。`NaN`/`-inf` 会被 `gt=0` 拦下（NaN 比较恒
+    False → 422），但依赖那个副作用不是契约——这里对全部被消费的数值字段
+    统一显式 `isfinite` 校验，非有限值以与 parameter_guards 相同的 400 +
+    violations 形状拒绝。`None`（可选字段未填）跳过。
+    """
+    violations = [
+        f"{name} must be a finite number, got {value}"
+        for name, value in fields.items()
+        if value is not None and not math.isfinite(value)
+    ]
+    if violations:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "non_finite_parameter",
+                "violations": violations,
+                "message": "; ".join(violations),
+            },
+        )
+
+
 def _validate_candidate_target_or_400(
     scenario: Scenario,
     *,
@@ -1535,14 +1562,11 @@ def _mode_label(mode: orchestration.GenerationMode) -> str:
     }[mode]
 
 
-def _fmt_metric(metric: orchestration.MetricValue, *, precision: int = 3) -> str:
-    if metric.status == "unavailable" or metric.value is None:
-        return "N/A"
-    return f"{metric.value:.{precision}f}"
-
-
-def _fmt_optional_target(value: float | None, *, precision: int = 3) -> str:
-    return "(unconstrained)" if value is None else f"{value:.{precision}f}"
+# P17 对抗审 M3：页面与 xlsx 导出共用 `orchestration.formatting` 的单一格式化
+# 器（含"非零小值不得显示为 0.000 假零"守卫）——本模块只保留同名薄别名，
+# 保证既有调用点零翻新；不得在此重新实现格式化逻辑（会重新引入口径分叉）。
+_fmt_metric = formatting.fmt_metric
+_fmt_optional_target = formatting.fmt_optional_target
 
 
 _CANDIDATE_IMAGE_QUALITY_ROWS: tuple[tuple[str, str], ...] = (
@@ -1608,11 +1632,11 @@ def _candidate_deviation_row(dev: orchestration.TargetDeviation) -> dict[str, ob
         "field": dev.field,
         "constraint_kind": dev.constraint_kind,
         "target": _fmt_optional_target(dev.target),
-        "achieved": f"{dev.achieved:.3f}",
-        "violation": f"{dev.violation:.3f}",
-        "rel_violation": "N/A" if dev.rel_violation is None else f"{dev.rel_violation:.1%}",
+        "achieved": formatting.fmt_float(dev.achieved),
+        "violation": formatting.fmt_float(dev.violation),
+        "rel_violation": formatting.fmt_rel_violation(dev.rel_violation),
         "converged": dev.converged_toward_target,
-        "converged_label": "Yes" if dev.converged_toward_target else "No",
+        "converged_label": formatting.fmt_yes_no(dev.converged_toward_target),
     }
 
 
@@ -1620,9 +1644,9 @@ def _candidate_manufacturability_context(
     mfg: orchestration.ManufacturabilityProxy,
 ) -> dict[str, object]:
     return {
-        "total_track_mm": f"{mfg.total_track_mm:.3f}",
+        "total_track_mm": formatting.fmt_float(mfg.total_track_mm),
         "n_pieces": mfg.n_pieces,
-        "has_special_glass": "Yes" if mfg.has_special_glass else "No",
+        "has_special_glass": formatting.fmt_yes_no(mfg.has_special_glass),
         "aspheric_term_count": _fmt_metric(mfg.aspheric_term_count, precision=0),
         "aspheric_surface_count": _fmt_metric(mfg.aspheric_surface_count, precision=0),
         "chief_ray_angle_deg": _fmt_metric(mfg.chief_ray_angle_deg),
@@ -1818,8 +1842,8 @@ def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, obje
         "repeatability": _candidate_repeatability_context(row.repeatability),
         "rank_status": rank.status,
         "rank_status_label": "Ranked" if rank.status == "ranked" else "Withheld",
-        "rank_score": f"{rank.score:.3f}" if rank.score is not None else None,
-        "rank_coverage_pct": f"{rank.coverage_pct:.0%}",
+        "rank_score": formatting.fmt_float(rank.score) if rank.score is not None else None,
+        "rank_coverage_pct": formatting.fmt_pct(rank.coverage_pct, precision=0),
         "rank_missing_metrics": ", ".join(rank.missing_metrics) or "(none)",
         "rank_explanation": row.rank_explanation,
     }
@@ -1839,7 +1863,7 @@ def _candidate_requirement_rows(target: orchestration.TargetSpec) -> list[dict[s
         {"label": "Scenario", "value": target.scenario.value},
         {"label": "EFL (mm)", "value": _fmt_optional_target(target.efl_mm)},
         {"label": "FOV (deg)", "value": _fmt_optional_target(target.fov_deg, precision=1)},
-        {"label": "F-number", "value": f"{target.fnum:.3f}"},
+        {"label": "F-number", "value": formatting.fmt_float(target.fnum)},
         {"label": "Image height (mm)", "value": _fmt_optional_target(target.image_height_mm)},
         {
             "label": "Max total track (mm)",
@@ -1847,7 +1871,7 @@ def _candidate_requirement_rows(target: orchestration.TargetSpec) -> list[dict[s
         },
         {
             "label": "Element count",
-            "value": "(unconstrained)" if target.n_elements is None else str(target.n_elements),
+            "value": formatting.fmt_optional_int(target.n_elements),
         },
         {"label": "Max weight (g)", "value": _fmt_optional_target(target.max_weight_g)},
         {"label": "Manufacturing tier", "value": target.manufacturing_tier or "(unspecified)"},
@@ -2164,6 +2188,13 @@ async def submit_candidate_job(
     # ceiling from the adjust-and-rerun form) — see `_candidate_job_payload` /
     # `_target_spec_from_candidate_payload`. The wizard form never sends it,
     # so it defaults `None` there (honest "no ceiling" gap, unchanged).
+    _validate_finite_form_numbers_or_400(
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        max_total_track_mm=max_total_track_mm,
+    )
     _validate_candidate_target_or_400(
         scenario,
         efl_mm=focal_length_mm,
@@ -2266,6 +2297,30 @@ def _safe_download_filename(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9._-]+", "_", value)
 
 
+#: P17 对抗审 MINOR：导出物在请求线程内整包内存构建、一次性 Response —— 给
+#: 产物加一个路由级大小闸，异常膨胀的 payload（今天 n=4 + 小 ZMX 远够不着，
+#: 但 job result 没有结构性上限）拒绝为 413 而不是悄悄吃掉演示机内存/带宽。
+_MAX_EXPORT_RESPONSE_BYTES = 50 * 1024 * 1024
+
+
+def _guard_export_size_or_413(content: bytes, *, artifact: str, job_id: str) -> None:
+    if len(content) > _MAX_EXPORT_RESPONSE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+            detail={
+                "error": "export_too_large",
+                "artifact": artifact,
+                "job_id": job_id,
+                "size_bytes": len(content),
+                "limit_bytes": _MAX_EXPORT_RESPONSE_BYTES,
+                "message": (
+                    f"{artifact} export is {len(content)} bytes, over the "
+                    f"{_MAX_EXPORT_RESPONSE_BYTES}-byte route limit"
+                ),
+            },
+        )
+
+
 @app.get("/candidates/{job_id}", response_class=HTMLResponse, tags=["web"])
 async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
     record = _load_succeeded_candidate_set_record(job_id)
@@ -2293,6 +2348,7 @@ async def candidate_set_export_xlsx(job_id: str) -> Response:
         job_id=job_id,
         requirement=str(requirement) if requirement not in {None, ""} else None,
     )
+    _guard_export_size_or_413(workbook_bytes, artifact="workbook", job_id=job_id)
     filename = _safe_download_filename(f"atelier-candidates-{job_id}.xlsx")
     return Response(
         content=workbook_bytes,
@@ -2319,6 +2375,7 @@ async def candidate_bundle_zip(job_id: str, candidate_id: str) -> Response:
             detail={"error": "candidate_not_found", "job_id": job_id, "candidate_id": candidate_id},
         )
     zip_bytes = orchestration.build_candidate_bundle_zip(scored, target=candidate_set.target)
+    _guard_export_size_or_413(zip_bytes, artifact="bundle", job_id=job_id)
     filename = _safe_download_filename(f"atelier-candidate-{candidate_id}.zip")
     return Response(
         content=zip_bytes,

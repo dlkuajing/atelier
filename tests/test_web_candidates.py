@@ -787,6 +787,62 @@ def test_candidate_submit_rejects_out_of_bounds_target_with_violations():
     assert "EFL 20.0mm out of" in html
 
 
+def _base_candidate_form(**overrides: object) -> dict[str, object]:
+    data: dict[str, object] = {
+        "scenario": "smartphone-wide",
+        "scenario_label_en": "Smartphone Wide",
+        "focal_length_mm": 3.8,
+        "f_number": 1.9,
+        "field_of_view_deg": 78.0,
+        "image_height_mm": 3.2,
+        "n_elements": 6,
+    }
+    data.update(overrides)
+    return data
+
+
+def test_candidate_submit_rejects_infinite_ttl_with_400_violation():
+    """P17 对抗审 M1（真机探针实锤的缺陷）：`Form(gt=0)` 对 inf 判真
+    （inf > 0），`max_total_track_mm=inf` 曾拿 303 直进 job payload /
+    TargetSpec / 页面 / xlsx。显式 isfinite 校验后必须 400 + violations
+    文案，且不产生 job。"""
+    with TestClient(app) as client:
+        response = client.post(
+            "/candidates",
+            data=_base_candidate_form(max_total_track_mm="inf"),
+            follow_redirects=False,
+        )
+    assert response.status_code == 400, response.text
+    assert "max_total_track_mm must be a finite number" in response.text
+
+
+def test_candidate_submit_rejects_infinite_efl_with_400():
+    """inf EFL：isfinite 校验先于 parameter_guards 拦下（统一 400 形状，
+    不依赖 bounds 比较对 inf 的偶然行为）。"""
+    with TestClient(app) as client:
+        response = client.post(
+            "/candidates",
+            data=_base_candidate_form(focal_length_mm="inf"),
+            follow_redirects=False,
+        )
+    assert response.status_code == 400, response.text
+    assert "focal_length_mm must be a finite number" in response.text
+
+
+def test_candidate_submit_rejects_nan_and_negative_inf_ttl():
+    """NaN / -inf 被 pydantic 的 `gt=0` 拦下（NaN 比较恒 False、-inf < 0
+    → 422 表单校验错误，经 web 错误页如实渲染）——钉住"任何非有限值都到
+    不了 job"这条线，无论上游哪一层先拦。"""
+    with TestClient(app) as client:
+        for bad in ("nan", "-inf"):
+            response = client.post(
+                "/candidates",
+                data=_base_candidate_form(max_total_track_mm=bad),
+                follow_redirects=False,
+            )
+            assert response.status_code == 422, (bad, response.text)
+
+
 def test_candidate_submit_accepts_omitted_wizard_only_fields(monkeypatch):
     """The adjust-and-rerun form never sends total_track_mm/airy_disc/cutoff
     (wizard-only derived estimates `/candidates` never reads) — the route
@@ -875,7 +931,7 @@ def test_candidate_set_export_xlsx_matches_page_values(monkeypatch):
     assert ids == {_RETRIEVED_ID, _TARGET_CONVERGED_ID}
     for row in candidates_rows[1:]:
         if row[candidate_id_idx] == _RETRIEVED_ID:
-            assert row[rank_score_idx] == 0.812  # same value the page shows as "score=0.812"
+            assert row[rank_score_idx] == "0.812"  # identical formatter string as page "score=0.812" (M3)
 
 
 def test_candidate_bundle_zip_download_for_known_candidate(monkeypatch):
@@ -915,6 +971,87 @@ def test_candidate_export_routes_404_for_unknown_job():
     with TestClient(app) as client, patch.object(optical, "job_store", store):
         assert client.get("/candidates/does-not-exist/export.xlsx").status_code == 404
         assert client.get("/candidates/does-not-exist/some-id/bundle.zip").status_code == 404
+
+
+def _tiny_ri_candidate_set() -> CandidateSet:
+    """Retrieval-only batch whose single candidate carries a nonzero
+    worst-field RI smaller than the 3-decimal display tick (0.0004) — the
+    exact fake-zero shape 对抗审 M3 called out."""
+    base = _retrieved_candidate()
+    tiny = MetricValue(value=0.0004, status="available")
+    candidate = base.model_copy(
+        update={
+            "scorecard": base.scorecard.model_copy(
+                update={
+                    "image_quality": base.scorecard.image_quality.model_copy(
+                        update={"relative_illumination": tiny}
+                    )
+                }
+            )
+        }
+    )
+    summary = CandidateSetSummary(
+        candidate_count=1,
+        mode_counts={GenerationMode.RETRIEVED: 1},
+        ranked_count=1,
+        withheld_count=0,
+        ri_missing_count=0,
+        notes=[],
+    )
+    return CandidateSet(target=_target_spec(), candidates=[candidate], summary=summary)
+
+
+def test_nonzero_tiny_ri_never_renders_as_zero_on_page_and_xlsx(monkeypatch):
+    """P17 对抗审 M3 假零钉死（页面模板 + xlsx 双侧）：非零小值两侧都必须
+    显示 `<0.001`，绝不显示 "0.000"——同一 payload 经同一格式化器。"""
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_tiny_ri_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        job_id = _submitted_candidate_set_job_id(client)
+        page = client.get(f"/candidates/{job_id}")
+        export = client.get(f"/candidates/{job_id}/export.xlsx")
+
+    assert page.status_code == 200, page.text
+    card = _candidate_card_html(page.text, _RETRIEVED_ID)
+    ri_row = re.search(
+        r"<tr>\s*<th scope=\"row\">Relative illumination[^<]*</th>\s*<td[^>]*>(.*?)</td>",
+        card,
+        re.S,
+    )
+    assert ri_row is not None
+    page_ri = ri_row.group(1).strip()
+    assert page_ri == "&lt;0.001"  # Jinja autoescapes '<'
+    assert "0.000" not in page_ri
+
+    wb = openpyxl.load_workbook(io.BytesIO(export.content))
+    rows = list(wb["Candidates"].iter_rows(values_only=True))
+    header, body = rows[0], rows[1]
+    ri_idx = header.index("Relative illumination (worst field)")
+    assert body[ri_idx] == "<0.001"  # identical formatter, un-escaped surface
+
+
+def test_candidate_export_over_size_limit_returns_413(monkeypatch):
+    """P17 对抗审 MINOR：导出物路由级大小闸——超限 413，不整包发出。"""
+    import app.main as main_module
+
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_retrieval_only_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+    monkeypatch.setattr(main_module, "_MAX_EXPORT_RESPONSE_BYTES", 16)
+
+    with TestClient(app) as client:
+        job_id = _submitted_candidate_set_job_id(client)
+        xlsx_response = client.get(f"/candidates/{job_id}/export.xlsx")
+        zip_response = client.get(f"/candidates/{job_id}/{_RETRIEVED_ID}/bundle.zip")
+
+    assert xlsx_response.status_code == 413, xlsx_response.text
+    assert zip_response.status_code == 413, zip_response.text
 
 
 # ---------------------------------------------------------------------------

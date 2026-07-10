@@ -36,6 +36,11 @@ from app.core.orchestration.candidate import (  # noqa: E402
     TargetDeviation,
     TargetSpec,
 )
+from app.core.orchestration.formatting import (  # noqa: E402
+    fmt_float,
+    fmt_metric,
+    fmt_rel_violation,
+)
 from app.core.orchestration.orchestrator import DEFAULT_N, orchestrate  # noqa: E402
 
 # ---------------------------------------------------------------------------
@@ -102,10 +107,10 @@ def _target_spec_from_requirement(req: dict[str, object]) -> TargetSpec:
 # ---------------------------------------------------------------------------
 
 
+# P17 对抗审 M3：MD 报告与页面/xlsx 共用 `orchestration.formatting` 的同一
+# 格式化器（含"非零小值不显示 0.000 假零"守卫）——薄别名，不得在此重新实现。
 def _fmt_metric(m: MetricValue, *, precision: int = 3) -> str:
-    if m.status == "unavailable" or m.value is None:
-        return "N/A"
-    return f"{m.value:.{precision}f}"
+    return fmt_metric(m, precision=precision)
 
 
 def _fmt_optional(value: float | int | None) -> str:
@@ -121,12 +126,12 @@ def _md_safe(value: str) -> str:
 
 
 def _fmt_deviation_row(dev: TargetDeviation) -> str:
-    target_str = "unconstrained" if dev.target is None else f"{dev.target:.3f}"
-    rel_str = "N/A" if dev.rel_violation is None else f"{dev.rel_violation:.1%}"
+    target_str = "unconstrained" if dev.target is None else fmt_float(dev.target)
+    rel_str = fmt_rel_violation(dev.rel_violation)
     converged_str = "是" if dev.converged_toward_target else "否"
     return (
-        f"| {dev.field} | {dev.constraint_kind} | {target_str} | {dev.achieved:.3f} "
-        f"| {dev.violation:.3f} | {rel_str} | {converged_str} |"
+        f"| {dev.field} | {dev.constraint_kind} | {target_str} | {fmt_float(dev.achieved)} "
+        f"| {fmt_float(dev.violation)} | {rel_str} | {converged_str} |"
     )
 
 

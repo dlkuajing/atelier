@@ -15,7 +15,6 @@ import io
 import zipfile
 
 import openpyxl
-import pytest
 
 from app.core.case_library import load_case_library
 from app.core.optical_sample import OpticalSampleData
@@ -256,8 +255,10 @@ def test_workbook_has_summary_and_candidates_sheets_with_same_source_values():
     rank_score_idx = header.index("rank_score")
     ids = {row[candidate_id_idx] for row in body}
     assert ids == {sc.scorecard.candidate_id for sc in candidate_set.candidates}
+    # P17 对抗审 M3：xlsx 单元格 = 页面同一格式化器产出的同一字符串
+    # （页面 rank 行显示 "score=0.812"），不再是原始 float。
     for row in body:
-        assert row[rank_score_idx] == pytest.approx(0.812)
+        assert row[rank_score_idx] == "0.812"
 
     # P17 sub-item 3: repeatability columns present, honest default state
     # (these fixtures never supply repeat samples -> unavailable/run_count=1,
@@ -267,6 +268,33 @@ def test_workbook_has_summary_and_candidates_sheets_with_same_source_values():
     for row in body:
         assert row[rc_idx] == 1
         assert row[rs_idx] == "unavailable"
+
+
+def test_workbook_nonzero_tiny_value_never_renders_as_zero():
+    """P17 对抗审 M3 假零钉死（xlsx 侧）：`0 < RI < 0.0005` 曾以原始 float
+    进 xlsx、页面显示 "0.000"——统一格式化器后，两侧都必须显示 "<0.001"，
+    绝不显示假零。"""
+    sc = _retrieved_candidate()
+    tiny_ri = MetricValue(value=0.0004, status="available")
+    sc = sc.model_copy(
+        update={
+            "scorecard": sc.scorecard.model_copy(
+                update={
+                    "image_quality": sc.scorecard.image_quality.model_copy(
+                        update={"relative_illumination": tiny_ri}
+                    )
+                }
+            )
+        }
+    )
+    candidate_set = _candidate_set(sc)
+    workbook_bytes = build_candidate_set_workbook(candidate_set, job_id="job-tz", requirement=None)
+    wb = openpyxl.load_workbook(io.BytesIO(workbook_bytes))
+    rows = list(wb["Candidates"].iter_rows(values_only=True))
+    header, body = rows[0], rows[1]
+    ri_idx = header.index("Relative illumination (worst field)")
+    assert body[ri_idx] == "<0.001"
+    assert body[ri_idx] != "0.000"
 
 
 def test_workbook_never_contains_pass_fail_verdict_wording():
@@ -382,12 +410,11 @@ def test_bundle_zip_reconstructs_mode3_reproduction_seq_when_provenance_complete
     assert "reproduction.seq: included" in readme
 
 
-def test_bundle_zip_seq_reconstruction_fails_closed_without_edge_used():
-    """Missing autovig provenance -> no vignetting profile can be
-    reconstructed, but the macro build itself should still succeed with
-    `vignetting=None` (native/no-clip path) rather than silently
-    fabricating a value — this test just pins that a missing/garbage
-    `autovig.edge_used` does not crash the export."""
+def test_bundle_zip_seq_fails_closed_without_edge_used():
+    """P17 对抗审 M2：`autovig.edge_used` 缺失 → 实际跑次的渐晕/裁瞳配置
+    不可重建，用 native/no-clip 猜测重建出的宏不是"复现"——必须 fail closed
+    不交付 .seq，README 写明缺的就是 edge_used。（本测试从此前"缺 edge 仍
+    交付"的旧行为翻转为钉住修复。）"""
     sc = _target_converged_candidate()
     sc = sc.model_copy(
         update={
@@ -402,7 +429,55 @@ def test_bundle_zip_seq_reconstruction_fails_closed_without_edge_used():
     )
     zip_bytes = build_candidate_bundle_zip(sc, target=_target_spec())
     with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+        assert "reproduction.seq" not in zf.namelist()
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "NOT included" in readme
+    assert "autovig edge_used missing" in readme
+    assert "复现宏不可用" in readme
+
+
+def test_bundle_zip_seq_fails_closed_when_edge_used_nonfinite():
+    """NaN/inf edge_used 同属"不可重建"（fail closed），不是可用的裁瞳量。"""
+    sc = _target_converged_candidate()
+    sc = sc.model_copy(
+        update={
+            "generated": sc.generated.model_copy(
+                update={
+                    "optical_extras": OpticalExtras(
+                        ri_by_field=None,
+                        codev_post_aut={"autovig.edge_used": float("nan")},
+                    )
+                }
+            )
+        }
+    )
+    zip_bytes = build_candidate_bundle_zip(sc, target=_target_spec())
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+        assert "reproduction.seq" not in zf.namelist()
+
+
+def test_bundle_zip_seq_included_when_edge_used_is_zero():
+    """`edge_used == 0.0` 是合法完整 provenance（实际跑次零裁瞳），必须与
+    "缺失"严格区分——照常交付 .seq（`_autovig_profile(0)` → 无渐晕 = 忠实
+    复现该跑次）。"""
+    sc = _target_converged_candidate()
+    sc = sc.model_copy(
+        update={
+            "generated": sc.generated.model_copy(
+                update={
+                    "optical_extras": OpticalExtras(
+                        ri_by_field=None,
+                        codev_post_aut={"autovig.edge_used": 0.0},
+                    )
+                }
+            )
+        }
+    )
+    zip_bytes = build_candidate_bundle_zip(sc, target=_target_spec())
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
         assert "reproduction.seq" in zf.namelist()
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "reproduction.seq: included" in readme
 
 
 def test_bundle_zip_seq_omitted_when_seed_zmx_unresolvable():
@@ -418,7 +493,7 @@ def test_bundle_zip_seq_omitted_when_seed_zmx_unresolvable():
         assert "reproduction.seq" not in names
         readme = zf.read("README.txt").decode("utf-8")
     assert "NOT included" in readme
-    assert "provenance fields" in readme
+    assert "seed ZMX not resolvable" in readme  # concrete missing-provenance reason (M2)
 
 
 def test_bundle_zip_seq_not_applicable_for_retrieved_candidate():
