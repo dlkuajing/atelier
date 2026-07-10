@@ -26,7 +26,7 @@ from typing import ClassVar
 
 import pytest
 
-from app.core.case_library import _candidate_scenarios, load_case_library, match_case
+from app.core.case_library import _candidate_scenarios, load_case_library, match_case, rank_seeds
 from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
 from app.core.engines.seed_target_score import SeedTargetScore
 from app.core.lens_system import Scenario
@@ -456,6 +456,202 @@ def test_rank_seeds_by_target_match_degrades_to_efl_only_when_fov_unconstrained(
     case_ids = [case.metadata.case_id for case, _ in scored if case.metadata is not None]
     assert case_ids[0] == narrow_fov.metadata.case_id  # 退化路径未做 FOV 过滤
     assert wide_fov.metadata.case_id in case_ids  # 两颗都还在（没被 stage 1 剔除）
+
+
+# ---------------------------------------------------------------------------
+# `_fov_bounded_efl_close_extras` — stage 1b 甜区召回补齐（P11 甜区覆盖率
+# 漏斗调优，2026-07-11）。实锤依据：`scripts/sweet_zone_coverage.py` 量化，
+# wide/tele/uw 三场景 miss 中 100%/100%/100% 是 `funnel_caused_miss`（存在
+# 性扫描口径，EFL 维真空洞=0）——库内存在甜区带内 seed，但 stage 1 的
+# top-`_FOV_PREFILTER_TOP_K` 没选中它。见 `.planning/loop/
+# mode3-funnel-tuning-report.md` 的 K/cap 倍率量化扫描。
+# ---------------------------------------------------------------------------
+
+
+def _efl_fov_variant(
+    base: OpticalSampleData, case_id: str, *, efl_mm: float, fov_deg: float
+) -> OpticalSampleData:
+    """`base` 的 deep copy，覆写 case_id / 原生 EFL（metadata+paraxial 两处
+    一起改，同 `test_sweet_zone_coverage.py` 的既有惯例）/ 原生 FOV。"""
+    variant = base.model_copy(deep=True)
+    assert variant.metadata is not None
+    variant.metadata.case_id = case_id
+    variant.metadata.computed_efl_mm = efl_mm
+    variant.paraxial.effective_focal_length_mm = efl_mm
+    variant.metadata.fov_deg = fov_deg
+    return variant
+
+
+def test_fov_bounded_efl_close_extras_includes_seed_within_adaptive_fov_cap():
+    """primary 池自身最差成员 |FOV 失配|=5.0（target_fov=80, primary 成员
+    fov=85）定义了自适应上限；候选 seed fov=83（失配 3.0 <= 5.0）且 EFL
+    band=lt5（delta≈-2%）必须被纳入 extras。"""
+    base = _real_case_with_zmx()
+    target_efl = base.paraxial.effective_focal_length_mm
+
+    primary_member = _efl_fov_variant(base, "PRIMARY-1", efl_mm=target_efl * 3.0, fov_deg=85.0)
+    within_cap = _efl_fov_variant(base, "WITHIN-CAP", efl_mm=target_efl * 0.98, fov_deg=83.0)
+
+    extras = generators_module._fov_bounded_efl_close_extras(
+        [primary_member],
+        [primary_member, within_cap],
+        target_efl_mm=target_efl,
+        target_fov_deg=80.0,
+    )
+    extra_ids = {c.metadata.case_id for c in extras if c.metadata is not None}
+    assert "WITHIN-CAP" in extra_ids
+    assert "PRIMARY-1" not in extra_ids  # 已在 primary 里，不重复纳入
+
+
+def test_fov_bounded_efl_close_extras_excludes_seed_beyond_adaptive_fov_cap():
+    """同上设定（cap=5.0），候选 seed fov=91（失配 11.0 > 5.0）即便 EFL
+    band=lt5 也必须被排除——这是"不比 stage 1 自己已经接受的 FOV 容差更
+    差"的核心不变量，直接对应判据 2（FOV 质量不回退）。"""
+    base = _real_case_with_zmx()
+    target_efl = base.paraxial.effective_focal_length_mm
+
+    primary_member = _efl_fov_variant(base, "PRIMARY-1", efl_mm=target_efl * 3.0, fov_deg=85.0)
+    beyond_cap = _efl_fov_variant(base, "BEYOND-CAP", efl_mm=target_efl * 0.98, fov_deg=91.0)
+
+    extras = generators_module._fov_bounded_efl_close_extras(
+        [primary_member],
+        [primary_member, beyond_cap],
+        target_efl_mm=target_efl,
+        target_fov_deg=80.0,
+    )
+    extra_ids = {c.metadata.case_id for c in extras if c.metadata is not None}
+    assert "BEYOND-CAP" not in extra_ids
+
+
+def test_fov_bounded_efl_close_extras_excludes_seed_with_far_efl_band_even_within_fov_cap():
+    """FOV 失配在自适应上限内（3.0 <= 5.0），但 EFL band=gt30（delta 远超
+    `_EFL_CLOSE_BANDS_FOR_RECALL`）——band 门禁必须独立生效，不能靠 FOV
+    近就绕过 EFL 接近度要求。"""
+    base = _real_case_with_zmx()
+    target_efl = base.paraxial.effective_focal_length_mm
+
+    primary_member = _efl_fov_variant(base, "PRIMARY-1", efl_mm=target_efl * 3.0, fov_deg=85.0)
+    far_efl_near_fov = _efl_fov_variant(
+        base, "FAR-EFL-NEAR-FOV", efl_mm=target_efl * 5.0, fov_deg=83.0
+    )
+
+    extras = generators_module._fov_bounded_efl_close_extras(
+        [primary_member],
+        [primary_member, far_efl_near_fov],
+        target_efl_mm=target_efl,
+        target_fov_deg=80.0,
+    )
+    extra_ids = {c.metadata.case_id for c in extras if c.metadata is not None}
+    assert "FAR-EFL-NEAR-FOV" not in extra_ids
+
+
+def test_fov_bounded_efl_close_extras_empty_primary_yields_zero_cap():
+    """`primary` 为空（结构上不应发生，防御性覆盖）：`fov_cap` 退化为 0.0
+    （`default=0.0`），任何非零 FOV 失配的候选都会被排除。"""
+    base = _real_case_with_zmx()
+    target_efl = base.paraxial.effective_focal_length_mm
+    candidate = _efl_fov_variant(base, "CANDIDATE", efl_mm=target_efl, fov_deg=80.5)
+
+    extras = generators_module._fov_bounded_efl_close_extras(
+        [], [candidate], target_efl_mm=target_efl, target_fov_deg=80.0
+    )
+    assert extras == []
+
+
+# ---------------------------------------------------------------------------
+# `_rank_seeds_by_target_match` — stage 1b 甜区召回补齐端到端（真实库反例
+# 锚，PR#60 `test_sweet_zone_coverage.py::
+# test_efl_band_material_real_library_counterexample_anchors` 同源反例，
+# 逐点核验用真实 `TargetConvergedGenerator._rank_seeds_by_target_match`
+# 确认「改后必须被选中」，而不仅是 PR#60 那条测试的"材料存在性"弱断言）
+# ---------------------------------------------------------------------------
+
+
+def test_rank_seeds_by_target_match_recovers_real_wide_anchor_excluded_from_stage1_top_k():
+    """真库反例（`.planning/loop/mode3-funnel-tuning-report.md` 逐点核验）：
+    wide target EFL=5.2mm/FOV=61.5° 时，`US-11719917-B2-e6`
+    （原生 EFL≈5.364mm，ΔEFL≈-3.06%，band=lt5）在 stage 1 的 FOV 近邻
+    top-10 里排不进（sanity 断言验证这一点，否则本测试没有意义）——stage
+    1b 甜区召回补齐后必须成为 `_rank_seeds_by_target_match` 的第一名。"""
+    pool = [
+        c
+        for c in load_case_library()
+        if c.metadata is not None
+        and c.metadata.scenario in _candidate_scenarios(Scenario.SMARTPHONE_WIDE)
+        and (ZMX_AMMO_DIR / c.metadata.source_zmx).is_file()
+    ]
+    target_efl, target_fov, target_fnum = 5.2, 61.5, 2.2
+
+    ranking = rank_seeds(pool, efl_mm=target_efl, fov_deg=target_fov, fnum=target_fnum)
+    primary_ids = {c.metadata.case_id for c in ranking.ranked_cases[:10] if c.metadata is not None}
+    assert "US-11719917-B2-e6" not in primary_ids  # sanity: 真是漏斗排除，非已在 primary
+
+    spec = TargetSpec(
+        scenario=Scenario.SMARTPHONE_WIDE, efl_mm=target_efl, fov_deg=target_fov, fnum=target_fnum
+    )
+    scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+    assert scored[0][0].metadata is not None
+    assert scored[0][0].metadata.case_id == "US-11719917-B2-e6"
+
+
+def test_rank_seeds_by_target_match_recovers_real_telephoto_anchor_excluded_from_stage1_top_k():
+    """真库反例：tele target EFL=11.5mm/FOV=15.3°（贴近场景 FOV 下界
+    15.0°，仍是合法客户请求）时，`US-20210364737-A1-e8`
+    （原生 EFL≈12.012mm，ΔEFL≈-4.26%，band=lt5）同样被 stage 1 top-10
+    挡在外面，stage 1b 补齐后必须夺回第一名。"""
+    pool = [
+        c
+        for c in load_case_library()
+        if c.metadata is not None
+        and c.metadata.scenario in _candidate_scenarios(Scenario.SMARTPHONE_TELEPHOTO)
+        and (ZMX_AMMO_DIR / c.metadata.source_zmx).is_file()
+    ]
+    target_efl, target_fov, target_fnum = 11.5, 15.3, 2.2
+
+    ranking = rank_seeds(pool, efl_mm=target_efl, fov_deg=target_fov, fnum=target_fnum)
+    primary_ids = {c.metadata.case_id for c in ranking.ranked_cases[:10] if c.metadata is not None}
+    assert "US-20210364737-A1-e8" not in primary_ids  # sanity: 真是漏斗排除
+
+    spec = TargetSpec(
+        scenario=Scenario.SMARTPHONE_TELEPHOTO,
+        efl_mm=target_efl,
+        fov_deg=target_fov,
+        fnum=target_fnum,
+    )
+    scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+    assert scored[0][0].metadata is not None
+    assert scored[0][0].metadata.case_id == "US-20210364737-A1-e8"
+
+
+def test_rank_seeds_by_target_match_does_not_force_in_genuinely_far_fov_ultrawide_anchor():
+    """诚实留痕（非缺陷）：PR#60 存在性扫描给出的第三个反例
+    `US-12210213-B2-e3`（ultrawide target EFL=3.2mm，原生 FOV≈103.6°）逐点
+    核验（`.planning/loop/mode3-funnel-tuning-report.md` §ultrawide 反例
+    核验）显示这**不是**一个 stage-1-宽度排除案例：目标 FOV 与其原生 FOV
+    足够接近时（fov>=98.5°）它本来就在 stage 1 top-10 里、稳居第一；目标
+    FOV 明显偏远时（fov<=98.0°，失配 >5.6°）它的 |FOV 失配| 超出该 target
+    下 primary 池自身的自适应上限，`_fov_bounded_efl_close_extras`
+    正确地不把它拉进候选池——两者之间不存在"排除但可召回"的中间地带（细
+    粒度扫描确认过渡宽度为 0）。本测试锁定这个边界行为：target_fov=98.0
+    （刚好在自适应上限外）时它必须不出现在候选池里，target_fov=98.5
+    （刚好在自适应上限内/已在 primary）时它必须是第一名——防止未来有人
+    "修复"成强行拉近它反而破坏了自适应上限本身的不变量。"""
+    target_efl, target_fnum = 3.2, 2.1
+    anchor_id = "US-12210213-B2-e3"
+
+    spec_far = TargetSpec(
+        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.0, fnum=target_fnum
+    )
+    scored_far = TargetConvergedGenerator._rank_seeds_by_target_match(spec_far)
+    far_ids = {c.metadata.case_id for c, _ in scored_far if c.metadata is not None}
+    assert anchor_id not in far_ids  # 自适应上限正确拒绝了它——不是漏斗缺陷
+
+    spec_near = TargetSpec(
+        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.5, fnum=target_fnum
+    )
+    scored_near = TargetConvergedGenerator._rank_seeds_by_target_match(spec_near)
+    assert scored_near[0][0].metadata is not None
+    assert scored_near[0][0].metadata.case_id == anchor_id
 
 
 def test_candidate_for_seed_notes_flag_fov_unfiltered_selection_when_fov_unconstrained(

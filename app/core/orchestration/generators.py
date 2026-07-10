@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import tempfile
 from abc import ABC, abstractmethod
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import ClassVar, final
 
@@ -210,6 +210,12 @@ _BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
 #: 仍有真实候选可选，窄到不会把远 FOV 的 seed 重新放回候选池。
 _FOV_PREFILTER_TOP_K = 10
 
+#: `score_seed_target_match` 的两档"EFL 已经很接近"分桶（P11 甜区覆盖率
+#: 漏斗调优，2026-07-11），供 `_fov_bounded_efl_close_extras` 甜区召回补齐
+#: 使用——直接复用 `seed_target_score.py` 已有的 N=24 真机标定分桶边界
+#: （score<15），不发明新阈值。
+_EFL_CLOSE_BANDS_FOR_RECALL: frozenset[str] = frozenset({"lt5", "5to15"})
+
 
 #: post_aut 质量三键的 0.0 是"追迹全失败"哨兵，不是真实测量值：CODE V 宏累加器
 #: （`codev_optimize._metric_function_block` 的 `FCT @rmssum` 等）以 `^max == 0`
@@ -335,6 +341,78 @@ def _mode3_generation_notes(
             "（fix/mode3-seed-fov-prefilter，2026-07-10）"
         )
     return notes
+
+
+def _fov_bounded_efl_close_extras(
+    primary: Sequence[OpticalSampleData],
+    pool: Sequence[OpticalSampleData],
+    *,
+    target_efl_mm: float,
+    target_fov_deg: float,
+) -> list[OpticalSampleData]:
+    """P11 甜区覆盖率漏斗调优（2026-07-11）：stage 1 甜区召回补齐。
+
+    实锤（`scripts/sweet_zone_coverage.py` 量化，PR#60）：两段式匹配把场景
+    池收窄到 `rank_seeds` 全维距离 top-`_FOV_PREFILTER_TOP_K`（FOV 权重
+    0.46 主导）后，wide/tele/uw 三场景分别有 88/300、135/300、51/300 格点
+    因为"库内存在 EFL 甜区带内 seed，但它没进 top-K"而 miss（存在性扫描口
+    径的 `funnel_caused_miss`，三场景 EFL 维真空洞均=0，证明这是漏斗宽度
+    问题，不是库缺料）。
+
+    本函数在 stage 1 之后、stage 2 之前，把"EFL 距离已经很近
+    （`score_seed_target_match` band ∈ `_EFL_CLOSE_BANDS_FOR_RECALL`，直接
+    复用其 N=24 真机标定分桶，不发明新阈值）但被 top-K 挡在外面"的 seed
+    按与 target 的 |FOV 失配| 升序纳入候选，**上限自适应**：只收 |FOV 失配|
+    不超过 `primary`（stage 1 top-K）自身最差成员那个值——不引入任何新的
+    全局幅度常数，语义是"不比 stage 1 自己已经接受的 FOV 容差更差"。
+
+    量化验证（K/cap 扫描，`.planning/loop/mode3-funnel-tuning-report.md`
+    §K 扫描 / §cap 倍率扫描）：该自适应上限（cap 倍率固定 1.0，不做可配置
+    暴露）在三场景网格采样上，甜区覆盖率 wide 36.0%→66.0%、tele 34.3%→
+    45.7%、uw 45.3%→43.0%（uw 名义上小幅下降，逐点核验证实是 eval 脚本
+    `[-15%,0%]` 单向窗口 vs `score_seed_target_match` 双向对称打分的既有
+    认知差，被替换的候选 band/score/FOV 匹配全部持平或更优，非质量倒退，
+    见任务报告 §ultrawide 逐点核验）；被选 seed 的 |FOV 失配| 分布
+    p95/max 相对基线几乎不变（wide fov_max 18.2→18.2 完全不变，tele
+    fov_max 21.8→21.8 完全不变）——这不是巧合，是这个自适应上限的结构性
+    保证。更大倍率（1.25/1.5/2.0/3.0）继续小幅提升覆盖率，但 fov_p95/
+    fov_max 开始明显偏离基线（如 tele cap=1.25 时 fov_max 21.8→26.1），
+    代价超出"噪声级"，故固定倍率 1.0。
+
+    Args:
+        primary: stage 1（`rank_seeds` top-K）已选中的候选，仅用于确定
+            per-query 自适应 FOV 上限与去重。
+        pool: 场景全池（ZMX-backed），补齐候选从这里筛选。
+        target_efl_mm / target_fov_deg: 与 `_rank_seeds_by_target_match`
+            同源的 target 值。
+
+    Returns:
+        `primary` 之外、满足 band+FOV 上限的补齐候选（未排序——调用方与
+        `primary` 拼接后交给 stage 2 统一按 band+score 重排，不在本函数
+        内二次排序，避免和 stage 2 的排序语义打架）。
+    """
+    primary_ids = {c.metadata.case_id for c in primary if c.metadata is not None}
+    fov_cap = max(
+        (abs(c.metadata.fov_deg - target_fov_deg) for c in primary if c.metadata is not None),
+        default=0.0,
+    )
+    extras: list[OpticalSampleData] = []
+    for case in pool:
+        if case.metadata is None or case.metadata.case_id in primary_ids:
+            continue
+        native_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(native_efl_mm) or native_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(native_efl_mm, target_efl_mm)
+        except ValueError:
+            continue
+        if match.band not in _EFL_CLOSE_BANDS_FOR_RECALL:
+            continue
+        if abs(case.metadata.fov_deg - target_fov_deg) > fov_cap:
+            continue
+        extras.append(case)
+    return extras
 
 
 class TargetConvergedGenerator(CandidateGenerator):
@@ -466,23 +544,30 @@ class TargetConvergedGenerator(CandidateGenerator):
         1. **FOV 近邻预筛**（`spec.fov_deg` 非 None 时）：`case_library.
            rank_seeds`——路由层唯一真相源的多维规格距离（FOV 权重 0.46
            主导 / IMH 0.30 / EFL 0.20）——把 ZMX 真实存在的场景池收窄到距离
-           最近的前 `_FOV_PREFILTER_TOP_K` 颗。闭合的正是 FOV 盲区：EFL 单
-           维打分对"seed 原生 FOV 36° vs target FOV 78°"这种规格错配视而
-           不见，rank_seeds 的全维距离能看见。
-        2. **EFL 收敛风险重排**：在 stage 1 收窄后的邻域内（或 `spec.
+           最近的前 `_FOV_PREFILTER_TOP_K` 颗（stage 1 primary）。闭合的正
+           是 FOV 盲区：EFL 单维打分对"seed 原生 FOV 36° vs target FOV
+           78°"这种规格错配视而不见，rank_seeds 的全维距离能看见。
+        1b. **甜区召回补齐**（`_fov_bounded_efl_close_extras`，P11 甜区覆盖
+           率漏斗调优，2026-07-11）：stage 1 primary 之外，把"EFL 已经很
+           接近但被 top-K 挡在外面"的 seed 按 |FOV 失配| 自适应上限（不超
+           过 primary 自身最差成员）纳入候选——量化证实这类 seed 是三场景
+           miss 的主因（EFL 维真空洞=0，见该函数 docstring 的量化引用）。
+        2. **EFL 收敛风险重排**：在 stage 1+1b 候选池内（或 `spec.
            fov_deg is None` 时的整个 ZMX-backed 池——见下），按
            `seed_target_score.score_seed_target_match`（EFL 收敛风险代理，
            N=24 真机数据依据，见该模块 docstring）分 band 优先、band 内
            score 升序排序。
 
         `sorted`/`list.sort` 是稳定排序：stage 2 分数打平（如两颗 seed EFL
-        相同）时保留 stage 1 的距离序（FOV 更近的排前面）——这是 tie-break
-        的机制，不是额外发明的第三个权重。
+        相同）时保留候选池的原始序（primary 在前，按 stage 1 距离排过序；
+        1b 补齐的 extras 在后，`_fov_bounded_efl_close_extras` 不对 extras
+        排序——遍历 `pool` 的原始序，不发明额外的组内排序语义）——这是
+        tie-break 的机制，不是额外发明的第三个权重。
 
         `spec.fov_deg is None`（target FOV 未约束，§7-E unconstrained 语义）
         时 `rank_seeds` 的检索排序查询没有"不检索这一维"的语义（同
-        `RetrievalGenerator` docstring）：跳过 stage 1，退化为纯 stage 2
-        （2026-07-10 前唯一路径）。调用方 `_generate` 通过
+        `RetrievalGenerator` docstring）：跳过 stage 1 与 1b，退化为纯
+        stage 2（2026-07-10 前唯一路径）。调用方 `_generate` 通过
         `_mode3_generation_notes` 如实注明"FOV 未约束，seed 选择未做 FOV
         近邻过滤"——诚实降级，不是 bug。
 
@@ -514,7 +599,14 @@ class TargetConvergedGenerator(CandidateGenerator):
                 manufacturing_tier=spec.manufacturing_tier,
                 priority=spec.priority,
             )
-            pool = seed_ranking.ranked_cases[:_FOV_PREFILTER_TOP_K]
+            primary = seed_ranking.ranked_cases[:_FOV_PREFILTER_TOP_K]
+            extras = _fov_bounded_efl_close_extras(
+                primary,
+                zmx_backed_cases,
+                target_efl_mm=spec.efl_mm,
+                target_fov_deg=spec.fov_deg,
+            )
+            pool = primary + extras
 
         scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
         for case in pool:

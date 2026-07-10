@@ -11,8 +11,9 @@ go/no-go 闸选题集的前置量化缺口。
 
 本脚本对 wide / telephoto / ultrawide 三场景各铺 EFL×F#×FOV×IMH 网格，每个
 格点用生产 Mode3 (`TargetConvergedGenerator`) 同款两段式排序（stage 1
-`case_library.rank_seeds` FOV/IMH 近邻预筛 → stage 2
-`seed_target_score.score_seed_target_match` EFL band 排序，见
+`case_library.rank_seeds` FOV/IMH 近邻预筛 → stage 1b 甜区召回补齐
+（`_fov_bounded_efl_close_extras`，P11 甜区覆盖率漏斗调优，2026-07-11）→
+stage 2 `seed_target_score.score_seed_target_match` EFL band 排序，见
 `app/core/orchestration/generators.py::_rank_seeds_by_target_match`
 docstring）算出"库内最佳匹配"，按 ΔEFL%=(target-native)/native 是否落在
 [-15%, 0]（主口径"甜区"）分类，产出覆盖率数字、空洞清单、markdown 热图报告
@@ -92,6 +93,12 @@ FOV_PREFILTER_TOP_K = 10
 #: seed-target band 的机器排序权重，镜像
 #: `app/core/orchestration/generators.py::_BAND_RANK`。
 _BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
+
+#: `score_seed_target_match` 的两档"EFL 已经很接近"分桶，镜像
+#: `app/core/orchestration/generators.py::_EFL_CLOSE_BANDS_FOR_RECALL`（P11
+#: 甜区覆盖率漏斗调优，2026-07-11）——写死本文件生产实际值，而非 import
+#: 该私有常量，同 `FOV_PREFILTER_TOP_K` 的镜像口径。
+_EFL_CLOSE_BANDS_FOR_RECALL: frozenset[str] = frozenset({"lt5", "5to15"})
 
 _SCENARIOS: tuple[Scenario, ...] = (
     Scenario.SMARTPHONE_WIDE,
@@ -192,6 +199,44 @@ def _zmx_backed_pool(scenario: Scenario) -> list[OpticalSampleData]:
 # ---------------------------------------------------------------------------
 
 
+def _fov_bounded_efl_close_extras(
+    primary: Sequence[OpticalSampleData],
+    pool: Sequence[OpticalSampleData],
+    *,
+    target_efl_mm: float,
+    target_fov_deg: float,
+) -> list[OpticalSampleData]:
+    """stage 1b 甜区召回补齐，镜像
+    `app/core/orchestration/generators.py::_fov_bounded_efl_close_extras`
+    （P11 甜区覆盖率漏斗调优，2026-07-11）——本地重实现（同文件顶部
+    docstring "刻意不做的事"：不直接 import generators 模块），语义逐字
+    对齐：`primary` 之外，EFL band ∈ `_EFL_CLOSE_BANDS_FOR_RECALL` 且
+    |FOV 失配| 不超过 `primary` 自身最差成员的 seed 纳入候选，上限自适应，
+    不引入新的全局幅度常数。"""
+    primary_ids = {c.metadata.case_id for c in primary if c.metadata is not None}
+    fov_cap = max(
+        (abs(c.metadata.fov_deg - target_fov_deg) for c in primary if c.metadata is not None),
+        default=0.0,
+    )
+    extras: list[OpticalSampleData] = []
+    for case in pool:
+        if case.metadata is None or case.metadata.case_id in primary_ids:
+            continue
+        native_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(native_efl_mm) or native_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(native_efl_mm, target_efl_mm)
+        except ValueError:
+            continue
+        if match.band not in _EFL_CLOSE_BANDS_FOR_RECALL:
+            continue
+        if abs(case.metadata.fov_deg - target_fov_deg) > fov_cap:
+            continue
+        extras.append(case)
+    return extras
+
+
 def _rank_pool_by_target(
     pool: Sequence[OpticalSampleData],
     grid_point: GridPoint,
@@ -199,9 +244,11 @@ def _rank_pool_by_target(
     top_k: int = FOV_PREFILTER_TOP_K,
 ) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
     """stage 1：`rank_seeds` 全维规格距离（FOV 权重主导）收窄到最近 `top_k`
-    颗；stage 2：在收窄邻域内按 `score_seed_target_match` band 优先、band
-    内 score 升序重排。`list.sort` 稳定排序，stage2 打平时保留 stage1 的
-    距离序——同 `_rank_seeds_by_target_match` 的 tie-break 语义。"""
+    颗（primary）；stage 1b：`_fov_bounded_efl_close_extras` 甜区召回补齐；
+    stage 2：在 primary+extras 候选池内按 `score_seed_target_match` band
+    优先、band 内 score 升序重排。`list.sort` 稳定排序，stage2 打平时保留
+    候选池的原始序（primary 在前、extras 在后）——同
+    `_rank_seeds_by_target_match` 的 tie-break 语义。"""
     if not pool:
         return []
 
@@ -212,7 +259,14 @@ def _rank_pool_by_target(
         fnum=grid_point.fnum,
         image_height_mm=grid_point.image_height_mm,
     )
-    narrowed = seed_ranking.ranked_cases[:top_k]
+    primary = seed_ranking.ranked_cases[:top_k]
+    extras = _fov_bounded_efl_close_extras(
+        primary,
+        pool,
+        target_efl_mm=grid_point.efl_mm,
+        target_fov_deg=grid_point.fov_deg,
+    )
+    narrowed = primary + extras
 
     scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
     for case in narrowed:
