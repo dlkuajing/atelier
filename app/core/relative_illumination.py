@@ -28,6 +28,15 @@ clear-aperture geometry to violate. If a future intake pipeline starts
 carrying `CLAP` data, this function picks it up automatically with no code
 change. The `cos^4(theta)` term remains the real, always-active falloff
 signal for wide-FOV phone lenses.
+
+**Phase 17 子项4** (`compute_relative_illumination`'s `zmx_path` kwarg): lets
+a caller point RI compute at an explicit ZMX file instead of the default
+`ZMX_AMMO_DIR / sample.metadata.source_zmx` resolution — built so Mode3
+(`TargetConvergedGenerator`) candidates, whose optimized ZMX never lives
+under `ZMX_AMMO_DIR`, can stop being structurally RI-unavailable. See
+`compute_relative_illumination`'s own docstring for why the actual
+`generators.py` call-site connection is out of scope for this change (file
+boundary with another in-flight PR).
 """
 
 from __future__ import annotations
@@ -35,6 +44,7 @@ from __future__ import annotations
 import math
 import warnings
 from functools import lru_cache
+from pathlib import Path
 
 import numpy as np
 
@@ -77,14 +87,14 @@ def _traced_pass_fraction(optic, hx: float, hy: float, wavelength_um: float) -> 
     return float(passed.sum()) / float(x.size)
 
 
-def _compute_ri_by_field(source_zmx: str, fov_deg: float) -> dict[str, MetricValue]:
-    """Rebuild a fresh Optic from `source_zmx` and compute RI at the
-    canonical MTF field fractions. Fail closed (all-unavailable) on any
-    load/trace error — never guesses a value."""
+def _compute_ri_by_field(zmx_path: Path, fov_deg: float) -> dict[str, MetricValue]:
+    """Rebuild a fresh Optic from `zmx_path` and compute RI at the canonical
+    MTF field fractions. Fail closed (all-unavailable) on any load/trace
+    error — never guesses a value."""
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            optic = load_normalized_zmx(ZMX_AMMO_DIR / source_zmx)
+            optic = load_normalized_zmx(zmx_path)
             regularize_fields_to_angle(optic, fov_deg)
             wavelength_um = float(optic.primary_wavelength)
             max_field_deg = float(optic.fields.max_field)
@@ -145,16 +155,16 @@ class _RIComputeAllUnavailable(Exception):  # noqa: N818 - internal cache-bypass
 
 @lru_cache(maxsize=512)
 def _compute_ri_by_field_cached_impl(
-    source_zmx: str, fov_deg: float, mtime_ns: int, size: int
+    zmx_path: Path, fov_deg: float, mtime_ns: int, size: int
 ) -> tuple[tuple[str, float | None, str], ...]:
-    """Memoized core compute, keyed by `(source_zmx, fov_deg, mtime_ns,
+    """Memoized core compute, keyed by `(zmx_path, fov_deg, mtime_ns,
     size)` — the file stat is part of the key so a ZMX rewrite (intake
     re-run, patent-seed correction, ...) invalidates stale entries
     automatically instead of silently replaying a computation against the
     old file contents. `mtime_ns`/`size` are supplied by the caller
     (`_compute_ri_by_field_cached`), which stats the file *before* this
     memoized call so the key always reflects the current file."""
-    computed = _compute_ri_by_field(source_zmx, fov_deg)
+    computed = _compute_ri_by_field(zmx_path, fov_deg)
     result = tuple((key, metric.value, metric.status) for key, metric in computed.items())
     if all(status == "unavailable" for _, _, status in result):
         raise _RIComputeAllUnavailable(result)
@@ -162,9 +172,9 @@ def _compute_ri_by_field_cached_impl(
 
 
 def _compute_ri_by_field_cached(
-    source_zmx: str, fov_deg: float
+    zmx_path: Path, fov_deg: float
 ) -> tuple[tuple[str, float | None, str], ...]:
-    """Public cache entry point. Stats `source_zmx` before computing so the
+    """Public cache entry point. Stats `zmx_path` before computing so the
     cache key reflects the file's current contents, and never memoizes an
     all-unavailable result (a transient load/trace failure) — a subsequent
     call with the same args retries instead of replaying a stale failure
@@ -172,7 +182,7 @@ def _compute_ri_by_field_cached(
     multiple orchestrator calls (e.g. `RetrievalGenerator` invoked for
     several `n`)."""
     try:
-        stat = (ZMX_AMMO_DIR / source_zmx).stat()
+        stat = zmx_path.stat()
     except OSError:
         # File missing/inaccessible: `_compute_ri_by_field` would fail closed
         # on this too, but we can't form a cache key without a stat — skip
@@ -180,21 +190,59 @@ def _compute_ri_by_field_cached(
         return tuple((key, metric.value, metric.status) for key, metric in _empty_result().items())
     try:
         return _compute_ri_by_field_cached_impl(
-            source_zmx, fov_deg, stat.st_mtime_ns, stat.st_size
+            zmx_path, fov_deg, stat.st_mtime_ns, stat.st_size
         )
     except _RIComputeAllUnavailable as exc:
         return exc.result
 
 
-def compute_relative_illumination(sample: OpticalSampleData) -> dict[str, MetricValue]:
+def compute_relative_illumination(
+    sample: OpticalSampleData, *, zmx_path: Path | None = None
+) -> dict[str, MetricValue]:
     """Compute per-field RI for one case, keyed by canonical MTF field
     fraction strings (`app.core.mtf_fields.format_mtf_field_fraction`).
 
     Generator-stage compute (§7-D): rebuilds a fresh `Optic` from the case's
     source ZMX. Fail closed per field on any load/trace error or missing
     metadata — never fabricates a value.
+
+    `zmx_path` (Phase 17 子项4, default `None`): explicit ZMX file location
+    to use instead of resolving `sample.metadata.source_zmx` under
+    `ZMX_AMMO_DIR`. Every caller today (`RetrievalGenerator`, every existing
+    test) omits it and gets byte-for-byte the same `ZMX_AMMO_DIR /
+    sample.metadata.source_zmx` resolution as before this parameter existed
+    — zero behavior change.
+
+    Why this exists: `TargetConvergedGenerator` (Mode3,
+    `app/core/orchestration/generators.py`) writes its optimized ZMX to a
+    per-job temp directory, then builds the candidate's `payload` with
+    `metadata.source_zmx` set to just that file's *name* (not a path under
+    `ZMX_AMMO_DIR` — it was never copied there). Calling
+    `compute_relative_illumination(payload)` with no `zmx_path` therefore
+    always fails closed to fully-unavailable for Mode3 today (structural
+    miss, not a real "we don't know" — the optimized geometry exists on disk
+    at generation time, this function just wasn't told where). Passing the
+    generator's own `optimized_zmx_path` here (`zmx_path=optimized_zmx_path`)
+    while that file still exists (i.e. from *inside*
+    `TargetConvergedGenerator._candidate_for_seed`, before its enclosing
+    `tempfile.TemporaryDirectory` context exits) would let RI compute
+    genuinely succeed for Mode3, fail-closed only on real trace failures —
+    same contract as Mode1.
+
+    **This module cannot make that connection itself**: the call site is
+    `generators.py`'s `compute_relative_illumination(payload)` at
+    `TargetConvergedGenerator._candidate_for_seed` (search for
+    `ri_by_field=compute_relative_illumination(payload)`), and that file is
+    off-limits for this change — it is the active file surface of another
+    in-flight PR (`feat/mode3-funnel-tuning`, #63) per this task's iron
+    rules. This function is fully built and tested (see
+    `tests/test_relative_illumination.py`) so the connection is a single
+    keyword-argument addition once that PR lands; until then Mode3 candidate
+    cards keep showing RI as honestly `unavailable` (fail closed, not a
+    regression — same behavior as before this sub-item).
     """
     if sample.metadata is None:
         return _empty_result()
-    cached = _compute_ri_by_field_cached(sample.metadata.source_zmx, sample.metadata.fov_deg)
+    resolved_path = zmx_path if zmx_path is not None else ZMX_AMMO_DIR / sample.metadata.source_zmx
+    cached = _compute_ri_by_field_cached(resolved_path, sample.metadata.fov_deg)
     return {key: MetricValue(value=value, status=status) for key, value, status in cached}
