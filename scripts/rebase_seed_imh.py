@@ -17,8 +17,8 @@ from typing import Literal
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE
-from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
+from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE  # noqa: E402
+from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout  # noqa: E402
 
 INDEX_PATH = REPO_ROOT / "app" / "data" / "optical_cases" / "index.json"
 ZMX_DIR = REPO_ROOT / "data" / "zmx"

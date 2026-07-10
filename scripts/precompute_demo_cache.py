@@ -30,7 +30,10 @@ from app.core.demo_cache import (  # noqa: E402
     write_demo_cache_bundle,
 )
 from app.core.engines.codev import probe_code_v_installation  # noqa: E402
-from app.core.engines.codev_batch import CodeVBatchError, resolve_default_codev_executable  # noqa: E402
+from app.core.engines.codev_batch import (  # noqa: E402
+    CodeVBatchError,
+    resolve_default_codev_executable,
+)
 from app.core.engines.codev_optimize import CodeVOptimizeResult, run_codev_optimize  # noqa: E402
 from app.core.mtf_fields import MTF_FIELD_FALLBACK_SETS  # noqa: E402
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx  # noqa: E402

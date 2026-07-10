@@ -16,10 +16,12 @@ from scripts.e2_golden import (
     ZMX_REAL_IMH_MAX_DEVIATION,
 )
 from scripts.evaluate_design_agent import (
-    EVAL_CASES,
     _EVAL_GOLDEN,
-    PATENT_GOLDEN_CASE_NAMES as EVAL_PATENT_GOLDEN_CASE_NAMES,
+    EVAL_CASES,
     main,
+)
+from scripts.evaluate_design_agent import (
+    PATENT_GOLDEN_CASE_NAMES as EVAL_PATENT_GOLDEN_CASE_NAMES,
 )
 
 INDEX_PATH = Path(__file__).resolve().parents[1] / "app" / "data" / "optical_cases" / "index.json"

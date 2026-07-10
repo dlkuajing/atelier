@@ -45,12 +45,11 @@ from app.core.image_quality_floor import (
 )
 from app.core.layout_svg import render_layout_svg
 from app.core.lens_system import (
+    _ULTRAWIDE_FOV_MIN,
     LayoutSVG,
     Scenario,
     _classify_scenario,
-    _ULTRAWIDE_FOV_MIN,
 )
-from app.core.optical_calc import airy_disk_diameter_um
 from app.core.local_optimizer import (
     mtf_bands_from_snapshot,
     mtf_field_weighted_non_regressed,
@@ -62,6 +61,7 @@ from app.core.local_optimizer import (
     protected_rms_merit_probe,
 )
 from app.core.mtf_fields import MTF_FIELD_FALLBACK_SETS, format_mtf_field_fraction
+from app.core.optical_calc import airy_disk_diameter_um
 from app.core.optical_engine import (
     compute_paraxial_summary,
     extract_surface_descriptors,

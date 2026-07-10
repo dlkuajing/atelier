@@ -35,7 +35,6 @@ with warnings.catch_warnings():
 from app.core.lens_system import RayPath, RayTraceResult, Scenario
 from app.core.provenance import ProvenanceSource
 
-
 logger = logging.getLogger(__name__)
 
 

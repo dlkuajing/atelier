@@ -14,7 +14,6 @@ from app.core.optical_calc import (
 )
 from app.main import app
 
-
 client = TestClient(app)
 
 

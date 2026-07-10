@@ -15,7 +15,6 @@ from scripts.patent_crawler import (
     filter_patent_records_by_pool,
 )
 
-
 ROOT = Path(__file__).resolve().parents[1]
 PATENT_DIR = ROOT / "data/patents"
 REPORT_PATH = ROOT / ".planning/loop/uspto-b7-report.md"

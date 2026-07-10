@@ -14,7 +14,6 @@ from app.core.spot_diagram import SpotDiagramResult, SpotFieldData, SpotWaveleng
 from app.core.wavefront_metrics import WavefrontFieldMetric, WavefrontMetricsResult
 from app.main import app
 
-
 LEGAL_PROVENANCE = {source.value for source in ProvenanceSource}
 
 
@@ -130,12 +129,12 @@ def test_analysis_artifacts_serialize_nonempty_legal_provenance() -> None:
 
 def test_provenance_enum_reserves_codev_run() -> None:
     assert ProvenanceSource.CODEV_RUN.value == "codev-run"
-    assert LEGAL_PROVENANCE == {
+    assert {
         "optiland-raytrace",
         "optiland-wavefront",
         "thin-lens-analytic",
         "codev-run",
-    }
+    } == LEGAL_PROVENANCE
 
 
 def test_invalid_provenance_is_rejected() -> None:

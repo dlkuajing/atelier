@@ -18,7 +18,6 @@ from app.core.patent_crawl_schema import (
     validate_patent_record,
 )
 
-
 VALID_PATENT_RECORD = {
     "id": "US1234567B2",
     "title": "Optical imaging lens assembly",

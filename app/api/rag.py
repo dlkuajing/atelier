@@ -13,7 +13,6 @@ from pydantic import BaseModel, Field
 from app.core.lens_system import Scenario
 from app.core.rag import LensPatentHit, get_default_store
 
-
 router = APIRouter()
 
 
