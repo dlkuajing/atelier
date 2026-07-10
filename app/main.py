@@ -1577,6 +1577,152 @@ def _candidate_manufacturability_context(
     }
 
 
+# Compact per-candidate MTF chart geometry. Left/bottom padding leaves room
+# for axis tick labels — the axes must stay labeled and honest (full 0-1
+# modulation scale, real frequency range), never a truncated scale that
+# flatters the curves.
+_CANDIDATE_MTF_WIDTH = 380
+_CANDIDATE_MTF_HEIGHT = 200
+_CANDIDATE_MTF_PAD_LEFT = 40
+_CANDIDATE_MTF_PAD_RIGHT = 12
+_CANDIDATE_MTF_PAD_TOP = 10
+_CANDIDATE_MTF_PAD_BOTTOM = 32
+
+#: Field-index -> CSS class cycle for candidate MTF curves (site.css
+#: .mtf-field-N maps onto the token palette).
+_CANDIDATE_MTF_FIELD_CLASS_COUNT = 4
+
+
+def _candidate_mtf_polyline(
+    freqs: list[float],
+    values: list[float],
+    max_freq: float,
+) -> str:
+    plot_w = _CANDIDATE_MTF_WIDTH - _CANDIDATE_MTF_PAD_LEFT - _CANDIDATE_MTF_PAD_RIGHT
+    plot_h = _CANDIDATE_MTF_HEIGHT - _CANDIDATE_MTF_PAD_TOP - _CANDIDATE_MTF_PAD_BOTTOM
+    points: list[str] = []
+    for freq, value in zip(freqs, values, strict=False):
+        if not math.isfinite(freq) or not math.isfinite(value):
+            continue
+        x = _CANDIDATE_MTF_PAD_LEFT + max(0.0, min(freq, max_freq)) / max_freq * plot_w
+        y = _CANDIDATE_MTF_PAD_TOP + (1.0 - max(0.0, min(value, 1.0))) * plot_h
+        points.append(f"{x:.1f},{y:.1f}")
+    return " ".join(points)
+
+
+def _candidate_mtf_axes_svg(max_freq: float) -> list[str]:
+    left = _CANDIDATE_MTF_PAD_LEFT
+    right = _CANDIDATE_MTF_WIDTH - _CANDIDATE_MTF_PAD_RIGHT
+    top = _CANDIDATE_MTF_PAD_TOP
+    bottom = _CANDIDATE_MTF_HEIGHT - _CANDIDATE_MTF_PAD_BOTTOM
+    parts: list[str] = [
+        f'<line class="mtf-axis" x1="{left}" y1="{bottom}" x2="{right}" y2="{bottom}"></line>',
+        f'<line class="mtf-axis" x1="{left}" y1="{top}" x2="{left}" y2="{bottom}"></line>',
+    ]
+    # Y ticks: full honest modulation scale 0 / 0.5 / 1.0.
+    for frac in (0.0, 0.5, 1.0):
+        y = top + (1.0 - frac) * (bottom - top)
+        parts.append(
+            f'<line class="mtf-grid" x1="{left}" y1="{y:.1f}" x2="{right}" y2="{y:.1f}"></line>'
+        )
+        parts.append(
+            f'<text class="mtf-tick-label" x="{left - 6}" y="{y + 3.5:.1f}" '
+            f'text-anchor="end">{frac:.1f}</text>'
+        )
+    # X ticks: 0 / mid / max of the real plotted frequency range.
+    for frac in (0.0, 0.5, 1.0):
+        x = left + frac * (right - left)
+        parts.append(
+            f'<text class="mtf-tick-label" x="{x:.1f}" y="{bottom + 14}" '
+            f'text-anchor="middle">{max_freq * frac:.0f}</text>'
+        )
+    parts.append(
+        f'<text class="mtf-tick-label" x="{right}" y="{bottom + 27}" '
+        'text-anchor="end">spatial frequency (lp/mm)</text>'
+    )
+    return parts
+
+
+def _candidate_mtf_svg(mtf: MTFResult) -> str:
+    """Compact, honest MTF chart for one candidate card: sagittal solid /
+    tangential dashed per field, diffraction-limit reference, labeled axes.
+    The y-axis is always the full 0-1 modulation scale and the x-axis spans
+    the real computed frequency range — no truncation that flatters curves.
+    Returns "" when the payload carries too little finite MTF data to plot
+    (the template shows an honest empty state instead)."""
+    freqs = _finite_float_values(mtf.freq_lp_per_mm)
+    if len(freqs) < 2 or not mtf.fields:
+        return ""
+    max_freq = max(freqs)
+    if max_freq <= 0:
+        return ""
+
+    curves: list[str] = []
+    for field in mtf.fields:
+        css = f"mtf-field-{field.field_index % _CANDIDATE_MTF_FIELD_CLASS_COUNT}"
+        sag_points = _candidate_mtf_polyline(mtf.freq_lp_per_mm, field.sagittal, max_freq)
+        tan_points = _candidate_mtf_polyline(mtf.freq_lp_per_mm, field.tangential, max_freq)
+        if sag_points.count(" ") >= 1:
+            curves.append(
+                f'<polyline class="mtf-curve-line {css}" points="{sag_points}"></polyline>'
+            )
+        if tan_points.count(" ") >= 1:
+            curves.append(
+                f'<polyline class="mtf-curve-line mtf-tan {css}" points="{tan_points}"></polyline>'
+            )
+    if not curves:
+        return ""
+
+    parts = _candidate_mtf_axes_svg(max_freq)
+    diff_points = _candidate_mtf_polyline(mtf.freq_lp_per_mm, mtf.diff_limited, max_freq)
+    if diff_points.count(" ") >= 1:
+        parts.append(
+            f'<polyline class="mtf-curve-line mtf-diff-limit" points="{diff_points}"></polyline>'
+        )
+    parts.extend(curves)
+    body = "".join(parts)
+    return (
+        f'<svg viewBox="0 0 {_CANDIDATE_MTF_WIDTH} {_CANDIDATE_MTF_HEIGHT}" role="img" '
+        f'aria-label="Candidate MTF curves, 0 to {max_freq:.0f} lp/mm, '
+        'full 0-1 modulation scale">'
+        f"{body}</svg>"
+    )
+
+
+def _candidate_mtf_legend(mtf: MTFResult) -> list[dict[str, str]]:
+    return [
+        {
+            "label": f"Field {field.field_index}",
+            "css": f"mtf-field-{field.field_index % _CANDIDATE_MTF_FIELD_CLASS_COUNT}",
+        }
+        for field in mtf.fields
+    ]
+
+
+def _candidate_mtf_caption(mtf: MTFResult, max_freq: float) -> str:
+    return (
+        f"Sagittal solid / tangential dashed per field; grey dashed = diffraction limit. "
+        f"Plotted 0-{max_freq:.0f} lp/mm on the full 0-1 modulation scale; "
+        f"diffraction cutoff {mtf.cutoff_freq_lp_per_mm:.0f} lp/mm."
+    )
+
+
+def _candidate_visuals_context(payload: OpticalSampleData) -> dict[str, object]:
+    layout_svg = payload.layout_svg.svg_content
+    mtf_svg = _candidate_mtf_svg(payload.mtf)
+    finite_freqs = _finite_float_values(payload.mtf.freq_lp_per_mm)
+    max_freq = max(finite_freqs) if finite_freqs else 0.0
+    return {
+        "layout_svg": layout_svg,
+        "has_layout_svg": bool(layout_svg.strip()),
+        "mtf_svg": mtf_svg,
+        "has_mtf": bool(mtf_svg),
+        "mtf_provenance": _source_value(payload.mtf.provenance),
+        "mtf_legend": _candidate_mtf_legend(payload.mtf) if mtf_svg else [],
+        "mtf_caption": _candidate_mtf_caption(payload.mtf, max_freq) if mtf_svg else "",
+    }
+
+
 def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, object]:
     row = sc.scorecard
     gen = sc.generated
@@ -1587,6 +1733,7 @@ def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, obje
         "mode_label": _mode_label(row.mode),
         "source_case_id": gen.source_case_id or "(none)",
         "generation_notes": list(gen.generation_notes),
+        "visuals": _candidate_visuals_context(gen.payload),
         "codev_post_aut": _candidate_codev_post_aut_context(gen.optical_extras),
         "deviations": [_candidate_deviation_row(dev) for dev in row.target_deviations],
         "image_quality": [

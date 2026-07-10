@@ -18,8 +18,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi.testclient import TestClient
 
 from app.api import optical
+from app.core.aberration import MTFResult
 from app.core.case_library import load_case_library
 from app.core.job_store import JobStore
+from app.core.lens_system import LayoutSVG
 from app.core.orchestration import (
     CandidateSet,
     CandidateSetSummary,
@@ -387,6 +389,34 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
     # RETRIEVED converges nothing — every deviation row must say "No".
     assert 'data-deviation-field="efl" data-converged="false"' in retrieved_card
 
+    # Per-candidate layout SVG: same .layout-svg-frame + optiland-raytrace
+    # provenance badge pattern as the result page.
+    layout_match = re.search(
+        r'<section\b(?=[^>]*data-candidate-layout)[^>]*>.*?</section>', retrieved_card, re.S
+    )
+    assert layout_match is not None
+    layout_block = layout_match.group(0)
+    assert 'data-available="true"' in layout_block
+    assert 'data-provenance="optiland-raytrace"' in layout_block
+    assert "layout-svg-frame" in layout_block
+    assert "<svg" in layout_block
+    assert "data-layout-empty" not in layout_block
+
+    # Per-candidate MTF visual: labeled, honest axes (full 0-1 scale, real
+    # frequency range) + provenance badge from payload.mtf.provenance.
+    mtf_match = re.search(
+        r'<figure\b(?=[^>]*data-candidate-mtf)[^>]*>.*?</figure>', retrieved_card, re.S
+    )
+    assert mtf_match is not None
+    mtf_block = mtf_match.group(0)
+    assert 'data-available="true"' in mtf_block
+    assert 'data-provenance="optiland-raytrace"' in mtf_block
+    assert "mtf-curve-line" in mtf_block
+    assert "lp/mm" in mtf_block  # frequency axis stays labeled
+    assert "full 0-1 modulation scale" in mtf_block  # honest y-scale copy
+    assert "diffraction cutoff" in mtf_block
+    assert "data-mtf-empty" not in mtf_block
+
     converged_card = _candidate_card_html(html, _TARGET_CONVERGED_ID)
     assert 'data-rank-status="withheld"' in converged_card
     assert "status=withheld" in converged_card
@@ -407,6 +437,10 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
 
     # Fictitious-glass provenance, verbatim from generation_notes.
     assert "fictitious-within-plastic-GLA(default)" in converged_card
+
+    # N/A values are muted (value-na hook) so real numbers stand out; the
+    # converged fixture's RI is unavailable -> its N/A cell carries the class.
+    assert "value-na" in converged_card
 
     # [EXPERT] grid is present, mentions both candidate ids, and every data cell is empty.
     expert_grid = _expert_grid_html(html)
@@ -462,6 +496,118 @@ def test_candidate_set_retrieval_only_shows_honesty_banner(monkeypatch):
     assert "data-honesty-banner" in html
     assert "本批候选均未朝客户 target 收敛（③/Mode3 未接）" in html
     assert 'data-mode="target-converged"' not in html
+
+
+# ---------------------------------------------------------------------------
+# Degraded visuals -> honest empty states (no fabricated charts)
+# ---------------------------------------------------------------------------
+
+
+def _degraded_visuals_candidate_set() -> CandidateSet:
+    """Retrieval-only batch whose single candidate carries an empty layout SVG
+    and an MTF payload with no plottable data — both visuals must fall back to
+    honest empty-state copy, never a fabricated or blank-but-available chart."""
+    degraded_payload = _CASE.model_copy(
+        update={
+            "layout_svg": LayoutSVG(width_px=100, height_px=50, svg_content="  "),
+            "mtf": MTFResult(
+                freq_lp_per_mm=[],
+                fields=[],
+                diff_limited=[],
+                cutoff_freq_lp_per_mm=810.0,
+                airy_disc_diameter_um=2.6,
+                rms_spot_radius_um_by_field=[],
+            ),
+        }
+    )
+    assert _CASE.metadata is not None
+    generated = GeneratedCandidate(
+        candidate_id=_RETRIEVED_ID,
+        mode=GenerationMode.RETRIEVED,
+        source_case_id=_CASE.metadata.case_id,
+        payload=degraded_payload,
+        optical_extras=OpticalExtras(),
+        generation_notes=["检索最近邻 seed，未朝 target 优化", "role=best_match"],
+    )
+    scorecard = ScorecardRow(
+        candidate_id=_RETRIEVED_ID,
+        mode=GenerationMode.RETRIEVED,
+        target_deviations=_deviations(GenerationMode.RETRIEVED),
+        image_quality=_image_quality(),
+        manufacturability=_manufacturability(),
+        rank=_ranked_result(),
+        rank_explanation="degraded-visuals fixture",
+    )
+    candidate = ScoredCandidate(generated=generated, scorecard=scorecard)
+    summary = CandidateSetSummary(
+        candidate_count=1,
+        mode_counts={GenerationMode.RETRIEVED: 1},
+        ranked_count=1,
+        withheld_count=0,
+        ri_missing_count=1,
+        notes=[],
+    )
+    return CandidateSet(target=_target_spec(), candidates=[candidate], summary=summary)
+
+
+def test_candidate_card_degraded_visuals_show_honest_empty_states(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate",
+        _fake_orchestrate(_degraded_visuals_candidate_set()),
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        submitted = client.post(
+            "/candidates", data=_candidate_form_payload(), follow_redirects=False
+        )
+        job_id = submitted.headers["location"].rsplit("/", 1)[1]
+
+        with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+            "".join(streamed.iter_text())
+
+        result = client.get(f"/candidates/{job_id}")
+
+    assert result.status_code == 200, result.text
+    card = _candidate_card_html(result.text, _RETRIEVED_ID)
+
+    layout_match = re.search(
+        r'<section\b(?=[^>]*data-candidate-layout)[^>]*>.*?</section>', card, re.S
+    )
+    assert layout_match is not None
+    layout_block = layout_match.group(0)
+    assert 'data-available="false"' in layout_block
+    assert "data-layout-empty" in layout_block
+    assert "No SVG payload was returned for this candidate." in layout_block
+    assert "layout-svg-frame" not in layout_block
+
+    mtf_match = re.search(r'<figure\b(?=[^>]*data-candidate-mtf)[^>]*>.*?</figure>', card, re.S)
+    assert mtf_match is not None
+    mtf_block = mtf_match.group(0)
+    assert 'data-available="false"' in mtf_block
+    assert "data-mtf-empty" in mtf_block
+    assert "No plottable MTF payload was returned for this candidate." in mtf_block
+    assert "mtf-curve-line" not in mtf_block
+
+
+# ---------------------------------------------------------------------------
+# Provenance badge differentiation: estimate dot must not reuse the solid
+# real-raytrace default
+# ---------------------------------------------------------------------------
+
+
+def test_site_css_gives_optiland_estimate_a_distinct_badge_dot():
+    with TestClient(app) as client:
+        response = client.get("/static/site.css")
+    assert response.status_code == 200
+    css = response.text
+    assert '.source-badge[data-provenance="optiland-estimate"]::before' in css
+    estimate_rule = css.split('.source-badge[data-provenance="optiland-estimate"]::before', 1)[1]
+    estimate_rule = estimate_rule.split("}", 1)[0]
+    # Hollow/outlined treatment: transparent fill + visible outline.
+    assert "background: transparent" in estimate_rule
+    assert "border:" in estimate_rule
 
 
 # ---------------------------------------------------------------------------
