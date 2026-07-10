@@ -12,6 +12,7 @@ from app.core.engines.codev_readout import (
     CodeVSurfaceReadout,
     CodeVWavelengthReadout,
 )
+from app.core.zmx_materials import _CODEV_MODEL_GLASS_MARKER_RE
 
 _WRITABLE_ASPHERE_TERMS: tuple[str, ...] = ("A", "B", "C", "D", "E", "F", "G")
 _UNSUPPORTED_EVENASPH_TERMS: tuple[str, ...] = ("H", "J")
@@ -263,7 +264,17 @@ def _glass_line(surface: CodeVSurfaceReadout) -> str | None:
     name = _optional_glass_name(surface.glass)
     if name is None:
         return None
-    model_flag = 1 if name.upper() == "___BLANK" else 0
+    # Model glass needs flag=1 both for plain "___BLANK" and for the repair
+    # marker form "<trade-name>_BLANK" (scripts/repair_legacy_zmx_glass.py):
+    # CODE V echoes the marker name back in its readout, and a rebuilt ZMX
+    # emitted with flag=0 would carry catalog-name semantics that real Zemax
+    # (and a second ZEMAXOS_TO_CV import, e.g. Stage-B or 资深 Verify)
+    # resolves as AIR — reproducing the all-air seed bug on the deliverable.
+    is_model_glass = (
+        name.upper() == "___BLANK"
+        or _CODEV_MODEL_GLASS_MARKER_RE.search(name.upper()) is not None
+    )
+    model_flag = 1 if is_model_glass else 0
     return f"  GLAS {name} {model_flag} 0 {_fmt_number(nd)} {_fmt_number(vd)} 0 0 0 0 0 0 "
 
 

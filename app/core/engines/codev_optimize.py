@@ -1054,6 +1054,45 @@ def run_codev_target(
         allow_nonzero_ok_result=True,
     )
     data: dict[str, object] = dict(batch.data)
+    # Fail-fast 预检（数据病灶防线，真机实锤 2026-07-10）：seed_baseline 是导入
+    # 后、任何配置/AUT 之前的 CODE V 直读快照。EFL 非有限或 |EFL| >= 1e30
+    # （CODE V 垃圾哨兵——全空气系统实测 EFY=1e35）说明种子进 CODE V 时玻璃根本
+    # 没解析（GLAS 名不在目录且非 model glass，ZEMAXOS_TO_CV 静默置为空气）。
+    # 立即抛可归因错误，而不是让 AUT 在零光焦度系统上跑完整条 autovig ladder、
+    # 最后以 "zmx_rebuild_error: non-finite EFL: -inf" 伪装成重建问题（根因诊断
+    # 见 tests/test_zmx_glass_resolvability.py 与 scripts/repair_legacy_zmx_glass.py）。
+    baseline_efl_text = str(data.get("seed_baseline.efl_y_mm", ""))
+    try:
+        baseline_efl_mm = float(baseline_efl_text)
+    except ValueError:
+        # required-keys 闸已保证该键存在——解析失败即非数垃圾，正是预检要抓的
+        # 腐坏形态之一，绝不吞掉（fail-fast，与哨兵路径同款可归因错误）。
+        raise CodeVBatchError(
+            "failure",
+            "seed baseline EFL readout is non-numeric garbage: "
+            f"{baseline_efl_text!r}; the CODE V import/readout is corrupt for "
+            "this seed (see scripts/repair_legacy_zmx_glass.py for the known "
+            "unresolved-glass defect family)",
+            details={
+                "source_zmx": str(source_zmx),
+                "seed_baseline_efl_y_mm": baseline_efl_text,
+                "preflight": "corrupt-baseline-efl",
+            },
+        ) from None
+    if not math.isfinite(baseline_efl_mm) or abs(baseline_efl_mm) >= 1e30:
+        raise CodeVBatchError(
+            "failure",
+            "seed imported into CODE V with unresolved glass (all-air system): "
+            f"baseline EFL {baseline_efl_text!r}; check the source ZMX GLAS lines "
+            "carry explicit model-glass nd/vd or CODE-V-resolvable catalog names "
+            "(see scripts/repair_legacy_zmx_glass.py)",
+            details={
+                "source_zmx": str(source_zmx),
+                "seed_baseline_efl_y_mm": baseline_efl_text,
+                "sentinel_threshold": 1e30,
+                "preflight": "unresolved-glass",
+            },
+        )
     data["aut_error_trace"] = _safe_aut_error_trace(batch.listing_path)
     data["optimized_zmx_path"] = None
     returncode_ok = batch.returncode in _OPTIMIZE_OK_RETURNCODES
@@ -1178,6 +1217,11 @@ def run_codev_target_autovig(
                 emit_optimized_zmx=emit_optimized_zmx, **sequence_options,
             )
         except CodeVBatchError as exc:
+            if exc.details.get("preflight"):
+                # 种子级预检缺陷（如导入即全空气/基线读数腐坏）：换渐晕 rung
+                # 不可能改变导入结果，爬完整条 ladder 只是把同一错误重打 N 次
+                # CODE V——直接上抛，保留可归因 details。
+                raise
             if first_error is None:
                 first_error = exc
             last_error = exc
@@ -1308,6 +1352,24 @@ def _rms_display(rms: float) -> str:
     return "不可用（缺失/非法/非正，fail-closed 落后）" if math.isinf(rms) else f"{rms:.4g}µm"
 
 
+def _error_summary(result: Mapping[str, object]) -> str:
+    """reason 文案用：从配置结果里的 error dict 如实摘要 kind + detail 片段。
+    绝不把数据缺陷（如 unresolved-glass 预检）硬贴 tooling 标签。"""
+    error = result.get("error")
+    if not isinstance(error, Mapping):
+        return "kind=unknown"
+    kind = error.get("kind", "unknown")
+    detail = str(error.get("detail", "") or "")
+    if len(detail) > 100:
+        detail = detail[:97] + "..."
+    return f"kind={kind}: {detail}" if detail else f"kind={kind}"
+
+
+def _config_is_preflight(result: Mapping[str, object]) -> bool:
+    error = result.get("error")
+    return isinstance(error, Mapping) and bool(error.get("preflight"))
+
+
 def _select_preferred(
     configs: Mapping[str, Mapping[str, object]],
 ) -> tuple[str | None, str]:
@@ -1327,9 +1389,24 @@ def _select_preferred(
     best_errored, best_not_conv, best_rms = ranks[best]
     second_errored, second_not_conv, second_rms = ranks[second]
     if best_errored:
-        return None, "两配置均报 CodeVBatchError（tooling-blocked），无可用结果"
+        # 如实归因（W4）：从各配置真实 error dict 摘要 kind + detail，只在
+        # 没有种子级预检缺陷标记时才称 tooling-blocked——数据缺陷（如
+        # unresolved-glass）不是工具链问题，误贴标签会把修数据的工单派去修工具。
+        summaries = "; ".join(
+            f'"{name}" {_error_summary(configs[name])}'
+            for name in _STANDARD_EXTRA_DOF_CONFIGS
+        )
+        label = (
+            "seed 级预检缺陷"
+            if any(_config_is_preflight(configs[name]) for name in _STANDARD_EXTRA_DOF_CONFIGS)
+            else "tooling-blocked"
+        )
+        return None, f"两配置均报 CodeVBatchError（{label}；{summaries}），无可用结果"
     if second_errored:
-        return best, f'"{second}" 配置报 CodeVBatchError，"{best}" 为唯一可用结果'
+        return best, (
+            f'"{second}" 配置报 CodeVBatchError（{_error_summary(configs[second])}），'
+            f'"{best}" 为唯一可用结果'
+        )
     best_conv = 1 - best_not_conv
     second_conv = 1 - second_not_conv
     if best_conv != second_conv:
@@ -1433,7 +1510,16 @@ def run_codev_target_standard(
     )
     configs: dict[str, dict[str, object]] = {}
     # 串行——CODE V 单实例/单 license seat 硬约束，勿并行化。
+    preflight_error: dict[str, object] | None = None
     for extra_dof in _STANDARD_EXTRA_DOF_CONFIGS:
+        if preflight_error is not None:
+            # 种子级预检缺陷（导入即坏，与 extra_dof 配置无关）：第二配置
+            # 不再真机重跑同一必然失败，如实记同一错误 + skipped 注记。
+            configs[extra_dof] = {
+                "error": dict(preflight_error),
+                "skipped": "seed-level preflight defect, identical for every config",
+            }
+            continue
         try:
             data = run_codev_target_autovig(
                 source_zmx=source_zmx,
@@ -1451,7 +1537,11 @@ def run_codev_target_standard(
             )
             configs[extra_dof] = dict(data)
         except CodeVBatchError as exc:
-            configs[extra_dof] = {"error": {"kind": exc.kind, "detail": exc.message}}
+            error: dict[str, object] = {"kind": exc.kind, "detail": exc.message}
+            if exc.details.get("preflight"):
+                error["preflight"] = exc.details["preflight"]
+                preflight_error = error
+            configs[extra_dof] = {"error": error}
 
     preferred, preferred_reason = _select_preferred(configs)
     # provenance 按 config 如实生成（诚实语义：标签必须与该配置实际跑法一致）：

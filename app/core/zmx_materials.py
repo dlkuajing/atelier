@@ -53,13 +53,20 @@ MATERIAL_ND_VD: dict[str, tuple[float, float]] = {
 }
 
 _SUFFIX_RE = re.compile(r"_\d+$")
+# CODE V model-glass marker appended by scripts/repair_legacy_zmx_glass.py
+# (ZEMAXOS_TO_CV selects its model-glass branch by substring match on "BLANK";
+# the marker keeps the trade name in-file while making CODE V honor the inline
+# nd/vd). The lookbehind spares the plain Zemax "___BLANK" placeholder name.
+_CODEV_MODEL_GLASS_MARKER_RE = re.compile(r"(?<=[^_])_BLANK$")
 
 
 def _canon(name: str) -> str:
-    """Uppercase + strip the Zemax factory suffix (e.g. ``_14``)."""
+    """Uppercase + strip the repair marker (``_BLANK``) and the Zemax factory
+    suffix (e.g. ``_14``), so ``APL5014CL_14_BLANK`` -> ``APL5014CL``."""
     if not name:
         return ""
-    return _SUFFIX_RE.sub("", name.strip().upper())
+    text = _CODEV_MODEL_GLASS_MARKER_RE.sub("", name.strip().upper())
+    return _SUFFIX_RE.sub("", text)
 
 
 def lookup_nd_vd(name: str) -> tuple[float, float] | None:

@@ -927,6 +927,127 @@ def _buf_exp_paths_from_sequence_single(sequence_path: Path) -> list[Path]:
     return [Path(m) for m in matches]
 
 
+def _target_popen_with_baseline(baseline_text: str):
+    """FakePopen 工厂：先写正常 target TSV，再把 seed_baseline EFL 改为
+    `baseline_text`（模拟导入侧腐坏）。记录实例化次数，供 fail-fast 测试
+    断言真正发起了几次 CODE V 批跑。"""
+
+    class FakePopen:
+        pid = 4322
+        returncode = 1
+        invocations = 0
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            type(self).invocations += 1
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            (result_path,) = _buf_exp_paths_from_sequence_single(sequence_path)
+            _write_target_result(result_path)
+            text = result_path.read_text(encoding="utf-8")
+            result_path.write_text(
+                text.replace(
+                    "seed_baseline.efl_y_mm\t3.6225",
+                    f"seed_baseline.efl_y_mm\t{baseline_text}",
+                ),
+                encoding="utf-8",
+            )
+            return "ignored", ""
+
+    return FakePopen
+
+
+def test_mock_run_codev_target_rejects_all_air_seed_baseline(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """导入即全空气的种子（玻璃未解析，CODE V EFY 哨兵 1e35）必须立即抛可归因
+    的 CodeVBatchError，而不是带着垃圾三快照继续跑 autovig ladder、最后以
+    zmx_rebuild_error 伪装成 ZMX 重建问题（真机根因 2026-07-10，见
+    scripts/repair_legacy_zmx_glass.py）。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(
+        codev_batch.subprocess, "Popen", _target_popen_with_baseline("1.000000e+35")
+    )
+
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path,
+            target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+        )
+    assert error.value.kind == "failure"
+    assert "unresolved glass" in error.value.message
+    assert "all-air" in error.value.message
+    assert error.value.details["seed_baseline_efl_y_mm"] == "1.000000e+35"
+    assert error.value.details["preflight"] == "unresolved-glass"
+
+
+def test_mock_run_codev_target_rejects_non_numeric_seed_baseline(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """required-keys 闸已保证键存在，float() ValueError = 非数垃圾——这正是
+    预检要抓的腐坏形态之一，必须抛可归因错误而不是静默跳过检查（W2）。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(
+        codev_batch.subprocess, "Popen", _target_popen_with_baseline("n/a-garbage")
+    )
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path,
+            target_efl_mm=4.057, stage="A", executable=executable, timeout_seconds=12.0,
+        )
+    assert error.value.kind == "failure"
+    assert "non-numeric" in error.value.message
+    assert "n/a-garbage" in error.value.message
+    assert error.value.details["preflight"] == "corrupt-baseline-efl"
+
+
+def test_mock_autovig_preflight_defect_short_circuits_ladder(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """种子级预检缺陷是确定性的：换渐晕 rung 不改变导入结果。autovig 必须在
+    rung0 直接上抛，不爬完整条 ladder（W3）。"""
+    executable = _fake_codev_executable(tmp_path)
+    fake_popen = _target_popen_with_baseline("1.000000e+35")
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", fake_popen)
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target_autovig(
+            source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+            stage="A", executable=executable, timeout_seconds=12.0, platform_name="nt",
+            num_fields=3, vig_ladder=(0.0, 0.2, 0.3),
+        )
+    assert error.value.details["preflight"] == "unresolved-glass"
+    assert fake_popen.invocations == 1  # rung0 即上抛，不再爬 0.2/0.3
+
+
+def test_mock_standard_preflight_defect_runs_one_batch_and_attributes_reason(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """标准双配置入口对种子级预检缺陷只真机跑 1 次：第二配置如实记同一错误 +
+    skipped 注记（W3）；preferred_reason 从真实 error dict 归因，不硬贴
+    tooling-blocked 标签（W4）。"""
+    executable = _fake_codev_executable(tmp_path)
+    fake_popen = _target_popen_with_baseline("1.000000e+35")
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", fake_popen)
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        executable=executable, timeout_seconds=12.0,
+    )
+    assert fake_popen.invocations == 1  # 整个 standard 调用只发起 1 次 CODE V 批跑
+    asphere_error = result["configs"]["asphere"]["error"]
+    both = result["configs"]["both"]
+    assert asphere_error["kind"] == "failure"
+    assert "unresolved glass" in asphere_error["detail"]
+    assert asphere_error["preflight"] == "unresolved-glass"
+    assert both["error"] == asphere_error
+    assert both["skipped"] == "seed-level preflight defect, identical for every config"
+    assert result["preferred"] is None
+    assert "unresolved glass" in result["preferred_reason"]
+    assert "seed 级预检缺陷" in result["preferred_reason"]
+    assert "tooling-blocked" not in result["preferred_reason"]
+
+
 # ===========================================================================
 # parse_aut_error_trace（AUT 误差函数轨迹诊断）单测：内联 fixture 摘录自真实
 # .lis 样本，未经删改数值（仅省略了中间的 Parameter 逐行清单，不影响

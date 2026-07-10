@@ -124,6 +124,25 @@ def test_build_zmx_from_codev_readout_emits_zemax_tokens() -> None:
     assert "  CURV 0.05 0 0 0 0 \"\"\r\n" in text
     assert "  GLAS BK7 0 0 1.5168 64.17 0 0 0 0 0 0 \r\n" in text
     assert "  GLAS ___BLANK 1 0 1.62 30 0 0 0 0 0 0 \r\n" in text
+
+
+def test_marker_suffixed_glass_is_written_as_model_glass() -> None:
+    """CODE V echoes the repair marker name (e.g. APL5014CL_14_BLANK, see
+    scripts/repair_legacy_zmx_glass.py) back in its readout. The rebuilt
+    candidate ZMX must carry model_flag=1 for it: flag=0 catalog-name
+    semantics would make real Zemax (and a second ZEMAXOS_TO_CV import,
+    e.g. Stage-B or expert Verify) resolve the deliverable's glass as air —
+    reproducing the all-air seed bug on the output artifact."""
+    readout = _manual_readout()
+    marked = replace(
+        readout.surfaces[0], glass="APL5014CL_14_BLANK", nd=1.544, vd=56.0
+    )
+    text = build_zmx_from_codev_readout(
+        replace(readout, surfaces=(marked, *readout.surfaces[1:]))
+    )
+    assert "  GLAS APL5014CL_14_BLANK 1 0 1.544 56 0 0 0 0 0 0 \r\n" in text
+    # The plain placeholder keeps its existing flag=1 behavior.
+    assert "  GLAS ___BLANK 1 0 1.62 30 0 0 0 0 0 0 \r\n" in text
     assert "  CONI -0.2\r\n" in text
     assert "  PARM 1 0\r\n" in text
     assert "  PARM 2 0.0001\r\n" in text
