@@ -17,7 +17,7 @@
 ## 待真机项（8）
 
 1. 真实 catalog 牌号赋值与 catalog 限定语法。
-2. `GLC S... 100` 是否为可靠冻结表达。
+2. 冻结表达=不声明任何玻璃变量（orchestrator 终审修正：opt3 先例 GLC Sk 0=放开玻璃变量，未经验证的 GLC Sk 100 冻结猜测风险=语义相反；C 臂 readback 证明玻璃未变仍为必收证据）。
 3. 显式 Nd:Vd 写入与随后目录牌号 readback 的组合语义。
 4. 三快照 per-field × per-wavelength spot/WFE/横轴色差宏与 buffer 拼接。
 5. 配置指纹所需 focus/refocus、ray aiming、zoom 数据库项。

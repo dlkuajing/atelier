@@ -97,7 +97,9 @@ def test_builder_has_assign_freeze_short_aut_and_three_snapshots(tmp_path):
     assert "before-fictitious" in sequence
     assert "after-snap-frozen" in sequence
     assert "after-snap-reopt" in sequence
-    assert "GLC S1 100" in sequence
+    # Freeze must NOT declare any glass variable (opt3 precedent: GLC opens
+    # glass as an AUT variable; freezing is the absence of the declaration).
+    assert "GLC" not in sequence.replace("! GLC intentionally absent", "")
     aut = sequence.split("AUT", 1)[1]
     assert "GLC S" not in aut
     assert "MXC 7" in sequence and "MNC 2" in sequence

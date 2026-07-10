@@ -224,7 +224,10 @@ def build_glass_freeze_reopt_sequence(
             f"! catalog={entry.catalog_id} name={entry.glass_name} version={entry.version}",
             f"! explicit offline Nd={entry.nd:.12g} Vd={entry.vd:.12g}",
             f"GLA S{s} {entry.nd:.12g}:{entry.vd:.12g}",
-            f"GLC S{s} 100",
+            # Freeze = declare NO glass variable at all (opt3 precedent:
+            # "GLC Sk 0" *opens* glass as an AUT variable; an unverified
+            # "GLC Sk 100" freeze guess risks the opposite semantics).
+            # The matrix C-arm readback proves glass stayed frozen.
         ]
     lines += _snapshot_block("after-snap-frozen", session_run_id, configuration_fingerprint)
     lines += [
