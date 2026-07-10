@@ -181,3 +181,20 @@ FOV below is full field (`2 × hfov_deg`) computed from the pipeline-published h
 | US-12487435-B2 | Embodiment 4 | failed |  |  |  |  |  | PatentParseError: surface 4 radius is not numeric: Second |
 | US-12487435-B2 | Embodiment 5 | failed |  |  |  |  |  | PatentParseError: surface 4 radius is not numeric: Second |
 | US-12487435-B2 | Embodiment 6 | failed |  |  |  |  |  | PatentParseError: surface 4 radius is not numeric: Second |
+
+## Shovel 4B — formal intake
+
+- staging candidates: 18 NEWMAX embodiments, all accounted in `p12-intake-ledger.json`
+- accepted: **6**; rejected: **12**
+- rejection ledger: 7 implausible smartphone FOVs above the ratified 135° ceiling
+  (`US-12596237-B2` e1-e7), plus 5 non-positive FTAN sanity anchors
+  (`US-12578548-B2` e1-e5)
+- accepted gates: formal-stem unique; positive `ATELIER_REAL_IMH_MM`; positive FTAN
+  sanity; physical GLAS nd/vd; positive Optiland EFL; bounded lightweight build;
+  `mtf_max_field_frac <= 0.5`; FOV/EFL plausibility; no near-duplicate key collision
+- library count: 436 -> **442**
+- runtime scenario distribution: wide 224 -> **225** (+1), telephoto 134 -> **139**
+  (+5), ultrawide 78 -> **78** (+0)
+- existing-case invariant: no pre-existing case JSON changed; only six new case JSON files
+  and `index.json` were written
+- glass resolvability gate: **7 passed**

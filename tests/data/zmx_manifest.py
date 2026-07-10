@@ -408,6 +408,7 @@ DATA06_MANIFEST_NAMES = (
 )
 DATA09_MANIFEST_NAMES = ("data09d1_manifest.json",)
 DATA10_MANIFEST_NAMES = ("data10a_manifest.json", "data10b_manifest.json")
+P12_MANIFEST_NAMES = ("p12_intake_manifest.json",)
 DATA06_ZMX_AMMO: list[dict] = []
 for manifest_name in DATA06_MANIFEST_NAMES:
     manifest_path = Path(__file__).with_name(manifest_name)
@@ -423,9 +424,15 @@ for manifest_name in DATA10_MANIFEST_NAMES:
     manifest_path = Path(__file__).with_name(manifest_name)
     if manifest_path.exists():
         DATA10_ZMX_AMMO.extend(json.loads(manifest_path.read_text(encoding="utf-8")))
+P12_ZMX_AMMO: list[dict] = []
+for manifest_name in P12_MANIFEST_NAMES:
+    manifest_path = Path(__file__).with_name(manifest_name)
+    if manifest_path.exists():
+        P12_ZMX_AMMO.extend(json.loads(manifest_path.read_text(encoding="utf-8")))
 ZMX_AMMO.extend(DATA06_ZMX_AMMO)
 ZMX_AMMO.extend(DATA09_ZMX_AMMO)
 ZMX_AMMO.extend(DATA10_ZMX_AMMO)
+ZMX_AMMO.extend(P12_ZMX_AMMO)
 
 ZMX_AMMO_FILENAMES: list[str] = [a["filename"] for a in ZMX_AMMO]
 
@@ -441,9 +448,12 @@ assert len(DATA10_ZMX_AMMO) == 83, (
     f"expected 83 converted DATA-10 designs (8 DATA-10a live mining + 75 DATA-10b "
     f"Sunny/Ability parser-family expansion), got {len(DATA10_ZMX_AMMO)}"
 )
-assert len(ZMX_AMMO) == 436, (
-    f"expected 436 ammo designs (17 GGG + 22 patent + 128 DATA-06 + 186 DATA-09d1 "
-    f"+ 8 DATA-10a + 75 DATA-10b), got {len(ZMX_AMMO)}"
+assert len(P12_ZMX_AMMO) == 6, (
+    f"expected 6 accepted Phase 12 NEWMAX designs, got {len(P12_ZMX_AMMO)}"
+)
+assert len(ZMX_AMMO) == 442, (
+    f"expected 442 ammo designs (17 GGG + 22 patent + 128 DATA-06 + 186 DATA-09d1 "
+    f"+ 8 DATA-10a + 75 DATA-10b + 6 Phase 12 NEWMAX), got {len(ZMX_AMMO)}"
 )
 
 # E2-01 batch 1 full-embodiment cross-validation provenance (patent seeds only).
