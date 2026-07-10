@@ -20,6 +20,7 @@ import contextlib
 import json
 import math
 import re
+import threading
 import warnings
 from collections.abc import Callable, Sequence
 from functools import lru_cache
@@ -725,6 +726,48 @@ def _case_index_image_height_mm_by_id() -> dict[str, float]:
     return values
 
 
+# Hard wall-clock budget for one live protected-edge-field scan during a seed
+# intake audit. Follows the scripts/generate_cases.py BUILD_TIMEOUT_S daemon-
+# thread precedent: a single pathological seed must never stall the whole
+# audit (observed: some DATA-10b seeds hang the Optiland probe indefinitely).
+# Calibration (2026-07-10, demo machine, 8-seed sample of the live-scan
+# population): healthy seeds complete a 5-point scan in 1.5-3.3s, so 30s is
+# roughly a 10x margin over the slowest healthy scan while keeping even a
+# worst-case (every seed timing out) audit CI-safe.
+EDGE_SCAN_TIMEOUT_S = 30.0
+
+
+def _edge_scan_with_timeout(
+    source_zmx: str,
+    fov_deg: float,
+    *,
+    timeout_s: float = EDGE_SCAN_TIMEOUT_S,
+):
+    """Run protected_edge_field_stability_scan with a hard wall-clock bound.
+
+    Returns (scan, None) on success, (None, error) on failure or timeout. A
+    timeout is reported to the caller so it can be recorded honestly in the
+    audit evidence -- never silently treated as a pass or a fail.
+    """
+
+    holder: dict = {}
+
+    def _worker() -> None:
+        try:
+            holder["scan"] = protected_edge_field_stability_scan(source_zmx, fov_deg)
+        except Exception as exc:  # noqa: BLE001 - reported to the audit caller
+            holder["error"] = exc
+
+    thread = threading.Thread(target=_worker, daemon=True)
+    thread.start()
+    thread.join(timeout=timeout_s)
+    if thread.is_alive():
+        return None, TimeoutError(f"edge-field scan exceeded {timeout_s:.0f}s")
+    if "error" in holder:
+        return None, holder["error"]
+    return holder["scan"], None
+
+
 @lru_cache(maxsize=1)
 def _case_index_payload_edge_seed_ids() -> set[str]:
     """Payload-bounded intake waves keep lightweight MTF; do not rescan every audit."""
@@ -744,9 +787,16 @@ def _case_index_payload_edge_seed_ids() -> set[str]:
         if not isinstance(record, dict):
             continue
         batch = str(record.get("intake_batch", ""))
+        # DATA-10 waves (10a live mining, 10b Sunny/Ability parser expansion)
+        # use the same bounded lightweight-build intake as DATA-09d1, so their
+        # payload mtf_max_field_frac is equally authoritative. Without this,
+        # every audit live-rescans all 83 DATA-10 seeds -- observed to hang
+        # the audit tests >7min after the 10b intake (some new seeds are
+        # ultra-slow to edge-probe).
         is_payload_bounded = (
             (batch.startswith("DATA-06") and batch != "DATA-06c")
             or batch.startswith("DATA-09d1")
+            or batch.startswith("DATA-10")
         )
         if not is_payload_bounded:
             continue
@@ -999,10 +1049,26 @@ def build_seed_intake_audit(
             )
             edge_stability_cache[case.metadata.case_id] = result
             return result
-        scan = protected_edge_field_stability_scan(
+        scan, scan_error = _edge_scan_with_timeout(
             case.metadata.source_zmx,
             case.metadata.fov_deg,
         )
+        if scan is None:
+            # Recorded honestly: a timed-out or crashed probe is neither a
+            # pass nor a fail -- the seed keeps its payload MTF value and the
+            # evidence names the probe outcome so the audit stays inspectable.
+            result = (
+                case.metadata.mtf_max_field_frac,
+                None,
+                [
+                    f"payload:{format_mtf_field_fraction(case.metadata.mtf_max_field_frac)}",
+                    f"probe-timeout:{scan_error}"
+                    if isinstance(scan_error, TimeoutError)
+                    else f"probe-error:{type(scan_error).__name__}: {scan_error}",
+                ],
+            )
+            edge_stability_cache[case.metadata.case_id] = result
+            return result
         highest_stable: float | None = None
         first_cliff: float | None = None
         for point in scan:
