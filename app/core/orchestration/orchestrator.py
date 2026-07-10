@@ -71,6 +71,7 @@ def orchestrate(
     rel_tolerances: Mapping[str, float] | None = None,
     rank_weights: Mapping[str, float] | None = None,
     min_coverage_pct: float | None = None,
+    repeat_runs: int = 1,
 ) -> CandidateSet:
     """Run every registered (or explicitly selected) generator against
     `spec`, score each produced candidate against `target`, and return a
@@ -92,7 +93,30 @@ def orchestrate(
     docstring). `None` (the default for all three) leaves `score_candidate`'s
     own default in place — every existing caller that doesn't pass these is
     unaffected.
+
+    `repeat_runs` (Phase 17 子项3, default `1`, zero behavior change): this
+    shovel only delivers the `RepeatabilityMetrics` schema + fail-closed
+    single-run default (`repeat_runs=1` never passes repeat samples to
+    `score_candidate`, so every existing caller sees identical output to
+    before this parameter existed). `repeat_runs > 1` deliberately raises
+    `NotImplementedError` rather than silently running once and pretending
+    the extra runs happened — the real multi-run execution engine (calling
+    a generator's seed multiple independent times and collecting RMS/WFE
+    samples) is genuinely unbuilt and its real-CODE-V cost is scheduled
+    separately ("由 orchestrator 排窗"), not something this call should
+    silently skip or fake.
     """
+    if repeat_runs < 1:
+        raise ValueError(f"orchestrate: repeat_runs must be >= 1, got {repeat_runs}")
+    if repeat_runs > 1:
+        raise NotImplementedError(
+            f"orchestrate: repeat_runs={repeat_runs} requested, but the real repeat-run "
+            "execution engine (Phase 17 子项3) is not implemented yet — this call only "
+            "wires the RepeatabilityMetrics schema + repeat_runs=1 default path. Real "
+            "multi-run CODE V verification is scheduled separately by the orchestrator, "
+            "not triggered implicitly here."
+        )
+
     selected_modes = (
         list(_REGISTRY.keys()) if modes is None else list(dict.fromkeys(modes))
     )

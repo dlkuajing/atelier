@@ -319,6 +319,22 @@
                   <p class="manufacturability-note">{{ candidate.manufacturability.note }}</p>
                 </div>
 
+                <div
+                  class="repeatability-proxy"
+                  data-repeatability
+                  data-repeatability-status="{{ candidate.repeatability.status }}"
+                  aria-label="Repeatability (cross-run distribution)"
+                >
+                  <p class="brief-label">Repeatability (cross-run distribution)</p>
+                  <ul>
+                    <li>run_count: {{ candidate.repeatability.run_count }}</li>
+                    <li>status: <span data-repeatability-status-label>{{ candidate.repeatability.status_label }}</span></li>
+                    <li>RMS spot radius (um): min={{ candidate.repeatability.rms_min }}, max={{ candidate.repeatability.rms_max }}, spread={{ candidate.repeatability.rms_spread }}</li>
+                    <li>WFE (waves): min={{ candidate.repeatability.wfe_min }}, max={{ candidate.repeatability.wfe_max }}, spread={{ candidate.repeatability.wfe_spread }}</li>
+                  </ul>
+                  <p class="repeatability-note" data-repeatability-note>{{ candidate.repeatability.note }}</p>
+                </div>
+
                 <div class="rank-result" data-rank-result data-rank-status="{{ candidate.rank_status }}">
                   {% if candidate.rank_status == "ranked" %}
                     <p>status=ranked, score={{ candidate.rank_score }}, coverage={{ candidate.rank_coverage_pct }}</p>

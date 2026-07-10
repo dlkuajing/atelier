@@ -149,6 +149,33 @@ def _manufacturability_row(mfg: ManufacturabilityProxy) -> list[object]:
     ]
 
 
+_REPEATABILITY_COLUMNS: tuple[str, ...] = (
+    "repeatability_run_count",
+    "repeatability_status",
+    "repeatability_rms_um_min",
+    "repeatability_rms_um_max",
+    "repeatability_rms_um_spread",
+    "repeatability_wfe_waves_min",
+    "repeatability_wfe_waves_max",
+    "repeatability_wfe_waves_spread",
+    "repeatability_note",
+)
+
+
+def _repeatability_row(rep) -> list[object]:
+    return [
+        rep.run_count,
+        rep.status,
+        _metric_cell(rep.rms_spot_radius_um_min),
+        _metric_cell(rep.rms_spot_radius_um_max),
+        _metric_cell(rep.rms_spot_radius_um_spread),
+        _metric_cell(rep.wfe_waves_min),
+        _metric_cell(rep.wfe_waves_max),
+        _metric_cell(rep.wfe_waves_spread),
+        rep.note,
+    ]
+
+
 def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
     ws.title = "Candidates"
     header = ["candidate_id", "mode", "source_case_id", "rank_status", "rank_score", "coverage_pct", "missing_metrics"]
@@ -156,6 +183,7 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
         header += [f"{field}_target", f"{field}_achieved", f"{field}_rel_violation", f"{field}_converged"]
     header += [label for label, _ in _IMAGE_QUALITY_COLUMNS]
     header += ["ttl_mm", "n_pieces", "has_special_glass", "aspheric_term_count", "aspheric_surface_count", "chief_ray_angle_deg"]
+    header += list(_REPEATABILITY_COLUMNS)
     ws.append(header)
 
     for sc in candidate_set.candidates:
@@ -185,6 +213,7 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
         for _, attr in _IMAGE_QUALITY_COLUMNS:
             line.append(_metric_cell(getattr(row.image_quality, attr)))
         line += _manufacturability_row(row.manufacturability)
+        line += _repeatability_row(row.repeatability)
         ws.append(line)
 
 

@@ -1630,6 +1630,27 @@ def _candidate_manufacturability_context(
     }
 
 
+def _candidate_repeatability_context(
+    rep: orchestration.RepeatabilityMetrics,
+) -> dict[str, object]:
+    """P17 sub-item 3: render the honest run_count/status the page must
+    show as-is — `orchestrate()`'s only wired path today (`repeat_runs=1`)
+    always yields `status="unavailable"`, and this context never upgrades
+    that (no client-side fabrication)."""
+    return {
+        "run_count": rep.run_count,
+        "status": rep.status,
+        "status_label": "Available" if rep.status == "available" else "Unavailable",
+        "rms_min": _fmt_metric(rep.rms_spot_radius_um_min),
+        "rms_max": _fmt_metric(rep.rms_spot_radius_um_max),
+        "rms_spread": _fmt_metric(rep.rms_spot_radius_um_spread),
+        "wfe_min": _fmt_metric(rep.wfe_waves_min),
+        "wfe_max": _fmt_metric(rep.wfe_waves_max),
+        "wfe_spread": _fmt_metric(rep.wfe_waves_spread),
+        "note": rep.note,
+    }
+
+
 # Compact per-candidate MTF chart geometry. Left/bottom padding leaves room
 # for axis tick labels — the axes must stay labeled and honest (full 0-1
 # modulation scale, real frequency range), never a truncated scale that
@@ -1794,6 +1815,7 @@ def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, obje
             for label, attr in _CANDIDATE_IMAGE_QUALITY_ROWS
         ],
         "manufacturability": _candidate_manufacturability_context(row.manufacturability),
+        "repeatability": _candidate_repeatability_context(row.repeatability),
         "rank_status": rank.status,
         "rank_status_label": "Ranked" if rank.status == "ranked" else "Withheld",
         "rank_score": f"{rank.score:.3f}" if rank.score is not None else None,

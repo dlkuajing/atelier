@@ -575,3 +575,99 @@ def test_score_candidate_output_has_no_pass_fail_fields():
     field_names = set(type(row).model_fields.keys())
     assert not (field_names & forbidden)
     assert row.rank_explanation  # non-empty explanation
+
+
+# ---------------------------------------------------------------------------
+# F. Repeatability (Phase 17 子项3) — mock-chain: pure aggregation of
+# caller-supplied repeat samples, no CODE V / no generators.py involvement.
+# ---------------------------------------------------------------------------
+
+
+def test_repeatability_defaults_to_unavailable_single_run():
+    target = _wide_target_spec()
+    generated = _generated_candidate()
+    row = score_candidate(generated, target)
+    r = row.repeatability
+    assert r.run_count == 1
+    assert r.status == "unavailable"
+    for m in (
+        r.rms_spot_radius_um_min,
+        r.rms_spot_radius_um_max,
+        r.rms_spot_radius_um_spread,
+        r.wfe_waves_min,
+        r.wfe_waves_max,
+        r.wfe_waves_spread,
+    ):
+        assert m.status == "unavailable"
+        assert m.value is None
+    assert "未做重复性验证" in r.note
+
+
+def test_repeatability_single_sample_still_unavailable():
+    """One sample is not a distribution — fail closed, not min==max==spread=0."""
+    target = _wide_target_spec()
+    generated = _generated_candidate()
+    row = score_candidate(generated, target, repeat_rms_samples_um=[12.6])
+    assert row.repeatability.run_count == 1
+    assert row.repeatability.status == "unavailable"
+
+
+def test_repeatability_two_plus_rms_samples_computes_min_max_spread():
+    """Historical grounding: opt3 handoff limitation #8 — one real candidate's
+    RMS spanned 12.6/71/188um across 3 real runs."""
+    target = _wide_target_spec()
+    generated = _generated_candidate()
+    row = score_candidate(generated, target, repeat_rms_samples_um=[12.6, 71.0, 188.0])
+    r = row.repeatability
+    assert r.run_count == 3
+    assert r.status == "available"
+    assert r.rms_spot_radius_um_min.value == pytest.approx(12.6)
+    assert r.rms_spot_radius_um_max.value == pytest.approx(188.0)
+    assert r.rms_spot_radius_um_spread.value == pytest.approx(188.0 - 12.6)
+    # wfe series wasn't supplied -> independently unavailable, doesn't block rms.
+    assert r.wfe_waves_min.status == "unavailable"
+    assert "run_count=3" in r.note
+
+
+def test_repeatability_wfe_samples_computed_independently_of_rms():
+    target = _wide_target_spec()
+    generated = _generated_candidate()
+    row = score_candidate(
+        generated, target, repeat_wfe_samples_waves=[0.08, 0.12, 0.09]
+    )
+    r = row.repeatability
+    assert r.run_count == 3
+    assert r.status == "available"
+    assert r.wfe_waves_min.value == pytest.approx(0.08)
+    assert r.wfe_waves_max.value == pytest.approx(0.12)
+    assert r.wfe_waves_spread.value == pytest.approx(0.04)
+    assert r.rms_spot_radius_um_min.status == "unavailable"
+
+
+def test_repeatability_nonfinite_samples_excluded_before_min_max():
+    target = _wide_target_spec()
+    generated = _generated_candidate()
+    row = score_candidate(
+        generated, target, repeat_rms_samples_um=[12.6, float("nan"), 71.0, float("inf")]
+    )
+    r = row.repeatability
+    # run_count counts raw samples supplied (honest "how many runs"), but the
+    # min/max/spread stats only fold in the finite ones.
+    assert r.run_count == 4
+    assert r.status == "available"
+    assert r.rms_spot_radius_um_min.value == pytest.approx(12.6)
+    assert r.rms_spot_radius_um_max.value == pytest.approx(71.0)
+
+
+def test_repeatability_all_nonfinite_samples_stays_unavailable():
+    target = _wide_target_spec()
+    generated = _generated_candidate()
+    row = score_candidate(
+        generated, target, repeat_rms_samples_um=[float("nan"), float("inf")]
+    )
+    r = row.repeatability
+    assert r.run_count == 2  # honest count of samples supplied
+    # No finite stat could be resolved from either series -> overall status
+    # stays unavailable too (never "available" with six N/A fields).
+    assert r.status == "unavailable"
+    assert r.rms_spot_radius_um_min.status == "unavailable"

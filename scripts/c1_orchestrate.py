@@ -303,6 +303,22 @@ def _render_candidate(index: int, sc: ScoredCandidate) -> list[str]:
         )
     lines.append(f"- {row.rank_explanation}")
     lines.append("")
+
+    rep = row.repeatability
+    lines.append("**重复性（跨跑次分布，Phase 17 子项3）**")
+    lines.append("")
+    lines.append(f"- run_count={rep.run_count}, status=`{rep.status}`")
+    lines.append(
+        f"- RMS 点列半径 (um): min={_fmt_metric(rep.rms_spot_radius_um_min)}, "
+        f"max={_fmt_metric(rep.rms_spot_radius_um_max)}, "
+        f"spread={_fmt_metric(rep.rms_spot_radius_um_spread)}"
+    )
+    lines.append(
+        f"- WFE (waves): min={_fmt_metric(rep.wfe_waves_min)}, "
+        f"max={_fmt_metric(rep.wfe_waves_max)}, spread={_fmt_metric(rep.wfe_waves_spread)}"
+    )
+    lines.append(f"- {_md_safe(rep.note)}")
+    lines.append("")
     return lines
 
 
@@ -358,6 +374,17 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "旋钮，见 scorecard.py `_rank` docstring）；省略则用其内建默认（当前 80%）"
         ),
     )
+    parser.add_argument(
+        "--repeat-runs",
+        type=int,
+        default=1,
+        dest="repeat_runs",
+        help=(
+            "重复性验证跑次（Phase 17 子项3）；默认 1=现行为零变化。>1 目前会直接"
+            "抛 NotImplementedError——真机多跑执行引擎未接入，由 orchestrator 另行"
+            "排窗实现（见 orchestrator.orchestrate 的 repeat_runs docstring）。"
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -385,7 +412,11 @@ def main(argv: list[str] | None = None) -> int:
         label = _requirement_label(req, i)
         target = _target_spec_from_requirement(req)
         candidate_set = orchestrate(
-            target, target, n=args.n, min_coverage_pct=args.min_coverage_pct
+            target,
+            target,
+            n=args.n,
+            min_coverage_pct=args.min_coverage_pct,
+            repeat_runs=args.repeat_runs,
         )
 
         md_path = args.out / f"report_{i:02d}.md"

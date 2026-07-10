@@ -259,6 +259,15 @@ def test_workbook_has_summary_and_candidates_sheets_with_same_source_values():
     for row in body:
         assert row[rank_score_idx] == pytest.approx(0.812)
 
+    # P17 sub-item 3: repeatability columns present, honest default state
+    # (these fixtures never supply repeat samples -> unavailable/run_count=1,
+    # same as the page's own default rendering).
+    rc_idx = header.index("repeatability_run_count")
+    rs_idx = header.index("repeatability_status")
+    for row in body:
+        assert row[rc_idx] == 1
+        assert row[rs_idx] == "unavailable"
+
 
 def test_workbook_never_contains_pass_fail_verdict_wording():
     candidate_set = _candidate_set(_retrieved_candidate(), _target_converged_candidate())

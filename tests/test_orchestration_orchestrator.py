@@ -209,6 +209,47 @@ def test_registry_is_immutable():
 
 
 # ---------------------------------------------------------------------------
+# repeat_runs (Phase 17 子项3): default 1 = zero behavior change; >1 fails
+# closed with NotImplementedError (real multi-run engine out of scope).
+# ---------------------------------------------------------------------------
+
+
+def test_orchestrate_default_repeat_runs_produces_unavailable_repeatability(no_codev):
+    target = _wide_target_spec()
+    result = orchestrate(target, target, n=2)
+    assert result.candidates
+    for sc in result.candidates:
+        repeatability = sc.scorecard.repeatability
+        assert repeatability.run_count == 1
+        assert repeatability.status == "unavailable"
+        assert "未做重复性验证" in repeatability.note
+
+
+def test_orchestrate_explicit_repeat_runs_1_matches_default(no_codev):
+    target = _wide_target_spec()
+    default_result = orchestrate(target, target, n=2)
+    explicit_result = orchestrate(target, target, n=2, repeat_runs=1)
+    assert [sc.scorecard.repeatability for sc in default_result.candidates] == [
+        sc.scorecard.repeatability for sc in explicit_result.candidates
+    ]
+
+
+def test_orchestrate_repeat_runs_below_one_raises_value_error():
+    target = _wide_target_spec()
+    with pytest.raises(ValueError, match="repeat_runs must be >= 1"):
+        orchestrate(target, target, n=1, repeat_runs=0)
+
+
+def test_orchestrate_repeat_runs_above_one_raises_not_implemented():
+    """Real multi-run verification is deliberately not silently skipped or
+    faked — a caller asking for repeat_runs>1 today must get a loud, honest
+    refusal, not a quiet single run mislabeled as N runs."""
+    target = _wide_target_spec()
+    with pytest.raises(NotImplementedError, match="repeat_runs=2"):
+        orchestrate(target, target, n=1, repeat_runs=2)
+
+
+# ---------------------------------------------------------------------------
 # Ranking: ranked-desc-by-score first, withheld sinks to the bottom (§7-E)
 # ---------------------------------------------------------------------------
 
@@ -336,6 +377,27 @@ def test_c1_orchestrate_script_smoke(tmp_path: Path, no_codev):
     roundtripped = CandidateSet.model_validate(json_payload)
     assert roundtripped.summary.candidate_count == 2
     assert len(roundtripped.candidates) == 2
+
+
+def test_c1_orchestrate_script_smoke_reports_default_repeatability(tmp_path: Path, no_codev):
+    """Default --repeat-runs (1, unset) -> the honest single-run
+    unavailable state shows up in the rendered Markdown report."""
+    from scripts.c1_orchestrate import main
+
+    out_dir = tmp_path / "c1_repeat_default"
+    exit_code = main(["--out", str(out_dir), "--n", "1"])
+    assert exit_code == 0
+    md_text = sorted(out_dir.glob("report_*.md"))[0].read_text(encoding="utf-8")
+    assert "run_count=1, status=`unavailable`" in md_text
+    assert "未做重复性验证" in md_text
+
+
+def test_c1_orchestrate_script_repeat_runs_above_one_raises(tmp_path: Path, no_codev):
+    from scripts.c1_orchestrate import main
+
+    out_dir = tmp_path / "c1_repeat_two"
+    with pytest.raises(NotImplementedError, match="repeat_runs=2"):
+        main(["--out", str(out_dir), "--n", "1", "--repeat-runs", "2"])
 
 
 def test_c1_orchestrate_script_with_custom_requirements_file(tmp_path: Path, no_codev):

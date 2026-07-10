@@ -471,6 +471,33 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
+# P17 sub-item 3: repeatability column — unavailable by default, shown
+# honestly (no fabricated distribution for a single-run batch).
+# ---------------------------------------------------------------------------
+
+
+def test_candidate_card_shows_repeatability_unavailable_by_default(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_full_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        job_id = _submitted_candidate_set_job_id(client)
+        result = client.get(f"/candidates/{job_id}")
+
+    assert result.status_code == 200, result.text
+    html = result.text
+    for candidate_id in (_RETRIEVED_ID, _TARGET_CONVERGED_ID):
+        card = _candidate_card_html(html, candidate_id)
+        assert 'data-repeatability-status="unavailable"' in card
+        assert "run_count: 1" in card
+        assert "Unavailable" in card
+        assert "未做重复性验证" in card
+
+
+# ---------------------------------------------------------------------------
 # Retrieval-only batch -> honesty banner surfaces verbatim
 # ---------------------------------------------------------------------------
 

@@ -31,6 +31,7 @@ from app.core.orchestration.candidate import (
     MetricValue,
     OpticalExtras,
     RankResult,
+    RepeatabilityMetrics,
     ScorecardRow,
     ScoredCandidate,
     TargetDeviation,
@@ -198,6 +199,60 @@ def test_scorecard_row_has_no_pass_fail_fields():
     forbidden = {"verdict", "passed", "qualified", "is_good", "pass", "fail", "ok", "good"}
     field_names = set(ScorecardRow.model_fields.keys())
     assert not (field_names & forbidden), field_names & forbidden
+
+
+# ---------------------------------------------------------------------------
+# RepeatabilityMetrics (Phase 17 子项3, §5.3 extension)
+# ---------------------------------------------------------------------------
+
+
+def test_scorecard_row_repeatability_defaults_to_unavailable_single_run():
+    """Constructing a `ScorecardRow` without an explicit `repeatability` (as
+    every pre-P17-3 fixture in this test suite still does) must land on the
+    same honest fail-closed state `scorecard.py::score_candidate` produces
+    for `repeat_runs=1` — not raise, not silently fabricate a distribution."""
+    row = _scorecard_row(GenerationMode.RETRIEVED)
+    r = row.repeatability
+    assert r.run_count == 1
+    assert r.status == "unavailable"
+    assert r.rms_spot_radius_um_min.status == "unavailable"
+    assert r.wfe_waves_max.status == "unavailable"
+
+
+def test_repeatability_metrics_available_requires_matching_field_statuses():
+    unavailable = MetricValue(value=None, status="unavailable")
+    available = MetricValue(value=1.0, status="available")
+
+    with pytest.raises(ValueError, match="全部分布字段必须 unavailable"):
+        RepeatabilityMetrics(
+            run_count=1,
+            status="unavailable",
+            rms_spot_radius_um_min=available,  # inconsistent: unavailable status, available field
+            rms_spot_radius_um_max=unavailable,
+            rms_spot_radius_um_spread=unavailable,
+            wfe_waves_min=unavailable,
+            wfe_waves_max=unavailable,
+            wfe_waves_spread=unavailable,
+            note="test",
+        )
+
+
+def test_repeatability_metrics_available_status_round_trips():
+    metric = MetricValue(value=12.6, status="available")
+    unavailable = MetricValue(value=None, status="unavailable")
+    r = RepeatabilityMetrics(
+        run_count=3,
+        status="available",
+        rms_spot_radius_um_min=metric,
+        rms_spot_radius_um_max=metric,
+        rms_spot_radius_um_spread=metric,
+        wfe_waves_min=unavailable,
+        wfe_waves_max=unavailable,
+        wfe_waves_spread=unavailable,
+        note="run_count=3",
+    )
+    assert r.status == "available"
+    assert r.rms_spot_radius_um_min.value == 12.6
 
 
 # ---------------------------------------------------------------------------

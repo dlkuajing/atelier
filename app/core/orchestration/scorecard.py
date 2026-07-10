@@ -61,6 +61,7 @@ from app.core.orchestration.candidate import (
     MetricValue,
     OpticalExtras,
     RankResult,
+    RepeatabilityMetrics,
     ScorecardRow,
     TargetDeviation,
     TargetSpec,
@@ -593,6 +594,67 @@ def _rank(
 
 
 # ---------------------------------------------------------------------------
+# F. Repeatability (Phase 17 子项3 — §7 之外的新增维，见 candidate.py
+# `RepeatabilityMetrics` docstring for scope/历史依据)
+# ---------------------------------------------------------------------------
+
+
+def _repeatability_series(samples: Sequence[float]) -> tuple[MetricValue, MetricValue, MetricValue]:
+    """(min, max, spread) across ≥2 finite samples; all-unavailable otherwise
+    (fail closed — a single sample or all-NaN is not a distribution)."""
+    finite = [v for v in samples if math.isfinite(v)]
+    if len(finite) < 2:
+        return _metric(None), _metric(None), _metric(None)
+    lo, hi = min(finite), max(finite)
+    return _metric(lo), _metric(hi), _metric(hi - lo)
+
+
+def _repeatability(
+    repeat_rms_samples_um: Sequence[float], repeat_wfe_samples_waves: Sequence[float]
+) -> RepeatabilityMetrics:
+    """Pure aggregation of caller-supplied repeat-run samples (mock-chain
+    testable — no CODE V, no `generators.py` involvement: a caller collects
+    samples from however many real/independent runs it chooses and hands
+    them here). `run_count` = the larger of the two series' lengths (a
+    caller supplying only one series still gets an honest count, and
+    non-finite samples still count toward it — "how many runs happened" is
+    a different question from "how many produced a usable number"). `status`
+    is `"available"` iff `run_count >= 2` AND at least one series actually
+    resolved a finite min/max (otherwise `run_count=5` of all-NaN samples
+    would misleadingly read as "available" with six N/A fields) — otherwise
+    every field is forced unavailable by `RepeatabilityMetrics`'s own
+    validator."""
+    run_count = max(len(repeat_rms_samples_um), len(repeat_wfe_samples_waves), 1)
+    rms_min, rms_max, rms_spread = _repeatability_series(repeat_rms_samples_um)
+    wfe_min, wfe_max, wfe_spread = _repeatability_series(repeat_wfe_samples_waves)
+    has_finite_distribution = rms_min.status == "available" or wfe_min.status == "available"
+    if run_count >= 2 and has_finite_distribution:
+        return RepeatabilityMetrics(
+            run_count=run_count,
+            status="available",
+            rms_spot_radius_um_min=rms_min,
+            rms_spot_radius_um_max=rms_max,
+            rms_spot_radius_um_spread=rms_spread,
+            wfe_waves_min=wfe_min,
+            wfe_waves_max=wfe_max,
+            wfe_waves_spread=wfe_spread,
+            note=f"run_count={run_count}，跨 {run_count} 次独立跑取分布",
+        )
+    unavailable = _metric(None)
+    return RepeatabilityMetrics(
+        run_count=run_count,
+        status="unavailable",
+        rms_spot_radius_um_min=unavailable,
+        rms_spot_radius_um_max=unavailable,
+        rms_spot_radius_um_spread=unavailable,
+        wfe_waves_min=unavailable,
+        wfe_waves_max=unavailable,
+        wfe_waves_spread=unavailable,
+        note=f"run_count={run_count}，未做重复性验证",
+    )
+
+
+# ---------------------------------------------------------------------------
 # Public entry point (§7 前言)
 # ---------------------------------------------------------------------------
 
@@ -604,6 +666,8 @@ def score_candidate(
     rel_tolerances: Mapping[str, float] = _REL_TOLERANCE,
     rank_weights: Mapping[str, float] | None = None,
     min_coverage_pct: float = _MIN_COVERAGE_PCT,
+    repeat_rms_samples_um: Sequence[float] = (),
+    repeat_wfe_samples_waves: Sequence[float] = (),
 ) -> ScorecardRow:
     """Pure function: `ScorecardRow` from `generated.payload` +
     `generated.optical_extras` only — never touches optic/ZMX (§7).
@@ -611,7 +675,15 @@ def score_candidate(
     `rel_tolerances` / `rank_weights` / `min_coverage_pct` are the §7-E
     tunables (see module `Tunables` section + `_rank` docstring) exposed as
     keyword args — default to the same module constants, so every existing
-    caller (all current tests, `orchestrate`) is unaffected."""
+    caller (all current tests, `orchestrate`) is unaffected.
+
+    `repeat_rms_samples_um` / `repeat_wfe_samples_waves` (Phase 17 子项3):
+    optional cross-run repeat-verification samples, empty by default — a
+    single `orchestrate()` pass (`repeat_runs=1`, today's only wired path)
+    never supplies these, so `repeatability` stays the honest
+    `run_count=1`/`unavailable` default for every existing caller (zero
+    behavior change). See `_repeatability` / `candidate.py
+    RepeatabilityMetrics`."""
     payload = generated.payload
     deviations, nonfinite_fields = _target_deviations(generated.mode, payload, target)
     image_quality = _image_quality(payload, generated.optical_extras)
@@ -624,6 +696,7 @@ def score_candidate(
         rank_weights=rank_weights,
         min_coverage_pct=min_coverage_pct,
     )
+    repeatability = _repeatability(repeat_rms_samples_um, repeat_wfe_samples_waves)
 
     return ScorecardRow(
         candidate_id=generated.candidate_id,
@@ -633,4 +706,5 @@ def score_candidate(
         manufacturability=manufacturability,
         rank=rank,
         rank_explanation=explanation,
+        repeatability=repeatability,
     )
