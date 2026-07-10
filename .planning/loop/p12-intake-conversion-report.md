@@ -198,3 +198,22 @@ FOV below is full field (`2 × hfov_deg`) computed from the pipeline-published h
 - existing-case invariant: no pre-existing case JSON changed; only six new case JSON files
   and `index.json` were written
 - glass resolvability gate: **7 passed**
+
+### Golden/count reanchor
+
+- `eval_golden.json`: 439 -> **445** briefs (six new case anchors)
+- existing routing-winner flips: **0**; no ambiguous flip was accepted
+- hardcoded counts: library/index 436 -> **442**; runtime telephoto 134 -> **139**;
+  first-order outliers 313 -> **314**; preflight visible total 437 -> **443**;
+  high-FOV count remains **79** and the target-window lightweight count remains **397**
+  because none of the six accepted seeds enters that acquisition window
+- focused regression after first count pass: 1347 passed / 2 failed in 193.40s;
+  both failures were the initially over-incremented target-window lightweight count
+  (expected 403, observed authoritative runtime 397), corrected here before full regression
+
+### Final verification
+
+- `PYTHONUTF8=1 uv run pytest -q`: **1992 passed, 3 skipped, 7002 warnings in
+  1565.92s (0:26:05)**; exit code 0
+- `uv run ruff check .`: **All checks passed**
+- `tests/test_zmx_glass_resolvability.py`: **7 passed**
