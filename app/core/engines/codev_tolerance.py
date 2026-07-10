@@ -1,32 +1,38 @@
-"""Offline contract for CODE V TOR tolerancing.
-
-This module deliberately does not run CODE V or claim a yield.  The installed
-11.5 Tolerancing manual documents ``WBF PER``/``WBF MC`` worksheet-buffer
-exports, but does not show their complete exported file grammar.  Parsing is
-therefore fail-closed until a real batch export is captured and versioned.
-"""
+"""Strict offline contract for CODE V 11.5 TOR tolerancing exports."""
 
 from __future__ import annotations
 
+import csv
 import math
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
 from app.core.engines.codev_batch import ensure_buf_exp_safe_filename
 
 TorMetric = Literal["mtf", "rms"]
+_COMMAND_PREFIX = re.compile(
+    r"^(?:DEF|DLT|CMP|TOR|FRE|AZI|NTR|CHT|WBF|GO|BUF|OUT|IN|RES|EXI)\b",
+    re.IGNORECASE,
+)
+_SURFACE_RANGE = re.compile(r"\bS(?:I|\d+)(?:\.\.(?:J|\d+))?\b", re.IGNORECASE)
+
+
+class TorParseStatus(StrEnum):
+    """Closed parser states; availability is intentionally not constructible here."""
+
+    UNAVAILABLE = "unavailable"
+
+
+class TorProvenance(StrEnum):
+    UNAVAILABLE = "unavailable"
 
 
 @dataclass(frozen=True)
 class TorToleranceTable:
-    """Explicit, expert-ratified CODE V tolerance commands.
-
-    An empty table is rejected: CODE V defaults must never silently become an
-    Atelier manufacturing standard.
-    """
-
     commands: tuple[str, ...]
     provenance: str
 
@@ -35,19 +41,42 @@ class TorToleranceTable:
 class TorCompensators:
     commands: tuple[str, ...]
     provenance: str
+    assembly_assumptions: str
 
 
 @dataclass(frozen=True)
 class TorMonteCarlo:
     trials: int
-    seed: int | None = None
+
+
+@dataclass(frozen=True)
+class TorPerformanceRow:
+    zoom: int
+    field: int
+    frequency_lp_per_mm: float
+    azimuth_deg: float
+    criterion: str
+    design: float
+    probability_columns: tuple[float, ...]
+
+
+@dataclass(frozen=True)
+class TorMonteCarloRow:
+    sample: int
+    zoom: int
+    field: int
+    criterion: str
+    value: float
 
 
 @dataclass(frozen=True)
 class TorParseResult:
-    status: Literal["unavailable"]
-    provenance: Literal["unavailable"]
+    status: TorParseStatus
+    provenance: TorProvenance
     reason: str
+    declared_trials: int | None = None
+    performance_rows: tuple[TorPerformanceRow, ...] = ()
+    monte_carlo_rows: tuple[TorMonteCarloRow, ...] = ()
 
 
 def _quote_codev_path(path: Path) -> str:
@@ -57,8 +86,24 @@ def _quote_codev_path(path: Path) -> str:
 def _validate_commands(commands: Sequence[str], name: str) -> None:
     if not commands:
         raise ValueError(f"{name} must be explicit and non-empty")
-    if any(not command.strip() or "\n" in command or "\r" in command for command in commands):
-        raise ValueError(f"{name} commands must be non-empty single lines")
+    if any(
+        not command.strip() or "\n" in command or "\r" in command or ";" in command
+        for command in commands
+    ):
+        raise ValueError(f"{name} commands must be non-empty single commands")
+
+
+def _validate_provenance(value: str, name: str) -> str:
+    clean = value.strip()
+    if not clean or "\n" in value or "\r" in value or _COMMAND_PREFIX.match(clean):
+        raise ValueError(f"{name} must be non-command, single-line metadata")
+    return clean
+
+
+def _validate_tolerance_ranges(commands: Sequence[str]) -> None:
+    for command in commands:
+        if command.lstrip().upper().startswith("DEF TOL") and not _SURFACE_RANGE.search(command):
+            raise ValueError("DEF TOL requires an explicit surface or surface range")
 
 
 def build_codev_tor_sequence(
@@ -71,38 +116,59 @@ def build_codev_tor_sequence(
     monte_carlo: TorMonteCarlo,
     metric: TorMetric,
     mtf_frequency_lp_per_mm: float | None = None,
+    mtf_azimuth_deg: float = 90.0,
 ) -> str:
-    """Build a TOR batch sequence using documented worksheet-buffer output.
-
-    Evidence: CODE V 11.5 Tolerancing Reference Manual, chapter 2, "Defining
-    TOR Output": WBF PER exports performance summary, WBF MC exports trials,
-    and NTR selects the trial count.  Exact batch behaviour remains a real-
-    machine verification item; this pure builder performs no optical work.
-    """
+    """Build the verified single-GO, two-buffer sequence for a ZMX source."""
 
     source = Path(source_path)
     performance_path = Path(performance_result_path)
     mc_path = Path(monte_carlo_result_path)
+    if source.suffix.lower() != ".zmx":
+        raise ValueError("source_path must be a ZMX file")
+    if not source.is_file():
+        raise ValueError("source_path must exist")
     ensure_buf_exp_safe_filename(performance_path)
     ensure_buf_exp_safe_filename(mc_path)
+    resolved_source = source.resolve()
+    resolved_performance = performance_path.resolve()
+    resolved_mc = mc_path.resolve()
+    if resolved_performance == resolved_mc:
+        raise ValueError("PER and MC output paths must differ")
+    if resolved_source in {resolved_performance, resolved_mc}:
+        raise ValueError("output paths must differ from source_path")
     _validate_commands(tolerance_table.commands, "tolerance_table")
     _validate_commands(compensators.commands, "compensators")
-    if not tolerance_table.provenance.strip() or not compensators.provenance.strip():
-        raise ValueError("tolerance and compensator provenance must be non-empty")
-    if monte_carlo.trials <= 0:
-        raise ValueError("monte_carlo.trials must be positive")
+    _validate_tolerance_ranges(tolerance_table.commands)
+    tolerance_provenance = _validate_provenance(
+        tolerance_table.provenance, "tolerance provenance"
+    )
+    compensator_provenance = _validate_provenance(
+        compensators.provenance, "compensator provenance"
+    )
+    assembly_assumptions = _validate_provenance(
+        compensators.assembly_assumptions, "assembly assumptions"
+    )
+    if not isinstance(monte_carlo.trials, int) or isinstance(monte_carlo.trials, bool):
+        raise ValueError("monte_carlo.trials must be an integer")
+    if not 1 <= monte_carlo.trials <= 1_000_000:
+        raise ValueError("monte_carlo.trials must be between 1 and 1000000")
+    if metric not in ("mtf", "rms"):
+        raise ValueError("metric must be 'mtf' or 'rms'")
     if metric == "mtf":
         if mtf_frequency_lp_per_mm is None or not math.isfinite(mtf_frequency_lp_per_mm):
             raise ValueError("finite mtf_frequency_lp_per_mm is required for MTF TOR")
         if mtf_frequency_lp_per_mm <= 0:
             raise ValueError("mtf_frequency_lp_per_mm must be positive")
-    elif mtf_frequency_lp_per_mm is not None:
-        raise ValueError("mtf_frequency_lp_per_mm is only valid for MTF TOR")
+        if not math.isfinite(mtf_azimuth_deg) or not 0 <= mtf_azimuth_deg < 180:
+            raise ValueError("mtf_azimuth_deg must be finite and in [0, 180)")
+    elif mtf_frequency_lp_per_mm is not None or mtf_azimuth_deg != 90.0:
+        raise ValueError("MTF frequency/azimuth parameters are only valid for MTF TOR")
 
     lines = [
-        "! Generated by app.core.engines.codev_tolerance; offline TOR contract.",
-        f"! tolerance provenance: {tolerance_table.provenance}",
-        f"! compensator provenance: {compensators.provenance}",
+        "! Generated by app.core.engines.codev_tolerance; verified TOR contract.",
+        f"! tolerance provenance: {tolerance_provenance}",
+        f"! compensator provenance: {compensator_provenance}",
+        f"! assembly assumptions: {assembly_assumptions}",
         "OUT NO",
         f"IN CV_MACRO:ZEMAXOS_TO_CV {_quote_codev_path(source)}",
         *tolerance_table.commands,
@@ -110,18 +176,20 @@ def build_codev_tor_sequence(
         "TOR",
     ]
     if metric == "mtf":
-        lines.append(f"FRE {mtf_frequency_lp_per_mm:.12g}")
-    lines.extend([f"NTR {monte_carlo.trials}", "CHT N", "WBF PER", "GO"])
-    # The manual documents separate PER and MC buffer selections.  Re-running
-    # GO after changing WBF is deliberately visible pending machine validation.
+        lines.extend(
+            [f"FRE {mtf_frequency_lp_per_mm:.12g}", f"AZI {mtf_azimuth_deg:.12g}"]
+        )
     lines.extend(
         [
-            f"BUF EXP B1 {_quote_codev_path(performance_path)}",
-            "BUF DEL B1",
-            "WBF MC",
+            f"NTR {monte_carlo.trials}",
+            "CHT N",
+            "WBF B1 PER",
+            "WBF B2 MC",
             "GO",
-            f"BUF EXP B1 {_quote_codev_path(mc_path)}",
+            f"BUF EXP B1 {_quote_codev_path(performance_path)}",
+            f"BUF EXP B2 {_quote_codev_path(mc_path)}",
             "BUF DEL B1",
+            "BUF DEL B2",
             "OUT YES",
             "EXI YES",
             "",
@@ -130,26 +198,96 @@ def build_codev_tor_sequence(
     return "\n".join(lines)
 
 
+def _read_tsv(path: Path) -> list[list[str]]:
+    text = path.read_text(encoding="utf-8-sig")
+    return list(csv.reader(text.splitlines(), delimiter="\t"))
+
+
+def _parse_per(rows: list[list[str]]) -> tuple[TorPerformanceRow, ...]:
+    header = ["Eval Zoom", "Eval Field", "X", "Y", "Frequency", "Azimuth", "Weight", "Design", "Criterion"]
+    index = next((i for i, row in enumerate(rows) if row[:9] == header), None)
+    if index is None or not any("probability density function:" in "\t".join(r) for r in rows):
+        raise ValueError("PER declarations/header missing")
+    parsed = []
+    for row in rows[index + 1 :]:
+        if not any(row):
+            continue
+        if len(row) != 17:
+            raise ValueError("PER data row has unexpected column count")
+        values = tuple(float(value) for value in row[9:17])
+        numeric_values = (
+            float(row[4]),
+            float(row[5]),
+            float(row[7]),
+            *values,
+        )
+        if not all(math.isfinite(value) for value in numeric_values):
+            raise ValueError("PER numeric values must be finite")
+        parsed.append(
+            TorPerformanceRow(
+                zoom=int(row[0]), field=int(row[1]), frequency_lp_per_mm=float(row[4]),
+                azimuth_deg=float(row[5]), criterion=row[8], design=float(row[7]),
+                probability_columns=values,
+            )
+        )
+    if not parsed:
+        raise ValueError("PER contains no data rows")
+    return tuple(parsed)
+
+
+def _parse_mc(rows: list[list[str]]) -> tuple[int, tuple[TorMonteCarloRow, ...]]:
+    declaration = next(
+        (
+            row
+            for row in rows
+            if any(cell.strip() == "Number of Monte-Carlo samples:" for cell in row)
+        ),
+        None,
+    )
+    header_index = next((i for i, row in enumerate(rows) if row == ["Sample", "Zoom", "Field", "Criterion", "Value"]), None)
+    if declaration is None or header_index is None:
+        raise ValueError("MC declaration/header missing")
+    declaration_values = [cell.strip() for cell in declaration if cell.strip()]
+    if len(declaration_values) != 2:
+        raise ValueError("MC trial declaration malformed")
+    declared = int(declaration_values[1])
+    parsed = []
+    for row in rows[header_index + 1 :]:
+        if not any(row):
+            continue
+        if len(row) != 5:
+            raise ValueError("MC data row has unexpected column count")
+        value = float(row[4])
+        if not math.isfinite(value):
+            raise ValueError("MC value must be finite")
+        parsed.append(TorMonteCarloRow(int(row[0]), int(row[1]), int(row[2]), row[3], value))
+    if not parsed or {row.sample for row in parsed} != set(range(1, declared + 1)):
+        raise ValueError("MC sample coverage does not match declared trials")
+    return declared, tuple(parsed)
+
+
 def parse_codev_tor_exports(
-    performance_result_path: Path | str,
-    monte_carlo_result_path: Path | str,
+    performance_result_path: Path | str, monte_carlo_result_path: Path | str
 ) -> TorParseResult:
-    """Fail closed until real CODE V 11.5 BUF EXP samples define the grammar."""
+    """Parse verified CODE V 11.5 structures while withholding yield semantics."""
 
     performance_path = Path(performance_result_path)
     mc_path = Path(monte_carlo_result_path)
+    if performance_path == mc_path:
+        return TorParseResult(TorParseStatus.UNAVAILABLE, TorProvenance.UNAVAILABLE, "PER and MC paths are identical")
     missing = [str(path) for path in (performance_path, mc_path) if not path.is_file()]
     if missing:
-        return TorParseResult(
-            status="unavailable",
-            provenance="unavailable",
-            reason=f"TOR BUF EXP file missing: {', '.join(missing)}",
-        )
+        return TorParseResult(TorParseStatus.UNAVAILABLE, TorProvenance.UNAVAILABLE, f"TOR BUF EXP file missing: {', '.join(missing)}")
+    try:
+        performance_rows = _parse_per(_read_tsv(performance_path))
+        declared, mc_rows = _parse_mc(_read_tsv(mc_path))
+    except (OSError, UnicodeError, ValueError) as exc:
+        return TorParseResult(TorParseStatus.UNAVAILABLE, TorProvenance.UNAVAILABLE, f"TOR export parse failed: {exc}")
     return TorParseResult(
-        status="unavailable",
-        provenance="unavailable",
-        reason=(
-            "CODE V 11.5 TOR BUF EXP grammar awaits a real-machine sample; "
-            "no yield was parsed"
-        ),
+        TorParseStatus.UNAVAILABLE,
+        TorProvenance.UNAVAILABLE,
+        "structures parsed; PER probability semantics and yield policy are not ratified",
+        declared,
+        performance_rows,
+        mc_rows,
     )
