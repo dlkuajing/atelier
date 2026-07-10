@@ -16,7 +16,6 @@ from app.core.llm_relay import (
     model_for_role,
 )
 
-
 # ---------------------------------------------------------------------------
 # Role mapping
 # ---------------------------------------------------------------------------
@@ -76,4 +75,4 @@ def test_primary_chat_is_not_in_unavailable_set():
 
 def test_unavailable_set_is_currently_empty():
     """Sanity: no relay-blocked models tracked right now."""
-    assert KNOWN_UNAVAILABLE == frozenset()
+    assert frozenset() == KNOWN_UNAVAILABLE

@@ -7,7 +7,6 @@ from pathlib import Path
 from app.core.patent_crawl_config import three_to_seven_p_hit_rate
 from app.core.patent_crawl_schema import load_validated_jsonl, validate_patent_record
 
-
 ROOT = Path(__file__).resolve().parents[1]
 BATCH_PATHS = (
     ROOT / "data/patents/uspto-smartphone-batch1.jsonl",

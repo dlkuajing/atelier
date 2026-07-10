@@ -17,9 +17,9 @@ from app.api.wizard import (
     ExecutiveSummaryRequest,
     ExtractScenarioRequest,
     ExtractScenarioResponse,
-    generate_executive_summary,
     _strip_markdown_fences,
     extract_scenario,
+    generate_executive_summary,
     parse_llm_scenario_response,
 )
 from app.core.lens_system import Scenario

@@ -22,7 +22,6 @@ from app.core.spot_diagram import SpotDiagramResult, SpotFieldData, SpotWaveleng
 from app.core.wavefront_metrics import WavefrontFieldMetric, WavefrontMetricsResult
 from app.main import app
 
-
 client = TestClient(app)
 
 

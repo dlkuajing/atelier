@@ -54,7 +54,6 @@ from typing import Any
 import httpx
 import structlog
 
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.core.patent_crawl_config import (  # noqa: E402
@@ -62,7 +61,6 @@ from app.core.patent_crawl_config import (  # noqa: E402
     has_three_to_seven_p_keyword,
 )
 from app.core.patent_crawl_schema import validate_patent_record  # noqa: E402
-
 
 logger = structlog.get_logger(__name__)
 
@@ -542,7 +540,7 @@ def _classification_codes(page_html: str) -> list[str]:
     )
     block = marker.group(1) if marker else page_html
     codes = re.findall(r"\b[A-HY]\d{2}[A-Z]\s?\d+/\d+\b", _strip_html(block))
-    return sorted(set(code.replace(" ", "") for code in codes))
+    return sorted({code.replace(" ", "") for code in codes})
 
 
 def _claim_excerpt(page_html: str) -> str:

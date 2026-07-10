@@ -23,7 +23,6 @@ from openai import AsyncOpenAI, OpenAI
 
 from app.core.config import settings
 
-
 # Model IDs — verified against relay at https://api.openbili.com/v1 on 2026-05-21
 # (see ~/.claude/projects/-Users-c-joelin-Desktop-----/memory/reference_lumira_credentials.md)
 
