@@ -407,7 +407,7 @@ DATA06_MANIFEST_NAMES = (
     "data06i_rescan2_manifest.json",
 )
 DATA09_MANIFEST_NAMES = ("data09d1_manifest.json",)
-DATA10_MANIFEST_NAMES = ("data10a_manifest.json",)
+DATA10_MANIFEST_NAMES = ("data10a_manifest.json", "data10b_manifest.json")
 DATA06_ZMX_AMMO: list[dict] = []
 for manifest_name in DATA06_MANIFEST_NAMES:
     manifest_path = Path(__file__).with_name(manifest_name)
@@ -437,13 +437,13 @@ assert len(DATA06_ZMX_AMMO) == 128, (
 assert len(DATA09_ZMX_AMMO) == 186, (
     f"expected 186 converted DATA-09d1 designs, got {len(DATA09_ZMX_AMMO)}"
 )
-assert len(DATA10_ZMX_AMMO) == 8, (
-    f"expected 8 converted DATA-10a designs (live USPTO mining, base-library-fill "
-    f"shovel toward the >=500 North-Star gate), got {len(DATA10_ZMX_AMMO)}"
+assert len(DATA10_ZMX_AMMO) == 83, (
+    f"expected 83 converted DATA-10 designs (8 DATA-10a live mining + 75 DATA-10b "
+    f"Sunny/Ability parser-family expansion), got {len(DATA10_ZMX_AMMO)}"
 )
-assert len(ZMX_AMMO) == 361, (
-    f"expected 361 ammo designs (17 GGG + 22 patent + 128 DATA-06 + 186 DATA-09d1 "
-    f"+ 8 DATA-10a), got {len(ZMX_AMMO)}"
+assert len(ZMX_AMMO) == 436, (
+    f"expected 436 ammo designs (17 GGG + 22 patent + 128 DATA-06 + 186 DATA-09d1 "
+    f"+ 8 DATA-10a + 75 DATA-10b), got {len(ZMX_AMMO)}"
 )
 
 # E2-01 batch 1 full-embodiment cross-validation provenance (patent seeds only).
