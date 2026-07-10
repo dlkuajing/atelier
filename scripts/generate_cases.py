@@ -27,7 +27,7 @@ from tests.data.zmx_manifest import ZMX_AMMO  # noqa: E402
 SEED_IMH_OVERRIDES_PATH = (
     Path(__file__).resolve().parents[1] / "tests" / "data" / "seed_imh_overrides.json"
 )
-LIGHTWEIGHT_INTAKE_BATCH_PREFIXES = ("DATA-06", "DATA-09d1", "DATA-10")
+LIGHTWEIGHT_INTAKE_BATCH_PREFIXES = ("DATA-06", "DATA-09d1", "DATA-10", "P12")
 # Full-library regeneration hazard: at least one pre-existing DATA-06f design
 # (US-11940597-B2-e2, discovered during the DATA-10a base-library-fill batch)
 # hangs inside build_sample_from_optic even on the lightweight path -- no

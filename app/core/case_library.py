@@ -797,6 +797,7 @@ def _case_index_payload_edge_seed_ids() -> set[str]:
             (batch.startswith("DATA-06") and batch != "DATA-06c")
             or batch.startswith("DATA-09d1")
             or batch.startswith("DATA-10")
+            or batch.startswith("P12")
         )
         if not is_payload_bounded:
             continue

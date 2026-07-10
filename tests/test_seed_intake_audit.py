@@ -210,14 +210,14 @@ def test_seed_intake_audit_can_preflight_raw_candidate_zmx(tmp_path):
 
     report = _audit(args)
 
-    # DATA-10b intake: 436-seed library + 1 preflight candidate = 437 visible
+    # Phase 12 intake: 442-seed library + 1 preflight candidate = 443 visible
     # seeds, 79 high-FOV (78 in-library + the candidate). Accepted stays 0: no
     # seed fits the full-field acquisition window.
-    assert len(load_case_library()) == 436
-    assert report["total_seed_count"] == 437
+    assert len(load_case_library()) == 442
+    assert report["total_seed_count"] == 443
     assert report["high_fov_seed_count"] == 79
     assert report["accepted_seed_count"] == 0
-    assert any("total visible phone seeds=437" in item for item in report["known_evidence"])
+    assert any("total visible phone seeds=443" in item for item in report["known_evidence"])
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])
 
 
@@ -254,10 +254,10 @@ def test_seed_intake_preflight_endpoint_audits_uploaded_zmx():
     assert response.status_code == 200
     report = response.json()
     assert report["status"] == "gap"
-    # DATA-10b intake: 436-seed library + 1 uploaded candidate = 437 seeds,
+    # Phase 12 intake: 442-seed library + 1 uploaded candidate = 443 seeds,
     # 79 high-FOV.
-    assert report["total_seed_count"] == 437
+    assert report["total_seed_count"] == 443
     assert report["high_fov_seed_count"] == 79
     assert report["accepted_seed_count"] == 0
-    assert any("total visible phone seeds=437" in item for item in report["known_evidence"])
+    assert any("total visible phone seeds=443" in item for item in report["known_evidence"])
     assert any("accepted high-FOV full-field seeds=0" in item for item in report["known_evidence"])

@@ -1,0 +1,20 @@
+[
+  {"case_id":"US-10101561-B2-e3","patent_id":"US-10101561-B2","embodiment":"Embodiment 3","status":"intaken","reason":"passes local intake gates","efl_mm":3.354315173447671,"fov_deg":84.0,"fnum":2.2,"real_imh_mm":3.126930057,"mtf_max_field_frac":0.5},
+  {"case_id":"US-12596237-B2-e1","patent_id":"US-12596237-B2","embodiment":"Embodiment 1","status":"rejected","reason":"implausible smartphone-lens FOV 149.87deg outside (5.0, 135.0) (parser/table mismatch suspected)"},
+  {"case_id":"US-12596237-B2-e2","patent_id":"US-12596237-B2","embodiment":"Embodiment 2","status":"rejected","reason":"implausible smartphone-lens FOV 151.93deg outside (5.0, 135.0) (parser/table mismatch suspected)"},
+  {"case_id":"US-12596237-B2-e3","patent_id":"US-12596237-B2","embodiment":"Embodiment 3","status":"rejected","reason":"implausible smartphone-lens FOV 152.14deg outside (5.0, 135.0) (parser/table mismatch suspected)"},
+  {"case_id":"US-12596237-B2-e4","patent_id":"US-12596237-B2","embodiment":"Embodiment 4","status":"rejected","reason":"implausible smartphone-lens FOV 153.35deg outside (5.0, 135.0) (parser/table mismatch suspected)"},
+  {"case_id":"US-12596237-B2-e5","patent_id":"US-12596237-B2","embodiment":"Embodiment 5","status":"rejected","reason":"implausible smartphone-lens FOV 155.14deg outside (5.0, 135.0) (parser/table mismatch suspected)"},
+  {"case_id":"US-12596237-B2-e6","patent_id":"US-12596237-B2","embodiment":"Embodiment 6","status":"rejected","reason":"implausible smartphone-lens FOV 151.83deg outside (5.0, 135.0) (parser/table mismatch suspected)"},
+  {"case_id":"US-12596237-B2-e7","patent_id":"US-12596237-B2","embodiment":"Embodiment 7","status":"rejected","reason":"implausible smartphone-lens FOV 142.51deg outside (5.0, 135.0) (parser/table mismatch suspected)"},
+  {"case_id":"US-12578548-B2-e1","patent_id":"US-12578548-B2","embodiment":"Embodiment 1","status":"rejected","reason":"non-positive ATELIER_FTAN_IMH_SANITY_MM -14.28756538"},
+  {"case_id":"US-12578548-B2-e2","patent_id":"US-12578548-B2","embodiment":"Embodiment 2","status":"rejected","reason":"non-positive ATELIER_FTAN_IMH_SANITY_MM -14.63046695"},
+  {"case_id":"US-12578548-B2-e3","patent_id":"US-12578548-B2","embodiment":"Embodiment 3","status":"rejected","reason":"non-positive ATELIER_FTAN_IMH_SANITY_MM -15.65917165"},
+  {"case_id":"US-12578548-B2-e4","patent_id":"US-12578548-B2","embodiment":"Embodiment 4","status":"rejected","reason":"non-positive ATELIER_FTAN_IMH_SANITY_MM -11.89295557"},
+  {"case_id":"US-12578548-B2-e5","patent_id":"US-12578548-B2","embodiment":"Embodiment 5","status":"rejected","reason":"non-positive ATELIER_FTAN_IMH_SANITY_MM -12.11585544"},
+  {"case_id":"US-20260063869-A1-e2","patent_id":"US-20260063869-A1","embodiment":"Embodiment 2","status":"intaken","reason":"passes local intake gates","efl_mm":14.69267432906345,"fov_deg":36.2,"fnum":2.58,"real_imh_mm":14.03791099,"mtf_max_field_frac":0.5},
+  {"case_id":"US-20260063869-A1-e3","patent_id":"US-20260063869-A1","embodiment":"Embodiment 3","status":"intaken","reason":"passes local intake gates","efl_mm":13.252090207389523,"fov_deg":36.7,"fnum":2.15,"real_imh_mm":4.39335128,"mtf_max_field_frac":0.5},
+  {"case_id":"US-20260063869-A1-e4","patent_id":"US-20260063869-A1","embodiment":"Embodiment 4","status":"intaken","reason":"passes local intake gates","efl_mm":12.876262951651167,"fov_deg":37.8,"fnum":2.38,"real_imh_mm":4.345920914,"mtf_max_field_frac":0.5},
+  {"case_id":"US-20260063869-A1-e5","patent_id":"US-20260063869-A1","embodiment":"Embodiment 5","status":"intaken","reason":"passes local intake gates","efl_mm":13.464224792995177,"fov_deg":36.3,"fnum":2.38,"real_imh_mm":4.39204461,"mtf_max_field_frac":0.5},
+  {"case_id":"US-20260063869-A1-e6","patent_id":"US-20260063869-A1","embodiment":"Embodiment 6","status":"intaken","reason":"passes local intake gates","efl_mm":13.04578618137436,"fov_deg":40.5,"fnum":2.48,"real_imh_mm":4.889589835,"mtf_max_field_frac":0.5}
+]

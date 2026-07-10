@@ -41,8 +41,9 @@ def test_build_one_real_sample_roundtrip():
 
 def test_load_all_cases_valid():
     cases = load_case_library()
-    # 17 GGG + 22 curated patent + 128 DATA-06 + 186 DATA-09d1 + 83 DATA-10a/b seeds.
-    assert len(cases) == 436
+    # 17 GGG + 22 curated patent + 128 DATA-06 + 186 DATA-09d1 + 83 DATA-10a/b
+    # seeds + 6 Phase 12 NEWMAX seeds.
+    assert len(cases) == 442
     for c in cases:
         assert isinstance(c, OpticalSampleData)
         assert c.metadata is not None
@@ -65,8 +66,8 @@ def test_telephoto_tier_is_populated_after_reclassification():
     ]
     # 115 in the 343-library baseline + 4 genuine long-focus DATA-06i seeds
     # (US-12443014-B2 e1-e4) from the 353 intake + 15 DATA-10b Sunny/Ability
-    # long-focus seeds from the 436 intake.
-    assert len(telephoto) == 134
+    # long-focus seeds from the 436 intake + 5 Phase 12 NEWMAX telephoto seeds.
+    assert len(telephoto) == 139
     # Every telephoto seed must satisfy the guard-aligned classifier contract.
     for c in telephoto:
         assert c.metadata.computed_efl_mm >= 5.0
