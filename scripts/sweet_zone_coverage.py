@@ -476,42 +476,70 @@ def render_heatmap_table(results: Sequence[MatchResult]) -> str:
 
 
 @dataclass(frozen=True)
-class EflHole:
+class CellHole:
+    """一个 (EFL, FOV) 切片的空洞——与热图 0% 格子逐一对应，是
+    "未覆盖格点"的量化，而不是粗粒度的 EFL 边际聚合（后者会被同一 EFL 行
+    里任何一个覆盖的 FOV 列掩盖，稀释掉真正的空洞）。"""
+
     efl_mm: float
+    fov_deg: float
     total_points: int
-    sweet_zone_points: int
     avg_delta_efl_pct: float | None
+    nearest_miss_delta_efl_pct: float | None
     funnel_caused_miss_points: int
     true_gap_points: int
 
 
-def _efl_holes(results: Sequence[MatchResult]) -> list[EflHole]:
-    """按 EFL 网格值聚合（跨 F#/FOV/IMH 子网格），列出甜区覆盖率为 0 的
-    EFL 切片——这些是"这个焦距段库里完全没有能打的种子"的直接量化，供
-    Phase 12 定向补库方向参考。"""
+def _nearest_boundary_distance_pct(delta_efl_pct: float) -> float:
+    """miss/loose 格点的 ΔEFL% 距甜区边界 [-15%, 0] 最近一侧的距离
+    （量化"最近 miss 有多远"，恒 >= 0；甜区内为 0，理论上不会传入本函数）。"""
+    lo, hi = SWEET_ZONE_DELTA_EFL_PCT
+    if delta_efl_pct < lo:
+        return lo - delta_efl_pct
+    if delta_efl_pct > hi:
+        return delta_efl_pct - hi
+    return 0.0
+
+
+def _cell_holes(results: Sequence[MatchResult]) -> list[CellHole]:
+    """按 (EFL, FOV) 网格值对聚合（跨 F#/IMH 子网格），列出甜区覆盖率为 0
+    的切片——这些格点与 markdown 热图的 "· 0%" 格子逐一对应，是"库里这个
+    EFL×FOV 组合完全打不中甜区"的直接量化，供 Phase 12 定向补库方向参考。
+    `nearest_miss_delta_efl_pct` 取该切片内离甜区边界最近的一个 miss，量化
+    "最近 miss 有多远"（任务要求的"未覆盖格点+最近 miss 的量化距离"）。"""
     efl_values = sorted({r.grid_point.efl_mm for r in results})
-    holes: list[EflHole] = []
+    fov_values = sorted({r.grid_point.fov_deg for r in results})
+    holes: list[CellHole] = []
     for efl in efl_values:
-        subset = [r for r in results if r.grid_point.efl_mm == efl]
-        sweet = sum(1 for r in subset if r.coverage == "sweet_zone")
-        if sweet > 0:
-            continue
-        deltas = [r.delta_efl_pct for r in subset if r.delta_efl_pct is not None]
-        avg_delta = sum(deltas) / len(deltas) if deltas else None
-        funnel = sum(1 for r in subset if r.funnel_caused_miss)
-        non_funnel_non_sweet = sum(
-            1 for r in subset if r.coverage != "sweet_zone" and not r.funnel_caused_miss
-        )
-        holes.append(
-            EflHole(
-                efl_mm=efl,
-                total_points=len(subset),
-                sweet_zone_points=sweet,
-                avg_delta_efl_pct=avg_delta,
-                funnel_caused_miss_points=funnel,
-                true_gap_points=non_funnel_non_sweet,
+        for fov in fov_values:
+            subset = [
+                r for r in results if r.grid_point.efl_mm == efl and r.grid_point.fov_deg == fov
+            ]
+            if not subset:
+                continue
+            sweet = sum(1 for r in subset if r.coverage == "sweet_zone")
+            if sweet > 0:
+                continue
+            deltas = [r.delta_efl_pct for r in subset if r.delta_efl_pct is not None]
+            avg_delta = sum(deltas) / len(deltas) if deltas else None
+            nearest = (
+                min(_nearest_boundary_distance_pct(d) for d in deltas) if deltas else None
             )
-        )
+            funnel = sum(1 for r in subset if r.funnel_caused_miss)
+            non_funnel_non_sweet = sum(
+                1 for r in subset if r.coverage != "sweet_zone" and not r.funnel_caused_miss
+            )
+            holes.append(
+                CellHole(
+                    efl_mm=efl,
+                    fov_deg=fov,
+                    total_points=len(subset),
+                    avg_delta_efl_pct=avg_delta,
+                    nearest_miss_delta_efl_pct=nearest,
+                    funnel_caused_miss_points=funnel,
+                    true_gap_points=non_funnel_non_sweet,
+                )
+            )
     return holes
 
 
@@ -528,7 +556,7 @@ def _render_scenario_section(
 ) -> str:
     summary = summarize(results, scenario)
     bounds = SCENARIO_BOUNDS[scenario]
-    holes = _efl_holes(results)
+    holes = _cell_holes(results)
 
     lines = [
         f"## {scenario.value}",
@@ -561,38 +589,62 @@ def _render_scenario_section(
     ]
 
     if holes:
-        lines.append("### 空洞清单（该 EFL 切片甜区覆盖率=0%）")
+        lines.append(
+            f"### 空洞清单（{len(holes)} 个 (EFL,FOV) 切片甜区覆盖率=0%，"
+            "与上方热图的 \"· 0%\" 格子逐一对应）"
+        )
         lines.append("")
         lines.append(
-            "| target EFL(mm) | 格点数 | 平均 ΔEFL%(最佳匹配) | 漏斗致 miss | 真空洞(库内确无甜区解) |"
+            "| target EFL(mm) | target FOV(deg) | 格点数 | 最近 miss 距甜区边界 | "
+            "平均 ΔEFL%(最佳匹配) | 漏斗致 miss | 真空洞(库内确无甜区解) |"
         )
-        lines.append("|---:|---:|---:|---:|---:|")
-        for hole in holes:
-            avg_delta_str = f"{hole.avg_delta_efl_pct:+.1f}%" if hole.avg_delta_efl_pct is not None else "N/A"
+        lines.append("|---:|---:|---:|---:|---:|---:|---:|")
+        for hole in sorted(holes, key=lambda h: (h.efl_mm, h.fov_deg)):
+            avg_delta_str = (
+                f"{hole.avg_delta_efl_pct:+.1f}%" if hole.avg_delta_efl_pct is not None else "N/A"
+            )
+            nearest_str = (
+                f"{hole.nearest_miss_delta_efl_pct:.1f}pp"
+                if hole.nearest_miss_delta_efl_pct is not None
+                else "N/A"
+            )
             lines.append(
-                f"| {hole.efl_mm:.2f} | {hole.total_points} | {avg_delta_str} | "
+                f"| {hole.efl_mm:.2f} | {hole.fov_deg:.1f} | {hole.total_points} | "
+                f"{nearest_str} | {avg_delta_str} | "
                 f"{hole.funnel_caused_miss_points} | {hole.true_gap_points} |"
             )
         lines.append("")
+
         true_gap_holes = [h for h in holes if h.true_gap_points > 0]
         if true_gap_holes:
-            efl_span = ", ".join(f"{h.efl_mm:.2f}mm" for h in true_gap_holes)
+            true_gap_efls = sorted({h.efl_mm for h in true_gap_holes})
+            efl_span = ", ".join(f"{efl:.2f}mm" for efl in true_gap_efls)
             lines.append(
                 f"**定向补库建议**：{scenario.value} 场景在 target EFL ≈ {efl_span} "
-                "附近，库内即使不做 FOV/IMH 收窄也找不到 ΔEFL 落甜区的原生 seed"
-                "——这是真实的原料空洞，建议 Phase 12 USPTO 补库优先定向这些 "
-                "EFL 段（按上表平均 ΔEFL% 的方向：负值=需要更长焦的 seed 补入，"
-                "正值=需要更短焦的 seed 补入）。"
+                f"（合计 {len(true_gap_holes)} 个 (EFL,FOV) 切片）附近，库内即使不做 "
+                "FOV/IMH 收窄也找不到 ΔEFL 落甜区的原生 seed——这是真实的原料"
+                "空洞，建议 Phase 12 USPTO 补库优先定向这些 EFL 段（按上表平均 "
+                "ΔEFL% 的方向：负值=需要更长焦的 seed 补入，正值=需要更短焦的 "
+                "seed 补入）。"
             )
+            if len(true_gap_holes) < len(holes):
+                lines.append(
+                    f"其余 {len(holes) - len(true_gap_holes)} 个空洞切片全部标记为"
+                    "漏斗致 miss（见下），不建议在那些切片上补库。"
+                )
         else:
             lines.append(
-                "**定向补库建议**：本场景空洞 EFL 切片的 miss 全部标记为"
-                "「漏斗致 miss」——whole-pool 里其实存在甜区内的 EFL 匹配，"
-                "只是被 stage1 FOV/IMH 近邻预筛（top "
-                f"{FOV_PREFILTER_TOP_K}）挡在候选池外。这不是缺 seed，是排序"
-                "参数需要复核（e.g. 放宽 top_k 或重新评估 FOV 权重），不建议"
-                "在这个方向上补库。"
+                "**定向补库建议**：本场景全部空洞切片都标记为「漏斗致 miss」"
+                "——whole-pool 里其实存在甜区内的 EFL 匹配，只是被 stage1 "
+                f"FOV/IMH 近邻预筛（top {FOV_PREFILTER_TOP_K}）挡在候选池外。"
+                "这不是缺 seed，是两段式排序的参数需要复核（e.g. 放宽 top_k 或"
+                "重新评估 FOV 权重），不建议在这个方向上补库。"
             )
+        lines.append("")
+    else:
+        lines.append("### 空洞清单")
+        lines.append("")
+        lines.append("无——本场景网格采样下每个 (EFL,FOV) 切片至少有一个格点落甜区。")
         lines.append("")
 
     return "\n".join(lines)
