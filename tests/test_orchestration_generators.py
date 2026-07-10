@@ -22,6 +22,7 @@ import subprocess
 import sys
 import textwrap
 from pathlib import Path
+from types import SimpleNamespace
 from typing import ClassVar
 
 import pytest
@@ -460,11 +461,14 @@ def test_rank_seeds_by_target_match_degrades_to_efl_only_when_fov_unconstrained(
 
 # ---------------------------------------------------------------------------
 # `_fov_bounded_efl_close_extras` — stage 1b 甜区召回补齐（P11 甜区覆盖率
-# 漏斗调优，2026-07-11）。实锤依据：`scripts/sweet_zone_coverage.py` 量化，
-# wide/tele/uw 三场景 miss 中 100%/100%/100% 是 `funnel_caused_miss`（存在
-# 性扫描口径，EFL 维真空洞=0）——库内存在甜区带内 seed，但 stage 1 的
-# top-`_FOV_PREFILTER_TOP_K` 没选中它。见 `.planning/loop/
-# mode3-funnel-tuning-report.md` 的 K/cap 倍率量化扫描。
+# 漏斗调优 + 对抗审 BLOCKER 修复，2026-07-11）。实锤依据：
+# `scripts/sweet_zone_coverage.py` 量化，wide/tele/uw 三场景 miss 中
+# 100%/100%/100% 是 `efl_material_exists_but_not_selected`（存在性扫描口径，
+# EFL 维真空洞=0）——库内存在甜区带内 seed，但 stage 1 的
+# top-`_FOV_PREFILTER_TOP_K` 没选中它。cap 锚点=旧路径真机席位
+# （primary-only stage 2 排序后前 `_TARGET_MAX_SEEDS` 颗）的最差 |FOV
+# 失配|——安全证明见生产函数 docstring。见 `.planning/loop/
+# mode3-funnel-tuning-report.md` 的 K/cap 量化扫描。
 # ---------------------------------------------------------------------------
 
 
@@ -483,8 +487,8 @@ def _efl_fov_variant(
 
 
 def test_fov_bounded_efl_close_extras_includes_seed_within_adaptive_fov_cap():
-    """primary 池自身最差成员 |FOV 失配|=5.0（target_fov=80, primary 成员
-    fov=85）定义了自适应上限；候选 seed fov=83（失配 3.0 <= 5.0）且 EFL
+    """单成员 primary（席位=其自身）|FOV 失配|=5.0（target_fov=80, 成员
+    fov=85）定义 cap；候选 seed fov=83（失配 3.0 <= 5.0）且 EFL
     band=lt5（delta≈-2%）必须被纳入 extras。"""
     base = _real_case_with_zmx()
     target_efl = base.paraxial.effective_focal_length_mm
@@ -505,8 +509,8 @@ def test_fov_bounded_efl_close_extras_includes_seed_within_adaptive_fov_cap():
 
 def test_fov_bounded_efl_close_extras_excludes_seed_beyond_adaptive_fov_cap():
     """同上设定（cap=5.0），候选 seed fov=91（失配 11.0 > 5.0）即便 EFL
-    band=lt5 也必须被排除——这是"不比 stage 1 自己已经接受的 FOV 容差更
-    差"的核心不变量，直接对应判据 2（FOV 质量不回退）。"""
+    band=lt5 也必须被排除——这是"不比旧路径真机席位的 FOV 容差更差"的核心
+    不变量，直接对应判据 2（FOV 质量不回退）。"""
     base = _real_case_with_zmx()
     target_efl = base.paraxial.effective_focal_length_mm
 
@@ -556,6 +560,142 @@ def test_fov_bounded_efl_close_extras_empty_primary_yields_zero_cap():
         [], [candidate], target_efl_mm=target_efl, target_fov_deg=80.0
     )
     assert extras == []
+
+
+def test_fov_bounded_efl_close_extras_cap_anchored_to_old_codev_seats_not_primary_max():
+    """对抗审 BLOCKER 复现（helper 级）：primary 内单颗 FOV 离群点若 EFL
+    差到进不了旧路径真机席位（stage 2 前 `_TARGET_MAX_SEEDS` 颗），就不得
+    撑大 cap。SEAT-A/B（FOV 78=target，ΔEFL -10%/-12%，5to15）占据两个旧
+    席位（失配 0,0 → cap=0）；OUTLIER（FOV 20，ΔEFL +40%，gt30）虽在
+    primary 里但排不进席位；PR#48 形状的 X（FOV 36，ΔEFL≈-0.1%，lt5）在
+    第一版 cap（primary 全体最差=58°）下会被纳入并以 lt5 碾压全场——现版本
+    必须排除它。"""
+    base = _real_case_with_zmx()
+    target_efl = 4.0
+    seat_a = _efl_fov_variant(base, "SEAT-A", efl_mm=target_efl / 0.90, fov_deg=78.0)
+    seat_b = _efl_fov_variant(base, "SEAT-B", efl_mm=target_efl / 0.88, fov_deg=78.0)
+    outlier = _efl_fov_variant(base, "OUTLIER-FOV20", efl_mm=target_efl / 1.40, fov_deg=20.0)
+    pr48_shape = _efl_fov_variant(base, "PR48-X-FOV36", efl_mm=target_efl / 0.999, fov_deg=36.0)
+
+    extras = generators_module._fov_bounded_efl_close_extras(
+        [seat_a, seat_b, outlier],
+        [seat_a, seat_b, outlier, pr48_shape],
+        target_efl_mm=target_efl,
+        target_fov_deg=78.0,
+    )
+    assert extras == []  # cap=0（席位失配 0,0），不是 58（primary 全体最差）
+
+
+def test_fov_bounded_efl_close_extras_all_tight_seats_give_zero_cap_no_extras():
+    """对抗审 BLOCKER 指出的反向退化边界（接受为 fail-safe 行为并钉死）：
+    旧席位全部精确贴合 target FOV（失配 0）→ cap=0 → 即便 extras 候选
+    失配只有 0.5° 且 EFL 完美命中也不召回。语义：宁可少召回（保持旧路径
+    行为），不可回退 FOV。"""
+    base = _real_case_with_zmx()
+    target_efl = 4.0
+    tight = [
+        _efl_fov_variant(base, f"TIGHT-{i}", efl_mm=target_efl / 0.90, fov_deg=80.0)
+        for i in range(3)
+    ]
+    near_extra = _efl_fov_variant(base, "NEAR-EXTRA", efl_mm=target_efl, fov_deg=80.5)
+
+    extras = generators_module._fov_bounded_efl_close_extras(
+        tight, [*tight, near_extra], target_efl_mm=target_efl, target_fov_deg=80.0
+    )
+    assert extras == []
+
+
+def test_rank_seeds_by_target_match_outlier_primary_does_not_reopen_pr48_blindspot(monkeypatch):
+    """对抗审 BLOCKER 指定的端到端回归测试（断言最终胜者，不是 helper
+    include/exclude）：9 颗近 FOV primary + 1 颗极远离群 primary + 1 个
+    PR#48 形状 extra。
+
+    构造（复现审查现场合成反例的确切形状）：target EFL=4.0/FOV=78°；
+    primary = 9 颗 FOV 78°（ΔEFL -10%，5to15）+ 1 颗 FOV 20°（ΔEFL +40%，
+    gt30，进不了席位）；primary 外 1 颗 FOV 36°、ΔEFL≈-0.1%（lt5，EFL
+    score 碾压全场）。第一版 cap（primary 全体最差 |FOV 失配|=58°）会把
+    FOV 36° 那颗放进竞争池并让它夺冠 = PR#48 的 36° seed 打 78° target
+    盲区回归；席位锚 cap（席位=两颗 78° seed，失配 0 → cap=0）必须把它
+    挡在外面，最终前 `_TARGET_MAX_SEEDS` 颗全部是近 FOV seed。
+
+    `rank_seeds` 打桩为固定 primary 序（本测试的对象是 stage 1b+2 的组合
+    安全性，不是 rank_seeds 的多维距离——打桩才能确定性复现"离群点在
+    top-10 内"这个审查场景，不依赖 rank_seeds 权重的未来演化）。"""
+    base = _real_case_with_zmx()
+    target_efl = 4.0
+    near = [
+        _efl_fov_variant(base, f"NEAR-{i}", efl_mm=target_efl / 0.90, fov_deg=78.0)
+        for i in range(9)
+    ]
+    outlier = _efl_fov_variant(base, "OUTLIER-FOV20", efl_mm=target_efl / 1.40, fov_deg=20.0)
+    pr48_shape = _efl_fov_variant(base, "PR48-X-FOV36", efl_mm=target_efl / 0.999, fov_deg=36.0)
+
+    pool = [pr48_shape, *near, outlier]  # 对抗性池序：PR#48 形状的 extra 放最前
+    primary = [*near, outlier]  # 10 席 stage 1：9 近 + 1 极远（审查合成形状）
+    monkeypatch.setattr(generators_module, "cases_for_scenario", lambda scenario: pool)  # noqa: ARG005
+    monkeypatch.setattr(
+        generators_module,
+        "rank_seeds",
+        lambda cases, **kwargs: SimpleNamespace(ranked_cases=primary),  # noqa: ARG005
+    )
+
+    spec = TargetSpec(
+        scenario=Scenario.SMARTPHONE_WIDE,
+        efl_mm=target_efl,
+        fov_deg=78.0,
+        fnum=base.paraxial.f_number,
+    )
+    scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+    scored_ids = [c.metadata.case_id for c, _ in scored if c.metadata is not None]
+
+    seats = scored_ids[: generators_module._TARGET_MAX_SEEDS]
+    assert all(seat_id.startswith("NEAR-") for seat_id in seats), seats  # 无 FOV 大幅回退
+    assert "PR48-X-FOV36" not in scored_ids  # 盲区形状 extra 未被离群点撑大的 cap 放进来
+
+
+def test_rank_seeds_by_target_match_output_invariant_under_pool_permutation(monkeypatch):
+    """对抗审 MINOR：extras 同 band/同 score 的 tie 由显式键（|FOV 失配|
+    再 case_id）裁决，不再依赖 `cases_for_scenario`/索引文件顺序——库顺序
+    置换后输出序必须逐位相同（"输入集合相同即复现"，CODE V 真机对象不随
+    库文件重排漂移）。三颗 extras 同 EFL（band/score 全 tie）：失配 1° 的
+    X-ALPHA，失配 2° 的 X-BETA/X-GAMMA（仅 case_id 可分）。"""
+    base = _real_case_with_zmx()
+    target_efl = 4.0
+    seat_a = _efl_fov_variant(base, "SEAT-A", efl_mm=target_efl / 0.90, fov_deg=75.0)  # 失配 3
+    seat_b = _efl_fov_variant(base, "SEAT-B", efl_mm=target_efl / 0.88, fov_deg=75.0)
+    x_alpha = _efl_fov_variant(base, "X-ALPHA", efl_mm=target_efl / 0.98, fov_deg=77.0)
+    x_beta = _efl_fov_variant(base, "X-BETA", efl_mm=target_efl / 0.98, fov_deg=76.0)
+    x_gamma = _efl_fov_variant(base, "X-GAMMA", efl_mm=target_efl / 0.98, fov_deg=76.0)
+
+    pool = [seat_a, seat_b, x_alpha, x_beta, x_gamma]
+    primary = [seat_a, seat_b]  # 席位失配 3°,3° → cap=3°，三颗 extras 全部可召回
+    monkeypatch.setattr(
+        generators_module,
+        "rank_seeds",
+        lambda cases, **kwargs: SimpleNamespace(ranked_cases=primary),  # noqa: ARG005
+    )
+    spec = TargetSpec(
+        scenario=Scenario.SMARTPHONE_WIDE,
+        efl_mm=target_efl,
+        fov_deg=78.0,
+        fnum=base.paraxial.f_number,
+    )
+
+    orders: list[list[str]] = []
+    permutations = [pool, list(reversed(pool)), [x_gamma, x_alpha, seat_b, x_beta, seat_a]]
+    for permuted in permutations:
+        monkeypatch.setattr(
+            generators_module,
+            "cases_for_scenario",
+            lambda scenario, p=permuted: p,  # noqa: ARG005
+        )
+        scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+        orders.append([c.metadata.case_id for c, _ in scored if c.metadata is not None])
+
+    assert orders[0] == orders[1] == orders[2]
+    # 显式键的期望序：三颗 lt5 extras（失配 1° < 2°，2° tie 按 case_id）在前，
+    # 两颗 5to15 席位 seed（score 10 < 12）在后。
+    assert orders[0] == ["X-ALPHA", "X-BETA", "X-GAMMA", "SEAT-A", "SEAT-B"]
 
 
 # ---------------------------------------------------------------------------

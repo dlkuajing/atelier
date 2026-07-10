@@ -217,6 +217,52 @@ _FOV_PREFILTER_TOP_K = 10
 _EFL_CLOSE_BANDS_FOR_RECALL: frozenset[str] = frozenset({"lt5", "5to15"})
 
 
+def _stage2_sort_key(
+    case: OpticalSampleData, match: SeedTargetScore, target_fov_deg: float | None
+) -> tuple[int, float, float, str]:
+    """Stage 2 排序全键（对抗审 MINOR 修复，2026-07-11）。
+
+    主键不变：band 优先（`_BAND_RANK`）、band 内 score 升序——既有 N=24
+    真机依据的 EFL 收敛风险排序语义原样保留。新增两级显式 tie-break 终键：
+    |FOV 失配|（同 band 同 score 时 FOV 更近者优先，与 stage 1 的 FOV 主导
+    距离语义方向一致）、case_id（字典序，最终裁决键）。
+
+    动机：旧实现同 band/同 score 时由 `cases_for_scenario`/索引文件顺序经
+    stable sort 隐式裁决——库重排会改变 top-2，即改变 CODE V 真机对象。
+    显式全键保证"输入集合相同即输出相同"（置换不变，见
+    test_rank_seeds_by_target_match_output_invariant_under_pool_permutation）。
+
+    `target_fov_deg is None`（FOV unconstrained 降级路径）时 FOV 键恒
+    0.0（无失配可言），tie 落到 case_id 终键。
+    """
+    assert case.metadata is not None
+    fov_mismatch = (
+        abs(case.metadata.fov_deg - target_fov_deg) if target_fov_deg is not None else 0.0
+    )
+    return (_BAND_RANK[match.band], match.score, fov_mismatch, case.metadata.case_id)
+
+
+def _score_cases_for_target(
+    cases: Sequence[OpticalSampleData], target_efl_mm: float
+) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
+    """对一组 case 逐颗跑 `score_seed_target_match`，非法 EFL（非有限/非正/
+    打分 raise）静默跳过（与 `_rank_seeds_by_target_match` 既有过滤语义
+    一致）。不排序——调用方自选排序键。"""
+    scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
+    for case in cases:
+        if case.metadata is None:
+            continue
+        seed_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(seed_efl_mm, target_efl_mm)
+        except ValueError:
+            continue
+        scored.append((case, match))
+    return scored
+
+
 #: post_aut 质量三键的 0.0 是"追迹全失败"哨兵，不是真实测量值：CODE V 宏累加器
 #: （`codev_optimize._metric_function_block` 的 `FCT @rmssum` 等）以 `^max == 0`
 #: 起始，只在对应查询返回 `^err = 0`（追迹成功）的场次才更新；全部场次追迹失败
@@ -350,52 +396,74 @@ def _fov_bounded_efl_close_extras(
     target_efl_mm: float,
     target_fov_deg: float,
 ) -> list[OpticalSampleData]:
-    """P11 甜区覆盖率漏斗调优（2026-07-11）：stage 1 甜区召回补齐。
+    """P11 甜区覆盖率漏斗调优（2026-07-11，对抗审 BLOCKER 修复版）：
+    stage 1b 甜区召回补齐。
 
     实锤（`scripts/sweet_zone_coverage.py` 量化，PR#60）：两段式匹配把场景
     池收窄到 `rank_seeds` 全维距离 top-`_FOV_PREFILTER_TOP_K`（FOV 权重
     0.46 主导）后，wide/tele/uw 三场景分别有 88/300、135/300、51/300 格点
     因为"库内存在 EFL 甜区带内 seed，但它没进 top-K"而 miss（存在性扫描口
-    径的 `funnel_caused_miss`，三场景 EFL 维真空洞均=0，证明这是漏斗宽度
-    问题，不是库缺料）。
+    径的 `efl_material_exists_but_not_selected`，三场景 EFL 维真空洞均=0，
+    证明这是漏斗宽度问题，不是库缺料）。
 
     本函数在 stage 1 之后、stage 2 之前，把"EFL 距离已经很近
     （`score_seed_target_match` band ∈ `_EFL_CLOSE_BANDS_FOR_RECALL`，直接
     复用其 N=24 真机标定分桶，不发明新阈值）但被 top-K 挡在外面"的 seed
-    按与 target 的 |FOV 失配| 升序纳入候选，**上限自适应**：只收 |FOV 失配|
-    不超过 `primary`（stage 1 top-K）自身最差成员那个值——不引入任何新的
-    全局幅度常数，语义是"不比 stage 1 自己已经接受的 FOV 容差更差"。
+    纳入候选，**FOV 上限锚定旧路径真机席位**：
 
-    量化验证（K/cap 扫描，`.planning/loop/mode3-funnel-tuning-report.md`
-    §K 扫描 / §cap 倍率扫描）：该自适应上限（cap 倍率固定 1.0，不做可配置
-    暴露）在三场景网格采样上，甜区覆盖率 wide 36.0%→66.0%、tele 34.3%→
-    45.7%、uw 45.3%→43.0%（uw 名义上小幅下降，逐点核验证实是 eval 脚本
-    `[-15%,0%]` 单向窗口 vs `score_seed_target_match` 双向对称打分的既有
-    认知差，被替换的候选 band/score/FOV 匹配全部持平或更优，非质量倒退，
-    见任务报告 §ultrawide 逐点核验）；被选 seed 的 |FOV 失配| 分布
-    p95/max 相对基线几乎不变（wide fov_max 18.2→18.2 完全不变，tele
-    fov_max 21.8→21.8 完全不变）——这不是巧合，是这个自适应上限的结构性
-    保证。更大倍率（1.25/1.5/2.0/3.0）继续小幅提升覆盖率，但 fov_p95/
-    fov_max 开始明显偏离基线（如 tele cap=1.25 时 fov_max 21.8→26.1），
-    代价超出"噪声级"，故固定倍率 1.0。
+        cap = 旧路径（primary-only）按 stage 2 全键排序后真正会送 CODE V
+              的前 `_TARGET_MAX_SEEDS` 颗（"旧席位"）的最差 |FOV 失配|
+
+    **安全证明**（对抗审 BLOCKER：第一版 cap 取 primary 全体最差 |FOV
+    失配|，可被 top-10 内单颗 FOV 离群点撑大——合成反例 9 颗 78° + 1 颗
+    20° → cap=58° → FOV 36° 的 lt5 extra 被纳入且 EFL score 碾压 primary
+    = PR#48 盲区回归。现版本锚点消除该路径）：
+
+    1. 旧路径 CODE V 席位 = stage 2 全键排序后 primary 的前
+       `_TARGET_MAX_SEEDS` 颗；
+    2. 任何 extra 的 |FOV 失配| ≤ cap = 旧席位的最差 |FOV 失配|；
+    3. 新路径最终席位 ⊆（旧席位按序前缀）∪（满足 2 的 extras）——extras
+       只能把 primary 成员向后挤，primary 成员间的 stage 2 相对序不变
+       （同一排序键）；
+    4. 故新席位的最差 |FOV 失配| ≤ 旧席位的最差 |FOV 失配|：**结构上不可能
+       比旧路径实际送真机的 seed 更差**。这是"不比旧路径最终胜者差"的强
+       声明，不是第一版"不比 primary 最差成员差"（可被离群点偷换）的弱
+       声明。
+
+    退化边界（对抗审同条指出，接受为 fail-safe 方向）：旧席位全部精确贴合
+    target FOV 时 cap→0，召回补齐退化为空——宁可少召回，不可回退 FOV，见
+    test_fov_bounded_efl_close_extras_all_tight_seats_give_zero_cap_no_extras。
+
+    量化验证（改后复测数字见 `.planning/loop/mode3-funnel-tuning-report.md`
+    与重新生成的 `sweet-zone-coverage-report.md`；报告同时含独立安全指标：
+    新旧路径最终 top-1/top-2 席位的 |FOV 失配| 回退分布）。
 
     Args:
-        primary: stage 1（`rank_seeds` top-K）已选中的候选，仅用于确定
-            per-query 自适应 FOV 上限与去重。
+        primary: stage 1（`rank_seeds` top-K）已选中的候选，用于确定旧路径
+            席位（cap 锚点）与去重。
         pool: 场景全池（ZMX-backed），补齐候选从这里筛选。
         target_efl_mm / target_fov_deg: 与 `_rank_seeds_by_target_match`
             同源的 target 值。
 
     Returns:
         `primary` 之外、满足 band+FOV 上限的补齐候选（未排序——调用方与
-        `primary` 拼接后交给 stage 2 统一按 band+score 重排，不在本函数
-        内二次排序，避免和 stage 2 的排序语义打架）。
+        `primary` 拼接后交给 stage 2 统一按全键重排，不在本函数内二次
+        排序，避免和 stage 2 的排序语义打架）。
     """
     primary_ids = {c.metadata.case_id for c in primary if c.metadata is not None}
+
+    scored_primary = _score_cases_for_target(primary, target_efl_mm)
+    scored_primary.sort(key=lambda item: _stage2_sort_key(item[0], item[1], target_fov_deg))
+    old_codev_seats = scored_primary[:_TARGET_MAX_SEEDS]
     fov_cap = max(
-        (abs(c.metadata.fov_deg - target_fov_deg) for c in primary if c.metadata is not None),
+        (
+            abs(case.metadata.fov_deg - target_fov_deg)
+            for case, _ in old_codev_seats
+            if case.metadata is not None
+        ),
         default=0.0,
     )
+
     extras: list[OpticalSampleData] = []
     for case in pool:
         if case.metadata is None or case.metadata.case_id in primary_ids:
@@ -548,21 +616,20 @@ class TargetConvergedGenerator(CandidateGenerator):
            是 FOV 盲区：EFL 单维打分对"seed 原生 FOV 36° vs target FOV
            78°"这种规格错配视而不见，rank_seeds 的全维距离能看见。
         1b. **甜区召回补齐**（`_fov_bounded_efl_close_extras`，P11 甜区覆盖
-           率漏斗调优，2026-07-11）：stage 1 primary 之外，把"EFL 已经很
-           接近但被 top-K 挡在外面"的 seed 按 |FOV 失配| 自适应上限（不超
-           过 primary 自身最差成员）纳入候选——量化证实这类 seed 是三场景
-           miss 的主因（EFL 维真空洞=0，见该函数 docstring 的量化引用）。
+           率漏斗调优，2026-07-11，对抗审 BLOCKER 修复版）：stage 1 primary
+           之外，把"EFL 已经很接近但被 top-K 挡在外面"的 seed 纳入候选，
+           |FOV 失配| 上限锚定**旧路径真机席位**（primary-only stage 2 排序
+           后的前 `_TARGET_MAX_SEEDS` 颗）的最差 |FOV 失配|——结构保证新
+           路径最终席位的最差 FOV 失配不劣于旧路径（安全证明见该函数
+           docstring）。量化证实这类 seed 是三场景 miss 的主因（EFL 维真
+           空洞=0）。
         2. **EFL 收敛风险重排**：在 stage 1+1b 候选池内（或 `spec.
            fov_deg is None` 时的整个 ZMX-backed 池——见下），按
-           `seed_target_score.score_seed_target_match`（EFL 收敛风险代理，
-           N=24 真机数据依据，见该模块 docstring）分 band 优先、band 内
-           score 升序排序。
-
-        `sorted`/`list.sort` 是稳定排序：stage 2 分数打平（如两颗 seed EFL
-        相同）时保留候选池的原始序（primary 在前，按 stage 1 距离排过序；
-        1b 补齐的 extras 在后，`_fov_bounded_efl_close_extras` 不对 extras
-        排序——遍历 `pool` 的原始序，不发明额外的组内排序语义）——这是
-        tie-break 的机制，不是额外发明的第三个权重。
+           `_stage2_sort_key` 全键排序：band 优先、band 内 score 升序
+           （`seed_target_score.score_seed_target_match`，EFL 收敛风险
+           代理，N=24 真机数据依据）为主键；|FOV 失配|、case_id 为显式
+           tie-break 终键（对抗审 MINOR：消除库文件顺序的隐式裁决，
+           置换不变）。
 
         `spec.fov_deg is None`（target FOV 未约束，§7-E unconstrained 语义）
         时 `rank_seeds` 的检索排序查询没有"不检索这一维"的语义（同
@@ -608,18 +675,8 @@ class TargetConvergedGenerator(CandidateGenerator):
             )
             pool = primary + extras
 
-        scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
-        for case in pool:
-            assert case.metadata is not None
-            seed_efl_mm = case.paraxial.effective_focal_length_mm
-            if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
-                continue
-            try:
-                match = score_seed_target_match(seed_efl_mm, spec.efl_mm)
-            except ValueError:
-                continue
-            scored.append((case, match))
-        scored.sort(key=lambda item: (_BAND_RANK[item[1].band], item[1].score))
+        scored = _score_cases_for_target(pool, spec.efl_mm)
+        scored.sort(key=lambda item: _stage2_sort_key(item[0], item[1], spec.fov_deg))
         return scored
 
     @staticmethod

@@ -100,6 +100,12 @@ _BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
 #: 该私有常量，同 `FOV_PREFILTER_TOP_K` 的镜像口径。
 _EFL_CLOSE_BANDS_FOR_RECALL: frozenset[str] = frozenset({"lt5", "5to15"})
 
+#: stage 1b cap 锚点的席位数，镜像
+#: `app/core/orchestration/generators.py::_TARGET_MAX_SEEDS`（Mode3 每次
+#: 编排真机批跑的 seed 数硬顶）——cap = 旧路径（primary-only）stage 2 排序
+#: 后前这么多颗（"旧席位"）的最差 |FOV 失配|（对抗审 BLOCKER 修复锚点）。
+_TOP_SEEDS_FOR_CAP = 2
+
 _SCENARIOS: tuple[Scenario, ...] = (
     Scenario.SMARTPHONE_WIDE,
     Scenario.SMARTPHONE_TELEPHOTO,
@@ -199,6 +205,40 @@ def _zmx_backed_pool(scenario: Scenario) -> list[OpticalSampleData]:
 # ---------------------------------------------------------------------------
 
 
+def _stage2_sort_key(
+    case: OpticalSampleData, match: SeedTargetScore, target_fov_deg: float | None
+) -> tuple[int, float, float, str]:
+    """stage 2 排序全键，镜像
+    `app/core/orchestration/generators.py::_stage2_sort_key`（对抗审 MINOR
+    修复，2026-07-11）：band 优先、band 内 score 升序为主键；|FOV 失配|、
+    case_id 为显式 tie-break 终键（消除库文件顺序的隐式裁决，置换不变）。"""
+    assert case.metadata is not None
+    fov_mismatch = (
+        abs(case.metadata.fov_deg - target_fov_deg) if target_fov_deg is not None else 0.0
+    )
+    return (_BAND_RANK[match.band], match.score, fov_mismatch, case.metadata.case_id)
+
+
+def _score_cases_for_target(
+    cases: Sequence[OpticalSampleData], target_efl_mm: float
+) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
+    """镜像 `generators.py::_score_cases_for_target`：逐颗打分，非法 EFL
+    静默跳过，不排序。"""
+    scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
+    for case in cases:
+        if case.metadata is None:
+            continue
+        seed_efl_mm = case.paraxial.effective_focal_length_mm
+        if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
+            continue
+        try:
+            match = score_seed_target_match(seed_efl_mm, target_efl_mm)
+        except ValueError:
+            continue
+        scored.append((case, match))
+    return scored
+
+
 def _fov_bounded_efl_close_extras(
     primary: Sequence[OpticalSampleData],
     pool: Sequence[OpticalSampleData],
@@ -208,16 +248,28 @@ def _fov_bounded_efl_close_extras(
 ) -> list[OpticalSampleData]:
     """stage 1b 甜区召回补齐，镜像
     `app/core/orchestration/generators.py::_fov_bounded_efl_close_extras`
-    （P11 甜区覆盖率漏斗调优，2026-07-11）——本地重实现（同文件顶部
-    docstring "刻意不做的事"：不直接 import generators 模块），语义逐字
-    对齐：`primary` 之外，EFL band ∈ `_EFL_CLOSE_BANDS_FOR_RECALL` 且
-    |FOV 失配| 不超过 `primary` 自身最差成员的 seed 纳入候选，上限自适应，
-    不引入新的全局幅度常数。"""
+    （P11 漏斗调优 + 对抗审 BLOCKER 修复，2026-07-11）——本地重实现（同文件
+    顶部 docstring "刻意不做的事"：不直接 import generators 模块），语义
+    逐字对齐：`primary` 之外，EFL band ∈ `_EFL_CLOSE_BANDS_FOR_RECALL` 且
+    |FOV 失配| 不超过**旧路径真机席位**（primary-only stage 2 排序后前
+    `_TOP_SEEDS_FOR_CAP` 颗）最差 |FOV 失配| 的 seed 纳入候选。安全证明见
+    生产函数 docstring。注意：本文件另有生产等价校验测试
+    （test_sweet_zone_coverage.py::test_rank_pool_by_target_matches_production_*，
+    对抗审 MAJOR"镜像循环论证"的独立性补丁），镜像 drift 会被测试抓住。"""
     primary_ids = {c.metadata.case_id for c in primary if c.metadata is not None}
+
+    scored_primary = _score_cases_for_target(primary, target_efl_mm)
+    scored_primary.sort(key=lambda item: _stage2_sort_key(item[0], item[1], target_fov_deg))
+    old_codev_seats = scored_primary[:_TOP_SEEDS_FOR_CAP]
     fov_cap = max(
-        (abs(c.metadata.fov_deg - target_fov_deg) for c in primary if c.metadata is not None),
+        (
+            abs(case.metadata.fov_deg - target_fov_deg)
+            for case, _ in old_codev_seats
+            if case.metadata is not None
+        ),
         default=0.0,
     )
+
     extras: list[OpticalSampleData] = []
     for case in pool:
         if case.metadata is None or case.metadata.case_id in primary_ids:
@@ -237,20 +289,26 @@ def _fov_bounded_efl_close_extras(
     return extras
 
 
-def _rank_pool_by_target(
+def _two_stage_with_baseline(
     pool: Sequence[OpticalSampleData],
     grid_point: GridPoint,
     *,
     top_k: int = FOV_PREFILTER_TOP_K,
-) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
-    """stage 1：`rank_seeds` 全维规格距离（FOV 权重主导）收窄到最近 `top_k`
-    颗（primary）；stage 1b：`_fov_bounded_efl_close_extras` 甜区召回补齐；
-    stage 2：在 primary+extras 候选池内按 `score_seed_target_match` band
-    优先、band 内 score 升序重排。`list.sort` 稳定排序，stage2 打平时保留
-    候选池的原始序（primary 在前、extras 在后）——同
-    `_rank_seeds_by_target_match` 的 tie-break 语义。"""
+) -> tuple[
+    list[tuple[OpticalSampleData, SeedTargetScore]],
+    list[tuple[OpticalSampleData, SeedTargetScore]],
+]:
+    """两段式匹配 + 旧路径 baseline（对抗审 MAJOR"独立安全指标"数据源）。
+
+    Returns:
+        (new_scored, baseline_scored)：
+        - new_scored：stage 1 primary + stage 1b extras 的 stage 2 全键排序
+          （= 生产 `_rank_seeds_by_target_match` 当前行为的镜像）；
+        - baseline_scored：仅 primary 的 stage 2 全键排序（= stage 1b 落地前
+          的旧路径行为），供逐格点对比"最终 top-1/top-2 席位的 FOV 回退"。
+    """
     if not pool:
-        return []
+        return [], []
 
     seed_ranking = rank_seeds(
         list(pool),
@@ -266,21 +324,26 @@ def _rank_pool_by_target(
         target_efl_mm=grid_point.efl_mm,
         target_fov_deg=grid_point.fov_deg,
     )
-    narrowed = primary + extras
 
-    scored: list[tuple[OpticalSampleData, SeedTargetScore]] = []
-    for case in narrowed:
-        assert case.metadata is not None
-        seed_efl_mm = case.paraxial.effective_focal_length_mm
-        if not math.isfinite(seed_efl_mm) or seed_efl_mm <= 0:
-            continue
-        try:
-            match = score_seed_target_match(seed_efl_mm, grid_point.efl_mm)
-        except ValueError:
-            continue
-        scored.append((case, match))
-    scored.sort(key=lambda item: (_BAND_RANK[item[1].band], item[1].score))
-    return scored
+    baseline_scored = _score_cases_for_target(primary, grid_point.efl_mm)
+    baseline_scored.sort(key=lambda item: _stage2_sort_key(item[0], item[1], grid_point.fov_deg))
+
+    new_scored = _score_cases_for_target(list(primary) + extras, grid_point.efl_mm)
+    new_scored.sort(key=lambda item: _stage2_sort_key(item[0], item[1], grid_point.fov_deg))
+    return new_scored, baseline_scored
+
+
+def _rank_pool_by_target(
+    pool: Sequence[OpticalSampleData],
+    grid_point: GridPoint,
+    *,
+    top_k: int = FOV_PREFILTER_TOP_K,
+) -> list[tuple[OpticalSampleData, SeedTargetScore]]:
+    """两段式匹配（新路径），语义镜像生产
+    `TargetConvergedGenerator._rank_seeds_by_target_match`。等价性由
+    生产等价校验测试独立锚定（见 `_fov_bounded_efl_close_extras` docstring）。"""
+    new_scored, _ = _two_stage_with_baseline(pool, grid_point, top_k=top_k)
+    return new_scored
 
 
 def _in_band(value: float, band: tuple[float, float]) -> bool:
@@ -365,11 +428,43 @@ class MatchResult:
     efl_band_seed_count: int = 0
     efl_band_min_fov_mismatch_deg: float | None = None
     efl_band_min_fov_mismatch_case_id: str | None = None
-    #: 严格口径（对抗审 BLOCKER 2 修复）：**仅** `coverage == "miss"` 且
-    #: EFL 维有原料（存在性扫描 in_band_count > 0）时为 True。loose_band /
-    #: missing_dimension 一律 False——报告口径"其中漏斗致 miss"必须真的是
-    #: miss 的子集。
-    funnel_caused_miss: bool = False
+    #: 严格口径（PR#60 对抗审 BLOCKER 2 修复；2026-07-11 更名为中性指标，
+    #: 原名 `funnel_caused_miss`——对抗审 MINOR：该指标只表达"全库存在 EFL
+    #: 带内 seed 但两段式没选它"，**不含 FOV 可接受性判断**，不能反推"应由
+    #: 放宽漏斗恢复"）：**仅** `coverage == "miss"` 且 EFL 维有原料（存在性
+    #: 扫描 in_band_count > 0）时为 True。loose_band / missing_dimension
+    #: 一律 False——必须真的是 miss 的子集。
+    efl_material_exists_but_not_selected: bool = False
+    #: 独立安全指标（对抗审 MAJOR"镜像循环论证"修复）：旧路径（primary-only）
+    #: 最终 top-1 的读数——供逐格点对比新路径最终席位相对旧路径的 FOV 回退，
+    #: 以及 uw 翻窗格点的机器可复算归因表。
+    baseline_seed_case_id: str | None = None
+    baseline_delta_efl_pct: float | None = None
+    baseline_band: str | None = None
+    baseline_score: float | None = None
+    baseline_fov_mismatch_deg: float | None = None
+    #: 新路径最终 top-1 的 score 与 |FOV 失配|（top-1 回退 = seed_fov_mismatch
+    #: - baseline_fov_mismatch）。
+    seed_score: float | None = None
+    seed_fov_mismatch_deg: float | None = None
+    #: top-2 席位（真机实际会跑的 `_TARGET_MAX_SEEDS` 颗）最差 |FOV 失配| 的
+    #: 回退：max(new_top2) - max(old_top2)。按 stage 1b 的安全证明恒 <= 0
+    #: （浮点噪声内），报告以此独立验证结构保证。
+    fov_top2_worst_regression_deg: float | None = None
+
+
+def _worst_fov_mismatch(
+    scored: Sequence[tuple[OpticalSampleData, SeedTargetScore]],
+    target_fov_deg: float,
+    *,
+    top_n: int,
+) -> float | None:
+    mismatches = [
+        abs(case.metadata.fov_deg - target_fov_deg)
+        for case, _ in scored[:top_n]
+        if case.metadata is not None
+    ]
+    return max(mismatches) if mismatches else None
 
 
 def evaluate_grid_point(
@@ -379,13 +474,13 @@ def evaluate_grid_point(
     top_k: int = FOV_PREFILTER_TOP_K,
 ) -> MatchResult:
     """一个格点的完整判定：两段式选出"库内最佳匹配"，按 ΔEFL% 分类，附带
-    缺维 fail-closed 降级与漏斗/真空洞区分标记（存在性扫描口径）。"""
+    缺维 fail-closed 降级、EFL 原料存在性标记与新旧路径 FOV 安全对比。"""
     if not pool:
         return MatchResult(grid_point=grid_point, coverage="no_seed_available")
 
     material = _efl_band_material(pool, grid_point.efl_mm, grid_point.fov_deg)
 
-    scored = _rank_pool_by_target(pool, grid_point, top_k=top_k)
+    scored, baseline_scored = _two_stage_with_baseline(pool, grid_point, top_k=top_k)
     if not scored:
         # stage1 收窄后没有任何候选给出有限正 EFL 的合法打分（schema 上
         # 不应发生，防御性 fail-closed，不炸整个 sweep）。
@@ -412,7 +507,28 @@ def evaluate_grid_point(
     else:
         coverage = "miss"
 
-    funnel_caused_miss = coverage == "miss" and material.in_band_count > 0
+    efl_material_flag = coverage == "miss" and material.in_band_count > 0
+
+    baseline_case_id: str | None = None
+    baseline_delta: float | None = None
+    baseline_band: str | None = None
+    baseline_score: float | None = None
+    baseline_mismatch: float | None = None
+    top2_regression: float | None = None
+    if baseline_scored:
+        b_seed, b_match = baseline_scored[0]
+        assert b_seed.metadata is not None
+        baseline_case_id = b_seed.metadata.case_id
+        baseline_delta = b_match.delta_efl_pct
+        baseline_band = b_match.band
+        baseline_score = b_match.score
+        baseline_mismatch = abs(b_seed.metadata.fov_deg - grid_point.fov_deg)
+        new_worst = _worst_fov_mismatch(scored, grid_point.fov_deg, top_n=_TOP_SEEDS_FOR_CAP)
+        old_worst = _worst_fov_mismatch(
+            baseline_scored, grid_point.fov_deg, top_n=_TOP_SEEDS_FOR_CAP
+        )
+        if new_worst is not None and old_worst is not None:
+            top2_regression = new_worst - old_worst
 
     return MatchResult(
         grid_point=grid_point,
@@ -426,7 +542,15 @@ def evaluate_grid_point(
         efl_band_seed_count=material.in_band_count,
         efl_band_min_fov_mismatch_deg=material.min_fov_mismatch_deg,
         efl_band_min_fov_mismatch_case_id=material.min_fov_mismatch_case_id,
-        funnel_caused_miss=funnel_caused_miss,
+        efl_material_exists_but_not_selected=efl_material_flag,
+        baseline_seed_case_id=baseline_case_id,
+        baseline_delta_efl_pct=baseline_delta,
+        baseline_band=baseline_band,
+        baseline_score=baseline_score,
+        baseline_fov_mismatch_deg=baseline_mismatch,
+        seed_score=match.score,
+        seed_fov_mismatch_deg=abs(seed.metadata.fov_deg - grid_point.fov_deg),
+        fov_top2_worst_regression_deg=top2_regression,
     )
 
 
@@ -444,8 +568,9 @@ class ScenarioSummary:
     miss: int
     missing_dimension: int
     no_seed_available: int
-    #: 严格口径：miss 且 EFL 维有原料（存在性扫描），恒 <= miss。
-    funnel_caused_miss: int = 0
+    #: 严格口径（中性命名，见 MatchResult 同名字段注记）：miss 且 EFL 维
+    #: 有原料（存在性扫描），恒 <= miss。
+    efl_material_exists_but_not_selected: int = 0
     #: 真空洞：miss 且 EFL 存在性扫描无带内 seed（需要补库的那种缺料）。
     true_gap: int = 0
 
@@ -479,7 +604,9 @@ def summarize(results: Sequence[MatchResult], scenario: Scenario) -> ScenarioSum
         miss=sum(1 for r in results if r.coverage == "miss"),
         missing_dimension=sum(1 for r in results if r.coverage == "missing_dimension"),
         no_seed_available=sum(1 for r in results if r.coverage == "no_seed_available"),
-        funnel_caused_miss=sum(1 for r in results if r.funnel_caused_miss),
+        efl_material_exists_but_not_selected=sum(
+            1 for r in results if r.efl_material_exists_but_not_selected
+        ),
         true_gap=sum(
             1 for r in results if r.coverage == "miss" and r.efl_band_seed_count == 0
         ),
@@ -575,8 +702,8 @@ class CellHole:
     total_points: int
     avg_delta_efl_pct: float | None
     nearest_miss_delta_efl_pct: float | None
-    #: 严格口径：miss 且 EFL 维有原料。
-    funnel_caused_miss_points: int
+    #: 严格口径（中性命名，见 MatchResult 同名字段注记）：miss 且 EFL 维有原料。
+    efl_material_exists_but_not_selected_points: int
     #: miss 且 EFL 存在性扫描无带内 seed。
     true_gap_points: int
     #: EFL 维原料存在性扫描（切片内所有格点共享同一 target EFL/FOV/池，值
@@ -622,7 +749,9 @@ def _cell_holes(results: Sequence[MatchResult]) -> list[CellHole]:
             nearest = (
                 min(_nearest_boundary_distance_pct(d) for d in deltas) if deltas else None
             )
-            funnel = sum(1 for r in subset if r.funnel_caused_miss)
+            material_not_selected = sum(
+                1 for r in subset if r.efl_material_exists_but_not_selected
+            )
             true_gap = sum(
                 1 for r in subset if r.coverage == "miss" and r.efl_band_seed_count == 0
             )
@@ -636,7 +765,7 @@ def _cell_holes(results: Sequence[MatchResult]) -> list[CellHole]:
                     total_points=len(subset),
                     avg_delta_efl_pct=avg_delta,
                     nearest_miss_delta_efl_pct=nearest,
-                    funnel_caused_miss_points=funnel,
+                    efl_material_exists_but_not_selected_points=material_not_selected,
                     true_gap_points=true_gap,
                     efl_band_seed_count=probe.efl_band_seed_count,
                     efl_band_min_fov_mismatch_deg=probe.efl_band_min_fov_mismatch_deg,
@@ -644,6 +773,75 @@ def _cell_holes(results: Sequence[MatchResult]) -> list[CellHole]:
                 )
             )
     return holes
+
+
+# ---------------------------------------------------------------------------
+# 独立安全指标：最终席位 FOV 回退（对抗审 MAJOR"镜像循环论证"修复的一半：
+# 不再只断言"extras 不超过 cap"这个与实现同源的口径，而是直接量化"新路径
+# 最终 top-1/top-2 相对旧路径（primary-only）的 |FOV 失配| 回退"——该指标
+# 不依赖 cap 逻辑本身，是可独立复算的输出面读数）
+# ---------------------------------------------------------------------------
+
+
+def _percentile(sorted_vals: Sequence[float], p: float) -> float:
+    """最近邻百分位（与任务报告 K 扫描口径一致的简单实现，不依赖 numpy）。"""
+    if not sorted_vals:
+        return float("nan")
+    idx = min(len(sorted_vals) - 1, int(round(p * (len(sorted_vals) - 1))))
+    return sorted_vals[idx]
+
+
+def _render_fov_safety_section(results: Sequence[MatchResult]) -> str:
+    top1_regressions: list[tuple[float, MatchResult]] = []
+    top2_regressions: list[float] = []
+    for r in results:
+        if r.seed_fov_mismatch_deg is not None and r.baseline_fov_mismatch_deg is not None:
+            top1_regressions.append(
+                (r.seed_fov_mismatch_deg - r.baseline_fov_mismatch_deg, r)
+            )
+        if r.fov_top2_worst_regression_deg is not None:
+            top2_regressions.append(r.fov_top2_worst_regression_deg)
+    if not top1_regressions:
+        return "_(无可对比格点)_"
+
+    top1_vals = sorted(v for v, _ in top1_regressions)
+    top2_vals = sorted(top2_regressions)
+    lines = [
+        "### 独立安全指标：最终席位 |FOV 失配| 回退（新路径 vs 旧路径 primary-only；正值=回退）",
+        "",
+        "| 指标 | p50 | p95 | max |",
+        "|---|---:|---:|---:|",
+        (
+            f"| top-1 回退（deg） | {_percentile(top1_vals, 0.50):+.2f} | "
+            f"{_percentile(top1_vals, 0.95):+.2f} | {max(top1_vals):+.2f} |"
+        ),
+        (
+            f"| top-2 席位最差回退（deg，stage 1b 结构保证恒 ≤ 0） | "
+            f"{_percentile(top2_vals, 0.50):+.2f} | {_percentile(top2_vals, 0.95):+.2f} | "
+            f"{max(top2_vals):+.2f} |"
+        )
+        if top2_vals
+        else "| top-2 席位最差回退（deg） | N/A | N/A | N/A |",
+        "",
+    ]
+    worst = sorted(top1_regressions, key=lambda t: -t[0])[:3]
+    if worst and worst[0][0] > 0:
+        lines.append("最坏 top-1 回退格点（前 3，供逐点复核）：")
+        for regression, r in worst:
+            if regression <= 0:
+                break
+            gp = r.grid_point
+            imh_str = f"{gp.image_height_mm:.2f}mm" if gp.image_height_mm is not None else "N/A"
+            lines.append(
+                f"- target(EFL {gp.efl_mm:.2f}mm/F#{gp.fnum:.2f}/FOV {gp.fov_deg:.1f}°"
+                f"/IMH {imh_str})："
+                f"旧 {r.baseline_seed_case_id}（失配 {r.baseline_fov_mismatch_deg:.1f}°）→ "
+                f"新 {r.seed_case_id}（失配 {r.seed_fov_mismatch_deg:.1f}°），"
+                f"回退 +{regression:.1f}°"
+            )
+    else:
+        lines.append("无任何格点出现 top-1 FOV 回退（全部 ≤ 0）。")
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -683,12 +881,14 @@ def _render_scenario_section(
         f"| miss（超出宽松带） | {summary.miss} | {summary.miss_pct:.1f}% |",
         f"| 因缺维无法判断 | {summary.missing_dimension} | {summary.missing_dimension_pct:.1f}% |",
         f"| 池内无合法候选（no_seed_available） | {summary.no_seed_available} | {summary._pct(summary.no_seed_available):.1f}% |",
-        f"| miss 中漏斗致 miss（严格：miss 且 EFL 维有原料） | {summary.funnel_caused_miss} | {summary._pct(summary.funnel_caused_miss):.1f}% |",
+        f"| miss 且 EFL 维有原料（efl_material_exists_but_not_selected，严格 miss 子集） | {summary.efl_material_exists_but_not_selected} | {summary._pct(summary.efl_material_exists_but_not_selected):.1f}% |",
         f"| miss 中真空洞（EFL 存在性扫描无带内 seed） | {summary.true_gap} | {summary._pct(summary.true_gap):.1f}% |",
         "",
         "### 覆盖率热图（行=EFL, 列=FOV；格子=该切片 F#×IMH 子网格的甜区覆盖率）",
         "",
         render_heatmap_table(results),
+        "",
+        _render_fov_safety_section(results),
         "",
     ]
 
@@ -701,7 +901,7 @@ def _render_scenario_section(
         lines.append(
             "| target EFL(mm) | target FOV(deg) | 格点数 | 最近 miss 距甜区边界 | "
             "平均 ΔEFL%(最佳匹配) | EFL带内seed数 | 带内seed最小\\|FOV失配\\|(deg) | "
-            "漏斗致 miss(严格) | 真空洞 |"
+            "EFL有料未选中(严格) | 真空洞 |"
         )
         lines.append("|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
         for hole in sorted(holes, key=lambda h: (h.efl_mm, h.fov_deg)):
@@ -722,7 +922,7 @@ def _render_scenario_section(
                 f"| {hole.efl_mm:.2f} | {hole.fov_deg:.1f} | {hole.total_points} | "
                 f"{nearest_str} | {avg_delta_str} | "
                 f"{hole.efl_band_seed_count} | {mismatch_str} | "
-                f"{hole.funnel_caused_miss_points} | {hole.true_gap_points} |"
+                f"{hole.efl_material_exists_but_not_selected_points} | {hole.true_gap_points} |"
             )
         lines.append("")
 
@@ -812,19 +1012,24 @@ def render_report(
         "（+25.1% 起首次失败，此处 +10% 留安全边际）。",
         "- **两段式匹配**：镜像生产 Mode3 "
         "`TargetConvergedGenerator._rank_seeds_by_target_match`"
-        "（`app/core/orchestration/generators.py`）——stage 1 "
+        "（`app/core/orchestration/generators.py`；等价性由抽样等价校验测试"
+        "独立锚定，见 `tests/test_sweet_zone_coverage.py`）——stage 1 "
         "`case_library.rank_seeds` 全维规格距离（FOV 权重 0.46 主导）收窄到 "
-        f"top {FOV_PREFILTER_TOP_K} 颗近邻，stage 2 "
-        "`seed_target_score.score_seed_target_match` 在邻域内按 EFL 收敛风险"
-        " band 重排，取第一名为「库内最佳匹配」。这就是真实客户请求会被路由"
+        f"top {FOV_PREFILTER_TOP_K} 颗近邻（primary），stage 1b 甜区召回补齐"
+        "（EFL band 已足够近且 |FOV 失配| 不超过旧路径真机席位最差值的 seed，"
+        "P11 漏斗调优 + 对抗审 BLOCKER 修复版），stage 2 "
+        "`seed_target_score.score_seed_target_match` 按 EFL 收敛风险 band "
+        "重排（band、score 主键 + |FOV 失配|、case_id 显式 tie-break 终键），"
+        "取第一名为「库内最佳匹配」。这就是真实客户请求会被路由"
         "到的那颗 seed，不是理论最优 EFL 匹配。",
-        "- **漏斗致 miss vs 真空洞（存在性扫描口径）**：对场景池每颗合法正 "
+        "- **EFL 有料未选中 vs 真空洞（存在性扫描口径）**：对场景池每颗合法正 "
         "EFL seed 直接算 ΔEFL%，闭区间 [-15%, 0] 内存在任意一颗即「EFL 维有"
         "原料」（真存在性扫描，不是 band-rank 第一名判定——后者会让更近的轻微"
         "拉焦 seed 掩盖稍远的带内缩焦 seed）。**仅对 coverage=miss 的格点**"
-        "判定：miss 且有原料 = `funnel_caused_miss`（排序/参数问题，两段式"
-        "漏斗把带内 seed 挡在外面）；miss 且无原料 = 真空洞（需要补库的缺料）。"
-        "loose_band 不计入漏斗口径。",
+        "判定：miss 且有原料 = `efl_material_exists_but_not_selected`（中性"
+        "命名：只表达存在性，**不含 FOV 可接受性判断**，不能反推\"应由放宽"
+        "漏斗恢复\"——带内 seed 可能 FOV 远到任何健康的漏斗都不该选它）；"
+        "miss 且无原料 = 真空洞（需要补库的缺料）。loose_band 不计入本口径。",
         "- **EFL 有料 ≠ 可用原料**：Mode3 现状只有 EFL 真收敛"
         "（`CONVERGED_FIELDS={\"efl\"}`），FOV 靠 seed 原生匹配——EFL 带内 "
         "seed 可能 FOV 差几十度，候选虽诚实但规格错配。因此空洞清单额外给出"
@@ -842,7 +1047,7 @@ def render_report(
         "",
         "## 三场景覆盖率总览",
         "",
-        "| 场景 | 候选池 | 格点数 | 甜区% | 宽松带或以上% | miss | 漏斗致 miss(严格) | 真空洞 | 缺维格点 |",
+        "| 场景 | 候选池 | 格点数 | 甜区% | 宽松带或以上% | miss | EFL有料未选中(严格) | 真空洞 | 缺维格点 |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for scenario in _SCENARIOS:
@@ -851,7 +1056,7 @@ def render_report(
         lines.append(
             f"| {scenario.value} | {pool_sizes.get(scenario, 0)} | {summary.total_points} | "
             f"{summary.sweet_zone_pct:.1f}% | {summary.loose_band_or_better_pct:.1f}% | "
-            f"{summary.miss} | {summary.funnel_caused_miss} | {summary.true_gap} | "
+            f"{summary.miss} | {summary.efl_material_exists_but_not_selected} | {summary.true_gap} | "
             f"{summary.missing_dimension} |"
         )
     lines.append("")
