@@ -251,6 +251,11 @@ def _parse_prescription_attempts(
     try:
         metas = _find_embodiment_metas(text)
     except PatentParseError:
+        # NEWMAX carries exact metadata inside its family-specific TABLE header.
+        # Keep this strict fallback separate so primary does not grow permissive.
+        attempts = _parse_newmax_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_fujifilm_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -333,6 +338,236 @@ def _parse_prescription_at_meta(
         surfaces=optical_surfaces,
         unsupported_asphere_terms=unsupported,
     )
+
+
+# ---------------------------------------------------------------------------
+# NEWMAX fallback family. Static publications pair a prescription table with
+# the immediately following asphere table and carry f/Fno/full FOV in-header.
+# ---------------------------------------------------------------------------
+
+_NEWMAX_HEADER_RE = re.compile(
+    rf"\bTABLE\s+(?P<table>\d+)\s+Embodiment\s+(?P<embodiment>\d+)\s+"
+    rf"f(?:\s*\(\s*focal\s+length\s*\))?\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm\s*,?\s*"
+    rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s*,?\s*"
+    rf"FOV(?:\s*\(\s*field\s+of\s+view\s+2\s*[ωw]\s*\))?\s*=\s*"
+    rf"(?P<fov>{NUMBER_PATTERN})\s*(?:deg\.?|°)",
+    re.IGNORECASE,
+)
+_NEWMAX_COEFFICIENT_LABEL_RE = re.compile(r"[A-Z]:?|A\d+:?", re.IGNORECASE)
+_NEWMAX_OBJECT_ROW_RE = re.compile(r"\b0\s+Object\b", re.IGNORECASE)
+_NEWMAX_ORDINAL_LENS = {
+    "first": 1,
+    "second": 2,
+    "third": 3,
+    "fourth": 4,
+    "fifth": 5,
+    "sixth": 6,
+    "seventh": 7,
+}
+
+
+def _parse_newmax_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse NEWMAX static surface/coefficient table pairs independently."""
+
+    blocks = _patent_table_blocks(text)
+    surface_blocks = [
+        (index, block, match)
+        for index, block in enumerate(blocks)
+        if (match := _NEWMAX_HEADER_RE.search(block.text)) is not None
+        and _NEWMAX_OBJECT_ROW_RE.search(block.text)
+    ]
+    if not surface_blocks:
+        return []
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for block_index, block, header in surface_blocks:
+        embodiment_number = int(header.group("embodiment"))
+        embodiment = f"Embodiment {embodiment_number}"
+        try:
+            surfaces, index_by_label = _parse_newmax_surface_table(
+                block.text, embodiment_number=embodiment_number
+            )
+            if block_index + 1 >= len(blocks):
+                raise PatentParseError(f"NEWMAX {embodiment} lacks paired coefficient table")
+            coefficient_block = blocks[block_index + 1]
+            if coefficient_block.number != block.number + 1:
+                raise PatentParseError(f"NEWMAX {embodiment} coefficient table is not adjacent")
+            coefficients = _parse_newmax_asphere_table(
+                coefficient_block.text, index_by_label=index_by_label
+            )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+                    surface.surface_type = "ASP"
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=_parse_number(header.group("f")),
+                f_number=_parse_number(header.group("fno")),
+                hfov_deg=_parse_number(header.group("fov")) / 2.0,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - per-embodiment fail-loud ledger
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_newmax_surface_table(
+    block_text: str,
+    *,
+    embodiment_number: int,
+) -> tuple[list[PatentSurface], dict[str, int]]:
+    """Parse NEWMAX rows after normalizing only documented label variants."""
+
+    match = _NEWMAX_OBJECT_ROW_RE.search(block_text)
+    if match is None:
+        raise PatentParseError(f"NEWMAX embodiment {embodiment_number} object row not found")
+    table_text = block_text[match.start() :]
+    table_text = re.sub(
+        r"\b(First|Second|Third|Fourth|Fifth|Sixth|Seventh)\s+lens\b",
+        _newmax_ordinal_lens,
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    table_text = re.sub(
+        r"\b(?:IR-filter|Optical\s+filter)\b", "Filter", table_text, flags=re.IGNORECASE
+    )
+    table_text = re.sub(r"\bImage\s+plane\b", "Image", table_text, flags=re.IGNORECASE)
+    surfaces = _parse_surface_table(table_text)
+    for surface in surfaces:
+        if surface.material is not None and (surface.nd is None or surface.vd is None):
+            raise PatentParseError(
+                f"NEWMAX surface {surface.index} material lacks printed nd/vd"
+            )
+    optical_surfaces = [surface for surface in surfaces if surface.index > 0]
+    if len(optical_surfaces) < 4 or optical_surfaces[-1].label.upper() != "IMAGE":
+        raise PatentParseError(f"NEWMAX embodiment {embodiment_number} surface table is incomplete")
+    return optical_surfaces, {str(surface.index): surface.index for surface in optical_surfaces}
+
+
+def _newmax_ordinal_lens(match: re.Match[str]) -> str:
+    return f"Lens {_NEWMAX_ORDINAL_LENS[match.group(1).lower()]}"
+
+
+def _parse_newmax_asphere_table(
+    block_text: str,
+    *,
+    index_by_label: dict[str, int],
+) -> dict[int, dict[str, float]]:
+    """Map the two published NEWMAX monomial coefficient conventions."""
+
+    tokens = block_text.split()
+    coefficients: dict[int, dict[str, float]] = {}
+    pos = 0
+    while pos < len(tokens):
+        if tokens[pos].lower() != "surface":
+            pos += 1
+            continue
+        pos += 1
+        surface_labels: list[str] = []
+        while pos < len(tokens) and tokens[pos].isdigit():
+            surface_labels.append(tokens[pos])
+            pos += 1
+        if not surface_labels:
+            continue
+        while pos < len(tokens):
+            raw_label = tokens[pos]
+            if raw_label.lower() == "surface":
+                break
+            if _NEWMAX_COEFFICIENT_LABEL_RE.fullmatch(raw_label) is None:
+                pos += 1
+                continue
+            label = raw_label.rstrip(":").upper()
+            pos += 1
+            values: list[float] = []
+            for surface_label in surface_labels:
+                if pos >= len(tokens):
+                    raise PatentParseError(
+                        f"NEWMAX {label} row is incomplete at surface {surface_label}"
+                    )
+                try:
+                    values.append(_parse_number(tokens[pos]))
+                except PatentParseError as exc:
+                    raise PatentParseError(
+                        f"NEWMAX {label} row has nonnumeric data token: {tokens[pos]}"
+                    ) from exc
+                pos += 1
+            for surface_label, value in zip(surface_labels, values, strict=True):
+                codev_label = _newmax_codev_asphere_label(label, value, surface_label)
+                if codev_label is None:
+                    continue
+                surface_index = index_by_label.get(surface_label)
+                if surface_index is None:
+                    raise PatentParseError(
+                        f"NEWMAX coefficient references unknown surface {surface_label}"
+                    )
+                coefficients.setdefault(surface_index, {})[codev_label] = value
+    if not coefficients:
+        raise PatentParseError("NEWMAX asphere table had no coefficient rows")
+    return coefficients
+
+
+def _newmax_codev_asphere_label(label: str, value: float, surface_label: str) -> str | None:
+    if label == "K":
+        return "K"
+    # US-10101561-B2, Equation 1 (Google Patents, verbatim term sequence):
+    # ``A h^4 + B h^6 + C h^8 + D h^10 + E h^12 + G h^14 + ...``.
+    # The published coefficient table prints its sixth row as ``F`` while the
+    # equation names that h^14 term ``G`` (the letter F is skipped in the
+    # equation).  Table rows A..F therefore map positionally to h^4..h^14 --
+    # but any table letter beyond F is ambiguous between the two lettering
+    # schemes (positional G=h^16 vs equation G=h^14), so nonzero values there
+    # must fail loud rather than risk an order-shift (E1-01 incident class).
+    if len(label) == 1 and "A" <= label <= "Z":
+        if label > "F":
+            if abs(value) > 0.0:
+                raise PatentParseError(
+                    "ambiguous NEWMAX alphabetic coefficient beyond F "
+                    f"(equation lettering skips F): surface {surface_label}:{label}={value:.3g}"
+                )
+            return None
+        order = 4 + 2 * (ord(label) - ord("A"))
+    else:
+        order_match = re.fullmatch(r"A(\d+)", label)
+        if order_match is None:
+            raise PatentParseError(f"unsupported NEWMAX coefficient label: {label}")
+        order = int(order_match.group(1))
+        # US-12596237-B2, Equation 2 (Google Patents, verbatim):
+        # ``z(h) = ch^2/{1+[1-(k+1)c^2h^2]^0.5} + Σ(A_i)·(h^i)``.
+        # A2 multiplies h^2. It is verified zero and never shifted into A4.
+        if order == 2:
+            if abs(value) > 0.0:
+                raise PatentParseError(
+                    f"nonzero NEWMAX A2 term: surface {surface_label}:A2={value:.3g}"
+                )
+            return None
+    codev_label = ASPHERE_ORDER_TO_CODEV.get(order)
+    if codev_label is None:
+        if abs(value) > 0.0:
+            raise PatentParseError(
+                f"unsupported nonzero NEWMAX asphere term: surface {surface_label}:{label}={value:.3g}"
+            )
+        return None
+    return codev_label
 
 
 _FUJIFILM_BASIC_TABLE_PATTERN = re.compile(
