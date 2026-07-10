@@ -1078,6 +1078,19 @@ def _parse_sekonix_table_attempts(
     attempts: list[_PrescriptionParseAttempt] = []
     for embodiment_number, (block_index, block) in enumerate(surface_blocks, start=1):
         embodiment = f"SEKONIX embodiment {embodiment_number}"
+        # Metadata may be printed before the surface table or after its paired
+        # coefficient table.  Start at the nearest embodiment marker in the
+        # inter-table prose: starting at publication zero would admit prior-art
+        # values, while starting at the table would discard leading metadata.
+        search_start = 0
+        if embodiment_number > 1:
+            previous_block_index = surface_blocks[embodiment_number - 2][0]
+            previous_pair_index = previous_block_index + 1
+            if previous_pair_index < len(blocks):
+                search_start = blocks[previous_pair_index].end
+        leading_prose = text[search_start:block.start]
+        markers = list(re.finditer(r"\b(?:the\s+)?(?:\w+\s+)?embodiment\b", leading_prose, re.I))
+        span_start = search_start + markers[-1].start() if markers else block.start
         next_start = (
             surface_blocks[embodiment_number][1].start
             if embodiment_number < len(surface_blocks)
@@ -1100,7 +1113,7 @@ def _parse_sekonix_table_attempts(
                 if surface.index in coefficients:
                     surface.asphere_coefficients.update(coefficients[surface.index])
                     surface.surface_type = "ASP"
-            meta = _sekonix_meta_for_span(text[block.start:next_start])
+            meta = _sekonix_meta_for_span(text[span_start:next_start])
             prescription = PatentPrescription(
                 patent_id=patent_id,
                 embodiment=embodiment,
@@ -1202,6 +1215,11 @@ def _parse_sekonix_surface_table(
             if glass_code is not None:
                 nd, vd = _sekonix_glass_code(glass_code) or (None, None)
                 material = glass_code
+            elif malformed := next(
+                (token for token in tail if re.fullmatch(r"\d{5,7}\.\d{3,5}", token)),
+                None,
+            ):
+                raise PatentParseError(f"malformed SEKONIX Glass Code: {malformed}")
             elif any(re.search(r"[A-Za-z]", token) for token in tail[:-1]):
                 named = next(token for token in tail[:-1] if re.search(r"[A-Za-z]", token))
                 raise PatentParseError(f"SEKONIX Glass Code cannot be split deterministically: {named}")
@@ -1250,10 +1268,10 @@ def _sekonix_distance(token: str, *, field_name: str) -> float:
 
 
 def _sekonix_glass_code(token: str) -> tuple[float, float] | None:
-    match = re.fullmatch(r"(?P<nd>\d{3})000\.(?P<vd>\d{4})", token)
+    match = re.fullmatch(r"(?P<nd>\d{6})\.(?P<vd>\d{4})", token)
     if match is None:
         return None
-    return 1.0 + int(match.group("nd")) / 1000.0, int(match.group("vd")) / 100.0
+    return 1.0 + int(match.group("nd")) / 1_000_000.0, int(match.group("vd")) / 100.0
 
 
 def _sekonix_number(token: str) -> float:
@@ -1271,47 +1289,11 @@ def _parse_sekonix_asphere_table(
     tokens = body.split()
     coefficients: dict[int, dict[str, float]] = {}
     if "QCON_COEFFICIENT" in body.upper():
-        current_surfaces: list[str] = []
-        pos = 0
-        while pos < len(tokens):
-            if tokens[pos].lower() == "surface":
-                pos += 1
-                current_surfaces = []
-                while pos < len(tokens) and _SEKONIX_ROW_RE.fullmatch(tokens[pos]):
-                    current_surfaces.append(tokens[pos].rstrip(":").upper())
-                    pos += 1
-                continue
-            label = tokens[pos].upper()
-            order = None
-            if label == "K":
-                codev_label = "K"
-            else:
-                match = re.fullmatch(r"(\d+)(?:TH|ST|ND|RD)", label)
-                if match is None or pos + 1 >= len(tokens) or tokens[pos + 1] != "Qcon_Coefficient":
-                    pos += 1
-                    continue
-                order = int(match.group(1))
-                codev_label = ASPHERE_ORDER_TO_CODEV.get(order)
-                pos += 1
-            pos += 1
-            values: list[float] = []
-            for _surface in current_surfaces:
-                if pos >= len(tokens):
-                    raise PatentParseError(f"SEKONIX {label} coefficient row is incomplete")
-                values.append(0.0 if _is_empty_value(tokens[pos]) else _sekonix_number(tokens[pos]))
-                pos += 1
-            for surface_label, value in zip(current_surfaces, values, strict=True):
-                if order is not None and codev_label is None:
-                    if abs(value) > 0.0:
-                        raise PatentParseError(
-                            "unsupported nonzero SEKONIX Qcon asphere term: "
-                            f"{surface_label}:{order}th={value:.3g}"
-                        )
-                    continue
-                surface_index = index_by_label.get(surface_label)
-                if surface_index is not None:
-                    coefficients.setdefault(surface_index, {})[codev_label] = value
-        return coefficients
+        # US-12619054-B2, Mathematical Expression 1, and US-12498545-B2,
+        # Mathematical Expression 1, define the departure as
+        # ``u^4 * sum(a_m * Q_m^con(u^2))`` with ``u=r/r_n``.  Those Forbes
+        # Qcon coefficients are not monomial r^4/r^6 coefficients.
+        raise PatentParseError("Qcon basis conversion not implemented")
 
     header_pos = next(
         (
@@ -1325,6 +1307,9 @@ def _parse_sekonix_asphere_table(
     )
     if header_pos is None:
         return coefficients
+    # US-11099361-B2, Equation 1 (verbatim term sequence):
+    # ``A3 * Y^4 + A4 * Y^6 + A5 * Y^8 + A6 * Y^10 + ... + A14 * Y^26``.
+    # Therefore its A-number is an even-order sequence index, not the power.
     labels: list[str] = []
     while header_pos < len(tokens) and re.fullmatch(r"K|A\d+", tokens[header_pos], re.I):
         labels.append(tokens[header_pos].upper())

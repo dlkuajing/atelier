@@ -120,7 +120,32 @@ def test_sekonix_real_publication_surface_fixtures(
     assert math.isinf(surfaces[-1].radius_mm)
 
 
+def test_sekonix_glass_code_decodes_all_six_nd_digits() -> None:
+    assert patent_to_zmx._sekonix_glass_code("535000.5600") == pytest.approx((1.535, 56.0))
+    assert patent_to_zmx._sekonix_glass_code("544100.5600") == pytest.approx((1.5441, 56.0))
+    assert patent_to_zmx._sekonix_glass_code("634000.2390") == pytest.approx((1.634, 23.9))
+
+    text = patent_to_zmx.normalize_patent_text(US_12498545_B2_QCON)
+    surface_text = patent_to_zmx._patent_table_blocks(text)[0].text
+    surface_text = surface_text.split(" 14 Sphere", 1)[0] + " Image Sphere Infinity -0.0004"
+    surfaces, _ = patent_to_zmx._parse_sekonix_surface_table(surface_text, embodiment_number=1)
+    for surface_index in (4, 10):
+        surface = surfaces[surface_index - 1]
+        assert surface.nd == pytest.approx(1.5441)
+        assert surface.vd == pytest.approx(56.0)
+
+
+def test_sekonix_malformed_glass_code_fails_loud() -> None:
+    malformed = US_12498545_B2_QCON.replace("544100.5600", "54410.5600", 1)
+    text = patent_to_zmx.normalize_patent_text(malformed)
+    block = patent_to_zmx._patent_table_blocks(text)[0]
+    with pytest.raises(PatentParseError, match="malformed SEKONIX Glass Code: 54410.5600"):
+        patent_to_zmx._parse_sekonix_surface_table(block.text, embodiment_number=1)
+
+
 def test_sekonix_a3_names_map_explicitly_to_codev_even_orders() -> None:
+    # US-11099361-B2, Equation 1 (Google Patents, verbatim term sequence):
+    # "A3 · Y^4 + A4 · Y^6 + A5 · Y^8 + A6 · Y^10 + ... + A14 · Y^26"
     text = patent_to_zmx.normalize_patent_text(US_11099361_B2_RDY)
     blocks = patent_to_zmx._patent_table_blocks(text)
     _, labels = patent_to_zmx._parse_sekonix_surface_table(blocks[0].text, embodiment_number=1)
@@ -136,7 +161,10 @@ def test_sekonix_a3_names_map_explicitly_to_codev_even_orders() -> None:
     assert first["E"] == pytest.approx(7.267430e-4)
 
 
-def test_sekonix_qcon_orders_map_explicitly_to_codev_orders() -> None:
+def test_sekonix_qcon_basis_fails_closed() -> None:
+    # US-12619054-B2, Mathematical Expression 1 (Google Patents, verbatim):
+    # "u^4 · sum[m=0..13](a_m · Q_m^con(u^2))"; "u indicates r/r_n".
+    # US-12498545-B2 prints the same Qcon basis (sum ends at m=12).
     text = patent_to_zmx.normalize_patent_text(US_12619054_B2_SPHERE_ASPHERE)
     blocks = patent_to_zmx._patent_table_blocks(text)
     powered_surfaces = blocks[0].text.split(" 12 Sphere", 1)[0] + " Image Sphere infinity 0.0000"
@@ -144,15 +172,8 @@ def test_sekonix_qcon_orders_map_explicitly_to_codev_orders() -> None:
         powered_surfaces,
         embodiment_number=1,
     )
-    coefficients = patent_to_zmx._parse_sekonix_asphere_table(
-        blocks[1].text,
-        index_by_label=labels,
-    )
-
-    second = coefficients[labels["2"]]
-    assert second["K"] == pytest.approx(-99.0)
-    assert second["A"] == pytest.approx(2.20510e-3)
-    assert second["B"] == pytest.approx(-7.96835e-4)
+    with pytest.raises(PatentParseError, match="Qcon basis conversion not implemented"):
+        patent_to_zmx._parse_sekonix_asphere_table(blocks[1].text, index_by_label=labels)
 
 
 def test_sekonix_range_only_metadata_fails_loud_per_embodiment() -> None:
@@ -176,7 +197,7 @@ def test_sekonix_named_glass_code_without_catalog_indices_fails_closed() -> None
         patent_to_zmx._parse_sekonix_surface_table(block.text, embodiment_number=1)
 
 
-def test_sekonix_nonzero_unsupported_qcon_order_fails_loud() -> None:
+def test_sekonix_all_qcon_orders_fail_loud_before_mapping() -> None:
     text = patent_to_zmx.normalize_patent_text(
         US_12619054_B2_SPHERE_ASPHERE.replace(
             "6th Qcon Coefficient",
@@ -190,5 +211,5 @@ def test_sekonix_nonzero_unsupported_qcon_order_fails_loud() -> None:
         embodiment_number=1,
     )
 
-    with pytest.raises(PatentParseError, match="unsupported nonzero SEKONIX Qcon"):
+    with pytest.raises(PatentParseError, match="Qcon basis conversion not implemented"):
         patent_to_zmx._parse_sekonix_asphere_table(blocks[1].text, index_by_label=labels)
