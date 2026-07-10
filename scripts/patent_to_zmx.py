@@ -353,7 +353,17 @@ _NEWMAX_HEADER_RE = re.compile(
     rf"(?P<fov>{NUMBER_PATTERN})\s*(?:deg\.?|°)",
     re.IGNORECASE,
 )
-_NEWMAX_COEFFICIENT_LABEL_RE = re.compile(r"K:?|[A-Z]:?|A\d+:?", re.IGNORECASE)
+_NEWMAX_COEFFICIENT_LABEL_RE = re.compile(r"[A-Z]:?|A\d+:?", re.IGNORECASE)
+_NEWMAX_OBJECT_ROW_RE = re.compile(r"\b0\s+Object\b", re.IGNORECASE)
+_NEWMAX_ORDINAL_LENS = {
+    "first": 1,
+    "second": 2,
+    "third": 3,
+    "fourth": 4,
+    "fifth": 5,
+    "sixth": 6,
+    "seventh": 7,
+}
 
 
 def _parse_newmax_table_attempts(
@@ -368,7 +378,7 @@ def _parse_newmax_table_attempts(
         (index, block, match)
         for index, block in enumerate(blocks)
         if (match := _NEWMAX_HEADER_RE.search(block.text)) is not None
-        and re.search(r"\b0\s+Object\b", block.text, re.IGNORECASE)
+        and _NEWMAX_OBJECT_ROW_RE.search(block.text)
     ]
     if not surface_blocks:
         return []
@@ -428,13 +438,12 @@ def _parse_newmax_surface_table(
 ) -> tuple[list[PatentSurface], dict[str, int]]:
     """Parse NEWMAX rows after normalizing only documented label variants."""
 
-    match = re.search(r"\b0\s+Object\b", block_text, re.IGNORECASE)
+    match = _NEWMAX_OBJECT_ROW_RE.search(block_text)
     if match is None:
         raise PatentParseError(f"NEWMAX embodiment {embodiment_number} object row not found")
     table_text = block_text[match.start() :]
-    table_text = re.sub(r"\bFirst\s+lens\b", "Lens 1", table_text, flags=re.IGNORECASE)
     table_text = re.sub(
-        r"\b(Second|Third|Fourth|Fifth|Sixth|Seventh)\s+lens\b",
+        r"\b(First|Second|Third|Fourth|Fifth|Sixth|Seventh)\s+lens\b",
         _newmax_ordinal_lens,
         table_text,
         flags=re.IGNORECASE,
@@ -456,15 +465,7 @@ def _parse_newmax_surface_table(
 
 
 def _newmax_ordinal_lens(match: re.Match[str]) -> str:
-    ordinal = {
-        "second": 2,
-        "third": 3,
-        "fourth": 4,
-        "fifth": 5,
-        "sixth": 6,
-        "seventh": 7,
-    }
-    return f"Lens {ordinal[match.group(1).lower()]}"
+    return f"Lens {_NEWMAX_ORDINAL_LENS[match.group(1).lower()]}"
 
 
 def _parse_newmax_asphere_table(
