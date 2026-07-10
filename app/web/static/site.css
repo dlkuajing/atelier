@@ -305,6 +305,25 @@ button:focus-visible {
   gap: 12px;
 }
 
+.confirmation-submit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.button-secondary {
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  color: #fffaf0;
+  border-color: var(--brass);
+  background: var(--brass);
+}
+
 .job-progress {
   display: grid;
   gap: 24px;
@@ -960,6 +979,206 @@ button:focus-visible {
 .ray-three {
   top: 61%;
   transform: rotate(-8deg);
+}
+
+/* -------------------------------------------------------------------- */
+/* C1 candidate orchestration (Mode1 retrieval + Mode3 target-converged) */
+/* -------------------------------------------------------------------- */
+
+.candidate-set {
+  display: grid;
+  gap: 28px;
+}
+
+.candidate-set h1 {
+  max-width: 720px;
+  font-size: clamp(2.8rem, 9vw, 6.2rem);
+}
+
+.honesty-banner {
+  margin: 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(199, 67, 45, 0.5);
+  border-left: 6px solid var(--red);
+  border-radius: 8px;
+  background: rgba(199, 67, 45, 0.08);
+}
+
+.honesty-banner-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--red);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.honesty-banner p {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+.requirement-echo,
+.batch-summary,
+.expert-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.candidate-list {
+  display: grid;
+  gap: 20px;
+}
+
+.batch-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mode-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.74);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.mode-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+
+.mode-badge[data-mode="target-converged"]::before {
+  background: var(--brass);
+}
+
+.mode-badge-count {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.batch-notes {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.candidate-card {
+  display: grid;
+  gap: 14px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 250, 240, 0.82);
+}
+
+.candidate-card-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.candidate-card-heading h3 {
+  margin: 0;
+  color: var(--carbon);
+  font-family: "Cascadia Mono", "Consolas", monospace;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.rank-badge[data-rank-status="ranked"] {
+  color: var(--carbon);
+  background: rgba(0, 168, 168, 0.16);
+}
+
+.rank-badge[data-rank-status="withheld"] {
+  color: var(--red);
+  background: rgba(199, 67, 45, 0.12);
+}
+
+.candidate-provenance {
+  margin: 0;
+  color: var(--muted);
+}
+
+.candidate-provenance code {
+  color: var(--carbon);
+}
+
+.candidate-notes {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.codev-provenance {
+  padding: 14px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: rgba(37, 37, 37, 0.03);
+}
+
+.provenance-caveat {
+  margin: 0 0 10px;
+  color: var(--red);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.manufacturability-proxy ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.manufacturability-note {
+  margin: 6px 0 0;
+  color: var(--carbon);
+  font-weight: 700;
+}
+
+.rank-result p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.rank-result p + p {
+  margin-top: 6px;
+}
+
+.expert-table td.expert-cell {
+  color: var(--muted);
+  text-align: center;
 }
 
 @media (max-width: 820px) {
