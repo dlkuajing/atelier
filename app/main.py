@@ -49,7 +49,11 @@ from app.core.optical_sample import (  # noqa: E402
     DesignAssessment,
     OpticalSampleData,
 )
-from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
+from app.core.parameter_guards import (  # noqa: E402
+    SCENARIO_BOUNDS,
+    ParameterGuardError,
+    validate_scenario_params,
+)
 from app.core.provenance import ProvenanceSource  # noqa: E402
 from app.core.spot_diagram import compute_spot_diagram  # noqa: E402
 from app.core.wavefront_metrics import compute_wavefront_metrics  # noqa: E402
@@ -183,6 +187,9 @@ def _is_api_request(request: Request) -> bool:
 
 def _format_error_detail(detail: object) -> str:
     if isinstance(detail, Mapping):
+        message = detail.get("message")
+        if message:
+            return str(message)
         error = detail.get("error")
         job_id = detail.get("job_id")
         if error and job_id:
@@ -1379,7 +1386,8 @@ def _result_summary_context(
 
 
 def _target_spec_from_candidate_payload(payload: Mapping[str, object]) -> orchestration.TargetSpec:
-    """Map the wizard-confirmed form fields onto `TargetSpec`.
+    """Map the wizard-confirmed (or P17 adjust-and-rerun) form fields onto
+    `TargetSpec`.
 
     The wizard flow only ever produces EFL / FOV / F# / image-height / element
     count (see `_summary_form_fields`) — it has no notion of a customer TTL
@@ -1388,7 +1396,11 @@ def _target_spec_from_candidate_payload(payload: Mapping[str, object]) -> orches
     `total_track_mm` (a nominal *achieved* estimate for the mid-bound scenario
     point, not a customer-specified ceiling) — silently promoting an estimate
     into a hard constraint would be exactly the kind of unearned precision the
-    North Star forbids.
+    North Star forbids. `max_total_track_mm` is the one exception: the
+    candidate-set page's "adjust & rerun" form (P17 sub-item 1) lets a
+    reviewer type an explicit TTL ceiling, which flows through here as a real
+    customer constraint — the wizard form still never sends this key, so
+    `payload.get(...)` stays `None` on that path (zero behavior change).
     """
     return orchestration.TargetSpec(
         scenario=_result_payload_scenario(payload),
@@ -1396,7 +1408,7 @@ def _target_spec_from_candidate_payload(payload: Mapping[str, object]) -> orches
         fov_deg=_optional_float(payload.get("field_of_view_deg")),
         fnum=float(payload["f_number"]),
         image_height_mm=_optional_float(payload.get("image_height_mm")),
-        max_total_track_mm=None,
+        max_total_track_mm=_optional_float(payload.get("max_total_track_mm")),
         n_elements=_optional_int(payload.get("n_elements")),
         max_weight_g=None,
         manufacturing_tier=None,
@@ -1411,6 +1423,7 @@ def _candidate_job_payload(
     f_number: float,
     field_of_view_deg: float,
     image_height_mm: float,
+    max_total_track_mm: float | None,
     n_elements: int | None,
     requirement: str | None,
 ) -> dict[str, object]:
@@ -1421,9 +1434,48 @@ def _candidate_job_payload(
         "f_number": f_number,
         "field_of_view_deg": field_of_view_deg,
         "image_height_mm": image_height_mm,
+        "max_total_track_mm": max_total_track_mm,
         "n_elements": n_elements,
         "requirement": requirement,
     }
+
+
+def _validate_candidate_target_or_400(
+    scenario: Scenario,
+    *,
+    efl_mm: float,
+    f_number: float,
+    fov_deg: float,
+    image_height_mm: float,
+    n_elements: int | None,
+) -> None:
+    """Run `parameter_guards` against a candidate-orchestration submission
+    (wizard-derived or the P17 "adjust & rerun" form) and convert a
+    `ParameterGuardError` into an honest 400 — mirrors
+    `app/api/optical.py::_validate_or_400`, kept as a separate web-layer copy
+    since that one raises the JSON-shaped detail the `/api/optical/*` routes
+    expect, while this one adds a flat `message` the generic web error
+    handler (`_web_error_response` / `_format_error_detail`) renders as a
+    single readable line instead of a raw dict dump."""
+    try:
+        validate_scenario_params(
+            scenario,
+            efl_mm=efl_mm,
+            f_number=f_number,
+            fov_deg=fov_deg,
+            image_height_mm=image_height_mm,
+            n_elements=n_elements,
+        )
+    except ParameterGuardError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "parameter_guard_failed",
+                "scenario": scenario.value,
+                "violations": e.violations,
+                "message": "; ".join(e.violations),
+            },
+        ) from e
 
 
 def _compute_candidate_job(payload: Mapping[str, object]) -> dict[str, object]:
@@ -1780,6 +1832,27 @@ def _candidate_requirement_rows(target: orchestration.TargetSpec) -> list[dict[s
     ]
 
 
+def _fmt_form_value(value: float | int | None) -> str:
+    """Render a target field for an editable form input's `value` attribute —
+    "" (empty, unconstrained) for `None` rather than the literal string
+    "None"."""
+    return "" if value is None else str(value)
+
+
+def _candidate_adjust_form_context(target: orchestration.TargetSpec) -> dict[str, str]:
+    """Pre-fill values for the candidate-set page's "adjust & rerun" form
+    (P17 sub-item 1) — echoes the batch's own `TargetSpec` so a reviewer edits
+    the exact numbers that produced this candidate set, not wizard defaults."""
+    return {
+        "efl_mm": _fmt_form_value(target.efl_mm),
+        "fnum": _fmt_form_value(target.fnum),
+        "fov_deg": _fmt_form_value(target.fov_deg),
+        "image_height_mm": _fmt_form_value(target.image_height_mm),
+        "max_total_track_mm": _fmt_form_value(target.max_total_track_mm),
+        "n_elements": _fmt_form_value(target.n_elements),
+    }
+
+
 def _candidate_set_context(
     *,
     result: Mapping[str, object],
@@ -1795,9 +1868,11 @@ def _candidate_set_context(
         f"{ri_available}/{summary.candidate_count}" if summary.candidate_count else "0/0"
     )
     requirement = result.get("requirement")
+    scenario_value = str(result.get("scenario", candidate_set.target.scenario.value))
     return {
         "product_name": "Atelier",
-        "scenario": str(result.get("scenario", candidate_set.target.scenario.value)),
+        "scenario": scenario_value,
+        "scenario_label_en": scenario_value.replace("-", " ").title(),
         "requirement": str(requirement) if requirement not in {None, ""} else None,
         "job_id": progress.get("job_id", ""),
         "honesty_banner": candidate_set.honesty_banner,
@@ -1814,6 +1889,7 @@ def _candidate_set_context(
         "expert_rows": [
             {"candidate_id": sc.scorecard.candidate_id} for sc in candidate_set.candidates
         ],
+        "adjust_form": _candidate_adjust_form_context(candidate_set.target),
     }
 
 
@@ -2042,10 +2118,11 @@ async def submit_candidate_job(
     f_number: Annotated[float, Form(gt=0)],
     field_of_view_deg: Annotated[float, Form(gt=0, le=180)],
     image_height_mm: Annotated[float, Form(gt=0)],
-    total_track_mm: Annotated[float, Form(gt=0)],
-    airy_disc_diameter_um: Annotated[float, Form(gt=0)],
-    cutoff_freq_lp_per_mm: Annotated[float, Form(gt=0)],
     n_elements: Annotated[int | None, Form(ge=2, le=20)] = None,
+    max_total_track_mm: Annotated[float | None, Form(gt=0)] = None,
+    total_track_mm: Annotated[float | None, Form(gt=0)] = None,
+    airy_disc_diameter_um: Annotated[float | None, Form(gt=0)] = None,
+    cutoff_freq_lp_per_mm: Annotated[float | None, Form(gt=0)] = None,
     wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
     requirement: Annotated[str | None, Form(max_length=2000)] = None,
 ) -> RedirectResponse:
@@ -2053,13 +2130,32 @@ async def submit_candidate_job(
     # `cutoff_freq_lp_per_mm` / `wavelength_nm` are accepted (not used) so this
     # route can share the exact same hidden-field form as `/jobs` — the
     # wizard_confirm page posts the identical confirmed-parameters form to
-    # either endpoint via a second submit button's `formaction`.
+    # either endpoint via a second submit button's `formaction`. They default
+    # to `None`/550.0 (rather than staying required) so the candidate-set
+    # page's "adjust & rerun" form (P17 sub-item 1) — which has no wizard
+    # derived total-track/Airy-disc/cutoff estimates to echo back — can post
+    # a smaller field set without fabricating placeholder values for fields
+    # this route never reads.
+    #
+    # `max_total_track_mm` is different: it IS consumed (a real customer TTL
+    # ceiling from the adjust-and-rerun form) — see `_candidate_job_payload` /
+    # `_target_spec_from_candidate_payload`. The wizard form never sends it,
+    # so it defaults `None` there (honest "no ceiling" gap, unchanged).
+    _validate_candidate_target_or_400(
+        scenario,
+        efl_mm=focal_length_mm,
+        f_number=f_number,
+        fov_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+    )
     payload = _candidate_job_payload(
         scenario=scenario,
         focal_length_mm=focal_length_mm,
         f_number=f_number,
         field_of_view_deg=field_of_view_deg,
         image_height_mm=image_height_mm,
+        max_total_track_mm=max_total_track_mm,
         n_elements=n_elements,
         requirement=requirement,
     )

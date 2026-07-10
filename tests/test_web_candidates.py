@@ -661,6 +661,132 @@ def test_candidate_set_unknown_job_id_404():
 
 
 # ---------------------------------------------------------------------------
+# P17 sub-item 1: adjust & rerun — candidate-set page reruns through the same
+# `/candidates` job mechanism, pre-filled with the batch's own target, gated
+# by parameter_guards.
+# ---------------------------------------------------------------------------
+
+
+def test_candidate_set_page_renders_adjust_form_prefilled(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_retrieval_only_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        submitted = client.post(
+            "/candidates", data=_candidate_form_payload(), follow_redirects=False
+        )
+        job_id = submitted.headers["location"].rsplit("/", 1)[1]
+        with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+            "".join(streamed.iter_text())
+        result = client.get(f"/candidates/{job_id}")
+
+    assert result.status_code == 200, result.text
+    html = result.text
+    assert "data-adjust-rerun-form" in html
+    assert 'action="/candidates"' in html
+    # Pre-filled from the batch's own TargetSpec (not wizard defaults).
+    assert 'data-adjust-field="efl_mm" value="3.8"' in html
+    assert 'data-adjust-field="fnum" value="1.9"' in html
+    assert 'data-adjust-field="fov_deg" value="78.0"' in html
+    assert 'data-adjust-field="image_height_mm" value="3.2"' in html
+    assert 'data-adjust-field="n_elements" value="6"' in html
+    # TTL is never supplied by the wizard flow -> honestly blank, not "None".
+    assert 'data-adjust-field="max_total_track_mm" value=""' in html
+
+
+def test_candidate_set_adjust_rerun_submits_new_job_through_same_route(monkeypatch):
+    calls: list[dict[str, object]] = []
+
+    def _recording_orchestrate(spec, target, *, n=4, **kwargs):  # noqa: ANN001, ARG001
+        calls.append({"efl_mm": target.efl_mm, "max_total_track_mm": target.max_total_track_mm})
+        return _retrieval_only_candidate_set()
+
+    monkeypatch.setattr("app.core.orchestration.orchestrate", _recording_orchestrate)
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        # Mirrors the adjust form's field set exactly — no wizard-only
+        # total_track_mm/airy_disc/cutoff fields, plus a real TTL ceiling.
+        submitted = client.post(
+            "/candidates",
+            data={
+                "scenario": "smartphone-wide",
+                "scenario_label_en": "Smartphone Wide",
+                "focal_length_mm": 4.1,
+                "f_number": 2.0,
+                "field_of_view_deg": 80.0,
+                "image_height_mm": 3.4,
+                "n_elements": 6,
+                "max_total_track_mm": 4.6,
+                "requirement": "",
+            },
+            follow_redirects=False,
+        )
+        assert submitted.status_code == 303, submitted.text
+        job_id = submitted.headers["location"].rsplit("/", 1)[1]
+        with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+            "".join(streamed.iter_text())
+        result = client.get(f"/candidates/{job_id}")
+
+    assert result.status_code == 200, result.text
+    assert calls == [{"efl_mm": 4.1, "max_total_track_mm": 4.6}]
+
+
+def test_candidate_submit_rejects_out_of_bounds_target_with_violations():
+    with TestClient(app) as client:
+        response = client.post(
+            "/candidates",
+            data={
+                "scenario": "smartphone-wide",
+                "scenario_label_en": "Smartphone Wide",
+                "focal_length_mm": 20.0,  # smartphone-wide EFL bound is [2.4, 5.2]mm
+                "f_number": 1.9,
+                "field_of_view_deg": 78.0,
+                "image_height_mm": 3.2,
+                "n_elements": 6,
+            },
+            follow_redirects=False,
+        )
+    assert response.status_code == 400, response.text
+    html = response.text
+    assert "data-error-page" in html
+    assert "EFL 20.0mm out of" in html
+
+
+def test_candidate_submit_accepts_omitted_wizard_only_fields(monkeypatch):
+    """The adjust-and-rerun form never sends total_track_mm/airy_disc/cutoff
+    (wizard-only derived estimates `/candidates` never reads) — the route
+    must not 422 on their absence."""
+    monkeypatch.setattr(
+        "app.core.orchestration.orchestrate", _fake_orchestrate(_retrieval_only_candidate_set())
+    )
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/candidates",
+            data={
+                "scenario": "smartphone-wide",
+                "scenario_label_en": "Smartphone Wide",
+                "focal_length_mm": 3.8,
+                "f_number": 1.9,
+                "field_of_view_deg": 78.0,
+                "image_height_mm": 3.2,
+            },
+            follow_redirects=False,
+        )
+        assert response.status_code == 303, response.text
+        job_id = response.headers["location"].rsplit("/", 1)[1]
+        with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+            "".join(streamed.iter_text())
+
+
+# ---------------------------------------------------------------------------
 # wizard_confirm second submit button (§C)
 # ---------------------------------------------------------------------------
 
