@@ -211,6 +211,26 @@ _BAND_RANK: dict[str, int] = {"lt5": 0, "5to15": 1, "15to30": 2, "gt30": 3}
 _FOV_PREFILTER_TOP_K = 10
 
 
+#: post_aut 质量三键的 0.0 是"追迹全失败"哨兵，不是真实测量值：CODE V 宏累加器
+#: （`codev_optimize._metric_function_block` 的 `FCT @rmssum` 等）以 `^max == 0`
+#: 起始，只在对应查询返回 `^err = 0`（追迹成功）的场次才更新；全部场次追迹失败
+#: 时初值 0 被原样写出（哨兵结案详见 `codev_optimize._standard_config_rms`
+#: docstring）。物理上 RMS 点列/波前精确为 0 不存在（衍射极限设下界 >0），把它
+#: 渲染成 "0" 会被资深读成"完美结果"——诚实红线，必须归 `None`（下游 web
+#: `main._fmt_codev_value` 与离线报告 `scripts/c1_orchestrate.py::_fmt_codev_value`
+#: 对 `None` 均渲染 N/A）。**逐键独立**：同一快照里 distortion=43.86 与 rms=0.0
+#: （哨兵）可并存，只有恰好 0.0 的键被映射。不含 post_aut.efl_y_mm / fno /
+#: maximh_mm / efl_target_deviation_pct / autovig.edge_used——那些键的 0.0 是
+#: 合法值（edge_used=0 表示无渐晕裁切、EFL 偏差可能就是极小）。
+_POST_AUT_ZERO_SENTINEL_KEYS = frozenset(
+    {
+        "post_aut.max_rms_spot_diameter_um",
+        "post_aut.max_rms_wavefront_error_waves",
+        "post_aut.max_distortion_pct",
+    }
+)
+
+
 def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | str | None]:
     """从 `run_codev_target_standard` 某配置的原始 dict 里摘出 CODE V 真机
     快照数字（post_aut 三快照 + autovig/AUT 误差诊断），供
@@ -218,7 +238,8 @@ def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | 
     （`score_candidate` 只读 payload/optical_extras.ri_by_field，不读这里，
     见 `candidate.py::OpticalExtras.codev_post_aut` docstring）。缺失/非数
     一律 `None`，不猜测（fail closed，同 `codev_optimize._standard_config_rms`
-    的风格）。"""
+    的风格）；质量三键的 0.0 追迹全失败哨兵同样归 `None`
+    （`_POST_AUT_ZERO_SENTINEL_KEYS` 注记）。"""
 
     def _float(key: str) -> float | None:
         raw = config.get(key)
@@ -228,7 +249,11 @@ def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | 
             value = float(str(raw))
         except (TypeError, ValueError):
             return None
-        return value if math.isfinite(value) else None
+        if not math.isfinite(value):
+            return None
+        if value == 0.0 and key in _POST_AUT_ZERO_SENTINEL_KEYS:
+            return None
+        return value
 
     def _text(key: str) -> str | None:
         raw = config.get(key)
