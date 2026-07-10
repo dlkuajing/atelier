@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import math
 import re
 from pathlib import Path
@@ -18,6 +19,35 @@ from scripts.patent_to_zmx import (
     prescription_fingerprint,
     write_patent_zmx,
 )
+
+
+def test_load_patent_pool_filters_only_patents_with_normalized_ids(tmp_path: Path) -> None:
+    pool_path = tmp_path / "uspto-smartphone-batch1.jsonl"
+    records = [
+        {"id": "US-10101561-B2", "title": "selected"},
+        {"id": "US-11099361-B2", "title": "not selected"},
+    ]
+    pool_path.write_text(
+        "".join(json.dumps(record) + "\n" for record in records), encoding="utf-8"
+    )
+
+    candidates = patent_to_zmx.load_patent_pool(
+        tmp_path, only_patents={"us10101561b2"}
+    )
+
+    assert [candidate.patent_id for candidate in candidates] == ["US-10101561-B2"]
+
+
+def test_load_patent_pool_without_filter_keeps_existing_behavior(tmp_path: Path) -> None:
+    pool_path = tmp_path / "uspto-smartphone-batch1.jsonl"
+    pool_path.write_text(
+        json.dumps({"id": "US-10101561-B2", "title": "candidate"}) + "\n",
+        encoding="utf-8",
+    )
+
+    candidates = patent_to_zmx.load_patent_pool(tmp_path)
+
+    assert [candidate.patent_id for candidate in candidates] == ["US-10101561-B2"]
 
 PRESCRIPTION_TEXT = """
 TABLE-US-00001 TABLE 1A 1st Embodiment f = 12.99 mm, Fno = 1.71,

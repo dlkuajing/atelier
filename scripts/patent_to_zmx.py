@@ -2294,11 +2294,21 @@ def build_readout_from_prescription(
     )
 
 
-def load_patent_pool(pool_dir: Path, pattern: str = DEFAULT_POOL_GLOB) -> list[PatentCandidate]:
+def load_patent_pool(
+    pool_dir: Path,
+    pattern: str = DEFAULT_POOL_GLOB,
+    *,
+    only_patents: frozenset[str] | set[str] | None = None,
+) -> list[PatentCandidate]:
     """Load de-duplicated USPTO patent candidates from local JSONL pool files."""
 
     candidates: list[PatentCandidate] = []
     seen: set[str] = set()
+    normalized_only = (
+        {_normalized_patent_id(patent_id) for patent_id in only_patents}
+        if only_patents is not None
+        else None
+    )
     for path in sorted(pool_dir.glob(pattern)):
         with path.open(encoding="utf-8") as handle:
             for line_number, line in enumerate(handle, start=1):
@@ -2307,7 +2317,11 @@ def load_patent_pool(pool_dir: Path, pattern: str = DEFAULT_POOL_GLOB) -> list[P
                 record = json.loads(line)
                 patent_id = str(record.get("id") or "").strip()
                 normalized = _normalized_patent_id(patent_id)
-                if not patent_id or normalized in seen:
+                if (
+                    not patent_id
+                    or normalized in seen
+                    or (normalized_only is not None and normalized not in normalized_only)
+                ):
                     continue
                 seen.add(normalized)
                 candidates.append(
@@ -2358,10 +2372,11 @@ async def run_conversion(
     target_successes: int,
     max_attempts: int,
     case_index_path: Path | None = DEFAULT_CASE_INDEX_PATH,
+    only_patents: frozenset[str] | set[str] | None = None,
 ) -> list[ConversionAttempt]:
     """Fetch USPTO HTML, parse prescriptions, write ZMX files, and report attempts."""
 
-    candidates = load_patent_pool(pool_dir)
+    candidates = load_patent_pool(pool_dir, only_patents=only_patents)
     attempts: list[ConversionAttempt] = []
     seen_prescription_fingerprints: set[str] = set()
     successes = 0
@@ -3554,12 +3569,24 @@ def main() -> int:
     parser.add_argument("--target-successes", type=int, default=5)
     parser.add_argument("--max-attempts", type=int, default=40)
     parser.add_argument(
+        "--only-patents",
+        type=Path,
+        help="Text file containing one patent number per line; restrict mining to this set.",
+    )
+    parser.add_argument(
         "--case-index",
         type=Path,
         default=DEFAULT_CASE_INDEX_PATH,
         help="Formal case index used to skip already ingested patent embodiments.",
     )
     args = parser.parse_args()
+    only_patents = None
+    if args.only_patents is not None:
+        only_patents = frozenset(
+            line.strip()
+            for line in args.only_patents.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        )
 
     attempts = asyncio.run(
         run_conversion(
@@ -3569,6 +3596,7 @@ def main() -> int:
             target_successes=args.target_successes,
             max_attempts=args.max_attempts,
             case_index_path=args.case_index,
+            only_patents=only_patents,
         )
     )
     successes = sum(attempt.status == "success" for attempt in attempts)
