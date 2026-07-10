@@ -9,6 +9,7 @@ import numpy as np
 from pydantic import BaseModel, Field
 
 from app.core.zmx_ingest import load_normalized_zmx
+from app.core.zmx_materials import _CODEV_MODEL_GLASS_MARKER_RE
 
 
 class PrescriptionSurface(BaseModel):
@@ -85,14 +86,14 @@ def _zmx_glass_names_by_surface(path: Path) -> dict[int, str]:
             continue
         parts = line.split()
         if len(parts) >= 2:
-            name = parts[1].strip('"')
             # Strip the CODE V model-glass marker appended by
             # scripts/repair_legacy_zmx_glass.py (keeps the display name equal
             # to the real trade name, e.g. APL5014CL_14_BLANK -> APL5014CL_14).
-            # The plain Zemax "___BLANK" placeholder is left untouched.
-            if name != "___BLANK":
-                name = name.removesuffix("_BLANK")
-            names[current_surface] = name
+            # One authoritative marker rule: the shared regex's lookbehind
+            # already preserves the plain Zemax "___BLANK" placeholder.
+            names[current_surface] = _CODEV_MODEL_GLASS_MARKER_RE.sub(
+                "", parts[1].strip('"')
+            )
     return names
 
 

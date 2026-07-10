@@ -184,6 +184,9 @@ def _patch_zemax_glass_materials() -> None:
 
     def _patched_read_glass(self, data: list) -> None:
         _orig_read_glass(self, data)
+        mat = self._current_surf_data.get("material")
+        if not isinstance(mat, AbbeMaterial):
+            return  # catalog Material or "mirror" — keep full-fidelity result (hot path)
         name = data[1] if len(data) > 1 else ""
         from app.core.zmx_materials import _CODEV_MODEL_GLASS_MARKER_RE, _abbe, lookup_nd_vd
 
@@ -194,12 +197,11 @@ def _patch_zemax_glass_materials() -> None:
         # D263T, fuzzy-matched by Optiland) keeps its full-dispersion Material
         # exactly as it did before the repair (bit-identical EFL).
         stripped = _CODEV_MODEL_GLASS_MARKER_RE.sub("", name)
-        if stripped != name and isinstance(self._current_surf_data.get("material"), AbbeMaterial):
+        if stripped != name:
             _orig_read_glass(self, [data[0], stripped, *data[2:]])
-
-        mat = self._current_surf_data.get("material")
-        if not isinstance(mat, AbbeMaterial):
-            return  # catalog Material or "mirror" — keep full-fidelity result
+            mat = self._current_surf_data.get("material")
+            if not isinstance(mat, AbbeMaterial):
+                return  # bare trade name hit the catalog — keep it
 
         real = lookup_nd_vd(name)
         if real is not None:
