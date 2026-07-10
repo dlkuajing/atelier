@@ -1991,9 +1991,9 @@
     "n_filter": 1,
     "materials": [],
     "fov_deg": 39.5,
-    "nominal_efl_mm": 4.732096695289737,
+    "nominal_efl_mm": 4.732096695,
     "computed_efl_mm": 4.732096695289737,
-    "efl_error_pct": 0.0,
+    "efl_error_pct": 6.122806482137541e-9,
     "mtf_max_field_frac": 0.5
   }
 }

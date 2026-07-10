@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CASE_INDEX_PATH = ROOT / "app" / "data" / "optical_cases" / "index.json"
 CASE_JSON_DIR = ROOT / "app" / "data" / "optical_cases"
 DATA_ZMX_DIR = ROOT / "data" / "zmx"
-LIGHTWEIGHT_INTAKE_BATCH_PREFIXES = ("DATA-06", "DATA-09d1")
+LIGHTWEIGHT_INTAKE_BATCH_PREFIXES = ("DATA-06", "DATA-09d1", "DATA-10")
 
 sys.path.insert(0, str(ROOT))
 

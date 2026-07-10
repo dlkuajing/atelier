@@ -1,0 +1,154 @@
+[
+  {
+    "case_id": "US-20250370222-A1-e1",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 1",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20250370222-A1-e2",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 2",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20250370222-A1-e3",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 3",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20250370222-A1-e4",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 4",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20250370222-A1-e5",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 5",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20250370222-A1-e6",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 6",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20250370222-A1-e7",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 7",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20250370222-A1-e8",
+    "patent_id": "US-20250370222-A1",
+    "embodiment": "AAC Raytech example 8",
+    "status": "rejected",
+    "reason": "implausible smartphone-lens FOV 1deg outside (5.0, 135.0) (parser/table mismatch suspected)"
+  },
+  {
+    "case_id": "US-20260126622-A1-e1",
+    "patent_id": "US-20260126622-A1",
+    "embodiment": "AAC Raytech example 1",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 2.60494256459561,
+    "fov_deg": 86.55,
+    "fnum": 2.448,
+    "real_imh_mm": 2.527815734,
+    "mtf_max_field_frac": 0.5
+  },
+  {
+    "case_id": "US-20260126622-A1-e2",
+    "patent_id": "US-20260126622-A1",
+    "embodiment": "AAC Raytech example 2",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 2.4409559992181133,
+    "fov_deg": 89.2,
+    "fnum": 2.448,
+    "real_imh_mm": 41.87768281,
+    "mtf_max_field_frac": 0.5
+  },
+  {
+    "case_id": "US-20260126622-A1-e3",
+    "patent_id": "US-20260126622-A1",
+    "embodiment": "AAC Raytech example 3",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 2.807128547120955,
+    "fov_deg": 82.17,
+    "fnum": 2.449,
+    "real_imh_mm": 2.497606607,
+    "mtf_max_field_frac": 0.5
+  },
+  {
+    "case_id": "US-20260126622-A1-e4",
+    "patent_id": "US-20260126622-A1",
+    "embodiment": "AAC Raytech example 4",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 2.839420575138557,
+    "fov_deg": 81.56,
+    "fnum": 2.448,
+    "real_imh_mm": 2.489831606,
+    "mtf_max_field_frac": 0.5
+  },
+  {
+    "case_id": "US-20260126622-A1-e5",
+    "patent_id": "US-20260126622-A1",
+    "embodiment": "AAC Raytech example 5",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 2.301060122588229,
+    "fov_deg": 93.55,
+    "fnum": 2.449,
+    "real_imh_mm": 2.564710703,
+    "mtf_max_field_frac": 0.5
+  },
+  {
+    "case_id": "US-20260126622-A1-e6",
+    "patent_id": "US-20260126622-A1",
+    "embodiment": "AAC Raytech example 6",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 2.8301797722281576,
+    "fov_deg": 83.29,
+    "fnum": 2.447,
+    "real_imh_mm": 2.482720755,
+    "mtf_max_field_frac": 0.5
+  },
+  {
+    "case_id": "US-20200057277-A1-e1",
+    "patent_id": "US-20200057277-A1",
+    "embodiment": "AAC Raytech example 1",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 3.52540295429055,
+    "fov_deg": 31.710177042450404,
+    "fnum": 2.0,
+    "real_imh_mm": 1.00740106,
+    "mtf_max_field_frac": 0.5
+  },
+  {
+    "case_id": "US-11262555-B2-e2",
+    "patent_id": "US-11262555-B2",
+    "embodiment": "AAC Raytech example 2",
+    "status": "intaken",
+    "reason": "passes local intake gates",
+    "efl_mm": 5.680244829166606,
+    "fov_deg": 77.03,
+    "fnum": 1.6,
+    "real_imh_mm": 2.321787434,
+    "mtf_max_field_frac": 0.5
+  }
+]

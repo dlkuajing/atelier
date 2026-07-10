@@ -1951,9 +1951,9 @@
     "n_filter": 1,
     "materials": [],
     "fov_deg": 79.0,
-    "nominal_efl_mm": 4.819696755462771,
+    "nominal_efl_mm": 4.819696755,
     "computed_efl_mm": 4.819696755462771,
-    "efl_error_pct": 0.0,
+    "efl_error_pct": 9.601665379672524e-9,
     "mtf_max_field_frac": 0.5
   }
 }
