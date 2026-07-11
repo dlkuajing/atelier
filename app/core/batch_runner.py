@@ -271,6 +271,7 @@ def _run_one_target(
     batch: BatchRecord,
     archive: BatchArchive,
     engine: BatchEngine,
+    engine_name: str,
     index: int,
     entry: Mapping[str, object],
     job_timeout_sec: float | None,
@@ -291,6 +292,7 @@ def _run_one_target(
         "target_spec": dict(entry),
         "created_at": _utc_now_iso(),
         "attempt": attempt,
+        "engine": engine_name,  # MAJOR-4: per-job actual-engine provenance
     }
 
     # -- preflight --
@@ -389,6 +391,7 @@ def _run_one_target_safe(
     batch: BatchRecord,
     archive: BatchArchive,
     engine: BatchEngine,
+    engine_name: str,
     index: int,
     entry: Mapping[str, object],
     job_timeout_sec: float | None,
@@ -404,6 +407,7 @@ def _run_one_target_safe(
             batch=batch,
             archive=archive,
             engine=engine,
+            engine_name=engine_name,
             index=index,
             entry=entry,
             job_timeout_sec=job_timeout_sec,
@@ -425,6 +429,7 @@ def _run_one_target_safe(
             created_at=_utc_now_iso(),
             updated_at=_utc_now_iso(),
             attempt=attempt,
+            engine=engine_name,
             failure=BatchJobFailure(category="exception", message=f"{type(exc).__name__}: {exc}"),
         )
         with contextlib.suppress(Exception):  # archive itself is broken; nothing left to persist, still return honestly
@@ -489,6 +494,16 @@ def run_batch(
         if batch_id is None:
             raise ValueError("run_batch: resume=True 需要提供 batch_id")
         batch = archive.get_batch(batch_id)
+        if engine_name != batch.engine:
+            # MAJOR-4 (P18 对抗审): a resume must not switch engines while
+            # the batch ledger keeps claiming the original one — refuse
+            # outright (simple and honest). A different engine means a
+            # different batch: start one.
+            raise ValueError(
+                f"run_batch: resume engine mismatch — batch {batch_id} was created "
+                f"with engine={batch.engine!r}, refusing to resume with "
+                f"engine={engine_name!r}（账本必须如实反映实际引擎；换引擎请开新 batch）"
+            )
         resolved_targets = archive.get_targets(batch_id)
     else:
         if targets is None:
@@ -546,6 +561,7 @@ def run_batch(
             batch=batch,
             archive=archive,
             engine=engine,
+            engine_name=batch.engine,  # ledger truth (== engine_name, validated on resume)
             index=index,
             entry=resolved_targets[index],
             job_timeout_sec=job_timeout_sec,

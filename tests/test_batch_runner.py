@@ -603,6 +603,94 @@ def test_run_batch_max_wall_min_truncates_after_first_job(tmp_path: Path, monkey
     assert len(summary.jobs) == 1
 
 
+def test_resume_engine_mismatch_refused(tmp_path: Path):
+    """MAJOR-4 (P18 对抗审): resuming a batch with a different engine than
+    the one recorded at creation is refused — the ledger must never claim
+    engine=X while jobs actually ran on engine=Y."""
+    archive = BatchArchive(root=tmp_path / "archive")
+    first = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive,
+        targets=[_valid_entry(0), _valid_entry(1)],
+        target_source="unit-engine",
+        engine_name="fake",
+        max_jobs=1,
+        artifacts_root=tmp_path / "artifacts",
+    )
+    assert first.batch.status == "budget_exhausted"
+
+    with pytest.raises(ValueError, match="engine mismatch"):
+        run_batch(
+            engine=FakeEngine(n=2),
+            archive=archive,
+            resume=True,
+            batch_id=first.batch.batch_id,
+            engine_name="real",
+            artifacts_root=tmp_path / "artifacts",
+        )
+    # Nothing was run/written by the refused resume.
+    assert len(archive.list_jobs(first.batch.batch_id)) == 1
+
+
+def test_job_records_carry_actual_engine_name(tmp_path: Path):
+    """MAJOR-4: every job snapshot records which engine actually ran it."""
+    archive = BatchArchive(root=tmp_path / "archive")
+    targets = [_valid_entry(0)]
+    targets[0] = {**targets[0]}
+    summary = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive,
+        targets=targets,
+        target_source="unit-engine-stamp",
+        engine_name="fake",
+        artifacts_root=tmp_path / "artifacts",
+    )
+    assert summary.jobs[0].engine == "fake"
+
+    # Preflight-failed jobs are stamped too.
+    archive2 = BatchArchive(root=tmp_path / "archive2")
+    bad = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive2,
+        targets=[{"scenario": "smartphone-wide"}],  # missing fnum -> preflight
+        target_source="unit-engine-stamp-preflight",
+        engine_name="fake",
+        artifacts_root=tmp_path / "artifacts2",
+    )
+    assert bad.jobs[0].status == "failed"
+    assert bad.jobs[0].engine == "fake"
+
+
+def test_cli_resume_engine_mismatch_exits_2(tmp_path: Path):
+    import importlib.util
+
+    script_path = Path(__file__).resolve().parents[1] / "scripts" / "p18_night_batch.py"
+    spec = importlib.util.spec_from_file_location("p18_night_batch_cli_test_m4", script_path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    archive = BatchArchive(root=tmp_path / "archive")
+    first = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive,
+        targets=[_valid_entry(0)],
+        target_source="unit-cli-m4",
+        engine_name="fake",
+        artifacts_root=tmp_path / "artifacts",
+    )
+
+    exit_code = module.main(
+        [
+            "--engine", "real",
+            "--resume",
+            "--batch-id", first.batch.batch_id,
+            "--archive-dir", str(tmp_path / "archive"),
+        ]
+    )
+    assert exit_code == 2
+
+
 def test_resume_without_batch_id_raises():
     archive = BatchArchive(root=Path("."))
     engine = FakeEngine(n=1)

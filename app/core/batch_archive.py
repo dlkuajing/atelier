@@ -114,6 +114,14 @@ class BatchJobRecord(BaseModel):
     result_summary: dict[str, object] | None = None
     candidate_set_pointer: str | None = None
     artifact_dir: str | None = None
+    engine: str | None = Field(
+        None,
+        description=(
+            "实际执行本 job 的 engine 名（MAJOR-4 逐 job provenance）；`None` = "
+            "记录产生于该字段引入前（显式留白，不猜测）。batch_runner 的每条"
+            "新记录都会如实填写。"
+        ),
+    )
     attempt: int = Field(
         1,
         ge=1,
@@ -519,6 +527,8 @@ def _write_jobs_sheet(ws: Worksheet, jobs: Sequence[BatchJobRecord]) -> None:
             "job_id",
             "target_index",
             "target_label",
+            "engine",
+            "attempt",
             "status",
             "degradation",
             "failure_category",
@@ -547,6 +557,8 @@ def _write_jobs_sheet(ws: Worksheet, jobs: Sequence[BatchJobRecord]) -> None:
                 job.job_id,
                 job.target_index,
                 job.target_label,
+                job.engine or "",
+                job.attempt,
                 job.status,
                 job.degradation or "",
                 job.failure.category if job.failure else "",

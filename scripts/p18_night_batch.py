@@ -124,18 +124,24 @@ def main(argv: list[str] | None = None) -> int:
         else:
             targets, target_source = _sample_default_targets(args.sample_n, seed=args.sample_seed)
 
-    summary = run_batch(
-        engine=engine,
-        archive=archive,
-        targets=targets,
-        target_source=target_source,
-        batch_id=args.batch_id,
-        resume=args.resume,
-        max_jobs=args.max_jobs,
-        max_wall_min=args.max_wall_min,
-        job_timeout_sec=args.job_timeout_sec,
-        engine_name=args.engine,
-    )
+    try:
+        summary = run_batch(
+            engine=engine,
+            archive=archive,
+            targets=targets,
+            target_source=target_source,
+            batch_id=args.batch_id,
+            resume=args.resume,
+            max_jobs=args.max_jobs,
+            max_wall_min=args.max_wall_min,
+            job_timeout_sec=args.job_timeout_sec,
+            engine_name=args.engine,
+        )
+    except ValueError as exc:
+        # e.g. MAJOR-4 resume engine mismatch — a usage error, not a batch
+        # failure: nothing ran, nothing was written.
+        print(str(exc), file=sys.stderr)
+        return 2
 
     succeeded = sum(1 for j in summary.jobs if j.status == "succeeded")
     degraded = sum(1 for j in summary.jobs if j.status == "degraded")
