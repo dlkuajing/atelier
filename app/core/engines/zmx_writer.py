@@ -41,12 +41,20 @@ def build_zmx_from_codev_readout(
     wavelengths_um: Sequence[float] | None = None,
     semi_diameter_mm: float | None = None,
 ) -> str:
-    """Return an ASCII Zemax ``.zmx`` prescription with CRLF newlines.
+    """Return an ASCII Zemax ``.zmx`` prescription with LF newlines.
 
     The input is the structured readout produced by ``codev_readout``. CODE V
     exposes vignetting as upper/lower pupil limits; Zemax stores equivalent
     decenter/compression arrays, so both ``VDXN/VDYN`` and ``VCXN/VCYN`` are
     emitted to preserve the four readout values.
+
+    Line endings MUST be LF: real-machine proof (2026-07-11, byte-identical
+    A/B import of the same 24-slot file) shows CRLF endings break
+    ZEMAXOS_TO_CV's WAVM wavelength parsing — the lens imports with NO
+    wavelength data ("No wavelength data specified"), silently killing
+    dispersion/vd and chromatic evaluation. The LF variant imports all
+    wavelengths and yields dispersion-measured vd. The seed corpus in
+    data/zmx/ is LF on disk and imports correctly.
     """
 
     surfaces = _ordered_surfaces(readout)
@@ -72,7 +80,7 @@ def build_zmx_from_codev_readout(
     for surface in surfaces:
         _append_surface(lines, surface, semi_diameter_override_mm=semi_diameter_mm)
 
-    text = "\r\n".join(lines) + "\r\n"
+    text = "\n".join(lines) + "\n"
     text.encode("ascii")
     return text
 
@@ -88,7 +96,7 @@ def write_zmx_from_codev_readout(
     output_path: Path | str,
     **kwargs: object,
 ) -> Path:
-    """Write a CODE V readout as an ASCII/CRLF Zemax file and return its path."""
+    """Write a CODE V readout as an ASCII/LF Zemax file and return its path."""
 
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -259,8 +267,16 @@ def _append_even_asphere_terms(lines: list[str], surface: CodeVSurfaceReadout) -
 def _glass_line(surface: CodeVSurfaceReadout) -> str | None:
     nd = surface.nd
     vd = surface.vd
-    if nd is None or vd is None or not math.isfinite(nd) or not math.isfinite(vd):
+    if nd is None or not math.isfinite(nd):
         return None
+    # Unknown dispersion is NOT air: single-wavelength CODE V imports (short
+    # WAVM tables, see the LF/WAVM dossier) yield vd=None after PR#70 made vd
+    # fail-closed. Dropping the whole GLAS here rebuilt every such candidate
+    # as an all-air system (-inf EFL, real-machine regression 2026-07-11).
+    # Zemax's own convention for "index known, dispersion unspecified" is
+    # vd=0 — keep the measured nd, write vd 0.
+    if vd is None or not math.isfinite(vd):
+        vd = 0.0
     if nd <= 1.000001:
         return None
     name = _optional_glass_name(surface.glass)
