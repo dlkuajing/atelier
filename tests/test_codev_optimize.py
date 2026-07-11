@@ -1197,6 +1197,36 @@ def test_parse_aut_error_trace_unstable_termination_keyword() -> None:
     assert trace["termination"] == "unstable_condition"
 
 
+@pytest.mark.parametrize(
+    ("phrase", "keyword"),
+    [
+        (
+            "Abnormal AUTO Completion - Scaled down SPC data",
+            "scaled_down_spc_data",
+        ),
+        (
+            "Abnormal AUTO Completion - Scaled down nominal system cannot be traced",
+            "scaled_down_nominal_cannot_be_traced",
+        ),
+    ],
+)
+def test_parse_aut_error_trace_scaled_down_terminations(phrase: str, keyword: str) -> None:
+    """P15 Stage 2 真机回填：42 格采证 corpus 发现的两个 aperture/pupil 缩放
+    失败终止措辞（13 次 / 6 次）进 _AUT_TERMINATION_KEYWORDS——修复前
+    fail-open 返回 termination=None（不可观测）。"""
+    text = (
+        " CYCLE NUMBER 0:\n\n"
+        "  ABERR F. =        1.00000000\n"
+        "  CONST F. =        1.00000000\n"
+        "  ERR. F.  =        2.00000000\n\n"
+        f"     {phrase}\n"
+        "AUT> GO\n"
+    )
+    trace = parse_aut_error_trace(text)
+    assert trace["termination"] == keyword
+    assert trace["err_f_first"] == pytest.approx(2.0)
+
+
 def test_mock_run_codev_target_includes_aut_error_trace(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

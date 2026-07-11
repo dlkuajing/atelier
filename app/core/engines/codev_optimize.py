@@ -808,6 +808,16 @@ _AUT_TERMINATION_KEYWORDS: tuple[tuple[str, str], ...] = (
         "Abnormal AUTO Completion - Unable to scale up Pupil and Field specifications",
         "unable_to_scale_pupil_field",
     ),
+    # P15 Stage 2 真机回填（2026-07-11 采证矩阵 corpus，42 格）：aperture/pupil
+    # 缩放失败家族的两个新措辞——"Scaled down SPC data" 13 次 / "Scaled down
+    # nominal system cannot be traced" 6 次（.planning/loop/p15-stageb-evidence/
+    # summary.md §6）。此前未登记时 fail-open 返回 termination=None（无害但不可
+    # 观测）。
+    ("Abnormal AUTO Completion - Scaled down SPC data", "scaled_down_spc_data"),
+    (
+        "Abnormal AUTO Completion - Scaled down nominal system cannot be traced",
+        "scaled_down_nominal_cannot_be_traced",
+    ),
 )
 _AUT_TERMINATION_RE = re.compile(
     "|".join(re.escape(phrase) for phrase, _keyword in _AUT_TERMINATION_KEYWORDS)

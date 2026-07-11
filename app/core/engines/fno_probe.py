@@ -65,14 +65,27 @@ FnoFailureCategory = Literal[
 _TIR_RE = re.compile(r"RAY ERROR:\s*REFL\b|Total\s+reflection", re.IGNORECASE)
 _CHIEF_RAY_MISS_RE = re.compile(r"RAY ERROR:\s*MISS\b", re.IGNORECASE)
 _RAY_AIMING_WARNING_RE = re.compile(r"Ray aiming not used", re.IGNORECASE)
-# pending-real-machine validation — see module docstring.
+# 真机回填（P15 Stage 2 采证矩阵，42 格 corpus）：两个 "Scaled down" 措辞属
+# aperture/pupil 缩放失败家族（"Scaled down SPC data" 13 次 / "Scaled down
+# nominal system cannot be traced" 6 次），并入 aperture-conflict 正则。
+# "Unable to scale up Pupil and Field specifications" 在本 corpus 0 命中但是
+# codev_optimize._AUT_TERMINATION_KEYWORDS 已有的真机措辞，保留；泛化的
+# aperture/EPD conflict 分支仍属 pending-real-machine（0 命中，待更多 corpus）。
 _APERTURE_CONFLICT_RE = re.compile(
     r"Unable to scale up Pupil and Field specifications"
+    r"|Scaled down SPC data"
+    r"|Scaled down nominal system cannot be traced"
     r"|aperture[^\n]{0,40}(?:conflict|exceed|error)"
     r"|EPD[^\n]{0,40}(?:conflict|exceed|error)",
     re.IGNORECASE,
 )
-_AUT_STRUCTURE_RE = re.compile(r"CYCLE NUMBER|AUTO Completion", re.IGNORECASE)
+# ok 的正面证据（fail-closed，对抗审查 MAJOR-3/MINOR-5 修复 2026-07-11）：
+# 必须看到 "Normal AUTO Completion" 且全文无任何 "Abnormal AUTO Completion"。
+# 无错误标记但也无正常终止证据（未知终止措辞 / 清单被截断 / 进程中途被杀）
+# 一律 other——绝不给 "ok" 背书。修复前的旧行为（有 AUT 结构且无错误即 ok）
+# 会把 "Abnormal AUTO Completion - <未登记措辞>" 的清单误判为 ok。
+_NORMAL_COMPLETION_RE = re.compile(r"Normal AUTO Completion", re.IGNORECASE)
+_ABNORMAL_COMPLETION_RE = re.compile(r"Abnormal AUTO Completion[^\r\n]*", re.IGNORECASE)
 _EXCERPT_CHARS = 500
 
 
@@ -93,6 +106,8 @@ class FnoFailureClassification:
     aperture_conflict_matched: str | None
     excerpt: str | None
     note: str
+    normal_completion: bool = False
+    abnormal_completion_matched: str | None = None
 
     def describe(self) -> dict[str, object]:
         return {
@@ -103,6 +118,8 @@ class FnoFailureClassification:
             "aperture_conflict_matched": self.aperture_conflict_matched,
             "excerpt": self.excerpt,
             "note": self.note,
+            "normal_completion": self.normal_completion,
+            "abnormal_completion_matched": self.abnormal_completion_matched,
         }
 
 
@@ -119,6 +136,14 @@ def classify_fno_listing(listing_text: str | None) -> FnoFailureClassification:
     marginal rays as the deeper root cause; ``MISS`` errors are frequently a
     downstream symptom of the same ray-solving breakdown. This is a
     priority-ordered heuristic for bucketing, not a quality judgment.
+
+    ``ok`` is fail-closed（对抗审查 MAJOR-3/MINOR-5 修复）: it requires
+    *positive* evidence — a ``Normal AUTO Completion`` line present AND no
+    ``Abnormal AUTO Completion`` anywhere AND zero ray-error / aperture
+    markers. A listing with no failure markers but also no normal-completion
+    evidence (unknown termination phrase, truncated listing, process killed
+    mid-run) classifies as ``other`` with an excerpt — absence of errors is
+    never treated as success.
     """
 
     if not listing_text or not listing_text.strip():
@@ -137,6 +162,9 @@ def classify_fno_listing(listing_text: str | None) -> FnoFailureClassification:
     ray_aiming_warning = bool(_RAY_AIMING_WARNING_RE.search(listing_text))
     aperture_match = _APERTURE_CONFLICT_RE.search(listing_text)
     aperture_conflict_matched = aperture_match.group(0) if aperture_match else None
+    normal_completion = bool(_NORMAL_COMPLETION_RE.search(listing_text))
+    abnormal_match = _ABNORMAL_COMPLETION_RE.search(listing_text)
+    abnormal_completion_matched = abnormal_match.group(0).strip() if abnormal_match else None
 
     if refl_count > 0:
         category: Literal["ok", "TIR", "chief-ray-missing", "aperture-conflict", "other"] = (
@@ -151,12 +179,23 @@ def classify_fno_listing(listing_text: str | None) -> FnoFailureClassification:
         note = f"{miss_count} RAY ERROR: MISS occurrence(s)"
         if ray_aiming_warning:
             note += "; Ray aiming not used"
-    elif _AUT_STRUCTURE_RE.search(listing_text):
+    elif normal_completion and abnormal_completion_matched is None:
         category = "ok"
-        note = "no RAY ERROR / aperture-conflict markers; AUT structure present"
+        note = (
+            "positive evidence: Normal AUTO Completion present, no abnormal "
+            "termination, no RAY ERROR / aperture-conflict markers"
+        )
+    elif abnormal_completion_matched is not None:
+        # 未登记的 Abnormal 终止措辞（fail-closed：登记在案的 aperture 家族已在
+        # 上面的 aperture-conflict 分支命中，落到这里 = 新措辞，如实 other）。
+        category = "other"
+        note = f"unrecognized abnormal termination: {abnormal_completion_matched!r}"
     else:
         category = "other"
-        note = "no known failure markers and no recognizable AUT structure"
+        note = (
+            "no failure markers but no Normal AUTO Completion evidence either "
+            "(fail-closed: absence of errors is not success)"
+        )
 
     excerpt = listing_text[:_EXCERPT_CHARS] if category == "other" else None
 
@@ -168,6 +207,8 @@ def classify_fno_listing(listing_text: str | None) -> FnoFailureClassification:
         aperture_conflict_matched=aperture_conflict_matched,
         excerpt=excerpt,
         note=note,
+        normal_completion=normal_completion,
+        abnormal_completion_matched=abnormal_completion_matched,
     )
 
 

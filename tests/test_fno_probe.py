@@ -148,6 +148,61 @@ def test_classify_aperture_conflict_synthetic_fixture() -> None:
     assert "Pupil and Field" in result.aperture_conflict_matched
 
 
+@pytest.mark.parametrize(
+    "phrase",
+    [
+        "Abnormal AUTO Completion - Scaled down SPC data",
+        "Abnormal AUTO Completion - Scaled down nominal system cannot be traced",
+    ],
+)
+def test_classify_scaled_down_family_is_aperture_conflict(phrase: str) -> None:
+    """真机回填（P15 Stage 2 corpus）：两个 "Scaled down" 终止措辞（13 次 / 6
+    次）属 aperture/pupil 缩放失败家族，无 RAY ERROR 行时必须归 aperture-
+    conflict——修复前它们会因"无错误标记 + 有 AUT 结构"被误判 ok（MAJOR-3）。"""
+    text = f" CYCLE NUMBER 0:\n\n     {phrase}\nAUT> GO\n"
+    result = classify_fno_listing(text)
+    assert result.category == "aperture-conflict"
+    assert "Scaled down" in result.aperture_conflict_matched
+    assert result.abnormal_completion_matched is not None
+
+
+def test_classify_unknown_abnormal_termination_is_not_ok() -> None:
+    """未登记的 Abnormal 终止措辞 fail-closed：绝不落 ok（MINOR-5）。"""
+    text = (
+        " CYCLE NUMBER 0:\n\n"
+        "     Abnormal AUTO Completion - Some brand new failure phrase\n"
+        "AUT> GO\n"
+    )
+    result = classify_fno_listing(text)
+    assert result.category == "other"
+    assert "Some brand new failure phrase" in result.note
+    assert result.excerpt is not None
+
+
+def test_classify_no_completion_evidence_is_other_not_ok() -> None:
+    """fail-closed ok（MAJOR-3）：有 AUT 结构、无错误标记，但没有 Normal AUTO
+    Completion 正面证据（清单截断/进程中途被杀/未知措辞）→ other，不是 ok。
+    修复前的旧行为（AUT 结构存在即 ok）会把这类清单误判成功。"""
+    text = " CYCLE NUMBER 0:\n\n  ERR. F.  =      128.15953160\n"
+    result = classify_fno_listing(text)
+    assert result.category == "other"
+    assert "not success" in result.note
+    assert result.normal_completion is False
+
+
+def test_classify_ok_requires_normal_and_no_abnormal() -> None:
+    """ok 的正面证据双条件：Normal 存在且 Abnormal 不存在。同一清单里两者都
+    出现（多 AUT 块场景）→ 不是 ok。"""
+    text = (
+        "     Normal AUTO Completion - System improvement less than IMP\n"
+        "     Abnormal AUTO Completion - Some other failure later\n"
+    )
+    result = classify_fno_listing(text)
+    assert result.category == "other"
+    assert result.normal_completion is True
+    assert result.abnormal_completion_matched is not None
+
+
 def test_classify_no_listing_text_is_other_no_signal() -> None:
     for missing in (None, "", "   "):
         result = classify_fno_listing(missing)
@@ -185,6 +240,8 @@ def test_describe_round_trips_all_fields() -> None:
         "aperture_conflict_matched",
         "excerpt",
         "note",
+        "normal_completion",
+        "abnormal_completion_matched",
     }
 
 
