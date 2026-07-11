@@ -19,10 +19,13 @@ from app.core.engines.codev_optimize import (
     CODEV_OPTIMIZE_RESULT_SCHEMA,
     DEFAULT_GLASS_BOUNDS_ND_VD,
     DEFAULT_OPTIMIZE_SEED,
+    FNO_LADDER_RESULT_SCHEMA,
     STANDARD_RESULT_SCHEMA,
     TARGET_RESULT_SCHEMA,
     _autovig_profile,
+    _geometric_fnum_ladder,
     _glass_map_hull,
+    _measured_fnum,
     build_codev_optimize_sequence,
     build_codev_target_sequence,
     default_optimize_seed,
@@ -31,6 +34,7 @@ from app.core.engines.codev_optimize import (
     run_codev_optimize,
     run_codev_target,
     run_codev_target_autovig,
+    run_codev_target_fno_ladder,
     run_codev_target_standard,
 )
 from app.core.engines.codev_readout import CODEV_READOUT_RESULT_SCHEMA
@@ -2062,3 +2066,240 @@ def test_real_codev_target_delivers_verifiable_zmx_without_extra_dof(tmp_path: P
         print(f"[smoke] RMS spot computable, max_rms_radius_um={max_rms_um}")
     except Exception as exc:  # noqa: BLE001 - diagnostic only, report honestly either way
         print(f"[smoke] RMS spot computation raised: {type(exc).__name__}: {exc}")
+
+
+# ===========================================================================
+# FNO 阶梯引擎（Phase 15 Stage 3）：_geometric_fnum_ladder / _measured_fnum
+# 纯函数测试 + run_codev_target_fno_ladder mock 测试（monkeypatch
+# codev_optimize.run_codev_target_autovig 本体，不触碰 subprocess/CODE V）。
+# ===========================================================================
+
+
+def test_geometric_fnum_ladder_tighten_last_rung_exact() -> None:
+    rungs = _geometric_fnum_ladder(native_fnum=2.0, fnum_target=1.6, rung_count=3)
+    assert len(rungs) == 3
+    assert rungs[-1] == pytest.approx(1.6)
+    assert rungs[0] > rungs[1] > rungs[2]  # 收紧方向：单调递减
+    assert all(1.6 <= r <= 2.0 for r in rungs)
+
+
+def test_geometric_fnum_ladder_loosen_last_rung_exact() -> None:
+    rungs = _geometric_fnum_ladder(native_fnum=2.0, fnum_target=3.0, rung_count=2)
+    assert len(rungs) == 2
+    assert rungs[-1] == pytest.approx(3.0)
+    assert rungs[0] < rungs[1]
+    assert all(2.0 <= r <= 3.0 for r in rungs)
+
+
+def test_geometric_fnum_ladder_native_equals_target_single_rung() -> None:
+    rungs = _geometric_fnum_ladder(native_fnum=2.0, fnum_target=2.0, rung_count=5)
+    assert rungs == [2.0]
+
+
+def test_geometric_fnum_ladder_rejects_bad_rung_count() -> None:
+    with pytest.raises(ValueError):
+        _geometric_fnum_ladder(native_fnum=2.0, fnum_target=1.6, rung_count=0)
+
+
+def test_geometric_fnum_ladder_rejects_nonpositive_inputs() -> None:
+    with pytest.raises(ValueError):
+        _geometric_fnum_ladder(native_fnum=0.0, fnum_target=1.6, rung_count=2)
+    with pytest.raises(ValueError):
+        _geometric_fnum_ladder(native_fnum=2.0, fnum_target=-1.0, rung_count=2)
+
+
+def test_measured_fnum_computes_efl_over_epd() -> None:
+    data = {"post_aut.efl_y_mm": "4.0", "post_aut.epd_mm": "2.0"}
+    assert _measured_fnum(data) == pytest.approx(2.0)
+
+
+def test_measured_fnum_fail_closed_missing_or_bad() -> None:
+    assert _measured_fnum({}) is None
+    assert _measured_fnum({"post_aut.efl_y_mm": "nan", "post_aut.epd_mm": "2.0"}) is None
+    assert _measured_fnum({"post_aut.efl_y_mm": "4.0", "post_aut.epd_mm": "garbage"}) is None
+    assert _measured_fnum({"post_aut.efl_y_mm": "4.0", "post_aut.epd_mm": "0.0"}) is None
+
+
+def _fake_ladder_autovig(*, native_measured: float, rung_status: dict[int, str] | None = None):
+    """Stub for codev_optimize.run_codev_target_autovig: tracks call order via
+    a closure counter (index 0 = rung0/native, 1.. = ladder rungs in the
+    order run_codev_target_fno_ladder issues them). rung_status maps a call
+    index to a forced outcome: "error" (generic CodeVBatchError), "preflight"
+    (seed-level defect, short-circuits the whole ladder), "non-finite"
+    (post_aut fields come back non-numeric). Absent -> "ok", perfectly
+    achieving whatever target_f_number was requested (native_measured for
+    rung 0's target_f_number=None)."""
+    calls = {"n": 0}
+    rung_status = rung_status or {}
+
+    def _run(*, target_f_number: float | None = None, **_ignored: object) -> dict[str, object]:
+        idx = calls["n"]
+        calls["n"] += 1
+        status = rung_status.get(idx, "ok")
+        if status == "error":
+            raise CodeVBatchError("timeout", f"rung {idx} boom")
+        if status == "preflight":
+            raise CodeVBatchError(
+                "failure", "unresolved glass", details={"preflight": "unresolved-glass"}
+            )
+        fnum = native_measured if target_f_number is None else target_f_number
+        if status == "non-finite":
+            efl_text, epd_text = "nan", "nan"
+        else:
+            efl_text, epd_text = "4.0", str(4.0 / fnum)
+        return {
+            "post_aut.efl_y_mm": efl_text,
+            "post_aut.epd_mm": epd_text,
+            "efl_target_deviation_pct": "0.01",
+            "aut_converged": "1",
+            "post_aut.max_rms_spot_diameter_um": "10.0",
+            "post_aut.max_rms_wavefront_error_waves": "0.3",
+            "autovig.edge_used": "0.2",
+            "autovig.converged": "1",
+            "aut_error_trace": {"err_f_ratio": 0.5},
+        }
+
+    return _run
+
+
+def test_fno_ladder_happy_path_climbs_and_hits_target(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+    )
+    assert result["schema"] == FNO_LADDER_RESULT_SCHEMA
+    assert result["native_fnum_measured"] == pytest.approx(2.0)
+    assert len(result["rungs"]) == 3  # rung0 native + 2 ladder rungs
+    assert result["rungs"][0]["target_fnum"] is None
+    assert result["rungs"][0]["measured_fnum"] == pytest.approx(2.0)
+    assert result["rungs"][-1]["target_fnum"] == pytest.approx(1.6)
+    assert result["rungs"][-1]["measured_fnum"] == pytest.approx(1.6)
+    assert result["rungs"][-1]["fnum_target_deviation_pct"] == pytest.approx(0.0, abs=1e-9)
+    assert result["rungs"][-1]["err_f_ratio"] == pytest.approx(0.5)
+    assert result["final"]["rung_index"] == 2
+    assert result["final_rung_index"] == 2
+    assert result["blocked"] is False
+
+
+def test_fno_ladder_rung_error_is_absorbed_and_climb_continues(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """吞并续爬先例（US20180143405A1 recovery）：中间某 rung 报
+    CodeVBatchError（非预检缺陷）时该 rung 记为 status="error"，ladder 继续
+    爬向下一级，不整条上抛。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={2: "error"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=3,
+    )
+    assert len(result["rungs"]) == 4  # rung0 + rungs 1,2,3
+    assert result["rungs"][2]["status"] == "error"
+    assert result["rungs"][2]["error"]["kind"] == "timeout"
+    assert result["rungs"][3]["status"] == "ok"  # final rung still attempted and succeeds
+    assert result["rungs"][3]["target_fnum"] == pytest.approx(1.6)
+    assert result["final_rung_index"] == 3
+    assert result["blocked"] is False
+
+
+def test_fno_ladder_non_finite_rung_is_fail_closed_not_estimated(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "non-finite"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+    )
+    assert result["rungs"][1]["status"] == "non-finite"
+    assert result["rungs"][1]["measured_fnum"] is None
+    assert result["rungs"][1]["fnum_target_deviation_pct"] is None
+    # rung0 (native) is still "ok" -> that's the final fallback, not the failed rung.
+    assert result["final_rung_index"] == 0
+    assert result["blocked"] is False
+
+
+def test_fno_ladder_preflight_defect_short_circuits_whole_ladder(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Seed 级预检缺陷（如导入即全空气）在 rung0 就短路：换 F# 不会改变导入
+    结果，不该爬完整条 ladder 重复同一个必然失败。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={0: "preflight"}),
+    )
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target_fno_ladder(
+            source_zmx=default_optimize_seed(),
+            work_dir=tmp_path,
+            target_efl_mm=4.0,
+            fnum_target=1.6,
+            rung_count=2,
+        )
+    assert error.value.details["preflight"] == "unresolved-glass"
+
+
+def test_fno_ladder_native_rung_failure_blocks_entire_ladder(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Rung0（native 实测）本身失败/超时（非预检）→ 没有基点可算几何级距，
+    如实只留 rung0 的错误记录，不猜测续爬；blocked=True。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={0: "error"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+    )
+    assert len(result["rungs"]) == 1
+    assert result["rungs"][0]["status"] == "error"
+    assert result["native_fnum_measured"] is None
+    assert result["final"] is None
+    assert result["final_rung_index"] is None
+    assert result["blocked"] is True
+
+
+def test_fno_ladder_zero_regression_existing_autovig_untouched(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """加法式声明的 sanity check：新增 run_codev_target_fno_ladder 不改变
+    run_codev_target_autovig 本体的默认行为（既有 autovig mock 测试路径照常
+    通过，见本文件上方 test_mock_autovig_* 系列——本测试只是再显式确认一次
+    直接调用未被 ladder 新代码路径污染）。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", _autovig_fake_popen(0.0))
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=12.0,
+        vig_ladder=(0.0, 0.2, 0.3),
+    )
+    assert data["autovig.edge_used"] == "0"
+    assert data["autovig.converged"] == "1"

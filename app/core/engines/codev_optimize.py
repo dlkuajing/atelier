@@ -1576,6 +1576,258 @@ def run_codev_target_standard(
     }
 
 
+# ===========================================================================
+# FNO 阶梯引擎（Phase 15 Stage 3 · P15-c 交付）：从真机实测 native F# 分级逼近
+# 客户 fnum_target（几何级距），每级复用 run_codev_target_autovig（渐晕/
+# ray-setup 按该级目标 F# 重新爬梯，短 AUT，EFL 约束保持不变）。见
+# .planning/loop/opt3-final-handoff-2026-07-09.md 限制#1（显式 FNO 命令致宽
+# 视场主光线追迹失败）与 app/core/engines/fno_probe.py（Stage A/B 失败模式采
+# 证 harness，同一根因的姊妹交付）。
+#
+# 纯加法式新函数——不修改上面任何既有函数的签名/行为，零回归由"新增代码路
+# 径与已有测试路径互不相交"保证，不依赖某个"参数为 None 时退化到旧行为"的分
+# 支（本文件既有的 target-mode / 标准打包入口都是同一模式，见各自 section
+# banner）。
+#
+# ★ 未接入 C1（run_codev_target_standard）★：本函数刻意不修改任何既有函数、
+# 不出现在 CONVERGED_FIELDS（现={"efl"}）——AGENTS.md 北极星条款要求
+# CONVERGED_FIELDS 扩 fnum 需真机证据支撑，本阶段（Phase 15 Stage 3）只建
+# 引擎 + mock 测试；真机验证 + ≥8 seed 收敛矩阵是下一真机窗（orchestrator
+# 续派）。
+# ===========================================================================
+
+FNO_LADDER_RESULT_SCHEMA = "atelier-p15-fno-ladder-v1"
+
+
+def _geometric_fnum_ladder(
+    *, native_fnum: float, fnum_target: float, rung_count: int
+) -> list[float]:
+    """从 ``native_fnum`` 到 ``fnum_target`` 的几何级距序列（不含 native 本
+    身，含末级）。末级强制精确等于 ``fnum_target``（浮点几何插值的舍入残差
+    在最后一步被清零，不留"差一点点没到 target"的假象）。"""
+    if rung_count < 1:
+        raise ValueError(f"rung_count must be >= 1: {rung_count!r}")
+    _validate_positive(native_fnum, "native_fnum")
+    _validate_positive(fnum_target, "fnum_target")
+    if math.isclose(native_fnum, fnum_target, rel_tol=1e-9):
+        return [fnum_target]
+    ratio = fnum_target / native_fnum
+    rungs = [native_fnum * (ratio ** (k / rung_count)) for k in range(1, rung_count + 1)]
+    rungs[-1] = fnum_target
+    return rungs
+
+
+def _fmt_fnum_ladder_token(value: float) -> str:
+    """Dot-free filename token for an F# ladder rung (same CODE V ``BUF EXP``
+    filename hazard as ``_fmt_edge_filename_token``, but F# values are not
+    bounded to ``[0,1)`` like vignetting edges — dedicated helper at 0.01
+    resolution, not a reuse of the vignetting-specific one)."""
+    numeric = float(value)
+    if not math.isfinite(numeric) or numeric < 0:
+        raise ValueError(f"value must be finite and non-negative: {value!r}")
+    return f"fno{round(numeric * 100):04d}"
+
+
+def _measured_fnum(data: Mapping[str, object]) -> float | None:
+    """F# 实测口径（opt3 轮2-3 教训："F# 构造即达≈0" 是一阶物理错，AUT 拉
+    EFL/改渐晕时 F# 会漂）：``post_aut.efl_y_mm / post_aut.epd_mm`` 活算，绝
+    不信任何构造值。任一字段缺失/非数/非有限，或 EPD≈0（除零风险）→ None
+    （fail-closed，宁缺不估算）。"""
+    try:
+        efl = float(str(data.get("post_aut.efl_y_mm", "")))
+        epd = float(str(data.get("post_aut.epd_mm", "")))
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(efl) or not math.isfinite(epd) or abs(epd) < 1e-9:
+        return None
+    return abs(efl / epd)
+
+
+def _optional_finite_float(data: Mapping[str, object], key: str) -> float | None:
+    try:
+        value = float(str(data.get(key, "")))
+    except (TypeError, ValueError):
+        return None
+    return value if math.isfinite(value) else None
+
+
+def _fno_ladder_rung_from_data(
+    *, rung_index: int, target_fnum: float | None, data: Mapping[str, object]
+) -> dict[str, object]:
+    """构造一个成功产出数据的 rung 记录。fail-closed：``measured_fnum`` 为
+    ``None`` 时该 rung ``status="non-finite"``（快照字段非有限/缺失），否则
+    ``"ok"``——绝不用估算填充任何字段。"""
+    measured = _measured_fnum(data)
+    fnum_target_deviation_pct: float | None = None
+    if measured is not None and target_fnum is not None and target_fnum > 1e-12:
+        fnum_target_deviation_pct = abs(measured - target_fnum) / target_fnum * 100
+
+    aut_error_trace = data.get("aut_error_trace")
+    err_f_ratio = (
+        aut_error_trace.get("err_f_ratio") if isinstance(aut_error_trace, Mapping) else None
+    )
+    return {
+        "rung_index": rung_index,
+        "target_fnum": target_fnum,
+        "status": "ok" if measured is not None else "non-finite",
+        "measured_fnum": measured,
+        "fnum_target_deviation_pct": fnum_target_deviation_pct,
+        "efl_target_deviation_pct": _optional_finite_float(data, "efl_target_deviation_pct"),
+        "post_aut.max_rms_spot_diameter_um": _optional_finite_float(
+            data, "post_aut.max_rms_spot_diameter_um"
+        ),
+        "post_aut.max_rms_wavefront_error_waves": _optional_finite_float(
+            data, "post_aut.max_rms_wavefront_error_waves"
+        ),
+        "err_f_ratio": err_f_ratio,
+        "aut_converged": str(data.get("aut_converged")) == "1",
+        "autovig.edge_used": data.get("autovig.edge_used"),
+        "autovig.converged": data.get("autovig.converged"),
+        "error": None,
+    }
+
+
+def _fno_ladder_error_rung(
+    *, rung_index: int, target_fnum: float | None, exc: CodeVBatchError
+) -> dict[str, object]:
+    return {
+        "rung_index": rung_index,
+        "target_fnum": target_fnum,
+        "status": "error",
+        "measured_fnum": None,
+        "fnum_target_deviation_pct": None,
+        "efl_target_deviation_pct": None,
+        "post_aut.max_rms_spot_diameter_um": None,
+        "post_aut.max_rms_wavefront_error_waves": None,
+        "err_f_ratio": None,
+        "aut_converged": False,
+        "autovig.edge_used": None,
+        "autovig.converged": None,
+        "error": {"kind": exc.kind, "detail": exc.message},
+    }
+
+
+def run_codev_target_fno_ladder(
+    *,
+    source_zmx: Path | str,
+    work_dir: Path | str,
+    target_efl_mm: float,
+    fnum_target: float,
+    target_imh_mm: float | None = None,
+    stage: str = "A",
+    rung_count: int = 3,
+    vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
+    num_fields: int | None = None,
+    extra_dof: str = "none",
+    glass_bounds_nd_vd: Sequence[tuple[float, float]] | None = None,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
+    timeout_seconds: float = 180.0,
+    platform_name: str = os.name,
+    emit_optimized_zmx: bool = False,
+) -> dict[str, object]:
+    """从 seed 实测 native F# 分级逼近 ``fnum_target``（几何级距，rung_count
+    级 + rung 0 = native），每级独立调用 ``run_codev_target_autovig``（该级
+    目标 F# 下重新爬渐晕/ray-setup 梯，短 AUT，EFL 约束保持不变）。
+
+    Rung 0（native）：``target_f_number=None``（不设 FNO，即现有已验证的
+    Stage A/autovig 路径）——用它的 ``post_aut`` 快照实测 native F#
+    （``EFL_real/EPD_real`` 活算，见 ``_measured_fnum``），而不是信任调用方
+    传入或 index.json 里的标称值（opt3 轮2-3 教训：F# 会随 AUT/渐晕漂移，构
+    造值不可信）。Rung 1..``rung_count``：目标 F# 按
+    ``_geometric_fnum_ladder`` 几何插值，末级强制精确等于 ``fnum_target``。
+
+    每级独立、串行调用 ``run_codev_target_autovig``；该级若报
+    ``CodeVBatchError`` 且非 seed 级预检缺陷 → 记为该 rung
+    ``status="error"``，**吞并续爬**下一级（先例：``US20180143405A1``
+    recovery，见 ``run_codev_target_autovig`` 文档字符串）。Seed 级预检缺陷
+    （如导入即全空气）→ 换 F# 不会改变导入结果，立即整条 ladder 短路上抛
+    （与 ``run_codev_target_autovig``/``run_codev_target_standard`` 同款
+    fail-fast 语义）。若 rung 0 本身就短路/未拿到可用 native 实测，几何级
+    距无基点可算——如实只保留 rung 0 的记录，不猜测续爬（fail-closed，宁缺
+    不估算）。
+
+    fail-closed（AGENTS.md 诚实红线）：任一 rung 的 ``post_aut`` 关键快照字
+    段非有限/缺失 → 该 rung ``status="non-finite"``，对应字段一律 ``None``，
+    绝不用估算填充。``measured_fnum`` 是本函数的核心诚实性字段：F# 达成与否
+    只信 ``post_aut.efl_y_mm``/``post_aut.epd_mm`` 活算之比，不信 ``FNO``
+    命令本身"构造设定"了什么。
+
+    每个 rung 独立子目录（``work_dir/rung{k}_...``），互不覆写——内部
+    autovig 爬梯已用 ``_fmt_edge_filename_token`` 消歧同一 rung 内的渐晕级，
+    F#-rung 之间的消歧则由子目录边界保证，不需要改动
+    ``run_codev_target_autovig`` 本体。
+
+    Returns:
+        {"schema": FNO_LADDER_RESULT_SCHEMA, "source_zmx": ..., "stage": ...,
+         "target_efl_mm": ..., "fnum_target": ..., "rung_count": ...,
+         "native_fnum_measured": float | None,
+         "rungs": [rung0_dict, rung1_dict, ...],  # 见
+             _fno_ladder_rung_from_data / _fno_ladder_error_rung
+         "final_rung_index": int | None,  # 最后一个成功产出数据的 rung
+         "final": dict | None,  # 该 rung 记录的浅拷贝，None 表示全灭
+         "blocked": bool}  # True 当且仅当没有任何一级产出可用数据
+    """
+
+    work_dir = Path(work_dir)
+    rungs: list[dict[str, object]] = []
+
+    def _run_rung(*, rung_index: int, target_fnum: float | None, tag: str) -> dict[str, object]:
+        try:
+            data = run_codev_target_autovig(
+                source_zmx=source_zmx,
+                work_dir=work_dir / tag,
+                target_efl_mm=target_efl_mm,
+                target_f_number=target_fnum,
+                target_imh_mm=target_imh_mm,
+                stage=stage,
+                vig_ladder=vig_ladder,
+                num_fields=num_fields,
+                executable=executable,
+                timeout_seconds=timeout_seconds,
+                platform_name=platform_name,
+                extra_dof=extra_dof,
+                glass_bounds_nd_vd=glass_bounds_nd_vd,
+                emit_optimized_zmx=emit_optimized_zmx,
+            )
+        except CodeVBatchError as exc:
+            if exc.details.get("preflight"):
+                raise
+            return _fno_ladder_error_rung(rung_index=rung_index, target_fnum=target_fnum, exc=exc)
+        return _fno_ladder_rung_from_data(rung_index=rung_index, target_fnum=target_fnum, data=data)
+
+    rung0 = _run_rung(rung_index=0, target_fnum=None, tag="rung0_native")
+    rungs.append(rung0)
+    native_measured = rung0["measured_fnum"] if rung0["status"] == "ok" else None
+
+    if native_measured is not None:
+        ladder = _geometric_fnum_ladder(
+            native_fnum=native_measured, fnum_target=fnum_target, rung_count=rung_count
+        )
+        for k, rung_target in enumerate(ladder, start=1):
+            token = _fmt_fnum_ladder_token(rung_target)
+            rungs.append(
+                _run_rung(rung_index=k, target_fnum=rung_target, tag=f"rung{k}_{token}")
+            )
+    # else: rung0 未拿到可用 native 实测（error/non-finite）——几何级距无基点
+    # 可算，不猜测续爬，如实只留 rung0 的记录（fail-closed，宁缺不估算）。
+
+    ok_rungs = [r for r in rungs if r["status"] == "ok"]
+    final = dict(ok_rungs[-1]) if ok_rungs else None
+    return {
+        "schema": FNO_LADDER_RESULT_SCHEMA,
+        "source_zmx": Path(source_zmx).name,
+        "stage": stage,
+        "target_efl_mm": target_efl_mm,
+        "fnum_target": fnum_target,
+        "rung_count": rung_count,
+        "native_fnum_measured": native_measured,
+        "rungs": rungs,
+        "final_rung_index": final["rung_index"] if final is not None else None,
+        "final": final,
+        "blocked": final is None,
+    }
+
+
 def parse_codev_optimize_file(result_path: Path | str) -> CodeVOptimizeSummary:
     """Parse an AUT optimization TSV exported by ``BUF EXP``."""
 
