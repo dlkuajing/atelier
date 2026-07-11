@@ -67,6 +67,7 @@ class TorPerformanceRow:
     criterion: str
     design: float
     probability_columns: tuple[float, ...]
+    compensator_ranges: tuple[float, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -86,6 +87,7 @@ class TorParseResult:
     declared_trials: int | None = None
     performance_rows: tuple[TorPerformanceRow, ...] = ()
     monte_carlo_rows: tuple[TorMonteCarloRow, ...] = ()
+    compensator_names: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -313,23 +315,38 @@ def _read_tsv(path: Path) -> list[list[str]]:
     return list(csv.reader(text.splitlines(), delimiter="\t"))
 
 
-def _parse_per(rows: list[list[str]]) -> tuple[TorPerformanceRow, ...]:
+def _parse_per(
+    rows: list[list[str]],
+) -> tuple[tuple[TorPerformanceRow, ...], tuple[str, ...]]:
     header = ["Eval Zoom", "Eval Field", "X", "Y", "Frequency", "Azimuth", "Weight", "Design", "Criterion"]
     index = next((i for i, row in enumerate(rows) if row[:9] == header), None)
     if index is None or not any("probability density function:" in "\t".join(r) for r in rows):
         raise ValueError("PER declarations/header missing")
+    header_row = rows[index]
+    if len(header_row) < 17 or any(not name.strip() for name in header_row[17:]):
+        raise ValueError("PER header has an invalid column layout")
+    compensator_names = tuple(name.strip() for name in header_row[17:])
+    expected_width = 17 + len(compensator_names)
     parsed = []
     for row in rows[index + 1 :]:
         if not any(row):
             continue
-        if len(row) != 17:
+        if len(row) != expected_width:
             raise ValueError("PER data row has unexpected column count")
         frequency = float(row[4])
         azimuth = float(row[5])
         design = float(row[7])
         probability_columns = tuple(float(value) for value in row[9:17])
+        compensator_ranges = tuple(float(value) for value in row[17:])
         if not all(
-            math.isfinite(value) for value in (frequency, azimuth, design, *probability_columns)
+            math.isfinite(value)
+            for value in (
+                frequency,
+                azimuth,
+                design,
+                *probability_columns,
+                *compensator_ranges,
+            )
         ):
             raise ValueError("PER numeric values must be finite")
         parsed.append(
@@ -337,11 +354,12 @@ def _parse_per(rows: list[list[str]]) -> tuple[TorPerformanceRow, ...]:
                 zoom=int(row[0]), field=int(row[1]), frequency_lp_per_mm=frequency,
                 azimuth_deg=azimuth, criterion=row[8], design=design,
                 probability_columns=probability_columns,
+                compensator_ranges=compensator_ranges,
             )
         )
     if not parsed:
         raise ValueError("PER contains no data rows")
-    return tuple(parsed)
+    return tuple(parsed), compensator_names
 
 
 def _parse_mc(rows: list[list[str]]) -> tuple[int, tuple[TorMonteCarloRow, ...]]:
@@ -388,7 +406,7 @@ def parse_codev_tor_exports(
     if missing:
         return TorParseResult(TorParseStatus.UNAVAILABLE, TorProvenance.UNAVAILABLE, f"TOR BUF EXP file missing: {', '.join(missing)}")
     try:
-        performance_rows = _parse_per(_read_tsv(performance_path))
+        performance_rows, compensator_names = _parse_per(_read_tsv(performance_path))
         declared, mc_rows = _parse_mc(_read_tsv(mc_path))
     except (OSError, UnicodeError, ValueError) as exc:
         return TorParseResult(TorParseStatus.UNAVAILABLE, TorProvenance.UNAVAILABLE, f"TOR export parse failed: {exc}")
@@ -399,4 +417,5 @@ def parse_codev_tor_exports(
         declared,
         performance_rows,
         mc_rows,
+        compensator_names,
     )

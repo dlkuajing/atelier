@@ -7,8 +7,8 @@ from app.core.engines.codev_tolerance import CodeVTorRunResult, parse_codev_tor_
 from scripts.p14_tor_matrix import plan, run_matrix
 
 FIXTURES = Path(__file__).parent / "data" / "codev_tor"
-PER = next(FIXTURES.glob("real_sample_per_*.txt"))
-MC = next(FIXTURES.glob("real_sample_mc_*.txt"))
+PER = FIXTURES / "real_sample_per_US20170003482A1_defttol_ntr20_fre100.txt"
+MC = FIXTURES / "real_sample_mc_US20170003482A1_deftol_ntr20_fre100.txt"
 
 
 def _inputs(tmp_path: Path):

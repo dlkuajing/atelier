@@ -23,8 +23,12 @@ from app.core.engines.tor_yield import (
 )
 
 FIXTURES = Path(__file__).parent / "data" / "codev_tor"
-REAL_PER = next(FIXTURES.glob("real_sample_per_*.txt"))
-REAL_MC = next(FIXTURES.glob("real_sample_mc_*.txt"))
+REAL_PER = FIXTURES / "real_sample_per_US20170003482A1_defttol_ntr20_fre100.txt"
+REAL_MC = FIXTURES / "real_sample_mc_US20170003482A1_deftol_ntr20_fre100.txt"
+CMP_FIXTURES = (
+    ("s17", "DLZ S18"),
+    ("s19", "DLZ S20"),
+)
 REAL_ZMX = Path("data/zmx/US20170003482A1.zmx")
 
 
@@ -130,11 +134,52 @@ def test_parser_real_machine_fixtures_returns_structure_not_yield() -> None:
     assert result.status is TorParseStatus.UNAVAILABLE
     assert result.declared_trials == 20
     assert len(result.performance_rows) == 3
+    assert result.compensator_names == ()
     assert len(result.monte_carlo_rows) == 60
     assert result.performance_rows[0].azimuth_deg == 90
     assert result.performance_rows[0].probability_columns[0] == pytest.approx(5.08389)
     assert result.monte_carlo_rows[18].value == pytest.approx(0.186827)
     assert "not ratified" in result.reason
+
+
+@pytest.mark.parametrize(("family", "compensator_name"), CMP_FIXTURES)
+def test_parser_real_machine_compensator_fixtures(
+    family: str, compensator_name: str
+) -> None:
+    per = FIXTURES / f"real_sample_per_cmpdlz_{family}_ntr100_fre100.txt"
+    mc = FIXTURES / f"real_sample_mc_cmpdlz_{family}_ntr100_fre100.txt"
+
+    result = parse_codev_tor_exports(per, mc)
+
+    assert result.compensator_names == (compensator_name,)
+    assert len(result.performance_rows) == 3
+    assert all(len(row.compensator_ranges) == 1 for row in result.performance_rows)
+    assert result.declared_trials == 100
+    assert {row.sample for row in result.monte_carlo_rows} == set(range(1, 101))
+
+
+@pytest.mark.parametrize(
+    ("replacement", "reason"),
+    [
+        ("\t0.595796", ""),
+        ("\t0.595796", "\t0.595796\t0.1"),
+        ("\t0.595796", "\tnan"),
+    ],
+)
+def test_parser_rejects_compensator_width_and_nonfinite_values(
+    tmp_path: Path, replacement: str, reason: str
+) -> None:
+    source = FIXTURES / "real_sample_per_cmpdlz_s17_ntr100_fre100.txt"
+    per = tmp_path / "per.tsv"
+    per.write_text(
+        source.read_text(encoding="utf-8").replace(replacement, reason, 1),
+        encoding="utf-8",
+    )
+    mc = FIXTURES / "real_sample_mc_cmpdlz_s17_ntr100_fre100.txt"
+
+    result = parse_codev_tor_exports(per, mc)
+
+    assert "parse failed" in result.reason
 
 
 def test_parser_rejects_unknown_or_same_path_exports(tmp_path: Path) -> None:
