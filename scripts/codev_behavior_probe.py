@@ -59,6 +59,7 @@ class ProbeResult:
 # ---------------------------------------------------------------------------
 
 def build_static_readout_sequence(*, source_zmx: Path, result_path: Path) -> str:
+    source_zmx = source_zmx.resolve()
     """Import seed and dump full readout (field types / YIM / vignetting / FNO / EPD).
 
     复用 codev_optimize 的 _optimized_readout_block（同一 readout 逻辑，
@@ -166,6 +167,7 @@ def _maximh_snippet(prefix: str) -> list[str]:
 def build_aut_drift_sequence(
     *, source_zmx: Path, result_path: Path, aperture_mode: str, target_efl_factor: float
 ) -> str:
+    source_zmx = source_zmx.resolve()
     """Import seed, (optionally switch aperture mode), AUT pull EFL to factor*seed_efy,
     capture before/after {efy, fno, epd, maximh}. aperture_mode ∈ native|epd|fno."""
 
@@ -300,6 +302,7 @@ _E3_REQUIRED = ("schema", "status", "dix_axial", "dix_maxfield", "diy_maxfield",
 
 
 def build_e3_sequence(*, source_zmx: Path, result_path: Path) -> str:
+    source_zmx = source_zmx.resolve()
     """读 DIX/DIY（畸变 DB accessor）——证其为纯读、无 err 语法。守卫须用有 err
     出口的 trace 原语（SPOTDATA，现有 @rmssum 已证可用）。"""
     lines = [

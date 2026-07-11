@@ -60,10 +60,10 @@ class CodeVSurfaceReadout:
     glass: str | None
     nd: float | None
     vd: float | None
-    vd_source: str | None
     surface_type: str | None
     is_stop: bool
     asphere_coefficients: dict[str, float]
+    vd_source: str | None = None
 
     def describe(self) -> dict[str, object]:
         return {
@@ -385,8 +385,8 @@ def run_codev_readout(
 ) -> CodeVReadoutResult:
     """Import one ZMX into CODE V and read database-backed prescription facts."""
 
-    source_zmx = Path(source_zmx)
-    work_dir = Path(work_dir)
+    source_zmx = Path(source_zmx).resolve()
+    work_dir = Path(work_dir).resolve()
     ensure_codev_safe_input_path(work_dir, role="work_dir")
     work_dir.mkdir(parents=True, exist_ok=True)
     staged_zmx: Path | None = None
@@ -517,9 +517,9 @@ def _parse_surface(
     vd = _optional_float(data.get(f"{prefix}.vd"))
     vd_source = "dispersion-measured" if vd not in (None, 0.0) else None
     match = re.fullmatch(r"(?P<nd>\d{6})\.(?P<vd>\d{3,})", glass or "")
-    if vd in (None, 0.0) and match is not None:
+    if vd in (None, 0.0) and nd is not None and match is not None:
         decoded_nd = 1.0 + int(match.group("nd")) / 1_000_000.0
-        if nd is not None and abs(decoded_nd - nd) > 5e-4:
+        if abs(decoded_nd - nd) > 5e-4:
             raise CodeVBatchError(
                 "failure",
                 "model-glass code nd disagrees with CODE V readout",

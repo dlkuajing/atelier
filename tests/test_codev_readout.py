@@ -266,6 +266,38 @@ def test_mock_codev_readout_reuses_batch_runner(monkeypatch, tmp_path: Path) -> 
     assert result.readout.fields[1].y == pytest.approx(3.62257)
 
 
+def test_run_codev_readout_stages_dotted_source_and_reports_it(monkeypatch, tmp_path: Path) -> None:
+    executable = _fake_codev_executable(tmp_path)
+    dotted = tmp_path / ".inputs"
+    dotted.mkdir()
+    source = dotted / "lens.zmx"
+    source.write_text("VERS 000001\n", encoding="ascii")
+
+    class FakePopen:
+        pid = 4330
+        returncode = 0
+
+        def __init__(self, command, **kwargs):
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout=None):
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            sequence = sequence_path.read_text(encoding="ascii")
+            assert ".inputs" not in sequence
+            _write_readout_result(_result_path_from_sequence(sequence_path))
+            return "", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    result = run_codev_readout(source_zmx=source, work_dir=tmp_path / "work", executable=executable)
+    assert result.describe()["staged_zmx"] == str((tmp_path / "work" / "lens.zmx").resolve())
+
+
+def test_run_codev_readout_rejects_dotted_work_dir(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="work_dir"):
+        run_codev_readout(source_zmx=default_patent_roundtrip_seed(), work_dir=tmp_path / ".work")
+
+
 def test_codev_readout_rejects_returncode_outside_empirical_ok_set(
     monkeypatch,
     tmp_path: Path,
