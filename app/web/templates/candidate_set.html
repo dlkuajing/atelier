@@ -62,6 +62,68 @@
           </table>
         </section>
 
+        <section class="candidate-adjust" data-candidate-adjust aria-label="Adjust and rerun">
+          <div class="section-heading">
+            <p class="eyebrow">Adjust &amp; rerun</p>
+            <h2>调整约束，重新编排</h2>
+            <p>
+              修改下列 target 数值后重新提交——沿用同一 <code>/candidates</code>
+              编排通道（检索 + 优化双模，后台任务分道），不新增并行真机通道；
+              提交前会先过 parameter_guards 场景边界校验，超界会如实列出违规项。
+            </p>
+          </div>
+          <form class="adjust-rerun-form" data-adjust-rerun-form action="/candidates" method="post">
+            <input type="hidden" name="scenario" value="{{ scenario }}">
+            <input type="hidden" name="scenario_label_en" value="{{ scenario_label_en }}">
+            <input type="hidden" name="requirement" value="{{ requirement or '' }}">
+            <div class="adjust-field-grid">
+              <label>
+                <span>EFL (mm)</span>
+                <input
+                  type="number" step="any" name="focal_length_mm" required
+                  data-adjust-field="efl_mm" value="{{ adjust_form.efl_mm }}"
+                >
+              </label>
+              <label>
+                <span>F-number</span>
+                <input
+                  type="number" step="any" name="f_number" required
+                  data-adjust-field="fnum" value="{{ adjust_form.fnum }}"
+                >
+              </label>
+              <label>
+                <span>FOV (deg)</span>
+                <input
+                  type="number" step="any" name="field_of_view_deg" required
+                  data-adjust-field="fov_deg" value="{{ adjust_form.fov_deg }}"
+                >
+              </label>
+              <label>
+                <span>Image height (mm)</span>
+                <input
+                  type="number" step="any" name="image_height_mm" required
+                  data-adjust-field="image_height_mm" value="{{ adjust_form.image_height_mm }}"
+                >
+              </label>
+              <label>
+                <span>Max total track (mm, optional)</span>
+                <input
+                  type="number" step="any" name="max_total_track_mm"
+                  data-adjust-field="max_total_track_mm" value="{{ adjust_form.max_total_track_mm }}"
+                >
+              </label>
+              <label>
+                <span>Element count (optional)</span>
+                <input
+                  type="number" step="1" name="n_elements"
+                  data-adjust-field="n_elements" value="{{ adjust_form.n_elements }}"
+                >
+              </label>
+            </div>
+            <button type="submit" data-adjust-submit>调整并重新编排（新候选集 job）</button>
+          </form>
+        </section>
+
         <section class="batch-summary" data-batch-summary aria-label="Batch summary">
           <div class="section-heading">
             <p class="eyebrow">Batch summary</p>
@@ -94,6 +156,11 @@
               {% for note in summary.notes %}<li>{{ note }}</li>{% endfor %}
             </ul>
           {% endif %}
+          <a
+            class="button-link"
+            data-export-workbook
+            href="/candidates/{{ job_id }}/export.xlsx"
+          >导出规格书（.xlsx，全批次）</a>
         </section>
 
         {% if candidates %}
@@ -118,6 +185,12 @@
 
                 <p class="candidate-provenance">
                   Source seed: <code>{{ candidate.source_case_id }}</code>
+                  &mdash;
+                  <a
+                    class="button-link"
+                    data-export-bundle
+                    href="/candidates/{{ job_id }}/{{ candidate.candidate_id }}/bundle.zip"
+                  >下载 ZMX + 复现 .seq（.zip）</a>
                 </p>
 
                 <div class="candidate-visuals">
@@ -244,6 +317,22 @@
                     <li>Chief ray angle (deg): {% if candidate.manufacturability.chief_ray_angle_deg == 'N/A' %}<span class="value-na">N/A</span>{% else %}{{ candidate.manufacturability.chief_ray_angle_deg }}{% endif %}</li>
                   </ul>
                   <p class="manufacturability-note">{{ candidate.manufacturability.note }}</p>
+                </div>
+
+                <div
+                  class="repeatability-proxy"
+                  data-repeatability
+                  data-repeatability-status="{{ candidate.repeatability.status }}"
+                  aria-label="Repeatability (cross-run distribution)"
+                >
+                  <p class="brief-label">Repeatability (cross-run distribution)</p>
+                  <ul>
+                    <li>run_count: {{ candidate.repeatability.run_count }}</li>
+                    <li>status: <span data-repeatability-status-label>{{ candidate.repeatability.status_label }}</span></li>
+                    <li>RMS spot radius (um): min={{ candidate.repeatability.rms_min }}, max={{ candidate.repeatability.rms_max }}, spread={{ candidate.repeatability.rms_spread }}</li>
+                    <li>WFE (waves): min={{ candidate.repeatability.wfe_min }}, max={{ candidate.repeatability.wfe_max }}, spread={{ candidate.repeatability.wfe_spread }}</li>
+                  </ul>
+                  <p class="repeatability-note" data-repeatability-note>{{ candidate.repeatability.note }}</p>
                 </div>
 
                 <div class="rank-result" data-rank-result data-rank-status="{{ candidate.rank_status }}">

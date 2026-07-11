@@ -195,6 +195,74 @@ class RankResult(BaseModel):
         return self
 
 
+class RepeatabilityMetrics(BaseModel):
+    """跨重复跑次的分布（Phase 17 子项3）。一次 `orchestrate` 默认只跑一次
+    （`repeat_runs=1`，现行为零变化）——`run_count` 恒 1、`status` 恒
+    `"unavailable"`，直到调用方显式提供 ≥2 组重复跑样本
+    （`score_candidate` 的 `repeat_rms_samples_um`/`repeat_wfe_samples_waves`
+    关键字参数，见 `scorecard.py`）。
+
+    本铲（P17-3）只交付这份 schema + fail-closed 默认路径 + mock 链测试；
+    真机多跑执行引擎（重复调用 CODE V 拿分布）不在本铲范围，由
+    `orchestrator.orchestrate` 的 `repeat_runs` 参数另行排窗接入（见其
+    docstring）。历史依据：opt3 handoff 限制#8 记录候选2 三跑 RMS
+    12.6/71/188µm——单次跑数字可能极不具代表性，这正是加这维的动机。
+
+    无 verdict 字段（同 `ScorecardRow` 诚实不变量2）——纯分布量化数据，"跑了几次
+    / 分布多宽"不代表"是否可用"，量产可用性判断权仍在资深手里。
+    """
+
+    run_count: int = Field(..., ge=1)
+    status: Literal["available", "unavailable"]
+    rms_spot_radius_um_min: MetricValue
+    rms_spot_radius_um_max: MetricValue
+    rms_spot_radius_um_spread: MetricValue
+    wfe_waves_min: MetricValue
+    wfe_waves_max: MetricValue
+    wfe_waves_spread: MetricValue
+    note: str = Field(..., description="人读一句话说明（如 'run_count=1，未做重复性验证'）")
+
+    @model_validator(mode="after")
+    def _unavailable_has_no_stats(self) -> RepeatabilityMetrics:
+        if self.status == "unavailable":
+            fields = (
+                self.rms_spot_radius_um_min,
+                self.rms_spot_radius_um_max,
+                self.rms_spot_radius_um_spread,
+                self.wfe_waves_min,
+                self.wfe_waves_max,
+                self.wfe_waves_spread,
+            )
+            if any(m.status != "unavailable" for m in fields):
+                raise ValueError(
+                    "status=unavailable 时全部分布字段必须 unavailable（fail closed，"
+                    "不可静默填值）"
+                )
+        return self
+
+
+_UNAVAILABLE_METRIC = MetricValue(value=None, status="unavailable")
+
+
+def _default_repeatability() -> RepeatabilityMetrics:
+    """安全的 fail-closed 默认——`run_count=1`/`status=unavailable` 是"我们还
+    不知道"的诚实表达，不是编造数据；不经 `score_candidate` 直接构造
+    `ScorecardRow`（既有测试 fixture 等）落到这个默认值，与
+    `repeat_runs=1`（现行为零变化）时 `score_candidate` 自己算出的结果完全
+    一致（见 `scorecard.py::_repeatability`）。"""
+    return RepeatabilityMetrics(
+        run_count=1,
+        status="unavailable",
+        rms_spot_radius_um_min=_UNAVAILABLE_METRIC,
+        rms_spot_radius_um_max=_UNAVAILABLE_METRIC,
+        rms_spot_radius_um_spread=_UNAVAILABLE_METRIC,
+        wfe_waves_min=_UNAVAILABLE_METRIC,
+        wfe_waves_max=_UNAVAILABLE_METRIC,
+        wfe_waves_spread=_UNAVAILABLE_METRIC,
+        note="run_count=1，未做重复性验证",
+    )
+
+
 class ScorecardRow(BaseModel):
     """纯量化打分（§5.3）。无 verdict/合格/passed 字段——诚实不变量 2。"""
 
@@ -205,6 +273,7 @@ class ScorecardRow(BaseModel):
     manufacturability: ManufacturabilityProxy
     rank: RankResult  # 带 coverage 的排序结果（非裸 float，codex 轮3）
     rank_explanation: str
+    repeatability: RepeatabilityMetrics = Field(default_factory=_default_repeatability)
     # ↑ 无 verdict / 合格 / passed 字段（诚实不变量 2）
 
 

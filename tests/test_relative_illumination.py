@@ -142,6 +142,78 @@ def test_ri_result_always_covers_canonical_field_keys():
 
 
 # ---------------------------------------------------------------------------
+# `zmx_path` explicit override (Phase 17 子项4)
+#
+# Built so Mode3 (TargetConvergedGenerator) candidates — whose optimized ZMX
+# never lives under ZMX_AMMO_DIR, so `metadata.source_zmx` alone can never
+# resolve — can stop being structurally RI-unavailable. The actual
+# generators.py call-site connection is out of scope (see
+# `compute_relative_illumination`'s docstring); these tests prove the
+# capability itself is correct and safe to wire in later with a single
+# keyword argument.
+# ---------------------------------------------------------------------------
+
+
+def test_ri_zmx_path_overrides_unresolvable_source_zmx_metadata():
+    """Mirrors the exact Mode3 failure mode: `metadata.source_zmx` doesn't
+    resolve under ZMX_AMMO_DIR (in Mode3's real case, because the optimized
+    ZMX lives in a per-job temp dir instead), but the caller has the real
+    file's path in hand and passes it explicitly — RI must now compute for
+    real instead of failing closed."""
+    case = _anchor_case()
+    assert case.metadata is not None
+    real_path = relative_illumination.ZMX_AMMO_DIR / case.metadata.source_zmx
+    broken = case.model_copy(
+        update={"metadata": case.metadata.model_copy(update={"source_zmx": "does-not-exist.zmx"})}
+    )
+
+    # Without zmx_path: fails closed (same as the existing regression test).
+    without_override = compute_relative_illumination(broken)
+    assert all(m.status == "unavailable" for m in without_override.values())
+
+    # With zmx_path pointing at the real file: computes for real.
+    with_override = compute_relative_illumination(broken, zmx_path=real_path)
+    axis = with_override[format_mtf_field_fraction(0.0)]
+    assert axis.status == "available"
+    assert axis.value == pytest.approx(1.0)
+    edge = with_override[format_mtf_field_fraction(1.0)]
+    assert edge.status == "available"
+    assert edge.value is not None
+    assert edge.value < 1.0  # real cos^4 falloff, not a fabricated constant
+
+
+def test_ri_zmx_path_matches_default_resolution_for_the_same_file():
+    """Passing the exact file the default (no-arg) path would already have
+    resolved must produce numerically identical results — the two code
+    paths converge on the same compute, `zmx_path` is purely a location
+    override, not a different algorithm."""
+    case = _anchor_case()
+    assert case.metadata is not None
+    real_path = relative_illumination.ZMX_AMMO_DIR / case.metadata.source_zmx
+
+    default_result = compute_relative_illumination(case)
+    explicit_result = compute_relative_illumination(case, zmx_path=real_path)
+    assert default_result == explicit_result
+
+
+def test_ri_zmx_path_none_is_the_default_and_changes_nothing():
+    case = _anchor_case()
+    assert compute_relative_illumination(case) == compute_relative_illumination(
+        case, zmx_path=None
+    )
+
+
+def test_ri_zmx_path_missing_file_fails_closed_even_with_valid_metadata():
+    """`zmx_path` always takes precedence over `metadata.source_zmx` — a
+    bad explicit path fails closed rather than silently falling back to the
+    (possibly perfectly valid) metadata-derived resolution."""
+    case = _anchor_case()  # case.metadata.source_zmx is a real, valid file
+    bogus_path = relative_illumination.ZMX_AMMO_DIR / "does-not-exist-either.zmx"
+    ri = compute_relative_illumination(case, zmx_path=bogus_path)
+    assert all(m.status == "unavailable" for m in ri.values())
+
+
+# ---------------------------------------------------------------------------
 # Cache: transient failures never memoized; keyed off file stat (§7-D)
 # ---------------------------------------------------------------------------
 

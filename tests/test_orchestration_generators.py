@@ -927,8 +927,11 @@ def test_candidate_for_seed_success_path_produces_target_converged_candidate(
     ZMX's *content*, copied to a filename that does not collide with anything
     under `ZMX_AMMO_DIR` — mirroring the real generator's actual optimized-ZMX
     filenames (`{stem}_target{efl}..._optimized.zmx`, never a bare ammo-dir
-    name) so the RI-unavailable assertion below exercises the genuine
-    `ZMX_AMMO_DIR`-lookup-miss path, not an accidental filename collision."""
+    name). Since P17-4 (loop3 遗留#4 closure) that non-colliding location is
+    exactly what proves the RI wiring: the ammo-dir lookup for this filename
+    misses, so the *only* way the RI assertions below can see real values is
+    `_candidate_for_seed` explicitly handing `optimized_zmx_path` to
+    `compute_relative_illumination(zmx_path=...)`."""
     seed = _real_case_with_zmx()
     assert seed.metadata is not None
     stand_in_zmx = tmp_path / f"{seed.metadata.case_id}_target3.797_optimized.zmx"
@@ -954,12 +957,62 @@ def test_candidate_for_seed_success_path_produces_target_converged_candidate(
     assert extras.codev_post_aut["post_aut.max_rms_spot_diameter_um"] == pytest.approx(12.3)
     assert extras.codev_post_aut["err_f_ratio"] == pytest.approx(0.09)
     assert extras.codev_post_aut["aut_termination"] == "normal_completion"
-    # RI 结构性存在但恒 unavailable（优化后 ZMX 不在 ZMX_AMMO_DIR 下，已知限制）
+    # P17-4（loop3 遗留#4 闭合）：RI 用优化后 ZMX 的显式路径实算——不再因
+    # "临时目录不在 ZMX_AMMO_DIR 下" 而结构性 miss。轴上场 RI 恒 1.0（cos^4(0)
+    # 归一），离轴至少一场 < 1.0（真实 cos^4 衰减，非编造常数）。
     assert extras.ri_by_field is not None
-    assert all(m.status == "unavailable" for m in extras.ri_by_field.values())
+    available = {k: m for k, m in extras.ri_by_field.items() if m.status == "available"}
+    assert available, "RI must genuinely compute from the explicit optimized-ZMX path"
+    assert extras.ri_by_field["0.0"].status == "available"
+    assert extras.ri_by_field["0.0"].value == pytest.approx(1.0)
+    assert any(m.value is not None and m.value < 1.0 for m in available.values())
     joined_notes = " ".join(candidate.generation_notes)
     assert "band=lt5" in joined_notes
     assert "preferred" in joined_notes
+    # 注记不再宣称"恒 unavailable"（那会是对新行为的撒谎），改为如实注明
+    # 显式路径实算 + fail-closed。
+    assert "恒 unavailable" not in joined_notes
+    assert any("P17-4 接线" in note for note in candidate.generation_notes)
+
+
+def test_candidate_for_seed_ri_fails_closed_when_optimized_zmx_deleted_before_ri(
+    tmp_path: Path, monkeypatch
+):
+    """RI 接线的 fail-closed 半边：显式路径解析不到（模拟极端竞态/重建产物
+    被清掉，payload 构建已完成但 RI 复算时文件没了）→ RI 全 unavailable，
+    候选照常产出（RI 缺失不否决候选，与 Mode1 单颗 RI 失败不拖垮整批同则）。
+
+    实现方式：让 `build_sample_from_optic` 一结束就删掉优化 ZMX——通过
+    monkeypatch 包装 `load_normalized_zmx` 完成加载后删除文件即可模拟
+    "payload 构建成功、RI 复算时文件已不存在" 的窗口。
+    """
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    stand_in_zmx = tmp_path / f"{seed.metadata.case_id}_target3.797_optimized.zmx"
+    stand_in_zmx.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=str(stand_in_zmx)),  # noqa: ANN003
+    )
+
+    real_load = generators_module.load_normalized_zmx
+    def _load_then_delete(path):  # noqa: ANN001
+        optic = real_load(path)
+        Path(path).unlink()  # file vanishes between payload build and RI compute
+        return optic
+
+    monkeypatch.setattr(generators_module, "load_normalized_zmx", _load_then_delete)
+    spec = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed, match=_fake_match(), spec=spec, work_dir=tmp_path / "work"
+    )
+
+    assert candidate is not None  # RI 缺失不否决候选
+    assert candidate.optical_extras.ri_by_field is not None
+    assert all(
+        m.status == "unavailable" for m in candidate.optical_extras.ri_by_field.values()
+    )
 
 
 # ---------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 import asyncio
 import json
 import math
+import re
 import warnings
 from collections.abc import AsyncIterator, Mapping
 from contextlib import asynccontextmanager, redirect_stdout, suppress
@@ -49,7 +50,12 @@ from app.core.optical_sample import (  # noqa: E402
     DesignAssessment,
     OpticalSampleData,
 )
-from app.core.parameter_guards import SCENARIO_BOUNDS  # noqa: E402
+from app.core.orchestration import formatting  # noqa: E402
+from app.core.parameter_guards import (  # noqa: E402
+    SCENARIO_BOUNDS,
+    ParameterGuardError,
+    validate_scenario_params,
+)
 from app.core.provenance import ProvenanceSource  # noqa: E402
 from app.core.spot_diagram import compute_spot_diagram  # noqa: E402
 from app.core.wavefront_metrics import compute_wavefront_metrics  # noqa: E402
@@ -183,6 +189,9 @@ def _is_api_request(request: Request) -> bool:
 
 def _format_error_detail(detail: object) -> str:
     if isinstance(detail, Mapping):
+        message = detail.get("message")
+        if message:
+            return str(message)
         error = detail.get("error")
         job_id = detail.get("job_id")
         if error and job_id:
@@ -1379,7 +1388,8 @@ def _result_summary_context(
 
 
 def _target_spec_from_candidate_payload(payload: Mapping[str, object]) -> orchestration.TargetSpec:
-    """Map the wizard-confirmed form fields onto `TargetSpec`.
+    """Map the wizard-confirmed (or P17 adjust-and-rerun) form fields onto
+    `TargetSpec`.
 
     The wizard flow only ever produces EFL / FOV / F# / image-height / element
     count (see `_summary_form_fields`) — it has no notion of a customer TTL
@@ -1388,7 +1398,11 @@ def _target_spec_from_candidate_payload(payload: Mapping[str, object]) -> orches
     `total_track_mm` (a nominal *achieved* estimate for the mid-bound scenario
     point, not a customer-specified ceiling) — silently promoting an estimate
     into a hard constraint would be exactly the kind of unearned precision the
-    North Star forbids.
+    North Star forbids. `max_total_track_mm` is the one exception: the
+    candidate-set page's "adjust & rerun" form (P17 sub-item 1) lets a
+    reviewer type an explicit TTL ceiling, which flows through here as a real
+    customer constraint — the wizard form still never sends this key, so
+    `payload.get(...)` stays `None` on that path (zero behavior change).
     """
     return orchestration.TargetSpec(
         scenario=_result_payload_scenario(payload),
@@ -1396,7 +1410,7 @@ def _target_spec_from_candidate_payload(payload: Mapping[str, object]) -> orches
         fov_deg=_optional_float(payload.get("field_of_view_deg")),
         fnum=float(payload["f_number"]),
         image_height_mm=_optional_float(payload.get("image_height_mm")),
-        max_total_track_mm=None,
+        max_total_track_mm=_optional_float(payload.get("max_total_track_mm")),
         n_elements=_optional_int(payload.get("n_elements")),
         max_weight_g=None,
         manufacturing_tier=None,
@@ -1411,6 +1425,7 @@ def _candidate_job_payload(
     f_number: float,
     field_of_view_deg: float,
     image_height_mm: float,
+    max_total_track_mm: float | None,
     n_elements: int | None,
     requirement: str | None,
 ) -> dict[str, object]:
@@ -1421,9 +1436,74 @@ def _candidate_job_payload(
         "f_number": f_number,
         "field_of_view_deg": field_of_view_deg,
         "image_height_mm": image_height_mm,
+        "max_total_track_mm": max_total_track_mm,
         "n_elements": n_elements,
         "requirement": requirement,
     }
+
+
+def _validate_finite_form_numbers_or_400(**fields: float | None) -> None:
+    """P17 对抗审 M1：拒绝任何非有限（inf/-inf/NaN）表单数值进入候选 job。
+
+    为什么需要在 pydantic 之外补一层：`Form(gt=0)` 对 `inf` 判真（inf > 0），
+    真机探针实证 `max_total_track_mm=inf` 曾拿到 303 直进 job payload /
+    `TargetSpec` / 页面 / xlsx。`NaN`/`-inf` 会被 `gt=0` 拦下（NaN 比较恒
+    False → 422），但依赖那个副作用不是契约——这里对全部被消费的数值字段
+    统一显式 `isfinite` 校验，非有限值以与 parameter_guards 相同的 400 +
+    violations 形状拒绝。`None`（可选字段未填）跳过。
+    """
+    violations = [
+        f"{name} must be a finite number, got {value}"
+        for name, value in fields.items()
+        if value is not None and not math.isfinite(value)
+    ]
+    if violations:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "non_finite_parameter",
+                "violations": violations,
+                "message": "; ".join(violations),
+            },
+        )
+
+
+def _validate_candidate_target_or_400(
+    scenario: Scenario,
+    *,
+    efl_mm: float,
+    f_number: float,
+    fov_deg: float,
+    image_height_mm: float,
+    n_elements: int | None,
+) -> None:
+    """Run `parameter_guards` against a candidate-orchestration submission
+    (wizard-derived or the P17 "adjust & rerun" form) and convert a
+    `ParameterGuardError` into an honest 400 — mirrors
+    `app/api/optical.py::_validate_or_400`, kept as a separate web-layer copy
+    since that one raises the JSON-shaped detail the `/api/optical/*` routes
+    expect, while this one adds a flat `message` the generic web error
+    handler (`_web_error_response` / `_format_error_detail`) renders as a
+    single readable line instead of a raw dict dump."""
+    try:
+        validate_scenario_params(
+            scenario,
+            efl_mm=efl_mm,
+            f_number=f_number,
+            fov_deg=fov_deg,
+            image_height_mm=image_height_mm,
+            n_elements=n_elements,
+        )
+    except ParameterGuardError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "parameter_guard_failed",
+                "scenario": scenario.value,
+                "violations": e.violations,
+                "message": "; ".join(e.violations),
+            },
+        ) from e
 
 
 def _compute_candidate_job(payload: Mapping[str, object]) -> dict[str, object]:
@@ -1482,14 +1562,11 @@ def _mode_label(mode: orchestration.GenerationMode) -> str:
     }[mode]
 
 
-def _fmt_metric(metric: orchestration.MetricValue, *, precision: int = 3) -> str:
-    if metric.status == "unavailable" or metric.value is None:
-        return "N/A"
-    return f"{metric.value:.{precision}f}"
-
-
-def _fmt_optional_target(value: float | None, *, precision: int = 3) -> str:
-    return "(unconstrained)" if value is None else f"{value:.{precision}f}"
+# P17 对抗审 M3：页面与 xlsx 导出共用 `orchestration.formatting` 的单一格式化
+# 器（含"非零小值不得显示为 0.000 假零"守卫）——本模块只保留同名薄别名，
+# 保证既有调用点零翻新；不得在此重新实现格式化逻辑（会重新引入口径分叉）。
+_fmt_metric = formatting.fmt_metric
+_fmt_optional_target = formatting.fmt_optional_target
 
 
 _CANDIDATE_IMAGE_QUALITY_ROWS: tuple[tuple[str, str], ...] = (
@@ -1555,11 +1632,11 @@ def _candidate_deviation_row(dev: orchestration.TargetDeviation) -> dict[str, ob
         "field": dev.field,
         "constraint_kind": dev.constraint_kind,
         "target": _fmt_optional_target(dev.target),
-        "achieved": f"{dev.achieved:.3f}",
-        "violation": f"{dev.violation:.3f}",
-        "rel_violation": "N/A" if dev.rel_violation is None else f"{dev.rel_violation:.1%}",
+        "achieved": formatting.fmt_float(dev.achieved),
+        "violation": formatting.fmt_float(dev.violation),
+        "rel_violation": formatting.fmt_rel_violation(dev.rel_violation),
         "converged": dev.converged_toward_target,
-        "converged_label": "Yes" if dev.converged_toward_target else "No",
+        "converged_label": formatting.fmt_yes_no(dev.converged_toward_target),
     }
 
 
@@ -1567,13 +1644,34 @@ def _candidate_manufacturability_context(
     mfg: orchestration.ManufacturabilityProxy,
 ) -> dict[str, object]:
     return {
-        "total_track_mm": f"{mfg.total_track_mm:.3f}",
+        "total_track_mm": formatting.fmt_float(mfg.total_track_mm),
         "n_pieces": mfg.n_pieces,
-        "has_special_glass": "Yes" if mfg.has_special_glass else "No",
+        "has_special_glass": formatting.fmt_yes_no(mfg.has_special_glass),
         "aspheric_term_count": _fmt_metric(mfg.aspheric_term_count, precision=0),
         "aspheric_surface_count": _fmt_metric(mfg.aspheric_surface_count, precision=0),
         "chief_ray_angle_deg": _fmt_metric(mfg.chief_ray_angle_deg),
         "note": mfg.note,
+    }
+
+
+def _candidate_repeatability_context(
+    rep: orchestration.RepeatabilityMetrics,
+) -> dict[str, object]:
+    """P17 sub-item 3: render the honest run_count/status the page must
+    show as-is — `orchestrate()`'s only wired path today (`repeat_runs=1`)
+    always yields `status="unavailable"`, and this context never upgrades
+    that (no client-side fabrication)."""
+    return {
+        "run_count": rep.run_count,
+        "status": rep.status,
+        "status_label": "Available" if rep.status == "available" else "Unavailable",
+        "rms_min": _fmt_metric(rep.rms_spot_radius_um_min),
+        "rms_max": _fmt_metric(rep.rms_spot_radius_um_max),
+        "rms_spread": _fmt_metric(rep.rms_spot_radius_um_spread),
+        "wfe_min": _fmt_metric(rep.wfe_waves_min),
+        "wfe_max": _fmt_metric(rep.wfe_waves_max),
+        "wfe_spread": _fmt_metric(rep.wfe_waves_spread),
+        "note": rep.note,
     }
 
 
@@ -1741,10 +1839,11 @@ def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, obje
             for label, attr in _CANDIDATE_IMAGE_QUALITY_ROWS
         ],
         "manufacturability": _candidate_manufacturability_context(row.manufacturability),
+        "repeatability": _candidate_repeatability_context(row.repeatability),
         "rank_status": rank.status,
         "rank_status_label": "Ranked" if rank.status == "ranked" else "Withheld",
-        "rank_score": f"{rank.score:.3f}" if rank.score is not None else None,
-        "rank_coverage_pct": f"{rank.coverage_pct:.0%}",
+        "rank_score": formatting.fmt_float(rank.score) if rank.score is not None else None,
+        "rank_coverage_pct": formatting.fmt_pct(rank.coverage_pct, precision=0),
         "rank_missing_metrics": ", ".join(rank.missing_metrics) or "(none)",
         "rank_explanation": row.rank_explanation,
     }
@@ -1764,7 +1863,7 @@ def _candidate_requirement_rows(target: orchestration.TargetSpec) -> list[dict[s
         {"label": "Scenario", "value": target.scenario.value},
         {"label": "EFL (mm)", "value": _fmt_optional_target(target.efl_mm)},
         {"label": "FOV (deg)", "value": _fmt_optional_target(target.fov_deg, precision=1)},
-        {"label": "F-number", "value": f"{target.fnum:.3f}"},
+        {"label": "F-number", "value": formatting.fmt_float(target.fnum)},
         {"label": "Image height (mm)", "value": _fmt_optional_target(target.image_height_mm)},
         {
             "label": "Max total track (mm)",
@@ -1772,12 +1871,33 @@ def _candidate_requirement_rows(target: orchestration.TargetSpec) -> list[dict[s
         },
         {
             "label": "Element count",
-            "value": "(unconstrained)" if target.n_elements is None else str(target.n_elements),
+            "value": formatting.fmt_optional_int(target.n_elements),
         },
         {"label": "Max weight (g)", "value": _fmt_optional_target(target.max_weight_g)},
         {"label": "Manufacturing tier", "value": target.manufacturing_tier or "(unspecified)"},
         {"label": "Priority", "value": target.priority or "(unspecified)"},
     ]
+
+
+def _fmt_form_value(value: float | int | None) -> str:
+    """Render a target field for an editable form input's `value` attribute —
+    "" (empty, unconstrained) for `None` rather than the literal string
+    "None"."""
+    return "" if value is None else str(value)
+
+
+def _candidate_adjust_form_context(target: orchestration.TargetSpec) -> dict[str, str]:
+    """Pre-fill values for the candidate-set page's "adjust & rerun" form
+    (P17 sub-item 1) — echoes the batch's own `TargetSpec` so a reviewer edits
+    the exact numbers that produced this candidate set, not wizard defaults."""
+    return {
+        "efl_mm": _fmt_form_value(target.efl_mm),
+        "fnum": _fmt_form_value(target.fnum),
+        "fov_deg": _fmt_form_value(target.fov_deg),
+        "image_height_mm": _fmt_form_value(target.image_height_mm),
+        "max_total_track_mm": _fmt_form_value(target.max_total_track_mm),
+        "n_elements": _fmt_form_value(target.n_elements),
+    }
 
 
 def _candidate_set_context(
@@ -1795,9 +1915,11 @@ def _candidate_set_context(
         f"{ri_available}/{summary.candidate_count}" if summary.candidate_count else "0/0"
     )
     requirement = result.get("requirement")
+    scenario_value = str(result.get("scenario", candidate_set.target.scenario.value))
     return {
         "product_name": "Atelier",
-        "scenario": str(result.get("scenario", candidate_set.target.scenario.value)),
+        "scenario": scenario_value,
+        "scenario_label_en": scenario_value.replace("-", " ").title(),
         "requirement": str(requirement) if requirement not in {None, ""} else None,
         "job_id": progress.get("job_id", ""),
         "honesty_banner": candidate_set.honesty_banner,
@@ -1814,6 +1936,7 @@ def _candidate_set_context(
         "expert_rows": [
             {"candidate_id": sc.scorecard.candidate_id} for sc in candidate_set.candidates
         ],
+        "adjust_form": _candidate_adjust_form_context(candidate_set.target),
     }
 
 
@@ -2042,10 +2165,11 @@ async def submit_candidate_job(
     f_number: Annotated[float, Form(gt=0)],
     field_of_view_deg: Annotated[float, Form(gt=0, le=180)],
     image_height_mm: Annotated[float, Form(gt=0)],
-    total_track_mm: Annotated[float, Form(gt=0)],
-    airy_disc_diameter_um: Annotated[float, Form(gt=0)],
-    cutoff_freq_lp_per_mm: Annotated[float, Form(gt=0)],
     n_elements: Annotated[int | None, Form(ge=2, le=20)] = None,
+    max_total_track_mm: Annotated[float | None, Form(gt=0)] = None,
+    total_track_mm: Annotated[float | None, Form(gt=0)] = None,
+    airy_disc_diameter_um: Annotated[float | None, Form(gt=0)] = None,
+    cutoff_freq_lp_per_mm: Annotated[float | None, Form(gt=0)] = None,
     wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
     requirement: Annotated[str | None, Form(max_length=2000)] = None,
 ) -> RedirectResponse:
@@ -2053,13 +2177,39 @@ async def submit_candidate_job(
     # `cutoff_freq_lp_per_mm` / `wavelength_nm` are accepted (not used) so this
     # route can share the exact same hidden-field form as `/jobs` — the
     # wizard_confirm page posts the identical confirmed-parameters form to
-    # either endpoint via a second submit button's `formaction`.
+    # either endpoint via a second submit button's `formaction`. They default
+    # to `None`/550.0 (rather than staying required) so the candidate-set
+    # page's "adjust & rerun" form (P17 sub-item 1) — which has no wizard
+    # derived total-track/Airy-disc/cutoff estimates to echo back — can post
+    # a smaller field set without fabricating placeholder values for fields
+    # this route never reads.
+    #
+    # `max_total_track_mm` is different: it IS consumed (a real customer TTL
+    # ceiling from the adjust-and-rerun form) — see `_candidate_job_payload` /
+    # `_target_spec_from_candidate_payload`. The wizard form never sends it,
+    # so it defaults `None` there (honest "no ceiling" gap, unchanged).
+    _validate_finite_form_numbers_or_400(
+        focal_length_mm=focal_length_mm,
+        f_number=f_number,
+        field_of_view_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        max_total_track_mm=max_total_track_mm,
+    )
+    _validate_candidate_target_or_400(
+        scenario,
+        efl_mm=focal_length_mm,
+        f_number=f_number,
+        fov_deg=field_of_view_deg,
+        image_height_mm=image_height_mm,
+        n_elements=n_elements,
+    )
     payload = _candidate_job_payload(
         scenario=scenario,
         focal_length_mm=focal_length_mm,
         f_number=f_number,
         field_of_view_deg=field_of_view_deg,
         image_height_mm=image_height_mm,
+        max_total_track_mm=max_total_track_mm,
         n_elements=n_elements,
         requirement=requirement,
     )
@@ -2103,8 +2253,11 @@ async def result_summary_from_job(request: Request, job_id: str) -> HTMLResponse
     )
 
 
-@app.get("/candidates/{job_id}", response_class=HTMLResponse, tags=["web"])
-async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
+def _load_succeeded_candidate_set_record(job_id: str) -> JobRecord:
+    """Shared job lookup + status gate for every `/candidates/{job_id}*`
+    route (HTML render, xlsx export, per-candidate zip bundle) — unknown job
+    or wrong engine -> 404, still queued/running -> 409, so all three
+    surfaces fail identically instead of drifting apart."""
     try:
         record = optical.job_store.get(job_id)
     except JobNotFoundError as exc:
@@ -2126,6 +2279,51 @@ async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
                 "status": record.status.value,
             },
         )
+    return record
+
+
+def _candidate_set_from_record(record: JobRecord) -> orchestration.CandidateSet:
+    assert record.result is not None  # guaranteed by _load_succeeded_candidate_set_record
+    candidate_set_payload = record.result.get("candidate_set")
+    if not isinstance(candidate_set_payload, Mapping):
+        raise ValueError("candidate orchestration job has invalid candidate_set payload")
+    return orchestration.CandidateSet.model_validate(candidate_set_payload)
+
+
+def _safe_download_filename(value: str) -> str:
+    """Collapse anything outside a conservative filename-safe charset (a
+    `candidate_id` embeds `::` — invalid in a Windows filename) into `_`, so
+    a suggested download name is safe on every OS the demo runs on."""
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", value)
+
+
+#: P17 对抗审 MINOR：导出物在请求线程内整包内存构建、一次性 Response —— 给
+#: 产物加一个路由级大小闸，异常膨胀的 payload（今天 n=4 + 小 ZMX 远够不着，
+#: 但 job result 没有结构性上限）拒绝为 413 而不是悄悄吃掉演示机内存/带宽。
+_MAX_EXPORT_RESPONSE_BYTES = 50 * 1024 * 1024
+
+
+def _guard_export_size_or_413(content: bytes, *, artifact: str, job_id: str) -> None:
+    if len(content) > _MAX_EXPORT_RESPONSE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+            detail={
+                "error": "export_too_large",
+                "artifact": artifact,
+                "job_id": job_id,
+                "size_bytes": len(content),
+                "limit_bytes": _MAX_EXPORT_RESPONSE_BYTES,
+                "message": (
+                    f"{artifact} export is {len(content)} bytes, over the "
+                    f"{_MAX_EXPORT_RESPONSE_BYTES}-byte route limit"
+                ),
+            },
+        )
+
+
+@app.get("/candidates/{job_id}", response_class=HTMLResponse, tags=["web"])
+async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
+    record = _load_succeeded_candidate_set_record(job_id)
     return templates.TemplateResponse(
         request,
         "candidate_set.html",
@@ -2133,6 +2331,56 @@ async def candidate_set_from_job(request: Request, job_id: str) -> HTMLResponse:
             result=record.result,
             progress=_job_progress_context(record),
         ),
+    )
+
+
+@app.get("/candidates/{job_id}/export.xlsx", include_in_schema=False, tags=["web"])
+async def candidate_set_export_xlsx(job_id: str) -> Response:
+    """P17 sub-item 2 ①: spec-sheet xlsx for the whole candidate set — built
+    from the exact same validated `CandidateSet` the HTML page renders (no
+    second computation)."""
+    record = _load_succeeded_candidate_set_record(job_id)
+    candidate_set = _candidate_set_from_record(record)
+    assert record.result is not None
+    requirement = record.result.get("requirement")
+    workbook_bytes = orchestration.build_candidate_set_workbook(
+        candidate_set,
+        job_id=job_id,
+        requirement=str(requirement) if requirement not in {None, ""} else None,
+    )
+    _guard_export_size_or_413(workbook_bytes, artifact="workbook", job_id=job_id)
+    filename = _safe_download_filename(f"atelier-candidates-{job_id}.xlsx")
+    return Response(
+        content=workbook_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@app.get("/candidates/{job_id}/{candidate_id}/bundle.zip", include_in_schema=False, tags=["web"])
+async def candidate_bundle_zip(job_id: str, candidate_id: str) -> Response:
+    """P17 sub-item 2 ②: one candidate's ZMX + reproduction .seq + README
+    download bundle, built from the same validated `CandidateSet` (no second
+    computation) — see `app.core.orchestration.export` for the fail-closed
+    contract when the underlying ZMX/.seq isn't resolvable."""
+    record = _load_succeeded_candidate_set_record(job_id)
+    candidate_set = _candidate_set_from_record(record)
+    scored = next(
+        (sc for sc in candidate_set.candidates if sc.scorecard.candidate_id == candidate_id),
+        None,
+    )
+    if scored is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "candidate_not_found", "job_id": job_id, "candidate_id": candidate_id},
+        )
+    zip_bytes = orchestration.build_candidate_bundle_zip(scored, target=candidate_set.target)
+    _guard_export_size_or_413(zip_bytes, artifact="bundle", job_id=job_id)
+    filename = _safe_download_filename(f"atelier-candidate-{candidate_id}.zip")
+    return Response(
+        content=zip_bytes,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
 

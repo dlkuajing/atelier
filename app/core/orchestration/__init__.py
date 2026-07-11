@@ -24,10 +24,15 @@ from app.core.orchestration.candidate import (
     MetricValue,
     OpticalExtras,
     RankResult,
+    RepeatabilityMetrics,
     ScorecardRow,
     ScoredCandidate,
     TargetDeviation,
     TargetSpec,
+)
+from app.core.orchestration.export import (
+    build_candidate_bundle_zip,
+    build_candidate_set_workbook,
 )
 from app.core.orchestration.generators import (
     CandidateGenerator,
@@ -50,12 +55,15 @@ __all__ = [
     "MetricValue",
     "OpticalExtras",
     "RankResult",
+    "RepeatabilityMetrics",
     "RetrievalGenerator",
     "ScorecardRow",
     "ScoredCandidate",
     "TargetConvergedGenerator",
     "TargetDeviation",
     "TargetSpec",
+    "build_candidate_bundle_zip",
+    "build_candidate_set_workbook",
     "orchestrate",
     "score_candidate",
 ]
