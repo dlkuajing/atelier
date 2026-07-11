@@ -1,0 +1,962 @@
+  
+  
+                                   Welcome to
+  
+                                   C O D E   V
+  
+                                PC  Version 11.5
+                                   Build 27302701
+  
+                                   11-Jul-2026
+  
+                            A proprietary product of
+  
+                              SYNOPSYS, INC
+                              Pasadena, California
+  
+CODE V> OUT NO
+     Radius input/output mode
+  
+    Lens data created by Zemax version 191028
+  
+    Zemax command MODE ignored
+     WARNING - Vignetting angles not used.
+     ERROR - No wavelength  2 in zoom position  1
+  
+     Surface pointer = OBJ
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 1
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 2
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 3
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 4
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 5
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 6
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 7
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 8
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 9
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 10
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 11
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 12
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 13
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 14
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 15
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 16
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 17
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = IMG
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     WARNING - Please check the converted lens carefully.
+               Some information will not be converted.
+               Changes in either CODE V or ZEMAX may invalidate
+               the converted information.
+               Due to differences between CODE V and ZEMAX ray
+               aiming and vignetting factors, it is recommended
+               that you set vignetting for the converted system.
+  
+               A concise listing of conversion warnings appears
+               in the Tabbed Output Window 'Info' tab and in the
+               Command Window.
+  
+CODE V> BUF PUT B1 I^row J1 "schema"
+      Created new worksheet B1.
+CODE V> BUF PUT B1 I^row J2 "atelier-codev-readout-v1"
+CODE V> BUF PUT B1 I^row J1 "status"
+CODE V> BUF PUT B1 I^row J2 "ok"
+CODE V> BUF PUT B1 I^row J1 "source_zmx"
+CODE V> BUF PUT B1 I^row J2 "cand_flagship_both.zmx"
+CODE V> BUF PUT B1 I^row J1 "units"
+CODE V> BUF PUT B1 I^row J2 ^units
+CODE V> BUF PUT B1 I^row J1 "aperture_type"
+CODE V> BUF PUT B1 I^row J2 ^apetype
+CODE V> BUF PUT B1 I^row J1 "f_number"
+CODE V> BUF PUT B1 I^row J2 (FNO)
+CODE V> BUF PUT B1 I^row J1 "entrance_pupil_diameter_mm"
+CODE V> BUF PUT B1 I^row J2 (EPD)
+CODE V> BUF PUT B1 I^row J1 "num_surfaces"
+CODE V> BUF PUT B1 I^row J2 ^numsur
+CODE V> BUF PUT B1 I^row J1 "num_fields"
+CODE V> BUF PUT B1 I^row J2 ^numfld
+CODE V> BUF PUT B1 I^row J1 "num_wavelengths"
+CODE V> BUF PUT B1 I^row J2 ^numwav
+CODE V> BUF PUT B1 I^row J1 "num_zooms"
+CODE V> BUF PUT B1 I^row J2 ^numz
+CODE V> BUF PUT B1 I^row J1 "stop_surface"
+CODE V> BUF PUT B1 I^row J2 ^stop
+CODE V> BUF PUT B1 I^row J1 "field_type"
+CODE V> BUF PUT B1 I^row J2 ^field_type
+CODE V> BUF PUT B1 I^row J1 "reference_wavelength_index"
+CODE V> BUF PUT B1 I^row J2 ^refw
+CODE V> BUF PUT B1 I^row J1 "image_height_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^maximh
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+     ERROR - Ray missed surface   3 for zoom position  1
+     ERROR - Ray missed surface  14 for zoom position  1
+     ERROR - Ray missed surface  14 for zoom position  1
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WL W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WTW Z1 W^w)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_x
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_y
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_x
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_y
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_x
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_y
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
+CODE V> BUF EXP B1 "C:\Users\Administrator\AppData\Local\Temp\claude\D--atelier\6c49fb9d-20ee-464b-a2cf-0d7eeff1ada6\scratchpad\p13matrix\smoke_out\readout5\atelier_codev_readout.tsv"
+     Buffer B1 exported to file atelier_codev_readout.tsv
+CODE V> BUF DEL B1
+CODE V> OUT YES
+CODE V> EXI YES
+     EXI                                                                              11-Jul-26   7H  5M 51S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S

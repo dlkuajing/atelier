@@ -11,7 +11,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
-from app.core.engines.codev_batch import ensure_buf_exp_safe_filename
+from app.core.engines.codev_batch import ensure_buf_exp_safe_filename, ensure_codev_safe_input_path
 
 TorMetric = Literal["mtf", "rms"]
 _COMMAND_PREFIX = re.compile(
@@ -121,6 +121,7 @@ def build_codev_tor_sequence(
     """Build the verified single-GO, two-buffer sequence for a ZMX source."""
 
     source = Path(source_path)
+    ensure_codev_safe_input_path(source, role="source_path")
     performance_path = Path(performance_result_path)
     mc_path = Path(monte_carlo_result_path)
     if source.suffix.lower() != ".zmx":

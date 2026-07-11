@@ -37,6 +37,7 @@ _FO_REQUIRED = ("schema", "status", "efl", "fno", "maximh", "num_fields")
 
 
 def _first_order_seq(source_zmx: Path, result_path: Path) -> str:
+    source_zmx = source_zmx.resolve()
     return "\n".join([
         "! scratch: seed first-order read.",
         "OUT NO",

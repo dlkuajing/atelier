@@ -14,6 +14,7 @@ from app.core.engines.codev_batch import (
     CodeVBatchError,
     CodeVBatchResult,
     ensure_buf_exp_safe_filename,
+    ensure_codev_safe_input_path,
     parse_codev_result_file,
     run_codev_batch,
 )
@@ -214,6 +215,7 @@ def build_codev_optimize_sequence(
     _validate_positive_int(tolerance_nrd, "tolerance_nrd")
 
     source_zmx = Path(source_zmx)
+    ensure_codev_safe_input_path(source_zmx, role="source_zmx")
     result_path = Path(result_path)
     optimized_readout_path = Path(optimized_readout_path)
     lines: list[str] = [
@@ -661,6 +663,7 @@ def build_codev_target_sequence(
         raise ValueError("optimized_readout_path is required when emit_optimized_zmx=True")
 
     source_zmx = Path(source_zmx)
+    ensure_codev_safe_input_path(source_zmx, role="source_zmx")
     result_path = Path(result_path)
 
     lines: list[str] = [

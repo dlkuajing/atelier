@@ -1,10 +1,15 @@
-"""Generate the Phase 13 real-machine matrix manifest/report skeleton; does not run CODE V."""
+"""Plan or execute the Phase 13 glass-snap matrix."""
 
 from __future__ import annotations
 
 import argparse
 import csv
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from app.core.engines.glass_snap_matrix import run_snap_matrix
 
 EXPERIMENTS = (
     ("A", "fictitious baseline"),
@@ -32,16 +37,35 @@ def build_rows(candidates: list[str]) -> list[dict[str, str]]:
 
 
 def main() -> int:
+    argv = sys.argv[1:]
+    if argv and argv[0] not in {"plan", "run", "-h", "--help"}:
+        argv.insert(0, "plan")
     parser = argparse.ArgumentParser()
-    parser.add_argument("candidates", type=Path, help="UTF-8 text file: one candidate ZMX per line")
-    parser.add_argument("--output-dir", type=Path, required=True)
-    args = parser.parse_args()
-    candidates = [x.strip() for x in args.candidates.read_text(encoding="utf-8").splitlines() if x.strip()]
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    for command in ("plan", "run"):
+        child = subparsers.add_parser(command)
+        child.add_argument(
+            "candidates", type=Path, help="UTF-8 text file: one candidate ZMX per line"
+        )
+        child.add_argument("--output-dir", type=Path, required=True)
+        if command == "run":
+            child.add_argument(
+                "--run-codev", action="store_true", help="execute CODE V; otherwise build only"
+            )
+    args = parser.parse_args(argv)
+    candidates = [
+        x.strip() for x in args.candidates.read_text(encoding="utf-8").splitlines() if x.strip()
+    ]
     if len(candidates) < 3:
         parser.error("matrix requires at least three candidate ZMX paths")
+    if args.command == "run":
+        run_snap_matrix(candidates, output_dir=args.output_dir, run_codev=args.run_codev)
+        return 0
     args.output_dir.mkdir(parents=True, exist_ok=True)
     rows = build_rows(candidates)
-    with (args.output_dir / "p13-snap-matrix.tsv").open("w", encoding="utf-8", newline="") as handle:
+    with (args.output_dir / "p13-snap-matrix.tsv").open(
+        "w", encoding="utf-8", newline=""
+    ) as handle:
         writer = csv.DictWriter(handle, fieldnames=rows[0], delimiter="\t")
         writer.writeheader()
         writer.writerows(rows)

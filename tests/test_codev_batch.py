@@ -606,6 +606,23 @@ def test_ensure_buf_exp_safe_filename_accepts_legal(legal: str) -> None:
     codev_batch.ensure_buf_exp_safe_filename(legal)  # 不应抛
 
 
+@pytest.mark.parametrize(
+    "path",
+    [r"D:\safe\lens.zmx", r"\\server\share\lens.zmx", "relative/lens.zmx"],
+)
+def test_codev_safe_input_path_accepts_dot_free_components(path: str) -> None:
+    codev_batch.ensure_codev_safe_input_path(path)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [r"D:\safe\.planning\lens.zmx", ".hidden.zmx", "safe/.hidden.zmx", 'safe/ba"d.zmx', "safe\nfile.zmx"],
+)
+def test_codev_safe_input_path_rejects_silent_import_hazards(path: str) -> None:
+    with pytest.raises(ValueError):
+        codev_batch.ensure_codev_safe_input_path(path)
+
+
 def test_run_codev_batch_rejects_dangerous_sequence_and_result_names(tmp_path: Path) -> None:
     """守卫在 run_codev_batch 入口最前（先于 executable/seq 存在性检查）：
     危险文件名立即 ValueError，绝不发起 CODE V 进程让宏静默中止。"""

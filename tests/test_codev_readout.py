@@ -166,6 +166,7 @@ def test_parse_codev_readout_file_builds_structured_model(tmp_path: Path) -> Non
     assert readout.surfaces[0].semi_diameter_mm == pytest.approx(1.10)
     assert readout.surfaces[0].nd == pytest.approx(1.544)
     assert readout.surfaces[0].vd == pytest.approx(55.9)
+    assert readout.surfaces[0].vd_source == "dispersion-measured"
     assert readout.surfaces[0].surface_type == "ASP"
     assert readout.surfaces[0].is_stop is True
     assert readout.surfaces[0].asphere_coefficients["A"] == pytest.approx(0.001)
@@ -180,6 +181,40 @@ def test_parse_codev_readout_file_builds_structured_model(tmp_path: Path) -> Non
     assert readout.fields[1].y == pytest.approx(3.62257)
     assert readout.fields[1].vuy == pytest.approx(0.3)
     assert readout.fields[1].vlx == pytest.approx(-0.4)
+    assert readout.surfaces[0].describe()["vd_source"] == "dispersion-measured"
+
+
+def test_real_smoke_fixture_decodes_model_glass_vd() -> None:
+    fixture = Path(".planning/loop/p13-smoke-2026-07-11/readout5-glasscode/atelier_codev_readout.tsv")
+    readout = parse_codev_readout_file(fixture)
+    surface = next(s for s in readout.surfaces if s.glass == "546000.401540")
+    assert surface.nd == pytest.approx(1.546)
+    assert surface.vd == pytest.approx(40.154)
+    assert surface.vd_source == "glass-code-decoded"
+
+
+def test_model_glass_decode_rejects_nd_disagreement(tmp_path: Path) -> None:
+    result_path = tmp_path / "readout.tsv"
+    _write_readout_result(result_path)
+    text = result_path.read_text(encoding="utf-8")
+    text = text.replace("surface.1.glass\t___BLANK", "surface.1.glass\t546000.401540")
+    text = text.replace("surface.1.nd\t1.544", "surface.1.nd\t1.544")
+    text = text.replace("surface.1.vd\t55.9", "surface.1.vd\t0")
+    result_path.write_text(text, encoding="utf-8")
+    with pytest.raises(CodeVBatchError, match="nd disagrees"):
+        parse_codev_readout_file(result_path)
+
+
+def test_malformed_short_model_glass_fraction_is_not_decoded(tmp_path: Path) -> None:
+    result_path = tmp_path / "readout.tsv"
+    _write_readout_result(result_path)
+    text = result_path.read_text(encoding="utf-8")
+    text = text.replace("surface.1.glass\t___BLANK", "surface.1.glass\t544000.40")
+    text = text.replace("surface.1.vd\t55.9", "surface.1.vd\t0")
+    result_path.write_text(text, encoding="utf-8")
+    surface = parse_codev_readout_file(result_path).surfaces[0]
+    assert surface.vd == 0
+    assert surface.vd_source is None
 
 
 def test_parse_codev_readout_file_rejects_missing_surface_keys(tmp_path: Path) -> None:
@@ -229,6 +264,38 @@ def test_mock_codev_readout_reuses_batch_runner(monkeypatch, tmp_path: Path) -> 
     assert result.readout.num_surfaces == 2
     assert result.readout.surfaces[0].surface_type == "ASP"
     assert result.readout.fields[1].y == pytest.approx(3.62257)
+
+
+def test_run_codev_readout_stages_dotted_source_and_reports_it(monkeypatch, tmp_path: Path) -> None:
+    executable = _fake_codev_executable(tmp_path)
+    dotted = tmp_path / ".inputs"
+    dotted.mkdir()
+    source = dotted / "lens.zmx"
+    source.write_text("VERS 000001\n", encoding="ascii")
+
+    class FakePopen:
+        pid = 4330
+        returncode = 0
+
+        def __init__(self, command, **kwargs):
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout=None):
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            sequence = sequence_path.read_text(encoding="ascii")
+            assert ".inputs" not in sequence
+            _write_readout_result(_result_path_from_sequence(sequence_path))
+            return "", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    result = run_codev_readout(source_zmx=source, work_dir=tmp_path / "work", executable=executable)
+    assert result.describe()["staged_zmx"] == str((tmp_path / "work" / "lens.zmx").resolve())
+
+
+def test_run_codev_readout_rejects_dotted_work_dir(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="work_dir"):
+        run_codev_readout(source_zmx=default_patent_roundtrip_seed(), work_dir=tmp_path / ".work")
 
 
 def test_codev_readout_rejects_returncode_outside_empirical_ok_set(
