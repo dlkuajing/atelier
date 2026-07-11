@@ -374,10 +374,12 @@ def _mode3_generation_notes(
         f"preferred 配置=\"{preferred}\"（{preferred_reason}）",
         f"玻璃 provenance（preferred=\"{preferred}\"）：{glass_model_label}",
         f"渐晕 edge_used（preferred 配置，autovig 裁瞳量）={edge_used}",
-        "CONVERGED_FIELDS[TARGET_CONVERGED] 已缩窄为 {efl}：F# 现状锁 native（非达"
-        "target）、IMH/FOV Stage C 场重建未落地——本候选 5 维 target-deviation 中"
-        "只有 efl 标 converged=True，其余如实标 False（见 candidate.py "
-        "CONVERGED_FIELDS 缩窄注记）",
+        "收敛维 provenance（P15 带条件扩，2026-07-11）：efl 标 converged=True"
+        "（接缝1 真机验证）；fnum 的能力上限已进 CONVERGED_FIELDS 但**本候选未跑"
+        " FNO 阶梯**（run_codev_target_standard 走 FNO 锁 native 路径，"
+        "fnum_ladder_achieved=None）→ fnum 如实标 False；IMH/FOV Stage C 场重建"
+        "未落地、TTL 恒不在优化维，均如实标 False（见 candidate.py "
+        "CONVERGED_FIELDS 能力上限注记与 fnum_gate_from_ladder_result）",
         "optical_extras.ri_by_field 按优化后 ZMX 显式路径实算（P17-4 接线，"
         "relative_illumination.py 的 zmx_path 参数）——loop3 遗留#4（临时目录致"
         "RI 复算结构性 miss）已闭合；追迹失败时仍 fail-closed 全 unavailable，"
@@ -535,10 +537,18 @@ class TargetConvergedGenerator(CandidateGenerator):
        `score_candidate` 不消费它（打分口径保持 payload/Optiland 一致
        性），只在离线报告的 provenance 区如实展示（`scripts/c1_orchestrate.py`）。
 
-    **诚实红线**：`CONVERGED_FIELDS[TARGET_CONVERGED]` 已缩窄为
-    `frozenset({"efl"})`（`candidate.py`，2026-07-10）——F#/IMH/FOV 现状不
-    达 target（F# 只锁 native，IMH/FOV Stage C 未落地），虚标为已收敛 =
-    撒谎，违反诚实不变量。TTL 从未在优化维内。
+    **诚实红线**（P15 带条件扩后，2026-07-11）：
+    `CONVERGED_FIELDS[TARGET_CONVERGED]` = `frozenset({"efl", "fnum"})`
+    （`candidate.py`，语义=能力上限）。efl 无条件真收敛（接缝1）；**fnum 带
+    per-candidate 证据 gate**——本 generator 走 `run_codev_target_standard`
+    （FNO 锁 native，接缝3a），**不跑 FNO 阶梯**，产出候选的
+    `fnum_ladder_achieved` 恒为默认 `None` → fnum 恒标 False。将来把
+    `run_codev_target_fno_ladder`（P15 Stage B 引擎，真机 14 ladder 验证）
+    接进本 generator 时，用 `candidate.fnum_gate_from_ladder_result(result)`
+    从四条件 `target_achieved` 记录填 gate（禁 aut_converged 单维），并把
+    accepted_final 摘要（measured_fnum/effective_edge_used/ray_grid）进
+    provenance side-channel。IMH/FOV Stage C 未落地、TTL 从未在优化维内，
+    虚标为已收敛 = 撒谎，违反诚实不变量。
 
     六接缝原文（§10，作后续 Stage B/C session 的接口锚，未落地部分保留
     file:line）：
@@ -548,7 +558,9 @@ class TargetConvergedGenerator(CandidateGenerator):
     2. 玻璃可变——已落地：`extra_dof="both"` 走塑料域 GLA 边界（`codev_
        optimize.py` "玻璃可变域修复"章节，commit 7b504c6）。
     3. merit 加客户操作数——部分落地：3a F# 走 FNO 模式锁 native（真机 E1
-       实测）；IMH/FOV 操作数未加（Stage C 场重建，未落地）。
+       实测）；F# **朝 target** 的引擎已另立（`run_codev_target_fno_ladder`
+       + ray-aware retry，P15，未接本 generator）；IMH/FOV 操作数未加
+       （Stage C 场重建，未落地）。
     4. `applied_to_payload` 真置 `True`：`local_optimizer.py`（~9 处硬编码
        False，未落地——本 generator 走独立 payload 现算路径，不经
        `local_optimizer`，该接缝仍待 case_library 侧收口）。

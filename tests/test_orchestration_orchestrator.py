@@ -172,9 +172,11 @@ def test_orchestrate_target_converged_success_clears_banner_and_round_trips_vali
 
     efl_dev = next(d for d in row.target_deviations if d.field == "efl")
     assert efl_dev.converged_toward_target is True
-    # 其余维（fnum/imh/fov/ttl，凡有产出）如实标 False——CONVERGED_FIELDS 缩窄
-    # 为 {efl} 后，validator（ScoredCandidate._enforce_consistency）本身就会在
-    # 任何字段不一致时 raise；这里直接断言 orchestrate 的真实产出没有撒谎。
+    # 其余维（fnum/imh/fov/ttl，凡有产出）如实标 False——P15 带条件扩后 fnum
+    # 虽在能力上限表内，但本 generator 路径不跑 FNO 阶梯（fnum_ladder_achieved
+    # 恒 None）→ fnum 仍恒 False；validator（ScoredCandidate._enforce_
+    # consistency）本身就会在任何字段不一致时 raise；这里直接断言 orchestrate
+    # 的真实产出没有撒谎。
     for field in ("fnum", "imh", "fov", "ttl"):
         dev = next((d for d in row.target_deviations if d.field == field), None)
         if dev is not None:
