@@ -20,7 +20,11 @@ import structlog
 
 from app.core.case_library import build_sample_from_optic, cases_for_scenario, rank_seeds
 from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
-from app.core.engines.codev_optimize import RAY_RETRY_VIG_LADDER, run_codev_target_fno_ladder
+from app.core.engines.codev_optimize import (
+    EFL_TARGET_TOLERANCE_PCT,
+    RAY_RETRY_VIG_LADDER,
+    run_codev_target_fno_ladder,
+)
 from app.core.engines.seed_target_score import SeedTargetScore, score_seed_target_match
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
@@ -885,6 +889,27 @@ class TargetConvergedGenerator(CandidateGenerator):
         if evidence is None:
             return None
 
+        accepted = evidence.accepted_final
+        if accepted is not None:
+            try:
+                accepted_path = Path(accepted.optimized_zmx_path).resolve(strict=True)
+                load_path = optimized_zmx_path.resolve(strict=True)
+            except OSError as exc:
+                logger.warning(
+                    "mode3_seed_accepted_zmx_unresolvable",
+                    case_id=seed.metadata.case_id,
+                    error=f"{type(exc).__name__}: {exc}",
+                )
+                return None
+            if load_path != accepted_path:
+                logger.warning(
+                    "mode3_seed_accepted_zmx_path_mismatch",
+                    case_id=seed.metadata.case_id,
+                    load_path=str(load_path),
+                    accepted_path=str(accepted_path),
+                )
+                return None
+
         try:
             optic = load_normalized_zmx(optimized_zmx_path)
             payload = build_sample_from_optic(
@@ -903,6 +928,46 @@ class TargetConvergedGenerator(CandidateGenerator):
                 error=f"{type(exc).__name__}: {exc}",
             )
             return None
+
+        payload_efl = payload.paraxial.effective_focal_length_mm
+        if not math.isfinite(payload_efl):
+            logger.warning("mode3_seed_payload_efl_nonfinite", case_id=seed.metadata.case_id)
+            return None
+        payload_efl_deviation_pct = (
+            abs(payload_efl - evidence.target_efl_mm) / evidence.target_efl_mm * 100
+        )
+        if payload_efl_deviation_pct >= EFL_TARGET_TOLERANCE_PCT:
+            logger.warning(
+                "mode3_seed_payload_efl_outside_verified_tolerance",
+                case_id=seed.metadata.case_id,
+                deviation_pct=payload_efl_deviation_pct,
+                tolerance_pct=EFL_TARGET_TOLERANCE_PCT,
+            )
+            return None
+
+        if accepted is not None:
+            payload_fnum = payload.paraxial.f_number
+            if not math.isfinite(payload_fnum):
+                logger.warning("mode3_seed_payload_fnum_nonfinite", case_id=seed.metadata.case_id)
+                return None
+            target_deviation_pct = (
+                abs(payload_fnum - evidence.fnum_target) / evidence.fnum_target * 100
+            )
+            measured_deviation_pct = (
+                abs(payload_fnum - accepted.measured_fnum) / accepted.measured_fnum * 100
+            )
+            if (
+                target_deviation_pct > evidence.fnum_tolerance_pct
+                or measured_deviation_pct > evidence.fnum_tolerance_pct
+            ):
+                logger.warning(
+                    "mode3_seed_payload_fnum_outside_verified_tolerance",
+                    case_id=seed.metadata.case_id,
+                    target_deviation_pct=target_deviation_pct,
+                    measured_deviation_pct=measured_deviation_pct,
+                    tolerance_pct=evidence.fnum_tolerance_pct,
+                )
+                return None
 
         provenance_raw = result.get("provenance")
         provenance = provenance_raw if isinstance(provenance_raw, Mapping) else {}

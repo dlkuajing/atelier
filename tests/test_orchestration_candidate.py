@@ -67,7 +67,12 @@ def _fnum_evidence(achieved: bool | None) -> FnumLadderEvidence | None:
             aut_converged=True,
             ray_traceable=True,
             effective_edge_used=0.3,
-            ray_grid={"category": "ok"},
+            ray_grid={
+                "category": "ok", "refl_count": 0, "miss_count": 0,
+                "ray_aiming_warning": False, "aperture_conflict_matched": None,
+                "excerpt": None, "note": "positive measured listing evidence",
+                "normal_completion": True, "abnormal_completion_matched": None,
+            },
             quality_note="measured on accepted vignetted pupil",
             optimized_zmx_path="accepted.zmx",
         )
@@ -415,6 +420,28 @@ def test_fnum_gate_from_ladder_result_requires_four_condition_record():
     forged_final = dict(raw["accepted_final"])
     forged_final["ray_traceable"] = "True"
     assert fnum_gate_from_ladder_result({**raw, "accepted_final": forged_final}) is False
+    impossible_fnum = dict(raw["accepted_final"])
+    impossible_fnum.update({"measured_fnum": 99.0, "fno_param_achieved": True})
+    assert fnum_gate_from_ladder_result(
+        {
+            **raw,
+            "fnum_target": 2.0,
+            "fnum_tolerance_pct": 8.0,
+            "accepted_final": impossible_fnum,
+        }
+    ) is False
+    contradictory_grid = dict(raw["accepted_final"])
+    contradictory_grid["ray_grid"] = {
+        **contradictory_grid["ray_grid"],
+        "category": "ok",
+        "refl_count": 7,
+    }
+    assert fnum_gate_from_ladder_result(
+        {**raw, "accepted_final": contradictory_grid}
+    ) is False
+    unknown_grid = dict(raw["accepted_final"])
+    unknown_grid["ray_grid"] = {**unknown_grid["ray_grid"], "unknown_failure_count": 0}
+    assert fnum_gate_from_ladder_result({**raw, "accepted_final": unknown_grid}) is False
     # aut_converged 单维（P15 Stage 2 证明的双假阳性维度）绝不放行
     assert fnum_gate_from_ladder_result({"aut_converged": "1"}) is False
     assert fnum_gate_from_ladder_result({}) is False

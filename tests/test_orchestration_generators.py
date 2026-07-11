@@ -341,17 +341,30 @@ def _fake_match(*, band: str = "lt5", score: float = 2.0, delta_pct: float = 2.0
 
 
 def _fake_ladder_result(
-    *, optimized_zmx_path: str | None, target_achieved: bool = True
+    *,
+    optimized_zmx_path: str | None,
+    target_efl_mm: float = 3.797,
+    fnum_target: float = 2.3,
+    target_achieved: bool = True,
 ) -> dict[str, object]:
     accepted = {
         "rung_index": 3,
-        "target_fnum": 2.3,
+        "target_fnum": fnum_target,
         "status": "measured",
-        "measured_fnum": 2.3,
+        "measured_fnum": fnum_target,
         "fnum_target_deviation_pct": 0.0,
         "fno_param_achieved": target_achieved,
         "ray_traceable": target_achieved,
-        "ray_grid": {"category": "ok" if target_achieved else "TIR"},
+        "ray_grid": (
+            {
+                "category": "ok", "refl_count": 0, "miss_count": 0,
+                "ray_aiming_warning": False, "aperture_conflict_matched": None,
+                "excerpt": None, "note": "positive measured listing evidence",
+                "normal_completion": True, "abnormal_completion_matched": None,
+            }
+            if target_achieved
+            else {"category": "TIR", "refl_count": 1, "miss_count": 0}
+        ),
         "efl_target_deviation_pct": 0.01,
         "post_aut.max_rms_spot_diameter_um": 12.3,
         "post_aut.max_rms_wavefront_error_waves": 0.04,
@@ -370,8 +383,8 @@ def _fake_ladder_result(
         "schema": "atelier-p15-fno-ladder-v1",
         "source_zmx": "seed.zmx",
         "stage": "B",
-        "target_efl_mm": 3.797,
-        "fnum_target": 2.3,
+        "target_efl_mm": target_efl_mm,
+        "fnum_target": fnum_target,
         "rung_count": 3,
         "fnum_tolerance_pct": 8.0,
         "vig_ladder": [0.0, 0.2, 0.3],
@@ -811,9 +824,16 @@ def test_candidate_for_seed_notes_flag_fov_unfiltered_selection_when_fov_unconst
     monkeypatch.setattr(
         generators_module,
         "run_codev_target_fno_ladder",
-        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(unconstrained_zmx)),  # noqa: ANN003
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(unconstrained_zmx),
+            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+        ),
     )
-    spec_unconstrained = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    spec_unconstrained = TargetSpec(
+        scenario=seed.metadata.scenario,
+        efl_mm=seed.paraxial.effective_focal_length_mm,
+        fnum=seed.paraxial.f_number,
+    )
     candidate = TargetConvergedGenerator._candidate_for_seed(
         seed=seed, match=_fake_match(), spec=spec_unconstrained, work_dir=tmp_path / "work-a"
     )
@@ -825,10 +845,16 @@ def test_candidate_for_seed_notes_flag_fov_unfiltered_selection_when_fov_unconst
     monkeypatch.setattr(
         generators_module,
         "run_codev_target_fno_ladder",
-        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(constrained_zmx)),  # noqa: ANN003
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(constrained_zmx),
+            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+        ),
     )
     spec_constrained = TargetSpec(
-        scenario=seed.metadata.scenario, efl_mm=3.797, fov_deg=seed.metadata.fov_deg, fnum=2.3
+        scenario=seed.metadata.scenario,
+        efl_mm=seed.paraxial.effective_focal_length_mm,
+        fov_deg=seed.metadata.fov_deg,
+        fnum=seed.paraxial.f_number,
     )
     candidate_constrained = TargetConvergedGenerator._candidate_for_seed(
         seed=seed, match=_fake_match(), spec=spec_constrained, work_dir=tmp_path / "work-b"
@@ -910,7 +936,10 @@ def test_candidate_for_seed_payload_build_failure_is_fail_closed(tmp_path: Path,
     monkeypatch.setattr(
         generators_module,
         "run_codev_target_fno_ladder",
-        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(bogus_zmx)),  # noqa: ANN003
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(bogus_zmx),
+            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+        ),
     )
     result = TargetConvergedGenerator._candidate_for_seed(
         seed=seed,
@@ -942,9 +971,16 @@ def test_candidate_for_seed_success_path_produces_target_converged_candidate(
     monkeypatch.setattr(
         generators_module,
         "run_codev_target_fno_ladder",
-        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(stand_in_zmx)),  # noqa: ANN003
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(stand_in_zmx),
+            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+        ),
     )
-    spec = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    spec = TargetSpec(
+        scenario=seed.metadata.scenario,
+        efl_mm=seed.paraxial.effective_focal_length_mm,
+        fnum=seed.paraxial.f_number,
+    )
     candidate = TargetConvergedGenerator._candidate_for_seed(
         seed=seed, match=_fake_match(), spec=spec, work_dir=tmp_path / "work"
     )
@@ -1000,11 +1036,18 @@ def test_target_converged_generator_injected_ladder_runner_keeps_negative_eviden
     def runner(**kwargs):  # noqa: ANN003
         calls.append(kwargs)
         return _fake_ladder_result(
-            optimized_zmx_path=str(stand_in_zmx), target_achieved=False
+            optimized_zmx_path=str(stand_in_zmx),
+            target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
+            target_achieved=False,
         )
 
     generator = TargetConvergedGenerator(ladder_runner=runner)
-    spec = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    spec = TargetSpec(
+        scenario=seed.metadata.scenario,
+        efl_mm=seed.paraxial.effective_focal_length_mm,
+        fnum=seed.paraxial.f_number,
+    )
     candidate = generator._candidate_for_seed(
         seed=seed,
         match=_fake_match(),
@@ -1014,12 +1057,71 @@ def test_target_converged_generator_injected_ladder_runner_keeps_negative_eviden
     )
 
     assert candidate is not None
-    assert calls and calls[0]["fnum_target"] == pytest.approx(2.3)
+    assert calls and calls[0]["fnum_target"] == pytest.approx(seed.paraxial.f_number)
     assert calls[0]["ray_retry_vig_ladder"] == generators_module.RAY_RETRY_VIG_LADDER
     assert candidate.fnum_ladder_evidence is not None
     assert candidate.fnum_ladder_evidence.target_achieved is False
     assert candidate.fnum_ladder_evidence.accepted_final is None
     assert candidate.fnum_ladder_achieved is False
+
+
+def test_candidate_for_seed_rejects_ladder_claim_disagrees_with_loaded_payload(
+    tmp_path: Path, monkeypatch
+):
+    """Review regression: a copied native seed cannot wear fake 3.797/2.3 evidence."""
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    assert (
+        abs(seed.paraxial.effective_focal_length_mm - 3.797) / 3.797 * 100
+        >= generators_module.EFL_TARGET_TOLERANCE_PCT
+        or abs(seed.paraxial.f_number - 2.3) / 2.3 * 100 > 8.0
+    )
+    stand_in_zmx = tmp_path / "native-seed-falsely-labelled-optimized.zmx"
+    stand_in_zmx.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_fno_ladder",
+        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(stand_in_zmx)),  # noqa: ARG005
+    )
+
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        work_dir=tmp_path / "work",
+    )
+    assert candidate is None
+
+
+def test_candidate_for_seed_rejects_payload_fnum_disagrees_with_accepted_measurement(
+    tmp_path: Path, monkeypatch
+):
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    fake_target_fnum = seed.paraxial.f_number / 2.0
+    stand_in_zmx = tmp_path / "native-seed-falsely-labelled-fnum.zmx"
+    stand_in_zmx.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_fno_ladder",
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(stand_in_zmx),
+            target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
+        ),
+    )
+
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(
+            scenario=seed.metadata.scenario,
+            efl_mm=seed.paraxial.effective_focal_length_mm,
+            fnum=fake_target_fnum,
+        ),
+        work_dir=tmp_path / "work",
+    )
+    assert candidate is None
 
 
 def test_candidate_for_seed_persists_optimized_zmx_bytes(tmp_path: Path, monkeypatch):
@@ -1031,12 +1133,19 @@ def test_candidate_for_seed_persists_optimized_zmx_bytes(tmp_path: Path, monkeyp
     monkeypatch.setattr(
         generators_module,
         "run_codev_target_fno_ladder",
-        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(source)),  # noqa: ANN003
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(source), target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
+        ),
     )
     candidate = TargetConvergedGenerator._candidate_for_seed(
         seed=seed,
         match=_fake_match(),
-        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        spec=TargetSpec(
+            scenario=seed.metadata.scenario,
+            efl_mm=seed.paraxial.effective_focal_length_mm,
+            fnum=seed.paraxial.f_number,
+        ),
         work_dir=tmp_path / "work",
         artifact_dir=tmp_path / "artifacts",
         run_index=1,
@@ -1058,7 +1167,10 @@ def test_candidate_for_seed_persist_collision_records_warning(tmp_path: Path, mo
     monkeypatch.setattr(
         generators_module,
         "run_codev_target_fno_ladder",
-        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(source)),  # noqa: ANN003
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(source), target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
+        ),
     )
     collision = tmp_path / "artifacts" / "candidates" / (
         f"{seed.metadata.case_id}--stageb-ladder--run-1"
@@ -1067,7 +1179,11 @@ def test_candidate_for_seed_persist_collision_records_warning(tmp_path: Path, mo
     candidate = TargetConvergedGenerator._candidate_for_seed(
         seed=seed,
         match=_fake_match(),
-        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        spec=TargetSpec(
+            scenario=seed.metadata.scenario,
+            efl_mm=seed.paraxial.effective_focal_length_mm,
+            fnum=seed.paraxial.f_number,
+        ),
         work_dir=tmp_path / "work",
         artifact_dir=tmp_path / "artifacts",
     )
@@ -1095,7 +1211,10 @@ def test_candidate_for_seed_ri_fails_closed_when_optimized_zmx_deleted_before_ri
     monkeypatch.setattr(
         generators_module,
         "run_codev_target_fno_ladder",
-        lambda **kwargs: _fake_ladder_result(optimized_zmx_path=str(stand_in_zmx)),  # noqa: ANN003
+        lambda **kwargs: _fake_ladder_result(
+            optimized_zmx_path=str(stand_in_zmx),
+            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+        ),
     )
 
     real_load = generators_module.load_normalized_zmx
@@ -1105,7 +1224,11 @@ def test_candidate_for_seed_ri_fails_closed_when_optimized_zmx_deleted_before_ri
         return optic
 
     monkeypatch.setattr(generators_module, "load_normalized_zmx", _load_then_delete)
-    spec = TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3)
+    spec = TargetSpec(
+        scenario=seed.metadata.scenario,
+        efl_mm=seed.paraxial.effective_focal_length_mm,
+        fnum=seed.paraxial.f_number,
+    )
     candidate = TargetConvergedGenerator._candidate_for_seed(
         seed=seed, match=_fake_match(), spec=spec, work_dir=tmp_path / "work"
     )

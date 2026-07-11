@@ -79,7 +79,12 @@ def _fnum_evidence(achieved: bool | None) -> FnumLadderEvidence | None:
         FnumAcceptedFinalEvidence(
             status="measured", measured_fnum=2.4, fno_param_achieved=True,
             aut_converged=True, ray_traceable=True, effective_edge_used=0.2,
-            ray_grid={"category": "ok"}, quality_note="measured accepted rung",
+            ray_grid={
+                "category": "ok", "refl_count": 0, "miss_count": 0,
+                "ray_aiming_warning": False, "aperture_conflict_matched": None,
+                "excerpt": None, "note": "positive measured listing evidence",
+                "normal_completion": True, "abnormal_completion_matched": None,
+            }, quality_note="measured accepted rung",
             optimized_zmx_path="accepted.zmx",
         ) if achieved else None
     )

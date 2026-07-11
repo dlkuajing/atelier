@@ -27,6 +27,7 @@ from pydantic import (
     ConfigDict,
     Field,
     StrictBool,
+    StrictInt,
     computed_field,
     field_validator,
     model_validator,
@@ -395,6 +396,30 @@ class OpticalExtras(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+class FnumRayGridOkEvidence(BaseModel):
+    """Closed positive listing classification; category alone is insufficient."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    category: Literal["ok"]
+    refl_count: StrictInt = Field(ge=0)
+    miss_count: StrictInt = Field(ge=0)
+    ray_aiming_warning: StrictBool
+    aperture_conflict_matched: None
+    excerpt: None
+    note: str = Field(min_length=1)
+    normal_completion: StrictBool
+    abnormal_completion_matched: None
+
+    @model_validator(mode="after")
+    def _positive_classification_is_closed(self) -> FnumRayGridOkEvidence:
+        if self.refl_count != 0 or self.miss_count != 0:
+            raise ValueError("ray_grid category=ok requires zero REFL and MISS counts")
+        if self.normal_completion is not True:
+            raise ValueError("ray_grid category=ok requires positive Normal AUTO completion")
+        return self
+
+
 class FnumAcceptedFinalEvidence(BaseModel):
     """One measured, ray-clean final FNO-ladder rung (closed schema)."""
 
@@ -406,7 +431,7 @@ class FnumAcceptedFinalEvidence(BaseModel):
     aut_converged: StrictBool
     ray_traceable: StrictBool
     effective_edge_used: float = Field(ge=0, lt=1)
-    ray_grid: dict[str, object]
+    ray_grid: FnumRayGridOkEvidence
     quality_note: str = Field(min_length=1)
     optimized_zmx_path: str = Field(min_length=1)
 
@@ -425,8 +450,6 @@ class FnumAcceptedFinalEvidence(BaseModel):
             and self.ray_traceable is True
         ):
             raise ValueError("accepted_final requires all four Stage B conditions")
-        if self.ray_grid.get("category") != "ok":
-            raise ValueError("accepted_final ray_grid.category must be 'ok'")
         return self
 
 
@@ -450,10 +473,30 @@ class FnumLadderEvidence(BaseModel):
     num_fields: int = Field(ge=2)
     extra_dof: Literal["none", "asphere", "glass", "both"]
 
+    @field_validator("target_efl_mm", "fnum_target", "fnum_tolerance_pct")
+    @classmethod
+    def _finite_outer_numbers(cls, value: float) -> float:
+        if not math.isfinite(value):
+            raise ValueError("FNO ladder target/tolerance numbers must be finite")
+        return value
+
     @model_validator(mode="after")
     def _target_and_final_are_biconditional(self) -> FnumLadderEvidence:
         if self.target_achieved != (self.accepted_final is not None):
             raise ValueError("target_achieved must exactly match accepted_final presence")
+        accepted = self.accepted_final
+        if accepted is not None:
+            deviation_pct = (
+                abs(accepted.measured_fnum - self.fnum_target) / self.fnum_target * 100
+            )
+            recomputed = deviation_pct <= self.fnum_tolerance_pct
+            if accepted.fno_param_achieved is not recomputed:
+                raise ValueError(
+                    "accepted_final.fno_param_achieved disagrees with measured_fnum, "
+                    "outer fnum_target and fnum_tolerance_pct"
+                )
+            if not recomputed:
+                raise ValueError("accepted_final measured_fnum is outside F# tolerance")
         return self
 
 

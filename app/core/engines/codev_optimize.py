@@ -406,6 +406,7 @@ def run_codev_optimize(
 # ===========================================================================
 
 TARGET_RESULT_SCHEMA = "atelier-codev-target-v1"
+EFL_TARGET_TOLERANCE_PCT = 2.0
 _TARGET_SNAPSHOTS = ("seed_baseline", "config_pre_aut", "post_aut")
 
 
@@ -724,7 +725,7 @@ def build_codev_target_sequence(
         "  ^efl_target_dev_pct == ABSF((^post_aut_efl_y_mm-^target_efl)/^target_efl)*100",
         "END IF",
         "^aut_converged == 0",
-        "IF ^efl_target_dev_pct < 2.0",
+        f"IF ^efl_target_dev_pct < {EFL_TARGET_TOLERANCE_PCT:.1f}",
         "  ^aut_converged == 1",
         "END IF",
         "^numf_out == (NUM F)",

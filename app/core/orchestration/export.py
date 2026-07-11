@@ -240,7 +240,9 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
             evidence.target_achieved if evidence is not None else None,
             fmt_float(accepted.measured_fnum) if accepted is not None else "N/A",
             fmt_float(accepted.effective_edge_used) if accepted is not None else "N/A",
-            json.dumps(accepted.ray_grid, ensure_ascii=False, sort_keys=True)
+            json.dumps(
+                accepted.ray_grid.model_dump(), ensure_ascii=False, sort_keys=True
+            )
             if accepted is not None
             else "N/A",
             accepted.quality_note if accepted is not None else "N/A",
@@ -402,7 +404,9 @@ def _bundle_readme(
         f"{fmt_float(accepted.effective_edge_used) if accepted else 'N/A'}",
         "accepted_final.ray_grid: "
         + (
-            json.dumps(accepted.ray_grid, ensure_ascii=False, sort_keys=True)
+            json.dumps(
+                accepted.ray_grid.model_dump(), ensure_ascii=False, sort_keys=True
+            )
             if accepted
             else "N/A"
         ),

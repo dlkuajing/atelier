@@ -197,7 +197,12 @@ def _target_converged_candidate(*, optimized_zmx_resolvable: bool = False) -> Sc
         aut_converged=True,
         ray_traceable=True,
         effective_edge_used=0.4,
-        ray_grid={"category": "ok", "refl_count": 0, "miss_count": 0},
+        ray_grid={
+            "category": "ok", "refl_count": 0, "miss_count": 0,
+            "ray_aiming_warning": False, "aperture_conflict_matched": None,
+            "excerpt": None, "note": "positive measured listing evidence",
+            "normal_completion": True, "abnormal_completion_matched": None,
+        },
         quality_note="measured on accepted ray-retry pupil",
         optimized_zmx_path="accepted-final.zmx",
     )

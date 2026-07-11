@@ -1720,7 +1720,9 @@ def _candidate_fnum_ladder_context(
         "effective_edge_used": formatting.fmt_float(accepted.effective_edge_used)
         if accepted is not None
         else "N/A",
-        "ray_grid": json.dumps(accepted.ray_grid, ensure_ascii=False, sort_keys=True)
+        "ray_grid": json.dumps(
+            accepted.ray_grid.model_dump(), ensure_ascii=False, sort_keys=True
+        )
         if accepted is not None
         else "N/A",
         "quality_note": accepted.quality_note if accepted is not None else "N/A",
