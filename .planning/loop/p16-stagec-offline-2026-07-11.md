@@ -13,6 +13,8 @@
 - manifest 复用 `SCENARIO_BOUNDS`/`validate_scenario_params`，双向 target 在 IMH 与派生 FOV 交集边界内生成；无双向空间的 seed 进入结构化 blocked 账本；control 明名 `native-imh-reconstructed-control`。
 - 候选/metadata/export seam：payload 的 nominal IMH 与 derived FOV 可从同一个 resolver 注入；Stage C evidence typed 持久化；Stage B reproduction.seq 不得冒充 Stage C replay。
 - candidate/bundle 同时核 source/output SHA、target/profile、artifact path 与 payload IMH/FOV；任一缺失或漂移，`candidate.zmx` 与 `reproduction.seq` 均扣留并在 README 说明。
+- 最终复核收敛：artifact 字节事实只由 `validate_reconstructed_field_artifact` 一处解析，严格核 ASCII/LF、唯一 FTYP3、X/Y 场数、signed fractions、edge=target IMH、四条实际零渐晕与真实 SHA；producer 自报 hash/profile 不作事实。
+- canonical target EFL 从 `ResolvedFieldTarget` 直接进入 reconstruction/evidence/manifest/export；derived FOV 只用 target IMH + target EFL，post-run payload EFL 仅是后续达成读数，不反写 provenance。
 
 ## 明确未验证
 

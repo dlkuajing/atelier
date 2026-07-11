@@ -15,6 +15,7 @@ from app.core.engines.stagec_field import (
     StageCFieldEvidence,
     reconstruct_image_fields,
     resolve_field_target,
+    validate_reconstructed_field_artifact,
 )
 
 
@@ -109,6 +110,14 @@ def _zmx(
     return ("\r\n".join(lines) + "\r\n").encode()
 
 
+def _resolved_target(*, efl_mm: float = 4.0, image_height_mm: float = 3.0):
+    target = resolve_field_target(
+        efl_mm=efl_mm, image_height_mm=image_height_mm, full_fov_deg=None
+    )
+    assert target.status is FieldTargetStatus.RESOLVED
+    return target
+
+
 @pytest.mark.parametrize("num_fields", [2, 3, 12])
 def test_reconstruction_preserves_field_count_fractions_source_and_lf(
     tmp_path: Path, num_fields: int
@@ -120,7 +129,8 @@ def test_reconstruction_preserves_field_count_fractions_source_and_lf(
     source_hash = hashlib.sha256(source_bytes).hexdigest()
 
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=output, target_image_height_mm=3.2
+        source_zmx=source, output_zmx=output,
+        resolved_target=_resolved_target(image_height_mm=3.2),
     )
 
     assert result.status == "constructed"
@@ -143,7 +153,7 @@ def test_reconstruction_preserves_signed_field_fractions(tmp_path: Path) -> None
     output = tmp_path / "out.zmx"
     source.write_bytes(_zmx(3, signed_fields=True))
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=output, target_image_height_mm=3.0
+        source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
     )
     assert result.normalized_fractions == (-1.0, 0.0, 1.0)
     yfln = next(
@@ -153,13 +163,41 @@ def test_reconstruction_preserves_signed_field_fractions(tmp_path: Path) -> None
     assert tuple(float(value) for value in yfln.split()[1:]) == (-3.0, 0.0, 3.0)
 
 
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (lambda text: text + "FTYP 3 0 3 0 0 0 0 3\n", "exactly one FTYP"),
+        (lambda text: text.replace("VDYN 0 0 0", "VDYN 0 0 0.1"), "VDYN"),
+        (lambda text: text.replace("XFLN 0.0 0.0 0.0", "XFLN 0.0 0.0"), "count"),
+        (lambda text: text.replace("YFLN 0 1.5 3", "YFLN 0 1.4 3"), "fractions"),
+    ],
+)
+def test_artifact_validator_rejects_bytes_that_disagree_with_declared_profile(
+    tmp_path: Path, mutation, message: str,
+) -> None:
+    source = tmp_path / "seed.zmx"
+    output = tmp_path / "out.zmx"
+    source.write_bytes(_zmx(3))
+    result = reconstruct_image_fields(
+        source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
+    )
+    output.write_text(mutation(output.read_text(encoding="ascii")), encoding="ascii", newline="\n")
+    with pytest.raises(ValueError, match=message):
+        validate_reconstructed_field_artifact(
+            output,
+            expected_num_fields=result.num_fields,
+            expected_fractions=result.normalized_fractions,
+            target_image_height_mm=result.target_image_height_mm,
+        )
+
+
 def test_reconstruction_rejects_same_resolved_path_without_touching_source(tmp_path: Path) -> None:
     source = tmp_path / "seed.zmx"
     source.write_bytes(_zmx(3))
     before = source.read_bytes()
     with pytest.raises(ValueError, match="different paths"):
         reconstruct_image_fields(
-            source_zmx=source, output_zmx=source, target_image_height_mm=3.0
+            source_zmx=source, output_zmx=source, resolved_target=_resolved_target(),
         )
     assert source.read_bytes() == before
 
@@ -176,7 +214,7 @@ def test_atomic_publish_failure_preserves_existing_output_and_cleans_temp(
     monkeypatch.setattr(stagec.os, "replace", Mock(side_effect=OSError("publish failed")))
     with pytest.raises(OSError, match="publish failed"):
         reconstruct_image_fields(
-            source_zmx=source, output_zmx=output, target_image_height_mm=3.0
+            source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
         )
     assert output.read_bytes() == b"existing-output"
     assert not list(tmp_path.glob(".*.tmp"))
@@ -186,7 +224,8 @@ def test_reconstruction_rejects_nonzero_x_field(tmp_path: Path) -> None:
     source = tmp_path / "seed.zmx"
     source.write_bytes(_zmx(3, x_edge=0.2))
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=tmp_path / "out.zmx", target_image_height_mm=3.0
+        source_zmx=source, output_zmx=tmp_path / "out.zmx",
+        resolved_target=_resolved_target(),
     )
     assert result.status == "rejected"
     assert not (tmp_path / "out.zmx").exists()
@@ -199,7 +238,7 @@ def test_reconstruction_nonzero_vignetting_is_unverified_and_emits_nothing(
     source.write_bytes(_zmx(3, nonzero_vig=True))
     output = tmp_path / "out.zmx"
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=output, target_image_height_mm=3.0
+        source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
     )
     assert result.status == "unverified"
     assert result.vignetting_status == "nonzero-unverified"
@@ -216,8 +255,11 @@ def _offline_evidence(*, reconstruction: bool = True) -> dict[str, object]:
         "real_chief_ray_status": "pending",
         "rsi_status": "pending",
         "target_image_height_mm": 3.0 if reconstruction else None,
+        "target_efl_mm": 4.0 if reconstruction else None,
         "nominal_image_height_mm": 3.0 if reconstruction else None,
-        "derived_full_fov_deg": 70.0 if reconstruction else None,
+        "derived_full_fov_deg": (
+            2 * math.degrees(math.atan(3.0 / 4.0)) if reconstruction else None
+        ),
         "measured_full_fov_deg": None,
         "reconstruction_applied": reconstruction,
         "imh_field_valid": False,

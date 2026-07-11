@@ -595,6 +595,11 @@ def build_sample_from_optic(
             raise ValueError("resolved_field_target must have status=resolved")
         if resolved_field_target.image_height_mm is None or resolved_field_target.full_fov_deg is None:
             raise ValueError("resolved_field_target requires IMH and FOV")
+        if resolved_field_target.efl_mm is None or not math.isclose(
+            nominal_efl_mm, resolved_field_target.efl_mm, rel_tol=1e-12, abs_tol=1e-12
+        ):
+            raise ValueError("nominal EFL must equal resolved field target EFL")
+        nominal_efl_mm = resolved_field_target.efl_mm
         nominal_fov_deg = resolved_field_target.full_fov_deg
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")

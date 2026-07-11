@@ -212,6 +212,7 @@ class FieldReconstructionResult(BaseModel):
     output_sha256: str | None = None
     num_fields: int | None
     normalized_fractions: tuple[float, ...]
+    target_efl_mm: float
     target_image_height_mm: float
     field_type_before: int | None
     field_type_after: Literal[3] | None
@@ -252,6 +253,8 @@ class FieldReconstructionResult(BaseModel):
             )
         ):
             raise ValueError("constructed field profile must contain a signed unit edge")
+        if not math.isfinite(self.target_efl_mm) or self.target_efl_mm <= 0:
+            raise ValueError("target_efl_mm must be positive and finite")
         return self
 
 
@@ -266,8 +269,76 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+class ParsedStageCArtifact(BaseModel):
+    """Facts parsed from artifact bytes; never accepts producer declarations as facts."""
+
+    model_config = ConfigDict(extra="forbid")
+    sha256: str
+    num_fields: int = Field(ge=2)
+    normalized_fractions: tuple[float, ...]
+    target_image_height_mm: float = Field(gt=0)
+
+
+def validate_reconstructed_field_artifact(
+    artifact_path: str | Path,
+    *,
+    expected_num_fields: int,
+    expected_fractions: tuple[float, ...],
+    target_image_height_mm: float,
+) -> ParsedStageCArtifact:
+    """Parse and validate the complete offline Stage C artifact from actual bytes."""
+
+    path = Path(artifact_path)
+    payload = path.read_bytes()
+    if b"\r" in payload or not payload.endswith(b"\n"):
+        raise ValueError("Stage C artifact must use LF-only line endings")
+    try:
+        text = payload.decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise ValueError("Stage C artifact must be ASCII") from exc
+    lines = text.splitlines()
+
+    def unique_row(key: str) -> tuple[float, ...]:
+        matches = [line for line in lines if line.startswith(f"{key} ")]
+        if len(matches) != 1:
+            raise ValueError(f"Stage C artifact requires exactly one {key} row")
+        return _floats(matches[0].removeprefix(f"{key} "))
+
+    ftyp = unique_row("FTYP")
+    if not ftyp or int(ftyp[0]) != 3:
+        raise ValueError("Stage C artifact must contain unique FTYP3")
+    xfln = unique_row("XFLN")
+    yfln = unique_row("YFLN")
+    if len(yfln) != expected_num_fields or len(xfln) != expected_num_fields:
+        raise ValueError("Stage C artifact XFLN/YFLN count differs from declared num_fields")
+    if any(value != 0.0 for value in xfln):
+        raise ValueError("Stage C artifact supports XFLN=0 only")
+    if len(expected_fractions) != expected_num_fields:
+        raise ValueError("declared field fraction count differs from num_fields")
+    edge = max(abs(value) for value in yfln)
+    if not math.isclose(edge, target_image_height_mm, rel_tol=1e-15, abs_tol=1e-15):
+        raise ValueError("Stage C artifact edge does not equal target IMH")
+    actual_fractions = tuple(value / edge for value in yfln)
+    if any(
+        not math.isclose(actual, expected, rel_tol=1e-15, abs_tol=1e-15)
+        for actual, expected in zip(actual_fractions, expected_fractions, strict=True)
+    ):
+        raise ValueError("Stage C artifact signed field fractions differ from declaration")
+    for key in ("VDXN", "VDYN", "VCXN", "VCYN"):
+        values = unique_row(key)
+        if len(values) != expected_num_fields or any(value != 0.0 for value in values):
+            raise ValueError(f"Stage C artifact {key} must be complete and all-zero")
+    return ParsedStageCArtifact(
+        sha256=hashlib.sha256(payload).hexdigest(),
+        num_fields=expected_num_fields,
+        normalized_fractions=actual_fractions,
+        target_image_height_mm=edge,
+    )
+
+
 def reconstruct_image_fields(
-    *, source_zmx: str | Path, output_zmx: str | Path, target_image_height_mm: float
+    *, source_zmx: str | Path, output_zmx: str | Path,
+    resolved_target: ResolvedFieldTarget,
 ) -> FieldReconstructionResult:
     """Create a LF-only temporary FTYP3 ZMX, or fail closed before writing."""
 
@@ -277,8 +348,12 @@ def reconstruct_image_fields(
     output_resolved = output.resolve(strict=False)
     if source_resolved == output_resolved:
         raise ValueError("source_zmx and output_zmx must resolve to different paths")
-    if not math.isfinite(target_image_height_mm) or target_image_height_mm <= 0:
-        raise ValueError("target_image_height_mm must be positive and finite")
+    if resolved_target.status is not FieldTargetStatus.RESOLVED or (
+        resolved_target.efl_mm is None or resolved_target.image_height_mm is None
+    ):
+        raise ValueError("reconstruction requires a resolved canonical field target")
+    target_efl_mm = resolved_target.efl_mm
+    target_image_height_mm = resolved_target.image_height_mm
     before = _sha256(source)
     source_bytes = source.read_bytes()
     encoding = "utf-16" if source_bytes.startswith((b"\xff\xfe", b"\xfe\xff")) else "utf-8"
@@ -302,6 +377,7 @@ def reconstruct_image_fields(
         "output_sha256": None,
         "num_fields": num_fields,
         "normalized_fractions": fractions,
+        "target_efl_mm": target_efl_mm,
         "target_image_height_mm": target_image_height_mm,
         "field_type_before": int(ftyp[0]) if ftyp else None,
         "field_type_after": None,
@@ -357,27 +433,18 @@ def reconstruct_image_fields(
     try:
         payload = ("\n".join(rebuilt) + "\n").encode("utf-8")
         temp.write_bytes(payload)
-        if b"\r" in payload:
-            raise ValueError("temporary reconstruction is not LF-only")
-        parsed = temp.read_text(encoding="utf-8").splitlines()
-        parsed_ftyp = next((line for line in parsed if line.startswith("FTYP ")), None)
-        parsed_yfln = next((line for line in parsed if line.startswith("YFLN ")), None)
-        if parsed_ftyp is None or int(parsed_ftyp.split()[1]) != 3 or parsed_yfln is None:
-            raise ValueError("temporary reconstruction failed FTYP3/YFLN validation")
-        actual_y = _floats(parsed_yfln.removeprefix("YFLN "))
-        expected_y = tuple(frac * target_image_height_mm for frac in fractions)
-        if len(actual_y) != len(expected_y) or any(
-            not math.isclose(a, b, rel_tol=1e-15, abs_tol=1e-15)
-            for a, b in zip(actual_y, expected_y, strict=True)
-        ):
-            raise ValueError("temporary reconstruction field profile changed during serialization")
+        parsed = validate_reconstructed_field_artifact(
+            temp,
+            expected_num_fields=num_fields,
+            expected_fractions=fractions,
+            target_image_height_mm=target_image_height_mm,
+        )
         after = _sha256(source)
         if after != before:
             raise ValueError("source ZMX changed before atomic output publication")
-        output_hash = _sha256(temp)
         result = FieldReconstructionResult(
             status="constructed", output_path=str(output), source_sha256_after=after,
-            output_sha256=output_hash, field_type_after=3, line_endings="LF",
+            output_sha256=parsed.sha256, field_type_after=3, line_endings="LF",
             vignetting_status="zero",
             reason="temporary FTYP3/YFLN artifact constructed; real chief-ray verification pending",
             **{key: value for key, value in base.items() if key not in {
@@ -409,6 +476,7 @@ class StageCFieldEvidence(BaseModel):
     real_chief_ray_status: Literal["pending"] = "pending"
     rsi_status: Literal["pending"] = "pending"
     target_image_height_mm: float | None
+    target_efl_mm: float | None
     nominal_image_height_mm: float | None
     derived_full_fov_deg: float | None
     measured_full_fov_deg: float | None
@@ -434,12 +502,24 @@ class StageCFieldEvidence(BaseModel):
                 self.imh_source != "constructed"
                 or self.fov_source != "derived"
                 or self.target_image_height_mm is None
+                or self.target_efl_mm is None
                 or self.nominal_image_height_mm != self.target_image_height_mm
                 or not math.isfinite(self.target_image_height_mm)
                 or self.target_image_height_mm <= 0
+                or not math.isfinite(self.target_efl_mm)
+                or self.target_efl_mm <= 0
                 or self.derived_full_fov_deg is None
                 or not math.isfinite(self.derived_full_fov_deg)
                 or not 0 < self.derived_full_fov_deg < 180
+                or not math.isclose(
+                    self.derived_full_fov_deg,
+                    2
+                    * math.degrees(
+                        math.atan(self.target_image_height_mm / self.target_efl_mm)
+                    ),
+                    rel_tol=1e-12,
+                    abs_tol=1e-12,
+                )
                 or self.measured_full_fov_deg is not None
             ):
                 raise ValueError("constructed offline evidence requires same-source IMH and derived FOV")
@@ -450,6 +530,7 @@ class StageCFieldEvidence(BaseModel):
                 value is not None
                 for value in (
                     self.target_image_height_mm,
+                    self.target_efl_mm,
                     self.nominal_image_height_mm,
                     self.derived_full_fov_deg,
                     self.measured_full_fov_deg,
@@ -475,6 +556,7 @@ class StageCMachineFieldResult(BaseModel):
     schema_id: Literal["atelier-p16-stagec-machine-result-v1"]
     listing_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     reconstructed_zmx_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    target_efl_mm: float = Field(gt=0)
     real_chief_ray_image_height_mm: float
     rsi_image_height_mm: float
     measured_efl_mm: float

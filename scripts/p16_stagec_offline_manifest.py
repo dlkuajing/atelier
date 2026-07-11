@@ -106,7 +106,7 @@ def build_manifest(*, output_dir: Path, seed_count: int = 8) -> dict[str, object
             result = reconstruct_image_fields(
                 source_zmx=source,
                 output_zmx=output,
-                target_image_height_mm=target_imh,
+                resolved_target=resolved,
             )
             if result.status != "constructed":
                 eligible = False
@@ -124,6 +124,7 @@ def build_manifest(*, output_dir: Path, seed_count: int = 8) -> dict[str, object
                     "scenario": scenario.value,
                     "arm": label,
                     "target_image_height_mm": target_imh,
+                    "target_efl_mm": efl_mm,
                     "derived_fov_deg": resolved.full_fov_deg,
                     "field_reconstruction": result.model_dump(mode="json"),
                     "machine_execution_status": "blocked",

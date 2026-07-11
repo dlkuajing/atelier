@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import math
 from pathlib import Path
+
+import pytest
 
 from app.core.lens_system import Scenario
 from app.core.parameter_guards import SCENARIO_BOUNDS
@@ -24,10 +27,17 @@ def test_offline_manifest_has_eight_seeds_three_arms_and_no_machine_claims(
         assert cell["machine_result"] is None
         assert cell["expert_verdict"] is None
         assert cell["field_reconstruction"]["status"] == "constructed"
+        assert cell["field_reconstruction"]["target_efl_mm"] == cell["target_efl_mm"]
         assert Path(cell["field_reconstruction"]["output_path"]).is_file()
         bounds = SCENARIO_BOUNDS[Scenario(cell["scenario"])]
         assert bounds.image_height_mm_min <= cell["target_image_height_mm"] <= bounds.image_height_mm_max
         assert bounds.fov_deg_min <= cell["derived_fov_deg"] <= bounds.fov_deg_max
+        assert cell["derived_fov_deg"] == pytest.approx(
+            2
+            * math.degrees(
+                math.atan(cell["target_image_height_mm"] / cell["target_efl_mm"])
+            )
+        )
     assert all(
         arms == {"native-imh-reconstructed-control", "target-low", "target-high"}
         for arms in by_seed.values()

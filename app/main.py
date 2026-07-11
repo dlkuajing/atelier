@@ -1746,6 +1746,9 @@ def _candidate_stagec_field_context(
         "machine_execution_reason": evidence.machine_execution_reason,
         "imh_source": evidence.imh_source,
         "imh_achieved": formatting.fmt_yes_no(evidence.image_height_achieved),
+        "target_efl_mm": formatting.fmt_float(evidence.target_efl_mm)
+        if evidence.target_efl_mm is not None
+        else "N/A",
         "fov_source": evidence.fov_source,
         "fov_deg": formatting.fmt_float(fov) if fov is not None else "N/A",
         "real_chief_ray_status": evidence.real_chief_ray_status,

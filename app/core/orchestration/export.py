@@ -33,6 +33,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from app.core.case_library import load_case_library
 from app.core.engines.codev_optimize import _autovig_profile, build_codev_target_sequence
+from app.core.engines.stagec_field import validate_reconstructed_field_artifact
 from app.core.orchestration.candidate import (
     CandidateSet,
     GenerationMode,
@@ -177,6 +178,7 @@ _STAGEC_EVIDENCE_COLUMNS: tuple[str, ...] = (
     "stagec_reconstruction_status",
     "stagec_imh_source",
     "stagec_imh_achieved",
+    "stagec_target_efl_mm",
     "stagec_fov_source",
     "stagec_fov_deg",
     "stagec_real_chief_ray_status",
@@ -266,6 +268,9 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
             stagec.reconstruction_status if stagec is not None else "N/A",
             stagec.imh_source if stagec is not None else "N/A",
             stagec.image_height_achieved if stagec is not None else None,
+            fmt_float(stagec.target_efl_mm)
+            if stagec is not None and stagec.target_efl_mm is not None
+            else "N/A",
             stagec.fov_source if stagec is not None else "N/A",
             (
                 fmt_float(
@@ -310,7 +315,7 @@ def build_candidate_set_workbook(
 # ---------------------------------------------------------------------------
 
 
-def _resolve_candidate_zmx_path(sc: ScoredCandidate):
+def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
     """Resolve the candidate's own delivered-payload ZMX under the
     persistent `ZMX_AMMO_DIR` — mode-agnostic by design (see module
     docstring "已知限制"): real today for `RETRIEVED` candidates, will start
@@ -320,24 +325,28 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
     there (fail closed, never fabricates a path)."""
     reconstruction = sc.generated.stagec_field_reconstruction
     if reconstruction is not None:
+        if target.efl_mm is None or not math.isclose(
+            target.efl_mm,
+            reconstruction.target_efl_mm,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ) or target.image_height_mm is None or not math.isclose(
+            target.image_height_mm,
+            reconstruction.target_image_height_mm,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            return None
         evidence = sc.generated.stagec_field_evidence
         if reconstruction.status != "constructed" or reconstruction.output_path is None:
             return None
         if evidence is None or evidence.image_height_achieved or (
             evidence.target_image_height_mm != reconstruction.target_image_height_mm
+            or evidence.target_efl_mm != reconstruction.target_efl_mm
             or evidence.nominal_image_height_mm != reconstruction.target_image_height_mm
         ):
             return None
-        if reconstruction.num_fields is None or (
-            len(reconstruction.normalized_fractions) != reconstruction.num_fields
-            or not reconstruction.normalized_fractions
-            or not math.isclose(
-                max(abs(value) for value in reconstruction.normalized_fractions),
-                1.0,
-                rel_tol=0.0,
-                abs_tol=1e-15,
-            )
-        ):
+        if reconstruction.num_fields is None:
             return None
         source = Path(reconstruction.source_path)
         if not source.is_file() or (
@@ -348,7 +357,16 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
         path = Path(reconstruction.output_path)
         if not path.is_file() or reconstruction.output_sha256 is None:
             return None
-        if hashlib.sha256(path.read_bytes()).hexdigest() != reconstruction.output_sha256:
+        try:
+            parsed = validate_reconstructed_field_artifact(
+                path,
+                expected_num_fields=reconstruction.num_fields,
+                expected_fractions=reconstruction.normalized_fractions,
+                target_image_height_mm=reconstruction.target_image_height_mm,
+            )
+        except (OSError, ValueError):
+            return None
+        if parsed.sha256 != reconstruction.output_sha256:
             return None
         optimized_path = sc.generated.optimized_zmx_path
         if optimized_path is None or Path(optimized_path).resolve() != path.resolve():
@@ -356,11 +374,15 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
         metadata = sc.generated.payload.metadata
         if metadata is None or metadata.image_height_mm != reconstruction.target_image_height_mm:
             return None
+        if not math.isclose(
+            metadata.nominal_efl_mm,
+            reconstruction.target_efl_mm,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            return None
         expected_fov = 2 * math.degrees(
-            math.atan(
-                reconstruction.target_image_height_mm
-                / sc.generated.payload.paraxial.effective_focal_length_mm
-            )
+            math.atan(reconstruction.target_image_height_mm / reconstruction.target_efl_mm)
         )
         if evidence.derived_full_fov_deg is None or not math.isclose(
             evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
@@ -572,7 +594,7 @@ def build_candidate_bundle_zip(sc: ScoredCandidate, *, target: TargetSpec) -> by
     artifact is available, the README honestly explains why (fail closed,
     never a broken zip, never a partial artifact passing itself off as
     complete)."""
-    zmx_path = _resolve_candidate_zmx_path(sc)
+    zmx_path = _resolve_candidate_zmx_path(sc, target=target)
     seq_text, seq_unavailable_reason = _reproduction_seq_text(sc, target)
     readme = _bundle_readme(
         sc,

@@ -22,7 +22,11 @@ import openpyxl
 import pytest
 
 from app.core.case_library import load_case_library
-from app.core.engines.stagec_field import FieldReconstructionResult, StageCFieldEvidence
+from app.core.engines.stagec_field import (
+    StageCFieldEvidence,
+    reconstruct_image_fields,
+    resolve_field_target,
+)
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     CandidateSet,
@@ -284,32 +288,48 @@ def _stageb_negative_candidate() -> ScoredCandidate:
     return ScoredCandidate(generated=generated, scorecard=scorecard)
 
 
+def _stagec_target_spec() -> TargetSpec:
+    return _target_spec().model_copy(
+        update={
+            "image_height_mm": 3.0,
+            "fov_deg": 2 * math.degrees(math.atan(3.0 / 3.8)),
+        }
+    )
+
+
 def _stagec_offline_candidate(tmp_path: Path) -> ScoredCandidate:
     sc = _target_converged_candidate()
     source = tmp_path / "seed.zmx"
-    source.write_bytes(b"stage-c-source")
-    source_sha = hashlib.sha256(source.read_bytes()).hexdigest()
+    fractions = tuple(i / 11 for i in range(12))
+    zero = " ".join("0" for _ in fractions)
+    source.write_text(
+        "\n".join(
+            (
+                "FTYP 0 0 12 5 0 0 0 12",
+                f"XFLN {zero}",
+                "YFLN " + " ".join(str(value * 40) for value in fractions),
+                f"VDXN {zero}",
+                f"VDYN {zero}",
+                f"VCXN {zero}",
+                f"VCYN {zero}",
+                "SURF 0",
+            )
+        )
+        + "\n",
+        encoding="ascii",
+        newline="\n",
+    )
     artifact = tmp_path / "temporary-stagec.zmx"
-    artifact.write_bytes(b"stage-c-reconstruction")
-    artifact_sha = hashlib.sha256(artifact.read_bytes()).hexdigest()
     target_imh = 3.0
-    efl = sc.generated.payload.paraxial.effective_focal_length_mm
+    efl = 3.8
     derived_fov = 2 * math.degrees(math.atan(target_imh / efl))
-    reconstruction = FieldReconstructionResult(
-        status="constructed",
-        source_path=str(source),
-        output_path=str(artifact),
-        source_sha256_before=source_sha,
-        source_sha256_after=source_sha,
-        output_sha256=artifact_sha,
-        num_fields=12,
-        normalized_fractions=tuple(i / 11 for i in range(12)),
-        target_image_height_mm=3.0,
-        field_type_before=0,
-        field_type_after=3,
-        line_endings="LF",
-        vignetting_status="zero",
-        reason="offline construction only",
+    resolved = resolve_field_target(
+        efl_mm=efl, image_height_mm=target_imh, full_fov_deg=None
+    )
+    reconstruction = reconstruct_image_fields(
+        source_zmx=source,
+        output_zmx=artifact,
+        resolved_target=resolved,
     )
     evidence = StageCFieldEvidence(
         reconstruction_status="constructed",
@@ -320,6 +340,7 @@ def _stagec_offline_candidate(tmp_path: Path) -> ScoredCandidate:
         real_chief_ray_status="pending",
         rsi_status="pending",
         target_image_height_mm=3.0,
+        target_efl_mm=efl,
         nominal_image_height_mm=3.0,
         derived_full_fov_deg=derived_fov,
         measured_full_fov_deg=None,
@@ -339,6 +360,7 @@ def _stagec_offline_candidate(tmp_path: Path) -> ScoredCandidate:
                     "image_height_source": "constructed",
                     "fov_deg": derived_fov,
                     "fov_source": "derived",
+                    "nominal_efl_mm": efl,
                 }
             )
         }
@@ -658,12 +680,31 @@ def test_stagec_web_xlsx_bundle_sources_are_honest_and_replay_fails_closed(
     assert values[header.index("stagec_reconstruction_status")] == "constructed"
     assert values[header.index("stagec_imh_source")] == "constructed"
     assert values[header.index("stagec_imh_achieved")] is False
+    assert values[header.index("stagec_target_efl_mm")] == "3.800"
     assert values[header.index("stagec_fov_source")] == "derived"
     assert values[header.index("stagec_fov_deg")] == f"{sc.generated.stagec_field_evidence.derived_full_fov_deg:.3f}"
+    reconstruction = sc.generated.stagec_field_reconstruction
+    assert reconstruction is not None
+    assert sc.generated.stagec_field_evidence.derived_full_fov_deg == pytest.approx(
+        2
+        * math.degrees(
+            math.atan(
+                reconstruction.target_image_height_mm / reconstruction.target_efl_mm
+            )
+        )
+    )
+    assert not math.isclose(
+        reconstruction.target_efl_mm,
+        sc.generated.payload.paraxial.effective_focal_length_mm,
+        rel_tol=1e-12,
+    ), "fixture must prove post-run payload EFL is not the FOV provenance source"
     assert values[header.index("stagec_real_chief_ray_status")] == "pending"
     assert values[header.index("stagec_rsi_status")] == "pending"
 
-    with zipfile.ZipFile(io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))) as zf:
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
+    ) as zf:
+        assert "candidate.zmx" in zf.namelist()
         assert "reproduction.seq" not in zf.namelist()
         readme = zf.read("README.txt").decode("utf-8")
     assert "FOV: derived/measured only; never optimized/converged" in readme
@@ -676,7 +717,9 @@ def test_stagec_bundle_withholds_candidate_zmx_after_artifact_tamper(tmp_path: P
     reconstruction = sc.generated.stagec_field_reconstruction
     assert reconstruction is not None and reconstruction.output_path is not None
     Path(reconstruction.output_path).write_bytes(b"tampered-after-validation")
-    with zipfile.ZipFile(io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))) as zf:
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
+    ) as zf:
         assert "candidate.zmx" not in zf.namelist()
         readme = zf.read("README.txt").decode("utf-8")
     assert "source/output hash" in readme
@@ -688,7 +731,30 @@ def test_stagec_bundle_withholds_candidate_zmx_after_source_tamper(tmp_path: Pat
     reconstruction = sc.generated.stagec_field_reconstruction
     assert reconstruction is not None
     Path(reconstruction.source_path).write_bytes(b"tampered-source")
-    with zipfile.ZipFile(io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))) as zf:
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
+    ) as zf:
+        assert "candidate.zmx" not in zf.namelist()
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "candidate.zmx withheld" in readme
+
+
+def test_stagec_bundle_rejects_arbitrary_bytes_even_with_self_reported_hash(tmp_path: Path):
+    sc = _stagec_offline_candidate(tmp_path)
+    reconstruction = sc.generated.stagec_field_reconstruction
+    assert reconstruction is not None and reconstruction.output_path is not None
+    artifact = Path(reconstruction.output_path)
+    artifact.write_bytes(b"arbitrary-but-self-hashed\n")
+    forged_reconstruction = reconstruction.model_copy(
+        update={"output_sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()}
+    )
+    forged_generated = sc.generated.model_copy(
+        update={"stagec_field_reconstruction": forged_reconstruction}
+    )
+    forged = sc.model_copy(update={"generated": forged_generated})
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
+    ) as zf:
         assert "candidate.zmx" not in zf.namelist()
         readme = zf.read("README.txt").decode("utf-8")
     assert "candidate.zmx withheld" in readme
@@ -699,7 +765,18 @@ def test_stagec_candidate_rejects_target_profile_and_artifact_path_mismatch(tmp_
     raw = sc.generated.model_dump()
     raw["stagec_field_evidence"]["target_image_height_mm"] = 3.1
     raw["stagec_field_evidence"]["nominal_image_height_mm"] = 3.1
+    raw["stagec_field_evidence"]["derived_full_fov_deg"] = 2 * math.degrees(
+        math.atan(3.1 / 3.8)
+    )
     with pytest.raises(ValueError, match="target differs"):
+        GeneratedCandidate.model_validate(raw)
+
+    raw = sc.generated.model_dump()
+    raw["stagec_field_evidence"]["target_efl_mm"] = 3.9
+    raw["stagec_field_evidence"]["derived_full_fov_deg"] = 2 * math.degrees(
+        math.atan(3.0 / 3.9)
+    )
+    with pytest.raises(ValueError, match="target EFL differs"):
         GeneratedCandidate.model_validate(raw)
 
     raw = sc.generated.model_dump()
@@ -712,6 +789,17 @@ def test_stagec_candidate_rejects_target_profile_and_artifact_path_mismatch(tmp_
     raw = sc.generated.model_dump()
     raw["optimized_zmx_path"] = str(other)
     with pytest.raises(ValueError, match="must be the Stage C reconstruction output"):
+        GeneratedCandidate.model_validate(raw)
+
+    reconstruction = sc.generated.stagec_field_reconstruction
+    assert reconstruction is not None and reconstruction.output_path is not None
+    artifact = Path(reconstruction.output_path)
+    artifact.write_bytes(b"self-hashed-but-not-a-zmx\n")
+    raw = sc.generated.model_dump()
+    raw["stagec_field_reconstruction"]["output_sha256"] = hashlib.sha256(
+        artifact.read_bytes()
+    ).hexdigest()
+    with pytest.raises(ValueError, match="artifact bytes are invalid"):
         GeneratedCandidate.model_validate(raw)
 
 
