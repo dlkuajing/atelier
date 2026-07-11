@@ -175,6 +175,8 @@ def _append_wavelengths(
             f"WAVM {wavelength.index} "
             f"{_fmt_number(wavelength.wavelength_um)} {_fmt_number(wavelength.weight)}"
         )
+    for slot in range(len(wavelengths) + 1, 25):
+        lines.append(f"WAVM {slot} 0.55 1")
     primary = readout_primary_index
     if primary < 1 or primary > len(wavelengths):
         raise ValueError(
