@@ -2681,7 +2681,13 @@ def test_fno_ladder_rung_schema_is_additive_over_pilot_contract(
         missing = _PILOT_ERA_RUNG_KEYS - set(rung)
         assert not missing, f"pilot-era keys missing from rung record: {missing}"
         extra = set(rung) - _PILOT_ERA_RUNG_KEYS
-        assert extra == {"effective_edge_used", "ray_retry"}, (
+        assert extra == {
+            "effective_edge_used",
+            "ray_retry",
+            "quality_note",
+            "optimized_zmx_path",
+            "aut_termination",
+        }, (
             f"additive keys drifted beyond the declared set: {extra}"
         )
         assert rung["ray_retry"] is None  # 默认路径恒 None

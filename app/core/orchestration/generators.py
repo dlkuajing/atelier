@@ -12,7 +12,7 @@ import math
 import shutil
 import tempfile
 from abc import ABC, abstractmethod
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import ClassVar, final
 
@@ -20,7 +20,7 @@ import structlog
 
 from app.core.case_library import build_sample_from_optic, cases_for_scenario, rank_seeds
 from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
-from app.core.engines.codev_optimize import run_codev_target_standard
+from app.core.engines.codev_optimize import RAY_RETRY_VIG_LADDER, run_codev_target_fno_ladder
 from app.core.engines.seed_target_score import SeedTargetScore, score_seed_target_match
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
@@ -28,6 +28,7 @@ from app.core.orchestration.candidate import (
     GenerationMode,
     OpticalExtras,
     TargetSpec,
+    fnum_ladder_evidence_from_result,
 )
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
 
@@ -289,7 +290,7 @@ _POST_AUT_ZERO_SENTINEL_KEYS = frozenset(
 
 
 def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | str | None]:
-    """从 `run_codev_target_standard` 某配置的原始 dict 里摘出 CODE V 真机
+    """从 FNO ladder 选定 rung 的原始 dict 里摘出 CODE V 真机
     快照数字（post_aut 三快照 + autovig/AUT 误差诊断），供
     `OpticalExtras.codev_post_aut` 存放——纯诊断 side-channel，不参与打分
     （`score_candidate` 只读 payload/optical_extras.ri_by_field，不读这里，
@@ -325,6 +326,14 @@ def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | 
             err_f_ratio = float(raw_ratio)
         raw_termination = aut_error_trace.get("termination")
         termination = str(raw_termination) if raw_termination is not None else None
+    if err_f_ratio is None:
+        err_f_ratio = _float("err_f_ratio")
+    if termination is None:
+        termination = _text("aut_termination")
+
+    effective_edge = _float("effective_edge_used")
+    if effective_edge is None:
+        effective_edge = _float("autovig.edge_used")
 
     return {
         "post_aut.efl_y_mm": _float("post_aut.efl_y_mm"),
@@ -333,11 +342,11 @@ def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | 
             "post_aut.max_rms_wavefront_error_waves"
         ),
         "post_aut.max_distortion_pct": _float("post_aut.max_distortion_pct"),
-        "post_aut.fno": _float("post_aut.fno"),
+        "post_aut.fno": _float("post_aut.fno") or _float("measured_fnum"),
         "post_aut.maximh_mm": _float("post_aut.maximh_mm"),
         "efl_target_deviation_pct": _float("efl_target_deviation_pct"),
         "aut_converged": _text("aut_converged"),
-        "autovig.edge_used": _float("autovig.edge_used"),
+        "autovig.edge_used": effective_edge,
         "err_f_ratio": err_f_ratio,
         "aut_termination": termination,
     }
@@ -365,19 +374,24 @@ def _mode3_generation_notes(
     raw_glass_model = provenance.get("glass_model")
     if isinstance(raw_glass_model, Mapping):
         glass_model_label = str(raw_glass_model.get(preferred, "unknown"))
-    edge_used = config.get("autovig.edge_used", "N/A")
+    edge_used = config.get("effective_edge_used", "N/A")
+    ladder_achieved = (
+        config.get("status") == "measured"
+        and config.get("fno_param_achieved") is True
+        and config.get("aut_converged") is True
+        and config.get("ray_traceable") is True
+    )
     notes = [
-        "Mode3：③ target 优化标准入口（codev_optimize.run_codev_target_standard），"
+        "Mode3：③ target 优化 Stage B 入口（codev_optimize.run_codev_target_fno_ladder），"
         f"seed={seed.metadata.case_id}",
         f"seed-target 匹配 band={match.band}（score={match.score:.2f}, "
         f"ΔEFL={match.delta_efl_pct:+.1f}%；{match.evidence_note}）",
         f"preferred 配置=\"{preferred}\"（{preferred_reason}）",
         f"玻璃 provenance（preferred=\"{preferred}\"）：{glass_model_label}",
-        f"渐晕 edge_used（preferred 配置，autovig 裁瞳量）={edge_used}",
+        f"accepted/last measured effective_edge_used（真实裁瞳量）={edge_used}",
         "收敛维 provenance（P15 带条件扩，2026-07-11）：efl 标 converged=True"
-        "（接缝1 真机验证）；fnum 的能力上限已进 CONVERGED_FIELDS 但**本候选未跑"
-        " FNO 阶梯**（run_codev_target_standard 走 FNO 锁 native 路径，"
-        "fnum_ladder_achieved=None）→ fnum 如实标 False；IMH/FOV Stage C 场重建"
+        f"（接缝1 真机验证）；本候选 FNO ladder 四条件 gate={ladder_achieved}，"
+        "fnum converged 仅由 closed ladder evidence 派生；IMH/FOV Stage C 场重建"
         "未落地、TTL 恒不在优化维，均如实标 False（见 candidate.py "
         "CONVERGED_FIELDS 能力上限注记与 fnum_gate_from_ladder_result）",
         "optical_extras.ri_by_field 按优化后 ZMX 显式路径实算（P17-4 接线，"
@@ -510,11 +524,11 @@ class TargetConvergedGenerator(CandidateGenerator):
        EFL ← `payload.paraxial.effective_focal_length_mm` vs `spec.efl_mm`）
        在邻域内按 band 优先、band 内 score 升序重排；`spec.fov_deg is None`
        时退化为纯 EFL 排序（原行为，诚实降级）。取前
-       `min(n, _TARGET_MAX_SEEDS)` 颗——真机成本控制（每颗 seed 一次
-       `run_codev_target_standard` 批跑，数十秒到数分钟）。
-    3. 每颗 seed 跑 `codev_optimize.run_codev_target_standard`
-       （`emit_optimized_zmx=True`，标准 {asphere,both} 双配置并跑取优，
-       §10 接缝 1/2/3a）。单颗 seed 报 `CodeVBatchError`（tooling-blocked/
+       `min(n, _TARGET_MAX_SEEDS)` 颗——真机成本控制（每颗 seed 一条
+       `run_codev_target_fno_ladder` 串行阶梯）。
+    3. 每颗 seed 跑可注入、生产默认的 `codev_optimize.run_codev_target_fno_ladder`
+       （Stage B、3 rung、ray-aware retry、`extra_dof="both"`、
+       `emit_optimized_zmx=True`）。单颗 seed 报 `CodeVBatchError`（tooling-blocked/
        timeout/no_license 等）→ 跳过该 seed（结构化日志留痕），不炸整个
        generator（不炸其余 seed，也不炸 `orchestrate` 的其它 mode）。
     4. `preferred` 配置的 `optimized_zmx_path` 现算 payload：
@@ -540,14 +554,11 @@ class TargetConvergedGenerator(CandidateGenerator):
     **诚实红线**（P15 带条件扩后，2026-07-11）：
     `CONVERGED_FIELDS[TARGET_CONVERGED]` = `frozenset({"efl", "fnum"})`
     （`candidate.py`，语义=能力上限）。efl 无条件真收敛（接缝1）；**fnum 带
-    per-candidate 证据 gate**——本 generator 走 `run_codev_target_standard`
-    （FNO 锁 native，接缝3a），**不跑 FNO 阶梯**，产出候选的
-    `fnum_ladder_achieved` 恒为默认 `None` → fnum 恒标 False。将来把
-    `run_codev_target_fno_ladder`（P15 Stage B 引擎，真机 14 ladder 验证）
-    接进本 generator 时，用 `candidate.fnum_gate_from_ladder_result(result)`
-    从四条件 `target_achieved` 记录填 gate（禁 aut_converged 单维），并把
-    accepted_final 摘要（measured_fnum/effective_edge_used/ray_grid）进
-    provenance side-channel。IMH/FOV Stage C 未落地、TTL 从未在优化维内，
+    per-candidate 证据 gate**——本 generator 走 FNO 阶梯并只认 closed evidence；
+    `fnum_ladder_evidence` 只接受 closed schema，并由四条件
+    `target_achieved` 派生 gate（禁 aut_converged 单维）；accepted_final 的
+    optimized ZMX 是 payload 重建、scorecard achieved F# 与持久化 artifact 的
+    同一来源。无完整证据保持 None/False。IMH/FOV Stage C 未落地、TTL 从未在优化维内，
     虚标为已收敛 = 撒谎，违反诚实不变量。
 
     六接缝原文（§10，作后续 Stage B/C session 的接口锚，未落地部分保留
@@ -573,6 +584,16 @@ class TargetConvergedGenerator(CandidateGenerator):
     """
 
     mode: ClassVar[GenerationMode] = GenerationMode.TARGET_CONVERGED
+
+    def __init__(
+        self,
+        *,
+        artifact_dir: Path | None = None,
+        repeat_runs: int = 1,
+        ladder_runner: Callable[..., dict[str, object]] | None = None,
+    ) -> None:
+        super().__init__(artifact_dir=artifact_dir, repeat_runs=repeat_runs)
+        self.ladder_runner = ladder_runner or run_codev_target_fno_ladder
 
     def _generate(
         self, spec: TargetSpec, target: TargetSpec, *, n: int
@@ -618,6 +639,7 @@ class TargetConvergedGenerator(CandidateGenerator):
                         work_dir=tmpdir / seed.metadata.case_id / f"run-{run_index}",
                         artifact_dir=self.artifact_dir,
                         run_index=run_index,
+                        ladder_runner=self.ladder_runner,
                     )
                     attempts.append(candidate)
                 successful = [attempt for attempt in attempts if attempt is not None]
@@ -764,6 +786,7 @@ class TargetConvergedGenerator(CandidateGenerator):
         work_dir: Path,
         artifact_dir: Path | None = None,
         run_index: int = 1,
+        ladder_runner: Callable[..., dict[str, object]] | None = None,
     ) -> GeneratedCandidate | None:
         """一颗 seed 的完整 ③ 批跑 + payload 现算，失败一律 `None`（fail
         closed，调用方跳过、不炸整个 generator）。"""
@@ -772,13 +795,19 @@ class TargetConvergedGenerator(CandidateGenerator):
         source_zmx_path = ZMX_AMMO_DIR / seed.metadata.source_zmx
 
         try:
-            result = run_codev_target_standard(
+            runner = ladder_runner or run_codev_target_fno_ladder
+            result = runner(
                 source_zmx=source_zmx_path,
                 work_dir=work_dir,
                 target_efl_mm=spec.efl_mm,
+                fnum_target=spec.fnum,
+                stage="B",
+                rung_count=3,
+                ray_retry_vig_ladder=RAY_RETRY_VIG_LADDER,
+                num_fields=3,
+                extra_dof="both",
                 emit_optimized_zmx=True,
                 timeout_seconds=180.0,
-                num_fields=3,
             )
         except CodeVBatchError as exc:
             logger.warning(
@@ -789,24 +818,36 @@ class TargetConvergedGenerator(CandidateGenerator):
             )
             return None
 
-        preferred = result.get("preferred")
-        preferred_reason = str(result.get("preferred_reason", ""))
-        configs = result.get("configs")
-        if not isinstance(preferred, str) or not isinstance(configs, Mapping):
+        evidence = fnum_ladder_evidence_from_result(result)
+        if evidence is None:
             logger.warning(
-                "mode3_seed_no_preferred_config",
+                "mode3_seed_invalid_fno_ladder_evidence",
                 case_id=seed.metadata.case_id,
-                reason=preferred_reason,
             )
             return None
-        config = configs.get(preferred)
-        if not isinstance(config, Mapping) or "error" in config:
+        if not (
+            math.isclose(evidence.target_efl_mm, spec.efl_mm, rel_tol=1e-12)
+            and math.isclose(evidence.fnum_target, spec.fnum, rel_tol=1e-12)
+        ):
             logger.warning(
-                "mode3_seed_preferred_config_errored",
+                "mode3_seed_ladder_target_mismatch",
                 case_id=seed.metadata.case_id,
-                preferred=preferred,
             )
             return None
+        selected_raw = result.get("accepted_final") or result.get("last_measured_rung")
+        if not isinstance(selected_raw, Mapping):
+            logger.warning(
+                "mode3_seed_no_measured_fno_rung",
+                case_id=seed.metadata.case_id,
+            )
+            return None
+        config = selected_raw
+        preferred = "stageb-ladder"
+        preferred_reason = (
+            "accepted_final four-condition rung"
+            if evidence.target_achieved
+            else "last measured rung; F# target not achieved"
+        )
 
         optimized_zmx_path_raw = config.get("optimized_zmx_path")
         if not optimized_zmx_path_raw:
@@ -837,6 +878,13 @@ class TargetConvergedGenerator(CandidateGenerator):
                 artifact_warnings.append(warning)
                 logger.warning("mode3_zmx_persist_failed", case_id=seed.metadata.case_id, error=warning)
 
+        # Persistence may have replaced the accepted_final path. Re-validate so
+        # the evidence path and the exact ZMX used to rebuild the payload remain
+        # the same source of truth.
+        evidence = fnum_ladder_evidence_from_result(result)
+        if evidence is None:
+            return None
+
         try:
             optic = load_normalized_zmx(optimized_zmx_path)
             payload = build_sample_from_optic(
@@ -860,11 +908,7 @@ class TargetConvergedGenerator(CandidateGenerator):
         provenance = provenance_raw if isinstance(provenance_raw, Mapping) else {}
         from app.core.relative_illumination import compute_relative_illumination
 
-        config_snapshots = {
-            str(name): _codev_post_aut_snapshot(raw_config)
-            for name, raw_config in configs.items()
-            if isinstance(raw_config, Mapping) and "error" not in raw_config
-        }
+        config_snapshots = {preferred: _codev_post_aut_snapshot(config)}
         return GeneratedCandidate(
             candidate_id=f"{seed.metadata.case_id}::target-converged-{preferred}",
             mode=GenerationMode.TARGET_CONVERGED,
@@ -894,5 +938,6 @@ class TargetConvergedGenerator(CandidateGenerator):
             artifact_warnings=artifact_warnings,
             repeat_run_artifact_paths=[str(optimized_zmx_path)],
             codev_preferred_config=preferred,
-            codev_config_snapshots=config_snapshots,
+            codev_config_snapshots={preferred: config_snapshots.get(preferred, {})},
+            fnum_ladder_evidence=evidence,
         )

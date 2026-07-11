@@ -16,11 +16,21 @@
 
 from __future__ import annotations
 
+import math
+from collections.abc import Mapping
 from enum import StrEnum
 from types import MappingProxyType
 from typing import Literal
 
-from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 
 from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
@@ -369,8 +379,8 @@ class OpticalExtras(BaseModel):
     codev_post_aut: dict[str, float | str | None] | None = Field(
         None,
         description=(
-            "Mode3（TargetConvergedGenerator）专属：CODE V `run_codev_target_standard` "
-            "preferred 配置的 post_aut 快照数字 + autovig/AUT 误差诊断（真机裸出，非"
+            "Mode3（TargetConvergedGenerator）专属：CODE V FNO ladder 选定 rung "
+            "的 post_aut 快照数字 + autovig/AUT 误差诊断（真机裸出，非"
             "score_candidate 消费——打分口径保持 payload/Optiland 一致性，见"
             "generators.py `_codev_post_aut_snapshot`）。只作为离线报告 provenance 区"
             "如实展示的 side-channel；CODE V 裁瞳(vignetted pupil)口径与 payload 侧"
@@ -378,6 +388,114 @@ class OpticalExtras(BaseModel):
             "（如 RetrievalGenerator）。"
         ),
     )
+
+
+# ---------------------------------------------------------------------------
+# Stage B structured FNO-ladder evidence
+# ---------------------------------------------------------------------------
+
+
+class FnumAcceptedFinalEvidence(BaseModel):
+    """One measured, ray-clean final FNO-ladder rung (closed schema)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["measured"]
+    measured_fnum: float = Field(gt=0)
+    fno_param_achieved: StrictBool
+    aut_converged: StrictBool
+    ray_traceable: StrictBool
+    effective_edge_used: float = Field(ge=0, lt=1)
+    ray_grid: dict[str, object]
+    quality_note: str = Field(min_length=1)
+    optimized_zmx_path: str = Field(min_length=1)
+
+    @field_validator("measured_fnum", "effective_edge_used")
+    @classmethod
+    def _finite_numbers(cls, value: float) -> float:
+        if not math.isfinite(value):
+            raise ValueError("FNO ladder evidence numbers must be finite")
+        return value
+
+    @model_validator(mode="after")
+    def _four_conditions_and_ray_grid_agree(self) -> FnumAcceptedFinalEvidence:
+        if not (
+            self.fno_param_achieved is True
+            and self.aut_converged is True
+            and self.ray_traceable is True
+        ):
+            raise ValueError("accepted_final requires all four Stage B conditions")
+        if self.ray_grid.get("category") != "ok":
+            raise ValueError("accepted_final ray_grid.category must be 'ok'")
+        return self
+
+
+class FnumLadderEvidence(BaseModel):
+    """Validated per-candidate Stage B evidence plus exact replay recipe."""
+
+    model_config = ConfigDict(extra="forbid", validate_by_name=True, serialize_by_alias=True)
+
+    schema_id: Literal["atelier-p15-fno-ladder-v1"] = Field(
+        validation_alias="schema", serialization_alias="schema"
+    )
+    target_achieved: StrictBool
+    accepted_final: FnumAcceptedFinalEvidence | None
+    target_efl_mm: float = Field(gt=0)
+    fnum_target: float = Field(gt=0)
+    stage: Literal["A", "B", "C"]
+    rung_count: int = Field(ge=1)
+    fnum_tolerance_pct: float = Field(gt=0)
+    vig_ladder: tuple[float, ...]
+    ray_retry_vig_ladder: tuple[float, ...]
+    num_fields: int = Field(ge=2)
+    extra_dof: Literal["none", "asphere", "glass", "both"]
+
+    @model_validator(mode="after")
+    def _target_and_final_are_biconditional(self) -> FnumLadderEvidence:
+        if self.target_achieved != (self.accepted_final is not None):
+            raise ValueError("target_achieved must exactly match accepted_final presence")
+        return self
+
+
+def fnum_ladder_evidence_from_result(result: object) -> FnumLadderEvidence | None:
+    """Validate raw ladder output; malformed or inconsistent data is no evidence."""
+
+    if not isinstance(result, Mapping):
+        return None
+    accepted_raw = result.get("accepted_final")
+    accepted: dict[str, object] | None = None
+    if accepted_raw is not None:
+        if not isinstance(accepted_raw, Mapping):
+            return None
+        accepted = {
+            "status": accepted_raw.get("status"),
+            "measured_fnum": accepted_raw.get("measured_fnum"),
+            "fno_param_achieved": accepted_raw.get("fno_param_achieved"),
+            "aut_converged": accepted_raw.get("aut_converged"),
+            "ray_traceable": accepted_raw.get("ray_traceable"),
+            "effective_edge_used": accepted_raw.get("effective_edge_used"),
+            "ray_grid": accepted_raw.get("ray_grid"),
+            "quality_note": accepted_raw.get("quality_note"),
+            "optimized_zmx_path": accepted_raw.get("optimized_zmx_path"),
+        }
+    raw = {
+        "schema": result.get("schema"),
+        "target_achieved": result.get("target_achieved"),
+        "accepted_final": accepted,
+        "target_efl_mm": result.get("target_efl_mm"),
+        "fnum_target": result.get("fnum_target"),
+        "stage": result.get("stage"),
+        "rung_count": result.get("rung_count"),
+        "fnum_tolerance_pct": result.get("fnum_tolerance_pct"),
+        "vig_ladder": result.get("vig_ladder"),
+        "ray_retry_vig_ladder": result.get("ray_retry_vig_ladder"),
+        "num_fields": result.get("num_fields"),
+        "extra_dof": result.get("extra_dof"),
+    }
+    try:
+        return FnumLadderEvidence.model_validate(raw)
+    except (TypeError, ValueError):
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -413,28 +531,28 @@ class GeneratedCandidate(BaseModel):
     )
     repeat_rms_samples_um: list[float] = Field(default_factory=list, exclude=True)
     repeat_wfe_samples_waves: list[float] = Field(default_factory=list, exclude=True)
-    fnum_ladder_achieved: bool | None = Field(
+    fnum_ladder_evidence: FnumLadderEvidence | None = Field(
         None,
         description=(
-            "per-candidate F# 收敛证据 gate（P15 带条件扩，orchestrator 裁决 "
-            "2026-07-11）：None=本候选没跑 FNO 阶梯（现状全部 generator 路径）；"
-            "True=本候选自己的 `run_codev_target_fno_ladder` 产出 "
-            "target_achieved=True（四条件：measured+param 容差内+EFL 保持+ray-"
-            "clean，见 fnum_gate_from_ladder_result——**禁止**用 aut_converged "
-            "单维代填）；False=ladder 跑了但未达标。fnum 的 "
-            "converged_toward_target 仅当此字段为 True 时才允许为 True。"
+            "per-candidate closed FNO-ladder evidence; None means unverifiable. "
+            "The convergence gate is derived from this structure, never supplied as a bool."
         ),
     )
 
     @model_validator(mode="after")
     def _fnum_gate_requires_target_converged_mode(self) -> GeneratedCandidate:
         # RETRIEVED（零优化）候选带 F# ladder 证据 = provenance 矛盾，构造期拒绝。
-        if self.fnum_ladder_achieved is not None and self.mode is not GenerationMode.TARGET_CONVERGED:
+        if self.fnum_ladder_evidence is not None and self.mode is not GenerationMode.TARGET_CONVERGED:
             raise ValueError(
-                "fnum_ladder_achieved 只允许 TARGET_CONVERGED 候选携带"
+                "fnum_ladder_evidence 只允许 TARGET_CONVERGED 候选携带"
                 f"（mode={self.mode}）——RETRIEVED 不优化任何维"
             )
         return self
+
+    @property
+    def fnum_ladder_achieved(self) -> bool | None:
+        evidence = self.fnum_ladder_evidence
+        return evidence.target_achieved if evidence is not None else None
 
     @property
     def is_target_converged(self) -> bool:  # 派生只读，不可单独伪造
@@ -451,11 +569,8 @@ def fnum_gate_from_ladder_result(ladder_result: object) -> bool:
 
     Fail-closed：非 Mapping / 键缺失 / 值非 True（含 None、"True" 字符串等
     任何非布尔真值）一律 False——缺证据不给收敛背书。"""
-    from collections.abc import Mapping as _Mapping
-
-    if not isinstance(ladder_result, _Mapping):
-        return False
-    return ladder_result.get("target_achieved") is True
+    evidence = fnum_ladder_evidence_from_result(ladder_result)
+    return evidence is not None and evidence.target_achieved is True
 
 
 # 每个 mode 实际朝 target 优化/收敛的 field 集合（per-field provenance · codex 轮5）。

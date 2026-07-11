@@ -38,6 +38,8 @@ from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     CONVERGED_FIELDS,
+    FnumAcceptedFinalEvidence,
+    FnumLadderEvidence,
     GeneratedCandidate,
     GenerationMode,
     ImageQualityMetrics,
@@ -68,6 +70,25 @@ def _first_case_with_metadata() -> OpticalSampleData:
 
 
 _CASE = _first_case_with_metadata()
+
+
+def _fnum_evidence(achieved: bool | None) -> FnumLadderEvidence | None:
+    if achieved is None:
+        return None
+    accepted = (
+        FnumAcceptedFinalEvidence(
+            status="measured", measured_fnum=2.4, fno_param_achieved=True,
+            aut_converged=True, ray_traceable=True, effective_edge_used=0.2,
+            ray_grid={"category": "ok"}, quality_note="measured accepted rung",
+            optimized_zmx_path="accepted.zmx",
+        ) if achieved else None
+    )
+    return FnumLadderEvidence(
+        schema="atelier-p15-fno-ladder-v1", target_achieved=achieved,
+        accepted_final=accepted, target_efl_mm=4.0, fnum_target=2.4, stage="B",
+        rung_count=3, fnum_tolerance_pct=8.0, vig_ladder=(0.0, 0.2),
+        ray_retry_vig_ladder=(0.2,), num_fields=3, extra_dof="both",
+    )
 
 _WIDE_REQUEST: dict[str, object] = {
     "efl_mm": 2.8,
@@ -123,7 +144,7 @@ def _generated_candidate(
         payload=_CASE,
         optical_extras=OpticalExtras(ri_by_field=ri_by_field),
         generation_notes=["test fixture"],
-        fnum_ladder_achieved=fnum_ladder_achieved,
+        fnum_ladder_evidence=_fnum_evidence(fnum_ladder_achieved),
     )
 
 

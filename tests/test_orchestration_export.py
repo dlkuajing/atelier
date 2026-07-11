@@ -23,6 +23,8 @@ from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     CandidateSet,
     CandidateSetSummary,
+    FnumAcceptedFinalEvidence,
+    FnumLadderEvidence,
     GeneratedCandidate,
     GenerationMode,
     ImageQualityMetrics,
@@ -91,7 +93,7 @@ def _manufacturability() -> ManufacturabilityProxy:
 
 
 def _deviations(mode: GenerationMode) -> list[TargetDeviation]:
-    conv = {"efl"} if mode is GenerationMode.TARGET_CONVERGED else set()
+    conv = {"efl", "fnum"} if mode is GenerationMode.TARGET_CONVERGED else set()
     rows = [
         ("efl", "exact", 3.8, 3.79, 0.01, 0.01 / 3.8),
         ("fov", "exact", 78.0, 76.5, 1.5, 1.5 / 78.0),
@@ -188,6 +190,31 @@ def _target_converged_candidate(*, optimized_zmx_resolvable: bool = False) -> Sc
         "autovig.edge_used": 0.4,
         "aut_converged": "1",
     }
+    accepted = FnumAcceptedFinalEvidence(
+        status="measured",
+        measured_fnum=1.9,
+        fno_param_achieved=True,
+        aut_converged=True,
+        ray_traceable=True,
+        effective_edge_used=0.4,
+        ray_grid={"category": "ok", "refl_count": 0, "miss_count": 0},
+        quality_note="measured on accepted ray-retry pupil",
+        optimized_zmx_path="accepted-final.zmx",
+    )
+    evidence = FnumLadderEvidence(
+        schema="atelier-p15-fno-ladder-v1",
+        target_achieved=True,
+        accepted_final=accepted,
+        target_efl_mm=3.8,
+        fnum_target=1.9,
+        stage="B",
+        rung_count=3,
+        fnum_tolerance_pct=8.0,
+        vig_ladder=(0.0, 0.2, 0.3),
+        ray_retry_vig_ladder=(0.2, 0.3, 0.4, 0.5),
+        num_fields=3,
+        extra_dof="both",
+    )
     generated = GeneratedCandidate(
         candidate_id=candidate_id,
         mode=GenerationMode.TARGET_CONVERGED,
@@ -195,6 +222,7 @@ def _target_converged_candidate(*, optimized_zmx_resolvable: bool = False) -> Sc
         payload=payload,
         optical_extras=OpticalExtras(ri_by_field=None, codev_post_aut=codev_post_aut),
         generation_notes=["Mode3：③ target 优化标准入口"],
+        fnum_ladder_evidence=evidence,
     )
     scorecard = ScorecardRow(
         candidate_id=candidate_id,
@@ -225,6 +253,26 @@ def _candidate_set(*candidates: ScoredCandidate) -> CandidateSet:
         notes=["fixture: export test batch"],
     )
     return CandidateSet(target=_target_spec(), candidates=list(candidates), summary=summary)
+
+
+def _stageb_negative_candidate() -> ScoredCandidate:
+    positive = _target_converged_candidate()
+    evidence = positive.generated.fnum_ladder_evidence
+    assert evidence is not None
+    negative_evidence = evidence.model_copy(
+        update={"target_achieved": False, "accepted_final": None}
+    )
+    generated = positive.generated.model_copy(
+        update={"fnum_ladder_evidence": negative_evidence}
+    )
+    deviations = [
+        dev.model_copy(update={"converged_toward_target": False})
+        if dev.field == "fnum"
+        else dev
+        for dev in positive.scorecard.target_deviations
+    ]
+    scorecard = positive.scorecard.model_copy(update={"target_deviations": deviations})
+    return ScoredCandidate(generated=generated, scorecard=scorecard)
 
 
 # ---------------------------------------------------------------------------
@@ -382,7 +430,7 @@ def test_bundle_zip_omits_zmx_and_explains_when_not_persisted():
         assert "README.txt" in names
         readme = zf.read("README.txt").decode("utf-8")
     assert "NOT included" in readme
-    assert "temporary directory" in readme
+    assert "persistence failure" in readme
 
 
 def test_bundle_zip_includes_zmx_once_mode3_artifact_is_persisted():
@@ -426,7 +474,40 @@ def test_bundle_zip_reconstructs_mode3_reproduction_seq_when_provenance_complete
 
     assert seq_text.strip()  # non-empty macro text
     assert f"{target.efl_mm}" in seq_text or f"{target.efl_mm:.6f}" in seq_text
+    assert "FNO 1.9" in seq_text
+    assert "VUY" in seq_text and "VLY" in seq_text
     assert "reproduction.seq: included" in readme
+    assert "accepted_final.measured_fnum: 1.900" in readme
+    assert "accepted_final.effective_edge_used: 0.400" in readme
+    assert '"category": "ok"' in readme
+    assert "measured on accepted ray-retry pupil" in readme
+
+
+def test_stageb_negative_evidence_exports_false_and_omits_reproduction_seq():
+    sc = _stageb_negative_candidate()
+    workbook = openpyxl.load_workbook(
+        io.BytesIO(
+            build_candidate_set_workbook(
+                _candidate_set(sc), job_id="stageb-negative", requirement=None
+            )
+        )
+    )
+    rows = list(workbook["Candidates"].iter_rows(values_only=True))
+    header, values = rows[0], rows[1]
+    assert values[header.index("fnum_ladder_target_achieved")] is False
+    assert values[header.index("fnum_accepted_measured_fnum")] == "N/A"
+    assert values[header.index("fnum_accepted_effective_edge_used")] == "N/A"
+    assert values[header.index("fnum_accepted_ray_grid")] == "N/A"
+    assert values[header.index("fnum_accepted_quality_note")] == "N/A"
+
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))
+    ) as zf:
+        assert "reproduction.seq" not in zf.namelist()
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "fnum_ladder.target_achieved: False" in readme
+    assert "accepted_final.measured_fnum: N/A" in readme
+    assert "did not produce an accepted_final rung" in readme
 
 
 def test_seed_zmx_resolution_matches_disk_name_exactly():
@@ -455,11 +536,8 @@ def test_seed_zmx_resolution_matches_disk_name_exactly():
     assert path.name == seed_case.metadata.source_zmx
 
 
-def test_bundle_zip_seq_fails_closed_without_edge_used():
-    """P17 对抗审 M2：`autovig.edge_used` 缺失 → 实际跑次的渐晕/裁瞳配置
-    不可重建，用 native/no-clip 猜测重建出的宏不是"复现"——必须 fail closed
-    不交付 .seq，README 写明缺的就是 edge_used。（本测试从此前"缺 edge 仍
-    交付"的旧行为翻转为钉住修复。）"""
+def test_bundle_zip_seq_fails_closed_without_stageb_evidence():
+    """A legacy post-AUT snapshot cannot substitute for closed Stage B evidence."""
     sc = _target_converged_candidate()
     sc = sc.model_copy(
         update={
@@ -467,7 +545,8 @@ def test_bundle_zip_seq_fails_closed_without_edge_used():
                 update={
                     "optical_extras": OpticalExtras(
                         ri_by_field=None, codev_post_aut={"post_aut.efl_y_mm": 3.79}
-                    )
+                    ),
+                    "fnum_ladder_evidence": None,
                 }
             )
         }
@@ -477,13 +556,21 @@ def test_bundle_zip_seq_fails_closed_without_edge_used():
         assert "reproduction.seq" not in zf.namelist()
         readme = zf.read("README.txt").decode("utf-8")
     assert "NOT included" in readme
-    assert "autovig edge_used missing" in readme
-    assert "复现宏不可用" in readme
+    assert "validated Stage B FNO-ladder evidence missing" in readme
 
 
 def test_bundle_zip_seq_fails_closed_when_edge_used_nonfinite():
     """NaN/inf edge_used 同属"不可重建"（fail closed），不是可用的裁瞳量。"""
     sc = _target_converged_candidate()
+    evidence = sc.generated.fnum_ladder_evidence
+    assert evidence is not None and evidence.accepted_final is not None
+    invalid_evidence = evidence.model_copy(
+        update={
+            "accepted_final": evidence.accepted_final.model_copy(
+                update={"effective_edge_used": float("nan")}
+            )
+        }
+    )
     sc = sc.model_copy(
         update={
             "generated": sc.generated.model_copy(
@@ -491,7 +578,8 @@ def test_bundle_zip_seq_fails_closed_when_edge_used_nonfinite():
                     "optical_extras": OpticalExtras(
                         ri_by_field=None,
                         codev_post_aut={"autovig.edge_used": float("nan")},
-                    )
+                    ),
+                    "fnum_ladder_evidence": invalid_evidence,
                 }
             )
         }
@@ -506,6 +594,15 @@ def test_bundle_zip_seq_included_when_edge_used_is_zero():
     "缺失"严格区分——照常交付 .seq（`_autovig_profile(0)` → 无渐晕 = 忠实
     复现该跑次）。"""
     sc = _target_converged_candidate()
+    evidence = sc.generated.fnum_ladder_evidence
+    assert evidence is not None and evidence.accepted_final is not None
+    zero_evidence = evidence.model_copy(
+        update={
+            "accepted_final": evidence.accepted_final.model_copy(
+                update={"effective_edge_used": 0.0}
+            )
+        }
+    )
     sc = sc.model_copy(
         update={
             "generated": sc.generated.model_copy(
@@ -513,7 +610,8 @@ def test_bundle_zip_seq_included_when_edge_used_is_zero():
                     "optical_extras": OpticalExtras(
                         ri_by_field=None,
                         codev_post_aut={"autovig.edge_used": 0.0},
-                    )
+                    ),
+                    "fnum_ladder_evidence": zero_evidence,
                 }
             )
         }

@@ -1627,7 +1627,7 @@ _CANDIDATE_CODEV_POST_AUT_ROWS: tuple[tuple[str, str], ...] = (
 
 _CANDIDATE_CODEV_POST_AUT_CAVEAT = (
     "裁瞳口径快照，不可与满口径直接横比 —— 以下数字来自 CODE V "
-    "run_codev_target_standard preferred 配置的批跑读数，裁瞳（vignetted pupil）"
+    "FNO ladder 选定 rung 的批跑读数，裁瞳（vignetted pupil）"
     "口径，与上方 target 偏差/像质摘要的 Optiland 满口径不可直接横比，仅供资深"
     "核对 provenance —— 不参与本页任何排序/打分。"
 )
@@ -1701,6 +1701,29 @@ def _candidate_repeatability_context(
         "wfe_max": _fmt_metric(rep.wfe_waves_max),
         "wfe_spread": _fmt_metric(rep.wfe_waves_spread),
         "note": rep.note,
+    }
+
+
+def _candidate_fnum_ladder_context(
+    generated: orchestration.GeneratedCandidate,
+) -> dict[str, object]:
+    evidence = generated.fnum_ladder_evidence
+    accepted = evidence.accepted_final if evidence is not None else None
+    return {
+        "status": "measured" if accepted is not None else "unavailable",
+        "target_achieved": formatting.fmt_yes_no(evidence.target_achieved)
+        if evidence is not None
+        else "N/A",
+        "measured_fnum": formatting.fmt_float(accepted.measured_fnum)
+        if accepted is not None
+        else "N/A",
+        "effective_edge_used": formatting.fmt_float(accepted.effective_edge_used)
+        if accepted is not None
+        else "N/A",
+        "ray_grid": json.dumps(accepted.ray_grid, ensure_ascii=False, sort_keys=True)
+        if accepted is not None
+        else "N/A",
+        "quality_note": accepted.quality_note if accepted is not None else "N/A",
     }
 
 
@@ -1869,6 +1892,7 @@ def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, obje
         ],
         "manufacturability": _candidate_manufacturability_context(row.manufacturability),
         "repeatability": _candidate_repeatability_context(row.repeatability),
+        "fnum_ladder": _candidate_fnum_ladder_context(gen),
         "rank_status": rank.status,
         "rank_status_label": "Ranked" if rank.status == "ranked" else "Withheld",
         "rank_score": formatting.fmt_float(rank.score) if rank.score is not None else None,

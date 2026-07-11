@@ -17,6 +17,8 @@ from app.core.orchestration.candidate import (
     NO_TARGET_CONVERGED_BANNER,
     CandidateSet,
     CandidateSetSummary,
+    FnumAcceptedFinalEvidence,
+    FnumLadderEvidence,
     GeneratedCandidate,
     GenerationMode,
     ImageQualityMetrics,
@@ -30,6 +32,7 @@ from app.core.orchestration.candidate import (
     TargetDeviation,
     TargetSpec,
     fnum_gate_from_ladder_result,
+    fnum_ladder_evidence_from_result,
 )
 from app.core.orchestration.export import (
     build_candidate_bundle_zip,
@@ -50,6 +53,8 @@ __all__ = [
     "CandidateSet",
     "CandidateSetSummary",
     "GeneratedCandidate",
+    "FnumAcceptedFinalEvidence",
+    "FnumLadderEvidence",
     "GenerationMode",
     "ImageQualityMetrics",
     "ManufacturabilityProxy",
@@ -66,6 +71,7 @@ __all__ = [
     "build_candidate_bundle_zip",
     "build_candidate_set_workbook",
     "fnum_gate_from_ladder_result",
+    "fnum_ladder_evidence_from_result",
     "orchestrate",
     "score_candidate",
 ]

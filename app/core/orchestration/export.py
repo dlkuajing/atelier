@@ -11,31 +11,17 @@ HTML 渲染与本模块）取数——不重新触碰 optic/ZMX、不二次计�
 可制造性 proxy + 排序结果）。
 ② `build_candidate_bundle_zip`：单候选 ZMX + 复现 .seq + README 下载包。
 
-**已知限制（如实记录，非本铲修复范围）**：Mode3（`TargetConvergedGenerator`，
-`app/core/orchestration/generators.py`）优化后的 ZMX 落在一次性
-`tempfile.TemporaryDirectory` 里，任务结束即清理——`generators.py` 是另一在飞
-PR（`feat/mode3-funnel-tuning`，#63）的文件面，本铲铁律不碰。因此：
-- ZMX 下载对**任意** mode 都走同一条路径解析（`ZMX_AMMO_DIR /
-  payload.metadata.source_zmx`）——Mode1（检索，零优化）今天就能下载真实文件；
-  Mode3 的优化 ZMX 今天解析不到（fail closed，README 如实说明），一旦
-  generators.py 侧把优化 ZMX 落进持久化目录（或把路径接进这里），这条路径
-  自动生效，不需要再改本模块。
-- 复现 `.seq`：Mode3 专属，用 `codev_optimize.build_codev_target_sequence`
-  （纯字符串生成，见其 docstring）从候选留存的 provenance（target EFL、
-  candidate_id 编码的 preferred 配置、`codev_post_aut["autovig.edge_used"]`）
-  重建一份"配方"宏——不是历史上真正跑过的那份 `.seq`字节（那份也在同一个
-  已清理的临时目录里），是可重新提交给 CODE V、预期产出等价优化的复现脚本。
-  **上列三件 provenance 缺任何一件即 fail-closed 不交付 .seq**（P17 对抗审
-  M2：缺 `edge_used` 曾退化成 native/no-clip 宏仍冒充"复现"——渐晕/裁瞳
-  配置是复现语义的一部分，缺件重建=另一个配置，README 会写明缺哪件；
-  `edge_used=0.0` 是合法完整值=零裁瞳，不算缺件）。`num_fields=3` 是
-  generators.py `_candidate_for_seed` 当前硬编码值（未来若可配，需要
-  codev_post_aut 补一个字段才能精确复现）。
+Mode3 优化 ZMX 由 generator 持久化并通过 `optimized_zmx_path` 解析；复制失败
+仍 fail-closed 不导出。Stage B 复现 `.seq` 只从 closed FNO-ladder evidence
+重建 accepted_final 的实际配置（target EFL/F-number、stage、extra_dof、
+num_fields、effective_edge_used）。证据缺失、未达标或与批 target 不一致时不
+导出 `.seq`；绝不退回旧 post-AUT 裸字典或猜 native/no-clip 配置。
 """
 
 from __future__ import annotations
 
 import io
+import json
 import math
 import zipfile
 from datetime import UTC, datetime
@@ -81,14 +67,6 @@ _PRECISION_NOTE = (
     "非零小值显示为 <最小刻度，绝不显示假零 0.000）。全精度原始数据以"
     " job result JSON（CandidateSet.model_dump）为准。"
 )
-
-# Fixed Mode3 constant this module's .seq reconstruction relies on — mirrors
-# `generators.py::TargetConvergedGenerator._candidate_for_seed`'s hardcoded
-# `run_codev_target_standard(..., num_fields=3)` call. If that call site ever
-# starts varying `num_fields` per seed, a real field count needs to be added
-# to `OpticalExtras.codev_post_aut` before this constant can be retired.
-_MODE3_NUM_FIELDS = 3
-
 
 # ---------------------------------------------------------------------------
 # ① xlsx workbook
@@ -185,6 +163,14 @@ _REPEATABILITY_COLUMNS: tuple[str, ...] = (
     "repeatability_note",
 )
 
+_FNUM_EVIDENCE_COLUMNS: tuple[str, ...] = (
+    "fnum_ladder_target_achieved",
+    "fnum_accepted_measured_fnum",
+    "fnum_accepted_effective_edge_used",
+    "fnum_accepted_ray_grid",
+    "fnum_accepted_quality_note",
+)
+
 
 def _repeatability_row(rep: RepeatabilityMetrics) -> list[object]:
     # Same strings as the page's `_candidate_repeatability_context`.
@@ -215,6 +201,7 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
     header += [label for label, _ in _IMAGE_QUALITY_COLUMNS]
     header += ["ttl_mm", "n_pieces", "has_special_glass", "aspheric_term_count", "aspheric_surface_count", "chief_ray_angle_deg"]
     header += list(_REPEATABILITY_COLUMNS)
+    header += list(_FNUM_EVIDENCE_COLUMNS)
     ws.append(header)
 
     for sc in candidate_set.candidates:
@@ -247,6 +234,17 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
             line.append(fmt_metric(getattr(row.image_quality, attr)))
         line += _manufacturability_row(row.manufacturability)
         line += _repeatability_row(row.repeatability)
+        evidence = gen.fnum_ladder_evidence
+        accepted = evidence.accepted_final if evidence is not None else None
+        line += [
+            evidence.target_achieved if evidence is not None else None,
+            fmt_float(accepted.measured_fnum) if accepted is not None else "N/A",
+            fmt_float(accepted.effective_edge_used) if accepted is not None else "N/A",
+            json.dumps(accepted.ray_grid, ensure_ascii=False, sort_keys=True)
+            if accepted is not None
+            else "N/A",
+            accepted.quality_note if accepted is not None else "N/A",
+        ]
         ws.append(line)
 
 
@@ -314,17 +312,6 @@ def _resolve_seed_zmx_path(sc: ScoredCandidate):
     return None  # seed not in the library -> fail closed, never guess a filename
 
 
-def _mode3_preferred_config(candidate_id: str) -> str | None:
-    """Parse the `preferred` extra_dof config name out of a Mode3 candidate
-    id, which `generators.py` encodes as
-    `f"{case_id}::target-converged-{preferred}"` (structural, not a guess —
-    the only place that string is built)."""
-    marker = "::target-converged-"
-    if marker not in candidate_id:
-        return None
-    return candidate_id.rsplit(marker, 1)[-1] or None
-
-
 def _reproduction_seq_text(
     sc: ScoredCandidate, target: TargetSpec
 ) -> tuple[str | None, str | None]:
@@ -342,31 +329,33 @@ def _reproduction_seq_text(
     "缺失"严格区分。"""
     if sc.mode is not GenerationMode.TARGET_CONVERGED:
         return None, "not applicable (Mode1, zero optimization ran)"
+    evidence = sc.generated.fnum_ladder_evidence
+    if evidence is None:
+        return None, "validated Stage B FNO-ladder evidence missing"
+    if not evidence.target_achieved or evidence.accepted_final is None:
+        return None, "Stage B FNO ladder did not produce an accepted_final rung"
     if target.efl_mm is None:
         return None, "target EFL missing from the batch's TargetSpec"
+    if not math.isclose(target.efl_mm, evidence.target_efl_mm, rel_tol=1e-12):
+        return None, "batch target EFL does not match the accepted ladder recipe"
+    if not math.isclose(target.fnum, evidence.fnum_target, rel_tol=1e-12):
+        return None, "batch target F-number does not match the accepted ladder recipe"
     seed_zmx = _resolve_seed_zmx_path(sc)
     if seed_zmx is None:
         return None, "seed ZMX not resolvable under data/zmx/"
-    preferred = _mode3_preferred_config(sc.scorecard.candidate_id)
-    if preferred is None:
-        return None, "preferred extra_dof config not parseable from candidate_id"
-    post_aut = sc.generated.optical_extras.codev_post_aut
-    edge_used = post_aut.get("autovig.edge_used") if post_aut else None
-    if not isinstance(edge_used, int | float) or not math.isfinite(float(edge_used)):
-        return None, (
-            "autovig edge_used missing from provenance — the actual run's "
-            "vignetting/pupil-clip configuration cannot be reconstructed, and a "
-            "macro with a guessed (native/no-clip) pupil would NOT reproduce this "
-            "candidate (复现宏不可用：缺 autovig edge_used)"
-        )
-    vignetting = _autovig_profile(float(edge_used), _MODE3_NUM_FIELDS)
+    accepted = evidence.accepted_final
+    if not math.isfinite(accepted.effective_edge_used):
+        return None, "accepted effective_edge_used is non-finite"
+    vignetting = _autovig_profile(accepted.effective_edge_used, evidence.num_fields)
     try:
         return (
             build_codev_target_sequence(
                 source_zmx=seed_zmx,
                 result_path="atelier_reproduction_result.tsv",
-                target_efl_mm=target.efl_mm,
-                extra_dof=preferred,
+                target_efl_mm=evidence.target_efl_mm,
+                target_f_number=evidence.fnum_target,
+                stage=evidence.stage,
+                extra_dof=evidence.extra_dof,
                 vignetting=vignetting,
                 emit_optimized_zmx=True,
                 optimized_readout_path="atelier_reproduction_optimized_readout.txt",
@@ -404,6 +393,22 @@ def _bundle_readme(
         "不代为判定，[EXPERT] 一栏在候选集页面上保持留白。",
         "",
     ]
+    evidence = gen.fnum_ladder_evidence
+    accepted = evidence.accepted_final if evidence is not None else None
+    lines += [
+        f"fnum_ladder.target_achieved: {evidence.target_achieved if evidence else 'unavailable'}",
+        f"accepted_final.measured_fnum: {fmt_float(accepted.measured_fnum) if accepted else 'N/A'}",
+        "accepted_final.effective_edge_used: "
+        f"{fmt_float(accepted.effective_edge_used) if accepted else 'N/A'}",
+        "accepted_final.ray_grid: "
+        + (
+            json.dumps(accepted.ray_grid, ensure_ascii=False, sort_keys=True)
+            if accepted
+            else "N/A"
+        ),
+        f"accepted_final.quality_note: {accepted.quality_note if accepted else 'N/A'}",
+        "",
+    ]
     if zmx_path is not None:
         lines += [
             f"candidate.zmx: included ({zmx_path.name}), delivered-payload prescription.",
@@ -411,24 +416,20 @@ def _bundle_readme(
     else:
         lines += [
             "candidate.zmx: NOT included — this candidate's ZMX is not resolvable on",
-            "disk today. Known limitation: Mode3 (target-converged) optimized ZMX",
-            "files are written to a per-job temporary directory that is cleaned up",
-            "when the job finishes (app/core/orchestration/generators.py, out of",
-            "scope for this fix — see that module's TargetConvergedGenerator",
-            "docstring). Mode1 (retrieved) candidates always resolve here.",
+            "disk. Mode3 persistence failure is recorded in artifact_warnings and",
+            "fails closed here; Mode1 resolves only its recorded seed source_zmx.",
         ]
     lines.append("")
     if seq_text is not None:
         lines += [
             "reproduction.seq: included — a deterministically RECONSTRUCTED CODE V",
-            "macro (not the literal historical .seq, which lived in the same",
-            "cleaned-up temp directory as the optimized ZMX above). Rebuilt from the",
-            "candidate's full stored provenance (target EFL, preferred extra_dof",
-            "config, autovig edge_used pupil-clip). Re-running it against the seed",
+            "macro (not the literal historical .seq). Rebuilt from the",
+            "candidate's validated Stage B ladder evidence (target EFL/F-number,",
+            "stage, extra_dof, and accepted effective_edge_used pupil-clip). Re-running it against the seed",
             "ZMX is expected to reproduce an equivalent optimization to the one that",
             "produced this candidate, not necessarily bit-identical results.",
-            f"Assumes num_fields={_MODE3_NUM_FIELDS} (the current fixed Mode3",
-            "constant) since the actual per-run field count isn't persisted.",
+            f"Uses persisted num_fields={evidence.num_fields if evidence else 'N/A'};",
+            "the accepted ray-retry/autovig pupil configuration is not guessed.",
         ]
     elif row.mode is GenerationMode.TARGET_CONVERGED:
         lines += [

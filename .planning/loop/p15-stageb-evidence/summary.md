@@ -100,7 +100,7 @@
 - **每级必须重解渐晕**（autovig 爬梯）——32/42 TIR 证明裸 FNO retarget 光栅必伤；阶梯引擎已按此设计（每 rung 独立 `run_codev_target_autovig`）。
 - **达标判据必须双维上报**：`measured_fnum`（EFL_real/EPD_real 活算，不信构造值）+ 光栅干净度证据（渐晕 edge_used、err_f_ratio）。引擎已实现 measured_fnum fail-closed；**建议下一窗把 per-rung .lis 分类（fno_probe.classify_fno_listing）也接进 rung 记录**，光栅干净度即可量化上报。
 - **收紧方向预期需要更多渐晕/更细阶梯**：0/18 clean 说明收紧的每一级都要靠渐晕清理救；95° 超广角收紧有 timeout 风险（引擎已实现每级吞并续爬）。
-- **CONVERGED_FIELDS 不得扩 fnum**：本采证再次证明 `aut_converged=1` + `post_aut.fno==target` 双假阳性——在光栅干净度证据未接入引擎并真机验证 ≥8 seed 前，扩展是提前标注未验证能力（诚实红线）。
+- **后置裁决（取代旧“不得扩 fnum”）**：随后完成的 14 条 FNO ladder 真机矩阵已把光栅干净度接入，并验证 closed gate（`accepted_final.status=measured` + `fno_param_achieved=True` + `aut_converged=True` + `ray_traceable=True`）为 **0 假阳性**。因此 `CONVERGED_FIELDS` 可把 `fnum` 作为能力上限纳入，但只能对持有同一候选结构化 ladder evidence 且 `target_achieved=True` 的候选派生 `converged=True`；裸 bool、`aut_converged` 单维、缺字段或 schema 不符均 fail-closed。裁决证据见 `fno-matrix-2026-07-11/matrix-analysis.md`，不涉及也不代填任何 [EXPERT] 良品/合格判断。
 
 ## 8. Native 对照臂结果（2026-07-11 同日真机窗 · 12 格，闭 §6 限制 1）
 

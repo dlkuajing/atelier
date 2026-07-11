@@ -137,27 +137,35 @@ def test_orchestrate_target_converged_success_clears_banner_and_round_trips_vali
     monkeypatch.setattr(generators_module, "cases_for_scenario", lambda scenario: [seed])
     monkeypatch.setattr(
         generators_module,
-        "run_codev_target_standard",
+        "run_codev_target_fno_ladder",
         lambda **kwargs: {  # noqa: ANN003
-            "preferred": "asphere",
-            "preferred_reason": "mock preferred (unit test)",
-            "configs": {
-                "asphere": {
-                    "optimized_zmx_path": str(stand_in_zmx),
-                    "post_aut.efl_y_mm": "3.797",
-                    "post_aut.max_rms_spot_diameter_um": "12.3",
-                    "post_aut.max_rms_wavefront_error_waves": "0.04",
-                    "post_aut.max_distortion_pct": "3.1",
-                    "post_aut.fno": "2.3",
-                    "post_aut.maximh_mm": "3.3",
-                    "efl_target_deviation_pct": "0.01",
-                    "aut_converged": "1",
-                    "autovig.edge_used": "0.0",
-                    "aut_error_trace": {"err_f_ratio": 0.09, "termination": "normal_completion"},
-                },
-                "both": {"error": {"kind": "no_license", "detail": "mock skip"}},
+            "schema": "atelier-p15-fno-ladder-v1",
+            "stage": "B",
+            "target_efl_mm": 3.797,
+            "fnum_target": 2.3,
+            "rung_count": 3,
+            "fnum_tolerance_pct": 8.0,
+            "vig_ladder": [0.0, 0.2],
+            "ray_retry_vig_ladder": [0.2, 0.3],
+            "num_fields": 3,
+            "extra_dof": "both",
+            "last_measured_rung": {
+                "status": "measured", "measured_fnum": 2.3,
+                "fno_param_achieved": True, "aut_converged": True,
+                "ray_traceable": True, "ray_grid": {"category": "ok"},
+                "effective_edge_used": "0.0", "quality_note": "accepted pupil",
+                "optimized_zmx_path": str(stand_in_zmx),
+                "post_aut.max_rms_spot_diameter_um": 12.3,
             },
-            "provenance": {"glass_model": {"asphere": "glass-frozen", "both": "n/a"}},
+            "target_achieved": True,
+            "accepted_final": {
+                "status": "measured", "measured_fnum": 2.3,
+                "fno_param_achieved": True, "aut_converged": True,
+                "ray_traceable": True, "ray_grid": {"category": "ok"},
+                "effective_edge_used": "0.0", "quality_note": "accepted pupil",
+                "optimized_zmx_path": str(stand_in_zmx),
+                "post_aut.max_rms_spot_diameter_um": 12.3,
+            },
         },
     )
 
@@ -172,12 +180,9 @@ def test_orchestrate_target_converged_success_clears_banner_and_round_trips_vali
 
     efl_dev = next(d for d in row.target_deviations if d.field == "efl")
     assert efl_dev.converged_toward_target is True
-    # 其余维（fnum/imh/fov/ttl，凡有产出）如实标 False——P15 带条件扩后 fnum
-    # 虽在能力上限表内，但本 generator 路径不跑 FNO 阶梯（fnum_ladder_achieved
-    # 恒 None）→ fnum 仍恒 False；validator（ScoredCandidate._enforce_
-    # consistency）本身就会在任何字段不一致时 raise；这里直接断言 orchestrate
-    # 的真实产出没有撒谎。
-    for field in ("fnum", "imh", "fov", "ttl"):
+    fnum_dev = next(d for d in row.target_deviations if d.field == "fnum")
+    assert fnum_dev.converged_toward_target is True
+    for field in ("imh", "fov", "ttl"):
         dev = next((d for d in row.target_deviations if d.field == field), None)
         if dev is not None:
             assert dev.converged_toward_target is False

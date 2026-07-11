@@ -24,6 +24,8 @@ from app.core.orchestration.candidate import (
     NO_TARGET_CONVERGED_BANNER,
     CandidateSet,
     CandidateSetSummary,
+    FnumAcceptedFinalEvidence,
+    FnumLadderEvidence,
     GeneratedCandidate,
     GenerationMode,
     ImageQualityMetrics,
@@ -52,6 +54,40 @@ def _first_case_with_metadata() -> OpticalSampleData:
 
 
 _CASE = _first_case_with_metadata()
+
+
+def _fnum_evidence(achieved: bool | None) -> FnumLadderEvidence | None:
+    if achieved is None:
+        return None
+    accepted = (
+        FnumAcceptedFinalEvidence(
+            status="measured",
+            measured_fnum=2.4,
+            fno_param_achieved=True,
+            aut_converged=True,
+            ray_traceable=True,
+            effective_edge_used=0.3,
+            ray_grid={"category": "ok"},
+            quality_note="measured on accepted vignetted pupil",
+            optimized_zmx_path="accepted.zmx",
+        )
+        if achieved
+        else None
+    )
+    return FnumLadderEvidence(
+        schema="atelier-p15-fno-ladder-v1",
+        target_achieved=achieved,
+        accepted_final=accepted,
+        target_efl_mm=4.0,
+        fnum_target=2.4,
+        stage="B",
+        rung_count=3,
+        fnum_tolerance_pct=8.0,
+        vig_ladder=(0.0, 0.2),
+        ray_retry_vig_ladder=(0.2, 0.3),
+        num_fields=3,
+        extra_dof="both",
+    )
 
 
 def _metric(value: float | None = None) -> MetricValue:
@@ -127,7 +163,7 @@ def _generated_candidate(
         payload=_CASE,
         optical_extras=OpticalExtras(),
         generation_notes=["test fixture"],
-        fnum_ladder_achieved=fnum_ladder_achieved,
+        fnum_ladder_evidence=_fnum_evidence(fnum_ladder_achieved),
     )
 
 
@@ -348,7 +384,7 @@ def test_scored_candidate_fnum_gate_true_but_scorecard_says_no_raises():
 def test_generated_candidate_retrieved_with_fnum_gate_raises():
     """RETRIEVED（零优化）候选携带 F# ladder 证据 = provenance 矛盾，构造期拒绝。"""
     assert _CASE.metadata is not None
-    with pytest.raises(ValueError, match="fnum_ladder_achieved"):
+    with pytest.raises(ValueError, match="fnum_ladder_evidence"):
         GeneratedCandidate(
             candidate_id="test",
             mode=GenerationMode.RETRIEVED,
@@ -356,16 +392,29 @@ def test_generated_candidate_retrieved_with_fnum_gate_raises():
             payload=_CASE,
             optical_extras=OpticalExtras(),
             generation_notes=["test fixture"],
-            fnum_ladder_achieved=True,
+            fnum_ladder_evidence=_fnum_evidence(True),
         )
 
 
 def test_fnum_gate_from_ladder_result_requires_four_condition_record():
     """gate 判定只认引擎四条件 target_achieved 记录（禁 aut_converged 单维）；
     fail-closed：非 Mapping/缺键/非 True 一律 False。"""
-    assert fnum_gate_from_ladder_result({"target_achieved": True}) is True
-    assert fnum_gate_from_ladder_result({"target_achieved": False}) is False
-    assert fnum_gate_from_ladder_result({"target_achieved": "True"}) is False  # 非布尔真值
+    valid = _fnum_evidence(True)
+    assert valid is not None
+    raw = valid.model_dump()
+    assert fnum_gate_from_ladder_result(raw) is True
+    negative = _fnum_evidence(False)
+    assert negative is not None
+    assert fnum_gate_from_ladder_result(negative.model_dump()) is False
+    assert fnum_gate_from_ladder_result({**raw, "target_achieved": "True"}) is False
+    assert fnum_gate_from_ladder_result({**raw, "accepted_final": None}) is False
+    for missing in ("schema", "num_fields", "accepted_final"):
+        forged = dict(raw)
+        forged.pop(missing)
+        assert fnum_gate_from_ladder_result(forged) is False
+    forged_final = dict(raw["accepted_final"])
+    forged_final["ray_traceable"] = "True"
+    assert fnum_gate_from_ladder_result({**raw, "accepted_final": forged_final}) is False
     # aut_converged 单维（P15 Stage 2 证明的双假阳性维度）绝不放行
     assert fnum_gate_from_ladder_result({"aut_converged": "1"}) is False
     assert fnum_gate_from_ladder_result({}) is False

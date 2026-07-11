@@ -1771,6 +1771,11 @@ def _fno_ladder_rung_from_data(
             data, "post_aut.max_rms_wavefront_error_waves"
         ),
         "err_f_ratio": err_f_ratio,
+        "aut_termination": (
+            aut_error_trace.get("termination")
+            if isinstance(aut_error_trace, Mapping)
+            else None
+        ),
         "aut_converged": str(data.get("aut_converged")) == "1",
         "autovig.edge_used": data.get("autovig.edge_used"),
         "autovig.converged": data.get("autovig.converged"),
@@ -1784,6 +1789,11 @@ def _fno_ladder_rung_from_data(
         # （见 _ray_aware_retry）。资深读 RMS/WFE 必须连同此列（RMS 在裁瞳上
         # 测=偏乐观）。
         "effective_edge_used": data.get("autovig.edge_used"),
+        "quality_note": (
+            "RMS/WFE measured on the accepted autovig pupil; read together with "
+            "effective_edge_used"
+        ),
+        "optimized_zmx_path": data.get("optimized_zmx_path"),
         "ray_retry": None,
         "error": None,
     }
@@ -1805,10 +1815,13 @@ def _fno_ladder_error_rung(
         "post_aut.max_rms_spot_diameter_um": None,
         "post_aut.max_rms_wavefront_error_waves": None,
         "err_f_ratio": None,
+        "aut_termination": None,
         "aut_converged": False,
         "autovig.edge_used": None,
         "autovig.converged": None,
         "effective_edge_used": None,
+        "quality_note": "rung has no measured accepted optical quality",
+        "optimized_zmx_path": None,
         "ray_retry": None,
         "error": {"kind": exc.kind, "detail": exc.message},
     }
@@ -1903,6 +1916,11 @@ def _ray_aware_retry(
             accepted["autovig.edge_used"] = rung.get("autovig.edge_used")
             accepted["autovig.converged"] = rung.get("autovig.converged")
             accepted["effective_edge_used"] = _fmt_number(edge)
+            accepted["quality_note"] = (
+                "RMS/WFE measured on the retry's vignetted pupil "
+                f"(off-axis edge={edge:g}) — optimistic vs full pupil; "
+                "read together with effective_edge_used"
+            )
             accepted["ray_retry"] = {
                 "triggered": True,
                 "accepted_edge": edge,
@@ -2150,6 +2168,10 @@ def run_codev_target_fno_ladder(
         "fnum_target": fnum_target,
         "rung_count": rung_count,
         "fnum_tolerance_pct": fnum_tolerance_pct,
+        "vig_ladder": list(vig_ladder),
+        "ray_retry_vig_ladder": list(ray_retry_vig_ladder or ()),
+        "num_fields": num_fields,
+        "extra_dof": extra_dof,
         "native_fnum_measured": native_measured,
         "rungs": rungs,
         "last_measured_rung_index": (

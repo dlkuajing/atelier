@@ -461,6 +461,12 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
     assert 'data-deviation-field="fnum" data-converged="false"' in converged_card
     assert 'data-deviation-field="imh" data-converged="false"' in converged_card
     assert 'data-deviation-field="ttl" data-converged="false"' in converged_card
+    assert 'data-fnum-ladder-evidence' in converged_card
+    assert 'data-evidence-status="unavailable"' in converged_card
+    assert "accepted_final.measured_fnum: N/A" in converged_card
+    assert "accepted_final.effective_edge_used: N/A" in converged_card
+    assert "accepted_final.ray_grid: N/A" in converged_card
+    assert "accepted_final.quality_note: N/A" in converged_card
     assert "(unconstrained)" in converged_card  # ttl target echo
 
     # CODE V post-AUT provenance-only sub-block, with the caveat copied verbatim.
