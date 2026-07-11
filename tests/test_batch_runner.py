@@ -180,6 +180,15 @@ def test_run_batch_fake_engine_five_targets_one_injected_failure(tmp_path: Path)
     failed_job = next(j for j in summary.jobs if j.target_index == 2)
     assert failed_job.failure is not None
     assert failed_job.failure.category == "engine"
+
+    # Artifact paths must be absolute — a reader process (e.g. the
+    # /batches/{batch_id} web page) is not guaranteed to share this
+    # process's cwd, and a relative path would silently fail to resolve.
+    succeeded_job = next(j for j in summary.jobs if j.target_index == 0)
+    assert succeeded_job.artifact_dir is not None
+    assert Path(succeeded_job.artifact_dir).is_absolute()
+    assert succeeded_job.candidate_set_pointer is not None
+    assert Path(succeeded_job.candidate_set_pointer).is_absolute()
     # A failed attempt still persists its (0-candidate) CandidateSet — honest
     # audit trail, not swept under the rug.
     assert failed_job.candidate_set_pointer is not None

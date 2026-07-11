@@ -385,9 +385,17 @@ def run_batch(
         )
         resolved_targets = list(targets)
 
+    # `.resolve()` (not just the join) matters: `settings.job_artifacts_dir`
+    # defaults to the *relative* `Path("var/job-artifacts")`, and the process
+    # that later reads `job.artifact_dir`/`candidate_set_pointer` off disk
+    # (the `/batches/{batch_id}` web page, in particular) is not guaranteed
+    # to share this process's cwd. A relative path stored in the archive
+    # would silently resolve to nothing (or the wrong directory) from a
+    # different cwd — storing an absolute path makes every downstream reader
+    # cwd-independent.
     resolved_artifacts_root = (
         artifacts_root if artifacts_root is not None else (settings.job_artifacts_dir / "batches")
-    )
+    ).resolve()
 
     completed_indices = {
         job.target_index
