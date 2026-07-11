@@ -101,3 +101,29 @@
 - **达标判据必须双维上报**：`measured_fnum`（EFL_real/EPD_real 活算，不信构造值）+ 光栅干净度证据（渐晕 edge_used、err_f_ratio）。引擎已实现 measured_fnum fail-closed；**建议下一窗把 per-rung .lis 分类（fno_probe.classify_fno_listing）也接进 rung 记录**，光栅干净度即可量化上报。
 - **收紧方向预期需要更多渐晕/更细阶梯**：0/18 clean 说明收紧的每一级都要靠渐晕清理救；95° 超广角收紧有 timeout 风险（引擎已实现每级吞并续爬）。
 - **CONVERGED_FIELDS 不得扩 fnum**：本采证再次证明 `aut_converged=1` + `post_aut.fno==target` 双假阳性——在光栅干净度证据未接入引擎并真机验证 ≥8 seed 前，扩展是提前标注未验证能力（诚实红线）。
+
+## 8. Native 对照臂结果（2026-07-11 同日真机窗 · 12 格，闭 §6 限制 1）
+
+同宏、同短 AUT、同 EFL 锁 native、**不发 FNO 命令**的对照探针（`native-control-2026-07-11/`，per-cell seq/tsv/lis + `native-control-results.tsv`）。对照口径：对照臂分类 = seed 固有光栅状态；FNO 臂分类与对照臂的**差异**才可归因 FNO retarget。
+
+| seed | FOV | native 对照 | FNO 臂（§1-§5 矩阵） | 归因 |
+|---|---|---|---|---|
+| US10281683B2 | 81° | TIR (REFL 13, MISS 2) | 4 格全 TIR | **seed 固有**（与 opt3 诊断 v2 一致） |
+| US20180143405A1 | 95° | timeout（部分清单 REFL 13） | 收紧 timeout / 放松 TIR | **seed 固有**（TIR-flood 在 native 已现） |
+| US10330891B2 | 100° | TIR (7, 0) | 3 格全 TIR | seed 固有 |
+| US20210165194A1 | 95° | TIR (3, 2) | 收紧 timeout / **放松 2.4 ok** | 固有 TIR + **放松反而清掉病灶** |
+| US20170003482A1 | 91° | **ok (0, 0)** | 收紧 1.8 TIR / 2.0 MISS / 放松 ok | ★**唯一干净归因：FNO 收紧确实诱发新病灶**★ |
+| US8908290B1 | 91.2° | chief-ray-missing (0, 6) | 收紧 TIR / **放松 2.4 ok** | 固有 MISS，收紧升级 TIR，放松清掉 |
+| US20140111876A1 | 75.2° | TIR (7, 0) | 5 格全 TIR | seed 固有 |
+| US10310222B2 | 76.2° | TIR (11, 0) | 4 格全 TIR | seed 固有 |
+| US-12443014-B2-e1 | 15.8° | TIR (45, 11) | 5 格全 TIR | **seed 固有——§3"长焦意外 TIR"之谜解开** |
+| US-12372756-B2-e8 | 15.9° | TIR (44, 5) | 5 格全 TIR（MISS 恒 5） | seed 固有（MISS 5 固定份额=对照臂同值） |
+| US-20260160979-A1-e3 | 19° | **ok (0, 0)** | 放松 3 格全 ok | seed 干净，FNO 放松不破坏 |
+| US-11940597-B2-e6 | 18.8° | TIR (1, 0) | 收紧 TIR (REFL 45/33) / **放松 4.0 ok** | 微固有（1），**收紧放大 45 倍**，放松清零 |
+
+**修正后的核心读法**（更新 §0-§4 的解释，分布数字不变）：
+
+1. **矩阵 TIR 的大头是 seed 固有份额**：10/12 seed 对照臂即带病灶（8 TIR + 1 timeout + 1 chief-ray-missing）——ZMX→CV 导入丢 ray-aiming 的已知病根（诊断 v2），与 FNO 无关。§3 的"长焦也大量 TIR"由此完全解释（两颗长焦 native REFL 44-45）。
+2. **FNO 收紧的真实增量效应**（对照臂干净/轻微的 seed 上可见）：US20170003482A1 ok→TIR/MISS（诱发）；US-11940597-B2-e6 REFL 1→45/33（放大 45 倍）；US8908290B1 MISS→TIR（升级）。**收紧确实加重光栅病灶**——方向结论（收紧 0/18 clean）成立且现在有对照支撑。
+3. **新模式：放松可清掉固有病灶**（3 例：US20210165194A1 TIR→ok、US8908290B1 MISS→ok、US-11940597 TIR→ok）——物理直觉一致（收小孔径裁掉边缘病灶光线）。放松方向的 F# 达 target 对这类 seed 可能"免费"。
+4. **对 Stage 3 阶梯的输入**：收紧阶梯在多数 seed 上是在**已带伤的光栅**上工作，per-rung autovig 渐晕清理是必需而非保险；`ray_traceable` 判定应对照 rung 0（native）的 ray_grid 读——rung 0 本身 False 的 seed，目标 rung 的 False 未必是 FNO 的锅（引擎已分 rung 记录，资深可对照读）。
