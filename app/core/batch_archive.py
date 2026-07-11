@@ -60,6 +60,19 @@ class BatchArchiveError(RuntimeError):
     or a `create_batch` call that collides with an existing batch_id."""
 
 
+class CandidateSetUnavailableError(BatchArchiveError):
+    """The job's persisted `CandidateSet` cannot be loaded (no
+    `candidate_set_pointer`, file missing, or corrupt payload) — verdict
+    writes fail closed: a verdict cannot anchor to candidates we cannot
+    enumerate (P18 对抗审 MAJOR-2)."""
+
+
+class UnknownCandidateKeyError(BatchArchiveError):
+    """The verdict's `candidate_key` does not match any candidate in the
+    job's persisted `CandidateSet` — a ghost [EXPERT] verdict must never be
+    written (P18 对抗审 MAJOR-2)."""
+
+
 # ---------------------------------------------------------------------------
 # Records
 # ---------------------------------------------------------------------------
@@ -346,11 +359,68 @@ class BatchArchive:
 
     # -- expert verdicts --
 
+    def candidate_keys_for_job(self, batch_id: str, job_id: str) -> frozenset[str]:
+        """Enumerate the candidate ids in the job's persisted `CandidateSet`
+        (raw JSON traversal of `candidate_set_pointer` — cheap, no dependency
+        on the orchestration models). MAJOR-2's verdict anchor: raises
+        `BatchArchiveError` for an unknown job and
+        `CandidateSetUnavailableError` when the pointer is absent, the file
+        is gone, or the payload is malformed — a verdict target set we
+        cannot enumerate means no verdict can be written (fail closed). An
+        honestly *empty* candidates list is valid and returns an empty set
+        (every key is then unknown)."""
+        job = self.get_job(batch_id, job_id)
+        if not job.candidate_set_pointer:
+            raise CandidateSetUnavailableError(
+                f"job has no persisted candidate set: {batch_id}/{job_id}"
+            )
+        path = Path(job.candidate_set_pointer)
+        if not path.is_file():
+            raise CandidateSetUnavailableError(
+                f"candidate set file missing on disk: {job.candidate_set_pointer}"
+            )
+        try:
+            payload = _read_json(path)
+        except (json.JSONDecodeError, OSError) as exc:
+            raise CandidateSetUnavailableError(
+                f"candidate set file unreadable/corrupt: {job.candidate_set_pointer}"
+            ) from exc
+        candidates = payload.get("candidates")
+        if not isinstance(candidates, list):
+            raise CandidateSetUnavailableError(
+                f"candidate set payload malformed (no candidates list): {job.candidate_set_pointer}"
+            )
+        keys: set[str] = set()
+        for entry in candidates:
+            candidate_id = (
+                entry.get("scorecard", {}).get("candidate_id")
+                if isinstance(entry, dict) and isinstance(entry.get("scorecard"), dict)
+                else None
+            )
+            if not isinstance(candidate_id, str) or not candidate_id:
+                raise CandidateSetUnavailableError(
+                    "candidate set payload malformed (candidate without scorecard."
+                    f"candidate_id): {job.candidate_set_pointer}"
+                )
+            keys.add(candidate_id)
+        return frozenset(keys)
+
     def put_verdict(self, verdict: ExpertVerdict, *, batch_id: str) -> None:
-        """Fails loud (`BatchArchiveError`) if `verdict.job_id` doesn't
-        resolve to a real job record in this batch — a verdict must anchor
-        to an actual attempt, never a free-floating claim."""
-        self.get_job(batch_id, verdict.job_id)
+        """Fails loud if the verdict doesn't anchor to reality (P18 对抗审
+        MAJOR-2 — a ghost [EXPERT] verdict must be unwritable at the storage
+        layer, not just discouraged at the web layer):
+
+        - unknown job -> `BatchArchiveError`
+        - job's candidate set absent/corrupt -> `CandidateSetUnavailableError`
+        - `candidate_key` not in the persisted set -> `UnknownCandidateKeyError`
+        """
+        keys = self.candidate_keys_for_job(batch_id, verdict.job_id)
+        if verdict.candidate_key not in keys:
+            raise UnknownCandidateKeyError(
+                f"candidate_key {verdict.candidate_key!r} is not a candidate of "
+                f"{batch_id}/{verdict.job_id} (persisted candidate set has "
+                f"{len(keys)} candidates)"
+            )
         _atomic_write_json(
             self._verdict_file(batch_id, verdict.job_id, verdict.candidate_key),
             verdict.model_dump(mode="json"),

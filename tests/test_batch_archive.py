@@ -11,6 +11,7 @@ verdicts leave no row rather than a placeholder).
 from __future__ import annotations
 
 import io
+import json
 from pathlib import Path
 
 import openpyxl
@@ -22,7 +23,9 @@ from app.core.batch_archive import (
     BatchArchiveError,
     BatchJobFailure,
     BatchJobRecord,
+    CandidateSetUnavailableError,
     ExpertVerdict,
+    UnknownCandidateKeyError,
     build_batch_workbook,
 )
 
@@ -39,6 +42,7 @@ def _make_job(
     target_index: int = 0,
     status: str = "succeeded",
     failure: BatchJobFailure | None = None,
+    candidate_set_pointer: str | None = None,
 ) -> BatchJobRecord:
     return BatchJobRecord(
         job_id=job_id,
@@ -50,10 +54,20 @@ def _make_job(
         created_at="2026-07-11T00:00:00+00:00",
         updated_at="2026-07-11T00:00:01+00:00",
         result_summary={"candidate_count": 4, "ranked_count": 3, "withheld_count": 1},
-        candidate_set_pointer=None,
+        candidate_set_pointer=candidate_set_pointer,
         artifact_dir=None,
         failure=failure,
     )
+
+
+def _write_candidate_set(dir_path: Path, candidate_ids: list[str], name: str = "cs.json") -> str:
+    """Persist a minimal-but-real-shaped CandidateSet JSON (the raw
+    `candidates[].scorecard.candidate_id` structure `candidate_keys_for_job`
+    traverses) and return its path — verdict tests anchor to it (MAJOR-2)."""
+    path = dir_path / name
+    payload = {"candidates": [{"scorecard": {"candidate_id": cid}} for cid in candidate_ids]}
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return str(path)
 
 
 # ---------------------------------------------------------------------------
@@ -316,7 +330,8 @@ def test_get_verdict_absent_returns_none_not_placeholder(tmp_path: Path):
 def test_put_and_get_verdict_round_trips(tmp_path: Path):
     archive = BatchArchive(root=tmp_path)
     batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
-    archive.put_job(_make_job(batch_id=batch.batch_id))
+    pointer = _write_candidate_set(tmp_path, ["cand-a", "cand-b"])
+    archive.put_job(_make_job(batch_id=batch.batch_id, candidate_set_pointer=pointer))
     verdict = ExpertVerdict(
         job_id="job-0000",
         candidate_key="cand-a",
@@ -345,11 +360,97 @@ def test_put_verdict_unknown_job_raises(tmp_path: Path):
         archive.put_verdict(verdict, batch_id=batch.batch_id)
 
 
+def test_put_verdict_ghost_candidate_key_never_writes(tmp_path: Path):
+    """MAJOR-2 (P18 对抗审): a candidate_key that is not a candidate of the
+    job's persisted CandidateSet must be unwritable at the storage layer —
+    no ghost [EXPERT] verdict, no file on disk."""
+    archive = BatchArchive(root=tmp_path)
+    batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
+    pointer = _write_candidate_set(tmp_path, ["cand-a"])
+    archive.put_job(_make_job(batch_id=batch.batch_id, candidate_set_pointer=pointer))
+    ghost = ExpertVerdict(
+        job_id="job-0000", candidate_key="cand-GHOST", verdict_text="x",
+        reviewer="y", recorded_at="t",
+    )
+    with pytest.raises(UnknownCandidateKeyError):
+        archive.put_verdict(ghost, batch_id=batch.batch_id)
+    assert archive.get_verdict(batch.batch_id, "job-0000", "cand-GHOST") is None
+    assert archive.list_verdicts(batch.batch_id) == []
+
+
+def test_put_verdict_no_candidate_set_pointer_fails_closed(tmp_path: Path):
+    """MAJOR-2: a job with no persisted candidate set (e.g. preflight
+    failure) has no valid verdict targets — write fails closed."""
+    archive = BatchArchive(root=tmp_path)
+    batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
+    archive.put_job(_make_job(batch_id=batch.batch_id, candidate_set_pointer=None))
+    verdict = ExpertVerdict(
+        job_id="job-0000", candidate_key="cand-a", verdict_text="x",
+        reviewer="y", recorded_at="t",
+    )
+    with pytest.raises(CandidateSetUnavailableError):
+        archive.put_verdict(verdict, batch_id=batch.batch_id)
+    assert archive.list_verdicts(batch.batch_id) == []
+
+
+def test_put_verdict_corrupt_candidate_set_fails_closed(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path)
+    batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
+    corrupt = tmp_path / "corrupt.json"
+    corrupt.write_text('{"candidates": [{"scorecard": ', encoding="utf-8")
+    archive.put_job(_make_job(batch_id=batch.batch_id, candidate_set_pointer=str(corrupt)))
+    verdict = ExpertVerdict(
+        job_id="job-0000", candidate_key="cand-a", verdict_text="x",
+        reviewer="y", recorded_at="t",
+    )
+    with pytest.raises(CandidateSetUnavailableError):
+        archive.put_verdict(verdict, batch_id=batch.batch_id)
+
+
+def test_put_verdict_missing_candidate_set_file_fails_closed(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path)
+    batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
+    archive.put_job(
+        _make_job(batch_id=batch.batch_id, candidate_set_pointer=str(tmp_path / "gone.json"))
+    )
+    verdict = ExpertVerdict(
+        job_id="job-0000", candidate_key="cand-a", verdict_text="x",
+        reviewer="y", recorded_at="t",
+    )
+    with pytest.raises(CandidateSetUnavailableError):
+        archive.put_verdict(verdict, batch_id=batch.batch_id)
+
+
+def test_candidate_keys_for_job_empty_candidates_is_valid_empty_set(tmp_path: Path):
+    """An honestly empty candidates list is a *valid* (loadable) set — every
+    key is then unknown, distinguishing 400 (ghost key) from 409 (no set)."""
+    archive = BatchArchive(root=tmp_path)
+    batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
+    pointer = _write_candidate_set(tmp_path, [])
+    archive.put_job(_make_job(batch_id=batch.batch_id, candidate_set_pointer=pointer))
+    assert archive.candidate_keys_for_job(batch.batch_id, "job-0000") == frozenset()
+    verdict = ExpertVerdict(
+        job_id="job-0000", candidate_key="cand-a", verdict_text="x",
+        reviewer="y", recorded_at="t",
+    )
+    with pytest.raises(UnknownCandidateKeyError):
+        archive.put_verdict(verdict, batch_id=batch.batch_id)
+
+
 def test_list_verdicts_filters_by_job_id(tmp_path: Path):
     archive = BatchArchive(root=tmp_path)
     batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
-    archive.put_job(_make_job(batch_id=batch.batch_id, job_id="job-0000"))
-    archive.put_job(_make_job(batch_id=batch.batch_id, job_id="job-0001", target_index=1))
+    pointer_a = _write_candidate_set(tmp_path, ["cand-a"], name="cs-a.json")
+    pointer_b = _write_candidate_set(tmp_path, ["cand-b"], name="cs-b.json")
+    archive.put_job(
+        _make_job(batch_id=batch.batch_id, job_id="job-0000", candidate_set_pointer=pointer_a)
+    )
+    archive.put_job(
+        _make_job(
+            batch_id=batch.batch_id, job_id="job-0001", target_index=1,
+            candidate_set_pointer=pointer_b,
+        )
+    )
     archive.put_verdict(
         ExpertVerdict(
             job_id="job-0000",
@@ -380,7 +481,8 @@ def test_list_verdicts_filters_by_job_id(tmp_path: Path):
 def test_verdict_resubmission_overwrites(tmp_path: Path):
     archive = BatchArchive(root=tmp_path)
     batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
-    archive.put_job(_make_job(batch_id=batch.batch_id))
+    pointer = _write_candidate_set(tmp_path, ["cand-a"])
+    archive.put_job(_make_job(batch_id=batch.batch_id, candidate_set_pointer=pointer))
     archive.put_verdict(
         ExpertVerdict(
             job_id="job-0000", candidate_key="cand-a", verdict_text="first",
@@ -410,7 +512,11 @@ def test_verdict_resubmission_overwrites(tmp_path: Path):
 def test_workbook_has_three_sheets_summary_jobs_verdicts(tmp_path: Path):
     archive = BatchArchive(root=tmp_path)
     batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="fake")
-    job_ok = _make_job(batch_id=batch.batch_id, job_id="job-0000", status="succeeded")
+    pointer = _write_candidate_set(tmp_path, ["cand-a"])
+    job_ok = _make_job(
+        batch_id=batch.batch_id, job_id="job-0000", status="succeeded",
+        candidate_set_pointer=pointer,
+    )
     job_failed = _make_job(
         batch_id=batch.batch_id,
         job_id="job-0001",

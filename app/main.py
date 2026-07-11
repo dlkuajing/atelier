@@ -38,7 +38,9 @@ from app.core.batch_archive import (  # noqa: E402
     BatchArchiveError,
     BatchJobRecord,
     BatchRecord,
+    CandidateSetUnavailableError,
     ExpertVerdict,
+    UnknownCandidateKeyError,
     build_batch_workbook,
 )
 from app.core.config import settings  # noqa: E402
@@ -2628,7 +2630,14 @@ async def submit_batch_verdict(
 ) -> RedirectResponse:
     """[EXPERT] 判定权红线：`verdict_text`/`reviewer` are required, non-blank
     form fields — nothing here defaults, predicts, or backfills a verdict.
-    The timestamp is always server-generated (never trusts a client value)."""
+    The timestamp is always server-generated (never trusts a client value).
+
+    MAJOR-2 (P18 对抗审): the storage layer (`BatchArchive.put_verdict`)
+    verifies `candidate_key` against the job's *persisted* `CandidateSet`
+    before writing — a key that isn't a real candidate of this job is a
+    ghost verdict and gets 400; a job whose candidate set can't be loaded
+    (failed-before-results job, missing/corrupt file) gets 409 (no valid
+    verdict target exists to record against)."""
     _load_batch_or_404(batch_id)
     try:
         verdict = ExpertVerdict(
@@ -2646,6 +2655,27 @@ async def submit_batch_verdict(
         ) from exc
     try:
         batch_archive_store.put_verdict(verdict, batch_id=batch_id)
+    except UnknownCandidateKeyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "unknown_candidate_key",
+                "batch_id": batch_id,
+                "job_id": job_id,
+                "candidate_key": candidate_key,
+                "message": str(exc),
+            },
+        ) from exc
+    except CandidateSetUnavailableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "error": "candidate_set_unavailable",
+                "batch_id": batch_id,
+                "job_id": job_id,
+                "message": str(exc),
+            },
+        ) from exc
     except BatchArchiveError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

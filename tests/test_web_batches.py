@@ -169,6 +169,58 @@ def test_submit_verdict_unknown_job_404(batch_setup):
     assert response.status_code == 404
 
 
+def test_submit_verdict_ghost_candidate_key_rejected_400(batch_setup):
+    """MAJOR-2 (P18 对抗审): a candidate_key that isn't in the job's
+    persisted CandidateSet must be rejected — previously this stored a ghost
+    [EXPERT] verdict (复现实锤 303+stored)."""
+    archive, batch = batch_setup
+    job = next(j for j in archive.list_jobs(batch.batch_id) if j.status == "succeeded")
+
+    with TestClient(app) as client:
+        response = client.post(
+            f"/batches/{batch.batch_id}/jobs/{job.job_id}/verdicts",
+            data={
+                "candidate_key": "totally-made-up-candidate",
+                "verdict_text": "ghost verdict",
+                "reviewer": "nobody",
+            },
+        )
+    assert response.status_code == 400
+    assert archive.get_verdict(batch.batch_id, job.job_id, "totally-made-up-candidate") is None
+    assert archive.list_verdicts(batch.batch_id) == []
+
+
+def test_submit_verdict_job_without_candidate_set_rejected_409(tmp_path: Path, monkeypatch):
+    """MAJOR-2: a job that failed before producing a candidate set has no
+    valid verdict targets — POST gets 409, nothing is written."""
+    from app.core.batch_archive import BatchJobFailure, BatchJobRecord
+
+    archive = BatchArchive(root=tmp_path / "archive")
+    monkeypatch.setattr(main_module, "batch_archive_store", archive)
+    batch = archive.create_batch(target_source="unit", targets=_TARGETS[:1], engine="fake")
+    archive.put_job(
+        BatchJobRecord(
+            job_id="job-0000",
+            batch_id=batch.batch_id,
+            target_index=0,
+            target_label="t0",
+            target_spec=_TARGETS[0],
+            status="failed",
+            created_at="x",
+            updated_at="x",
+            failure=BatchJobFailure(category="preflight", message="bad spec"),
+        )
+    )
+
+    with TestClient(app) as client:
+        response = client.post(
+            f"/batches/{batch.batch_id}/jobs/job-0000/verdicts",
+            data={"candidate_key": "cand-a", "verdict_text": "x", "reviewer": "y"},
+        )
+    assert response.status_code == 409
+    assert archive.list_verdicts(batch.batch_id) == []
+
+
 def test_submit_verdict_unknown_batch_404(tmp_path: Path, monkeypatch):
     monkeypatch.setattr(main_module, "batch_archive_store", BatchArchive(root=tmp_path / "empty"))
     with TestClient(app) as client:
