@@ -1466,6 +1466,14 @@ button:focus-visible {
   background: rgba(181, 132, 56, 0.18);
 }
 
+/* BLOCKER-1: a degraded job (requested mode produced nothing, e.g. Mode3
+   without CODE V) must read as a warning, never blend in with succeeded. */
+.job-status-badge[data-job-status="degraded"] {
+  color: var(--carbon);
+  border: 1px solid var(--brass);
+  background: rgba(181, 132, 56, 0.22);
+}
+
 .batch-status-badge[data-batch-status="aborted"],
 .job-status-badge[data-job-status="failed"] {
   color: var(--red);

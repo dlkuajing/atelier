@@ -184,6 +184,62 @@ def test_job_record_non_failed_status_rejects_failure_field():
         )
 
 
+def test_job_record_degraded_requires_degradation_reason():
+    for bad_degradation in (None, "   "):
+        with pytest.raises(ValidationError):
+            BatchJobRecord(
+                job_id="job-0000",
+                batch_id="b",
+                target_index=0,
+                target_label="t",
+                target_spec={},
+                status="degraded",
+                created_at="x",
+                updated_at="x",
+                degradation=bad_degradation,
+            )
+
+
+def test_job_record_non_degraded_status_rejects_degradation_field():
+    with pytest.raises(ValidationError):
+        BatchJobRecord(
+            job_id="job-0000",
+            batch_id="b",
+            target_index=0,
+            target_label="t",
+            target_spec={},
+            status="succeeded",
+            created_at="x",
+            updated_at="x",
+            degradation="mode missing",
+        )
+
+
+def test_job_record_degraded_round_trips(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path)
+    batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="real")
+    job = BatchJobRecord(
+        job_id="job-0000",
+        batch_id=batch.batch_id,
+        target_index=0,
+        target_label="t0",
+        target_spec=_TARGETS[0],
+        status="degraded",
+        created_at="x",
+        updated_at="x",
+        result_summary={
+            "candidate_count": 2,
+            "modes_requested": ["retrieved", "target-converged"],
+            "modes_present": ["retrieved"],
+            "missing_modes": ["target-converged"],
+            "mode_counts": {"retrieved": 2},
+        },
+        degradation="requested generation mode(s) produced no candidates: target-converged",
+    )
+    archive.put_job(job)
+    assert archive.get_job(batch.batch_id, "job-0000") == job
+
+
 # ---------------------------------------------------------------------------
 # Crash recovery: a leftover partial-write temp file must never surface.
 # ---------------------------------------------------------------------------
@@ -400,6 +456,53 @@ def test_workbook_verdicts_sheet_omits_row_for_unreviewed_candidate(tmp_path: Pa
     verdicts_ws = wb["Expert verdicts"]
     rows = list(verdicts_ws.iter_rows(min_row=2, values_only=True))
     assert rows == []  # header only, no placeholder row
+
+
+def test_workbook_jobs_sheet_carries_mode_accounting_and_degradation(tmp_path: Path):
+    """BLOCKER-1: the morning workbook must show which requested modes went
+    missing — a Mode3-less night can't hide in the xlsx."""
+    archive = BatchArchive(root=tmp_path)
+    batch = archive.create_batch(target_source="x", targets=_TARGETS, engine="real")
+    degraded_job = BatchJobRecord(
+        job_id="job-0000",
+        batch_id=batch.batch_id,
+        target_index=0,
+        target_label="t0",
+        target_spec=_TARGETS[0],
+        status="degraded",
+        created_at="x",
+        updated_at="x",
+        result_summary={
+            "candidate_count": 2,
+            "ranked_count": 2,
+            "withheld_count": 0,
+            "modes_requested": ["retrieved", "target-converged"],
+            "modes_present": ["retrieved"],
+            "missing_modes": ["target-converged"],
+            "mode_counts": {"retrieved": 2},
+        },
+        degradation="requested generation mode(s) produced no candidates: target-converged",
+    )
+    archive.put_job(degraded_job)
+
+    workbook_bytes = build_batch_workbook(batch, archive.list_jobs(batch.batch_id), [])
+    wb = openpyxl.load_workbook(io.BytesIO(workbook_bytes))
+    jobs_ws = wb["Jobs"]
+    header = [c.value for c in next(jobs_ws.iter_rows(min_row=1, max_row=1))]
+    for col in ("modes_requested", "modes_present", "missing_modes", "mode_counts", "degradation"):
+        assert col in header
+    row = [c.value for c in next(jobs_ws.iter_rows(min_row=2, max_row=2))]
+    by_col = dict(zip(header, row, strict=True))
+    assert by_col["status"] == "degraded"
+    assert by_col["missing_modes"] == "target-converged"
+    assert by_col["modes_requested"] == "retrieved, target-converged"
+    assert by_col["mode_counts"] == "retrieved=2"
+    assert "target-converged" in by_col["degradation"]
+    # Degraded status also lands in the Summary sheet's status counts.
+    summary_text = " ".join(
+        str(c.value) for r in wb["Summary"].iter_rows() for c in r if c.value is not None
+    )
+    assert "degraded" in summary_text
 
 
 def test_workbook_summary_carries_non_pass_fail_banner(tmp_path: Path):

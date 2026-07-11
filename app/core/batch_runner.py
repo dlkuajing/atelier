@@ -39,13 +39,24 @@ from app.core.batch_archive import (
     BatchJobFailure,
     BatchJobRecord,
     BatchRecord,
+    JobStatus,
 )
 from app.core.config import settings
 from app.core.orchestration.candidate import CandidateSet, GenerationMode, TargetSpec
-from app.core.orchestration.orchestrator import DEFAULT_N, orchestrate
+from app.core.orchestration.orchestrator import (
+    _REGISTRY as _ORCHESTRATOR_REGISTRY,  # mode truth source for RealEngine.modes_requested
+)
+from app.core.orchestration.orchestrator import (
+    DEFAULT_N,
+    orchestrate,
+)
 
 _TARGET_SPEC_FIELDS = frozenset(TargetSpec.model_fields.keys())
-_TERMINAL_JOB_STATUSES = frozenset({"succeeded", "failed"})
+#: `degraded` is terminal: the job ran to completion and archived its
+#: (partial-mode) results — resume must not silently re-run it. Re-running a
+#: degraded job (e.g. after CODE V comes back) is an operator decision, made
+#: by deleting the job's ledger file, not an automatic retry.
+_TERMINAL_JOB_STATUSES = frozenset({"succeeded", "degraded", "failed"})
 
 
 def _utc_now_iso() -> str:
@@ -96,6 +107,12 @@ class EngineRunResult:
 
 
 class BatchEngine(Protocol):
+    #: The generation modes this engine *asks* the orchestrator to run.
+    #: BLOCKER-1 (P18 对抗审): the runner compares this against the returned
+    #: `CandidateSet.modes_present` — any requested mode that produced zero
+    #: candidates books the job as `degraded` (never a silent `succeeded`).
+    modes_requested: tuple[GenerationMode, ...]
+
     def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult: ...
 
 
@@ -103,18 +120,30 @@ class FakeEngine:
     """Mode1-only real orchestration — see module docstring. `n` mirrors
     `orchestrate`'s own `n` (candidates per target)."""
 
+    modes_requested: tuple[GenerationMode, ...] = (GenerationMode.RETRIEVED,)
+
     def __init__(self, *, n: int = DEFAULT_N) -> None:
         self.n = n
 
     def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
         artifact_dir.mkdir(parents=True, exist_ok=True)
-        candidate_set = orchestrate(target, target, n=self.n, modes=[GenerationMode.RETRIEVED])
+        candidate_set = orchestrate(
+            target, target, n=self.n, modes=list(self.modes_requested)
+        )
         return EngineRunResult(candidate_set=candidate_set)
 
 
 class RealEngine:
     """Full orchestration (Mode1 + Mode3, `orchestrate`'s default modes) —
-    see module docstring. Never invoked by this repo's own test suite."""
+    see module docstring. Never invoked by this repo's own test suite.
+
+    `modes_requested` mirrors `orchestrator._REGISTRY` (the truth source for
+    what `orchestrate(modes=None)` actually runs) rather than hardcoding the
+    two enum members — if a mode is ever added to/removed from the registry,
+    this engine's degradation accounting follows automatically.
+    """
+
+    modes_requested: tuple[GenerationMode, ...] = tuple(_ORCHESTRATOR_REGISTRY.keys())
 
     def __init__(self, *, n: int = DEFAULT_N, repeat_runs: int = 1) -> None:
         self.n = n
@@ -149,7 +178,21 @@ def _engine_result_failure_reason(candidate_set: CandidateSet) -> str | None:
     return None
 
 
-def _result_summary(candidate_set: CandidateSet) -> dict[str, object]:
+def _missing_modes(
+    candidate_set: CandidateSet, modes_requested: tuple[GenerationMode, ...]
+) -> list[GenerationMode]:
+    """Requested modes that produced zero candidates — order preserved from
+    the request. BLOCKER-1: `TargetConvergedGenerator` degrades *silently*
+    (returns `[]` with only a log line, no summary note) when CODE V is
+    unavailable, so mode presence must be checked structurally against the
+    returned set, not inferred from notes."""
+    present = candidate_set.modes_present
+    return [m for m in modes_requested if m not in present]
+
+
+def _result_summary(
+    candidate_set: CandidateSet, *, modes_requested: tuple[GenerationMode, ...]
+) -> dict[str, object]:
     s = candidate_set.summary
     return {
         "candidate_count": s.candidate_count,
@@ -157,6 +200,13 @@ def _result_summary(candidate_set: CandidateSet) -> dict[str, object]:
         "withheld_count": s.withheld_count,
         "ri_missing_count": s.ri_missing_count,
         "notes": list(s.notes),
+        # BLOCKER-1 mode accounting — previously `summary.mode_counts` was
+        # dropped here, so a real batch whose Mode3 leg silently fell away
+        # (CODE V unavailable) booked indistinguishably from a full run.
+        "mode_counts": {mode.value: count for mode, count in s.mode_counts.items()},
+        "modes_requested": [m.value for m in modes_requested],
+        "modes_present": sorted(m.value for m in candidate_set.modes_present),
+        "missing_modes": [m.value for m in _missing_modes(candidate_set, modes_requested)],
     }
 
 
@@ -264,17 +314,39 @@ def _run_one_target(
         encoding="utf-8",
     )
 
+    modes_requested = tuple(getattr(engine, "modes_requested", ()))
     failure_reason = _engine_result_failure_reason(result.candidate_set)
+    missing = _missing_modes(result.candidate_set, modes_requested)
+    if failure_reason is not None:
+        status: JobStatus = "failed"
+        failure = BatchJobFailure(category="engine", message=failure_reason)
+        degradation = None
+    elif missing:
+        # BLOCKER-1: candidates exist, but a requested mode contributed
+        # nothing — e.g. a real batch whose Mode3/CODE V leg silently fell
+        # away. Booked as `degraded`, never `succeeded`.
+        status = "degraded"
+        failure = None
+        degradation = (
+            "requested generation mode(s) produced no candidates: "
+            + ", ".join(m.value for m in missing)
+            + " — batch degraded (e.g. CODE V unavailable => Mode3 silently skipped);"
+            " results below cover only: "
+            + (", ".join(sorted(m.value for m in result.candidate_set.modes_present)) or "(none)")
+        )
+    else:
+        status = "succeeded"
+        failure = None
+        degradation = None
     record = BatchJobRecord(
         **common,
-        status="failed" if failure_reason is not None else "succeeded",
+        status=status,
         updated_at=_utc_now_iso(),
-        result_summary=_result_summary(result.candidate_set),
+        result_summary=_result_summary(result.candidate_set, modes_requested=modes_requested),
         candidate_set_pointer=str(candidate_set_path),
         artifact_dir=str(artifact_dir),
-        failure=BatchJobFailure(category="engine", message=failure_reason)
-        if failure_reason is not None
-        else None,
+        failure=failure,
+        degradation=degradation,
     )
     archive.put_job(record)
     return record

@@ -179,6 +179,48 @@ def test_submit_verdict_unknown_batch_404(tmp_path: Path, monkeypatch):
     assert response.status_code == 404
 
 
+def test_batch_detail_shows_degraded_job_visibly(tmp_path: Path, monkeypatch):
+    """BLOCKER-1 web visibility: a degraded job renders its own status badge
+    and the degradation reason — it never reads as a clean success row."""
+    from app.core.batch_archive import BatchJobRecord
+
+    archive = BatchArchive(root=tmp_path / "archive")
+    monkeypatch.setattr(main_module, "batch_archive_store", archive)
+    batch = archive.create_batch(target_source="unit", targets=_TARGETS[:1], engine="real")
+    archive.put_job(
+        BatchJobRecord(
+            job_id="job-0000",
+            batch_id=batch.batch_id,
+            target_index=0,
+            target_label="t0",
+            target_spec=_TARGETS[0],
+            status="degraded",
+            created_at="x",
+            updated_at="x",
+            result_summary={
+                "candidate_count": 2,
+                "ranked_count": 2,
+                "modes_requested": ["retrieved", "target-converged"],
+                "modes_present": ["retrieved"],
+                "missing_modes": ["target-converged"],
+                "mode_counts": {"retrieved": 2},
+            },
+            degradation="requested generation mode(s) produced no candidates: target-converged",
+        )
+    )
+
+    with TestClient(app) as client:
+        detail = client.get(f"/batches/{batch.batch_id}")
+        listing = client.get("/batches")
+
+    assert detail.status_code == 200
+    assert 'data-job-status="degraded"' in detail.text
+    assert "data-job-degradation" in detail.text
+    assert "target-converged" in detail.text
+    # List page: degraded count appears in the success-rate column.
+    assert "(1 degraded)" in listing.text
+
+
 def test_batch_export_xlsx_downloads_workbook_with_three_sheets(batch_setup):
     _, batch = batch_setup
     with TestClient(app) as client:

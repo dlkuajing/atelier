@@ -151,6 +151,129 @@ def test_engine_result_failure_reason_none_for_healthy_result():
 
 
 # ---------------------------------------------------------------------------
+# BLOCKER-1: mode accounting + degraded status (P18 对抗审)
+# ---------------------------------------------------------------------------
+
+
+class _DegradedStubEngine:
+    """Test-only engine simulating a real batch whose Mode3/CODE V leg
+    silently fell away: it *requests* both modes but delegates to Mode1-only
+    orchestration — exactly what `RealEngine` produces on a machine where
+    `DEFAULT_CODEV_EXECUTABLE` is missing (TargetConvergedGenerator returns
+    `[]` with only a log line, no summary note)."""
+
+    modes_requested = (GenerationMode.RETRIEVED, GenerationMode.TARGET_CONVERGED)
+
+    def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
+        return FakeEngine(n=2).run(target, artifact_dir=artifact_dir)
+
+
+def test_real_engine_requests_all_registered_modes():
+    from app.core.orchestration.orchestrator import _REGISTRY
+
+    assert RealEngine.modes_requested == tuple(_REGISTRY.keys())
+    assert GenerationMode.TARGET_CONVERGED in RealEngine.modes_requested
+
+
+def test_run_batch_books_degraded_when_requested_mode_produces_nothing(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path / "archive")
+    summary = run_batch(
+        engine=_DegradedStubEngine(),
+        archive=archive,
+        targets=[_valid_entry(0)],
+        target_source="unit-degraded",
+        engine_name="real",
+        artifacts_root=tmp_path / "artifacts",
+    )
+
+    job = summary.jobs[0]
+    assert job.status == "degraded"  # never a silent succeeded
+    assert job.failure is None
+    assert job.degradation is not None
+    assert "target-converged" in job.degradation
+    assert job.result_summary is not None
+    assert job.result_summary["modes_requested"] == ["retrieved", "target-converged"]
+    assert job.result_summary["modes_present"] == ["retrieved"]
+    assert job.result_summary["missing_modes"] == ["target-converged"]
+    assert job.result_summary["mode_counts"] == {"retrieved": 2}
+
+    # Crash-safe: reloaded ledger carries the same degradation record.
+    reloaded = BatchArchive(root=tmp_path / "archive").get_job(summary.batch.batch_id, job.job_id)
+    assert reloaded.status == "degraded"
+    assert reloaded.degradation == job.degradation
+
+
+def test_run_batch_fake_engine_records_full_mode_accounting_no_degradation(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path / "archive")
+    summary = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive,
+        targets=[_valid_entry(0)],
+        target_source="unit-modes",
+        artifacts_root=tmp_path / "artifacts",
+    )
+
+    job = summary.jobs[0]
+    assert job.status == "succeeded"
+    assert job.degradation is None
+    assert job.result_summary is not None
+    assert job.result_summary["modes_requested"] == ["retrieved"]
+    assert job.result_summary["modes_present"] == ["retrieved"]
+    assert job.result_summary["missing_modes"] == []
+
+
+def test_degraded_is_terminal_for_resume(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path / "archive")
+    first = run_batch(
+        engine=_DegradedStubEngine(),
+        archive=archive,
+        targets=[_valid_entry(0)],
+        target_source="unit-degraded-resume",
+        engine_name="real",
+        artifacts_root=tmp_path / "artifacts",
+    )
+    assert first.jobs[0].status == "degraded"
+
+    second = run_batch(
+        engine=_DegradedStubEngine(),
+        archive=archive,
+        resume=True,
+        batch_id=first.batch.batch_id,
+        engine_name="real",
+        artifacts_root=tmp_path / "artifacts",
+    )
+    # Not silently re-run: same record, untouched created_at.
+    assert second.jobs[0].created_at == first.jobs[0].created_at
+    assert second.batch.status == "completed"
+
+
+def test_degraded_zero_candidates_still_books_as_engine_failure(tmp_path: Path):
+    """0 candidates outranks degradation: an empty result is a failed job
+    (engine category), not a degraded one."""
+
+    class _EmptyStubEngine:
+        modes_requested = (GenerationMode.RETRIEVED, GenerationMode.TARGET_CONVERGED)
+
+        def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
+            entry = {**_valid_entry(0), "fov_deg": None}  # forces 0 retrieval candidates
+            return FakeEngine(n=2).run(target_spec_from_entry(entry), artifact_dir=artifact_dir)
+
+    archive = BatchArchive(root=tmp_path / "archive")
+    summary = run_batch(
+        engine=_EmptyStubEngine(),
+        archive=archive,
+        targets=[_valid_entry(0)],
+        target_source="unit-empty",
+        artifacts_root=tmp_path / "artifacts",
+    )
+    job = summary.jobs[0]
+    assert job.status == "failed"
+    assert job.failure is not None
+    assert job.failure.category == "engine"
+    assert job.degradation is None
+
+
+# ---------------------------------------------------------------------------
 # run_batch — full chain with FakeEngine
 # ---------------------------------------------------------------------------
 

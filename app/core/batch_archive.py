@@ -42,7 +42,11 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 from app.core.config import settings
 
 BatchStatus = Literal["running", "completed", "budget_exhausted", "aborted"]
-JobStatus = Literal["queued", "running", "succeeded", "failed"]
+#: `degraded` (P18 对抗审 BLOCKER-1): the engine returned candidates, but at
+#: least one *requested* generation mode produced nothing — e.g. a real batch
+#: whose Mode3/CODE V leg silently fell away (CODE V unavailable). Such a job
+#: must never book as `succeeded`; the degradation reason is mandatory.
+JobStatus = Literal["queued", "running", "succeeded", "degraded", "failed"]
 FailureCategory = Literal["preflight", "engine", "timeout", "exception"]
 
 _NON_PASS_FAIL_BANNER = (
@@ -98,6 +102,13 @@ class BatchJobRecord(BaseModel):
     candidate_set_pointer: str | None = None
     artifact_dir: str | None = None
     failure: BatchJobFailure | None = None
+    degradation: str | None = Field(
+        None,
+        description=(
+            "status=degraded 时必填的人读原因（如 'requested mode target-converged "
+            "produced no candidates'）；其它状态必须为 None（BLOCKER-1 诚实账本）"
+        ),
+    )
 
     @model_validator(mode="after")
     def _failure_consistent_with_status(self) -> BatchJobRecord:
@@ -107,6 +118,12 @@ class BatchJobRecord(BaseModel):
             )
         if self.status != "failed" and self.failure is not None:
             raise ValueError("failure 只能在 status=failed 时设置")
+        if self.status == "degraded" and not (self.degradation or "").strip():
+            raise ValueError(
+                "status=degraded 时 degradation 原因必填（BLOCKER-1：静默降级不可无痕）"
+            )
+        if self.status != "degraded" and self.degradation is not None:
+            raise ValueError("degradation 只能在 status=degraded 时设置")
         return self
 
 
@@ -404,6 +421,18 @@ def _write_batch_summary_sheet(
     ws.append([_NON_PASS_FAIL_BANNER])
 
 
+def _fmt_mode_list(value: object) -> str:
+    if isinstance(value, list | tuple):
+        return ", ".join(str(v) for v in value)
+    return str(value) if value else ""
+
+
+def _fmt_mode_counts(value: object) -> str:
+    if isinstance(value, Mapping):
+        return ", ".join(f"{k}={v}" for k, v in value.items())
+    return str(value) if value else ""
+
+
 def _write_jobs_sheet(ws: Worksheet, jobs: Sequence[BatchJobRecord]) -> None:
     ws.title = "Jobs"
     ws.append(
@@ -412,11 +441,20 @@ def _write_jobs_sheet(ws: Worksheet, jobs: Sequence[BatchJobRecord]) -> None:
             "target_index",
             "target_label",
             "status",
+            "degradation",
             "failure_category",
             "failure_message",
             "candidate_count",
             "ranked_count",
             "withheld_count",
+            # BLOCKER-1 mode accounting: which modes the engine *asked* the
+            # orchestrator to run, which actually produced candidates, and
+            # the difference — so a Mode3-less "real" night reads as exactly
+            # that in the morning workbook, never as a clean success column.
+            "modes_requested",
+            "modes_present",
+            "missing_modes",
+            "mode_counts",
             "candidate_set_pointer",
             "artifact_dir",
             "created_at",
@@ -431,11 +469,16 @@ def _write_jobs_sheet(ws: Worksheet, jobs: Sequence[BatchJobRecord]) -> None:
                 job.target_index,
                 job.target_label,
                 job.status,
+                job.degradation or "",
                 job.failure.category if job.failure else "",
                 job.failure.message if job.failure else "",
                 result_summary.get("candidate_count", ""),
                 result_summary.get("ranked_count", ""),
                 result_summary.get("withheld_count", ""),
+                _fmt_mode_list(result_summary.get("modes_requested")),
+                _fmt_mode_list(result_summary.get("modes_present")),
+                _fmt_mode_list(result_summary.get("missing_modes")),
+                _fmt_mode_counts(result_summary.get("mode_counts")),
                 job.candidate_set_pointer or "",
                 job.artifact_dir or "",
                 job.created_at,

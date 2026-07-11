@@ -2451,6 +2451,7 @@ _JOB_STATUS_LABELS: dict[str, str] = {
     "queued": "Queued",
     "running": "Running",
     "succeeded": "Succeeded",
+    "degraded": "Degraded (missing modes)",
     "failed": "Failed",
 }
 
@@ -2463,10 +2464,17 @@ _FAILURE_CATEGORY_LABELS: dict[str, str] = {
 
 
 def _batch_success_rate_label(jobs: list[BatchJobRecord]) -> str:
+    """`succeeded/total`, with an explicit degraded count appended whenever
+    any job lost a requested generation mode (BLOCKER-1: a Mode3-less night
+    must be visible on the *list* page, not just per job)."""
     if not jobs:
         return "0/0"
     succeeded = sum(1 for j in jobs if j.status == "succeeded")
-    return f"{succeeded}/{len(jobs)}"
+    degraded = sum(1 for j in jobs if j.status == "degraded")
+    label = f"{succeeded}/{len(jobs)}"
+    if degraded:
+        label += f" ({degraded} degraded)"
+    return label
 
 
 def _load_batch_or_404(batch_id: str) -> BatchRecord:
@@ -2559,6 +2567,9 @@ def _job_row_context(batch_id: str, job: BatchJobRecord) -> dict[str, object]:
             else None
         ),
         "failure_message": job.failure.message if job.failure is not None else None,
+        "degradation": job.degradation,
+        "missing_modes": list(result_summary.get("missing_modes") or []),
+        "modes_present": list(result_summary.get("modes_present") or []),
         "candidate_count": result_summary.get("candidate_count"),
         "ranked_count": result_summary.get("ranked_count"),
         "candidates": candidates,

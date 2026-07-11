@@ -120,6 +120,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     succeeded = sum(1 for j in summary.jobs if j.status == "succeeded")
+    degraded = sum(1 for j in summary.jobs if j.status == "degraded")
     failed = sum(1 for j in summary.jobs if j.status == "failed")
     failure_categories: dict[str, int] = {}
     for job in summary.jobs:
@@ -128,11 +129,23 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"batch {summary.batch.batch_id}: status={summary.batch.status} "
-        f"{succeeded} succeeded, {failed} failed, "
+        f"{succeeded} succeeded, {degraded} degraded, {failed} failed, "
         f"{len(summary.jobs)}/{summary.batch.target_count} attempted"
     )
     if failure_categories:
         print(f"failure categories: {failure_categories}")
+    if degraded:
+        # BLOCKER-1: a degraded night must scream at the top of the morning
+        # report — list which jobs lost which requested modes.
+        print(
+            "[DEGRADED] requested generation mode(s) produced no candidates on "
+            f"{degraded} job(s) (e.g. CODE V unavailable => Mode3 silently skipped):",
+            file=sys.stderr,
+        )
+        for job in summary.jobs:
+            if job.status == "degraded":
+                missing = (job.result_summary or {}).get("missing_modes", [])
+                print(f"  {job.job_id} ({job.target_label}): missing {missing}", file=sys.stderr)
     if summary.budget_exhausted:
         print(
             "[BUDGET] this invocation stopped early on a max-jobs/max-wall-min limit — "
@@ -140,7 +153,7 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    return 0 if failed == 0 else 1
+    return 0 if failed == 0 and degraded == 0 else 1
 
 
 if __name__ == "__main__":

@@ -82,7 +82,7 @@
                   <th scope="col">#</th>
                   <th scope="col">Target</th>
                   <th scope="col">Status</th>
-                  <th scope="col">Failure category</th>
+                  <th scope="col">Failure / degradation</th>
                   <th scope="col">Candidates</th>
                   <th scope="col">[EXPERT] verdicts</th>
                 </tr>
@@ -97,6 +97,8 @@
                       {% if job.failure_category_label %}
                         <span data-failure-category>{{ job.failure_category_label }}</span>
                         <span class="value-na">{{ job.failure_message }}</span>
+                      {% elif job.degradation %}
+                        <span data-job-degradation>{{ job.degradation }}</span>
                       {% else %}
                         <span class="value-na">&mdash;</span>
                       {% endif %}
