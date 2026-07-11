@@ -48,7 +48,7 @@ def test_command_sequences_and_crlf() -> None:
     assert "FCT @p13ok" in module.build_sequence("fct")
     assert "LCL NUM ^p13row" in module.build_sequence("lcl")
     assert "BUF EXP B1" in module.build_sequence("readout")
-    assert "SAV probe_lens" in module.build_sequence("sav")
+    assert "SAV probe_lens.1" in module.build_sequence("sav")
     assert "WRL probe_lens" in module.build_sequence("wrl")
 
 

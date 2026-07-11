@@ -138,9 +138,9 @@ def build_sequence(command: str, source_name: str = "inputzmx") -> str:
         ]
     elif command == "sav":
         # CODE V Lens System Setup Reference Manual 11.5, pp. 87-89: command-line
-        # SAV is the unconditional form used in .SEQ files; repeat saves version the
-        # previous file. Each cell is fresh, so this relative target cannot pre-exist.
-        lines += ["SAV probe_lens"]
+        # SAV is the unconditional form used in .SEQ files; an explicit version suffix
+        # "allows over-writing of a prior file" (p. 89), so no prompt is involved.
+        lines += ["SAV probe_lens.1"]
     elif command == "wrl":
         lines += ["WRL probe_lens"]
     lines += ["OUT YES", "EXI YES", ""]
