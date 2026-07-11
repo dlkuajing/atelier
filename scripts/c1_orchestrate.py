@@ -380,14 +380,19 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--artifact-dir",
+        type=Path,
+        default=None,
+        help="Mode3 optimized ZMX 持久化目录；默认为 <out>/artifacts",
+    )
+    parser.add_argument(
         "--repeat-runs",
         type=int,
         default=1,
         dest="repeat_runs",
         help=(
-            "重复性验证跑次（Phase 17 子项3）；默认 1=现行为零变化。>1 目前会直接"
-            "抛 NotImplementedError——真机多跑执行引擎未接入，由 orchestrator 另行"
-            "排窗实现（见 orchestrator.orchestrate 的 repeat_runs docstring）。"
+            "重复性验证跑次（1..3，默认 1）；仅 Mode3/CODE V lane 严格串行重跑，"
+            "Mode1 retrieval 仍为单次确定性查找。"
         ),
     )
     return parser.parse_args(argv)
@@ -410,6 +415,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     requirements = _load_requirements(args.requirements)
     args.out.mkdir(parents=True, exist_ok=True)
+    artifact_dir = args.artifact_dir or (args.out / "artifacts")
 
     index_lines = ["# C1 编排批量报告索引", ""]
     any_failed = False
@@ -422,6 +428,7 @@ def main(argv: list[str] | None = None) -> int:
             n=args.n,
             min_coverage_pct=args.min_coverage_pct,
             repeat_runs=args.repeat_runs,
+            artifact_dir=artifact_dir,
         )
 
         md_path = args.out / f"report_{i:02d}.md"

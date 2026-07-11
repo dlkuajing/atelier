@@ -33,7 +33,11 @@ from app.core.orchestration.candidate import (
     OpticalExtras,
     TargetSpec,
 )
-from app.core.orchestration.generators import CandidateGenerator, RetrievalGenerator
+from app.core.orchestration.generators import (
+    CandidateGenerator,
+    RetrievalGenerator,
+    TargetConvergedGenerator,
+)
 from app.core.orchestration.orchestrator import orchestrate
 
 _WIDE_REQUEST: dict[str, object] = {
@@ -240,13 +244,121 @@ def test_orchestrate_repeat_runs_below_one_raises_value_error():
         orchestrate(target, target, n=1, repeat_runs=0)
 
 
-def test_orchestrate_repeat_runs_above_one_raises_not_implemented():
-    """Real multi-run verification is deliberately not silently skipped or
-    faked — a caller asking for repeat_runs>1 today must get a loud, honest
-    refusal, not a quiet single run mislabeled as N runs."""
+def test_orchestrate_repeat_runs_above_three_raises_value_error():
     target = _wide_target_spec()
-    with pytest.raises(NotImplementedError, match="repeat_runs=2"):
-        orchestrate(target, target, n=1, repeat_runs=2)
+    with pytest.raises(ValueError, match="repeat_runs must be <= 3"):
+        orchestrate(target, target, n=1, repeat_runs=4)
+
+
+def test_orchestrate_mode3_repeats_strictly_serial_and_aggregates(monkeypatch):
+    seed = RetrievalGenerator()._generate(_wide_target_spec(), _wide_target_spec(), n=1)[0]
+    assert seed.payload.metadata is not None
+    calls: list[int] = []
+    monkeypatch.setattr(generators_module, "DEFAULT_CODEV_EXECUTABLE", Path(__file__))
+    monkeypatch.setattr(
+        TargetConvergedGenerator,
+        "_rank_seeds_by_target_match",
+        staticmethod(lambda spec: [(seed.payload, object())]),
+    )
+
+    def _candidate_for_seed(*, run_index, **kwargs):  # noqa: ANN001
+        calls.append(run_index)
+        diameter = (10.0, 14.0, 18.0)[run_index - 1]
+        preferred = "both" if run_index == 2 else "asphere"
+        return seed.model_copy(
+            update={
+                "candidate_id": "repeat-mode3",
+                "mode": GenerationMode.TARGET_CONVERGED,
+                "optical_extras": OpticalExtras(
+                    codev_post_aut={
+                        "post_aut.max_rms_spot_diameter_um": diameter,
+                        "post_aut.max_rms_wavefront_error_waves": run_index / 100,
+                    }
+                ),
+                "optimized_zmx_path": f"run-{run_index}/candidate.zmx",
+                "codev_preferred_config": preferred,
+                "codev_config_snapshots": {
+                    "asphere": {
+                        "post_aut.max_rms_spot_diameter_um": diameter,
+                        "post_aut.max_rms_wavefront_error_waves": run_index / 100,
+                    },
+                    "both": {
+                        "post_aut.max_rms_spot_diameter_um": 60.0,
+                        "post_aut.max_rms_wavefront_error_waves": 0.9,
+                    },
+                },
+            }
+        )
+
+    monkeypatch.setattr(
+        TargetConvergedGenerator, "_candidate_for_seed", staticmethod(_candidate_for_seed)
+    )
+    result = orchestrate(
+        _wide_target_spec(),
+        _wide_target_spec(),
+        n=1,
+        modes=[GenerationMode.TARGET_CONVERGED],
+        repeat_runs=3,
+    )
+    repeat = result.candidates[0].scorecard.repeatability
+    assert calls == [1, 2, 3]
+    assert repeat.run_count == 3
+    assert repeat.rms_spot_radius_um_min.value == 5.0
+    assert repeat.rms_spot_radius_um_max.value == 9.0
+    assert repeat.rms_spot_radius_um_spread.value == 4.0
+    assert repeat.wfe_waves_spread.value == pytest.approx(0.02)
+    generated = result.candidates[0].generated
+    assert generated.repeat_run_artifact_paths == [
+        "run-1/candidate.zmx",
+        "run-2/candidate.zmx",
+        "run-3/candidate.zmx",
+    ]
+    assert any("preferred flip both->asphere" in note for note in generated.generation_notes)
+
+
+def test_orchestrate_mode3_first_run_failure_uses_second_run_artifact(monkeypatch):
+    seed = RetrievalGenerator()._generate(_wide_target_spec(), _wide_target_spec(), n=1)[0]
+    monkeypatch.setattr(generators_module, "DEFAULT_CODEV_EXECUTABLE", Path(__file__))
+    monkeypatch.setattr(
+        TargetConvergedGenerator,
+        "_rank_seeds_by_target_match",
+        staticmethod(lambda spec: [(seed.payload, object())]),
+    )
+
+    def _candidate_for_seed(*, run_index, **kwargs):  # noqa: ANN001
+        if run_index == 1:
+            return None
+        return seed.model_copy(
+            update={
+                "candidate_id": "repeat-mode3",
+                "mode": GenerationMode.TARGET_CONVERGED,
+                "optimized_zmx_path": f"run-{run_index}/candidate.zmx",
+                "codev_preferred_config": "asphere",
+                "codev_config_snapshots": {
+                    "asphere": {
+                        "post_aut.max_rms_spot_diameter_um": 10.0 + run_index,
+                        "post_aut.max_rms_wavefront_error_waves": run_index / 100,
+                    }
+                },
+            }
+        )
+
+    monkeypatch.setattr(
+        TargetConvergedGenerator, "_candidate_for_seed", staticmethod(_candidate_for_seed)
+    )
+    result = orchestrate(
+        _wide_target_spec(),
+        _wide_target_spec(),
+        n=1,
+        modes=[GenerationMode.TARGET_CONVERGED],
+        repeat_runs=3,
+    )
+    generated = result.candidates[0].generated
+    assert generated.optimized_zmx_path == "run-2/candidate.zmx"
+    assert generated.repeat_run_artifact_paths == [
+        "run-2/candidate.zmx",
+        "run-3/candidate.zmx",
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -392,12 +504,13 @@ def test_c1_orchestrate_script_smoke_reports_default_repeatability(tmp_path: Pat
     assert "未做重复性验证" in md_text
 
 
-def test_c1_orchestrate_script_repeat_runs_above_one_raises(tmp_path: Path, no_codev):
+def test_c1_orchestrate_script_repeat_runs_two_keeps_retrieval_single_run(tmp_path: Path, no_codev):
     from scripts.c1_orchestrate import main
 
     out_dir = tmp_path / "c1_repeat_two"
-    with pytest.raises(NotImplementedError, match="repeat_runs=2"):
-        main(["--out", str(out_dir), "--n", "1", "--repeat-runs", "2"])
+    assert main(["--out", str(out_dir), "--n", "1", "--repeat-runs", "2"]) == 0
+    md_text = sorted(out_dir.glob("report_*.md"))[0].read_text(encoding="utf-8")
+    assert "run_count=1, status=`unavailable`" in md_text
 
 
 def test_c1_orchestrate_script_with_custom_requirements_file(tmp_path: Path, no_codev):

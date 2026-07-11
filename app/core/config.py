@@ -1,6 +1,7 @@
 """Centralized application settings via pydantic-settings."""
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated
 
 from pydantic import Field, field_validator
@@ -41,6 +42,10 @@ class Settings(BaseSettings):
 
     # === DB ===
     database_url: str | None = None
+    job_artifacts_dir: Path = Field(
+        Path("var/job-artifacts"),
+        description="Persistent job artifacts root; retention/GC policy is future work.",
+    )
 
     # === Observability ===
     langfuse_host: str | None = None

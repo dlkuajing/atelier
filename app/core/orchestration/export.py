@@ -39,6 +39,7 @@ import io
 import math
 import zipfile
 from datetime import UTC, datetime
+from pathlib import Path
 
 from openpyxl import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -281,6 +282,10 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
     generators.py-side persistence gap is closed, with zero changes needed
     here. `None` when the metadata is missing or the file isn't actually
     there (fail closed, never fabricates a path)."""
+    optimized_path = sc.generated.optimized_zmx_path
+    if optimized_path:
+        path = Path(optimized_path)
+        return path if path.is_file() else None
     metadata = sc.generated.payload.metadata
     if metadata is None or not metadata.source_zmx:
         return None

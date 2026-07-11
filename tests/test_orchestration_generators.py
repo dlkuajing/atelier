@@ -975,6 +975,61 @@ def test_candidate_for_seed_success_path_produces_target_converged_candidate(
     assert any("P17-4 接线" in note for note in candidate.generation_notes)
 
 
+def test_candidate_for_seed_persists_optimized_zmx_bytes(tmp_path: Path, monkeypatch):
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    source = tmp_path / "ephemeral.zmx"
+    expected = (ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes()
+    source.write_bytes(expected)
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=str(source)),  # noqa: ANN003
+    )
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        work_dir=tmp_path / "work",
+        artifact_dir=tmp_path / "artifacts",
+        run_index=1,
+    )
+    assert candidate is not None
+    persisted = Path(candidate.optimized_zmx_path or "")
+    assert persisted.read_bytes() == expected
+    assert persisted == tmp_path / "artifacts" / "candidates" / (
+        f"{seed.metadata.case_id}--asphere--run-1"
+    ) / "candidate.zmx"
+    assert candidate.artifact_warnings == []
+
+
+def test_candidate_for_seed_persist_collision_records_warning(tmp_path: Path, monkeypatch):
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    source = tmp_path / "ephemeral.zmx"
+    source.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    monkeypatch.setattr(
+        generators_module,
+        "run_codev_target_standard",
+        lambda **kwargs: _fake_standard_result(optimized_zmx_path=str(source)),  # noqa: ANN003
+    )
+    collision = tmp_path / "artifacts" / "candidates" / (
+        f"{seed.metadata.case_id}--asphere--run-1"
+    )
+    collision.mkdir(parents=True)
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(scenario=seed.metadata.scenario, efl_mm=3.797, fnum=2.3),
+        work_dir=tmp_path / "work",
+        artifact_dir=tmp_path / "artifacts",
+    )
+    assert candidate is not None
+    assert candidate.optimized_zmx_path == str(source)
+    assert candidate.artifact_warnings
+    assert "fail-closed" in candidate.artifact_warnings[0]
+
+
 def test_candidate_for_seed_ri_fails_closed_when_optimized_zmx_deleted_before_ri(
     tmp_path: Path, monkeypatch
 ):
@@ -1123,7 +1178,7 @@ def test_generate_isolates_single_seed_failure_and_keeps_survivor(monkeypatch, t
 
     calls: list[str] = []
 
-    def _fake_candidate_for_seed(*, seed, match, spec, work_dir):  # noqa: ANN001
+    def _fake_candidate_for_seed(*, seed, match, spec, work_dir, **kwargs):  # noqa: ANN001
         calls.append(seed.metadata.case_id)
         if seed is seed_a:
             return None
@@ -1154,7 +1209,7 @@ def test_generate_caps_seed_count_at_max_regardless_of_n(monkeypatch):
     )
     attempted: list[str] = []
 
-    def _fake_candidate_for_seed(*, seed, match, spec, work_dir):  # noqa: ANN001
+    def _fake_candidate_for_seed(*, seed, match, spec, work_dir, **kwargs):  # noqa: ANN001
         attempted.append(seed.metadata.case_id)
         return None
 

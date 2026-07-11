@@ -26,6 +26,7 @@ TargetConvergedGenerator}`（§4/§6）。Mode2 不在 registry（§6.3）。
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from pathlib import Path
 from types import MappingProxyType
 
 from app.core.orchestration.candidate import (
@@ -72,6 +73,7 @@ def orchestrate(
     rank_weights: Mapping[str, float] | None = None,
     min_coverage_pct: float | None = None,
     repeat_runs: int = 1,
+    artifact_dir: Path | None = None,
 ) -> CandidateSet:
     """Run every registered (or explicitly selected) generator against
     `spec`, score each produced candidate against `target`, and return a
@@ -94,28 +96,15 @@ def orchestrate(
     own default in place — every existing caller that doesn't pass these is
     unaffected.
 
-    `repeat_runs` (Phase 17 子项3, default `1`, zero behavior change): this
-    shovel only delivers the `RepeatabilityMetrics` schema + fail-closed
-    single-run default (`repeat_runs=1` never passes repeat samples to
-    `score_candidate`, so every existing caller sees identical output to
-    before this parameter existed). `repeat_runs > 1` deliberately raises
-    `NotImplementedError` rather than silently running once and pretending
-    the extra runs happened — the real multi-run execution engine (calling
-    a generator's seed multiple independent times and collecting RMS/WFE
-    samples) is genuinely unbuilt and its real-CODE-V cost is scheduled
-    separately ("由 orchestrator 排窗"), not something this call should
-    silently skip or fake.
+    `repeat_runs` is bounded to 1..3. Values above one apply only to Mode3:
+    each selected seed's CODE V optimization is invoked strictly serially and
+    its finite post-AUT RMS/WFE samples feed the repeatability score. Retrieval
+    remains a single deterministic lookup with unavailable repeatability.
     """
     if repeat_runs < 1:
         raise ValueError(f"orchestrate: repeat_runs must be >= 1, got {repeat_runs}")
-    if repeat_runs > 1:
-        raise NotImplementedError(
-            f"orchestrate: repeat_runs={repeat_runs} requested, but the real repeat-run "
-            "execution engine (Phase 17 子项3) is not implemented yet — this call only "
-            "wires the RepeatabilityMetrics schema + repeat_runs=1 default path. Real "
-            "multi-run CODE V verification is scheduled separately by the orchestrator, "
-            "not triggered implicitly here."
-        )
+    if repeat_runs > 3:
+        raise ValueError(f"orchestrate: repeat_runs must be <= 3, got {repeat_runs}")
 
     selected_modes = (
         list(_REGISTRY.keys()) if modes is None else list(dict.fromkeys(modes))
@@ -139,10 +128,19 @@ def orchestrate(
         generator_cls = _REGISTRY[mode]
         batch: list[ScoredCandidate] = []
         try:
-            generator = generator_cls()
+            generator = generator_cls(
+                artifact_dir=artifact_dir,
+                repeat_runs=repeat_runs if mode is GenerationMode.TARGET_CONVERGED else 1,
+            )
             generated_candidates = generator.generate(spec, target, n=n)
             for generated in generated_candidates:
-                scorecard = score_candidate(generated, target, **score_kwargs)
+                scorecard = score_candidate(
+                    generated,
+                    target,
+                    repeat_rms_samples_um=generated.repeat_rms_samples_um,
+                    repeat_wfe_samples_waves=generated.repeat_wfe_samples_waves,
+                    **score_kwargs,
+                )
                 batch.append(ScoredCandidate(generated=generated, scorecard=scorecard))
         except Exception as exc:  # noqa: BLE001 - isolate this mode's failure (fail-open, recorded below), never sink the whole batch
             errors.append(

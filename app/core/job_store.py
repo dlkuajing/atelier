@@ -81,6 +81,7 @@ class JobStore:
         payload: Mapping[str, object],
         *,
         lane: str | None = None,
+        job_id: str | None = None,
     ) -> str:
         """Create a job and schedule the engine submission on the running event loop.
 
@@ -91,7 +92,9 @@ class JobStore:
         `DEFAULT_SEAT_LANE`.
         """
         payload_copy = dict(payload)
-        job_id = uuid4().hex
+        job_id = job_id or uuid4().hex
+        if job_id in self._jobs:
+            raise ValueError(f"job id already exists: {job_id}")
         resolved_lane = lane if lane is not None else getattr(engine, "seat_lane", DEFAULT_SEAT_LANE)
         self._jobs[job_id] = JobRecord(
             job_id=job_id,
