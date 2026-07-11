@@ -760,6 +760,36 @@ def test_stagec_bundle_rejects_arbitrary_bytes_even_with_self_reported_hash(tmp_
     assert "candidate.zmx withheld" in readme
 
 
+def test_stagec_candidate_and_export_reject_self_hashed_ftyp_count_forgery(tmp_path: Path):
+    sc = _stagec_offline_candidate(tmp_path)
+    reconstruction = sc.generated.stagec_field_reconstruction
+    assert reconstruction is not None and reconstruction.output_path is not None
+    artifact = Path(reconstruction.output_path)
+    artifact.write_text(
+        artifact.read_text(encoding="ascii").replace("FTYP 3 0 12", "FTYP 3 0 999"),
+        encoding="ascii",
+        newline="\n",
+    )
+    forged_reconstruction = reconstruction.model_copy(
+        update={"output_sha256": hashlib.sha256(artifact.read_bytes()).hexdigest()}
+    )
+    raw = sc.generated.model_dump()
+    raw["stagec_field_reconstruction"] = forged_reconstruction.model_dump()
+    with pytest.raises(ValueError, match="artifact bytes are invalid"):
+        GeneratedCandidate.model_validate(raw)
+
+    forged_generated = sc.generated.model_copy(
+        update={"stagec_field_reconstruction": forged_reconstruction}
+    )
+    forged = sc.model_copy(update={"generated": forged_generated})
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
+    ) as zf:
+        assert "candidate.zmx" not in zf.namelist()
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "candidate.zmx withheld" in readme
+
+
 def test_stagec_candidate_rejects_target_profile_and_artifact_path_mismatch(tmp_path: Path):
     sc = _stagec_offline_candidate(tmp_path)
     raw = sc.generated.model_dump()
