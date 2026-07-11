@@ -68,7 +68,7 @@ def run_matrix(candidates: Sequence[Path], output: Path, evidence_dir: Path, con
         cell.mkdir(parents=True, exist_ok=True)
         staged = cell / "candidate.zmx"
         shutil.copy2(row["source_zmx"], staged)
-        kwargs = dict(source_zmx=staged, work_dir=cell, tolerance_table=table, compensators=compensators, monte_carlo=mc, metric=cfg["metric"], mtf_frequency_lp_per_mm=cfg.get("mtf_frequency_lp_per_mm"))
+        kwargs = {"source_zmx": staged, "work_dir": cell, "tolerance_table": table, "compensators": compensators, "monte_carlo": mc, "metric": cfg["metric"], "mtf_frequency_lp_per_mm": cfg.get("mtf_frequency_lp_per_mm")}
         if not run_codev:
             (cell / "atelier_tor.seq").write_text(build_codev_tor_sequence(source_path=staged, performance_result_path=cell / "atelier_tor_per.tsv", monte_carlo_result_path=cell / "atelier_tor_mc.tsv", tolerance_table=table, compensators=compensators, monte_carlo=mc, metric=cfg["metric"], mtf_frequency_lp_per_mm=cfg.get("mtf_frequency_lp_per_mm")), encoding="ascii")
             row["status"] = "built-not-run"
