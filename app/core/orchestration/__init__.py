@@ -29,6 +29,7 @@ from app.core.orchestration.candidate import (
     ScoredCandidate,
     TargetDeviation,
     TargetSpec,
+    fnum_gate_from_ladder_result,
 )
 from app.core.orchestration.export import (
     build_candidate_bundle_zip,
@@ -64,6 +65,7 @@ __all__ = [
     "TargetSpec",
     "build_candidate_bundle_zip",
     "build_candidate_set_workbook",
+    "fnum_gate_from_ladder_result",
     "orchestrate",
     "score_candidate",
 ]

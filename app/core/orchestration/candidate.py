@@ -413,10 +413,49 @@ class GeneratedCandidate(BaseModel):
     )
     repeat_rms_samples_um: list[float] = Field(default_factory=list, exclude=True)
     repeat_wfe_samples_waves: list[float] = Field(default_factory=list, exclude=True)
+    fnum_ladder_achieved: bool | None = Field(
+        None,
+        description=(
+            "per-candidate F# 收敛证据 gate（P15 带条件扩，orchestrator 裁决 "
+            "2026-07-11）：None=本候选没跑 FNO 阶梯（现状全部 generator 路径）；"
+            "True=本候选自己的 `run_codev_target_fno_ladder` 产出 "
+            "target_achieved=True（四条件：measured+param 容差内+EFL 保持+ray-"
+            "clean，见 fnum_gate_from_ladder_result——**禁止**用 aut_converged "
+            "单维代填）；False=ladder 跑了但未达标。fnum 的 "
+            "converged_toward_target 仅当此字段为 True 时才允许为 True。"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _fnum_gate_requires_target_converged_mode(self) -> GeneratedCandidate:
+        # RETRIEVED（零优化）候选带 F# ladder 证据 = provenance 矛盾，构造期拒绝。
+        if self.fnum_ladder_achieved is not None and self.mode is not GenerationMode.TARGET_CONVERGED:
+            raise ValueError(
+                "fnum_ladder_achieved 只允许 TARGET_CONVERGED 候选携带"
+                f"（mode={self.mode}）——RETRIEVED 不优化任何维"
+            )
+        return self
 
     @property
     def is_target_converged(self) -> bool:  # 派生只读，不可单独伪造
         return self.mode is GenerationMode.TARGET_CONVERGED
+
+
+def fnum_gate_from_ladder_result(ladder_result: object) -> bool:
+    """从 `codev_optimize.run_codev_target_fno_ladder` 的返回 dict 判定
+    per-candidate F# 收敛 gate（orchestrator 裁决 2026-07-11：gate 必须用
+    引擎的四条件 `target_achieved` 记录——status=measured AND fno_param_
+    achieved AND aut_converged AND ray_traceable，全矩阵 14 真机 ladder 验证
+    0 假阳性；**禁止**读 `aut_converged` 单维代判，那是 P15 Stage 2 证明的
+    双重假阳性维度之一）。
+
+    Fail-closed：非 Mapping / 键缺失 / 值非 True（含 None、"True" 字符串等
+    任何非布尔真值）一律 False——缺证据不给收敛背书。"""
+    from collections.abc import Mapping as _Mapping
+
+    if not isinstance(ladder_result, _Mapping):
+        return False
+    return ladder_result.get("target_achieved") is True
 
 
 # 每个 mode 实际朝 target 优化/收敛的 field 集合（per-field provenance · codex 轮5）。
@@ -425,16 +464,24 @@ class GeneratedCandidate(BaseModel):
 CONVERGED_FIELDS: MappingProxyType[GenerationMode, frozenset[str]] = MappingProxyType(
     {
         GenerationMode.RETRIEVED: frozenset(),  # 检索不优化任何维
-        # 缩窄（真接入时按实际能力收紧，2026-07-10 · TargetConvergedGenerator 填实）：
-        # spec §10 原文把 Mode3 优化维定义为 {EFL, F#, IMH, FOV}（六接缝对应），但
-        # `codev_optimize.run_codev_target_standard`（③ 标准入口）目前只有接缝1
-        # （EFL 解锁朝 target，真机 E1 验证）实际达标；接缝3a 是 FNO 模式锁 native F#
-        # （"保持"不是"朝 target 收敛"）；IMH/FOV 的 Stage C 场重建完全未落地。虚标
-        # F#/IMH/FOV 为已收敛 = 撒谎（违反诚实不变量，见本文件 docstring 不变量4 与
-        # generators.py::TargetConvergedGenerator 接入警示段）。
-        # 将来 Stage B（F# 真优化，需宽视场 CRA 前置工程）/ Stage C（IMH/FOV 场重建）
-        # 落地时，按该字段实际达标的那一刻扩这张表（同步 §10 file:line 接缝清单）。
-        GenerationMode.TARGET_CONVERGED: frozenset({"efl"}),
+        # 语义（P15 带条件扩后，orchestrator 裁决 2026-07-11）：本表 = 该 mode 的
+        # **收敛能力上限**（capability ceiling），不是无条件断言。
+        #   - "efl"：per-mode 无条件成立（接缝1 EFL 解锁朝 target，真机 E1 验证，
+        #     2026-07-10 起）。
+        #   - "fnum"：**带条件**——converged=Yes 仅当该候选自己的
+        #     `run_codev_target_fno_ladder` 产出 target_achieved=True（四条件 gate，
+        #     见 `GeneratedCandidate.fnum_ladder_achieved` 与
+        #     `fnum_gate_from_ladder_result`；P15 全矩阵 14 真机 ladder 验证该 gate
+        #     0 假阳性，证据 .planning/loop/p15-stageb-evidence/fno-matrix-2026-07-11/
+        #     matrix-analysis.md）。ladder 未跑（fnum_ladder_achieved=None）或未达标
+        #     （False）的候选 fnum 恒 No——无条件扩=对固有带伤 seed 池（矩阵实测
+        #     64%）提前标注未验证能力（红线）。
+        #     一致性由 `ScoredCandidate._enforce_consistency` 双向钉死。
+        # IMH/FOV 的 Stage C 场重建完全未落地，仍不在表内（虚标=撒谎，违反诚实
+        # 不变量，见本文件 docstring 不变量4 与 generators.py::
+        # TargetConvergedGenerator 接入警示段）；TTL 从不在优化维。Stage C 落地时
+        # 按该字段实际达标的那一刻扩表（同步 §10 file:line 接缝清单）。
+        GenerationMode.TARGET_CONVERGED: frozenset({"efl", "fnum"}),
     }
 )
 
@@ -449,11 +496,19 @@ class ScoredCandidate(BaseModel):
     def _enforce_consistency(self) -> ScoredCandidate:  # raise 非 assert
         if self.scorecard.mode is not self.generated.mode:
             raise ValueError("scorecard.mode != generated.mode")
-        conv = CONVERGED_FIELDS[self.generated.mode]  # per-field，非全局 bool
+        conv = CONVERGED_FIELDS[self.generated.mode]  # per-field 能力上限，非全局 bool
         for dev in self.scorecard.target_deviations:
-            if dev.converged_toward_target != (dev.field in conv):
+            # fnum 带条件（P15 裁决）：能力上限在表内 AND 该候选自己的 ladder 四条件
+            # gate 为 True（fnum_ladder_achieved，见 GeneratedCandidate）。其余维仍
+            # 是纯 per-mode 查表。双向强一致（==，非单边）：虚标 Yes 与漏标 No 都拒。
+            expected = dev.field in conv and (
+                dev.field != "fnum" or self.generated.fnum_ladder_achieved is True
+            )
+            if dev.converged_toward_target != expected:
                 raise ValueError(
-                    f"{dev.field} converged 与 mode {self.generated.mode} 优化维不一致"
+                    f"{dev.field} converged 与 mode {self.generated.mode} 优化维/证据 "
+                    f"gate 不一致（actual={dev.converged_toward_target}, expected={expected}；"
+                    f"fnum_ladder_achieved={self.generated.fnum_ladder_achieved}）"
                 )
         return self
 
