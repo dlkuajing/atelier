@@ -6,7 +6,6 @@ import csv
 import math
 import os
 import re
-import subprocess
 import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
@@ -17,8 +16,10 @@ from typing import Any, Literal
 from app.core.engines.codev_batch import (
     DEFAULT_CODEV_EXECUTABLE,
     CodeVBatchError,
+    _delete_stale_result,
     ensure_buf_exp_safe_filename,
     ensure_codev_safe_input_path,
+    run_codev_process,
 )
 
 TorMetric = Literal["mtf", "rms"]
@@ -98,8 +99,17 @@ class CodeVTorRunResult:
     parse_result: TorParseResult
 
 
-def _default_tor_runner(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(command, capture_output=True, text=True, check=False, **kwargs)
+def _default_tor_runner(command: list[str], **kwargs: Any) -> Any:
+    process, stdout, stderr, duration = run_codev_process(
+        command,
+        work_dir=Path(kwargs["cwd"]),
+        timeout_seconds=float(kwargs["timeout"]),
+    )
+    return type(
+        "CodeVTorProcessResult",
+        (),
+        {"returncode": process.returncode, "stdout": stdout, "stderr": stderr, "duration": duration},
+    )()
 
 
 def _reject_dotted_components(path: Path, name: str) -> None:
@@ -147,15 +157,16 @@ def run_codev_tor(
         ),
         encoding="ascii",
     )
+    stale_deleted = {
+        str(path): _delete_stale_result(path)
+        for path in (per_path, mc_path)
+    }
     started = time.monotonic()
-    try:
-        process = runner(
-            [str(Path(executable)), "/B", sequence_path.name],
-            cwd=work,
-            timeout=timeout_seconds,
-        )
-    except subprocess.TimeoutExpired as exc:
-        raise CodeVBatchError("timeout", "CODE V TOR run exceeded timeout", details={"timeout_seconds": timeout_seconds}) from exc
+    process = runner(
+        [str(Path(executable)), "/B", sequence_path.name],
+        cwd=work,
+        timeout=timeout_seconds,
+    )
     duration = time.monotonic() - started
     returncode = int(process.returncode)
     if returncode not in {0, 1}:
@@ -163,6 +174,13 @@ def run_codev_tor(
             "failure",
             "CODE V TOR batch returned an unsupported return code",
             details={"returncode": returncode, "stderr": getattr(process, "stderr", "")[-4000:]},
+        )
+    missing = [str(path) for path in (per_path, mc_path) if not path.is_file()]
+    if missing:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V TOR run finished without producing fresh export files",
+            details={"missing": missing, "stale_exports_deleted": stale_deleted, "returncode": returncode},
         )
     parsed = parse_codev_tor_exports(per_path, mc_path)
     return CodeVTorRunResult(

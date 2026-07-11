@@ -1,5 +1,6 @@
 """Offline tests for the Phase 14 TOR contract."""
 
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -14,7 +15,12 @@ from app.core.engines.codev_tolerance import (
     parse_codev_tor_exports,
     run_codev_tor,
 )
-from app.core.engines.tor_yield import UNRATIFIED_TOR_YIELD_POLICY, TorYieldPolicy, compute_mc_yield
+from app.core.engines.tor_yield import (
+    UNRATIFIED_TOR_YIELD_POLICY,
+    TorYieldPolicy,
+    compute_mc_yield,
+    mc_saturation_fraction,
+)
 
 FIXTURES = Path(__file__).parent / "data" / "codev_tor"
 REAL_PER = next(FIXTURES.glob("real_sample_per_*.txt"))
@@ -164,8 +170,30 @@ def test_tor_runner_missing_mc_is_unavailable(tmp_path: Path) -> None:
     def fake(command, **kwargs):
         (Path(kwargs["cwd"]) / "atelier_tor_per.tsv").write_bytes(REAL_PER.read_bytes())
         return type("P", (), {"returncode": 0, "stderr": ""})()
-    result = run_codev_tor(source_zmx=REAL_ZMX, work_dir=tmp_path / "tor", runner=fake, tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100)
-    assert "missing" in result.parse_result.reason
+    with pytest.raises(CodeVBatchError, match="fresh export"):
+        run_codev_tor(source_zmx=REAL_ZMX, work_dir=tmp_path / "tor", runner=fake, tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100)
+
+
+def test_tor_runner_deletes_stale_exports_before_rc1_run(tmp_path: Path) -> None:
+    work = tmp_path / "tor"
+    work.mkdir()
+    (work / "atelier_tor_per.tsv").write_bytes(REAL_PER.read_bytes())
+    (work / "atelier_tor_mc.tsv").write_bytes(REAL_MC.read_bytes())
+    with pytest.raises(CodeVBatchError, match="fresh export"):
+        run_codev_tor(source_zmx=REAL_ZMX, work_dir=work, runner=lambda *a, **k: type("P", (), {"returncode": 1, "stderr": ""})(), tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100)
+    assert not (work / "atelier_tor_per.tsv").exists()
+
+
+def test_default_tor_runner_uses_shared_process_discipline(monkeypatch, tmp_path: Path) -> None:
+    import app.core.engines.codev_tolerance as module
+    called = {}
+    def shared(command, **kwargs):
+        called.update(kwargs)
+        return type("P", (), {"returncode": 1})(), "out", "err", 0.1
+    monkeypatch.setattr(module, "run_codev_process", shared)
+    result = module._default_tor_runner(["codev"], cwd=tmp_path, timeout=3)
+    assert result.returncode == 1
+    assert called["timeout_seconds"] == 3
 
 
 def test_tor_runner_rc2_errors(tmp_path: Path) -> None:
@@ -176,9 +204,33 @@ def test_tor_runner_rc2_errors(tmp_path: Path) -> None:
 def test_tor_yield_default_off_and_ratified_math() -> None:
     parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
     assert compute_mc_yield(parsed, UNRATIFIED_TOR_YIELD_POLICY).status == "unavailable"
-    measured = compute_mc_yield(parsed, TorYieldPolicy("MTF", 0.1, "min", True, "Tolerancing.pdf + probe"))
+    measured = compute_mc_yield(parsed, TorYieldPolicy("MTF", 0.1, "min", True, "Tolerancing.pdf + probe", 1.0))
     assert measured.status == "measured"
     assert measured.trials == 20
     assert measured.yield_fraction == pytest.approx(0.0)
     assert measured.per_field_yield["z1:f1"] == pytest.approx(0.9)
     assert measured.saturation_fraction == pytest.approx(58 / 60)
+
+
+def test_saturation_is_policy_independent_and_gates_ratified_yield() -> None:
+    parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
+    saturated = replace(parsed, monte_carlo_rows=tuple(replace(row, value=1.0) for row in parsed.monte_carlo_rows))
+    assert mc_saturation_fraction(saturated) == 1.0
+    blocked = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 0.5))
+    assert blocked.status == "unavailable"
+    assert "1" in blocked.reason and "0.5" in blocked.reason
+    measured = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
+    assert measured.status == "measured"
+
+
+@pytest.mark.parametrize("mutation, reason", [
+    (lambda rows: rows + (rows[0],), "duplicate"),
+    (lambda rows: tuple(row for row in rows if not (row.sample == 1 and row.field == 1)), "coverage"),
+    (lambda rows: (replace(rows[0], criterion="RMS"), *rows[1:]), "criterion"),
+])
+def test_yield_fail_closed_branches(mutation, reason: str) -> None:
+    parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
+    changed = replace(parsed, monte_carlo_rows=tuple(mutation(parsed.monte_carlo_rows)))
+    result = compute_mc_yield(changed, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
+    assert result.status == "unavailable"
+    assert reason in result.reason

@@ -16,12 +16,17 @@ class TorYieldPolicy:
     direction: Literal["min", "max"]
     semantics_ratified: bool
     semantics_evidence: str
+    max_saturation_fraction: float | None = None
 
     def __post_init__(self) -> None:
         if not math.isfinite(self.threshold):
             raise ValueError("threshold must be finite")
         if self.semantics_ratified and not self.semantics_evidence.strip():
             raise ValueError("ratified policy requires semantics_evidence")
+        if self.semantics_ratified and self.max_saturation_fraction is None:
+            raise ValueError("ratified policy requires max_saturation_fraction")
+        if self.max_saturation_fraction is not None and not 0 <= self.max_saturation_fraction <= 1:
+            raise ValueError("max_saturation_fraction must be in [0, 1]")
 
 
 @dataclass(frozen=True)
@@ -41,10 +46,19 @@ UNRATIFIED_TOR_YIELD_POLICY = TorYieldPolicy(
 )
 
 
+def mc_saturation_fraction(result: TorParseResult) -> float | None:
+    """Return the policy-independent fraction of MC values saturated at 0 or 1."""
+    rows = result.monte_carlo_rows
+    if not rows:
+        return None
+    return sum(row.value in {0.0, 1.0} for row in rows) / len(rows)
+
+
 def compute_mc_yield(result: TorParseResult, policy: TorYieldPolicy) -> TorYieldResult:
     provenance = f"TOR MC; policy evidence: {policy.semantics_evidence or 'none'}"
+    saturation = mc_saturation_fraction(result)
     if not policy.semantics_ratified:
-        return TorYieldResult("unavailable", None, {}, 0, None, provenance, "TOR yield semantics are not ratified")
+        return TorYieldResult("unavailable", None, {}, 0, saturation, provenance, "TOR yield semantics are not ratified")
     rows = result.monte_carlo_rows
     if not rows or result.declared_trials is None:
         return TorYieldResult("unavailable", None, {}, 0, None, provenance, "TOR MC rows are missing")
@@ -64,5 +78,10 @@ def compute_mc_yield(result: TorParseResult, policy: TorYieldPolicy) -> TorYield
         return value >= policy.threshold if policy.direction == "min" else value <= policy.threshold
     per_field = {f"z{z}:f{f}": sum(passes(s[(z, f)]) for s in samples.values()) / len(samples) for z, f in sorted(fields)}
     overall = sum(all(passes(value) for value in sample.values()) for sample in samples.values()) / len(samples)
-    saturation = sum(row.value in {0.0, 1.0} for row in rows) / len(rows)
+    assert policy.max_saturation_fraction is not None
+    if saturation is not None and saturation > policy.max_saturation_fraction:
+        return TorYieldResult(
+            "unavailable", None, {}, 0, saturation, provenance,
+            f"TOR MC saturation_fraction {saturation:.6g} exceeds policy maximum {policy.max_saturation_fraction:.6g}",
+        )
     return TorYieldResult("measured", overall, per_field, len(samples), saturation, provenance, "computed from complete TOR MC rows")

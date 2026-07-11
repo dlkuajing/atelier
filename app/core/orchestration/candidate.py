@@ -20,7 +20,7 @@ from enum import StrEnum
 from types import MappingProxyType
 from typing import Literal
 
-from pydantic import BaseModel, Field, computed_field, model_validator
+from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
 
 from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
@@ -252,6 +252,20 @@ class ToleranceYieldMetrics(BaseModel):
     provenance: str
     reason: str
 
+    @field_validator("yield_fraction", "saturation_fraction")
+    @classmethod
+    def _bounded_metrics(cls, metric: MetricValue) -> MetricValue:
+        if metric.value is not None and not 0 <= metric.value <= 1:
+            raise ValueError("tolerance yield metric values must be in [0, 1]")
+        return metric
+
+    @field_validator("per_field_yield")
+    @classmethod
+    def _bounded_per_field(cls, values: dict[str, float]) -> dict[str, float]:
+        if any(not 0 <= value <= 1 for value in values.values()):
+            raise ValueError("per_field_yield values must be in [0, 1]")
+        return values
+
     @model_validator(mode="after")
     def _fail_closed(self) -> ToleranceYieldMetrics:
         if self.status == "unavailable" and (
@@ -266,6 +280,10 @@ class ToleranceYieldMetrics(BaseModel):
             or not self.provenance.strip()
         ):
             raise ValueError("measured tolerance yield requires values and provenance")
+        if self.status == "measured" and self.trials < 1:
+            raise ValueError("measured tolerance yield requires trials >= 1")
+        if self.status == "unavailable" and self.trials != 0:
+            raise ValueError("unavailable tolerance yield requires trials == 0")
         return self
 
 

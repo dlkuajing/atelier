@@ -139,6 +139,55 @@ class CodeVBatchResult:
         }
 
 
+def run_codev_process(
+    command: list[str],
+    *,
+    work_dir: Path,
+    timeout_seconds: float,
+    env: Mapping[str, str] | None = None,
+    platform_name: str = os.name,
+) -> tuple[subprocess.Popen[bytes], str, str, float]:
+    """Run CODE V with the shared timeout, process-tree kill, and bounded reap contract."""
+    started_at = time.monotonic()
+    try:
+        process = _popen_codev(command, work_dir=work_dir, env=env, platform_name=platform_name)
+    except OSError as exc:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V batch process could not be started",
+            details={
+                "command": command,
+                "work_dir": str(work_dir),
+                "exception_type": type(exc).__name__,
+                "error": str(exc),
+            },
+        ) from exc
+    try:
+        stdout, stderr = process.communicate(timeout=timeout_seconds)
+    except subprocess.TimeoutExpired as exc:
+        kill_details = _kill_process_tree(process, platform_name=platform_name)
+        reap_details = _reap_process_after_kill(process)
+        raise CodeVBatchError(
+            "timeout",
+            "CODE V batch run exceeded its hard timeout",
+            details={
+                "command": command,
+                "pid": process.pid,
+                "timeout_seconds": timeout_seconds,
+                "stdout_tail": _tail(_coerce_output(exc.stdout)),
+                "stderr_tail": _tail(_coerce_output(exc.stderr)),
+                "kill": kill_details,
+                "reap": reap_details,
+            },
+        ) from exc
+    return (
+        process,
+        _coerce_output(stdout),
+        _coerce_output(stderr),
+        time.monotonic() - started_at,
+    )
+
+
 def build_trivial_sequence(result_path: Path | str) -> str:
     """Build a minimal CODE V .seq that writes structured TSV via BUF EXP."""
 
@@ -329,49 +378,27 @@ def run_codev_batch(
         else str(sequence_path)
     )
     command = [str(executable), "/B", sequence_arg]
-    started_at = time.monotonic()
     try:
-        process = _popen_codev(command, work_dir=work_dir, env=env, platform_name=platform_name)
-    except OSError as exc:
-        raise CodeVBatchError(
-            "failure",
-            "CODE V batch process could not be started",
-            details={
-                "command": command,
+        process, stdout_text, stderr_text, duration_seconds = run_codev_process(
+            command,
+            work_dir=work_dir,
+            timeout_seconds=timeout_seconds,
+            env=env,
+            platform_name=platform_name,
+        )
+    except CodeVBatchError as exc:
+        timeout_listing_path = _claim_listing_path(listing_snapshot_before, bare_listing_guess)
+        exc.details.update(
+            {
                 "executable": str(executable),
-                "work_dir": str(work_dir),
                 "stale_result_deleted": stale_result_deleted,
                 "stale_listing_deleted": stale_listing_deleted,
-                "exception_type": type(exc).__name__,
-                "error": str(exc),
-            },
-        ) from exc
-    try:
-        stdout, stderr = process.communicate(timeout=timeout_seconds)
-    except subprocess.TimeoutExpired as exc:
-        kill_details = _kill_process_tree(process, platform_name=platform_name)
-        reap_details = _reap_process_after_kill(process)
-        timeout_listing_path = _claim_listing_path(listing_snapshot_before, bare_listing_guess)
-        raise CodeVBatchError(
-            "timeout",
-            "CODE V batch run exceeded its hard timeout",
-            details={
-                "command": command,
-                "pid": process.pid,
-                "timeout_seconds": timeout_seconds,
-                "stdout_tail": _tail(_coerce_output(exc.stdout)),
-                "stderr_tail": _tail(_coerce_output(exc.stderr)),
-                "kill": kill_details,
-                "reap": reap_details,
                 "listing_tail": _read_tail(timeout_listing_path)
                 if timeout_listing_path is not None
                 else "",
-            },
-        ) from exc
-
-    duration_seconds = time.monotonic() - started_at
-    stdout_text = _coerce_output(stdout)
-    stderr_text = _coerce_output(stderr)
+            }
+        )
+        raise
     listing_path = _claim_listing_path(listing_snapshot_before, bare_listing_guess)
     listing_tail = _read_tail(listing_path) if listing_path is not None else ""
 
