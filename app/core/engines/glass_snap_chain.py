@@ -215,9 +215,13 @@ def build_glass_freeze_reopt_sequence(
         raise ValueError("each material identity must appear exactly once")
     lines = [
         "! P13 glass snap chain; NEW glass assignment/freeze grammar pending real-machine verification.",
+        # FCT definitions must precede every executable statement (real-machine
+        # proof 2026-07-11: FCT after IN CV_MACRO garbles the parse — cascade of
+        # "Zero or negative value for row qualifier"; codev_optimize's proven
+        # sequences define FCTs first, before OUT NO / import).
+        *_rmswfe_function_definitions(),
         "OUT NO",
         f'IN CV_MACRO:ZEMAXOS_TO_CV "{Path(source_zmx).as_posix()}"',
-        *_rmswfe_function_definitions(),
         *_snapshot_block("before-fictitious", session_run_id, configuration_fingerprint),
     ]
     for proposal in accepted if apply_snaps else ():

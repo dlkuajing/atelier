@@ -109,6 +109,11 @@ def test_builder_has_assign_freeze_short_aut_and_three_snapshots(tmp_path):
     assert "RMSWE(1,0,60,^rwe,'NOM')" in sequence
     assert "before_fictitious_rmswfe == @p13wfe(1)" in sequence
     assert "pending real-machine verification" in sequence
+    # FCT definitions must precede every executable statement (real-machine
+    # proof 2026-07-11: FCT after IN CV_MACRO garbles the parse into a
+    # "Zero or negative value for row qualifier" cascade).
+    assert sequence.index("FCT @p13wfe(") < sequence.index("OUT NO")
+    assert sequence.index("END FCT ^ok") < sequence.index("ZEMAXOS_TO_CV")
 
 
 def _snapshot(stage: str, *, fingerprint: str = "same") -> SnapshotMetrics:
