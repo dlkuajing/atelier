@@ -637,7 +637,7 @@ def build_sample_from_optic(
             resolved_field_target.image_height_mm if resolved_field_target is not None else None
         ),
         image_height_source=(
-            resolved_field_target.image_height_source if resolved_field_target is not None else None
+            "constructed" if resolved_field_target is not None else None
         ),
         fov_source=(resolved_field_target.fov_source if resolved_field_target is not None else None),
         nominal_efl_mm=nominal_efl_mm,

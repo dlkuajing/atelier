@@ -20,6 +20,7 @@ num_fields、effective_edge_used）。证据缺失、未达标或与批 target �
 
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 import math
@@ -172,6 +173,7 @@ _FNUM_EVIDENCE_COLUMNS: tuple[str, ...] = (
 )
 
 _STAGEC_EVIDENCE_COLUMNS: tuple[str, ...] = (
+    "stagec_machine_execution_status",
     "stagec_reconstruction_status",
     "stagec_imh_source",
     "stagec_imh_achieved",
@@ -260,6 +262,7 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
         ]
         stagec = gen.stagec_field_evidence
         line += [
+            stagec.machine_execution_status if stagec is not None else "N/A",
             stagec.reconstruction_status if stagec is not None else "N/A",
             stagec.imh_source if stagec is not None else "N/A",
             stagec.image_height_achieved if stagec is not None else None,
@@ -315,6 +318,55 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
     generators.py-side persistence gap is closed, with zero changes needed
     here. `None` when the metadata is missing or the file isn't actually
     there (fail closed, never fabricates a path)."""
+    reconstruction = sc.generated.stagec_field_reconstruction
+    if reconstruction is not None:
+        evidence = sc.generated.stagec_field_evidence
+        if reconstruction.status != "constructed" or reconstruction.output_path is None:
+            return None
+        if evidence is None or evidence.image_height_achieved or (
+            evidence.target_image_height_mm != reconstruction.target_image_height_mm
+            or evidence.nominal_image_height_mm != reconstruction.target_image_height_mm
+        ):
+            return None
+        if reconstruction.num_fields is None or (
+            len(reconstruction.normalized_fractions) != reconstruction.num_fields
+            or not reconstruction.normalized_fractions
+            or not math.isclose(
+                max(abs(value) for value in reconstruction.normalized_fractions),
+                1.0,
+                rel_tol=0.0,
+                abs_tol=1e-15,
+            )
+        ):
+            return None
+        source = Path(reconstruction.source_path)
+        if not source.is_file() or (
+            hashlib.sha256(source.read_bytes()).hexdigest()
+            != reconstruction.source_sha256_before
+        ):
+            return None
+        path = Path(reconstruction.output_path)
+        if not path.is_file() or reconstruction.output_sha256 is None:
+            return None
+        if hashlib.sha256(path.read_bytes()).hexdigest() != reconstruction.output_sha256:
+            return None
+        optimized_path = sc.generated.optimized_zmx_path
+        if optimized_path is None or Path(optimized_path).resolve() != path.resolve():
+            return None
+        metadata = sc.generated.payload.metadata
+        if metadata is None or metadata.image_height_mm != reconstruction.target_image_height_mm:
+            return None
+        expected_fov = 2 * math.degrees(
+            math.atan(
+                reconstruction.target_image_height_mm
+                / sc.generated.payload.paraxial.effective_focal_length_mm
+            )
+        )
+        if evidence.derived_full_fov_deg is None or not math.isclose(
+            evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
+        ) or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12):
+            return None
+        return path
     optimized_path = sc.generated.optimized_zmx_path
     if optimized_path:
         path = Path(optimized_path)
@@ -324,6 +376,18 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
         return None
     path = ZMX_AMMO_DIR / metadata.source_zmx
     return path if path.is_file() else None
+
+
+def _candidate_zmx_unavailable_reason(sc: ScoredCandidate) -> str:
+    if sc.generated.stagec_field_reconstruction is not None:
+        return (
+            "Stage C source/output hash, target/profile, or candidate payload path is missing "
+            "or inconsistent; candidate.zmx withheld"
+        )
+    return (
+        "this candidate's ZMX is not resolvable on disk; persistence failure is recorded "
+        "and export fails closed"
+    )
 
 
 def _resolve_seed_zmx_path(sc: ScoredCandidate):
@@ -472,9 +536,7 @@ def _bundle_readme(
         ]
     else:
         lines += [
-            "candidate.zmx: NOT included — this candidate's ZMX is not resolvable on",
-            "disk. Mode3 persistence failure is recorded in artifact_warnings and",
-            "fails closed here; Mode1 resolves only its recorded seed source_zmx.",
+            "candidate.zmx: NOT included — " + _candidate_zmx_unavailable_reason(sc),
         ]
     lines.append("")
     if seq_text is not None:

@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import hashlib
 import math
+import os
 import re
+import uuid
 from enum import StrEnum
 from pathlib import Path
 from typing import Literal
@@ -22,6 +24,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, model_validator
 class FieldTargetStatus(StrEnum):
     RESOLVED = "resolved"
     CONFLICT = "conflict"
+    INVALID = "invalid"
     UNAVAILABLE = "unavailable"
 
 
@@ -43,6 +46,16 @@ class ResolvedFieldTarget(BaseModel):
 
     @model_validator(mode="after")
     def _closed_shape(self) -> ResolvedFieldTarget:
+        if self.efl_mm is not None and (not math.isfinite(self.efl_mm) or self.efl_mm <= 0):
+            raise ValueError("EFL must be positive and finite when present")
+        if self.image_height_mm is not None and (
+            not math.isfinite(self.image_height_mm) or self.image_height_mm <= 0
+        ):
+            raise ValueError("IMH must be positive and finite when present")
+        if self.full_fov_deg is not None and (
+            not math.isfinite(self.full_fov_deg) or not 0 < self.full_fov_deg < 180
+        ):
+            raise ValueError("FOV must be finite and inside (0, 180) when present")
         if self.status is FieldTargetStatus.RESOLVED and (
             self.efl_mm is None or self.image_height_mm is None or self.full_fov_deg is None
         ):
@@ -56,6 +69,28 @@ class ResolvedFieldTarget(BaseModel):
             for value in (self.image_height_mm, self.full_fov_deg)
         ):
             raise ValueError("unavailable target cannot carry resolved IMH/FOV")
+        if self.status is FieldTargetStatus.RESOLVED and (
+            not math.isfinite(self.efl_mm) or self.efl_mm <= 0
+            or not math.isfinite(self.image_height_mm) or self.image_height_mm <= 0
+            or not math.isfinite(self.full_fov_deg) or not 0 < self.full_fov_deg < 180
+        ):
+            raise ValueError("resolved EFL/IMH/FOV must be finite and physically positive")
+        if self.status in {FieldTargetStatus.INVALID, FieldTargetStatus.UNAVAILABLE} and any(
+            value is not None for value in (self.image_height_delta_mm, self.fov_delta_deg)
+        ):
+            raise ValueError("invalid/unavailable target cannot carry consistency deltas")
+        if self.status is FieldTargetStatus.INVALID and any(
+            value is not None for value in (self.image_height_mm, self.full_fov_deg)
+        ):
+            raise ValueError("invalid target cannot carry resolved IMH/FOV")
+        if self.status is FieldTargetStatus.CONFLICT and (
+            self.consistency != "conflict"
+            or self.image_height_source != "unavailable"
+            or self.fov_source != "unavailable"
+            or not math.isfinite(self.image_height_delta_mm)
+            or not math.isfinite(self.fov_delta_deg)
+        ):
+            raise ValueError("conflict target must carry finite deltas and unavailable sources")
         return self
 
 
@@ -70,7 +105,7 @@ def resolve_field_target(
     two raw signed deltas so policy can be chosen outside this module.
     """
 
-    if efl_mm is None or not math.isfinite(efl_mm) or efl_mm <= 0:
+    if efl_mm is None:
         return ResolvedFieldTarget(
             status=FieldTargetStatus.UNAVAILABLE,
             efl_mm=None,
@@ -81,8 +116,30 @@ def resolve_field_target(
             consistency="not-applicable",
             reason="positive finite EFL is required",
         )
-    imh_ok = image_height_mm is not None and math.isfinite(image_height_mm) and image_height_mm > 0
-    fov_ok = full_fov_deg is not None and math.isfinite(full_fov_deg) and 0 < full_fov_deg < 180
+    if not math.isfinite(efl_mm) or efl_mm <= 0:
+        return ResolvedFieldTarget(
+            status=FieldTargetStatus.INVALID, efl_mm=None, image_height_mm=None,
+            full_fov_deg=None, image_height_source="unavailable", fov_source="unavailable",
+            consistency="not-applicable", reason="explicit EFL is not positive and finite",
+        )
+    if image_height_mm is not None and (
+        not math.isfinite(image_height_mm) or image_height_mm <= 0
+    ):
+        return ResolvedFieldTarget(
+            status=FieldTargetStatus.INVALID, efl_mm=efl_mm, image_height_mm=None,
+            full_fov_deg=None, image_height_source="unavailable", fov_source="unavailable",
+            consistency="not-applicable", reason="explicit IMH is not positive and finite",
+        )
+    if full_fov_deg is not None and (
+        not math.isfinite(full_fov_deg) or not 0 < full_fov_deg < 180
+    ):
+        return ResolvedFieldTarget(
+            status=FieldTargetStatus.INVALID, efl_mm=efl_mm, image_height_mm=None,
+            full_fov_deg=None, image_height_source="unavailable", fov_source="unavailable",
+            consistency="not-applicable", reason="explicit FOV is outside (0, 180) or non-finite",
+        )
+    imh_ok = image_height_mm is not None
+    fov_ok = full_fov_deg is not None
     if not imh_ok and not fov_ok:
         return ResolvedFieldTarget(
             status=FieldTargetStatus.UNAVAILABLE,
@@ -152,6 +209,7 @@ class FieldReconstructionResult(BaseModel):
     output_path: str | None
     source_sha256_before: str
     source_sha256_after: str
+    output_sha256: str | None = None
     num_fields: int | None
     normalized_fractions: tuple[float, ...]
     target_image_height_mm: float
@@ -163,6 +221,15 @@ class FieldReconstructionResult(BaseModel):
 
     @model_validator(mode="after")
     def _source_unchanged(self) -> FieldReconstructionResult:
+        for label, digest in (
+            ("source_sha256_before", self.source_sha256_before),
+            ("source_sha256_after", self.source_sha256_after),
+            ("output_sha256", self.output_sha256),
+        ):
+            if digest is not None and (
+                len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest)
+            ):
+                raise ValueError(f"{label} must be a lowercase SHA-256 hex digest")
         if self.source_sha256_before != self.source_sha256_after:
             raise ValueError("source ZMX changed during temporary reconstruction")
         if self.status == "constructed" and (
@@ -170,8 +237,21 @@ class FieldReconstructionResult(BaseModel):
             or self.field_type_after != 3
             or self.line_endings != "LF"
             or self.vignetting_status != "zero"
+            or self.output_sha256 is None
         ):
             raise ValueError("constructed result requires a complete zero-vignetting FTYP3 artifact")
+        if self.normalized_fractions and self.num_fields is not None and (
+            len(self.normalized_fractions) != self.num_fields
+        ):
+            raise ValueError("normalized field profile length must equal num_fields")
+        if self.status == "constructed" and (
+            not self.normalized_fractions
+            or not math.isclose(
+                max(abs(value) for value in self.normalized_fractions), 1.0,
+                rel_tol=0.0, abs_tol=1e-15,
+            )
+        ):
+            raise ValueError("constructed field profile must contain a signed unit edge")
         return self
 
 
@@ -193,6 +273,10 @@ def reconstruct_image_fields(
 
     source = Path(source_zmx)
     output = Path(output_zmx)
+    source_resolved = source.resolve(strict=True)
+    output_resolved = output.resolve(strict=False)
+    if source_resolved == output_resolved:
+        raise ValueError("source_zmx and output_zmx must resolve to different paths")
     if not math.isfinite(target_image_height_mm) or target_image_height_mm <= 0:
         raise ValueError("target_image_height_mm must be positive and finite")
     before = _sha256(source)
@@ -215,6 +299,7 @@ def reconstruct_image_fields(
         "output_path": None,
         "source_sha256_before": before,
         "source_sha256_after": _sha256(source),
+        "output_sha256": None,
         "num_fields": num_fields,
         "normalized_fractions": fractions,
         "target_image_height_mm": target_image_height_mm,
@@ -243,7 +328,7 @@ def reconstruct_image_fields(
             status="rejected", vignetting_status="unavailable",
             reason="angular YFLN profile has no positive edge", **base
         )
-    fractions = tuple(abs(value) / edge for value in yfln)
+    fractions = tuple(value / edge for value in yfln)
     base["normalized_fractions"] = fractions
     vig_keys = ("VDXN", "VDYN", "VCXN", "VCYN")
     if any(key not in rows or len(rows[key]) != len(yfln) for key in vig_keys):
@@ -268,49 +353,74 @@ def reconstruct_image_fields(
             line = f"YFLN {y_values}"
         rebuilt.append(line)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_bytes(("\n".join(rebuilt) + "\n").encode("utf-8"))
-    return FieldReconstructionResult(
-        status="constructed", output_path=str(output), source_sha256_after=_sha256(source),
-        field_type_after=3, line_endings="LF", vignetting_status="zero",
-        reason="temporary FTYP3/YFLN artifact constructed; real chief-ray verification pending",
-        **{key: value for key, value in base.items() if key not in {"output_path", "source_sha256_after", "field_type_after", "line_endings"}},
-    )
+    temp = output.with_name(f".{output.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        payload = ("\n".join(rebuilt) + "\n").encode("utf-8")
+        temp.write_bytes(payload)
+        if b"\r" in payload:
+            raise ValueError("temporary reconstruction is not LF-only")
+        parsed = temp.read_text(encoding="utf-8").splitlines()
+        parsed_ftyp = next((line for line in parsed if line.startswith("FTYP ")), None)
+        parsed_yfln = next((line for line in parsed if line.startswith("YFLN ")), None)
+        if parsed_ftyp is None or int(parsed_ftyp.split()[1]) != 3 or parsed_yfln is None:
+            raise ValueError("temporary reconstruction failed FTYP3/YFLN validation")
+        actual_y = _floats(parsed_yfln.removeprefix("YFLN "))
+        expected_y = tuple(frac * target_image_height_mm for frac in fractions)
+        if len(actual_y) != len(expected_y) or any(
+            not math.isclose(a, b, rel_tol=1e-15, abs_tol=1e-15)
+            for a, b in zip(actual_y, expected_y, strict=True)
+        ):
+            raise ValueError("temporary reconstruction field profile changed during serialization")
+        after = _sha256(source)
+        if after != before:
+            raise ValueError("source ZMX changed before atomic output publication")
+        output_hash = _sha256(temp)
+        result = FieldReconstructionResult(
+            status="constructed", output_path=str(output), source_sha256_after=after,
+            output_sha256=output_hash, field_type_after=3, line_endings="LF",
+            vignetting_status="zero",
+            reason="temporary FTYP3/YFLN artifact constructed; real chief-ray verification pending",
+            **{key: value for key, value in base.items() if key not in {
+                "output_path", "source_sha256_after", "output_sha256", "field_type_after", "line_endings"
+            }},
+        )
+        os.replace(temp, output)
+        return result
+    except Exception:
+        temp.unlink(missing_ok=True)
+        raise
 
 
 class StageCFieldEvidence(BaseModel):
-    """Closed Stage C evidence; four booleans cannot be supplied independently."""
+    """Offline-only evidence. It cannot express any achieved machine condition."""
 
     model_config = ConfigDict(extra="forbid")
 
     schema_id: Literal["atelier-p16-stagec-field-v1"] = "atelier-p16-stagec-field-v1"
-    reconstruction_status: Literal["not-applied", "constructed", "constructed-verified"]
+    machine_execution_status: Literal["blocked"] = "blocked"
+    machine_execution_reason: str = Field(
+        default="real chief-ray/RSI machine verification has not run", min_length=1
+    )
+    reconstruction_status: Literal["not-applied", "constructed"]
     imh_source: Literal["constructed", "unavailable"]
-    fov_source: Literal["derived", "measured", "unavailable"]
-    efl_constraint_status: Literal["held", "failed", "unverified"]
-    ray_metrics_status: Literal["valid", "invalid", "pending"]
-    real_chief_ray_status: Literal["verified", "pending", "failed"]
-    rsi_status: Literal["verified", "pending", "failed"]
+    fov_source: Literal["derived", "unavailable"]
+    efl_constraint_status: Literal["unverified"] = "unverified"
+    ray_metrics_status: Literal["pending"] = "pending"
+    real_chief_ray_status: Literal["pending"] = "pending"
+    rsi_status: Literal["pending"] = "pending"
     target_image_height_mm: float | None
     nominal_image_height_mm: float | None
     derived_full_fov_deg: float | None
     measured_full_fov_deg: float | None
     reconstruction_applied: StrictBool
-    imh_field_valid: StrictBool
-    efl_constraint_held: StrictBool
-    ray_metrics_valid: StrictBool
+    imh_field_valid: Literal[False] = False
+    efl_constraint_held: Literal[False] = False
+    ray_metrics_valid: Literal[False] = False
     note: str = Field(min_length=1)
 
     @model_validator(mode="after")
     def _derive_and_close(self) -> StageCFieldEvidence:
-        expected = (
-            self.reconstruction_status != "not-applied",
-            self.reconstruction_status == "constructed-verified"
-            and self.imh_source == "constructed"
-            and self.real_chief_ray_status == "verified"
-            and self.rsi_status == "verified",
-            self.efl_constraint_status == "held",
-            self.ray_metrics_status == "valid",
-        )
+        expected = (self.reconstruction_status != "not-applied", False, False, False)
         actual = (
             self.reconstruction_applied,
             self.imh_field_valid,
@@ -319,18 +429,62 @@ class StageCFieldEvidence(BaseModel):
         )
         if actual != expected:
             raise ValueError(f"Stage C four-condition flags disagree with typed evidence: {actual=}, {expected=}")
-        if all(actual) and (
-            self.real_chief_ray_status != "verified" or self.rsi_status != "verified"
+        if self.reconstruction_status == "constructed":
+            if (
+                self.imh_source != "constructed"
+                or self.fov_source != "derived"
+                or self.target_image_height_mm is None
+                or self.nominal_image_height_mm != self.target_image_height_mm
+                or not math.isfinite(self.target_image_height_mm)
+                or self.target_image_height_mm <= 0
+                or self.derived_full_fov_deg is None
+                or not math.isfinite(self.derived_full_fov_deg)
+                or not 0 < self.derived_full_fov_deg < 180
+                or self.measured_full_fov_deg is not None
+            ):
+                raise ValueError("constructed offline evidence requires same-source IMH and derived FOV")
+        elif (
+            self.imh_source != "unavailable"
+            or self.fov_source != "unavailable"
+            or any(
+                value is not None
+                for value in (
+                    self.target_image_height_mm,
+                    self.nominal_image_height_mm,
+                    self.derived_full_fov_deg,
+                    self.measured_full_fov_deg,
+                )
+            )
         ):
-            raise ValueError("Stage C cannot close before real chief-ray and RSI verification")
+            raise ValueError("not-applied offline evidence cannot carry field values")
         return self
 
     @property
     def image_height_achieved(self) -> bool:
-        return all(
-            (self.reconstruction_applied, self.imh_field_valid, self.efl_constraint_held, self.ray_metrics_valid)
-        )
+        return False
 
     @property
-    def fov_attainment_label(self) -> Literal["derived", "measured", "unavailable"]:
+    def fov_attainment_label(self) -> Literal["derived", "unavailable"]:
         return self.fov_source
+
+
+class StageCMachineFieldResult(BaseModel):
+    """Reserved typed seam for future real-machine parsing; not candidate evidence yet."""
+
+    model_config = ConfigDict(extra="forbid")
+    schema_id: Literal["atelier-p16-stagec-machine-result-v1"]
+    listing_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    reconstructed_zmx_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    real_chief_ray_image_height_mm: float
+    rsi_image_height_mm: float
+    measured_efl_mm: float
+    ray_metrics_valid: StrictBool
+
+    @model_validator(mode="after")
+    def _finite_machine_values(self) -> StageCMachineFieldResult:
+        values = (
+            self.real_chief_ray_image_height_mm, self.rsi_image_height_mm, self.measured_efl_mm
+        )
+        if any(not math.isfinite(value) for value in values):
+            raise ValueError("machine result values must be finite")
+        return self

@@ -1742,6 +1742,8 @@ def _candidate_stagec_field_context(
     )
     return {
         "status": evidence.reconstruction_status,
+        "machine_execution_status": evidence.machine_execution_status,
+        "machine_execution_reason": evidence.machine_execution_reason,
         "imh_source": evidence.imh_source,
         "imh_achieved": formatting.fmt_yes_no(evidence.image_height_achieved),
         "fov_source": evidence.fov_source,

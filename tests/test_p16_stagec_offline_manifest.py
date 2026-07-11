@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from app.core.lens_system import Scenario
+from app.core.parameter_guards import SCENARIO_BOUNDS
 from scripts.p16_stagec_offline_manifest import build_manifest
 
 
@@ -23,4 +25,16 @@ def test_offline_manifest_has_eight_seeds_three_arms_and_no_machine_claims(
         assert cell["expert_verdict"] is None
         assert cell["field_reconstruction"]["status"] == "constructed"
         assert Path(cell["field_reconstruction"]["output_path"]).is_file()
-    assert all(arms == {"native", "target-low", "target-high"} for arms in by_seed.values())
+        bounds = SCENARIO_BOUNDS[Scenario(cell["scenario"])]
+        assert bounds.image_height_mm_min <= cell["target_image_height_mm"] <= bounds.image_height_mm_max
+        assert bounds.fov_deg_min <= cell["derived_fov_deg"] <= bounds.fov_deg_max
+    assert all(
+        arms == {"native-imh-reconstructed-control", "target-low", "target-high"}
+        for arms in by_seed.values()
+    )
+    assert isinstance(manifest["blocked_seeds"], list)
+    assert manifest["blocked_seeds"], "ineligible seeds must remain visible, not silently skipped"
+    assert all(
+        set(blocked) == {"case_id", "reason"} and blocked["reason"]
+        for blocked in manifest["blocked_seeds"]
+    )

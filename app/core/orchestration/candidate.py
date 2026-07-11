@@ -16,9 +16,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Mapping
 from enum import StrEnum
+from pathlib import Path
 from types import MappingProxyType
 from typing import Literal
 
@@ -609,6 +611,48 @@ class GeneratedCandidate(BaseModel):
                 reconstruction.status == "constructed"
             ):
                 raise ValueError("Stage C evidence disagrees with reconstruction artifact")
+            evidence = self.stagec_field_evidence
+            if reconstruction.status != "constructed":
+                raise ValueError("offline Stage C evidence requires a constructed artifact")
+            if evidence.image_height_achieved:
+                raise ValueError("offline Stage C evidence can never claim IMH achieved")
+            if evidence.target_image_height_mm != reconstruction.target_image_height_mm:
+                raise ValueError("Stage C evidence target differs from reconstruction target")
+            if evidence.nominal_image_height_mm != reconstruction.target_image_height_mm:
+                raise ValueError("Stage C nominal IMH differs from reconstruction target")
+            if self.optimized_zmx_path is None or reconstruction.output_path is None:
+                raise ValueError("Stage C candidate requires the reconstructed artifact path")
+            candidate_path = Path(self.optimized_zmx_path).resolve(strict=True)
+            reconstruction_path = Path(reconstruction.output_path).resolve(strict=True)
+            if candidate_path != reconstruction_path:
+                raise ValueError("candidate ZMX must be the Stage C reconstruction output")
+            if reconstruction.output_sha256 is None or (
+                hashlib.sha256(reconstruction_path.read_bytes()).hexdigest()
+                != reconstruction.output_sha256
+            ):
+                raise ValueError("Stage C reconstruction artifact hash mismatch")
+            source_path = Path(reconstruction.source_path).resolve(strict=True)
+            if source_path == reconstruction_path:
+                raise ValueError("Stage C source and reconstruction output must differ")
+            source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
+            if source_hash != reconstruction.source_sha256_before or (
+                reconstruction.source_sha256_before != reconstruction.source_sha256_after
+            ):
+                raise ValueError("Stage C reconstruction source hash mismatch")
+            metadata = self.payload.metadata
+            if metadata is None or metadata.image_height_mm != reconstruction.target_image_height_mm:
+                raise ValueError("payload nominal IMH differs from Stage C reconstruction")
+            if metadata.image_height_source != "constructed":
+                raise ValueError("Stage C payload IMH source must be constructed")
+            if metadata.fov_source != "derived" or evidence.fov_source != "derived":
+                raise ValueError("offline Stage C FOV must be derived-only")
+            expected_fov = 2 * math.degrees(
+                math.atan(reconstruction.target_image_height_mm / self.payload.paraxial.effective_focal_length_mm)
+            )
+            if evidence.derived_full_fov_deg is None or not math.isclose(
+                evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
+            ) or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12):
+                raise ValueError("Stage C derived FOV is not same-source with payload EFL/IMH")
         return self
 
     @property

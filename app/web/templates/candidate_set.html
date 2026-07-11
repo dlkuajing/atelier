@@ -284,7 +284,8 @@
                     <p>Unavailable — no Stage C field evidence was recorded.</p>
                   {% else %}
                     <ul>
-                      <li>IMH: source={{ candidate.stagec_field.imh_source }}, constructed-verified achieved={{ candidate.stagec_field.imh_achieved }}</li>
+                      <li>machine execution: {{ candidate.stagec_field.machine_execution_status }} — {{ candidate.stagec_field.machine_execution_reason }}</li>
+                      <li>IMH: source={{ candidate.stagec_field.imh_source }}, offline achieved={{ candidate.stagec_field.imh_achieved }} (machine-blocked)</li>
                       <li>FOV: {{ candidate.stagec_field.fov_deg }}°, source={{ candidate.stagec_field.fov_source }} (derived/measured only; never optimized/converged)</li>
                       <li>real chief ray: {{ candidate.stagec_field.real_chief_ray_status }}; RSI: {{ candidate.stagec_field.rsi_status }}</li>
                       <li>{{ candidate.stagec_field.note }}</li>

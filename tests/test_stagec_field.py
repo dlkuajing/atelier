@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import itertools
 import math
 from pathlib import Path
 from unittest.mock import Mock
@@ -12,6 +11,7 @@ from pydantic import ValidationError
 from app.core.case_library import build_sample_from_optic, load_case_library
 from app.core.engines.stagec_field import (
     FieldTargetStatus,
+    ResolvedFieldTarget,
     StageCFieldEvidence,
     reconstruct_image_fields,
     resolve_field_target,
@@ -19,9 +19,38 @@ from app.core.engines.stagec_field import (
 
 
 def test_resolver_requires_positive_finite_efl() -> None:
-    for efl in (None, 0.0, -1.0, math.nan, math.inf):
+    unavailable = resolve_field_target(efl_mm=None, image_height_mm=2.0, full_fov_deg=None)
+    assert unavailable.status is FieldTargetStatus.UNAVAILABLE
+    for efl in (0.0, -1.0, math.nan, math.inf):
         result = resolve_field_target(efl_mm=efl, image_height_mm=2.0, full_fov_deg=None)
-        assert result.status is FieldTargetStatus.UNAVAILABLE
+        assert result.status is FieldTargetStatus.INVALID
+
+
+@pytest.mark.parametrize("invalid", [0.0, -1.0, math.nan, math.inf])
+def test_explicit_invalid_dimension_is_not_overridden_by_other_valid_dimension(
+    invalid: float,
+) -> None:
+    assert resolve_field_target(
+        efl_mm=4.0, image_height_mm=invalid, full_fov_deg=60.0
+    ).status is FieldTargetStatus.INVALID
+    assert resolve_field_target(
+        efl_mm=4.0, image_height_mm=2.0, full_fov_deg=invalid
+    ).status is FieldTargetStatus.INVALID
+
+
+def test_resolved_target_model_rejects_nonfinite_or_status_spoof() -> None:
+    with pytest.raises(ValidationError):
+        ResolvedFieldTarget(
+            status="resolved", efl_mm=4.0, image_height_mm=math.nan,
+            full_fov_deg=60.0, image_height_source="provided", fov_source="provided",
+            consistency="exact", reason="spoof",
+        )
+    with pytest.raises(ValidationError):
+        ResolvedFieldTarget(
+            status="invalid", efl_mm=4.0, image_height_mm=2.0,
+            full_fov_deg=60.0, image_height_source="provided", fov_source="provided",
+            consistency="exact", reason="spoof",
+        )
 
 
 def test_resolver_derives_fov_from_imh_only() -> None:
@@ -54,8 +83,13 @@ def test_resolver_both_values_are_exact_constraint_not_tolerance() -> None:
     assert conflict.fov_delta_deg is not None
 
 
-def _zmx(num_fields: int, *, nonzero_vig: bool = False, x_edge: float = 0.0) -> bytes:
+def _zmx(
+    num_fields: int, *, nonzero_vig: bool = False, x_edge: float = 0.0,
+    signed_fields: bool = False,
+) -> bytes:
     fractions = [i / (num_fields - 1) for i in range(num_fields)]
+    if signed_fields:
+        fractions = [-1.0 + 2.0 * i / (num_fields - 1) for i in range(num_fields)]
     y = " ".join(str(value * 40) for value in fractions)
     x = " ".join(str(x_edge if i else 0.0) for i in range(num_fields))
     zero = [0.0] * num_fields
@@ -104,6 +138,50 @@ def test_reconstruction_preserves_field_count_fractions_source_and_lf(
     assert float(yfln.split()[-1]) == 3.2
 
 
+def test_reconstruction_preserves_signed_field_fractions(tmp_path: Path) -> None:
+    source = tmp_path / "signed.zmx"
+    output = tmp_path / "out.zmx"
+    source.write_bytes(_zmx(3, signed_fields=True))
+    result = reconstruct_image_fields(
+        source_zmx=source, output_zmx=output, target_image_height_mm=3.0
+    )
+    assert result.normalized_fractions == (-1.0, 0.0, 1.0)
+    yfln = next(
+        line for line in output.read_text(encoding="utf-8").splitlines()
+        if line.startswith("YFLN ")
+    )
+    assert tuple(float(value) for value in yfln.split()[1:]) == (-3.0, 0.0, 3.0)
+
+
+def test_reconstruction_rejects_same_resolved_path_without_touching_source(tmp_path: Path) -> None:
+    source = tmp_path / "seed.zmx"
+    source.write_bytes(_zmx(3))
+    before = source.read_bytes()
+    with pytest.raises(ValueError, match="different paths"):
+        reconstruct_image_fields(
+            source_zmx=source, output_zmx=source, target_image_height_mm=3.0
+        )
+    assert source.read_bytes() == before
+
+
+def test_atomic_publish_failure_preserves_existing_output_and_cleans_temp(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import app.core.engines.stagec_field as stagec
+
+    source = tmp_path / "seed.zmx"
+    output = tmp_path / "out.zmx"
+    source.write_bytes(_zmx(3))
+    output.write_bytes(b"existing-output")
+    monkeypatch.setattr(stagec.os, "replace", Mock(side_effect=OSError("publish failed")))
+    with pytest.raises(OSError, match="publish failed"):
+        reconstruct_image_fields(
+            source_zmx=source, output_zmx=output, target_image_height_mm=3.0
+        )
+    assert output.read_bytes() == b"existing-output"
+    assert not list(tmp_path.glob(".*.tmp"))
+
+
 def test_reconstruction_rejects_nonzero_x_field(tmp_path: Path) -> None:
     source = tmp_path / "seed.zmx"
     source.write_bytes(_zmx(3, x_edge=0.2))
@@ -128,61 +206,47 @@ def test_reconstruction_nonzero_vignetting_is_unverified_and_emits_nothing(
     assert not output.exists()
 
 
-def _evidence_for_flags(flags: tuple[bool, bool, bool, bool]) -> dict[str, object]:
-    reconstruction, imh, efl, ray = flags
+def _offline_evidence(*, reconstruction: bool = True) -> dict[str, object]:
     return {
-        "reconstruction_status": "constructed-verified" if imh else (
-            "constructed" if reconstruction else "not-applied"
-        ),
+        "reconstruction_status": "constructed" if reconstruction else "not-applied",
         "imh_source": "constructed" if reconstruction else "unavailable",
         "fov_source": "derived" if reconstruction else "unavailable",
-        "efl_constraint_status": "held" if efl else "unverified",
-        "ray_metrics_status": "valid" if ray else "pending",
-        "real_chief_ray_status": "verified" if imh else "pending",
-        "rsi_status": "verified" if imh else "pending",
+        "efl_constraint_status": "unverified",
+        "ray_metrics_status": "pending",
+        "real_chief_ray_status": "pending",
+        "rsi_status": "pending",
         "target_image_height_mm": 3.0 if reconstruction else None,
         "nominal_image_height_mm": 3.0 if reconstruction else None,
         "derived_full_fov_deg": 70.0 if reconstruction else None,
         "measured_full_fov_deg": None,
         "reconstruction_applied": reconstruction,
-        "imh_field_valid": imh,
-        "efl_constraint_held": efl,
-        "ray_metrics_valid": ray,
+        "imh_field_valid": False,
+        "efl_constraint_held": False,
+        "ray_metrics_valid": False,
         "note": "quantitative evidence only; [EXPERT] review remains blank",
     }
 
 
-@pytest.mark.parametrize("flags", itertools.product((False, True), repeat=4))
-def test_four_condition_schema_accepts_all_16_internally_consistent_combinations(
-    flags: tuple[bool, bool, bool, bool],
-) -> None:
-    if flags[1] and not flags[0]:
-        # IMH validity entails a reconstruction. This is a typed contradiction,
-        # not one of the realizable four-condition states.
-        with pytest.raises(ValidationError):
-            StageCFieldEvidence.model_validate(_evidence_for_flags(flags))
-    else:
-        evidence = StageCFieldEvidence.model_validate(_evidence_for_flags(flags))
-        assert evidence.image_height_achieved is all(flags)
+def test_offline_evidence_is_machine_blocked_and_never_achieved() -> None:
+    evidence = StageCFieldEvidence.model_validate(_offline_evidence())
+    assert evidence.reconstruction_applied is True
+    assert evidence.image_height_achieved is False
 
 
 def test_typed_evidence_rejects_spoofed_positive_flags() -> None:
-    raw = _evidence_for_flags((True, False, True, True))
-    raw["imh_field_valid"] = True
-    with pytest.raises(ValidationError):
-        StageCFieldEvidence.model_validate(raw)
-
-
-def test_constructed_without_real_chief_ray_and_rsi_cannot_close() -> None:
-    raw = _evidence_for_flags((True, True, True, True))
-    raw["real_chief_ray_status"] = "pending"
-    raw["rsi_status"] = "pending"
-    with pytest.raises(ValidationError):
-        StageCFieldEvidence.model_validate(raw)
+    for key, value in (
+        ("imh_field_valid", True), ("efl_constraint_held", True),
+        ("ray_metrics_valid", True), ("real_chief_ray_status", "verified"),
+        ("rsi_status", "verified"), ("reconstruction_status", "constructed-verified"),
+    ):
+        raw = _offline_evidence()
+        raw[key] = value
+        with pytest.raises(ValidationError):
+            StageCFieldEvidence.model_validate(raw)
 
 
 def test_fov_is_derived_or_measured_never_optimized_or_converged() -> None:
-    evidence = StageCFieldEvidence.model_validate(_evidence_for_flags((True, False, True, False)))
+    evidence = StageCFieldEvidence.model_validate(_offline_evidence())
     assert evidence.fov_attainment_label == "derived"
     assert "optimized" not in evidence.model_dump_json()
     assert "converged" not in evidence.model_dump_json()
@@ -217,6 +281,6 @@ def test_build_sample_uses_one_resolved_field_source_without_reverting_to_angle(
     regularize.assert_not_called()
     assert sample.metadata is not None
     assert sample.metadata.image_height_mm == 3.0
-    assert sample.metadata.image_height_source == "provided"
+    assert sample.metadata.image_height_source == "constructed"
     assert sample.metadata.fov_deg == target.full_fov_deg
     assert sample.metadata.fov_source == "derived"
