@@ -219,12 +219,23 @@ def _run_engine_with_timeout(
 ) -> EngineRunResult:
     """`timeout_sec=None` (the default) runs inline with no timeout guard.
     Otherwise runs the engine on a worker thread and raises
-    `concurrent.futures.TimeoutError` if it doesn't finish in time — note
-    Python cannot forcibly kill the worker thread, so a timed-out engine
-    call keeps running in the background; this is a known limitation (see
-    the batch brief's 夜批真跑风险清单), acceptable here because it only
-    stops the *runner* from waiting, it never corrupts the ledger (the
-    orphaned thread's eventual result, if any, is simply never persisted)."""
+    `concurrent.futures.TimeoutError` if it doesn't finish in time.
+
+    **MAJOR-3 containment contract (P18 对抗审)** — Python cannot forcibly
+    kill the worker thread, so a timed-out engine call keeps running in the
+    background. Three fences keep that orphan harmless:
+
+    1. every attempt runs in its own `attempt-N` artifact subdirectory
+       (`_run_one_target`), so the orphan can only keep writing into its own
+       already-condemned attempt dir — a later retry gets a fresh dir;
+    2. the orphan's eventual result is never persisted (this call already
+       returned/raised, the ledger snapshot is final);
+    3. the timeout knob is **rejected for `--engine real`** at the CLI
+       (`scripts/p18_night_batch.py`): a real CODE V engine call cannot be
+       terminated from this layer, so offering a timeout there would be a
+       false safety valve — fail closed instead. `FakeEngine`/test stubs
+       (pure in-process Python, bounded runtime) remain timeout-eligible.
+    """
     if timeout_sec is None:
         return engine.run(target, artifact_dir=artifact_dir)
     # Deliberately not a `with ThreadPoolExecutor() as pool:` block: that
@@ -241,6 +252,20 @@ def _run_engine_with_timeout(
         pool.shutdown(wait=False)
 
 
+def _latest_attempt_number(job_root: Path) -> int:
+    """Highest `attempt-N` subdirectory already on disk (0 when none) —
+    disk-derived rather than ledger-derived, so a retry after the operator
+    cleared a stale ledger record still lands in a fresh directory."""
+    if not job_root.is_dir():
+        return 0
+    latest = 0
+    for child in job_root.iterdir():
+        name = child.name
+        if child.is_dir() and name.startswith("attempt-") and name[len("attempt-"):].isdigit():
+            latest = max(latest, int(name[len("attempt-"):]))
+    return latest
+
+
 def _run_one_target(
     *,
     batch: BatchRecord,
@@ -253,6 +278,11 @@ def _run_one_target(
 ) -> BatchJobRecord:
     job_id = f"job-{index:04d}"
     label = target_label_from_entry(entry, index)
+    # MAJOR-3: every attempt gets its own subdirectory — a previous attempt's
+    # possibly-still-alive timed-out worker thread can only touch its own
+    # attempt dir, never this one, and a timed-out dir is never reused.
+    job_root = artifacts_root / batch.batch_id / job_id
+    attempt = _latest_attempt_number(job_root) + 1
     common = {
         "job_id": job_id,
         "batch_id": batch.batch_id,
@@ -260,6 +290,7 @@ def _run_one_target(
         "target_label": label,
         "target_spec": dict(entry),
         "created_at": _utc_now_iso(),
+        "attempt": attempt,
     }
 
     # -- preflight --
@@ -275,7 +306,8 @@ def _run_one_target(
         archive.put_job(record)
         return record
 
-    artifact_dir = artifacts_root / batch.batch_id / job_id
+    artifact_dir = job_root / f"attempt-{attempt}"
+    artifact_dir.mkdir(parents=True, exist_ok=True)  # claim the attempt number on disk immediately
     archive.put_job(
         BatchJobRecord(
             **common, status="running", updated_at=_utc_now_iso(), artifact_dir=str(artifact_dir)
@@ -378,8 +410,13 @@ def _run_one_target_safe(
             artifacts_root=artifacts_root,
         )
     except Exception as exc:  # noqa: BLE001 - catch-all safety net, see docstring
+        job_id = f"job-{index:04d}"
+        # Attempt provenance for the safety net: the attempt that just blew
+        # up is the latest attempt dir on disk (min 1 — the crash may have
+        # happened before the dir was created).
+        attempt = max(_latest_attempt_number(artifacts_root / batch.batch_id / job_id), 1)
         record = BatchJobRecord(
-            job_id=f"job-{index:04d}",
+            job_id=job_id,
             batch_id=batch.batch_id,
             target_index=index,
             target_label=target_label_from_entry(entry, index),
@@ -387,6 +424,7 @@ def _run_one_target_safe(
             status="failed",
             created_at=_utc_now_iso(),
             updated_at=_utc_now_iso(),
+            attempt=attempt,
             failure=BatchJobFailure(category="exception", message=f"{type(exc).__name__}: {exc}"),
         )
         with contextlib.suppress(Exception):  # archive itself is broken; nothing left to persist, still return honestly
@@ -428,10 +466,16 @@ def run_batch(
     (`archive.get_targets`, written once at `create_batch` time) rather than
     trusting the caller's `targets`/`target_source` again — so a later
     `--resume` invocation always replays the exact same indexed set even if
-    it's given different (or no) `--targets`/`--sample-n` flags. Only
-    targets whose existing job record is *terminal* (`succeeded`/`failed`)
-    are skipped; a job stuck at `running` (e.g. the process was killed
-    mid-engine-call) is re-attempted — `put_job` overwrites are idempotent.
+    it's given different (or no) `--targets`/`--sample-n` flags. Targets
+    whose existing job record is *terminal* (`succeeded`/`degraded`/
+    `failed`) are skipped. **A job still marked `running`/`queued` is
+    refused, not retried** (MAJOR-3 fail-closed): from a fresh process we
+    cannot distinguish "the previous runner died mid-job" (safe to retry)
+    from "another process is still running this job right now" (retrying
+    would race it on the archive/artifacts). The refusal is recorded in the
+    batch notes; after confirming no process is still working the job, the
+    operator clears the stale marker by deleting that job's ledger file —
+    the next resume then retries it into a fresh `attempt-N` directory.
 
     `max_jobs` caps how many *new* jobs this single invocation starts;
     `max_wall_min` stops starting new jobs once that many minutes have
@@ -469,12 +513,24 @@ def run_batch(
         artifacts_root if artifacts_root is not None else (settings.job_artifacts_dir / "batches")
     ).resolve()
 
+    existing_jobs = archive.list_jobs(batch.batch_id)
     completed_indices = {
-        job.target_index
-        for job in archive.list_jobs(batch.batch_id)
-        if job.status in _TERMINAL_JOB_STATUSES
+        job.target_index for job in existing_jobs if job.status in _TERMINAL_JOB_STATUSES
     }
-    pending_indices = [i for i in range(len(resolved_targets)) if i not in completed_indices]
+    # MAJOR-3 fail-closed: a non-terminal (running/queued) ledger record is
+    # refused, never silently retried — see the resume paragraph in this
+    # function's docstring.
+    stale_running = sorted(
+        job.job_id for job in existing_jobs if job.status not in _TERMINAL_JOB_STATUSES
+    )
+    stale_indices = {
+        job.target_index for job in existing_jobs if job.status not in _TERMINAL_JOB_STATUSES
+    }
+    pending_indices = [
+        i
+        for i in range(len(resolved_targets))
+        if i not in completed_indices and i not in stale_indices
+    ]
 
     started_at = time.monotonic()
     budget_exhausted = False
@@ -497,13 +553,22 @@ def run_batch(
         )
 
     all_jobs = archive.list_jobs(batch.batch_id)
-    incomplete = len(all_jobs) < len(resolved_targets)
+    terminal_count = sum(1 for job in all_jobs if job.status in _TERMINAL_JOB_STATUSES)
+    incomplete = terminal_count < len(resolved_targets)
     notes = list(batch.notes)
     if budget_exhausted:
         notes.append(
             f"budget exhausted this run (max_jobs={max_jobs}, max_wall_min={max_wall_min}): "
-            f"{len(all_jobs)}/{len(resolved_targets)} targets have a job record so far — "
+            f"{terminal_count}/{len(resolved_targets)} targets terminal so far — "
             "resume with --resume to continue"
+        )
+    if stale_running:
+        notes.append(
+            "MAJOR-3 fail-closed: refused to retry job(s) still marked running/queued "
+            f"({', '.join(stale_running)}) — cannot tell a dead runner from a live one. "
+            "After confirming no process is still working these jobs, delete their "
+            "ledger files under jobs/ and resume; the retry lands in a fresh attempt-N "
+            "directory."
         )
     final_status = "budget_exhausted" if incomplete else "completed"
     updated_batch = archive.update_batch(batch.batch_id, status=final_status, notes=notes)

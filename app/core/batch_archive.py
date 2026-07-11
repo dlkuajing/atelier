@@ -114,6 +114,15 @@ class BatchJobRecord(BaseModel):
     result_summary: dict[str, object] | None = None
     candidate_set_pointer: str | None = None
     artifact_dir: str | None = None
+    attempt: int = Field(
+        1,
+        ge=1,
+        description=(
+            "本 job 的第几次尝试（MAJOR-3 attempt provenance）：每次尝试写进自己的 "
+            "attempt-N 工件子目录，timeout 后旧目录绝不复用——一个未被杀死的超时"
+            "线程只能继续写它自己那份已被判死的 attempt 目录，碰不到下一次尝试。"
+        ),
+    )
     failure: BatchJobFailure | None = None
     degradation: str | None = Field(
         None,

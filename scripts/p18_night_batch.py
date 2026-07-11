@@ -69,11 +69,18 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--batch-id", type=str, default=None, dest="batch_id")
     parser.add_argument(
         "--resume", action="store_true",
-        help="从磁盘账本续跑既有 batch（需配 --batch-id）；跳过已终态(succeeded/failed)的 job",
+        help="从磁盘账本续跑既有 batch（需配 --batch-id）；跳过已终态"
+        "(succeeded/degraded/failed)的 job；仍标 running/queued 的 job 拒绝重试"
+        "（MAJOR-3 fail-closed，清理方式见 run_batch docstring）",
     )
     parser.add_argument("--max-jobs", type=int, default=None, dest="max_jobs")
     parser.add_argument("--max-wall-min", type=float, default=None, dest="max_wall_min")
-    parser.add_argument("--job-timeout-sec", type=float, default=None, dest="job_timeout_sec")
+    parser.add_argument(
+        "--job-timeout-sec", type=float, default=None, dest="job_timeout_sec",
+        help="单 job 超时秒数。仅 --engine fake 可用：real 引擎的 CODE V 进程无法从"
+        "本层终止，超时在 real 模式下是假安全阀（线程停等但真机进程照跑），因此"
+        "与 --engine real 组合直接拒绝（MAJOR-3 fail-closed）",
+    )
     parser.add_argument("--n", type=int, default=DEFAULT_N, help=f"每 target 产出候选数（默认 {DEFAULT_N}）")
     parser.add_argument("--repeat-runs", type=int, default=1, dest="repeat_runs")
     parser.add_argument(
@@ -88,6 +95,17 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.resume and not args.batch_id:
         print("--resume 需要同时提供 --batch-id", file=sys.stderr)
+        return 2
+    if args.engine == "real" and args.job_timeout_sec is not None:
+        # MAJOR-3 fail-closed: this layer cannot terminate a real CODE V
+        # engine call — a "timeout" there would abandon the wait while the
+        # real process keeps running (false safety valve). Refuse outright.
+        print(
+            "--job-timeout-sec 与 --engine real 不能组合：real 引擎的 CODE V 调用"
+            "无法从本层终止，超时只是假安全阀（宁缺毋假）。用 --max-wall-min 控制"
+            "整批预算，或改用 --engine fake。",
+            file=sys.stderr,
+        )
         return 2
 
     archive = BatchArchive(root=args.archive_dir) if args.archive_dir else BatchArchive()

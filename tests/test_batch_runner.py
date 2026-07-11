@@ -407,6 +407,132 @@ def test_run_batch_unexpected_post_engine_error_classified_as_exception(tmp_path
 
 
 # ---------------------------------------------------------------------------
+# MAJOR-3: attempt isolation + stale-running refusal (P18 对抗审)
+# ---------------------------------------------------------------------------
+
+
+def test_jobs_run_in_attempt_subdirectories_with_provenance(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path / "archive")
+    summary = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive,
+        targets=[_valid_entry(0)],
+        target_source="unit-attempt",
+        artifacts_root=tmp_path / "artifacts",
+    )
+    job = summary.jobs[0]
+    assert job.attempt == 1
+    assert job.artifact_dir is not None
+    assert Path(job.artifact_dir).name == "attempt-1"
+    assert Path(job.artifact_dir).is_dir()
+
+
+def test_retry_after_operator_clears_ledger_uses_fresh_attempt_dir(tmp_path: Path):
+    """MAJOR-3: after a timeout, the condemned attempt dir is never reused —
+    an operator-cleared retry lands in attempt-2 while attempt-1 (where a
+    possibly-still-alive orphan thread would write) stays untouched."""
+    archive = BatchArchive(root=tmp_path / "archive")
+    targets = [_valid_entry(0)]
+
+    first = run_batch(
+        engine=_SlowStubEngine(),
+        archive=archive,
+        targets=targets,
+        target_source="unit-retry",
+        job_timeout_sec=0.05,
+        artifacts_root=tmp_path / "artifacts",
+    )
+    timed_out = first.jobs[0]
+    assert timed_out.status == "failed"
+    assert timed_out.failure is not None and timed_out.failure.category == "timeout"
+    assert timed_out.attempt == 1
+    attempt1_dir = Path(timed_out.artifact_dir)
+    assert attempt1_dir.name == "attempt-1"
+    marker = attempt1_dir / "orphan-was-here.txt"
+    marker.write_text("simulates the un-killable timed-out worker still writing", encoding="utf-8")
+
+    # Operator action: confirm nothing is running, clear the ledger file.
+    job_file = tmp_path / "archive" / first.batch.batch_id / "jobs" / "job-0000.json"
+    assert job_file.is_file()
+    job_file.unlink()
+
+    second = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive,
+        resume=True,
+        batch_id=first.batch.batch_id,
+        artifacts_root=tmp_path / "artifacts",
+    )
+    retried = second.jobs[0]
+    assert retried.status == "succeeded"
+    assert retried.attempt == 2
+    assert Path(retried.artifact_dir).name == "attempt-2"
+    assert Path(retried.artifact_dir) != attempt1_dir
+    # The condemned dir (and whatever the orphan wrote into it) is untouched.
+    assert marker.is_file()
+
+
+def test_resume_refuses_stale_running_job(tmp_path: Path):
+    """MAJOR-3 fail-closed: a job still marked running is never silently
+    retried — resume skips it, records the refusal, and leaves the batch
+    resumable instead of claiming completion."""
+    from app.core.batch_archive import BatchJobRecord
+
+    archive = BatchArchive(root=tmp_path / "archive")
+    targets = [_valid_entry(0), _valid_entry(1)]
+    batch = archive.create_batch(target_source="unit-stale", targets=targets, engine="fake")
+    stale = BatchJobRecord(
+        job_id="job-0000",
+        batch_id=batch.batch_id,
+        target_index=0,
+        target_label="t0",
+        target_spec=targets[0],
+        status="running",
+        created_at="2026-07-11T00:00:00+00:00",
+        updated_at="2026-07-11T00:00:00+00:00",
+    )
+    archive.put_job(stale)
+
+    summary = run_batch(
+        engine=FakeEngine(n=2),
+        archive=archive,
+        resume=True,
+        batch_id=batch.batch_id,
+        artifacts_root=tmp_path / "artifacts",
+    )
+
+    by_id = {j.job_id: j for j in summary.jobs}
+    assert by_id["job-0000"].status == "running"  # untouched, not retried
+    assert by_id["job-0000"].updated_at == stale.updated_at
+    assert by_id["job-0001"].status == "succeeded"  # the other target still ran
+    assert summary.batch.status == "budget_exhausted"  # not "completed" with a stuck job
+    assert any("running/queued" in note and "job-0000" in note for note in summary.batch.notes)
+
+
+def test_cli_rejects_job_timeout_with_real_engine(tmp_path: Path):
+    """MAJOR-3 fail-closed: --job-timeout-sec + --engine real is a false
+    safety valve (this layer cannot kill a CODE V call) — refused outright,
+    nothing runs, nothing is archived."""
+    import importlib.util
+
+    script_path = Path(__file__).resolve().parents[1] / "scripts" / "p18_night_batch.py"
+    spec = importlib.util.spec_from_file_location("p18_night_batch_cli_test", script_path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    exit_code = module.main(
+        [
+            "--engine", "real",
+            "--job-timeout-sec", "5",
+            "--archive-dir", str(tmp_path / "archive"),
+        ]
+    )
+    assert exit_code == 2
+    assert not (tmp_path / "archive").exists()  # nothing was created
+
+
+# ---------------------------------------------------------------------------
 # Budget cutoffs + resume
 # ---------------------------------------------------------------------------
 
