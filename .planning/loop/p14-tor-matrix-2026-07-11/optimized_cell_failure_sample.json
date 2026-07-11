@@ -1,0 +1,15 @@
+{
+  "type": "CodeVBatchError",
+  "message": "CODE V TOR run finished without producing fresh export files",
+  "details": {
+    "missing": [
+      "C:\\Users\\Administrator\\AppData\\Local\\Temp\\claude\\D--atelier\\35264aa5-1da3-4d09-9e86-cf204e30310a\\scratchpad\\p14matrix\\ev_s17_v2\\001-e80e70e4\\optimized\\atelier_tor_per.tsv",
+      "C:\\Users\\Administrator\\AppData\\Local\\Temp\\claude\\D--atelier\\35264aa5-1da3-4d09-9e86-cf204e30310a\\scratchpad\\p14matrix\\ev_s17_v2\\001-e80e70e4\\optimized\\atelier_tor_mc.tsv"
+    ],
+    "stale_exports_deleted": {
+      "C:\\Users\\Administrator\\AppData\\Local\\Temp\\claude\\D--atelier\\35264aa5-1da3-4d09-9e86-cf204e30310a\\scratchpad\\p14matrix\\ev_s17_v2\\001-e80e70e4\\optimized\\atelier_tor_per.tsv": false,
+      "C:\\Users\\Administrator\\AppData\\Local\\Temp\\claude\\D--atelier\\35264aa5-1da3-4d09-9e86-cf204e30310a\\scratchpad\\p14matrix\\ev_s17_v2\\001-e80e70e4\\optimized\\atelier_tor_mc.tsv": false
+    },
+    "returncode": 1
+  }
+}

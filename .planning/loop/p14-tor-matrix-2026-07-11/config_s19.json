@@ -1,0 +1,10 @@
+{
+  "tolerance_commands": ["DEF TOL S1..19"],
+  "tolerance_provenance": "CODE V default tolerance table via DEF TOL S1..19 (probe-evidence syntax); vendor capability not injected; expert ratification pending",
+  "compensator_commands": ["CMP DLZ SI"],
+  "compensator_provenance": "focal-shift compensator CMP DLZ SI per Tolerancing.pdf p.86 and example p.127",
+  "assembly_assumptions": "single focus compensation at image surface; no active alignment assumed",
+  "trials": 100,
+  "metric": "mtf",
+  "mtf_frequency_lp_per_mm": 100.0
+}

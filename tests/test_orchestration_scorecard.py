@@ -603,6 +603,71 @@ def test_repeatability_defaults_to_unavailable_single_run():
     assert "未做重复性验证" in r.note
 
 
+def test_tolerance_yield_defaults_unavailable_and_never_uses_proxy():
+    row = score_candidate(_generated_candidate(), _wide_target_spec())
+    assert row.tolerance_yield.status == "unavailable"
+    assert row.tolerance_yield.yield_fraction.value is None
+    assert "proxy" not in row.tolerance_yield.provenance.casefold()
+
+
+def test_measured_tolerance_yield_renders_provenance():
+    from app.core.orchestration.candidate import MetricValue, ToleranceYieldMetrics
+
+    tor = ToleranceYieldMetrics(
+        status="measured",
+        yield_fraction=MetricValue(value=0.75, status="available"),
+        per_field_yield={"z1:f1": 0.8},
+        trials=20,
+        saturation_fraction=MetricValue(value=0.9, status="available"),
+        provenance="TOR MC export; policy evidence: Tolerancing.pdf section X",
+        reason="computed from complete TOR MC rows",
+    )
+    row = score_candidate(_generated_candidate(), _wide_target_spec(), tolerance_yield=tor)
+    assert row.tolerance_yield == tor
+    assert "Tolerancing.pdf" in row.model_dump_json()
+
+
+@pytest.mark.parametrize(
+    "updates",
+    [
+        {"yield_fraction": {"value": 1.1, "status": "available"}},
+        {"saturation_fraction": {"value": -0.1, "status": "available"}},
+        {"per_field_yield": {"z1:f1": 2.0}},
+        {"trials": 0},
+    ],
+)
+def test_measured_tolerance_yield_rejects_invalid_bounds_and_trials(updates):
+    from app.core.orchestration.candidate import MetricValue, ToleranceYieldMetrics
+
+    values = {
+        "status": "measured",
+        "yield_fraction": MetricValue(value=0.75, status="available"),
+        "per_field_yield": {"z1:f1": 0.8},
+        "trials": 20,
+        "saturation_fraction": MetricValue(value=0.2, status="available"),
+        "provenance": "TOR MC",
+        "reason": "measured",
+    }
+    values.update(updates)
+    with pytest.raises(ValueError):
+        ToleranceYieldMetrics(**values)
+
+
+def test_unavailable_tolerance_yield_rejects_nonzero_trials():
+    from app.core.orchestration.candidate import MetricValue, ToleranceYieldMetrics
+
+    with pytest.raises(ValueError, match="trials == 0"):
+        ToleranceYieldMetrics(
+            status="unavailable",
+            yield_fraction=MetricValue(value=None, status="unavailable"),
+            per_field_yield={},
+            trials=1,
+            saturation_fraction=MetricValue(value=None, status="unavailable"),
+            provenance="none",
+            reason="none",
+        )
+
+
 def test_repeatability_single_sample_still_unavailable():
     """One sample is not a distribution — fail closed, not min==max==spread=0."""
     target = _wide_target_spec()
