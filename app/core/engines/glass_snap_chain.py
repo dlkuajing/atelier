@@ -273,7 +273,7 @@ def _snapshot_export_block(run_id: str, fingerprint: str) -> list[str]:
     ):
         lines += [f'BUF PUT B1 I^row J1 "{key}"', f"BUF PUT B1 I^row J2 {value}", "^row == ^row+1"]
     for stage in ("before_fictitious", "after_snap_frozen", "after_snap_reopt"):
-        for metric in ("efl", "rmswfe"):
+        for metric in ("efl", "rmswfe", "rmswfe_ok"):
             key = f"{stage.replace('_', '-')}.{metric}"
             lines += [
                 f'BUF PUT B1 I^row J1 "{key}"',
@@ -292,6 +292,8 @@ def _snapshot_block(stage: str, run_id: str, fingerprint: str) -> list[str]:
         f"^{prefix}_efl == ABSF((EFY))",
         f"^{prefix}_rmswfe == 0",
         f"^ok == RMSWE(1,0,60,^{prefix}_rmswfe,'NOM')",
+        f"^{prefix}_rmswfe_ok == ^ok",
+        "! RMSWE return flag export: pending real-machine macro verification",
         "! per-field/per-wavelength RMS spot, chromatic detail: pending real-machine macro verification",
     ]
 

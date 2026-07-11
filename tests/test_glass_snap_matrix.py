@@ -6,7 +6,12 @@ from types import SimpleNamespace
 
 from app.core.engines.codev_batch import CodeVBatchResult
 from app.core.engines.codev_readout import parse_codev_readout_file
-from app.core.engines.glass_snap_matrix import EXPERIMENTS, SNAPSHOT_SCHEMA, run_snap_matrix
+from app.core.engines.glass_snap_matrix import (
+    EXPERIMENTS,
+    SNAPSHOT_SCHEMA,
+    extract_snapshot_metrics,
+    run_snap_matrix,
+)
 
 FIXTURE = Path(".planning/loop/p13-smoke-2026-07-11/readout5-glasscode/atelier_codev_readout.tsv")
 
@@ -37,6 +42,7 @@ def _snapshot_data() -> dict[str, str]:
     ):
         data[f"{stage}.efl"] = str(index)
         data[f"{stage}.rmswfe"] = str(index / 10)
+        data[f"{stage}.rmswfe_ok"] = "1"
     return data
 
 
@@ -62,7 +68,7 @@ def test_matrix_full_af_execution_and_tsv_statuses(tmp_path: Path) -> None:
     )
     assert len(result.rows) == len(EXPERIMENTS)
     by_code = {row["experiment"]: row for row in result.rows}
-    assert by_code["D"]["status"].startswith("withheld:")
+    assert by_code["D"]["status"] == "built-not-run:pending-real-machine-verification"
     assert {by_code[code]["status"] for code in "ABCEF"} == {"ok"}
     assert all(
         (output / by_code[code]["evidence_dir"] / "snapshots.json").is_file() for code in "ABCEF"
@@ -76,9 +82,9 @@ def test_matrix_dry_run_stages_dotted_source_and_builds_sequences(tmp_path: Path
     result = run_snap_matrix(
         [_candidate(tmp_path, dotted=True)], output_dir=output, readout_runner=_readout_runner
     )
-    assert {row["status"] for row in result.rows if row["experiment"] != "D"} == {"built-not-run"}
+    assert {row["status"] for row in result.rows} == {"built-requires-readout"}
     assert list(output.glob("*/source.zmx"))
-    assert len(list(output.glob("*/[ABCEF]/run.seq"))) == 5
+    assert not list(output.glob("*/readout"))
 
 
 def test_matrix_identity_gate_withholds_all_cells(monkeypatch, tmp_path: Path) -> None:
@@ -86,7 +92,7 @@ def test_matrix_identity_gate_withholds_all_cells(monkeypatch, tmp_path: Path) -
 
     monkeypatch.setattr(glass_snap_matrix, "material_claims_from_readout", lambda readout: ())
     result = run_snap_matrix(
-        [_candidate(tmp_path)], output_dir=tmp_path / "matrix", readout_runner=_readout_runner
+        [_candidate(tmp_path)], output_dir=tmp_path / "matrix", run_codev=True, readout_runner=_readout_runner
     )
     assert all(row["status"].startswith("withheld:") for row in result.rows)
 
@@ -96,7 +102,7 @@ def test_matrix_readout_failure_marks_all_cells(tmp_path: Path) -> None:
         raise RuntimeError("readout broke")
 
     result = run_snap_matrix(
-        [_candidate(tmp_path)], output_dir=tmp_path / "matrix", readout_runner=fail
+        [_candidate(tmp_path)], output_dir=tmp_path / "matrix", run_codev=True, readout_runner=fail
     )
     assert {row["status"] for row in result.rows} == {"failed:readout"}
     assert all("readout broke" in row["notes"] for row in result.rows)
@@ -117,3 +123,47 @@ def test_matrix_missing_snapshot_key_fails_closed(tmp_path: Path) -> None:
     )
     statuses = {row["status"] for row in result.rows if row["experiment"] != "D"}
     assert statuses == {"failed:execution-or-snapshot-parse"}
+
+
+def test_same_stem_candidates_get_distinct_evidence_and_staged_bytes(tmp_path: Path) -> None:
+    candidates = []
+    for dirname, content in (("asphere", "ONE"), ("both", "TWO")):
+        parent = tmp_path / dirname
+        parent.mkdir()
+        candidate = parent / "lens.zmx"
+        candidate.write_text(content, encoding="ascii")
+        candidates.append(candidate)
+    result = run_snap_matrix(candidates, output_dir=tmp_path / "matrix")
+    evidence_roots = {row["evidence_dir"].split("/")[0].split("\\")[0] for row in result.rows}
+    assert len(evidence_roots) == 2
+    assert {path.read_text(encoding="ascii") for path in (tmp_path / "matrix").glob("*/source.zmx")} == {"ONE", "TWO"}
+
+
+def test_bad_candidate_staging_does_not_discard_prior_rows(tmp_path: Path) -> None:
+    good = _candidate(tmp_path)
+    result = run_snap_matrix([good, tmp_path / "missing.zmx"], output_dir=tmp_path / "matrix")
+    assert len(result.rows) == 12
+    assert [row["status"] for row in result.rows[:6]] == ["built-requires-readout"] * 6
+    assert {row["status"] for row in result.rows[6:]} == {"failed:stage"}
+
+
+def test_e_runs_aut_while_a_does_not(tmp_path: Path) -> None:
+    output = tmp_path / "matrix"
+    result = run_snap_matrix([_candidate(tmp_path)], output_dir=output, run_codev=True,
+                             readout_runner=_readout_runner, batch_runner=_batch_runner)
+    by_code = {row["experiment"]: row for row in result.rows}
+    a = (output / by_code["A"]["evidence_dir"] / "run.seq").read_text(encoding="ascii")
+    e = (output / by_code["E"]["evidence_dir"] / "run.seq").read_text(encoding="ascii")
+    assert "\nAUT\n" not in a.replace("\r\n", "\n")
+    assert "\nAUT\n" in e.replace("\r\n", "\n")
+
+
+def test_snapshot_rmswe_failure_and_nonfinite_values_are_withheld() -> None:
+    data = _snapshot_data()
+    data["before-fictitious.rmswfe"] = "0"
+    data["before-fictitious.rmswfe_ok"] = "0"
+    data["after-snap-frozen.efl"] = "nan"
+    snapshots = extract_snapshot_metrics(data)["snapshots"]
+    assert snapshots[0] == {"stage": "before-fictitious", "status": "withheld", "reason": "RMSWE failed"}
+    assert snapshots[1]["status"] == "withheld"
+    assert "efl_mm" not in snapshots[0] and "rms_wfe_waves" not in snapshots[0]

@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import math
 import shutil
 import uuid
 from collections.abc import Callable, Iterable, Mapping
@@ -16,7 +17,7 @@ from app.core.engines.codev_batch import (
     ensure_codev_safe_input_path,
     run_codev_batch,
 )
-from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
+from app.core.engines.codev_readout import CodeVReadout, CodeVReadoutResult, run_codev_readout
 from app.core.engines.glass_snap import build_plastic_catalog
 from app.core.engines.glass_snap_chain import (
     build_glass_freeze_reopt_sequence,
@@ -58,17 +59,26 @@ def run_snap_matrix(
 ) -> MatrixRunResult:
     """Build or execute every candidate/experiment cell without judging metrics."""
 
-    output_dir = Path(output_dir)
+    output_dir = Path(output_dir).resolve()
     ensure_codev_safe_input_path(output_dir, role="output_dir")
     output_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, str]] = []
-    for candidate_value in candidates:
-        candidate = Path(candidate_value)
-        candidate_id = _safe_token(candidate.stem)
+    for index, candidate_value in enumerate(candidates):
+        candidate = Path(candidate_value).resolve()
+        candidate_id = _candidate_token(index, candidate)
         candidate_work = output_dir / candidate_id
-        candidate_work.mkdir(parents=True, exist_ok=True)
-        staged = candidate_work / "source.zmx"
-        shutil.copy2(candidate, staged)
+        try:
+            candidate_work.mkdir(parents=True, exist_ok=True)
+            staged = (candidate_work / "source.zmx").resolve()
+            shutil.copy2(candidate, staged)
+        except Exception as exc:  # noqa: BLE001 - preserve prior matrix rows.
+            rows.extend(_failed_rows(candidate, output_dir, candidate_id, "stage", exc))
+            continue
+        if not run_codev:
+            rows.extend(
+                _pending_readout_rows(candidate, output_dir, candidate_id)
+            )
+            continue
         try:
             readout_result = readout_runner(source_zmx=staged, work_dir=candidate_work / "readout")
             claims = material_claims_from_readout(readout_result.readout)
@@ -88,7 +98,9 @@ def run_snap_matrix(
                 rows.append(row)
                 continue
             if code == "D":
-                row["status"] = "withheld:catalog value conflict (intentional control)"
+                _build_catalog_conflict_probe(evidence, readout_result.readout)
+                row["status"] = "built-not-run:pending-real-machine-verification"
+                row["notes"] = "Python nd/vd recorded; CODE V GLD readback grammar is pending verification"
                 rows.append(row)
                 continue
             proposals = propose_material_snaps(
@@ -120,13 +132,9 @@ def run_snap_matrix(
                 max_cycles=max_cycles,
                 min_cycles=min_cycles,
                 apply_snaps=code in {"B", "C", "F"},
-                run_aut=code in {"C", "F"},
+                run_aut=code in {"C", "E", "F"},
             )
             sequence_path.write_text(sequence, encoding="ascii", newline="\r\n")
-            if not run_codev:
-                row["status"] = "built-not-run"
-                rows.append(row)
-                continue
             try:
                 batch = batch_runner(
                     sequence_path=sequence_path,
@@ -145,7 +153,7 @@ def run_snap_matrix(
                                 "after-snap-frozen",
                                 "after-snap-reopt",
                             )
-                            for metric in ("efl", "rmswfe")
+                            for metric in ("efl", "rmswfe", "rmswfe_ok")
                         ),
                     ),
                     allow_nonzero_ok_result=True,
@@ -182,13 +190,18 @@ def extract_snapshot_metrics(data: Mapping[str, str]) -> dict[str, object]:
     snapshots = result["snapshots"]
     assert isinstance(snapshots, list)
     for stage in ("before-fictitious", "after-snap-frozen", "after-snap-reopt"):
-        snapshots.append(
-            {
-                "stage": stage,
-                "efl_mm": float(_required(data, f"{stage}.efl")),
-                "rms_wfe_waves": float(_required(data, f"{stage}.rmswfe")),
-            }
-        )
+        ok = float(_required(data, f"{stage}.rmswfe_ok"))
+        if not math.isfinite(ok) or ok == 0.0:
+            snapshots.append({"stage": stage, "status": "withheld", "reason": "RMSWE failed"})
+            continue
+        efl = float(_required(data, f"{stage}.efl"))
+        rmswfe = float(_required(data, f"{stage}.rmswfe"))
+        if not math.isfinite(efl) or not math.isfinite(rmswfe):
+            snapshots.append(
+                {"stage": stage, "status": "withheld", "reason": "non-finite metric"}
+            )
+            continue
+        snapshots.append({"stage": stage, "status": "ok", "efl_mm": efl, "rms_wfe_waves": rmswfe})
     return result
 
 
@@ -202,6 +215,10 @@ def _required(data: Mapping[str, str], key: str) -> str:
 def _safe_token(value: str) -> str:
     clean = "".join(char if char.isalnum() or char in "-_" else "_" for char in value)
     return f"{clean[:48]}-{hashlib.sha256(value.encode()).hexdigest()[:8]}"
+
+
+def _candidate_token(index: int, candidate: Path) -> str:
+    return f"{index:04d}-{_safe_token(candidate.stem)}-{hashlib.sha256(str(candidate).encode()).hexdigest()[:12]}"
 
 
 def _row(candidate: Path, code: str, variable: str, evidence: Path, root: Path) -> dict[str, str]:
@@ -226,6 +243,38 @@ def _failed_rows(
         row.update(status=f"failed:{stage}", notes=f"{type(exc).__name__}: {exc}")
         rows.append(row)
     return rows
+
+
+def _pending_readout_rows(candidate: Path, root: Path, candidate_id: str) -> list[dict[str, str]]:
+    rows = []
+    for code, variable in EXPERIMENTS:
+        evidence = root / candidate_id / code
+        evidence.mkdir(parents=True, exist_ok=True)
+        row = _row(candidate, code, variable, evidence, root)
+        row.update(
+            status="built-requires-readout",
+            notes="No CODE V process was started; sequence construction requires a readout",
+        )
+        rows.append(row)
+    return rows
+
+
+def _build_catalog_conflict_probe(evidence: Path, readout: CodeVReadout) -> None:
+    """Record Python facts and an explicitly unverified CODE V GLD probe skeleton."""
+
+    facts = [
+        {"surface": surface.index, "glass": surface.glass, "nd": surface.nd, "vd": surface.vd}
+        for surface in readout.surfaces
+        if surface.glass
+    ]
+    (evidence / "python-catalog-values.json").write_text(
+        json.dumps(facts, indent=2, sort_keys=True), encoding="utf-8"
+    )
+    (evidence / "catalog-conflict-probe.seq").write_text(
+        "! GLD catalog interrogation grammar pending real-machine verification\n"
+        "! This artifact is built-only and MUST NOT be represented as conflict evidence.\n",
+        encoding="ascii",
+    )
 
 
 def _copy_listing(batch: CodeVBatchResult, evidence: Path) -> None:
