@@ -45,7 +45,12 @@ def test_command_sequences_and_crlf() -> None:
         sequence = module.build_sequence(command)
         assert '\r\nIN CV_MACRO:ZEMAXOS_TO_CV "inputzmx"' in sequence
         assert "\n" not in sequence.replace("\r\n", "")
-    assert "FCT @p13ok" in module.build_sequence("fct")
+    assert "FCT @pbok(NUM ^dummy)" in module.build_sequence("fct")
+    # definitions must precede OUT NO (real-machine compile rule)
+    fct_seq = module.build_sequence("fct")
+    assert fct_seq.index("FCT @pbok") < fct_seq.index("OUT NO")
+    lcl_seq = module.build_sequence("lcl")
+    assert lcl_seq.index("LCL NUM") < lcl_seq.index("OUT NO")
     assert "LCL NUM ^p13row" in module.build_sequence("lcl")
     assert "BUF EXP B1" in module.build_sequence("readout")
     assert "SAV probe_lens.1" in module.build_sequence("sav")

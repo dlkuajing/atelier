@@ -122,12 +122,23 @@ def build_grid() -> list[Cell]:
     return [Cell(i, source, command) for i, (source, command) in enumerate(pairs)]
 
 
-def build_sequence(command: str, source_name: str = "inputzmx") -> str:
-    prefix: list[str] = ["! P13 mystery bisect; generated offline.", "OUT NO"]
+def build_sequence(command: str, source_name: str = "input.zmx") -> str:
+    # Definitions (FCT/LCL) must precede every executable statement, including
+    # OUT NO (real-machine: "Definitions are only allowed before any
+    # executable statement"). FCT shape mirrors the dossier's proven pattern.
+    prefix: list[str] = ["! P13 mystery bisect; generated offline."]
     if command == "fct":
-        prefix += ["FCT @p13ok", "  @p13ok == 1", "END FCT @p13ok"]
+        prefix += [
+            "FCT @pbok(NUM ^dummy)",
+            "LCL NUM ^dummy ^ok",
+            "^ok == 1",
+            "END FCT ^ok",
+        ]
     elif command == "lcl":
-        prefix += ["LCL NUM ^p13row", "^p13row == 1"]
+        prefix += ["LCL NUM ^p13row"]
+    prefix += ["OUT NO"]
+    if command == "lcl":
+        prefix += ["^p13row == 1"]
     lines = prefix + [f'IN CV_MACRO:ZEMAXOS_TO_CV "{source_name}"']
     if command == "readout":
         lines += [
@@ -175,7 +186,7 @@ def run_cell(
 ) -> Result:
     cell_dir = output_dir / cell.cell_id
     cell_dir.mkdir(parents=True, exist_ok=False)
-    source_path = cell_dir / "inputzmx"
+    source_path = cell_dir / "input.zmx"
     source_path.write_text(source_text, encoding="ascii", newline="\n")
     sequence_path = cell_dir / "probe.seq"
     sequence_path.write_bytes(build_sequence(cell.command).encode("ascii"))
