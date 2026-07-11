@@ -1699,6 +1699,14 @@ def _optional_finite_float(data: Mapping[str, object], key: str) -> float | None
 # 主公 ratify，见 .planning/debug/codev-target-convergence.md「已定决策」1）。
 _DEFAULT_FNUM_TOLERANCE_PCT = 8.0
 
+# ray-aware 渐晕重试的建议阶梯（调用方**显式**选用；ladder 参数默认 None=
+# 不启用=零回归）：opt3 真机杠杆实证（.planning/debug/codev-target-
+# convergence.md 诊断 v2）——显式 VUY/VLY 0.40 全场 → conv✅；0 0.50 0.50 仅
+# 离轴 → conv✅；0.30 离轴 / 0.20 全场 → 不足。故从 0.2 爬到 0.5。死路（勿
+# 改走）：SET VIG/SET VIY 对零渐晕 seed 是 no-op；SET APE/CAP 的孔径由已失败
+# reference ray 派生=循环。
+RAY_RETRY_VIG_LADDER: tuple[float, ...] = (0.2, 0.3, 0.4, 0.5)
+
 
 def _ray_traceable(ray_grid: object) -> bool | None:
     """光线可追迹维（BLOCKER-1）：从 ``run_codev_target`` 的 ``ray_grid`` 诊
@@ -1766,6 +1774,11 @@ def _fno_ladder_rung_from_data(
         "aut_converged": str(data.get("aut_converged")) == "1",
         "autovig.edge_used": data.get("autovig.edge_used"),
         "autovig.converged": data.get("autovig.converged"),
+        # 渐晕 provenance 单一读取点：未经 ray-retry 时 = autovig.edge_used 原
+        # 值；ray-retry 采纳后 = 重试的显式渐晕 edge（见 _ray_aware_retry）。
+        # 资深读 RMS/WFE 必须连同此列（RMS 在裁瞳上测=偏乐观）。
+        "effective_edge_used": data.get("autovig.edge_used"),
+        "ray_retry": None,
         "error": None,
     }
 
@@ -1789,8 +1802,106 @@ def _fno_ladder_error_rung(
         "aut_converged": False,
         "autovig.edge_used": None,
         "autovig.converged": None,
+        "effective_edge_used": None,
+        "ray_retry": None,
         "error": {"kind": exc.kind, "detail": exc.message},
     }
+
+
+def _ray_aware_retry(
+    *,
+    rung: dict[str, object],
+    rung_index: int,
+    target_fnum: float | None,
+    num_fields: int | None,
+    retry_vig_ladder: tuple[float, ...],
+    retry_work_dir: Path,
+    fnum_tolerance_pct: float,
+    run_kwargs: Mapping[str, object],
+) -> dict[str, object]:
+    """Ray-aware 渐晕重试（P15 阶梯试点实锤的引擎缺口修复，加法式）：
+
+    背景（ladder-pilot-2026-07-11 真机证据）：autovig 只在 EFL 不收敛时爬渐
+    晕；一个 EFL 已收敛但光栅带伤（如 chief-ray-missing）的 rung 永远拿不到
+    渐晕清理——而渐晕（显式 VUY/VLY/VUX/VLX 因子裁优化光栅，opt3 已验证杠
+    杆，F# 不变）恰是裁掉病灶光线的工具。本函数对这样的 rung 按
+    ``retry_vig_ladder`` 逐级用显式离轴渐晕（``_autovig_profile``：轴上不
+    裁、离轴均匀裁）重跑 ``run_codev_target``，**接受判据 = EFL-hit AND
+    ray-clean**（``aut_converged=1`` 且 ``ray_grid.category=="ok"``），命中
+    即停。
+
+    诚实口径：
+      - 采纳重试后，rung 本体数据（measured_fnum/RMS/WFE/ray_grid 等）全部
+        来自重试那次 run；``autovig.edge_used``/``autovig.converged`` 保留
+        autovig 阶段的原值（那是 autovig 真实跑出的），采纳数据的真实渐晕
+        写在 ``effective_edge_used``（渐晕 provenance 单一读取点）。
+      - ``ray_retry.quality_note`` 如实标注：RMS/WFE 在裁瞳光栅上测=较全瞳
+        偏乐观，资深必须连渐晕列读。
+      - 单次重试报 ``CodeVBatchError``（如 timeout）→ 记录该 attempt 续爬
+        下一级（吞并续爬纪律）；爬满仍不满足 → 保留原始（autovig 阶段）
+        rung 数据 + ``ray_retry.accepted_edge=None``，rung 如实不被接受
+        （``ray_traceable`` 维持 False，``target_achieved`` 不放行）。
+    """
+    attempts: list[dict[str, object]] = []
+    if not num_fields or num_fields <= 1:
+        # 无场数（rung 数据里学不到）或单场种子：离轴渐晕 profile 无从构造，
+        # 不烧真机盲试——如实记录后返回原 rung（fail-closed，不接受）。
+        out = dict(rung)
+        out["ray_retry"] = {
+            "triggered": True,
+            "accepted_edge": None,
+            "attempts": attempts,
+            "note": "num_fields unavailable or single-field seed; cannot build off-axis profile",
+        }
+        return out
+    for edge in retry_vig_ladder:
+        vig = _autovig_profile(edge, num_fields)
+        if vig is None:
+            continue  # edge<=0：无渐晕重试无意义（等同原 rung），跳过
+        try:
+            data2 = run_codev_target(
+                work_dir=retry_work_dir,
+                vignetting=vig,
+                rung_filename_tag=_fmt_edge_filename_token(edge),
+                **run_kwargs,
+            )
+        except CodeVBatchError as exc:
+            attempts.append(
+                {"edge": edge, "aut_converged": None, "ray_category": None, "error": exc.kind}
+            )
+            continue
+        conv = str(data2.get("aut_converged")) == "1"
+        ray_grid = data2.get("ray_grid")
+        category = ray_grid.get("category") if isinstance(ray_grid, Mapping) else None
+        attempts.append(
+            {"edge": edge, "aut_converged": conv, "ray_category": category, "error": None}
+        )
+        if conv and category == "ok":
+            accepted = _fno_ladder_rung_from_data(
+                rung_index=rung_index,
+                target_fnum=target_fnum,
+                data=data2,
+                fnum_tolerance_pct=fnum_tolerance_pct,
+            )
+            # autovig.* 保留 autovig 阶段原值（诚实：重试不是 autovig 跑的）；
+            # 采纳数据的真实渐晕走 effective_edge_used。
+            accepted["autovig.edge_used"] = rung.get("autovig.edge_used")
+            accepted["autovig.converged"] = rung.get("autovig.converged")
+            accepted["effective_edge_used"] = _fmt_number(edge)
+            accepted["ray_retry"] = {
+                "triggered": True,
+                "accepted_edge": edge,
+                "attempts": attempts,
+                "quality_note": (
+                    "RMS/WFE measured on the retry's vignetted pupil "
+                    f"(off-axis edge={edge:g}) — optimistic vs full pupil; "
+                    "read together with effective_edge_used"
+                ),
+            }
+            return accepted
+    out = dict(rung)
+    out["ray_retry"] = {"triggered": True, "accepted_edge": None, "attempts": attempts}
+    return out
 
 
 def run_codev_target_fno_ladder(
@@ -1804,6 +1915,7 @@ def run_codev_target_fno_ladder(
     rung_count: int = 3,
     fnum_tolerance_pct: float = _DEFAULT_FNUM_TOLERANCE_PCT,
     vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
+    ray_retry_vig_ladder: tuple[float, ...] | None = None,
     num_fields: int | None = None,
     extra_dof: str = "none",
     glass_bounds_nd_vd: Sequence[tuple[float, float]] | None = None,
@@ -1860,13 +1972,27 @@ def run_codev_target_fno_ladder(
     F#-rung 之间的消歧则由子目录边界保证，不需要改动
     ``run_codev_target_autovig`` 本体。
 
+    ``ray_retry_vig_ladder``（加法式，默认 ``None`` = 不启用 = 现行为零回
+    归）：ray-aware 渐晕重试（真机试点 ladder-pilot-2026-07-11 实锤的引擎缺
+    口——autovig 只治"EFL 不收敛"，不治"EFL 收敛但光栅带伤"，全部试点 rung
+    edge=0 即证）。启用后，任一 rung 满足 **EFL-hit（aut_converged）AND
+    ray_traceable is False**（光栅有确证病灶；``None``=无证据不烧真机盲试）
+    时，按该阶梯逐级用显式离轴渐晕因子（``_autovig_profile``，opt3 验证杠杆
+    VUY/VLY/VUX/VLX，F# 不变）重跑该 rung，接受判据 = **EFL-hit AND
+    ray-clean**，命中即停；爬满不中则保留原数据、rung 如实不被接受。建议值
+    ``RAY_RETRY_VIG_LADDER``（0.2→0.5，opt3 实测有效带）。重试证据全部进
+    rung 记录的 ``ray_retry`` dict（edges 尝试轨迹/accepted_edge/quality
+    note），采纳数据的真实渐晕在 ``effective_edge_used``（渐晕 provenance
+    单一读取点；RMS 在裁瞳上测=偏乐观，资深连列读）。
+
     Returns:
         {"schema": FNO_LADDER_RESULT_SCHEMA, "source_zmx": ..., "stage": ...,
          "target_efl_mm": ..., "fnum_target": ..., "rung_count": ...,
          "fnum_tolerance_pct": float,
          "native_fnum_measured": float | None,
          "rungs": [rung0_dict, rung1_dict, ...],  # 见
-             _fno_ladder_rung_from_data / _fno_ladder_error_rung
+             _fno_ladder_rung_from_data / _fno_ladder_error_rung；每 rung 含
+             effective_edge_used（渐晕 provenance）与 ray_retry（None=未触发）
          "last_measured_rung_index": int | None,  # 最后一个可解析 rung（爬到哪）
          "last_measured_rung": dict | None,       # 该 rung 记录浅拷贝；None=全灭
          "target_achieved": bool,   # 四条件达标（见上），fail-closed
@@ -1899,12 +2025,48 @@ def run_codev_target_fno_ladder(
             if exc.details.get("preflight"):
                 raise
             return _fno_ladder_error_rung(rung_index=rung_index, target_fnum=target_fnum, exc=exc)
-        return _fno_ladder_rung_from_data(
+        rung = _fno_ladder_rung_from_data(
             rung_index=rung_index,
             target_fnum=target_fnum,
             data=data,
             fnum_tolerance_pct=fnum_tolerance_pct,
         )
+        if (
+            ray_retry_vig_ladder
+            and rung["status"] == "measured"
+            and rung["aut_converged"] is True
+            and rung["ray_traceable"] is False
+        ):
+            # 场数：优先调用方注入，否则从本 rung 数据学（autovig 出参 TSV 键）。
+            nf = num_fields
+            if nf is None:
+                try:
+                    nf = int(float(str(data.get("num_fields", "0") or "0")))
+                except (TypeError, ValueError):
+                    nf = None
+            rung = _ray_aware_retry(
+                rung=rung,
+                rung_index=rung_index,
+                target_fnum=target_fnum,
+                num_fields=nf,
+                retry_vig_ladder=ray_retry_vig_ladder,
+                retry_work_dir=work_dir / tag / "ray_retry",
+                fnum_tolerance_pct=fnum_tolerance_pct,
+                run_kwargs={
+                    "source_zmx": source_zmx,
+                    "target_efl_mm": target_efl_mm,
+                    "target_f_number": target_fnum,
+                    "target_imh_mm": target_imh_mm,
+                    "stage": stage,
+                    "executable": executable,
+                    "timeout_seconds": timeout_seconds,
+                    "platform_name": platform_name,
+                    "extra_dof": extra_dof,
+                    "glass_bounds_nd_vd": glass_bounds_nd_vd,
+                    "emit_optimized_zmx": emit_optimized_zmx,
+                },
+            )
+        return rung
 
     rung0 = _run_rung(rung_index=0, target_fnum=None, tag="rung0_native")
     rungs.append(rung0)
