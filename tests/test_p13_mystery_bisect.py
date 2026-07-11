@@ -43,7 +43,7 @@ def test_sources_are_deterministic_single_block_swaps() -> None:
 def test_command_sequences_and_crlf() -> None:
     for command in module.COMMANDS:
         sequence = module.build_sequence(command)
-        assert '\r\nIN CV_MACRO:ZEMAXOS_TO_CV "inputzmx"' in sequence
+        assert '\r\nIN CV_MACRO:ZEMAXOS_TO_CV "input.zmx"' in sequence
         assert "\n" not in sequence.replace("\r\n", "")
     assert "FCT @pbok(NUM ^dummy)" in module.build_sequence("fct")
     # definitions must precede OUT NO (real-machine compile rule)
