@@ -65,6 +65,7 @@ from app.core.orchestration.candidate import (
     ScorecardRow,
     TargetDeviation,
     TargetSpec,
+    ToleranceYieldMetrics,
 )
 from app.core.zmx_materials import lookup_nd_vd
 
@@ -668,6 +669,7 @@ def score_candidate(
     min_coverage_pct: float = _MIN_COVERAGE_PCT,
     repeat_rms_samples_um: Sequence[float] = (),
     repeat_wfe_samples_waves: Sequence[float] = (),
+    tolerance_yield: ToleranceYieldMetrics | None = None,
 ) -> ScorecardRow:
     """Pure function: `ScorecardRow` from `generated.payload` +
     `generated.optical_extras` only — never touches optic/ZMX (§7).
@@ -707,4 +709,5 @@ def score_candidate(
         rank=rank,
         rank_explanation=explanation,
         repeatability=repeatability,
+        **({"tolerance_yield": tolerance_yield} if tolerance_yield is not None else {}),
     )

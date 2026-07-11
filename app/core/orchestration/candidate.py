@@ -241,6 +241,34 @@ class RepeatabilityMetrics(BaseModel):
         return self
 
 
+class ToleranceYieldMetrics(BaseModel):
+    """True CODE V TOR yield only; routing-level proxy values are not comparable."""
+
+    status: Literal["unavailable", "measured"]
+    yield_fraction: MetricValue
+    per_field_yield: dict[str, float] = Field(default_factory=dict)
+    trials: int = Field(ge=0)
+    saturation_fraction: MetricValue
+    provenance: str
+    reason: str
+
+    @model_validator(mode="after")
+    def _fail_closed(self) -> ToleranceYieldMetrics:
+        if self.status == "unavailable" and (
+            self.yield_fraction.status != "unavailable"
+            or self.saturation_fraction.status != "unavailable"
+            or self.per_field_yield
+        ):
+            raise ValueError("unavailable tolerance yield cannot carry measured values")
+        if self.status == "measured" and (
+            self.yield_fraction.status != "available"
+            or self.saturation_fraction.status != "available"
+            or not self.provenance.strip()
+        ):
+            raise ValueError("measured tolerance yield requires values and provenance")
+        return self
+
+
 _UNAVAILABLE_METRIC = MetricValue(value=None, status="unavailable")
 
 
@@ -263,6 +291,18 @@ def _default_repeatability() -> RepeatabilityMetrics:
     )
 
 
+def _default_tolerance_yield() -> ToleranceYieldMetrics:
+    return ToleranceYieldMetrics(
+        status="unavailable",
+        yield_fraction=_UNAVAILABLE_METRIC,
+        per_field_yield={},
+        trials=0,
+        saturation_fraction=_UNAVAILABLE_METRIC,
+        provenance="TOR unavailable; policy evidence: none",
+        reason="TOR yield semantics are not ratified",
+    )
+
+
 class ScorecardRow(BaseModel):
     """纯量化打分（§5.3）。无 verdict/合格/passed 字段——诚实不变量 2。"""
 
@@ -274,6 +314,7 @@ class ScorecardRow(BaseModel):
     rank: RankResult  # 带 coverage 的排序结果（非裸 float，codex 轮3）
     rank_explanation: str
     repeatability: RepeatabilityMetrics = Field(default_factory=_default_repeatability)
+    tolerance_yield: ToleranceYieldMetrics = Field(default_factory=_default_tolerance_yield)
     # ↑ 无 verdict / 合格 / passed 字段（诚实不变量 2）
 
 
