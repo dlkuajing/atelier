@@ -27,7 +27,13 @@ def _candidate(tmp_path: Path, *, dotted: bool = False) -> Path:
 def _readout_runner(**kwargs):
     source = Path(kwargs["source_zmx"])
     assert not any(part.startswith(".") for part in source.parts)
-    return SimpleNamespace(readout=parse_codev_readout_file(FIXTURE))
+    fixture = Path(kwargs["work_dir"]) / "honest-dispersion-readout.tsv"
+    fixture.parent.mkdir(parents=True, exist_ok=True)
+    text = FIXTURE.read_text(encoding="utf-8")
+    for surface in (1, 4, 6, 8, 10, 12, 14, 16):
+        text = text.replace(f"surface.{surface}.vd\t0", f"surface.{surface}.vd\t55.9")
+    fixture.write_text(text, encoding="utf-8")
+    return SimpleNamespace(readout=parse_codev_readout_file(fixture))
 
 
 def _snapshot_data() -> dict[str, str]:
