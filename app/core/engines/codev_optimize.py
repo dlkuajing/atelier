@@ -900,6 +900,30 @@ def _safe_aut_error_trace(listing_path: Path | None) -> dict[str, float | str | 
         return None
 
 
+def _safe_ray_grid_classification(listing_path: Path | None) -> dict[str, object] | None:
+    """光栅健康度分类（对抗审查 BLOCKER-1 修复 2026-07-11）：对同一 ``.lis``
+    清单跑 ``fno_probe.classify_fno_listing``（TIR / chief-ray-missing /
+    aperture-conflict / ok / other，ok 需正面证据 fail-closed），返回
+    ``describe()`` dict。P15 Stage 2 采证矩阵（42 格真机）证明
+    ``aut_converged=1 + post_aut.fno==target`` 是双重假阳性达标信号——F# 系
+    统参数达值与光线可追迹性是两个完全分离的维度，光栅健康度必须独立可观
+    测（.planning/loop/p15-stageb-evidence/summary.md §0）。
+
+    与 ``_safe_aut_error_trace`` 同款 fail-open：读不到/解析抛异常 → None，
+    绝不影响主 TSV 契约。延迟导入 ``fno_probe``：该模块顶层 import 本模块
+    （``build_codev_target_sequence``/``run_codev_target``），模块级互导会
+    循环。"""
+    if listing_path is None:
+        return None
+    try:
+        from app.core.engines.fno_probe import classify_fno_listing
+
+        listing_text = listing_path.read_text(encoding="utf-8", errors="replace")
+        return classify_fno_listing(listing_text).describe()
+    except Exception:  # noqa: BLE001 - 诊断 side-channel，任何异常都不外泄给主流程
+        return None
+
+
 # ---------------------------------------------------------------------------
 # 优化后 ZMX 重建（③ target 模式接上"资深可 Verify"闭环）：把 baseline
 # run_codev_optimize 已有的 readout→zmx_writer 重建管线加法式移植到 target
@@ -986,6 +1010,12 @@ def run_codev_target(
     read from the run's ``.lis`` listing, exposed alongside the TSV-derived
     fields. It never affects the TSV-based contract above it — a missing or
     unparseable listing just yields ``None``.
+
+    ``"ray_grid"`` is a second additive diagnostic key (see
+    ``_safe_ray_grid_classification``, BLOCKER-1 修复): the same listing's
+    ray-grid health classification (``fno_probe.classify_fno_listing``
+    describe() dict — TIR / chief-ray-missing / aperture-conflict / ok /
+    other). Same fail-open semantics: missing listing yields ``None``.
 
     ``rung_filename_tag`` (加法式，默认 ``None``)：显式指定本次调用产出的
     ``.seq``/``.tsv``/readout/optimized ZMX 的消歧后缀，覆盖从
@@ -1107,6 +1137,10 @@ def run_codev_target(
             },
         )
     data["aut_error_trace"] = _safe_aut_error_trace(batch.listing_path)
+    # 加法式诊断键（BLOCKER-1）：同一 .lis 的光栅健康度分类，供 FNO ladder /
+    # scorecard 把「参数达值」与「光线可追迹」两维分开上报。fail-open，缺清单
+    # → None。
+    data["ray_grid"] = _safe_ray_grid_classification(batch.listing_path)
     data["optimized_zmx_path"] = None
     returncode_ok = batch.returncode in _OPTIMIZE_OK_RETURNCODES
     if not returncode_ok:
@@ -1661,27 +1695,66 @@ def _optional_finite_float(data: Mapping[str, object], key: str) -> float | None
     return value if math.isfinite(value) else None
 
 
+# F# 达值几何容差默认 8%：spike 设计 spec §6 预设几何容差（F# 8% / IMH 2%，
+# 主公 ratify，见 .planning/debug/codev-target-convergence.md「已定决策」1）。
+_DEFAULT_FNUM_TOLERANCE_PCT = 8.0
+
+
+def _ray_traceable(ray_grid: object) -> bool | None:
+    """光线可追迹维（BLOCKER-1）：从 ``run_codev_target`` 的 ``ray_grid`` 诊
+    断键（``fno_probe.classify_fno_listing`` describe() dict）派生三值判定——
+    ``True`` 仅当分类为 ``"ok"``（正面证据 fail-closed，见 fno_probe）；分类
+    为任何失败类 → ``False``；无 ``ray_grid`` 证据（缺清单）→ ``None``（不可
+    知≠可追迹，``target_achieved`` 对 None 同样不放行）。"""
+    if not isinstance(ray_grid, Mapping):
+        return None
+    return ray_grid.get("category") == "ok"
+
+
 def _fno_ladder_rung_from_data(
-    *, rung_index: int, target_fnum: float | None, data: Mapping[str, object]
+    *,
+    rung_index: int,
+    target_fnum: float | None,
+    data: Mapping[str, object],
+    fnum_tolerance_pct: float,
 ) -> dict[str, object]:
     """构造一个成功产出数据的 rung 记录。fail-closed：``measured_fnum`` 为
     ``None`` 时该 rung ``status="non-finite"``（快照字段非有限/缺失），否则
-    ``"ok"``——绝不用估算填充任何字段。"""
+    ``"measured"``——绝不用估算填充任何字段。
+
+    ``status="measured"`` 只表示「数据层可解析」（EFL_real/EPD_real 活算出
+    了有限值），**不是成功判定**（对抗审查 BLOCKER-1：旧名 "ok" 会被下游读
+    成成功）。成功与否拆成两个独立维度分开上报：
+
+      - ``fno_param_achieved``：F# **系统参数达值**维——实测 F# 落在本 rung
+        目标的 ``fnum_tolerance_pct`` 几何容差内（rung 0 无目标 → None）。
+      - ``ray_traceable``：**光线可追迹**维——``ray_grid`` 分类为 "ok"（正
+        面证据）才 True；TIR/MISS/aperture-conflict/other → False；无清单证
+        据 → None。
+
+    P15 Stage 2 采证矩阵（42 格真机）证明两维完全分离：40/40 非超时格参数
+    逐位达值、但仅 7/42 光栅 clean——单看任何一维都是假阳性。"""
     measured = _measured_fnum(data)
     fnum_target_deviation_pct: float | None = None
+    fno_param_achieved: bool | None = None
     if measured is not None and target_fnum is not None and target_fnum > 1e-12:
         fnum_target_deviation_pct = abs(measured - target_fnum) / target_fnum * 100
+        fno_param_achieved = fnum_target_deviation_pct <= fnum_tolerance_pct
 
     aut_error_trace = data.get("aut_error_trace")
     err_f_ratio = (
         aut_error_trace.get("err_f_ratio") if isinstance(aut_error_trace, Mapping) else None
     )
+    ray_grid = data.get("ray_grid")
     return {
         "rung_index": rung_index,
         "target_fnum": target_fnum,
-        "status": "ok" if measured is not None else "non-finite",
+        "status": "measured" if measured is not None else "non-finite",
         "measured_fnum": measured,
         "fnum_target_deviation_pct": fnum_target_deviation_pct,
+        "fno_param_achieved": fno_param_achieved,
+        "ray_traceable": _ray_traceable(ray_grid),
+        "ray_grid": dict(ray_grid) if isinstance(ray_grid, Mapping) else None,
         "efl_target_deviation_pct": _optional_finite_float(data, "efl_target_deviation_pct"),
         "post_aut.max_rms_spot_diameter_um": _optional_finite_float(
             data, "post_aut.max_rms_spot_diameter_um"
@@ -1706,6 +1779,9 @@ def _fno_ladder_error_rung(
         "status": "error",
         "measured_fnum": None,
         "fnum_target_deviation_pct": None,
+        "fno_param_achieved": None,
+        "ray_traceable": None,
+        "ray_grid": None,
         "efl_target_deviation_pct": None,
         "post_aut.max_rms_spot_diameter_um": None,
         "post_aut.max_rms_wavefront_error_waves": None,
@@ -1726,6 +1802,7 @@ def run_codev_target_fno_ladder(
     target_imh_mm: float | None = None,
     stage: str = "A",
     rung_count: int = 3,
+    fnum_tolerance_pct: float = _DEFAULT_FNUM_TOLERANCE_PCT,
     vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
     num_fields: int | None = None,
     extra_dof: str = "none",
@@ -1762,6 +1839,22 @@ def run_codev_target_fno_ladder(
     只信 ``post_aut.efl_y_mm``/``post_aut.epd_mm`` 活算之比，不信 ``FNO``
     命令本身"构造设定"了什么。
 
+    双维达标判定（对抗审查 BLOCKER-1/-2 修复 2026-07-11）：P15 Stage 2 采证
+    矩阵（42 格真机）证明「FNO 系统参数达值」与「光线可追迹性」完全分离
+    （40/40 参数逐位达值 vs 仅 7/42 光栅 clean）——``aut_converged=1 +
+    post_aut.fno==target`` 是双重假阳性。因此：
+
+      - 每 rung 记录 ``fno_param_achieved``（实测 F# 落 ``fnum_tolerance_pct``
+        几何容差内，默认 8% = spike spec §6 主公 ratify 容差）与
+        ``ray_traceable``（``ray_grid`` 分类为 "ok" 的正面证据）两个独立维度。
+      - 顶层 ``target_achieved`` 仅当**目标 rung**（target_fnum ==
+        fnum_target 的那一级）同时满足四条：status="measured" AND
+        fno_param_achieved AND aut_converged（EFL 约束保持）AND
+        ray_traceable——任何一维缺证据（None）都不放行（fail-closed）。
+      - ``last_measured_rung`` 只回答「爬到哪」（最后一个可解析 rung），与
+        「到没到 target」（``accepted_final``，仅 ``target_achieved`` 时非
+        None）是两个不同的问题，刻意分开命名。
+
     每个 rung 独立子目录（``work_dir/rung{k}_...``），互不覆写——内部
     autovig 爬梯已用 ``_fmt_edge_filename_token`` 消歧同一 rung 内的渐晕级，
     F#-rung 之间的消歧则由子目录边界保证，不需要改动
@@ -1770,12 +1863,15 @@ def run_codev_target_fno_ladder(
     Returns:
         {"schema": FNO_LADDER_RESULT_SCHEMA, "source_zmx": ..., "stage": ...,
          "target_efl_mm": ..., "fnum_target": ..., "rung_count": ...,
+         "fnum_tolerance_pct": float,
          "native_fnum_measured": float | None,
          "rungs": [rung0_dict, rung1_dict, ...],  # 见
              _fno_ladder_rung_from_data / _fno_ladder_error_rung
-         "final_rung_index": int | None,  # 最后一个成功产出数据的 rung
-         "final": dict | None,  # 该 rung 记录的浅拷贝，None 表示全灭
-         "blocked": bool}  # True 当且仅当没有任何一级产出可用数据
+         "last_measured_rung_index": int | None,  # 最后一个可解析 rung（爬到哪）
+         "last_measured_rung": dict | None,       # 该 rung 记录浅拷贝；None=全灭
+         "target_achieved": bool,   # 四条件达标（见上），fail-closed
+         "accepted_final": dict | None,  # 达标时=目标 rung 记录；未达标=None
+         "blocked": bool}  # True 当且仅当没有任何一级产出可解析数据
     """
 
     work_dir = Path(work_dir)
@@ -1803,11 +1899,16 @@ def run_codev_target_fno_ladder(
             if exc.details.get("preflight"):
                 raise
             return _fno_ladder_error_rung(rung_index=rung_index, target_fnum=target_fnum, exc=exc)
-        return _fno_ladder_rung_from_data(rung_index=rung_index, target_fnum=target_fnum, data=data)
+        return _fno_ladder_rung_from_data(
+            rung_index=rung_index,
+            target_fnum=target_fnum,
+            data=data,
+            fnum_tolerance_pct=fnum_tolerance_pct,
+        )
 
     rung0 = _run_rung(rung_index=0, target_fnum=None, tag="rung0_native")
     rungs.append(rung0)
-    native_measured = rung0["measured_fnum"] if rung0["status"] == "ok" else None
+    native_measured = rung0["measured_fnum"] if rung0["status"] == "measured" else None
 
     if native_measured is not None:
         ladder = _geometric_fnum_ladder(
@@ -1821,8 +1922,29 @@ def run_codev_target_fno_ladder(
     # else: rung0 未拿到可用 native 实测（error/non-finite）——几何级距无基点
     # 可算，不猜测续爬，如实只留 rung0 的记录（fail-closed，宁缺不估算）。
 
-    ok_rungs = [r for r in rungs if r["status"] == "ok"]
-    final = dict(ok_rungs[-1]) if ok_rungs else None
+    measured_rungs = [r for r in rungs if r["status"] == "measured"]
+    last_measured = dict(measured_rungs[-1]) if measured_rungs else None
+
+    # target_achieved 四条件（BLOCKER-2，fail-closed：布尔维度的 None 不放行）：
+    # 目标 rung 存在且可解析 + F# 参数达值（容差内）+ EFL 约束保持 + 光栅可追
+    # 迹（正面证据）。目标 rung 按 target_fnum == fnum_target 认定（末级由
+    # _geometric_fnum_ladder 强制精确等于 target；native≈target 时唯一级即目标级）。
+    target_rungs = [
+        r
+        for r in rungs
+        if r["target_fnum"] is not None
+        and math.isclose(float(r["target_fnum"]), fnum_target, rel_tol=1e-9)
+    ]
+    accepted_final: dict[str, object] | None = None
+    if target_rungs:
+        candidate = target_rungs[-1]
+        if (
+            candidate["status"] == "measured"
+            and candidate["fno_param_achieved"] is True
+            and candidate["aut_converged"] is True
+            and candidate["ray_traceable"] is True
+        ):
+            accepted_final = dict(candidate)
     return {
         "schema": FNO_LADDER_RESULT_SCHEMA,
         "source_zmx": Path(source_zmx).name,
@@ -1830,11 +1952,16 @@ def run_codev_target_fno_ladder(
         "target_efl_mm": target_efl_mm,
         "fnum_target": fnum_target,
         "rung_count": rung_count,
+        "fnum_tolerance_pct": fnum_tolerance_pct,
         "native_fnum_measured": native_measured,
         "rungs": rungs,
-        "final_rung_index": final["rung_index"] if final is not None else None,
-        "final": final,
-        "blocked": final is None,
+        "last_measured_rung_index": (
+            last_measured["rung_index"] if last_measured is not None else None
+        ),
+        "last_measured_rung": last_measured,
+        "target_achieved": accepted_final is not None,
+        "accepted_final": accepted_final,
+        "blocked": last_measured is None,
     }
 
 

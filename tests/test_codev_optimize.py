@@ -2150,22 +2150,50 @@ def test_measured_fnum_fail_closed_missing_or_bad() -> None:
     assert _measured_fnum({"post_aut.efl_y_mm": "4.0", "post_aut.epd_mm": "0.0"}) is None
 
 
+_LADDER_RAY_GRID_OK = {
+    "category": "ok",
+    "refl_count": 0,
+    "miss_count": 0,
+    "ray_aiming_warning": False,
+    "aperture_conflict_matched": None,
+    "excerpt": None,
+    "note": "positive evidence",
+    "normal_completion": True,
+    "abnormal_completion_matched": None,
+}
+_LADDER_RAY_GRID_TIR = {
+    "category": "TIR",
+    "refl_count": 7,
+    "miss_count": 3,
+    "ray_aiming_warning": True,
+    "aperture_conflict_matched": None,
+    "excerpt": None,
+    "note": "7 RAY ERROR: REFL occurrence(s)",
+    "normal_completion": True,
+    "abnormal_completion_matched": None,
+}
+
+
 def _fake_ladder_autovig(*, native_measured: float, rung_status: dict[int, str] | None = None):
     """Stub for codev_optimize.run_codev_target_autovig: tracks call order via
     a closure counter (index 0 = rung0/native, 1.. = ladder rungs in the
     order run_codev_target_fno_ladder issues them). rung_status maps a call
     index to a forced outcome: "error" (generic CodeVBatchError), "preflight"
     (seed-level defect, short-circuits the whole ladder), "non-finite"
-    (post_aut fields come back non-numeric). Absent -> "ok", perfectly
-    achieving whatever target_f_number was requested (native_measured for
-    rung 0's target_f_number=None)."""
+    (post_aut fields come back non-numeric), "tir" (measured + converged but
+    ray grid classified TIR — the double-false-positive shape from the Stage
+    2 evidence), "no-ray-grid" (measured but listing evidence missing),
+    "off-target" (measured F# 20% away from the requested target). Absent ->
+    "measured-ok", perfectly achieving whatever target_f_number was requested
+    (native_measured for rung 0's target_f_number=None) with a clean ray
+    grid."""
     calls = {"n": 0}
     rung_status = rung_status or {}
 
     def _run(*, target_f_number: float | None = None, **_ignored: object) -> dict[str, object]:
         idx = calls["n"]
         calls["n"] += 1
-        status = rung_status.get(idx, "ok")
+        status = rung_status.get(idx, "measured-ok")
         if status == "error":
             raise CodeVBatchError("timeout", f"rung {idx} boom")
         if status == "preflight":
@@ -2173,10 +2201,17 @@ def _fake_ladder_autovig(*, native_measured: float, rung_status: dict[int, str] 
                 "failure", "unresolved glass", details={"preflight": "unresolved-glass"}
             )
         fnum = native_measured if target_f_number is None else target_f_number
+        if status == "off-target":
+            fnum = fnum * 1.2  # 实测偏离请求 target 20%（超 8% 容差）
         if status == "non-finite":
             efl_text, epd_text = "nan", "nan"
         else:
             efl_text, epd_text = "4.0", str(4.0 / fnum)
+        ray_grid: dict[str, object] | None = dict(_LADDER_RAY_GRID_OK)
+        if status == "tir":
+            ray_grid = dict(_LADDER_RAY_GRID_TIR)
+        elif status == "no-ray-grid":
+            ray_grid = None
         return {
             "post_aut.efl_y_mm": efl_text,
             "post_aut.epd_mm": epd_text,
@@ -2187,6 +2222,7 @@ def _fake_ladder_autovig(*, native_measured: float, rung_status: dict[int, str] 
             "autovig.edge_used": "0.2",
             "autovig.converged": "1",
             "aut_error_trace": {"err_f_ratio": 0.5},
+            "ray_grid": ray_grid,
         }
 
     return _run
@@ -2212,12 +2248,18 @@ def test_fno_ladder_happy_path_climbs_and_hits_target(
     assert len(result["rungs"]) == 3  # rung0 native + 2 ladder rungs
     assert result["rungs"][0]["target_fnum"] is None
     assert result["rungs"][0]["measured_fnum"] == pytest.approx(2.0)
+    assert result["rungs"][0]["fno_param_achieved"] is None  # rung0 无目标
     assert result["rungs"][-1]["target_fnum"] == pytest.approx(1.6)
     assert result["rungs"][-1]["measured_fnum"] == pytest.approx(1.6)
     assert result["rungs"][-1]["fnum_target_deviation_pct"] == pytest.approx(0.0, abs=1e-9)
     assert result["rungs"][-1]["err_f_ratio"] == pytest.approx(0.5)
-    assert result["final"]["rung_index"] == 2
-    assert result["final_rung_index"] == 2
+    assert result["rungs"][-1]["fno_param_achieved"] is True
+    assert result["rungs"][-1]["ray_traceable"] is True
+    assert result["last_measured_rung"]["rung_index"] == 2
+    assert result["last_measured_rung_index"] == 2
+    assert result["target_achieved"] is True  # 四条件全成立
+    assert result["accepted_final"]["rung_index"] == 2
+    assert result["fnum_tolerance_pct"] == pytest.approx(8.0)
     assert result["blocked"] is False
 
 
@@ -2242,9 +2284,10 @@ def test_fno_ladder_rung_error_is_absorbed_and_climb_continues(
     assert len(result["rungs"]) == 4  # rung0 + rungs 1,2,3
     assert result["rungs"][2]["status"] == "error"
     assert result["rungs"][2]["error"]["kind"] == "timeout"
-    assert result["rungs"][3]["status"] == "ok"  # final rung still attempted and succeeds
+    assert result["rungs"][3]["status"] == "measured"  # final rung still attempted, measured
     assert result["rungs"][3]["target_fnum"] == pytest.approx(1.6)
-    assert result["final_rung_index"] == 3
+    assert result["last_measured_rung_index"] == 3
+    assert result["target_achieved"] is True  # 目标 rung 本身四条件成立
     assert result["blocked"] is False
 
 
@@ -2266,8 +2309,13 @@ def test_fno_ladder_non_finite_rung_is_fail_closed_not_estimated(
     assert result["rungs"][1]["status"] == "non-finite"
     assert result["rungs"][1]["measured_fnum"] is None
     assert result["rungs"][1]["fnum_target_deviation_pct"] is None
-    # rung0 (native) is still "ok" -> that's the final fallback, not the failed rung.
-    assert result["final_rung_index"] == 0
+    assert result["rungs"][1]["fno_param_achieved"] is None
+    # rung0 (native) is still measured -> last_measured falls back to it, but
+    # the TARGET rung itself is non-finite -> target_achieved must be False
+    # (BLOCKER-2: "爬到哪" 与 "到没到 target" 是两个问题).
+    assert result["last_measured_rung_index"] == 0
+    assert result["target_achieved"] is False
+    assert result["accepted_final"] is None
     assert result["blocked"] is False
 
 
@@ -2312,9 +2360,93 @@ def test_fno_ladder_native_rung_failure_blocks_entire_ladder(
     assert len(result["rungs"]) == 1
     assert result["rungs"][0]["status"] == "error"
     assert result["native_fnum_measured"] is None
-    assert result["final"] is None
-    assert result["final_rung_index"] is None
+    assert result["last_measured_rung"] is None
+    assert result["last_measured_rung_index"] is None
+    assert result["target_achieved"] is False
+    assert result["accepted_final"] is None
     assert result["blocked"] is True
+
+
+def test_fno_ladder_tir_rung_is_not_target_achieved(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """审查者点名的回归形态（BLOCKER-1/-2）：目标 rung 上
+    aut_converged=1 + measured_fnum≈target（参数维双达标）但光栅分类 TIR
+    ——P15 Stage 2 真机矩阵 32/42 格正是这个双重假阳性形态。target_achieved
+    必须 False，且 rung 记录里两维各自如实：fno_param_achieved=True /
+    ray_traceable=False。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "tir", 2: "tir"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["status"] == "measured"
+    assert target_rung["aut_converged"] is True  # EFL 维"达标"
+    assert target_rung["fno_param_achieved"] is True  # F# 参数维"达标"
+    assert target_rung["ray_traceable"] is False  # 但光栅 TIR
+    assert target_rung["ray_grid"]["category"] == "TIR"
+    assert result["target_achieved"] is False  # 双假阳性不放行
+    assert result["accepted_final"] is None
+    # 「爬到哪」如实：最后一个可解析 rung 仍是它
+    assert result["last_measured_rung_index"] == target_rung["rung_index"]
+
+
+def test_fno_ladder_missing_ray_grid_evidence_is_fail_closed(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """无 ray_grid 证据（清单缺失/不可读 → None）时 ray_traceable=None，
+    target_achieved 对 None 不放行（不可知≠可追迹，fail-closed）。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "no-ray-grid"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["ray_traceable"] is None
+    assert target_rung["ray_grid"] is None
+    assert result["target_achieved"] is False
+    assert result["accepted_final"] is None
+
+
+def test_fno_ladder_off_tolerance_measured_fnum_is_not_param_achieved(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """实测 F#（EFL_real/EPD_real 活算）偏离目标 20%（超 8% 几何容差）→
+    fno_param_achieved=False → target_achieved=False，即便光栅干净、EFL 收敛
+    ——「FNO 命令设定了 target」不等于「实测达值」（opt3 轮2-3 教训）。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "off-target"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["status"] == "measured"
+    assert target_rung["ray_traceable"] is True
+    assert target_rung["measured_fnum"] == pytest.approx(1.6 * 1.2)
+    assert target_rung["fno_param_achieved"] is False
+    assert result["target_achieved"] is False
 
 
 def test_fno_ladder_zero_regression_existing_autovig_untouched(
