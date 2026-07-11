@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product_name }} Batch Archive</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="/">Workbench</a>
+        <a href="/batches">Batches</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="batch-list-page result-page" data-batch-list-page aria-labelledby="batch-list-title">
+        <p class="eyebrow">P18 batch archive</p>
+        <h1 id="batch-list-title">Batches</h1>
+        <p class="batch-list-byline">
+          Night batches produced by <code>scripts/p18_night_batch.py</code> — [EXPERT] verdicts are
+          entered on each batch's detail page, never pre-filled here.
+        </p>
+
+        {% if rows %}
+          <table class="parameter-table batch-list-table" aria-label="Batch list" data-batch-list-table>
+            <thead>
+              <tr>
+                <th scope="col">Batch</th>
+                <th scope="col">Created (UTC)</th>
+                <th scope="col">Engine</th>
+                <th scope="col">Target source</th>
+                <th scope="col">Attempted / total</th>
+                <th scope="col">Succeeded</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in rows %}
+                <tr data-batch-row data-batch-id="{{ row.batch_id }}">
+                  <th scope="row"><a class="button-link" data-batch-link href="/batches/{{ row.batch_id }}"><code>{{ row.batch_id }}</code></a></th>
+                  <td>{{ row.created_at }}</td>
+                  <td>{{ row.engine }}</td>
+                  <td>{{ row.target_source }}</td>
+                  <td class="num">{{ row.attempted_count }} / {{ row.target_count }}</td>
+                  <td class="num">{{ row.success_rate_label }}</td>
+                  <td>
+                    <span class="batch-status-badge" data-batch-status="{{ row.status }}">{{ row.status_label }}</span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="analysis-empty" data-empty-batch-list>
+            No batches yet — run <code>uv run python scripts/p18_night_batch.py --engine fake --sample-n 5</code>
+            to produce one.
+          </p>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>

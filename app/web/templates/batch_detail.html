@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ product_name }} Batch {{ batch.batch_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="{{ product_name }} home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>{{ product_name }}</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="/">Workbench</a>
+        <a href="/batches">Batches</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section
+        class="batch-detail-page result-page"
+        data-batch-detail-page
+        data-batch-id="{{ batch.batch_id }}"
+        aria-labelledby="batch-detail-title"
+      >
+        <p class="eyebrow">P18 batch archive</p>
+        <h1 id="batch-detail-title"><code>{{ batch.batch_id }}</code></h1>
+
+        <section class="batch-summary" data-batch-summary aria-label="Batch summary">
+          <dl class="metrics-grid batch-metrics" aria-label="Batch counts">
+            <div>
+              <dt>Status</dt>
+              <dd><span class="batch-status-badge" data-batch-status="{{ batch.status }}">{{ batch.status_label }}</span></dd>
+            </div>
+            <div>
+              <dt>Engine</dt>
+              <dd>{{ batch.engine }}</dd>
+            </div>
+            <div>
+              <dt>Attempted / total</dt>
+              <dd data-batch-attempted>{{ attempted_count }} / {{ batch.target_count }}</dd>
+            </div>
+            <div>
+              <dt>Succeeded</dt>
+              <dd data-batch-success-rate>{{ success_rate_label }}</dd>
+            </div>
+            <div>
+              <dt>[EXPERT] verdicts recorded</dt>
+              <dd data-batch-verdict-progress>{{ verdict_progress_label }}</dd>
+            </div>
+          </dl>
+          <table class="parameter-table" aria-label="Batch metadata">
+            <tbody>
+              <tr><th scope="row">Created (UTC)</th><td>{{ batch.created_at }}</td></tr>
+              <tr><th scope="row">Updated (UTC)</th><td>{{ batch.updated_at }}</td></tr>
+              <tr><th scope="row">Target source</th><td>{{ batch.target_source }}</td></tr>
+            </tbody>
+          </table>
+          {% if batch.notes %}
+            <ul class="batch-notes">
+              {% for note in batch.notes %}<li>{{ note }}</li>{% endfor %}
+            </ul>
+          {% endif %}
+          <a class="button-link" data-export-batch-workbook href="/batches/{{ batch.batch_id }}/export.xlsx">
+            导出批次账本（.xlsx，机器列 / [EXPERT] 列分表）
+          </a>
+        </section>
+
+        <section class="batch-jobs" aria-label="Job list">
+          <div class="section-heading">
+            <p class="eyebrow">Jobs</p>
+            <h2>{{ jobs|length }} target{{ '' if jobs|length == 1 else 's' }} attempted</h2>
+          </div>
+
+          {% if jobs %}
+            <table class="parameter-table batch-jobs-table" aria-label="Job summary table" data-batch-jobs-table>
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Target</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Failure / degradation</th>
+                  <th scope="col">Candidates</th>
+                  <th scope="col">[EXPERT] verdicts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for job in jobs %}
+                  <tr data-job-row data-job-id="{{ job.job_id }}" data-job-status="{{ job.status }}">
+                    <td class="num">{{ job.target_index }}</td>
+                    <td>{{ job.target_label }}</td>
+                    <td><span class="job-status-badge" data-job-status="{{ job.status }}">{{ job.status_label }}</span></td>
+                    <td>
+                      {% if job.failure_category_label %}
+                        <span data-failure-category>{{ job.failure_category_label }}</span>
+                        <span class="value-na">{{ job.failure_message }}</span>
+                      {% elif job.degradation %}
+                        <span data-job-degradation>{{ job.degradation }}</span>
+                      {% else %}
+                        <span class="value-na">&mdash;</span>
+                      {% endif %}
+                    </td>
+                    <td class="num">
+                      {% if job.candidate_count is not none %}
+                        {{ job.candidate_count }} ({{ job.ranked_count }} ranked)
+                      {% else %}
+                        <span class="value-na">&mdash;</span>
+                      {% endif %}
+                    </td>
+                    <td class="num" data-job-verdict-progress>{{ job.verdict_recorded_count }} / {{ job.candidates|length }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="analysis-empty" data-empty-jobs>No jobs recorded for this batch yet.</p>
+          {% endif %}
+        </section>
+
+        {% for job in jobs %}
+          {% if job.candidates %}
+            <section
+              class="job-candidates"
+              data-job-candidates
+              data-job-id="{{ job.job_id }}"
+              aria-label="Candidates for {{ job.job_id }}"
+            >
+              <div class="section-heading">
+                <p class="eyebrow"><code>{{ job.job_id }}</code> &mdash; {{ job.target_label }}</p>
+                <h2>[EXPERT] verdict entry</h2>
+                <p>以下判定由资深填写：自由文本 verdict + 署名 —— AI 不代判、不预填、不默认。</p>
+              </div>
+              <table
+                class="parameter-table expert-table batch-expert-table"
+                aria-label="Candidate verdicts for {{ job.job_id }}"
+              >
+                <thead>
+                  <tr>
+                    <th scope="col">Candidate</th>
+                    <th scope="col">Mode</th>
+                    <th scope="col">Rank</th>
+                    <th scope="col">[EXPERT] verdict</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for candidate in job.candidates %}
+                    <tr data-candidate-verdict-row data-candidate-key="{{ candidate.candidate_id }}">
+                      <th scope="row"><code>{{ candidate.candidate_id }}</code></th>
+                      <td>{{ candidate.mode_label }}</td>
+                      <td>{{ candidate.rank_status }} ({{ candidate.rank_score }}, {{ candidate.coverage_pct }})</td>
+                      <td class="expert-cell">
+                        {% if candidate.verdict %}
+                          <div class="verdict-recorded" data-verdict-recorded>
+                            <p class="verdict-text">{{ candidate.verdict.verdict_text }}</p>
+                            <p class="verdict-byline">&mdash; {{ candidate.verdict.reviewer }}, {{ candidate.verdict.recorded_at }}</p>
+                            {% if candidate.verdict.note %}<p class="verdict-note">{{ candidate.verdict.note }}</p>{% endif %}
+                          </div>
+                        {% else %}
+                          <form
+                            class="verdict-form"
+                            data-verdict-form
+                            method="post"
+                            action="/batches/{{ batch.batch_id }}/jobs/{{ job.job_id }}/verdicts"
+                          >
+                            <input type="hidden" name="candidate_key" value="{{ candidate.candidate_id }}">
+                            <label>
+                              <span>Verdict (required)</span>
+                              <textarea name="verdict_text" required data-verdict-text-input></textarea>
+                            </label>
+                            <label>
+                              <span>Reviewer (required)</span>
+                              <input type="text" name="reviewer" required data-verdict-reviewer-input>
+                            </label>
+                            <label>
+                              <span>Note (optional)</span>
+                              <input type="text" name="note" data-verdict-note-input>
+                            </label>
+                            <button type="submit" data-verdict-submit>录入 [EXPERT] 判定</button>
+                          </form>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </section>
+          {% endif %}
+        {% endfor %}
+      </section>
+    </main>
+  </body>
+</html>

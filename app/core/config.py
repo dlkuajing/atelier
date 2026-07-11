@@ -46,6 +46,10 @@ class Settings(BaseSettings):
         Path("var/job-artifacts"),
         description="Persistent job artifacts root; retention/GC policy is future work.",
     )
+    batch_archive_dir: Path = Field(
+        Path("var/batch-archive"),
+        description="P18 batch archive root (batch/job/[EXPERT]-verdict JSON records).",
+    )
 
     # === Observability ===
     langfuse_host: str | None = None
