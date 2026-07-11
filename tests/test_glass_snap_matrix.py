@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
 from app.core.engines.codev_batch import CodeVBatchResult
 from app.core.engines.codev_readout import parse_codev_readout_file
+from app.core.engines.glass_snap import CatalogEntry
 from app.core.engines.glass_snap_matrix import (
     EXPERIMENTS,
     SNAPSHOT_SCHEMA,
@@ -27,7 +29,13 @@ def _candidate(tmp_path: Path, *, dotted: bool = False) -> Path:
 def _readout_runner(**kwargs):
     source = Path(kwargs["source_zmx"])
     assert not any(part.startswith(".") for part in source.parts)
-    return SimpleNamespace(readout=parse_codev_readout_file(FIXTURE))
+    fixture = Path(kwargs["work_dir"]) / "honest-dispersion-readout.tsv"
+    fixture.parent.mkdir(parents=True, exist_ok=True)
+    text = FIXTURE.read_text(encoding="utf-8")
+    for surface in (1, 4, 6, 8, 10, 12, 14, 16):
+        text = text.replace(f"surface.{surface}.vd\t0", f"surface.{surface}.vd\t55.9")
+    fixture.write_text(text, encoding="utf-8")
+    return SimpleNamespace(readout=parse_codev_readout_file(fixture))
 
 
 def _snapshot_data() -> dict[str, str]:
@@ -97,6 +105,32 @@ def test_matrix_identity_gate_withholds_all_cells(monkeypatch, tmp_path: Path) -
     assert all(row["status"].startswith("withheld:") for row in result.rows)
 
 
+def test_withheld_candidate_still_writes_out_of_tolerance_proposal_ledger(
+    monkeypatch, tmp_path: Path
+) -> None:
+    from app.core.engines import glass_snap_matrix
+
+    monkeypatch.setattr(
+        glass_snap_matrix,
+        "build_plastic_catalog",
+        lambda: (CatalogEntry("far-catalog", "FAR", "v1", 3.0, 1.0),),
+    )
+    output = tmp_path / "matrix"
+    result = run_snap_matrix(
+        [_candidate(tmp_path)],
+        output_dir=output,
+        run_codev=True,
+        readout_runner=_readout_runner,
+        batch_runner=_batch_runner,
+    )
+    row = next(row for row in result.rows if row["experiment"] == "B")
+    assert row["status"] == "withheld:snap proposal outside uncalibrated construction tolerance"
+    ledger = json.loads((output / row["evidence_dir"] / "snap-proposals.json").read_text())
+    assert ledger
+    assert {item["verdict"] for item in ledger} == {"out-of-tolerance"}
+    assert all(item["tolerance"] == 1.0 for item in ledger)
+
+
 def test_matrix_readout_failure_marks_all_cells(tmp_path: Path) -> None:
     def fail(**kwargs):
         raise RuntimeError("readout broke")
@@ -161,9 +195,22 @@ def test_e_runs_aut_while_a_does_not(tmp_path: Path) -> None:
 def test_snapshot_rmswe_failure_and_nonfinite_values_are_withheld() -> None:
     data = _snapshot_data()
     data["before-fictitious.rmswfe"] = "0"
-    data["before-fictitious.rmswfe_ok"] = "0"
+    data["before-fictitious.rmswfe_ok"] = "-1"
     data["after-snap-frozen.efl"] = "nan"
     snapshots = extract_snapshot_metrics(data)["snapshots"]
     assert snapshots[0] == {"stage": "before-fictitious", "status": "withheld", "reason": "RMSWE failed"}
     assert snapshots[1]["status"] == "withheld"
     assert "efl_mm" not in snapshots[0] and "rms_wfe_waves" not in snapshots[0]
+
+
+def test_snapshot_zero_rmswe_with_nonnegative_flag_is_legitimate() -> None:
+    data = _snapshot_data()
+    data["before-fictitious.rmswfe"] = "0"
+    data["before-fictitious.rmswfe_ok"] = "0"
+    snapshot = extract_snapshot_metrics(data)["snapshots"][0]
+    assert snapshot == {
+        "stage": "before-fictitious",
+        "status": "ok",
+        "efl_mm": 1.0,
+        "rms_wfe_waves": 0.0,
+    }

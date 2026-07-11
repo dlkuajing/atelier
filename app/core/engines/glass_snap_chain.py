@@ -217,6 +217,7 @@ def build_glass_freeze_reopt_sequence(
         "! P13 glass snap chain; NEW glass assignment/freeze grammar pending real-machine verification.",
         "OUT NO",
         f'IN CV_MACRO:ZEMAXOS_TO_CV "{Path(source_zmx).as_posix()}"',
+        *_rmswfe_function_definitions(),
         *_snapshot_block("before-fictitious", session_run_id, configuration_fingerprint),
     ]
     for proposal in accepted if apply_snaps else ():
@@ -284,17 +285,37 @@ def _snapshot_export_block(run_id: str, fingerprint: str) -> list[str]:
 
 
 def _snapshot_block(stage: str, run_id: str, fingerprint: str) -> list[str]:
-    """Structural placeholder using established EFY/RMSWE calls; values come only from CODE V."""
+    """Capture EFL and proven array-based RMSWE metrics from CODE V."""
 
     prefix = stage.replace("-", "_")
     return [
         f"! SNAPSHOT {stage} run={run_id} config={fingerprint}",
         f"^{prefix}_efl == ABSF((EFY))",
-        f"^{prefix}_rmswfe == 0",
-        f"^ok == RMSWE(1,0,60,^{prefix}_rmswfe,'NOM')",
-        f"^{prefix}_rmswfe_ok == ^ok",
-        "! RMSWE return flag export: pending real-machine macro verification",
+        f"^{prefix}_rmswfe == @p13wfe(1)",
+        f"^{prefix}_rmswfe_ok == @p13wfeok(1)",
         "! per-field/per-wavelength RMS spot, chromatic detail: pending real-machine macro verification",
+    ]
+
+
+def _rmswfe_function_definitions() -> list[str]:
+    return [
+        "FCT @p13wfe(NUM ^dummy)",
+        "LCL NUM ^dummy ^f ^ok ^rwe(10,26) ^value ^max",
+        "^max == 0",
+        "^ok == RMSWE(1,0,60,^rwe,'NOM')",
+        "IF ^ok >= 0",
+        "  FOR ^f 1 (NUM F)",
+        "    ^value == ABSF(^rwe(1,^f))",
+        "    IF ^value > ^max",
+        "      ^max == ^value",
+        "    END IF",
+        "  END FOR",
+        "END IF",
+        "END FCT ^max",
+        "FCT @p13wfeok(NUM ^dummy)",
+        "LCL NUM ^dummy ^ok ^rwe(10,26)",
+        "^ok == RMSWE(1,0,60,^rwe,'NOM')",
+        "END FCT ^ok",
     ]
 
 

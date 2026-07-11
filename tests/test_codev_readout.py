@@ -184,16 +184,16 @@ def test_parse_codev_readout_file_builds_structured_model(tmp_path: Path) -> Non
     assert readout.surfaces[0].describe()["vd_source"] == "dispersion-measured"
 
 
-def test_real_smoke_fixture_decodes_model_glass_vd() -> None:
+def test_real_smoke_fixture_does_not_decode_mangled_glass_name_as_vd() -> None:
     fixture = Path(".planning/loop/p13-smoke-2026-07-11/readout5-glasscode/atelier_codev_readout.tsv")
     readout = parse_codev_readout_file(fixture)
     surface = next(s for s in readout.surfaces if s.glass == "546000.401540")
     assert surface.nd == pytest.approx(1.546)
-    assert surface.vd == pytest.approx(40.154)
-    assert surface.vd_source == "glass-code-decoded"
+    assert surface.vd is None
+    assert surface.vd_source is None
 
 
-def test_model_glass_decode_rejects_nd_disagreement(tmp_path: Path) -> None:
+def test_model_glass_name_does_not_supply_missing_vd(tmp_path: Path) -> None:
     result_path = tmp_path / "readout.tsv"
     _write_readout_result(result_path)
     text = result_path.read_text(encoding="utf-8")
@@ -201,8 +201,9 @@ def test_model_glass_decode_rejects_nd_disagreement(tmp_path: Path) -> None:
     text = text.replace("surface.1.nd\t1.544", "surface.1.nd\t1.544")
     text = text.replace("surface.1.vd\t55.9", "surface.1.vd\t0")
     result_path.write_text(text, encoding="utf-8")
-    with pytest.raises(CodeVBatchError, match="nd disagrees"):
-        parse_codev_readout_file(result_path)
+    surface = parse_codev_readout_file(result_path).surfaces[0]
+    assert surface.vd is None
+    assert surface.vd_source is None
 
 
 def test_malformed_short_model_glass_fraction_is_not_decoded(tmp_path: Path) -> None:
@@ -213,7 +214,7 @@ def test_malformed_short_model_glass_fraction_is_not_decoded(tmp_path: Path) -> 
     text = text.replace("surface.1.vd\t55.9", "surface.1.vd\t0")
     result_path.write_text(text, encoding="utf-8")
     surface = parse_codev_readout_file(result_path).surfaces[0]
-    assert surface.vd == 0
+    assert surface.vd is None
     assert surface.vd_source is None
 
 

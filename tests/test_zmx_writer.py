@@ -118,6 +118,10 @@ def test_build_zmx_from_codev_readout_emits_zemax_tokens() -> None:
     assert "FTYP 3 0 2 2 0 0 0 2\r\n" in text
     assert "WAVM 1 0.555 1\r\n" in text
     assert "WAVM 2 0.65 0.107\r\n" in text
+    wavm_lines = [line for line in text.splitlines() if line.startswith("WAVM ")]
+    assert len(wavm_lines) == 24
+    assert wavm_lines[:2] == ["WAVM 1 0.555 1", "WAVM 2 0.65 0.107"]
+    assert wavm_lines[2:] == [f"WAVM {slot} 0.55 1" for slot in range(3, 25)]
     assert "PWAV 1\r\n" in text
     assert "SURF 0\r\n" in text
     assert "SURF 1\r\n  STOP\r\n  TYPE EVENASPH\r\n" in text

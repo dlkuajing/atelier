@@ -104,6 +104,10 @@ def test_builder_has_assign_freeze_short_aut_and_three_snapshots(tmp_path):
     assert "GLC S" not in aut
     assert "MXC 7" in sequence and "MNC 2" in sequence
     assert "RMSWE" in sequence
+    assert sequence.count("FCT @p13wfe(") == 1
+    assert sequence.count("FCT @p13wfeok(") == 1
+    assert "RMSWE(1,0,60,^rwe,'NOM')" in sequence
+    assert "before_fictitious_rmswfe == @p13wfe(1)" in sequence
     assert "pending real-machine verification" in sequence
 
 
