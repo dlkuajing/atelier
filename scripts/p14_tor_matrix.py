@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import shutil
 import sys
@@ -23,6 +24,7 @@ from app.core.engines.codev_tolerance import (  # noqa: E402
 from app.core.engines.tor_yield import (  # noqa: E402
     UNRATIFIED_TOR_YIELD_POLICY,
     compute_mc_yield,
+    mc_saturation_fraction,
 )
 
 HEADER_NOTE = (
@@ -32,8 +34,24 @@ HEADER_NOTE = (
 FIELDS = ["candidate", "variant", "source_zmx", "status", "yield", "trials", "saturation", "per_field", "tor_section", "routing_proxy_section"]
 
 
-def _rows(candidates: Sequence[Path]) -> list[dict[str, str]]:
-    return [{"candidate": p.stem, "variant": variant, "source_zmx": str(p), "status": "not-run", "yield": "unavailable", "trials": "", "saturation": "", "per_field": "", "tor_section": "true TOR only", "routing_proxy_section": "routing proxy: separate/non-comparable"} for p in candidates for variant in ("baseline-positive-control", "optimized")]
+def _pairs(entries: Sequence[str | Path]) -> list[tuple[Path, Path]]:
+    pairs = []
+    for entry in entries:
+        parts = str(entry).split("\t")
+        if len(parts) != 2 or not all(parts):
+            raise ValueError("each candidate entry must be baseline_zmx<TAB>optimized_zmx")
+        pairs.append((Path(parts[0]), Path(parts[1])))
+    return pairs
+
+
+def _rows(entries: Sequence[str | Path]) -> list[dict[str, str]]:
+    rows = []
+    for index, pair in enumerate(_pairs(entries), start=1):
+        digest = hashlib.sha256("\0".join(str(p.resolve()) for p in pair).encode()).hexdigest()[:8]
+        candidate = f"{index:03d}-{digest}"
+        for variant, source in zip(("baseline-positive-control", "optimized"), pair, strict=True):
+            rows.append({"candidate": candidate, "variant": variant, "source_zmx": str(source), "status": "not-run", "yield": "unavailable", "trials": "", "saturation": "", "per_field": "", "tor_section": "true TOR only", "routing_proxy_section": "routing proxy: separate/non-comparable"})
+    return rows
 
 
 def _write(path: Path, rows: list[dict[str, str]]) -> None:
@@ -45,9 +63,9 @@ def _write(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def plan(candidates: Sequence[Path], output: Path) -> list[dict[str, str]]:
+def plan(candidates: Sequence[str | Path], output: Path) -> list[dict[str, str]]:
     if len(candidates) < 2:
-        raise ValueError("plan requires at least two candidate ZMX paths")
+        raise ValueError("plan requires at least two candidate pairs")
     rows = _rows(candidates)
     _write(output, rows)
     return rows
@@ -57,7 +75,9 @@ def _config(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def run_matrix(candidates: Sequence[Path], output: Path, evidence_dir: Path, config_path: Path, *, run_codev: bool, tor_runner: Callable[..., Any] = run_codev_tor) -> list[dict[str, str]]:
+def run_matrix(candidates: Sequence[str | Path], output: Path, evidence_dir: Path, config_path: Path, *, run_codev: bool, tor_runner: Callable[..., Any] = run_codev_tor) -> list[dict[str, str]]:
+    if len(candidates) < 2:
+        raise ValueError("run requires at least two candidate pairs")
     cfg = _config(config_path)
     table = TorToleranceTable(tuple(cfg["tolerance_commands"]), cfg["tolerance_provenance"])
     compensators = TorCompensators(tuple(cfg["compensator_commands"]), cfg["compensator_provenance"], cfg["assembly_assumptions"])
@@ -78,9 +98,13 @@ def run_matrix(candidates: Sequence[Path], output: Path, evidence_dir: Path, con
             parsed = result.parse_result
             (cell / "parse.json").write_text(json.dumps({"status": parsed.status, "reason": parsed.reason, "declared_trials": parsed.declared_trials, "performance_rows": len(parsed.performance_rows), "monte_carlo_rows": len(parsed.monte_carlo_rows)}, indent=2), encoding="utf-8")
             derived = compute_mc_yield(parsed, UNRATIFIED_TOR_YIELD_POLICY)
-            row.update({"status": "ok" if parsed.monte_carlo_rows else f"unavailable:{parsed.reason}", "yield": "unavailable", "trials": str(parsed.declared_trials or ""), "saturation": "unavailable" if derived.saturation_fraction is None else str(derived.saturation_fraction), "per_field": "unavailable" if not derived.per_field_yield else json.dumps(derived.per_field_yield, sort_keys=True)})
+            saturation = mc_saturation_fraction(parsed)
+            row.update({"status": "ok" if parsed.monte_carlo_rows else f"unavailable:{parsed.reason}", "yield": "unavailable", "trials": str(parsed.declared_trials or ""), "saturation": "unavailable" if saturation is None else str(saturation), "per_field": "unavailable" if not derived.per_field_yield else json.dumps(derived.per_field_yield, sort_keys=True)})
         except Exception as exc:  # CLI evidence collector must preserve all remaining cells.
-            row["status"] = f"failed:run:{type(exc).__name__}"
+            details = getattr(exc, "details", {})
+            failure = {"type": type(exc).__name__, "message": str(exc), "details": details}
+            (cell / "failure.json").write_text(json.dumps(failure, indent=2, default=str), encoding="utf-8")
+            row["status"] = f"failed:run:{type(exc).__name__}:{str(exc)[:120]}"
     _write(output, rows)
     return rows
 
@@ -90,7 +114,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("plan", "run"):
         cmd = sub.add_parser(name)
-        cmd.add_argument("candidates", nargs="+", type=Path)
+        cmd.add_argument("candidates", nargs="+", help="baseline_zmx<TAB>optimized_zmx")
         cmd.add_argument("--output", type=Path, required=True)
         cmd.add_argument("--config", type=Path)
         cmd.add_argument("--evidence-dir", type=Path)
