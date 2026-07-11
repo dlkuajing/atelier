@@ -19,6 +19,7 @@ from pathlib import Path
 import openpyxl
 
 from app.core.case_library import load_case_library
+from app.core.engines.stagec_field import FieldReconstructionResult, StageCFieldEvidence
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     CandidateSet,
@@ -278,6 +279,51 @@ def _stageb_negative_candidate() -> ScoredCandidate:
     ]
     scorecard = positive.scorecard.model_copy(update={"target_deviations": deviations})
     return ScoredCandidate(generated=generated, scorecard=scorecard)
+
+
+def _stagec_offline_candidate() -> ScoredCandidate:
+    sc = _target_converged_candidate()
+    reconstruction = FieldReconstructionResult(
+        status="constructed",
+        source_path="seed.zmx",
+        output_path="temporary-stagec.zmx",
+        source_sha256_before="a" * 64,
+        source_sha256_after="a" * 64,
+        num_fields=12,
+        normalized_fractions=tuple(i / 11 for i in range(12)),
+        target_image_height_mm=3.0,
+        field_type_before=0,
+        field_type_after=3,
+        line_endings="LF",
+        vignetting_status="zero",
+        reason="offline construction only",
+    )
+    evidence = StageCFieldEvidence(
+        reconstruction_status="constructed",
+        imh_source="constructed",
+        fov_source="derived",
+        efl_constraint_status="unverified",
+        ray_metrics_status="pending",
+        real_chief_ray_status="pending",
+        rsi_status="pending",
+        target_image_height_mm=3.0,
+        nominal_image_height_mm=3.0,
+        derived_full_fov_deg=76.4,
+        measured_full_fov_deg=None,
+        reconstruction_applied=True,
+        imh_field_valid=False,
+        efl_constraint_held=False,
+        ray_metrics_valid=False,
+        note="FOV derived-only; [EXPERT] remains blank",
+    )
+    generated = GeneratedCandidate.model_validate(
+        {
+            **sc.generated.model_dump(),
+            "stagec_field_reconstruction": reconstruction.model_dump(),
+            "stagec_field_evidence": evidence.model_dump(),
+        }
+    )
+    return ScoredCandidate(generated=generated, scorecard=sc.scorecard)
 
 
 # ---------------------------------------------------------------------------
@@ -562,6 +608,35 @@ def test_bundle_zip_seq_fails_closed_without_stageb_evidence():
         readme = zf.read("README.txt").decode("utf-8")
     assert "NOT included" in readme
     assert "validated Stage B FNO-ladder evidence missing" in readme
+
+
+def test_stagec_web_xlsx_bundle_sources_are_honest_and_replay_fails_closed():
+    sc = _stagec_offline_candidate()
+    workbook = openpyxl.load_workbook(
+        io.BytesIO(
+            build_candidate_set_workbook(
+                _candidate_set(sc), job_id="stagec-offline", requirement=None
+            )
+        ),
+        read_only=True,
+        data_only=True,
+    )
+    rows = list(workbook["Candidates"].iter_rows(values_only=True))
+    header, values = rows[0], rows[1]
+    assert values[header.index("stagec_reconstruction_status")] == "constructed"
+    assert values[header.index("stagec_imh_source")] == "constructed"
+    assert values[header.index("stagec_imh_achieved")] is False
+    assert values[header.index("stagec_fov_source")] == "derived"
+    assert values[header.index("stagec_fov_deg")] == "76.400"
+    assert values[header.index("stagec_real_chief_ray_status")] == "pending"
+    assert values[header.index("stagec_rsi_status")] == "pending"
+
+    with zipfile.ZipFile(io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))) as zf:
+        assert "reproduction.seq" not in zf.namelist()
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "FOV: derived/measured only; never optimized/converged" in readme
+    assert "Stage C CODE V field syntax" in readme
+    assert "[EXPERT]" in readme
 
 
 def test_bundle_zip_seq_fails_closed_when_edge_used_nonfinite():

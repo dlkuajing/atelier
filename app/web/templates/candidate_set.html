@@ -278,6 +278,19 @@
                     <li>accepted_final.quality_note: {{ candidate.fnum_ladder.quality_note }}</li>
                   </ul>
                 </section>
+                <section class="codev-provenance" data-stagec-field-evidence data-evidence-status="{{ candidate.stagec_field.status }}" aria-label="Stage C field evidence">
+                  <h4>Stage C field evidence</h4>
+                  {% if candidate.stagec_field.status == "unavailable" %}
+                    <p>Unavailable — no Stage C field evidence was recorded.</p>
+                  {% else %}
+                    <ul>
+                      <li>IMH: source={{ candidate.stagec_field.imh_source }}, constructed-verified achieved={{ candidate.stagec_field.imh_achieved }}</li>
+                      <li>FOV: {{ candidate.stagec_field.fov_deg }}°, source={{ candidate.stagec_field.fov_source }} (derived/measured only; never optimized/converged)</li>
+                      <li>real chief ray: {{ candidate.stagec_field.real_chief_ray_status }}; RSI: {{ candidate.stagec_field.rsi_status }}</li>
+                      <li>{{ candidate.stagec_field.note }}</li>
+                    </ul>
+                  {% endif %}
+                </section>
 
                 <table class="parameter-table deviation-table" aria-label="Target deviation (5 dimensions)">
                   <thead>

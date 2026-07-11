@@ -33,6 +33,7 @@ from pydantic import (
     model_validator,
 )
 
+from app.core.engines.stagec_field import FieldReconstructionResult, StageCFieldEvidence
 from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
 
@@ -581,6 +582,12 @@ class GeneratedCandidate(BaseModel):
             "The convergence gate is derived from this structure, never supplied as a bool."
         ),
     )
+    stagec_field_reconstruction: FieldReconstructionResult | None = Field(
+        None, description="offline temporary-ZMX provenance; not real-machine evidence"
+    )
+    stagec_field_evidence: StageCFieldEvidence | None = Field(
+        None, description="closed Stage C evidence; FOV remains derived/measured, never optimized"
+    )
 
     @model_validator(mode="after")
     def _fnum_gate_requires_target_converged_mode(self) -> GeneratedCandidate:
@@ -590,6 +597,18 @@ class GeneratedCandidate(BaseModel):
                 "fnum_ladder_evidence 只允许 TARGET_CONVERGED 候选携带"
                 f"（mode={self.mode}）——RETRIEVED 不优化任何维"
             )
+        if (
+            self.stagec_field_reconstruction is not None or self.stagec_field_evidence is not None
+        ) and self.mode is not GenerationMode.TARGET_CONVERGED:
+            raise ValueError("Stage C provenance is only valid for TARGET_CONVERGED candidates")
+        if self.stagec_field_evidence is not None:
+            reconstruction = self.stagec_field_reconstruction
+            if reconstruction is None:
+                raise ValueError("Stage C evidence requires field reconstruction provenance")
+            if self.stagec_field_evidence.reconstruction_applied != (
+                reconstruction.status == "constructed"
+            ):
+                raise ValueError("Stage C evidence disagrees with reconstruction artifact")
         return self
 
     @property

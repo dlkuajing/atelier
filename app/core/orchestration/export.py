@@ -171,6 +171,16 @@ _FNUM_EVIDENCE_COLUMNS: tuple[str, ...] = (
     "fnum_accepted_quality_note",
 )
 
+_STAGEC_EVIDENCE_COLUMNS: tuple[str, ...] = (
+    "stagec_reconstruction_status",
+    "stagec_imh_source",
+    "stagec_imh_achieved",
+    "stagec_fov_source",
+    "stagec_fov_deg",
+    "stagec_real_chief_ray_status",
+    "stagec_rsi_status",
+)
+
 
 def _repeatability_row(rep: RepeatabilityMetrics) -> list[object]:
     # Same strings as the page's `_candidate_repeatability_context`.
@@ -202,6 +212,7 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
     header += ["ttl_mm", "n_pieces", "has_special_glass", "aspheric_term_count", "aspheric_surface_count", "chief_ray_angle_deg"]
     header += list(_REPEATABILITY_COLUMNS)
     header += list(_FNUM_EVIDENCE_COLUMNS)
+    header += list(_STAGEC_EVIDENCE_COLUMNS)
     ws.append(header)
 
     for sc in candidate_set.candidates:
@@ -246,6 +257,28 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
             if accepted is not None
             else "N/A",
             accepted.quality_note if accepted is not None else "N/A",
+        ]
+        stagec = gen.stagec_field_evidence
+        line += [
+            stagec.reconstruction_status if stagec is not None else "N/A",
+            stagec.imh_source if stagec is not None else "N/A",
+            stagec.image_height_achieved if stagec is not None else None,
+            stagec.fov_source if stagec is not None else "N/A",
+            (
+                fmt_float(
+                    stagec.measured_full_fov_deg
+                    if stagec.measured_full_fov_deg is not None
+                    else stagec.derived_full_fov_deg
+                )
+                if stagec is not None
+                and (
+                    stagec.measured_full_fov_deg is not None
+                    or stagec.derived_full_fov_deg is not None
+                )
+                else "N/A"
+            ),
+            stagec.real_chief_ray_status if stagec is not None else "N/A",
+            stagec.rsi_status if stagec is not None else "N/A",
         ]
         ws.append(line)
 
@@ -331,6 +364,17 @@ def _reproduction_seq_text(
     "缺失"严格区分。"""
     if sc.mode is not GenerationMode.TARGET_CONVERGED:
         return None, "not applicable (Mode1, zero optimization ran)"
+    if sc.generated.stagec_field_reconstruction is not None:
+        reconstruction = sc.generated.stagec_field_reconstruction
+        if reconstruction.status != "constructed":
+            return None, "Stage C field reconstruction is not complete"
+        # The existing sequence builder does not encode FTYP3/YFLN, and the
+        # CODE V ANG->IMG/RSI syntax is intentionally not guessed.  Shipping a
+        # Stage-B-only macro for a Stage-C candidate would be false replay.
+        return None, (
+            "Stage C CODE V field syntax and real chief-ray/RSI replay are pending machine "
+            "verification; Stage-B-only sequence withheld"
+        )
     evidence = sc.generated.fnum_ladder_evidence
     if evidence is None:
         return None, "validated Stage B FNO-ladder evidence missing"
@@ -396,6 +440,7 @@ def _bundle_readme(
         "",
     ]
     evidence = gen.fnum_ladder_evidence
+    stagec = gen.stagec_field_evidence
     accepted = evidence.accepted_final if evidence is not None else None
     lines += [
         f"fnum_ladder.target_achieved: {evidence.target_achieved if evidence else 'unavailable'}",
@@ -413,6 +458,14 @@ def _bundle_readme(
         f"accepted_final.quality_note: {accepted.quality_note if accepted else 'N/A'}",
         "",
     ]
+    if stagec is not None:
+        lines += [
+            "stagec.field_evidence: "
+            + json.dumps(stagec.model_dump(mode="json"), ensure_ascii=False, sort_keys=True),
+            "stagec.FOV: derived/measured only; never optimized/converged",
+            "stagec.[EXPERT]: no production-readiness verdict is supplied",
+            "",
+        ]
     if zmx_path is not None:
         lines += [
             f"candidate.zmx: included ({zmx_path.name}), delivered-payload prescription.",
