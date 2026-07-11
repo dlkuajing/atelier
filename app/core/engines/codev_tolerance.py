@@ -4,14 +4,22 @@ from __future__ import annotations
 
 import csv
 import math
+import os
 import re
-from collections.abc import Sequence
+import subprocess
+import time
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
-from app.core.engines.codev_batch import ensure_buf_exp_safe_filename, ensure_codev_safe_input_path
+from app.core.engines.codev_batch import (
+    DEFAULT_CODEV_EXECUTABLE,
+    CodeVBatchError,
+    ensure_buf_exp_safe_filename,
+    ensure_codev_safe_input_path,
+)
 
 TorMetric = Literal["mtf", "rms"]
 _COMMAND_PREFIX = re.compile(
@@ -77,6 +85,89 @@ class TorParseResult:
     declared_trials: int | None = None
     performance_rows: tuple[TorPerformanceRow, ...] = ()
     monte_carlo_rows: tuple[TorMonteCarloRow, ...] = ()
+
+
+@dataclass(frozen=True)
+class CodeVTorRunResult:
+    executable: Path
+    sequence_path: Path
+    performance_export_path: Path
+    monte_carlo_export_path: Path
+    returncode: int
+    duration_seconds: float
+    parse_result: TorParseResult
+
+
+def _default_tor_runner(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(command, capture_output=True, text=True, check=False, **kwargs)
+
+
+def _reject_dotted_components(path: Path, name: str) -> None:
+    """CODE V can misparse dots in path components; P13's guard is not on this branch."""
+    if any("." in part for part in path.resolve().parts[:-1]):
+        raise ValueError(f"{name} contains a dotted directory component unsafe for CODE V")
+
+
+def run_codev_tor(
+    *,
+    source_zmx: Path | str,
+    work_dir: Path | str,
+    tolerance_table: TorToleranceTable,
+    compensators: TorCompensators,
+    monte_carlo: TorMonteCarlo,
+    metric: TorMetric,
+    mtf_frequency_lp_per_mm: float | None = None,
+    mtf_azimuth_deg: float = 90.0,
+    executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
+    timeout_seconds: float = 120.0,
+    runner: Callable[..., Any] = _default_tor_runner,
+) -> CodeVTorRunResult:
+    """Build and run the two-export TOR contract; return codes 0 and 1 are normal."""
+    source = Path(source_zmx)
+    work = Path(work_dir)
+    _reject_dotted_components(source, "source_zmx")
+    _reject_dotted_components(work / "placeholder", "work_dir")
+    work.mkdir(parents=True, exist_ok=True)
+    sequence_path = work / "atelier_tor.seq"
+    per_path = work / "atelier_tor_per.tsv"
+    mc_path = work / "atelier_tor_mc.tsv"
+    for path in (sequence_path, per_path, mc_path):
+        ensure_buf_exp_safe_filename(path)
+    sequence_path.write_text(
+        build_codev_tor_sequence(
+            source_path=source,
+            performance_result_path=per_path,
+            monte_carlo_result_path=mc_path,
+            tolerance_table=tolerance_table,
+            compensators=compensators,
+            monte_carlo=monte_carlo,
+            metric=metric,
+            mtf_frequency_lp_per_mm=mtf_frequency_lp_per_mm,
+            mtf_azimuth_deg=mtf_azimuth_deg,
+        ),
+        encoding="ascii",
+    )
+    started = time.monotonic()
+    try:
+        process = runner(
+            [str(Path(executable)), "/B", sequence_path.name],
+            cwd=work,
+            timeout=timeout_seconds,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise CodeVBatchError("timeout", "CODE V TOR run exceeded timeout", details={"timeout_seconds": timeout_seconds}) from exc
+    duration = time.monotonic() - started
+    returncode = int(process.returncode)
+    if returncode not in {0, 1}:
+        raise CodeVBatchError(
+            "failure",
+            "CODE V TOR batch returned an unsupported return code",
+            details={"returncode": returncode, "stderr": getattr(process, "stderr", "")[-4000:]},
+        )
+    parsed = parse_codev_tor_exports(per_path, mc_path)
+    return CodeVTorRunResult(
+        Path(executable), sequence_path, per_path, mc_path, returncode, duration, parsed
+    )
 
 
 def _quote_codev_path(path: Path) -> str:

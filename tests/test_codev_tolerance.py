@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from app.core.engines.codev_batch import CodeVBatchError
 from app.core.engines.codev_tolerance import (
     TorCompensators,
     TorMonteCarlo,
@@ -11,7 +12,9 @@ from app.core.engines.codev_tolerance import (
     TorToleranceTable,
     build_codev_tor_sequence,
     parse_codev_tor_exports,
+    run_codev_tor,
 )
+from app.core.engines.tor_yield import UNRATIFIED_TOR_YIELD_POLICY, TorYieldPolicy, compute_mc_yield
 
 FIXTURES = Path(__file__).parent / "data" / "codev_tor"
 REAL_PER = next(FIXTURES.glob("real_sample_per_*.txt"))
@@ -145,3 +148,37 @@ def test_parser_rejects_nonfinite_mc_value(tmp_path: Path) -> None:
     mc.write_text(REAL_MC.read_text(encoding="utf-8").replace("0.186827", "nan"), encoding="utf-8")
     result = parse_codev_tor_exports(REAL_PER, mc)
     assert "must be finite" in result.reason
+
+
+def test_tor_runner_accepts_rc1_and_parses_both_exports(tmp_path: Path) -> None:
+    def fake(command, **kwargs):
+        (Path(kwargs["cwd"]) / "atelier_tor_per.tsv").write_bytes(REAL_PER.read_bytes())
+        (Path(kwargs["cwd"]) / "atelier_tor_mc.tsv").write_bytes(REAL_MC.read_bytes())
+        return type("P", (), {"returncode": 1, "stderr": ""})()
+    result = run_codev_tor(source_zmx=REAL_ZMX, work_dir=tmp_path / "tor", runner=fake, tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100.0)
+    assert result.returncode == 1
+    assert len(result.parse_result.monte_carlo_rows) == 60
+
+
+def test_tor_runner_missing_mc_is_unavailable(tmp_path: Path) -> None:
+    def fake(command, **kwargs):
+        (Path(kwargs["cwd"]) / "atelier_tor_per.tsv").write_bytes(REAL_PER.read_bytes())
+        return type("P", (), {"returncode": 0, "stderr": ""})()
+    result = run_codev_tor(source_zmx=REAL_ZMX, work_dir=tmp_path / "tor", runner=fake, tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100)
+    assert "missing" in result.parse_result.reason
+
+
+def test_tor_runner_rc2_errors(tmp_path: Path) -> None:
+    with pytest.raises(CodeVBatchError):
+        run_codev_tor(source_zmx=REAL_ZMX, work_dir=tmp_path / "tor", runner=lambda *a, **k: type("P", (), {"returncode": 2, "stderr": "bad"})(), tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100)
+
+
+def test_tor_yield_default_off_and_ratified_math() -> None:
+    parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
+    assert compute_mc_yield(parsed, UNRATIFIED_TOR_YIELD_POLICY).status == "unavailable"
+    measured = compute_mc_yield(parsed, TorYieldPolicy("MTF", 0.1, "min", True, "Tolerancing.pdf + probe"))
+    assert measured.status == "measured"
+    assert measured.trials == 20
+    assert measured.yield_fraction == pytest.approx(0.0)
+    assert measured.per_field_yield["z1:f1"] == pytest.approx(0.9)
+    assert measured.saturation_fraction == pytest.approx(58 / 60)
