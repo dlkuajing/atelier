@@ -226,3 +226,17 @@ def test_build_zmx_from_codev_readout_rejects_nonzero_h_j_asphere_terms() -> Non
 
     assert error.value.args[1]["surface_index"] == 1
     assert error.value.args[1]["unsupported_coefficients"] == {"H": 1.0e-14}
+
+
+def test_unknown_dispersion_keeps_glass_as_vd_zero_not_air() -> None:
+    """vd=None (single-wavelength CODE V import, fail-closed since PR#70) must
+    NOT drop the GLAS line: an all-air rebuild ingests as -inf EFL (real-machine
+    regression 2026-07-11, US8310767B2 both configs). Zemax convention for
+    "index measured, dispersion unspecified" is vd=0."""
+    readout = _manual_readout()
+    unknown_vd = replace(readout.surfaces[0], vd=None)
+    text = build_zmx_from_codev_readout(
+        replace(readout, surfaces=(unknown_vd, *readout.surfaces[1:]))
+    )
+    glas = [line for line in text.splitlines() if line.lstrip().startswith("GLAS")]
+    assert any(" 1.5168 0 " in line for line in glas), glas

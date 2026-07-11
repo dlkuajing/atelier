@@ -267,8 +267,16 @@ def _append_even_asphere_terms(lines: list[str], surface: CodeVSurfaceReadout) -
 def _glass_line(surface: CodeVSurfaceReadout) -> str | None:
     nd = surface.nd
     vd = surface.vd
-    if nd is None or vd is None or not math.isfinite(nd) or not math.isfinite(vd):
+    if nd is None or not math.isfinite(nd):
         return None
+    # Unknown dispersion is NOT air: single-wavelength CODE V imports (short
+    # WAVM tables, see the LF/WAVM dossier) yield vd=None after PR#70 made vd
+    # fail-closed. Dropping the whole GLAS here rebuilt every such candidate
+    # as an all-air system (-inf EFL, real-machine regression 2026-07-11).
+    # Zemax's own convention for "index known, dispersion unspecified" is
+    # vd=0 — keep the measured nd, write vd 0.
+    if vd is None or not math.isfinite(vd):
+        vd = 0.0
     if nd <= 1.000001:
         return None
     name = _optional_glass_name(surface.glass)
