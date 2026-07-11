@@ -246,16 +246,20 @@ def build_glass_freeze_reopt_sequence(
     lines += _snapshot_block("after-snap-frozen", session_run_id, configuration_fingerprint)
     if run_aut:
         lines += [
+            # Asphere A..G variable flags are LENS-DATA commands and must sit
+            # at command level BEFORE the AUT block (codev_optimize's proven
+            # `_extra_dof_block` ordering). Placing them inside AUT is
+            # rejected on the real machine: "ERROR - Invalid constraint AC"
+            # (matrix v5 C/E/F arms, 2026-07-11).
+            "! GLC intentionally absent: glass remains frozen",
+            "FOR ^s 1 (NUM S)",
+            '  IF (TYP SUR S^s) = "ASP"',
+            *[f"    {c}C S^s 0" for c in "ABCDEFG"],
+            "  END IF",
+            "END FOR",
             "AUT",
             "  SUR N",
             "  CHG SA",
-            "  ! GLC intentionally absent: glass remains frozen",
-            "  ! Existing authorized ASP A..G DOF only; pending real-machine verification",
-            "  FOR ^s 1 (NUM S)",
-            '    IF (TYP SUR S^s) = "ASP"',
-            *[f"      {c}C S^s 0" for c in "ABCDEFG"],
-            "    END IF",
-            "  END FOR",
             f"  MXC {max_cycles}",
             f"  MNC {min_cycles}",
             "  IMP 0.001",
