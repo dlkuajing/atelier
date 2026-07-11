@@ -1774,9 +1774,15 @@ def _fno_ladder_rung_from_data(
         "aut_converged": str(data.get("aut_converged")) == "1",
         "autovig.edge_used": data.get("autovig.edge_used"),
         "autovig.converged": data.get("autovig.converged"),
-        # 渐晕 provenance 单一读取点：未经 ray-retry 时 = autovig.edge_used 原
-        # 值；ray-retry 采纳后 = 重试的显式渐晕 edge（见 _ray_aware_retry）。
-        # 资深读 RMS/WFE 必须连同此列（RMS 在裁瞳上测=偏乐观）。
+        # Additive schema 演化（对抗审查 MAJOR 裁决，沿仓库 additive 先例）：
+        # effective_edge_used / ray_retry 两字段**无条件恒在**（含 ray-retry
+        # 未启用的默认路径）——旧键与旧值不变，新键 additive，见
+        # test_fno_ladder_rung_schema_is_additive_over_pilot_contract。刻意不
+        # 做"条件出现"（条件字段更伤消费者）。
+        # effective_edge_used = 渐晕 provenance 单一读取点：未经 ray-retry 时
+        # = autovig.edge_used 原值；ray-retry 采纳后 = 重试的显式渐晕 edge
+        # （见 _ray_aware_retry）。资深读 RMS/WFE 必须连同此列（RMS 在裁瞳上
+        # 测=偏乐观）。
         "effective_edge_used": data.get("autovig.edge_used"),
         "ray_retry": None,
         "error": None,
@@ -1842,6 +1848,10 @@ def _ray_aware_retry(
         rung 数据 + ``ray_retry.accepted_edge=None``，rung 如实不被接受
         （``ray_traceable`` 维持 False，``target_achieved`` 不放行）。
     """
+    # ray_retry 记录在三个出口分支（采纳 / 耗尽 / 无法尝试）保持同一键集
+    # {triggered, accepted_edge, attempts, quality_note, skip_reason}（对抗审
+    # 查 MINOR 修复）：quality_note 三分支恒在（消费者无需按分支猜键）；
+    # skip_reason 仅在"根本没尝试"时非 None——与"尝试了但耗尽"稳定区分。
     attempts: list[dict[str, object]] = []
     if not num_fields or num_fields <= 1:
         # 无场数（rung 数据里学不到）或单场种子：离轴渐晕 profile 无从构造，
@@ -1851,7 +1861,12 @@ def _ray_aware_retry(
             "triggered": True,
             "accepted_edge": None,
             "attempts": attempts,
-            "note": "num_fields unavailable or single-field seed; cannot build off-axis profile",
+            "quality_note": (
+                "retry not attempted; rung not accepted, original autovig-stage data kept"
+            ),
+            "skip_reason": (
+                "num_fields unavailable or single-field seed; cannot build off-axis profile"
+            ),
         }
         return out
     for edge in retry_vig_ladder:
@@ -1897,10 +1912,20 @@ def _ray_aware_retry(
                     f"(off-axis edge={edge:g}) — optimistic vs full pupil; "
                     "read together with effective_edge_used"
                 ),
+                "skip_reason": None,
             }
             return accepted
     out = dict(rung)
-    out["ray_retry"] = {"triggered": True, "accepted_edge": None, "attempts": attempts}
+    out["ray_retry"] = {
+        "triggered": True,
+        "accepted_edge": None,
+        "attempts": attempts,
+        "quality_note": (
+            "exhausted retry ladder without an EFL-hit AND ray-clean edge; "
+            "rung not accepted, original autovig-stage data kept"
+        ),
+        "skip_reason": None,
+    }
     return out
 
 
@@ -1972,18 +1997,28 @@ def run_codev_target_fno_ladder(
     F#-rung 之间的消歧则由子目录边界保证，不需要改动
     ``run_codev_target_autovig`` 本体。
 
-    ``ray_retry_vig_ladder``（加法式，默认 ``None`` = 不启用 = 现行为零回
-    归）：ray-aware 渐晕重试（真机试点 ladder-pilot-2026-07-11 实锤的引擎缺
-    口——autovig 只治"EFL 不收敛"，不治"EFL 收敛但光栅带伤"，全部试点 rung
-    edge=0 即证）。启用后，任一 rung 满足 **EFL-hit（aut_converged）AND
+    ``ray_retry_vig_ladder``（默认 ``None`` = 不启用）：ray-aware 渐晕重试
+    （真机试点 ladder-pilot-2026-07-11 实锤的引擎缺口——autovig 只治"EFL 不
+    收敛"，不治"EFL 收敛但光栅带伤"，全部试点 rung edge=0 即证）。
+
+    兼容性声明（对抗审查 MAJOR 裁决，沿仓库 additive-schema 先例）：默认
+    ``None`` 时为**行为零回归**（不发起任何重试 CODE V 调用、既有键值全部
+    不变），但 rung 记录 schema 为 **additive 演化**——新增
+    ``effective_edge_used``（默认路径下恒等于 ``autovig.edge_used``）与
+    ``ray_retry``（默认路径下恒为 ``None``）两个**无条件恒在**的字段，刻意
+    不做条件出现（条件字段更伤消费者）。旧消费者按旧键读取不受影响，见
+    ``test_fno_ladder_rung_schema_is_additive_over_pilot_contract``。
+
+    启用后，任一 rung 满足 **EFL-hit（aut_converged）AND
     ray_traceable is False**（光栅有确证病灶；``None``=无证据不烧真机盲试）
     时，按该阶梯逐级用显式离轴渐晕因子（``_autovig_profile``，opt3 验证杠杆
     VUY/VLY/VUX/VLX，F# 不变）重跑该 rung，接受判据 = **EFL-hit AND
     ray-clean**，命中即停；爬满不中则保留原数据、rung 如实不被接受。建议值
     ``RAY_RETRY_VIG_LADDER``（0.2→0.5，opt3 实测有效带）。重试证据全部进
-    rung 记录的 ``ray_retry`` dict（edges 尝试轨迹/accepted_edge/quality
-    note），采纳数据的真实渐晕在 ``effective_edge_used``（渐晕 provenance
-    单一读取点；RMS 在裁瞳上测=偏乐观，资深连列读）。
+    rung 记录的 ``ray_retry`` dict（统一键集 triggered/attempts/
+    accepted_edge/quality_note/skip_reason，三出口分支同构），采纳数据的真
+    实渐晕在 ``effective_edge_used``（渐晕 provenance 单一读取点；RMS 在裁
+    瞳上测=偏乐观，资深连列读）。
 
     Returns:
         {"schema": FNO_LADDER_RESULT_SCHEMA, "source_zmx": ..., "stage": ...,
