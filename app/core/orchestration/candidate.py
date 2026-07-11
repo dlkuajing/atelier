@@ -202,10 +202,9 @@ class RepeatabilityMetrics(BaseModel):
     （`score_candidate` 的 `repeat_rms_samples_um`/`repeat_wfe_samples_waves`
     关键字参数，见 `scorecard.py`）。
 
-    本铲（P17-3）只交付这份 schema + fail-closed 默认路径 + mock 链测试；
-    真机多跑执行引擎（重复调用 CODE V 拿分布）不在本铲范围，由
-    `orchestrator.orchestrate` 的 `repeat_runs` 参数另行排窗接入（见其
-    docstring）。历史依据：opt3 handoff 限制#8 记录候选2 三跑 RMS
+    P17-6 已把 `orchestrator.orchestrate(repeat_runs=2..3)` 接到 Mode3 的
+    严格串行 CODE V 重跑；Mode1 检索仍保持 run_count=1/unavailable。
+    历史依据：opt3 handoff 限制#8 记录候选2 三跑 RMS
     12.6/71/188µm——单次跑数字可能极不具代表性，这正是加这维的动机。
 
     无 verdict 字段（同 `ScorecardRow` 诚实不变量2）——纯分布量化数据，"跑了几次

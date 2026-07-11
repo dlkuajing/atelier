@@ -681,7 +681,7 @@ def score_candidate(
 
     `repeat_rms_samples_um` / `repeat_wfe_samples_waves` (Phase 17 子项3):
     optional cross-run repeat-verification samples, empty by default — a
-    single `orchestrate()` pass (`repeat_runs=1`, today's only wired path)
+    single `orchestrate()` pass (`repeat_runs=1`)
     never supplies these, so `repeatability` stays the honest
     `run_count=1`/`unavailable` default for every existing caller (zero
     behavior change). See `_repeatability` / `candidate.py
