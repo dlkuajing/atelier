@@ -198,6 +198,8 @@ def build_glass_freeze_reopt_sequence(
     configuration_fingerprint: str,
     max_cycles: int = UNVALIDATED_DEFAULT_SHORT_AUT_MAX_CYCLES,
     min_cycles: int = UNVALIDATED_DEFAULT_SHORT_AUT_MIN_CYCLES,
+    apply_snaps: bool = True,
+    run_aut: bool = True,
 ) -> str:
     """Build only: catalog assignment/freeze/AUT grammar awaits real-machine verification."""
 
@@ -207,7 +209,7 @@ def build_glass_freeze_reopt_sequence(
         raise ValueError("cycle budget must satisfy 1 <= min_cycles <= max_cycles")
     ensure_codev_safe_input_path(source_zmx, role="source_zmx")
     accepted = [p for p in proposals if p.disposition == "proposed" and p.result.entry]
-    if len(accepted) != len(proposals) or not accepted:
+    if apply_snaps and (len(accepted) != len(proposals) or not accepted):
         raise ValueError("every material identity needs one in-tolerance proposal")
     if len({p.region.region_id for p in accepted}) != len(accepted):
         raise ValueError("each material identity must appear exactly once")
@@ -217,7 +219,7 @@ def build_glass_freeze_reopt_sequence(
         f'IN CV_MACRO:ZEMAXOS_TO_CV "{Path(source_zmx).as_posix()}"',
         *_snapshot_block("before-fictitious", session_run_id, configuration_fingerprint),
     ]
-    for proposal in accepted:
+    for proposal in accepted if apply_snaps else ():
         entry = proposal.result.entry
         if entry is None:  # Defensive: accepted filter above should make this unreachable.
             raise ValueError("accepted proposal is missing its catalog entry")
@@ -232,22 +234,26 @@ def build_glass_freeze_reopt_sequence(
             # The matrix C-arm readback proves glass stayed frozen.
         ]
     lines += _snapshot_block("after-snap-frozen", session_run_id, configuration_fingerprint)
+    if run_aut:
+        lines += [
+            "AUT",
+            "  SUR N",
+            "  CHG SA",
+            "  ! GLC intentionally absent: glass remains frozen",
+            "  ! Existing authorized ASP A..G DOF only; pending real-machine verification",
+            "  FOR ^s 1 (NUM S)",
+            '    IF (TYP SUR S^s) = "ASP"',
+            *[f"      {c}C S^s 0" for c in "ABCDEFG"],
+            "    END IF",
+            "  END FOR",
+            f"  MXC {max_cycles}",
+            f"  MNC {min_cycles}",
+            "  IMP 0.001",
+            "GO",
+        ]
     lines += [
-        "AUT",
-        "  SUR N",
-        "  CHG SA",
-        "  ! GLC intentionally absent: glass remains frozen",
-        "  ! Existing authorized ASP A..G DOF only; pending real-machine verification",
-        "  FOR ^s 1 (NUM S)",
-        '    IF (TYP SUR S^s) = "ASP"',
-        *[f"      {c}C S^s 0" for c in "ABCDEFG"],
-        "    END IF",
-        "  END FOR",
-        f"  MXC {max_cycles}",
-        f"  MNC {min_cycles}",
-        "  IMP 0.001",
-        "GO",
         *_snapshot_block("after-snap-reopt", session_run_id, configuration_fingerprint),
+        *_snapshot_export_block(session_run_id, configuration_fingerprint),
         f'BUF EXP B1 "{Path(result_path).as_posix()}"',
         "BUF DEL B1",
         "OUT YES",
@@ -255,6 +261,26 @@ def build_glass_freeze_reopt_sequence(
         "",
     ]
     return "\n".join(lines)
+
+
+def _snapshot_export_block(run_id: str, fingerprint: str) -> list[str]:
+    lines = ["^row == 1"]
+    for key, value in (
+        ("schema", '"atelier-glass-snap-snapshots-v1"'),
+        ("status", '"ok"'),
+        ("session_run_id", f'"{run_id}"'),
+        ("configuration_fingerprint", f'"{fingerprint}"'),
+    ):
+        lines += [f'BUF PUT B1 I^row J1 "{key}"', f"BUF PUT B1 I^row J2 {value}", "^row == ^row+1"]
+    for stage in ("before_fictitious", "after_snap_frozen", "after_snap_reopt"):
+        for metric in ("efl", "rmswfe"):
+            key = f"{stage.replace('_', '-')}.{metric}"
+            lines += [
+                f'BUF PUT B1 I^row J1 "{key}"',
+                f"BUF PUT B1 I^row J2 ^{stage}_{metric}",
+                "^row == ^row+1",
+            ]
+    return lines
 
 
 def _snapshot_block(stage: str, run_id: str, fingerprint: str) -> list[str]:
@@ -375,4 +401,11 @@ def _positive_finite(value: float | None) -> bool:
 
 
 def _valid_nd_vd(nd: float | None, vd: float | None) -> bool:
-    return nd is not None and vd is not None and math.isfinite(nd) and math.isfinite(vd) and nd > 1 and vd > 0
+    return (
+        nd is not None
+        and vd is not None
+        and math.isfinite(nd)
+        and math.isfinite(vd)
+        and nd > 1
+        and vd > 0
+    )

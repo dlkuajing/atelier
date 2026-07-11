@@ -40,14 +40,15 @@ print("step 2: material claims:", len(claims))
 identity = build_material_region_identities(claims)
 print("  regions:", len(identity.regions), "withheld:", identity.withheld_reasons)
 if not identity.writable:
-    print("IDENTITY-WITHHELD — cannot proceed"); sys.exit(2)
+    print("IDENTITY-WITHHELD — cannot proceed")
+    sys.exit(2)
 
 catalog = build_plastic_catalog()
 proposals = propose_material_snaps(identity, catalog, tolerance=0.05, disp_factor=1.0)
 for p in proposals:
     e = p.result.entry
     print(f"  region {p.region.region_id} S{p.region.start_surface}: {p.disposition}"
-          f" -> {(e.glass_name + ' d=%.5f' % p.result.distance) if e else 'fictitious-kept'}")
+          f" -> {(e.glass_name + f' d={p.result.distance:.5f}') if e else 'fictitious-kept'}")
 if any(p.disposition != "proposed" for p in proposals):
     print("NOTE: some regions kept fictitious; freeze sequence needs all proposed — smoke uses tolerance=0.05 (uncalibrated, smoke only)")
     proposals = tuple(p for p in proposals if p.disposition == "proposed")
@@ -80,9 +81,9 @@ lis = sorted(OUT.glob("*.lis"), key=lambda p: p.stat().st_mtime, reverse=True)
 if lis:
     text = lis[0].read_bytes().decode("ascii", errors="replace")
     import re
-    errs = [l for l in text.splitlines() if re.search(r"ERROR|WARNING - Sequence aborted|not allowed|Syntax", l)]
+    errs = [line for line in text.splitlines() if re.search(r"ERROR|WARNING - Sequence aborted|not allowed|Syntax", line)]
     print("step 5: listing errors/aborts:", len(errs))
-    for l in errs[:12]:
-        print("   ", l.strip())
+    for line in errs[:12]:
+        print("   ", line.strip())
 res = OUT / "freeze_result.txt"
-print("result file:", "EXISTS %d bytes" % res.stat().st_size if res.exists() else "MISSING")
+print("result file:", f"EXISTS {res.stat().st_size} bytes" if res.exists() else "MISSING")
