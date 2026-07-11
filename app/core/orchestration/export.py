@@ -20,6 +20,7 @@ num_fields、effective_edge_used）。证据缺失、未达标或与批 target �
 
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 import math
@@ -32,6 +33,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from app.core.case_library import load_case_library
 from app.core.engines.codev_optimize import _autovig_profile, build_codev_target_sequence
+from app.core.engines.stagec_field import validate_reconstructed_field_artifact
 from app.core.orchestration.candidate import (
     CandidateSet,
     GenerationMode,
@@ -171,6 +173,18 @@ _FNUM_EVIDENCE_COLUMNS: tuple[str, ...] = (
     "fnum_accepted_quality_note",
 )
 
+_STAGEC_EVIDENCE_COLUMNS: tuple[str, ...] = (
+    "stagec_machine_execution_status",
+    "stagec_reconstruction_status",
+    "stagec_imh_source",
+    "stagec_imh_achieved",
+    "stagec_target_efl_mm",
+    "stagec_fov_source",
+    "stagec_fov_deg",
+    "stagec_real_chief_ray_status",
+    "stagec_rsi_status",
+)
+
 
 def _repeatability_row(rep: RepeatabilityMetrics) -> list[object]:
     # Same strings as the page's `_candidate_repeatability_context`.
@@ -202,6 +216,7 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
     header += ["ttl_mm", "n_pieces", "has_special_glass", "aspheric_term_count", "aspheric_surface_count", "chief_ray_angle_deg"]
     header += list(_REPEATABILITY_COLUMNS)
     header += list(_FNUM_EVIDENCE_COLUMNS)
+    header += list(_STAGEC_EVIDENCE_COLUMNS)
     ws.append(header)
 
     for sc in candidate_set.candidates:
@@ -247,6 +262,32 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
             else "N/A",
             accepted.quality_note if accepted is not None else "N/A",
         ]
+        stagec = gen.stagec_field_evidence
+        line += [
+            stagec.machine_execution_status if stagec is not None else "N/A",
+            stagec.reconstruction_status if stagec is not None else "N/A",
+            stagec.imh_source if stagec is not None else "N/A",
+            stagec.image_height_achieved if stagec is not None else None,
+            fmt_float(stagec.target_efl_mm)
+            if stagec is not None and stagec.target_efl_mm is not None
+            else "N/A",
+            stagec.fov_source if stagec is not None else "N/A",
+            (
+                fmt_float(
+                    stagec.measured_full_fov_deg
+                    if stagec.measured_full_fov_deg is not None
+                    else stagec.derived_full_fov_deg
+                )
+                if stagec is not None
+                and (
+                    stagec.measured_full_fov_deg is not None
+                    or stagec.derived_full_fov_deg is not None
+                )
+                else "N/A"
+            ),
+            stagec.real_chief_ray_status if stagec is not None else "N/A",
+            stagec.rsi_status if stagec is not None else "N/A",
+        ]
         ws.append(line)
 
 
@@ -274,7 +315,7 @@ def build_candidate_set_workbook(
 # ---------------------------------------------------------------------------
 
 
-def _resolve_candidate_zmx_path(sc: ScoredCandidate):
+def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
     """Resolve the candidate's own delivered-payload ZMX under the
     persistent `ZMX_AMMO_DIR` — mode-agnostic by design (see module
     docstring "已知限制"): real today for `RETRIEVED` candidates, will start
@@ -282,6 +323,72 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
     generators.py-side persistence gap is closed, with zero changes needed
     here. `None` when the metadata is missing or the file isn't actually
     there (fail closed, never fabricates a path)."""
+    reconstruction = sc.generated.stagec_field_reconstruction
+    if reconstruction is not None:
+        if target.efl_mm is None or not math.isclose(
+            target.efl_mm,
+            reconstruction.target_efl_mm,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ) or target.image_height_mm is None or not math.isclose(
+            target.image_height_mm,
+            reconstruction.target_image_height_mm,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            return None
+        evidence = sc.generated.stagec_field_evidence
+        if reconstruction.status != "constructed" or reconstruction.output_path is None:
+            return None
+        if evidence is None or evidence.image_height_achieved or (
+            evidence.target_image_height_mm != reconstruction.target_image_height_mm
+            or evidence.target_efl_mm != reconstruction.target_efl_mm
+            or evidence.nominal_image_height_mm != reconstruction.target_image_height_mm
+        ):
+            return None
+        if reconstruction.num_fields is None:
+            return None
+        source = Path(reconstruction.source_path)
+        if not source.is_file() or (
+            hashlib.sha256(source.read_bytes()).hexdigest()
+            != reconstruction.source_sha256_before
+        ):
+            return None
+        path = Path(reconstruction.output_path)
+        if not path.is_file() or reconstruction.output_sha256 is None:
+            return None
+        try:
+            parsed = validate_reconstructed_field_artifact(
+                path,
+                expected_num_fields=reconstruction.num_fields,
+                expected_fractions=reconstruction.normalized_fractions,
+                target_image_height_mm=reconstruction.target_image_height_mm,
+            )
+        except (OSError, ValueError):
+            return None
+        if parsed.sha256 != reconstruction.output_sha256:
+            return None
+        optimized_path = sc.generated.optimized_zmx_path
+        if optimized_path is None or Path(optimized_path).resolve() != path.resolve():
+            return None
+        metadata = sc.generated.payload.metadata
+        if metadata is None or metadata.image_height_mm != reconstruction.target_image_height_mm:
+            return None
+        if not math.isclose(
+            metadata.nominal_efl_mm,
+            reconstruction.target_efl_mm,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            return None
+        expected_fov = 2 * math.degrees(
+            math.atan(reconstruction.target_image_height_mm / reconstruction.target_efl_mm)
+        )
+        if evidence.derived_full_fov_deg is None or not math.isclose(
+            evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
+        ) or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12):
+            return None
+        return path
     optimized_path = sc.generated.optimized_zmx_path
     if optimized_path:
         path = Path(optimized_path)
@@ -291,6 +398,18 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate):
         return None
     path = ZMX_AMMO_DIR / metadata.source_zmx
     return path if path.is_file() else None
+
+
+def _candidate_zmx_unavailable_reason(sc: ScoredCandidate) -> str:
+    if sc.generated.stagec_field_reconstruction is not None:
+        return (
+            "Stage C source/output hash, target/profile, or candidate payload path is missing "
+            "or inconsistent; candidate.zmx withheld"
+        )
+    return (
+        "this candidate's ZMX is not resolvable on disk; persistence failure is recorded "
+        "and export fails closed"
+    )
 
 
 def _resolve_seed_zmx_path(sc: ScoredCandidate):
@@ -331,6 +450,17 @@ def _reproduction_seq_text(
     "缺失"严格区分。"""
     if sc.mode is not GenerationMode.TARGET_CONVERGED:
         return None, "not applicable (Mode1, zero optimization ran)"
+    if sc.generated.stagec_field_reconstruction is not None:
+        reconstruction = sc.generated.stagec_field_reconstruction
+        if reconstruction.status != "constructed":
+            return None, "Stage C field reconstruction is not complete"
+        # The existing sequence builder does not encode FTYP3/YFLN, and the
+        # CODE V ANG->IMG/RSI syntax is intentionally not guessed.  Shipping a
+        # Stage-B-only macro for a Stage-C candidate would be false replay.
+        return None, (
+            "Stage C CODE V field syntax and real chief-ray/RSI replay are pending machine "
+            "verification; Stage-B-only sequence withheld"
+        )
     evidence = sc.generated.fnum_ladder_evidence
     if evidence is None:
         return None, "validated Stage B FNO-ladder evidence missing"
@@ -396,6 +526,7 @@ def _bundle_readme(
         "",
     ]
     evidence = gen.fnum_ladder_evidence
+    stagec = gen.stagec_field_evidence
     accepted = evidence.accepted_final if evidence is not None else None
     lines += [
         f"fnum_ladder.target_achieved: {evidence.target_achieved if evidence else 'unavailable'}",
@@ -413,15 +544,21 @@ def _bundle_readme(
         f"accepted_final.quality_note: {accepted.quality_note if accepted else 'N/A'}",
         "",
     ]
+    if stagec is not None:
+        lines += [
+            "stagec.field_evidence: "
+            + json.dumps(stagec.model_dump(mode="json"), ensure_ascii=False, sort_keys=True),
+            "stagec.FOV: derived/measured only; never optimized/converged",
+            "stagec.[EXPERT]: no production-readiness verdict is supplied",
+            "",
+        ]
     if zmx_path is not None:
         lines += [
             f"candidate.zmx: included ({zmx_path.name}), delivered-payload prescription.",
         ]
     else:
         lines += [
-            "candidate.zmx: NOT included — this candidate's ZMX is not resolvable on",
-            "disk. Mode3 persistence failure is recorded in artifact_warnings and",
-            "fails closed here; Mode1 resolves only its recorded seed source_zmx.",
+            "candidate.zmx: NOT included — " + _candidate_zmx_unavailable_reason(sc),
         ]
     lines.append("")
     if seq_text is not None:
@@ -457,7 +594,7 @@ def build_candidate_bundle_zip(sc: ScoredCandidate, *, target: TargetSpec) -> by
     artifact is available, the README honestly explains why (fail closed,
     never a broken zip, never a partial artifact passing itself off as
     complete)."""
-    zmx_path = _resolve_candidate_zmx_path(sc)
+    zmx_path = _resolve_candidate_zmx_path(sc, target=target)
     seq_text, seq_unavailable_reason = _reproduction_seq_text(sc, target)
     readme = _bundle_readme(
         sc,

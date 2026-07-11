@@ -31,6 +31,12 @@ class CaseMetadata(BaseModel):
     materials: list[str] = Field(..., description="Distinct real material names used (datasheet)")
     fov_deg: float = Field(..., description="Nominal full FOV from the manifest")
     image_height_mm: float | None = Field(None, description="Nominal image height from index.json")
+    image_height_source: str | None = Field(
+        None, description="provided / derived / constructed; None for legacy payloads"
+    )
+    fov_source: str | None = Field(
+        None, description="provided / derived / measured; never optimized by Stage C"
+    )
     nominal_efl_mm: float = Field(..., description="Design-nominal EFL from filename")
     computed_efl_mm: float = Field(..., description="Optiland-recomputed EFL")
     efl_error_pct: float = Field(..., description="abs(computed-nominal)/nominal*100")

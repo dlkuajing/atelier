@@ -1729,6 +1729,34 @@ def _candidate_fnum_ladder_context(
     }
 
 
+def _candidate_stagec_field_context(
+    generated: orchestration.GeneratedCandidate,
+) -> dict[str, object]:
+    evidence = generated.stagec_field_evidence
+    if evidence is None:
+        return {"status": "unavailable"}
+    fov = (
+        evidence.measured_full_fov_deg
+        if evidence.measured_full_fov_deg is not None
+        else evidence.derived_full_fov_deg
+    )
+    return {
+        "status": evidence.reconstruction_status,
+        "machine_execution_status": evidence.machine_execution_status,
+        "machine_execution_reason": evidence.machine_execution_reason,
+        "imh_source": evidence.imh_source,
+        "imh_achieved": formatting.fmt_yes_no(evidence.image_height_achieved),
+        "target_efl_mm": formatting.fmt_float(evidence.target_efl_mm)
+        if evidence.target_efl_mm is not None
+        else "N/A",
+        "fov_source": evidence.fov_source,
+        "fov_deg": formatting.fmt_float(fov) if fov is not None else "N/A",
+        "real_chief_ray_status": evidence.real_chief_ray_status,
+        "rsi_status": evidence.rsi_status,
+        "note": evidence.note,
+    }
+
+
 # Compact per-candidate MTF chart geometry. Left/bottom padding leaves room
 # for axis tick labels — the axes must stay labeled and honest (full 0-1
 # modulation scale, real frequency range), never a truncated scale that
@@ -1895,6 +1923,7 @@ def _candidate_card_context(sc: orchestration.ScoredCandidate) -> dict[str, obje
         "manufacturability": _candidate_manufacturability_context(row.manufacturability),
         "repeatability": _candidate_repeatability_context(row.repeatability),
         "fnum_ladder": _candidate_fnum_ladder_context(gen),
+        "stagec_field": _candidate_stagec_field_context(gen),
         "rank_status": rank.status,
         "rank_status_label": "Ranked" if rank.status == "ranked" else "Withheld",
         "rank_score": formatting.fmt_float(rank.score) if rank.score is not None else None,

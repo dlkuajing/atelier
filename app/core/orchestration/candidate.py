@@ -16,9 +16,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Mapping
 from enum import StrEnum
+from pathlib import Path
 from types import MappingProxyType
 from typing import Literal
 
@@ -33,6 +35,11 @@ from pydantic import (
     model_validator,
 )
 
+from app.core.engines.stagec_field import (
+    FieldReconstructionResult,
+    StageCFieldEvidence,
+    validate_reconstructed_field_artifact,
+)
 from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
 
@@ -581,6 +588,12 @@ class GeneratedCandidate(BaseModel):
             "The convergence gate is derived from this structure, never supplied as a bool."
         ),
     )
+    stagec_field_reconstruction: FieldReconstructionResult | None = Field(
+        None, description="offline temporary-ZMX provenance; not real-machine evidence"
+    )
+    stagec_field_evidence: StageCFieldEvidence | None = Field(
+        None, description="closed Stage C evidence; FOV remains derived/measured, never optimized"
+    )
 
     @model_validator(mode="after")
     def _fnum_gate_requires_target_converged_mode(self) -> GeneratedCandidate:
@@ -590,6 +603,86 @@ class GeneratedCandidate(BaseModel):
                 "fnum_ladder_evidence 只允许 TARGET_CONVERGED 候选携带"
                 f"（mode={self.mode}）——RETRIEVED 不优化任何维"
             )
+        if (
+            self.stagec_field_reconstruction is not None or self.stagec_field_evidence is not None
+        ) and self.mode is not GenerationMode.TARGET_CONVERGED:
+            raise ValueError("Stage C provenance is only valid for TARGET_CONVERGED candidates")
+        if self.stagec_field_evidence is not None:
+            reconstruction = self.stagec_field_reconstruction
+            if reconstruction is None:
+                raise ValueError("Stage C evidence requires field reconstruction provenance")
+            if self.stagec_field_evidence.reconstruction_applied != (
+                reconstruction.status == "constructed"
+            ):
+                raise ValueError("Stage C evidence disagrees with reconstruction artifact")
+            evidence = self.stagec_field_evidence
+            if reconstruction.status != "constructed":
+                raise ValueError("offline Stage C evidence requires a constructed artifact")
+            if evidence.image_height_achieved:
+                raise ValueError("offline Stage C evidence can never claim IMH achieved")
+            if evidence.target_image_height_mm != reconstruction.target_image_height_mm:
+                raise ValueError("Stage C evidence target differs from reconstruction target")
+            if evidence.target_efl_mm != reconstruction.target_efl_mm:
+                raise ValueError("Stage C evidence target EFL differs from reconstruction")
+            if evidence.nominal_image_height_mm != reconstruction.target_image_height_mm:
+                raise ValueError("Stage C nominal IMH differs from reconstruction target")
+            if self.optimized_zmx_path is None or reconstruction.output_path is None:
+                raise ValueError("Stage C candidate requires the reconstructed artifact path")
+            candidate_path = Path(self.optimized_zmx_path).resolve(strict=True)
+            reconstruction_path = Path(reconstruction.output_path).resolve(strict=True)
+            if candidate_path != reconstruction_path:
+                raise ValueError("candidate ZMX must be the Stage C reconstruction output")
+            if reconstruction.num_fields is None or reconstruction.output_sha256 is None:
+                raise ValueError("Stage C reconstruction declarations are incomplete")
+            try:
+                parsed_artifact = validate_reconstructed_field_artifact(
+                    reconstruction_path,
+                    expected_num_fields=reconstruction.num_fields,
+                    expected_fractions=reconstruction.normalized_fractions,
+                    target_image_height_mm=reconstruction.target_image_height_mm,
+                )
+            except (OSError, ValueError) as exc:
+                raise ValueError("Stage C reconstruction artifact bytes are invalid") from exc
+            if parsed_artifact.sha256 != reconstruction.output_sha256:
+                raise ValueError("Stage C reconstruction artifact hash mismatch")
+            source_path = Path(reconstruction.source_path).resolve(strict=True)
+            if source_path == reconstruction_path:
+                raise ValueError("Stage C source and reconstruction output must differ")
+            source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
+            if source_hash != reconstruction.source_sha256_before or (
+                reconstruction.source_sha256_before != reconstruction.source_sha256_after
+            ):
+                raise ValueError("Stage C reconstruction source hash mismatch")
+            metadata = self.payload.metadata
+            if metadata is None or metadata.image_height_mm != reconstruction.target_image_height_mm:
+                raise ValueError("payload nominal IMH differs from Stage C reconstruction")
+            if not math.isclose(
+                metadata.nominal_efl_mm,
+                reconstruction.target_efl_mm,
+                rel_tol=1e-12,
+                abs_tol=1e-12,
+            ):
+                raise ValueError("payload nominal EFL differs from canonical Stage C target EFL")
+            if self.fnum_ladder_evidence is not None and not math.isclose(
+                self.fnum_ladder_evidence.target_efl_mm,
+                reconstruction.target_efl_mm,
+                rel_tol=1e-12,
+                abs_tol=1e-12,
+            ):
+                raise ValueError("Stage B and Stage C canonical target EFL differ")
+            if metadata.image_height_source != "constructed":
+                raise ValueError("Stage C payload IMH source must be constructed")
+            if metadata.fov_source != "derived" or evidence.fov_source != "derived":
+                raise ValueError("offline Stage C FOV must be derived-only")
+            expected_fov = 2 * math.degrees(
+                math.atan(
+                    reconstruction.target_image_height_mm / reconstruction.target_efl_mm
+                )
+            )
+            if evidence.derived_full_fov_deg is None or not math.isclose(
+                evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
+            ) or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12):
+                raise ValueError("Stage C derived FOV is not same-source with payload EFL/IMH")
         return self
 
     @property

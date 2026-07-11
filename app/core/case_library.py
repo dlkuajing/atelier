@@ -30,6 +30,7 @@ from typing import NamedTuple
 import numpy as np
 
 from app.core.aberration import MTFFieldData, MTFResult, compute_mtf
+from app.core.engines.stagec_field import FieldTargetStatus, ResolvedFieldTarget
 from app.core.image_quality_floor import (
     IMAGE_QUALITY_FLOOR_MAX_RMS_UM as _IMAGE_QUALITY_FLOOR_MAX_RMS_UM,
 )
@@ -586,12 +587,28 @@ def build_sample_from_optic(
     *,
     source_path: str | Path | None = None,
     lightweight_artifacts: bool = False,
+    resolved_field_target: ResolvedFieldTarget | None = None,
 ) -> OpticalSampleData:
     """Build one OpticalSampleData from a normalized real optic + manifest nominals."""
+    if resolved_field_target is not None:
+        if resolved_field_target.status is not FieldTargetStatus.RESOLVED:
+            raise ValueError("resolved_field_target must have status=resolved")
+        if resolved_field_target.image_height_mm is None or resolved_field_target.full_fov_deg is None:
+            raise ValueError("resolved_field_target requires IMH and FOV")
+        if resolved_field_target.efl_mm is None or not math.isclose(
+            nominal_efl_mm, resolved_field_target.efl_mm, rel_tol=1e-12, abs_tol=1e-12
+        ):
+            raise ValueError("nominal EFL must equal resolved field target EFL")
+        nominal_efl_mm = resolved_field_target.efl_mm
+        nominal_fov_deg = resolved_field_target.full_fov_deg
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        # ANGLE fields (full set) so trace / SVG aim fast; MTF may shrink it later.
-        regularize_fields_to_angle(optic, nominal_fov_deg)
+        # Legacy/native payloads use ANGLE fields so trace/SVG aim fast. A
+        # Stage C caller supplies an already reconstructed IMG field table;
+        # converting it back to ANGLE here would silently destroy the very
+        # artifact being verified.
+        if resolved_field_target is None:
+            regularize_fields_to_angle(optic, nominal_fov_deg)
         paraxial = compute_paraxial_summary(optic)
         surfaces = extract_surface_descriptors(optic)
         # Flat filter/cover-glass faces have radius inf, which Pydantic serializes
@@ -621,6 +638,13 @@ def build_sample_from_optic(
         n_filter=n_filter,
         materials=materials,
         fov_deg=nominal_fov_deg,
+        image_height_mm=(
+            resolved_field_target.image_height_mm if resolved_field_target is not None else None
+        ),
+        image_height_source=(
+            "constructed" if resolved_field_target is not None else None
+        ),
+        fov_source=(resolved_field_target.fov_source if resolved_field_target is not None else None),
         nominal_efl_mm=nominal_efl_mm,
         computed_efl_mm=computed_efl,
         efl_error_pct=efl_error_pct,
