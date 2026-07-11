@@ -12,6 +12,30 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.repair_legacy_zmx_glass import decode_zmx_text, encode_zmx_text  # noqa: E402
 
 _WAVM_RE = re.compile(r"^(?P<indent>\s*)WAVM\s+(?P<slot>\d+)\b")
+_NUMERIC_GLAS_RE = re.compile(
+    r"^(?P<indent>\s*)GLAS\s+(?P<name>\d{6}\.\d+)\s+(?P<flag>\S+)\s+(?P<rest>.*)$"
+)
+
+
+def rename_numeric_glass_names(text: str) -> tuple[str, int]:
+    """Rewrite numeric model-glass code GLAS names to ``___BLANK 1``.
+
+    ZEMAXOS_TO_CV parses a numeric NAME as a float and derives the fictitious
+    glass's dispersion from the mangled result (real-machine proof 2026-07-11:
+    declared vd 54.0607 became vd 40.154 inside CODE V). ``___BLANK`` with
+    model_flag=1 makes the importer honor the explicit nd/vd columns instead.
+    """
+
+    lines = text.splitlines(keepends=True)
+    renamed = 0
+    for index, line in enumerate(lines):
+        match = _NUMERIC_GLAS_RE.match(line.rstrip("\r\n"))
+        if match is None:
+            continue
+        eol = line[len(line.rstrip("\r\n")):]
+        lines[index] = f"{match.group('indent')}GLAS ___BLANK 1 {match.group('rest')}{eol}"
+        renamed += 1
+    return "".join(lines), renamed
 
 
 def pad_wavm_text(text: str) -> tuple[str, int]:
@@ -36,23 +60,25 @@ def pad_wavm_text(text: str) -> tuple[str, int]:
     return "".join(lines), len(padding)
 
 
-def repair_wavm_file(path: Path, *, write: bool = False) -> tuple[int, bool]:
-    """Audit one ZMX; return (rows added, endings normalized).
+def repair_wavm_file(path: Path, *, write: bool = False) -> tuple[int, bool, int]:
+    """Audit one ZMX; return (rows added, endings normalized, GLAS renamed).
 
     Output is always LF-normalized: real-machine proof (2026-07-11, byte-identical
     A/B import) shows CRLF endings break ZEMAXOS_TO_CV's WAVM wavelength parsing
     (lens imports with no wavelength data). A file that is already 24-slot but
-    CRLF still gets rewritten to LF.
+    CRLF still gets rewritten to LF. Numeric model-glass code names are renamed
+    to ``___BLANK 1`` (see ``rename_numeric_glass_names``).
     """
 
     raw = path.read_bytes()
     text, encoding = decode_zmx_text(raw)
     repaired, added = pad_wavm_text(text)
+    repaired, renamed = rename_numeric_glass_names(repaired)
     normalized = repaired.replace("\r\n", "\n").replace("\r", "\n")
     eol_fixed = normalized != repaired or "\r" in text
-    if write and (added or eol_fixed):
+    if write and (added or eol_fixed or renamed):
         path.write_bytes(encode_zmx_text(normalized, encoding))
-    return added, eol_fixed
+    return added, eol_fixed, renamed
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -67,16 +93,19 @@ def main(argv: list[str] | None = None) -> int:
     failed = False
     for path in files:
         try:
-            added, eol_fixed = repair_wavm_file(path, write=args.write)
+            added, eol_fixed, renamed = repair_wavm_file(path, write=args.write)
         except (OSError, ValueError) as exc:
             failed = True
             print(f"refused {path}: {exc}")
             continue
-        if not added and not eol_fixed:
+        if not added and not eol_fixed and not renamed:
             verdict = "already-compliant"
         else:
             verdict = "repaired" if args.write else "would-repair"
-        print(f"{verdict} {path}: {added} WAVM row(s), eol_normalized={eol_fixed}")
+        print(
+            f"{verdict} {path}: {added} WAVM row(s), eol_normalized={eol_fixed}, "
+            f"glas_renamed={renamed}"
+        )
     return 1 if failed else 0
 
 
