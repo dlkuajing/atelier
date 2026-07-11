@@ -1,0 +1,212 @@
+! trimmed excerpt: 634 raw lines -> 209 kept (RAY-ERROR / Total-reflection / ERROR-dash / WARNING / AUTO-Completion / CYCLE-NUMBER lines + 2-line context, plus the first 40 lines; original line numbers prefixed). Classification already ran on the full text at run time -- this trimming only affects what's persisted to disk.
+! full-text sha256: 506a2490553e34acfdd4988d81fd07aa1441e10a32b5c81432b6283235edd39e  (raw line count: 634)
+
+     1|   
+     2|   
+     3|                                    Welcome to
+     4|   
+     5|                                    C O D E   V
+     6|   
+     7|                                 PC  Version 11.5
+     8|                                    Build 27302701
+     9|   
+    10|                                    11-Jul-2026
+    11|   
+    12|                             A proprietary product of
+    13|   
+    14|                               SYNOPSYS, INC
+    15|                               Pasadena, California
+    16|   
+    17| CODE V> OUT NO
+    18|      Radius input/output mode
+    19|   
+    20|     Lens data created by Zemax version 191028
+    21|   
+    22|     Zemax command MODE ignored
+    23|      WARNING - Vignetting angles not used.
+    24|      ERROR - No wavelength  2 in zoom position  1
+    25|   
+    26|      Surface pointer = OBJ
+    27|     Zemax surface type  STANDARD
+    28|     CODE V surface type SPH
+    29|     Zemax command FIMP ignored.
+    30|      WARNING - Hiding of rays not used.
+    31|     Zemax command MIRR ignored.
+    32|     Zemax command SLAB ignored.
+    33|     Zemax command MEMA ignored.
+    34|     Zemax command POPS ignored.
+    35|   
+    36|      Surface pointer = 1
+    37|     Zemax surface type  STANDARD
+    38|     CODE V surface type SPH
+    39|     Zemax command FIMP ignored.
+    40|      WARNING - Hiding of rays not used.
+    41|     Zemax command MIRR ignored.
+    42|     Zemax command SLAB ignored.
+    48|     CODE V surface type ASP
+    49|     Zemax command FIMP ignored.
+    50|      WARNING - Hiding of rays not used.
+    51|     Zemax command MIRR ignored.
+    52|     Zemax command SLAB ignored.
+    53|      WARNING - Partial dispersion of model glass not used.
+    54|     Zemax command MEMA ignored.
+    55|     Zemax command POPS ignored.
+    59|     CODE V surface type ASP
+    60|     Zemax command FIMP ignored.
+    61|      WARNING - Hiding of rays not used.
+    62|     Zemax command MIRR ignored.
+    63|     Zemax command SLAB ignored.
+    69|     CODE V surface type ASP
+    70|     Zemax command FIMP ignored.
+    71|      WARNING - Hiding of rays not used.
+    72|     Zemax command MIRR ignored.
+    73|     Zemax command SLAB ignored.
+    74|      WARNING - Partial dispersion of model glass not used.
+    75|     Zemax command MEMA ignored.
+    76|     Zemax command POPS ignored.
+    80|     CODE V surface type ASP
+    81|     Zemax command FIMP ignored.
+    82|      WARNING - Hiding of rays not used.
+    83|     Zemax command MIRR ignored.
+    84|     Zemax command SLAB ignored.
+    90|     CODE V surface type ASP
+    91|     Zemax command FIMP ignored.
+    92|      WARNING - Hiding of rays not used.
+    93|     Zemax command MIRR ignored.
+    94|     Zemax command SLAB ignored.
+    95|      WARNING - Partial dispersion of model glass not used.
+    96|     Zemax command MEMA ignored.
+    97|     Zemax command POPS ignored.
+   101|     CODE V surface type ASP
+   102|     Zemax command FIMP ignored.
+   103|      WARNING - Hiding of rays not used.
+   104|     Zemax command MIRR ignored.
+   105|     Zemax command SLAB ignored.
+   111|     CODE V surface type ASP
+   112|     Zemax command FIMP ignored.
+   113|      WARNING - Hiding of rays not used.
+   114|     Zemax command MIRR ignored.
+   115|     Zemax command SLAB ignored.
+   116|      WARNING - Partial dispersion of model glass not used.
+   117|     Zemax command MEMA ignored.
+   118|     Zemax command POPS ignored.
+   122|     CODE V surface type ASP
+   123|     Zemax command FIMP ignored.
+   124|      WARNING - Hiding of rays not used.
+   125|     Zemax command MIRR ignored.
+   126|     Zemax command SLAB ignored.
+   132|     CODE V surface type ASP
+   133|     Zemax command FIMP ignored.
+   134|      WARNING - Hiding of rays not used.
+   135|     Zemax command MIRR ignored.
+   136|     Zemax command SLAB ignored.
+   137|      WARNING - Partial dispersion of model glass not used.
+   138|     Zemax command MEMA ignored.
+   139|     Zemax command POPS ignored.
+   143|     CODE V surface type ASP
+   144|     Zemax command FIMP ignored.
+   145|      WARNING - Hiding of rays not used.
+   146|     Zemax command MIRR ignored.
+   147|     Zemax command SLAB ignored.
+   153|     CODE V surface type SPH
+   154|     Zemax command FIMP ignored.
+   155|      WARNING - Hiding of rays not used.
+   156|     Zemax command MIRR ignored.
+   157|     Zemax command SLAB ignored.
+   163|     CODE V surface type SPH
+   164|     Zemax command FIMP ignored.
+   165|      WARNING - Hiding of rays not used.
+   166|     Zemax command MIRR ignored.
+   167|     Zemax command SLAB ignored.
+   168|      WARNING - Partial dispersion of model glass not used.
+   169|     Zemax command MEMA ignored.
+   170|     Zemax command POPS ignored.
+   174|     CODE V surface type SPH
+   175|     Zemax command FIMP ignored.
+   176|      WARNING - Hiding of rays not used.
+   177|     Zemax command MIRR ignored.
+   178|     Zemax command SLAB ignored.
+   184|     CODE V surface type SPH
+   185|     Zemax command FIMP ignored.
+   186|      WARNING - Hiding of rays not used.
+   187|     Zemax command MIRR ignored.
+   188|     Zemax command SLAB ignored.
+   189|      WARNING - Partial dispersion of model glass not used.
+   190|     Zemax command MEMA ignored.
+   191|     Zemax command POPS ignored.
+   195|     CODE V surface type SPH
+   196|     Zemax command FIMP ignored.
+   197|      WARNING - Hiding of rays not used.
+   198|     Zemax command MIRR ignored.
+   199|     Zemax command SLAB ignored.
+   205|     CODE V surface type SPH
+   206|     Zemax command FIMP ignored.
+   207|      WARNING - Hiding of rays not used.
+   208|     Zemax command MIRR ignored.
+   209|     Zemax command SLAB ignored.
+   215|     Zemax command ! AT ignored.
+   216|   
+   217|      WARNING - Please check the converted lens carefully.
+   218|                Some information will not be converted.
+   219|                Changes in either CODE V or ZEMAX may invalidate
+   228|   
+   229| CODE V> DEF VAR SA
+   230|      ERROR - Ray missed surface   3 for zoom position  1
+   231|      ERROR - Ray missed surface   3 for zoom position  1
+   232|      ERROR - Ray missed surface   3 for zoom position  1
+   233|      ERROR - Ray missed surface   4 for zoom position  1
+   234|      ERROR - Total reflection at surface   9 for zoom position  1
+   235|      ERROR - Ray missed surface   3 for zoom position  1
+   236|      ERROR - Ray missed surface   4 for zoom position  1
+   237|      ERROR - Total reflection at surface   9 for zoom position  1
+   238|      ERROR - One or more of the reference rays from field  1 is deviated far from
+   239|              most of the other rays from this field point.  The reference rays are
+   240|              used to determine the numerical aperture and the grid spacing.  Thus, it
+   243|              may solve this problem and allow the computation to proceed.
+   244| CODE V> FNO 4
+   245|      WARNING - One or more of the reference rays from field  2 is deviated far from
+   246|                most of the other rays from this field point.  The reference rays are
+   247|                used to determine the numerical aperture and the grid spacing.  Thus, it
+   256|      AUT                                                                              11-Jul-26  11H 23M 15S
+   257|                                                  CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S
+   258|      WARNING - CODE V places the reference sphere at the exit pupil.  However,
+   259|                the aberrations of this lens make the OPD data (and any quantity
+   260|                that depends upon OPD data) very sensitive to the exact value of
+   371|   
+   372|      RELATIVE TIME PER CYCLE IS   99.9 UNITS
+   373|      WARNING - The macro function SPOTDATA is not supported on multiple threads.
+   374|                CODE V will set the multiple processor setting (MPP) to 1 to prevent errors.
+   375|                Please refer to the CODE V Setup and Operation Reference Manual for a complete list
+   376|                of pre-defined macro functions that are currently limited to running on a single thread.
+   377|   
+   378|  CYCLE NUMBER 0:
+   379|   
+   380|   ABERR F. =       30.35533717
+   426|   @ATELIER_LATCOLOR      =   0.00000E+00   0.00000E+00   1.000E-02   0.000E+00
+   427|   @ATELIER_RMSSPOT       =   0.00000E+00   1.91881E+03   1.000E-03   3.682E+06
+   428|      WARNING - Frozen Thickness Violations:
+   429|   Mx CT S13
+   430|   
+   432|   Constraints added:      Mn ET S9 (>)                Mn ET S16 (>)
+   433|   
+   434|  CYCLE NUMBER 1:
+   435|   
+   436|   ABERR F. =       10.07736141
+   485|   @ATELIER_LATCOLOR      =   0.00000E+00   0.00000E+00   1.000E-02   0.000E+00
+   486|   @ATELIER_RMSSPOT       =   0.00000E+00   9.26404E+02   1.000E-03   8.582E+05
+   487|      WARNING - Frozen Thickness Violations:
+   488|   Mx CT S13
+   489|   
+   493|   Constraints released:   Mn CT S1 (>)
+   494|   
+   495|  CYCLE NUMBER 2:
+   496|   
+   497|   ABERR F. =        6.54386887
+   546|   @ATELIER_LATCOLOR      =   0.00000E+00   0.00000E+00   1.000E-02   0.000E+00
+   547|   @ATELIER_RMSSPOT       =   0.00000E+00   4.08716E+02   1.000E-03   1.670E+05
+   548|      WARNING - Frozen Thickness Violations:
+   549|   Mx CT S13
+   550|   
+   551|      Normal AUTO Completion - Maximum cycle limit reached
+   552| AUT> GO
+   553| 

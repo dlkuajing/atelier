@@ -284,10 +284,14 @@ def _trim_large_lis(lis_path: Path) -> None:
         if _LIS_SIGNAL_RE.search(line):
             keep.update(range(max(0, i - _LIS_CONTEXT_LINES), min(len(raw_lines), i + _LIS_CONTEXT_LINES + 1)))
     excerpt = [f"{i + 1:6d}| {raw_lines[i]}" for i in sorted(keep)]
+    # header 措辞刻意用连字符（"Total-reflection"）避开分类器正则
+    # （fno_probe._TIR_RE 的 `Total\s+reflection` 分支）——否则 header 自述的
+    # 信号清单会被 classify_fno_listing 误计一次 REFL（真机 recheck 实锤：
+    # runtime REFL=1 的格，含旧措辞 header 的 trimmed 归档重判 REFL=2）。
     header = [
         f"! trimmed excerpt: {len(raw_lines)} raw lines -> {len(excerpt)} kept "
-        "(RAY ERROR / Total reflection / ERROR - / WARNING / AUTO Completion / "
-        f"CYCLE NUMBER lines + {_LIS_CONTEXT_LINES}-line context, plus the first "
+        "(RAY-ERROR / Total-reflection / ERROR-dash / WARNING / AUTO-Completion / "
+        f"CYCLE-NUMBER lines + {_LIS_CONTEXT_LINES}-line context, plus the first "
         "40 lines; original line numbers prefixed). Classification already ran "
         "on the full text at run time -- this trimming only affects what's "
         "persisted to disk.",

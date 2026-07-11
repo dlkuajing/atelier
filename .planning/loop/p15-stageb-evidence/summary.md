@@ -91,7 +91,9 @@
    | US20140111876A1 loosen→3.000 | TIR（REFL 1） | ok |
    | US-12443014-B2-e1 loosen→4.000 | TIR（REFL 2） | ok |
 
-   共性：这 5 格 runtime REFL 计数极低（1-2），其 TIR 证据恰好全部来自被丢弃的 `Total reflection`/`ERROR -` 行。其余 37 格 trimmed 归档重判与 runtime 一致（可复核）。**修复已落**：trim 正则补齐两种形态 + header 记录全文 sha256/原始行数（后续采证全部可复核）；**这 5 格排入下一真机窗重采队列**（同格重跑 ~15s/格，归档即得全证据）。分布结论稳健性：即使把这 5 格保守地从 TIR 改记 ok，TIR 仍 27/42（64%）、收紧方向仍 0 clean，§0-§4 结论不变。
+   共性：这 5 格 runtime REFL 计数极低（1-2），其 TIR 证据恰好全部来自被丢弃的 `Total reflection`/`ERROR -` 行。其余 37 格 trimmed 归档重判与 runtime 一致（可复核）。**修复已落**：trim 正则补齐两种形态 + header 记录全文 sha256/原始行数（后续采证全部可复核）。分布结论稳健性：即使把这 5 格保守地从 TIR 改记 ok，TIR 仍 27/42（64%）、收紧方向仍 0 clean，§0-§4 结论不变。
+
+   **✅ 重采已闭环（2026-07-11 同日真机窗）**：5 格全部用修好的 trimmer 重跑，证据在 `recheck-2026-07-11/`（per-cell seq/tsv/lis + `recheck-results.tsv`）。三重验证通过：① 分类复现——5/5 重采 runtime 分类与原矩阵 runtime 分类逐位一致（TIR；REFL/MISS 计数 1/0、1/6、1/0、1/0、2/0 与原矩阵完全相同，探针确定性成立）；② 归档可复核——对重采 trimmed 归档重跑分类器 5/5 逐位复现 runtime 分类与计数；③ sha256 锚在位（header 记全文 sha256+原始行数）。附带发现并修复第二个 trimmer 病灶：header 自述信号清单中的 "Total reflection" 字样会被分类器误计一次 REFL（runtime 1 → 归档重判 2），header 措辞已改用连字符形式避开正则。原矩阵目录中这 5 格的旧 trimmed 归档保留不动（审计链），以 `recheck-2026-07-11/` 为可复核权威版本。
 
 ## 7. 对 Stage 3 阶梯引擎（已建，待真机验证）的输入
 
