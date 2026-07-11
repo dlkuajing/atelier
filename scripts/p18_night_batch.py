@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import random
 import sys
 from pathlib import Path
@@ -51,6 +52,31 @@ def _sample_default_targets(
     return sampled, source
 
 
+# --- argparse numeric guards (MINOR-5, P18 对抗审) -------------------------
+# argparse raising ArgumentTypeError -> usage error, exit code 2, nothing runs.
+
+
+def _positive_int(value: str) -> int:
+    n = int(value)
+    if n < 1:
+        raise argparse.ArgumentTypeError(f"must be >= 1, got {n}")
+    return n
+
+
+def _positive_float(value: str) -> float:
+    f = float(value)
+    if not math.isfinite(f) or f <= 0:
+        raise argparse.ArgumentTypeError(f"must be a positive finite number, got {value}")
+    return f
+
+
+def _repeat_runs_arg(value: str) -> int:
+    n = int(value)
+    if not 1 <= n <= 3:  # mirrors orchestrate()'s own 1..3 bound, rejected at the CLI edge
+        raise argparse.ArgumentTypeError(f"must be between 1 and 3, got {n}")
+    return n
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -64,7 +90,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="显式 target 清单 JSON 文件（列表，每项含 TargetSpec 字段）；省略则从"
         " sweet-zone-topic-set.json 抽样",
     )
-    parser.add_argument("--sample-n", type=int, default=50, dest="sample_n")
+    parser.add_argument("--sample-n", type=_positive_int, default=50, dest="sample_n")
     parser.add_argument("--sample-seed", type=int, default=None, dest="sample_seed")
     parser.add_argument("--batch-id", type=str, default=None, dest="batch_id")
     parser.add_argument(
@@ -73,16 +99,19 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "(succeeded/degraded/failed)的 job；仍标 running/queued 的 job 拒绝重试"
         "（MAJOR-3 fail-closed，清理方式见 run_batch docstring）",
     )
-    parser.add_argument("--max-jobs", type=int, default=None, dest="max_jobs")
-    parser.add_argument("--max-wall-min", type=float, default=None, dest="max_wall_min")
+    parser.add_argument("--max-jobs", type=_positive_int, default=None, dest="max_jobs")
+    parser.add_argument("--max-wall-min", type=_positive_float, default=None, dest="max_wall_min")
     parser.add_argument(
-        "--job-timeout-sec", type=float, default=None, dest="job_timeout_sec",
+        "--job-timeout-sec", type=_positive_float, default=None, dest="job_timeout_sec",
         help="单 job 超时秒数。仅 --engine fake 可用：real 引擎的 CODE V 进程无法从"
         "本层终止，超时在 real 模式下是假安全阀（线程停等但真机进程照跑），因此"
         "与 --engine real 组合直接拒绝（MAJOR-3 fail-closed）",
     )
-    parser.add_argument("--n", type=int, default=DEFAULT_N, help=f"每 target 产出候选数（默认 {DEFAULT_N}）")
-    parser.add_argument("--repeat-runs", type=int, default=1, dest="repeat_runs")
+    parser.add_argument(
+        "--n", type=_positive_int, default=DEFAULT_N,
+        help=f"每 target 产出候选数（默认 {DEFAULT_N}）",
+    )
+    parser.add_argument("--repeat-runs", type=_repeat_runs_arg, default=1, dest="repeat_runs")
     parser.add_argument(
         "--archive-dir", type=Path, default=None, dest="archive_dir",
         help="覆盖 settings.batch_archive_dir（主要供测试/隔离用）",

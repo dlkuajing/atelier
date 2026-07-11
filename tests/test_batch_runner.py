@@ -733,6 +733,46 @@ def test_run_batch_resume_ignores_new_targets_argument(tmp_path: Path):
     assert len(second.jobs) == 2
 
 
+# ---------------------------------------------------------------------------
+# MINOR-5: CLI numeric-argument guards (P18 对抗审)
+# ---------------------------------------------------------------------------
+
+
+def _load_cli_module():
+    import importlib.util
+
+    script_path = Path(__file__).resolve().parents[1] / "scripts" / "p18_night_batch.py"
+    spec = importlib.util.spec_from_file_location("p18_night_batch_cli_test_m5", script_path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["--engine", "fake", "--sample-n", "0"],
+        ["--engine", "fake", "--sample-n", "-3"],
+        ["--engine", "fake", "--max-jobs", "0"],
+        ["--engine", "fake", "--max-wall-min", "0"],
+        ["--engine", "fake", "--max-wall-min", "-1.5"],
+        ["--engine", "fake", "--max-wall-min", "inf"],
+        ["--engine", "fake", "--job-timeout-sec", "0"],
+        ["--engine", "fake", "--job-timeout-sec", "nan"],
+        ["--engine", "fake", "--n", "0"],
+        ["--engine", "fake", "--repeat-runs", "0"],
+        ["--engine", "fake", "--repeat-runs", "4"],
+    ],
+)
+def test_cli_rejects_non_positive_numeric_args(argv: list[str], tmp_path: Path):
+    module = _load_cli_module()
+    with pytest.raises(SystemExit) as exc_info:
+        module.main([*argv, "--archive-dir", str(tmp_path / "archive")])
+    assert exc_info.value.code == 2  # argparse usage error
+    assert not (tmp_path / "archive").exists()  # nothing ran, nothing written
+
+
 def test_target_entry_error_message_surfaces_pydantic_validation_error():
     entry = {"scenario": "not-a-real-scenario", "fnum": 2.0}
     with pytest.raises(TargetEntryError):
