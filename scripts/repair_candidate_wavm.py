@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import argparse
 import re
+import sys
 from pathlib import Path
 
-from scripts.repair_legacy_zmx_glass import decode_zmx_text, encode_zmx_text
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from scripts.repair_legacy_zmx_glass import decode_zmx_text, encode_zmx_text  # noqa: E402
 
 _WAVM_RE = re.compile(r"^(?P<indent>\s*)WAVM\s+(?P<slot>\d+)\b")
 
