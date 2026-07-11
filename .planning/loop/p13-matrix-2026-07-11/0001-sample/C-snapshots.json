@@ -1,0 +1,22 @@
+{
+  "configuration_fingerprint": "f9b29d67da8ebcfce45d5b1c0730a27e17caac109eba7878e53e7146e2270d52",
+  "schema": "atelier-glass-snap-snapshots-v1",
+  "session_run_id": "bfaa77a4e46d4c378b62be8d84e56d00",
+  "snapshots": [
+    {
+      "reason": "RMSWE failed",
+      "stage": "before-fictitious",
+      "status": "withheld"
+    },
+    {
+      "reason": "RMSWE failed",
+      "stage": "after-snap-frozen",
+      "status": "withheld"
+    },
+    {
+      "reason": "RMSWE failed",
+      "stage": "after-snap-reopt",
+      "status": "withheld"
+    }
+  ]
+}

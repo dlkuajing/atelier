@@ -1,0 +1,122 @@
+! P13 glass snap chain; NEW glass assignment/freeze grammar pending real-machine verification.
+FCT @p13wfe(NUM ^dummy)
+LCL NUM ^dummy ^f ^ok ^rwe(10,26) ^value ^max
+^max == 0
+^ok == RMSWE(1,0,60,^rwe,'NOM')
+IF ^ok >= 0
+  FOR ^f 1 (NUM F)
+    ^value == ABSF(^rwe(1,^f))
+    IF ^value > ^max
+      ^max == ^value
+    END IF
+  END FOR
+END IF
+END FCT ^max
+FCT @p13wfeok(NUM ^dummy)
+LCL NUM ^dummy ^ok ^rwe(10,26)
+^ok == RMSWE(1,0,60,^rwe,'NOM')
+END FCT ^ok
+OUT NO
+IN CV_MACRO:ZEMAXOS_TO_CV "C:\Users\Administrator\AppData\Local\Temp\claude\D--atelier\35264aa5-1da3-4d09-9e86-cf204e30310a\scratchpad\p13matrix-real\out-v7\0000-US20170003482A1_target3_797_optimized-323ccb3f-0e463b0455bb\source.zmx"
+! SNAPSHOT before-fictitious run=28be8bbc116841bfa16040af678819ce config=f9b29d67da8ebcfce45d5b1c0730a27e17caac109eba7878e53e7146e2270d52
+^before_fictitious_efl == ABSF((EFY))
+^before_fictitious_rmswfe == @p13wfe(1)
+^before_fictitious_rmswfe_ok == @p13wfeok(1)
+! per-field/per-wavelength RMS spot, chromatic detail: pending real-machine macro verification
+! catalog=atelier-plastics name=APL5014CL version=zmx-materials-v1
+! explicit offline Nd=1.544 Vd=56
+GLA S1 1.544:56
+! catalog=atelier-plastics name=APL5014CL version=zmx-materials-v1
+! explicit offline Nd=1.544 Vd=56
+GLA S4 1.544:56
+! catalog=atelier-plastics name=SP3810 version=zmx-materials-v1
+! explicit offline Nd=1.64 Vd=23.3
+GLA S6 1.64:23.3
+! catalog=atelier-plastics name=APL5014CL version=zmx-materials-v1
+! explicit offline Nd=1.544 Vd=56
+GLA S8 1.544:56
+! catalog=atelier-plastics name=SP3810 version=zmx-materials-v1
+! explicit offline Nd=1.64 Vd=23.3
+GLA S10 1.64:23.3
+! catalog=atelier-plastics name=APL5014CL version=zmx-materials-v1
+! explicit offline Nd=1.544 Vd=56
+GLA S12 1.544:56
+! catalog=atelier-plastics name=ZEONEX-E48R version=zmx-materials-v1
+! explicit offline Nd=1.531 Vd=56
+GLA S14 1.531:56
+! catalog=atelier-plastics name=ZEONEX-E48R version=zmx-materials-v1
+! explicit offline Nd=1.531 Vd=56
+GLA S16 1.531:56
+! SNAPSHOT after-snap-frozen run=28be8bbc116841bfa16040af678819ce config=f9b29d67da8ebcfce45d5b1c0730a27e17caac109eba7878e53e7146e2270d52
+^after_snap_frozen_efl == ABSF((EFY))
+^after_snap_frozen_rmswfe == @p13wfe(1)
+^after_snap_frozen_rmswfe_ok == @p13wfeok(1)
+! per-field/per-wavelength RMS spot, chromatic detail: pending real-machine macro verification
+! GLC intentionally absent: glass remains frozen
+FOR ^s 1 (NUM S)
+  IF (TYP SUR S^s) = "ASP"
+    AC S^s 0
+    BC S^s 0
+    CC S^s 0
+    DC S^s 0
+    EC S^s 0
+    FC S^s 0
+    GC S^s 0
+  END IF
+END FOR
+AUT
+  SUR N
+  CHG SA
+  MXC 5
+  MNC 1
+  IMP 0.001
+GO
+! SNAPSHOT after-snap-reopt run=28be8bbc116841bfa16040af678819ce config=f9b29d67da8ebcfce45d5b1c0730a27e17caac109eba7878e53e7146e2270d52
+^after_snap_reopt_efl == ABSF((EFY))
+^after_snap_reopt_rmswfe == @p13wfe(1)
+^after_snap_reopt_rmswfe_ok == @p13wfeok(1)
+! per-field/per-wavelength RMS spot, chromatic detail: pending real-machine macro verification
+^row == 1
+BUF PUT B1 I^row J1 "schema"
+BUF PUT B1 I^row J2 "atelier-glass-snap-snapshots-v1"
+^row == ^row+1
+BUF PUT B1 I^row J1 "status"
+BUF PUT B1 I^row J2 "ok"
+^row == ^row+1
+BUF PUT B1 I^row J1 "session_run_id"
+BUF PUT B1 I^row J2 "28be8bbc116841bfa16040af678819ce"
+^row == ^row+1
+BUF PUT B1 I^row J1 "configuration_fingerprint"
+BUF PUT B1 I^row J2 "f9b29d67da8ebcfce45d5b1c0730a27e17caac109eba7878e53e7146e2270d52"
+^row == ^row+1
+BUF PUT B1 I^row J1 "before-fictitious.efl"
+BUF PUT B1 I^row J2 ^before_fictitious_efl
+^row == ^row+1
+BUF PUT B1 I^row J1 "before-fictitious.rmswfe"
+BUF PUT B1 I^row J2 ^before_fictitious_rmswfe
+^row == ^row+1
+BUF PUT B1 I^row J1 "before-fictitious.rmswfe_ok"
+BUF PUT B1 I^row J2 ^before_fictitious_rmswfe_ok
+^row == ^row+1
+BUF PUT B1 I^row J1 "after-snap-frozen.efl"
+BUF PUT B1 I^row J2 ^after_snap_frozen_efl
+^row == ^row+1
+BUF PUT B1 I^row J1 "after-snap-frozen.rmswfe"
+BUF PUT B1 I^row J2 ^after_snap_frozen_rmswfe
+^row == ^row+1
+BUF PUT B1 I^row J1 "after-snap-frozen.rmswfe_ok"
+BUF PUT B1 I^row J2 ^after_snap_frozen_rmswfe_ok
+^row == ^row+1
+BUF PUT B1 I^row J1 "after-snap-reopt.efl"
+BUF PUT B1 I^row J2 ^after_snap_reopt_efl
+^row == ^row+1
+BUF PUT B1 I^row J1 "after-snap-reopt.rmswfe"
+BUF PUT B1 I^row J2 ^after_snap_reopt_rmswfe
+^row == ^row+1
+BUF PUT B1 I^row J1 "after-snap-reopt.rmswfe_ok"
+BUF PUT B1 I^row J2 ^after_snap_reopt_rmswfe_ok
+^row == ^row+1
+BUF EXP B1 "C:\Users\Administrator\AppData\Local\Temp\claude\D--atelier\35264aa5-1da3-4d09-9e86-cf204e30310a\scratchpad\p13matrix-real\out-v7\0000-US20170003482A1_target3_797_optimized-323ccb3f-0e463b0455bb\C\snapshots.tsv"
+BUF DEL B1
+OUT YES
+EXI YES
