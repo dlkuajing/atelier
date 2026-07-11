@@ -167,9 +167,22 @@ def test_e_runs_aut_while_a_does_not(tmp_path: Path) -> None:
 def test_snapshot_rmswe_failure_and_nonfinite_values_are_withheld() -> None:
     data = _snapshot_data()
     data["before-fictitious.rmswfe"] = "0"
-    data["before-fictitious.rmswfe_ok"] = "0"
+    data["before-fictitious.rmswfe_ok"] = "-1"
     data["after-snap-frozen.efl"] = "nan"
     snapshots = extract_snapshot_metrics(data)["snapshots"]
     assert snapshots[0] == {"stage": "before-fictitious", "status": "withheld", "reason": "RMSWE failed"}
     assert snapshots[1]["status"] == "withheld"
     assert "efl_mm" not in snapshots[0] and "rms_wfe_waves" not in snapshots[0]
+
+
+def test_snapshot_zero_rmswe_with_nonnegative_flag_is_legitimate() -> None:
+    data = _snapshot_data()
+    data["before-fictitious.rmswfe"] = "0"
+    data["before-fictitious.rmswfe_ok"] = "0"
+    snapshot = extract_snapshot_metrics(data)["snapshots"][0]
+    assert snapshot == {
+        "stage": "before-fictitious",
+        "status": "ok",
+        "efl_mm": 1.0,
+        "rms_wfe_waves": 0.0,
+    }

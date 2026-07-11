@@ -191,7 +191,7 @@ def extract_snapshot_metrics(data: Mapping[str, str]) -> dict[str, object]:
     assert isinstance(snapshots, list)
     for stage in ("before-fictitious", "after-snap-frozen", "after-snap-reopt"):
         ok = float(_required(data, f"{stage}.rmswfe_ok"))
-        if not math.isfinite(ok) or ok == 0.0:
+        if not math.isfinite(ok) or ok < 0.0:
             snapshots.append({"stage": stage, "status": "withheld", "reason": "RMSWE failed"})
             continue
         efl = float(_required(data, f"{stage}.efl"))
