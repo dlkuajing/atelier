@@ -305,7 +305,7 @@ def validate_reconstructed_field_artifact(
         return _floats(matches[0].removeprefix(f"{key} "))
 
     ftyp = unique_row("FTYP")
-    if len(ftyp) != 8 or int(ftyp[0]) != 3:
+    if len(ftyp) != 8 or not math.isfinite(ftyp[0]) or ftyp[0] != 3.0:
         raise ValueError("Stage C artifact must contain one complete 8-slot FTYP3 row")
     if any(not value.is_integer() for value in (ftyp[2], ftyp[7])) or (
         int(ftyp[2]) != expected_num_fields or int(ftyp[7]) != expected_num_fields

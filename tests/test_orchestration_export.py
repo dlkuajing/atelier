@@ -760,13 +760,19 @@ def test_stagec_bundle_rejects_arbitrary_bytes_even_with_self_reported_hash(tmp_
     assert "candidate.zmx withheld" in readme
 
 
-def test_stagec_candidate_and_export_reject_self_hashed_ftyp_count_forgery(tmp_path: Path):
+@pytest.mark.parametrize(
+    "forged_ftyp",
+    ["FTYP 3 0 999", "FTYP 3.5 0 12"],
+)
+def test_stagec_candidate_and_export_reject_self_hashed_ftyp_forgery(
+    tmp_path: Path, forged_ftyp: str,
+):
     sc = _stagec_offline_candidate(tmp_path)
     reconstruction = sc.generated.stagec_field_reconstruction
     assert reconstruction is not None and reconstruction.output_path is not None
     artifact = Path(reconstruction.output_path)
     artifact.write_text(
-        artifact.read_text(encoding="ascii").replace("FTYP 3 0 12", "FTYP 3 0 999"),
+        artifact.read_text(encoding="ascii").replace("FTYP 3 0 12", forged_ftyp),
         encoding="ascii",
         newline="\n",
     )

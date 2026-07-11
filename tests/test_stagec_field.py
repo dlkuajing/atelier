@@ -167,6 +167,7 @@ def test_reconstruction_preserves_signed_field_fractions(tmp_path: Path) -> None
     ("mutation", "message"),
     [
         (lambda text: text + "FTYP 3 0 3 0 0 0 0 3\n", "exactly one FTYP"),
+        (lambda text: text.replace("FTYP 3 0 3", "FTYP 3.5 0 3"), "FTYP3"),
         (
             lambda text: text.replace("FTYP 3 0 3", "FTYP 3 0 999"),
             "FTYP field-count slots",
