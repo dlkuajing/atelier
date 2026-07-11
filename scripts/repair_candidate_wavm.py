@@ -32,6 +32,18 @@ def rename_numeric_glass_names(text: str) -> tuple[str, int]:
         match = _NUMERIC_GLAS_RE.match(line.rstrip("\r\n"))
         if match is None:
             continue
+        # Gate (review MAJOR): rename only when the leading six digits encode
+        # this line's explicit nd ((nd-1)*1e6, the model-glass code contract).
+        # A numeric name that does NOT encode its own nd could be a legitimate
+        # catalog trade name — leave it untouched.
+        rest_fields = match.group("rest").split()
+        try:
+            explicit_nd = float(rest_fields[1])
+        except (IndexError, ValueError):
+            continue
+        encoded_nd = 1.0 + int(match.group("name")[:6]) / 1e6
+        if abs(encoded_nd - explicit_nd) > 5e-4:
+            continue
         eol = line[len(line.rstrip("\r\n")):]
         lines[index] = f"{match.group('indent')}GLAS ___BLANK 1 {match.group('rest')}{eol}"
         renamed += 1

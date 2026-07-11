@@ -79,3 +79,13 @@ run12"FCT+seed 干净"实为 PowerShell 反斜杠路径）。glass_snap_chain �
 上评估（source vd=55.9=声明真值，距离 1.7e-5 → snapped APL5014CL）。快照 RMSWE 全 withheld
 =诚实物理（导入丢 ray-aiming，与 Stage B 光线可追迹同根），像质 delta 待 ray-setup 集成铲。
 记账：stage withheld 时 EFL（近轴量，实测有效）也被整段扣留——可细分（backlog）。
+
+## 审查补记（合并前对抗审 1 MAJOR + 2 MINOR 处置）
+
+- MAJOR 已修：数字名改写加「前 6 位必须编码本行 nd（(nd-1)*1e6，模型码契约）」可验证门，
+  writer 与 repair 双侧；假想的合法数字牌号目录玻璃不再被吞并。
+- MINOR 已修：bisect prober 非空输出目录默认拒绝，需显式 --overwrite。
+- MINOR 记账（存量非本分支引入）：Optiland ingest 侧 `zmx_materials.resolve_material`
+  对 vd=0 回退伪造 vd=50（AbbeMaterial）——「色散未知」在 Optiland 度量链中会像已知色散。
+  单波长导入产生的 vd=0 GLAS（专利 seed 池普遍形态）受此影响。工单：ingest 侧带 provenance
+  的 unknown-dispersion 处理（禁伪造），随下一 P13 铲。

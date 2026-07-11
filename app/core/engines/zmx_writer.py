@@ -292,7 +292,11 @@ def _glass_line(surface: CodeVSurfaceReadout) -> str | None:
     # (snap proposals, chromatic metrics). "___BLANK 1 0 nd vd" (PR#49
     # convention) makes the importer build the model glass from the explicit
     # values instead of the name.
-    if re.fullmatch(r"\d{6}\.\d+", name):
+    # Gate (review MAJOR): a name-shape match alone cannot distinguish a
+    # model-glass code from a hypothetical numeric catalog trade name. Only
+    # rename when the leading six digits actually encode THIS row's nd
+    # ((nd-1)*1e6), which is the Zemax/CODE V model-glass code contract.
+    if re.fullmatch(r"\d{6}\.\d+", name) and abs((1.0 + int(name[:6]) / 1e6) - nd) <= 5e-4:
         name = "___BLANK"
     # Model glass needs flag=1 both for plain "___BLANK" and for the repair
     # marker form "<trade-name>_BLANK" (scripts/repair_legacy_zmx_glass.py):

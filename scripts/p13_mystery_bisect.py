@@ -290,13 +290,23 @@ def main() -> int:
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--timeout", type=float, default=40.0)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="delete an existing non-empty output directory (default: refuse)",
+    )
     args = parser.parse_args()
     if args.start < 0 or (args.limit is not None and args.limit < 1):
         parser.error("--start must be >= 0 and --limit must be >= 1")
     output = args.output.resolve()
-    if output.exists():
+    if output.exists() and any(output.iterdir()):
+        # Evidence safety (review MINOR): never silently destroy prior cells
+        # — a slice re-run (--start N) or a mistyped path must not erase
+        # earlier listings/summaries.
+        if not args.overwrite:
+            parser.error(f"output dir {output} is not empty; pass --overwrite to replace it")
         shutil.rmtree(output)
-    output.mkdir(parents=True)
+    output.mkdir(parents=True, exist_ok=True)
     sources = build_sources(SEED.read_text(encoding="ascii"), CANDIDATE.read_text(encoding="ascii"))
     cells = build_grid()[args.start : None if args.limit is None else args.start + args.limit]
     results = [
