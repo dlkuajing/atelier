@@ -16,6 +16,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 
+from app.core.engines.codev_batch import ensure_codev_safe_input_path
 from app.core.engines.codev_readout import CodeVReadout
 from app.core.engines.glass_snap import CatalogEntry, SnapResult, snap_glass
 
@@ -204,6 +205,7 @@ def build_glass_freeze_reopt_sequence(
         raise ValueError("session_run_id and configuration_fingerprint are required")
     if max_cycles < 1 or min_cycles < 1 or min_cycles > max_cycles:
         raise ValueError("cycle budget must satisfy 1 <= min_cycles <= max_cycles")
+    ensure_codev_safe_input_path(source_zmx, role="source_zmx")
     accepted = [p for p in proposals if p.disposition == "proposed" and p.result.entry]
     if len(accepted) != len(proposals) or not accepted:
         raise ValueError("every material identity needs one in-tolerance proposal")

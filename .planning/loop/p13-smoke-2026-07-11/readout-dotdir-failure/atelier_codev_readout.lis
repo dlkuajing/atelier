@@ -1,0 +1,120 @@
+  
+  
+                                   Welcome to
+  
+                                   C O D E   V
+  
+                                PC  Version 11.5
+                                   Build 27302701
+  
+                                   11-Jul-2026
+  
+                            A proprietary product of
+  
+                              SYNOPSYS, INC
+                              Pasadena, California
+  
+CODE V> OUT NO
+     ERROR - Zemax File D:\atelier\.planning\loop\candidates-2026-07-09\US201700
+             Verify that there are no spaces in either
+             the folder path name or the file name.
+             If the file name begins with a numeric,
+             the file name must be enclosed in quotes.
+  
+CODE V> BUF PUT B1 I^row J1 "schema"
+      Created new worksheet B1.
+CODE V> BUF PUT B1 I^row J2 "atelier-codev-readout-v1"
+CODE V> BUF PUT B1 I^row J1 "status"
+CODE V> BUF PUT B1 I^row J2 "ok"
+CODE V> BUF PUT B1 I^row J1 "source_zmx"
+CODE V> BUF PUT B1 I^row J2 "US20170003482A1_target3.797_optimized.zmx"
+CODE V> BUF PUT B1 I^row J1 "units"
+CODE V> BUF PUT B1 I^row J2 ^units
+CODE V> BUF PUT B1 I^row J1 "aperture_type"
+CODE V> BUF PUT B1 I^row J2 ^apetype
+CODE V> BUF PUT B1 I^row J1 "f_number"
+CODE V> BUF PUT B1 I^row J2 (FNO)
+     ERROR - No entrance pupil diameter, f/number, numerical aperture specified
+CODE V> BUF PUT B1 I^row J1 "entrance_pupil_diameter_mm"
+CODE V> BUF PUT B1 I^row J2 (EPD)
+     ERROR - No entrance pupil diameter, f/number, numerical aperture specified
+CODE V> BUF PUT B1 I^row J1 "num_surfaces"
+CODE V> BUF PUT B1 I^row J2 ^numsur
+CODE V> BUF PUT B1 I^row J1 "num_fields"
+CODE V> BUF PUT B1 I^row J2 ^numfld
+CODE V> BUF PUT B1 I^row J1 "num_wavelengths"
+CODE V> BUF PUT B1 I^row J2 ^numwav
+CODE V> BUF PUT B1 I^row J1 "num_zooms"
+CODE V> BUF PUT B1 I^row J2 ^numz
+CODE V> BUF PUT B1 I^row J1 "stop_surface"
+CODE V> BUF PUT B1 I^row J2 ^stop
+CODE V> BUF PUT B1 I^row J1 "field_type"
+CODE V> BUF PUT B1 I^row J2 ^field_type
+CODE V> BUF PUT B1 I^row J1 "reference_wavelength_index"
+CODE V> BUF PUT B1 I^row J2 ^refw
+CODE V> BUF PUT B1 I^row J1 "image_height_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^maximh
+     ERROR - Index data not defined for surface
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (RDY S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (THI S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (MAP S^s)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^glass
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^nd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^vd
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^surf_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^isstop
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefK
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefA
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefB
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefC
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefD
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefE
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefF
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefG
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefH
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^coefJ
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WL W^w)
+     ERROR - No wavelength data specified
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (WTW Z1 W^w)
+     ERROR - No wavelength data specified
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_type
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_x
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 ^field_y
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLY F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VUX F^f Z1)
+CODE V>   BUF PUT B1 I^row J1 ^key
+CODE V>   BUF PUT B1 I^row J2 (VLX F^f Z1)
+CODE V> BUF EXP B1 "C:\Users\Administrator\AppData\Local\Temp\claude\D--atelier\6c49fb9d-20ee-464b-a2cf-0d7eeff1ada6\scratchpad\p13matrix\smoke_out\readout\atelier_codev_readout.tsv"
+     Buffer B1 exported to file atelier_codev_readout.tsv
+CODE V> BUF DEL B1
+CODE V> OUT YES
+CODE V> EXI YES
+     EXI                                                                              11-Jul-26   7H  4M  9S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S

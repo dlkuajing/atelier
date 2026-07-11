@@ -11,6 +11,7 @@ from pathlib import Path
 from app.core.engines.codev_batch import (
     DEFAULT_CODEV_EXECUTABLE,
     CodeVBatchResult,
+    ensure_codev_safe_input_path,
     run_codev_batch,
 )
 from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
@@ -179,6 +180,7 @@ def build_zmx_import_sequence(
     """
 
     source_zmx = Path(source_zmx)
+    ensure_codev_safe_input_path(source_zmx, role="source_zmx")
     result_path = Path(result_path)
     command_export_path = Path(command_export_path)
     rows = (

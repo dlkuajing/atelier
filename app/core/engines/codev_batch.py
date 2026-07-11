@@ -636,6 +636,24 @@ def ensure_buf_exp_safe_filename(path: Path | str, *, role: str = "path") -> Non
         )
 
 
+def ensure_codev_safe_input_path(path: Path | str, *, role: str = "input_path") -> None:
+    """Reject paths that CODE V's Zemax import macro cannot consume safely."""
+
+    value = str(path)
+    if any(char in value for char in ('"', "\r", "\n")):
+        raise ValueError(f"CODE V {role} cannot contain quotes or newlines: {value!r}")
+    # PurePath semantics on the host are insufficient for Windows paths in CI,
+    # so normalize both separator spellings.  Drive/UNC anchors yield empty
+    # components and are deliberately ignored.
+    components = value.replace("\\", "/").split("/")
+    dotted = next((part for part in components if part.startswith(".") and part), None)
+    if dotted is not None:
+        raise ValueError(
+            f"CODE V-unsafe {role} {value!r}: dot-prefixed path component {dotted!r} "
+            "makes ZEMAXOS_TO_CV silently import a dummy system"
+        )
+
+
 def _quote_codev_path(path: Path) -> str:
     value = str(path)
     if any(char in value for char in ('"', "\r", "\n")):
