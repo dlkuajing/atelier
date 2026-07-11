@@ -447,6 +447,7 @@ def write_summary_report(results: list[tuple[MatrixRow, FnoProbeResult]], path: 
     ]
     for row, result in results:
         classification = result.classification
+        duration_cell = f"{result.duration_seconds:.1f}" if result.duration_seconds else "0"
         lines.append(
             f"| {row.case_id} | {row.direction} | {row.native_fnum:.3f} | "
             f"{row.target_f_number:.3f} | {row.fov_deg:.1f} | {result.outcome} | "
@@ -454,7 +455,7 @@ def write_summary_report(results: list[tuple[MatrixRow, FnoProbeResult]], path: 
             f"{result.efl_target_deviation_pct if result.efl_target_deviation_pct is not None else ''} | "
             f"{classification.refl_count if classification else ''} | "
             f"{classification.miss_count if classification else ''} | "
-            f"{result.duration_seconds:.1f if result.duration_seconds else 0} |"
+            f"{duration_cell} |"
         )
 
     lines += [

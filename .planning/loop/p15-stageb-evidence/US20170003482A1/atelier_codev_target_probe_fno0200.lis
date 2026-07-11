@@ -1,0 +1,196 @@
+! trimmed excerpt: 659 raw lines -> 194 kept (RAY ERROR / WARNING / AUTO Completion / CYCLE NUMBER lines + 2-line context, plus the first 40 lines; original line numbers prefixed). Classification already ran on the full text at run time -- this trimming only affects what's persisted to disk.
+
+     1|   
+     2|   
+     3|                                    Welcome to
+     4|   
+     5|                                    C O D E   V
+     6|   
+     7|                                 PC  Version 11.5
+     8|                                    Build 27302701
+     9|   
+    10|                                    11-Jul-2026
+    11|   
+    12|                             A proprietary product of
+    13|   
+    14|                               SYNOPSYS, INC
+    15|                               Pasadena, California
+    16|   
+    17| CODE V> OUT NO
+    18|      Radius input/output mode
+    19|   
+    20|     Lens data created by Zemax version 200706
+    21|   
+    22|     Zemax command MODE ignored
+    23|     ZEMAX NOTE 0 table5
+    24|     Zemax command PFIL ignored
+    25|     Zemax command LANG ignored
+    26|      WARNING - Glass catalog list not used.
+    27|      WARNING - Ray aiming not used.
+    28|      WARNING - Pupil shift for ray aiming not used.
+    29|     Zemax command SDMA ignored
+    30|     Zemax command OMMA ignored
+    31|     Zemax command HYPR ignored
+    32|      WARNING - Vignetting angles not used.
+    33|     Zemax command POLS ignored
+    34|     Zemax command GLRS ignored
+    35|     Zemax command GSTD ignored
+    36|     Zemax command NSCD ignored
+    37|     Zemax command COFN ignored
+    38|     Zemax command COFN ignored
+    39|   
+    40|      Surface pointer = OBJ
+    42|     CODE V surface type SPH
+    43|     Zemax command FIMP ignored.
+    44|      WARNING - Hiding of rays not used.
+    45|     Zemax command MIRR ignored.
+    46|     Zemax command SLAB ignored.
+    52|     CODE V surface type ASP
+    53|     Zemax command FIMP ignored.
+    54|      WARNING - Hiding of rays not used.
+    55|     Zemax command MIRR ignored.
+    56|     Zemax command SLAB ignored.
+    57|      WARNING - Partial dispersion of model glass not used.
+    58|     Zemax command MEMA ignored.
+    59|     Zemax command POPS ignored.
+    63|     CODE V surface type ASP
+    64|     Zemax command FIMP ignored.
+    65|      WARNING - Hiding of rays not used.
+    66|     Zemax command MIRR ignored.
+    67|     Zemax command SLAB ignored.
+    73|     CODE V surface type ASP
+    74|     Zemax command FIMP ignored.
+    75|      WARNING - Hiding of rays not used.
+    76|     Zemax command MIRR ignored.
+    77|     Zemax command SLAB ignored.
+    83|     CODE V surface type ASP
+    84|     Zemax command FIMP ignored.
+    85|      WARNING - Hiding of rays not used.
+    86|     Zemax command MIRR ignored.
+    87|     Zemax command SLAB ignored.
+    88|      WARNING - Partial dispersion of model glass not used.
+    89|     Zemax command MEMA ignored.
+    90|     Zemax command POPS ignored.
+    94|     CODE V surface type ASP
+    95|     Zemax command FIMP ignored.
+    96|      WARNING - Hiding of rays not used.
+    97|     Zemax command MIRR ignored.
+    98|     Zemax command SLAB ignored.
+   104|     CODE V surface type ASP
+   105|     Zemax command FIMP ignored.
+   106|      WARNING - Hiding of rays not used.
+   107|     Zemax command MIRR ignored.
+   108|     Zemax command SLAB ignored.
+   109|      WARNING - Partial dispersion of model glass not used.
+   110|     Zemax command MEMA ignored.
+   111|     Zemax command POPS ignored.
+   115|     CODE V surface type ASP
+   116|     Zemax command FIMP ignored.
+   117|      WARNING - Hiding of rays not used.
+   118|     Zemax command MIRR ignored.
+   119|     Zemax command SLAB ignored.
+   125|     CODE V surface type ASP
+   126|     Zemax command FIMP ignored.
+   127|      WARNING - Hiding of rays not used.
+   128|     Zemax command MIRR ignored.
+   129|     Zemax command SLAB ignored.
+   130|      WARNING - Partial dispersion of model glass not used.
+   131|     Zemax command MEMA ignored.
+   132|     Zemax command POPS ignored.
+   136|     CODE V surface type ASP
+   137|     Zemax command FIMP ignored.
+   138|      WARNING - Hiding of rays not used.
+   139|     Zemax command MIRR ignored.
+   140|     Zemax command SLAB ignored.
+   146|     CODE V surface type ASP
+   147|     Zemax command FIMP ignored.
+   148|      WARNING - Hiding of rays not used.
+   149|     Zemax command MIRR ignored.
+   150|     Zemax command SLAB ignored.
+   151|      WARNING - Partial dispersion of model glass not used.
+   152|     Zemax command MEMA ignored.
+   153|     Zemax command POPS ignored.
+   157|     CODE V surface type ASP
+   158|     Zemax command FIMP ignored.
+   159|      WARNING - Hiding of rays not used.
+   160|     Zemax command MIRR ignored.
+   161|     Zemax command SLAB ignored.
+   167|     CODE V surface type ASP
+   168|     Zemax command FIMP ignored.
+   169|      WARNING - Hiding of rays not used.
+   170|     Zemax command MIRR ignored.
+   171|     Zemax command SLAB ignored.
+   172|      WARNING - Partial dispersion of model glass not used.
+   173|     Zemax command MEMA ignored.
+   174|     Zemax command POPS ignored.
+   178|     CODE V surface type ASP
+   179|     Zemax command FIMP ignored.
+   180|      WARNING - Hiding of rays not used.
+   181|     Zemax command MIRR ignored.
+   182|     Zemax command SLAB ignored.
+   188|     CODE V surface type ASP
+   189|     Zemax command FIMP ignored.
+   190|      WARNING - Hiding of rays not used.
+   191|     Zemax command MIRR ignored.
+   192|     Zemax command SLAB ignored.
+   193|      WARNING - Partial dispersion of model glass not used.
+   194|     Zemax command MEMA ignored.
+   195|     Zemax command POPS ignored.
+   199|     CODE V surface type ASP
+   200|     Zemax command FIMP ignored.
+   201|      WARNING - Hiding of rays not used.
+   202|     Zemax command MIRR ignored.
+   203|     Zemax command SLAB ignored.
+   209|     CODE V surface type SPH
+   210|     Zemax command FIMP ignored.
+   211|      WARNING - Hiding of rays not used.
+   212|     Zemax command MIRR ignored.
+   213|     Zemax command SLAB ignored.
+   214|      WARNING - Partial dispersion of model glass not used.
+   215|     Zemax command MEMA ignored.
+   216|     Zemax command POPS ignored.
+   220|     CODE V surface type SPH
+   221|     Zemax command FIMP ignored.
+   222|      WARNING - Hiding of rays not used.
+   223|     Zemax command MIRR ignored.
+   224|     Zemax command SLAB ignored.
+   230|     CODE V surface type SPH
+   231|     Zemax command FIMP ignored.
+   232|      WARNING - Hiding of rays not used.
+   233|     Zemax command MIRR ignored.
+   234|     Zemax command SLAB ignored.
+   236|     Zemax command POPS ignored.
+   237|   
+   238|      WARNING - Please check the converted lens carefully.
+   239|                Some information will not be converted.
+   240|                Changes in either CODE V or ZEMAX may invalidate
+   381|   
+   382|      RELATIVE TIME PER CYCLE IS  341.5 UNITS
+   383|      WARNING - The macro function SPOTDATA is not supported on multiple threads.
+   384|                CODE V will set the multiple processor setting (MPP) to 1 to prevent errors.
+   385|                Please refer to the CODE V Setup and Operation Reference Manual for a complete list
+   386|                of pre-defined macro functions that are currently limited to running on a single thread.
+   387|   
+   388|  CYCLE NUMBER 0:
+   389|   
+   390|   ABERR F. =        3.54665859
+   447|   
+   448|   Constraints added:      EFL (=)                     Mn CT S3 (>)
+   449|  RAY ERROR: MISS  6
+   450|  RAY ERROR: MISS  6
+   451|  RAY ERROR: MISS  6
+   452|  RAY ERROR: MISS  6
+   453|   
+   454|  CYCLE NUMBER 1:
+   455|   
+   456|   ABERR F. =        3.66730033
+   513|   @ATELIER_RMSSPOT       =   0.00000E+00   7.43722E+01   1.000E-03   5.531E+03
+   514|   
+   515|  CYCLE NUMBER 2:
+   516|   
+   517|   ABERR F. =        4.00071630
+   574|   @ATELIER_RMSSPOT       =   0.00000E+00   7.75042E+01   1.000E-03   6.007E+03
+   575|   
+   576|      Normal AUTO Completion - Maximum cycle limit reached
+   577| AUT> GO
+   578| 
