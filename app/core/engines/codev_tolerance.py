@@ -114,12 +114,6 @@ def _default_tor_runner(command: list[str], **kwargs: Any) -> Any:
     )()
 
 
-def _reject_dotted_components(path: Path, name: str) -> None:
-    """CODE V can misparse dots in path components; P13's guard is not on this branch."""
-    if any("." in part for part in path.resolve().parts[:-1]):
-        raise ValueError(f"{name} contains a dotted directory component unsafe for CODE V")
-
-
 def run_codev_tor(
     *,
     source_zmx: Path | str,
@@ -135,10 +129,12 @@ def run_codev_tor(
     runner: Callable[..., Any] = _default_tor_runner,
 ) -> CodeVTorRunResult:
     """Build and run the two-export TOR contract; return codes 0 and 1 are normal."""
-    source = Path(source_zmx)
-    work = Path(work_dir)
-    _reject_dotted_components(source, "source_zmx")
-    _reject_dotted_components(work / "placeholder", "work_dir")
+    # Run-boundary resolve + shared guard (P13 convention): relative paths would
+    # otherwise resolve against CODE V's cwd and silently import a dummy system.
+    source = Path(source_zmx).resolve()
+    work = Path(work_dir).resolve()
+    ensure_codev_safe_input_path(source, role="source_zmx")
+    ensure_codev_safe_input_path(work, role="work_dir")
     work.mkdir(parents=True, exist_ok=True)
     sequence_path = work / "atelier_tor.seq"
     per_path = work / "atelier_tor_per.tsv"
