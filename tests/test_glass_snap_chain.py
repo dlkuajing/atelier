@@ -116,8 +116,8 @@ def test_builder_has_assign_freeze_short_aut_and_three_snapshots(tmp_path):
     assert sequence.index("END FCT ^ok") < sequence.index("ZEMAXOS_TO_CV")
     # Backslash paths only: forward-slash absolute paths in ZEMAXOS_TO_CV hang
     # CODE V (decisive A/B 2026-07-11); BUF EXP kept consistent.
-    import_line = next(l for l in sequence.splitlines() if "ZEMAXOS_TO_CV" in l)
-    export_line = next(l for l in sequence.splitlines() if "BUF EXP" in l)
+    import_line = next(ln for ln in sequence.splitlines() if "ZEMAXOS_TO_CV" in ln)
+    export_line = next(ln for ln in sequence.splitlines() if "BUF EXP" in ln)
     assert "/" not in import_line.split(":", 2)[-1]
     assert "/" not in export_line.split(" ", 3)[-1]
 
