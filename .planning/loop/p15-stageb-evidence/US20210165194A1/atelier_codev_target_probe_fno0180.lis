@@ -1,0 +1,449 @@
+  
+  
+                                   Welcome to
+  
+                                   C O D E   V
+  
+                                PC  Version 11.5
+                                   Build 27302701
+  
+                                   11-Jul-2026
+  
+                            A proprietary product of
+  
+                              SYNOPSYS, INC
+                              Pasadena, California
+  
+CODE V> OUT NO
+     Radius input/output mode
+  
+    Lens data created by Zemax version 210628
+  
+    Zemax command MODE ignored
+    Zemax command AUTH ignored
+    Zemax command PFIL ignored
+    Zemax command LANG ignored
+     WARNING - Glass catalog list not used.
+     WARNING - Ray aiming not used.
+     WARNING - Pupil shift for ray aiming not used.
+    Zemax command SDMA ignored
+    Zemax command OMMA ignored
+    Zemax command HYPR ignored
+     WARNING - Vignetting angles not used.
+    Zemax command XAIM ignored
+    Zemax command YAIM ignored
+    Zemax command ZAIM ignored
+    Zemax command POLS ignored
+    Zemax command GLRS ignored
+    Zemax command GSTD ignored
+    Zemax command NSCD ignored
+    Zemax command COFN ignored
+    Zemax command COFN ignored
+    Zemax command LUID ignored
+  
+     Surface pointer = OBJ
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 1
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 2
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 3
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 4
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 5
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 6
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 7
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 8
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 9
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 10
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 11
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 12
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 13
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 14
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 15
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 16
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = IMG
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     WARNING - Please check the converted lens carefully.
+               Some information will not be converted.
+               Changes in either CODE V or ZEMAX may invalidate
+               the converted information.
+               Due to differences between CODE V and ZEMAX ray
+               aiming and vignetting factors, it is recommended
+               that you set vignetting for the converted system.
+  
+               A concise listing of conversion warnings appears
+               in the Tabbed Output Window 'Info' tab and in the
+               Command Window.
+  
+CODE V> DEF VAR SA
+ 
+ 
+CODE V> FNO 1.8
+     ERROR - Ray failure at surface   9.  No intersections found within the limiting
+             volume.  Consider increasing the size of the normalization radius, EDG
+             apertures, or bounding box limits if this surface blocks rays in the
+             desired ray bundle.  Also consider resetting the vignetting.
+     ERROR - One or more of the reference rays from field  2 is deviated far from
+             most of the other rays from this field point.  The reference rays are
+             used to determine the numerical aperture and the grid spacing.  Thus, it
+             is important that these rays are focused at approximately the same spot
+             as the other rays from this field point.  Modifying the vignetting
+             may solve this problem and allow the computation to proceed.
+CODE V> AUT
+     AUT                                                                              11-Jul-26  10H  9M 12S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  1S
+     ***Defocussing frozen to eliminate redundant variable
+AUT>   SUR N
+AUT>   CHG SA
+AUT>   WFR Y
+AUT>   WTF FA 10
+AUT>   EFL = 2.40859727258987
+AUT>   @atelier_latcolor == @lcum(1)
+AUT>   @atelier_latcolor = 0
+AUT>   WTC 0.01
+AUT>   @atelier_rmsspot == @rmssum(1)
+AUT>   @atelier_rmsspot = 0
+AUT>   WTC 0.001
+AUT>   MNT 0.025
+AUT>   MNE 0.025
+AUT>   MXT 10
+AUT>   MNA 0.001
+AUT>   MXC 2
+AUT>   MNC 1
+AUT>   IMP 0.001
+AUT> GO
+ -------------------------------------------------------------------------------
+  
+       USER CONSTRAINT DEFINITIONS
+            @atelier_rmsspot == @rmssum(1)
+  
+            @atelier_latcolor == @lcum(1)
+  
+  
+  
+       POTENTIALLY ACTIVE SPECIFIC CONSTRAINTS
+         EFL                                  =       2.408597
+         @ATELIER_LATCOLOR                    =       0.000000     (WTC =    0.01000)
+         @ATELIER_RMSSPOT                     =       0.000000     (WTC =    0.00100)
+  
+       GENERAL CONSTRAINTS
+         MXT      10.000000
+         MNT       0.025000
+         MNE       0.025000
+         MNA       0.001000
+         MAE       0.002500
+         GLA               NFK5  NSK16  NLAF2  SF4
+  
+       ERROR FUNCTION CONSTRUCTION
+         WFR        Y
+         WTW       1          1          1          1          1
+         WTA       0.000000
+         DEL       0.220000
+         WTX F1   10.000000
+         WTX F2   10.000000
+         WTX F3   10.000000
+         WTY F1   10.000000
+         WTY F2   10.000000
+         WTY F3   10.000000
+  
+       CONVERGENCE CONTROLS
+         MXC         2
+         MNC         1
+         TAR       0.000000
+         IMP       0.001000
+  
+       OUTPUT CONTROLS
+         SUR NO
+         CHG S0..17
+  
+     Recommendations for most stable convergence:
+  
+       Use object space aperture specifications:
+       - NAO for finite conjugate systems
+       - EPD for infinite conjugate systems
+  
+       VARIABLE LIST
+  
+         NO      PARAMETERS *
+          1      CUY S2       CUY S5
+          2      CUY S5       CUY S6       CUY S7
+          3      CUY S6       CUY S7
+          4      CUY S7
+          5      A   S5
+          6      A   S6
+          7      A   S7
+          8      THI S2
+          9      THI S4
+         10      THI S6
+         11      THI S8
+         12      THI S10
+         13      THI S12
+         14      THI S14
+         15      THI S16
+  
+     * Multiple entries on a line are composite variables.
+     Composite variables are either program-generated bendings
+     or user-requested couplings.
+  
+      15 VARIABLES
+  
+      15 CONSTRAINTS CAN BE ACTIVE
+  
+     RELATIVE TIME PER CYCLE IS  221.0 UNITS
+     ERROR - Ray failure at surface   9.  No intersections found within the limiting
+             volume.  Consider increasing the size of the normalization radius, EDG
+             apertures, or bounding box limits if this surface blocks rays in the
+             desired ray bundle.  Also consider resetting the vignetting.
+ RAY ERROR: MISS  9
+           Aperture and Field at 0.900 of spec.
+     WARNING - The macro function SPOTDATA is not supported on multiple threads.
+               CODE V will set the multiple processor setting (MPP) to 1 to prevent errors.
+               Please refer to the CODE V Setup and Operation Reference Manual for a complete list
+               of pre-defined macro functions that are currently limited to running on a single thread.
+  
+ CYCLE NUMBER 0:
+  
+  ABERR F. =        0.19618323
+  CONST F. =     1607.91922149
+  ERR. F.  =     1608.11540472
+  
+  OPD     0.19671355     0.13503235     0.20982922
+  WAV     0.21046770     0.16992183     0.23832502
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S2               -5.15463918E-03      0.00E+00
+  CUY S5                4.88042948E-01      0.00E+00
+  CUY S6               -5.47267493E-03      0.00E+00
+  CUY S7                2.97601333E-02      0.00E+00
+  A   S5               -7.54068000E-02      0.00E+00
+  A   S6               -2.24360000E-01      0.00E+00
+  A   S7               -5.63451000E-01      0.00E+00
+  THI S2                1.50000000E-01      0.00E+00
+  THI S4               -5.50000000E-02      0.00E+00
+  THI S6                2.31000000E-01      0.00E+00
+  THI S8                9.80000000E-02      0.00E+00
+  THI S10               5.00000000E-02      0.00E+00
+  THI S12               9.70000000E-02      0.00E+00
+  THI S14               3.86000000E-01      0.00E+00
+  THI S16               4.75000000E-01      0.00E+00
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.406151     0.000000     0.424878     4.327000     0.729101    -2.085399
+  
+  Specific Constraints:        target        value         diff      active (**)
+  EFL                    =   2.40860E+00   2.40615E+00  -2.446E-03    **
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.26173E+00   1.000E-02   1.592E+02
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.80621E+01   1.000E-03   1.449E+03
+  
+  Constraints added:      EFL (=)                     Mn CT S4 (>)
+     ERROR - Total reflection at surface  10 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Total reflection at surface  10 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Total reflection at surface  10 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Total reflection at surface  10 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Total reflection at surface  10 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Total reflection at surface  10 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1
+     ERROR - Total reflection at surface  10 for zoom position  1
+     ERROR - Ray missed surface   5 for zoom position  1

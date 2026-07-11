@@ -19,10 +19,13 @@ from app.core.engines.codev_optimize import (
     CODEV_OPTIMIZE_RESULT_SCHEMA,
     DEFAULT_GLASS_BOUNDS_ND_VD,
     DEFAULT_OPTIMIZE_SEED,
+    FNO_LADDER_RESULT_SCHEMA,
     STANDARD_RESULT_SCHEMA,
     TARGET_RESULT_SCHEMA,
     _autovig_profile,
+    _geometric_fnum_ladder,
     _glass_map_hull,
+    _measured_fnum,
     build_codev_optimize_sequence,
     build_codev_target_sequence,
     default_optimize_seed,
@@ -31,6 +34,7 @@ from app.core.engines.codev_optimize import (
     run_codev_optimize,
     run_codev_target,
     run_codev_target_autovig,
+    run_codev_target_fno_ladder,
     run_codev_target_standard,
 )
 from app.core.engines.codev_readout import CODEV_READOUT_RESULT_SCHEMA
@@ -1193,6 +1197,36 @@ def test_parse_aut_error_trace_unstable_termination_keyword() -> None:
     assert trace["termination"] == "unstable_condition"
 
 
+@pytest.mark.parametrize(
+    ("phrase", "keyword"),
+    [
+        (
+            "Abnormal AUTO Completion - Scaled down SPC data",
+            "scaled_down_spc_data",
+        ),
+        (
+            "Abnormal AUTO Completion - Scaled down nominal system cannot be traced",
+            "scaled_down_nominal_cannot_be_traced",
+        ),
+    ],
+)
+def test_parse_aut_error_trace_scaled_down_terminations(phrase: str, keyword: str) -> None:
+    """P15 Stage 2 真机回填：42 格采证 corpus 发现的两个 aperture/pupil 缩放
+    失败终止措辞（13 次 / 6 次）进 _AUT_TERMINATION_KEYWORDS——修复前
+    fail-open 返回 termination=None（不可观测）。"""
+    text = (
+        " CYCLE NUMBER 0:\n\n"
+        "  ABERR F. =        1.00000000\n"
+        "  CONST F. =        1.00000000\n"
+        "  ERR. F.  =        2.00000000\n\n"
+        f"     {phrase}\n"
+        "AUT> GO\n"
+    )
+    trace = parse_aut_error_trace(text)
+    assert trace["termination"] == keyword
+    assert trace["err_f_first"] == pytest.approx(2.0)
+
+
 def test_mock_run_codev_target_includes_aut_error_trace(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -2062,3 +2096,712 @@ def test_real_codev_target_delivers_verifiable_zmx_without_extra_dof(tmp_path: P
         print(f"[smoke] RMS spot computable, max_rms_radius_um={max_rms_um}")
     except Exception as exc:  # noqa: BLE001 - diagnostic only, report honestly either way
         print(f"[smoke] RMS spot computation raised: {type(exc).__name__}: {exc}")
+
+
+# ===========================================================================
+# FNO 阶梯引擎（Phase 15 Stage 3）：_geometric_fnum_ladder / _measured_fnum
+# 纯函数测试 + run_codev_target_fno_ladder mock 测试（monkeypatch
+# codev_optimize.run_codev_target_autovig 本体，不触碰 subprocess/CODE V）。
+# ===========================================================================
+
+
+def test_geometric_fnum_ladder_tighten_last_rung_exact() -> None:
+    rungs = _geometric_fnum_ladder(native_fnum=2.0, fnum_target=1.6, rung_count=3)
+    assert len(rungs) == 3
+    assert rungs[-1] == pytest.approx(1.6)
+    assert rungs[0] > rungs[1] > rungs[2]  # 收紧方向：单调递减
+    assert all(1.6 <= r <= 2.0 for r in rungs)
+
+
+def test_geometric_fnum_ladder_loosen_last_rung_exact() -> None:
+    rungs = _geometric_fnum_ladder(native_fnum=2.0, fnum_target=3.0, rung_count=2)
+    assert len(rungs) == 2
+    assert rungs[-1] == pytest.approx(3.0)
+    assert rungs[0] < rungs[1]
+    assert all(2.0 <= r <= 3.0 for r in rungs)
+
+
+def test_geometric_fnum_ladder_native_equals_target_single_rung() -> None:
+    rungs = _geometric_fnum_ladder(native_fnum=2.0, fnum_target=2.0, rung_count=5)
+    assert rungs == [2.0]
+
+
+def test_geometric_fnum_ladder_rejects_bad_rung_count() -> None:
+    with pytest.raises(ValueError):
+        _geometric_fnum_ladder(native_fnum=2.0, fnum_target=1.6, rung_count=0)
+
+
+def test_geometric_fnum_ladder_rejects_nonpositive_inputs() -> None:
+    with pytest.raises(ValueError):
+        _geometric_fnum_ladder(native_fnum=0.0, fnum_target=1.6, rung_count=2)
+    with pytest.raises(ValueError):
+        _geometric_fnum_ladder(native_fnum=2.0, fnum_target=-1.0, rung_count=2)
+
+
+def test_measured_fnum_computes_efl_over_epd() -> None:
+    data = {"post_aut.efl_y_mm": "4.0", "post_aut.epd_mm": "2.0"}
+    assert _measured_fnum(data) == pytest.approx(2.0)
+
+
+def test_measured_fnum_fail_closed_missing_or_bad() -> None:
+    assert _measured_fnum({}) is None
+    assert _measured_fnum({"post_aut.efl_y_mm": "nan", "post_aut.epd_mm": "2.0"}) is None
+    assert _measured_fnum({"post_aut.efl_y_mm": "4.0", "post_aut.epd_mm": "garbage"}) is None
+    assert _measured_fnum({"post_aut.efl_y_mm": "4.0", "post_aut.epd_mm": "0.0"}) is None
+
+
+_LADDER_RAY_GRID_OK = {
+    "category": "ok",
+    "refl_count": 0,
+    "miss_count": 0,
+    "ray_aiming_warning": False,
+    "aperture_conflict_matched": None,
+    "excerpt": None,
+    "note": "positive evidence",
+    "normal_completion": True,
+    "abnormal_completion_matched": None,
+}
+_LADDER_RAY_GRID_TIR = {
+    "category": "TIR",
+    "refl_count": 7,
+    "miss_count": 3,
+    "ray_aiming_warning": True,
+    "aperture_conflict_matched": None,
+    "excerpt": None,
+    "note": "7 RAY ERROR: REFL occurrence(s)",
+    "normal_completion": True,
+    "abnormal_completion_matched": None,
+}
+
+
+def _fake_ladder_autovig(*, native_measured: float, rung_status: dict[int, str] | None = None):
+    """Stub for codev_optimize.run_codev_target_autovig: tracks call order via
+    a closure counter (index 0 = rung0/native, 1.. = ladder rungs in the
+    order run_codev_target_fno_ladder issues them). rung_status maps a call
+    index to a forced outcome: "error" (generic CodeVBatchError), "preflight"
+    (seed-level defect, short-circuits the whole ladder), "non-finite"
+    (post_aut fields come back non-numeric), "tir" (measured + converged but
+    ray grid classified TIR — the double-false-positive shape from the Stage
+    2 evidence), "no-ray-grid" (measured but listing evidence missing),
+    "off-target" (measured F# 20% away from the requested target). Absent ->
+    "measured-ok", perfectly achieving whatever target_f_number was requested
+    (native_measured for rung 0's target_f_number=None) with a clean ray
+    grid."""
+    calls = {"n": 0}
+    rung_status = rung_status or {}
+
+    def _run(*, target_f_number: float | None = None, **_ignored: object) -> dict[str, object]:
+        idx = calls["n"]
+        calls["n"] += 1
+        status = rung_status.get(idx, "measured-ok")
+        if status == "error":
+            raise CodeVBatchError("timeout", f"rung {idx} boom")
+        if status == "preflight":
+            raise CodeVBatchError(
+                "failure", "unresolved glass", details={"preflight": "unresolved-glass"}
+            )
+        fnum = native_measured if target_f_number is None else target_f_number
+        if status == "off-target":
+            fnum = fnum * 1.2  # 实测偏离请求 target 20%（超 8% 容差）
+        if status == "non-finite":
+            efl_text, epd_text = "nan", "nan"
+        else:
+            efl_text, epd_text = "4.0", str(4.0 / fnum)
+        ray_grid: dict[str, object] | None = dict(_LADDER_RAY_GRID_OK)
+        if status == "tir":
+            ray_grid = dict(_LADDER_RAY_GRID_TIR)
+        elif status == "no-ray-grid":
+            ray_grid = None
+        return {
+            "post_aut.efl_y_mm": efl_text,
+            "post_aut.epd_mm": epd_text,
+            "efl_target_deviation_pct": "0.01",
+            "aut_converged": "1",
+            "post_aut.max_rms_spot_diameter_um": "10.0",
+            "post_aut.max_rms_wavefront_error_waves": "0.3",
+            "num_fields": "3",
+            "autovig.edge_used": "0.2",
+            "autovig.converged": "1",
+            "aut_error_trace": {"err_f_ratio": 0.5},
+            "ray_grid": ray_grid,
+        }
+
+    return _run
+
+
+def test_fno_ladder_happy_path_climbs_and_hits_target(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+    )
+    assert result["schema"] == FNO_LADDER_RESULT_SCHEMA
+    assert result["native_fnum_measured"] == pytest.approx(2.0)
+    assert len(result["rungs"]) == 3  # rung0 native + 2 ladder rungs
+    assert result["rungs"][0]["target_fnum"] is None
+    assert result["rungs"][0]["measured_fnum"] == pytest.approx(2.0)
+    assert result["rungs"][0]["fno_param_achieved"] is None  # rung0 无目标
+    assert result["rungs"][-1]["target_fnum"] == pytest.approx(1.6)
+    assert result["rungs"][-1]["measured_fnum"] == pytest.approx(1.6)
+    assert result["rungs"][-1]["fnum_target_deviation_pct"] == pytest.approx(0.0, abs=1e-9)
+    assert result["rungs"][-1]["err_f_ratio"] == pytest.approx(0.5)
+    assert result["rungs"][-1]["fno_param_achieved"] is True
+    assert result["rungs"][-1]["ray_traceable"] is True
+    assert result["last_measured_rung"]["rung_index"] == 2
+    assert result["last_measured_rung_index"] == 2
+    assert result["target_achieved"] is True  # 四条件全成立
+    assert result["accepted_final"]["rung_index"] == 2
+    assert result["fnum_tolerance_pct"] == pytest.approx(8.0)
+    assert result["blocked"] is False
+
+
+def test_fno_ladder_rung_error_is_absorbed_and_climb_continues(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """吞并续爬先例（US20180143405A1 recovery）：中间某 rung 报
+    CodeVBatchError（非预检缺陷）时该 rung 记为 status="error"，ladder 继续
+    爬向下一级，不整条上抛。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={2: "error"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=3,
+    )
+    assert len(result["rungs"]) == 4  # rung0 + rungs 1,2,3
+    assert result["rungs"][2]["status"] == "error"
+    assert result["rungs"][2]["error"]["kind"] == "timeout"
+    assert result["rungs"][3]["status"] == "measured"  # final rung still attempted, measured
+    assert result["rungs"][3]["target_fnum"] == pytest.approx(1.6)
+    assert result["last_measured_rung_index"] == 3
+    assert result["target_achieved"] is True  # 目标 rung 本身四条件成立
+    assert result["blocked"] is False
+
+
+def test_fno_ladder_non_finite_rung_is_fail_closed_not_estimated(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "non-finite"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+    )
+    assert result["rungs"][1]["status"] == "non-finite"
+    assert result["rungs"][1]["measured_fnum"] is None
+    assert result["rungs"][1]["fnum_target_deviation_pct"] is None
+    assert result["rungs"][1]["fno_param_achieved"] is None
+    # rung0 (native) is still measured -> last_measured falls back to it, but
+    # the TARGET rung itself is non-finite -> target_achieved must be False
+    # (BLOCKER-2: "爬到哪" 与 "到没到 target" 是两个问题).
+    assert result["last_measured_rung_index"] == 0
+    assert result["target_achieved"] is False
+    assert result["accepted_final"] is None
+    assert result["blocked"] is False
+
+
+def test_fno_ladder_preflight_defect_short_circuits_whole_ladder(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Seed 级预检缺陷（如导入即全空气）在 rung0 就短路：换 F# 不会改变导入
+    结果，不该爬完整条 ladder 重复同一个必然失败。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={0: "preflight"}),
+    )
+    with pytest.raises(CodeVBatchError) as error:
+        run_codev_target_fno_ladder(
+            source_zmx=default_optimize_seed(),
+            work_dir=tmp_path,
+            target_efl_mm=4.0,
+            fnum_target=1.6,
+            rung_count=2,
+        )
+    assert error.value.details["preflight"] == "unresolved-glass"
+
+
+def test_fno_ladder_native_rung_failure_blocks_entire_ladder(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Rung0（native 实测）本身失败/超时（非预检）→ 没有基点可算几何级距，
+    如实只留 rung0 的错误记录，不猜测续爬；blocked=True。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={0: "error"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+    )
+    assert len(result["rungs"]) == 1
+    assert result["rungs"][0]["status"] == "error"
+    assert result["native_fnum_measured"] is None
+    assert result["last_measured_rung"] is None
+    assert result["last_measured_rung_index"] is None
+    assert result["target_achieved"] is False
+    assert result["accepted_final"] is None
+    assert result["blocked"] is True
+
+
+def test_fno_ladder_tir_rung_is_not_target_achieved(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """审查者点名的回归形态（BLOCKER-1/-2）：目标 rung 上
+    aut_converged=1 + measured_fnum≈target（参数维双达标）但光栅分类 TIR
+    ——P15 Stage 2 真机矩阵 32/42 格正是这个双重假阳性形态。target_achieved
+    必须 False，且 rung 记录里两维各自如实：fno_param_achieved=True /
+    ray_traceable=False。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "tir", 2: "tir"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["status"] == "measured"
+    assert target_rung["aut_converged"] is True  # EFL 维"达标"
+    assert target_rung["fno_param_achieved"] is True  # F# 参数维"达标"
+    assert target_rung["ray_traceable"] is False  # 但光栅 TIR
+    assert target_rung["ray_grid"]["category"] == "TIR"
+    assert result["target_achieved"] is False  # 双假阳性不放行
+    assert result["accepted_final"] is None
+    # 「爬到哪」如实：最后一个可解析 rung 仍是它
+    assert result["last_measured_rung_index"] == target_rung["rung_index"]
+
+
+def test_fno_ladder_missing_ray_grid_evidence_is_fail_closed(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """无 ray_grid 证据（清单缺失/不可读 → None）时 ray_traceable=None，
+    target_achieved 对 None 不放行（不可知≠可追迹，fail-closed）。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "no-ray-grid"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["ray_traceable"] is None
+    assert target_rung["ray_grid"] is None
+    assert result["target_achieved"] is False
+    assert result["accepted_final"] is None
+
+
+def test_fno_ladder_off_tolerance_measured_fnum_is_not_param_achieved(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """实测 F#（EFL_real/EPD_real 活算）偏离目标 20%（超 8% 几何容差）→
+    fno_param_achieved=False → target_achieved=False，即便光栅干净、EFL 收敛
+    ——「FNO 命令设定了 target」不等于「实测达值」（opt3 轮2-3 教训）。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "off-target"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["status"] == "measured"
+    assert target_rung["ray_traceable"] is True
+    assert target_rung["measured_fnum"] == pytest.approx(1.6 * 1.2)
+    assert target_rung["fno_param_achieved"] is False
+    assert result["target_achieved"] is False
+
+
+def test_fno_ladder_zero_regression_existing_autovig_untouched(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """加法式声明的 sanity check：新增 run_codev_target_fno_ladder 不改变
+    run_codev_target_autovig 本体的默认行为（既有 autovig mock 测试路径照常
+    通过，见本文件上方 test_mock_autovig_* 系列——本测试只是再显式确认一次
+    直接调用未被 ladder 新代码路径污染）。"""
+    executable = _fake_codev_executable(tmp_path)
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", _autovig_fake_popen(0.0))
+    data = run_codev_target_autovig(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057,
+        stage="A", executable=executable, timeout_seconds=12.0,
+        vig_ladder=(0.0, 0.2, 0.3),
+    )
+    assert data["autovig.edge_used"] == "0"
+    assert data["autovig.converged"] == "1"
+
+
+# ===========================================================================
+# Ray-aware 渐晕重试（P15 试点缺口修复）：EFL 收敛但光栅带伤的 rung 按显式
+# 离轴渐晕阶梯重试，接受判据 = EFL-hit AND ray-clean。mock: patch
+# codev_optimize.run_codev_target_autovig（rung 主跑）与
+# codev_optimize.run_codev_target（重试路径）。
+# ===========================================================================
+
+
+def _fake_retry_run_codev_target(
+    *,
+    clean_at_edge: float,
+    fail_edges: dict[float, str] | None = None,
+    calls: list[float] | None = None,
+):
+    """Stub for the retry path's run_codev_target: reads the off-axis edge
+    from the vignetting kwarg; edges in fail_edges raise that error kind;
+    edges >= clean_at_edge return a clean ray grid, below stay TIR."""
+
+    def _run(
+        *, vignetting: list[float] | None = None, target_f_number: float | None = None,
+        **_ignored: object,
+    ) -> dict[str, object]:
+        edge = max(vignetting) if vignetting else 0.0
+        if calls is not None:
+            calls.append(edge)
+        if fail_edges and edge in fail_edges:
+            raise CodeVBatchError(fail_edges[edge], f"retry boom at edge {edge}")
+        clean = edge >= clean_at_edge
+        fnum = target_f_number if target_f_number is not None else 2.0
+        return {
+            "post_aut.efl_y_mm": "4.0",
+            "post_aut.epd_mm": str(4.0 / fnum),
+            "efl_target_deviation_pct": "0.02",
+            "aut_converged": "1",
+            "post_aut.max_rms_spot_diameter_um": "12.0",
+            "post_aut.max_rms_wavefront_error_waves": "0.35",
+            "num_fields": "3",
+            "aut_error_trace": {"err_f_ratio": 0.4},
+            "ray_grid": dict(_LADDER_RAY_GRID_OK if clean else _LADDER_RAY_GRID_TIR),
+        }
+
+    return _run
+
+
+def test_fno_ladder_ray_retry_clears_grid_and_accepts(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """点名场景 1：EFL 收敛 + TIR → 重试触发 → 渐晕 0.3 后 clean → rung 被
+    接受（ray_traceable=True → target_achieved=True）且 accepted_edge/
+    effective_edge_used/quality_note 全部留痕。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "tir", 2: "tir"}),
+    )
+    retry_calls: list[float] = []
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target",
+        _fake_retry_run_codev_target(clean_at_edge=0.3, calls=retry_calls),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+        ray_retry_vig_ladder=(0.2, 0.3, 0.4),
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["ray_traceable"] is True  # 重试后光栅 clean
+    assert target_rung["ray_grid"]["category"] == "ok"
+    assert target_rung["fno_param_achieved"] is True
+    retry = target_rung["ray_retry"]
+    assert retry["triggered"] is True
+    assert retry["accepted_edge"] == pytest.approx(0.3)
+    assert [a["edge"] for a in retry["attempts"]] == [0.2, 0.3]  # 命中即停，0.4 未烧
+    assert retry["attempts"][0]["ray_category"] == "TIR"
+    assert retry["attempts"][1]["ray_category"] == "ok"
+    assert "optimistic" in retry["quality_note"]  # 裁瞳口径如实标注
+    assert retry["skip_reason"] is None  # 统一键集：真正尝试过的分支 skip_reason=None
+    assert target_rung["effective_edge_used"] == "0.3"
+    assert target_rung["autovig.edge_used"] == "0.2"  # autovig 阶段原值保留（诚实）
+    assert result["target_achieved"] is True
+    assert result["accepted_final"]["rung_index"] == target_rung["rung_index"]
+    # 两个 TIR rung（1 与 2/目标级）各重试一轮：0.2(伤)+0.3(清) × 2
+    assert retry_calls == [0.2, 0.3, 0.2, 0.3]
+
+
+def test_fno_ladder_ray_retry_exhausted_stays_unaccepted(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """点名场景 2：重试爬满仍不 clean → rung 如实不被接受（ray_traceable 维
+    持 False、target_achieved=False），原始（autovig 阶段）数据保留，尝试轨
+    迹全记录。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "tir"}),
+    )
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target",
+        _fake_retry_run_codev_target(clean_at_edge=99.0),  # 永不 clean
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+        ray_retry_vig_ladder=(0.2, 0.3),
+    )
+    target_rung = result["rungs"][-1]
+    assert target_rung["ray_traceable"] is False
+    assert target_rung["ray_grid"]["category"] == "TIR"
+    retry = target_rung["ray_retry"]
+    assert retry["triggered"] is True
+    assert retry["accepted_edge"] is None
+    assert [a["edge"] for a in retry["attempts"]] == [0.2, 0.3]  # 爬满全记录
+    # 统一键集（MINOR 修复）：耗尽分支同样恒有 quality_note，skip_reason=None
+    # 与"根本没尝试"稳定区分。
+    assert "exhausted" in retry["quality_note"]
+    assert retry["skip_reason"] is None
+    assert target_rung["measured_fnum"] == pytest.approx(1.6)  # 原 autovig 阶段数据保留
+    assert target_rung["effective_edge_used"] == "0.2"  # autovig 阶段渐晕（未被重试覆盖）
+    assert result["target_achieved"] is False
+    assert result["accepted_final"] is None
+
+
+def test_fno_ladder_ray_retry_default_off_zero_regression(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """点名场景 3：默认关闭（不传 ray_retry_vig_ladder）→ **行为零回归**：
+    重试路径零 CODE V 调用、rung 记录 ray_retry=None、目标判定与试点真机行
+    为一致。schema 层为 additive 演化（新键恒在），见
+    test_fno_ladder_rung_schema_is_additive_over_pilot_contract。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "tir"}),
+    )
+    retry_calls: list[float] = []
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target",
+        _fake_retry_run_codev_target(clean_at_edge=0.2, calls=retry_calls),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+    )
+    assert retry_calls == []  # 重试路径未被触碰
+    target_rung = result["rungs"][-1]
+    assert target_rung["ray_retry"] is None
+    assert target_rung["ray_traceable"] is False
+    assert result["target_achieved"] is False
+
+
+# 试点时代（commit 33b0227..8fe20f8，ladder-pilot-2026-07-11 真机验证过的
+# 消费口径）rung 记录的键集——additive-schema 兼容性测试的固定锚，勿随手改：
+# 改动此集合意味着破坏旧消费者，必须走显式 schema 决策而不是顺手编辑。
+_PILOT_ERA_RUNG_KEYS = frozenset(
+    {
+        "rung_index",
+        "target_fnum",
+        "status",
+        "measured_fnum",
+        "fnum_target_deviation_pct",
+        "fno_param_achieved",
+        "ray_traceable",
+        "ray_grid",
+        "efl_target_deviation_pct",
+        "post_aut.max_rms_spot_diameter_um",
+        "post_aut.max_rms_wavefront_error_waves",
+        "err_f_ratio",
+        "aut_converged",
+        "autovig.edge_used",
+        "autovig.converged",
+        "error",
+    }
+)
+
+
+def test_fno_ladder_rung_schema_is_additive_over_pilot_contract(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Additive-schema 兼容性闸（对抗审查 MAJOR 裁决，沿仓库 additive 先
+    例）：默认路径（不启用 ray-retry）下，试点时代的旧键**全部仍在且值语义
+    不变**（旧消费者按键读取不受影响）；新增键恰为
+    {effective_edge_used, ray_retry} 两个无条件恒在字段，且默认路径下
+    effective_edge_used 恒等于 autovig.edge_used、ray_retry 恒为 None。
+    error rung 同样受此契约约束。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "error"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=2,
+    )
+    assert len(result["rungs"]) == 3  # rung0 measured + rung1 error + rung2 measured
+    for rung in result["rungs"]:
+        missing = _PILOT_ERA_RUNG_KEYS - set(rung)
+        assert not missing, f"pilot-era keys missing from rung record: {missing}"
+        extra = set(rung) - _PILOT_ERA_RUNG_KEYS
+        assert extra == {
+            "effective_edge_used",
+            "ray_retry",
+            "quality_note",
+            "optimized_zmx_path",
+            "aut_termination",
+        }, (
+            f"additive keys drifted beyond the declared set: {extra}"
+        )
+        assert rung["ray_retry"] is None  # 默认路径恒 None
+        assert rung["effective_edge_used"] == rung["autovig.edge_used"]  # 默认路径恒等
+    # 旧键值语义抽查（measured rung）：与试点契约相同的取值口径
+    measured = result["rungs"][0]
+    assert measured["status"] == "measured"
+    assert measured["measured_fnum"] == pytest.approx(2.0)
+    assert measured["autovig.edge_used"] == "0.2"
+    error_rung = result["rungs"][1]
+    assert error_rung["status"] == "error"
+    assert error_rung["error"]["kind"] == "timeout"
+
+
+def test_fno_ladder_ray_retry_absorbs_per_edge_errors(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """重试单级报 CodeVBatchError（如 timeout）→ 记录该 attempt 续爬下一级
+    （吞并续爬纪律），后续级 clean 仍可接受。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "tir"}),
+    )
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target",
+        _fake_retry_run_codev_target(clean_at_edge=0.3, fail_edges={0.2: "timeout"}),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+        ray_retry_vig_ladder=(0.2, 0.3),
+    )
+    target_rung = result["rungs"][-1]
+    retry = target_rung["ray_retry"]
+    assert retry["attempts"][0] == {
+        "edge": 0.2, "aut_converged": None, "ray_category": None, "error": "timeout",
+    }
+    assert retry["accepted_edge"] == pytest.approx(0.3)
+    assert target_rung["ray_traceable"] is True
+    assert result["target_achieved"] is True
+
+
+def test_fno_ladder_ray_retry_skip_reason_distinguishes_unattempted(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """统一键集（MINOR 修复）：场数不可学（rung 数据无 num_fields 且调用方
+    未注入）→ 重试触发但无法尝试，skip_reason 非 None（与"尝试了但耗尽"的
+    skip_reason=None 稳定区分），quality_note 恒在，重试路径零 CODE V 调用。"""
+    inner = _fake_ladder_autovig(native_measured=2.0, rung_status={1: "tir"})
+
+    def _no_num_fields(**kwargs: object) -> dict[str, object]:
+        data = inner(**kwargs)
+        data.pop("num_fields", None)
+        return data
+
+    monkeypatch.setattr(codev_optimize, "run_codev_target_autovig", _no_num_fields)
+    retry_calls: list[float] = []
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target",
+        _fake_retry_run_codev_target(clean_at_edge=0.2, calls=retry_calls),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+        ray_retry_vig_ladder=(0.2, 0.3),
+    )
+    assert retry_calls == []  # 无法构造 profile，不烧真机盲试
+    target_rung = result["rungs"][-1]
+    retry = target_rung["ray_retry"]
+    assert retry["triggered"] is True
+    assert retry["accepted_edge"] is None
+    assert retry["attempts"] == []
+    assert "num_fields" in retry["skip_reason"]  # 未尝试分支：skip_reason 非 None
+    assert "not attempted" in retry["quality_note"]  # quality_note 三分支恒在
+    assert target_rung["ray_traceable"] is False
+    assert result["target_achieved"] is False
+
+
+def test_fno_ladder_ray_retry_not_triggered_without_ray_evidence(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """ray_traceable=None（无清单证据）不触发重试——无确证病灶不烧真机盲试
+    （触发条件严格 = EFL-hit AND ray_traceable is False）。target_achieved
+    仍被 None fail-closed 挡下。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_ladder_autovig(native_measured=2.0, rung_status={1: "no-ray-grid"}),
+    )
+    retry_calls: list[float] = []
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target",
+        _fake_retry_run_codev_target(clean_at_edge=0.2, calls=retry_calls),
+    )
+    result = run_codev_target_fno_ladder(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        target_efl_mm=4.0,
+        fnum_target=1.6,
+        rung_count=1,
+        ray_retry_vig_ladder=(0.2, 0.3),
+    )
+    assert retry_calls == []
+    target_rung = result["rungs"][-1]
+    assert target_rung["ray_retry"] is None
+    assert target_rung["ray_traceable"] is None
+    assert result["target_achieved"] is False

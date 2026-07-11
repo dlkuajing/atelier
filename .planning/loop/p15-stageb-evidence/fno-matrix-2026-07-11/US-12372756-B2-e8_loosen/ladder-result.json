@@ -1,0 +1,321 @@
+{
+  "schema": "atelier-p15-fno-ladder-v1",
+  "source_zmx": "US-12372756-B2-e8.zmx",
+  "stage": "A",
+  "target_efl_mm": 9.970488803362947,
+  "fnum_target": 4.0,
+  "rung_count": 3,
+  "fnum_tolerance_pct": 8.0,
+  "native_fnum_measured": 2.4500027018927986,
+  "rungs": [
+    {
+      "rung_index": 0,
+      "target_fnum": null,
+      "status": "measured",
+      "measured_fnum": 2.4500027018927986,
+      "fnum_target_deviation_pct": null,
+      "fno_param_achieved": null,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 44,
+        "miss_count": 5,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": "Scaled down nominal system cannot be traced",
+        "excerpt": null,
+        "note": "44 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": "Abnormal AUTO Completion - Scaled down nominal system cannot be traced"
+      },
+      "efl_target_deviation_pct": 0.0402268,
+      "post_aut.max_rms_spot_diameter_um": 0.0,
+      "post_aut.max_rms_wavefront_error_waves": 0.0,
+      "err_f_ratio": null,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 1,
+      "target_fnum": 2.8849018308696137,
+      "status": "measured",
+      "measured_fnum": 2.884904612608027,
+      "fnum_target_deviation_pct": 9.642402329353181e-05,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 40,
+        "miss_count": 5,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": "Scaled down nominal system cannot be traced",
+        "excerpt": null,
+        "note": "40 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": "Abnormal AUTO Completion - Scaled down nominal system cannot be traced"
+      },
+      "efl_target_deviation_pct": 0.0402268,
+      "post_aut.max_rms_spot_diameter_um": 0.0,
+      "post_aut.max_rms_wavefront_error_waves": 0.0,
+      "err_f_ratio": null,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 2,
+      "target_fnum": 3.396999753234971,
+      "status": "measured",
+      "measured_fnum": 3.3969968701788327,
+      "fnum_target_deviation_pct": 8.487066080956403e-05,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 28,
+        "miss_count": 5,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": "Scaled down nominal system cannot be traced",
+        "excerpt": null,
+        "note": "28 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": "Abnormal AUTO Completion - Scaled down nominal system cannot be traced"
+      },
+      "efl_target_deviation_pct": 0.0402268,
+      "post_aut.max_rms_spot_diameter_um": 0.0,
+      "post_aut.max_rms_wavefront_error_waves": 0.0,
+      "err_f_ratio": null,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 3,
+      "target_fnum": 4.0,
+      "status": "measured",
+      "measured_fnum": 4.000008020468235,
+      "fnum_target_deviation_pct": 0.0002005117058834216,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 20,
+        "miss_count": 5,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": "Scaled down nominal system cannot be traced",
+        "excerpt": null,
+        "note": "20 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": "Abnormal AUTO Completion - Scaled down nominal system cannot be traced"
+      },
+      "efl_target_deviation_pct": 0.0402268,
+      "post_aut.max_rms_spot_diameter_um": 0.0,
+      "post_aut.max_rms_wavefront_error_waves": 0.0,
+      "err_f_ratio": null,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    }
+  ],
+  "last_measured_rung_index": 3,
+  "last_measured_rung": {
+    "rung_index": 3,
+    "target_fnum": 4.0,
+    "status": "measured",
+    "measured_fnum": 4.000008020468235,
+    "fnum_target_deviation_pct": 0.0002005117058834216,
+    "fno_param_achieved": true,
+    "ray_traceable": false,
+    "ray_grid": {
+      "category": "TIR",
+      "refl_count": 20,
+      "miss_count": 5,
+      "ray_aiming_warning": false,
+      "aperture_conflict_matched": "Scaled down nominal system cannot be traced",
+      "excerpt": null,
+      "note": "20 RAY ERROR: REFL occurrence(s)",
+      "normal_completion": true,
+      "abnormal_completion_matched": "Abnormal AUTO Completion - Scaled down nominal system cannot be traced"
+    },
+    "efl_target_deviation_pct": 0.0402268,
+    "post_aut.max_rms_spot_diameter_um": 0.0,
+    "post_aut.max_rms_wavefront_error_waves": 0.0,
+    "err_f_ratio": null,
+    "aut_converged": true,
+    "autovig.edge_used": "0",
+    "autovig.converged": "1",
+    "effective_edge_used": "0",
+    "ray_retry": {
+      "triggered": true,
+      "accepted_edge": null,
+      "attempts": [
+        {
+          "edge": 0.2,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.3,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.4,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.5,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        }
+      ],
+      "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+      "skip_reason": null
+    },
+    "error": null
+  },
+  "target_achieved": false,
+  "accepted_final": null,
+  "blocked": false
+}

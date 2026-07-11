@@ -1,0 +1,15 @@
+case_id	direction	fnum_target	native_fnum_measured	target_achieved	last_measured_rung_index	blocked	rungs_total	rungs_ray_retry_triggered	rungs_ray_retry_accepted	duration_s	error
+US20210165194A1	loosen	2.4	2.0	True	3	False	4	1	1	76.0	
+US20170003482A1	loosen	2.4	2.319990518229984	True	3	False	4	0	0	42.5	
+US8908290B1	loosen	2.4	1.9999949371190182	True	3	False	4	3	3	80.9	
+US-11940597-B2-e6	loosen	4.0	3.5699949915436937	False	3	False	4	3	0	74.0	
+US-12443014-B2-e1	loosen	4.0	2.8000038789947586	False	3	False	4	4	0	197.2	
+US-12372756-B2-e8	loosen	4.0	2.4500027018927986	False	3	False	4	4	0	47.2	
+US10281683B2	loosen	3.0	1.6799984272120905	False	3	False	4	4	1	312.8	
+US20140111876A1	loosen	3.0	2.07000163220085	False	3	False	4	4	0	180.1	
+US10330891B2	loosen	2.4	2.080002754560088	False	3	False	4	4	0	182.3	
+US20170003482A1	tighten	2.0	2.319990518229984	True	3	False	4	1	1	68.1	
+US8908290B1	tighten	1.8	1.9999949371190182	True	3	False	4	4	4	94.9	
+US20210165194A1	tighten	1.8	2.0	False	2	False	4	3	3	248.4	
+US-11940597-B2-e6	tighten	2.0	3.5699949915436937	False	3	False	4	4	0	72.2	
+US20180143405A1	loosen	2.4	None	False	None	True	1	0	0	180.1	

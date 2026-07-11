@@ -204,9 +204,9 @@ def _target_converged_candidate() -> ScoredCandidate:
             "Mode3：③ target 优化标准入口，seed=3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",
             "preferred 配置=\"both\"（both config produced lower spot RMS）",
             "玻璃 provenance（preferred=\"both\"）：fictitious-within-plastic-GLA(default)",
-            "CONVERGED_FIELDS[TARGET_CONVERGED] 已缩窄为 {efl}：F# 现状锁 native、"
-            "IMH/FOV Stage C 场重建未落地——本候选 5 维 target-deviation 中只有 efl "
-            "标 converged=True，其余如实标 False",
+            "收敛维 provenance（P15 带条件扩）：efl 标 converged=True；fnum 能力"
+            "上限已进 CONVERGED_FIELDS 但本候选未跑 FNO 阶梯（fnum_ladder_"
+            "achieved=None）→ 如实标 False；IMH/FOV Stage C 未落地亦如实标 False",
         ],
         codev_post_aut=codev_post_aut,
         ri_available=False,
@@ -461,6 +461,12 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
     assert 'data-deviation-field="fnum" data-converged="false"' in converged_card
     assert 'data-deviation-field="imh" data-converged="false"' in converged_card
     assert 'data-deviation-field="ttl" data-converged="false"' in converged_card
+    assert 'data-fnum-ladder-evidence' in converged_card
+    assert 'data-evidence-status="unavailable"' in converged_card
+    assert "accepted_final.measured_fnum: N/A" in converged_card
+    assert "accepted_final.effective_edge_used: N/A" in converged_card
+    assert "accepted_final.ray_grid: N/A" in converged_card
+    assert "accepted_final.quality_note: N/A" in converged_card
     assert "(unconstrained)" in converged_card  # ttl target echo
 
     # CODE V post-AUT provenance-only sub-block, with the caveat copied verbatim.

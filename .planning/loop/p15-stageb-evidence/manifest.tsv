@@ -1,0 +1,43 @@
+case_id	category	scenario	fov_deg	n_pieces	native_efl_mm	native_fnum	direction	target_f_number	source_zmx	rationale
+US10281683B2	wide	smartphone-wide	81.000	6	4.7060	1.680	tighten	1.600	US10281683B2.zmx	旗舰 TIR 案例：native F/1.68 全反射根因诊断的原始种子（见 .planning/debug/codev-target-convergence.md「诊断 v2」）。
+US10281683B2	wide	smartphone-wide	81.000	6	4.7060	1.680	loosen	2.180	US10281683B2.zmx	旗舰 TIR 案例：native F/1.68 全反射根因诊断的原始种子（见 .planning/debug/codev-target-convergence.md「诊断 v2」）。
+US10281683B2	wide	smartphone-wide	81.000	6	4.7060	1.680	loosen	2.680	US10281683B2.zmx	旗舰 TIR 案例：native F/1.68 全反射根因诊断的原始种子（见 .planning/debug/codev-target-convergence.md「诊断 v2」）。
+US10281683B2	wide	smartphone-wide	81.000	6	4.7060	1.680	loosen	3.000	US10281683B2.zmx	旗舰 TIR 案例：native F/1.68 全反射根因诊断的原始种子（见 .planning/debug/codev-target-convergence.md「诊断 v2」）。
+US20180143405A1	wide	smartphone-ultrawide	95.000	6	3.0730	1.860	tighten	1.800	US20180143405A1.zmx	最难 seed（95° FOV、S14 TIR flood 历史上曾致 autovig 全臂超时），边缘案例覆盖。
+US20180143405A1	wide	smartphone-ultrawide	95.000	6	3.0730	1.860	loosen	2.360	US20180143405A1.zmx	最难 seed（95° FOV、S14 TIR flood 历史上曾致 autovig 全臂超时），边缘案例覆盖。
+US20180143405A1	wide	smartphone-ultrawide	95.000	6	3.0730	1.860	loosen	2.400	US20180143405A1.zmx	最难 seed（95° FOV、S14 TIR flood 历史上曾致 autovig 全臂超时），边缘案例覆盖。
+US10330891B2	wide	smartphone-ultrawide	100.000	6	2.4164	2.080	tighten	1.800	US10330891B2.zmx	已知 22 颗真机验证池内视场最宽（100°）。
+US10330891B2	wide	smartphone-ultrawide	100.000	6	2.4164	2.080	tighten	2.000	US10330891B2.zmx	已知 22 颗真机验证池内视场最宽（100°）。
+US10330891B2	wide	smartphone-ultrawide	100.000	6	2.4164	2.080	loosen	2.400	US10330891B2.zmx	已知 22 颗真机验证池内视场最宽（100°）。
+US20210165194A1	wide	smartphone-ultrawide	95.000	5	2.4086	2.000	tighten	1.800	US20210165194A1.zmx	95° 超广角，5 片，native F/2.0 中庸参照。
+US20210165194A1	wide	smartphone-ultrawide	95.000	5	2.4086	2.000	loosen	2.400	US20210165194A1.zmx	95° 超广角，5 片，native F/2.0 中庸参照。
+US20170003482A1	wide	smartphone-ultrawide	91.000	7	3.6213	2.320	tighten	1.800	US20170003482A1.zmx	opt3 全程最佳收敛控制种子（渐晕0即收敛），作为「好行为」对照。
+US20170003482A1	wide	smartphone-ultrawide	91.000	7	3.6213	2.320	tighten	2.000	US20170003482A1.zmx	opt3 全程最佳收敛控制种子（渐晕0即收敛），作为「好行为」对照。
+US20170003482A1	wide	smartphone-ultrawide	91.000	7	3.6213	2.320	loosen	2.400	US20170003482A1.zmx	opt3 全程最佳收敛控制种子（渐晕0即收敛），作为「好行为」对照。
+US8908290B1	wide	smartphone-ultrawide	91.200	6	3.9503	2.000	tighten	1.800	US8908290B1.zmx	91.2° 超广角，6 片，native F/2.0（与 US20210165194A1 同 F# 不同 FOV/片数对照）。
+US8908290B1	wide	smartphone-ultrawide	91.200	6	3.9503	2.000	loosen	2.400	US8908290B1.zmx	91.2° 超广角，6 片，native F/2.0（与 US20210165194A1 同 F# 不同 FOV/片数对照）。
+US20140111876A1	wide	smartphone-wide	75.200	6	4.1851	2.070	tighten	1.600	US20140111876A1.zmx	75.2° 恰在 wide FOV 阈值边界，opt3 asphere/glass DOF 矩阵已用过。
+US20140111876A1	wide	smartphone-wide	75.200	6	4.1851	2.070	tighten	1.800	US20140111876A1.zmx	75.2° 恰在 wide FOV 阈值边界，opt3 asphere/glass DOF 矩阵已用过。
+US20140111876A1	wide	smartphone-wide	75.200	6	4.1851	2.070	tighten	2.000	US20140111876A1.zmx	75.2° 恰在 wide FOV 阈值边界，opt3 asphere/glass DOF 矩阵已用过。
+US20140111876A1	wide	smartphone-wide	75.200	6	4.1851	2.070	loosen	2.570	US20140111876A1.zmx	75.2° 恰在 wide FOV 阈值边界，opt3 asphere/glass DOF 矩阵已用过。
+US20140111876A1	wide	smartphone-wide	75.200	6	4.1851	2.070	loosen	3.000	US20140111876A1.zmx	75.2° 恰在 wide FOV 阈值边界，opt3 asphere/glass DOF 矩阵已用过。
+US10310222B2	wide	smartphone-wide	76.200	6	4.6091	1.800	tighten	1.600	US10310222B2.zmx	76.2° + native F/1.8（wide 组第二快 F#），覆盖快光圈宽视场组合。
+US10310222B2	wide	smartphone-wide	76.200	6	4.6091	1.800	loosen	2.300	US10310222B2.zmx	76.2° + native F/1.8（wide 组第二快 F#），覆盖快光圈宽视场组合。
+US10310222B2	wide	smartphone-wide	76.200	6	4.6091	1.800	loosen	2.800	US10310222B2.zmx	76.2° + native F/1.8（wide 组第二快 F#），覆盖快光圈宽视场组合。
+US10310222B2	wide	smartphone-wide	76.200	6	4.6091	1.800	loosen	3.000	US10310222B2.zmx	76.2° + native F/1.8（wide 组第二快 F#），覆盖快光圈宽视场组合。
+US-12443014-B2-e1	tele	smartphone-telephoto	15.800	5	17.3271	2.800	tighten	1.800	US-12443014-B2-e1.zmx	15.8° 窄视场长焦（EFL~17.3mm），native F/2.8 中庸，低 TIR 风险方向对照。
+US-12443014-B2-e1	tele	smartphone-telephoto	15.800	5	17.3271	2.800	tighten	2.000	US-12443014-B2-e1.zmx	15.8° 窄视场长焦（EFL~17.3mm），native F/2.8 中庸，低 TIR 风险方向对照。
+US-12443014-B2-e1	tele	smartphone-telephoto	15.800	5	17.3271	2.800	loosen	3.300	US-12443014-B2-e1.zmx	15.8° 窄视场长焦（EFL~17.3mm），native F/2.8 中庸，低 TIR 风险方向对照。
+US-12443014-B2-e1	tele	smartphone-telephoto	15.800	5	17.3271	2.800	loosen	3.800	US-12443014-B2-e1.zmx	15.8° 窄视场长焦（EFL~17.3mm），native F/2.8 中庸，低 TIR 风险方向对照。
+US-12443014-B2-e1	tele	smartphone-telephoto	15.800	5	17.3271	2.800	loosen	4.000	US-12443014-B2-e1.zmx	15.8° 窄视场长焦（EFL~17.3mm），native F/2.8 中庸，低 TIR 风险方向对照。
+US-12372756-B2-e8	tele	smartphone-telephoto	15.900	5	9.9705	2.450	tighten	1.800	US-12372756-B2-e8.zmx	15.9° 窄视场，native F/2.45，5 片。
+US-12372756-B2-e8	tele	smartphone-telephoto	15.900	5	9.9705	2.450	tighten	2.000	US-12372756-B2-e8.zmx	15.9° 窄视场，native F/2.45，5 片。
+US-12372756-B2-e8	tele	smartphone-telephoto	15.900	5	9.9705	2.450	loosen	2.950	US-12372756-B2-e8.zmx	15.9° 窄视场，native F/2.45，5 片。
+US-12372756-B2-e8	tele	smartphone-telephoto	15.900	5	9.9705	2.450	loosen	3.450	US-12372756-B2-e8.zmx	15.9° 窄视场，native F/2.45，5 片。
+US-12372756-B2-e8	tele	smartphone-telephoto	15.900	5	9.9705	2.450	loosen	4.000	US-12372756-B2-e8.zmx	15.9° 窄视场，native F/2.45，5 片。
+US-20260160979-A1-e3	tele	smartphone-telephoto	19.000	8	13.4203	1.680	loosen	2.180	US-20260160979-A1-e3.zmx	19.0° 窄视场但 native F/1.68 极快（8 片）——罕见「窄视场+快光圈」组合，且 native F# 低于其 telephoto scenario 的 f_number_min(1.8)，收紧方向 band 内无候选（如实记录为空集，非 bug）。
+US-20260160979-A1-e3	tele	smartphone-telephoto	19.000	8	13.4203	1.680	loosen	2.680	US-20260160979-A1-e3.zmx	19.0° 窄视场但 native F/1.68 极快（8 片）——罕见「窄视场+快光圈」组合，且 native F# 低于其 telephoto scenario 的 f_number_min(1.8)，收紧方向 band 内无候选（如实记录为空集，非 bug）。
+US-20260160979-A1-e3	tele	smartphone-telephoto	19.000	8	13.4203	1.680	loosen	4.000	US-20260160979-A1-e3.zmx	19.0° 窄视场但 native F/1.68 极快（8 片）——罕见「窄视场+快光圈」组合，且 native F# 低于其 telephoto scenario 的 f_number_min(1.8)，收紧方向 band 内无候选（如实记录为空集，非 bug）。
+US-11940597-B2-e6	tele	smartphone-telephoto	18.800	4	19.6731	3.570	tighten	1.800	US-11940597-B2-e6.zmx	18.8° 窄视场，native F/3.57（本矩阵最慢 F#），4 片最简单结构对照。
+US-11940597-B2-e6	tele	smartphone-telephoto	18.800	4	19.6731	3.570	tighten	2.000	US-11940597-B2-e6.zmx	18.8° 窄视场，native F/3.57（本矩阵最慢 F#），4 片最简单结构对照。
+US-11940597-B2-e6	tele	smartphone-telephoto	18.800	4	19.6731	3.570	loosen	4.000	US-11940597-B2-e6.zmx	18.8° 窄视场，native F/3.57（本矩阵最慢 F#），4 片最简单结构对照。

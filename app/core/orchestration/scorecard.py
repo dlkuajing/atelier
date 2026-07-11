@@ -245,7 +245,11 @@ def _ceiling_or_unconstrained_deviation(
 
 
 def _target_deviations(
-    mode: GenerationMode, payload: OpticalSampleData, target: TargetSpec
+    mode: GenerationMode,
+    payload: OpticalSampleData,
+    target: TargetSpec,
+    *,
+    fnum_ladder_achieved: bool | None = None,
 ) -> tuple[list[TargetDeviation], list[str]]:
     """Returns `(rows, nonfinite_fields)`. `nonfinite_fields` lists every
     target-deviation field whose row was dropped because its achieved value
@@ -255,6 +259,14 @@ def _target_deviations(
     than a structurally absent one and must never silently pass through as a
     clean row (regression: TTL ceiling with NaN achieved used to compute
     `violation=max(0.0, nan-limit)=0.0`, a fabricated "within spec" reading).
+
+    ``fnum_ladder_achieved``（P15 带条件扩，orchestrator 裁决 2026-07-11）：
+    per-candidate F# 收敛证据 gate（`GeneratedCandidate.fnum_ladder_achieved`
+    透传）。fnum 的 ``converged_toward_target`` = 能力上限在
+    ``CONVERGED_FIELDS[mode]`` 内 **AND** 本 gate 为 True——ladder 未跑
+    （None，现状全部 generator 路径）或未达标（False）时 fnum 恒 No；其余维
+    仍是纯 per-mode 查表（efl 无条件、IMH/FOV 如实 No）。与
+    ``ScoredCandidate._enforce_consistency`` 的期望公式逐字段同构。
     """
     conv = CONVERGED_FIELDS[mode]
     paraxial = payload.paraxial
@@ -284,7 +296,7 @@ def _target_deviations(
             field="fnum",
             target_value=target.fnum,
             achieved=paraxial.f_number,
-            converged="fnum" in conv,
+            converged=("fnum" in conv) and fnum_ladder_achieved is True,
         ),
     )
 
@@ -693,7 +705,12 @@ def score_candidate(
     behavior change). See `_repeatability` / `candidate.py
     RepeatabilityMetrics`."""
     payload = generated.payload
-    deviations, nonfinite_fields = _target_deviations(generated.mode, payload, target)
+    deviations, nonfinite_fields = _target_deviations(
+        generated.mode,
+        payload,
+        target,
+        fnum_ladder_achieved=generated.fnum_ladder_achieved,
+    )
     image_quality = _image_quality(payload, generated.optical_extras)
     manufacturability = _manufacturability(payload)
     rank, explanation = _rank(

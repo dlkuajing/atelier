@@ -1,0 +1,269 @@
+! target-mode: EFL->target + FNO-lock F# + 3 snapshots. codev_optimize.
+FCT @lcum(NUM ^dummy)
+LCL NUM ^dummy ^f ^wshort ^wlong ^x1 ^x2 ^y1 ^y2 ^value ^max
+^max == 0
+^wshort == 1
+^wlong == (NUM W)
+FOR ^f 1 (NUM F)
+  ^x1 == (X F^f Z1 R1 W^wshort SI)
+  ^y1 == (Y F^f Z1 R1 W^wshort SI)
+  ^x2 == (X F^f Z1 R1 W^wlong SI)
+  ^y2 == (Y F^f Z1 R1 W^wlong SI)
+  ^value == SQRTF((^x1-^x2)**2 + (^y1-^y2)**2)*1000
+  IF ^value > ^max
+    ^max == ^value
+  END IF
+END FOR
+END FCT ^max
+FCT @rmssum(NUM ^dummy)
+LCL NUM ^dummy ^f ^spot(10) ^err ^value ^max
+^max == 0
+FOR ^f 1 (NUM F)
+  ^err == SPOTDATA(1,^f,1,0.01,'CEN',0,0,^spot)
+  IF ^err = 0
+    ^value == ^spot(1)*1000
+    IF ^value > ^max
+      ^max == ^value
+    END IF
+  END IF
+END FOR
+END FCT ^max
+FCT @mtfmin(NUM ^freq, NUM ^nrd)
+LCL NUM ^freq ^nrd ^f ^xout(6) ^yout(6) ^xmtf ^ymtf ^value ^min
+^min == 1
+FOR ^f 1 (NUM F)
+  ^xmtf == MTF_1FLD(1,^f,^freq,0,^nrd,^xout,'DIF','SIN')
+  ^ymtf == MTF_1FLD(1,^f,^freq,90,^nrd,^yout,'DIF','SIN')
+  IF ^xmtf >= 0 and ^ymtf >= 0
+    ^value == (^xmtf+^ymtf)/2
+    IF ^value < ^min
+      ^min == ^value
+    END IF
+  END IF
+END FOR
+END FCT ^min
+FCT @wfewav(NUM ^dummy)
+LCL NUM ^dummy ^f ^ok ^rwe(10,26) ^value ^max
+^max == 0
+^ok == RMSWE(1,0,60,^rwe,'NOM')
+IF ^ok >= 0
+  FOR ^f 1 (NUM F)
+    ^value == ABSF(^rwe(1,^f))
+    IF ^value > ^max
+      ^max == ^value
+    END IF
+  END FOR
+END IF
+END FCT ^max
+FCT @dstpct(NUM ^dummy)
+LCL NUM ^dummy ^f ^dx ^dy ^value ^max
+^max == 0
+FOR ^f 1 (NUM F)
+  ^dx == (DIX Z1 F^f)
+  ^dy == (DIY Z1 F^f)
+  ^value == SQRTF(^dx*^dx + ^dy*^dy)*100
+  IF ^value > ^max
+    ^max == ^value
+  END IF
+END FOR
+END FCT ^max
+OUT NO
+IN CV_MACRO:ZEMAXOS_TO_CV "D:\atelier-wt-c\data\zmx\US10281683B2.zmx"
+DEF VAR SA
+^seed_baseline_efl_y_mm == ABSF((EFY))
+^seed_baseline_max_lateral_color_um == @lcum(1)
+^seed_baseline_max_rms_spot_diameter_um == @rmssum(1)
+^seed_baseline_max_rms_wavefront_error_waves == @wfewav(1)
+^seed_baseline_max_distortion_pct == @dstpct(1)
+^seed_baseline_fno == ABSF((FNO))
+^seed_baseline_epd == ABSF((EPD))
+^seed_baseline_ftyp == (TYP FLD)
+^seed_baseline_maximh == 0
+FOR ^f 1 (NUM F)
+  ^yh == (YRI F^f Z1)
+  IF ^seed_baseline_ftyp = "ANG"
+    ^yh == ^seed_baseline_efl_y_mm * TANF((YAN F^f Z1)*4*ATANF(1)/180)
+  ELS IF ^seed_baseline_ftyp = "IMG"
+    ^yh == (YIM F^f Z1)
+  END IF
+  IF ABSF(^yh) > ^seed_baseline_maximh
+    ^seed_baseline_maximh == ABSF(^yh)
+  END IF
+END FOR
+^config_pre_aut_efl_y_mm == ABSF((EFY))
+^config_pre_aut_max_lateral_color_um == @lcum(1)
+^config_pre_aut_max_rms_spot_diameter_um == @rmssum(1)
+^config_pre_aut_max_rms_wavefront_error_waves == @wfewav(1)
+^config_pre_aut_max_distortion_pct == @dstpct(1)
+^config_pre_aut_fno == ABSF((FNO))
+^config_pre_aut_epd == ABSF((EPD))
+^config_pre_aut_ftyp == (TYP FLD)
+^config_pre_aut_maximh == 0
+FOR ^f 1 (NUM F)
+  ^yh == (YRI F^f Z1)
+  IF ^config_pre_aut_ftyp = "ANG"
+    ^yh == ^config_pre_aut_efl_y_mm * TANF((YAN F^f Z1)*4*ATANF(1)/180)
+  ELS IF ^config_pre_aut_ftyp = "IMG"
+    ^yh == (YIM F^f Z1)
+  END IF
+  IF ABSF(^yh) > ^config_pre_aut_maximh
+    ^config_pre_aut_maximh == ABSF(^yh)
+  END IF
+END FOR
+AUT
+  SUR N
+  CHG SA
+  WFR Y
+  WTF FA 10
+  EFL = 4.70602808468692
+  @atelier_latcolor == @lcum(1)
+  @atelier_latcolor = 0
+  WTC 0.01
+  @atelier_rmsspot == @rmssum(1)
+  @atelier_rmsspot = 0
+  WTC 0.001
+  MNT 0.025
+  MNE 0.025
+  MXT 10
+  MNA 0.001
+  MXC 2
+  MNC 1
+  IMP 0.001
+GO
+^post_aut_efl_y_mm == ABSF((EFY))
+^post_aut_max_lateral_color_um == @lcum(1)
+^post_aut_max_rms_spot_diameter_um == @rmssum(1)
+^post_aut_max_rms_wavefront_error_waves == @wfewav(1)
+^post_aut_max_distortion_pct == @dstpct(1)
+^post_aut_fno == ABSF((FNO))
+^post_aut_epd == ABSF((EPD))
+^post_aut_ftyp == (TYP FLD)
+^post_aut_maximh == 0
+FOR ^f 1 (NUM F)
+  ^yh == (YRI F^f Z1)
+  IF ^post_aut_ftyp = "ANG"
+    ^yh == ^post_aut_efl_y_mm * TANF((YAN F^f Z1)*4*ATANF(1)/180)
+  ELS IF ^post_aut_ftyp = "IMG"
+    ^yh == (YIM F^f Z1)
+  END IF
+  IF ABSF(^yh) > ^post_aut_maximh
+    ^post_aut_maximh == ABSF(^yh)
+  END IF
+END FOR
+^target_efl == 4.70602808468692
+^efl_target_dev_pct == 0
+IF ABSF(^target_efl) > 1.0E-12
+  ^efl_target_dev_pct == ABSF((^post_aut_efl_y_mm-^target_efl)/^target_efl)*100
+END IF
+^aut_converged == 0
+IF ^efl_target_dev_pct < 2.0
+  ^aut_converged == 1
+END IF
+^numf_out == (NUM F)
+^row == 1
+BUF PUT B1 I^row J1 "schema"
+BUF PUT B1 I^row J2 "atelier-codev-target-v1"
+^row == ^row+1
+BUF PUT B1 I^row J1 "status"
+BUF PUT B1 I^row J2 "ok"
+^row == ^row+1
+BUF PUT B1 I^row J1 "mode"
+BUF PUT B1 I^row J2 "target"
+^row == ^row+1
+BUF PUT B1 I^row J1 "stage"
+BUF PUT B1 I^row J2 "probe"
+^row == ^row+1
+BUF PUT B1 I^row J1 "source_zmx"
+BUF PUT B1 I^row J2 "US10281683B2.zmx"
+^row == ^row+1
+BUF PUT B1 I^row J1 "num_fields"
+BUF PUT B1 I^row J2 ^numf_out
+^row == ^row+1
+BUF PUT B1 I^row J1 "vignetting_edge"
+BUF PUT B1 I^row J2 0
+^row == ^row+1
+BUF PUT B1 I^row J1 "target.efl_mm"
+BUF PUT B1 I^row J2 ^target_efl
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.efl_y_mm"
+BUF PUT B1 I^row J2 ^seed_baseline_efl_y_mm
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_lateral_color_um"
+BUF PUT B1 I^row J2 ^seed_baseline_max_lateral_color_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_rms_spot_diameter_um"
+BUF PUT B1 I^row J2 ^seed_baseline_max_rms_spot_diameter_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_rms_wavefront_error_waves"
+BUF PUT B1 I^row J2 ^seed_baseline_max_rms_wavefront_error_waves
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.max_distortion_pct"
+BUF PUT B1 I^row J2 ^seed_baseline_max_distortion_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.fno"
+BUF PUT B1 I^row J2 ^seed_baseline_fno
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.epd_mm"
+BUF PUT B1 I^row J2 ^seed_baseline_epd
+^row == ^row+1
+BUF PUT B1 I^row J1 "seed_baseline.maximh_mm"
+BUF PUT B1 I^row J2 ^seed_baseline_maximh
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.efl_y_mm"
+BUF PUT B1 I^row J2 ^config_pre_aut_efl_y_mm
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_lateral_color_um"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_lateral_color_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_rms_spot_diameter_um"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_spot_diameter_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_rms_wavefront_error_waves"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_wavefront_error_waves
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.max_distortion_pct"
+BUF PUT B1 I^row J2 ^config_pre_aut_max_distortion_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.fno"
+BUF PUT B1 I^row J2 ^config_pre_aut_fno
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.epd_mm"
+BUF PUT B1 I^row J2 ^config_pre_aut_epd
+^row == ^row+1
+BUF PUT B1 I^row J1 "config_pre_aut.maximh_mm"
+BUF PUT B1 I^row J2 ^config_pre_aut_maximh
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.efl_y_mm"
+BUF PUT B1 I^row J2 ^post_aut_efl_y_mm
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_lateral_color_um"
+BUF PUT B1 I^row J2 ^post_aut_max_lateral_color_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_rms_spot_diameter_um"
+BUF PUT B1 I^row J2 ^post_aut_max_rms_spot_diameter_um
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_rms_wavefront_error_waves"
+BUF PUT B1 I^row J2 ^post_aut_max_rms_wavefront_error_waves
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.max_distortion_pct"
+BUF PUT B1 I^row J2 ^post_aut_max_distortion_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.fno"
+BUF PUT B1 I^row J2 ^post_aut_fno
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.epd_mm"
+BUF PUT B1 I^row J2 ^post_aut_epd
+^row == ^row+1
+BUF PUT B1 I^row J1 "post_aut.maximh_mm"
+BUF PUT B1 I^row J2 ^post_aut_maximh
+^row == ^row+1
+BUF PUT B1 I^row J1 "efl_target_deviation_pct"
+BUF PUT B1 I^row J2 ^efl_target_dev_pct
+^row == ^row+1
+BUF PUT B1 I^row J1 "aut_converged"
+BUF PUT B1 I^row J2 ^aut_converged
+^row == ^row+1
+BUF EXP B1 "D:\atelier-wt-c\.planning\loop\p15-stageb-evidence\native-control-2026-07-11\US10281683B2\atelier_codev_target_probe_native.tsv"
+BUF DEL B1
+OUT YES
+EXI YES

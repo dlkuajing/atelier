@@ -1,0 +1,223 @@
+{
+  "schema": "atelier-p15-fno-ladder-v1",
+  "source_zmx": "US20210165194A1.zmx",
+  "stage": "A",
+  "target_efl_mm": 2.408597272589866,
+  "fnum_target": 1.8,
+  "rung_count": 3,
+  "fnum_tolerance_pct": 8.0,
+  "native_fnum_measured": 2.0,
+  "rungs": [
+    {
+      "rung_index": 0,
+      "target_fnum": null,
+      "status": "measured",
+      "measured_fnum": 2.0,
+      "fnum_target_deviation_pct": null,
+      "fno_param_achieved": null,
+      "ray_traceable": true,
+      "ray_grid": {
+        "category": "ok",
+        "refl_count": 0,
+        "miss_count": 0,
+        "ray_aiming_warning": true,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "positive evidence: Normal AUTO Completion present, no abnormal termination, no RAY ERROR / aperture-conflict markers",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 1.843767e-14,
+      "post_aut.max_rms_spot_diameter_um": 12.118,
+      "post_aut.max_rms_wavefront_error_waves": 0.466113,
+      "err_f_ratio": 0.8110081557593284,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0.2",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": 0.2,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "ok",
+            "error": null
+          }
+        ],
+        "quality_note": "RMS/WFE measured on the retry's vignetted pupil (off-axis edge=0.2) — optimistic vs full pupil; read together with effective_edge_used",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 1,
+      "target_fnum": 1.9309787692112594,
+      "status": "measured",
+      "measured_fnum": 1.9309736641680362,
+      "fnum_target_deviation_pct": 0.0002643759374603994,
+      "fno_param_achieved": true,
+      "ray_traceable": true,
+      "ray_grid": {
+        "category": "ok",
+        "refl_count": 0,
+        "miss_count": 0,
+        "ray_aiming_warning": true,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "positive evidence: Normal AUTO Completion present, no abnormal termination, no RAY ERROR / aperture-conflict markers",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 1.701797e-11,
+      "post_aut.max_rms_spot_diameter_um": 10.4724,
+      "post_aut.max_rms_wavefront_error_waves": 0.492557,
+      "err_f_ratio": 0.5437609102649191,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0.2",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": 0.2,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "ok",
+            "error": null
+          }
+        ],
+        "quality_note": "RMS/WFE measured on the retry's vignetted pupil (off-axis edge=0.2) — optimistic vs full pupil; read together with effective_edge_used",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 2,
+      "target_fnum": 1.8643395035723154,
+      "status": "measured",
+      "measured_fnum": 1.8643424953364345,
+      "fnum_target_deviation_pct": 0.000160473138791323,
+      "fno_param_achieved": true,
+      "ray_traceable": true,
+      "ray_grid": {
+        "category": "ok",
+        "refl_count": 0,
+        "miss_count": 0,
+        "ray_aiming_warning": true,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "positive evidence: Normal AUTO Completion present, no abnormal termination, no RAY ERROR / aperture-conflict markers",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 5.624301e-09,
+      "post_aut.max_rms_spot_diameter_um": 10.6428,
+      "post_aut.max_rms_wavefront_error_waves": 0.469568,
+      "err_f_ratio": 0.5328524549207156,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0.3",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": 0.3,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "chief-ray-missing",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "ok",
+            "error": null
+          }
+        ],
+        "quality_note": "RMS/WFE measured on the retry's vignetted pupil (off-axis edge=0.3) — optimistic vs full pupil; read together with effective_edge_used",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 3,
+      "target_fnum": 1.8,
+      "status": "error",
+      "measured_fnum": null,
+      "fnum_target_deviation_pct": null,
+      "fno_param_achieved": null,
+      "ray_traceable": null,
+      "ray_grid": null,
+      "efl_target_deviation_pct": null,
+      "post_aut.max_rms_spot_diameter_um": null,
+      "post_aut.max_rms_wavefront_error_waves": null,
+      "err_f_ratio": null,
+      "aut_converged": false,
+      "autovig.edge_used": null,
+      "autovig.converged": null,
+      "effective_edge_used": null,
+      "ray_retry": null,
+      "error": {
+        "kind": "timeout",
+        "detail": "CODE V batch run exceeded its hard timeout"
+      }
+    }
+  ],
+  "last_measured_rung_index": 2,
+  "last_measured_rung": {
+    "rung_index": 2,
+    "target_fnum": 1.8643395035723154,
+    "status": "measured",
+    "measured_fnum": 1.8643424953364345,
+    "fnum_target_deviation_pct": 0.000160473138791323,
+    "fno_param_achieved": true,
+    "ray_traceable": true,
+    "ray_grid": {
+      "category": "ok",
+      "refl_count": 0,
+      "miss_count": 0,
+      "ray_aiming_warning": true,
+      "aperture_conflict_matched": null,
+      "excerpt": null,
+      "note": "positive evidence: Normal AUTO Completion present, no abnormal termination, no RAY ERROR / aperture-conflict markers",
+      "normal_completion": true,
+      "abnormal_completion_matched": null
+    },
+    "efl_target_deviation_pct": 5.624301e-09,
+    "post_aut.max_rms_spot_diameter_um": 10.6428,
+    "post_aut.max_rms_wavefront_error_waves": 0.469568,
+    "err_f_ratio": 0.5328524549207156,
+    "aut_converged": true,
+    "autovig.edge_used": "0",
+    "autovig.converged": "1",
+    "effective_edge_used": "0.3",
+    "ray_retry": {
+      "triggered": true,
+      "accepted_edge": 0.3,
+      "attempts": [
+        {
+          "edge": 0.2,
+          "aut_converged": true,
+          "ray_category": "chief-ray-missing",
+          "error": null
+        },
+        {
+          "edge": 0.3,
+          "aut_converged": true,
+          "ray_category": "ok",
+          "error": null
+        }
+      ],
+      "quality_note": "RMS/WFE measured on the retry's vignetted pupil (off-axis edge=0.3) — optimistic vs full pupil; read together with effective_edge_used",
+      "skip_reason": null
+    },
+    "error": null
+  },
+  "target_achieved": false,
+  "accepted_final": null,
+  "blocked": false
+}

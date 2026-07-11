@@ -1,0 +1,321 @@
+{
+  "schema": "atelier-p15-fno-ladder-v1",
+  "source_zmx": "US-11940597-B2-e6.zmx",
+  "stage": "A",
+  "target_efl_mm": 19.67312941413708,
+  "fnum_target": 2.0,
+  "rung_count": 3,
+  "fnum_tolerance_pct": 8.0,
+  "native_fnum_measured": 3.5699949915436937,
+  "rungs": [
+    {
+      "rung_index": 0,
+      "target_fnum": null,
+      "status": "measured",
+      "measured_fnum": 3.5699949915436937,
+      "fnum_target_deviation_pct": null,
+      "fno_param_achieved": null,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 4,
+        "miss_count": 0,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "4 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 8e-06,
+      "post_aut.max_rms_spot_diameter_um": 64.6319,
+      "post_aut.max_rms_wavefront_error_waves": 0.962674,
+      "err_f_ratio": 0.0014151908193145643,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "chief-ray-missing",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "chief-ray-missing",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 1,
+      "target_fnum": 2.9429874025440976,
+      "status": "measured",
+      "measured_fnum": 2.9429821608885898,
+      "fnum_target_deviation_pct": 0.00017810662401504578,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 14,
+        "miss_count": 2,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": "Unable to scale up Pupil and Field specifications",
+        "excerpt": null,
+        "note": "14 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": "Abnormal AUTO Completion - Unable to scale up Pupil and Field specifications"
+      },
+      "efl_target_deviation_pct": 3.439245e-09,
+      "post_aut.max_rms_spot_diameter_um": 136.873,
+      "post_aut.max_rms_wavefront_error_waves": 0.0,
+      "err_f_ratio": 0.005088745405221118,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 2,
+      "target_fnum": 2.4261028018384128,
+      "status": "measured",
+      "measured_fnum": 2.4261023449687684,
+      "fnum_target_deviation_pct": 1.8831421487677855e-05,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 48,
+        "miss_count": 3,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": "Unable to scale up Pupil and Field specifications",
+        "excerpt": null,
+        "note": "48 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": "Abnormal AUTO Completion - Unable to scale up Pupil and Field specifications"
+      },
+      "efl_target_deviation_pct": 0.00111364,
+      "post_aut.max_rms_spot_diameter_um": 0.0,
+      "post_aut.max_rms_wavefront_error_waves": 0.0,
+      "err_f_ratio": 0.09960283615755668,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": false,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 3,
+      "target_fnum": 2.0,
+      "status": "measured",
+      "measured_fnum": 2.0,
+      "fnum_target_deviation_pct": 0.0,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 39,
+        "miss_count": 8,
+        "ray_aiming_warning": false,
+        "aperture_conflict_matched": "Unable to scale up Pupil and Field specifications",
+        "excerpt": null,
+        "note": "39 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": "Abnormal AUTO Completion - Unable to scale up Pupil and Field specifications"
+      },
+      "efl_target_deviation_pct": 0.0133488,
+      "post_aut.max_rms_spot_diameter_um": 0.0,
+      "post_aut.max_rms_wavefront_error_waves": 0.0,
+      "err_f_ratio": 0.05516599176431813,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    }
+  ],
+  "last_measured_rung_index": 3,
+  "last_measured_rung": {
+    "rung_index": 3,
+    "target_fnum": 2.0,
+    "status": "measured",
+    "measured_fnum": 2.0,
+    "fnum_target_deviation_pct": 0.0,
+    "fno_param_achieved": true,
+    "ray_traceable": false,
+    "ray_grid": {
+      "category": "TIR",
+      "refl_count": 39,
+      "miss_count": 8,
+      "ray_aiming_warning": false,
+      "aperture_conflict_matched": "Unable to scale up Pupil and Field specifications",
+      "excerpt": null,
+      "note": "39 RAY ERROR: REFL occurrence(s)",
+      "normal_completion": true,
+      "abnormal_completion_matched": "Abnormal AUTO Completion - Unable to scale up Pupil and Field specifications"
+    },
+    "efl_target_deviation_pct": 0.0133488,
+    "post_aut.max_rms_spot_diameter_um": 0.0,
+    "post_aut.max_rms_wavefront_error_waves": 0.0,
+    "err_f_ratio": 0.05516599176431813,
+    "aut_converged": true,
+    "autovig.edge_used": "0",
+    "autovig.converged": "1",
+    "effective_edge_used": "0",
+    "ray_retry": {
+      "triggered": true,
+      "accepted_edge": null,
+      "attempts": [
+        {
+          "edge": 0.2,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.3,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.4,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.5,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        }
+      ],
+      "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+      "skip_reason": null
+    },
+    "error": null
+  },
+  "target_achieved": false,
+  "accepted_final": null,
+  "blocked": false
+}

@@ -1,0 +1,315 @@
+{
+  "schema": "atelier-p15-fno-ladder-v1",
+  "source_zmx": "US10281683B2.zmx",
+  "stage": "A",
+  "target_efl_mm": 4.706028084686921,
+  "fnum_target": 3.0,
+  "rung_count": 3,
+  "fnum_tolerance_pct": 8.0,
+  "native_fnum_measured": 1.6799984272120905,
+  "rungs": [
+    {
+      "rung_index": 0,
+      "target_fnum": null,
+      "status": "measured",
+      "measured_fnum": 1.6799984272120905,
+      "fnum_target_deviation_pct": null,
+      "fno_param_achieved": null,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 72,
+        "miss_count": 13,
+        "ray_aiming_warning": true,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "72 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 0.129614,
+      "post_aut.max_rms_spot_diameter_um": 127.902,
+      "post_aut.max_rms_wavefront_error_waves": 2.12597,
+      "err_f_ratio": 8.518429992033044,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 1,
+      "target_fnum": 2.0381978306046937,
+      "status": "measured",
+      "measured_fnum": 2.0381940683290365,
+      "fnum_target_deviation_pct": 0.00018458834568189732,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 94,
+        "miss_count": 18,
+        "ray_aiming_warning": true,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "94 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 0.0419684,
+      "post_aut.max_rms_spot_diameter_um": 16.1886,
+      "post_aut.max_rms_wavefront_error_waves": 0.427731,
+      "err_f_ratio": 4.072269646587306,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 2,
+      "target_fnum": 2.472770408229216,
+      "status": "measured",
+      "measured_fnum": 2.4727713147745307,
+      "fnum_target_deviation_pct": 3.66611195199975e-05,
+      "fno_param_achieved": true,
+      "ray_traceable": true,
+      "ray_grid": {
+        "category": "ok",
+        "refl_count": 0,
+        "miss_count": 0,
+        "ray_aiming_warning": true,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "positive evidence: Normal AUTO Completion present, no abnormal termination, no RAY ERROR / aperture-conflict markers",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 9.912208e-11,
+      "post_aut.max_rms_spot_diameter_um": 4.82662,
+      "post_aut.max_rms_wavefront_error_waves": 0.0973986,
+      "err_f_ratio": 0.12369445468557257,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0.4",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": 0.4,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "ok",
+            "error": null
+          }
+        ],
+        "quality_note": "RMS/WFE measured on the retry's vignetted pupil (off-axis edge=0.4) — optimistic vs full pupil; read together with effective_edge_used",
+        "skip_reason": null
+      },
+      "error": null
+    },
+    {
+      "rung_index": 3,
+      "target_fnum": 3.0,
+      "status": "measured",
+      "measured_fnum": 2.9999936252135555,
+      "fnum_target_deviation_pct": 0.0002124928814832098,
+      "fno_param_achieved": true,
+      "ray_traceable": false,
+      "ray_grid": {
+        "category": "TIR",
+        "refl_count": 1,
+        "miss_count": 1,
+        "ray_aiming_warning": true,
+        "aperture_conflict_matched": null,
+        "excerpt": null,
+        "note": "1 RAY ERROR: REFL occurrence(s)",
+        "normal_completion": true,
+        "abnormal_completion_matched": null
+      },
+      "efl_target_deviation_pct": 8.870407e-13,
+      "post_aut.max_rms_spot_diameter_um": 6.42814,
+      "post_aut.max_rms_wavefront_error_waves": 0.158078,
+      "err_f_ratio": 0.2065535777787832,
+      "aut_converged": true,
+      "autovig.edge_used": "0",
+      "autovig.converged": "1",
+      "effective_edge_used": "0",
+      "ray_retry": {
+        "triggered": true,
+        "accepted_edge": null,
+        "attempts": [
+          {
+            "edge": 0.2,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.3,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.4,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          },
+          {
+            "edge": 0.5,
+            "aut_converged": true,
+            "ray_category": "TIR",
+            "error": null
+          }
+        ],
+        "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+        "skip_reason": null
+      },
+      "error": null
+    }
+  ],
+  "last_measured_rung_index": 3,
+  "last_measured_rung": {
+    "rung_index": 3,
+    "target_fnum": 3.0,
+    "status": "measured",
+    "measured_fnum": 2.9999936252135555,
+    "fnum_target_deviation_pct": 0.0002124928814832098,
+    "fno_param_achieved": true,
+    "ray_traceable": false,
+    "ray_grid": {
+      "category": "TIR",
+      "refl_count": 1,
+      "miss_count": 1,
+      "ray_aiming_warning": true,
+      "aperture_conflict_matched": null,
+      "excerpt": null,
+      "note": "1 RAY ERROR: REFL occurrence(s)",
+      "normal_completion": true,
+      "abnormal_completion_matched": null
+    },
+    "efl_target_deviation_pct": 8.870407e-13,
+    "post_aut.max_rms_spot_diameter_um": 6.42814,
+    "post_aut.max_rms_wavefront_error_waves": 0.158078,
+    "err_f_ratio": 0.2065535777787832,
+    "aut_converged": true,
+    "autovig.edge_used": "0",
+    "autovig.converged": "1",
+    "effective_edge_used": "0",
+    "ray_retry": {
+      "triggered": true,
+      "accepted_edge": null,
+      "attempts": [
+        {
+          "edge": 0.2,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.3,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.4,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        },
+        {
+          "edge": 0.5,
+          "aut_converged": true,
+          "ray_category": "TIR",
+          "error": null
+        }
+      ],
+      "quality_note": "exhausted retry ladder without an EFL-hit AND ray-clean edge; rung not accepted, original autovig-stage data kept",
+      "skip_reason": null
+    },
+    "error": null
+  },
+  "target_achieved": false,
+  "accepted_final": null,
+  "blocked": false
+}

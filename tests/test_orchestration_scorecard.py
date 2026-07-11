@@ -38,6 +38,8 @@ from app.core.lens_system import Scenario
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     CONVERGED_FIELDS,
+    FnumAcceptedFinalEvidence,
+    FnumLadderEvidence,
     GeneratedCandidate,
     GenerationMode,
     ImageQualityMetrics,
@@ -68,6 +70,30 @@ def _first_case_with_metadata() -> OpticalSampleData:
 
 
 _CASE = _first_case_with_metadata()
+
+
+def _fnum_evidence(achieved: bool | None) -> FnumLadderEvidence | None:
+    if achieved is None:
+        return None
+    accepted = (
+        FnumAcceptedFinalEvidence(
+            status="measured", measured_fnum=2.4, fno_param_achieved=True,
+            aut_converged=True, ray_traceable=True, effective_edge_used=0.2,
+            ray_grid={
+                "category": "ok", "refl_count": 0, "miss_count": 0,
+                "ray_aiming_warning": False, "aperture_conflict_matched": None,
+                "excerpt": None, "note": "positive measured listing evidence",
+                "normal_completion": True, "abnormal_completion_matched": None,
+            }, quality_note="measured accepted rung",
+            optimized_zmx_path="accepted.zmx",
+        ) if achieved else None
+    )
+    return FnumLadderEvidence(
+        schema="atelier-p15-fno-ladder-v1", target_achieved=achieved,
+        accepted_final=accepted, target_efl_mm=4.0, fnum_target=2.4, stage="B",
+        rung_count=3, fnum_tolerance_pct=8.0, vig_ladder=(0.0, 0.2),
+        ray_retry_vig_ladder=(0.2,), num_fields=3, extra_dof="both",
+    )
 
 _WIDE_REQUEST: dict[str, object] = {
     "efl_mm": 2.8,
@@ -113,6 +139,7 @@ def _generated_candidate(
     *,
     candidate_id: str = "test",
     ri_by_field: dict[str, MetricValue] | None = None,
+    fnum_ladder_achieved: bool | None = None,
 ) -> GeneratedCandidate:
     assert _CASE.metadata is not None
     return GeneratedCandidate(
@@ -122,6 +149,7 @@ def _generated_candidate(
         payload=_CASE,
         optical_extras=OpticalExtras(ri_by_field=ri_by_field),
         generation_notes=["test fixture"],
+        fnum_ladder_evidence=_fnum_evidence(fnum_ladder_achieved),
     )
 
 
@@ -348,14 +376,48 @@ def test_retrieved_scorecard_all_fields_unconverged():
 
 
 def test_target_converged_scorecard_matches_converged_fields_and_round_trips():
+    """P15 带条件扩后：efl 无条件 Yes（能力上限表）；fnum 虽在表内但 ladder
+    未跑（fnum_ladder_achieved=None，本 fixture 现状）→ 恒 No；其余维不在
+    表内恒 No。期望公式与 _enforce_consistency 同构。"""
     target = _wide_target_spec()
     generated = _generated_candidate(GenerationMode.TARGET_CONVERGED)
     row = score_candidate(generated, target)
     conv = CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
     for dev in row.target_deviations:
-        assert dev.converged_toward_target == (dev.field in conv)
+        expected = (dev.field in conv) and dev.field != "fnum"  # gate=None → fnum No
+        assert dev.converged_toward_target == expected
     ttl_dev = next(d for d in row.target_deviations if d.field == "ttl")
     assert ttl_dev.converged_toward_target is False  # TTL never in Mode3 six-splice
+    ScoredCandidate(generated=generated, scorecard=row)
+
+
+def test_target_converged_fnum_gate_true_marks_fnum_converged():
+    """带条件扩正路径：候选携带 ladder 四条件达标证据（fnum_ladder_achieved=
+    True）→ fnum converged=Yes，且通过诚实不变量校验 round-trip。"""
+    target = _wide_target_spec()
+    generated = _generated_candidate(
+        GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=True
+    )
+    row = score_candidate(generated, target)
+    fnum_dev = next(d for d in row.target_deviations if d.field == "fnum")
+    assert fnum_dev.converged_toward_target is True
+    efl_dev = next(d for d in row.target_deviations if d.field == "efl")
+    assert efl_dev.converged_toward_target is True  # efl 无条件（能力上限表）
+    for other in row.target_deviations:
+        if other.field not in ("efl", "fnum"):
+            assert other.converged_toward_target is False  # IMH/FOV/TTL 仍如实 No
+    ScoredCandidate(generated=generated, scorecard=row)
+
+
+def test_target_converged_fnum_gate_false_keeps_fnum_unconverged():
+    """ladder 跑了但未达标（False）→ fnum 恒 No（与未跑 None 同为 fail-closed）。"""
+    target = _wide_target_spec()
+    generated = _generated_candidate(
+        GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=False
+    )
+    row = score_candidate(generated, target)
+    fnum_dev = next(d for d in row.target_deviations if d.field == "fnum")
+    assert fnum_dev.converged_toward_target is False
     ScoredCandidate(generated=generated, scorecard=row)
 
 
