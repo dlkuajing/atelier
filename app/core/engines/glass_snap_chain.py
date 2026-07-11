@@ -221,7 +221,12 @@ def build_glass_freeze_reopt_sequence(
         # sequences define FCTs first, before OUT NO / import).
         *_rmswfe_function_definitions(),
         "OUT NO",
-        f'IN CV_MACRO:ZEMAXOS_TO_CV "{Path(source_zmx).as_posix()}"',
+        # Backslash paths ONLY: a forward-slash absolute path in
+        # ZEMAXOS_TO_CV hangs CODE V in a "Zero or negative value for row
+        # qualifier" cascade (decisive same-file A/B, 2026-07-11; this
+        # as_posix() was the sole forward-slash builder in the repo and the
+        # root cause of the first A-F matrix's 14 failed cells).
+        f'IN CV_MACRO:ZEMAXOS_TO_CV "{str(Path(source_zmx)).replace("/", chr(92))}"',
         *_snapshot_block("before-fictitious", session_run_id, configuration_fingerprint),
     ]
     for proposal in accepted if apply_snaps else ():
@@ -241,16 +246,20 @@ def build_glass_freeze_reopt_sequence(
     lines += _snapshot_block("after-snap-frozen", session_run_id, configuration_fingerprint)
     if run_aut:
         lines += [
+            # Asphere A..G variable flags are LENS-DATA commands and must sit
+            # at command level BEFORE the AUT block (codev_optimize's proven
+            # `_extra_dof_block` ordering). Placing them inside AUT is
+            # rejected on the real machine: "ERROR - Invalid constraint AC"
+            # (matrix v5 C/E/F arms, 2026-07-11).
+            "! GLC intentionally absent: glass remains frozen",
+            "FOR ^s 1 (NUM S)",
+            '  IF (TYP SUR S^s) = "ASP"',
+            *[f"    {c}C S^s 0" for c in "ABCDEFG"],
+            "  END IF",
+            "END FOR",
             "AUT",
             "  SUR N",
             "  CHG SA",
-            "  ! GLC intentionally absent: glass remains frozen",
-            "  ! Existing authorized ASP A..G DOF only; pending real-machine verification",
-            "  FOR ^s 1 (NUM S)",
-            '    IF (TYP SUR S^s) = "ASP"',
-            *[f"      {c}C S^s 0" for c in "ABCDEFG"],
-            "    END IF",
-            "  END FOR",
             f"  MXC {max_cycles}",
             f"  MNC {min_cycles}",
             "  IMP 0.001",
@@ -259,7 +268,7 @@ def build_glass_freeze_reopt_sequence(
     lines += [
         *_snapshot_block("after-snap-reopt", session_run_id, configuration_fingerprint),
         *_snapshot_export_block(session_run_id, configuration_fingerprint),
-        f'BUF EXP B1 "{Path(result_path).as_posix()}"',
+        f'BUF EXP B1 "{str(Path(result_path)).replace("/", chr(92))}"',
         "BUF DEL B1",
         "OUT YES",
         "EXI YES",

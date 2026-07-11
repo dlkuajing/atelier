@@ -60,3 +60,32 @@ sequence builder），矩阵重跑。**
 未完成。**下一步（下窗，禁零敲碎打）**：脚本化系统二分——每 run 全新目录、单变量控制
 （定义有无 × 命令集 × 候选/seed × 候选内容分段替换），一批跑完出判别式；SAV 语法先查
 手册（可能需 `SAV cand21 YES` 式确认参数或改 WRL）。
+
+## ★ CLOSED（同日晚窗，脚本化二分+决定性 A/B）★
+
+**判别式：`IN CV_MACRO:ZEMAXOS_TO_CV` 嵌入正斜杠绝对路径 = row-qualifier cascade/挂死。**
+同文件同命令 A/B：正斜杠超时挂死；反斜杠 2.3s 干净导入 19 面。全部历史数据点 100% 拟合
+（失败组全为我手写 seq/glass_snap_chain 的 as_posix() 正斜杠；干净组全为反斜杠/相对名——
+run12"FCT+seed 干净"实为 PowerShell 反斜杠路径）。glass_snap_chain 是全仓唯一正斜杠 builder。
+修复：两处嵌入点反斜杠归一+builder 测试。28 格脚本化二分（scripts/p13_mystery_bisect.py）
+全 clean 反向锚定判别式。
+
+**连带真机再抓两实锤**（矩阵 v5/v6/v7 递进）：
+1. 非球面 A..G 变量旗=镜头数据命令，必须在 AUT 块之前（AUT 内报 Invalid constraint AC）；
+2. ★数字码玻璃名腐蚀 CODE V 内色散★——ZEMAXOS_TO_CV 用（搓坏的）名字派生 fictitious
+   glass 色散（声明 vd 54.0607 → CODE V 内 40.154），writer/repair 已改 ___BLANK 1 显式值。
+
+**终局（矩阵 v7）：20/20 可执行格 ok**（4 D 臂 GLD 语法如实 pending），snap 提议在真色散
+上评估（source vd=55.9=声明真值，距离 1.7e-5 → snapped APL5014CL）。快照 RMSWE 全 withheld
+=诚实物理（导入丢 ray-aiming，与 Stage B 光线可追迹同根），像质 delta 待 ray-setup 集成铲。
+记账：stage withheld 时 EFL（近轴量，实测有效）也被整段扣留——可细分（backlog）。
+
+## 审查补记（合并前对抗审 1 MAJOR + 2 MINOR 处置）
+
+- MAJOR 已修：数字名改写加「前 6 位必须编码本行 nd（(nd-1)*1e6，模型码契约）」可验证门，
+  writer 与 repair 双侧；假想的合法数字牌号目录玻璃不再被吞并。
+- MINOR 已修：bisect prober 非空输出目录默认拒绝，需显式 --overwrite。
+- MINOR 记账（存量非本分支引入）：Optiland ingest 侧 `zmx_materials.resolve_material`
+  对 vd=0 回退伪造 vd=50（AbbeMaterial）——「色散未知」在 Optiland 度量链中会像已知色散。
+  单波长导入产生的 vd=0 GLAS（专利 seed 池普遍形态）受此影响。工单：ingest 侧带 provenance
+  的 unknown-dispersion 处理（禁伪造），随下一 P13 铲。

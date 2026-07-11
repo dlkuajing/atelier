@@ -1,0 +1,138 @@
+[
+  {
+    "distance": 1.7377970866342893e-05,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "APL5014CL",
+      "nd": 1.544,
+      "vd": 56.0
+    },
+    "region_id": "z1:s1-s2",
+    "source": {
+      "glass_name": "544000.559000",
+      "nd": 1.544,
+      "vd": 55.9
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  },
+  {
+    "distance": 1.7377970866342893e-05,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "APL5014CL",
+      "nd": 1.544,
+      "vd": 56.0
+    },
+    "region_id": "z1:s4-s5",
+    "source": {
+      "glass_name": "544000.559000",
+      "nd": 1.544,
+      "vd": 55.9
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  },
+  {
+    "distance": 0.00103747469152275,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "SP3810",
+      "nd": 1.64,
+      "vd": 23.3
+    },
+    "region_id": "z1:s6-s7",
+    "source": {
+      "glass_name": "639000.235000",
+      "nd": 1.639,
+      "vd": 23.5
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  },
+  {
+    "distance": 1.7377970866342893e-05,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "APL5014CL",
+      "nd": 1.544,
+      "vd": 56.0
+    },
+    "region_id": "z1:s8-s9",
+    "source": {
+      "glass_name": "544000.559000",
+      "nd": 1.544,
+      "vd": 55.9
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  },
+  {
+    "distance": 0.00103747469152275,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "SP3810",
+      "nd": 1.64,
+      "vd": 23.3
+    },
+    "region_id": "z1:s10-s11",
+    "source": {
+      "glass_name": "639000.235000",
+      "nd": 1.639,
+      "vd": 23.5
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  },
+  {
+    "distance": 1.7377970866342893e-05,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "APL5014CL",
+      "nd": 1.544,
+      "vd": 56.0
+    },
+    "region_id": "z1:s12-s13",
+    "source": {
+      "glass_name": "544000.559000",
+      "nd": 1.544,
+      "vd": 55.9
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  },
+  {
+    "distance": 0.004001887116768485,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "ZEONEX-E48R",
+      "nd": 1.531,
+      "vd": 56.0
+    },
+    "region_id": "z1:s14-s15",
+    "source": {
+      "glass_name": "535000.557000",
+      "nd": 1.535,
+      "vd": 55.7
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  },
+  {
+    "distance": 0.014072759681877687,
+    "proposed": {
+      "catalog_id": "atelier-plastics",
+      "glass_name": "ZEONEX-E48R",
+      "nd": 1.531,
+      "vd": 56.0
+    },
+    "region_id": "z1:s16-s17",
+    "source": {
+      "glass_name": "516999.642000",
+      "nd": 1.517,
+      "vd": 64.2
+    },
+    "tolerance": 1.0,
+    "verdict": "snapped"
+  }
+]
