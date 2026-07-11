@@ -1,0 +1,6 @@
+# [EXPERT] TOR/PER/MC semantics and threshold policy require expert ratification; routing proxy and true TOR are mutually incomparable.
+candidate	variant	source_zmx	status	yield	trials	saturation	per_field	tor_section	routing_proxy_section
+001-86633e09	baseline-positive-control	D:\atelier\data\zmx\US20170045714A1.zmx	ok	unavailable	100	0.82	unavailable	true TOR only	routing proxy: separate/non-comparable
+001-86633e09	optimized	D:\atelier\.planning\loop\candidates-2026-07-09\US20170045714A1\asphere\US20170045714A1_target3.797_vig020_optimized.zmx	failed:run:CodeVBatchError:CODE V TOR run finished without producing fresh export files	unavailable				true TOR only	routing proxy: separate/non-comparable
+002-fdc9e3ec	baseline-positive-control	D:\atelier\data\zmx\US20170045714A1.zmx	ok	unavailable	100	0.82	unavailable	true TOR only	routing proxy: separate/non-comparable
+002-fdc9e3ec	optimized	D:\atelier\.planning\loop\candidates-2026-07-09\US20170045714A1\both\US20170045714A1_target3.797_vig020_optimized.zmx	failed:run:CodeVBatchError:CODE V TOR run finished without producing fresh export files	unavailable				true TOR only	routing proxy: separate/non-comparable
