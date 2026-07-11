@@ -85,3 +85,24 @@ xlsx 产物（`sample-export.xlsx`，同目录）作为留痕，截图本身在�
    修复：`resolved_artifacts_root = (...).resolve()`，落盘前转绝对路径；已补
    回归测试 `test_run_batch_fake_engine_five_targets_one_injected_failure` 内
    新增的绝对路径断言。
+
+## 对抗审修复轮补充实测（2026-07-11，Codex 审后 5 fix）
+
+浏览器 + xlsx 复核 BLOCKER-1（degraded 可见性）三面落地，方法同上
+（`atelier-demo-p18` 端口 8004，注入 1 条 `status=degraded` 演示 job）：
+
+- **详情页**：job 表 STATUS 列渲染 `DEGRADED (MISSING MODES)` badge
+  （`preview_inspect` 实测背景 `rgba(181,132,56,0.22)` 琥珀色，与
+  succeeded 绿/failed 红明确区分）；`FAILURE / DEGRADATION` 列完整显示
+  degradation 原文（含 missing mode 名与 "results below cover only:
+  retrieved"）。
+- **列表页 + 详情 summary**：SUCCEEDED 栏显示 `0/1 (1 degraded)`——
+  degraded 不计入成功。
+- **xlsx**：Jobs 表实测新列 `engine=real / attempt=1 / status=degraded /
+  degradation=原文 / modes_requested=retrieved, target-converged /
+  modes_present=retrieved / missing_modes=target-converged /
+  mode_counts=retrieved=2` 全部落盘。
+- **CLI**：fake 批冒烟输出 `2 succeeded, 0 degraded, 0 failed`，
+  ledger JSON 实测含 `engine/attempt/modes_requested/modes_present/
+  missing_modes/mode_counts` 全部新字段；`--engine real --job-timeout-sec`
+  与 resume 引擎不一致均 exit 2 且零副作用（测试断言归档目录不存在）。
