@@ -201,8 +201,21 @@ def run_cell(
             if listing_path.exists()
             else stdout + "\n" + stderr
         )
-        verdict = classify_listing(text)
         returncode = getattr(process, "returncode", None)
+        listing_verdict = classify_listing(text)
+        if returncode not in (0, 1):
+            # CODE V's verified batch contract accepts both 0 and 1 after
+            # output validation.  Anything else is a process failure even
+            # when the listing happens not to contain a recognised error.
+            verdict = Verdict(
+                "process-error",
+                f"returncode={returncode}; listing={listing_verdict.display()}",
+            )
+        elif not text.strip():
+            # An empty listing/stdout/stderr is not evidence of a clean run.
+            verdict = Verdict("missing-evidence")
+        else:
+            verdict = listing_verdict
     except CodeVBatchError as exc:
         listing_path = _listing(cell_dir)
         text = (
@@ -210,7 +223,12 @@ def run_cell(
             if listing_path.exists()
             else str(exc.details.get("listing_tail", ""))
         )
-        verdict = classify_listing(text, timed_out=exc.kind == "timeout")
+        if exc.kind == "timeout":
+            verdict = Verdict("timeout")
+        else:
+            verdict = Verdict("runner-error", f"{exc.kind}: {exc.message}"[:160])
+        if not text.strip():
+            text = verdict.display()
         returncode = None
         duration = timeout
     if not listing_path.exists():

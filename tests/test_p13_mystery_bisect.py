@@ -6,6 +6,8 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+from app.core.engines.codev_batch import CodeVBatchError
+
 MODULE_PATH = Path(__file__).parents[1] / "scripts/p13_mystery_bisect.py"
 SPEC = importlib.util.spec_from_file_location("p13_mystery_bisect", MODULE_PATH)
 assert SPEC and SPEC.loader
@@ -90,3 +92,84 @@ def test_fake_runner_and_tsv_shape(tmp_path: Path) -> None:
     ]
     assert rows[0]["verdict"] == "clean"
     assert result.sequence_path.read_bytes().count(b"\r\n") > 1
+
+
+def test_runner_failure_never_becomes_clean_on_empty_listing(tmp_path: Path) -> None:
+    def failing_runner(command: list[str], *, work_dir: Path, timeout_seconds: float):
+        raise CodeVBatchError("failure", "boom")
+
+    result = module.run_cell(
+        module.Cell(0, "seed", "import"),
+        "NAME seed\nSURF 0\n",
+        tmp_path,
+        timeout=1,
+        runner=failing_runner,
+    )
+
+    assert result.verdict.kind == "runner-error"
+    assert result.verdict.detail == "failure: boom"
+    assert result.listing_path.read_text(encoding="utf-8") == "runner-error (failure: boom)"
+
+
+def test_unaccepted_returncode_never_becomes_clean_on_empty_output(tmp_path: Path) -> None:
+    def nonzero_runner(command: list[str], *, work_dir: Path, timeout_seconds: float):
+        return SimpleNamespace(returncode=2), "", "", 0.25
+
+    result = module.run_cell(
+        module.Cell(0, "seed", "import"),
+        "NAME seed\nSURF 0\n",
+        tmp_path,
+        timeout=1,
+        runner=nonzero_runner,
+    )
+
+    assert result.verdict.kind == "process-error"
+    assert result.verdict.detail == "returncode=2; listing=clean"
+
+
+def test_accepted_returncode_without_any_evidence_is_not_clean(tmp_path: Path) -> None:
+    def empty_runner(command: list[str], *, work_dir: Path, timeout_seconds: float):
+        return SimpleNamespace(returncode=1), "", "", 0.25
+
+    result = module.run_cell(
+        module.Cell(0, "seed", "import"),
+        "NAME seed\nSURF 0\n",
+        tmp_path,
+        timeout=1,
+        runner=empty_runner,
+    )
+
+    assert result.verdict.kind == "missing-evidence"
+
+
+def test_missing_returncode_is_process_error_even_with_clean_listing(tmp_path: Path) -> None:
+    def unknown_runner(command: list[str], *, work_dir: Path, timeout_seconds: float):
+        (work_dir / "probe.lis").write_text("completed normally", encoding="ascii")
+        return SimpleNamespace(), "", "", 0.25
+
+    result = module.run_cell(
+        module.Cell(0, "seed", "import"),
+        "NAME seed\nSURF 0\n",
+        tmp_path,
+        timeout=1,
+        runner=unknown_runner,
+    )
+
+    assert result.verdict.kind == "process-error"
+    assert result.verdict.detail == "returncode=None; listing=clean"
+
+
+def test_codev_returncode_one_with_clean_listing_is_accepted(tmp_path: Path) -> None:
+    def codev_runner(command: list[str], *, work_dir: Path, timeout_seconds: float):
+        (work_dir / "probe.lis").write_text("completed normally", encoding="ascii")
+        return SimpleNamespace(returncode=1), "", "", 0.25
+
+    result = module.run_cell(
+        module.Cell(0, "seed", "import"),
+        "NAME seed\nSURF 0\n",
+        tmp_path,
+        timeout=1,
+        runner=codev_runner,
+    )
+
+    assert result.verdict.kind == "clean"
