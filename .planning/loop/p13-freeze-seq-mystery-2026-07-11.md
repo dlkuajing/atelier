@@ -46,3 +46,17 @@ sequence builder），矩阵重跑。**
 直接 `codev.exe /B` 探针每次留一对 codev/codevm 孤儿进程（7 对堆积后新批任务静默排队
 挂死）——探针一律走 `run_codev_batch`/`run_codev_process`（超时+kill-tree 纪律），
 杀孤儿后 `Get-Process codev,codevm` 必须归零再继续。
+
+## 追加数据点（同日晚窗，推翻"预编译定义"单因假设）
+
+| 组合 | 结果 |
+|---|---|
+| **无定义** + 候选导入 + `SAV cand21`（probe_fct 目录） | ❌ cascade + 挂死超时（run21） |
+| `SAV "长路径"` 形态（run19） | ❌ 挂死超时（SAV 语法/提示待查，次要） |
+| FCT 定义 + seed 导入（同一污染目录 run12） | ✅ 干净（目录污染单因排除） |
+
+**修正结论**：cascade 判别式不是「预编译定义」单因——candidate×{定义 OR 某第二触发}。
+候选文件内容仍是必要条件（seed 全组合干净）。SAV/RES 逃生门验证被 SAV 自身挂死阻断，
+未完成。**下一步（下窗，禁零敲碎打）**：脚本化系统二分——每 run 全新目录、单变量控制
+（定义有无 × 命令集 × 候选/seed × 候选内容分段替换），一批跑完出判别式；SAV 语法先查
+手册（可能需 `SAV cand21 YES` 式确认参数或改 WRL）。
