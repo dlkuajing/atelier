@@ -511,6 +511,51 @@ def test_run_fno_probe_preflight_defect_is_not_masked_as_aperture_conflict(
     assert result.outcome != "aperture-conflict"
 
 
+def test_run_fno_probe_native_control_arm_omits_fno(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """native 对照臂（target_f_number=None + direction="native"）：生成的宏
+    不含 FNO 命令、文件名 tag 为 _native、结果正常分类——用于区分 seed 固有
+    光线病灶与 FNO 诱发病灶（summary.md §6 限制 1 的控制实验）。"""
+    executable = _fake_codev_executable(tmp_path)
+    seen_seq_text: list[str] = []
+
+    class FakePopen:
+        pid = 116
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            seen_seq_text.append(sequence_path.read_text(encoding="ascii"))
+            result_path = _buf_exp_single_path(sequence_path)
+            _write_probe_result(result_path)
+            sequence_path.with_suffix(".lis").write_text(_REAL_OK_EXCERPT, encoding="utf-8")
+            return "ignored", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+
+    result = run_fno_probe(
+        source_zmx=default_optimize_seed(),
+        work_dir=tmp_path,
+        native_efl_mm=4.057,
+        native_fnum=2.32,
+        target_f_number=None,
+        direction="native",
+        executable=executable,
+        timeout_seconds=12.0,
+    )
+    assert len(seen_seq_text) == 1
+    assert "\nFNO " not in seen_seq_text[0]  # 对照臂不发 FNO 命令
+    assert result.direction == "native"
+    assert result.target_f_number is None
+    assert result.outcome == "ok"
+    assert result.lis_path is not None and result.lis_path.endswith("_native.lis")
+
+
 def test_run_fno_probe_uses_dot_free_filename_tag(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

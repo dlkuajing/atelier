@@ -232,7 +232,7 @@ def build_fno_probe_sequence(
     source_zmx: Path | str,
     result_path: Path | str,
     native_efl_mm: float,
-    target_f_number: float,
+    target_f_number: float | None,
     stage: str = "probe",
     max_cycles: int = 2,
     min_cycles: int = 1,
@@ -252,6 +252,11 @@ def build_fno_probe_sequence(
       (already proven in ``.planning/debug/codev-target-convergence.md``:
       "从 CYCLE 0 就 RAY ERROR: REFL 4/14") — a short probe is enough
       evidence without paying for a full 25-cycle optimization search.
+
+    ``target_f_number=None`` = **native 对照臂**（对抗审查后补的控制实验，
+    见 Stage 2 summary.md §6 限制 1）：同宏、同短 AUT、同 EFL 锁 native，
+    唯独**不发 FNO 命令**——用于区分「seed 导入即固有的光线病灶」与「FNO
+    retarget 诱发的病灶」。对照臂与 FNO 臂的分类差异才可归因于 FNO。
     """
     return build_codev_target_sequence(
         source_zmx=source_zmx,
@@ -268,13 +273,16 @@ def build_fno_probe_sequence(
 
 @dataclass(frozen=True)
 class FnoProbeResult:
-    """One (seed, target F#) cell of the Stage B failure-mode matrix."""
+    """One (seed, target F#) cell of the Stage B failure-mode matrix.
+
+    ``target_f_number=None`` + ``direction="native"`` = native 对照臂格
+    （不设 FNO 的同宏探针，区分 seed 固有 vs FNO 诱发的光线病灶）。"""
 
     source_zmx: str
     native_fnum: float
     native_efl_mm: float
-    target_f_number: float
-    direction: Literal["tighten", "loosen"]
+    target_f_number: float | None
+    direction: Literal["tighten", "loosen", "native"]
     outcome: FnoFailureCategory
     classification: FnoFailureClassification | None
     aut_converged: bool | None
@@ -338,8 +346,8 @@ def run_fno_probe(
     work_dir: Path | str,
     native_efl_mm: float,
     native_fnum: float,
-    target_f_number: float,
-    direction: Literal["tighten", "loosen"],
+    target_f_number: float | None,
+    direction: Literal["tighten", "loosen", "native"],
     stage: str = "probe",
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 90.0,
@@ -362,11 +370,15 @@ def run_fno_probe(
     partial listing might suggest — the timeout itself is the primary
     evidence (see brief: "超时也是一类证据"); the partial classification (if
     any) is still attached as ``classification`` for extra context.
+
+    ``target_f_number=None``（配 ``direction="native"``）= native 对照臂：
+    不发 FNO 命令的同宏探针，文件名 tag 为 ``_native``。用于把 FNO 臂的分类
+    与 seed 固有光线病灶分离（见 ``build_fno_probe_sequence``）。
     """
 
     work_dir = Path(work_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
-    tag = _fmt_fnum_filename_token(target_f_number)
+    tag = "_native" if target_f_number is None else _fmt_fnum_filename_token(target_f_number)
     seq_path, tsv_path, lis_path = _expected_probe_paths(work_dir, stage, tag)
 
     started = time.monotonic()
