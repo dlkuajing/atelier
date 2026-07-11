@@ -1,0 +1,1880 @@
+  
+  
+                                   Welcome to
+  
+                                   C O D E   V
+  
+                                PC  Version 11.5
+                                   Build 27302701
+  
+                                   11-Jul-2026
+  
+                            A proprietary product of
+  
+                              SYNOPSYS, INC
+                              Pasadena, California
+  
+CODE V> OUT NO
+     Radius input/output mode
+  
+    Lens data created by Zemax version 200706
+  
+    Zemax command MODE ignored
+    ZEMAX NOTE 0 table5
+    Zemax command PFIL ignored
+    Zemax command LANG ignored
+     WARNING - Glass catalog list not used.
+     WARNING - Ray aiming not used.
+     WARNING - Pupil shift for ray aiming not used.
+    Zemax command SDMA ignored
+    Zemax command OMMA ignored
+    Zemax command HYPR ignored
+     WARNING - Vignetting angles not used.
+    Zemax command POLS ignored
+    Zemax command GLRS ignored
+    Zemax command GSTD ignored
+    Zemax command NSCD ignored
+    Zemax command COFN ignored
+    Zemax command COFN ignored
+  
+     Surface pointer = OBJ
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 1
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 2
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 3
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 4
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 5
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 6
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 7
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 8
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 9
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 10
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 11
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 12
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 13
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 14
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 15
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = IMG
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     WARNING - Please check the converted lens carefully.
+               Some information will not be converted.
+               Changes in either CODE V or ZEMAX may invalidate
+               the converted information.
+               Due to differences between CODE V and ZEMAX ray
+               aiming and vignetting factors, it is recommended
+               that you set vignetting for the converted system.
+  
+               A concise listing of conversion warnings appears
+               in the Tabbed Output Window 'Info' tab and in the
+               Command Window.
+  
+CODE V> DEF VAR SA
+     ERROR - Total reflection at surface   9 for zoom position  1
+     ERROR - One or more of the reference rays from field  2 is deviated far from
+             most of the other rays from this field point.  The reference rays are
+             used to determine the numerical aperture and the grid spacing.  Thus, it
+             is important that these rays are focused at approximately the same spot
+             as the other rays from this field point.  Modifying the vignetting
+             may solve this problem and allow the computation to proceed.
+CODE V> FNO 2.4
+CODE V> VUY 0 0.3 0.3
+CODE V> VLY 0 0.3 0.3
+CODE V> VUX 0 0.3 0.3
+CODE V> VLX 0 0.3 0.3
+ 
+ 
+CODE V> AUT
+     AUT                                                                              11-Jul-26  14H 18M 54S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S
+     ***Defocussing frozen to eliminate redundant variable
+AUT>   SUR N
+AUT>   CHG SA
+AUT>   WFR Y
+AUT>   WTF FA 10
+AUT>   EFL = 2.41636308716203
+AUT>   @atelier_latcolor == @lcum(1)
+AUT>   @atelier_latcolor = 0
+AUT>   WTC 0.01
+AUT>   @atelier_rmsspot == @rmssum(1)
+AUT>   @atelier_rmsspot = 0
+AUT>   WTC 0.001
+AUT>   MNT 0.025
+AUT>   MNE 0.025
+AUT>   MXT 10
+AUT>   MNA 0.001
+AUT>   MXC 25
+AUT>   MNC 3
+AUT>   IMP 0.001
+AUT> GO
+ -------------------------------------------------------------------------------
+  
+       USER CONSTRAINT DEFINITIONS
+            @atelier_rmsspot == @rmssum(1)
+  
+            @atelier_latcolor == @lcum(1)
+  
+  
+  
+       POTENTIALLY ACTIVE SPECIFIC CONSTRAINTS
+         EFL                                  =       2.416363
+         @ATELIER_LATCOLOR                    =       0.000000     (WTC =    0.01000)
+         @ATELIER_RMSSPOT                     =       0.000000     (WTC =    0.00100)
+  
+       GENERAL CONSTRAINTS
+         MXT      10.000000
+         MNT       0.025000
+         MNE       0.025000
+         MNA       0.001000
+         MAE       0.002500
+         GLA               NFK5  NSK16  NLAF2  SF4
+  
+       ERROR FUNCTION CONSTRUCTION
+         WFR        Y
+         WTW       1          1          1
+         WTA       0.000000
+         DEL       0.220000
+         WTX F1   10.000000
+         WTX F2   10.000000
+         WTX F3   10.000000
+         WTY F1   10.000000
+         WTY F2   10.000000
+         WTY F3   10.000000
+  
+       CONVERGENCE CONTROLS
+         MXC        25
+         MNC         3
+         TAR       0.000000
+         IMP       0.001000
+  
+       OUTPUT CONTROLS
+         SUR NO
+         CHG S0..16
+  
+     Recommendations for most stable convergence:
+  
+       Use object space aperture specifications:
+       - NAO for finite conjugate systems
+       - EPD for infinite conjugate systems
+  
+       VARIABLE LIST
+  
+         NO      PARAMETERS *
+          1      CUY S1       CUY S2
+          2      CUY S2       CUY S4
+          3      CUY S4       CUY S5
+          4      CUY S5       CUY S6
+          5      CUY S6       CUY S7
+          6      CUY S7       CUY S8
+          7      CUY S8       CUY S9
+          8      CUY S9       CUY S10
+          9      CUY S10       CUY S11
+         10      CUY S11       CUY S12
+         11      CUY S12       CUY S13
+         12      CUY S13
+         13      A   S1
+         14      A   S2
+         15      A   S4
+         16      A   S5
+         17      A   S6
+         18      A   S7
+         19      A   S8
+         20      A   S9
+         21      A   S10
+         22      A   S11
+         23      A   S12
+         24      A   S13
+         25      THI S2
+         26      THI S3
+         27      THI S5
+         28      THI S7
+         29      THI S9
+         30      THI S11
+         31      THI S13
+         32      THI S15
+  
+     * Multiple entries on a line are composite variables.
+     Composite variables are either program-generated bendings
+     or user-requested couplings.
+  
+      32 VARIABLES
+  
+      32 CONSTRAINTS CAN BE ACTIVE
+  
+     RELATIVE TIME PER CYCLE IS  267.8 UNITS
+     WARNING - The macro function SPOTDATA is not supported on multiple threads.
+               CODE V will set the multiple processor setting (MPP) to 1 to prevent errors.
+               Please refer to the CODE V Setup and Operation Reference Manual for a complete list
+               of pre-defined macro functions that are currently limited to running on a single thread.
+  
+ CYCLE NUMBER 0:
+  
+  ABERR F. =        0.04798047
+  CONST F. =      174.49912710
+  ERR. F.  =      174.54710757
+  
+  OPD     0.04880558     0.05136912     0.03342763
+  WAV     0.05258451     0.06007623     0.03605957
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.44069641E-01      0.00E+00
+  CUY S2                4.29184549E-01      0.00E+00
+  CUY S4                5.00075011E-02      0.00E+00
+  CUY S5               -6.94444444E-01      0.00E+00
+  CUY S6               -4.82625483E-01      0.00E+00
+  CUY S7               -1.67546285E-02      0.00E+00
+  CUY S8                6.02046960E-01      0.00E+00
+  CUY S9                5.10725230E-01      0.00E+00
+  CUY S10              -7.02740689E-01      0.00E+00
+  CUY S11              -1.60771704E+00      0.00E+00
+  CUY S12               4.62962963E-01      0.00E+00
+  CUY S13               1.33333333E+00      0.00E+00
+  A   S1                1.18490000E-03      0.00E+00
+  A   S2                3.39250000E-01      0.00E+00
+  A   S4               -1.27120000E-01      0.00E+00
+  A   S5                6.07450000E-01      0.00E+00
+  A   S6                3.93150000E-01      0.00E+00
+  A   S7                1.85590000E-01      0.00E+00
+  A   S8               -2.75420000E-01      0.00E+00
+  A   S9                1.04900000E-01      0.00E+00
+  A   S10              -2.22350000E-01      0.00E+00
+  A   S11               1.83910000E-01      0.00E+00
+  A   S12               1.76650000E-01      0.00E+00
+  A   S13               3.90070000E-02      0.00E+00
+  THI S2                8.00000000E-02      0.00E+00
+  THI S3                6.10000000E-02      0.00E+00
+  THI S5                3.70000000E-02      0.00E+00
+  THI S7                4.00000000E-02      0.00E+00
+  THI S9                3.00000000E-01      0.00E+00
+  THI S11               4.00000000E-02      0.00E+00
+  THI S13               6.00000000E-01      0.00E+00
+  THI S15               2.84000000E-01      0.00E+00
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.417572     0.000000     0.260236     4.216000     0.377876    -3.362370
+  
+  Specific Constraints:        target        value         diff      active (**)
+  EFL                    =   2.41636E+00   2.41757E+00   1.209E-03    **
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.25424E+00   1.000E-02   1.573E+02
+  @ATELIER_RMSSPOT       =   0.00000E+00   4.14561E+00   1.000E-03   1.719E+01
+  
+  Constraints added:      EFL (=)
+  
+ CYCLE NUMBER 1:
+  
+  ABERR F. =        0.03497350
+  CONST F. =       15.16451942
+  ERR. F.  =       15.19949292       (change =     -159.34761465)
+  
+  OPD     0.03083147     0.03955611     0.02697178
+  WAV     0.03543701     0.04488411     0.02873614
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52432513E-01      8.36E-03
+  CUY S2                4.34619819E-01      5.44E-03
+  CUY S4                4.81287876E-02     -1.88E-03
+  CUY S5               -6.96641406E-01     -2.20E-03
+  CUY S6               -4.83376490E-01     -7.51E-04
+  CUY S7               -1.20752108E-02      4.68E-03
+  CUY S8                5.84807279E-01     -1.72E-02
+  CUY S9                4.91349001E-01     -1.94E-02
+  CUY S10              -7.02714696E-01      2.60E-05
+  CUY S11              -1.59765051E+00      1.01E-02
+  CUY S12               4.63919073E-01      9.56E-04
+  CUY S13               1.30725295E+00     -2.61E-02
+  A   S1                2.42912387E-03      1.24E-03
+  A   S2                3.37104445E-01     -2.15E-03
+  A   S4               -1.28272442E-01     -1.15E-03
+  A   S5                6.04119829E-01     -3.33E-03
+  A   S6                3.91750021E-01     -1.40E-03
+  A   S7                1.86574144E-01      9.84E-04
+  A   S8               -2.75469450E-01     -4.95E-05
+  A   S9                1.05088401E-01      1.88E-04
+  A   S10              -2.21771714E-01      5.78E-04
+  A   S11               1.82480785E-01     -1.43E-03
+  A   S12               1.76678561E-01      2.86E-05
+  A   S13               3.90191892E-02      1.22E-05
+  THI S2                8.92113510E-02      9.21E-03
+  THI S3                6.26445909E-02      1.64E-03
+  THI S5                3.67065496E-02     -2.93E-04
+  THI S7                3.95919614E-02     -4.08E-04
+  THI S9                3.00425270E-01      4.25E-04
+  THI S11               3.58951547E-02     -4.10E-03
+  THI S13               5.97520737E-01     -2.48E-03
+  THI S15               2.81454221E-01     -2.55E-03
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416358     0.000000     0.270415     4.219996     0.389698    -3.443710
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -5.543E-06  -8.755E-08
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.50806E-01   1.000E-02   2.274E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.59030E+00   1.000E-03   1.289E+01
+  
+ CYCLE NUMBER 2:
+  
+  ABERR F. =        0.03502748
+  CONST F. =       14.94207934
+  ERR. F.  =       14.97710682       (change =       -0.22238610)
+  
+  OPD     0.02920678     0.03985994     0.02899127
+  WAV     0.03352309     0.04471944     0.03091238
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52427371E-01     -5.14E-06
+  CUY S2                4.34577061E-01     -4.28E-05
+  CUY S4                4.80476374E-02     -8.12E-05
+  CUY S5               -6.96639466E-01      1.94E-06
+  CUY S6               -4.83320737E-01      5.58E-05
+  CUY S7               -1.20553107E-02      1.99E-05
+  CUY S8                5.85059329E-01      2.52E-04
+  CUY S9                4.91563561E-01      2.15E-04
+  CUY S10              -7.02769783E-01     -5.51E-05
+  CUY S11              -1.59758596E+00      6.46E-05
+  CUY S12               4.63859991E-01     -5.91E-05
+  CUY S13               1.30688194E+00     -3.71E-04
+  A   S1                2.41280346E-03     -1.63E-05
+  A   S2                3.37142573E-01      3.81E-05
+  A   S4               -1.28323689E-01     -5.12E-05
+  A   S5                6.04229125E-01      1.09E-04
+  A   S6                3.91721675E-01     -2.83E-05
+  A   S7                1.86590396E-01      1.63E-05
+  A   S8               -2.75489913E-01     -2.05E-05
+  A   S9                1.05100182E-01      1.18E-05
+  A   S10              -2.21782866E-01     -1.12E-05
+  A   S11               1.82488958E-01      8.17E-06
+  A   S12               1.76677660E-01     -9.02E-07
+  A   S13               3.90197605E-02      5.71E-07
+  THI S2                8.92159989E-02      4.65E-06
+  THI S3                6.26384107E-02     -6.18E-06
+  THI S5                3.66965372E-02     -1.00E-05
+  THI S7                3.95770534E-02     -1.49E-05
+  THI S9                3.00410953E-01     -1.43E-05
+  THI S11               3.57308688E-02     -1.64E-04
+  THI S13               5.97530789E-01      1.01E-05
+  THI S15               2.81464275E-01      1.01E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.270602     4.219801     0.389703    -3.444517
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   3.813E-12   3.915E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.46648E-01   1.000E-02   2.151E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.57652E+00   1.000E-03   1.279E+01
+  
+ CYCLE NUMBER 3:
+  
+  ABERR F. =        0.03583435
+  CONST F. =       14.92532992
+  ERR. F.  =       14.96116427       (change =       -0.01594255)
+  
+  OPD     0.03007562     0.04125525     0.02818536
+  WAV     0.03479696     0.04681907     0.03001328
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52461703E-01      3.43E-05
+  CUY S2                4.34619970E-01      4.29E-05
+  CUY S4                4.80805736E-02      3.29E-05
+  CUY S5               -6.96531191E-01      1.08E-04
+  CUY S6               -4.83227682E-01      9.31E-05
+  CUY S7               -1.20360398E-02      1.93E-05
+  CUY S8                5.85281446E-01      2.22E-04
+  CUY S9                4.91746738E-01      1.83E-04
+  CUY S10              -7.02819889E-01     -5.01E-05
+  CUY S11              -1.59766178E+00     -7.58E-05
+  CUY S12               4.63816093E-01     -4.39E-05
+  CUY S13               1.30688492E+00      2.98E-06
+  A   S1                2.50083251E-03      8.80E-05
+  A   S2                3.36932950E-01     -2.10E-04
+  A   S4               -1.28186799E-01      1.37E-04
+  A   S5                6.04179207E-01     -4.99E-05
+  A   S6                3.91742207E-01      2.05E-05
+  A   S7                1.86581894E-01     -8.50E-06
+  A   S8               -2.75474712E-01      1.52E-05
+  A   S9                1.05111067E-01      1.09E-05
+  A   S10              -2.21804941E-01     -2.21E-05
+  A   S11               1.82483662E-01     -5.30E-06
+  A   S12               1.76676560E-01     -1.10E-06
+  A   S13               3.90203727E-02      6.12E-07
+  THI S2                8.91991028E-02     -1.69E-05
+  THI S3                6.25988053E-02     -3.96E-05
+  THI S5                3.67103456E-02      1.38E-05
+  THI S7                3.96086525E-02      3.16E-05
+  THI S9                3.00396499E-01     -1.45E-05
+  THI S11               3.56791370E-02     -5.17E-05
+  THI S13               5.97556463E-01      2.57E-05
+  THI S15               2.81489948E-01      2.57E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.270512     4.219749     0.389685    -3.444484
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -6.555E-12   3.168E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.43681E-01   1.000E-02   2.064E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.58621E+00   1.000E-03   1.286E+01
+  
+ CYCLE NUMBER 4:
+  
+  ABERR F. =        0.03587472
+  CONST F. =       14.73544256
+  ERR. F.  =       14.77131728       (change =       -0.18984699)
+  
+  OPD     0.02913219     0.04146973     0.02921802
+  WAV     0.03375996     0.04681411     0.03112174
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52455141E-01     -6.56E-06
+  CUY S2                4.34604383E-01     -1.56E-05
+  CUY S4                4.80633459E-02     -1.72E-05
+  CUY S5               -6.96516680E-01      1.45E-05
+  CUY S6               -4.83200251E-01      2.74E-05
+  CUY S7               -1.20272915E-02      8.75E-06
+  CUY S8                5.85126120E-01     -1.55E-04
+  CUY S9                4.91564493E-01     -1.82E-04
+  CUY S10              -7.02854880E-01     -3.50E-05
+  CUY S11              -1.59763989E+00      2.19E-05
+  CUY S12               4.63817606E-01      1.51E-06
+  CUY S13               1.30676258E+00     -1.22E-04
+  A   S1                2.49708980E-03     -3.74E-06
+  A   S2                3.36942440E-01      9.49E-06
+  A   S4               -1.28199438E-01     -1.26E-05
+  A   S5                6.04198272E-01      1.91E-05
+  A   S6                3.91726897E-01     -1.53E-05
+  A   S7                1.86587290E-01      5.40E-06
+  A   S8               -2.75478548E-01     -3.84E-06
+  A   S9                1.05124733E-01      1.37E-05
+  A   S10              -2.21810825E-01     -5.88E-06
+  A   S11               1.82486098E-01      2.44E-06
+  A   S12               1.76676234E-01     -3.26E-07
+  A   S13               3.90206200E-02      2.47E-07
+  THI S2                8.92138856E-02      1.48E-05
+  THI S3                6.26333737E-02      3.46E-05
+  THI S5                3.67055427E-02     -4.80E-06
+  THI S7                3.96019343E-02     -6.72E-06
+  THI S9                3.00372082E-01     -2.44E-05
+  THI S11               3.56141631E-02     -6.50E-05
+  THI S13               5.97558365E-01      1.90E-06
+  THI S15               2.81491851E-01      1.90E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.270662     4.219699     0.389703    -3.444974
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -6.449E-08  -8.130E-06
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.41357E-01   1.000E-02   1.998E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.56893E+00   1.000E-03   1.274E+01
+  
+ CYCLE NUMBER 5:
+  
+  ABERR F. =        0.03406991
+  CONST F. =       14.44037895
+  ERR. F.  =       14.47444886       (change =       -0.29686843)
+  
+  OPD     0.02341783     0.04028064     0.02916619
+  WAV     0.02918755     0.04606188     0.03113441
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52727224E-01      2.72E-04
+  CUY S2                4.33555034E-01     -1.05E-03
+  CUY S4                4.68561648E-02     -1.21E-03
+  CUY S5               -6.97330311E-01     -8.14E-04
+  CUY S6               -4.83789857E-01     -5.90E-04
+  CUY S7               -1.15334330E-02      4.94E-04
+  CUY S8                5.88319746E-01      3.19E-03
+  CUY S9                4.93465219E-01      1.90E-03
+  CUY S10              -7.01499860E-01      1.36E-03
+  CUY S11              -1.59553541E+00      2.10E-03
+  CUY S12               4.47305967E-01     -1.65E-02
+  CUY S13               1.26607054E+00     -4.07E-02
+  A   S1                2.55894970E-03      6.19E-05
+  A   S2                3.36781102E-01     -1.61E-04
+  A   S4               -1.28018600E-01      1.81E-04
+  A   S5                6.03984087E-01     -2.14E-04
+  A   S6                3.91896781E-01      1.70E-04
+  A   S7                1.86535870E-01     -5.14E-05
+  A   S8               -2.75435568E-01      4.30E-05
+  A   S9                1.04853278E-01     -2.71E-04
+  A   S10              -2.21745146E-01      6.57E-05
+  A   S11               1.82461427E-01     -2.47E-05
+  A   S12               1.76625191E-01     -5.10E-05
+  A   S13               3.90591587E-02      3.85E-05
+  THI S2                8.90123026E-02     -2.02E-04
+  THI S3                6.23870228E-02     -2.46E-04
+  THI S5                3.68141804E-02      1.09E-04
+  THI S7                3.96938155E-02      9.19E-05
+  THI S9                2.99464097E-01     -9.08E-04
+  THI S11               2.81423323E-02     -7.47E-03
+  THI S13               5.99500916E-01      1.94E-03
+  THI S15               2.83434402E-01      1.94E-03
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.415787     0.000000     0.280939     4.213015     0.389489    -3.527663
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41579E+00  -5.763E-04  -1.628E-08
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.01342E-01   1.000E-02   1.027E+00
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.66243E+00   1.000E-03   1.341E+01
+  
+ CYCLE NUMBER 6:
+  
+  ABERR F. =        0.03576840
+  CONST F. =       14.03844573
+  ERR. F.  =       14.07421413       (change =       -0.40023472)
+  
+  OPD     0.02939689     0.04108428     0.02956066
+  WAV     0.03355314     0.04632074     0.03128767
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52695502E-01     -3.17E-05
+  CUY S2                4.33519945E-01     -3.51E-05
+  CUY S4                4.67532674E-02     -1.03E-04
+  CUY S5               -6.97354329E-01     -2.40E-05
+  CUY S6               -4.83715916E-01      7.39E-05
+  CUY S7               -1.15363897E-02     -2.96E-06
+  CUY S8                5.88406434E-01      8.67E-05
+  CUY S9                4.93488770E-01      2.36E-05
+  CUY S10              -7.01625500E-01     -1.26E-04
+  CUY S11              -1.59558410E+00     -4.87E-05
+  CUY S12               4.47520207E-01      2.14E-04
+  CUY S13               1.26666495E+00      5.94E-04
+  A   S1                2.52372387E-03     -3.52E-05
+  A   S2                3.36869079E-01      8.80E-05
+  A   S4               -1.28109757E-01     -9.12E-05
+  A   S5                6.04057195E-01      7.31E-05
+  A   S6                3.91900596E-01      3.82E-06
+  A   S7                1.86534143E-01     -1.73E-06
+  A   S8               -2.75467591E-01     -3.20E-05
+  A   S9                1.04856940E-01      3.66E-06
+  A   S10              -2.21757348E-01     -1.22E-05
+  A   S11               1.82469887E-01      8.46E-06
+  A   S12               1.76619507E-01     -5.68E-06
+  A   S13               3.90583846E-02     -7.74E-07
+  THI S2                8.89857666E-02     -2.65E-05
+  THI S3                6.23908318E-02      3.81E-06
+  THI S5                3.67876676E-02     -2.65E-05
+  THI S7                3.96585349E-02     -3.53E-05
+  THI S9                2.99457101E-01     -7.00E-06
+  THI S11               2.78765753E-02     -2.66E-04
+  THI S13               5.99360653E-01     -1.40E-04
+  THI S15               2.83294138E-01     -1.40E-04
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.281643     4.212517     0.389454    -3.525824
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -1.810E-11  -1.480E-06
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   9.88963E-02   1.000E-02   9.780E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.61392E+00   1.000E-03   1.306E+01
+  
+ CYCLE NUMBER 7:
+  
+  ABERR F. =        0.03445838
+  CONST F. =       13.96002327
+  ERR. F.  =       13.99448164       (change =       -0.07973249)
+  
+  OPD     0.02336559     0.04127305     0.02896802
+  WAV     0.02924246     0.04719174     0.03087936
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52695344E-01     -1.57E-07
+  CUY S2                4.33547284E-01      2.73E-05
+  CUY S4                4.67949862E-02      4.17E-05
+  CUY S5               -6.97235642E-01      1.19E-04
+  CUY S6               -4.83614030E-01      1.02E-04
+  CUY S7               -1.15407384E-02     -4.35E-06
+  CUY S8                5.88621636E-01      2.15E-04
+  CUY S9                4.93650488E-01      1.62E-04
+  CUY S10              -7.01723495E-01     -9.80E-05
+  CUY S11              -1.59575984E+00     -1.76E-04
+  CUY S12               4.46926786E-01     -5.93E-04
+  CUY S13               1.26610958E+00     -5.55E-04
+  A   S1                2.54824146E-03      2.45E-05
+  A   S2                3.36730016E-01     -1.39E-04
+  A   S4               -1.27905278E-01      2.04E-04
+  A   S5                6.03954957E-01     -1.02E-04
+  A   S6                3.91913874E-01      1.33E-05
+  A   S7                1.86528505E-01     -5.64E-06
+  A   S8               -2.75443066E-01      2.45E-05
+  A   S9                1.04861232E-01      4.29E-06
+  A   S10              -2.21767756E-01     -1.04E-05
+  A   S11               1.82466766E-01     -3.12E-06
+  A   S12               1.76609610E-01     -9.90E-06
+  A   S13               3.90572864E-02     -1.10E-06
+  THI S2                8.89402744E-02     -4.55E-05
+  THI S3                6.23010287E-02     -8.98E-05
+  THI S5                3.67892946E-02      1.63E-06
+  THI S7                3.96801064E-02      2.16E-05
+  THI S9                2.99447412E-01     -9.69E-06
+  THI S11               2.81958993E-02      3.19E-04
+  THI S13               5.99564556E-01      2.04E-04
+  THI S15               2.83498042E-01      2.04E-04
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.281110     4.212919     0.389399    -3.525487
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -3.175E-10  -2.881E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   9.30912E-02   1.000E-02   8.666E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.61848E+00   1.000E-03   1.309E+01
+  
+ CYCLE NUMBER 8:
+  
+  ABERR F. =        0.03618109
+  CONST F. =       13.36962474
+  ERR. F.  =       13.40580583       (change =       -0.58867581)
+  
+  OPD     0.02918626     0.04182325     0.03009658
+  WAV     0.03342792     0.04707857     0.03183996
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52657920E-01     -3.74E-05
+  CUY S2                4.33493970E-01     -5.33E-05
+  CUY S4                4.67291975E-02     -6.58E-05
+  CUY S5               -6.97202557E-01      3.31E-05
+  CUY S6               -4.83532652E-01      8.14E-05
+  CUY S7               -1.15440710E-02     -3.33E-06
+  CUY S8                5.88568486E-01     -5.31E-05
+  CUY S9                4.93457584E-01     -1.93E-04
+  CUY S10              -7.01875465E-01     -1.52E-04
+  CUY S11              -1.59566667E+00      9.32E-05
+  CUY S12               4.47167445E-01      2.41E-04
+  CUY S13               1.26622116E+00      1.12E-04
+  A   S1                2.52322210E-03     -2.50E-05
+  A   S2                3.36789355E-01      5.93E-05
+  A   S4               -1.27971946E-01     -6.67E-05
+  A   S5                6.04020538E-01      6.56E-05
+  A   S6                3.91912328E-01     -1.55E-06
+  A   S7                1.86529050E-01      5.44E-07
+  A   S8               -2.75464361E-01     -2.13E-05
+  A   S9                1.04862110E-01      8.77E-07
+  A   S10              -2.21781336E-01     -1.36E-05
+  A   S11               1.82479523E-01      1.28E-05
+  A   S12               1.76615937E-01      6.33E-06
+  A   S13               3.90562448E-02     -1.04E-06
+  THI S2                8.89332442E-02     -7.03E-06
+  THI S3                6.23508204E-02      4.98E-05
+  THI S5                3.67602715E-02     -2.90E-05
+  THI S7                3.96426349E-02     -3.75E-05
+  THI S9                2.99445260E-01     -2.15E-06
+  THI S11               2.79598630E-02     -2.36E-04
+  THI S13               5.99397912E-01     -1.67E-04
+  THI S15               2.83331398E-01     -1.67E-04
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.281557     4.212490     0.389387    -3.525683
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -1.936E-07  -3.923E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   9.41434E-02   1.000E-02   8.863E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.53318E+00   1.000E-03   1.248E+01
+  
+ CYCLE NUMBER 9:
+  
+  ABERR F. =        0.03589091
+  CONST F. =       13.23047940
+  ERR. F.  =       13.26637031       (change =       -0.13943551)
+  
+  OPD     0.02661931     0.04265351     0.02979752
+  WAV     0.03127177     0.04832858     0.03161592
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52651829E-01     -6.09E-06
+  CUY S2                4.33494434E-01      4.64E-07
+  CUY S4                4.67847482E-02      5.56E-05
+  CUY S5               -6.97100215E-01      1.02E-04
+  CUY S6               -4.83480528E-01      5.21E-05
+  CUY S7               -1.15462585E-02     -2.19E-06
+  CUY S8                5.88657766E-01      8.93E-05
+  CUY S9                4.93493771E-01      3.62E-05
+  CUY S10              -7.01982637E-01     -1.07E-04
+  CUY S11              -1.59580172E+00     -1.35E-04
+  CUY S12               4.46977371E-01     -1.90E-04
+  CUY S13               1.26615515E+00     -6.60E-05
+  A   S1                2.51150185E-03     -1.17E-05
+  A   S2                3.36899778E-01      1.10E-04
+  A   S4               -1.27802510E-01      1.69E-04
+  A   S5                6.03956776E-01     -6.38E-05
+  A   S6                3.91916882E-01      4.55E-06
+  A   S7                1.86526894E-01     -2.16E-06
+  A   S8               -2.75442371E-01      2.20E-05
+  A   S9                1.04863517E-01      1.41E-06
+  A   S10              -2.21785471E-01     -4.13E-06
+  A   S11               1.82470868E-01     -8.65E-06
+  A   S12               1.76612864E-01     -3.07E-06
+  A   S13               3.90556129E-02     -6.32E-07
+  THI S2                8.89118244E-02     -2.14E-05
+  THI S3                6.22902843E-02     -6.05E-05
+  THI S5                3.67554649E-02     -4.81E-06
+  THI S7                3.96493059E-02      6.67E-06
+  THI S9                2.99442793E-01     -2.47E-06
+  THI S11               2.80830284E-02      1.23E-04
+  THI S13               5.99454066E-01      5.62E-05
+  THI S15               2.83387552E-01      5.62E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.281347     4.212587     0.389361    -3.525216
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -2.767E-11  -6.854E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   8.92971E-02   1.000E-02   7.974E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.52606E+00   1.000E-03   1.243E+01
+  
+ CYCLE NUMBER 10:
+  
+  ABERR F. =        0.03633636
+  CONST F. =       13.10018208
+  ERR. F.  =       13.13651844       (change =       -0.12985187)
+  
+  OPD     0.02849889     0.04252207     0.03005890
+  WAV     0.03283360     0.04801131     0.03185914
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52645439E-01     -6.39E-06
+  CUY S2                4.33485510E-01     -8.92E-06
+  CUY S4                4.67701142E-02     -1.46E-05
+  CUY S5               -6.97091424E-01      8.79E-06
+  CUY S6               -4.83460075E-01      2.05E-05
+  CUY S7               -1.15471455E-02     -8.87E-07
+  CUY S8                5.88651580E-01     -6.19E-06
+  CUY S9                4.93492224E-01     -1.55E-06
+  CUY S10              -7.01962995E-01      1.96E-05
+  CUY S11              -1.59576771E+00      3.40E-05
+  CUY S12               4.47016155E-01      3.88E-05
+  CUY S13               1.26615668E+00      1.53E-06
+  A   S1                2.50435221E-03     -7.15E-06
+  A   S2                3.36922587E-01      2.28E-05
+  A   S4               -1.27818940E-01     -1.64E-05
+  A   S5                6.03972755E-01      1.60E-05
+  A   S6                3.91916997E-01      1.15E-07
+  A   S7                1.86526829E-01     -6.48E-08
+  A   S8               -2.75448432E-01     -6.06E-06
+  A   S9                1.04863396E-01     -1.21E-07
+  A   S10              -2.21788010E-01     -2.54E-06
+  A   S11               1.82473990E-01      3.12E-06
+  A   S12               1.76615049E-01      2.19E-06
+  A   S13               3.90553324E-02     -2.81E-07
+  THI S2                8.89085532E-02     -3.27E-06
+  THI S3                6.22925114E-02      2.23E-06
+  THI S5                3.67497372E-02     -5.73E-06
+  THI S7                3.96412849E-02     -8.02E-06
+  THI S9                2.99442744E-01     -4.85E-08
+  THI S11               2.80355382E-02     -4.75E-05
+  THI S13               5.99427833E-01     -2.62E-05
+  THI S15               2.83361319E-01     -2.62E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.281436     4.212498     0.389356    -3.525254
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -1.484E-08  -5.959E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   8.92620E-02   1.000E-02   7.968E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.50762E+00   1.000E-03   1.230E+01
+  
+ CYCLE NUMBER 11:
+  
+  ABERR F. =        0.03822351
+  CONST F. =       12.02548945
+  ERR. F.  =       12.06371295       (change =       -1.07280549)
+  
+  OPD     0.02916085     0.04453342     0.03292110
+  WAV     0.03322323     0.04969088     0.03571937
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52353757E-01     -2.92E-04
+  CUY S2                4.33158601E-01     -3.27E-04
+  CUY S4                4.68626180E-02      9.25E-05
+  CUY S5               -6.95668164E-01      1.42E-03
+  CUY S6               -4.82214971E-01      1.25E-03
+  CUY S7               -1.16453395E-02     -9.82E-05
+  CUY S8                5.88998872E-01      3.47E-04
+  CUY S9                4.93313827E-01     -1.78E-04
+  CUY S10              -7.02824617E-01     -8.62E-04
+  CUY S11              -1.59647951E+00     -7.12E-04
+  CUY S12               4.49169249E-01      2.15E-03
+  CUY S13               1.27260775E+00      6.45E-03
+  A   S1                1.69209601E-03     -8.12E-04
+  A   S2                3.36694377E-01     -2.28E-04
+  A   S4               -1.27652497E-01      1.66E-04
+  A   S5                6.03760146E-01     -2.13E-04
+  A   S6                3.92001179E-01      8.42E-05
+  A   S7                1.86493842E-01     -3.30E-05
+  A   S8               -2.75382493E-01      6.59E-05
+  A   S9                1.04865885E-01      2.49E-06
+  A   S10              -2.21962551E-01     -1.75E-04
+  A   S11               1.82434151E-01     -3.98E-05
+  A   S12               1.76791348E-01      1.76E-04
+  A   S13               3.90279914E-02     -2.73E-05
+  THI S2                8.83391756E-02     -5.69E-04
+  THI S3                6.33957554E-02      1.10E-03
+  THI S5                3.62907686E-02     -4.59E-04
+  THI S7                3.97317583E-02      9.05E-05
+  THI S9                2.99435535E-01     -7.21E-06
+  THI S11               2.90962116E-02      1.06E-03
+  THI S13               6.01519570E-01      2.09E-03
+  THI S15               2.85453056E-01      2.09E-03
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416346     0.000000     0.277242     4.215809     0.388642    -3.514564
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41635E+00  -1.715E-05   2.658E-07
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.43097E-02   1.000E-02   1.963E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.43935E+00   1.000E-03   1.183E+01
+  
+ CYCLE NUMBER 12:
+  
+  ABERR F. =        0.03738337
+  CONST F. =       11.94107918
+  ERR. F.  =       11.97846254       (change =       -0.08525041)
+  
+  OPD     0.02754164     0.04470894     0.03081745
+  WAV     0.03201178     0.05029107     0.03352617
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52372707E-01      1.90E-05
+  CUY S2                4.33197818E-01      3.92E-05
+  CUY S4                4.69270472E-02      6.44E-05
+  CUY S5               -6.95737691E-01     -6.95E-05
+  CUY S6               -4.82328426E-01     -1.13E-04
+  CUY S7               -1.16445367E-02      8.03E-07
+  CUY S8                5.89007422E-01      8.55E-06
+  CUY S9                4.93342591E-01      2.88E-05
+  CUY S10              -7.02783368E-01      4.12E-05
+  CUY S11              -1.59650920E+00     -2.97E-05
+  CUY S12               4.48980656E-01     -1.89E-04
+  CUY S13               1.27233850E+00     -2.69E-04
+  A   S1                1.71727939E-03      2.52E-05
+  A   S2                3.36641406E-01     -5.30E-05
+  A   S4               -1.27586014E-01      6.65E-05
+  A   S5                6.03670499E-01     -8.96E-05
+  A   S6                3.92005070E-01      3.89E-06
+  A   S7                1.86484384E-01     -9.46E-06
+  A   S8               -2.75371986E-01      1.05E-05
+  A   S9                1.04878977E-01      1.31E-05
+  A   S10              -2.21951440E-01      1.11E-05
+  A   S11               1.82428819E-01     -5.33E-06
+  A   S12               1.76791115E-01     -2.32E-07
+  A   S13               3.90280956E-02      1.04E-07
+  THI S2                8.83257496E-02     -1.34E-05
+  THI S3                6.33585818E-02     -3.72E-05
+  THI S5                3.63036630E-02      1.29E-05
+  THI S7                3.97550018E-02      2.32E-05
+  THI S9                2.99448515E-01      1.30E-05
+  THI S11               2.91546298E-02      5.84E-05
+  THI S13               6.01531032E-01      1.15E-05
+  THI S15               2.85464518E-01      1.15E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277193     4.215877     0.388628    -3.514906
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -1.383E-11   4.404E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.44646E-02   1.000E-02   1.977E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.42686E+00   1.000E-03   1.174E+01
+  
+ CYCLE NUMBER 13:
+  
+  ABERR F. =        0.03731208
+  CONST F. =       11.80530932
+  ERR. F.  =       11.84262140       (change =       -0.13584114)
+  
+  OPD     0.02771708     0.04415155     0.03151578
+  WAV     0.03201781     0.04944630     0.03423785
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52370233E-01     -2.47E-06
+  CUY S2                4.33180303E-01     -1.75E-05
+  CUY S4                4.69016162E-02     -2.54E-05
+  CUY S5               -6.95699770E-01      3.79E-05
+  CUY S6               -4.82278745E-01      4.97E-05
+  CUY S7               -1.16424949E-02      2.04E-06
+  CUY S8                5.88913876E-01     -9.35E-05
+  CUY S9                4.93261139E-01     -8.15E-05
+  CUY S10              -7.02759988E-01      2.34E-05
+  CUY S11              -1.59646372E+00      4.55E-05
+  CUY S12               4.48992960E-01      1.23E-05
+  CUY S13               1.27227065E+00     -6.78E-05
+  A   S1                1.70701751E-03     -1.03E-05
+  A   S2                3.36675247E-01      3.38E-05
+  A   S4               -1.27613953E-01     -2.79E-05
+  A   S5                6.03690087E-01      1.96E-05
+  A   S6                3.91993073E-01     -1.20E-05
+  A   S7                1.86490017E-01      5.63E-06
+  A   S8               -2.75382837E-01     -1.09E-05
+  A   S9                1.04871181E-01     -7.80E-06
+  A   S10              -2.21956424E-01     -4.98E-06
+  A   S11               1.82432572E-01      3.75E-06
+  A   S12               1.76791031E-01     -8.40E-08
+  A   S13               3.90281641E-02      6.86E-08
+  THI S2                8.83235300E-02     -2.22E-06
+  THI S3                6.33876152E-02      2.90E-05
+  THI S5                3.62984689E-02     -5.19E-06
+  THI S7                3.97452653E-02     -9.74E-06
+  THI S9                2.99453856E-01      5.34E-06
+  THI S11               2.91240390E-02     -3.06E-05
+  THI S13               6.01531744E-01      7.11E-07
+  THI S15               2.85465229E-01      7.11E-07
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277260     4.215865     0.388625    -3.515205
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -1.750E-08   6.312E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.38783E-02   1.000E-02   1.925E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.40775E+00   1.000E-03   1.161E+01
+  
+ CYCLE NUMBER 14:
+  
+  ABERR F. =        0.03713912
+  CONST F. =       11.72805129
+  ERR. F.  =       11.76519041       (change =       -0.07743099)
+  
+  OPD     0.02721070     0.04453073     0.03054753
+  WAV     0.03175603     0.05013082     0.03313278
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52389968E-01      1.97E-05
+  CUY S2                4.33220271E-01      4.00E-05
+  CUY S4                4.69060674E-02      4.45E-06
+  CUY S5               -6.95648952E-01      5.08E-05
+  CUY S6               -4.82210281E-01      6.85E-05
+  CUY S7               -1.16391624E-02      3.33E-06
+  CUY S8                5.88351857E-01     -5.62E-04
+  CUY S9                4.92726505E-01     -5.35E-04
+  CUY S10              -7.02698118E-01      6.19E-05
+  CUY S11              -1.59646542E+00     -1.70E-06
+  CUY S12               4.48854311E-01     -1.39E-04
+  CUY S13               1.27198231E+00     -2.88E-04
+  A   S1                1.78633991E-03      7.93E-05
+  A   S2                3.36525696E-01     -1.50E-04
+  A   S4               -1.27441603E-01      1.72E-04
+  A   S5                6.03848071E-01      1.58E-04
+  A   S6                3.91966562E-01     -2.65E-05
+  A   S7                1.86488995E-01     -1.02E-06
+  A   S8               -2.75356348E-01      2.65E-05
+  A   S9                1.04888134E-01      1.70E-05
+  A   S10              -2.21946983E-01      9.44E-06
+  A   S11               1.82424206E-01     -8.37E-06
+  A   S12               1.76790730E-01     -3.02E-07
+  A   S13               3.90283278E-02      1.64E-07
+  THI S2                8.83017207E-02     -2.18E-05
+  THI S3                6.33459336E-02     -4.17E-05
+  THI S5                3.63053781E-02      6.91E-06
+  THI S7                3.97605723E-02      1.53E-05
+  THI S9                2.99471773E-01      1.79E-05
+  THI S11               2.91073184E-02     -1.67E-05
+  THI S13               6.01541341E-01      9.60E-06
+  THI S15               2.85474826E-01      9.60E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277457     4.215834     0.388600    -3.516011
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   7.037E-12   5.929E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.33172E-02   1.000E-02   1.876E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.39712E+00   1.000E-03   1.154E+01
+  
+ CYCLE NUMBER 15:
+  
+  ABERR F. =        0.03764110
+  CONST F. =       11.71462807
+  ERR. F.  =       11.75226917       (change =       -0.01292124)
+  
+  OPD     0.02879204     0.04394878     0.03221933
+  WAV     0.03289070     0.04905314     0.03485032
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52382459E-01     -7.51E-06
+  CUY S2                4.33177073E-01     -4.32E-05
+  CUY S4                4.68400856E-02     -6.60E-05
+  CUY S5               -6.95543408E-01      1.06E-04
+  CUY S6               -4.82071151E-01      1.39E-04
+  CUY S7               -1.16344457E-02      4.72E-06
+  CUY S8                5.88081339E-01     -2.71E-04
+  CUY S9                4.92485475E-01     -2.41E-04
+  CUY S10              -7.02639327E-01      5.88E-05
+  CUY S11              -1.59635698E+00      1.08E-04
+  CUY S12               4.49111495E-01      2.57E-04
+  CUY S13               1.27230091E+00      3.19E-04
+  A   S1                1.76682355E-03     -1.95E-05
+  A   S2                3.36590572E-01      6.49E-05
+  A   S4               -1.27486200E-01     -4.46E-05
+  A   S5                6.03904364E-01      5.63E-05
+  A   S6                3.91936138E-01     -3.04E-05
+  A   S7                1.86501292E-01      1.23E-05
+  A   S8               -2.75371827E-01     -1.55E-05
+  A   S9                1.04869276E-01     -1.89E-05
+  A   S10              -2.21966522E-01     -1.95E-05
+  A   S11               1.82431480E-01      7.27E-06
+  A   S12               1.76790555E-01     -1.75E-07
+  A   S13               3.90284894E-02      1.62E-07
+  THI S2                8.83229109E-02      2.12E-05
+  THI S3                6.32939449E-02     -5.20E-05
+  THI S5                3.62909858E-02     -1.44E-05
+  THI S7                3.97410553E-02     -1.95E-05
+  THI S9                2.99488710E-01      1.69E-05
+  THI S11               2.90517568E-02     -5.56E-05
+  THI S13               6.01541832E-01      4.91E-07
+  THI S15               2.85475317E-01      4.91E-07
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277548     4.215731     0.388625    -3.515489
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   1.104E-11   5.946E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.27357E-02   1.000E-02   1.826E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.39588E+00   1.000E-03   1.153E+01
+  
+ CYCLE NUMBER 16:
+  
+  ABERR F. =        0.03720102
+  CONST F. =       11.53005783
+  ERR. F.  =       11.56725885       (change =       -0.18501032)
+  
+  OPD     0.02758378     0.04407574     0.03143240
+  WAV     0.03189207     0.04936663     0.03402640
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52393411E-01      1.10E-05
+  CUY S2                4.33198246E-01      2.12E-05
+  CUY S4                4.68647526E-02      2.47E-05
+  CUY S5               -6.95596392E-01     -5.30E-05
+  CUY S6               -4.82138576E-01     -6.74E-05
+  CUY S7               -1.16341438E-02      3.02E-07
+  CUY S8                5.88228652E-01      1.47E-04
+  CUY S9                4.92619188E-01      1.34E-04
+  CUY S10              -7.02669303E-01     -3.00E-05
+  CUY S11              -1.59640106E+00     -4.41E-05
+  CUY S12               4.49062504E-01     -4.90E-05
+  CUY S13               1.27229051E+00     -1.04E-05
+  A   S1                1.77677512E-03      9.95E-06
+  A   S2                3.36570437E-01     -2.01E-05
+  A   S4               -1.27454376E-01      3.18E-05
+  A   S5                6.03874744E-01     -2.96E-05
+  A   S6                3.91946599E-01      1.05E-05
+  A   S7                1.86496417E-01     -4.88E-06
+  A   S8               -2.75365812E-01      6.02E-06
+  A   S9                1.04877258E-01      7.98E-06
+  A   S10              -2.21963755E-01      2.77E-06
+  A   S11               1.82428883E-01     -2.60E-06
+  A   S12               1.76790414E-01     -1.41E-07
+  A   S13               3.90285491E-02      5.97E-08
+  THI S2                8.83160524E-02     -6.86E-06
+  THI S3                6.32734338E-02     -2.05E-05
+  THI S5                3.62984425E-02      7.46E-06
+  THI S7                3.97542384E-02      1.32E-05
+  THI S9                2.99509381E-01      2.07E-05
+  THI S11               2.90947959E-02      4.30E-05
+  THI S13               6.01548838E-01      7.01E-06
+  THI S15               2.85482324E-01      7.01E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277435     4.215795     0.388618    -3.515430
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -2.539E-12   2.363E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.26127E-02   1.000E-02   1.816E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.36875E+00   1.000E-03   1.135E+01
+  
+ CYCLE NUMBER 17:
+  
+  ABERR F. =        0.03664082
+  CONST F. =       11.48073546
+  ERR. F.  =       11.51737629       (change =       -0.04988257)
+  
+  OPD     0.02738562     0.04318568     0.03123569
+  WAV     0.03167006     0.04823494     0.03369057
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52414116E-01      2.07E-05
+  CUY S2                4.33243795E-01      4.55E-05
+  CUY S4                4.68572300E-02     -7.52E-06
+  CUY S5               -6.95636454E-01     -4.01E-05
+  CUY S6               -4.82153273E-01     -1.47E-05
+  CUY S7               -1.16474906E-02     -1.33E-05
+  CUY S8                5.87703689E-01     -5.25E-04
+  CUY S9                4.92104308E-01     -5.15E-04
+  CUY S10              -7.02653364E-01      1.59E-05
+  CUY S11              -1.59640271E+00     -1.65E-06
+  CUY S12               4.48983848E-01     -7.87E-05
+  CUY S13               1.27216915E+00     -1.21E-04
+  A   S1                1.84804204E-03      7.13E-05
+  A   S2                3.36407317E-01     -1.63E-04
+  A   S4               -1.27653588E-01     -1.99E-04
+  A   S5                6.04033030E-01      1.58E-04
+  A   S6                3.91931738E-01     -1.49E-05
+  A   S7                1.86500158E-01      3.74E-06
+  A   S8               -2.75375306E-01     -9.49E-06
+  A   S9                1.04864275E-01     -1.30E-05
+  A   S10              -2.21979819E-01     -1.61E-05
+  A   S11               1.82427483E-01     -1.40E-06
+  A   S12               1.76790143E-01     -2.72E-07
+  A   S13               3.90287037E-02      1.55E-07
+  THI S2                8.83012747E-02     -1.48E-05
+  THI S3                6.33151817E-02      4.17E-05
+  THI S5                3.62952501E-02     -3.19E-06
+  THI S7                3.97374891E-02     -1.67E-05
+  THI S9                2.99507387E-01     -1.99E-06
+  THI S11               2.91608096E-02      6.60E-05
+  THI S13               6.01558234E-01      9.40E-06
+  THI S15               2.85491719E-01      9.40E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277543     4.215876     0.388601    -3.515806
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   8.462E-12   2.037E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.20602E-02   1.000E-02   1.769E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.36212E+00   1.000E-03   1.130E+01
+  
+ CYCLE NUMBER 18:
+  
+  ABERR F. =        0.03671503
+  CONST F. =       11.38108095
+  ERR. F.  =       11.41779597       (change =       -0.09958031)
+  
+  OPD     0.02723234     0.04360562     0.03082959
+  WAV     0.03165005     0.04884627     0.03326803
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52423170E-01      9.05E-06
+  CUY S2                4.33262634E-01      1.88E-05
+  CUY S4                4.68794032E-02      2.22E-05
+  CUY S5               -6.95598864E-01      3.76E-05
+  CUY S6               -4.82127731E-01      2.55E-05
+  CUY S7               -1.16465223E-02      9.68E-07
+  CUY S8                5.87829148E-01      1.25E-04
+  CUY S9                4.92218945E-01      1.15E-04
+  CUY S10              -7.02677330E-01     -2.40E-05
+  CUY S11              -1.59644121E+00     -3.85E-05
+  CUY S12               4.48981558E-01     -2.29E-06
+  CUY S13               1.27224324E+00      7.41E-05
+  A   S1                1.86467494E-03      1.66E-05
+  A   S2                3.36377304E-01     -3.00E-05
+  A   S4               -1.27622472E-01      3.11E-05
+  A   S5                6.04003501E-01     -2.95E-05
+  A   S6                3.91939387E-01      7.65E-06
+  A   S7                1.86495901E-01     -4.26E-06
+  A   S8               -2.75370106E-01      5.20E-06
+  A   S9                1.04871383E-01      7.11E-06
+  A   S10              -2.21977146E-01      2.67E-06
+  A   S11               1.82424939E-01     -2.54E-06
+  A   S12               1.76790017E-01     -1.26E-07
+  A   S13               3.90287589E-02      5.52E-08
+  THI S2                8.82940237E-02     -7.25E-06
+  THI S3                6.32980652E-02     -1.71E-05
+  THI S5                3.63007479E-02      5.50E-06
+  THI S7                3.97486309E-02      1.11E-05
+  THI S9                2.99520183E-01      1.28E-05
+  THI S11               2.91784250E-02      1.76E-05
+  THI S13               6.01563253E-01      5.02E-06
+  THI S15               2.85496739E-01      5.02E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277444     4.215903     0.388593    -3.515594
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   1.052E-13   7.560E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.20776E-02   1.000E-02   1.771E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.34724E+00   1.000E-03   1.120E+01
+  
+ CYCLE NUMBER 19:
+  
+  ABERR F. =        0.03687380
+  CONST F. =       11.36416709
+  ERR. F.  =       11.40104089       (change =       -0.01675508)
+  
+  OPD     0.02735209     0.04362356     0.03137690
+  WAV     0.03165203     0.04874397     0.03383156
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52427210E-01      4.04E-06
+  CUY S2                4.33267773E-01      5.14E-06
+  CUY S4                4.68657189E-02     -1.37E-05
+  CUY S5               -6.95588349E-01      1.05E-05
+  CUY S6               -4.82101954E-01      2.58E-05
+  CUY S7               -1.16456627E-02      8.60E-07
+  CUY S8                5.87689478E-01     -1.40E-04
+  CUY S9                4.92082379E-01     -1.37E-04
+  CUY S10              -7.02667487E-01      9.84E-06
+  CUY S11              -1.59643516E+00      6.06E-06
+  CUY S12               4.48938896E-01     -4.27E-05
+  CUY S13               1.27214085E+00     -1.02E-04
+  A   S1                1.84843723E-03     -1.62E-05
+  A   S2                3.36380589E-01      3.29E-06
+  A   S4               -1.27668199E-01     -4.57E-05
+  A   S5                6.04040724E-01      3.72E-05
+  A   S6                3.91933668E-01     -5.72E-06
+  A   S7                1.86497584E-01      1.68E-06
+  A   S8               -2.75366926E-01      3.18E-06
+  A   S9                1.04876009E-01      4.63E-06
+  A   S10              -2.21980428E-01     -3.28E-06
+  A   S11               1.82425023E-01      8.37E-08
+  A   S12               1.76789952E-01     -6.48E-08
+  A   S13               3.90287973E-02      3.85E-08
+  THI S2                8.82921706E-02     -1.85E-06
+  THI S3                6.32917100E-02     -6.36E-06
+  THI S5                3.62996157E-02     -1.13E-06
+  THI S7                3.97440701E-02     -4.56E-06
+  THI S9                2.99528467E-01      8.28E-06
+  THI S11               2.91683485E-02     -1.01E-05
+  THI S13               6.01565274E-01      2.02E-06
+  THI S15               2.85498760E-01      2.02E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277509     4.215890     0.388591    -3.515849
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -1.139E-12   4.982E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.18558E-02   1.000E-02   1.752E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.34499E+00   1.000E-03   1.119E+01
+  
+ CYCLE NUMBER 20:
+  
+  ABERR F. =        0.03683562
+  CONST F. =       11.34189095
+  ERR. F.  =       11.37872656       (change =       -0.02231433)
+  
+  OPD     0.02722935     0.04386967     0.03081079
+  WAV     0.03167123     0.04917462     0.03323666
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52433344E-01      6.13E-06
+  CUY S2                4.33280692E-01      1.29E-05
+  CUY S4                4.68880319E-02      2.23E-05
+  CUY S5               -6.95599024E-01     -1.07E-05
+  CUY S6               -4.82127944E-01     -2.60E-05
+  CUY S7               -1.16451653E-02      4.97E-07
+  CUY S8                5.87769681E-01      8.02E-05
+  CUY S9                4.92158638E-01      7.63E-05
+  CUY S10              -7.02678008E-01     -1.05E-05
+  CUY S11              -1.59645814E+00     -2.30E-05
+  CUY S12               4.48960145E-01      2.12E-05
+  CUY S13               1.27221816E+00      7.73E-05
+  A   S1                1.86033199E-03      1.19E-05
+  A   S2                3.36360868E-01     -1.97E-05
+  A   S4               -1.27625614E-01      4.26E-05
+  A   S5                6.04008802E-01     -3.19E-05
+  A   S6                3.91936726E-01      3.06E-06
+  A   S7                1.86494361E-01     -3.22E-06
+  A   S8               -2.75357883E-01      9.04E-06
+  A   S9                1.04882035E-01      6.03E-06
+  A   S10              -2.21980470E-01     -4.21E-08
+  A   S11               1.82422925E-01     -2.10E-06
+  A   S12               1.76789878E-01     -7.41E-08
+  A   S13               3.90288344E-02      3.71E-08
+  THI S2                8.82880270E-02     -4.14E-06
+  THI S3                6.32786819E-02     -1.30E-05
+  THI S5                3.63015596E-02      1.94E-06
+  THI S7                3.97495974E-02      5.53E-06
+  THI S9                2.99541303E-01      1.28E-05
+  THI S11               2.91770584E-02      8.71E-06
+  THI S13               6.01568408E-01      3.13E-06
+  THI S15               2.85501894E-01      3.13E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277450     4.215905     0.388587    -3.515703
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   3.686E-14   7.553E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.19453E-02   1.000E-02   1.759E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.34155E+00   1.000E-03   1.117E+01
+  
+ CYCLE NUMBER 21:
+  
+  ABERR F. =        0.03688834
+  CONST F. =       11.31974099
+  ERR. F.  =       11.35662932       (change =       -0.02209724)
+  
+  OPD     0.02726104     0.04379213     0.03118788
+  WAV     0.03162361     0.04898939     0.03362862
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52434949E-01      1.60E-06
+  CUY S2                4.33281265E-01      5.73E-07
+  CUY S4                4.68803609E-02     -7.67E-06
+  CUY S5               -6.95588647E-01      1.04E-05
+  CUY S6               -4.82110690E-01      1.73E-05
+  CUY S7               -1.16447864E-02      3.79E-07
+  CUY S8                5.87709029E-01     -6.07E-05
+  CUY S9                4.92100026E-01     -5.86E-05
+  CUY S10              -7.02672078E-01      5.93E-06
+  CUY S11              -1.59644874E+00      9.41E-06
+  CUY S12               4.48964421E-01      4.28E-06
+  CUY S13               1.27220796E+00     -1.02E-05
+  A   S1                1.85402508E-03     -6.31E-06
+  A   S2                3.36385419E-01      2.46E-05
+  A   S4               -1.27639840E-01     -1.42E-05
+  A   S5                6.04023072E-01      1.43E-05
+  A   S6                3.91933190E-01     -3.54E-06
+  A   S7                1.86496278E-01      1.92E-06
+  A   S8               -2.75363061E-01     -5.18E-06
+  A   S9                1.04882799E-01      7.64E-07
+  A   S10              -2.21982471E-01     -2.00E-06
+  A   S11               1.82424225E-01      1.30E-06
+  A   S12               1.76789851E-01     -2.73E-08
+  A   S13               3.90288530E-02      1.86E-08
+  THI S2                8.82880006E-02     -2.63E-08
+  THI S3                6.32805987E-02      1.92E-06
+  THI S5                3.63003266E-02     -1.23E-06
+  THI S7                3.97464904E-02     -3.11E-06
+  THI S9                2.99545584E-01      4.28E-06
+  THI S11               2.91712777E-02     -5.78E-06
+  THI S13               6.01569236E-01      8.28E-07
+  THI S15               2.85502721E-01      8.28E-07
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277473     4.215902     0.388587    -3.515768
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -3.464E-14   2.826E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.17515E-02   1.000E-02   1.743E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.33848E+00   1.000E-03   1.115E+01
+  
+ CYCLE NUMBER 22:
+  
+  ABERR F. =        0.03688489
+  CONST F. =       11.28634421
+  ERR. F.  =       11.32322911       (change =       -0.03340022)
+  
+  OPD     0.02721115     0.04408171     0.03070224
+  WAV     0.03163325     0.04941935     0.03307214
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52445575E-01      1.06E-05
+  CUY S2                4.33303140E-01      2.19E-05
+  CUY S4                4.69116554E-02      3.13E-05
+  CUY S5               -6.95574116E-01      1.45E-05
+  CUY S6               -4.82115622E-01     -4.93E-06
+  CUY S7               -1.16437279E-02      1.06E-06
+  CUY S8                5.87566279E-01     -1.43E-04
+  CUY S9                4.91955720E-01     -1.44E-04
+  CUY S10              -7.02674049E-01     -1.97E-06
+  CUY S11              -1.59646709E+00     -1.84E-05
+  CUY S12               4.48923577E-01     -4.08E-05
+  CUY S13               1.27214980E+00     -5.82E-05
+  A   S1                1.88962162E-03      3.56E-05
+  A   S2                3.36311412E-01     -7.40E-05
+  A   S4               -1.27723489E-01     -8.36E-05
+  A   S5                6.04040810E-01      1.77E-05
+  A   S6                3.91930620E-01     -2.57E-06
+  A   S7                1.86493922E-01     -2.36E-06
+  A   S8               -2.75341974E-01      2.11E-05
+  A   S9                1.04893157E-01      1.04E-05
+  A   S10              -2.21987286E-01     -4.81E-06
+  A   S11               1.82420874E-01     -3.35E-06
+  A   S12               1.76789723E-01     -1.28E-07
+  A   S13               3.90289258E-02      7.28E-08
+  THI S2                8.82826998E-02     -5.30E-06
+  THI S3                6.32590794E-02     -2.15E-05
+  THI S5                3.62995520E-02     -7.75E-07
+  THI S7                3.97403021E-02     -6.19E-06
+  THI S9                2.99567849E-01      2.23E-05
+  THI S11               2.91846979E-02      1.34E-05
+  THI S13               6.01574260E-01      5.02E-06
+  THI S15               2.85507746E-01      5.02E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277492     4.215908     0.388581    -3.515917
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   4.396E-14   3.027E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.15590E-02   1.000E-02   1.727E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.33371E+00   1.000E-03   1.111E+01
+  
+ CYCLE NUMBER 23:
+  
+  ABERR F. =        0.03691566
+  CONST F. =       11.24441223
+  ERR. F.  =       11.28132788       (change =       -0.04190123)
+  
+  OPD     0.02726314     0.04391571     0.03115840
+  WAV     0.03158138     0.04910382     0.03354568
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52447419E-01      1.84E-06
+  CUY S2                4.33301352E-01     -1.79E-06
+  CUY S4                4.69007020E-02     -1.10E-05
+  CUY S5               -6.95558777E-01      1.53E-05
+  CUY S6               -4.82092655E-01      2.30E-05
+  CUY S7               -1.16432915E-02      4.36E-07
+  CUY S8                5.87483980E-01     -8.23E-05
+  CUY S9                4.91877102E-01     -7.86E-05
+  CUY S10              -7.02664546E-01      9.50E-06
+  CUY S11              -1.59644913E+00      1.80E-05
+  CUY S12               4.48935846E-01      1.23E-05
+  CUY S13               1.27213770E+00     -1.21E-05
+  A   S1                1.88324003E-03     -6.38E-06
+  A   S2                3.36339142E-01      2.77E-05
+  A   S4               -1.27744030E-01     -2.05E-05
+  A   S5                6.04061442E-01      2.06E-05
+  A   S6                3.91925358E-01     -5.26E-06
+  A   S7                1.86496905E-01      2.98E-06
+  A   S8               -2.75346721E-01     -4.75E-06
+  A   S9                1.04891707E-01     -1.45E-06
+  A   S10              -2.21990470E-01     -3.18E-06
+  A   S11               1.82422815E-01      1.94E-06
+  A   S12               1.76789692E-01     -3.09E-08
+  A   S13               3.90289504E-02      2.47E-08
+  THI S2                8.82836477E-02      9.48E-07
+  THI S3                6.32669056E-02      7.83E-06
+  THI S5                3.62973750E-02     -2.18E-06
+  THI S7                3.97359871E-02     -4.32E-06
+  THI S9                2.99573905E-01      6.06E-06
+  THI S11               2.91749393E-02     -9.76E-06
+  THI S13               6.01575282E-01      1.02E-06
+  THI S15               2.85508767E-01      1.02E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277524     4.215908     0.388583    -3.516027
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   3.614E-10   2.811E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.12527E-02   1.000E-02   1.702E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.32780E+00   1.000E-03   1.107E+01
+  
+ CYCLE NUMBER 24:
+  
+  ABERR F. =        0.03676200
+  CONST F. =       11.16739527
+  ERR. F.  =       11.20415726       (change =       -0.07717062)
+  
+  OPD     0.02726535     0.04395934     0.03049558
+  WAV     0.03169001     0.04923897     0.03277393
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52466208E-01      1.88E-05
+  CUY S2                4.33338890E-01      3.75E-05
+  CUY S4                4.69263909E-02      2.57E-05
+  CUY S5               -6.95618258E-01     -5.95E-05
+  CUY S6               -4.82158392E-01     -6.57E-05
+  CUY S7               -1.16421463E-02      1.15E-06
+  CUY S8                5.87238579E-01     -2.45E-04
+  CUY S9                4.91628510E-01     -2.49E-04
+  CUY S10              -7.02669640E-01     -5.09E-06
+  CUY S11              -1.59647602E+00     -2.69E-05
+  CUY S12               4.48871632E-01     -6.42E-05
+  CUY S13               1.27203923E+00     -9.85E-05
+  A   S1                1.91969739E-03      3.65E-05
+  A   S2                3.36201966E-01     -1.37E-04
+  A   S4               -1.27917115E-01     -1.73E-04
+  A   S5                6.04062664E-01      1.22E-06
+  A   S6                3.91923602E-01     -1.76E-06
+  A   S7                1.86494574E-01     -2.33E-06
+  A   S8               -2.75321329E-01      2.54E-05
+  A   S9                1.04909169E-01      1.75E-05
+  A   S10              -2.22000265E-01     -9.80E-06
+  A   S11               1.82419384E-01     -3.43E-06
+  A   S12               1.76789498E-01     -1.94E-07
+  A   S13               3.90290673E-02      1.17E-07
+  THI S2                8.82751383E-02     -8.51E-06
+  THI S3                6.32332550E-02     -3.37E-05
+  THI S5                3.62942078E-02     -3.17E-06
+  THI S7                3.97192934E-02     -1.67E-05
+  THI S9                2.99618422E-01      4.45E-05
+  THI S11               2.92065766E-02      3.16E-05
+  THI S13               6.01584144E-01      8.86E-06
+  THI S15               2.85517630E-01      8.86E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277569     4.215931     0.388574    -3.516297
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00  -3.531E-13   3.054E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.10460E-02   1.000E-02   1.685E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.31646E+00   1.000E-03   1.100E+01
+  
+ CYCLE NUMBER 25:
+  
+  ABERR F. =        0.03679009
+  CONST F. =       11.14714283
+  ERR. F.  =       11.18393292       (change =       -0.02022434)
+  
+  OPD     0.02722297     0.04376023     0.03112737
+  WAV     0.03150837     0.04884080     0.03343504
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S1                5.52469041E-01      2.83E-06
+  CUY S2                4.33336489E-01     -2.40E-06
+  CUY S4                4.69104908E-02     -1.59E-05
+  CUY S5               -6.95599191E-01      1.91E-05
+  CUY S6               -4.82128284E-01      3.01E-05
+  CUY S7               -1.16416276E-02      5.19E-07
+  CUY S8                5.87116754E-01     -1.22E-04
+  CUY S9                4.91510735E-01     -1.18E-04
+  CUY S10              -7.02657893E-01      1.17E-05
+  CUY S11              -1.59645210E+00      2.39E-05
+  CUY S12               4.48886972E-01      1.53E-05
+  CUY S13               1.27202233E+00     -1.69E-05
+  A   S1                1.91090859E-03     -8.79E-06
+  A   S2                3.36241049E-01      3.91E-05
+  A   S4               -1.27945668E-01     -2.86E-05
+  A   S5                6.04094048E-01      3.14E-05
+  A   S6                3.91916883E-01     -6.72E-06
+  A   S7                1.86498713E-01      4.14E-06
+  A   S8               -2.75327658E-01     -6.33E-06
+  A   S9                1.04907292E-01     -1.88E-06
+  A   S10              -2.22004809E-01     -4.54E-06
+  A   S11               1.82422097E-01      2.71E-06
+  A   S12               1.76789458E-01     -3.96E-08
+  A   S13               3.90291002E-02      3.29E-08
+  THI S2                8.82761657E-02      1.03E-06
+  THI S3                6.32375487E-02      4.29E-06
+  THI S5                3.62910707E-02     -3.14E-06
+  THI S7                3.97133070E-02     -5.99E-06
+  THI S9                2.99628817E-01      1.04E-05
+  THI S11               2.91958047E-02     -1.08E-05
+  THI S13               6.01585656E-01      1.51E-06
+  THI S15               2.85519141E-01      1.51E-06
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      2.416363     0.000000     0.277612     4.215928     0.388575    -3.516431
+  
+  Active Constraints -   1:    target        value         diff        cost
+  EFL                    =   2.41636E+00   2.41636E+00   6.528E-14   2.953E-05
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   4.12591E-02   1.000E-02   1.702E-01
+  @ATELIER_RMSSPOT       =   0.00000E+00   3.31314E+00   1.000E-03   1.098E+01
+  
+     Normal AUTO Completion - Maximum cycle limit reached
+AUT> GO
+ 
+ 
+CODE V> BUF PUT B1 I^row J1 "schema"
+      Created new worksheet B1.
+CODE V> BUF PUT B1 I^row J2 "atelier-codev-target-v1"
+CODE V> BUF PUT B1 I^row J1 "status"
+CODE V> BUF PUT B1 I^row J2 "ok"
+CODE V> BUF PUT B1 I^row J1 "mode"
+CODE V> BUF PUT B1 I^row J2 "target"
+CODE V> BUF PUT B1 I^row J1 "stage"
+CODE V> BUF PUT B1 I^row J2 "A"
+CODE V> BUF PUT B1 I^row J1 "source_zmx"
+CODE V> BUF PUT B1 I^row J2 "US10330891B2.zmx"
+CODE V> BUF PUT B1 I^row J1 "num_fields"
+CODE V> BUF PUT B1 I^row J2 ^numf_out
+CODE V> BUF PUT B1 I^row J1 "vignetting_edge"
+CODE V> BUF PUT B1 I^row J2 0.3
+CODE V> BUF PUT B1 I^row J1 "target.efl_mm"
+CODE V> BUF PUT B1 I^row J2 ^target_efl
+CODE V> BUF PUT B1 I^row J1 "target.f_number"
+CODE V> BUF PUT B1 I^row J2 2.4
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.fno"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_fno
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_epd
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_maximh
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_fno
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_epd
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "post_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "post_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_fno
+CODE V> BUF PUT B1 I^row J1 "post_aut.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_epd
+CODE V> BUF PUT B1 I^row J1 "post_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "efl_target_deviation_pct"
+CODE V> BUF PUT B1 I^row J2 ^efl_target_dev_pct
+CODE V> BUF PUT B1 I^row J1 "aut_converged"
+CODE V> BUF PUT B1 I^row J2 ^aut_converged
+CODE V> BUF EXP B1 "D:\atelier-wt-c\.planning\loop\p15-stageb-evidence\fno-matrix-2026-07-11\US10330891B2_loosen\rung3_fno0240\ray_retry\atelier_codev_target_A_vig0300.tsv"
+     Buffer B1 exported to file atelier_codev_target_A_vig0300.tsv
+CODE V> BUF DEL B1
+CODE V> OUT YES
+CODE V> EXI YES
+     EXI                                                                              11-Jul-26  14H 19M  5S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M 11S

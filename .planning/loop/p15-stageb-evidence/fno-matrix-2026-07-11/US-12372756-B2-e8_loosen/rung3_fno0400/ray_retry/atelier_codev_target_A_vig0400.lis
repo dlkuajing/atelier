@@ -1,0 +1,580 @@
+  
+  
+                                   Welcome to
+  
+                                   C O D E   V
+  
+                                PC  Version 11.5
+                                   Build 27302701
+  
+                                   11-Jul-2026
+  
+                            A proprietary product of
+  
+                              SYNOPSYS, INC
+                              Pasadena, California
+  
+CODE V> OUT NO
+     Radius input/output mode
+  
+    Lens data created by Zemax version 191028
+  
+    Zemax command MODE ignored
+     WARNING - Vignetting angles not used.
+     ERROR - No wavelength  2 in zoom position  1
+  
+     Surface pointer = OBJ
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 1
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 2
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 3
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 4
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 5
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 6
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 7
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 8
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 9
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 10
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 11
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 12
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 13
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = IMG
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+    Zemax command ! AT ignored.
+    Zemax command ! AT ignored.
+    Zemax command ! AT ignored.
+    Zemax command ! AT ignored.
+  
+     WARNING - Please check the converted lens carefully.
+               Some information will not be converted.
+               Changes in either CODE V or ZEMAX may invalidate
+               the converted information.
+               Due to differences between CODE V and ZEMAX ray
+               aiming and vignetting factors, it is recommended
+               that you set vignetting for the converted system.
+  
+               A concise listing of conversion warnings appears
+               in the Tabbed Output Window 'Info' tab and in the
+               Command Window.
+  
+CODE V> DEF VAR SA
+     ERROR - Unable to find chief ray: F2,W1,Z1.  Use CRA command.
+     ERROR - Chief ray fails - Trace up to failure point:
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - One or more of the reference rays from field  1 is deviated far from
+             most of the other rays from this field point.  The reference rays are
+             used to determine the numerical aperture and the grid spacing.  Thus, it
+             is important that these rays are focused at approximately the same spot
+             as the other rays from this field point.  Modifying the vignetting
+             may solve this problem and allow the computation to proceed.
+CODE V> FNO 4
+CODE V> VUY 0 0.4
+CODE V> VLY 0 0.4
+CODE V> VUX 0 0.4
+CODE V> VLX 0 0.4
+     ERROR - Unable to find chief ray: F2,W1,Z1.  Use CRA command.
+     ERROR - Chief ray fails - Trace up to failure point:
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     WARNING - One or more of the reference rays from field  1 is deviated far from
+               most of the other rays from this field point.  The reference rays are
+               used to determine the numerical aperture and the grid spacing.  Thus, it
+               is important that these rays are focused at approximately the same spot
+               as the other rays from this field point.  Modifying the vignetting
+               may solve this problem and make the calculation more accurate.
+     ERROR - Unable to find chief ray: F2,W1,Z1.  Use CRA command.
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - The chief ray for field  2 is deviated far from most of the other
+             rays from this field point.  This means that the chief ray is not
+             representative of the majority of the rays from that field point.
+             Because of this condition, the requested computation has been aborted.
+             Use chief-ray aiming (for the reference wavelength) to select a ray that
+             behaves like most of the other rays from that field point.
+CODE V> AUT
+     AUT                                                                              11-Jul-26  14H  8M  1S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S
+     WARNING - CODE V places the reference sphere at the exit pupil.  However,
+               the aberrations of this lens make the OPD data (and any quantity
+               that depends upon OPD data) very sensitive to the exact value of
+               the reference sphere radius.  You can use the RSL command to
+               reposition the reference sphere if that is appropriate for
+               your application.
+     ***Defocussing frozen to eliminate redundant variable
+AUT>   SUR N
+AUT>   CHG SA
+AUT>   WFR Y
+AUT>   WTF FA 10
+AUT>   EFL = 9.97048880336295
+AUT>   @atelier_latcolor == @lcum(1)
+AUT>   @atelier_latcolor = 0
+AUT>   WTC 0.01
+AUT>   @atelier_rmsspot == @rmssum(1)
+AUT>   @atelier_rmsspot = 0
+AUT>   WTC 0.001
+AUT>   MNT 0.025
+AUT>   MNE 0.025
+AUT>   MXT 10
+AUT>   MNA 0.001
+AUT>   MXC 25
+AUT>   MNC 3
+AUT>   IMP 0.001
+AUT> GO
+ -------------------------------------------------------------------------------
+  
+       USER CONSTRAINT DEFINITIONS
+            @atelier_rmsspot == @rmssum(1)
+  
+            @atelier_latcolor == @lcum(1)
+  
+  
+  
+       POTENTIALLY ACTIVE SPECIFIC CONSTRAINTS
+         EFL                                  =       9.970489
+         @ATELIER_LATCOLOR                    =       0.000000     (WTC =    0.01000)
+         @ATELIER_RMSSPOT                     =       0.000000     (WTC =    0.00100)
+  
+       GENERAL CONSTRAINTS
+         MXT      10.000000
+         MNT       0.025000
+         MNE       0.025000
+         MNA       0.001000
+         MAE       0.002500
+         GLA               NFK5  NSK16  NLAF2  SF4
+  
+       ERROR FUNCTION CONSTRUCTION
+         WFR        Y
+         WTW       1
+         WTA       0.000000
+         DEL       0.220000
+         WTX F1   10.000000
+         WTX F2   10.000000
+         WTY F1   10.000000
+         WTY F2   10.000000
+  
+       CONVERGENCE CONTROLS
+         MXC        25
+         MNC         3
+         TAR       0.000000
+         IMP       0.001000
+  
+       OUTPUT CONTROLS
+         SUR NO
+         CHG S0..14
+  
+     Recommendations for most stable convergence:
+  
+       Use object space aperture specifications:
+       - NAO for finite conjugate systems
+       - EPD for infinite conjugate systems
+  
+       VARIABLE LIST
+  
+         NO      PARAMETERS *
+          1      CUY S2       CUY S3       CUY S4       CUY S5
+          2      CUY S3       CUY S4
+          3      CUY S4       CUY S5
+          4      CUY S5       CUY S6
+          5      CUY S6       CUY S7       CUY S8       CUY S9       CUY S10       CUY S11
+          6      CUY S7       CUY S8
+          7      CUY S8       CUY S9       CUY S10       CUY S11
+          8      CUY S9       CUY S10
+          9      CUY S10       CUY S11
+         10      CUY S11
+         11      A   S2
+         12      A   S3
+         13      A   S4
+         14      A   S5
+         15      A   S6
+         16      A   S7
+         17      A   S8
+         18      A   S9
+         19      A   S10
+         20      A   S11
+         21      THI S1
+         22      THI S3
+         23      THI S5
+         24      THI S7
+         25      THI S9
+         26      THI S11
+         27      THI S13
+  
+     * Multiple entries on a line are composite variables.
+     Composite variables are either program-generated bendings
+     or user-requested couplings.
+  
+      27 VARIABLES
+  
+      27 CONSTRAINTS CAN BE ACTIVE
+  
+     RELATIVE TIME PER CYCLE IS   79.8 UNITS
+ RAY ERROR: MISS 11
+           Aperture and Field at 0.900 of spec.
+ RAY ERROR: MISS 11
+           Aperture and Field at 0.810 of spec.
+ RAY ERROR: MISS 11
+           Aperture and Field at 0.729 of spec.
+ RAY ERROR: MISS 11
+           Aperture and Field at 0.656 of spec.
+ RAY ERROR: MISS 11
+           Aperture and Field at 0.590 of spec.
+ RAY ERROR: REFL 11
+           Aperture and Field at 0.531 of spec.
+ RAY ERROR: REFL 11
+  
+  
+  Parameter                 Value            Change
+  CUY S2                3.33000333E-01      0.00E+00
+  CUY S3               -1.31527029E-01      0.00E+00
+  CUY S4               -3.08928020E-01      0.00E+00
+  CUY S5                6.68538575E-02      0.00E+00
+  CUY S6                3.63240102E-01      0.00E+00
+  CUY S7                4.49034576E-01      0.00E+00
+  CUY S8                7.90826414E-02      0.00E+00
+  CUY S9               -2.28560980E-02      0.00E+00
+  CUY S10               1.40429715E-01      0.00E+00
+  CUY S11               1.56421086E-01      0.00E+00
+  A   S2               -3.61010000E-03      0.00E+00
+  A   S3                1.95190000E-02      0.00E+00
+  A   S4                5.70670000E-02      0.00E+00
+  A   S5                7.11560000E-02      0.00E+00
+  A   S6                1.50870000E-02      0.00E+00
+  A   S7               -8.49920000E-02      0.00E+00
+  A   S8               -9.30960000E-02      0.00E+00
+  A   S9               -1.53040000E-01      0.00E+00
+  A   S10              -1.49590000E-01      0.00E+00
+  A   S11              -3.91300000E-02      0.00E+00
+  THI S1               -6.80000000E-01      0.00E+00
+  THI S3                1.47000000E-01      0.00E+00
+  THI S5                1.23000000E-01      0.00E+00
+  THI S7                3.54000000E-01      0.00E+00
+  THI S9                1.31000000E-01      0.00E+00
+  THI S11               1.50000000E+00      0.00E+00
+  THI S13               2.94700000E+00      0.00E+00
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      9.974500     0.000000     2.903749     6.840000     0.000000    -4.455714
+  
+     Abnormal AUTO Completion - Scaled down nominal system cannot be traced
+        Listed specific constraint values may not be valid.
+     ERROR - Unable to find chief ray: F2,W1,Z1.  Use CRA command.
+     ERROR - Chief ray fails - Trace up to failure point:
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     WARNING - One or more of the reference rays from field  1 is deviated far from
+               most of the other rays from this field point.  The reference rays are
+               used to determine the numerical aperture and the grid spacing.  Thus, it
+               is important that these rays are focused at approximately the same spot
+               as the other rays from this field point.  Modifying the vignetting
+               may solve this problem and make the calculation more accurate.
+     ERROR - Unable to find chief ray: F2,W1,Z1.  Use CRA command.
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Total reflection at surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - Ray missed surface  11 for zoom position  1
+     ERROR - The chief ray for field  2 is deviated far from most of the other
+             rays from this field point.  This means that the chief ray is not
+             representative of the majority of the rays from that field point.
+             Because of this condition, the requested computation has been aborted.
+             Use chief-ray aiming (for the reference wavelength) to select a ray that
+             behaves like most of the other rays from that field point.
+CODE V> BUF PUT B1 I^row J1 "schema"
+      Created new worksheet B1.
+CODE V> BUF PUT B1 I^row J2 "atelier-codev-target-v1"
+CODE V> BUF PUT B1 I^row J1 "status"
+CODE V> BUF PUT B1 I^row J2 "ok"
+CODE V> BUF PUT B1 I^row J1 "mode"
+CODE V> BUF PUT B1 I^row J2 "target"
+CODE V> BUF PUT B1 I^row J1 "stage"
+CODE V> BUF PUT B1 I^row J2 "A"
+CODE V> BUF PUT B1 I^row J1 "source_zmx"
+CODE V> BUF PUT B1 I^row J2 "US-12372756-B2-e8.zmx"
+CODE V> BUF PUT B1 I^row J1 "num_fields"
+CODE V> BUF PUT B1 I^row J2 ^numf_out
+CODE V> BUF PUT B1 I^row J1 "vignetting_edge"
+CODE V> BUF PUT B1 I^row J2 0.4
+CODE V> BUF PUT B1 I^row J1 "target.efl_mm"
+CODE V> BUF PUT B1 I^row J2 ^target_efl
+CODE V> BUF PUT B1 I^row J1 "target.f_number"
+CODE V> BUF PUT B1 I^row J2 4
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.fno"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_fno
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_epd
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_maximh
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_fno
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_epd
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "post_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "post_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_fno
+CODE V> BUF PUT B1 I^row J1 "post_aut.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_epd
+CODE V> BUF PUT B1 I^row J1 "post_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "efl_target_deviation_pct"
+CODE V> BUF PUT B1 I^row J2 ^efl_target_dev_pct
+CODE V> BUF PUT B1 I^row J1 "aut_converged"
+CODE V> BUF PUT B1 I^row J2 ^aut_converged
+CODE V> BUF EXP B1 "D:\atelier-wt-c\.planning\loop\p15-stageb-evidence\fno-matrix-2026-07-11\US-12372756-B2-e8_loosen\rung3_fno0400\ray_retry\atelier_codev_target_A_vig0400.tsv"
+     Buffer B1 exported to file atelier_codev_target_A_vig0400.tsv
+CODE V> BUF DEL B1
+CODE V> OUT YES
+CODE V> EXI YES
+     EXI                                                                              11-Jul-26  14H  8M  2S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  1S

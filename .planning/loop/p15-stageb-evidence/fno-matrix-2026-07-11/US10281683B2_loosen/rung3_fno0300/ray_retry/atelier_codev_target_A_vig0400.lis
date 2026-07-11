@@ -1,0 +1,778 @@
+  
+  
+                                   Welcome to
+  
+                                   C O D E   V
+  
+                                PC  Version 11.5
+                                   Build 27302701
+  
+                                   11-Jul-2026
+  
+                            A proprietary product of
+  
+                              SYNOPSYS, INC
+                              Pasadena, California
+  
+CODE V> OUT NO
+     Radius input/output mode
+  
+    Lens data created by Zemax version 210628
+  
+    Zemax command MODE ignored
+    Zemax command AUTH ignored
+    Zemax command PFIL ignored
+    Zemax command LANG ignored
+     WARNING - Glass catalog list not used.
+     WARNING - Ray aiming not used.
+     WARNING - Pupil shift for ray aiming not used.
+    Zemax command SDMA ignored
+    Zemax command OMMA ignored
+    Zemax command HYPR ignored
+     WARNING - Vignetting angles not used.
+    Zemax command XAIM ignored
+    Zemax command YAIM ignored
+    Zemax command ZAIM ignored
+    Zemax command POLS ignored
+    Zemax command GLRS ignored
+    Zemax command GSTD ignored
+    Zemax command NSCD ignored
+    Zemax command COFN ignored
+    Zemax command COFN ignored
+    Zemax command LUID ignored
+  
+     Surface pointer = OBJ
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 1
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 2
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 3
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 4
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 5
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 6
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 7
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 8
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 9
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 10
+    Zemax command SSID ignored.
+    Zemax surface type  EVENASPH
+    CODE V surface type ASP
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 11
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 12
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 13
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 14
+    Zemax command SSID ignored.
+    Zemax surface type  XASPHERE
+    CODE V surface type SPS ODD
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Maximum term number not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 15
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+     WARNING - Partial dispersion of model glass not used.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 16
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = 17
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     Surface pointer = IMG
+    Zemax command SSID ignored.
+    Zemax surface type  STANDARD
+    CODE V surface type SPH
+    Zemax command FIMP ignored.
+     WARNING - Hiding of rays not used.
+    Zemax command MIRR ignored.
+    Zemax command SLAB ignored.
+    Zemax command MEMA ignored.
+    Zemax command POPS ignored.
+  
+     WARNING - Please check the converted lens carefully.
+               Some information will not be converted.
+               Changes in either CODE V or ZEMAX may invalidate
+               the converted information.
+               Due to differences between CODE V and ZEMAX ray
+               aiming and vignetting factors, it is recommended
+               that you set vignetting for the converted system.
+  
+               A concise listing of conversion warnings appears
+               in the Tabbed Output Window 'Info' tab and in the
+               Command Window.
+  
+CODE V> DEF VAR SA
+ 
+ 
+CODE V> FNO 3
+CODE V> VUY 0 0.4 0.4
+CODE V> VLY 0 0.4 0.4
+CODE V> VUX 0 0.4 0.4
+CODE V> VLX 0 0.4 0.4
+ 
+ 
+CODE V> AUT
+     AUT                                                                              11-Jul-26  14H 13M  4S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  0S
+AUT>   SUR N
+AUT>   CHG SA
+AUT>   WFR Y
+AUT>   WTF FA 10
+AUT>   EFL = 4.70602808468692
+AUT>   @atelier_latcolor == @lcum(1)
+AUT>   @atelier_latcolor = 0
+AUT>   WTC 0.01
+AUT>   @atelier_rmsspot == @rmssum(1)
+AUT>   @atelier_rmsspot = 0
+AUT>   WTC 0.001
+AUT>   MNT 0.025
+AUT>   MNE 0.025
+AUT>   MXT 10
+AUT>   MNA 0.001
+AUT>   MXC 25
+AUT>   MNC 3
+AUT>   IMP 0.001
+AUT> GO
+ -------------------------------------------------------------------------------
+  
+       USER CONSTRAINT DEFINITIONS
+            @atelier_rmsspot == @rmssum(1)
+  
+            @atelier_latcolor == @lcum(1)
+  
+  
+  
+       POTENTIALLY ACTIVE SPECIFIC CONSTRAINTS
+         EFL                                  =       4.706028
+         @ATELIER_LATCOLOR                    =       0.000000     (WTC =    0.01000)
+         @ATELIER_RMSSPOT                     =       0.000000     (WTC =    0.00100)
+  
+       GENERAL CONSTRAINTS
+         MXT      10.000000
+         MNT       0.025000
+         MNE       0.025000
+         MNA       0.001000
+         MAE       0.002500
+         GLA               NFK5  NSK16  NLAF2  SF4
+  
+       ERROR FUNCTION CONSTRUCTION
+         WFR        Y
+         WTW       1          1          1          1          1
+         WTA       0.000000
+         DEL       0.220000
+         WTX F1   10.000000
+         WTX F2   10.000000
+         WTX F3   10.000000
+         WTY F1   10.000000
+         WTY F2   10.000000
+         WTY F3   10.000000
+  
+       CONVERGENCE CONTROLS
+         MXC        25
+         MNC         3
+         TAR       0.000000
+         IMP       0.001000
+  
+       OUTPUT CONTROLS
+         SUR NO
+         CHG S0..18
+  
+     Recommendations for most stable convergence:
+  
+       Use object space aperture specifications:
+       - NAO for finite conjugate systems
+       - EPD for infinite conjugate systems
+  
+       VARIABLE LIST
+  
+         NO      PARAMETERS *
+          1      CUY S3       CUY S4
+          2      CUY S4       CUY S5
+          3      CUY S5       CUY S6
+          4      CUY S6       CUY S7
+          5      CUY S7       CUY S8
+          6      CUY S8       CUY S9
+          7      CUY S9       CUY S10
+          8      CUY S10
+          9      A   S3
+         10      A   S4
+         11      A   S5
+         12      A   S6
+         13      A   S7
+         14      A   S8
+         15      A   S9
+         16      A   S10
+         17      THI S2
+         18      THI S4
+         19      THI S6
+         20      THI S8
+         21      THI S10
+         22      THI S12
+         23      THI S14
+         24      THI S16
+         25      THI S18
+  
+     * Multiple entries on a line are composite variables.
+     Composite variables are either program-generated bendings
+     or user-requested couplings.
+  
+      25 VARIABLES
+  
+      25 CONSTRAINTS CAN BE ACTIVE
+  
+     RELATIVE TIME PER CYCLE IS  344.6 UNITS
+     WARNING - The macro function SPOTDATA is not supported on multiple threads.
+               CODE V will set the multiple processor setting (MPP) to 1 to prevent errors.
+               Please refer to the CODE V Setup and Operation Reference Manual for a complete list
+               of pre-defined macro functions that are currently limited to running on a single thread.
+  
+ CYCLE NUMBER 0:
+  
+  ABERR F. =        0.07578390
+  CONST F. =      291.07418809
+  ERR. F.  =      291.14997198
+  
+  OPD     0.07945963     0.08141325     0.06049263
+  WAV     0.08184443     0.08414441     0.06386779
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S3                4.38461876E-01      0.00E+00
+  CUY S4                1.55033952E-01      0.00E+00
+  CUY S5                2.87306786E-01      0.00E+00
+  CUY S6                4.05695971E-01      0.00E+00
+  CUY S7                2.81529154E-02      0.00E+00
+  CUY S8               -2.32964473E-01      0.00E+00
+  CUY S9               -4.91593747E-01      0.00E+00
+  CUY S10              -3.43489163E-01      0.00E+00
+  A   S3                1.40041000E-04      0.00E+00
+  A   S4               -1.77404000E-02      0.00E+00
+  A   S5               -1.04752000E-01      0.00E+00
+  A   S6               -7.17227000E-02      0.00E+00
+  A   S7                2.70142000E-02      0.00E+00
+  A   S8                4.51043000E-03      0.00E+00
+  A   S9                9.52605000E-03      0.00E+00
+  A   S10               2.75271000E-02      0.00E+00
+  THI S2               -4.75900000E-01      0.00E+00
+  THI S4                4.00200000E-01      0.00E+00
+  THI S6                1.63300000E-01      0.00E+00
+  THI S8                5.97900000E-01      0.00E+00
+  THI S10               5.00000000E-02      0.00E+00
+  THI S12               6.61800000E-01      0.00E+00
+  THI S14               2.31100000E-01      0.00E+00
+  THI S16               5.50000000E-01      0.00E+00
+  THI S18               0.00000000E+00      0.00E+00
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      4.699441     0.000000    -0.011325     6.000000     0.475900    -3.099869
+  
+  Specific Constraints:        target        value         diff      active (**)
+  EFL                    =   4.70603E+00   4.69944E+00  -6.587E-03    **
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   1.64791E+00   1.000E-02   2.716E+02
+  @ATELIER_RMSSPOT       =   0.00000E+00   4.41723E+00   1.000E-03   1.951E+01
+     WARNING - Frozen Thickness Violations:
+  Mn ET S17
+  
+  Constraints added:      EFL (=)                     Mn CT S2 (>)
+  
+ CYCLE NUMBER 1:
+  
+  ABERR F. =        0.10433107
+  CONST F. =     1398.70180091
+  ERR. F.  =     1398.80613198       (change =     1107.65616000)
+  
+  OPD     0.04729712     0.12937834     0.11071775
+  WAV     0.04890161     0.13246081     0.11890502
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S3                4.25800715E-01     -1.27E-02
+  CUY S4                1.52262432E-01     -2.77E-03
+  CUY S5                2.91745471E-01      4.44E-03
+  CUY S6                3.98708723E-01     -6.99E-03
+  CUY S7                2.83993995E-02      2.46E-04
+  CUY S8               -2.41667361E-01     -8.70E-03
+  CUY S9               -5.03451843E-01     -1.19E-02
+  CUY S10              -3.47173787E-01     -3.68E-03
+  A   S3               -4.38851178E-03     -4.53E-03
+  A   S4               -2.56372340E-02     -7.90E-03
+  A   S5               -1.04959276E-01     -2.07E-04
+  A   S6               -6.88743447E-02      2.85E-03
+  A   S7                2.74093456E-02      3.95E-04
+  A   S8                4.09739436E-03     -4.13E-04
+  A   S9                7.15919202E-03     -2.37E-03
+  A   S10               2.71016078E-02     -4.25E-04
+  THI S2                1.00000000E-03      4.77E-01
+  THI S4                3.88012802E-01     -1.22E-02
+  THI S6                1.59381533E-01     -3.92E-03
+  THI S8                5.72479828E-01     -2.54E-02
+  THI S10               5.89474204E-02      8.95E-03
+  THI S12               6.49745357E-01     -1.21E-02
+  THI S14               2.44975204E-01      1.39E-02
+  THI S16               5.63875204E-01      1.39E-02
+  THI S18               1.38752036E-02      1.39E-02
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      4.706040     0.000000     0.011635     6.460017     0.475900    -3.329547
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   4.70603E+00   4.70604E+00   1.213E-05  -3.363E-07
+  Mn CT S2                                                          -1.275E-06
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   3.68293E+00   1.000E-02   1.356E+03
+  @ATELIER_RMSSPOT       =   0.00000E+00   6.50439E+00   1.000E-03   4.231E+01
+  
+ CYCLE NUMBER 2:
+  
+  ABERR F. =        0.20686153
+  CONST F. =     1217.63520463
+  ERR. F.  =     1217.84206615       (change =     -180.96406583)
+  
+  OPD     0.25441534     0.20790711     0.12254389
+  WAV     0.26693371     0.21539576     0.12701052
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S3                4.25864269E-01      6.36E-05
+  CUY S4                1.51931678E-01     -3.31E-04
+  CUY S5                2.92521587E-01      7.76E-04
+  CUY S6                4.00641193E-01      1.93E-03
+  CUY S7                3.05893579E-02      2.19E-03
+  CUY S8               -2.50803781E-01     -9.14E-03
+  CUY S9               -5.13306284E-01     -9.85E-03
+  CUY S10              -3.45942614E-01      1.23E-03
+  A   S3               -4.45934439E-03     -7.08E-05
+  A   S4               -2.55809321E-02      5.63E-05
+  A   S5               -1.05025650E-01     -6.64E-05
+  A   S6               -6.88316050E-02      4.27E-05
+  A   S7                2.73471778E-02     -6.22E-05
+  A   S8                4.33848877E-03      2.41E-04
+  A   S9                6.31481155E-03     -8.44E-04
+  A   S10               2.72417618E-02      1.40E-04
+  THI S2                1.00000000E-03      4.45E-17
+  THI S4                3.89522937E-01      1.51E-03
+  THI S6                1.59426392E-01      4.49E-05
+  THI S8                5.69273784E-01     -3.21E-03
+  THI S10               5.87528743E-02     -1.95E-04
+  THI S12               6.52304184E-01      2.56E-03
+  THI S14               2.48650067E-01      3.67E-03
+  THI S16               5.67550067E-01      3.67E-03
+  THI S18               1.75500674E-02      3.67E-03
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      4.706039     0.000000    -0.006305     6.468080     0.475900    -3.326061
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   4.70603E+00   4.70604E+00   1.102E-05  -1.678E-02
+  Mn CT S2                                                          -1.213E-03
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   3.26716E+00   1.000E-02   1.067E+03
+  @ATELIER_RMSSPOT       =   0.00000E+00   1.22557E+01   1.000E-03   1.502E+02
+  
+ CYCLE NUMBER 3:
+  
+  ABERR F. =        0.18381470
+  CONST F. =     1130.21646367
+  ERR. F.  =     1130.40027837       (change =      -87.44178779)
+  
+  OPD     0.22124225     0.18755451     0.11254280
+  WAV     0.23166130     0.19400478     0.12096089
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S3                4.25793223E-01     -7.10E-05
+  CUY S4                1.51374738E-01     -5.57E-04
+  CUY S5                2.94018272E-01      1.50E-03
+  CUY S6                4.02829020E-01      2.19E-03
+  CUY S7                3.07018892E-02      1.13E-04
+  CUY S8               -2.50845804E-01     -4.20E-05
+  CUY S9               -5.13072535E-01      2.34E-04
+  CUY S10              -3.45636030E-01      3.07E-04
+  A   S3               -4.48133822E-03     -2.20E-05
+  A   S4               -2.55475608E-02      3.34E-05
+  A   S5               -1.05061715E-01     -3.61E-05
+  A   S6               -6.87972558E-02      3.43E-05
+  A   S7                2.73140346E-02     -3.31E-05
+  A   S8                4.36784568E-03      2.94E-05
+  A   S9                6.26998074E-03     -4.48E-05
+  A   S10               2.72835882E-02      4.18E-05
+  THI S2                1.00000000E-03      1.02E-17
+  THI S4                3.89365204E-01     -1.58E-04
+  THI S6                1.55747150E-01     -3.68E-03
+  THI S8                5.68858213E-01     -4.16E-04
+  THI S10               5.84296542E-02     -3.23E-04
+  THI S12               6.52064052E-01     -2.40E-04
+  THI S14               2.48485077E-01     -1.65E-04
+  THI S16               5.67385077E-01     -1.65E-04
+  THI S18               1.73850774E-02     -1.65E-04
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      4.706028     0.000000    -0.004802     6.462934     0.475900    -3.322332
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   4.70603E+00   4.70603E+00   2.898E-08  -1.656E-02
+  Mn CT S2                                                          -1.072E-03
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   3.18180E+00   1.000E-02   1.012E+03
+  @ATELIER_RMSSPOT       =   0.00000E+00   1.08549E+01   1.000E-03   1.178E+02
+  
+ CYCLE NUMBER 4:
+  
+  ABERR F. =        0.18243521
+  CONST F. =     1124.40431170
+  ERR. F.  =     1124.58674692       (change =       -5.81353145)
+  
+  OPD     0.21799872     0.18575557     0.11519915
+  WAV     0.22820940     0.19211624     0.12412914
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S3                4.25795867E-01      2.64E-06
+  CUY S4                1.51342510E-01     -3.22E-05
+  CUY S5                2.94091847E-01      7.36E-05
+  CUY S6                4.02955469E-01      1.26E-04
+  CUY S7                3.07174573E-02      1.56E-05
+  CUY S8               -2.50843811E-01      1.99E-06
+  CUY S9               -5.13050043E-01      2.25E-05
+  CUY S10              -3.45610721E-01      2.53E-05
+  A   S3               -4.48358646E-03     -2.25E-06
+  A   S4               -2.55438137E-02      3.75E-06
+  A   S5               -1.05066383E-01     -4.67E-06
+  A   S6               -6.87925369E-02      4.72E-06
+  A   S7                2.73098980E-02     -4.14E-06
+  A   S8                4.37133518E-03      3.49E-06
+  A   S9                6.26475951E-03     -5.22E-06
+  A   S10               2.72882336E-02      4.65E-06
+  THI S2                1.00000000E-03      0.00E+00
+  THI S4                3.89356640E-01     -8.56E-06
+  THI S6                1.55403553E-01     -3.44E-04
+  THI S8                5.68830403E-01     -2.78E-05
+  THI S10               5.84013591E-02     -2.83E-05
+  THI S12               6.52053099E-01     -1.10E-05
+  THI S14               2.48471910E-01     -1.32E-05
+  THI S16               5.67371910E-01     -1.32E-05
+  THI S18               1.73719104E-02     -1.32E-05
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      4.706028     0.000000    -0.004661     6.462489     0.475900    -3.322015
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   4.70603E+00   4.70603E+00   5.511E-08  -3.579E-02
+  Mn CT S2                                                          -1.075E-03
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   3.17432E+00   1.000E-02   1.008E+03
+  @ATELIER_RMSSPOT       =   0.00000E+00   1.08062E+01   1.000E-03   1.168E+02
+ RAY ERROR: REFL 14
+ RAY ERROR: REFL 14
+ RAY ERROR: REFL 14
+  
+ CYCLE NUMBER 5:
+  
+  ABERR F. =        0.18243222
+  CONST F. =     1124.40922221
+  ERR. F.  =     1124.59165443       (change =        0.00490751)
+  
+  OPD     0.21799674     0.18575528     0.11519044
+  WAV     0.22820723     0.19211590     0.12411925
+  
+  
+  
+  Parameter                 Value            Change
+  CUY S3                4.25795846E-01     -2.13E-08
+  CUY S4                1.51342576E-01      6.60E-08
+  CUY S5                2.94091766E-01     -8.12E-08
+  CUY S6                4.02955266E-01     -2.04E-07
+  CUY S7                3.07173978E-02     -5.95E-08
+  CUY S8               -2.50843820E-01     -8.58E-09
+  CUY S9               -5.13050038E-01      4.78E-09
+  CUY S10              -3.45610748E-01     -2.76E-08
+  A   S3               -4.48359382E-03     -7.36E-09
+  A   S4               -2.55438013E-02      1.24E-08
+  A   S5               -1.05066381E-01      2.87E-09
+  A   S6               -6.87925364E-02      5.33E-10
+  A   S7                2.73098839E-02     -1.40E-08
+  A   S8                4.37134696E-03      1.18E-08
+  A   S9                6.26474348E-03     -1.60E-08
+  A   S10               2.72882283E-02     -5.29E-09
+  THI S2                1.00000000E-03      0.00E+00
+  THI S4                3.89356604E-01     -3.62E-08
+  THI S6                1.55404226E-01      6.73E-07
+  THI S8                5.68830545E-01      1.42E-07
+  THI S10               5.84014746E-02      1.15E-07
+  THI S12               6.52053021E-01     -7.75E-08
+  THI S14               2.48471901E-01     -9.15E-09
+  THI S16               5.67371901E-01     -9.15E-09
+  THI S18               1.73719013E-02     -9.15E-09
+  
+        EFL          REDU         PIM          OAL         EN PUP       EX PUP
+      4.706028     0.000000    -0.004661     6.462490     0.475900    -3.322015
+  
+  Active Constraints -   2:    target        value         diff        cost
+  EFL                    =   4.70603E+00   4.70603E+00   4.815E-08  -1.361E-02
+  Mn CT S2                                                          -9.663E-04
+  
+  Weighted Constraints:        target        value        WTC/PTC     contrib
+  @ATELIER_LATCOLOR      =   0.00000E+00   3.17433E+00   1.000E-02   1.008E+03
+  @ATELIER_RMSSPOT       =   0.00000E+00   1.08061E+01   1.000E-03   1.168E+02
+  
+     Normal AUTO Completion - System improvement less than IMP
+AUT> GO
+ 
+ 
+CODE V> BUF PUT B1 I^row J1 "schema"
+      Created new worksheet B1.
+CODE V> BUF PUT B1 I^row J2 "atelier-codev-target-v1"
+CODE V> BUF PUT B1 I^row J1 "status"
+CODE V> BUF PUT B1 I^row J2 "ok"
+CODE V> BUF PUT B1 I^row J1 "mode"
+CODE V> BUF PUT B1 I^row J2 "target"
+CODE V> BUF PUT B1 I^row J1 "stage"
+CODE V> BUF PUT B1 I^row J2 "A"
+CODE V> BUF PUT B1 I^row J1 "source_zmx"
+CODE V> BUF PUT B1 I^row J2 "US10281683B2.zmx"
+CODE V> BUF PUT B1 I^row J1 "num_fields"
+CODE V> BUF PUT B1 I^row J2 ^numf_out
+CODE V> BUF PUT B1 I^row J1 "vignetting_edge"
+CODE V> BUF PUT B1 I^row J2 0.4
+CODE V> BUF PUT B1 I^row J1 "target.efl_mm"
+CODE V> BUF PUT B1 I^row J2 ^target_efl
+CODE V> BUF PUT B1 I^row J1 "target.f_number"
+CODE V> BUF PUT B1 I^row J2 3
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.fno"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_fno
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_epd
+CODE V> BUF PUT B1 I^row J1 "seed_baseline.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^seed_baseline_maximh
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_fno
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_epd
+CODE V> BUF PUT B1 I^row J1 "config_pre_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^config_pre_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "post_aut.efl_y_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_efl_y_mm
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_lateral_color_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_lateral_color_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_spot_diameter_um"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_spot_diameter_um
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_rms_wavefront_error_waves"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_rms_wavefront_error_waves
+CODE V> BUF PUT B1 I^row J1 "post_aut.max_distortion_pct"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_max_distortion_pct
+CODE V> BUF PUT B1 I^row J1 "post_aut.fno"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_fno
+CODE V> BUF PUT B1 I^row J1 "post_aut.epd_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_epd
+CODE V> BUF PUT B1 I^row J1 "post_aut.maximh_mm"
+CODE V> BUF PUT B1 I^row J2 ^post_aut_maximh
+CODE V> BUF PUT B1 I^row J1 "efl_target_deviation_pct"
+CODE V> BUF PUT B1 I^row J2 ^efl_target_dev_pct
+CODE V> BUF PUT B1 I^row J1 "aut_converged"
+CODE V> BUF PUT B1 I^row J2 ^aut_converged
+CODE V> BUF EXP B1 "D:\atelier-wt-c\.planning\loop\p15-stageb-evidence\fno-matrix-2026-07-11\US10281683B2_loosen\rung3_fno0300\ray_retry\atelier_codev_target_A_vig0400.tsv"
+     Buffer B1 exported to file atelier_codev_target_A_vig0400.tsv
+CODE V> BUF DEL B1
+CODE V> OUT YES
+CODE V> EXI YES
+     EXI                                                                              11-Jul-26  14H 13M  9S
+                                                 CODE V PC  Version: 11.5             CPU clock:  0H  0M  5S

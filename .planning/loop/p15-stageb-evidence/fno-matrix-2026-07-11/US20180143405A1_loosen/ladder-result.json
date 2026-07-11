@@ -1,0 +1,40 @@
+{
+  "schema": "atelier-p15-fno-ladder-v1",
+  "source_zmx": "US20180143405A1.zmx",
+  "stage": "A",
+  "target_efl_mm": 3.0730259620372187,
+  "fnum_target": 2.4,
+  "rung_count": 3,
+  "fnum_tolerance_pct": 8.0,
+  "native_fnum_measured": null,
+  "rungs": [
+    {
+      "rung_index": 0,
+      "target_fnum": null,
+      "status": "error",
+      "measured_fnum": null,
+      "fnum_target_deviation_pct": null,
+      "fno_param_achieved": null,
+      "ray_traceable": null,
+      "ray_grid": null,
+      "efl_target_deviation_pct": null,
+      "post_aut.max_rms_spot_diameter_um": null,
+      "post_aut.max_rms_wavefront_error_waves": null,
+      "err_f_ratio": null,
+      "aut_converged": false,
+      "autovig.edge_used": null,
+      "autovig.converged": null,
+      "effective_edge_used": null,
+      "ray_retry": null,
+      "error": {
+        "kind": "timeout",
+        "detail": "CODE V batch run exceeded its hard timeout"
+      }
+    }
+  ],
+  "last_measured_rung_index": null,
+  "last_measured_rung": null,
+  "target_achieved": false,
+  "accepted_final": null,
+  "blocked": true
+}
