@@ -1668,10 +1668,11 @@ def _candidate_manufacturability_context(
 def _candidate_repeatability_context(
     rep: orchestration.RepeatabilityMetrics,
 ) -> dict[str, object]:
-    """P17 sub-item 3: render the honest run_count/status the page must
-    show as-is — `orchestrate()`'s only wired path today (`repeat_runs=1`)
-    always yields `status="unavailable"`, and this context never upgrades
-    that (no client-side fabrication)."""
+    """Render the server-computed repeat distribution without fabrication.
+
+    RMS samples are CODE V post-AUT cropped/vignetted-pupil max spot diameter/2;
+    the scorecard headline RMS remains Optiland full-aperture and is not comparable.
+    """
     return {
         "run_count": rep.run_count,
         "status": rep.status,

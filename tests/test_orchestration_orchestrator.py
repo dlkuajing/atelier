@@ -264,6 +264,7 @@ def test_orchestrate_mode3_repeats_strictly_serial_and_aggregates(monkeypatch):
     def _candidate_for_seed(*, run_index, **kwargs):  # noqa: ANN001
         calls.append(run_index)
         diameter = (10.0, 14.0, 18.0)[run_index - 1]
+        preferred = "both" if run_index == 2 else "asphere"
         return seed.model_copy(
             update={
                 "candidate_id": "repeat-mode3",
@@ -274,6 +275,18 @@ def test_orchestrate_mode3_repeats_strictly_serial_and_aggregates(monkeypatch):
                         "post_aut.max_rms_wavefront_error_waves": run_index / 100,
                     }
                 ),
+                "optimized_zmx_path": f"run-{run_index}/candidate.zmx",
+                "codev_preferred_config": preferred,
+                "codev_config_snapshots": {
+                    "asphere": {
+                        "post_aut.max_rms_spot_diameter_um": diameter,
+                        "post_aut.max_rms_wavefront_error_waves": run_index / 100,
+                    },
+                    "both": {
+                        "post_aut.max_rms_spot_diameter_um": 60.0,
+                        "post_aut.max_rms_wavefront_error_waves": 0.9,
+                    },
+                },
             }
         )
 
@@ -294,6 +307,58 @@ def test_orchestrate_mode3_repeats_strictly_serial_and_aggregates(monkeypatch):
     assert repeat.rms_spot_radius_um_max.value == 9.0
     assert repeat.rms_spot_radius_um_spread.value == 4.0
     assert repeat.wfe_waves_spread.value == pytest.approx(0.02)
+    generated = result.candidates[0].generated
+    assert generated.repeat_run_artifact_paths == [
+        "run-1/candidate.zmx",
+        "run-2/candidate.zmx",
+        "run-3/candidate.zmx",
+    ]
+    assert any("preferred flip both->asphere" in note for note in generated.generation_notes)
+
+
+def test_orchestrate_mode3_first_run_failure_uses_second_run_artifact(monkeypatch):
+    seed = RetrievalGenerator()._generate(_wide_target_spec(), _wide_target_spec(), n=1)[0]
+    monkeypatch.setattr(generators_module, "DEFAULT_CODEV_EXECUTABLE", Path(__file__))
+    monkeypatch.setattr(
+        TargetConvergedGenerator,
+        "_rank_seeds_by_target_match",
+        staticmethod(lambda spec: [(seed.payload, object())]),
+    )
+
+    def _candidate_for_seed(*, run_index, **kwargs):  # noqa: ANN001
+        if run_index == 1:
+            return None
+        return seed.model_copy(
+            update={
+                "candidate_id": "repeat-mode3",
+                "mode": GenerationMode.TARGET_CONVERGED,
+                "optimized_zmx_path": f"run-{run_index}/candidate.zmx",
+                "codev_preferred_config": "asphere",
+                "codev_config_snapshots": {
+                    "asphere": {
+                        "post_aut.max_rms_spot_diameter_um": 10.0 + run_index,
+                        "post_aut.max_rms_wavefront_error_waves": run_index / 100,
+                    }
+                },
+            }
+        )
+
+    monkeypatch.setattr(
+        TargetConvergedGenerator, "_candidate_for_seed", staticmethod(_candidate_for_seed)
+    )
+    result = orchestrate(
+        _wide_target_spec(),
+        _wide_target_spec(),
+        n=1,
+        modes=[GenerationMode.TARGET_CONVERGED],
+        repeat_runs=3,
+    )
+    generated = result.candidates[0].generated
+    assert generated.optimized_zmx_path == "run-2/candidate.zmx"
+    assert generated.repeat_run_artifact_paths == [
+        "run-2/candidate.zmx",
+        "run-3/candidate.zmx",
+    ]
 
 
 # ---------------------------------------------------------------------------

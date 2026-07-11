@@ -294,6 +294,28 @@ def test_candidate_submit_rejects_repeat_runs_outside_1_to_3(monkeypatch):
         assert client.post("/candidates", data=payload).status_code == 400
 
 
+def test_candidate_submit_repeat_runs_two_reaches_orchestrate(monkeypatch):
+    seen: dict[str, object] = {}
+
+    def _recording_orchestrate(spec, target, *, n=4, **kwargs):  # noqa: ANN001, ARG001
+        seen.update(kwargs)
+        return _full_candidate_set()
+
+    monkeypatch.setattr("app.core.orchestration.orchestrate", _recording_orchestrate)
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+    payload = _candidate_form_payload()
+    payload["repeat_runs"] = 2
+    with TestClient(app) as client:
+        submitted = client.post("/candidates", data=payload, follow_redirects=False)
+        assert submitted.status_code == 303
+        job_id = submitted.headers["location"].rsplit("/", 1)[1]
+        with client.stream("GET", f"/api/optical/jobs/{job_id}/events") as streamed:
+            "".join(streamed.iter_text())
+    assert seen["repeat_runs"] == 2
+    assert str(seen["artifact_dir"]).endswith(job_id)
+
+
 def _candidate_card_html(html: str, candidate_id: str) -> str:
     match = re.search(
         rf'<article\b(?=[^>]*data-candidate-id="{re.escape(candidate_id)}")[^>]*>.*?</article>',

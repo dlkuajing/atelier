@@ -219,7 +219,13 @@ class RepeatabilityMetrics(BaseModel):
     wfe_waves_min: MetricValue
     wfe_waves_max: MetricValue
     wfe_waves_spread: MetricValue
-    note: str = Field(..., description="人读一句话说明（如 'run_count=1，未做重复性验证'）")
+    note: str = Field(
+        ...,
+        description=(
+            "人读说明；RMS 样本为 CODE V post-AUT 裁瞳 max RMS spot diameter/2，"
+            "不是 Optiland 全口径 scorecard headline RMS"
+        ),
+    )
 
     @model_validator(mode="after")
     def _unavailable_has_no_stats(self) -> RepeatabilityMetrics:
@@ -304,7 +310,10 @@ def _default_repeatability() -> RepeatabilityMetrics:
         wfe_waves_min=_UNAVAILABLE_METRIC,
         wfe_waves_max=_UNAVAILABLE_METRIC,
         wfe_waves_spread=_UNAVAILABLE_METRIC,
-        note="run_count=1，未做重复性验证",
+        note=(
+            "run_count=1，未做重复性验证；RMS 口径定义为 CODE V post-AUT "
+            "裁瞳 max spot diameter/2（非 Optiland 全口径 headline RMS）"
+        ),
     )
 
 
@@ -394,6 +403,14 @@ class GeneratedCandidate(BaseModel):
         None, description="Mode3 优化后 ZMX 的实际路径；持久化启用时为 job artifact 路径"
     )
     artifact_warnings: list[str] = Field(default_factory=list)
+    repeat_run_artifact_paths: list[str] = Field(
+        default_factory=list,
+        description="Mode3 所有成功重跑的持久化 ZMX 路径，供审计与留存管理",
+    )
+    codev_preferred_config: str | None = Field(default=None, exclude=True)
+    codev_config_snapshots: dict[str, dict[str, float | str | None]] = Field(
+        default_factory=dict, exclude=True
+    )
     repeat_rms_samples_um: list[float] = Field(default_factory=list, exclude=True)
     repeat_wfe_samples_waves: list[float] = Field(default_factory=list, exclude=True)
 

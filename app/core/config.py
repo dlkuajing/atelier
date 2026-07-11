@@ -42,7 +42,10 @@ class Settings(BaseSettings):
 
     # === DB ===
     database_url: str | None = None
-    job_artifacts_dir: Path = Path("var/job-artifacts")
+    job_artifacts_dir: Path = Field(
+        Path("var/job-artifacts"),
+        description="Persistent job artifacts root; retention/GC policy is future work.",
+    )
 
     # === Observability ===
     langfuse_host: str | None = None

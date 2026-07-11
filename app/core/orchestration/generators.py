@@ -617,13 +617,32 @@ class TargetConvergedGenerator(CandidateGenerator):
                     rms_samples: list[float] = []
                     wfe_samples: list[float] = []
                     dropped: list[str] = []
+                    primary_config = primary.codev_preferred_config
+                    artifact_paths = [
+                        attempt.optimized_zmx_path
+                        for attempt in successful
+                        if attempt.optimized_zmx_path is not None
+                    ]
                     for run_index, attempt in enumerate(attempts, 1):
                         if attempt is None:
                             rms_samples.append(math.nan)
                             wfe_samples.append(math.nan)
                             dropped.append(f"repeat run {run_index}: candidate generation failed")
                             continue
-                        snapshot = attempt.optical_extras.codev_post_aut or {}
+                        if attempt.codev_preferred_config != primary_config:
+                            dropped.append(
+                                f"repeat run {run_index}: preferred flip "
+                                f"{attempt.codev_preferred_config}->{primary_config}; "
+                                "sampled primary config"
+                            )
+                        snapshot = attempt.codev_config_snapshots.get(primary_config or "")
+                        if snapshot is None:
+                            rms_samples.append(math.nan)
+                            wfe_samples.append(math.nan)
+                            dropped.append(
+                                f"repeat run {run_index}: config-missing ({primary_config})"
+                            )
+                            continue
                         rms = snapshot.get("post_aut.max_rms_spot_diameter_um")
                         wfe = snapshot.get("post_aut.max_rms_wavefront_error_waves")
                         if isinstance(rms, (int, float)) and math.isfinite(rms):
@@ -641,6 +660,7 @@ class TargetConvergedGenerator(CandidateGenerator):
                             "repeat_rms_samples_um": rms_samples,
                             "repeat_wfe_samples_waves": wfe_samples,
                             "generation_notes": [*primary.generation_notes, *dropped],
+                            "repeat_run_artifact_paths": artifact_paths,
                         }
                     )
                     candidates.append(primary)
@@ -828,6 +848,11 @@ class TargetConvergedGenerator(CandidateGenerator):
         provenance = provenance_raw if isinstance(provenance_raw, Mapping) else {}
         from app.core.relative_illumination import compute_relative_illumination
 
+        config_snapshots = {
+            str(name): _codev_post_aut_snapshot(raw_config)
+            for name, raw_config in configs.items()
+            if isinstance(raw_config, Mapping) and "error" not in raw_config
+        }
         return GeneratedCandidate(
             candidate_id=f"{seed.metadata.case_id}::target-converged-{preferred}",
             mode=GenerationMode.TARGET_CONVERGED,
@@ -855,4 +880,7 @@ class TargetConvergedGenerator(CandidateGenerator):
             ),
             optimized_zmx_path=str(optimized_zmx_path),
             artifact_warnings=artifact_warnings,
+            repeat_run_artifact_paths=[str(optimized_zmx_path)],
+            codev_preferred_config=preferred,
+            codev_config_snapshots=config_snapshots,
         )

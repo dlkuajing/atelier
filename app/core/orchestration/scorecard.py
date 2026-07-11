@@ -639,7 +639,10 @@ def _repeatability(
             wfe_waves_min=wfe_min,
             wfe_waves_max=wfe_max,
             wfe_waves_spread=wfe_spread,
-            note=f"run_count={run_count}，跨 {run_count} 次独立跑取分布",
+            note=(
+                f"run_count={run_count}，跨 {run_count} 次独立跑取分布；RMS 为 CODE V "
+                "post-AUT 裁瞳 max spot diameter/2（非 Optiland 全口径 headline RMS）"
+            ),
         )
     unavailable = _metric(None)
     return RepeatabilityMetrics(
@@ -651,7 +654,10 @@ def _repeatability(
         wfe_waves_min=unavailable,
         wfe_waves_max=unavailable,
         wfe_waves_spread=unavailable,
-        note=f"run_count={run_count}，未做重复性验证",
+        note=(
+            f"run_count={run_count}，未做重复性验证（有效样本不足）；RMS 口径定义为 CODE V post-AUT "
+            "裁瞳 max spot diameter/2（非 Optiland 全口径 headline RMS）"
+        ),
     )
 
 
