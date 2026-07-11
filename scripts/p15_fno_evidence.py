@@ -29,6 +29,7 @@ timeout 五+一类。只出数据与分类，不下良品判定（AGENTS.md 北�
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import sys
 from dataclasses import dataclass
@@ -254,18 +255,30 @@ def write_manifest_tsv(matrix: list[MatrixRow], path: Path) -> None:
 
 _LIS_LINE_THRESHOLD = 500
 _LIS_CONTEXT_LINES = 2
-_LIS_SIGNAL_RE = re.compile(r"RAY ERROR|WARNING -|AUTO Completion|CYCLE NUMBER")
+# 信号行正则必须覆盖分类器（fno_probe.classify_fno_listing）的**全部**证据形
+# 态，否则 trimmed 归档无法复核 runtime 分类（对抗审查 MAJOR-4 实锤：初版漏
+# 了 "Total reflection"/"ERROR -" 形态的 TIR 行，5 格 runtime=TIR 的已归档清
+# 单按 trimmed 文本重判会降级为 ok/aperture-conflict——见 summary.md §6）。
+_LIS_SIGNAL_RE = re.compile(
+    r"RAY ERROR|Total reflection|ERROR -|WARNING -|AUTO Completion|CYCLE NUMBER"
+)
 
 
 def _trim_large_lis(lis_path: Path) -> None:
     """大 .lis 只留关键段+行号（brief 明确允许），分类本身已在运行时基于全文
     完成（见 fno_probe.run_fno_probe），本函数只影响落盘/入库的内容。<=500
-    行的小文件原样保留。"""
+    行的小文件原样保留。
+
+    可复核性锚（MAJOR-4 修复）：header 记录全文 sha256 与原始行数——信号正
+    则覆盖分类器全部证据形态后，trimmed 文本重跑分类器可复现 runtime 分类；
+    sha256 供任何持有原始 CODE V 输出的一方核对归档对应关系。"""
     if not lis_path.is_file():
         return
-    raw_lines = lis_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    full_text = lis_path.read_text(encoding="utf-8", errors="replace")
+    raw_lines = full_text.splitlines()
     if len(raw_lines) <= _LIS_LINE_THRESHOLD:
         return
+    full_sha256 = hashlib.sha256(full_text.encode("utf-8", errors="replace")).hexdigest()
     keep: set[int] = set(range(min(40, len(raw_lines))))  # 头部：导入/配置回显
     for i, line in enumerate(raw_lines):
         if _LIS_SIGNAL_RE.search(line):
@@ -273,10 +286,12 @@ def _trim_large_lis(lis_path: Path) -> None:
     excerpt = [f"{i + 1:6d}| {raw_lines[i]}" for i in sorted(keep)]
     header = [
         f"! trimmed excerpt: {len(raw_lines)} raw lines -> {len(excerpt)} kept "
-        "(RAY ERROR / WARNING / AUTO Completion / CYCLE NUMBER lines + "
-        f"{_LIS_CONTEXT_LINES}-line context, plus the first 40 lines; original "
-        "line numbers prefixed). Classification already ran on the full text "
-        "at run time -- this trimming only affects what's persisted to disk.",
+        "(RAY ERROR / Total reflection / ERROR - / WARNING / AUTO Completion / "
+        f"CYCLE NUMBER lines + {_LIS_CONTEXT_LINES}-line context, plus the first "
+        "40 lines; original line numbers prefixed). Classification already ran "
+        "on the full text at run time -- this trimming only affects what's "
+        "persisted to disk.",
+        f"! full-text sha256: {full_sha256}  (raw line count: {len(raw_lines)})",
         "",
     ]
     lis_path.write_text("\n".join(header + excerpt) + "\n", encoding="utf-8")

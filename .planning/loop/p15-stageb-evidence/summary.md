@@ -81,6 +81,17 @@
 3. **本探针短 AUT（2 cycle）**：终止措辞分布（21 次 "Maximum cycle limit reached"）是 MXC 2 的直接后果，不代表完整优化的终止形态；本探针只采失败模式，不采收敛质量。
 4. **像质读数不入本报告**：带 RAY ERROR 的光栅上 RMS/WFE 数字不可信（SPOTDATA fail-open 跳过失败场次），故本报告刻意不出像质列；阶梯引擎的 per-rung 像质必须连同渐晕 edge_used 一起读。
 5. 逐格原始证据：`results.tsv`（42 行全量）+ 每 seed 子目录 `.seq/.tsv/.lis`（大 .lis 为关键段摘录+原始行号，分类时已用全文）。
+6. **归档口径与 5 格不可复核清单（对抗审查 MAJOR-4 实锤，如实声明）**：初版 trim 信号正则漏了 `Total reflection`/`ERROR -` 形态的 TIR 行（分类器的 TIR 证据有 `RAY ERROR: REFL` 与 `Total reflection` 两种形态，trim 只保留了前者），导致以下 5 格的**已归档 trimmed 清单**重跑分类器无法复现 runtime 分类（runtime 分类基于全文、results.tsv 数字为真值；全文在 trim 时被原位覆写、本窗禁跑 CODE V 无法重采）：
+
+   | cell | runtime 分类（results.tsv） | trimmed 归档重判 |
+   |---|---|---|
+   | US10330891B2 loosen→2.400 | TIR（REFL 1） | ok |
+   | US20170003482A1 tighten→1.800 | TIR（REFL 1, MISS 6） | aperture-conflict |
+   | US20140111876A1 loosen→2.570 | TIR（REFL 1） | ok |
+   | US20140111876A1 loosen→3.000 | TIR（REFL 1） | ok |
+   | US-12443014-B2-e1 loosen→4.000 | TIR（REFL 2） | ok |
+
+   共性：这 5 格 runtime REFL 计数极低（1-2），其 TIR 证据恰好全部来自被丢弃的 `Total reflection`/`ERROR -` 行。其余 37 格 trimmed 归档重判与 runtime 一致（可复核）。**修复已落**：trim 正则补齐两种形态 + header 记录全文 sha256/原始行数（后续采证全部可复核）；**这 5 格排入下一真机窗重采队列**（同格重跑 ~15s/格，归档即得全证据）。分布结论稳健性：即使把这 5 格保守地从 TIR 改记 ok，TIR 仍 27/42（64%）、收紧方向仍 0 clean，§0-§4 结论不变。
 
 ## 7. 对 Stage 3 阶梯引擎（已建，待真机验证）的输入
 
