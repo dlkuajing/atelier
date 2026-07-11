@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import re
 import shutil
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -515,19 +514,17 @@ def _parse_surface(
     glass = _optional_text(data.get(f"{prefix}.glass"))
     nd = _optional_float(data.get(f"{prefix}.nd"))
     vd = _optional_float(data.get(f"{prefix}.vd"))
-    vd_source = "dispersion-measured" if vd not in (None, 0.0) else None
-    match = re.fullmatch(r"(?P<nd>\d{6})\.(?P<vd>\d{3,})", glass or "")
-    if vd in (None, 0.0) and nd is not None and match is not None:
-        decoded_nd = 1.0 + int(match.group("nd")) / 1_000_000.0
-        if abs(decoded_nd - nd) > 5e-4:
-            raise CodeVBatchError(
-                "failure",
-                "model-glass code nd disagrees with CODE V readout",
-                details={"surface": surface_index, "glass": glass, "decoded_nd": decoded_nd, "readout_nd": nd},
-            )
-        digits = match.group("vd")
-        vd = int(digits) / 10 ** (len(digits) - 2)
-        vd_source = "glass-code-decoded"
+    # Real-machine evidence (2026-07-11) proves GLA fractional digits are
+    # import-name mangling debris, not dispersion. Declared 546401.540607
+    # (nd=1.5464, vd=54.0607) reads back as 546000.401540; the same rule fits
+    # 542965.529055, 639236.228034, 539906.552927, 638139.228307, and
+    # 550536.504741. Seed-path names such as 544000.559000 can survive
+    # verbatim, so only the macro's measured dispersion is admissible.
+    if vd in (None, 0.0):
+        vd = None
+        vd_source = None
+    else:
+        vd_source = "dispersion-measured"
     return CodeVSurfaceReadout(
         index=surface_index,
         radius_y_mm=_required_float(data, f"{prefix}.radius_y_mm"),
