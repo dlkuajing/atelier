@@ -109,25 +109,26 @@ def test_build_zmx_from_codev_readout_emits_zemax_tokens() -> None:
     text = build_zmx_from_codev_readout(_manual_readout())
 
     assert text.startswith("VERS 191028")
-    assert "\r\n" in text
-    assert "\n" not in text.replace("\r\n", "")
+    # LF-only endings: CRLF breaks ZEMAXOS_TO_CV WAVM parsing (real-machine proof 2026-07-11).
+    assert "\r" not in text
+    assert text.endswith("\n")
     text.encode("ascii")
-    assert "MODE SEQ\r\n" in text
-    assert "UNIT MM X W X CM MR CPMM\r\n" in text
-    assert "FNUM 2.4 0\r\n" in text
-    assert "FTYP 3 0 2 2 0 0 0 2\r\n" in text
-    assert "WAVM 1 0.555 1\r\n" in text
-    assert "WAVM 2 0.65 0.107\r\n" in text
+    assert "MODE SEQ\n" in text
+    assert "UNIT MM X W X CM MR CPMM\n" in text
+    assert "FNUM 2.4 0\n" in text
+    assert "FTYP 3 0 2 2 0 0 0 2\n" in text
+    assert "WAVM 1 0.555 1\n" in text
+    assert "WAVM 2 0.65 0.107\n" in text
     wavm_lines = [line for line in text.splitlines() if line.startswith("WAVM ")]
     assert len(wavm_lines) == 24
     assert wavm_lines[:2] == ["WAVM 1 0.555 1", "WAVM 2 0.65 0.107"]
     assert wavm_lines[2:] == [f"WAVM {slot} 0.55 1" for slot in range(3, 25)]
-    assert "PWAV 1\r\n" in text
-    assert "SURF 0\r\n" in text
-    assert "SURF 1\r\n  STOP\r\n  TYPE EVENASPH\r\n" in text
-    assert "  CURV 0.05 0 0 0 0 \"\"\r\n" in text
-    assert "  GLAS BK7 0 0 1.5168 64.17 0 0 0 0 0 0 \r\n" in text
-    assert "  GLAS ___BLANK 1 0 1.62 30 0 0 0 0 0 0 \r\n" in text
+    assert "PWAV 1\n" in text
+    assert "SURF 0\n" in text
+    assert "SURF 1\n  STOP\n  TYPE EVENASPH\n" in text
+    assert "  CURV 0.05 0 0 0 0 \"\"\n" in text
+    assert "  GLAS BK7 0 0 1.5168 64.17 0 0 0 0 0 0 \n" in text
+    assert "  GLAS ___BLANK 1 0 1.62 30 0 0 0 0 0 0 \n" in text
 
 
 def test_marker_suffixed_glass_is_written_as_model_glass() -> None:
@@ -144,21 +145,21 @@ def test_marker_suffixed_glass_is_written_as_model_glass() -> None:
     text = build_zmx_from_codev_readout(
         replace(readout, surfaces=(marked, *readout.surfaces[1:]))
     )
-    assert "  GLAS APL5014CL_14_BLANK 1 0 1.544 56 0 0 0 0 0 0 \r\n" in text
+    assert "  GLAS APL5014CL_14_BLANK 1 0 1.544 56 0 0 0 0 0 0 \n" in text
     # The plain placeholder keeps its existing flag=1 behavior.
-    assert "  GLAS ___BLANK 1 0 1.62 30 0 0 0 0 0 0 \r\n" in text
-    assert "  CONI -0.2\r\n" in text
-    assert "  PARM 1 0\r\n" in text
-    assert "  PARM 2 0.0001\r\n" in text
-    assert "  PARM 3 -2e-06\r\n" in text
-    assert "  PARM 8 3e-12\r\n" in text
-    assert "  DIAM 1.1 0 0 0 1 \"\"\r\n" in text
-    assert "  DIAM 2.2 0 0 0 1 \"\"\r\n" in text
-    assert "  DIAM 3.3 0 0 0 1 \"\"\r\n" in text
-    assert "VDXN 0 0.05\r\n" in text
-    assert "VDYN 0 0.2\r\n" in text
-    assert "VCXN 0 0.15\r\n" in text
-    assert "VCYN 0 0.1\r\n" in text
+    assert "  GLAS ___BLANK 1 0 1.62 30 0 0 0 0 0 0 \n" in text
+    assert "  CONI -0.2\n" in text
+    assert "  PARM 1 0\n" in text
+    assert "  PARM 2 0.0001\n" in text
+    assert "  PARM 3 -2e-06\n" in text
+    assert "  PARM 8 3e-12\n" in text
+    assert "  DIAM 1.1 0 0 0 1 \"\"\n" in text
+    assert "  DIAM 2.2 0 0 0 1 \"\"\n" in text
+    assert "  DIAM 3.3 0 0 0 1 \"\"\n" in text
+    assert "VDXN 0 0.05\n" in text
+    assert "VDYN 0 0.2\n" in text
+    assert "VCXN 0 0.15\n" in text
+    assert "VCYN 0 0.1\n" in text
 
 
 def test_write_zmx_from_codev_readout_roundtrips_through_normalized_ingest(
@@ -171,8 +172,8 @@ def test_write_zmx_from_codev_readout_roundtrips_through_normalized_ingest(
 
     raw = output_path.read_bytes()
     assert raw.decode("ascii")
-    assert b"\r\n" in raw
-    assert b"\n" not in raw.replace(b"\r\n", b"")
+    assert b"\r" not in raw
+    assert b"\n" not in raw.replace(b"\n", b"")
 
     optic = load_normalized_zmx(output_path)
     efl = float(optic.paraxial.f2())
@@ -185,7 +186,7 @@ def test_write_zmx_from_codev_readout_can_emit_entrance_pupil_diameter() -> None
     readout = replace(_manual_readout(), aperture_type="EPD")
     text = build_zmx_from_codev_readout(readout)
 
-    assert "ENPD 4.2\r\n" in text
+    assert "ENPD 4.2\n" in text
     assert "FNUM" not in text
 
 

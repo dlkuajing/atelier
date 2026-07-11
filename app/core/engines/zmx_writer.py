@@ -41,12 +41,20 @@ def build_zmx_from_codev_readout(
     wavelengths_um: Sequence[float] | None = None,
     semi_diameter_mm: float | None = None,
 ) -> str:
-    """Return an ASCII Zemax ``.zmx`` prescription with CRLF newlines.
+    """Return an ASCII Zemax ``.zmx`` prescription with LF newlines.
 
     The input is the structured readout produced by ``codev_readout``. CODE V
     exposes vignetting as upper/lower pupil limits; Zemax stores equivalent
     decenter/compression arrays, so both ``VDXN/VDYN`` and ``VCXN/VCYN`` are
     emitted to preserve the four readout values.
+
+    Line endings MUST be LF: real-machine proof (2026-07-11, byte-identical
+    A/B import of the same 24-slot file) shows CRLF endings break
+    ZEMAXOS_TO_CV's WAVM wavelength parsing — the lens imports with NO
+    wavelength data ("No wavelength data specified"), silently killing
+    dispersion/vd and chromatic evaluation. The LF variant imports all
+    wavelengths and yields dispersion-measured vd. The seed corpus in
+    data/zmx/ is LF on disk and imports correctly.
     """
 
     surfaces = _ordered_surfaces(readout)
@@ -72,7 +80,7 @@ def build_zmx_from_codev_readout(
     for surface in surfaces:
         _append_surface(lines, surface, semi_diameter_override_mm=semi_diameter_mm)
 
-    text = "\r\n".join(lines) + "\r\n"
+    text = "\n".join(lines) + "\n"
     text.encode("ascii")
     return text
 
@@ -88,7 +96,7 @@ def write_zmx_from_codev_readout(
     output_path: Path | str,
     **kwargs: object,
 ) -> Path:
-    """Write a CODE V readout as an ASCII/CRLF Zemax file and return its path."""
+    """Write a CODE V readout as an ASCII/LF Zemax file and return its path."""
 
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)

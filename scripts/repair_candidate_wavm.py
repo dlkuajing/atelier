@@ -36,15 +36,23 @@ def pad_wavm_text(text: str) -> tuple[str, int]:
     return "".join(lines), len(padding)
 
 
-def repair_wavm_file(path: Path, *, write: bool = False) -> int:
-    """Audit one ZMX and optionally write padding; return the number of added rows."""
+def repair_wavm_file(path: Path, *, write: bool = False) -> tuple[int, bool]:
+    """Audit one ZMX; return (rows added, endings normalized).
+
+    Output is always LF-normalized: real-machine proof (2026-07-11, byte-identical
+    A/B import) shows CRLF endings break ZEMAXOS_TO_CV's WAVM wavelength parsing
+    (lens imports with no wavelength data). A file that is already 24-slot but
+    CRLF still gets rewritten to LF.
+    """
 
     raw = path.read_bytes()
     text, encoding = decode_zmx_text(raw)
     repaired, added = pad_wavm_text(text)
-    if write and added:
-        path.write_bytes(encode_zmx_text(repaired, encoding))
-    return added
+    normalized = repaired.replace("\r\n", "\n").replace("\r", "\n")
+    eol_fixed = normalized != repaired or "\r" in text
+    if write and (added or eol_fixed):
+        path.write_bytes(encode_zmx_text(normalized, encoding))
+    return added, eol_fixed
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -59,13 +67,16 @@ def main(argv: list[str] | None = None) -> int:
     failed = False
     for path in files:
         try:
-            added = repair_wavm_file(path, write=args.write)
+            added, eol_fixed = repair_wavm_file(path, write=args.write)
         except (OSError, ValueError) as exc:
             failed = True
             print(f"refused {path}: {exc}")
             continue
-        verdict = "already-24-slot" if not added else ("repaired" if args.write else "would-pad")
-        print(f"{verdict} {path}: {added} WAVM row(s)")
+        if not added and not eol_fixed:
+            verdict = "already-compliant"
+        else:
+            verdict = "repaired" if args.write else "would-repair"
+        print(f"{verdict} {path}: {added} WAVM row(s), eol_normalized={eol_fixed}")
     return 1 if failed else 0
 
 
