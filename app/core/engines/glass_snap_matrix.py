@@ -20,6 +20,7 @@ from app.core.engines.codev_batch import (
 from app.core.engines.codev_readout import CodeVReadout, CodeVReadoutResult, run_codev_readout
 from app.core.engines.glass_snap import build_plastic_catalog
 from app.core.engines.glass_snap_chain import (
+    SnapProposal,
     build_glass_freeze_reopt_sequence,
     build_material_region_identities,
     configuration_fingerprint,
@@ -89,10 +90,20 @@ def run_snap_matrix(
             rows.extend(_failed_rows(candidate, output_dir, candidate_id, "readout", exc))
             continue
 
+        proposals = propose_material_snaps(
+            identity,
+            build_plastic_catalog(),
+            spectral_definition="C-d-F/runtime-placeholder",
+            catalog_spectral_definition="C-d-F/runtime-placeholder",
+            # Matrix construction only: deliberately broad and uncalibrated.
+            tolerance=1.0,
+        )
+
         for code, variable in EXPERIMENTS:
             evidence = candidate_work / code
             evidence.mkdir(parents=True, exist_ok=True)
             row = _row(candidate, code, variable, evidence, output_dir)
+            _write_snap_proposals(evidence / "snap-proposals.json", proposals)
             if not identity.writable:
                 row["status"] = f"withheld:{'; '.join(identity.withheld_reasons)}"
                 rows.append(row)
@@ -103,15 +114,6 @@ def run_snap_matrix(
                 row["notes"] = "Python nd/vd recorded; CODE V GLD readback grammar is pending verification"
                 rows.append(row)
                 continue
-            proposals = propose_material_snaps(
-                identity,
-                build_plastic_catalog(),
-                spectral_definition="C-d-F/runtime-placeholder",
-                catalog_spectral_definition="C-d-F/runtime-placeholder",
-                # Matrix construction only: deliberately broad and uncalibrated.
-                # The report makes no quality verdict from this proposal distance.
-                tolerance=1.0,
-            )
             if code in {"B", "C", "F"} and any(p.disposition != "proposed" for p in proposals):
                 row["status"] = "withheld:snap proposal outside uncalibrated construction tolerance"
                 rows.append(row)
@@ -174,6 +176,34 @@ def run_snap_matrix(
     report_path = output_dir / "p13-snap-matrix.md"
     report_path.write_text(_report(rows), encoding="utf-8")
     return MatrixRunResult(tuple(rows), matrix_path, report_path)
+
+
+def _write_snap_proposals(path: Path, proposals: tuple[SnapProposal, ...]) -> None:
+    ledger = []
+    for proposal in proposals:
+        entry = proposal.result.entry
+        ledger.append(
+            {
+                "region_id": proposal.region.region_id,
+                "source": {
+                    "glass_name": proposal.region.source_glass_name,
+                    "nd": proposal.region.nd,
+                    "vd": proposal.region.vd,
+                },
+                "proposed": None
+                if entry is None
+                else {
+                    "catalog_id": entry.catalog_id,
+                    "glass_name": entry.glass_name,
+                    "nd": entry.nd,
+                    "vd": entry.vd,
+                },
+                "distance": proposal.result.distance,
+                "tolerance": proposal.result.tolerance,
+                "verdict": "snapped" if proposal.disposition == "proposed" else "out-of-tolerance",
+            }
+        )
+    path.write_text(json.dumps(ledger, indent=2, sort_keys=True), encoding="utf-8")
 
 
 def extract_snapshot_metrics(data: Mapping[str, str]) -> dict[str, object]:

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
 from app.core.engines.codev_batch import CodeVBatchResult
 from app.core.engines.codev_readout import parse_codev_readout_file
+from app.core.engines.glass_snap import CatalogEntry
 from app.core.engines.glass_snap_matrix import (
     EXPERIMENTS,
     SNAPSHOT_SCHEMA,
@@ -101,6 +103,32 @@ def test_matrix_identity_gate_withholds_all_cells(monkeypatch, tmp_path: Path) -
         [_candidate(tmp_path)], output_dir=tmp_path / "matrix", run_codev=True, readout_runner=_readout_runner
     )
     assert all(row["status"].startswith("withheld:") for row in result.rows)
+
+
+def test_withheld_candidate_still_writes_out_of_tolerance_proposal_ledger(
+    monkeypatch, tmp_path: Path
+) -> None:
+    from app.core.engines import glass_snap_matrix
+
+    monkeypatch.setattr(
+        glass_snap_matrix,
+        "build_plastic_catalog",
+        lambda: (CatalogEntry("far-catalog", "FAR", "v1", 3.0, 1.0),),
+    )
+    output = tmp_path / "matrix"
+    result = run_snap_matrix(
+        [_candidate(tmp_path)],
+        output_dir=output,
+        run_codev=True,
+        readout_runner=_readout_runner,
+        batch_runner=_batch_runner,
+    )
+    row = next(row for row in result.rows if row["experiment"] == "B")
+    assert row["status"] == "withheld:snap proposal outside uncalibrated construction tolerance"
+    ledger = json.loads((output / row["evidence_dir"] / "snap-proposals.json").read_text())
+    assert ledger
+    assert {item["verdict"] for item in ledger} == {"out-of-tolerance"}
+    assert all(item["tolerance"] == 1.0 for item in ledger)
 
 
 def test_matrix_readout_failure_marks_all_cells(tmp_path: Path) -> None:
