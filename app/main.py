@@ -7,6 +7,7 @@ import re
 import warnings
 from collections.abc import AsyncIterator, Mapping
 from contextlib import asynccontextmanager, redirect_stdout, suppress
+from datetime import UTC, datetime
 from io import StringIO
 from pathlib import Path
 from typing import Annotated
@@ -20,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from pydantic import ValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Apply Optiland 0.6 runtime patches FIRST — before any other Optiland import
@@ -31,6 +33,14 @@ _optiland_patches.apply_all()
 from app.api import optical, rag, wizard  # noqa: E402
 from app.core import orchestration  # noqa: E402
 from app.core.aberration import MTFResult  # noqa: E402
+from app.core.batch_archive import (  # noqa: E402
+    BatchArchive,
+    BatchArchiveError,
+    BatchJobRecord,
+    BatchRecord,
+    ExpertVerdict,
+    build_batch_workbook,
+)
 from app.core.config import settings  # noqa: E402
 from app.core.demo_cache import (  # noqa: E402
     DemoAnalysisBundle,
@@ -69,6 +79,11 @@ from app.core.zmx_ingest import (  # noqa: E402
 logger = structlog.get_logger(__name__)
 WEB_ROOT = Path(__file__).resolve().parent / "web"
 templates = Jinja2Templates(directory=WEB_ROOT / "templates")
+#: P18 batch archive singleton (mirrors `optical.job_store`'s module-level
+#: pattern) — file-backed, so this instance carries no state itself; tests
+#: monkeypatch it to a `BatchArchive(root=tmp_path)` the same way they
+#: monkeypatch `optical.job_store`.
+batch_archive_store = BatchArchive()
 _JOB_PROGRESS_PERCENT = {
     JobStatus.QUEUED: 10,
     JobStatus.RUNNING: 55,
@@ -2040,6 +2055,7 @@ async def root(request: Request) -> HTMLResponse:
                 ("Workbench", "#request"),
                 ("Library", "#library"),
                 ("Analysis", "#analysis"),
+                ("Batches", "/batches"),
                 ("API", "/docs"),
             ),
             "example_requirements": EXAMPLE_REQUIREMENTS,
@@ -2328,14 +2344,17 @@ def _safe_download_filename(value: str) -> str:
 _MAX_EXPORT_RESPONSE_BYTES = 50 * 1024 * 1024
 
 
-def _guard_export_size_or_413(content: bytes, *, artifact: str, job_id: str) -> None:
+def _guard_export_size_or_413(content: bytes, *, artifact: str, resource_id: str) -> None:
+    # `resource_id` is a job_id for candidate-set exports, a batch_id for
+    # P18 batch exports — generalized (was `job_id`) once a second, non-job
+    # caller (`batch_export_xlsx`) needed this same guard.
     if len(content) > _MAX_EXPORT_RESPONSE_BYTES:
         raise HTTPException(
             status_code=status.HTTP_413_CONTENT_TOO_LARGE,
             detail={
                 "error": "export_too_large",
                 "artifact": artifact,
-                "job_id": job_id,
+                "resource_id": resource_id,
                 "size_bytes": len(content),
                 "limit_bytes": _MAX_EXPORT_RESPONSE_BYTES,
                 "message": (
@@ -2373,7 +2392,7 @@ async def candidate_set_export_xlsx(job_id: str) -> Response:
         job_id=job_id,
         requirement=str(requirement) if requirement not in {None, ""} else None,
     )
-    _guard_export_size_or_413(workbook_bytes, artifact="workbook", job_id=job_id)
+    _guard_export_size_or_413(workbook_bytes, artifact="workbook", resource_id=job_id)
     filename = _safe_download_filename(f"atelier-candidates-{job_id}.xlsx")
     return Response(
         content=workbook_bytes,
@@ -2400,11 +2419,241 @@ async def candidate_bundle_zip(job_id: str, candidate_id: str) -> Response:
             detail={"error": "candidate_not_found", "job_id": job_id, "candidate_id": candidate_id},
         )
     zip_bytes = orchestration.build_candidate_bundle_zip(scored, target=candidate_set.target)
-    _guard_export_size_or_413(zip_bytes, artifact="bundle", job_id=job_id)
+    _guard_export_size_or_413(zip_bytes, artifact="bundle", resource_id=job_id)
     filename = _safe_download_filename(f"atelier-candidate-{candidate_id}.zip")
     return Response(
         content=zip_bytes,
         media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+
+# ---------------------------------------------------------------------------
+# P18 batch archive management (/batches, /batches/{batch_id})
+#
+# Batch jobs are produced offline by `scripts/p18_night_batch.py`
+# (`app.core.batch_runner.run_batch`) — a separate execution path from the
+# in-memory `optical.job_store` the rest of this file's web routes read
+# from. There is deliberately no `/jobs/{job_id}` for a batch job: the two
+# systems don't share job ids, and every page here reads straight off the
+# P18-1 archive (`batch_archive_store`), never `optical.job_store`.
+# ---------------------------------------------------------------------------
+
+_BATCH_STATUS_LABELS: dict[str, str] = {
+    "running": "Running",
+    "completed": "Completed",
+    "budget_exhausted": "Budget exhausted (resumable)",
+    "aborted": "Aborted",
+}
+
+_JOB_STATUS_LABELS: dict[str, str] = {
+    "queued": "Queued",
+    "running": "Running",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+}
+
+_FAILURE_CATEGORY_LABELS: dict[str, str] = {
+    "preflight": "Preflight (invalid target spec)",
+    "engine": "Engine",
+    "timeout": "Timeout",
+    "exception": "Unexpected exception",
+}
+
+
+def _batch_success_rate_label(jobs: list[BatchJobRecord]) -> str:
+    if not jobs:
+        return "0/0"
+    succeeded = sum(1 for j in jobs if j.status == "succeeded")
+    return f"{succeeded}/{len(jobs)}"
+
+
+def _load_batch_or_404(batch_id: str) -> BatchRecord:
+    try:
+        return batch_archive_store.get_batch(batch_id)
+    except BatchArchiveError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "batch_not_found", "batch_id": batch_id},
+        ) from exc
+
+
+def _batch_list_row(batch: BatchRecord) -> dict[str, object]:
+    jobs = batch_archive_store.list_jobs(batch.batch_id)
+    return {
+        "batch_id": batch.batch_id,
+        "created_at": batch.created_at,
+        "status": batch.status,
+        "status_label": _BATCH_STATUS_LABELS.get(batch.status, batch.status),
+        "engine": batch.engine,
+        "target_source": batch.target_source,
+        "target_count": batch.target_count,
+        "attempted_count": len(jobs),
+        "success_rate_label": _batch_success_rate_label(jobs),
+    }
+
+
+def _batches_list_context() -> dict[str, object]:
+    return {
+        "product_name": "Atelier",
+        "rows": [_batch_list_row(b) for b in batch_archive_store.list_batches()],
+    }
+
+
+def _job_candidate_rows(batch_id: str, job: BatchJobRecord) -> list[dict[str, object]]:
+    """Load the job's persisted `CandidateSet` (if any) straight off disk —
+    `candidate_set_pointer` is a path, not a URL, this is the only surface
+    that ever reads it. Missing/corrupt pointer -> `[]` (fail closed, no
+    verdict rows rendered rather than a 500)."""
+    if job.candidate_set_pointer is None:
+        return []
+    path = Path(job.candidate_set_pointer)
+    if not path.is_file():
+        return []
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        candidate_set = orchestration.CandidateSet.model_validate(payload)
+    except (json.JSONDecodeError, ValueError):
+        return []
+
+    rows: list[dict[str, object]] = []
+    for sc in candidate_set.candidates:
+        candidate_id = sc.scorecard.candidate_id
+        verdict = batch_archive_store.get_verdict(batch_id, job.job_id, candidate_id)
+        rank = sc.scorecard.rank
+        rows.append(
+            {
+                "candidate_id": candidate_id,
+                "mode_label": _mode_label(sc.mode),
+                "rank_status": rank.status,
+                "rank_score": formatting.fmt_float(rank.score) if rank.score is not None else "N/A",
+                "coverage_pct": formatting.fmt_pct(rank.coverage_pct, precision=0),
+                "verdict": (
+                    {
+                        "verdict_text": verdict.verdict_text,
+                        "reviewer": verdict.reviewer,
+                        "recorded_at": verdict.recorded_at,
+                        "note": verdict.note or "",
+                    }
+                    if verdict is not None
+                    else None
+                ),
+            }
+        )
+    return rows
+
+
+def _job_row_context(batch_id: str, job: BatchJobRecord) -> dict[str, object]:
+    result_summary = job.result_summary or {}
+    candidates = _job_candidate_rows(batch_id, job)
+    return {
+        "job_id": job.job_id,
+        "target_index": job.target_index,
+        "target_label": job.target_label,
+        "status": job.status,
+        "status_label": _JOB_STATUS_LABELS.get(job.status, job.status),
+        "failure_category_label": (
+            _FAILURE_CATEGORY_LABELS.get(job.failure.category, job.failure.category)
+            if job.failure is not None
+            else None
+        ),
+        "failure_message": job.failure.message if job.failure is not None else None,
+        "candidate_count": result_summary.get("candidate_count"),
+        "ranked_count": result_summary.get("ranked_count"),
+        "candidates": candidates,
+        "verdict_recorded_count": sum(1 for c in candidates if c["verdict"] is not None),
+    }
+
+
+def _batch_detail_context(batch: BatchRecord, jobs: list[BatchJobRecord]) -> dict[str, object]:
+    job_rows = [_job_row_context(batch.batch_id, job) for job in jobs]
+    total_candidates = sum(len(row["candidates"]) for row in job_rows)
+    total_verdicts = sum(row["verdict_recorded_count"] for row in job_rows)
+    return {
+        "product_name": "Atelier",
+        "batch": {
+            "batch_id": batch.batch_id,
+            "created_at": batch.created_at,
+            "updated_at": batch.updated_at,
+            "status": batch.status,
+            "status_label": _BATCH_STATUS_LABELS.get(batch.status, batch.status),
+            "engine": batch.engine,
+            "target_source": batch.target_source,
+            "target_count": batch.target_count,
+            "notes": list(batch.notes),
+        },
+        "attempted_count": len(jobs),
+        "success_rate_label": _batch_success_rate_label(jobs),
+        "verdict_progress_label": f"{total_verdicts}/{total_candidates}" if total_candidates else "0/0",
+        "jobs": job_rows,
+    }
+
+
+@app.get("/batches", response_class=HTMLResponse, tags=["web"])
+async def batches_list(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(request, "batch_list.html", _batches_list_context())
+
+
+@app.get("/batches/{batch_id}", response_class=HTMLResponse, tags=["web"])
+async def batch_detail(request: Request, batch_id: str) -> HTMLResponse:
+    batch = _load_batch_or_404(batch_id)
+    jobs = batch_archive_store.list_jobs(batch_id)
+    return templates.TemplateResponse(
+        request, "batch_detail.html", _batch_detail_context(batch, jobs)
+    )
+
+
+@app.post(
+    "/batches/{batch_id}/jobs/{job_id}/verdicts", include_in_schema=False, tags=["web"]
+)
+async def submit_batch_verdict(
+    batch_id: str,
+    job_id: str,
+    candidate_key: Annotated[str, Form(min_length=1)],
+    verdict_text: Annotated[str, Form(min_length=1, max_length=4000)],
+    reviewer: Annotated[str, Form(min_length=1, max_length=200)],
+    note: Annotated[str | None, Form(max_length=2000)] = None,
+) -> RedirectResponse:
+    """[EXPERT] 判定权红线：`verdict_text`/`reviewer` are required, non-blank
+    form fields — nothing here defaults, predicts, or backfills a verdict.
+    The timestamp is always server-generated (never trusts a client value)."""
+    _load_batch_or_404(batch_id)
+    try:
+        verdict = ExpertVerdict(
+            job_id=job_id,
+            candidate_key=candidate_key,
+            verdict_text=verdict_text,
+            reviewer=reviewer,
+            recorded_at=datetime.now(UTC).isoformat(timespec="seconds"),
+            note=note or None,
+        )
+    except ValidationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": "invalid_verdict", "message": str(exc)},
+        ) from exc
+    try:
+        batch_archive_store.put_verdict(verdict, batch_id=batch_id)
+    except BatchArchiveError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": "job_not_found", "batch_id": batch_id, "job_id": job_id},
+        ) from exc
+    return RedirectResponse(url=f"/batches/{batch_id}", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@app.get("/batches/{batch_id}/export.xlsx", include_in_schema=False, tags=["web"])
+async def batch_export_xlsx(batch_id: str) -> Response:
+    batch = _load_batch_or_404(batch_id)
+    jobs = batch_archive_store.list_jobs(batch_id)
+    verdicts = batch_archive_store.list_verdicts(batch_id)
+    workbook_bytes = build_batch_workbook(batch, jobs, verdicts)
+    _guard_export_size_or_413(workbook_bytes, artifact="batch-workbook", resource_id=batch_id)
+    filename = _safe_download_filename(f"atelier-batch-{batch_id}.xlsx")
+    return Response(
+        content=workbook_bytes,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
