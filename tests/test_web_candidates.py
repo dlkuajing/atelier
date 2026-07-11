@@ -285,6 +285,15 @@ def _candidate_form_payload() -> dict[str, object]:
     }
 
 
+def test_candidate_submit_rejects_repeat_runs_outside_1_to_3(monkeypatch):
+    store = JobStore()
+    monkeypatch.setattr(optical, "job_store", store)
+    with TestClient(app) as client:
+        payload = _candidate_form_payload()
+        payload["repeat_runs"] = 4
+        assert client.post("/candidates", data=payload).status_code == 400
+
+
 def _candidate_card_html(html: str, candidate_id: str) -> str:
     match = re.search(
         rf'<article\b(?=[^>]*data-candidate-id="{re.escape(candidate_id)}")[^>]*>.*?</article>',

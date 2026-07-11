@@ -391,6 +391,12 @@ class GeneratedCandidate(BaseModel):
     payload: OpticalSampleData  # 复用现有统一 payload（光路/MTF/点列/波前/…）
     optical_extras: OpticalExtras  # generator 阶段用 optic 算的、payload 缺失的量（RI 等）
     generation_notes: list[str]  # 诚实注记，如 "检索最近邻 seed，未朝 target 优化"
+    optimized_zmx_path: str | None = Field(
+        None, description="Mode3 优化后 ZMX 的实际路径；持久化启用时为 job artifact 路径"
+    )
+    artifact_warnings: list[str] = Field(default_factory=list)
+    repeat_rms_samples_um: list[float] = Field(default_factory=list, exclude=True)
+    repeat_wfe_samples_waves: list[float] = Field(default_factory=list, exclude=True)
 
     @property
     def is_target_converged(self) -> bool:  # 派生只读，不可单独伪造

@@ -14,6 +14,7 @@ from __future__ import annotations
 import io
 import os
 import zipfile
+from pathlib import Path
 
 import openpyxl
 
@@ -394,6 +395,22 @@ def test_bundle_zip_includes_zmx_once_mode3_artifact_is_persisted():
 
     with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
         assert "candidate.zmx" in zf.namelist()
+
+
+def test_bundle_zip_reads_persisted_mode3_artifact_path(tmp_path: Path):
+    expected = b"persistent optimized zmx bytes\r\n"
+    artifact = tmp_path / "job" / "candidates" / "candidate-key" / "candidate.zmx"
+    artifact.parent.mkdir(parents=True)
+    artifact.write_bytes(expected)
+    sc = _target_converged_candidate().model_copy(
+        update={
+            "generated": _target_converged_candidate().generated.model_copy(
+                update={"optimized_zmx_path": str(artifact)}
+            )
+        }
+    )
+    with zipfile.ZipFile(io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))) as zf:
+        assert zf.read("candidate.zmx") == expected
 
 
 def test_bundle_zip_reconstructs_mode3_reproduction_seq_when_provenance_complete():

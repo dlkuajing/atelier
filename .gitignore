@@ -34,3 +34,4 @@ build/
 scratch_probe/
 scratch_experiment/
 scratch_diag/
+var/

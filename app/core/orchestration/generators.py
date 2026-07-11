@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import math
+import shutil
 import tempfile
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
@@ -54,6 +55,10 @@ class CandidateGenerator(ABC):
     """
 
     mode: ClassVar[GenerationMode]
+
+    def __init__(self, *, artifact_dir: Path | None = None, repeat_runs: int = 1) -> None:
+        self.artifact_dir = artifact_dir
+        self.repeat_runs = repeat_runs
 
     def __init_subclass__(cls, **kwargs: object) -> None:
         super().__init_subclass__(**kwargs)
@@ -592,14 +597,53 @@ class TargetConvergedGenerator(CandidateGenerator):
             tmpdir = Path(tmpdir_str)
             for seed, match in selected:
                 assert seed.metadata is not None
-                candidate = self._candidate_for_seed(
-                    seed=seed,
-                    match=match,
-                    spec=spec,
-                    work_dir=tmpdir / seed.metadata.case_id,
-                )
-                if candidate is not None:
-                    candidates.append(candidate)
+                attempts: list[GeneratedCandidate | None] = []
+                for run_index in range(1, self.repeat_runs + 1):
+                    candidate = self._candidate_for_seed(
+                        seed=seed,
+                        match=match,
+                        spec=spec,
+                        work_dir=tmpdir / seed.metadata.case_id / f"run-{run_index}",
+                        artifact_dir=self.artifact_dir,
+                        run_index=run_index,
+                    )
+                    attempts.append(candidate)
+                successful = [attempt for attempt in attempts if attempt is not None]
+                if successful:
+                    primary = successful[0]
+                    if self.repeat_runs == 1:
+                        candidates.append(primary)
+                        continue
+                    rms_samples: list[float] = []
+                    wfe_samples: list[float] = []
+                    dropped: list[str] = []
+                    for run_index, attempt in enumerate(attempts, 1):
+                        if attempt is None:
+                            rms_samples.append(math.nan)
+                            wfe_samples.append(math.nan)
+                            dropped.append(f"repeat run {run_index}: candidate generation failed")
+                            continue
+                        snapshot = attempt.optical_extras.codev_post_aut or {}
+                        rms = snapshot.get("post_aut.max_rms_spot_diameter_um")
+                        wfe = snapshot.get("post_aut.max_rms_wavefront_error_waves")
+                        if isinstance(rms, (int, float)) and math.isfinite(rms):
+                            rms_samples.append(float(rms) / 2.0)
+                        else:
+                            rms_samples.append(math.nan)
+                            dropped.append(f"repeat run {run_index}: RMS sample non-finite/missing")
+                        if isinstance(wfe, (int, float)) and math.isfinite(wfe):
+                            wfe_samples.append(float(wfe))
+                        else:
+                            wfe_samples.append(math.nan)
+                            dropped.append(f"repeat run {run_index}: WFE sample non-finite/missing")
+                    primary = primary.model_copy(
+                        update={
+                            "repeat_rms_samples_um": rms_samples,
+                            "repeat_wfe_samples_waves": wfe_samples,
+                            "generation_notes": [*primary.generation_notes, *dropped],
+                        }
+                    )
+                    candidates.append(primary)
         return candidates
 
     @staticmethod
@@ -686,6 +730,8 @@ class TargetConvergedGenerator(CandidateGenerator):
         match: SeedTargetScore,
         spec: TargetSpec,
         work_dir: Path,
+        artifact_dir: Path | None = None,
+        run_index: int = 1,
     ) -> GeneratedCandidate | None:
         """一颗 seed 的完整 ③ 批跑 + payload 现算，失败一律 `None`（fail
         closed，调用方跳过、不炸整个 generator）。"""
@@ -740,6 +786,24 @@ class TargetConvergedGenerator(CandidateGenerator):
             )
             return None
         optimized_zmx_path = Path(str(optimized_zmx_path_raw))
+        artifact_warnings: list[str] = []
+        if artifact_dir is not None:
+            candidate_key = f"{seed.metadata.case_id}--{preferred}--run-{run_index}"
+            persistent_dir = artifact_dir / "candidates" / candidate_key
+            persistent_path = persistent_dir / "candidate.zmx"
+            try:
+                persistent_dir.mkdir(parents=True, exist_ok=False)
+                shutil.copyfile(optimized_zmx_path, persistent_path)
+                optimized_zmx_path = persistent_path
+                if isinstance(config, dict):
+                    config["optimized_zmx_path"] = str(persistent_path)
+            except Exception as exc:  # noqa: BLE001 - one missing artifact must not sink the candidate
+                warning = (
+                    f"优化 ZMX 持久化失败，保留临时路径并由导出层 fail-closed："
+                    f"{type(exc).__name__}: {exc}"
+                )
+                artifact_warnings.append(warning)
+                logger.warning("mode3_zmx_persist_failed", case_id=seed.metadata.case_id, error=warning)
 
         try:
             optic = load_normalized_zmx(optimized_zmx_path)
@@ -789,4 +853,6 @@ class TargetConvergedGenerator(CandidateGenerator):
                 config=config,
                 provenance=provenance,
             ),
+            optimized_zmx_path=str(optimized_zmx_path),
+            artifact_warnings=artifact_warnings,
         )

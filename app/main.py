@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager, redirect_stdout, suppress
 from io import StringIO
 from pathlib import Path
 from typing import Annotated
+from uuid import uuid4
 
 import structlog
 from fastapi import FastAPI, Form, HTTPException, Request, Response, status
@@ -1428,6 +1429,8 @@ def _candidate_job_payload(
     max_total_track_mm: float | None,
     n_elements: int | None,
     requirement: str | None,
+    repeat_runs: int = 1,
+    artifact_dir: Path | None = None,
 ) -> dict[str, object]:
     return {
         "job_type": "candidate-orchestration",
@@ -1439,6 +1442,8 @@ def _candidate_job_payload(
         "max_total_track_mm": max_total_track_mm,
         "n_elements": n_elements,
         "requirement": requirement,
+        "repeat_runs": repeat_runs,
+        "artifact_dir": str(artifact_dir) if artifact_dir is not None else None,
     }
 
 
@@ -1509,13 +1514,19 @@ def _validate_candidate_target_or_400(
 def _compute_candidate_job(payload: Mapping[str, object]) -> dict[str, object]:
     scenario = _result_payload_scenario(payload)
     target = _target_spec_from_candidate_payload(payload)
-    candidate_set = orchestration.orchestrate(target, target, n=4)
+    artifact_dir_raw = payload.get("artifact_dir")
+    artifact_dir = Path(str(artifact_dir_raw)) if artifact_dir_raw else None
+    repeat_runs = int(payload.get("repeat_runs", 1))
+    candidate_set = orchestration.orchestrate(
+        target, target, n=4, repeat_runs=repeat_runs, artifact_dir=artifact_dir
+    )
     requirement = payload.get("requirement")
     return {
         "job_type": "candidate-orchestration",
         "scenario": scenario.value,
         "requirement": str(requirement) if requirement not in {None, ""} else None,
         "candidate_set": candidate_set.model_dump(mode="json"),
+        "artifact_dir": str(artifact_dir) if artifact_dir is not None else None,
     }
 
 
@@ -2172,6 +2183,7 @@ async def submit_candidate_job(
     cutoff_freq_lp_per_mm: Annotated[float | None, Form(gt=0)] = None,
     wavelength_nm: Annotated[float, Form(gt=0)] = 550.0,
     requirement: Annotated[str | None, Form(max_length=2000)] = None,
+    repeat_runs: Annotated[int, Form()] = 1,
 ) -> RedirectResponse:
     # `scenario_label_en` / `total_track_mm` / `airy_disc_diameter_um` /
     # `cutoff_freq_lp_per_mm` / `wavelength_nm` are accepted (not used) so this
@@ -2203,6 +2215,16 @@ async def submit_candidate_job(
         image_height_mm=image_height_mm,
         n_elements=n_elements,
     )
+    if not 1 <= repeat_runs <= 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "invalid_repeat_runs",
+                "message": f"repeat_runs must be between 1 and 3, got {repeat_runs}",
+            },
+        )
+    job_id = uuid4().hex
+    artifact_dir = settings.job_artifacts_dir / job_id
     payload = _candidate_job_payload(
         scenario=scenario,
         focal_length_mm=focal_length_mm,
@@ -2212,8 +2234,10 @@ async def submit_candidate_job(
         max_total_track_mm=max_total_track_mm,
         n_elements=n_elements,
         requirement=requirement,
+        repeat_runs=repeat_runs,
+        artifact_dir=artifact_dir,
     )
-    job_id = optical.job_store.submit(CandidateOrchestrationEngine(), payload)
+    job_id = optical.job_store.submit(CandidateOrchestrationEngine(), payload, job_id=job_id)
     return RedirectResponse(
         url=f"/jobs/{job_id}",
         status_code=status.HTTP_303_SEE_OTHER,
