@@ -10,6 +10,7 @@ recovery receipt before any batch/job work can begin.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import socket
@@ -61,23 +62,75 @@ def _atomic_write_json(path: Path, payload: Mapping[str, object]) -> None:
         temporary.unlink(missing_ok=True)
 
 
-def _read_owner(path: Path) -> dict[str, object] | None:
-    if not path.is_file():
-        return None
+@dataclass(frozen=True)
+class _OwnerSnapshot:
+    parsed: dict[str, object] | None
+    sha256: str
+    byte_count: int
+    parse_error: str | None
+
+    def safe_evidence(self) -> dict[str, object]:
+        return {
+            "sha256": self.sha256,
+            "byte_count": self.byte_count,
+            "parse_error": self.parse_error,
+            "raw_content_recorded": False,
+        }
+
+
+def _read_owner_snapshot(path: Path) -> _OwnerSnapshot | None:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+        raw = path.read_bytes()
+    except FileNotFoundError:
+        return None
+    except OSError as exc:
         raise BatchRunnerLockRecoveryRequired(
-            f"Phase18 runner owner record is unreadable ({path}): {exc}. "
-            "Do not delete it or infer liveness from a PID; inspect the file, then use the "
-            "explicit recovery flow once the OS lock can be acquired."
+            f"Phase18 runner owner bytes cannot be read ({path}): {exc}; recovery refused. "
+            "Do not delete the record or infer liveness from a PID."
         ) from exc
-    if not isinstance(value, dict):
-        raise BatchRunnerLockRecoveryRequired(
-            f"Phase18 runner owner record is not a JSON object: {path}. "
-            "Explicit recovery is required; PID-based cleanup is forbidden."
+    digest = hashlib.sha256(raw).hexdigest()
+    try:
+        value = json.loads(raw.decode("utf-8"))
+    except UnicodeError:
+        return _OwnerSnapshot(
+            parsed=None,
+            sha256=digest,
+            byte_count=len(raw),
+            parse_error="UnicodeDecodeError: owner bytes are not valid UTF-8",
         )
-    return value
+    except json.JSONDecodeError:
+        return _OwnerSnapshot(
+            parsed=None,
+            sha256=digest,
+            byte_count=len(raw),
+            parse_error="JSONDecodeError: owner bytes are not valid JSON",
+        )
+    if not isinstance(value, dict):
+        return _OwnerSnapshot(
+            parsed=None,
+            sha256=digest,
+            byte_count=len(raw),
+            parse_error=f"TypeError: top-level JSON is {type(value).__name__}, not object",
+        )
+    return _OwnerSnapshot(
+        parsed=value,
+        sha256=digest,
+        byte_count=len(raw),
+        parse_error=None,
+    )
+
+
+def _read_owner(path: Path) -> dict[str, object] | None:
+    snapshot = _read_owner_snapshot(path)
+    if snapshot is None:
+        return None
+    if snapshot.parsed is None:
+        raise BatchRunnerLockRecoveryRequired(
+            f"Phase18 runner owner record is malformed ({path}; {snapshot.parse_error}; "
+            f"sha256={snapshot.sha256}, bytes={snapshot.byte_count}). Explicit recovery is "
+            "required; raw content is not echoed and PID-based cleanup is forbidden."
+        )
+    return snapshot.parsed
 
 
 def _owner_hint(owner_path: Path) -> str:
@@ -367,22 +420,23 @@ def batch_runner_lock(
         owner: dict[str, object] | None = None
         acquired = True
         try:
-            stale_owner = _read_owner(owner_path)
-            if stale_owner is not None and not recover_stale:
+            stale_snapshot = _read_owner_snapshot(owner_path)
+            stale_owner = stale_snapshot.parsed if stale_snapshot is not None else None
+            if stale_snapshot is not None and not recover_stale:
                 raise BatchRunnerLockRecoveryRequired(
                     "Phase18 OS lock is free but a prior owner record remains, indicating an "
                     f"unclean exit ({_owner_hint(owner_path)}). Re-run with explicit stale-lock "
                     "recovery only after verifying the prior run is no longer active; recovery "
                     "will prove this again by acquiring the OS lock and write a receipt."
                 )
-            if stale_owner is None and recover_stale:
+            if stale_snapshot is None and recover_stale:
                 raise BatchRunnerLockRecoveryNotNeeded(
                     "--recover-stale-lock was requested, but no stale owner record exists; "
                     "run normally so recovery cannot become a habitual lock bypass."
                 )
 
             owner = _new_owner(details)
-            if stale_owner is not None:
+            if stale_snapshot is not None:
                 active_processes = _active_phase18_processes()
                 if active_processes:
                     summary = ", ".join(
@@ -402,6 +456,7 @@ def batch_runner_lock(
                         "runner/codev/codevm process (PID was not used alone as a liveness decision)"
                     ),
                     "stale_owner": stale_owner,
+                    "stale_owner_bytes": stale_snapshot.safe_evidence(),
                     "replacement_owner": owner,
                 }
                 receipt_name = (

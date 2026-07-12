@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import subprocess
 import sys
@@ -140,6 +142,75 @@ def test_posix_process_read_unicode_error_fails_closed(tmp_path: Path):
 
     with pytest.raises(BatchRunnerLockRecoveryRequired, match="cannot decode"):
         batch_run_lock_module._read_posix_process(process_dir)
+
+
+@pytest.mark.parametrize(
+    ("raw_owner", "parse_error"),
+    [
+        (b'{"lock_id":"secret-that-must-not-leak"', "JSONDecodeError"),
+        (b'["secret-that-must-not-leak"]', "TypeError"),
+    ],
+)
+def test_explicit_recovery_preserves_safe_evidence_for_malformed_owner(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    raw_owner: bytes,
+    parse_error: str,
+):
+    root = tmp_path / "archive"
+    root.mkdir()
+    owner_path = root / ".p18-runner.owner.json"
+    owner_path.write_bytes(raw_owner)
+    monkeypatch.setattr(batch_run_lock_module, "_active_phase18_processes", lambda: [])
+
+    with (
+        pytest.raises(BatchRunnerLockRecoveryRequired, match="Explicit recovery is required"),
+        batch_runner_lock(root),
+    ):
+        pass
+
+    with batch_runner_lock(root, recover_stale=True):
+        pass
+
+    receipts = list((root / ".p18-runner-recoveries").glob("*.json"))
+    assert len(receipts) == 1
+    receipt_text = receipts[0].read_text(encoding="utf-8")
+    receipt = json.loads(receipt_text)
+    assert receipt["stale_owner"] is None
+    evidence = receipt["stale_owner_bytes"]
+    assert evidence["sha256"] == hashlib.sha256(raw_owner).hexdigest()
+    assert evidence["byte_count"] == len(raw_owner)
+    assert evidence["parse_error"].startswith(parse_error)
+    assert evidence["raw_content_recorded"] is False
+    assert "secret-that-must-not-leak" not in receipt_text
+    assert not owner_path.exists()
+
+
+def test_owner_permission_error_remains_fail_closed_during_explicit_recovery(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    import errno
+
+    root = tmp_path / "archive"
+    root.mkdir()
+    owner_path = root / ".p18-runner.owner.json"
+    owner_path.write_text('{"lock_id":"old"}', encoding="utf-8")
+    original_read_bytes = Path.read_bytes
+
+    def guarded_read_bytes(path: Path) -> bytes:
+        if path == owner_path:
+            raise PermissionError(errno.EACCES, "denied", str(path))
+        return original_read_bytes(path)
+
+    monkeypatch.setattr(Path, "read_bytes", guarded_read_bytes)
+    with (
+        pytest.raises(BatchRunnerLockRecoveryRequired, match="owner bytes cannot be read"),
+        batch_runner_lock(root, recover_stale=True),
+    ):
+        pass
+
+    assert owner_path.is_file()
+    assert not (root / ".p18-runner-recoveries").exists()
 
 
 def test_live_subprocess_blocks_run_batch_before_batch_or_job_creation(tmp_path: Path):

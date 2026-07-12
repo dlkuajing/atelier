@@ -60,3 +60,7 @@ POSIX `/proc` 读取异常会被当成“进程退出”静默跳过。修复后
 - 潜在 runner carrier 的 command line 缺失/空白即 fail-closed；
 - POSIX 只有 `ENOENT/ESRCH`（枚举后进程自然退出）可跳过，EACCES、解码错误及其它
   I/O 异常全部拒绝恢复；Windows snapshot 缺字段、异常类型或解码异常同样拒绝。
+- 第二轮独立审查指出 malformed/non-object owner 会让显式恢复不可达；现改为在 OS 锁
+  已持有时读取原始 bytes，普通启动仍拒绝，显式恢复在严格进程归零后把 SHA-256、长度、
+  安全 parse-error 写入 receipt（不记录/回显原内容）并原子替换 owner。PermissionError
+  或其它真实读取 I/O 失败仍 fail-closed。
