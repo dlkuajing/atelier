@@ -302,6 +302,10 @@ def build_candidate_set_workbook(
     function of `candidate_set` — the same validated object the candidate-set
     page renders (`app.main._candidate_set_context`), so every number here is
     the identical value shown on the page (no second computation)."""
+    candidate_set = CandidateSet.model_validate_json(
+        candidate_set.model_dump_json(exclude_computed_fields=True),
+        strict=True,
+    )
     wb = Workbook()
     summary_ws = wb.active
     assert summary_ws is not None
@@ -605,6 +609,47 @@ def build_candidate_bundle_zip(sc: ScoredCandidate, *, target: TargetSpec) -> by
     artifact is available, the README honestly explains why (fail closed,
     never a broken zip, never a partial artifact passing itself off as
     complete)."""
+    try:
+        validated_sc = ScoredCandidate.model_validate_json(
+            sc.model_dump_json(exclude_computed_fields=True),
+            strict=True,
+        )
+        validated_target = TargetSpec.model_validate_json(
+            target.model_dump_json(), strict=True
+        )
+    except ValueError as exc:
+        ladder = sc.generated.fnum_ladder_evidence
+        accepted = ladder.accepted_final if ladder is not None else None
+        if sc.generated.stagec_field_reconstruction is not None:
+            seq_reason = "Stage C candidate provenance failed strict validation"
+        elif ladder is None:
+            seq_reason = "validated Stage B FNO-ladder evidence missing"
+        elif accepted is not None and not math.isfinite(accepted.effective_edge_used):
+            seq_reason = "accepted effective_edge_used is non-finite"
+        else:
+            seq_reason = "candidate provenance failed strict validation"
+        stagec_reason = (
+            _candidate_zmx_unavailable_reason(sc)
+            if sc.generated.stagec_field_reconstruction is not None
+            else "candidate provenance failed strict validation; candidate.zmx withheld"
+        )
+        readme = (
+            "Atelier candidate bundle — STRICT VALIDATION REJECTION\n"
+            "======================================================\n\n"
+            "No candidate status, machine verification, ZMX, or sequence is emitted from "
+            "an invalid object.\n"
+            f"candidate.zmx: NOT included — {stagec_reason}\n"
+            "reproduction.seq: NOT included — "
+            f"{seq_reason}\n"
+            f"validation_error_type: {type(exc).__name__}\n"
+            "[EXPERT] remains blank.\n"
+        )
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr("README.txt", readme)
+        return buffer.getvalue()
+    sc = validated_sc
+    target = validated_target
     zmx_path = _resolve_candidate_zmx_path(sc, target=target)
     seq_text, seq_unavailable_reason = _reproduction_seq_text(sc, target)
     readme = _bundle_readme(

@@ -18,8 +18,8 @@ from app.core.engines.stagec_field import (
     StageCMachineFieldEvidence,
     StageCMachinePerFieldReadback,
     StageCMachineReadback,
-    StageCVignettingReadback,
     build_stagec_machine_evidence,
+    build_stagec_machine_readback,
     reconstruct_image_fields,
     resolve_field_target,
     validate_reconstructed_field_artifact,
@@ -307,12 +307,12 @@ def test_fov_is_derived_or_measured_never_optimized_or_converged() -> None:
 
 
 def _machine_readback(reconstruction) -> StageCMachineReadback:
-    digest = "a" * 64
     count = MachineMetricCount(valid=16, attempted=16)
     fields = tuple(
         StageCMachinePerFieldReadback(
             field_index=index,
             normalized_fraction=fraction,
+            field_readback_x_mm=0.0,
             field_readback_mm=fraction * reconstruction.target_image_height_mm,
             rsi_image_height_mm=fraction * reconstruction.target_image_height_mm,
             chief_ray_image_height_mm=fraction * reconstruction.target_image_height_mm,
@@ -326,20 +326,22 @@ def _machine_readback(reconstruction) -> StageCMachineReadback:
         )
         for index, fraction in enumerate(reconstruction.normalized_fractions)
     )
-    return StageCMachineReadback(
+    return build_stagec_machine_readback(
         field_coordinate_classification="image-height",
         measured_efl_mm=reconstruction.target_efl_mm * 1.019,
+        expected_samples_per_metric=16,
         fields=fields,
-        vignetting=StageCVignettingReadback(
-            classification="zero-verified",
-            provenance="machine-readback",
-            profile=tuple(0.0 for _ in fields),
-            artifact_sha256=digest,
-        ),
-        listing_sha256=digest,
+        vignetting_classification="zero-verified",
+        vignetting_provenance="machine-readback",
+        vignetting_profile=tuple(0.0 for _ in fields),
+        listing_bytes=b"structured listing fixture",
+        metrics_bytes=b"structured metrics fixture",
+        config_snapshot={
+            "expected_samples_per_metric": 16,
+            "field_count": len(fields),
+            "field_coordinate_classification": "image-height",
+        },
         reconstructed_zmx_sha256=reconstruction.output_sha256,
-        metrics_artifact_sha256=digest,
-        config_fingerprint=digest,
     )
 
 
@@ -355,6 +357,21 @@ def _machine_evidence(tmp_path: Path):
     readback = _machine_readback(reconstruction)
     return reconstruction, readback, build_stagec_machine_evidence(
         reconstruction=reconstruction, readback=readback
+    )
+
+
+def _rebind_readback(readback: StageCMachineReadback, **updates) -> StageCMachineReadback:
+    """Adversarial helper: recompute fingerprints after a semantically bad mutation."""
+
+    import app.core.engines.stagec_field as stagec
+
+    mutated = readback.model_copy(update=updates)
+    if "config_snapshot" in updates:
+        mutated = mutated.model_copy(
+            update={"config_fingerprint": stagec._config_fingerprint(mutated.config_snapshot)}
+        )
+    return mutated.model_copy(
+        update={"readback_fingerprint": stagec._readback_fingerprint(mutated)}
     )
 
 
@@ -378,6 +395,146 @@ def test_machine_evidence_factory_derives_complete_four_condition_gate(tmp_path:
     }
     assert payload["readback"]["config_fingerprint"] == readback.config_fingerprint
     assert payload["reconstruction_artifact_sha256"] == reconstruction.output_sha256
+    assert payload["readback"]["listing_artifact"]["sha256"] == readback.listing_sha256
+    assert payload["readback"]["metrics_artifact"]["sha256"] == readback.metrics_artifact_sha256
+
+
+@pytest.mark.parametrize("artifact_name", ["listing_artifact", "metrics_artifact"])
+def test_machine_raw_artifact_sha_is_bound_to_actual_bytes_and_participates_in_gate(
+    tmp_path: Path, artifact_name: str,
+) -> None:
+    reconstruction, readback, _ = _machine_evidence(tmp_path)
+    artifact = getattr(readback, artifact_name).model_copy(
+        update={"content_base64": "dGFtcGVyZWQ="}
+    )
+    forged = _rebind_readback(readback, **{artifact_name: artifact})
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=forged,
+    )
+    assert evidence.image_height_achieved is False
+    assert evidence.imh_field_valid is False
+    assert evidence.efl_constraint_held is False
+    assert evidence.ray_metrics_valid is False
+
+
+def test_config_snapshot_is_canonically_bound_and_semantics_participate_in_gate(
+    tmp_path: Path,
+) -> None:
+    reconstruction, readback, _ = _machine_evidence(tmp_path)
+    config = {**readback.config_snapshot, "field_count": 999}
+    forged = _rebind_readback(readback, config_snapshot=config)
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=forged,
+    )
+    assert evidence.image_height_achieved is False
+    assert evidence.imh_field_valid is False
+    assert evidence.ray_metrics_valid is False
+
+
+def test_self_consistent_one_of_one_counts_cannot_pass(tmp_path: Path) -> None:
+    reconstruction, readback, _ = _machine_evidence(tmp_path)
+    one = MachineMetricCount(valid=1, attempted=1)
+    fields = tuple(
+        field.model_copy(
+            update={
+                "rsi_samples": one,
+                "chief_ray_samples": one,
+                "spot_samples": one,
+                "wfe_samples": one,
+            }
+        )
+        for field in readback.fields
+    )
+    config = {**readback.config_snapshot, "expected_samples_per_metric": 1}
+    forged = _rebind_readback(
+        readback,
+        fields=fields,
+        expected_samples_per_metric=1,
+        config_snapshot=config,
+    )
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=forged,
+    )
+    assert evidence.image_height_achieved is False
+    assert evidence.imh_field_valid is False
+    assert evidence.ray_metrics_valid is False
+
+
+def test_machine_x_readback_requires_proven_zero_even_on_axis(tmp_path: Path) -> None:
+    reconstruction, readback, _ = _machine_evidence(tmp_path)
+    fields = (
+        readback.fields[0].model_copy(update={"field_readback_x_mm": 0.001}),
+        *readback.fields[1:],
+    )
+    forged = _rebind_readback(readback, fields=fields)
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=forged,
+    )
+    assert evidence.imh_field_valid is False
+    assert evidence.image_height_achieved is False
+
+
+def test_vignetting_provenance_binds_source_and_rejects_nonzero_contradiction(
+    tmp_path: Path,
+) -> None:
+    reconstruction, readback, _ = _machine_evidence(tmp_path)
+    artifact_readback = build_stagec_machine_readback(
+        field_coordinate_classification="image-height",
+        measured_efl_mm=reconstruction.target_efl_mm,
+        expected_samples_per_metric=16,
+        fields=readback.fields,
+        vignetting_classification="zero-verified",
+        vignetting_provenance="artifact",
+        vignetting_profile=(0.0, 0.0, 0.0),
+        listing_bytes=b"artifact provenance listing",
+        metrics_bytes=b"artifact provenance metrics",
+        config_snapshot=readback.config_snapshot,
+        reconstructed_zmx_sha256=reconstruction.output_sha256,
+    )
+    assert build_stagec_machine_evidence(
+        reconstruction=reconstruction, readback=artifact_readback
+    ).image_height_achieved is True
+
+    wrong_vignetting = artifact_readback.vignetting.model_copy(
+        update={"artifact_sha256": artifact_readback.metrics_artifact_sha256}
+    )
+    wrong_source = _rebind_readback(artifact_readback, vignetting=wrong_vignetting)
+    assert build_stagec_machine_evidence(
+        reconstruction=reconstruction, readback=wrong_source
+    ).ray_metrics_valid is False
+
+    wrong_machine_vignetting = readback.vignetting.model_copy(
+        update={"artifact_sha256": reconstruction.output_sha256}
+    )
+    wrong_machine_source = _rebind_readback(
+        readback, vignetting=wrong_machine_vignetting
+    )
+    assert build_stagec_machine_evidence(
+        reconstruction=reconstruction, readback=wrong_machine_source
+    ).ray_metrics_valid is False
+
+    nonzero = build_stagec_machine_readback(
+        field_coordinate_classification="image-height",
+        measured_efl_mm=reconstruction.target_efl_mm,
+        expected_samples_per_metric=16,
+        fields=readback.fields,
+        vignetting_classification="nonzero-verified",
+        vignetting_provenance="machine-readback",
+        vignetting_profile=(0.0, 0.0, 0.1),
+        listing_bytes=b"nonzero contradiction listing",
+        metrics_bytes=b"nonzero contradiction metrics",
+        config_snapshot=readback.config_snapshot,
+        reconstructed_zmx_sha256=reconstruction.output_sha256,
+    )
+    contradiction = build_stagec_machine_evidence(
+        reconstruction=reconstruction, readback=nonzero
+    )
+    assert contradiction.ray_metrics_valid is False
+    assert contradiction.image_height_achieved is False
 
 
 def test_machine_evidence_cannot_be_rehydrated_from_claimed_gate_booleans(
@@ -480,6 +637,27 @@ def test_machine_efl_gate_is_strictly_below_existing_two_percent(tmp_path: Path)
     evidence = build_stagec_machine_evidence(
         reconstruction=reconstruction,
         readback=exact_boundary,
+    )
+    assert evidence.efl_constraint_held is False
+    assert evidence.image_height_achieved is False
+
+
+def test_machine_efl_decimal_boundary_target_five_measured_five_point_one_fails(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "efl-boundary-seed.zmx"
+    output = tmp_path / "efl-boundary-reconstructed.zmx"
+    source.write_bytes(_zmx(3))
+    reconstruction = reconstruct_image_fields(
+        source_zmx=source,
+        output_zmx=output,
+        resolved_target=_resolved_target(efl_mm=5.0),
+    )
+    readback = _machine_readback(reconstruction)
+    boundary = _rebind_readback(readback, measured_efl_mm=5.1)
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=boundary,
     )
     assert evidence.efl_constraint_held is False
     assert evidence.image_height_achieved is False

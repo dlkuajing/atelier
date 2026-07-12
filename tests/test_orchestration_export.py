@@ -27,9 +27,8 @@ from app.core.engines.stagec_field import (
     MachineRayClassification,
     StageCFieldEvidence,
     StageCMachinePerFieldReadback,
-    StageCMachineReadback,
-    StageCVignettingReadback,
     build_stagec_machine_evidence,
+    build_stagec_machine_readback,
     reconstruct_image_fields,
     resolve_field_target,
 )
@@ -392,6 +391,7 @@ def _stagec_machine_candidate(tmp_path: Path) -> ScoredCandidate:
         StageCMachinePerFieldReadback(
             field_index=index,
             normalized_fraction=fraction,
+            field_readback_x_mm=0.0,
             field_readback_mm=fraction * reconstruction.target_image_height_mm,
             rsi_image_height_mm=fraction * reconstruction.target_image_height_mm,
             chief_ray_image_height_mm=fraction * reconstruction.target_image_height_mm,
@@ -405,21 +405,22 @@ def _stagec_machine_candidate(tmp_path: Path) -> ScoredCandidate:
         )
         for index, fraction in enumerate(reconstruction.normalized_fractions)
     )
-    digest = "b" * 64
-    readback = StageCMachineReadback(
+    readback = build_stagec_machine_readback(
         field_coordinate_classification="image-height",
         measured_efl_mm=reconstruction.target_efl_mm,
+        expected_samples_per_metric=8,
         fields=fields,
-        vignetting=StageCVignettingReadback(
-            classification="zero-verified",
-            provenance="machine-readback",
-            profile=tuple(0.0 for _ in fields),
-            artifact_sha256=digest,
-        ),
-        listing_sha256=digest,
+        vignetting_classification="zero-verified",
+        vignetting_provenance="machine-readback",
+        vignetting_profile=tuple(0.0 for _ in fields),
+        listing_bytes=b"candidate listing fixture",
+        metrics_bytes=b"candidate metrics fixture",
+        config_snapshot={
+            "expected_samples_per_metric": 8,
+            "field_count": len(fields),
+            "field_coordinate_classification": "image-height",
+        },
         reconstructed_zmx_sha256=reconstruction.output_sha256,
-        metrics_artifact_sha256=digest,
-        config_fingerprint=digest,
     )
     evidence = build_stagec_machine_evidence(
         reconstruction=reconstruction,
@@ -807,6 +808,63 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
     assert '"ray_classification": "valid"' in readme
     assert "FOV: derived/measured only; never optimized/converged" in readme
     assert "[EXPERT]" in readme
+
+
+def test_export_entry_revalidates_model_copy_forged_mode_and_emits_no_verified_output(
+    tmp_path: Path,
+) -> None:
+    sc = _stagec_machine_candidate(tmp_path)
+    forged = sc.model_copy(
+        update={
+            "generated": sc.generated.model_copy(update={"mode": GenerationMode.RETRIEVED})
+        }
+    )
+    forged_set = _candidate_set(sc).model_copy(update={"candidates": [forged]})
+    with pytest.raises(ValueError):
+        build_candidate_set_workbook(
+            forged_set, job_id="forged-mode", requirement=None
+        )
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
+    ) as zf:
+        assert zf.namelist() == ["README.txt"]
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "STRICT VALIDATION REJECTION" in readme
+    assert "candidate.zmx: NOT included" in readme
+    assert '"verified"' not in readme
+
+
+def test_export_entry_revalidates_model_copy_forged_stagec_contradiction(
+    tmp_path: Path,
+) -> None:
+    sc = _stagec_offline_candidate(tmp_path)
+    evidence = sc.generated.stagec_field_evidence
+    assert isinstance(evidence, StageCFieldEvidence)
+    forged_evidence = evidence.model_copy(
+        update={
+            "target_image_height_mm": 3.1,
+            "nominal_image_height_mm": 3.1,
+            "derived_full_fov_deg": 2 * math.degrees(math.atan(3.1 / 3.8)),
+        }
+    )
+    forged = sc.model_copy(
+        update={
+            "generated": sc.generated.model_copy(
+                update={"stagec_field_evidence": forged_evidence}
+            )
+        }
+    )
+    with pytest.raises(ValueError, match="target differs"):
+        build_candidate_set_workbook(
+            _candidate_set(forged), job_id="forged-stagec", requirement=None
+        )
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
+    ) as zf:
+        assert zf.namelist() == ["README.txt"]
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "STRICT VALIDATION REJECTION" in readme
+    assert "candidate.zmx: NOT included" in readme
 
 
 def test_stagec_bundle_withholds_candidate_zmx_after_artifact_tamper(tmp_path: Path):
