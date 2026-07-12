@@ -60,15 +60,20 @@ def test_clean_release_removes_owner_and_recovery_flag_cannot_be_habitual(tmp_pa
 def test_recovery_quiescence_matches_codev_and_other_phase18_runner(
     monkeypatch: pytest.MonkeyPatch,
 ):
+    process = batch_run_lock_module._ProcessInfo
     monkeypatch.setattr(
         batch_run_lock_module,
         "_process_snapshot",
         lambda: [
-            (os.getpid(), "python.exe", "python scripts/p18_night_batch.py"),
-            (222, "codev.exe", "codev.exe /B run.seq"),
-            (333, "codevm", "codevm"),
-            (444, "python.exe", "python scripts/p18_night_batch.py --resume"),
-            (555, "python.exe", "python unrelated.py"),
+            process(os.getpid(), 101, "python3.12.exe", "python scripts/p18_night_batch.py"),
+            process(101, 100, "uv.exe", "uv run python scripts/p18_night_batch.py"),
+            process(100, 1, "pwsh.exe", "pwsh"),
+            process(222, 1, "codev.exe", "codev.exe /B run.seq"),
+            process(333, 1, "codevm", "codevm"),
+            process(444, 1, "python3.12", "python scripts/p18_night_batch.py --resume"),
+            process(445, 1, "uv.exe", "uv run scripts/p18_night_batch.py --resume"),
+            process(446, 1, "py.exe", "py scripts/p18_night_batch.py --resume"),
+            process(555, 1, "python.exe", "python unrelated.py"),
         ],
     )
 
@@ -78,7 +83,63 @@ def test_recovery_quiescence_matches_codev_and_other_phase18_runner(
         (222, "codev"),
         (333, "codev"),
         (444, "phase18-runner"),
+        (445, "phase18-runner"),
+        (446, "phase18-runner"),
     }
+
+
+@pytest.mark.parametrize("command_line", [None, ""])
+def test_recovery_refuses_unreadable_possible_runner_command_line(
+    monkeypatch: pytest.MonkeyPatch, command_line: str | None
+):
+    process = batch_run_lock_module._ProcessInfo
+    monkeypatch.setattr(
+        batch_run_lock_module,
+        "_process_snapshot",
+        lambda: [
+            process(os.getpid(), 1, "python.exe", "python recovery.py"),
+            process(777, 1, "python3.12", command_line),
+        ],
+    )
+
+    with pytest.raises(BatchRunnerLockRecoveryRequired, match="command line is unavailable"):
+        batch_run_lock_module._active_phase18_processes()
+
+
+def test_posix_process_read_skips_only_exit_race(tmp_path: Path):
+    assert batch_run_lock_module._read_posix_process(tmp_path / "999999") is None
+
+
+def test_posix_process_read_permission_error_fails_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    import errno
+
+    process_dir = tmp_path / "123"
+    process_dir.mkdir()
+    (process_dir / "status").write_text("PPid:\t1\n", encoding="utf-8")
+    (process_dir / "comm").write_text("python3.12\n", encoding="utf-8")
+    original_read_bytes = Path.read_bytes
+
+    def guarded_read_bytes(path: Path) -> bytes:
+        if path == process_dir / "cmdline":
+            raise PermissionError(errno.EACCES, "denied", str(path))
+        return original_read_bytes(path)
+
+    monkeypatch.setattr(Path, "read_bytes", guarded_read_bytes)
+    with pytest.raises(BatchRunnerLockRecoveryRequired, match="cannot inspect"):
+        batch_run_lock_module._read_posix_process(process_dir)
+
+
+def test_posix_process_read_unicode_error_fails_closed(tmp_path: Path):
+    process_dir = tmp_path / "124"
+    process_dir.mkdir()
+    (process_dir / "status").write_text("PPid:\t1\n", encoding="utf-8")
+    (process_dir / "comm").write_text("python3.12\n", encoding="utf-8")
+    (process_dir / "cmdline").write_bytes(b"python\0\xff\0")
+
+    with pytest.raises(BatchRunnerLockRecoveryRequired, match="cannot decode"):
+        batch_run_lock_module._read_posix_process(process_dir)
 
 
 def test_live_subprocess_blocks_run_batch_before_batch_or_job_creation(tmp_path: Path):

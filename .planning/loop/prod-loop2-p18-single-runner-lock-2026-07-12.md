@@ -47,3 +47,16 @@ interface，内部隐藏 Windows `msvcrt.locking`、POSIX `fcntl.flock`、owner 
   静默验证通过后恢复并写 receipt。
 - 干净退出删除 owner；无 stale owner 的 recovery flag 拒绝。
 - 所有 pytest 均设置 `PYTHONUTF8=1` 且显式 `-k "not real"`。
+
+## Independent review hardening
+
+独立审查复现初版恢复扫描存在 MAJOR：runner carrier 仅匹配少数固定 Python 名，且
+POSIX `/proc` 读取异常会被当成“进程退出”静默跳过。修复后：
+
+- process snapshot 带 PPID，显式排除 recovery 当前进程及其 ancestor chain，避免
+  `uv run python ...` 把自己的 `uv` launcher 误报为另一 runner；
+- 其它 `uv/uv.exe`、`py/py.exe`、任意 `python*` 载体只要 command line 指向
+  `p18_night_batch.py` 均算活跃 runner；
+- 潜在 runner carrier 的 command line 缺失/空白即 fail-closed；
+- POSIX 只有 `ENOENT/ESRCH`（枚举后进程自然退出）可跳过，EACCES、解码错误及其它
+  I/O 异常全部拒绝恢复；Windows snapshot 缺字段、异常类型或解码异常同样拒绝。

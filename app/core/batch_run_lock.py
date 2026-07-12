@@ -17,6 +17,7 @@ import subprocess
 import sys
 from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import BinaryIO
@@ -144,44 +145,120 @@ def _new_owner(details: Mapping[str, object] | None) -> dict[str, object]:
     }
 
 
-def _process_snapshot() -> list[tuple[int, str, str]]:
-    """Return ``(pid, executable name, command line)`` without importing psutil.
+@dataclass(frozen=True)
+class _ProcessInfo:
+    pid: int
+    ppid: int
+    name: str
+    command_line: str | None
+
+
+def _windows_process_snapshot() -> list[_ProcessInfo]:
+    command = (
+        "$ErrorActionPreference='Stop'; "
+        "$OutputEncoding=[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new(); "
+        "Get-CimInstance Win32_Process | "
+        "Select-Object ProcessId,ParentProcessId,Name,CommandLine | "
+        "ConvertTo-Json -Compress"
+    )
+    try:
+        completed = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="strict",
+            timeout=15,
+        )
+        payload = json.loads(completed.stdout or "[]")
+    except (OSError, UnicodeError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+        raise BatchRunnerLockRecoveryRequired(
+            f"cannot verify Phase18/CODE V process quiescence on Windows: {exc}; "
+            "stale-lock recovery refused"
+        ) from exc
+    rows = payload if isinstance(payload, list) else [payload]
+    snapshot: list[_ProcessInfo] = []
+    try:
+        for row in rows:
+            if not isinstance(row, dict):
+                raise ValueError("process snapshot row is not an object")
+            name_value = row.get("Name")
+            if not isinstance(name_value, str) or not name_value:
+                raise ValueError("process snapshot row has no executable name")
+            command_line_value = row.get("CommandLine")
+            if command_line_value is not None and not isinstance(command_line_value, str):
+                raise ValueError("process snapshot command line is neither text nor null")
+            snapshot.append(
+                _ProcessInfo(
+                    pid=int(row["ProcessId"]),
+                    ppid=int(row["ParentProcessId"]),
+                    name=name_value,
+                    command_line=command_line_value,
+                )
+            )
+    except (KeyError, TypeError, ValueError) as exc:
+        raise BatchRunnerLockRecoveryRequired(
+            f"Windows process snapshot is incomplete or malformed: {exc}; "
+            "stale-lock recovery refused"
+        ) from exc
+    return snapshot
+
+
+def _read_posix_process(process_dir: Path) -> _ProcessInfo | None:
+    """Read one `/proc/<pid>` entry.
+
+    ENOENT/ESRCH means the process exited between enumeration and read and is
+    the only skippable case.  Permission, encoding, and all other errors make
+    a zero-runner claim unprovable, so recovery fails closed.
+    """
+    import errno
+
+    try:
+        status = (process_dir / "status").read_text(encoding="utf-8")
+        name = (process_dir / "comm").read_text(encoding="utf-8").strip()
+        raw_cmdline = (process_dir / "cmdline").read_bytes()
+        command_line = raw_cmdline.replace(b"\0", b" ").decode("utf-8")
+    except OSError as exc:
+        if exc.errno in {errno.ENOENT, errno.ESRCH}:
+            return None
+        raise BatchRunnerLockRecoveryRequired(
+            f"cannot inspect {process_dir} for stale-lock recovery: {exc}; recovery refused"
+        ) from exc
+    except UnicodeError as exc:
+        raise BatchRunnerLockRecoveryRequired(
+            f"cannot decode {process_dir} process metadata for stale-lock recovery: {exc}; "
+            "recovery refused"
+        ) from exc
+
+    ppid_line = next((line for line in status.splitlines() if line.startswith("PPid:")), None)
+    if ppid_line is None:
+        raise BatchRunnerLockRecoveryRequired(
+            f"cannot determine parent PID for {process_dir}; stale-lock recovery refused"
+        )
+    try:
+        ppid = int(ppid_line.partition(":")[2].strip())
+    except ValueError as exc:
+        raise BatchRunnerLockRecoveryRequired(
+            f"invalid parent PID in {process_dir}/status; stale-lock recovery refused"
+        ) from exc
+    return _ProcessInfo(
+        pid=int(process_dir.name),
+        ppid=ppid,
+        name=name,
+        command_line=command_line,
+    )
+
+
+def _process_snapshot() -> list[_ProcessInfo]:
+    """Return a process tree snapshot without importing psutil.
 
     Recovery is deliberately stricter than ordinary acquisition.  If process
     inspection itself is unavailable, callers cannot prove quiescence and the
     recovery path fails closed.
     """
     if os.name == "nt":
-        command = (
-            "Get-CimInstance Win32_Process | "
-            "Select-Object ProcessId,Name,CommandLine | ConvertTo-Json -Compress"
-        )
-        try:
-            completed = subprocess.run(
-                ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
-                check=True,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=15,
-            )
-            payload = json.loads(completed.stdout or "[]")
-        except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
-            raise BatchRunnerLockRecoveryRequired(
-                f"cannot verify Phase18/CODE V process quiescence on Windows: {exc}; "
-                "stale-lock recovery refused"
-            ) from exc
-        rows = payload if isinstance(payload, list) else [payload]
-        return [
-            (
-                int(row.get("ProcessId", -1)),
-                str(row.get("Name") or ""),
-                str(row.get("CommandLine") or ""),
-            )
-            for row in rows
-            if isinstance(row, dict)
-        ]
+        return _windows_process_snapshot()
 
     proc = Path("/proc")
     if not proc.is_dir():
@@ -189,7 +266,7 @@ def _process_snapshot() -> list[tuple[int, str, str]]:
             "cannot verify Phase18/CODE V process quiescence: /proc is unavailable; "
             "stale-lock recovery refused"
         )
-    snapshot: list[tuple[int, str, str]] = []
+    snapshot: list[_ProcessInfo] = []
     try:
         process_dirs = [path for path in proc.iterdir() if path.name.isdigit()]
     except OSError as exc:
@@ -197,34 +274,55 @@ def _process_snapshot() -> list[tuple[int, str, str]]:
             f"cannot enumerate /proc for stale-lock recovery: {exc}"
         ) from exc
     for process_dir in process_dirs:
-        try:
-            name = (process_dir / "comm").read_text(encoding="utf-8").strip()
-            raw_cmdline = (process_dir / "cmdline").read_bytes()
-        except (OSError, UnicodeError):
-            continue  # a process may exit between enumeration and read
-        command_line = raw_cmdline.replace(b"\0", b" ").decode("utf-8", errors="replace")
-        snapshot.append((int(process_dir.name), name, command_line))
+        process = _read_posix_process(process_dir)
+        if process is not None:
+            snapshot.append(process)
     return snapshot
+
+
+def _runner_carrier(name: str) -> bool:
+    normalized = name.casefold()
+    return normalized in {"uv", "uv.exe", "py", "py.exe"} or normalized.startswith("python")
+
+
+def _ancestor_pids(snapshot: list[_ProcessInfo], pid: int) -> set[int]:
+    by_pid = {process.pid: process for process in snapshot}
+    ancestors: set[int] = set()
+    cursor = pid
+    while cursor in by_pid:
+        parent = by_pid[cursor].ppid
+        if parent <= 0 or parent in ancestors:
+            break
+        ancestors.add(parent)
+        cursor = parent
+    return ancestors
 
 
 def _active_phase18_processes() -> list[dict[str, object]]:
     active: list[dict[str, object]] = []
     current_pid = os.getpid()
-    for pid, name, command_line in _process_snapshot():
-        if pid == current_pid:
-            continue
-        normalized_name = name.casefold()
+    snapshot = _process_snapshot()
+    own_process_tree = _ancestor_pids(snapshot, current_pid) | {current_pid}
+    for process in snapshot:
+        normalized_name = process.name.casefold()
         is_codev = normalized_name in {"codev", "codev.exe", "codevm", "codevm.exe"}
-        is_runner = (
-            normalized_name in {"python", "python3", "python.exe", "python3.exe", "pythonw.exe"}
-            and "p18_night_batch.py" in command_line.casefold()
-        )
-        if is_codev or is_runner:
+        if is_codev:
+            active.append({"pid": process.pid, "name": process.name, "kind": "codev"})
+            continue
+        if not _runner_carrier(process.name) or process.pid in own_process_tree:
+            continue
+        if not process.command_line:
+            raise BatchRunnerLockRecoveryRequired(
+                "cannot prove Phase18 runner quiescence because command line is unavailable for "
+                f"possible runner carrier {process.name}[{process.pid}]; recovery refused"
+            )
+        is_runner = "p18_night_batch.py" in process.command_line.casefold()
+        if is_runner:
             active.append(
                 {
-                    "pid": pid,
-                    "name": name,
-                    "kind": "codev" if is_codev else "phase18-runner",
+                    "pid": process.pid,
+                    "name": process.name,
+                    "kind": "phase18-runner",
                 }
             )
     return active
