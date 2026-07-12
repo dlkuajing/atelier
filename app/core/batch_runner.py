@@ -41,6 +41,7 @@ from app.core.batch_archive import (
     BatchRecord,
     JobStatus,
 )
+from app.core.batch_run_lock import batch_runner_lock
 from app.core.config import settings
 from app.core.orchestration.candidate import CandidateSet, GenerationMode, TargetSpec
 from app.core.orchestration.orchestrator import (
@@ -449,7 +450,7 @@ class BatchRunSummary:
     budget_exhausted: bool
 
 
-def run_batch(
+def _run_batch_under_lock(
     *,
     engine: BatchEngine,
     archive: BatchArchive,
@@ -590,3 +591,52 @@ def run_batch(
     updated_batch = archive.update_batch(batch.batch_id, status=final_status, notes=notes)
 
     return BatchRunSummary(batch=updated_batch, jobs=all_jobs, budget_exhausted=budget_exhausted)
+
+
+def run_batch(
+    *,
+    engine: BatchEngine,
+    archive: BatchArchive,
+    targets: Sequence[Mapping[str, object]] | None = None,
+    target_source: str = "",
+    batch_id: str | None = None,
+    resume: bool = False,
+    max_jobs: int | None = None,
+    max_wall_min: float | None = None,
+    job_timeout_sec: float | None = None,
+    engine_name: str = "fake",
+    artifacts_root: Path | None = None,
+    recover_stale_lock: bool = False,
+) -> BatchRunSummary:
+    """Run one batch while holding the archive-wide cross-process lock.
+
+    The lock is acquired before this function reads or creates a batch/job
+    record and remains held through final ledger persistence.  A contender
+    therefore fails before engine startup.  After an unclean process exit,
+    normal acquisition refuses the surviving owner record; callers must set
+    ``recover_stale_lock=True`` to use the explicit OS-lock-proven recovery
+    flow documented by :func:`app.core.batch_run_lock.batch_runner_lock`.
+    """
+    lock_details = {
+        "operation": "resume" if resume else "create",
+        "batch_id": batch_id,
+        "engine": engine_name,
+    }
+    with batch_runner_lock(
+        archive.root,
+        recover_stale=recover_stale_lock,
+        details=lock_details,
+    ):
+        return _run_batch_under_lock(
+            engine=engine,
+            archive=archive,
+            targets=targets,
+            target_source=target_source,
+            batch_id=batch_id,
+            resume=resume,
+            max_jobs=max_jobs,
+            max_wall_min=max_wall_min,
+            job_timeout_sec=job_timeout_sec,
+            engine_name=engine_name,
+            artifacts_root=artifacts_root,
+        )

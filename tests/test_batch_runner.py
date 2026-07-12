@@ -691,8 +691,8 @@ def test_cli_resume_engine_mismatch_exits_2(tmp_path: Path):
     assert exit_code == 2
 
 
-def test_resume_without_batch_id_raises():
-    archive = BatchArchive(root=Path("."))
+def test_resume_without_batch_id_raises(tmp_path: Path):
+    archive = BatchArchive(root=tmp_path / "archive")
     engine = FakeEngine(n=1)
     with pytest.raises(ValueError):
         run_batch(engine=engine, archive=archive, resume=True)

@@ -28,6 +28,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.core.batch_archive import BatchArchive  # noqa: E402
+from app.core.batch_run_lock import BatchRunnerLockError  # noqa: E402
 from app.core.batch_runner import DEFAULT_N, FakeEngine, RealEngine, run_batch  # noqa: E402
 
 _DEFAULT_TARGETS_PATH = (
@@ -99,6 +100,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         "(succeeded/degraded/failed)的 job；仍标 running/queued 的 job 拒绝重试"
         "（MAJOR-3 fail-closed，清理方式见 run_batch docstring）",
     )
+    parser.add_argument(
+        "--recover-stale-lock",
+        action="store_true",
+        dest="recover_stale_lock",
+        help=(
+            "显式恢复异常退出遗留的 owner 记录。仅在 OS 锁可被原子获取时成功，"
+            "并要求 Phase18 runner/codev/codevm 进程全归零；不按 PID 单独判活、不终止进程，"
+            "并写入 recovery receipt；无遗留记录时拒绝。"
+        ),
+    )
     parser.add_argument("--max-jobs", type=_positive_int, default=None, dest="max_jobs")
     parser.add_argument("--max-wall-min", type=_positive_float, default=None, dest="max_wall_min")
     parser.add_argument(
@@ -165,8 +176,9 @@ def main(argv: list[str] | None = None) -> int:
             max_wall_min=args.max_wall_min,
             job_timeout_sec=args.job_timeout_sec,
             engine_name=args.engine,
+            recover_stale_lock=args.recover_stale_lock,
         )
-    except ValueError as exc:
+    except (ValueError, BatchRunnerLockError) as exc:
         # e.g. MAJOR-4 resume engine mismatch — a usage error, not a batch
         # failure: nothing ran, nothing was written.
         print(str(exc), file=sys.stderr)
