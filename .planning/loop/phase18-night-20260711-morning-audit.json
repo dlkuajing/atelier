@@ -1,0 +1,189 @@
+{
+  "schema": "atelier-p18-morning-audit-v1",
+  "generated_at": "2026-07-12T12:33:22+00:00",
+  "batch_id": "night-20260711",
+  "audit_scope": "structure-and-provenance-only",
+  "acceptance_contract": {
+    "expected_target_count": 50,
+    "required_excluded_attempts": [
+      "job-0020/attempt-1",
+      "job-0021/attempt-1"
+    ],
+    "require_no_expert_verdicts": true
+  },
+  "structural_status": "PASS",
+  "errors": [],
+  "observations": [
+    "no [EXPERT] verdict files recorded; judgment remains blank",
+    "41 structurally valid current-attempt ZMX files are unpublished/unreferenced by the persisted CandidateSets",
+    "terminal job status proves pipeline delivery only; it is not optical qualification"
+  ],
+  "source": {
+    "archive_dir": "D:\\atelier-wt-ctl\\var\\batch-archive\\night-20260711",
+    "artifact_dir": "D:\\atelier-wt-ctl\\var\\job-artifacts\\batches\\night-20260711",
+    "audit_script_sha256": "0ddfba4ca2abd874e619316cdf4f42aac1cbf3223f05df9653869e4a3811ecd0",
+    "sha256": {
+      "batch.json": "898bfafe7b09a99edd5370a12ab57320fc01023d5eeee206b0b6f39267e8d951",
+      "targets.json": "057b001c0ff21250aad9de660dbb718f5001c9065b67448d65df0ae364004d7e",
+      "jobs/job-0000.json": "d4abf778e38ae7c9d2d6f0d5ee54c7a024b98405cea49797e3a7ba8009ed2262",
+      "jobs/job-0001.json": "678368b2c54c3c14694c42a748dab68c73b0201dbc16cdc333067ce82797a847",
+      "jobs/job-0002.json": "f3e9889bbf4e70f68b7cd9074c289314e21ecbdc79db8f767d06a4f4b4bd46f7",
+      "jobs/job-0003.json": "b8e1c51a35a43cfa43d58c0a79079d624700088466e8642e30466ce167caa6b3",
+      "jobs/job-0004.json": "92c1d45fa32ac24710d80cd1f739525347dc023fcc37ffc7a1bc4f9fa949f519",
+      "jobs/job-0005.json": "744613183d980ecebba4ff4125b2b64099b7c6d6af349190956d410ef3d37896",
+      "jobs/job-0006.json": "33583ef9e57d1bf94f5176fe0c85b278190ee42c358f2352d89b303ded659b56",
+      "jobs/job-0007.json": "560da929abcae6a8c6c28f5696d6f7b5532b0463707ffa7f83d243d42f694300",
+      "jobs/job-0008.json": "ba00c0091c764d10d29a37d13aa1ea663da478feb71c9eb1fc1ce2a20a71cd89",
+      "jobs/job-0009.json": "24daad2c3394660bf3c17bda3d0c0ada1d794d63218d5578b0b19f1a21e70742",
+      "jobs/job-0010.json": "b7ba8b97e4cf6c265793deb292f1d11cd9d6aa94636ff180ed89c5dd0345ea19",
+      "jobs/job-0011.json": "aee8788a8905c2540316716dfd1131ff49a31e6692b7a3b2634f9611cb450660",
+      "jobs/job-0012.json": "fe8b653052bad162f075e981d5a2a36d4cb297279b0a87be432db7c1e3726c1b",
+      "jobs/job-0013.json": "1862d9395d872e9b025a3aad109d3d53ae2797798d9c829c4f2ab589b412b74c",
+      "jobs/job-0014.json": "7db47bd60f1e35845ebd09675ecb2f36cc675d49ad3d3be36b2c69ac70c13972",
+      "jobs/job-0015.json": "d3a797db48a02b3d2209ad692282d14173046a07e0fbca390e90204fc80941dd",
+      "jobs/job-0016.json": "551f11fadce28af01af16c16cfcf0e01b08cd088cdd46066984c08a7a1e668b0",
+      "jobs/job-0017.json": "4c0493d29457aa06387d65032b322a29c608417036ea3f7c4d4a723057564b03",
+      "jobs/job-0018.json": "adc9e951dfa307eaea69baca55975f02e75d8c619a452a8d1408e437f43c8b2a",
+      "jobs/job-0019.json": "1f2704fe8a34d1aa3ec7cec1fa51fe41cee88cc53f148590a2b9f4fc553a71ec",
+      "jobs/job-0020.json": "ec9ac0f561a66b17cbe37c1d715fef16b0863f11ea117ad87165fb75971f8ac2",
+      "jobs/job-0021.json": "7b5c38ce09b8fe416a6ed73ce40efc4d1cd42d1886bbddc274b76cde43b46055",
+      "jobs/job-0022.json": "d39218e85721c1680c871a6a207e5af07fe076236c7ccc6bae6897f5c7792edf",
+      "jobs/job-0023.json": "9ed8e836487327c131acb545a2f4a2d481cea722c644944f829c84a35c28e3be",
+      "jobs/job-0024.json": "6050c962630ef36365727404e5f85d25676a5c37fee5c71b1f01e794005e535f",
+      "jobs/job-0025.json": "02a3c7f8cd3ca947ace9d3feae0f68be34c8beab24db385a35b5186019bfe54a",
+      "jobs/job-0026.json": "f2495d36b749a4a3f245cc52506bf898b436a95f77a5eb13faed56ca7b9861b5",
+      "jobs/job-0027.json": "ed75b941fb12f8e614fa32e2065977c7425da18dba7decb21bf58a68e9b9fc08",
+      "jobs/job-0028.json": "2fcc4e0b3b6a4dcf5946c52f97d2b09dc7a1e6dd9bb8167bbda66fd3bb3d11fe",
+      "jobs/job-0029.json": "6fa69eeb1eeaf51b0b2361d127c361a1deebf70074dcd15d0d7d8d75347e2577",
+      "jobs/job-0030.json": "54ae284a52a626f40ce4e95ed417f3510d4dfefe964668b0f44aef042d65c84d",
+      "jobs/job-0031.json": "f00fcf98a1d63e0927510a39533a79d3619b8361840b57a8581132c95bb9913a",
+      "jobs/job-0032.json": "8ae8995aa14a962b11cd9efce6bc136d4cc96028f7b8d098b560c62b2e71224b",
+      "jobs/job-0033.json": "7d30128ea91885250d9a090194ab11590ede794060483590b0d1a14b93772f3c",
+      "jobs/job-0034.json": "a6db36595dc246c9eac627401d8f6e706c7c1af08a9fa90edbff5a1d66d67eec",
+      "jobs/job-0035.json": "42a3f84bcabbed5d141dadee6850503ef4999fa11c2d9fdb6cb324d7ec357c02",
+      "jobs/job-0036.json": "0ad6a3c9a9e109559c020a7cffc76d39e9172665bfdae35f0f39d9e764484cb7",
+      "jobs/job-0037.json": "c78b0da1123f55bc96fd96408de0a55d6cffdf5b33c5a3e11331ef15582c64b2",
+      "jobs/job-0038.json": "776a2b7d704bd930c6993b0a5fcde9d3ccc57236f4c7dc33e076be90a5a09a22",
+      "jobs/job-0039.json": "f0a7667af3a190ce100f03d3acc6ec53dd273c7a3fe5e48c97e6302efa879f0b",
+      "jobs/job-0040.json": "8506d4e932020e8d67eba530fe7eb21cfd2793a3808898aad2a5232ff3d13d3c",
+      "jobs/job-0041.json": "95deec2120ace56913b68d059455700a1c6f31a41aaac6723a99626bc69e1757",
+      "jobs/job-0042.json": "effa7199e08713064b304a2b906ead6550e90c088c9fc1c4380c8998566d0b45",
+      "jobs/job-0043.json": "3757498146423f37bb1ea4aa1730f968f86de6a3704d26ed228cdc0df3eb8f17",
+      "jobs/job-0044.json": "8f1a8dd361afbd2a4a2c4a0887c5a42be01a163d3ed0b424c5b58a9e1bc4b63b",
+      "jobs/job-0045.json": "517b481d30e9e664c32a3c0dadd657bbb78ddbc27e2ad270f04abe194bcd7523",
+      "jobs/job-0046.json": "62f1baa607c1aef5fe35bded9326627614750ff76efca5b4f79f1e33c9020d4d",
+      "jobs/job-0047.json": "06c2db0517bd5e7411d066b04e1e39876493c1810a4aeb8d7d5a6ed513b087c2",
+      "jobs/job-0048.json": "f6a2c8409c38dcc329d277302f21d72d88bd7b396bea2e3a9cb293a73a76f5ba",
+      "jobs/job-0049.json": "41da31653809855342b66d112f166bfe7a473cac125c0ed2ab893718ad4338e9",
+      "resume-incident-20260712.json": "4b32a06b6dbf415a31739fd91517b97469a176e035d290f936edd37415330c73",
+      "job-0020-retry-receipt-20260712.json": "2d0a9a8675a986a2d43eb56311e82460f4c344daf2ebcd7fe50cf8a03449fa90",
+      "job-0020-attempt-1-contaminated-ledger.json": "46e942a03c5182c747bed3ad16e83f6193f17e92e1c19033d22171c7adc618bc"
+    },
+    "current_manifest_sha256": "55eecdd56742b843d8b7cb503db327566fdb67ca2ad7ca50693805408253fb29",
+    "current_manifest_file_count": 134,
+    "excluded_attempt_manifest_sha256": "ffffc756b9b0e6a82b909e01a8235e75d10418f5c5679279ed6cba4e40b3841c",
+    "excluded_attempt_manifest_file_count": 3
+  },
+  "counts": {
+    "targets": 50,
+    "jobs": 50,
+    "candidate_sets_valid": 50,
+    "candidates": 243,
+    "job_statuses": {
+      "degraded": 21,
+      "succeeded": 29
+    },
+    "candidate_modes": {
+      "retrieved": 200,
+      "target-converged": 43
+    },
+    "degraded_reasons": {
+      "requested generation mode(s) produced no candidates: target-converged — batch degraded (e.g. CODE V unavailable => Mode3 silently skipped); results below cover only: retrieved": 21
+    },
+    "post_aut_snapshots": 43,
+    "current_attempt_zmx": 84,
+    "candidate_referenced_zmx": 43,
+    "unpublished_current_attempt_zmx": 41,
+    "expert_verdicts": 0
+  },
+  "incident_and_attempt_trust": {
+    "current_attempts": {
+      "job-0020": 2,
+      "job-0021": 2
+    },
+    "resume_incident_present": true,
+    "trust_disposition_keys": [
+      "job-0020_attempt-1",
+      "job-0021_attempt-1"
+    ],
+    "batch_id_matches": true,
+    "job0020_retry_receipt_present": true,
+    "job0020_contaminated_ledger_present": true,
+    "job0020_preserved_hash_matches_receipt": true,
+    "job-0020_attempt1_preserved": true,
+    "job-0021_attempt1_preserved": true,
+    "permanently_excluded": [
+      "job-0020/attempt-1",
+      "job-0021/attempt-1"
+    ]
+  },
+  "machine_quality_observations": {
+    "aut_converged": {
+      "false": 2,
+      "true": 41
+    },
+    "aut_termination": {
+      "<missing>": 3,
+      "max_cycle_limit": 8,
+      "normal_completion": 22,
+      "unable_to_scale_pupil_field": 4,
+      "unstable_condition": 6
+    },
+    "flagged_candidates": [
+      {
+        "job_id": "job-0008",
+        "candidate_id": "5P_F2.0_FOV78.7_EFL3.8_IMH3.3_TTL4.35::target-converged-asphere",
+        "flags": [
+          "AUT termination missing",
+          "post-AUT RMS missing"
+        ]
+      },
+      {
+        "job_id": "job-0012",
+        "candidate_id": "5P_F2.0_FOV78.7_EFL3.8_IMH3.3_TTL4.35::target-converged-asphere",
+        "flags": [
+          "AUT termination missing",
+          "post-AUT RMS missing"
+        ]
+      },
+      {
+        "job_id": "job-0018",
+        "candidate_id": "5P_F2.0_FOV78.7_EFL3.8_IMH3.3_TTL4.35::target-converged-asphere",
+        "flags": [
+          "AUT termination missing",
+          "post-AUT RMS missing"
+        ]
+      },
+      {
+        "job_id": "job-0023",
+        "candidate_id": "US-12248126-B2-e5::target-converged-both",
+        "flags": [
+          "aut_converged=false",
+          "EFL deviation=36.0802%"
+        ]
+      },
+      {
+        "job_id": "job-0030",
+        "candidate_id": "US-11719917-B2-e2::target-converged-asphere",
+        "flags": [
+          "aut_converged=false",
+          "post-AUT RMS extreme=1.154158e+21 um"
+        ]
+      }
+    ],
+    "fnum_ladder_candidates": 10,
+    "fnum_target_achieved": 0,
+    "fnum_accepted_final": 0,
+    "disclaimer": "Machine measurements only. No pass/fail, yield, production-usability, or [EXPERT] verdict is inferred."
+  }
+}
