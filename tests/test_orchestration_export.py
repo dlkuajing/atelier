@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import math
 import os
 import zipfile
@@ -23,10 +24,7 @@ import pytest
 
 from app.core.case_library import load_case_library
 from app.core.engines.stagec_field import (
-    MachineMetricCount,
-    MachineRayClassification,
     StageCFieldEvidence,
-    StageCMachinePerFieldReadback,
     build_stagec_machine_evidence,
     build_stagec_machine_readback,
     reconstruct_image_fields,
@@ -382,46 +380,94 @@ def _stagec_offline_candidate(tmp_path: Path) -> ScoredCandidate:
     return ScoredCandidate(generated=generated, scorecard=sc.scorecard)
 
 
+def _export_machine_readback(reconstruction):
+    source_bytes = Path(reconstruction.source_path).read_bytes()
+    reconstructed_bytes = Path(reconstruction.output_path).read_bytes()
+    run_id = "stagec-export-fixture"
+    config = {
+        "field_type": "RIH",
+        "field_count": len(reconstruction.normalized_fractions),
+        "expected_samples_per_metric": 8,
+        "vignetting_mode": "zero-only",
+    }
+    canonical = lambda value: json.dumps(  # noqa: E731
+        value, sort_keys=True, separators=(",", ":")
+    ).encode()
+    config_fingerprint = hashlib.sha256(canonical(config)).hexdigest()
+    source_sha = hashlib.sha256(source_bytes).hexdigest()
+    reconstructed_sha = hashlib.sha256(reconstructed_bytes).hexdigest()
+    sequence_bytes = (
+        "ATELIER_STAGEC_SEQUENCE_V1\n"
+        f"RUN_ID\t{run_id}\n"
+        f"SOURCE_ZMX_SHA256\t{source_sha}\n"
+        f"RECONSTRUCTED_ZMX_SHA256\t{reconstructed_sha}\n"
+        f"CONFIG_FINGERPRINT\t{config_fingerprint}\n"
+        "! synthetic export fixture body; never executable\n"
+    ).encode()
+    manifest = {
+        "schema_id": "atelier-stagec-machine-manifest-v1",
+        "run_id": run_id,
+        "source_zmx_sha256": source_sha,
+        "reconstructed_zmx_sha256": reconstructed_sha,
+        "sequence_sha256": hashlib.sha256(sequence_bytes).hexdigest(),
+        "config": config,
+        "config_fingerprint": config_fingerprint,
+    }
+    manifest_bytes = canonical(manifest)
+    listing = [
+        f"ATELIER_STAGEC_RUN_BEGIN\t{run_id}",
+        "SCHEMA\tatelier-stagec-listing-v1",
+        f"SOURCE_ZMX_SHA256\t{manifest['source_zmx_sha256']}",
+        f"RECONSTRUCTED_ZMX_SHA256\t{manifest['reconstructed_zmx_sha256']}",
+        f"CONFIG_FINGERPRINT\t{config_fingerprint}",
+        "TYP_FLD\tRIH",
+    ]
+    for index in range(config["field_count"]):
+        listing += [f"FIELD_BEGIN\t{index}", f"FIELD_OK\t{index}", f"FIELD_END\t{index}"]
+    listing.append(f"ATELIER_STAGEC_RUN_END\t{run_id}")
+    listing_bytes = ("\n".join(listing) + "\n").encode()
+    meta = {
+        "schema_id": "atelier-stagec-machine-metrics-v1",
+        "run_id": run_id,
+        "source_zmx_sha256": manifest["source_zmx_sha256"],
+        "reconstructed_zmx_sha256": manifest["reconstructed_zmx_sha256"],
+        "config_fingerprint": config_fingerprint,
+        "field_type": "RIH",
+        "field_count": str(config["field_count"]),
+        "expected_samples_per_metric": "8",
+        "measured_efl_mm": str(reconstruction.target_efl_mm),
+    }
+    columns = (
+        "record\tfield_index\tnormalized_fraction\tfield_type\tdefinition_x_ri_mm\t"
+        "definition_y_ri_mm\trsi_actual_x_mm\trsi_actual_y_mm\trsi_direction_l\t"
+        "rsi_direction_m\trsi_direction_n\trayrsi_return_code\trer\tbls\t"
+        "rms_spot_radius_um\trms_wfe_waves\trsi_valid\trsi_attempted\tchief_valid\t"
+        "chief_attempted\tspot_valid\tspot_attempted\twfe_valid\twfe_attempted\t"
+        "vuy\tvly\tvux\tvlx"
+    )
+    metrics = [f"META\t{key}\t{value}" for key, value in meta.items()]
+    metrics.append(columns)
+    for index, fraction in enumerate(reconstruction.normalized_fractions):
+        y = fraction * reconstruction.target_image_height_mm
+        metrics.append(
+            f"FIELD\t{index}\t{fraction}\tRIH\t0\t{y}\t0\t{y}\t0\t0\t1\t0\t0\t0\t"
+            f"{2 + index}\t{0.2 + index / 100}\t8\t8\t8\t8\t8\t8\t8\t8\t0\t0\t0\t0"
+        )
+    return build_stagec_machine_readback(
+        listing_bytes=listing_bytes,
+        metrics_bytes=("\n".join(metrics) + "\n").encode(),
+        source_zmx_bytes=source_bytes,
+        reconstructed_zmx_bytes=reconstructed_bytes,
+        sequence_bytes=sequence_bytes,
+        manifest_bytes=manifest_bytes,
+    )
+
+
 def _stagec_machine_candidate(tmp_path: Path) -> ScoredCandidate:
     offline = _stagec_offline_candidate(tmp_path)
     reconstruction = offline.generated.stagec_field_reconstruction
     assert reconstruction is not None and reconstruction.output_sha256 is not None
-    count = MachineMetricCount(valid=8, attempted=8)
-    fields = tuple(
-        StageCMachinePerFieldReadback(
-            field_index=index,
-            normalized_fraction=fraction,
-            field_readback_x_mm=0.0,
-            field_readback_mm=fraction * reconstruction.target_image_height_mm,
-            rsi_image_height_mm=fraction * reconstruction.target_image_height_mm,
-            chief_ray_image_height_mm=fraction * reconstruction.target_image_height_mm,
-            rms_spot_radius_um=2.0 + index,
-            rms_wfe_waves=0.2 + index / 100,
-            rsi_samples=count,
-            chief_ray_samples=count,
-            spot_samples=count,
-            wfe_samples=count,
-            ray_classification=MachineRayClassification.VALID,
-        )
-        for index, fraction in enumerate(reconstruction.normalized_fractions)
-    )
-    readback = build_stagec_machine_readback(
-        field_coordinate_classification="image-height",
-        measured_efl_mm=reconstruction.target_efl_mm,
-        expected_samples_per_metric=8,
-        fields=fields,
-        vignetting_classification="zero-verified",
-        vignetting_provenance="machine-readback",
-        vignetting_profile=tuple(0.0 for _ in fields),
-        listing_bytes=b"candidate listing fixture",
-        metrics_bytes=b"candidate metrics fixture",
-        config_snapshot={
-            "expected_samples_per_metric": 8,
-            "field_count": len(fields),
-            "field_coordinate_classification": "image-height",
-        },
-        reconstructed_zmx_sha256=reconstruction.output_sha256,
-    )
+    readback = _export_machine_readback(reconstruction)
     evidence = build_stagec_machine_evidence(
         reconstruction=reconstruction,
         readback=readback,
@@ -773,12 +819,13 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
     sc = _stagec_machine_candidate(tmp_path)
     evidence = sc.generated.stagec_field_evidence
     assert evidence is not None and evidence.evidence_kind == "machine"
-    assert evidence.image_height_achieved is True
+    assert evidence.image_height_achieved is False
+    assert evidence.machine_execution_status == "parsed-unverified"
     persisted = sc.generated.model_dump(mode="json")
     persisted["stagec_field_evidence"]["imh_field_valid"] = False
     restored = GeneratedCandidate.model_validate(persisted)
     assert restored.stagec_field_evidence is not None
-    assert restored.stagec_field_evidence.image_height_achieved is True
+    assert restored.stagec_field_evidence.image_height_achieved is False
     deviations = {item.field: item for item in sc.scorecard.target_deviations}
     assert deviations["imh"].converged_toward_target is False
     assert deviations["fov"].converged_toward_target is False
@@ -793,10 +840,23 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
     )
     rows = list(workbook["Candidates"].iter_rows(values_only=True))
     header, values = rows[0], rows[1]
-    assert values[header.index("stagec_machine_execution_status")] == "verified"
-    assert values[header.index("stagec_imh_source")] == "constructed-machine-verified"
-    assert values[header.index("stagec_imh_achieved")] is True
+    assert values[header.index("stagec_machine_execution_status")] == "parsed-unverified"
+    assert values[header.index("stagec_imh_source")] == "constructed-unverified"
+    assert values[header.index("stagec_imh_achieved")] is False
     assert values[header.index("stagec_fov_source")] == "derived"
+    machine_status_columns = (
+        "stagec_machine_execution_status",
+        "stagec_imh_source",
+        "stagec_real_chief_ray_status",
+        "stagec_rsi_status",
+    )
+    for column in machine_status_columns:
+        assert values[header.index(column)] not in {
+            "verified",
+            "constructed-machine-verified",
+            "zero-verified",
+            "nonzero-verified",
+        }
 
     with zipfile.ZipFile(
         io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
@@ -806,6 +866,18 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
         readme = zf.read("README.txt").decode("utf-8")
     assert '"config_fingerprint": "' in readme
     assert '"ray_classification": "valid"' in readme
+    assert '"machine_execution_status": "parsed-unverified"' in readme
+    assert '"machine_execution_status": "verified"' not in readme
+    assert '"classification": "zero-parsed-unverified"' in readme
+    for forbidden in (
+        '"classification": "zero-verified"',
+        '"classification": "nonzero-verified"',
+        '"imh_source": "constructed-machine-verified"',
+        '"real_chief_ray_status": "verified"',
+        '"rsi_status": "verified"',
+        '"ray_metrics_status": "verified"',
+    ):
+        assert forbidden not in readme
     assert "FOV: derived/measured only; never optimized/converged" in readme
     assert "[EXPERT]" in readme
 

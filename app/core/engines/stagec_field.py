@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import base64
 import binascii
+import csv
 import hashlib
+import io
 import json
 import math
 import os
@@ -567,12 +569,33 @@ class StageCFieldEvidence(BaseModel):
 
 
 class MachineRayClassification(StrEnum):
-    """Classification emitted by a machine-side reader, never inferred here."""
+    """Fail-closed classification derived from raw CODE V ray outcomes."""
 
     VALID = "valid"
-    VIGNETTED = "vignetted"
-    MISSED = "missed"
+    RAY_TRACE_FAILURE = "ray-trace-failure"
+    OBSCURATION = "obscuration"
+    CLEAR_APERTURE_BLOCK = "clear-aperture-block"
     UNKNOWN = "unknown"
+
+
+class MachineListingFailure(StrEnum):
+    """Deterministic failure class for a rejected Stage C listing segment."""
+
+    SEGMENT_CARDINALITY = "segment-cardinality"
+    STALE_OR_FOREIGN_RUN = "stale-or-foreign-run"
+    MALFORMED_SEGMENT = "malformed-segment"
+    DUPLICATE_METADATA = "duplicate-metadata"
+    METADATA_MISMATCH = "metadata-mismatch"
+    ERROR_BEARING_RECORD = "error-bearing-record"
+    FIELD_SEGMENT_MISMATCH = "field-segment-mismatch"
+
+
+class MachineListingParseError(ValueError):
+    """Listing rejection carrying a stable machine-readable category."""
+
+    def __init__(self, category: MachineListingFailure, message: str) -> None:
+        super().__init__(message)
+        self.category = category
 
 
 class MachineMetricCount(BaseModel):
@@ -620,29 +643,52 @@ class BoundMachineArtifact(BaseModel):
 
 
 class StageCMachinePerFieldReadback(BaseModel):
-    """Structured facts for one field. Zero/None remain visible sentinel facts."""
+    """RIH definition and RSI chief-ray facts kept as distinct raw columns."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
     field_index: int = Field(ge=0)
-    normalized_fraction: float | None
-    field_readback_x_mm: float | None
-    field_readback_mm: float | None
-    rsi_image_height_mm: float | None
-    chief_ray_image_height_mm: float | None
-    rms_spot_radius_um: float | None
-    rms_wfe_waves: float | None
+    normalized_fraction: float
+    field_type: Literal["RIH"] = "RIH"
+    definition_x_ri_mm: float
+    definition_y_ri_mm: float
+    rsi_actual_x_mm: float
+    rsi_actual_y_mm: float
+    rsi_direction_l: float
+    rsi_direction_m: float
+    rsi_direction_n: float
+    rayrsi_return_code: int
+    ray_error_code: int
+    blocked_surface: int
+    rms_spot_radius_um: float
+    rms_wfe_waves: float
+    vuy: float
+    vly: float
+    vux: float
+    vlx: float
     rsi_samples: MachineMetricCount
     chief_ray_samples: MachineMetricCount
     spot_samples: MachineMetricCount
     wfe_samples: MachineMetricCount
-    ray_classification: MachineRayClassification
+
+    @computed_field
+    @property
+    def ray_classification(self) -> MachineRayClassification:
+        if self.rayrsi_return_code != 0 or self.ray_error_code != 0:
+            return MachineRayClassification.RAY_TRACE_FAILURE
+        if self.blocked_surface < 0:
+            return MachineRayClassification.OBSCURATION
+        if self.blocked_surface > 0:
+            return MachineRayClassification.CLEAR_APERTURE_BLOCK
+        return MachineRayClassification.VALID
 
 
 class StageCVignettingReadback(BaseModel):
     """Vignetting provenance without interpreting or generating CODE V syntax."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    classification: Literal["zero-verified", "nonzero-verified", "unknown"]
+    classification: Literal[
+        "zero-parsed-unverified", "nonzero-parsed-unverified", "unknown"
+    ]
     provenance: Literal["machine-readback", "artifact", "unknown"]
     profile: tuple[float, ...] | None
     artifact_sha256: str | None = Field(None, pattern=r"^[0-9a-f]{64}$")
@@ -656,19 +702,25 @@ class StageCMachineReadback(BaseModel):
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    schema_id: Literal["atelier-stagec-machine-readback-v1"] = (
-        "atelier-stagec-machine-readback-v1"
+    schema_id: Literal["atelier-stagec-machine-readback-v2"] = (
+        "atelier-stagec-machine-readback-v2"
     )
-    field_coordinate_classification: Literal["image-height", "angle", "unknown"]
-    measured_efl_mm: float | None
+    run_id: str = Field(min_length=1)
+    field_type: Literal["RIH"] = "RIH"
+    measured_efl_mm: float
     expected_samples_per_metric: int = Field(ge=2)
     fields: tuple[StageCMachinePerFieldReadback, ...]
     vignetting: StageCVignettingReadback
     listing_artifact: BoundMachineArtifact
     metrics_artifact: BoundMachineArtifact
+    source_zmx_artifact: BoundMachineArtifact
+    reconstructed_zmx_artifact: BoundMachineArtifact
+    sequence_artifact: BoundMachineArtifact
+    manifest_artifact: BoundMachineArtifact
     config_snapshot: dict[str, str | int | float | bool | None]
     config_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     readback_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_zmx_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     reconstructed_zmx_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
 
     @computed_field
@@ -683,8 +735,20 @@ class StageCMachineReadback(BaseModel):
 
     @model_validator(mode="after")
     def _bindings_are_canonical(self) -> StageCMachineReadback:
-        if not self.listing_artifact.binding_valid() or not self.metrics_artifact.binding_valid():
+        artifacts = (
+            self.listing_artifact,
+            self.metrics_artifact,
+            self.source_zmx_artifact,
+            self.reconstructed_zmx_artifact,
+            self.sequence_artifact,
+            self.manifest_artifact,
+        )
+        if not all(artifact.binding_valid() for artifact in artifacts):
             raise ValueError("machine artifact byte binding is invalid")
+        if self.source_zmx_sha256 != self.source_zmx_artifact.sha256:
+            raise ValueError("source ZMX SHA-256 does not match bound bytes")
+        if self.reconstructed_zmx_sha256 != self.reconstructed_zmx_artifact.sha256:
+            raise ValueError("reconstructed ZMX SHA-256 does not match bound bytes")
         if _config_fingerprint(self.config_snapshot) != self.config_fingerprint:
             raise ValueError("config fingerprint does not match canonical snapshot")
         if _readback_fingerprint(self) != self.readback_fingerprint:
@@ -724,48 +788,373 @@ def _readback_fingerprint(readback: StageCMachineReadback) -> str:
         return ""
 
 
+class _StageCMachineConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    field_type: Literal["RIH"]
+    field_count: int = Field(ge=2)
+    expected_samples_per_metric: int = Field(ge=2)
+    vignetting_mode: Literal["zero-only"]
+
+
+class _StageCMachineManifest(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    schema_id: Literal["atelier-stagec-machine-manifest-v1"]
+    run_id: str = Field(min_length=1)
+    source_zmx_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    reconstructed_zmx_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    sequence_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    config: _StageCMachineConfig
+    config_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def _config_is_bound(self) -> _StageCMachineManifest:
+        if _config_fingerprint(self.config.model_dump()) != self.config_fingerprint:
+            raise ValueError("manifest config fingerprint mismatch")
+        return self
+
+
+_METRICS_COLUMNS = (
+    "record",
+    "field_index",
+    "normalized_fraction",
+    "field_type",
+    "definition_x_ri_mm",
+    "definition_y_ri_mm",
+    "rsi_actual_x_mm",
+    "rsi_actual_y_mm",
+    "rsi_direction_l",
+    "rsi_direction_m",
+    "rsi_direction_n",
+    "rayrsi_return_code",
+    "rer",
+    "bls",
+    "rms_spot_radius_um",
+    "rms_wfe_waves",
+    "rsi_valid",
+    "rsi_attempted",
+    "chief_valid",
+    "chief_attempted",
+    "spot_valid",
+    "spot_attempted",
+    "wfe_valid",
+    "wfe_attempted",
+    "vuy",
+    "vly",
+    "vux",
+    "vlx",
+)
+_METRICS_META_KEYS = frozenset(
+    {
+        "schema_id",
+        "run_id",
+        "source_zmx_sha256",
+        "reconstructed_zmx_sha256",
+        "config_fingerprint",
+        "field_type",
+        "field_count",
+        "expected_samples_per_metric",
+        "measured_efl_mm",
+    }
+)
+
+
+def _artifact_bytes(artifact: BoundMachineArtifact) -> bytes:
+    return base64.b64decode(artifact.content_base64, validate=True)
+
+
+def _strict_utf8(payload: bytes, label: str) -> str:
+    try:
+        text = payload.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"{label} must be strict UTF-8") from exc
+    if "\x00" in text:
+        raise ValueError(f"{label} contains NUL")
+    return text
+
+
+def _parse_int(value: str, label: str) -> int:
+    if not re.fullmatch(r"-?\d+", value):
+        raise ValueError(f"{label} must be an integer")
+    return int(value)
+
+
+def _parse_float(value: str, label: str) -> float:
+    try:
+        parsed = float(value)
+    except ValueError as exc:
+        raise ValueError(f"{label} must be numeric") from exc
+    if not math.isfinite(parsed):
+        raise ValueError(f"{label} must be finite")
+    return parsed
+
+
+def _parse_metric_count(values: Mapping[str, str], prefix: str) -> MachineMetricCount:
+    return MachineMetricCount(
+        valid=_parse_int(values[f"{prefix}_valid"], f"{prefix}_valid"),
+        attempted=_parse_int(values[f"{prefix}_attempted"], f"{prefix}_attempted"),
+    )
+
+
+def _parse_manifest(payload: bytes) -> _StageCMachineManifest:
+    def reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        result: dict[str, object] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("manifest contains duplicate JSON keys")
+            result[key] = value
+        return result
+
+    try:
+        raw = json.loads(
+            _strict_utf8(payload, "manifest"), object_pairs_hook=reject_duplicate_keys
+        )
+    except json.JSONDecodeError as exc:
+        raise ValueError("manifest must be strict JSON") from exc
+    return _StageCMachineManifest.model_validate(raw)
+
+
+def _parse_sequence_identity(
+    payload: bytes,
+    *,
+    manifest: _StageCMachineManifest,
+) -> None:
+    """Validate only the synthetic identity preamble, never guessed CODE V syntax."""
+
+    lines = _strict_utf8(payload, "sequence").splitlines()
+    expected = [
+        "ATELIER_STAGEC_SEQUENCE_V1",
+        f"RUN_ID\t{manifest.run_id}",
+        f"SOURCE_ZMX_SHA256\t{manifest.source_zmx_sha256}",
+        f"RECONSTRUCTED_ZMX_SHA256\t{manifest.reconstructed_zmx_sha256}",
+        f"CONFIG_FINGERPRINT\t{manifest.config_fingerprint}",
+    ]
+    if lines[: len(expected)] != expected:
+        raise ValueError("sequence identity preamble does not match manifest")
+
+
+def _parse_listing(
+    payload: bytes,
+    *,
+    manifest: _StageCMachineManifest,
+) -> None:
+    try:
+        listing_text = _strict_utf8(payload, "listing")
+    except ValueError as exc:
+        raise MachineListingParseError(
+            MachineListingFailure.MALFORMED_SEGMENT,
+            "listing encoding is malformed",
+        ) from exc
+    lines = [line.rstrip("\r") for line in listing_text.splitlines()]
+    begin = f"ATELIER_STAGEC_RUN_BEGIN\t{manifest.run_id}"
+    end = f"ATELIER_STAGEC_RUN_END\t{manifest.run_id}"
+    if lines.count(begin) != 1 or lines.count(end) != 1:
+        raise MachineListingParseError(
+            MachineListingFailure.SEGMENT_CARDINALITY,
+            "listing requires one unique complete run segment",
+        )
+    stagec_markers = [
+        line for line in lines if line.lstrip().startswith("ATELIER_STAGEC_RUN_")
+    ]
+    if stagec_markers != [begin, end]:
+        raise MachineListingParseError(
+            MachineListingFailure.STALE_OR_FOREIGN_RUN,
+            "listing contains a stale, foreign, or partial Stage C run",
+        )
+    start, stop = lines.index(begin), lines.index(end)
+    if stop <= start or any(line.startswith("ATELIER_STAGEC_RUN_") for line in lines[start + 1 : stop]):
+        raise MachineListingParseError(
+            MachineListingFailure.MALFORMED_SEGMENT,
+            "listing run segment is nested, stale, or truncated",
+        )
+    segment = lines[start + 1 : stop]
+    expected_meta = {
+        "SCHEMA": "atelier-stagec-listing-v1",
+        "SOURCE_ZMX_SHA256": manifest.source_zmx_sha256,
+        "RECONSTRUCTED_ZMX_SHA256": manifest.reconstructed_zmx_sha256,
+        "CONFIG_FINGERPRINT": manifest.config_fingerprint,
+        "TYP_FLD": "RIH",
+    }
+    seen_meta: dict[str, str] = {}
+    field_events: list[tuple[str, int]] = []
+    for line in segment:
+        parts = line.split("\t")
+        if len(parts) == 2 and parts[0] in expected_meta:
+            if parts[0] in seen_meta:
+                raise MachineListingParseError(
+                    MachineListingFailure.DUPLICATE_METADATA,
+                    "listing contains duplicate run metadata",
+                )
+            seen_meta[parts[0]] = parts[1]
+        elif len(parts) == 2 and parts[0] in {"FIELD_BEGIN", "FIELD_OK", "FIELD_END"}:
+            try:
+                field_index = _parse_int(parts[1], "listing field index")
+            except ValueError as exc:
+                raise MachineListingParseError(
+                    MachineListingFailure.MALFORMED_SEGMENT,
+                    "listing field index is malformed",
+                ) from exc
+            field_events.append((parts[0], field_index))
+        else:
+            raise MachineListingParseError(
+                MachineListingFailure.ERROR_BEARING_RECORD,
+                "listing contains unknown or error-bearing run record",
+            )
+    if seen_meta != expected_meta:
+        raise MachineListingParseError(
+            MachineListingFailure.METADATA_MISMATCH,
+            "listing run metadata mismatch",
+        )
+    expected_events = [
+        (event, index)
+        for index in range(manifest.config.field_count)
+        for event in ("FIELD_BEGIN", "FIELD_OK", "FIELD_END")
+    ]
+    if field_events != expected_events:
+        raise MachineListingParseError(
+            MachineListingFailure.FIELD_SEGMENT_MISMATCH,
+            "listing field segments are incomplete, duplicated, or out of order",
+        )
+
+
+def _parse_metrics(
+    payload: bytes,
+    *,
+    manifest: _StageCMachineManifest,
+) -> tuple[float, tuple[StageCMachinePerFieldReadback, ...], tuple[float, ...]]:
+    rows = list(csv.reader(io.StringIO(_strict_utf8(payload, "metrics")), delimiter="\t"))
+    meta: dict[str, str] = {}
+    cursor = 0
+    while cursor < len(rows) and rows[cursor] and rows[cursor][0] == "META":
+        row = rows[cursor]
+        if len(row) != 3 or row[1] in meta:
+            raise ValueError("metrics META rows must be unique key/value triples")
+        meta[row[1]] = row[2]
+        cursor += 1
+    if set(meta) != _METRICS_META_KEYS:
+        raise ValueError("metrics metadata schema is incomplete or contains unknown keys")
+    expected_meta = {
+        "schema_id": "atelier-stagec-machine-metrics-v1",
+        "run_id": manifest.run_id,
+        "source_zmx_sha256": manifest.source_zmx_sha256,
+        "reconstructed_zmx_sha256": manifest.reconstructed_zmx_sha256,
+        "config_fingerprint": manifest.config_fingerprint,
+        "field_type": "RIH",
+        "field_count": str(manifest.config.field_count),
+        "expected_samples_per_metric": str(manifest.config.expected_samples_per_metric),
+    }
+    for key, value in expected_meta.items():
+        if meta[key] != value:
+            raise ValueError(f"metrics {key} does not match bound run artifacts")
+    if cursor >= len(rows) or tuple(rows[cursor]) != _METRICS_COLUMNS:
+        raise ValueError("metrics field table header does not match closed schema")
+    cursor += 1
+    data_rows = rows[cursor:]
+    if len(data_rows) != manifest.config.field_count:
+        raise ValueError("metrics field row count mismatch")
+    fields: list[StageCMachinePerFieldReadback] = []
+    vignetting: list[float] = []
+    for expected_index, row in enumerate(data_rows):
+        if len(row) != len(_METRICS_COLUMNS) or row[0] != "FIELD":
+            raise ValueError("metrics contains malformed or unknown data row")
+        values = dict(zip(_METRICS_COLUMNS, row, strict=True))
+        index = _parse_int(values["field_index"], "field_index")
+        if index != expected_index:
+            raise ValueError("metrics field indices must be unique and contiguous")
+        if values["field_type"] != "RIH":
+            raise ValueError("metrics field_type must be exact RIH")
+        field = StageCMachinePerFieldReadback(
+            field_index=index,
+            normalized_fraction=_parse_float(values["normalized_fraction"], "fraction"),
+            field_type="RIH",
+            definition_x_ri_mm=_parse_float(values["definition_x_ri_mm"], "XRI"),
+            definition_y_ri_mm=_parse_float(values["definition_y_ri_mm"], "YRI"),
+            rsi_actual_x_mm=_parse_float(values["rsi_actual_x_mm"], "RSI actual X"),
+            rsi_actual_y_mm=_parse_float(values["rsi_actual_y_mm"], "RSI actual Y"),
+            rsi_direction_l=_parse_float(values["rsi_direction_l"], "RSI L"),
+            rsi_direction_m=_parse_float(values["rsi_direction_m"], "RSI M"),
+            rsi_direction_n=_parse_float(values["rsi_direction_n"], "RSI N"),
+            rayrsi_return_code=_parse_int(values["rayrsi_return_code"], "RAYRSI return"),
+            ray_error_code=_parse_int(values["rer"], "RER"),
+            blocked_surface=_parse_int(values["bls"], "BLS"),
+            rms_spot_radius_um=_parse_float(values["rms_spot_radius_um"], "spot"),
+            rms_wfe_waves=_parse_float(values["rms_wfe_waves"], "WFE"),
+            vuy=_parse_float(values["vuy"], "VUY"),
+            vly=_parse_float(values["vly"], "VLY"),
+            vux=_parse_float(values["vux"], "VUX"),
+            vlx=_parse_float(values["vlx"], "VLX"),
+            rsi_samples=_parse_metric_count(values, "rsi"),
+            chief_ray_samples=_parse_metric_count(values, "chief"),
+            spot_samples=_parse_metric_count(values, "spot"),
+            wfe_samples=_parse_metric_count(values, "wfe"),
+        )
+        fields.append(field)
+        vignetting.append(max(abs(field.vuy), abs(field.vly), abs(field.vux), abs(field.vlx)))
+    measured_efl = _parse_float(meta["measured_efl_mm"], "measured EFL")
+    return measured_efl, tuple(fields), tuple(vignetting)
+
+
 def build_stagec_machine_readback(
     *,
-    field_coordinate_classification: Literal["image-height", "angle", "unknown"],
-    measured_efl_mm: float | None,
-    expected_samples_per_metric: int,
-    fields: tuple[StageCMachinePerFieldReadback, ...],
-    vignetting_classification: Literal["zero-verified", "nonzero-verified", "unknown"],
-    vignetting_provenance: Literal["machine-readback", "artifact", "unknown"],
-    vignetting_profile: tuple[float, ...] | None,
     listing_bytes: bytes,
     metrics_bytes: bytes,
-    config_snapshot: dict[str, str | int | float | bool | None],
-    reconstructed_zmx_sha256: str,
+    source_zmx_bytes: bytes,
+    reconstructed_zmx_bytes: bytes,
+    sequence_bytes: bytes,
+    manifest_bytes: bytes,
 ) -> StageCMachineReadback:
-    """Bind raw artifacts/config to structured readback and compute fingerprints."""
+    """Parse a closed synthetic contract; callers cannot supply machine facts."""
 
     listing = BoundMachineArtifact.from_bytes(listing_bytes)
     metrics = BoundMachineArtifact.from_bytes(metrics_bytes)
-    if vignetting_provenance == "artifact":
-        vignetting_sha = reconstructed_zmx_sha256
-    elif vignetting_provenance == "machine-readback":
-        vignetting_sha = metrics.sha256
-    else:
-        vignetting_sha = None
+    source = BoundMachineArtifact.from_bytes(source_zmx_bytes)
+    reconstructed = BoundMachineArtifact.from_bytes(reconstructed_zmx_bytes)
+    sequence = BoundMachineArtifact.from_bytes(sequence_bytes)
+    manifest_artifact = BoundMachineArtifact.from_bytes(manifest_bytes)
+    manifest = _parse_manifest(manifest_bytes)
+    if manifest.source_zmx_sha256 != source.sha256:
+        raise ValueError("manifest source ZMX SHA-256 mismatch")
+    if manifest.reconstructed_zmx_sha256 != reconstructed.sha256:
+        raise ValueError("manifest reconstructed ZMX SHA-256 mismatch")
+    if manifest.sequence_sha256 != sequence.sha256:
+        raise ValueError("manifest sequence SHA-256 mismatch")
+    _parse_sequence_identity(sequence_bytes, manifest=manifest)
+    _parse_listing(
+        listing_bytes,
+        manifest=manifest,
+    )
+    measured_efl, fields, vignetting_profile = _parse_metrics(
+        metrics_bytes,
+        manifest=manifest,
+    )
+    config_snapshot = manifest.config.model_dump()
     provisional = StageCMachineReadback.model_construct(
-        schema_id="atelier-stagec-machine-readback-v1",
-        field_coordinate_classification=field_coordinate_classification,
-        measured_efl_mm=measured_efl_mm,
-        expected_samples_per_metric=expected_samples_per_metric,
+        schema_id="atelier-stagec-machine-readback-v2",
+        run_id=manifest.run_id,
+        field_type="RIH",
+        measured_efl_mm=measured_efl,
+        expected_samples_per_metric=manifest.config.expected_samples_per_metric,
         fields=fields,
         vignetting=StageCVignettingReadback(
-            classification=vignetting_classification,
-            provenance=vignetting_provenance,
+            classification=(
+                "zero-parsed-unverified"
+                if all(value == 0 for value in vignetting_profile)
+                else "nonzero-parsed-unverified"
+            ),
+            provenance="machine-readback",
             profile=vignetting_profile,
-            artifact_sha256=vignetting_sha,
+            artifact_sha256=metrics.sha256,
         ),
         listing_artifact=listing,
         metrics_artifact=metrics,
+        source_zmx_artifact=source,
+        reconstructed_zmx_artifact=reconstructed,
+        sequence_artifact=sequence,
+        manifest_artifact=manifest_artifact,
         config_snapshot=config_snapshot,
-        config_fingerprint=_config_fingerprint(config_snapshot),
+        config_fingerprint=manifest.config_fingerprint,
         readback_fingerprint="0" * 64,
-        reconstructed_zmx_sha256=reconstructed_zmx_sha256,
+        source_zmx_sha256=source.sha256,
+        reconstructed_zmx_sha256=reconstructed.sha256,
     )
     payload = provisional.model_dump(mode="python", exclude_computed_fields=True)
     payload["readback_fingerprint"] = _readback_fingerprint(provisional)
@@ -782,8 +1171,8 @@ class StageCMachineFieldEvidence(BaseModel):
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    schema_id: Literal["atelier-stagec-machine-evidence-v1"] = (
-        "atelier-stagec-machine-evidence-v1"
+    schema_id: Literal["atelier-stagec-machine-evidence-v2"] = (
+        "atelier-stagec-machine-evidence-v2"
     )
     evidence_kind: Literal["machine"] = "machine"
     reconstruction: FieldReconstructionResult
@@ -844,15 +1233,20 @@ class StageCMachineFieldEvidence(BaseModel):
 
     @computed_field
     @property
-    def machine_execution_status(self) -> Literal["verified", "invalid"]:
-        return "verified" if self.image_height_achieved else "invalid"
+    def machine_execution_status(self) -> Literal["parsed-unverified", "invalid"]:
+        return (
+            "parsed-unverified" if _readback_semantics_valid(self.readback) else "invalid"
+        )
 
     @computed_field
     @property
     def machine_execution_reason(self) -> str:
-        if self.image_height_achieved:
-            return "complete structured machine readback passed all four derived gates"
-        return "structured machine readback failed one or more derived gates"
+        if self.machine_execution_status == "invalid":
+            return "retained bytes do not reproduce the structured synthetic contract"
+        return (
+            "synthetic semantic contract parsed, but execution is unattested; "
+            "real runner attestation is required by a later schema"
+        )
 
     @computed_field
     @property
@@ -861,10 +1255,8 @@ class StageCMachineFieldEvidence(BaseModel):
 
     @computed_field
     @property
-    def imh_source(self) -> Literal[
-        "constructed-machine-verified", "constructed-unverified"
-    ]:
-        return "constructed-machine-verified" if self.imh_field_valid else "constructed-unverified"
+    def imh_source(self) -> Literal["constructed-unverified"]:
+        return "constructed-unverified"
 
     @computed_field
     @property
@@ -873,22 +1265,22 @@ class StageCMachineFieldEvidence(BaseModel):
 
     @computed_field
     @property
-    def efl_constraint_status(self) -> Literal["held", "failed"]:
-        return "held" if self.efl_constraint_held else "failed"
+    def efl_constraint_status(self) -> Literal["unverified"]:
+        return "unverified"
 
     @computed_field
     @property
-    def ray_metrics_status(self) -> Literal["verified", "invalid"]:
-        return "verified" if self.ray_metrics_valid else "invalid"
+    def ray_metrics_status(self) -> Literal["unverified"]:
+        return "unverified"
 
     @computed_field
     @property
-    def real_chief_ray_status(self) -> Literal["verified", "invalid"]:
-        return "verified" if _machine_gate_state(self.reconstruction, self.readback)[4] else "invalid"
+    def real_chief_ray_status(self) -> Literal["unverified"]:
+        return "unverified"
 
     @computed_field
     @property
-    def rsi_status(self) -> Literal["verified", "invalid"]:
+    def rsi_status(self) -> Literal["unverified"]:
         return self.real_chief_ray_status
 
     @computed_field
@@ -904,9 +1296,10 @@ class StageCMachineFieldEvidence(BaseModel):
     @computed_field
     @property
     def note(self) -> str:
-        if self.image_height_achieved:
-            return "all four machine gates derived true; quantitative evidence only, [EXPERT] remains blank"
-        return "one or more machine gates derived false; fail closed, [EXPERT] remains blank"
+        return (
+            "synthetic facts parsed but execution unattested; all machine gates fail closed, "
+            "[EXPERT] remains blank"
+        )
 
     @property
     def fov_attainment_label(self) -> Literal["derived"]:
@@ -950,29 +1343,40 @@ def _field_values_valid(
     ray_metrics_valid = True
     for field, fraction in zip(fields, fractions, strict=True):
         expected = fraction * target_image_height_mm
-        if not _finite(field.field_readback_x_mm) or field.field_readback_x_mm != 0:
+        if field.field_type != "RIH":
             imh_valid = False
         values = (
-            field.field_readback_mm,
-            field.rsi_image_height_mm,
-            field.chief_ray_image_height_mm,
+            field.definition_x_ri_mm,
+            field.definition_y_ri_mm,
+            field.rsi_actual_x_mm,
+            field.rsi_actual_y_mm,
+            field.rsi_direction_l,
+            field.rsi_direction_m,
+            field.rsi_direction_n,
         )
         if any(not _finite(value) for value in values):
             imh_valid = False
             chief_rsi_valid = False
         else:
-            assert all(value is not None for value in values)
-            if not math.isclose(field.field_readback_mm, expected, rel_tol=1e-12, abs_tol=1e-12):
+            if field.definition_x_ri_mm != 0 or field.rsi_actual_x_mm != 0:
                 imh_valid = False
-            if not math.isclose(field.rsi_image_height_mm, expected, rel_tol=1e-12, abs_tol=1e-12):
                 chief_rsi_valid = False
             if not math.isclose(
-                field.chief_ray_image_height_mm, expected, rel_tol=1e-12, abs_tol=1e-12
+                field.definition_y_ri_mm, expected, rel_tol=1e-12, abs_tol=1e-12
             ):
+                imh_valid = False
+            if not math.isclose(field.rsi_actual_y_mm, expected, rel_tol=1e-12, abs_tol=1e-12):
                 chief_rsi_valid = False
-            # A zero at the axial field is physical; at a non-zero field it is
-            # an unresolved/sentinel readback and fails closed.
-            if fraction != 0 and any(value == 0 for value in values):
+            direction_norm = math.sqrt(
+                field.rsi_direction_l**2
+                + field.rsi_direction_m**2
+                + field.rsi_direction_n**2
+            )
+            if not math.isclose(direction_norm, 1.0, rel_tol=1e-9, abs_tol=1e-9):
+                chief_rsi_valid = False
+            if fraction != 0 and (
+                field.definition_y_ri_mm == 0 or field.rsi_actual_y_mm == 0
+            ):
                 imh_valid = False
                 chief_rsi_valid = False
         if not (
@@ -991,6 +1395,23 @@ def _field_values_valid(
         ):
             ray_metrics_valid = False
     return imh_valid, chief_rsi_valid, ray_metrics_valid
+
+
+def _readback_semantics_valid(readback: StageCMachineReadback) -> bool:
+    """Reparse retained bytes so copied/rehydrated structured facts have no authority."""
+
+    try:
+        reparsed = build_stagec_machine_readback(
+            listing_bytes=_artifact_bytes(readback.listing_artifact),
+            metrics_bytes=_artifact_bytes(readback.metrics_artifact),
+            source_zmx_bytes=_artifact_bytes(readback.source_zmx_artifact),
+            reconstructed_zmx_bytes=_artifact_bytes(readback.reconstructed_zmx_artifact),
+            sequence_bytes=_artifact_bytes(readback.sequence_artifact),
+            manifest_bytes=_artifact_bytes(readback.manifest_artifact),
+        )
+    except (ValueError, binascii.Error):
+        return False
+    return reparsed == readback
 
 
 def _machine_gate_state(
@@ -1028,36 +1449,38 @@ def _machine_gate_state(
             expected_samples_per_metric=readback.expected_samples_per_metric,
         )
     artifact_bindings_ok = (
-        readback.listing_artifact.binding_valid()
+        _readback_semantics_valid(readback)
+        and readback.field_type == "RIH"
+        and readback.listing_artifact.binding_valid()
         and readback.metrics_artifact.binding_valid()
         and _config_fingerprint(readback.config_snapshot) == readback.config_fingerprint
         and _readback_fingerprint(readback) == readback.readback_fingerprint
         and readback.config_snapshot.get("expected_samples_per_metric")
         == readback.expected_samples_per_metric
         and readback.config_snapshot.get("field_count") == len(readback.fields)
-        and readback.config_snapshot.get("field_coordinate_classification")
-        == readback.field_coordinate_classification
+        and readback.config_snapshot.get("field_type") == "RIH"
+        and readback.source_zmx_sha256 == reconstruction.source_sha256_before
     )
     vignetting_profile = readback.vignetting.profile
     provenance_sha_ok = False
-    if readback.vignetting.provenance == "artifact":
+    if readback.vignetting.provenance == "machine-readback":
         provenance_sha_ok = (
-            readback.vignetting.artifact_sha256 == reconstruction.output_sha256
+            readback.vignetting.artifact_sha256 == readback.metrics_artifact.sha256
         )
-    elif readback.vignetting.provenance == "machine-readback":
-        provenance_sha_ok = readback.vignetting.artifact_sha256 in {
-            readback.listing_artifact.sha256,
-            readback.metrics_artifact.sha256,
-        }
     vignetting_ok = (
         artifact_ok
         and artifact_bindings_ok
         and provenance_sha_ok
-        and readback.vignetting.classification == "zero-verified"
+        and readback.vignetting.classification == "zero-parsed-unverified"
         and vignetting_profile is not None
         and len(vignetting_profile) == len(reconstruction.normalized_fractions)
         and all(math.isfinite(value) for value in vignetting_profile)
         and readback.vignetting.artifact_sha256 is not None
+        and all(
+            math.isfinite(value) and value == 0
+            for field in readback.fields
+            for value in (field.vuy, field.vly, field.vux, field.vlx)
+        )
     )
     if vignetting_ok:
         assert vignetting_profile is not None
@@ -1065,7 +1488,7 @@ def _machine_gate_state(
     imh_field_valid = (
         artifact_ok
         and artifact_bindings_ok
-        and readback.field_coordinate_classification == "image-height"
+        and readback.field_type == "RIH"
         and profile_ok
         and imh_values_ok
         and chief_rsi_ok
@@ -1087,13 +1510,11 @@ def _machine_gate_state(
         and metrics_ok
         and vignetting_ok
     )
-    return (
-        artifact_ok,
-        imh_field_valid,
-        efl_constraint_held,
-        ray_metrics_valid,
-        chief_rsi_ok and artifact_bindings_ok,
-    )
+    # v2 is a synthetic parser contract only.  These internally derived facts
+    # exercise the future reader boundary, but cannot attest that CODE V ran.
+    # A later runner-attested schema must explicitly unlock machine gates.
+    _ = (imh_field_valid, efl_constraint_held, ray_metrics_valid, chief_rsi_ok)
+    return (artifact_ok, False, False, False, False)
 
 
 def build_stagec_machine_evidence(
@@ -1108,7 +1529,7 @@ def build_stagec_machine_evidence(
     """
 
     return StageCMachineFieldEvidence.model_construct(
-        schema_id="atelier-stagec-machine-evidence-v1",
+        schema_id="atelier-stagec-machine-evidence-v2",
         evidence_kind="machine",
         reconstruction=reconstruction,
         readback=readback,
@@ -1125,14 +1546,36 @@ def restore_stagec_machine_evidence(
     ``readback`` are parsed, then the controlled factory derives every gate.
     """
 
+    if payload.get("schema_id") != "atelier-stagec-machine-evidence-v2":
+        raise ValueError("persisted machine evidence requires exact v2 schema")
+    if payload.get("evidence_kind") != "machine":
+        raise ValueError("persisted machine evidence requires evidence_kind=machine")
     reconstruction = FieldReconstructionResult.model_validate(payload.get("reconstruction"))
     raw_readback = payload.get("readback")
     if not isinstance(raw_readback, Mapping):
         raise ValueError("persisted machine evidence requires structured readback")
-    readback_payload = dict(raw_readback)
-    readback_payload.pop("listing_sha256", None)
-    readback_payload.pop("metrics_artifact_sha256", None)
-    readback = StageCMachineReadback.model_validate(readback_payload)
+    if raw_readback.get("schema_id") != "atelier-stagec-machine-readback-v2":
+        raise ValueError("persisted machine readback requires exact v2 schema")
+    artifacts: dict[str, bytes] = {}
+    for name in (
+        "listing_artifact",
+        "metrics_artifact",
+        "source_zmx_artifact",
+        "reconstructed_zmx_artifact",
+        "sequence_artifact",
+        "manifest_artifact",
+    ):
+        artifact_payload = raw_readback.get(name)
+        artifact = BoundMachineArtifact.model_validate(artifact_payload)
+        artifacts[name] = _artifact_bytes(artifact)
+    readback = build_stagec_machine_readback(
+        listing_bytes=artifacts["listing_artifact"],
+        metrics_bytes=artifacts["metrics_artifact"],
+        source_zmx_bytes=artifacts["source_zmx_artifact"],
+        reconstructed_zmx_bytes=artifacts["reconstructed_zmx_artifact"],
+        sequence_bytes=artifacts["sequence_artifact"],
+        manifest_bytes=artifacts["manifest_artifact"],
+    )
     return build_stagec_machine_evidence(reconstruction=reconstruction, readback=readback)
 
 
