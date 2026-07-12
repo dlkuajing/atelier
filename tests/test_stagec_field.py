@@ -11,8 +11,15 @@ from pydantic import ValidationError
 from app.core.case_library import build_sample_from_optic, load_case_library
 from app.core.engines.stagec_field import (
     FieldTargetStatus,
+    MachineMetricCount,
+    MachineRayClassification,
     ResolvedFieldTarget,
     StageCFieldEvidence,
+    StageCMachineFieldEvidence,
+    StageCMachinePerFieldReadback,
+    StageCMachineReadback,
+    StageCVignettingReadback,
+    build_stagec_machine_evidence,
     reconstruct_image_fields,
     resolve_field_target,
     validate_reconstructed_field_artifact,
@@ -297,6 +304,185 @@ def test_fov_is_derived_or_measured_never_optimized_or_converged() -> None:
     assert evidence.fov_attainment_label == "derived"
     assert "optimized" not in evidence.model_dump_json()
     assert "converged" not in evidence.model_dump_json()
+
+
+def _machine_readback(reconstruction) -> StageCMachineReadback:
+    digest = "a" * 64
+    count = MachineMetricCount(valid=16, attempted=16)
+    fields = tuple(
+        StageCMachinePerFieldReadback(
+            field_index=index,
+            normalized_fraction=fraction,
+            field_readback_mm=fraction * reconstruction.target_image_height_mm,
+            rsi_image_height_mm=fraction * reconstruction.target_image_height_mm,
+            chief_ray_image_height_mm=fraction * reconstruction.target_image_height_mm,
+            rms_spot_radius_um=1.0 + index,
+            rms_wfe_waves=0.1 + index / 100,
+            rsi_samples=count,
+            chief_ray_samples=count,
+            spot_samples=count,
+            wfe_samples=count,
+            ray_classification=MachineRayClassification.VALID,
+        )
+        for index, fraction in enumerate(reconstruction.normalized_fractions)
+    )
+    return StageCMachineReadback(
+        field_coordinate_classification="image-height",
+        measured_efl_mm=reconstruction.target_efl_mm * 1.019,
+        fields=fields,
+        vignetting=StageCVignettingReadback(
+            classification="zero-verified",
+            provenance="machine-readback",
+            profile=tuple(0.0 for _ in fields),
+            artifact_sha256=digest,
+        ),
+        listing_sha256=digest,
+        reconstructed_zmx_sha256=reconstruction.output_sha256,
+        metrics_artifact_sha256=digest,
+        config_fingerprint=digest,
+    )
+
+
+def _machine_evidence(tmp_path: Path):
+    source = tmp_path / "machine-seed.zmx"
+    output = tmp_path / "machine-reconstructed.zmx"
+    source.write_bytes(_zmx(3))
+    reconstruction = reconstruct_image_fields(
+        source_zmx=source,
+        output_zmx=output,
+        resolved_target=_resolved_target(),
+    )
+    readback = _machine_readback(reconstruction)
+    return reconstruction, readback, build_stagec_machine_evidence(
+        reconstruction=reconstruction, readback=readback
+    )
+
+
+def test_machine_evidence_factory_derives_complete_four_condition_gate(tmp_path: Path) -> None:
+    reconstruction, readback, evidence = _machine_evidence(tmp_path)
+
+    assert evidence.evidence_kind == "machine"
+    assert evidence.reconstruction_applied is True
+    assert evidence.imh_field_valid is True
+    assert evidence.efl_constraint_held is True
+    assert evidence.ray_metrics_valid is True
+    assert evidence.image_height_achieved is True
+    assert evidence.fov_source == "derived"
+    assert evidence.measured_full_fov_deg is None
+    assert evidence.target_efl_mm == reconstruction.target_efl_mm
+    assert evidence.target_image_height_mm == reconstruction.target_image_height_mm
+    payload = evidence.model_dump(mode="json")
+    assert payload["readback"]["fields"][2]["spot_samples"] == {
+        "valid": 16,
+        "attempted": 16,
+    }
+    assert payload["readback"]["config_fingerprint"] == readback.config_fingerprint
+    assert payload["reconstruction_artifact_sha256"] == reconstruction.output_sha256
+
+
+def test_machine_evidence_cannot_be_rehydrated_from_claimed_gate_booleans(
+    tmp_path: Path,
+) -> None:
+    _, _, evidence = _machine_evidence(tmp_path)
+    forged = evidence.model_dump()
+    forged["imh_field_valid"] = False
+    with pytest.raises(TypeError, match="must be built"):
+        StageCMachineFieldEvidence.model_validate(forged)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "failed_gate"),
+    [
+        (lambda r: r.model_copy(update={"measured_efl_mm": None}), "efl"),
+        (lambda r: r.model_copy(update={"measured_efl_mm": math.nan}), "efl"),
+        (lambda r: r.model_copy(update={"measured_efl_mm": 0.0}), "efl"),
+        (
+            lambda r: r.model_copy(update={"field_coordinate_classification": "unknown"}),
+            "imh",
+        ),
+        (
+            lambda r: r.model_copy(
+                update={"fields": r.fields[:-1]}
+            ),
+            "profile",
+        ),
+        (
+            lambda r: r.model_copy(
+                update={
+                    "fields": (
+                        *r.fields[:-1],
+                        r.fields[-1].model_copy(update={"rms_spot_radius_um": 0.0}),
+                    )
+                }
+            ),
+            "rays",
+        ),
+        (
+            lambda r: r.model_copy(
+                update={
+                    "fields": (
+                        *r.fields[:-1],
+                        r.fields[-1].model_copy(
+                            update={"ray_classification": MachineRayClassification.UNKNOWN}
+                        ),
+                    )
+                }
+            ),
+            "rays",
+        ),
+        (
+            lambda r: r.model_copy(
+                update={
+                    "vignetting": r.vignetting.model_copy(
+                        update={"classification": "unknown"}
+                    )
+                }
+            ),
+            "rays",
+        ),
+        (
+            lambda r: r.model_copy(
+                update={
+                    "vignetting": r.vignetting.model_copy(
+                        update={"profile": (0.0, 0.0, 0.1)}
+                    )
+                }
+            ),
+            "rays",
+        ),
+    ],
+)
+def test_machine_evidence_missing_sentinel_unknown_and_profile_mismatch_fail_closed(
+    tmp_path: Path, mutation, failed_gate: str,
+) -> None:
+    reconstruction, readback, _ = _machine_evidence(tmp_path)
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=mutation(readback),
+    )
+    assert evidence.image_height_achieved is False
+    if failed_gate == "efl":
+        assert evidence.efl_constraint_held is False
+    elif failed_gate == "imh":
+        assert evidence.imh_field_valid is False
+    elif failed_gate == "profile":
+        assert evidence.imh_field_valid is False
+        assert evidence.ray_metrics_valid is False
+    else:
+        assert evidence.ray_metrics_valid is False
+
+
+def test_machine_efl_gate_is_strictly_below_existing_two_percent(tmp_path: Path) -> None:
+    reconstruction, readback, _ = _machine_evidence(tmp_path)
+    exact_boundary = readback.model_copy(
+        update={"measured_efl_mm": reconstruction.target_efl_mm * 1.02}
+    )
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=exact_boundary,
+    )
+    assert evidence.efl_constraint_held is False
+    assert evidence.image_height_achieved is False
 
 
 def test_build_sample_uses_one_resolved_field_source_without_reverting_to_angle(

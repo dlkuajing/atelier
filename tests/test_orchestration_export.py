@@ -23,7 +23,13 @@ import pytest
 
 from app.core.case_library import load_case_library
 from app.core.engines.stagec_field import (
+    MachineMetricCount,
+    MachineRayClassification,
     StageCFieldEvidence,
+    StageCMachinePerFieldReadback,
+    StageCMachineReadback,
+    StageCVignettingReadback,
+    build_stagec_machine_evidence,
     reconstruct_image_fields,
     resolve_field_target,
 )
@@ -377,6 +383,54 @@ def _stagec_offline_candidate(tmp_path: Path) -> ScoredCandidate:
     return ScoredCandidate(generated=generated, scorecard=sc.scorecard)
 
 
+def _stagec_machine_candidate(tmp_path: Path) -> ScoredCandidate:
+    offline = _stagec_offline_candidate(tmp_path)
+    reconstruction = offline.generated.stagec_field_reconstruction
+    assert reconstruction is not None and reconstruction.output_sha256 is not None
+    count = MachineMetricCount(valid=8, attempted=8)
+    fields = tuple(
+        StageCMachinePerFieldReadback(
+            field_index=index,
+            normalized_fraction=fraction,
+            field_readback_mm=fraction * reconstruction.target_image_height_mm,
+            rsi_image_height_mm=fraction * reconstruction.target_image_height_mm,
+            chief_ray_image_height_mm=fraction * reconstruction.target_image_height_mm,
+            rms_spot_radius_um=2.0 + index,
+            rms_wfe_waves=0.2 + index / 100,
+            rsi_samples=count,
+            chief_ray_samples=count,
+            spot_samples=count,
+            wfe_samples=count,
+            ray_classification=MachineRayClassification.VALID,
+        )
+        for index, fraction in enumerate(reconstruction.normalized_fractions)
+    )
+    digest = "b" * 64
+    readback = StageCMachineReadback(
+        field_coordinate_classification="image-height",
+        measured_efl_mm=reconstruction.target_efl_mm,
+        fields=fields,
+        vignetting=StageCVignettingReadback(
+            classification="zero-verified",
+            provenance="machine-readback",
+            profile=tuple(0.0 for _ in fields),
+            artifact_sha256=digest,
+        ),
+        listing_sha256=digest,
+        reconstructed_zmx_sha256=reconstruction.output_sha256,
+        metrics_artifact_sha256=digest,
+        config_fingerprint=digest,
+    )
+    evidence = build_stagec_machine_evidence(
+        reconstruction=reconstruction,
+        readback=readback,
+    )
+    raw = offline.generated.model_dump()
+    raw["stagec_field_evidence"] = evidence
+    generated = GeneratedCandidate.model_validate(raw)
+    return ScoredCandidate(generated=generated, scorecard=offline.scorecard)
+
+
 # ---------------------------------------------------------------------------
 # ① xlsx workbook
 # ---------------------------------------------------------------------------
@@ -709,6 +763,49 @@ def test_stagec_web_xlsx_bundle_sources_are_honest_and_replay_fails_closed(
         readme = zf.read("README.txt").decode("utf-8")
     assert "FOV: derived/measured only; never optimized/converged" in readme
     assert "Stage C CODE V field syntax" in readme
+    assert "[EXPERT]" in readme
+
+
+def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
+    tmp_path: Path,
+) -> None:
+    sc = _stagec_machine_candidate(tmp_path)
+    evidence = sc.generated.stagec_field_evidence
+    assert evidence is not None and evidence.evidence_kind == "machine"
+    assert evidence.image_height_achieved is True
+    persisted = sc.generated.model_dump(mode="json")
+    persisted["stagec_field_evidence"]["imh_field_valid"] = False
+    restored = GeneratedCandidate.model_validate(persisted)
+    assert restored.stagec_field_evidence is not None
+    assert restored.stagec_field_evidence.image_height_achieved is True
+    deviations = {item.field: item for item in sc.scorecard.target_deviations}
+    assert deviations["imh"].converged_toward_target is False
+    assert deviations["fov"].converged_toward_target is False
+    workbook = openpyxl.load_workbook(
+        io.BytesIO(
+            build_candidate_set_workbook(
+                _candidate_set(sc), job_id="stagec-machine", requirement=None
+            )
+        ),
+        read_only=True,
+        data_only=True,
+    )
+    rows = list(workbook["Candidates"].iter_rows(values_only=True))
+    header, values = rows[0], rows[1]
+    assert values[header.index("stagec_machine_execution_status")] == "verified"
+    assert values[header.index("stagec_imh_source")] == "constructed-machine-verified"
+    assert values[header.index("stagec_imh_achieved")] is True
+    assert values[header.index("stagec_fov_source")] == "derived"
+
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
+    ) as zf:
+        assert "candidate.zmx" in zf.namelist()
+        assert "reproduction.seq" not in zf.namelist()
+        readme = zf.read("README.txt").decode("utf-8")
+    assert '"config_fingerprint": "' in readme
+    assert '"ray_classification": "valid"' in readme
+    assert "FOV: derived/measured only; never optimized/converged" in readme
     assert "[EXPERT]" in readme
 
 

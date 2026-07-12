@@ -22,7 +22,7 @@ from collections.abc import Mapping
 from enum import StrEnum
 from pathlib import Path
 from types import MappingProxyType
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import (
     BaseModel,
@@ -38,6 +38,8 @@ from pydantic import (
 from app.core.engines.stagec_field import (
     FieldReconstructionResult,
     StageCFieldEvidence,
+    StageCMachineFieldEvidence,
+    restore_stagec_machine_evidence,
     validate_reconstructed_field_artifact,
 )
 from app.core.lens_system import Scenario
@@ -591,9 +593,19 @@ class GeneratedCandidate(BaseModel):
     stagec_field_reconstruction: FieldReconstructionResult | None = Field(
         None, description="offline temporary-ZMX provenance; not real-machine evidence"
     )
-    stagec_field_evidence: StageCFieldEvidence | None = Field(
+    stagec_field_evidence: Annotated[
+        StageCFieldEvidence | StageCMachineFieldEvidence,
+        Field(discriminator="evidence_kind"),
+    ] | None = Field(
         None, description="closed Stage C evidence; FOV remains derived/measured, never optimized"
     )
+
+    @field_validator("stagec_field_evidence", mode="before")
+    @classmethod
+    def _restore_machine_evidence_from_raw_facts(cls, value: object) -> object:
+        if isinstance(value, Mapping) and value.get("evidence_kind") == "machine":
+            return restore_stagec_machine_evidence(value)
+        return value
 
     @model_validator(mode="after")
     def _fnum_gate_requires_target_converged_mode(self) -> GeneratedCandidate:
@@ -618,7 +630,7 @@ class GeneratedCandidate(BaseModel):
             evidence = self.stagec_field_evidence
             if reconstruction.status != "constructed":
                 raise ValueError("offline Stage C evidence requires a constructed artifact")
-            if evidence.image_height_achieved:
+            if isinstance(evidence, StageCFieldEvidence) and evidence.image_height_achieved:
                 raise ValueError("offline Stage C evidence can never claim IMH achieved")
             if evidence.target_image_height_mm != reconstruction.target_image_height_mm:
                 raise ValueError("Stage C evidence target differs from reconstruction target")
@@ -673,7 +685,7 @@ class GeneratedCandidate(BaseModel):
             if metadata.image_height_source != "constructed":
                 raise ValueError("Stage C payload IMH source must be constructed")
             if metadata.fov_source != "derived" or evidence.fov_source != "derived":
-                raise ValueError("offline Stage C FOV must be derived-only")
+                raise ValueError("Stage C FOV must be derived-only")
             expected_fov = 2 * math.degrees(
                 math.atan(
                     reconstruction.target_image_height_mm / reconstruction.target_efl_mm
@@ -683,6 +695,13 @@ class GeneratedCandidate(BaseModel):
                 evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
             ) or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12):
                 raise ValueError("Stage C derived FOV is not same-source with payload EFL/IMH")
+            if isinstance(evidence, StageCMachineFieldEvidence):
+                if evidence.reconstruction != reconstruction:
+                    raise ValueError("machine evidence reconstruction provenance differs")
+                if evidence.reconstruction_artifact_sha256 != reconstruction.output_sha256:
+                    raise ValueError("machine evidence artifact differs from reconstruction")
+                if evidence.readback.reconstructed_zmx_sha256 != reconstruction.output_sha256:
+                    raise ValueError("machine readback artifact differs from reconstruction")
         return self
 
     @property

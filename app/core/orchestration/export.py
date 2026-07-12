@@ -33,7 +33,11 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from app.core.case_library import load_case_library
 from app.core.engines.codev_optimize import _autovig_profile, build_codev_target_sequence
-from app.core.engines.stagec_field import validate_reconstructed_field_artifact
+from app.core.engines.stagec_field import (
+    StageCFieldEvidence,
+    StageCMachineFieldEvidence,
+    validate_reconstructed_field_artifact,
+)
 from app.core.orchestration.candidate import (
     CandidateSet,
     GenerationMode,
@@ -340,7 +344,9 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
         evidence = sc.generated.stagec_field_evidence
         if reconstruction.status != "constructed" or reconstruction.output_path is None:
             return None
-        if evidence is None or evidence.image_height_achieved or (
+        if evidence is None or (
+            isinstance(evidence, StageCFieldEvidence) and evidence.image_height_achieved
+        ) or (
             evidence.target_image_height_mm != reconstruction.target_image_height_mm
             or evidence.target_efl_mm != reconstruction.target_efl_mm
             or evidence.nominal_image_height_mm != reconstruction.target_image_height_mm
@@ -367,6 +373,11 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
         except (OSError, ValueError):
             return None
         if parsed.sha256 != reconstruction.output_sha256:
+            return None
+        if isinstance(evidence, StageCMachineFieldEvidence) and (
+            evidence.reconstruction_artifact_sha256 != parsed.sha256
+            or evidence.readback.reconstructed_zmx_sha256 != parsed.sha256
+        ):
             return None
         optimized_path = sc.generated.optimized_zmx_path
         if optimized_path is None or Path(optimized_path).resolve() != path.resolve():
