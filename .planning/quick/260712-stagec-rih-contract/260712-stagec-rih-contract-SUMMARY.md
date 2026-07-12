@@ -46,6 +46,11 @@
 - Workbook/bundle tests prove parsed synthetic facts never export a verified machine
   execution or achieved IMH. A real attested schema remains deferred to the verified
   probe/runner slice.
+- Second-review cleanup removed the last local verified wording from v2 vignetting:
+  classifications are now `zero-parsed-unverified` and
+  `nonzero-parsed-unverified`. Model JSON, workbook status columns, and bundle README
+  tests forbid verified machine/vignetting/chief-ray/RSI states; only the separately
+  allowlisted offline reconstruction status may remain `constructed-verified`.
 
 ## Explicitly not implemented
 

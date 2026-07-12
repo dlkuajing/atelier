@@ -464,6 +464,7 @@ def test_synthetic_machine_contract_parses_but_cannot_attest_execution(tmp_path:
     assert evidence.image_height_achieved is False
     assert evidence.machine_execution_status == "parsed-unverified"
     assert "execution is unattested" in evidence.machine_execution_reason
+    assert readback.vignetting.classification == "zero-parsed-unverified"
     assert evidence.fov_source == "derived"
     assert evidence.measured_full_fov_deg is None
     assert evidence.target_efl_mm == reconstruction.target_efl_mm
@@ -478,6 +479,18 @@ def test_synthetic_machine_contract_parses_but_cannot_attest_execution(tmp_path:
     assert payload["reconstruction_artifact_sha256"] == reconstruction.output_sha256
     assert payload["readback"]["listing_artifact"]["sha256"] == readback.listing_sha256
     assert payload["readback"]["metrics_artifact"]["sha256"] == readback.metrics_artifact_sha256
+    serialized = evidence.model_dump_json()
+    assert "zero-parsed-unverified" in serialized
+    for forbidden in (
+        '"zero-verified"',
+        '"nonzero-verified"',
+        '"constructed-machine-verified"',
+        '"machine_execution_status":"verified"',
+        '"real_chief_ray_status":"verified"',
+        '"rsi_status":"verified"',
+        '"ray_metrics_status":"verified"',
+    ):
+        assert forbidden not in serialized
 
 
 def test_arbitrary_listing_and_metrics_bytes_are_rejected(tmp_path: Path) -> None:

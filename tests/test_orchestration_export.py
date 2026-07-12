@@ -844,6 +844,19 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
     assert values[header.index("stagec_imh_source")] == "constructed-unverified"
     assert values[header.index("stagec_imh_achieved")] is False
     assert values[header.index("stagec_fov_source")] == "derived"
+    machine_status_columns = (
+        "stagec_machine_execution_status",
+        "stagec_imh_source",
+        "stagec_real_chief_ray_status",
+        "stagec_rsi_status",
+    )
+    for column in machine_status_columns:
+        assert values[header.index(column)] not in {
+            "verified",
+            "constructed-machine-verified",
+            "zero-verified",
+            "nonzero-verified",
+        }
 
     with zipfile.ZipFile(
         io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
@@ -855,6 +868,16 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
     assert '"ray_classification": "valid"' in readme
     assert '"machine_execution_status": "parsed-unverified"' in readme
     assert '"machine_execution_status": "verified"' not in readme
+    assert '"classification": "zero-parsed-unverified"' in readme
+    for forbidden in (
+        '"classification": "zero-verified"',
+        '"classification": "nonzero-verified"',
+        '"imh_source": "constructed-machine-verified"',
+        '"real_chief_ray_status": "verified"',
+        '"rsi_status": "verified"',
+        '"ray_metrics_status": "verified"',
+    ):
+        assert forbidden not in readme
     assert "FOV: derived/measured only; never optimized/converged" in readme
     assert "[EXPERT]" in readme
 

@@ -686,7 +686,9 @@ class StageCVignettingReadback(BaseModel):
     """Vignetting provenance without interpreting or generating CODE V syntax."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    classification: Literal["zero-verified", "nonzero-verified", "unknown"]
+    classification: Literal[
+        "zero-parsed-unverified", "nonzero-parsed-unverified", "unknown"
+    ]
     provenance: Literal["machine-readback", "artifact", "unknown"]
     profile: tuple[float, ...] | None
     artifact_sha256: str | None = Field(None, pattern=r"^[0-9a-f]{64}$")
@@ -1134,9 +1136,9 @@ def build_stagec_machine_readback(
         fields=fields,
         vignetting=StageCVignettingReadback(
             classification=(
-                "zero-verified"
+                "zero-parsed-unverified"
                 if all(value == 0 for value in vignetting_profile)
-                else "nonzero-verified"
+                else "nonzero-parsed-unverified"
             ),
             provenance="machine-readback",
             profile=vignetting_profile,
@@ -1253,10 +1255,8 @@ class StageCMachineFieldEvidence(BaseModel):
 
     @computed_field
     @property
-    def imh_source(self) -> Literal[
-        "constructed-machine-verified", "constructed-unverified"
-    ]:
-        return "constructed-machine-verified" if self.imh_field_valid else "constructed-unverified"
+    def imh_source(self) -> Literal["constructed-unverified"]:
+        return "constructed-unverified"
 
     @computed_field
     @property
@@ -1471,7 +1471,7 @@ def _machine_gate_state(
         artifact_ok
         and artifact_bindings_ok
         and provenance_sha_ok
-        and readback.vignetting.classification == "zero-verified"
+        and readback.vignetting.classification == "zero-parsed-unverified"
         and vignetting_profile is not None
         and len(vignetting_profile) == len(reconstruction.normalized_fractions)
         and all(math.isfinite(value) for value in vignetting_profile)
