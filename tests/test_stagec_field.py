@@ -12,6 +12,8 @@ from pydantic import ValidationError
 from app.core.case_library import build_sample_from_optic, load_case_library
 from app.core.engines.stagec_field import (
     FieldTargetStatus,
+    MachineListingFailure,
+    MachineListingParseError,
     MachineRayClassification,
     ResolvedFieldTarget,
     StageCFieldEvidence,
@@ -341,9 +343,12 @@ def _machine_inputs(
     source_sha = hashlib.sha256(source_bytes).hexdigest()
     reconstructed_sha = hashlib.sha256(reconstructed_bytes).hexdigest()
     sequence_bytes = (
-        "! synthetic Stage C contract fixture; never executable\n"
-        f"! run={run_id} source={source_sha} reconstructed={reconstructed_sha} "
-        f"config={config_fingerprint}\n"
+        "ATELIER_STAGEC_SEQUENCE_V1\n"
+        f"RUN_ID\t{run_id}\n"
+        f"SOURCE_ZMX_SHA256\t{source_sha}\n"
+        f"RECONSTRUCTED_ZMX_SHA256\t{reconstructed_sha}\n"
+        f"CONFIG_FINGERPRINT\t{config_fingerprint}\n"
+        "! synthetic fixture body; never executable\n"
     ).encode()
     manifest = {
         "schema_id": "atelier-stagec-machine-manifest-v1",
@@ -448,15 +453,17 @@ def _machine_evidence(tmp_path: Path):
     )
 
 
-def test_machine_evidence_factory_derives_complete_four_condition_gate(tmp_path: Path) -> None:
+def test_synthetic_machine_contract_parses_but_cannot_attest_execution(tmp_path: Path) -> None:
     reconstruction, readback, evidence = _machine_evidence(tmp_path)
 
     assert evidence.evidence_kind == "machine"
     assert evidence.reconstruction_applied is True
-    assert evidence.imh_field_valid is True
-    assert evidence.efl_constraint_held is True
-    assert evidence.ray_metrics_valid is True
-    assert evidence.image_height_achieved is True
+    assert evidence.imh_field_valid is False
+    assert evidence.efl_constraint_held is False
+    assert evidence.ray_metrics_valid is False
+    assert evidence.image_height_achieved is False
+    assert evidence.machine_execution_status == "parsed-unverified"
+    assert "execution is unattested" in evidence.machine_execution_reason
     assert evidence.fov_source == "derived"
     assert evidence.measured_full_fov_deg is None
     assert evidence.target_efl_mm == reconstruction.target_efl_mm
@@ -591,6 +598,24 @@ def test_listing_requires_one_complete_error_free_run_segment(tmp_path: Path) ->
         build_stagec_machine_readback(
             **{**good, "listing_bytes": ("\n".join(foreign) + "\n").encode()}
         )
+    leading_whitespace = ["  ATELIER_STAGEC_RUN_BEGIN\tforeign", *text]
+    with pytest.raises(MachineListingParseError) as exc_info:
+        build_stagec_machine_readback(
+            **{
+                **good,
+                "listing_bytes": ("\n".join(leading_whitespace) + "\n").encode(),
+            }
+        )
+    assert exc_info.value.category is MachineListingFailure.STALE_OR_FOREIGN_RUN
+
+    malformed_index = [
+        line.replace("FIELD_BEGIN\t0", "FIELD_BEGIN\tnot-int") for line in text
+    ]
+    with pytest.raises(MachineListingParseError) as exc_info:
+        build_stagec_machine_readback(
+            **{**good, "listing_bytes": ("\n".join(malformed_index) + "\n").encode()}
+        )
+    assert exc_info.value.category is MachineListingFailure.MALFORMED_SEGMENT
 
 
 def test_all_six_raw_artifacts_reject_byte_swaps(tmp_path: Path) -> None:
@@ -613,6 +638,43 @@ def test_all_six_raw_artifacts_reject_byte_swaps(tmp_path: Path) -> None:
             build_stagec_machine_readback(**{**good, key: swapped})
 
 
+def test_paired_sequence_manifest_swap_is_rejected_by_old_run_outputs(tmp_path: Path) -> None:
+    reconstruction, _, _ = _machine_evidence(tmp_path)
+    good = _machine_inputs(reconstruction)
+    manifest = json.loads(good["manifest_bytes"])
+    manifest["run_id"] = "different-run"
+    old_sequence = good["sequence_bytes"].decode().splitlines()
+    old_sequence[1] = "RUN_ID\tdifferent-run"
+    new_sequence = ("\n".join(old_sequence) + "\n").encode()
+    manifest["sequence_sha256"] = hashlib.sha256(new_sequence).hexdigest()
+    with pytest.raises(ValueError, match="listing run metadata mismatch|complete run"):
+        build_stagec_machine_readback(
+            **{
+                **good,
+                "sequence_bytes": new_sequence,
+                "manifest_bytes": _canonical_json(manifest),
+            }
+        )
+
+
+def test_sequence_identity_preamble_is_parsed_not_only_hashed(tmp_path: Path) -> None:
+    reconstruction, _, _ = _machine_evidence(tmp_path)
+    good = _machine_inputs(reconstruction)
+    sequence = good["sequence_bytes"].decode().splitlines()
+    sequence[2] = f"SOURCE_ZMX_SHA256\t{'0' * 64}"
+    bad_sequence = ("\n".join(sequence) + "\n").encode()
+    manifest = json.loads(good["manifest_bytes"])
+    manifest["sequence_sha256"] = hashlib.sha256(bad_sequence).hexdigest()
+    with pytest.raises(ValueError, match="sequence identity preamble"):
+        build_stagec_machine_readback(
+            **{
+                **good,
+                "sequence_bytes": bad_sequence,
+                "manifest_bytes": _canonical_json(manifest),
+            }
+        )
+
+
 def test_legacy_schema_duplicate_meta_and_duplicate_field_rows_are_rejected(
     tmp_path: Path,
 ) -> None:
@@ -622,6 +684,15 @@ def test_legacy_schema_duplicate_meta_and_duplicate_field_rows_are_rejected(
     manifest["schema_id"] = "atelier-stagec-machine-manifest-v0"
     with pytest.raises(ValidationError):
         build_stagec_machine_readback(**{**good, "manifest_bytes": _canonical_json(manifest)})
+
+    duplicate_manifest = good["manifest_bytes"].replace(
+        b'"run_id":"stagec-synthetic-run-001"',
+        b'"run_id":"shadow","run_id":"stagec-synthetic-run-001"',
+    )
+    with pytest.raises(ValueError, match="duplicate JSON keys"):
+        build_stagec_machine_readback(
+            **{**good, "manifest_bytes": duplicate_manifest}
+        )
 
     metrics = good["metrics_bytes"].decode().splitlines()
     with pytest.raises(ValueError, match="unique"):
@@ -641,14 +712,27 @@ def test_restore_reparses_artifacts_and_model_copy_facts_have_no_authority(
     payload = evidence.model_dump(mode="json")
     payload["readback"]["fields"][2]["definition_y_ri_mm"] = 999
     restored = restore_stagec_machine_evidence(payload)
-    assert restored.image_height_achieved is True
+    assert restored.image_height_achieved is False
     assert restored.readback.fields[2].definition_y_ri_mm == 3.0
 
     forged_field = readback.fields[2].model_copy(update={"definition_y_ri_mm": 999})
     forged = readback.model_copy(update={"fields": (*readback.fields[:2], forged_field)})
-    assert build_stagec_machine_evidence(
+    forged_evidence = build_stagec_machine_evidence(
         reconstruction=reconstruction, readback=forged
-    ).image_height_achieved is False
+    )
+    assert forged_evidence.image_height_achieved is False
+    assert forged_evidence.machine_execution_status == "invalid"
+
+    for path, value in (
+        (("schema_id",), "atelier-stagec-machine-evidence-v1"),
+        (("evidence_kind",), "offline"),
+        (("readback", "schema_id"), "atelier-stagec-machine-readback-v1"),
+    ):
+        legacy = evidence.model_dump(mode="json")
+        target = legacy if len(path) == 1 else legacy[path[0]]
+        target[path[-1]] = value
+        with pytest.raises(ValueError, match="exact v2|evidence_kind"):
+            restore_stagec_machine_evidence(legacy)
 
 
 def test_machine_efl_gate_is_strictly_below_existing_two_percent(tmp_path: Path) -> None:

@@ -911,12 +911,38 @@ def _parse_manifest(payload: bytes) -> _StageCMachineManifest:
     return _StageCMachineManifest.model_validate(raw)
 
 
+def _parse_sequence_identity(
+    payload: bytes,
+    *,
+    manifest: _StageCMachineManifest,
+) -> None:
+    """Validate only the synthetic identity preamble, never guessed CODE V syntax."""
+
+    lines = _strict_utf8(payload, "sequence").splitlines()
+    expected = [
+        "ATELIER_STAGEC_SEQUENCE_V1",
+        f"RUN_ID\t{manifest.run_id}",
+        f"SOURCE_ZMX_SHA256\t{manifest.source_zmx_sha256}",
+        f"RECONSTRUCTED_ZMX_SHA256\t{manifest.reconstructed_zmx_sha256}",
+        f"CONFIG_FINGERPRINT\t{manifest.config_fingerprint}",
+    ]
+    if lines[: len(expected)] != expected:
+        raise ValueError("sequence identity preamble does not match manifest")
+
+
 def _parse_listing(
     payload: bytes,
     *,
     manifest: _StageCMachineManifest,
 ) -> None:
-    lines = [line.rstrip("\r") for line in _strict_utf8(payload, "listing").splitlines()]
+    try:
+        listing_text = _strict_utf8(payload, "listing")
+    except ValueError as exc:
+        raise MachineListingParseError(
+            MachineListingFailure.MALFORMED_SEGMENT,
+            "listing encoding is malformed",
+        ) from exc
+    lines = [line.rstrip("\r") for line in listing_text.splitlines()]
     begin = f"ATELIER_STAGEC_RUN_BEGIN\t{manifest.run_id}"
     end = f"ATELIER_STAGEC_RUN_END\t{manifest.run_id}"
     if lines.count(begin) != 1 or lines.count(end) != 1:
@@ -924,7 +950,9 @@ def _parse_listing(
             MachineListingFailure.SEGMENT_CARDINALITY,
             "listing requires one unique complete run segment",
         )
-    stagec_markers = [line for line in lines if line.startswith("ATELIER_STAGEC_RUN_")]
+    stagec_markers = [
+        line for line in lines if line.lstrip().startswith("ATELIER_STAGEC_RUN_")
+    ]
     if stagec_markers != [begin, end]:
         raise MachineListingParseError(
             MachineListingFailure.STALE_OR_FOREIGN_RUN,
@@ -956,7 +984,14 @@ def _parse_listing(
                 )
             seen_meta[parts[0]] = parts[1]
         elif len(parts) == 2 and parts[0] in {"FIELD_BEGIN", "FIELD_OK", "FIELD_END"}:
-            field_events.append((parts[0], _parse_int(parts[1], "listing field index")))
+            try:
+                field_index = _parse_int(parts[1], "listing field index")
+            except ValueError as exc:
+                raise MachineListingParseError(
+                    MachineListingFailure.MALFORMED_SEGMENT,
+                    "listing field index is malformed",
+                ) from exc
+            field_events.append((parts[0], field_index))
         else:
             raise MachineListingParseError(
                 MachineListingFailure.ERROR_BEARING_RECORD,
@@ -1080,6 +1115,7 @@ def build_stagec_machine_readback(
         raise ValueError("manifest reconstructed ZMX SHA-256 mismatch")
     if manifest.sequence_sha256 != sequence.sha256:
         raise ValueError("manifest sequence SHA-256 mismatch")
+    _parse_sequence_identity(sequence_bytes, manifest=manifest)
     _parse_listing(
         listing_bytes,
         manifest=manifest,
@@ -1195,15 +1231,20 @@ class StageCMachineFieldEvidence(BaseModel):
 
     @computed_field
     @property
-    def machine_execution_status(self) -> Literal["verified", "invalid"]:
-        return "verified" if self.image_height_achieved else "invalid"
+    def machine_execution_status(self) -> Literal["parsed-unverified", "invalid"]:
+        return (
+            "parsed-unverified" if _readback_semantics_valid(self.readback) else "invalid"
+        )
 
     @computed_field
     @property
     def machine_execution_reason(self) -> str:
-        if self.image_height_achieved:
-            return "complete structured machine readback passed all four derived gates"
-        return "structured machine readback failed one or more derived gates"
+        if self.machine_execution_status == "invalid":
+            return "retained bytes do not reproduce the structured synthetic contract"
+        return (
+            "synthetic semantic contract parsed, but execution is unattested; "
+            "real runner attestation is required by a later schema"
+        )
 
     @computed_field
     @property
@@ -1224,22 +1265,22 @@ class StageCMachineFieldEvidence(BaseModel):
 
     @computed_field
     @property
-    def efl_constraint_status(self) -> Literal["held", "failed"]:
-        return "held" if self.efl_constraint_held else "failed"
+    def efl_constraint_status(self) -> Literal["unverified"]:
+        return "unverified"
 
     @computed_field
     @property
-    def ray_metrics_status(self) -> Literal["verified", "invalid"]:
-        return "verified" if self.ray_metrics_valid else "invalid"
+    def ray_metrics_status(self) -> Literal["unverified"]:
+        return "unverified"
 
     @computed_field
     @property
-    def real_chief_ray_status(self) -> Literal["verified", "invalid"]:
-        return "verified" if _machine_gate_state(self.reconstruction, self.readback)[4] else "invalid"
+    def real_chief_ray_status(self) -> Literal["unverified"]:
+        return "unverified"
 
     @computed_field
     @property
-    def rsi_status(self) -> Literal["verified", "invalid"]:
+    def rsi_status(self) -> Literal["unverified"]:
         return self.real_chief_ray_status
 
     @computed_field
@@ -1255,9 +1296,10 @@ class StageCMachineFieldEvidence(BaseModel):
     @computed_field
     @property
     def note(self) -> str:
-        if self.image_height_achieved:
-            return "all four machine gates derived true; quantitative evidence only, [EXPERT] remains blank"
-        return "one or more machine gates derived false; fail closed, [EXPERT] remains blank"
+        return (
+            "synthetic facts parsed but execution unattested; all machine gates fail closed, "
+            "[EXPERT] remains blank"
+        )
 
     @property
     def fov_attainment_label(self) -> Literal["derived"]:
@@ -1468,13 +1510,11 @@ def _machine_gate_state(
         and metrics_ok
         and vignetting_ok
     )
-    return (
-        artifact_ok,
-        imh_field_valid,
-        efl_constraint_held,
-        ray_metrics_valid,
-        chief_rsi_ok and artifact_bindings_ok,
-    )
+    # v2 is a synthetic parser contract only.  These internally derived facts
+    # exercise the future reader boundary, but cannot attest that CODE V ran.
+    # A later runner-attested schema must explicitly unlock machine gates.
+    _ = (imh_field_valid, efl_constraint_held, ray_metrics_valid, chief_rsi_ok)
+    return (artifact_ok, False, False, False, False)
 
 
 def build_stagec_machine_evidence(
@@ -1506,10 +1546,16 @@ def restore_stagec_machine_evidence(
     ``readback`` are parsed, then the controlled factory derives every gate.
     """
 
+    if payload.get("schema_id") != "atelier-stagec-machine-evidence-v2":
+        raise ValueError("persisted machine evidence requires exact v2 schema")
+    if payload.get("evidence_kind") != "machine":
+        raise ValueError("persisted machine evidence requires evidence_kind=machine")
     reconstruction = FieldReconstructionResult.model_validate(payload.get("reconstruction"))
     raw_readback = payload.get("readback")
     if not isinstance(raw_readback, Mapping):
         raise ValueError("persisted machine evidence requires structured readback")
+    if raw_readback.get("schema_id") != "atelier-stagec-machine-readback-v2":
+        raise ValueError("persisted machine readback requires exact v2 schema")
     artifacts: dict[str, bytes] = {}
     for name in (
         "listing_artifact",

@@ -29,6 +29,24 @@
   legacy/duplicate TSV records, IMG/ANG impersonation, definition/actual separation,
   raw ray failures/blocks, non-zero vignetting, model-copy mutation, and strict restore.
 
+## Independent-review correction
+
+- The v2 contract is explicitly parser-only: without a real runner/host attestation it
+  always reports `machine_execution_status=parsed-unverified`; IMH, EFL, ray, chief-ray,
+  and `image_height_achieved` machine gates remain false. Only the independently
+  validated offline reconstruction gate may be true. No self-reported receipt was added.
+- Added an exact controlled sequence identity preamble for run ID, source/reconstructed
+  SHA, and config fingerprint. The manifest binds the complete sequence SHA, while old
+  listing/metrics bytes reject a paired sequence+manifest identity swap.
+- Whole-listing marker discovery now catches leading-whitespace, foreign, and partial
+  Stage C markers. Listing encoding, syntax, and field-index failures are normalized to
+  stable `MachineListingFailure` categories.
+- Restore now requires exact outer evidence v2, `evidence_kind=machine`, and readback v2;
+  legacy records cannot be silently upgraded. Duplicate manifest JSON keys remain fatal.
+- Workbook/bundle tests prove parsed synthetic facts never export a verified machine
+  execution or achieved IMH. A real attested schema remains deferred to the verified
+  probe/runner slice.
+
 ## Explicitly not implemented
 
 - No CODE V process, probe, runner, matrix, production wiring, or claimed real syntax.

@@ -397,9 +397,12 @@ def _export_machine_readback(reconstruction):
     source_sha = hashlib.sha256(source_bytes).hexdigest()
     reconstructed_sha = hashlib.sha256(reconstructed_bytes).hexdigest()
     sequence_bytes = (
-        "! synthetic export fixture; never executable\n"
-        f"! run={run_id} source={source_sha} reconstructed={reconstructed_sha} "
-        f"config={config_fingerprint}\n"
+        "ATELIER_STAGEC_SEQUENCE_V1\n"
+        f"RUN_ID\t{run_id}\n"
+        f"SOURCE_ZMX_SHA256\t{source_sha}\n"
+        f"RECONSTRUCTED_ZMX_SHA256\t{reconstructed_sha}\n"
+        f"CONFIG_FINGERPRINT\t{config_fingerprint}\n"
+        "! synthetic export fixture body; never executable\n"
     ).encode()
     manifest = {
         "schema_id": "atelier-stagec-machine-manifest-v1",
@@ -816,12 +819,13 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
     sc = _stagec_machine_candidate(tmp_path)
     evidence = sc.generated.stagec_field_evidence
     assert evidence is not None and evidence.evidence_kind == "machine"
-    assert evidence.image_height_achieved is True
+    assert evidence.image_height_achieved is False
+    assert evidence.machine_execution_status == "parsed-unverified"
     persisted = sc.generated.model_dump(mode="json")
     persisted["stagec_field_evidence"]["imh_field_valid"] = False
     restored = GeneratedCandidate.model_validate(persisted)
     assert restored.stagec_field_evidence is not None
-    assert restored.stagec_field_evidence.image_height_achieved is True
+    assert restored.stagec_field_evidence.image_height_achieved is False
     deviations = {item.field: item for item in sc.scorecard.target_deviations}
     assert deviations["imh"].converged_toward_target is False
     assert deviations["fov"].converged_toward_target is False
@@ -836,9 +840,9 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
     )
     rows = list(workbook["Candidates"].iter_rows(values_only=True))
     header, values = rows[0], rows[1]
-    assert values[header.index("stagec_machine_execution_status")] == "verified"
-    assert values[header.index("stagec_imh_source")] == "constructed-machine-verified"
-    assert values[header.index("stagec_imh_achieved")] is True
+    assert values[header.index("stagec_machine_execution_status")] == "parsed-unverified"
+    assert values[header.index("stagec_imh_source")] == "constructed-unverified"
+    assert values[header.index("stagec_imh_achieved")] is False
     assert values[header.index("stagec_fov_source")] == "derived"
 
     with zipfile.ZipFile(
@@ -849,6 +853,8 @@ def test_stagec_machine_evidence_crosses_candidate_and_export_boundaries(
         readme = zf.read("README.txt").decode("utf-8")
     assert '"config_fingerprint": "' in readme
     assert '"ray_classification": "valid"' in readme
+    assert '"machine_execution_status": "parsed-unverified"' in readme
+    assert '"machine_execution_status": "verified"' not in readme
     assert "FOV: derived/measured only; never optimized/converged" in readme
     assert "[EXPERT]" in readme
 
