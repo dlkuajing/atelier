@@ -259,7 +259,7 @@ def test_demo_cache_round_trip_preserves_analysis_provenance(tmp_path):
         assert payload["provenance"] in {source.value for source in ProvenanceSource}
 
 
-def test_ultrawide_precomputed_cache_is_reachable_with_real_image_height():
+def test_ultrawide_precomputed_cache_is_reachable_with_nondefault_image_height():
     request = optical_api.demo_cache_request(
         scenario=Scenario.SMARTPHONE_ULTRAWIDE,
         focal_length_mm=3.621,

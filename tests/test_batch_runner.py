@@ -18,6 +18,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.core.batch_archive import BatchArchive, BatchArchiveError
+from app.core.batch_run_lock import BatchRunnerLockHeldError, batch_runner_lock
 from app.core.batch_runner import (
     EngineRunResult,
     FakeEngine,
@@ -29,6 +30,17 @@ from app.core.batch_runner import (
     target_spec_from_entry,
 )
 from app.core.orchestration.candidate import GenerationMode, TargetSpec
+
+
+@pytest.fixture(autouse=True)
+def _isolated_p18_global_window(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import app.core.batch_runner as batch_runner_module
+
+    monkeypatch.setattr(
+        batch_runner_module,
+        "P18_GLOBAL_WINDOW_ROOT",
+        tmp_path / "p18-global-window",
+    )
 
 
 def _valid_entry(index: int) -> dict[str, object]:
@@ -105,13 +117,22 @@ def test_real_engine_wiring_delegates_to_orchestrate_stub(tmp_path: Path, monkey
     captured: dict[str, object] = {}
 
     def _stub_orchestrate(spec, target, *, n, repeat_runs=1, artifact_dir=None, **kwargs):
-        captured.update(n=n, repeat_runs=repeat_runs, artifact_dir=artifact_dir)
+        captured.update(
+            n=n,
+            repeat_runs=repeat_runs,
+            artifact_dir=artifact_dir,
+            stagec_machine_evidence=kwargs.get("stagec_machine_evidence"),
+        )
         return batch_runner_module.CandidateSet(
             target=target,
             candidates=[],
             summary=CandidateSetSummary(
-                candidate_count=0, mode_counts={}, ranked_count=0, withheld_count=0,
-                ri_missing_count=0, notes=[],
+                candidate_count=0,
+                mode_counts={},
+                ranked_count=0,
+                withheld_count=0,
+                ri_missing_count=0,
+                notes=[],
             ),
         )
 
@@ -123,6 +144,7 @@ def test_real_engine_wiring_delegates_to_orchestrate_stub(tmp_path: Path, monkey
 
     assert captured["n"] == 2
     assert captured["repeat_runs"] == 2
+    assert captured["stagec_machine_evidence"] is False
     assert isinstance(result, EngineRunResult)
 
 
@@ -163,6 +185,8 @@ class _DegradedStubEngine:
     `[]` with only a log line, no summary note)."""
 
     modes_requested = (GenerationMode.RETRIEVED, GenerationMode.TARGET_CONVERGED)
+    engine_kind = "real"
+    requires_codev_window = True
 
     def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
         return FakeEngine(n=2).run(target, artifact_dir=artifact_dir)
@@ -173,6 +197,140 @@ def test_real_engine_requests_all_registered_modes():
 
     assert RealEngine.modes_requested == tuple(_REGISTRY.keys())
     assert GenerationMode.TARGET_CONVERGED in RealEngine.modes_requested
+
+
+def test_real_engine_cannot_be_relabelled_fake_before_any_ledger_write(
+    tmp_path: Path,
+) -> None:
+    archive = BatchArchive(root=tmp_path / "archive")
+    with pytest.raises(ValueError, match="engine mismatch"):
+        run_batch(
+            engine=RealEngine(n=1),
+            archive=archive,
+            targets=[_valid_entry(0)],
+            engine_name="fake",
+        )
+    assert archive.list_batches() == []
+
+
+def test_codev_window_engine_timeout_is_rejected_by_public_api_before_engine_or_ledger(
+    tmp_path: Path,
+) -> None:
+    calls = 0
+
+    class NeverRunRealEngine:
+        modes_requested = (GenerationMode.RETRIEVED,)
+        engine_kind = "real"
+        requires_codev_window = True
+
+        def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
+            nonlocal calls
+            calls += 1
+            raise AssertionError("real timeout preflight must reject before engine startup")
+
+    archive = BatchArchive(root=tmp_path / "archive")
+    artifacts = tmp_path / "artifacts"
+    with pytest.raises(ValueError, match="job_timeout_sec is forbidden"):
+        run_batch(
+            engine=NeverRunRealEngine(),
+            archive=archive,
+            targets=[_valid_entry(0)],
+            target_source="direct-api-timeout-refusal",
+            job_timeout_sec=0.01,
+            artifacts_root=artifacts,
+        )
+
+    assert calls == 0
+    assert archive.list_batches() == []
+    assert not artifacts.exists()
+
+
+def test_run_batch_exposes_no_global_window_override(tmp_path: Path) -> None:
+    with pytest.raises(TypeError, match="global_window_root"):
+        run_batch(
+            engine=FakeEngine(n=1),
+            archive=BatchArchive(root=tmp_path / "archive"),
+            targets=[_valid_entry(0)],
+            global_window_root=tmp_path / "bypass",  # type: ignore[call-arg]
+        )
+
+
+def test_custom_engine_without_closed_execution_contract_fails_before_lock(
+    tmp_path: Path,
+) -> None:
+    class UnclassifiedEngine:
+        modes_requested: tuple[GenerationMode, ...] = ()
+
+        def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
+            raise AssertionError("unclassified engine must never start")
+
+    archive = BatchArchive(root=tmp_path / "archive")
+    with pytest.raises(ValueError, match="closed engine_kind"):
+        run_batch(
+            engine=UnclassifiedEngine(),  # type: ignore[arg-type]
+            archive=archive,
+            targets=[_valid_entry(0)],
+        )
+    assert archive.list_batches() == []
+
+
+def test_real_batches_with_distinct_archives_share_one_global_window(
+    tmp_path: Path,
+) -> None:
+    calls = 0
+
+    class NeverRunEngine:
+        modes_requested = (GenerationMode.RETRIEVED,)
+        engine_kind = "real"
+        requires_codev_window = True
+
+        def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
+            nonlocal calls
+            calls += 1
+            raise AssertionError("global window contention must fail before engine startup")
+
+    import app.core.batch_runner as batch_runner_module
+
+    window = batch_runner_module.P18_GLOBAL_WINDOW_ROOT
+    archive = BatchArchive(root=tmp_path / "other-worktree" / "archive")
+    with batch_runner_lock(window), pytest.raises(BatchRunnerLockHeldError):
+        run_batch(
+            engine=NeverRunEngine(),
+            archive=archive,
+            targets=[_valid_entry(0)],
+            target_source="cross-worktree-window",
+            engine_name="real",
+        )
+    assert calls == 0
+    assert archive.list_batches() == []
+
+
+def test_real_batch_holds_global_window_for_entire_engine_call(tmp_path: Path) -> None:
+    import app.core.batch_runner as batch_runner_module
+
+    window = batch_runner_module.P18_GLOBAL_WINDOW_ROOT
+
+    class WindowProbeEngine:
+        modes_requested = (GenerationMode.RETRIEVED,)
+        engine_kind = "real"
+        requires_codev_window = True
+
+        def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
+            with pytest.raises(BatchRunnerLockHeldError), batch_runner_lock(window):
+                raise AssertionError("real engine ran outside the global window")
+            return FakeEngine(n=1).run(target, artifact_dir=artifact_dir)
+
+    summary = run_batch(
+        engine=WindowProbeEngine(),
+        archive=BatchArchive(root=tmp_path / "archive"),
+        targets=[_valid_entry(0)],
+        target_source="global-window-lifetime",
+        engine_name="real",
+        artifacts_root=tmp_path / "artifacts",
+    )
+    assert len(summary.jobs) == 1
+    with batch_runner_lock(window):
+        pass
 
 
 def test_run_batch_books_degraded_when_requested_mode_produces_nothing(tmp_path: Path):
@@ -253,6 +411,8 @@ def test_degraded_zero_candidates_still_books_as_engine_failure(tmp_path: Path):
 
     class _EmptyStubEngine:
         modes_requested = (GenerationMode.RETRIEVED, GenerationMode.TARGET_CONVERGED)
+        engine_kind = "fake"
+        requires_codev_window = False
 
         def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
             entry = {**_valid_entry(0), "fov_deg": None}  # forces 0 retrieval candidates
@@ -282,7 +442,10 @@ def test_run_batch_fake_engine_five_targets_one_injected_failure(tmp_path: Path)
     archive = BatchArchive(root=tmp_path / "archive")
     engine = FakeEngine(n=2)
     targets = [_valid_entry(i) for i in range(5)]
-    targets[2] = {**targets[2], "fov_deg": None}  # injected failure: Mode1 retrieval requires fov_deg
+    targets[2] = {
+        **targets[2],
+        "fov_deg": None,
+    }  # injected failure: Mode1 retrieval requires fov_deg
 
     summary = run_batch(
         engine=engine,
@@ -331,7 +494,9 @@ def test_run_batch_fake_engine_five_targets_one_injected_failure(tmp_path: Path)
 def test_run_batch_preflight_failure_for_invalid_entry(tmp_path: Path):
     archive = BatchArchive(root=tmp_path / "archive")
     engine = FakeEngine(n=2)
-    targets = [{"scenario": "smartphone-wide", "efl_mm": 3.5, "fov_deg": 78.0, "image_height_mm": 3.4}]
+    targets = [
+        {"scenario": "smartphone-wide", "efl_mm": 3.5, "fov_deg": 78.0, "image_height_mm": 3.4}
+    ]
 
     summary = run_batch(
         engine=engine,
@@ -352,6 +517,10 @@ def test_run_batch_preflight_failure_for_invalid_entry(tmp_path: Path):
 class _SlowStubEngine:
     """Local test-only engine (not `FakeEngine`/`RealEngine`) — sleeps past
     a short timeout to exercise the `timeout` failure category."""
+
+    modes_requested: tuple[GenerationMode, ...] = ()
+    engine_kind = "fake"
+    requires_codev_window = False
 
     def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
         time.sleep(0.3)
@@ -379,7 +548,9 @@ def test_run_batch_job_timeout_classified_correctly(tmp_path: Path):
     assert job.failure.category == "timeout"
 
 
-def test_run_batch_unexpected_post_engine_error_classified_as_exception(tmp_path: Path, monkeypatch):
+def test_run_batch_unexpected_post_engine_error_classified_as_exception(
+    tmp_path: Path, monkeypatch
+):
     import app.core.batch_runner as batch_runner_module
 
     def _boom(_candidate_set):
@@ -523,9 +694,12 @@ def test_cli_rejects_job_timeout_with_real_engine(tmp_path: Path):
 
     exit_code = module.main(
         [
-            "--engine", "real",
-            "--job-timeout-sec", "5",
-            "--archive-dir", str(tmp_path / "archive"),
+            "--engine",
+            "real",
+            "--job-timeout-sec",
+            "5",
+            "--archive-dir",
+            str(tmp_path / "archive"),
         ]
     )
     assert exit_code == 2
@@ -682,10 +856,13 @@ def test_cli_resume_engine_mismatch_exits_2(tmp_path: Path):
 
     exit_code = module.main(
         [
-            "--engine", "real",
+            "--engine",
+            "real",
             "--resume",
-            "--batch-id", first.batch.batch_id,
-            "--archive-dir", str(tmp_path / "archive"),
+            "--batch-id",
+            first.batch.batch_id,
+            "--archive-dir",
+            str(tmp_path / "archive"),
         ]
     )
     assert exit_code == 2
@@ -719,14 +896,20 @@ def test_run_batch_resume_ignores_new_targets_argument(tmp_path: Path):
     engine = FakeEngine(n=2)
     targets = [_valid_entry(i) for i in range(2)]
     first = run_batch(
-        engine=engine, archive=archive, targets=targets, target_source="unit-2",
+        engine=engine,
+        archive=archive,
+        targets=targets,
+        target_source="unit-2",
         artifacts_root=tmp_path / "artifacts",
     )
     assert first.batch.status == "completed"
 
     # Resuming an already-completed batch with zero pending targets is a no-op.
     second = run_batch(
-        engine=engine, archive=archive, resume=True, batch_id=first.batch.batch_id,
+        engine=engine,
+        archive=archive,
+        resume=True,
+        batch_id=first.batch.batch_id,
         artifacts_root=tmp_path / "artifacts",
     )
     assert second.batch.status == "completed"

@@ -17,6 +17,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import subprocess
 import sys
@@ -27,6 +29,7 @@ from typing import ClassVar
 
 import pytest
 
+from app.core.batch_run_lock import BatchRunnerLockHeldError, batch_runner_lock
 from app.core.case_library import _candidate_scenarios, load_case_library, match_case, rank_seeds
 from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
 from app.core.engines.seed_target_score import SeedTargetScore
@@ -281,9 +284,7 @@ def test_retrieval_generator_unknown_scenario_family_returns_empty_when_pool_emp
     # AR near-eye has no seeds in the smartphone case library family; the
     # generator must fail closed (empty list), not raise, when the filtered
     # pool is empty (mirrors match_case's `if not cases: return None`).
-    spec = TargetSpec(
-        scenario=Scenario.AR_NEAR_EYE, efl_mm=10.0, fov_deg=40.0, fnum=2.0
-    )
+    spec = TargetSpec(scenario=Scenario.AR_NEAR_EYE, efl_mm=10.0, fov_deg=40.0, fnum=2.0)
     generator = RetrievalGenerator()
     pool = [
         c
@@ -305,6 +306,14 @@ def test_retrieval_generator_unknown_scenario_family_returns_empty_when_pool_emp
 def test_target_converged_generator_mode_class_var():
     assert TargetConvergedGenerator.mode is GenerationMode.TARGET_CONVERGED
     assert RetrievalGenerator.mode is GenerationMode.RETRIEVED
+
+
+def test_target_converged_generator_rejects_custom_stagec_runner_in_production():
+    def custom_runner(**_kwargs: object) -> Path:
+        raise AssertionError("custom Stage C runner must never be admitted")
+
+    with pytest.raises(ValueError, match="official Stage C runner"):
+        TargetConvergedGenerator(stagec_runner=custom_runner)
 
 
 def test_target_converged_generator_returns_empty_when_efl_target_missing():
@@ -334,7 +343,9 @@ def _real_case_with_zmx() -> OpticalSampleData:
     raise AssertionError("case library has no case with an on-disk source ZMX")
 
 
-def _fake_match(*, band: str = "lt5", score: float = 2.0, delta_pct: float = 2.0) -> SeedTargetScore:
+def _fake_match(
+    *, band: str = "lt5", score: float = 2.0, delta_pct: float = 2.0
+) -> SeedTargetScore:
     return SeedTargetScore(
         delta_efl_pct=delta_pct, abs_delta_efl_pct=abs(delta_pct), score=score, band=band
     )
@@ -357,10 +368,15 @@ def _fake_ladder_result(
         "ray_traceable": target_achieved,
         "ray_grid": (
             {
-                "category": "ok", "refl_count": 0, "miss_count": 0,
-                "ray_aiming_warning": False, "aperture_conflict_matched": None,
-                "excerpt": None, "note": "positive measured listing evidence",
-                "normal_completion": True, "abnormal_completion_matched": None,
+                "category": "ok",
+                "refl_count": 0,
+                "miss_count": 0,
+                "ray_aiming_warning": False,
+                "aperture_conflict_matched": None,
+                "excerpt": None,
+                "note": "positive measured listing evidence",
+                "normal_completion": True,
+                "abnormal_completion_matched": None,
             }
             if target_achieved
             else {"category": "TIR", "refl_count": 1, "miss_count": 0}
@@ -439,7 +455,9 @@ def test_rank_seeds_by_target_match_prefers_fov_near_seed_when_fov_constrained(m
     narrow_fov, wide_fov = _fov_variant_pair()
     assert narrow_fov.metadata is not None and wide_fov.metadata is not None
     monkeypatch.setattr(
-        generators_module, "cases_for_scenario", lambda scenario: [narrow_fov, wide_fov]  # noqa: ARG005
+        generators_module,
+        "cases_for_scenario",
+        lambda scenario: [narrow_fov, wide_fov],  # noqa: ARG005
     )
     spec = TargetSpec(
         scenario=Scenario.SMARTPHONE_WIDE,
@@ -461,7 +479,9 @@ def test_rank_seeds_by_target_match_degrades_to_efl_only_when_fov_unconstrained(
     narrow_fov, wide_fov = _fov_variant_pair()
     assert narrow_fov.metadata is not None and wide_fov.metadata is not None
     monkeypatch.setattr(
-        generators_module, "cases_for_scenario", lambda scenario: [narrow_fov, wide_fov]  # noqa: ARG005
+        generators_module,
+        "cases_for_scenario",
+        lambda scenario: [narrow_fov, wide_fov],  # noqa: ARG005
     )
     spec = TargetSpec(
         scenario=Scenario.SMARTPHONE_WIDE,
@@ -826,7 +846,8 @@ def test_candidate_for_seed_notes_flag_fov_unfiltered_selection_when_fov_unconst
         "run_codev_target_fno_ladder",
         lambda **kwargs: _fake_ladder_result(
             optimized_zmx_path=str(unconstrained_zmx),
-            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+            target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
         ),
     )
     spec_unconstrained = TargetSpec(
@@ -847,7 +868,8 @@ def test_candidate_for_seed_notes_flag_fov_unfiltered_selection_when_fov_unconst
         "run_codev_target_fno_ladder",
         lambda **kwargs: _fake_ladder_result(
             optimized_zmx_path=str(constrained_zmx),
-            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+            target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
         ),
     )
     spec_constrained = TargetSpec(
@@ -894,7 +916,10 @@ def test_candidate_for_seed_returns_none_when_no_preferred_config(tmp_path: Path
         lambda **kwargs: {  # noqa: ANN003
             "preferred": None,
             "preferred_reason": "两配置均报 CodeVBatchError",
-            "configs": {"asphere": {"error": {"kind": "timeout"}}, "both": {"error": {"kind": "timeout"}}},
+            "configs": {
+                "asphere": {"error": {"kind": "timeout"}},
+                "both": {"error": {"kind": "timeout"}},
+            },
             "provenance": {},
         },
     )
@@ -938,7 +963,8 @@ def test_candidate_for_seed_payload_build_failure_is_fail_closed(tmp_path: Path,
         "run_codev_target_fno_ladder",
         lambda **kwargs: _fake_ladder_result(
             optimized_zmx_path=str(bogus_zmx),
-            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+            target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
         ),
     )
     result = TargetConvergedGenerator._candidate_for_seed(
@@ -973,7 +999,8 @@ def test_candidate_for_seed_success_path_produces_target_converged_candidate(
         "run_codev_target_fno_ladder",
         lambda **kwargs: _fake_ladder_result(
             optimized_zmx_path=str(stand_in_zmx),
-            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+            target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
         ),
     )
     spec = TargetSpec(
@@ -1021,6 +1048,9 @@ def test_candidate_for_seed_success_path_produces_target_converged_candidate(
     # 注记不再宣称"恒 unavailable"（那会是对新行为的撒谎），改为如实注明
     # 显式路径实算 + fail-closed。
     assert "恒 unavailable" not in joined_notes
+    assert "Stage C 场重建未落地" not in joined_notes
+    assert "Stage C RIH 重建与真机 receipt 验证 achieved" in joined_notes
+    assert "FOV 只允许由同源 EFL/IMH 派生或实测" in joined_notes
     assert any("P17-4 接线" in note for note in candidate.generation_notes)
 
 
@@ -1134,7 +1164,8 @@ def test_candidate_for_seed_persists_optimized_zmx_bytes(tmp_path: Path, monkeyp
         generators_module,
         "run_codev_target_fno_ladder",
         lambda **kwargs: _fake_ladder_result(
-            optimized_zmx_path=str(source), target_efl_mm=kwargs["target_efl_mm"],
+            optimized_zmx_path=str(source),
+            target_efl_mm=kwargs["target_efl_mm"],
             fnum_target=kwargs["fnum_target"],
         ),
     )
@@ -1153,10 +1184,359 @@ def test_candidate_for_seed_persists_optimized_zmx_bytes(tmp_path: Path, monkeyp
     assert candidate is not None
     persisted = Path(candidate.optimized_zmx_path or "")
     assert persisted.read_bytes() == expected
-    assert persisted == tmp_path / "artifacts" / "candidates" / (
-        f"{seed.metadata.case_id}--stageb-ladder--run-1"
-    ) / "candidate.zmx"
+    assert (
+        persisted
+        == tmp_path
+        / "artifacts"
+        / "candidates"
+        / (f"{seed.metadata.case_id}--stageb-ladder--run-1")
+        / "candidate.zmx"
+    )
     assert candidate.artifact_warnings == []
+
+
+@pytest.mark.parametrize(
+    ("defect", "message"),
+    [
+        ("missing", "missing or contradictory"),
+        ("unknown", "missing or contradictory"),
+        ("contradictory", "missing or contradictory"),
+        ("hash", "record bytes changed"),
+    ],
+)
+def test_production_stageb_cache_binding_fails_closed(
+    tmp_path: Path, defect: str, message: str
+) -> None:
+    record = tmp_path / "cache-record.json"
+    raw_result = tmp_path / "raw-ladder-result.json"
+    record.write_bytes(b"retained cache record")
+    raw_result.write_bytes(b"retained raw ladder")
+    entry = {
+        "cache_scope": "pre-run-bound",
+        "pre_run_bound": True,
+        "cache_record_path": str(record.resolve()),
+        "cache_record_sha256": hashlib.sha256(record.read_bytes()).hexdigest(),
+        "raw_ladder_result_path": str(raw_result.resolve()),
+        "raw_ladder_result_sha256": hashlib.sha256(raw_result.read_bytes()).hexdigest(),
+    }
+    if defect == "missing":
+        entry.pop("cache_scope")
+    elif defect == "unknown":
+        entry["cache_scope"] = "invented"
+    elif defect == "contradictory":
+        entry["pre_run_bound"] = False
+    else:
+        entry["cache_record_sha256"] = "0" * 64
+    raw = json.dumps({"accepted": [entry]}, allow_nan=False).encode()
+
+    with pytest.raises(ValueError, match=message):
+        generators_module._production_stageb_cache_binding(raw)
+
+
+def test_candidate_for_seed_production_stagec_uses_accepted_bytes_for_attested_payload(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.core.engines import stagec_attested as attested_module
+    from app.core.engines import stagec_field as stagec_field_module
+    from app.core.engines.stagec_attested import (
+        StageCAttestedEvidence,
+        StageCAttestedField,
+    )
+    from app.core.engines.stagec_field import validate_reconstructed_field_artifact
+    from app.core.orchestration import candidate as candidate_module
+
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    accepted = tmp_path / "accepted.zmx"
+    accepted.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    result = _fake_ladder_result(
+        optimized_zmx_path=str(accepted),
+        target_efl_mm=seed.paraxial.effective_focal_length_mm,
+        fnum_target=seed.paraxial.f_number,
+    )
+    result["source_zmx"] = seed.metadata.source_zmx
+    fake_codev = tmp_path / "codev.exe"
+    fake_codev.write_bytes(b"fixture CODE V")
+    fake_macro = tmp_path / "zemaxos_to_cv.seq"
+    fake_macro.write_bytes(b"fixture official macro")
+    monkeypatch.setattr(attested_module, "_TRUSTED_CODEV_EXECUTABLE", fake_codev)
+    monkeypatch.setattr(attested_module, "_OFFICIAL_ZEMAX_MACRO", fake_macro)
+    real_reconstruct = stagec_field_module.reconstruct_image_fields
+
+    def reconstruct_fixture(**kwargs: object):
+        source_zmx = Path(str(kwargs["source_zmx"]))
+        angular = tmp_path / "angular-fixture.zmx"
+        source_text = source_zmx.read_text(encoding="utf-16")
+        assert "FTYP 3 " in source_text
+        angular.write_text(
+            source_text.replace("FTYP 3 ", "FTYP 0 ", 1),
+            encoding="utf-16",
+        )
+        reconstructed = real_reconstruct(
+            source_zmx=angular,
+            output_zmx=Path(str(kwargs["output_zmx"])),
+            resolved_target=kwargs["resolved_target"],
+            allow_nonzero_vignetting_for_machine=True,
+        )
+        source_sha = hashlib.sha256(source_zmx.read_bytes()).hexdigest()
+        return reconstructed.model_copy(
+            update={
+                "source_path": str(source_zmx.resolve()),
+                "source_sha256_before": source_sha,
+                "source_sha256_after": source_sha,
+            }
+        )
+
+    monkeypatch.setattr(generators_module, "reconstruct_image_fields", reconstruct_fixture)
+    restored: StageCAttestedEvidence | None = None
+
+    def fake_stagec_runner(**kwargs: object) -> Path:
+        nonlocal restored
+        with pytest.raises(BatchRunnerLockHeldError), batch_runner_lock(tmp_path / "p18-archive"):
+            raise AssertionError("the production P18 window unexpectedly reopened")
+        plan = json.loads(Path(str(kwargs["execution_plan"])).read_text(encoding="utf-8"))
+        assert set(plan) == {
+            "schema_id",
+            "matrix_id",
+            "stageb_manifest",
+            "stageb_manifest_sha256",
+            "seed_count",
+            "cell_count",
+            "repeat_count",
+            "expected_run_count",
+            "stageb_cache_scope_counts",
+            "all_inputs_pre_run_bound",
+            "retrospective_seed_ids",
+            "cells",
+            "expert_verdict",
+        }
+        assert plan["schema_id"] == "atelier-stagec-production-execution-plan-v1"
+        assert (plan["seed_count"], plan["cell_count"], plan["repeat_count"]) == (1, 1, 1)
+        assert plan["expected_run_count"] == 1
+        assert plan["stageb_cache_scope_counts"] == {"pre-run-bound": 1}
+        assert plan["all_inputs_pre_run_bound"] is True
+        assert plan["retrospective_seed_ids"] == []
+        authority = Path(str(kwargs["stageb_manifest"]))
+        assert plan["stageb_manifest"] == str(authority.resolve())
+        assert plan["stageb_manifest_sha256"] == hashlib.sha256(authority.read_bytes()).hexdigest()
+        reconstruction = plan["cells"][0]["reconstruction"]
+        assert plan["cells"][0]["cache_scope"] == "pre-run-bound"
+        assert plan["cells"][0]["pre_run_bound"] is True
+        assert len(plan["cells"][0]["cache_record_sha256"]) == 64
+        assert Path(plan["cells"][0]["cache_record_path"]).is_file()
+        assert len(plan["cells"][0]["raw_ladder_result_sha256"]) == 64
+        assert Path(plan["cells"][0]["raw_ladder_result_path"]).is_file()
+        output = Path(reconstruction["output_path"])
+        parsed = validate_reconstructed_field_artifact(
+            output,
+            expected_num_fields=reconstruction["num_fields"],
+            expected_fractions=tuple(reconstruction["normalized_fractions"]),
+            target_image_height_mm=reconstruction["target_image_height_mm"],
+            vignetting_mode="finite-nonzoom",
+        )
+        expected_profiles = tuple(
+            (vuy, vly, vux, vlx)
+            for vuy, vly, vux, vlx in zip(
+                parsed.vuy, parsed.vly, parsed.vux, parsed.vlx, strict=True
+            )
+        )
+        fields = tuple(
+            StageCAttestedField(
+                field_index=index,
+                sample_id=f"field-{index:04d}",
+                normalized_fraction=fraction,
+                definition_x_ri_mm=0.0,
+                definition_y_ri_mm=fraction * reconstruction["target_image_height_mm"],
+                rsi_actual_x_mm=0.0,
+                rsi_actual_y_mm=fraction * reconstruction["target_image_height_mm"],
+                rsi_direction_l=0.0,
+                rsi_direction_m=0.0,
+                rsi_direction_n=1.0,
+                rayrsi_return_code=0,
+                rer=0,
+                bls=0,
+                spotdata_return_code=0,
+                rms_spot_diameter_um=10.0,
+                rmswe_return_value=1.0,
+                rms_wfe_waves=0.2,
+                vuy=expected_profiles[index - 1][0],
+                vly=expected_profiles[index - 1][1],
+                vux=expected_profiles[index - 1][2],
+                vlx=expected_profiles[index - 1][3],
+                ray_classification="valid",
+            )
+            for index, fraction in enumerate(reconstruction["normalized_fractions"], start=1)
+        )
+        package = tmp_path / "trusted-package"
+        restored = StageCAttestedEvidence.model_construct(
+            schema_id="atelier-stagec-attested-evidence-v3",
+            evidence_kind="attested-machine",
+            run_id="production-test-run",
+            matrix_id=kwargs["matrix_id"],
+            cell_id=f"{seed.metadata.case_id}--production-target",
+            seed_id=seed.metadata.case_id,
+            arm="production-target",
+            repeat_index=1,
+            receipt_sha256="1" * 64,
+            execution_plan_sha256=hashlib.sha256(
+                Path(str(kwargs["execution_plan"])).read_bytes()
+            ).hexdigest(),
+            stageb_cache_scope=plan["cells"][0]["cache_scope"],
+            stageb_pre_run_bound=plan["cells"][0]["pre_run_bound"],
+            stageb_cache_record_sha256=plan["cells"][0]["cache_record_sha256"],
+            stageb_raw_ladder_result_sha256=plan["cells"][0]["raw_ladder_result_sha256"],
+            package_path=str(package),
+            source_zmx_sha256=hashlib.sha256(
+                Path(str(result["accepted_final"]["optimized_zmx_path"])).read_bytes()
+            ).hexdigest(),
+            reconstructed_zmx_sha256=parsed.sha256,
+            target_efl_mm=reconstruction["target_efl_mm"],
+            target_image_height_mm=reconstruction["target_image_height_mm"],
+            normalized_fractions=tuple(reconstruction["normalized_fractions"]),
+            expected_vignetting_profile=expected_profiles,
+            measured_efl_mm=reconstruction["target_efl_mm"],
+            fields=fields,
+            process_returncode_observed=0,
+            process_duration_seconds=0.1,
+            artifact_bindings_valid=True,
+            receipt_attested=True,
+            field_type="RIH",
+            expert_verdict=None,
+        )
+        return package / "post-run-receipt.json"
+
+    def fake_restore(_path: Path) -> StageCAttestedEvidence:
+        assert restored is not None
+        return restored
+
+    from app.core.engines import stageb_authority as authority_module
+
+    monkeypatch.setattr(authority_module, "OFFICIAL_EXECUTABLE", fake_codev)
+    monkeypatch.setattr(authority_module, "OFFICIAL_MACRO", fake_macro)
+    monkeypatch.setattr(
+        authority_module,
+        "TRUSTED_CODEV_SHA256",
+        hashlib.sha256(fake_codev.read_bytes()).hexdigest(),
+    )
+    monkeypatch.setattr(authority_module, "TRUSTED_CODEV_SIZE_BYTES", fake_codev.stat().st_size)
+    monkeypatch.setattr(
+        authority_module,
+        "TRUSTED_MACRO_SHA256",
+        hashlib.sha256(fake_macro.read_bytes()).hexdigest(),
+    )
+    monkeypatch.setattr(authority_module, "TRUSTED_CODEV_FILE_VERSION", "11.5-test")
+
+    def fake_authority_runner(**kwargs: object) -> dict[str, object]:
+        payload = json.loads(json.dumps(result))
+        payload["source_zmx"] = Path(str(kwargs["source_zmx"])).name
+        for key in (
+            "stage",
+            "target_efl_mm",
+            "fnum_target",
+            "rung_count",
+            "fnum_tolerance_pct",
+            "num_fields",
+            "extra_dof",
+        ):
+            payload[key] = kwargs[key]
+        payload["vig_ladder"] = list(kwargs["vig_ladder"])
+        payload["ray_retry_vig_ladder"] = list(kwargs["ray_retry_vig_ladder"])
+        return payload
+
+    def fake_open_authority(config: object):
+        assert isinstance(config, authority_module.StageBAuthorityConfig)
+        monkeypatch.setattr(authority_module, "P18_GLOBAL_WINDOW_ROOT", config.p18_lock_root)
+        test_config = authority_module.StageBAuthorityConfig(
+            # Keep the Windows pytest fixture below MAX_PATH; production path
+            # placement is asserted separately from the retained manifest.
+            authority_root=tmp_path / "authority",
+            output_lock_root=config.output_lock_root,
+            p18_lock_root=config.p18_lock_root,
+            executable=fake_codev,
+            official_macro=fake_macro,
+            _codev_version_for_tests="11.5-test",
+        )
+        return authority_module._open_stageb_authority_for_tests(  # noqa: SLF001
+            test_config, fake_authority_runner
+        )
+
+    monkeypatch.setattr(generators_module, "open_stageb_authority", fake_open_authority)
+    monkeypatch.setattr(generators_module, "restore_stagec_attested_evidence", fake_restore)
+    monkeypatch.setattr(candidate_module, "restore_stagec_attested_evidence", fake_restore)
+    spec = TargetSpec(
+        scenario=seed.metadata.scenario,
+        efl_mm=seed.paraxial.effective_focal_length_mm,
+        fnum=seed.paraxial.f_number,
+        image_height_mm=2.3,
+    )
+
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=spec,
+        work_dir=tmp_path / "work",
+        artifact_dir=tmp_path / "artifacts",
+        run_index=1,
+        ladder_runner=generators_module.run_codev_target_fno_ladder,
+        stagec_runner=fake_stagec_runner,
+        stageb_p18_lock_root=tmp_path / "p18-archive",
+    )
+
+    assert candidate is not None
+    with batch_runner_lock(tmp_path / "p18-archive"):
+        pass
+    assert candidate.stagec_field_evidence is restored
+    assert candidate.stagec_field_evidence.image_height_achieved is True
+    assert Path(candidate.optimized_zmx_path or "").name == "candidate-rih.zmx"
+    assert candidate.payload.metadata is not None
+    assert candidate.payload.metadata.image_height_mm == 2.3
+
+
+def test_candidate_for_seed_production_stagec_collision_fails_closed(
+    tmp_path: Path,
+) -> None:
+    seed = _real_case_with_zmx()
+    assert seed.metadata is not None
+    source = tmp_path / "accepted.zmx"
+    source.write_bytes((ZMX_AMMO_DIR / seed.metadata.source_zmx).read_bytes())
+    result = _fake_ladder_result(
+        optimized_zmx_path=str(source),
+        target_efl_mm=seed.paraxial.effective_focal_length_mm,
+        fnum_target=seed.paraxial.f_number,
+    )
+    collision = (
+        tmp_path / "artifacts" / "candidates" / (f"{seed.metadata.case_id}--stageb-ladder--run-1")
+    )
+    collision.mkdir(parents=True)
+    (collision / "candidate.zmx").write_bytes(b"stale-candidate-must-not-be-reused")
+    runner_called = False
+
+    def forbidden_runner(**_kwargs: object) -> Path:
+        nonlocal runner_called
+        runner_called = True
+        raise AssertionError("Stage C runner must not see a collided candidate directory")
+
+    candidate = TargetConvergedGenerator._candidate_for_seed(
+        seed=seed,
+        match=_fake_match(),
+        spec=TargetSpec(
+            scenario=seed.metadata.scenario,
+            efl_mm=seed.paraxial.effective_focal_length_mm,
+            fnum=seed.paraxial.f_number,
+            image_height_mm=2.3,
+        ),
+        work_dir=tmp_path / "work",
+        artifact_dir=tmp_path / "artifacts",
+        run_index=1,
+        ladder_runner=lambda **_kwargs: result,
+        stagec_runner=forbidden_runner,
+        stageb_p18_lock_root=tmp_path / "p18-archive",
+    )
+
+    assert candidate is None
+    assert runner_called is False
+    assert (collision / "candidate.zmx").read_bytes() == b"stale-candidate-must-not-be-reused"
+    assert not (collision / "stagec").exists()
 
 
 def test_candidate_for_seed_persist_collision_records_warning(tmp_path: Path, monkeypatch):
@@ -1168,12 +1548,13 @@ def test_candidate_for_seed_persist_collision_records_warning(tmp_path: Path, mo
         generators_module,
         "run_codev_target_fno_ladder",
         lambda **kwargs: _fake_ladder_result(
-            optimized_zmx_path=str(source), target_efl_mm=kwargs["target_efl_mm"],
+            optimized_zmx_path=str(source),
+            target_efl_mm=kwargs["target_efl_mm"],
             fnum_target=kwargs["fnum_target"],
         ),
     )
-    collision = tmp_path / "artifacts" / "candidates" / (
-        f"{seed.metadata.case_id}--stageb-ladder--run-1"
+    collision = (
+        tmp_path / "artifacts" / "candidates" / (f"{seed.metadata.case_id}--stageb-ladder--run-1")
     )
     collision.mkdir(parents=True)
     candidate = TargetConvergedGenerator._candidate_for_seed(
@@ -1213,11 +1594,13 @@ def test_candidate_for_seed_ri_fails_closed_when_optimized_zmx_deleted_before_ri
         "run_codev_target_fno_ladder",
         lambda **kwargs: _fake_ladder_result(
             optimized_zmx_path=str(stand_in_zmx),
-            target_efl_mm=kwargs["target_efl_mm"], fnum_target=kwargs["fnum_target"],
+            target_efl_mm=kwargs["target_efl_mm"],
+            fnum_target=kwargs["fnum_target"],
         ),
     )
 
     real_load = generators_module.load_normalized_zmx
+
     def _load_then_delete(path):  # noqa: ANN001
         optic = real_load(path)
         Path(path).unlink()  # file vanishes between payload build and RI compute
@@ -1235,9 +1618,7 @@ def test_candidate_for_seed_ri_fails_closed_when_optimized_zmx_deleted_before_ri
 
     assert candidate is not None  # RI 缺失不否决候选
     assert candidate.optical_extras.ri_by_field is not None
-    assert all(
-        m.status == "unavailable" for m in candidate.optical_extras.ri_by_field.values()
-    )
+    assert all(m.status == "unavailable" for m in candidate.optical_extras.ri_by_field.values())
 
 
 # ---------------------------------------------------------------------------
@@ -1402,6 +1783,7 @@ def test_generate_caps_seed_count_at_max_regardless_of_n(monkeypatch):
     not DEFAULT_CODEV_EXECUTABLE.is_file(),
     reason="real CODE V installation required for the Mode3 end-to-end smoke",
 )
+@pytest.mark.real_machine
 def test_real_target_converged_generator_orchestrate_end_to_end():
     """真机端到端：`orchestrate()` 全 modes 开，target EFL=3.797mm /
     FOV=78deg / F#=2.3（wide 场景，池内实测甜区附近，见

@@ -40,26 +40,38 @@ def test_resolver_requires_positive_finite_efl() -> None:
 def test_explicit_invalid_dimension_is_not_overridden_by_other_valid_dimension(
     invalid: float,
 ) -> None:
-    assert resolve_field_target(
-        efl_mm=4.0, image_height_mm=invalid, full_fov_deg=60.0
-    ).status is FieldTargetStatus.INVALID
-    assert resolve_field_target(
-        efl_mm=4.0, image_height_mm=2.0, full_fov_deg=invalid
-    ).status is FieldTargetStatus.INVALID
+    assert (
+        resolve_field_target(efl_mm=4.0, image_height_mm=invalid, full_fov_deg=60.0).status
+        is FieldTargetStatus.INVALID
+    )
+    assert (
+        resolve_field_target(efl_mm=4.0, image_height_mm=2.0, full_fov_deg=invalid).status
+        is FieldTargetStatus.INVALID
+    )
 
 
 def test_resolved_target_model_rejects_nonfinite_or_status_spoof() -> None:
     with pytest.raises(ValidationError):
         ResolvedFieldTarget(
-            status="resolved", efl_mm=4.0, image_height_mm=math.nan,
-            full_fov_deg=60.0, image_height_source="provided", fov_source="provided",
-            consistency="exact", reason="spoof",
+            status="resolved",
+            efl_mm=4.0,
+            image_height_mm=math.nan,
+            full_fov_deg=60.0,
+            image_height_source="provided",
+            fov_source="provided",
+            consistency="exact",
+            reason="spoof",
         )
     with pytest.raises(ValidationError):
         ResolvedFieldTarget(
-            status="invalid", efl_mm=4.0, image_height_mm=2.0,
-            full_fov_deg=60.0, image_height_source="provided", fov_source="provided",
-            consistency="exact", reason="spoof",
+            status="invalid",
+            efl_mm=4.0,
+            image_height_mm=2.0,
+            full_fov_deg=60.0,
+            image_height_source="provided",
+            fov_source="provided",
+            consistency="exact",
+            reason="spoof",
         )
 
 
@@ -83,9 +95,7 @@ def test_resolver_both_values_are_exact_constraint_not_tolerance() -> None:
     imh = 4 * math.tan(math.radians(30))
     exact = resolve_field_target(efl_mm=4.0, image_height_mm=imh, full_fov_deg=60.0)
     assert exact.status is FieldTargetStatus.RESOLVED
-    conflict = resolve_field_target(
-        efl_mm=4.0, image_height_mm=imh + 1e-8, full_fov_deg=60.0
-    )
+    conflict = resolve_field_target(efl_mm=4.0, image_height_mm=imh + 1e-8, full_fov_deg=60.0)
     assert conflict.status is FieldTargetStatus.CONFLICT
     assert conflict.image_height_mm is None
     assert conflict.full_fov_deg is None
@@ -94,7 +104,10 @@ def test_resolver_both_values_are_exact_constraint_not_tolerance() -> None:
 
 
 def _zmx(
-    num_fields: int, *, nonzero_vig: bool = False, x_edge: float = 0.0,
+    num_fields: int,
+    *,
+    nonzero_vig: bool = False,
+    x_edge: float = 0.0,
     signed_fields: bool = False,
 ) -> bytes:
     fractions = [i / (num_fields - 1) for i in range(num_fields)]
@@ -120,9 +133,7 @@ def _zmx(
 
 
 def _resolved_target(*, efl_mm: float = 4.0, image_height_mm: float = 3.0):
-    target = resolve_field_target(
-        efl_mm=efl_mm, image_height_mm=image_height_mm, full_fov_deg=None
-    )
+    target = resolve_field_target(efl_mm=efl_mm, image_height_mm=image_height_mm, full_fov_deg=None)
     assert target.status is FieldTargetStatus.RESOLVED
     return target
 
@@ -138,7 +149,8 @@ def test_reconstruction_preserves_field_count_fractions_source_and_lf(
     source_hash = hashlib.sha256(source_bytes).hexdigest()
 
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=output,
+        source_zmx=source,
+        output_zmx=output,
         resolved_target=_resolved_target(image_height_mm=3.2),
     )
 
@@ -162,12 +174,13 @@ def test_reconstruction_preserves_signed_field_fractions(tmp_path: Path) -> None
     output = tmp_path / "out.zmx"
     source.write_bytes(_zmx(3, signed_fields=True))
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
+        source_zmx=source,
+        output_zmx=output,
+        resolved_target=_resolved_target(),
     )
     assert result.normalized_fractions == (-1.0, 0.0, 1.0)
     yfln = next(
-        line for line in output.read_text(encoding="utf-8").splitlines()
-        if line.startswith("YFLN ")
+        line for line in output.read_text(encoding="utf-8").splitlines() if line.startswith("YFLN ")
     )
     assert tuple(float(value) for value in yfln.split()[1:]) == (-3.0, 0.0, 3.0)
 
@@ -187,13 +200,17 @@ def test_reconstruction_preserves_signed_field_fractions(tmp_path: Path) -> None
     ],
 )
 def test_artifact_validator_rejects_bytes_that_disagree_with_declared_profile(
-    tmp_path: Path, mutation, message: str,
+    tmp_path: Path,
+    mutation,
+    message: str,
 ) -> None:
     source = tmp_path / "seed.zmx"
     output = tmp_path / "out.zmx"
     source.write_bytes(_zmx(3))
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
+        source_zmx=source,
+        output_zmx=output,
+        resolved_target=_resolved_target(),
     )
     output.write_text(mutation(output.read_text(encoding="ascii")), encoding="ascii", newline="\n")
     with pytest.raises(ValueError, match=message):
@@ -211,13 +228,16 @@ def test_reconstruction_rejects_same_resolved_path_without_touching_source(tmp_p
     before = source.read_bytes()
     with pytest.raises(ValueError, match="different paths"):
         reconstruct_image_fields(
-            source_zmx=source, output_zmx=source, resolved_target=_resolved_target(),
+            source_zmx=source,
+            output_zmx=source,
+            resolved_target=_resolved_target(),
         )
     assert source.read_bytes() == before
 
 
 def test_atomic_publish_failure_preserves_existing_output_and_cleans_temp(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     import app.core.engines.stagec_field as stagec
 
@@ -228,7 +248,9 @@ def test_atomic_publish_failure_preserves_existing_output_and_cleans_temp(
     monkeypatch.setattr(stagec.os, "replace", Mock(side_effect=OSError("publish failed")))
     with pytest.raises(OSError, match="publish failed"):
         reconstruct_image_fields(
-            source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
+            source_zmx=source,
+            output_zmx=output,
+            resolved_target=_resolved_target(),
         )
     assert output.read_bytes() == b"existing-output"
     assert not list(tmp_path.glob(".*.tmp"))
@@ -238,7 +260,8 @@ def test_reconstruction_rejects_nonzero_x_field(tmp_path: Path) -> None:
     source = tmp_path / "seed.zmx"
     source.write_bytes(_zmx(3, x_edge=0.2))
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=tmp_path / "out.zmx",
+        source_zmx=source,
+        output_zmx=tmp_path / "out.zmx",
         resolved_target=_resolved_target(),
     )
     assert result.status == "rejected"
@@ -252,11 +275,42 @@ def test_reconstruction_nonzero_vignetting_is_unverified_and_emits_nothing(
     source.write_bytes(_zmx(3, nonzero_vig=True))
     output = tmp_path / "out.zmx"
     result = reconstruct_image_fields(
-        source_zmx=source, output_zmx=output, resolved_target=_resolved_target(),
+        source_zmx=source,
+        output_zmx=output,
+        resolved_target=_resolved_target(),
     )
     assert result.status == "unverified"
     assert result.vignetting_status == "nonzero-unverified"
     assert not output.exists()
+
+
+def test_machine_scoped_reconstruction_retains_nonzero_vignetting_for_four_v_readback(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "seed.zmx"
+    source.write_bytes(_zmx(3, nonzero_vig=True))
+    output = tmp_path / "out.zmx"
+
+    result = reconstruct_image_fields(
+        source_zmx=source,
+        output_zmx=output,
+        resolved_target=_resolved_target(),
+        allow_nonzero_vignetting_for_machine=True,
+    )
+    parsed = validate_reconstructed_field_artifact(
+        output,
+        expected_num_fields=3,
+        expected_fractions=result.normalized_fractions,
+        target_image_height_mm=result.target_image_height_mm,
+        vignetting_mode="finite-nonzoom",
+    )
+
+    assert result.status == "constructed"
+    assert result.vignetting_status == "nonzero-retained"
+    assert parsed.zero_vignetting is False
+    assert parsed.vux == (0.0, 0.0, -0.1)
+    assert parsed.vlx == (0.0, 0.0, 0.1)
+    assert parsed.vuy == parsed.vly == (0.0, 0.0, 0.0)
 
 
 def _offline_evidence(*, reconstruction: bool = True) -> dict[str, object]:
@@ -291,9 +345,12 @@ def test_offline_evidence_is_machine_blocked_and_never_achieved() -> None:
 
 def test_typed_evidence_rejects_spoofed_positive_flags() -> None:
     for key, value in (
-        ("imh_field_valid", True), ("efl_constraint_held", True),
-        ("ray_metrics_valid", True), ("real_chief_ray_status", "verified"),
-        ("rsi_status", "verified"), ("reconstruction_status", "constructed-verified"),
+        ("imh_field_valid", True),
+        ("efl_constraint_held", True),
+        ("ray_metrics_valid", True),
+        ("real_chief_ray_status", "verified"),
+        ("rsi_status", "verified"),
+        ("reconstruction_status", "constructed-verified"),
     ):
         raw = _offline_evidence()
         raw[key] = value
@@ -384,9 +441,7 @@ def _machine_inputs(
         "field_count": str(config["field_count"]),
         "expected_samples_per_metric": "16",
         "measured_efl_mm": str(
-            reconstruction.target_efl_mm * 1.019
-            if measured_efl_mm is None
-            else measured_efl_mm
+            reconstruction.target_efl_mm * 1.019 if measured_efl_mm is None else measured_efl_mm
         ),
     }
     meta.update(metrics_meta_overrides or {})
@@ -423,7 +478,10 @@ def _machine_inputs(
             "vlx": 0,
         }
         values.update((field_overrides or {}).get(index, {}))
-        rows.append("FIELD\t" + "\t".join(str(values[column]) for column in _MACHINE_COLUMNS.split("\t")[1:]))
+        rows.append(
+            "FIELD\t"
+            + "\t".join(str(values[column]) for column in _MACHINE_COLUMNS.split("\t")[1:])
+        )
     return {
         "listing_bytes": listing_bytes,
         "metrics_bytes": ("\n".join(rows) + "\n").encode(),
@@ -448,8 +506,10 @@ def _machine_evidence(tmp_path: Path):
         resolved_target=_resolved_target(),
     )
     readback = _machine_readback(reconstruction)
-    return reconstruction, readback, build_stagec_machine_evidence(
-        reconstruction=reconstruction, readback=readback
+    return (
+        reconstruction,
+        readback,
+        build_stagec_machine_evidence(reconstruction=reconstruction, readback=readback),
     )
 
 
@@ -601,7 +661,9 @@ def test_listing_requires_one_complete_error_free_run_segment(tmp_path: Path) ->
     for bad_lines in (text[:-1], text + text, [*text[:9], "CODEV_ERROR\tbad", *text[9:]]):
         # Rebuilding metrics is intentionally not attempted: listing parser must reject first.
         with pytest.raises(ValueError, match="listing"):
-            build_stagec_machine_readback(**{**good, "listing_bytes": ("\n".join(bad_lines) + "\n").encode()})
+            build_stagec_machine_readback(
+                **{**good, "listing_bytes": ("\n".join(bad_lines) + "\n").encode()}
+            )
     foreign = [
         "ATELIER_STAGEC_RUN_BEGIN\tstale-run",
         "ATELIER_STAGEC_RUN_END\tstale-run",
@@ -621,9 +683,7 @@ def test_listing_requires_one_complete_error_free_run_segment(tmp_path: Path) ->
         )
     assert exc_info.value.category is MachineListingFailure.STALE_OR_FOREIGN_RUN
 
-    malformed_index = [
-        line.replace("FIELD_BEGIN\t0", "FIELD_BEGIN\tnot-int") for line in text
-    ]
+    malformed_index = [line.replace("FIELD_BEGIN\t0", "FIELD_BEGIN\tnot-int") for line in text]
     with pytest.raises(MachineListingParseError) as exc_info:
         build_stagec_machine_readback(
             **{**good, "listing_bytes": ("\n".join(malformed_index) + "\n").encode()}
@@ -703,9 +763,7 @@ def test_legacy_schema_duplicate_meta_and_duplicate_field_rows_are_rejected(
         b'"run_id":"shadow","run_id":"stagec-synthetic-run-001"',
     )
     with pytest.raises(ValueError, match="duplicate JSON keys"):
-        build_stagec_machine_readback(
-            **{**good, "manifest_bytes": duplicate_manifest}
-        )
+        build_stagec_machine_readback(**{**good, "manifest_bytes": duplicate_manifest})
 
     metrics = good["metrics_bytes"].decode().splitlines()
     with pytest.raises(ValueError, match="unique"):
@@ -730,9 +788,7 @@ def test_restore_reparses_artifacts_and_model_copy_facts_have_no_authority(
 
     forged_field = readback.fields[2].model_copy(update={"definition_y_ri_mm": 999})
     forged = readback.model_copy(update={"fields": (*readback.fields[:2], forged_field)})
-    forged_evidence = build_stagec_machine_evidence(
-        reconstruction=reconstruction, readback=forged
-    )
+    forged_evidence = build_stagec_machine_evidence(reconstruction=reconstruction, readback=forged)
     assert forged_evidence.image_height_achieved is False
     assert forged_evidence.machine_execution_status == "invalid"
 
@@ -790,11 +846,25 @@ def test_build_sample_uses_one_resolved_field_source_without_reverting_to_angle(
     target = resolve_field_target(efl_mm=4.0, image_height_mm=3.0, full_fov_deg=None)
     regularize = Mock(side_effect=AssertionError("Stage C IMG fields reverted to ANGLE"))
     monkeypatch.setattr(library, "regularize_fields_to_angle", regularize)
-    monkeypatch.setattr(library, "compute_paraxial_summary", lambda _: template.paraxial.model_copy(deep=True))
-    monkeypatch.setattr(library, "extract_surface_descriptors", lambda _: [s.model_copy(deep=True) for s in template.surfaces])
-    monkeypatch.setattr(library, "trace_optic", lambda *_, **__: template.trace.model_copy(deep=True))
-    monkeypatch.setattr(library, "_fast_layout_svg_from_surfaces", lambda _: template.layout_svg.model_copy(deep=True))
-    monkeypatch.setattr(library, "_lightweight_mtf", lambda *_: (template.mtf.model_copy(deep=True), 1.0))
+    monkeypatch.setattr(
+        library, "compute_paraxial_summary", lambda _: template.paraxial.model_copy(deep=True)
+    )
+    monkeypatch.setattr(
+        library,
+        "extract_surface_descriptors",
+        lambda _: [s.model_copy(deep=True) for s in template.surfaces],
+    )
+    monkeypatch.setattr(
+        library, "trace_optic", lambda *_, **__: template.trace.model_copy(deep=True)
+    )
+    monkeypatch.setattr(
+        library,
+        "_fast_layout_svg_from_surfaces",
+        lambda _: template.layout_svg.model_copy(deep=True),
+    )
+    monkeypatch.setattr(
+        library, "_lightweight_mtf", lambda *_: (template.mtf.model_copy(deep=True), 1.0)
+    )
     monkeypatch.setattr(library, "_classify_surfaces", lambda _: (4, 1))
     monkeypatch.setattr(library, "_materials_from_zmx", lambda *_, **__: ["TEST-GLASS"])
 

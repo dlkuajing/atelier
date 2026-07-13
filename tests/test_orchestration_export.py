@@ -189,12 +189,16 @@ def _target_converged_candidate(*, optimized_zmx_resolvable: bool = False) -> Sc
     production, but forward-compatible) path where the file does resolve."""
     assert _CASE.metadata is not None
     candidate_id = f"{_CASE.metadata.case_id}::target-converged-both"
-    payload = _CASE if optimized_zmx_resolvable else _CASE.model_copy(
-        update={
-            "metadata": _CASE.metadata.model_copy(
-                update={"source_zmx": "atelier-c1-mode3-tmp-optimized-both.zmx"}
-            )
-        }
+    payload = (
+        _CASE
+        if optimized_zmx_resolvable
+        else _CASE.model_copy(
+            update={
+                "metadata": _CASE.metadata.model_copy(
+                    update={"source_zmx": "atelier-c1-mode3-tmp-optimized-both.zmx"}
+                )
+            }
+        )
     )
     codev_post_aut = {
         "post_aut.efl_y_mm": 3.79,
@@ -209,10 +213,15 @@ def _target_converged_candidate(*, optimized_zmx_resolvable: bool = False) -> Sc
         ray_traceable=True,
         effective_edge_used=0.4,
         ray_grid={
-            "category": "ok", "refl_count": 0, "miss_count": 0,
-            "ray_aiming_warning": False, "aperture_conflict_matched": None,
-            "excerpt": None, "note": "positive measured listing evidence",
-            "normal_completion": True, "abnormal_completion_matched": None,
+            "category": "ok",
+            "refl_count": 0,
+            "miss_count": 0,
+            "ray_aiming_warning": False,
+            "aperture_conflict_matched": None,
+            "excerpt": None,
+            "note": "positive measured listing evidence",
+            "normal_completion": True,
+            "abnormal_completion_matched": None,
         },
         quality_note="measured on accepted ray-retry pupil",
         optimized_zmx_path="accepted-final.zmx",
@@ -278,13 +287,9 @@ def _stageb_negative_candidate() -> ScoredCandidate:
     negative_evidence = evidence.model_copy(
         update={"target_achieved": False, "accepted_final": None}
     )
-    generated = positive.generated.model_copy(
-        update={"fnum_ladder_evidence": negative_evidence}
-    )
+    generated = positive.generated.model_copy(update={"fnum_ladder_evidence": negative_evidence})
     deviations = [
-        dev.model_copy(update={"converged_toward_target": False})
-        if dev.field == "fnum"
-        else dev
+        dev.model_copy(update={"converged_toward_target": False}) if dev.field == "fnum" else dev
         for dev in positive.scorecard.target_deviations
     ]
     scorecard = positive.scorecard.model_copy(update={"target_deviations": deviations})
@@ -326,9 +331,7 @@ def _stagec_offline_candidate(tmp_path: Path) -> ScoredCandidate:
     target_imh = 3.0
     efl = 3.8
     derived_fov = 2 * math.degrees(math.atan(target_imh / efl))
-    resolved = resolve_field_target(
-        efl_mm=efl, image_height_mm=target_imh, full_fov_deg=None
-    )
+    resolved = resolve_field_target(efl_mm=efl, image_height_mm=target_imh, full_fov_deg=None)
     reconstruction = reconstruct_image_fields(
         source_zmx=source,
         output_zmx=artifact,
@@ -478,6 +481,22 @@ def _stagec_machine_candidate(tmp_path: Path) -> ScoredCandidate:
     return ScoredCandidate(generated=generated, scorecard=offline.scorecard)
 
 
+def _assert_strict_validation_rejection_bundle(
+    zip_bytes: bytes, *, forbidden_details: tuple[str, ...] = ()
+) -> str:
+    """Assert the invalid-object boundary withholds artifacts and object details."""
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+        assert zf.namelist() == ["README.txt"]
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "STRICT VALIDATION REJECTION" in readme
+    assert "candidate.zmx: NOT included" in readme
+    assert "reproduction.seq: NOT included" in readme
+    assert "validation_error_type: ValidationError" in readme
+    for detail in forbidden_details:
+        assert detail not in readme
+    return readme
+
+
 # ---------------------------------------------------------------------------
 # ① xlsx workbook
 # ---------------------------------------------------------------------------
@@ -575,10 +594,7 @@ def test_workbook_summary_sheet_echoes_honesty_banner_when_present():
     workbook_bytes = build_candidate_set_workbook(candidate_set, job_id="job-2", requirement=None)
     wb = openpyxl.load_workbook(io.BytesIO(workbook_bytes))
     summary_text = "\n".join(
-        str(v)
-        for row in wb["Summary"].iter_rows(values_only=True)
-        for v in row
-        if v is not None
+        str(v) for row in wb["Summary"].iter_rows(values_only=True) for v in row if v is not None
     )
     assert candidate_set.honesty_banner in summary_text
 
@@ -703,9 +719,7 @@ def test_stageb_negative_evidence_exports_false_and_omits_reproduction_seq():
     assert values[header.index("fnum_accepted_ray_grid")] == "N/A"
     assert values[header.index("fnum_accepted_quality_note")] == "N/A"
 
-    with zipfile.ZipFile(
-        io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))
-    ) as zf:
+    with zipfile.ZipFile(io.BytesIO(build_candidate_bundle_zip(sc, target=_target_spec()))) as zf:
         assert "reproduction.seq" not in zf.namelist()
         readme = zf.read("README.txt").decode("utf-8")
     assert "fnum_ladder.target_achieved: False" in readme
@@ -754,12 +768,10 @@ def test_bundle_zip_seq_fails_closed_without_stageb_evidence():
             )
         }
     )
-    zip_bytes = build_candidate_bundle_zip(sc, target=_target_spec())
-    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
-        assert "reproduction.seq" not in zf.namelist()
-        readme = zf.read("README.txt").decode("utf-8")
-    assert "NOT included" in readme
-    assert "validated Stage B FNO-ladder evidence missing" in readme
+    _assert_strict_validation_rejection_bundle(
+        build_candidate_bundle_zip(sc, target=_target_spec()),
+        forbidden_details=("post_aut.efl_y_mm", "3.79"),
+    )
 
 
 def test_stagec_web_xlsx_bundle_sources_are_honest_and_replay_fails_closed(
@@ -783,15 +795,16 @@ def test_stagec_web_xlsx_bundle_sources_are_honest_and_replay_fails_closed(
     assert values[header.index("stagec_imh_achieved")] is False
     assert values[header.index("stagec_target_efl_mm")] == "3.800"
     assert values[header.index("stagec_fov_source")] == "derived"
-    assert values[header.index("stagec_fov_deg")] == f"{sc.generated.stagec_field_evidence.derived_full_fov_deg:.3f}"
+    assert (
+        values[header.index("stagec_fov_deg")]
+        == f"{sc.generated.stagec_field_evidence.derived_full_fov_deg:.3f}"
+    )
     reconstruction = sc.generated.stagec_field_reconstruction
     assert reconstruction is not None
     assert sc.generated.stagec_field_evidence.derived_full_fov_deg == pytest.approx(
         2
         * math.degrees(
-            math.atan(
-                reconstruction.target_image_height_mm / reconstruction.target_efl_mm
-            )
+            math.atan(reconstruction.target_image_height_mm / reconstruction.target_efl_mm)
         )
     )
     assert not math.isclose(
@@ -809,7 +822,9 @@ def test_stagec_web_xlsx_bundle_sources_are_honest_and_replay_fails_closed(
         assert "reproduction.seq" not in zf.namelist()
         readme = zf.read("README.txt").decode("utf-8")
     assert "FOV: derived/measured only; never optimized/converged" in readme
-    assert "Stage C CODE V field syntax" in readme
+    assert "Stage B optimizer replay does not encode the attested Stage C FTYP3/YFLN" in readme
+    assert "exact machine-executed sequence is retained as" in readme
+    assert "stagec-evidence/stagec.seq" in readme
     assert "[EXPERT]" in readme
 
 
@@ -887,15 +902,11 @@ def test_export_entry_revalidates_model_copy_forged_mode_and_emits_no_verified_o
 ) -> None:
     sc = _stagec_machine_candidate(tmp_path)
     forged = sc.model_copy(
-        update={
-            "generated": sc.generated.model_copy(update={"mode": GenerationMode.RETRIEVED})
-        }
+        update={"generated": sc.generated.model_copy(update={"mode": GenerationMode.RETRIEVED})}
     )
     forged_set = _candidate_set(sc).model_copy(update={"candidates": [forged]})
     with pytest.raises(ValueError):
-        build_candidate_set_workbook(
-            forged_set, job_id="forged-mode", requirement=None
-        )
+        build_candidate_set_workbook(forged_set, job_id="forged-mode", requirement=None)
     with zipfile.ZipFile(
         io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
     ) as zf:
@@ -921,9 +932,7 @@ def test_export_entry_revalidates_model_copy_forged_stagec_contradiction(
     )
     forged = sc.model_copy(
         update={
-            "generated": sc.generated.model_copy(
-                update={"stagec_field_evidence": forged_evidence}
-            )
+            "generated": sc.generated.model_copy(update={"stagec_field_evidence": forged_evidence})
         }
     )
     with pytest.raises(ValueError, match="target differs"):
@@ -944,13 +953,266 @@ def test_stagec_bundle_withholds_candidate_zmx_after_artifact_tamper(tmp_path: P
     reconstruction = sc.generated.stagec_field_reconstruction
     assert reconstruction is not None and reconstruction.output_path is not None
     Path(reconstruction.output_path).write_bytes(b"tampered-after-validation")
+    _assert_strict_validation_rejection_bundle(
+        build_candidate_bundle_zip(sc, target=_stagec_target_spec()),
+        forbidden_details=("tampered-after-validation",),
+    )
+
+
+def test_export_rejects_model_construct_forged_v3_at_fresh_restore(tmp_path: Path):
+    from app.core.engines.stagec_attested import StageCAttestedEvidence
+
+    sc = _stagec_offline_candidate(tmp_path)
+    reconstruction = sc.generated.stagec_field_reconstruction
+    assert reconstruction is not None and reconstruction.output_sha256 is not None
+    forged_v3 = StageCAttestedEvidence.model_construct(
+        schema_id="atelier-stagec-attested-evidence-v3",
+        evidence_kind="attested-machine",
+        run_id="forged-run",
+        matrix_id="forged-matrix",
+        cell_id="forged-cell",
+        seed_id="forged-seed",
+        arm="production-target",
+        repeat_index=1,
+        receipt_sha256="0" * 64,
+        execution_plan_sha256="0" * 64,
+        stageb_cache_scope="pre-run-bound",
+        stageb_pre_run_bound=True,
+        stageb_cache_record_sha256="0" * 64,
+        package_path=str(tmp_path / "caller-authored-package"),
+        source_zmx_sha256=reconstruction.source_sha256_before,
+        reconstructed_zmx_sha256=reconstruction.output_sha256,
+        target_efl_mm=reconstruction.target_efl_mm,
+        target_image_height_mm=reconstruction.target_image_height_mm,
+        normalized_fractions=reconstruction.normalized_fractions,
+        expected_vignetting_profile=tuple(
+            (0.0, 0.0, 0.0, 0.0) for _ in reconstruction.normalized_fractions
+        ),
+        measured_efl_mm=reconstruction.target_efl_mm,
+        fields=(),
+        process_returncode_observed=0,
+        process_duration_seconds=0.1,
+        artifact_bindings_valid=True,
+        receipt_attested=True,
+        field_type="RIH",
+        expert_verdict=None,
+    )
+    forged = sc.model_copy(
+        update={"generated": sc.generated.model_copy(update={"stagec_field_evidence": forged_v3})}
+    )
+
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
+    ) as zf:
+        assert zf.namelist() == ["README.txt"]
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "STRICT VALIDATION REJECTION" in readme
+    assert "candidate.zmx: NOT included" in readme
+
+
+@pytest.mark.parametrize(
+    "forged",
+    [
+        ScoredCandidate.model_construct(),
+        ScoredCandidate.model_construct(generated=object(), scorecard=object()),
+    ],
+    ids=("missing-all-fields", "malformed-nested-fields"),
+)
+def test_export_strict_rejection_never_reinspects_model_construct_input(
+    forged: ScoredCandidate,
+) -> None:
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
+    ) as zf:
+        assert zf.namelist() == ["README.txt"]
+        readme = zf.read("README.txt").decode("utf-8")
+
+    assert "STRICT VALIDATION REJECTION" in readme
+    assert "candidate.zmx: NOT included" in readme
+    assert "reproduction.seq: NOT included" in readme
+    assert "[EXPERT] remains blank" in readme
+    assert "candidate_id:" not in readme
+    assert "source_case_id:" not in readme
+
+
+def test_stagec_non_v3_export_rejects_post_validation_path_race(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.core.orchestration import export as export_module
+
+    sc = _stagec_offline_candidate(tmp_path)
+    original_resolve = export_module._resolve_candidate_zmx_path
+
+    def race_after_validation(scored: ScoredCandidate, *, target: TargetSpec) -> Path | None:
+        path = original_resolve(scored, target=target)
+        assert path is not None
+        path.write_bytes(b"changed-between-validation-and-snapshot")
+        return path
+
+    monkeypatch.setattr(export_module, "_resolve_candidate_zmx_path", race_after_validation)
     with zipfile.ZipFile(
         io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
     ) as zf:
-        assert "candidate.zmx" not in zf.namelist()
+        assert zf.namelist() == ["README.txt"]
         readme = zf.read("README.txt").decode("utf-8")
-    assert "source/output hash" in readme
-    assert "candidate.zmx withheld" in readme
+    assert "CANDIDATE ZMX REJECTION" in readme
+    assert "candidate.zmx: NOT included" in readme
+
+
+def test_attested_v3_bundle_snapshots_full_package_and_same_candidate_bytes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.core.engines import stageb_authority
+    from app.core.engines import stagec_attested as attested
+    from tests.test_stagec_attested import (
+        _OFFICIAL_MACRO_RAW,
+        _PINNED_CODEV_VERSION,
+        _PINNED_EXE_SHA256,
+        _PINNED_EXE_SIZE_BYTES,
+        _seal,
+    )
+
+    trusted_root = tmp_path / "trusted-runs"
+    trusted_root.mkdir()
+    key = tmp_path / "attestation.key"
+    key.write_bytes(b"k" * 32)
+    monkeypatch.setattr(attested, "_TRUSTED_RUN_ROOT", trusted_root)
+    monkeypatch.setattr(attested, "_ATTESTATION_KEY_PATH", key)
+    monkeypatch.setattr(attested, "_TRUSTED_CODEV_EXECUTABLE", Path("D:/CODEV115/codev.exe"))
+    monkeypatch.setattr(attested, "_TRUSTED_CODEV_SHA256", _PINNED_EXE_SHA256)
+    monkeypatch.setattr(attested, "_TRUSTED_CODEV_SIZE_BYTES", _PINNED_EXE_SIZE_BYTES)
+    monkeypatch.setattr(
+        attested,
+        "_TRUSTED_ZEMAX_MACRO_SHA256",
+        attested._sha(_OFFICIAL_MACRO_RAW),
+    )
+    monkeypatch.setattr(attested, "TRUSTED_CODEV_FILE_VERSION", _PINNED_CODEV_VERSION)
+    monkeypatch.setattr(stageb_authority, "TRUSTED_CODEV_SHA256", _PINNED_EXE_SHA256)
+    monkeypatch.setattr(stageb_authority, "TRUSTED_CODEV_SIZE_BYTES", _PINNED_EXE_SIZE_BYTES)
+    monkeypatch.setattr(
+        stageb_authority,
+        "TRUSTED_MACRO_SHA256",
+        attested._sha(_OFFICIAL_MACRO_RAW),
+    )
+    monkeypatch.setattr(stageb_authority, "TRUSTED_CODEV_FILE_VERSION", _PINNED_CODEV_VERSION)
+    receipt = _seal(trusted_root / "run_001", plan_kind="production")
+    evidence = attested.restore_stagec_attested_evidence(receipt)
+
+    candidate_root = tmp_path / "candidate"
+    candidate_root.mkdir()
+    target_efl = evidence.target_efl_mm
+    target_imh = evidence.target_image_height_mm
+    target_fov = 2 * math.degrees(math.atan(target_imh / target_efl))
+    reconstruction = reconstruct_image_fields(
+        source_zmx=receipt.parent / "source.zmx",
+        output_zmx=candidate_root / "candidate-rih.zmx",
+        resolved_target=resolve_field_target(
+            efl_mm=target_efl,
+            image_height_mm=target_imh,
+            full_fov_deg=None,
+        ),
+        allow_nonzero_vignetting_for_machine=True,
+    )
+    assert reconstruction.output_sha256 == evidence.reconstructed_zmx_sha256
+    base = _target_converged_candidate()
+    ladder = base.generated.fnum_ladder_evidence
+    assert ladder is not None and ladder.accepted_final is not None
+    accepted = ladder.accepted_final.model_copy(
+        update={
+            "measured_fnum": 2.4,
+            "effective_edge_used": 0.3,
+            "optimized_zmx_path": str((receipt.parent / "source.zmx").resolve()),
+        }
+    )
+    ladder = ladder.model_copy(
+        update={
+            "target_efl_mm": target_efl,
+            "fnum_target": 2.4,
+            "num_fields": 2,
+            "accepted_final": accepted,
+        }
+    )
+    assert base.generated.payload.metadata is not None
+    payload = base.generated.payload.model_copy(
+        update={
+            "metadata": base.generated.payload.metadata.model_copy(
+                update={
+                    "case_id": evidence.seed_id,
+                    "source_zmx": Path(reconstruction.output_path or "").name,
+                    "image_height_mm": target_imh,
+                    "image_height_source": "constructed",
+                    "fov_deg": target_fov,
+                    "fov_source": "derived",
+                    "nominal_efl_mm": target_efl,
+                }
+            )
+        }
+    )
+    generated = GeneratedCandidate.model_validate(
+        {
+            **base.generated.model_dump(exclude={"stagec_field_evidence"}),
+            "source_case_id": evidence.seed_id,
+            "payload": payload.model_dump(),
+            "optimized_zmx_path": reconstruction.output_path,
+            "fnum_ladder_evidence": ladder.model_dump(by_alias=True),
+            "stagec_field_reconstruction": reconstruction.model_dump(),
+            "stagec_field_evidence": evidence,
+        }
+    )
+    sc = ScoredCandidate(generated=generated, scorecard=base.scorecard)
+    production_target = TargetSpec(
+        scenario=payload.metadata.scenario,
+        efl_mm=target_efl,
+        fnum=2.4,
+        image_height_mm=target_imh,
+        fov_deg=target_fov,
+    )
+
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(sc, target=production_target))
+    ) as zf:
+        names = set(zf.namelist())
+        package_names = {
+            name.removeprefix("stagec-evidence/")
+            for name in names
+            if name.startswith("stagec-evidence/")
+        }
+        assert package_names == {path.name for path in receipt.parent.iterdir() if path.is_file()}
+        assert zf.read("candidate.zmx") == zf.read("stagec-evidence/reconstructed.zmx")
+        assert hashlib.sha256(zf.read("candidate.zmx")).hexdigest() == (
+            evidence.reconstructed_zmx_sha256
+        )
+        assert hashlib.sha256(zf.read("stagec-evidence/post-run-receipt.json")).hexdigest() == (
+            evidence.receipt_sha256
+        )
+        readme = zf.read("README.txt").decode("utf-8")
+    assert "local-runner-attested, HMAC-bound" in readme
+    assert f"attestation_scope: {evidence.attestation_scope}" in readme
+
+    fov_only_target = production_target.model_copy(update={"image_height_mm": None})
+    with zipfile.ZipFile(io.BytesIO(build_candidate_bundle_zip(sc, target=fov_only_target))) as zf:
+        assert zf.read("candidate.zmx") == zf.read("stagec-evidence/reconstructed.zmx")
+        fov_only_readme = zf.read("README.txt").decode("utf-8")
+    assert '"fov_source": "derived"' in fov_only_readme
+    assert "stagec.[EXPERT]: no production-readiness verdict is supplied" in fov_only_readme
+
+    from app.core.orchestration import export as export_module
+
+    real_restore = export_module.restore_stagec_attested_evidence
+
+    def tamper_after_fresh_restore(path: Path):  # noqa: ANN202
+        freshly_restored = real_restore(path)
+        (receipt.parent / "execution-plan.json").write_bytes(b"post-restore-race")
+        return freshly_restored
+
+    monkeypatch.setattr(
+        export_module, "restore_stagec_attested_evidence", tamper_after_fresh_restore
+    )
+    with zipfile.ZipFile(
+        io.BytesIO(build_candidate_bundle_zip(sc, target=production_target))
+    ) as zf:
+        assert zf.namelist() == ["README.txt"]
+        assert "STAGE C EVIDENCE REJECTION" in zf.read("README.txt").decode("utf-8")
 
 
 def test_stagec_bundle_withholds_candidate_zmx_after_source_tamper(tmp_path: Path):
@@ -958,12 +1220,10 @@ def test_stagec_bundle_withholds_candidate_zmx_after_source_tamper(tmp_path: Pat
     reconstruction = sc.generated.stagec_field_reconstruction
     assert reconstruction is not None
     Path(reconstruction.source_path).write_bytes(b"tampered-source")
-    with zipfile.ZipFile(
-        io.BytesIO(build_candidate_bundle_zip(sc, target=_stagec_target_spec()))
-    ) as zf:
-        assert "candidate.zmx" not in zf.namelist()
-        readme = zf.read("README.txt").decode("utf-8")
-    assert "candidate.zmx withheld" in readme
+    _assert_strict_validation_rejection_bundle(
+        build_candidate_bundle_zip(sc, target=_stagec_target_spec()),
+        forbidden_details=("tampered-source",),
+    )
 
 
 def test_stagec_bundle_rejects_arbitrary_bytes_even_with_self_reported_hash(tmp_path: Path):
@@ -979,12 +1239,10 @@ def test_stagec_bundle_rejects_arbitrary_bytes_even_with_self_reported_hash(tmp_
         update={"stagec_field_reconstruction": forged_reconstruction}
     )
     forged = sc.model_copy(update={"generated": forged_generated})
-    with zipfile.ZipFile(
-        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
-    ) as zf:
-        assert "candidate.zmx" not in zf.namelist()
-        readme = zf.read("README.txt").decode("utf-8")
-    assert "candidate.zmx withheld" in readme
+    _assert_strict_validation_rejection_bundle(
+        build_candidate_bundle_zip(forged, target=_stagec_target_spec()),
+        forbidden_details=("arbitrary-but-self-hashed",),
+    )
 
 
 @pytest.mark.parametrize(
@@ -992,7 +1250,8 @@ def test_stagec_bundle_rejects_arbitrary_bytes_even_with_self_reported_hash(tmp_
     ["FTYP 3 0 999", "FTYP 3.5 0 12"],
 )
 def test_stagec_candidate_and_export_reject_self_hashed_ftyp_forgery(
-    tmp_path: Path, forged_ftyp: str,
+    tmp_path: Path,
+    forged_ftyp: str,
 ):
     sc = _stagec_offline_candidate(tmp_path)
     reconstruction = sc.generated.stagec_field_reconstruction
@@ -1015,12 +1274,10 @@ def test_stagec_candidate_and_export_reject_self_hashed_ftyp_forgery(
         update={"stagec_field_reconstruction": forged_reconstruction}
     )
     forged = sc.model_copy(update={"generated": forged_generated})
-    with zipfile.ZipFile(
-        io.BytesIO(build_candidate_bundle_zip(forged, target=_stagec_target_spec()))
-    ) as zf:
-        assert "candidate.zmx" not in zf.namelist()
-        readme = zf.read("README.txt").decode("utf-8")
-    assert "candidate.zmx withheld" in readme
+    _assert_strict_validation_rejection_bundle(
+        build_candidate_bundle_zip(forged, target=_stagec_target_spec()),
+        forbidden_details=(forged_ftyp,),
+    )
 
 
 def test_stagec_candidate_rejects_target_profile_and_artifact_path_mismatch(tmp_path: Path):
@@ -1028,17 +1285,13 @@ def test_stagec_candidate_rejects_target_profile_and_artifact_path_mismatch(tmp_
     raw = sc.generated.model_dump()
     raw["stagec_field_evidence"]["target_image_height_mm"] = 3.1
     raw["stagec_field_evidence"]["nominal_image_height_mm"] = 3.1
-    raw["stagec_field_evidence"]["derived_full_fov_deg"] = 2 * math.degrees(
-        math.atan(3.1 / 3.8)
-    )
+    raw["stagec_field_evidence"]["derived_full_fov_deg"] = 2 * math.degrees(math.atan(3.1 / 3.8))
     with pytest.raises(ValueError, match="target differs"):
         GeneratedCandidate.model_validate(raw)
 
     raw = sc.generated.model_dump()
     raw["stagec_field_evidence"]["target_efl_mm"] = 3.9
-    raw["stagec_field_evidence"]["derived_full_fov_deg"] = 2 * math.degrees(
-        math.atan(3.0 / 3.9)
-    )
+    raw["stagec_field_evidence"]["derived_full_fov_deg"] = 2 * math.degrees(math.atan(3.0 / 3.9))
     with pytest.raises(ValueError, match="target EFL differs"):
         GeneratedCandidate.model_validate(raw)
 

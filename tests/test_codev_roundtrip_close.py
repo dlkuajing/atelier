@@ -11,6 +11,7 @@ from app.core.engines.codev_roundtrip import (
 )
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(
     not DEFAULT_CODEV_EXECUTABLE.is_file(),
     reason="real CODE V installation required for the ENGINE-04c closure smoke",

@@ -29,6 +29,7 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from types import MappingProxyType
 
+from app.core.batch_run_lock import P18_GLOBAL_WINDOW_ROOT
 from app.core.orchestration.candidate import (
     CandidateSet,
     CandidateSetSummary,
@@ -74,6 +75,8 @@ def orchestrate(
     min_coverage_pct: float | None = None,
     repeat_runs: int = 1,
     artifact_dir: Path | None = None,
+    p18_window_root: Path | None = None,
+    stagec_machine_evidence: bool = True,
 ) -> CandidateSet:
     """Run every registered (or explicitly selected) generator against
     `spec`, score each produced candidate against `target`, and return a
@@ -106,9 +109,7 @@ def orchestrate(
     if repeat_runs > 3:
         raise ValueError(f"orchestrate: repeat_runs must be <= 3, got {repeat_runs}")
 
-    selected_modes = (
-        list(_REGISTRY.keys()) if modes is None else list(dict.fromkeys(modes))
-    )
+    selected_modes = list(_REGISTRY.keys()) if modes is None else list(dict.fromkeys(modes))
     unknown = [m for m in selected_modes if m not in _REGISTRY]
     if unknown:
         raise ValueError(f"orchestrate: unregistered generation mode(s): {unknown}")
@@ -123,14 +124,25 @@ def orchestrate(
 
     scored: list[ScoredCandidate] = []
     errors: list[str] = []
+    canonical_p18_window_root = Path(
+        P18_GLOBAL_WINDOW_ROOT if p18_window_root is None else p18_window_root
+    ).resolve()
 
     for mode in selected_modes:
         generator_cls = _REGISTRY[mode]
         batch: list[ScoredCandidate] = []
         try:
+            generator_kwargs: dict[str, object] = {
+                "artifact_dir": artifact_dir,
+                "repeat_runs": (repeat_runs if mode is GenerationMode.TARGET_CONVERGED else 1),
+            }
+            if issubclass(generator_cls, TargetConvergedGenerator):
+                if stagec_machine_evidence:
+                    generator_kwargs["stageb_p18_lock_root"] = canonical_p18_window_root
+                else:
+                    generator_kwargs["stagec_runner"] = None
             generator = generator_cls(
-                artifact_dir=artifact_dir,
-                repeat_runs=repeat_runs if mode is GenerationMode.TARGET_CONVERGED else 1,
+                **generator_kwargs,
             )
             generated_candidates = generator.generate(spec, target, n=n)
             for generated in generated_candidates:
@@ -152,7 +164,9 @@ def orchestrate(
 
     ranked = [sc for sc in scored if sc.scorecard.rank.status == "ranked"]
     withheld = [sc for sc in scored if sc.scorecard.rank.status == "withheld"]
-    ranked.sort(key=lambda sc: sc.scorecard.rank.score, reverse=True)  # score is non-None for "ranked" (RankResult invariant)
+    ranked.sort(
+        key=lambda sc: sc.scorecard.rank.score, reverse=True
+    )  # score is non-None for "ranked" (RankResult invariant)
     ordered = ranked + withheld  # withheld sinks to the bottom, stable within each group
 
     mode_counts: dict[GenerationMode, int] = {}

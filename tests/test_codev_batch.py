@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 from collections.abc import Mapping
@@ -15,8 +16,48 @@ from app.core.engines.codev_batch import (
     build_trivial_sequence,
     parse_codev_result_file,
     run_codev_batch,
+    run_codev_process_bytes,
     run_trivial_codev_batch,
 )
+
+
+@pytest.fixture(autouse=True)
+def _isolate_codev_lock(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Mocked subprocess tests must never contend with the production CODE V lane."""
+
+    monkeypatch.setattr(codev_batch, "_DEFAULT_CODEV_LOCK_ROOT", tmp_path / "codev-lock")
+
+
+def test_raw_process_capture_preserves_exact_bytes_and_lock_owner(
+    monkeypatch, tmp_path: Path
+) -> None:
+    class FakePopen:
+        pid = 1200
+        returncode = 0
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[bytes, bytes]:
+            assert timeout == 7.0
+            return b"\x80stdout\r\n", b"\xffstderr\n"
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    lock_root = tmp_path / "shared-lock"
+
+    capture = run_codev_process_bytes(
+        ["codev.exe", "/B", "probe.seq"],
+        work_dir=tmp_path,
+        timeout_seconds=7.0,
+        lock_root=lock_root,
+    )
+
+    assert capture.stdout_bytes == b"\x80stdout\r\n"
+    assert capture.stderr_bytes == b"\xffstderr\n"
+    assert capture.process.returncode == 0
+    assert capture.lock_owner["details"]["purpose"] == "codev-process"
+    assert not (lock_root / ".p18-runner.owner.json").exists()
 
 
 def _fake_codev_executable(tmp_path: Path) -> Path:
@@ -453,8 +494,10 @@ def test_mock_subprocess_timeout_taskkill_gbk_output_does_not_crash(
 
     with pytest.raises(CodeVBatchError) as error:
         run_trivial_codev_batch(
-            work_dir=tmp_path, executable=executable,
-            timeout_seconds=0.01, platform_name="nt",
+            work_dir=tmp_path,
+            executable=executable,
+            timeout_seconds=0.01,
+            platform_name="nt",
         )
 
     assert error.value.kind == "timeout"
@@ -462,6 +505,186 @@ def test_mock_subprocess_timeout_taskkill_gbk_output_does_not_crash(
     assert error.value.details["kill"]["returncode"] == 0
     # 未崩，tail 是 str（GBK 字节被 errors='replace' 安全解码）
     assert isinstance(error.value.details["kill"]["stdout_tail"], str)
+
+
+def test_post_start_communication_error_kills_and_reaps_before_releasing_lane(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    class FakePopen:
+        pid = 4242
+        returncode = None
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.calls = 0
+
+        def communicate(self, timeout: float | None = None) -> tuple[bytes, bytes]:
+            self.calls += 1
+            if self.calls == 1:
+                raise OSError("reader failed")
+            self.returncode = -9
+            return b"drained", b""
+
+        def kill(self) -> None:
+            self.returncode = -9
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    lock_root = tmp_path / "lock"
+
+    with pytest.raises(CodeVBatchError, match="communication failed") as error:
+        run_codev_process_bytes(
+            ["codev", "/B", "x.seq"],
+            work_dir=tmp_path,
+            timeout_seconds=1,
+            platform_name="posix",
+            lock_root=lock_root,
+        )
+
+    assert error.value.kind == "failure"
+    assert error.value.details["reap"]["reaped"] is True
+    assert not (lock_root / ".p18-runner.owner.json").exists()
+
+
+def test_unreaped_post_start_failure_leaves_quarantine_owner(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    class FakePopen:
+        pid = 4343
+        returncode = None
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            pass
+
+        def communicate(self, timeout: float | None = None) -> tuple[bytes, bytes]:
+            raise OSError("reader and reap failed")
+
+        def kill(self) -> None:
+            pass
+
+        def wait(self, timeout: float | None = None) -> int:
+            raise subprocess.TimeoutExpired("wait", timeout)
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    lock_root = tmp_path / "lock"
+
+    with pytest.raises(CodeVBatchError, match="communication failed") as error:
+        run_codev_process_bytes(
+            ["codev", "/B", "x.seq"],
+            work_dir=tmp_path,
+            timeout_seconds=1,
+            platform_name="posix",
+            lock_root=lock_root,
+        )
+
+    assert error.value.details["reap"]["reaped"] is False
+    assert error.value.details["quarantine"]["status"] == "quarantine-owner-written"
+    owner = (lock_root / ".p18-runner.owner.json").read_text(encoding="utf-8")
+    assert "quarantine-" in owner
+    with pytest.raises(Exception, match="prior owner record remains"):
+        run_codev_process_bytes(
+            ["codev", "/B", "x.seq"],
+            work_dir=tmp_path,
+            timeout_seconds=1,
+            platform_name="posix",
+            lock_root=lock_root,
+        )
+
+
+@pytest.mark.parametrize("failure_point", ["write", "fsync", "replace"])
+def test_quarantine_metadata_failure_retains_original_owner_stale_gate(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    failure_point: str,
+) -> None:
+    class FakePopen:
+        pid = 4444
+        returncode = None
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            pass
+
+        def communicate(self, timeout: float | None = None) -> tuple[bytes, bytes]:
+            raise OSError("reader and reap failed")
+
+        def kill(self) -> None:
+            pass
+
+        def wait(self, timeout: float | None = None) -> int:
+            raise subprocess.TimeoutExpired("wait", timeout)
+
+    quarantine_fds: set[int] = set()
+    original_open = Path.open
+    original_fsync = codev_batch.os.fsync
+    original_replace = codev_batch.os.replace
+
+    class QuarantineHandle:
+        def __init__(self, handle) -> None:  # noqa: ANN001
+            self._handle = handle
+
+        def __enter__(self):  # noqa: ANN204
+            self._handle.__enter__()
+            quarantine_fds.add(self._handle.fileno())
+            return self
+
+        def __exit__(self, *args):  # noqa: ANN002, ANN204
+            return self._handle.__exit__(*args)
+
+        def write(self, payload: bytes) -> int:
+            if failure_point == "write":
+                raise OSError("injected quarantine write failure")
+            return self._handle.write(payload)
+
+        def flush(self) -> None:
+            self._handle.flush()
+
+        def fileno(self) -> int:
+            return self._handle.fileno()
+
+    def guarded_open(path: Path, *args, **kwargs):  # noqa: ANN002, ANN003, ANN202
+        handle = original_open(path, *args, **kwargs)
+        if ".quarantine-" in path.name:
+            return QuarantineHandle(handle)
+        return handle
+
+    def guarded_fsync(fd: int) -> None:
+        if failure_point == "fsync" and fd in quarantine_fds:
+            raise OSError("injected quarantine fsync failure")
+        original_fsync(fd)
+
+    def guarded_replace(source, destination) -> None:  # noqa: ANN001
+        if failure_point == "replace" and ".quarantine-" in Path(source).name:
+            raise OSError("injected quarantine replace failure")
+        original_replace(source, destination)
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    monkeypatch.setattr(Path, "open", guarded_open)
+    monkeypatch.setattr(codev_batch.os, "fsync", guarded_fsync)
+    monkeypatch.setattr(codev_batch.os, "replace", guarded_replace)
+    lock_root = tmp_path / "lock"
+    owner_path = lock_root / ".p18-runner.owner.json"
+
+    with pytest.raises(CodeVBatchError, match="communication failed") as error:
+        run_codev_process_bytes(
+            ["codev", "/B", "x.seq"],
+            work_dir=tmp_path,
+            timeout_seconds=1,
+            platform_name="posix",
+            lock_root=lock_root,
+        )
+
+    quarantine = error.value.details["quarantine"]
+    assert quarantine["status"] == "metadata-write-failed-original-owner-retained"
+    assert quarantine["exception_type"] == "OSError"
+    retained_owner = json.loads(owner_path.read_text(encoding="utf-8"))
+    assert retained_owner["lock_id"] == error.value.details["lock_owner"]["lock_id"]
+    assert list(lock_root.glob("*.quarantine-*.tmp")) == []
+    with pytest.raises(Exception, match="prior owner record remains"):
+        run_codev_process_bytes(
+            ["codev", "/B", "x.seq"],
+            work_dir=tmp_path,
+            timeout_seconds=1,
+            platform_name="posix",
+            lock_root=lock_root,
+        )
 
 
 def test_mock_subprocess_timeout_listing_read_oserror_still_raises_timeout(
@@ -616,7 +839,13 @@ def test_codev_safe_input_path_accepts_dot_free_components(path: str) -> None:
 
 @pytest.mark.parametrize(
     "path",
-    [r"D:\safe\.planning\lens.zmx", ".hidden.zmx", "safe/.hidden.zmx", 'safe/ba"d.zmx', "safe\nfile.zmx"],
+    [
+        r"D:\safe\.planning\lens.zmx",
+        ".hidden.zmx",
+        "safe/.hidden.zmx",
+        'safe/ba"d.zmx',
+        "safe\nfile.zmx",
+    ],
 )
 def test_codev_safe_input_path_rejects_silent_import_hazards(path: str) -> None:
     with pytest.raises(ValueError):
@@ -630,17 +859,20 @@ def test_run_codev_batch_rejects_dangerous_sequence_and_result_names(tmp_path: P
     safe_res = tmp_path / "ok.tsv"
     with pytest.raises(ValueError, match="sequence_path"):
         run_codev_batch(
-            sequence_path=tmp_path / "bad_vig0.20_x.seq", result_path=safe_res,
+            sequence_path=tmp_path / "bad_vig0.20_x.seq",
+            result_path=safe_res,
             executable=tmp_path / "missing_codev.exe",
         )
     with pytest.raises(ValueError, match="result_path"):
         run_codev_batch(
-            sequence_path=safe_seq, result_path=tmp_path / "bad_vig0.20_readout.tsv",
+            sequence_path=safe_seq,
+            result_path=tmp_path / "bad_vig0.20_readout.tsv",
             executable=tmp_path / "missing_codev.exe",
         )
 
 
 @pytest.mark.skipif(not DEFAULT_CODEV_EXECUTABLE.is_file(), reason="CODE V is not installed here")
+@pytest.mark.real_machine
 def test_real_codev_trivial_batch_smoke(tmp_path: Path) -> None:
     try:
         result = run_trivial_codev_batch(work_dir=tmp_path, timeout_seconds=30.0)

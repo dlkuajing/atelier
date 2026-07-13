@@ -8,13 +8,17 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 import shutil
 import tempfile
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Mapping, Sequence
+from contextlib import ExitStack
 from pathlib import Path
 from typing import ClassVar, final
+from uuid import uuid4
 
 import structlog
 
@@ -26,6 +30,16 @@ from app.core.engines.codev_optimize import (
     run_codev_target_fno_ladder,
 )
 from app.core.engines.seed_target_score import SeedTargetScore, score_seed_target_match
+from app.core.engines.stageb_authority import (
+    StageBAuthorityConfig,
+    StageBAuthorityRequest,
+    open_stageb_authority,
+)
+from app.core.engines.stagec_attested import (
+    restore_stagec_attested_evidence,
+    run_stagec_attested,
+)
+from app.core.engines.stagec_field import reconstruct_image_fields, resolve_field_target
 from app.core.optical_sample import OpticalSampleData
 from app.core.orchestration.candidate import (
     GeneratedCandidate,
@@ -37,6 +51,79 @@ from app.core.orchestration.candidate import (
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
 
 logger = structlog.get_logger(__name__)
+
+
+def _production_stageb_cache_binding(authority_raw: bytes) -> dict[str, object]:
+    """Read one exact cache binding; never infer missing provenance fields."""
+
+    def no_duplicates(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        value: dict[str, object] = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError(f"duplicate production Stage B authority key: {key}")
+            value[key] = item
+        return value
+
+    try:
+        authority_payload = json.loads(
+            authority_raw.decode("utf-8", errors="strict"),
+            object_pairs_hook=no_duplicates,
+            parse_constant=lambda token: (_ for _ in ()).throw(
+                ValueError(f"non-finite production Stage B authority value: {token}")
+            ),
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("production Stage B authority must be strict UTF-8 JSON") from exc
+    authority_entries = (
+        authority_payload.get("accepted") if isinstance(authority_payload, dict) else None
+    )
+    if not isinstance(authority_entries, list) or len(authority_entries) != 1:
+        raise ValueError("production Stage C authority requires one accepted entry")
+    authority_entry = authority_entries[0]
+    if not isinstance(authority_entry, dict):
+        raise ValueError("production Stage C authority entry is malformed")
+    cache_scope = authority_entry.get("cache_scope")
+    cache_pre_run_bound = authority_entry.get("pre_run_bound")
+    cache_record_path_raw = authority_entry.get("cache_record_path")
+    cache_record_sha256 = authority_entry.get("cache_record_sha256")
+    raw_result_path_raw = authority_entry.get("raw_ladder_result_path")
+    raw_result_sha256 = authority_entry.get("raw_ladder_result_sha256")
+    if (
+        cache_scope
+        not in {
+            "pre-run-bound",
+            "retrospective-current-state-adoption",
+        }
+        or not isinstance(cache_pre_run_bound, bool)
+        or cache_pre_run_bound is not (cache_scope == "pre-run-bound")
+        or not isinstance(cache_record_path_raw, str)
+        or not isinstance(cache_record_sha256, str)
+        or len(cache_record_sha256) != 64
+        or any(character not in "0123456789abcdef" for character in cache_record_sha256)
+        or not isinstance(raw_result_path_raw, str)
+        or not isinstance(raw_result_sha256, str)
+        or len(raw_result_sha256) != 64
+        or any(character not in "0123456789abcdef" for character in raw_result_sha256)
+    ):
+        raise ValueError("production Stage C cache authority is missing or contradictory")
+    cache_record_path = Path(cache_record_path_raw).resolve(strict=True)
+    raw_result_path = Path(raw_result_path_raw).resolve(strict=True)
+    if (
+        cache_record_path_raw != str(cache_record_path)
+        or hashlib.sha256(cache_record_path.read_bytes()).hexdigest() != cache_record_sha256
+        or raw_result_path_raw != str(raw_result_path)
+        or hashlib.sha256(raw_result_path.read_bytes()).hexdigest() != raw_result_sha256
+    ):
+        raise ValueError("production Stage C cache authority record bytes changed")
+    return {
+        "scope": cache_scope,
+        "pre_run_bound": cache_pre_run_bound,
+        "record_path": cache_record_path_raw,
+        "record_sha256": cache_record_sha256,
+        "raw_result_path": raw_result_path_raw,
+        "raw_result_sha256": raw_result_sha256,
+    }
+
 
 # Deferred import (inside `_generate`, not module top-level): `relative_illumination`
 # imports `app.core.orchestration.candidate.MetricValue`, which forces loading this
@@ -77,9 +164,7 @@ class CandidateGenerator(ABC):
         ...
 
     @final  # 静态检查器拦覆盖
-    def generate(
-        self, spec: TargetSpec, target: TargetSpec, *, n: int
-    ) -> list[GeneratedCandidate]:
+    def generate(self, spec: TargetSpec, target: TargetSpec, *, n: int) -> list[GeneratedCandidate]:
         candidates = self._generate(spec, target, n=n)
         for c in candidates:
             if c.mode is not type(self).mode:  # 显式 raise，-O 下不消失
@@ -162,9 +247,7 @@ class RetrievalGenerator(CandidateGenerator):
 
         if n > len(picked):
             used_ids = {c.metadata.case_id for c, _ in picked if c.metadata is not None}
-            nearby_index = sum(
-                1 for _, role in picked if role.startswith("nearby_alternative_")
-            )
+            nearby_index = sum(1 for _, role in picked if role.startswith("nearby_alternative_"))
             for case in seed_ranking.ranked_cases:
                 if len(picked) >= n:
                     break
@@ -342,9 +425,7 @@ def _codev_post_aut_snapshot(config: Mapping[str, object]) -> dict[str, float | 
     return {
         "post_aut.efl_y_mm": _float("post_aut.efl_y_mm"),
         "post_aut.max_rms_spot_diameter_um": _float("post_aut.max_rms_spot_diameter_um"),
-        "post_aut.max_rms_wavefront_error_waves": _float(
-            "post_aut.max_rms_wavefront_error_waves"
-        ),
+        "post_aut.max_rms_wavefront_error_waves": _float("post_aut.max_rms_wavefront_error_waves"),
         "post_aut.max_distortion_pct": _float("post_aut.max_distortion_pct"),
         "post_aut.fno": _float("post_aut.fno") or _float("measured_fnum"),
         "post_aut.maximh_mm": _float("post_aut.maximh_mm"),
@@ -390,14 +471,16 @@ def _mode3_generation_notes(
         f"seed={seed.metadata.case_id}",
         f"seed-target 匹配 band={match.band}（score={match.score:.2f}, "
         f"ΔEFL={match.delta_efl_pct:+.1f}%；{match.evidence_note}）",
-        f"preferred 配置=\"{preferred}\"（{preferred_reason}）",
-        f"玻璃 provenance（preferred=\"{preferred}\"）：{glass_model_label}",
+        f'preferred 配置="{preferred}"（{preferred_reason}）',
+        f'玻璃 provenance（preferred="{preferred}"）：{glass_model_label}',
         f"accepted/last measured effective_edge_used（真实裁瞳量）={edge_used}",
         "收敛维 provenance（P15 带条件扩，2026-07-11）：efl 标 converged=True"
         f"（接缝1 真机验证）；本候选 FNO ladder 四条件 gate={ladder_achieved}，"
-        "fnum converged 仅由 closed ladder evidence 派生；IMH/FOV Stage C 场重建"
-        "未落地、TTL 恒不在优化维，均如实标 False（见 candidate.py "
-        "CONVERGED_FIELDS 能力上限注记与 fnum_gate_from_ladder_result）",
+        "fnum converged 仅由 closed ladder evidence 派生；IMH 可由随后闭合的 "
+        "Stage C RIH 重建与真机 receipt 验证 achieved，但不属于 Stage B 优化"
+        "收敛维；FOV 只允许由同源 EFL/IMH 派生或实测、并非朝 target 优化；"
+        "TTL 恒不在优化维，故三者在 candidate.py CONVERGED_FIELDS 均如实标 "
+        "False（见能力上限注记与 fnum_gate_from_ladder_result）",
         "optical_extras.ri_by_field 按优化后 ZMX 显式路径实算（P17-4 接线，"
         "relative_illumination.py 的 zmx_path 参数）——loop3 遗留#4（临时目录致"
         "RI 复算结构性 miss）已闭合；追迹失败时仍 fail-closed 全 unavailable，"
@@ -540,8 +623,9 @@ class TargetConvergedGenerator(CandidateGenerator):
        （仓里现有"单 ZMX → OpticalSampleData"管线，`app/api/optical.py` 的
        seed-preflight 端点同款用法）。`nominal_efl_mm=spec.efl_mm`（客户
        target，① EFL 已收敛）；`nominal_fov_deg=seed.metadata.fov_deg`
-       （seed 原生 FOV——Stage C 场重建未落地，FOV 未真朝 target 收敛，不
-       能虚标 target FOV 当 nominal）；`n_pieces=seed.metadata.n_pieces`
+       （此处是 Stage B 的 seed 原生 FOV；production Stage C 稍后可从闭合的
+       EFL/IMH 同源派生 FOV，但仍未朝 target 优化，故此步不能虚标 target
+       FOV 当 nominal）；`n_pieces=seed.metadata.n_pieces`
        （AUT 优化不改变元件数）。**已知风险（真机验证，见任务报告）**：
        `even_asphere` 满口径追迹在部分优化后 ZMX 上可能数值异常——整段
        `load_normalized_zmx`+`build_sample_from_optic` 包在 try/except 里，
@@ -562,8 +646,10 @@ class TargetConvergedGenerator(CandidateGenerator):
     `fnum_ladder_evidence` 只接受 closed schema，并由四条件
     `target_achieved` 派生 gate（禁 aut_converged 单维）；accepted_final 的
     optimized ZMX 是 payload 重建、scorecard achieved F# 与持久化 artifact 的
-    同一来源。无完整证据保持 None/False。IMH/FOV Stage C 未落地、TTL 从未在优化维内，
-    虚标为已收敛 = 撒谎，违反诚实不变量。
+    同一来源。无完整证据保持 None/False。IMH 可由 production Stage C 的 RIH
+    重建与真机 receipt 验证 achieved，FOV 只能同源派生/实测；二者仍未进入
+    Stage B 优化收敛维，TTL 也从未在优化维内。把三者虚标为 converged = 撒谎，
+    违反诚实不变量。
 
     六接缝原文（§10，作后续 Stage B/C session 的接口锚，未落地部分保留
     file:line）：
@@ -573,9 +659,11 @@ class TargetConvergedGenerator(CandidateGenerator):
     2. 玻璃可变——已落地：`extra_dof="both"` 走塑料域 GLA 边界（`codev_
        optimize.py` "玻璃可变域修复"章节，commit 7b504c6）。
     3. merit 加客户操作数——部分落地：3a F# 走 FNO 模式锁 native（真机 E1
-       实测）；F# **朝 target** 的引擎已另立（`run_codev_target_fno_ladder`
-       + ray-aware retry，P15，未接本 generator）；IMH/FOV 操作数未加
-       （Stage C 场重建，未落地）。
+       实测）；F# **朝 target** 的引擎（`run_codev_target_fno_ladder`
+       + ray-aware retry，P15）已接本 generator 并由 closed ladder evidence
+       gate；IMH/FOV 操作数仍未加入
+       Stage B optimizer。Stage C RIH 重建/真机 attestation 已闭合，但它不把
+       IMH/FOV 改写成 Stage B optimizer 的 converged 维。
     4. `applied_to_payload` 真置 `True`：`local_optimizer.py`（~9 处硬编码
        False，未落地——本 generator 走独立 payload 现算路径，不经
        `local_optimizer`，该接缝仍待 case_library 侧收口）。
@@ -595,9 +683,20 @@ class TargetConvergedGenerator(CandidateGenerator):
         artifact_dir: Path | None = None,
         repeat_runs: int = 1,
         ladder_runner: Callable[..., dict[str, object]] | None = None,
+        stagec_runner: Callable[..., Path] | None = run_stagec_attested,
+        stageb_p18_lock_root: Path | None = None,
+        _allow_test_stagec_runner: bool = False,
     ) -> None:
         super().__init__(artifact_dir=artifact_dir, repeat_runs=repeat_runs)
         self.ladder_runner = ladder_runner or run_codev_target_fno_ladder
+        if stagec_runner not in {None, run_stagec_attested} and not _allow_test_stagec_runner:
+            raise ValueError(
+                "production TargetConvergedGenerator requires the official Stage C runner"
+            )
+        self.stagec_runner = stagec_runner
+        self.stageb_p18_lock_root = (
+            None if stageb_p18_lock_root is None else Path(stageb_p18_lock_root).resolve()
+        )
 
     def _generate(
         self, spec: TargetSpec, target: TargetSpec, *, n: int
@@ -644,6 +743,8 @@ class TargetConvergedGenerator(CandidateGenerator):
                         artifact_dir=self.artifact_dir,
                         run_index=run_index,
                         ladder_runner=self.ladder_runner,
+                        stagec_runner=self.stagec_runner,
+                        stageb_p18_lock_root=self.stageb_p18_lock_root,
                     )
                     attempts.append(candidate)
                 successful = [attempt for attempt in attempts if attempt is not None]
@@ -791,34 +892,145 @@ class TargetConvergedGenerator(CandidateGenerator):
         artifact_dir: Path | None = None,
         run_index: int = 1,
         ladder_runner: Callable[..., dict[str, object]] | None = None,
+        stagec_runner: Callable[..., Path] | None = None,
+        stageb_p18_lock_root: Path | None = None,
+    ) -> GeneratedCandidate | None:
+        with ExitStack() as authority_stack:
+            return TargetConvergedGenerator._candidate_for_seed_with_authority(
+                seed=seed,
+                match=match,
+                spec=spec,
+                work_dir=work_dir,
+                artifact_dir=artifact_dir,
+                run_index=run_index,
+                ladder_runner=ladder_runner,
+                stagec_runner=stagec_runner,
+                stageb_p18_lock_root=stageb_p18_lock_root,
+                authority_stack=authority_stack,
+            )
+
+    @staticmethod
+    def _candidate_for_seed_with_authority(
+        *,
+        seed: OpticalSampleData,
+        match: SeedTargetScore,
+        spec: TargetSpec,
+        work_dir: Path,
+        artifact_dir: Path | None = None,
+        run_index: int = 1,
+        ladder_runner: Callable[..., dict[str, object]] | None = None,
+        stagec_runner: Callable[..., Path] | None = None,
+        stageb_p18_lock_root: Path | None = None,
+        authority_stack: ExitStack,
     ) -> GeneratedCandidate | None:
         """一颗 seed 的完整 ③ 批跑 + payload 现算，失败一律 `None`（fail
         closed，调用方跳过、不炸整个 generator）。"""
         assert spec.efl_mm is not None
         assert seed.metadata is not None
         source_zmx_path = ZMX_AMMO_DIR / seed.metadata.source_zmx
-
+        field_target_requested = spec.image_height_mm is not None or spec.fov_deg is not None
+        production_stagec_requested = field_target_requested and stagec_runner is not None
+        resolved_field = resolve_field_target(
+            efl_mm=spec.efl_mm,
+            image_height_mm=spec.image_height_mm,
+            full_fov_deg=spec.fov_deg,
+        )
+        candidate_key = f"{seed.metadata.case_id}--stageb-ladder--run-{run_index}"
+        persistent_dir: Path | None = None
+        stagec_dir: Path | None = None
+        authority_manifest: Path | None = None
         try:
-            runner = ladder_runner or run_codev_target_fno_ladder
-            result = runner(
-                source_zmx=source_zmx_path,
-                work_dir=work_dir,
-                target_efl_mm=spec.efl_mm,
-                fnum_target=spec.fnum,
-                stage="B",
-                rung_count=3,
-                ray_retry_vig_ladder=RAY_RETRY_VIG_LADDER,
-                num_fields=3,
-                extra_dof="both",
-                emit_optimized_zmx=True,
-                timeout_seconds=180.0,
-            )
+            if production_stagec_requested:
+                if ladder_runner is not run_codev_target_fno_ladder:
+                    raise ValueError(
+                        "Stage C authority cannot attest a custom Stage B ladder runner"
+                    )
+                if stageb_p18_lock_root is None:
+                    raise ValueError(
+                        "production Stage C requires the canonical P18 archive lock root"
+                    )
+                canonical_p18_lock_root = Path(stageb_p18_lock_root).resolve()
+                if (
+                    artifact_dir is None
+                    or resolved_field.image_height_mm is None
+                    or resolved_field.efl_mm is None
+                ):
+                    logger.warning(
+                        "mode3_stagec_prerequisite_unavailable",
+                        case_id=seed.metadata.case_id,
+                        accepted_final=False,
+                        artifact_dir=artifact_dir is not None,
+                        field_status=resolved_field.status,
+                    )
+                    return None
+                persistent_dir = artifact_dir / "candidates" / candidate_key
+                persistent_dir.mkdir(parents=True, exist_ok=False)
+                stagec_dir = persistent_dir / "stagec"
+                stagec_dir.mkdir(exist_ok=False)
+                executable = Path(DEFAULT_CODEV_EXECUTABLE).resolve(strict=True)
+                authority_key = hashlib.sha256(
+                    candidate_key.encode("utf-8", errors="strict")
+                ).hexdigest()[:32]
+                config = StageBAuthorityConfig(
+                    # Keep the authority path short on Windows.  The full case
+                    # identity remains inside the pre-run intent; this digest
+                    # is only the collision-resistant directory key.
+                    authority_root=(artifact_dir / ".stageb-authority-runs" / authority_key),
+                    output_lock_root=artifact_dir / ".stageb-authority-lock",
+                    p18_lock_root=canonical_p18_lock_root,
+                    executable=executable,
+                )
+                request = StageBAuthorityRequest(
+                    case_id=seed.metadata.case_id,
+                    rationale="production-stagec-pre-run-authority",
+                    index_record={
+                        "case_id": seed.metadata.case_id,
+                        "scenario": seed.metadata.scenario.value,
+                        "source_zmx": seed.metadata.source_zmx,
+                        "efl_mm": spec.efl_mm,
+                        "image_height_mm": seed.metadata.image_height_mm,
+                    },
+                    source_zmx=source_zmx_path,
+                    accepted_output_path=persistent_dir / "candidate.zmx",
+                    scenario=seed.metadata.scenario.value,
+                    target_efl_mm=spec.efl_mm,
+                    fnum_target=spec.fnum,
+                    native_image_height_mm=seed.metadata.image_height_mm,
+                )
+                authority = authority_stack.enter_context(open_stageb_authority(config))
+                outcome = authority.run(request)
+                if outcome.status != "accepted" or outcome.manifest_path is None:
+                    return None
+                result = outcome.result
+                authority_manifest = outcome.manifest_path
+            else:
+                runner = ladder_runner or run_codev_target_fno_ladder
+                result = runner(
+                    source_zmx=source_zmx_path,
+                    work_dir=work_dir,
+                    target_efl_mm=spec.efl_mm,
+                    fnum_target=spec.fnum,
+                    stage="B",
+                    rung_count=3,
+                    ray_retry_vig_ladder=RAY_RETRY_VIG_LADDER,
+                    num_fields=3,
+                    extra_dof="both",
+                    emit_optimized_zmx=True,
+                    timeout_seconds=180.0,
+                )
         except CodeVBatchError as exc:
             logger.warning(
                 "mode3_seed_codev_failed",
                 case_id=seed.metadata.case_id,
                 kind=exc.kind,
                 message=exc.message,
+            )
+            return None
+        except (FileExistsError, RuntimeError, ValueError, OSError) as exc:
+            logger.warning(
+                "mode3_stageb_authority_failed",
+                case_id=seed.metadata.case_id,
+                error=f"{type(exc).__name__}: {exc}",
             )
             return None
 
@@ -864,7 +1076,7 @@ class TargetConvergedGenerator(CandidateGenerator):
             return None
         optimized_zmx_path = Path(str(optimized_zmx_path_raw))
         artifact_warnings: list[str] = []
-        if artifact_dir is not None:
+        if artifact_dir is not None and not production_stagec_requested:
             candidate_key = f"{seed.metadata.case_id}--{preferred}--run-{run_index}"
             persistent_dir = artifact_dir / "candidates" / candidate_key
             persistent_path = persistent_dir / "candidate.zmx"
@@ -880,7 +1092,13 @@ class TargetConvergedGenerator(CandidateGenerator):
                     f"{type(exc).__name__}: {exc}"
                 )
                 artifact_warnings.append(warning)
-                logger.warning("mode3_zmx_persist_failed", case_id=seed.metadata.case_id, error=warning)
+                logger.warning(
+                    "mode3_zmx_persist_failed", case_id=seed.metadata.case_id, error=warning
+                )
+                if production_stagec_requested:
+                    # Production Stage C may never fall back to an ephemeral path
+                    # or reuse a stale candidate directory.
+                    return None
 
         # Persistence may have replaced the accepted_final path. Re-validate so
         # the evidence path and the exact ZMX used to rebuild the payload remain
@@ -901,6 +1119,7 @@ class TargetConvergedGenerator(CandidateGenerator):
                     error=f"{type(exc).__name__}: {exc}",
                 )
                 return None
+
             if load_path != accepted_path:
                 logger.warning(
                     "mode3_seed_accepted_zmx_path_mismatch",
@@ -909,6 +1128,145 @@ class TargetConvergedGenerator(CandidateGenerator):
                     accepted_path=str(accepted_path),
                 )
                 return None
+
+        stagec_reconstruction = None
+        stagec_evidence = None
+        if field_target_requested and stagec_runner is not None:
+            if (
+                accepted is None
+                or artifact_dir is None
+                or resolved_field.image_height_mm is None
+                or resolved_field.efl_mm is None
+            ):
+                logger.warning(
+                    "mode3_stagec_prerequisite_unavailable",
+                    case_id=seed.metadata.case_id,
+                    accepted_final=accepted is not None,
+                    artifact_dir=artifact_dir is not None,
+                    field_status=resolved_field.status,
+                )
+                return None
+            try:
+                if stagec_dir is None or authority_manifest is None:
+                    raise RuntimeError("Stage C pre-run authority was not retained")
+                authority_raw = authority_manifest.read_bytes()
+                cache_binding = _production_stageb_cache_binding(authority_raw)
+                cache_scope = cache_binding["scope"]
+                cache_pre_run_bound = cache_binding["pre_run_bound"]
+                cache_record_path_raw = cache_binding["record_path"]
+                cache_record_sha256 = cache_binding["record_sha256"]
+                cache_raw_result_path = cache_binding["raw_result_path"]
+                cache_raw_result_sha256 = cache_binding["raw_result_sha256"]
+                reconstructed_path = stagec_dir / "candidate-rih.zmx"
+                if reconstructed_path.exists():
+                    raise FileExistsError(f"Stage C reconstruction collision: {reconstructed_path}")
+                stagec_reconstruction = reconstruct_image_fields(
+                    source_zmx=optimized_zmx_path,
+                    output_zmx=reconstructed_path,
+                    resolved_target=resolved_field,
+                    allow_nonzero_vignetting_for_machine=True,
+                )
+                if (
+                    stagec_reconstruction.status != "constructed"
+                    or stagec_reconstruction.num_fields is None
+                ):
+                    raise ValueError(
+                        "Stage C reconstruction did not produce a closed machine input: "
+                        f"{stagec_reconstruction.status}: {stagec_reconstruction.reason}"
+                    )
+                production_matrix_id = (
+                    f"production-{seed.metadata.case_id}-{run_index}-{uuid4().hex[:8]}"
+                )
+                production_plan = {
+                    "schema_id": "atelier-stagec-production-execution-plan-v1",
+                    "matrix_id": production_matrix_id,
+                    "stageb_manifest": str(authority_manifest.resolve()),
+                    "stageb_manifest_sha256": hashlib.sha256(authority_raw).hexdigest(),
+                    "seed_count": 1,
+                    "cell_count": 1,
+                    "repeat_count": 1,
+                    "expected_run_count": 1,
+                    "stageb_cache_scope_counts": {cache_scope: 1},
+                    "all_inputs_pre_run_bound": cache_pre_run_bound,
+                    "retrospective_seed_ids": (
+                        [] if cache_pre_run_bound else [seed.metadata.case_id]
+                    ),
+                    "cells": [
+                        {
+                            "cell_id": f"{seed.metadata.case_id}--production-target",
+                            "case_id": seed.metadata.case_id,
+                            "arm": "production-target",
+                            "target_efl_mm": resolved_field.efl_mm,
+                            "target_image_height_mm": resolved_field.image_height_mm,
+                            "cache_scope": cache_scope,
+                            "pre_run_bound": cache_pre_run_bound,
+                            "cache_record_path": cache_record_path_raw,
+                            "cache_record_sha256": cache_record_sha256,
+                            "raw_ladder_result_path": cache_raw_result_path,
+                            "raw_ladder_result_sha256": cache_raw_result_sha256,
+                            "reconstruction": stagec_reconstruction.model_dump(mode="json"),
+                        }
+                    ],
+                    "expert_verdict": None,
+                }
+                production_plan_path = stagec_dir / "execution-plan.json"
+                production_plan_raw = (
+                    json.dumps(
+                        production_plan,
+                        ensure_ascii=False,
+                        allow_nan=False,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                    )
+                    + "\n"
+                )
+                with production_plan_path.open("x", encoding="utf-8", newline="\n") as handle:
+                    handle.write(production_plan_raw)
+                receipt = stagec_runner(
+                    stageb_manifest=authority_manifest,
+                    execution_plan=production_plan_path,
+                    stageb_case_id=seed.metadata.case_id,
+                    matrix_id=production_matrix_id,
+                    arm="production-target",
+                    repeat_index=run_index,
+                    target_image_height_mm=resolved_field.image_height_mm,
+                    timeout_seconds=180.0,
+                )
+                stagec_evidence = restore_stagec_attested_evidence(receipt)
+                reconstructed_sha256 = hashlib.sha256(reconstructed_path.read_bytes()).hexdigest()
+                if (
+                    stagec_evidence.matrix_id != production_matrix_id
+                    or stagec_evidence.cell_id != f"{seed.metadata.case_id}--production-target"
+                    or stagec_evidence.seed_id != seed.metadata.case_id
+                    or stagec_evidence.arm != "production-target"
+                    or stagec_evidence.repeat_index != run_index
+                    or stagec_evidence.target_efl_mm != resolved_field.efl_mm
+                    or stagec_evidence.target_image_height_mm != resolved_field.image_height_mm
+                    or stagec_evidence.reconstructed_zmx_sha256 != reconstructed_sha256
+                    or stagec_reconstruction.output_sha256 != reconstructed_sha256
+                    or stagec_evidence.stageb_cache_scope != cache_scope
+                    or stagec_evidence.stageb_pre_run_bound is not cache_pre_run_bound
+                    or stagec_evidence.stageb_cache_record_sha256 != cache_record_sha256
+                    or stagec_evidence.stageb_raw_ladder_result_sha256 != cache_raw_result_sha256
+                ):
+                    raise ValueError(
+                        "production Stage C evidence differs from the authority cache binding"
+                    )
+            except Exception as exc:  # noqa: BLE001 - one Stage C machine failure blocks only this seed
+                logger.warning(
+                    "mode3_stagec_machine_failed",
+                    case_id=seed.metadata.case_id,
+                    error=f"{type(exc).__name__}: {exc}",
+                )
+                return None
+            if not stagec_evidence.image_height_achieved:
+                logger.warning(
+                    "mode3_stagec_machine_gate_blocked",
+                    case_id=seed.metadata.case_id,
+                    run_id=stagec_evidence.run_id,
+                )
+                return None
+            optimized_zmx_path = reconstructed_path
 
         try:
             optic = load_normalized_zmx(optimized_zmx_path)
@@ -919,6 +1277,7 @@ class TargetConvergedGenerator(CandidateGenerator):
                 nominal_efl_mm=spec.efl_mm,
                 nominal_fov_deg=seed.metadata.fov_deg,
                 source_path=optimized_zmx_path,
+                resolved_field_target=(resolved_field if stagec_evidence is not None else None),
             )
         except Exception as exc:  # noqa: BLE001 - Optiland 满口径追迹在优化后 ZMX 上可能数值异常（even_asphere），fail closed 逐颗 seed 隔离，不炸整个 generator
             logger.warning(
@@ -985,9 +1344,7 @@ class TargetConvergedGenerator(CandidateGenerator):
                 # 默认解析必然 miss —— 显式把真实路径递给 RI 复算（此刻文件
                 # 仍存在：还在 `_generate` 的 TemporaryDirectory 上下文内）。
                 # 追迹失败仍 fail-closed 全 unavailable，不猜值。
-                ri_by_field=compute_relative_illumination(
-                    payload, zmx_path=optimized_zmx_path
-                ),
+                ri_by_field=compute_relative_illumination(payload, zmx_path=optimized_zmx_path),
                 codev_post_aut=_codev_post_aut_snapshot(config),
             ),
             generation_notes=_mode3_generation_notes(
@@ -1005,4 +1362,6 @@ class TargetConvergedGenerator(CandidateGenerator):
             codev_preferred_config=preferred,
             codev_config_snapshots={preferred: config_snapshots.get(preferred, {})},
             fnum_ladder_evidence=evidence,
+            stagec_field_reconstruction=stagec_reconstruction,
+            stagec_field_evidence=stagec_evidence,
         )

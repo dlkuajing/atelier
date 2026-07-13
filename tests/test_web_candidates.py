@@ -202,11 +202,12 @@ def _target_converged_candidate() -> ScoredCandidate:
         candidate_id=_TARGET_CONVERGED_ID,
         generation_notes=[
             "Mode3：③ target 优化标准入口，seed=3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56",
-            "preferred 配置=\"both\"（both config produced lower spot RMS）",
-            "玻璃 provenance（preferred=\"both\"）：fictitious-within-plastic-GLA(default)",
+            'preferred 配置="both"（both config produced lower spot RMS）',
+            '玻璃 provenance（preferred="both"）：fictitious-within-plastic-GLA(default)',
             "收敛维 provenance（P15 带条件扩）：efl 标 converged=True；fnum 能力"
             "上限已进 CONVERGED_FIELDS 但本候选未跑 FNO 阶梯（fnum_ladder_"
-            "achieved=None）→ 如实标 False；IMH/FOV Stage C 未落地亦如实标 False",
+            "achieved=None）→ 如实标 False；IMH 可由 Stage C RIH/receipt 验证 "
+            "achieved 但非优化收敛维，FOV derived-only，二者仍如实标 False",
         ],
         codev_post_aut=codev_post_aut,
         ri_available=False,
@@ -328,7 +329,7 @@ def _candidate_card_html(html: str, candidate_id: str) -> str:
 
 def _expert_grid_html(html: str) -> str:
     match = re.search(
-        r'<section\b(?=[^>]*data-expert-grid)[^>]*>.*?</section>',
+        r"<section\b(?=[^>]*data-expert-grid)[^>]*>.*?</section>",
         html,
         re.S,
     )
@@ -426,7 +427,7 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
     # Per-candidate layout SVG: same .layout-svg-frame + optiland-raytrace
     # provenance badge pattern as the result page.
     layout_match = re.search(
-        r'<section\b(?=[^>]*data-candidate-layout)[^>]*>.*?</section>', retrieved_card, re.S
+        r"<section\b(?=[^>]*data-candidate-layout)[^>]*>.*?</section>", retrieved_card, re.S
     )
     assert layout_match is not None
     layout_block = layout_match.group(0)
@@ -439,7 +440,7 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
     # Per-candidate MTF visual: labeled, honest axes (full 0-1 scale, real
     # frequency range) + provenance badge from payload.mtf.provenance.
     mtf_match = re.search(
-        r'<figure\b(?=[^>]*data-candidate-mtf)[^>]*>.*?</figure>', retrieved_card, re.S
+        r"<figure\b(?=[^>]*data-candidate-mtf)[^>]*>.*?</figure>", retrieved_card, re.S
     )
     assert mtf_match is not None
     mtf_block = mtf_match.group(0)
@@ -461,7 +462,7 @@ def test_candidate_set_full_batch_round_trip(monkeypatch):
     assert 'data-deviation-field="fnum" data-converged="false"' in converged_card
     assert 'data-deviation-field="imh" data-converged="false"' in converged_card
     assert 'data-deviation-field="ttl" data-converged="false"' in converged_card
-    assert 'data-fnum-ladder-evidence' in converged_card
+    assert "data-fnum-ladder-evidence" in converged_card
     assert 'data-evidence-status="unavailable"' in converged_card
     assert "accepted_final.measured_fnum: N/A" in converged_card
     assert "accepted_final.effective_edge_used: N/A" in converged_card
@@ -640,7 +641,7 @@ def test_candidate_card_degraded_visuals_show_honest_empty_states(monkeypatch):
     card = _candidate_card_html(result.text, _RETRIEVED_ID)
 
     layout_match = re.search(
-        r'<section\b(?=[^>]*data-candidate-layout)[^>]*>.*?</section>', card, re.S
+        r"<section\b(?=[^>]*data-candidate-layout)[^>]*>.*?</section>", card, re.S
     )
     assert layout_match is not None
     layout_block = layout_match.group(0)
@@ -649,7 +650,7 @@ def test_candidate_card_degraded_visuals_show_honest_empty_states(monkeypatch):
     assert "No SVG payload was returned for this candidate." in layout_block
     assert "layout-svg-frame" not in layout_block
 
-    mtf_match = re.search(r'<figure\b(?=[^>]*data-candidate-mtf)[^>]*>.*?</figure>', card, re.S)
+    mtf_match = re.search(r"<figure\b(?=[^>]*data-candidate-mtf)[^>]*>.*?</figure>", card, re.S)
     assert mtf_match is not None
     mtf_block = mtf_match.group(0)
     assert 'data-available="false"' in mtf_block
@@ -968,7 +969,9 @@ def test_candidate_set_export_xlsx_matches_page_values(monkeypatch):
     assert ids == {_RETRIEVED_ID, _TARGET_CONVERGED_ID}
     for row in candidates_rows[1:]:
         if row[candidate_id_idx] == _RETRIEVED_ID:
-            assert row[rank_score_idx] == "0.812"  # identical formatter string as page "score=0.812" (M3)
+            assert (
+                row[rank_score_idx] == "0.812"
+            )  # identical formatter string as page "score=0.812" (M3)
 
 
 def test_candidate_bundle_zip_download_for_known_candidate(monkeypatch):
