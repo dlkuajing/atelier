@@ -51,3 +51,6 @@ ignore = ["E501"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "real_machine: depends on or launches installed CODE V; launches retain production global locks",
+]

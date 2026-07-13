@@ -281,6 +281,7 @@ def test_roundtrip_report_records_five_gates() -> None:
     assert "wavelength" in text
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(not DEFAULT_CODEV_EXECUTABLE.is_file(), reason="CODE V is not installed here")
 def test_real_codev_import_patent_seed_smoke(tmp_path: Path) -> None:
     try:

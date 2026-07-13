@@ -33,9 +33,15 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from app.core.case_library import load_case_library
 from app.core.engines.codev_optimize import _autovig_profile, build_codev_target_sequence
+from app.core.engines.stagec_attested import (
+    StageCAttestedEvidence,
+    restore_stagec_attested_evidence,
+)
 from app.core.engines.stagec_field import (
+    FieldTargetStatus,
     StageCFieldEvidence,
     StageCMachineFieldEvidence,
+    resolve_field_target,
     validate_reconstructed_field_artifact,
 )
 from app.core.orchestration.candidate import (
@@ -207,7 +213,15 @@ def _repeatability_row(rep: RepeatabilityMetrics) -> list[object]:
 
 def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
     ws.title = "Candidates"
-    header = ["candidate_id", "mode", "source_case_id", "rank_status", "rank_score", "coverage_pct", "missing_metrics"]
+    header = [
+        "candidate_id",
+        "mode",
+        "source_case_id",
+        "rank_status",
+        "rank_score",
+        "coverage_pct",
+        "missing_metrics",
+    ]
     for field in _DEVIATION_FIELDS:
         header += [
             f"{field}_target",
@@ -217,7 +231,14 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
             f"{field}_converged",
         ]
     header += [label for label, _ in _IMAGE_QUALITY_COLUMNS]
-    header += ["ttl_mm", "n_pieces", "has_special_glass", "aspheric_term_count", "aspheric_surface_count", "chief_ray_angle_deg"]
+    header += [
+        "ttl_mm",
+        "n_pieces",
+        "has_special_glass",
+        "aspheric_term_count",
+        "aspheric_surface_count",
+        "chief_ray_angle_deg",
+    ]
     header += list(_REPEATABILITY_COLUMNS)
     header += list(_FNUM_EVIDENCE_COLUMNS)
     header += list(_STAGEC_EVIDENCE_COLUMNS)
@@ -259,9 +280,7 @@ def _write_candidates_sheet(ws: Worksheet, candidate_set: CandidateSet) -> None:
             evidence.target_achieved if evidence is not None else None,
             fmt_float(accepted.measured_fnum) if accepted is not None else "N/A",
             fmt_float(accepted.effective_edge_used) if accepted is not None else "N/A",
-            json.dumps(
-                accepted.ray_grid.model_dump(), ensure_ascii=False, sort_keys=True
-            )
+            json.dumps(accepted.ray_grid.model_dump(), ensure_ascii=False, sort_keys=True)
             if accepted is not None
             else "N/A",
             accepted.quality_note if accepted is not None else "N/A",
@@ -333,35 +352,48 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
     there (fail closed, never fabricates a path)."""
     reconstruction = sc.generated.stagec_field_reconstruction
     if reconstruction is not None:
-        if target.efl_mm is None or not math.isclose(
-            target.efl_mm,
-            reconstruction.target_efl_mm,
-            rel_tol=1e-12,
-            abs_tol=1e-12,
-        ) or target.image_height_mm is None or not math.isclose(
-            target.image_height_mm,
-            reconstruction.target_image_height_mm,
-            rel_tol=1e-12,
-            abs_tol=1e-12,
+        resolved_target = resolve_field_target(
+            efl_mm=target.efl_mm,
+            image_height_mm=target.image_height_mm,
+            full_fov_deg=target.fov_deg,
+        )
+        if (
+            resolved_target.status is not FieldTargetStatus.RESOLVED
+            or resolved_target.efl_mm is None
+            or resolved_target.image_height_mm is None
+            or not math.isclose(
+                resolved_target.efl_mm,
+                reconstruction.target_efl_mm,
+                rel_tol=1e-12,
+                abs_tol=1e-12,
+            )
+            or not math.isclose(
+                resolved_target.image_height_mm,
+                reconstruction.target_image_height_mm,
+                rel_tol=1e-12,
+                abs_tol=1e-12,
+            )
         ):
             return None
         evidence = sc.generated.stagec_field_evidence
         if reconstruction.status != "constructed" or reconstruction.output_path is None:
             return None
-        if evidence is None or (
-            isinstance(evidence, StageCFieldEvidence) and evidence.image_height_achieved
-        ) or (
-            evidence.target_image_height_mm != reconstruction.target_image_height_mm
-            or evidence.target_efl_mm != reconstruction.target_efl_mm
-            or evidence.nominal_image_height_mm != reconstruction.target_image_height_mm
+        if (
+            evidence is None
+            or (isinstance(evidence, StageCFieldEvidence) and evidence.image_height_achieved)
+            or (isinstance(evidence, StageCAttestedEvidence) and not evidence.image_height_achieved)
+            or (
+                evidence.target_image_height_mm != reconstruction.target_image_height_mm
+                or evidence.target_efl_mm != reconstruction.target_efl_mm
+                or evidence.nominal_image_height_mm != reconstruction.target_image_height_mm
+            )
         ):
             return None
         if reconstruction.num_fields is None:
             return None
         source = Path(reconstruction.source_path)
         if not source.is_file() or (
-            hashlib.sha256(source.read_bytes()).hexdigest()
-            != reconstruction.source_sha256_before
+            hashlib.sha256(source.read_bytes()).hexdigest() != reconstruction.source_sha256_before
         ):
             return None
         path = Path(reconstruction.output_path)
@@ -373,6 +405,11 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
                 expected_num_fields=reconstruction.num_fields,
                 expected_fractions=reconstruction.normalized_fractions,
                 target_image_height_mm=reconstruction.target_image_height_mm,
+                vignetting_mode=(
+                    "finite-nonzoom"
+                    if isinstance(evidence, StageCAttestedEvidence)
+                    else "zero-only"
+                ),
             )
         except (OSError, ValueError):
             return None
@@ -381,6 +418,11 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
         if isinstance(evidence, StageCMachineFieldEvidence) and (
             evidence.reconstruction_artifact_sha256 != parsed.sha256
             or evidence.readback.reconstructed_zmx_sha256 != parsed.sha256
+        ):
+            return None
+        if isinstance(evidence, StageCAttestedEvidence) and (
+            evidence.reconstruction_artifact_sha256 != parsed.sha256
+            or evidence.reconstructed_zmx_sha256 != parsed.sha256
         ):
             return None
         optimized_path = sc.generated.optimized_zmx_path
@@ -399,9 +441,13 @@ def _resolve_candidate_zmx_path(sc: ScoredCandidate, *, target: TargetSpec):
         expected_fov = 2 * math.degrees(
             math.atan(reconstruction.target_image_height_mm / reconstruction.target_efl_mm)
         )
-        if evidence.derived_full_fov_deg is None or not math.isclose(
-            evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
-        ) or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12):
+        if (
+            evidence.derived_full_fov_deg is None
+            or not math.isclose(
+                evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
+            )
+            or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12)
+        ):
             return None
         return path
     optimized_path = sc.generated.optimized_zmx_path
@@ -469,12 +515,15 @@ def _reproduction_seq_text(
         reconstruction = sc.generated.stagec_field_reconstruction
         if reconstruction.status != "constructed":
             return None, "Stage C field reconstruction is not complete"
-        # The existing sequence builder does not encode FTYP3/YFLN, and the
-        # CODE V ANG->IMG/RSI syntax is intentionally not guessed.  Shipping a
-        # Stage-B-only macro for a Stage-C candidate would be false replay.
+        # The existing Stage B optimizer replay builder does not encode the
+        # Stage C FTYP3/YFLN reconstruction.  The attested package already
+        # retains the exact machine-executed Stage C sequence; shipping a
+        # second Stage-B-only macro as ``reproduction.seq`` would be a false
+        # end-to-end replay even though chief-ray/RSI verification is complete.
         return None, (
-            "Stage C CODE V field syntax and real chief-ray/RSI replay are pending machine "
-            "verification; Stage-B-only sequence withheld"
+            "the Stage B optimizer replay does not encode the attested Stage C FTYP3/YFLN "
+            "reconstruction; the exact machine-executed sequence is retained as "
+            "stagec-evidence/stagec.seq, and a Stage-B-only reproduction.seq is withheld"
         )
     evidence = sc.generated.fnum_ladder_evidence
     if evidence is None:
@@ -522,9 +571,7 @@ def _bundle_readme(
 ) -> str:
     row = sc.scorecard
     gen = sc.generated
-    rank_score_str = (
-        fmt_float(row.rank.score) if row.rank.score is not None else "N/A"
-    )
+    rank_score_str = fmt_float(row.rank.score) if row.rank.score is not None else "N/A"
     lines = [
         "Atelier C1 candidate bundle — provenance & non-verdict notice",
         "=" * 66,
@@ -550,9 +597,7 @@ def _bundle_readme(
         f"{fmt_float(accepted.effective_edge_used) if accepted else 'N/A'}",
         "accepted_final.ray_grid: "
         + (
-            json.dumps(
-                accepted.ray_grid.model_dump(), ensure_ascii=False, sort_keys=True
-            )
+            json.dumps(accepted.ray_grid.model_dump(), ensure_ascii=False, sort_keys=True)
             if accepted
             else "N/A"
         ),
@@ -567,6 +612,13 @@ def _bundle_readme(
             "stagec.[EXPERT]: no production-readiness verdict is supplied",
             "",
         ]
+        if isinstance(stagec, StageCAttestedEvidence):
+            lines += [
+                "stagec-evidence/: included — local-runner-attested, HMAC-bound receipt "
+                "package and retained raw bytes.",
+                f"attestation_scope: {stagec.attestation_scope}",
+                "",
+            ]
     if zmx_path is not None:
         lines += [
             f"candidate.zmx: included ({zmx_path.name}), delivered-payload prescription.",
@@ -602,6 +654,22 @@ def _bundle_readme(
     return "\n".join(lines) + "\n"
 
 
+def _candidate_rejection_bundle(*, title: str, reason: str, exc: Exception) -> bytes:
+    readme = (
+        f"Atelier candidate bundle — {title}\n"
+        "====================================================\n\n"
+        f"{reason}\n"
+        "candidate.zmx: NOT included — validated bytes were unavailable.\n"
+        "reproduction.seq: NOT included — evidence integrity failed closed.\n"
+        f"validation_error_type: {type(exc).__name__}\n"
+        "[EXPERT] remains blank.\n"
+    )
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("README.txt", readme)
+    return buffer.getvalue()
+
+
 def build_candidate_bundle_zip(sc: ScoredCandidate, *, target: TargetSpec) -> bytes:
     """Zip bundle (bytes) for one candidate: ZMX (when resolvable) +
     reproduction `.seq` (Mode3, when reconstructible from complete provenance)
@@ -614,47 +682,109 @@ def build_candidate_bundle_zip(sc: ScoredCandidate, *, target: TargetSpec) -> by
             sc.model_dump_json(exclude_computed_fields=True),
             strict=True,
         )
-        validated_target = TargetSpec.model_validate_json(
-            target.model_dump_json(), strict=True
+        validated_target = TargetSpec.model_validate_json(target.model_dump_json(), strict=True)
+    except Exception as exc:  # noqa: BLE001 - forged/unserializable models fail closed
+        # Never inspect the rejected object again.  `model_construct()` can
+        # omit or poison any nested field, so even a defensive-looking
+        # `sc.generated...` read here would create a second exception path.
+        return _candidate_rejection_bundle(
+            title="STRICT VALIDATION REJECTION",
+            reason=(
+                "No candidate status, machine verification, ZMX, sequence, or provenance "
+                "detail is emitted from an invalid object."
+            ),
+            exc=exc,
         )
-    except ValueError as exc:
-        ladder = sc.generated.fnum_ladder_evidence
-        accepted = ladder.accepted_final if ladder is not None else None
-        if sc.generated.stagec_field_reconstruction is not None:
-            seq_reason = "Stage C candidate provenance failed strict validation"
-        elif ladder is None:
-            seq_reason = "validated Stage B FNO-ladder evidence missing"
-        elif accepted is not None and not math.isfinite(accepted.effective_edge_used):
-            seq_reason = "accepted effective_edge_used is non-finite"
-        else:
-            seq_reason = "candidate provenance failed strict validation"
-        stagec_reason = (
-            _candidate_zmx_unavailable_reason(sc)
-            if sc.generated.stagec_field_reconstruction is not None
-            else "candidate provenance failed strict validation; candidate.zmx withheld"
-        )
-        readme = (
-            "Atelier candidate bundle — STRICT VALIDATION REJECTION\n"
-            "======================================================\n\n"
-            "No candidate status, machine verification, ZMX, or sequence is emitted from "
-            "an invalid object.\n"
-            f"candidate.zmx: NOT included — {stagec_reason}\n"
-            "reproduction.seq: NOT included — "
-            f"{seq_reason}\n"
-            f"validation_error_type: {type(exc).__name__}\n"
-            "[EXPERT] remains blank.\n"
-        )
-        buffer = io.BytesIO()
-        with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr("README.txt", readme)
-        return buffer.getvalue()
     sc = validated_sc
     target = validated_target
-    zmx_path = _resolve_candidate_zmx_path(sc, target=target)
+    stagec_entries: dict[str, bytes] = {}
+    candidate_zmx_bytes: bytes | None = None
+    candidate_zmx_name: str | None = None
+    stagec_evidence = sc.generated.stagec_field_evidence
+    if isinstance(stagec_evidence, StageCAttestedEvidence):
+        package = Path(stagec_evidence.package_path)
+        receipt_path = package / "post-run-receipt.json"
+        try:
+            restored = restore_stagec_attested_evidence(receipt_path)
+            if restored != stagec_evidence:
+                raise ValueError("persisted Stage C evidence differs from fresh receipt restore")
+            # Restore above validates the package. Snapshot every canonical file
+            # exactly once afterwards; all zip entries, including candidate.zmx,
+            # are written from these immutable in-memory bytes.
+            snapshot = {
+                path.name: path.read_bytes()
+                for path in package.iterdir()
+                if path.is_file() and not path.is_symlink()
+            }
+            receipt_raw = snapshot["post-run-receipt.json"]
+            reconstructed_raw = snapshot["reconstructed.zmx"]
+            receipt_sha = hashlib.sha256(receipt_raw).hexdigest()
+            reconstructed_sha = hashlib.sha256(reconstructed_raw).hexdigest()
+            receipt_payload = json.loads(receipt_raw.decode("utf-8"))
+            artifact_descriptors = receipt_payload.get("artifacts")
+            artifact_names = set(snapshot) - {"post-run-receipt.json"}
+            if not isinstance(artifact_descriptors, dict) or artifact_names != set(
+                artifact_descriptors
+            ):
+                raise ValueError("Stage C snapshot artifact set differs from receipt")
+            for name in artifact_names:
+                raw = snapshot[name]
+                if artifact_descriptors[name] != {
+                    "size_bytes": len(raw),
+                    "sha256": hashlib.sha256(raw).hexdigest(),
+                }:
+                    raise ValueError(f"Stage C snapshot artifact drifted after restore: {name}")
+            reconstruction = sc.generated.stagec_field_reconstruction
+            if (
+                receipt_sha != stagec_evidence.receipt_sha256
+                or reconstructed_sha != stagec_evidence.reconstructed_zmx_sha256
+                or reconstruction is None
+                or reconstruction.output_sha256 != reconstructed_sha
+                or stagec_evidence.reconstruction_artifact_sha256 != reconstructed_sha
+            ):
+                raise ValueError("Stage C snapshot differs from receipt/reconstruction hashes")
+            stagec_entries = snapshot
+            candidate_zmx_bytes = reconstructed_raw
+            candidate_zmx_name = "reconstructed.zmx"
+        except Exception as exc:  # noqa: BLE001 - export boundary always returns rejection zip
+            return _candidate_rejection_bundle(
+                title="STAGE C EVIDENCE REJECTION",
+                reason=(
+                    "Local-runner-attested package failed a fresh byte-level restore/snapshot; "
+                    "candidate ZMX, sequence, and evidence are all withheld."
+                ),
+                exc=exc,
+            )
+    try:
+        zmx_path = _resolve_candidate_zmx_path(sc, target=target)
+        if isinstance(stagec_evidence, StageCAttestedEvidence) and zmx_path is None:
+            raise ValueError("Stage C v3 candidate/target provenance did not resolve")
+    except Exception as exc:  # noqa: BLE001 - provenance resolution never leaks from export
+        return _candidate_rejection_bundle(
+            title="CANDIDATE PROVENANCE REJECTION",
+            reason="Candidate target/path provenance failed strict resolution.",
+            exc=exc,
+        )
+    if candidate_zmx_bytes is None and zmx_path is not None:
+        try:
+            snapshot = zmx_path.read_bytes()
+            reconstruction = sc.generated.stagec_field_reconstruction
+            if reconstruction is not None:
+                snapshot_sha = hashlib.sha256(snapshot).hexdigest()
+                if reconstruction.output_sha256 != snapshot_sha:
+                    raise ValueError("candidate ZMX changed after strict validation")
+            candidate_zmx_bytes = snapshot
+            candidate_zmx_name = zmx_path.name
+        except Exception as exc:  # noqa: BLE001 - filesystem drift returns honest rejection
+            return _candidate_rejection_bundle(
+                title="CANDIDATE ZMX REJECTION",
+                reason="Candidate ZMX read/hash drifted after strict validation.",
+                exc=exc,
+            )
     seq_text, seq_unavailable_reason = _reproduction_seq_text(sc, target)
     readme = _bundle_readme(
         sc,
-        zmx_path=zmx_path,
+        zmx_path=Path(candidate_zmx_name) if candidate_zmx_bytes is not None else None,
         seq_text=seq_text,
         seq_unavailable_reason=seq_unavailable_reason,
     )
@@ -662,8 +792,10 @@ def build_candidate_bundle_zip(sc: ScoredCandidate, *, target: TargetSpec) -> by
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("README.txt", readme)
-        if zmx_path is not None:
-            zf.write(zmx_path, arcname="candidate.zmx")
+        if candidate_zmx_bytes is not None:
+            zf.writestr("candidate.zmx", candidate_zmx_bytes)
         if seq_text is not None:
             zf.writestr("reproduction.seq", seq_text)
+        for name, payload in sorted(stagec_entries.items()):
+            zf.writestr(f"stagec-evidence/{name}", payload)
     return buffer.getvalue()

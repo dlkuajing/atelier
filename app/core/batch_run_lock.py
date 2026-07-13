@@ -27,6 +27,7 @@ from uuid import uuid4
 _LOCK_FILE = ".p18-runner.lock"
 _OWNER_FILE = ".p18-runner.owner.json"
 _RECOVERY_DIR = ".p18-runner-recoveries"
+P18_GLOBAL_WINDOW_ROOT = Path.home() / ".atelier" / "p18-codev-window"
 
 
 class BatchRunnerLockError(RuntimeError):
@@ -43,6 +44,33 @@ class BatchRunnerLockRecoveryRequired(BatchRunnerLockError):
 
 class BatchRunnerLockRecoveryNotNeeded(BatchRunnerLockError):
     """Recovery was requested although no stale owner record exists."""
+
+
+class BatchRunnerLockOwner(dict[str, object]):
+    """Owner metadata plus a one-way handoff to the stale-owner gate.
+
+    The context manager normally removes its owner record on clean exit.  A
+    caller that can no longer prove its protected child process has exited
+    must call :meth:`handoff_to_stale_gate` *before* attempting any diagnostic
+    metadata write.  The handoff is one-way: context cleanup then preserves
+    the original owner record even if that later write fails.
+    """
+
+    def __init__(
+        self,
+        metadata: Mapping[str, object],
+        *,
+        recovered_stale: bool,
+    ) -> None:
+        super().__init__(metadata)
+        self["recovered_stale"] = recovered_stale
+        self._stale_gate_handed_off = False
+
+    def handoff_to_stale_gate(self) -> dict[str, object]:
+        """Suppress normal cleanup and return a stable metadata snapshot."""
+
+        self._stale_gate_handed_off = True
+        return dict(self)
 
 
 def _utc_now_iso() -> str:
@@ -386,8 +414,9 @@ def batch_runner_lock(
     archive_root: Path,
     *,
     recover_stale: bool = False,
+    recover_stale_if_present: bool = False,
     details: Mapping[str, object] | None = None,
-) -> Iterator[dict[str, object]]:
+) -> Iterator[BatchRunnerLockOwner]:
     """Hold the archive-wide single-runner lock for the caller's full run.
 
     Acquisition is non-blocking and fail-closed.  ``recover_stale=True`` is
@@ -418,18 +447,19 @@ def batch_runner_lock(
             )
 
         owner: dict[str, object] | None = None
+        owner_lease: BatchRunnerLockOwner | None = None
         acquired = True
         try:
             stale_snapshot = _read_owner_snapshot(owner_path)
             stale_owner = stale_snapshot.parsed if stale_snapshot is not None else None
-            if stale_snapshot is not None and not recover_stale:
+            if stale_snapshot is not None and not (recover_stale or recover_stale_if_present):
                 raise BatchRunnerLockRecoveryRequired(
                     "Phase18 OS lock is free but a prior owner record remains, indicating an "
                     f"unclean exit ({_owner_hint(owner_path)}). Re-run with explicit stale-lock "
                     "recovery only after verifying the prior run is no longer active; recovery "
                     "will prove this again by acquiring the OS lock and write a receipt."
                 )
-            if stale_snapshot is None and recover_stale:
+            if stale_snapshot is None and recover_stale and not recover_stale_if_present:
                 raise BatchRunnerLockRecoveryNotNeeded(
                     "--recover-stale-lock was requested, but no stale owner record exists; "
                     "run normally so recovery cannot become a habitual lock bypass."
@@ -440,8 +470,7 @@ def batch_runner_lock(
                 active_processes = _active_phase18_processes()
                 if active_processes:
                     summary = ", ".join(
-                        f"{item['kind']}:{item['name']}[{item['pid']}]"
-                        for item in active_processes
+                        f"{item['kind']}:{item['name']}[{item['pid']}]" for item in active_processes
                     )
                     raise BatchRunnerLockRecoveryRequired(
                         "OS runner lock is free, but Phase18/CODE V process quiescence is not "
@@ -464,12 +493,18 @@ def batch_runner_lock(
                 )
                 _atomic_write_json(root / _RECOVERY_DIR / receipt_name, receipt)
             _atomic_write_json(owner_path, owner)
-            yield owner
+            owner_lease = BatchRunnerLockOwner(
+                owner,
+                recovered_stale=stale_snapshot is not None,
+            )
+            yield owner_lease
         finally:
             # Only the holder owning this lock_id may clear metadata.  If the
             # record was externally altered, leave it behind so the next run
             # fails closed into the explicit recovery path.
-            if owner is not None:
+            if owner is not None and (
+                owner_lease is None or not owner_lease._stale_gate_handed_off
+            ):
                 try:
                     current = _read_owner(owner_path)
                     if current is not None and current.get("lock_id") == owner["lock_id"]:

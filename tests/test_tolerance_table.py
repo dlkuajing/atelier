@@ -178,6 +178,7 @@ def test_result_page_renders_codev_tolerance_table(monkeypatch: pytest.MonkeyPat
     assert 'data-tolerance-rank="1"' in html
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(
     not DEFAULT_CODEV_EXECUTABLE.is_file()
     or os.environ.get("ATELIER_RUN_REAL_CODEV_TOLERANCE") != "1",

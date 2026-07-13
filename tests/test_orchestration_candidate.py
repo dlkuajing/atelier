@@ -68,10 +68,15 @@ def _fnum_evidence(achieved: bool | None) -> FnumLadderEvidence | None:
             ray_traceable=True,
             effective_edge_used=0.3,
             ray_grid={
-                "category": "ok", "refl_count": 0, "miss_count": 0,
-                "ray_aiming_warning": False, "aperture_conflict_matched": None,
-                "excerpt": None, "note": "positive measured listing evidence",
-                "normal_completion": True, "abnormal_completion_matched": None,
+                "category": "ok",
+                "refl_count": 0,
+                "miss_count": 0,
+                "ray_aiming_warning": False,
+                "aperture_conflict_matched": None,
+                "excerpt": None,
+                "note": "positive measured listing evidence",
+                "normal_completion": True,
+                "abnormal_completion_matched": None,
             },
             quality_note="measured on accepted vignetted pupil",
             optimized_zmx_path="accepted.zmx",
@@ -147,8 +152,7 @@ def _target_deviations(
             rel_violation=0.0,
             # 与 ScoredCandidate._enforce_consistency 期望公式同构：fnum 带
             # per-candidate 证据 gate（P15 带条件扩），其余维纯查表。
-            converged_toward_target=(f in conv)
-            and (f != "fnum" or fnum_ladder_achieved is True),
+            converged_toward_target=(f in conv) and (f != "fnum" or fnum_ladder_achieved is True),
         )
         for f in fields
     ]
@@ -199,9 +203,7 @@ def _scored_candidate(
         generated=_generated_candidate(
             mode, candidate_id, fnum_ladder_achieved=fnum_ladder_achieved
         ),
-        scorecard=_scorecard_row(
-            mode, candidate_id, fnum_ladder_achieved=fnum_ladder_achieved
-        ),
+        scorecard=_scorecard_row(mode, candidate_id, fnum_ladder_achieved=fnum_ladder_achieved),
     )
 
 
@@ -234,7 +236,8 @@ def test_converged_fields_matches_spec():
     assert CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED] == frozenset({"efl", "fnum"})
     # TTL 恒不在收敛维内（Mode3 六接缝不含 TTL，§10）
     assert "ttl" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
-    # IMH/FOV 现状未达标（Stage C 场重建未落地），不得标已收敛
+    # IMH 可由 Stage C RIH/receipt 验证 achieved，FOV 可同源派生/实测；
+    # 二者仍不属于 Stage B optimizer 的 converged 维，不得偷换语义。
     assert "imh" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
     assert "fov" not in CONVERGED_FIELDS[GenerationMode.TARGET_CONVERGED]
 
@@ -353,9 +356,7 @@ def test_scored_candidate_fnum_gate_true_round_trips_with_fnum_yes():
 def test_scored_candidate_forged_fnum_yes_without_gate_raises(gate: bool | None):
     """ladder 未跑（None）/未达标（False）时伪造 fnum converged=Yes → 构造期
     拒绝（诚实不变量：无四条件证据不给收敛背书）。"""
-    generated = _generated_candidate(
-        GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=gate
-    )
+    generated = _generated_candidate(GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=gate)
     deviations = [
         d.model_copy(update={"converged_toward_target": True}) if d.field == "fnum" else d
         for d in _target_deviations(GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=gate)
@@ -376,11 +377,10 @@ def test_scored_candidate_forged_fnum_yes_without_gate_raises(gate: bool | None)
 def test_scored_candidate_fnum_gate_true_but_scorecard_says_no_raises():
     """双向强一致：有证据（gate=True）却漏标 No 同样拒绝——converged 列必须
     与证据逐字段一致，防止展示层静默丢真实收敛信息。"""
-    generated = _generated_candidate(
-        GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=True
-    )
+    generated = _generated_candidate(GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=True)
     scorecard = _scorecard_row(
-        GenerationMode.TARGET_CONVERGED, fnum_ladder_achieved=None  # fixture 填 No
+        GenerationMode.TARGET_CONVERGED,
+        fnum_ladder_achieved=None,  # fixture 填 No
     )
     with pytest.raises(ValueError, match="fnum converged 与 mode"):
         ScoredCandidate(generated=generated, scorecard=scorecard)
@@ -422,23 +422,24 @@ def test_fnum_gate_from_ladder_result_requires_four_condition_record():
     assert fnum_gate_from_ladder_result({**raw, "accepted_final": forged_final}) is False
     impossible_fnum = dict(raw["accepted_final"])
     impossible_fnum.update({"measured_fnum": 99.0, "fno_param_achieved": True})
-    assert fnum_gate_from_ladder_result(
-        {
-            **raw,
-            "fnum_target": 2.0,
-            "fnum_tolerance_pct": 8.0,
-            "accepted_final": impossible_fnum,
-        }
-    ) is False
+    assert (
+        fnum_gate_from_ladder_result(
+            {
+                **raw,
+                "fnum_target": 2.0,
+                "fnum_tolerance_pct": 8.0,
+                "accepted_final": impossible_fnum,
+            }
+        )
+        is False
+    )
     contradictory_grid = dict(raw["accepted_final"])
     contradictory_grid["ray_grid"] = {
         **contradictory_grid["ray_grid"],
         "category": "ok",
         "refl_count": 7,
     }
-    assert fnum_gate_from_ladder_result(
-        {**raw, "accepted_final": contradictory_grid}
-    ) is False
+    assert fnum_gate_from_ladder_result({**raw, "accepted_final": contradictory_grid}) is False
     unknown_grid = dict(raw["accepted_final"])
     unknown_grid["ray_grid"] = {**unknown_grid["ray_grid"], "unknown_failure_count": 0}
     assert fnum_gate_from_ladder_result({**raw, "accepted_final": unknown_grid}) is False

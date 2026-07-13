@@ -7,14 +7,18 @@ the CODE V listing/log output for successful results.
 
 from __future__ import annotations
 
+import json
 import os
 import re
+import secrets
 import subprocess
 import time
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
+from app.core.batch_run_lock import BatchRunnerLockOwner, batch_runner_lock
 from app.core.engines.codev import probe_code_v_installation
 
 _FALLBACK_CODEV_EXECUTABLE = Path("D:/CODEV115/codev.exe")
@@ -26,6 +30,7 @@ _TRIVIAL_SEQUENCE_NAME = "atelier_codev_trivial.seq"
 _TRIVIAL_RESULT_NAME = "atelier_codev_trivial.tsv"
 _OUTPUT_TAIL_CHARS = 4000
 _REAP_TIMEOUT_SECONDS = 5.0
+_DEFAULT_CODEV_LOCK_ROOT = Path.home() / ".atelier" / "codev-execution-lock"
 _BATCH_REQUIRED_KEYS = ("schema", "status")
 _TRIVIAL_REQUIRED_KEYS = ("schema", "status", "engine", "contract")
 _LICENSE_MARKERS = (
@@ -139,6 +144,175 @@ class CodeVBatchResult:
         }
 
 
+@dataclass(frozen=True)
+class CodeVRawProcessCapture:
+    """Exact process bytes plus the authoritative shared-lock owner."""
+
+    process: subprocess.Popen[bytes]
+    stdout_bytes: bytes
+    stderr_bytes: bytes
+    duration_seconds: float
+    lock_owner: dict[str, object]
+
+
+def run_codev_process_bytes(
+    command: list[str],
+    *,
+    work_dir: Path,
+    timeout_seconds: float,
+    env: Mapping[str, str] | None = None,
+    platform_name: str = os.name,
+    lock_root: Path | None = None,
+    recover_stale_lock: bool = False,
+) -> CodeVRawProcessCapture:
+    """Run one CODE V process under the cross-worktree lock and retain raw bytes."""
+
+    resolved_lock_root = (
+        Path(lock_root).resolve() if lock_root is not None else _DEFAULT_CODEV_LOCK_ROOT.resolve()
+    )
+    details = {
+        "purpose": "codev-process",
+        "command": list(command),
+        "work_dir": str(Path(work_dir).resolve()),
+    }
+    with batch_runner_lock(
+        resolved_lock_root,
+        recover_stale=recover_stale_lock,
+        details=details,
+    ) as owner:
+        owner_metadata = dict(owner)
+        started_at = time.monotonic()
+        try:
+            process = _popen_codev(
+                command,
+                work_dir=work_dir,
+                env=env,
+                platform_name=platform_name,
+            )
+        except OSError as exc:
+            raise CodeVBatchError(
+                "failure",
+                "CODE V batch process could not be started",
+                details={
+                    "command": command,
+                    "work_dir": str(work_dir),
+                    "exception_type": type(exc).__name__,
+                    "error": str(exc),
+                    "lock_owner": owner_metadata,
+                },
+            ) from exc
+        try:
+            stdout, stderr = process.communicate(timeout=timeout_seconds)
+            if process.returncode is None:
+                raise RuntimeError("communicate returned before CODE V exit was proven")
+        except BaseException as exc:
+            kill_details = _kill_process_tree(process, platform_name=platform_name)
+            reap_details = _reap_process_after_kill(process)
+            quarantine_details: dict[str, object] | None = None
+            quarantine_error: Exception | None = None
+            if reap_details.get("reaped") is not True:
+                try:
+                    quarantine_details = _write_codev_quarantine_owner(
+                        resolved_lock_root,
+                        owner=owner,
+                        cause=exc,
+                        kill=kill_details,
+                        reap=reap_details,
+                    )
+                except Exception as metadata_exc:  # noqa: BLE001 - preserve both failure records.
+                    quarantine_error = metadata_exc
+                    quarantine_details = {
+                        "status": "metadata-write-failed-original-owner-retained",
+                        "exception_type": type(metadata_exc).__name__,
+                        "error": str(metadata_exc),
+                    }
+            if not isinstance(exc, Exception):
+                raise
+            kind: CodeVBatchErrorKind = (
+                "timeout" if isinstance(exc, subprocess.TimeoutExpired) else "failure"
+            )
+            message = (
+                "CODE V batch run exceeded its hard timeout"
+                if kind == "timeout"
+                else "CODE V process communication failed after startup"
+            )
+            error = CodeVBatchError(
+                kind,
+                message,
+                details={
+                    "command": command,
+                    "pid": process.pid,
+                    "timeout_seconds": timeout_seconds,
+                    "exception_type": type(exc).__name__,
+                    "error": str(exc),
+                    "stdout_tail": _tail(_coerce_output(getattr(exc, "stdout", None))),
+                    "stderr_tail": _tail(_coerce_output(getattr(exc, "stderr", None))),
+                    "kill": kill_details,
+                    "reap": reap_details,
+                    "quarantine": quarantine_details,
+                    "lock_owner": owner_metadata,
+                },
+            )
+            raise error from (quarantine_error or exc)
+        return CodeVRawProcessCapture(
+            process=process,
+            stdout_bytes=_coerce_bytes(stdout),
+            stderr_bytes=_coerce_bytes(stderr),
+            duration_seconds=time.monotonic() - started_at,
+            lock_owner=owner_metadata,
+        )
+
+
+def _write_codev_quarantine_owner(
+    lock_root: Path,
+    *,
+    owner: BatchRunnerLockOwner,
+    cause: BaseException,
+    kill: Mapping[str, object],
+    reap: Mapping[str, object],
+) -> dict[str, object]:
+    """Leave durable stale-owner evidence when child-tree exit is unproven."""
+
+    owner_path = lock_root / ".p18-runner.owner.json"
+    # This one-way handoff must precede JSON encoding, temporary-file creation,
+    # write/fsync, and replace.  Any failure after this point leaves the
+    # original owner record as the durable stale gate.
+    owner_snapshot = owner.handoff_to_stale_gate()
+    original_lock_id = owner_snapshot.get("lock_id", "unknown")
+    quarantine_lock_id = f"quarantine-{original_lock_id}"
+    quarantine = {
+        **owner_snapshot,
+        "lock_id": quarantine_lock_id,
+        "quarantine": {
+            "reason": "CODE V process tree exit could not be proven before lane release",
+            "exception_type": type(cause).__name__,
+            "kill": dict(kill),
+            "reap": dict(reap),
+            "recovery": (
+                "explicit stale-lock recovery is required and must independently prove "
+                "all Phase18/CODE V processes are absent"
+            ),
+        },
+    }
+    temporary = owner_path.with_name(
+        f"{owner_path.name}.quarantine-{os.getpid()}-{secrets.token_hex(6)}.tmp"
+    )
+    payload = (json.dumps(quarantine, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    try:
+        with temporary.open("xb") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, owner_path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return {
+        "status": "quarantine-owner-written",
+        "lock_id": quarantine_lock_id,
+        "owner_path": str(owner_path),
+    }
+
+
 def run_codev_process(
     command: list[str],
     *,
@@ -146,45 +320,24 @@ def run_codev_process(
     timeout_seconds: float,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
+    lock_root: Path | None = None,
+    recover_stale_lock: bool = False,
 ) -> tuple[subprocess.Popen[bytes], str, str, float]:
     """Run CODE V with the shared timeout, process-tree kill, and bounded reap contract."""
-    started_at = time.monotonic()
-    try:
-        process = _popen_codev(command, work_dir=work_dir, env=env, platform_name=platform_name)
-    except OSError as exc:
-        raise CodeVBatchError(
-            "failure",
-            "CODE V batch process could not be started",
-            details={
-                "command": command,
-                "work_dir": str(work_dir),
-                "exception_type": type(exc).__name__,
-                "error": str(exc),
-            },
-        ) from exc
-    try:
-        stdout, stderr = process.communicate(timeout=timeout_seconds)
-    except subprocess.TimeoutExpired as exc:
-        kill_details = _kill_process_tree(process, platform_name=platform_name)
-        reap_details = _reap_process_after_kill(process)
-        raise CodeVBatchError(
-            "timeout",
-            "CODE V batch run exceeded its hard timeout",
-            details={
-                "command": command,
-                "pid": process.pid,
-                "timeout_seconds": timeout_seconds,
-                "stdout_tail": _tail(_coerce_output(exc.stdout)),
-                "stderr_tail": _tail(_coerce_output(exc.stderr)),
-                "kill": kill_details,
-                "reap": reap_details,
-            },
-        ) from exc
+    capture = run_codev_process_bytes(
+        command,
+        work_dir=work_dir,
+        timeout_seconds=timeout_seconds,
+        env=env,
+        platform_name=platform_name,
+        lock_root=lock_root,
+        recover_stale_lock=recover_stale_lock,
+    )
     return (
-        process,
-        _coerce_output(stdout),
-        _coerce_output(stderr),
-        time.monotonic() - started_at,
+        capture.process,
+        _coerce_output(capture.stdout_bytes),
+        _coerce_output(capture.stderr_bytes),
+        capture.duration_seconds,
     )
 
 
@@ -610,6 +763,7 @@ def _reap_process_after_kill(process) -> dict[str, object]:
             "returncode": process.returncode,
             "stdout_tail": _tail(_coerce_output(stdout)),
             "stderr_tail": _tail(_coerce_output(stderr)),
+            "reaped": process.returncode is not None,
         }
     except subprocess.TimeoutExpired as exc:
         details: dict[str, object] = {
@@ -631,8 +785,10 @@ def _reap_process_after_kill(process) -> dict[str, object]:
     if callable(wait):
         try:
             details["wait_returncode"] = wait(timeout=_REAP_TIMEOUT_SECONDS)
+            details["reaped"] = True
         except Exception as exc:  # noqa: BLE001 - best-effort handle release.
             details["wait_error"] = str(exc)
+    details.setdefault("reaped", False)
     return details
 
 
@@ -739,3 +895,15 @@ def _coerce_output(value: object) -> str:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     return str(value)
+
+
+def _coerce_bytes(value: object) -> bytes:
+    if value is None:
+        return b""
+    if isinstance(value, bytes):
+        return value
+    if isinstance(value, bytearray):
+        return bytes(value)
+    if isinstance(value, str):
+        return value.encode("utf-8")
+    return str(value).encode("utf-8")

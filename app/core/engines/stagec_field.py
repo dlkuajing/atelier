@@ -79,14 +79,16 @@ class ResolvedFieldTarget(BaseModel):
         ):
             raise ValueError("conflict requires both raw deltas")
         if self.status is FieldTargetStatus.UNAVAILABLE and any(
-            value is not None
-            for value in (self.image_height_mm, self.full_fov_deg)
+            value is not None for value in (self.image_height_mm, self.full_fov_deg)
         ):
             raise ValueError("unavailable target cannot carry resolved IMH/FOV")
         if self.status is FieldTargetStatus.RESOLVED and (
-            not math.isfinite(self.efl_mm) or self.efl_mm <= 0
-            or not math.isfinite(self.image_height_mm) or self.image_height_mm <= 0
-            or not math.isfinite(self.full_fov_deg) or not 0 < self.full_fov_deg < 180
+            not math.isfinite(self.efl_mm)
+            or self.efl_mm <= 0
+            or not math.isfinite(self.image_height_mm)
+            or self.image_height_mm <= 0
+            or not math.isfinite(self.full_fov_deg)
+            or not 0 < self.full_fov_deg < 180
         ):
             raise ValueError("resolved EFL/IMH/FOV must be finite and physically positive")
         if self.status in {FieldTargetStatus.INVALID, FieldTargetStatus.UNAVAILABLE} and any(
@@ -132,25 +134,36 @@ def resolve_field_target(
         )
     if not math.isfinite(efl_mm) or efl_mm <= 0:
         return ResolvedFieldTarget(
-            status=FieldTargetStatus.INVALID, efl_mm=None, image_height_mm=None,
-            full_fov_deg=None, image_height_source="unavailable", fov_source="unavailable",
-            consistency="not-applicable", reason="explicit EFL is not positive and finite",
+            status=FieldTargetStatus.INVALID,
+            efl_mm=None,
+            image_height_mm=None,
+            full_fov_deg=None,
+            image_height_source="unavailable",
+            fov_source="unavailable",
+            consistency="not-applicable",
+            reason="explicit EFL is not positive and finite",
         )
-    if image_height_mm is not None and (
-        not math.isfinite(image_height_mm) or image_height_mm <= 0
-    ):
+    if image_height_mm is not None and (not math.isfinite(image_height_mm) or image_height_mm <= 0):
         return ResolvedFieldTarget(
-            status=FieldTargetStatus.INVALID, efl_mm=efl_mm, image_height_mm=None,
-            full_fov_deg=None, image_height_source="unavailable", fov_source="unavailable",
-            consistency="not-applicable", reason="explicit IMH is not positive and finite",
+            status=FieldTargetStatus.INVALID,
+            efl_mm=efl_mm,
+            image_height_mm=None,
+            full_fov_deg=None,
+            image_height_source="unavailable",
+            fov_source="unavailable",
+            consistency="not-applicable",
+            reason="explicit IMH is not positive and finite",
         )
-    if full_fov_deg is not None and (
-        not math.isfinite(full_fov_deg) or not 0 < full_fov_deg < 180
-    ):
+    if full_fov_deg is not None and (not math.isfinite(full_fov_deg) or not 0 < full_fov_deg < 180):
         return ResolvedFieldTarget(
-            status=FieldTargetStatus.INVALID, efl_mm=efl_mm, image_height_mm=None,
-            full_fov_deg=None, image_height_source="unavailable", fov_source="unavailable",
-            consistency="not-applicable", reason="explicit FOV is outside (0, 180) or non-finite",
+            status=FieldTargetStatus.INVALID,
+            efl_mm=efl_mm,
+            image_height_mm=None,
+            full_fov_deg=None,
+            image_height_source="unavailable",
+            fov_source="unavailable",
+            consistency="not-applicable",
+            reason="explicit FOV is outside (0, 180) or non-finite",
         )
     imh_ok = image_height_mm is not None
     fov_ok = full_fov_deg is not None
@@ -231,7 +244,7 @@ class FieldReconstructionResult(BaseModel):
     field_type_before: int | None
     field_type_after: Literal[3] | None
     line_endings: Literal["LF"] | None
-    vignetting_status: Literal["zero", "nonzero-unverified", "unavailable"]
+    vignetting_status: Literal["zero", "nonzero-unverified", "nonzero-retained", "unavailable"]
     reason: str
 
     @model_validator(mode="after")
@@ -251,19 +264,25 @@ class FieldReconstructionResult(BaseModel):
             self.output_path is None
             or self.field_type_after != 3
             or self.line_endings != "LF"
-            or self.vignetting_status != "zero"
+            or self.vignetting_status not in {"zero", "nonzero-retained"}
             or self.output_sha256 is None
         ):
-            raise ValueError("constructed result requires a complete zero-vignetting FTYP3 artifact")
-        if self.normalized_fractions and self.num_fields is not None and (
-            len(self.normalized_fractions) != self.num_fields
+            raise ValueError(
+                "constructed result requires a complete finite-vignetting FTYP3 artifact"
+            )
+        if (
+            self.normalized_fractions
+            and self.num_fields is not None
+            and (len(self.normalized_fractions) != self.num_fields)
         ):
             raise ValueError("normalized field profile length must equal num_fields")
         if self.status == "constructed" and (
             not self.normalized_fractions
             or not math.isclose(
-                max(abs(value) for value in self.normalized_fractions), 1.0,
-                rel_tol=0.0, abs_tol=1e-15,
+                max(abs(value) for value in self.normalized_fractions),
+                1.0,
+                rel_tol=0.0,
+                abs_tol=1e-15,
             )
         ):
             raise ValueError("constructed field profile must contain a signed unit edge")
@@ -291,6 +310,17 @@ class ParsedStageCArtifact(BaseModel):
     num_fields: int = Field(ge=2)
     normalized_fractions: tuple[float, ...]
     target_image_height_mm: float = Field(gt=0)
+    vuy: tuple[float, ...]
+    vly: tuple[float, ...]
+    vux: tuple[float, ...]
+    vlx: tuple[float, ...]
+
+    @computed_field
+    @property
+    def zero_vignetting(self) -> bool:
+        return all(
+            value == 0 for profile in (self.vuy, self.vly, self.vux, self.vlx) for value in profile
+        )
 
 
 def validate_reconstructed_field_artifact(
@@ -299,6 +329,7 @@ def validate_reconstructed_field_artifact(
     expected_num_fields: int,
     expected_fractions: tuple[float, ...],
     target_image_height_mm: float,
+    vignetting_mode: Literal["zero-only", "finite-nonzoom"] = "zero-only",
 ) -> ParsedStageCArtifact:
     """Parse and validate the complete offline Stage C artifact from actual bytes."""
 
@@ -342,21 +373,32 @@ def validate_reconstructed_field_artifact(
         for actual, expected in zip(actual_fractions, expected_fractions, strict=True)
     ):
         raise ValueError("Stage C artifact signed field fractions differ from declaration")
-    for key in ("VDXN", "VDYN", "VCXN", "VCYN"):
-        values = unique_row(key)
-        if len(values) != expected_num_fields or any(value != 0.0 for value in values):
+    profiles = {key: unique_row(key) for key in ("VDXN", "VDYN", "VCXN", "VCYN")}
+    for key, values in profiles.items():
+        if len(values) != expected_num_fields or any(not math.isfinite(value) for value in values):
+            raise ValueError(f"Stage C artifact {key} must be complete and finite")
+        if vignetting_mode == "zero-only" and any(value != 0.0 for value in values):
             raise ValueError(f"Stage C artifact {key} must be complete and all-zero")
+    vdx, vdy = profiles["VDXN"], profiles["VDYN"]
+    vcx, vcy = profiles["VCXN"], profiles["VCYN"]
     return ParsedStageCArtifact(
         sha256=hashlib.sha256(payload).hexdigest(),
         num_fields=expected_num_fields,
         normalized_fractions=actual_fractions,
         target_image_height_mm=edge,
+        vuy=tuple(center - delta for center, delta in zip(vcy, vdy, strict=True)),
+        vly=tuple(center + delta for center, delta in zip(vcy, vdy, strict=True)),
+        vux=tuple(center - delta for center, delta in zip(vcx, vdx, strict=True)),
+        vlx=tuple(center + delta for center, delta in zip(vcx, vdx, strict=True)),
     )
 
 
 def reconstruct_image_fields(
-    *, source_zmx: str | Path, output_zmx: str | Path,
+    *,
+    source_zmx: str | Path,
+    output_zmx: str | Path,
     resolved_target: ResolvedFieldTarget,
+    allow_nonzero_vignetting_for_machine: bool = False,
 ) -> FieldReconstructionResult:
     """Create a LF-only temporary FTYP3 ZMX, or fail closed before writing."""
 
@@ -403,37 +445,50 @@ def reconstruct_image_fields(
     }
     if not ftyp or not yfln or not xfln or len(xfln) != len(yfln) or len(yfln) < 2:
         return FieldReconstructionResult(
-            status="rejected", vignetting_status="unavailable",
-            reason="FTYP/XFLN/YFLN field profile is missing or inconsistent", **base
+            status="rejected",
+            vignetting_status="unavailable",
+            reason="FTYP/XFLN/YFLN field profile is missing or inconsistent",
+            **base,
         )
     if int(ftyp[0]) != 0:
         return FieldReconstructionResult(
-            status="rejected", vignetting_status="unavailable",
-            reason="only angular FTYP0 input is supported by the offline reconstruction", **base
+            status="rejected",
+            vignetting_status="unavailable",
+            reason="only angular FTYP0 input is supported by the offline reconstruction",
+            **base,
         )
     if any(value != 0.0 for value in xfln):
         return FieldReconstructionResult(
-            status="rejected", vignetting_status="unavailable",
-            reason="initial Stage C supports XFLN=0 only", **base
+            status="rejected",
+            vignetting_status="unavailable",
+            reason="initial Stage C supports XFLN=0 only",
+            **base,
         )
     edge = max(abs(value) for value in yfln)
     if edge <= 0:
         return FieldReconstructionResult(
-            status="rejected", vignetting_status="unavailable",
-            reason="angular YFLN profile has no positive edge", **base
+            status="rejected",
+            vignetting_status="unavailable",
+            reason="angular YFLN profile has no positive edge",
+            **base,
         )
     fractions = tuple(value / edge for value in yfln)
     base["normalized_fractions"] = fractions
     vig_keys = ("VDXN", "VDYN", "VCXN", "VCYN")
     if any(key not in rows or len(rows[key]) != len(yfln) for key in vig_keys):
         return FieldReconstructionResult(
-            status="unverified", vignetting_status="unavailable",
-            reason="complete vignetting profile is unavailable; no artifact emitted", **base
+            status="unverified",
+            vignetting_status="unavailable",
+            reason="complete vignetting profile is unavailable; no artifact emitted",
+            **base,
         )
-    if any(value != 0.0 for key in vig_keys for value in rows[key]):
+    nonzero_vignetting = any(value != 0.0 for key in vig_keys for value in rows[key])
+    if nonzero_vignetting and not allow_nonzero_vignetting_for_machine:
         return FieldReconstructionResult(
-            status="unverified", vignetting_status="nonzero-unverified",
-            reason="nonzero vignetting remap is not machine-verified; no artifact emitted", **base
+            status="unverified",
+            vignetting_status="nonzero-unverified",
+            reason="nonzero vignetting remap is not machine-verified; no artifact emitted",
+            **base,
         )
     rebuilt: list[str] = []
     y_values = " ".join(format(frac * target_image_height_mm, ".17g") for frac in fractions)
@@ -456,18 +511,37 @@ def reconstruct_image_fields(
             expected_num_fields=num_fields,
             expected_fractions=fractions,
             target_image_height_mm=target_image_height_mm,
+            vignetting_mode=("finite-nonzoom" if nonzero_vignetting else "zero-only"),
         )
         after = _sha256(source)
         if after != before:
             raise ValueError("source ZMX changed before atomic output publication")
         result = FieldReconstructionResult(
-            status="constructed", output_path=str(output), source_sha256_after=after,
-            output_sha256=parsed.sha256, field_type_after=3, line_endings="LF",
-            vignetting_status="zero",
-            reason="temporary FTYP3/YFLN artifact constructed; real chief-ray verification pending",
-            **{key: value for key, value in base.items() if key not in {
-                "output_path", "source_sha256_after", "output_sha256", "field_type_after", "line_endings"
-            }},
+            status="constructed",
+            output_path=str(output),
+            source_sha256_after=after,
+            output_sha256=parsed.sha256,
+            field_type_after=3,
+            line_endings="LF",
+            vignetting_status=("nonzero-retained" if nonzero_vignetting else "zero"),
+            reason=(
+                "temporary FTYP3/YFLN artifact constructed with finite nonzero vignetting "
+                "retained; runner-attested four-V/chief-ray verification required"
+                if nonzero_vignetting
+                else "temporary FTYP3/YFLN artifact constructed; real chief-ray verification pending"
+            ),
+            **{
+                key: value
+                for key, value in base.items()
+                if key
+                not in {
+                    "output_path",
+                    "source_sha256_after",
+                    "output_sha256",
+                    "field_type_after",
+                    "line_endings",
+                }
+            },
         )
         os.replace(temp, output)
         return result
@@ -515,7 +589,9 @@ class StageCFieldEvidence(BaseModel):
             self.ray_metrics_valid,
         )
         if actual != expected:
-            raise ValueError(f"Stage C four-condition flags disagree with typed evidence: {actual=}, {expected=}")
+            raise ValueError(
+                f"Stage C four-condition flags disagree with typed evidence: {actual=}, {expected=}"
+            )
         if self.reconstruction_status == "constructed":
             if (
                 self.imh_source != "constructed"
@@ -532,16 +608,15 @@ class StageCFieldEvidence(BaseModel):
                 or not 0 < self.derived_full_fov_deg < 180
                 or not math.isclose(
                     self.derived_full_fov_deg,
-                    2
-                    * math.degrees(
-                        math.atan(self.target_image_height_mm / self.target_efl_mm)
-                    ),
+                    2 * math.degrees(math.atan(self.target_image_height_mm / self.target_efl_mm)),
                     rel_tol=1e-12,
                     abs_tol=1e-12,
                 )
                 or self.measured_full_fov_deg is not None
             ):
-                raise ValueError("constructed offline evidence requires same-source IMH and derived FOV")
+                raise ValueError(
+                    "constructed offline evidence requires same-source IMH and derived FOV"
+                )
         elif (
             self.imh_source != "unavailable"
             or self.fov_source != "unavailable"
@@ -686,9 +761,7 @@ class StageCVignettingReadback(BaseModel):
     """Vignetting provenance without interpreting or generating CODE V syntax."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    classification: Literal[
-        "zero-parsed-unverified", "nonzero-parsed-unverified", "unknown"
-    ]
+    classification: Literal["zero-parsed-unverified", "nonzero-parsed-unverified", "unknown"]
     provenance: Literal["machine-readback", "artifact", "unknown"]
     profile: tuple[float, ...] | None
     artifact_sha256: str | None = Field(None, pattern=r"^[0-9a-f]{64}$")
@@ -702,9 +775,7 @@ class StageCMachineReadback(BaseModel):
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    schema_id: Literal["atelier-stagec-machine-readback-v2"] = (
-        "atelier-stagec-machine-readback-v2"
-    )
+    schema_id: Literal["atelier-stagec-machine-readback-v2"] = "atelier-stagec-machine-readback-v2"
     run_id: str = Field(min_length=1)
     field_type: Literal["RIH"] = "RIH"
     measured_efl_mm: float
@@ -905,9 +976,7 @@ def _parse_manifest(payload: bytes) -> _StageCMachineManifest:
         return result
 
     try:
-        raw = json.loads(
-            _strict_utf8(payload, "manifest"), object_pairs_hook=reject_duplicate_keys
-        )
+        raw = json.loads(_strict_utf8(payload, "manifest"), object_pairs_hook=reject_duplicate_keys)
     except json.JSONDecodeError as exc:
         raise ValueError("manifest must be strict JSON") from exc
     return _StageCMachineManifest.model_validate(raw)
@@ -952,16 +1021,16 @@ def _parse_listing(
             MachineListingFailure.SEGMENT_CARDINALITY,
             "listing requires one unique complete run segment",
         )
-    stagec_markers = [
-        line for line in lines if line.lstrip().startswith("ATELIER_STAGEC_RUN_")
-    ]
+    stagec_markers = [line for line in lines if line.lstrip().startswith("ATELIER_STAGEC_RUN_")]
     if stagec_markers != [begin, end]:
         raise MachineListingParseError(
             MachineListingFailure.STALE_OR_FOREIGN_RUN,
             "listing contains a stale, foreign, or partial Stage C run",
         )
     start, stop = lines.index(begin), lines.index(end)
-    if stop <= start or any(line.startswith("ATELIER_STAGEC_RUN_") for line in lines[start + 1 : stop]):
+    if stop <= start or any(
+        line.startswith("ATELIER_STAGEC_RUN_") for line in lines[start + 1 : stop]
+    ):
         raise MachineListingParseError(
             MachineListingFailure.MALFORMED_SEGMENT,
             "listing run segment is nested, stale, or truncated",
@@ -1171,9 +1240,7 @@ class StageCMachineFieldEvidence(BaseModel):
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
-    schema_id: Literal["atelier-stagec-machine-evidence-v2"] = (
-        "atelier-stagec-machine-evidence-v2"
-    )
+    schema_id: Literal["atelier-stagec-machine-evidence-v2"] = "atelier-stagec-machine-evidence-v2"
     evidence_kind: Literal["machine"] = "machine"
     reconstruction: FieldReconstructionResult
     readback: StageCMachineReadback
@@ -1234,9 +1301,7 @@ class StageCMachineFieldEvidence(BaseModel):
     @computed_field
     @property
     def machine_execution_status(self) -> Literal["parsed-unverified", "invalid"]:
-        return (
-            "parsed-unverified" if _readback_semantics_valid(self.readback) else "invalid"
-        )
+        return "parsed-unverified" if _readback_semantics_valid(self.readback) else "invalid"
 
     @computed_field
     @property
@@ -1361,22 +1426,16 @@ def _field_values_valid(
             if field.definition_x_ri_mm != 0 or field.rsi_actual_x_mm != 0:
                 imh_valid = False
                 chief_rsi_valid = False
-            if not math.isclose(
-                field.definition_y_ri_mm, expected, rel_tol=1e-12, abs_tol=1e-12
-            ):
+            if not math.isclose(field.definition_y_ri_mm, expected, rel_tol=1e-12, abs_tol=1e-12):
                 imh_valid = False
             if not math.isclose(field.rsi_actual_y_mm, expected, rel_tol=1e-12, abs_tol=1e-12):
                 chief_rsi_valid = False
             direction_norm = math.sqrt(
-                field.rsi_direction_l**2
-                + field.rsi_direction_m**2
-                + field.rsi_direction_n**2
+                field.rsi_direction_l**2 + field.rsi_direction_m**2 + field.rsi_direction_n**2
             )
             if not math.isclose(direction_norm, 1.0, rel_tol=1e-9, abs_tol=1e-9):
                 chief_rsi_valid = False
-            if fraction != 0 and (
-                field.definition_y_ri_mm == 0 or field.rsi_actual_y_mm == 0
-            ):
+            if fraction != 0 and (field.definition_y_ri_mm == 0 or field.rsi_actual_y_mm == 0):
                 imh_valid = False
                 chief_rsi_valid = False
         if not (
@@ -1464,9 +1523,7 @@ def _machine_gate_state(
     vignetting_profile = readback.vignetting.profile
     provenance_sha_ok = False
     if readback.vignetting.provenance == "machine-readback":
-        provenance_sha_ok = (
-            readback.vignetting.artifact_sha256 == readback.metrics_artifact.sha256
-        )
+        provenance_sha_ok = readback.vignetting.artifact_sha256 == readback.metrics_artifact.sha256
     vignetting_ok = (
         artifact_ok
         and artifact_bindings_ok
@@ -1504,11 +1561,7 @@ def _machine_gate_state(
         except (InvalidOperation, ZeroDivisionError):
             efl_constraint_held = False
     ray_metrics_valid = (
-        artifact_bindings_ok
-        and profile_ok
-        and chief_rsi_ok
-        and metrics_ok
-        and vignetting_ok
+        artifact_bindings_ok and profile_ok and chief_rsi_ok and metrics_ok and vignetting_ok
     )
     # v2 is a synthetic parser contract only.  These internally derived facts
     # exercise the future reader boundary, but cannot attest that CODE V ran.

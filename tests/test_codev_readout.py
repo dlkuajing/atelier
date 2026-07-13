@@ -333,6 +333,7 @@ def test_codev_readout_rejects_returncode_outside_empirical_ok_set(
     assert error.value.details["data"]["status"] == "ok"
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(not DEFAULT_CODEV_EXECUTABLE.is_file(), reason="CODE V is not installed here")
 def test_real_codev_readout_patent_seed_smoke(tmp_path: Path) -> None:
     try:

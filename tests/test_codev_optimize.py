@@ -316,6 +316,7 @@ def test_codev_optimize_report_records_engine_05a() -> None:
     assert "optimized.zmx" in text
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(
     not DEFAULT_CODEV_EXECUTABLE.is_file(),
     reason="real CODE V installation required for the ENGINE-05a optimize smoke",
@@ -1964,6 +1965,7 @@ def test_target_standard_passes_emit_optimized_zmx_through_to_autovig(
     assert captured == [True, True]  # 两配置（asphere/both）都透传
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(
     not DEFAULT_CODEV_EXECUTABLE.is_file(),
     reason="real CODE V installation required for the target-mode ZMX delivery smoke",
@@ -2051,6 +2053,7 @@ def test_real_codev_target_standard_delivers_verifiable_zmx() -> None:
         print(f"[smoke] RMS spot computation raised: {type(exc).__name__}: {exc}")
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(
     not DEFAULT_CODEV_EXECUTABLE.is_file(),
     reason="real CODE V installation required for the target-mode ZMX delivery smoke",

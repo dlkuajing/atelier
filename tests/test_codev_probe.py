@@ -122,6 +122,7 @@ def test_default_codev_executable_falls_back_when_probe_misses(
     assert Path(codev_batch.DEFAULT_CODEV_EXECUTABLE) == fallback
 
 
+@pytest.mark.real_machine
 @pytest.mark.skipif(not Path("D:/CODEV115").is_dir(), reason="CODE V is not installed here")
 def test_real_codev115_installation_probe() -> None:
     installation = probe_code_v_installation(

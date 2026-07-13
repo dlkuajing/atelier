@@ -30,7 +30,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Protocol
+from typing import Literal, Protocol
 
 from pydantic import ValidationError
 
@@ -41,7 +41,7 @@ from app.core.batch_archive import (
     BatchRecord,
     JobStatus,
 )
-from app.core.batch_run_lock import batch_runner_lock
+from app.core.batch_run_lock import P18_GLOBAL_WINDOW_ROOT, batch_runner_lock
 from app.core.config import settings
 from app.core.orchestration.candidate import CandidateSet, GenerationMode, TargetSpec
 from app.core.orchestration.orchestrator import (
@@ -113,6 +113,8 @@ class BatchEngine(Protocol):
     #: `CandidateSet.modes_present` — any requested mode that produced zero
     #: candidates books the job as `degraded` (never a silent `succeeded`).
     modes_requested: tuple[GenerationMode, ...]
+    engine_kind: Literal["fake", "real"]
+    requires_codev_window: bool
 
     def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult: ...
 
@@ -122,15 +124,15 @@ class FakeEngine:
     `orchestrate`'s own `n` (candidates per target)."""
 
     modes_requested: tuple[GenerationMode, ...] = (GenerationMode.RETRIEVED,)
+    engine_kind: Literal["fake"] = "fake"
+    requires_codev_window = False
 
     def __init__(self, *, n: int = DEFAULT_N) -> None:
         self.n = n
 
     def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
         artifact_dir.mkdir(parents=True, exist_ok=True)
-        candidate_set = orchestrate(
-            target, target, n=self.n, modes=list(self.modes_requested)
-        )
+        candidate_set = orchestrate(target, target, n=self.n, modes=list(self.modes_requested))
         return EngineRunResult(candidate_set=candidate_set)
 
 
@@ -145,6 +147,8 @@ class RealEngine:
     """
 
     modes_requested: tuple[GenerationMode, ...] = tuple(_ORCHESTRATOR_REGISTRY.keys())
+    engine_kind: Literal["real"] = "real"
+    requires_codev_window = True
 
     def __init__(self, *, n: int = DEFAULT_N, repeat_runs: int = 1) -> None:
         self.n = n
@@ -153,7 +157,12 @@ class RealEngine:
     def run(self, target: TargetSpec, *, artifact_dir: Path) -> EngineRunResult:
         artifact_dir.mkdir(parents=True, exist_ok=True)
         candidate_set = orchestrate(
-            target, target, n=self.n, repeat_runs=self.repeat_runs, artifact_dir=artifact_dir
+            target,
+            target,
+            n=self.n,
+            repeat_runs=self.repeat_runs,
+            artifact_dir=artifact_dir,
+            stagec_machine_evidence=False,
         )
         return EngineRunResult(candidate_set=candidate_set)
 
@@ -231,11 +240,12 @@ def _run_engine_with_timeout(
        already-condemned attempt dir — a later retry gets a fresh dir;
     2. the orphan's eventual result is never persisted (this call already
        returned/raised, the ledger snapshot is final);
-    3. the timeout knob is **rejected for `--engine real`** at the CLI
-       (`scripts/p18_night_batch.py`): a real CODE V engine call cannot be
-       terminated from this layer, so offering a timeout there would be a
-       false safety valve — fail closed instead. `FakeEngine`/test stubs
-       (pure in-process Python, bounded runtime) remain timeout-eligible.
+    3. the timeout knob is rejected for every engine requiring the global
+       CODE V window by the public :func:`run_batch` API (and redundantly by
+       the CLI): a real CODE V engine call cannot be terminated from this
+       layer, so offering a timeout there would be a false safety valve.
+       `FakeEngine`/test stubs (pure in-process Python, bounded runtime)
+       remain timeout-eligible.
     """
     if timeout_sec is None:
         return engine.run(target, artifact_dir=artifact_dir)
@@ -262,8 +272,8 @@ def _latest_attempt_number(job_root: Path) -> int:
     latest = 0
     for child in job_root.iterdir():
         name = child.name
-        if child.is_dir() and name.startswith("attempt-") and name[len("attempt-"):].isdigit():
-            latest = max(latest, int(name[len("attempt-"):]))
+        if child.is_dir() and name.startswith("attempt-") and name[len("attempt-") :].isdigit():
+            latest = max(latest, int(name[len("attempt-") :]))
     return latest
 
 
@@ -433,7 +443,9 @@ def _run_one_target_safe(
             engine=engine_name,
             failure=BatchJobFailure(category="exception", message=f"{type(exc).__name__}: {exc}"),
         )
-        with contextlib.suppress(Exception):  # archive itself is broken; nothing left to persist, still return honestly
+        with contextlib.suppress(
+            Exception
+        ):  # archive itself is broken; nothing left to persist, still return honestly
             archive.put_job(record)
         return record
 
@@ -593,6 +605,31 @@ def _run_batch_under_lock(
     return BatchRunSummary(batch=updated_batch, jobs=all_jobs, budget_exhausted=budget_exhausted)
 
 
+def _engine_execution_contract(
+    engine: BatchEngine,
+) -> tuple[Literal["fake", "real"], bool]:
+    """Derive ledger identity and CODE V locking from the engine object itself."""
+
+    if isinstance(engine, RealEngine):
+        expected_kind: Literal["fake", "real"] = "real"
+        expected_window = True
+    elif isinstance(engine, FakeEngine):
+        expected_kind = "fake"
+        expected_window = False
+    else:
+        kind = getattr(engine, "engine_kind", None)
+        requires_window = getattr(engine, "requires_codev_window", None)
+        if kind not in {"fake", "real"} or type(requires_window) is not bool:
+            raise ValueError(
+                "custom batch engine lacks a closed engine_kind/requires_codev_window contract"
+            )
+        expected_kind = kind
+        expected_window = requires_window
+    if expected_window is not (expected_kind == "real"):
+        raise ValueError("batch engine identity contradicts its CODE V window requirement")
+    return expected_kind, expected_window
+
+
 def run_batch(
     *,
     engine: BatchEngine,
@@ -604,7 +641,7 @@ def run_batch(
     max_jobs: int | None = None,
     max_wall_min: float | None = None,
     job_timeout_sec: float | None = None,
-    engine_name: str = "fake",
+    engine_name: str | None = None,
     artifacts_root: Path | None = None,
     recover_stale_lock: bool = False,
 ) -> BatchRunSummary:
@@ -617,16 +654,52 @@ def run_batch(
     ``recover_stale_lock=True`` to use the explicit OS-lock-proven recovery
     flow documented by :func:`app.core.batch_run_lock.batch_runner_lock`.
     """
+    derived_engine_name, requires_global_window = _engine_execution_contract(engine)
+    if engine_name is not None and engine_name != derived_engine_name:
+        raise ValueError(
+            "engine mismatch: caller label differs from the executable engine contract"
+        )
+    if requires_global_window and job_timeout_sec is not None:
+        raise ValueError(
+            "job_timeout_sec is forbidden for real CODE V engines because a timed-out "
+            "worker thread cannot be stopped before the global window is released"
+        )
     lock_details = {
         "operation": "resume" if resume else "create",
         "batch_id": batch_id,
-        "engine": engine_name,
+        "engine": derived_engine_name,
     }
-    with batch_runner_lock(
-        archive.root,
-        recover_stale=recover_stale_lock,
-        details=lock_details,
-    ):
+    resolved_global_window_root = Path(P18_GLOBAL_WINDOW_ROOT).resolve()
+    if requires_global_window and resolved_global_window_root == Path(archive.root).resolve():
+        raise ValueError("global P18 window and archive-local lock roots must differ")
+    with contextlib.ExitStack() as lock_stack:
+        owners: list[dict[str, object]] = []
+        if requires_global_window:
+            owners.append(
+                lock_stack.enter_context(
+                    batch_runner_lock(
+                        resolved_global_window_root,
+                        recover_stale_if_present=recover_stale_lock,
+                        details={
+                            **lock_details,
+                            "scope": "cross-worktree-codev-window",
+                        },
+                    )
+                )
+            )
+        owners.append(
+            lock_stack.enter_context(
+                batch_runner_lock(
+                    archive.root,
+                    recover_stale_if_present=recover_stale_lock,
+                    details={**lock_details, "scope": "archive-ledger"},
+                )
+            )
+        )
+        if recover_stale_lock and not any(owner.get("recovered_stale") is True for owner in owners):
+            raise ValueError(
+                "--recover-stale-lock was requested, but neither P18 lock root had stale metadata"
+            )
         return _run_batch_under_lock(
             engine=engine,
             archive=archive,
@@ -637,6 +710,6 @@ def run_batch(
             max_jobs=max_jobs,
             max_wall_min=max_wall_min,
             job_timeout_sec=job_timeout_sec,
-            engine_name=engine_name,
+            engine_name=derived_engine_name,
             artifacts_root=artifacts_root,
         )

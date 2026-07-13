@@ -35,6 +35,10 @@ from pydantic import (
     model_validator,
 )
 
+from app.core.engines.stagec_attested import (
+    StageCAttestedEvidence,
+    restore_stagec_attested_evidence,
+)
 from app.core.engines.stagec_field import (
     FieldReconstructionResult,
     StageCFieldEvidence,
@@ -115,9 +119,7 @@ class MetricValue(BaseModel):
     @model_validator(mode="after")
     def _value_status_consistent(self) -> MetricValue:
         if self.status == "unavailable" and self.value is not None:
-            raise ValueError(
-                "status=unavailable 时 value 必须为 None（fail closed，不可静默填值）"
-            )
+            raise ValueError("status=unavailable 时 value 必须为 None（fail closed，不可静默填值）")
         if self.status == "available" and self.value is None:
             raise ValueError("status=available 时 value 不可为 None")
         return self
@@ -182,7 +184,8 @@ class ManufacturabilityProxy(BaseModel):
     n_pieces: int
     has_special_glass: bool
     aspheric_term_count: MetricValue = Field(
-        ..., description="非球面系数项数（跨所有非球面面求和）；payload 无持久化系数，恒 unavailable"
+        ...,
+        description="非球面系数项数（跨所有非球面面求和）；payload 无持久化系数，恒 unavailable",
     )
     aspheric_surface_count: MetricValue = Field(
         ..., description="非球面面数；payload 无持久化 conic/系数，恒 unavailable"
@@ -191,9 +194,7 @@ class ManufacturabilityProxy(BaseModel):
         ..., description="主光线角 vs 传感器 CRA 匹配（几何可算）"
     )
     note: str = Field(
-        default=(
-            "非真公差良率(无 Monte-Carlo/补偿器/TOR，C2=CODE V 未接)，仅几何+材料 proxy"
-        ),
+        default=("非真公差良率(无 Monte-Carlo/补偿器/TOR，C2=CODE V 未接)，仅几何+材料 proxy"),
         description="强制说明（§7-C）",
     )
 
@@ -260,8 +261,7 @@ class RepeatabilityMetrics(BaseModel):
             )
             if any(m.status != "unavailable" for m in fields):
                 raise ValueError(
-                    "status=unavailable 时全部分布字段必须 unavailable（fail closed，"
-                    "不可静默填值）"
+                    "status=unavailable 时全部分布字段必须 unavailable（fail closed，不可静默填值）"
                 )
         return self
 
@@ -495,9 +495,7 @@ class FnumLadderEvidence(BaseModel):
             raise ValueError("target_achieved must exactly match accepted_final presence")
         accepted = self.accepted_final
         if accepted is not None:
-            deviation_pct = (
-                abs(accepted.measured_fnum - self.fnum_target) / self.fnum_target * 100
-            )
+            deviation_pct = abs(accepted.measured_fnum - self.fnum_target) / self.fnum_target * 100
             recomputed = deviation_pct <= self.fnum_tolerance_pct
             if accepted.fno_param_achieved is not recomputed:
                 raise ValueError(
@@ -593,24 +591,39 @@ class GeneratedCandidate(BaseModel):
     stagec_field_reconstruction: FieldReconstructionResult | None = Field(
         None, description="offline temporary-ZMX provenance; not real-machine evidence"
     )
-    stagec_field_evidence: Annotated[
-        StageCFieldEvidence | StageCMachineFieldEvidence,
-        Field(discriminator="evidence_kind"),
-    ] | None = Field(
+    stagec_field_evidence: (
+        Annotated[
+            StageCFieldEvidence | StageCMachineFieldEvidence | StageCAttestedEvidence,
+            Field(discriminator="evidence_kind"),
+        ]
+        | None
+    ) = Field(
         None, description="closed Stage C evidence; FOV remains derived/measured, never optimized"
     )
 
     @field_validator("stagec_field_evidence", mode="before")
     @classmethod
     def _restore_machine_evidence_from_raw_facts(cls, value: object) -> object:
+        if isinstance(value, StageCAttestedEvidence):
+            return restore_stagec_attested_evidence(
+                Path(value.package_path) / "post-run-receipt.json"
+            )
         if isinstance(value, Mapping) and value.get("evidence_kind") == "machine":
             return restore_stagec_machine_evidence(value)
+        if isinstance(value, Mapping) and value.get("evidence_kind") == "attested-machine":
+            package_path = value.get("package_path")
+            if not isinstance(package_path, str):
+                raise ValueError("persisted Stage C v3 evidence requires package_path")
+            return restore_stagec_attested_evidence(Path(package_path) / "post-run-receipt.json")
         return value
 
     @model_validator(mode="after")
     def _fnum_gate_requires_target_converged_mode(self) -> GeneratedCandidate:
         # RETRIEVED（零优化）候选带 F# ladder 证据 = provenance 矛盾，构造期拒绝。
-        if self.fnum_ladder_evidence is not None and self.mode is not GenerationMode.TARGET_CONVERGED:
+        if (
+            self.fnum_ladder_evidence is not None
+            and self.mode is not GenerationMode.TARGET_CONVERGED
+        ):
             raise ValueError(
                 "fnum_ladder_evidence 只允许 TARGET_CONVERGED 候选携带"
                 f"（mode={self.mode}）——RETRIEVED 不优化任何维"
@@ -652,6 +665,11 @@ class GeneratedCandidate(BaseModel):
                     expected_num_fields=reconstruction.num_fields,
                     expected_fractions=reconstruction.normalized_fractions,
                     target_image_height_mm=reconstruction.target_image_height_mm,
+                    vignetting_mode=(
+                        "finite-nonzoom"
+                        if isinstance(evidence, StageCAttestedEvidence)
+                        else "zero-only"
+                    ),
                 )
             except (OSError, ValueError) as exc:
                 raise ValueError("Stage C reconstruction artifact bytes are invalid") from exc
@@ -666,7 +684,10 @@ class GeneratedCandidate(BaseModel):
             ):
                 raise ValueError("Stage C reconstruction source hash mismatch")
             metadata = self.payload.metadata
-            if metadata is None or metadata.image_height_mm != reconstruction.target_image_height_mm:
+            if (
+                metadata is None
+                or metadata.image_height_mm != reconstruction.target_image_height_mm
+            ):
                 raise ValueError("payload nominal IMH differs from Stage C reconstruction")
             if not math.isclose(
                 metadata.nominal_efl_mm,
@@ -682,18 +703,33 @@ class GeneratedCandidate(BaseModel):
                 abs_tol=1e-12,
             ):
                 raise ValueError("Stage B and Stage C canonical target EFL differ")
+            if isinstance(evidence, StageCAttestedEvidence):
+                if evidence.reconstructed_zmx_sha256 != reconstruction.output_sha256:
+                    raise ValueError(
+                        "Stage C v3 receipt differs from reconstructed candidate bytes"
+                    )
+                if evidence.source_zmx_sha256 != reconstruction.source_sha256_before:
+                    raise ValueError("Stage C v3 receipt differs from Stage B source bytes")
+                ladder = self.fnum_ladder_evidence
+                if ladder is None or not ladder.target_achieved or ladder.accepted_final is None:
+                    raise ValueError("Stage C v3 requires Stage B accepted_final evidence")
+                accepted_path = Path(ladder.accepted_final.optimized_zmx_path).resolve(strict=True)
+                if accepted_path != source_path:
+                    raise ValueError("Stage C v3 source must be the Stage B accepted_final ZMX")
             if metadata.image_height_source != "constructed":
                 raise ValueError("Stage C payload IMH source must be constructed")
             if metadata.fov_source != "derived" or evidence.fov_source != "derived":
                 raise ValueError("Stage C FOV must be derived-only")
             expected_fov = 2 * math.degrees(
-                math.atan(
-                    reconstruction.target_image_height_mm / reconstruction.target_efl_mm
-                )
+                math.atan(reconstruction.target_image_height_mm / reconstruction.target_efl_mm)
             )
-            if evidence.derived_full_fov_deg is None or not math.isclose(
-                evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
-            ) or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12):
+            if (
+                evidence.derived_full_fov_deg is None
+                or not math.isclose(
+                    evidence.derived_full_fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12
+                )
+                or not math.isclose(metadata.fov_deg, expected_fov, rel_tol=1e-12, abs_tol=1e-12)
+            ):
                 raise ValueError("Stage C derived FOV is not same-source with payload EFL/IMH")
             if isinstance(evidence, StageCMachineFieldEvidence):
                 if evidence.reconstruction != reconstruction:
@@ -747,10 +783,10 @@ CONVERGED_FIELDS: MappingProxyType[GenerationMode, frozenset[str]] = MappingProx
         #     （False）的候选 fnum 恒 No——无条件扩=对固有带伤 seed 池（矩阵实测
         #     64%）提前标注未验证能力（红线）。
         #     一致性由 `ScoredCandidate._enforce_consistency` 双向钉死。
-        # IMH/FOV 的 Stage C 场重建完全未落地，仍不在表内（虚标=撒谎，违反诚实
-        # 不变量，见本文件 docstring 不变量4 与 generators.py::
-        # TargetConvergedGenerator 接入警示段）；TTL 从不在优化维。Stage C 落地时
-        # 按该字段实际达标的那一刻扩表（同步 §10 file:line 接缝清单）。
+        # IMH 可由 production Stage C 的 RIH 重建与真机 receipt 验证 achieved；
+        # FOV 只允许从同源 EFL/IMH 派生或实测。二者都不属于 Stage B optimizer
+        # 的收敛维，故仍不在本表（把 achieved/derived 偷换成 converged=撒谎；见
+        # generators.py::TargetConvergedGenerator 诚实红线）。TTL 从不在优化维。
         GenerationMode.TARGET_CONVERGED: frozenset({"efl", "fnum"}),
     }
 )

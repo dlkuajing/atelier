@@ -40,6 +40,8 @@ def _subprocess_env() -> dict[str, str]:
 
 class _NeverEngine:
     modes_requested: tuple[()] = ()
+    engine_kind = "fake"
+    requires_codev_window = False
 
     def run(self, target, *, artifact_dir):  # noqa: ANN001, ANN201
         raise AssertionError("the engine must not start")
@@ -55,6 +57,23 @@ def test_clean_release_removes_owner_and_recovery_flag_cannot_be_habitual(tmp_pa
     with (
         pytest.raises(BatchRunnerLockRecoveryNotNeeded, match="no stale owner"),
         batch_runner_lock(root, recover_stale=True),
+    ):
+        pass
+
+
+def test_owner_handoff_to_stale_gate_is_one_way_and_suppresses_cleanup(tmp_path: Path):
+    root = tmp_path / "archive"
+    owner_path = root / ".p18-runner.owner.json"
+
+    with batch_runner_lock(root) as owner:
+        original_owner = json.loads(owner_path.read_text(encoding="utf-8"))
+        handoff_snapshot = owner.handoff_to_stale_gate()
+        assert handoff_snapshot["lock_id"] == original_owner["lock_id"]
+
+    assert json.loads(owner_path.read_text(encoding="utf-8")) == original_owner
+    with (
+        pytest.raises(BatchRunnerLockRecoveryRequired, match="prior owner record remains"),
+        batch_runner_lock(root),
     ):
         pass
 
@@ -350,6 +369,8 @@ def test_two_cli_resumes_are_serialized_before_duplicate_attempt(tmp_path: Path)
         f"entered=Path({str(entered)!r}); release=Path({str(release)!r})\n"
         "class SlowFakeEngine:\n"
         "    modes_requested=InnerFakeEngine.modes_requested\n"
+        "    engine_kind=InnerFakeEngine.engine_kind\n"
+        "    requires_codev_window=InnerFakeEngine.requires_codev_window\n"
         "    def __init__(self, *, n): self.inner=InnerFakeEngine(n=n)\n"
         "    def run(self, target, *, artifact_dir):\n"
         "        entered.write_text('entered', encoding='utf-8')\n"
