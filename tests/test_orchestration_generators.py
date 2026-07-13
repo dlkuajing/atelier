@@ -1257,6 +1257,7 @@ def test_candidate_for_seed_production_stagec_uses_accepted_bytes_for_attested_p
     result["source_zmx"] = seed.metadata.source_zmx
     fake_codev = tmp_path / "codev.exe"
     fake_codev.write_bytes(b"fixture CODE V")
+    monkeypatch.setattr(generators_module, "DEFAULT_CODEV_EXECUTABLE", fake_codev)
     fake_macro = tmp_path / "zemaxos_to_cv.seq"
     fake_macro.write_bytes(b"fixture official macro")
     monkeypatch.setattr(attested_module, "_TRUSTED_CODEV_EXECUTABLE", fake_codev)
@@ -1445,6 +1446,7 @@ def test_candidate_for_seed_production_stagec_uses_accepted_bytes_for_attested_p
 
     def fake_open_authority(config: object):
         assert isinstance(config, authority_module.StageBAuthorityConfig)
+        assert config.executable == fake_codev.resolve()
         monkeypatch.setattr(authority_module, "P18_GLOBAL_WINDOW_ROOT", config.p18_lock_root)
         test_config = authority_module.StageBAuthorityConfig(
             # Keep the Windows pytest fixture below MAX_PATH; production path

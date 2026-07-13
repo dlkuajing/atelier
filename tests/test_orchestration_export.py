@@ -1065,6 +1065,7 @@ def test_attested_v3_bundle_snapshots_full_package_and_same_candidate_bytes(
     from app.core.engines import stageb_authority
     from app.core.engines import stagec_attested as attested
     from tests.test_stagec_attested import (
+        _OFFICIAL_CODEV_RAW,
         _OFFICIAL_MACRO_RAW,
         _PINNED_CODEV_VERSION,
         _PINNED_EXE_SHA256,
@@ -1076,9 +1077,11 @@ def test_attested_v3_bundle_snapshots_full_package_and_same_candidate_bytes(
     trusted_root.mkdir()
     key = tmp_path / "attestation.key"
     key.write_bytes(b"k" * 32)
+    fake_codev = tmp_path / "codev.exe"
+    fake_codev.write_bytes(_OFFICIAL_CODEV_RAW)
     monkeypatch.setattr(attested, "_TRUSTED_RUN_ROOT", trusted_root)
     monkeypatch.setattr(attested, "_ATTESTATION_KEY_PATH", key)
-    monkeypatch.setattr(attested, "_TRUSTED_CODEV_EXECUTABLE", Path("D:/CODEV115/codev.exe"))
+    monkeypatch.setattr(attested, "_TRUSTED_CODEV_EXECUTABLE", fake_codev)
     monkeypatch.setattr(attested, "_TRUSTED_CODEV_SHA256", _PINNED_EXE_SHA256)
     monkeypatch.setattr(attested, "_TRUSTED_CODEV_SIZE_BYTES", _PINNED_EXE_SIZE_BYTES)
     monkeypatch.setattr(
@@ -1087,6 +1090,7 @@ def test_attested_v3_bundle_snapshots_full_package_and_same_candidate_bytes(
         attested._sha(_OFFICIAL_MACRO_RAW),
     )
     monkeypatch.setattr(attested, "TRUSTED_CODEV_FILE_VERSION", _PINNED_CODEV_VERSION)
+    monkeypatch.setattr(stageb_authority, "OFFICIAL_EXECUTABLE", fake_codev)
     monkeypatch.setattr(stageb_authority, "TRUSTED_CODEV_SHA256", _PINNED_EXE_SHA256)
     monkeypatch.setattr(stageb_authority, "TRUSTED_CODEV_SIZE_BYTES", _PINNED_EXE_SIZE_BYTES)
     monkeypatch.setattr(
