@@ -1,6 +1,6 @@
 ---
 quick_id: 260714-stageb-pin-line-ending
-status: verified_fixed_commit_pending
+status: released
 mode: debug
 validation: required
 owner: Codex

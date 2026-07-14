@@ -9,13 +9,12 @@ See `.planning/PROJECT.md` and `AGENTS.md`.
 
 **Naming:** `production-ready` / “生产可用”是 loop2 工程代号，不是资深 verdict。
 
-**Current focus:** production-ready loop2 的技术探路与 PR #82 docs/main CI release 已闭合；
-`d35b3d07` 的 main CI run `29233888562` success。当前本机 inventory 未发现
-`atelier-loop2` heartbeat，但没有保留可独立重算的 deletion operation receipt，因此只将其
-记为“当前不存在”的观察，不声称删除动作来源已证明。这些工程标签不同于北极星治理 gate
-A–F。北极星现为 `ACTIVE`，66-object canonical schema 与 claim/contract/authority mirrors 均为
-`v0.1-draft` + `UNRATIFIED`，
-北极星 A–F 全 false，专家与制造指标 unavailable。技术闭环不等于北极星 go/no-go 已通过。
+**Current focus:** 北极星控制面 v13 已从干净 `origin/main` 经三路独立只读 PASS、PR #83、
+PR CI、merge 与匹配 merge SHA 的 main CI 发布；Windows Stage B reviewed-source pin 漂移
+已由 PR #84 发布闭合。当前从 `42803f8d` 的干净基线执行
+O-01 strict preregistration/ITT protocol kernel。66-object canonical schema 与
+claim/contract/authority mirrors 仍为 `v0.1-draft` + `UNRATIFIED`，北极星 A–F 全 false，
+专家与制造指标 unavailable。控制面发布与离线内核实现都不等于北极星 go/no-go 已通过。
 
 ## Current Position
 
@@ -28,7 +27,7 @@ A–F。北极星现为 `ACTIVE`，66-object canonical schema 与 claim/contract
 | Phase 18 batch | 完成；PR #72/#77/#80。50/50：29 succeeded、21 degraded、0 failed。 |
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
-| North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
+| North-star control plane | ACTIVE / UNRATIFIED / control-plane-released；A–F=false。历史十二个拒绝树继续禁止发布。v13 fixed commit `2ca16029` / tree `6a75caf1` 经 GOVERNANCE、MACHINE、RELEASE_GIT_CI 三路独立只读 PASS，PR #83 的 head CI run `29346835530` success，merge commit `7f53436d` 的 tree 与 reviewed tree 完全相同，匹配 main CI run `29349180244` success。该发布仅闭合控制面代码交付，不是 registered RUN_CODE_RELEASE package，不闭任何 A–F；O-09 detached release evidence 才可能闭 F。 |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -36,8 +35,30 @@ success；匹配 merge SHA 的 main CI run `29229500265` success。
 Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 main CI
 run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2` heartbeat，
 但没有 durable deletion operation receipt，故不外推删除动作的可重算 provenance。
+North-star control-plane PR #83 reviewed head `2ca16029cc1b49b1ab2f17c0f379f7866a181c23`
+/ tree `6a75caf13826c595be4f1a698af6ddf72bee5131`；PR CI run `29346835530` success；
+merge `7f53436d3e470fde589bf62177b88d5ad11cebd5` 保持同一 tree，匹配 main CI run
+`29349180244` success。
+Stage B pin PR #84 reviewed head `2d36cb9096afb2c46100e40e484b5c4ad8930b9e` / tree
+`839635e5ee732fa6a22ccba193deb27a90246efc`；PR CI run `29356580472` success；merge
+`42803f8de6c6d8f6a2dbd5a0d4eb0c2ed8cf5ad7` 保持同一 tree，匹配 main CI run
+`29359056663` success。
 
-**Progress:** loop2 技术探路及发布链已闭合，heartbeat 当前缺席但删除 provenance 有证据缺口。
+**Progress:** loop2 技术探路、north-star v13 控制面与 Stage B Windows pin 修复发布链已闭合；
+O-01 首个 `0ae75a9/5937ae7`、第二个 `66331983/f3ab3aaf`、第三个
+`2d467ae6/344074d6`、第四个 `cc409880/f5cd22c9`、第五个 `536e26f/23ad364f` 与
+第六个 `17a2eaa/87c50bf`
+固定树均被独立只读审查拒绝
+并禁止发布。前两树 fix-forward 已补报告自身 freeze-hash 绑定、冻结的
+candidate reported-delivery 聚合、条件选择/exclusion 账本、嵌套 exact model class 与
+model scalar exact-type/value 检查；第三树 fix-forward 再以 exact built-in raw 深快照消除
+容器二次迭代，并强制 frozen 为 exact root model；第四树 fix-forward 要求 Pydantic
+extra/private 槽严格为 None；第五树 fix-forward 再以声明注解先验 exact-type 检查、exact
+built-in model storage、hidden slot 存在性与 raw cycle guard 封闭自替换容器、隐藏 extra、
+缺失槽和循环载荷；第六树 fix-forward 又以物理键数+exact string key 先验检查、identity-only
+类型分派与递归异常封装，阻断恶意 key/class/metaclass hook 和深层 raw 异常泄漏。91 项精确
+检查、Ruff、mypy 与 2267 项全仓离线回归均已绿；新的 clean-parent fixed-tree identity
+以 Git 为准，全新三路只读审查 pending。
 北极星 A–F 均为 false；资深良品率 go/no-go 未执行，不能写成“量产可用已通过”。
 
 ## Evidence Snapshot
@@ -160,7 +181,9 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 |---|---|---|
 | `260712-stagec-real-evidence` | complete | `.planning/quick/260712-stagec-real-evidence/`；PR #81 / main CI success。 |
 | `260713-loop2-final-handoff` | released-with-heartbeat-receipt-gap | `.planning/quick/260713-loop2-final-handoff/`；PR #82/main CI success；heartbeat 当前不存在但无 durable deletion receipt。 |
-| `260713-n7x` | active-unratified-external-release-evidence-required | `.planning/north-star/` 与 `.planning/quick/260713-n7x-unratified-claim-contract-authority-evid/`；历史 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6`、`ab7ce4d/f2ff988` 固定树均被拒；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED；tracked 文档只定义 fail-closed gate，不自证 fixed-tree review/PR/CI/merge；A–F 保持 false。 |
+| `260713-n7x` | control-plane-released-unratified | `.planning/north-star/` 与 `.planning/quick/260713-n7x-unratified-claim-contract-authority-evid/`；十二个历史固定树均被拒且禁止发布；v13 `2ca16029/6a75caf1` 三路独立只读 PASS，PR #83 / PR CI `29346835530` / merge `7f53436d` / main CI `29349180244` success。该链不构成 registered RUN_CODE_RELEASE，不闭 A–F。 |
+| `260714-stageb-pin-line-ending` | released | `.planning/quick/260714-stageb-pin-line-ending/`；PR #84 / PR CI `29356580472` / merge `42803f8d` / main CI `29359056663` success；reviewed LF pins 未改，Windows uniform CRLF checkout 可验证，mixed/bare CR 仍拒绝。 |
+| `260714-o01` | fixed-tree-review-pending-v7 | `.planning/quick/260714-north-star-o01-protocol-kernel/`；前六棵至 `17a2eaa/87c50bf` 均被只读审查拒绝且禁止发布；当前 candidate 91 targeted + Ruff/mypy + 2267 full offline 绿，clean-parent identity 以 Git 为准，全新三路审查 pending；A–F/GO 保持 false。 |
 
 ## Session Continuity
 
