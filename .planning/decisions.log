@@ -1,5 +1,6 @@
 2026-07-03 20:33 config: yolo/standard/parallel/commit_docs=true/balanced, all QA agents on — 依据主公挂loop开夜车指示自决，夜车需质量门全开
 2026-07-03 20:48 PROJECT_MODE=standard(horizontal) — 研究给出的构建序依赖分层明确(引擎抽象→任务层→spike→适配器)，纵向切片不适配基建型里程碑
+2026-07-14 | stageb-reviewed-pin-cross-platform | Windows `core.autocrlf=true`使两个reviewed predecessor源码的checkout bytes分别多出恰好1767/245个CR字节；严格CRLF→LF后精确恢复既有73242/4f94a0…与9864/9ffcbd… pin。修复不改pin，只允许全LF或全CRLF两种等价checkout，mixed EOL/bare CR/其他内容漂移继续fail-closed；目标25 passed、全仓离线2176 passed/1 skipped/545 deselected，未启动CODE V/runner。 | AI(GSD debug,可逆中影响完整性修复留痕)
 2026-07-04 04:14 夜车启动：cron 2bacd23a 每3h(:23)调 orchestrator（试水档·attended·并发守卫在 cron prompt）；跳过云端询问=任务绑本机文件系统云端不可跑+主公已明示夜车意图（凌晨在睡）
 2026-07-05 review-b4 E2E fix: confirmation Continue 改为真实 /results/summary 表单；demo E2E 只 mock LLM+SleepEngine，结果页走真实 case-library match 并逐卡断言 availability/provenance/数值；验证命令仅跑 uv run pytest tests/test_demo_e2e.py tests/test_web_wizard_flow.py
 2026-07-07 夜车提速改造（主公批准方案③④⑤⑥，效率分析实测：主车道27h内失败浪费9.2h/空转3.5h/gate 17min×轮）：③gate 并行化 pytest-xdist -n 8（实测全量 17m20s→6m40s，8=Optiland 1.2GB/proc 内存上限）已装6个venv+入 dev group；④班车站点扩容 atelier-night-shuttle.bat 加 lane-d/e（原只巡3道，d/e 闲置2-3天）；⑤批次15五车道蒸馏（连续发车授权）：主道=解析器族扩展×2+增量重扫入库，b=滚池至≥1214，c=全库冒烟+雷修，d=物理巡检+flaky猎手，e=预缓存扩容+降级演练；⑥新增 scripts/loop/backfill-main.sh 班车后回灌 main 进各车道防 drift 假红（lock/clean 双检查，冲突即 abort 交 attended）

@@ -80,6 +80,34 @@ def test_base_and_first_wrapper_hard_pins_match_reviewed_bytes() -> None:
     second._assert_trusted_predecessors()
 
 
+def test_source_descriptor_accepts_only_equivalent_uniform_crlf_checkout(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "reviewed.py"
+    reviewed_lf = b"first line\nsecond line\n"
+    source.write_bytes(reviewed_lf)
+    expected = {
+        "sha256": hashlib.sha256(reviewed_lf).hexdigest(),
+        "size": len(reviewed_lf),
+    }
+    assert second._source_descriptor(source) == expected
+
+    source.write_bytes(reviewed_lf.replace(b"\n", b"\r\n"))
+    assert second._source_descriptor(source) == expected
+
+
+@pytest.mark.parametrize("raw", [b"first\r\nsecond\n", b"first\rsecond\n"])
+def test_source_descriptor_rejects_mixed_or_bare_cr(
+    tmp_path: Path,
+    raw: bytes,
+) -> None:
+    source = tmp_path / "untrusted.py"
+    source.write_bytes(raw)
+
+    with pytest.raises(RuntimeError, match="line ending"):
+        second._source_descriptor(source)
+
+
 @pytest.mark.parametrize("pin", ["_TRUSTED_BASE_SHA256", "_TRUSTED_FIRST_SHA256"])
 def test_predecessor_pin_drift_blocks_install_before_dispatch_mutation(
     monkeypatch: pytest.MonkeyPatch, pin: str
