@@ -1,0 +1,748 @@
+{
+  "schema": "atelier-north-star-gap-ledger-v0.1",
+  "status": "ACTIVE",
+  "authoritative": false,
+  "authority": "index_cache_only",
+  "authority_statement": "This ledger is a non-authoritative index/cache. It cannot make a gate true or validate its own entries.",
+  "gate_truth_recomputation_sources": [
+    "frozen contracts",
+    "externally verified active minimum-claim envelope, signature set, durable high-water checkpoint, and deterministic lineage/comparison replay",
+    "externally verified human signatures",
+    "sealed manifests",
+    "machine receipts",
+    "protected-access envelope sets and replayed audit/consumed-capability roots",
+    "externally anchored and verifier-recomputed canonical_schema_template_hash equality",
+    "domain-separated canonical planned-identity-mapping and eligibility-decision content hashes",
+    "candidate_prelabel_binding_manifest over actual artifact bytes, required label views, fingerprints, lineage, and duplicate clusters",
+    "unique custody-broker-signed prelabel atomic-CAS freeze envelope and attested audit/consumed-root transition",
+    "externally anchored custody genesis plus raw atomic initialization receipt and signed pre-draw clock source",
+    "trusted review store, signed clock, and signed START/COMPLETE event-time source leaves",
+    "protected_run_machine_attempt_link_set_manifest and complete/incomplete attempt bijection",
+    "artifact hashes",
+    "closed-world evidence bundle and release-evidence package",
+    "externally verified final-decision signature records and signature set",
+    "Git commit and tree",
+    "PR and CI records including the bounded one-response repository Actions closure proof",
+    "holdout access logs"
+  ],
+  "claim": {
+    "version": "v0.1-draft",
+    "status": "UNRATIFIED",
+    "path": ".planning/north-star/claim-envelope-unratified-v0.1.md"
+  },
+  "minimum_claim_floor": {
+    "status": "UNRATIFIED",
+    "active_external_floor_hash": null,
+    "authority_signature_set_hash": null,
+    "active_checkpoint_hash": null,
+    "active_checkpoint_generation": null,
+    "present_truth": "only canonical null templates exist; no externally verified human-signed active floor, durable high-water checkpoint, or deterministic equal-or-broader lineage verification exists"
+  },
+  "canonical_schema": {
+    "version": "v0.1-draft",
+    "status": "UNRATIFIED",
+    "path": ".planning/north-star/preregistration-manifest-schema-unratified-v0.1.json",
+    "authority": "template_only",
+    "confirmatory_use_authorized": false,
+    "last_completed_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "57c305f37da6a4cc511e485900e6dcb04602a988",
+      "reviewed_tree_sha": "2b3c73d321677e863f2826e5e290e98e5b2bf8d7",
+      "reviewer_count": 3,
+      "gate_proof": false,
+      "historical_superseded": true,
+      "superseded_by_reviewed_commit_sha": "a5ea60e0799c50af51110c2601169e5908a15851"
+    },
+    "subsequent_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "a5ea60e0799c50af51110c2601169e5908a15851",
+      "reviewed_tree_sha": "930767afdded9fb5419531643fc6b1e7f0352d82",
+      "gate_proof": false,
+      "findings": [
+        "source-attestation signer and byte provenance were not fully closed",
+        "terminal pagination null semantics were incomplete",
+        "digest-field registry was not exhaustive",
+        "GitHub source profile was not completely signed and bound",
+        "canonical O-07 RUN_CODE_RELEASE package was missing",
+        "tracked planning documents made stale current-state claims"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_THIRD_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "ff76ae0c8dd87533820b73725590134d0a05dd03"
+    },
+    "third_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "ff76ae0c8dd87533820b73725590134d0a05dd03",
+      "reviewed_tree_sha": "431780535989ad8789de83ba0bbbdaec7e7da0ee",
+      "gate_proof": false,
+      "findings": [
+        "release and GitHub exact-source semantics were not fully closed",
+        "required-check and workflow-policy evidence needed stronger source-specific closure",
+        "the public merge API did not provide an exact-base or policy-snapshot CAS and the external provider freeze chain was incomplete"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_FOURTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "d9e0e75ed291189bc3afbc8fc1f7f1ee05eb25fe"
+    },
+    "fourth_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "d9e0e75ed291189bc3afbc8fc1f7f1ee05eb25fe",
+      "reviewed_tree_sha": "00c7af0f45c09896708cd2c570f93f86bdf6746a",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "CHANGES_REQUIRED_P1_2",
+        "MACHINE": "CHANGES_REQUIRED_P1_1",
+        "RELEASE_GIT_CI": "PASS_INVALIDATED_BY_SAME_TREE_FINDINGS"
+      },
+      "findings": [
+        "empty human authority rosters and zero quorum could vacuously validate minimum-claim and final-GO signature sets",
+        "expert_rater_count and both expert ITT thresholds could be zero so gate D could pass without any valid human expert label",
+        "the exhaustive digest selector omitted one mid-name hash and two OID-or-marker runtime fields"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_FIFTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "bd2e1cf585375a3716a8ea2dd53f698b19068492"
+    },
+    "fifth_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "bd2e1cf585375a3716a8ea2dd53f698b19068492",
+      "reviewed_tree_sha": "cf9c6f3e36ad1e2cac8f899c407ddf3e54624950",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "PASS_INVALIDATED_BY_SAME_TREE_FINDING",
+        "MACHINE": "PASS_INVALIDATED_BY_SAME_TREE_FINDING",
+        "RELEASE_GIT_CI": "CHANGES_REQUIRED_P1_1"
+      },
+      "findings": [
+        "the GET github_pr_observation_source_leaf required a plain request_body_hash classified as SINGLE_DIGEST while the transport rules prohibited a GET digest and required the exact GITHUB_HTTP_REQUEST_HAS_NO_BODY marker, making both PR-observation stages and the release chain unsatisfiable"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_SIXTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "aca724155d464496e18e36700733931e9d05638a"
+    },
+    "sixth_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "aca724155d464496e18e36700733931e9d05638a",
+      "reviewed_tree_sha": "53c24554606312fcbe54f9ddd836142f524fb34e",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "PASS_INVALIDATED_BY_SAME_TREE_FINDING",
+        "MACHINE": "CHANGES_REQUIRED_P1_1",
+        "RELEASE_GIT_CI": "PASS_INVALIDATED_BY_SAME_TREE_FINDING"
+      },
+      "findings": [
+        "the selected machine policy declared inventory_schema_hash and admission_receipt_schema_hash but activation carried only opaque inventory and admission hashes, without closed-world typed inventory/admission objects, raw externally attested OS evidence, activation-to-selected-policy schema/control equality, or recomputation through the actual ticket/intent/pre-spawn/start/terminal chain"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_SEVENTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "ead809c52b126cd9c9b99b14fd4db38cfcd22d2d"
+    },
+    "seventh_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "ead809c52b126cd9c9b99b14fd4db38cfcd22d2d",
+      "reviewed_tree_sha": "b140543e34e7da9e725ce613ba72e09a7c8175d5",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "CHANGES_REQUIRED_P1_1",
+        "MACHINE": "CHANGES_REQUIRED_P1_1",
+        "RELEASE_GIT_CI": "CHANGES_REQUIRED_P2_1"
+      },
+      "findings": [
+        "inventory and admission attestation message preimages excluded their signature_algorithm fields and their local verification rules did not bind an externally anchored allowed signature suite and trust-root contract",
+        "the durable pre-spawn receipt repeated initial inventory and admission hashes but carried no fresh raw native inventory or boundary revalidation evidence, parser membership, external attester record, atomic gate transaction, or bounded validity through process start",
+        "STATE.md said five historical fixed trees while enumerating six"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_EIGHTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "8acb078317e08fde061bc33dcd226864c5b6dcea"
+    },
+    "eighth_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "8acb078317e08fde061bc33dcd226864c5b6dcea",
+      "reviewed_tree_sha": "5856f8dd475942dcf3349d3302b22f0e3843e1aa",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "CHANGES_REQUIRED_P1_1",
+        "MACHINE": "CHANGES_REQUIRED_P1_2",
+        "RELEASE_GIT_CI": "PASS_INVALIDATED_BY_SAME_TREE_FINDINGS"
+      },
+      "findings": [
+        "the inventory and admission content-hash classification rules used the unregistered registered_object_hash alias instead of the exact registered_canonical_object_instance_hash class",
+        "the DURABLE_COMMIT event subject referenced the pre-spawn source-attestation record whose signed message contains the same event-time leaf, creating an unconstructible message-to-time-leaf-to-record-to-message hash cycle",
+        "the tracked acceptance-contract mirror simultaneously stated obsolete 25/25/46 machine binding counts and the canonical 27/27/48 counts"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_NINTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "0915ccf000438701bf10075e6f529ef349730e2a"
+    },
+    "ninth_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "0915ccf000438701bf10075e6f529ef349730e2a",
+      "reviewed_tree_sha": "7e004a031844720fdeb0226a328f2c40cb4d0bb9",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "CHANGES_REQUIRED_P2_1",
+        "MACHINE": "CHANGES_REQUIRED_P1_1",
+        "RELEASE_GIT_CI": "CHANGES_REQUIRED_P2_1"
+      },
+      "findings": [
+        "STATE Current Position and Quick Tasks entry summaries omitted the eighth rejected fixed tree 8acb078/5856f8d and its invalidated same-tree release PASS even though the detailed blocker history and ledger recorded it",
+        "the PRE_LEASE crash variant required a PROTECTED_ACCESS_INTENT_ENVELOPE last member and unconditionally required the last-durable tuple to equal a replayed partial-chain transition, but that kind is not a partial-chain member and no pre-chain sequence sentinel existed, making a crash after intent consumption but before lease acquisition unconstructible"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_TENTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "2c74a540e11187d3fe8250e78d77dae291a7b7a7"
+    },
+    "tenth_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "2c74a540e11187d3fe8250e78d77dae291a7b7a7",
+      "reviewed_tree_sha": "5784baccc296586863f2d2bcc2788719b3a2064c",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "PASS_INVALIDATED_BY_SAME_TREE_FINDING",
+        "MACHINE": "CHANGES_REQUIRED_P1_1",
+        "RELEASE_GIT_CI": "PASS_INVALIDATED_BY_SAME_TREE_FINDING"
+      },
+      "findings": [
+        "PRE_LEASE made machine_crash_or_abort_record.last_durable_member_hash equal a registered protected-access-intent-envelope hash while every other crash frontier made the same fixed path equal a machine typed-leaf hash, but the exhaustive hash registry requires one entry and one reference class per fixed path and defines no conditional union, so the record remained unconstructible"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_ELEVENTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "02f9d17cfeb2c34749612bdc41744a4820e537e7"
+    },
+    "eleventh_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "02f9d17cfeb2c34749612bdc41744a4820e537e7",
+      "reviewed_tree_sha": "7abf1b6189718d2a9366bda030662181676fdb60",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "CHANGES_REQUIRED_P1_2",
+        "MACHINE": "CHANGES_REQUIRED_P1_1_P2_1",
+        "RELEASE_GIT_CI": "CHANGES_REQUIRED_P2_1"
+      },
+      "findings": [
+        "machine_partial_chain_member_template.typed_leaf_hash was one fixed digest path carrying both ordinary machine typed leaves and the registered PROTECTED_ACCESS_TERMINAL_ENVELOPE object, so no single registry reference class could classify every member kind and PROTECTED_TERMINAL replay remained unconstructible",
+        "machine_crash_or_abort_record.last_durable_registered_object_hash_or_protocol_no_registered_object_last_member_marker was one registered-object path conditionally carrying both protected_access_intent_envelope and protected_access_terminal_envelope even though each registry entry has one exact expected-object-type slot and no conditional object-type union",
+        "the fixed schema recomputed 2055 automatic and 2062 nonbootstrap digest paths while PLAN SUMMARY and VERIFICATION still normatively required 2054 and 2061"
+      ],
+      "repair_status": "HISTORICAL_SUPERSEDED_BY_TWELFTH_REJECTED_FIXED_TREE",
+      "superseded_by_reviewed_commit_sha": "ab7ce4d82876361e686a8da603fbbc6712c1aa7d"
+    },
+    "twelfth_rejected_independent_fixed_tree_review": {
+      "status": "CHANGES_REQUIRED",
+      "reviewed_commit_sha": "ab7ce4d82876361e686a8da603fbbc6712c1aa7d",
+      "reviewed_tree_sha": "f2ff988ab3bd0abe97dd066dd1a2aa90af820bcf",
+      "sole_parent_sha": "d35b3d07cead830396d24d2b10665199c73985e0",
+      "gate_proof": false,
+      "scope_results": {
+        "GOVERNANCE": "PASS_INVALIDATED_BY_SAME_TREE_FINDING",
+        "MACHINE": "CHANGES_REQUIRED_P1_1",
+        "RELEASE_GIT_CI": "PASS_INVALIDATED_BY_SAME_TREE_FINDING"
+      },
+      "findings": [
+        "the partial-chain carrier split was structurally sound, but the kind-selected exact typed-member resolution covered only eleven recovery kinds while thirteen ordinary typed kinds remained unmapped, so a same-class cross-kind leaf could be substituted, including a real machine_lease_acquisition_receipt hash claimed as PRE_LAUNCH_SNAPSHOT"
+      ],
+      "repair_status": "CURRENT_THIRTEENTH_CLEAN_PARENT_FIX_FORWARD_IN_PROGRESS_EXHAUSTIVE_24_KIND_TYPED_MEMBER_TEMPLATE_POLICY_SCHEMA_DOMAIN_CONTEXT_MAP_NEW_FIXED_COMMIT_AND_ALL_THREE_FRESH_REVIEWS_REQUIRED"
+    },
+    "tracked_document_release_evidence_rule": "tracked planning documents are non-authoritative mirrors and may not self-prove the commit/tree containing them, clean-worktree provenance, fixed-tree reviews, PR checks, compare-and-swap merge, matching main CI, or release-package validity; only detached source-bound release evidence may prove those facts",
+    "blocking_p1_fix_forward_history_status": "HISTORICAL_SUPERSEDED_BY_TWELVE_REJECTED_FIXED_TREES_AND_CURRENT_THIRTEENTH_FIX_FORWARD",
+    "blocking_p1_fix_forward": [
+      {
+        "id": "P1-EXACT-MAPPING-ELIGIBILITY-CONTENT-HASHES",
+        "required_state": "planned_identity_mapping_content_hash and eligibility_decision_set_content_hash are verifier-recomputed domain-separated hashes over exact closed-world member templates, explicit formulas, and canonical contiguous target/candidate/run/attempt/decision ordering with no duplicate, gap, alias, or ID fallback",
+        "required_negative_vectors": [
+          "opaque root accepted without member recomputation",
+          "member reorder",
+          "missing or duplicate ordinal",
+          "ID fallback instead of resolved parent order",
+          "eligibility decision missing, duplicated, or ordered differently from targets"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      },
+      {
+        "id": "P1-CANONICAL-SCHEMA-HASH-EXTERNAL-EQUALITY",
+        "required_state": "the verifier recomputes canonical_schema_template_hash from the exact final schema bytes under the out-of-band bootstrap suite and requires equality across the external governance anchor, protocol manifest binding, protocol package, sealed manifest, activation manifest, and activation package",
+        "required_negative_vectors": [
+          "foreign schema hash spliced at any one binding",
+          "internally self-consistent schema hash not equal to the external expected hash",
+          "schema-template byte change under an unchanged claimed hash"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      },
+      {
+        "id": "P1-DRAW-ACTIVATION-CROSS-BATCH-BINDING",
+        "required_state": "draw, sealed manifest, and activation resolve to and exactly agree on ratification, batch, draw, protocol package/signature set, manifest, sampling frame/source/algorithm/entropy commitment, target distribution, and target count before any capability is usable",
+        "required_negative_vectors": [
+          "batch-A draw or manifest activated as batch-B",
+          "protocol or signature-set swap",
+          "distribution or target-count swap",
+          "activation timestamp preceding draw"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      },
+      {
+        "id": "P1-CANDIDATE-PRELABEL-ACTUAL-BYTES-BINDING",
+        "required_state": "one immutable candidate_prelabel_binding_manifest freezes every planned slot as available or unavailable before the first label action and binds each available slot to actual artifact bytes, artifact membership, required label-view objects, content and lineage fingerprints, deterministic equivalence-cluster membership, and source machine evidence",
+        "required_negative_vectors": [
+          "label for different candidate bytes or slot",
+          "candidate-artifact or required-view manifest swap",
+          "self-declared fingerprint, lineage, or cluster",
+          "duplicate candidates assigned different clusters",
+          "late unavailable-to-available promotion",
+          "label intent or terminal missing a required view object"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      },
+      {
+        "id": "P1-PROTECTED-RUN-MACHINE-ATTEMPT-BIJECTION",
+        "required_state": "a closed-world protected_run_machine_attempt_link_set_manifest gives every protected run intent exactly one ordered terminal or consumed-incomplete member and binds capability, membership proof, access intent, launch ticket, durable machine intent, terminal receipt, and protected terminal envelope without orphan or reuse",
+        "required_negative_vectors": [
+          "machine receipt paired with another protected run intent",
+          "orphan protected run intent, launch ticket, machine intent, receipt, or terminal envelope",
+          "duplicate or reused machine-chain hash",
+          "consumed-incomplete attempt counted as success",
+          "run, attempt, host, broker, lease, command, input, or toolchain pin mismatch"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      },
+      {
+        "id": "P1-MAIN-CI-MAIN-PUSH-IDENTITY-TIME",
+        "required_state": "main CI is accepted only when raw API evidence proves event=push, head_ref=refs/heads/main, head_branch=main, and head_sha=main_ref_oid_at_observation=the accepted merge SHA, using the reviewed workflow_file_path, workflow_ref, workflow_file_git_blob_oid, workflow_file_raw_bytes_hash, and workflow_blob_proof_leaf_hash, with created_at/run_started_at/completed_at monotonic and not before the raw merge-acceptance timestamp, merge/main-ref observations mutually bound, final observation after required-run completion, and nonempty exact workflow coverage",
+        "required_negative_vectors": [
+          "workflow_dispatch or non-push event",
+          "non-main branch or ref at the same SHA",
+          "foreign workflow ref or blob",
+          "run created before merge acceptance",
+          "main ref OID or head SHA mismatch"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      },
+      {
+        "id": "P1-INVENTORY-ADMISSION-SIGNATURE-ALGORITHM-PREIMAGE",
+        "required_state": "inventory and admission attestation message hashes include their signature_algorithm fields; both use the fixed detached signature input and verify identity, proof, fingerprint, algorithm, and signature against external trust roots, the exact OS-evidence attester allowlist, and the externally anchored allowed signature algorithm set with cross-source and cross-version replay rejected",
+        "required_negative_vectors": [
+          "signature algorithm excluded from the signed message",
+          "caller-selected or locally implied signature algorithm",
+          "signature verified without the external trust roots or exact attester allowlist",
+          "cross-source or cross-version replay"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      },
+      {
+        "id": "P1-ATOMIC-PRE-SPAWN-REVALIDATION-GATE",
+        "required_state": "the durable pre-spawn commit receipt carries a fresh raw native gate receipt, parser membership, external OS attester record, current inventory root and count, current launcher/admission/lease state, zero drift/uncovered/bypass constants, an externally anchored gate policy, a positive monotonic validity bound, and one single-use atomic transaction repeated by process start under the same clock before expiry",
+        "required_negative_vectors": [
+          "initial activation hashes repeated without fresh native evidence",
+          "inventory or boundary mutation between revalidation and spawn",
+          "expired reused or competing gate transaction",
+          "process start with a different gate transaction attestation record clock or validity bound"
+        ],
+        "verification_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+      }
+    ],
+    "historical_dirty_tree_adversarial_precheck": {
+      "status": "CHANGES_REQUIRED",
+      "review_class": "DIRTY_TREE_PRECHECK_NOT_FIXED_TREE_REVIEW",
+      "parent_commit_sha": "57c305f37da6a4cc511e485900e6dcb04602a988",
+      "fixed_commit_or_tree_reviewed": false,
+      "gate_proof": false,
+      "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING",
+      "p1_finding_count": 8,
+      "p2_finding_count": 1,
+      "target_static_contract_counts": {
+        "registered_object_templates": 52,
+        "detached_signer_classes": 9,
+        "launch_ticket_bindings": 20,
+        "durable_machine_intent_bindings": 21,
+        "machine_terminal_receipt_bindings": 36,
+        "evidence_bundle_fields": 28,
+        "release_and_authority_mirror_fields": 45,
+        "dynamic_shared_bindings": 21
+      },
+      "findings": [
+        {
+          "id": "P1-PRELABEL-BROKER-SIGNED-CAS-FREEZE",
+          "priority": "P1",
+          "finding": "the dirty schema represented the prelabel freeze as unsigned manifest fields and a textual atomic-CAS assertion, without a broker-signed transition chain, attested store receipt, exact sequence increment, or consumed-root carry-forward",
+          "required_fix": "separate pure prelabel content from four registered custody-broker objects (freeze transition, signature message, detached signature record, envelope); bind an attested atomic-CAS receipt, require new audit sequence equals prior plus one, carry the consumed root forward unchanged, and require the unique freeze after complete source-run/link evidence and before every label or view exposure",
+          "required_negative_vectors": [
+            "unsigned or self-reported freeze accepted",
+            "CAS receipt store, operation, prior head, committed head, sequence, root, manifest, or machine-link mismatch",
+            "second freeze or unavailable-to-available promotion",
+            "label or view exposure before the signed freeze envelope",
+            "run intent signed after freeze"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P1-REGISTERED-INSTANCE-DEPENDENCY-DAG",
+          "priority": "P1",
+          "finding": "the dirty type-registration order placed prelabel before generic run intent and terminal types even though source machine receipts and audit heads depend on run instances; the prose hash DAG stated the opposite order",
+          "required_fix": "treat registry order only as template registration and deterministically verify an instance dependency DAG over every direct and typed-leaf-transitive registered hash edge, with run/link before prelabel/freeze and freeze before label access",
+          "required_negative_vectors": [
+            "template registration order accepted as proof of instance creation order",
+            "unresolved, wrong-type, ambiguous, cyclic, or self-created dependency edge",
+            "label intent without a signed freeze-envelope ancestor",
+            "prelabel source receipt without its prior run intent and terminal chain"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P1-NESTED-CONTENT-UNIQUE-SOURCE-PATH",
+          "priority": "P1",
+          "finding": "mapping, eligibility, source-evidence, required-view, equivalence-cluster, and action-specific derived hashes had templates and formulas but no unique runtime source path or closed-world content container",
+          "required_fix": "map every derived hash field to exactly one inline or sealed-container runtime source path, exact value template, unique domain and explicit formula; hash-only detached content without uniquely locatable bytes rejects",
+          "required_negative_vectors": [
+            "hash presented without source content bytes",
+            "two source paths or content aliases for one hash field",
+            "content from another candidate, batch, action, or phase",
+            "template-valid content not present in the closed-world membership container"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P1-PLANNED-SLOT-SOURCE-REVERSE-BINDING",
+          "priority": "P1",
+          "finding": "the mapping used candidate_id while prelabel and label objects used planned_candidate_slot_id, and source run/attempt evidence was not required to resolve back to the same slot; eligibility input was not exactly tied to the target source",
+          "required_fix": "use planned_candidate_slot_id as the sole identifier and enforce attempt-to-run-to-slot-to-target reverse equality across mapping, link, receipt, derivation, prelabel and label; deterministically derive each eligibility input from the resolved target source and recompute its decision",
+          "required_negative_vectors": [
+            "candidate_id treated as an implicit alias",
+            "candidate B run or receipt used for candidate A lineage",
+            "attempt parented to another run or slot",
+            "eligibility decision computed from another target input"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P1-CONSUMED-INCOMPLETE-MACHINE-REVERSE-COVERAGE",
+          "priority": "P1",
+          "finding": "the consumed-incomplete link member collapsed retained machine state into an opaque hash and reverse coverage enumerated run intents and terminal receipts but not every launch ticket and durable machine intent",
+          "required_fix": "use exact tagged crash-frontier members or an exact domain-separated retained-chain content schema and prove complete forward-and-reverse coverage for every run intent, 20-field ticket, 21-field durable intent, 36-field receipt and protected terminal",
+          "required_negative_vectors": [
+            "ticket-only crash artifact omitted",
+            "durable intent without receipt omitted or cross-paired",
+            "opaque retained-chain hash accepted without members",
+            "orphan or reused ticket, durable intent, receipt, or terminal",
+            "consumed-incomplete member contributes success"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P1-SOURCE-SPECIFIC-GITHUB-RELEASE-LEAVES",
+          "priority": "P1",
+          "finding": "the dirty main-CI record required head_ref, workflow_ref and completed_at to come from Actions raw bytes even though the observed API shape does not contain those fields, and it lacked a server-side merged_at source",
+          "required_fix": "bind server-side merged_at and merge SHA from post-merge PR-GET raw bytes, Actions event/head_branch/head_sha/path/workflow_id/run_attempt/status/conclusion/timestamps from Actions raw bytes, refs/heads/main and OID from refs-API raw bytes, and workflow blob from merge-tree plus path; every derived full ref, workflow identity/ref, or completion time needs one explicit formula",
+          "required_negative_vectors": [
+            "absent API field filled by local assertion",
+            "local observation time substituted for server merged_at",
+            "same SHA from a non-push event or non-main ref",
+            "foreign workflow path, identity, or blob",
+            "run or main-ref observation preceding merge acceptance"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P1-UNIQUE-DUPLICATE-PARTITION",
+          "priority": "P1",
+          "finding": "the dirty candidate equivalence contract could accept a producer partition or split candidates with identical artifact bytes or identical semantic content into separate clusters, inflating independent expert numerators",
+          "required_fix": "recompute the unique complete partition over all available planned slots; the mandatory edge floor joins equal candidate-byte-set roots or equal semantic-content fingerprints, signed equivalence rules may only add merge edges, and the verifier computes closure, deterministic cluster order and full-cluster IDs while every slot remains in the ITT denominator",
+          "required_negative_vectors": [
+            "same candidate-byte-set root split across clusters",
+            "same semantic-content fingerprint split across clusters",
+            "producer-submitted partition or cluster ID trusted without full recomputation",
+            "overlapping incomplete or non-exhaustive available-slot partition",
+            "duplicate slots removed from the ITT denominator or counted as multiple independent numerators"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P1-LABEL-EXPOSURE-ACCESS-TIMELINE",
+          "priority": "P1",
+          "finding": "the dirty label contract did not prove that the signed prelabel freeze preceded every candidate exposure, that all required views were durably accessed, or that a blank entry form and raw human entry preceded the expert signature",
+          "required_fix": "bind exact prior-exposure history, a no-suggestion blank-form attestation, the complete ordered required-access event set, one same-session human-entry event and the expert label to the same freeze, slot, rater, views and rubric; enforce freeze before first exposure and the exact intent-review-access-entry-completion-signature-terminal timeline",
+          "required_negative_vectors": [
+            "prior candidate or cluster-peer exposure omitted or consumed-incomplete",
+            "blank form contains a prefilled value suggestion or recommendation",
+            "expert signature precedes any required view access or the human-entry event",
+            "access event omitted duplicated reordered or taken from another slot session or rater",
+            "label intent terminal and expert envelope bind different exposure histories or entry events"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        },
+        {
+          "id": "P2-ATTESTED-HUMAN-ENTRY-SURFACE",
+          "priority": "P2",
+          "finding": "the dirty prose could be read as proving that no AI influenced a human outside the recorded interface, which is not technically verifiable from the candidate evidence package",
+          "required_fix": "limit the enforceable claim to the attested trusted entry surface: it must open blank, contain no outcome or recommendation bytes, record raw same-session human entry, and end in a common-trust-verified human signature; never infer the expert's external cognitive provenance",
+          "required_negative_vectors": [
+            "prefilled outcome recommendation or suggestion bytes inside the attested surface",
+            "human values copied from an unbound session surface slot or rater",
+            "claim that external human cognitive provenance was verified without evidence"
+          ],
+          "repair_status": "STATIC_VERIFIED_FIXED_COMMIT_PENDING"
+        }
+      ]
+    },
+    "latest_dirty_tree_schema_specialist_review": {
+      "status": "PASS",
+      "review_class": "DIRTY_TREE_SPECIALIST_REVIEW_NOT_FIXED_TREE_REVIEW",
+      "historical_superseded": true,
+      "not_current_state": true,
+      "schema_sha256": "4995633b492b745c21dd2117174c5b90be30b68abeedbf043f090860bc58ceb8",
+      "reviewer_count": 3,
+      "p1_finding_count": 0,
+      "p2_finding_count": 0,
+      "fixed_commit_or_tree_reviewed": false,
+      "gate_proof": false,
+      "control_plane_state": "STATIC_VERIFIED_FIXED_COMMIT_PENDING",
+      "target_static_contract_counts": {
+        "registered_object_types": 52,
+        "detached_signer_classes": 13,
+        "hash_reference_classes": 7,
+        "sealed_sample_manifest_fields": 26,
+        "launch_ticket_bindings": 25,
+        "durable_machine_intent_bindings": 25,
+        "machine_terminal_receipt_bindings": 46,
+        "active_status_cas_bindings": 32,
+        "evidence_bundle_fields": 29,
+        "release_and_authority_mirror_fields": 50,
+        "dynamic_shared_bindings": 22
+      },
+      "coverage": [
+        "externally anchored custody genesis/store/clock and review time-source signatures",
+        "machine wrapper-payload-evidence-time equality, status CAS, release journal, crash and supersession closure",
+        "bounded repository Actions closure response, anti-pick, workflow path/ref and single source profile",
+        "closed hash-reference class set with no unregistered explicit class"
+      ]
+    },
+    "current_dirty_fix_forward_state": {
+      "status": "AUTHOR_STATIC_VERIFIED_FIXED_COMMIT_PENDING",
+      "schema_sha256": "674e2e440c5ba671fe833308a12826dc3ab5a9ac0da916e7247665ab57db6c34",
+      "authority_policy_sha256": "485821144aa2bb2a11c6388da54d0048d3a5f8551220d96c95faefcfb5e41867",
+      "fixed_commit_sha": null,
+      "fixed_tree_sha": null,
+      "author_static_suite_status": "PASS_CURRENT_DIRTY_BYTES_NOT_GATE_PROOF_2994_ASSERTIONS",
+      "dirty_specialist_precheck_status": "TWELFTH_FIXED_TREE_MACHINE_P1_FIXED_AUTHOR_RECHECK_PASS",
+      "duplicate_json_key_scan_status": "PASS_THREE_JSON_FILES_AND_ESCAPED_KEY_NEGATIVE_PROBE",
+      "digest_selector_recomputation": {
+        "runtime_template_roots": 129,
+        "auto_selected_paths": 2056,
+        "exact_additional_semantic_paths": 10,
+        "bootstrap_excluded_paths": 3,
+        "nonbootstrap_registry_paths": 2063
+      },
+      "fresh_fixed_tree_review_status": "NOT_STARTED_FOR_CURRENT_FIX_FORWARD_AB7CE4D_REJECTED",
+      "gate_proof": false,
+      "github_pr_observation_no_body_binding": "GET source leaf uses request_body_hash_or_protocol_no_body_marker, must equal GITHUB_HTTP_REQUEST_HAS_NO_BODY, and must classify as DIGEST_OR_EXACT_PROTOCOL_MARKER; a digest or any other marker rejects",
+      "expert_rater_authority_binding": "external anchor bootstrap hash equals the exact nonempty signed protocol rater tuple array; every counted signature tuple resolves one unique member; each candidate numerator requires the complete exact distinct rater set and signed combination rule",
+      "machine_inventory_admission_binding": "initial inventory/admission signature algorithms are in their message preimages and validate under the fixed detached input, external trust roots, exact attester allowlist and anchored allowed suite; the 64-field durable pre-spawn receipt is a fresh raw native externally attested atomic revalidation/commit gate whose single-use transaction, attestation record, clock and validity bound are repeated by the 36-field process-start receipt",
+      "exact_registered_object_hash_class_binding": "every non-null reference_class must belong to the exact ten-member enum; inventory content_hash and admission receipt_hash use registered_canonical_object_instance_hash and the unregistered registered_object_hash alias rejects",
+      "durable_commit_event_subject_acyclicity": "the DURABLE_COMMIT event subject binds the durable-store and revalidation transactions plus valid-through counter but excludes the source-attestation record whose signed message contains the same event-time leaf; the final durable receipt separately binds both the leaf and record",
+      "acceptance_mirror_machine_binding_counts": "launch ticket, durable intent and terminal receipt binding counts are exactly 27/27/48 in both canonical schema and tracked acceptance mirror",
+      "pre_lease_crash_initial_anchor": "PRE_LEASE uses the unique pre-chain intent anchor lifecycle INTENT_CONSUMED, sequence -1 and kind PROTECTED_ACCESS_INTENT_ENVELOPE; its selected source is the same-record exact-type protected_access_intent_envelope_hash while the terminal and typed carriers equal NO_PROTECTED_TERMINAL_LAST_MEMBER and NO_TYPED_LEAF_LAST_MEMBER; the anchor is not a partial-chain member and the crash record itself is the first member at sequence zero, while null, zero, every other negative or positive anchor sequence, marker mix and any claimed prior machine member reject",
+      "crash_last_member_hash_reference_class_split": "last-member kind selects the existing exact-type protected_access_intent_envelope_hash only for PRE_LEASE, the exact-type terminal-envelope-or-NO_PROTECTED_TERMINAL_LAST_MEMBER path only for PROTECTED_TERMINAL, and the authority_suite_bound typed-evidence/proof-or-NO_TYPED_LEAF_LAST_MEMBER path for every other kind; no fixed path has a conditional object-type union or reference-class union and the obsolete mixed last_durable_member_hash path is absent",
+      "partial_chain_member_hash_reference_class_split": "machine_partial_chain_member_template uses one exact-type protected-terminal-envelope-or-NO_PROTECTED_TERMINAL_PARTIAL_CHAIN_MEMBER path and one authority_suite_bound typed-evidence/proof-or-NO_TYPED_LEAF_PARTIAL_CHAIN_MEMBER path; PROTECTED_ACCESS_TERMINAL_ENVELOPE selects the former and every other member kind selects the latter with exactly one real hash",
+      "partial_chain_typed_member_exact_resolution": "all 24 nonterminal partial-chain member kinds select exactly one canonical typed template or signed-policy schema/domain plus exact transition context; POST_RUN_SNAPSHOT_AND_MONITOR and ZERO_STATE_PROOF each partition normal versus recovery predecessor states without overlap or gap; all selected objects repeat the exact batch, activation, machine tuple, run, attempt, host, broker, lease and transition bindings, and same-class cross-kind leaf substitution rejects",
+      "current_structural_targets": {
+        "registered_object_types": 66,
+        "authority_roster_and_quorum_registered_object_types": 2,
+        "detached_signer_classes": 24,
+        "hash_reference_classes": 10,
+        "sealed_sample_manifest_fields": 26,
+        "launch_ticket_bindings": 27,
+        "durable_machine_intent_bindings": 27,
+        "machine_terminal_receipt_bindings": 48,
+        "active_status_cas_bindings": 33,
+        "machine_entry_inventory_fields": 33,
+        "machine_admission_receipt_fields": 39,
+        "durable_pre_spawn_commit_receipt_fields": 64,
+        "machine_process_start_receipt_fields": 36,
+        "machine_OS_evidence_signed_source_kinds": 5,
+        "machine_time_status_OS_evidence_and_pre_spawn_gate_external_anchor_mapping_rows": 19,
+        "machine_execution_typed_templates": 29,
+        "evidence_bundle_fields": 32,
+        "release_and_authority_mirror_fields": 43,
+        "dynamic_shared_bindings": 25,
+        "release_git_ci_typed_templates": 64,
+        "protocol_bindings": 20,
+        "human_owned_choices": 109,
+        "github_source_leaf_templates": 15,
+        "github_request_transport_kinds": 14,
+        "release_nullable_paths": 8
+      },
+      "a_through_f": false,
+      "valid_external_human_go": false
+    }
+  },
+  "contract": {
+    "version": "v0.1-draft",
+    "status": "UNRATIFIED",
+    "path": ".planning/north-star/acceptance-contract-unratified-v0.1.md"
+  },
+  "authority_policy": {
+    "version": "v0.1-draft",
+    "status": "UNRATIFIED",
+    "path": ".planning/north-star/authority-policy-unratified-v0.1.json"
+  },
+  "confirmatory_access": {
+    "sample_drawn": false,
+    "sample_created": false,
+    "sample_opened_or_inspected": false,
+    "holdout_accessed": false,
+    "holdout_labelled": false,
+    "codev_started_by_this_task": false
+  },
+  "gates": {
+    "A": {
+      "value": false,
+      "name": "contract and permissions",
+      "present_truth": "UNRATIFIED canonical schema and non-authoritative mirrors; all twelve recorded fixed trees were rejected CHANGES_REQUIRED and cannot be published; dirty-tree prechecks and author-side static checks are not fixed-tree review or gate proof; a new clean-parent fixed commit/tree plus fresh three-scope independent read-only reviews remain required; the out-of-band governance anchor, human-signed active minimum-claim floor, durable anti-rollback checkpoint, common trust policy, store/clock/event-time attester allowlists, final scope choices, signatures and hash bindings are all unset"
+    },
+    "B": {
+      "value": false,
+      "name": "multi-target same-source production chain",
+      "present_truth": "only one exploratory exact-target chain exists; there is no preregistered representative multi-target batch with frozen ITT, successful outer CLI semantics, same-source exports, and repeat evidence"
+    },
+    "C": {
+      "value": false,
+      "name": "evidence completeness",
+      "present_truth": "optical, RI, CRA, distortion, Stage B, Stage C, repeatability, TOR, and manufacturability evidence do not meet a ratified completeness threshold; tor_semantics, tor_units, tor_table_hash_selection, tor_monte_carlo_denominator, tor_compensator_policy, tor_aggregation_rule, tor_saturation_mapping, and tor_compensation_failure_mapping are unset; proxy, degraded, missing, and unavailable remain unfilled"
+    },
+    "D": {
+      "value": false,
+      "name": "human expert validation",
+      "present_truth": "no ratified expert rubric, immutable pre-label manifest plus unique custody-broker-signed CAS freeze binding actual candidate bytes/views/fingerprints/lineage/clusters before exposure, authorized signed expert_worth_reviewing/expert_production_usable labels, review-time series, productivity baseline, or ITT expert-rate thresholds exist"
+    },
+    "E": {
+      "value": false,
+      "name": "independent holdout",
+      "present_truth": "no separated holdout custodian, externally anchored custody genesis/atomic initialization receipt/signed clock, sealed draw, cross-batch-safe activation, capability proof, complete 27/27/48 protected-run-to-machine reverse bijection with status/journal/crash replay, signed prelabel freeze, protected review chain, or independent R-00 through R-03 confirmatory rerun exists"
+    },
+    "F": {
+      "value": false,
+      "name": "release evidence completeness",
+      "release_evidence_complete": false,
+      "present_truth": "the north-star implementation has no active-floor bindings, fixed final reviewed release tree, accepted merge CAS, terminal-success required PR evidence, complete one-response repository Actions closure with source-bound raw bytes and GitHub-server-time closure, synchronized tracked writeback, 32-field closed-world evidence bundle, or valid detached acyclic 43-field release-evidence-package hash with 25 shared bindings"
+    }
+  },
+  "final_goal_decision": {
+    "valid_external_human_go": false,
+    "present_truth": "no externally trusted final decision signature-message/record/set with decision=GO exists; final decision objects do not change gate F",
+    "completion_formula": "A AND B AND C AND D AND E AND F AND valid_external_human_go"
+  },
+  "outputs": {
+    "expert_metrics": {
+      "status": "unavailable",
+      "reason": "no ratified rubric/rater policy and no authorized human-signed expert_worth_reviewing and expert_production_usable labels bound to planned ITT slots"
+    },
+      "manufacturing_metrics": {
+        "status": "unavailable",
+        "reason": "no ratified tor_semantics, tor_units, tor_table_hash_selection, tor_monte_carlo_denominator, tor_compensator_policy, tor_aggregation_rule, tor_saturation_mapping, tor_compensation_failure_mapping, or threshold; current exploratory TOR evidence includes saturation"
+    },
+    "north_star_go": {
+      "status": "unavailable",
+      "reason": "all A-F gates are false and human authority fields are unset"
+    }
+  },
+  "evidence_index": [
+    {
+      "id": "loop2-p18-orchestration",
+      "classification": "exploratory_reusable_component",
+      "observed_fact": "P18 records 29 succeeded / 21 degraded / 0 failed orchestration terminal states; 29/21 is not an expert rate and not manufacturing yield",
+      "raw_source": {
+        "status": "linked",
+        "path": ".planning/loop/phase18-night-20260711-morning-audit.md",
+        "source_kind": "tracked_audit_record",
+        "gate_proof": false
+      }
+    },
+    {
+      "id": "loop2-stageb-input-closure",
+      "classification": "exploratory_reusable_component",
+      "observed_fact": "Stage B records 8/8 unique accepted inputs, including related patent-family samples and retrospective adoption; 8/8 is not an expert rate and not manufacturing yield",
+      "raw_source": {
+        "status": "linked",
+        "path": ".planning/quick/260712-stagec-real-evidence/260712-stagec-real-evidence-PLAN.md",
+        "recorded_artifact_sha256": "29384d5d9a10356c8b9bd908c48ab6970977fcafe77ac59a100aaf268350d969",
+        "source_kind": "tracked_execution_record",
+        "underlying_runtime_artifact_reopened_by_this_task": true,
+        "gate_proof": false
+      }
+    },
+    {
+      "id": "loop2-stagec-matrix",
+      "classification": "exploratory_reusable_component",
+      "observed_fact": "Stage C records 2 delivered / 46 blocked and 6/48 metric-usable runs; 2/46 and 6/48 are not expert rates and not manufacturing yield",
+      "raw_source": {
+        "status": "linked",
+        "path": ".planning/quick/260712-stagec-real-evidence/260712-stagec-real-evidence-PLAN.md",
+        "recorded_report_sha256": "36759d97bdd6860a47df39ad494e84774dc1ed7d7200e71b872e6b028c22baf8",
+        "source_kind": "tracked_execution_record",
+        "underlying_runtime_artifact_reopened_by_this_task": true,
+        "gate_proof": false
+      }
+    },
+    {
+      "id": "loop2-single-exact-target",
+      "classification": "exploratory_reusable_component",
+      "observed_fact": "one exact target, US9304295B2, has a recorded same-source Stage B to Stage C to exports-v2 chain; the single exact target is not general production capability, an expert rate, or manufacturing yield",
+      "raw_source": {
+        "status": "linked",
+        "path": ".planning/loop/prod-loop2-final-handoff-2026-07-13.md",
+        "source_kind": "tracked_handoff_record",
+        "underlying_runtime_artifact_reopened_by_this_task": true,
+        "gate_proof": false
+      }
+    },
+    {
+      "id": "loop2-pre-sentinel-statistics",
+      "classification": "incident_evidence",
+      "observed_fact": "pre-fix Stage C statistics mixed sentinel values and are permanently non-publishable incident evidence",
+      "raw_source": {
+        "status": "linked",
+        "path": ".planning/loop/prod-loop2-final-handoff-2026-07-13.md",
+        "source_kind": "tracked_incident_record",
+        "underlying_runtime_artifact_reopened_by_this_task": false,
+        "gate_proof": false
+      }
+    },
+    {
+      "id": "codev-user-scoped-lock",
+      "classification": "incident_evidence",
+      "observed_fact": "the current default CODE V execution lock is under the current user's home directory and run_codev_process_bytes accepts a caller-provided lock_root; this is not a machine-wide seat lease",
+      "raw_source": {
+        "status": "linked",
+        "path": "app/core/engines/codev_batch.py",
+        "source_symbols": [
+          "_DEFAULT_CODEV_LOCK_ROOT",
+          "run_codev_process_bytes",
+          "_popen_codev"
+        ],
+        "source_kind": "tracked_source_code",
+        "gate_proof": false
+      }
+    },
+    {
+      "id": "codev-direct-popen-bypass",
+      "classification": "incident_evidence",
+      "observed_fact": "a retained P13 smoke script directly invokes subprocess.Popen outside a unique canonical launcher",
+      "raw_source": {
+        "status": "linked",
+        "path": ".planning/loop/p13-smoke-2026-07-11/freeze_smoke.py",
+        "source_line": 70,
+        "source_kind": "tracked_source_code",
+        "gate_proof": false
+      }
+    },
+    {
+      "id": "codev-post-share-deny-no-real-rerun",
+      "classification": "incident_evidence",
+      "observed_fact": "the executable share-deny hardening protects executable TOCTOU only; the tracked Stage C record states that no real CODE V run followed that patch",
+      "raw_source": {
+        "status": "linked",
+        "path": ".planning/quick/260712-stagec-real-evidence/260712-stagec-real-evidence-PLAN.md",
+        "source_kind": "tracked_execution_record",
+        "gate_proof": false
+      }
+    }
+  ]
+}
