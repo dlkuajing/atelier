@@ -53,7 +53,15 @@ _SECOND_RELATIVE_PATH = "scripts/p16_stagec_stageb_inputs_supplement2.py"
 def _source_descriptor(path: Path) -> dict[str, object]:
     resolved = path.resolve(strict=True)
     raw = resolved.read_bytes()
-    return {"sha256": hashlib.sha256(raw).hexdigest(), "size": len(raw)}
+    without_crlf = raw.replace(b"\r\n", b"")
+    if b"\r" in without_crlf:
+        raise RuntimeError("reviewed source contains a bare CR line ending")
+    line_feed_count = raw.count(b"\n")
+    crlf_count = raw.count(b"\r\n")
+    if crlf_count not in (0, line_feed_count):
+        raise RuntimeError("reviewed source contains mixed LF and CRLF line endings")
+    canonical = raw.replace(b"\r\n", b"\n") if crlf_count else raw
+    return {"sha256": hashlib.sha256(canonical).hexdigest(), "size": len(canonical)}
 
 
 def _assert_trusted_predecessors() -> None:
