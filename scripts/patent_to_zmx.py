@@ -191,6 +191,17 @@ class RecoveredPatentHtml:
     recovered_text_table_count: int
 
 
+@dataclass(frozen=True)
+class RecoveredPriorPublicationPdf:
+    """Official A-publication PDF linked from one same-application grant."""
+
+    primary_publication_id: str
+    source_publication_id: str
+    application_number: str
+    source_fetched: FetchedPatentHtml
+    recovered: PatentPdfOcrRecovery
+
+
 @dataclass
 class PatentSurface:
     index: int
@@ -3671,6 +3682,46 @@ def _ability_eight_lens_terminal_attempt(
     )
 
 
+def _validate_ability_pdf_source_linkage(payload: dict[str, Any]) -> None:
+    """Validate the optional grant-to-prior-publication parser binding."""
+
+    source_publication_id = payload.get("source_publication_id")
+    if source_publication_id is None:
+        return
+    if (
+        not isinstance(source_publication_id, str)
+        or re.fullmatch(r"US-\d+-A\d+", source_publication_id) is None
+        or source_publication_id == payload.get("publication_id")
+    ):
+        raise PatentParseError("Ability PDF OCR source publication id is invalid")
+    linkage = payload.get("source_linkage")
+    if not isinstance(linkage, dict) or linkage.get("kind") != (
+        "uspto_prior_publication_data_same_application_v1"
+    ):
+        raise PatentParseError("Ability PDF OCR source linkage is missing")
+    if linkage.get("grant_prior_publication_binding") is not True:
+        raise PatentParseError("Ability PDF OCR grant prior-publication binding is absent")
+    if linkage.get("exact_application_number_match") is not True:
+        raise PatentParseError("Ability PDF OCR application-number linkage is absent")
+    application_number = linkage.get("application_number")
+    if not isinstance(application_number, str) or re.fullmatch(
+        r"\d{2}/\d{6}", application_number
+    ) is None:
+        raise PatentParseError("Ability PDF OCR linkage application number is invalid")
+    primary_digest = linkage.get("primary_html_sha256")
+    source_digest = linkage.get("source_html_sha256")
+    if any(
+        not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+        for digest in (primary_digest, source_digest)
+    ):
+        raise PatentParseError("Ability PDF OCR linkage HTML hash is invalid")
+    source_facts = payload.get("source_facts")
+    if not isinstance(source_facts, dict) or source_facts.get(
+        "primary_html_sha256"
+    ) != source_digest:
+        raise PatentParseError("Ability PDF OCR source facts do not match linked HTML")
+
+
 def _parse_ability_pdf_ocr_attempts(
     raw_text: str,
     *,
@@ -3688,6 +3739,7 @@ def _parse_ability_pdf_ocr_attempts(
         raise PatentParseError("unsupported Ability PDF OCR parser schema")
     if payload.get("publication_id") != patent_id:
         raise PatentParseError("Ability PDF OCR publication id does not match the candidate")
+    _validate_ability_pdf_source_linkage(payload)
     profile = payload.get("profile")
     if profile == _ABILITY_EIGHT_LENS_PROFILE:
         return [_ability_eight_lens_terminal_attempt(payload)]
@@ -8207,6 +8259,8 @@ async def _convert_candidate(
     parser_source_document: SourceDocumentEvidence | None = None
     recovered_parser_input: RecoveredPatentHtml | None = None
     recovered_pdf_input: PatentPdfOcrRecovery | None = None
+    recovered_prior_pdf_input: RecoveredPriorPublicationPdf | None = None
+    prior_pdf_html_document: SourceDocumentEvidence | None = None
     official_pdf_document: SourceDocumentEvidence | None = None
     mirror_pdf_document: SourceDocumentEvidence | None = None
     pdf_source_pin: SourceDocumentEvidence | None = None
@@ -8275,20 +8329,43 @@ async def _convert_candidate(
                         primary_html=fetched.html,
                         cached_sources=cached_pdf_sources,
                     )
+                    if recovered_pdf_input is None:
+                        recovered_prior_pdf_input = (
+                            await _recover_prior_publication_ability_pdf_ocr(
+                                client,
+                                token,
+                                primary_publication_id=candidate.patent_id,
+                                primary_fetched=fetched,
+                                cached_sources=cached_pdf_sources,
+                            )
+                        )
+                        if recovered_prior_pdf_input is not None:
+                            recovered_pdf_input = recovered_prior_pdf_input.recovered
                 except PatentPdfRecoveryError as exc:
                     raise PatentParseError(f"official PDF recovery rejected: {exc}") from exc
                 if recovered_pdf_input is None:
                     raise primary_parse_error
+                pdf_source_publication_id = (
+                    recovered_prior_pdf_input.source_publication_id
+                    if recovered_prior_pdf_input is not None
+                    else candidate.patent_id
+                )
+                if recovered_prior_pdf_input is not None:
+                    prior_pdf_html_document = _retain_fetched_patent_html(
+                        raw_document_dir,
+                        patent_id=recovered_prior_pdf_input.source_publication_id,
+                        fetched=recovered_prior_pdf_input.source_fetched,
+                    )
                 official_pdf_document = _retain_source_bytes(
                     raw_document_dir,
-                    publication_id=candidate.patent_id,
+                    publication_id=pdf_source_publication_id,
                     source_bucket="USPTO-PDF",
                     suffix="pdf",
                     content=recovered_pdf_input.official_pdf,
                 )
                 mirror_pdf_document = _retain_source_bytes(
                     raw_document_dir,
-                    publication_id=candidate.patent_id,
+                    publication_id=pdf_source_publication_id,
                     source_bucket="GOOGLE-OCR-PDF",
                     suffix="pdf",
                     content=recovered_pdf_input.mirror_pdf,
@@ -8316,6 +8393,8 @@ async def _convert_candidate(
                     mirror_pdf_source=mirror_pdf_document,
                     parser_source=parser_source_document,
                     source_pin=pdf_source_pin,
+                    prior_publication_recovery=recovered_prior_pdf_input,
+                    prior_publication_source=prior_pdf_html_document,
                 )
                 parse_attempts = _parse_prescription_attempts(
                     recovered_pdf_input.parser_input.decode("utf-8"),
@@ -8677,6 +8756,119 @@ def _grant_binds_prior_publication(raw_html: str, publication_id: str) -> bool:
         rf"{re.escape(match.group('kind'))}\b"
     )
     return re.search(pattern, section.group("body"), flags=re.IGNORECASE) is not None
+
+
+def _grant_prior_publication_ids(raw_html: str) -> tuple[str, ...]:
+    """Extract only official US A-publications from Prior Publication Data."""
+
+    text = normalize_patent_text(raw_html)
+    section = re.search(
+        r"\bPrior\s+Publication\s+Data\b(?P<body>.*?)"
+        r"\b(?:Foreign\s+Application\s+Priority\s+Data|Related\s+U\.S\.\s+Application\s+Data|"
+        r"Publication\s+Classification)\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if section is None:
+        return ()
+    publications = {
+        f"US-{match.group('number')}-{match.group('kind').upper()}"
+        for match in re.finditer(
+            r"\bUS\s+(?P<number>\d{11})\s+(?P<kind>A\d+)\b",
+            section.group("body"),
+            flags=re.IGNORECASE,
+        )
+    }
+    return tuple(sorted(publications))
+
+
+async def _recover_prior_publication_ability_pdf_ocr(
+    client: httpx.AsyncClient,
+    token: str,
+    *,
+    primary_publication_id: str,
+    primary_fetched: FetchedPatentHtml,
+    cached_sources: PatentPdfCachedSources | None,
+) -> RecoveredPriorPublicationPdf | None:
+    """Recover an Ability PDF only through an exact grant/A-publication binding."""
+
+    if _source_for_patent_id(primary_publication_id) != "USPAT":
+        return None
+    application_number = _ppubs_application_number(primary_fetched.html)
+    if application_number is None:
+        return None
+    prior_publications = _grant_prior_publication_ids(primary_fetched.html)
+    if not prior_publications:
+        return None
+    if len(prior_publications) != 1:
+        raise PatentParseError(
+            "grant Prior Publication Data is ambiguous: " + ", ".join(prior_publications)
+        )
+    source_publication_id = prior_publications[0]
+    if not _grant_binds_prior_publication(primary_fetched.html, source_publication_id):
+        raise PatentParseError("grant does not bind the selected prior publication")
+    source_html = await _ppubs_patent_html(
+        client,
+        token,
+        source_publication_id,
+        "US-PGPUB",
+    )
+    if _ppubs_application_number(source_html) != application_number:
+        raise PatentParseError("prior publication application number does not match grant")
+    recovered = await recover_ability_official_pdf_ocr(
+        client,
+        token,
+        publication_id=source_publication_id,
+        primary_html=source_html,
+        cached_sources=cached_sources,
+    )
+    if recovered is None:
+        return None
+    try:
+        parser_payload = json.loads(recovered.parser_input)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise PatentParseError("prior-publication PDF parser input is invalid") from exc
+    if (
+        not isinstance(parser_payload, dict)
+        or parser_payload.get("publication_id") != source_publication_id
+    ):
+        raise PatentParseError("prior-publication PDF parser input is not source-bound")
+    primary_digest = sha256_bytes(primary_fetched.html.encode("utf-8"))
+    source_digest = sha256_bytes(source_html.encode("utf-8"))
+    parser_payload["publication_id"] = primary_publication_id
+    parser_payload["source_publication_id"] = source_publication_id
+    parser_payload["source_linkage"] = {
+        "application_number": application_number,
+        "exact_application_number_match": True,
+        "grant_prior_publication_binding": True,
+        "kind": "uspto_prior_publication_data_same_application_v1",
+        "primary_html_sha256": primary_digest,
+        "source_html_sha256": source_digest,
+    }
+    parser_input = (
+        json.dumps(
+            parser_payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n"
+    ).encode("utf-8")
+    linked_recovery = replace(
+        recovered,
+        publication_id=primary_publication_id,
+        parser_input=parser_input,
+    )
+    return RecoveredPriorPublicationPdf(
+        primary_publication_id=primary_publication_id,
+        source_publication_id=source_publication_id,
+        application_number=application_number,
+        source_fetched=FetchedPatentHtml(
+            html=source_html,
+            source_bucket="US-PGPUB",
+        ),
+        recovered=linked_recovery,
+    )
 
 
 async def _recover_same_application_grant_html(
@@ -9075,8 +9267,13 @@ def _retain_pdf_ocr_recovery_manifest(
     mirror_pdf_source: SourceDocumentEvidence,
     parser_source: SourceDocumentEvidence,
     source_pin: SourceDocumentEvidence,
+    prior_publication_recovery: RecoveredPriorPublicationPdf | None = None,
+    prior_publication_source: SourceDocumentEvidence | None = None,
 ) -> SourceDocumentEvidence:
     """Retain official-PDF/OCR-overlay linkage and deterministic tool versions."""
+
+    if (prior_publication_recovery is None) != (prior_publication_source is None):
+        raise PatentParseError("prior-publication PDF manifest linkage is incomplete")
 
     payload = {
         "schema_version": 1,
@@ -9126,6 +9323,32 @@ def _retain_pdf_ocr_recovery_manifest(
             "parser_input_is_canonical_json": True,
         },
     }
+    if prior_publication_recovery is not None and prior_publication_source is not None:
+        try:
+            parser_payload = json.loads(recovered.parser_input)
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise PatentParseError("linked PDF parser input is invalid") from exc
+        linkage = parser_payload.get("source_linkage") if isinstance(parser_payload, dict) else None
+        linkage_matches = (
+            isinstance(linkage, dict)
+            and linkage.get("application_number")
+            == prior_publication_recovery.application_number
+            and linkage.get("primary_html_sha256") == primary_source.sha256
+            and linkage.get("source_html_sha256") == prior_publication_source.sha256
+            and parser_payload.get("source_publication_id")
+            == prior_publication_recovery.source_publication_id
+        )
+        payload["pdf_source_publication"] = {
+            "application_number": prior_publication_recovery.application_number,
+            "official_html": {
+                "path": prior_publication_source.retained_path,
+                "sha256": prior_publication_source.sha256,
+                "source_bucket": prior_publication_source.source_bucket,
+            },
+            "publication_id": prior_publication_recovery.source_publication_id,
+            "relationship": "grant_prior_publication_data_same_application",
+        }
+        payload["checks"]["prior_publication_linkage_matches_parser_input"] = linkage_matches
     if not all(payload["checks"].values()):
         raise PatentParseError("PDF OCR recovery manifest contains a failed linkage check")
     content = (

@@ -1658,6 +1658,33 @@ def test_same_application_grant_recovery_requires_exact_official_linkage(
     assert recovered.recovered_text_table_count == 5
 
 
+def test_ability_grant_prior_publication_binding_is_exact() -> None:
+    root = Path(__file__).resolve().parents[1]
+    grant = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "b54234c78c881767"
+        / "US-11768354-B2.html"
+    ).read_text(encoding="utf-8")
+    publication = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "8321e4c6f37bd824"
+        / "US-20200201001-A1.html"
+    ).read_text(encoding="utf-8")
+
+    assert patent_to_zmx._grant_prior_publication_ids(grant) == ("US-20200201001-A1",)
+    assert patent_to_zmx._grant_binds_prior_publication(grant, "US-20200201001-A1")
+    assert patent_to_zmx._ppubs_application_number(grant) == "16/683826"
+    assert patent_to_zmx._ppubs_application_number(publication) == "16/683826"
+
+
 def test_convert_candidate_retains_primary_recovered_input_and_manifest(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -2392,6 +2419,26 @@ def test_ability_two_five_lens_profile_rejects_source_binding_drift() -> None:
         )
 
 
+def test_ability_two_five_lens_profile_rejects_unproven_prior_publication() -> None:
+    payload = json.loads(_ability_two_five_lens_pdf_ocr_parser_input())
+    payload["publication_id"] = "US-11768354-B2"
+    payload["source_publication_id"] = "US-20200201001-A1"
+    payload["source_linkage"] = {
+        "application_number": "16/683826",
+        "exact_application_number_match": True,
+        "grant_prior_publication_binding": False,
+        "kind": "uspto_prior_publication_data_same_application_v1",
+        "primary_html_sha256": "b" * 64,
+        "source_html_sha256": "8" * 64,
+    }
+
+    with pytest.raises(PatentParseError, match="prior-publication binding is absent"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-11768354-B2",
+        )
+
+
 def test_ability_pdf_ocr_parser_recovers_only_independently_classified_ol2() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_pdf_ocr_parser_input().decode(),
@@ -2709,6 +2756,123 @@ def test_convert_candidate_retains_two_five_lens_pdf_failures_without_worker(
     assert all(attempt.status == "failed" for attempt in attempts)
     assert all(attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON" for attempt in attempts)
     assert len({attempt.fulltext_recovery_manifest_sha256 for attempt in attempts}) == 1
+    assert not (tmp_path / "staging").exists()
+
+
+def test_convert_candidate_recovers_linked_prior_publication_pdf(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    grant = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "b54234c78c881767"
+        / "US-11768354-B2.html"
+    ).read_text(encoding="utf-8")
+    publication = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "8321e4c6f37bd824"
+        / "US-20200201001-A1.html"
+    ).read_text(encoding="utf-8")
+    source_parser_payload = json.loads(_ability_two_five_lens_pdf_ocr_parser_input())
+    source_parser_payload["source_facts"]["primary_html_sha256"] = hashlib.sha256(
+        publication.encode("utf-8")
+    ).hexdigest()
+    source_parser_input = (
+        json.dumps(source_parser_payload, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode()
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-11768354-B2",
+        source_bucket="USPAT",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html=grant,
+            source_bucket="USPAT",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_prior_fetch(
+        _client: object,
+        _token: str,
+        publication_id: str,
+        source_bucket: str,
+    ) -> str:
+        assert (publication_id, source_bucket) == ("US-20200201001-A1", "US-PGPUB")
+        return publication
+
+    async def fake_pdf_recovery(
+        *_args: object,
+        publication_id: str,
+        **_kwargs: object,
+    ) -> object:
+        if publication_id == "US-11768354-B2":
+            return None
+        assert publication_id == "US-20200201001-A1"
+        return patent_to_zmx.PatentPdfOcrRecovery(
+            publication_id=publication_id,
+            official_pdf=b"%PDF-official-prior-publication",
+            official_pdf_url=(
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20200201001"
+            ),
+            mirror_pdf=b"%PDF-mirror-prior-publication",
+            mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US20200201001.pdf",
+            parser_input=source_parser_input,
+            page_count=12,
+            page_image_sha256=tuple(str(index) * 64 for index in range(1, 4)),
+            key_page_numbers=(4, 5, 6),
+            pypdf_version="fixture",
+            rapidocr_version="fixture",
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("rejected linked PDF OCR cells must not launch a trace worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(patent_to_zmx, "_ppubs_patent_html", fake_prior_fetch)
+    monkeypatch.setattr(patent_to_zmx, "recover_ability_official_pdf_ocr", fake_pdf_recovery)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-11768354-B2",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+        )
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert all(attempt.status == "failed" for attempt in attempts)
+    assert len({attempt.fulltext_recovery_manifest_sha256 for attempt in attempts}) == 1
+    manifest = json.loads(
+        Path(attempts[0].fulltext_recovery_manifest_path).read_text(encoding="utf-8")
+    )
+    assert manifest["pdf_source_publication"]["publication_id"] == "US-20200201001-A1"
+    assert manifest["pdf_source_publication"]["application_number"] == "16/683826"
+    assert manifest["checks"]["prior_publication_linkage_matches_parser_input"] is True
+    linked_parser = json.loads(Path(attempts[0].parser_input_document_path).read_text())
+    assert linked_parser["publication_id"] == "US-11768354-B2"
+    assert linked_parser["source_publication_id"] == "US-20200201001-A1"
+    assert linked_parser["source_linkage"]["grant_prior_publication_binding"] is True
     assert not (tmp_path / "staging").exists()
 
 

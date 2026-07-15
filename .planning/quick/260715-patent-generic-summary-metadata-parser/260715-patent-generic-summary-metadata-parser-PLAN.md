@@ -470,6 +470,25 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `95d070bf7b5149c475b9927b1ae5e1bc5490ae884cd65c53bcc8cbea39382769`.
   Strict audit remains 619/619 with zero corrupt evidence; 124 focused parser/replay tests, Ruff,
   and `git diff --check` pass with CODE V inventory zero.
+- The corresponding grant `US-11768354-B2` is not treated as an independent optical source. Its
+  official PPUBS HTML SHA-256
+  `b54234c78c881767f36db6f1c4eae08d64f41e5dace70bc3f74fc4bd9f664901` contains a unique
+  Prior Publication Data entry for `US-20200201001-A1`; both official documents publish exact
+  application number `16/683826`. The new inverse same-application path fetches that A-publication,
+  reuses its pixel-verified PDF/OCR evidence, and writes a parser payload whose candidate identity
+  remains B2 while its source-publication identity remains A1. The recovery manifest binds both
+  official HTML hashes and refuses missing/ambiguous prior-publication or application-number links.
+- Real B2 attempts 2/3 retain the same two source-bound OCR failures as the A-publication and create
+  no worker, request, or ZMX. Their canonical result SHA-256 after removing only `result_attempt` is
+  `6a205da6f64f476a07dba5c1c2fdf8c52b607aebe3c4bc77b7896467fa94a646`; linked parser SHA-256
+  is `0ef3e2001fbb26398661c6c4890d75b9ece7626244c4646caf884d5f80fe0f3b`; recovery-manifest
+  SHA-256 is `119a8ba8c86d49fa321e2359d51ff53a62ddf794851e5e7f057044954653a83d`.
+  Generic summary changed 257 to 256. Current result-set SHA-256 is
+  `bde5ef2636d8499475a02a0168440de0556963d114427d9c95c0df7c9c80a84a`; summary artifact
+  SHA-256 is `8147f4836c85f5d3379e7623cd82ef85b8d0782f8179ef5bb5d43a55c2fae86a`;
+  after-census SHA-256 is `c4e665e12e5db7bcb43b51a6840c0a7fec4a41932cf4e74ce13b5012df479a15`.
+  Strict audit is 619/619 with zero corrupt evidence; 127 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
