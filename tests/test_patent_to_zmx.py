@@ -69,6 +69,19 @@ SECOND_PRESCRIPTION_TEXT = PRESCRIPTION_TEXT.replace(
 
 MULTI_EMBODIMENT_TEXT = PRESCRIPTION_TEXT + "\n" + SECOND_PRESCRIPTION_TEXT
 
+PREFERRED_EMBODIMENT_TEXT = PRESCRIPTION_TEXT.replace(
+    "1st Embodiment",
+    "Optical data of this preferred embodiment",
+)
+OUTER_SIDE_OBJECT_TEXT = PRESCRIPTION_TEXT.replace(
+    "0 Object Infinity Infinity",
+    "0 Outer-Side Plano Infinity Conjugate Surface",
+)
+M_SIDE_OBJECT_TEXT = PRESCRIPTION_TEXT.replace(
+    "0 Object Infinity Infinity",
+    "0 m-side surface Plano Infinity",
+)
+
 XASPHERE_TEXT = PRESCRIPTION_TEXT.replace(
     "A16= 1.0E-10 --",
     "A16= 1.0E-10 -- A18= 2.5E-12 -3.5E-12 "
@@ -331,6 +344,40 @@ def test_parse_patent_prescriptions_extracts_all_embodiments() -> None:
     assert prescriptions[1].hfov_deg == pytest.approx(21.0)
     assert prescriptions[0].surfaces[2].asphere_coefficients["A"] == pytest.approx(-5.6789e-5)
     assert prescriptions[1].surfaces[2].asphere_coefficients["A"] == pytest.approx(-6.6789e-5)
+
+
+@pytest.mark.parametrize(
+    "raw_text",
+    (PREFERRED_EMBODIMENT_TEXT, OUTER_SIDE_OBJECT_TEXT, M_SIDE_OBJECT_TEXT),
+)
+def test_parse_primary_tables_accepts_published_label_and_object_row_variants(
+    raw_text: str,
+) -> None:
+    prescription = parse_patent_prescription(raw_text, patent_id="US-PRIMARY-VARIANT-A1")
+
+    assert prescription.focal_length_mm == pytest.approx(12.99)
+    assert prescription.f_number == pytest.approx(1.71)
+    assert prescription.hfov_deg == pytest.approx(20.0)
+    assert len(prescription.surfaces) == 5
+
+
+@pytest.mark.parametrize(
+    ("published_label", "expected_label"),
+    (
+        ("IR-filter", "IR-filter"),
+        ("RCS", "Image"),
+        ("Inner-Side", "Image"),
+    ),
+)
+def test_parse_primary_tables_accepts_published_filter_and_conjugate_labels(
+    published_label: str,
+    expected_label: str,
+) -> None:
+    raw_text = PRESCRIPTION_TEXT.replace("5 Image Plano --", f"5 {published_label} Plano --")
+
+    prescription = parse_patent_prescription(raw_text, patent_id="US-PRIMARY-END-A1")
+
+    assert prescription.surfaces[-1].label == expected_label
 
 
 def test_parse_patent_prescriptions_skips_narrative_embodiment_references() -> None:

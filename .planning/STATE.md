@@ -190,13 +190,14 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
 | `260715-patent-local-pool-replay` | complete-local-replay-saturation-incomplete | Cohort SHA `e809823c...b42b`; 619/619 strict results, missing=0, corrupt=0; result-set SHA `3bc0bbee...76df`. Final items: parser review 1388, receipt terminal 631, staging pending intake 359, patent-budget retry 16. All current roots retain official PPUBS HTML. No-op replay processed 0 and preserved summary SHA `65122027...d130`. Parent saturation remains incomplete. |
 | `260715-patent-sunny-metadata-parser` | complete-shovel-saturation-incomplete | Before 299 items/64 roots; after 199/53, resolving 100 without missing-field regression. Result-set SHA `2e0a9ceb...d506`; 619/619 strict results, missing=0, corrupt=0; 95 tests+Ruff green, CODE V inventory zero. Next largest parser bucket is generic summary metadata=294. |
+| `260715-patent-generic-summary-metadata-parser` | active-first-layout | Strict before census 294 items/294 roots, 179 normalized layouts, artifact SHA `fa145da6...82c4`, bound to result set `2e0a9ceb...d506`. First exact family: 8 roots/58 embodiments, dry-run 52 parsed + 6 physical/OCR rejects; append-only replay pending. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260715-patent-sunny-metadata-parser/260715-patent-sunny-metadata-parser-PLAN.md`,
+`.planning/quick/260715-patent-generic-summary-metadata-parser/260715-patent-generic-summary-metadata-parser-PLAN.md`,
 then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.py`; never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current

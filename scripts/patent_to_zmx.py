@@ -2960,6 +2960,12 @@ def _trace_audit_from_worker(result: TraceAuditResult) -> TraceApertureAudit:
     )
 
 
+_PRIMARY_SURFACE_ZERO_RE = re.compile(
+    r"\b0\s+(?:Object\b|Outer-Side\b|m-side\b)",
+    flags=re.IGNORECASE,
+)
+
+
 def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
     label_pattern = re.compile(
         r"(?P<embodiment>"
@@ -2967,7 +2973,8 @@ def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
         r"Embodiment\s+\d+|"
         r"(?:First|Second|Third|Fourth|Fifth|Sixth|Seventh|Eighth|Ninth|Tenth)\s+"
         r"Embodiment|"
-        r"(?:Working\s+)?Example(?:\s+No\.?)?\s+\d+"
+        r"(?:Working\s+)?Example(?:\s+No\.?)?\s+\d+|"
+        r"Optical\s+data\s+of\s+this\s+preferred\s+embodiment"
         r")",
         flags=re.IGNORECASE,
     )
@@ -2978,7 +2985,7 @@ def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
             label_matches[index + 1].start() if index + 1 < len(label_matches) else len(text)
         )
         window = text[match.start() : min(next_start, match.start() + 900)]
-        surface_start = re.search(r"\b0\s+Object\b", window, flags=re.IGNORECASE)
+        surface_start = _PRIMARY_SURFACE_ZERO_RE.search(window)
         if surface_start is None:
             continue
         meta_window = window[: surface_start.start()]
@@ -3036,9 +3043,9 @@ def _extract_meta_number(
 
 def _surface_table_text(text: str, start: int, coeff_start: int) -> str:
     table_region = text[start:coeff_start]
-    start_match = re.search(r"\b0\s+Object\b", table_region, flags=re.IGNORECASE)
+    start_match = _PRIMARY_SURFACE_ZERO_RE.search(table_region)
     if start_match is None:
-        raise PatentParseError("surface table did not start with surface 0 Object")
+        raise PatentParseError("surface table did not contain a supported surface 0 row")
     table_region = table_region[start_match.start() :]
     cutoff_matches = [
         match.start()
@@ -3275,6 +3282,19 @@ def _consume_surface_label(tokens: list[str], pos: int) -> tuple[str, int]:
         raise PatentParseError("unexpected end of surface row")
     token = tokens[pos]
     upper = token.upper()
+    if upper == "OUTER-SIDE":
+        return "Object", pos + 1
+    if upper == "M-SIDE":
+        next_pos = pos + 1
+        if next_pos < len(tokens) and tokens[next_pos].upper() == "SURFACE":
+            next_pos += 1
+        return "Object", next_pos
+    if upper == "INNER-SIDE":
+        return "Image", pos + 1
+    if upper == "RCS":
+        return "Image", pos + 1
+    if upper == "IR-FILTER":
+        return "IR-filter", pos + 1
     if upper == "LENS" and pos + 1 < len(tokens):
         return f"Lens {tokens[pos + 1]}", pos + 2
     if upper in {"APE.", "APE"} and pos + 1 < len(tokens) and tokens[pos + 1].upper() == "STOP":
