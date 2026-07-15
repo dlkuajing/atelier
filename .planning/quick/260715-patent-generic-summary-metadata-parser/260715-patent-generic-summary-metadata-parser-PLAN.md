@@ -860,6 +860,30 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `0322af075da2fca25629adf9e2e0c18ca1ed50bc48b1bde485e7c8d6498a0af9`.
   Strict audit remains 619/619 with zero corrupt evidence; 192 focused
   parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
+- The largest remaining zero-table signature is title-heterogeneous. Only
+  `US-12547862-B1` and `US-20260170283-A1` were selected: both official records explicitly publish
+  Zebra Family ID `98700212` and the same barcode-reader title. Their retained official HTML
+  SHA-256 values are `ca8f47b8f7a692bf589e79092c5175538fe17df799d0f4e31192109402a9e0d2`
+  and `d44912d391e3fcc3f117e903eeacbbf71355b1b1a1653a37c3ad6952954f284b`; normalized-text
+  SHA-256 values are `59517f74eaf91b27eea059da2aad8b43780e06d7c9be50de917a12c527ec1538`
+  and `6c83c9a608eb6784ad7a5f749e7d190ac86acbd8aa586d1ec1ef8258dd380cf4`.
+- Each exact text has zero PPUBS table blocks and the same measured architecture counts: Family ID
+  once, `barcode` 245 times, non-internet-connected barcode twice, imaging-lens assembly twice,
+  image sensor three times, field of view twice, return light five times, illumination assembly
+  once, and aiming light three times. Word-bounded curvature/asphere/Abbe/Surface/Fno/F-number/
+  EFL/effective-focal-length/optical-data/TABLE-US prescription markers are all absent. Source hash,
+  count, table, or marker drift fails closed.
+- Both roots are independently terminal
+  `confirmed_no_prescription.barcode_scanner_architecture_only`; no worker or ZMX is created.
+  Attempts 2/3 have canonical semantic SHA-256 values
+  `66ff406d3ee1dd7ed38016e2387d8371f51bf8e28af44da7b453942ef7b642ca` and
+  `0266a3c2d5def17efd58170b49cc674019a9cc6d639eae33cddd4b3ad0103386` respectively per root.
+- Generic summary changed 231 to 229. Current result-set SHA-256 is
+  `cc7c29c752c13a3c739f6809e586f4ac951e865d3c41c3e013260cbc341ab0fd`; summary artifact
+  SHA-256 is `a77a2c20de27d9ec7bbbe6b7799b161e0c2c787c836c7ec49e9012d412761b8e`;
+  after-census SHA-256 is `20ce2d2847e3c519a231ca20db57df6d6bbb878faf3d4e7db9de87afd30dd3e8`.
+  Strict audit remains 619/619 with zero corrupt evidence; 195 focused
+  parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

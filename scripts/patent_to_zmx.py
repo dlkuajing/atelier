@@ -446,6 +446,12 @@ def _parse_prescription_attempts(
         )
         if attempts:
             return attempts
+        attempts = _classify_barcode_scanner_architecture_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _classify_ir_filter_coating_only_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1617,6 +1623,45 @@ _NON_OPTICAL_ZONE_STRAY_LIGHT_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = 
             "stray light": 16,
             "three-piece optical lens assembly": 1,
             "curvature radius": 11,
+        },
+    },
+}
+_BARCODE_SCANNER_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
+    r"\bSYSTEMS\s+AND\s+METHODS\s+TO\s+IDENTIFY\s+BARCODES\s+OF\s+INTEREST\s+"
+    r"USING\s+A\s+NON-INTERNET\s+CONNECTED\s+BARCODE\s+SCANNER\b",
+    flags=re.IGNORECASE,
+)
+_BARCODE_SCANNER_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12547862-B1": {
+        "normalized_text_sha256": (
+            "59517f74eaf91b27eea059da2aad8b43780e06d7c9be50de917a12c527ec1538"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 98700212": 1,
+            "barcode": 245,
+            "non-internet-connected barcode": 2,
+            "imaging lens assembly": 2,
+            "image sensor": 3,
+            "field of view": 2,
+            "return light": 5,
+            "illumination assembly": 1,
+            "aiming light": 3,
+        },
+    },
+    "US-20260170283-A1": {
+        "normalized_text_sha256": (
+            "6c83c9a608eb6784ad7a5f749e7d190ac86acbd8aa586d1ec1ef8258dd380cf4"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 98700212": 1,
+            "barcode": 245,
+            "non-internet-connected barcode": 2,
+            "imaging lens assembly": 2,
+            "image sensor": 3,
+            "field of view": 2,
+            "return light": 5,
+            "illumination assembly": 1,
+            "aiming light": 3,
         },
     },
 }
@@ -8558,6 +8603,74 @@ def _classify_non_optical_zone_stray_light_only_attempts(
                     "the exact retained official PPUBS disclosure publishes non-optical-zone "
                     "connection geometry for suppressing stray light but no optical surface "
                     "prescription or prescription table"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_barcode_scanner_architecture_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify one exact Zebra barcode-reader architecture family."""
+
+    if _BARCODE_SCANNER_ARCHITECTURE_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _BARCODE_SCANNER_ARCHITECTURE_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment = "non-internet-connected barcode-reader architecture"
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"barcode-reader official text hash changed for {patent_id}"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "barcode-reader disclosure unexpectedly contains PPUBS tables"
+            )
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"barcode-reader phrase {phrase!r} occurs {observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bcurvature\s+radius\b|\bradius\s+of\s+curvature\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)\b|\bSurface\s+(?:No\.|#)\s*|"
+            r"\bFno\b|\bF\s*[- ]?number\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|TABLE-US-)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "barcode-reader disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription.barcode_scanner_architecture_only"
+                ),
+                detail=(
+                    "the exact retained official PPUBS disclosure publishes barcode-reader "
+                    "illumination, aiming, image-sensor, and decoding architecture but no "
+                    "optical surface prescription or prescription table"
                 ),
             ),
         )
