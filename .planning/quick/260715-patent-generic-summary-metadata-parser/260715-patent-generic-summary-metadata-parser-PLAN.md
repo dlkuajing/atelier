@@ -392,6 +392,33 @@ thresholds, or claim patent saturation.
   SHA-256 is `a891746e53826bc3b6e35ec75ab9c828c5c3be7b6abe987dfadd81cc9d73e673`.
   Strict audit remains 619/619 with zero corrupt evidence. The focused parser/replay suite is
   110 passed, the offline CODE V guard suite is 5 passed, full Ruff and `git diff --check` pass.
+- The remaining Ability subfamily was measured from the 16-root largest normalized signature.
+  `US-11231565-B2` has one image-only FIG. 2 surface table and one FIG. 3 asphere table. Its
+  official PPUBS HTML SHA-256 is
+  `836b4c2bd3c50743d2ba5324fe9f69e3c75b52d0ab1ca4b408010a78141e4183`; it binds the two
+  figures to one prescription, defines F/FNO/FOV symbolically, and contains zero numeric
+  assignments to those three system values. The 11 official USPTO page images are byte-identical
+  to the Google OCR-overlay page images. FIG. 2/FIG. 3 are pages 4/5; neither the overlay text nor
+  independent coordinate OCR contains an F, FNO, or FOV label. Corrupt optical OCR cells remain
+  unparsed and no value is inferred from geometry or tracing.
+- A second canonical Ability profile now retains the official HTML hash, exact source-statement
+  counts, all-page image hashes, both PDFs, key-page OCR tokens, and tool versions. The frozen
+  official/mirror pair is source-pinned after first exact-image verification. Parser input SHA-256
+  is `d05273c2316a54a59dcd552f3ba06f9251204c0777ac720a3cce11076b2d71a0`; recovery-manifest
+  SHA-256 is `cea92a4169691a6cf0e2df325e32ec3ba09a279028ebcdc82bcb58d85f723917`.
+  Any page/role/count change or possible system-value label fails back to parser review. The sole
+  disclosed item is therefore source-proven
+  `metadata_unpublished.system_f_fno_fov_values_absent`; no conversion worker or ZMX is created.
+- Append-only attempts 2 and 3 have identical parser/manifest/source hashes, terminal payloads,
+  and canonical result SHA-256 (excluding the attempt sequence)
+  `ab0ab85962d09522082da0b7ac08f920a69f34db48520d9d598b9c9d7b62b242`.
+  Generic summary changed 260 to 259. Current result-set SHA-256 is
+  `96978077e26ccf694c1e69fa132ba50fd0df37d125224ceae3e8951907426eec`; summary artifact
+  SHA-256 is `72245fe68b29f43e2cfd36afde03096a7d4caadd3115fa4f91e120e275d6184d`; after-census
+  SHA-256 is `6aafc95f17dcf45fab27134cf9bc84eaa7e60733e8866bd27b5f3d0082cecbba`.
+  Strict audit remains 619/619 with zero corrupt evidence. The focused parser/replay suite is
+  114 passed, the offline CODE V guard suite is 5 passed, full Ruff and `git diff --check` pass;
+  CODE V inventory is zero before and after replay/testing.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

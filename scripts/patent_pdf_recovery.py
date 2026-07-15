@@ -39,6 +39,18 @@ _ABILITY_REQUIRED_FIGURE_TEXT = (
     "FIG. 5 lists one embodiment",
     "FIG. 7 lists information",
 )
+_ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT = (
+    "FIG. 2 shows each lens parameter of the optical lens",
+    "FIG. 3 lists aspheric coefficients of the mathematic equation "
+    "of the aspheric lenses of the optical lens",
+    "FNO is F-number of the stop STO",
+    "FOV is a field of view of the optical lens",
+)
+_ABILITY_EIGHT_LENS_PROFILE = "ability_eight_lens_metadata_unpublished_v1"
+_SYSTEM_VALUE_PATTERN_TEMPLATE = (
+    r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
+    r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
+)
 _PDF_HEADER = b"%PDF-"
 
 
@@ -71,12 +83,58 @@ class PatentPdfCachedSources:
     mirror_pdf_url: str
 
 
-def ability_drawing_tables_declared(raw_html: str) -> bool:
-    """Return whether official text declares the exact image-table layout."""
-
+def _normalized_html_text(raw_html: str) -> str:
     text = html.unescape(re.sub(r"<[^>]+>", " ", raw_html))
-    text = re.sub(r"\s+", " ", text)
-    return all(marker in text for marker in _ABILITY_REQUIRED_FIGURE_TEXT)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _ability_layout_profile(raw_html: str) -> str | None:
+    """Return the exact source-proven Ability drawing-table profile."""
+
+    text = _normalized_html_text(raw_html)
+    if all(marker in text for marker in _ABILITY_REQUIRED_FIGURE_TEXT):
+        return "ability_two_lens_prescriptions_v1"
+    if all(marker in text for marker in _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
+        return _ABILITY_EIGHT_LENS_PROFILE
+    return None
+
+
+def ability_drawing_tables_declared(raw_html: str) -> bool:
+    """Return whether official text declares a supported image-table layout."""
+
+    return _ability_layout_profile(raw_html) is not None
+
+
+def _ability_eight_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Measure the exact official-text facts needed for a terminal outcome."""
+
+    text = _normalized_html_text(raw_html)
+    assignments = {
+        label: len(
+            re.findall(
+                _SYSTEM_VALUE_PATTERN_TEMPLATE.format(label=re.escape(label)),
+                text,
+                flags=re.IGNORECASE,
+            )
+        )
+        for label in ("F", "FNO", "FOV")
+    }
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "surface_figure_binding_count": text.count(
+            _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT[0]
+        ),
+        "asphere_figure_binding_count": text.count(
+            _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT[1]
+        ),
+        "fno_definition_count": text.count(
+            _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT[2]
+        ),
+        "fov_definition_count": text.count(
+            _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT[3]
+        ),
+        "numeric_system_value_assignment_counts": assignments,
+    }
 
 
 def _compact_publication_id(publication_id: str) -> tuple[str, str]:
@@ -165,6 +223,8 @@ def _canonical_parser_input(
     publication_id: str,
     page_count: int,
     key_pages: list[tuple[int, str, str, str, list[dict[str, Any]]]],
+    profile: str | None = None,
+    source_facts: dict[str, Any] | None = None,
 ) -> bytes:
     payload = {
         "schema_version": 1,
@@ -182,6 +242,12 @@ def _canonical_parser_input(
             for page_number, role, image_sha256, mirror_text, tokens in key_pages
         ],
     }
+    # Keep the first profile's canonical bytes stable.  New profile metadata is
+    # emitted only for layouts which need additional source-level proof.
+    if profile is not None:
+        payload["profile"] = profile
+    if source_facts is not None:
+        payload["source_facts"] = source_facts
     return (
         json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
     ).encode("utf-8")
@@ -195,9 +261,10 @@ async def recover_ability_official_pdf_ocr(
     primary_html: str,
     cached_sources: PatentPdfCachedSources | None = None,
 ) -> PatentPdfOcrRecovery | None:
-    """Recover the first strict Ability image-table layout or return no match."""
+    """Recover a strict Ability image-table layout or return no match."""
 
-    if not ability_drawing_tables_declared(primary_html):
+    profile = _ability_layout_profile(primary_html)
+    if profile is None:
         return None
     compact_id, patent_number = _compact_publication_id(publication_id)
     official_url = USPTO_IMAGE_PDF_URL.format(patent_number=patent_number)
@@ -284,20 +351,48 @@ async def recover_ability_official_pdf_ocr(
         page_hashes.append(official_hash)
         official_images.append(official_image)
 
-    role_pages = {
-        "surface_ol1": _figure_page(
-            mirror_texts,
-            "2A",
-            ("Lens", "Surface", "Curvature", "Thickness", "Abbe"),
-        ),
-        "asphere_ol1": _figure_page(mirror_texts, "2B", ("S7", "S8", "A6", "A16")),
-        "surface_ol2": _figure_page(
-            mirror_texts,
-            "5",
-            ("Lens", "Surface", "Curvature", "Thickness", "Abbe"),
-        ),
-        "system_meta": _figure_page(mirror_texts, "7", ("OL1", "OL2", "FOV", "FNO")),
-    }
+    if profile == "ability_two_lens_prescriptions_v1":
+        role_pages = {
+            "surface_ol1": _figure_page(
+                mirror_texts,
+                "2A",
+                ("Lens", "Surface", "Curvature", "Thickness", "Abbe"),
+            ),
+            "asphere_ol1": _figure_page(
+                mirror_texts,
+                "2B",
+                ("S7", "S8", "A6", "A16"),
+            ),
+            "surface_ol2": _figure_page(
+                mirror_texts,
+                "5",
+                ("Lens", "Surface", "Curvature", "Thickness", "Abbe"),
+            ),
+            "system_meta": _figure_page(
+                mirror_texts,
+                "7",
+                ("OL1", "OL2", "FOV", "FNO"),
+            ),
+        }
+        parser_profile = None
+        source_facts = None
+    else:
+        if profile != _ABILITY_EIGHT_LENS_PROFILE:
+            raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
+        role_pages = {
+            "surface_single": _figure_page(
+                mirror_texts,
+                "2",
+                ("Surface", "Curvature", "Thickness", "Abbe", "Conic"),
+            ),
+            "asphere_single": _figure_page(
+                mirror_texts,
+                "3",
+                ("Aspheric", "coefficient", "A4", "A16"),
+            ),
+        }
+        parser_profile = profile
+        source_facts = _ability_eight_lens_source_facts(primary_html)
     if len(set(role_pages.values())) != len(role_pages):
         raise PatentPdfRecoveryError("Ability PDF key roles do not map to distinct pages")
 
@@ -316,6 +411,8 @@ async def recover_ability_official_pdf_ocr(
         publication_id=publication_id,
         page_count=page_count,
         key_pages=key_pages,
+        profile=parser_profile,
+        source_facts=source_facts,
     )
     from importlib.metadata import version
 

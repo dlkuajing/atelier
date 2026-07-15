@@ -2401,6 +2401,7 @@ def _parse_kantatsu_six_lens_table_attempts(
 # ---------------------------------------------------------------------------
 
 _ABILITY_PDF_PARSER_FAMILY = "ability_official_pdf_ocr_v1"
+_ABILITY_EIGHT_LENS_PROFILE = "ability_eight_lens_metadata_unpublished_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -2729,6 +2730,85 @@ def _ability_meta_row(page: dict[str, Any], label: str) -> tuple[float, float]:
     return values[0][1], values[1][1]
 
 
+def _ability_eight_lens_terminal_attempt(
+    payload: dict[str, Any],
+) -> _PrescriptionParseAttempt:
+    """Classify one source-bound prescription whose system metadata is absent."""
+
+    if payload.get("page_count") != 11:
+        raise PatentParseError("Ability eight-lens PDF page count is not the retained layout")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 2:
+        raise PatentParseError("Ability eight-lens PDF must retain exactly two key pages")
+    surface_page = _ability_page(payload, "surface_single")
+    asphere_page = _ability_page(payload, "asphere_single")
+    if (surface_page.get("page_number"), asphere_page.get("page_number")) != (4, 5):
+        raise PatentParseError("Ability eight-lens key pages are not FIG. 2/FIG. 3 pages 4/5")
+
+    page_requirements = (
+        (
+            surface_page,
+            ("Sheet 2 of 4", "FIG . 2", "Surface", "Curvature", "Thickness", "Abbe", "Conic"),
+        ),
+        (
+            asphere_page,
+            ("Sheet 3 of 4", "FIG . 3", "Aspheric", "coefficient", "A4", "A16"),
+        ),
+    )
+    system_label_pattern = re.compile(r"\b(?:FNO|FOV|F)\b", flags=re.IGNORECASE)
+    for page, required in page_requirements:
+        mirror_text = page.get("mirror_text")
+        if not isinstance(mirror_text, str) or any(
+            marker.casefold() not in mirror_text.casefold() for marker in required
+        ):
+            raise PatentParseError("Ability eight-lens OCR overlay lacks a required figure marker")
+        if system_label_pattern.search(mirror_text) is not None:
+            raise PatentParseError(
+                "Ability eight-lens OCR overlay contains possible F/FNO/FOV metadata"
+            )
+        rapidocr_text = " ".join(
+            _ability_token_text(token) for token in page["rapidocr_tokens"]
+        )
+        if system_label_pattern.search(rapidocr_text) is not None:
+            raise PatentParseError(
+                "Ability eight-lens independent OCR contains possible F/FNO/FOV metadata"
+            )
+
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("Ability eight-lens parser input lacks official source facts")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Ability eight-lens official HTML hash is invalid")
+    expected_counts = {
+        "surface_figure_binding_count": 2,
+        "asphere_figure_binding_count": 2,
+        "fno_definition_count": 1,
+        "fov_definition_count": 4,
+    }
+    if any(facts.get(key) != expected for key, expected in expected_counts.items()):
+        raise PatentParseError("Ability eight-lens official figure/definition counts changed")
+    if facts.get("numeric_system_value_assignment_counts") != {
+        "F": 0,
+        "FNO": 0,
+        "FOV": 0,
+    }:
+        raise PatentParseError("Ability eight-lens official HTML may publish system values")
+
+    return _PrescriptionParseAttempt(
+        embodiment_number=1,
+        embodiment="Ability eight-lens FIG. 1 embodiment",
+        error=PatentTerminalParseError(
+            status="metadata_unpublished",
+            reason_code="metadata_unpublished.system_f_fno_fov_values_absent",
+            detail=(
+                "official HTML and both exact-image OCR views publish no numeric "
+                "F/FNO/FOV values for the sole FIG. 2/FIG. 3 prescription"
+            ),
+        ),
+    )
+
+
 def _parse_ability_pdf_ocr_attempts(
     raw_text: str,
     *,
@@ -2746,6 +2826,11 @@ def _parse_ability_pdf_ocr_attempts(
         raise PatentParseError("unsupported Ability PDF OCR parser schema")
     if payload.get("publication_id") != patent_id:
         raise PatentParseError("Ability PDF OCR publication id does not match the candidate")
+    profile = payload.get("profile")
+    if profile == _ABILITY_EIGHT_LENS_PROFILE:
+        return [_ability_eight_lens_terminal_attempt(payload)]
+    if profile is not None:
+        raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")
     meta_page = _ability_page(payload, "system_meta")
     # OL1 has a published asphere table, but its retained OCR views leave

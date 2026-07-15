@@ -12,7 +12,7 @@ import pytest
 
 from app.core.engines.zmx_writer import write_zmx_from_codev_readout
 from app.core.zmx_ingest import load_normalized_zmx
-from scripts import patent_to_zmx
+from scripts import patent_pdf_recovery, patent_to_zmx
 from scripts.patent_to_zmx import (
     PatentParseError,
     build_readout_from_prescription,
@@ -1871,6 +1871,90 @@ def _ability_pdf_ocr_parser_input(*, low_confidence_radius: bool = False) -> byt
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _ability_eight_lens_pdf_ocr_parser_input() -> bytes:
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "ability_eight_lens_metadata_unpublished_v1",
+        "publication_id": "US-11231565-B2",
+        "page_count": 11,
+        "source_facts": {
+            "primary_html_sha256": "8" * 64,
+            "surface_figure_binding_count": 2,
+            "asphere_figure_binding_count": 2,
+            "fno_definition_count": 1,
+            "fov_definition_count": 4,
+            "numeric_system_value_assignment_counts": {"F": 0, "FNO": 0, "FOV": 0},
+        },
+        "pages": [
+            {
+                "page_number": 4,
+                "role": "surface_single",
+                "official_image_sha256": "4" * 64,
+                "mirror_text": (
+                    "Sheet 2 of 4 FIG . 2 Surface Curvature Thickness Abbe Conic"
+                ),
+                "rapidocr_tokens": [_ability_ocr_token("Surface", 1.0, 1.0)],
+            },
+            {
+                "page_number": 5,
+                "role": "asphere_single",
+                "official_image_sha256": "5" * 64,
+                "mirror_text": "Sheet 3 of 4 FIG . 3 Aspheric coefficient A4 A16",
+                "rapidocr_tokens": [_ability_ocr_token("Aspheric", 1.0, 1.0)],
+            },
+        ],
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
+def test_ability_eight_lens_source_facts_detect_published_system_value() -> None:
+    figure_text = (
+        "FIG. 2 shows each lens parameter of the optical lens "
+        "FIG. 3 lists aspheric coefficients of the mathematic equation "
+        "of the aspheric lenses of the optical lens "
+    )
+    source = (
+        figure_text * 2
+        + "FNO is F-number of the stop STO "
+        + "FOV is a field of view of the optical lens " * 4
+        + "FNO = 2.8"
+    )
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._ability_eight_lens_source_facts(source)
+    assert facts["surface_figure_binding_count"] == 2
+    assert facts["asphere_figure_binding_count"] == 2
+    assert facts["numeric_system_value_assignment_counts"] == {"F": 0, "FNO": 1, "FOV": 0}
+
+
+def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_eight_lens_pdf_ocr_parser_input().decode(),
+        patent_id="US-11231565-B2",
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert attempts[0].error.status == "metadata_unpublished"
+    assert (
+        attempts[0].error.reason_code
+        == "metadata_unpublished.system_f_fno_fov_values_absent"
+    )
+
+
+def test_ability_eight_lens_pdf_ocr_parser_rejects_possible_published_system_value() -> None:
+    payload = json.loads(_ability_eight_lens_pdf_ocr_parser_input())
+    payload["source_facts"]["numeric_system_value_assignment_counts"]["F"] = 1
+
+    with pytest.raises(PatentParseError, match="may publish system values"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-11231565-B2",
+        )
+
+
 def test_ability_pdf_ocr_parser_recovers_only_independently_classified_ol2() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_pdf_ocr_parser_input().decode(),
@@ -1992,6 +2076,71 @@ def test_convert_candidate_retains_official_pdf_ocr_linkage_manifest(
     assert cached_sources is not None
     assert cached_sources.official_pdf == b"%PDF-official"
     assert cached_sources.mirror_pdf == b"%PDF-mirror"
+
+
+def test_convert_candidate_retains_pdf_terminal_evidence_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-11231565-B2",
+        source_bucket="USPAT",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html="official HTML whose image tables require PDF recovery",
+            source_bucket="USPAT",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_pdf_recovery(*_args: object, **_kwargs: object) -> object:
+        return patent_to_zmx.PatentPdfOcrRecovery(
+            publication_id="US-11231565-B2",
+            official_pdf=b"%PDF-official-eight-lens",
+            official_pdf_url=(
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11231565"
+            ),
+            mirror_pdf=b"%PDF-mirror-eight-lens",
+            mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US11231565.pdf",
+            parser_input=_ability_eight_lens_pdf_ocr_parser_input(),
+            page_count=11,
+            page_image_sha256=("a" * 64, "b" * 64),
+            key_page_numbers=(4, 5),
+            pypdf_version="fixture",
+            rapidocr_version="fixture",
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("metadata-terminal PDF recovery must not launch a trace worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(patent_to_zmx, "recover_ability_official_pdf_ocr", fake_pdf_recovery)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-11231565-B2",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+        )
+    )
+
+    assert [attempt.status for attempt in attempts] == ["metadata_unpublished"]
+    assert attempts[0].reason_code == "metadata_unpublished.system_f_fno_fov_values_absent"
+    assert attempts[0].parser_input_source_bucket == "USPTO-PDF-OCR-JSON"
+    assert attempts[0].fulltext_recovery_manifest_path
+    assert not (tmp_path / "staging").exists()
 
 
 def test_pdf_ocr_source_pin_rejects_retained_source_hash_drift(tmp_path: Path) -> None:
