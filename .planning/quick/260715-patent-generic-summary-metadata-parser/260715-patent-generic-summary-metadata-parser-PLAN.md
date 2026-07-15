@@ -155,6 +155,22 @@ thresholds, or claim patent saturation.
   rotationally symmetric sequential model cannot represent the coordinate bend or directional
   pupils. Collapsing those disclosures to one inferred stop/F-number would change the optical
   model, so this is not treated as the next scalar-table parser layout.
+- The seventh source-proven family is the 20-table Kantatsu nine-lens layout in
+  `US-20210396972`. The official PPUBS text identifies smartphone/cellular-phone use, binds ten
+  numerical-data examples to surface/asphere table pairs, defines ω as half angle of view, and
+  publishes f/Fno/ω plus K/A4--A16. A hash-verified ownership scan of all 277 remaining generic
+  roots matched only this root. Six examples parse deterministically; examples 1--4 retain their
+  published split numeric tokens as per-example parser failures.
+- Append-only replay retained all ten disclosed embodiments: examples 7 and 9 are
+  converted-pending-intake staging candidates; examples 5, 6, 8, and 10 have terminal
+  `trace_failed` receipts because full-field real rays did not reach the image surface; examples
+  1--4 remain structured parser-review items. No candidate was promoted. The generic document
+  bucket changed 277 to 276. Result-set SHA-256 is
+  `53ccc5108b5a6e92656adfea1229a4f9438fdb327fecd712f7afedbb80f929bf`; summary artifact
+  SHA-256 is `e7696b73b4605faf71aaa50c6ce679a31300beee13fef4293d553f6a3c4a14cb`;
+  strict audit is 619/619 with zero corrupt evidence. The after-seventh-layout census SHA-256 is
+  `f7f6a3433cc01860d310c8a275619a37621725bcf8519173bc3fb3543d6ed998`; CODE V inventory
+  remains zero; 90 focused parser/census/replay/process tests and Ruff pass.
 
 ## Completion condition
 

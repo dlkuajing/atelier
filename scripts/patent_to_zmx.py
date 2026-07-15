@@ -1025,6 +1025,12 @@ _KANTATSU_NINE_LENS_BINDING_PATTERN = re.compile(
     r"TABLE-US-\d+\s+TABLE\s+(?P<table>\d+)\s+Basic\s+Lens\s+Data\b",
     flags=re.IGNORECASE,
 )
+_KANTATSU_NINE_LENS_PRETABLE_BINDING_PATTERN = re.compile(
+    r"\bNumerical\s+Data\s+Example\s+(?P<example>\d+)\s+"
+    r"Basic\s+Lens\s+Data\s+\[\d+\]\s+TABLE-US-\d+\s+"
+    r"TABLE\s+(?P<table>\d+)\b",
+    flags=re.IGNORECASE,
+)
 _KANTATSU_NINE_LENS_META_PATTERN = re.compile(
     rf"\bf\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm\s+"
     rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s+"
@@ -1041,13 +1047,17 @@ _KANTATSU_NINE_LENS_UNIT_PATTERN = re.compile(
     r"\bBasic\s+Lens\s+Data\b.*?\[(?P<unit>[mn]m)\]",
     flags=re.IGNORECASE,
 )
+_KANTATSU_NINE_LENS_PRETABLE_UNIT_PATTERN = re.compile(
+    r"\bi\s+r\s+d\s+n\s+d\s+ν\s+d\s+\[(?P<unit>[mn]m)\]",
+    flags=re.IGNORECASE,
+)
 _KANTATSU_NINE_LENS_FIRST_SURFACE_PATTERN = re.compile(
-    r"\bL1\s+1\*\(ST\)\s+",
+    r"\bL1\s+1\s*\*\s*\(ST\)\s+",
     flags=re.IGNORECASE,
 )
 _KANTATSU_NINE_LENS_SURFACE_ROW_PATTERN = re.compile(
     r"(?<!\S)(?:(?P<label>L[1-9])\s+)?"
-    r"(?P<index>(?:[1-9]|1[0-9]|20))(?P<star>\*)?"
+    r"(?P<index>(?:[1-9]|1[0-9]|20))\s*(?P<star>\*)?\s*"
     r"(?P<stop>\(ST\))?\s+",
     flags=re.IGNORECASE,
 )
@@ -1834,24 +1844,38 @@ def _parse_kantatsu_nine_lens_table_attempts(
     *,
     patent_id: str,
 ) -> list[_PrescriptionParseAttempt]:
-    """Parse exact 13-pair Kantatsu nine-lens numerical-data tables.
+    """Parse exact 10- or 13-pair Kantatsu nine-lens numerical-data tables.
 
     PPUBS unit damage and split numeric tokens remain per-example failures.
     Only tables explicitly carrying ``[mm]`` are converted.
     """
 
     bindings = list(_KANTATSU_NINE_LENS_BINDING_PATTERN.finditer(text))
+    unit_pattern = _KANTATSU_NINE_LENS_UNIT_PATTERN
+    if not bindings:
+        bindings = list(_KANTATSU_NINE_LENS_PRETABLE_BINDING_PATTERN.finditer(text))
+        unit_pattern = _KANTATSU_NINE_LENS_PRETABLE_UNIT_PATTERN
     if not bindings:
         return []
+    blocks = _numbered_patent_table_blocks(text)
+    expected_examples = len(blocks) // 2 if len(blocks) % 2 == 0 else 0
+    disclosed_examples = expected_examples or max(
+        int(binding.group("example")) for binding in bindings
+    )
     try:
-        if len(bindings) != 13:
+        if expected_examples not in {10, 13}:
             raise PatentParseError(
-                f"Kantatsu nine-lens family must disclose 13 examples, found {len(bindings)}"
+                "Kantatsu nine-lens family must contain 10 or 13 surface/asphere "
+                f"table pairs, found {len(blocks)} tables"
             )
-        blocks = _numbered_patent_table_blocks(text)
-        if set(blocks) != set(range(1, 27)):
+        if set(blocks) != set(range(1, expected_examples * 2 + 1)):
             raise PatentParseError(
-                "Kantatsu nine-lens family must contain numbered TABLES 1-26"
+                "Kantatsu nine-lens family tables are not consecutively numbered"
+            )
+        if len(bindings) != expected_examples:
+            raise PatentParseError(
+                "Kantatsu nine-lens example/table bindings are incomplete: "
+                f"expected {expected_examples}, found {len(bindings)}"
             )
         if _KANTATSU_NINE_LENS_HALF_FIELD_DEFINITION.search(text) is None:
             raise PatentParseError(
@@ -1873,16 +1897,16 @@ def _parse_kantatsu_nine_lens_table_attempts(
                 embodiment=f"Kantatsu nine-lens example {example_number}",
                 error=exc,
             )
-            for example_number in range(1, 14)
+            for example_number in range(1, disclosed_examples + 1)
         ]
 
     attempts: list[_PrescriptionParseAttempt] = []
-    for example_number in range(1, 14):
+    for example_number in range(1, expected_examples + 1):
         embodiment = f"Kantatsu nine-lens example {example_number}"
         try:
             surface_text = blocks[example_number * 2 - 1]
             coefficient_text = blocks[example_number * 2]
-            unit_match = _KANTATSU_NINE_LENS_UNIT_PATTERN.search(surface_text)
+            unit_match = unit_pattern.search(surface_text)
             if unit_match is None:
                 raise PatentParseError(
                     f"Kantatsu example {example_number} surface-table unit not found"
@@ -1951,7 +1975,7 @@ def _parse_kantatsu_nine_lens_surface_table(
     example_number: int,
 ) -> list[PatentSurface]:
     first_surface = _KANTATSU_NINE_LENS_FIRST_SURFACE_PATTERN.search(table_text)
-    image = re.search(r"(?<!\S)\(IM\)\s+Infinity\b", table_text, re.IGNORECASE)
+    image = re.search(r"(?<!\S)\((?:I|1)M\)\s+Infinity\b", table_text, re.IGNORECASE)
     if first_surface is None or image is None or image.start() <= first_surface.start():
         raise PatentParseError(
             f"Kantatsu example {example_number} surface/image rows are incomplete"

@@ -424,6 +424,40 @@ def _kantatsu_nine_lens_fixture() -> str:
 
 KANTATSU_NINE_LENS_TEXT = _kantatsu_nine_lens_fixture()
 
+
+def _kantatsu_nine_lens_pretable_fixture() -> str:
+    parts = [
+        "f represents a focal length of the whole lens system, Fno represents an F-number, "
+        "and ω represents a half angle of view."
+    ]
+    surface_rows = KANTATSU_NINE_LENS_SURFACES.replace(
+        "1*(ST)", "1 * (ST)", 1
+    ).replace("(IM)", "(1M)", 1)
+    for example_number in range(1, 11):
+        surface_table = example_number * 2 - 1
+        coefficient_table = example_number * 2
+        parts.append(
+            f"Numerical Data Example {example_number} Basic Lens Data "
+            f"[{example_number:04d}] TABLE-US-{surface_table:05d} TABLE {surface_table} "
+            "f = 5.69 mm Fno = 1.9 ω = 39.3° i r d n d ν d [mm] "
+            f"{surface_rows}"
+        )
+        rows = " ".join(
+            f"{surface} 0.000E+00 1.000E-03 -2.000E-04 3.000E-05 "
+            "-4.000E-06 5.000E-07 -6.000E-08 7.000E-09"
+            for surface in range(1, 19)
+        )
+        parts.append(
+            f"TABLE-US-{coefficient_table:05d} TABLE {coefficient_table} "
+            "Aspherical surface data i k A4 A6 A8 A10 A12 A14 A16 "
+            f"{rows}"
+        )
+    return " ".join(parts)
+
+
+KANTATSU_NINE_LENS_PRETABLE_TEXT = _kantatsu_nine_lens_pretable_fixture()
+
+
 SUNNY_OBJ_STO_TEXT = """
 TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
 number Surface type curvature Thickness index Abbe number coefficient
@@ -1018,6 +1052,36 @@ def test_kantatsu_nine_lens_requires_published_half_angle_definition() -> None:
         "published half-angle definition not found" in str(attempt.error)
         for attempt in attempts
     )
+
+
+def test_kantatsu_nine_lens_parses_ten_pretable_bound_examples() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        KANTATSU_NINE_LENS_PRETABLE_TEXT,
+        patent_id="US-KANTATSU-NINE-LENS-PRETABLE-A1",
+    )
+
+    assert len(attempts) == 10
+    assert all(attempt.error is None for attempt in attempts)
+    first = attempts[0].prescription
+    assert first is not None
+    assert (first.focal_length_mm, first.f_number, first.hfov_deg) == pytest.approx(
+        (5.69, 1.9, 39.3)
+    )
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[-1].label == "Image"
+
+
+def test_kantatsu_nine_lens_pretable_retains_split_material_token() -> None:
+    text = KANTATSU_NINE_LENS_PRETABLE_TEXT.replace("1.5443", "1 5443", 1)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-KANTATSU-NINE-LENS-PRETABLE-DAMAGED-A1",
+    )
+
+    assert len(attempts) == 10
+    assert "surface sequence must be 1-20" in str(attempts[0].error)
+    assert all(attempt.error is None for attempt in attempts[1:])
 
 
 def test_parse_samsung_wide_fov_embodiment_pairs_and_full_field() -> None:
