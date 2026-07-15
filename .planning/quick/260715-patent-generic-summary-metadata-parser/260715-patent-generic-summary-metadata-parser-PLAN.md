@@ -133,6 +133,28 @@ thresholds, or claim patent saturation.
   strict audit is 619/619 with zero corrupt evidence. The after-fifth-layout census SHA-256 is
   `7026ffe86f8cfbb7472e53cf30807d27487fd2c5d7505c168d85803c559041fa`; CODE V inventory
   remains zero; 84 focused parser/census/replay/process tests and Ruff pass.
+- The sixth source-proven family is the exact 26-table Kantatsu nine-lens layout in
+  `US-20210364764`. Its official PPUBS text binds table pairs 1/2 through 25/26 to thirteen
+  numerical-data examples, defines ω as half angle of view, publishes the stop at surface 1,
+  and publishes K/A4--A16 for surfaces 1--18. A hash-verified ownership scan of all 278 remaining
+  generic roots matched only this root. Examples 1--3 and 5--6 parse deterministically. Example 4
+  retains the official split surface token as a parser rejection; examples 7--13 retain the
+  official `[nm]` surface-table unit instead of silently repairing it to `[mm]`.
+- Append-only replay retained all thirteen disclosed embodiments: examples 3, 5, and 6 are
+  converted-pending-intake staging candidates; examples 1 and 2 have terminal `trace_failed`
+  receipts because full-field real rays did not reach the image surface; the eight source-damaged
+  examples remain structured parser-review items. No candidate was promoted. The generic document
+  bucket changed 278 to 277. Result-set SHA-256 is
+  `d989da868801c39202dc943d636f5684b8ef7082f3f27f2bc2607cd0097eda47`; summary artifact
+  SHA-256 is `f3cfc0c56b8972c65d583f5908b2a1975c8c4a94e953cc8ec318a2d20d4e7a8b`;
+  strict audit is 619/619 with zero corrupt evidence. The after-sixth-layout census SHA-256 is
+  `d391572abd94870b92b42d6f8fb69aced2ad87b15f51f683a87f843f87539a59`; CODE V inventory
+  remains zero; 87 focused parser/census/replay/process tests and Ruff pass.
+- `US-20260063876` remains fail-closed after official-text inspection. Its prescriptions use a
+  refractive prism and publish two direction-specific stops plus `f/EPDmax`; the current
+  rotationally symmetric sequential model cannot represent the coordinate bend or directional
+  pupils. Collapsing those disclosures to one inferred stop/F-number would change the optical
+  model, so this is not treated as the next scalar-table parser layout.
 
 ## Completion condition
 

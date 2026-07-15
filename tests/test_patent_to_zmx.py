@@ -366,6 +366,64 @@ def _mobile_imaging_lens_fixture() -> str:
 
 MOBILE_IMAGING_LENS_TEXT = _mobile_imaging_lens_fixture()
 
+
+KANTATSU_NINE_LENS_SURFACES = """L1 1*(ST) 2.400 0.500 1.5443 55.9 f1 = 40.000
+2* 2.300 0.080 L2 3* 2.500 0.600 1.5443 55.9 f2 = 4.600 4* 200.000 0.030
+L3 5* 8.000 0.250 1.6707 19.2 f3 = -9.800 6* 3.500 0.400
+L4 7* 13.000 0.420 1.5443 55.9 f4 = 70.000 8* 20.000 0.040
+L5 9* 25.000 0.320 1.5443 55.9 f5 = 24.000 10* -30.000 0.390
+L6 11* -4.500 0.250 1.5443 55.9 f6 = 90.000 12* -4.200 0.050
+L7 13* -20.000 0.600 1.5443 55.9 f7 = -100.000 14* -30.000 0.030
+L8 15* 6.000 0.600 1.6707 19.2 f8 = 100.000 16* 6.000 0.350
+L9 17* 3.500 0.830 1.5443 55.9 f9 = -10.000 18* 2.000 0.350
+19 Infinity 0.210 1.5168 64.2 20 Infinity 0.660 (IM) Infinity"""
+
+
+def _kantatsu_nine_lens_fixture() -> str:
+    parts = [
+        "f represents a focal length of the whole lens system, Fno represents an F-number, "
+        "and ω represents a half angle of view."
+    ]
+    for example_number in range(1, 14):
+        surface_table = example_number * 2 - 1
+        coefficient_table = example_number * 2
+        surface_rows = KANTATSU_NINE_LENS_SURFACES
+        if example_number == 4:
+            surface_rows = surface_rows.replace(
+                "L9 17* 3.500 0.830",
+                "L9 17* 3.500 0 830",
+                1,
+            )
+        meta = "f = 6.71 mm Fno = 1.9 ω = 39.5°"
+        if example_number <= 6:
+            surface_body = (
+                "Basic Lens Data r d i Infinity Infinity n d ν d [mm] "
+                f"{surface_rows} {meta}"
+            )
+        else:
+            surface_body = (
+                f"Basic Lens Data {meta} i r d nd νd [nm] Infinity Infinity "
+                f"{surface_rows}"
+            )
+        parts.append(
+            f"Numerical Data Example {example_number} [{example_number:04d}] "
+            f"TABLE-US-{surface_table:05d} TABLE {surface_table} {surface_body}"
+        )
+        rows = " ".join(
+            f"{surface} 0.000E+00 1.000E-03 -2.000E-04 3.000E-05 "
+            "-4.000E-06 5.000E-07 -6.000E-08 7.000E-09"
+            for surface in range(1, 19)
+        )
+        parts.append(
+            f"TABLE-US-{coefficient_table:05d} TABLE {coefficient_table} "
+            "Aspherical surface data i k A4 A6 A8 A10 A12 A14 A16 "
+            f"{rows}"
+        )
+    return " ".join(parts)
+
+
+KANTATSU_NINE_LENS_TEXT = _kantatsu_nine_lens_fixture()
+
 SUNNY_OBJ_STO_TEXT = """
 TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
 number Surface type curvature Thickness index Abbe number coefficient
@@ -907,6 +965,57 @@ def test_mobile_imaging_lens_requires_published_half_field_definition() -> None:
     assert all(attempt.prescription is None for attempt in attempts)
     assert all(
         "published half-field definition not found" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_kantatsu_nine_lens_retains_damaged_rows_and_units_per_example() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        KANTATSU_NINE_LENS_TEXT,
+        patent_id="US-KANTATSU-NINE-LENS-A1",
+    )
+
+    assert len(attempts) == 13
+    assert [attempt.embodiment_number for attempt in attempts if attempt.error is None] == [
+        1,
+        2,
+        3,
+        5,
+        6,
+    ]
+    first = attempts[0].prescription
+    assert first is not None
+    assert (first.focal_length_mm, first.f_number, first.hfov_deg) == pytest.approx(
+        (6.71, 1.9, 39.5)
+    )
+    assert len(first.surfaces) == 21
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[0].nd == pytest.approx(1.5443)
+    assert first.surfaces[0].asphere_coefficients["A"] == pytest.approx(1.0e-3)
+    assert first.surfaces[0].asphere_coefficients["G"] == pytest.approx(7.0e-9)
+    assert "lens 9 first-surface row is malformed" in str(attempts[3].error)
+    assert all(
+        "surface-table unit is [nm], not [mm]" in str(attempt.error)
+        for attempt in attempts[6:]
+    )
+
+
+def test_kantatsu_nine_lens_requires_published_half_angle_definition() -> None:
+    text = KANTATSU_NINE_LENS_TEXT.replace(
+        "and ω represents a half angle of view.",
+        "and ω is listed in degrees.",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-KANTATSU-NINE-LENS-MISSING-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 13
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "published half-angle definition not found" in str(attempt.error)
         for attempt in attempts
     )
 
