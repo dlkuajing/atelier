@@ -379,6 +379,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_folded_lens_barrel_driving_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_large_aperture_scanning_tele_attempts(
         raw_text,
         patent_id=patent_id,
@@ -1964,6 +1970,97 @@ _LENS_BARREL_ABSORBING_GEOMETRY_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] 
             "optical lens element set": 57,
             "smart phone": 1,
             "image sensor": 8,
+        },
+    },
+}
+_FOLDED_LENS_BARREL_DRIVING_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*IMAGING\s+LENS\s+"
+    r"ASSEMBLY\s+DRIVING\s+MODULE\s+AND\s+ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_FOLDED_LENS_BARREL_DRIVING_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11722760-B2": {
+        "raw_document_sha256": (
+            "414e34d63d4331fa4caee23b523035adc9aa4805c7db23c10deb0ef0f6b96bcc"
+        ),
+        "normalized_text_sha256": (
+            "2e4280dbd1fbc1ece18329fa544e46f4feb53c639e141f1c4dd7a7a62d952712"
+        ),
+        "application_number": "17/391171",
+        "heading_markers": ("1st Embodiment (35)", "2nd Embodiment (61)"),
+        "table_prefix": "TABLE-US-00001 TABLE 1 d1 (mm) 1.4 d2 (mm) 1.4",
+        "ppubs_table_count": 1,
+        "architecture_phrase_counts": {
+            "Family ID: 77725725": 1,
+            "imaging lens assembly module": 43,
+            "imaging lens assembly driving module": 6,
+            "light path folding element": 16,
+            "first lens barrel": 80,
+            "second lens barrel": 77,
+            "rolling bearings": 20,
+            "first sensing element": 34,
+            "fourth sensing element": 17,
+            "plastic lens elements": 33,
+            "smartphone": 1,
+            "image sensor": 12,
+            "FIG. 1 E is an optical surface schematic view": 2,
+            "TABLE-US-00001": 1,
+        },
+    },
+    "US-12088905-B2": {
+        "raw_document_sha256": (
+            "7242c9295f2f5c6ba76ac26061e7c59dec855b3c92466b0c1406222256bd3055"
+        ),
+        "normalized_text_sha256": (
+            "ab9fcb48acc448ca03dccc35ebc0e10e302f9c87bba4766c208546a616d2131a"
+        ),
+        "application_number": "18/337147",
+        "heading_markers": ("1st Embodiment (35)", "2nd Embodiment (61)"),
+        "table_prefix": "TABLE-US-00001 TABLE 1 d1 (mm) 1.4 d2 (mm) 1.4",
+        "ppubs_table_count": 1,
+        "architecture_phrase_counts": {
+            "Family ID: 77725725": 1,
+            "imaging lens assembly module": 43,
+            "imaging lens assembly driving module": 31,
+            "light path folding element": 16,
+            "first lens barrel": 80,
+            "second lens barrel": 77,
+            "rolling bearings": 20,
+            "first sensing element": 34,
+            "fourth sensing element": 17,
+            "plastic lens elements": 33,
+            "smartphone": 1,
+            "image sensor": 12,
+            "FIG. 1 E is an optical surface schematic view": 2,
+            "TABLE-US-00001": 1,
+        },
+    },
+    "US-20230353852-A1": {
+        "raw_document_sha256": (
+            "3eca590960e69369b5474ffac654dc0b8597ff9563387efcd027feef3f0a3a24"
+        ),
+        "normalized_text_sha256": (
+            "ba8b3dc979f32ce054fc9fdd130eed90fc4a19a2049024287b8e98a10ac47b33"
+        ),
+        "application_number": "18/337147",
+        "heading_markers": ("1st Embodiment [0041]", "2nd Embodiment [0066]"),
+        "table_prefix": "TABLE-US-00001 d1 (mm) 1.4 d2 (mm) 1.4",
+        "ppubs_table_count": 0,
+        "architecture_phrase_counts": {
+            "Family ID: 77725725": 1,
+            "imaging lens assembly module": 43,
+            "imaging lens assembly driving module": 31,
+            "light path folding element": 16,
+            "first lens barrel": 80,
+            "second lens barrel": 77,
+            "rolling bearings": 20,
+            "first sensing element": 34,
+            "fourth sensing element": 17,
+            "plastic lens elements": 33,
+            "smartphone": 1,
+            "image sensor": 12,
+            "FIG. 1 E is an optical surface schematic view": 2,
+            "TABLE-US-00001": 1,
         },
     },
 }
@@ -10382,6 +10479,160 @@ def _classify_lens_barrel_absorbing_geometry_only_attempts(
             )
         )
     return attempts
+
+
+def _classify_folded_lens_barrel_driving_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 77725725 mechanical and device embodiments."""
+
+    profile = _FOLDED_LENS_BARREL_DRIVING_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiments = (
+        "Folded lens-barrel driving and sensing architecture example 1",
+        "Multi-camera electronic-device architecture example 2",
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"folded lens-barrel driving official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "folded lens-barrel driving normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if _FOLDED_LENS_BARREL_DRIVING_ONLY_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("folded lens-barrel driving title binding changed")
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "folded lens-barrel driving application binding changed"
+            )
+        for marker in profile["heading_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"folded lens-barrel driving heading {marker!r} changed"
+                )
+        if re.search(r"\b3rd\s+Embodiment\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "folded lens-barrel driving source gained a third embodiment"
+            )
+        table_prefix = str(profile["table_prefix"])
+        if len(re.findall(re.escape(table_prefix), text, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "folded lens-barrel driving sensing-distance table changed"
+            )
+        if len(_patent_table_blocks(text)) != profile["ppubs_table_count"]:
+            raise PatentParseError(
+                "folded lens-barrel driving PPUBS table-label layout changed"
+            )
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded lens-barrel driving phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if len(re.findall(r"\bfocal\s+length\b", text, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "folded lens-barrel driving nonnumeric focal-length architecture changed"
+            )
+        drawings = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+THE\s+DRAWINGS(?P<body>.*?)"
+            r"DETAILED\s+DESCRIPTION",
+            text,
+            re.IGNORECASE,
+        )
+        if drawings is None:
+            raise PatentParseError(
+                "folded lens-barrel driving drawing description is missing"
+            )
+        if re.search(
+            r"\b(?:table|prescription|optical\s+data|lens\s+data)\b",
+            drawings.group("body"),
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "folded lens-barrel driving drawings now reference prescription data"
+            )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)?\b|\brefractive\s+index\b|"
+            r"\bSurface\s+(?:No\.|#)\s*|\bFno\b|\bF\s*[- ]?number\b|"
+            r"\bEFL\b|\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\blens\s+data\b|\bprescription\b)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "folded lens-barrel driving disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain both explicit embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment=embodiments[0],
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "lens_driving_mechanical_architecture_only"
+                ),
+                detail=(
+                    "example 1 publishes folded lens barrels, rolling bearings, magnets, "
+                    "coils, sensing elements, and sensing-element axial distances only; "
+                    "it has no optical surface prescription"
+                ),
+            ),
+        ),
+        _PrescriptionParseAttempt(
+            embodiment_number=2,
+            embodiment=embodiments[1],
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "camera_module_device_architecture_only"
+                ),
+                detail=(
+                    "example 2 publishes only smartphone, image-sensor, and multiple "
+                    "image-capturing-device architecture; it has no optical surface "
+                    "prescription"
+                ),
+            ),
+        ),
+    ]
 
 
 def _classify_light_blocking_geometry_only_attempts(

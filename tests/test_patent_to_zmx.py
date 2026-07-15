@@ -6833,6 +6833,130 @@ def test_lens_barrel_absorbing_source_locked_prescription_marker_fails_all(
     } == {"lens-barrel absorbing disclosure contains a prescription marker"}
 
 
+def _folded_lens_barrel_driving_source_fixture(patent_id: str) -> str:
+    return " ".join(
+        (
+            f"{patent_id} - Patent Public Search | USPTO IMAGING LENS ASSEMBLY MODULE, "
+            "IMAGING LENS ASSEMBLY DRIVING MODULE AND ELECTRONIC DEVICE Abstract",
+            "Family ID: 77725725 Appl. No.: 18/337147",
+            "BRIEF DESCRIPTION OF THE DRAWINGS FIG. 1 A is an exploded view. "
+            "FIG. 1 E is an optical surface schematic view. DETAILED DESCRIPTION",
+            "1st Embodiment [0041] Please refer to FIG. 1 A.",
+            "imaging lens assembly module imaging lens assembly driving module "
+            "light path folding element first lens barrel second lens barrel "
+            "rolling bearings first sensing element fourth sensing element "
+            "plastic lens elements",
+            "TABLE-US-00001 d1 (mm) 1.4 d2 (mm) 1.4",
+            "2nd Embodiment [0066] Please refer to FIG. 2 A.",
+            "The smartphone includes an image sensor and imaging lens assembly modules "
+            "with different focal length.",
+        )
+    )
+
+
+def _install_folded_lens_barrel_driving_test_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    phrases = (
+        "Family ID: 77725725",
+        "imaging lens assembly module",
+        "imaging lens assembly driving module",
+        "light path folding element",
+        "first lens barrel",
+        "second lens barrel",
+        "rolling bearings",
+        "first sensing element",
+        "fourth sensing element",
+        "plastic lens elements",
+        "smartphone",
+        "image sensor",
+        "FIG. 1 E is an optical surface schematic view",
+        "TABLE-US-00001",
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._FOLDED_LENS_BARREL_DRIVING_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "application_number": "18/337147",
+            "heading_markers": (
+                "1st Embodiment [0041]",
+                "2nd Embodiment [0066]",
+            ),
+            "table_prefix": "TABLE-US-00001 d1 (mm) 1.4 d2 (mm) 1.4",
+            "ppubs_table_count": len(
+                patent_to_zmx._patent_table_blocks(normalized)
+            ),
+            "architecture_phrase_counts": {
+                phrase: len(re.findall(re.escape(phrase), normalized, re.IGNORECASE))
+                for phrase in phrases
+            },
+        },
+    )
+
+
+def test_folded_lens_barrel_driving_source_locked_examples_are_terminal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-FOLDED-LENS-BARREL-DRIVING-TEST-A1"
+    raw_text = _folded_lens_barrel_driving_source_fixture(patent_id)
+    _install_folded_lens_barrel_driving_test_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert attempts[0].error.reason_code == (
+        "confirmed_no_prescription.lens_driving_mechanical_architecture_only"
+    )
+    assert attempts[1].error.reason_code == (
+        "confirmed_no_prescription.camera_module_device_architecture_only"
+    )
+
+
+def test_folded_lens_barrel_driving_prescription_marker_fails_all(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-FOLDED-LENS-BARREL-DRIVING-DRIFT-A1"
+    raw_text = _folded_lens_barrel_driving_source_fixture(patent_id) + (
+        " radius of curvature"
+    )
+    _install_folded_lens_barrel_driving_test_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 2
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {
+        str(attempt.error) for attempt in attempts
+    } == {"folded lens-barrel driving disclosure contains a prescription marker"}
+
+
 def test_sunny_group_rows_are_cardinality_bound_and_full_fov_is_halved() -> None:
     raw_text = """
     FOV is a maximum field of view of the optical imaging lens assembly.
