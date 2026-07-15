@@ -2433,6 +2433,12 @@ _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
 _GENIUS_SIX_LENS_NINE_PROFILE = "genius_six_lens_nine_embodiment_census_v1"
+_GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE = (
+    "genius_six_lens_nine_three_comparison_census_v1"
+)
+_GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_PROFILE = (
+    "genius_six_lens_nine_four_comparison_census_v1"
+)
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -4687,8 +4693,11 @@ def _genius_six_lens_census_attempts(
     payload: dict[str, Any],
     *,
     embodiment_count: int,
+    sheet_count: int | None = None,
+    comparison_count: int = 2,
 ) -> list[_PrescriptionParseAttempt]:
-    sheet_count = 20 if embodiment_count == 5 else 32
+    if sheet_count is None:
+        sheet_count = 20 if embodiment_count == 5 else 32
     ordinals = (
         "first",
         "second",
@@ -4702,10 +4711,8 @@ def _genius_six_lens_census_attempts(
     )[:embodiment_count]
     last_asphere_page = 7 + (embodiment_count - 1) * 3
     comparison_errors = []
-    for index, page_number in enumerate(
-        (last_asphere_page + 1, last_asphere_page + 2),
-        start=1,
-    ):
+    for index in range(1, comparison_count + 1):
+        page_number = last_asphere_page + index
         page = _ability_page(payload, f"genius_six_comparison_{index}")
         error = _genius_six_page_binding_error(
             page,
@@ -4814,6 +4821,46 @@ def _parse_genius_six_lens_nine_attempts(
     ):
         raise PatentParseError("Genius nine-embodiment official figure bindings changed")
     return _genius_six_lens_census_attempts(payload, embodiment_count=9)
+
+
+def _parse_genius_six_lens_nine_comparison_variant_attempts(
+    payload: dict[str, Any],
+    *,
+    page_count: int,
+    sheet_count: int,
+    comparison_count: int,
+    expected_comparison_counts: dict[str, int],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != page_count:
+        raise PatentParseError(
+            f"Genius nine-embodiment PDF page count is not retained {page_count} layout"
+        )
+    pages = payload.get("pages")
+    expected_key_pages = 18 + comparison_count
+    if not isinstance(pages, list) or len(pages) != expected_key_pages:
+        raise PatentParseError(
+            f"Genius nine-embodiment PDF must retain {expected_key_pages} key pages"
+        )
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("Genius nine-embodiment input lacks official source facts")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Genius nine-embodiment official HTML hash is invalid")
+    figure_counts = facts.get("figure_binding_counts")
+    if (
+        not isinstance(figure_counts, dict)
+        or len(figure_counts) != 18
+        or set(figure_counts.values()) != {1}
+        or facts.get("comparison_binding_counts") != expected_comparison_counts
+    ):
+        raise PatentParseError("Genius nine-embodiment official figure bindings changed")
+    return _genius_six_lens_census_attempts(
+        payload,
+        embodiment_count=9,
+        sheet_count=sheet_count,
+        comparison_count=comparison_count,
+    )
 
 
 def _ability_eight_lens_terminal_attempt(
@@ -5161,6 +5208,28 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_genius_six_lens_five_attempts(payload)
     if profile == _GENIUS_SIX_LENS_NINE_PROFILE:
         return _parse_genius_six_lens_nine_attempts(payload)
+    if profile == _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE:
+        return _parse_genius_six_lens_nine_comparison_variant_attempts(
+            payload,
+            page_count=48,
+            sheet_count=33,
+            comparison_count=3,
+            expected_comparison_counts={"FIG. 43": 1, "FIG. 44": 1, "FIG. 45": 1},
+        )
+    if profile == _GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_PROFILE:
+        return _parse_genius_six_lens_nine_comparison_variant_attempts(
+            payload,
+            page_count=50,
+            sheet_count=34,
+            comparison_count=4,
+            expected_comparison_counts={
+                "FIG. 43 to FIG. 46 illustrate all important parameters and numerical values "
+                "of relational expressions for the optical lens element assemblies according "
+                "to the first to ninth embodiments of the invention": 1,
+                "FIG. 43 and FIG. 45": 5,
+                "FIG. 44 and FIG. 46": 4,
+            },
+        )
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")

@@ -9,6 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import cv2
+import httpx
 import numpy as np
 import pytest
 
@@ -2555,6 +2556,85 @@ def _genius_six_lens_nine_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_six_lens_nine_variant_pdf_ocr_parser_input(
+    *,
+    profile: str,
+    publication_id: str,
+    page_count: int,
+    sheet_count: int,
+    comparison_count: int,
+    source_facts: dict[str, object],
+) -> bytes:
+    payload = json.loads(_genius_six_lens_nine_pdf_ocr_parser_input())
+    payload["profile"] = profile
+    payload["publication_id"] = publication_id
+    payload["page_count"] = page_count
+    payload["source_facts"] = source_facts
+    pages = [
+        page
+        for page in payload["pages"]
+        if not page["role"].startswith("genius_six_comparison_")
+    ]
+    for page in pages:
+        for token in page["rapidocr_tokens"]:
+            token["text"] = re.sub(r"of 32\b", f"of {sheet_count}", token["text"])
+    for comparison in range(1, comparison_count + 1):
+        page_number = 31 + comparison
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": f"genius_six_comparison_{comparison}",
+                "official_image_sha256": "f" * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(
+                        f"Sheet {page_number - 1} of {sheet_count}",
+                        700.0,
+                        50.0,
+                    )
+                ],
+            }
+        )
+    payload["pages"] = pages
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
+def _genius_six_lens_nine_three_comparison_pdf_ocr_parser_input() -> bytes:
+    markers = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_THREE_COMPARISON_REQUIRED_FIGURE_TEXT
+    comparisons = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_THREE_COMPARISON_MARKERS
+    source = " ".join((*markers, *comparisons))
+    return _genius_six_lens_nine_variant_pdf_ocr_parser_input(
+        profile="genius_six_lens_nine_three_comparison_census_v1",
+        publication_id="US-20260186249-A1",
+        page_count=48,
+        sheet_count=33,
+        comparison_count=3,
+        source_facts=patent_pdf_recovery._genius_six_lens_nine_three_comparison_source_facts(
+            source
+        ),
+    )
+
+
+def _genius_six_lens_nine_four_comparison_pdf_ocr_parser_input() -> bytes:
+    markers = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_REQUIRED_FIGURE_TEXT
+    comparisons = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_MARKERS
+    expected = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_EXPECTED_COUNTS
+    source_parts = list(markers)
+    for marker, count in zip(comparisons, expected, strict=True):
+        source_parts.extend([marker] * count)
+    source = " ".join(source_parts)
+    return _genius_six_lens_nine_variant_pdf_ocr_parser_input(
+        profile="genius_six_lens_nine_four_comparison_census_v1",
+        publication_id="US-20260186250-A1",
+        page_count=50,
+        sheet_count=34,
+        comparison_count=4,
+        source_facts=patent_pdf_recovery._genius_six_lens_nine_four_comparison_source_facts(
+            source
+        ),
+    )
+
+
 def _ability_three_lens_prescription_page(
     *,
     optical_lens: int,
@@ -2993,6 +3073,73 @@ def test_genius_six_lens_nine_source_facts_bind_every_figure() -> None:
     assert facts["comparison_binding_counts"] == {"FIG. 43": 1, "FIG. 44": 1}
 
 
+def test_genius_six_lens_nine_comparison_variant_source_facts_are_exact() -> None:
+    three_markers = (
+        patent_pdf_recovery._GENIUS_SIX_LENS_NINE_THREE_COMPARISON_REQUIRED_FIGURE_TEXT
+    )
+    three_comparisons = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_THREE_COMPARISON_MARKERS
+    three_source = " ".join((*three_markers, *three_comparisons))
+    assert patent_pdf_recovery.ability_drawing_tables_declared(three_source)
+    three_facts = (
+        patent_pdf_recovery._genius_six_lens_nine_three_comparison_source_facts(
+            three_source
+        )
+    )
+    assert len(three_facts["figure_binding_counts"]) == 18
+    assert set(three_facts["figure_binding_counts"].values()) == {1}
+    assert three_facts["comparison_binding_counts"] == {
+        "FIG. 43": 1,
+        "FIG. 44": 1,
+        "FIG. 45": 1,
+    }
+
+    four_markers = (
+        patent_pdf_recovery._GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_REQUIRED_FIGURE_TEXT
+    )
+    four_comparisons = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_MARKERS
+    expected = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_EXPECTED_COUNTS
+    four_parts = list(four_markers)
+    for marker, count in zip(four_comparisons, expected, strict=True):
+        four_parts.extend([marker] * count)
+    four_source = " ".join(four_parts)
+    assert patent_pdf_recovery.ability_drawing_tables_declared(four_source)
+    four_facts = patent_pdf_recovery._genius_six_lens_nine_four_comparison_source_facts(
+        four_source
+    )
+    assert len(four_facts["figure_binding_counts"]) == 18
+    assert set(four_facts["figure_binding_counts"].values()) == {1}
+    assert four_facts["comparison_binding_counts"] == dict(
+        zip(four_comparisons, expected, strict=True)
+    )
+
+
+def test_google_404_is_allowed_only_for_proven_official_only_profile(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def missing_page(*_args: object, **_kwargs: object) -> object:
+        request = httpx.Request("GET", "https://patents.google.com/missing")
+        response = httpx.Response(404, request=request)
+        raise httpx.HTTPStatusError("missing", request=request, response=response)
+
+    monkeypatch.setattr(patent_pdf_recovery, "_get_with_retries", missing_page)
+    urls = asyncio.run(
+        patent_pdf_recovery._google_citation_pdf_urls(
+            object(),
+            "https://patents.google.com/missing",
+            profile="genius_six_lens_nine_three_comparison_census_v1",
+        )
+    )
+    assert urls == set()
+    with pytest.raises(httpx.HTTPStatusError):
+        asyncio.run(
+            patent_pdf_recovery._google_citation_pdf_urls(
+                object(),
+                "https://patents.google.com/missing",
+                profile="ability_eight_lens_metadata_unpublished_v1",
+            )
+        )
+
+
 def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_eight_lens_pdf_ocr_parser_input().decode(),
@@ -3206,6 +3353,36 @@ def test_genius_six_lens_nine_profile_retains_every_embodiment() -> None:
         patent_id="US-12461345-B2",
     )
     assert [attempt.embodiment_number for attempt in grant_attempts] == list(range(1, 10))
+
+
+@pytest.mark.parametrize(
+    ("parser_input", "patent_id"),
+    (
+        (
+            _genius_six_lens_nine_three_comparison_pdf_ocr_parser_input,
+            "US-20260186249-A1",
+        ),
+        (
+            _genius_six_lens_nine_four_comparison_pdf_ocr_parser_input,
+            "US-20260186250-A1",
+        ),
+    ),
+)
+def test_genius_six_lens_nine_comparison_variants_retain_every_embodiment(
+    parser_input: object,
+    patent_id: str,
+) -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        parser_input().decode(),
+        patent_id=patent_id,
+    )
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 10))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "six-lens optical/asphere census passed; numeric cell parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
 
 
 def test_ability_three_lens_pdf_profile_retains_each_disclosed_ocr_failure() -> None:
