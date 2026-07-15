@@ -318,6 +318,9 @@ def _parse_prescription_attempts(
         attempts = _parse_kantatsu_six_lens_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_kantatsu_ih_first_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_kantatsu_inline_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1163,6 +1166,35 @@ _KANTATSU_SIX_LENS_HALF_FIELD_DEFINITION = re.compile(
     flags=re.IGNORECASE,
 )
 _KANTATSU_SIX_LENS_ASPHERE_DEFINITION = re.compile(
+    r"\bA4,\s+A6,\s+A8,\s+A10,\s+A12,\s+A14\s+and\s+A16\s+denote\s+"
+    r"aspheric\s+surface\s+coefficients\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_IH_FIRST_HEADER_PATTERN = re.compile(
+    rf"\bTABLE\s+(?P<table>\d+)\s+Example\s*(?P<example>\d+)\s+"
+    rf"Unit\s+mm\s+f\s*=\s*(?P<f>{NUMBER_PATTERN})\s+"
+    rf"i\s*h\s*=\s*(?P<ih>{NUMBER_PATTERN})\s+"
+    rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s+"
+    rf"TTL\s*=\s*(?P<ttl>{NUMBER_PATTERN})\s+"
+    rf"\S+\s*\(\s*\)\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s+Surface\s+Data\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_IH_FIRST_BINDING_PATTERN = re.compile(
+    r"\bExample\s+(?P<example>\d+)\s+\[\d+\]\s+The\s+basic\s+lens\s+data\s+"
+    r"is\s+shown\s+below\s+in\s+Table\s+(?P<table>\d+)\.\s+"
+    r"TABLE-US-\d+\s+TABLE\s+(?P<header_table>\d+)\s+"
+    r"Example\s*(?P<header_example>\d+)\s+Unit\s+mm\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_IH_FIRST_HALF_FIELD_DEFINITION = re.compile(
+    r"\bIn\s+each\s+example,\s+f\s+denotes\s+the\s+focal\s+length\s+of\s+the\s+"
+    r"overall\s+optical\s+system\s+of\s+the\s+imaging\s+lens,\s+Fno\s+denotes\s+"
+    r"an\s+F-number,\s+\S+\s+denotes\s+a\s+half\s+field\s+of\s+view,\s+ih\s+"
+    r"denotes\s+a\s+maximum\s+image\s+height,\s+and\s+TTL\s+denotes\s+a\s+"
+    r"total\s+track\s+length\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_IH_FIRST_ASPHERE_DEFINITION = re.compile(
     r"\bA4,\s+A6,\s+A8,\s+A10,\s+A12,\s+A14\s+and\s+A16\s+denote\s+"
     r"aspheric\s+surface\s+coefficients\b",
     flags=re.IGNORECASE,
@@ -2107,6 +2139,155 @@ def _parse_kantatsu_six_lens_table_attempts(
                 raise PatentParseError(
                     f"Kantatsu six-lens example {example_number} has invalid "
                     "f/h/Fno/TTL/half-field metadata"
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=half_field,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retained per published example
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=example_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_kantatsu_ih_first_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse four-example Kantatsu tables whose metadata lists ``ih`` first."""
+
+    blocks = _patent_table_blocks(text)
+    matched_headers = [_KANTATSU_IH_FIRST_HEADER_PATTERN.search(block.text) for block in blocks]
+    if not any(matched_headers):
+        return []
+
+    bindings = list(_KANTATSU_IH_FIRST_BINDING_PATTERN.finditer(text))
+    try:
+        if [block.number for block in blocks] != list(range(1, 6)):
+            raise PatentParseError(
+                "Kantatsu ih-first family tables are not consecutive through the "
+                "conditional-expression summary"
+            )
+        if len(bindings) != 4:
+            raise PatentParseError(
+                f"Kantatsu ih-first family must bind four examples, found {len(bindings)}"
+            )
+        if _KANTATSU_IH_FIRST_HALF_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError("Kantatsu ih-first published half-field definition not found")
+        if _KANTATSU_IH_FIRST_ASPHERE_DEFINITION.search(text) is None:
+            raise PatentParseError(
+                "Kantatsu ih-first published A4-A16 asphere definition not found"
+            )
+        for example_number, binding in enumerate(bindings, start=1):
+            bound_values = (
+                int(binding.group("example")),
+                int(binding.group("table")),
+                int(binding.group("header_table")),
+                int(binding.group("header_example")),
+            )
+            if bound_values != (example_number,) * 4:
+                raise PatentParseError(
+                    "Kantatsu ih-first narrative/header binding is not consecutive at "
+                    f"example {example_number}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all four disclosed examples
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=f"Kantatsu ih-first example {example_number}",
+                error=exc,
+            )
+            for example_number in range(1, 5)
+        ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for example_number, block in enumerate(blocks[:4], start=1):
+        embodiment = f"Kantatsu ih-first example {example_number}"
+        try:
+            header = _KANTATSU_IH_FIRST_HEADER_PATTERN.search(block.text)
+            if header is None:
+                raise PatentParseError(
+                    f"Kantatsu ih-first example {example_number} header is source-damaged"
+                )
+            if (
+                int(header.group("table")) != example_number
+                or int(header.group("example")) != example_number
+            ):
+                raise PatentParseError(
+                    f"Kantatsu ih-first example {example_number} header is cross-bound"
+                )
+
+            # PPUBS inserts spaces inside textual parentheses in this family. Only
+            # labels are normalized; numeric tokens remain separate.
+            table_text = re.sub(
+                r"\(\s*(Object|Stop)\s*\)",
+                r"(\1)",
+                block.text,
+                flags=re.IGNORECASE,
+            )
+            table_text = re.sub(
+                r"\(\s*(?:v|\u03bd)\s*d(\d+)\s*\)",
+                r"(vd\1)",
+                table_text,
+                flags=re.IGNORECASE,
+            )
+            surfaces, source_to_output, lens_surface_end = _parse_kantatsu_inline_surface_table(
+                table_text,
+                example_number=example_number,
+                family_label="Kantatsu ih-first",
+            )
+            if lens_surface_end != 13:
+                raise PatentParseError(
+                    f"Kantatsu ih-first example {example_number} lens surface coverage "
+                    f"must end at 13, found {lens_surface_end}"
+                )
+            coefficients = _parse_kantatsu_inline_asphere_table(
+                table_text,
+                example_number=example_number,
+                expected_source_surfaces=tuple(range(2, 14)),
+                labels=("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16"),
+                family_label="Kantatsu ih-first",
+            )
+            for source_index, row in coefficients.items():
+                output_index = source_to_output[source_index]
+                surface = surfaces[output_index - 1]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(row)
+
+            focal_length = _parse_number(header.group("f"))
+            image_height = _parse_number(header.group("ih"))
+            f_number = _parse_number(header.group("fno"))
+            total_track = _parse_number(header.group("ttl"))
+            half_field = _parse_number(header.group("hfov"))
+            if (
+                focal_length <= 0
+                or image_height <= 0
+                or f_number <= 0
+                or total_track <= 0
+                or not 0 < half_field < 90
+            ):
+                raise PatentParseError(
+                    f"Kantatsu ih-first example {example_number} has invalid "
+                    "f/ih/Fno/TTL/half-field metadata"
                 )
             prescription = PatentPrescription(
                 patent_id=patent_id,

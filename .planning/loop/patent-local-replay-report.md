@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `a53e735db0867e6fe352f71b22f1c58b6ca065029a6cd8f942531572a5fd4c1e`
+- result_set_sha256: `9149666fd16e422ead35413b1ef271f512f215bba6d025b3d2bda12df77e8182`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 510
 - `terminal`: 708
-- `parser_review_required`: 1344
+- `parser_review_required`: 1347
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1344
+- `parser_review_required.deterministic_parser_rejected`: 1347
 - `terminal.process_receipt_classified`: 708
 - `converted_pending_intake.process_isolated_zmx_ready`: 510
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -68,7 +68,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 269
+- `generic_summary_metadata_missing`: 268
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -103,6 +103,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sunny_asphere_row_s7_has_more_values_than_headers_token`: 3
 - `other_unsupported_nonzero_fujifilm_asphere_terms_s3_a3_n_s4_a3_n_s14_a3_n_s15_a3_n`: 3
 - `other_kantatsu_example_n_lens_n_first_surface_row_is_malformed`: 2
+- `other_kantatsu_ih_first_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 2
 - `other_newmax_a_row_has_nonnumeric_data_token_positive`: 2
 - `other_r2_thickness_is_not_numeric_d2`: 2
 - `other_sekonix_glass_code_cannot_be_split_deterministically_token`: 2
@@ -115,6 +116,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_aspheric_row_a26_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a8_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_k_has_more_numeric_values_than_surfaces_extra_token`: 1
+- `other_kantatsu_ih_first_example_n_header_is_source_damaged`: 1
+- `other_kantatsu_ih_first_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 1
 - `other_kantatsu_inline_example_n_coefficient_a20_for_source_surface_n_is_missing`: 1
 - `other_kantatsu_inline_example_n_coefficient_label_expected_a4_found_n`: 1
 - `other_kantatsu_inline_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 1

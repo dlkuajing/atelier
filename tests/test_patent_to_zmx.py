@@ -1177,6 +1177,62 @@ def test_kantatsu_six_lens_requires_published_half_field_definition() -> None:
     )
 
 
+def test_kantatsu_ih_first_retains_every_official_numeric_break() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "856703de431c5c5a"
+        / "US-20210364766-A1.html"
+    )
+    raw = source.read_bytes()
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "856703de431c5c5ac4338d3ea28d1dea7d7e2fa89038135cb9f4287e72075e9b"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw.decode("utf-8"),
+        patent_id="US-20210364766-A1",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert ", 10, 6, 11," in str(attempts[0].error)
+    assert ", 13, 77, 14," in str(attempts[1].error)
+    assert "[1, 2, 1, 544, 3" in str(attempts[2].error)
+    assert "example 4 header is source-damaged" in str(attempts[3].error)
+
+
+def test_kantatsu_ih_first_requires_published_half_field_definition() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "856703de431c5c5a"
+        / "US-20210364766-A1.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "denotes a half field of view",
+        "is listed in degrees",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-20210364766-NO-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "published half-field definition not found" in str(attempt.error) for attempt in attempts
+    )
+
+
 def test_kantatsu_inline_retained_source_parses_only_complete_examples() -> None:
     source = (
         Path(__file__).resolve().parents[1]

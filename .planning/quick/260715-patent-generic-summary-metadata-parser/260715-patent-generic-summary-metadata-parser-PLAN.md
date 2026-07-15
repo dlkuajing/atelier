@@ -253,6 +253,23 @@ thresholds, or claim patent saturation.
   `9bb1f22c42b1915bb0cf95a5429ad7c44b416e2afc61203e1a97b1253a6bdc80` and contains 269 roots
   across 155 normalized signatures; 101 focused parser/census/replay/process tests and Ruff pass;
   CODE V inventory remains zero.
+- The twelfth source-proven family is the four-example Kantatsu `f/ih/Fno/TTL/half-field` layout
+  in `US-20210364766`. A complete 269-root ownership scan matched only this retained official
+  PPUBS document. The narrative binds all four examples to tables 1--4, defines the field as half
+  field of view, prints a Stop, and defines K/A4--A16. The parser normalizes only spaces inside
+  textual Object/Stop/material-label parentheses; it does not join numeric tokens.
+- All four disclosed examples retain official numeric damage: table 1 splits `55.86` into
+  `55. 6`, table 2 splits the surface-13 radius into `-13.4 77`, table 3 splits several numeric
+  tokens including `1 544`, and table 4 prints `Fno = 2 41`. Append-only replay replaced one
+  document-scoped generic failure with four source-hash-bound embodiment parser rejections; no
+  conversion ran and no candidate was promoted. The generic document bucket changed 269 to 268.
+  Result-set SHA-256 is
+  `9149666fd16e422ead35413b1ef271f512f215bba6d025b3d2bda12df77e8182`; summary artifact
+  SHA-256 is `79d82a6e804db54e64575667d488533705e988f2942e063c291b97ece5d67be0`;
+  strict audit is 619/619 with zero corrupt evidence. The after-twelfth-layout census SHA-256 is
+  `842df767c0ca217e16334f4d17dff962d528fcfa2c90e5c497dbe167c1e80d1e` and contains 268 roots
+  across 154 normalized signatures; 104 focused parser/census/replay/process tests and Ruff pass;
+  CODE V inventory remains zero.
 
 ## Completion condition
 

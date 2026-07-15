@@ -45,7 +45,7 @@ Sunny metadata 最大桶首铲已完成；下一步按完整 census 的新最大
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE；619-root frozen local replay remains strict with missing=0 and corrupt=0. After generic-summary layout 11: 429 parser-review roots, 137 mixed roots, 510 staging items, and 28 patent-budget retry items remain non-terminal. The largest parser bucket remains `generic_summary_metadata_missing=269`; this is not source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE；619-root frozen local replay remains strict with missing=0 and corrupt=0. After generic-summary layout 12: 429 parser-review roots, 137 mixed roots, 510 staging items, and 28 patent-budget retry items remain non-terminal. The largest parser bucket remains `generic_summary_metadata_missing=268`; this is not source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
