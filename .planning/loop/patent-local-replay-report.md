@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `3bc0bbee88906ff3b6c40e276addbb6bd3336e0dc73dd987706f5b90393776df`
+- result_set_sha256: `2e0a9ceb2e8b930393168dc7f9cda50c1659aebeacab6afe98f0b96dfea5d506`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,18 +20,18 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 15
 - `terminal`: 33
-- `parser_review_required`: 467
+- `parser_review_required`: 453
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 104
+- `mixed_nonterminal`: 118
 
 ## Item states
 
-- `converted_pending_intake`: 359
-- `terminal`: 631
-- `parser_review_required`: 1388
-- `conversion_retry_required`: 16
+- `converted_pending_intake`: 429
+- `terminal`: 649
+- `parser_review_required`: 1288
+- `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
 
@@ -42,23 +42,23 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 0
-- `trace_failed`: 523
-- `trace_timeout`: 108
+- `trace_failed`: 550
+- `trace_timeout`: 99
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 467
-- `mixed_nonterminal.multiple_item_states`: 104
+- `parser_review_required.all_disclosed_items_rejected`: 453
+- `mixed_nonterminal.multiple_item_states`: 118
 - `terminal.all_disclosed_items_terminal`: 33
 - `converted_pending_intake.all_disclosed_items_converted`: 15
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1388
-- `terminal.process_receipt_classified`: 631
-- `converted_pending_intake.process_isolated_zmx_ready`: 359
-- `conversion_retry_required.patent_budget_exhausted`: 16
+- `parser_review_required.deterministic_parser_rejected`: 1288
+- `terminal.process_receipt_classified`: 649
+- `converted_pending_intake.process_isolated_zmx_ready`: 429
+- `conversion_retry_required.patent_budget_exhausted`: 28
 
 ## Source attempts
 
@@ -68,8 +68,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `sunny_embodiment_metadata_missing`: 299
 - `generic_summary_metadata_missing`: 294
+- `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
 - `generic_surface_radius_not_numeric`: 112

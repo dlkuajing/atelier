@@ -2084,6 +2084,7 @@ def _sunny_group_row_values(
     label_patterns: tuple[str, ...],
     embodiment_count: int,
     reject_compound_fno: bool = False,
+    reject_operator_prefix: bool = False,
 ) -> list[float] | None:
     """Return one unambiguous, complete per-embodiment row.
 
@@ -2103,16 +2104,19 @@ def _sunny_group_row_values(
                 body,
                 flags=re.IGNORECASE,
             ):
-                if reject_compound_fno:
-                    prefix = body[max(0, match.start() - 32) : match.start()]
-                    if re.search(
-                        r"(?:ImgH|TTL|TL|DT\w*)\s*[×*]\s*$",
-                        prefix,
-                        flags=re.IGNORECASE,
-                    ) is not None:
-                        # ``ImgH × f/EPD (mm)`` is a dimensional condition,
-                        # not the working F-number row.
-                        continue
+                prefix = body[max(0, match.start() - 32) : match.start()]
+                if reject_operator_prefix and re.search(r"[×*]\s*$", prefix) is not None:
+                    # A row such as ``tan(FOV/2) × f(mm)`` publishes a
+                    # compound condition, not the effective focal length.
+                    continue
+                if reject_compound_fno and re.search(
+                    r"(?:ImgH|TTL|TL|DT\w*)\s*[×*]\s*$",
+                    prefix,
+                    flags=re.IGNORECASE,
+                ) is not None:
+                    # ``ImgH × f/EPD (mm)`` is a dimensional condition,
+                    # not the working F-number row.
+                    continue
                 values = tuple(
                     _parse_number(token)
                     for token in match.group(1).split()
@@ -2120,6 +2124,15 @@ def _sunny_group_row_values(
                 )
                 if len(values) == embodiment_count:
                     candidates.add(values)
+                elif len(values) == embodiment_count * 2 and all(
+                    values[index] == values[index + 1]
+                    for index in range(0, len(values), 2)
+                ):
+                    # Some multi-state Sunny tables publish two adjacent
+                    # state columns for each surface prescription.  Collapse
+                    # only when every published pair is exactly identical;
+                    # differing states require a dedicated parser family.
+                    candidates.add(values[::2])
     if len(candidates) != 1:
         return None
     return list(next(iter(candidates)))
@@ -2148,6 +2161,7 @@ def _sunny_consolidated_meta_rows(
             blocks,
             label_patterns=label_patterns,
             embodiment_count=embodiment_count,
+            reject_operator_prefix=meta_field == "efl",
         )
         if values is not None:
             rows[meta_field] = values

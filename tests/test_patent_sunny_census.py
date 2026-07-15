@@ -13,6 +13,7 @@ CENSUS = (
     / "census"
     / "sunny-metadata-before.json"
 )
+AFTER_CENSUS = CENSUS.with_name("sunny-metadata-after.json")
 
 
 def test_frozen_sunny_metadata_census_is_strict_and_canonical() -> None:
@@ -37,3 +38,15 @@ def test_sunny_layout_signature_ignores_numeric_values_but_keeps_semantics() -> 
     second = first.replace("1.2 1.3", "1.4 1.5").replace("100 102", "104 106")
 
     assert _layout_evidence(first)[0] == _layout_evidence(second)[0]
+
+
+def test_post_replay_sunny_metadata_census_is_strict_and_canonical() -> None:
+    census = SunnyMetadataCensus.model_validate_json(AFTER_CENSUS.read_bytes())
+
+    assert census.affected_items == 199
+    assert census.affected_roots == 53
+    assert census.result_set_sha256 == (
+        "2e0a9ceb2e8b930393168dc7f9cda50c1659aebeacab6afe98f0b96dfea5d506"
+    )
+    assert census.missing_field_counts == {"Fno": 154, "Semi-FOV": 155, "f": 77}
+    assert canonical_json_bytes(census) == AFTER_CENSUS.read_bytes()

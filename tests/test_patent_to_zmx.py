@@ -646,7 +646,8 @@ def test_sunny_group_rows_are_cardinality_bound_and_full_fov_is_halved() -> None
 def test_sunny_group_rows_reject_compound_fno_and_undefined_or_ambiguous_fov() -> None:
     raw_text = """
     TABLE-US-00001 TABLE 1 Conditional/Embodiment 1 2 3
-    ImgH × f/EPD (mm) 3.10 3.20 3.30 FOV(deg) 120.0 122.0 124.0
+    ImgH × f/EPD (mm) 3.10 3.20 3.30
+    tan(FOV/2) × f(mm) 4.10 4.20 4.30 FOV(deg) 120.0 122.0 124.0
     TABLE-US-00002 TABLE 2 Example Condition 1 2 3
     FOV(deg) 121.0 123.0 125.0
     """
@@ -658,7 +659,38 @@ def test_sunny_group_rows_reject_compound_fno_and_undefined_or_ambiguous_fov() -
     )
 
     assert "fno" not in rows
+    assert "efl" not in rows
     assert "hfov" not in rows
+
+
+def test_sunny_group_rows_collapse_only_exact_duplicate_state_pairs() -> None:
+    raw_text = """
+    FOV is a maximum field of view.
+    TABLE-US-00001 TABLE 1 Parameter 1 2 3 4 5 6
+    f(mm) 1.35 1.35 1.38 1.38 1.31 1.31
+    Fno 2.20 2.20 2.19 2.19 2.18 2.18
+    FOV(deg) 113.08 113.08 112.06 112.06 111.85 111.85
+    """
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    rows = patent_to_zmx._sunny_consolidated_meta_rows(
+        patent_to_zmx._patent_table_blocks(text),
+        embodiment_count=3,
+        document_text=text,
+    )
+
+    assert rows == {
+        "efl": [1.35, 1.38, 1.31],
+        "fno": [2.20, 2.19, 2.18],
+        "hfov": [56.54, 56.03, 55.925],
+    }
+
+    differing = text.replace("2.20 2.20", "2.20 2.21")
+    differing_rows = patent_to_zmx._sunny_consolidated_meta_rows(
+        patent_to_zmx._patent_table_blocks(differing),
+        embodiment_count=3,
+        document_text=differing,
+    )
+    assert "fno" not in differing_rows
 
 
 def test_parse_patent_prescription_accepts_ability_opto_tables() -> None:
