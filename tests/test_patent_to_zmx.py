@@ -2055,6 +2055,166 @@ def _ability_four_eight_lens_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _largan_surface_page(
+    *,
+    embodiment_number: int,
+    page_number: int,
+    figure_number: int,
+    focal_length: float,
+) -> dict[str, object]:
+    tokens = [
+        _ability_ocr_token("Surface #", 100.0, 100.0),
+        _ability_ocr_token("Curvature Radius", 200.0, 100.0),
+        _ability_ocr_token("Thickness", 300.0, 100.0),
+        _ability_ocr_token("Material", 400.0, 100.0),
+        _ability_ocr_token("Index", 500.0, 100.0),
+        _ability_ocr_token("Abbe #", 600.0, 100.0),
+        _ability_ocr_token("0", 100.0, 130.0),
+    ]
+    for surface_number in range(1, 15):
+        y = 130.0 + 30.0 * surface_number
+        tokens.append(_ability_ocr_token(str(surface_number), 100.0, y))
+        radius = (
+            "Plano"
+            if surface_number in {1, 12, 13, 14}
+            else f"{10.0 + surface_number:.5f} (ASP)"
+        )
+        tokens.append(_ability_ocr_token(radius, 200.0, y))
+        if surface_number != 14:
+            tokens.append(_ability_ocr_token("0.100", 300.0, y))
+        if surface_number in {2, 4, 6, 8, 10}:
+            tokens.extend(
+                (
+                    _ability_ocr_token("Plastic", 400.0, y),
+                    _ability_ocr_token("1.544", 500.0, y),
+                    _ability_ocr_token("55.9", 600.0, y),
+                )
+            )
+        elif surface_number == 12:
+            tokens.extend(
+                (
+                    _ability_ocr_token("Glass", 400.0, y),
+                    _ability_ocr_token("1.517", 500.0, y),
+                    _ability_ocr_token("64.2", 600.0, y),
+                )
+            )
+    table_number = 2 * embodiment_number - 1
+    return {
+        "page_number": page_number,
+        "role": f"largan_surface_{embodiment_number}",
+        "official_image_sha256": format(page_number % 16, "x") * 64,
+        "mirror_text": (
+            f"TABLE {table_number} ( Embodiment {embodiment_number} ) "
+            f"f = {focal_length:.2f} mm , Fno = 2.9 , HFOV = 33.0 deg . "
+            f"Surface # Curvature Radius Thickness Fig . {figure_number}"
+        ),
+        "rapidocr_tokens": tokens,
+    }
+
+
+def _largan_asphere_page(
+    *,
+    embodiment_number: int,
+    page_number: int,
+    figure_number: int,
+) -> dict[str, object]:
+    tokens: list[dict[str, object]] = []
+    scientific_values: list[str] = []
+    row_labels = ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    for group_index, surfaces in enumerate(((2, 3, 4, 5, 6), (7, 8, 9, 10, 11))):
+        header_y = 100.0 + group_index * 400.0
+        tokens.append(_ability_ocr_token("Surface #", 100.0, header_y))
+        column_xs = [200.0 + 100.0 * index for index in range(5)]
+        tokens.extend(
+            _ability_ocr_token(str(surface), x, header_y)
+            for surface, x in zip(surfaces, column_xs, strict=True)
+        )
+        for row_index, label in enumerate(row_labels, start=1):
+            row_y = header_y + 30.0 * row_index
+            tokens.append(_ability_ocr_token(label, 100.0, row_y))
+            for column_x in column_xs:
+                value = "-1.00000E+00" if label == "K" else "0.00000E+00"
+                tokens.append(_ability_ocr_token(value, column_x, row_y))
+                scientific_values.append(value)
+    table_number = 2 * embodiment_number
+    return {
+        "page_number": page_number,
+        "role": f"largan_asphere_{embodiment_number}",
+        "official_image_sha256": format(page_number % 16, "x") * 64,
+        "mirror_text": (
+            f"TABLE {table_number} Aspheric Coefficients Surface # "
+            + " ".join(scientific_values)
+            + f" Fig . {figure_number}"
+        ),
+        "rapidocr_tokens": tokens,
+    }
+
+
+def _largan_three_five_lens_pdf_ocr_parser_input() -> bytes:
+    focal_lengths = (5.44, 5.46, 5.47)
+    pages: list[dict[str, object]] = []
+    for embodiment_number, (surface_page, asphere_page, surface_figure) in enumerate(
+        ((8, 9, 7), (10, 11, 9), (12, 13, 11)),
+        start=1,
+    ):
+        pages.extend(
+            (
+                _largan_surface_page(
+                    embodiment_number=embodiment_number,
+                    page_number=surface_page,
+                    figure_number=surface_figure,
+                    focal_length=focal_lengths[embodiment_number - 1],
+                ),
+                _largan_asphere_page(
+                    embodiment_number=embodiment_number,
+                    page_number=asphere_page,
+                    figure_number=surface_figure + 1,
+                ),
+            )
+        )
+    meta_tokens = [
+        _ability_ocr_token("Embodiment Embodiment Embodiment", 100.0, 100.0),
+        *(
+            _ability_ocr_token(str(index), 100.0 + index * 100.0, 130.0)
+            for index in range(1, 4)
+        ),
+    ]
+    for label, y, values in (
+        ("f", 160.0, focal_lengths),
+        ("Fno", 190.0, (2.9, 2.9, 2.9)),
+        ("HFOV", 220.0, (33.0, 33.0, 33.0)),
+    ):
+        meta_tokens.append(_ability_ocr_token(label, 100.0, y))
+        meta_tokens.extend(
+            _ability_ocr_token(str(value), 100.0 + index * 100.0, y)
+            for index, value in enumerate(values, start=1)
+        )
+    pages.append(
+        {
+            "page_number": 14,
+            "role": "largan_system_meta",
+            "official_image_sha256": "e" * 64,
+            "mirror_text": "TABLE 7 Embodiment f Fno HFOV TTL ImgH Fig . 13",
+            "rapidocr_tokens": meta_tokens,
+        }
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "largan_three_five_lens_prescriptions_v1",
+        "publication_id": "US-12449639-B2",
+        "page_count": 21,
+        "source_facts": {
+            "primary_html_sha256": "e" * 64,
+            "figure_binding_counts": {
+                f"FIG. {number}": 1 for number in range(7, 14)
+            },
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _ability_three_lens_prescription_page(
     *,
     optical_lens: int,
@@ -2431,6 +2591,17 @@ def test_ability_four_eight_lens_source_facts_prove_f_number_absence() -> None:
     assert facts["f_number_label_counts"] == {"FNO": 0, "F-number": 0, "F/#": 0}
 
 
+def test_largan_three_five_lens_source_facts_bind_every_table() -> None:
+    markers = patent_pdf_recovery._LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT
+    source = " ".join(markers)
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._largan_three_five_lens_source_facts(source)
+    assert facts["figure_binding_counts"] == {
+        f"FIG. {number}": 1 for number in range(7, 14)
+    }
+
+
 def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_eight_lens_pdf_ocr_parser_input().decode(),
@@ -2511,6 +2682,45 @@ def test_ability_four_eight_lens_profile_rejects_ocr_f_number_label() -> None:
             json.dumps(payload),
             patent_id="US-10809497-B2",
         )
+
+
+def test_largan_three_five_lens_profile_parses_complete_cross_checked_cells() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _largan_three_five_lens_pdf_ocr_parser_input().decode(),
+        patent_id="US-12449639-B2",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    assert [prescription.focal_length_mm for prescription in prescriptions if prescription] == [
+        5.44,
+        5.46,
+        5.47,
+    ]
+    assert all(prescription.f_number == 2.9 for prescription in prescriptions if prescription)
+    assert all(prescription.hfov_deg == 33.0 for prescription in prescriptions if prescription)
+    assert all(len(prescription.surfaces) == 14 for prescription in prescriptions if prescription)
+
+
+def test_largan_three_five_lens_profile_retains_low_confidence_by_embodiment() -> None:
+    payload = json.loads(_largan_three_five_lens_pdf_ocr_parser_input())
+    first_asphere = next(page for page in payload["pages"] if page["role"] == "largan_asphere_1")
+    coefficient = next(
+        token
+        for token in first_asphere["rapidocr_tokens"]
+        if token["text"] == "-1.00000E+00"
+    )
+    coefficient["confidence"] = 0.98
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id="US-12449639-B2",
+    )
+
+    assert attempts[0].prescription is None
+    assert "coefficient OCR views disagree" in str(attempts[0].error)
+    assert all(attempt.prescription is not None for attempt in attempts[1:])
 
 
 def test_ability_three_lens_pdf_profile_retains_each_disclosed_ocr_failure() -> None:
@@ -3156,7 +3366,9 @@ def test_convert_candidate_recovers_linked_prior_publication_pdf(
         **_kwargs: object,
     ) -> object:
         if publication_id == "US-11768354-B2":
-            return None
+            raise patent_to_zmx.PatentPdfRecoveryError(
+                "grant citation PDF unavailable; use prior publication"
+            )
         assert publication_id == "US-20200201001-A1"
         return patent_to_zmx.PatentPdfOcrRecovery(
             publication_id=publication_id,

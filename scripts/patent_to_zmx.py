@@ -2417,6 +2417,7 @@ _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
 _ABILITY_TWO_FIVE_LENS_PROFILE = "ability_two_five_lens_prescriptions_v1"
 _ABILITY_TWO_NINE_LENS_PROFILE = "ability_two_nine_lens_f_number_unpublished_v1"
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
+_LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -3605,6 +3606,470 @@ def _parse_ability_two_five_lens_attempts(
     return attempts
 
 
+def _largan_required_number_token(
+    tokens: list[dict[str, Any]],
+    *,
+    x: float,
+    y: float,
+    context: str,
+) -> dict[str, Any]:
+    candidates = [
+        token
+        for token in tokens
+        if abs(_ability_token_center(token)[0] - x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and abs(_ability_token_center(token)[1] - y) <= _ABILITY_ROW_Y_TOLERANCE
+        and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+    ]
+    if len(candidates) != 1:
+        raise PatentParseError(
+            f"Largan {context} has {len(candidates)} numeric OCR tokens"
+        )
+    token = candidates[0]
+    confidence = _ability_token_confidence(token)
+    if confidence < _ABILITY_OCR_NUMBER_CONFIDENCE:
+        raise PatentParseError(
+            f"Largan {context} token {_ability_token_text(token)!r} confidence "
+            f"{confidence:.6f} is below {_ABILITY_OCR_NUMBER_CONFIDENCE:.6f}"
+        )
+    return token
+
+
+def _largan_five_lens_surface_table(page: dict[str, Any]) -> list[PatentSurface]:
+    """Parse one Largan five-lens table from coordinate OCR without repair."""
+
+    tokens = list(page["rapidocr_tokens"])
+    headers = {
+        label: _ability_unique_token(tokens, label, min_confidence=0.95)
+        for label in ("Surface #", "Curvature Radius", "Thickness", "Material", "Index", "Abbe #")
+    }
+    surface_x, header_y = _ability_token_center(headers["Surface #"])
+    radius_x, _ = _ability_token_center(headers["Curvature Radius"])
+    thickness_x, _ = _ability_token_center(headers["Thickness"])
+    material_x, _ = _ability_token_center(headers["Material"])
+    nd_x, _ = _ability_token_center(headers["Index"])
+    vd_x, _ = _ability_token_center(headers["Abbe #"])
+
+    row_tokens = [
+        token
+        for token in tokens
+        if _ability_token_center(token)[1] > header_y
+        and abs(_ability_token_center(token)[0] - surface_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and re.fullmatch(r"\d+", _ability_token_text(token))
+    ]
+    row_tokens.sort(key=lambda token: _ability_token_center(token)[1])
+    if [_ability_token_text(token) for token in row_tokens] != [
+        str(index) for index in range(15)
+    ]:
+        raise PatentParseError("Largan five-lens surface row sequence is not 0 through 14")
+    for token in row_tokens:
+        confidence = _ability_token_confidence(token)
+        if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            raise PatentParseError(
+                f"Largan surface label {_ability_token_text(token)!r} confidence "
+                f"{confidence:.6f} is below {_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+
+    surfaces: list[PatentSurface] = []
+    radius_pattern = re.compile(
+        rf"(?P<value>{NUMBER_PATTERN})(?P<asphere>\s*\(ASP\))?",
+        flags=re.IGNORECASE,
+    )
+    for surface_number, row_token in enumerate(row_tokens[1:], start=1):
+        _, row_y = _ability_token_center(row_token)
+        radius_candidates = []
+        for token in tokens:
+            token_x, token_y = _ability_token_center(token)
+            if (
+                abs(token_x - radius_x) > _ABILITY_COLUMN_X_TOLERANCE
+                or abs(token_y - row_y) > _ABILITY_ROW_Y_TOLERANCE
+            ):
+                continue
+            token_text = _ability_token_text(token)
+            if token_text.casefold() == "plano":
+                if _ability_token_confidence(token) >= 0.97:
+                    radius_candidates.append((token, None, False))
+                continue
+            match = radius_pattern.fullmatch(token_text)
+            if match is not None:
+                confidence = _ability_token_confidence(token)
+                if confidence < _ABILITY_OCR_NUMBER_CONFIDENCE:
+                    raise PatentParseError(
+                        f"Largan surface {surface_number} radius token {token_text!r} "
+                        f"confidence {confidence:.6f} is below "
+                        f"{_ABILITY_OCR_NUMBER_CONFIDENCE:.6f}"
+                    )
+                radius_candidates.append(
+                    (
+                        token,
+                        _parse_number(match.group("value")),
+                        match.group("asphere") is not None,
+                    )
+                )
+        if len(radius_candidates) != 1:
+            raise PatentParseError(
+                f"Largan five-lens surface {surface_number} radius has "
+                f"{len(radius_candidates)} values above confidence gate"
+            )
+        _radius_token, radius, is_asphere = radius_candidates[0]
+
+        if surface_number == 14:
+            thickness = 0.0
+        else:
+            thickness = _parse_number(
+                _ability_token_text(
+                    _largan_required_number_token(
+                        tokens,
+                        x=thickness_x,
+                        y=row_y,
+                        context=f"surface {surface_number} thickness",
+                    )
+                )
+            )
+
+        material_tokens = [
+            token
+            for token in tokens
+            if abs(_ability_token_center(token)[0] - material_x)
+            <= _ABILITY_COLUMN_X_TOLERANCE
+            and abs(_ability_token_center(token)[1] - row_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and _ability_token_text(token).casefold() in {"plastic", "glass"}
+            and _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+        ]
+        if len(material_tokens) > 1:
+            raise PatentParseError(
+                f"Largan five-lens surface {surface_number} material label is ambiguous"
+            )
+        nd_token = _ability_number_token(tokens, x=nd_x, y=row_y, required=False)
+        vd_token = _ability_number_token(tokens, x=vd_x, y=row_y, required=False)
+        if bool(material_tokens) != bool(nd_token) or bool(nd_token) != bool(vd_token):
+            raise PatentParseError(
+                f"Largan five-lens surface {surface_number} material data is incomplete"
+            )
+        nd = _parse_number(_ability_token_text(nd_token)) if nd_token else None
+        vd = _parse_number(_ability_token_text(vd_token)) if vd_token else None
+        _validate_material_indices(
+            surface_index=surface_number,
+            nd=nd,
+            vd=vd,
+        )
+        label = (
+            "Stop"
+            if surface_number == 1
+            else "Image"
+            if surface_number == 14
+            else f"S{surface_number}"
+        )
+        surfaces.append(
+            PatentSurface(
+                index=len(surfaces) + 1,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=None,
+                nd=nd,
+                vd=vd,
+                surface_type="ASP" if is_asphere else None,
+            )
+        )
+    return surfaces
+
+
+_LARGAN_SCIENTIFIC_CELL_PATTERN = re.compile(
+    r"[-+]?\d[.,]\d{5}E[-+]\d{2}",
+    flags=re.IGNORECASE,
+)
+
+
+def _largan_normalized_scientific_values(text: str) -> list[str]:
+    normalized = re.sub(
+        r"([Ee])\s*([+-])\s*(\d{2})",
+        r"\1\2\3",
+        text.replace(",", "."),
+    )
+    return [match.group(0).upper() for match in _LARGAN_SCIENTIFIC_CELL_PATTERN.finditer(normalized)]
+
+
+def _largan_five_lens_aspheres(
+    page: dict[str, Any],
+) -> dict[int, dict[str, float]]:
+    """Parse two five-column coefficient grids only when both OCR views agree."""
+
+    tokens = list(page["rapidocr_tokens"])
+    mirror_text = page.get("mirror_text")
+    if not isinstance(mirror_text, str):
+        raise PatentParseError("Largan five-lens asphere page lacks OCR-overlay text")
+    coordinate_values = [
+        _ability_token_text(token).replace(",", ".").upper()
+        for token in tokens
+        if _LARGAN_SCIENTIFIC_CELL_PATTERN.fullmatch(
+            _ability_token_text(token).replace(",", ".")
+        )
+        and _ability_token_confidence(token) >= _ABILITY_OCR_NUMBER_CONFIDENCE
+    ]
+    overlay_values = _largan_normalized_scientific_values(mirror_text)
+    if sorted(coordinate_values) != sorted(overlay_values):
+        raise PatentParseError(
+            "Largan five-lens coefficient OCR views disagree or contain joined cells"
+        )
+
+    header_tokens = [
+        token
+        for token in tokens
+        if _ability_token_text(token).casefold() == "surface #"
+        and _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+    ]
+    header_tokens.sort(key=lambda token: _ability_token_center(token)[1])
+    if len(header_tokens) != 2:
+        raise PatentParseError("Largan five-lens asphere table does not have two grids")
+    coefficients = {
+        surface_number: dict.fromkeys(
+            ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16"),
+            0.0,
+        )
+        for surface_number in range(2, 12)
+    }
+    expected_groups = ((2, 3, 4, 5, 6), (7, 8, 9, 10, 11))
+    row_labels = ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    for group_index, (header, expected_surfaces) in enumerate(
+        zip(header_tokens, expected_groups, strict=True)
+    ):
+        header_x, header_y = _ability_token_center(header)
+        next_y = (
+            _ability_token_center(header_tokens[group_index + 1])[1]
+            if group_index + 1 < len(header_tokens)
+            else float("inf")
+        )
+        surface_headers = [
+            token
+            for token in tokens
+            if abs(_ability_token_center(token)[1] - header_y)
+            <= _ABILITY_ROW_Y_TOLERANCE
+            and _ability_token_center(token)[0] > header_x
+            and re.fullmatch(r"\d+", _ability_token_text(token))
+            and _ability_token_confidence(token) >= 0.90
+        ]
+        surface_headers.sort(key=lambda token: _ability_token_center(token)[0])
+        if tuple(int(_ability_token_text(token)) for token in surface_headers) != (
+            expected_surfaces
+        ):
+            raise PatentParseError("Largan five-lens asphere surface headers changed")
+        column_xs = [_ability_token_center(token)[0] for token in surface_headers]
+
+        normalized_row_tokens: dict[str, dict[str, Any]] = {}
+        for token in tokens:
+            token_x, token_y = _ability_token_center(token)
+            if token_x >= min(column_xs) or not header_y < token_y < next_y:
+                continue
+            normalized = re.sub(r"[\s=]", "", _ability_token_text(token)).upper()
+            if normalized in row_labels:
+                if normalized in normalized_row_tokens:
+                    raise PatentParseError(
+                        f"Largan five-lens asphere row {normalized} is ambiguous"
+                    )
+                normalized_row_tokens[normalized] = token
+        if tuple(label for label in row_labels if label in normalized_row_tokens) != row_labels:
+            raise PatentParseError("Largan five-lens asphere coefficient rows are incomplete")
+        for label in row_labels:
+            _, row_y = _ability_token_center(normalized_row_tokens[label])
+            for surface_number, column_x in zip(
+                expected_surfaces,
+                column_xs,
+                strict=True,
+            ):
+                value_token = _ability_number_token(
+                    tokens,
+                    x=column_x,
+                    y=row_y,
+                    required=False,
+                )
+                if value_token is not None:
+                    coefficients[surface_number][label] = _parse_number(
+                        _ability_token_text(value_token)
+                    )
+    return coefficients
+
+
+def _largan_three_five_lens_system_meta(
+    page: dict[str, Any],
+    surface_pages: list[dict[str, Any]],
+) -> list[tuple[float, float, float]]:
+    """Parse TABLE 7 metadata and cross-check each prescription page header."""
+
+    tokens = list(page["rapidocr_tokens"])
+    embodiment_header = _ability_unique_token(
+        tokens,
+        "Embodiment Embodiment Embodiment",
+        min_confidence=0.95,
+    )
+    f_token = _ability_unique_token(tokens, "f", min_confidence=0.95)
+    _, embodiment_y = _ability_token_center(embodiment_header)
+    _, f_y = _ability_token_center(f_token)
+    column_tokens = [
+        token
+        for token in tokens
+        if embodiment_y < _ability_token_center(token)[1] < f_y
+        and _ability_token_text(token) in {"1", "2", "3"}
+        and _ability_token_confidence(token) >= 0.99
+    ]
+    column_tokens.sort(key=lambda token: _ability_token_center(token)[0])
+    if [_ability_token_text(token) for token in column_tokens] != ["1", "2", "3"]:
+        raise PatentParseError("Largan TABLE 7 embodiment columns changed")
+    column_xs = [_ability_token_center(token)[0] for token in column_tokens]
+    rows: dict[str, list[float]] = {}
+    for label in ("f", "Fno", "HFOV"):
+        label_token = _ability_unique_token(tokens, label, min_confidence=0.95)
+        _, row_y = _ability_token_center(label_token)
+        rows[label] = [
+            _parse_number(
+                _ability_token_text(
+                    _largan_required_number_token(
+                        tokens,
+                        x=column_x,
+                        y=row_y,
+                        context=f"TABLE 7 {label} embodiment value",
+                    )
+                )
+            )
+            for column_x in column_xs
+        ]
+    metadata = list(zip(rows["f"], rows["Fno"], rows["HFOV"], strict=True))
+    if any(
+        focal <= 0.0 or f_number <= 0.0 or not 0.0 < hfov < 90.0
+        for focal, f_number, hfov in metadata
+    ):
+        raise PatentParseError("Largan five-lens system metadata is outside physical bounds")
+    for embodiment_number, (surface_page, expected) in enumerate(
+        zip(surface_pages, metadata, strict=True),
+        start=1,
+    ):
+        mirror_text = surface_page.get("mirror_text")
+        if not isinstance(mirror_text, str):
+            raise PatentParseError("Largan surface page lacks OCR-overlay text")
+        match = re.search(
+            rf"TABLE\s*{2 * embodiment_number - 1}\s*\(\s*Embodiment\s*"
+            rf"{embodiment_number}\s*\).*?\bf\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm"
+            rf".*?\bFno\s*=\s*(?P<fno>{NUMBER_PATTERN}).*?\bHFOV\s*=\s*"
+            rf"(?P<hfov>{NUMBER_PATTERN})\s*deg",
+            mirror_text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Largan embodiment {embodiment_number} overlay metadata is absent"
+            )
+        observed = tuple(
+            _parse_number(match.group(label)) for label in ("f", "fno", "hfov")
+        )
+        if observed != expected:
+            raise PatentParseError(
+                f"Largan embodiment {embodiment_number} metadata OCR views disagree"
+            )
+    return metadata
+
+
+def _parse_largan_three_five_lens_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 21:
+        raise PatentParseError("Largan three-five-lens PDF page count is not retained")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 7:
+        raise PatentParseError("Largan three-five-lens PDF must retain seven key pages")
+    page_profiles = (
+        ("largan_surface_1", 8, "largan_asphere_1", 9, "FIG . 7", "FIG . 8"),
+        ("largan_surface_2", 10, "largan_asphere_2", 11, "FIG . 9", "FIG . 10"),
+        ("largan_surface_3", 12, "largan_asphere_3", 13, "FIG . 11", "FIG . 12"),
+    )
+    surface_pages: list[dict[str, Any]] = []
+    asphere_pages: list[dict[str, Any]] = []
+    for surface_role, surface_number, asphere_role, asphere_number, surface_figure, asphere_figure in (
+        page_profiles
+    ):
+        surface_page = _ability_page(payload, surface_role)
+        asphere_page = _ability_page(payload, asphere_role)
+        if (surface_page.get("page_number"), asphere_page.get("page_number")) != (
+            surface_number,
+            asphere_number,
+        ):
+            raise PatentParseError("Largan prescription role is on the wrong page")
+        surface_text = surface_page.get("mirror_text")
+        asphere_text = asphere_page.get("mirror_text")
+        if not isinstance(surface_text, str) or any(
+            marker.casefold() not in surface_text.casefold()
+            for marker in (surface_figure, "Surface #", "Fno", "HFOV")
+        ):
+            raise PatentParseError("Largan surface page lacks required markers")
+        if not isinstance(asphere_text, str) or any(
+            marker.casefold() not in asphere_text.casefold()
+            for marker in (asphere_figure, "Aspheric Coefficients", "Surface #")
+        ):
+            raise PatentParseError("Largan asphere page lacks required markers")
+        surface_pages.append(surface_page)
+        asphere_pages.append(asphere_page)
+    meta_page = _ability_page(payload, "largan_system_meta")
+    if meta_page.get("page_number") != 14:
+        raise PatentParseError("Largan TABLE 7 metadata is not on page 14")
+    mirror_meta = meta_page.get("mirror_text")
+    if not isinstance(mirror_meta, str) or any(
+        marker.casefold() not in mirror_meta.casefold()
+        for marker in ("FIG . 13", "TABLE 7", "Embodiment", "Fno", "HFOV")
+    ):
+        raise PatentParseError("Largan TABLE 7 metadata page lacks required markers")
+
+    facts = payload.get("source_facts")
+    expected_figure_counts = {f"FIG. {number}": 1 for number in range(7, 14)}
+    if not isinstance(facts, dict) or facts.get("figure_binding_counts") != expected_figure_counts:
+        raise PatentParseError("Largan official figure bindings changed")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Largan official HTML hash is invalid")
+    metadata = _largan_three_five_lens_system_meta(meta_page, surface_pages)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, (surface_page, asphere_page, meta) in enumerate(
+        zip(surface_pages, asphere_pages, metadata, strict=True),
+        start=1,
+    ):
+        embodiment = f"Largan five-lens embodiment {embodiment_number}"
+        try:
+            surfaces = _largan_five_lens_surface_table(surface_page)
+            coefficients = _largan_five_lens_aspheres(asphere_page)
+            surface_by_label = {surface.label: surface for surface in surfaces}
+            for surface_number, values in coefficients.items():
+                surface = surface_by_label[f"S{surface_number}"]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(
+                    {label: value for label, value in values.items() if value != 0.0}
+                )
+            focal_length, f_number, hfov = meta
+            prescription = PatentPrescription(
+                patent_id=str(payload["publication_id"]),
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=hfov,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain each disclosed embodiment
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+        else:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    prescription=prescription,
+                )
+            )
+    return attempts
+
+
 def _ability_eight_lens_terminal_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -3940,6 +4405,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _ability_two_nine_lens_terminal_attempts(payload)
     if profile == _ABILITY_FOUR_EIGHT_LENS_PROFILE:
         return _ability_four_eight_lens_terminal_attempts(payload)
+    if profile == _LARGAN_THREE_FIVE_LENS_PROFILE:
+        return _parse_largan_three_five_lens_attempts(payload)
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")
@@ -8515,13 +8982,18 @@ async def _convert_candidate(
                         raw_document_dir,
                         publication_id=candidate.patent_id,
                     )
-                    recovered_pdf_input = await recover_ability_official_pdf_ocr(
-                        client,
-                        token,
-                        publication_id=candidate.patent_id,
-                        primary_html=fetched.html,
-                        cached_sources=cached_pdf_sources,
-                    )
+                    direct_pdf_error: PatentPdfRecoveryError | None = None
+                    try:
+                        recovered_pdf_input = await recover_ability_official_pdf_ocr(
+                            client,
+                            token,
+                            publication_id=candidate.patent_id,
+                            primary_html=fetched.html,
+                            cached_sources=cached_pdf_sources,
+                        )
+                    except PatentPdfRecoveryError as exc:
+                        direct_pdf_error = exc
+                        recovered_pdf_input = None
                     if recovered_pdf_input is None:
                         recovered_prior_pdf_input = (
                             await _recover_prior_publication_ability_pdf_ocr(
@@ -8534,6 +9006,8 @@ async def _convert_candidate(
                         )
                         if recovered_prior_pdf_input is not None:
                             recovered_pdf_input = recovered_prior_pdf_input.recovered
+                    if recovered_pdf_input is None and direct_pdf_error is not None:
+                        raise direct_pdf_error
                 except PatentPdfRecoveryError as exc:
                     raise PatentParseError(f"official PDF recovery rejected: {exc}") from exc
                 if recovered_pdf_input is None:

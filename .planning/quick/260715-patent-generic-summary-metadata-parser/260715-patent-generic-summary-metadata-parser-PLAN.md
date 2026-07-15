@@ -531,6 +531,32 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `31e2d1e72a50baa50e3162894bab16b272cc8ee5bd12326f5d3336efa9270ce8`.
   Strict audit is 619/619 with zero corrupt evidence; 135 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- The next largest measured signature contains 13 actual optical prescriptions. The first
+  source-proven root, `US-12449639-B2`, binds exactly one Prior Publication Data record,
+  `US-20220137372-A1`; both official records publish application `17/577825`. The A-publication
+  official HTML SHA-256 is
+  `ea81961d51b85e34fae9da57ff9b11c2de92fc3da1079b6cb9e8096ea85c08a7`. Exact source counts
+  bind FIG. 7--13 once each. All 21 official/mirror decoded page rasters are pixel-identical; pages
+  8--14 retain three surface tables, three asphere tables, and TABLE 7 metadata.
+- The Largan profile parses 3/3 complete cross-checked fixtures into 14-surface prescriptions and
+  uses published HFOV directly. It also makes grant recovery robust when a grant has no mirror PDF:
+  direct recovery failure is retained until the exact same-application A-publication succeeds, and
+  still fails closed when that prior path is absent or invalid.
+- Real e1/e2/e3 remain independently rejected at unchanged gates: stop thickness `-0.295` has
+  confidence 0.989782 below 0.99; surface 4 radius `100.00000 (ASP)` has confidence 0.981783 below
+  0.99; surface label `11` has confidence 0.919665 below 0.95. No token, sign, decimal, coefficient,
+  or surface label is repaired; no worker or ZMX is created.
+- Initial attempt 2 is retained append-only. After error evidence was made token-specific, attempts
+  3/4 have identical canonical result SHA-256
+  `5d9791f834be88a01e4366a4d6dee40cb22a079374e219ab98389ba3571d7f45`, parser SHA-256
+  `dc1d887aef56dbb30932099eb93460b50e8f29d93a9e480cf5742f0b30c3456b`, and recovery-manifest
+  SHA-256 `7434873655a3d4ad12d981b0637e9e61fc1ba323e1af7901bd1be0348faae5d6`.
+  Generic summary changed 254 to 253. Current result-set SHA-256 is
+  `1625eb8c803dcc9775115f422f2bc3190e570b6c248f15c31fe11a21cc1bb3a7`; summary artifact
+  SHA-256 is `0338d0e34b6ce95d6d16876909a96340a77c0730a6d01566d3e5e5643b9f9202`;
+  after-census SHA-256 is `09ddad25aeeb79f2e18d4f99d8c1d8ad5ea9ad96f9a4a5b1e72ea74f32c0892a`.
+  Strict audit is 619/619 with zero corrupt evidence; 138 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

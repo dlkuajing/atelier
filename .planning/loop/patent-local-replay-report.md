@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `85cb7850bbf805c01aa1528f3ada7bd337aed3eb82a1d67b8188ecd0a7259053`
+- result_set_sha256: `1625eb8c803dcc9775115f422f2bc3190e570b6c248f15c31fe11a21cc1bb3a7`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 518
 - `terminal`: 732
-- `parser_review_required`: 1352
+- `parser_review_required`: 1354
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1352
+- `parser_review_required.deterministic_parser_rejected`: 1354
 - `terminal.process_receipt_classified`: 714
 - `converted_pending_intake.process_isolated_zmx_ready`: 518
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -72,7 +72,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 254
+- `generic_summary_metadata_missing`: 253
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -135,6 +135,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_kantatsu_inline_example_n_stop_row_is_malformed`: 1
 - `other_kantatsu_six_lens_example_n_coefficient_a14_for_source_surface_n_is_malformed_e_n`: 1
 - `other_kantatsu_six_lens_example_n_coefficient_label_expected_a16_found_end`: 1
+- `other_largan_surface_label_token_confidence_n_is_below_n`: 1
+- `other_largan_surface_n_radius_token_token_confidence_n_is_below_n`: 1
+- `other_largan_surface_n_thickness_token_token_confidence_n_is_below_n`: 1
 - `other_mobile_imaging_lens_example_n_surface_n_coefficient_a12_is_malformed_e_n`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
 - `other_samsung_even_order_embodiment_n_asphere_headers_must_be_s1_s8_and_s9_s16`: 1

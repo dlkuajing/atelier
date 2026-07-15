@@ -93,6 +93,16 @@ _ABILITY_FOUR_EIGHT_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 9 lists optical properties of the optical lenses",
 )
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
+_LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT = (
+    "FIG. 7 is TABLE 1 which lists the optical data of the first embodiment",
+    "FIG. 8 is TABLE 2 which lists the aspheric surface data of the first embodiment",
+    "FIG. 9 is TABLE 3 which lists the optical data of the second embodiment",
+    "FIG. 10 is TABLE 4 which lists the aspheric surface data of the second embodiment",
+    "FIG. 11 is TABLE 5 which lists the optical data of the third embodiment",
+    "FIG. 12 is TABLE 6 which lists the aspheric surface data of the third embodiment",
+    "FIG. 13 is TABLE 7 which lists the data of the respective embodiments",
+)
+_LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
     r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
     r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
@@ -150,6 +160,8 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         return _ABILITY_TWO_NINE_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_FOUR_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
         return _ABILITY_FOUR_EIGHT_LENS_PROFILE
+    if all(marker in text for marker in _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT):
+        return _LARGAN_THREE_FIVE_LENS_PROFILE
     return None
 
 
@@ -253,6 +265,19 @@ def _ability_four_eight_lens_source_facts(raw_html: str) -> dict[str, Any]:
                 re.findall(r"\bF\s*[- ]?number\b", text, flags=re.IGNORECASE)
             ),
             "F/#": len(re.findall(r"\bF\s*/\s*#\b", text, flags=re.IGNORECASE)),
+        },
+    }
+
+
+def _largan_three_five_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Measure exact official bindings for three Largan five-lens prescriptions."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" is TABLE", maxsplit=1)[0]: text.count(marker)
+            for marker in _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT
         },
     }
 
@@ -638,6 +663,46 @@ async def recover_ability_official_pdf_ocr(
         }
         parser_profile = profile
         source_facts = _ability_four_eight_lens_source_facts(primary_html)
+    elif profile == _LARGAN_THREE_FIVE_LENS_PROFILE:
+        role_pages = {
+            "largan_surface_1": _figure_page(
+                mirror_texts,
+                "7",
+                ("TABLE 1", "Embodiment 1", "Surface #", "Fno", "HFOV"),
+            ),
+            "largan_asphere_1": _figure_page(
+                mirror_texts,
+                "8",
+                ("TABLE 2", "Aspheric Coefficients", "Surface #", "A16"),
+            ),
+            "largan_surface_2": _figure_page(
+                mirror_texts,
+                "9",
+                ("TABLE 3", "Embodiment 2", "Surface #", "Fno", "HFOV"),
+            ),
+            "largan_asphere_2": _figure_page(
+                mirror_texts,
+                "10",
+                ("TABLE4", "Aspheric Coefficients", "Surface #", "A14"),
+            ),
+            "largan_surface_3": _figure_page(
+                mirror_texts,
+                "11",
+                ("TABLE 5", "Embodiment 3", "Surface #", "Fno", "HFOV"),
+            ),
+            "largan_asphere_3": _figure_page(
+                mirror_texts,
+                "12",
+                ("TABLE 6", "Aspheric Coefficients", "Surface #", "A14"),
+            ),
+            "largan_system_meta": _figure_page(
+                mirror_texts,
+                "13",
+                ("TABLE 7", "Embodiment", "Fno", "HFOV", "TTL", "ImgH"),
+            ),
+        }
+        parser_profile = profile
+        source_facts = _largan_three_five_lens_source_facts(primary_html)
     else:
         raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
     if len(set(role_pages.values())) != len(role_pages):
