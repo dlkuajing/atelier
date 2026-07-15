@@ -2429,6 +2429,7 @@ _ABILITY_TWO_FIVE_LENS_PROFILE = "ability_two_five_lens_prescriptions_v1"
 _ABILITY_TWO_NINE_LENS_PROFILE = "ability_two_nine_lens_f_number_unpublished_v1"
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
 _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
+_ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -4081,6 +4082,204 @@ def _parse_largan_three_five_lens_attempts(
     return attempts
 
 
+def _ability_zoom_required_number_token(
+    tokens: list[dict[str, Any]],
+    *,
+    x: float,
+    y: float,
+    context: str,
+) -> dict[str, Any]:
+    candidates = [
+        token
+        for token in tokens
+        if abs(_ability_token_center(token)[0] - x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and abs(_ability_token_center(token)[1] - y) <= _ABILITY_ROW_Y_TOLERANCE
+        and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+    ]
+    if len(candidates) != 1:
+        raise PatentParseError(
+            f"Ability zoom {context} has {len(candidates)} numeric OCR tokens"
+        )
+    token = candidates[0]
+    confidence = _ability_token_confidence(token)
+    if confidence < _ABILITY_OCR_NUMBER_CONFIDENCE:
+        raise PatentParseError(
+            f"Ability zoom {context} token {_ability_token_text(token)!r} confidence "
+            f"{confidence:.6f} is below {_ABILITY_OCR_NUMBER_CONFIDENCE:.6f}"
+        )
+    return token
+
+
+def _ability_zoom_surface_census(page: dict[str, Any]) -> None:
+    """Validate one variable-length zoom-state surface grid at unchanged gates."""
+
+    tokens = list(page["rapidocr_tokens"])
+    surface_header = _ability_unique_token(tokens, "Surface", min_confidence=0.95)
+    curvature_header = _ability_unique_token(tokens, "Curvature", min_confidence=0.95)
+    index_header = _ability_unique_token(tokens, "index", min_confidence=0.95)
+    abbe_header = _ability_unique_token(tokens, "Abbe", min_confidence=0.95)
+    surface_x, header_y = _ability_token_center(surface_header)
+    radius_x, _ = _ability_token_center(curvature_header)
+    nd_x, _ = _ability_token_center(index_header)
+    vd_x, _ = _ability_token_center(abbe_header)
+    thickness_x = (radius_x + nd_x) / 2.0
+
+    row_tokens = [
+        token
+        for token in tokens
+        if _ability_token_center(token)[1] > header_y
+        and abs(_ability_token_center(token)[0] - surface_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and re.fullmatch(r"S\d+|STO|IMA", _ability_token_text(token), re.IGNORECASE)
+    ]
+    row_tokens.sort(key=lambda token: _ability_token_center(token)[1])
+    observed = [_ability_token_text(token).upper() for token in row_tokens]
+    surface_numbers = [
+        int(label[1:]) for label in observed if re.fullmatch(r"S\d+", label)
+    ]
+    if (
+        not surface_numbers
+        or surface_numbers != list(range(1, max(surface_numbers) + 1))
+        or observed.count("STO") != 1
+        or observed.count("IMA") != 1
+        or observed[-1] != "IMA"
+    ):
+        raise PatentParseError(
+            "Ability zoom surface sequence is not S1..Sn with one STO and final IMA"
+        )
+    for token in row_tokens:
+        confidence = _ability_token_confidence(token)
+        if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            raise PatentParseError(
+                f"Ability zoom surface label {_ability_token_text(token)!r} confidence "
+                f"{confidence:.6f} is below {_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+
+    for token in row_tokens:
+        label = _ability_token_text(token).upper()
+        _, row_y = _ability_token_center(token)
+        if label != "IMA":
+            _ability_zoom_required_number_token(
+                tokens,
+                x=thickness_x,
+                y=row_y,
+                context=f"{label} thickness",
+            )
+        if label == "STO":
+            _ability_infinity_token(tokens, x=radius_x, y=row_y)
+            continue
+        if label == "IMA":
+            continue
+        _ability_zoom_required_number_token(
+            tokens,
+            x=radius_x,
+            y=row_y,
+            context=f"{label} radius",
+        )
+        nd_candidates = [
+            token
+            for token in tokens
+            if abs(_ability_token_center(token)[0] - nd_x) <= _ABILITY_COLUMN_X_TOLERANCE
+            and abs(_ability_token_center(token)[1] - row_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+        ]
+        vd_candidates = [
+            token
+            for token in tokens
+            if abs(_ability_token_center(token)[0] - vd_x) <= _ABILITY_COLUMN_X_TOLERANCE
+            and abs(_ability_token_center(token)[1] - row_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+        ]
+        if bool(nd_candidates) != bool(vd_candidates) or len(nd_candidates) > 1 or len(
+            vd_candidates
+        ) > 1:
+            raise PatentParseError(f"Ability zoom {label} material columns are incomplete")
+        if nd_candidates:
+            _ability_zoom_required_number_token(
+                tokens,
+                x=nd_x,
+                y=row_y,
+                context=f"{label} refractive index",
+            )
+            _ability_zoom_required_number_token(
+                tokens,
+                x=vd_x,
+                y=row_y,
+                context=f"{label} Abbe number",
+            )
+
+
+def _parse_ability_zoom_two_state_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") not in {14, 15}:
+        raise PatentParseError("Ability zoom PDF page count is not a retained layout")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 4:
+        raise PatentParseError("Ability zoom PDF must retain exactly four key pages")
+    state_profiles = (
+        (1, "telescopic", "ability_zoom_telescopic", 4, "FIG . 3"),
+        (2, "wide-angle", "ability_zoom_wide", 5, "FIG . 4"),
+    )
+    state_pages: list[dict[str, Any]] = []
+    for _number, _state, role, page_number, figure in state_profiles:
+        page = _ability_page(payload, role)
+        mirror_text = page.get("mirror_text")
+        if page.get("page_number") != page_number or not isinstance(mirror_text, str):
+            raise PatentParseError(f"Ability zoom role {role} is not on its retained page")
+        if any(
+            marker.casefold() not in mirror_text.casefold()
+            for marker in (figure, "Surface", "Curvature", "Thickness", "Abbe")
+        ):
+            raise PatentParseError(f"Ability zoom role {role} lacks table markers")
+        state_pages.append(page)
+    asphere_page = _ability_page(payload, "ability_zoom_asphere")
+    meta_page = _ability_page(payload, "ability_zoom_meta")
+    if (asphere_page.get("page_number"), meta_page.get("page_number")) != (6, 7):
+        raise PatentParseError("Ability zoom FIG. 5/FIG. 6 pages are not retained")
+    for page, required in (
+        (asphere_page, ("FIG . 5", "K", "A4")),
+        (meta_page, ("FIG . 6", "Fw", "Ft", "TTL", "Fno", "FOV")),
+    ):
+        mirror_text = page.get("mirror_text")
+        if not isinstance(mirror_text, str) or any(
+            marker.casefold() not in mirror_text.casefold() for marker in required
+        ):
+            raise PatentParseError("Ability zoom supporting page lacks required markers")
+
+    facts = payload.get("source_facts")
+    valid_counts = (
+        {"FIG. 3": 1, "FIG. 4": 1, "FIG. 5": 1, "FIG. 6": 1},
+        {"FIG. 3": 1, "FIG. 4": 1, "FIG. 5": 1, "FIG. 6": 2},
+    )
+    if not isinstance(facts, dict) or facts.get("figure_binding_counts") not in valid_counts:
+        raise PatentParseError("Ability zoom official figure bindings changed")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Ability zoom official HTML hash is invalid")
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for (number, state, _role, _page_number, _figure), page in zip(
+        state_profiles,
+        state_pages,
+        strict=True,
+    ):
+        embodiment = f"Ability zoom {state} state"
+        try:
+            _ability_zoom_surface_census(page)
+            raise PatentParseError(
+                "Ability zoom surface grid passed; asphere grid still requires cell splitting"
+            )
+        except Exception as exc:  # noqa: BLE001 - retain each disclosed zoom state
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+    return attempts
+
+
 def _ability_eight_lens_terminal_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -4418,6 +4617,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _ability_four_eight_lens_terminal_attempts(payload)
     if profile == _LARGAN_THREE_FIVE_LENS_PROFILE:
         return _parse_largan_three_five_lens_attempts(payload)
+    if profile == _ABILITY_ZOOM_TWO_STATE_PROFILE:
+        return _parse_ability_zoom_two_state_attempts(payload)
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")

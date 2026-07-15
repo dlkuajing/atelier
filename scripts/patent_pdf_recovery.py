@@ -103,6 +103,16 @@ _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 13 is TABLE 7 which lists the data of the respective embodiments",
 )
 _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
+_ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT = (
+    "FIG. 3 lists each lens parameter of the optical lens at the telescopic end "
+    "shown in FIG. 1",
+    "FIG. 4 lists each lens parameter of the optical lens at the wide-angle end "
+    "shown in FIG. 2",
+    "FIG. 5 lists aspheric coefficients of the mathematic equation of the aspheric "
+    "lenses of the optical lens of FIG. 1",
+    "FIG. 6 lists the specific parameters of the optical lens of FIG. 1",
+)
+_ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
     r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
     r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
@@ -162,6 +172,8 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         return _ABILITY_FOUR_EIGHT_LENS_PROFILE
     if all(marker in text for marker in _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT):
         return _LARGAN_THREE_FIVE_LENS_PROFILE
+    if all(marker in text for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT):
+        return _ABILITY_ZOOM_TWO_STATE_PROFILE
     return None
 
 
@@ -278,6 +290,19 @@ def _largan_three_five_lens_source_facts(raw_html: str) -> dict[str, Any]:
         "figure_binding_counts": {
             marker.split(" is TABLE", maxsplit=1)[0]: text.count(marker)
             for marker in _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT
+        },
+    }
+
+
+def _ability_zoom_two_state_source_facts(raw_html: str) -> dict[str, Any]:
+    """Measure exact bindings for one telescopic and one wide-angle prescription."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" lists", maxsplit=1)[0]: text.count(marker)
+            for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT
         },
     }
 
@@ -703,6 +728,31 @@ async def recover_ability_official_pdf_ocr(
         }
         parser_profile = profile
         source_facts = _largan_three_five_lens_source_facts(primary_html)
+    elif profile == _ABILITY_ZOOM_TWO_STATE_PROFILE:
+        role_pages = {
+            "ability_zoom_telescopic": _figure_page(
+                mirror_texts,
+                "3",
+                ("Surface", "Curvature", "Thickness", "Refractive", "Abbe"),
+            ),
+            "ability_zoom_wide": _figure_page(
+                mirror_texts,
+                "4",
+                ("Surface", "Curvature", "Thickness", "Refractive", "Abbe"),
+            ),
+            "ability_zoom_asphere": _figure_page(
+                mirror_texts,
+                "5",
+                ("K", "A2", "A4"),
+            ),
+            "ability_zoom_meta": _figure_page(
+                mirror_texts,
+                "6",
+                ("Fw", "Ft", "TTL", "Fno", "FOV"),
+            ),
+        }
+        parser_profile = profile
+        source_facts = _ability_zoom_two_state_source_facts(primary_html)
     else:
         raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
     if len(set(role_pages.values())) != len(role_pages):

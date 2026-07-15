@@ -2233,6 +2233,73 @@ def _largan_three_five_lens_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _ability_zoom_two_state_pdf_ocr_parser_input() -> bytes:
+    pages = []
+    for role, page_number, figure in (
+        ("ability_zoom_telescopic", 4, 3),
+        ("ability_zoom_wide", 5, 4),
+    ):
+        tokens = [
+            _ability_ocr_token("Surface", 100.0, 100.0),
+            _ability_ocr_token("Curvature", 200.0, 100.0),
+            _ability_ocr_token("index", 400.0, 100.0),
+            _ability_ocr_token("Abbe", 500.0, 100.0),
+            _ability_ocr_token("S1", 100.0, 150.0),
+            _ability_ocr_token("S2", 100.0, 200.0, confidence=0.94),
+            _ability_ocr_token("STO", 100.0, 250.0),
+            _ability_ocr_token("S3", 100.0, 300.0),
+            _ability_ocr_token("S4", 100.0, 350.0),
+            _ability_ocr_token("IMA", 100.0, 400.0),
+        ]
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": role,
+                "official_image_sha256": str(page_number) * 64,
+                "mirror_text": (
+                    f"FIG . {figure} Surface Curvature Thickness Refractive Abbe"
+                ),
+                "rapidocr_tokens": tokens,
+            }
+        )
+    pages.extend(
+        (
+            {
+                "page_number": 6,
+                "role": "ability_zoom_asphere",
+                "official_image_sha256": "6" * 64,
+                "mirror_text": "FIG . 5 S24 S23 K A2 A4",
+                "rapidocr_tokens": [_ability_ocr_token("S24", 1.0, 1.0)],
+            },
+            {
+                "page_number": 7,
+                "role": "ability_zoom_meta",
+                "official_image_sha256": "7" * 64,
+                "mirror_text": "FIG . 6 Fw Ft TTL Fno FOVt FOVw",
+                "rapidocr_tokens": [_ability_ocr_token("Fw", 1.0, 1.0)],
+            },
+        )
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "ability_zoom_two_state_census_v1",
+        "publication_id": "US-20210373301-A1",
+        "page_count": 14,
+        "source_facts": {
+            "primary_html_sha256": "c" * 64,
+            "figure_binding_counts": {
+                "FIG. 3": 1,
+                "FIG. 4": 1,
+                "FIG. 5": 1,
+                "FIG. 6": 2,
+            },
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _ability_three_lens_prescription_page(
     *,
     optical_lens: int,
@@ -2620,6 +2687,20 @@ def test_largan_three_five_lens_source_facts_bind_every_table() -> None:
     }
 
 
+def test_ability_zoom_two_state_source_facts_bind_all_four_figures() -> None:
+    markers = patent_pdf_recovery._ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT
+    source = " ".join((*markers, markers[-1]))
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._ability_zoom_two_state_source_facts(source)
+    assert facts["figure_binding_counts"] == {
+        "FIG. 3": 1,
+        "FIG. 4": 1,
+        "FIG. 5": 1,
+        "FIG. 6": 2,
+    }
+
+
 def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_eight_lens_pdf_ocr_parser_input().decode(),
@@ -2739,6 +2820,46 @@ def test_largan_three_five_lens_profile_retains_low_confidence_by_embodiment() -
     assert attempts[0].prescription is None
     assert "coefficient OCR views disagree" in str(attempts[0].error)
     assert all(attempt.prescription is not None for attempt in attempts[1:])
+
+
+def test_ability_zoom_two_state_profile_retains_each_state_failure() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_zoom_two_state_pdf_ocr_parser_input().decode(),
+        patent_id="US-20210373301-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Ability zoom telescopic state",
+        "Ability zoom wide-angle state",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all("surface label 'S2' confidence 0.940000" in str(attempt.error) for attempt in attempts)
+
+
+def test_ability_zoom_surface_census_accepts_complete_variable_grid() -> None:
+    page = {
+        "rapidocr_tokens": [
+            _ability_ocr_token("Surface", 100.0, 100.0),
+            _ability_ocr_token("Curvature", 200.0, 100.0),
+            _ability_ocr_token("index", 400.0, 100.0),
+            _ability_ocr_token("Abbe", 500.0, 100.0),
+            _ability_ocr_token("S1", 100.0, 150.0),
+            _ability_ocr_token("10", 200.0, 150.0),
+            _ability_ocr_token("1", 300.0, 150.0),
+            _ability_ocr_token("1.5", 400.0, 150.0),
+            _ability_ocr_token("60", 500.0, 150.0),
+            _ability_ocr_token("STO", 100.0, 200.0),
+            _ability_ocr_token("8", 200.0, 200.0),
+            _ability_ocr_token("0.5", 300.0, 200.0),
+            _ability_ocr_token("S2", 100.0, 250.0),
+            _ability_ocr_token("-10", 200.0, 250.0),
+            _ability_ocr_token("2", 300.0, 250.0),
+            _ability_ocr_token("IMA", 100.0, 300.0),
+        ]
+    }
+
+    patent_to_zmx._ability_zoom_surface_census(page)
 
 
 def test_ability_three_lens_pdf_profile_retains_each_disclosed_ocr_failure() -> None:

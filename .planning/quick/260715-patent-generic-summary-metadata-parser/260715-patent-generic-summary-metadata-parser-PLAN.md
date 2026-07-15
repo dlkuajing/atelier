@@ -576,6 +576,30 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `4ede47182c669058962d214e004c0c39fc5ace182a466e22725905ba6107d982`.
   Strict audit is 619/619 with zero corrupt evidence; 140 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- Exact application-number and Prior Publication Data bindings partitioned four Ability zoom roots
+  into two families: application 17/331960 (`US-20210373301-A1` / `US-12541082-B2`) and
+  application 17/364515 (`US-20220066127-A1` / `US-12321034-B2`). Each official source binds
+  FIG. 3 telescopic, FIG. 4 wide-angle, FIG. 5 asphere, and FIG. 6 system metadata. The latter
+  grant uses the exact same-application A-publication because its direct grant mirror has no OCR
+  text layer; its retained 15-page source manifest proves decoded-raster identity.
+- The `ability_zoom_two_state_census_v1` profile retains both disclosed states independently and
+  validates variable `S1..Sn`, one `STO`, final `IMA`, and material-cell pairing without changing
+  the 0.95 label or 0.99 numeric confidence gates. All eight state records fail closed on actual
+  OCR evidence: application 17/331960 at S15 Abbe token `72` confidence 0.841798, and application
+  17/364515 at surface label `S8` confidence 0.942588. No coefficient cell is split or repaired,
+  and no worker or ZMX is created.
+- Append-only attempt 2 is retained, including the initial document-scoped FIG. 5 binding failures
+  for the 17/364515 family. Attempts 3/4 are stable after the binding correction. Their per-root
+  canonical result SHA-256 values are `7e6d874e88c34af518eada50713be1faa7415899ba58fa5d8788ba7032853b8a`,
+  `394cfd34494c77948d342eac77b46022f0546b0652ad89ee123c7a285f698f93`,
+  `e4a219a3ac9423a27c4357a29030660ff5a1a9306d54ff17fbd184edc5e9198e`, and
+  `ed81411f42c0f3177b747ccf990ec1e2acdf99db43d5d89c22db291fd7058133` in root-list order.
+- Generic summary changed 251 to 247. Current result-set SHA-256 is
+  `76b0f1eab60a5f997f4c2558d703e4e1009d704f9b85ada0b5b83e293dfdf3df`; summary artifact
+  SHA-256 is `08352cd4bc835a4a6cc8e4b50bc0b68c3faa1f5837df99b87b99c8ab321f3330`;
+  after-census SHA-256 is `4f96268ea235205fdae177e90beff4e8ac9d19f49a6a809342cedf836322b5a8`.
+  Strict audit is 619/619 with zero corrupt evidence; 143 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

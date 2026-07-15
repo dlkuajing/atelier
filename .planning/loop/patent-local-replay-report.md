@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `7e72eb412ea5c4c28d25cbe9c2c8e407421c8307de4045bc62fead610bb76442`
+- result_set_sha256: `76b0f1eab60a5f997f4c2558d703e4e1009d704f9b85ada0b5b83e293dfdf3df`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 518
 - `terminal`: 734
-- `parser_review_required`: 1352
+- `parser_review_required`: 1356
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1352
+- `parser_review_required.deterministic_parser_rejected`: 1356
 - `terminal.process_receipt_classified`: 714
 - `converted_pending_intake.process_isolated_zmx_ready`: 518
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -73,7 +73,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 251
+- `generic_summary_metadata_missing`: 247
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -100,6 +100,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `sekonix_surface_row_incomplete`: 6
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a36_n`: 5
 - `other_ability_pdf_numeric_cell_at_n_n_has_n_values_above_confidence_gate`: 4
+- `other_ability_zoom_s15_abbe_number_token_token_confidence_n_is_below_n`: 4
+- `other_ability_zoom_surface_label_token_confidence_n_is_below_n`: 4
 - `other_kantatsu_damaged_metadata_example_n_published_ih_fno_half_field_labels_are_absent_from_the_table_header`: 4
 - `other_r10_thickness_is_not_numeric_d10`: 4
 - `other_r4_thickness_is_not_numeric_d4`: 4
