@@ -428,6 +428,12 @@ def _parse_prescription_attempts(
         attempts = _parse_sekonix_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _classify_surface_texture_acquisition_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _classify_ir_filter_coating_only_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1526,6 +1532,11 @@ _SAMSUNG_EIGHT_LENS_ASPHERE_CONTINUATION_PATTERN = re.compile(
 _IR_FILTER_COATING_ONLY_TITLE_PATTERN = re.compile(
     r"\bOPTICAL\s+LENS\s+ASSEMBLY\s+AND\s+IMAGING\s+LENS\s+WITH\s+"
     r"INFRARED\s+RAY\s+FILTERING\b",
+    flags=re.IGNORECASE,
+)
+_SURFACE_TEXTURE_ACQUISITION_ONLY_TITLE_PATTERN = re.compile(
+    r"\bSYSTEM\s+AND\s+METHOD\s+FOR\s+ACQUIRING\s+IMAGES\s+OF\s+"
+    r"SURFACE\s+TEXTURE\b",
     flags=re.IGNORECASE,
 )
 _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
@@ -6883,6 +6894,72 @@ def _validate_samsung_eight_lens_metadata_table(table_text: str) -> None:
             raise PatentParseError(
                 f"Samsung eight-lens TABLE 11 metadata row {label} is missing or ambiguous"
             )
+
+
+def _classify_surface_texture_acquisition_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify one exact machine-vision camera/illumination architecture family."""
+
+    if _SURFACE_TEXTURE_ACQUISITION_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    embodiment = "surface-texture machine-vision architecture"
+    try:
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "surface-texture acquisition family unexpectedly contains PPUBS tables"
+            )
+        expected_phrase_counts = {
+            "vision system camera assembly": 7,
+            "105-millimeter focal length": 1,
+            "spaced apart axially by approximately 1 millimeter": 1,
+            "semi-reflecting mirror": 4,
+            "structured illumination": 2,
+            "FIG. 10 is a schematic diagram of an alternate arrangement": 1,
+        }
+        for phrase, expected in expected_phrase_counts.items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"surface-texture acquisition phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"\b(?:Curvature\s+Radius|Aspheric\s+Coefficients|Abbe\s+(?:Number|#)|"
+            r"Surface\s+#|Fno|F\s*[- ]?number)\b",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "surface-texture acquisition family contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-title structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription.surface_texture_acquisition_architecture_only"
+                ),
+                detail=(
+                    "official PPUBS text discloses a machine-vision camera, structured "
+                    "illumination, mirror, and spaced catalog-like lenses but publishes "
+                    "no optical surface prescription or prescription table"
+                ),
+            ),
+        )
+    ]
 
 
 def _classify_ir_filter_coating_only_attempts(

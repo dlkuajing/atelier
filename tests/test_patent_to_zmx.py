@@ -471,6 +471,24 @@ def _ir_filter_coating_only_fixture(*, prescription_marker: bool = False) -> str
     return " ".join(parts)
 
 
+def _surface_texture_acquisition_only_fixture(
+    *,
+    prescription_marker: bool = False,
+) -> str:
+    parts = [
+        "SYSTEM AND METHOD FOR ACQUIRING IMAGES OF SURFACE TEXTURE.",
+        "vision system camera assembly " * 7,
+        "105-millimeter focal length",
+        "spaced apart axially by approximately 1 millimeter",
+        "semi-reflecting mirror " * 4,
+        "structured illumination " * 2,
+        "FIG. 10 is a schematic diagram of an alternate arrangement",
+    ]
+    if prescription_marker:
+        parts.append("Surface # Curvature Radius")
+    return " ".join(parts)
+
+
 MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
 L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
 ST 3 Infinity -0.020
@@ -3901,6 +3919,32 @@ def test_ir_filter_coating_only_classifier_refuses_prescription_marker() -> None
     assert isinstance(attempts[0].error, PatentParseError)
     assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
     assert "prescription-table markers" in str(attempts[0].error)
+
+
+def test_surface_texture_acquisition_only_is_confirmed_no_prescription() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _surface_texture_acquisition_only_fixture(),
+        patent_id="US-20160305871-A1",
+    )
+
+    assert len(attempts) == 1
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription.surface_texture_acquisition_architecture_only"
+    )
+
+
+def test_surface_texture_acquisition_classifier_refuses_prescription_marker() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _surface_texture_acquisition_only_fixture(prescription_marker=True),
+        patent_id="US-20160305871-A1",
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert "contains a prescription marker" in str(attempts[0].error)
 
 
 def test_parse_folded_zoom_accepts_reordered_multiline_surface_header() -> None:

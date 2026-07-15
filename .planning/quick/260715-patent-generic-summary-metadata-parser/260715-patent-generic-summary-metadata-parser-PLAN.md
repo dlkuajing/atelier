@@ -557,6 +557,25 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `09ddad25aeeb79f2e18d4f99d8c1d8ad5ea9ad96f9a4a5b1e72ea74f32c0892a`.
   Strict audit is 619/619 with zero corrupt evidence; 138 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- Exact-title source census identified `US-20160305871-A1` and `US-10724947-B2` as one
+  surface-texture machine-vision camera/illumination family, not smartphone lens prescriptions.
+  Both official documents have zero PPUBS tables and identical structural counts: seven occurrences
+  of `vision system camera assembly`, one catalog-like 105 mm focal length, one 1 mm axial spacing,
+  four semi-reflecting-mirror mentions, two structured-illumination mentions, and one FIG. 10
+  alternate-architecture description. They contain no curvature-radius, surface-number, Abbe,
+  asphere-coefficient, or F-number marker.
+- The narrow classifier requires every one of those counts and rejects any prescription marker.
+  Both roots are terminal
+  `confirmed_no_prescription.surface_texture_acquisition_architecture_only`; no optical numeric
+  value is interpreted, no worker or ZMX is created. Attempts 2/3 are stable: A1 canonical result
+  SHA-256 `2d6a805fcbc5ac5a43e2b9786bb271af2203e37671978e1225030b418593677e`; B2 canonical result
+  SHA-256 `3b694b3f1309ee48e80e3e114bcdeb0b6e7e32e121ccaf8b709d2564cfcbe81e`.
+- Generic summary changed 253 to 251. Current result-set SHA-256 is
+  `7e72eb412ea5c4c28d25cbe9c2c8e407421c8307de4045bc62fead610bb76442`; summary artifact
+  SHA-256 is `508766426d48d4c0fcef9a926ced3f28d44e1904344898aeb85818f6ec6eaf7b`;
+  after-census SHA-256 is `4ede47182c669058962d214e004c0c39fc5ace182a466e22725905ba6107d982`.
+  Strict audit is 619/619 with zero corrupt evidence; 140 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
