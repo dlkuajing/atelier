@@ -722,6 +722,57 @@ def _install_light_blocking_geometry_fixture_profile(
     return patent_id
 
 
+def _folded_tele_missing_f_number_fixture(
+    *,
+    publish_hfov: bool = False,
+    split_conic_header: bool = False,
+) -> str:
+    parts = [
+        "ZOOM DUAL-APERTURE CAMERA WITH FOLDED LENS",
+        "Family ID: 55268405",
+        "Detailed optical data and aspheric surface data is given in Tables 2 and 3 "
+        "for lens module 220 a, in Tables 4 and 5 for lens module 220 b, and in "
+        "Tables 6 and 7 for lens module 220 c.",
+        "lens module 220 a lens module 220 b lens module 220 c",
+        "EFL.sub.T of 12 mm",
+        "Wide F-number Tele F-number",
+        "TABLE-US-00001 TABLE 1 FIG W L H",
+    ]
+    for surface_number, asphere_number in ((2, 3), (4, 5), (6, 7)):
+        surface_header = (
+            "Radius Conic # (R) Distance N.sub.d/V.sub.d Diameter coefficient k"
+            if split_conic_header
+            else "Conic coefficient # Radius (R) Distance N.sub.d/V.sub.d Diameter k"
+        )
+        parts.append(
+            f"TABLE-US-{surface_number:05d} TABLE {surface_number} {surface_header}"
+        )
+        parts.append(
+            f"TABLE-US-{asphere_number:05d} TABLE {asphere_number} "
+            "# α.sub.1 α.sub.2 α.sub.3"
+        )
+    if publish_hfov:
+        parts.append("HFOV = 12.5 degrees")
+    return " ".join(parts)
+
+
+def _install_folded_tele_missing_f_number_fixture_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    text: str,
+) -> str:
+    patent_id = "US-FOLDED-TELE-MISSING-FNO-FIXTURE-A1"
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._FOLDED_TELE_MISSING_F_NUMBER_SOURCE_PROFILES,
+        patent_id,
+        {
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "lens_module_220_c_count": 2,
+        },
+    )
+    return patent_id
+
+
 MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
 L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
 ST 3 Infinity -0.020
@@ -5623,6 +5674,74 @@ def test_light_blocking_geometry_classifier_refuses_source_hash_drift(
 ) -> None:
     text = _light_blocking_geometry_only_fixture()
     patent_id = _install_light_blocking_geometry_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "official text hash changed" in str(attempts[0].error)
+
+
+def test_folded_tele_three_prescriptions_are_terminal_when_f_number_absent(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _folded_tele_missing_f_number_fixture()
+    patent_id = _install_folded_tele_missing_f_number_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Folded Tele lens module 220a",
+        "Folded Tele lens module 220b",
+        "Folded Tele lens module 220c",
+    ]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code == "metadata_unpublished.system_f_number_absent"
+        for attempt in attempts
+    )
+
+
+def test_folded_tele_accepts_published_split_conic_header(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _folded_tele_missing_f_number_fixture(split_conic_header=True)
+    patent_id = _install_folded_tele_missing_f_number_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 3
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.reason_code == "metadata_unpublished.system_f_number_absent"
+        for attempt in attempts
+    )
+
+
+def test_folded_tele_missing_f_number_classifier_refuses_metadata_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _folded_tele_missing_f_number_fixture(publish_hfov=True)
+    patent_id = _install_folded_tele_missing_f_number_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "phrase 'HFOV' occurs 1; expected 0" in str(attempts[0].error)
+
+
+def test_folded_tele_missing_f_number_classifier_refuses_source_hash_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _folded_tele_missing_f_number_fixture()
+    patent_id = _install_folded_tele_missing_f_number_fixture_profile(monkeypatch, text)
 
     attempts = patent_to_zmx._parse_prescription_attempts(
         text + " publication revision",

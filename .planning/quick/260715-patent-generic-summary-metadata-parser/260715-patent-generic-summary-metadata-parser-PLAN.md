@@ -942,6 +942,49 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `4235103512ee8ef452c50e9633e4add8cc5cdb14427a025df6a94db8f77a8857`.
   Strict audit remains 619/619 with zero corrupt evidence; 201 focused
   parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
+- Global official Family ID grouping identified the largest remaining exact family: eight
+  `ZOOM DUAL-APERTURE CAMERA WITH FOLDED LENS` records in Family ID `55268405`. Their retained
+  official PPUBS HTML SHA-256 values, in root-list order, are
+  `8ed96dbfd9a12df001200e400e72e326fb02cd1fea3dead05a4daade446bedac`,
+  `8d59f91c85c15a8a4f8b65b4baa3156800dcb17a568a5a9d18bfe3187de80a53`,
+  `2af1a002526a4cdabab4c23f43b92284eeac6ea2c43f3b3dfc25676dd6a1e291`,
+  `1f7754a3bd884a33eed4ac727dedced9c36fa1dc439bcbf1ea6adc6c68f8e698`,
+  `1ebeddf0f2d5e69b9b2eb6aadcadde58efc4d7ba7f9d9b18902f6cb2527bc756`,
+  `d585b6029c00b6423cff6301a159289db6388e948e81ea5e1ccbc4444222421f`,
+  `683b88c1a06d05800a15746562675d5f1bde28c8c2998d6f28ab66acdc439abb`, and
+  `c82a08c7e35d2a6e635fcd35337527eae97b61ab1c5c5294cb737b5bab579503`.
+- Corresponding normalized-text SHA-256 values are
+  `a7214ec208151fe0eb684e41b035adf7712573b4ea682f76da3d086997b88b2d`,
+  `8a6b73cca2bbe21467a6d068ba1a6ad3b22de77adf44ba1ae2932b8f060c52dc`,
+  `230470eef9ba561e9fbc99a3f75b2693d70647625735b8177a85007471194bab`,
+  `a805a3cee37ea20ea6d9b198a03c30d2f7afbccb4d212e3f3beedcea46019300`,
+  `c05a97a8b839514495a6f5ece2d4eb2724c6fc50dacec141daadf3f34e95b1bf`,
+  `8bec326bf0ecc72d7a3965b01465c05a5efe6484ceabc79b023bc29644d33642`,
+  `49345928fbad7d934b116bb97eb1b98ae3249d4eb3bef74277edb1fea405555f`, and
+  `68480e54aa353e67767a85176ef96db1542751d8466080a1192894baaee7692e`.
+- Every text has exact Tables 1--7 and explicitly maps surface/asphere pairs 2/3, 4/5, and 6/7
+  to lens modules 220a, 220b, and 220c. Family ID, mapping sentence, module-reference, EFL-T 12 mm,
+  F-number, and zero-HFOV counts are source-locked. `US-12663618-B2` alone uses the published
+  split-conic header `Radius Conic # (R) Distance ... coefficient k`; a dedicated regression locks
+  that layout while the other seven retain the standard header. No exact prescription-specific
+  system F-number is published; range and inequality statements are not substituted or derived.
+- Each root expands from one document failure to three terminal embodiments, for 24 total
+  `metadata_unpublished.system_f_number_absent` items. No conversion attempt, worker, or ZMX is
+  created. Latest two attempts are canonical-equal per root with semantic SHA-256 values
+  `ed43605ce196632e533f811dd4554449b6eb4fcb6123665e554372e553e0b137`,
+  `d3fcc05d700e879a1a0300997d4fd8ea64f64962faa0ea05310db98361569340`,
+  `991ff0a33f7b8a317f74866f2e08c78d70362bc321d289bfc723f202d506850b`,
+  `ab442e6f8f11dce3c3f580af75f9a4fc63cf0bdae0ad6681441ed06a0c86b4c4`,
+  `d98b8e715ef681429977ddb1cd20cf5651d2b304a841c431f8e2c36ec986369d`,
+  `14fa6cfab06b30edd9c6d610419e07ccc981cd2709652464792f6dcecfd3a9ee`,
+  `7714e4b545286e36d69612a29d5131a762c749cc3eff8873cdea51dbf51e2e9a`, and
+  `514693290f6eb5e40eb118c0d365d8c8e78e119b57fd0ee12b9e1aff4a7f56e1`.
+- Generic summary changed 223 to 215. Current result-set SHA-256 is
+  `f15f635465fff7e9294e72e94fc44090f13f63f9222f6b53155fc03b35671b38`; summary artifact
+  SHA-256 is `344977609f3be5aaeec52eb8095d3339e9d47a06fc78f41a78d6cc06664f4aee`;
+  after-census SHA-256 is `75e4df464990e06de21ca10cd90c4ca3f4a0db76f627ebc266e159a1c44b6938`.
+  Strict audit remains 619/619 with zero corrupt evidence; 205 focused
+  parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

@@ -419,6 +419,12 @@ def _parse_prescription_attempts(
         attempts = _parse_folded_zoom_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _classify_folded_tele_missing_f_number_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _parse_aac_raytech_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1793,6 +1799,60 @@ _LIGHT_BLOCKING_GEOMETRY_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "field of view": 17,
             "FOV (degree)": 14,
         },
+    },
+}
+_FOLDED_TELE_MISSING_F_NUMBER_TITLE_PATTERN = re.compile(
+    r"\bZOOM\s+DUAL\s*[- ]?APERTURE\s+CAMERA\s+WITH\s+FOLDED\s+LENS\b",
+    flags=re.IGNORECASE,
+)
+_FOLDED_TELE_MISSING_F_NUMBER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-10571665-B2": {
+        "normalized_text_sha256": (
+            "a7214ec208151fe0eb684e41b035adf7712573b4ea682f76da3d086997b88b2d"
+        ),
+        "lens_module_220_c_count": 2,
+    },
+    "US-11042011-B2": {
+        "normalized_text_sha256": (
+            "8a6b73cca2bbe21467a6d068ba1a6ad3b22de77adf44ba1ae2932b8f060c52dc"
+        ),
+        "lens_module_220_c_count": 2,
+    },
+    "US-11703668-B2": {
+        "normalized_text_sha256": (
+            "230470eef9ba561e9fbc99a3f75b2693d70647625735b8177a85007471194bab"
+        ),
+        "lens_module_220_c_count": 2,
+    },
+    "US-11982796-B2": {
+        "normalized_text_sha256": (
+            "a805a3cee37ea20ea6d9b198a03c30d2f7afbccb4d212e3f3beedcea46019300"
+        ),
+        "lens_module_220_c_count": 2,
+    },
+    "US-12663618-B2": {
+        "normalized_text_sha256": (
+            "c05a97a8b839514495a6f5ece2d4eb2724c6fc50dacec141daadf3f34e95b1bf"
+        ),
+        "lens_module_220_c_count": 2,
+    },
+    "US-20160044250-A1": {
+        "normalized_text_sha256": (
+            "8bec326bf0ecc72d7a3965b01465c05a5efe6484ceabc79b023bc29644d33642"
+        ),
+        "lens_module_220_c_count": 1,
+    },
+    "US-20200057282-A1": {
+        "normalized_text_sha256": (
+            "49345928fbad7d934b116bb97eb1b98ae3249d4eb3bef74277edb1fea405555f"
+        ),
+        "lens_module_220_c_count": 2,
+    },
+    "US-20220382024-A1": {
+        "normalized_text_sha256": (
+            "68480e54aa353e67767a85176ef96db1542751d8466080a1192894baaee7692e"
+        ),
+        "lens_module_220_c_count": 2,
     },
 }
 _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
@@ -8948,6 +9008,102 @@ def _classify_light_blocking_geometry_only_attempts(
             ),
         )
     ]
+
+
+def _classify_folded_tele_missing_f_number_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain three exact folded-Tele prescriptions whose F-number is unpublished."""
+
+    if _FOLDED_TELE_MISSING_F_NUMBER_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _FOLDED_TELE_MISSING_F_NUMBER_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"folded-Tele official text hash changed for {patent_id}"
+            )
+        blocks = _patent_table_blocks(text)
+        table_numbers = [block.number for block in blocks]
+        if table_numbers != list(range(1, 8)):
+            raise PatentParseError(
+                f"folded-Tele table sequence is {table_numbers}; expected 1..7"
+            )
+        expected_phrase_counts = {
+            "Family ID: 55268405": 1,
+            (
+                "Detailed optical data and aspheric surface data is given in Tables 2 "
+                "and 3 for lens module 220 a"
+            ): 1,
+            "lens module 220 a": 2,
+            "lens module 220 b": 2,
+            "lens module 220 c": profile["lens_module_220_c_count"],
+            "EFL.sub.T of 12 mm": 1,
+            "F-number": 2,
+            "HFOV": 0,
+        }
+        for phrase, expected in expected_phrase_counts.items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded-Tele phrase {phrase!r} occurs {observed}; expected {expected}"
+                )
+        table_pairs = ((2, 3, "220a"), (4, 5, "220b"), (6, 7, "220c"))
+        for surface_number, asphere_number, module in table_pairs:
+            surface_text = blocks[surface_number - 1].text
+            asphere_text = blocks[asphere_number - 1].text
+            if (
+                re.search(
+                    r"(?:\bRadius(?:\s+\(R\))?\s+Distance\b|"
+                    r"\bRadius\s+Conic\s+#\s+\(R\)\s+Distance\b)",
+                    surface_text,
+                )
+                is None
+            ):
+                raise PatentParseError(
+                    f"folded-Tele module {module} surface-table header changed"
+                )
+            if re.search(r"\bN\.sub\.d\s*/\s*V\.sub\.d\b", surface_text) is None:
+                raise PatentParseError(
+                    f"folded-Tele module {module} material header changed"
+                )
+            if re.search(r"#\s+α\.sub\.1\s+α\.sub\.2", asphere_text) is None:
+                raise PatentParseError(
+                    f"folded-Tele module {module} asphere-table header changed"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment="folded Tele prescription family",
+                error=exc,
+            )
+        ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, module in enumerate(("220a", "220b", "220c"), start=1):
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Folded Tele lens module {module}",
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code="metadata_unpublished.system_f_number_absent",
+                    detail=(
+                        f"Tables {2 * embodiment_number}/{2 * embodiment_number + 1} "
+                        f"publish the complete module {module} surface/asphere prescription, "
+                        "but the official text publishes no exact system F-number for that "
+                        "prescription; range and inequality statements are not substituted"
+                    ),
+                ),
+            )
+        )
+    return attempts
 
 
 def _parse_folded_zoom_table_attempts(

@@ -193,7 +193,7 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
 | `260715-patent-local-pool-replay` | complete-local-replay-saturation-incomplete | Cohort SHA `e809823c...b42b`; 619/619 strict results, missing=0, corrupt=0; result-set SHA `3bc0bbee...76df`. Final items: parser review 1388, receipt terminal 631, staging pending intake 359, patent-budget retry 16. All current roots retain official PPUBS HTML. No-op replay processed 0 and preserved summary SHA `65122027...d130`. Parent saturation remains incomplete. |
 | `260715-patent-sunny-metadata-parser` | complete-shovel-saturation-incomplete | Before 299 items/64 roots; after 199/53, resolving 100 without missing-field regression. Result-set SHA `2e0a9ceb...d506`; 619/619 strict results, missing=0, corrupt=0; 95 tests+Ruff green, CODE V inventory zero. Next largest parser bucket is generic summary metadata=294. |
-| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Source-proven HTML layouts, source terminals, exact-raster PDF profiles, B2→A1 prior-publication recovery, and explicit official-PDF-only OCR paths are replayed append-only. The latest exact Family ID 78608859 classifier proves four Largan disclosures contain only aperture-opening geometry tables and no surface prescription; attempts 2/3 agree and no conversion worker is created. Generic bucket is 223, result set `26437251...7f810`, summary `baca75f0...1063e`, and audit is 619/619 corrupt=0. Continue the largest measured parser bucket without promoting staging. |
+| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Source-proven HTML layouts, source terminals, exact-raster PDF profiles, B2→A1 prior-publication recovery, and explicit official-PDF-only OCR paths are replayed append-only. The latest exact Family ID 55268405 profile expands eight folded-Tele documents into 24 table-pair-bound embodiments; all are terminal because no exact system F-number is published, and no conversion worker is created. Generic bucket is 215, result set `f15f6354...71b38`, summary `34497760...f4aee`, and audit is 619/619 corrupt=0. Continue the largest measured parser bucket without promoting staging. |
 
 ## Session Continuity
 
@@ -205,7 +205,7 @@ then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work remains the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (223), using the same strict before/after census, source-proven
+`generic_summary_metadata_missing` (215), using the same strict before/after census, source-proven
 layout rules, append-only targeted replay, and full-pool audit contract.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
