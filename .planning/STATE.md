@@ -17,6 +17,15 @@ A–F。北极星现为 `ACTIVE`，66-object canonical schema 与 claim/contract
 `v0.1-draft` + `UNRATIFIED`，
 北极星 A–F 全 false，专家与制造指标 unavailable。技术闭环不等于北极星 go/no-go 已通过。
 
+**Patent saturation focus (2026-07-15, branch work):** `origin/main@42803f8` 起的独立
+`codex/patent-saturation-ledger` worktree 已建立 GSD quick 控制面。运行时重算为 714 个 USPTO
+元数据根、442 个正式设计（425 个专利设计、116 个美国专利根）、95 个本地池根有正式工件、
+619 个未覆盖；发现并集为 735 根（另 21 个正式根不在本地元数据池）。canonical snapshot
+SHA-256=`c86527b71e0500074bf14e1668bc3ab6701e5d54d3d22ef5826686101d6b5ec1`；
+严格 audit 为 `saturation_complete=false`，明确 735 根未归族/未终态、425 个正式 embodiment
+尚未按新 provenance 合约闭环、25 个旧 seed embodiment 身份未明确、735 根无保留全文。
+这是未合 main 的进行中证据，不是饱和完成声明；500 仅为历史进度标记。
+
 ## Current Position
 
 | Scope | Status |
@@ -29,6 +38,7 @@ A–F。北极星现为 `ACTIVE`，66-object canonical schema 与 claim/contract
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
+| Patent saturation | ACTIVE / INCOMPLETE；GSD quick `260715-patent-saturation-ledger`。714 raw roots + 116 formal roots = 735 union；snapshot `c86527b…b5ec1` 可重算，audit 按设计 exit=1；下一铲为进程级硬超时与保留原始输入。 |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -153,6 +163,8 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 - 外部依赖：另一台电脑的 109 ZMX、商用/合规定位、严格杂散光与 AR 外部工具链。
 - 存量工单：unknown dispersion provenance、专利 WAVM 24 槽化、5P MTF NaN、P13
   GLD/withheld EFL、Stage B listing/WRX/WRY、C1 artifact-key collision。
+- 专利饱和当前缺口：无保留全文湖、无 source crawl exhausted 游标、无官方 family closure；
+  转换器的 Optiland trace 仍在同进程同步执行，历史 8 个挂死/极慢专利尚无进程硬超时。
 
 ## Quick Tasks
 
@@ -161,10 +173,17 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260712-stagec-real-evidence` | complete | `.planning/quick/260712-stagec-real-evidence/`；PR #81 / main CI success。 |
 | `260713-loop2-final-handoff` | released-with-heartbeat-receipt-gap | `.planning/quick/260713-loop2-final-handoff/`；PR #82/main CI success；heartbeat 当前不存在但无 durable deletion receipt。 |
 | `260713-n7x` | active-unratified-external-release-evidence-required | `.planning/north-star/` 与 `.planning/quick/260713-n7x-unratified-claim-contract-authority-evid/`；历史 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6`、`ab7ce4d/f2ff988` 固定树均被拒；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED；tracked 文档只定义 fail-closed gate，不自证 fixed-tree review/PR/CI/merge；A–F 保持 false。 |
+| `260715-patent-saturation-ledger` | active-foundation-complete-saturation-incomplete | `.planning/quick/260715-patent-saturation-ledger/`、`data/patent-ledger/` 与 `.planning/loop/patent-saturation-baseline.md`；66 相关测试+Ruff 绿，三工件二次重建 byte-identical，严格 audit exit=1。 |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
+
+For patent saturation work, resume from
+`.planning/quick/260715-patent-saturation-ledger/260715-patent-saturation-ledger-PLAN.md`, then
+rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.py`; never infer terminal
+outcomes from chat or historical free-text reports. The current highest-value executable gap is
+the process-level hard timeout around patent/embodiment conversion before full-pool replay.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three

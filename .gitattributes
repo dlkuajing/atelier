@@ -4,3 +4,21 @@
 *.zmx -text
 *.ZMX -text
 *.seq -text
+.planning/quick/**/*.png filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.pdf filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.tif filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.tiff filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.gif filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.webp filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.bmp filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.png filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.pdf filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.tif filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.tiff filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.gif filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.webp filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.bmp filter=lfs diff=lfs merge=lfs -text

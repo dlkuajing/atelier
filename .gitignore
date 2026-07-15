@@ -25,6 +25,8 @@ build/
 !/data/patents/
 /data/patents/*
 !/data/patents/uspto-smartphone-batch*.jsonl
+!/data/patent-ledger/
+!/data/patent-ledger/**
 *.db
 *.sqlite
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-从现有确定性光学后端（Optiland 快引擎、案例库、Wizard LLM 编排）出发，构建可插拔双引擎架构，先用 Null/Sleep 引擎把抽象层和异步任务层跑通（不依赖 CODE V 安装），再做 ZMX↔CODE V 互通 spike 验证转换保真度，随后接入真实 CODE V 适配器并解决专利 seed 路由死结，补全专家级分析视图，搭建本地演示前端，最终一键启动 + 完整彩排收尾。CODE V 安装是外部依赖，前几个阶段必须在没有 CODE V 的机器上（含 CI）可执行可测试。手机镜头专利底库规模化采集不依赖 CODE V、不依赖引擎抽象，使用现有 patent_crawler/e2_intake/generate_cases/audit_seed_intake 流水线，可在早期与引擎工作并行推进；但底库"可路由 seed 规模"验收门只能在专利 seed 可路由化（真 IMH 实算）完成后才能真正关闭。
+从现有确定性光学后端（Optiland 快引擎、案例库、Wizard LLM 编排）出发，构建可插拔双引擎架构，先用 Null/Sleep 引擎把抽象层和异步任务层跑通（不依赖 CODE V 安装），再做 ZMX↔CODE V 互通 spike 验证转换保真度，随后接入真实 CODE V 适配器并解决专利 seed 路由死结，补全专家级分析视图，搭建本地演示前端，最终一键启动 + 完整彩排收尾。CODE V 安装是外部依赖，前几个阶段必须在没有 CODE V 的机器上（含 CI）可执行可测试。手机镜头专利底库穷尽不依赖 CODE V、不依赖引擎抽象；现有 patent_crawler/patent_to_zmx/e2_intake/generate_cases/audit_seed_intake 是起点，但验收终点已从历史“≥500”改为选定公开来源游标耗尽、逐专利族/逐 embodiment 唯一终态、冻结池确定性回放无新增 seed，并保持正式 seed 全部真实 IMH 可路由。
 
 ## Phases
 
@@ -11,11 +11,11 @@
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: 引擎抽象与降级**（2026-07-04 夜车批次1，PR #1） - 可插拔计算引擎接口 + NullDeepEngine + 运行时探测，全链路无 CODE V 可跑通
-- [~] **Phase 2: 专利底库规模化采集**（进行中：采集管线+QC 就绪，USPTO 三批 94 颗候选入库 PR #5/#13；DATA-01 待主公同步 staging ZMX） - 同步 109 颗 staging ZMX + 双源专利定向采集入库，为规模验收打底（可与 Phase 1/3 并行）
+- [~] **Phase 2: 专利底库穷尽采集**（进行中：2026-07-15 基线为 714 个 USPTO 根、442 个正式设计；无全文湖、无 source exhausted 证据） - 建原始专利湖、官方族归并、可恢复游标和逐记录终态账本，按最大失败桶持续回放（可与其他阶段并行）
 - [x] **Phase 3: 通用后台任务层**（2026-07-04 夜车批次1，PR #1） - 假引擎（SleepEngine）验证异步任务 + SSE 进度流 + 单席位信号量
 - [x] **Phase 4: 专家分析补全**（2026-07-04/05 批次2+3，PR #2/#3/#10 含数值锚点与版本守卫） - 点列图/场曲畸变/处方表/波前误差 RMS·Strehl，不依赖 CODE V
 - [x] **Phase 5: ZMX↔CODE V 互通 Spike**（2026-07-05 批次5+6）- 探测/批处理链路/导入实算真 IMH/DB 读数重建 ZMX 全通；CODE V 11.5 无原生 ZMX 导出（WRL 只出 .seq），已采用 04a 数据库读数 + 04b 自研 ZMX writer 关闭回程闭环；`US20170003482A1.zmx` 往返四项保真全过（EFL 偏差 `3.19e-13%`，逐面 nd/vd 无 mismatch，非球面项数保持 S1-S15 各 8 项，VDX/VDY 未丢失），证据见 `.planning/loop/codev-roundtrip-report.md`
-- [~] **Phase 6: 专利 seed 可路由化与底库规模验收**（判据1-3 完成 2026-07-06 批次7，PR #22）- 22 颗专利 seed 真 IMH 实算重锚（CODE V 读数+一阶物理自检门，最大偏差 2.94%）/ 路由重锚（含 IMH 差分断言）/ eval golden 全 22 颗覆盖+物理锚；余判据4=规模门 ≥500 可路由 seed（原料池 224，需专利→案例转换流水线放量）
+- [~] **Phase 6: 专利 seed 可路由化与饱和验收**（历史判据1-3 完成 2026-07-06 批次7，PR #22；饱和判据进行中）- 正式库现有 442/442 非空 IMH；剩余验收不是固定数量，而是全部发现记录唯一终态、正式工件一致、冻结池回放无新增 seed、来源 exhausted 证据闭环
 - [x] **Phase 7: CODE V 引擎适配器与深度成果展示**（2026-07-06 批次8，PR #24；SHOW-03 先期 PR #8）- AUT 优化适配器（EFL 锁定/玻璃冻结，US20170003482A1 实测 RMS spot ↓61%/横向色差 ↓92%/波前 ↓86%）+ 并排对比视图（MTF 双频轴叠加）+ CODE V 扰动敏感度 top-N 表 + 溯源从产物 run 证据推导（夹具/降级禁标 codev-run）；优化产物 readout→zmx_writer→zmx_ingest 单一路径；真实预缓存产物入库支持断网演示
 - [x] **Phase 8: 演示前端**（批次3+4：骨架/输入流/SSE进度/双语摘要/结果页整合叙事，PR #4/#7/#11） - 本地服务 + 浏览器界面，覆盖需求到 CODE V 成果全叙事
 - [~] **Phase 9: 一键启动与演示彩排**（一键启动+预缓存机制+全叙事E2E已完成 PR #12/#14；两段式彩排第一段完成：三遍彩排零瑕疵，待主公终验） - 单命令拉起 + 预缓存 + 完整彩排（里程碑验收）
@@ -33,16 +33,17 @@
   3. 引擎接口对 FastEngine（Optiland 包装）和 NullDeepEngine 提供一致调用契约
 **Plans**: TBD
 
-### Phase 2: 专利底库规模化采集
-**Goal**: 把手机镜头专利/staging 设计规模化收入案例库，为"专家级说服力"的数据规模基础做准备；使用既有采集/摄入流水线，不依赖引擎抽象或 CODE V，可与 Phase 1/3 并行推进
+### Phase 2: 专利底库穷尽采集
+**Goal**: 将合法公开、可重复获取的手机镜头专利分层收入原始专利湖，完成官方族归并、全文/处方恢复、确定性转换与十类唯一终态；500 仅为历史标记，不构成停止条件
 **Depends on**: Nothing (独立于引擎工作；可并行执行)
 **Requirements**: DATA-01, DATA-02
 **Success Criteria** (what must be TRUE):
-  1. lens-data-staging/ 的 109 颗手机镜头 ZMX 已同步进本仓库 data/zmx/ 并全部过 QC intake 流水线（audit_seed_intake 无阻断性失败）
-  2. patent_crawler 已针对手机镜头设计专利（3P-7P，覆盖 Largan/Sunny/舜宇/玉晶光等大厂 + 高引用专利）完成定向规模化采集，双源（USPTO/Espacenet）交叉验证通过
-  3. 新采集案例全部走 e2_intake QC 门 + generate_cases 正式生成 case_id，与既有 39 案例共存于同一案例库结构下
+  1. 所有选定官方数据源、CPC/IPC、查询族和受让人别名的分页游标均有可重算 exhausted 证据，并建立截止日后的增量游标
+  2. 所有发现记录完成官方专利族归并；每个专利根和每个已知 embodiment 恰有一个允许的结构化终态，无 unknown/静默跳过/临时 staging 遗留
+  3. 原始全文/图像/OCR 与正式 seed 分层保存；任何正式入库均有确定性处方、完整 provenance、质量闸、真实 IMH、物理合理性、去重和路由验收证据
+  4. 同一冻结原始池完整回放不再产生新 seed，账本与工件哈希可复现
 **Plans**: TBD
-**Note**: DATA-01 有外部依赖——109 颗 ZMX 文件位于另一台电脑（lens-data-staging/），需主公先行同步至可访问位置或本仓库。此依赖不由本阶段内工作解除。
+**Note**: 109 颗外部 `lens-data-staging/` ZMX 当前不可得，不计入本阶段可用资产或完成依赖。
 
 ### Phase 3: 通用后台任务层
 **Goal**: 提供长任务的异步执行 + 进度推送基础设施，在真实 CODE V 存在之前用假引擎验证全链路
@@ -77,15 +78,15 @@
   4. CODE V 实际调用方式（可执行文件/CLI 参数/输出格式）已从安装后的 Macro-PLUS 手册确认并记录，不再依赖二手资料假设
 **Plans**: TBD
 
-### Phase 6: 专利 seed 可路由化与底库规模验收
-**Goal**: 解除专利 seed 因 IMH=0.0 导致的不可路由死结，使其成为可被匹配、可被评估回归覆盖的正式案例；在此基础上关闭底库规模验收门（Phase 2 采集的案例只有在真 IMH 重锚后才计入"可路由 seed"）
+### Phase 6: 专利 seed 可路由化与饱和验收
+**Goal**: 保证每个通过 Phase 2 转换的设计只有在真实 IMH、可追迹性、物理合理性、同族/处方去重、质量闸和路由验收全部通过后才进入正式库，并闭合全库一致性与冻结池饱和证明
 **Depends on**: Phase 5, Phase 2
 **Requirements**: SEED-01, SEED-02, SEED-03, DATA-03
 **Success Criteria** (what must be TRUE):
   1. 全部专利 seed 案例（含 Phase 2 新采集的批次）拥有实算得出的真实 IMH（不再是 0.0 占位）
   2. match_case 使用实算 IMH 重建的距离度量，可将专利 seed 作为最近邻候选返回
   3. evaluate_design_agent 回归集通过 --fail-on-regression，覆盖重锚后的专利 seed
-  4. 可路由 seed 总量 ≥500 颗（专利 seed 为主要来源；主公 2026-07-03 定调，采集按批次滚动），全部通过 audit_seed_intake 审计
+  4. 正式底库、ZMX、案例索引、路由 golden、统计报告和 provenance 完全一致；冻结池完整回放无新增合格 seed，全部测试/CI/独立只读审查/PR/main CI 闭环
 **Plans**: TBD
 
 ### Phase 7: CODE V 引擎适配器与深度成果展示
@@ -140,11 +141,11 @@ Phases execute in numeric order with one parallel branch: 1 and 2 can start toge
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. 引擎抽象与降级 | 0/TBD | Not started | - |
-| 2. 专利底库规模化采集 | 0/TBD | Not started | - |
+| 2. 专利底库穷尽采集 | GSD quick active | In progress（714 根基线账本已建立，来源/全文/终态未饱和） | - |
 | 3. 通用后台任务层 | 0/TBD | Not started | - |
 | 4. 专家分析补全 | 0/TBD | Not started | - |
 | 5. ZMX↔CODE V 互通 Spike | 0/TBD | Completed | 2026-07-05 |
-| 6. 专利 seed 可路由化与底库规模验收 | 0/TBD | Not started | - |
+| 6. 专利 seed 可路由化与饱和验收 | GSD quick active | In progress（442 正式设计；全池终态与回放未闭） | - |
 | 7. CODE V 引擎适配器与深度成果展示 | 0/TBD | Not started | - |
 | 8. 演示前端 | 0/TBD | Not started | - |
 | 9. 一键启动与演示彩排 | 0/TBD | In progress（第一段彩排完成，待主公终验） | - |

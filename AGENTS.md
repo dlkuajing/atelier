@@ -7,7 +7,7 @@
 
 **专家级量产设计论证**（2026-07-08 主公定向：从"演示产品"升级为"量产设计产出引擎"；里程碑级转向，完整重规划待探路阶良品率 go/no-go 闸后启动）：产品批量产出量产级候选设计，把初/中级设计师"一稿数周"的产出瓶颈，压缩为资深设计师对成品的快速判断与背书。**可信度依然是唯一不可失守的东西**：AI 只多产、不越权定夺，量产"合格/可用"的最终判断权与 [EXPERT] 背书始终在资深设计师手里。AR 近眼显示与严格杂散光/鬼像验证，为需外部工具链的已知例外格。非商用，不管侵权（生产力工具形态下商用/合规定位是否调整=另一待主公决策项）。
 
-演示产品里程碑执行路线（沿用）：.planning/ROADMAP.md 九阶段（2026-07-03 立项）：Phase 1/3/4/5/8 完成（CODE V 11.5 装于 D:\CODEV115，ZMX↔CODE V 闭环=DB 读数直出重建，见 app/core/engines/codev_readout.py+zmx_writer.py）、2/7/9 进行中、6 待启；新方向探路阶=Phase 10（C1 多产编排 + 良品率 go/no-go 闸）。staging ZMX 不可得（主公 2026-07-05 裁定），底库规模门全靠 USPTO 采集（原料池 159/500+，最新入库约 343 可路由）。推进方式=gsd-loop 多车道夜车（见 .planning/decisions.log）。
+演示产品里程碑执行路线（沿用）：.planning/ROADMAP.md 九阶段（2026-07-03 立项）：Phase 1/3/4/5/8 完成（CODE V 11.5 装于 D:\CODEV115，ZMX↔CODE V 闭环=DB 读数直出重建，见 app/core/engines/codev_readout.py+zmx_writer.py）、2/6/7/9 进行中；新方向探路阶=Phase 10（C1 多产编排 + 良品率 go/no-go 闸）。staging ZMX 不可得（主公 2026-07-05 裁定）。专利底库现行目标是公开来源与逐 embodiment 终态饱和；500 仅为历史进度标记，不是停止条件。2026-07-15 可重算基线为 USPTO 元数据池 714 个唯一根、正式库 442 个设计（425 个专利设计、116 个美国专利根），其中本地池 95 根已有正式工件、619 根未覆盖；尚无保留全文湖或数据源 exhausted 证明。推进方式=gsd-loop 多车道夜车（见 .planning/decisions.log）。
 
 ## 与 lumira 官网的关系（drift 契约）
 
@@ -37,6 +37,8 @@
 
 ## 数据资产
 
-- `app/data/optical_cases/`：39 个案例 seed（17 真实设计 + 22 专利 seed）
-- `data/zmx/`：39 颗 ZMX 原文件
-- `lens-data-staging/`（109 颗手机镜头 zmx）在另一台电脑，尚未同步进本仓库
+- `app/data/optical_cases/`：442 个正式案例（17 个原始真实设计 + 425 个专利设计）
+- `data/zmx/`：442 颗正式 ZMX
+- `data/patents/`：714 条 USPTO 发现元数据；不是全文专利湖
+- `data/patent-ledger/`：专利饱和 snapshot/audit（必须由脚本重算，不以手写摘要为真值）
+- `lens-data-staging/` 的 109 颗外部 ZMX 不可得（主公 2026-07-05 裁定），不得当作当前可用资产
