@@ -117,6 +117,7 @@ def test_summary_is_resumable_append_only_and_fails_closed_on_corrupt_latest(
 
     partial = summarize_replay_results(cohort, results_dir=results)
     assert partial.roots_with_results == 1
+    assert partial.result_file_count == 1
     assert partial.missing_root_ids == (cohort.members[1].root_id,)
     assert partial.next_missing_index == 1
     assert partial.cohort_replay_complete is False
@@ -133,18 +134,80 @@ def test_summary_is_resumable_append_only_and_fails_closed_on_corrupt_latest(
     second_path.write_bytes(canonical_json_bytes(second_result))
     complete = summarize_replay_results(cohort, results_dir=results)
     assert complete.roots_with_results == 2
+    assert complete.result_file_count == 2
     assert complete.cohort_replay_complete is True
     assert complete.root_state_counts[
         RootReplayState.SOURCE_EXHAUSTED_PENDING_ALTERNATES
     ] == 2
+    assert complete.result_set_sha256 == summarize_replay_results(
+        cohort, results_dir=results
+    ).result_set_sha256
 
     corrupt_path, retry_number = next_result_attempt(results, first_member.root_id)
     assert retry_number == 2
     corrupt_path.write_text("not json", encoding="utf-8")
     corrupt = summarize_replay_results(cohort, results_dir=results)
     assert corrupt.roots_with_results == 1
+    assert corrupt.result_file_count == 1
     assert corrupt.corrupt_result_paths == (corrupt_path.as_posix(),)
     assert corrupt.cohort_replay_complete is False
+
+
+def test_audit_fails_closed_when_referenced_external_evidence_is_missing(
+    tmp_path: Path,
+) -> None:
+    actual = _actual_cohort()
+    cohort = actual.model_copy(update={"members": actual.members[:1]})
+    member = cohort.members[0]
+    publication_id = member.publications[0].publication_id
+    raw = tmp_path / "raw.html"
+    raw.write_bytes(b"raw")
+    evidence = EvidenceRef(
+        evidence_type="uspto_ppubs_parser_input_html",
+        path=raw.relative_to(tmp_path).as_posix(),
+        sha256=sha256_bytes(raw.read_bytes()),
+    )
+    item = ReplayItemResult(
+        item_id=f"{publication_id}:document",
+        state=ReplayItemState.PARSER_REVIEW_REQUIRED,
+        reason_code="parser_review_required.deterministic_parser_rejected",
+        detail="PatentParseError: fixture",
+        evidence=(evidence,),
+    )
+    result = RootReplayResult(
+        cohort_sha256=cohort_sha256(cohort),
+        root_id=member.root_id,
+        result_attempt=1,
+        publication_id=publication_id,
+        root_state=RootReplayState.PARSER_REVIEW_REQUIRED,
+        reason_code="parser_review_required.all_disclosed_items_rejected",
+        source_attempts=(
+            SourceFetchAttempt(
+                publication_id=publication_id,
+                source_bucket="fixture",
+                state=SourceFetchState.RETAINED,
+                http_status=200,
+            ),
+        ),
+        raw_document=evidence,
+        items=(item,),
+    )
+    result_path, _ = next_result_attempt(tmp_path / "results", member.root_id)
+    result_path.write_bytes(canonical_json_bytes(result))
+
+    assert summarize_replay_results(
+        cohort,
+        results_dir=tmp_path / "results",
+        evidence_root=tmp_path,
+    ).cohort_replay_complete
+    raw.unlink()
+    missing = summarize_replay_results(
+        cohort,
+        results_dir=tmp_path / "results",
+        evidence_root=tmp_path,
+    )
+    assert missing.cohort_replay_complete is False
+    assert missing.corrupt_result_paths == (result_path.as_posix(),)
 
 
 def test_run_replay_resumes_without_refetching_completed_roots(
@@ -217,6 +280,13 @@ def test_run_replay_resumes_without_refetching_completed_roots(
     assert summarize_replay_results(
         cohort, results_dir=tmp_path / "results"
     ).cohort_replay_complete
+
+    kwargs["retry_root_states"] = frozenset(
+        {RootReplayState.SOURCE_EXHAUSTED_PENDING_ALTERNATES}
+    )
+    assert asyncio.run(patent_pool_replay.run_replay(cohort, **kwargs)) == 1
+    assert replayed_roots[-1] == cohort.members[0].root_id
+    assert token_calls == 3
 
 
 def test_replay_schemas_reject_unstructured_or_duplicate_outcomes() -> None:

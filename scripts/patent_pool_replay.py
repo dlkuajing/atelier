@@ -95,6 +95,7 @@ async def run_replay(
     patent_budget_seconds: float,
     only_roots: frozenset[str] | None = None,
     retry_nonterminal: bool = False,
+    retry_root_states: frozenset[RootReplayState] | None = None,
 ) -> int:
     """Replay up to ``limit`` roots, atomically checkpointing after each root."""
 
@@ -104,6 +105,10 @@ async def run_replay(
         raise PatentReplayError("delay_seconds must be non-negative")
     if patent_budget_seconds <= 0:
         raise PatentReplayError("patent_budget_seconds must be positive")
+    if retry_nonterminal and retry_root_states:
+        raise PatentReplayError(
+            "retry_nonterminal and retry_root_states are mutually exclusive"
+        )
     verify_replay_cohort_inputs(cohort, repo_root=ROOT)
     digest = cohort_sha256(cohort)
     selected = [
@@ -125,7 +130,10 @@ async def run_replay(
             previous = load_root_replay_result(latest)
             if previous.cohort_sha256 != digest or previous.root_id != member.root_id:
                 raise PatentReplayError(f"result/cohort mismatch: {latest}")
-            if not retry_nonterminal or previous.root_state is RootReplayState.TERMINAL:
+            if retry_root_states is not None:
+                if previous.root_state not in retry_root_states:
+                    continue
+            elif not retry_nonterminal or previous.root_state is RootReplayState.TERMINAL:
                 continue
         pending.append(member)
         if limit and len(pending) >= limit:
@@ -444,8 +452,13 @@ def _refresh_summary_artifacts(
     results_dir: Path,
     summary_path: Path,
     report_path: Path,
+    validate_evidence: bool = False,
 ) -> None:
-    summary = summarize_replay_results(cohort, results_dir=results_dir)
+    summary = summarize_replay_results(
+        cohort,
+        results_dir=results_dir,
+        evidence_root=ROOT if validate_evidence else None,
+    )
     _atomic_write(summary_path, canonical_json_bytes(summary))
     _atomic_write(report_path, replay_report_markdown(cohort, summary).encode("utf-8"))
 
@@ -503,6 +516,12 @@ def main() -> int:
     )
     run_parser.add_argument("--only-roots", type=Path)
     run_parser.add_argument("--retry-nonterminal", action="store_true")
+    run_parser.add_argument(
+        "--retry-root-state",
+        action="append",
+        choices=tuple(state.value for state in RootReplayState),
+        default=[],
+    )
     audit_parser = subparsers.add_parser("audit")
     _add_common_paths(audit_parser)
     report_parser = subparsers.add_parser("report")
@@ -538,6 +557,10 @@ def main() -> int:
                 patent_budget_seconds=args.patent_budget_seconds,
                 only_roots=_load_only_roots(args.only_roots),
                 retry_nonterminal=args.retry_nonterminal,
+                retry_root_states=frozenset(
+                    RootReplayState(value) for value in args.retry_root_state
+                )
+                or None,
             )
         )
         summary = summarize_replay_results(cohort, results_dir=args.results_dir)
@@ -553,8 +576,13 @@ def main() -> int:
         results_dir=args.results_dir,
         summary_path=args.summary,
         report_path=args.report,
+        validate_evidence=True,
     )
-    summary = summarize_replay_results(cohort, results_dir=args.results_dir)
+    summary = summarize_replay_results(
+        cohort,
+        results_dir=args.results_dir,
+        evidence_root=ROOT,
+    )
     if args.command == "report":
         print(replay_report_markdown(cohort, summary), end="")
         return 0

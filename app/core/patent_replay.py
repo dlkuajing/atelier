@@ -225,6 +225,8 @@ class ReplaySummary(StrictModel):
     cohort_sha256: str
     cohort_roots: int = Field(ge=0)
     roots_with_results: int = Field(ge=0)
+    result_file_count: int = Field(ge=0)
+    result_set_sha256: str
     missing_root_ids: tuple[str, ...]
     corrupt_result_paths: tuple[str, ...]
     cohort_replay_complete: bool
@@ -237,6 +239,13 @@ class ReplaySummary(StrictModel):
     item_reason_counts: dict[str, int]
     source_attempt_state_counts: dict[SourceFetchState, int]
     parser_failure_signature_counts: dict[str, int]
+
+    @field_validator("cohort_sha256", "result_set_sha256")
+    @classmethod
+    def validate_summary_sha256(cls, value: str) -> str:
+        if not re.fullmatch(r"[0-9a-f]{64}", value):
+            raise ValueError("summary hashes must be lowercase SHA-256")
+        return value
 
 
 def build_replay_cohort(
@@ -363,6 +372,7 @@ def summarize_replay_results(
     cohort: ReplayCohortManifest,
     *,
     results_dir: Path,
+    evidence_root: Path | None = None,
 ) -> ReplaySummary:
     digest = cohort_sha256(cohort)
     missing: list[str] = []
@@ -375,6 +385,7 @@ def summarize_replay_results(
     source_attempt_counts: Counter[SourceFetchState] = Counter()
     parser_failure_counts: Counter[str] = Counter()
     roots_with_results = 0
+    result_manifest: list[dict[str, str]] = []
     for member in cohort.members:
         result_path = latest_result_path(results_dir, member.root_id)
         if result_path is None or not result_path.is_file():
@@ -388,7 +399,20 @@ def summarize_replay_results(
         if result.cohort_sha256 != digest or result.root_id != member.root_id:
             corrupt.append(result_path.as_posix())
             continue
+        if evidence_root is not None:
+            try:
+                _verify_result_evidence(result, evidence_root=evidence_root)
+            except PatentReplayError:
+                corrupt.append(result_path.as_posix())
+                continue
         roots_with_results += 1
+        result_manifest.append(
+            {
+                "root_id": member.root_id,
+                "path": result_path.relative_to(results_dir).as_posix(),
+                "sha256": sha256_bytes(result_path.read_bytes()),
+            }
+        )
         root_counts[result.root_state] += 1
         root_reason_counts[result.reason_code] += 1
         for source_attempt in result.source_attempts:
@@ -413,6 +437,8 @@ def summarize_replay_results(
         cohort_sha256=digest,
         cohort_roots=len(cohort.members),
         roots_with_results=roots_with_results,
+        result_file_count=len(result_manifest),
+        result_set_sha256=sha256_bytes(canonical_json_bytes({"files": result_manifest})),
         missing_root_ids=tuple(missing),
         corrupt_result_paths=tuple(sorted(corrupt)),
         cohort_replay_complete=not missing and not corrupt,
@@ -454,6 +480,8 @@ def replay_report_markdown(cohort: ReplayCohortManifest, summary: ReplaySummary)
 - cohort_sha256: `{summary.cohort_sha256}`
 - frozen_roots: {summary.cohort_roots}
 - roots_with_results: {summary.roots_with_results}
+- result_file_count: {summary.result_file_count}
+- result_set_sha256: `{summary.result_set_sha256}`
 - missing_roots: {len(summary.missing_root_ids)}
 - corrupt_results: {len(summary.corrupt_result_paths)}
 - cohort_replay_complete: `{str(summary.cohort_replay_complete).lower()}`
@@ -567,6 +595,30 @@ def _verify_snapshot_inputs(repo_root: Path, inputs: InputManifest) -> None:
         raise PatentReplayError(f"frozen case index is missing: {case_index_path}")
     if sha256_bytes(case_index_path.read_bytes()) != inputs.case_index.sha256:
         raise PatentReplayError("frozen case index hash drift")
+
+
+def _verify_result_evidence(
+    result: RootReplayResult,
+    *,
+    evidence_root: Path,
+) -> None:
+    references = []
+    if result.raw_document is not None:
+        references.append(result.raw_document)
+    references.extend(evidence for item in result.items for evidence in item.evidence)
+    seen: set[tuple[str, str]] = set()
+    for reference in references:
+        key = (reference.path, reference.sha256)
+        if key in seen:
+            continue
+        seen.add(key)
+        path = Path(reference.path)
+        if not path.is_absolute():
+            path = evidence_root / path
+        if not path.is_file():
+            raise PatentReplayError(f"replay evidence is missing: {path}")
+        if sha256_bytes(path.read_bytes()) != reference.sha256:
+            raise PatentReplayError(f"replay evidence hash drift: {path}")
 
 
 def _load_pool_records(

@@ -4,32 +4,34 @@
 
 - cohort_sha256: `e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b`
 - frozen_roots: 619
-- roots_with_results: 528
-- missing_roots: 91
+- roots_with_results: 619
+- result_file_count: 619
+- result_set_sha256: `3bc0bbee88906ff3b6c40e276addbb6bd3336e0dc73dd987706f5b90393776df`
+- missing_roots: 0
 - corrupt_results: 0
-- cohort_replay_complete: `false`
+- cohort_replay_complete: `true`
 - saturation_complete: `false`
-- next_missing_index: 528
+- next_missing_index: None
 
 The replay-complete flag means every frozen local root has one strict current replay result. It
 does not mean source saturation, formal intake, production usability, or an expert verdict.
 
 ## Root states
 
-- `converted_pending_intake`: 11
-- `terminal`: 22
-- `parser_review_required`: 394
-- `source_retry_required`: 6
+- `converted_pending_intake`: 15
+- `terminal`: 33
+- `parser_review_required`: 467
+- `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 95
+- `mixed_nonterminal`: 104
 
 ## Item states
 
-- `converted_pending_intake`: 295
-- `terminal`: 548
-- `parser_review_required`: 1176
-- `conversion_retry_required`: 14
+- `converted_pending_intake`: 359
+- `terminal`: 631
+- `parser_review_required`: 1388
+- `conversion_retry_required`: 16
 
 ## Terminal statuses proven by replay receipts
 
@@ -40,61 +42,69 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 0
-- `trace_failed`: 449
-- `trace_timeout`: 99
+- `trace_failed`: 523
+- `trace_timeout`: 108
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 394
-- `mixed_nonterminal.multiple_item_states`: 95
-- `terminal.all_disclosed_items_terminal`: 22
-- `converted_pending_intake.all_disclosed_items_converted`: 11
-- `source_retry_required.uspto_ppubs_fetch_incomplete`: 6
+- `parser_review_required.all_disclosed_items_rejected`: 467
+- `mixed_nonterminal.multiple_item_states`: 104
+- `terminal.all_disclosed_items_terminal`: 33
+- `converted_pending_intake.all_disclosed_items_converted`: 15
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1176
-- `terminal.process_receipt_classified`: 548
-- `converted_pending_intake.process_isolated_zmx_ready`: 295
-- `conversion_retry_required.patent_budget_exhausted`: 14
+- `parser_review_required.deterministic_parser_rejected`: 1388
+- `terminal.process_receipt_classified`: 631
+- `converted_pending_intake.process_isolated_zmx_ready`: 359
+- `conversion_retry_required.patent_budget_exhausted`: 16
 
 ## Source attempts
 
-- `retained`: 522
-- `http_error`: 4
-- `transport_error`: 14
+- `retained`: 619
+- `http_error`: 0
+- `transport_error`: 0
 
 ## Parser failure signatures
 
-- `sunny_embodiment_metadata_missing`: 295
-- `generic_summary_metadata_missing`: 244
-- `sunny_surface_value_not_numeric`: 117
-- `aac_raytech_summary_metadata_missing`: 108
-- `generic_surface_radius_not_numeric`: 75
-- `asphere_section_missing`: 64
+- `sunny_embodiment_metadata_missing`: 299
+- `generic_summary_metadata_missing`: 294
+- `aac_raytech_summary_metadata_missing`: 174
+- `sunny_surface_value_not_numeric`: 120
+- `generic_surface_radius_not_numeric`: 112
+- `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
-- `generic_numeric_token_rejected`: 54
+- `generic_numeric_token_rejected`: 62
 - `generic_surface_table_index_break`: 33
 - `other_sunny_s1_row_has_unexpected_extra_values_n_n_n`: 29
-- `ocr_corrupted_exponent`: 17
+- `ocr_corrupted_exponent`: 18
 - `asphere_surface_header_missing`: 16
+- `other_surface_n_thickness_is_not_numeric_flt`: 11
 - `other_sunny_sto_value_is_not_numeric_surface`: 8
 - `other_sunny_s3_row_has_unexpected_extra_values_n_n_n`: 6
+- `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6
 - `sekonix_surface_row_incomplete`: 6
+- `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a36_n`: 5
+- `other_r10_thickness_is_not_numeric_d10`: 4
+- `other_r4_thickness_is_not_numeric_d4`: 4
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bk7_schott`: 4
+- `other_aspheric_row_a4_has_more_numeric_values_than_surfaces_extra_token`: 3
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bsc7_hoya`: 3
 - `other_sunny_asphere_row_s7_has_more_values_than_headers_token`: 3
+- `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 3
+- `other_unsupported_nonzero_fujifilm_asphere_terms_s3_a3_n_s4_a3_n_s14_a3_n_s15_a3_n`: 3
 - `other_newmax_a_row_has_nonnumeric_data_token_positive`: 2
+- `other_r2_thickness_is_not_numeric_d2`: 2
 - `other_sekonix_glass_code_cannot_be_split_deterministically_token`: 2
+- `other_stop_thickness_is_not_numeric_d0`: 2
 - `other_sunny_asphere_row_s1_has_more_values_than_headers_token`: 2
 - `other_sunny_asphere_row_s5_has_more_values_than_headers_token`: 2
-- `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 2
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r4_a2_n`: 2
+- `other_aspheric_row_a14_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a24_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a26_has_more_numeric_values_than_surfaces_extra_token`: 1
-- `other_aspheric_row_a4_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a8_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_k_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
@@ -104,3 +114,4 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sunny_sto_value_is_not_numeric_s7_aas`: 1
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a32_n`: 1
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r2_a32_n`: 1
+- `other_unsupported_nonzero_fujifilm_asphere_terms_s5_a3_n_s6_a3_n_s16_a3_n_s17_a3_n`: 1

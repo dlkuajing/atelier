@@ -1,6 +1,6 @@
 ---
 quick_id: 260715-patent-local-pool-replay
-status: active
+status: complete
 owner: Codex
 base: d2e6a2d
 ---
@@ -69,20 +69,26 @@ dedupe, routing, and provenance gates close.
   measured largest remaining bucket is written to STATE/decisions. Parent saturation remains
   incomplete even if replay produces new staging candidates.
 
-## Runtime checkpoint (2026-07-15)
+## Final runtime result (2026-07-15)
 
 - Frozen manifest: 619 roots / 619 publications, cohort SHA-256
   `e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b`.
-- Current replay checkpoint: 528/619 roots, 0 corrupt results. This is an intermediate checkpoint,
-  not replay completion or saturation.
-- Current root states: parser review 394, mixed non-terminal 95, source retry 6, all-terminal 22,
-  all-converted-pending-intake 11.
-- Current item states: parser review 1176, terminal receipt 548, converted-pending-intake 295,
-  patent-budget retry 14.
+- Replay completed with 619/619 current strict root results, 0 missing and 0 corrupt. Parent patent
+  saturation remains incomplete.
+- Final root states after targeted source retry: parser review 467, mixed non-terminal 104,
+  all-terminal 33, all-converted-pending-intake 15, source retry 0.
+- Final item states: parser review 1388, terminal receipt 631, converted-pending-intake 359,
+  patent-budget retry 16. Terminal receipts classify 523 trace failures and 108 trace timeouts.
+- All 619 current root results retain official PPUBS HTML evidence. The six initial source-retry
+  roots were retried by root-state selector and all resolved without replaying the other 613 roots.
 - Parser signatures are recomputed from strict result detail. Current largest measured signatures
-  are Sunny metadata missing (295), generic summary metadata missing (244), Sunny surface value
-  non-numeric (117), and AAC Raytech summary metadata missing (108); the full cohort must finish
-  before selecting the final largest parser bucket.
+  are Sunny metadata missing (299), generic summary metadata missing (294), AAC Raytech summary
+  metadata missing (174), and Sunny surface value non-numeric (120). Sunny metadata is therefore
+  the next measured parser shovel.
+- Current result-set SHA-256 is
+  `3bc0bbee88906ff3b6c40e276addbb6bd3336e0dc73dd987706f5b90393776df`; summary file SHA-256 is
+  `65122027ba6c12c7913bbf0950a11527953f53a5c124e40ebd23ac825baad130`.
+- A no-op complete-cohort replay processed zero roots and left the summary byte hash unchanged.
 - Official PPUBS canary retained HTML and no CODE V process existed before or after replay.
 - Real-pool failures drove two fail-closed fixes: retained source attempts now survive document
   parser exceptions; explicit optical infinity/plano radius is deterministically encoded as the

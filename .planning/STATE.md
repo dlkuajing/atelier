@@ -22,14 +22,16 @@ A–F。北极星现为 `ACTIVE`，66-object canonical schema 与 claim/contract
 元数据根、442 个正式设计（425 个专利设计、116 个美国专利根）、95 个本地池根有正式工件、
 619 个未覆盖；发现并集为 735 根（另 21 个正式根不在本地元数据池）。canonical snapshot
 SHA-256=`c86527b71e0500074bf14e1668bc3ab6701e5d54d3d22ef5826686101d6b5ec1`；
-严格 audit 为 `saturation_complete=false`，明确 735 根未归族/未终态、425 个正式 embodiment
-尚未按新 provenance 合约闭环、25 个旧 seed embodiment 身份未明确、735 根无保留全文。
-这是未合 main 的进行中证据，不是饱和完成声明；500 仅为历史进度标记。
+foundation snapshot 的严格 audit 为 `saturation_complete=false`，明确 735 根未归族/未终态、
+425 个正式 embodiment 尚未按新 provenance 合约闭环、25 个旧 seed embodiment 身份未明确；
+当时 735 根均无保留全文。第三个 quick 现已为冻结的 619 个本地未覆盖根全部保留官方 PPUBS
+HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和账本。这是未合 main 的进行中证据，
+不是饱和完成声明；500 仅为历史进度标记。
 第二个 GSD quick 已将每个 embodiment 的 Optiland/ZMX 转换移入独立子进程：默认 120 秒
 硬超时、Windows `taskkill /F /T` 杀树、2 秒 bounded reap、append-only retry identity、原始
 HTML 输入哈希、request/response/stdout/stderr/receipt/candidate ZMX 全证据保留，且仅在父进程
-重新装载并确认有限 EFL 后原子发布 staging ZMX。该 quick 仍未合 main；下一步是冻结并回放
-619 个未覆盖根，而不是扩大固定数量目标。
+重新装载并确认有限 EFL 后原子发布 staging ZMX。第三个 quick 已完成 619-root frozen replay；
+下一步按完整 census 的最大桶补 Sunny metadata parser，再全池确定性回放，而不是扩大固定数量目标。
 
 ## Current Position
 
@@ -43,7 +45,7 @@ HTML 输入哈希、request/response/stdout/stderr/receipt/candidate ZMX 全证�
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE；账本 foundation 与进程硬超时 quick 已完成本地实现。714 raw roots + 116 formal roots = 735 union；snapshot `c86527b…b5ec1` 可重算，audit 按设计 exit=1；下一铲为冻结/回放 619 个未覆盖根并按最大结构化失败桶推进。 |
+| Patent saturation | ACTIVE / INCOMPLETE；619-root frozen local replay is complete with 619 strict current results, missing=0, corrupt=0, but 467 parser-review roots, 104 mixed roots, 359 staging items, and 16 patent-budget retry items remain non-terminal. Next measured shovel is Sunny metadata parsing; this is not source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -168,8 +170,9 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 - 外部依赖：另一台电脑的 109 ZMX、商用/合规定位、严格杂散光与 AR 外部工具链。
 - 存量工单：unknown dispersion provenance、专利 WAVM 24 槽化、5P MTF NaN、P13
   GLD/withheld EFL、Stage B listing/WRX/WRY、C1 artifact-key collision。
-- 专利饱和当前缺口：仅新转换输入具备保留 HTML，历史 735 根仍无闭合全文湖；无 source crawl
-  exhausted 游标、无官方 family closure；619 个本地未覆盖根尚未通过新隔离执行器冻结回放。
+- 专利饱和当前缺口：619 个本地未覆盖根已完成新隔离执行器冻结回放，且当前 619 根均有
+  官方 PPUBS HTML；但仍无 source crawl exhausted 游标、无官方 family closure，且 parser、trace、
+  staging intake 与 patent-budget 非终态均未闭合。
 - 2026-07-15 完整宿主 pytest 首轮暴露非 `real_machine` 路径仍可启动 CODE V；该轮立即作废并
   终止 pytest 树。`D:/CVUSER/codev.rec` 只记录 `LEN NEW` 启动与 `EXI Y`，无业务宏。测试入口
   现对所有非 `real_machine` 测试在 `subprocess.Popen` 前 fail-closed 拒绝
@@ -185,7 +188,7 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260713-n7x` | active-unratified-external-release-evidence-required | `.planning/north-star/` 与 `.planning/quick/260713-n7x-unratified-claim-contract-authority-evid/`；历史 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6`、`ab7ce4d/f2ff988` 固定树均被拒；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED；tracked 文档只定义 fail-closed gate，不自证 fixed-tree review/PR/CI/merge；A–F 保持 false。 |
 | `260715-patent-saturation-ledger` | active-foundation-complete-saturation-incomplete | `.planning/quick/260715-patent-saturation-ledger/`、`data/patent-ledger/` 与 `.planning/loop/patent-saturation-baseline.md`；66 相关测试+Ruff 绿，三工件二次重建 byte-identical，严格 audit exit=1。 |
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
-| `260715-patent-local-pool-replay` | active-528-of-619-saturation-incomplete | Frozen cohort SHA `e809823c...b42b`; strict checkpoint 528/619, corrupt=0. Current item census: parser review 1176, receipt terminal 548, staging pending intake 295, patent-budget retry 14. Largest interim parser signatures: Sunny metadata missing 295, generic summary metadata missing 244, Sunny surface value non-numeric 117, and AAC Raytech summary metadata missing 108. Continue the full frozen replay; do not select a final parser bucket or claim saturation from this partial sample. |
+| `260715-patent-local-pool-replay` | complete-local-replay-saturation-incomplete | Cohort SHA `e809823c...b42b`; 619/619 strict results, missing=0, corrupt=0; result-set SHA `3bc0bbee...76df`. Final items: parser review 1388, receipt terminal 631, staging pending intake 359, patent-budget retry 16. All current roots retain official PPUBS HTML. No-op replay processed 0 and preserved summary SHA `65122027...d130`. Parent saturation remains incomplete. |
 
 ## Session Continuity
 
@@ -196,8 +199,8 @@ For patent saturation work, resume from
 then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.py`; never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-highest-value executable work is to resume the frozen 619-root replay from its strict result
-checkpoint, then select parser/fulltext work from the largest complete-cohort structured bucket.
+highest-value executable work is the complete-cohort largest parser bucket: Sunny embodiment
+metadata missing (299), followed by full-pool deterministic replay and census comparison.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three
