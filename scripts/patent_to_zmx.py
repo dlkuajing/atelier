@@ -458,6 +458,12 @@ def _parse_prescription_attempts(
         )
         if attempts:
             return attempts
+        attempts = _classify_light_blocking_geometry_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _classify_ir_filter_coating_only_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1711,6 +1717,81 @@ _IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]
             "focal length": 16,
             "equivalent focal length": 13,
             "thermal expansion coefficients": 1,
+        },
+    },
+}
+_LIGHT_BLOCKING_GEOMETRY_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_LIGHT_BLOCKING_GEOMETRY_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12001077-B2": {
+        "normalized_text_sha256": (
+            "83bced2427a357d878458607be067736e62e64548bc20f19a3ed2540218a458c"
+        ),
+        "table_count": 14,
+        "geometry_phrase_counts": {
+            "Family ID: 78608859": 1,
+            "imaging lens assembly module": 213,
+            "light blocking structure": 212,
+            "light blocking opening": 282,
+            "first curvature radius": 52,
+            "second curvature radius": 45,
+            "lens element": 269,
+            "field of view": 18,
+            "FOV (degree)": 14,
+        },
+    },
+    "US-12405441-B2": {
+        "normalized_text_sha256": (
+            "8d724d5cc2442fb2637318615b76fb1c6ce312b5171376edb1b7561c93c21622"
+        ),
+        "table_count": 14,
+        "geometry_phrase_counts": {
+            "Family ID: 78608859": 1,
+            "imaging lens assembly module": 196,
+            "light blocking structure": 208,
+            "light blocking opening": 270,
+            "first curvature radius": 48,
+            "second curvature radius": 41,
+            "lens element": 256,
+            "field of view": 17,
+            "FOV (degree)": 14,
+        },
+    },
+    "US-20210364725-A1": {
+        "normalized_text_sha256": (
+            "b1ef346be3187db3c6bf9bde364ac4267c91cd652ec4a0172172101ed6617eb4"
+        ),
+        "table_count": 14,
+        "geometry_phrase_counts": {
+            "Family ID: 78608859": 1,
+            "imaging lens assembly module": 213,
+            "light blocking structure": 212,
+            "light blocking opening": 282,
+            "first curvature radius": 52,
+            "second curvature radius": 45,
+            "lens element": 269,
+            "field of view": 18,
+            "FOV (degree)": 14,
+        },
+    },
+    "US-20240280784-A1": {
+        "normalized_text_sha256": (
+            "3f7c2d12e5dfe7ebfc5a8e21dcde9baaf64fef29c678bb8c3797e5e16a9f7ac4"
+        ),
+        "table_count": 14,
+        "geometry_phrase_counts": {
+            "Family ID: 78608859": 1,
+            "imaging lens assembly module": 196,
+            "light blocking structure": 208,
+            "light blocking opening": 270,
+            "first curvature radius": 48,
+            "second curvature radius": 41,
+            "lens element": 256,
+            "field of view": 17,
+            "FOV (degree)": 14,
         },
     },
 }
@@ -8792,6 +8873,77 @@ def _classify_imaging_lens_system_architecture_only_attempts(
                     "the exact retained official PPUBS disclosure publishes multi-camera "
                     "lens-element arrangement and system-level equivalent focal ranges but "
                     "no optical surface prescription or prescription table"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_light_blocking_geometry_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify one exact Largan light-blocking-opening geometry family."""
+
+    if _LIGHT_BLOCKING_GEOMETRY_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _LIGHT_BLOCKING_GEOMETRY_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment = "light-blocking-opening geometry disclosure"
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"light-blocking-geometry official text hash changed for {patent_id}"
+            )
+        table_count = len(_patent_table_blocks(text))
+        if table_count != profile["table_count"]:
+            raise PatentParseError(
+                f"light-blocking-geometry table count is {table_count}; "
+                f"expected {profile['table_count']}"
+            )
+        for phrase, expected in profile["geometry_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"light-blocking-geometry phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bSurface\s+(?:No\.|#)\s*|"
+            r"\b(?:Radius|Curvature)\s+Thickness\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)\b|\brefractive\s+index\b|"
+            r"\bFno\b|\bF\s*[- ]?number\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\bprescription\b)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "light-blocking-geometry disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code="confirmed_no_prescription.light_blocking_geometry_only",
+                detail=(
+                    "the exact retained official PPUBS disclosure publishes only "
+                    "light-blocking-opening D/A/R/dmin/FOV/N geometry tables and no "
+                    "optical surface prescription"
                 ),
             ),
         )

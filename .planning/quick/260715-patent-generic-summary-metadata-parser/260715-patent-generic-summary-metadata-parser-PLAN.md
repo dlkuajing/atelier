@@ -910,6 +910,38 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `32a1920844ac1c9673de875409e1d6b32c495bd5ad003bdd54c619981b85931`.
   Strict audit remains 619/619 with zero corrupt evidence; 198 focused
   parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
+- Exact official records `US-12001077-B2`, `US-12405441-B2`, `US-20210364725-A1`, and
+  `US-20240280784-A1` share title `IMAGING LENS ASSEMBLY MODULE, CAMERA MODULE AND ELECTRONIC
+  DEVICE`, Largan as applicant, and explicit Family ID `78608859`. Their retained official PPUBS
+  HTML SHA-256 values are `43dfc30d214a97462d0332f247e8f74a4b1f42251b9498b969d9d17533dd7ef8`,
+  `05488c323e189ea71ec508a66ad6ee26c349cadb4812da7fe51f069e1a3adfa7`,
+  `d5ac1d927b0c3740ea6b3ce86c34d511bdad43dc3f5ae16118afaa979125ce27`, and
+  `1e92e4ca4dd5da1b34074bef7f4446526e6b723bf778e72e97bff1c070a87d3d`; normalized-text
+  SHA-256 values are `83bced2427a357d878458607be067736e62e64548bc20f19a3ed2540218a458c`,
+  `8d724d5cc2442fb2637318615b76fb1c6ce312b5171376edb1b7561c93c21622`,
+  `b1ef346be3187db3c6bf9bde364ac4267c91cd652ec4a0172172101ed6617eb4`, and
+  `3f7c2d12e5dfe7ebfc5a8e21dcde9baaf64fef29c678bb8c3797e5e16a9f7ac4`.
+- Each document has exactly fourteen PPUBS tables. The 2021 application/grant pair has exact
+  counts 213 imaging-lens-assembly-module, 212 light-blocking-structure, 282
+  light-blocking-opening, 52 first-curvature-radius, 45 second-curvature-radius, 269 lens-element,
+  18 field-of-view, and 14 `FOV (degree)`; the 2024 continuation pair has respectively
+  196/208/270/48/41/256/17/14. The tables publish only aperture-opening `D/A/R/dmin/FOV/N`
+  geometry. Word-bounded Surface-No/#, radius-thickness, asphere-data/coefficient, Abbe,
+  refractive-index, Fno/F-number/EFL/effective-focal-length, optical-data, and prescription markers
+  are absent. Any source hash, count, table cardinality, or marker drift fails closed.
+- All four roots are independently terminal
+  `confirmed_no_prescription.light_blocking_geometry_only`; no worker or ZMX is created. Attempts
+  2/3 are canonical-equal per root with semantic SHA-256 values
+  `b6ba4aea5d7838f8d6e46ef844e7cf9fdff306ef0afb77ef9c2953d44ecd55cb`,
+  `5b19cb61d1cae0a6914eba4dbf4d7f810958bf20e9127afba92caf8aae54d321`,
+  `2cacbb71bf40de4fd127d1891984602b58817edff06194caabc68ca1eb1e1679`, and
+  `b803326037af4f8e8a617998108f88a940c39af4b62cde8178238e751d24295f`.
+- Generic summary changed 227 to 223. Current result-set SHA-256 is
+  `264372514fb8821bd267c8f9fd7b0fc0d58075b087e61c5f2bd9be284fa7f810`; summary artifact
+  SHA-256 is `baca75f0010274fc8dcc10ebaf3e85047e57d8f30055e4e6a035a87d1791063e`;
+  after-census SHA-256 is `4235103512ee8ef452c50e9633e4add8cc5cdb14427a025df6a94db8f77a8857`.
+  Strict audit remains 619/619 with zero corrupt evidence; 201 focused
+  parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
