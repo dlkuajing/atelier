@@ -61,6 +61,12 @@ thresholds, or claim patent saturation.
   `f=... mm, Fno=..., HFOV=...` headers. Deterministic dry-run yields 52 complete prescriptions
   and 6 structured physical/OCR rejections. The two related exemplary tables with a different
   `S.sub.i` structure remain outside this implementation.
+- Append-only replay completed all 8 roots. The generic document bucket changed 294→286; the 58
+  disclosed embodiments produced 26 converted-pending-intake items, 26 terminal receipts, and 6
+  structured parser rejections. No candidate was promoted. Result-set SHA-256 is
+  `f0e4e3c1a0a0600fea49c276ce51cfe7a84558228d55bb0f404509bebe6f4dc8`; strict audit is
+  619/619 with zero corrupt evidence. The after-first-layout census SHA-256 is
+  `f165467dd70fe1ab98e529c61dbc95ef499e1f47523e854595ae1101f5673c35`.
 
 ## Completion condition
 
