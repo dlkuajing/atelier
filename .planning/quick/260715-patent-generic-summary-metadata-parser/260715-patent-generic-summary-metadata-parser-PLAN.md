@@ -368,7 +368,7 @@ thresholds, or claim patent saturation.
   `US-10684452-B2`. Official PPUBS HTML declares the exact FIG. 2A/2B/5/7 prescription
   drawings but contains no table text. The official USPTO PDF is a 16-page raster document;
   its generated PDF wrapper changes `/CreationDate` between requests. The Google citation PDF
-  is accepted only after every embedded page image is byte-identical to the official PDF. The
+  is accepted only after every decoded page raster is pixel-identical to the official PDF. The
   PDF workflow therefore retains both raw PDFs, every official page-image SHA-256, key-page OCR
   tokens with coordinates/confidence, tool versions, and canonical parser JSON. No OCR token is
   repaired or filled by an LLM.
@@ -397,7 +397,7 @@ thresholds, or claim patent saturation.
   official PPUBS HTML SHA-256 is
   `836b4c2bd3c50743d2ba5324fe9f69e3c75b52d0ab1ca4b408010a78141e4183`; it binds the two
   figures to one prescription, defines F/FNO/FOV symbolically, and contains zero numeric
-  assignments to those three system values. The 11 official USPTO page images are byte-identical
+  assignments to those three system values. The 11 official USPTO page rasters are pixel-identical
   to the Google OCR-overlay page images. FIG. 2/FIG. 3 are pages 4/5; neither the overlay text nor
   independent coordinate OCR contains an F, FNO, or FOV label. Corrupt optical OCR cells remain
   unparsed and no value is inferred from geometry or tracing.
@@ -422,7 +422,7 @@ thresholds, or claim patent saturation.
 - The third Ability PDF profile is source-bound to `US-11175479-B2` (official PPUBS HTML SHA-256
   `71e2de18fc731e17525617401999d416cc86864d16a0fe6cf69506f3e73a3e18`). The source binds
   OL1--OL3 to FIG. 4A/4B, 5A/5B, and 6A/6B and publishes their F/FNO/full-FOV values in FIG. 7.
-  The official and OCR-overlay PDFs have 15 byte-identical page images; combined surface/asphere
+  The official and OCR-overlay PDFs have 15 pixel-identical decoded page rasters; combined surface/asphere
   tables are pages 6/7/8 and system metadata is page 9. Recovery retains all source/page hashes,
   coordinate/confidence tokens, source figure counts, and the unchanged 0.99 optical-number gate.
 - F/FNO/FOV columns parse deterministically, but the first unresolved source cells are OL1 S3's
@@ -441,6 +441,35 @@ thresholds, or claim patent saturation.
   SHA-256 is `4857e660c31aa19d869874a2a1d0320a4ca2110e8edf589e64cd349738278e8c`.
   Strict audit remains 619/619 with zero corrupt evidence; 118 focused tests, 5 CODE V guard tests,
   Ruff, and `git diff --check` pass with CODE V inventory zero.
+- The fourth Ability PDF profile is source-bound to application publication
+  `US-20200201001-A1` (official PPUBS HTML SHA-256
+  `8321e4c6f37bd824e18092ace74a133e967009ce32db252b5248269e2630efc6`). Exact source counts
+  bind FIG. 3A/3B and 4A/4B once each and FIG. 5 twice. The 12-page official and OCR-overlay PDFs
+  have pixel-identical decoded rasters; pages 4/5 publish two five-lens surface/asphere tables and
+  page 6 publishes exact `f/Fno/FOV` columns. Synthetic complete fixtures recover both 16-surface
+  prescriptions at `(2.1, 2.0, 70.0)` and `(2.5, 2.0, 55.0)` using full-FOV divided by two.
+- The retained real OCR remains fail-closed per embodiment. OL1 does not independently locate the
+  printed stop label (`1S`, confidence 0.844495); OL2 first fails at the S11 infinity glyph token,
+  whose confidence is 0.964980 and therefore does not clear the unchanged 0.99 optical-number
+  gate. No label, infinity glyph, sign, decimal, material, or coefficient is repaired. Both items
+  remain parser review and launch no conversion worker or ZMX.
+- Repeated recovery exposed that `pypdf` can emit a TIFF container with one nondeterministic padding
+  byte even when decoded pixels are identical. Hashing those container bytes caused false linkage
+  failures and non-reproducible page hashes. Recovery now compares decoded raster shape/dtype/pixels
+  and hashes the canonical `decoded-page-raster-v1` preimage. A lossless multi-encoding regression
+  test proves container bytes may differ while page identity remains equal. Three actual recoveries
+  produced identical parser SHA-256
+  `ab762093159604b48db94723ca579173f14cf9009257575b6869c6770ba4d3de`.
+- Append-only attempts 2/3 preserve the same two-item payload after removing only
+  `result_attempt` (SHA-256
+  `e613cbb07458e2ace72a8512bcadb3fa5ff6625239f6e721403969886f3e6473`) and recovery-manifest
+  SHA-256 `28ba9fc4994dd5e08eb9f31dbc8300839ff95d7e7b69fc3461b4278474b925fb`.
+  Generic summary changed 258 to 257. Current result-set SHA-256 is
+  `a81589742414e9ab982fd02e21bbff17a6bf4cfa094935a4a492d5269ed7eea3`; summary artifact
+  SHA-256 is `e29f5e059eaa422e2dca2542d5062c1ab76a1e862de6c86fa02a148ecb41769e`;
+  after-census SHA-256 is `95d070bf7b5149c475b9927b1ae5e1bc5490ae884cd65c53bcc8cbea39382769`.
+  Strict audit remains 619/619 with zero corrupt evidence; 124 focused parser/replay tests, Ruff,
+  and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

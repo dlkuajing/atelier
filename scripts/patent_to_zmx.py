@@ -2397,12 +2397,13 @@ def _parse_kantatsu_six_lens_table_attempts(
 # Ability Enterprise drawing-table PDF fallback.  PPUBS HTML declares these
 # figures but omits their image-only prescriptions.  The retained parser input
 # is canonical JSON produced only after the OCR PDF's embedded page images are
-# byte-identical to the official USPTO page images.
+# pixel-identical to the official USPTO decoded page rasters.
 # ---------------------------------------------------------------------------
 
 _ABILITY_PDF_PARSER_FAMILY = "ability_official_pdf_ocr_v1"
 _ABILITY_EIGHT_LENS_PROFILE = "ability_eight_lens_metadata_unpublished_v1"
 _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
+_ABILITY_TWO_FIVE_LENS_PROFILE = "ability_two_five_lens_prescriptions_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -2461,6 +2462,12 @@ _ABILITY_THREE_OL3_ASPHERE_LABELS = (
     "S13",
     "S14",
 )
+_ABILITY_TWO_FIVE_SURFACE_LABELS = (
+    *(f"S{i}" for i in range(1, 5)),
+    "St",
+    *(f"S{i}" for i in range(5, 15)),
+)
+_ABILITY_TWO_FIVE_ASPHERE_LABELS = ("S3", "S4", "S7", "S8", "S9", "S10")
 
 
 def _ability_token_center(token: dict[str, Any]) -> tuple[float, float]:
@@ -3194,6 +3201,397 @@ def _parse_ability_three_lens_attempts(payload: dict[str, Any]) -> list[_Prescri
     return attempts
 
 
+def _ability_two_five_surface_table(
+    page: dict[str, Any],
+    *,
+    surface_figure: str,
+) -> list[PatentSurface]:
+    """Parse one source-bound five-lens surface table without repairing OCR."""
+
+    tokens = list(page["rapidocr_tokens"])
+    figure_token = _ability_unique_token(tokens, surface_figure, min_confidence=0.90)
+    _, figure_y = _ability_token_center(figure_token)
+
+    def table_header(text: str) -> dict[str, Any]:
+        matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).casefold() == text.casefold()
+            and _ability_token_center(token)[1] < figure_y
+            and _ability_token_confidence(token) >= 0.98
+        ]
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Ability two-five-lens header {text!r} occurs {len(matches)} times"
+            )
+        return matches[0]
+
+    surface_header = table_header("Surface")
+    radius_header = table_header("curvature")
+    thickness_header = table_header("Thickness")
+    refractive_header = table_header("Refractive")
+    abbe_header = table_header("Abbe")
+    surface_x, header_y = _ability_token_center(surface_header)
+    radius_x, _ = _ability_token_center(radius_header)
+    thickness_x, _ = _ability_token_center(thickness_header)
+    nd_x, _ = _ability_token_center(refractive_header)
+    vd_x, _ = _ability_token_center(abbe_header)
+
+    row_tokens = [
+        token
+        for token in tokens
+        if header_y < _ability_token_center(token)[1] < figure_y
+        and abs(_ability_token_center(token)[0] - surface_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and re.fullmatch(r"S\d+|St", _ability_token_text(token), re.IGNORECASE)
+        and _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+    ]
+    row_tokens.sort(key=lambda token: _ability_token_center(token)[1])
+    observed_labels = tuple(_ability_token_text(token) for token in row_tokens)
+    if tuple(label.casefold() for label in observed_labels) != tuple(
+        label.casefold() for label in _ABILITY_TWO_FIVE_SURFACE_LABELS
+    ):
+        raise PatentParseError(
+            "Ability two-five-lens surface row sequence mismatch: "
+            + ",".join(observed_labels)
+        )
+
+    surfaces: list[PatentSurface] = []
+    for label, row_token in zip(
+        _ABILITY_TWO_FIVE_SURFACE_LABELS,
+        row_tokens,
+        strict=True,
+    ):
+        _, row_y = _ability_token_center(row_token)
+        radius_candidates = [
+            token
+            for token in tokens
+            if abs(_ability_token_center(token)[0] - radius_x) <= _ABILITY_COLUMN_X_TOLERANCE
+            and abs(_ability_token_center(token)[1] - row_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+            and _ability_token_confidence(token) >= 0.97
+        ]
+        if [_ability_token_text(token) for token in radius_candidates] == ["8"]:
+            _ability_infinity_token(tokens, x=radius_x, y=row_y)
+            radius = None
+        else:
+            radius = _parse_number(
+                _ability_token_text(
+                    _ability_profile_number_token(tokens, x=radius_x, y=row_y)
+                )
+            )
+        thickness = _parse_number(
+            _ability_token_text(
+                _ability_profile_number_token(tokens, x=thickness_x, y=row_y)
+            )
+        )
+        material_tokens = [
+            token
+            for token in tokens
+            if abs(_ability_token_center(token)[1] - row_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+            and _ability_token_confidence(token) >= _ABILITY_OCR_NUMBER_CONFIDENCE
+        ]
+        nd_matches = [
+            token
+            for token in material_tokens
+            if abs(_ability_token_center(token)[0] - nd_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        ]
+        vd_matches = [
+            token
+            for token in material_tokens
+            if abs(_ability_token_center(token)[0] - vd_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        ]
+        if len(nd_matches) != len(vd_matches) or len(nd_matches) > 1:
+            raise PatentParseError(
+                f"Ability two-five-lens row {label} has incomplete material data"
+            )
+        nd = _parse_number(_ability_token_text(nd_matches[0])) if nd_matches else None
+        vd = _parse_number(_ability_token_text(vd_matches[0])) if vd_matches else None
+        _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
+        surfaces.append(
+            PatentSurface(
+                index=len(surfaces) + 1,
+                label="Stop" if label.casefold() == "st" else label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=None,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    last_row_y = _ability_token_center(row_tokens[-1])[1]
+    image_radius_tokens = [
+        token
+        for token in tokens
+        if last_row_y + _ABILITY_ROW_Y_TOLERANCE < _ability_token_center(token)[1] < figure_y
+        and abs(_ability_token_center(token)[0] - radius_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+    ]
+    if len(image_radius_tokens) != 1:
+        raise PatentParseError("Ability two-five-lens image row is not independently located")
+    _, image_y = _ability_token_center(image_radius_tokens[0])
+    _ability_infinity_token(tokens, x=radius_x, y=image_y)
+    surfaces.append(
+        PatentSurface(
+            index=len(surfaces) + 1,
+            label="Image",
+            radius_mm=None,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    return surfaces
+
+
+def _ability_two_five_aspheres(
+    page: dict[str, Any],
+    *,
+    surface_figure: str,
+    asphere_figure: str,
+) -> dict[str, dict[str, float]]:
+    """Parse the transposed six-surface asphere table with two-view agreement."""
+
+    tokens = list(page["rapidocr_tokens"])
+    surface_end = _ability_unique_token(tokens, surface_figure, min_confidence=0.90)
+    asphere_end = _ability_unique_token(tokens, asphere_figure, min_confidence=0.90)
+    _, surface_end_y = _ability_token_center(surface_end)
+    _, asphere_end_y = _ability_token_center(asphere_end)
+    k_token = _ability_unique_token(tokens, "K", min_confidence=0.95)
+    _, k_y = _ability_token_center(k_token)
+    column_tokens: list[dict[str, Any]] = []
+    for label in _ABILITY_TWO_FIVE_ASPHERE_LABELS:
+        matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).casefold() == label.casefold()
+            and surface_end_y < _ability_token_center(token)[1] < k_y
+            and _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+        ]
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Ability two-five-lens asphere column {label} occurs {len(matches)} times"
+            )
+        column_tokens.append(matches[0])
+    column_xs = [_ability_token_center(token)[0] for token in column_tokens]
+
+    row_labels = ("K", "A2", "A4", "A6", "A8", "A10", "A12")
+    row_tokens: list[dict[str, Any]] = []
+    for label in row_labels:
+        matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).casefold() == label.casefold()
+            and surface_end_y < _ability_token_center(token)[1] < asphere_end_y
+            and _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+        ]
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Ability two-five-lens asphere row {label} occurs {len(matches)} times"
+            )
+        row_tokens.append(matches[0])
+    if [
+        _ability_token_center(token)[1] for token in row_tokens
+    ] != sorted(_ability_token_center(token)[1] for token in row_tokens):
+        raise PatentParseError("Ability two-five-lens asphere rows are out of order")
+
+    mirror_text = page.get("mirror_text")
+    if not isinstance(mirror_text, str):
+        raise PatentParseError("Ability two-five-lens page lacks OCR-overlay text")
+    start_match = re.search(
+        rf"\bFig\s*\.\s*{re.escape(surface_figure.removeprefix('FIG. '))}\b",
+        mirror_text,
+        flags=re.IGNORECASE,
+    )
+    end_match = re.search(
+        rf"\bFig\s*\.\s*{re.escape(asphere_figure.removeprefix('FIG. '))}\b",
+        mirror_text,
+        flags=re.IGNORECASE,
+    )
+    if start_match is None or end_match is None or start_match.end() >= end_match.start():
+        raise PatentParseError("Ability two-five-lens asphere overlay boundaries are ambiguous")
+    overlay = re.sub(
+        r"([Ee])\s*([+-])\s*(\d+)",
+        r"\1\2\3",
+        mirror_text[start_match.end() : end_match.start()],
+    )
+    overlay_cursor = 0
+    rows: dict[str, list[float]] = {}
+    for label, row_token in zip(row_labels, row_tokens, strict=True):
+        _, row_y = _ability_token_center(row_token)
+        texts = [
+            _ability_token_text(_ability_profile_number_token(tokens, x=x, y=row_y))
+            for x in column_xs
+        ]
+        for token_text in texts:
+            match = re.search(
+                rf"(?<![A-Z0-9.+-]){re.escape(token_text)}(?![A-Z0-9.])",
+                overlay[overlay_cursor:],
+                flags=re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Ability two-five-lens OCR views disagree at "
+                    f"{label} value {token_text}"
+                )
+            overlay_cursor += match.end()
+        rows[label] = [_parse_number(text) for text in texts]
+    if any(value != 0.0 for value in rows["A2"]):
+        raise PatentParseError("Ability two-five-lens table has unsupported nonzero A2")
+    return {
+        surface_label: {
+            coefficient: rows[coefficient][column_index]
+            for coefficient in ("K", "A4", "A6", "A8", "A10", "A12")
+        }
+        for column_index, surface_label in enumerate(_ABILITY_TWO_FIVE_ASPHERE_LABELS)
+    }
+
+
+def _ability_two_five_system_meta(page: dict[str, Any]) -> list[tuple[float, float, float]]:
+    tokens = list(page["rapidocr_tokens"])
+    column_tokens = [
+        _ability_unique_token(tokens, label, min_confidence=0.97)
+        for label in ("OL1", "OL2")
+    ]
+    column_xs = [_ability_token_center(token)[0] for token in column_tokens]
+    rows: dict[str, list[float]] = {}
+    for label in ("f (mm)", "Fno", "FOV (°)"):
+        label_token = _ability_unique_token(tokens, label, min_confidence=0.95)
+        _, row_y = _ability_token_center(label_token)
+        rows[label] = [
+            _parse_number(
+                _ability_token_text(_ability_profile_number_token(tokens, x=x, y=row_y))
+            )
+            for x in column_xs
+        ]
+    metadata = list(zip(rows["f (mm)"], rows["Fno"], rows["FOV (°)"], strict=True))
+    if any(f <= 0.0 or fno <= 0.0 or not 0.0 < fov < 180.0 for f, fno, fov in metadata):
+        raise PatentParseError("Ability two-five-lens system metadata is outside physical bounds")
+    return metadata
+
+
+def _parse_ability_two_five_lens_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 12:
+        raise PatentParseError("Ability two-five-lens PDF page count is not the retained layout")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 3:
+        raise PatentParseError("Ability two-five-lens PDF must retain exactly three key pages")
+    role_pages = (
+        ("prescription_five_ol1", 4, "FIG. 3A", "FIG. 3B"),
+        ("prescription_five_ol2", 5, "FIG. 4A", "FIG. 4B"),
+    )
+    prescription_pages: list[dict[str, Any]] = []
+    for role, page_number, surface_figure, asphere_figure in role_pages:
+        page = _ability_page(payload, role)
+        if page.get("page_number") != page_number:
+            raise PatentParseError(f"Ability two-five-lens role {role} is on the wrong page")
+        mirror_text = page.get("mirror_text")
+        if (
+            not isinstance(mirror_text, str)
+            or any(
+                re.search(
+                    rf"\bFig\s*\.\s*{re.escape(figure.removeprefix('FIG. '))}\b",
+                    mirror_text,
+                    flags=re.IGNORECASE,
+                )
+                is None
+                for figure in (surface_figure, asphere_figure)
+            )
+            or any(
+                marker.casefold() not in mirror_text.casefold()
+                for marker in ("Surface", "Radius", "A12")
+            )
+        ):
+            raise PatentParseError(
+                f"Ability two-five-lens role {role} lacks figure/table markers"
+            )
+        prescription_pages.append(page)
+    meta_page = _ability_page(payload, "system_meta_five")
+    if meta_page.get("page_number") != 6:
+        raise PatentParseError("Ability two-five-lens system metadata is not on page 6")
+    mirror_meta = meta_page.get("mirror_text")
+    if not isinstance(mirror_meta, str) or any(
+        marker.casefold() not in mirror_meta.casefold()
+        for marker in ("FIG . 5", "OL1", "OL2", "Fno", "FOV")
+    ):
+        raise PatentParseError("Ability two-five-lens metadata page lacks table markers")
+
+    facts = payload.get("source_facts")
+    expected_figure_counts = {
+        "FIG. 3A": 1,
+        "FIG. 3B": 1,
+        "FIG. 4A": 1,
+        "FIG. 4B": 1,
+        "FIG. 5": 2,
+    }
+    if not isinstance(facts, dict) or facts.get("figure_binding_counts") != expected_figure_counts:
+        raise PatentParseError("Ability two-five-lens official figure bindings changed")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Ability two-five-lens official HTML hash is invalid")
+    metadata = _ability_two_five_system_meta(meta_page)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, (profile, page, meta) in enumerate(
+        zip(role_pages, prescription_pages, metadata, strict=True),
+        start=1,
+    ):
+        _role, _page_number, surface_figure, asphere_figure = profile
+        embodiment = f"Ability optical lens OL{embodiment_number}"
+        try:
+            surfaces = _ability_two_five_surface_table(
+                page,
+                surface_figure=surface_figure,
+            )
+            aspheres = _ability_two_five_aspheres(
+                page,
+                surface_figure=surface_figure,
+                asphere_figure=asphere_figure,
+            )
+            surface_by_label = {surface.label: surface for surface in surfaces}
+            for label, coefficients in aspheres.items():
+                surface = surface_by_label[label]
+                surface.surface_type = "ASP"
+                if coefficients["K"] != 0.0:
+                    surface.asphere_coefficients["K"] = coefficients["K"]
+                surface.asphere_coefficients.update(
+                    {key: value for key, value in coefficients.items() if key != "K"}
+                )
+            focal_length, f_number, full_fov = meta
+            prescription = PatentPrescription(
+                patent_id=str(payload["publication_id"]),
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_fov / 2.0,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain each disclosed optical lens
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+        else:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    prescription=prescription,
+                )
+            )
+    return attempts
+
+
 def _ability_eight_lens_terminal_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -3295,6 +3693,8 @@ def _parse_ability_pdf_ocr_attempts(
         return [_ability_eight_lens_terminal_attempt(payload)]
     if profile == _ABILITY_THREE_LENS_PROFILE:
         return _parse_ability_three_lens_attempts(payload)
+    if profile == _ABILITY_TWO_FIVE_LENS_PROFILE:
+        return _parse_ability_two_five_lens_attempts(payload)
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")
@@ -8713,6 +9113,7 @@ def _retain_pdf_ocr_recovery_manifest(
             "key_page_numbers": list(recovered.key_page_numbers),
         },
         "page_count": recovered.page_count,
+        "page_identity": "decoded_page_raster_pixels_v1",
         "official_page_image_sha256": list(recovered.page_image_sha256),
         "tool_versions": {
             "pypdf": recovered.pypdf_version,
@@ -8720,7 +9121,7 @@ def _retain_pdf_ocr_recovery_manifest(
         },
         "checks": {
             "same_publication_id": recovered.publication_id == primary_publication_id,
-            "all_page_images_byte_identical": True,
+            "all_decoded_page_rasters_pixel_identical": True,
             "key_pages_have_official_image_hashes": True,
             "parser_input_is_canonical_json": True,
         },

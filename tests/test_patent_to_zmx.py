@@ -8,6 +8,8 @@ import re
 from pathlib import Path
 from types import SimpleNamespace
 
+import cv2
+import numpy as np
 import pytest
 
 from app.core.engines.zmx_writer import write_zmx_from_codev_readout
@@ -1762,6 +1764,19 @@ def _ability_ocr_token(
     }
 
 
+def test_pdf_page_identity_ignores_lossless_container_encoding() -> None:
+    raster = np.zeros((16, 16), dtype=np.uint8)
+    raster[2:14, 7:9] = 255
+    ok_fast, fast = cv2.imencode(".png", raster, [cv2.IMWRITE_PNG_COMPRESSION, 1])
+    ok_small, small = cv2.imencode(".png", raster, [cv2.IMWRITE_PNG_COMPRESSION, 9])
+
+    assert ok_fast and ok_small
+    assert fast.tobytes() != small.tobytes()
+    assert patent_pdf_recovery._canonical_raster_sha256(
+        fast.tobytes()
+    ) == patent_pdf_recovery._canonical_raster_sha256(small.tobytes())
+
+
 def _ability_pdf_ocr_parser_input(*, low_confidence_radius: bool = False) -> bytes:
     surface_tokens = [
         _ability_ocr_token("Surface", 100.0, 100.0),
@@ -2068,6 +2083,151 @@ def _ability_three_lens_pdf_ocr_parser_input(
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _ability_two_five_lens_prescription_page(
+    *,
+    optical_lens: int,
+    page_number: int,
+    surface_figure: str,
+    asphere_figure: str,
+) -> dict[str, object]:
+    surface_labels = [*(f"S{i}" for i in range(1, 5)), "St"]
+    surface_labels.extend(f"S{i}" for i in range(5, 15))
+    tokens = [
+        _ability_ocr_token("Surface", 100.0, 100.0),
+        _ability_ocr_token("curvature", 200.0, 100.0),
+        _ability_ocr_token("Thickness", 300.0, 100.0),
+        _ability_ocr_token("Refractive", 400.0, 100.0),
+        _ability_ocr_token("Abbe", 500.0, 100.0),
+    ]
+    for index, label in enumerate(surface_labels):
+        y = 200.0 + index * 30.0
+        tokens.extend(
+            (
+                _ability_ocr_token(label, 100.0, y),
+                _ability_ocr_token("8" if label == "St" else "10", 200.0, y),
+                _ability_ocr_token("0.2", 300.0, y),
+            )
+        )
+        if label != "St" and int(label[1:]) % 2 == 1:
+            tokens.extend(
+                (
+                    _ability_ocr_token("1.5", 400.0, y),
+                    _ability_ocr_token("55", 500.0, y),
+                )
+            )
+    image_y = 200.0 + len(surface_labels) * 30.0
+    tokens.append(_ability_ocr_token("8", 200.0, image_y))
+    surface_figure_y = image_y + 60.0
+    tokens.append(_ability_ocr_token(f"FIG. {surface_figure}", 350.0, surface_figure_y))
+
+    asphere_header_y = surface_figure_y + 100.0
+    asphere_labels = ("S3", "S4", "S7", "S8", "S9", "S10")
+    column_xs = tuple(200.0 + index * 100.0 for index in range(len(asphere_labels)))
+    tokens.append(_ability_ocr_token("Surface", 100.0, asphere_header_y))
+    tokens.extend(
+        _ability_ocr_token(label, x, asphere_header_y)
+        for label, x in zip(asphere_labels, column_xs, strict=True)
+    )
+    row_labels = ("K", "A2", "A4", "A6", "A8", "A10", "A12")
+    overlay_rows = []
+    for index, label in enumerate(row_labels):
+        y = asphere_header_y + 50.0 + index * 30.0
+        tokens.append(_ability_ocr_token(label, 100.0, y))
+        tokens.extend(_ability_ocr_token("0", x, y) for x in column_xs)
+        overlay_rows.append(f"{label} " + " ".join("0" for _ in column_xs))
+    asphere_figure_y = asphere_header_y + 100.0 + len(row_labels) * 30.0
+    tokens.append(_ability_ocr_token(f"FIG. {asphere_figure}", 350.0, asphere_figure_y))
+    return {
+        "page_number": page_number,
+        "role": f"prescription_five_ol{optical_lens}",
+        "official_image_sha256": str(page_number) * 64,
+        "mirror_text": (
+            f"Sheet {page_number - 1} of 5 Surface Radius A12 FIG . {surface_figure} "
+            + "Surface number "
+            + " ".join(asphere_labels)
+            + " "
+            + " ".join(overlay_rows)
+            + f" FIG . {asphere_figure}"
+        ),
+        "rapidocr_tokens": tokens,
+    }
+
+
+def _ability_two_five_lens_pdf_ocr_parser_input(
+    *,
+    complete_prescriptions: bool = False,
+) -> bytes:
+    pages = []
+    for optical_lens, page_number, surface_figure, asphere_figure in (
+        (1, 4, "3A", "3B"),
+        (2, 5, "4A", "4B"),
+    ):
+        if complete_prescriptions:
+            pages.append(
+                _ability_two_five_lens_prescription_page(
+                    optical_lens=optical_lens,
+                    page_number=page_number,
+                    surface_figure=surface_figure,
+                    asphere_figure=asphere_figure,
+                )
+            )
+        else:
+            pages.append(
+                {
+                    "page_number": page_number,
+                    "role": f"prescription_five_ol{optical_lens}",
+                    "official_image_sha256": str(page_number) * 64,
+                    "mirror_text": (
+                        f"Sheet {page_number - 1} of 5 Surface Radius A12 "
+                        f"FIG . {surface_figure} FIG . {asphere_figure}"
+                    ),
+                    "rapidocr_tokens": [_ability_ocr_token("fixture", 1.0, 1.0)],
+                }
+            )
+    meta_tokens = [
+        _ability_ocr_token("OL1", 300.0, 100.0),
+        _ability_ocr_token("OL2", 500.0, 100.0),
+    ]
+    for y, label, values in (
+        (200.0, "f (mm)", (2.1, 2.5)),
+        (240.0, "Fno", (2.0, 2.0)),
+        (280.0, "FOV (°)", (140.0, 110.0)),
+    ):
+        meta_tokens.append(_ability_ocr_token(label, 100.0, y))
+        meta_tokens.extend(
+            _ability_ocr_token(str(value), x, y)
+            for x, value in zip((300.0, 500.0), values, strict=True)
+        )
+    pages.append(
+        {
+            "page_number": 6,
+            "role": "system_meta_five",
+            "official_image_sha256": "6" * 64,
+            "mirror_text": "Sheet 5 of 5 FIG . 5 OL1 OL2 Fno FOV",
+            "rapidocr_tokens": meta_tokens,
+        }
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "ability_two_five_lens_prescriptions_v1",
+        "publication_id": "US-20200201001-A1",
+        "page_count": 12,
+        "source_facts": {
+            "primary_html_sha256": "8" * 64,
+            "figure_binding_counts": {
+                "FIG. 3A": 1,
+                "FIG. 3B": 1,
+                "FIG. 4A": 1,
+                "FIG. 4B": 1,
+                "FIG. 5": 2,
+            },
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def test_ability_eight_lens_source_facts_detect_published_system_value() -> None:
     figure_text = (
         "FIG. 2 shows each lens parameter of the optical lens "
@@ -2086,6 +2246,22 @@ def test_ability_eight_lens_source_facts_detect_published_system_value() -> None
     assert facts["surface_figure_binding_count"] == 2
     assert facts["asphere_figure_binding_count"] == 2
     assert facts["numeric_system_value_assignment_counts"] == {"F": 0, "FNO": 1, "FOV": 0}
+
+
+def test_ability_two_five_lens_source_facts_bind_every_published_figure() -> None:
+    markers = patent_pdf_recovery._ABILITY_TWO_FIVE_LENS_REQUIRED_FIGURE_TEXT
+    source = " ".join((*markers, markers[-1]))
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    assert patent_pdf_recovery._ability_two_five_lens_source_facts(source)[
+        "figure_binding_counts"
+    ] == {
+        "FIG. 3A": 1,
+        "FIG. 3B": 1,
+        "FIG. 4A": 1,
+        "FIG. 4B": 1,
+        "FIG. 5": 2,
+    }
 
 
 def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
@@ -2161,6 +2337,58 @@ def test_ability_three_lens_pdf_profile_rejects_source_binding_drift() -> None:
         patent_to_zmx._parse_prescription_attempts(
             json.dumps(payload),
             patent_id="US-11175479-B2",
+        )
+
+
+def test_ability_two_five_lens_profile_retains_each_disclosed_ocr_failure() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_two_five_lens_pdf_ocr_parser_input().decode(),
+        patent_id="US-20200201001-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Ability optical lens OL1",
+        "Ability optical lens OL2",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(isinstance(attempt.error, PatentParseError) for attempt in attempts)
+    assert all("token 'FIG." in str(attempt.error) for attempt in attempts)
+
+
+def test_ability_two_five_lens_profile_parses_complete_cross_checked_cells() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_two_five_lens_pdf_ocr_parser_input(complete_prescriptions=True).decode(),
+        patent_id="US-20200201001-A1",
+    )
+
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    assert [
+        (prescription.focal_length_mm, prescription.f_number, prescription.hfov_deg)
+        for prescription in prescriptions
+        if prescription is not None
+    ] == pytest.approx([(2.1, 2.0, 70.0), (2.5, 2.0, 55.0)])
+    assert [len(prescription.surfaces) for prescription in prescriptions if prescription] == [
+        16,
+        16,
+    ]
+    assert all(
+        prescription.surfaces[4].label == "Stop"
+        for prescription in prescriptions
+        if prescription is not None
+    )
+
+
+def test_ability_two_five_lens_profile_rejects_source_binding_drift() -> None:
+    payload = json.loads(_ability_two_five_lens_pdf_ocr_parser_input())
+    payload["source_facts"]["figure_binding_counts"]["FIG. 5"] = 1
+
+    with pytest.raises(PatentParseError, match="official figure bindings changed"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-20200201001-A1",
         )
 
 
@@ -2277,6 +2505,8 @@ def test_convert_candidate_retains_official_pdf_ocr_linkage_manifest(
     assert manifest["ocr_overlay_pdf"]["source_bucket"] == "GOOGLE-OCR-PDF"
     assert manifest["source_pin"]["source_bucket"] == "USPTO-PDF-OCR-SOURCE-PIN"
     assert manifest["parser_input"]["key_page_numbers"] == [4, 5, 8, 10]
+    assert manifest["page_identity"] == "decoded_page_raster_pixels_v1"
+    assert manifest["checks"]["all_decoded_page_rasters_pixel_identical"] is True
     assert all(manifest["checks"].values())
     cached_sources = patent_to_zmx._load_pdf_ocr_source_pin(
         tmp_path / "raw",
@@ -2411,6 +2641,71 @@ def test_convert_candidate_retains_three_lens_pdf_ocr_failures_without_worker(
     )
 
     assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert all(attempt.status == "failed" for attempt in attempts)
+    assert all(attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON" for attempt in attempts)
+    assert len({attempt.fulltext_recovery_manifest_sha256 for attempt in attempts}) == 1
+    assert not (tmp_path / "staging").exists()
+
+
+def test_convert_candidate_retains_two_five_lens_pdf_failures_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-20200201001-A1",
+        source_bucket="US-PGPUB",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html="official HTML whose two five-lens tables require PDF recovery",
+            source_bucket="US-PGPUB",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_pdf_recovery(*_args: object, **_kwargs: object) -> object:
+        return patent_to_zmx.PatentPdfOcrRecovery(
+            publication_id="US-20200201001-A1",
+            official_pdf=b"%PDF-official-two-five-lens",
+            official_pdf_url=(
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20200201001"
+            ),
+            mirror_pdf=b"%PDF-mirror-two-five-lens",
+            mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US20200201001.pdf",
+            parser_input=_ability_two_five_lens_pdf_ocr_parser_input(),
+            page_count=12,
+            page_image_sha256=tuple(str(index) * 64 for index in range(1, 4)),
+            key_page_numbers=(4, 5, 6),
+            pypdf_version="fixture",
+            rapidocr_version="fixture",
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("rejected PDF OCR cells must not launch a trace worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(patent_to_zmx, "recover_ability_official_pdf_ocr", fake_pdf_recovery)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-20200201001-A1",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+        )
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
     assert all(attempt.status == "failed" for attempt in attempts)
     assert all(attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON" for attempt in attempts)
     assert len({attempt.fulltext_recovery_manifest_sha256 for attempt in attempts}) == 1

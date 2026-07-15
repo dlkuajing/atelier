@@ -2,9 +2,9 @@
 
 USPTO Patent Public Search serves some drawing tables only as page images.  A
 Google Patents PDF may add an OCR text layer to the same page image.  This
-module accepts that text layer only when every embedded page image is byte-for-
-byte identical to the official USPTO PDF, then retains a second deterministic
-OCR view of the key pages for missing-cell detection and parser provenance.
+module accepts that text layer only when every decoded page raster is pixel-
+identical to the official USPTO PDF, then retains a second deterministic OCR
+view of the key pages for missing-cell detection and parser provenance.
 """
 
 from __future__ import annotations
@@ -59,6 +59,16 @@ _ABILITY_THREE_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 7 lists optical data of the optical lenses OL 1 , OL 2 , OL 3",
 )
 _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
+_ABILITY_TWO_FIVE_LENS_REQUIRED_FIGURE_TEXT = (
+    "FIG. 3A shows each lens parameter of the optical lens of FIG. 1",
+    "FIG. 3B shows each coefficient of a mathematical formula of aspheric surface "
+    "for the aspheric lens of the optical lens of FIG. 1",
+    "FIG. 4A shows each lens parameter of the optical lens of FIG. 2",
+    "FIG. 4B shows each coefficient of a mathematical formula of aspheric surface "
+    "for the aspheric lens of the optical lens of FIG. 2",
+    "FIG. 5 shows parameter performance of the optical lens",
+)
+_ABILITY_TWO_FIVE_LENS_PROFILE = "ability_two_five_lens_prescriptions_v1"
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
     r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
     r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
@@ -110,6 +120,8 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         return _ABILITY_EIGHT_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_THREE_LENS_REQUIRED_FIGURE_TEXT):
         return _ABILITY_THREE_LENS_PROFILE
+    if all(marker in text for marker in _ABILITY_TWO_FIVE_LENS_REQUIRED_FIGURE_TEXT):
+        return _ABILITY_TWO_FIVE_LENS_PROFILE
     return None
 
 
@@ -164,6 +176,19 @@ def _ability_three_lens_source_facts(raw_html: str) -> dict[str, Any]:
     }
 
 
+def _ability_two_five_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Measure the official bindings for two disclosed five-lens prescriptions."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _ABILITY_TWO_FIVE_LENS_REQUIRED_FIGURE_TEXT
+        },
+    }
+
+
 def _compact_publication_id(publication_id: str) -> tuple[str, str]:
     match = re.fullmatch(r"US-(?P<number>\d+)-(?P<kind>[A-Z]\d+)", publication_id.upper())
     if match is None:
@@ -208,6 +233,27 @@ def _page_image(page: pypdf._page.PageObject, *, source: str, page_number: int) 
             f"{source} page {page_number} contains {len(images)} images; expected exactly one"
         )
     return images[0].data
+
+
+def _decoded_raster(image_bytes: bytes, *, source: str) -> np.ndarray:
+    image = cv2.imdecode(np.frombuffer(image_bytes, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+    if image is None:
+        raise PatentPdfRecoveryError(f"{source} page image could not be decoded")
+    return np.ascontiguousarray(image)
+
+
+def _canonical_raster_sha256(image_bytes: bytes) -> str:
+    """Hash decoded pixels, excluding nondeterministic TIFF container padding."""
+
+    image = _decoded_raster(image_bytes, source="canonical")
+    digest = hashlib.sha256()
+    digest.update(b"decoded-page-raster-v1\0")
+    digest.update(str(image.shape).encode("ascii"))
+    digest.update(b"\0")
+    digest.update(str(image.dtype).encode("ascii"))
+    digest.update(b"\0")
+    digest.update(image.tobytes(order="C"))
+    return digest.hexdigest()
 
 
 def _figure_page(texts: list[str], figure: str, required: tuple[str, ...]) -> int:
@@ -370,12 +416,23 @@ async def recover_ability_official_pdf_ocr(
             source="Google OCR",
             page_number=page_number,
         )
-        official_hash = hashlib.sha256(official_image).hexdigest()
-        if hashlib.sha256(mirror_image).hexdigest() != official_hash:
+        official_raster = _decoded_raster(
+            official_image,
+            source=f"USPTO page {page_number}",
+        )
+        mirror_raster = _decoded_raster(
+            mirror_image,
+            source=f"Google OCR page {page_number}",
+        )
+        if (
+            official_raster.shape != mirror_raster.shape
+            or official_raster.dtype != mirror_raster.dtype
+            or not np.array_equal(official_raster, mirror_raster)
+        ):
             raise PatentPdfRecoveryError(
-                f"official/OCR page image mismatch at page {page_number}"
+                f"official/OCR decoded page raster mismatch at page {page_number}"
             )
-        page_hashes.append(official_hash)
+        page_hashes.append(_canonical_raster_sha256(official_image))
         official_images.append(official_image)
 
     if profile == "ability_two_lens_prescriptions_v1":
@@ -443,6 +500,26 @@ async def recover_ability_official_pdf_ocr(
         }
         parser_profile = profile
         source_facts = _ability_three_lens_source_facts(primary_html)
+    elif profile == _ABILITY_TWO_FIVE_LENS_PROFILE:
+        role_pages = {
+            "prescription_five_ol1": _figure_page(
+                mirror_texts,
+                "3A",
+                ("Surface", "Radius", "Thickness", "Abbe", "A12", "K"),
+            ),
+            "prescription_five_ol2": _figure_page(
+                mirror_texts,
+                "4A",
+                ("Surface", "Radius", "Thickness", "Abbe", "A12", "K"),
+            ),
+            "system_meta_five": _figure_page(
+                mirror_texts,
+                "5",
+                ("OL1", "OL2", "Fno", "FOV"),
+            ),
+        }
+        parser_profile = profile
+        source_facts = _ability_two_five_lens_source_facts(primary_html)
     else:
         raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
     if len(set(role_pages.values())) != len(role_pages):
