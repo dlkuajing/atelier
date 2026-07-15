@@ -101,6 +101,22 @@ thresholds, or claim patent saturation.
   strict audit is 619/619 with zero corrupt evidence. The after-third-layout census SHA-256 is
   `1e3800f286ed316840dd70b3b379987b187da8ede95b6f38595b94cf001319f8`; 77 focused
   parser/census/replay/process tests and Ruff pass.
+- The fourth source-proven family is the exact 22-table Samsung wide-horizontal-FOV layout in
+  `US-12560782` and `US-20260153712`. Ten narrative statements bind table pairs 1/2 through
+  19/20 to embodiments one through ten; S9 is the published stop, table 21 binds f, f-number, and
+  HFOV by embodiment column, and the official text defines A--H/J as aspherical constants. The
+  same text explicitly defines HFOV as full horizontal field of view, so the parser divides each
+  published value by two for the pipeline half-field input. A full 281-root ownership scan matched
+  only these two roots and recovered 20/20 prescriptions without parser errors.
+- Append-only replay completed both roots and all twenty embodiments as
+  converted-pending-intake. Corresponding embodiments across the application and grant have the
+  same ten prescription fingerprints; duplicate disposition remains deferred to intake. No
+  candidate was promoted. The generic document bucket changed 281 to 279. Result-set SHA-256 is
+  `846ec2bb7bdd342281532daf5b31975838eec4e1908837162c3dd290e12f5e9e`; summary artifact
+  SHA-256 is `70456cf863ab2daf58826dab71bff755963a62b89f5746fc4b6548f7842ecc84`;
+  strict audit is 619/619 with zero corrupt evidence. The after-fourth-layout census SHA-256 is
+  `d0fc9ec820763cc0255a6a164bf014d451f205b089862d87343a1467c5470629`; 80 focused
+  parser/census/replay/process tests and Ruff pass.
 
 ## Completion condition
 

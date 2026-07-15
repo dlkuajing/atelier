@@ -312,6 +312,9 @@ def _parse_prescription_attempts(
         attempts = _parse_apple_exemplary_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_samsung_wide_fov_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_folded_zoom_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -977,6 +980,27 @@ _APPLE_EXEMPLARY_ROW_PATTERN = re.compile(
     rf"(?=(?:Object\b|L\.sub\.\d+\b|IR\b|Image\b|INF\b|{NUMBER_PATTERN}))",
     flags=re.IGNORECASE,
 )
+_SAMSUNG_WIDE_FOV_BINDING_PATTERN = re.compile(
+    r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<coefficient_table>\d+)\s+below\s+"
+    r"list\s+the\s+lens\s+properties\s+and\s+aspherical\s+values\s+of\s+the\s+"
+    r"(?P<ordinal>first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\s+"
+    r"embodiment\s+of\s+the\s+imaging\s+lens\s+system\.",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_WIDE_FOV_SURFACE_HEADER_PATTERN = re.compile(
+    r"\bSurface\s+Radius\s+of\s+Thickness/\s+Refractive\s+Abbe\s+Effective\s+"
+    r"No\.\s+Component\s+Curvature\s+Distance\s+Index\s+Number\s+Radius\s+",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_WIDE_FOV_COEFFICIENT_HEADER_PATTERN = re.compile(
+    r"\bSurface\s+No\.\s+S3\s+S4\s+S5\s+S6\s+S13\s+S14\s+",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_WIDE_FOV_FULL_FIELD_DEFINITION = re.compile(
+    r"\bHFOV\s+is\s+a\s+field\s+of\s+view\s+of\s+the\s+imaging\s+plane\s+in\s+a\s+"
+    r"horizontal\s+direction\s+expressed\s+in\s+degrees\b",
+    flags=re.IGNORECASE,
+)
 _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
     r"\bOptical\s+lens\s+system\s+(?P<system>\d+)\s+.*?"
     r"\bSurface(?:\s+Curvature\s+Aperture\s+Radius\s+Abbe\s+Focal)?\s+"
@@ -1387,6 +1411,324 @@ def _parse_apple_exemplary_asphere_table(
     ):
         raise PatentParseError(
             f"Apple embodiment {embodiment_number} coefficient coverage is incomplete"
+        )
+    return coefficients
+
+
+def _parse_samsung_wide_fov_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse Samsung 7-lens wide-FOV embodiment table pairs.
+
+    In this exact family, ``HFOV`` is explicitly defined as the full horizontal
+    field of view.  The conversion therefore divides the published value by two
+    for the pipeline's half-field input.
+    """
+
+    bindings = list(_SAMSUNG_WIDE_FOV_BINDING_PATTERN.finditer(text))
+    if not bindings:
+        return []
+
+    binding_numbers = list(range(1, 11))
+    attempts: list[_PrescriptionParseAttempt] = []
+    try:
+        if len(bindings) != 10:
+            raise PatentParseError(
+                f"Samsung wide-FOV family must disclose 10 embodiments, found {len(bindings)}"
+            )
+        if _SAMSUNG_WIDE_FOV_FULL_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError("Samsung wide-FOV full-field HFOV definition not found")
+        if re.search(
+            r"\bA,\s+B,\s+C,\s+D,\s+E,\s+F,\s+G,\s+H,\s+and\s+J\s+"
+            r"are\s+aspherical\s+constants\b",
+            text,
+            flags=re.IGNORECASE,
+        ) is None:
+            raise PatentParseError("Samsung wide-FOV A-H/J asphere definition not found")
+        blocks = _numbered_patent_table_blocks(text)
+        metadata = _parse_samsung_wide_fov_metadata(blocks)
+        if set(metadata) != set(range(1, 11)):
+            raise PatentParseError("Samsung wide-FOV metadata does not cover embodiments 1-10")
+        for embodiment_number, binding in enumerate(bindings, start=1):
+            surface_table = int(binding.group("surface_table"))
+            coefficient_table = int(binding.group("coefficient_table"))
+            if (
+                binding.group("ordinal").lower() != _ordinal_word(embodiment_number)
+                or surface_table != embodiment_number * 2 - 1
+                or coefficient_table != embodiment_number * 2
+            ):
+                raise PatentParseError(
+                    "Samsung wide-FOV table/ordinal binding is not consecutive at "
+                    f"embodiment {embodiment_number}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the disclosed embodiment set
+        for embodiment_number in binding_numbers:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=f"Samsung wide-FOV embodiment {embodiment_number}",
+                    error=exc,
+                )
+            )
+        return attempts
+
+    for embodiment_number in range(1, 11):
+        embodiment = f"Samsung wide-FOV embodiment {embodiment_number}"
+        try:
+            surface_table = embodiment_number * 2 - 1
+            coefficient_table = embodiment_number * 2
+            surface_text = blocks.get(surface_table)
+            if surface_text is None:
+                raise PatentParseError(f"Samsung wide-FOV TABLE {surface_table} not found")
+            coefficient_text = blocks.get(coefficient_table)
+            if coefficient_text is None:
+                raise PatentParseError(f"Samsung wide-FOV TABLE {coefficient_table} not found")
+            surfaces = _parse_samsung_wide_fov_surface_table(
+                surface_text,
+                embodiment_number=embodiment_number,
+            )
+            coefficients = _parse_samsung_wide_fov_asphere_table(
+                coefficient_text,
+                embodiment_number=embodiment_number,
+            )
+            surface_indices = {surface.index for surface in surfaces}
+            if not set(coefficients).issubset(surface_indices):
+                raise PatentParseError(
+                    f"Samsung wide-FOV embodiment {embodiment_number} coefficients "
+                    "reference an unknown surface"
+                )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.surface_type = "ASP"
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+            focal_length, f_number, full_horizontal_fov = metadata[embodiment_number]
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_horizontal_fov / 2.0,
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - retained per published embodiment
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _numbered_patent_table_blocks(text: str) -> dict[int, str]:
+    blocks: dict[int, str] = {}
+    for block in _patent_table_blocks(text):
+        if block.number in blocks:
+            raise PatentParseError(f"duplicate numbered patent table: {block.number}")
+        blocks[block.number] = block.text
+    return blocks
+
+
+def _parse_samsung_wide_fov_metadata(
+    blocks: dict[int, str],
+) -> dict[int, tuple[float, float, float]]:
+    table = blocks.get(21)
+    if table is None:
+        raise PatentParseError("Samsung wide-FOV TABLE 21 metadata not found")
+    first_header = re.search(
+        r"\bOptical\s+First\s+Second\s+Third\s+Fourth\s+Fifth\s+Property\s+"
+        r"Embodiment\s+Embodiment\s+Embodiment\s+Embodiment\s+Embodiment\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    second_header = re.search(
+        r"\bOptical\s+Sixth\s+Seventh\s+Eighth\s+Ninth\s+Tenth\s+Property\s+"
+        r"Embodiment\s+Embodiment\s+Embodiment\s+Embodiment\s+Embodiment\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if first_header is None or second_header is None or second_header.start() <= first_header.end():
+        raise PatentParseError("Samsung wide-FOV TABLE 21 metadata headers are incomplete")
+
+    metadata: dict[int, tuple[float, float, float]] = {}
+    sections = (
+        (range(1, 6), table[first_header.end() : second_header.start()]),
+        (range(6, 11), table[second_header.end() :]),
+    )
+    for embodiment_numbers, section in sections:
+        focal_lengths = _parse_exact_five_value_row(section, label="f")
+        f_numbers = _parse_exact_five_value_row(section, label="f-number")
+        full_fields = _parse_exact_five_value_row(section, label="HFOV")
+        for embodiment_number, focal_length, f_number, full_field in zip(
+            embodiment_numbers,
+            focal_lengths,
+            f_numbers,
+            full_fields,
+            strict=True,
+        ):
+            metadata[embodiment_number] = (focal_length, f_number, full_field)
+    return metadata
+
+
+def _parse_exact_five_value_row(text: str, *, label: str) -> tuple[float, ...]:
+    value_sequence = rf"(?P<values>(?:{NUMBER_PATTERN}\s+){{4}}{NUMBER_PATTERN})"
+    matches = list(
+        re.finditer(
+            rf"(?<!\S){re.escape(label)}(?!\S)\s+{value_sequence}",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Samsung wide-FOV metadata row {label} must occur exactly once per half"
+        )
+    values = tuple(_parse_number(token) for token in matches[0].group("values").split())
+    if len(values) != 5:
+        raise PatentParseError(f"Samsung wide-FOV metadata row {label} is incomplete")
+    return values
+
+
+def _parse_samsung_wide_fov_surface_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> list[PatentSurface]:
+    header = _SAMSUNG_WIDE_FOV_SURFACE_HEADER_PATTERN.search(table_text)
+    if header is None:
+        raise PatentParseError(
+            f"Samsung wide-FOV embodiment {embodiment_number} surface header not found"
+        )
+    body = re.split(
+        r"\s+(?:\(\d+\)|\[\d+\])\s+",
+        table_text[header.end() :],
+        maxsplit=1,
+    )[0]
+    starts = list(re.finditer(r"(?<!\S)S(?P<index>\d+)\s+", body, flags=re.IGNORECASE))
+    indices = [int(match.group("index")) for match in starts]
+    if indices != list(range(1, 20)):
+        raise PatentParseError(
+            f"Samsung wide-FOV embodiment {embodiment_number} surface sequence must be S1-S19"
+        )
+
+    row_labels: dict[int, tuple[str, ...]] = {
+        1: ("First", "Lens"),
+        3: ("Second", "Lens"),
+        5: ("Third", "Lens"),
+        7: ("Fourth", "Lens"),
+        9: ("Stop",),
+        10: ("Fifth", "Lens"),
+        11: ("Sixth", "Lens"),
+        13: ("Seventh", "Lens"),
+        15: ("Filter",),
+        17: ("Cover", "Glass"),
+        19: ("Imaging", "Plane"),
+    }
+    material_surfaces = {1, 3, 5, 7, 10, 11, 13, 15, 17}
+    surfaces: list[PatentSurface] = []
+    for row_index, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = starts[row_index + 1].start() if row_index + 1 < len(starts) else len(body)
+        tokens = body[match.end() : end].split()
+        expected_label = row_labels.get(surface_index, ())
+        if tuple(token.lower() for token in tokens[: len(expected_label)]) != tuple(
+            token.lower() for token in expected_label
+        ):
+            raise PatentParseError(
+                f"Samsung wide-FOV embodiment {embodiment_number} surface "
+                f"S{surface_index} label mismatch"
+            )
+        values = tokens[len(expected_label) :]
+        expected_values = 5 if surface_index in material_surfaces else 3
+        if len(values) != expected_values:
+            raise PatentParseError(
+                f"Samsung wide-FOV embodiment {embodiment_number} surface S{surface_index} "
+                f"has {len(values)} values, expected {expected_values}"
+            )
+        radius = _distance_value(values[0], field_name=f"Samsung S{surface_index} radius")
+        thickness = _distance_value(
+            values[1],
+            field_name=f"Samsung S{surface_index} thickness",
+        )
+        nd = vd = None
+        if surface_index in material_surfaces:
+            nd = _parse_number(values[2])
+            vd = _parse_number(values[3])
+            effective_radius = _parse_number(values[4])
+            _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+        else:
+            effective_radius = _parse_number(values[2])
+        if effective_radius <= 0:
+            raise PatentParseError(
+                f"Samsung wide-FOV embodiment {embodiment_number} surface "
+                f"S{surface_index} effective radius must be positive"
+            )
+        label = " ".join(expected_label) if expected_label else f"Surface {surface_index}"
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material="Glass" if nd is not None else None,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+    return surfaces
+
+
+def _parse_samsung_wide_fov_asphere_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> dict[int, dict[str, float]]:
+    header = _SAMSUNG_WIDE_FOV_COEFFICIENT_HEADER_PATTERN.search(table_text)
+    if header is None:
+        raise PatentParseError(
+            f"Samsung wide-FOV embodiment {embodiment_number} coefficient header not found"
+        )
+    body = re.split(
+        r"\s+(?:\(\d+\)|\[\d+\])\s+",
+        table_text[header.end() :],
+        maxsplit=1,
+    )[0]
+    tokens = body.split()
+    expected_labels = ("K", "A", "B", "C", "D", "E", "F", "G", "H", "J")
+    surface_indices = (3, 4, 5, 6, 13, 14)
+    coefficients = {surface_index: {} for surface_index in surface_indices}
+    position = 0
+    for label in expected_labels:
+        if position >= len(tokens) or tokens[position].upper() != label:
+            raise PatentParseError(
+                f"Samsung wide-FOV embodiment {embodiment_number} coefficient row "
+                f"{label} not found in order"
+            )
+        position += 1
+        if position + len(surface_indices) > len(tokens):
+            raise PatentParseError(
+                f"Samsung wide-FOV embodiment {embodiment_number} coefficient row {label} "
+                "is incomplete"
+            )
+        values = [_parse_number(token) for token in tokens[position : position + 6]]
+        position += len(surface_indices)
+        for surface_index, value in zip(surface_indices, values, strict=True):
+            coefficients[surface_index][label] = value
+    if position != len(tokens):
+        raise PatentParseError(
+            f"Samsung wide-FOV embodiment {embodiment_number} coefficient table has extra tokens"
         )
     return coefficients
 

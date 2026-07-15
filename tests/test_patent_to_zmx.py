@@ -210,6 +210,88 @@ S.sub.i D E F
 6 0.242787E+02 0.114039E+04
 """
 
+SAMSUNG_WIDE_FOV_SURFACE_ROWS = """Surface Radius of Thickness/ Refractive Abbe Effective
+No. Component Curvature Distance Index Number Radius
+S1 First Lens 27.2287 0.6000 1.777 49.6 4.692
+S2 4.5548 4.9502 3.542
+S3 Second Lens -3.3431 1.6907 1.601 30.4 3.003
+S4 -6.6665 0.1000 3.269
+S5 Third Lens 6.2933 2.1939 1.618 26.3 3.423
+S6 -36.9517 0.1906 3.208
+S7 Fourth Lens -24.3693 1.3176 1.623 60.3 3.186
+S8 -12.5741 0.0000 3.024
+S9 Stop Infinity 0.3000 2.865
+S10 Fifth Lens 8.2508 2.8899 1.618 60.6 3.025
+S11 Sixth Lens -3.9900 0.6000 1.749 28.1 2.984
+S12 6.6444 0.1000 3.105
+S13 Seventh Lens 7.7338 1.6902 1.650 55.5 3.132
+S14 -10.2819 2.7218 3.186
+S15 Filter Infinity 0.4000 1.519 64.2 3.432
+S16 Infinity 0.5500 3.454
+S17 Cover Glass Infinity 0.4000 1.519 64.2 3.498
+S18 Infinity 3.8036 3.519
+S19 Imaging Plane Infinity 0.0015 3.827"""
+
+SAMSUNG_WIDE_FOV_COEFFICIENT_ROWS = """Surface No. S3 S4 S5 S6 S13 S14
+k -1.26022E+00 -2.71647E+00 -2.04937E-01 -5.87526E+01 0.00000E+00 0.00000E+00
+A 2.59351E-03 2.46173E-03 -1.65008E-05 -1.57045E-04 2.44654E-04 1.10893E-03
+B -1.10782E-04 -2.47393E-05 2.58956E-05 6.35081E-05 2.80354E-05 3.28342E-05
+C 5.54083E-07 -6.16987E-07 7.87004E-08 -1.02142E-06 -7.33986E-07 2.71772E-07
+D 0 0 0 0 4.00308E-08 4.64438E-08
+E 0 0 0 0 0 0
+F 0 0 0 0 0 0
+G 0 0 0 0 0 0
+H 0 0 0 0 0 0
+J 0 0 0 0 0 0"""
+
+SAMSUNG_WIDE_FOV_METADATA = """TABLE-US-00021 TABLE 21
+Optical First Second Third Fourth Fifth Property
+Embodiment Embodiment Embodiment Embodiment Embodiment
+f 4.5301 4.5625 4.5030 4.4610 4.4950
+f-number 1.8718 1.8714 1.8000 1.8000 1.8000
+HFOV 82.0000 82.0000 82.0000 82.0000 81.9900
+Optical Sixth Seventh Eighth Ninth Tenth Property
+Embodiment Embodiment Embodiment Embodiment Embodiment
+f 4.4764 4.4741 4.4642 4.4856 4.5171
+f-number 1.8122 1.7800 1.7690 1.7690 1.6944
+HFOV 82.0000 82.0000 82.0000 82.0000 82.0000"""
+
+
+def _samsung_wide_fov_fixture() -> str:
+    ordinals = (
+        "first",
+        "second",
+        "third",
+        "fourth",
+        "fifth",
+        "sixth",
+        "seventh",
+        "eighth",
+        "ninth",
+        "tenth",
+    )
+    parts = [
+        "HFOV is a field of view of the imaging plane in a horizontal direction "
+        "expressed in degrees. A, B, C, D, E, F, G, H, and J are aspherical constants."
+    ]
+    for embodiment_number, ordinal in enumerate(ordinals, start=1):
+        surface_table = embodiment_number * 2 - 1
+        coefficient_table = embodiment_number * 2
+        parts.append(
+            f"[{embodiment_number:04d}] Tables {surface_table} and {coefficient_table} "
+            "below list the lens properties and aspherical values of the "
+            f"{ordinal} embodiment of the imaging lens system. "
+            f"TABLE-US-{surface_table:05d} TABLE {surface_table} "
+            f"{SAMSUNG_WIDE_FOV_SURFACE_ROWS} "
+            f"TABLE-US-{coefficient_table:05d} TABLE {coefficient_table} "
+            f"{SAMSUNG_WIDE_FOV_COEFFICIENT_ROWS}"
+        )
+    parts.append(SAMSUNG_WIDE_FOV_METADATA)
+    return " ".join(parts)
+
+
+SAMSUNG_WIDE_FOV_TEXT = _samsung_wide_fov_fixture()
+
 SUNNY_OBJ_STO_TEXT = """
 TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
 number Surface type curvature Thickness index Abbe number coefficient
@@ -688,6 +770,44 @@ def test_parse_apple_exemplary_table_rejects_cross_bound_ordinal() -> None:
 
     with pytest.raises(PatentParseError, match="ordinal does not match"):
         parse_patent_prescriptions(text, patent_id="US-APPLE-CROSS-BOUND-A1")
+
+
+def test_parse_samsung_wide_fov_embodiment_pairs_and_full_field() -> None:
+    prescriptions = parse_patent_prescriptions(
+        SAMSUNG_WIDE_FOV_TEXT,
+        patent_id="US-SAMSUNG-WIDE-FOV-A1",
+    )
+
+    assert len(prescriptions) == 10
+    first = prescriptions[0]
+    assert first.embodiment == "Samsung wide-FOV embodiment 1"
+    assert (
+        first.focal_length_mm,
+        first.f_number,
+        first.hfov_deg,
+    ) == pytest.approx((4.5301, 1.8718, 41.0))
+    assert len(first.surfaces) == 19
+    surfaces = {surface.index: surface for surface in first.surfaces}
+    assert surfaces[1].nd == pytest.approx(1.777)
+    assert surfaces[9].label == "Stop"
+    assert surfaces[19].label == "Imaging Plane"
+    assert surfaces[3].surface_type == "ASP"
+    assert surfaces[3].asphere_coefficients["K"] == pytest.approx(-1.26022)
+    assert surfaces[3].asphere_coefficients["A"] == pytest.approx(2.59351e-3)
+    assert surfaces[14].asphere_coefficients["D"] == pytest.approx(4.64438e-8)
+    assert prescriptions[4].hfov_deg == pytest.approx(40.995)
+
+
+def test_parse_samsung_wide_fov_requires_published_full_field_definition() -> None:
+    text = SAMSUNG_WIDE_FOV_TEXT.replace(
+        "HFOV is a field of view of the imaging plane in a horizontal direction "
+        "expressed in degrees.",
+        "HFOV is listed in degrees.",
+        1,
+    )
+
+    with pytest.raises(PatentParseError, match="full-field HFOV definition not found"):
+        parse_patent_prescriptions(text, patent_id="US-SAMSUNG-WIDE-FOV-MISSING-A1")
 
 
 def test_parse_folded_zoom_accepts_reordered_multiline_surface_header() -> None:
