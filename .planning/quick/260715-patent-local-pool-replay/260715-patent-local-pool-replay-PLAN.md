@@ -73,15 +73,16 @@ dedupe, routing, and provenance gates close.
 
 - Frozen manifest: 619 roots / 619 publications, cohort SHA-256
   `e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b`.
-- Current replay checkpoint: 128/619 roots, 0 corrupt results. This is an intermediate checkpoint,
+- Current replay checkpoint: 228/619 roots, 0 corrupt results. This is an intermediate checkpoint,
   not replay completion or saturation.
-- Current root states: parser review 94, mixed non-terminal 27, source retry 3, all-terminal 3,
-  all-converted-pending-intake 1.
-- Current item states: parser review 322, terminal receipt 171, converted-pending-intake 48,
+- Current root states: parser review 165, mixed non-terminal 51, source retry 3, all-terminal 7,
+  all-converted-pending-intake 2.
+- Current item states: parser review 661, terminal receipt 303, converted-pending-intake 85,
   patent-budget retry 1.
 - Parser signatures are recomputed from strict result detail. Current largest measured signatures
-  are AAC Raytech summary metadata missing (63) and Sunny metadata missing (63); the full cohort
-  must finish before selecting the final largest parser bucket.
+  are Sunny metadata missing (202), Sunny surface value non-numeric (81), generic summary metadata
+  missing (72), and AAC Raytech summary metadata missing (63); the full cohort must finish before
+  selecting the final largest parser bucket.
 - Official PPUBS canary retained HTML and no CODE V process existed before or after replay.
 - Real-pool failures drove two fail-closed fixes: retained source attempts now survive document
   parser exceptions; explicit optical infinity/plano radius is deterministically encoded as the
