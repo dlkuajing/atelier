@@ -764,6 +764,64 @@ def test_item_mapping_preserves_evidence_and_never_promotes_staging_to_intaken(
     }
 
 
+def test_item_mapping_includes_recovered_parser_input_and_linkage_manifest(
+    tmp_path: Path,
+) -> None:
+    raw = tmp_path / "primary.html"
+    parser_input = tmp_path / "grant.html"
+    manifest = tmp_path / "recovery.json"
+    receipt = tmp_path / "receipt.json"
+    zmx = tmp_path / "candidate.zmx"
+    for path, content in (
+        (raw, b"primary"),
+        (parser_input, b"grant"),
+        (manifest, b"manifest"),
+        (receipt, b"receipt"),
+        (zmx, b"zmx"),
+    ):
+        path.write_bytes(content)
+    raw_evidence = EvidenceRef(
+        evidence_type="source",
+        path=raw.as_posix(),
+        sha256=sha256_bytes(raw.read_bytes()),
+    )
+    attempt = patent_to_zmx.ConversionAttempt(
+        patent_id="US-TEST-A1",
+        title="fixture",
+        status="success",
+        reason="converted",
+        attempt_id="request/attempt-0001",
+        request_sha256="1" * 64,
+        receipt_path=receipt.as_posix(),
+        raw_document_path=raw.as_posix(),
+        raw_document_sha256=raw_evidence.sha256,
+        parser_input_document_path=parser_input.as_posix(),
+        parser_input_document_sha256=sha256_bytes(parser_input.read_bytes()),
+        parser_input_publication_id="US-TEST-B2",
+        parser_input_source_bucket="USPAT",
+        fulltext_recovery_manifest_path=manifest.as_posix(),
+        fulltext_recovery_manifest_sha256=sha256_bytes(manifest.read_bytes()),
+        embodiment_number=1,
+        embodiment="Embodiment 1",
+        prescription_fingerprint="2" * 64,
+        zmx_path=zmx.as_posix(),
+    )
+
+    item = patent_pool_replay._item_from_conversion_attempt(
+        attempt,
+        publication_id="US-TEST-A1",
+        raw_document=raw_evidence,
+    )
+
+    assert {evidence.evidence_type for evidence in item.evidence} == {
+        "source",
+        "uspto_ppubs_recovered_parser_input_html",
+        "patent_fulltext_recovery_manifest",
+        "patent_conversion_receipt",
+        "staging_zmx",
+    }
+
+
 def test_freeze_command_writes_loadable_canonical_artifacts(tmp_path: Path) -> None:
     cohort_path = tmp_path / "cohort.json"
     results_dir = tmp_path / "results"

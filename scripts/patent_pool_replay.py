@@ -283,7 +283,11 @@ async def _replay_member(
     raw_document = _checked_evidence(
         retained_attempt.raw_document_path,
         expected_sha256=retained_attempt.raw_document_sha256,
-        evidence_type="uspto_ppubs_parser_input_html",
+        evidence_type=(
+            "uspto_ppubs_primary_html"
+            if retained_attempt.parser_input_document_path
+            else "uspto_ppubs_parser_input_html"
+        ),
     )
     items = tuple(
         _item_from_conversion_attempt(
@@ -337,6 +341,29 @@ def _item_from_conversion_attempt(
         if attempt.receipt_path
         else None
     )
+    recovery_evidence: tuple[EvidenceRef, ...] = ()
+    recovery_fields = (
+        attempt.parser_input_document_path,
+        attempt.parser_input_document_sha256,
+        attempt.parser_input_publication_id,
+        attempt.parser_input_source_bucket,
+        attempt.fulltext_recovery_manifest_path,
+        attempt.fulltext_recovery_manifest_sha256,
+    )
+    if any(recovery_fields):
+        if not all(recovery_fields):
+            raise PatentReplayError(f"incomplete fulltext recovery evidence: {item_id}")
+        parser_input = _checked_evidence(
+            attempt.parser_input_document_path,
+            expected_sha256=attempt.parser_input_document_sha256,
+            evidence_type="uspto_ppubs_recovered_parser_input_html",
+        )
+        recovery_manifest = _checked_evidence(
+            attempt.fulltext_recovery_manifest_path,
+            expected_sha256=attempt.fulltext_recovery_manifest_sha256,
+            evidence_type="patent_fulltext_recovery_manifest",
+        )
+        recovery_evidence = (parser_input, recovery_manifest)
     if attempt.status == "success":
         if receipt is None or not attempt.zmx_path:
             raise PatentReplayError(f"success lacks receipt/ZMX evidence: {item_id}")
@@ -345,7 +372,7 @@ def _item_from_conversion_attempt(
             **base,
             state=ReplayItemState.CONVERTED_PENDING_INTAKE,
             reason_code="converted_pending_intake.process_isolated_zmx_ready",
-            evidence=(raw_document, receipt, zmx),
+            evidence=(raw_document, *recovery_evidence, receipt, zmx),
         )
     terminal_by_status = {
         "quality_rejected": TerminalStatus.QUALITY_REJECTED,
@@ -359,14 +386,14 @@ def _item_from_conversion_attempt(
             state=ReplayItemState.TERMINAL,
             reason_code="terminal.process_receipt_classified",
             terminal_status=terminal_status,
-            evidence=(raw_document, receipt),
+            evidence=(raw_document, *recovery_evidence, receipt),
         )
     if attempt.status in {"trace_failed", "trace_timeout"}:
         return ReplayItemResult(
             **base,
             state=ReplayItemState.CONVERSION_RETRY_REQUIRED,
             reason_code="conversion_retry_required.missing_process_receipt",
-            evidence=(raw_document,),
+            evidence=(raw_document, *recovery_evidence),
         )
     if attempt.status == "conversion_retry_required":
         return ReplayItemResult(
@@ -376,14 +403,14 @@ def _item_from_conversion_attempt(
                 attempt.reason_code
                 or "conversion_retry_required.patent_budget_exhausted"
             ),
-            evidence=(raw_document,),
+            evidence=(raw_document, *recovery_evidence),
         )
     if attempt.status == "failed":
         return ReplayItemResult(
             **base,
             state=ReplayItemState.PARSER_REVIEW_REQUIRED,
             reason_code="parser_review_required.deterministic_parser_rejected",
-            evidence=(raw_document,),
+            evidence=(raw_document, *recovery_evidence),
         )
     raise PatentReplayError(f"unmapped replay conversion status {attempt.status!r}: {item_id}")
 

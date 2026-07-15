@@ -6,6 +6,7 @@ import json
 import math
 import re
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -1345,6 +1346,224 @@ def test_kantatsu_damaged_metadata_requires_published_definition() -> None:
     assert all(
         "published half-field definition not found" in str(attempt.error) for attempt in attempts
     )
+
+
+def test_kantatsu_five_lens_same_application_grant_parses_all_examples() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "9563226c2a8ee53f"
+        / "US-11947087-B2.html"
+    )
+    raw = source.read_bytes()
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "9563226c2a8ee53f7b532892296df7f358c63516f248e89924654740541cfc95"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw.decode("utf-8"),
+        patent_id="US-20210373295-A1",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.error is None for attempt in attempts)
+    assert [
+        patent_to_zmx.prescription_fingerprint(attempt.prescription)
+        for attempt in attempts
+        if attempt.prescription is not None
+    ] == [
+        "77bceb9d329ad812",
+        "b301b599a38b7f59",
+        "d2a74b19658a9e56",
+        "790e42851dd0715d",
+    ]
+    first = attempts[0].prescription
+    assert first is not None
+    assert (first.focal_length_mm, first.f_number, first.hfov_deg) == pytest.approx(
+        (3.63, 1.80, 38.5)
+    )
+    assert [surface.index for surface in first.surfaces] == list(range(1, 15))
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[1].asphere_coefficients["K"] == pytest.approx(1.094850e-1)
+    assert first.surfaces[1].asphere_coefficients["J"] == pytest.approx(-7.714514e-1)
+    assert first.surfaces[11].label == "Filter"
+    assert (first.surfaces[11].nd, first.surfaces[11].vd) == pytest.approx((1.517, 64.20))
+    assert first.surfaces[-1].label == "Image"
+
+
+def test_kantatsu_five_lens_same_application_grant_requires_half_field_definition() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "9563226c2a8ee53f"
+        / "US-11947087-B2.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "denotes a half field of view",
+        "is listed in degrees",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-20210373295-NO-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "published half-field definition not found" in str(attempt.error) for attempt in attempts
+    )
+
+
+def test_same_application_grant_recovery_requires_exact_official_linkage(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    primary = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "371d425dcf416125"
+        / "US-20210373295-A1.html"
+    ).read_text(encoding="utf-8")
+    grant = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "9563226c2a8ee53f"
+        / "US-11947087-B2.html"
+    ).read_text(encoding="utf-8")
+
+    async def fake_search(*_args: object) -> list[dict[str, str]]:
+        return [{"documentId": "US-11947087-B2", "type": "USPAT"}]
+
+    async def fake_grant_fetch(
+        _client: object,
+        _token: str,
+        publication_id: str,
+        source_bucket: str,
+    ) -> str:
+        assert (publication_id, source_bucket) == ("US-11947087-B2", "USPAT")
+        return grant
+
+    monkeypatch.setattr(patent_to_zmx, "_ppubs_search_docs", fake_search)
+    monkeypatch.setattr(patent_to_zmx, "_ppubs_patent_html", fake_grant_fetch)
+    recovered = asyncio.run(
+        patent_to_zmx._recover_same_application_grant_html(
+            object(),
+            "not-recorded",
+            primary_publication_id="US-20210373295-A1",
+            primary_fetched=patent_to_zmx.FetchedPatentHtml(
+                html=primary,
+                source_bucket="US-PGPUB",
+            ),
+        )
+    )
+
+    assert recovered is not None
+    assert recovered.publication_id == "US-11947087-B2"
+    assert recovered.application_number == "17/391819"
+    assert recovered.primary_embedded_tiff_count == 5
+    assert recovered.primary_text_table_count == 1
+    assert recovered.recovered_text_table_count == 5
+
+
+def test_convert_candidate_retains_primary_recovered_input_and_manifest(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    primary = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "371d425dcf416125"
+        / "US-20210373295-A1.html"
+    ).read_text(encoding="utf-8")
+    grant = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "9563226c2a8ee53f"
+        / "US-11947087-B2.html"
+    ).read_text(encoding="utf-8")
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-20210373295-A1",
+        source_bucket="US-PGPUB",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html=primary,
+            source_bucket="US-PGPUB",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_search(*_args: object) -> list[dict[str, str]]:
+        return [{"documentId": "US-11947087-B2", "type": "USPAT"}]
+
+    async def fake_grant_fetch(*_args: object) -> str:
+        return grant
+
+    clock = iter((0.0, 2.0, 2.0, 2.0, 2.0))
+    monkeypatch.setattr(patent_to_zmx, "time", SimpleNamespace(monotonic=lambda: next(clock)))
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(patent_to_zmx, "_ppubs_search_docs", fake_search)
+    monkeypatch.setattr(patent_to_zmx, "_ppubs_patent_html", fake_grant_fetch)
+
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-20210373295-A1",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+            patent_budget_seconds=1.0,
+        )
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.status == "conversion_retry_required" for attempt in attempts)
+    assert {attempt.raw_document_sha256 for attempt in attempts} == {
+        "371d425dcf4161259f4f6373c5597b9069e99641100d1f7f781a6dbb106a9f8d"
+    }
+    assert {attempt.parser_input_document_sha256 for attempt in attempts} == {
+        "9563226c2a8ee53f7b532892296df7f358c63516f248e89924654740541cfc95"
+    }
+    assert {attempt.parser_input_publication_id for attempt in attempts} == {
+        "US-11947087-B2"
+    }
+    manifest_paths = {attempt.fulltext_recovery_manifest_path for attempt in attempts}
+    assert len(manifest_paths) == 1
+    manifest = json.loads(Path(manifest_paths.pop()).read_text(encoding="utf-8"))
+    assert manifest["application_number"] == "17/391819"
+    assert manifest["primary"]["publication_id"] == "US-20210373295-A1"
+    assert manifest["parser_input"]["publication_id"] == "US-11947087-B2"
+    assert all(manifest["checks"].values())
 
 
 def test_kantatsu_inline_retained_source_parses_only_complete_examples() -> None:

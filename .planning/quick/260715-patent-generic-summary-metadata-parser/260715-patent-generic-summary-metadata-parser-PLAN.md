@@ -302,6 +302,33 @@ thresholds, or claim patent saturation.
   is `7b15036db05a82a178f0608395c4de692ea50a15ffd724843aa89539c1e922e2` and contains 266 roots
   across 152 normalized signatures; 110 focused parser/census/replay/process tests and Ruff pass;
   CODE V inventory remains zero.
+- The fifteenth source-proven family starts from `US-20210373295-A1`, whose retained official
+  PPUBS HTML SHA-256 is
+  `371d425dcf4161259f4f6373c5597b9069e99641100d1f7f781a6dbb106a9f8d`. The A-publication
+  exposes four examples but embeds prescription tables 1--4 as five TIFF objects. Anonymous
+  official PPUBS exact-application search resolves `US-11947087-B2`; that grant has the same
+  application number `17/391819`, its Prior Publication Data explicitly names
+  `US 20210373295 A1`, and its retained HTML SHA-256 is
+  `9563226c2a8ee53f7b532892296df7f358c63516f248e89924654740541cfc95` with all five tables
+  in text. No parent-application prescription or OCR value is substituted.
+- The recovery executor now activates only for A-publications containing official embedded TIFF
+  objects. It requires exact application-number equality, an exact grant-to-publication binding,
+  and more textual tables in the grant. It retains the original A-publication, actual B2 parser
+  input, and a deterministic linkage manifest (SHA-256
+  `df96b7466024d290aaf46906d99ceb8e922d150c985ff14af67bd43354d16d36`) as distinct evidence.
+  The new exact five-lens parser binds four table/example pairs, published f/ih/Fno/TTL/half-field,
+  Stop, surfaces 1--11 plus published filter rows 18/19, and K/A4--A20 without repairing tokens.
+- Append-only replay converted all four disclosed examples to staging-only ZMX with distinct
+  fingerprints. Two consecutive process-isolated replays produced identical conversion-request
+  and ZMX hashes for all four examples. No candidate was promoted; intake duplicate, quality,
+  physical-reasonableness, and routing gates remain pending. The generic document bucket changed
+  266 to 265. Result-set SHA-256 is
+  `11d5f4378e74f939ac30aafe9a3909d1e47f2158e8d893e26def74be2301412e`; summary artifact
+  SHA-256 is `79b27b43d5c0e5442ed5af292027079ec462480a28a230c8407a74506704e09f`;
+  strict audit is 619/619 with zero corrupt evidence. The after-fifteenth-layout census SHA-256 is
+  `8ef8d4c1064e37471b459adba7090c22d3f740834adf060e80b0c6c37726589c` and contains 265 roots
+  across 151 normalized signatures; 99 patent parser/replay/process tests and Ruff pass; CODE V
+  inventory remains zero.
 
 ## Completion condition
 

@@ -47,7 +47,11 @@ from app.core.patent_replay import (  # noqa: E402
     SourceFetchState,
 )
 from app.core.zmx_ingest import load_normalized_zmx  # noqa: E402
-from scripts.patent_crawler import _ppubs_access_token, _ppubs_patent_html  # noqa: E402
+from scripts.patent_crawler import (  # noqa: E402
+    _ppubs_access_token,
+    _ppubs_patent_html,
+    _ppubs_search_docs,
+)
 
 DEFAULT_POOL_GLOB = "uspto-smartphone-batch*.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "data" / "zmx-staging"
@@ -149,6 +153,18 @@ class FetchedPatentHtml:
     attempts: tuple[SourceFetchAttempt, ...] = ()
 
 
+@dataclass(frozen=True)
+class RecoveredPatentHtml:
+    """Official same-application grant selected as a text parser input."""
+
+    publication_id: str
+    application_number: str
+    fetched: FetchedPatentHtml
+    primary_embedded_tiff_count: int
+    primary_text_table_count: int
+    recovered_text_table_count: int
+
+
 @dataclass
 class PatentSurface:
     index: int
@@ -212,6 +228,12 @@ class ConversionAttempt:
     raw_document_sha256: str = ""
     source_bucket: str = ""
     source_attempts: tuple[SourceFetchAttempt, ...] = ()
+    parser_input_document_path: str = ""
+    parser_input_document_sha256: str = ""
+    parser_input_publication_id: str = ""
+    parser_input_source_bucket: str = ""
+    fulltext_recovery_manifest_path: str = ""
+    fulltext_recovery_manifest_sha256: str = ""
     embodiment_number: int | None = None
     prescription_fingerprint: str = ""
     embodiment: str = ""
@@ -316,6 +338,12 @@ def _parse_prescription_attempts(
         if attempts:
             return attempts
         attempts = _parse_kantatsu_six_lens_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
+        attempts = _parse_kantatsu_five_lens_ih_first_table_attempts(
+            text,
+            patent_id=patent_id,
+        )
         if attempts:
             return attempts
         attempts = _parse_kantatsu_ih_first_table_attempts(text, patent_id=patent_id)
@@ -1174,6 +1202,36 @@ _KANTATSU_SIX_LENS_HALF_FIELD_DEFINITION = re.compile(
 _KANTATSU_SIX_LENS_ASPHERE_DEFINITION = re.compile(
     r"\bA4,\s+A6,\s+A8,\s+A10,\s+A12,\s+A14\s+and\s+A16\s+denote\s+"
     r"aspheric\s+surface\s+coefficients\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_FIVE_LENS_IH_FIRST_HEADER_PATTERN = re.compile(
+    rf"\bTABLE\s+(?P<table>\d+)\s+Example\s*(?P<example>\d+)\s+"
+    rf"Unit\s+mm\s+f\s*=\s*(?P<f>{NUMBER_PATTERN})\s+"
+    rf"i\s*h\s*=\s*(?P<ih>{NUMBER_PATTERN})\s+"
+    rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s+"
+    rf"TTL\s*=\s*(?P<ttl>{NUMBER_PATTERN})\s+"
+    rf"[^\s(=]+\s*\(\s*[^)]*\s*\)\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s+"
+    r"Surface\s+Data\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_FIVE_LENS_IH_FIRST_BINDING_PATTERN = re.compile(
+    r"\bExample\s+(?P<example>\d+)\s+\(\d+\)\s+The\s+basic\s+lens\s+data\s+"
+    r"is\s+shown\s+below\s+in\s+Table\s+(?P<table>\d+)\.\s+\(\d+\)\s+"
+    r"TABLE-US-\d+\s+TABLE\s+(?P<header_table>\d+)\s+"
+    r"Example\s*(?P<header_example>\d+)\s+Unit\s+mm\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_FIVE_LENS_IH_FIRST_HALF_FIELD_DEFINITION = re.compile(
+    r"\bIn\s+each\s+example,\s+f\s+denotes\s+the\s+focal\s+length\s+of\s+the\s+"
+    r"overall\s+optical\s+system\s+of\s+the\s+imaging\s+lens,\s+Fno\s+denotes\s+"
+    r"an\s+F-number,\s+\S+\s+denotes\s+a\s+half\s+field\s+of\s+view,\s+ih\s+"
+    r"denotes\s+a\s+maximum\s+image\s+height,\s+and\s+TTL\s+denotes\s+a\s+"
+    r"total\s+track\s+length\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_FIVE_LENS_IH_FIRST_ASPHERE_DEFINITION = re.compile(
+    r"\bA4,\s+A6,\s+A8,\s+A10,\s+A12,\s+A14,\s+A16,\s+A18\s+and\s+A20\s+"
+    r"denote\s+aspheric\s+surface\s+coefficients\b",
     flags=re.IGNORECASE,
 )
 _KANTATSU_IH_FIRST_HEADER_PATTERN = re.compile(
@@ -2228,6 +2286,163 @@ def _parse_kantatsu_six_lens_table_attempts(
     return attempts
 
 
+def _parse_kantatsu_five_lens_ih_first_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse exact four-example five-lens tables recovered from a USPTO grant."""
+
+    blocks = _patent_table_blocks(text)
+    matched_headers = [
+        _KANTATSU_FIVE_LENS_IH_FIRST_HEADER_PATTERN.search(block.text) for block in blocks
+    ]
+    bindings = list(_KANTATSU_FIVE_LENS_IH_FIRST_BINDING_PATTERN.finditer(text))
+    # Family ownership is deliberately narrower than the shared metadata header.
+    # Other Kantatsu A-publications use bracket paragraph numbers and/or publish
+    # more than five tables; they must continue to their established parsers.
+    if (
+        not any(matched_headers)
+        or [block.number for block in blocks] != list(range(1, 6))
+        or len(bindings) != 4
+    ):
+        return []
+
+    try:
+        if _KANTATSU_FIVE_LENS_IH_FIRST_HALF_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError(
+                "Kantatsu five-lens ih-first published half-field definition not found"
+            )
+        if _KANTATSU_FIVE_LENS_IH_FIRST_ASPHERE_DEFINITION.search(text) is None:
+            raise PatentParseError(
+                "Kantatsu five-lens ih-first published A4-A20 asphere definition not found"
+            )
+        for example_number, binding in enumerate(bindings, start=1):
+            bound_values = (
+                int(binding.group("example")),
+                int(binding.group("table")),
+                int(binding.group("header_table")),
+                int(binding.group("header_example")),
+            )
+            if bound_values != (example_number,) * 4:
+                raise PatentParseError(
+                    "Kantatsu five-lens ih-first narrative/header binding is not "
+                    f"consecutive at example {example_number}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all four disclosed examples
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=f"Kantatsu five-lens ih-first example {example_number}",
+                error=exc,
+            )
+            for example_number in range(1, 5)
+        ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for example_number, block in enumerate(blocks[:4], start=1):
+        embodiment = f"Kantatsu five-lens ih-first example {example_number}"
+        try:
+            header = _KANTATSU_FIVE_LENS_IH_FIRST_HEADER_PATTERN.search(block.text)
+            if header is None:
+                raise PatentParseError(
+                    f"Kantatsu five-lens ih-first example {example_number} "
+                    "header is source-damaged"
+                )
+            if (
+                int(header.group("table")) != example_number
+                or int(header.group("example")) != example_number
+            ):
+                raise PatentParseError(
+                    f"Kantatsu five-lens ih-first example {example_number} "
+                    "header is cross-bound"
+                )
+
+            table_text = re.sub(
+                r"\(\s*(Object|Stop)\s*\)",
+                r"(\1)",
+                block.text,
+                flags=re.IGNORECASE,
+            )
+            table_text = re.sub(
+                r"\(\s*(?:v|\u03bd)\s*d(\d+)\s*\)",
+                r"(vd\1)",
+                table_text,
+                flags=re.IGNORECASE,
+            )
+            surfaces, source_to_output, lens_surface_end = _parse_kantatsu_inline_surface_table(
+                table_text,
+                example_number=example_number,
+                family_label="Kantatsu five-lens ih-first",
+            )
+            if lens_surface_end != 11:
+                raise PatentParseError(
+                    f"Kantatsu five-lens ih-first example {example_number} lens surface "
+                    f"coverage must end at 11, found {lens_surface_end}"
+                )
+            asphere_table_text = re.split(
+                r"\s+\(\d+\)\s+The\s+imaging\s+lens\b",
+                table_text,
+                maxsplit=1,
+                flags=re.IGNORECASE,
+            )[0]
+            coefficients = _parse_kantatsu_inline_asphere_table(
+                asphere_table_text,
+                example_number=example_number,
+                expected_source_surfaces=tuple(range(2, 12)),
+                labels=("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16", "A18", "A20"),
+                family_label="Kantatsu five-lens ih-first",
+            )
+            for source_index, row in coefficients.items():
+                output_index = source_to_output[source_index]
+                surface = surfaces[output_index - 1]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(row)
+
+            focal_length = _parse_number(header.group("f"))
+            image_height = _parse_number(header.group("ih"))
+            f_number = _parse_number(header.group("fno"))
+            total_track = _parse_number(header.group("ttl"))
+            half_field = _parse_number(header.group("hfov"))
+            if (
+                focal_length <= 0
+                or image_height <= 0
+                or f_number <= 0
+                or total_track <= 0
+                or not 0 < half_field < 90
+            ):
+                raise PatentParseError(
+                    f"Kantatsu five-lens ih-first example {example_number} has invalid "
+                    "f/ih/Fno/TTL/half-field metadata"
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=half_field,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain per published example
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=example_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
 def _parse_kantatsu_ih_first_table_attempts(
     text: str,
     *,
@@ -2711,6 +2926,10 @@ def _parse_kantatsu_inline_surface_table(
         lens_surface_end, filter_front, filter_rear = 11, 12, 13
     elif source_indices == list(range(1, 16)):
         lens_surface_end, filter_front, filter_rear = 13, 14, 15
+    elif source_indices == [*range(1, 12), 18, 19]:
+        # This five-lens family numbers the two published filter rows 18/19
+        # after lens surface 11. Output indices follow physical row order.
+        lens_surface_end, filter_front, filter_rear = 11, 18, 19
     elif source_indices == [*range(1, 16), 18, 19]:
         # The official table omits optional source surfaces 16/17 and then prints
         # the remaining filter rows as 18/19. Output indices follow physical row
@@ -5899,6 +6118,9 @@ async def _convert_candidate(
     raw_document_dir = raw_document_dir or output_dir / ".raw-html"
     attempts_dir = attempts_dir or output_dir / ".attempts"
     source_document: SourceDocumentEvidence | None = None
+    parser_source_document: SourceDocumentEvidence | None = None
+    recovered_parser_input: RecoveredPatentHtml | None = None
+    recovery_manifest: SourceDocumentEvidence | None = None
     fetched: FetchedPatentHtml | None = None
     try:
         fetched = await _fetch_patent_html(client, token, candidate.patent_id)
@@ -5920,10 +6142,37 @@ async def _convert_candidate(
             patent_id=candidate.patent_id,
             fetched=fetched,
         )
-        parse_attempts = _parse_prescription_attempts(
-            fetched.html,
-            patent_id=candidate.patent_id,
-        )
+        parser_source_document = source_document
+        try:
+            parse_attempts = _parse_prescription_attempts(
+                fetched.html,
+                patent_id=candidate.patent_id,
+            )
+        except PatentParseError as primary_parse_error:
+            recovered_parser_input = await _recover_same_application_grant_html(
+                client,
+                token,
+                primary_publication_id=candidate.patent_id,
+                primary_fetched=fetched,
+            )
+            if recovered_parser_input is None:
+                raise primary_parse_error
+            parser_source_document = _retain_fetched_patent_html(
+                raw_document_dir,
+                patent_id=recovered_parser_input.publication_id,
+                fetched=recovered_parser_input.fetched,
+            )
+            recovery_manifest = _retain_fulltext_recovery_manifest(
+                raw_document_dir,
+                primary_publication_id=candidate.patent_id,
+                primary_source=source_document,
+                recovered=recovered_parser_input,
+                parser_source=parser_source_document,
+            )
+            parse_attempts = _parse_prescription_attempts(
+                recovered_parser_input.fetched.html,
+                patent_id=candidate.patent_id,
+            )
     except Exception as exc:  # noqa: BLE001 - report per-patent failure reason
         source_attempts = (
             exc.attempts
@@ -5941,10 +6190,40 @@ async def _convert_candidate(
                 ),
                 raw_document_sha256=(source_document.sha256 if source_document is not None else ""),
                 source_attempts=source_attempts,
+                parser_input_document_path=(
+                    parser_source_document.retained_path
+                    if parser_source_document is not None
+                    and parser_source_document != source_document
+                    else ""
+                ),
+                parser_input_document_sha256=(
+                    parser_source_document.sha256
+                    if parser_source_document is not None
+                    and parser_source_document != source_document
+                    else ""
+                ),
+                parser_input_publication_id=(
+                    recovered_parser_input.publication_id
+                    if recovered_parser_input is not None
+                    else ""
+                ),
+                parser_input_source_bucket=(
+                    parser_source_document.source_bucket
+                    if parser_source_document is not None
+                    and parser_source_document != source_document
+                    else ""
+                ),
+                fulltext_recovery_manifest_path=(
+                    recovery_manifest.retained_path if recovery_manifest is not None else ""
+                ),
+                fulltext_recovery_manifest_sha256=(
+                    recovery_manifest.sha256 if recovery_manifest is not None else ""
+                ),
             )
         ]
 
     assert source_document is not None
+    assert parser_source_document is not None
     attempts: list[ConversionAttempt] = []
     formal_case_stems = formal_case_stems or frozenset()
     for parse_attempt in parse_attempts:
@@ -6053,7 +6332,7 @@ async def _convert_candidate(
                 continue
             worker_timeout_seconds = min(worker_timeout_seconds, remaining_seconds)
         try:
-            request = _conversion_request(prescription, source_document)
+            request = _conversion_request(prescription, parser_source_document)
         except Exception as exc:  # noqa: BLE001 - preserve and continue later embodiments.
             attempts.append(
                 ConversionAttempt(
@@ -6170,7 +6449,213 @@ async def _convert_candidate(
                     coverage=_coverage(prescription),
                 )
             )
+    if recovered_parser_input is not None:
+        assert recovery_manifest is not None
+        for attempt in attempts:
+            attempt.parser_input_document_path = parser_source_document.retained_path
+            attempt.parser_input_document_sha256 = parser_source_document.sha256
+            attempt.parser_input_publication_id = recovered_parser_input.publication_id
+            attempt.parser_input_source_bucket = parser_source_document.source_bucket
+            attempt.fulltext_recovery_manifest_path = recovery_manifest.retained_path
+            attempt.fulltext_recovery_manifest_sha256 = recovery_manifest.sha256
     return attempts
+
+
+_PPUBS_APPLICATION_NUMBER_PATTERN = re.compile(
+    r"\bAppl\.\s*No\.:\s*(?P<series>\d{2})\s*/\s*(?P<serial>\d{6})\b",
+    flags=re.IGNORECASE,
+)
+_PPUBS_EMBEDDED_TIFF_PATTERN = re.compile(
+    r"<\?img\b[^>]*\bfile\s*=\s*[\"'][^\"']+\.TIF[\"'][^>]*\?>",
+    flags=re.IGNORECASE,
+)
+
+
+def _ppubs_application_number(raw_html: str) -> str | None:
+    """Return one exact USPTO application number or fail closed on ambiguity."""
+
+    matches = {
+        f"{match.group('series')}/{match.group('serial')}"
+        for match in _PPUBS_APPLICATION_NUMBER_PATTERN.finditer(
+            normalize_patent_text(raw_html)
+        )
+    }
+    return next(iter(matches)) if len(matches) == 1 else None
+
+
+def _ppubs_application_query(application_number: str) -> str:
+    series, serial = application_number.split("/", maxsplit=1)
+    if re.fullmatch(r"\d{2}", series) is None or re.fullmatch(r"\d{6}", serial) is None:
+        raise PatentParseError(f"invalid USPTO application number: {application_number}")
+    return f"{series}/{serial[:3]},{serial[3:]}.app."
+
+
+def _grant_binds_prior_publication(raw_html: str, publication_id: str) -> bool:
+    """Require the grant's official Prior Publication Data to name the A-publication."""
+
+    match = re.fullmatch(r"US-(?P<number>\d+)-(?P<kind>A\d+)", publication_id.upper())
+    if match is None:
+        return False
+    text = normalize_patent_text(raw_html)
+    section = re.search(
+        r"\bPrior\s+Publication\s+Data\b(?P<body>.*?)"
+        r"\b(?:Foreign\s+Application\s+Priority\s+Data|Related\s+U\.S\.\s+Application\s+Data|"
+        r"Publication\s+Classification)\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if section is None:
+        return False
+    pattern = (
+        rf"\bUS\s+{re.escape(match.group('number'))}\s+"
+        rf"{re.escape(match.group('kind'))}\b"
+    )
+    return re.search(pattern, section.group("body"), flags=re.IGNORECASE) is not None
+
+
+async def _recover_same_application_grant_html(
+    client: httpx.AsyncClient,
+    token: str,
+    *,
+    primary_publication_id: str,
+    primary_fetched: FetchedPatentHtml,
+) -> RecoveredPatentHtml | None:
+    """Find an official text grant only when the A-publication embeds TIFF tables."""
+
+    if _source_for_patent_id(primary_publication_id) != "US-PGPUB":
+        return None
+    embedded_tiff_count = len(_PPUBS_EMBEDDED_TIFF_PATTERN.findall(primary_fetched.html))
+    if embedded_tiff_count == 0:
+        return None
+    application_number = _ppubs_application_number(primary_fetched.html)
+    if application_number is None:
+        return None
+
+    primary_text_table_count = len(
+        _patent_table_blocks(normalize_patent_text(primary_fetched.html))
+    )
+    docs = await _ppubs_search_docs(
+        client,
+        token,
+        _ppubs_application_query(application_number),
+        20,
+    )
+    recovered: list[RecoveredPatentHtml] = []
+    fetch_failures: list[str] = []
+    for doc in sorted(docs, key=lambda item: str(item.get("documentId") or "")):
+        publication_id = str(doc.get("documentId") or "").strip().upper()
+        source_bucket = str(doc.get("type") or "").strip().upper()
+        if (
+            source_bucket != "USPAT"
+            or re.fullmatch(r"US-\d+-B\d+", publication_id) is None
+        ):
+            continue
+        try:
+            html_text = await _ppubs_patent_html(
+                client,
+                token,
+                publication_id,
+                source_bucket,
+            )
+        except Exception as exc:  # noqa: BLE001 - try every exact-app grant
+            fetch_failures.append(f"{publication_id}:{type(exc).__name__}")
+            continue
+        if _ppubs_application_number(html_text) != application_number:
+            continue
+        if not _grant_binds_prior_publication(html_text, primary_publication_id):
+            continue
+        recovered_text_table_count = len(
+            _patent_table_blocks(normalize_patent_text(html_text))
+        )
+        if recovered_text_table_count <= primary_text_table_count:
+            continue
+        recovered.append(
+            RecoveredPatentHtml(
+                publication_id=publication_id,
+                application_number=application_number,
+                fetched=FetchedPatentHtml(
+                    html=html_text,
+                    source_bucket=source_bucket,
+                    attempts=(),
+                ),
+                primary_embedded_tiff_count=embedded_tiff_count,
+                primary_text_table_count=primary_text_table_count,
+                recovered_text_table_count=recovered_text_table_count,
+            )
+        )
+    if not recovered:
+        if fetch_failures:
+            raise PatentParseError(
+                "same-application grant recovery fetch failed: " + ", ".join(fetch_failures)
+            )
+        return None
+    return max(
+        recovered,
+        key=lambda item: (item.recovered_text_table_count, item.publication_id),
+    )
+
+
+def _retain_fulltext_recovery_manifest(
+    raw_document_dir: Path,
+    *,
+    primary_publication_id: str,
+    primary_source: SourceDocumentEvidence,
+    recovered: RecoveredPatentHtml,
+    parser_source: SourceDocumentEvidence,
+) -> SourceDocumentEvidence:
+    """Retain deterministic linkage checks for primary and recovered parser inputs."""
+
+    payload = {
+        "schema_version": 1,
+        "recovery_type": "uspto_same_application_grant_text",
+        "application_number": recovered.application_number,
+        "primary": {
+            "publication_id": primary_publication_id,
+            "source_bucket": primary_source.source_bucket,
+            "path": primary_source.retained_path,
+            "sha256": primary_source.sha256,
+            "embedded_tiff_count": recovered.primary_embedded_tiff_count,
+            "text_table_count": recovered.primary_text_table_count,
+        },
+        "parser_input": {
+            "publication_id": recovered.publication_id,
+            "source_bucket": parser_source.source_bucket,
+            "path": parser_source.retained_path,
+            "sha256": parser_source.sha256,
+            "text_table_count": recovered.recovered_text_table_count,
+        },
+        "checks": {
+            "exact_application_number_match": True,
+            "grant_prior_publication_binding": True,
+            "parser_input_has_more_text_tables": True,
+        },
+    }
+    content = (
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+    digest = sha256_bytes(content)
+    path = (
+        raw_document_dir
+        / "fulltext-recovery"
+        / digest[:16]
+        / (
+            f"{_safe_stem(primary_publication_id)}--"
+            f"{_safe_stem(recovered.publication_id)}.json"
+        )
+    )
+    if path.exists():
+        if path.read_bytes() != content:
+            raise PatentParseError(f"fulltext recovery manifest hash-path collision: {path}")
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = path.with_name(f".{path.name}.tmp")
+        temp_path.write_bytes(content)
+        temp_path.replace(path)
+    return SourceDocumentEvidence(
+        source_bucket="fulltext-recovery-manifest",
+        retained_path=Path(_display_path(path)).as_posix(),
+        sha256=digest,
+    )
 
 
 async def _fetch_patent_html(

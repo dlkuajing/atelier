@@ -26,7 +26,10 @@ foundation snapshot 的严格 audit 为 `saturation_complete=false`，明确 735
 425 个正式 embodiment 尚未按新 provenance 合约闭环、25 个旧 seed embodiment 身份未明确；
 当时 735 根均无保留全文。第三个 quick 现已为冻结的 619 个本地未覆盖根全部保留官方 PPUBS
 HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和账本。这是未合 main 的进行中证据，
-不是饱和完成声明；500 仅为历史进度标记。
+不是饱和完成声明；500 仅为历史进度标记。generic-summary 第十五铲已为
+`US-20210373295-A1` 建立同申请官方授权全文恢复：原 A1 的四张处方为 TIFF，解析器仅在
+`US-11947087-B2` 同申请号且 Prior Publication Data 明确回指 A1 时使用其文本表，并同时保留
+原文、解析输入和 linkage manifest；四个结果仍只处于 staging pending intake。
 第二个 GSD quick 已将每个 embodiment 的 Optiland/ZMX 转换移入独立子进程：默认 120 秒
 硬超时、Windows `taskkill /F /T` 杀树、2 秒 bounded reap、append-only retry identity、原始
 HTML 输入哈希、request/response/stdout/stderr/receipt/candidate ZMX 全证据保留，且仅在父进程
@@ -45,7 +48,7 @@ Sunny metadata 最大桶首铲已完成；下一步按完整 census 的新最大
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE；619-root frozen local replay remains strict with missing=0 and corrupt=0. After generic-summary layout 14: 429 parser-review roots, 137 mixed roots, 510 staging items, and 28 patent-budget retry items remain non-terminal. The largest parser bucket remains `generic_summary_metadata_missing=266`; this is not source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE；619-root frozen local replay remains strict with missing=0 and corrupt=0. After generic-summary layout 15: 428 parser-review roots, 137 mixed roots, 514 staging items, and 28 patent-budget retry items remain non-terminal. The largest parser bucket remains `generic_summary_metadata_missing=265`; this is not source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -190,7 +193,7 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
 | `260715-patent-local-pool-replay` | complete-local-replay-saturation-incomplete | Cohort SHA `e809823c...b42b`; 619/619 strict results, missing=0, corrupt=0; result-set SHA `3bc0bbee...76df`. Final items: parser review 1388, receipt terminal 631, staging pending intake 359, patent-budget retry 16. All current roots retain official PPUBS HTML. No-op replay processed 0 and preserved summary SHA `65122027...d130`. Parent saturation remains incomplete. |
 | `260715-patent-sunny-metadata-parser` | complete-shovel-saturation-incomplete | Before 299 items/64 roots; after 199/53, resolving 100 without missing-field regression. Result-set SHA `2e0a9ceb...d506`; 619/619 strict results, missing=0, corrupt=0; 95 tests+Ruff green, CODE V inventory zero. Next largest parser bucket is generic summary metadata=294. |
-| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Layouts 1--10 are replayed append-only. The tenth inline Kantatsu layout matched exactly two roots / 23 examples: 10 parsed, yielding 2 staging-only ZMX and 8 terminal `trace_failed` receipts; 13 official source-damaged examples remain parser review without repair. Generic bucket is 270 across 156 signatures, result set `3907d368...a811`, and audit is 619/619 corrupt=0. The high-order missing-exponent/stop family and prism/directional-pupil families remain fail-closed. Select the next exact layout from the remaining 270. |
+| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Layouts 1--15 are replayed append-only. Layout 15 recovered four TIFF-only A1 prescriptions only from the exact same-application B2 grant, with original/recovered/manifest evidence separated; all four are staging-only and repeated request/ZMX hashes are stable. Generic bucket is 265 across 151 signatures, result set `11d5f437...412e`, and audit is 619/619 corrupt=0. The high-order missing-exponent/stop family and prism/directional-pupil families remain fail-closed. Select the next exact source family from the remaining 265. |
 
 ## Session Continuity
 
@@ -202,7 +205,7 @@ then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work remains the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (276), using the same strict before/after census, source-proven
+`generic_summary_metadata_missing` (265), using the same strict before/after census, source-proven
 layout rules, append-only targeted replay, and full-pool audit contract.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then

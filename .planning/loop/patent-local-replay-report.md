@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `53652aa9fbad3a49960de0736c8415df00f5df919bb2d8934278dac245c40dc5`
+- result_set_sha256: `11d5f4378e74f939ac30aafe9a3909d1e47f2158e8d893e26def74be2301412e`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -18,9 +18,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root states
 
-- `converted_pending_intake`: 19
+- `converted_pending_intake`: 20
 - `terminal`: 34
-- `parser_review_required`: 429
+- `parser_review_required`: 428
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -28,9 +28,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item states
 
-- `converted_pending_intake`: 510
+- `converted_pending_intake`: 514
 - `terminal`: 708
-- `parser_review_required`: 1355
+- `parser_review_required`: 1354
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -48,16 +48,16 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 429
+- `parser_review_required.all_disclosed_items_rejected`: 428
 - `mixed_nonterminal.multiple_item_states`: 137
 - `terminal.all_disclosed_items_terminal`: 34
-- `converted_pending_intake.all_disclosed_items_converted`: 19
+- `converted_pending_intake.all_disclosed_items_converted`: 20
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1355
+- `parser_review_required.deterministic_parser_rejected`: 1354
 - `terminal.process_receipt_classified`: 708
-- `converted_pending_intake.process_isolated_zmx_ready`: 510
+- `converted_pending_intake.process_isolated_zmx_ready`: 514
 - `conversion_retry_required.patent_budget_exhausted`: 28
 
 ## Source attempts
@@ -68,7 +68,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 266
+- `generic_summary_metadata_missing`: 265
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
