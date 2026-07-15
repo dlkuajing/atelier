@@ -528,6 +528,50 @@ def _install_lens_driving_fixture_profile(
     return patent_id
 
 
+def _non_optical_zone_stray_light_only_fixture(
+    *,
+    prescription_marker: bool = False,
+) -> str:
+    parts = [
+        "IMAGING LENS ASSEMBLY AND OPTICAL VERIFICATION SYSTEM",
+        "Family ID: 79907355",
+        "field of view (FOV) greater than 120 degrees " * 2,
+        "first connection portion " * 2,
+        "non-optical zone " * 3,
+        "stray light " * 2,
+        "three-piece optical lens assembly",
+        "curvature radius " * 2,
+    ]
+    if prescription_marker:
+        parts.append("Surface # Radius Thickness Abbe #")
+    return " ".join(parts)
+
+
+def _install_non_optical_zone_fixture_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    text: str,
+) -> str:
+    patent_id = "US-NON-OPTICAL-ZONE-FIXTURE-A1"
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._NON_OPTICAL_ZONE_STRAY_LIGHT_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "architecture_phrase_counts": {
+                "Family ID: 79907355": 1,
+                "field of view (FOV) greater than 120 degrees": 2,
+                "first connection portion": 2,
+                "non-optical zone": 3,
+                "stray light": 2,
+                "three-piece optical lens assembly": 1,
+                "curvature radius": 2,
+            },
+        },
+    )
+    return patent_id
+
+
 MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
 L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
 ST 3 Infinity -0.020
@@ -4963,6 +5007,54 @@ def test_lens_driving_mechanical_classifier_refuses_source_hash_drift(
 ) -> None:
     text = _lens_driving_mechanical_only_fixture()
     patent_id = _install_lens_driving_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "official text hash changed" in str(attempts[0].error)
+
+
+def test_non_optical_zone_stray_light_only_is_confirmed_no_prescription(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _non_optical_zone_stray_light_only_fixture()
+    patent_id = _install_non_optical_zone_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription.non_optical_zone_stray_light_architecture_only"
+    )
+
+
+def test_non_optical_zone_classifier_refuses_prescription_marker(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _non_optical_zone_stray_light_only_fixture(prescription_marker=True)
+    patent_id = _install_non_optical_zone_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "contains a prescription marker" in str(attempts[0].error)
+
+
+def test_non_optical_zone_classifier_refuses_source_hash_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _non_optical_zone_stray_light_only_fixture()
+    patent_id = _install_non_optical_zone_fixture_profile(monkeypatch, text)
 
     attempts = patent_to_zmx._parse_prescription_attempts(
         text + " publication revision",

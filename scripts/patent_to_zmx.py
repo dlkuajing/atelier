@@ -440,6 +440,12 @@ def _parse_prescription_attempts(
         )
         if attempts:
             return attempts
+        attempts = _classify_non_optical_zone_stray_light_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _classify_ir_filter_coating_only_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1577,6 +1583,40 @@ _LENS_DRIVING_MECHANICAL_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "carrier": 175,
             "magnet": 116,
             "coil": 21,
+        },
+    },
+}
+_NON_OPTICAL_ZONE_STRAY_LIGHT_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\s+AND\s+OPTICAL\s+VERIFICATION\s+SYSTEM\b",
+    flags=re.IGNORECASE,
+)
+_NON_OPTICAL_ZONE_STRAY_LIGHT_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11892707-B2": {
+        "normalized_text_sha256": (
+            "101ff4360f85edbb552f718c9ac4ec9a1343c65026491ca21f37f5b38d5e2757"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 79907355": 1,
+            "field of view (FOV) greater than 120 degrees": 2,
+            "first connection portion": 32,
+            "non-optical zone": 54,
+            "stray light": 16,
+            "three-piece optical lens assembly": 1,
+            "curvature radius": 11,
+        },
+    },
+    "US-20220229269-A1": {
+        "normalized_text_sha256": (
+            "8c8066f68343d3ec391ace2c7daedc810c0e37b44d46de34406c8327e2a4a0a3"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 79907355": 1,
+            "field of view (FOV) greater than 120 degrees": 2,
+            "first connection portion": 32,
+            "non-optical zone": 54,
+            "stray light": 16,
+            "three-piece optical lens assembly": 1,
+            "curvature radius": 11,
         },
     },
 }
@@ -8176,6 +8216,73 @@ def _classify_lens_driving_mechanical_only_attempts(
                     "the exact retained official PPUBS disclosure publishes lens-driving "
                     "carrier, magnet, coil, and mechanism architecture but no optical "
                     "surface prescription or prescription table"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_non_optical_zone_stray_light_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify one exact NEWMAX non-optical-zone architecture family."""
+
+    if _NON_OPTICAL_ZONE_STRAY_LIGHT_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _NON_OPTICAL_ZONE_STRAY_LIGHT_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment = "non-optical-zone stray-light suppression architecture"
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"non-optical-zone official text hash changed for {patent_id}"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "non-optical-zone disclosure unexpectedly contains PPUBS tables"
+            )
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"non-optical-zone phrase {phrase!r} occurs {observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\baspheric\s+coefficients?\b|\bAbbe\s+(?:number|#)\b|"
+            r"\bSurface\s+(?:No\.|#)\s*|\bFno\b|\bF\s*[- ]?number\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|TABLE-US-)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "non-optical-zone disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "non_optical_zone_stray_light_architecture_only"
+                ),
+                detail=(
+                    "the exact retained official PPUBS disclosure publishes non-optical-zone "
+                    "connection geometry for suppressing stray light but no optical surface "
+                    "prescription or prescription table"
                 ),
             ),
         )

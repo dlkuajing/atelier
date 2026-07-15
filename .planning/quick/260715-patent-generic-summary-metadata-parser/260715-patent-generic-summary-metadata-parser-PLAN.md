@@ -781,6 +781,31 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `f7cee47117c28d8760434735838b0717389a691535582aa178b0d33f015e0a5a`.
   Strict audit is 619/619 with zero corrupt evidence; 162 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- The largest remaining 11-root zero-table signature was not treated as one family. Exact official
+  records `US-11892707-B2` and `US-20220229269-A1` share title `IMAGING LENS ASSEMBLY AND
+  OPTICAL VERIFICATION SYSTEM` and each explicitly publishes Family ID `79907355`. Their retained
+  official PPUBS HTML SHA-256 values are
+  `20353ac047838387b56a652c036eb88dfafa0bc7af5aecb57bdaa18bb9c497fd` and
+  `4ad66bd5064805593523e760c5ac35c88a78a76875b63b6c10bd49aedb68342f`; normalized-text
+  SHA-256 values are `101ff4360f85edbb552f718c9ac4ec9a1343c65026491ca21f37f5b38d5e2757`
+  and `8c8066f68343d3ec391ace2c7daedc810c0e37b44d46de34406c8327e2a4a0a3`.
+- Each text has zero PPUBS table blocks and the same exact architecture counts: Family ID once,
+  FOV-greater-than-120 text twice, first-connection-portion 32 times, non-optical-zone 54 times,
+  stray-light 16 times, three-piece optical-lens assembly once, and curvature-radius narrative 11
+  times. `curvature radius` describes connection geometry here, so the classifier separately proves
+  zero strong prescription markers (`Surface #/No.`, asphere coefficients, Abbe, Fno/F-number,
+  EFL, optical-data, or PPUBS table token). Any hash, count, table, or marker drift fails closed.
+- Both roots are independently terminal
+  `confirmed_no_prescription.non_optical_zone_stray_light_architecture_only`; no worker or ZMX is
+  created. Attempts 2/3 have canonical semantic SHA-256 values
+  `66bf55f2e00d0352af00e6180b1c66953b4b4f5b3c12764ee9146d9011992216` and
+  `8f60dfb15a6f3a0004b8dd445e3b6621c1efbf1e07fb4ccc3ec5d6204a9f358f` respectively per root.
+- Generic summary changed 235 to 233. Current result-set SHA-256 is
+  `dd8c33bc29826a3cff29a92c95de94dae381e5987e85cc8f8c3cd700b1962369`; summary artifact
+  SHA-256 is `a32a8ddcacd375fffe32b1c88a87e237889a4a3e1a99db255a79a7aabeaa24a5`;
+  after-census SHA-256 is `db60a6ef9eb065b8b107cf2ddd3c29f6958da1b9c1aafea9dcbc8c113fb324b8`.
+  Strict audit is 619/619 with zero corrupt evidence; 186 focused parser/census/replay/process tests,
+  Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
