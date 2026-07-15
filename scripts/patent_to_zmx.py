@@ -434,6 +434,12 @@ def _parse_prescription_attempts(
         )
         if attempts:
             return attempts
+        attempts = _classify_lens_driving_mechanical_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _classify_ir_filter_coating_only_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1539,6 +1545,41 @@ _SURFACE_TEXTURE_ACQUISITION_ONLY_TITLE_PATTERN = re.compile(
     r"SURFACE\s+TEXTURE\b",
     flags=re.IGNORECASE,
 )
+_LENS_DRIVING_MECHANICAL_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+DRIVING\s+MODULE\s*,?\s+IMAGE\s+CAPTURING\s+"
+    r"APPARATUS\s+AND\s+ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_LENS_DRIVING_MECHANICAL_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12607821-B2": {
+        "normalized_text_sha256": (
+            "59c846813747313f1fc30305ce5632807a11dcfc5cf2ee0ff7eb09e018495969"
+        ),
+        "mechanical_phrase_counts": {
+            "imaging lens driving module": 79,
+            "image capturing apparatus": 32,
+            "electronic device": 20,
+            "driving mechanism": 24,
+            "carrier": 175,
+            "magnet": 118,
+            "coil": 21,
+        },
+    },
+    "US-20220113492-A1": {
+        "normalized_text_sha256": (
+            "4738f683f3f26fd4ecaeaba9a7cc56bf03d690b409dd1be8010219b82890222c"
+        ),
+        "mechanical_phrase_counts": {
+            "imaging lens driving module": 83,
+            "image capturing apparatus": 32,
+            "electronic device": 20,
+            "driving mechanism": 24,
+            "carrier": 175,
+            "magnet": 116,
+            "coil": 21,
+        },
+    },
+}
 _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
     r"\bOptical\s+lens\s+system\s+(?P<system>\d+)\s+.*?"
     r"\bSurface(?:\s+Curvature\s+Aperture\s+Radius\s+Abbe\s+Focal)?\s+"
@@ -7949,6 +7990,74 @@ def _classify_ir_filter_coating_only_attempts(
                     "all 78 official PPUBS tables disclose only thin-film material, layer "
                     "thickness, wavelength, or transmittance data; no optical surface "
                     "prescription is published"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_lens_driving_mechanical_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify two exact official lens-driving mechanical disclosures."""
+
+    if _LENS_DRIVING_MECHANICAL_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _LENS_DRIVING_MECHANICAL_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment = "imaging-lens driving mechanical architecture"
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"lens-driving mechanical official text hash changed for {patent_id}"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "lens-driving mechanical disclosure unexpectedly contains PPUBS tables"
+            )
+        for phrase, expected in profile["mechanical_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"lens-driving mechanical phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bcurvature\s+radius\b|\baspheric\s+coefficients?\b|"
+            r"\bAbbe\s+(?:number|#)\b|\bSurface\s+(?:No\.|#)\s*|"
+            r"\bFno\b|\bF\s*[- ]?number\b|\beffective\s+focal\s+length\b|"
+            r"\boptical\s+data\b|TABLE-US-)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "lens-driving mechanical disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription.lens_driving_mechanical_architecture_only"
+                ),
+                detail=(
+                    "the exact retained official PPUBS disclosure publishes lens-driving "
+                    "carrier, magnet, coil, and mechanism architecture but no optical "
+                    "surface prescription or prescription table"
                 ),
             ),
         )

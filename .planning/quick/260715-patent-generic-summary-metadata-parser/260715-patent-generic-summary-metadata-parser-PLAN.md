@@ -733,6 +733,30 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `076a35c6007825b5a216dcaea96253cadeb049e3d1233ef8ca04d4672d19d943`.
   Strict audit is 619/619 with zero corrupt evidence; 156 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- The 11-root all-zero census signature was not treated as one family: its official titles range
+  across lamps, ophthalmology, camera modules, optical machines, and lens-driving mechanisms.
+  Only `US-12607821-B2` and `US-20220113492-A1` were selected, and no family relationship is
+  inferred between them.
+- Their retained official PPUBS HTML SHA-256 values are
+  `78392875188fc4c40b8b9e357ee1e287620afa6eddd9846291ee0a0d90df1b35` and
+  `ef58959a0f361fdb964b7e76637189afb278b7c4bcfb3572f9bfad0aa7da8dcc`; normalized-text
+  profiles are independently pinned as `59c846813747313f1fc30305ce5632807a11dcfc5cf2ee0ff7eb09e018495969`
+  and `4738f683f3f26fd4ecaeaba9a7cc56bf03d690b409dd1be8010219b82890222c`.
+  Both exact texts publish carrier/magnet/coil/driving-mechanism architecture, contain zero PPUBS
+  tables, and contain zero curvature/asphere/Abbe/surface/Fno/EFL/optical-data markers. Any source
+  hash, phrase count, table, or prescription-marker drift fails closed.
+- Both roots are terminal
+  `confirmed_no_prescription.lens_driving_mechanical_architecture_only`; no worker or ZMX is
+  created. Attempts 3/4 differ only by the explicit retry ordinal. Canonical semantic receipt
+  SHA-256 values after excluding that ordinal are stable per root:
+  `0a2ee3f796f2c8ca0e6a1d99877be724f4a13d714062776fce65b8080470a0a8` and
+  `19e62350a242533c61a7ebf6075e91edbfa0d986995ea099f3b8aad347bfa683`.
+- Generic summary changed 238 to 236. Current result-set SHA-256 is
+  `337d28819d12d96719002327c2cbc496eeb50a1a9aebedc598e9a8def6691c49`; summary artifact
+  SHA-256 is `c7aa5d587eb630e47fdc232861bf6051e76192eac83a134ad4ff6110c873f78f`;
+  after-census SHA-256 is `ec417874b5ebef16a844e75be849b804cd449d291f4a3a8537ad4c57432c3ed8`.
+  Strict audit is 619/619 with zero corrupt evidence; 159 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

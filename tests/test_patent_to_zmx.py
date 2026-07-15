@@ -490,6 +490,44 @@ def _surface_texture_acquisition_only_fixture(
     return " ".join(parts)
 
 
+def _lens_driving_mechanical_only_fixture(*, prescription_marker: bool = False) -> str:
+    parts = [
+        "IMAGING LENS DRIVING MODULE, IMAGE CAPTURING APPARATUS AND ELECTRONIC DEVICE",
+        "driving mechanism",
+        "carrier carrier",
+        "magnet",
+        "coil",
+    ]
+    if prescription_marker:
+        parts.append("Surface No. Curvature Radius")
+    return " ".join(parts)
+
+
+def _install_lens_driving_fixture_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    text: str,
+) -> str:
+    patent_id = "US-LENS-DRIVING-FIXTURE-A1"
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._LENS_DRIVING_MECHANICAL_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "mechanical_phrase_counts": {
+                "imaging lens driving module": 1,
+                "image capturing apparatus": 1,
+                "electronic device": 1,
+                "driving mechanism": 1,
+                "carrier": 2,
+                "magnet": 1,
+                "coil": 1,
+            },
+        },
+    )
+    return patent_id
+
+
 MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
 L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
 ST 3 Infinity -0.020
@@ -4764,6 +4802,54 @@ def test_surface_texture_acquisition_classifier_refuses_prescription_marker() ->
     assert len(attempts) == 1
     assert isinstance(attempts[0].error, PatentParseError)
     assert "contains a prescription marker" in str(attempts[0].error)
+
+
+def test_lens_driving_mechanical_only_is_confirmed_no_prescription(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _lens_driving_mechanical_only_fixture()
+    patent_id = _install_lens_driving_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription.lens_driving_mechanical_architecture_only"
+    )
+
+
+def test_lens_driving_mechanical_classifier_refuses_prescription_marker(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _lens_driving_mechanical_only_fixture(prescription_marker=True)
+    patent_id = _install_lens_driving_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "contains a prescription marker" in str(attempts[0].error)
+
+
+def test_lens_driving_mechanical_classifier_refuses_source_hash_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _lens_driving_mechanical_only_fixture()
+    patent_id = _install_lens_driving_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "official text hash changed" in str(attempts[0].error)
 
 
 def test_parse_folded_zoom_accepts_reordered_multiline_surface_header() -> None:
