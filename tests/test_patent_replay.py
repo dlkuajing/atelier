@@ -764,6 +764,59 @@ def test_item_mapping_preserves_evidence_and_never_promotes_staging_to_intaken(
     }
 
 
+@pytest.mark.parametrize(
+    ("status", "reason_code", "terminal_status"),
+    [
+        (
+            "metadata_unpublished",
+            "metadata_unpublished.stop_axial_coordinate_absent",
+            TerminalStatus.METADATA_UNPUBLISHED,
+        ),
+        (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.ir_filter_coating_tables_only",
+            TerminalStatus.CONFIRMED_NO_PRESCRIPTION,
+        ),
+    ],
+)
+def test_item_mapping_accepts_source_proven_terminal_without_process_receipt(
+    tmp_path: Path,
+    status: str,
+    reason_code: str,
+    terminal_status: TerminalStatus,
+) -> None:
+    raw = tmp_path / "source.html"
+    raw.write_bytes(b"official source")
+    raw_evidence = EvidenceRef(
+        evidence_type="source",
+        path=raw.as_posix(),
+        sha256=sha256_bytes(raw.read_bytes()),
+    )
+    attempt = patent_to_zmx.ConversionAttempt(
+        patent_id="US-TEST-A1",
+        title="fixture",
+        status=status,
+        reason="source-proven terminal outcome",
+        reason_code=reason_code,
+        raw_document_path=raw.as_posix(),
+        raw_document_sha256=raw_evidence.sha256,
+        embodiment_number=1,
+        embodiment="Example 1",
+    )
+
+    item = patent_pool_replay._item_from_conversion_attempt(
+        attempt,
+        publication_id="US-TEST-A1",
+        raw_document=raw_evidence,
+    )
+
+    assert item.state is ReplayItemState.TERMINAL
+    assert item.terminal_status is terminal_status
+    assert item.reason_code == f"terminal.{reason_code}"
+    assert item.conversion_attempt_id is None
+    assert item.evidence == (raw_evidence,)
+
+
 def test_item_mapping_includes_recovered_parser_input_and_linkage_manifest(
     tmp_path: Path,
 ) -> None:

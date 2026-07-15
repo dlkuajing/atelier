@@ -292,6 +292,183 @@ def _samsung_wide_fov_fixture() -> str:
 SAMSUNG_WIDE_FOV_TEXT = _samsung_wide_fov_fixture()
 
 
+def _samsung_even_order_fixture(
+    *,
+    damaged_first_asphere_header: bool = False,
+    omit_half_field_definition: bool = False,
+) -> str:
+    surface_headers = {
+        5: (
+            "Sur- face Radius of Refractive Abbe Effective No. Components "
+            "curvature index number Radius"
+        ),
+        6: (
+            "Sur- Thick- Re- face Com- Radius of ness/ fractive Abbe Effective No. "
+            "ponents curvature Distance index number Radius"
+        ),
+        7: (
+            "Radius of Thickness/ Refractive Abbe Effective Surface No. Components "
+            "curvature Distance index number Radius"
+        ),
+    }
+    default_header = (
+        "Surface Radius of Thickness/ Refractive Abbe Effective No. Components "
+        "curvature Distance index number Radius"
+    )
+    late_header = (
+        "Surface Radius of Refractive Abbe Effective No. Components curvature "
+        "Thickness/Distance index number Radius"
+    )
+    labels = {
+        1: "First lens",
+        3: "Second lens",
+        4: "Stop",
+        5: "Third lens",
+        7: "Fourth lens",
+        9: "Fifth lens",
+        11: "Sixth lens",
+        13: "Seventh lens",
+        15: "Eighth lens",
+        17: "Filter",
+        19: "Imaging plane",
+    }
+    material_surfaces = {1, 3, 5, 7, 9, 11, 13, 15, 17}
+
+    def surface_rows() -> str:
+        rows = []
+        for surface_index in range(1, 20):
+            radius = "Infinity" if surface_index >= 17 else f"{surface_index + 1}.0"
+            values = [radius, "0.1"]
+            if surface_index in material_surfaces:
+                values.extend(("1.55", "55.0"))
+            values.append(f"{surface_index + 2}.0")
+            rows.append(
+                " ".join(
+                    [f"S{surface_index}", labels.get(surface_index, ""), *values]
+                ).strip()
+            )
+        return " ".join(rows)
+
+    def asphere_rows(surface_start: int, *, terms_before_values: bool) -> str:
+        rows = ["K " + " ".join(["0.0"] * 8)]
+        for order in range(4, 31, 2):
+            suffix = "nd" if order == 22 else "th"
+            values = ["0.0"] * 8
+            if order == 30:
+                values[-1] = "1.0E-15"
+            value_text = " ".join(values)
+            label = f"{order}{suffix}"
+            if terms_before_values:
+                rows.append(f"{label} order {value_text} term")
+            else:
+                rows.append(f"{label} {value_text} order term")
+        return " ".join(rows)
+
+    definition = (
+        "HFOV values are listed."
+        if omit_half_field_definition
+        else "HFOV is the half field of view of the imaging lens system."
+    )
+    parts = [
+        "IMAGING LENS SYSTEM. "
+        + definition
+        + " c is the reciprocal of the radius of curvature of the corresponding lens, "
+        "k is the conic constant, A to H and J are aspherical constants."
+    ]
+    for embodiment_number in range(1, 11):
+        surface_table = embodiment_number * 2 - 1
+        asphere_table = embodiment_number * 2
+        parts.append(
+            f"Tables {surface_table} and {asphere_table} list lens characteristics "
+            "and aspheric values of the imaging lens system according to the present "
+            "embodiment."
+        )
+        header = surface_headers.get(
+            embodiment_number,
+            late_header if embodiment_number >= 8 else default_header,
+        )
+        parts.append(
+            f"TABLE-US-{surface_table:05d} TABLE {surface_table} {header} {surface_rows()}"
+        )
+        continuation = "S9 S10 S11 S12 S13 S14 S15 S16"
+        if damaged_first_asphere_header and embodiment_number == 1:
+            continuation = "S9 S10 S1 S12 S13 S14 S15 S16"
+        parts.append(
+            f"TABLE-US-{asphere_table:05d} TABLE {asphere_table} "
+            "Surface No. S1 S2 S3 S4 S5 S6 S7 S8 "
+            f"{asphere_rows(1, terms_before_values=True)} "
+            f"Surface No{'.' if embodiment_number != 6 else ''} {continuation} "
+            f"{asphere_rows(9, terms_before_values=False)} "
+            f"[{1100 + embodiment_number}]"
+        )
+    parts.append(
+        "TABLE-US-00021 TABLE 21 First Second Third Fourth Fifth Elements "
+        "embodiment embodiment embodiment embodiment embodiment "
+        "f 6.1 6.2 6.3 6.4 6.5 f-number 1.5 1.6 1.7 1.8 1.9 "
+        "HFOV(°) 41.1 42.2 43.3 44.4 45.5 "
+        "Sixth Seventh Eighth Ninth Tenth Elements embodiment embodiment embodiment "
+        "embodiment embodiment f 7.1 7.2 7.3 7.4 7.5 "
+        "f-number 2.1 2.2 2.3 2.4 2.5 HFOV(°) 85.1 85.2 85.3 85.4 85.5"
+    )
+    parts.append("TABLE-US-00022 TABLE 22 conditional values")
+    parts.append("TABLE-US-00023 TABLE 23 conditional values")
+    return " ".join(parts)
+
+
+def _samsung_eight_lens_missing_stop_fixture(*, extra_stop_binding: bool = False) -> str:
+    parts = ['"A to J" are aspheric constants.']
+    for example_number in range(1, 6):
+        system = example_number * 100
+        surface_table = example_number * 2 - 1
+        asphere_table = example_number * 2
+        parts.append(
+            f"The imaging lens system {system} may further include a stop ST. "
+            f"The stop ST may be disposed between the second lens {system + 20} "
+            f"and the third lens {system + 30}. "
+            f"Tables {surface_table} and {asphere_table} list lens characteristics "
+            f"and aspherical values of the imaging lens system {system}."
+        )
+        surface_rows = " ".join(f"S{index} {index}.0 0.1" for index in range(1, 20))
+        parts.append(
+            f"TABLE-US-{surface_table:05d} TABLE {surface_table} "
+            "Surface Radius of Thickness/ Refractive Abbe No. Note Curvature "
+            f"Distance Index Number {surface_rows}"
+        )
+        first_rows = " ".join(
+            f"S{index} 0 0 0 0 0 0" if not (example_number == 3 and index == 12) else
+            "S12 0 0 0 |0 0 0"
+            for index in range(1, 17)
+        )
+        second_rows = " ".join(f"S{index} 0 0 0 0" for index in range(1, 17))
+        parts.append(
+            f"TABLE-US-{asphere_table:05d} TABLE {asphere_table} "
+            f"Surface No. K A B C D E {first_rows} Surface No. F G H J {second_rows}"
+        )
+    parts.append(
+        "TABLE-US-00011 TABLE 11 First Second Third Fourth Fifth Note Example Example "
+        "Example Example Example TTL 7 7 7 7 7 BFL 1 1 1 1 1 f number 1.6 1.6 1.6 "
+        "1.6 1.6 FOV 82 82 82 82 82 f 6 6 6 6 6"
+    )
+    parts.append("TABLE-US-00012 TABLE 12 Conditional First Second Third Fourth Fifth")
+    if extra_stop_binding:
+        parts.append("The stop ST has a published axial coordinate of 0.2 mm.")
+    return " ".join(parts)
+
+
+def _ir_filter_coating_only_fixture(*, prescription_marker: bool = False) -> str:
+    parts = [
+        "OPTICAL LENS ASSEMBLY AND IMAGING LENS WITH INFRARED RAY FILTERING. "
+        "Light enters through an aperture stop 60 and reaches an image sensor."
+    ]
+    for table_number in range(1, 79):
+        marker = " Curvature 1.0" if prescription_marker and table_number == 78 else ""
+        parts.append(
+            f"TABLE-US-{table_number:05d} TABLE {table_number} "
+            f"Wavelength (nm) 850 Transmittance (%) 1.0{marker}"
+        )
+    return " ".join(parts)
+
+
 MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
 L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
 ST 3 Infinity -0.020
@@ -1828,6 +2005,118 @@ def test_parse_samsung_wide_fov_requires_published_full_field_definition() -> No
         parse_patent_prescriptions(text, patent_id="US-SAMSUNG-WIDE-FOV-MISSING-A1")
 
 
+def test_parse_samsung_even_order_pairs_preserves_published_half_field() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _samsung_even_order_fixture(),
+        patent_id="US-SAMSUNG-EVEN-ORDER-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 11))
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    first = prescriptions[0]
+    sixth = prescriptions[5]
+    assert first is not None and sixth is not None
+    assert (first.focal_length_mm, first.f_number, first.hfov_deg) == pytest.approx(
+        (6.1, 1.5, 41.1)
+    )
+    assert sixth.hfov_deg == pytest.approx(85.1)
+    surfaces = {surface.index: surface for surface in first.surfaces}
+    assert len(surfaces) == 19
+    assert surfaces[4].label == "Stop"
+    assert surfaces[4].surface_type == "ASP"
+    assert surfaces[1].nd == pytest.approx(1.55)
+    assert surfaces[16].asphere_coefficients["A30"] == pytest.approx(1.0e-15)
+
+
+def test_samsung_even_order_damaged_header_fails_only_affected_embodiment() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _samsung_even_order_fixture(damaged_first_asphere_header=True),
+        patent_id="US-SAMSUNG-EVEN-ORDER-DAMAGED-A1",
+    )
+
+    assert len(attempts) == 10
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert "asphere headers must be S1-S8 and S9-S16" in str(attempts[0].error)
+    assert all(attempt.prescription is not None for attempt in attempts[1:])
+
+
+def test_samsung_even_order_requires_published_half_field_definition() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _samsung_even_order_fixture(omit_half_field_definition=True),
+        patent_id="US-SAMSUNG-EVEN-ORDER-NO-HALF-FIELD-A1",
+    )
+
+    assert len(attempts) == 10
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all("half-field HFOV definition not found" in str(attempt.error) for attempt in attempts)
+
+
+def test_samsung_eight_lens_missing_stop_is_source_terminal_per_example() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _samsung_eight_lens_missing_stop_fixture(),
+        patent_id="US-SAMSUNG-EIGHT-LENS-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4, 5]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {
+        (attempt.error.status, attempt.error.reason_code)
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    } == {
+        (
+            "metadata_unpublished",
+            "metadata_unpublished.stop_axial_coordinate_absent",
+        )
+    }
+
+
+def test_samsung_eight_lens_extra_stop_disclosure_refuses_terminal_classification() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _samsung_eight_lens_missing_stop_fixture(extra_stop_binding=True),
+        patent_id="US-SAMSUNG-EIGHT-LENS-EXTRA-A1",
+    )
+
+    assert len(attempts) == 5
+    assert all(isinstance(attempt.error, PatentParseError) for attempt in attempts)
+    assert all(
+        not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert all("extra binding" in str(attempt.error) for attempt in attempts)
+
+
+def test_ir_filter_coating_only_document_is_confirmed_no_prescription() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ir_filter_coating_only_fixture(),
+        patent_id="US-IR-FILTER-A1",
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].embodiment_number is None
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == "confirmed_no_prescription.ir_filter_coating_tables_only"
+
+
+def test_ir_filter_coating_only_classifier_refuses_prescription_marker() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ir_filter_coating_only_fixture(prescription_marker=True),
+        patent_id="US-IR-FILTER-DAMAGED-A1",
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "prescription-table markers" in str(attempts[0].error)
+
+
 def test_parse_folded_zoom_accepts_reordered_multiline_surface_header() -> None:
     text = FOLDED_ZOOM_TEXT.replace(
         "Surface # Comment Type Radius Thickness (D/2) Material Index Abbe # Length",
@@ -2320,6 +2609,57 @@ def test_convert_candidate_skips_duplicate_prescription_without_writing_zmx(
     assert "prescription fingerprint" in second[0].reason
     assert (output_dir / "US-DUP-A1-e1.zmx").is_file()
     assert not (output_dir / "US-DUP-A2-e1.zmx").exists()
+
+
+def test_convert_candidate_preserves_source_terminal_status_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_fetch(
+        _client: object,
+        _token: str,
+        patent_id: str,
+    ) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html=_samsung_eight_lens_missing_stop_fixture(),
+            source_bucket="US-PGPUB",
+            attempts=(
+                patent_to_zmx.SourceFetchAttempt(
+                    publication_id=patent_id,
+                    source_bucket="US-PGPUB",
+                    state=patent_to_zmx.SourceFetchState.RETAINED,
+                    http_status=200,
+                ),
+            ),
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("source-terminal outcomes must not launch a trace worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "token",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-SAMSUNG-EIGHT-LENS-A1",
+                title="fixture",
+                source_url="",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "zmx",
+            raw_document_dir=tmp_path / "raw",
+        )
+    )
+
+    assert [attempt.status for attempt in attempts] == ["metadata_unpublished"] * 5
+    assert {
+        attempt.reason_code for attempt in attempts
+    } == {"metadata_unpublished.stop_axial_coordinate_absent"}
+    assert all(attempt.raw_document_path for attempt in attempts)
+    assert not (tmp_path / "zmx").exists() or not any((tmp_path / "zmx").iterdir())
 
 
 def test_patent_to_zmx_report_includes_failure_reason_counts(tmp_path: Path) -> None:

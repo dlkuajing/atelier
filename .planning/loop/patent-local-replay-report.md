@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `11d5f4378e74f939ac30aafe9a3909d1e47f2158e8d893e26def74be2301412e`
+- result_set_sha256: `f527823e4ff73f146a70ca67f6ff45750712f9aa6dbc6a2692583c61cf0e3bc0`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,18 +19,18 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 20
-- `terminal`: 34
-- `parser_review_required`: 428
+- `terminal`: 37
+- `parser_review_required`: 424
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 137
+- `mixed_nonterminal`: 138
 
 ## Item states
 
-- `converted_pending_intake`: 514
-- `terminal`: 708
-- `parser_review_required`: 1354
+- `converted_pending_intake`: 517
+- `terminal`: 725
+- `parser_review_required`: 1351
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,27 +38,29 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 0
+- `confirmed_no_prescription`: 1
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
-- `metadata_unpublished`: 0
-- `trace_failed`: 602
-- `trace_timeout`: 106
+- `metadata_unpublished`: 10
+- `trace_failed`: 607
+- `trace_timeout`: 107
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 428
-- `mixed_nonterminal.multiple_item_states`: 137
-- `terminal.all_disclosed_items_terminal`: 34
+- `parser_review_required.all_disclosed_items_rejected`: 424
+- `mixed_nonterminal.multiple_item_states`: 138
+- `terminal.all_disclosed_items_terminal`: 37
 - `converted_pending_intake.all_disclosed_items_converted`: 20
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1354
-- `terminal.process_receipt_classified`: 708
-- `converted_pending_intake.process_isolated_zmx_ready`: 514
+- `parser_review_required.deterministic_parser_rejected`: 1351
+- `terminal.process_receipt_classified`: 714
+- `converted_pending_intake.process_isolated_zmx_ready`: 517
 - `conversion_retry_required.patent_budget_exhausted`: 28
+- `terminal.metadata_unpublished.stop_axial_coordinate_absent`: 10
+- `terminal.confirmed_no_prescription.ir_filter_coating_tables_only`: 1
 
 ## Source attempts
 
@@ -68,7 +70,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 265
+- `generic_summary_metadata_missing`: 261
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -129,6 +131,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_kantatsu_six_lens_example_n_coefficient_label_expected_a16_found_end`: 1
 - `other_mobile_imaging_lens_example_n_surface_n_coefficient_a12_is_malformed_e_n`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
+- `other_samsung_even_order_embodiment_n_asphere_headers_must_be_s1_s8_and_s9_s16`: 1
 - `other_sunny_asphere_row_s12_has_more_values_than_headers_token`: 1
 - `other_sunny_s15_row_has_unexpected_extra_values_n_n_n_n`: 1
 - `other_sunny_s7_row_has_unexpected_extra_values_n_n_n_n`: 1

@@ -37,8 +37,10 @@ thresholds, or claim patent saturation.
    steal or cross-bind another family's tables.
 3. Add exact-source regression fixtures for every layout and negative tests for ambiguity and
    cross-embodiment leakage.
-4. Replay affected roots append-only through the existing process-isolated converter and 180-second
-   root budget. Successful output remains `converted_pending_intake`.
+4. Replay affected roots append-only through the existing process-isolated converter. Keep the
+   120-second per-embodiment hard timeout unchanged; when a root discloses enough embodiments to
+   exceed the 180-second default cumulative budget, raise only that root budget explicitly and
+   retain the budget-exhausted attempt. Successful output remains `converted_pending_intake`.
 5. Recompute the full summary, strict external-evidence audit, and before/after census. Record the
    next largest measured bucket.
 
@@ -329,6 +331,39 @@ thresholds, or claim patent saturation.
   `8ef8d4c1064e37471b459adba7090c22d3f740834adf060e80b0c6c37726589c` and contains 265 roots
   across 151 normalized signatures; 99 patent parser/replay/process tests and Ruff pass; CODE V
   inventory remains zero.
+- Source-proven terminal classification was added for three exact publications found by a complete
+  265-root ownership scan. `US-12591117-B2` and `US-20260160982-A1` each publish five S1--S19
+  prescriptions but disclose the stop only as somewhere between the second and third lenses, with
+  no axial coordinate; their ten embodiments are now `metadata_unpublished` instead of parser
+  review. `US-20130301136-A1` contains 78 coating/material/transmittance tables and no surface
+  prescription, so its document item is `confirmed_no_prescription`. Two append-only replays
+  retained stable terminal payloads. The generic bucket changed 265 to 262; result-set SHA-256 was
+  `f3d5fa1655ed38a75190d3c6d47278b415abb685730caec5c8008a5d7c37b3e6`; the after-source-terminal
+  census SHA-256 is `d1536c901baf58bf28b35b6d5c0713151a6aac897b01af59eff4ffafcafa01dd`.
+- The sixteenth executable layout is the 23-table Samsung even-order family in
+  `US-20240036290-A1` (official PPUBS SHA-256
+  `6580ff97379aaf56b60649bd30522972b43027a7f0084316bcb802b7cc4d31d2`). A complete 262-root
+  ownership scan matched only this publication. Its source binds ten surface/asphere table pairs,
+  explicitly defines HFOV as half field, publishes S1--S19 with S4 as Stop, and labels K plus every
+  even asphere order from 4 through 30 for S1--S16. Published HFOV values, including 85.x degrees,
+  are retained exactly rather than heuristically halved.
+- Official application-number search for `18/096148` returned only the A1. Its first asphere table
+  prints the continuation header as `S9 S10 S1 S12 ...`, so embodiment 1 remains a source-bound
+  parser rejection without rewriting `S1` to `S11`. Embodiments 2--10 parse exactly. The initial
+  180-second replay retained its budget-exhausted items; two subsequent append-only replays used a
+  1200-second cumulative root budget while preserving the 120-second worker limit. Both complete
+  runs produced identical item states, all nine request SHA-256 values, and the three staging ZMX
+  hashes: e5 `aebdcf3000f2669a9d73e869fc2297b0f8e19145557bf2280ea7856f4de72d82`, e6
+  `38d8edbfd2e623774bc88711432948751135f9fe4b8f44d3ccdba25ba139e247`, and e9
+  `36b94831ef9ef7d5fcce229522b85661701e37126aca74be6f15837739a1fc7e`.
+- The latest Samsung result contains three `converted_pending_intake` items, five terminal
+  `trace_failed` receipts, one 120-second `trace_timeout`, and one parser rejection. No candidate
+  was promoted. The generic bucket changed 262 to 261. Current result-set SHA-256 is
+  `f527823e4ff73f146a70ca67f6ff45750712f9aa6dbc6a2692583c61cf0e3bc0`; summary artifact SHA-256
+  is `bbf2d414d4728d8341346cd09421a4cc1e62a41aeecfff024bdaf137b3c1c933`; after-sixteenth-layout
+  census SHA-256 is `94e48368a74e0a6f96d7e7e927c693207afa869442121c15b6c4da8d2ccb992e`.
+  Strict audit remains 619/619 with zero corrupt evidence; 104 parser/replay tests and Ruff pass;
+  CODE V inventory remained zero before and after both full replays.
 
 ## Completion condition
 

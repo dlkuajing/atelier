@@ -388,6 +388,23 @@ def _item_from_conversion_attempt(
             terminal_status=terminal_status,
             evidence=(raw_document, *recovery_evidence, receipt),
         )
+    source_terminal_by_status = {
+        "confirmed_no_prescription": TerminalStatus.CONFIRMED_NO_PRESCRIPTION,
+        "metadata_unpublished": TerminalStatus.METADATA_UNPUBLISHED,
+    }
+    source_terminal_status = source_terminal_by_status.get(attempt.status)
+    if source_terminal_status is not None:
+        if not attempt.reason_code.startswith(f"{attempt.status}."):
+            raise PatentReplayError(
+                f"source terminal status lacks a namespaced reason code: {item_id}"
+            )
+        return ReplayItemResult(
+            **base,
+            state=ReplayItemState.TERMINAL,
+            reason_code=f"terminal.{attempt.reason_code}",
+            terminal_status=source_terminal_status,
+            evidence=(raw_document, *recovery_evidence),
+        )
     if attempt.status in {"trace_failed", "trace_timeout"}:
         return ReplayItemResult(
             **base,

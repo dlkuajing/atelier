@@ -121,6 +121,26 @@ class PatentParseError(ValueError):
     """Raised when a patent table is unavailable or unsafe to convert."""
 
 
+class PatentTerminalParseError(PatentParseError):
+    """A source-proven parse outcome that is terminal without ray tracing.
+
+    This is deliberately narrower than a generic parser rejection.  Callers may
+    use it only when the retained official source itself proves one of the
+    saturation contract's terminal outcomes.
+    """
+
+    _ALLOWED_STATUSES = frozenset({"confirmed_no_prescription", "metadata_unpublished"})
+
+    def __init__(self, *, status: str, reason_code: str, detail: str) -> None:
+        if status not in self._ALLOWED_STATUSES:
+            raise ValueError(f"unsupported source-proven terminal parse status: {status}")
+        if not reason_code.startswith(f"{status}."):
+            raise ValueError("terminal parse reason code must be namespaced by status")
+        self.status = status
+        self.reason_code = reason_code
+        super().__init__(detail)
+
+
 class PatentTraceError(RuntimeError):
     """Raised when deterministic prescription tracing or ZMX validation fails."""
 
@@ -246,7 +266,7 @@ class ConversionAttempt:
 
 @dataclass(frozen=True)
 class _PrescriptionParseAttempt:
-    embodiment_number: int
+    embodiment_number: int | None
     embodiment: str
     prescription: PatentPrescription | None = None
     error: Exception | None = None
@@ -367,6 +387,15 @@ def _parse_prescription_attempts(
         attempts = _parse_samsung_wide_fov_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_samsung_even_order_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
+        attempts = _parse_samsung_eight_lens_missing_stop_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _parse_folded_zoom_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -377,6 +406,9 @@ def _parse_prescription_attempts(
         if attempts:
             return attempts
         attempts = _parse_sekonix_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
+        attempts = _classify_ir_filter_coating_only_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
         raise
@@ -1408,6 +1440,72 @@ _SAMSUNG_WIDE_FOV_COEFFICIENT_HEADER_PATTERN = re.compile(
 _SAMSUNG_WIDE_FOV_FULL_FIELD_DEFINITION = re.compile(
     r"\bHFOV\s+is\s+a\s+field\s+of\s+view\s+of\s+the\s+imaging\s+plane\s+in\s+a\s+"
     r"horizontal\s+direction\s+expressed\s+in\s+degrees\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EVEN_ORDER_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+SYSTEM\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EVEN_ORDER_BINDING_PATTERN = re.compile(
+    r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<asphere_table>\d+)\s+list\s+"
+    r"(?:the\s+)?lens\s+characteristics\s+and\s+(?:the\s+)?aspheric\s+values?\s+of\s+"
+    r"the\s+imaging\s+lens\s+system\s+according\s+to\s+the\s+present\s+embodiment\.",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EVEN_ORDER_HALF_FIELD_DEFINITION = re.compile(
+    r"\bHFOV\s+is\s+the\s+half\s+field\s+of\s+view\s+of\s+the\s+imaging\s+lens\s+system\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EVEN_ORDER_ASPHERE_DEFINITION = re.compile(
+    r"\bc\s+is\s+the\s+reciprocal\s+of\s+the\s+radius\s+of\s+curvature\s+of\s+the\s+"
+    r"corresponding\s+lens\s*,\s*k\s+is\s+the\s+conic\s+constant\s*,.*?"
+    r"\bA\s+to\s+H\s+and\s+J\s+are\s+aspherical\s+constants\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EVEN_ORDER_SURFACE_HEADERS = frozenset(
+    {
+        "Surface Radius of Thickness/ Refractive Abbe Effective No. Components "
+        "curvature Distance index number Radius",
+        # The fifth official HTML table drops the two wrapping column labels,
+        # while retaining the same exact 5/3-value row arity as all nine peers.
+        "Sur- face Radius of Refractive Abbe Effective No. Components curvature "
+        "index number Radius",
+        # PPUBS interleaves line-wrapped header cells in TABLE 11.
+        "Sur- Thick- Re- face Com- Radius of ness/ fractive Abbe Effective No. "
+        "ponents curvature Distance index number Radius",
+        "Radius of Thickness/ Refractive Abbe Effective Surface No. Components "
+        "curvature Distance index number Radius",
+        "Surface Radius of Refractive Abbe Effective No. Components curvature "
+        "Thickness/Distance index number Radius",
+    }
+)
+_SAMSUNG_EIGHT_LENS_BINDING_PATTERN = re.compile(
+    r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<asphere_table>\d+)\s+list\s+"
+    r"lens\s+characteristics\s+and\s+aspherical\s+values\s+of\s+the\s+imaging\s+"
+    r"lens\s+system\s+(?P<system>[1-5]00)\s*\.",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EIGHT_LENS_STOP_PATTERN = re.compile(
+    r"\bThe\s+stop\s+ST\s+may\s+be\s+disposed\s+between\s+the\s+second\s+lens\s+"
+    r"(?P<second>[1-5]20)\s+and\s+the\s+third\s+lens\s+(?P<third>[1-5]30)\s*\.",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EIGHT_LENS_SURFACE_HEADER_PATTERN = re.compile(
+    r"\bSurface\s+Radius\s+of\s+Thickness/\s+Refractive\s+Abbe\s+No\.\s+Note\s+"
+    r"Curvature\s+Distance\s+Index\s+Number\s+",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EIGHT_LENS_ASPHERE_HEADER_PATTERN = re.compile(
+    r"\bSurface\s+No\.\s+K\s+A\s+B\s+C\s+D\s+E\s+",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_EIGHT_LENS_ASPHERE_CONTINUATION_PATTERN = re.compile(
+    r"\bSurface\s+No\.\s+F\s+G\s+H\s+J\s+",
+    flags=re.IGNORECASE,
+)
+_IR_FILTER_COATING_ONLY_TITLE_PATTERN = re.compile(
+    r"\bOPTICAL\s+LENS\s+ASSEMBLY\s+AND\s+IMAGING\s+LENS\s+WITH\s+"
+    r"INFRARED\s+RAY\s+FILTERING\b",
     flags=re.IGNORECASE,
 )
 _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
@@ -4144,6 +4242,626 @@ def _parse_samsung_wide_fov_asphere_table(
     return coefficients
 
 
+def _parse_samsung_even_order_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse Samsung S1-S16 even-order asphere table pairs independently.
+
+    This family publishes ten TABLE pairs and explicitly defines ``HFOV`` as
+    half field. Each coefficient table names polynomial orders through 30th
+    order, so high-order mappings come from source row labels rather than from
+    an inferred symbolic coefficient.
+    """
+
+    bindings = list(_SAMSUNG_EVEN_ORDER_BINDING_PATTERN.finditer(text))
+    if _SAMSUNG_EVEN_ORDER_TITLE_PATTERN.search(text) is None or not bindings:
+        return []
+
+    embodiment_numbers = range(1, 11)
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Samsung even-order embodiment {embodiment_number}",
+                error=exc,
+            )
+            for embodiment_number in embodiment_numbers
+        ]
+
+    try:
+        if len(bindings) != 10:
+            raise PatentParseError(
+                f"Samsung even-order family must bind 10 embodiments, found {len(bindings)}"
+            )
+        if _SAMSUNG_EVEN_ORDER_HALF_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError("Samsung even-order half-field HFOV definition not found")
+        if _SAMSUNG_EVEN_ORDER_ASPHERE_DEFINITION.search(text) is None:
+            raise PatentParseError("Samsung even-order asphere equation definition not found")
+        blocks = _numbered_patent_table_blocks(text)
+        if set(blocks) != set(range(1, 24)):
+            raise PatentParseError(
+                "Samsung even-order family must contain exactly TABLE 1 through 23"
+            )
+        for embodiment_number, binding in enumerate(bindings, start=1):
+            if (
+                int(binding.group("surface_table")) != embodiment_number * 2 - 1
+                or int(binding.group("asphere_table")) != embodiment_number * 2
+            ):
+                raise PatentParseError(
+                    "Samsung even-order table binding is not consecutive at "
+                    f"embodiment {embodiment_number}"
+                )
+        metadata = _parse_samsung_even_order_metadata(blocks)
+        if set(metadata) != set(embodiment_numbers):
+            raise PatentParseError("Samsung even-order metadata does not cover embodiments 1-10")
+    except Exception as exc:  # noqa: BLE001 - retain the disclosed embodiment set
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number in embodiment_numbers:
+        embodiment = f"Samsung even-order embodiment {embodiment_number}"
+        try:
+            surface_table = embodiment_number * 2 - 1
+            asphere_table = embodiment_number * 2
+            surfaces = _parse_samsung_even_order_surface_table(
+                blocks[surface_table],
+                embodiment_number=embodiment_number,
+            )
+            coefficients = _parse_samsung_even_order_asphere_table(
+                blocks[asphere_table],
+                embodiment_number=embodiment_number,
+            )
+            if set(coefficients) != set(range(1, 17)):
+                raise PatentParseError(
+                    f"Samsung even-order embodiment {embodiment_number} asphere coverage "
+                    "must be S1-S16"
+                )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.surface_type = "ASP"
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+            focal_length, f_number, half_field = metadata[embodiment_number]
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=half_field,
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - retained per published embodiment
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_samsung_even_order_metadata(
+    blocks: dict[int, str],
+) -> dict[int, tuple[float, float, float]]:
+    table = blocks.get(21)
+    if table is None:
+        raise PatentParseError("Samsung even-order TABLE 21 metadata not found")
+    first_header = re.search(
+        r"\bFirst\s+Second\s+Third\s+Fourth\s+Fifth\s+Elements\s+"
+        r"(?:embodiment\s+){4}embodiment\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    second_header = re.search(
+        r"\bSixth\s+Seventh\s+Eighth\s+Ninth\s+Tenth\s+Elements\s+"
+        r"(?:embodiment\s+){4}embodiment\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if first_header is None or second_header is None or second_header.start() <= first_header.end():
+        raise PatentParseError("Samsung even-order TABLE 21 metadata headers are incomplete")
+
+    metadata: dict[int, tuple[float, float, float]] = {}
+    sections = (
+        (range(1, 6), table[first_header.end() : second_header.start()]),
+        (range(6, 11), table[second_header.end() :]),
+    )
+    for embodiment_numbers, section in sections:
+        focal_lengths = _parse_samsung_even_order_five_value_row(
+            section,
+            label_pattern=r"f",
+            label="f",
+        )
+        f_numbers = _parse_samsung_even_order_five_value_row(
+            section,
+            label_pattern=r"f-number",
+            label="f-number",
+        )
+        half_fields = _parse_samsung_even_order_five_value_row(
+            section,
+            label_pattern=r"HFOV(?:\(°\))?",
+            label="HFOV",
+        )
+        for embodiment_number, focal_length, f_number, half_field in zip(
+            embodiment_numbers,
+            focal_lengths,
+            f_numbers,
+            half_fields,
+            strict=True,
+        ):
+            metadata[embodiment_number] = (focal_length, f_number, half_field)
+    return metadata
+
+
+def _parse_samsung_even_order_five_value_row(
+    text: str,
+    *,
+    label_pattern: str,
+    label: str,
+) -> tuple[float, ...]:
+    value_sequence = rf"(?P<values>(?:{NUMBER_PATTERN}\s+){{4}}{NUMBER_PATTERN})"
+    matches = list(
+        re.finditer(
+            rf"(?<!\S)(?:{label_pattern})(?!\S)\s+{value_sequence}",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Samsung even-order metadata row {label} must occur exactly once per half"
+        )
+    return tuple(_parse_number(token) for token in matches[0].group("values").split())
+
+
+def _parse_samsung_even_order_surface_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> list[PatentSurface]:
+    starts = list(re.finditer(r"(?<!\S)S(?P<index>\d+)\s+", table_text, re.IGNORECASE))
+    indices = [int(match.group("index")) for match in starts]
+    if indices != list(range(1, 20)):
+        raise PatentParseError(
+            f"Samsung even-order embodiment {embodiment_number} surface sequence must be S1-S19"
+        )
+    header = re.sub(
+        r"\ATABLE-US-\d+\s+TABLE\s+\d+\s+",
+        "",
+        table_text[: starts[0].start()],
+        flags=re.IGNORECASE,
+    ).strip()
+    if header not in _SAMSUNG_EVEN_ORDER_SURFACE_HEADERS:
+        raise PatentParseError(
+            f"Samsung even-order embodiment {embodiment_number} surface header is unsupported"
+        )
+
+    label_tokens: dict[int, tuple[str, ...]] = {
+        1: ("First", "lens"),
+        3: ("Second", "lens"),
+        4: ("Stop",),
+        5: ("Third", "lens"),
+        7: ("Fourth", "lens"),
+        9: ("Fifth", "lens"),
+        11: ("Sixth", "lens"),
+        13: ("Seventh", "lens"),
+        15: ("Eighth", "lens"),
+        17: ("Filter",),
+        19: ("Imaging", "plane"),
+    }
+    material_surfaces = {1, 3, 5, 7, 9, 11, 13, 15, 17}
+    surfaces: list[PatentSurface] = []
+    for row_index, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = starts[row_index + 1].start() if row_index + 1 < len(starts) else len(table_text)
+        tokens = table_text[match.end() : end].split()
+        values = [
+            token
+            for token in tokens
+            if token.upper() == "INFINITY" or re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
+        ]
+        residue = [
+            token.lower()
+            for token in tokens
+            if token.upper() != "INFINITY"
+            and re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE) is None
+        ]
+        expected_label = [token.lower() for token in label_tokens.get(surface_index, ())]
+        if residue != expected_label:
+            raise PatentParseError(
+                f"Samsung even-order embodiment {embodiment_number} surface "
+                f"S{surface_index} label mismatch"
+            )
+        expected_values = 5 if surface_index in material_surfaces else 3
+        if len(values) != expected_values:
+            raise PatentParseError(
+                f"Samsung even-order embodiment {embodiment_number} surface S{surface_index} "
+                f"has {len(values)} values, expected {expected_values}"
+            )
+        radius = _distance_value(
+            values[0],
+            field_name=f"Samsung even-order S{surface_index} radius",
+        )
+        thickness = _distance_value(
+            values[1],
+            field_name=f"Samsung even-order S{surface_index} thickness",
+        )
+        nd = vd = None
+        if surface_index in material_surfaces:
+            nd = _parse_number(values[2])
+            vd = _parse_number(values[3])
+            effective_radius = _parse_number(values[4])
+            _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+        else:
+            effective_radius = _parse_number(values[2])
+        if effective_radius <= 0:
+            raise PatentParseError(
+                f"Samsung even-order embodiment {embodiment_number} surface "
+                f"S{surface_index} effective radius must be positive"
+            )
+        label = " ".join(label_tokens.get(surface_index, ())) or f"Surface {surface_index}"
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material="Glass" if nd is not None else None,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+    return surfaces
+
+
+def _parse_samsung_even_order_asphere_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> dict[int, dict[str, float]]:
+    header_pattern = re.compile(
+        r"\bSurface\s+No\.?\s+(?P<labels>(?:S\d+\s+){7}S\d+)\s+",
+        flags=re.IGNORECASE,
+    )
+    headers = list(header_pattern.finditer(table_text))
+    if len(headers) != 2:
+        raise PatentParseError(
+            f"Samsung even-order embodiment {embodiment_number} must have two asphere headers"
+        )
+    expected_groups = (tuple(range(1, 9)), tuple(range(9, 17)))
+    parsed_groups = tuple(
+        tuple(int(token[1:]) for token in header.group("labels").split())
+        for header in headers
+    )
+    if parsed_groups != expected_groups:
+        raise PatentParseError(
+            f"Samsung even-order embodiment {embodiment_number} asphere headers must be "
+            "S1-S8 and S9-S16"
+        )
+
+    coefficients: dict[int, dict[str, float]] = {}
+    sections = (
+        (expected_groups[0], table_text[headers[0].end() : headers[1].start()]),
+        (expected_groups[1], table_text[headers[1].end() :]),
+    )
+    row_labels = ("K",) + tuple(
+        f"{order}{'nd' if order == 22 else 'th'}" for order in range(4, 31, 2)
+    )
+    row_pattern = re.compile(
+        r"(?<!\S)(?:K|4th|6th|8th|10th|12th|14th|16th|18th|20th|22nd|"
+        r"24th|26th|28th|30th)(?!\S)",
+        flags=re.IGNORECASE,
+    )
+    for surface_indices, section in sections:
+        section = re.split(
+            r"\s+(?:\(\d+\)|\[\d+\])\s+",
+            section,
+            maxsplit=1,
+        )[0]
+        row_starts = list(row_pattern.finditer(section))
+        if tuple(match.group(0).upper() for match in row_starts) != tuple(
+            label.upper() for label in row_labels
+        ):
+            raise PatentParseError(
+                f"Samsung even-order embodiment {embodiment_number} coefficient rows "
+                "must be K and even orders 4-30"
+            )
+        for row_index, match in enumerate(row_starts):
+            end = (
+                row_starts[row_index + 1].start()
+                if row_index + 1 < len(row_starts)
+                else len(section)
+            )
+            row_tokens = section[match.start() : end].split()
+            numeric_tokens = [
+                token
+                for token in row_tokens
+                if re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
+            ]
+            residue = [
+                token.lower()
+                for token in row_tokens
+                if re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE) is None
+            ]
+            expected_residue = (
+                [match.group(0).lower()]
+                if match.group(0).upper() == "K"
+                else [match.group(0).lower(), "order", "term"]
+            )
+            if residue != expected_residue or len(numeric_tokens) != 8:
+                raise PatentParseError(
+                    f"Samsung even-order embodiment {embodiment_number} coefficient row "
+                    f"{match.group(0)} is incomplete"
+                )
+            codev_label = "K"
+            if match.group(0).upper() != "K":
+                order_match = re.match(r"\d+", match.group(0))
+                if order_match is None:
+                    raise PatentParseError("Samsung even-order coefficient label is invalid")
+                codev_label = ASPHERE_ORDER_TO_CODEV[int(order_match.group(0))]
+            for surface_index, token in zip(surface_indices, numeric_tokens, strict=True):
+                coefficients.setdefault(surface_index, {})[codev_label] = _parse_number(token)
+    return coefficients
+
+
+def _parse_samsung_eight_lens_missing_stop_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify five source-complete tables whose axial stop coordinate is absent.
+
+    The official family publishes S1-S19 surface tables and states only that ST
+    may lie somewhere in the S4-S5 air gap.  Selecting an endpoint or splitting
+    that gap would invent a number, so these embodiments are terminal source
+    outcomes rather than conversion candidates.
+    """
+
+    bindings = list(_SAMSUNG_EIGHT_LENS_BINDING_PATTERN.finditer(text))
+    if not bindings:
+        return []
+
+    embodiment_numbers = range(1, 6)
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Samsung eight-lens example {embodiment_number}",
+                error=exc,
+            )
+            for embodiment_number in embodiment_numbers
+        ]
+
+    try:
+        if len(bindings) != 5:
+            raise PatentParseError(
+                f"Samsung eight-lens family must bind five examples, found {len(bindings)}"
+            )
+        blocks = _numbered_patent_table_blocks(text)
+        if set(blocks) != set(range(1, 13)):
+            raise PatentParseError("Samsung eight-lens family must contain TABLE 1 through 12")
+        stops = list(_SAMSUNG_EIGHT_LENS_STOP_PATTERN.finditer(text))
+        if len(stops) != 5 or len(re.findall(r"\bstop\s+ST\b", text, re.IGNORECASE)) != 10:
+            raise PatentParseError(
+                "Samsung eight-lens stop disclosures are incomplete or contain an extra binding"
+            )
+        if (
+            re.search(
+                r"[“\"]A\s+to\s+J[”\"]\s+are\s+aspheric\s+constants\b",
+                text,
+                flags=re.IGNORECASE,
+            )
+            is None
+        ):
+            raise PatentParseError("Samsung eight-lens A-J asphere definition not found")
+        for embodiment_number, (binding, stop) in enumerate(zip(bindings, stops, strict=True), 1):
+            expected_surface_table = embodiment_number * 2 - 1
+            expected_asphere_table = embodiment_number * 2
+            expected_system = embodiment_number * 100
+            if (
+                int(binding.group("surface_table")) != expected_surface_table
+                or int(binding.group("asphere_table")) != expected_asphere_table
+                or int(binding.group("system")) != expected_system
+                or int(stop.group("second")) != expected_system + 20
+                or int(stop.group("third")) != expected_system + 30
+            ):
+                raise PatentParseError(
+                    "Samsung eight-lens table/stop binding is not consecutive at "
+                    f"example {embodiment_number}"
+                )
+            _validate_samsung_eight_lens_surface_table(
+                blocks[expected_surface_table],
+                embodiment_number=embodiment_number,
+            )
+            _validate_samsung_eight_lens_asphere_table(
+                blocks[expected_asphere_table],
+                embodiment_number=embodiment_number,
+            )
+        _validate_samsung_eight_lens_metadata_table(blocks[11])
+    except Exception as exc:  # noqa: BLE001 - retain all five disclosed examples
+        return attempts_for_error(exc)
+
+    detail = (
+        "official S1-S19 tables omit a stop row and disclose ST only as somewhere between "
+        "the second and third lenses; the axial stop coordinate is not published"
+    )
+    return attempts_for_error(
+        PatentTerminalParseError(
+            status="metadata_unpublished",
+            reason_code="metadata_unpublished.stop_axial_coordinate_absent",
+            detail=detail,
+        )
+    )
+
+
+def _validate_samsung_eight_lens_surface_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> None:
+    header = _SAMSUNG_EIGHT_LENS_SURFACE_HEADER_PATTERN.search(table_text)
+    if header is None:
+        raise PatentParseError(
+            f"Samsung eight-lens example {embodiment_number} surface header not found"
+        )
+    body = re.split(
+        r"\s+(?:\(\d+\)|\[\d+\])\s+",
+        table_text[header.end() :],
+        maxsplit=1,
+    )[0]
+    indices = [
+        int(match.group("index"))
+        for match in re.finditer(r"(?<!\S)S(?P<index>\d+)\s+", body, re.IGNORECASE)
+    ]
+    if indices != list(range(1, 20)):
+        raise PatentParseError(
+            f"Samsung eight-lens example {embodiment_number} surface sequence must be S1-S19"
+        )
+    if re.search(r"\b(?:stop|ST)\b", body, re.IGNORECASE) is not None:
+        raise PatentParseError(
+            f"Samsung eight-lens example {embodiment_number} unexpectedly contains a stop row"
+        )
+
+
+def _validate_samsung_eight_lens_asphere_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> None:
+    first_header = _SAMSUNG_EIGHT_LENS_ASPHERE_HEADER_PATTERN.search(table_text)
+    continuation = _SAMSUNG_EIGHT_LENS_ASPHERE_CONTINUATION_PATTERN.search(table_text)
+    if (
+        first_header is None
+        or continuation is None
+        or continuation.start() <= first_header.end()
+    ):
+        raise PatentParseError(
+            f"Samsung eight-lens example {embodiment_number} asphere headers are incomplete"
+        )
+    first_indices = [
+        int(value)
+        for value in re.findall(
+            r"(?<!\S)S(\d+)\s+",
+            table_text[first_header.end() : continuation.start()],
+            flags=re.IGNORECASE,
+        )
+    ]
+    continuation_body = re.split(
+        r"\s+(?:\(\d+\)|\[\d+\])\s+",
+        table_text[continuation.end() :],
+        maxsplit=1,
+    )[0]
+    second_indices = [
+        int(value)
+        for value in re.findall(
+            r"(?<!\S)S(\d+)\s+",
+            continuation_body,
+            flags=re.IGNORECASE,
+        )
+    ]
+    expected = list(range(1, 17))
+    if first_indices != expected or second_indices != expected:
+        raise PatentParseError(
+            f"Samsung eight-lens example {embodiment_number} asphere rows must be S1-S16 twice"
+        )
+
+
+def _validate_samsung_eight_lens_metadata_table(table_text: str) -> None:
+    if (
+        re.search(
+            r"\bFirst\s+Second\s+Third\s+Fourth\s+Fifth\s+Note\s+"
+            r"Example\s+Example\s+Example\s+Example\s+Example\s+",
+            table_text,
+            flags=re.IGNORECASE,
+        )
+        is None
+    ):
+        raise PatentParseError("Samsung eight-lens TABLE 11 example header not found")
+    for label in (r"f\s+number", "FOV", "f"):
+        matches = list(
+            re.finditer(
+                rf"(?<!\S){label}(?!\S)\s+"
+                rf"(?P<values>(?:{NUMBER_PATTERN}\s+){{4}}{NUMBER_PATTERN})(?!\S)",
+                table_text,
+                flags=re.IGNORECASE,
+            )
+        )
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Samsung eight-lens TABLE 11 metadata row {label} is missing or ambiguous"
+            )
+
+
+def _classify_ir_filter_coating_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the exact 78-table IR-coating document as no prescription."""
+
+    if _IR_FILTER_COATING_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    embodiment = "IR-filter coating document"
+    try:
+        blocks = _patent_table_blocks(text)
+        if [block.number for block in blocks] != list(range(1, 79)):
+            raise PatentParseError("IR-filter coating family must contain TABLE 1 through 78")
+        allowed_table_marker = re.compile(
+            r"(?:\bWavelength\s+\(nm\)|\bLayer\b|\bMaterial\b|"
+            r"\bTotal\s+(?:amount|number)\b|\bPhysical\s+total\s+thickness\b)",
+            flags=re.IGNORECASE,
+        )
+        if any(allowed_table_marker.search(block.text) is None for block in blocks):
+            raise PatentParseError("IR-filter coating family contains an unclassified table")
+        table_text = " ".join(block.text for block in blocks)
+        if re.search(
+            r"\b(?:curvature|Abbe|surface\s+No\.|FOV|HFOV|f\s+number|focal\s+length)\b",
+            table_text,
+            flags=re.IGNORECASE,
+        ):
+            raise PatentParseError(
+                "IR-filter coating family unexpectedly contains prescription-table markers"
+            )
+        if len(re.findall(r"\baperture\s+stop\s+60\b", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("IR-filter coating family aperture narrative is incomplete")
+    except Exception as exc:  # noqa: BLE001 - retain exact-title structural damage
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code="confirmed_no_prescription.ir_filter_coating_tables_only",
+                detail=(
+                    "all 78 official PPUBS tables disclose only thin-film material, layer "
+                    "thickness, wavelength, or transmittance data; no optical surface "
+                    "prescription is published"
+                ),
+            ),
+        )
+    ]
+
+
 def _parse_folded_zoom_table_attempts(
     text: str,
     *,
@@ -6174,6 +6892,7 @@ async def _convert_candidate(
                 patent_id=candidate.patent_id,
             )
     except Exception as exc:  # noqa: BLE001 - report per-patent failure reason
+        failure_status, failure_reason_code = _parse_failure_outcome(exc)
         source_attempts = (
             exc.attempts
             if isinstance(exc, PatentFulltextFetchError)
@@ -6183,8 +6902,9 @@ async def _convert_candidate(
             ConversionAttempt(
                 patent_id=candidate.patent_id,
                 title=candidate.title,
-                status="failed",
+                status=failure_status,
                 reason=f"{type(exc).__name__}: {exc}",
+                reason_code=failure_reason_code,
                 raw_document_path=(
                     source_document.retained_path if source_document is not None else ""
                 ),
@@ -6228,12 +6948,14 @@ async def _convert_candidate(
     formal_case_stems = formal_case_stems or frozenset()
     for parse_attempt in parse_attempts:
         if parse_attempt.error is not None:
+            failure_status, failure_reason_code = _parse_failure_outcome(parse_attempt.error)
             attempts.append(
                 ConversionAttempt(
                     patent_id=candidate.patent_id,
                     title=candidate.title,
-                    status="failed",
+                    status=failure_status,
                     reason=f"{type(parse_attempt.error).__name__}: {parse_attempt.error}",
+                    reason_code=failure_reason_code,
                     raw_document_path=source_document.retained_path,
                     raw_document_sha256=source_document.sha256,
                     source_bucket=fetched.source_bucket,
@@ -6459,6 +7181,12 @@ async def _convert_candidate(
             attempt.fulltext_recovery_manifest_path = recovery_manifest.retained_path
             attempt.fulltext_recovery_manifest_sha256 = recovery_manifest.sha256
     return attempts
+
+
+def _parse_failure_outcome(exc: Exception) -> tuple[str, str]:
+    if isinstance(exc, PatentTerminalParseError):
+        return exc.status, exc.reason_code
+    return "failed", ""
 
 
 _PPUBS_APPLICATION_NUMBER_PATTERN = re.compile(
