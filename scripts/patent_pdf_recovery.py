@@ -138,6 +138,53 @@ _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS = (
 )
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _GENIUS_FOUR_LENS_ELEVEN_ALLOWED_BLANK_MIRROR_PAGES = frozenset({6, 17, 21, 33, 45})
+_GENIUS_NINE_LENS_ELEVEN_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+    "tenth",
+    "eleventh",
+)
+_GENIUS_NINE_LENS_ELEVEN_OPTICAL_FIGURES = tuple(8 + 4 * index for index in range(11))
+_GENIUS_NINE_LENS_ELEVEN_ASPHERE_FIGURES = tuple(9 + 4 * index for index in range(11))
+_GENIUS_NINE_LENS_ELEVEN_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for embodiment, (ordinal, optical_figure, asphere_figure) in enumerate(
+        zip(
+            _GENIUS_NINE_LENS_ELEVEN_ORDINALS,
+            _GENIUS_NINE_LENS_ELEVEN_OPTICAL_FIGURES,
+            _GENIUS_NINE_LENS_ELEVEN_ASPHERE_FIGURES,
+            strict=True,
+        ),
+        start=1,
+    )
+    for marker in (
+        (
+            f"FIG. {optical_figure} depicts a table of optical data for each lens element "
+            + (
+                f"of {'an' if ordinal in {'eighth', 'eleventh'} else 'a'} {ordinal} "
+                "embodiment of an optical imaging lens according to "
+                if embodiment == 1 or embodiment >= 7
+                else f"of the optical imaging lens of a {ordinal} embodiment of "
+            )
+            + "the present disclosure"
+        ),
+        f"FIG. {asphere_figure} depicts a table of aspherical data of "
+        f"{'an' if ordinal in {'eighth', 'eleventh'} else 'a'} {ordinal} "
+        "embodiment of the optical imaging lens according to the present disclosure",
+    )
+)
+_GENIUS_NINE_LENS_ELEVEN_COMPARISON_MARKERS = (
+    "FIGS. 50 A and 50 B depict tables for the values of",
+    "of all eleven example embodiments",
+)
+_GENIUS_NINE_LENS_ELEVEN_PROFILE = "genius_nine_lens_eleven_embodiment_census_v1"
 _GENIUS_FOUR_LENS_NINE_OPTICAL_FIGURES = (8, 12, 16, 20, 24, 28, 32, 36, 40)
 _GENIUS_FOUR_LENS_NINE_ASPHERE_FIGURES = (9, 13, 17, 21, 25, 29, 33, 37, 41)
 _GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT = tuple(
@@ -292,6 +339,7 @@ _GENIUS_OFFICIAL_ONLY_PROFILES = frozenset(
         _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE,
         _GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_PROFILE,
         _GENIUS_FOUR_LENS_NINE_PROFILE,
+        _GENIUS_NINE_LENS_ELEVEN_PROFILE,
     }
 )
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
@@ -359,6 +407,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
     ):
         return _GENIUS_FOUR_LENS_ELEVEN_PROFILE
+    if all(
+        marker in text for marker in _GENIUS_NINE_LENS_ELEVEN_REQUIRED_FIGURE_TEXT
+    ) and all(marker in text for marker in _GENIUS_NINE_LENS_ELEVEN_COMPARISON_MARKERS):
+        return _GENIUS_NINE_LENS_ELEVEN_PROFILE
     if all(marker in text for marker in _GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT) and all(
         marker in text for marker in _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
     ):
@@ -552,6 +604,26 @@ def _genius_four_lens_nine_source_facts(raw_html: str) -> dict[str, Any]:
             marker.split(" show", maxsplit=1)[0]: text.count(marker)
             for marker in _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
         },
+    }
+
+
+def _genius_nine_lens_eleven_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind eleven nine-lens optical/asphere pairs and two comparison sheets."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" depicts", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_NINE_LENS_ELEVEN_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_counts": {
+            marker: text.count(marker)
+            for marker in _GENIUS_NINE_LENS_ELEVEN_COMPARISON_MARKERS
+        },
+        "genius_applicant_assignee_count": text.count(
+            "Genius Electronic Optical (Xiamen) Co., Ltd."
+        ),
     }
 
 
@@ -1149,6 +1221,20 @@ async def recover_ability_official_pdf_ocr(
                 )
         parser_profile = profile
         source_facts = _genius_four_lens_eleven_source_facts(primary_html)
+    elif profile == _GENIUS_NINE_LENS_ELEVEN_PROFILE:
+        if page_count != 65:
+            raise PatentPdfRecoveryError(
+                "Genius nine-lens eleven-embodiment PDF page count is not 65"
+            )
+        role_pages = {}
+        for embodiment in range(1, 12):
+            optical_page_index = 6 + (embodiment - 1) * 4
+            role_pages[f"genius_nine_eleven_optical_{embodiment}"] = optical_page_index
+            role_pages[f"genius_nine_eleven_asphere_{embodiment}"] = optical_page_index + 1
+        role_pages["genius_nine_eleven_comparison_1"] = 48
+        role_pages["genius_nine_eleven_comparison_2"] = 49
+        parser_profile = profile
+        source_facts = _genius_nine_lens_eleven_source_facts(primary_html)
     elif profile == _GENIUS_FOUR_LENS_NINE_PROFILE:
         if page_count != 47:
             raise PatentPdfRecoveryError("Genius four-lens nine-embodiment PDF page count is not 47")

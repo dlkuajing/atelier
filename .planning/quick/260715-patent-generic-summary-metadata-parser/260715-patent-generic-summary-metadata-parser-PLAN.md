@@ -757,6 +757,30 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `ec417874b5ebef16a844e75be849b804cd449d291f4a3a8537ad4c57432c3ed8`.
   Strict audit is 619/619 with zero corrupt evidence; 159 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- The largest 11-root `OPTICAL IMAGING LENS` signature was not generalized blindly. Only
+  `US-12625349-B2` currently matches the new exact Genius profile: official HTML SHA-256
+  `f97ac1531762ef9d44f904565b39b6611924471a4c2cc300a4c8c2e76ecee701` binds eleven
+  optical/asphere pairs (FIG.8/9 through FIG.48/49), FIG.50A/B comparison sheets, and two exact
+  Genius applicant/assignee records. Every required binding count is exactly one.
+- Its pinned official-only PDF SHA-256 is
+  `4f49d1d866fce7d99f8aa2553733bbbffbcd83ddac361fb11df85f1f0d13fada`; the source-pin
+  SHA-256 is `71dcdcf13a1f2846ff5db6b57a4f0c3d0b9b2693f7cc131ed9fb19c257886e8b`.
+  It has 65 pages and 48 drawing sheets. Retained key pages are 7/8, 11/12, 15/16, 19/20,
+  23/24, 27/28, 31/32, 35/36, 39/40, 43/44, 47/48, and comparison pages 49/50. Google Patents
+  returned 404, so the manifest contains no overlay and makes no raster-pair equality claim.
+- The exact profile expands one document failure into 11 independent parser-review items. Actual
+  failures include below-0.95 or missing drawing-sheet headers and `a6`/`a12` labels; comparison
+  sheet 48's header confidence is 0.941840. No OCR token or number is repaired, and no worker,
+  ZMX, or promotion occurs. Attempts 3/4 are canonical-equal with semantic result SHA-256
+  `de4744f8bc5a74e6756e38850b1dc16320af13626cad74d4a7878d0087080e58`, parser-input
+  SHA-256 `3e7b50f3b86cc102bc86ee936b563d2176c8e50e7be848c6906fd1927f78ee3e`, and manifest
+  SHA-256 `37f62b6b7aa3faa2e181db54462da2fa55f47b7dbe20dbee559f8bf64e83c651`.
+- Generic summary changed 236 to 235. Current result-set SHA-256 is
+  `0da2ea6374db0b374c53aa2ac3412b42a14c209af2bcf3561958cd32a2f36457`; summary artifact
+  SHA-256 is `89017c49ff327d9888fe24ce35413e80f2648f14273e35a4ac0fe6530270897f`;
+  after-census SHA-256 is `f7cee47117c28d8760434735838b0717389a691535582aa178b0d33f015e0a5a`.
+  Strict audit is 619/619 with zero corrupt evidence; 162 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
