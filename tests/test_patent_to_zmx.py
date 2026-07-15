@@ -2640,6 +2640,107 @@ def _genius_eight_lens_fourteen_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_six_lens_ten_dual_focus_pdf_ocr_parser_input() -> bytes:
+    pages = []
+    for embodiment_number in range(1, 11):
+        optical_page_number = 24 + (embodiment_number - 1) * 2
+        asphere_page_number = optical_page_number + 1
+        pages.append(
+            {
+                "page_number": optical_page_number,
+                "role": f"genius_six_ten_dual_optical_{embodiment_number}",
+                "official_image_sha256": str(embodiment_number % 10) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(
+                        f"Sheet {optical_page_number - 1} of 46",
+                        700.0,
+                        50.0,
+                    ),
+                    _ability_ocr_token(
+                        "EFL=1, EFLA=2, Fno at first focusing state=3",
+                        100.0,
+                        100.0,
+                    ),
+                    _ability_ocr_token(
+                        "Fno at second focusing state=4, "
+                        "HFOV at first focusing state=5",
+                        100.0,
+                        140.0,
+                    ),
+                    _ability_ocr_token(
+                        "HFOV at second focusing state=6, TTL=7, ImgH=8",
+                        100.0,
+                        180.0,
+                    ),
+                ],
+            }
+        )
+        pages.append(
+            {
+                "page_number": asphere_page_number,
+                "role": f"genius_six_ten_dual_asphere_{embodiment_number}",
+                "official_image_sha256": str((embodiment_number + 1) % 10) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(
+                        f"Sheet {asphere_page_number - 1} of 46",
+                        700.0,
+                        50.0,
+                    ),
+                    *(
+                        _ability_ocr_token(label, 100.0 + index * 80.0, 100.0)
+                        for index, label in enumerate(
+                            ("K", "a4", "a6", "a8", "a10", "a12", "a14", "a16", "a18", "a20")
+                        )
+                    ),
+                ],
+            }
+        )
+    for comparison in range(1, 5):
+        page_number = 43 + comparison
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": f"genius_six_ten_dual_comparison_{comparison}",
+                "official_image_sha256": "f" * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(
+                        f"Sheet {page_number - 1} of 46",
+                        700.0,
+                        50.0,
+                    )
+                ],
+            }
+        )
+    markers = patent_pdf_recovery._GENIUS_SIX_LENS_TEN_DUAL_FOCUS_REQUIRED_FIGURE_TEXT
+    comparison = (
+        patent_pdf_recovery._GENIUS_SIX_LENS_TEN_DUAL_FOCUS_COMPARISON_MARKER
+    )
+    source = " ".join(
+        (
+            *markers,
+            comparison,
+            *("first focusing state",) * 200,
+            *("second focusing state",) * 206,
+            *("optical imaging lens of six lens elements",) * 2,
+        )
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "genius_six_lens_ten_dual_focus_census_v1",
+        "publication_id": "US-12656578-B2",
+        "page_count": 64,
+        "source_facts": patent_pdf_recovery._genius_six_lens_ten_dual_focus_source_facts(
+            source
+        ),
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_six_lens_five_pdf_ocr_parser_input() -> bytes:
     pages = []
     for embodiment_number in range(1, 6):
@@ -3438,6 +3539,31 @@ def test_genius_six_lens_nine_source_facts_bind_every_figure() -> None:
     assert facts["comparison_binding_counts"] == {"FIG. 43": 1, "FIG. 44": 1}
 
 
+def test_genius_six_lens_ten_dual_focus_source_facts_are_exact() -> None:
+    markers = patent_pdf_recovery._GENIUS_SIX_LENS_TEN_DUAL_FOCUS_REQUIRED_FIGURE_TEXT
+    comparison = (
+        patent_pdf_recovery._GENIUS_SIX_LENS_TEN_DUAL_FOCUS_COMPARISON_MARKER
+    )
+    source = " ".join(
+        (
+            *markers,
+            comparison,
+            *("first focusing state",) * 200,
+            *("second focusing state",) * 206,
+            *("optical imaging lens of six lens elements",) * 2,
+        )
+    )
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._genius_six_lens_ten_dual_focus_source_facts(source)
+    assert len(facts["figure_binding_counts"]) == 10
+    assert set(facts["figure_binding_counts"].values()) == {1}
+    assert facts["comparison_binding_count"] == 1
+    assert facts["first_focusing_state_count"] == 201
+    assert facts["second_focusing_state_count"] == 207
+    assert facts["six_lens_element_claim_count"] == 2
+
+
 def test_genius_six_lens_nine_comparison_variant_source_facts_are_exact() -> None:
     three_markers = (
         patent_pdf_recovery._GENIUS_SIX_LENS_NINE_THREE_COMPARISON_REQUIRED_FIGURE_TEXT
@@ -3719,6 +3845,32 @@ def test_genius_eight_lens_fourteen_profile_refuses_source_binding_drift() -> No
         patent_to_zmx._parse_prescription_attempts(
             json.dumps(payload),
             patent_id="US-20250020895-A1",
+        )
+
+
+def test_genius_six_lens_ten_dual_focus_profile_retains_every_embodiment() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _genius_six_lens_ten_dual_focus_pdf_ocr_parser_input().decode(),
+        patent_id="US-12656578-B2",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 11))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "ten-embodiment dual-focus census passed; numeric parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_genius_six_lens_ten_dual_focus_profile_refuses_source_drift() -> None:
+    payload = json.loads(_genius_six_lens_ten_dual_focus_pdf_ocr_parser_input())
+    payload["source_facts"]["second_focusing_state_count"] = 206
+
+    with pytest.raises(PatentParseError, match="official figure/source bindings changed"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-12656578-B2",
         )
 
 

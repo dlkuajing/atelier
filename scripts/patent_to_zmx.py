@@ -2519,6 +2519,9 @@ _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE = (
 _GENIUS_FOUR_LENS_NINE_PROFILE = "genius_four_lens_nine_embodiment_census_v1"
 _GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
 _GENIUS_SIX_LENS_NINE_PROFILE = "genius_six_lens_nine_embodiment_census_v1"
+_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_PROFILE = (
+    "genius_six_lens_ten_dual_focus_census_v1"
+)
 _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE = (
     "genius_six_lens_nine_three_comparison_census_v1"
 )
@@ -4775,6 +4778,48 @@ def _genius_six_asphere_census_error(page: dict[str, Any]) -> str | None:
     return None
 
 
+def _genius_six_ten_dual_metadata_error(page: dict[str, Any]) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    patterns = {
+        "EFL": r"(?:^|[\s,])EFL\s*=",
+        "EFLA": r"(?:^|[\s,])EFLA\s*=",
+        "first-focus Fno": r"(?:^|[\s,])Fno\s+at\s+first\s+focusing\s+state\s*=",
+        "second-focus Fno": r"(?:^|[\s,])Fno\s+at\s+second\s+focusing\s+state\s*=",
+        "first-focus HFOV": r"(?:^|[\s,])HFOV\s+at\s+first\s+focusing\s+state\s*=",
+        "second-focus HFOV": r"(?:^|[\s,])HFOV\s+at\s+second\s+focusing\s+state\s*=",
+        "TTL": r"(?:^|[\s,])TTL\s*=",
+        "ImgH": r"(?:^|[\s,])ImgH\s*=",
+    }
+    for label, pattern in patterns.items():
+        matches = [
+            token
+            for token in tokens
+            if re.search(pattern, _ability_token_text(token), flags=re.IGNORECASE)
+        ]
+        if len(matches) != 1:
+            return f"dual-focus optical metadata {label} has {len(matches)} exact prefixes"
+        confidence = _ability_token_confidence(matches[0])
+        if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            return (
+                f"dual-focus optical metadata {label} confidence {confidence:.6f} is below "
+                f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+    return None
+
+
+def _genius_six_ten_dual_asphere_census_error(page: dict[str, Any]) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("K", "a4", "a6", "a8", "a10", "a12", "a14", "a16", "a18", "a20"):
+        error = _genius_six_exact_label_error(
+            tokens,
+            label,
+            context="dual-focus asphere table",
+        )
+        if error is not None:
+            return error
+    return None
+
+
 def _genius_nine_lens_eleven_optical_census_error(page: dict[str, Any]) -> str | None:
     tokens = list(page.get("rapidocr_tokens") or [])
     for label in ("EFL", "HFOV", "TTL", "Fno", "Image Height"):
@@ -5132,6 +5177,119 @@ def _parse_genius_six_lens_nine_attempts(
     ):
         raise PatentParseError("Genius nine-embodiment official figure bindings changed")
     return _genius_six_lens_census_attempts(payload, embodiment_count=9)
+
+
+def _parse_genius_six_lens_ten_dual_focus_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 64:
+        raise PatentParseError(
+            "Genius ten-embodiment dual-focus PDF page count is not 64"
+        )
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 24:
+        raise PatentParseError(
+            "Genius ten-embodiment dual-focus PDF must retain 24 key pages"
+        )
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError(
+            "Genius ten-embodiment dual-focus input lacks official source facts"
+        )
+    primary_digest = facts.get("primary_html_sha256")
+    if (
+        not isinstance(primary_digest, str)
+        or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None
+    ):
+        raise PatentParseError("Genius dual-focus official HTML hash is invalid")
+    figure_counts = facts.get("figure_binding_counts")
+    if (
+        not isinstance(figure_counts, dict)
+        or len(figure_counts) != 10
+        or set(figure_counts.values()) != {1}
+        or facts.get("comparison_binding_count") != 1
+        or facts.get("first_focusing_state_count") != 201
+        or facts.get("second_focusing_state_count") != 207
+        or facts.get("six_lens_element_claim_count") != 2
+    ):
+        raise PatentParseError("Genius dual-focus official figure/source bindings changed")
+
+    comparison_errors = []
+    for comparison in range(1, 5):
+        page_number = 43 + comparison
+        page = _ability_page(
+            payload,
+            f"genius_six_ten_dual_comparison_{comparison}",
+        )
+        error = _genius_six_page_binding_error(
+            page,
+            page_number=page_number,
+            sheet_number=page_number - 1,
+            sheet_count=46,
+            role=f"genius_six_ten_dual_comparison_{comparison}",
+        )
+        if error is not None:
+            comparison_errors.append(error)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    ordinals = (
+        "first",
+        "second",
+        "third",
+        "fourth",
+        "fifth",
+        "sixth",
+        "seventh",
+        "eighth",
+        "ninth",
+        "tenth",
+    )
+    for embodiment_number, ordinal in enumerate(ordinals, start=1):
+        optical_page_number = 24 + (embodiment_number - 1) * 2
+        asphere_page_number = optical_page_number + 1
+        optical_page = _ability_page(
+            payload,
+            f"genius_six_ten_dual_optical_{embodiment_number}",
+        )
+        asphere_page = _ability_page(
+            payload,
+            f"genius_six_ten_dual_asphere_{embodiment_number}",
+        )
+        errors = [
+            error
+            for error in (
+                _genius_six_page_binding_error(
+                    optical_page,
+                    page_number=optical_page_number,
+                    sheet_number=optical_page_number - 1,
+                    sheet_count=46,
+                    role=f"genius_six_ten_dual_optical_{embodiment_number}",
+                ),
+                _genius_six_ten_dual_metadata_error(optical_page),
+                _genius_six_page_binding_error(
+                    asphere_page,
+                    page_number=asphere_page_number,
+                    sheet_number=asphere_page_number - 1,
+                    sheet_count=46,
+                    role=f"genius_six_ten_dual_asphere_{embodiment_number}",
+                ),
+                _genius_six_ten_dual_asphere_census_error(asphere_page),
+                *comparison_errors,
+            )
+            if error is not None
+        ]
+        if not errors:
+            errors.append(
+                "Genius ten-embodiment dual-focus census passed; numeric parser remains"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Genius six-lens dual-focus {ordinal} embodiment",
+                error=PatentParseError(" | ".join(errors)),
+            )
+        )
+    return attempts
 
 
 def _parse_genius_six_lens_nine_comparison_variant_attempts(
@@ -5646,6 +5804,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_genius_six_lens_five_attempts(payload)
     if profile == _GENIUS_SIX_LENS_NINE_PROFILE:
         return _parse_genius_six_lens_nine_attempts(payload)
+    if profile == _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_PROFILE:
+        return _parse_genius_six_lens_ten_dual_focus_attempts(payload)
     if profile == _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE:
         return _parse_genius_six_lens_nine_comparison_variant_attempts(
             payload,

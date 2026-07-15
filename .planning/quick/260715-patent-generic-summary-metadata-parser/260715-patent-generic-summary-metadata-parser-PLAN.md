@@ -833,6 +833,33 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `b76b0aada8b4b6ffe918103c5a74e6d3ff39cbe37350a71484a571abd626b617`.
   Strict audit is 619/619 with zero corrupt evidence; 189 focused parser/census/replay/process tests,
   Ruff, and `git diff --check` pass with CODE V inventory zero.
+- `US-12656578-B2` uniquely matches the new ten-embodiment, six-lens dual-focus profile. Its
+  official PPUBS HTML SHA-256 is
+  `9170320128219baf3186ca8015c0527e1556a88b0a4001bdb17416b34e11f86a`; ten exact
+  optical/asphere bindings map FIG.26/27 through FIG.44/45, the FIG.46--49 comparison sentence
+  occurs once, `first focusing state`/`second focusing state` occur 201/207 times, and the exact
+  six-lens-element claim occurs twice. Any source/count/layout drift fails closed.
+- The immutable source pin contains only the retained official USPTO PDF: PDF SHA-256
+  `e1514362d680daa05d5fb1f8bc787b3f8de715a0bbb1af98a57e8e40a5660495`, source-pin
+  SHA-256 `c51fd40b42dc167306a5adcf66c90c5a26e3f37b1b91f8348e7a0919aded6b2d`.
+  No mirror PDF is retained and no raster-pair equality is claimed. The 64-page PDF has 46 drawing
+  sheets; key pages are 24/25 through 42/43 for the ten prescription pairs and 44--47 for the four
+  comparison figures.
+- One document failure expands into ten independent parser-review items. Actual evidence includes
+  missing exact sheet-header tokens, asphere `a4`/`a6`/`a8` label confidence below the unchanged
+  0.95 gate, an `a8` duplicate token, and comparison-sheet 45's header confidence 0.942348. No OCR
+  token or optical number is repaired; all conversion attempt IDs are null and no worker or ZMX is
+  created.
+- Attempts 2/3 are canonical-equal after excluding only `result_attempt`, with semantic result
+  SHA-256 `ee0e48c06c4ea9aa7aa2765143dc080de8d9063139a7e0783b5b14ad26805dee`, parser-input
+  SHA-256 `13e54fb7b0932b645f95fc2cdfb96b855eee637db571b98199eb494f70e3ce92`, and recovery
+  manifest SHA-256 `0613696e165dfc7a9a4dd20fdcdbca3a791d4c4fd3e1a9828348dd3f602ea565`.
+- Generic summary changed 232 to 231. Current result-set SHA-256 is
+  `e701d09dc670a556783fa16ce7c343b17b8d6c81d1324a26f315ea004abf8a9e`; summary artifact
+  SHA-256 is `5d54581bc8f1826e9d71ab5da2cecb1ba985e887271d973a30010f630663fb6d`;
+  after-census SHA-256 is `0322af075da2fca25629adf9e2e0c18ca1ed50bc48b1bde485e7c8d6498a0af9`.
+  Strict audit remains 619/619 with zero corrupt evidence; 192 focused
+  parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

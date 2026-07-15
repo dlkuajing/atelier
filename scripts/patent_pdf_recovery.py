@@ -330,6 +330,47 @@ _GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS = (
     "relational values according to the sixth to the ninth embodiments of the disclosure",
 )
 _GENIUS_SIX_LENS_NINE_PROFILE = "genius_six_lens_nine_embodiment_census_v1"
+_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+    "tenth",
+)
+_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_OPTICAL_FIGURES = tuple(
+    26 + 2 * index for index in range(10)
+)
+_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_ASPHERE_FIGURES = tuple(
+    27 + 2 * index for index in range(10)
+)
+_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_REQUIRED_FIGURE_TEXT = tuple(
+    (
+        f"The optical data of the {ordinal} embodiment of the optical imaging lens"
+        f"{' 1' if embodiment == 1 else ''} are shown in FIG. {optical_figure} while the "
+        f"aspheric surface data are shown in FIG. {asphere_figure} ."
+    )
+    for embodiment, (ordinal, optical_figure, asphere_figure) in enumerate(
+        zip(
+            _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_ORDINALS,
+            _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_OPTICAL_FIGURES,
+            _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_ASPHERE_FIGURES,
+            strict=True,
+        ),
+        start=1,
+    )
+)
+_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_COMPARISON_MARKER = (
+    "Some important ratios in each embodiment at the first focusing state or at the second "
+    "focusing state are shown in FIG. 46 , in FIG. 47 , in FIG. 48 , and in FIG. 49 ."
+)
+_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_PROFILE = (
+    "genius_six_lens_ten_dual_focus_census_v1"
+)
 _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_ORDINALS = (
     "first",
     "second",
@@ -399,6 +440,7 @@ _GENIUS_OFFICIAL_ONLY_PROFILES = frozenset(
     {
         _GENIUS_SIX_LENS_FIVE_PROFILE,
         _GENIUS_SIX_LENS_NINE_PROFILE,
+        _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_PROFILE,
         _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE,
         _GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_PROFILE,
         _GENIUS_FOUR_LENS_NINE_PROFILE,
@@ -493,6 +535,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS
     ):
         return _GENIUS_SIX_LENS_NINE_PROFILE
+    if all(
+        marker in text for marker in _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_REQUIRED_FIGURE_TEXT
+    ) and text.count(_GENIUS_SIX_LENS_TEN_DUAL_FOCUS_COMPARISON_MARKER) == 1:
+        return _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_PROFILE
     if all(
         marker in text
         for marker in _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_REQUIRED_FIGURE_TEXT
@@ -745,6 +791,27 @@ def _genius_six_lens_nine_source_facts(raw_html: str) -> dict[str, Any]:
             marker.split(" shows", maxsplit=1)[0]: text.count(marker)
             for marker in _GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS
         },
+    }
+
+
+def _genius_six_lens_ten_dual_focus_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind ten dual-focus optical/asphere pairs and four comparison sheets."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker: text.count(marker)
+            for marker in _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_count": text.count(
+            _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_COMPARISON_MARKER
+        ),
+        "first_focusing_state_count": text.count("first focusing state"),
+        "second_focusing_state_count": text.count("second focusing state"),
+        "six_lens_element_claim_count": text.count(
+            "optical imaging lens of six lens elements"
+        ),
     }
 
 
@@ -1381,6 +1448,22 @@ async def recover_ability_official_pdf_ocr(
         role_pages["genius_six_comparison_2"] = 32
         parser_profile = profile
         source_facts = _genius_six_lens_nine_source_facts(primary_html)
+    elif profile == _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_PROFILE:
+        if page_count != 64:
+            raise PatentPdfRecoveryError(
+                "Genius ten-embodiment dual-focus PDF page count is not 64"
+        )
+        role_pages = {}
+        for embodiment in range(1, 11):
+            optical_page_index = 23 + (embodiment - 1) * 2
+            role_pages[f"genius_six_ten_dual_optical_{embodiment}"] = optical_page_index
+            role_pages[f"genius_six_ten_dual_asphere_{embodiment}"] = (
+                optical_page_index + 1
+            )
+        for comparison in range(1, 5):
+            role_pages[f"genius_six_ten_dual_comparison_{comparison}"] = 42 + comparison
+        parser_profile = profile
+        source_facts = _genius_six_lens_ten_dual_focus_source_facts(primary_html)
     elif profile == _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE:
         if page_count != 48:
             raise PatentPdfRecoveryError(
