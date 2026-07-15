@@ -315,6 +315,9 @@ def _parse_prescription_attempts(
         attempts = _parse_mobile_imaging_lens_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_kantatsu_six_lens_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_kantatsu_inline_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1128,6 +1131,40 @@ _KANTATSU_INLINE_ORDINALS = {
 _KANTATSU_INLINE_ORDINAL_PATTERN = "|".join(_KANTATSU_INLINE_ORDINALS)
 _KANTATSU_INLINE_ASPHERE_GROUP_PATTERN = re.compile(
     rf"(?P<headings>(?:(?:{_KANTATSU_INLINE_ORDINAL_PATTERN})\s+Surface\s+)+)k\s+",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_SIX_LENS_ASPHERE_GROUP_PATTERN = re.compile(
+    rf"(?P<headings>(?:(?:{_KANTATSU_INLINE_ORDINAL_PATTERN})\s+){{6}}"
+    r"(?:Surface\s+){6})k\s+",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_SIX_LENS_HEADER_PATTERN = re.compile(
+    rf"\bTABLE\s+(?P<table>\d+)\s+Example\s+(?P<example>\d+)\s+"
+    rf"Unit\s+mm\s+f\s*=\s*(?P<f>{NUMBER_PATTERN})\s+"
+    rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s+"
+    rf"[^\s=]+\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s+"
+    rf"h\s*=\s*(?P<ih>{NUMBER_PATTERN})\s+"
+    rf"TTL\s*=\s*(?P<ttl>{NUMBER_PATTERN})\s+Surface\s+Data\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_SIX_LENS_BINDING_PATTERN = re.compile(
+    r"\bExample\s+(?P<example>\d+)\s+\[\d+\]\s+The\s+basic\s+lens\s+data\s+"
+    r"is\s+shown\s+below\s+in\s+Table\s+(?P<table>\d+)\.\s+"
+    r"TABLE-US-\d+\s+TABLE\s+(?P<header_table>\d+)\s+"
+    r"Example\s+(?P<header_example>\d+)\s+Unit\s+mm\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_SIX_LENS_HALF_FIELD_DEFINITION = re.compile(
+    r"\bIn\s+each\s+example,\s+f\s+denotes\s+a\s+focal\s+length\s+of\s+the\s+"
+    r"overall\s+optical\s+system\s+of\s+the\s+imaging\s+lens,\s+Fno\s+denotes\s+"
+    r"a\s+F-number,\s+\S+\s+denotes\s+a\s+half\s+field\s+of\s+view,\s+ih\s+"
+    r"denotes\s+a\s+maximum\s+image\s+height,\s+and\s+TTL\s+denotes\s+a\s+"
+    r"total\s+track\s+length\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_SIX_LENS_ASPHERE_DEFINITION = re.compile(
+    r"\bA4,\s+A6,\s+A8,\s+A10,\s+A12,\s+A14\s+and\s+A16\s+denote\s+"
+    r"aspheric\s+surface\s+coefficients\b",
     flags=re.IGNORECASE,
 )
 _KANTATSU_NINE_LENS_BINDING_PATTERN = re.compile(
@@ -1956,6 +1993,149 @@ def _parse_mobile_imaging_lens_coefficient_rows(
     return coefficients, position
 
 
+def _parse_kantatsu_six_lens_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse exact four-example Kantatsu six-lens grouped tables."""
+
+    blocks = _patent_table_blocks(text)
+    surface_blocks = [
+        (block, header)
+        for block in blocks
+        if (header := _KANTATSU_SIX_LENS_HEADER_PATTERN.search(block.text)) is not None
+    ]
+    if not surface_blocks:
+        return []
+
+    bindings = list(_KANTATSU_SIX_LENS_BINDING_PATTERN.finditer(text))
+    disclosed_examples = max(len(surface_blocks), len(bindings))
+    try:
+        if disclosed_examples != 4:
+            raise PatentParseError(
+                f"Kantatsu six-lens family must publish four examples, found {disclosed_examples}"
+            )
+        if [block.number for block in blocks] != list(range(1, 6)):
+            raise PatentParseError(
+                "Kantatsu six-lens family tables are not consecutive through the "
+                "conditional-expression summary"
+            )
+        if [block.number for block, _header in surface_blocks] != list(range(1, 5)):
+            raise PatentParseError("Kantatsu six-lens prescription tables are not consecutive")
+        if _KANTATSU_SIX_LENS_HALF_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError("Kantatsu six-lens published half-field definition not found")
+        if _KANTATSU_SIX_LENS_ASPHERE_DEFINITION.search(text) is None:
+            raise PatentParseError(
+                "Kantatsu six-lens published A4-A16 asphere definition not found"
+            )
+        if len(bindings) != disclosed_examples:
+            raise PatentParseError(
+                "Kantatsu six-lens example/table bindings are incomplete: "
+                f"expected {disclosed_examples}, found {len(bindings)}"
+            )
+        for example_number, binding in enumerate(bindings, start=1):
+            bound_values = (
+                int(binding.group("example")),
+                int(binding.group("table")),
+                int(binding.group("header_table")),
+                int(binding.group("header_example")),
+            )
+            if bound_values != (example_number,) * 4:
+                raise PatentParseError(
+                    "Kantatsu six-lens narrative/header binding is not consecutive at "
+                    f"example {example_number}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain every disclosed example
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=f"Kantatsu six-lens example {example_number}",
+                error=exc,
+            )
+            for example_number in range(1, disclosed_examples + 1)
+        ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for example_number, (block, header) in enumerate(surface_blocks, start=1):
+        embodiment = f"Kantatsu six-lens example {example_number}"
+        try:
+            if (
+                int(header.group("table")) != example_number
+                or int(header.group("example")) != example_number
+            ):
+                raise PatentParseError(
+                    f"Kantatsu six-lens example {example_number} header is cross-bound"
+                )
+            surfaces, source_to_output, lens_surface_end = _parse_kantatsu_inline_surface_table(
+                block.text,
+                example_number=example_number,
+                family_label="Kantatsu six-lens",
+            )
+            if lens_surface_end != 13:
+                raise PatentParseError(
+                    f"Kantatsu six-lens example {example_number} lens surface coverage "
+                    f"must end at 13, found {lens_surface_end}"
+                )
+            coefficients = _parse_kantatsu_inline_asphere_table(
+                block.text,
+                example_number=example_number,
+                expected_source_surfaces=tuple(range(2, 14)),
+                labels=("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16"),
+                family_label="Kantatsu six-lens",
+                group_pattern=_KANTATSU_SIX_LENS_ASPHERE_GROUP_PATTERN,
+                paired_headings=False,
+            )
+            for source_index, row in coefficients.items():
+                output_index = source_to_output[source_index]
+                surface = surfaces[output_index - 1]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(row)
+
+            focal_length = _parse_number(header.group("f"))
+            image_height = _parse_number(header.group("ih"))
+            f_number = _parse_number(header.group("fno"))
+            total_track = _parse_number(header.group("ttl"))
+            half_field = _parse_number(header.group("hfov"))
+            if (
+                focal_length <= 0
+                or image_height <= 0
+                or f_number <= 0
+                or total_track <= 0
+                or not 0 < half_field < 90
+            ):
+                raise PatentParseError(
+                    f"Kantatsu six-lens example {example_number} has invalid "
+                    "f/h/Fno/TTL/half-field metadata"
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=half_field,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retained per published example
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=example_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
 def _parse_kantatsu_inline_table_attempts(
     text: str,
     *,
@@ -2100,6 +2280,7 @@ def _parse_kantatsu_inline_surface_table(
     table_text: str,
     *,
     example_number: int,
+    family_label: str = "Kantatsu inline",
 ) -> tuple[list[PatentSurface], dict[int, int], int]:
     object_row = re.search(
         r"\(Object\)\s+Infinity\s+Infinity\b",
@@ -2115,7 +2296,7 @@ def _parse_kantatsu_inline_surface_table(
         or not object_row.end() < image_row.start() < constituent.start()
     ):
         raise PatentParseError(
-            f"Kantatsu inline example {example_number} object/image rows are incomplete"
+            f"{family_label} example {example_number} object/image rows are incomplete"
         )
 
     body = table_text[object_row.end() : image_row.start()]
@@ -2123,6 +2304,8 @@ def _parse_kantatsu_inline_surface_table(
     source_indices = [int(match.group("index")) for match in starts]
     if source_indices == list(range(1, 14)):
         lens_surface_end, filter_front, filter_rear = 11, 12, 13
+    elif source_indices == list(range(1, 16)):
+        lens_surface_end, filter_front, filter_rear = 13, 14, 15
     elif source_indices == [*range(1, 16), 18, 19]:
         # The official table omits optional source surfaces 16/17 and then prints
         # the remaining filter rows as 18/19. Output indices follow physical row
@@ -2130,7 +2313,7 @@ def _parse_kantatsu_inline_surface_table(
         lens_surface_end, filter_front, filter_rear = 15, 18, 19
     else:
         raise PatentParseError(
-            f"Kantatsu inline example {example_number} source surface sequence is "
+            f"{family_label} example {example_number} source surface sequence is "
             f"unsupported or damaged: {source_indices}"
         )
 
@@ -2149,13 +2332,13 @@ def _parse_kantatsu_inline_surface_table(
         if source_index == 1:
             if has_star or not has_stop or len(tokens) != 2:
                 raise PatentParseError(
-                    f"Kantatsu inline example {example_number} stop row is malformed"
+                    f"{family_label} example {example_number} stop row is malformed"
                 )
             label = "Stop"
         elif source_index <= lens_surface_end:
             if not has_star or has_stop:
                 raise PatentParseError(
-                    f"Kantatsu inline example {example_number} lens surface "
+                    f"{family_label} example {example_number} lens surface "
                     f"{source_index} marker is malformed"
                 )
             lens_number = source_index // 2
@@ -2164,7 +2347,7 @@ def _parse_kantatsu_inline_surface_table(
                 suffix = _KANTATSU_INLINE_MATERIAL_SUFFIX.fullmatch(tokens[-1]) if tokens else None
                 if len(tokens) != 5 or suffix is None or int(suffix.group("lens")) != lens_number:
                     raise PatentParseError(
-                        f"Kantatsu inline example {example_number} lens {lens_number} "
+                        f"{family_label} example {example_number} lens {lens_number} "
                         "material row is malformed"
                     )
                 nd = _parse_number(tokens[2])
@@ -2172,13 +2355,13 @@ def _parse_kantatsu_inline_surface_table(
                 material = "Published nd/vd"
             elif len(tokens) != 2:
                 raise PatentParseError(
-                    f"Kantatsu inline example {example_number} lens {lens_number} "
+                    f"{family_label} example {example_number} lens {lens_number} "
                     "second-surface row is malformed"
                 )
         elif source_index == filter_front:
             if has_star or has_stop or len(tokens) != 4:
                 raise PatentParseError(
-                    f"Kantatsu inline example {example_number} filter-front row is malformed"
+                    f"{family_label} example {example_number} filter-front row is malformed"
                 )
             label = "Filter"
             nd = _parse_number(tokens[2])
@@ -2187,12 +2370,12 @@ def _parse_kantatsu_inline_surface_table(
         elif source_index == filter_rear:
             if has_star or has_stop or len(tokens) != 2:
                 raise PatentParseError(
-                    f"Kantatsu inline example {example_number} filter-rear row is malformed"
+                    f"{family_label} example {example_number} filter-rear row is malformed"
                 )
             label = "Filter"
         else:  # pragma: no cover - source sequence guard above makes this unreachable
             raise PatentParseError(
-                f"Kantatsu inline example {example_number} unexpected source surface {source_index}"
+                f"{family_label} example {example_number} unexpected source surface {source_index}"
             )
 
         _validate_material_indices(surface_index=output_index, nd=nd, vd=vd)
@@ -2202,11 +2385,11 @@ def _parse_kantatsu_inline_surface_table(
                 label=label,
                 radius_mm=_distance_value(
                     tokens[0],
-                    field_name=f"Kantatsu inline source surface {source_index} radius",
+                    field_name=f"{family_label} source surface {source_index} radius",
                 ),
                 thickness_mm=_distance_value(
                     tokens[1],
-                    field_name=f"Kantatsu inline source surface {source_index} thickness",
+                    field_name=f"{family_label} source surface {source_index} thickness",
                 ),
                 material=material,
                 nd=nd,
@@ -2236,26 +2419,39 @@ def _parse_kantatsu_inline_asphere_table(
     *,
     example_number: int,
     expected_source_surfaces: tuple[int, ...],
+    labels: tuple[str, ...] = (
+        "K",
+        "A4",
+        "A6",
+        "A8",
+        "A10",
+        "A12",
+        "A14",
+        "A16",
+        "A18",
+        "A20",
+    ),
+    family_label: str = "Kantatsu inline",
+    group_pattern: re.Pattern[str] = _KANTATSU_INLINE_ASPHERE_GROUP_PATTERN,
+    paired_headings: bool = True,
 ) -> dict[int, dict[str, float]]:
     section_start = re.search(r"\bAspheric\s+Surface\s+Data\b", table_text, re.IGNORECASE)
     if section_start is None:
-        raise PatentParseError(
-            f"Kantatsu inline example {example_number} asphere section not found"
-        )
+        raise PatentParseError(f"{family_label} example {example_number} asphere section not found")
     section = table_text[section_start.end() :]
     section = re.split(r"\s\[\d{4}\]\s", section, maxsplit=1)[0]
-    groups = list(_KANTATSU_INLINE_ASPHERE_GROUP_PATTERN.finditer(section))
+    groups = list(group_pattern.finditer(section))
     if not groups:
-        raise PatentParseError(f"Kantatsu inline example {example_number} asphere groups not found")
+        raise PatentParseError(f"{family_label} example {example_number} asphere groups not found")
 
     coefficients: dict[int, dict[str, float]] = {}
     published_source_surfaces: list[int] = []
-    labels = ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16", "A18", "A20")
     for group_position, group in enumerate(groups):
+        heading_suffix = r"\s+Surface" if paired_headings else r"\b"
         source_surfaces = [
             _KANTATSU_INLINE_ORDINALS[match.group("ordinal").lower()]
             for match in re.finditer(
-                rf"(?P<ordinal>{_KANTATSU_INLINE_ORDINAL_PATTERN})\s+Surface",
+                rf"(?P<ordinal>{_KANTATSU_INLINE_ORDINAL_PATTERN}){heading_suffix}",
                 group.group("headings"),
                 re.IGNORECASE,
             )
@@ -2271,14 +2467,14 @@ def _parse_kantatsu_inline_asphere_table(
                 actual = tokens[position] if position < len(tokens) else "<end>"
                 if actual.upper() != label:
                     raise PatentParseError(
-                        f"Kantatsu inline example {example_number} coefficient label "
+                        f"{family_label} example {example_number} coefficient label "
                         f"expected {label}, found {actual}"
                     )
                 position += 1
             for source_index in source_surfaces:
                 if position >= len(tokens):
                     raise PatentParseError(
-                        f"Kantatsu inline example {example_number} coefficient {label} "
+                        f"{family_label} example {example_number} coefficient {label} "
                         f"for source surface {source_index} is missing"
                     )
                 raw_value = tokens[position]
@@ -2286,7 +2482,7 @@ def _parse_kantatsu_inline_asphere_table(
                     value = _parse_number(raw_value)
                 except PatentParseError as exc:
                     raise PatentParseError(
-                        f"Kantatsu inline example {example_number} coefficient {label} "
+                        f"{family_label} example {example_number} coefficient {label} "
                         f"for source surface {source_index} is malformed: {raw_value}"
                     ) from exc
                 position += 1
@@ -2294,13 +2490,13 @@ def _parse_kantatsu_inline_asphere_table(
                 coefficients.setdefault(source_index, {})[codev_label] = value
         if position != len(tokens):
             raise PatentParseError(
-                f"Kantatsu inline example {example_number} asphere group has trailing tokens: "
+                f"{family_label} example {example_number} asphere group has trailing tokens: "
                 f"{tokens[position : position + 4]}"
             )
 
     if tuple(published_source_surfaces) != expected_source_surfaces:
         raise PatentParseError(
-            f"Kantatsu inline example {example_number} coefficient surface coverage is "
+            f"{family_label} example {example_number} coefficient surface coverage is "
             f"damaged: {published_source_surfaces}"
         )
     return coefficients

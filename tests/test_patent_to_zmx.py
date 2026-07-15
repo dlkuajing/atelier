@@ -1112,6 +1112,71 @@ def test_mobile_imaging_lens_requires_published_half_field_definition() -> None:
     )
 
 
+def test_kantatsu_six_lens_retained_source_parses_only_complete_examples() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "849299ca1b87707e"
+        / "US-20210382275-A1.html"
+    )
+    raw = source.read_bytes()
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "849299ca1b87707e5c62f4ebdc74777bdd7cf333cdc910baa9b768df874791d7"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw.decode("utf-8"),
+        patent_id="US-20210382275-A1",
+    )
+
+    assert len(attempts) == 4
+    assert [attempt.embodiment_number for attempt in attempts if attempt.error is None] == [2, 3]
+    assert "coefficient A14 for source surface 9 is malformed: E-01" in str(attempts[0].error)
+    assert "coefficient label expected A16, found <end>" in str(attempts[3].error)
+    second = attempts[1].prescription
+    assert second is not None
+    assert (second.focal_length_mm, second.f_number, second.hfov_deg) == pytest.approx(
+        (4.22, 1.80, 39.3)
+    )
+    assert [surface.index for surface in second.surfaces] == list(range(1, 17))
+    assert second.surfaces[0].label == "Stop"
+    assert second.surfaces[1].asphere_coefficients["A"] == pytest.approx(-5.811608e-3)
+    assert second.surfaces[13].label == "Filter"
+    assert (second.surfaces[13].nd, second.surfaces[13].vd) == pytest.approx((1.563, 51.3))
+    assert second.surfaces[-1].label == "Image"
+
+
+def test_kantatsu_six_lens_requires_published_half_field_definition() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "849299ca1b87707e"
+        / "US-20210382275-A1.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "denotes a half field of view",
+        "is listed in degrees",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-20210382275-NO-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "published half-field definition not found" in str(attempt.error) for attempt in attempts
+    )
+
+
 def test_kantatsu_inline_retained_source_parses_only_complete_examples() -> None:
     source = (
         Path(__file__).resolve().parents[1]

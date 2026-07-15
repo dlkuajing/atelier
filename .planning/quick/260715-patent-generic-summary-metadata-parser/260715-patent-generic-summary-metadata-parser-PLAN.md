@@ -235,6 +235,24 @@ thresholds, or claim patent saturation.
   strict audit is 619/619 with zero corrupt evidence. The after-tenth-layout census SHA-256 is
   `c7793ae9d0f7ec6c9ba9ac8d0f7642712a78b4ecd5bbc534bb7fb8aa19216b7b` and contains 270 roots
   across 156 normalized signatures; CODE V inventory remains zero.
+- The eleventh source-proven family is the four-example Kantatsu six-lens grouped layout in
+  `US-20210382275`. A complete 270-root ownership scan matched only this retained official PPUBS
+  document. Its narrative binds examples 1--4 to tables 1--4, explicitly defines the header field
+  as half field of view, publishes surface 1 as Stop, and defines K/A4--A16 for surfaces 2--13.
+  Examples 2 and 3 parse deterministically. Example 1 retains the published split exponent
+  `1.183031 E-01`; example 4 publishes no A16 row in its second coefficient group. Neither value
+  is joined, inferred, or copied from another example.
+- Append-only replay retained all four examples. Example 2 produced one
+  converted-pending-intake staging ZMX with real IMH `1.343337673215634` mm; example 3 received a
+  terminal `trace_failed` receipt because full-field real rays did not reach the image surface;
+  examples 1 and 4 remain structured parser rejections. No candidate was promoted. The generic
+  document bucket changed 270 to 269. Result-set SHA-256 is
+  `a53e735db0867e6fe352f71b22f1c58b6ca065029a6cd8f942531572a5fd4c1e`; summary artifact
+  SHA-256 is `21b3d6c41c34e81df0f355d89d1298ba174ccc6297860b726afc47d31ca7fb33`;
+  strict audit is 619/619 with zero corrupt evidence. The after-eleventh-layout census SHA-256 is
+  `9bb1f22c42b1915bb0cf95a5429ad7c44b416e2afc61203e1a97b1253a6bdc80` and contains 269 roots
+  across 155 normalized signatures; 101 focused parser/census/replay/process tests and Ruff pass;
+  CODE V inventory remains zero.
 
 ## Completion condition
 
