@@ -200,18 +200,19 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-sunny-metadata-parser` | complete-shovel-saturation-incomplete | Before 299 items/64 roots; after 199/53, resolving 100 without missing-field regression. Result-set SHA `2e0a9ceb...d506`; 619/619 strict results, missing=0, corrupt=0; 95 tests+Ruff green, CODE V inventory zero. Next largest parser bucket is generic summary metadata=294. |
 | `260715-patent-generic-summary-metadata-parser` | complete-largest-bucket-shovel-saturation-incomplete | Strict before census 294 items/294 roots. Source-proven HTML layouts, source terminals, exact-raster PDF profiles, B2→A1 prior-publication recovery, and explicit official-PDF-only OCR paths are replayed append-only. The latest exact Genius Family ID 48153254 recovery source-locks the 65/66-page layouts and +1/+2 drawing-sheet offsets, expands all three roots to 11 embodiments each, and retains measured OCR failures without repair. Attempts 5/6 are semantic-equal per root and create no worker/ZMX. Generic bucket is 198, result set `ed908718...871f`, summary `73de95a9...210a`, after-census `6826002d...3363`, and audit is 619/619 corrupt=0. The next largest measured bucket is Sunny metadata at 199. |
 | `260715-patent-sunny-residual-parser` | complete-largest-bucket-shovel-saturation-incomplete | Family 77932615 exact-source parsing reduces Sunny metadata 199→187. Two same-application roots each produce two staging conversions, four trace-failed terminals, one metadata terminal, and one explicit folded-coordinate parser gap. Attempts 3/4 are stable after retry identity is excluded; result set `8e5f3b0e...e5b5`, summary `6d6f73c3...dc4b`, after-census `a07909c5...d3bf`; audit 619/619 corrupt=0; 230 focused tests+Ruff green; CODE V zero. Generic summary 198 is next. |
+| `260715-patent-generic-residual-parser` | complete-largest-bucket-shovel-saturation-incomplete | Family 72082560 exact-source classification reduces generic metadata 198→195. Three roots expand to 24 explicit confirmed-no-prescription terminals for seven barrel/absorbing-geometry examples plus one smartphone wrapper each; no worker/ZMX. Attempts 2/3 are canonical-equal after excluding only result identity; result set `502722f7...bb104`, summary `42b0a594...b8db`, after-census `4aa52fed...c6dce`; audit 619/619 corrupt=0; 245 focused tests+Ruff green; CODE V zero. Family 44121309 remains figure-OCR recovery because official text points to prescriptions in FIGS. 14A/14B. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260715-patent-sunny-residual-parser/260715-patent-sunny-residual-parser-PLAN.md`,
+`.planning/quick/260715-patent-generic-residual-parser/260715-patent-generic-residual-parser-PLAN.md`,
 then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.py`; never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work remains the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (198; next `sunny_embodiment_metadata_missing` is 187), using the same strict before/after census, source-proven
+`generic_summary_metadata_missing` (195; next `sunny_embodiment_metadata_missing` is 187), using the same strict before/after census, source-proven
 layout rules, append-only targeted replay, and full-pool audit contract.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then

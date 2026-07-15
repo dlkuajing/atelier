@@ -373,6 +373,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_lens_barrel_absorbing_geometry_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_large_aperture_scanning_tele_attempts(
         raw_text,
         patent_id=patent_id,
@@ -1903,6 +1909,61 @@ _IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]
             "focal length": 16,
             "equivalent focal length": 13,
             "thermal expansion coefficients": 1,
+        },
+    },
+}
+_LENS_BARREL_ABSORBING_GEOMETRY_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY(?:\s+MODULE)?\s*,\s*CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_LENS_BARREL_ABSORBING_GEOMETRY_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12298595-B2": {
+        "raw_document_sha256": (
+            "7026f1e465f6aece0d38ae3b479c657a96313b0948099d1ad2c7a41776eb9972"
+        ),
+        "normalized_text_sha256": (
+            "75c468b41831ed49ace3aad85a9983e6ee64b685cce33cb484527837936dbb57"
+        ),
+        "application_number": "16/924496",
+        "table7_prefix": "7th example EPD (mm) 1.77 ψY (mm) 2.32 ψb (mm) 1.82",
+        "geometry_phrase_counts": {
+            "minimum opening": 33,
+            "optical lens element set": 65,
+            "smart phone": 1,
+            "image sensor": 8,
+        },
+    },
+    "US-20210088752-A1": {
+        "raw_document_sha256": (
+            "09bf70b6835f49bf072aca9cc017cd890afb45eebd29a4a86ce470dd07187af7"
+        ),
+        "normalized_text_sha256": (
+            "7299d778c9cc10a3642bc3eed79297ea344255c99e48af18c89cfe6ff562b889"
+        ),
+        "application_number": "16/924496",
+        "table7_prefix": "7th example EPD (mm) 1.77 ψY (mm) 2.32 ψb (mm) 1.82",
+        "geometry_phrase_counts": {
+            "minimum opening": 33,
+            "optical lens element set": 65,
+            "smart phone": 1,
+            "image sensor": 8,
+        },
+    },
+    "US-20260147182-A1": {
+        "raw_document_sha256": (
+            "3905fa6a1c284a9a375192d1f40db0720fa7620cace856b93674c54f0e2e6bfd"
+        ),
+        "normalized_text_sha256": (
+            "73ddb6e57102209d443fef28c29f6644a840a8474e271ae5e8d8cee1aa784409"
+        ),
+        "application_number": "19/177743",
+        "table7_prefix": "7th example EPD (mm) 1.77 ψL (mm) 2.32 ψb (mm) 1.82",
+        "geometry_phrase_counts": {
+            "minimum opening": 29,
+            "optical lens element set": 57,
+            "smart phone": 1,
+            "image sensor": 8,
         },
     },
 }
@@ -10140,6 +10201,187 @@ def _classify_imaging_lens_system_architecture_only_attempts(
             ),
         )
     ]
+
+
+def _classify_lens_barrel_absorbing_geometry_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 72082560 barrel/absorbing-layer examples.
+
+    Examples 1-7 publish only entrance/minimum-opening, barrel, effective
+    optical-surface, element-diameter, center-thickness, and axial-length
+    geometry.  Example 8 is the smartphone/camera-module wrapper.  The exact
+    retained sources publish no curvature, glass, asphere, EFL, F-number, or
+    field prescription and their drawing descriptions contain no hidden table
+    or prescription reference.
+    """
+
+    profile = _LENS_BARREL_ABSORBING_GEOMETRY_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=f"Lens-barrel absorbing geometry example {index}",
+                error=exc,
+            )
+            for index in range(1, 9)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"lens-barrel absorbing official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"lens-barrel absorbing normalized text hash changed for {patent_id}"
+            )
+        if _LENS_BARREL_ABSORBING_GEOMETRY_ONLY_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("lens-barrel absorbing title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*72082560", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("lens-barrel absorbing Family ID binding changed")
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("lens-barrel absorbing application binding changed")
+
+        blocks = _patent_table_blocks(text)
+        if [block.number for block in blocks] != list(range(1, 8)):
+            raise PatentParseError("lens-barrel absorbing source tables must be 1-7")
+        for index, block in enumerate(blocks, start=1):
+            body = _cut_sunny_table_narrative(block.text)
+            suffix = "st" if index == 1 else "nd" if index == 2 else "rd" if index == 3 else "th"
+            if re.search(rf"\b{index}{suffix}\s+example\b", body, re.IGNORECASE) is None:
+                raise PatentParseError(
+                    f"lens-barrel absorbing TABLE {index} example binding changed"
+                )
+            required_labels = (
+                r"\bEPD\s*\(mm\)",
+                r"ψb\s*\(mm\)",
+                r"\bCT\s*\(mm\)",
+                r"(?<!ψ)\bL\s*\(mm\)",
+                r"ψY\s*/\s*CT",
+            )
+            if any(re.search(label, body, re.IGNORECASE) is None for label in required_labels):
+                raise PatentParseError(
+                    f"lens-barrel absorbing TABLE {index} geometry header changed"
+                )
+            if index <= 6 and re.search(r"ψL\s*\(mm\)", body) is None:
+                raise PatentParseError(
+                    f"lens-barrel absorbing TABLE {index} element-diameter header changed"
+                )
+            if index == 7 and re.search(
+                re.escape(str(profile["table7_prefix"])),
+                body,
+                re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    "lens-barrel absorbing TABLE 7 source-prefix binding changed"
+                )
+            has_effective_diameter = re.search(r"ψA\s*\(mm\)", body) is not None
+            if has_effective_diameter != (index <= 6):
+                raise PatentParseError(
+                    f"lens-barrel absorbing TABLE {index} effective-diameter binding changed"
+                )
+
+        for index in range(1, 9):
+            suffix = "st" if index == 1 else "nd" if index == 2 else "rd" if index == 3 else "th"
+            heading = rf"\b{index}{suffix}\s+Example\s+(?:\(\d+\)|\[\d+\])\s+FIG\."
+            if len(re.findall(heading, text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"lens-barrel absorbing example {index} section binding changed"
+                )
+
+        for phrase, expected in profile["geometry_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"lens-barrel absorbing phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        drawings = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+THE\s+DRAWINGS(?P<body>.*?)"
+            r"DETAILED\s+DESCRIPTION",
+            text,
+            re.IGNORECASE,
+        )
+        if drawings is None:
+            raise PatentParseError("lens-barrel absorbing drawing description is missing")
+        if re.search(
+            r"\b(?:table|prescription|optical\s+data|lens\s+data)\b",
+            drawings.group("body"),
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "lens-barrel absorbing drawings now reference prescription data"
+            )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)?\b|\brefractive\s+index\b|"
+            r"\bSurface\s+(?:No\.|#)\s*|\bFno\b|\bF\s*[- ]?number\b|"
+            r"\bEFL\b|\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\blens\s+data\b|\bprescription\b)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "lens-barrel absorbing disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all eight explicit examples
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index in range(1, 9):
+        device_wrapper = index == 8
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=(
+                    "Smartphone camera-module example 8"
+                    if device_wrapper
+                    else f"Lens-barrel absorbing geometry example {index}"
+                ),
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription.camera_module_device_architecture_only"
+                        if device_wrapper
+                        else (
+                            "confirmed_no_prescription."
+                            "lens_barrel_absorbing_geometry_only"
+                        )
+                    ),
+                    detail=(
+                        "example 8 publishes only the smartphone, camera-module, image-sensor, "
+                        "and user-interface wrapper; it has no optical prescription"
+                        if device_wrapper
+                        else (
+                            f"TABLE {index} publishes only opening, barrel, effective-surface, "
+                            "element-diameter, center-thickness, length, and ratio geometry; "
+                            "it has no optical surface prescription"
+                        )
+                    ),
+                ),
+            )
+        )
+    return attempts
 
 
 def _classify_light_blocking_geometry_only_attempts(

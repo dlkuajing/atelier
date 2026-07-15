@@ -6716,6 +6716,123 @@ def test_sunny_long_focus_source_locked_product_drift_fails_all_items(
     } == {"Sunny long-focus field-product token sequence changed"}
 
 
+def _lens_barrel_absorbing_source_fixture(patent_id: str) -> str:
+    headings = " ".join(
+        f"{index}{'st' if index == 1 else 'nd' if index == 2 else 'rd' if index == 3 else 'th'} "
+        f"Example [{index:04d}] FIG. {index} A is a schematic view."
+        for index in range(1, 9)
+    )
+
+    def geometry_table(index: int) -> str:
+        suffix = "st" if index == 1 else "nd" if index == 2 else "rd" if index == 3 else "th"
+        if index <= 6:
+            body = (
+                "EPD (mm) 1.62 ψY (mm) 1.62 ψb (mm) 1.881 ψL (mm) 3.098 "
+                "EPD/ψb 0.861 ψY/ψL 0.523 ψA (mm) 1.884 ψL/ψb 1.647 "
+                "EPD/ψA 0.860 CT (mm) 0.89 L (mm) 0.622 ψY/CT 1.820"
+            )
+        else:
+            body = (
+                "EPD (mm) 1.77 ψY (mm) 2.32 ψb (mm) 1.82 ψY/ψL 0.720 "
+                "EPD/ψb 0.973 ψL/ψb 1.275 L (mm) 0.22 CT (mm) 0.492 "
+                "ψY (mm) 1.67 ψY/CT 3.394"
+            )
+        return (
+            f"TABLE-US-{index:05d} TABLE {index} {index}{suffix} example {body} "
+            f"[{1000 + index:04d}] According to the {index}{suffix} example."
+        )
+
+    return " ".join(
+        (
+            f"{patent_id} - Patent Public Search | USPTO IMAGING LENS ASSEMBLY, "
+            "CAMERA MODULE AND ELECTRONIC DEVICE Abstract",
+            "Family ID: 72082560 Appl. No.: 16/924496",
+            "minimum opening optical lens element set",
+            "BRIEF DESCRIPTION OF THE DRAWINGS FIG. 1 A is a schematic view. "
+            "DETAILED DESCRIPTION",
+            headings,
+            "The 8th example is a smart phone with an image sensor.",
+            *(geometry_table(index) for index in range(1, 8)),
+        )
+    )
+
+
+def _install_lens_barrel_absorbing_test_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    phrases = ("minimum opening", "optical lens element set", "smart phone", "image sensor")
+    monkeypatch.setitem(
+        patent_to_zmx._LENS_BARREL_ABSORBING_GEOMETRY_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "application_number": "16/924496",
+            "table7_prefix": "7th example EPD (mm) 1.77 ψY (mm) 2.32 ψb (mm) 1.82",
+            "geometry_phrase_counts": {
+                phrase: len(re.findall(re.escape(phrase), normalized, re.IGNORECASE))
+                for phrase in phrases
+            },
+        },
+    )
+
+
+def test_lens_barrel_absorbing_source_locked_examples_are_terminal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-LENS-BARREL-ABSORBING-TEST-A1"
+    raw_text = _lens_barrel_absorbing_source_fixture(patent_id)
+    _install_lens_barrel_absorbing_test_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 9))
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert {
+        attempt.error.reason_code for attempt in attempts[:7]
+    } == {"confirmed_no_prescription.lens_barrel_absorbing_geometry_only"}
+    assert (
+        attempts[7].error.reason_code
+        == "confirmed_no_prescription.camera_module_device_architecture_only"
+    )
+
+
+def test_lens_barrel_absorbing_source_locked_prescription_marker_fails_all(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-LENS-BARREL-ABSORBING-DRIFT-A1"
+    raw_text = _lens_barrel_absorbing_source_fixture(patent_id).replace(
+        "minimum opening optical lens element set",
+        "minimum opening optical lens element set radius of curvature",
+        1,
+    )
+    _install_lens_barrel_absorbing_test_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 8
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {
+        str(attempt.error) for attempt in attempts
+    } == {"lens-barrel absorbing disclosure contains a prescription marker"}
+
+
 def test_sunny_group_rows_are_cardinality_bound_and_full_fov_is_halved() -> None:
     raw_text = """
     FOV is a maximum field of view of the optical imaging lens assembly.
