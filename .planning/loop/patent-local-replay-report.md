@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `06a3d4b592f5842c54ae702d08cd309c22e0b9a1c8f255e6364ffa6ede89b669`
+- result_set_sha256: `3907d3680a24f06b388b158ed8fb286e6ba09bb0c4873fa0bc5b76d3fad9a811`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,17 +20,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 19
 - `terminal`: 34
-- `parser_review_required`: 431
+- `parser_review_required`: 430
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 135
+- `mixed_nonterminal`: 136
 
 ## Item states
 
-- `converted_pending_intake`: 507
-- `terminal`: 699
-- `parser_review_required`: 1332
+- `converted_pending_intake`: 509
+- `terminal`: 707
+- `parser_review_required`: 1343
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -42,22 +42,22 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 0
-- `trace_failed`: 593
+- `trace_failed`: 601
 - `trace_timeout`: 106
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 431
-- `mixed_nonterminal.multiple_item_states`: 135
+- `parser_review_required.all_disclosed_items_rejected`: 430
+- `mixed_nonterminal.multiple_item_states`: 136
 - `terminal.all_disclosed_items_terminal`: 34
 - `converted_pending_intake.all_disclosed_items_converted`: 19
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1332
-- `terminal.process_receipt_classified`: 699
-- `converted_pending_intake.process_isolated_zmx_ready`: 507
+- `parser_review_required.deterministic_parser_rejected`: 1343
+- `terminal.process_receipt_classified`: 707
+- `converted_pending_intake.process_isolated_zmx_ready`: 509
 - `conversion_retry_required.patent_budget_exhausted`: 28
 
 ## Source attempts
@@ -68,7 +68,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 272
+- `generic_summary_metadata_missing`: 270
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -85,9 +85,10 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_folded_macro_tele_system_n_whole_system_focal_token_f_is_not_officially_defined_as_efl`: 9
 - `other_sunny_sto_value_is_not_numeric_surface`: 8
 - `other_kantatsu_example_n_surface_table_unit_is_nm_not_mm`: 7
+- `other_kantatsu_inline_example_n_object_image_rows_are_incomplete`: 7
+- `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 7
 - `other_folded_zoom_system_n_surface_index_break_expected_s8_found_s7`: 6
 - `other_sunny_s3_row_has_unexpected_extra_values_n_n_n`: 6
-- `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 6
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6
 - `sekonix_surface_row_incomplete`: 6
@@ -114,6 +115,11 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_aspheric_row_a26_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a8_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_k_has_more_numeric_values_than_surfaces_extra_token`: 1
+- `other_kantatsu_inline_example_n_coefficient_a20_for_source_surface_n_is_missing`: 1
+- `other_kantatsu_inline_example_n_coefficient_label_expected_a4_found_n`: 1
+- `other_kantatsu_inline_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 1
+- `other_kantatsu_inline_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 1
+- `other_kantatsu_inline_example_n_stop_row_is_malformed`: 1
 - `other_mobile_imaging_lens_example_n_surface_n_coefficient_a12_is_malformed_e_n`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
 - `other_sunny_asphere_row_s12_has_more_values_than_headers_token`: 1

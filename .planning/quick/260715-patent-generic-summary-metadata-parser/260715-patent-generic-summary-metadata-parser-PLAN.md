@@ -215,6 +215,26 @@ thresholds, or claim patent saturation.
   `999b0487e8ce7a1844cc8478baa8383a9c856021d7cb9f59252ede41dcbbf24c` and contains 272 roots
   across 158 normalized signatures; CODE V inventory remains zero; 105 focused
   parser/census/replay/process tests and Ruff pass.
+- The tenth source-proven family is the inline Kantatsu surface/asphere layout in
+  `US-20210364759` and `US-20220163773`. A hash-verified ownership scan of all 272 remaining
+  generic roots matched only these two publications. Both bind narrative example/table numbers to
+  exact `f/ih/Fno/TTL/ω` headers, explicitly define ω as half field, print a Stop, and define
+  A4--A20. The first root's twelve examples all retain official OCR/numeric damage, including
+  split surface tokens, an out-of-bounds printed index, `Step`/`lnfinity`/`Obiect` glyphs, and
+  malformed coefficient exponents or labels. The parser does not repair any of them.
+- `US-20220163773` publishes eleven examples. Example 1 omits all A20 values in its first two
+  coefficient groups and remains a parser rejection. Examples 2--11 parse deterministically. Its
+  official rows omit optional source surfaces 16/17 and continue with filter rows 18/19; output
+  indices follow the published physical row order without inserting dummy surfaces or values.
+- Append-only replay retained all 23 disclosed examples. The ten complete prescriptions produced
+  two converted-pending-intake staging ZMX files and eight terminal `trace_failed` receipts; the
+  thirteen source-damaged examples remain structured parser rejections. No candidate was promoted.
+  The generic document bucket changed 272 to 270. Result-set SHA-256 is
+  `3907d3680a24f06b388b158ed8fb286e6ba09bb0c4873fa0bc5b76d3fad9a811`; summary artifact
+  SHA-256 is `b108122da32ce2936ebed27a487b87d0e99b217312e127931276b15fbac48cec`;
+  strict audit is 619/619 with zero corrupt evidence. The after-tenth-layout census SHA-256 is
+  `c7793ae9d0f7ec6c9ba9ac8d0f7642712a78b4ecd5bbc534bb7fb8aa19216b7b` and contains 270 roots
+  across 156 normalized signatures; CODE V inventory remains zero.
 
 ## Completion condition
 

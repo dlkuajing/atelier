@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import math
 import re
@@ -27,13 +28,9 @@ def test_load_patent_pool_filters_only_patents_with_normalized_ids(tmp_path: Pat
         {"id": "US-10101561-B2", "title": "selected"},
         {"id": "US-11099361-B2", "title": "not selected"},
     ]
-    pool_path.write_text(
-        "".join(json.dumps(record) + "\n" for record in records), encoding="utf-8"
-    )
+    pool_path.write_text("".join(json.dumps(record) + "\n" for record in records), encoding="utf-8")
 
-    candidates = patent_to_zmx.load_patent_pool(
-        tmp_path, only_patents={"us10101561b2"}
-    )
+    candidates = patent_to_zmx.load_patent_pool(tmp_path, only_patents={"us10101561b2"})
 
     assert [candidate.patent_id for candidate in candidates] == ["US-10101561-B2"]
 
@@ -48,6 +45,7 @@ def test_load_patent_pool_without_filter_keeps_existing_behavior(tmp_path: Path)
     candidates = patent_to_zmx.load_patent_pool(tmp_path)
 
     assert [candidate.patent_id for candidate in candidates] == ["US-10101561-B2"]
+
 
 PRESCRIPTION_TEXT = """
 TABLE-US-00001 TABLE 1A 1st Embodiment f = 12.99 mm, Fno = 1.71,
@@ -325,9 +323,7 @@ def _mobile_imaging_lens_fixture() -> str:
         coefficient_table = example_number * 2
         late = example_number >= 7
         surface_rows = (
-            MOBILE_IMAGING_LENS_LATE_SURFACES
-            if late
-            else MOBILE_IMAGING_LENS_EARLY_SURFACES
+            MOBILE_IMAGING_LENS_LATE_SURFACES if late else MOBILE_IMAGING_LENS_EARLY_SURFACES
         )
         f, fno, hfov = (7.05, 2.1, 35.2) if late else (7.71, 1.5, 33.4)
         parts.append(
@@ -344,10 +340,7 @@ def _mobile_imaging_lens_fixture() -> str:
                 f"{surface} 5.000E-07 -6.000E-08 7.000E-09 -8.000E-10 9.000E-11"
                 for surface in range(2, 18)
             )
-            coefficient_body = (
-                f"i k A4 A6 A8 A10 {first_rows} "
-                f"i A12 A14 A16 A18 A20 {second_rows}"
-            )
+            coefficient_body = f"i k A4 A6 A8 A10 {first_rows} i A12 A14 A16 A18 A20 {second_rows}"
         else:
             surface_indices = (1, 2, *range(4, 18))
             rows = " ".join(
@@ -397,13 +390,11 @@ def _kantatsu_nine_lens_fixture() -> str:
         meta = "f = 6.71 mm Fno = 1.9 ω = 39.5°"
         if example_number <= 6:
             surface_body = (
-                "Basic Lens Data r d i Infinity Infinity n d ν d [mm] "
-                f"{surface_rows} {meta}"
+                f"Basic Lens Data r d i Infinity Infinity n d ν d [mm] {surface_rows} {meta}"
             )
         else:
             surface_body = (
-                f"Basic Lens Data {meta} i r d nd νd [nm] Infinity Infinity "
-                f"{surface_rows}"
+                f"Basic Lens Data {meta} i r d nd νd [nm] Infinity Infinity {surface_rows}"
             )
         parts.append(
             f"Numerical Data Example {example_number} [{example_number:04d}] "
@@ -430,9 +421,9 @@ def _kantatsu_nine_lens_pretable_fixture() -> str:
         "f represents a focal length of the whole lens system, Fno represents an F-number, "
         "and ω represents a half angle of view."
     ]
-    surface_rows = KANTATSU_NINE_LENS_SURFACES.replace(
-        "1*(ST)", "1 * (ST)", 1
-    ).replace("(IM)", "(1M)", 1)
+    surface_rows = KANTATSU_NINE_LENS_SURFACES.replace("1*(ST)", "1 * (ST)", 1).replace(
+        "(IM)", "(1M)", 1
+    )
     for example_number in range(1, 11):
         surface_table = example_number * 2 - 1
         coefficient_table = example_number * 2
@@ -488,8 +479,7 @@ def _folded_macro_tele_surface_table(
         f"TABLE-US-{table_number:05d} TABLE {table_number} {system_label} {system} "
         f"{focal_label} = {12.0 + system / 100:.2f} mm, F number = 2.0, "
         "Half FOV = 10.0 deg. Aperture Curvature Radius Focal Surface # Comment "
-        "Type Radius Thickness (D/2) Material Index Abbe # Length "
-        + " ".join(rows)
+        "Type Radius Thickness (D/2) Material Index Abbe # Length " + " ".join(rows)
     )
 
 
@@ -516,17 +506,14 @@ def _folded_macro_tele_object_state_table(
 ) -> str:
     rows = ["Infinity 0.500 10.0 0.0"]
     rows.extend(
-        f"{1000 - index * 50} {0.5 + index / 100:.2f} "
-        f"{10.0 - index / 2:.1f} {-index / 100:.2f}"
+        f"{1000 - index * 50} {0.5 + index / 100:.2f} {10.0 - index / 2:.1f} {-index / 100:.2f}"
         for index in range(1, count)
     )
     system_label = "Lens system" if system != 290 else "Embodiment"
     return (
         f"TABLE-US-{table_number:05d} TABLE {table_number} {system_label} {system} "
         "Variation of lens properties with object distance Object Distance BFL HFOV "
-        "[mm] [mm] [deg] Magnification "
-        + " ".join(rows)
-        + f" ({table_number})"
+        "[mm] [mm] [deg] Magnification " + " ".join(rows) + f" ({table_number})"
     )
 
 
@@ -1083,9 +1070,7 @@ def test_parse_mobile_imaging_lens_single_and_split_coefficient_layouts() -> Non
     assert prescriptions[4].surfaces[0].surface_type == "ASP"
 
     late = prescriptions[6]
-    assert (late.focal_length_mm, late.f_number, late.hfov_deg) == pytest.approx(
-        (7.05, 2.1, 35.2)
-    )
+    assert (late.focal_length_mm, late.f_number, late.hfov_deg) == pytest.approx((7.05, 2.1, 35.2))
     assert late.surfaces[0].label == "Stop"
     assert late.surfaces[1].label == "Lens 1"
     assert late.surfaces[1].asphere_coefficients["H"] == pytest.approx(-8.0e-10)
@@ -1123,8 +1108,101 @@ def test_mobile_imaging_lens_requires_published_half_field_definition() -> None:
     assert len(attempts) == 12
     assert all(attempt.prescription is None for attempt in attempts)
     assert all(
-        "published half-field definition not found" in str(attempt.error)
-        for attempt in attempts
+        "published half-field definition not found" in str(attempt.error) for attempt in attempts
+    )
+
+
+def test_kantatsu_inline_retained_source_parses_only_complete_examples() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "709bf966d3087414"
+        / "US-20220163773-A1.html"
+    )
+    raw = source.read_bytes()
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "709bf966d30874140c2dbae29e78a02c4ebc0f0d24ac3ff37ad10d2b5c339e64"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw.decode("utf-8"),
+        patent_id="US-20220163773-A1",
+    )
+
+    assert len(attempts) == 11
+    assert [attempt.embodiment_number for attempt in attempts if attempt.error is None] == list(
+        range(2, 12)
+    )
+    assert "coefficient A20 for source surface 2 is missing" in str(attempts[0].error)
+    second = attempts[1].prescription
+    assert second is not None
+    assert (second.focal_length_mm, second.f_number, second.hfov_deg) == pytest.approx(
+        (4.70, 1.60, 39.4)
+    )
+    assert [surface.index for surface in second.surfaces] == list(range(1, 19))
+    assert second.surfaces[0].label == "Stop"
+    assert second.surfaces[1].asphere_coefficients["A"] == pytest.approx(-7.200435e-3)
+    assert second.surfaces[15].label == "Filter"
+    assert (second.surfaces[15].nd, second.surfaces[15].vd) == pytest.approx((1.517, 64.2))
+    assert second.surfaces[-1].label == "Image"
+
+
+def test_kantatsu_inline_retains_official_ocr_damage_without_numeric_repair() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "1a0d11c6dc00d532"
+        / "US-20210364759-A1.html"
+    )
+    raw = source.read_bytes()
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "1a0d11c6dc00d5328c68ca7c4115662f12f32334e5d4c76b71b9da43ef296651"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw.decode("utf-8"),
+        patent_id="US-20210364759-A1",
+    )
+
+    assert len(attempts) == 12
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert "[1, 2, 3, 4, 5, 6, 7, 8, 5583" in str(attempts[0].error)
+    assert "nd=3.671 allowed [1.3, 2.2]" in str(attempts[1].error)
+    assert "stop row is malformed" in str(attempts[2].error)
+    assert "coefficient label expected A4" in str(attempts[5].error)
+
+
+def test_kantatsu_inline_requires_published_half_field_definition() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "709bf966d3087414"
+        / "US-20220163773-A1.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "ω denotes a half field of view",
+        "ω is listed in degrees",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-20220163773-NO-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 11
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "published half-field definition not found" in str(attempt.error) for attempt in attempts
     )
 
 
@@ -1154,8 +1232,7 @@ def test_kantatsu_nine_lens_retains_damaged_rows_and_units_per_example() -> None
     assert first.surfaces[0].asphere_coefficients["G"] == pytest.approx(7.0e-9)
     assert "lens 9 first-surface row is malformed" in str(attempts[3].error)
     assert all(
-        "surface-table unit is [nm], not [mm]" in str(attempt.error)
-        for attempt in attempts[6:]
+        "surface-table unit is [nm], not [mm]" in str(attempt.error) for attempt in attempts[6:]
     )
 
 
@@ -1174,8 +1251,7 @@ def test_kantatsu_nine_lens_requires_published_half_angle_definition() -> None:
     assert len(attempts) == 13
     assert all(attempt.prescription is None for attempt in attempts)
     assert all(
-        "published half-angle definition not found" in str(attempt.error)
-        for attempt in attempts
+        "published half-angle definition not found" in str(attempt.error) for attempt in attempts
     )
 
 
@@ -1238,8 +1314,7 @@ def test_folded_macro_tele_retains_all_states_and_only_parses_infinity_efl() -> 
         for attempt in attempts[1:8]
     )
     assert all(
-        "whole-system focal token F is not officially defined as EFL"
-        in str(attempt.error)
+        "whole-system focal token F is not officially defined as EFL" in str(attempt.error)
         for attempt in attempts[28:]
     )
 
@@ -1258,10 +1333,7 @@ def test_folded_macro_tele_requires_official_half_field_definition() -> None:
 
     assert len(attempts) == 37
     assert all(attempt.prescription is None for attempt in attempts)
-    assert all(
-        "Half FOV/HFOV definition not found" in str(attempt.error)
-        for attempt in attempts
-    )
+    assert all("Half FOV/HFOV definition not found" in str(attempt.error) for attempt in attempts)
 
 
 def test_parse_samsung_wide_fov_embodiment_pairs_and_full_field() -> None:
@@ -1328,8 +1400,7 @@ def test_folded_zoom_qtyp_index_damage_is_retained_per_configuration() -> None:
     assert all(attempt.prescription is None for attempt in attempts)
     assert all(isinstance(attempt.error, PatentParseError) for attempt in attempts)
     assert all(
-        "surface index break: expected S2, found S1" in str(attempt.error)
-        for attempt in attempts
+        "surface index break: expected S2, found S1" in str(attempt.error) for attempt in attempts
     )
 
 
@@ -1341,8 +1412,7 @@ def test_folded_zoom_qtyp_is_rejected_when_surface_indices_are_intact() -> None:
 
     assert len(attempts) == 2
     assert all(
-        "unsupported published QTYP/NR/A0-A6 surfaces" in str(attempt.error)
-        for attempt in attempts
+        "unsupported published QTYP/NR/A0-A6 surfaces" in str(attempt.error) for attempt in attempts
     )
 
 
