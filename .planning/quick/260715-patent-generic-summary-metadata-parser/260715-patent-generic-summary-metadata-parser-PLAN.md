@@ -710,6 +710,29 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `225d06105090ce35407a8320edb1dea2eb747e8de11a492d2a4fc925a4281d56`.
   Strict audit is 619/619 with zero corrupt evidence; 154 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- `US-20260186247-A1` independently binds nine four-lens optical/asphere pairs (FIG.8/9 through
+  FIG.40/41) plus comparison FIGS.42-45. Its retained official-only PDF has 47 pages and 33
+  drawing sheets; optical pages are 5/8/11/14/17/20/23/26/29, asphere pages are
+  6/9/12/15/18/21/24/27/30, and comparison pages are 31/32/33/34.
+- The old four-lens eleven-embodiment profile is not reused: this source uses constant surface
+  labels 15/16 through 95/96 rather than embodiment-prefixed labels. A first formal pass exposed
+  that every asphere page contains two real `Surface` headers; the new profile's deterministic
+  cardinality was corrected from all nine official pages before attempts 3/4, eliminating that
+  false failure without changing any confidence threshold.
+- All nine items remain parser review because of actual below-gate sheet headers, `HFOV`/`Fno`/
+  `EFL`/`Material` labels, and `a4`/`a6` asphere labels. No number is inferred or repaired; no
+  worker, ZMX, or promotion occurs. Attempts 3/4 are canonical-equal with result SHA-256
+  `da7192bdf0bf21093144d8bd50a647785337d8b62736dc70b34dbb3542f531c9`.
+- Parser-input SHA-256 is `0f698cbe3812f4d4c522a8ece7abf3248780b814498c76416641f3fd763af0fb`;
+  manifest SHA-256 is `02ba2ce7eed84fd6dcfbb6cedb89ed27a95135335b39c114015726c82fccbc79`;
+  retained official PDF SHA-256 is
+  `85e7c155c897fdc5869d1c1c6d3722c8f8082efe81028ef981f68c27e92a7594`.
+- Generic summary changed 239 to 238. Current result-set SHA-256 is
+  `ecf14c32f005e5ecefa446107b03bbc4ab6aa027702091c3e0d30141f6e9281b`; summary artifact
+  SHA-256 is `c28bbe655fe2dc9937c358902d09ad5999ee2298b8909ae63e7187a82968520d`;
+  after-census SHA-256 is `076a35c6007825b5a216dcaea96253cadeb049e3d1233ef8ca04d4672d19d943`.
+  Strict audit is 619/619 with zero corrupt evidence; 156 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

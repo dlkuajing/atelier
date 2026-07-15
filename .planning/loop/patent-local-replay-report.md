@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `7bdd16ec9286daa78629b30c46f59023eb9d6ae8fc1298a34d740899236b0f8b`
+- result_set_sha256: `ecf14c32f005e5ecefa446107b03bbc4ab6aa027702091c3e0d30141f6e9281b`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 518
 - `terminal`: 734
-- `parser_review_required`: 1410
+- `parser_review_required`: 1418
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1410
+- `parser_review_required.deterministic_parser_rejected`: 1418
 - `terminal.process_receipt_classified`: 714
 - `converted_pending_intake.process_isolated_zmx_ready`: 518
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -73,7 +73,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 239
+- `generic_summary_metadata_missing`: 238
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -131,12 +131,18 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_ability_ol1_asphere_cells_are_not_independently_classified_fail_closed`: 1
 - `other_ability_three_lens_row_s3_has_incomplete_material_data`: 1
 - `other_asphere_table_has_n_exact_surface_headers`: 1
+- `other_asphere_table_label_token_confidence_n_is_below_n_genius_four_nine_comparison_1_drawing_sheet_header_confid_bc2bf123a84d`: 1
 - `other_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 1
 - `other_aspheric_row_a14_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a24_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a26_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a8_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_k_has_more_numeric_values_than_surfaces_extra_token`: 1
+- `other_genius_four_nine_optical_1_drawing_sheet_header_confidence_n_is_below_n_optical_table_label_token_confidenc_54aadedf7f87`: 1
+- `other_genius_four_nine_optical_2_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_hfov_has_n_e_e20bea602e99`: 1
+- `other_genius_four_nine_optical_4_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_fno_has_n_ex_7315390bf990`: 1
+- `other_genius_four_nine_optical_5_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_fno_confiden_7b66ba42eb3d`: 1
+- `other_genius_four_nine_optical_8_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_efl_confiden_2f658b04f032`: 1
 - `other_genius_six_asphere_1_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_below_n`: 1
 - `other_genius_six_asphere_3_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_7c9ff752e955`: 1
 - `other_genius_six_asphere_4_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_ac80028645fd`: 1
@@ -172,11 +178,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_largan_surface_n_radius_token_token_confidence_n_is_below_n`: 1
 - `other_largan_surface_n_thickness_token_token_confidence_n_is_below_n`: 1
 - `other_mobile_imaging_lens_example_n_surface_n_coefficient_a12_is_malformed_e_n`: 1
+- `other_optical_metadata_label_efl_confidence_n_is_below_n_asphere_table_label_token_has_n_exact_ocr_tokens_expecte_d6d7b977ef46`: 1
 - `other_optical_metadata_label_efl_confidence_n_is_below_n_genius_six_asphere_6_drawing_sheet_header_confidence_n_i_8d847f6eb21e`: 1
 - `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_confidence_n_is_below_n`: 1
 - `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_confidence_n_is_below_n_geniu_10a53b7f241e`: 1
 - `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 1
+- `other_optical_metadata_label_fno_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_below_n_genius_1bd197505af2`: 1
 - `other_optical_metadata_label_fno_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expect_770054bc16de`: 1
+- `other_optical_metadata_label_fno_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expect_bfd6dee531a3`: 1
 - `other_optical_metadata_label_hfov_has_n_exact_ocr_prefixes_genius_six_asphere_5_drawing_sheet_header_confidence_n_434796a4e225`: 1
 - `other_optical_metadata_label_lcr_has_n_exact_ocr_prefixes_genius_six_asphere_9_drawing_sheet_header_confidence_n_aca32a0bb804`: 1
 - `other_optical_table_has_n_accepted_radius_headers_asphere_coefficient_label_a10_confidence_n_is_below_n`: 1

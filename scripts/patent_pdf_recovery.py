@@ -138,6 +138,30 @@ _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS = (
 )
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _GENIUS_FOUR_LENS_ELEVEN_ALLOWED_BLANK_MIRROR_PAGES = frozenset({6, 17, 21, 33, 45})
+_GENIUS_FOUR_LENS_NINE_OPTICAL_FIGURES = (8, 12, 16, 20, 24, 28, 32, 36, 40)
+_GENIUS_FOUR_LENS_NINE_ASPHERE_FIGURES = (9, 13, 17, 21, 25, 29, 33, 37, 41)
+_GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for ordinal, optical_figure, asphere_figure in zip(
+        ("first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth"),
+        _GENIUS_FOUR_LENS_NINE_OPTICAL_FIGURES,
+        _GENIUS_FOUR_LENS_NINE_ASPHERE_FIGURES,
+        strict=True,
+    )
+    for marker in (
+        f"FIG. {optical_figure} shows detailed optical data of the optical imaging lens of the "
+        f"{ordinal} embodiment of the disclosure",
+        f"FIG. {asphere_figure} shows aspheric parameters of the optical imaging lens of the "
+        f"{ordinal} embodiment of the disclosure",
+    )
+)
+_GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS = (
+    "FIG. 42 and FIG. 43 show values of important parameters and their relational expressions "
+    "of the optical imaging lenses of the first to fifth embodiments of the disclosure",
+    "FIG. 44 and FIG. 45 show values of important parameters and their relational expressions "
+    "of the optical imaging lenses of the sixth to ninth embodiments of the disclosure",
+)
+_GENIUS_FOUR_LENS_NINE_PROFILE = "genius_four_lens_nine_embodiment_census_v1"
 _GENIUS_SIX_LENS_FIVE_OPTICAL_FIGURES = (9, 13, 17, 21, 25)
 _GENIUS_SIX_LENS_FIVE_ASPHERE_FIGURES = (10, 14, 18, 22, 26)
 _GENIUS_SIX_LENS_FIVE_ORDINALS = ("first", "second", "third", "fourth", "fifth")
@@ -267,6 +291,7 @@ _GENIUS_OFFICIAL_ONLY_PROFILES = frozenset(
         _GENIUS_SIX_LENS_NINE_PROFILE,
         _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE,
         _GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_PROFILE,
+        _GENIUS_FOUR_LENS_NINE_PROFILE,
     }
 )
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
@@ -334,6 +359,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
     ):
         return _GENIUS_FOUR_LENS_ELEVEN_PROFILE
+    if all(marker in text for marker in _GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT) and all(
+        marker in text for marker in _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
+    ):
+        return _GENIUS_FOUR_LENS_NINE_PROFILE
     if all(marker in text for marker in _GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT) and (
         _GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER in text
     ):
@@ -506,6 +535,23 @@ def _genius_four_lens_eleven_source_facts(raw_html: str) -> dict[str, Any]:
             for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
         },
         "fno_label_count": len(re.findall(r"\bFno\b", text, flags=re.IGNORECASE)),
+    }
+
+
+def _genius_four_lens_nine_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind all nine four-lens figure pairs and four comparison figures."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_counts": {
+            marker.split(" show", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
+        },
     }
 
 
@@ -1103,6 +1149,18 @@ async def recover_ability_official_pdf_ocr(
                 )
         parser_profile = profile
         source_facts = _genius_four_lens_eleven_source_facts(primary_html)
+    elif profile == _GENIUS_FOUR_LENS_NINE_PROFILE:
+        if page_count != 47:
+            raise PatentPdfRecoveryError("Genius four-lens nine-embodiment PDF page count is not 47")
+        role_pages = {}
+        for embodiment in range(1, 10):
+            optical_page_index = 4 + (embodiment - 1) * 3
+            role_pages[f"genius_four_nine_optical_{embodiment}"] = optical_page_index
+            role_pages[f"genius_four_nine_asphere_{embodiment}"] = optical_page_index + 1
+        for comparison in range(1, 5):
+            role_pages[f"genius_four_nine_comparison_{comparison}"] = 29 + comparison
+        parser_profile = profile
+        source_facts = _genius_four_lens_nine_source_facts(primary_html)
     elif profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
         if page_count != 34:
             raise PatentPdfRecoveryError("Genius five-embodiment PDF page count is not 34")
