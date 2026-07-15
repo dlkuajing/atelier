@@ -185,18 +185,19 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260713-n7x` | active-unratified-external-release-evidence-required | `.planning/north-star/` 与 `.planning/quick/260713-n7x-unratified-claim-contract-authority-evid/`；历史 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6`、`ab7ce4d/f2ff988` 固定树均被拒；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED；tracked 文档只定义 fail-closed gate，不自证 fixed-tree review/PR/CI/merge；A–F 保持 false。 |
 | `260715-patent-saturation-ledger` | active-foundation-complete-saturation-incomplete | `.planning/quick/260715-patent-saturation-ledger/`、`data/patent-ledger/` 与 `.planning/loop/patent-saturation-baseline.md`；66 相关测试+Ruff 绿，三工件二次重建 byte-identical，严格 audit exit=1。 |
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
+| `260715-patent-local-pool-replay` | active-128-of-619-saturation-incomplete | Frozen cohort SHA `e809823c...b42b`; strict checkpoint 128/619, corrupt=0. Current item census: parser review 322, receipt terminal 171, staging pending intake 48, patent-budget retry 1. Largest interim parser signatures: AAC Raytech summary metadata missing 63 and Sunny metadata missing 63. Continue the full frozen replay; do not select a final parser bucket or claim saturation from this partial sample. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260715-patent-conversion-hard-timeout/260715-patent-conversion-hard-timeout-PLAN.md`,
+`.planning/quick/260715-patent-local-pool-replay/260715-patent-local-pool-replay-PLAN.md`,
 then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.py`; never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-highest-value executable work is a frozen replay of the 619 uncovered local roots through the
-isolated runner, followed by parser/fulltext work selected from the largest structured bucket.
+highest-value executable work is to resume the frozen 619-root replay from its strict result
+checkpoint, then select parser/fulltext work from the largest complete-cohort structured bucket.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three
