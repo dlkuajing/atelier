@@ -353,10 +353,15 @@ def _item_from_conversion_attempt(
     if any(recovery_fields):
         if not all(recovery_fields):
             raise PatentReplayError(f"incomplete fulltext recovery evidence: {item_id}")
+        parser_input_evidence_type = (
+            "uspto_official_pdf_ocr_parser_input"
+            if attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON"
+            else "uspto_ppubs_recovered_parser_input_html"
+        )
         parser_input = _checked_evidence(
             attempt.parser_input_document_path,
             expected_sha256=attempt.parser_input_document_sha256,
-            evidence_type="uspto_ppubs_recovered_parser_input_html",
+            evidence_type=parser_input_evidence_type,
         )
         recovery_manifest = _checked_evidence(
             attempt.fulltext_recovery_manifest_path,

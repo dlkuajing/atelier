@@ -817,8 +817,17 @@ def test_item_mapping_accepts_source_proven_terminal_without_process_receipt(
     assert item.evidence == (raw_evidence,)
 
 
+@pytest.mark.parametrize(
+    ("source_bucket", "parser_evidence_type"),
+    [
+        ("USPAT", "uspto_ppubs_recovered_parser_input_html"),
+        ("USPTO-PDF-OCR-JSON", "uspto_official_pdf_ocr_parser_input"),
+    ],
+)
 def test_item_mapping_includes_recovered_parser_input_and_linkage_manifest(
     tmp_path: Path,
+    source_bucket: str,
+    parser_evidence_type: str,
 ) -> None:
     raw = tmp_path / "primary.html"
     parser_input = tmp_path / "grant.html"
@@ -851,7 +860,7 @@ def test_item_mapping_includes_recovered_parser_input_and_linkage_manifest(
         parser_input_document_path=parser_input.as_posix(),
         parser_input_document_sha256=sha256_bytes(parser_input.read_bytes()),
         parser_input_publication_id="US-TEST-B2",
-        parser_input_source_bucket="USPAT",
+        parser_input_source_bucket=source_bucket,
         fulltext_recovery_manifest_path=manifest.as_posix(),
         fulltext_recovery_manifest_sha256=sha256_bytes(manifest.read_bytes()),
         embodiment_number=1,
@@ -868,7 +877,7 @@ def test_item_mapping_includes_recovered_parser_input_and_linkage_manifest(
 
     assert {evidence.evidence_type for evidence in item.evidence} == {
         "source",
-        "uspto_ppubs_recovered_parser_input_html",
+        parser_evidence_type,
         "patent_fulltext_recovery_manifest",
         "patent_conversion_receipt",
         "staging_zmx",

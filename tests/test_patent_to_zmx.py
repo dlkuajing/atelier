@@ -1743,6 +1743,360 @@ def test_convert_candidate_retains_primary_recovered_input_and_manifest(
     assert all(manifest["checks"].values())
 
 
+def _ability_ocr_token(
+    text: str,
+    x: float,
+    y: float,
+    *,
+    confidence: float = 0.999,
+) -> dict[str, object]:
+    return {
+        "box": [
+            [x - 5.0, y - 5.0],
+            [x + 5.0, y - 5.0],
+            [x + 5.0, y + 5.0],
+            [x - 5.0, y + 5.0],
+        ],
+        "text": text,
+        "confidence": confidence,
+    }
+
+
+def _ability_pdf_ocr_parser_input(*, low_confidence_radius: bool = False) -> bytes:
+    surface_tokens = [
+        _ability_ocr_token("Surface", 100.0, 100.0),
+        _ability_ocr_token("Curvature", 200.0, 100.0),
+        _ability_ocr_token("Thickness", 300.0, 100.0),
+        _ability_ocr_token("Refractive", 400.0, 100.0),
+        _ability_ocr_token("Abbe", 500.0, 100.0),
+    ]
+    rows = [
+        ("S1", "11.104", "0.724", "1.83", "40.7"),
+        ("S2", "5.088", "2.150", None, None),
+        ("S3", "10.224", "0.481", "1.75", "53.3"),
+        ("S4", "3.473", "2.926", None, None),
+        ("S15", "19.027", "1.791", "1.50", "77.6"),
+        ("S16", "2.769", "0.398", None, None),
+        ("S5", "4.281", "1.915", "2.00", "17.3"),
+        ("S6", "-47.168", "0.013", None, None),
+        ("St", "8", "0.412", None, None),
+        ("S10", "-17.119", "1.353", "1.96", "18.5"),
+        ("S11", "4.061", "1.680", "1.62", "64.5"),
+        ("S12", "-4.061", "0.355", None, None),
+        ("S7", "9.773", "1.841", "1.62", "64.5"),
+        ("S8", "-9.773", "3.940", None, None),
+        ("Sf1", "8", "0.30", "1.51", "52.1"),
+        ("Sf2", "8", "0.60", None, None),
+        ("Sc1", "8", "0.50", "1.49", "68.4"),
+        ("Sc2", "8", "0.549", None, None),
+    ]
+    for index, (label, radius, thickness, nd, vd) in enumerate(rows):
+        y = 200.0 + index * 40.0
+        surface_tokens.extend(
+            [
+                _ability_ocr_token(label, 100.0, y),
+                _ability_ocr_token(
+                    radius,
+                    200.0,
+                    y,
+                    confidence=(0.98 if low_confidence_radius and label == "S1" else 0.999),
+                ),
+                _ability_ocr_token(thickness, 300.0, y),
+            ]
+        )
+        if nd is not None and vd is not None:
+            surface_tokens.extend(
+                [
+                    _ability_ocr_token(nd, 400.0, y),
+                    _ability_ocr_token(vd, 500.0, y),
+                ]
+            )
+    final_y = 200.0 + len(rows) * 40.0
+    surface_tokens.extend(
+        [
+            _ability_ocr_token("8", 200.0, final_y),
+            _ability_ocr_token("0.00", 300.0, final_y),
+            _ability_ocr_token("FIG. 5", 300.0, final_y + 60.0),
+        ]
+    )
+    meta_tokens = []
+    for y, label, left, right in (
+        (200.0, "F", "2.48", "2.32"),
+        (240.0, "FOV", "170", "170"),
+        (280.0, "FNO", "2.84", "2.82"),
+    ):
+        meta_tokens.extend(
+            [
+                _ability_ocr_token(label, 100.0, y),
+                _ability_ocr_token(left, 300.0, y),
+                _ability_ocr_token(right, 400.0, y),
+            ]
+        )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "publication_id": "US-10684452-B2",
+        "page_count": 16,
+        "pages": [
+            {
+                "page_number": 4,
+                "role": "surface_ol1",
+                "official_image_sha256": "1" * 64,
+                "mirror_text": "FIG. 2A",
+                "rapidocr_tokens": [_ability_ocr_token("FIG. 2A", 1.0, 1.0)],
+            },
+            {
+                "page_number": 5,
+                "role": "asphere_ol1",
+                "official_image_sha256": "2" * 64,
+                "mirror_text": "FIG. 2B",
+                "rapidocr_tokens": [_ability_ocr_token("FIG. 2B", 1.0, 1.0)],
+            },
+            {
+                "page_number": 8,
+                "role": "surface_ol2",
+                "official_image_sha256": "3" * 64,
+                "mirror_text": "FIG. 5",
+                "rapidocr_tokens": surface_tokens,
+            },
+            {
+                "page_number": 10,
+                "role": "system_meta",
+                "official_image_sha256": "4" * 64,
+                "mirror_text": "FIG. 7",
+                "rapidocr_tokens": meta_tokens,
+            },
+        ],
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
+def test_ability_pdf_ocr_parser_recovers_only_independently_classified_ol2() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_pdf_ocr_parser_input().decode(),
+        patent_id="US-10684452-B2",
+    )
+
+    assert len(attempts) == 2
+    assert attempts[0].prescription is None
+    assert "fail closed" in str(attempts[0].error)
+    second = attempts[1].prescription
+    assert second is not None
+    assert (second.focal_length_mm, second.f_number, second.hfov_deg) == pytest.approx(
+        (2.32, 2.82, 85.0)
+    )
+    assert len(second.surfaces) == 19
+    assert [surface.label for surface in second.surfaces[8:]] == [
+        "Stop",
+        "S10",
+        "S11",
+        "S12",
+        "S7",
+        "S8",
+        "Filter",
+        "Filter",
+        "Cover",
+        "Cover",
+        "Image",
+    ]
+    assert second.surfaces[8].radius_mm is None
+    assert (second.surfaces[14].nd, second.surfaces[14].vd) == pytest.approx((1.51, 52.1))
+
+
+def test_ability_pdf_ocr_parser_rejects_low_confidence_optical_number() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_pdf_ocr_parser_input(low_confidence_radius=True).decode(),
+        patent_id="US-10684452-B2",
+    )
+
+    assert attempts[1].prescription is None
+    assert "numeric cell" in str(attempts[1].error)
+
+
+def test_convert_candidate_retains_official_pdf_ocr_linkage_manifest(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    parser_input = _ability_pdf_ocr_parser_input()
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-10684452-B2",
+        source_bucket="USPAT",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html="official HTML without tables",
+            source_bucket="USPAT",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_pdf_recovery(*_args: object, **_kwargs: object) -> object:
+        return patent_to_zmx.PatentPdfOcrRecovery(
+            publication_id="US-10684452-B2",
+            official_pdf=b"%PDF-official",
+            official_pdf_url=(
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10684452"
+            ),
+            mirror_pdf=b"%PDF-mirror",
+            mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US10684452.pdf",
+            parser_input=parser_input,
+            page_count=16,
+            page_image_sha256=("a" * 64,),
+            key_page_numbers=(4, 5, 8, 10),
+            pypdf_version="fixture",
+            rapidocr_version="fixture",
+        )
+
+    clock = iter((0.0, 2.0))
+    monkeypatch.setattr(patent_to_zmx, "time", SimpleNamespace(monotonic=lambda: next(clock)))
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(patent_to_zmx, "recover_ability_official_pdf_ocr", fake_pdf_recovery)
+
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-10684452-B2",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+            patent_budget_seconds=1.0,
+        )
+    )
+
+    assert [attempt.status for attempt in attempts] == ["failed", "conversion_retry_required"]
+    assert {attempt.parser_input_source_bucket for attempt in attempts} == {
+        "USPTO-PDF-OCR-JSON"
+    }
+    manifest_paths = {attempt.fulltext_recovery_manifest_path for attempt in attempts}
+    assert len(manifest_paths) == 1
+    manifest = json.loads(Path(manifest_paths.pop()).read_text(encoding="utf-8"))
+    assert manifest["recovery_type"] == "uspto_official_pdf_exact_image_ocr_overlay"
+    assert manifest["official_pdf"]["source_bucket"] == "USPTO-PDF"
+    assert manifest["ocr_overlay_pdf"]["source_bucket"] == "GOOGLE-OCR-PDF"
+    assert manifest["source_pin"]["source_bucket"] == "USPTO-PDF-OCR-SOURCE-PIN"
+    assert manifest["parser_input"]["key_page_numbers"] == [4, 5, 8, 10]
+    assert all(manifest["checks"].values())
+    cached_sources = patent_to_zmx._load_pdf_ocr_source_pin(
+        tmp_path / "raw",
+        publication_id="US-10684452-B2",
+    )
+    assert cached_sources is not None
+    assert cached_sources.official_pdf == b"%PDF-official"
+    assert cached_sources.mirror_pdf == b"%PDF-mirror"
+
+
+def test_pdf_ocr_source_pin_rejects_retained_source_hash_drift(tmp_path: Path) -> None:
+    official = patent_to_zmx._retain_source_bytes(
+        tmp_path,
+        publication_id="US-10684452-B2",
+        source_bucket="USPTO-PDF",
+        suffix="pdf",
+        content=b"%PDF-official",
+    )
+    mirror = patent_to_zmx._retain_source_bytes(
+        tmp_path,
+        publication_id="US-10684452-B2",
+        source_bucket="GOOGLE-OCR-PDF",
+        suffix="pdf",
+        content=b"%PDF-mirror",
+    )
+    recovered = patent_to_zmx.PatentPdfOcrRecovery(
+        publication_id="US-10684452-B2",
+        official_pdf=b"%PDF-official",
+        official_pdf_url=(
+            "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10684452"
+        ),
+        mirror_pdf=b"%PDF-mirror",
+        mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US10684452.pdf",
+        parser_input=b"{}\n",
+        page_count=1,
+        page_image_sha256=("a" * 64,),
+        key_page_numbers=(1,),
+        pypdf_version="fixture",
+        rapidocr_version="fixture",
+    )
+    patent_to_zmx._retain_pdf_ocr_source_pin(
+        tmp_path,
+        publication_id="US-10684452-B2",
+        recovered=recovered,
+        official_pdf_source=official,
+        mirror_pdf_source=mirror,
+    )
+    Path(official.retained_path).write_bytes(b"%PDF-mutated")
+
+    with pytest.raises(patent_to_zmx.PatentParseError, match="hash mismatch"):
+        patent_to_zmx._load_pdf_ocr_source_pin(
+            tmp_path,
+            publication_id="US-10684452-B2",
+        )
+
+
+def test_pdf_ocr_source_pin_rejects_source_outside_raw_lake(tmp_path: Path) -> None:
+    raw_dir = tmp_path / "raw"
+    official = patent_to_zmx._retain_source_bytes(
+        raw_dir,
+        publication_id="US-10684452-B2",
+        source_bucket="USPTO-PDF",
+        suffix="pdf",
+        content=b"%PDF-official",
+    )
+    mirror = patent_to_zmx._retain_source_bytes(
+        raw_dir,
+        publication_id="US-10684452-B2",
+        source_bucket="GOOGLE-OCR-PDF",
+        suffix="pdf",
+        content=b"%PDF-mirror",
+    )
+    recovered = patent_to_zmx.PatentPdfOcrRecovery(
+        publication_id="US-10684452-B2",
+        official_pdf=b"%PDF-official",
+        official_pdf_url=(
+            "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10684452"
+        ),
+        mirror_pdf=b"%PDF-mirror",
+        mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US10684452.pdf",
+        parser_input=b"{}\n",
+        page_count=1,
+        page_image_sha256=("a" * 64,),
+        key_page_numbers=(1,),
+        pypdf_version="fixture",
+        rapidocr_version="fixture",
+    )
+    pin = patent_to_zmx._retain_pdf_ocr_source_pin(
+        raw_dir,
+        publication_id="US-10684452-B2",
+        recovered=recovered,
+        official_pdf_source=official,
+        mirror_pdf_source=mirror,
+    )
+    outside = tmp_path / "outside.pdf"
+    outside.write_bytes(b"%PDF-official")
+    pin_path = Path(pin.retained_path)
+    payload = json.loads(pin_path.read_text(encoding="utf-8"))
+    payload["official_pdf"]["path"] = outside.as_posix()
+    pin_path.write_bytes(
+        (
+            json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            + "\n"
+        ).encode("utf-8")
+    )
+
+    with pytest.raises(patent_to_zmx.PatentParseError, match="outside the raw document lake"):
+        patent_to_zmx._load_pdf_ocr_source_pin(
+            raw_dir,
+            publication_id="US-10684452-B2",
+        )
+
+
 def test_kantatsu_inline_retained_source_parses_only_complete_examples() -> None:
     source = (
         Path(__file__).resolve().parents[1]

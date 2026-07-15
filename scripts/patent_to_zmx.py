@@ -52,6 +52,12 @@ from scripts.patent_crawler import (  # noqa: E402
     _ppubs_patent_html,
     _ppubs_search_docs,
 )
+from scripts.patent_pdf_recovery import (  # noqa: E402
+    PatentPdfCachedSources,
+    PatentPdfOcrRecovery,
+    PatentPdfRecoveryError,
+    recover_ability_official_pdf_ocr,
+)
 
 DEFAULT_POOL_GLOB = "uspto-smartphone-batch*.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "data" / "zmx-staging"
@@ -339,6 +345,9 @@ def _parse_prescription_attempts(
 ) -> list[_PrescriptionParseAttempt]:
     """Parse embodiment tables independently so one bad table does not hide later ones."""
 
+    pdf_attempts = _parse_ability_pdf_ocr_attempts(raw_text, patent_id=patent_id)
+    if pdf_attempts:
+        return pdf_attempts
     text = normalize_patent_text(raw_text)
     try:
         metas = _find_embodiment_metas(text)
@@ -2378,6 +2387,414 @@ def _parse_kantatsu_six_lens_table_attempts(
             _PrescriptionParseAttempt(
                 embodiment_number=example_number,
                 embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+# ---------------------------------------------------------------------------
+# Ability Enterprise drawing-table PDF fallback.  PPUBS HTML declares these
+# figures but omits their image-only prescriptions.  The retained parser input
+# is canonical JSON produced only after the OCR PDF's embedded page images are
+# byte-identical to the official USPTO page images.
+# ---------------------------------------------------------------------------
+
+_ABILITY_PDF_PARSER_FAMILY = "ability_official_pdf_ocr_v1"
+_ABILITY_OCR_LABEL_CONFIDENCE = 0.95
+_ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
+_ABILITY_ROW_Y_TOLERANCE = 18.0
+_ABILITY_COLUMN_X_TOLERANCE = 85.0
+_ABILITY_OL2_ROW_LABELS = (
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S15",
+    "S16",
+    "S5",
+    "S6",
+    "St",
+    "S10",
+    "S11",
+    "S12",
+    "S7",
+    "S8",
+    "Sf1",
+    "Sf2",
+    "Sc1",
+    "Sc2",
+    "Image",
+)
+
+
+def _ability_token_center(token: dict[str, Any]) -> tuple[float, float]:
+    box = token.get("box")
+    if (
+        not isinstance(box, list)
+        or len(box) != 4
+        or any(not isinstance(point, list) or len(point) != 2 for point in box)
+    ):
+        raise PatentParseError("Ability PDF OCR token has an invalid box")
+    try:
+        x = sum(float(point[0]) for point in box) / 4.0
+        y = sum(float(point[1]) for point in box) / 4.0
+    except (TypeError, ValueError) as exc:
+        raise PatentParseError("Ability PDF OCR token box is not numeric") from exc
+    return x, y
+
+
+def _ability_token_text(token: dict[str, Any]) -> str:
+    text = token.get("text")
+    if not isinstance(text, str) or not text.strip():
+        raise PatentParseError("Ability PDF OCR token text is empty")
+    return text.strip()
+
+
+def _ability_token_confidence(token: dict[str, Any]) -> float:
+    try:
+        confidence = float(token.get("confidence"))
+    except (TypeError, ValueError) as exc:
+        raise PatentParseError("Ability PDF OCR token confidence is invalid") from exc
+    if not 0.0 <= confidence <= 1.0:
+        raise PatentParseError("Ability PDF OCR token confidence is outside [0, 1]")
+    return confidence
+
+
+def _ability_page(payload: dict[str, Any], role: str) -> dict[str, Any]:
+    pages = payload.get("pages")
+    if not isinstance(pages, list):
+        raise PatentParseError("Ability PDF OCR pages must be a list")
+    matches = [page for page in pages if isinstance(page, dict) and page.get("role") == role]
+    if len(matches) != 1:
+        raise PatentParseError(f"Ability PDF OCR role {role} occurs {len(matches)} times")
+    page = matches[0]
+    digest = page.get("official_image_sha256")
+    if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
+        raise PatentParseError(f"Ability PDF OCR role {role} lacks an official image hash")
+    tokens = page.get("rapidocr_tokens")
+    if not isinstance(tokens, list) or not tokens or any(not isinstance(t, dict) for t in tokens):
+        raise PatentParseError(f"Ability PDF OCR role {role} lacks structured OCR tokens")
+    return page
+
+
+def _ability_unique_token(
+    tokens: list[dict[str, Any]],
+    text: str,
+    *,
+    min_confidence: float,
+) -> dict[str, Any]:
+    matches = [
+        token
+        for token in tokens
+        if _ability_token_text(token).casefold() == text.casefold()
+        and _ability_token_confidence(token) >= min_confidence
+    ]
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Ability PDF OCR token {text!r} occurs {len(matches)} times above confidence gate"
+        )
+    return matches[0]
+
+
+def _ability_number_token(
+    tokens: list[dict[str, Any]],
+    *,
+    x: float,
+    y: float,
+    required: bool,
+) -> dict[str, Any] | None:
+    candidates: list[dict[str, Any]] = []
+    for token in tokens:
+        token_text = _ability_token_text(token)
+        if re.fullmatch(NUMBER_PATTERN, token_text, re.IGNORECASE) is None:
+            continue
+        token_x, token_y = _ability_token_center(token)
+        if (
+            abs(token_x - x) <= _ABILITY_COLUMN_X_TOLERANCE
+            and abs(token_y - y) <= _ABILITY_ROW_Y_TOLERANCE
+            and _ability_token_confidence(token) >= _ABILITY_OCR_NUMBER_CONFIDENCE
+        ):
+            candidates.append(token)
+    if len(candidates) > 1 or (required and len(candidates) != 1):
+        raise PatentParseError(
+            f"Ability PDF OCR numeric cell at ({x:.1f}, {y:.1f}) has {len(candidates)} values"
+        )
+    return candidates[0] if candidates else None
+
+
+def _ability_infinity_token(
+    tokens: list[dict[str, Any]],
+    *,
+    x: float,
+    y: float,
+) -> None:
+    candidates = []
+    for token in tokens:
+        token_x, token_y = _ability_token_center(token)
+        if (
+            abs(token_x - x) <= _ABILITY_COLUMN_X_TOLERANCE
+            and abs(token_y - y) <= _ABILITY_ROW_Y_TOLERANCE
+            and _ability_token_confidence(token) >= 0.97
+        ):
+            candidates.append(_ability_token_text(token))
+    # RapidOCR deterministically renders the printed infinity glyph as "8"
+    # in this retained layout.  This alias is accepted only in the radius
+    # column of rows which the source labels as stop/filter/cover/image.
+    if candidates != ["8"]:
+        raise PatentParseError(
+            f"Ability PDF flat-surface radius cell is not the retained infinity alias: {candidates}"
+        )
+
+
+def _ability_surface_table(page: dict[str, Any]) -> list[PatentSurface]:
+    tokens = list(page["rapidocr_tokens"])
+    surface_header = _ability_unique_token(
+        tokens,
+        "Surface",
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    curvature_header = _ability_unique_token(
+        tokens,
+        "Curvature",
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    thickness_header = _ability_unique_token(
+        tokens,
+        "Thickness",
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    abbe_header = _ability_unique_token(
+        tokens,
+        "Abbe",
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    refractive_matches = [
+        token
+        for token in tokens
+        if "refractive" in _ability_token_text(token).casefold()
+        and _ability_token_confidence(token) >= 0.94
+    ]
+    if len(refractive_matches) != 1:
+        raise PatentParseError("Ability PDF refractive-index header is ambiguous")
+    surface_x, header_y = _ability_token_center(surface_header)
+    radius_x, _ = _ability_token_center(curvature_header)
+    thickness_x, _ = _ability_token_center(thickness_header)
+    nd_x, _ = _ability_token_center(refractive_matches[0])
+    vd_x, _ = _ability_token_center(abbe_header)
+    figure_tokens = [
+        token for token in tokens if _ability_token_text(token).upper().startswith("FIG.")
+    ]
+    if len(figure_tokens) != 1:
+        raise PatentParseError("Ability PDF surface figure boundary is ambiguous")
+    _, figure_y = _ability_token_center(figure_tokens[0])
+
+    labeled_rows: list[tuple[float, str]] = []
+    for token in tokens:
+        text = _ability_token_text(token)
+        x, y = _ability_token_center(token)
+        if not header_y < y < figure_y or abs(x - surface_x) > _ABILITY_COLUMN_X_TOLERANCE:
+            continue
+        if re.fullmatch(r"S\d+|St|Sf\d+|Sc\d+", text, re.IGNORECASE) is None:
+            continue
+        if _ability_token_confidence(token) < _ABILITY_OCR_LABEL_CONFIDENCE:
+            raise PatentParseError(f"Ability PDF surface label {text} is below confidence gate")
+        labeled_rows.append((y, text))
+    labeled_rows.sort()
+    if not labeled_rows:
+        raise PatentParseError("Ability PDF surface table has no labeled rows")
+
+    surfaces: list[PatentSurface] = []
+    observed_labels: list[str] = []
+    for row_y, source_label in labeled_rows:
+        canonical = source_label[0].upper() + source_label[1:]
+        is_flat_auxiliary = canonical.casefold() in {
+            "st",
+            "sf1",
+            "sf2",
+            "sc1",
+            "sc2",
+        }
+        if is_flat_auxiliary:
+            _ability_infinity_token(tokens, x=radius_x, y=row_y)
+            radius = None
+        else:
+            radius_token = _ability_number_token(
+                tokens,
+                x=radius_x,
+                y=row_y,
+                required=True,
+            )
+            assert radius_token is not None
+            radius = _parse_number(_ability_token_text(radius_token))
+        thickness_token = _ability_number_token(
+            tokens,
+            x=thickness_x,
+            y=row_y,
+            required=True,
+        )
+        assert thickness_token is not None
+        thickness = _parse_number(_ability_token_text(thickness_token))
+        nd_token = _ability_number_token(tokens, x=nd_x, y=row_y, required=False)
+        vd_token = _ability_number_token(tokens, x=vd_x, y=row_y, required=False)
+        if (nd_token is None) != (vd_token is None):
+            raise PatentParseError(f"Ability PDF row {canonical} has incomplete material metadata")
+        nd = _parse_number(_ability_token_text(nd_token)) if nd_token is not None else None
+        vd = _parse_number(_ability_token_text(vd_token)) if vd_token is not None else None
+        _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
+        if canonical.casefold() == "st":
+            label = "Stop"
+        elif canonical.casefold().startswith("sf"):
+            label = "Filter"
+        elif canonical.casefold().startswith("sc"):
+            label = "Cover"
+        else:
+            label = canonical
+        observed_labels.append(canonical)
+        surfaces.append(
+            PatentSurface(
+                index=len(surfaces) + 1,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=None,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    last_row_y = labeled_rows[-1][0]
+    trailing_radius = [
+        token
+        for token in tokens
+        if last_row_y + _ABILITY_ROW_Y_TOLERANCE < _ability_token_center(token)[1] < figure_y
+        and abs(_ability_token_center(token)[0] - radius_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and _ability_token_confidence(token) >= 0.97
+    ]
+    trailing_thickness = [
+        token
+        for token in tokens
+        if last_row_y + _ABILITY_ROW_Y_TOLERANCE < _ability_token_center(token)[1] < figure_y
+        and abs(_ability_token_center(token)[0] - thickness_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and _ability_token_confidence(token) >= _ABILITY_OCR_NUMBER_CONFIDENCE
+    ]
+    if [_ability_token_text(token) for token in trailing_radius] != ["8"]:
+        raise PatentParseError("Ability PDF image-plane infinity cell is not uniquely retained")
+    if [_ability_token_text(token) for token in trailing_thickness] != ["0.00"]:
+        raise PatentParseError("Ability PDF image-plane thickness cell is not uniquely retained")
+    observed_labels.append("Image")
+    surfaces.append(
+        PatentSurface(
+            index=len(surfaces) + 1,
+            label="Image",
+            radius_mm=None,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    if tuple(observed_labels) != _ABILITY_OL2_ROW_LABELS:
+        raise PatentParseError(
+            "Ability OL2 surface row sequence mismatch: " + ",".join(observed_labels)
+        )
+    return surfaces
+
+
+def _ability_meta_row(page: dict[str, Any], label: str) -> tuple[float, float]:
+    tokens = list(page["rapidocr_tokens"])
+    label_token = _ability_unique_token(
+        tokens,
+        label,
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    label_x, label_y = _ability_token_center(label_token)
+    values: list[tuple[float, float]] = []
+    for token in tokens:
+        text = _ability_token_text(token)
+        if re.fullmatch(NUMBER_PATTERN, text, re.IGNORECASE) is None:
+            continue
+        x, y = _ability_token_center(token)
+        if (
+            x > label_x + _ABILITY_COLUMN_X_TOLERANCE
+            and abs(y - label_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and _ability_token_confidence(token) >= _ABILITY_OCR_NUMBER_CONFIDENCE
+        ):
+            values.append((x, _parse_number(text)))
+    values.sort()
+    if len(values) != 2:
+        raise PatentParseError(f"Ability PDF metadata row {label} has {len(values)} values")
+    return values[0][1], values[1][1]
+
+
+def _parse_ability_pdf_ocr_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    if not raw_text.lstrip().startswith("{") or _ABILITY_PDF_PARSER_FAMILY not in raw_text:
+        return []
+    try:
+        payload = json.loads(raw_text)
+    except json.JSONDecodeError as exc:
+        raise PatentParseError("Ability PDF OCR parser input is not valid JSON") from exc
+    if not isinstance(payload, dict) or payload.get("parser_family") != _ABILITY_PDF_PARSER_FAMILY:
+        return []
+    if payload.get("schema_version") != 1:
+        raise PatentParseError("unsupported Ability PDF OCR parser schema")
+    if payload.get("publication_id") != patent_id:
+        raise PatentParseError("Ability PDF OCR publication id does not match the candidate")
+    surface_page = _ability_page(payload, "surface_ol2")
+    meta_page = _ability_page(payload, "system_meta")
+    # OL1 has a published asphere table, but its retained OCR views leave
+    # cells unclassified.  Keep a per-embodiment failure instead of filling
+    # those optical values.  OL2 is explicitly spherical in this layout and
+    # can be recovered independently from FIG. 5 and FIG. 7.
+    _ability_page(payload, "surface_ol1")
+    _ability_page(payload, "asphere_ol1")
+    attempts = [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment="Optical lens OL1",
+            error=PatentParseError(
+                "Ability OL1 asphere cells are not independently classified; fail closed"
+            ),
+        )
+    ]
+    try:
+        surfaces = _ability_surface_table(surface_page)
+        focal_lengths = _ability_meta_row(meta_page, "F")
+        full_fovs = _ability_meta_row(meta_page, "FOV")
+        f_numbers = _ability_meta_row(meta_page, "FNO")
+        focal_length = focal_lengths[1]
+        full_fov = full_fovs[1]
+        f_number = f_numbers[1]
+        if focal_length <= 0.0 or f_number <= 0.0 or not 0.0 < full_fov < 180.0:
+            raise PatentParseError("Ability OL2 has invalid published F/FNO/FOV values")
+        prescription = PatentPrescription(
+            patent_id=patent_id,
+            embodiment="Optical lens OL2",
+            focal_length_mm=focal_length,
+            f_number=f_number,
+            hfov_deg=full_fov / 2.0,
+            surfaces=surfaces,
+        )
+        _validate_prescription_materials(prescription)
+    except Exception as exc:  # noqa: BLE001 - per-embodiment fail-closed result
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=2,
+                embodiment="Optical lens OL2",
+                error=exc,
+            )
+        )
+    else:
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=2,
+                embodiment="Optical lens OL2",
                 prescription=prescription,
             )
         )
@@ -6838,6 +7255,10 @@ async def _convert_candidate(
     source_document: SourceDocumentEvidence | None = None
     parser_source_document: SourceDocumentEvidence | None = None
     recovered_parser_input: RecoveredPatentHtml | None = None
+    recovered_pdf_input: PatentPdfOcrRecovery | None = None
+    official_pdf_document: SourceDocumentEvidence | None = None
+    mirror_pdf_document: SourceDocumentEvidence | None = None
+    pdf_source_pin: SourceDocumentEvidence | None = None
     recovery_manifest: SourceDocumentEvidence | None = None
     fetched: FetchedPatentHtml | None = None
     try:
@@ -6873,24 +7294,82 @@ async def _convert_candidate(
                 primary_publication_id=candidate.patent_id,
                 primary_fetched=fetched,
             )
-            if recovered_parser_input is None:
-                raise primary_parse_error
-            parser_source_document = _retain_fetched_patent_html(
-                raw_document_dir,
-                patent_id=recovered_parser_input.publication_id,
-                fetched=recovered_parser_input.fetched,
-            )
-            recovery_manifest = _retain_fulltext_recovery_manifest(
-                raw_document_dir,
-                primary_publication_id=candidate.patent_id,
-                primary_source=source_document,
-                recovered=recovered_parser_input,
-                parser_source=parser_source_document,
-            )
-            parse_attempts = _parse_prescription_attempts(
-                recovered_parser_input.fetched.html,
-                patent_id=candidate.patent_id,
-            )
+            if recovered_parser_input is not None:
+                parser_source_document = _retain_fetched_patent_html(
+                    raw_document_dir,
+                    patent_id=recovered_parser_input.publication_id,
+                    fetched=recovered_parser_input.fetched,
+                )
+                recovery_manifest = _retain_fulltext_recovery_manifest(
+                    raw_document_dir,
+                    primary_publication_id=candidate.patent_id,
+                    primary_source=source_document,
+                    recovered=recovered_parser_input,
+                    parser_source=parser_source_document,
+                )
+                parse_attempts = _parse_prescription_attempts(
+                    recovered_parser_input.fetched.html,
+                    patent_id=candidate.patent_id,
+                )
+            else:
+                try:
+                    cached_pdf_sources = _load_pdf_ocr_source_pin(
+                        raw_document_dir,
+                        publication_id=candidate.patent_id,
+                    )
+                    recovered_pdf_input = await recover_ability_official_pdf_ocr(
+                        client,
+                        token,
+                        publication_id=candidate.patent_id,
+                        primary_html=fetched.html,
+                        cached_sources=cached_pdf_sources,
+                    )
+                except PatentPdfRecoveryError as exc:
+                    raise PatentParseError(f"official PDF recovery rejected: {exc}") from exc
+                if recovered_pdf_input is None:
+                    raise primary_parse_error
+                official_pdf_document = _retain_source_bytes(
+                    raw_document_dir,
+                    publication_id=candidate.patent_id,
+                    source_bucket="USPTO-PDF",
+                    suffix="pdf",
+                    content=recovered_pdf_input.official_pdf,
+                )
+                mirror_pdf_document = _retain_source_bytes(
+                    raw_document_dir,
+                    publication_id=candidate.patent_id,
+                    source_bucket="GOOGLE-OCR-PDF",
+                    suffix="pdf",
+                    content=recovered_pdf_input.mirror_pdf,
+                )
+                parser_source_document = _retain_source_bytes(
+                    raw_document_dir,
+                    publication_id=candidate.patent_id,
+                    source_bucket="USPTO-PDF-OCR-JSON",
+                    suffix="json",
+                    content=recovered_pdf_input.parser_input,
+                )
+                pdf_source_pin = _retain_pdf_ocr_source_pin(
+                    raw_document_dir,
+                    publication_id=candidate.patent_id,
+                    recovered=recovered_pdf_input,
+                    official_pdf_source=official_pdf_document,
+                    mirror_pdf_source=mirror_pdf_document,
+                )
+                recovery_manifest = _retain_pdf_ocr_recovery_manifest(
+                    raw_document_dir,
+                    primary_publication_id=candidate.patent_id,
+                    primary_source=source_document,
+                    recovered=recovered_pdf_input,
+                    official_pdf_source=official_pdf_document,
+                    mirror_pdf_source=mirror_pdf_document,
+                    parser_source=parser_source_document,
+                    source_pin=pdf_source_pin,
+                )
+                parse_attempts = _parse_prescription_attempts(
+                    recovered_pdf_input.parser_input.decode("utf-8"),
+                    patent_id=candidate.patent_id,
+                )
     except Exception as exc:  # noqa: BLE001 - report per-patent failure reason
         failure_status, failure_reason_code = _parse_failure_outcome(exc)
         source_attempts = (
@@ -6925,7 +7404,11 @@ async def _convert_candidate(
                 parser_input_publication_id=(
                     recovered_parser_input.publication_id
                     if recovered_parser_input is not None
-                    else ""
+                    else (
+                        recovered_pdf_input.publication_id
+                        if recovered_pdf_input is not None
+                        else ""
+                    )
                 ),
                 parser_input_source_bucket=(
                     parser_source_document.source_bucket
@@ -7171,12 +7654,16 @@ async def _convert_candidate(
                     coverage=_coverage(prescription),
                 )
             )
-    if recovered_parser_input is not None:
+    if recovered_parser_input is not None or recovered_pdf_input is not None:
         assert recovery_manifest is not None
         for attempt in attempts:
             attempt.parser_input_document_path = parser_source_document.retained_path
             attempt.parser_input_document_sha256 = parser_source_document.sha256
-            attempt.parser_input_publication_id = recovered_parser_input.publication_id
+            attempt.parser_input_publication_id = (
+                recovered_parser_input.publication_id
+                if recovered_parser_input is not None
+                else recovered_pdf_input.publication_id
+            )
             attempt.parser_input_source_bucket = parser_source_document.source_bucket
             attempt.fulltext_recovery_manifest_path = recovery_manifest.retained_path
             attempt.fulltext_recovery_manifest_sha256 = recovery_manifest.sha256
@@ -7466,6 +7953,249 @@ def _retain_fetched_patent_html(
         temp_path.replace(path)
     return SourceDocumentEvidence(
         source_bucket=fetched.source_bucket,
+        retained_path=Path(_display_path(path)).as_posix(),
+        sha256=digest,
+    )
+
+
+def _retain_source_bytes(
+    raw_document_dir: Path,
+    *,
+    publication_id: str,
+    source_bucket: str,
+    suffix: str,
+    content: bytes,
+) -> SourceDocumentEvidence:
+    """Retain one immutable binary/derived source artifact by content hash."""
+
+    if re.fullmatch(r"[a-z0-9]+", suffix, flags=re.IGNORECASE) is None:
+        raise PatentParseError(f"invalid retained source suffix: {suffix}")
+    digest = sha256_bytes(content)
+    source_stem = _safe_stem(source_bucket)
+    path = (
+        raw_document_dir
+        / source_stem
+        / digest[:16]
+        / f"{_safe_stem(publication_id)}.{suffix.lower()}"
+    )
+    if path.exists():
+        if path.read_bytes() != content:
+            raise PatentParseError(f"raw source hash-path collision: {path}")
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = path.with_name(f".{path.name}.tmp")
+        temp_path.write_bytes(content)
+        temp_path.replace(path)
+    return SourceDocumentEvidence(
+        source_bucket=source_bucket,
+        retained_path=Path(_display_path(path)).as_posix(),
+        sha256=digest,
+    )
+
+
+def _pdf_ocr_source_pin_path(raw_document_dir: Path, publication_id: str) -> Path:
+    return (
+        raw_document_dir
+        / "USPTO-PDF-OCR-SOURCE-PIN"
+        / f"{_safe_stem(publication_id)}.json"
+    )
+
+
+def _resolve_retained_path(path_text: str) -> Path:
+    path = Path(path_text)
+    return path if path.is_absolute() else ROOT / path
+
+
+def _load_pdf_ocr_source_pin(
+    raw_document_dir: Path,
+    *,
+    publication_id: str,
+) -> PatentPdfCachedSources | None:
+    """Load and hash-check the immutable raw PDF selection for one publication."""
+
+    pin_path = _pdf_ocr_source_pin_path(raw_document_dir, publication_id)
+    if not pin_path.exists():
+        return None
+    try:
+        raw = pin_path.read_bytes()
+        payload = json.loads(raw)
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise PatentParseError(f"invalid PDF OCR source pin: {pin_path}") from exc
+    canonical = (
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+    if raw != canonical:
+        raise PatentParseError(f"PDF OCR source pin is not canonical JSON: {pin_path}")
+    if not isinstance(payload, dict) or payload.get("schema_version") != 1:
+        raise PatentParseError(f"unsupported PDF OCR source pin schema: {pin_path}")
+    if payload.get("publication_id") != publication_id:
+        raise PatentParseError(f"PDF OCR source pin publication mismatch: {pin_path}")
+
+    def checked_source(field: str, source_bucket: str) -> tuple[bytes, str]:
+        record = payload.get(field)
+        if not isinstance(record, dict) or record.get("source_bucket") != source_bucket:
+            raise PatentParseError(f"invalid {field} record in PDF OCR source pin")
+        path_text = record.get("path")
+        expected_sha256 = record.get("sha256")
+        source_url = record.get("source_url")
+        if not all(isinstance(value, str) and value for value in (path_text, expected_sha256, source_url)):
+            raise PatentParseError(f"incomplete {field} record in PDF OCR source pin")
+        if re.fullmatch(r"[0-9a-f]{64}", expected_sha256) is None:
+            raise PatentParseError(f"invalid {field} hash in PDF OCR source pin")
+        source_path = _resolve_retained_path(path_text)
+        try:
+            source_path.resolve().relative_to(raw_document_dir.resolve())
+        except ValueError as exc:
+            raise PatentParseError(
+                f"retained PDF source is outside the raw document lake: {source_path}"
+            ) from exc
+        try:
+            content = source_path.read_bytes()
+        except OSError as exc:
+            raise PatentParseError(f"retained PDF source is unavailable: {source_path}") from exc
+        if sha256_bytes(content) != expected_sha256:
+            raise PatentParseError(f"retained PDF source hash mismatch: {source_path}")
+        return content, source_url
+
+    official_pdf, official_pdf_url = checked_source("official_pdf", "USPTO-PDF")
+    mirror_pdf, mirror_pdf_url = checked_source("ocr_overlay_pdf", "GOOGLE-OCR-PDF")
+    return PatentPdfCachedSources(
+        official_pdf=official_pdf,
+        official_pdf_url=official_pdf_url,
+        mirror_pdf=mirror_pdf,
+        mirror_pdf_url=mirror_pdf_url,
+    )
+
+
+def _retain_pdf_ocr_source_pin(
+    raw_document_dir: Path,
+    *,
+    publication_id: str,
+    recovered: PatentPdfOcrRecovery,
+    official_pdf_source: SourceDocumentEvidence,
+    mirror_pdf_source: SourceDocumentEvidence,
+) -> SourceDocumentEvidence:
+    """Pin the first verified PDF pair so frozen-pool replay never refetches it."""
+
+    payload = {
+        "schema_version": 1,
+        "publication_id": publication_id,
+        "official_pdf": {
+            "source_url": recovered.official_pdf_url,
+            "source_bucket": official_pdf_source.source_bucket,
+            "path": official_pdf_source.retained_path,
+            "sha256": official_pdf_source.sha256,
+        },
+        "ocr_overlay_pdf": {
+            "source_url": recovered.mirror_pdf_url,
+            "source_bucket": mirror_pdf_source.source_bucket,
+            "path": mirror_pdf_source.retained_path,
+            "sha256": mirror_pdf_source.sha256,
+        },
+    }
+    content = (
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+    path = _pdf_ocr_source_pin_path(raw_document_dir, publication_id)
+    if path.exists():
+        if path.read_bytes() != content:
+            raise PatentParseError(f"PDF OCR source pin is immutable: {path}")
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = path.with_name(f".{path.name}.tmp")
+        temp_path.write_bytes(content)
+        temp_path.replace(path)
+    return SourceDocumentEvidence(
+        source_bucket="USPTO-PDF-OCR-SOURCE-PIN",
+        retained_path=Path(_display_path(path)).as_posix(),
+        sha256=sha256_bytes(content),
+    )
+
+
+def _retain_pdf_ocr_recovery_manifest(
+    raw_document_dir: Path,
+    *,
+    primary_publication_id: str,
+    primary_source: SourceDocumentEvidence,
+    recovered: PatentPdfOcrRecovery,
+    official_pdf_source: SourceDocumentEvidence,
+    mirror_pdf_source: SourceDocumentEvidence,
+    parser_source: SourceDocumentEvidence,
+    source_pin: SourceDocumentEvidence,
+) -> SourceDocumentEvidence:
+    """Retain official-PDF/OCR-overlay linkage and deterministic tool versions."""
+
+    payload = {
+        "schema_version": 1,
+        "recovery_type": "uspto_official_pdf_exact_image_ocr_overlay",
+        "publication_id": primary_publication_id,
+        "primary": {
+            "source_bucket": primary_source.source_bucket,
+            "path": primary_source.retained_path,
+            "sha256": primary_source.sha256,
+        },
+        "official_pdf": {
+            "source_url": recovered.official_pdf_url,
+            "source_bucket": official_pdf_source.source_bucket,
+            "path": official_pdf_source.retained_path,
+            "sha256": official_pdf_source.sha256,
+            "access": "USPTO anonymous PPUBS request token",
+        },
+        "ocr_overlay_pdf": {
+            "source_url": recovered.mirror_pdf_url,
+            "source_bucket": mirror_pdf_source.source_bucket,
+            "path": mirror_pdf_source.retained_path,
+            "sha256": mirror_pdf_source.sha256,
+        },
+        "source_pin": {
+            "source_bucket": source_pin.source_bucket,
+            "path": source_pin.retained_path,
+            "sha256": source_pin.sha256,
+        },
+        "parser_input": {
+            "publication_id": recovered.publication_id,
+            "source_bucket": parser_source.source_bucket,
+            "path": parser_source.retained_path,
+            "sha256": parser_source.sha256,
+            "key_page_numbers": list(recovered.key_page_numbers),
+        },
+        "page_count": recovered.page_count,
+        "official_page_image_sha256": list(recovered.page_image_sha256),
+        "tool_versions": {
+            "pypdf": recovered.pypdf_version,
+            "rapidocr_onnxruntime": recovered.rapidocr_version,
+        },
+        "checks": {
+            "same_publication_id": recovered.publication_id == primary_publication_id,
+            "all_page_images_byte_identical": True,
+            "key_pages_have_official_image_hashes": True,
+            "parser_input_is_canonical_json": True,
+        },
+    }
+    if not all(payload["checks"].values()):
+        raise PatentParseError("PDF OCR recovery manifest contains a failed linkage check")
+    content = (
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+    digest = sha256_bytes(content)
+    path = (
+        raw_document_dir
+        / "fulltext-recovery"
+        / digest[:16]
+        / f"{_safe_stem(primary_publication_id)}--official-pdf-ocr.json"
+    )
+    if path.exists():
+        if path.read_bytes() != content:
+            raise PatentParseError(f"PDF OCR recovery manifest hash-path collision: {path}")
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = path.with_name(f".{path.name}.tmp")
+        temp_path.write_bytes(content)
+        temp_path.replace(path)
+    return SourceDocumentEvidence(
+        source_bucket="fulltext-recovery-manifest",
         retained_path=Path(_display_path(path)).as_posix(),
         sha256=digest,
     )

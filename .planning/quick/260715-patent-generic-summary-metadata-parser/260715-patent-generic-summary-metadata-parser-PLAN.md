@@ -364,6 +364,42 @@ thresholds, or claim patent saturation.
   census SHA-256 is `94e48368a74e0a6f96d7e7e927c693207afa869442121c15b6c4da8d2ccb992e`.
   Strict audit remains 619/619 with zero corrupt evidence; 104 parser/replay tests and Ruff pass;
   CODE V inventory remained zero before and after both full replays.
+- The seventeenth executable layout starts from image-only Ability publication
+  `US-10684452-B2`. Official PPUBS HTML declares the exact FIG. 2A/2B/5/7 prescription
+  drawings but contains no table text. The official USPTO PDF is a 16-page raster document;
+  its generated PDF wrapper changes `/CreationDate` between requests. The Google citation PDF
+  is accepted only after every embedded page image is byte-identical to the official PDF. The
+  PDF workflow therefore retains both raw PDFs, every official page-image SHA-256, key-page OCR
+  tokens with coordinates/confidence, tool versions, and canonical parser JSON. No OCR token is
+  repaired or filled by an LLM.
+- OL1 remains a per-embodiment parser rejection because FIG. 2B does not independently classify
+  every asphere cell. OL2 publishes a complete 19-surface spherical prescription and exact
+  `F=2.32`, `FNO=2.82`, `FOV=170`; deterministic conversion uses half-field 85 degrees and
+  produced one staging-only candidate with real IMH `3.53289981438067` mm, fingerprint
+  `00c779a7ac5b42a4`, request SHA-256
+  `110e974769178b2efb84247d9508c7ff1eb5aa7e03c5e446988ace69d9422184`, and ZMX SHA-256
+  `c1ada4f996ee9a2ebfa14b0e8bd2dedd5421c3fdb41570cd4ef8fc441a1a9750`.
+- The first two PDF replay manifests exposed the dynamic USPTO wrapper hash. Recovery now writes
+  an immutable, hash-checked source pin after the first exact-image linkage and reuses that frozen
+  PDF pair instead of refetching it. Append-only attempts 4 and 5 have identical parser-input SHA
+  `8b54de447644363c03ac4c5f392fa36fc8d35cfc8a0786b4d25b4684c077c148`, recovery-manifest SHA
+  `0c3938f1ee10005e94654f7945132fca54214099fb4d1f02a3ec5561403428e6`, request/fingerprint,
+  item states, real IMH, and ZMX hash. The replay evidence type now distinguishes official
+  PDF/OCR parser JSON from recovered PPUBS HTML.
+- Generic summary changed 261 to 260. Current result-set SHA-256 is
+  `ffc0667f7ba18c2e10520c9258c33fd05f9d5c0fd5629b30ae6b363e2ffdf63b`; summary artifact
+  SHA-256 is `a88087b1dba696497c7e6567925983d6057485c8f29316c2799f1c2951bb697a`; the Ability after-census
+  SHA-256 is `a891746e53826bc3b6e35ec75ab9c828c5c3be7b6abe987dfadd81cc9d73e673`.
+  Strict audit remains 619/619 with zero corrupt evidence. The focused parser/replay suite is
+  110 passed, the offline CODE V guard suite is 5 passed, full Ruff and `git diff --check` pass.
+- Verification incident: an unfiltered host-wide `pytest` command included a marked
+  `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
+  atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
+  immediately after detection and both inventories returned to zero. The current `codev.rec`
+  contains only startup/exit commands but its timestamp does not bind it to this event, so it is
+  not treated as an execution receipt. A corrected `pytest -m "not real_machine"` run kept CODE V
+  at zero under repeated monitoring but hit the outer 1200-second tool limit without a pass/fail
+  result; it is recorded as no conclusion, not PASS. PR CI remains the eventual full-suite gate.
 
 ## Completion condition
 
