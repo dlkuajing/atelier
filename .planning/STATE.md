@@ -34,11 +34,13 @@ HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和
 硬超时、Windows `taskkill /F /T` 杀树、2 秒 bounded reap、append-only retry identity、原始
 HTML 输入哈希、request/response/stdout/stderr/receipt/candidate ZMX 全证据保留，且仅在父进程
 重新装载并确认有限 EFL 后原子发布 staging ZMX。第三个 quick 已完成 619-root frozen replay；
-Sunny metadata 最大桶首铲已完成；generic-summary 逐桶回放现为 207 个根，仍略高于 Sunny
-metadata 的 199 个失败签名。最新一铲将 Samsung Family ID `91269360` 的 3 个根/30 个
-embodiment 收口为 `metadata_unpublished.high_order_asphere_term_definition_absent`：官方公式只
-定义 A--H/J，但表内另有非零 L--P 且未定义幂次，未按惯例猜补。下一步继续按完整 census 的
-最大可证桶推进，而不是扩大固定数量目标。
+Sunny metadata 最大桶首铲已完成；generic-summary 逐桶回放现为 201 个根，仍略高于 Sunny
+metadata 的 199 个失败签名。最新一铲将 Corephotonics Family ID `81853013` 的 3 个根/9 个
+变焦 configuration 收口为
+`metadata_unpublished.configuration_hfov_and_qcon_q6_definition_absent`：官方表公开三个 EFL/F#
+和移动组厚度，但未公开逐 configuration 数值 HFOV；16 个 QTYP 面的 A6 均非零，而两份记录的
+Q-conic 公式只定义到 Q5、另一份只定义到 Q2，三份均未定义 Q6。未从 EFL/像面推导视场，也未
+套用惯例 Q-conic 基底。下一步继续按完整 census 的最大可证桶推进，而不是扩大固定数量目标。
 
 ## Current Position
 
@@ -52,7 +54,7 @@ embodiment 收口为 `metadata_unpublished.high_order_asphere_term_definition_ab
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen 619-root local replay remains strict with missing=0 and corrupt=0. Current evidence has 390 parser-review roots, 139 mixed roots, 70 terminal roots, 20 converted roots, 518 staging items, 1422 parser-review items, 815 terminal items, and 28 conversion-retry items. The latest exact Family ID 91269360 classifier proves 30 embodiments cannot be converted deterministically because the official equation omits the published non-zero L--P term mapping. Generic-summary remains the largest parser signature at 207 roots, followed by Sunny metadata at 199. This is not source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen 619-root local replay remains strict with missing=0 and corrupt=0. Current evidence has 384 parser-review roots, 139 mixed roots, 73 terminal roots, 23 converted roots, 530 staging items, 1416 parser-review items, 824 terminal items, and 28 conversion-retry items. The latest exact Family ID 81853013 classifier proves nine adaptive-zoom configurations cannot be converted deterministically because the official records publish neither numeric configuration HFOV nor the Q6 definition needed by their non-zero A6 coefficients. Generic-summary remains the largest parser signature at 201 roots, followed by Sunny metadata at 199. This is not source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -197,7 +199,7 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
 | `260715-patent-local-pool-replay` | complete-local-replay-saturation-incomplete | Cohort SHA `e809823c...b42b`; 619/619 strict results, missing=0, corrupt=0; result-set SHA `3bc0bbee...76df`. Final items: parser review 1388, receipt terminal 631, staging pending intake 359, patent-budget retry 16. All current roots retain official PPUBS HTML. No-op replay processed 0 and preserved summary SHA `65122027...d130`. Parent saturation remains incomplete. |
 | `260715-patent-sunny-metadata-parser` | complete-shovel-saturation-incomplete | Before 299 items/64 roots; after 199/53, resolving 100 without missing-field regression. Result-set SHA `2e0a9ceb...d506`; 619/619 strict results, missing=0, corrupt=0; 95 tests+Ruff green, CODE V inventory zero. Next largest parser bucket is generic summary metadata=294. |
-| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Source-proven HTML layouts, source terminals, exact-raster PDF profiles, B2→A1 prior-publication recovery, and explicit official-PDF-only OCR paths are replayed append-only. The latest exact Corephotonics Family ID 85477866 parser restores four six-lens prescriptions from each of three official records and carries the published 555.0 nm reference wavelength through request hashing, ZMX `PWAV`, worker/parent EFL validation, and real-ray tracing. Superseding attempts 4/5 convert 12/12 to staging only with stable semantic evidence and four same-family fingerprints; attempts 2/3 remain retained but are not current because they used the historical d-line default. Generic bucket is 204, result set `bcd2c5de...4361c`, summary `0e1a50e9...67d6c`, after-census `88478871...25e1f`, and audit is 619/619 corrupt=0. Continue the largest measured parser bucket without promoting staging. |
+| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Source-proven HTML layouts, source terminals, exact-raster PDF profiles, B2→A1 prior-publication recovery, and explicit official-PDF-only OCR paths are replayed append-only. The latest exact Corephotonics Family ID 81853013 classifier binds all five source tables and three zoom states per record, then fails closed because configuration HFOV and the Q6 meaning of non-zero A6 are unpublished. Attempts 2/3 classify all 9/9 configurations terminal with stable semantic evidence and create no worker/ZMX. Generic bucket is 201, result set `3ff7444c...96a2`, summary `57d6841c...9b36`, after-census `31f027f9...978`, and audit is 619/619 corrupt=0. Continue the largest measured parser bucket without promoting staging. |
 
 ## Session Continuity
 
@@ -209,7 +211,7 @@ then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work remains the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (204; next `sunny_embodiment_metadata_missing` is 199), using the same strict before/after census, source-proven
+`generic_summary_metadata_missing` (201; next `sunny_embodiment_metadata_missing` is 199), using the same strict before/after census, source-proven
 layout rules, append-only targeted replay, and full-pool audit contract.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then

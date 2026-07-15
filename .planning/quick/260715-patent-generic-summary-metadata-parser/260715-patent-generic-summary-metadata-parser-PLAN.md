@@ -1119,6 +1119,27 @@ thresholds, or claim patent saturation.
   Generic summary remains 204, strict audit remains 619/619 with zero corrupt evidence, and 239
   focused parser/census/replay/process tests plus Ruff and `git diff --check` pass with CODE V
   inventory zero.
+- Folded adaptive-zoom terminal classification: official records `US-11947247-B2`,
+  `US-12572060-B2`, and `US-20230288783-A1` share Family ID `81853013` and exact Tables 1--5.
+  Each publishes three EFL/F-number states and the moving S7/S13/S17 thicknesses. All sixteen
+  QTYP rows have non-zero A6, but the Q-conic definitions in the first and third records stop at
+  Q5 and those in `US-12572060-B2` stop at Q2; none defines Q6. The records also publish no
+  numeric HFOV for any configuration. The source-locked classifier therefore creates three
+  `metadata_unpublished.configuration_hfov_and_qcon_q6_definition_absent` terminal items per root,
+  without deriving field angle, assuming a Q-conic coefficient basis, or starting a worker/ZMX.
+- Append-only attempts 2/3 are canonical-equal per root after excluding `result_attempt`:
+  `US-11947247`=`7b3bd223711895fa20ec97940e9ab8d3f30ef34fbbc82b1a7f4e463cafb87690`,
+  `US-12572060`=`1d3fcf0ee63fe21c9be7b9da6bf25f46d9cca6ac02cabe12b3466a7994dd4aa7`,
+  and `US-20230288783`=`39b1887562d3211381c61330d42c3661af7b18d14cbf1c4181732cd7a16616f5`.
+  Generic summary changes 204 to 201; Sunny metadata remains next at 199. Current result-set
+  SHA-256 is `3ff7444c5965a0fdae48ff97fa66b3d32ead0c7d0dfc90c4badb05f9e60b96a2`;
+  summary SHA-256 is `57d6841cfdcfe9314af8db8993f555937d0c1d22a3f6e2bd0743a8cf086d9b36`;
+  report SHA-256 is `5b1fa53a8f26674c81d2d1181a31f93d848a506fa68a327c4aa5af132d83c2bb`;
+  after-census SHA-256 is `31f027f97493d22d6caec1a172078493f8e95277360abe5fc063e317c515b978`.
+  Strict audit remains 619/619 with zero corrupt evidence; root states are 23 converted, 73
+  terminal, 384 parser review, and 139 mixed; item states are 530 converted, 824 terminal, 1416
+  parser review, and 28 retry. All 244 focused parser/census/replay/process tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 
 ## Completion condition
 

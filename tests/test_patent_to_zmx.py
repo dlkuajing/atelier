@@ -5559,6 +5559,121 @@ def test_large_aperture_scanning_tele_requires_native_fov_binding(
     assert all("TABLE 14 field bindings changed" in str(attempt.error) for attempt in attempts)
 
 
+@pytest.mark.parametrize(
+    ("publication_id", "source_parts"),
+    (
+        (
+            "US-11947247-B2",
+            ("USPAT", "738f12facf7092f2", "US-11947247-B2.html"),
+        ),
+        (
+            "US-12572060-B2",
+            ("USPAT", "3a888161b1902f85", "US-12572060-B2.html"),
+        ),
+        (
+            "US-20230288783-A1",
+            ("US-PGPUB", "a0b7015cb421fac8", "US-20230288783-A1.html"),
+        ),
+    ),
+)
+def test_folded_adaptive_zoom_configurations_are_source_terminal(
+    publication_id: str,
+    source_parts: tuple[str, str, str],
+) -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / Path(*source_parts)
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source.read_text(encoding="utf-8"),
+        patent_id=publication_id,
+    )
+
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Folded adaptive zoom configuration 1",
+        "Folded adaptive zoom configuration 2",
+        "Folded adaptive zoom configuration 3",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code
+        == "metadata_unpublished.configuration_hfov_and_qcon_q6_definition_absent"
+        for attempt in attempts
+    )
+
+
+def test_folded_adaptive_zoom_rejects_changed_official_hash() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "738f12facf7092f2"
+        / "US-11947247-B2.html"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source.read_text(encoding="utf-8") + " publication revision",
+        patent_id="US-11947247-B2",
+    )
+
+    assert len(attempts) == 3
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "official raw text hash changed" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_folded_adaptive_zoom_refuses_new_numeric_hfov(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "738f12facf7092f2"
+        / "US-11947247-B2.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "f/# 2.34 3.52 4.69",
+        "f/# 2.34 3.52 4.69 HFOV = 20",
+        1,
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._FOLDED_ADAPTIVE_ZOOM_SOURCE_PROFILES,
+        "US-11947247-B2",
+        {
+            **patent_to_zmx._FOLDED_ADAPTIVE_ZOOM_SOURCE_PROFILES["US-11947247-B2"],
+            "raw_document_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                patent_to_zmx.normalize_patent_text(text).encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-11947247-B2",
+    )
+
+    assert len(attempts) == 3
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "now publishes numeric HFOV" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
 def test_folded_macro_tele_retains_all_states_and_only_parses_infinity_efl() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         FOLDED_MACRO_TELE_TEXT,

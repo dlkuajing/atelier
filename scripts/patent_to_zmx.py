@@ -360,6 +360,12 @@ def _parse_prescription_attempts(
     pdf_attempts = _parse_ability_pdf_ocr_attempts(raw_text, patent_id=patent_id)
     if pdf_attempts:
         return pdf_attempts
+    source_locked_attempts = _parse_folded_adaptive_zoom_terminal_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_large_aperture_scanning_tele_attempts(
         raw_text,
         patent_id=patent_id,
@@ -1557,6 +1563,49 @@ _LARGE_APERTURE_SCANNING_TELE_FIELD_BINDINGS = {
     "HFOV": (12.8, 11.5, 15.7, 13.7),
     "n-FOV.sub.T": (25.6, 22.8, 31.0, 27.4),
     "SD": (8.0, 5.6, 8.0, 7.0),
+}
+_FOLDED_ADAPTIVE_ZOOM_TITLE_PATTERN = re.compile(
+    r"\bFOLDED\s+CAMERA\s+WITH\s+CONTINUOUSLY\s+ADAPTIVE\s+ZOOM\s+FACTOR\b",
+    flags=re.IGNORECASE,
+)
+_FOLDED_ADAPTIVE_ZOOM_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11947247-B2": {
+        "raw_document_sha256": (
+            "738f12facf7092f2f417aa19eedefc5ff1e6167b2893599c0357d457d60f1f35"
+        ),
+        "normalized_text_sha256": (
+            "99941829b0ed8bd15d6ee519d409616c3b15672766ba6d23d28e6362f08dec31"
+        ),
+        "qcon_formula_count": 10,
+        "qcon_last_definition_id": "MATH-US-00001-10",
+    },
+    "US-12572060-B2": {
+        "raw_document_sha256": (
+            "3a888161b1902f85510fac473e35d4b00cdde17b27477e0477512ba5f1cea2e5"
+        ),
+        "normalized_text_sha256": (
+            "c5342d6fef3c8158fe32fe9964ea39fc077381217147397bd519bacaba32f1bc"
+        ),
+        "qcon_formula_count": 7,
+        "qcon_last_definition_id": "MATH-US-00001-7",
+    },
+    "US-20230288783-A1": {
+        "raw_document_sha256": (
+            "a0b7015cb421fac8678d58a8d9d71c67fc5d0f7c631dccf0b240be98d18d42fa"
+        ),
+        "normalized_text_sha256": (
+            "4426d79e2dfe6e63183aec40b1c544de937f6642c0b3346abb5de9c931818fc0"
+        ),
+        "qcon_formula_count": 10,
+        "qcon_last_definition_id": "MATH-US-00001-10",
+    },
+}
+_FOLDED_ADAPTIVE_ZOOM_EFLS = (15.0, 22.5, 30.0)
+_FOLDED_ADAPTIVE_ZOOM_F_NUMBERS = (2.34, 3.52, 4.69)
+_FOLDED_ADAPTIVE_ZOOM_MOVING_THICKNESSES = {
+    7: (1.4118, 5.1246, 7.8118),
+    13: (6.5013, 2.7885, 0.1013),
+    17: (0.9176, 4.6456, 7.3176),
 }
 _SAMSUNG_WIDE_FOV_BINDING_PATTERN = re.compile(
     r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<coefficient_table>\d+)\s+below\s+"
@@ -7629,6 +7678,215 @@ def _parse_large_aperture_scanning_tele_attempts(
         )
         for index, prescription in enumerate(prescriptions, start=1)
     ]
+
+
+def _parse_folded_adaptive_zoom_terminal_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify Family 81853013 configurations with two source-proven gaps."""
+
+    profile = _FOLDED_ADAPTIVE_ZOOM_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=f"Folded adaptive zoom configuration {index}",
+                error=exc,
+            )
+            for index in range(1, 4)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"folded adaptive zoom official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"folded adaptive zoom normalized text hash changed for {patent_id}"
+            )
+        if _FOLDED_ADAPTIVE_ZOOM_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("folded adaptive zoom title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*81853013", text, flags=re.IGNORECASE)) != 1:
+            raise PatentParseError("folded adaptive zoom Family ID binding changed")
+        if len(
+            re.findall(
+                r"The\s+reference\s+wavelength\s+is\s+555\.0\s+nm",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("folded adaptive zoom reference wavelength changed")
+
+        blocks = _folded_adaptive_zoom_source_blocks(text)
+        if set(blocks) != set(range(1, 6)):
+            raise PatentParseError("folded adaptive zoom must contain source tables 1-5")
+        if len(
+            re.findall(
+                r"S\.sub\.(?:[2-9]|1[0-7])\s+QTYP\b",
+                blocks[1],
+                flags=re.IGNORECASE,
+            )
+        ) != 16:
+            raise PatentParseError("folded adaptive zoom QTYP surface binding changed")
+
+        qcon_rows = _folded_adaptive_zoom_qcon_rows(blocks[2])
+        if [index for index, _values in qcon_rows] != list(range(2, 18)):
+            raise PatentParseError("folded adaptive zoom Q-conic row sequence changed")
+        if any(values[-1] == 0.0 for _index, values in qcon_rows):
+            raise PatentParseError("folded adaptive zoom published A6 evidence changed")
+
+        if raw_text.count('<maths id="MATH-US-00001') != profile["qcon_formula_count"]:
+            raise PatentParseError("folded adaptive zoom Q-conic formula count changed")
+        if f'<maths id="{profile["qcon_last_definition_id"]}"' not in raw_text:
+            raise PatentParseError("folded adaptive zoom final Q-conic definition changed")
+        if '<maths id="MATH-US-00001-11"' in raw_text:
+            raise PatentParseError("folded adaptive zoom now publishes a Q6 definition")
+
+        table4_efls, moving_thicknesses = _folded_adaptive_zoom_configuration_table(
+            blocks[4]
+        )
+        if table4_efls != _FOLDED_ADAPTIVE_ZOOM_EFLS:
+            raise PatentParseError("folded adaptive zoom TABLE 4 EFL binding changed")
+        if moving_thicknesses != _FOLDED_ADAPTIVE_ZOOM_MOVING_THICKNESSES:
+            raise PatentParseError("folded adaptive zoom moving-thickness binding changed")
+        table5_efls, f_numbers = _folded_adaptive_zoom_f_number_table(blocks[5])
+        if table5_efls != _FOLDED_ADAPTIVE_ZOOM_EFLS:
+            raise PatentParseError("folded adaptive zoom TABLE 5 EFL binding changed")
+        if f_numbers != _FOLDED_ADAPTIVE_ZOOM_F_NUMBERS:
+            raise PatentParseError("folded adaptive zoom TABLE 5 f-number binding changed")
+
+        if re.search(
+            rf"\bHFOV\s*(?:=|\[\s*deg\s*\])\s*{NUMBER_PATTERN}",
+            text,
+            flags=re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError("folded adaptive zoom now publishes numeric HFOV")
+        if len(re.findall(r"\bHFOV\b", text, flags=re.IGNORECASE)) != 2:
+            raise PatentParseError("folded adaptive zoom HFOV definition count changed")
+    except Exception as exc:  # noqa: BLE001 - retain all three configurations
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=f"Folded adaptive zoom configuration {index}",
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=(
+                    "metadata_unpublished.configuration_hfov_and_qcon_q6_definition_absent"
+                ),
+                detail=(
+                    f"configuration {index} publishes EFL/f-number and moving thicknesses, "
+                    "but no numeric HFOV; TABLE 2 has non-zero A6 while the official "
+                    "Q-conic formula does not define Q6"
+                ),
+            ),
+        )
+        for index in range(1, 4)
+    ]
+
+
+def _folded_adaptive_zoom_source_blocks(text: str) -> dict[int, str]:
+    matches = list(_LARGE_APERTURE_SCANNING_TELE_SOURCE_ANCHOR_PATTERN.finditer(text))
+    blocks: dict[int, str] = {}
+    for index, match in enumerate(matches):
+        number = int(match.group("number"))
+        if number in blocks:
+            raise PatentParseError(f"duplicate folded adaptive zoom table: {number}")
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        blocks[number] = text[match.start() : end]
+    return blocks
+
+
+def _folded_adaptive_zoom_qcon_rows(
+    table_text: str,
+) -> list[tuple[int, tuple[float, ...]]]:
+    header = re.search(
+        r"\bConic\s+Surface\s+\(k\)\s+NR\s+"
+        r"A\.sub\.0\s+A\.sub\.1\s+A\.sub\.2\s+A\.sub\.3\s+"
+        r"A\.sub\.4\s+A\.sub\.5\s+A\.sub\.6\s+",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError("folded adaptive zoom Q-conic header changed")
+    row_pattern = re.compile(
+        r"S\.sub\.(?P<surface>\d+)\s+"
+        + r"\s+".join(rf"(?P<v{index}>{NUMBER_PATTERN})" for index in range(9)),
+        flags=re.IGNORECASE,
+    )
+    return [
+        (
+            int(match.group("surface")),
+            tuple(_parse_number(match.group(f"v{index}")) for index in range(9)),
+        )
+        for match in row_pattern.finditer(table_text, header.end())
+    ]
+
+
+def _folded_adaptive_zoom_configuration_table(
+    table_text: str,
+) -> tuple[tuple[float, ...], dict[int, tuple[float, ...]]]:
+    efls = _folded_adaptive_zoom_efl_header(table_text)
+    rows: dict[int, tuple[float, ...]] = {}
+    for surface in (7, 13, 17):
+        match = re.search(
+            rf"S\.sub\.{surface}\s+"
+            + r"\s+".join(
+                rf"(?P<v{index}>{NUMBER_PATTERN})" for index in range(3)
+            ),
+            table_text,
+            flags=re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"folded adaptive zoom TABLE 4 surface {surface} row missing"
+            )
+        rows[surface] = tuple(
+            _parse_number(match.group(f"v{index}")) for index in range(3)
+        )
+    return efls, rows
+
+
+def _folded_adaptive_zoom_f_number_table(
+    table_text: str,
+) -> tuple[tuple[float, ...], tuple[float, ...]]:
+    efls = _folded_adaptive_zoom_efl_header(table_text)
+    match = re.search(
+        r"f/#\s+"
+        + r"\s+".join(rf"(?P<v{index}>{NUMBER_PATTERN})" for index in range(3)),
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError("folded adaptive zoom TABLE 5 f-number row missing")
+    return efls, tuple(
+        _parse_number(match.group(f"v{index}")) for index in range(3)
+    )
+
+
+def _folded_adaptive_zoom_efl_header(table_text: str) -> tuple[float, ...]:
+    match = re.search(
+        r"Configuration\s+1\s+Configuration\s+2\s+Configuration\s*3\s+"
+        + r"\s+".join(
+            rf"EFL\s*=\s*(?P<v{index}>{NUMBER_PATTERN})\s*mm"
+            for index in range(3)
+        ),
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError("folded adaptive zoom configuration header missing")
+    return tuple(_parse_number(match.group(f"v{index}")) for index in range(3))
 
 
 def _large_aperture_scanning_tele_source_blocks(text: str) -> dict[int, str]:
