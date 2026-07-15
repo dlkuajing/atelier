@@ -684,6 +684,44 @@ def test_convert_candidate_writes_each_embodiment_with_e_suffix_without_network(
     assert (tmp_path / "US-MULTI-A1-e2.zmx").is_file()
     assert attempts[0].zmx_path.endswith("US-MULTI-A1-e1.zmx")
     assert attempts[1].zmx_path.endswith("US-MULTI-A1-e2.zmx")
+    assert all(attempt.attempt_id for attempt in attempts)
+    assert all(Path(attempt.receipt_path).is_file() for attempt in attempts)
+    assert all(Path(attempt.raw_document_path).is_file() for attempt in attempts)
+    assert attempts[0].raw_document_sha256 == attempts[1].raw_document_sha256
+
+
+def test_real_worker_retry_keeps_stable_request_identity_and_append_only_attempts(
+    tmp_path: Path,
+) -> None:
+    prescription = parse_patent_prescription(PRESCRIPTION_TEXT, patent_id="US-RETRY-A1")
+    fetched = patent_to_zmx.FetchedPatentHtml(
+        html=PRESCRIPTION_TEXT,
+        source_bucket="fixture",
+    )
+    source = patent_to_zmx._retain_fetched_patent_html(
+        tmp_path / "raw",
+        patent_id=prescription.patent_id,
+        fetched=fetched,
+    )
+    request = patent_to_zmx._conversion_request(prescription, source)
+    kwargs = {
+        "published_zmx_path": tmp_path / "staging" / "US-RETRY-A1-e1.zmx",
+        "attempts_root": tmp_path / "attempts",
+        "repo_root": patent_to_zmx.ROOT,
+        "timeout_seconds": 30.0,
+    }
+
+    first = patent_to_zmx.run_patent_conversion_attempt(request, **kwargs)
+    second = patent_to_zmx.run_patent_conversion_attempt(request, **kwargs)
+
+    assert first.status == second.status == "success"
+    assert first.request_sha256 == second.request_sha256
+    assert first.retry_number == 1
+    assert second.retry_number == 2
+    assert first.attempt_id != second.attempt_id
+    assert Path(first.candidate_zmx_path or "").is_file()
+    assert Path(second.candidate_zmx_path or "").is_file()
+    assert kwargs["published_zmx_path"].is_file()
 
 
 def test_convert_candidate_keeps_later_embodiments_after_parse_failure(
@@ -789,36 +827,10 @@ def test_convert_candidate_skips_duplicate_prescription_without_writing_zmx(
     output_dir = tmp_path / "zmx"
     seen_prescription_fingerprints: set[str] = set()
 
-    class FakeParaxial:
-        def f2(self) -> float:
-            return 12.34
-
-    class FakeOptic:
-        paraxial = FakeParaxial()
-
     async def fake_fetch(_client: object, _token: str, _patent_id: str) -> str:
         return PRESCRIPTION_TEXT
 
-    def fake_write(
-        _prescription: patent_to_zmx.PatentPrescription,
-        output_path: Path,
-    ) -> patent_to_zmx.TraceApertureAudit:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text("fake zmx", encoding="ascii")
-        return patent_to_zmx.TraceApertureAudit(
-            semi_diameters_mm={},
-            real_image_height_mm=1.0,
-            sanity_image_height_mm=2.0,
-            measured_surfaces=(),
-            interpolated_surfaces=(),
-            finite_final_rays=1,
-            total_rays=1,
-        )
-
-    monkeypatch.setattr(patent_to_zmx, "ROOT", tmp_path)
     monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch)
-    monkeypatch.setattr(patent_to_zmx, "write_patent_zmx", fake_write)
-    monkeypatch.setattr(patent_to_zmx, "load_normalized_zmx", lambda _path: FakeOptic())
 
     first = asyncio.run(
         patent_to_zmx._convert_candidate(

@@ -31,11 +31,23 @@ from app.core.engines.codev_readout import (  # noqa: E402
     CodeVWavelengthReadout,
 )
 from app.core.engines.zmx_writer import write_zmx_from_codev_readout  # noqa: E402
+from app.core.patent_conversion_process import (  # noqa: E402
+    DEFAULT_CONVERSION_TIMEOUT_SECONDS,
+    PatentConversionRequest,
+    PatentPrescriptionInput,
+    PatentSurfaceInput,
+    SourceDocumentEvidence,
+    TraceAuditResult,
+    run_patent_conversion_attempt,
+    sha256_bytes,
+)
 from app.core.zmx_ingest import load_normalized_zmx  # noqa: E402
 from scripts.patent_crawler import _ppubs_access_token, _ppubs_patent_html  # noqa: E402
 
 DEFAULT_POOL_GLOB = "uspto-smartphone-batch*.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "data" / "zmx-staging"
+DEFAULT_RAW_DOCUMENT_DIR = ROOT / "data" / "patent-lake" / "uspto-ppubs-html"
+DEFAULT_ATTEMPTS_DIR = ROOT / "data" / "patent-conversion-attempts"
 DEFAULT_REPORT_PATH = ROOT / ".planning" / "loop" / "patent2zmx-spike-report.md"
 DEFAULT_CASE_INDEX_PATH = ROOT / "app" / "data" / "optical_cases" / "index.json"
 TRACE_WAVELENGTH_UM = 0.5876
@@ -100,6 +112,10 @@ class PatentParseError(ValueError):
     """Raised when a patent table is unavailable or unsafe to convert."""
 
 
+class PatentTraceError(RuntimeError):
+    """Raised when deterministic prescription tracing or ZMX validation fails."""
+
+
 @dataclass(frozen=True)
 class PatentCandidate:
     patent_id: str
@@ -107,6 +123,12 @@ class PatentCandidate:
     source_url: str
     pool_path: Path
     line_number: int
+
+
+@dataclass(frozen=True)
+class FetchedPatentHtml:
+    html: str
+    source_bucket: str
 
 
 @dataclass
@@ -164,6 +186,12 @@ class ConversionAttempt:
     title: str
     status: str
     reason: str
+    reason_code: str = ""
+    attempt_id: str = ""
+    request_sha256: str = ""
+    receipt_path: str = ""
+    raw_document_path: str = ""
+    raw_document_sha256: str = ""
     embodiment: str = ""
     zmx_path: str = ""
     efl_mm: float | None = None
@@ -2373,6 +2401,9 @@ async def run_conversion(
     max_attempts: int,
     case_index_path: Path | None = DEFAULT_CASE_INDEX_PATH,
     only_patents: frozenset[str] | set[str] | None = None,
+    raw_document_dir: Path = DEFAULT_RAW_DOCUMENT_DIR,
+    attempts_dir: Path = DEFAULT_ATTEMPTS_DIR,
+    conversion_timeout_seconds: float = DEFAULT_CONVERSION_TIMEOUT_SECONDS,
 ) -> list[ConversionAttempt]:
     """Fetch USPTO HTML, parse prescriptions, write ZMX files, and report attempts."""
 
@@ -2397,6 +2428,9 @@ async def run_conversion(
                 output_dir,
                 formal_case_stems=formal_case_stems,
                 seen_prescription_fingerprints=seen_prescription_fingerprints,
+                raw_document_dir=raw_document_dir,
+                attempts_dir=attempts_dir,
+                conversion_timeout_seconds=conversion_timeout_seconds,
             )
             attempts.extend(candidate_attempts)
             successes += sum(attempt.status == "success" for attempt in candidate_attempts)
@@ -2414,10 +2448,26 @@ async def _convert_candidate(
     *,
     formal_case_stems: frozenset[str] | set[str] | None = None,
     seen_prescription_fingerprints: set[str] | None = None,
+    raw_document_dir: Path | None = None,
+    attempts_dir: Path | None = None,
+    conversion_timeout_seconds: float = DEFAULT_CONVERSION_TIMEOUT_SECONDS,
 ) -> list[ConversionAttempt]:
+    raw_document_dir = raw_document_dir or output_dir / ".raw-html"
+    attempts_dir = attempts_dir or output_dir / ".attempts"
+    source_document: SourceDocumentEvidence | None = None
     try:
-        page_html = await _fetch_patent_html(client, token, candidate.patent_id)
-        parse_attempts = _parse_prescription_attempts(page_html, patent_id=candidate.patent_id)
+        fetched = await _fetch_patent_html(client, token, candidate.patent_id)
+        if isinstance(fetched, str):
+            fetched = FetchedPatentHtml(html=fetched, source_bucket="injected-fixture")
+        source_document = _retain_fetched_patent_html(
+            raw_document_dir,
+            patent_id=candidate.patent_id,
+            fetched=fetched,
+        )
+        parse_attempts = _parse_prescription_attempts(
+            fetched.html,
+            patent_id=candidate.patent_id,
+        )
     except Exception as exc:  # noqa: BLE001 - report per-patent failure reason
         return [
             ConversionAttempt(
@@ -2425,9 +2475,14 @@ async def _convert_candidate(
                 title=candidate.title,
                 status="failed",
                 reason=f"{type(exc).__name__}: {exc}",
+                raw_document_path=(
+                    source_document.retained_path if source_document is not None else ""
+                ),
+                raw_document_sha256=(source_document.sha256 if source_document is not None else ""),
             )
         ]
 
+    assert source_document is not None
     attempts: list[ConversionAttempt] = []
     formal_case_stems = formal_case_stems or frozenset()
     for parse_attempt in parse_attempts:
@@ -2438,6 +2493,8 @@ async def _convert_candidate(
                     title=candidate.title,
                     status="failed",
                     reason=f"{type(parse_attempt.error).__name__}: {parse_attempt.error}",
+                    raw_document_path=source_document.retained_path,
+                    raw_document_sha256=source_document.sha256,
                     embodiment=parse_attempt.embodiment,
                 )
             )
@@ -2449,6 +2506,8 @@ async def _convert_candidate(
                     title=candidate.title,
                     status="failed",
                     reason="PatentParseError: embodiment did not produce a prescription",
+                    raw_document_path=source_document.retained_path,
+                    raw_document_sha256=source_document.sha256,
                     embodiment=parse_attempt.embodiment,
                 )
             )
@@ -2466,6 +2525,8 @@ async def _convert_candidate(
                         reason=(
                             f"duplicate_prescription: {DUPLICATE_PRESCRIPTION_DETAIL} {fingerprint}"
                         ),
+                        raw_document_path=source_document.retained_path,
+                        raw_document_sha256=source_document.sha256,
                         embodiment=prescription.embodiment,
                         coverage=_coverage(prescription),
                     )
@@ -2483,6 +2544,8 @@ async def _convert_candidate(
                     title=candidate.title,
                     status="skipped",
                     reason="formal case index already contains this patent embodiment",
+                    raw_document_path=source_document.retained_path,
+                    raw_document_sha256=source_document.sha256,
                     embodiment=prescription.embodiment,
                 )
             )
@@ -2490,42 +2553,97 @@ async def _convert_candidate(
         output_path = output_dir / (
             f"{_safe_stem(candidate.patent_id)}-e{parse_attempt.embodiment_number}.zmx"
         )
+        request = _conversion_request(prescription, source_document)
         try:
-            trace_audit = write_patent_zmx(prescription, output_path)
-            optic = load_normalized_zmx(output_path)
-            efl = float(optic.paraxial.f2())
-            if not math.isfinite(efl):
-                raise PatentParseError("generated ZMX loaded but EFL was not finite")
+            receipt = await asyncio.to_thread(
+                run_patent_conversion_attempt,
+                request,
+                published_zmx_path=output_path,
+                attempts_root=attempts_dir,
+                repo_root=ROOT,
+                timeout_seconds=conversion_timeout_seconds,
+            )
+        except Exception as exc:  # noqa: BLE001 - keep processing later embodiments.
+            attempts.append(
+                ConversionAttempt(
+                    patent_id=candidate.patent_id,
+                    title=candidate.title,
+                    status="trace_failed",
+                    reason=f"trace_failed.executor_exception: {type(exc).__name__}: {exc}",
+                    reason_code="trace_failed.executor_exception",
+                    raw_document_path=source_document.retained_path,
+                    raw_document_sha256=source_document.sha256,
+                    embodiment=prescription.embodiment,
+                    coverage=_coverage(prescription),
+                )
+            )
+            continue
+        if receipt.status == "success":
+            response = receipt.worker_response
+            if response is None or response.efl_mm is None or response.trace_audit is None:
+                attempts.append(
+                    ConversionAttempt(
+                        patent_id=candidate.patent_id,
+                        title=candidate.title,
+                        status="trace_failed",
+                        reason="trace_failed.receipt_invalid: success omitted worker measurements",
+                        reason_code="trace_failed.receipt_invalid",
+                        attempt_id=receipt.attempt_id,
+                        request_sha256=receipt.request_sha256,
+                        receipt_path=receipt.receipt_path,
+                        raw_document_path=source_document.retained_path,
+                        raw_document_sha256=source_document.sha256,
+                        embodiment=prescription.embodiment,
+                        coverage=_coverage(prescription),
+                    )
+                )
+                continue
+            trace_audit = _trace_audit_from_worker(response.trace_audit)
             attempts.append(
                 ConversionAttempt(
                     patent_id=candidate.patent_id,
                     title=candidate.title,
                     status="success",
-                    reason="parsed and ingested",
+                    reason="parsed and process-isolated ingestion succeeded",
+                    reason_code=receipt.reason_code,
+                    attempt_id=receipt.attempt_id,
+                    request_sha256=receipt.request_sha256,
+                    receipt_path=receipt.receipt_path,
+                    raw_document_path=source_document.retained_path,
+                    raw_document_sha256=source_document.sha256,
                     embodiment=prescription.embodiment,
                     zmx_path=_display_path(output_path),
-                    efl_mm=efl,
+                    efl_mm=response.efl_mm,
                     real_image_height_mm=trace_audit.real_image_height_mm,
                     sanity_image_height_mm=trace_audit.sanity_image_height_mm,
                     coverage=_coverage(prescription, trace_audit=trace_audit),
                 )
             )
-        except Exception as exc:  # noqa: BLE001 - report per-embodiment failure reason
-            with contextlib.suppress(FileNotFoundError):
-                output_path.unlink()
+        else:
             attempts.append(
                 ConversionAttempt(
                     patent_id=candidate.patent_id,
                     title=candidate.title,
-                    status="failed",
-                    reason=f"{type(exc).__name__}: {exc}",
+                    status=receipt.status,
+                    reason=f"{receipt.reason_code}: {receipt.detail}",
+                    reason_code=receipt.reason_code,
+                    attempt_id=receipt.attempt_id,
+                    request_sha256=receipt.request_sha256,
+                    receipt_path=receipt.receipt_path,
+                    raw_document_path=source_document.retained_path,
+                    raw_document_sha256=source_document.sha256,
                     embodiment=prescription.embodiment,
+                    coverage=_coverage(prescription),
                 )
             )
     return attempts
 
 
-async def _fetch_patent_html(client: httpx.AsyncClient, token: str, patent_id: str) -> str:
+async def _fetch_patent_html(
+    client: httpx.AsyncClient,
+    token: str,
+    patent_id: str,
+) -> FetchedPatentHtml:
     sources = [_source_for_patent_id(patent_id), "USPAT", "US-PGPUB", "USOCR"]
     seen: set[str] = set()
     errors: list[str] = []
@@ -2534,10 +2652,83 @@ async def _fetch_patent_html(client: httpx.AsyncClient, token: str, patent_id: s
             continue
         seen.add(source)
         try:
-            return await _ppubs_patent_html(client, token, patent_id, source)
+            return FetchedPatentHtml(
+                html=await _ppubs_patent_html(client, token, patent_id, source),
+                source_bucket=source,
+            )
         except Exception as exc:  # noqa: BLE001 - try alternate PPUBS source buckets
             errors.append(f"{source}: {type(exc).__name__}")
     raise PatentParseError("USPTO HTML unavailable (" + "; ".join(errors) + ")")
+
+
+def _retain_fetched_patent_html(
+    raw_document_dir: Path,
+    *,
+    patent_id: str,
+    fetched: FetchedPatentHtml,
+) -> SourceDocumentEvidence:
+    """Retain exactly the decoded HTML text supplied to the deterministic parser."""
+
+    content = fetched.html.encode("utf-8")
+    digest = sha256_bytes(content)
+    source_stem = _safe_stem(fetched.source_bucket)
+    path = raw_document_dir / source_stem / digest[:16] / f"{_safe_stem(patent_id)}.html"
+    if path.exists():
+        if path.read_bytes() != content:
+            raise PatentParseError(f"raw document hash-path collision: {path}")
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = path.with_name(f".{path.name}.tmp")
+        temp_path.write_bytes(content)
+        temp_path.replace(path)
+    return SourceDocumentEvidence(
+        source_bucket=fetched.source_bucket,
+        retained_path=Path(_display_path(path)).as_posix(),
+        sha256=digest,
+    )
+
+
+def _conversion_request(
+    prescription: PatentPrescription,
+    source_document: SourceDocumentEvidence,
+) -> PatentConversionRequest:
+    return PatentConversionRequest(
+        prescription=PatentPrescriptionInput(
+            patent_id=prescription.patent_id,
+            embodiment=prescription.embodiment,
+            focal_length_mm=prescription.focal_length_mm,
+            f_number=prescription.f_number,
+            hfov_deg=prescription.hfov_deg,
+            surfaces=tuple(
+                PatentSurfaceInput(
+                    index=surface.index,
+                    label=surface.label,
+                    radius_mm=surface.radius_mm,
+                    thickness_mm=surface.thickness_mm,
+                    material=surface.material,
+                    nd=surface.nd,
+                    vd=surface.vd,
+                    surface_type=surface.surface_type,
+                    asphere_coefficients=dict(surface.asphere_coefficients),
+                )
+                for surface in prescription.surfaces
+            ),
+            unsupported_asphere_terms=tuple(prescription.unsupported_asphere_terms),
+        ),
+        source_document=source_document,
+    )
+
+
+def _trace_audit_from_worker(result: TraceAuditResult) -> TraceApertureAudit:
+    return TraceApertureAudit(
+        semi_diameters_mm=dict(result.semi_diameters_mm),
+        real_image_height_mm=result.real_image_height_mm,
+        sanity_image_height_mm=result.sanity_image_height_mm,
+        measured_surfaces=result.measured_surfaces,
+        interpolated_surfaces=result.interpolated_surfaces,
+        finite_final_rays=result.finite_final_rays,
+        total_rays=result.total_rays,
+    )
 
 
 def _find_embodiment_metas(text: str) -> list[_EmbodimentMeta]:
@@ -3098,8 +3289,8 @@ def _write_report(
         "",
         "## Per-patent attempts",
         "",
-        "| patent | embodiment | status | zmx | efl_mm | real_imh_mm | f_tan_sanity_mm | field coverage | reason |",
-        "|---|---|---|---|---:|---:|---:|---|---|",
+        "| patent | embodiment | status | reason_code | attempt_id | raw_document | raw_sha256 | receipt | zmx | efl_mm | real_imh_mm | f_tan_sanity_mm | field coverage | reason |",
+        "|---|---|---|---|---|---|---|---|---|---:|---:|---:|---|---|",
     ]
     for attempt in attempts:
         coverage = _format_coverage(attempt.coverage)
@@ -3119,6 +3310,11 @@ def _write_report(
                     _md_cell(attempt.patent_id),
                     _md_cell(attempt.embodiment),
                     attempt.status,
+                    _md_cell(attempt.reason_code),
+                    _md_cell(attempt.attempt_id),
+                    _md_cell(attempt.raw_document_path),
+                    _md_cell(attempt.raw_document_sha256),
+                    _md_cell(attempt.receipt_path),
                     _md_cell(attempt.zmx_path),
                     efl,
                     real_imh,
@@ -3136,6 +3332,9 @@ def _failure_reason_counts(attempts: list[ConversionAttempt]) -> Counter[str]:
     counts: Counter[str] = Counter()
     for attempt in attempts:
         if attempt.status == "success":
+            continue
+        if attempt.reason_code:
+            counts[attempt.reason_code] += 1
             continue
         if attempt.status == "duplicate_prescription":
             counts["duplicate_prescription"] += 1
@@ -3185,7 +3384,10 @@ def write_patent_zmx(
             temp_path,
             name=_safe_stem(prescription.patent_id),
         )
-        trace_audit = _trace_surface_apertures(temp_path, prescription)
+        try:
+            trace_audit = _trace_surface_apertures(temp_path, prescription)
+        except Exception as exc:
+            raise PatentTraceError(f"{type(exc).__name__}: {exc}") from exc
         final_readout = build_readout_from_prescription(
             prescription,
             semi_diameters_mm=trace_audit.semi_diameters_mm,
@@ -3569,6 +3771,24 @@ def main() -> int:
     parser.add_argument("--target-successes", type=int, default=5)
     parser.add_argument("--max-attempts", type=int, default=40)
     parser.add_argument(
+        "--conversion-timeout-seconds",
+        type=float,
+        default=DEFAULT_CONVERSION_TIMEOUT_SECONDS,
+        help="Hard wall-clock timeout for each isolated embodiment conversion.",
+    )
+    parser.add_argument(
+        "--raw-document-dir",
+        type=Path,
+        default=DEFAULT_RAW_DOCUMENT_DIR,
+        help="Content-addressed store for the exact HTML text supplied to parsers.",
+    )
+    parser.add_argument(
+        "--attempts-dir",
+        type=Path,
+        default=DEFAULT_ATTEMPTS_DIR,
+        help="Append-only process request/response/log/receipt evidence root.",
+    )
+    parser.add_argument(
         "--only-patents",
         type=Path,
         help="Text file containing one patent number per line; restrict mining to this set.",
@@ -3597,6 +3817,9 @@ def main() -> int:
             max_attempts=args.max_attempts,
             case_index_path=args.case_index,
             only_patents=only_patents,
+            raw_document_dir=args.raw_document_dir,
+            attempts_dir=args.attempts_dir,
+            conversion_timeout_seconds=args.conversion_timeout_seconds,
         )
     )
     successes = sum(attempt.status == "success" for attempt in attempts)
