@@ -16,6 +16,8 @@ from app.core.patent_conversion_process import (
     PatentSurfaceInput,
     ProcessExecution,
     SourceDocumentEvidence,
+    canonical_json_bytes,
+    conversion_request_sha256,
     run_patent_conversion_attempt,
     run_process_with_hard_timeout,
     sha256_bytes,
@@ -60,6 +62,37 @@ def test_conversion_request_schema_version_is_closed(tmp_path: Path) -> None:
 
     with pytest.raises(ValidationError, match="schema_version"):
         PatentConversionRequest.model_validate(payload)
+
+
+def test_default_reference_wavelength_preserves_historical_request_bytes(
+    tmp_path: Path,
+) -> None:
+    request = _minimal_request(tmp_path)
+    payload = request.model_dump(mode="json")
+
+    assert "reference_wavelength_um" not in payload["prescription"]
+    restored = PatentConversionRequest.model_validate_json(canonical_json_bytes(request))
+    assert restored.prescription.reference_wavelength_um == pytest.approx(0.5876)
+    assert conversion_request_sha256(restored) == conversion_request_sha256(request)
+
+
+def test_nondefault_reference_wavelength_is_hashed_conversion_input(
+    tmp_path: Path,
+) -> None:
+    default_request = _minimal_request(tmp_path)
+    source_reference = default_request.model_copy(
+        update={
+            "prescription": default_request.prescription.model_copy(
+                update={"reference_wavelength_um": 0.555}
+            )
+        }
+    )
+    payload = source_reference.model_dump(mode="json")
+
+    assert payload["prescription"]["reference_wavelength_um"] == pytest.approx(0.555)
+    assert conversion_request_sha256(source_reference) != conversion_request_sha256(
+        default_request
+    )
 
 
 def test_real_sleeping_process_is_hard_timed_out_and_reaped(tmp_path: Path) -> None:

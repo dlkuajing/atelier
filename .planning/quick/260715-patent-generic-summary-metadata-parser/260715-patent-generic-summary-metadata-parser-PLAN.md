@@ -1046,6 +1046,45 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `ead32801dc1d7bfbbe10d476ff807d2c81c27889cb3969f182d13fc76ad5a189`.
   Strict audit remains 619/619 with zero corrupt evidence; 210 focused
   parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
+- Three official Corephotonics records `US-12216259-B2`, `US-12411321-B1`, and
+  `US-20250271645-A1` explicitly publish Family ID `85477866` and bind to
+  `PCT/IB2022/060748` / `WO2023/111711`. Retained official PPUBS HTML SHA-256 values are
+  `86d554b9602ba6d6d25a7e378a05f8477f5ca4bd71d5c7564489cafd41891744`,
+  `9084f2c33d964572e78a73f2696ee16ee887c4b467ff7f3bc025d54a52b96a67`, and
+  `6cee6f58f05c7c78829f5f872c08b88a2879ead05a796a367fe2d714322af22b`;
+  normalized-text SHA-256 values are
+  `dd190c44fb05db84a44000de42cf2b85c228f421f4a4f964f22706b8e74d489d`,
+  `7f30e9e4ff73b370c79020d119fb2663d1f67ce04f3dd290923d93ec1afeb272`, and
+  `c4790a2b8cc367304729712bf7b2019ab4823993a59b177121fd6438d767acb6`.
+- Each document publishes four six-lens prescriptions for examples 800/900/1000/1100. The exact
+  ASP equation and coefficient headers bind Conic plus orders 4--16. TABLE 14 independently binds
+  EFL 17.37/14.10/14.10/14.10 mm, f-number 2.35/2.45/2.45/2.43, diagonal native FOV
+  25.6/22.8/31.0/27.4 degrees, and sensor diagonal 8.0/5.6/8.0/7.0 mm. The per-prescription HFOV
+  12.8/11.5/15.7/13.7 degrees is used directly as half field only after the native-FOV cross-table
+  check confirms a maximum 0.4-degree difference from twice HFOV; no angle is calculated from EFL
+  or sensor size.
+- The source-locked parser uses the raw and normalized hashes, exact title/Family ID, all fourteen
+  `TABLE-US` anchors, ASP definition, and TABLE 14 bindings. It retains the published first-lens
+  Glass and later-lens Plastic materials. It also reconstructs the A1 example-900 coefficient row
+  continuation that the official HTML places after the surface table, by relocating no token and
+  changing no number. The B1 example-1100 surface-2 order-16 coefficient remains its published
+  `+1.34E-10`; the B2/A1 values remain `-1.34E-10`.
+- Append-only attempts 2/3 convert all twelve candidates to staging-only ZMX and four distinct
+  prescription fingerprints. Across the repeated attempts, all twelve conversion-request hashes,
+  fingerprints, real IMH values, finite-ray counts, and ZMX hashes are identical. Receipt hashes
+  intentionally differ because retry identity is part of the receipt and are not reported as
+  canonical-equal. Representative B2 real IMH values are
+  4.015556596788725/2.9080814166147024/4.104067626857016/3.580784617841087 mm. No formal
+  intake, deduplication decision, route promotion, or expert judgment is claimed.
+- Generic summary changed 207 to 204; `sunny_embodiment_metadata_missing` is next at 199. Current
+  result-set SHA-256 is `1f76989c9acb10c32addcd3fea7a62c76c3eb1353699848328cb21da4db28b48`;
+  summary artifact SHA-256 is `c89cad5fac1ae6d9679388ed16552a1327958cc57fbb3e2910fc1af4d6b19442`;
+  report SHA-256 is `5a987663a6bcc10d6d826e05e3f3e253ad18de646a07ef61bd61a55f58b40cf6`;
+  after-census SHA-256 is `e69e5495da23d2b46b717f6e2e626647222bbf825c8973fb455a78051617c588`.
+  Strict audit remains 619/619 with zero corrupt evidence; root states are 23 converted, 70
+  terminal, 387 parser review, and 139 mixed; item states are 530 converted, 815 terminal, 1419
+  parser review, and 28 retry. All 236 focused parser/census/replay/process tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
@@ -1054,6 +1093,32 @@ thresholds, or claim patent saturation.
   not treated as an execution receipt. A corrected `pytest -m "not real_machine"` run kept CODE V
   at zero under repeated monitoring but hit the outer 1200-second tool limit without a pass/fail
   result; it is recorded as no conclusion, not PASS. PR CI remains the eventual full-suite gate.
+- Reference-wavelength correction: all three Family ID `85477866` records explicitly publish
+  `The reference wavelength is 555.0 nm`. A retained same-applicant official record,
+  `US-12560777-B2`, explicitly labels its material values `Nd Vd` while using the same 555 nm
+  reference convention. The parser therefore keeps the published Index/Abbe values unchanged and
+  records 0.555 micrometres as the prescription reference wavelength rather than relabelling any
+  material value. The process request serializes and hashes a non-default source wavelength but
+  excludes the historical 0.5876-micrometre default, so existing request bytes remain compatible.
+  The generated ZMX has `WAVM 2 0.555 1` and `PWAV 2`; worker and parent EFL validation and the
+  real-ray aperture/IMH trace use the same published reference wavelength.
+- Initial attempts 2/3 used the historical d-line conversion default and remain append-only
+  evidence, but they are superseded rather than reused. Attempts 4/5 are semantic-equal per root:
+  `US-12216259`=`2b3c349616e8ea0bdf03d2e2b08ea411919d6d4394e87f47f8ff2c6b83fbb870`,
+  `US-12411321`=`e28a5c6330fc0bbb0ee475fab4c8841b6bf25dc48123379504c3e0f227c1b90a`,
+  and `US-20250271645`=`77193c36356fd86cec0dbf7cc5c28181602cce7a13e203810ad300b1e00881ea`.
+  Representative B2 555-nm real IMH values are
+  4.016713921859653/2.913547491054199/4.104776016278381/3.585119155183039 mm,
+  with finite-ray counts 4/5, 5/5, 5/5, and 5/5. No formal intake, dedupe decision, route
+  promotion, or expert judgment is claimed.
+- Latest result-set SHA-256 is
+  `bcd2c5de2b47132cf0e89c922b42954008e6d2b05e64ed649e78606b7ec4361c`; summary artifact
+  SHA-256 is `0e1a50e94e9ac2515917fd3ae1f9e2988ed687036120e360a8d0db63dbd0676c`;
+  report SHA-256 is `47b2d212547a313f81836d4c560861e1ad3f1961f2cd8c36b543f84ab080592a`;
+  after-census SHA-256 is `884788717114df39f941984e0d6d54cde94c9da8633596b4a152c94c6a325e1f`.
+  Generic summary remains 204, strict audit remains 619/619 with zero corrupt evidence, and 239
+  focused parser/census/replay/process tests plus Ruff and `git diff --check` pass with CODE V
+  inventory zero.
 
 ## Completion condition
 

@@ -4299,6 +4299,27 @@ def test_genius_six_lens_nine_profile_retains_every_embodiment() -> None:
     assert [attempt.embodiment_number for attempt in grant_attempts] == list(range(1, 10))
 
 
+def test_corephotonics_555_nm_convention_publishes_nd_vd_material_columns() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "b1257f70d0725069"
+        / "US-12560777-B2.html"
+    )
+    raw = source.read_bytes()
+    text = patent_to_zmx.normalize_patent_text(raw.decode("utf-8"))
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "b1257f70d07250690e5306488b26c607e6970051b4f43ab6efbee8841a0bd9e2"
+    )
+    assert "Corephotonics Ltd." in text
+    assert text.count("The reference wavelength is 555.0 nm") == 1
+    assert "R [mm] T [mm] D [mm] Nd Vd Focal Length [mm]" in text
+
+
 @pytest.mark.parametrize(
     ("parser_input", "patent_id"),
     (
@@ -5378,6 +5399,164 @@ def test_kantatsu_nine_lens_pretable_retains_split_material_token() -> None:
     assert len(attempts) == 10
     assert "surface sequence must be 1-20" in str(attempts[0].error)
     assert all(attempt.error is None for attempt in attempts[1:])
+
+
+@pytest.mark.parametrize(
+    ("publication_id", "source_parts", "example_1100_surface_2_g"),
+    (
+        (
+            "US-12216259-B2",
+            ("USPAT", "86d554b9602ba6d6", "US-12216259-B2.html"),
+            -1.34e-10,
+        ),
+        (
+            "US-12411321-B1",
+            ("USPAT", "9084f2c33d964572", "US-12411321-B1.html"),
+            1.34e-10,
+        ),
+        (
+            "US-20250271645-A1",
+            ("US-PGPUB", "6cee6f58f05c7c78", "US-20250271645-A1.html"),
+            -1.34e-10,
+        ),
+    ),
+)
+def test_large_aperture_scanning_tele_official_family_parses_exactly(
+    publication_id: str,
+    source_parts: tuple[str, str, str],
+    example_1100_surface_2_g: float,
+) -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / Path(*source_parts)
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source.read_text(encoding="utf-8"),
+        patent_id=publication_id,
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    complete = [prescription for prescription in prescriptions if prescription is not None]
+    assert all(
+        prescription.reference_wavelength_um == pytest.approx(0.555)
+        for prescription in complete
+    )
+    observed_metadata = [
+        (prescription.focal_length_mm, prescription.f_number, prescription.hfov_deg)
+        for prescription in complete
+    ]
+    assert observed_metadata == [
+        pytest.approx(values)
+        for values in (
+            (17.37, 2.35, 12.8),
+            (14.10, 2.45, 11.5),
+            (14.10, 2.45, 15.7),
+            (14.10, 2.43, 13.7),
+        )
+    ]
+    assert all(
+        [surface.index for surface in prescription.surfaces] == list(range(1, 17))
+        for prescription in complete
+    )
+    first = complete[0]
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[1].material == "Glass"
+    assert first.surfaces[3].material == "Plastic"
+    assert first.surfaces[-1].label == "Image"
+    assert set(first.surfaces[1].asphere_coefficients) == {
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+    }
+    example_900 = complete[1]
+    assert example_900.surfaces[1].asphere_coefficients["G"] == pytest.approx(-1.79e-10)
+    assert example_900.surfaces[12].asphere_coefficients["G"] == pytest.approx(-3.87e-8)
+    example_1100 = complete[3]
+    assert example_1100.surfaces[1].asphere_coefficients["G"] == pytest.approx(
+        example_1100_surface_2_g
+    )
+    assert example_1100.surfaces[13].label == "IR Filter"
+    readout = build_readout_from_prescription(first)
+    assert [wavelength.wavelength_um for wavelength in readout.wavelengths] == pytest.approx(
+        [0.4861, 0.555, 0.5876, 0.6563]
+    )
+    assert readout.reference_wavelength_index == 2
+
+
+def test_large_aperture_scanning_tele_rejects_changed_official_hash() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "86d554b9602ba6d6"
+        / "US-12216259-B2.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "HFOV = 12.8",
+        "HFOV = 12.9",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-12216259-B2",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all("official raw text hash changed" in str(attempt.error) for attempt in attempts)
+
+
+def test_large_aperture_scanning_tele_requires_native_fov_binding(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "86d554b9602ba6d6"
+        / "US-12216259-B2.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "n-FOV.sub.T 25.6°",
+        "n-FOV.sub.T 24.0°",
+        1,
+    )
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._LARGE_APERTURE_SCANNING_TELE_SOURCE_PROFILES,
+        "US-12216259-B2",
+        {
+            "raw_document_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-12216259-B2",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all("TABLE 14 field bindings changed" in str(attempt.error) for attempt in attempts)
 
 
 def test_folded_macro_tele_retains_all_states_and_only_parses_infinity_efl() -> None:

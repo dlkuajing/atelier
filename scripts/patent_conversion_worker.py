@@ -17,6 +17,7 @@ from app.core.patent_conversion_process import (  # noqa: E402
     TraceAuditResult,
     canonical_json_bytes,
     conversion_request_sha256,
+    set_patent_validation_wavelength,
 )
 from app.core.zmx_ingest import load_normalized_zmx  # noqa: E402
 from scripts.patent_to_zmx import (  # noqa: E402
@@ -57,11 +58,16 @@ def convert_request(
             )
             for surface in prescription_input.surfaces
         ],
+        reference_wavelength_um=prescription_input.reference_wavelength_um,
         unsupported_asphere_terms=list(prescription_input.unsupported_asphere_terms),
     )
     try:
         trace_audit = write_patent_zmx(prescription, output_path)
         optic = load_normalized_zmx(output_path)
+        set_patent_validation_wavelength(
+            optic,
+            prescription.reference_wavelength_um,
+        )
         efl_mm = float(optic.paraxial.f2())
         if not math.isfinite(efl_mm):
             raise PatentTraceError("generated ZMX loaded but EFL was not finite")

@@ -34,6 +34,7 @@ from app.core.engines.codev_readout import (  # noqa: E402
 from app.core.engines.zmx_writer import write_zmx_from_codev_readout  # noqa: E402
 from app.core.patent_conversion_process import (  # noqa: E402
     DEFAULT_CONVERSION_TIMEOUT_SECONDS,
+    DEFAULT_PATENT_REFERENCE_WAVELENGTH_UM,
     PatentConversionRequest,
     PatentPrescriptionInput,
     PatentSurfaceInput,
@@ -65,7 +66,6 @@ DEFAULT_RAW_DOCUMENT_DIR = ROOT / "data" / "patent-lake" / "uspto-ppubs-html"
 DEFAULT_ATTEMPTS_DIR = ROOT / "data" / "patent-conversion-attempts"
 DEFAULT_REPORT_PATH = ROOT / ".planning" / "loop" / "patent2zmx-spike-report.md"
 DEFAULT_CASE_INDEX_PATH = ROOT / "app" / "data" / "optical_cases" / "index.json"
-TRACE_WAVELENGTH_UM = 0.5876
 TRACE_PROVISIONAL_SEMI_DIAMETER_MM = 100.0
 TRACE_APERTURE_CLEARANCE = 1.02
 MIN_TRACE_SEMI_DIAMETER_MM = 0.05
@@ -223,6 +223,7 @@ class PatentPrescription:
     f_number: float
     hfov_deg: float
     surfaces: list[PatentSurface]
+    reference_wavelength_um: float = DEFAULT_PATENT_REFERENCE_WAVELENGTH_UM
     unsupported_asphere_terms: list[str] = field(default_factory=list)
 
     @property
@@ -359,6 +360,12 @@ def _parse_prescription_attempts(
     pdf_attempts = _parse_ability_pdf_ocr_attempts(raw_text, patent_id=patent_id)
     if pdf_attempts:
         return pdf_attempts
+    source_locked_attempts = _parse_large_aperture_scanning_tele_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     text = normalize_patent_text(raw_text)
     try:
         metas = _find_embodiment_metas(text)
@@ -1494,6 +1501,62 @@ _FOLDED_MACRO_TELE_SYSTEM_TABLES = {
     "230": (9, 10, 11, 8),
     "240": (13, 14, 16, 6),
     "290": (19, 20, 21, 8),
+}
+_LARGE_APERTURE_SCANNING_TELE_TITLE_PATTERN = re.compile(
+    r"\bLARGE-APERTURE\s+COMPACT\s+SCANNING\s+TELE\s+CAMERAS\b",
+    flags=re.IGNORECASE,
+)
+_LARGE_APERTURE_SCANNING_TELE_SOURCE_ANCHOR_PATTERN = re.compile(
+    r"\bTABLE-US-(?P<number>\d{5})\s+",
+    flags=re.IGNORECASE,
+)
+_LARGE_APERTURE_SCANNING_TELE_SURFACE_HEADER_PATTERN = re.compile(
+    rf"\bExample\s+(?P<example>800|900|1000|1100)\s+"
+    rf"EFL\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm\s*,\s*"
+    rf"(?:Eff\.\s+)?f\s+number\s*=\s*(?P<fno>{NUMBER_PATTERN})\s*"
+    rf"\(\s*Eff\.\s+DA/2\s*=\s*(?P<aperture>{NUMBER_PATTERN})\s*mm\s*\)\s*,\s*"
+    rf"HFOV\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s*deg\.?\s+"
+    r"Aperture\s+Curvature\s+Radius\s+Focal\s+Surface\s+#\s+Comment\s+Type\s+"
+    r"Radius\s+Thickness\s+\(D/2\)\s+Material\s+Index\s+Abbe\s+#\s+Length\s+",
+    flags=re.IGNORECASE,
+)
+_LARGE_APERTURE_SCANNING_TELE_COEFFICIENT_HEADER_PATTERN = re.compile(
+    r"\bAspheric\s+Coefficients(?:\s+\(Continued\))?\s+Surface\s+#\s+",
+    flags=re.IGNORECASE,
+)
+_LARGE_APERTURE_SCANNING_TELE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12216259-B2": {
+        "raw_document_sha256": (
+            "86d554b9602ba6d6d25a7e378a05f8477f5ca4bd71d5c7564489cafd41891744"
+        ),
+        "normalized_text_sha256": (
+            "dd190c44fb05db84a44000de42cf2b85c228f421f4a4f964f22706b8e74d489d"
+        ),
+    },
+    "US-12411321-B1": {
+        "raw_document_sha256": (
+            "9084f2c33d964572e78a73f2696ee16ee887c4b467ff7f3bc025d54a52b96a67"
+        ),
+        "normalized_text_sha256": (
+            "7f30e9e4ff73b370c79020d119fb2663d1f67ce04f3dd290923d93ec1afeb272"
+        ),
+    },
+    "US-20250271645-A1": {
+        "raw_document_sha256": (
+            "6cee6f58f05c7c78829f5f872c08b88a2879ead05a796a367fe2d714322af22b"
+        ),
+        "normalized_text_sha256": (
+            "c4790a2b8cc367304729712bf7b2019ab4823993a59b177121fd6438d767acb6"
+        ),
+    },
+}
+_LARGE_APERTURE_SCANNING_TELE_EXAMPLES = (800, 900, 1000, 1100)
+_LARGE_APERTURE_SCANNING_TELE_FIELD_BINDINGS = {
+    "EFL": (17.37, 14.10, 14.10, 14.10),
+    "f number": (2.35, 2.45, 2.45, 2.43),
+    "HFOV": (12.8, 11.5, 15.7, 13.7),
+    "n-FOV.sub.T": (25.6, 22.8, 31.0, 27.4),
+    "SD": (8.0, 5.6, 8.0, 7.0),
 }
 _SAMSUNG_WIDE_FOV_BINDING_PATTERN = re.compile(
     r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<coefficient_table>\d+)\s+below\s+"
@@ -7371,6 +7434,525 @@ def _parse_kantatsu_nine_lens_asphere_table(
     return coefficients
 
 
+def _parse_large_aperture_scanning_tele_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the exact Family 85477866 four-prescription disclosure.
+
+    The source profile pins both the retained official HTML bytes and normalized
+    text.  TABLE 14 publishes a diagonal native FOV beside each system and binds
+    it to the per-prescription HFOV at approximately twice the angle (maximum
+    published difference 0.4 degrees).  That cross-table evidence is required
+    before the published HFOV value is used as the pipeline half field; no field
+    value is derived from EFL or sensor diagonal.
+    """
+
+    profile = _LARGE_APERTURE_SCANNING_TELE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=f"Large-aperture scanning tele example {example}",
+                error=exc,
+            )
+            for index, example in enumerate(
+                _LARGE_APERTURE_SCANNING_TELE_EXAMPLES,
+                start=1,
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"large-aperture scanning tele official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "large-aperture scanning tele official normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if _LARGE_APERTURE_SCANNING_TELE_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("large-aperture scanning tele title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*85477866", text, flags=re.IGNORECASE)) != 1:
+            raise PatentParseError("large-aperture scanning tele Family ID binding changed")
+        if len(
+            re.findall(
+                r"Even\s+Asphere\s+\(ASP\)\s+surface\s+sag\s+formula",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ) != 1 or len(
+            re.findall(
+                r"A\.sub\.n\s+are\s+the\s+polynomial\s+coefficients\s+shown\s+"
+                r"in\s+lens\s+data\s+tables",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ) != 1 or len(
+            re.findall(
+                r"c\s+is\s+the\s+paraxial\s+curvature\s+of\s+the\s+surface",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("large-aperture scanning tele ASP definition changed")
+        if len(
+            re.findall(
+                r"The\s+reference\s+wavelength\s+is\s+555\.0\s+nm",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "large-aperture scanning tele reference wavelength binding changed"
+            )
+
+        blocks = _large_aperture_scanning_tele_source_blocks(text)
+        if set(blocks) != set(range(1, 15)):
+            raise PatentParseError(
+                "large-aperture scanning tele family must contain source anchors 1-14"
+            )
+        table_bindings = _parse_large_aperture_scanning_tele_field_bindings(blocks[14])
+        if table_bindings != {
+            key: tuple(values)
+            for key, values in _LARGE_APERTURE_SCANNING_TELE_FIELD_BINDINGS.items()
+            if key != "HFOV"
+        }:
+            raise PatentParseError(
+                "large-aperture scanning tele TABLE 14 field bindings changed"
+            )
+
+        prescriptions: list[PatentPrescription] = []
+        for index, example in enumerate(
+            _LARGE_APERTURE_SCANNING_TELE_EXAMPLES,
+            start=1,
+        ):
+            pair = (index * 2 + 2, index * 2 + 3)
+            surface_candidates = [
+                table_number
+                for table_number in pair
+                if (
+                    header := _LARGE_APERTURE_SCANNING_TELE_SURFACE_HEADER_PATTERN.search(
+                        blocks[table_number]
+                    )
+                )
+                is not None
+                and int(header.group("example")) == example
+            ]
+            if len(surface_candidates) != 1:
+                raise PatentParseError(
+                    f"large-aperture scanning tele example {example} surface table binding changed"
+                )
+            surface_table = surface_candidates[0]
+            coefficient_table = next(
+                table_number for table_number in pair if table_number != surface_table
+            )
+            if _LARGE_APERTURE_SCANNING_TELE_COEFFICIENT_HEADER_PATTERN.search(
+                blocks[coefficient_table]
+            ) is None:
+                raise PatentParseError(
+                    f"large-aperture scanning tele example {example} coefficient table missing"
+                )
+            header = _LARGE_APERTURE_SCANNING_TELE_SURFACE_HEADER_PATTERN.search(
+                blocks[surface_table]
+            )
+            if header is None:  # pragma: no cover - guarded by surface_candidates
+                raise PatentParseError(
+                    f"large-aperture scanning tele example {example} header missing"
+                )
+            focal_length = _parse_number(header.group("f"))
+            f_number = _parse_number(header.group("fno"))
+            half_field = _parse_number(header.group("hfov"))
+            expected_column = index - 1
+            if (
+                focal_length != table_bindings["EFL"][expected_column]
+                or f_number != table_bindings["f number"][expected_column]
+                or half_field
+                != _LARGE_APERTURE_SCANNING_TELE_FIELD_BINDINGS["HFOV"][
+                    expected_column
+                ]
+            ):
+                raise PatentParseError(
+                    f"large-aperture scanning tele example {example} header/TABLE 14 mismatch"
+                )
+            if (
+                abs(
+                    table_bindings["n-FOV.sub.T"][expected_column]
+                    - 2.0 * half_field
+                )
+                > 0.5
+            ):
+                raise PatentParseError(
+                    "large-aperture scanning tele HFOV/native-FOV cross-table "
+                    f"binding changed for example {example}"
+                )
+            surfaces, trailing_text = _parse_large_aperture_scanning_tele_surfaces(
+                blocks[surface_table],
+                header=header,
+                example=example,
+            )
+            coefficients = _parse_large_aperture_scanning_tele_coefficients(
+                blocks[coefficient_table] + " " + trailing_text,
+                example=example,
+            )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.surface_type = "ASP"
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=f"Large-aperture scanning tele example {example}",
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=half_field,
+                surfaces=surfaces,
+                reference_wavelength_um=0.555,
+            )
+            _validate_prescription_materials(prescription)
+            prescriptions.append(prescription)
+    except Exception as exc:  # noqa: BLE001 - retain all four disclosed examples
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=prescription.embodiment,
+            prescription=prescription,
+        )
+        for index, prescription in enumerate(prescriptions, start=1)
+    ]
+
+
+def _large_aperture_scanning_tele_source_blocks(text: str) -> dict[int, str]:
+    matches = list(_LARGE_APERTURE_SCANNING_TELE_SOURCE_ANCHOR_PATTERN.finditer(text))
+    blocks: dict[int, str] = {}
+    for index, match in enumerate(matches):
+        number = int(match.group("number"))
+        if number in blocks:
+            raise PatentParseError(
+                f"duplicate large-aperture scanning tele source anchor: {number}"
+            )
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        blocks[number] = text[match.start() : end]
+    return blocks
+
+
+def _parse_large_aperture_scanning_tele_field_bindings(
+    table_text: str,
+) -> dict[str, tuple[float, ...]]:
+    if re.search(
+        r"\bn-FOV\.sub\.T\s+.*?Diagonal\s+n-FOV\.sub\.T\b",
+        table_text,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError(
+            "large-aperture scanning tele diagonal native-FOV label missing"
+        )
+
+    def four_values(label: str, *, degrees: bool = False) -> tuple[float, ...]:
+        suffix = r"\s*°?" if degrees else ""
+        value = rf"(?P<v{{index}}>{NUMBER_PATTERN}){suffix}"
+        pattern = re.escape(label) + r"\s+" + r"\s+".join(
+            value.format(index=index) for index in range(4)
+        )
+        match = re.search(pattern, table_text, flags=re.IGNORECASE)
+        if match is None:
+            raise PatentParseError(
+                f"large-aperture scanning tele TABLE 14 row {label} missing"
+            )
+        return tuple(_parse_number(match.group(f"v{index}")) for index in range(4))
+
+    return {
+        "EFL": four_values("EFL"),
+        "f number": four_values("f number"),
+        "n-FOV.sub.T": four_values("n-FOV.sub.T", degrees=True),
+        "SD": four_values("SD"),
+    }
+
+
+def _parse_large_aperture_scanning_tele_surfaces(
+    table_text: str,
+    *,
+    header: re.Match[str],
+    example: int,
+) -> tuple[list[PatentSurface], str]:
+    tokens = table_text[header.end() :].split()
+    pos = 0
+
+    def take(expected: str | None = None) -> str:
+        nonlocal pos
+        if pos >= len(tokens):
+            raise PatentParseError(
+                f"large-aperture scanning tele example {example} surface table is incomplete"
+            )
+        token = tokens[pos]
+        pos += 1
+        if expected is not None and token.lower() != expected.lower():
+            raise PatentParseError(
+                f"large-aperture scanning tele example {example} expected {expected}, "
+                f"found {token}"
+            )
+        return token
+
+    surfaces: list[PatentSurface] = []
+    take("1")
+    take("A.S.")
+    take("Plano")
+    stop_radius = _distance_value(take(), field_name=f"example {example} stop radius")
+    stop_thickness = _distance_value(
+        take(), field_name=f"example {example} stop thickness"
+    )
+    _parse_number(take())
+    surfaces.append(
+        PatentSurface(
+            index=1,
+            label="Stop",
+            radius_mm=stop_radius,
+            thickness_mm=stop_thickness,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+
+    for lens_number in range(1, 7):
+        first_index = lens_number * 2
+        take(str(first_index))
+        take("Lens")
+        take(str(lens_number))
+        take("ASP")
+        first_radius = _distance_value(
+            take(), field_name=f"example {example} surface {first_index} radius"
+        )
+        first_thickness = _distance_value(
+            take(), field_name=f"example {example} surface {first_index} thickness"
+        )
+        _parse_number(take())
+        material = take()
+        expected_material = "Glass" if lens_number == 1 else "Plastic"
+        if material.lower() != expected_material.lower():
+            raise PatentParseError(
+                f"large-aperture scanning tele example {example} lens {lens_number} "
+                f"material changed: {material}"
+            )
+        nd = _parse_number(take())
+        vd = _parse_number(take())
+        _parse_number(take())
+        surfaces.append(
+            PatentSurface(
+                index=first_index,
+                label=f"Lens {lens_number}",
+                radius_mm=first_radius,
+                thickness_mm=first_thickness,
+                material=expected_material,
+                nd=nd,
+                vd=vd,
+                surface_type="ASP",
+            )
+        )
+
+        second_index = first_index + 1
+        take(str(second_index))
+        second_radius = _distance_value(
+            take(), field_name=f"example {example} surface {second_index} radius"
+        )
+        second_thickness = _distance_value(
+            take(), field_name=f"example {example} surface {second_index} thickness"
+        )
+        _parse_number(take())
+        surfaces.append(
+            PatentSurface(
+                index=second_index,
+                label=f"Lens {lens_number}",
+                radius_mm=second_radius,
+                thickness_mm=second_thickness,
+                material=None,
+                nd=None,
+                vd=None,
+                surface_type="ASP",
+            )
+        )
+
+    take("14")
+    filter_first_token = take()
+    deferred_filter_token = False
+    if filter_first_token.lower() == "filter":
+        filter_label = "Filter"
+    elif filter_first_token.lower() == "ir":
+        filter_label = "IR Filter"
+        if pos < len(tokens) and tokens[pos].lower() == "filter":
+            pos += 1
+        else:
+            deferred_filter_token = True
+    else:
+        raise PatentParseError(
+            f"large-aperture scanning tele example {example} filter label changed"
+        )
+    take("Plano")
+    filter_radius = _distance_value(
+        take(), field_name=f"example {example} filter radius"
+    )
+    filter_thickness = _distance_value(
+        take(), field_name=f"example {example} filter thickness"
+    )
+    filter_aperture = take()
+    if not _is_empty_value(filter_aperture):
+        _parse_number(filter_aperture)
+    take("Glass")
+    filter_nd = _parse_number(take())
+    filter_vd = _parse_number(take())
+    if deferred_filter_token:
+        take("Filter")
+    surfaces.append(
+        PatentSurface(
+            index=14,
+            label=filter_label,
+            radius_mm=filter_radius,
+            thickness_mm=filter_thickness,
+            material="Glass",
+            nd=filter_nd,
+            vd=filter_vd,
+            surface_type=None,
+        )
+    )
+
+    take("15")
+    filter_back_radius = _distance_value(
+        take(), field_name=f"example {example} filter back radius"
+    )
+    filter_back_thickness = _distance_value(
+        take(), field_name=f"example {example} filter back thickness"
+    )
+    take("--")
+    surfaces.append(
+        PatentSurface(
+            index=15,
+            label=filter_label,
+            radius_mm=filter_back_radius,
+            thickness_mm=filter_back_thickness,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+
+    take("16")
+    take("Image")
+    take("Plano")
+    image_radius = _distance_value(
+        take(), field_name=f"example {example} image radius"
+    )
+    image_thickness = _distance_value(
+        take(), field_name=f"example {example} image thickness"
+    )
+    take("--")
+    surfaces.append(
+        PatentSurface(
+            index=16,
+            label="Image",
+            radius_mm=image_radius,
+            thickness_mm=image_thickness,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    return surfaces, " ".join(tokens[pos:])
+
+
+def _parse_large_aperture_scanning_tele_coefficients(
+    table_text: str,
+    *,
+    example: int,
+) -> dict[int, dict[str, float]]:
+    headers = list(
+        _LARGE_APERTURE_SCANNING_TELE_COEFFICIENT_HEADER_PATTERN.finditer(table_text)
+    )
+    if len(headers) not in {1, 2}:
+        raise PatentParseError(
+            f"large-aperture scanning tele example {example} coefficient section count changed"
+        )
+
+    coefficients: dict[int, dict[str, float]] = {}
+    observed_labels: set[str] = set()
+    for header_index, header in enumerate(headers):
+        end = headers[header_index + 1].start() if header_index + 1 < len(headers) else len(
+            table_text
+        )
+        tokens = table_text[header.end() : end].split()
+        pos = 0
+        labels: list[str] = []
+        while pos < len(tokens) and re.fullmatch(
+            r"Conic|\d+\.sup\.th",
+            tokens[pos],
+            flags=re.IGNORECASE,
+        ):
+            labels.append(tokens[pos])
+            pos += 1
+        if not labels:
+            raise PatentParseError(
+                f"large-aperture scanning tele example {example} coefficient labels missing"
+            )
+        codev_labels: list[str] = []
+        for label in labels:
+            if label.lower() == "conic":
+                codev_label = "K"
+            else:
+                order = int(label.split(".", 1)[0])
+                if order not in {4, 6, 8, 10, 12, 14, 16}:
+                    raise PatentParseError(
+                        f"large-aperture scanning tele example {example} unsupported "
+                        f"coefficient order {order}"
+                    )
+                codev_label = ASPHERE_ORDER_TO_CODEV[order]
+            if codev_label in observed_labels:
+                raise PatentParseError(
+                    f"large-aperture scanning tele example {example} duplicate "
+                    f"coefficient label {codev_label}"
+                )
+            observed_labels.add(codev_label)
+            codev_labels.append(codev_label)
+
+        for surface_index in range(2, 14):
+            if pos >= len(tokens) or tokens[pos] != str(surface_index):
+                actual = tokens[pos] if pos < len(tokens) else "<end>"
+                raise PatentParseError(
+                    f"large-aperture scanning tele example {example} coefficient sequence "
+                    f"expected {surface_index}, found {actual}"
+                )
+            pos += 1
+            row = coefficients.setdefault(surface_index, {})
+            for codev_label in codev_labels:
+                if pos >= len(tokens):
+                    raise PatentParseError(
+                        f"large-aperture scanning tele example {example} surface "
+                        f"{surface_index} coefficient row is incomplete"
+                    )
+                row[codev_label] = _parse_number(tokens[pos])
+                pos += 1
+
+    expected_labels = {"K", "A", "B", "C", "D", "E", "F", "G"}
+    if observed_labels != expected_labels or any(
+        set(coefficients.get(surface_index, {})) != expected_labels
+        for surface_index in range(2, 14)
+    ):
+        raise PatentParseError(
+            f"large-aperture scanning tele example {example} coefficient coverage changed"
+        )
+    return coefficients
+
+
 def _parse_folded_macro_tele_table_attempts(
     text: str,
     *,
@@ -11349,10 +11931,8 @@ def build_readout_from_prescription(
             vlx=0.0,
         ),
     )
-    wavelengths = (
-        CodeVWavelengthReadout(index=1, wavelength_um=0.4861, weight=1.0),
-        CodeVWavelengthReadout(index=2, wavelength_um=0.5876, weight=1.0),
-        CodeVWavelengthReadout(index=3, wavelength_um=0.6563, weight=1.0),
+    wavelengths, reference_wavelength_index = _patent_wavelength_table(
+        prescription.reference_wavelength_um
     )
     return CodeVReadout(
         source_zmx=f"{_safe_stem(prescription.patent_id)}.zmx",
@@ -11366,13 +11946,39 @@ def build_readout_from_prescription(
         num_zooms=1,
         stop_surface=stop_surface,
         field_type="ANG",
-        reference_wavelength_index=2,
+        reference_wavelength_index=reference_wavelength_index,
         image_height_y_mm=(
             image_height_y_mm if image_height_y_mm is not None else prescription.image_height_mm
         ),
         surfaces=surfaces,
         fields=fields,
         wavelengths=wavelengths,
+    )
+
+
+def _patent_wavelength_table(
+    reference_wavelength_um: float,
+) -> tuple[tuple[CodeVWavelengthReadout, ...], int]:
+    if not math.isfinite(reference_wavelength_um) or reference_wavelength_um <= 0.0:
+        raise PatentParseError("reference wavelength must be finite and positive")
+    values = [0.4861, 0.5876, 0.6563]
+    if not any(
+        math.isclose(reference_wavelength_um, value, rel_tol=0.0, abs_tol=1e-12)
+        for value in values
+    ):
+        values.append(reference_wavelength_um)
+        values.sort()
+    reference_index = next(
+        index
+        for index, value in enumerate(values, start=1)
+        if math.isclose(reference_wavelength_um, value, rel_tol=0.0, abs_tol=1e-12)
+    )
+    return (
+        tuple(
+            CodeVWavelengthReadout(index=index, wavelength_um=value, weight=1.0)
+            for index, value in enumerate(values, start=1)
+        ),
+        reference_index,
     )
 
 
@@ -12688,6 +13294,7 @@ def _conversion_request(
                 )
                 for surface in prescription.surfaces
             ),
+            reference_wavelength_um=prescription.reference_wavelength_um,
             unsupported_asphere_terms=tuple(prescription.unsupported_asphere_terms),
         ),
         source_document=source_document,
@@ -13245,6 +13852,7 @@ def _coverage(
         "f_mm": prescription.focal_length_mm,
         "f_number": prescription.f_number,
         "hfov_deg": prescription.hfov_deg,
+        "reference_wavelength_um": prescription.reference_wavelength_um,
         "sanity_image_height_mm": prescription.image_height_mm,
         "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
     }
@@ -13524,7 +14132,13 @@ def _trace_surface_apertures(
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RuntimeWarning)
-        rays = optic.trace_generic(h_x, h_y, p_x, p_y, TRACE_WAVELENGTH_UM)
+        rays = optic.trace_generic(
+            h_x,
+            h_y,
+            p_x,
+            p_y,
+            prescription.reference_wavelength_um,
+        )
 
     measured: dict[int, float] = {}
     surface_indices = sorted(surface.index for surface in prescription.surfaces)

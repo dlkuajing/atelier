@@ -29,6 +29,7 @@ from app.core.zmx_ingest import load_normalized_zmx
 
 SCHEMA_VERSION = 1
 DEFAULT_CONVERSION_TIMEOUT_SECONDS = 120.0
+DEFAULT_PATENT_REFERENCE_WAVELENGTH_UM = 0.5876
 PROCESS_TREE_KILL_TIMEOUT_SECONDS = 5.0
 PROCESS_REAP_TIMEOUT_SECONDS = 2.0
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
@@ -74,6 +75,11 @@ class PatentPrescriptionInput(StrictModel):
     f_number: float
     hfov_deg: float
     surfaces: tuple[PatentSurfaceInput, ...] = Field(min_length=1)
+    reference_wavelength_um: float = Field(
+        default=DEFAULT_PATENT_REFERENCE_WAVELENGTH_UM,
+        gt=0.0,
+        exclude_if=lambda value: value == DEFAULT_PATENT_REFERENCE_WAVELENGTH_UM,
+    )
     unsupported_asphere_terms: tuple[str, ...] = ()
 
 
@@ -213,6 +219,15 @@ def conversion_request_sha256(request: PatentConversionRequest) -> str:
 
 def load_conversion_request(path: Path) -> PatentConversionRequest:
     return PatentConversionRequest.model_validate_json(path.read_bytes())
+
+
+def set_patent_validation_wavelength(optic: Any, wavelength_um: float) -> None:
+    """Set the source-published primary wavelength for deterministic validation."""
+
+    if not math.isfinite(wavelength_um) or wavelength_um <= 0.0:
+        raise ValueError("patent reference wavelength must be finite and positive")
+    optic.wavelengths.wavelengths.clear()
+    optic.wavelengths.add(wavelength_um, is_primary=True)
 
 
 def run_process_with_hard_timeout(
@@ -381,6 +396,10 @@ def run_patent_conversion_attempt(
         if not candidate_path.is_file():
             raise FileNotFoundError("worker reported success without candidate ZMX")
         optic = load_normalized_zmx(candidate_path)
+        set_patent_validation_wavelength(
+            optic,
+            request.prescription.reference_wavelength_um,
+        )
         parent_efl = float(optic.paraxial.f2())
         if not math.isfinite(parent_efl):
             raise ValueError("parent validation produced non-finite EFL")
