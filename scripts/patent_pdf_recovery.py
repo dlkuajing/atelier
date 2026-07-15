@@ -47,6 +47,18 @@ _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT = (
     "FOV is a field of view of the optical lens",
 )
 _ABILITY_EIGHT_LENS_PROFILE = "ability_eight_lens_metadata_unpublished_v1"
+_ABILITY_THREE_LENS_REQUIRED_FIGURE_TEXT = (
+    "FIG. 4A lists parameters of each lens of the optical lens shown in FIG. 1",
+    "FIG. 4B lists aspherical coefficients of the aspherical surface formula "
+    "of the lenses in optical lens shown in FIG. 1",
+    "FIG. 5A lists parameters of each lens of the optical lens shown in FIG. 2",
+    "FIG. 5B lists aspherical coefficients of the aspherical surface formula "
+    "of the lenses in optical lens shown in FIG. 2",
+    "FIG. 6A lists parameters of each lens of the optical lens shown in FIG. 3",
+    "FIG. 6B lists aspherical coefficients of the aspherical surface formula",
+    "FIG. 7 lists optical data of the optical lenses OL 1 , OL 2 , OL 3",
+)
+_ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
     r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
     r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
@@ -96,6 +108,8 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         return "ability_two_lens_prescriptions_v1"
     if all(marker in text for marker in _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
         return _ABILITY_EIGHT_LENS_PROFILE
+    if all(marker in text for marker in _ABILITY_THREE_LENS_REQUIRED_FIGURE_TEXT):
+        return _ABILITY_THREE_LENS_PROFILE
     return None
 
 
@@ -134,6 +148,19 @@ def _ability_eight_lens_source_facts(raw_html: str) -> dict[str, Any]:
             _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT[3]
         ),
         "numeric_system_value_assignment_counts": assignments,
+    }
+
+
+def _ability_three_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Measure the official figure bindings for the three-prescription layout."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" lists", maxsplit=1)[0]: text.count(marker)
+            for marker in _ABILITY_THREE_LENS_REQUIRED_FIGURE_TEXT
+        },
     }
 
 
@@ -376,9 +403,7 @@ async def recover_ability_official_pdf_ocr(
         }
         parser_profile = None
         source_facts = None
-    else:
-        if profile != _ABILITY_EIGHT_LENS_PROFILE:
-            raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
+    elif profile == _ABILITY_EIGHT_LENS_PROFILE:
         role_pages = {
             "surface_single": _figure_page(
                 mirror_texts,
@@ -393,6 +418,33 @@ async def recover_ability_official_pdf_ocr(
         }
         parser_profile = profile
         source_facts = _ability_eight_lens_source_facts(primary_html)
+    elif profile == _ABILITY_THREE_LENS_PROFILE:
+        role_pages = {
+            "prescription_ol1": _figure_page(
+                mirror_texts,
+                "4A",
+                ("surface", "curvature", "thickness", "abbe", "A16"),
+            ),
+            "prescription_ol2": _figure_page(
+                mirror_texts,
+                "5A",
+                ("surface", "curvature", "thickness", "abbe", "A16"),
+            ),
+            "prescription_ol3": _figure_page(
+                mirror_texts,
+                "6A",
+                ("surface", "curvature", "thickness", "abbe", "A16"),
+            ),
+            "system_meta_three": _figure_page(
+                mirror_texts,
+                "7",
+                ("optical lens", "OL1", "OL3", "FNO", "FOV"),
+            ),
+        }
+        parser_profile = profile
+        source_facts = _ability_three_lens_source_facts(primary_html)
+    else:
+        raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
     if len(set(role_pages.values())) != len(role_pages):
         raise PatentPdfRecoveryError("Ability PDF key roles do not map to distinct pages")
 

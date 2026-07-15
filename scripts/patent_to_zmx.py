@@ -2402,6 +2402,7 @@ def _parse_kantatsu_six_lens_table_attempts(
 
 _ABILITY_PDF_PARSER_FAMILY = "ability_official_pdf_ocr_v1"
 _ABILITY_EIGHT_LENS_PROFILE = "ability_eight_lens_metadata_unpublished_v1"
+_ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -2426,6 +2427,39 @@ _ABILITY_OL2_ROW_LABELS = (
     "Sc1",
     "Sc2",
     "Image",
+)
+_ABILITY_THREE_OL12_SURFACE_LABELS = (
+    *(f"S{i}" for i in range(1, 7)),
+    "St",
+    *(f"S{i}" for i in range(7, 17)),
+)
+_ABILITY_THREE_OL3_SURFACE_LABELS = (
+    *(f"S{i}" for i in range(1, 7)),
+    "St",
+    *(f"S{i}" for i in range(7, 19)),
+)
+_ABILITY_THREE_OL12_ASPHERE_LABELS = (
+    "S3",
+    "S4",
+    "S7",
+    "S8",
+    "S9",
+    "S10",
+    "S11",
+    "S12",
+    "S13",
+    "S14",
+)
+_ABILITY_THREE_OL3_ASPHERE_LABELS = (
+    "S5",
+    "S6",
+    "S7",
+    "S8",
+    "S9",
+    "S11",
+    "S12",
+    "S13",
+    "S14",
 )
 
 
@@ -2730,6 +2764,436 @@ def _ability_meta_row(page: dict[str, Any], label: str) -> tuple[float, float]:
     return values[0][1], values[1][1]
 
 
+def _ability_profile_number_token(
+    tokens: list[dict[str, Any]],
+    *,
+    x: float,
+    y: float,
+    min_confidence: float = _ABILITY_OCR_NUMBER_CONFIDENCE,
+) -> dict[str, Any]:
+    candidates = []
+    for token in tokens:
+        if re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE) is None:
+            continue
+        token_x, token_y = _ability_token_center(token)
+        if (
+            abs(token_x - x) <= _ABILITY_COLUMN_X_TOLERANCE
+            and abs(token_y - y) <= _ABILITY_ROW_Y_TOLERANCE
+            and _ability_token_confidence(token) >= min_confidence
+        ):
+            candidates.append(token)
+    if len(candidates) != 1:
+        raise PatentParseError(
+            f"Ability PDF numeric cell at ({x:.1f}, {y:.1f}) has "
+            f"{len(candidates)} values above confidence gate"
+        )
+    return candidates[0]
+
+
+def _ability_three_lens_surface_table(
+    page: dict[str, Any],
+    *,
+    expected_labels: tuple[str, ...],
+    surface_figure: str,
+) -> tuple[list[PatentSurface], dict[str, float]]:
+    tokens = list(page["rapidocr_tokens"])
+    surface_header = _ability_unique_token(tokens, "surface", min_confidence=0.98)
+    curvature_header = _ability_unique_token(tokens, "curvature", min_confidence=0.98)
+    index_header = _ability_unique_token(tokens, "index", min_confidence=0.98)
+    abbe_header = _ability_unique_token(tokens, "number", min_confidence=0.98)
+    conic_header = _ability_unique_token(tokens, "constant", min_confidence=0.98)
+    surface_x, header_y = _ability_token_center(surface_header)
+    radius_x, _ = _ability_token_center(curvature_header)
+    nd_x, _ = _ability_token_center(index_header)
+    vd_x, _ = _ability_token_center(abbe_header)
+    conic_x, _ = _ability_token_center(conic_header)
+    millimeter_headers = [
+        token
+        for token in tokens
+        if _ability_token_text(token).casefold() == "(mm)"
+        and _ability_token_confidence(token) >= 0.98
+    ]
+    thickness_headers = [
+        token
+        for token in millimeter_headers
+        if radius_x < _ability_token_center(token)[0] < nd_x
+    ]
+    if len(thickness_headers) != 1:
+        raise PatentParseError("Ability three-lens thickness column is ambiguous")
+    thickness_x, _ = _ability_token_center(thickness_headers[0])
+    figure_token = _ability_unique_token(tokens, surface_figure, min_confidence=0.90)
+    _, figure_y = _ability_token_center(figure_token)
+
+    row_tokens = [
+        token
+        for token in tokens
+        if header_y < _ability_token_center(token)[1] < figure_y
+        and abs(_ability_token_center(token)[0] - surface_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and re.fullmatch(r"S\d+|St", _ability_token_text(token), re.IGNORECASE)
+        and _ability_token_confidence(token) >= 0.90
+    ]
+    row_tokens.sort(key=lambda token: _ability_token_center(token)[1])
+    observed_labels = tuple(_ability_token_text(token) for token in row_tokens)
+    if tuple(label.casefold() for label in observed_labels) != tuple(
+        label.casefold() for label in expected_labels
+    ):
+        raise PatentParseError(
+            "Ability three-lens surface row sequence mismatch: " + ",".join(observed_labels)
+        )
+
+    surfaces: list[PatentSurface] = []
+    conics: dict[str, float] = {}
+    for label, row_token in zip(expected_labels, row_tokens, strict=True):
+        _, row_y = _ability_token_center(row_token)
+        radius_token = _ability_profile_number_token(tokens, x=radius_x, y=row_y)
+        radius_text = _ability_token_text(radius_token)
+        if radius_text == "8":
+            _ability_infinity_token(tokens, x=radius_x, y=row_y)
+            radius = None
+        else:
+            radius = _parse_number(radius_text)
+        thickness = _parse_number(
+            _ability_token_text(
+                _ability_profile_number_token(tokens, x=thickness_x, y=row_y)
+            )
+        )
+        material_tokens = [
+            token
+            for token in tokens
+            if abs(_ability_token_center(token)[1] - row_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and _ability_token_confidence(token) >= _ABILITY_OCR_NUMBER_CONFIDENCE
+            and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+        ]
+        nd_matches = [
+            token
+            for token in material_tokens
+            if abs(_ability_token_center(token)[0] - nd_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        ]
+        vd_matches = [
+            token
+            for token in material_tokens
+            if abs(_ability_token_center(token)[0] - vd_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        ]
+        if len(nd_matches) != len(vd_matches) or len(nd_matches) > 1:
+            raise PatentParseError(f"Ability three-lens row {label} has incomplete material data")
+        nd = _parse_number(_ability_token_text(nd_matches[0])) if nd_matches else None
+        vd = _parse_number(_ability_token_text(vd_matches[0])) if vd_matches else None
+        _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
+        conic = _parse_number(
+            _ability_token_text(_ability_profile_number_token(tokens, x=conic_x, y=row_y))
+        )
+        conics[label] = conic
+        surfaces.append(
+            PatentSurface(
+                index=len(surfaces) + 1,
+                label="Stop" if label.casefold() == "st" else label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=None,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    image_tokens = [
+        token
+        for token in tokens
+        if header_y < _ability_token_center(token)[1] < figure_y
+        and abs(_ability_token_center(token)[0] - surface_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and _ability_token_text(token).casefold() == "i"
+        and _ability_token_confidence(token) >= 0.65
+    ]
+    if len(image_tokens) != 1:
+        raise PatentParseError("Ability three-lens image row is not independently located")
+    _, image_y = _ability_token_center(image_tokens[0])
+    _ability_infinity_token(tokens, x=radius_x, y=image_y)
+    surfaces.append(
+        PatentSurface(
+            index=len(surfaces) + 1,
+            label="Image",
+            radius_mm=None,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    return surfaces, conics
+
+
+def _ability_overlay_asphere_rows(
+    page: dict[str, Any],
+    *,
+    expected_labels: tuple[str, ...],
+    surface_figure: str,
+    asphere_figure: str,
+) -> dict[str, str]:
+    mirror_text = page.get("mirror_text")
+    if not isinstance(mirror_text, str):
+        raise PatentParseError("Ability three-lens page lacks OCR-overlay text")
+    start_match = re.search(
+        rf"\bFig\s*\.\s*{re.escape(surface_figure.removeprefix('Fig. '))}\b",
+        mirror_text,
+        flags=re.IGNORECASE,
+    )
+    end_match = re.search(
+        rf"\bFig\s*\.\s*{re.escape(asphere_figure.removeprefix('Fig. '))}\b",
+        mirror_text,
+        flags=re.IGNORECASE,
+    )
+    if start_match is None or end_match is None or start_match.end() >= end_match.start():
+        raise PatentParseError("Ability three-lens asphere overlay boundaries are ambiguous")
+    text = mirror_text[start_match.end() : end_match.start()]
+    text = re.sub(r"([Ee])\s*([+-])\s*(\d+)", r"\1\2\3", text)
+    starts: list[tuple[str, int, int]] = []
+    cursor = 0
+    for label in expected_labels:
+        match = re.search(
+            rf"(?<![A-Z0-9]){re.escape(label)}(?=\s|[-+0-9])",
+            text[cursor:],
+            flags=re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(f"Ability three-lens overlay row {label} is not located")
+        start = cursor + match.start()
+        end = cursor + match.end()
+        starts.append((label, start, end))
+        cursor = end
+    return {
+        label: text[row_end : (starts[index + 1][1] if index + 1 < len(starts) else len(text))]
+        for index, (label, _row_start, row_end) in enumerate(starts)
+    }
+
+
+def _ability_three_lens_aspheres(
+    page: dict[str, Any],
+    *,
+    expected_labels: tuple[str, ...],
+    surface_figure: str,
+    asphere_figure: str,
+) -> dict[str, dict[str, float]]:
+    tokens = list(page["rapidocr_tokens"])
+    header_labels = ("A2", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    header_tokens = {
+        label: _ability_unique_token(tokens, label, min_confidence=0.95)
+        for label in header_labels
+    }
+    header_y = sum(_ability_token_center(token)[1] for token in header_tokens.values()) / len(
+        header_tokens
+    )
+    end_token = _ability_unique_token(tokens, asphere_figure, min_confidence=0.90)
+    _, end_y = _ability_token_center(end_token)
+    overlay_rows = _ability_overlay_asphere_rows(
+        page,
+        expected_labels=expected_labels,
+        surface_figure=surface_figure,
+        asphere_figure=asphere_figure,
+    )
+    coefficients: dict[str, dict[str, float]] = {}
+    for label in expected_labels:
+        label_matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).casefold() == label.casefold()
+            and header_y < _ability_token_center(token)[1] < end_y
+            and _ability_token_confidence(token) >= 0.90
+        ]
+        if len(label_matches) != 1:
+            raise PatentParseError(
+                f"Ability three-lens asphere row {label} occurs {len(label_matches)} times"
+            )
+        _, row_y = _ability_token_center(label_matches[0])
+        texts: list[str] = []
+        values: list[float] = []
+        for header_label in header_labels:
+            column_x, _ = _ability_token_center(header_tokens[header_label])
+            token = _ability_profile_number_token(tokens, x=column_x, y=row_y)
+            texts.append(_ability_token_text(token))
+            values.append(_parse_number(texts[-1]))
+        overlay_row = overlay_rows[label]
+        overlay_cursor = 0
+        for token_text in texts:
+            match = re.search(
+                rf"(?<![-+0-9.]){re.escape(token_text)}(?![0-9.])",
+                overlay_row[overlay_cursor:],
+                flags=re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    f"Ability three-lens {label} OCR views disagree at value {token_text}"
+                )
+            overlay_cursor += match.end()
+        if values[0] != 0.0:
+            raise PatentParseError(f"Ability three-lens {label} has unsupported nonzero A2")
+        coefficients[label] = dict(zip(header_labels[1:], values[1:], strict=True))
+    return coefficients
+
+
+def _ability_three_lens_system_meta(page: dict[str, Any]) -> list[tuple[float, float, float]]:
+    tokens = list(page["rapidocr_tokens"])
+    column_tokens = [
+        _ability_unique_token(tokens, label, min_confidence=0.97)
+        for label in ("OL1", "OL2", "OL3")
+    ]
+    column_xs = [_ability_token_center(token)[0] for token in column_tokens]
+    rows: dict[str, list[float]] = {}
+    for label, minimum_confidence in (("F (mm)", 0.94), ("FNO (mm)", 0.97), ("FOV (degree)", 0.97)):
+        label_token = _ability_unique_token(tokens, label, min_confidence=minimum_confidence)
+        _, row_y = _ability_token_center(label_token)
+        rows[label] = [
+            _parse_number(
+                _ability_token_text(_ability_profile_number_token(tokens, x=x, y=row_y))
+            )
+            for x in column_xs
+        ]
+    metadata = list(zip(rows["F (mm)"], rows["FNO (mm)"], rows["FOV (degree)"], strict=True))
+    if any(f <= 0.0 or fno <= 0.0 or not 0.0 < fov < 180.0 for f, fno, fov in metadata):
+        raise PatentParseError("Ability three-lens system metadata is outside physical bounds")
+    return metadata
+
+
+def _parse_ability_three_lens_attempts(payload: dict[str, Any]) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 15:
+        raise PatentParseError("Ability three-lens PDF page count is not the retained layout")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 4:
+        raise PatentParseError("Ability three-lens PDF must retain exactly four key pages")
+    role_pages = (
+        (
+            "prescription_ol1",
+            6,
+            "Fig. 4A",
+            "Fig. 4B",
+            _ABILITY_THREE_OL12_SURFACE_LABELS,
+            _ABILITY_THREE_OL12_ASPHERE_LABELS,
+        ),
+        (
+            "prescription_ol2",
+            7,
+            "Fig. 5A",
+            "Fig. 5B",
+            _ABILITY_THREE_OL12_SURFACE_LABELS,
+            _ABILITY_THREE_OL12_ASPHERE_LABELS,
+        ),
+        (
+            "prescription_ol3",
+            8,
+            "Fig. 6A",
+            "Fig. 6B",
+            _ABILITY_THREE_OL3_SURFACE_LABELS,
+            _ABILITY_THREE_OL3_ASPHERE_LABELS,
+        ),
+    )
+    prescription_pages: list[dict[str, Any]] = []
+    for role, page_number, surface_figure, asphere_figure, _surface_labels, _asphere_labels in role_pages:
+        page = _ability_page(payload, role)
+        if page.get("page_number") != page_number:
+            raise PatentParseError(f"Ability three-lens role {role} is on the wrong page")
+        mirror_text = page.get("mirror_text")
+        figure_numbers = (
+            surface_figure.removeprefix("Fig. "),
+            asphere_figure.removeprefix("Fig. "),
+        )
+        if (
+            not isinstance(mirror_text, str)
+            or any(
+                re.search(
+                    rf"\bFig\s*\.\s*{re.escape(figure)}\b",
+                    mirror_text,
+                    flags=re.IGNORECASE,
+                )
+                is None
+                for figure in figure_numbers
+            )
+            or any(
+                marker.casefold() not in mirror_text.casefold()
+                for marker in ("surface", "curvature", "A16")
+            )
+        ):
+            raise PatentParseError(f"Ability three-lens role {role} lacks figure/table markers")
+        prescription_pages.append(page)
+    meta_page = _ability_page(payload, "system_meta_three")
+    if meta_page.get("page_number") != 9:
+        raise PatentParseError("Ability three-lens system metadata is not on page 9")
+    metadata = _ability_three_lens_system_meta(meta_page)
+
+    facts = payload.get("source_facts")
+    expected_figure_counts = {
+        "FIG. 4A": 1,
+        "FIG. 4B": 1,
+        "FIG. 5A": 1,
+        "FIG. 5B": 1,
+        "FIG. 6A": 1,
+        "FIG. 6B": 2,
+        "FIG. 7": 2,
+    }
+    if not isinstance(facts, dict) or facts.get("figure_binding_counts") != expected_figure_counts:
+        raise PatentParseError("Ability three-lens official figure bindings changed")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Ability three-lens official HTML hash is invalid")
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, (profile, page, meta) in enumerate(
+        zip(role_pages, prescription_pages, metadata, strict=True),
+        start=1,
+    ):
+        _role, _page_number, surface_figure, asphere_figure, surface_labels, asphere_labels = profile
+        embodiment = f"Ability optical lens OL{embodiment_number}"
+        try:
+            surfaces, conics = _ability_three_lens_surface_table(
+                page,
+                expected_labels=surface_labels,
+                surface_figure=surface_figure,
+            )
+            coefficient_rows = _ability_three_lens_aspheres(
+                page,
+                expected_labels=asphere_labels,
+                surface_figure=surface_figure,
+                asphere_figure=asphere_figure,
+            )
+            surface_by_label = {surface.label: surface for surface in surfaces}
+            if any(value != 0.0 and label not in coefficient_rows for label, value in conics.items()):
+                raise PatentParseError(
+                    f"Ability OL{embodiment_number} has a conic outside its asphere table"
+                )
+            for label, coefficients in coefficient_rows.items():
+                surface = surface_by_label[label]
+                surface.surface_type = "ASP"
+                if conics[label] != 0.0:
+                    surface.asphere_coefficients["K"] = conics[label]
+                surface.asphere_coefficients.update(coefficients)
+            focal_length, f_number, full_fov = meta
+            prescription = PatentPrescription(
+                patent_id=str(payload["publication_id"]),
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_fov / 2.0,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain each disclosed optical lens
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+        else:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    prescription=prescription,
+                )
+            )
+    return attempts
+
+
 def _ability_eight_lens_terminal_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -2829,6 +3293,8 @@ def _parse_ability_pdf_ocr_attempts(
     profile = payload.get("profile")
     if profile == _ABILITY_EIGHT_LENS_PROFILE:
         return [_ability_eight_lens_terminal_attempt(payload)]
+    if profile == _ABILITY_THREE_LENS_PROFILE:
+        return _parse_ability_three_lens_attempts(payload)
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")

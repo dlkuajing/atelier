@@ -419,6 +419,28 @@ thresholds, or claim patent saturation.
   Strict audit remains 619/619 with zero corrupt evidence. The focused parser/replay suite is
   114 passed, the offline CODE V guard suite is 5 passed, full Ruff and `git diff --check` pass;
   CODE V inventory is zero before and after replay/testing.
+- The third Ability PDF profile is source-bound to `US-11175479-B2` (official PPUBS HTML SHA-256
+  `71e2de18fc731e17525617401999d416cc86864d16a0fe6cf69506f3e73a3e18`). The source binds
+  OL1--OL3 to FIG. 4A/4B, 5A/5B, and 6A/6B and publishes their F/FNO/full-FOV values in FIG. 7.
+  The official and OCR-overlay PDFs have 15 byte-identical page images; combined surface/asphere
+  tables are pages 6/7/8 and system metadata is page 9. Recovery retains all source/page hashes,
+  coordinate/confidence tokens, source figure counts, and the unchanged 0.99 optical-number gate.
+- F/FNO/FOV columns parse deterministically, but the first unresolved source cells are OL1 S3's
+  refractive-index token, OL2 S3's conic token, and OL3 S3's curvature token. Each is present below
+  the confidence gate or is not independently classified; no sign, decimal, infinity glyph, or
+  material value is repaired. The three disclosures remain parser-review items rather than a
+  false terminal or conversion. No worker, request, receipt, or ZMX is created.
+- Append-only attempts 2/3 preserve parser-input SHA-256
+  `1abbdbbb7912ea30e5399e1c558485aa31676d1e5c0d866f6f2f73f2a17038dc`, recovery-manifest
+  SHA-256 `3337dff42164d2d6607b161a4c4bd364af12b07027faa027536dd4c38b40e7c3`, and canonical result
+  SHA-256 (excluding attempt sequence)
+  `b670da254846fc3972db6324dc1e5a21f574df088c92535d209f879e50a1a1cf`.
+  Generic summary changed 259 to 258. Current result-set SHA-256 is
+  `478a3b2e9013d5f4fc202763fe3c9d9a467b3af67949f8fd8a07165ccfa96258`; summary artifact
+  SHA-256 is `aaa47670730ea5603b9a591beb3047fa6e045d3ee5a5d04c1f0bf8515f8c7125`; after-census
+  SHA-256 is `4857e660c31aa19d869874a2a1d0320a4ca2110e8edf589e64cd349738278e8c`.
+  Strict audit remains 619/619 with zero corrupt evidence; 118 focused tests, 5 CODE V guard tests,
+  Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

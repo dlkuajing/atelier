@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `96978077e26ccf694c1e69fa132ba50fd0df37d125224ceae3e8951907426eec`
+- result_set_sha256: `478a3b2e9013d5f4fc202763fe3c9d9a467b3af67949f8fd8a07165ccfa96258`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 518
 - `terminal`: 726
-- `parser_review_required`: 1350
+- `parser_review_required`: 1352
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1350
+- `parser_review_required.deterministic_parser_rejected`: 1352
 - `terminal.process_receipt_classified`: 714
 - `converted_pending_intake.process_isolated_zmx_ready`: 518
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -71,7 +71,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 259
+- `generic_summary_metadata_missing`: 258
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -107,6 +107,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bsc7_hoya`: 3
 - `other_sunny_asphere_row_s7_has_more_values_than_headers_token`: 3
 - `other_unsupported_nonzero_fujifilm_asphere_terms_s3_a3_n_s4_a3_n_s14_a3_n_s15_a3_n`: 3
+- `other_ability_pdf_numeric_cell_at_n_n_has_n_values_above_confidence_gate`: 2
 - `other_kantatsu_example_n_lens_n_first_surface_row_is_malformed`: 2
 - `other_kantatsu_ih_first_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 2
 - `other_newmax_a_row_has_nonnumeric_data_token_positive`: 2
@@ -117,6 +118,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sunny_asphere_row_s5_has_more_values_than_headers_token`: 2
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r4_a2_n`: 2
 - `other_ability_ol1_asphere_cells_are_not_independently_classified_fail_closed`: 1
+- `other_ability_three_lens_row_s3_has_incomplete_material_data`: 1
 - `other_aspheric_row_a14_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a24_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a26_has_more_numeric_values_than_surfaces_extra_token`: 1

@@ -1908,6 +1908,166 @@ def _ability_eight_lens_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _ability_three_lens_prescription_page(
+    *,
+    optical_lens: int,
+    page_number: int,
+    role: str,
+    surface_figure: str,
+    asphere_figure: str,
+) -> dict[str, object]:
+    surface_labels = [*(f"S{i}" for i in range(1, 7)), "St"]
+    surface_labels.extend(
+        f"S{i}" for i in range(7, 19 if optical_lens == 3 else 17)
+    )
+    asphere_labels = (
+        ["S5", "S6", "S7", "S8", "S9", "S11", "S12", "S13", "S14"]
+        if optical_lens == 3
+        else ["S3", "S4", "S7", "S8", "S9", "S10", "S11", "S12", "S13", "S14"]
+    )
+    tokens = [
+        _ability_ocr_token("surface", 100.0, 100.0),
+        _ability_ocr_token("curvature", 200.0, 100.0),
+        _ability_ocr_token("(mm)", 300.0, 120.0),
+        _ability_ocr_token("index", 400.0, 100.0),
+        _ability_ocr_token("number", 500.0, 100.0),
+        _ability_ocr_token("constant", 700.0, 100.0),
+    ]
+    for index, label in enumerate(surface_labels):
+        y = 200.0 + index * 30.0
+        tokens.extend(
+            (
+                _ability_ocr_token(label, 100.0, y),
+                _ability_ocr_token("8" if label == "St" else "10.0", 200.0, y),
+                _ability_ocr_token("0.2", 300.0, y),
+                _ability_ocr_token("0", 700.0, y),
+            )
+        )
+        if label[1:].isdigit() and int(label[1:]) % 2 == 1:
+            tokens.extend(
+                (
+                    _ability_ocr_token("1.5", 400.0, y),
+                    _ability_ocr_token("55", 500.0, y),
+                )
+            )
+    image_y = 200.0 + len(surface_labels) * 30.0
+    tokens.extend(
+        (
+            _ability_ocr_token("I", 100.0, image_y),
+            _ability_ocr_token("8", 200.0, image_y),
+        )
+    )
+    surface_figure_y = image_y + 50.0
+    tokens.append(_ability_ocr_token(f"Fig. {surface_figure}", 400.0, surface_figure_y))
+    asphere_header_y = surface_figure_y + 100.0
+    coefficient_labels = ("A2", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    coefficient_xs = tuple(200.0 + index * 100.0 for index in range(8))
+    tokens.extend(
+        _ability_ocr_token(label, x, asphere_header_y)
+        for label, x in zip(coefficient_labels, coefficient_xs, strict=True)
+    )
+    overlay_rows = []
+    for index, label in enumerate(asphere_labels):
+        y = asphere_header_y + 50.0 + index * 30.0
+        tokens.append(_ability_ocr_token(label, 100.0, y))
+        tokens.extend(_ability_ocr_token("0", x, y) for x in coefficient_xs)
+        overlay_rows.append(f"{label} " + " ".join("0" for _ in coefficient_labels))
+    asphere_figure_y = asphere_header_y + 100.0 + len(asphere_labels) * 30.0
+    tokens.append(_ability_ocr_token(f"Fig. {asphere_figure}", 400.0, asphere_figure_y))
+    return {
+        "page_number": page_number,
+        "role": role,
+        "official_image_sha256": str(page_number) * 64,
+        "mirror_text": (
+            f"Sheet {page_number - 2} of 7 surface curvature A16 "
+            f"Fig . {surface_figure} "
+            + " ".join(overlay_rows)
+            + f" Fig . {asphere_figure}"
+        ),
+        "rapidocr_tokens": tokens,
+    }
+
+
+def _ability_three_lens_pdf_ocr_parser_input(
+    *,
+    complete_prescriptions: bool = False,
+) -> bytes:
+    pages = []
+    for optical_lens, page_number, role, surface_figure, asphere_figure in (
+        (1, 6, "prescription_ol1", "4A", "4B"),
+        (2, 7, "prescription_ol2", "5A", "5B"),
+        (3, 8, "prescription_ol3", "6A", "6B"),
+    ):
+        if complete_prescriptions:
+            pages.append(
+                _ability_three_lens_prescription_page(
+                    optical_lens=optical_lens,
+                    page_number=page_number,
+                    role=role,
+                    surface_figure=surface_figure,
+                    asphere_figure=asphere_figure,
+                )
+            )
+        else:
+            pages.append(
+                {
+                    "page_number": page_number,
+                    "role": role,
+                    "official_image_sha256": str(page_number) * 64,
+                    "mirror_text": (
+                        f"Sheet {page_number - 2} of 7 surface curvature A16 "
+                        f"Fig . {surface_figure} Fig . {asphere_figure}"
+                    ),
+                    "rapidocr_tokens": [_ability_ocr_token("fixture", 1.0, 1.0)],
+                }
+            )
+    meta_tokens = [
+        _ability_ocr_token("OL1", 300.0, 100.0),
+        _ability_ocr_token("OL2", 500.0, 100.0),
+        _ability_ocr_token("OL3", 700.0, 100.0),
+    ]
+    for y, label, values in (
+        (200.0, "F (mm)", (3.0, 3.0, 4.04)),
+        (240.0, "FNO (mm)", (2.6, 2.6, 2.8)),
+        (280.0, "FOV (degree)", (90.0, 90.0, 90.0)),
+    ):
+        meta_tokens.append(_ability_ocr_token(label, 100.0, y))
+        meta_tokens.extend(
+            _ability_ocr_token(str(value), x, y)
+            for x, value in zip((300.0, 500.0, 700.0), values, strict=True)
+        )
+    pages.append(
+        {
+            "page_number": 9,
+            "role": "system_meta_three",
+            "official_image_sha256": "9" * 64,
+            "mirror_text": "Sheet 7 of 7 Fig . 7 OL1 OL2 OL3 F FNO FOV",
+            "rapidocr_tokens": meta_tokens,
+        }
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "ability_three_lens_prescriptions_v1",
+        "publication_id": "US-11175479-B2",
+        "page_count": 15,
+        "source_facts": {
+            "primary_html_sha256": "7" * 64,
+            "figure_binding_counts": {
+                "FIG. 4A": 1,
+                "FIG. 4B": 1,
+                "FIG. 5A": 1,
+                "FIG. 5B": 1,
+                "FIG. 6A": 1,
+                "FIG. 6B": 2,
+                "FIG. 7": 2,
+            },
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def test_ability_eight_lens_source_facts_detect_published_system_value() -> None:
     figure_text = (
         "FIG. 2 shows each lens parameter of the optical lens "
@@ -1952,6 +2112,55 @@ def test_ability_eight_lens_pdf_ocr_parser_rejects_possible_published_system_val
         patent_to_zmx._parse_prescription_attempts(
             json.dumps(payload),
             patent_id="US-11231565-B2",
+        )
+
+
+def test_ability_three_lens_pdf_profile_retains_each_disclosed_ocr_failure() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_three_lens_pdf_ocr_parser_input().decode(),
+        patent_id="US-11175479-B2",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Ability optical lens OL1",
+        "Ability optical lens OL2",
+        "Ability optical lens OL3",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(isinstance(attempt.error, PatentParseError) for attempt in attempts)
+    assert all("token 'surface'" in str(attempt.error) for attempt in attempts)
+
+
+def test_ability_three_lens_pdf_profile_parses_complete_cross_checked_cells() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_three_lens_pdf_ocr_parser_input(complete_prescriptions=True).decode(),
+        patent_id="US-11175479-B2",
+    )
+
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    assert [
+        (prescription.focal_length_mm, prescription.f_number, prescription.hfov_deg)
+        for prescription in prescriptions
+        if prescription is not None
+    ] == pytest.approx([(3.0, 2.6, 45.0), (3.0, 2.6, 45.0), (4.04, 2.8, 45.0)])
+    assert [len(prescription.surfaces) for prescription in prescriptions if prescription] == [
+        18,
+        18,
+        20,
+    ]
+
+
+def test_ability_three_lens_pdf_profile_rejects_source_binding_drift() -> None:
+    payload = json.loads(_ability_three_lens_pdf_ocr_parser_input())
+    payload["source_facts"]["figure_binding_counts"]["FIG. 6B"] = 1
+
+    with pytest.raises(PatentParseError, match="official figure bindings changed"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-11175479-B2",
         )
 
 
@@ -2140,6 +2349,71 @@ def test_convert_candidate_retains_pdf_terminal_evidence_without_worker(
     assert attempts[0].reason_code == "metadata_unpublished.system_f_fno_fov_values_absent"
     assert attempts[0].parser_input_source_bucket == "USPTO-PDF-OCR-JSON"
     assert attempts[0].fulltext_recovery_manifest_path
+    assert not (tmp_path / "staging").exists()
+
+
+def test_convert_candidate_retains_three_lens_pdf_ocr_failures_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-11175479-B2",
+        source_bucket="USPAT",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html="official HTML whose three image tables require PDF recovery",
+            source_bucket="USPAT",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_pdf_recovery(*_args: object, **_kwargs: object) -> object:
+        return patent_to_zmx.PatentPdfOcrRecovery(
+            publication_id="US-11175479-B2",
+            official_pdf=b"%PDF-official-three-lens",
+            official_pdf_url=(
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11175479"
+            ),
+            mirror_pdf=b"%PDF-mirror-three-lens",
+            mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US11175479.pdf",
+            parser_input=_ability_three_lens_pdf_ocr_parser_input(),
+            page_count=15,
+            page_image_sha256=tuple(str(index) * 64 for index in range(1, 6)),
+            key_page_numbers=(6, 7, 8, 9),
+            pypdf_version="fixture",
+            rapidocr_version="fixture",
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("rejected PDF OCR cells must not launch a trace worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(patent_to_zmx, "recover_ability_official_pdf_ocr", fake_pdf_recovery)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-11175479-B2",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+        )
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert all(attempt.status == "failed" for attempt in attempts)
+    assert all(attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON" for attempt in attempts)
+    assert len({attempt.fulltext_recovery_manifest_sha256 for attempt in attempts}) == 1
     assert not (tmp_path / "staging").exists()
 
 
