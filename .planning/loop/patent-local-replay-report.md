@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `dd8c33bc29826a3cff29a92c95de94dae381e5987e85cc8f8c3cd700b1962369`
+- result_set_sha256: `3099e9cbc61a10cb8d7e13072cc08da25413d244ef690bfc3ca48cd472efe9b1`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 518
 - `terminal`: 738
-- `parser_review_required`: 1424
+- `parser_review_required`: 1437
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1424
+- `parser_review_required.deterministic_parser_rejected`: 1437
 - `terminal.process_receipt_classified`: 714
 - `converted_pending_intake.process_isolated_zmx_ready`: 518
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -75,7 +75,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 233
+- `generic_summary_metadata_missing`: 232
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -88,6 +88,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_finite_object_state_is_published_but_unsupported_by_the_infinity_conjugate_replay_model_object_distance_n`: 24
 - `ocr_corrupted_exponent`: 21
 - `asphere_surface_header_missing`: 16
+- `other_optical_metadata_label_hfov_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 11
 - `other_surface_n_thickness_is_not_numeric_flt`: 11
 - `other_folded_macro_tele_system_n_whole_system_focal_token_f_is_not_officially_defined_as_efl`: 9
 - `other_asphere_table_label_token_confidence_n_is_below_n`: 8
@@ -123,6 +124,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_kantatsu_example_n_lens_n_first_surface_row_is_malformed`: 2
 - `other_kantatsu_ih_first_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 2
 - `other_newmax_a_row_has_nonnumeric_data_token_positive`: 2
+- `other_optical_metadata_label_efl_confidence_n_is_below_n_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 2
+- `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 2
 - `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_confidence_n_is_below_n`: 2
 - `other_r2_thickness_is_not_numeric_d2`: 2
 - `other_sekonix_glass_code_cannot_be_split_deterministically_token`: 2
@@ -195,7 +198,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_metadata_label_efl_confidence_n_is_below_n_genius_six_asphere_6_drawing_sheet_header_confidence_n_i_8d847f6eb21e`: 1
 - `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_confidence_n_is_below_n`: 1
 - `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_confidence_n_is_below_n_geniu_10a53b7f241e`: 1
-- `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 1
 - `other_optical_metadata_label_fno_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_below_n_genius_1bd197505af2`: 1
 - `other_optical_metadata_label_fno_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expect_770054bc16de`: 1
 - `other_optical_metadata_label_fno_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expect_bfd6dee531a3`: 1

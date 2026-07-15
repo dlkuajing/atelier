@@ -2557,6 +2557,89 @@ def _genius_nine_lens_eleven_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_eight_lens_fourteen_pdf_ocr_parser_input() -> bytes:
+    pages = []
+    for embodiment_number in range(1, 15):
+        optical_page_number = 5 + (embodiment_number - 1) * 3
+        asphere_page_number = optical_page_number + 1
+        optical_tokens = [
+            _ability_ocr_token(
+                f"Sheet {optical_page_number - 1} of 46",
+                700.0,
+                50.0,
+            ),
+            *(
+                _ability_ocr_token(f"{label}=1.0", 100.0 + index * 100.0, 100.0)
+                for index, label in enumerate(("EFL", "HFOV", "TTL", "Fno", "Image height"))
+            ),
+            *(
+                _ability_ocr_token(label, 100.0 + index * 100.0, 150.0)
+                for index, label in enumerate(
+                    ("Surface", "Radius", "Thickness", "Material", "index", "number")
+                )
+            ),
+        ]
+        pages.append(
+            {
+                "page_number": optical_page_number,
+                "role": f"genius_eight_fourteen_optical_{embodiment_number}",
+                "official_image_sha256": str(embodiment_number % 10) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": optical_tokens,
+            }
+        )
+        asphere_tokens = [
+            _ability_ocr_token(
+                f"Sheet {asphere_page_number - 1} of 46",
+                700.0,
+                50.0,
+            ),
+            _ability_ocr_token("Surface", 900.0, 100.0),
+            *(
+                _ability_ocr_token(label, 100.0 + index * 80.0, 100.0)
+                for index, label in enumerate(
+                    ("Surface", "K", "a2", "a4", "a6", "a8", "a10", "a12", "a14", "a16")
+                )
+            ),
+        ]
+        pages.append(
+            {
+                "page_number": asphere_page_number,
+                "role": f"genius_eight_fourteen_asphere_{embodiment_number}",
+                "official_image_sha256": str((embodiment_number + 1) % 10) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": asphere_tokens,
+            }
+        )
+    for comparison, (page_number, sheet_number) in enumerate(((46, 45), (47, 46)), start=1):
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": f"genius_eight_fourteen_comparison_{comparison}",
+                "official_image_sha256": "f" * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(f"Sheet {sheet_number} of 46", 700.0, 50.0)
+                ],
+            }
+        )
+    markers = patent_pdf_recovery._GENIUS_EIGHT_LENS_FOURTEEN_REQUIRED_FIGURE_TEXT
+    comparisons = patent_pdf_recovery._GENIUS_EIGHT_LENS_FOURTEEN_COMPARISON_MARKERS
+    source = " ".join(
+        (*markers, *comparisons, *("Genius Electronic Optical (Xiamen) Co., Ltd.",) * 2)
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "genius_eight_lens_fourteen_embodiment_census_v1",
+        "publication_id": "US-20250020895-A1",
+        "page_count": 64,
+        "source_facts": patent_pdf_recovery._genius_eight_lens_fourteen_source_facts(source),
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_six_lens_five_pdf_ocr_parser_input() -> bytes:
     pages = []
     for embodiment_number in range(1, 6):
@@ -3303,6 +3386,21 @@ def test_genius_nine_lens_eleven_source_facts_bind_every_figure() -> None:
     assert facts["genius_applicant_assignee_count"] == 2
 
 
+def test_genius_eight_lens_fourteen_source_facts_bind_every_figure() -> None:
+    markers = patent_pdf_recovery._GENIUS_EIGHT_LENS_FOURTEEN_REQUIRED_FIGURE_TEXT
+    comparisons = patent_pdf_recovery._GENIUS_EIGHT_LENS_FOURTEEN_COMPARISON_MARKERS
+    source = " ".join(
+        (*markers, *comparisons, *("Genius Electronic Optical (Xiamen) Co., Ltd.",) * 2)
+    )
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._genius_eight_lens_fourteen_source_facts(source)
+    assert len(facts["figure_binding_counts"]) == 28
+    assert set(facts["figure_binding_counts"].values()) == {1}
+    assert facts["comparison_binding_counts"] == dict.fromkeys(comparisons, 1)
+    assert facts["genius_applicant_assignee_count"] == 2
+
+
 def test_genius_four_lens_nine_source_facts_bind_every_figure() -> None:
     markers = patent_pdf_recovery._GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT
     comparisons = patent_pdf_recovery._GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
@@ -3596,6 +3694,32 @@ def test_genius_nine_lens_eleven_profile_retains_every_embodiment() -> None:
         in str(attempt.error)
         for attempt in attempts
     )
+
+
+def test_genius_eight_lens_fourteen_profile_retains_every_embodiment() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _genius_eight_lens_fourteen_pdf_ocr_parser_input().decode(),
+        patent_id="US-20250020895-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 15))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "eight-lens fourteen-embodiment census passed; numeric parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_genius_eight_lens_fourteen_profile_refuses_source_binding_drift() -> None:
+    payload = json.loads(_genius_eight_lens_fourteen_pdf_ocr_parser_input())
+    payload["source_facts"]["genius_applicant_assignee_count"] = 1
+
+    with pytest.raises(PatentParseError, match="official figure/source bindings changed"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-20250020895-A1",
+        )
 
 
 def test_genius_nine_lens_eleven_profile_refuses_source_binding_drift() -> None:

@@ -2513,6 +2513,9 @@ _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _GENIUS_NINE_LENS_ELEVEN_PROFILE = "genius_nine_lens_eleven_embodiment_census_v1"
+_GENIUS_EIGHT_LENS_FOURTEEN_PROFILE = (
+    "genius_eight_lens_fourteen_embodiment_census_v1"
+)
 _GENIUS_FOUR_LENS_NINE_PROFILE = "genius_four_lens_nine_embodiment_census_v1"
 _GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
 _GENIUS_SIX_LENS_NINE_PROFILE = "genius_six_lens_nine_embodiment_census_v1"
@@ -4794,6 +4797,21 @@ def _genius_nine_lens_eleven_asphere_census_error(page: dict[str, Any]) -> str |
     return None
 
 
+def _genius_eight_lens_fourteen_optical_census_error(
+    page: dict[str, Any],
+) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("EFL", "HFOV", "TTL", "Fno", "Image height"):
+        error = _genius_six_metadata_label_error(tokens, label)
+        if error is not None:
+            return error
+    for label in ("Surface", "Radius", "Thickness", "Material", "index", "number"):
+        error = _genius_six_exact_label_error(tokens, label, context="optical table")
+        if error is not None:
+            return error
+    return None
+
+
 def _genius_six_lens_census_attempts(
     payload: dict[str, Any],
     *,
@@ -4959,6 +4977,101 @@ def _parse_genius_nine_lens_eleven_attempts(
             _PrescriptionParseAttempt(
                 embodiment_number=embodiment_number,
                 embodiment=f"Genius nine-lens embodiment {embodiment_number}",
+                error=PatentParseError(" | ".join(errors)),
+            )
+        )
+    return attempts
+
+
+def _parse_genius_eight_lens_fourteen_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 64:
+        raise PatentParseError(
+            "Genius eight-lens fourteen-embodiment PDF page count is not 64"
+        )
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 30:
+        raise PatentParseError(
+            "Genius eight-lens fourteen-embodiment PDF must retain 30 key pages"
+        )
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError(
+            "Genius eight-lens fourteen-embodiment input lacks official source facts"
+        )
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Genius eight-lens official HTML hash is invalid")
+    figure_counts = facts.get("figure_binding_counts")
+    comparison_counts = facts.get("comparison_binding_counts")
+    if (
+        not isinstance(figure_counts, dict)
+        or len(figure_counts) != 28
+        or set(figure_counts.values()) != {1}
+        or not isinstance(comparison_counts, dict)
+        or len(comparison_counts) != 3
+        or set(comparison_counts.values()) != {1}
+        or facts.get("genius_applicant_assignee_count") != 2
+    ):
+        raise PatentParseError("Genius eight-lens official figure/source bindings changed")
+
+    comparison_errors = []
+    for comparison, (page_number, sheet_number) in enumerate(((46, 45), (47, 46)), start=1):
+        page = _ability_page(payload, f"genius_eight_fourteen_comparison_{comparison}")
+        error = _genius_six_page_binding_error(
+            page,
+            page_number=page_number,
+            sheet_number=sheet_number,
+            sheet_count=46,
+            role=f"genius_eight_fourteen_comparison_{comparison}",
+        )
+        if error is not None:
+            comparison_errors.append(error)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number in range(1, 15):
+        optical_page_number = 5 + (embodiment_number - 1) * 3
+        asphere_page_number = optical_page_number + 1
+        optical_page = _ability_page(
+            payload,
+            f"genius_eight_fourteen_optical_{embodiment_number}",
+        )
+        asphere_page = _ability_page(
+            payload,
+            f"genius_eight_fourteen_asphere_{embodiment_number}",
+        )
+        errors = [
+            error
+            for error in (
+                _genius_six_page_binding_error(
+                    optical_page,
+                    page_number=optical_page_number,
+                    sheet_number=optical_page_number - 1,
+                    sheet_count=46,
+                    role=f"genius_eight_fourteen_optical_{embodiment_number}",
+                ),
+                _genius_eight_lens_fourteen_optical_census_error(optical_page),
+                _genius_six_page_binding_error(
+                    asphere_page,
+                    page_number=asphere_page_number,
+                    sheet_number=asphere_page_number - 1,
+                    sheet_count=46,
+                    role=f"genius_eight_fourteen_asphere_{embodiment_number}",
+                ),
+                _genius_six_asphere_census_error(asphere_page),
+                *comparison_errors,
+            )
+            if error is not None
+        ]
+        if not errors:
+            errors.append(
+                "Genius eight-lens fourteen-embodiment census passed; numeric parser remains"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Genius eight-lens embodiment {embodiment_number}",
                 error=PatentParseError(" | ".join(errors)),
             )
         )
@@ -5525,6 +5638,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_genius_four_lens_eleven_attempts(payload)
     if profile == _GENIUS_NINE_LENS_ELEVEN_PROFILE:
         return _parse_genius_nine_lens_eleven_attempts(payload)
+    if profile == _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE:
+        return _parse_genius_eight_lens_fourteen_attempts(payload)
     if profile == _GENIUS_FOUR_LENS_NINE_PROFILE:
         return _parse_genius_four_lens_nine_attempts(payload)
     if profile == _GENIUS_SIX_LENS_FIVE_PROFILE:

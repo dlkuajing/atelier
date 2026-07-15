@@ -806,6 +806,33 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `db60a6ef9eb065b8b107cf2ddd3c29f6958da1b9c1aafea9dcbc8c113fb324b8`.
   Strict audit is 619/619 with zero corrupt evidence; 186 focused parser/census/replay/process tests,
   Ruff, and `git diff --check` pass with CODE V inventory zero.
+- `US-20250020895-A1` uniquely binds 14 eight-lens optical/asphere pairs: FIG.8/9 through
+  FIG.60/61. Its 28 exact detailed-description markers, FIG.62A/B comparison marker, all-
+  embodiments marker, fourteen-embodiments marker, and two Genius applicant/assignee records each
+  have the required exact count. Retained official HTML SHA-256 is
+  `4b067a237fdb6f7eac5b3bf811b91c7edbe9a1f698d89e4dd2382497873dc29e`.
+- The retained official PDF SHA-256 is
+  `52e320c0662d4ec781d7b72962547adc5c792dbad2b5fa422d9439598878b308`; Google citation PDF
+  SHA-256 is `9b4df1f27d8d271ef11013bfcd1cdd8209dd57bc9867086f3ad2d401f0e830b2`.
+  All 64 decoded page rasters match pixel-for-pixel. The PDFs contain 46 drawing sheets; retained
+  key pages are 5/6, 8/9, 11/12, 14/15, 17/18, 20/21, 23/24, 26/27, 29/30, 32/33, 35/36,
+  38/39, 41/42, 44/45, and FIG.62A/B pages 46/47. Source-pin SHA-256 is
+  `755f451c29b3c55558103b153ac6d1252ebad0e01d7d87e8d85a0e759bbf9d10`.
+- The exact profile expands one document failure into 14 parser-review items. Eleven items lack an
+  exact HFOV OCR prefix; one lacks EFL; two have EFL confidence 0.947845/0.949103 below the
+  unchanged 0.95 label gate. Every asphere page also lacks the two exact `Surface` tokens required
+  by its published double-header layout. No OCR value is repaired; conversion attempt IDs remain
+  null, and no worker or ZMX is produced.
+- Attempts 2/3 are canonical-equal with semantic result SHA-256
+  `f9c57390bd028527ae20c4a337ce9434ae947f0fecbc68a6c280810c0ce7ad7c`, parser-input
+  SHA-256 `2adb8e047ef6d74fee70327a7bc984faa6a36e4bd813ed1bd9fcf5a3978be1f4`, and manifest
+  SHA-256 `6c08d2141ad87ae0a6adc755483280df13eec6f5451782ecef376d313907af75`.
+- Generic summary changed 233 to 232. Current result-set SHA-256 is
+  `3099e9cbc61a10cb8d7e13072cc08da25413d244ef690bfc3ca48cd472efe9b1`; summary artifact
+  SHA-256 is `6334ad3c2475a685a99f56da10812f21c93846313cfaeee7f4f3a32c9e639105`;
+  after-census SHA-256 is `b76b0aada8b4b6ffe918103c5a74e6d3ff39cbe37350a71484a571abd626b617`.
+  Strict audit is 619/619 with zero corrupt evidence; 189 focused parser/census/replay/process tests,
+  Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
