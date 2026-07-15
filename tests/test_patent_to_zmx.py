@@ -292,6 +292,80 @@ def _samsung_wide_fov_fixture() -> str:
 
 SAMSUNG_WIDE_FOV_TEXT = _samsung_wide_fov_fixture()
 
+
+MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
+L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
+ST 3 Infinity -0.020
+L2 4* 3.900 0.350 1.6608 20.4 f2 = -12.300 5* 2.500 0.340
+L3 6* 35.000 0.820 1.5348 55.7 f3 = 13.500 7* -9.000 0.050
+L4 8* 4.600 0.520 1.5348 55.7 f4 = -47.000 9* 3.700 0.830
+L5 10* -60.000 0.590 1.5348 55.7 f5 = -27.000 11* 19.000 0.260
+L6 12* -32.000 0.720 1.5348 55.7 f6 = 6.900 13* -3.300 0.100
+L7 14* -29.000 0.970 1.6392 23.5 f7 = -36.000 15* 116.000 0.480
+L8 16* 100.000 0.830 1.5348 55.7 f8 = -6.700 17* 3.400 0.500
+18 Infinity 0.210 1.5168 64.2 19 Infinity 0.800 (IM) Infinity"""
+
+MOBILE_IMAGING_LENS_LATE_SURFACES = """Infinity Infinity
+ST 1 Infinity -0.380
+L1 2* 2.800 0.740 1.5445 56.4 f1 = 5.900 3* 20.000 0.030
+L2 4* 4.100 0.370 1.6707 19.2 f2 = -12.900 5* 2.600 0.110
+L3 6* 5.400 0.560 1.5445 56.4 f3 = 16.700 7* 12.900 0.560
+L4 8* -16.000 0.420 1.5445 56.4 f4 = -69.000 9* -28.000 0.300
+L5 10* -7.200 0.400 1.6707 19.2 f5 = -14.400 11* -29.000 0.250
+L6 12* -12.300 0.620 1.5880 28.8 f6 = 12.400 13* -4.600 0.030
+L7 14* 4.700 0.650 1.5348 55.7 f7 = -89.000 15* 4.000 0.340
+L8 16* 4.200 1.040 1.5348 55.7 f8 = -14.200 17* 2.400 1.000
+18 Infinity 0.210 1.5168 64.2 19 Infinity 0.470 (IM) Infinity"""
+
+
+def _mobile_imaging_lens_fixture() -> str:
+    parts = ["ω represents a half field of view."]
+    for example_number in range(1, 13):
+        surface_table = example_number * 2 - 1
+        coefficient_table = example_number * 2
+        late = example_number >= 7
+        surface_rows = (
+            MOBILE_IMAGING_LENS_LATE_SURFACES
+            if late
+            else MOBILE_IMAGING_LENS_EARLY_SURFACES
+        )
+        f, fno, hfov = (7.05, 2.1, 35.2) if late else (7.71, 1.5, 33.4)
+        parts.append(
+            f"TABLE-US-{surface_table:05d} TABLE {surface_table} "
+            f"f = {f:.2f} mm Fno = {fno:.1f} ω = {hfov:.1f}° "
+            f"i r d n d νd [mm] {surface_rows}"
+        )
+        if late:
+            first_rows = " ".join(
+                f"{surface} 0.000E+00 1.000E-03 -2.000E-04 3.000E-05 -4.000E-06"
+                for surface in range(2, 18)
+            )
+            second_rows = " ".join(
+                f"{surface} 5.000E-07 -6.000E-08 7.000E-09 -8.000E-10 9.000E-11"
+                for surface in range(2, 18)
+            )
+            coefficient_body = (
+                f"i k A4 A6 A8 A10 {first_rows} "
+                f"i A12 A14 A16 A18 A20 {second_rows}"
+            )
+        else:
+            surface_indices = (1, 2, *range(4, 18))
+            rows = " ".join(
+                f"{surface} 0.000E+00 1.000E-03 -2.000E-04 1.000E-04 "
+                "-4.000E-05 5.000E-06 -6.000E-07 7.000E-08"
+                for surface in surface_indices
+            )
+            index_header = "" if example_number == 5 else "i "
+            coefficient_body = f"{index_header}k A4 A6 A8 A10 A12 A14 A16 {rows}"
+        parts.append(
+            f"TABLE-US-{coefficient_table:05d} TABLE {coefficient_table} "
+            f"Aspheric Surface Data: {coefficient_body}"
+        )
+    return " ".join(parts)
+
+
+MOBILE_IMAGING_LENS_TEXT = _mobile_imaging_lens_fixture()
+
 SUNNY_OBJ_STO_TEXT = """
 TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
 number Surface type curvature Thickness index Abbe number coefficient
@@ -770,6 +844,71 @@ def test_parse_apple_exemplary_table_rejects_cross_bound_ordinal() -> None:
 
     with pytest.raises(PatentParseError, match="ordinal does not match"):
         parse_patent_prescriptions(text, patent_id="US-APPLE-CROSS-BOUND-A1")
+
+
+def test_parse_mobile_imaging_lens_single_and_split_coefficient_layouts() -> None:
+    prescriptions = parse_patent_prescriptions(
+        MOBILE_IMAGING_LENS_TEXT,
+        patent_id="US-MOBILE-IMAGING-LENS-A1",
+    )
+
+    assert len(prescriptions) == 12
+    early = prescriptions[0]
+    assert early.embodiment == "Mobile imaging-lens example 1"
+    assert (early.focal_length_mm, early.f_number, early.hfov_deg) == pytest.approx(
+        (7.71, 1.5, 33.4)
+    )
+    assert len(early.surfaces) == 20
+    assert early.surfaces[0].label == "Lens 1"
+    assert early.surfaces[2].label == "Stop"
+    assert early.surfaces[0].asphere_coefficients["A"] == pytest.approx(1.0e-3)
+    assert early.surfaces[0].asphere_coefficients["G"] == pytest.approx(7.0e-8)
+    assert prescriptions[4].surfaces[0].surface_type == "ASP"
+
+    late = prescriptions[6]
+    assert (late.focal_length_mm, late.f_number, late.hfov_deg) == pytest.approx(
+        (7.05, 2.1, 35.2)
+    )
+    assert late.surfaces[0].label == "Stop"
+    assert late.surfaces[1].label == "Lens 1"
+    assert late.surfaces[1].asphere_coefficients["H"] == pytest.approx(-8.0e-10)
+    assert late.surfaces[1].asphere_coefficients["J"] == pytest.approx(9.0e-11)
+    assert late.surfaces[-1].label == "Image"
+
+
+def test_mobile_imaging_lens_split_exponent_fails_only_its_example() -> None:
+    text = MOBILE_IMAGING_LENS_TEXT.replace("1.000E-04", "1.000 E-04", 1)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-MOBILE-IMAGING-LENS-OCR-A1",
+    )
+
+    assert len(attempts) == 12
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert "coefficient A10 is malformed: E-04" in str(attempts[0].error)
+    assert sum(attempt.error is None for attempt in attempts) == 11
+
+
+def test_mobile_imaging_lens_requires_published_half_field_definition() -> None:
+    text = MOBILE_IMAGING_LENS_TEXT.replace(
+        "ω represents a half field of view.",
+        "ω is listed in degrees.",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-MOBILE-IMAGING-LENS-MISSING-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 12
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "published half-field definition not found" in str(attempt.error)
+        for attempt in attempts
+    )
 
 
 def test_parse_samsung_wide_fov_embodiment_pairs_and_full_field() -> None:

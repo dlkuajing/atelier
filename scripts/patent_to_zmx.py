@@ -312,6 +312,9 @@ def _parse_prescription_attempts(
         attempts = _parse_apple_exemplary_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_mobile_imaging_lens_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_samsung_wide_fov_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -980,6 +983,40 @@ _APPLE_EXEMPLARY_ROW_PATTERN = re.compile(
     rf"(?=(?:Object\b|L\.sub\.\d+\b|IR\b|Image\b|INF\b|{NUMBER_PATTERN}))",
     flags=re.IGNORECASE,
 )
+_MOBILE_IMAGING_LENS_SURFACE_HEADER_PATTERN = re.compile(
+    rf"\bf\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm\s+"
+    rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s+"
+    rf"ω\s*=\s*(?P<hfov>{NUMBER_PATTERN})°\s+"
+    r"i\s+r\s+d\s+n\s+d\s+νd\s+\[mm\]\s+",
+    flags=re.IGNORECASE,
+)
+_MOBILE_IMAGING_LENS_HALF_FIELD_DEFINITION = re.compile(
+    r"ω\s+represents\s+a\s+half\s+field\s+of\s+view\b",
+    flags=re.IGNORECASE,
+)
+_MOBILE_IMAGING_LENS_SURFACE_ROW_PATTERN = re.compile(
+    r"(?<!\S)(?:(?P<label>L[1-8]|ST)\s+)?"
+    r"(?P<index>(?:[1-9]|1[0-9]))(?P<star>\*)?\s+",
+    flags=re.IGNORECASE,
+)
+_MOBILE_IMAGING_LENS_SINGLE_ASPHERE_HEADER = re.compile(
+    r"\bAspheric\s+[Ss]urface\s+Data:\s+(?:i\s+)?"
+    r"k\s+A4\s+A6\s+A8\s+A10\s+A12\s+A14\s+A16\s+",
+    flags=re.IGNORECASE,
+)
+_MOBILE_IMAGING_LENS_SPLIT_ASPHERE_HEADER = re.compile(
+    r"\bAspheric\s+[Ss]urface\s+Data:\s+i\s+"
+    r"k\s+A4\s+A6\s+A8\s+A10\s+",
+    flags=re.IGNORECASE,
+)
+_MOBILE_IMAGING_LENS_SECOND_ASPHERE_HEADER = (
+    "i",
+    "A12",
+    "A14",
+    "A16",
+    "A18",
+    "A20",
+)
 _SAMSUNG_WIDE_FOV_BINDING_PATTERN = re.compile(
     r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<coefficient_table>\d+)\s+below\s+"
     r"list\s+the\s+lens\s+properties\s+and\s+aspherical\s+values\s+of\s+the\s+"
@@ -1413,6 +1450,344 @@ def _parse_apple_exemplary_asphere_table(
             f"Apple embodiment {embodiment_number} coefficient coverage is incomplete"
         )
     return coefficients
+
+
+def _parse_mobile_imaging_lens_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the exact 12-example ``f/Fno/ω`` mobile imaging-lens family.
+
+    The publication explicitly defines ``ω`` as half field of view.  One
+    malformed coefficient token therefore rejects only its published example;
+    values are never joined or repaired across whitespace.
+    """
+
+    raw_blocks = _patent_table_blocks(text)
+    if not any(
+        _MOBILE_IMAGING_LENS_SURFACE_HEADER_PATTERN.search(block.text) is not None
+        for block in raw_blocks
+    ):
+        return []
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    try:
+        blocks = _numbered_patent_table_blocks(text)
+        surface_headers = {
+            table_number: header
+            for table_number, block_text in blocks.items()
+            if table_number % 2 == 1
+            and (
+                header := _MOBILE_IMAGING_LENS_SURFACE_HEADER_PATTERN.search(block_text)
+            )
+            is not None
+        }
+        if set(blocks) != set(range(1, 25)):
+            raise PatentParseError(
+                "mobile imaging-lens family must contain numbered TABLES 1-24"
+            )
+        if set(surface_headers) != set(range(1, 24, 2)):
+            raise PatentParseError(
+                "mobile imaging-lens surface tables must be odd TABLES 1-23"
+            )
+        if _MOBILE_IMAGING_LENS_HALF_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError(
+                "mobile imaging-lens published half-field definition not found"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain the disclosed example set
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=f"Mobile imaging-lens example {example_number}",
+                error=exc,
+            )
+            for example_number in range(1, 13)
+        ]
+
+    for example_number in range(1, 13):
+        embodiment = f"Mobile imaging-lens example {example_number}"
+        surface_table = example_number * 2 - 1
+        coefficient_table = example_number * 2
+        try:
+            surface_text = blocks[surface_table]
+            coefficient_text = blocks.get(coefficient_table)
+            if coefficient_text is None:
+                raise PatentParseError(
+                    f"mobile imaging-lens TABLE {coefficient_table} not found"
+                )
+            header = surface_headers[surface_table]
+            surfaces = _parse_mobile_imaging_lens_surface_table(
+                surface_text,
+                header=header,
+                example_number=example_number,
+            )
+            coefficients = _parse_mobile_imaging_lens_asphere_table(
+                coefficient_text,
+                example_number=example_number,
+                split_layout=example_number >= 7,
+            )
+            surface_indices = {surface.index for surface in surfaces}
+            if not set(coefficients).issubset(surface_indices):
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} coefficients "
+                    "reference an unknown surface"
+                )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.surface_type = "ASP"
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+            focal_length = _parse_number(header.group("f"))
+            f_number = _parse_number(header.group("fno"))
+            half_field = _parse_number(header.group("hfov"))
+            if focal_length <= 0 or f_number <= 0 or not 0 < half_field < 90:
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} has invalid f/Fno/ω"
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=half_field,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retained per published example
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=example_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_mobile_imaging_lens_surface_table(
+    table_text: str,
+    *,
+    header: re.Match[str],
+    example_number: int,
+) -> list[PatentSurface]:
+    body = table_text[header.end() :]
+    image_matches = list(re.finditer(r"(?<!\S)\(IM\)\s+Infinity\b", body, re.IGNORECASE))
+    if len(image_matches) != 1:
+        raise PatentParseError(
+            f"mobile imaging-lens example {example_number} must publish one image row"
+        )
+    surface_body = body[: image_matches[0].start()].strip()
+    object_match = re.match(r"Infinity\s+Infinity\s+", surface_body, re.IGNORECASE)
+    if object_match is None:
+        raise PatentParseError(
+            f"mobile imaging-lens example {example_number} object row not found"
+        )
+    surface_body = surface_body[object_match.end() :]
+    starts = list(_MOBILE_IMAGING_LENS_SURFACE_ROW_PATTERN.finditer(surface_body))
+    indices = [int(match.group("index")) for match in starts]
+    if indices != list(range(1, 20)):
+        raise PatentParseError(
+            f"mobile imaging-lens example {example_number} surface sequence must be 1-19"
+        )
+
+    surfaces: list[PatentSurface] = []
+    current_lens = 0
+    stop_count = 0
+    for row_position, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = starts[row_position + 1].start() if row_position + 1 < len(starts) else len(
+            surface_body
+        )
+        tokens = surface_body[match.end() : end].split()
+        label_token = (match.group("label") or "").upper()
+        has_star = match.group("star") is not None
+        nd = vd = None
+        material = None
+
+        if label_token == "ST":
+            stop_count += 1
+            if has_star or len(tokens) != 2:
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} stop row is malformed"
+                )
+            label = "Stop"
+        elif label_token.startswith("L"):
+            expected_lens = current_lens + 1
+            if label_token != f"L{expected_lens}" or not has_star or len(tokens) != 7:
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} lens {expected_lens} "
+                    "first-surface row is malformed"
+                )
+            if tokens[4].lower() != f"f{expected_lens}" or tokens[5] != "=":
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} lens {expected_lens} "
+                    "published focal-length suffix is malformed"
+                )
+            _parse_number(tokens[6])
+            current_lens = expected_lens
+            label = f"Lens {current_lens}"
+            nd = _parse_number(tokens[2])
+            vd = _parse_number(tokens[3])
+            material = "Glass"
+        elif surface_index == 18:
+            if label_token or has_star or len(tokens) != 4:
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} filter row 18 is malformed"
+                )
+            label = "Filter"
+            nd = _parse_number(tokens[2])
+            vd = _parse_number(tokens[3])
+            material = "Glass"
+        elif surface_index == 19:
+            if label_token or has_star or len(tokens) != 2:
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} filter row 19 is malformed"
+                )
+            label = "Filter"
+        else:
+            if label_token or not has_star or len(tokens) != 2 or current_lens == 0:
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} surface "
+                    f"{surface_index} row is malformed"
+                )
+            label = f"Lens {current_lens}"
+
+        radius = _distance_value(
+            tokens[0],
+            field_name=f"mobile imaging-lens surface {surface_index} radius",
+        )
+        thickness = _distance_value(
+            tokens[1],
+            field_name=f"mobile imaging-lens surface {surface_index} thickness",
+        )
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    if current_lens != 8 or stop_count != 1:
+        raise PatentParseError(
+            f"mobile imaging-lens example {example_number} must contain eight lenses and one stop"
+        )
+    surfaces.append(
+        PatentSurface(
+            index=20,
+            label="Image",
+            radius_mm=math.inf,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    return surfaces
+
+
+def _parse_mobile_imaging_lens_asphere_table(
+    table_text: str,
+    *,
+    example_number: int,
+    split_layout: bool,
+) -> dict[int, dict[str, float]]:
+    if split_layout:
+        header = _MOBILE_IMAGING_LENS_SPLIT_ASPHERE_HEADER.search(table_text)
+        surface_indices = tuple(range(2, 18))
+        first_labels = ("K", "A4", "A6", "A8", "A10")
+    else:
+        header = _MOBILE_IMAGING_LENS_SINGLE_ASPHERE_HEADER.search(table_text)
+        surface_indices = (1, 2, *range(4, 18))
+        first_labels = ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    if header is None:
+        raise PatentParseError(
+            f"mobile imaging-lens example {example_number} coefficient header not found"
+        )
+
+    tokens = table_text[header.end() :].split()
+    coefficients, position = _parse_mobile_imaging_lens_coefficient_rows(
+        tokens,
+        position=0,
+        surface_indices=surface_indices,
+        labels=first_labels,
+        example_number=example_number,
+    )
+    if split_layout:
+        second_header = tuple(tokens[position : position + 6])
+        if tuple(label.upper() for label in second_header) != tuple(
+            label.upper() for label in _MOBILE_IMAGING_LENS_SECOND_ASPHERE_HEADER
+        ):
+            raise PatentParseError(
+                f"mobile imaging-lens example {example_number} second coefficient header "
+                "is missing"
+            )
+        second_coefficients, _ = _parse_mobile_imaging_lens_coefficient_rows(
+            tokens,
+            position=position + 6,
+            surface_indices=surface_indices,
+            labels=("A12", "A14", "A16", "A18", "A20"),
+            example_number=example_number,
+        )
+        for surface_index, values in second_coefficients.items():
+            coefficients[surface_index].update(values)
+    return coefficients
+
+
+def _parse_mobile_imaging_lens_coefficient_rows(
+    tokens: list[str],
+    *,
+    position: int,
+    surface_indices: tuple[int, ...],
+    labels: tuple[str, ...],
+    example_number: int,
+) -> tuple[dict[int, dict[str, float]], int]:
+    coefficients: dict[int, dict[str, float]] = {}
+    for surface_index in surface_indices:
+        if position >= len(tokens) or tokens[position] != str(surface_index):
+            actual = tokens[position] if position < len(tokens) else "<end>"
+            raise PatentParseError(
+                f"mobile imaging-lens example {example_number} coefficient row sequence "
+                f"expected {surface_index}, found {actual}"
+            )
+        position += 1
+        row: dict[str, float] = {}
+        for label in labels:
+            if position >= len(tokens):
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} surface {surface_index} "
+                    "coefficient row is incomplete"
+                )
+            try:
+                value = _parse_number(tokens[position])
+            except PatentParseError as exc:
+                raise PatentParseError(
+                    f"mobile imaging-lens example {example_number} surface {surface_index} "
+                    f"coefficient {label} is malformed: {tokens[position]}"
+                ) from exc
+            position += 1
+            if label == "K":
+                codev_label = "K"
+            else:
+                order = int(label[1:])
+                codev_label = ASPHERE_ORDER_TO_CODEV[order]
+            row[codev_label] = value
+        coefficients[surface_index] = row
+    return coefficients, position
 
 
 def _parse_samsung_wide_fov_table_attempts(

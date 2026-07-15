@@ -117,6 +117,22 @@ thresholds, or claim patent saturation.
   strict audit is 619/619 with zero corrupt evidence. The after-fourth-layout census SHA-256 is
   `d0fc9ec820763cc0255a6a164bf014d451f205b089862d87343a1467c5470629`; 80 focused
   parser/census/replay/process tests and Ruff pass.
+- The fifth source-proven family is the exact 24-table mobile imaging-lens layout in
+  `US-20220276465`. Its official PPUBS text publishes twelve surface/asphere table pairs, explicit
+  stop rows, f/Fno/ω in every surface-table header, and explicitly defines ω as half field of
+  view. A complete 279-root ownership scan matched only this root. Eleven embodiments parse
+  deterministically; example 2 remains fail-closed because official TABLE 4 splits the nonzero
+  coefficient token `1.729 E-04`. The parser does not join or repair it.
+- Append-only replay retained all twelve disclosed embodiments: the eleven complete
+  prescriptions received terminal `trace_failed` receipts because full-field real rays did not
+  reach the image surface, while the damaged second embodiment remains a structured parser-review
+  item pending alternate official fulltext/image recovery. No ZMX was promoted or left in staging.
+  The generic document bucket changed 279 to 278. Result-set SHA-256 is
+  `18a0a3102b5b3c8fedfff26b1500db893e931b3bd0068893133ce9071ef4f036`; summary artifact
+  SHA-256 is `b20fbe2d945280148d3555c9c19cf870b6eb0d5f4d8d053f70aaff2e5db0b3e9`;
+  strict audit is 619/619 with zero corrupt evidence. The after-fifth-layout census SHA-256 is
+  `7026ffe86f8cfbb7472e53cf30807d27487fd2c5d7505c168d85803c559041fa`; CODE V inventory
+  remains zero; 84 focused parser/census/replay/process tests and Ruff pass.
 
 ## Completion condition
 
