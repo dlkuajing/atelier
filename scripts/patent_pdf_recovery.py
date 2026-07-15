@@ -113,6 +113,31 @@ _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT = (
     "FIG. 6 lists the specific parameters of the optical lens of FIG. 1",
 )
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
+_GENIUS_FOUR_LENS_ELEVEN_OPTICAL_FIGURES = (2, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43)
+_GENIUS_FOUR_LENS_ELEVEN_ASPHERE_FIGURES = (4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44)
+_GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for embodiment, (optical_figure, asphere_figure) in enumerate(
+        zip(
+            _GENIUS_FOUR_LENS_ELEVEN_OPTICAL_FIGURES,
+            _GENIUS_FOUR_LENS_ELEVEN_ASPHERE_FIGURES,
+            strict=True,
+        ),
+        start=1,
+    )
+    for marker in (
+        f"FIG. {optical_figure} shows a table of optical data of each lens element "
+        f"of the optical imaging lens according to embodiment {embodiment} of the invention",
+        f"FIG. {asphere_figure} shows a table of aspherical data of the optical imaging lens "
+        f"according to embodiment {embodiment} of the invention",
+    )
+)
+_GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS = (
+    "FIG. 46 shows a comparison table",
+    "all 11 example embodiments shown in FIGS. 1",
+)
+_GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
+_GENIUS_FOUR_LENS_ELEVEN_ALLOWED_BLANK_MIRROR_PAGES = frozenset({6, 17, 21, 33, 45})
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
     r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
     r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
@@ -174,6 +199,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         return _LARGAN_THREE_FIVE_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT):
         return _ABILITY_ZOOM_TWO_STATE_PROFILE
+    if all(marker in text for marker in _GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT) and all(
+        marker in text for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
+    ):
+        return _GENIUS_FOUR_LENS_ELEVEN_PROFILE
     return None
 
 
@@ -304,6 +333,24 @@ def _ability_zoom_two_state_source_facts(raw_html: str) -> dict[str, Any]:
             marker.split(" lists", maxsplit=1)[0]: text.count(marker)
             for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT
         },
+    }
+
+
+def _genius_four_lens_eleven_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind all eleven optical/asphere figure pairs and their Fno comparison table."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_counts": {
+            marker: text.count(marker)
+            for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
+        },
+        "fno_label_count": len(re.findall(r"\bFno\b", text, flags=re.IGNORECASE)),
     }
 
 
@@ -515,8 +562,24 @@ async def recover_ability_official_pdf_ocr(
         raise PatentPdfRecoveryError("official and OCR PDFs have different page counts")
     page_count = len(official_reader.pages)
     mirror_texts = [page.extract_text() or "" for page in mirror_reader.pages]
-    if not all(text.strip() for text in mirror_texts):
-        raise PatentPdfRecoveryError("Google citation PDF lacks an OCR text layer on one or more pages")
+    blank_mirror_pages = {
+        page_number
+        for page_number, text in enumerate(mirror_texts, start=1)
+        if not text.strip()
+    }
+    if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
+        unexpected_blank_pages = (
+            blank_mirror_pages - _GENIUS_FOUR_LENS_ELEVEN_ALLOWED_BLANK_MIRROR_PAGES
+        )
+        if unexpected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "Genius OCR overlay has unexpected blank pages: "
+                + ",".join(str(page) for page in sorted(unexpected_blank_pages))
+            )
+    elif blank_mirror_pages:
+        raise PatentPdfRecoveryError(
+            "Google citation PDF lacks an OCR text layer on one or more pages"
+        )
 
     page_hashes: list[str] = []
     official_images: list[bytes] = []
@@ -753,6 +816,33 @@ async def recover_ability_official_pdf_ocr(
         }
         parser_profile = profile
         source_facts = _ability_zoom_two_state_source_facts(primary_html)
+    elif profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
+        if page_count != 66:
+            raise PatentPdfRecoveryError("Genius eleven-embodiment PDF page count is not 66")
+        role_pages = {}
+        for embodiment, (optical_figure, asphere_figure) in enumerate(
+            zip(
+                _GENIUS_FOUR_LENS_ELEVEN_OPTICAL_FIGURES,
+                _GENIUS_FOUR_LENS_ELEVEN_ASPHERE_FIGURES,
+                strict=True,
+            ),
+            start=1,
+        ):
+            optical_page_index = 2 if embodiment == 1 else optical_figure
+            asphere_page_index = asphere_figure
+            role_pages[f"genius_optical_{embodiment}"] = optical_page_index
+            role_pages[f"genius_asphere_{embodiment}"] = asphere_page_index
+        role_pages["genius_comparison"] = 46
+        for role, page_index in role_pages.items():
+            mirror_text = mirror_texts[page_index]
+            if mirror_text and f"Sheet {page_index} of 48" not in re.sub(
+                r"\s+", " ", mirror_text
+            ):
+                raise PatentPdfRecoveryError(
+                    f"Genius role {role} lacks its drawing-sheet header"
+                )
+        parser_profile = profile
+        source_facts = _genius_four_lens_eleven_source_facts(primary_html)
     else:
         raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
     if len(set(role_pages.values())) != len(role_pages):

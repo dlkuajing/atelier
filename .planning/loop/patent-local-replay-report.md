@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `76b0f1eab60a5f997f4c2558d703e4e1009d704f9b85ada0b5b83e293dfdf3df`
+- result_set_sha256: `427df235546c80de9d61f28bd8ce76d56fa6320a859f47706e7464142f29bd7a`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 518
 - `terminal`: 734
-- `parser_review_required`: 1356
+- `parser_review_required`: 1366
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1356
+- `parser_review_required.deterministic_parser_rejected`: 1366
 - `terminal.process_receipt_classified`: 714
 - `converted_pending_intake.process_isolated_zmx_ready`: 518
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -73,7 +73,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 247
+- `generic_summary_metadata_missing`: 246
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -116,6 +116,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_kantatsu_example_n_lens_n_first_surface_row_is_malformed`: 2
 - `other_kantatsu_ih_first_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 2
 - `other_newmax_a_row_has_nonnumeric_data_token_positive`: 2
+- `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_confidence_n_is_below_n`: 2
 - `other_r2_thickness_is_not_numeric_d2`: 2
 - `other_sekonix_glass_code_cannot_be_split_deterministically_token`: 2
 - `other_stop_thickness_is_not_numeric_d0`: 2
@@ -124,6 +125,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r4_a2_n`: 2
 - `other_ability_ol1_asphere_cells_are_not_independently_classified_fail_closed`: 1
 - `other_ability_three_lens_row_s3_has_incomplete_material_data`: 1
+- `other_asphere_table_has_n_exact_surface_headers`: 1
 - `other_aspheric_row_a14_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a24_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_aspheric_row_a26_has_more_numeric_values_than_surfaces_extra_token`: 1
@@ -142,6 +144,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_largan_surface_n_radius_token_token_confidence_n_is_below_n`: 1
 - `other_largan_surface_n_thickness_token_token_confidence_n_is_below_n`: 1
 - `other_mobile_imaging_lens_example_n_surface_n_coefficient_a12_is_malformed_e_n`: 1
+- `other_optical_table_has_n_accepted_radius_headers_asphere_coefficient_label_a10_confidence_n_is_below_n`: 1
+- `other_optical_table_has_n_accepted_radius_headers_asphere_coefficient_label_a4_has_n_exact_ocr_tokens`: 1
+- `other_optical_table_surface_confidence_n_is_below_n_asphere_coefficient_label_a6_confidence_n_is_below_n`: 1
+- `other_optical_table_surface_confidence_n_is_below_n_asphere_table_has_n_exact_surface_headers`: 1
+- `other_optical_table_surface_confidence_n_is_below_n_asphere_table_surface_confidence_n_is_below_n`: 1
+- `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_coefficient_label_a4_con_602028eaba4f`: 1
+- `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_coefficient_label_a4_con_91e338c1d9f8`: 1
+- `other_optical_table_surface_n_confidence_n_is_below_n_asphere_table_surface_n_confidence_n_is_below_n`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
 - `other_samsung_even_order_embodiment_n_asphere_headers_must_be_s1_s8_and_s9_s16`: 1
 - `other_sunny_asphere_row_s12_has_more_values_than_headers_token`: 1

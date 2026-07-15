@@ -2430,6 +2430,7 @@ _ABILITY_TWO_NINE_LENS_PROFILE = "ability_two_nine_lens_f_number_unpublished_v1"
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
 _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
+_GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -4280,6 +4281,305 @@ def _parse_ability_zoom_two_state_attempts(
     return attempts
 
 
+def _genius_four_lens_surface_labels(embodiment_number: int) -> tuple[str, ...]:
+    prefix = str(embodiment_number)
+    return (
+        f"{prefix}00",
+        f"{prefix}11",
+        f"{prefix}12",
+        f"{prefix}21",
+        f"{prefix}22",
+        f"{prefix}31",
+        f"{prefix}32",
+        f"{prefix}41",
+        f"{prefix}42",
+        f"{prefix}51",
+        f"{prefix}52",
+        f"{prefix}60",
+    )
+
+
+def _genius_page_binding_error(
+    page: dict[str, Any],
+    *,
+    page_number: int,
+    sheet_number: int,
+    role: str,
+) -> str | None:
+    if page.get("page_number") != page_number:
+        return f"{role} is not retained on page {page_number}"
+    tokens = list(page.get("rapidocr_tokens") or [])
+    sheet_matches = [
+        token
+        for token in tokens
+        if f"Sheet {sheet_number} of 48" in _ability_token_text(token)
+    ]
+    if len(sheet_matches) != 1:
+        return f"{role} has {len(sheet_matches)} drawing-sheet header tokens"
+    confidence = _ability_token_confidence(sheet_matches[0])
+    if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+        return (
+            f"{role} drawing-sheet header confidence {confidence:.6f} is below "
+            f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+        )
+    return None
+
+
+def _genius_optical_census_error(
+    page: dict[str, Any],
+    *,
+    embodiment_number: int,
+) -> str | None:
+    tokens = list(page["rapidocr_tokens"])
+    expected_labels = _genius_four_lens_surface_labels(embodiment_number)
+    label_tokens: list[dict[str, Any]] = []
+    for label in expected_labels:
+        matches = [token for token in tokens if _ability_token_text(token) == label]
+        if len(matches) != 1:
+            return (
+                f"optical table surface {label} has {len(matches)} exact OCR label tokens"
+            )
+        confidence = _ability_token_confidence(matches[0])
+        if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            return (
+                f"optical table surface {label} confidence {confidence:.6f} is below "
+                f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+        label_tokens.append(matches[0])
+
+    radius_matches = [
+        token
+        for token in tokens
+        if _ability_token_text(token).casefold() == "radius"
+        and _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+    ]
+    if len(radius_matches) != 1:
+        return f"optical table has {len(radius_matches)} accepted Radius headers"
+    radius_y = _ability_token_center(radius_matches[0])[1]
+    surface_x = sum(_ability_token_center(token)[0] for token in label_tokens) / len(label_tokens)
+    surface_header_candidates = [
+        token
+        for token in tokens
+        if abs(_ability_token_center(token)[0] - surface_x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and abs(_ability_token_center(token)[1] - radius_y) <= _ABILITY_ROW_Y_TOLERANCE * 2
+        and token not in label_tokens
+    ]
+    if len(surface_header_candidates) != 1:
+        return (
+            "optical table surface header has "
+            f"{len(surface_header_candidates)} coordinate OCR candidates"
+        )
+    surface_header = surface_header_candidates[0]
+    header_text = re.sub(r"\s+", "", _ability_token_text(surface_header)).casefold()
+    header_confidence = _ability_token_confidence(surface_header)
+    if header_text != "surface#":
+        return (
+            f"optical table surface header token {_ability_token_text(surface_header)!r} "
+            f"does not equal 'Surface#' (confidence {header_confidence:.6f})"
+        )
+    if header_confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+        return (
+            f"optical table Surface# confidence {header_confidence:.6f} is below "
+            f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+        )
+    return None
+
+
+def _genius_asphere_census_error(
+    page: dict[str, Any],
+    *,
+    embodiment_number: int,
+) -> str | None:
+    tokens = list(page["rapidocr_tokens"])
+    prefix = str(embodiment_number)
+    expected_surface_labels = tuple(
+        f"{prefix}{suffix}" for suffix in ("11", "12", "21", "22", "31", "32", "41", "42")
+    )
+    for label in expected_surface_labels:
+        matches = [token for token in tokens if _ability_token_text(token) == label]
+        if len(matches) != 1:
+            return f"asphere table surface {label} has {len(matches)} exact OCR label tokens"
+        confidence = _ability_token_confidence(matches[0])
+        if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            return (
+                f"asphere table surface {label} confidence {confidence:.6f} is below "
+                f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+
+    surface_headers = [
+        token
+        for token in tokens
+        if re.sub(r"\s+", "", _ability_token_text(token)).casefold() == "surface#"
+    ]
+    if len(surface_headers) != 2:
+        return f"asphere table has {len(surface_headers)} exact Surface# headers"
+    for token in surface_headers:
+        confidence = _ability_token_confidence(token)
+        if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            return (
+                f"asphere table Surface# confidence {confidence:.6f} is below "
+                f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+
+    for label in ("K", "a4", "a6", "a8", "a10", "a12", "a14", "a16"):
+        matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).casefold() == label.casefold()
+        ]
+        if len(matches) != 2:
+            return f"asphere coefficient label {label} has {len(matches)} exact OCR tokens"
+        below_gate = [
+            _ability_token_confidence(token)
+            for token in matches
+            if _ability_token_confidence(token) < _ABILITY_OCR_LABEL_CONFIDENCE
+        ]
+        if below_gate:
+            return (
+                f"asphere coefficient label {label} confidence {min(below_gate):.6f} "
+                f"is below {_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+    return None
+
+
+def _genius_comparison_census_error(page: dict[str, Any]) -> str | None:
+    tokens = list(page["rapidocr_tokens"])
+    fno_tokens = [
+        token
+        for token in tokens
+        if _ability_token_text(token).casefold() == "fno"
+    ]
+    if len(fno_tokens) != 3:
+        return f"FIG. 46 has {len(fno_tokens)} exact Fno row labels"
+    expected_value_counts = (4, 4, 3)
+    for panel, (label_token, expected_count) in enumerate(
+        zip(
+            sorted(fno_tokens, key=lambda token: _ability_token_center(token)[1]),
+            expected_value_counts,
+            strict=True,
+        ),
+        start=1,
+    ):
+        confidence = _ability_token_confidence(label_token)
+        if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            return (
+                f"FIG. 46 panel {panel} Fno label confidence {confidence:.6f} is below "
+                f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+        label_x, label_y = _ability_token_center(label_token)
+        values = [
+            token
+            for token in tokens
+            if _ability_token_center(token)[0] > label_x + _ABILITY_COLUMN_X_TOLERANCE
+            and abs(_ability_token_center(token)[1] - label_y) <= _ABILITY_ROW_Y_TOLERANCE
+            and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+        ]
+        if len(values) != expected_count:
+            return (
+                f"FIG. 46 panel {panel} Fno row has {len(values)} numeric tokens; "
+                f"expected {expected_count}"
+            )
+        below_gate = [
+            token
+            for token in values
+            if _ability_token_confidence(token) < _ABILITY_OCR_NUMBER_CONFIDENCE
+        ]
+        if below_gate:
+            token = min(below_gate, key=_ability_token_confidence)
+            return (
+                f"FIG. 46 panel {panel} Fno token {_ability_token_text(token)!r} confidence "
+                f"{_ability_token_confidence(token):.6f} is below "
+                f"{_ABILITY_OCR_NUMBER_CONFIDENCE:.6f}"
+            )
+    return None
+
+
+def _parse_genius_four_lens_eleven_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 66:
+        raise PatentParseError("Genius eleven-embodiment PDF page count is not 66")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 23:
+        raise PatentParseError("Genius eleven-embodiment PDF must retain 23 key pages")
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("Genius parser input lacks official source facts")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Genius official HTML hash is invalid")
+    figure_counts = facts.get("figure_binding_counts")
+    comparison_counts = facts.get("comparison_binding_counts")
+    if (
+        not isinstance(figure_counts, dict)
+        or len(figure_counts) != 22
+        or set(figure_counts.values()) != {1}
+        or not isinstance(comparison_counts, dict)
+        or len(comparison_counts) != 2
+        or set(comparison_counts.values()) != {1}
+        or facts.get("fno_label_count") != 1
+    ):
+        raise PatentParseError("Genius official figure/Fno bindings changed")
+
+    comparison_page = _ability_page(payload, "genius_comparison")
+    comparison_binding_error = _genius_page_binding_error(
+        comparison_page,
+        page_number=47,
+        sheet_number=46,
+        role="genius_comparison",
+    )
+    comparison_census_error = _genius_comparison_census_error(comparison_page)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number in range(1, 12):
+        optical_figure = 2 if embodiment_number == 1 else 4 * embodiment_number - 1
+        asphere_figure = 4 * embodiment_number
+        optical_page_number = optical_figure + 1
+        asphere_page_number = asphere_figure + 1
+        optical_page = _ability_page(payload, f"genius_optical_{embodiment_number}")
+        asphere_page = _ability_page(payload, f"genius_asphere_{embodiment_number}")
+        errors = [
+            error
+            for error in (
+                _genius_page_binding_error(
+                    optical_page,
+                    page_number=optical_page_number,
+                    sheet_number=optical_figure,
+                    role=f"genius_optical_{embodiment_number}",
+                ),
+                _genius_optical_census_error(
+                    optical_page,
+                    embodiment_number=embodiment_number,
+                ),
+                _genius_page_binding_error(
+                    asphere_page,
+                    page_number=asphere_page_number,
+                    sheet_number=asphere_figure,
+                    role=f"genius_asphere_{embodiment_number}",
+                ),
+                _genius_asphere_census_error(
+                    asphere_page,
+                    embodiment_number=embodiment_number,
+                ),
+                comparison_binding_error,
+                comparison_census_error,
+            )
+            if error is not None
+        ]
+        if not errors:
+            errors.append(
+                "Genius optical/asphere/Fno census passed; numeric cell parser remains"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Genius four-lens embodiment {embodiment_number}",
+                error=PatentParseError(" | ".join(errors)),
+            )
+        )
+    return attempts
+
+
 def _ability_eight_lens_terminal_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -4619,6 +4919,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_largan_three_five_lens_attempts(payload)
     if profile == _ABILITY_ZOOM_TWO_STATE_PROFILE:
         return _parse_ability_zoom_two_state_attempts(payload)
+    if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
+        return _parse_genius_four_lens_eleven_attempts(payload)
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")

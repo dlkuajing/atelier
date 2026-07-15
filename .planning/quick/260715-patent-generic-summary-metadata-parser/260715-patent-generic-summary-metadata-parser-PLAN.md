@@ -600,6 +600,31 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `4f96268ea235205fdae177e90beff4e8ac9d19f49a6a809342cedf836322b5a8`.
   Strict audit is 619/619 with zero corrupt evidence; 143 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- The largest 12-root normalized layout was not treated as one parser family merely because all
+  titles were Genius. The first exact source family, `US-20170097490-A1` (official HTML SHA-256
+  `0211f3fe1bdd3152ab6c57c25e4991603504980b37398c9ae5cbcb9812c43dea`), uniquely binds eleven
+  optical-data figures, eleven asphere figures, and FIG. 46's comparison table for all eleven Fno
+  values. This proves eleven disclosed embodiments rather than one document-scoped failure.
+- The retained 66-page official PDF SHA-256 is
+  `bc7c5e69d66788055add6e305596fd1e172abba355736d581b9cab082b82d2d9`; the Google overlay
+  SHA-256 is `e7597fe7ee2f76e7912ff6df00844252f4859420d62a7862623c11178839c0b3`.
+  All decoded page rasters are pixel-identical. The parser retains 23 key pages; overlay text is
+  blank on key pages 17, 21, 33, and 45, so coordinate RapidOCR is the only independent text view
+  there. FIG. 46's three Fno rows pass the unchanged gates.
+- `genius_four_lens_eleven_embodiment_census_v1` retains all eleven embodiments separately. Every
+  one remains fail-closed on source-specific optical/asphere evidence: corrupt or below-0.95
+  `Surface#`, `Radius`, surface-ID, or coefficient labels. No OCR token is repaired, the profile
+  does not claim numeric-cell parsing is complete, and no worker or ZMX is created.
+- Attempts 2/3 have identical canonical result SHA-256
+  `ad9c4e484a6bb0a4eb37d4fa85295956a5cde3cde5c340420ed595f27be4085e`, parser-input SHA-256
+  `a30e48af334c8f8ae3d18c78f5086fa9b81c41728a0da1104a710e5587916c22`, and recovery-manifest
+  SHA-256 `bb0ac8d6bbd05395764b1d988c6646b2713b2d0ea6b1614c342331925fda2e00`.
+- Generic summary changed 247 to 246. Current result-set SHA-256 is
+  `427df235546c80de9d61f28bd8ce76d56fa6320a859f47706e7464142f29bd7a`; summary artifact
+  SHA-256 is `85c42e3b64e97403d25197eb9bebb397223bec14fb0af2ff2c55040b599956aa`;
+  after-census SHA-256 is `99a285cf0c66e3d956eeb2abc95d472e338fd24b4f5fdf40e8500db445db68d2`.
+  Strict audit is 619/619 with zero corrupt evidence; 145 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
