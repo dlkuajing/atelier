@@ -192,6 +192,29 @@ thresholds, or claim patent saturation.
   `371074751bc28244c286a019cd276b0761fe1d8d789397311bcf3664cc676668` and contains 275 roots
   across 161 normalized signatures; CODE V inventory remains zero; 93 focused
   parser/census/replay/process tests and Ruff pass.
+- The ninth source-proven family is the ordinal-header NEWMAX residual layout in
+  `US-12510730`, `US-12510732`, and `US-12535652`. Their retained official PPUBS text publishes
+  nineteen ordinal-bound surface/asphere pairs with exact f, Fno, and full FOV, explicitly defines
+  HFOV as half the maximum FOV, and places exactly one Stop in each complete prescription. The
+  first and third roots explicitly identify mobile-device/mobile-phone applications.
+- A hash-verified ownership scan of all 275 remaining generic roots matched only these three
+  roots. Fourteen of nineteen embodiments parse deterministically. Example 2 in `US-12510730`
+  and `US-12510732` starts at surface 2 after the object row in the retained official source;
+  examples 2, 4, and 5 in `US-12535652` print `fdter` where the filter row label is required. All
+  five remain per-embodiment parser rejections without renumbering or OCR repair.
+- The first bounded replay exposed four `patent_budget_exhausted` items; an append-only retry with
+  the same request identities and unchanged 120-second worker hard limit raised only the cumulative
+  per-patent budget. A transient three-bucket USPTO `ConnectError` on `US-12535652` was then retried
+  by exact root state. The final latest results contain ten converted-pending-intake staging ZMX
+  candidates with real IMH, four terminal `trace_timeout` receipts, and five structured parser
+  rejections, with zero source or budget retry state. No candidate was promoted.
+- The generic document bucket changed 275 to 272. Result-set SHA-256 is
+  `06a3d4b592f5842c54ae702d08cd309c22e0b9a1c8f255e6364ffa6ede89b669`; summary artifact
+  SHA-256 is `9c6014d5468c4b03dd6669e1e206676dac0e3c9a398d17643b8b70f8b87fd0fd`;
+  strict audit is 619/619 with zero corrupt evidence. The after-ninth-layout census SHA-256 is
+  `999b0487e8ce7a1844cc8478baa8383a9c856021d7cb9f59252ede41dcbbf24c` and contains 272 roots
+  across 158 normalized signatures; CODE V inventory remains zero; 105 focused
+  parser/census/replay/process tests and Ruff pass.
 
 ## Completion condition
 

@@ -421,6 +421,22 @@ _NEWMAX_HEADER_RE = re.compile(
     rf"(?P<fov>{NUMBER_PATTERN})\s*(?:deg\.?|°)",
     re.IGNORECASE,
 )
+_NEWMAX_ORDINAL_HEADER_RE = re.compile(
+    rf"\bTABLE\s+(?P<table>\d+)\s+"
+    rf"(?P<ordinal>First|Second|Third|Fourth|Fifth|Sixth|Seventh)\s+Embodiment\s+"
+    rf"f\s*\(\s*focal\s+length\s*\)\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm"
+    rf"(?:\s*\(\s*millimeters?\s*\))?\s*,\s*"
+    rf"Fno\s*\(\s*f-number\s*\)\s*=\s*(?P<fno>{NUMBER_PATTERN})\s*,\s*"
+    rf"FOV\s*\(\s*field\s+of\s+view(?:\s+2\s*(?:ω|w))?\s*\)\s*=\s*"
+    rf"(?P<fov>{NUMBER_PATTERN})\s*deg\.?"
+    rf"(?:\s*\(\s*degrees?\s*\))?",
+    re.IGNORECASE,
+)
+_NEWMAX_ORDINAL_FULL_FIELD_DEFINITION_RE = re.compile(
+    r"\b(?:A\s+)?half\s+of\s+(?:a|the)\s+maximum\s+field\s+of\s+view\b"
+    r".{0,160}\bHFOV\b",
+    re.IGNORECASE | re.DOTALL,
+)
 _NEWMAX_COEFFICIENT_LABEL_RE = re.compile(r"[A-Z]:?|A\d+:?", re.IGNORECASE)
 _NEWMAX_OBJECT_ROW_RE = re.compile(r"\b0\s+Object\b", re.IGNORECASE)
 _NEWMAX_ORDINAL_LENS = {
@@ -434,6 +450,10 @@ _NEWMAX_ORDINAL_LENS = {
 }
 
 
+def _newmax_table_header(block_text: str) -> re.Match[str] | None:
+    return _NEWMAX_HEADER_RE.search(block_text) or _NEWMAX_ORDINAL_HEADER_RE.search(block_text)
+
+
 def _parse_newmax_table_attempts(
     text: str,
     *,
@@ -445,7 +465,7 @@ def _parse_newmax_table_attempts(
     surface_blocks = [
         (index, block, match)
         for index, block in enumerate(blocks)
-        if (match := _NEWMAX_HEADER_RE.search(block.text)) is not None
+        if (match := _newmax_table_header(block.text)) is not None
         and _NEWMAX_OBJECT_ROW_RE.search(block.text)
     ]
     if not surface_blocks:
@@ -453,9 +473,23 @@ def _parse_newmax_table_attempts(
 
     attempts: list[_PrescriptionParseAttempt] = []
     for block_index, block, header in surface_blocks:
-        embodiment_number = int(header.group("embodiment"))
+        ordinal = header.groupdict().get("ordinal")
+        embodiment_number = (
+            _NEWMAX_ORDINAL_LENS[ordinal.lower()]
+            if ordinal is not None
+            else int(header.group("embodiment"))
+        )
         embodiment = f"Embodiment {embodiment_number}"
         try:
+            if ordinal is not None:
+                if block.number != embodiment_number * 2 - 1:
+                    raise PatentParseError(
+                        f"NEWMAX {embodiment} surface table number is not ordinal-bound"
+                    )
+                if _NEWMAX_ORDINAL_FULL_FIELD_DEFINITION_RE.search(text) is None:
+                    raise PatentParseError(
+                        "NEWMAX ordinal family maximum-FOV/HFOV definition not found"
+                    )
             surfaces, index_by_label = _parse_newmax_surface_table(
                 block.text, embodiment_number=embodiment_number
             )
@@ -471,12 +505,19 @@ def _parse_newmax_table_attempts(
                 if surface.index in coefficients:
                     surface.asphere_coefficients.update(coefficients[surface.index])
                     surface.surface_type = "ASP"
+            focal_length = _parse_number(header.group("f"))
+            f_number = _parse_number(header.group("fno"))
+            half_field = _parse_number(header.group("fov")) / 2.0
+            if focal_length <= 0 or f_number <= 0 or not 0 < half_field < 90:
+                raise PatentParseError(
+                    f"NEWMAX {embodiment} has invalid f/Fno/full-FOV metadata"
+                )
             prescription = PatentPrescription(
                 patent_id=patent_id,
                 embodiment=embodiment,
-                focal_length_mm=_parse_number(header.group("f")),
-                f_number=_parse_number(header.group("fno")),
-                hfov_deg=_parse_number(header.group("fov")) / 2.0,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=half_field,
                 surfaces=surfaces,
             )
             _validate_prescription_materials(prescription)
@@ -517,7 +558,10 @@ def _parse_newmax_surface_table(
         flags=re.IGNORECASE,
     )
     table_text = re.sub(
-        r"\b(?:IR-filter|Optical\s+filter)\b", "Filter", table_text, flags=re.IGNORECASE
+        r"\b(?:IR-filter|IR\s+bandpass|Optical\s+filter)\b",
+        "Filter",
+        table_text,
+        flags=re.IGNORECASE,
     )
     table_text = re.sub(r"\bImage\s+plane\b", "Image", table_text, flags=re.IGNORECASE)
     surfaces = _parse_surface_table(table_text)
@@ -529,6 +573,10 @@ def _parse_newmax_surface_table(
     optical_surfaces = [surface for surface in surfaces if surface.index > 0]
     if len(optical_surfaces) < 4 or optical_surfaces[-1].label.upper() != "IMAGE":
         raise PatentParseError(f"NEWMAX embodiment {embodiment_number} surface table is incomplete")
+    if sum(surface.label.upper() == "STOP" for surface in optical_surfaces) != 1:
+        raise PatentParseError(
+            f"NEWMAX embodiment {embodiment_number} must publish exactly one stop"
+        )
     return optical_surfaces, {str(surface.index): surface.index for surface in optical_surfaces}
 
 
@@ -543,6 +591,7 @@ def _parse_newmax_asphere_table(
 ) -> dict[int, dict[str, float]]:
     """Map the two published NEWMAX monomial coefficient conventions."""
 
+    block_text = re.split(r"\s(?:\(\d+\)|\[\d+\])\s", block_text, maxsplit=1)[0]
     tokens = block_text.split()
     coefficients: dict[int, dict[str, float]] = {}
     pos = 0

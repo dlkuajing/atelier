@@ -21,6 +21,7 @@ AFTER_FIFTH_LAYOUT = CENSUS.with_name("generic-summary-after-fifth-layout.json")
 AFTER_SIXTH_LAYOUT = CENSUS.with_name("generic-summary-after-sixth-layout.json")
 AFTER_SEVENTH_LAYOUT = CENSUS.with_name("generic-summary-after-seventh-layout.json")
 AFTER_EIGHTH_LAYOUT = CENSUS.with_name("generic-summary-after-eighth-layout.json")
+AFTER_NINTH_LAYOUT = CENSUS.with_name("generic-summary-after-ninth-layout.json")
 
 
 def test_generic_summary_before_census_is_strict_and_canonical() -> None:
@@ -140,3 +141,15 @@ def test_generic_summary_after_eighth_layout_is_strict_and_canonical() -> None:
     )
     assert len(census.layout_signature_counts) == 161
     assert canonical_json_bytes(census) == AFTER_EIGHTH_LAYOUT.read_bytes()
+
+
+def test_generic_summary_after_ninth_layout_is_strict_and_canonical() -> None:
+    census = GenericSummaryCensus.model_validate_json(AFTER_NINTH_LAYOUT.read_bytes())
+
+    assert census.affected_items == 272
+    assert census.affected_roots == 272
+    assert census.result_set_sha256 == (
+        "06a3d4b592f5842c54ae702d08cd309c22e0b9a1c8f255e6364ffa6ede89b669"
+    )
+    assert len(census.layout_signature_counts) == 158
+    assert canonical_json_bytes(census) == AFTER_NINTH_LAYOUT.read_bytes()

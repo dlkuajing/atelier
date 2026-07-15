@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `07e1ebda99d49d480c96bd5260e894c5e26386d2aef2b6672d4f0303d00cd795`
+- result_set_sha256: `06a3d4b592f5842c54ae702d08cd309c22e0b9a1c8f255e6364ffa6ede89b669`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,17 +20,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 19
 - `terminal`: 34
-- `parser_review_required`: 434
+- `parser_review_required`: 431
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 132
+- `mixed_nonterminal`: 135
 
 ## Item states
 
-- `converted_pending_intake`: 497
-- `terminal`: 695
-- `parser_review_required`: 1330
+- `converted_pending_intake`: 507
+- `terminal`: 699
+- `parser_review_required`: 1332
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -43,21 +43,21 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 0
 - `trace_failed`: 593
-- `trace_timeout`: 102
+- `trace_timeout`: 106
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 434
-- `mixed_nonterminal.multiple_item_states`: 132
+- `parser_review_required.all_disclosed_items_rejected`: 431
+- `mixed_nonterminal.multiple_item_states`: 135
 - `terminal.all_disclosed_items_terminal`: 34
 - `converted_pending_intake.all_disclosed_items_converted`: 19
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1330
-- `terminal.process_receipt_classified`: 695
-- `converted_pending_intake.process_isolated_zmx_ready`: 497
+- `parser_review_required.deterministic_parser_rejected`: 1332
+- `terminal.process_receipt_classified`: 699
+- `converted_pending_intake.process_isolated_zmx_ready`: 507
 - `conversion_retry_required.patent_budget_exhausted`: 28
 
 ## Source attempts
@@ -68,15 +68,15 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 275
+- `generic_summary_metadata_missing`: 272
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
-- `generic_surface_radius_not_numeric`: 112
+- `generic_surface_radius_not_numeric`: 115
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62
-- `generic_surface_table_index_break`: 33
+- `generic_surface_table_index_break`: 35
 - `other_sunny_s1_row_has_unexpected_extra_values_n_n_n`: 29
 - `other_finite_object_state_is_published_but_unsupported_by_the_infinity_conjugate_replay_model_object_distance_n`: 24
 - `ocr_corrupted_exponent`: 21
