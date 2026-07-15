@@ -2822,7 +2822,9 @@ def _genius_four_lens_eleven_pdf_ocr_parser_input() -> bytes:
         "publication_id": "US-20170097490-A1",
         "page_count": 66,
         "source_facts": {
-            "primary_html_sha256": "c" * 64,
+            "primary_html_sha256": (
+                "0211f3fe1bdd3152ab6c57c25e4991603504980b37398c9ae5cbcb9812c43dea"
+            ),
             "figure_binding_counts": figure_counts,
             "comparison_binding_counts": {
                 "FIG. 46 shows a comparison table": 1,
@@ -3832,6 +3834,62 @@ def test_genius_four_lens_eleven_source_facts_bind_every_figure() -> None:
     assert facts["fno_label_count"] == 1
 
 
+@pytest.mark.parametrize(
+    ("source_sha256", "page_count", "drawing_page_offset", "blank_pages"),
+    (
+        (
+            "0211f3fe1bdd3152ab6c57c25e4991603504980b37398c9ae5cbcb9812c43dea",
+            66,
+            1,
+            frozenset({6, 17, 21, 33, 45}),
+        ),
+        (
+            "3b6a1046e050f84cd85e6e04efeee1a2ca96ff2450b1b810816733d7a3d03a73",
+            65,
+            1,
+            frozenset({48}),
+        ),
+        (
+            "bdc8b8babf2e783d5c8bb49be17a1c79ff143aba871d0ac217edc6e63e8def6a",
+            66,
+            2,
+            frozenset({6, 7, 11, 19, 23, 27, 32, 50}),
+        ),
+        (
+            "8b17a79c47cb8c9b589e62cba4097197485d1827ea7ed7147ba57da9f4ccd873",
+            65,
+            1,
+            frozenset({6, 10, 17, 30, 41, 42, 48}),
+        ),
+    ),
+)
+def test_genius_four_lens_eleven_source_layout_is_exact(
+    source_sha256: str,
+    page_count: int,
+    drawing_page_offset: int,
+    blank_pages: frozenset[int],
+) -> None:
+    layout = (
+        patent_pdf_recovery.genius_four_lens_eleven_source_layout_for_sha256(
+            source_sha256
+        )
+    )
+
+    assert layout["page_count"] == page_count
+    assert layout["drawing_page_offset"] == drawing_page_offset
+    assert layout["blank_mirror_pages"] == blank_pages
+
+
+def test_genius_four_lens_eleven_source_layout_rejects_changed_html() -> None:
+    with pytest.raises(
+        patent_pdf_recovery.PatentPdfRecoveryError,
+        match="official HTML is not source-locked",
+    ):
+        patent_pdf_recovery.genius_four_lens_eleven_source_layout_for_sha256(
+            "0" * 64
+        )
+
+
 def test_genius_nine_lens_eleven_source_facts_bind_every_figure() -> None:
     markers = patent_pdf_recovery._GENIUS_NINE_LENS_ELEVEN_REQUIRED_FIGURE_TEXT
     comparisons = patent_pdf_recovery._GENIUS_NINE_LENS_ELEVEN_COMPARISON_MARKERS
@@ -4156,6 +4214,56 @@ def test_genius_four_lens_eleven_profile_retains_every_embodiment() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _genius_four_lens_eleven_pdf_ocr_parser_input().decode(),
         patent_id="US-20170097490-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 12))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "optical/asphere/Fno census passed; numeric cell parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+@pytest.mark.parametrize(
+    ("publication_id", "primary_html_sha256", "page_count", "page_shift"),
+    (
+        (
+            "US-20150077867-A1",
+            "3b6a1046e050f84cd85e6e04efeee1a2ca96ff2450b1b810816733d7a3d03a73",
+            65,
+            0,
+        ),
+        (
+            "US-8929000-B2",
+            "bdc8b8babf2e783d5c8bb49be17a1c79ff143aba871d0ac217edc6e63e8def6a",
+            66,
+            1,
+        ),
+        (
+            "US-9341816-B2",
+            "8b17a79c47cb8c9b589e62cba4097197485d1827ea7ed7147ba57da9f4ccd873",
+            65,
+            0,
+        ),
+    ),
+)
+def test_genius_four_lens_eleven_profile_uses_source_locked_page_offset(
+    publication_id: str,
+    primary_html_sha256: str,
+    page_count: int,
+    page_shift: int,
+) -> None:
+    payload = json.loads(_genius_four_lens_eleven_pdf_ocr_parser_input())
+    payload["publication_id"] = publication_id
+    payload["page_count"] = page_count
+    payload["source_facts"]["primary_html_sha256"] = primary_html_sha256
+    for page in payload["pages"]:
+        page["page_number"] += page_shift
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id=publication_id,
     )
 
     assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 12))

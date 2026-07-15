@@ -1140,6 +1140,40 @@ thresholds, or claim patent saturation.
   terminal, 384 parser review, and 139 mixed; item states are 530 converted, 824 terminal, 1416
   parser review, and 28 retry. All 244 focused parser/census/replay/process tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- Genius Family ID `48153254` source recovery covers official records `US-20150077867-A1`,
+  `US-8929000-B2`, and `US-9341816-B2`. All three exact HTML sources bind the existing
+  `genius_four_lens_eleven_embodiment_census_v1` profile. Their official drawing PDFs contain
+  65/66/65 pages. Drawing sheets use PDF-page offsets +1/+2/+1, and their exact Google OCR
+  blank-page sets are `{48}`, `{6,7,11,19,23,27,32,50}`, and
+  `{6,10,17,30,41,42,48}`. Each official/Google pair has zero decoded-raster mismatches.
+- The recovery and conversion layers now share the official-HTML-digest layout map instead of
+  hard-coding 66 pages and one offset. The live USPTO endpoint can repackage equivalent PDF
+  bytes, so first recovery is locked by the exact HTML/layout/blank-page/raster checks and then
+  persists the actual PDF bytes in an immutable source pin. `US-9341816-B2` additionally retains
+  the exact application `14/549477` prior-publication linkage to `US-20150077867-A1`.
+- Attempts 2--4 remain append-only evidence of the prior blank-page, premature PDF-byte-hash, and
+  cross-layer page-layout failures. Attempts 5/6 are canonical-equal after excluding
+  `result_attempt`: `US-20150077867`=
+  `b56d7021a9cd5ec86e68f98405fdba9def87e76f98a2d2063cc79028c07cae05`,
+  `US-8929000`=`f54012bc5471679213dee31536d34c96343d6c5abd2c31eca35520e2c35139f2`,
+  and `US-9341816`=`7b760ecf8c5db1527ba84696f3b99a98f2463efd64da21c3414472788bbbde53`.
+  Parser-input SHA-256 values are `ff3d3260a374dbc5b522147e0d5aef0a8cde67e16cbac6c85e478c0bc7f5ed07`,
+  `dc5a8f8ca86f3b2bb147348d8f76261cdc343d7188e87a7a34a81d66c330addd`, and
+  `01b89df8fa794a2ae468dcd127f6fb2074b83d6981d6aeac8beea1a02bfd3582`.
+- Every root now has eleven independent parser-review items. Actual failures include missing or
+  below-0.95 `Surface#`, `Radius`, drawing-sheet, and surface-ID labels plus Fno label/value
+  confidence below the unchanged 0.95/0.99 gates. No OCR token or number is repaired; all
+  conversion attempt IDs remain null, and no worker, ZMX, intake, or expert judgment is created.
+  Generic summary changes 201 to 198, so Sunny metadata at 199 becomes the next largest bucket.
+  Current result-set SHA-256 is
+  `ed9087181ff378f73bb3adccab677183915a3f1429b264355ed8cc908735871f`;
+  summary SHA-256 is `73de95a9c5c861389a38d3dfc8080e036b21ae141772ec7c1cf1577babeb210a`;
+  report SHA-256 is `dccc60ba37664b5826b5befc2b25d2f7e05c061a050f02190c4d67477f6e53cc`;
+  after-census SHA-256 is `6826002d3d670770440f3c645ba79d94c1532961372848dc719dd736403f3363`.
+  Strict audit remains 619/619 with zero corrupt evidence; root states remain 23 converted, 73
+  terminal, 384 parser review, and 139 mixed; item states are 530 converted, 824 terminal, 1446
+  parser review, and 28 retry. All 252 focused parser/census/replay/process tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 
 ## Completion condition
 

@@ -57,6 +57,7 @@ from scripts.patent_pdf_recovery import (  # noqa: E402
     PatentPdfCachedSources,
     PatentPdfOcrRecovery,
     PatentPdfRecoveryError,
+    genius_four_lens_eleven_source_layout_for_sha256,
     recover_ability_official_pdf_ocr,
 )
 
@@ -5079,17 +5080,26 @@ def _genius_comparison_census_error(page: dict[str, Any]) -> str | None:
 def _parse_genius_four_lens_eleven_attempts(
     payload: dict[str, Any],
 ) -> list[_PrescriptionParseAttempt]:
-    if payload.get("page_count") != 66:
-        raise PatentParseError("Genius eleven-embodiment PDF page count is not 66")
-    pages = payload.get("pages")
-    if not isinstance(pages, list) or len(pages) != 23:
-        raise PatentParseError("Genius eleven-embodiment PDF must retain 23 key pages")
     facts = payload.get("source_facts")
     if not isinstance(facts, dict):
         raise PatentParseError("Genius parser input lacks official source facts")
     primary_digest = facts.get("primary_html_sha256")
     if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
         raise PatentParseError("Genius official HTML hash is invalid")
+    try:
+        source_layout = genius_four_lens_eleven_source_layout_for_sha256(primary_digest)
+    except PatentPdfRecoveryError as exc:
+        raise PatentParseError(str(exc)) from exc
+    expected_page_count = source_layout["page_count"]
+    if payload.get("page_count") != expected_page_count:
+        raise PatentParseError(
+            "Genius eleven-embodiment PDF page count changed: "
+            f"actual={payload.get('page_count')} expected={expected_page_count}"
+        )
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 23:
+        raise PatentParseError("Genius eleven-embodiment PDF must retain 23 key pages")
+    drawing_page_offset = source_layout["drawing_page_offset"]
     figure_counts = facts.get("figure_binding_counts")
     comparison_counts = facts.get("comparison_binding_counts")
     if (
@@ -5106,7 +5116,7 @@ def _parse_genius_four_lens_eleven_attempts(
     comparison_page = _ability_page(payload, "genius_comparison")
     comparison_binding_error = _genius_page_binding_error(
         comparison_page,
-        page_number=47,
+        page_number=46 + drawing_page_offset,
         sheet_number=46,
         role="genius_comparison",
     )
@@ -5116,8 +5126,8 @@ def _parse_genius_four_lens_eleven_attempts(
     for embodiment_number in range(1, 12):
         optical_figure = 2 if embodiment_number == 1 else 4 * embodiment_number - 1
         asphere_figure = 4 * embodiment_number
-        optical_page_number = optical_figure + 1
-        asphere_page_number = asphere_figure + 1
+        optical_page_number = optical_figure + drawing_page_offset
+        asphere_page_number = asphere_figure + drawing_page_offset
         optical_page = _ability_page(payload, f"genius_optical_{embodiment_number}")
         asphere_page = _ability_page(payload, f"genius_asphere_{embodiment_number}")
         errors = [

@@ -137,7 +137,28 @@ _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS = (
     "all 11 example embodiments shown in FIGS. 1",
 )
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
-_GENIUS_FOUR_LENS_ELEVEN_ALLOWED_BLANK_MIRROR_PAGES = frozenset({6, 17, 21, 33, 45})
+_GENIUS_FOUR_LENS_ELEVEN_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "0211f3fe1bdd3152ab6c57c25e4991603504980b37398c9ae5cbcb9812c43dea": {
+        "page_count": 66,
+        "drawing_page_offset": 1,
+        "blank_mirror_pages": frozenset({6, 17, 21, 33, 45}),
+    },
+    "3b6a1046e050f84cd85e6e04efeee1a2ca96ff2450b1b810816733d7a3d03a73": {
+        "page_count": 65,
+        "drawing_page_offset": 1,
+        "blank_mirror_pages": frozenset({48}),
+    },
+    "bdc8b8babf2e783d5c8bb49be17a1c79ff143aba871d0ac217edc6e63e8def6a": {
+        "page_count": 66,
+        "drawing_page_offset": 2,
+        "blank_mirror_pages": frozenset({6, 7, 11, 19, 23, 27, 32, 50}),
+    },
+    "8b17a79c47cb8c9b589e62cba4097197485d1827ea7ed7147ba57da9f4ccd873": {
+        "page_count": 65,
+        "drawing_page_offset": 1,
+        "blank_mirror_pages": frozenset({6, 10, 17, 30, 41, 42, 48}),
+    },
+}
 _GENIUS_NINE_LENS_ELEVEN_ORDINALS = (
     "first",
     "second",
@@ -706,6 +727,26 @@ def _genius_four_lens_eleven_source_facts(raw_html: str) -> dict[str, Any]:
     }
 
 
+def _genius_four_lens_eleven_source_layout(raw_html: str) -> dict[str, Any]:
+    """Return an exact PDF layout pinned to one retained official HTML source."""
+
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    return genius_four_lens_eleven_source_layout_for_sha256(digest)
+
+
+def genius_four_lens_eleven_source_layout_for_sha256(
+    digest: str,
+) -> dict[str, Any]:
+    """Return the source-locked PDF layout for an official HTML digest."""
+
+    layout = _GENIUS_FOUR_LENS_ELEVEN_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Genius four-lens eleven-embodiment official HTML is not source-locked"
+        )
+    return layout
+
+
 def _genius_four_lens_nine_source_facts(raw_html: str) -> dict[str, Any]:
     """Bind all nine four-lens figure pairs and four comparison figures."""
 
@@ -1084,6 +1125,12 @@ async def recover_ability_official_pdf_ocr(
     if (mirror_pdf is None) != (mirror_url is None):
         raise PatentPdfRecoveryError("Google OCR PDF URL/content availability differs")
 
+    genius_four_lens_layout: dict[str, Any] | None = None
+    if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
+        genius_four_lens_layout = _genius_four_lens_eleven_source_layout(primary_html)
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError("Genius mirror PDF is unavailable")
+
     official_reader = pypdf.PdfReader(io.BytesIO(official_pdf))
     mirror_reader = pypdf.PdfReader(io.BytesIO(mirror_pdf)) if mirror_pdf is not None else None
     if mirror_reader is not None and len(official_reader.pages) != len(mirror_reader.pages):
@@ -1100,13 +1147,14 @@ async def recover_ability_official_pdf_ocr(
         if not text.strip()
     }
     if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
-        unexpected_blank_pages = (
-            blank_mirror_pages - _GENIUS_FOUR_LENS_ELEVEN_ALLOWED_BLANK_MIRROR_PAGES
-        )
-        if unexpected_blank_pages:
+        assert genius_four_lens_layout is not None
+        expected_blank_pages = genius_four_lens_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
             raise PatentPdfRecoveryError(
-                "Genius OCR overlay has unexpected blank pages: "
-                + ",".join(str(page) for page in sorted(unexpected_blank_pages))
+                "Genius OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
             )
     elif profile in _GENIUS_OFFICIAL_ONLY_PROFILES:
         # This exact profile does not use mirror text. When an overlay is
@@ -1352,9 +1400,15 @@ async def recover_ability_official_pdf_ocr(
         parser_profile = profile
         source_facts = _ability_zoom_two_state_source_facts(primary_html)
     elif profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
-        if page_count != 66:
-            raise PatentPdfRecoveryError("Genius eleven-embodiment PDF page count is not 66")
-        role_pages = {}
+        assert genius_four_lens_layout is not None
+        expected_page_count = genius_four_lens_layout["page_count"]
+        if page_count != expected_page_count:
+            raise PatentPdfRecoveryError(
+                "Genius eleven-embodiment PDF page count changed: "
+                f"actual={page_count} expected={expected_page_count}"
+            )
+        drawing_page_offset = genius_four_lens_layout["drawing_page_offset"]
+        role_sheets: dict[str, int] = {}
         for embodiment, (optical_figure, asphere_figure) in enumerate(
             zip(
                 _GENIUS_FOUR_LENS_ELEVEN_OPTICAL_FIGURES,
@@ -1363,14 +1417,19 @@ async def recover_ability_official_pdf_ocr(
             ),
             start=1,
         ):
-            optical_page_index = 2 if embodiment == 1 else optical_figure
-            asphere_page_index = asphere_figure
-            role_pages[f"genius_optical_{embodiment}"] = optical_page_index
-            role_pages[f"genius_asphere_{embodiment}"] = asphere_page_index
-        role_pages["genius_comparison"] = 46
+            role_sheets[f"genius_optical_{embodiment}"] = (
+                2 if embodiment == 1 else optical_figure
+            )
+            role_sheets[f"genius_asphere_{embodiment}"] = asphere_figure
+        role_sheets["genius_comparison"] = 46
+        role_pages = {
+            role: sheet + drawing_page_offset - 1
+            for role, sheet in role_sheets.items()
+        }
         for role, page_index in role_pages.items():
+            sheet = role_sheets[role]
             mirror_text = mirror_texts[page_index]
-            if mirror_text and f"Sheet {page_index} of 48" not in re.sub(
+            if mirror_text and f"Sheet {sheet} of 48" not in re.sub(
                 r"\s+", " ", mirror_text
             ):
                 raise PatentPdfRecoveryError(

@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `3ff7444c5965a0fdae48ff97fa66b3d32ead0c7d0dfc90c4badb05f9e60b96a2`
+- result_set_sha256: `ed9087181ff378f73bb3adccab677183915a3f1429b264355ed8cc908735871f`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 530
 - `terminal`: 824
-- `parser_review_required`: 1416
+- `parser_review_required`: 1446
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1416
+- `parser_review_required.deterministic_parser_rejected`: 1446
 - `terminal.process_receipt_classified`: 714
 - `converted_pending_intake.process_isolated_zmx_ready`: 530
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
@@ -81,8 +81,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 201
 - `sunny_embodiment_metadata_missing`: 199
+- `generic_summary_metadata_missing`: 198
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
 - `generic_surface_radius_not_numeric`: 115
@@ -105,6 +105,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 7
 - `other_folded_zoom_system_n_surface_index_break_expected_s8_found_s7`: 6
 - `other_kantatsu_missing_half_field_example_n_published_half_field_value_is_absent_from_the_table_header`: 6
+- `other_optical_table_has_n_accepted_radius_headers_asphere_table_has_n_exact_surface_headers_fig_n_panel_n_fno_lab_25f8d3f7f98f`: 6
 - `other_sunny_s3_row_has_unexpected_extra_values_n_n_n`: 6
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6
@@ -117,6 +118,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_r10_thickness_is_not_numeric_d10`: 4
 - `other_r4_thickness_is_not_numeric_d4`: 4
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bk7_schott`: 4
+- `other_asphere_table_has_n_exact_surface_headers_fig_n_panel_n_fno_token_token_confidence_n_is_below_n`: 3
 - `other_aspheric_row_a4_has_more_numeric_values_than_surfaces_extra_token`: 3
 - `other_folded_zoom_system_n_uses_unsupported_published_qtyp_nr_a0_a6_surfaces`: 3
 - `other_kantatsu_example_n_surface_sequence_must_be_n_n`: 3
@@ -133,7 +135,15 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_newmax_a_row_has_nonnumeric_data_token_positive`: 2
 - `other_optical_metadata_label_efl_confidence_n_is_below_n_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 2
 - `other_optical_metadata_label_efl_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 2
+- `other_optical_table_surface_confidence_n_is_below_n_asphere_table_has_n_exact_surface_headers_fig_n_panel_n_fno_l_8a8ad8fb644d`: 2
+- `other_optical_table_surface_header_has_n_coordinate_ocr_candidates_asphere_table_has_n_exact_surface_headers_fig_fbc202300362`: 2
+- `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_table_has_n_exact_surfac_09342362f878`: 2
+- `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_table_surface_confidence_4bd14666e52e`: 2
+- `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_has_n_exact_surface_headers_fig_n_panel_7d5e120d1590`: 2
+- `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_has_n_exact_surface_headers_fig_n_panel_a70a8c9bb167`: 2
 - `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_confidence_n_is_below_n`: 2
+- `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_confidence_n_is_below_n_fig_n_pa_dfd8a62af989`: 2
+- `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_n_has_n_exact_ocr_label_tokens_f_8bf2118adcc0`: 2
 - `other_r2_thickness_is_not_numeric_d2`: 2
 - `other_sekonix_glass_code_cannot_be_split_deterministically_token`: 2
 - `other_stop_thickness_is_not_numeric_d0`: 2
@@ -168,6 +178,13 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_genius_nine_eleven_optical_7_has_n_drawing_sheet_header_tokens_asphere_table_label_token_confidence_n_is_be_93e9c088f706`: 1
 - `other_genius_nine_eleven_optical_8_has_n_drawing_sheet_header_tokens_genius_nine_eleven_comparison_2_drawing_shee_f3136e470111`: 1
 - `other_genius_nine_eleven_optical_9_has_n_drawing_sheet_header_tokens_asphere_table_label_token_confidence_n_is_be_6e6fc5771478`: 1
+- `other_genius_optical_10_has_n_drawing_sheet_header_tokens_optical_table_surface_header_token_token_does_not_equal_22d7076a9e33`: 1
+- `other_genius_optical_11_has_n_drawing_sheet_header_tokens_optical_table_surface_n_has_n_exact_ocr_label_tokens_as_64160926c433`: 1
+- `other_genius_optical_3_drawing_sheet_header_confidence_n_is_below_n_asphere_table_surface_n_confidence_n_is_below_0c7f08131298`: 1
+- `other_genius_optical_4_drawing_sheet_header_confidence_n_is_below_n_optical_table_surface_header_token_token_does_4f687845171b`: 1
+- `other_genius_optical_6_has_n_drawing_sheet_header_tokens_optical_table_surface_n_confidence_n_is_below_n_asphere_f18cdf583033`: 1
+- `other_genius_optical_8_drawing_sheet_header_confidence_n_is_below_n_optical_table_has_n_accepted_radius_headers_a_d1e86cbc5855`: 1
+- `other_genius_optical_9_has_n_drawing_sheet_header_tokens_optical_table_surface_header_token_token_does_not_equal_5103393acf61`: 1
 - `other_genius_six_asphere_1_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_below_n`: 1
 - `other_genius_six_asphere_3_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_7c9ff752e955`: 1
 - `other_genius_six_asphere_4_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_ac80028645fd`: 1
@@ -225,6 +242,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_table_surface_confidence_n_is_below_n_asphere_table_surface_confidence_n_is_below_n`: 1
 - `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_coefficient_label_a4_con_602028eaba4f`: 1
 - `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_coefficient_label_a4_con_91e338c1d9f8`: 1
+- `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_table_surface_n_confiden_29ea736dab40`: 1
 - `other_optical_table_surface_n_confidence_n_is_below_n_asphere_table_surface_n_confidence_n_is_below_n`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
 - `other_samsung_even_order_embodiment_n_asphere_headers_must_be_s1_s8_and_s9_s16`: 1
