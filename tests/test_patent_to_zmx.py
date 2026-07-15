@@ -1290,6 +1290,63 @@ def test_kantatsu_missing_half_field_requires_published_definition() -> None:
     )
 
 
+def test_kantatsu_damaged_metadata_never_binds_unlabeled_values() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "9b970512355845fe"
+        / "US-20210396957-A1.html"
+    )
+    raw = source.read_bytes()
+
+    assert hashlib.sha256(raw).hexdigest() == (
+        "9b970512355845fe334608f7850c37c952153e6600f2775493f858cf1477f71a"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw.decode("utf-8"),
+        patent_id="US-20210396957-A1",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 5))
+    assert all(
+        "published ih/Fno/half-field labels are absent from the table header" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_kantatsu_damaged_metadata_requires_published_definition() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "9b970512355845fe"
+        / "US-20210396957-A1.html"
+    )
+    text = source.read_text(encoding="utf-8").replace(
+        "denotes a half field of view",
+        "is not defined here",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-20210396957-NO-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "published half-field definition not found" in str(attempt.error) for attempt in attempts
+    )
+
+
 def test_kantatsu_inline_retained_source_parses_only_complete_examples() -> None:
     source = (
         Path(__file__).resolve().parents[1]

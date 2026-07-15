@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `49332a57b7888eda04118ab704c042a56a27de66cdfc46fd04630a70176d4e49`
+- result_set_sha256: `53652aa9fbad3a49960de0736c8415df00f5df919bb2d8934278dac245c40dc5`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 510
 - `terminal`: 708
-- `parser_review_required`: 1352
+- `parser_review_required`: 1355
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1352
+- `parser_review_required.deterministic_parser_rejected`: 1355
 - `terminal.process_receipt_classified`: 708
 - `converted_pending_intake.process_isolated_zmx_ready`: 510
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -68,7 +68,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 267
+- `generic_summary_metadata_missing`: 266
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -94,6 +94,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6
 - `sekonix_surface_row_incomplete`: 6
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a36_n`: 5
+- `other_kantatsu_damaged_metadata_example_n_published_ih_fno_half_field_labels_are_absent_from_the_table_header`: 4
 - `other_r10_thickness_is_not_numeric_d10`: 4
 - `other_r4_thickness_is_not_numeric_d4`: 4
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bk7_schott`: 4

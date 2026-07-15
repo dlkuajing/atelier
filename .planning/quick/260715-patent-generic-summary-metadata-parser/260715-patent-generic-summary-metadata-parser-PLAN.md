@@ -285,6 +285,23 @@ thresholds, or claim patent saturation.
   is `56d2836382bad8321a3d24e3418af4ff94175ced5fe1f9dd73c2e36693d0f5d6` and contains 267 roots
   across 153 normalized signatures; 107 focused parser/census/replay/process tests and Ruff pass;
   CODE V inventory remains zero.
+- The fourteenth source-proven family is the four-example Kantatsu layout in
+  `US-20210396957`. A complete 267-root ownership scan matched only this retained official PPUBS
+  document, whose SHA-256 is
+  `9b970512355845fe334608f7850c37c952153e6600f2775493f858cf1477f71a`.
+  Its narrative defines f, Fno, half field, and ih, and binds examples 1--4 to tables 1--4, but
+  each source table header retains five numeric positions while the ih/Fno/half-field labels are
+  absent. The parser refuses to bind those positions by order or infer their identities.
+- Append-only replay replaced the one document-scoped generic failure with four source-hash-bound
+  embodiment parser rejections stating that the published ih/Fno/half-field labels are absent.
+  No conversion ran and no candidate was promoted. The generic document bucket changed 267 to
+  266. Result-set SHA-256 is
+  `53652aa9fbad3a49960de0736c8415df00f5df919bb2d8934278dac245c40dc5`; summary artifact
+  SHA-256 is `3e37d32bac8d69dc04b84877e9008e61def1b66451bba0b02003e988c40a19b6`;
+  strict audit is 619/619 with zero corrupt evidence. The after-fourteenth-layout census SHA-256
+  is `7b15036db05a82a178f0608395c4de692ea50a15ffd724843aa89539c1e922e2` and contains 266 roots
+  across 152 normalized signatures; 110 focused parser/census/replay/process tests and Ruff pass;
+  CODE V inventory remains zero.
 
 ## Completion condition
 
