@@ -1711,7 +1711,11 @@ def _parse_sunny_table_attempts(
     if not surface_blocks:
         return []
 
-    consolidated = _sunny_consolidated_meta_rows(blocks)
+    consolidated = _sunny_consolidated_meta_rows(
+        blocks,
+        embodiment_count=len(surface_blocks),
+        document_text=text,
+    )
     attempts: list[_PrescriptionParseAttempt] = []
     for embodiment_number, (_block_index, block) in enumerate(surface_blocks, start=1):
         embodiment = f"Sunny embodiment {embodiment_number}"
@@ -2070,53 +2074,104 @@ _SUNNY_CONSOLIDATED_LABELS: dict[str, tuple[str, ...]] = {
 }
 
 
-def _sunny_consolidated_meta_rows(blocks: list[_PatentTableBlock]) -> dict[str, list[float]]:
-    """Collect per-example value rows from a consolidated Sunny parameter table."""
+_SUNNY_GROUP_FNO_LABELS = (r"(?<![A-Za-z0-9/])f\s*/\s*EPD(?!\s*\()",)
+_SUNNY_GROUP_FULL_FOV_LABELS = (r"(?<![-A-Za-z])FOV\s*(?:\([^)]*\))?",)
 
-    rows: dict[str, list[float]] = {}
+
+def _sunny_group_row_values(
+    blocks: list[_PatentTableBlock],
+    *,
+    label_patterns: tuple[str, ...],
+    embodiment_count: int,
+    reject_compound_fno: bool = False,
+) -> list[float] | None:
+    """Return one unambiguous, complete per-embodiment row.
+
+    Sunny changes the order of words such as ``Example``, ``Embodiment``,
+    ``Condition``, and ``Expression`` across related filings.  The stable
+    structure is the exact row label followed by one published value per
+    disclosed surface table.  Requiring exact cardinality avoids treating a
+    bound, a per-example scalar, or an unrelated conditional row as metadata.
+    """
+
+    candidates: set[tuple[float, ...]] = set()
     for block in blocks:
         body = _cut_sunny_table_narrative(block.text)
-        if re.search(r"\bconditional\s+expressions?\b", body, flags=re.IGNORECASE) is not None:
-            # Conditional-expression summary tables list per-embodiment values;
-            # the only metadata field they reliably carry is the working
-            # F-number as an "f/EPD" row.
-            match = re.search(
-                rf"f\s*/\s*EPD\s+((?:{NUMBER_PATTERN}\s*)+)",
+        for label_pattern in label_patterns:
+            for match in re.finditer(
+                rf"{label_pattern}\s+((?:{NUMBER_PATTERN}\s*)+)",
                 body,
                 flags=re.IGNORECASE,
-            )
-            if match is not None and "fno" not in rows:
-                values = [
+            ):
+                if reject_compound_fno:
+                    prefix = body[max(0, match.start() - 32) : match.start()]
+                    if re.search(
+                        r"(?:ImgH|TTL|TL|DT\w*)\s*[×*]\s*$",
+                        prefix,
+                        flags=re.IGNORECASE,
+                    ) is not None:
+                        # ``ImgH × f/EPD (mm)`` is a dimensional condition,
+                        # not the working F-number row.
+                        continue
+                values = tuple(
                     _parse_number(token)
                     for token in match.group(1).split()
                     if re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
-                ]
-                if len(values) >= 2:
-                    rows["fno"] = values
-            continue
-        if re.search(r"\bparameters?\b", body, flags=re.IGNORECASE) is None:
-            continue
-        if re.search(r"\bConditional\b", body, flags=re.IGNORECASE) is not None:
-            continue
-        for meta_field, label_patterns in _SUNNY_CONSOLIDATED_LABELS.items():
-            if meta_field in rows:
-                continue
-            for label_pattern in label_patterns:
-                match = re.search(
-                    rf"{label_pattern}\s*((?:{NUMBER_PATTERN}\s*)+)",
-                    body,
-                    flags=re.IGNORECASE,
                 )
-                if match is None:
-                    continue
-                values = [
-                    _parse_number(token)
-                    for token in match.group(1).split()
-                    if re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
-                ]
-                if len(values) >= 2:
-                    rows[meta_field] = values
-                    break
+                if len(values) == embodiment_count:
+                    candidates.add(values)
+    if len(candidates) != 1:
+        return None
+    return list(next(iter(candidates)))
+
+
+def _sunny_fov_is_full_angle(document_text: str) -> bool:
+    full_field = r"(?:maximum|maximal|full)\s+(?:diagonal\s+)?field[- ]of[- ]view"
+    patterns = (
+        rf"{full_field}\s+FOV\b",
+        rf"\bFOV\b\s+(?:is|represents|denotes)\s+(?:a\s+|the\s+)?{full_field}",
+    )
+    return any(re.search(pattern, document_text, flags=re.IGNORECASE) for pattern in patterns)
+
+
+def _sunny_consolidated_meta_rows(
+    blocks: list[_PatentTableBlock],
+    *,
+    embodiment_count: int,
+    document_text: str,
+) -> dict[str, list[float]]:
+    """Collect exact, cardinality-bound per-embodiment Sunny metadata rows."""
+
+    rows: dict[str, list[float]] = {}
+    for meta_field, label_patterns in _SUNNY_CONSOLIDATED_LABELS.items():
+        values = _sunny_group_row_values(
+            blocks,
+            label_patterns=label_patterns,
+            embodiment_count=embodiment_count,
+        )
+        if values is not None:
+            rows[meta_field] = values
+
+    f_numbers = _sunny_group_row_values(
+        blocks,
+        label_patterns=_SUNNY_GROUP_FNO_LABELS,
+        embodiment_count=embodiment_count,
+        reject_compound_fno=True,
+    )
+    if f_numbers is not None:
+        rows["fno"] = f_numbers
+
+    if "hfov" not in rows and _sunny_fov_is_full_angle(document_text):
+        full_fovs = _sunny_group_row_values(
+            blocks,
+            label_patterns=_SUNNY_GROUP_FULL_FOV_LABELS,
+            embodiment_count=embodiment_count,
+        )
+        if full_fovs is not None and all(0.0 < value < 180.0 for value in full_fovs):
+            # PatentPrescription stores half field angle.  The document must
+            # explicitly define FOV as the maximum/full field before this
+            # deterministic unit transform is allowed.
+            rows["hfov"] = [value / 2.0 for value in full_fovs]
     return rows
 
 

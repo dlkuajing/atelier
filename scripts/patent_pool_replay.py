@@ -31,6 +31,7 @@ from app.core.patent_replay import (  # noqa: E402
     load_replay_cohort,
     load_root_replay_result,
     next_result_attempt,
+    parser_failure_signature,
     replay_report_markdown,
     sha256_bytes,
     summarize_replay_results,
@@ -96,6 +97,7 @@ async def run_replay(
     only_roots: frozenset[str] | None = None,
     retry_nonterminal: bool = False,
     retry_root_states: frozenset[RootReplayState] | None = None,
+    retry_parser_signatures: frozenset[str] | None = None,
 ) -> int:
     """Replay up to ``limit`` roots, atomically checkpointing after each root."""
 
@@ -105,9 +107,17 @@ async def run_replay(
         raise PatentReplayError("delay_seconds must be non-negative")
     if patent_budget_seconds <= 0:
         raise PatentReplayError("patent_budget_seconds must be positive")
-    if retry_nonterminal and retry_root_states:
+    retry_selectors = sum(
+        (
+            bool(retry_nonterminal),
+            bool(retry_root_states),
+            bool(retry_parser_signatures),
+        )
+    )
+    if retry_selectors > 1:
         raise PatentReplayError(
-            "retry_nonterminal and retry_root_states are mutually exclusive"
+            "retry_nonterminal, retry_root_states, and retry_parser_signatures "
+            "are mutually exclusive"
         )
     verify_replay_cohort_inputs(cohort, repo_root=ROOT)
     digest = cohort_sha256(cohort)
@@ -132,6 +142,14 @@ async def run_replay(
                 raise PatentReplayError(f"result/cohort mismatch: {latest}")
             if retry_root_states is not None:
                 if previous.root_state not in retry_root_states:
+                    continue
+            elif retry_parser_signatures is not None:
+                current_signatures = {
+                    parser_failure_signature(item.detail)
+                    for item in previous.items
+                    if item.state is ReplayItemState.PARSER_REVIEW_REQUIRED
+                }
+                if current_signatures.isdisjoint(retry_parser_signatures):
                     continue
             elif not retry_nonterminal or previous.root_state is RootReplayState.TERMINAL:
                 continue
@@ -522,6 +540,12 @@ def main() -> int:
         choices=tuple(state.value for state in RootReplayState),
         default=[],
     )
+    run_parser.add_argument(
+        "--retry-parser-signature",
+        action="append",
+        default=[],
+        help="append-only retry of roots whose latest result contains this parser signature",
+    )
     audit_parser = subparsers.add_parser("audit")
     _add_common_paths(audit_parser)
     report_parser = subparsers.add_parser("report")
@@ -561,6 +585,7 @@ def main() -> int:
                     RootReplayState(value) for value in args.retry_root_state
                 )
                 or None,
+                retry_parser_signatures=frozenset(args.retry_parser_signature) or None,
             )
         )
         summary = summarize_replay_results(cohort, results_dir=args.results_dir)

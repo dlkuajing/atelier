@@ -189,18 +189,20 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-saturation-ledger` | active-foundation-complete-saturation-incomplete | `.planning/quick/260715-patent-saturation-ledger/`、`data/patent-ledger/` 与 `.planning/loop/patent-saturation-baseline.md`；66 相关测试+Ruff 绿，三工件二次重建 byte-identical，严格 audit exit=1。 |
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
 | `260715-patent-local-pool-replay` | complete-local-replay-saturation-incomplete | Cohort SHA `e809823c...b42b`; 619/619 strict results, missing=0, corrupt=0; result-set SHA `3bc0bbee...76df`. Final items: parser review 1388, receipt terminal 631, staging pending intake 359, patent-budget retry 16. All current roots retain official PPUBS HTML. No-op replay processed 0 and preserved summary SHA `65122027...d130`. Parent saturation remains incomplete. |
+| `260715-patent-sunny-metadata-parser` | active-census | Bound to cohort SHA `e809823c...b42b` and pre-change result-set SHA `3bc0bbee...76df`; census all 299 `sunny_embodiment_metadata_missing` items from retained official HTML, implement only deterministic published layouts, then append-only targeted replay and full summary audit. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260715-patent-local-pool-replay/260715-patent-local-pool-replay-PLAN.md`,
+`.planning/quick/260715-patent-sunny-metadata-parser/260715-patent-sunny-metadata-parser-PLAN.md`,
 then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.py`; never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-highest-value executable work is the complete-cohort largest parser bucket: Sunny embodiment
-metadata missing (299), followed by full-pool deterministic replay and census comparison.
+highest-value executable work is the complete-cohort largest parser bucket: census every Sunny
+embodiment metadata missing item (299), implement only source-proven layouts, then run targeted
+and full-pool deterministic replay with census comparison.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three

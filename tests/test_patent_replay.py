@@ -21,7 +21,9 @@ from app.core.patent_replay import (
     build_replay_cohort,
     canonical_json_bytes,
     cohort_sha256,
+    latest_result_path,
     load_replay_cohort,
+    load_root_replay_result,
     next_result_attempt,
     parser_failure_signature,
     sha256_bytes,
@@ -287,6 +289,57 @@ def test_run_replay_resumes_without_refetching_completed_roots(
     assert asyncio.run(patent_pool_replay.run_replay(cohort, **kwargs)) == 1
     assert replayed_roots[-1] == cohort.members[0].root_id
     assert token_calls == 3
+
+    kwargs["retry_root_states"] = None
+    kwargs["retry_parser_signatures"] = frozenset(
+        {"aac_raytech_summary_metadata_missing"}
+    )
+    assert asyncio.run(patent_pool_replay.run_replay(cohort, **kwargs)) == 0
+    assert token_calls == 3
+
+    kwargs["retry_parser_signatures"] = frozenset(
+        {"sunny_embodiment_metadata_missing"}
+    )
+    latest = latest_result_path(tmp_path / "results", cohort.members[0].root_id)
+    assert latest is not None
+    previous = load_root_replay_result(latest)
+    parser_evidence = EvidenceRef(
+        evidence_type="fixture",
+        path="fixture.html",
+        sha256="0" * 64,
+    )
+    parser_item = ReplayItemResult(
+        item_id=f"{previous.publication_id}:e1",
+        state=ReplayItemState.PARSER_REVIEW_REQUIRED,
+        reason_code="parser_review_required.deterministic_parser_rejected",
+        detail="PatentParseError: Sunny embodiment 1 metadata missing: Fno",
+        evidence=(parser_evidence,),
+    )
+    parser_result = RootReplayResult(
+        cohort_sha256=previous.cohort_sha256,
+        root_id=previous.root_id,
+        result_attempt=previous.result_attempt + 1,
+        publication_id=previous.publication_id,
+        root_state=RootReplayState.PARSER_REVIEW_REQUIRED,
+        reason_code="parser_review_required.all_disclosed_items_rejected",
+        source_attempts=(
+            SourceFetchAttempt(
+                publication_id=previous.publication_id,
+                source_bucket="fixture",
+                state=SourceFetchState.RETAINED,
+                http_status=200,
+            ),
+        ),
+        raw_document=parser_evidence,
+        items=(parser_item,),
+    )
+    parser_path, _ = next_result_attempt(
+        tmp_path / "results", cohort.members[0].root_id
+    )
+    parser_path.write_bytes(canonical_json_bytes(parser_result))
+    assert asyncio.run(patent_pool_replay.run_replay(cohort, **kwargs)) == 1
+    assert replayed_roots[-1] == cohort.members[0].root_id
+    assert token_calls == 4
 
 
 def test_replay_schemas_reject_unstructured_or_duplicate_outcomes() -> None:

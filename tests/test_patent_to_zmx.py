@@ -615,6 +615,52 @@ def test_parse_sunny_narrative_meta_and_focal_length_column() -> None:
     assert lens1.asphere_coefficients["K"] == pytest.approx(0.2654)
 
 
+def test_sunny_group_rows_are_cardinality_bound_and_full_fov_is_halved() -> None:
+    raw_text = """
+    FOV is a maximum field of view of the optical imaging lens assembly.
+    TABLE-US-00001 TABLE 1 Conditional Embodiment Expression 1 2 3
+    f/EPD 1.37 1.28 1.19 ImgH/f 1.79 1.71 1.91
+    TABLE-US-00002 TABLE 2 embodiment parameter 1 2 3
+    f(mm) 3.10 3.20 3.30 FOV(deg) 120.0 122.0 124.0
+    """
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    rows = patent_to_zmx._sunny_consolidated_meta_rows(
+        patent_to_zmx._patent_table_blocks(text),
+        embodiment_count=3,
+        document_text=text,
+    )
+
+    assert rows == {
+        "efl": [3.10, 3.20, 3.30],
+        "fno": [1.37, 1.28, 1.19],
+        "hfov": [60.0, 61.0, 62.0],
+    }
+    assert patent_to_zmx._sunny_meta_for_embodiment(
+        text,
+        embodiment_number=2,
+        table_span=(0, 0),
+        consolidated=rows,
+    ) == pytest.approx((3.20, 1.28, 61.0))
+
+
+def test_sunny_group_rows_reject_compound_fno_and_undefined_or_ambiguous_fov() -> None:
+    raw_text = """
+    TABLE-US-00001 TABLE 1 Conditional/Embodiment 1 2 3
+    ImgH × f/EPD (mm) 3.10 3.20 3.30 FOV(deg) 120.0 122.0 124.0
+    TABLE-US-00002 TABLE 2 Example Condition 1 2 3
+    FOV(deg) 121.0 123.0 125.0
+    """
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    rows = patent_to_zmx._sunny_consolidated_meta_rows(
+        patent_to_zmx._patent_table_blocks(text),
+        embodiment_count=3,
+        document_text=text,
+    )
+
+    assert "fno" not in rows
+    assert "hfov" not in rows
+
+
 def test_parse_patent_prescription_accepts_ability_opto_tables() -> None:
     prescription = parse_patent_prescription(
         ABILITY_OPTO_TEXT,
