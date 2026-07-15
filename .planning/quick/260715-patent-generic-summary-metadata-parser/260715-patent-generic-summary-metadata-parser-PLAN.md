@@ -510,6 +510,27 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `9ce366aa248bbe5e720910a6e1a2fd286b3dd4346566185b75d7bc8bb0e5bd58`.
   Strict audit is 619/619 with zero corrupt evidence; 131 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero and no worker/ZMX for this root.
+- The next source-proven optical root in that heterogeneous zero-table signature is
+  `US-10809497-B2`. Official PPUBS HTML SHA-256
+  `a4776865cc4bf356f17d6648922065957c134be2d6db92d035423d79c8993490` binds four
+  prescriptions: OL1 FIG. 2A/2B, OL2 FIG. 4A/4B, OL3 FIG. 6A/6B, and OL4 FIG. 8; FIG. 9 is their
+  published property table. All 14 official/mirror decoded page rasters are pixel-identical, with
+  key pages 3/4/6/7/8.
+- FIG. 9 publishes focal lengths, curvature radii, and ratios but no FNO, F-number, or F/#. Those
+  labels occur zero times in official HTML and both retained OCR views. The profile therefore
+  records e1--e4 independently as terminal
+  `metadata_unpublished.system_f_number_absent`; it does not parse damaged prescription cells,
+  derive aperture from geometry, launch a worker, or create ZMX.
+- Append-only attempts 2/3 have identical canonical result SHA-256
+  `6aeaae4372e276e13bd2b02893d0b4086bb21c4212d14cf59b5b5cd024143a24`, parser SHA-256
+  `88e33380711f36f0b86086814041a12201b7a2625406e7a6622256da6b0e09ed`, and recovery-manifest
+  SHA-256 `a77d47c8ea3ab7d0adbb4bb343b1396217d01b2f659778709db6eac3bc1e48e0`.
+  Generic summary changed 255 to 254. Current result-set SHA-256 is
+  `85cb7850bbf805c01aa1528f3ada7bd337aed3eb82a1d67b8188ecd0a7259053`; summary artifact
+  SHA-256 is `bf11224997c6a8d11f7bffa569bf7165b3aebba942be2dd2994a04ab903fe32e`;
+  after-census SHA-256 is `31e2d1e72a50baa50e3162894bab16b272cc8ee5bd12326f5d3336efa9270ce8`.
+  Strict audit is 619/619 with zero corrupt evidence; 135 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

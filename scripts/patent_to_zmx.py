@@ -2416,6 +2416,7 @@ _ABILITY_EIGHT_LENS_PROFILE = "ability_eight_lens_metadata_unpublished_v1"
 _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
 _ABILITY_TWO_FIVE_LENS_PROFILE = "ability_two_five_lens_prescriptions_v1"
 _ABILITY_TWO_NINE_LENS_PROFILE = "ability_two_nine_lens_f_number_unpublished_v1"
+_ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -3769,6 +3770,107 @@ def _ability_two_nine_lens_terminal_attempts(
     ]
 
 
+def _ability_four_eight_lens_terminal_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    """Classify four eight-lens prescriptions whose source omits F-number."""
+
+    if payload.get("page_count") != 14:
+        raise PatentParseError("Ability four-eight-lens PDF page count is not retained")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 5:
+        raise PatentParseError("Ability four-eight-lens PDF must retain exactly five key pages")
+    page_requirements = (
+        (
+            "prescription_eight_ol1",
+            3,
+            ("FIG . 2A", "FIG . 2B", "Surface", "Curvature", "A12"),
+        ),
+        (
+            "prescription_eight_ol2",
+            4,
+            ("FIG . 4A", "FIG . 4B", "Surface", "Curvature", "A12"),
+        ),
+        (
+            "prescription_eight_ol3",
+            6,
+            ("FIG . 6A", "FIG . 6B", "Surface", "Curvature", "A12"),
+        ),
+        (
+            "prescription_eight_ol4",
+            7,
+            ("FIG . 8", "Surface", "Curvature", "Thickness", "Abbe"),
+        ),
+        (
+            "system_meta_four_eight",
+            8,
+            ("FIG . 9", "Optical lens OL1", "Optical lens OL4", "F1", "R1"),
+        ),
+    )
+    retained_pages: list[dict[str, Any]] = []
+    for role, page_number, required in page_requirements:
+        page = _ability_page(payload, role)
+        if page.get("page_number") != page_number:
+            raise PatentParseError(
+                f"Ability four-eight-lens role {role} is on the wrong page"
+            )
+        mirror_text = page.get("mirror_text")
+        if not isinstance(mirror_text, str) or any(
+            marker.casefold() not in mirror_text.casefold() for marker in required
+        ):
+            raise PatentParseError(
+                f"Ability four-eight-lens role {role} lacks figure/table markers"
+            )
+        retained_pages.append(page)
+
+    f_number_pattern = re.compile(
+        r"\b(?:FNO|F\s*[- ]?number|F\s*/\s*#)\b",
+        flags=re.IGNORECASE,
+    )
+    for page in retained_pages:
+        mirror_text = str(page["mirror_text"])
+        coordinate_text = " ".join(
+            _ability_token_text(token) for token in page["rapidocr_tokens"]
+        )
+        if f_number_pattern.search(mirror_text) or f_number_pattern.search(coordinate_text):
+            raise PatentParseError("Ability four-eight-lens OCR may publish an F-number")
+
+    facts = payload.get("source_facts")
+    expected_figure_counts = {
+        "FIG. 2A": 1,
+        "FIG. 2B": 1,
+        "FIG. 4A": 1,
+        "FIG. 4B": 1,
+        "FIG. 6A": 1,
+        "FIG. 6B": 1,
+        "FIG. 8": 1,
+        "FIG. 9": 2,
+    }
+    if not isinstance(facts, dict) or facts.get("figure_binding_counts") != expected_figure_counts:
+        raise PatentParseError("Ability four-eight-lens official figure bindings changed")
+    if facts.get("f_number_label_counts") != {"FNO": 0, "F-number": 0, "F/#": 0}:
+        raise PatentParseError("Ability four-eight-lens official text may publish an F-number")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Ability four-eight-lens official HTML hash is invalid")
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=f"Ability optical lens OL{embodiment_number}",
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code="metadata_unpublished.system_f_number_absent",
+                detail=(
+                    "official HTML and both exact-raster OCR views publish no F-number "
+                    f"for optical lens OL{embodiment_number}"
+                ),
+            ),
+        )
+        for embodiment_number in (1, 2, 3, 4)
+    ]
+
+
 def _validate_ability_pdf_source_linkage(payload: dict[str, Any]) -> None:
     """Validate the optional grant-to-prior-publication parser binding."""
 
@@ -3836,6 +3938,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_ability_two_five_lens_attempts(payload)
     if profile == _ABILITY_TWO_NINE_LENS_PROFILE:
         return _ability_two_nine_lens_terminal_attempts(payload)
+    if profile == _ABILITY_FOUR_EIGHT_LENS_PROFILE:
+        return _ability_four_eight_lens_terminal_attempts(payload)
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")

@@ -1999,6 +1999,62 @@ def _ability_two_nine_lens_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _ability_four_eight_lens_pdf_ocr_parser_input() -> bytes:
+    page_specs = (
+        (3, "prescription_eight_ol1", "FIG . 2A FIG . 2B", "A12"),
+        (4, "prescription_eight_ol2", "FIG . 4A FIG . 4B", "A12"),
+        (6, "prescription_eight_ol3", "FIG . 6A FIG . 6B", "A12"),
+        (7, "prescription_eight_ol4", "FIG . 8", ""),
+    )
+    pages = [
+        {
+            "page_number": page_number,
+            "role": role,
+            "official_image_sha256": str(page_number) * 64,
+            "mirror_text": (
+                f"Sheet {page_number} {figures} Surface Curvature Thickness Abbe {a12}"
+            ),
+            "rapidocr_tokens": [_ability_ocr_token("Surface", 1.0, 1.0)],
+        }
+        for page_number, role, figures, a12 in page_specs
+    ]
+    pages.append(
+        {
+            "page_number": 8,
+            "role": "system_meta_four_eight",
+            "official_image_sha256": "8" * 64,
+            "mirror_text": (
+                "Sheet 7 of 7 FIG . 9 Optical lens OL1 Optical lens OL2 "
+                "Optical lens OL3 Optical lens OL4 F1 R1"
+            ),
+            "rapidocr_tokens": [_ability_ocr_token("F1", 1.0, 1.0)],
+        }
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "ability_four_eight_lens_f_number_unpublished_v1",
+        "publication_id": "US-10809497-B2",
+        "page_count": 14,
+        "source_facts": {
+            "primary_html_sha256": "a" * 64,
+            "figure_binding_counts": {
+                "FIG. 2A": 1,
+                "FIG. 2B": 1,
+                "FIG. 4A": 1,
+                "FIG. 4B": 1,
+                "FIG. 6A": 1,
+                "FIG. 6B": 1,
+                "FIG. 8": 1,
+                "FIG. 9": 2,
+            },
+            "f_number_label_counts": {"FNO": 0, "F-number": 0, "F/#": 0},
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _ability_three_lens_prescription_page(
     *,
     optical_lens: int,
@@ -2356,6 +2412,25 @@ def test_ability_two_nine_lens_source_facts_prove_f_number_absence() -> None:
     assert facts["f_number_label_counts"] == {"FNO": 0, "F-number": 0, "F/#": 0}
 
 
+def test_ability_four_eight_lens_source_facts_prove_f_number_absence() -> None:
+    markers = patent_pdf_recovery._ABILITY_FOUR_EIGHT_LENS_REQUIRED_FIGURE_TEXT
+    source = " ".join((*markers, markers[-1]))
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._ability_four_eight_lens_source_facts(source)
+    assert facts["figure_binding_counts"] == {
+        "FIG. 2A": 1,
+        "FIG. 2B": 1,
+        "FIG. 4A": 1,
+        "FIG. 4B": 1,
+        "FIG. 6A": 1,
+        "FIG. 6B": 1,
+        "FIG. 8": 1,
+        "FIG. 9": 2,
+    }
+    assert facts["f_number_label_counts"] == {"FNO": 0, "F-number": 0, "F/#": 0}
+
+
 def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_eight_lens_pdf_ocr_parser_input().decode(),
@@ -2406,6 +2481,35 @@ def test_ability_two_nine_lens_profile_rejects_ocr_f_number_label() -> None:
         patent_to_zmx._parse_prescription_attempts(
             json.dumps(payload),
             patent_id="US-10690884-B2",
+        )
+
+
+def test_ability_four_eight_lens_profile_records_four_metadata_terminals() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_four_eight_lens_pdf_ocr_parser_input().decode(),
+        patent_id="US-10809497-B2",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert all(attempt.error.status == "metadata_unpublished" for attempt in attempts)
+    assert all(
+        attempt.error.reason_code == "metadata_unpublished.system_f_number_absent"
+        for attempt in attempts
+    )
+
+
+def test_ability_four_eight_lens_profile_rejects_ocr_f_number_label() -> None:
+    payload = json.loads(_ability_four_eight_lens_pdf_ocr_parser_input())
+    payload["pages"][4]["rapidocr_tokens"].append(_ability_ocr_token("FNO", 2.0, 2.0))
+
+    with pytest.raises(PatentParseError, match="OCR may publish an F-number"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-10809497-B2",
         )
 
 
@@ -2785,6 +2889,81 @@ def test_convert_candidate_retains_two_nine_lens_terminals_without_worker(
         for attempt in attempts
     )
     assert all(attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON" for attempt in attempts)
+    assert not (tmp_path / "staging").exists()
+
+
+def test_convert_candidate_retains_four_eight_lens_terminals_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-10809497-B2",
+        source_bucket="USPAT",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html="official HTML whose four eight-lens tables require PDF recovery",
+            source_bucket="USPAT",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_pdf_recovery(*_args: object, **_kwargs: object) -> object:
+        return patent_to_zmx.PatentPdfOcrRecovery(
+            publication_id="US-10809497-B2",
+            official_pdf=b"%PDF-official-four-eight-lens",
+            official_pdf_url=(
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10809497"
+            ),
+            mirror_pdf=b"%PDF-mirror-four-eight-lens",
+            mirror_pdf_url="https://patentimages.storage.googleapis.com/test/US10809497.pdf",
+            parser_input=_ability_four_eight_lens_pdf_ocr_parser_input(),
+            page_count=14,
+            page_image_sha256=tuple(str(index) * 64 for index in range(1, 6)),
+            key_page_numbers=(3, 4, 6, 7, 8),
+            pypdf_version="fixture",
+            rapidocr_version="fixture",
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("metadata-terminal PDF recovery must not launch a trace worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(
+        patent_to_zmx,
+        "recover_ability_official_pdf_ocr",
+        fake_pdf_recovery,
+    )
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-10809497-B2",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+        )
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4]
+    assert all(attempt.status == "metadata_unpublished" for attempt in attempts)
+    assert all(
+        attempt.reason_code == "metadata_unpublished.system_f_number_absent"
+        for attempt in attempts
+    )
+    assert all(
+        attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON"
+        for attempt in attempts
+    )
     assert not (tmp_path / "staging").exists()
 
 
