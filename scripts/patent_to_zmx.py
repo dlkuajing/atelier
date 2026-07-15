@@ -318,6 +318,9 @@ def _parse_prescription_attempts(
         attempts = _parse_kantatsu_nine_lens_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_folded_macro_tele_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_samsung_wide_fov_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1066,6 +1069,32 @@ _KANTATSU_NINE_LENS_ASPHERE_HEADER = re.compile(
     r"A12\s+A14\s+A16\s+",
     flags=re.IGNORECASE,
 )
+_FOLDED_MACRO_TELE_SIGNATURE = re.compile(
+    rf"\bLens\s+system\s+200\s+EFL\s*=\s*{NUMBER_PATTERN}\s*mm\s*,\s*"
+    rf"F\s+number\s*=\s*{NUMBER_PATTERN}\s*,\s*"
+    rf"(?:Half\s+FOV|HFOV)\s*=\s*{NUMBER_PATTERN}\s*deg\.?",
+    flags=re.IGNORECASE,
+)
+_FOLDED_MACRO_TELE_HALF_FIELD_DEFINITION = re.compile(
+    r"\bHalf\s+FOV\s*\(HFOV\)\s+are\s+given\b",
+    flags=re.IGNORECASE,
+)
+_FOLDED_MACRO_TELE_HEADER = re.compile(
+    rf"\b(?:Lens\s+system|Embodiment)\s+(?P<system>200|220|230|240|290)\s+"
+    rf"(?P<focal_label>EFL|F)\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm\s*,\s*"
+    rf"F\s+number\s*=\s*(?P<fno>{NUMBER_PATTERN})\s*,\s*"
+    rf"(?:Half\s+FOV|HFOV)\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s*deg\.?\s+"
+    r"Aperture\s+Curvature\s+Radius\s+Focal\s+Surface\s+#\s+Comment\s+Type\s+"
+    r"Radius\s+Thickness\s+\(D/2\)\s+Material\s+Index\s+Abbe\s+#\s+Length\s+",
+    flags=re.IGNORECASE,
+)
+_FOLDED_MACRO_TELE_SYSTEM_TABLES = {
+    "200": (1, 2, 3, 6),
+    "220": (5, 6, 7, 7),
+    "230": (9, 10, 11, 8),
+    "240": (13, 14, 16, 6),
+    "290": (19, 20, 21, 8),
+}
 _SAMSUNG_WIDE_FOV_BINDING_PATTERN = re.compile(
     r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<coefficient_table>\d+)\s+below\s+"
     r"list\s+the\s+lens\s+properties\s+and\s+aspherical\s+values\s+of\s+the\s+"
@@ -2121,6 +2150,436 @@ def _parse_kantatsu_nine_lens_asphere_table(
             row[codev_label] = value
         coefficients[surface_index] = row
     return coefficients
+
+
+def _parse_folded_macro_tele_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse exact folded smartphone macro-tele base prescriptions fail-closed.
+
+    The four published infinity-conjugate systems with explicit EFL metadata
+    are convertible. Every finite-object state remains an explicit failure
+    because the replay tracer models an infinity conjugate. System 290 remains
+    rejected because its whole-system focal token is only labelled ``F`` and
+    the official text does not define that token as EFL.
+    """
+
+    if _FOLDED_MACRO_TELE_SIGNATURE.search(text) is None:
+        return []
+    blocks = _numbered_patent_table_blocks(text)
+    fallback_labels = [f"Folded macro-tele disclosed state {index}" for index in range(1, 38)]
+    try:
+        if set(blocks) != set(range(1, 23)):
+            raise PatentParseError("folded macro-tele family must contain numbered TABLES 1-22")
+        if _FOLDED_MACRO_TELE_HALF_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError("folded macro-tele Half FOV/HFOV definition not found")
+        state_groups: dict[str, list[tuple[str, str, float]]] = {}
+        for system in ("200", "220", "230", "290"):
+            variation_table = _FOLDED_MACRO_TELE_SYSTEM_TABLES[system][2]
+            state_groups[system] = _parse_folded_macro_object_states(
+                blocks[variation_table], system=system
+            )
+        state_groups["240"] = _parse_folded_macro_config_states(
+            blocks[15], blocks[16]
+        )
+        if [len(state_groups[system]) for system in ("200", "220", "230", "240", "290")] != [
+            8,
+            8,
+            9,
+            3,
+            9,
+        ]:
+            raise PatentParseError("folded macro-tele disclosed-state counts changed")
+    except Exception as exc:  # noqa: BLE001 - retain all 37 published states
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=exc,
+            )
+            for index, label in enumerate(fallback_labels, start=1)
+        ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    attempt_number = 0
+    for system in ("200", "220", "230", "240", "290"):
+        surface_table, coefficient_table, _variation_table, lens_count = (
+            _FOLDED_MACRO_TELE_SYSTEM_TABLES[system]
+        )
+        base_prescription: PatentPrescription | None = None
+        base_error: Exception | None = None
+        try:
+            base_prescription = _parse_folded_macro_tele_base_prescription(
+                blocks[surface_table],
+                blocks[coefficient_table],
+                system=system,
+                lens_count=lens_count,
+                patent_id=patent_id,
+            )
+        except Exception as exc:  # noqa: BLE001 - apply to every state in this system
+            base_error = exc
+
+        for state_index, (state_name, object_distance, _hfov) in enumerate(
+            state_groups[system]
+        ):
+            attempt_number += 1
+            embodiment = f"Folded macro-tele system {system} {state_name}"
+            error = base_error
+            prescription = None
+            if error is None and state_index == 0 and object_distance == "Infinity":
+                prescription = base_prescription
+            elif error is None:
+                error = PatentParseError(
+                    "finite-object state is published but unsupported by the "
+                    f"infinity-conjugate replay model: object distance {object_distance}"
+                )
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=attempt_number,
+                    embodiment=embodiment,
+                    prescription=prescription,
+                    error=error,
+                )
+            )
+    return attempts
+
+
+def _parse_folded_macro_tele_base_prescription(
+    surface_text: str,
+    coefficient_text: str,
+    *,
+    system: str,
+    lens_count: int,
+    patent_id: str,
+) -> PatentPrescription:
+    header = _FOLDED_MACRO_TELE_HEADER.search(surface_text)
+    if header is None or header.group("system") != system:
+        raise PatentParseError(f"folded macro-tele system {system} surface header not found")
+    surfaces = _parse_folded_macro_tele_surfaces(
+        surface_text[header.end() :], system=system, lens_count=lens_count
+    )
+    coefficients = _parse_folded_macro_tele_coefficients(
+        coefficient_text, system=system, lens_count=lens_count
+    )
+    for surface in surfaces:
+        if surface.index in coefficients:
+            surface.asphere_coefficients.update(coefficients[surface.index])
+            surface.surface_type = "ASP"
+    if header.group("focal_label").upper() != "EFL":
+        raise PatentParseError(
+            f"folded macro-tele system {system} whole-system focal token F is not "
+            "officially defined as EFL"
+        )
+    focal_length = _parse_number(header.group("f"))
+    f_number = _parse_number(header.group("fno"))
+    half_field = _parse_number(header.group("hfov"))
+    if focal_length <= 0 or f_number <= 0 or not 0 < half_field < 90:
+        raise PatentParseError(f"folded macro-tele system {system} has invalid EFL/F-number/HFOV")
+    prescription = PatentPrescription(
+        patent_id=patent_id,
+        embodiment=f"Folded macro-tele system {system} infinity",
+        focal_length_mm=focal_length,
+        f_number=f_number,
+        hfov_deg=half_field,
+        surfaces=surfaces,
+    )
+    _validate_prescription_materials(prescription)
+    return prescription
+
+
+def _parse_folded_macro_tele_surfaces(
+    body: str,
+    *,
+    system: str,
+    lens_count: int,
+) -> list[PatentSurface]:
+    tokens = body.split()
+    pos = 0
+
+    def take(expected: str | None = None) -> str:
+        nonlocal pos
+        if pos >= len(tokens):
+            raise PatentParseError(f"folded macro-tele system {system} surface table is incomplete")
+        token = tokens[pos]
+        pos += 1
+        if expected is not None and token.lower() != expected.lower():
+            raise PatentParseError(
+                f"folded macro-tele system {system} expected {expected}, found {token}"
+            )
+        return token
+
+    surfaces: list[PatentSurface] = []
+    take("1")
+    take("A.S")
+    if pos < len(tokens) and tokens[pos].lower() == "plano":
+        pos += 1
+    stop_radius = _distance_value(take(), field_name="folded macro-tele stop radius")
+    stop_thickness = _distance_value(take(), field_name="folded macro-tele stop thickness")
+    _parse_number(take())  # published aperture radius
+    surfaces.append(
+        PatentSurface(
+            index=1,
+            label="Stop",
+            radius_mm=stop_radius,
+            thickness_mm=stop_thickness,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+
+    for lens_number in range(1, lens_count + 1):
+        first_index = lens_number * 2
+        take(str(first_index))
+        take("Lens")
+        take(str(lens_number))
+        take("ASP")
+        first_radius = _distance_value(take(), field_name=f"surface {first_index} radius")
+        first_thickness = _distance_value(take(), field_name=f"surface {first_index} thickness")
+        _parse_number(take())  # published aperture radius
+        take("Plastic")
+        nd = _parse_number(take())
+        vd = _parse_number(take())
+        _parse_number(take())  # published element focal length
+        surfaces.append(
+            PatentSurface(
+                index=first_index,
+                label=f"Lens {lens_number}",
+                radius_mm=first_radius,
+                thickness_mm=first_thickness,
+                material="Plastic",
+                nd=nd,
+                vd=vd,
+                surface_type="ASP",
+            )
+        )
+
+        second_index = first_index + 1
+        take(str(second_index))
+        second_radius = _distance_value(take(), field_name=f"surface {second_index} radius")
+        second_thickness = _distance_value(
+            take(), field_name=f"surface {second_index} thickness"
+        )
+        _parse_number(take())  # published aperture radius
+        surfaces.append(
+            PatentSurface(
+                index=second_index,
+                label=f"Lens {lens_number}",
+                radius_mm=second_radius,
+                thickness_mm=second_thickness,
+                material=None,
+                nd=None,
+                vd=None,
+                surface_type="ASP",
+            )
+        )
+
+    filter_front = lens_count * 2 + 2
+    take(str(filter_front))
+    take("Filter")
+    if pos < len(tokens) and tokens[pos].lower() == "plano":
+        pos += 1
+    filter_radius = _distance_value(take(), field_name="filter radius")
+    filter_thickness = _distance_value(take(), field_name="filter thickness")
+    take("--")
+    take("Glass")
+    filter_nd = _parse_number(take())
+    filter_vd = _parse_number(take())
+    surfaces.append(
+        PatentSurface(
+            index=filter_front,
+            label="Filter",
+            radius_mm=filter_radius,
+            thickness_mm=filter_thickness,
+            material="Glass",
+            nd=filter_nd,
+            vd=filter_vd,
+            surface_type=None,
+        )
+    )
+
+    filter_back = filter_front + 1
+    take(str(filter_back))
+    back_radius = _distance_value(take(), field_name="filter back radius")
+    back_thickness = _distance_value(take(), field_name="filter back thickness")
+    take("--")
+    surfaces.append(
+        PatentSurface(
+            index=filter_back,
+            label="Filter",
+            radius_mm=back_radius,
+            thickness_mm=back_thickness,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+
+    image_index = filter_back + 1
+    take(str(image_index))
+    take("Image")
+    if pos < len(tokens) and tokens[pos].lower() == "plano":
+        pos += 1
+    image_radius = _distance_value(take(), field_name="image radius")
+    image_thickness = _distance_value(take(), field_name="image thickness")
+    take("--")
+    if pos < len(tokens) and re.fullmatch(r"\(\d+\)", tokens[pos]) is None:
+        raise PatentParseError(
+            f"folded macro-tele system {system} surface table has unexpected trailing token "
+            f"{tokens[pos]}"
+        )
+    surfaces.append(
+        PatentSurface(
+            index=image_index,
+            label="Image",
+            radius_mm=image_radius,
+            thickness_mm=image_thickness,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    return surfaces
+
+
+def _parse_folded_macro_tele_coefficients(
+    table_text: str,
+    *,
+    system: str,
+    lens_count: int,
+) -> dict[int, dict[str, float]]:
+    header = re.search(r"\bAspheric\s+Coefficients\s+Surface\s+#\s+", table_text, re.I)
+    if header is None:
+        raise PatentParseError(f"folded macro-tele system {system} coefficient header not found")
+    tokens = table_text[header.end() :].split()
+    pos = 0
+    last_surface = lens_count * 2 + 1
+    coefficients: dict[int, dict[str, float]] = {}
+    section_count = 0
+    while pos < len(tokens):
+        if re.fullmatch(r"\(\d+\)", tokens[pos]):
+            break
+        if tokens[pos].lower() == "surface":
+            pos += 1
+            if pos < len(tokens) and tokens[pos] == "#":
+                pos += 1
+        labels: list[str] = []
+        while pos < len(tokens) and re.fullmatch(r"Conic|A\d+", tokens[pos], re.I):
+            labels.append(tokens[pos])
+            pos += 1
+        if not labels or labels[0].lower() != "conic":
+            raise PatentParseError(
+                f"folded macro-tele system {system} coefficient labels are malformed"
+            )
+        section_count += 1
+        for surface_index in range(2, last_surface + 1):
+            if pos >= len(tokens) or tokens[pos] != str(surface_index):
+                actual = tokens[pos] if pos < len(tokens) else "<end>"
+                raise PatentParseError(
+                    f"folded macro-tele system {system} coefficient sequence expected "
+                    f"{surface_index}, found {actual}"
+                )
+            pos += 1
+            for label in labels:
+                if pos >= len(tokens):
+                    raise PatentParseError(
+                        f"folded macro-tele system {system} coefficient row is incomplete"
+                    )
+                value = _parse_number(tokens[pos])
+                pos += 1
+                if label.lower() == "conic":
+                    codev_label = "K"
+                else:
+                    order = int(label[1:])
+                    codev_label = ASPHERE_ORDER_TO_CODEV.get(order)
+                    if codev_label is None:
+                        if abs(value) > 0.0:
+                            raise PatentParseError(
+                                f"unsupported folded macro-tele asphere term A{order}={value}"
+                            )
+                        continue
+                coefficients.setdefault(surface_index, {})[codev_label] = value
+    if section_count not in {1, 2} or any(
+        surface_index not in coefficients for surface_index in range(2, last_surface + 1)
+    ):
+        raise PatentParseError(
+            f"folded macro-tele system {system} coefficient coverage is incomplete"
+        )
+    return coefficients
+
+
+def _parse_folded_macro_object_states(
+    table_text: str,
+    *,
+    system: str,
+) -> list[tuple[str, str, float]]:
+    header = re.search(
+        rf"\b(?:Lens\s+system|Embodiment)\s+{system}\s+Variation\s+of\s+lens\s+"
+        rf"properties\s+with\s+"
+        r"object\s+distance\s+Object\s+Distance\s+BFL\s+HFOV\s+\[mm\]\s+\[mm\]\s+"
+        r"\[deg\]\s+Magnification\s+",
+        table_text,
+        re.I,
+    )
+    if header is None:
+        raise PatentParseError(f"folded macro-tele system {system} state table not found")
+    tokens = table_text[header.end() :].split()
+    states: list[tuple[str, str, float]] = []
+    pos = 0
+    while pos < len(tokens) and re.fullmatch(r"\(\d+\)", tokens[pos]) is None:
+        if pos + 3 >= len(tokens):
+            raise PatentParseError(f"folded macro-tele system {system} state row is incomplete")
+        object_distance = tokens[pos]
+        if object_distance != "Infinity":
+            _parse_number(object_distance)
+        _parse_number(tokens[pos + 1])  # BFL
+        half_field = _parse_number(tokens[pos + 2])
+        _parse_number(tokens[pos + 3])  # magnification
+        states.append((f"object {object_distance}", object_distance, half_field))
+        pos += 4
+    return states
+
+
+def _parse_folded_macro_config_states(
+    thickness_text: str,
+    field_text: str,
+) -> list[tuple[str, str, float]]:
+    thickness = re.search(
+        rf"\bLens\s+system\s+240\s+Variation\s+of\s+surface\s+thicknesses\s+"
+        rf"Surface\s+#\s+Config\.\s+A\s+Config\.\s+B\s+Config\.\s+C\s+"
+        rf"0\s+(?P<a>{NUMBER_PATTERN})\s+(?P<b>{NUMBER_PATTERN})\s+"
+        rf"(?P<c>{NUMBER_PATTERN})\s+5\s+{NUMBER_PATTERN}\s+{NUMBER_PATTERN}\s+"
+        rf"{NUMBER_PATTERN}\s+13\s+{NUMBER_PATTERN}\s+{NUMBER_PATTERN}\s+{NUMBER_PATTERN}",
+        thickness_text,
+        re.I,
+    )
+    fields = re.search(
+        rf"\bLens\s+system\s+240\s+Config\.\s+#\s+HFOV\s+Magnification\s+"
+        rf"A\s+(?P<a>{NUMBER_PATTERN})\s+deg\s+{NUMBER_PATTERN}\s+"
+        rf"B\s+(?P<b>{NUMBER_PATTERN})\s+deg\s+{NUMBER_PATTERN}\s+"
+        rf"C\s+(?P<c>{NUMBER_PATTERN})\s+deg\s+{NUMBER_PATTERN}",
+        field_text,
+        re.I,
+    )
+    if thickness is None or fields is None:
+        raise PatentParseError("folded macro-tele system 240 configuration tables are incomplete")
+    states: list[tuple[str, str, float]] = []
+    for label in ("a", "b", "c"):
+        object_token = thickness.group(label)
+        object_distance = "Infinity" if label == "a" else object_token
+        states.append(
+            (
+                f"configuration {label.upper()} object {object_distance}",
+                object_distance,
+                _parse_number(fields.group(label)),
+            )
+        )
+    return states
 
 
 def _parse_samsung_wide_fov_table_attempts(

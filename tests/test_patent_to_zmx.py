@@ -458,6 +458,131 @@ def _kantatsu_nine_lens_pretable_fixture() -> str:
 KANTATSU_NINE_LENS_PRETABLE_TEXT = _kantatsu_nine_lens_pretable_fixture()
 
 
+def _folded_macro_tele_surface_table(
+    system: int,
+    *,
+    table_number: int,
+    lens_count: int,
+    focal_label: str,
+) -> str:
+    rows = ["1 A.S plano Infinity -0.500 1.500"]
+    for lens_number in range(1, lens_count + 1):
+        first_surface = lens_number * 2
+        rows.extend(
+            [
+                f"{first_surface} Lens {lens_number} ASP "
+                f"{5.0 + lens_number:.3f} 0.700 2.000 Plastic 1.5443 55.9 5.000",
+                f"{first_surface + 1} {-6.0 - lens_number:.3f} 0.100 2.000",
+            ]
+        )
+    filter_front = lens_count * 2 + 2
+    rows.extend(
+        [
+            f"{filter_front} Filter plano Infinity 0.210 -- Glass 1.5168 64.2",
+            f"{filter_front + 1} Infinity 0.500 --",
+            f"{filter_front + 2} Image plano Infinity 0.000 -- ({table_number})",
+        ]
+    )
+    system_label = "Lens system" if system != 290 else "Embodiment"
+    return (
+        f"TABLE-US-{table_number:05d} TABLE {table_number} {system_label} {system} "
+        f"{focal_label} = {12.0 + system / 100:.2f} mm, F number = 2.0, "
+        "Half FOV = 10.0 deg. Aperture Curvature Radius Focal Surface # Comment "
+        "Type Radius Thickness (D/2) Material Index Abbe # Length "
+        + " ".join(rows)
+    )
+
+
+def _folded_macro_tele_coefficient_table(
+    *,
+    table_number: int,
+    lens_count: int,
+) -> str:
+    rows = " ".join(
+        f"{surface} 0.0 1.0E-03 -2.0E-04 3.0E-05 -4.0E-06"
+        for surface in range(2, lens_count * 2 + 2)
+    )
+    return (
+        f"TABLE-US-{table_number:05d} TABLE {table_number} "
+        f"Aspheric Coefficients Surface # Conic A4 A6 A8 A10 {rows}"
+    )
+
+
+def _folded_macro_tele_object_state_table(
+    system: int,
+    *,
+    table_number: int,
+    count: int,
+) -> str:
+    rows = ["Infinity 0.500 10.0 0.0"]
+    rows.extend(
+        f"{1000 - index * 50} {0.5 + index / 100:.2f} "
+        f"{10.0 - index / 2:.1f} {-index / 100:.2f}"
+        for index in range(1, count)
+    )
+    system_label = "Lens system" if system != 290 else "Embodiment"
+    return (
+        f"TABLE-US-{table_number:05d} TABLE {table_number} {system_label} {system} "
+        "Variation of lens properties with object distance Object Distance BFL HFOV "
+        "[mm] [mm] [deg] Magnification "
+        + " ".join(rows)
+        + f" ({table_number})"
+    )
+
+
+def _folded_macro_tele_fixture() -> str:
+    tables: dict[int, str] = {}
+    for system, surface_table, coefficient_table, state_table, lens_count, count in (
+        (200, 1, 2, 3, 6, 8),
+        (220, 5, 6, 7, 7, 8),
+        (230, 9, 10, 11, 8, 9),
+        (290, 19, 20, 21, 8, 9),
+    ):
+        focal_label = "EFL" if system != 290 else "F"
+        tables[surface_table] = _folded_macro_tele_surface_table(
+            system,
+            table_number=surface_table,
+            lens_count=lens_count,
+            focal_label=focal_label,
+        )
+        tables[coefficient_table] = _folded_macro_tele_coefficient_table(
+            table_number=coefficient_table,
+            lens_count=lens_count,
+        )
+        tables[state_table] = _folded_macro_tele_object_state_table(
+            system,
+            table_number=state_table,
+            count=count,
+        )
+    tables[13] = _folded_macro_tele_surface_table(
+        240,
+        table_number=13,
+        lens_count=6,
+        focal_label="EFL",
+    )
+    tables[14] = _folded_macro_tele_coefficient_table(table_number=14, lens_count=6)
+    tables[15] = (
+        "TABLE-US-00015 TABLE 15 Lens system 240 Variation of surface thicknesses "
+        "Surface # Config. A Config. B Config. C 0 10000000000 1000 100 "
+        "5 0.100 0.200 0.300 13 0.400 0.500 0.600 (15)"
+    )
+    tables[16] = (
+        "TABLE-US-00016 TABLE 16 Lens system 240 Config. # HFOV Magnification "
+        "A 10.0 deg 0.0 B 8.0 deg -0.01 C 6.0 deg -0.02 (16)"
+    )
+    for table_number in (4, 8, 12, 17, 18, 22):
+        tables[table_number] = (
+            f"TABLE-US-{table_number:05d} TABLE {table_number} "
+            f"Non-prescription auxiliary data ({table_number})"
+        )
+    return "Half FOV (HFOV) are given. " + " ".join(
+        tables[table_number] for table_number in range(1, 23)
+    )
+
+
+FOLDED_MACRO_TELE_TEXT = _folded_macro_tele_fixture()
+
+
 SUNNY_OBJ_STO_TEXT = """
 TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
 number Surface type curvature Thickness index Abbe number coefficient
@@ -1082,6 +1207,61 @@ def test_kantatsu_nine_lens_pretable_retains_split_material_token() -> None:
     assert len(attempts) == 10
     assert "surface sequence must be 1-20" in str(attempts[0].error)
     assert all(attempt.error is None for attempt in attempts[1:])
+
+
+def test_folded_macro_tele_retains_all_states_and_only_parses_infinity_efl() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        FOLDED_MACRO_TELE_TEXT,
+        patent_id="US-FOLDED-MACRO-TELE-A1",
+    )
+
+    assert len(attempts) == 37
+    successful = [attempt for attempt in attempts if attempt.error is None]
+    assert [attempt.embodiment_number for attempt in successful] == [1, 9, 17, 26]
+    prescriptions = [attempt.prescription for attempt in successful]
+    assert all(prescription is not None for prescription in prescriptions)
+    assert [len(prescription.surfaces) for prescription in prescriptions if prescription] == [
+        16,
+        18,
+        20,
+        16,
+    ]
+    first = prescriptions[0]
+    assert first is not None
+    assert (first.focal_length_mm, first.f_number, first.hfov_deg) == pytest.approx(
+        (14.0, 2.0, 10.0)
+    )
+    assert first.surfaces[0].label == "Stop"
+    assert first.surfaces[1].asphere_coefficients["A"] == pytest.approx(1.0e-3)
+    assert all(
+        "finite-object state is published but unsupported" in str(attempt.error)
+        for attempt in attempts[1:8]
+    )
+    assert all(
+        "whole-system focal token F is not officially defined as EFL"
+        in str(attempt.error)
+        for attempt in attempts[28:]
+    )
+
+
+def test_folded_macro_tele_requires_official_half_field_definition() -> None:
+    text = FOLDED_MACRO_TELE_TEXT.replace(
+        "Half FOV (HFOV) are given.",
+        "HFOV values are listed.",
+        1,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-FOLDED-MACRO-TELE-NO-DEFINITION-A1",
+    )
+
+    assert len(attempts) == 37
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "Half FOV/HFOV definition not found" in str(attempt.error)
+        for attempt in attempts
+    )
 
 
 def test_parse_samsung_wide_fov_embodiment_pairs_and_full_field() -> None:

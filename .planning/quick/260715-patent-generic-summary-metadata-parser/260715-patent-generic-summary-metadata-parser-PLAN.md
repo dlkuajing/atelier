@@ -171,6 +171,27 @@ thresholds, or claim patent saturation.
   strict audit is 619/619 with zero corrupt evidence. The after-seventh-layout census SHA-256 is
   `f7f6a3433cc01860d310c8a275619a37621725bcf8519173bc3fb3543d6ed998`; CODE V inventory
   remains zero; 90 focused parser/census/replay/process tests and Ruff pass.
+- The eighth source-proven family is the 22-table Corephotonics folded macro-tele layout in
+  `US-12399351`. The retained official PPUBS text identifies a folded digital camera for portable
+  mobile devices/smartphones and publishes five lens systems with 37 disclosed operational
+  states. Systems 200, 220, 230, and 240 each publish one infinity-conjugate prescription with
+  explicit EFL, F number, and Half FOV. Their remaining 24 states publish finite object distances,
+  which the current infinity-conjugate replay model cannot represent. System 290 labels its
+  whole-system focal token only as `F`; the official text does not define that token as EFL.
+- A hash-verified ownership scan of all 276 remaining generic roots matched only
+  `US-12399351`. A broader `EFL`-only probe also touched `US-20230132659`, but official evidence
+  shows that document uses `F/#`, diagonal FOV, and QT1 surfaces; tightening the signature to the
+  exact published `F number + Half FOV` header excludes this different parser family. Append-only
+  replay retained all 37 states: the four infinity/EFL prescriptions are converted-pending-intake
+  staging candidates with real IMH, while the 24 finite-object states and nine undefined-`F`
+  states remain explicit deterministic parser rejections. No candidate was promoted.
+- The generic document bucket changed 276 to 275. Result-set SHA-256 is
+  `07e1ebda99d49d480c96bd5260e894c5e26386d2aef2b6672d4f0303d00cd795`; summary artifact
+  SHA-256 is `ab03151b90e11e695088881ad147f906df6f896a1425a57a4dac511b65ca603b`;
+  strict audit is 619/619 with zero corrupt evidence. The after-eighth-layout census SHA-256 is
+  `371074751bc28244c286a019cd276b0761fe1d8d789397311bcf3664cc676668` and contains 275 roots
+  across 161 normalized signatures; CODE V inventory remains zero; 93 focused
+  parser/census/replay/process tests and Ruff pass.
 
 ## Completion condition
 
