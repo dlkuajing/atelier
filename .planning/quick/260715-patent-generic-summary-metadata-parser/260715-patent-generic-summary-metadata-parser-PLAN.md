@@ -67,6 +67,21 @@ thresholds, or claim patent saturation.
   `f0e4e3c1a0a0600fea49c276ce51cfe7a84558228d55bb0f404509bebe6f4dc8`; strict audit is
   619/619 with zero corrupt evidence. The after-first-layout census SHA-256 is
   `f165467dd70fe1ab98e529c61dbc95ef499e1f47523e854595ae1101f5673c35`.
+- The second source-proven family is 3 roots / 21 disclosed folded-zoom states. Exact adjacent
+  configuration tables bind EFL, F/#, HFOV, and every variable air gap by column. Twelve ASP
+  states are deterministically recoverable. Six QTYP states retain the published duplicate `S7`
+  / missing `S8` index failure; three index-complete QTYP states retain an explicit unsupported
+  `QTYP/NR/A0-A6` rejection instead of translating a different polynomial basis as XASPHERE.
+- Append-only replay completed all 3 roots. The 21 states produced 9 converted-pending-intake
+  items, 3 terminal process receipts (`trace_timeout` after the 120-second worker hard limit), and
+  9 structured parser rejections. No candidate was promoted. The generic document bucket changed
+  286→283. Result-set SHA-256 is
+  `3aab024784036d6f268f741deb0396d68438300226b20e9805f0c20f05d48bd6`; summary artifact
+  SHA-256 is `80310958a437ab64a90f997035cfc065c7aa73a9ec399f4c56e56a8ed44dcb19`;
+  strict audit is 619/619 with zero corrupt evidence. The after-second-layout census SHA-256 is
+  `fb68b3362117a00506dcadbc34189b7a6222a3d4afbddeb9559295aabbdc4798`. The
+  family-ownership scan matches exactly these 3 roots before replay and zero remaining roots after
+  replay; 74 focused parser/census/replay/process tests and Ruff pass.
 
 ## Completion condition
 

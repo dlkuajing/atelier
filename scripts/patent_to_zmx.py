@@ -309,6 +309,9 @@ def _parse_prescription_attempts(
         attempts = _parse_fujifilm_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_folded_zoom_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_aac_raytech_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -950,6 +953,22 @@ _PATENT_TABLE_BLOCK_PATTERN = re.compile(
     r"\bTABLE-US-\d+\s+TABLE\s+(?P<number>\d+)\s+",
     flags=re.IGNORECASE,
 )
+_FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
+    r"\bOptical\s+lens\s+system\s+(?P<system>\d+)\s+.*?"
+    r"\bSurface(?:\s+Curvature\s+Aperture\s+Radius\s+Abbe\s+Focal)?\s+"
+    r"#\s+Comment\s+Type\s+Radius\s+Thickness\b",
+    flags=re.IGNORECASE,
+)
+_FOLDED_ZOOM_QTYP_SURFACE_HEADER_PATTERN = re.compile(
+    r"\bOptical\s+lens\s+system\s+(?P<system>\d+)\s+.*?"
+    r"\bGroup\s+Lens\s+Surface\s+Type\s+R\s+\[mm\]\s+T\s+\[mm\]",
+    flags=re.IGNORECASE,
+)
+_FOLDED_ZOOM_NUMERIC_ROW_PATTERN = re.compile(
+    r"(?<!\S)(?P<index>\d+)\s+"
+    r"(?=(?:Lens\s+\d+\b|Filter\b|Image\b|[-+]?(?:\d|\.)|Infinity\b))",
+    flags=re.IGNORECASE,
+)
 _AAC_RAYTECH_SURFACE_HEADER_PATTERN = re.compile(
     r"\bR\s+d\s+nd\s+(?:vd|νd)\s+(?:S1|ST)\b",
     flags=re.IGNORECASE,
@@ -1054,6 +1073,497 @@ def _patent_table_blocks(text: str) -> list[_PatentTableBlock]:
             )
         )
     return blocks
+
+
+def _parse_folded_zoom_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse exact multi-state folded-zoom surface/configuration table triplets."""
+
+    blocks = _patent_table_blocks(text)
+    family_blocks: list[tuple[int, _PatentTableBlock, re.Match[str], bool]] = []
+    for block_index, block in enumerate(blocks):
+        if block_index + 1 >= len(blocks) or not _is_folded_zoom_configuration_table(
+            blocks[block_index + 1].text
+        ):
+            continue
+        asp_match = _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN.search(block.text)
+        if asp_match is not None:
+            family_blocks.append((block_index, block, asp_match, False))
+            continue
+        qtyp_match = _FOLDED_ZOOM_QTYP_SURFACE_HEADER_PATTERN.search(block.text)
+        if qtyp_match is not None:
+            family_blocks.append((block_index, block, qtyp_match, True))
+    if not family_blocks:
+        return []
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    attempt_number = 0
+    for block_index, surface_block, header_match, is_qtyp in family_blocks:
+        system = int(header_match.group("system"))
+        config_block = blocks[block_index + 1]
+        if is_qtyp:
+            dynamic_surfaces = _folded_zoom_qtyp_dynamic_surfaces(
+                surface_block.text,
+                table_number=config_block.number,
+            )
+        else:
+            dynamic_surfaces = _folded_zoom_dynamic_surface_indices(
+                surface_block.text,
+                table_number=config_block.number,
+            )
+        try:
+            configurations = _folded_zoom_configurations(
+                config_block.text,
+                expected_dynamic_surfaces=dynamic_surfaces,
+                system=system,
+            )
+        except Exception as exc:  # noqa: BLE001 - retained as family evidence
+            attempt_number += 1
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=attempt_number,
+                    embodiment=f"Folded zoom system {system}",
+                    error=exc,
+                )
+            )
+            continue
+
+        if is_qtyp:
+            qtyp_error = _folded_zoom_qtyp_rejection(surface_block.text, system=system)
+            for config_index, _configuration in enumerate(configurations, start=1):
+                attempt_number += 1
+                attempts.append(
+                    _PrescriptionParseAttempt(
+                        embodiment_number=attempt_number,
+                        embodiment=(
+                            f"Folded zoom system {system} configuration {config_index}"
+                        ),
+                        error=qtyp_error,
+                    )
+                )
+            continue
+
+        try:
+            surfaces, surface_dynamic_tables = _parse_folded_zoom_asp_surface_table(
+                surface_block.text,
+                system=system,
+            )
+            if set(surface_dynamic_tables) != set(dynamic_surfaces):
+                raise PatentParseError(
+                    f"folded zoom system {system} dynamic surface set changed during parsing"
+                )
+            if any(table != config_block.number for table in surface_dynamic_tables.values()):
+                raise PatentParseError(
+                    f"folded zoom system {system} references a non-adjacent configuration table"
+                )
+            if block_index + 2 >= len(blocks):
+                raise PatentParseError(
+                    f"folded zoom system {system} asphere table not found"
+                )
+            coefficient_end = next(
+                surface.index
+                for surface in surfaces
+                if surface.label in {"Filter", "Image"}
+            )
+            coefficients = _parse_folded_zoom_asphere_table(
+                blocks[block_index + 2].text,
+                expected_surface_ids=[
+                    surface.index
+                    for surface in surfaces
+                    if surface.index < coefficient_end
+                ],
+                system=system,
+            )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    # The coefficient table explicitly enumerates both faces of
+                    # every ASP lens even where the compact surface table only
+                    # repeats the ASP type on the first face.
+                    surface.surface_type = "ASP"
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+        except Exception as exc:  # noqa: BLE001 - repeated for every disclosed state
+            for config_index, _configuration in enumerate(configurations, start=1):
+                attempt_number += 1
+                attempts.append(
+                    _PrescriptionParseAttempt(
+                        embodiment_number=attempt_number,
+                        embodiment=(
+                            f"Folded zoom system {system} configuration {config_index}"
+                        ),
+                        error=exc,
+                    )
+                )
+            continue
+
+        for config_index, configuration in enumerate(configurations, start=1):
+            attempt_number += 1
+            embodiment = f"Folded zoom system {system} configuration {config_index}"
+            try:
+                state_surfaces = [
+                    replace(
+                        surface,
+                        thickness_mm=configuration[3].get(
+                            surface.index,
+                            surface.thickness_mm,
+                        ),
+                        asphere_coefficients=dict(surface.asphere_coefficients),
+                    )
+                    for surface in surfaces
+                ]
+                prescription = PatentPrescription(
+                    patent_id=patent_id,
+                    embodiment=embodiment,
+                    focal_length_mm=configuration[0],
+                    f_number=configuration[1],
+                    hfov_deg=configuration[2],
+                    surfaces=state_surfaces,
+                )
+            except Exception as exc:  # noqa: BLE001 - retained per configuration
+                attempts.append(
+                    _PrescriptionParseAttempt(
+                        embodiment_number=attempt_number,
+                        embodiment=embodiment,
+                        error=exc,
+                    )
+                )
+                continue
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=attempt_number,
+                    embodiment=embodiment,
+                    prescription=prescription,
+                )
+            )
+    return attempts
+
+
+def _is_folded_zoom_configuration_table(table_text: str) -> bool:
+    return (
+        len(re.findall(r"\bEFL\s*=", table_text, flags=re.IGNORECASE)) >= 2
+        and re.search(r"F\s*/\s*#", table_text, flags=re.IGNORECASE) is not None
+        and re.search(r"\bHFOV\b", table_text, flags=re.IGNORECASE) is not None
+    )
+
+
+def _folded_zoom_dynamic_surface_indices(
+    surface_text: str,
+    *,
+    table_number: int,
+) -> tuple[int, ...]:
+    matches = re.findall(
+        rf"(?<!\S)(?P<surface>\d+)\s+{NUMBER_PATTERN}\s+"
+        rf"See\s+Table\s+{table_number}\b",
+        surface_text,
+        flags=re.IGNORECASE,
+    )
+    return tuple(dict.fromkeys(int(surface) for surface in matches))
+
+
+def _folded_zoom_qtyp_dynamic_surfaces(
+    surface_text: str,
+    *,
+    table_number: int,
+) -> tuple[int, ...]:
+    matches = re.findall(
+        rf"S\.sub\.(?P<surface>\d+)\s+QTYP\s+{NUMBER_PATTERN}\s+"
+        rf"See\s+Table\s+{table_number}\b",
+        surface_text,
+        flags=re.IGNORECASE,
+    )
+    return tuple(dict.fromkeys(int(surface) for surface in matches))
+
+
+def _folded_zoom_configurations(
+    table_text: str,
+    *,
+    expected_dynamic_surfaces: tuple[int, ...],
+    system: int,
+) -> list[tuple[float, float, float, dict[int, float]]]:
+    efls = [
+        _parse_number(match.group("value"))
+        for match in re.finditer(
+            rf"\bEFL\s*=\s*(?P<value>{NUMBER_PATTERN})",
+            table_text,
+            flags=re.IGNORECASE,
+        )
+    ]
+    if not efls:
+        raise PatentParseError(f"folded zoom system {system} EFL row not found")
+    count = len(efls)
+
+    fno_match = re.search(
+        r"F\s*/\s*#\s+(?P<values>.*?)\s+HFOV\b",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if fno_match is None:
+        raise PatentParseError(f"folded zoom system {system} F/# row not found")
+    fnos = _folded_zoom_exact_row_values(
+        fno_match.group("values"),
+        count=count,
+        field=f"system {system} F/#",
+    )
+
+    hfov_match = re.search(
+        r"\bHFOV(?:\s+\[deg\])?\s+(?P<values>.*)",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if hfov_match is None:
+        raise PatentParseError(f"folded zoom system {system} HFOV row not found")
+    hfovs = _folded_zoom_exact_row_values(
+        hfov_match.group("values"),
+        count=count,
+        field=f"system {system} HFOV",
+        allow_trailing_narrative=True,
+    )
+
+    row_matches = list(
+        re.finditer(
+            r"(?:\bSurface\s+|\bS\.sub\.)(?P<surface>\d+)\s+",
+            table_text,
+            flags=re.IGNORECASE,
+        )
+    )
+    dynamic_values: dict[int, list[float]] = {}
+    fno_start = fno_match.start()
+    for row_index, row_match in enumerate(row_matches):
+        surface = int(row_match.group("surface"))
+        if surface not in expected_dynamic_surfaces:
+            continue
+        end = (
+            row_matches[row_index + 1].start()
+            if row_index + 1 < len(row_matches)
+            else fno_start
+        )
+        end = min(end, fno_start)
+        dynamic_values[surface] = _folded_zoom_exact_row_values(
+            table_text[row_match.end() : end],
+            count=count,
+            field=f"system {system} surface {surface} thickness",
+        )
+    if set(dynamic_values) != set(expected_dynamic_surfaces):
+        missing = sorted(set(expected_dynamic_surfaces) - set(dynamic_values))
+        raise PatentParseError(
+            f"folded zoom system {system} configuration rows missing: {missing}"
+        )
+
+    if any(value <= 0.0 for value in (*efls, *fnos, *hfovs)):
+        raise PatentParseError(f"folded zoom system {system} metadata must be positive")
+    if any(value >= 90.0 for value in hfovs):
+        raise PatentParseError(f"folded zoom system {system} HFOV must be below 90 degrees")
+    return [
+        (
+            efls[index],
+            fnos[index],
+            hfovs[index],
+            {surface: values[index] for surface, values in dynamic_values.items()},
+        )
+        for index in range(count)
+    ]
+
+
+def _folded_zoom_exact_row_values(
+    text: str,
+    *,
+    count: int,
+    field: str,
+    allow_trailing_narrative: bool = False,
+) -> list[float]:
+    source = text
+    if allow_trailing_narrative:
+        source = re.split(r"\s(?:\(\d+\)|\[\d+\])\s", source, maxsplit=1)[0]
+    tokens = re.findall(NUMBER_PATTERN, source, flags=re.IGNORECASE)
+    if len(tokens) != count:
+        raise PatentParseError(
+            f"folded zoom {field} row has {len(tokens)} values, expected {count}"
+        )
+    return [_parse_number(token) for token in tokens]
+
+
+def _parse_folded_zoom_asp_surface_table(
+    table_text: str,
+    *,
+    system: int,
+) -> tuple[list[PatentSurface], dict[int, int]]:
+    header = _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN.search(table_text)
+    if header is None:
+        raise PatentParseError(f"folded zoom system {system} ASP surface header not found")
+    candidates = list(_FOLDED_ZOOM_NUMERIC_ROW_PATTERN.finditer(table_text, header.end()))
+    starts: list[re.Match[str]] = []
+    expected_index = 1
+    for match in candidates:
+        if int(match.group("index")) != expected_index:
+            continue
+        starts.append(match)
+        expected_index += 1
+    if not starts:
+        raise PatentParseError(f"folded zoom system {system} surface rows not found")
+
+    surfaces: list[PatentSurface] = []
+    dynamic_tables: dict[int, int] = {}
+    for row_index, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = starts[row_index + 1].start() if row_index + 1 < len(starts) else len(table_text)
+        row = table_text[match.end() : end].split()
+        upper = [token.upper() for token in row]
+        if "ASP" in upper:
+            radius_pos = upper.index("ASP") + 1
+            surface_type = "ASP"
+        elif "PLANO" in upper:
+            radius_pos = upper.index("PLANO") + 1
+            surface_type = None
+        else:
+            radius_pos = 0
+            surface_type = None
+        if radius_pos >= len(row):
+            raise PatentParseError(
+                f"folded zoom system {system} surface {surface_index} radius missing"
+            )
+        radius = _distance_value(
+            row[radius_pos],
+            field_name=f"folded zoom surface {surface_index} radius",
+        )
+        thickness_pos = radius_pos + 1
+        if thickness_pos >= len(row):
+            raise PatentParseError(
+                f"folded zoom system {system} surface {surface_index} thickness missing"
+            )
+        if (
+            len(row) > thickness_pos + 2
+            and row[thickness_pos].upper() == "SEE"
+            and row[thickness_pos + 1].upper() == "TABLE"
+        ):
+            table_number = int(_parse_number(row[thickness_pos + 2]))
+            thickness = None
+            dynamic_tables[surface_index] = table_number
+        else:
+            thickness = _distance_value(
+                row[thickness_pos],
+                field_name=f"folded zoom surface {surface_index} thickness",
+            )
+
+        material = nd = vd = None
+        material_pos = next(
+            (
+                pos
+                for pos, token in enumerate(upper)
+                if token in {"PLASTIC", "GLASS"}
+            ),
+            None,
+        )
+        if material_pos is not None:
+            if material_pos + 2 >= len(row):
+                raise PatentParseError(
+                    f"folded zoom system {system} surface {surface_index} material indices missing"
+                )
+            material = row[material_pos]
+            nd = _parse_number(row[material_pos + 1])
+            vd = _parse_number(row[material_pos + 2])
+            _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+
+        joined = " ".join(row[:radius_pos]).upper()
+        lens_match = re.search(r"\bLENS\s+(\d+)\b", joined)
+        if "STOP" in joined:
+            label = "Stop"
+        elif lens_match is not None:
+            label = f"Lens {lens_match.group(1)}"
+        elif "FILTER" in joined:
+            label = "Filter"
+        elif "IMAGE" in joined:
+            label = "Image"
+        else:
+            label = f"Surface {surface_index}"
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=surface_type,
+            )
+        )
+    if surfaces[-1].label != "Image":
+        raise PatentParseError(f"folded zoom system {system} image row not found")
+    return surfaces, dynamic_tables
+
+
+def _parse_folded_zoom_asphere_table(
+    table_text: str,
+    *,
+    expected_surface_ids: list[int],
+    system: int,
+) -> dict[int, dict[str, float]]:
+    header = re.search(
+        r"\bAspheric\s+Coefficients\s+Surface\s+#\s+"
+        r"(?P<labels>Conic(?:\s+A\d+)+)\s+",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(f"folded zoom system {system} asphere header not found")
+    labels = header.group("labels").upper().split()
+    tokens = re.findall(NUMBER_PATTERN, table_text[header.end() :], flags=re.IGNORECASE)
+    row_width = 1 + len(labels)
+    required = row_width * len(expected_surface_ids)
+    if len(tokens) < required:
+        raise PatentParseError(
+            f"folded zoom system {system} asphere table is incomplete"
+        )
+    coefficients: dict[int, dict[str, float]] = {}
+    pos = 0
+    for expected_surface in expected_surface_ids:
+        surface_token = tokens[pos]
+        pos += 1
+        if not surface_token.isdigit() or int(surface_token) != expected_surface:
+            raise PatentParseError(
+                f"folded zoom system {system} asphere index break: "
+                f"expected {expected_surface}, found {surface_token}"
+            )
+        row: dict[str, float] = {}
+        for label in labels:
+            value = _parse_number(tokens[pos])
+            pos += 1
+            if label == "CONIC":
+                row["K"] = value
+                continue
+            order = int(label[1:])
+            if order not in SUPPORTED_ASPHERE_ORDERS:
+                if abs(value) > 0.0:
+                    raise PatentParseError(
+                        f"unsupported nonzero folded zoom asphere term: "
+                        f"S{expected_surface}:A{order}={value:.3g}"
+                    )
+                continue
+            row[ASPHERE_ORDER_TO_CODEV[order]] = value
+        coefficients[expected_surface] = row
+    return coefficients
+
+
+def _folded_zoom_qtyp_rejection(table_text: str, *, system: int) -> PatentParseError:
+    header = _FOLDED_ZOOM_QTYP_SURFACE_HEADER_PATTERN.search(table_text)
+    assert header is not None
+    indices: list[int] = []
+    for match in re.finditer(r"\bS(?:\.sub\.)?(?P<index>\d+)\b", table_text[header.end() :]):
+        index = int(match.group("index"))
+        indices.append(index)
+        if index >= 23:
+            break
+    for expected, actual in enumerate(indices):
+        if actual != expected:
+            return PatentParseError(
+                f"folded zoom system {system} surface index break: "
+                f"expected S{expected}, found S{actual}"
+            )
+    return PatentParseError(
+        f"folded zoom system {system} uses unsupported published QTYP/NR/A0-A6 surfaces"
+    )
 
 
 def _aac_raytech_summary_metas(blocks: list[_PatentTableBlock]) -> dict[int, _EmbodimentMeta]:

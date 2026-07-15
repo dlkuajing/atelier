@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `f0e4e3c1a0a0600fea49c276ce51cfe7a84558228d55bb0f404509bebe6f4dc8`
+- result_set_sha256: `3aab024784036d6f268f741deb0396d68438300226b20e9805f0c20f05d48bd6`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,17 +20,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 15
 - `terminal`: 34
-- `parser_review_required`: 445
+- `parser_review_required`: 442
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 125
+- `mixed_nonterminal`: 128
 
 ## Item states
 
-- `converted_pending_intake`: 455
-- `terminal`: 675
-- `parser_review_required`: 1286
+- `converted_pending_intake`: 464
+- `terminal`: 678
+- `parser_review_required`: 1292
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -43,21 +43,21 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 0
 - `trace_failed`: 576
-- `trace_timeout`: 99
+- `trace_timeout`: 102
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 445
-- `mixed_nonterminal.multiple_item_states`: 125
+- `parser_review_required.all_disclosed_items_rejected`: 442
+- `mixed_nonterminal.multiple_item_states`: 128
 - `terminal.all_disclosed_items_terminal`: 34
 - `converted_pending_intake.all_disclosed_items_converted`: 15
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1286
-- `terminal.process_receipt_classified`: 675
-- `converted_pending_intake.process_isolated_zmx_ready`: 455
+- `parser_review_required.deterministic_parser_rejected`: 1292
+- `terminal.process_receipt_classified`: 678
+- `converted_pending_intake.process_isolated_zmx_ready`: 464
 - `conversion_retry_required.patent_budget_exhausted`: 28
 
 ## Source attempts
@@ -68,7 +68,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 286
+- `generic_summary_metadata_missing`: 283
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -82,6 +82,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `asphere_surface_header_missing`: 16
 - `other_surface_n_thickness_is_not_numeric_flt`: 11
 - `other_sunny_sto_value_is_not_numeric_surface`: 8
+- `other_folded_zoom_system_n_surface_index_break_expected_s8_found_s7`: 6
 - `other_sunny_s3_row_has_unexpected_extra_values_n_n_n`: 6
 - `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 6
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
@@ -92,6 +93,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_r4_thickness_is_not_numeric_d4`: 4
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bk7_schott`: 4
 - `other_aspheric_row_a4_has_more_numeric_values_than_surfaces_extra_token`: 3
+- `other_folded_zoom_system_n_uses_unsupported_published_qtyp_nr_a0_a6_surfaces`: 3
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bsc7_hoya`: 3
 - `other_sunny_asphere_row_s7_has_more_values_than_headers_token`: 3
 - `other_unsupported_nonzero_fujifilm_asphere_terms_s3_a3_n_s4_a3_n_s14_a3_n_s15_a3_n`: 3

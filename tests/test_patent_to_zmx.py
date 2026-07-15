@@ -148,6 +148,39 @@ A4 -1.4397107E-03 8.7627361E-04
 [0001] trailing narrative.
 """
 
+FOLDED_ZOOM_TEXT = """
+TABLE-US-00001 TABLE 1 Optical lens system 600 Aperture Curvature Radius Focal
+Surface # Comment Type Radius Thickness (D/2) Material Index Abbe # Length
+1 Lens 1 ASP 10.000 1.000 2.000 Plastic 1.54 55.93 8.00
+2 -10.000 See Table 2 1.900
+3 Lens 2 - Stop ASP 8.000 0.800 1.800 Plastic 1.64 23.52 -6.00
+4 -8.000 See Table 2 1.700
+5 Image Plano Infinity -- -- EFL = see Table 2, F number = see Table 2,
+HFOV = see Table 2.
+TABLE-US-00002 TABLE 2 EFL = 9.61 EFL = 24.03
+Surface 2 0.911 4.599 Surface 4 4.251 0.563
+F/# 2.36 4.64 HFOV [deg] 13.97 6.06
+TABLE-US-00003 TABLE 3 Aspheric Coefficients Surface # Conic A4 A6
+1 0 -3.70E-04 -5.26E-06
+2 0 -2.58E-03 4.80E-04
+3 0 -2.11E-03 4.44E-04
+4 0 4.81E-04 -2.21E-05
+[0001] trailing narrative.
+"""
+
+FOLDED_ZOOM_DAMAGED_QTYP_TEXT = """
+TABLE-US-00001 TABLE 1 Optical lens system 800 Group Lens Surface Type
+R [mm] T [mm] D [mm] Nd Vd Focal Length [mm]
+Object S0 Flat Infinity Infinity G1 L1
+S.sub.1 QTYP 5.000 1.000 2.000 1.54 55.93 8.00
+L2 S.sub.1 QTYP -5.000 0.500 1.900
+L3 S.sub.3 QTYP 8.000 See Table 2 1.800
+Image sensor S4
+TABLE-US-00002 TABLE 2 Configuration 1 Configuration 2
+EFL = 10 [mm] EFL = 20 [mm] T [mm]
+S.sub.3 1.000 2.000 F/# 3.00 4.00 HFOV 15.00 7.50
+"""
+
 SUNNY_OBJ_STO_TEXT = """
 TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
 number Surface type curvature Thickness index Abbe number coefficient
@@ -555,6 +588,93 @@ def test_fujifilm_inline_tables_fail_loud_on_odd_asphere_terms() -> None:
     assert attempts[0].prescription is None
     assert isinstance(attempts[0].error, PatentParseError)
     assert "unsupported nonzero Fujifilm asphere terms" in str(attempts[0].error)
+
+
+def test_parse_folded_zoom_discrete_configurations() -> None:
+    prescriptions = parse_patent_prescriptions(
+        FOLDED_ZOOM_TEXT,
+        patent_id="US-FOLDED-ZOOM-FIXTURE-A1",
+    )
+
+    assert [prescription.embodiment for prescription in prescriptions] == [
+        "Folded zoom system 600 configuration 1",
+        "Folded zoom system 600 configuration 2",
+    ]
+    first, second = prescriptions
+    assert (first.focal_length_mm, first.f_number, first.hfov_deg) == pytest.approx(
+        (9.61, 2.36, 13.97)
+    )
+    assert (second.focal_length_mm, second.f_number, second.hfov_deg) == pytest.approx(
+        (24.03, 4.64, 6.06)
+    )
+    assert first.surfaces[1].thickness_mm == pytest.approx(0.911)
+    assert second.surfaces[1].thickness_mm == pytest.approx(4.599)
+    assert first.surfaces[3].thickness_mm == pytest.approx(4.251)
+    assert second.surfaces[3].thickness_mm == pytest.approx(0.563)
+    assert first.surfaces[2].label == "Stop"
+    assert first.surfaces[0].nd == pytest.approx(1.54)
+    assert first.surfaces[0].vd == pytest.approx(55.93)
+    assert first.surfaces[0].asphere_coefficients["A"] == pytest.approx(-3.70e-4)
+    assert first.surfaces[2].asphere_coefficients["B"] == pytest.approx(4.44e-4)
+    assert first.surfaces[-1].label == "Image"
+
+
+def test_parse_folded_zoom_accepts_reordered_multiline_surface_header() -> None:
+    text = FOLDED_ZOOM_TEXT.replace(
+        "Surface # Comment Type Radius Thickness (D/2) Material Index Abbe # Length",
+        "Surface Curvature Aperture Radius Abbe Focal # Comment Type Radius "
+        "Thickness (D/2) Material Index # Length",
+    )
+
+    prescriptions = parse_patent_prescriptions(
+        text,
+        patent_id="US-FOLDED-ZOOM-REORDERED-A1",
+    )
+
+    assert len(prescriptions) == 2
+    assert prescriptions[1].surfaces[3].thickness_mm == pytest.approx(0.563)
+
+
+def test_folded_zoom_qtyp_index_damage_is_retained_per_configuration() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        FOLDED_ZOOM_DAMAGED_QTYP_TEXT,
+        patent_id="US-FOLDED-ZOOM-QTYP-A1",
+    )
+
+    assert len(attempts) == 2
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(isinstance(attempt.error, PatentParseError) for attempt in attempts)
+    assert all(
+        "surface index break: expected S2, found S1" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_folded_zoom_qtyp_is_rejected_when_surface_indices_are_intact() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        FOLDED_ZOOM_DAMAGED_QTYP_TEXT.replace("L2 S.sub.1", "L2 S.sub.2"),
+        patent_id="US-FOLDED-ZOOM-QTYP-INTACT-A1",
+    )
+
+    assert len(attempts) == 2
+    assert all(
+        "unsupported published QTYP/NR/A0-A6 surfaces" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_folded_zoom_fallback_does_not_claim_static_qtyp_table() -> None:
+    text = patent_to_zmx.normalize_patent_text(
+        """
+        TABLE-US-00001 TABLE 1 Optical lens system 800 Group Lens Surface Type
+        R [mm] T [mm] D [mm] Nd Vd Object S0 Flat Infinity Infinity
+        S.sub.1 QTYP 5.0 1.0 2.0 1.54 55.93 S.sub.2 QTYP -5.0 0.5 1.9
+        TABLE-US-00002 TABLE 2 Conic Surface (k) NR A.sub.0 A.sub.1
+        S.sub.1 0 3.0 1.0E-03 -1.0E-04
+        """
+    )
+
+    assert patent_to_zmx._parse_folded_zoom_table_attempts(text, patent_id="STATIC") == []
 
 
 def test_parse_patent_prescriptions_accepts_aac_raytech_compact_tables() -> None:
