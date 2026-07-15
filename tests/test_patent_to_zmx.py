@@ -773,6 +773,54 @@ def _install_folded_tele_missing_f_number_fixture_profile(
     return patent_id
 
 
+def _barrel_spacer_geometry_only_fixture(
+    *,
+    prescription_marker: bool = False,
+) -> str:
+    parts = [
+        "IMAGING LENS ASSEMBLY, CAMERA MODULE AND ELECTRONIC DEVICE",
+        "Family ID: 63640526",
+        "imaging lens assembly " * 3,
+        "plastic barrel " * 3,
+        "spacer " * 3,
+        "lens element " * 3,
+        "stray light " * 2,
+    ]
+    for number in range(1, 4):
+        parts.append(
+            f"TABLE-US-{number:05d} TABLE {number} d (mm) 0.42 "
+            "ΦN1i (mm) 2.9 w1 (mm) 0.21 w2 (mm) 0.77 w2/w1 3.67"
+        )
+    if prescription_marker:
+        parts.append("Surface # Radius Thickness Abbe #")
+    return " ".join(parts)
+
+
+def _install_barrel_spacer_geometry_fixture_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    text: str,
+) -> str:
+    patent_id = "US-BARREL-SPACER-GEOMETRY-FIXTURE-A1"
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._BARREL_SPACER_GEOMETRY_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "geometry_phrase_counts": {
+                "Family ID: 63640526": 1,
+                "imaging lens assembly": 4,
+                "plastic barrel": 3,
+                "spacer": 3,
+                "lens element": 3,
+                "stray light": 2,
+                "d (mm)": 3,
+            },
+        },
+    )
+    return patent_id
+
+
 MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
 L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
 ST 3 Infinity -0.020
@@ -5742,6 +5790,59 @@ def test_folded_tele_missing_f_number_classifier_refuses_source_hash_drift(
 ) -> None:
     text = _folded_tele_missing_f_number_fixture()
     patent_id = _install_folded_tele_missing_f_number_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "official text hash changed" in str(attempts[0].error)
+
+
+def test_barrel_spacer_geometry_embodiments_are_confirmed_no_prescription(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _barrel_spacer_geometry_only_fixture()
+    patent_id = _install_barrel_spacer_geometry_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Barrel/spacer geometry embodiment 1",
+        "Barrel/spacer geometry embodiment 2",
+        "Barrel/spacer geometry embodiment 3",
+    ]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.error.reason_code
+        == "confirmed_no_prescription.barrel_spacer_geometry_only"
+        for attempt in attempts
+    )
+
+
+def test_barrel_spacer_geometry_classifier_refuses_prescription_marker(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _barrel_spacer_geometry_only_fixture(prescription_marker=True)
+    patent_id = _install_barrel_spacer_geometry_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "contains a prescription marker" in str(attempts[0].error)
+
+
+def test_barrel_spacer_geometry_classifier_refuses_source_hash_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _barrel_spacer_geometry_only_fixture()
+    patent_id = _install_barrel_spacer_geometry_fixture_profile(monkeypatch, text)
 
     attempts = patent_to_zmx._parse_prescription_attempts(
         text + " publication revision",

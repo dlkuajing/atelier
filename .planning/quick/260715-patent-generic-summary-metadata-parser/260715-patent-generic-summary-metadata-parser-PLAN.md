@@ -985,6 +985,40 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `75e4df464990e06de21ca10cd90c4ca3f4a0db76f627ebc266e159a1c44b6938`.
   Strict audit remains 619/619 with zero corrupt evidence; 205 focused
   parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
+- Five official Family ID `63640526` records share the barrel/spacer geometry disclosure; four use
+  the longer imaging-lens-assembly/camera/electronic-device title and `US-20250147264-A1` uses the
+  exact shorter title. Retained official PPUBS HTML SHA-256 values are
+  `bedb625a4292b80e110bb666add49009e0d784894b0895f5649c90f6f5740dfd`,
+  `56f85ca42ef2115f8f89a58afc03146f44638c09b565a3bca5b8a4fa33da5d1c`,
+  `6d580e49d75bf61512b4e226dff117c291a4c9998022126f83e41074a72e9f24`,
+  `16e4cd6b1456b17c8985f81886f0a3e604488b129fb1686bc8f1fca162f00cad`, and
+  `99aa28b70950eb6f2e6804055c7b5d69041c219ad4de2822ff8ec6367f14feb8`;
+  normalized-text SHA-256 values are
+  `79e834444da228951da14657ad4854b086fcb22baa18baa0d9b62ceacd927eab`,
+  `49f397a92f850d7a1140f286f6cf93cb442bd41091f6e7df2c6dec4863e1dede`,
+  `511956f91d4563f333c65d5ffd4496dfadaa8eacba56b043dce6efd6e331bfba`,
+  `d9e4f6c055e64b6f14bf5c4b607a9a9ff829b66cd919acc5a71805c937e0f802`, and
+  `38e02b10a61edf345b113dd889d601a44d3badecddaa146fd8b7c595fefb7a36`.
+- Every document has exact Tables 1--3 with `d`, `N1i`, and `w2/w1` barrel/spacer/opening geometry.
+  Per-document imaging-lens-assembly, plastic-barrel, spacer, lens-element, stray-light, and `d
+  (mm)` counts are source-locked. Word-bounded Surface-No/#, radius-thickness, asphere data,
+  Abbe, refractive-index, Fno/F-number/EFL/effective-focal-length, optical-data, and prescription
+  markers are absent. Substring `EFL` matches inside ordinary words and is not treated as an optical
+  marker. Any hash, count, table, header, or marker drift fails closed.
+- Each root expands into three independent
+  `confirmed_no_prescription.barrel_spacer_geometry_only` items, for 15 total; no conversion
+  attempt, worker, or ZMX is created. Attempts 2/3 are canonical-equal per root with semantic
+  SHA-256 values `6a7f3a1a6d215f378061a111648531f7dfa8954ad646544bd566603675cdb71b`,
+  `8be3877fead7f360030b42a93aabf47ce16b4cacc961f497e8b8e3642998e2a2`,
+  `30c78b0489c02c9ba3a3bfbab1078fa1630461bb1963128ae639980ecf37de11`,
+  `7c057e0badb6275bca764dd2a1d757954261fc5e8b0dedf58a9c3ac81b070085`, and
+  `666ea9382e5f044348870ee287a3aa47683363e865844246bc7dd9d1fc263cb0`.
+- Generic summary changed 215 to 210. Current result-set SHA-256 is
+  `c8737fc1bc72ee2e608406e17b983b8891f845cb5d442ca92b7adfd3dc72db57`; summary artifact
+  SHA-256 is `671445aa10f1eb41628aefc67725346196cd655d5a324b4506cc6456273e4c2c`;
+  after-census SHA-256 is `ca116a6c43645684396f6f60b780b75f12045ccae535df2b29465aaba350a7c8`.
+  Strict audit remains 619/619 with zero corrupt evidence; 208 focused
+  parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

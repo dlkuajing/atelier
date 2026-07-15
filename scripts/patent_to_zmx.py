@@ -425,6 +425,12 @@ def _parse_prescription_attempts(
         )
         if attempts:
             return attempts
+        attempts = _classify_barrel_spacer_geometry_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _parse_aac_raytech_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1853,6 +1859,83 @@ _FOLDED_TELE_MISSING_F_NUMBER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "68480e54aa353e67767a85176ef96db1542751d8466080a1192894baaee7692e"
         ),
         "lens_module_220_c_count": 2,
+    },
+}
+_BARREL_SPACER_GEOMETRY_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY(?:\s*,\s*CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE)?\b",
+    flags=re.IGNORECASE,
+)
+_BARREL_SPACER_GEOMETRY_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11372191-B2": {
+        "normalized_text_sha256": (
+            "79e834444da228951da14657ad4854b086fcb22baa18baa0d9b62ceacd927eab"
+        ),
+        "geometry_phrase_counts": {
+            "Family ID: 63640526": 1,
+            "imaging lens assembly": 128,
+            "plastic barrel": 93,
+            "spacer": 68,
+            "lens element": 206,
+            "stray light": 41,
+            "d (mm)": 3,
+        },
+    },
+    "US-12228785-B2": {
+        "normalized_text_sha256": (
+            "49f397a92f850d7a1140f286f6cf93cb442bd41091f6e7df2c6dec4863e1dede"
+        ),
+        "geometry_phrase_counts": {
+            "Family ID: 63640526": 1,
+            "imaging lens assembly": 128,
+            "plastic barrel": 92,
+            "spacer": 67,
+            "lens element": 208,
+            "stray light": 41,
+            "d (mm)": 3,
+        },
+    },
+    "US-20220276460-A1": {
+        "normalized_text_sha256": (
+            "511956f91d4563f333c65d5ffd4496dfadaa8eacba56b043dce6efd6e331bfba"
+        ),
+        "geometry_phrase_counts": {
+            "Family ID: 63640526": 1,
+            "imaging lens assembly": 128,
+            "plastic barrel": 93,
+            "spacer": 68,
+            "lens element": 206,
+            "stray light": 41,
+            "d (mm)": 3,
+        },
+    },
+    "US-20230341649-A1": {
+        "normalized_text_sha256": (
+            "d9e4f6c055e64b6f14bf5c4b607a9a9ff829b66cd919acc5a71805c937e0f802"
+        ),
+        "geometry_phrase_counts": {
+            "Family ID: 63640526": 1,
+            "imaging lens assembly": 130,
+            "plastic barrel": 96,
+            "spacer": 70,
+            "lens element": 210,
+            "stray light": 41,
+            "d (mm)": 3,
+        },
+    },
+    "US-20250147264-A1": {
+        "normalized_text_sha256": (
+            "38e02b10a61edf345b113dd889d601a44d3badecddaa146fd8b7c595fefb7a36"
+        ),
+        "geometry_phrase_counts": {
+            "Family ID: 63640526": 1,
+            "imaging lens assembly": 112,
+            "plastic barrel": 81,
+            "spacer": 64,
+            "lens element": 189,
+            "stray light": 41,
+            "d (mm)": 3,
+        },
     },
 }
 _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
@@ -9099,6 +9182,92 @@ def _classify_folded_tele_missing_f_number_attempts(
                         f"publish the complete module {module} surface/asphere prescription, "
                         "but the official text publishes no exact system F-number for that "
                         "prescription; range and inequality statements are not substituted"
+                    ),
+                ),
+            )
+        )
+    return attempts
+
+
+def _classify_barrel_spacer_geometry_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify one exact barrel/spacer geometry family without prescriptions."""
+
+    if _BARREL_SPACER_GEOMETRY_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _BARREL_SPACER_GEOMETRY_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"barrel-spacer-geometry official text hash changed for {patent_id}"
+            )
+        blocks = _patent_table_blocks(text)
+        table_numbers = [block.number for block in blocks]
+        if table_numbers != [1, 2, 3]:
+            raise PatentParseError(
+                f"barrel-spacer-geometry table sequence is {table_numbers}; expected 1..3"
+            )
+        for phrase, expected in profile["geometry_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"barrel-spacer-geometry phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for block in blocks:
+            if re.search(r"\bd\s+\(mm\)", block.text) is None:
+                raise PatentParseError(
+                    f"barrel-spacer-geometry TABLE {block.number} d header changed"
+                )
+            if re.search(r"N1i\s+\(mm\)", block.text) is None:
+                raise PatentParseError(
+                    f"barrel-spacer-geometry TABLE {block.number} N1i header changed"
+                )
+            if re.search(r"\bw2\s*/\s*w1\b", block.text) is None:
+                raise PatentParseError(
+                    f"barrel-spacer-geometry TABLE {block.number} width-ratio header changed"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bSurface\s+(?:No\.|#)\s*|"
+            r"\b(?:Radius|Curvature)\s+Thickness\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)\b|\brefractive\s+index\b|"
+            r"\bFno\b|\bF\s*[- ]?number\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\bprescription\b)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "barrel-spacer-geometry disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment="barrel/spacer geometry family",
+                error=exc,
+            )
+        ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number in range(1, 4):
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Barrel/spacer geometry embodiment {embodiment_number}",
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code="confirmed_no_prescription.barrel_spacer_geometry_only",
+                    detail=(
+                        f"TABLE {embodiment_number} publishes only barrel, spacer, opening, "
+                        "and width-ratio geometry and no optical surface prescription"
                     ),
                 ),
             )
