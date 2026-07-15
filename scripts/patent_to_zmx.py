@@ -321,6 +321,9 @@ def _parse_prescription_attempts(
         attempts = _parse_kantatsu_ih_first_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_kantatsu_missing_half_field_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_kantatsu_inline_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1197,6 +1200,34 @@ _KANTATSU_IH_FIRST_HALF_FIELD_DEFINITION = re.compile(
 _KANTATSU_IH_FIRST_ASPHERE_DEFINITION = re.compile(
     r"\bA4,\s+A6,\s+A8,\s+A10,\s+A12,\s+A14\s+and\s+A16\s+denote\s+"
     r"aspheric\s+surface\s+coefficients\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_MISSING_HALF_FIELD_HEADER_PATTERN = re.compile(
+    rf"\bTABLE\s+(?P<table>\d+)\s+Example\s*(?P<example>\d+)\s+"
+    rf"Unit\s+mm\s+f\s*=\s*(?P<f>{NUMBER_PATTERN})\s+"
+    rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s+"
+    rf"ih\s*=\s*(?P<ih>{NUMBER_PATTERN})\s+"
+    rf"TTL\s*=\s*(?P<ttl>{NUMBER_PATTERN})\s+Surface\s+Data\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_MISSING_HALF_FIELD_BINDING_PATTERN = re.compile(
+    r"\bExample\s+(?P<example>\d+)\s+\[\d+\]\s+The\s+basic\s+lens\s+data\s+"
+    r"is\s+shown\s+below\s+in\s+Table\s+(?P<table>\d+)\.\s+"
+    r"TABLE-US-\d+\s+TABLE\s+(?P<header_table>\d+)\s+"
+    r"Example\s*(?P<header_example>\d+)\s+Unit\s+mm\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_MISSING_HALF_FIELD_DEFINITION = re.compile(
+    r"\bIn\s+each\s+example,\s+f\s+denotes\s+the\s+focal\s+length\s+of\s+the\s+"
+    r"overall\s+optical\s+system\s+of\s+the\s+imaging\s+lens,\s+Fno\s+denotes\s+"
+    r"an\s+F-number,\s+\S+\s+denotes\s+a\s+half\s+field\s+of\s+view,\s+ih\s+"
+    r"denotes\s+a\s+maximum\s+image\s+height,\s+and\s+TTL\s+denotes\s+a\s+"
+    r"total\s+track\s+length\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_MISSING_HALF_FIELD_ASPHERE_DEFINITION = re.compile(
+    r"\bA4,\s+A6,\s+A8,\s+A10,\s+A12,\s+A14,\s+A16,\s+A18\s+and\s+A20\s+"
+    r"denote\s+aspheric\s+surface\s+coefficients\b",
     flags=re.IGNORECASE,
 )
 _KANTATSU_NINE_LENS_BINDING_PATTERN = re.compile(
@@ -2312,6 +2343,88 @@ def _parse_kantatsu_ih_first_table_attempts(
                 embodiment_number=example_number,
                 embodiment=embodiment,
                 prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_kantatsu_missing_half_field_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain tables that define half field but publish no per-example value."""
+
+    del patent_id  # Classification is source-bound and cannot produce a prescription.
+    blocks = _patent_table_blocks(text)
+    headers = [_KANTATSU_MISSING_HALF_FIELD_HEADER_PATTERN.search(block.text) for block in blocks]
+    if not any(headers):
+        return []
+
+    bindings = list(_KANTATSU_MISSING_HALF_FIELD_BINDING_PATTERN.finditer(text))
+    try:
+        if [block.number for block in blocks] != list(range(1, 8)):
+            raise PatentParseError(
+                "Kantatsu missing-half-field family tables are not consecutive through the "
+                "conditional-expression summary"
+            )
+        if len(bindings) != 6:
+            raise PatentParseError(
+                f"Kantatsu missing-half-field family must bind six examples, found {len(bindings)}"
+            )
+        if _KANTATSU_MISSING_HALF_FIELD_DEFINITION.search(text) is None:
+            raise PatentParseError(
+                "Kantatsu missing-half-field published half-field definition not found"
+            )
+        if _KANTATSU_MISSING_HALF_FIELD_ASPHERE_DEFINITION.search(text) is None:
+            raise PatentParseError(
+                "Kantatsu missing-half-field published A4-A20 asphere definition not found"
+            )
+        for example_number, binding in enumerate(bindings, start=1):
+            bound_values = (
+                int(binding.group("example")),
+                int(binding.group("table")),
+                int(binding.group("header_table")),
+                int(binding.group("header_example")),
+            )
+            if bound_values != (example_number,) * 4:
+                raise PatentParseError(
+                    "Kantatsu missing-half-field narrative/header binding is not consecutive at "
+                    f"example {example_number}"
+                )
+        if any(header is None for header in headers[:6]):
+            raise PatentParseError("Kantatsu missing-half-field example headers are incomplete")
+    except Exception as exc:  # noqa: BLE001 - retain all six disclosed examples
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=f"Kantatsu missing-half-field example {example_number}",
+                error=exc,
+            )
+            for example_number in range(1, 7)
+        ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for example_number, header in enumerate(headers[:6], start=1):
+        if header is None:  # pragma: no cover - guarded above
+            raise AssertionError("missing header after family validation")
+        if (
+            int(header.group("table")) != example_number
+            or int(header.group("example")) != example_number
+        ):
+            error = PatentParseError(
+                f"Kantatsu missing-half-field example {example_number} header is cross-bound"
+            )
+        else:
+            error = PatentParseError(
+                f"Kantatsu missing-half-field example {example_number} published "
+                "half-field value is absent from the table header"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=f"Kantatsu missing-half-field example {example_number}",
+                error=error,
             )
         )
     return attempts

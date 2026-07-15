@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `9149666fd16e422ead35413b1ef271f512f215bba6d025b3d2bda12df77e8182`
+- result_set_sha256: `49332a57b7888eda04118ab704c042a56a27de66cdfc46fd04630a70176d4e49`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 510
 - `terminal`: 708
-- `parser_review_required`: 1347
+- `parser_review_required`: 1352
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1347
+- `parser_review_required.deterministic_parser_rejected`: 1352
 - `terminal.process_receipt_classified`: 708
 - `converted_pending_intake.process_isolated_zmx_ready`: 510
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -68,7 +68,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 268
+- `generic_summary_metadata_missing`: 267
 - `sunny_embodiment_metadata_missing`: 199
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 120
@@ -88,6 +88,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_kantatsu_inline_example_n_object_image_rows_are_incomplete`: 7
 - `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 7
 - `other_folded_zoom_system_n_surface_index_break_expected_s8_found_s7`: 6
+- `other_kantatsu_missing_half_field_example_n_published_half_field_value_is_absent_from_the_table_header`: 6
 - `other_sunny_s3_row_has_unexpected_extra_values_n_n_n`: 6
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6

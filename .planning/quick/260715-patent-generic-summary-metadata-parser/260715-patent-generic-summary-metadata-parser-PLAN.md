@@ -270,6 +270,21 @@ thresholds, or claim patent saturation.
   `842df767c0ca217e16334f4d17dff962d528fcfa2c90e5c497dbe167c1e80d1e` and contains 268 roots
   across 154 normalized signatures; 104 focused parser/census/replay/process tests and Ruff pass;
   CODE V inventory remains zero.
+- The thirteenth source-proven family is the six-example Kantatsu layout in
+  `US-20210373296`. A complete 268-root ownership scan matched only this retained official PPUBS
+  document. Its narrative defines the field symbol as half field of view and binds examples 1--6
+  to tables 1--6, but every table header publishes only `f/Fno/ih/TTL`; no per-example half-field
+  value is present. The parser explicitly refuses to derive the missing angle from `f` and `ih`.
+- Append-only replay replaced the one document-scoped generic failure with six source-hash-bound
+  embodiment parser rejections stating that the published half-field value is absent. No
+  conversion ran and no candidate was promoted. The generic document bucket changed 268 to 267.
+  Result-set SHA-256 is
+  `49332a57b7888eda04118ab704c042a56a27de66cdfc46fd04630a70176d4e49`; summary artifact
+  SHA-256 is `0389de238a252f7fa9ea0832e44a1adc90ee4c8079d8745ac287a2268f36400d`;
+  strict audit is 619/619 with zero corrupt evidence. The after-thirteenth-layout census SHA-256
+  is `56d2836382bad8321a3d24e3418af4ff94175ced5fe1f9dd73c2e36693d0f5d6` and contains 267 roots
+  across 153 normalized signatures; 107 focused parser/census/replay/process tests and Ruff pass;
+  CODE V inventory remains zero.
 
 ## Completion condition
 
