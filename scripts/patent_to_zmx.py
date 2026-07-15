@@ -367,6 +367,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_sunny_long_focus_folded_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_large_aperture_scanning_tele_attempts(
         raw_text,
         patent_id=patent_id,
@@ -11486,6 +11492,69 @@ def _sekonix_meta_for_span(span: str) -> _SunnyMeta:
 _SUNNY_ROW_KEY_RE = re.compile(r"^(?:OBJ|STO|S\d+)$")
 _SUNNY_SURFACE_TYPE_RE = re.compile(r"^(?:spherical|aspheric(?:al)?)$", re.IGNORECASE)
 _SUNNY_NARRATIVE_CUT_RE = re.compile(r"\s(?:\(\d+\)|\[\d+\])\s")
+_SUNNY_LONG_FOCUS_FOLDED_SOURCE_PROFILES: dict[str, dict[str, str]] = {
+    "US-12078782-B2": {
+        "raw_document_sha256": (
+            "2ceeeedb0c95b9958a372642aa47b06b0be0093d4f740bdabcacc8e6aab7a08e"
+        ),
+        "normalized_text_sha256": (
+            "33b7f4f716197047a5a2f53227d90a274a0c3af57f94dd839b4b3f855fdcb997"
+        ),
+        "table_one_label": "1",
+    },
+    "US-20220137337-A1": {
+        "raw_document_sha256": (
+            "c40d066678be0f6fe2a8f592488381f13f611ee8cad7a25b481dee336763ce55"
+        ),
+        "normalized_text_sha256": (
+            "42e843b251d6b8caf8bec222638338249583e171a77ab3e4809924e717b614bc"
+        ),
+        "table_one_label": "I",
+    },
+}
+_SUNNY_LONG_FOCUS_FOLDED_SOURCE_ANCHOR_PATTERN = re.compile(
+    r"\bTABLE-US-(?P<anchor>\d+)\s+TABLE\s+(?P<label>\d+|I)\s+",
+    flags=re.IGNORECASE,
+)
+_SUNNY_LONG_FOCUS_FOLDED_EFLS: tuple[float | None, ...] = (
+    40.0,
+    40.0,
+    40.0,
+    45.0,
+    None,
+    40.0,
+    48.0,
+    40.0,
+)
+_SUNNY_LONG_FOCUS_FOLDED_PRODUCTS = (5.12, 5.12, 5.12, 5.76, 5.12, 5.12, 6.15, 5.12)
+_SUNNY_LONG_FOCUS_FOLDED_PRODUCT_TOKENS = (
+    "5.12",
+    "←",
+    "5.12",
+    "5.76",
+    "5.12",
+    "5.12",
+    "6.15",
+    "5.12",
+)
+_SUNNY_LONG_FOCUS_FOLDED_STANDARD_TABLES = {
+    1: (1, 2),
+    3: (4, 5),
+    4: (6, 7),
+    5: (8, 9),
+    6: (10, 11),
+    7: (12, 13),
+    8: (14, 15),
+}
+_SUNNY_LONG_FOCUS_FOLDED_COEFFICIENT_COUNTS = {
+    1: 8,
+    3: 8,
+    4: 8,
+    5: 9,
+    6: 8,
+    7: 9,
+    8: 9,
+}
 
 
 @dataclass(frozen=True)
@@ -11738,7 +11807,11 @@ def _parse_sunny_asphere_block_into(
     labels: list[str] = []
     while pos < len(tokens):
         token = tokens[pos]
-        if token == "Surface" and pos + 1 < len(tokens) and tokens[pos + 1] == "number":
+        if (
+            token == "Surface"
+            and pos + 1 < len(tokens)
+            and tokens[pos + 1].lower() in {"number", "no."}
+        ):
             pos += 2
             labels = []
             while pos < len(tokens) and re.fullmatch(r"[AK]\d*", tokens[pos], re.IGNORECASE):
@@ -12837,6 +12910,288 @@ async def _convert_candidate(
             attempt.fulltext_recovery_manifest_path = recovery_manifest.retained_path
             attempt.fulltext_recovery_manifest_sha256 = recovery_manifest.sha256
     return attempts
+
+
+def _parse_sunny_long_focus_folded_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Recover the source-locked Family 77932615 long-focus prescriptions.
+
+    TABLE 16 publishes ``f * tan(Semi-FOV)`` for every embodiment.  Where the
+    same official source also publishes the embodiment EFL, the half field is
+    the deterministic inverse of that exact relation.  No sensor geometry or
+    optical cell is inferred.  Embodiment 5 keeps the EFL cell blank and is
+    therefore terminal; embodiment 2 includes two mirrors and coordinate
+    reversals that remain fail-closed until a folded-coordinate parser exists.
+    """
+
+    profile = _SUNNY_LONG_FOCUS_FOLDED_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=f"Sunny long-focus embodiment {index}",
+                error=exc,
+            )
+            for index in range(1, 9)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Sunny long-focus official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Sunny long-focus normalized text hash changed for {patent_id}"
+            )
+        if re.search(
+            rf"^{re.escape(patent_id)}\s+-\s+Patent\s+Public\s+Search\s+\|\s+USPTO\b"
+            r".*?\bCAMERA\s+LENS\s+Abstract\b",
+            text,
+            flags=re.IGNORECASE,
+        ) is None:
+            raise PatentParseError("Sunny long-focus title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*77932615", text, flags=re.IGNORECASE)) != 1:
+            raise PatentParseError("Sunny long-focus Family ID binding changed")
+        if len(re.findall(r"Appl\.\s*No\.:\s*17\s*/\s*509745", text)) != 1:
+            raise PatentParseError("Sunny long-focus application binding changed")
+
+        blocks, labels = _sunny_long_focus_folded_source_blocks(text)
+        if set(blocks) != set(range(1, 17)):
+            raise PatentParseError("Sunny long-focus source tables 1-16 are not complete")
+        if labels[1].upper() != profile["table_one_label"]:
+            raise PatentParseError("Sunny long-focus TABLE 1 label changed")
+        if any(labels[number] != str(number) for number in range(2, 17)):
+            raise PatentParseError("Sunny long-focus numeric table labels changed")
+
+        efls, f_numbers = _sunny_long_focus_folded_metadata(text)
+        if efls != _SUNNY_LONG_FOCUS_FOLDED_EFLS:
+            raise PatentParseError("Sunny long-focus EFL metadata changed")
+        if f_numbers != (4.0,) * 8:
+            raise PatentParseError("Sunny long-focus F-number metadata changed")
+        products = _sunny_long_focus_folded_products(blocks[16])
+        if products != _SUNNY_LONG_FOCUS_FOLDED_PRODUCTS:
+            raise PatentParseError("Sunny long-focus field-product row changed")
+        if len(
+            re.findall(
+                r"Semi-FOV\s+is\s+the\s+maximum\s+semi-field\s+of\s+view",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Sunny long-focus Semi-FOV definition changed")
+        if re.search(
+            rf"(?:Semi-FOV|HFOV)\s*(?:\([^)]*\))?\s*(?:=|\bis\b)\s*"
+            rf"(?:about\s+)?{NUMBER_PATTERN}",
+            text,
+            flags=re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError("Sunny long-focus now publishes a standalone numeric half field")
+        folded_table = blocks[3]
+        folded_bindings = (
+            r"\(P1\)\s+Spherical\s+Infinity\s+-10\.0000",
+            r"S1\s+Aspherical\s+-7\.4399\s+-3\.7276",
+            r"S6\s+Aspherical\s+-15\.8317\s+-13\.7656",
+            r"\(P2\)\s+Spherical\s+Infinity\s+-5\.0000\s+"
+            r"Spherical\s+Infinity\s+5\.0000\s+"
+            r"Spherical\s+Infinity\s+2\.3656",
+        )
+        if any(
+            len(re.findall(pattern, folded_table, flags=re.IGNORECASE)) != 1
+            for pattern in folded_bindings
+        ):
+            raise PatentParseError("Sunny long-focus folded-coordinate bindings changed")
+
+        parsed: dict[int, PatentPrescription] = {}
+        for embodiment_number, (surface_table, coefficient_table) in (
+            _SUNNY_LONG_FOCUS_FOLDED_STANDARD_TABLES.items()
+        ):
+            surface_text = blocks[surface_table]
+            if embodiment_number == 1:
+                if surface_text.count("S7 Sphericai") != 1:
+                    raise PatentParseError("Sunny long-focus TABLE 1 S7 type token changed")
+                # The official source spells the non-numeric surface type as
+                # ``Sphericai`` in both same-application publications.  This
+                # source-locked token correction never changes an optical cell.
+                surface_text = surface_text.replace("S7 Sphericai", "S7 Spherical", 1)
+            surfaces, index_by_row_key = _parse_sunny_surface_table(
+                surface_text,
+                embodiment_number=embodiment_number,
+            )
+            if set(index_by_row_key) != {"STO", *(f"S{index}" for index in range(1, 10))}:
+                raise PatentParseError(
+                    f"Sunny long-focus embodiment {embodiment_number} surface sequence changed"
+                )
+            coefficients: dict[int, dict[str, float]] = {}
+            _parse_sunny_asphere_block_into(
+                blocks[coefficient_table],
+                index_by_row_key=index_by_row_key,
+                coefficients=coefficients,
+            )
+            expected_count = _SUNNY_LONG_FOCUS_FOLDED_COEFFICIENT_COUNTS[
+                embodiment_number
+            ]
+            coefficient_indices = {index_by_row_key[f"S{index}"] for index in range(1, 7)}
+            if set(coefficients) != coefficient_indices or any(
+                len(values) != expected_count for values in coefficients.values()
+            ):
+                raise PatentParseError(
+                    f"Sunny long-focus embodiment {embodiment_number} coefficients changed"
+                )
+            for surface in surfaces:
+                values = coefficients.get(surface.index)
+                if values is not None:
+                    surface.asphere_coefficients.update(values)
+                    surface.surface_type = "ASP"
+
+            focal_length = efls[embodiment_number - 1]
+            if focal_length is None:
+                continue
+            half_field = math.degrees(
+                math.atan(products[embodiment_number - 1] / focal_length)
+            )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=f"Sunny long-focus embodiment {embodiment_number}",
+                focal_length_mm=focal_length,
+                f_number=f_numbers[embodiment_number - 1],
+                hfov_deg=half_field,
+                surfaces=surfaces,
+            )
+            if not math.isclose(
+                prescription.image_height_mm,
+                products[embodiment_number - 1],
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ):
+                raise PatentParseError(
+                    f"Sunny long-focus embodiment {embodiment_number} field transform changed"
+                )
+            _validate_prescription_materials(prescription)
+            parsed[embodiment_number] = prescription
+    except Exception as exc:  # noqa: BLE001 - retain all eight disclosed embodiments
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number in range(1, 9):
+        embodiment = f"Sunny long-focus embodiment {embodiment_number}"
+        if embodiment_number == 2:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=PatentParseError(
+                        "Sunny long-focus embodiment 2 publishes P1/P2 mirrors, signed "
+                        "coordinate reversals, and unlabeled coordinate-break rows; a "
+                        "folded-coordinate parser is required"
+                    ),
+                )
+            )
+        elif embodiment_number == 5:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=PatentTerminalParseError(
+                        status="metadata_unpublished",
+                        reason_code=(
+                            "metadata_unpublished.configuration_effective_focal_length_"
+                            "and_numeric_semi_fov_absent"
+                        ),
+                        detail=(
+                            "embodiment 5 leaves the EFL value blank and publishes only "
+                            "f*tan(Semi-FOV)=5.12, so the numeric half field cannot be "
+                            "deterministically recovered"
+                        ),
+                    ),
+                )
+            )
+        else:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    prescription=parsed[embodiment_number],
+                )
+            )
+    return attempts
+
+
+def _sunny_long_focus_folded_source_blocks(
+    text: str,
+) -> tuple[dict[int, str], dict[int, str]]:
+    matches = list(_SUNNY_LONG_FOCUS_FOLDED_SOURCE_ANCHOR_PATTERN.finditer(text))
+    blocks: dict[int, str] = {}
+    labels: dict[int, str] = {}
+    for index, match in enumerate(matches):
+        label = match.group("label")
+        number = 1 if label.upper() == "I" else int(label)
+        if int(match.group("anchor")) != number:
+            raise PatentParseError("Sunny long-focus table anchor/label mismatch")
+        if number in blocks:
+            raise PatentParseError(f"duplicate Sunny long-focus source table: {number}")
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        blocks[number] = text[match.start() : end]
+        labels[number] = label
+    return blocks, labels
+
+
+def _sunny_long_focus_folded_metadata(
+    text: str,
+) -> tuple[tuple[float | None, ...], tuple[float, ...]]:
+    efls: list[float | None] = []
+    f_numbers: list[float] = []
+    for embodiment_number in range(1, 9):
+        pattern = re.compile(
+            rf"\bIn\s+Embodiment\s+{embodiment_number}\s*,\s+a\s+total\s+effective\s+"
+            rf"focal\s+length\s+f\s+of\s+the\s+camera\s+lens\s+has\s+a\s+value\s+of\s*"
+            rf"(?P<f>{NUMBER_PATTERN})?\s*mm\s*,\s+and\s+an\s+aperture\s+number\s+Fno\s+"
+            rf"of\s+the\s+camera\s+lens\s+has\s+a\s+value\s+of\s*"
+            rf"(?P<fno>{NUMBER_PATTERN})\s*\.",
+            flags=re.IGNORECASE,
+        )
+        matches = list(pattern.finditer(text))
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Sunny long-focus embodiment {embodiment_number} metadata binding changed"
+            )
+        focal_token = matches[0].group("f")
+        efls.append(_parse_number(focal_token) if focal_token is not None else None)
+        f_numbers.append(_parse_number(matches[0].group("fno")))
+    return tuple(efls), tuple(f_numbers)
+
+
+def _sunny_long_focus_folded_products(table_text: str) -> tuple[float, ...]:
+    body = _cut_sunny_table_narrative(table_text)
+    match = re.search(
+        r"\bf\s*×\s*tan\s*\(\s*Semi-FOV\s*\)\s+"
+        r"(?P<values>.*?)\s+TL\s*/\s*EPD\b",
+        body,
+        flags=re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError("Sunny long-focus field-product row is missing")
+    tokens = tuple(match.group("values").split())
+    if tokens != _SUNNY_LONG_FOCUS_FOLDED_PRODUCT_TOKENS:
+        raise PatentParseError("Sunny long-focus field-product token sequence changed")
+    values: list[float] = []
+    for token in tokens:
+        if token == "←":
+            if not values:
+                raise PatentParseError("Sunny long-focus field-product arrow lacks a value")
+            values.append(values[-1])
+        else:
+            values.append(_parse_number(token))
+    return tuple(values)
 
 
 def _parse_failure_outcome(exc: Exception) -> tuple[str, str]:

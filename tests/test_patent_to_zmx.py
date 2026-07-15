@@ -6573,6 +6573,149 @@ def test_parse_sunny_narrative_meta_and_focal_length_column() -> None:
     assert lens1.asphere_coefficients["K"] == pytest.approx(0.2654)
 
 
+def _sunny_long_focus_source_fixture(patent_id: str) -> str:
+    metadata = []
+    focal_lengths = ("40.00", "40.00", "40", "45", "", "40", "48", "40")
+    for index, focal_length in enumerate(focal_lengths, start=1):
+        metadata.append(
+            f"In Embodiment {index}, a total effective focal length f of the camera lens "
+            f"has a value of {focal_length} mm, and an aperture number Fno of the camera "
+            f"lens has a value of{'4.0' if index == 5 else ' 4.0'}."
+        )
+
+    def surface_table(number: int, *, misspelled_s7: bool = False) -> str:
+        s7_type = "Sphericai" if misspelled_s7 else "Spherical"
+        return f"""TABLE-US-{number:05d} TABLE {number}
+        Material Surface Surface Radius of Thickness/ Refractive Dispersion Focal Conic
+        No. type curvature distance index coefficient length coefficient
+        OBJ Spherical Infinity Infinity STO Spherical Infinity 1.0000
+        S1 Aspherical 10.0000 1.0000 1.500 50.00 20.00 0.0000
+        S2 Aspherical -10.0000 1.0000 0.0000
+        S3 Aspherical 11.0000 1.0000 1.600 40.00 -20.00 0.0000
+        S4 Aspherical -11.0000 1.0000 0.0000
+        S5 Aspherical 12.0000 1.0000 1.700 30.00 30.00 0.0000
+        S6 Aspherical -12.0000 20.0000 0.0000
+        S7 {s7_type} Infinity 0.2100 1.518 64.17
+        S8 Spherical Infinity 0.7900 S9 Spherical Infinity"""
+
+    def coefficient_table(number: int, coefficient_count: int) -> str:
+        labels = ("A4", "A6", "A8", "A10", "A12", "A14", "A16", "A18", "A20")[
+            :coefficient_count
+        ]
+        header = " ".join(labels)
+        values = " ".join("0.0E+00" for _ in labels)
+        rows = " ".join(f"S{index} {values}" for index in range(1, 7))
+        return f"TABLE-US-{number:05d} TABLE {number} Surface No. {header} {rows}"
+
+    tables = [surface_table(1, misspelled_s7=True), coefficient_table(2, 8)]
+    tables.append(
+        "TABLE-US-00003 TABLE 3 (P1) Spherical Infinity -10.0000 "
+        "S1 Aspherical -7.4399 -3.7276 S6 Aspherical -15.8317 -13.7656 "
+        "(P2) Spherical Infinity -5.0000 Spherical Infinity 5.0000 "
+        "Spherical Infinity 2.3656"
+    )
+    for embodiment, surface_number, coefficient_number, coefficient_count in (
+        (3, 4, 5, 8),
+        (4, 6, 7, 8),
+        (5, 8, 9, 9),
+        (6, 10, 11, 8),
+        (7, 12, 13, 9),
+        (8, 14, 15, 9),
+    ):
+        assert embodiment >= 3
+        tables.extend(
+            [
+                surface_table(surface_number),
+                coefficient_table(coefficient_number, coefficient_count),
+            ]
+        )
+    tables.append(
+        "TABLE-US-00016 TABLE 16 Conditional expression Embodiment 1 2 3 4 5 6 7 8 "
+        "f × tan (Semi-FOV) 5.12 ← 5.12 5.76 5.12 5.12 6.15 5.12 "
+        "TL/EPD 3.71 ← 3.63 3.68 3.90 3.67 3.64 3.92"
+    )
+    return " ".join(
+        (
+            f"{patent_id} - Patent Public Search | USPTO CAMERA LENS Abstract",
+            "Family ID: 77932615 Appl. No.: 17/509745",
+            "Semi-FOV is the maximum semi-field of view of the camera lens.",
+            *metadata,
+            *tables,
+        )
+    )
+
+
+def test_sunny_long_focus_source_locked_derivation_and_fail_closed_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-SUNNY-LONG-FOCUS-TEST-B2"
+    raw_text = _sunny_long_focus_source_fixture(patent_id)
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    monkeypatch.setitem(
+        patent_to_zmx._SUNNY_LONG_FOCUS_FOLDED_SOURCE_PROFILES,
+        patent_id,
+        {
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "table_one_label": "1",
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 9))
+    converted = {
+        attempt.embodiment_number: attempt.prescription
+        for attempt in attempts
+        if attempt.prescription is not None
+    }
+    assert set(converted) == {1, 3, 4, 6, 7, 8}
+    assert [converted[index].image_height_mm for index in sorted(converted)] == pytest.approx(
+        [5.12, 5.12, 5.76, 5.12, 6.15, 5.12]
+    )
+    assert all(
+        sum(bool(surface.asphere_coefficients) for surface in prescription.surfaces) == 6
+        for prescription in converted.values()
+    )
+    assert isinstance(attempts[1].error, PatentParseError)
+    assert "folded-coordinate parser is required" in str(attempts[1].error)
+    assert isinstance(attempts[4].error, patent_to_zmx.PatentTerminalParseError)
+    assert attempts[4].error.status == "metadata_unpublished"
+    assert (
+        attempts[4].error.reason_code
+        == "metadata_unpublished.configuration_effective_focal_length_and_numeric_semi_fov_absent"
+    )
+
+
+def test_sunny_long_focus_source_locked_product_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-SUNNY-LONG-FOCUS-DRIFT-B2"
+    raw_text = _sunny_long_focus_source_fixture(patent_id).replace(
+        "5.12 ← 5.12 5.76",
+        "5.13 ← 5.12 5.76",
+        1,
+    )
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    monkeypatch.setitem(
+        patent_to_zmx._SUNNY_LONG_FOCUS_FOLDED_SOURCE_PROFILES,
+        patent_id,
+        {
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "table_one_label": "1",
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 8
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {
+        str(attempt.error) for attempt in attempts
+    } == {"Sunny long-focus field-product token sequence changed"}
+
+
 def test_sunny_group_rows_are_cardinality_bound_and_full_fov_is_halved() -> None:
     raw_text = """
     FOV is a maximum field of view of the optical imaging lens assembly.
