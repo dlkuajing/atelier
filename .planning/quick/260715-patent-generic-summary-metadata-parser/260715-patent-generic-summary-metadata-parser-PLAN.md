@@ -625,6 +625,36 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `99a285cf0c66e3d956eeb2abc95d472e338fd24b4f5fdf40e8500db445db68d2`.
   Strict audit is 619/619 with zero corrupt evidence; 145 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- Exact official source markers bind `US-12429676-B2`, `US-20240369810-A1`, and
+  `US-20260009980-A1` to five optical-data figures (9/13/17/21/25), five asphere figures
+  (10/14/18/22/26), and comparison FIGS. 27/28. The grant uniquely links application
+  18/661719 to prior publication `US-20240369810-A1`; all three retain key PDF pages
+  6/7/9/10/12/13/15/16/18/19/20/21.
+- The first two recovery manifests retain a Google overlay whose decoded page rasters equal the
+  official PDF. Google exposes no citation PDF for `US-20260009980-A1`, so that publication uses
+  the distinct `uspto_official_pdf_coordinate_rapidocr` manifest: no overlay field, no raster-pair
+  equality claim, immutable official-PDF source pin, canonical official decoded-raster hashes, and
+  coordinate OCR only. Tests cover pin hash/path enforcement and the absence of false overlay
+  claims.
+- The exact five-embodiment profile expands all three document failures into 15 independent
+  parser-review items. Actual source defects include below-0.95 `a2` labels, `Fn0`/missing `Fno`,
+  below-gate drawing-sheet headers, and damaged fifth-embodiment metadata. No token or number is
+  repaired, no worker or ZMX is created, and attempts 3/4 are canonical-equal per root:
+  `eb4f30b28caa7db19b1aae46d6a0f34ccdf70680ad8e038ba19dfeb7e630d511`,
+  `84af31b9ee352ebfff4f0dd8a557580978cfb255b50068c5f95fa94d39f8cb43`, and
+  `f4b6004426880b37084f244e6f8c138ab3e8cc14c2d08db27111e805e78214f5` in root-list order.
+- Parser-input SHA-256 values are `3f8cedfe3c90789e29d29b13d348c2845b53c55439f87c1f1c806aed5c6da835`,
+  `ed05c7f5667a4b9d2e89f53bf9474cb4e58e55075a4c29404b06cc5150abda66`, and
+  `f2abfb250dbb1d11a5c642648ff3ddeca17fe1615937ab6febd2e5e4c776d6b5`; manifest SHA-256
+  values are `824075c7952e0d97b03357fa8420b659415a12e97a8815a6f97a9350f10ff309`,
+  `93657b6017f910d7856db926310409e1cfe814780e3e50a6b2ad9685f6f7aca2`, and
+  `6f404c3880bacc64982f8cad5b0dce77f6fd7d15134e109223adf096df5f50d2`.
+- Generic summary changed 246 to 243. Current result-set SHA-256 is
+  `24859a64abff52418fcf9731315a53b10933112a689d76f547f1df0a01fb8b9b`; summary artifact
+  SHA-256 is `894fd534d0983b926221687a9ed9b645247c1be0071f6df8b100c67d750faded`;
+  after-census SHA-256 is `3e8c99734063df5252beb42d223e4969bf939ba6670fbda8b89212976919ff2d`.
+  Strict audit is 619/619 with zero corrupt evidence; 148 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

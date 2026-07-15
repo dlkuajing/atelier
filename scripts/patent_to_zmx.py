@@ -2431,6 +2431,7 @@ _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished
 _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
+_GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
 _ABILITY_OCR_LABEL_CONFIDENCE = 0.95
 _ABILITY_OCR_NUMBER_CONFIDENCE = 0.99
 _ABILITY_ROW_Y_TOLERANCE = 18.0
@@ -4580,6 +4581,183 @@ def _parse_genius_four_lens_eleven_attempts(
     return attempts
 
 
+def _genius_six_page_binding_error(
+    page: dict[str, Any],
+    *,
+    page_number: int,
+    sheet_number: int,
+    role: str,
+) -> str | None:
+    if page.get("page_number") != page_number:
+        return f"{role} is not retained on page {page_number}"
+    tokens = list(page.get("rapidocr_tokens") or [])
+    sheet_matches = [
+        token for token in tokens if f"Sheet {sheet_number} of 20" in _ability_token_text(token)
+    ]
+    if len(sheet_matches) != 1:
+        return f"{role} has {len(sheet_matches)} drawing-sheet header tokens"
+    confidence = _ability_token_confidence(sheet_matches[0])
+    if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+        return (
+            f"{role} drawing-sheet header confidence {confidence:.6f} is below "
+            f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+        )
+    return None
+
+
+def _genius_six_exact_label_error(
+    tokens: list[dict[str, Any]],
+    label: str,
+    *,
+    context: str,
+    expected_count: int = 1,
+) -> str | None:
+    matches = [
+        token
+        for token in tokens
+        if _ability_token_text(token).strip(" .:").casefold() == label.casefold()
+    ]
+    if len(matches) != expected_count:
+        return (
+            f"{context} label {label!r} has {len(matches)} exact OCR tokens; "
+            f"expected {expected_count}"
+        )
+    below_gate = [
+        _ability_token_confidence(token)
+        for token in matches
+        if _ability_token_confidence(token) < _ABILITY_OCR_LABEL_CONFIDENCE
+    ]
+    if below_gate:
+        return (
+            f"{context} label {label!r} confidence {min(below_gate):.6f} is below "
+            f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+        )
+    return None
+
+
+def _genius_six_metadata_label_error(
+    tokens: list[dict[str, Any]],
+    label: str,
+) -> str | None:
+    pattern = re.compile(rf"(?:^|\s){re.escape(label)}\s*=", flags=re.IGNORECASE)
+    matches = [token for token in tokens if pattern.search(_ability_token_text(token))]
+    if len(matches) != 1:
+        return f"optical metadata label {label} has {len(matches)} exact OCR prefixes"
+    confidence = _ability_token_confidence(matches[0])
+    if confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+        return (
+            f"optical metadata label {label} confidence {confidence:.6f} is below "
+            f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+        )
+    return None
+
+
+def _genius_six_optical_census_error(page: dict[str, Any]) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("EFL", "HFOV", "TTL", "Fno", "LCR"):
+        error = _genius_six_metadata_label_error(tokens, label)
+        if error is not None:
+            return error
+    for label in ("surface", "radius", "thickness", "Abbe"):
+        error = _genius_six_exact_label_error(tokens, label, context="optical table")
+        if error is not None:
+            return error
+    return None
+
+
+def _genius_six_asphere_census_error(page: dict[str, Any]) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("surface", "K", "a2", "a4", "a6", "a8", "a10", "a12", "a14", "a16"):
+        error = _genius_six_exact_label_error(
+            tokens,
+            label,
+            context="asphere table",
+            expected_count=2 if label == "surface" else 1,
+        )
+        if error is not None:
+            return error
+    return None
+
+
+def _parse_genius_six_lens_five_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 34:
+        raise PatentParseError("Genius five-embodiment PDF page count is not 34")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 12:
+        raise PatentParseError("Genius five-embodiment PDF must retain 12 key pages")
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("Genius five-embodiment input lacks official source facts")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(r"[0-9a-f]{64}", primary_digest) is None:
+        raise PatentParseError("Genius five-embodiment official HTML hash is invalid")
+    figure_counts = facts.get("figure_binding_counts")
+    if (
+        not isinstance(figure_counts, dict)
+        or len(figure_counts) != 10
+        or set(figure_counts.values()) != {1}
+        or facts.get("comparison_binding_count") != 1
+    ):
+        raise PatentParseError("Genius five-embodiment official figure bindings changed")
+
+    comparison_errors = []
+    for index, (page_number, sheet_number) in enumerate(((20, 19), (21, 20)), start=1):
+        page = _ability_page(payload, f"genius_six_comparison_{index}")
+        error = _genius_six_page_binding_error(
+            page,
+            page_number=page_number,
+            sheet_number=sheet_number,
+            role=f"genius_six_comparison_{index}",
+        )
+        if error is not None:
+            comparison_errors.append(error)
+
+    ordinals = ("first", "second", "third", "fourth", "fifth")
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, ordinal in enumerate(ordinals, start=1):
+        optical_page_number = 6 + (embodiment_number - 1) * 3
+        asphere_page_number = optical_page_number + 1
+        optical_sheet = optical_page_number - 1
+        asphere_sheet = asphere_page_number - 1
+        optical_page = _ability_page(payload, f"genius_six_optical_{embodiment_number}")
+        asphere_page = _ability_page(payload, f"genius_six_asphere_{embodiment_number}")
+        errors = [
+            error
+            for error in (
+                _genius_six_page_binding_error(
+                    optical_page,
+                    page_number=optical_page_number,
+                    sheet_number=optical_sheet,
+                    role=f"genius_six_optical_{embodiment_number}",
+                ),
+                _genius_six_optical_census_error(optical_page),
+                _genius_six_page_binding_error(
+                    asphere_page,
+                    page_number=asphere_page_number,
+                    sheet_number=asphere_sheet,
+                    role=f"genius_six_asphere_{embodiment_number}",
+                ),
+                _genius_six_asphere_census_error(asphere_page),
+                *comparison_errors,
+            )
+            if error is not None
+        ]
+        if not errors:
+            errors.append(
+                "Genius six-lens optical/asphere census passed; numeric cell parser remains"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Genius six-lens {ordinal} embodiment",
+                error=PatentParseError(" | ".join(errors)),
+            )
+        )
+    return attempts
+
+
 def _ability_eight_lens_terminal_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -4921,6 +5099,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_ability_zoom_two_state_attempts(payload)
     if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
         return _parse_genius_four_lens_eleven_attempts(payload)
+    if profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
+        return _parse_genius_six_lens_five_attempts(payload)
     if profile is not None:
         raise PatentParseError(f"unsupported Ability PDF OCR profile: {profile}")
     surface_page = _ability_page(payload, "surface_ol2")
@@ -9610,13 +9790,14 @@ async def _convert_candidate(
                     suffix="pdf",
                     content=recovered_pdf_input.official_pdf,
                 )
-                mirror_pdf_document = _retain_source_bytes(
-                    raw_document_dir,
-                    publication_id=pdf_source_publication_id,
-                    source_bucket="GOOGLE-OCR-PDF",
-                    suffix="pdf",
-                    content=recovered_pdf_input.mirror_pdf,
-                )
+                if recovered_pdf_input.mirror_pdf is not None:
+                    mirror_pdf_document = _retain_source_bytes(
+                        raw_document_dir,
+                        publication_id=pdf_source_publication_id,
+                        source_bucket="GOOGLE-OCR-PDF",
+                        suffix="pdf",
+                        content=recovered_pdf_input.mirror_pdf,
+                    )
                 parser_source_document = _retain_source_bytes(
                     raw_document_dir,
                     publication_id=candidate.patent_id,
@@ -10449,7 +10630,11 @@ def _load_pdf_ocr_source_pin(
         return content, source_url
 
     official_pdf, official_pdf_url = checked_source("official_pdf", "USPTO-PDF")
-    mirror_pdf, mirror_pdf_url = checked_source("ocr_overlay_pdf", "GOOGLE-OCR-PDF")
+    if payload.get("ocr_overlay_pdf") is None:
+        mirror_pdf = None
+        mirror_pdf_url = None
+    else:
+        mirror_pdf, mirror_pdf_url = checked_source("ocr_overlay_pdf", "GOOGLE-OCR-PDF")
     return PatentPdfCachedSources(
         official_pdf=official_pdf,
         official_pdf_url=official_pdf_url,
@@ -10464,9 +10649,9 @@ def _retain_pdf_ocr_source_pin(
     publication_id: str,
     recovered: PatentPdfOcrRecovery,
     official_pdf_source: SourceDocumentEvidence,
-    mirror_pdf_source: SourceDocumentEvidence,
+    mirror_pdf_source: SourceDocumentEvidence | None,
 ) -> SourceDocumentEvidence:
-    """Pin the first verified PDF pair so frozen-pool replay never refetches it."""
+    """Pin immutable official bytes and the verified overlay when one is published."""
 
     payload = {
         "schema_version": 1,
@@ -10477,13 +10662,18 @@ def _retain_pdf_ocr_source_pin(
             "path": official_pdf_source.retained_path,
             "sha256": official_pdf_source.sha256,
         },
-        "ocr_overlay_pdf": {
+    }
+    if mirror_pdf_source is not None:
+        if recovered.mirror_pdf_url is None or recovered.mirror_pdf is None:
+            raise PatentParseError("retained OCR overlay lacks recovered URL/content")
+        payload["ocr_overlay_pdf"] = {
             "source_url": recovered.mirror_pdf_url,
             "source_bucket": mirror_pdf_source.source_bucket,
             "path": mirror_pdf_source.retained_path,
             "sha256": mirror_pdf_source.sha256,
-        },
-    }
+        }
+    elif recovered.mirror_pdf_url is not None or recovered.mirror_pdf is not None:
+        raise PatentParseError("recovered OCR overlay lacks retained source evidence")
     content = (
         json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         + "\n"
@@ -10511,7 +10701,7 @@ def _retain_pdf_ocr_recovery_manifest(
     primary_source: SourceDocumentEvidence,
     recovered: PatentPdfOcrRecovery,
     official_pdf_source: SourceDocumentEvidence,
-    mirror_pdf_source: SourceDocumentEvidence,
+    mirror_pdf_source: SourceDocumentEvidence | None,
     parser_source: SourceDocumentEvidence,
     source_pin: SourceDocumentEvidence,
     prior_publication_recovery: RecoveredPriorPublicationPdf | None = None,
@@ -10524,7 +10714,11 @@ def _retain_pdf_ocr_recovery_manifest(
 
     payload = {
         "schema_version": 1,
-        "recovery_type": "uspto_official_pdf_exact_image_ocr_overlay",
+        "recovery_type": (
+            "uspto_official_pdf_exact_image_ocr_overlay"
+            if mirror_pdf_source is not None
+            else "uspto_official_pdf_coordinate_rapidocr"
+        ),
         "publication_id": primary_publication_id,
         "primary": {
             "source_bucket": primary_source.source_bucket,
@@ -10537,12 +10731,6 @@ def _retain_pdf_ocr_recovery_manifest(
             "path": official_pdf_source.retained_path,
             "sha256": official_pdf_source.sha256,
             "access": "USPTO anonymous PPUBS request token",
-        },
-        "ocr_overlay_pdf": {
-            "source_url": recovered.mirror_pdf_url,
-            "source_bucket": mirror_pdf_source.source_bucket,
-            "path": mirror_pdf_source.retained_path,
-            "sha256": mirror_pdf_source.sha256,
         },
         "source_pin": {
             "source_bucket": source_pin.source_bucket,
@@ -10557,7 +10745,11 @@ def _retain_pdf_ocr_recovery_manifest(
             "key_page_numbers": list(recovered.key_page_numbers),
         },
         "page_count": recovered.page_count,
-        "page_identity": "decoded_page_raster_pixels_v1",
+        "page_identity": (
+            "decoded_page_raster_pixels_v1"
+            if mirror_pdf_source is not None
+            else "official_decoded_page_raster_pixels_v1"
+        ),
         "official_page_image_sha256": list(recovered.page_image_sha256),
         "tool_versions": {
             "pypdf": recovered.pypdf_version,
@@ -10565,11 +10757,22 @@ def _retain_pdf_ocr_recovery_manifest(
         },
         "checks": {
             "same_publication_id": recovered.publication_id == primary_publication_id,
-            "all_decoded_page_rasters_pixel_identical": True,
             "key_pages_have_official_image_hashes": True,
             "parser_input_is_canonical_json": True,
         },
     }
+    if mirror_pdf_source is not None:
+        if recovered.mirror_pdf_url is None or recovered.mirror_pdf is None:
+            raise PatentParseError("manifest OCR overlay lacks recovered URL/content")
+        payload["ocr_overlay_pdf"] = {
+            "source_url": recovered.mirror_pdf_url,
+            "source_bucket": mirror_pdf_source.source_bucket,
+            "path": mirror_pdf_source.retained_path,
+            "sha256": mirror_pdf_source.sha256,
+        }
+        payload["checks"]["all_decoded_page_rasters_pixel_identical"] = True
+    elif recovered.mirror_pdf_url is not None or recovered.mirror_pdf is not None:
+        raise PatentParseError("manifest recovered overlay lacks retained evidence")
     if prior_publication_recovery is not None and prior_publication_source is not None:
         try:
             parser_payload = json.loads(recovered.parser_input)

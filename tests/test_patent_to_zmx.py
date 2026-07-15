@@ -2392,6 +2392,86 @@ def _genius_four_lens_eleven_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_six_lens_five_pdf_ocr_parser_input() -> bytes:
+    pages = []
+    for embodiment_number in range(1, 6):
+        optical_page_number = 6 + (embodiment_number - 1) * 3
+        asphere_page_number = optical_page_number + 1
+        optical_sheet = optical_page_number - 1
+        asphere_sheet = asphere_page_number - 1
+        optical_tokens = [
+            _ability_ocr_token(f"Sheet {optical_sheet} of 20", 700.0, 50.0),
+            *(
+                _ability_ocr_token(f"{label}=1.0", 100.0 + index * 100.0, 100.0)
+                for index, label in enumerate(("EFL", "HFOV", "TTL", "Fno", "LCR"))
+            ),
+            *(
+                _ability_ocr_token(label, 100.0 + index * 100.0, 150.0)
+                for index, label in enumerate(("surface", "radius", "thickness", "Abbe"))
+            ),
+        ]
+        pages.append(
+            {
+                "page_number": optical_page_number,
+                "role": f"genius_six_optical_{embodiment_number}",
+                "official_image_sha256": str(embodiment_number) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": optical_tokens,
+            }
+        )
+        asphere_tokens = [
+            _ability_ocr_token(f"Sheet {asphere_sheet} of 20", 700.0, 50.0),
+            _ability_ocr_token("surface", 900.0, 100.0),
+            *(
+                _ability_ocr_token(label, 100.0 + index * 80.0, 100.0)
+                for index, label in enumerate(
+                    ("surface", "K", "a2", "a4", "a6", "a8", "a10", "a12", "a14", "a16")
+                )
+            ),
+        ]
+        pages.append(
+            {
+                "page_number": asphere_page_number,
+                "role": f"genius_six_asphere_{embodiment_number}",
+                "official_image_sha256": str(embodiment_number + 1) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": asphere_tokens,
+            }
+        )
+
+    for index, (page_number, sheet_number) in enumerate(((20, 19), (21, 20)), start=1):
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": f"genius_six_comparison_{index}",
+                "official_image_sha256": "f" * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(f"Sheet {sheet_number} of 20", 700.0, 50.0)
+                ],
+            }
+        )
+
+    figure_counts = {
+        marker.split(" shows", maxsplit=1)[0]: 1
+        for marker in patent_pdf_recovery._GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT
+    }
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "genius_six_lens_five_embodiment_census_v1",
+        "publication_id": "US-20240369810-A1",
+        "page_count": 34,
+        "source_facts": {
+            "primary_html_sha256": "d" * 64,
+            "figure_binding_counts": figure_counts,
+            "comparison_binding_count": 1,
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _ability_three_lens_prescription_page(
     *,
     optical_lens: int,
@@ -2806,6 +2886,18 @@ def test_genius_four_lens_eleven_source_facts_bind_every_figure() -> None:
     assert facts["fno_label_count"] == 1
 
 
+def test_genius_six_lens_five_source_facts_bind_every_figure() -> None:
+    markers = patent_pdf_recovery._GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT
+    comparison = patent_pdf_recovery._GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER
+    source = " ".join((*markers, comparison))
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._genius_six_lens_five_source_facts(source)
+    assert len(facts["figure_binding_counts"]) == 10
+    assert set(facts["figure_binding_counts"].values()) == {1}
+    assert facts["comparison_binding_count"] == 1
+
+
 def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_eight_lens_pdf_ocr_parser_input().decode(),
@@ -2977,6 +3069,21 @@ def test_genius_four_lens_eleven_profile_retains_every_embodiment() -> None:
     assert all(attempt.prescription is None for attempt in attempts)
     assert all(
         "optical/asphere/Fno census passed; numeric cell parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_genius_six_lens_five_profile_retains_every_embodiment() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _genius_six_lens_five_pdf_ocr_parser_input().decode(),
+        patent_id="US-20240369810-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 6))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "six-lens optical/asphere census passed; numeric cell parser remains"
         in str(attempt.error)
         for attempt in attempts
     )
@@ -3729,6 +3836,78 @@ def test_pdf_ocr_source_pin_rejects_retained_source_hash_drift(tmp_path: Path) -
             tmp_path,
             publication_id="US-10684452-B2",
         )
+
+
+def test_pdf_ocr_source_pin_and_manifest_support_official_only_rapidocr(
+    tmp_path: Path,
+) -> None:
+    official = patent_to_zmx._retain_source_bytes(
+        tmp_path,
+        publication_id="US-20260009980-A1",
+        source_bucket="USPTO-PDF",
+        suffix="pdf",
+        content=b"%PDF-official",
+    )
+    parser_source = patent_to_zmx._retain_source_bytes(
+        tmp_path,
+        publication_id="US-20260009980-A1",
+        source_bucket="USPTO-PDF-OCR-JSON",
+        suffix="json",
+        content=b"{}\n",
+    )
+    primary = patent_to_zmx._retain_source_bytes(
+        tmp_path,
+        publication_id="US-20260009980-A1",
+        source_bucket="US-PGPUB",
+        suffix="html",
+        content=b"official html",
+    )
+    recovered = patent_to_zmx.PatentPdfOcrRecovery(
+        publication_id="US-20260009980-A1",
+        official_pdf=b"%PDF-official",
+        official_pdf_url=(
+            "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20260009980"
+        ),
+        mirror_pdf=None,
+        mirror_pdf_url=None,
+        parser_input=b"{}\n",
+        page_count=1,
+        page_image_sha256=("a" * 64,),
+        key_page_numbers=(1,),
+        pypdf_version="fixture",
+        rapidocr_version="fixture",
+    )
+    pin = patent_to_zmx._retain_pdf_ocr_source_pin(
+        tmp_path,
+        publication_id="US-20260009980-A1",
+        recovered=recovered,
+        official_pdf_source=official,
+        mirror_pdf_source=None,
+    )
+    cached = patent_to_zmx._load_pdf_ocr_source_pin(
+        tmp_path,
+        publication_id="US-20260009980-A1",
+    )
+
+    assert cached is not None
+    assert cached.official_pdf == b"%PDF-official"
+    assert cached.mirror_pdf is None
+    assert cached.mirror_pdf_url is None
+    manifest_evidence = patent_to_zmx._retain_pdf_ocr_recovery_manifest(
+        tmp_path,
+        primary_publication_id="US-20260009980-A1",
+        primary_source=primary,
+        recovered=recovered,
+        official_pdf_source=official,
+        mirror_pdf_source=None,
+        parser_source=parser_source,
+        source_pin=pin,
+    )
+    manifest = json.loads(Path(manifest_evidence.retained_path).read_text(encoding="utf-8"))
+    assert manifest["recovery_type"] == "uspto_official_pdf_coordinate_rapidocr"
+    assert manifest["page_identity"] == "official_decoded_page_raster_pixels_v1"
+    assert "ocr_overlay_pdf" not in manifest
+    assert "all_decoded_page_rasters_pixel_identical" not in manifest["checks"]
 
 
 def test_pdf_ocr_source_pin_rejects_source_outside_raw_lake(tmp_path: Path) -> None:

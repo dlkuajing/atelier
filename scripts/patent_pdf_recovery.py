@@ -138,6 +138,29 @@ _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS = (
 )
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _GENIUS_FOUR_LENS_ELEVEN_ALLOWED_BLANK_MIRROR_PAGES = frozenset({6, 17, 21, 33, 45})
+_GENIUS_SIX_LENS_FIVE_OPTICAL_FIGURES = (9, 13, 17, 21, 25)
+_GENIUS_SIX_LENS_FIVE_ASPHERE_FIGURES = (10, 14, 18, 22, 26)
+_GENIUS_SIX_LENS_FIVE_ORDINALS = ("first", "second", "third", "fourth", "fifth")
+_GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for ordinal, optical_figure, asphere_figure in zip(
+        _GENIUS_SIX_LENS_FIVE_ORDINALS,
+        _GENIUS_SIX_LENS_FIVE_OPTICAL_FIGURES,
+        _GENIUS_SIX_LENS_FIVE_ASPHERE_FIGURES,
+        strict=True,
+    )
+    for marker in (
+        f"FIG. {optical_figure} shows detailed optical data of the optical lens assembly "
+        f"according to the {ordinal} embodiment of the disclosure",
+        f"FIG. {asphere_figure} shows aspheric parameters of the optical lens assembly "
+        f"according to the {ordinal} embodiment of the disclosure",
+    )
+)
+_GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER = (
+    "FIGS. 27 and 28 shows values of important parameters and relational expressions thereof "
+    "of the optical lens assemblies according to the first to fifth embodiments of the disclosure"
+)
+_GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
     r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
     r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
@@ -154,8 +177,8 @@ class PatentPdfOcrRecovery:
     publication_id: str
     official_pdf: bytes
     official_pdf_url: str
-    mirror_pdf: bytes
-    mirror_pdf_url: str
+    mirror_pdf: bytes | None
+    mirror_pdf_url: str | None
     parser_input: bytes
     page_count: int
     page_image_sha256: tuple[str, ...]
@@ -170,8 +193,8 @@ class PatentPdfCachedSources:
 
     official_pdf: bytes
     official_pdf_url: str
-    mirror_pdf: bytes
-    mirror_pdf_url: str
+    mirror_pdf: bytes | None
+    mirror_pdf_url: str | None
 
 
 def _normalized_html_text(raw_html: str) -> str:
@@ -203,6 +226,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
     ):
         return _GENIUS_FOUR_LENS_ELEVEN_PROFILE
+    if all(marker in text for marker in _GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT) and (
+        _GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER in text
+    ):
+        return _GENIUS_SIX_LENS_FIVE_PROFILE
     return None
 
 
@@ -351,6 +378,20 @@ def _genius_four_lens_eleven_source_facts(raw_html: str) -> dict[str, Any]:
             for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
         },
         "fno_label_count": len(re.findall(r"\bFno\b", text, flags=re.IGNORECASE)),
+    }
+
+
+def _genius_six_lens_five_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind all five optical/asphere pairs and their two comparison sheets."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_count": text.count(_GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER),
     }
 
 
@@ -535,33 +576,46 @@ async def recover_ability_official_pdf_ocr(
             html.unescape(match.group("url"))
             for match in _GOOGLE_PDF_META_RE.finditer(google_page.text)
         }
-        if len(pdf_urls) != 1:
+        if not pdf_urls and profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
+            mirror_url = None
+        elif len(pdf_urls) != 1:
             raise PatentPdfRecoveryError(
                 f"Google patent citation PDF count is {len(pdf_urls)}; expected one"
             )
-        mirror_url = next(iter(pdf_urls))
+        else:
+            mirror_url = next(iter(pdf_urls))
     else:
         mirror_url = cached_sources.mirror_pdf_url
-    parsed_url = httpx.URL(mirror_url)
-    if parsed_url.scheme != "https" or parsed_url.host != GOOGLE_PDF_HOST:
-        raise PatentPdfRecoveryError("Google citation PDF URL is outside the allowed host")
-    if cached_sources is None:
+    if mirror_url is not None:
+        parsed_url = httpx.URL(mirror_url)
+        if parsed_url.scheme != "https" or parsed_url.host != GOOGLE_PDF_HOST:
+            raise PatentPdfRecoveryError("Google citation PDF URL is outside the allowed host")
+    if cached_sources is None and mirror_url is not None:
         mirror_response = await _get_with_retries(
             client,
             mirror_url,
             headers={"Accept": "application/pdf"},
         )
         mirror_pdf = mirror_response.content
-    else:
+    elif cached_sources is not None:
         mirror_pdf = cached_sources.mirror_pdf
-    _require_pdf(mirror_pdf, source="Google patent OCR PDF")
+    else:
+        mirror_pdf = None
+    if mirror_pdf is not None:
+        _require_pdf(mirror_pdf, source="Google patent OCR PDF")
+    if (mirror_pdf is None) != (mirror_url is None):
+        raise PatentPdfRecoveryError("Google OCR PDF URL/content availability differs")
 
     official_reader = pypdf.PdfReader(io.BytesIO(official_pdf))
-    mirror_reader = pypdf.PdfReader(io.BytesIO(mirror_pdf))
-    if len(official_reader.pages) != len(mirror_reader.pages):
+    mirror_reader = pypdf.PdfReader(io.BytesIO(mirror_pdf)) if mirror_pdf is not None else None
+    if mirror_reader is not None and len(official_reader.pages) != len(mirror_reader.pages):
         raise PatentPdfRecoveryError("official and OCR PDFs have different page counts")
     page_count = len(official_reader.pages)
-    mirror_texts = [page.extract_text() or "" for page in mirror_reader.pages]
+    mirror_texts = (
+        [page.extract_text() or "" for page in mirror_reader.pages]
+        if mirror_reader is not None
+        else [""] * page_count
+    )
     blank_mirror_pages = {
         page_number
         for page_number, text in enumerate(mirror_texts, start=1)
@@ -576,6 +630,11 @@ async def recover_ability_official_pdf_ocr(
                 "Genius OCR overlay has unexpected blank pages: "
                 + ",".join(str(page) for page in sorted(unexpected_blank_pages))
             )
+    elif profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
+        # This exact profile does not use mirror text. When an overlay is
+        # published, every decoded raster is checked above; otherwise only the
+        # official USPTO rasters are retained. Key pages always use RapidOCR.
+        pass
     elif blank_mirror_pages:
         raise PatentPdfRecoveryError(
             "Google citation PDF lacks an OCR text layer on one or more pages"
@@ -583,36 +642,34 @@ async def recover_ability_official_pdf_ocr(
 
     page_hashes: list[str] = []
     official_images: list[bytes] = []
-    for page_number, (official_page, mirror_page) in enumerate(
-        zip(official_reader.pages, mirror_reader.pages, strict=True),
-        start=1,
-    ):
+    for page_number, official_page in enumerate(official_reader.pages, start=1):
         official_image = _page_image(
             official_page,
             source="USPTO",
             page_number=page_number,
         )
-        mirror_image = _page_image(
-            mirror_page,
-            source="Google OCR",
-            page_number=page_number,
-        )
-        official_raster = _decoded_raster(
-            official_image,
-            source=f"USPTO page {page_number}",
-        )
-        mirror_raster = _decoded_raster(
-            mirror_image,
-            source=f"Google OCR page {page_number}",
-        )
-        if (
-            official_raster.shape != mirror_raster.shape
-            or official_raster.dtype != mirror_raster.dtype
-            or not np.array_equal(official_raster, mirror_raster)
-        ):
-            raise PatentPdfRecoveryError(
-                f"official/OCR decoded page raster mismatch at page {page_number}"
+        if mirror_reader is not None:
+            mirror_image = _page_image(
+                mirror_reader.pages[page_number - 1],
+                source="Google OCR",
+                page_number=page_number,
             )
+            official_raster = _decoded_raster(
+                official_image,
+                source=f"USPTO page {page_number}",
+            )
+            mirror_raster = _decoded_raster(
+                mirror_image,
+                source=f"Google OCR page {page_number}",
+            )
+            if (
+                official_raster.shape != mirror_raster.shape
+                or official_raster.dtype != mirror_raster.dtype
+                or not np.array_equal(official_raster, mirror_raster)
+            ):
+                raise PatentPdfRecoveryError(
+                    f"official/OCR decoded page raster mismatch at page {page_number}"
+                )
         page_hashes.append(_canonical_raster_sha256(official_image))
         official_images.append(official_image)
 
@@ -843,6 +900,20 @@ async def recover_ability_official_pdf_ocr(
                 )
         parser_profile = profile
         source_facts = _genius_four_lens_eleven_source_facts(primary_html)
+    elif profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
+        if page_count != 34:
+            raise PatentPdfRecoveryError("Genius five-embodiment PDF page count is not 34")
+        role_pages = {}
+        for embodiment, (optical_page_index, asphere_page_index) in enumerate(
+            zip((5, 8, 11, 14, 17), (6, 9, 12, 15, 18), strict=True),
+            start=1,
+        ):
+            role_pages[f"genius_six_optical_{embodiment}"] = optical_page_index
+            role_pages[f"genius_six_asphere_{embodiment}"] = asphere_page_index
+        role_pages["genius_six_comparison_1"] = 19
+        role_pages["genius_six_comparison_2"] = 20
+        parser_profile = profile
+        source_facts = _genius_six_lens_five_source_facts(primary_html)
     else:
         raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
     if len(set(role_pages.values())) != len(role_pages):
