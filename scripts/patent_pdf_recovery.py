@@ -161,6 +161,41 @@ _GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER = (
     "of the optical lens assemblies according to the first to fifth embodiments of the disclosure"
 )
 _GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
+_GENIUS_SIX_LENS_NINE_OPTICAL_FIGURES = (9, 13, 17, 21, 25, 29, 33, 37, 41)
+_GENIUS_SIX_LENS_NINE_ASPHERE_FIGURES = (10, 14, 18, 22, 26, 30, 34, 38, 42)
+_GENIUS_SIX_LENS_NINE_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+)
+_GENIUS_SIX_LENS_NINE_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for ordinal, optical_figure, asphere_figure in zip(
+        _GENIUS_SIX_LENS_NINE_ORDINALS,
+        _GENIUS_SIX_LENS_NINE_OPTICAL_FIGURES,
+        _GENIUS_SIX_LENS_NINE_ASPHERE_FIGURES,
+        strict=True,
+    )
+    for marker in (
+        f"FIG. {optical_figure} shows the detailed optical data of the optical lens assembly "
+        f"according to the {ordinal} embodiment of the disclosure",
+        f"FIG. {asphere_figure} shows the aspheric parameters of the optical lens assembly "
+        f"according to the {ordinal} embodiment of the disclosure",
+    )
+)
+_GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS = (
+    "FIG. 43 shows the values of important parameters of the optical lens assembly and their "
+    "relational values according to the first to the fifth embodiments of the disclosure",
+    "FIG. 44 shows the values of important parameters of the optical lens assembly and their "
+    "relational values according to the sixth to the ninth embodiments of the disclosure",
+)
+_GENIUS_SIX_LENS_NINE_PROFILE = "genius_six_lens_nine_embodiment_census_v1"
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
     r"\b{label}\s*(?:=|:|is(?:\s+set\s+to)?)\s*"
     r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:E[-+]?\d+)?"
@@ -230,6 +265,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         _GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER in text
     ):
         return _GENIUS_SIX_LENS_FIVE_PROFILE
+    if all(marker in text for marker in _GENIUS_SIX_LENS_NINE_REQUIRED_FIGURE_TEXT) and all(
+        marker in text for marker in _GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS
+    ):
+        return _GENIUS_SIX_LENS_NINE_PROFILE
     return None
 
 
@@ -392,6 +431,23 @@ def _genius_six_lens_five_source_facts(raw_html: str) -> dict[str, Any]:
             for marker in _GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT
         },
         "comparison_binding_count": text.count(_GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER),
+    }
+
+
+def _genius_six_lens_nine_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind all nine optical/asphere pairs and their two comparison sheets."""
+
+    text = _normalized_html_text(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "figure_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_SIX_LENS_NINE_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS
+        },
     }
 
 
@@ -576,7 +632,10 @@ async def recover_ability_official_pdf_ocr(
             html.unescape(match.group("url"))
             for match in _GOOGLE_PDF_META_RE.finditer(google_page.text)
         }
-        if not pdf_urls and profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
+        if not pdf_urls and profile in {
+            _GENIUS_SIX_LENS_FIVE_PROFILE,
+            _GENIUS_SIX_LENS_NINE_PROFILE,
+        }:
             mirror_url = None
         elif len(pdf_urls) != 1:
             raise PatentPdfRecoveryError(
@@ -630,7 +689,7 @@ async def recover_ability_official_pdf_ocr(
                 "Genius OCR overlay has unexpected blank pages: "
                 + ",".join(str(page) for page in sorted(unexpected_blank_pages))
             )
-    elif profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
+    elif profile in {_GENIUS_SIX_LENS_FIVE_PROFILE, _GENIUS_SIX_LENS_NINE_PROFILE}:
         # This exact profile does not use mirror text. When an overlay is
         # published, every decoded raster is checked above; otherwise only the
         # official USPTO rasters are retained. Key pages always use RapidOCR.
@@ -914,6 +973,20 @@ async def recover_ability_official_pdf_ocr(
         role_pages["genius_six_comparison_2"] = 20
         parser_profile = profile
         source_facts = _genius_six_lens_five_source_facts(primary_html)
+    elif profile == _GENIUS_SIX_LENS_NINE_PROFILE:
+        if page_count not in {50, 51}:
+            raise PatentPdfRecoveryError(
+                "Genius nine-embodiment PDF page count is not retained 50/51 layout"
+            )
+        role_pages = {}
+        for embodiment in range(1, 10):
+            optical_page_index = 5 + (embodiment - 1) * 3
+            role_pages[f"genius_six_optical_{embodiment}"] = optical_page_index
+            role_pages[f"genius_six_asphere_{embodiment}"] = optical_page_index + 1
+        role_pages["genius_six_comparison_1"] = 31
+        role_pages["genius_six_comparison_2"] = 32
+        parser_profile = profile
+        source_facts = _genius_six_lens_nine_source_facts(primary_html)
     else:
         raise PatentPdfRecoveryError(f"unsupported Ability PDF profile: {profile}")
     if len(set(role_pages.values())) != len(role_pages):

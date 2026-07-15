@@ -655,6 +655,32 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `3e8c99734063df5252beb42d223e4969bf939ba6670fbda8b89212976919ff2d`.
   Strict audit is 619/619 with zero corrupt evidence; 148 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- `US-12461345-B2` and `US-20260036791-A1` each bind nine optical-data figures
+  (9/13/17/21/25/29/33/37/41), nine asphere figures (10/14/18/22/26/30/34/38/42), and
+  comparison FIGS. 43/44 exactly once. Their independently recovered official PDFs retain the
+  same key pages 6/7 through 30/31 plus 32/33, with 32 drawing sheets; the grant has 50 total
+  pages and the continuation publication has 51.
+- Neither publication currently exposes a Google citation PDF. Each therefore has its own
+  immutable `uspto_official_pdf_coordinate_rapidocr` source pin and manifest, with no overlay
+  field or pair-equality claim. The official PDF SHA-256 values are
+  `e7e1bee02c6b844550a5bae736151f8742f2846db703e6211dcce31ba310b7cc` and
+  `54281507d1181daa49cef509c5c4fdb569b77b1d3442a1af90f64a2ebae9b4c3`.
+- Both roots expand to nine independent parser-review items. Actual failures include below-gate
+  drawing-sheet headers, `a2`/`a4`/`a8`/`K` label damage, missing ninth-embodiment TTL in the
+  grant OCR, and missing ninth-embodiment EFL in the A1 OCR. No number is inferred or repaired;
+  no worker or ZMX is created. Attempts 3/4 are canonical-equal with result SHA-256 values
+  `ed15555cbac0f44388b1e132f558901c20daba303c2ae51361671806b584805f` and
+  `070424ce498ed6d3564ace216b28ca7a6e425192d34351706c99550e8b22d7cc`.
+- Parser-input SHA-256 values are `0b26adba7e4c54f2e3c188ec82362f3634313fc61e6427a39cf00ac44bba2ac8`
+  and `ace0aa7d53dd10987ae4c49249d522118a2ad1f65ab1933e95dd1555a943f597`;
+  manifest SHA-256 values are `06e8de243d85ea73e0035a651b07eceb6631142cd8ee522917a18aecbaaa9241`
+  and `c68538933c3cfc63080bc700ea7b995614f1544e02c41dbeb829fc26074cf2ee`.
+- Generic summary changed 243 to 241. Current result-set SHA-256 is
+  `b65b39ad10343f95b0326b81b57ca24cc8050828d4551cfa498a556aa7681d17`; summary artifact
+  SHA-256 is `ade8078358a5b864366314c35d24688cbd776f9f9bac17c0fb9b32357d238977`;
+  after-census SHA-256 is `40ce630375c346f58405b73fc974bc9dc150479e7b27e23195ba1c3d5bc42912`.
+  Strict audit is 619/619 with zero corrupt evidence; 150 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

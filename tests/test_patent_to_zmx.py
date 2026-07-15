@@ -2472,6 +2472,89 @@ def _genius_six_lens_five_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_six_lens_nine_pdf_ocr_parser_input() -> bytes:
+    pages = []
+    for embodiment_number in range(1, 10):
+        optical_page_number = 6 + (embodiment_number - 1) * 3
+        asphere_page_number = optical_page_number + 1
+        optical_tokens = [
+            _ability_ocr_token(f"Sheet {optical_page_number - 1} of 32", 700.0, 50.0),
+            _ability_ocr_token(
+                "Effective focal length (EFL) = 1, Half field of view (HFOV) = 2, "
+                "System length (TTL) = 3, F-number (Fno) = 4, "
+                "Light circle radius (LCR) = 5",
+                100.0,
+                100.0,
+            ),
+            *(
+                _ability_ocr_token(label, 100.0 + index * 100.0, 150.0)
+                for index, label in enumerate(("surface", "radius", "thickness", "Abbe"))
+            ),
+        ]
+        pages.append(
+            {
+                "page_number": optical_page_number,
+                "role": f"genius_six_optical_{embodiment_number}",
+                "official_image_sha256": str(embodiment_number) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": optical_tokens,
+            }
+        )
+        asphere_tokens = [
+            _ability_ocr_token(f"Sheet {asphere_page_number - 1} of 32", 700.0, 50.0),
+            _ability_ocr_token("surface", 900.0, 100.0),
+            *(
+                _ability_ocr_token(label, 100.0 + index * 80.0, 100.0)
+                for index, label in enumerate(
+                    ("surface", "K", "a2", "a4", "a6", "a8", "a10", "a12", "a14", "a16")
+                )
+            ),
+        ]
+        pages.append(
+            {
+                "page_number": asphere_page_number,
+                "role": f"genius_six_asphere_{embodiment_number}",
+                "official_image_sha256": str((embodiment_number + 1) % 10) * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": asphere_tokens,
+            }
+        )
+
+    for index, (page_number, sheet_number) in enumerate(((32, 31), (33, 32)), start=1):
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": f"genius_six_comparison_{index}",
+                "official_image_sha256": "f" * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(f"Sheet {sheet_number} of 32", 700.0, 50.0)
+                ],
+            }
+        )
+
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "genius_six_lens_nine_embodiment_census_v1",
+        "publication_id": "US-20260036791-A1",
+        "page_count": 51,
+        "source_facts": {
+            "primary_html_sha256": "e" * 64,
+            "figure_binding_counts": {
+                marker.split(" shows", maxsplit=1)[0]: 1
+                for marker in patent_pdf_recovery._GENIUS_SIX_LENS_NINE_REQUIRED_FIGURE_TEXT
+            },
+            "comparison_binding_counts": {
+                marker.split(" shows", maxsplit=1)[0]: 1
+                for marker in patent_pdf_recovery._GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS
+            },
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _ability_three_lens_prescription_page(
     *,
     optical_lens: int,
@@ -2898,6 +2981,18 @@ def test_genius_six_lens_five_source_facts_bind_every_figure() -> None:
     assert facts["comparison_binding_count"] == 1
 
 
+def test_genius_six_lens_nine_source_facts_bind_every_figure() -> None:
+    markers = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_REQUIRED_FIGURE_TEXT
+    comparisons = patent_pdf_recovery._GENIUS_SIX_LENS_NINE_COMPARISON_MARKERS
+    source = " ".join((*markers, *comparisons))
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._genius_six_lens_nine_source_facts(source)
+    assert len(facts["figure_binding_counts"]) == 18
+    assert set(facts["figure_binding_counts"].values()) == {1}
+    assert facts["comparison_binding_counts"] == {"FIG. 43": 1, "FIG. 44": 1}
+
+
 def test_ability_eight_lens_pdf_ocr_parser_records_metadata_terminal() -> None:
     attempts = patent_to_zmx._parse_prescription_attempts(
         _ability_eight_lens_pdf_ocr_parser_input().decode(),
@@ -3087,6 +3182,30 @@ def test_genius_six_lens_five_profile_retains_every_embodiment() -> None:
         in str(attempt.error)
         for attempt in attempts
     )
+
+
+def test_genius_six_lens_nine_profile_retains_every_embodiment() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _genius_six_lens_nine_pdf_ocr_parser_input().decode(),
+        patent_id="US-20260036791-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 10))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "six-lens optical/asphere census passed; numeric cell parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
+
+    grant_payload = json.loads(_genius_six_lens_nine_pdf_ocr_parser_input())
+    grant_payload["page_count"] = 50
+    grant_payload["publication_id"] = "US-12461345-B2"
+    grant_attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(grant_payload),
+        patent_id="US-12461345-B2",
+    )
+    assert [attempt.embodiment_number for attempt in grant_attempts] == list(range(1, 10))
 
 
 def test_ability_three_lens_pdf_profile_retains_each_disclosed_ocr_failure() -> None:
