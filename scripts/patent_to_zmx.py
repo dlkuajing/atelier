@@ -452,6 +452,12 @@ def _parse_prescription_attempts(
         )
         if attempts:
             return attempts
+        attempts = _classify_imaging_lens_system_architecture_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _classify_ir_filter_coating_only_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1662,6 +1668,49 @@ _BARCODE_SCANNER_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = 
             "return light": 5,
             "illumination assembly": 1,
             "aiming light": 3,
+        },
+    },
+}
+_IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+SYSTEM\s*,\s*IMAGE\s+CAPTURING\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12007589-B2": {
+        "normalized_text_sha256": (
+            "c37a76765f01a9da6722ec03f8f824e976ca14e41618ed782216760d7a188a5c"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 79321029": 1,
+            "imaging lens system": 217,
+            "image capturing module": 139,
+            "electronic device": 42,
+            "optical path": 175,
+            "lens element": 305,
+            "aperture element": 257,
+            "field of view": 7,
+            "focal length": 16,
+            "equivalent focal length": 13,
+            "thermal expansion coefficients": 1,
+        },
+    },
+    "US-12449571-B2": {
+        "normalized_text_sha256": (
+            "4dcc41158dec0b204a18f680b991de5ca1b4f7ced46298c44a27392308f1f88e"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 79321029": 1,
+            "imaging lens system": 187,
+            "image capturing module": 135,
+            "electronic device": 40,
+            "optical path": 148,
+            "lens element": 281,
+            "aperture element": 237,
+            "field of view": 7,
+            "focal length": 16,
+            "equivalent focal length": 13,
+            "thermal expansion coefficients": 1,
         },
     },
 }
@@ -8671,6 +8720,78 @@ def _classify_barcode_scanner_architecture_only_attempts(
                     "the exact retained official PPUBS disclosure publishes barcode-reader "
                     "illumination, aiming, image-sensor, and decoding architecture but no "
                     "optical surface prescription or prescription table"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_imaging_lens_system_architecture_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify one exact multi-camera imaging-lens architecture family."""
+
+    if _IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+    embodiment = "multi-camera imaging-lens system architecture"
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"imaging-lens-system official text hash changed for {patent_id}"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "imaging-lens-system disclosure unexpectedly contains PPUBS tables"
+            )
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"imaging-lens-system phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bradius\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)\b|\bSurface\s+(?:No\.|#)\s*|"
+            r"\bFno\b|\bF\s*[- ]?number\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\bprescription\b|TABLE-US-)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "imaging-lens-system disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription.imaging_lens_system_architecture_only"
+                ),
+                detail=(
+                    "the exact retained official PPUBS disclosure publishes multi-camera "
+                    "lens-element arrangement and system-level equivalent focal ranges but "
+                    "no optical surface prescription or prescription table"
                 ),
             ),
         )

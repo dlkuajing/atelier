@@ -884,6 +884,32 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `20ce2d2847e3c519a231ca20db57df6d6bbb878faf3d4e7db9de87afd30dd3e8`.
   Strict audit remains 619/619 with zero corrupt evidence; 195 focused
   parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
+- Exact official records `US-12007589-B2` and `US-12449571-B2` share title `IMAGING LENS
+  SYSTEM, IMAGE CAPTURING MODULE AND ELECTRONIC DEVICE` and each explicitly publishes Family ID
+  `79321029`. Their retained official PPUBS HTML SHA-256 values are
+  `8751cb74a9667c936d135f53820e3667ea630a06d29ae538ca8cbd8a632f68b7` and
+  `339c50dcb03b5ca9338b5b6f94baa121f263dd1345c03c309051cde26ef4373b`; normalized-text
+  SHA-256 values are `c37a76765f01a9da6722ec03f8f824e976ca14e41618ed782216760d7a188a5c`
+  and `4dcc41158dec0b204a18f680b991de5ca1b4f7ced46298c44a27392308f1f88e`.
+- Both texts have zero PPUBS table blocks. Exact phrase counts for B2 roots respectively are:
+  imaging-lens-system 217/187, image-capturing-module 139/135, electronic-device 42/40,
+  optical-path 175/148, lens-element 305/281, aperture-element 257/237, field-of-view 7/7,
+  focal-length 16/16, equivalent-focal-length 13/13, and thermal-expansion-coefficients 1/1.
+  Word-bounded radius/asphere/Abbe/Surface/Fno/F-number/EFL/effective-focal-length/optical-data/
+  prescription/TABLE-US markers are all absent. The published 11--600 mm equivalent-focal ranges
+  are system-level multi-camera architecture facts, not surface prescriptions; any hash, count,
+  table, or marker drift fails closed.
+- Both roots are independently terminal
+  `confirmed_no_prescription.imaging_lens_system_architecture_only`; no worker or ZMX is created.
+  Attempts 2/3 have canonical semantic SHA-256 values
+  `4ad86ec46acb13f568eb66e044e29887345a1d842a65dc7e4f68bce52d07b052` and
+  `7a7588b7ba2138d817ca83219fe777c7656d1b6ed917547d1f961d6921dfa440` respectively per root.
+- Generic summary changed 229 to 227. Current result-set SHA-256 is
+  `ad91860568588eb23a53d569ec4787b11f7cfa6ec0d9ed0d83bdf51aae8525df`; summary artifact
+  SHA-256 is `bb30a536d896752bcf4386bfb15889ebf978aaec30a7851f61b2630dfcaf6f9a`;
+  after-census SHA-256 is `32a1920844ac1c9673de875409e1d6b32c495bd5ad003bdd54c619981b85931`.
+  Strict audit remains 619/619 with zero corrupt evidence; 198 focused
+  parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

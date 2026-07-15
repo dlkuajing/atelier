@@ -621,6 +621,58 @@ def _install_barcode_scanner_fixture_profile(
     return patent_id
 
 
+def _imaging_lens_system_architecture_only_fixture(
+    *,
+    prescription_marker: bool = False,
+) -> str:
+    parts = [
+        "IMAGING LENS SYSTEM, IMAGE CAPTURING MODULE AND ELECTRONIC DEVICE",
+        "Family ID: 79321029",
+        "imaging lens system " * 3,
+        "image capturing module " * 2,
+        "electronic device " * 2,
+        "optical path " * 3,
+        "lens element " * 4,
+        "aperture element " * 3,
+        "field of view " * 2,
+        "focal length " * 3,
+        "equivalent focal length " * 2,
+        "thermal expansion coefficients",
+    ]
+    if prescription_marker:
+        parts.append("Surface # Radius")
+    return " ".join(parts)
+
+
+def _install_imaging_lens_system_fixture_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    text: str,
+) -> str:
+    patent_id = "US-IMAGING-LENS-SYSTEM-FIXTURE-B2"
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "normalized_text_sha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+            "architecture_phrase_counts": {
+                "Family ID: 79321029": 1,
+                "imaging lens system": 4,
+                "image capturing module": 3,
+                "electronic device": 3,
+                "optical path": 3,
+                "lens element": 4,
+                "aperture element": 3,
+                "field of view": 2,
+                "focal length": 5,
+                "equivalent focal length": 2,
+                "thermal expansion coefficients": 1,
+            },
+        },
+    )
+    return patent_id
+
+
 MOBILE_IMAGING_LENS_EARLY_SURFACES = """Infinity Infinity
 L1 1* 4.500 1.200 1.5348 55.7 f1 = 7.100 2* -22.000 0.050
 ST 3 Infinity -0.020
@@ -5428,6 +5480,54 @@ def test_barcode_scanner_classifier_refuses_source_hash_drift(
 ) -> None:
     text = _barcode_scanner_architecture_only_fixture()
     patent_id = _install_barcode_scanner_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "official text hash changed" in str(attempts[0].error)
+
+
+def test_imaging_lens_system_architecture_only_is_confirmed_no_prescription(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _imaging_lens_system_architecture_only_fixture()
+    patent_id = _install_imaging_lens_system_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription.imaging_lens_system_architecture_only"
+    )
+
+
+def test_imaging_lens_system_classifier_refuses_prescription_marker(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _imaging_lens_system_architecture_only_fixture(prescription_marker=True)
+    patent_id = _install_imaging_lens_system_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "contains a prescription marker" in str(attempts[0].error)
+
+
+def test_imaging_lens_system_classifier_refuses_source_hash_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _imaging_lens_system_architecture_only_fixture()
+    patent_id = _install_imaging_lens_system_fixture_profile(monkeypatch, text)
 
     attempts = patent_to_zmx._parse_prescription_attempts(
         text + " publication revision",
