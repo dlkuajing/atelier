@@ -489,6 +489,27 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `c4e665e12e5db7bcb43b51a6840c0a7fec4a41932cf4e74ce13b5012df479a15`.
   Strict audit is 619/619 with zero corrupt evidence; 127 focused parser/replay tests, Ruff, and
   `git diff --check` pass with CODE V inventory zero.
+- The next measured optical root inside the largest 14-root zero-table signature is
+  `US-10690884-B2`, not the signature's unrelated barcode/UI/calibration documents. Official PPUBS
+  HTML SHA-256 `de49a99af89787c46d4a08689739f916033ee5fe4748d145ed3eb640cc9222a0`
+  binds OL1 to FIG. 4A/4B, OL2 to FIG. 5A/5B, and both systems to FIG. 6. The 13-page official and
+  OCR-overlay PDFs have pixel-identical decoded rasters; the two prescription pages are 5/6 and
+  system page is 7.
+- FIG. 6 publishes F, TTL, and full FOV columns but no FNO, F-number, or F/#. Those labels occur
+  zero times in official HTML, all three retained overlay pages, and independent coordinate OCR.
+  Each disclosed optical lens is therefore terminal
+  `metadata_unpublished.system_f_number_absent`; corrupt surface/asphere cells are deliberately not
+  parsed, and no focal or aperture value is derived from geometry.
+- Append-only attempts 2/3 have identical canonical result SHA-256
+  `f423dea72bd0d4ac86ef06dc9a8009df5fccb7d6923a84afe57507333bcbdd72`, parser SHA-256
+  `ba5076be6cf606d7bc96c46cc12a94714c93781445da6bd331fae76c7f464dae`, and recovery-manifest
+  SHA-256 `4f480901783d4e1b5aadcf483f98235dd7b1c8dfe2992eea2824bf95a0adac53`.
+  Generic summary changed 256 to 255. Current result-set SHA-256 is
+  `ddf8aa92aa0e10a8d0be4d9c26f592d29b41a5964f0a94d339c131314433c28c`; summary artifact
+  SHA-256 is `1645bf2b3daeff0366ac2cc14d6db55508bbea25092cde708197596fb6304043`;
+  after-census SHA-256 is `9ce366aa248bbe5e720910a6e1a2fd286b3dd4346566185b75d7bc8bb0e5bd58`.
+  Strict audit is 619/619 with zero corrupt evidence; 131 focused parser/replay tests, Ruff, and
+  `git diff --check` pass with CODE V inventory zero and no worker/ZMX for this root.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated
