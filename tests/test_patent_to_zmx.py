@@ -295,6 +295,117 @@ def _samsung_wide_fov_fixture() -> str:
 SAMSUNG_WIDE_FOV_TEXT = _samsung_wide_fov_fixture()
 
 
+def _samsung_ten_lens_undefined_high_order_fixture(
+    *,
+    publish_high_order_definition: bool = False,
+) -> str:
+    definition = (
+        "c is a reciprocal of a radius of curvature of the corresponding lens, "
+        "k is a conic constant, r is a distance from a certain point on an "
+        "aspherical surface to an optical axis, A to H and J are aspherical "
+        "surface constants"
+    )
+    if publish_high_order_definition:
+        definition += ", and L to P are aspherical surface constants"
+    parts = [
+        "IMAGING LENS SYSTEM",
+        "Family ID: 91269360",
+        "FOV is a field of view of the imaging lens system",
+        definition,
+    ]
+    labels = (
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "J",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+    )
+    for embodiment_number in range(1, 11):
+        surface_table = embodiment_number * 2 - 1
+        asphere_table = embodiment_number * 2
+        parts.append(
+            f"Tables {surface_table} and {asphere_table} illustrate lens characteristics "
+            "and aspherical surface values of the imaging lens system according to the "
+            "present embodiment."
+        )
+        surface_rows = " ".join(
+            f"S{surface_index} "
+            + (
+                f"Lens {surface_index} 1.0 0.1 1.55 55.0"
+                if surface_index % 2 == 1 and surface_index <= 19
+                else "1.0 0.1"
+            )
+            for surface_index in range(1, 24)
+        )
+        parts.append(
+            f"TABLE-US-{surface_table:05d} TABLE {surface_table} Surface Radius of "
+            "Thickness/ Refractive Abbe No. Components curvature distance index number "
+            f"{surface_rows}"
+        )
+        coefficient_sections = []
+        for group in (range(1, 8), range(8, 15), range(15, 21)):
+            group_values = tuple(group)
+            rows = []
+            for label in labels:
+                values = ["0.0"] * len(group_values)
+                if label == "L":
+                    values[0] = "1.0E-9"
+                rows.append(f"{label} " + " ".join(values))
+            coefficient_sections.append(
+                "Surface No. "
+                + " ".join(f"S{surface_index}" for surface_index in group_values)
+                + " "
+                + " ".join(rows)
+            )
+        parts.append(
+            f"TABLE-US-{asphere_table:05d} TABLE {asphere_table} "
+            + " ".join(coefficient_sections)
+        )
+    parts.extend(
+        (
+            "TABLE-US-00021 TABLE 21 First Second Third Fourth Fifth Reference "
+            "embodiment embodiment embodiment embodiment embodiment "
+            "f 6.1 6.2 6.3 6.4 6.5 f number 1.5 1.6 1.7 1.8 1.9 "
+            "FOV 78.0 78.1 78.2 78.3 78.4",
+            "TABLE-US-00022 TABLE 22 Sixth Seventh Eighth Ninth Tenth Reference "
+            "embodiment embodiment embodiment embodiment embodiment "
+            "f 6.6 6.7 6.8 6.9 7.0 f number 1.5 1.6 1.7 1.8 1.9 "
+            "FOV 78.5 78.6 78.7 78.8 78.9",
+            "TABLE-US-00023 TABLE 23 conditional values",
+            "TABLE-US-00024 TABLE 24 conditional values",
+        )
+    )
+    return " ".join(parts)
+
+
+def _install_samsung_ten_lens_undefined_high_order_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    text: str,
+) -> str:
+    patent_id = "US-SAMSUNG-TEN-LENS-HIGH-ORDER-GAP-A1"
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._SAMSUNG_TEN_LENS_UNDEFINED_HIGH_ORDER_SOURCE_PROFILES,
+        patent_id,
+        {
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+    return patent_id
+
+
 def _samsung_even_order_fixture(
     *,
     damaged_first_asphere_header: bool = False,
@@ -5356,6 +5467,50 @@ def test_parse_samsung_wide_fov_requires_published_full_field_definition() -> No
 
     with pytest.raises(PatentParseError, match="full-field HFOV definition not found"):
         parse_patent_prescriptions(text, patent_id="US-SAMSUNG-WIDE-FOV-MISSING-A1")
+
+
+def test_samsung_ten_lens_undefined_high_order_terms_are_source_terminal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _samsung_ten_lens_undefined_high_order_fixture()
+    patent_id = _install_samsung_ten_lens_undefined_high_order_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 11))
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {
+        (attempt.error.status, attempt.error.reason_code)
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    } == {
+        (
+            "metadata_unpublished",
+            "metadata_unpublished.high_order_asphere_term_definition_absent",
+        )
+    }
+
+
+def test_samsung_ten_lens_published_high_order_definition_refuses_terminal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _samsung_ten_lens_undefined_high_order_fixture(
+        publish_high_order_definition=True
+    )
+    patent_id = _install_samsung_ten_lens_undefined_high_order_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 10
+    assert all(isinstance(attempt.error, PatentParseError) for attempt in attempts)
+    assert all(
+        not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert all("now have a published definition" in str(attempt.error) for attempt in attempts)
 
 
 def test_parse_samsung_even_order_pairs_preserves_published_half_field() -> None:

@@ -1019,6 +1019,33 @@ thresholds, or claim patent saturation.
   after-census SHA-256 is `ca116a6c43645684396f6f60b780b75f12045ccae535df2b29465aaba350a7c8`.
   Strict audit remains 619/619 with zero corrupt evidence; 208 focused
   parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
+- Three official Samsung records `US-12578550-B2`, `US-20240184082-A1`, and
+  `US-20260169262-A1` explicitly publish Family ID `91269360`, ten complete surface/asphere table
+  pairs, and exact f-number/FOV metadata. Retained official PPUBS HTML SHA-256 values are
+  `aefa39880e62bbd5539eb84080274130d5a8f574b4a220f6d52adb6b3c05efad`,
+  `49e4cf66895db7efc6d2841b6e5d9b17b5691eb71501ba440303b9d3856e1d5a`, and
+  `5b95e6d563a570e35541416b228851e44ce71999e8b768db4c8c23fb72b4e0a2`; normalized-text
+  SHA-256 values are `02aa5d51987a6fb37393d816e7e2c20193b3f4d7e01efc2f2aaad34522f0b695`,
+  `e4b3d02b47d3435e9517a3f79d03329dfb183dd99a723b87cfe510fbe6ab66a6`, and
+  `fea78314657aa574cfcb20d9b6ed1d0d227d34acb28a1bf6860562549a72450e`.
+- In all three exact texts, the published asphere equation defines A--H and J only, through the
+  20th-order term. Every corresponding coefficient table also publishes non-zero L--P rows, but
+  no polynomial-power mapping for those letters. The source-locked classifier validates Tables
+  1--24, bindings 1/2 through 19/20, S1--S23 surface sequences, S1--S7/S8--S14/S15--S20
+  coefficient sections, non-zero L--P evidence, and Tables 21/22 metadata. It refuses to infer the
+  missing mapping from convention or to discard the high-order rows.
+- Each root expands to ten independent terminal
+  `metadata_unpublished.high_order_asphere_term_definition_absent` items, for 30 total; no
+  conversion worker or ZMX is created. Attempts 2/3 are canonical-equal per root with semantic
+  SHA-256 values `ff1e347a86fe40a5d2f8e68940f4f10faf3c697fc73efa94771894f4fa3c79f9`,
+  `a02f8bd653480522c48974d77a6b5f8781c40507920b328ac46942a7d4c99a9e`, and
+  `9c036c083c8dac9bf258cd0c24d3ce2a41823c0bfbc47d6e35e40e295ad84217`.
+- Generic summary changed 210 to 207. Current result-set SHA-256 is
+  `9bc05596a0e7554170a8fa7365c105c2070bed3724e658c2cf96c72a3f7217ef`; summary artifact
+  SHA-256 is `372eee79634a169fec64af59d605e77dc808e86af05dfc1659db8dab2b3bdcba`;
+  after-census SHA-256 is `ead32801dc1d7bfbbe10d476ff807d2c81c27889cb3969f182d13fc76ad5a189`.
+  Strict audit remains 619/619 with zero corrupt evidence; 210 focused
+  parser/census/replay/process tests, Ruff, and `git diff --check` pass with CODE V inventory zero.
 - Verification incident: an unfiltered host-wide `pytest` command included a marked
   `real_machine` target-standard smoke and launched `D:\CODEV115\codev.exe /B
   atelier_codev_target_A.seq` plus `codevm.exe`. The pytest/CODE V process tree was terminated

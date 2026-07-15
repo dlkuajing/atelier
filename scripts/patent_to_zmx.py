@@ -404,6 +404,12 @@ def _parse_prescription_attempts(
         attempts = _parse_folded_macro_tele_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _classify_samsung_ten_lens_undefined_high_order_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _parse_samsung_wide_fov_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -1510,6 +1516,55 @@ _SAMSUNG_WIDE_FOV_FULL_FIELD_DEFINITION = re.compile(
     r"horizontal\s+direction\s+expressed\s+in\s+degrees\b",
     flags=re.IGNORECASE,
 )
+_SAMSUNG_TEN_LENS_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+SYSTEM\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_TEN_LENS_BINDING_PATTERN = re.compile(
+    r"\bTables\s+(?P<surface_table>\d+)\s+and\s+(?P<asphere_table>\d+)\s+"
+    r"illustrate\s+lens\s+characteristics\s+and\s+aspherical\s+surface\s+values\s+"
+    r"of\s+the\s+imaging\s+lens\s+system\s+according\s+to\s+the\s+present\s+"
+    r"embodiment\.",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_TEN_LENS_SURFACE_HEADER_PATTERN = re.compile(
+    r"\bSurface\s+Radius\s+of\s+Thickness/\s+Refractive\s+Abbe\s+No\.\s+"
+    r"Components\s+curvature\s+distance\s+index\s+number\s+",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_TEN_LENS_COEFFICIENT_HEADER_PATTERN = re.compile(
+    r"\bSurface\s+No\.\s+(?P<surfaces>(?:S\d+\s+)+)",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_TEN_LENS_FOV_DEFINITION = re.compile(
+    r"\bFOV\s+is\s+a\s+field\s+of\s+view\s+of\s+the\s+imaging\s+lens\s+system\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_TEN_LENS_PUBLISHED_ASPHERE_DEFINITION = re.compile(
+    r"\bc\s+is\s+a\s+reciprocal\s+of\s+a\s+radius\s+of\s+curvature\s+of\s+the\s+"
+    r"corresponding\s+lens\s*,\s*k\s+is\s+a\s+conic\s+constant\s*,\s*r\s+is\s+a\s+"
+    r"distance\s+from\s+a\s+certain\s+point\s+on\s+an\s+aspherical\s+surface\s+to\s+"
+    r"an\s+optical\s+axis\s*,\s*A\s+to\s+H\s+and\s+J\s+are\s+aspherical\s+surface\s+"
+    r"constants\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_TEN_LENS_UNDEFINED_HIGH_ORDER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12578550-B2": {
+        "normalized_text_sha256": (
+            "02aa5d51987a6fb37393d816e7e2c20193b3f4d7e01efc2f2aaad34522f0b695"
+        ),
+    },
+    "US-20240184082-A1": {
+        "normalized_text_sha256": (
+            "e4b3d02b47d3435e9517a3f79d03329dfb183dd99a723b87cfe510fbe6ab66a6"
+        ),
+    },
+    "US-20260169262-A1": {
+        "normalized_text_sha256": (
+            "fea78314657aa574cfcb20d9b6ed1d0d227d34acb28a1bf6860562549a72450e"
+        ),
+    },
+}
 _SAMSUNG_EVEN_ORDER_TITLE_PATTERN = re.compile(
     r"\bIMAGING\s+LENS\s+SYSTEM\b",
     flags=re.IGNORECASE,
@@ -7738,6 +7793,215 @@ def _parse_folded_macro_config_states(
             )
         )
     return states
+
+
+def _classify_samsung_ten_lens_undefined_high_order_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Fail closed when exact Samsung tables publish undefined L-P terms.
+
+    The retained official family publishes ten complete surface tables. Its
+    asphere equation defines A-H and J through the 20th-order term, while every
+    paired coefficient table also contains non-zero L-P rows without defining
+    their polynomial powers. Mapping those rows by convention would invent
+    optical semantics, so each disclosed embodiment receives a terminal source
+    metadata outcome instead of a partial prescription.
+    """
+
+    if _SAMSUNG_TEN_LENS_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _SAMSUNG_TEN_LENS_UNDEFINED_HIGH_ORDER_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiment_numbers = range(1, 11)
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Samsung ten-lens embodiment {embodiment_number}",
+                error=exc,
+            )
+            for embodiment_number in embodiment_numbers
+        ]
+
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Samsung ten-lens official text hash changed for {patent_id}"
+            )
+        if len(re.findall(r"Family\s+ID:\s*91269360", text, flags=re.IGNORECASE)) != 1:
+            raise PatentParseError("Samsung ten-lens Family ID binding changed")
+        if len(_SAMSUNG_TEN_LENS_FOV_DEFINITION.findall(text)) != 1:
+            raise PatentParseError("Samsung ten-lens full-field FOV definition changed")
+        if len(_SAMSUNG_TEN_LENS_PUBLISHED_ASPHERE_DEFINITION.findall(text)) != 1:
+            raise PatentParseError("Samsung ten-lens A-H/J asphere definition changed")
+        if re.search(
+            r"\b(?:L\s+to\s+P|L\s*,\s*M\s*,\s*N\s*,\s*O\s*,\s*(?:and\s+)?P)\s+"
+            r"are\s+aspherical\s+(?:surface\s+)?constants\b",
+            text,
+            flags=re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError("Samsung ten-lens L-P terms now have a published definition")
+
+        bindings = list(_SAMSUNG_TEN_LENS_BINDING_PATTERN.finditer(text))
+        if len(bindings) != 10:
+            raise PatentParseError(
+                f"Samsung ten-lens family must bind 10 embodiments, found {len(bindings)}"
+            )
+        for embodiment_number, binding in enumerate(bindings, start=1):
+            expected_pair = (embodiment_number * 2 - 1, embodiment_number * 2)
+            observed_pair = (
+                int(binding.group("surface_table")),
+                int(binding.group("asphere_table")),
+            )
+            if observed_pair != expected_pair:
+                raise PatentParseError(
+                    "Samsung ten-lens table binding is not consecutive at embodiment "
+                    f"{embodiment_number}: {observed_pair}"
+                )
+
+        blocks = _numbered_patent_table_blocks(text)
+        if set(blocks) != set(range(1, 25)):
+            raise PatentParseError("Samsung ten-lens family must contain TABLE 1 through 24")
+        _validate_samsung_ten_lens_metadata(blocks)
+        for embodiment_number in embodiment_numbers:
+            _validate_samsung_ten_lens_surface_table(
+                blocks[embodiment_number * 2 - 1],
+                embodiment_number=embodiment_number,
+            )
+            _validate_samsung_ten_lens_undefined_high_order_table(
+                blocks[embodiment_number * 2],
+                embodiment_number=embodiment_number,
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all disclosed embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=f"Samsung ten-lens embodiment {embodiment_number}",
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=(
+                    "metadata_unpublished.high_order_asphere_term_definition_absent"
+                ),
+                detail=(
+                    f"TABLE {embodiment_number * 2 - 1}/{embodiment_number * 2} "
+                    "publishes a complete surface/asphere pair, but the official "
+                    "equation defines only A-H/J while the coefficient table contains "
+                    "non-zero L-P rows with no published polynomial-power mapping; "
+                    "conventional mapping is not substituted"
+                ),
+            ),
+        )
+        for embodiment_number in embodiment_numbers
+    ]
+
+
+def _validate_samsung_ten_lens_metadata(blocks: dict[int, str]) -> None:
+    sections = (
+        (21, "First Second Third Fourth Fifth Reference embodiment"),
+        (22, "Sixth Seventh Eighth Ninth Tenth Reference embodiment"),
+    )
+    for table_number, header in sections:
+        table = blocks[table_number]
+        if header not in table:
+            raise PatentParseError(
+                f"Samsung ten-lens TABLE {table_number} metadata header changed"
+            )
+        _parse_exact_five_value_row(table, label="f")
+        _parse_exact_five_value_row(table, label="f number")
+        _parse_exact_five_value_row(table, label="FOV")
+
+
+def _validate_samsung_ten_lens_surface_table(
+    table: str,
+    *,
+    embodiment_number: int,
+) -> None:
+    header = _SAMSUNG_TEN_LENS_SURFACE_HEADER_PATTERN.search(table)
+    if header is None:
+        raise PatentParseError(
+            f"Samsung ten-lens embodiment {embodiment_number} surface header changed"
+        )
+    indices = [
+        int(match.group("index"))
+        for match in re.finditer(
+            r"(?<!\S)S(?P<index>\d+)\s+",
+            table[header.end() :],
+            flags=re.IGNORECASE,
+        )
+    ]
+    if indices != list(range(1, 24)):
+        raise PatentParseError(
+            f"Samsung ten-lens embodiment {embodiment_number} surface sequence "
+            f"is {indices}; expected S1-S23"
+        )
+
+
+def _validate_samsung_ten_lens_undefined_high_order_table(
+    table: str,
+    *,
+    embodiment_number: int,
+) -> None:
+    headers = list(_SAMSUNG_TEN_LENS_COEFFICIENT_HEADER_PATTERN.finditer(table))
+    expected_groups = (
+        tuple(range(1, 8)),
+        tuple(range(8, 15)),
+        tuple(range(15, 21)),
+    )
+    observed_groups = tuple(
+        tuple(int(token[1:]) for token in header.group("surfaces").split())
+        for header in headers
+    )
+    if observed_groups != expected_groups:
+        raise PatentParseError(
+            f"Samsung ten-lens embodiment {embodiment_number} coefficient headers "
+            f"are {observed_groups}; expected S1-S7, S8-S14, and S15-S20"
+        )
+
+    labels = ("K", "A", "B", "C", "D", "E", "F", "G", "H", "J", "L", "M", "N", "O", "P")
+    high_order_nonzero = False
+    for section_number, (header, surface_indices) in enumerate(
+        zip(headers, expected_groups, strict=True),
+        start=1,
+    ):
+        section_end = (
+            headers[section_number].start() if section_number < len(headers) else len(table)
+        )
+        tokens = table[header.end() : section_end].split()
+        position = 0
+        for label in labels:
+            if position >= len(tokens) or tokens[position].upper() != label:
+                raise PatentParseError(
+                    f"Samsung ten-lens embodiment {embodiment_number} section "
+                    f"{section_number} coefficient row {label} changed"
+                )
+            position += 1
+            value_tokens = tokens[position : position + len(surface_indices)]
+            if len(value_tokens) != len(surface_indices) or any(
+                re.fullmatch(NUMBER_PATTERN, token, flags=re.IGNORECASE) is None
+                for token in value_tokens
+            ):
+                raise PatentParseError(
+                    f"Samsung ten-lens embodiment {embodiment_number} section "
+                    f"{section_number} coefficient row {label} is incomplete"
+                )
+            values = tuple(_parse_number(token) for token in value_tokens)
+            if label in {"L", "M", "N", "O", "P"} and any(value != 0.0 for value in values):
+                high_order_nonzero = True
+            position += len(surface_indices)
+    if not high_order_nonzero:
+        raise PatentParseError(
+            f"Samsung ten-lens embodiment {embodiment_number} has no non-zero L-P evidence"
+        )
 
 
 def _parse_samsung_wide_fov_table_attempts(

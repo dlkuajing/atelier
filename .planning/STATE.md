@@ -34,7 +34,11 @@ HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和
 硬超时、Windows `taskkill /F /T` 杀树、2 秒 bounded reap、append-only retry identity、原始
 HTML 输入哈希、request/response/stdout/stderr/receipt/candidate ZMX 全证据保留，且仅在父进程
 重新装载并确认有限 EFL 后原子发布 staging ZMX。第三个 quick 已完成 619-root frozen replay；
-Sunny metadata 最大桶首铲已完成；下一步按完整 census 的新最大桶补 generic summary metadata parser，再全池确定性回放，而不是扩大固定数量目标。
+Sunny metadata 最大桶首铲已完成；generic-summary 逐桶回放现为 207 个根，仍略高于 Sunny
+metadata 的 199 个失败签名。最新一铲将 Samsung Family ID `91269360` 的 3 个根/30 个
+embodiment 收口为 `metadata_unpublished.high_order_asphere_term_definition_absent`：官方公式只
+定义 A--H/J，但表内另有非零 L--P 且未定义幂次，未按惯例猜补。下一步继续按完整 census 的
+最大可证桶推进，而不是扩大固定数量目标。
 
 ## Current Position
 
@@ -48,7 +52,7 @@ Sunny metadata 最大桶首铲已完成；下一步按完整 census 的新最大
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen 619-root local replay remains strict with missing=0 and corrupt=0. Current evidence has 412 parser-review roots, 139 mixed roots, 48 terminal roots, 518 staging items, 1444 parser-review items, and 28 conversion-retry items. The latest exact terminal classifier independently proves two Zebra Family ID 98700212 barcode-reader disclosures contain architecture only and no prescription. Generic-summary remains the largest parser bucket at 229 roots. This is not source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen 619-root local replay remains strict with missing=0 and corrupt=0. Current evidence has 390 parser-review roots, 139 mixed roots, 70 terminal roots, 20 converted roots, 518 staging items, 1422 parser-review items, 815 terminal items, and 28 conversion-retry items. The latest exact Family ID 91269360 classifier proves 30 embodiments cannot be converted deterministically because the official equation omits the published non-zero L--P term mapping. Generic-summary remains the largest parser signature at 207 roots, followed by Sunny metadata at 199. This is not source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
