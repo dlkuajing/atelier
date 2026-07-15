@@ -181,6 +181,35 @@ EFL = 10 [mm] EFL = 20 [mm] T [mm]
 S.sub.3 1.000 2.000 F/# 3.00 4.00 HFOV 15.00 7.50
 """
 
+APPLE_EXEMPLARY_TEXT = """
+TABLE-US-00001 TABLE 1A Optical data for a first exemplary embodiment shown in
+FIG. 1 f = 0.5639 mm, Fno = 2.2, HFOV = 37.5 deg, TTL = 1.059 mm
+S.sub.i Component R.sub.i Shape D.sub.i Material N.sub.d V.sub.d f.sub.l
+0 Object plane INF FLT INF
+1 L.sub.1 INF FLT 0.079548 Plastic 1.535 56.1 2.896
+2 -1.55332 ASP 0.100000
+3 L.sub.2 -0.52395 ASP 0.244898 Plastic 1.535 56.1 2.305
+4 -0.42801 ASP 0.100000
+5 L.sub.3 0.30738 ASP 0.322474 Plastic 1.535 56.1 1.135
+6 0.39315 ASP 0.101956
+7 IR filter INF FLT 0.110000 Glass 1.517 64.2
+8 INF FLT 0.100000
+9 Image plane INF FLT
+TABLE-US-00002 TABLE 1B Aspheric coefficients for the first exemplary embodiment
+S.sub.i K A B C
+2 -95.705155 0.311858E+01 -0.162181E+02 0.852881E+03
+3 5.577920 0.706073E+01 -0.113314E+03 -0.796803E+02
+4 1.226938 -0.707465E+01 0.492155E+02 -0.121150E+03
+5 -2.839956 0.103387E+01 -0.475271E+01 -0.221756E+02
+6 -0.713670 -0.642737E-03 -0.364121E+02 -0.142529E+02
+S.sub.i D E F
+2 0.399015E+04 0.484899E+04 -0.310112E+04
+3 0.809371E+04 0.478545E+04
+4 -0.229816E+04 -0.809035E+03
+5 0.386713E+02 0.211717E+02
+6 0.242787E+02 0.114039E+04
+"""
+
 SUNNY_OBJ_STO_TEXT = """
 TABLE-US-00001 TABLE 1 Material Surface Radius of Refractive Conic
 number Surface type curvature Thickness index Abbe number coefficient
@@ -617,6 +646,48 @@ def test_parse_folded_zoom_discrete_configurations() -> None:
     assert first.surfaces[0].asphere_coefficients["A"] == pytest.approx(-3.70e-4)
     assert first.surfaces[2].asphere_coefficients["B"] == pytest.approx(4.44e-4)
     assert first.surfaces[-1].label == "Image"
+
+
+def test_parse_apple_suffixed_exemplary_table_pair() -> None:
+    prescriptions = parse_patent_prescriptions(
+        APPLE_EXEMPLARY_TEXT,
+        patent_id="US-APPLE-EXEMPLARY-A1",
+    )
+
+    assert len(prescriptions) == 1
+    prescription = prescriptions[0]
+    assert prescription.embodiment == "Apple exemplary embodiment 1"
+    assert (
+        prescription.focal_length_mm,
+        prescription.f_number,
+        prescription.hfov_deg,
+    ) == pytest.approx((0.5639, 2.2, 37.5))
+    assert len(prescription.surfaces) == 9
+    first_lens = prescription.surfaces[0]
+    assert first_lens.index == 1
+    assert first_lens.radius_mm == math.inf
+    assert first_lens.nd == pytest.approx(1.535)
+    asphere = prescription.surfaces[1]
+    assert asphere.index == 2
+    assert asphere.surface_type == "ASP"
+    assert asphere.asphere_coefficients["K"] == pytest.approx(-95.705155)
+    assert asphere.asphere_coefficients["A"] == pytest.approx(3.11858)
+    assert asphere.asphere_coefficients["D"] == pytest.approx(3990.15)
+    assert asphere.asphere_coefficients["F"] == pytest.approx(-3101.12)
+    assert "F" not in prescription.surfaces[2].asphere_coefficients
+    assert prescription.surfaces[6].label == "IR filter"
+    assert prescription.surfaces[-1].label == "Image"
+
+
+def test_parse_apple_exemplary_table_rejects_cross_bound_ordinal() -> None:
+    text = APPLE_EXEMPLARY_TEXT.replace(
+        "Optical data for a first exemplary embodiment",
+        "Optical data for a second exemplary embodiment",
+        1,
+    )
+
+    with pytest.raises(PatentParseError, match="ordinal does not match"):
+        parse_patent_prescriptions(text, patent_id="US-APPLE-CROSS-BOUND-A1")
 
 
 def test_parse_folded_zoom_accepts_reordered_multiline_surface_header() -> None:

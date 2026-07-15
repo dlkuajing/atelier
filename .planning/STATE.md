@@ -190,7 +190,7 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-conversion-hard-timeout` | active-shovel-complete-saturation-incomplete | `.planning/quick/260715-patent-conversion-hard-timeout/`；真实 sleeping worker 在 0.2 秒超时后杀树/回收，真实处方跨进程成功且 retry request hash 稳定；77 项相关测试+Ruff 绿；宿主全套安全围栏后超时，完整 CI 待 PR。 |
 | `260715-patent-local-pool-replay` | complete-local-replay-saturation-incomplete | Cohort SHA `e809823c...b42b`; 619/619 strict results, missing=0, corrupt=0; result-set SHA `3bc0bbee...76df`. Final items: parser review 1388, receipt terminal 631, staging pending intake 359, patent-budget retry 16. All current roots retain official PPUBS HTML. No-op replay processed 0 and preserved summary SHA `65122027...d130`. Parent saturation remains incomplete. |
 | `260715-patent-sunny-metadata-parser` | complete-shovel-saturation-incomplete | Before 299 items/64 roots; after 199/53, resolving 100 without missing-field regression. Result-set SHA `2e0a9ceb...d506`; 619/619 strict results, missing=0, corrupt=0; 95 tests+Ruff green, CODE V inventory zero. Next largest parser bucket is generic summary metadata=294. |
-| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Layout 1 replayed 8 roots/58 states; layout 2 replayed 3 roots/21 states and produced 9 staging + 3 trace-timeout terminal + 9 parser rejects. Generic bucket is 283; result set `3aab0247...8bd6`; audit 619/619 corrupt=0. Select next exact layout from remaining 283. |
+| `260715-patent-generic-summary-metadata-parser` | active-next-layout | Strict before census 294 items/294 roots. Layouts 1--3 replayed 13 roots / 83 disclosed states. The Apple third layout recovered 4/4 prescriptions as staging-only candidates; generic bucket is 281, result set `099a5180...64ad`, and audit is 619/619 corrupt=0. The 30-embodiment high-order layout remains fail-closed because official exponent and stop bindings are incomplete. Select the next exact layout from the remaining 281. |
 
 ## Session Continuity
 
@@ -202,7 +202,7 @@ then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work remains the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (283), using the same strict before/after census, source-proven
+`generic_summary_metadata_missing` (281), using the same strict before/after census, source-proven
 layout rules, append-only targeted replay, and full-pool audit contract.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then

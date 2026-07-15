@@ -309,6 +309,9 @@ def _parse_prescription_attempts(
         attempts = _parse_fujifilm_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
+        attempts = _parse_apple_exemplary_table_attempts(text, patent_id=patent_id)
+        if attempts:
+            return attempts
         attempts = _parse_folded_zoom_table_attempts(text, patent_id=patent_id)
         if attempts:
             return attempts
@@ -953,6 +956,27 @@ _PATENT_TABLE_BLOCK_PATTERN = re.compile(
     r"\bTABLE-US-\d+\s+TABLE\s+(?P<number>\d+)\s+",
     flags=re.IGNORECASE,
 )
+_SUFFIXED_PATENT_TABLE_BLOCK_PATTERN = re.compile(
+    r"\bTABLE-US-\d+\s+TABLE\s+(?P<number>\d+)(?P<suffix>[A-Z])\s+",
+    flags=re.IGNORECASE,
+)
+_APPLE_EXEMPLARY_HEADER_PATTERN = re.compile(
+    rf"\bOptical\s+data\s+for\s+a\s+"
+    rf"(?P<ordinal>first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\s+"
+    rf"exemplary\s+embodiment\s+shown\s+in\s+FIG\.\s+\d+\s+"
+    rf"f\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm\s*,\s*"
+    rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s*,\s*"
+    rf"HFOV\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s*deg\s*,\s*"
+    rf"TTL\s*=\s*(?P<ttl>{NUMBER_PATTERN})\s*mm\s+"
+    r"S\.sub\.i\s+Component\s+R\.sub\.i\s+Shape\s+D\.sub\.i\s+"
+    r"Material\s+N\.sub\.d\s+V\.sub\.d\s+f\.sub\.l\b",
+    flags=re.IGNORECASE,
+)
+_APPLE_EXEMPLARY_ROW_PATTERN = re.compile(
+    rf"(?<!\S)(?P<index>\d+)\s+"
+    rf"(?=(?:Object\b|L\.sub\.\d+\b|IR\b|Image\b|INF\b|{NUMBER_PATTERN}))",
+    flags=re.IGNORECASE,
+)
 _FOLDED_ZOOM_ASP_SURFACE_HEADER_PATTERN = re.compile(
     r"\bOptical\s+lens\s+system\s+(?P<system>\d+)\s+.*?"
     r"\bSurface(?:\s+Curvature\s+Aperture\s+Radius\s+Abbe\s+Focal)?\s+"
@@ -1073,6 +1097,298 @@ def _patent_table_blocks(text: str) -> list[_PatentTableBlock]:
             )
         )
     return blocks
+
+
+def _parse_apple_exemplary_table_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse exact Apple ``TABLE nA/nB`` exemplary prescription pairs."""
+
+    blocks = _suffixed_patent_table_blocks(text)
+    surface_blocks = [
+        (number, block_text, header)
+        for (number, suffix), block_text in sorted(blocks.items())
+        if suffix == "A"
+        and (header := _APPLE_EXEMPLARY_HEADER_PATTERN.search(block_text)) is not None
+    ]
+    if not surface_blocks:
+        return []
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for attempt_number, (number, surface_text, header) in enumerate(surface_blocks, start=1):
+        embodiment = f"Apple exemplary embodiment {number}"
+        try:
+            expected_ordinal = _ordinal_word(number)
+            if header.group("ordinal").lower() != expected_ordinal:
+                raise PatentParseError(
+                    f"Apple TABLE {number}A ordinal does not match its table number"
+                )
+            coefficient_text = blocks.get((number, "B"))
+            if coefficient_text is None:
+                raise PatentParseError(f"Apple TABLE {number}B coefficient table not found")
+            surfaces = _parse_apple_exemplary_surface_table(
+                surface_text,
+                header=header,
+                embodiment_number=number,
+            )
+            coefficients = _parse_apple_exemplary_asphere_table(
+                coefficient_text,
+                embodiment_number=number,
+                ordinal=expected_ordinal,
+            )
+            surface_indices = {surface.index for surface in surfaces}
+            if not set(coefficients).issubset(surface_indices):
+                raise PatentParseError(
+                    f"Apple embodiment {number} coefficient table references an unknown surface"
+                )
+            for surface in surfaces:
+                if surface.index in coefficients:
+                    surface.surface_type = "ASP"
+                    surface.asphere_coefficients.update(coefficients[surface.index])
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=_parse_number(header.group("f")),
+                f_number=_parse_number(header.group("fno")),
+                hfov_deg=_parse_number(header.group("hfov")),
+                surfaces=surfaces,
+            )
+        except Exception as exc:  # noqa: BLE001 - retained per exemplary embodiment
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=attempt_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=attempt_number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _suffixed_patent_table_blocks(text: str) -> dict[tuple[int, str], str]:
+    matches = list(_SUFFIXED_PATENT_TABLE_BLOCK_PATTERN.finditer(text))
+    blocks: dict[tuple[int, str], str] = {}
+    for index, match in enumerate(matches):
+        key = (int(match.group("number")), match.group("suffix").upper())
+        if key in blocks:
+            raise PatentParseError(f"duplicate suffixed patent table: {key[0]}{key[1]}")
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        blocks[key] = text[match.start() : end]
+    return blocks
+
+
+def _ordinal_word(value: int) -> str:
+    words = (
+        "first",
+        "second",
+        "third",
+        "fourth",
+        "fifth",
+        "sixth",
+        "seventh",
+        "eighth",
+        "ninth",
+        "tenth",
+    )
+    if not 1 <= value <= len(words):
+        raise PatentParseError(f"unsupported ordinal table number: {value}")
+    return words[value - 1]
+
+
+def _parse_apple_exemplary_surface_table(
+    table_text: str,
+    *,
+    header: re.Match[str],
+    embodiment_number: int,
+) -> list[PatentSurface]:
+    candidates = list(_APPLE_EXEMPLARY_ROW_PATTERN.finditer(table_text, header.end()))
+    starts: list[re.Match[str]] = []
+    expected_index = 0
+    for match in candidates:
+        if int(match.group("index")) != expected_index:
+            continue
+        starts.append(match)
+        expected_index += 1
+    if not starts or int(starts[-1].group("index")) != 9:
+        raise PatentParseError(
+            f"Apple embodiment {embodiment_number} surface sequence must be exactly S0-S9"
+        )
+
+    surfaces: list[PatentSurface] = []
+    for row_index, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = starts[row_index + 1].start() if row_index + 1 < len(starts) else len(table_text)
+        row = table_text[match.end() : end].split()
+        upper = [token.upper() for token in row]
+        shape_pos = next(
+            (pos for pos, token in enumerate(upper) if token in {"FLT", "ASP"}),
+            None,
+        )
+        if shape_pos is None or shape_pos == 0:
+            raise PatentParseError(
+                f"Apple embodiment {embodiment_number} surface {surface_index} shape missing"
+            )
+        radius = _distance_value(
+            row[shape_pos - 1],
+            field_name=f"Apple surface {surface_index} radius",
+        )
+        if surface_index == 9:
+            thickness = 0.0
+        elif shape_pos + 1 < len(row):
+            thickness = _distance_value(
+                row[shape_pos + 1],
+                field_name=f"Apple surface {surface_index} thickness",
+            )
+        else:
+            raise PatentParseError(
+                f"Apple embodiment {embodiment_number} surface {surface_index} thickness missing"
+            )
+
+        material = nd = vd = None
+        material_pos = next(
+            (
+                pos
+                for pos, token in enumerate(upper)
+                if token in {"PLASTIC", "GLASS"}
+            ),
+            None,
+        )
+        if material_pos is not None:
+            if material_pos + 2 >= len(row):
+                raise PatentParseError(
+                    f"Apple embodiment {embodiment_number} surface {surface_index} "
+                    "material indices missing"
+                )
+            material = row[material_pos]
+            nd = _parse_number(row[material_pos + 1])
+            vd = _parse_number(row[material_pos + 2])
+            _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+
+        label_text = " ".join(row[: shape_pos - 1])
+        if re.search(r"\bObject\s+plane\b", label_text, flags=re.IGNORECASE):
+            label = "Object"
+        elif re.search(r"\bImage\s+plane\b", label_text, flags=re.IGNORECASE):
+            label = "Image"
+        elif re.search(r"\bIR\s+filter\b", label_text, flags=re.IGNORECASE):
+            label = "IR filter"
+        elif (lens_match := re.search(r"L\.sub\.(\d+)", label_text, flags=re.I)):
+            label = f"Lens {lens_match.group(1)}"
+        else:
+            label = f"Surface {surface_index}"
+        if surface_index > 0:
+            surfaces.append(
+                PatentSurface(
+                    index=surface_index,
+                    label=label,
+                    radius_mm=radius,
+                    thickness_mm=thickness,
+                    material=material,
+                    nd=nd,
+                    vd=vd,
+                    surface_type="ASP" if upper[shape_pos] == "ASP" else None,
+                )
+            )
+    if not surfaces or surfaces[-1].label != "Image":
+        raise PatentParseError(f"Apple embodiment {embodiment_number} image row not found")
+    return surfaces
+
+
+def _parse_apple_exemplary_asphere_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+    ordinal: str,
+) -> dict[int, dict[str, float]]:
+    title = re.search(
+        rf"\bAspheric\s+coefficients\s+for\s+the\s+{ordinal}\s+"
+        rf"exemplary\s+embodiment\b",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if title is None:
+        raise PatentParseError(
+            f"Apple embodiment {embodiment_number} coefficient title not found"
+        )
+    section_matches = list(
+        re.finditer(
+            r"S\.sub\.i\s+(?P<labels>K\s+A\s+B\s+C|D\s+E\s+F)\s+",
+            table_text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if [match.group("labels").upper().split() for match in section_matches] != [
+        ["K", "A", "B", "C"],
+        ["D", "E", "F"],
+    ]:
+        raise PatentParseError(
+            f"Apple embodiment {embodiment_number} coefficient sections are incomplete"
+        )
+
+    coefficients: dict[int, dict[str, float]] = {}
+    for section_index, section in enumerate(section_matches):
+        labels = section.group("labels").upper().split()
+        end = (
+            section_matches[section_index + 1].start()
+            if section_index + 1 < len(section_matches)
+            else len(table_text)
+        )
+        if claims_match := re.search(r"\bClaims\b", table_text[section.end() : end], re.I):
+            end = section.end() + claims_match.start()
+        row_pattern = re.compile(
+            rf"(?<!\S)(?P<surface>[2-6])\s+(?={NUMBER_PATTERN})",
+            flags=re.IGNORECASE,
+        )
+        row_candidates = list(
+            row_pattern.finditer(table_text, section.end(), end)
+        )
+        starts: list[re.Match[str]] = []
+        expected_surface = 2
+        for match in row_candidates:
+            if int(match.group("surface")) != expected_surface:
+                continue
+            starts.append(match)
+            expected_surface += 1
+        if len(starts) != 5:
+            raise PatentParseError(
+                f"Apple embodiment {embodiment_number} coefficient row sequence is incomplete"
+            )
+        for row_index, row_match in enumerate(starts):
+            surface = int(row_match.group("surface"))
+            row_end = starts[row_index + 1].start() if row_index + 1 < len(starts) else end
+            values = re.findall(
+                NUMBER_PATTERN,
+                table_text[row_match.end() : row_end],
+                flags=re.IGNORECASE,
+            )
+            if not values or len(values) > len(labels):
+                raise PatentParseError(
+                    f"Apple embodiment {embodiment_number} surface {surface} "
+                    f"coefficient row has {len(values)} values for {len(labels)} headers"
+                )
+            if section_index == 0 and len(values) != len(labels):
+                raise PatentParseError(
+                    f"Apple embodiment {embodiment_number} surface {surface} K/A/B/C row incomplete"
+                )
+            row = coefficients.setdefault(surface, {})
+            for label, value_token in zip(labels, values, strict=False):
+                row[label] = _parse_number(value_token)
+    required = {"K", "A", "B", "C"}
+    if set(coefficients) != set(range(2, 7)) or any(
+        not required.issubset(row) for row in coefficients.values()
+    ):
+        raise PatentParseError(
+            f"Apple embodiment {embodiment_number} coefficient coverage is incomplete"
+        )
+    return coefficients
 
 
 def _parse_folded_zoom_table_attempts(

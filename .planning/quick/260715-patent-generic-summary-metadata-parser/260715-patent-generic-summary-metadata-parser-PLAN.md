@@ -82,6 +82,25 @@ thresholds, or claim patent saturation.
   `fb68b3362117a00506dcadbc34189b7a6222a3d4afbddeb9559295aabbdc4798`. The
   family-ownership scan matches exactly these 3 roots before replay and zero remaining roots after
   replay; 74 focused parser/census/replay/process tests and Ruff pass.
+- A larger 3-root / 30-embodiment layout was inspected but remains fail-closed. Its retained
+  official PPUBS text defines only asphere terms A--H and J, while the published tables also carry
+  nonzero L--P columns without an official exponent definition; it also does not bind a stop
+  location to each embodiment. Translating those columns or selecting a stop would therefore be an
+  unsupported optical-value inference.
+- The third source-proven family is the exact Apple `TABLE 1A/1B`, `2A/2B` exemplary layout in
+  `US-20170090155` and `US-9897779`. Each A table publishes embodiment-bound f, F-number, HFOV,
+  S0--S9 geometry and materials; each paired B table publishes K and A--F under the patent's own
+  asphere definition. A full 283-root ownership scan matched only these two roots and recovered
+  4/4 prescriptions without parser errors.
+- Append-only replay completed both roots and all four embodiments as
+  converted-pending-intake; the two publication roots share the same two prescription fingerprints,
+  so duplicate disposition remains an intake responsibility rather than a parser guess. No
+  candidate was promoted. The generic document bucket changed 283 to 281. Result-set SHA-256 is
+  `099a5180a6237899947be146612b2117666b55b859dcbcdac116bd6aa03e64ad`; summary artifact
+  SHA-256 is `607f64d35302fc199e531bc55d9d28972b582bfd5224d7beb874f2a3ee3f57b1`;
+  strict audit is 619/619 with zero corrupt evidence. The after-third-layout census SHA-256 is
+  `1e3800f286ed316840dd70b3b379987b187da8ede95b6f38595b94cf001319f8`; 77 focused
+  parser/census/replay/process tests and Ruff pass.
 
 ## Completion condition
 
