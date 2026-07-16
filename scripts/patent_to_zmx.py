@@ -433,6 +433,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_kantatsu_surface_modification_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -3419,6 +3427,182 @@ _AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "938c801fd86a0af719399b976c1de652d405b453e14dfe07dc0a06275ef48c4f",
             "56863afcb922893ed60cdea338df2fe7206011ee2d4885b9c06bdbb54260e243",
             "33fd2a7c17638f25c63c6680cae3cec20a0b4340404b15252867cec9589dd5c6",
+        ),
+    },
+}
+
+_KANTATSU_SURFACE_MODIFICATION_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+UNIT\s+AND\s+METHOD\s+FOR\s+MANUFACTURING\s+THE\s+SAME\b",
+    flags=re.IGNORECASE,
+)
+_KANTATSU_SURFACE_MODIFICATION_FIGURE_DECLARATIONS = (
+    (16, ("1",)),
+    (17, ("2A", "2B")),
+    (18, ("3",)),
+    (19, ("4",)),
+    (20, ("5A", "5B", "5C", "5D")),
+    (21, ("6A", "6B", "6C", "6D")),
+    (22, ("7A", "7B")),
+    (23, ("8",)),
+    (24, ("9",)),
+    (25, ("10A", "10B", "10C", "10D")),
+    (26, ("11A", "11B")),
+)
+_KANTATSU_SURFACE_MODIFICATION_ITEMS = (
+    (
+        1,
+        "Imaging lens unit surface-modification architecture first embodiment",
+    ),
+    (
+        2,
+        "Imaging lens unit surface-modification architecture second embodiment",
+    ),
+)
+_KANTATSU_SURFACE_MODIFICATION_REASON_CODE = (
+    "confirmed_no_prescription."
+    "lens_barrel_surface_modification_and_manufacturing_architecture_only"
+)
+_KANTATSU_SURFACE_MODIFICATION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20210373283-A1": {
+        "raw_document_sha256": (
+            "f12d20d6c4a675d50fe7245fcda60aea7eb19389bfb0ca7cc314868053203431"
+        ),
+        "normalized_text_sha256": (
+            "71dc0a85845c6862c52dad4c4a2d0e42f1a6441e7bc4cc20a65954fc80333861"
+        ),
+        "family_id": "64459548",
+        "application_number": "17/344651",
+        "section_markers": {
+            "abstract": "Abstract",
+            "technical_field": "TECHNICAL FIELD",
+            "background_art": "BACKGROUND ART",
+            "summary": "SUMMARY OF INVENTION",
+            "brief": "BRIEF DESCRIPTION OF DRAWINGS",
+            "embodiments": "DESCRIPTION OF EMBODIMENTS",
+            "first_embodiment": "First Embodiment",
+            "second_embodiment": "Second Embodiment",
+            "reference_signs": "REFERENCE SIGNS LIST",
+            "claims": "Claims 1 . An imaging lens unit comprising:",
+        },
+        "section_sha256": {
+            "abstract": (
+                "b68ac90c4d716b93e34d181fe945b3c3fe325ed96fef42b9567ba088be152204"
+            ),
+            "technical_field": (
+                "3182671afc95726eb661239f6e4920f6facecbfb52ed6e5737bb16e094ba9605"
+            ),
+            "background_art": (
+                "2fcf8bae6302a7fe37298a61c1407881cba8c368f82228785883540dc6adfcf4"
+            ),
+            "summary": (
+                "75524b36f074efba0bc0b769abf7d7a65ff8e4c13f7ade2cbc67176dfa2797d9"
+            ),
+            "brief": (
+                "01640ba28a181f85fb5131aab9e0e7cbd2cf253fbeac4d411926dddf7774c6f4"
+            ),
+            "embodiments": (
+                "104a64ef717ad296c97dc64223e3ca81d1542c5afaa07932782a6a5cb8e8c05e"
+            ),
+            "first_embodiment": (
+                "805ff0673e9743b6e0d195e800a75b9dc4eed754b2cfcfc9a20b17358bc6c77f"
+            ),
+            "second_embodiment": (
+                "aec1e1d20905d5108b9513e607b828673a2c50c94bd0c339f95bf781ac658ee8"
+            ),
+            "reference_signs": (
+                "693905ce22aacddf85a164d1df656cc33247e816d86a1899fb6c88053778c257"
+            ),
+            "claims": (
+                "830eb05651865a7361fc49c30300398de5c9ba4c82af0c5f6a31d095ad93022f"
+            ),
+        },
+        "paragraph_ranges": {
+            "technical_field": (1, 1),
+            "background_art": (2, 3),
+            "summary": (4, 15),
+            "brief": (16, 26),
+            "embodiments": (27, 27),
+            "first_embodiment": (28, 117),
+            "second_embodiment": (118, 152),
+            "reference_signs": (153, 190),
+        },
+        "claim_count": 14,
+        "identity_markers": {
+            "United States Patent Application Publication 20210373283": 1,
+            "Family ID: 64459548": 1,
+            "Appl. No.: 17/344651": 1,
+            "Filed: June 10, 2021": 1,
+            "JP 2017-110499 Jun. 02, 2017": 1,
+            "JP 2018-086565 Apr. 27, 2018": 1,
+            "parent US continuation 15996142 20180601 ABANDONED": 1,
+            "KANTATSU CO., LTD.": 1,
+            "KASAMA; Nobuyuki": 2,
+        },
+        "source_scope_phrase_counts": {
+            "First Embodiment": 9,
+            "Second Embodiment": 8,
+            "imaging lens unit": 75,
+            "lens barrel": 97,
+            "lens element": 249,
+            "surface modification portion": 81,
+            "vacuum ultraviolet": 29,
+            "press fitting": 14,
+            "heating": 19,
+            "resin material": 13,
+            "edge portion": 57,
+            "coating region": 12,
+            "non-coating region": 7,
+            "light shielding plate": 16,
+            "rear light shielding ring": 24,
+            "bonding step": 12,
+            "surface modification step": 11,
+            "heating step": 7,
+            "optical axis": 40,
+            "convex surface": 4,
+            "concave surface": 4,
+            "aspherical surfaces": 2,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "radius of curvature": 0,
+            "curvature radius": 0,
+            "Abbe": 0,
+            "aspheric surface": 0,
+            "surface number": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface prescription": 0,
+            "refractive index": 0,
+            "thickness": 0,
+        },
+        "lens_shape_markers": (
+            (
+                "the first lens element 10 includes a lens portion 11 having a convex "
+                "surface on both the object side and the image side"
+            ),
+            (
+                "the second lens element 20 includes a lens portion 21 having a convex "
+                "surface on the object side and a concave surface on the image side"
+            ),
+            (
+                "the third lens element 30 includes a lens portion 31 formed such that "
+                "the object side and the image side are concave surfaces near the optical "
+                "axis, both sides are aspherical surfaces"
+            ),
+            (
+                "the fourth lens element 40 includes a lens portion 41 having a concave "
+                "surface on the object side and a convex surface on the image side"
+            ),
+            (
+                "the fifth lens element 50 includes a lens portion 51 formed such that "
+                "the object side has a convex surface and the image side has a concave "
+                "surface near the optical axis, both sides are aspherical surfaces"
+            ),
         ),
     },
 }
@@ -18357,6 +18541,237 @@ def _parse_aac_seven_lens_exact_attempts(
             prescription=prescription,
         )
         for index, prescription in enumerate(prescriptions, start=1)
+    ]
+
+
+def _classify_kantatsu_surface_modification_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 64459548 lens-unit manufacturing architecture."""
+
+    profile = _KANTATSU_SURFACE_MODIFICATION_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _KANTATSU_SURFACE_MODIFICATION_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Kantatsu surface-modification official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Kantatsu surface-modification normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_KANTATSU_SURFACE_MODIFICATION_TITLE_PATTERN.findall(text)) != 1:
+            raise PatentParseError(
+                "Kantatsu surface-modification title binding changed"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Kantatsu surface-modification identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Kantatsu surface-modification section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Kantatsu surface-modification section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Kantatsu surface-modification {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    "Kantatsu surface-modification "
+                    f"{section_name} paragraph denominator changed"
+                )
+        all_paragraphs = tuple(
+            int(value) for value in re.findall(r"\[(\d{4})\]", text)
+        )
+        if all_paragraphs != tuple(range(1, 191)):
+            raise PatentParseError(
+                "Kantatsu surface-modification paragraphs 1-190 changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "Kantatsu surface-modification claims 1-14 denominator changed"
+            )
+
+        brief = sections["brief"]
+        for paragraph, panels in _KANTATSU_SURFACE_MODIFICATION_FIGURE_DECLARATIONS:
+            if len(panels) == 1:
+                declaration = rf"FIG\.\s*{re.escape(panels[0])}\s+is\b"
+            elif len(panels) == 2:
+                declaration = (
+                    rf"FIGS\.\s*{re.escape(panels[0])}\s+and\s+"
+                    rf"{re.escape(panels[-1])}\s+are\b"
+                )
+            else:
+                declaration = (
+                    rf"FIGS\.\s*{re.escape(panels[0])}\s+to\s+"
+                    rf"{re.escape(panels[-1])}\s+are\b"
+                )
+            marker = rf"\[{paragraph:04d}\]\s+{declaration}"
+            if len(re.findall(marker, brief, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Kantatsu surface-modification drawing declaration "
+                    f"{panels[0]}-{panels[-1]} changed"
+                )
+        figure_panels = tuple(
+            panel
+            for _paragraph, panels in (
+                _KANTATSU_SURFACE_MODIFICATION_FIGURE_DECLARATIONS
+            )
+            for panel in panels
+        )
+        if len(figure_panels) != 23 or len(set(figure_panels)) != 23:
+            raise PatentParseError(
+                "Kantatsu surface-modification 23-panel denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Kantatsu surface-modification disclosure unexpectedly contains tables"
+            )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Kantatsu surface-modification phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Kantatsu surface-modification prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for marker in profile["lens_shape_markers"]:
+            if len(re.findall(re.escape(marker), sections["first_embodiment"], re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"Kantatsu surface-modification lens-shape marker {marker!r} changed"
+                )
+        second_reuse_marker = (
+            "Similarly to the first embodiment, the imaging lens unit 1 A of the "
+            "second embodiment illustrated in FIG. 8"
+        )
+        if (
+            len(
+                re.findall(
+                    re.escape(second_reuse_marker),
+                    sections["second_embodiment"],
+                    re.IGNORECASE,
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError(
+                "Kantatsu surface-modification second-embodiment reuse binding changed"
+            )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|"
+            r"\brefractive\s+index\b|\bAbbe(?:\s+(?:number|#))?\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\beffective\s+focal\s+length\b|\bfocal\s+length\b|"
+            r"\bF\s*[- ]?number\b|\bFNO\b|\bfield\s+of\s+view\b|\bFOV\b|"
+            r"\b(?:optical|lens|surface)\s+(?:surface\s+)?prescription\b)",
+            re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "Kantatsu surface-modification disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain both exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        (
+            "the exact first embodiment publishes five resin lens elements with "
+            "qualitative surface signs plus barrel/contact/coating, vacuum-ultraviolet "
+            "surface-modification, press-fitting, heating, and assembly steps; it "
+            "publishes no ordered optical surface prescription"
+        ),
+        (
+            "the exact second embodiment reuses the five-lens assembly and changes the "
+            "lens barrel and rear annular fixing member plus its manufacturing sequence; "
+            "it publishes no ordered optical surface prescription"
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_KANTATSU_SURFACE_MODIFICATION_REASON_CODE,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label in _KANTATSU_SURFACE_MODIFICATION_ITEMS
     ]
 
 

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "family_id": "64459548",
+  "current_frozen_cohort_roots": ["US-20210373283"],
+  "classification_publication_id": "US-20210373283-A1",
+  "classification_application_number": "17/344651",
+  "relationship_sources": [
+    "data/patent-lake/uspto-ppubs-html/US-PGPUB/f12d20d6c4a675d5/US-20210373283-A1.html",
+    "https://patents.google.com/patent/US20210373283A1/en",
+    "https://patents.google.com/patent/US20180348479A1/en"
+  ],
+  "priority_lineage": [
+    {
+      "application_id": "JP2017-110499",
+      "priority_date": "2017-06-02",
+      "disposition": "identity_and_priority_cross_check_only"
+    },
+    {
+      "application_id": "JP2018-086565",
+      "priority_date": "2018-04-27",
+      "related_publication_id": "JP7272755B2",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "external_family_members": [
+    {
+      "publication_id": "US-20180348479-A1",
+      "application_number": "15/996142",
+      "relationship": "parent_application_of_US17/344651",
+      "filing_date": "2018-06-01",
+      "publication_date": "2018-12-06",
+      "legal_status": "abandoned",
+      "frozen_cohort_membership": false,
+      "pdf_cross_check_completed": true,
+      "disposition": "queue_after_frozen_619_root_cohort_no_numeric_borrowing"
+    },
+    {
+      "publication_id": "CN-108983383-A",
+      "application_number": "CN201810558697.2A",
+      "relationship": "same_family_country_member",
+      "filing_date": "2018-06-01",
+      "publication_date": "2018-12-11",
+      "legal_status": "pending_on_google_family_timeline",
+      "frozen_cohort_membership": false,
+      "pdf_cross_check_completed": false,
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ]
+}

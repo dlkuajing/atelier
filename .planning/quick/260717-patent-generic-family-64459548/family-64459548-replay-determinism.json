@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "family_id": "64459548",
+  "root_id": "US-20210373283",
+  "publication_id": "US-20210373283-A1",
+  "item_count": 2,
+  "excluded_semantic_fields": ["result_attempt"],
+  "semantic_equal": true,
+  "semantic_sha256": "60c5e46a8d15f97df102e72a9293c4f381b61e9f2c68ef87efa4c44e6cbbf4ff",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20210373283/attempt-0002/result.json",
+      "bytes": 2533,
+      "file_sha256": "b6e7c9bdfdca1c68e61393e30ffd6db9067e81c1d6173f3e4049814c27b84d94",
+      "semantic_sha256": "60c5e46a8d15f97df102e72a9293c4f381b61e9f2c68ef87efa4c44e6cbbf4ff"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20210373283/attempt-0003/result.json",
+      "bytes": 2533,
+      "file_sha256": "738f1113390293201b9edeb1265191f098844b66065c37e1a63d3e4244d8774a",
+      "semantic_sha256": "60c5e46a8d15f97df102e72a9293c4f381b61e9f2c68ef87efa4c44e6cbbf4ff"
+    }
+  ],
+  "terminal_status": "confirmed_no_prescription",
+  "terminal_reason_code": "terminal.confirmed_no_prescription.lens_barrel_surface_modification_and_manufacturing_architecture_only",
+  "conversion_attempts": 0,
+  "candidate_zmx_count": 0,
+  "matching_staging_zmx_count": 0
+}
