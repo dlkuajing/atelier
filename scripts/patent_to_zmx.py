@@ -496,6 +496,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_folded_reflective_refractive_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_low_reflection_light_blocking_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -2126,6 +2134,97 @@ _LIGHT_BLOCKING_DUAL_RETAINER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "visual angle": 3,
             "convex surface": 6,
             "surface shape": 2,
+        },
+    },
+}
+_FOLDED_REFLECTIVE_REFRACTIVE_TITLE_PATTERN = re.compile(
+    r"\bCAMERA\s+MODULE\s+WITH\s+REFLECTIVE\s+AND\s+REFRACTIVE\s+MEMBER\s+"
+    r"AND\s+ELECTRONIC\s+DEVICE\s+INCLUDING\s+THE\s+SAME\b",
+    flags=re.IGNORECASE,
+)
+_FOLDED_REFLECTIVE_REFRACTIVE_FIGURE_PANELS = (
+    "1",
+    "2A",
+    "2B",
+    *(str(number) for number in range(3, 12)),
+    "12A",
+    "12B",
+    *(str(number) for number in range(13, 21)),
+)
+_FOLDED_REFLECTIVE_REFRACTIVE_SIMULATION_PAIRS = (
+    (3, 4),
+    (5, 6),
+    (7, 8),
+    (9, 10),
+    (13, 14),
+    (15, 16),
+    (17, 18),
+    (19, 20),
+)
+_FOLDED_REFLECTIVE_REFRACTIVE_ITEM_PROFILES = (
+    (
+        1,
+        "Folded reflective/refractive member architecture embodiment 1",
+        "confirmed_no_prescription."
+        "folded_reflective_refractive_member_and_stray_light_simulation_"
+        "architecture_only",
+    ),
+    (
+        2,
+        "Folded reflective/refractive member architecture embodiment 2",
+        "confirmed_no_prescription."
+        "folded_reflective_refractive_member_and_stray_light_simulation_"
+        "architecture_only",
+    ),
+)
+_FOLDED_REFLECTIVE_REFRACTIVE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12669686-B2": {
+        "raw_document_sha256": (
+            "1f70d988271192e12f7ca1c6f557cea92a571323fed6f1550da08bad050c32c1"
+        ),
+        "normalized_text_sha256": (
+            "9122a77ce59e2a85b5e504053ee02b488f28024aab02f42369c1985b783f9002"
+        ),
+        "family_id": "90454980",
+        "application_number": "18/370671",
+        "section_sha256": {
+            "background": (
+                "b41019c25d25070810af24e5cb12f9e612fd0fedb029144e3fbf1cb651bfdae5"
+            ),
+            "summary": (
+                "143ce75bbc729c80ce2a9d4fe27f9daa2b447eadfcd789b64c8a07802c59f571"
+            ),
+            "brief": (
+                "8e77f693ed05f0a4a611c812a95055556ac76e90247d53f571ef94b896c4accb"
+            ),
+            "detailed": (
+                "ba272b162f2ec33184546125ba5f905afc8cf13a063b2449c1210e9b00d149e4"
+            ),
+            "claims": (
+                "57d8e58c94fa508166a90d145cb3754d56a70f020a3a0552406562c511988dba"
+            ),
+        },
+        "source_scope_phrase_counts": {
+            "reflective and refractive member": 205,
+            "lens group": 78,
+            "lens assembly": 20,
+            "formula": 78,
+            "simulation results": 21,
+            "focal length": 11,
+            "effective focal length": 1,
+            "FOV": 8,
+            "field of view": 8,
+            "image height": 14,
+            "radius": 0,
+            "curvature": 2,
+            "refractive index": 2,
+            "Abbe": 3,
+            "dispersion": 3,
+            "asphere": 0,
+            "prescription": 0,
+            "surface number": 0,
+            "F-number": 0,
+            "FNO": 0,
         },
     },
 }
@@ -14483,6 +14582,235 @@ def _classify_light_blocking_dual_retainer_architecture_only_attempts(
                     status="confirmed_no_prescription",
                     reason_code=reason_code,
                     detail=detail,
+                ),
+            )
+        )
+    return attempts
+
+
+def _classify_folded_reflective_refractive_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 90454980 folded-member architecture."""
+
+    profile = _FOLDED_REFLECTIVE_REFRACTIVE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _FOLDED_REFLECTIVE_REFRACTIVE_ITEM_PROFILES
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"folded reflective/refractive official raw text hash changed for "
+                f"{patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"folded reflective/refractive normalized text hash changed for "
+                f"{patent_id}"
+            )
+        if _FOLDED_REFLECTIVE_REFRACTIVE_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("folded reflective/refractive title binding changed")
+
+        identity_markers = {
+            f"Family ID: {profile['family_id']}": 1,
+            f"Appl. No.: {profile['application_number']}": 1,
+            "SAMSUNG ELECTRONICS CO., LTD.": 2,
+            "PCT/KR2023/014316": 4,
+            "US 20240094515 A1 Mar. 21, 2024": 1,
+            (
+                "Korean Patent Application No. 10-2022-0118722, filed on "
+                "Sep. 20, 2022"
+            ): 1,
+            (
+                "Korean Patent Application No. 10-2022-0153925, filed on "
+                "Nov. 16, 2022"
+            ): 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded reflective/refractive identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = (
+            ("background", "BACKGROUND 1. Field (1)"),
+            ("summary", "SUMMARY (6)"),
+            ("brief", "BRIEF DESCRIPTION OF THE DRAWINGS (1)"),
+            ("detailed", "DETAILED DESCRIPTION (24)"),
+            ("claims", "Claims 1 . An electronic device comprising:"),
+        )
+        try:
+            starts = {name: text.index(marker) for name, marker in section_markers}
+        except ValueError as exc:
+            raise PatentParseError(
+                "folded reflective/refractive section boundary changed"
+            ) from exc
+        if tuple(starts.values()) != tuple(sorted(starts.values())):
+            raise PatentParseError(
+                "folded reflective/refractive section ordering changed"
+            )
+        sections = {
+            "background": text[starts["background"] : starts["summary"]],
+            "summary": text[starts["summary"] : starts["brief"]],
+            "brief": text[starts["brief"] : starts["detailed"]],
+            "detailed": text[starts["detailed"] : starts["claims"]],
+            "claims": text[starts["claims"] :],
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"folded reflective/refractive {section_name} section changed"
+                )
+
+        expected_paragraphs = {
+            "background": tuple(range(1, 6)),
+            "summary": tuple(range(6, 10)),
+            "brief": tuple(range(1, 24)),
+            "detailed": tuple(range(24, 170)),
+        }
+        for section_name, expected in expected_paragraphs.items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\((\d+)\)", sections[section_name])
+            )
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded reflective/refractive {section_name} paragraph "
+                    "denominator changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, 14)):
+            raise PatentParseError(
+                "folded reflective/refractive claims 1-13 denominator changed"
+            )
+
+        brief = sections["brief"]
+        for paragraph_number, panel in enumerate(
+            _FOLDED_REFLECTIVE_REFRACTIVE_FIGURE_PANELS,
+            start=2,
+        ):
+            spaced_panel = re.sub(r"(?<=\d)(?=[A-Z])", " ", panel)
+            marker = rf"\({paragraph_number}\)\s*FIG\.\s*{re.escape(spaced_panel)}\b"
+            if re.search(marker, brief, re.IGNORECASE) is None:
+                raise PatentParseError(
+                    f"folded reflective/refractive drawing panel {panel} changed"
+                )
+
+        detailed = sections["detailed"]
+        for architecture_figure, simulation_figure in (
+            _FOLDED_REFLECTIVE_REFRACTIVE_SIMULATION_PAIRS
+        ):
+            brief_marker = (
+                rf"FIG\.\s*{simulation_figure}\s+is a view illustrating simulation "
+                rf"results.*?embodiment of FIG\.\s*{architecture_figure}\b"
+            )
+            if len(re.findall(brief_marker, brief, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "folded reflective/refractive brief simulation pair "
+                    f"{architecture_figure}/{simulation_figure} changed"
+                )
+            detailed_marker = (
+                rf"FIG\.\s*{simulation_figure}\s+is a view illustrating simulation "
+                r"results"
+            )
+            if len(re.findall(detailed_marker, detailed, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "folded reflective/refractive detailed simulation pair "
+                    f"{architecture_figure}/{simulation_figure} changed"
+                )
+
+        embodiment_markers = (
+            "in the embodiment (e.g., the first embodiment) of FIGS. 1 to 10",
+            "in the embodiment (e.g., the second embodiment) of FIGS. 11 to 20",
+        )
+        for marker in embodiment_markers:
+            if len(re.findall(re.escape(marker), detailed, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"folded reflective/refractive embodiment marker {marker!r} changed"
+                )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "folded reflective/refractive disclosure unexpectedly contains tables"
+            )
+        source_scope = text[starts["background"] :]
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), source_scope, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded reflective/refractive phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        context_markers = {
+            (
+                "the lens group 200 may include one lens or may include a combination "
+                "of a plurality of lenses"
+            ): 1,
+            "Vd_ 1 of formula 4 represents": 2,
+            (
+                "specific shapes or dimensions of the lenses, reflective and "
+                "refractive members, and image sensors"
+            ): 1,
+        }
+        for marker, expected in context_markers.items():
+            observed = len(re.findall(re.escape(marker), detailed, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded reflective/refractive context marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain both exact-source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, label, reason_code in (
+        _FOLDED_REFLECTIVE_REFRACTIVE_ITEM_PROFILES
+    ):
+        figure_range = "FIGS. 1-10" if embodiment_number == 1 else "FIGS. 11-20"
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=reason_code,
+                    detail=(
+                        f"the exact retained {figure_range} embodiment publishes folded "
+                        "reflective/refractive-member and cutting-plane geometry plus "
+                        "four stray-light simulations, but no ordered lens surface "
+                        "prescription"
+                    ),
                 ),
             )
         )

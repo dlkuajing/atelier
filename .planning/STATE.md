@@ -231,24 +231,25 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260717-patent-generic-family-57585487` | complete-shovel-saturation-incomplete | Exact A1 source binds 24 polymer synthesis examples, 32 near-IR cut-filter manufacturing examples, one comparative example, FIGS.1-4 on two sheets, TABLE 1 heat/solvent-resistance ratings, paragraphs 0001-0620, and claims 1-18. Two independently fetched official wrappers and one Google wrapper contain 114 image pages and agree on all 114 decoded rasters. Text and all-page contact review expose zero ordered-surface prescription markers or hidden optical tables, so the root becomes one `near_ir_absorbing_polymer_and_cut_filter_materials_only` terminal with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `f0745d7a...61a5b`, summary `d69b7c61...bf7c4`, after census `75a22680...dfe35`; audit 619/619 corrupt=0; 425 offline patent/guard tests pass. WO/JP/TW family publications are queued outside the cohort. Generic 148 roots remains first; Family 93653416 is next. |
 | `260717-patent-generic-family-93653416` | complete-shovel-saturation-incomplete | Exact B2 source binds an XR content-collaboration GUI/device disclosure, paragraphs 0001-0248, claims 1-48, zero tables, 52 drawing sheets, and 57 actual panels. Two official B2 wrappers contain 108 image pages and agree on every decoded raster; same-application A1 official/Google 96-page wrappers do too. The source has no ordered-surface, focal-length, radius/index/Abbe/asphere, F-number, or optical-prescription data, so the root becomes one `xr_content_collaboration_user_interface_and_device_architecture_only` terminal with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `024ce7b8...248b`, summary `20879bb5...d9a1`, after census `7be0f127...a0cc`; audit 619/619 corrupt=0; 443 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. Same-application A1 and one PCT publication are queued outside the cohort. Generic 147 roots remains first; Family 97227325 is next. |
 | `260717-patent-generic-family-97227325` | complete-shovel-saturation-incomplete | Exact A1 source binds two imaging-lens-assembly light-blocking/dual-retainer embodiments, two smartphone wrappers, one mobile-transportation wrapper, paragraphs 0001-0116, claims 1-30, TABLES 1-2, and 30 drawing sheets/panels. Two official wrappers contain 44 image pages and agree on every decoded raster. The tables publish only Do/Di/Ds/La/As/Lr/Lo geometry and no ordered prescription, so the source expands to five architecture terminals with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `5a8c946b...e9b8`, summary `bf82ca12...16ee`, after census `dcd7a2a5...025d`; audit 619/619 corrupt=0; 447 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. Six TW/CN/DE/GB publications are queued outside the cohort. Generic 146 roots remains first; Family 90454980 is next. |
+| `260717-patent-generic-family-90454980` | complete-shovel-saturation-incomplete | Exact B2 source binds two folded reflective/refractive-member embodiments, eight paired stray-light simulations, FIGS.1-20/22 panels, background 1-5, summary 6-9, drawing paragraphs 1-23, detailed paragraphs 24-169, claims 1-13, and zero tables. Two B2 wrappers agree on all 40 decoded rasters; same-application official/Google A1 wrappers also agree internally, while B2/A1 differ 40/40 and are not cross-borrowed. Formulas and numeric ranges constrain member/cutting-plane/FOV/image-height geometry, not an ordered lens prescription, so the root expands to two confirmed-no-prescription architecture terminals with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `aafd6769...3706`, summary `0100c148...8f07`, after census `7b25fa8e...4361`; audit 619/619 corrupt=0; 451 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. Five KR/WO/EP/CN records are queued outside the cohort. Generic 145 roots remains first; Family 59500840 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260717-patent-generic-family-97227325/260717-patent-generic-family-97227325-PLAN.md`,
+`.planning/quick/260717-patent-generic-family-90454980/260717-patent-generic-family-90454980-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (146 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (145 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `90454980`, root `US-12669686`,
-publication `US-12669686-B2`, layout
-`0e55269144af351368b53593199bf7f489422f556a15498977514c41404140d2`. Use
+deterministic root/item/layout/family ordering is Family ID `59500840`, root `US-11118059`,
+publication `US-11118059-B2`, layout
+`0e961e03387b6137cc1d75f82afee182f4fd91ec8cd48c0230b3b3df0a2afd0f`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
 

@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "family_id": "90454980",
+  "root_id": "US-12669686",
+  "publication_id": "US-12669686-B2",
+  "application_number": "18/370671",
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/1f70d988271192e1/US-12669686-B2.html",
+    "raw_document_sha256": "1f70d988271192e12f7ca1c6f557cea92a571323fed6f1550da08bad050c32c1",
+    "normalized_text_sha256": "9122a77ce59e2a85b5e504053ee02b488f28024aab02f42369c1985b783f9002",
+    "raw_character_count": 150877,
+    "normalized_character_count": 119268,
+    "section_sha256": {
+      "background": "b41019c25d25070810af24e5cb12f9e612fd0fedb029144e3fbf1cb651bfdae5",
+      "summary": "143ce75bbc729c80ce2a9d4fe27f9daa2b447eadfcd789b64c8a07802c59f571",
+      "brief_description_of_drawings": "8e77f693ed05f0a4a611c812a95055556ac76e90247d53f571ef94b896c4accb",
+      "detailed_description": "ba272b162f2ec33184546125ba5f905afc8cf13a063b2449c1210e9b00d149e4",
+      "claims": "57d8e58c94fa508166a90d145cb3754d56a70f020a3a0552406562c511988dba"
+    }
+  },
+  "identity": {
+    "title": "Camera module with reflective and refractive member and electronic device including the same",
+    "applicant": "SAMSUNG ELECTRONICS CO., LTD.",
+    "prior_publication_id": "US-20240094515-A1",
+    "prior_publication_title": "Camera module and electronic device including the same",
+    "priority_applications": [
+      {
+        "application_number": "10-2022-0118722",
+        "filing_date": "2022-09-20",
+        "authority": "KR"
+      },
+      {
+        "application_number": "10-2022-0153925",
+        "filing_date": "2022-11-16",
+        "authority": "KR"
+      }
+    ],
+    "parent_application": "PCT/KR2023/014316"
+  },
+  "denominator": {
+    "b2_pdf_pages": 40,
+    "drawing_sheets": 22,
+    "figure_panels": 22,
+    "background_paragraphs": 5,
+    "summary_paragraphs": 4,
+    "brief_drawing_paragraphs": 23,
+    "detailed_description_paragraphs": 146,
+    "source_tables": 0,
+    "claims": 13,
+    "main_architecture_embodiments": 2,
+    "paired_stray_light_simulations": 8,
+    "terminal_items": 2
+  },
+  "figure_panels": [
+    "1",
+    "2A",
+    "2B",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12A",
+    "12B",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
+  ],
+  "simulation_pairs": [
+    {
+      "embodiment_number": 1,
+      "architecture_figure": 3,
+      "simulation_figure": 4
+    },
+    {
+      "embodiment_number": 1,
+      "architecture_figure": 5,
+      "simulation_figure": 6
+    },
+    {
+      "embodiment_number": 1,
+      "architecture_figure": 7,
+      "simulation_figure": 8
+    },
+    {
+      "embodiment_number": 1,
+      "architecture_figure": 9,
+      "simulation_figure": 10
+    },
+    {
+      "embodiment_number": 2,
+      "architecture_figure": 13,
+      "simulation_figure": 14
+    },
+    {
+      "embodiment_number": 2,
+      "architecture_figure": 15,
+      "simulation_figure": 16
+    },
+    {
+      "embodiment_number": 2,
+      "architecture_figure": 17,
+      "simulation_figure": 18
+    },
+    {
+      "embodiment_number": 2,
+      "architecture_figure": 19,
+      "simulation_figure": 20
+    }
+  ],
+  "source_scope_phrase_counts": {
+    "reflective and refractive member": 205,
+    "lens group": 78,
+    "lens assembly": 20,
+    "formula": 78,
+    "simulation results": 21,
+    "focal length": 11,
+    "effective focal length": 1,
+    "FOV": 8,
+    "field of view": 8,
+    "image height": 14,
+    "radius": 0,
+    "curvature": 2,
+    "refractive index": 2,
+    "Abbe": 3,
+    "dispersion": 3,
+    "asphere": 0,
+    "prescription": 0,
+    "surface number": 0,
+    "F-number": 0,
+    "FNO": 0
+  },
+  "formula_roles": [
+    {
+      "formula_numbers": [
+        1,
+        2,
+        3
+      ],
+      "role": "cutting-plane angle limits and opposing-angle ratio"
+    },
+    {
+      "formula_numbers": [
+        4
+      ],
+      "role": "reflective/refractive-member dispersion range, not a lens glass row"
+    },
+    {
+      "formula_numbers": [
+        5
+      ],
+      "role": "device/lens-assembly field-of-view range, not an exact prescription field"
+    },
+    {
+      "formula_numbers": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "role": "cutting-plane length to image-height ratios"
+    }
+  ],
+  "prescription_marker_counts": {
+    "ordered_ppubs_tables": 0,
+    "radius": 0,
+    "asphere": 0,
+    "prescription": 0,
+    "surface_number": 0,
+    "F-number": 0,
+    "FNO": 0
+  },
+  "terminal_items": [
+    {
+      "embodiment_number": 1,
+      "label": "Folded reflective/refractive member architecture embodiment 1",
+      "figure_range": [
+        1,
+        10
+      ],
+      "simulation_figures": [
+        4,
+        6,
+        8,
+        10
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_reflective_refractive_member_and_stray_light_simulation_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Folded reflective/refractive member architecture embodiment 2",
+      "figure_range": [
+        11,
+        20
+      ],
+      "simulation_figures": [
+        14,
+        16,
+        18,
+        20
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_reflective_refractive_member_and_stray_light_simulation_architecture_only"
+    }
+  ],
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-90454980/family-90454980-raster-audit.json",
+    "sha256": "46ba1cf3184df28f19ee783512729a1deb37228d87f7117ff1ce6f3f44db0ccc"
+  }
+}
