@@ -379,6 +379,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_endoscopic_three_lens_missing_f_number_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_catadioptric_module_architecture_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2243,6 +2249,67 @@ _FOLDED_LENS_BARREL_DRIVING_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "FIG. 1 E is an optical surface schematic view": 2,
             "TABLE-US-00001": 1,
         },
+    },
+}
+_ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_TITLE_PATTERN = re.compile(
+    r"\bOPTICAL\s+IMAGING\s+LENS\s+ASSEMBLY\s+AND\s+ENDOSCOPIC\s+OPTICAL\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_ENDOSCOPIC_THREE_LENS_FIGURES = tuple(range(1, 12))
+_ENDOSCOPIC_THREE_LENS_SYSTEM_ROWS = (
+    "EFL 0.43 f1 -0.35 f2 0.60 f3 0.59 HFOV 60.00",
+    "EFL 0.43 f1 -0.34 f2 0.60 f3 0.60 HFOV 60.00",
+    "EFL 0.42 f1 -0.33 f2 0.60 f3 0.59 HFOV 60.00",
+)
+_ENDOSCOPIC_THREE_LENS_TABLE_BINDINGS = (
+    (1, 2, 3),
+    (4, 5, 6),
+    (7, 8, 9),
+)
+_ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-11832791-B2": {
+        "raw_document_sha256": (
+            "2ef9a1fbb3aad09317228a9db6d30d1b9fad67059b7fae25e21655d96301451f"
+        ),
+        "normalized_text_sha256": (
+            "8d5d3edad4daa9845193bdd0e7d0e4d6a530c04a0ee9f334011c319fd7d3c699"
+        ),
+        "application_number": "17/477544",
+        "relationship_markers": ("US 20230091208 A1 Mar. 23, 2023",),
+        "table_block_sha256": (
+            "bfe01c7f69920951d339edf88608ee8bc1d2d0c603fbabf9985f4a7cf072497c",
+            "38644945b7692314a86cc1af5ca78dfa9368571c83fcb45db00c10d206be6ec0",
+            "f3514b31c4eaeb5fa85e239484de26853ec2c9518d09d1447db1cabe70381143",
+            "15c8628eb6dd710e67335fe076517f12882756cc8ba793736c426b51de5dc6cc",
+            "42473c9878f8392b9a12e0bdf7ee861f37af471f953151f760d268f60208160d",
+            "e5b1f6779b7bca3b926ef16831dffaa21f73221b6d9ff07ecfa6bfe87444a8b0",
+            "3f7ec1ca0e069bceae57e4b7df8e2a8b0dd34ee46bd3cbb4df4fad202a73e80e",
+            "425b6fe580e25de4e005da7ce0852a64e4a16dc75613c5f22f490d53acb2bf93",
+            "c8d51023005e1190005dd3b5123273fab826602fd8f96f9084abfb0508f67812",
+        ),
+    },
+    "US-20230091208-A1": {
+        "raw_document_sha256": (
+            "0ba2fa9864b8a3fc1b2b60af0dfc241eb55b0dcb953ea4f6cafeb3a0a34e475a"
+        ),
+        "normalized_text_sha256": (
+            "78b1cb4de4dc2a7a82e7e19e7c34e0c40725b05d9a17c32ea2ef7fed6c3a47eb"
+        ),
+        "application_number": "17/477544",
+        "relationship_markers": (),
+        "table_block_sha256": (
+            "90d02fced3e70c9e4f0d74421084fba5ede763e852930bba75219b939a7a575a",
+            "d0abdae31aea138557b8b3459ce3b22d10848b0d04217aa8c8eb15a095ce110a",
+            "2a8690cb248c52b172ee10e7fc68e2358fca6aef9da36650315f1a1bc7bc8497",
+            "d85217f4b07a639ae5ae1cd9945cdf2096baf3470627a3bb02d72c7bb3748a2b",
+            "7a1c6252792e85e275370163fd8bd64803194e028f3a3ae775a04aab69836a42",
+            "ab44d66af7b265f017174edaf0cf995b84b4a9e3a78c79573c21c3ff24b4e741",
+            "b02909799206e6cb96aa6b264556a5ca84d7869c67c09ce9818f770a91f069a9",
+            "5a27a1648e7b01f5f62604fad096a6489d2896e2fa378c08d4eb412d10de6eba",
+            "3b09b3b9cc93b8c9eac2a600877be07f09e683e3df1a47807cea463aa8493394",
+        ),
     },
 }
 _CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
@@ -11958,6 +12025,233 @@ def _classify_folded_lens_barrel_driving_only_attempts(
                 ),
             ),
         ),
+    ]
+
+
+def _classify_endoscopic_three_lens_missing_f_number_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain three exact endoscopic prescriptions whose F-number is unpublished."""
+
+    profile = _ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiments = tuple(
+        f"Endoscopic optical imaging lens assembly embodiment {index}"
+        for index in range(1, 4)
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"endoscopic three-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"endoscopic three-lens normalized text hash changed for {patent_id}"
+            )
+        if (
+            len(_ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_TITLE_PATTERN.findall(text))
+            != 1
+        ):
+            raise PatentParseError("endoscopic three-lens title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*78592599", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("endoscopic three-lens Family ID binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("endoscopic three-lens application binding changed")
+        for marker in profile["relationship_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"endoscopic three-lens relationship marker {marker!r} changed"
+                )
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)DETAILED DESCRIPTION",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError(
+                "endoscopic three-lens drawing description is missing"
+            )
+        declared_figures = tuple(
+            int(figure)
+            for figure in re.findall(
+                r"FIG\.\s*<b>(\d+)</b></figref>\s+is\s+",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _ENDOSCOPIC_THREE_LENS_FIGURES:
+            raise PatentParseError(
+                "endoscopic three-lens 11-figure denominator changed"
+            )
+        drawing_text = normalize_patent_text(brief_match.group("body"))
+        drawing_roles = (
+            len(re.findall(r"functional\s+block\s+diagram", drawing_text, re.IGNORECASE)),
+            len(
+                re.findall(
+                    r"diagram\s+of\s+(?:an?\s+)?(?:the\s+)?optical\s+imaging\s+"
+                    r"lens\s+assembly",
+                    drawing_text,
+                    re.IGNORECASE,
+                )
+            ),
+            len(re.findall(r"diagram\s+of\s+distortion", drawing_text, re.IGNORECASE)),
+            len(
+                re.findall(
+                    r"diagram\s+of\s+relative\s+illumination",
+                    drawing_text,
+                    re.IGNORECASE,
+                )
+            ),
+        )
+        if drawing_roles != (2, 3, 3, 3):
+            raise PatentParseError("endoscopic three-lens drawing roles changed")
+
+        table_binding_patterns = (
+            r"illustrated\s+in\s+Table\s+1\s*,\s*and\s+further\s+have\s+optical\s+"
+            r"data\s+and\s+aspheric\s+surface\s+data\s+respectively\s+illustrated\s+"
+            r"in\s+Table\s+2\s+and\s+Table\s+3",
+            r"illustrated\s+in\s+Table\s+4\s*,\s*and\s+further\s+have\s+optical\s+"
+            r"data\s+and\s+aspheric\s+surface\s+data\s+respectively\s+illustrated\s+"
+            r"in\s+Table\s+5\s+and\s+Table\s+6",
+            r"illustrated\s+in\s+Table\s+7\s*,\s*and\s+further\s+have\s+optical\s+"
+            r"data\s+and\s+aspheric\s+surface\s+data\s+respectively\s+illustrated\s+"
+            r"in\s+Table\s+8\s+and\s+Table\s+9",
+        )
+        for embodiment_number, pattern in enumerate(table_binding_patterns, start=1):
+            if len(re.findall(pattern, text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "endoscopic three-lens embodiment "
+                    f"{embodiment_number} table binding changed"
+                )
+        if re.search(r"\bfourth\s+embodiment\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "endoscopic three-lens source gained a fourth optical embodiment"
+            )
+
+        blocks = _patent_table_blocks(text)
+        table_numbers = tuple(block.number for block in blocks)
+        if table_numbers != tuple(range(1, 10)):
+            raise PatentParseError(
+                f"endoscopic three-lens table sequence is {table_numbers}; expected 1..9"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError("endoscopic three-lens table digest changed")
+
+        for embodiment_number, (system_number, surface_number, asphere_number) in enumerate(
+            _ENDOSCOPIC_THREE_LENS_TABLE_BINDINGS,
+            start=1,
+        ):
+            system_text = blocks[system_number - 1].text
+            surface_text = blocks[surface_number - 1].text
+            asphere_text = blocks[asphere_number - 1].text
+            if len(
+                re.findall(
+                    re.escape(_ENDOSCOPIC_THREE_LENS_SYSTEM_ROWS[embodiment_number - 1]),
+                    system_text,
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    "endoscopic three-lens embodiment "
+                    f"{embodiment_number} system row changed"
+                )
+            surface_markers = (
+                "Thickness Air gap Curvature Ape. stop radius distance",
+                "Refractive No. (mm) (mm) index Abbe No.",
+                "261(26) First lens",
+                "281(28) Second",
+                "30 Aperture",
+                "321(32) Third lens",
+                "34 Filter",
+                "36 Image",
+            )
+            if any(
+                len(re.findall(re.escape(marker), surface_text, re.IGNORECASE)) != 1
+                for marker in surface_markers
+            ):
+                raise PatentParseError(
+                    "endoscopic three-lens embodiment "
+                    f"{embodiment_number} surface-table structure changed"
+                )
+            if re.search(
+                r"No\.\s+261\(26\)\s+262\(26\)\s+281\(28\)\s+282\(28\)\s+"
+                r"321\(32\)\s+322\(32\)\s+K\s+.*?\s+A4\s+.*?\s+A6\s+.*?\s+"
+                r"A8\s+.*?\s+A10\s+.*?\s+A12\s+",
+                asphere_text,
+                re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    "endoscopic three-lens embodiment "
+                    f"{embodiment_number} asphere-table structure changed"
+                )
+
+        forbidden_f_number_patterns = (
+            r"\bF\s*[- ]?number\b",
+            r"\bFNO\b",
+            r"\bF\s*/\s*(?:#|No\.?|Number|\d)",
+            r"\baperture\s+number\b",
+            r"\bnumerical\s+aperture\b",
+        )
+        for pattern in forbidden_f_number_patterns:
+            observed = len(re.findall(pattern, text, re.IGNORECASE))
+            if observed != 0:
+                raise PatentParseError(
+                    f"endoscopic three-lens F-number marker {pattern!r} occurs "
+                    f"{observed}; expected 0"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all three optical embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code="metadata_unpublished.system_f_number_absent",
+                detail=(
+                    f"Tables {3 * index - 2}-{3 * index} publish direct EFL/HFOV, "
+                    "the complete surface prescription, and asphere coefficients, but "
+                    "the official HTML and all-page official raster audit publish no "
+                    "exact system F-number; aperture-stop position and curvature are "
+                    "not substituted or used to derive it"
+                ),
+            ),
+        )
+        for index, embodiment in enumerate(embodiments, start=1)
     ]
 
 

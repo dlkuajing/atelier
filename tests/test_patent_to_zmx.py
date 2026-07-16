@@ -7740,6 +7740,124 @@ def test_sunny_long_focus_source_locked_product_drift_fails_all_items(
     ("patent_id", "path_parts"),
     (
         (
+            "US-11832791-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "2ef9a1fbb3aad093",
+                "US-11832791-B2.html",
+            ),
+        ),
+        (
+            "US-20230091208-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "0ba2fa9864b8a3fc",
+                "US-20230091208-A1.html",
+            ),
+        ),
+    ),
+)
+def test_endoscopic_three_lens_exact_sources_are_terminal_when_f_number_absent(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Endoscopic optical imaging lens assembly embodiment 1",
+        "Endoscopic optical imaging lens assembly embodiment 2",
+        "Endoscopic optical imaging lens assembly embodiment 3",
+    ]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code
+        == "metadata_unpublished.system_f_number_absent"
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+
+
+def test_endoscopic_three_lens_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    audit_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-78592599"
+        / "family-78592599-raster-audit.json"
+    )
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+
+    assert audit["family_id"] == "78592599"
+    assert audit["figure_declarations"] == [str(index) for index in range(1, 12)]
+    for publication_id, record in audit["publications"].items():
+        pdf_path = root / record["retained_pdf_path"]
+        content = pdf_path.read_bytes()
+        assert hashlib.sha256(content).hexdigest() == record["retained_pdf_sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == 15
+        assert sum(len(page.extract_text() or "") for page in reader.pages) == 0
+        assert record["text_layer_char_count"] == 0
+        page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=publication_id,
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(reader.pages, start=1)
+        ]
+        raster_set_sha256 = hashlib.sha256(
+            json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        assert raster_set_sha256 == record["raster_set_sha256"]
+
+        second_pdf_path = root / record["second_live_pdf_path"]
+        second_content = second_pdf_path.read_bytes()
+        assert (
+            hashlib.sha256(second_content).hexdigest()
+            == record["second_live_pdf_sha256"]
+        )
+        second_reader = patent_pdf_recovery.pypdf.PdfReader(str(second_pdf_path))
+        second_page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=f"{publication_id} recheck",
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(second_reader.pages, start=1)
+        ]
+        assert second_page_hashes == page_hashes
+        assert record["second_live_raster_set_equal"] is True
+        assert len(record["drawing_page_numbers"]) == record["drawing_sheet_count"] == 7
+
+        contact_path = root / record["contact_sheet_path"]
+        assert (
+            hashlib.sha256(contact_path.read_bytes()).hexdigest()
+            == record["contact_sheet_sha256"]
+        )
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
             "US-12216247-B2",
             (
                 "data",
@@ -8459,6 +8577,143 @@ def _catadioptric_module_b2_source() -> tuple[str, str]:
         / "US-12631860-B2.html"
     )
     return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _endoscopic_three_lens_b2_source() -> tuple[str, str]:
+    patent_id = "US-11832791-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "2ef9a1fbb3aad093"
+        / "US-11832791-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_endoscopic_three_lens_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    blocks = patent_to_zmx._patent_table_blocks(normalized)
+    original = (
+        patent_to_zmx._ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES[
+            patent_id
+        ]
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "table_block_sha256": tuple(
+                hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+                for block in blocks
+            ),
+        },
+    )
+
+
+def test_endoscopic_three_lens_source_hash_drift_fails_all_items() -> None:
+    patent_id, raw_text = _endoscopic_three_lens_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 3
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        f"endoscopic three-lens official raw text hash changed for {patent_id}"
+    }
+
+
+def test_endoscopic_three_lens_system_row_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _endoscopic_three_lens_b2_source()
+    raw_text = original.replace(
+        "EFL 0.43 f1 −0.35 f2 0.60 f3 0.59 HFOV 60.00",
+        "EFL 0.44 f1 −0.35 f2 0.60 f3 0.59 HFOV 60.00",
+        1,
+    )
+    assert raw_text != original
+    _install_endoscopic_three_lens_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 3
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "endoscopic three-lens embodiment 1 system row changed"
+    }
+
+
+def test_endoscopic_three_lens_figure_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _endoscopic_three_lens_b2_source()
+    raw_text = original.replace(
+        '(11) <figref idref="DRAWINGS">FIG. <b>11</b></figref> is a diagram',
+        '(11) <figref idref="DRAWINGS">FIG. <b>12</b></figref> is a diagram',
+        1,
+    )
+    assert raw_text != original
+    _install_endoscopic_three_lens_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 3
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "endoscopic three-lens 11-figure denominator changed"
+    }
+
+
+def test_endoscopic_three_lens_published_f_number_reopens_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _endoscopic_three_lens_b2_source()
+    raw_text = original.replace(
+        "BRIEF DESCRIPTION OF THE DRAWINGS",
+        "System F-number 2.8. BRIEF DESCRIPTION OF THE DRAWINGS",
+        1,
+    )
+    assert raw_text != original
+    _install_endoscopic_three_lens_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 3
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "endoscopic three-lens F-number marker" in str(attempt.error)
+        for attempt in attempts
+    )
 
 
 def _install_catadioptric_module_drift_profile(
@@ -9195,6 +9450,60 @@ def test_convert_candidate_retains_catadioptric_terminals_without_worker(
     }
     assert {attempt.reason_code for attempt in attempts[6:]} == {
         "confirmed_no_prescription.camera_module_device_architecture_only"
+    }
+    assert all(attempt.raw_document_path for attempt in attempts)
+    assert not (tmp_path / "zmx").exists() or not any((tmp_path / "zmx").iterdir())
+
+
+def test_convert_candidate_retains_endoscopic_terminals_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, raw_text = _endoscopic_three_lens_b2_source()
+
+    async def fake_fetch(
+        _client: object,
+        _token: str,
+        fetched_patent_id: str,
+    ) -> patent_to_zmx.FetchedPatentHtml:
+        assert fetched_patent_id == patent_id
+        return patent_to_zmx.FetchedPatentHtml(
+            html=raw_text,
+            source_bucket="USPAT",
+            attempts=(
+                patent_to_zmx.SourceFetchAttempt(
+                    publication_id=fetched_patent_id,
+                    source_bucket="USPAT",
+                    state=patent_to_zmx.SourceFetchState.RETAINED,
+                    http_status=200,
+                ),
+            ),
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("metadata-unpublished outcomes must not launch a worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "token",
+            patent_to_zmx.PatentCandidate(
+                patent_id=patent_id,
+                title="fixture",
+                source_url="",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "zmx",
+            raw_document_dir=tmp_path / "raw",
+        )
+    )
+
+    assert [attempt.status for attempt in attempts] == ["metadata_unpublished"] * 3
+    assert {attempt.reason_code for attempt in attempts} == {
+        "metadata_unpublished.system_f_number_absent"
     }
     assert all(attempt.raw_document_path for attempt in attempts)
     assert not (tmp_path / "zmx").exists() or not any((tmp_path / "zmx").iterdir())
