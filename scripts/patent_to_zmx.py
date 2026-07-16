@@ -385,6 +385,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_circle_optics_mechanical_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_large_aperture_scanning_tele_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2064,6 +2070,34 @@ _FOLDED_LENS_BARREL_DRIVING_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
         },
     },
 }
+_CIRCLE_OPTICS_MECHANICAL_ONLY_TITLE_PATTERN = re.compile(
+    r"\bOPTO-MECHANICS\s+OF\s+PANORAMIC\s+CAPTURE\s+DEVICES\s+WITH\s+"
+    r"ABUTTING\s+CAMERAS\b",
+    flags=re.IGNORECASE,
+)
+_CIRCLE_OPTICS_MECHANICAL_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12092800-B2": {
+        "raw_document_sha256": (
+            "162be98ab26d3e96a81dddd8350a4c2ec1588133fd4751719ca8b31fbb1a3335"
+        ),
+        "normalized_text_sha256": (
+            "e7ee0f720a571939785c685b5b2cc517d66e43da25edcbc5c3088abd52ac45e5"
+        ),
+        "application_number": "17/622393",
+        "drawing_description_count": 28,
+        "architecture_phrase_counts": {
+            "Family ID: 74060373": 1,
+            "outer compressor": 11,
+            "aperture stop": 19,
+            "image plane": 34,
+            "aspheric surfaces": 1,
+            "lens element thicknesses and curvatures": 1,
+            "FIG. 8 depicts an image sensor with a sensor mount having adjustors": 1,
+            "FIG. 21 depicts an alternate configuration for an improved multi-camera "
+            "projection device": 1,
+        },
+    },
+}
 _LIGHT_BLOCKING_GEOMETRY_ONLY_TITLE_PATTERN = re.compile(
     r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*CAMERA\s+MODULE\s+AND\s+"
     r"ELECTRONIC\s+DEVICE\b",
@@ -3161,6 +3195,39 @@ _ABILITY_TWO_NINE_LENS_PROFILE = "ability_two_nine_lens_f_number_unpublished_v1"
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
 _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
+_CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
+_CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT = (
+    "provide lens prescription data for the lens",
+    "A prescription for this camera lens is given",
+    "with glass or material types, axial thicknesses, and surface radii identified",
+    "The lens has 7 lens elements",
+    "Aspherical surface coefficients are also provided",
+    "focused image at F/2.0",
+    "nominal focal length of 2.57 mm",
+    "aperture stop diameter of 1.42 mm",
+)
+_CIRCLE_OPTICS_SEVEN_LENS_PUBLICATION_SOURCES = {
+    "US-12313825-B2": {
+        "primary_html_sha256": (
+            "f39a32f7a1eb5004447f43fc12e3bd60c06a55f4f4c50d26e4375e61b17bd154"
+        ),
+        "application_number": "17/622463",
+        "role_page_numbers": {
+            "circle_optics_surface_table": 17,
+            "circle_optics_asphere_table": 18,
+        },
+    },
+    "US-20250284103-A1": {
+        "primary_html_sha256": (
+            "449f9a8e066cb4625dd38d76d737a711f216fb45195668f98c25f9c32cebabf4"
+        ),
+        "application_number": "19/217645",
+        "role_page_numbers": {
+            "circle_optics_surface_table": 16,
+            "circle_optics_asphere_table": 17,
+        },
+    },
+}
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _GENIUS_NINE_LENS_ELEVEN_PROFILE = "genius_nine_lens_eleven_embodiment_census_v1"
 _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE = (
@@ -6418,6 +6485,121 @@ def _validate_ability_pdf_source_linkage(payload: dict[str, Any]) -> None:
         raise PatentParseError("Ability PDF OCR source facts do not match linked HTML")
 
 
+def _circle_optics_seven_lens_review_attempt(
+    payload: dict[str, Any],
+) -> _PrescriptionParseAttempt:
+    """Retain the published prescription without accepting unreliable numeric OCR."""
+
+    embodiment = "Circle Optics seven-lens FIG. 8C prescription"
+    try:
+        if payload.get("page_count") != 66:
+            raise PatentParseError("Circle Optics seven-lens PDF page count is not 66")
+        publication_id = payload.get("publication_id")
+        source_profile = _CIRCLE_OPTICS_SEVEN_LENS_PUBLICATION_SOURCES.get(
+            str(publication_id)
+        )
+        if source_profile is None:
+            raise PatentParseError("Circle Optics publication is not source-locked")
+        facts = payload.get("source_facts")
+        if not isinstance(facts, dict):
+            raise PatentParseError("Circle Optics source facts are absent")
+        expected_facts = {
+            "primary_html_sha256": source_profile["primary_html_sha256"],
+            "family_id": "74060373",
+            "application_number": source_profile["application_number"],
+            "lens_element_count": 7,
+            "aspheric_lens_element_count": 3,
+            "f_number": 2.0,
+            "nominal_focal_length_mm": 2.57,
+            "aperture_stop_diameter_mm": 1.42,
+            "track_length_mm": 50.0,
+            "image_width_mm": 3.9,
+            "design_wavelengths_nm": [450, 587, 656],
+        }
+        for key, expected in expected_facts.items():
+            if facts.get(key) != expected:
+                raise PatentParseError(f"Circle Optics source fact {key!r} changed")
+        required_counts = facts.get("required_text_counts")
+        if required_counts != dict.fromkeys(
+            _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT,
+            1,
+        ):
+            raise PatentParseError("Circle Optics required source-text bindings changed")
+
+        pages: list[dict[str, Any]] = []
+        figure_markers = {
+            "circle_optics_surface_table": "FIG8C-1",
+            "circle_optics_asphere_table": "FIG8C-2",
+        }
+        for role, page_number in source_profile["role_page_numbers"].items():
+            page = _ability_page(payload, role)
+            if page.get("page_number") != page_number:
+                raise PatentParseError(f"Circle Optics role {role} is on the wrong page")
+            if page.get("rapidocr_rotation") != "clockwise_90":
+                raise PatentParseError(f"Circle Optics role {role} lacks its OCR rotation")
+            if page.get("mirror_text") != "":
+                raise PatentParseError(f"Circle Optics role {role} unexpectedly uses mirror text")
+            tokens = list(page["rapidocr_tokens"])
+            normalized_labels = [
+                (
+                    re.sub(r"[^A-Z0-9-]", "", _ability_token_text(token).upper()),
+                    _ability_token_confidence(token),
+                )
+                for token in tokens
+            ]
+            figure_matches = [
+                confidence
+                for label, confidence in normalized_labels
+                if label == figure_markers[role] and confidence >= _ABILITY_OCR_LABEL_CONFIDENCE
+            ]
+            prescription_matches = [
+                confidence
+                for label, confidence in normalized_labels
+                if label == "LENSPRESCRIPTION"
+                and confidence >= _ABILITY_OCR_LABEL_CONFIDENCE
+            ]
+            expected_prescription_labels = (
+                1 if role == "circle_optics_surface_table" else 0
+            )
+            if (
+                len(figure_matches) != 1
+                or len(prescription_matches) != expected_prescription_labels
+            ):
+                raise PatentParseError(
+                    f"Circle Optics role {role} lacks unique high-confidence table labels"
+                )
+            pages.append(page)
+
+        numeric_tokens = []
+        for page in pages:
+            for token in page["rapidocr_tokens"]:
+                x, y = _ability_token_center(token)
+                if (
+                    430.0 <= x <= 2900.0
+                    and 700.0 <= y <= 2200.0
+                    and _ability_token_confidence(token) >= _ABILITY_OCR_NUMBER_CONFIDENCE
+                    and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+                ):
+                    numeric_tokens.append(token)
+        if len(numeric_tokens) >= 20:
+            raise PatentParseError(
+                "Circle Optics OCR now exposes enough high-confidence numeric cells; "
+                "a reviewed complete seven-lens parser is required"
+            )
+        error = PatentParseError(
+            "Circle Optics publishes a seven-lens prescription in FIGS. 8C-1 and 8C-2, "
+            f"but only {len(numeric_tokens)} table-region numeric OCR tokens meet the "
+            f"{_ABILITY_OCR_NUMBER_CONFIDENCE:.2f} confidence gate; retained for parser review"
+        )
+    except Exception as exc:  # noqa: BLE001 - retain the source-specific embodiment
+        error = exc
+    return _PrescriptionParseAttempt(
+        embodiment_number=1,
+        embodiment=embodiment,
+        error=error,
+    )
+
+
 def _parse_ability_pdf_ocr_attempts(
     raw_text: str,
     *,
@@ -6451,6 +6633,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_largan_three_five_lens_attempts(payload)
     if profile == _ABILITY_ZOOM_TWO_STATE_PROFILE:
         return _parse_ability_zoom_two_state_attempts(payload)
+    if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
+        return [_circle_optics_seven_lens_review_attempt(payload)]
     if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
         return _parse_genius_four_lens_eleven_attempts(payload)
     if profile == _GENIUS_NINE_LENS_ELEVEN_PROFILE:
@@ -10632,6 +10816,110 @@ def _classify_folded_lens_barrel_driving_only_attempts(
                 ),
             ),
         ),
+    ]
+
+
+def _classify_circle_optics_mechanical_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the exact panoramic opto-mechanical member of Family 74060373."""
+
+    profile = _CIRCLE_OPTICS_MECHANICAL_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment = "Circle Optics panoramic capture opto-mechanical architecture"
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Circle Optics mechanical official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Circle Optics mechanical normalized text hash changed for {patent_id}"
+            )
+        if _CIRCLE_OPTICS_MECHANICAL_ONLY_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("Circle Optics mechanical title binding changed")
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Circle Optics mechanical application binding changed")
+        if _patent_table_blocks(text):
+            raise PatentParseError("Circle Optics mechanical source gained a PPUBS table")
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Circle Optics mechanical phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        drawings = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+(?:THE\s+)?DRAWINGS(?P<body>.*?)"
+            r"DETAILED\s+DESCRIPTION",
+            text,
+            re.IGNORECASE,
+        )
+        if drawings is None:
+            raise PatentParseError("Circle Optics mechanical drawing description is missing")
+        drawing_body = drawings.group("body")
+        drawing_numbers = [
+            int(number) for number in re.findall(r"\((\d+)\)", drawing_body)
+        ]
+        expected_drawing_numbers = list(
+            range(1, int(profile["drawing_description_count"]) + 1)
+        )
+        if drawing_numbers != expected_drawing_numbers:
+            raise PatentParseError(
+                "Circle Optics mechanical drawing sequence changed: "
+                f"actual={drawing_numbers} expected={expected_drawing_numbers}"
+            )
+        if re.search(
+            r"\b(?:table|prescription|optical\s+data|lens\s+data)\b",
+            drawing_body,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "Circle Optics mechanical drawings now reference prescription data"
+            )
+        if re.search(
+            r"(?:\blens\s+prescription\b|\boptical\s+data\b|\blens\s+data\b|"
+            r"\bsurface\s+radii\b|\baspherical\s+surface\s+coefficients\b)",
+            text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "Circle Optics mechanical disclosure contains a prescription marker"
+            )
+        error: Exception = PatentTerminalParseError(
+            status="confirmed_no_prescription",
+            reason_code=(
+                "confirmed_no_prescription."
+                "panoramic_opto_mechanical_architecture_only"
+            ),
+            detail=(
+                "the source publishes panoramic camera housings, compressors, stops, "
+                "sensors, projection architecture, and generic lens-design guidance only; "
+                "it has no optical surface prescription"
+            ),
+        )
+    except Exception as exc:  # noqa: BLE001 - retain the exact source member
+        error = exc
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment=embodiment,
+            error=error,
+        )
     ]
 
 

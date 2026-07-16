@@ -113,6 +113,35 @@ _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT = (
     "FIG. 6 lists the specific parameters of the optical lens of FIG. 1",
 )
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
+_CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT = (
+    "provide lens prescription data for the lens",
+    "A prescription for this camera lens is given",
+    "with glass or material types, axial thicknesses, and surface radii identified",
+    "The lens has 7 lens elements",
+    "Aspherical surface coefficients are also provided",
+    "focused image at F/2.0",
+    "nominal focal length of 2.57 mm",
+    "aperture stop diameter of 1.42 mm",
+)
+_CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
+_CIRCLE_OPTICS_SEVEN_LENS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "f39a32f7a1eb5004447f43fc12e3bd60c06a55f4f4c50d26e4375e61b17bd154": {
+        "application_number": "17/622463",
+        "page_count": 66,
+        "role_pages": {
+            "circle_optics_surface_table": 16,
+            "circle_optics_asphere_table": 17,
+        },
+    },
+    "449f9a8e066cb4625dd38d76d737a711f216fb45195668f98c25f9c32cebabf4": {
+        "application_number": "19/217645",
+        "page_count": 66,
+        "role_pages": {
+            "circle_optics_surface_table": 15,
+            "circle_optics_asphere_table": 16,
+        },
+    },
+}
 _GENIUS_FOUR_LENS_ELEVEN_OPTICAL_FIGURES = (2, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43)
 _GENIUS_FOUR_LENS_ELEVEN_ASPHERE_FIGURES = (4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44)
 _GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT = tuple(
@@ -467,6 +496,7 @@ _GENIUS_OFFICIAL_ONLY_PROFILES = frozenset(
         _GENIUS_FOUR_LENS_NINE_PROFILE,
         _GENIUS_NINE_LENS_ELEVEN_PROFILE,
         _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE,
+        _CIRCLE_OPTICS_SEVEN_LENS_PROFILE,
     }
 )
 _SYSTEM_VALUE_PATTERN_TEMPLATE = (
@@ -514,6 +544,11 @@ def _ability_layout_profile(raw_html: str) -> str | None:
     """Return the exact source-proven Ability drawing-table profile."""
 
     text = _normalized_html_text(raw_html)
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    if digest in _CIRCLE_OPTICS_SEVEN_LENS_SOURCE_LAYOUTS and all(
+        marker in text for marker in _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT
+    ):
+        return _CIRCLE_OPTICS_SEVEN_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_REQUIRED_FIGURE_TEXT):
         return "ability_two_lens_prescriptions_v1"
     if all(marker in text for marker in _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
@@ -706,6 +741,48 @@ def _ability_zoom_two_state_source_facts(raw_html: str) -> dict[str, Any]:
             marker.split(" lists", maxsplit=1)[0]: text.count(marker)
             for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT
         },
+    }
+
+
+def circle_optics_seven_lens_source_layout_for_sha256(
+    digest: str,
+) -> dict[str, Any]:
+    """Return the source-locked layout for one Circle Optics publication."""
+
+    layout = _CIRCLE_OPTICS_SEVEN_LENS_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Circle Optics seven-lens official HTML is not source-locked"
+        )
+    return layout
+
+
+def _circle_optics_seven_lens_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    return circle_optics_seven_lens_source_layout_for_sha256(digest)
+
+
+def _circle_optics_seven_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind the source text which describes the image-only seven-lens tables."""
+
+    text = _normalized_html_text(raw_html)
+    layout = _circle_optics_seven_lens_source_layout(raw_html)
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "family_id": "74060373",
+        "application_number": layout["application_number"],
+        "required_text_counts": {
+            marker: text.count(marker)
+            for marker in _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT
+        },
+        "lens_element_count": 7,
+        "aspheric_lens_element_count": 3,
+        "f_number": 2.0,
+        "nominal_focal_length_mm": 2.57,
+        "aperture_stop_diameter_mm": 1.42,
+        "track_length_mm": 50.0,
+        "image_width_mm": 3.9,
+        "design_wavelengths_nm": [450, 587, 656],
     }
 
 
@@ -1002,10 +1079,18 @@ def _figure_page(texts: list[str], figure: str, required: tuple[str, ...]) -> in
     return matches[0]
 
 
-def _rapidocr_tokens(image_bytes: bytes) -> list[dict[str, Any]]:
+def _rapidocr_tokens(
+    image_bytes: bytes,
+    *,
+    rotation: str | None = None,
+) -> list[dict[str, Any]]:
     image = cv2.imdecode(np.frombuffer(image_bytes, dtype=np.uint8), cv2.IMREAD_COLOR)
     if image is None:
         raise PatentPdfRecoveryError("official page image could not be decoded")
+    if rotation == "clockwise_90":
+        image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+    elif rotation is not None:
+        raise PatentPdfRecoveryError(f"unsupported RapidOCR rotation: {rotation}")
     engine = RapidOCR()
     result, _elapsed = engine(image)
     tokens: list[dict[str, Any]] = []
@@ -1027,22 +1112,26 @@ def _canonical_parser_input(
     key_pages: list[tuple[int, str, str, str, list[dict[str, Any]]]],
     profile: str | None = None,
     source_facts: dict[str, Any] | None = None,
+    rapidocr_rotation: str | None = None,
 ) -> bytes:
+    pages: list[dict[str, Any]] = []
+    for page_number, role, image_sha256, mirror_text, tokens in key_pages:
+        page = {
+            "page_number": page_number,
+            "role": role,
+            "official_image_sha256": image_sha256,
+            "mirror_text": mirror_text,
+            "rapidocr_tokens": tokens,
+        }
+        if rapidocr_rotation is not None:
+            page["rapidocr_rotation"] = rapidocr_rotation
+        pages.append(page)
     payload = {
         "schema_version": 1,
         "parser_family": "ability_official_pdf_ocr_v1",
         "publication_id": publication_id,
         "page_count": page_count,
-        "pages": [
-            {
-                "page_number": page_number,
-                "role": role,
-                "official_image_sha256": image_sha256,
-                "mirror_text": mirror_text,
-                "rapidocr_tokens": tokens,
-            }
-            for page_number, role, image_sha256, mirror_text, tokens in key_pages
-        ],
+        "pages": pages,
     }
     # Keep the first profile's canonical bytes stable.  New profile metadata is
     # emitted only for layouts which need additional source-level proof.
@@ -1130,6 +1219,9 @@ async def recover_ability_official_pdf_ocr(
         genius_four_lens_layout = _genius_four_lens_eleven_source_layout(primary_html)
         if mirror_pdf is None:
             raise PatentPdfRecoveryError("Genius mirror PDF is unavailable")
+    circle_optics_layout: dict[str, Any] | None = None
+    if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
+        circle_optics_layout = _circle_optics_seven_lens_source_layout(primary_html)
 
     official_reader = pypdf.PdfReader(io.BytesIO(official_pdf))
     mirror_reader = pypdf.PdfReader(io.BytesIO(mirror_pdf)) if mirror_pdf is not None else None
@@ -1199,7 +1291,19 @@ async def recover_ability_official_pdf_ocr(
         page_hashes.append(_canonical_raster_sha256(official_image))
         official_images.append(official_image)
 
-    if profile == "ability_two_lens_prescriptions_v1":
+    rapidocr_rotation: str | None = None
+    if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
+        assert circle_optics_layout is not None
+        if page_count != circle_optics_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Circle Optics seven-lens PDF page count changed: "
+                f"actual={page_count} expected={circle_optics_layout['page_count']}"
+            )
+        role_pages = dict(circle_optics_layout["role_pages"])
+        parser_profile = profile
+        source_facts = _circle_optics_seven_lens_source_facts(primary_html)
+        rapidocr_rotation = "clockwise_90"
+    elif profile == "ability_two_lens_prescriptions_v1":
         role_pages = {
             "surface_ol1": _figure_page(
                 mirror_texts,
@@ -1564,7 +1668,10 @@ async def recover_ability_official_pdf_ocr(
                 role,
                 page_hashes[page_index],
                 mirror_texts[page_index],
-                _rapidocr_tokens(official_images[page_index]),
+                _rapidocr_tokens(
+                    official_images[page_index],
+                    rotation=rapidocr_rotation,
+                ),
             )
         )
     parser_input = _canonical_parser_input(
@@ -1573,6 +1680,7 @@ async def recover_ability_official_pdf_ocr(
         key_pages=key_pages,
         profile=parser_profile,
         source_facts=source_facts,
+        rapidocr_rotation=rapidocr_rotation,
     )
     from importlib.metadata import version
 

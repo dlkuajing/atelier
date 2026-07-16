@@ -26,20 +26,17 @@ foundation snapshot 的严格 audit 为 `saturation_complete=false`，明确 735
 425 个正式 embodiment 尚未按新 provenance 合约闭环、25 个旧 seed embodiment 身份未明确；
 当时 735 根均无保留全文。第三个 quick 现已为冻结的 619 个本地未覆盖根全部保留官方 PPUBS
 HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和账本。这是未合 main 的进行中证据，
-不是饱和完成声明；500 仅为历史进度标记。generic-summary 第十五铲已为
-`US-20210373295-A1` 建立同申请官方授权全文恢复：原 A1 的四张处方为 TIFF，解析器仅在
-`US-11947087-B2` 同申请号且 Prior Publication Data 明确回指 A1 时使用其文本表，并同时保留
-原文、解析输入和 linkage manifest；四个结果仍只处于 staging pending intake。
-第二个 GSD quick 已将每个 embodiment 的 Optiland/ZMX 转换移入独立子进程：默认 120 秒
-硬超时、Windows `taskkill /F /T` 杀树、2 秒 bounded reap、append-only retry identity、原始
-HTML 输入哈希、request/response/stdout/stderr/receipt/candidate ZMX 全证据保留，且仅在父进程
-重新装载并确认有限 EFL 后原子发布 staging ZMX。第三个 quick 已完成 619-root frozen replay；
-Family ID `77932615` 的两个同申请 Sunny 公开文本已按精确原文哈希、16 表布局、逐 embodiment
-EFL/Fno 与 TABLE 16 的 `f×tan(Semi-FOV)` 行完成来源锁定回放。只有同时公开公式和两个操作数的
-1/3/4/6/7/8 使用确定性反函数；5 的 EFL 原文空白而终态拒绝，2 的 P1/P2 镜面与有符号坐标反转
-继续作为显式 parser 缺口。两根合计 4 个 staging 转换、8 个真实追迹拒绝、2 个元数据终态与
-2 个 parser 项；未进入正式库。Sunny metadata 从 199 降为 187，generic-summary 198 重新成为
-完整 census 的最大桶；下一铲按账本回到 generic，而不是扩大固定数量目标。
+不是饱和完成声明；500 仅为历史进度标记。当前严格 replay result set 为
+`e0b098b9b622c5ce6033889b93690aa18e5691a869309198a680c8f3ed74c180`：619/619、
+missing=0、corrupt=0。Family ID `74060373` 的三根已完成全披露审计：`US-12092800-B2`
+按精确 HTML 哈希、申请号、28 段绘图序列、零表格和零处方标记闭合为 panoramic
+opto-mechanical architecture-only 终态；`US-12313825-B2` 与 `US-20250284103-A1`
+明确在 FIGS. 8C-1/8C-2 发布七片式处方，但两份 66 页官方 PDF 在 0.99 门槛下均为零个
+表格区域数字 token，故保留 source-specific parser review，不补数、不造 ZMX。三根 attempts
+2/3 除 `result_attempt` 外逐字段相同；generic-summary 从 192 降至 189，双 census 输出
+SHA-256=`d638c3c548ac5bca9bbc088a9dc5aaf06e204beea004e00373f70d7932f81db5`。
+下一 generic 家族为三根并列的 `44121309` / `46327306`；先处理明确指向 FIGS. 14A/14B
+处方图的 `44121309`，不得把 image-only 处方误判为 no-prescription。
 
 ## Current Position
 
@@ -53,7 +50,7 @@ EFL/Fno 与 TABLE 16 的 `f×tan(Semi-FOV)` 行完成来源锁定回放。只有
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen 619-root local replay remains strict with missing=0 and corrupt=0. Current evidence has 382 parser-review roots, 141 mixed roots, 73 terminal roots, 23 converted roots, 534 staging items, 1433 parser-review items, 834 terminal items, and 28 conversion-retry items. The exact Sunny Family ID 77932615 shovel source-locks two same-application records and eight embodiments each: four items convert to staging, eight fail the unchanged real-ray gate, two are metadata terminals, and two retain a folded-coordinate parser gap. Sunny metadata is now 187; generic summary at 198 is the next largest measured bucket. This is not source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `e0b098b9...4c180`. Current roots: 375 parser review, 141 mixed, 80 terminal, 23 converted; items: 534 staging, 1426 parser review, 865 terminal, 28 conversion retry. Family 74060373 reduces generic summary 192→189: one exact mechanical terminal plus two explicit seven-lens FIG. 8C parser reviews; no ZMX. Sunny remains 187. Next generic family tie is 44121309/46327306 at three roots each; 44121309 goes first because official text points to image-only prescriptions. This is not source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -202,19 +199,22 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-sunny-residual-parser` | complete-largest-bucket-shovel-saturation-incomplete | Family 77932615 exact-source parsing reduces Sunny metadata 199→187. Two same-application roots each produce two staging conversions, four trace-failed terminals, one metadata terminal, and one explicit folded-coordinate parser gap. Attempts 3/4 are stable after retry identity is excluded; result set `8e5f3b0e...e5b5`, summary `6d6f73c3...dc4b`, after-census `a07909c5...d3bf`; audit 619/619 corrupt=0; 230 focused tests+Ruff green; CODE V zero. Generic summary 198 is next. |
 | `260715-patent-generic-residual-parser` | complete-largest-bucket-shovel-saturation-incomplete | Family 72082560 exact-source classification reduces generic metadata 198→195. Three roots expand to 24 explicit confirmed-no-prescription terminals for seven barrel/absorbing-geometry examples plus one smartphone wrapper each; no worker/ZMX. Attempts 2/3 are canonical-equal after excluding only result identity; result set `502722f7...bb104`, summary `42b0a594...b8db`, after-census `4aa52fed...c6dce`; audit 619/619 corrupt=0; 245 focused tests+Ruff green; CODE V zero. Family 44121309 remains figure-OCR recovery because official text points to prescriptions in FIGS. 14A/14B. |
 | `260715-patent-generic-family-77725725` | complete-largest-bucket-shovel-saturation-incomplete | Three exact Family 77725725 roots reduce generic metadata 195→192. Each independently expands to two terminals: folded lens-barrel driving/sensing architecture with only d1/d2 sensor distances, and multi-camera electronic-device architecture; no worker/ZMX. Attempts 2/3 are canonical-equal after excluding result identity; result set `3d12a5b3...3beb6`, summary `d2218257...6e138`, after-census `d9b439ac...f4bf7`; audit 619/619 corrupt=0; 247 focused tests+Ruff green; CODE V zero. |
+| `260715-patent-generic-family-74060373` | complete-largest-bucket-shovel-saturation-incomplete | Family 74060373 reduces generic metadata 192→189. US-12092800-B2 is an exact-source panoramic opto-mechanical terminal; US-12313825-B2 and US-20250284103-A1 retain explicit seven-lens FIG. 8C parser reviews because zero numeric table tokens meet 0.99. No ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `e0b098b9...4c180`, summary `2cdf8187...76237`, after census `d638c3c5...81db5`; audit 619/619 corrupt=0; 251 related tests+Ruff green; CODE V zero. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260715-patent-generic-family-77725725/260715-patent-generic-family-77725725-PLAN.md`,
+`.planning/quick/260715-patent-generic-family-74060373/260715-patent-generic-family-74060373-PLAN.md`,
 then rebuild `data/patent-ledger/snapshot.json` with `scripts/patent_saturation.py`; never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work remains the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (192; next `sunny_embodiment_metadata_missing` is 187), using the same strict before/after census, source-proven
-layout rules, append-only targeted replay, and full-pool audit contract.
+`generic_summary_metadata_missing` (189; next `sunny_embodiment_metadata_missing` is 187).
+Its next family tie is `44121309` / `46327306` at three roots each; process `44121309` first via
+the official FIGS. 14A/14B exact-raster path, using the same strict before/after census,
+source-proven layout rules, append-only targeted replay, and full-pool audit contract.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three

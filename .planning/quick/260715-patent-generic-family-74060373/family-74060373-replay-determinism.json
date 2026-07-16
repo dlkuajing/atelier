@@ -1,0 +1,57 @@
+{
+  "after_census": {
+    "affected_items": 189,
+    "affected_roots": 189,
+    "artifact_sha256": "d638c3c548ac5bca9bbc088a9dc5aaf06e204beea004e00373f70d7932f81db5",
+    "result_set_sha256": "e0b098b9b622c5ce6033889b93690aa18e5691a869309198a680c8f3ed74c180"
+  },
+  "before_census": {
+    "affected_items": 192,
+    "affected_roots": 192,
+    "artifact_sha256": "d9b439acdefac29a347d225baf2127cee2149bdc22fbdd97ea3915bb622f4bf7",
+    "result_set_sha256": "3d12a5b3ea27617286578ab122d3ee1f9a19f2720b3c8e097f538d90ca83beb6"
+  },
+  "cohort_sha256": "e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b",
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "roots": {
+    "US-12092800": [
+      {
+        "attempt": 2,
+        "result_sha256": "114399ce194d34ac5fa90d01656ec7bd16598f657aaac7ddb3d9822fffc4ee2f",
+        "semantic_sha256": "8332a5d7fc0ce515741a99dce8f7c96b39b779d00b4297a1d760bef982371883"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "1ad3ee0fed5fecdb71f21705b38697f5f8afc1637ef04fe66831e1b69f6ea4ec",
+        "semantic_sha256": "8332a5d7fc0ce515741a99dce8f7c96b39b779d00b4297a1d760bef982371883"
+      }
+    ],
+    "US-12313825": [
+      {
+        "attempt": 2,
+        "result_sha256": "a2fcc7e6c27ac9fb311a197d66aece60fbae31f00b2bfbdc49d6cf91d46f6090",
+        "semantic_sha256": "cdefe63ca6c469ec1b724f178c251b52880acdeae834115f73d681c05d43c1d1"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "4952524abc72dcdc4149a81c60c8f194637d0ca471e93aa5edb3c416e02dbb5a",
+        "semantic_sha256": "cdefe63ca6c469ec1b724f178c251b52880acdeae834115f73d681c05d43c1d1"
+      }
+    ],
+    "US-20250284103": [
+      {
+        "attempt": 2,
+        "result_sha256": "6d67ddbb477e336b82cec88f2911c311c3995453888f38a6e5b48d1f09c9b8c1",
+        "semantic_sha256": "12e910da0de603b4972b01ddf4d1094b7261b65fce1d767d98cedb3700d3559f"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "da7c6263f76fea03a6c04846ded20f3043789db1f7feed1de16567c713fdf206",
+        "semantic_sha256": "12e910da0de603b4972b01ddf4d1094b7261b65fce1d767d98cedb3700d3559f"
+      }
+    ]
+  },
+  "schema_version": 1
+}

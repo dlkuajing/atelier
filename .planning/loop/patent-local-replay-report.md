@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `3d12a5b3ea27617286578ab122d3ee1f9a19f2720b3c8e097f538d90ca83beb6`
+- result_set_sha256: `e0b098b9b622c5ce6033889b93690aa18e5691a869309198a680c8f3ed74c180`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 23
-- `terminal`: 79
-- `parser_review_required`: 376
+- `terminal`: 80
+- `parser_review_required`: 375
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 534
-- `terminal`: 864
-- `parser_review_required`: 1427
+- `terminal`: 865
+- `parser_review_required`: 1426
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 60
+- `confirmed_no_prescription`: 61
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 82
@@ -48,14 +48,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 376
+- `parser_review_required.all_disclosed_items_rejected`: 375
 - `mixed_nonterminal.multiple_item_states`: 141
-- `terminal.all_disclosed_items_terminal`: 79
+- `terminal.all_disclosed_items_terminal`: 80
 - `converted_pending_intake.all_disclosed_items_converted`: 23
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1427
+- `parser_review_required.deterministic_parser_rejected`: 1426
 - `terminal.process_receipt_classified`: 722
 - `converted_pending_intake.process_isolated_zmx_ready`: 534
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
@@ -74,6 +74,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.surface_texture_acquisition_architecture_only`: 2
 - `terminal.metadata_unpublished.configuration_effective_focal_length_and_numeric_semi_fov_absent`: 2
 - `terminal.confirmed_no_prescription.ir_filter_coating_tables_only`: 1
+- `terminal.confirmed_no_prescription.panoramic_opto_mechanical_architecture_only`: 1
 - `terminal.metadata_unpublished.system_f_fno_fov_values_absent`: 1
 
 ## Source attempts
@@ -84,7 +85,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `generic_summary_metadata_missing`: 192
+- `generic_summary_metadata_missing`: 189
 - `sunny_embodiment_metadata_missing`: 187
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
@@ -130,6 +131,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_unsupported_nonzero_fujifilm_asphere_terms_s3_a3_n_s4_a3_n_s14_a3_n_s15_a3_n`: 3
 - `other_ability_two_five_lens_surface_row_sequence_mismatch_s1_s2_s3_s4_s5_s6_s7_s8_s9_s10_s11_s12_s13_s14`: 2
 - `other_asphere_table_label_token_confidence_n_is_below_n_genius_six_comparison_2_drawing_sheet_header_confidence_n_is_below_n`: 2
+- `other_circle_optics_publishes_a_seven_lens_prescription_in_figs_8c_n_and_8c_n_but_only_n_table_region_numeric_ocr_6e54024052e3`: 2
 - `other_dual_focus_asphere_table_label_token_confidence_n_is_below_n_genius_six_ten_dual_comparison_3_drawing_sheet_7004e3d0ee01`: 2
 - `other_genius_six_optical_4_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_fno_has_n_exact_oc_7bc94ec12722`: 2
 - `other_genius_six_optical_5_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_hfov_has_n_exact_o_6d225c5a29c5`: 2

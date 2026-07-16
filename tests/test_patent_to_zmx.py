@@ -2743,6 +2743,58 @@ def _ability_zoom_two_state_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _circle_optics_seven_lens_pdf_ocr_parser_input() -> bytes:
+    pages = []
+    for prefix, role, page_number, figure in (
+        ("a", "circle_optics_surface_table", 17, "FIG.8C-1"),
+        ("b", "circle_optics_asphere_table", 18, "FIG.8C-2"),
+    ):
+        tokens = [
+            _ability_ocr_token(figure, 500.0, 500.0),
+        ]
+        if role == "circle_optics_surface_table":
+            tokens.append(_ability_ocr_token("Lens Prescription", 800.0, 500.0))
+            tokens.append(_ability_ocr_token("1.42", 500.0, 800.0, confidence=0.995))
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": role,
+                "official_image_sha256": prefix * 64,
+                "mirror_text": "",
+                "rapidocr_rotation": "clockwise_90",
+                "rapidocr_tokens": tokens,
+            }
+        )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "circle_optics_seven_lens_ocr_review_v1",
+        "publication_id": "US-12313825-B2",
+        "page_count": 66,
+        "source_facts": {
+            "primary_html_sha256": (
+                "f39a32f7a1eb5004447f43fc12e3bd60c06a55f4f4c50d26e4375e61b17bd154"
+            ),
+            "family_id": "74060373",
+            "application_number": "17/622463",
+            "required_text_counts": dict.fromkeys(
+                patent_pdf_recovery._CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT,
+                1,
+            ),
+            "lens_element_count": 7,
+            "aspheric_lens_element_count": 3,
+            "f_number": 2.0,
+            "nominal_focal_length_mm": 2.57,
+            "aperture_stop_diameter_mm": 1.42,
+            "track_length_mm": 50.0,
+            "image_width_mm": 3.9,
+            "design_wavelengths_nm": [450, 587, 656],
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_four_lens_eleven_pdf_ocr_parser_input() -> bytes:
     pages = []
     figure_counts = {}
@@ -3821,6 +3873,50 @@ def test_ability_zoom_two_state_source_facts_bind_all_four_figures() -> None:
     }
 
 
+def test_circle_optics_source_facts_bind_layout_and_disclosure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    markers = patent_pdf_recovery._CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT
+    source = " ".join(markers)
+    digest = hashlib.sha256(source.encode("utf-8")).hexdigest()
+    layout = {
+        "application_number": "17/622463",
+        "page_count": 66,
+        "role_pages": {
+            "circle_optics_surface_table": 16,
+            "circle_optics_asphere_table": 17,
+        },
+    }
+    monkeypatch.setitem(
+        patent_pdf_recovery._CIRCLE_OPTICS_SEVEN_LENS_SOURCE_LAYOUTS,
+        digest,
+        layout,
+    )
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    assert (
+        patent_pdf_recovery.circle_optics_seven_lens_source_layout_for_sha256(digest)
+        == layout
+    )
+    facts = patent_pdf_recovery._circle_optics_seven_lens_source_facts(source)
+    assert facts["application_number"] == "17/622463"
+    assert facts["required_text_counts"] == dict.fromkeys(markers, 1)
+    assert facts["design_wavelengths_nm"] == [450, 587, 656]
+
+
+def test_canonical_parser_input_records_explicit_rapidocr_rotation() -> None:
+    payload = json.loads(
+        patent_pdf_recovery._canonical_parser_input(
+            publication_id="US-12313825-B2",
+            page_count=66,
+            key_pages=[(17, "surface", "a" * 64, "", [])],
+            rapidocr_rotation="clockwise_90",
+        )
+    )
+
+    assert payload["pages"][0]["rapidocr_rotation"] == "clockwise_90"
+
+
 def test_genius_four_lens_eleven_source_facts_bind_every_figure() -> None:
     markers = patent_pdf_recovery._GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT
     comparison = patent_pdf_recovery._GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
@@ -4168,6 +4264,32 @@ def test_largan_three_five_lens_profile_retains_low_confidence_by_embodiment() -
     assert attempts[0].prescription is None
     assert "coefficient OCR views disagree" in str(attempts[0].error)
     assert all(attempt.prescription is not None for attempt in attempts[1:])
+
+
+def test_circle_optics_seven_lens_profile_retains_source_specific_review() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _circle_optics_seven_lens_pdf_ocr_parser_input().decode(),
+        patent_id="US-12313825-B2",
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert "only 1 table-region numeric OCR tokens" in str(attempts[0].error)
+    assert "retained for parser review" in str(attempts[0].error)
+
+
+def test_circle_optics_seven_lens_profile_fails_closed_on_source_drift() -> None:
+    payload = json.loads(_circle_optics_seven_lens_pdf_ocr_parser_input())
+    marker = next(iter(payload["source_facts"]["required_text_counts"]))
+    payload["source_facts"]["required_text_counts"][marker] = 2
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id="US-12313825-B2",
+    )
+
+    assert len(attempts) == 1
+    assert "required source-text bindings changed" in str(attempts[0].error)
 
 
 def test_ability_zoom_two_state_profile_retains_each_state_failure() -> None:
@@ -6955,6 +7077,108 @@ def test_folded_lens_barrel_driving_prescription_marker_fails_all(
     assert {
         str(attempt.error) for attempt in attempts
     } == {"folded lens-barrel driving disclosure contains a prescription marker"}
+
+
+def _circle_optics_mechanical_source_fixture(patent_id: str) -> str:
+    drawings = []
+    for figure in range(1, 29):
+        if figure == 8:
+            description = "FIG. 8 depicts an image sensor with a sensor mount having adjustors"
+        elif figure == 21:
+            description = (
+                "FIG. 21 depicts an alternate configuration for an improved multi-camera "
+                "projection device"
+            )
+        else:
+            description = f"FIG. {figure} is a schematic architecture view"
+        drawings.append(f"({figure}) {description}.")
+    return " ".join(
+        (
+            f"{patent_id} - Patent Public Search | USPTO OPTO-MECHANICS OF PANORAMIC "
+            "CAPTURE DEVICES WITH ABUTTING CAMERAS Abstract",
+            "Family ID: 74060373 Appl. No.: 17/622393",
+            "BRIEF DESCRIPTION OF THE DRAWINGS",
+            *drawings,
+            "DETAILED DESCRIPTION outer compressor aperture stop image plane aspheric "
+            "surfaces lens element thicknesses and curvatures",
+        )
+    )
+
+
+def _install_circle_optics_mechanical_test_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    phrases = (
+        "Family ID: 74060373",
+        "outer compressor",
+        "aperture stop",
+        "image plane",
+        "aspheric surfaces",
+        "lens element thicknesses and curvatures",
+        "FIG. 8 depicts an image sensor with a sensor mount having adjustors",
+        "FIG. 21 depicts an alternate configuration for an improved multi-camera "
+        "projection device",
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._CIRCLE_OPTICS_MECHANICAL_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "application_number": "17/622393",
+            "drawing_description_count": 28,
+            "architecture_phrase_counts": {
+                phrase: len(re.findall(re.escape(phrase), normalized, re.IGNORECASE))
+                for phrase in phrases
+            },
+        },
+    )
+
+
+def test_circle_optics_mechanical_source_locked_member_is_terminal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-CIRCLE-OPTICS-MECHANICAL-TEST-B2"
+    raw_text = _circle_optics_mechanical_source_fixture(patent_id)
+    _install_circle_optics_mechanical_test_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert attempts[0].error.status == "confirmed_no_prescription"
+    assert attempts[0].error.reason_code == (
+        "confirmed_no_prescription.panoramic_opto_mechanical_architecture_only"
+    )
+
+
+def test_circle_optics_mechanical_prescription_marker_fails_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-CIRCLE-OPTICS-MECHANICAL-DRIFT-B2"
+    raw_text = _circle_optics_mechanical_source_fixture(patent_id) + " lens prescription"
+    _install_circle_optics_mechanical_test_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert str(attempts[0].error) == (
+        "Circle Optics mechanical disclosure contains a prescription marker"
+    )
 
 
 def test_sunny_group_rows_are_cardinality_bound_and_full_fov_is_halved() -> None:
