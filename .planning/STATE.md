@@ -224,24 +224,25 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260716-patent-generic-family-74187659` | complete-shovel-saturation-incomplete | Same-application A1/B2 records bind three five-lens prescriptions, FIGS.1-7 and 4A/4B-6A/6B, plus complete 13-page official raster denominators. Direct EFL/Fno/TTL is published, but no angular field exists; h/H are explicitly fifth-lens shape coordinates. OL2 FIG. 5A publishes `R1=-17.90` while FIG. 7 publishes `R1=+17.90`, so the sign is retained as conflicted. Each root expands to three metadata terminals; no value is inferred/repaired and no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding result attempt; result set `9a5bb4f9...3da3`, summary `5791ed3d...e9f4`, after census `6680be2f...68fe`; audit 619/619 corrupt=0; 393 offline patent tests, compile, Ruff, and diff check pass; CODE V zero. Generic 157 roots remains first; Family 48495278 is next. |
 | `260716-patent-generic-family-48495278` | complete-shovel-saturation-incomplete | Continuation A1 and parent B2 records bind six four-lens embodiments, 12 optical/asphere table figures, FIG. 26 comparison, FIGS.1-28, and complete 36/31-page official raster denominators. FIG. 26 directly publishes six Fno values, correcting the generic error, but optical/asphere labels and coefficient tokens retain source-faithful OCR gaps or sub-gate confidence. Each root expands to six exact parser reviews; no cell is repaired/borrowed and no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding only result attempt; result set `eb1d0319...6076e`, summary `59cc2380...58969`, after census `1a112e9d...72b22`; audit 619/619 corrupt=0; 400 offline patent tests pass. Prior publication US-20140071340 is queued outside the cohort. Generic 155 roots remains first; all remaining exact families have one root and Family 73978649 is next. |
 | `260716-patent-generic-family-73978649` | complete-shovel-saturation-incomplete | Same-application B2/A1 records bind five examples, FIGS.1A-5D/23 panels, one 671-row 380-1050 nm reflectivity table, and complete 39-page official raster denominators. Examples 1-4 publish low-reflection coating/light-blocking architecture; Example 5 is the smartphone/camera wrapper. Neither text nor drawings publish an ordered surface prescription. The frozen root expands to five confirmed-no-prescription terminals; no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding only result attempt; result set `c9937f32...7e425`, summary `30e75e67...de9f`, after census `7e67aaf4...4ba7`; audit 619/619 corrupt=0; 399 offline patent tests, compile, Ruff, and diff check pass; CODE V zero. Same-application A1 and parent grant US-11852848-B2 are queued outside the cohort. Generic 154 roots remains first; Family 90845725 is next. |
+| `260716-patent-generic-family-90845725` | complete-shovel-saturation-incomplete | Exact A1 publication binds two near-eye folded three-lens prescriptions, TABLES 1-5, FIGS.1-10, and a complete 14-page official raster denominator. Surface/path and R1-R6 asphere data plus ENPD/image-height/FOV/ratios/track lengths are direct, but numeric system EFL and F-number are unpublished and not derived. The root expands to two metadata terminals; no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding only result attempt; result set `74ecf2b3...b1f15`, summary `0c7cd328...b2f57`, after census `0bb9f153...6a240`; audit 619/619 corrupt=0; 403 offline patent tests, compile, Ruff, and diff check pass; CODE V zero. Three CN/JP publications are queued outside the cohort. Generic 153 roots remains first; Family 82157375 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260716-patent-generic-family-73978649/260716-patent-generic-family-73978649-PLAN.md`,
+`.planning/quick/260716-patent-generic-family-90845725/260716-patent-generic-family-90845725-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (154 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (153 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `90845725`, root `US-20250271635`,
-publication `US-20250271635-A1`, layout
-`034d4b1159aad065557f891167fa3927b7bec395baabaf7083552efaf8513573`. All remaining exact-family
+deterministic root/item/layout/family ordering is Family ID `82157375`, root `US-12591114`,
+publication `US-12591114-B2`, layout
+`0760b8fbef57964d722dfaeda4228ec2e26cff685439c7cfdc7e13cbcd60f007`. All remaining exact-family
 groups currently have one root. Use the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
 

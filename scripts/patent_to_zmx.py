@@ -387,6 +387,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_aac_near_eye_folded_three_lens_missing_metadata_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_endoscopic_three_lens_missing_f_number_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2418,6 +2426,52 @@ _ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES: dict[
             "5a27a1648e7b01f5f62604fad096a6489d2896e2fa378c08d4eb412d10de6eba",
             "3b09b3b9cc93b8c9eac2a600877be07f09e683e3df1a47807cea463aa8493394",
         ),
+    },
+}
+_AAC_NEAR_EYE_FOLDED_THREE_LENS_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*OPTICAL\s+SYSTEM\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_AAC_NEAR_EYE_FOLDED_THREE_LENS_FIGURES = tuple(range(1, 11))
+_AAC_NEAR_EYE_FOLDED_THREE_LENS_TABLE_SHA256 = (
+    "2c140f7f09f7682a8af8222c16de017e947e28f7e59ac0a63eee93701b633ca5",
+    "59a67c7de41f031e7a222765812e2bc0aaae6ad19bf6c60f819299153f4390ec",
+    "3bcbcd7bfbdab7ffa7c6eadcff3e84bc918fe6211c7d9806b0c8897d0ece1ba2",
+    "8aed7f63acf17d7709f125eaceca961ca4e92bcac16424cb97ef49cbf9d02ac9",
+    "594c0f8f23883467efe88f08f5451e399a442841c1aa6afcd9a5cc1105b3b71f",
+)
+_AAC_NEAR_EYE_FOLDED_THREE_LENS_SYSTEM_ROWS = (
+    "In this embodiment, an entrance pupil diameter ENPD of the optical system "
+    "100 is 4.00 mm, an image height IH of 1.0H is 11.500 mm, and a field of "
+    "view FOV in a diagonal direction is 89.94°.",
+    "In this embodiment, an entrance pupil diameter ENPD of the optical system "
+    "100 is 4.00 mm, an image height IH of 1.0H is 11.200 mm, and a field of "
+    "view FOV in a diagonal direction is 94.95°.",
+)
+_AAC_NEAR_EYE_FOLDED_THREE_LENS_PHRASE_COUNTS = {
+    "optical path folding structure": 2,
+    "reflective polarizing coating": 24,
+    "semi-transparent and semi-reflective film": 12,
+    "entrance pupil diameter ENPD": 3,
+    "image height IH of 1.0H": 2,
+    "field of view FOV in a diagonal direction": 2,
+    "focal length of the optical system is defined as f": 2,
+    "focal length of the second lens": 5,
+    "Tables 1 and 2 show the design data": 1,
+    "Table 3 and table 4 show the design data": 1,
+    "d line is green light with a wavelength of 540 nm": 1,
+}
+_AAC_NEAR_EYE_FOLDED_THREE_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20250271635-A1": {
+        "raw_document_sha256": (
+            "36dafd2330f060721180c55b169135401815d1dc73e39af434b2912e2037957b"
+        ),
+        "normalized_text_sha256": (
+            "f0f9d8e1b241c27ff4508d009b9eb09b76e0bb320ce28f3e34b8de59e9730d9d"
+        ),
+        "application_number": "18/731404",
+        "owner_count": 1,
+        "priority_marker": "CN 202410202541.6 Feb. 23, 2024",
     },
 }
 _AAC_TELECENTRIC_NINE_LENS_TITLE_PATTERN = re.compile(
@@ -13911,6 +13965,225 @@ def _classify_endoscopic_three_lens_missing_f_number_attempts(
                     "the official HTML and all-page official raster audit publish no "
                     "exact system F-number; aperture-stop position and curvature are "
                     "not substituted or used to derive it"
+                ),
+            ),
+        )
+        for index, embodiment in enumerate(embodiments, start=1)
+    ]
+
+
+def _classify_aac_near_eye_folded_three_lens_missing_metadata_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain exact Family 90845725 folded prescriptions with EFL/FNO absent.
+
+    Both embodiments publish repeated reflective-path surface rows, R1-R6
+    aspheres, entrance pupil, image height, and diagonal FOV.  Their symbolic
+    focal-length ratios and track lengths do not directly publish numeric
+    system EFL or F-number, so neither value is derived for conversion.
+    """
+
+    profile = _AAC_NEAR_EYE_FOLDED_THREE_LENS_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiments = (
+        "AAC near-eye folded three-lens embodiment 1",
+        "AAC near-eye folded three-lens embodiment 2",
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"AAC near-eye folded official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"AAC near-eye folded normalized text hash changed for {patent_id}"
+            )
+        if len(_AAC_NEAR_EYE_FOLDED_THREE_LENS_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("AAC near-eye folded title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*90845725", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("AAC near-eye folded Family ID binding changed")
+        owner = "Changzhou AAC Raytech Optronics Co., Ltd."
+        if len(re.findall(re.escape(owner), text, re.IGNORECASE)) != profile[
+            "owner_count"
+        ]:
+            raise PatentParseError("AAC near-eye folded owner binding changed")
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("AAC near-eye folded application binding changed")
+        if len(
+            re.findall(
+                re.escape(str(profile["priority_marker"])),
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("AAC near-eye folded priority binding changed")
+
+        for heading, paragraph in (("First", "0052"), ("Second", "0093")):
+            if len(
+                re.findall(
+                    rf"<br\s*/?>\s*{heading}\s+Embodiment\s*<br\s*/?>"
+                    rf"\s*\[{paragraph}\]",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    f"AAC near-eye folded {heading.lower()} embodiment heading changed"
+                )
+        if re.search(
+            r"<br\s*/?>\s*Third\s+Embodiment\s*<br\s*/?>",
+            raw_text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError("AAC near-eye folded source gained a third embodiment")
+
+        table_ids = tuple(re.findall(r"TABLE-US-(\d+)", raw_text, re.IGNORECASE))
+        if table_ids != tuple(f"{index:05d}" for index in range(1, 6)):
+            raise PatentParseError("AAC near-eye folded table sequence changed")
+        table_texts: list[str] = []
+        for index in range(1, 6):
+            table_match = re.search(
+                rf"TABLE-US-{index:05d}(?P<body>.*?)<br\s*/?>",
+                raw_text,
+                re.DOTALL | re.IGNORECASE,
+            )
+            if table_match is None:
+                raise PatentParseError(
+                    f"AAC near-eye folded TABLE {index} body is missing"
+                )
+            table_texts.append(
+                normalize_patent_text(
+                    f"TABLE-US-{index:05d}" + table_match.group("body")
+                )
+            )
+        table_digests = tuple(
+            hashlib.sha256(table_text.encode("utf-8")).hexdigest()
+            for table_text in table_texts
+        )
+        if table_digests != _AAC_NEAR_EYE_FOLDED_THREE_LENS_TABLE_SHA256:
+            raise PatentParseError("AAC near-eye folded table digest changed")
+        table_prefixes = (
+            "TABLE-US-00001 TABLE 1 R d nd νd OBJECT Infinity -1437.5",
+            "TABLE-US-00002 TABLE 2 Conic coefficient Aspheric surface coefficients",
+            "TABLE-US-00003 TABLE 3 R d nd νd OBJECT Infinity -1342.8",
+            "TABLE-US-00004 TABLE 4 Conic coefficient Aspheric surface coefficient",
+            "TABLE-US-00005 TABLE 5 Parameters and First Second Conditional Equations",
+        )
+        if any(
+            not table_text.startswith(prefix)
+            for table_text, prefix in zip(table_texts, table_prefixes, strict=True)
+        ):
+            raise PatentParseError("AAC near-eye folded table-role binding changed")
+        folded_path_markers = (
+            ("d6 -6.098", "d7 -0.289", "d8 -0.122"),
+            ("d6 -5.647", "d8 -0.127"),
+        )
+        for index, markers in enumerate(folded_path_markers):
+            surface_table = table_texts[index * 2]
+            if any(marker not in surface_table for marker in markers):
+                raise PatentParseError(
+                    f"AAC near-eye folded embodiment {index + 1} reflected path changed"
+                )
+        if table_texts[4] != (
+            "TABLE-US-00005 TABLE 5 Parameters and First Second Conditional Equations "
+            "Embodiment Embodiment f2/f 5.19 8.93 (R1 + R2)/(R1 - R2) 1.38 4.72 "
+            "R5/R6 0.94 2.73 SDmax 23.00 22.00 eyebox 12.00 12.00 TL 18.307 "
+            "17.977 TTL 34.707 31.777 IH 11.500 11.200 FOV 89.94 94.95"
+        ):
+            raise PatentParseError("AAC near-eye folded TABLE 5 system rows changed")
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)"
+            r"DETAILED DESCRIPTION OF THE EMBODIMENTS",
+            text,
+            re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError("AAC near-eye folded drawing description is missing")
+        figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"FIG\.\s*(\d+)\s+(?:is|are)",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if figures != _AAC_NEAR_EYE_FOLDED_THREE_LENS_FIGURES:
+            raise PatentParseError("AAC near-eye folded ten-figure denominator changed")
+
+        for phrase, expected in _AAC_NEAR_EYE_FOLDED_THREE_LENS_PHRASE_COUNTS.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC near-eye folded phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        for row in _AAC_NEAR_EYE_FOLDED_THREE_LENS_SYSTEM_ROWS:
+            if len(re.findall(re.escape(row), text, re.IGNORECASE)) != 1:
+                raise PatentParseError("AAC near-eye folded direct system row changed")
+
+        numeric_required_metadata_patterns = (
+            r"(?:\beffective\s+focal\s+length\b|\bEFL\b|"
+            r"\bfocal\s+length\s+of\s+the\s+optical\s+system\b)\s*"
+            r"(?:is|=|:)\s*[-+]?\d",
+            r"\b(?:F\s*[- ]?number|FNO|F/#|aperture\s+number)\b\s*"
+            r"(?:is|=|:)\s*[-+]?\d",
+        )
+        if any(
+            re.search(pattern, text, re.IGNORECASE) is not None
+            for pattern in numeric_required_metadata_patterns
+        ):
+            raise PatentParseError(
+                "AAC near-eye folded required system metadata unexpectedly became numeric"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain both source-declared embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=(
+                    "metadata_unpublished."
+                    "prescription_specific_efl_and_f_number_absent"
+                ),
+                detail=(
+                    f"Tables {2 * index - 1}-{2 * index} publish the exact folded "
+                    "surface/path prescription and R1-R6 conic/A4-A16 coefficients; "
+                    "the embodiment and TABLE 5 publish direct ENPD, image height, "
+                    "diagonal FOV, ratios, and track lengths, but no direct numeric "
+                    "system EFL or F-number, and neither is derived from f2/f, pupil, "
+                    "track length, or the repeated reflective path"
                 ),
             ),
         )

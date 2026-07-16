@@ -10692,6 +10692,160 @@ def test_aac_telecentric_nine_lens_table7_spacing_drift_reopens_all_items(
     )
 
 
+def _aac_near_eye_folded_three_lens_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "36dafd2330f06072"
+        / "US-20250271635-A1.html"
+    )
+    return "US-20250271635-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_aac_near_eye_folded_three_lens_source_is_exact_metadata_terminal() -> None:
+    patent_id, raw_text = _aac_near_eye_folded_three_lens_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code
+        == "metadata_unpublished.prescription_specific_efl_and_f_number_absent"
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+
+
+def test_aac_near_eye_folded_three_lens_numeric_efl_reopens_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _aac_near_eye_folded_three_lens_source()
+    raw_text = original + " effective focal length = 42.0 mm"
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    profile = patent_to_zmx._AAC_NEAR_EYE_FOLDED_THREE_LENS_SOURCE_PROFILES[
+        patent_id
+    ]
+    monkeypatch.setitem(
+        patent_to_zmx._AAC_NEAR_EYE_FOLDED_THREE_LENS_SOURCE_PROFILES,
+        patent_id,
+        {
+            **profile,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 2
+    assert {str(attempt.error) for attempt in attempts} == {
+        "AAC near-eye folded required system metadata unexpectedly became numeric"
+    }
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+
+
+def test_aac_near_eye_folded_three_lens_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-90845725"
+    )
+    audit = json.loads(
+        (quick_root / "family-90845725-raster-audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert audit["family_id"] == "90845725"
+    assert audit["publication_id"] == "US-20250271635-A1"
+    assert audit["page_count"] == 14
+    assert audit["drawing_declarations"] == [str(index) for index in range(1, 11)]
+    assert audit["drawing_page_numbers"] == list(range(2, 8))
+    assert audit["drawing_sheet_count"] == 6
+    assert audit["table_numbers"] == list(range(1, 6))
+    assert audit["table_page_numbers"] == list(range(11, 15))
+    assert audit["decoded_raster_equality"] is True
+
+    contact_path = root / audit["contact_sheet_path"]
+    assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == audit[
+        "contact_sheet_sha256"
+    ]
+    raster_sets: list[list[str]] = []
+    for wrapper in audit["wrappers"].values():
+        pdf_path = root / wrapper["path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper["sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == wrapper["page_count"] == 14
+        assert [
+            page_number
+            for page_number, page in enumerate(reader.pages, start=1)
+            if not (page.extract_text() or "")
+        ] == wrapper["blank_text_pages"] == list(range(1, 15))
+        page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=audit["publication_id"],
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(reader.pages, start=1)
+        ]
+        assert page_hashes == wrapper["page_raster_sha256"]
+        assert hashlib.sha256(
+            json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+        ).hexdigest() == wrapper["raster_set_sha256"]
+        raster_sets.append(page_hashes)
+    assert raster_sets[0] == raster_sets[1]
+
+
+def test_aac_near_eye_folded_three_lens_external_queue_is_source_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    queue_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-90845725"
+        / "family-90845725-external-family-members.json"
+    )
+    queue = json.loads(queue_path.read_text(encoding="utf-8"))
+
+    assert queue["family_id"] == "90845725"
+    assert queue["current_frozen_cohort_roots"] == ["US-20250271635"]
+    assert queue["discovery"]["source_url"] == (
+        "https://patents.google.com/patent/US20250271635A1/en"
+    )
+    assert queue["us_application_status"] == (
+        "pending_notice_of_allowance_mailed_no_grant_publication_identified"
+    )
+    assert [
+        (record["application_number"], record["publication_id"])
+        for record in queue["external_family_members"]
+    ] == [
+        ("CN202410202541.6A", "CN-117970643-A"),
+        ("JP2024089800A", "JP-7610062-B1"),
+        ("JP2024089800A", "JP-2025129108-A"),
+    ]
+
+
 def test_endoscopic_three_lens_source_hash_drift_fails_all_items() -> None:
     patent_id, raw_text = _endoscopic_three_lens_b2_source()
 
