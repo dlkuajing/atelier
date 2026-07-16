@@ -379,6 +379,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_catadioptric_module_architecture_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_compact_barcode_telephoto_architecture_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2237,6 +2243,129 @@ _FOLDED_LENS_BARREL_DRIVING_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "FIG. 1 E is an optical surface schematic view": 2,
             "TABLE-US-00001": 1,
         },
+    },
+}
+_CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_CATADIOPTRIC_MODULE_DRAWINGS = (
+    ("1", "A"),
+    ("1", "B"),
+    ("1", "C"),
+    ("1", "D"),
+    ("1", "E"),
+    ("2", ""),
+    ("3", ""),
+    ("4", "A"),
+    ("4", "B"),
+    ("5", "A"),
+    ("5", "B"),
+    ("5", "C"),
+    ("5", "D"),
+    ("5", "E"),
+    ("6", ""),
+    ("7", "A"),
+    ("7", "B"),
+    ("7", "C"),
+)
+_CATADIOPTRIC_MODULE_TABLE_KEYS = (
+    (1, "A"),
+    (1, "B"),
+    (2, "A"),
+    (2, "B"),
+    (3, "A"),
+    (3, "B"),
+    (3, "C"),
+    (3, "D"),
+    (4, "A"),
+    (4, "B"),
+)
+_CATADIOPTRIC_MODULE_EXAMPLES = (
+    (1, 1, "1A", "1B"),
+    (1, 2, "2A", "2B"),
+    (1, 3, "3A", "3D"),
+    (2, 3, "3B", "3D"),
+    (3, 3, "3C", "3D"),
+    (1, 4, "4A", "4B"),
+)
+_CATADIOPTRIC_MODULE_SYSTEM_ROWS = {
+    "D (mm) 3.05 FNO 1.82 FOV (degrees) 19.1": 2,
+    "D (mm) 2.49 FNO 2.2 FOV (degrees) 16.5": 2,
+}
+_CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12631860-B2": {
+        "raw_document_sha256": (
+            "053e22371b8427c36702a98d7d4992c0ff86771fb8fa5391c04103982d8ee9f5"
+        ),
+        "normalized_text_sha256": (
+            "f5340d3edabdf94df8663b8b12514b77abe50380786603baef9b1f7401e6a16a"
+        ),
+        "application_number": "18/474353",
+        "heading_markers": (
+            "1st Embodiment (39)",
+            "2nd Embodiment (53)",
+            "3rd Embodiment (65)",
+            "4th Embodiment (78)",
+            "5th Embodiment (89)",
+            "6th Embodiment (98)",
+            "7th Embodiment (101)",
+        ),
+        "relationship_markers": (
+            "US 20240111139 A1 Apr. 04, 2024",
+            "us-provisional-application US 63377730 20220930",
+        ),
+        "table_block_sha256": (
+            "ff78a2555e5d8dac5b8b11e5a9c2fa21cfee9f5b5088c97dbcc4971542798ba1",
+            "713372b4007aa6577862e54dd0d8e5b3f85d216f5b68b68a5207a97be6561d86",
+            "54eb349fefd46805db4b725d13ca42574d0b22df44d058e8abdb204548d0d3a4",
+            "4192393f098d9a717e307be6af9f0bc0a402639299433a12845c52c1629b9b91",
+            "4cd295d8129cf358fd35d1fa637d96770cc81eef84d198b107655031227cdff6",
+            "a92a3563fceb52cc338c9efdef738bc3600fb7fdc9ad929e8c61ba004988f4ee",
+            "5b29dbf941ef16abef7b762caf161f1c2790975acfca7ec9bfdd728843412d1b",
+            "854e06d91b9e8d884c261802aeda805e666099681ab2f2248963e6de9dc48a85",
+            "12d8a09996586c3f33034596c5b93c11cf515e4eaf2cc73b08de649f7667d176",
+            "3d54804752b53c6ba0cfb4e46f345b48f4414d6c877329a908ec8a59e200a99d",
+        ),
+    },
+    "US-20260153717-A1": {
+        "raw_document_sha256": (
+            "0c6ae9d0c0d4606ebc29235e993f71ce459bf04a875f586c00eda9869c356990"
+        ),
+        "normalized_text_sha256": (
+            "57f16c924738b6790604ef5cdc3a08f9e1a70b3c6e3e93cac0c8ccfb721a062a"
+        ),
+        "application_number": "19/460417",
+        "heading_markers": (
+            "1st Embodiment [0045]",
+            "2nd Embodiment [0057]",
+            "3rd Embodiment [0067]",
+            "4th Embodiment [0076]",
+            "5th Embodiment [0085]",
+            "6th Embodiment [0094]",
+            "7th Embodiment [0097]",
+        ),
+        "relationship_markers": (
+            "parent US continuation 18474353 20230926 PENDING child US 19460417",
+            "us-provisional-application US 63377730 20220930",
+            "This application is a continuation of U.S. application Ser. No. 18/474,353, "
+            "filed Sep. 26, 2023",
+        ),
+        "table_block_sha256": (
+            "f4e8a8b604eb7ded2334acd2d0ef9dd586d3c30dc20d4379577da86726e5180c",
+            "3523e4c65f688f787dc4e3a340d8e2e7a4e129dae6c9e091656eec0a3a989be5",
+            "4783525745e6a4c3702fa4e0513b09f66f4d41cb245829141994a1786f107917",
+            "9cb55ca5416e169488a0c3ef803e4c2c680c6bae92cde3194129e00a16599026",
+            "5877e166374371539af904103e00971c7f94cc8d4c220c0089414bf6e774f651",
+            "0dca36e21261677ad10019d509317b1358ae5b243f2ea2efec30cbc3c0c4e7b8",
+            "f637d636e916fb6515ad4ac7d06829ba266eb1b551d5509e343211942eec9c29",
+            "3aec30c99949d8ad9d9e90d8ac20450f041c9361508fd65d6ff3fcc9c99d0d91",
+            "f6f0ba64f53a08d12be4dcc730e7eb78ba12b78f6e7ae91382426ca2cf05e254",
+            "abf6f2b5d14b7516d930bf3ac163ec938ddad382ae7bce992bafb849851db09f",
+        ),
     },
 }
 _SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_ONLY_TITLE_PATTERN = re.compile(
@@ -11830,6 +11959,221 @@ def _classify_folded_lens_barrel_driving_only_attempts(
             ),
         ),
     ]
+
+
+def _classify_catadioptric_module_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the nine source-declared items in exact Family 88236580 records.
+
+    Embodiments 1-4 publish six thin-film stack examples plus module-level D/FNO/FOV
+    values, but no optical surface prescription. Embodiments 5-7 publish only
+    smartphone, multi-camera/TOF/folded-light, and vehicle camera architecture.
+    """
+
+    profile = _CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiments = tuple(
+        f"Catadioptric thin-film example {example} of embodiment {embodiment}"
+        for example, embodiment, _table, _system_table in _CATADIOPTRIC_MODULE_EXAMPLES
+    ) + (
+        "Multi-camera smartphone architecture embodiment 5",
+        "Multi-camera TOF and folded-light architecture embodiment 6",
+        "Vehicle camera-module architecture embodiment 7",
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"catadioptric module official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"catadioptric module normalized text hash changed for {patent_id}"
+            )
+        if _CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("catadioptric module title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*88236580", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("catadioptric module Family ID binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("catadioptric module application binding changed")
+        for marker in profile["relationship_markers"]:
+            observed = len(re.findall(re.escape(str(marker)), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"catadioptric module relationship marker {marker!r} occurs "
+                    f"{observed}; expected 1"
+                )
+
+        for marker in profile["heading_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"catadioptric module heading {marker!r} changed"
+                )
+        example_pairs = {
+            (int(example), int(embodiment))
+            for example, embodiment in re.findall(
+                r"\b(\d+)(?:st|nd|rd|th)\s+example\s+of\s+the\s+"
+                r"(\d+)(?:st|nd|rd|th)\s+embodiment\b",
+                text,
+                re.IGNORECASE,
+            )
+        }
+        expected_examples = {
+            (example, embodiment)
+            for example, embodiment, _table, _system_table in _CATADIOPTRIC_MODULE_EXAMPLES
+        }
+        if example_pairs != expected_examples:
+            raise PatentParseError("catadioptric module example denominator changed")
+
+        blocks = _suffixed_patent_table_blocks(text)
+        if tuple(blocks) != _CATADIOPTRIC_MODULE_TABLE_KEYS:
+            raise PatentParseError("catadioptric module table denominator changed")
+        table_digests = tuple(
+            hashlib.sha256(blocks[key].encode("utf-8")).hexdigest() for key in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError("catadioptric module table digest changed")
+        for example, embodiment, table, _system_table in _CATADIOPTRIC_MODULE_EXAMPLES:
+            example_ordinal = {1: "1st", 2: "2nd", 3: "3rd"}[example]
+            embodiment_ordinal = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}[
+                embodiment
+            ]
+            marker = (
+                f"TABLE {table} the {example_ordinal} example of the "
+                f"{embodiment_ordinal} embodiment thin film material "
+                "refractive index"
+            )
+            if len(re.findall(re.escape(marker), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"catadioptric module thin-film TABLE {table} binding changed"
+                )
+        for row, expected in _CATADIOPTRIC_MODULE_SYSTEM_ROWS.items():
+            observed = len(re.findall(re.escape(row), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"catadioptric module system row {row!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)"
+            r"DETAILED DESCRIPTION<br\s*/?>",
+            raw_text,
+            re.DOTALL,
+        )
+        if brief_match is None:
+            raise PatentParseError("catadioptric module drawing description is missing")
+        drawing_refs = tuple(
+            (figure, panel.upper())
+            for figure, panel in re.findall(
+                r"FIG\.\s*<b>([1-7])</b>([A-E]?)</figref>\s+is\s+",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if drawing_refs != _CATADIOPTRIC_MODULE_DRAWINGS:
+            raise PatentParseError("catadioptric module 18-drawing denominator changed")
+        drawing_text = normalize_patent_text(brief_match.group("body"))
+        if re.search(
+            r"\b(?:table|prescription|optical\s+data|lens\s+data|radius|Abbe|FNO|FOV)\b",
+            drawing_text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "catadioptric module drawing descriptions reference prescription data"
+            )
+
+        exact_count_markers = {
+            r"\baspheric(?:al)?\b": 3,
+            r"\brefractive\s+index\b": 10,
+            r"\bfocal\s+lengths\b": 1,
+            r"40\s+degrees\s*<\s*θ\s*<\s*90\s+degrees": 1,
+        }
+        for pattern, expected in exact_count_markers.items():
+            observed = len(re.findall(pattern, text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"catadioptric module marker {pattern!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bAbbe\s+(?:number|#)?\b|\bSurface\s+(?:No\.?|#|Number)\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\blens\s+data\b|\bprescription\b|"
+            rf"\bfocal\s+lengths?\s*(?:=|:)\s*{NUMBER_PATTERN})",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "catadioptric module disclosure contains a surface-prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all nine source-declared items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, embodiment in enumerate(embodiments, start=1):
+        thin_film_example = index <= len(_CATADIOPTRIC_MODULE_EXAMPLES)
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription."
+                        "catadioptric_thin_film_and_module_architecture_only"
+                        if thin_film_example
+                        else (
+                            "confirmed_no_prescription."
+                            "camera_module_device_architecture_only"
+                        )
+                    ),
+                    detail=(
+                        "the source publishes a light-eliminating thin-film stack and "
+                        "module-level D/FNO/FOV values, but no ordered optical surface "
+                        "prescription"
+                        if thin_film_example
+                        else (
+                            f"{embodiment} publishes only camera-module placement, sensor, "
+                            "device, capture, TOF, folded-light, or vehicle architecture; "
+                            "it has no optical surface prescription"
+                        )
+                    ),
+                ),
+            )
+        )
+    return attempts
 
 
 def _classify_compact_barcode_telephoto_architecture_only_attempts(

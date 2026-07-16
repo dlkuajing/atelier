@@ -8182,6 +8182,120 @@ def test_shiftable_image_sensor_wire_exact_sources_are_terminal(
     ("patent_id", "path_parts"),
     (
         (
+            "US-12631860-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "053e22371b8427c3",
+                "US-12631860-B2.html",
+            ),
+        ),
+        (
+            "US-20260153717-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "0c6ae9d0c0d4606e",
+                "US-20260153717-A1.html",
+            ),
+        ),
+    ),
+)
+def test_catadioptric_module_exact_sources_are_terminal(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 10))
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+    assert {
+        attempt.error.reason_code for attempt in attempts[:6]
+    } == {
+        "confirmed_no_prescription."
+        "catadioptric_thin_film_and_module_architecture_only"
+    }
+    assert {
+        attempt.error.reason_code for attempt in attempts[6:]
+    } == {
+        "confirmed_no_prescription.camera_module_device_architecture_only"
+    }
+
+
+def test_catadioptric_module_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    audit_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-88236580"
+        / "family-88236580-raster-audit.json"
+    )
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+
+    assert audit["family_id"] == "88236580"
+    assert len(audit["figure_declarations"]) == 18
+    for publication_id, record in audit["publications"].items():
+        pdf_path = root / record["retained_pdf_path"]
+        content = pdf_path.read_bytes()
+        assert hashlib.sha256(content).hexdigest() == record["retained_pdf_sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == 30
+        page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=publication_id,
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(reader.pages, start=1)
+        ]
+        raster_set_sha256 = hashlib.sha256(
+            json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        assert raster_set_sha256 == record["raster_set_sha256"]
+        second_pdf_path = root / record["second_live_pdf_path"]
+        second_content = second_pdf_path.read_bytes()
+        assert (
+            hashlib.sha256(second_content).hexdigest()
+            == record["second_live_pdf_sha256"]
+        )
+        second_reader = patent_pdf_recovery.pypdf.PdfReader(str(second_pdf_path))
+        assert len(second_reader.pages) == record["page_count"]
+        second_page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=f"{publication_id} recheck",
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(second_reader.pages, start=1)
+        ]
+        assert second_page_hashes == page_hashes
+        assert len(record["drawing_page_numbers"]) == record["drawing_sheet_count"] == 18
+        assert record["second_live_raster_set_equal"] is True
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
             "US-12235418-B2",
             (
                 "data",
@@ -8331,6 +8445,135 @@ def _shiftable_image_sensor_wire_b2_source() -> tuple[str, str]:
         / "US-12470822-B2.html"
     )
     return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _catadioptric_module_b2_source() -> tuple[str, str]:
+    patent_id = "US-12631860-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "053e22371b8427c3"
+        / "US-12631860-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_catadioptric_module_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    blocks = patent_to_zmx._suffixed_patent_table_blocks(normalized)
+    original = (
+        patent_to_zmx._CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_SOURCE_PROFILES[
+            patent_id
+        ]
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "table_block_sha256": tuple(
+                hashlib.sha256(blocks[key].encode("utf-8")).hexdigest()
+                for key in blocks
+            ),
+        },
+    )
+
+
+def test_catadioptric_module_system_row_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _catadioptric_module_b2_source()
+    raw_text = original.replace(
+        "D (mm) 3.05 FNO 1.82 FOV (degrees) 19.1",
+        "D (mm) 3.05 FNO 1.82 FOV (degrees) 19.2",
+        1,
+    )
+    assert raw_text != original
+    _install_catadioptric_module_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 9
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "catadioptric module system row 'D (mm) 3.05 FNO 1.82 FOV "
+        "(degrees) 19.1' occurs 1; expected 2"
+    }
+
+
+def test_catadioptric_module_drawing_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _catadioptric_module_b2_source()
+    raw_text = original.replace(
+        '>FIG. <b>7</b>C</figref> is another schematic view of the vehicle instrument',
+        '>FIG. <b>7</b>D</figref> is another schematic view of the vehicle instrument',
+        1,
+    )
+    assert raw_text != original
+    _install_catadioptric_module_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 9
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "catadioptric module 18-drawing denominator changed"
+    }
+
+
+def test_catadioptric_module_prescription_marker_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _catadioptric_module_b2_source()
+    raw_text = original.replace(
+        "BRIEF DESCRIPTION OF THE DRAWINGS",
+        "Radius of curvature. BRIEF DESCRIPTION OF THE DRAWINGS",
+        1,
+    )
+    assert raw_text != original
+    _install_catadioptric_module_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 9
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "catadioptric module disclosure contains a surface-prescription marker"
+    }
 
 
 def _install_shiftable_image_sensor_wire_drift_profile(
@@ -8893,6 +9136,66 @@ def test_convert_candidate_preserves_source_terminal_status_without_worker(
     assert {
         attempt.reason_code for attempt in attempts
     } == {"metadata_unpublished.stop_axial_coordinate_absent"}
+    assert all(attempt.raw_document_path for attempt in attempts)
+    assert not (tmp_path / "zmx").exists() or not any((tmp_path / "zmx").iterdir())
+
+
+def test_convert_candidate_retains_catadioptric_terminals_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, raw_text = _catadioptric_module_b2_source()
+
+    async def fake_fetch(
+        _client: object,
+        _token: str,
+        fetched_patent_id: str,
+    ) -> patent_to_zmx.FetchedPatentHtml:
+        assert fetched_patent_id == patent_id
+        return patent_to_zmx.FetchedPatentHtml(
+            html=raw_text,
+            source_bucket="USPAT",
+            attempts=(
+                patent_to_zmx.SourceFetchAttempt(
+                    publication_id=fetched_patent_id,
+                    source_bucket="USPAT",
+                    state=patent_to_zmx.SourceFetchState.RETAINED,
+                    http_status=200,
+                ),
+            ),
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("confirmed-no-prescription outcomes must not launch a worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "token",
+            patent_to_zmx.PatentCandidate(
+                patent_id=patent_id,
+                title="fixture",
+                source_url="",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "zmx",
+            raw_document_dir=tmp_path / "raw",
+        )
+    )
+
+    assert [attempt.status for attempt in attempts] == [
+        "confirmed_no_prescription"
+    ] * 9
+    assert {attempt.reason_code for attempt in attempts[:6]} == {
+        "confirmed_no_prescription."
+        "catadioptric_thin_film_and_module_architecture_only"
+    }
+    assert {attempt.reason_code for attempt in attempts[6:]} == {
+        "confirmed_no_prescription.camera_module_device_architecture_only"
+    }
     assert all(attempt.raw_document_path for attempt in attempts)
     assert not (tmp_path / "zmx").exists() or not any((tmp_path / "zmx").iterdir())
 
