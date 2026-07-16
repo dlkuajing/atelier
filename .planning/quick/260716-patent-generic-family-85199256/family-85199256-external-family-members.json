@@ -1,0 +1,18 @@
+{
+  "current_frozen_cohort_roots": [
+    "US-12517281",
+    "US-20260093056"
+  ],
+  "external_family_members": [
+    {
+      "application_number": "18/097820",
+      "discovery_evidence": "US-12517281-B2 Prior Publication Data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_id": "US-20230236339-A1",
+      "publication_root": "US-20230236339",
+      "publication_date": "2023-07-27"
+    }
+  ],
+  "family_id": "85199256",
+  "schema_version": 1
+}

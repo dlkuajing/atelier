@@ -391,6 +391,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_meta_optical_layer_architecture_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_catadioptric_module_architecture_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2417,6 +2423,64 @@ _SAMSUNG_IRIS_FIRST_IR_LAYOUT = (
     (("13",), False),
     (("IMG",), False),
 )
+_META_OPTICAL_LAYER_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
+    r"\bMETA-OPTICAL\s+DEVICE\s+AND\s+ELECTRONIC\s+DEVICE\s+"
+    r"INCLUDING\s+THE\s+SAME\b",
+    flags=re.IGNORECASE,
+)
+_META_OPTICAL_LAYER_ARCHITECTURE_ONLY_DRAWINGS = (
+    *((str(index), "") for index in range(1, 12)),
+    *((str(index), panel) for index in range(12, 17) for panel in ("A", "B")),
+    *((str(index), "") for index in range(17, 20)),
+)
+_META_OPTICAL_LAYER_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12517281-B2": {
+        "raw_document_sha256": (
+            "8d33014a60dc3d2cc9d9a02e39831bf45852c1984f46bda6c4f70ce218345068"
+        ),
+        "normalized_text_sha256": (
+            "ab059245b4672308e713c2df51b45d37485236c8b35e869aa9bc4fcf6ab7a9c1"
+        ),
+        "application_number": "18/097820",
+        "relationship_markers": ("US 20230236339 A1 Jul. 27, 2023",),
+        "architecture_phrase_counts": {
+            "meta-optical device": 156,
+            "meta-structure layer": 169,
+            "nanostructure": 95,
+            "antireflective layer": 51,
+            "computational simulation": 18,
+            "transmittance": 22,
+            "focal length": 3,
+            "F number": 1,
+        },
+    },
+    "US-20260093056-A1": {
+        "raw_document_sha256": (
+            "925f82e175ec31eb5d9b20eef019db1715d7b01030701edce7453f1cdbc20854"
+        ),
+        "normalized_text_sha256": (
+            "af16fee0a73427814535b21023812fc614949042a09f5504122e69b037853f14"
+        ),
+        "application_number": "19/413947",
+        "relationship_markers": (
+            "parent US continuation 18097820 20230117",
+            "This present application is a continuation of U.S. application Ser. No. "
+            "18/097,820, filed on Jan. 17, 2023",
+        ),
+        "architecture_phrase_counts": {
+            "meta-optical device": 156,
+            "meta-structure layer": 159,
+            "nanostructure": 91,
+            "antireflective layer": 50,
+            "computational simulation": 18,
+            "transmittance": 22,
+            "focal length": 3,
+            "F number": 1,
+        },
+    },
+}
 _CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
     r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*CAMERA\s+MODULE\s+AND\s+"
     r"ELECTRONIC\s+DEVICE\b",
@@ -11597,7 +11661,8 @@ def _classify_barcode_scanner_architecture_only_attempts(
                 )
         prescription_marker = re.compile(
             r"(?:\bcurvature\s+radius\b|\bradius\s+of\s+curvature\b|"
-            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\baspher(?:e|ic|ical)\s+(?:surface\s+)?"
+            r"(?:data|coefficients?|parameters?)\b|"
             r"\bAbbe\s+(?:number|#)\b|\bSurface\s+(?:No\.|#)\s*|"
             r"\bFno\b|\bF\s*[- ]?number\b|\bEFL\b|"
             r"\beffective\s+focal\s+length\b|\boptical\s+data\b|TABLE-US-)",
@@ -12820,6 +12885,169 @@ def _parse_samsung_iris_moving_group_attempts(
             )
             for index, error in enumerate(source_errors, start=3)
         ],
+    ]
+
+
+def _classify_meta_optical_layer_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 85199256 meta-layer/device disclosures.
+
+    The retained HTML and image-only official PDFs disclose meta-structure layer
+    stacks, simulated transmittance, a meta-lens phase profile, and electronic
+    device blocks.  They publish no ordered refractive-surface prescription.
+    """
+
+    profile = _META_OPTICAL_LAYER_ARCHITECTURE_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+    embodiment = "meta-optical layer and electronic-device architecture"
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"meta-optical architecture official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"meta-optical architecture normalized text hash changed for {patent_id}"
+            )
+        if len(_META_OPTICAL_LAYER_ARCHITECTURE_ONLY_TITLE_PATTERN.findall(text)) != 1:
+            raise PatentParseError("meta-optical architecture title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*85199256", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("meta-optical architecture Family ID binding changed")
+        if (
+            len(
+                re.findall(
+                    r"Samsung\s+Electronics\s+Co\.,?\s*Ltd\.",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            != 2
+        ):
+            raise PatentParseError("meta-optical architecture owner binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if (
+            len(
+                re.findall(
+                    rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError("meta-optical architecture application binding changed")
+        for marker in profile["relationship_markers"]:
+            observed = len(re.findall(re.escape(str(marker)), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"meta-optical architecture relationship marker {marker!r} occurs "
+                    f"{observed}; expected 1"
+                )
+
+        if _patent_table_blocks(text) or re.search(r"TABLE-US-", raw_text):
+            raise PatentParseError(
+                "meta-optical architecture unexpectedly contains a PPUBS table"
+            )
+        numbered_headings = re.findall(
+            r"\b(?:EXAMPLE|NUMERICAL\s+EMBODIMENT)\s+(?:No\.\s*)?\d+\b",
+            text,
+            re.IGNORECASE,
+        )
+        if numbered_headings:
+            raise PatentParseError(
+                "meta-optical architecture numbered example denominator changed"
+            )
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)DETAILED DESCRIPTION",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError("meta-optical architecture drawing description is missing")
+        drawing_refs = tuple(
+            (figure, panel.upper())
+            for figure, panel in re.findall(
+                r"FIG\.\s*<b>(\d+)</b>([A-B]?)</figref>\s+"
+                r"(?:is\s+|exemplarily\s+illustrates\s+)",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if drawing_refs != _META_OPTICAL_LAYER_ARCHITECTURE_ONLY_DRAWINGS:
+            raise PatentParseError(
+                "meta-optical architecture 24-panel drawing denominator changed"
+            )
+        drawing_text = normalize_patent_text(brief_match.group("body"))
+        if re.search(
+            r"\b(?:prescription|optical\s+data|lens\s+data|"
+            r"radius\s+of\s+curvature|curvature\s+radius|Abbe|"
+            r"Surface\s+(?:No\.?|#|Number))\b",
+            drawing_text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "meta-optical architecture drawing descriptions reference prescription data"
+            )
+
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"meta-optical architecture phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bAbbe\s+(?:number|#)?\b|\bSurface\s+(?:No\.?|#|Number)\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\blens\s+data\b|\bprescription\b|"
+            rf"\bfocal\s+lengths?\s*(?:=|:)\s*{NUMBER_PATTERN})",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "meta-optical architecture disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "meta_optical_layer_and_device_architecture_only"
+                ),
+                detail=(
+                    "the exact retained official disclosure and its 24-panel raster "
+                    "drawing set publish meta-structure layers, simulated transmittance, "
+                    "a meta-lens phase profile, and electronic-device blocks but no "
+                    "ordered optical surface prescription or prescription table"
+                ),
+            ),
+        )
     ]
 
 

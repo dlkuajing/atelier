@@ -8440,6 +8440,147 @@ def test_shiftable_image_sensor_wire_exact_sources_are_terminal(
     ("patent_id", "path_parts"),
     (
         (
+            "US-12517281-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "8d33014a60dc3d2c",
+                "US-12517281-B2.html",
+            ),
+        ),
+        (
+            "US-20260093056-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "925f82e175ec31eb",
+                "US-20260093056-A1.html",
+            ),
+        ),
+    ),
+)
+def test_meta_optical_architecture_exact_sources_are_terminal(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].embodiment_number is None
+    assert attempts[0].prescription is None
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription.meta_optical_layer_and_device_architecture_only"
+    )
+
+
+def test_meta_optical_architecture_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    audit_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-85199256"
+        / "family-85199256-raster-audit.json"
+    )
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+
+    assert audit["family_id"] == "85199256"
+    assert audit["numbered_figure_count"] == 19
+    assert len(audit["figure_declarations"]) == 24
+    for publication_id, record in audit["publications"].items():
+        pdf_path = root / record["retained_pdf_path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == record[
+            "retained_pdf_sha256"
+        ]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"]
+        assert sum(len(page.extract_text() or "") for page in reader.pages) == 0
+        assert record["text_layer_char_count"] == 0
+        page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=publication_id,
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(reader.pages, start=1)
+        ]
+        raster_set_sha256 = hashlib.sha256(
+            json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        assert raster_set_sha256 == record["raster_set_sha256"]
+
+        second_pdf_path = root / record["second_live_pdf_path"]
+        assert hashlib.sha256(second_pdf_path.read_bytes()).hexdigest() == record[
+            "second_live_pdf_sha256"
+        ]
+        second_reader = patent_pdf_recovery.pypdf.PdfReader(str(second_pdf_path))
+        second_page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=f"{publication_id} recheck",
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(second_reader.pages, start=1)
+        ]
+        assert second_page_hashes == page_hashes
+        assert record["second_live_raster_set_equal"] is True
+        assert len(record["drawing_page_numbers"]) == record["drawing_sheet_count"] == 24
+        assert record["table_page_numbers"] == []
+
+        contact_path = root / record["contact_sheet_path"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == record[
+            "contact_sheet_sha256"
+        ]
+
+
+def test_meta_optical_architecture_external_family_queue_is_source_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    queue_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-85199256"
+        / "family-85199256-external-family-members.json"
+    )
+    queue = json.loads(queue_path.read_text(encoding="utf-8"))
+
+    assert queue["family_id"] == "85199256"
+    assert queue["current_frozen_cohort_roots"] == [
+        "US-12517281",
+        "US-20260093056",
+    ]
+    assert queue["external_family_members"] == [
+        {
+            "application_number": "18/097820",
+            "discovery_evidence": "US-12517281-B2 Prior Publication Data",
+            "disposition": "queue_after_frozen_619_root_cohort",
+            "publication_id": "US-20230236339-A1",
+            "publication_root": "US-20230236339",
+            "publication_date": "2023-07-27",
+        }
+    ]
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
             "US-12631860-B2",
             (
                 "data",
@@ -8745,6 +8886,113 @@ def _samsung_iris_b2_source() -> tuple[str, str]:
         / "US-11435552-B2.html"
     )
     return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _meta_optical_b2_source() -> tuple[str, str]:
+    patent_id = "US-12517281-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "8d33014a60dc3d2c"
+        / "US-12517281-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_meta_optical_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    original = (
+        patent_to_zmx._META_OPTICAL_LAYER_ARCHITECTURE_ONLY_SOURCE_PROFILES[
+            patent_id
+        ]
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._META_OPTICAL_LAYER_ARCHITECTURE_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+
+def test_meta_optical_architecture_source_hash_drift_reopens_parser_review() -> None:
+    patent_id, raw_text = _meta_optical_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert str(attempts[0].error) == (
+        f"meta-optical architecture official raw text hash changed for {patent_id}"
+    )
+
+
+def test_meta_optical_architecture_drawing_drift_reopens_parser_review(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _meta_optical_b2_source()
+    raw_text = original.replace(
+        "FIG. <b>19</b></figref> is a block diagram illustrating a configuration "
+        "of a three-dimensional sensor",
+        "FIG. <b>20</b></figref> is a block diagram illustrating a configuration "
+        "of a three-dimensional sensor",
+        1,
+    )
+    assert raw_text != original
+    _install_meta_optical_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert str(attempts[0].error) == (
+        "meta-optical architecture 24-panel drawing denominator changed"
+    )
+
+
+def test_meta_optical_architecture_prescription_marker_reopens_parser_review(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _meta_optical_b2_source()
+    raw_text = original + " Surface No. 1 radius of curvature = 1.0 mm."
+    _install_meta_optical_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert str(attempts[0].error) == (
+        "meta-optical architecture disclosure contains a prescription marker"
+    )
 
 
 def _install_samsung_iris_drift_profile(
