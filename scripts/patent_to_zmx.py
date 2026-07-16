@@ -379,6 +379,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_compact_barcode_telephoto_architecture_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_shiftable_image_sensor_wire_geometry_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -1897,6 +1903,79 @@ _BARCODE_SCANNER_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = 
             "illumination assembly": 1,
             "aiming light": 3,
         },
+    },
+}
+_COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
+    r"\bTELEPHOTO\s+LENS\s+FOR\s+COMPACT\s+LONG\s+RANGE\s+BARCODE\s+READER\b",
+    flags=re.IGNORECASE,
+)
+_COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_PHRASE_COUNTS = {
+    "Family ID: 84363056": 1,
+    "telephoto lens assembly": 51,
+    "Crown type glass": 5,
+    "Flint type glass": 5,
+    "Flint type plastic": 5,
+    "Crown type plastic": 5,
+    "index of refraction": 4,
+    "Abbe value": 4,
+    "plastic aspheric lens": 3,
+    "effective focal length": 8,
+    "field of view": 6,
+    "total length from the first lens to the imager": 4,
+    "central thickness": 4,
+}
+_COMPACT_BARCODE_TELEPHOTO_MATERIAL_ANCHORS = (
+    "first lens 122 is further made from a Crown type glass with an index of "
+    "refraction in the range of approximately 1.51-1.62, for example 1.52",
+    "first lens 122 has an Abbe value of approximately 59",
+    "third lens is made from a Flint type glass with an index of refraction in "
+    "the range of approximately 1.57-1.75, for example 1.66",
+    "third lens 126 has an Abbe value of approximately 24",
+    "second lens 124 has an index of refraction of approximately 1.65 and an "
+    "Abbe value of approximately 22",
+    "fourth lens 128 has an index of refraction of approximately 1.53 and an "
+    "Abbe value of approximately 56",
+)
+_COMPACT_BARCODE_TELEPHOTO_SYSTEM_VALUE_ANCHORS = (
+    "the total length is 10.34 millimeters",
+    "the EFL is 11.8 millimeters",
+    "making the telephoto ratio 0.876",
+    "the lens has a 19-degree FOV when used with a 1⁄4 inch imaging sensor",
+    "has a 2 millimeters aperture",
+)
+_COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12235418-B2": {
+        "raw_document_sha256": (
+            "90b705c9b510a7885abdc379a345e6765fbfbb85f3bdcfa63c41e1abbb18f59c"
+        ),
+        "normalized_text_sha256": (
+            "4e4ead6863537320d55b5b21cda40bbc7a62f1d6008c2d4d9b69ebddd21e857e"
+        ),
+        "application_number": "17/873058",
+        "relationship_markers": (
+            "US 20230067508 A1 Mar. 02, 2023",
+            "us-provisional-application US 63239348 20210831",
+        ),
+        "architecture_phrase_counts": (
+            _COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_PHRASE_COUNTS
+        ),
+    },
+    "US-20230067508-A1": {
+        "raw_document_sha256": (
+            "c13c69020e466001c3a6bb09584a7b5e09385c31b301fcb0ed9accc7d85d6bdd"
+        ),
+        "normalized_text_sha256": (
+            "41f761a66657fa8d6c040dc3fdcaf74a3326c5c973995e7eb1634ca099a79589"
+        ),
+        "application_number": "17/873058",
+        "relationship_markers": (
+            "us-provisional-application US 63239348 20210831",
+        ),
+        "architecture_phrase_counts": (
+            _COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_PHRASE_COUNTS
+        ),
     },
 }
 _IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
@@ -11321,6 +11400,187 @@ def _classify_folded_lens_barrel_driving_only_attempts(
                 ),
             ),
         ),
+    ]
+
+
+def _classify_compact_barcode_telephoto_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the exact Family 84363056 four-lens architecture disclosure.
+
+    Both same-application publications disclose one document-scoped telephoto
+    architecture with material classes, refractive indices, Abbe values, EFL,
+    field, aperture, and total length.  They publish no radii, axial surface
+    spacing, conic constants, or asphere coefficients, so no prescription can
+    be built.  Any source or denominator drift remains a parser failure.
+    """
+
+    profile = _COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+    embodiment = "Compact long-range barcode telephoto architecture"
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"compact barcode telephoto official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "compact barcode telephoto normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if (
+            _COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_ONLY_TITLE_PATTERN.search(text)
+            is None
+        ):
+            raise PatentParseError("compact barcode telephoto title binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("compact barcode telephoto application binding changed")
+        for marker in profile["relationship_markers"]:
+            observed = len(re.findall(re.escape(str(marker)), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    "compact barcode telephoto relationship marker "
+                    f"{marker!r} occurs {observed}; expected 1"
+                )
+
+        if _patent_table_blocks(text) or re.search(
+            r"TABLE-US-\d+", text, re.IGNORECASE
+        ):
+            raise PatentParseError("compact barcode telephoto source gained a PPUBS table")
+
+        drawings = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+THE\s+DRAWINGS\s+"
+            r"(?:\(\d+\)|\[\d+\])(?P<body>.*?)"
+            r"DETAILED\s+DESCRIPTION\s+(?:\(\d+\)|\[\d+\])",
+            text,
+            re.IGNORECASE,
+        )
+        if drawings is None:
+            raise PatentParseError(
+                "compact barcode telephoto drawing denominator is missing"
+            )
+        drawing_numbers = re.findall(
+            r"\bFIG\.\s*([1-5])\s+illustrates\s+",
+            drawings.group("body"),
+            re.IGNORECASE,
+        )
+        if drawing_numbers != ["1", "2", "3", "4", "5"]:
+            raise PatentParseError(
+                "compact barcode telephoto five-drawing denominator changed"
+            )
+        if re.search(
+            r"\b(?:table|prescription|optical\s+data|lens\s+data)\b",
+            drawings.group("body"),
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "compact barcode telephoto drawings now reference prescription data"
+            )
+
+        if len(
+            re.findall(
+                r"DETAILED\s+DESCRIPTION\s+(?:\(\d+\)|\[\d+\])",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "compact barcode telephoto detailed-section denominator changed"
+            )
+        if re.search(
+            r"(?:\(\d+\)|\[\d+\])\s+(?:EXAMPLE|EMBODIMENT)\s+"
+            r"(?:[1-9]\d*|[IVX]+)\b|"
+            r"\b[1-9]\d*(?:st|nd|rd|th)\s+(?:example|embodiment)\b",
+            text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "compact barcode telephoto formal item denominator changed"
+            )
+        independent_claims = re.findall(
+            r"\b(\d+)\s*\.\s+An\s+imaging\s+engine\s+for\s+decoding\s+barcodes",
+            text,
+            re.IGNORECASE,
+        )
+        if independent_claims != ["1", "11"]:
+            raise PatentParseError(
+                "compact barcode telephoto independent-claim denominator changed"
+            )
+
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"compact barcode telephoto phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase in _COMPACT_BARCODE_TELEPHOTO_MATERIAL_ANCHORS:
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"compact barcode telephoto material anchor {phrase!r} occurs "
+                    f"{observed}; expected 1"
+                )
+        for phrase in _COMPACT_BARCODE_TELEPHOTO_SYSTEM_VALUE_ANCHORS:
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"compact barcode telephoto system anchor {phrase!r} occurs "
+                    f"{observed}; expected 1"
+                )
+
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bsurface\s+radii\b|"
+            r"\baspher(?:e|ic|ical)\s+(?:surface\s+)?"
+            r"(?:data|coefficients?|parameters?)\b|"
+            r"\bconic\s+(?:constant|coefficient)\b|"
+            r"\b(?:axial|surface)\s+(?:air\s+)?spacings?\b|"
+            r"\bSurface\s+(?:No\.|#)\s*|\bFno\b|\bF\s*[- ]?number\b|"
+            r"\boptical\s+data\b|\blens\s+data\b|\bprescription\b)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "compact barcode telephoto disclosure contains a prescription marker"
+            )
+        error: Exception = PatentTerminalParseError(
+            status="confirmed_no_prescription",
+            reason_code=(
+                "confirmed_no_prescription."
+                "compact_barcode_telephoto_architecture_only"
+            ),
+            detail=(
+                "the source publishes a four-lens material/index/Abbe architecture and "
+                "system EFL, field, aperture, and total-length values, but no surface "
+                "radii, axial spacings, conic constants, or asphere coefficients"
+            ),
+        )
+    except Exception as exc:  # noqa: BLE001 - retain the exact document-scoped item
+        error = exc
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment=embodiment,
+            error=error,
+        )
     ]
 
 

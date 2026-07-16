@@ -7629,6 +7629,147 @@ def test_shiftable_image_sensor_wire_exact_sources_are_terminal(
     }
 
 
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
+            "US-12235418-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "90b705c9b510a788",
+                "US-12235418-B2.html",
+            ),
+        ),
+        (
+            "US-20230067508-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "c13c69020e466001",
+                "US-20230067508-A1.html",
+            ),
+        ),
+    ),
+)
+def test_compact_barcode_telephoto_exact_sources_are_terminal(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1]
+    assert attempts[0].embodiment == (
+        "Compact long-range barcode telephoto architecture"
+    )
+    assert isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert attempts[0].error.status == "confirmed_no_prescription"
+    assert attempts[0].error.reason_code == (
+        "confirmed_no_prescription.compact_barcode_telephoto_architecture_only"
+    )
+
+
+def _compact_barcode_telephoto_b2_source() -> tuple[str, str]:
+    patent_id = "US-12235418-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "90b705c9b510a788"
+        / "US-12235418-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_compact_barcode_telephoto_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    original = (
+        patent_to_zmx._COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_ONLY_SOURCE_PROFILES[
+            patent_id
+        ]
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._COMPACT_BARCODE_TELEPHOTO_ARCHITECTURE_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                patent_to_zmx.normalize_patent_text(raw_text).encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+
+def test_compact_barcode_telephoto_system_value_drift_fails_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _compact_barcode_telephoto_b2_source()
+    raw_text = original.replace("10.34 millimeters", "10.35 millimeters", 1)
+    assert raw_text != original
+    _install_compact_barcode_telephoto_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert str(attempts[0].error) == (
+        "compact barcode telephoto system anchor 'the total length is 10.34 "
+        "millimeters' occurs 0; expected 1"
+    )
+
+
+def test_compact_barcode_telephoto_prescription_marker_fails_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _compact_barcode_telephoto_b2_source()
+    raw_text = original.replace(
+        "In the foregoing specification, specific embodiments have been described.",
+        "Radius of curvature. In the foregoing specification, specific embodiments "
+        "have been described.",
+        1,
+    )
+    assert raw_text != original
+    _install_compact_barcode_telephoto_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert str(attempts[0].error) == (
+        "compact barcode telephoto disclosure contains a prescription marker"
+    )
+
+
 def _shiftable_image_sensor_wire_b2_source() -> tuple[str, str]:
     patent_id = "US-12470822-B2"
     source_path = (
