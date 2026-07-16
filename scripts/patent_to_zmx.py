@@ -4103,6 +4103,67 @@ def _parse_kantatsu_six_lens_table_attempts(
 _ABILITY_PDF_PARSER_FAMILY = "ability_official_pdf_ocr_v1"
 _ABILITY_EIGHT_LENS_PROFILE = "ability_eight_lens_metadata_unpublished_v1"
 _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
+_ABILITY_THREE_FIVE_LENS_PROFILE = (
+    "ability_three_five_lens_angular_field_unpublished_v1"
+)
+_ABILITY_THREE_FIVE_LENS_ROLE_PAGE_NUMBERS = {
+    "ability_three_five_prescription_ol1": 5,
+    "ability_three_five_prescription_ol2": 6,
+    "ability_three_five_prescription_ol3": 7,
+    "ability_three_five_system_meta": 8,
+}
+_ABILITY_THREE_FIVE_LENS_PUBLICATION_SOURCES = {
+    "US-11719909-B2": {
+        "primary_html_sha256": (
+            "f43a4a419a082df67f60af279a3053069903b81eac017ba14d55359904840987"
+        ),
+        "normalized_text_sha256": (
+            "9a41a01aeb9a626685aa3a7939d2c34c3dd442573accf78a2de062fb73b72910"
+        ),
+        "application_number": "16/883126",
+        "page_count": 13,
+        "blank_key_pages": frozenset({5, 6, 7, 8}),
+        "key_page_image_sha256": {
+            "ability_three_five_prescription_ol1": (
+                "d228c17cc75a9ee07221c983939fe84a2c52227b946d4973a8b4b9a76c7f1fbc"
+            ),
+            "ability_three_five_prescription_ol2": (
+                "07969a02deff4c2b837b465d7218e1ef992b4f0e4b34578efbb1a90b0070ea28"
+            ),
+            "ability_three_five_prescription_ol3": (
+                "71d564b5a924d610faf1434749a7798fb097923815b32960fb94cf5f6874354d"
+            ),
+            "ability_three_five_system_meta": (
+                "f9d78791e50b3bb8f6aeb5b913f8e7727f6c58d566d3b334fe8dcf33fc4f7206"
+            ),
+        },
+    },
+    "US-20210026108-A1": {
+        "primary_html_sha256": (
+            "a94cba4e581ebdb5b65798212ca6211170174ac43d60e539cce2152cf9d6c8de"
+        ),
+        "normalized_text_sha256": (
+            "49c30c4ae4049648ef33fd99bc6a5eb0f00c4da7f6e9c97949f5f1dc041e68d1"
+        ),
+        "application_number": "16/883126",
+        "page_count": 13,
+        "blank_key_pages": frozenset(),
+        "key_page_image_sha256": {
+            "ability_three_five_prescription_ol1": (
+                "95742709b43e371b5f6c8bae4765cf46bea3609c5046d15de40742113c189c9b"
+            ),
+            "ability_three_five_prescription_ol2": (
+                "d4e2eb07042851f8025ea6037d2b654a1f2941c248ad64dfba28683b4448abda"
+            ),
+            "ability_three_five_prescription_ol3": (
+                "bd904a31f239fb583b2183d901dbeb37a9a30769938a548b728a4f11d9da51d9"
+            ),
+            "ability_three_five_system_meta": (
+                "c2cf657990d7773f275578e988a59797a43803bcb086ac335eb0ee1fc805b23c"
+            ),
+        },
+    },
+}
 _ABILITY_TWO_FIVE_LENS_PROFILE = "ability_two_five_lens_prescriptions_v1"
 _ABILITY_TWO_NINE_LENS_PROFILE = "ability_two_nine_lens_f_number_unpublished_v1"
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
@@ -7575,6 +7636,281 @@ def _ability_eight_lens_terminal_attempt(
     )
 
 
+def _ability_three_five_lens_terminal_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    """Classify three source-locked five-lens prescriptions without angular field."""
+
+    publication_id = str(payload.get("publication_id"))
+    source_profile = _ABILITY_THREE_FIVE_LENS_PUBLICATION_SOURCES.get(publication_id)
+    if source_profile is None:
+        raise PatentParseError(
+            "Ability three-five-lens publication is not source-locked"
+        )
+    if payload.get("page_count") != source_profile["page_count"]:
+        raise PatentParseError("Ability three-five-lens PDF page count changed")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 4:
+        raise PatentParseError(
+            "Ability three-five-lens parser input must retain four key pages"
+        )
+
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("Ability three-five-lens source facts are absent")
+    expected_facts = {
+        "primary_html_sha256": source_profile["primary_html_sha256"],
+        "normalized_text_sha256": source_profile["normalized_text_sha256"],
+        "family_id": "74187659",
+        "application_number": source_profile["application_number"],
+        "prescription_count": 3,
+        "lens_element_count": 5,
+        "figure_binding_counts": dict.fromkeys(
+            (
+                "surface_ol1",
+                "asphere_ol1",
+                "surface_ol2",
+                "asphere_ol2",
+                "surface_ol3",
+                "asphere_ol3",
+                "system_meta",
+            ),
+            2,
+        ),
+        "angular_field_label_counts": {
+            "FOV": 0,
+            "HFOV": 0,
+            "field of view": 0,
+            "viewing angle": 0,
+            "angle of view": 0,
+            "image height": 0,
+        },
+        "shape_coordinate_definition_counts": {"h": 1, "H": 1},
+    }
+    for key, expected in expected_facts.items():
+        if facts.get(key) != expected:
+            raise PatentParseError(
+                f"Ability three-five-lens source fact {key!r} changed"
+            )
+
+    common_prescription_labels = frozenset(
+        {
+            "SURFACE",
+            "CURVATURE",
+            "THICKNESS",
+            "REFRACTIVE",
+            "ABBE",
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "ST",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "K",
+            "A2",
+            "A4",
+            "A6",
+            "A8",
+            "A10",
+            "A12",
+            "A14",
+            "A16",
+        }
+    )
+    prescription_required_labels = {
+        embodiment_number: common_prescription_labels
+        | {f"FIG{embodiment_number + 3}A", f"FIG{embodiment_number + 3}B"}
+        for embodiment_number in (1, 2, 3)
+    }
+    angular_field_pattern = re.compile(
+        r"\b(?:FOV|HFOV)\b|\bfield\s+of\s+view\b|\bviewing\s+angle\b|"
+        r"\bangle\s+of\s+view\b|\bhalf\s*[- ]?field\b|"
+        r"\bfull\s*[- ]?field\b|\bfield\s+angle\b|\bimage\s+height\b",
+        flags=re.IGNORECASE,
+    )
+    prescription_pages: dict[int, dict[str, Any]] = {}
+    for embodiment_number in (1, 2, 3):
+        role = f"ability_three_five_prescription_ol{embodiment_number}"
+        page = _ability_page(payload, role)
+        expected_page_number = _ABILITY_THREE_FIVE_LENS_ROLE_PAGE_NUMBERS[role]
+        if page.get("page_number") != expected_page_number:
+            raise PatentParseError(
+                f"Ability three-five-lens role {role} is on the wrong page"
+            )
+        if page.get("official_image_sha256") != source_profile[
+            "key_page_image_sha256"
+        ][role]:
+            raise PatentParseError(
+                f"Ability three-five-lens role {role} raster hash changed"
+            )
+        mirror_text = page.get("mirror_text")
+        if not isinstance(mirror_text, str) or (
+            not mirror_text.strip()
+        ) != (expected_page_number in source_profile["blank_key_pages"]):
+            raise PatentParseError(
+                f"Ability three-five-lens role {role} mirror-text state changed"
+            )
+        tokens = list(page["rapidocr_tokens"])
+        normalized_labels = {
+            re.sub(r"[^A-Z0-9]", "", _ability_token_text(token).upper())
+            for token in tokens
+            if _ability_token_confidence(token) >= 0.90
+        }
+        missing_labels = sorted(
+            prescription_required_labels[embodiment_number] - normalized_labels
+        )
+        if missing_labels:
+            raise PatentParseError(
+                f"Ability three-five-lens role {role} lacks labels: "
+                + ",".join(missing_labels)
+            )
+        coordinate_text = " ".join(_ability_token_text(token) for token in tokens)
+        if angular_field_pattern.search(mirror_text) or angular_field_pattern.search(
+            coordinate_text
+        ):
+            raise PatentParseError(
+                f"Ability three-five-lens role {role} may publish angular field"
+            )
+        prescription_pages[embodiment_number] = page
+
+    meta_role = "ability_three_five_system_meta"
+    meta_page = _ability_page(payload, meta_role)
+    meta_page_number = _ABILITY_THREE_FIVE_LENS_ROLE_PAGE_NUMBERS[meta_role]
+    if meta_page.get("page_number") != meta_page_number:
+        raise PatentParseError("Ability three-five-lens metadata is on the wrong page")
+    if meta_page.get("official_image_sha256") != source_profile[
+        "key_page_image_sha256"
+    ][meta_role]:
+        raise PatentParseError("Ability three-five-lens metadata raster hash changed")
+    meta_mirror_text = meta_page.get("mirror_text")
+    if not isinstance(meta_mirror_text, str) or (
+        not meta_mirror_text.strip()
+    ) != (meta_page_number in source_profile["blank_key_pages"]):
+        raise PatentParseError(
+            "Ability three-five-lens metadata mirror-text state changed"
+        )
+    meta_tokens = list(meta_page["rapidocr_tokens"])
+    meta_labels = {
+        re.sub(r"[^A-Z0-9]", "", _ability_token_text(token).upper())
+        for token in meta_tokens
+        if _ability_token_confidence(token) >= 0.90
+    }
+    required_meta_labels = {
+        "FIG7",
+        "OL1",
+        "OL2",
+        "OL3",
+        "EFLMM",
+        "FNO",
+        "TTLMM",
+        "F1MM",
+        "F2MM",
+        "F3MM",
+        "F4MM",
+        "F5MM",
+        "F345MM",
+        "F2F345",
+        "TTLEFL",
+        "R1MM",
+        "R2MM",
+        "R3MM",
+        "R4MM",
+    }
+    missing_meta_labels = sorted(required_meta_labels - meta_labels)
+    if missing_meta_labels:
+        raise PatentParseError(
+            "Ability three-five-lens metadata lacks labels: "
+            + ",".join(missing_meta_labels)
+        )
+    meta_coordinate_text = " ".join(
+        _ability_token_text(token) for token in meta_tokens
+    )
+    if angular_field_pattern.search(meta_mirror_text) or angular_field_pattern.search(
+        meta_coordinate_text
+    ):
+        raise PatentParseError(
+            "Ability three-five-lens metadata may publish angular field"
+        )
+
+    ol2_tokens = list(prescription_pages[2]["rapidocr_tokens"])
+    ol2_s1 = _ability_unique_token(
+        ol2_tokens,
+        "S1",
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    ol2_surface_r1 = _ability_unique_token(
+        ol2_tokens,
+        "-17.90",
+        min_confidence=0.99,
+    )
+    if abs(_ability_token_center(ol2_s1)[1] - _ability_token_center(ol2_surface_r1)[1]) > (
+        _ABILITY_ROW_Y_TOLERANCE
+    ):
+        raise PatentParseError(
+            "Ability OL2 FIG. 5A S1/R1 row association changed"
+        )
+    meta_ol2 = _ability_unique_token(
+        meta_tokens,
+        "OL2",
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    meta_r1 = _ability_unique_token(
+        meta_tokens,
+        "R1 (mm)",
+        min_confidence=_ABILITY_OCR_LABEL_CONFIDENCE,
+    )
+    meta_ol2_r1 = _ability_unique_token(
+        meta_tokens,
+        "17.90",
+        min_confidence=0.99,
+    )
+    meta_ol2_r1_x, meta_ol2_r1_y = _ability_token_center(meta_ol2_r1)
+    if (
+        abs(_ability_token_center(meta_ol2)[0] - meta_ol2_r1_x)
+        > _ABILITY_COLUMN_X_TOLERANCE
+        or abs(_ability_token_center(meta_r1)[1] - meta_ol2_r1_y)
+        > _ABILITY_ROW_Y_TOLERANCE
+    ):
+        raise PatentParseError(
+            "Ability OL2 FIG. 7 R1 column/row association changed"
+        )
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=f"Ability optical lens OL{embodiment_number}",
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=(
+                    "metadata_unpublished.prescription_specific_angular_field_absent"
+                    if embodiment_number != 2
+                    else "metadata_unpublished.prescription_specific_angular_field_"
+                    "absent_and_r1_sign_conflicted"
+                ),
+                detail=(
+                    f"official HTML and all 13 exact-raster PDF pages publish the complete "
+                    f"OL{embodiment_number} five-lens prescription, EFL, and Fno, but no "
+                    "angular field"
+                    + (
+                        "; FIG. 5A publishes S1/R1=-17.90 mm while FIG. 7 publishes "
+                        "OL2 R1=+17.90 mm"
+                        if embodiment_number == 2
+                        else ""
+                    )
+                ),
+            ),
+        )
+        for embodiment_number in (1, 2, 3)
+    ]
+
+
 def _ability_two_nine_lens_terminal_attempts(
     payload: dict[str, Any],
 ) -> list[_PrescriptionParseAttempt]:
@@ -8435,6 +8771,8 @@ def _parse_ability_pdf_ocr_attempts(
         return [_ability_eight_lens_terminal_attempt(payload)]
     if profile == _ABILITY_THREE_LENS_PROFILE:
         return _parse_ability_three_lens_attempts(payload)
+    if profile == _ABILITY_THREE_FIVE_LENS_PROFILE:
+        return _ability_three_five_lens_terminal_attempts(payload)
     if profile == _ABILITY_TWO_FIVE_LENS_PROFILE:
         return _parse_ability_two_five_lens_attempts(payload)
     if profile == _ABILITY_TWO_NINE_LENS_PROFILE:

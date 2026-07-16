@@ -3405,6 +3405,147 @@ def _genius_eight_lens_fourteen_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _ability_three_five_lens_pdf_ocr_parser_input(
+    publication_id: str = "US-11719909-B2",
+) -> bytes:
+    source_profile = patent_to_zmx._ABILITY_THREE_FIVE_LENS_PUBLICATION_SOURCES[
+        publication_id
+    ]
+    source_facts = {
+        "primary_html_sha256": source_profile["primary_html_sha256"],
+        "normalized_text_sha256": source_profile["normalized_text_sha256"],
+        "family_id": "74187659",
+        "application_number": "16/883126",
+        "prescription_count": 3,
+        "lens_element_count": 5,
+        "figure_binding_counts": dict.fromkeys(
+            (
+                "surface_ol1",
+                "asphere_ol1",
+                "surface_ol2",
+                "asphere_ol2",
+                "surface_ol3",
+                "asphere_ol3",
+                "system_meta",
+            ),
+            2,
+        ),
+        "angular_field_label_counts": {
+            "FOV": 0,
+            "HFOV": 0,
+            "field of view": 0,
+            "viewing angle": 0,
+            "angle of view": 0,
+            "image height": 0,
+        },
+        "shape_coordinate_definition_counts": {"h": 1, "H": 1},
+    }
+    common_prescription_labels = (
+        "Surface",
+        "Curvature",
+        "Thickness",
+        "Refractive",
+        "Abbe",
+        "S2",
+        "S3",
+        "S4",
+        "St",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9",
+        "S10",
+        "S11",
+        "S12",
+        "K",
+        "A2",
+        "A4",
+        "A6",
+        "A8",
+        "A10",
+        "A12",
+        "A14",
+        "A16",
+    )
+    pages = []
+    for embodiment_number in (1, 2, 3):
+        role = f"ability_three_five_prescription_ol{embodiment_number}"
+        page_number = patent_to_zmx._ABILITY_THREE_FIVE_LENS_ROLE_PAGE_NUMBERS[role]
+        tokens = [
+            _ability_ocr_token(f"FIG. {embodiment_number + 3}A", 100.0, 100.0),
+            _ability_ocr_token(f"FIG. {embodiment_number + 3}B", 200.0, 100.0),
+            _ability_ocr_token("S1", 100.0, 200.0),
+            *(
+                _ability_ocr_token(label, 300.0 + index * 10.0, 300.0)
+                for index, label in enumerate(common_prescription_labels)
+            ),
+        ]
+        if embodiment_number == 2:
+            tokens.append(_ability_ocr_token("-17.90", 200.0, 200.0))
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": role,
+                "official_image_sha256": source_profile["key_page_image_sha256"][role],
+                "mirror_text": (
+                    "" if page_number in source_profile["blank_key_pages"] else "OCR text"
+                ),
+                "rapidocr_tokens": tokens,
+            }
+        )
+
+    meta_role = "ability_three_five_system_meta"
+    meta_page_number = patent_to_zmx._ABILITY_THREE_FIVE_LENS_ROLE_PAGE_NUMBERS[
+        meta_role
+    ]
+    meta_tokens = [
+        _ability_ocr_token("FIG. 7", 100.0, 500.0),
+        _ability_ocr_token("OL1", 200.0, 100.0),
+        _ability_ocr_token("OL2", 300.0, 100.0),
+        _ability_ocr_token("OL3", 400.0, 100.0),
+        _ability_ocr_token("EFL (mm)", 100.0, 150.0),
+        _ability_ocr_token("Fno", 100.0, 170.0),
+        _ability_ocr_token("TTL (mm)", 100.0, 190.0),
+        _ability_ocr_token("F1 (mm)", 100.0, 210.0),
+        _ability_ocr_token("F2 (mm)", 100.0, 230.0),
+        _ability_ocr_token("F3 (mm)", 100.0, 250.0),
+        _ability_ocr_token("F4 (mm)", 100.0, 270.0),
+        _ability_ocr_token("F5 (mm)", 100.0, 290.0),
+        _ability_ocr_token("F345 (mm)", 100.0, 310.0),
+        _ability_ocr_token("F2/F345", 100.0, 330.0),
+        _ability_ocr_token("TTL/EFL", 100.0, 350.0),
+        _ability_ocr_token("R1 (mm)", 100.0, 400.0),
+        _ability_ocr_token("R2 (mm)", 100.0, 420.0),
+        _ability_ocr_token("R3 (mm)", 100.0, 440.0),
+        _ability_ocr_token("R4 (mm)", 100.0, 460.0),
+        _ability_ocr_token("17.90", 300.0, 400.0),
+    ]
+    pages.append(
+        {
+            "page_number": meta_page_number,
+            "role": meta_role,
+            "official_image_sha256": source_profile["key_page_image_sha256"][meta_role],
+            "mirror_text": (
+                ""
+                if meta_page_number in source_profile["blank_key_pages"]
+                else "OCR text"
+            ),
+            "rapidocr_tokens": meta_tokens,
+        }
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "ability_three_five_lens_angular_field_unpublished_v1",
+        "publication_id": publication_id,
+        "page_count": 13,
+        "source_facts": source_facts,
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_seven_lens_seven_pdf_ocr_parser_input() -> bytes:
     ordinals = ("first", "second", "third", "fourth", "fifth", "sixth", "seventh")
     pages = []
@@ -4365,6 +4506,58 @@ def test_ability_five_three_lens_sources_bind_five_prescriptions() -> None:
         assert not patent_pdf_recovery.ability_drawing_tables_declared(source + " ")
 
 
+def test_ability_three_five_lens_sources_bind_full_denominator_and_field_gap() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_paths = (
+        root
+        / "data/patent-lake/uspto-ppubs-html/US-PGPUB/a94cba4e581ebdb5/"
+        "US-20210026108-A1.html",
+        root
+        / "data/patent-lake/uspto-ppubs-html/USPAT/f43a4a419a082df6/"
+        "US-11719909-B2.html",
+    )
+
+    for source_path in source_paths:
+        source = source_path.read_text(encoding="utf-8")
+        assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+        layout = patent_pdf_recovery._ability_three_five_lens_source_layout(source)
+        assert layout["page_count"] == 13
+        assert len(layout["page_image_sha256"]) == 13
+        assert layout["role_pages"] == {
+            "ability_three_five_prescription_ol1": 4,
+            "ability_three_five_prescription_ol2": 5,
+            "ability_three_five_prescription_ol3": 6,
+            "ability_three_five_system_meta": 7,
+        }
+        facts = patent_pdf_recovery._ability_three_five_lens_source_facts(source)
+        assert facts["family_id"] == "74187659"
+        assert facts["application_number"] == "16/883126"
+        assert facts["prescription_count"] == 3
+        assert facts["lens_element_count"] == 5
+        assert facts["figure_binding_counts"] == dict.fromkeys(
+            (
+                "surface_ol1",
+                "asphere_ol1",
+                "surface_ol2",
+                "asphere_ol2",
+                "surface_ol3",
+                "asphere_ol3",
+                "system_meta",
+            ),
+            2,
+        )
+        assert facts["angular_field_label_counts"] == {
+            "FOV": 0,
+            "HFOV": 0,
+            "field of view": 0,
+            "viewing angle": 0,
+            "angle of view": 0,
+            "image height": 0,
+        }
+        assert facts["shape_coordinate_definition_counts"] == {"h": 1, "H": 1}
+        assert not patent_pdf_recovery.ability_drawing_tables_declared(source + " ")
+
+
 def test_aac_two_three_lens_sources_bind_two_prescriptions_and_field_gap() -> None:
     root = Path(__file__).resolve().parents[1]
     source_paths = (
@@ -4892,6 +5085,65 @@ def test_ability_two_nine_lens_profile_rejects_ocr_f_number_label() -> None:
         patent_to_zmx._parse_prescription_attempts(
             json.dumps(payload),
             patent_id="US-10690884-B2",
+        )
+
+
+@pytest.mark.parametrize("publication_id", ("US-11719909-B2", "US-20210026108-A1"))
+def test_ability_three_five_lens_profile_records_three_field_terminals(
+    publication_id: str,
+) -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_three_five_lens_pdf_ocr_parser_input(publication_id).decode(),
+        patent_id=publication_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        "metadata_unpublished.prescription_specific_angular_field_absent",
+        "metadata_unpublished.prescription_specific_angular_field_"
+        "absent_and_r1_sign_conflicted",
+        "metadata_unpublished.prescription_specific_angular_field_absent",
+    ]
+    assert "FIG. 5A publishes S1/R1=-17.90 mm" in str(attempts[1].error)
+    assert "FIG. 7 publishes OL2 R1=+17.90 mm" in str(attempts[1].error)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    (
+        ("field", "may publish angular field"),
+        ("source", "source fact 'angular_field_label_counts' changed"),
+        ("raster", "raster hash changed"),
+        ("r1", "token '17.90' occurs 0 times"),
+    ),
+)
+def test_ability_three_five_lens_profile_fails_closed_on_source_drift(
+    mutation: str,
+    message: str,
+) -> None:
+    payload = json.loads(_ability_three_five_lens_pdf_ocr_parser_input())
+    if mutation == "field":
+        payload["pages"][-1]["rapidocr_tokens"].append(
+            _ability_ocr_token("FOV", 500.0, 500.0)
+        )
+    elif mutation == "source":
+        payload["source_facts"]["angular_field_label_counts"]["FOV"] = 1
+    elif mutation == "raster":
+        payload["pages"][0]["official_image_sha256"] = "0" * 64
+    else:
+        for token in payload["pages"][-1]["rapidocr_tokens"]:
+            if token["text"] == "17.90":
+                token["text"] = "-17.90"
+
+    with pytest.raises(PatentParseError, match=message):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-11719909-B2",
         )
 
 

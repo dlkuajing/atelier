@@ -59,6 +59,72 @@ _ABILITY_THREE_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 7 lists optical data of the optical lenses OL 1 , OL 2 , OL 3",
 )
 _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
+_ABILITY_THREE_FIVE_LENS_PROFILE = (
+    "ability_three_five_lens_angular_field_unpublished_v1"
+)
+_ABILITY_THREE_FIVE_LENS_BINDING_PATTERNS = {
+    "surface_ol1": r"FIG\s*\.\s*4\s*A\s+lists\s+each\s+lens\s+parameter",
+    "asphere_ol1": r"FIG\s*\.\s*4\s*B\s+lists\s+aspheric\s+coefficients",
+    "surface_ol2": r"FIG\s*\.\s*5\s*A\s+lists\s+each\s+lens\s+parameter",
+    "asphere_ol2": r"FIG\s*\.\s*5\s*B\s+lists\s+aspheric\s+coefficients",
+    "surface_ol3": r"FIG\s*\.\s*6\s*A\s+lists\s+each\s+lens\s+parameter",
+    "asphere_ol3": r"FIG\s*\.\s*6\s*B\s+lists\s+aspheric\s+coefficients",
+    "system_meta": r"FIG\s*\.\s*7\s+lists\s+optical\s+information",
+}
+_ABILITY_THREE_FIVE_LENS_ROLE_PAGES = {
+    "ability_three_five_prescription_ol1": 4,
+    "ability_three_five_prescription_ol2": 5,
+    "ability_three_five_prescription_ol3": 6,
+    "ability_three_five_system_meta": 7,
+}
+_ABILITY_THREE_FIVE_LENS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "f43a4a419a082df67f60af279a3053069903b81eac017ba14d55359904840987": {
+        "application_number": "16/883126",
+        "normalized_text_sha256": (
+            "9a41a01aeb9a626685aa3a7939d2c34c3dd442573accf78a2de062fb73b72910"
+        ),
+        "page_count": 13,
+        "blank_mirror_pages": frozenset(range(1, 14)),
+        "page_image_sha256": (
+            "6ce17af05bcb10833f82327e7fcc15993652daad569928ea65a7a5fb43ec7d40",
+            "68719a082f41eb68aaaef42690f7b931ad73cc25845c247e8e66f1665d23287b",
+            "42710a6e86ccd32178768109e1122284481136c588df4bf1a1cdc9bac7eb28e1",
+            "055d03af44b5645747398e2a8909828d0d8daa9eb5ad450435c005ddfaafd318",
+            "d228c17cc75a9ee07221c983939fe84a2c52227b946d4973a8b4b9a76c7f1fbc",
+            "07969a02deff4c2b837b465d7218e1ef992b4f0e4b34578efbb1a90b0070ea28",
+            "71d564b5a924d610faf1434749a7798fb097923815b32960fb94cf5f6874354d",
+            "f9d78791e50b3bb8f6aeb5b913f8e7727f6c58d566d3b334fe8dcf33fc4f7206",
+            "8f4495e97a5fefd284b21f2d42852f2be99f5455aa01aa103bfea012398828fb",
+            "58b3d6cac78c6ec13eb3f2901749a8ca0a066f161703a4c53d5adc7640b1aa19",
+            "c556278d8db31888f2c024eaed389cb3a7b00b35bde1568b038f5195878e140d",
+            "149e068f56da88775fa69646af80ee8b2a510f9380fbdd804aa96022a48549c5",
+            "352d79924a39529657d9af653e0875c8330ff05adf369f7d89a512f648f1a8cb",
+        ),
+    },
+    "a94cba4e581ebdb5b65798212ca6211170174ac43d60e539cce2152cf9d6c8de": {
+        "application_number": "16/883126",
+        "normalized_text_sha256": (
+            "49c30c4ae4049648ef33fd99bc6a5eb0f00c4da7f6e9c97949f5f1dc041e68d1"
+        ),
+        "page_count": 13,
+        "blank_mirror_pages": frozenset(),
+        "page_image_sha256": (
+            "667562164dc4ad02135f661fc336d574ffd2b8e2362465ecaa06acd72b7bd968",
+            "085e01c20df7f66bdc7f90b1d7935c2c4505511787cc83385d2d300b267260a3",
+            "02f2c8c7e283316db6f2324345fadf4440f824ded7815e867fbea280b2e5c390",
+            "d20d9ff892f922c5ad176338e64c05d02a966b30f0bf6e359b9db89c4e4c1add",
+            "95742709b43e371b5f6c8bae4765cf46bea3609c5046d15de40742113c189c9b",
+            "d4e2eb07042851f8025ea6037d2b654a1f2941c248ad64dfba28683b4448abda",
+            "bd904a31f239fb583b2183d901dbeb37a9a30769938a548b728a4f11d9da51d9",
+            "c2cf657990d7773f275578e988a59797a43803bcb086ac335eb0ee1fc805b23c",
+            "71cfb7959d7a019816dc2b363a8cfcaf681895eaaa6fc7316fc1d20cbe9745ca",
+            "19fee2dd2903b2b4cc1c5a5bee9ea801846dd46fcea34a82578dbc86b42a674d",
+            "f8dac69f7cfa9c1bce6931d56739b4757ed3ea81e72572e86636973453536766",
+            "ee681be1a5f9c92b5728bff9dececa0eecf9fd5c9050a8ea3bd452006409b4b7",
+            "c2acca3b6f1d89bf8f79a8f7925d6ce5c65473351b7ca8f000ee8c627b10c19c",
+        ),
+    },
+}
 _ABILITY_TWO_FIVE_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 3A shows each lens parameter of the optical lens of FIG. 1",
     "FIG. 3B shows each coefficient of a mathematical formula of aspheric surface "
@@ -789,6 +855,11 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _KODAK_LOW_STRESS_REQUIRED_TEXT
     ):
         return _KODAK_LOW_STRESS_TWO_LENS_PROFILE
+    if digest in _ABILITY_THREE_FIVE_LENS_SOURCE_LAYOUTS and all(
+        re.search(pattern, text, flags=re.IGNORECASE) is not None
+        for pattern in _ABILITY_THREE_FIVE_LENS_BINDING_PATTERNS.values()
+    ):
+        return _ABILITY_THREE_FIVE_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_REQUIRED_FIGURE_TEXT):
         return "ability_two_lens_prescriptions_v1"
     if all(marker in text for marker in _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
@@ -1381,6 +1452,94 @@ def _genius_eight_lens_fourteen_source_facts(raw_html: str) -> dict[str, Any]:
     }
 
 
+def _ability_three_five_lens_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _ABILITY_THREE_FIVE_LENS_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Ability three-five-lens official HTML is not source-locked"
+        )
+    return {**layout, "role_pages": dict(_ABILITY_THREE_FIVE_LENS_ROLE_PAGES)}
+
+
+def _ability_three_five_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind three five-lens prescriptions and prove angular field is unpublished."""
+
+    text = _normalized_html_text(raw_html)
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _ability_three_five_lens_source_layout(raw_html)
+    normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Ability three-five-lens normalized official HTML hash changed"
+        )
+
+    figure_binding_counts = {
+        role: len(re.findall(pattern, text, flags=re.IGNORECASE))
+        for role, pattern in _ABILITY_THREE_FIVE_LENS_BINDING_PATTERNS.items()
+    }
+    if figure_binding_counts != dict.fromkeys(
+        _ABILITY_THREE_FIVE_LENS_BINDING_PATTERNS,
+        2,
+    ):
+        raise PatentPdfRecoveryError(
+            "Ability three-five-lens official figure-binding denominator changed"
+        )
+
+    angular_field_patterns = {
+        "FOV": r"\bFOV\b",
+        "HFOV": r"\bHFOV\b",
+        "field of view": r"\bfield\s+of\s+view\b",
+        "viewing angle": r"\bviewing\s+angle\b",
+        "angle of view": r"\bangle\s+of\s+view\b",
+        "image height": r"\bimage\s+height\b",
+    }
+    angular_field_label_counts = {
+        label: len(re.findall(pattern, text, flags=re.IGNORECASE))
+        for label, pattern in angular_field_patterns.items()
+    }
+    if any(angular_field_label_counts.values()):
+        raise PatentPdfRecoveryError(
+            "Ability three-five-lens official HTML may publish angular-field metadata"
+        )
+
+    shape_coordinate_definition_counts = {
+        "h": len(
+            re.findall(
+                r"distance\s+between\s+the\s+inflection\s+point\s+IF\s+and\s+"
+                r"the\s+optical\s+axis\s+OA\s+is\s+h",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ),
+        "H": len(
+            re.findall(
+                r"distance\s+between\s+an\s+outer\s+edge\s+of\s+the\s+image-side\s+"
+                r"surface\s+S\s*10\s+of\s+the\s+fifth\s+lens\s+L\s*5\s+and\s+"
+                r"the\s+optical\s+axis\s+OA\s+is\s+H",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ),
+    }
+    if shape_coordinate_definition_counts != {"h": 1, "H": 1}:
+        raise PatentPdfRecoveryError(
+            "Ability three-five-lens h/H shape-coordinate definitions changed"
+        )
+
+    return {
+        "primary_html_sha256": digest,
+        "normalized_text_sha256": normalized_digest,
+        "family_id": "74187659",
+        "application_number": layout["application_number"],
+        "prescription_count": 3,
+        "lens_element_count": 5,
+        "figure_binding_counts": figure_binding_counts,
+        "angular_field_label_counts": angular_field_label_counts,
+        "shape_coordinate_definition_counts": shape_coordinate_definition_counts,
+    }
+
+
 def genius_seven_lens_seven_source_layout_for_sha256(
     digest: str,
 ) -> dict[str, Any]:
@@ -1828,6 +1987,11 @@ async def recover_ability_official_pdf_ocr(
         ability_five_three_layout = _ability_five_three_lens_source_layout(primary_html)
         if mirror_pdf is None:
             raise PatentPdfRecoveryError("Ability five-three-lens mirror PDF is unavailable")
+    ability_three_five_layout: dict[str, Any] | None = None
+    if profile == _ABILITY_THREE_FIVE_LENS_PROFILE:
+        ability_three_five_layout = _ability_three_five_lens_source_layout(primary_html)
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError("Ability three-five-lens mirror PDF is unavailable")
     aac_two_three_layout: dict[str, Any] | None = None
     if profile == _AAC_TWO_THREE_LENS_PROFILE:
         aac_two_three_layout = _aac_two_three_lens_source_layout(primary_html)
@@ -1875,6 +2039,16 @@ async def recover_ability_official_pdf_ocr(
         if blank_mirror_pages != expected_blank_pages:
             raise PatentPdfRecoveryError(
                 "Ability five-three-lens OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
+            )
+    elif profile == _ABILITY_THREE_FIVE_LENS_PROFILE:
+        assert ability_three_five_layout is not None
+        expected_blank_pages = ability_three_five_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "Ability three-five-lens OCR overlay blank-page set changed: actual="
                 + ",".join(str(page) for page in sorted(blank_mirror_pages))
                 + " expected="
                 + ",".join(str(page) for page in sorted(expected_blank_pages))
@@ -1932,6 +2106,14 @@ async def recover_ability_official_pdf_ocr(
         page_hashes.append(_canonical_raster_sha256(official_image))
         official_images.append(official_image)
 
+    if profile == _ABILITY_THREE_FIVE_LENS_PROFILE:
+        assert ability_three_five_layout is not None
+        expected_page_hashes = ability_three_five_layout["page_image_sha256"]
+        if tuple(page_hashes) != expected_page_hashes:
+            raise PatentPdfRecoveryError(
+                "Ability three-five-lens full PDF raster denominator changed"
+            )
+
     rapidocr_rotation: str | None = None
     page_ocr_metadata: dict[str, dict[str, Any]] = {}
     if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
@@ -1956,6 +2138,16 @@ async def recover_ability_official_pdf_ocr(
         parser_profile = profile
         source_facts = _kodak_low_stress_source_facts(primary_html)
         rapidocr_rotation = "counterclockwise_90"
+    elif profile == _ABILITY_THREE_FIVE_LENS_PROFILE:
+        assert ability_three_five_layout is not None
+        if page_count != ability_three_five_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Ability three-five-lens PDF page count changed: "
+                f"actual={page_count} expected={ability_three_five_layout['page_count']}"
+            )
+        role_pages = dict(ability_three_five_layout["role_pages"])
+        parser_profile = profile
+        source_facts = _ability_three_five_lens_source_facts(primary_html)
     elif profile == "ability_two_lens_prescriptions_v1":
         role_pages = {
             "surface_ol1": _figure_page(
