@@ -504,6 +504,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_dye_aggregate_optical_filter_materials_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_low_reflection_light_blocking_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -2225,6 +2233,90 @@ _FOLDED_REFLECTIVE_REFRACTIVE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "surface number": 0,
             "F-number": 0,
             "FNO": 0,
+        },
+    },
+}
+_DYE_AGGREGATE_OPTICAL_FILTER_TITLE_PATTERN = re.compile(
+    r"\bFILM\s*,\s*FILM\s+FORMING\s+METHOD\s*,\s*OPTICAL\s+FILTER\s*,\s*"
+    r"LAMINATE\s*,\s*SOLID\s+IMAGE\s+PICKUP\s+ELEMENT\s*,\s*IMAGE\s+DISPLAY\s+"
+    r"DEVICE\s*,\s*AND\s+INFRARED\s+SENSOR\b",
+    flags=re.IGNORECASE,
+)
+_DYE_AGGREGATE_OPTICAL_FILTER_ITEM = (
+    1,
+    "Dye-aggregate film and optical-filter materials disclosure",
+    "confirmed_no_prescription."
+    "dye_aggregate_film_and_optical_filter_materials_only",
+)
+_DYE_AGGREGATE_OPTICAL_FILTER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11118059-B2": {
+        "raw_document_sha256": (
+            "e7790b40f208dbfd463b8cd758eb9039e2db3aa2e1030040f7784be1dff160ef"
+        ),
+        "normalized_text_sha256": (
+            "a0eb39df7c75b8ca04b8d49171482c93fde090a68ed7b0ee40a8b5894d171409"
+        ),
+        "family_id": "59500840",
+        "application_number": "16/052051",
+        "section_sha256": {
+            "cross_reference": (
+                "e7fd977e6718fc58881182bae246a19e8b1fabdaf88fbc0727161536ee0c9f61"
+            ),
+            "background": (
+                "8f159d33305e060cf073436ec539f1374eefa275b8a08331b731490137ddf023"
+            ),
+            "summary": (
+                "8711d0ea7678c230a74675af611ae1e98dcc1bede91c284aec4d03c45ca414b7"
+            ),
+            "brief": (
+                "33eb0c1236ce1859f0b834f4377f594bb43302d30e6ab19231a8d1a63b4a7100"
+            ),
+            "detailed": (
+                "eaac56aee6cb6bb5da2774acdfc6242727a60a1950d86ea3adc53b324b43352e"
+            ),
+            "claims": (
+                "f394ac84ae507c989bd23a4287076057a4f000a5d24ad238edf02014dcfdd205"
+            ),
+        },
+        "table_block_sha256": (
+            "34dd1182501cbe0907197980a2409934fa023d15a2076e835c0106afd539ab1d",
+            "7053acc5b9f4f0d941936090175fb7b566e800e9d5ccc146c63721bfc18dad43",
+            "939600d862cbe0ab614f68411159a73ebf7246db095c5fccf3eecff333aafe04",
+            "934257c1c895af96ce4864d729ba66d643e4172324c1aa3607298aa0c4545d37",
+            "a558b18e3a1868d35bfd7474240f022c936a1b97a26d9eeec931d0015ff43571",
+            "6122f27ff3518a87765590ee9e4b8f735bab1a05f66010338d0b603995250c2f",
+        ),
+        "formal_table_sha256": (
+            "64f60bd129cc4c9a205f06944542cadaa49e32611e9095f0f28813e3f3c9976d",
+            "708eb8ab9063bc5ba6ffaa3d05d11b248a0ed6da7375abcd731eb43436ef7ce0",
+            "8e25a4b7559436936764d5bfc2e005c97346c2f304bff875a4b4934cd852e41c",
+            "76d275a2ae413d538994b1c5d985d2bc282b4a6c047ff948bc710365ad58ebc8",
+            "1f94a611917319f9b32d45b1ed28e52554a42ba6409765168d70a20f23e74169",
+            "e8fa3aeae21daf702efd30e74b3be437612417809d9285d797d1de4e59ac222e",
+        ),
+        "source_scope_phrase_counts": {
+            "Example": 412,
+            "Comparative Example": 1,
+            "optical filter": 31,
+            "infrared cut filter": 26,
+            "infrared transmitting filter": 23,
+            "solid image pickup element": 22,
+            "film forming method": 59,
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "radius": 0,
+            "curvature": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "prescription": 0,
+            "surface number": 0,
+            "refractive index": 3,
+            "lens": 10,
+            "microlens": 5,
         },
     },
 }
@@ -14815,6 +14907,308 @@ def _classify_folded_reflective_refractive_architecture_only_attempts(
             )
         )
     return attempts
+
+
+def _classify_dye_aggregate_optical_filter_materials_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 59500840 film/filter materials disclosure."""
+
+    profile = _DYE_AGGREGATE_OPTICAL_FILTER_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment_number, embodiment, reason_code = _DYE_AGGREGATE_OPTICAL_FILTER_ITEM
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"dye-aggregate optical-filter official raw text hash changed for "
+                f"{patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"dye-aggregate optical-filter normalized text hash changed for "
+                f"{patent_id}"
+            )
+        if _DYE_AGGREGATE_OPTICAL_FILTER_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("dye-aggregate optical-filter title binding changed")
+
+        identity_markers = {
+            f"Family ID: {profile['family_id']}": 1,
+            f"Appl. No.: {profile['application_number']}": 1,
+            "FUJIFILM Corporation": 2,
+            "US 20180340070 A1 Nov. 29, 2018": 1,
+            "PCT/JP2017/003587": 4,
+            "Japanese Patent Application No. 2016-019130": 1,
+            "JP2016-019130": 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"dye-aggregate optical-filter identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = (
+            (
+                "cross_reference",
+                "CROSS-REFERENCE TO RELATED APPLICATIONS (1)",
+            ),
+            (
+                "background",
+                "BACKGROUND OF THE INVENTION 1. Field of the Invention (1)",
+            ),
+            ("summary", "SUMMARY OF THE INVENTION (4)"),
+            ("brief", "BRIEF DESCRIPTION OF THE DRAWING (1)"),
+            (
+                "detailed",
+                "DESCRIPTION OF THE PREFERRED EMBODIMENTS (2)",
+            ),
+            ("claims", "Claims 1. A film comprising:"),
+        )
+        try:
+            starts = {name: text.index(marker) for name, marker in section_markers}
+        except ValueError as exc:
+            raise PatentParseError(
+                "dye-aggregate optical-filter normalized section boundary changed"
+            ) from exc
+        if tuple(starts.values()) != tuple(sorted(starts.values())):
+            raise PatentParseError(
+                "dye-aggregate optical-filter normalized section ordering changed"
+            )
+        ordered_names = tuple(name for name, _marker in section_markers)
+        sections = {
+            name: text[
+                starts[name] : (
+                    starts[ordered_names[index + 1]]
+                    if index + 1 < len(ordered_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(ordered_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"dye-aggregate optical-filter {section_name} section changed"
+                )
+
+        raw_section_markers = (
+            ("cross_reference", "CROSS-REFERENCE TO RELATED APPLICATIONS"),
+            ("background", "BACKGROUND OF THE INVENTION"),
+            ("summary", "SUMMARY OF THE INVENTION"),
+            ("brief", "BRIEF DESCRIPTION OF THE DRAWING"),
+            ("detailed", "DESCRIPTION OF THE PREFERRED EMBODIMENTS"),
+            ("claims", "<h3>Claims</h3>"),
+        )
+        try:
+            raw_starts = {
+                name: raw_text.index(marker) for name, marker in raw_section_markers
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "dye-aggregate optical-filter raw section boundary changed"
+            ) from exc
+        if tuple(raw_starts.values()) != tuple(sorted(raw_starts.values())):
+            raise PatentParseError(
+                "dye-aggregate optical-filter raw section ordering changed"
+            )
+        raw_ordered_names = tuple(name for name, _marker in raw_section_markers)
+        raw_sections = {
+            name: raw_text[
+                raw_starts[name] : (
+                    raw_starts[raw_ordered_names[index + 1]]
+                    if index + 1 < len(raw_ordered_names)
+                    else len(raw_text)
+                )
+            ]
+            for index, name in enumerate(raw_ordered_names)
+        }
+        if len(re.findall(r"\n\(1\)\s+This application is", raw_sections["cross_reference"])) != 1:
+            raise PatentParseError(
+                "dye-aggregate optical-filter cross-reference paragraph changed"
+            )
+        structural_paragraph_pattern = re.compile(
+            r"(?:<p>|<br\s*/?>)\s*\((\d+)\)",
+            re.IGNORECASE,
+        )
+        expected_paragraphs = {
+            "background": tuple(range(1, 4)),
+            "summary": tuple(range(4, 53)),
+            "brief": (1,),
+            "detailed": tuple(range(2, 734)),
+        }
+        for section_name, expected in expected_paragraphs.items():
+            observed = tuple(
+                int(value)
+                for value in structural_paragraph_pattern.findall(
+                    raw_sections[section_name]
+                )
+            )
+            if observed != expected:
+                raise PatentParseError(
+                    f"dye-aggregate optical-filter {section_name} paragraph "
+                    "denominator changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, 30)):
+            raise PatentParseError(
+                "dye-aggregate optical-filter claims 1-29 denominator changed"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 7)):
+            raise PatentParseError(
+                "dye-aggregate optical-filter TABLE 1-6 denominator changed"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError(
+                "dye-aggregate optical-filter PPUBS table block changed"
+            )
+        table_end_markers = ("(291)", "(723)", "(724)", "(725)", "(730)", "(732)")
+        formal_tables: list[str] = []
+        for block, end_marker in zip(blocks, table_end_markers, strict=True):
+            if end_marker not in block.text:
+                raise PatentParseError(
+                    f"dye-aggregate optical-filter TABLE {block.number} end changed"
+                )
+            formal_tables.append(block.text.split(end_marker, 1)[0])
+        formal_table_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_table_digests != profile["formal_table_sha256"]:
+            raise PatentParseError(
+                "dye-aggregate optical-filter formal table content changed"
+            )
+        example_1_to_38 = tuple(
+            int(value)
+            for value in re.findall(
+                r"\bExample\s+(\d+)\b", formal_tables[1], re.IGNORECASE
+            )
+        )
+        if example_1_to_38 != tuple(range(1, 39)):
+            raise PatentParseError(
+                "dye-aggregate optical-filter Examples 1-38 denominator changed"
+            )
+        example_39_to_57 = tuple(
+            int(value)
+            for value in re.findall(
+                r"\b(3[9]|4\d|5[0-7])\s+Dye\b",
+                formal_tables[2],
+                re.IGNORECASE,
+            )
+        )
+        if example_39_to_57 != tuple(range(39, 58)):
+            raise PatentParseError(
+                "dye-aggregate optical-filter Examples 39-57 denominator changed"
+            )
+        comparative_1_to_18 = tuple(
+            int(value)
+            for value in re.findall(
+                r"\bExample\s+(\d+)\b", formal_tables[3], re.IGNORECASE
+            )
+        )
+        if comparative_1_to_18 != tuple(range(1, 19)):
+            raise PatentParseError(
+                "dye-aggregate optical-filter Comparative Examples 1-18 "
+                "denominator changed"
+            )
+        if len(re.findall(r"\bComparative\b", formal_tables[3], re.IGNORECASE)) != 18:
+            raise PatentParseError(
+                "dye-aggregate optical-filter comparative row binding changed"
+            )
+
+        figure_numbers = tuple(re.findall(r"\bFIG\.\s*(\d+)", text, re.IGNORECASE))
+        if figure_numbers != ("1", "1"):
+            raise PatentParseError(
+                "dye-aggregate optical-filter single-figure denominator changed"
+            )
+        structure_numbers = tuple(
+            int(value) for value in re.findall(r"##STR(\d{5})##", text)
+        )
+        if structure_numbers != (*range(1, 78), 90):
+            raise PatentParseError(
+                "dye-aggregate optical-filter chemical-structure denominator changed"
+            )
+        context_markers = {
+            "FIG. 1 is a schematic diagram showing an embodiment of an infrared sensor.": 1,
+            "110 : solid image pickup element": 1,
+            "111 : infrared cut filter": 1,
+            "112 : color filter": 1,
+            "114 : infrared transmitting filter": 1,
+            "115 : microlens": 1,
+            "116 : planarizing layer": 1,
+            (
+                "in the films obtained in Examples, the evaluation results of light "
+                "fastness, heat resistance, and defects were excellent"
+            ): 1,
+            (
+                "by further adding a coloring material that shields visible light, "
+                "an infrared transmitting filter having excellent spectral variation "
+                "resistance was obtained"
+            ): 1,
+        }
+        for marker, expected in context_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"dye-aggregate optical-filter context marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"dye-aggregate optical-filter phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the exact source-scoped item
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=(
+                    "the exact retained source publishes 57 film Examples, 18 "
+                    "Comparative Examples, six material/process tables, and one "
+                    "infrared-sensor layer-stack figure, but no ordered optical "
+                    "surface prescription"
+                ),
+            ),
+        )
+    ]
 
 
 def _classify_lens_driving_mechanical_only_attempts(
