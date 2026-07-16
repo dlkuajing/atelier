@@ -427,6 +427,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_aac_seven_lens_exact_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -3298,6 +3304,121 @@ _AAC_FIVE_LENS_F_NUMBER_BOUND_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "cf0a072bd18019383c6a8c09b0371e25c70e4a774c4f9ddcf66ccf46d0162c7f",
             "b6661c08b378a6873a2684c2b5e0fb4f8e24c7fa39c2faa4665c6d7d67242e95",
             "ba0e66cafc6365d0d040a22cf185d886eefe615029952c15566690cbc271b4a2",
+        ),
+    },
+}
+
+_AAC_SEVEN_LENS_EXACT_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Camera\s+optical\s+lens\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_AAC_SEVEN_LENS_EXACT_FIGURES = tuple(range(1, 13))
+_AAC_SEVEN_LENS_EXACT_TABLE_BINDINGS = ((1, 2), (5, 6), (9, 10))
+_AAC_SEVEN_LENS_EXACT_SYSTEM_METADATA = (
+    (4.925, 1.55, 77.08, 3.177, 4.0),
+    (4.762, 1.55, 78.86, 3.072, 4.0),
+    (4.981, 1.55, 76.65, 3.213, 4.0),
+)
+_AAC_SEVEN_LENS_EXACT_TABLE_13_LABELS = (
+    "f",
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f12",
+    "FNO",
+    "f1/f",
+    "n1",
+    "f3/f4",
+    "(R13 + R14)/(R13 - R14)",
+    "n2",
+)
+_AAC_SEVEN_LENS_EXACT_PHRASE_COUNTS = {
+    "entrance pupil diameter of the camera optical lens is": 3,
+    "image height of 1.0H is 4.0 mm": 3,
+    "FOV (field of view) is": 3,
+    "FNO 1.55 1.55 1.55": 1,
+    (
+        "Here, K is a conic coefficient, and A4, A6, A8, A10, A12, "
+        "A14 and A16 are aspheric surface coefficients."
+    ): 1,
+    "S1: aperture": 1,
+    "R16: curvature radius of an image side surface of the optical filter GF": 1,
+}
+_AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11467375-B2": {
+        "raw_document_sha256": (
+            "d06dcb7578f86ca8533ef6858e662c4b2bca133a9e0813636b2362182baecd40"
+        ),
+        "normalized_text_sha256": (
+            "f362e26c2d8805be302eba9e6aa51bc253df1e7746c932a9dd244715b41e0117"
+        ),
+        "section_markers": {
+            "background": "Background/Summary TECHNICAL FIELD (1)",
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+            "detailed": "DESCRIPTION OF EMBODIMENTS (14)",
+            "claims": "Claims 1. A camera optical lens, comprising,",
+        },
+        "section_sha256": {
+            "background": (
+                "be9272d04802ed90867bf58a533bc9c433dfef0930a2779820c33ef362f99dc0"
+            ),
+            "brief": (
+                "3d9a72a4323bd5e5b897d52bbf1e74efd13971ff59fee2c7bb519887f93b301f"
+            ),
+            "detailed": (
+                "4d7d7b924674d4dad1457e4c1c457265da006753fc8b28b5714898788f8f8bca"
+            ),
+            "claims": (
+                "1c89035c081fdc942601f1eab067bf71f17ec8fc1d8d5e3a13a804813b1d76d4"
+            ),
+        },
+        "paragraph_ranges": {
+            "background": (1, 2),
+            "brief": (1, 13),
+            "detailed": (14, 147),
+        },
+        "claim_count": 19,
+        "identity_markers": {
+            "Family ID: 71121572": 1,
+            "Appl. No.: 16/675252": 1,
+            "AAC Optics Solutions Pte. Ltd.": 2,
+            "US 20200209560 A1 Jul. 02, 2020": 1,
+            "CN 201811614496.6 Dec. 27, 2018": 1,
+            "CN 201811616007.0 Dec. 27, 2018": 1,
+        },
+        "table_block_sha256": (
+            "02bc7ff3cc4a1cb56dba7a19319473b5592388c3e5769cb396e6cbf8f852c133",
+            "03b6f07c8062bcadc37b7002a48df85634dc32dcd43ee3b10def102cdc5b268d",
+            "408f8868a2d07245b56b8974a0bd601af02aeefae56dded1cbde592d404bf4b1",
+            "83a7afcc51cdec21278d5391bf474fcd2ea8c8ae86b8d80c01595a5afb3742f4",
+            "58b3719d8e991f3ad0780dd30ec9a412d6b7c1eea3161262f56ec6a76447fe26",
+            "390756f3665025fa9ce9c1d73dddddb8b6966369442aaa02630effc3c2b955ca",
+            "53a29dcfdc4c3b03248b6f4d8e52ade3e058582ead75502d200bcd4b495afaa7",
+            "389405950a3ce8a64a9fc78a868550ff90b2303245a8bef717b8c81946fee8bb",
+            "ca3b9b61b2fea0c51a899e9b837c90820e2bfdbb4311dc654eddf10a05317d73",
+            "5c9bb7c4875a850bed6a49a692206200f051b714fbbf5b646c45798d3ea84955",
+            "fe2bd09902739db8074f405237bc6888849675c57d96384c834cea1c77a24b50",
+            "a5d43d5038238107475ab31ada61bba017a439d0f64be7049264a3631adefcc3",
+            "135181ca837bb78996b737aa148414298d0706eae50f6c6b49dc4674930da69e",
+        ),
+        "formal_table_sha256": (
+            "9a53f6fcc69dafe221d32e8c4f474d5917f2922758b3e2c70a90e6bf55257627",
+            "300f25e7246deeed19958853192b029ee731e58c6585ebe492b697de8a113cbf",
+            "8f5f5e1644d88d58caf966bf3b6c6640c0d827c62958e2b01b91a2a340fd26a6",
+            "629ca2aef058fe8034b4bc93bc12cc461a2e9b23e3f106f0cf7196d2e8e93956",
+            "6c60e045d4979b89b0f871db61cfed2a57a870869e674dc0a35e56f03c96200f",
+            "b6bd1f4b97a7f7b7e7f7eac7cab7b6dbf374d23e5294c516816e731dd3b95150",
+            "f0efb6c42bbb639aef2eadcc60110d344fca4532e53e550c326a36d5eaf50d3c",
+            "e0deb809d69bd35615974f903f8cebaa497f31a524e7e5169f1c27fd375f443f",
+            "08f674d29a9df87795d58306e5b4b7a419237ad32b3714979f1a1cb3abb17bf7",
+            "686d32a6de3d5ce76902a2a5bfa66228d77da3482bc20d0bd8b9f46b25926308",
+            "938c801fd86a0af719399b976c1de652d405b453e14dfe07dc0a06275ef48c4f",
+            "56863afcb922893ed60cdea338df2fe7206011ee2d4885b9c06bdbb54260e243",
+            "33fd2a7c17638f25c63c6680cae3cec20a0b4340404b15252867cec9589dd5c6",
         ),
     },
 }
@@ -17765,6 +17886,477 @@ def _classify_folded_lens_barrel_driving_only_attempts(
                 ),
             ),
         ),
+    ]
+
+
+def _aac_seven_lens_exact_formal_table(block: str) -> str:
+    return re.split(r"\s+\(\d+\)\s+", block, maxsplit=1)[0]
+
+
+def _parse_aac_seven_lens_exact_surface_table(
+    table: str,
+    *,
+    table_number: int,
+) -> list[PatentSurface]:
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+R\s+d\s+nd\s+ν\s+d\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"AAC seven-lens TABLE {table_number} surface header changed"
+        )
+    body = table[header.end() :]
+    position = 0
+
+    def take(pattern: str, *, context: str) -> re.Match[str]:
+        nonlocal position
+        match = re.match(pattern, body[position:], flags=re.IGNORECASE)
+        if match is None:
+            raise PatentParseError(
+                f"AAC seven-lens TABLE {table_number} {context} changed near "
+                f"{body[position:position + 80]!r}"
+            )
+        position += match.end()
+        return match
+
+    stop = take(
+        rf"S1\s+Infinity\s+d0\s*=\s*(?P<thickness>{NUMBER_PATTERN})\s+",
+        context="aperture row",
+    )
+    surfaces = [
+        PatentSurface(
+            index=1,
+            label="Stop",
+            radius_mm=math.inf,
+            thickness_mm=_parse_number(stop.group("thickness")),
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    ]
+
+    for surface_number in range(1, 17):
+        row = take(
+            rf"\s*R{surface_number}\s+(?P<radius>Infinity|{NUMBER_PATTERN})\s+"
+            rf"d{surface_number}\s*=\s*(?P<thickness>{NUMBER_PATTERN})",
+            context=f"R{surface_number} radius/thickness row",
+        )
+        radius = _distance_value(
+            row.group("radius"),
+            field_name=f"AAC TABLE {table_number} R{surface_number} radius",
+        )
+        thickness = _parse_number(row.group("thickness"))
+        material = None
+        nd = vd = None
+        if surface_number % 2 == 1:
+            material_marker = (
+                "g" if surface_number == 15 else str((surface_number + 1) // 2)
+            )
+            material_row = take(
+                rf"\s+nd{material_marker}\s+(?P<nd>{NUMBER_PATTERN})\s+"
+                rf"ν\s+{material_marker}\s+(?P<vd>{NUMBER_PATTERN})",
+                context=f"R{surface_number} material row",
+            )
+            nd = _parse_number(material_row.group("nd"))
+            vd = _parse_number(material_row.group("vd"))
+            material = (
+                "Filter"
+                if surface_number == 15
+                else ("Glass" if surface_number <= 3 else "Plastic")
+            )
+            _validate_material_indices(
+                surface_index=surface_number + 1,
+                nd=nd,
+                vd=vd,
+            )
+        if surface_number < 15:
+            lens_number = (surface_number + 1) // 2
+            side = 1 if surface_number % 2 else 2
+            label = f"L{lens_number} S{side}"
+        else:
+            label = f"GF S{surface_number - 14}"
+        surfaces.append(
+            PatentSurface(
+                index=surface_number + 1,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+    if body[position:].strip():
+        raise PatentParseError(
+            f"AAC seven-lens TABLE {table_number} surface table has trailing tokens: "
+            f"{body[position:position + 120]!r}"
+        )
+    surfaces.append(
+        PatentSurface(
+            index=18,
+            label="Image",
+            radius_mm=math.inf,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    if [surface.label for surface in surfaces] != [
+        "Stop",
+        *(f"L{lens} S{side}" for lens in range(1, 8) for side in (1, 2)),
+        "GF S1",
+        "GF S2",
+        "Image",
+    ]:
+        raise PatentParseError(
+            f"AAC seven-lens TABLE {table_number} surface order changed"
+        )
+    return surfaces
+
+
+def _parse_aac_seven_lens_exact_asphere_table(
+    table: str,
+    *,
+    table_number: int,
+) -> dict[int, dict[str, float]]:
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"Conic\s+coefficient\s+Aspherical\s+surface\s+coefficients\s+"
+        r"k\s+A4\s+A6\s+A8\s+A10\s+A12\s+A14\s+A16\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"AAC seven-lens TABLE {table_number} asphere header changed"
+        )
+    tokens = table[header.end() :].split()
+    position = 0
+    labels = ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    coefficients: dict[int, dict[str, float]] = {}
+    for surface_number in range(1, 15):
+        expected_row = f"R{surface_number}"
+        if position >= len(tokens) or tokens[position].upper() != expected_row.upper():
+            observed = tokens[position] if position < len(tokens) else "<eof>"
+            raise PatentParseError(
+                f"AAC seven-lens TABLE {table_number} expected {expected_row}, "
+                f"found {observed}"
+            )
+        position += 1
+        values = tokens[position : position + len(labels)]
+        if len(values) != len(labels) or any(
+            re.fullmatch(NUMBER_PATTERN, token, flags=re.IGNORECASE) is None
+            for token in values
+        ):
+            raise PatentParseError(
+                f"AAC seven-lens TABLE {table_number} {expected_row} coefficient row "
+                "is incomplete"
+            )
+        coefficients[surface_number] = {
+            (
+                "K"
+                if label == "K"
+                else ASPHERE_ORDER_TO_CODEV[int(label[1:])]
+            ): _parse_number(value)
+            for label, value in zip(labels, values, strict=True)
+        }
+        position += len(labels)
+    if position != len(tokens):
+        raise PatentParseError(
+            f"AAC seven-lens TABLE {table_number} asphere table has trailing tokens: "
+            f"{tuple(tokens[position:])!r}"
+        )
+    return coefficients
+
+
+def _parse_aac_seven_lens_exact_metadata_table(
+    table: str,
+) -> dict[str, tuple[float, float, float]]:
+    header = re.match(
+        r"\ATABLE-US-00013\s+TABLE\s+13\s+Parameters\s+and\s+Embodiment\s+"
+        r"Embodiment\s+Embodiment\s+conditions\s+1\s+2\s+3\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError("AAC seven-lens TABLE 13 metadata header changed")
+    body = table[header.end() :]
+    position = 0
+    rows: dict[str, tuple[float, float, float]] = {}
+    for label in _AAC_SEVEN_LENS_EXACT_TABLE_13_LABELS:
+        match = re.match(
+            rf"{re.escape(label)}\s+(?P<one>{NUMBER_PATTERN})\s+"
+            rf"(?P<two>{NUMBER_PATTERN})\s+(?P<three>{NUMBER_PATTERN})(?:\s+|\Z)",
+            body[position:],
+            flags=re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"AAC seven-lens TABLE 13 metadata row {label!r} changed near "
+                f"{body[position:position + 100]!r}"
+            )
+        rows[label] = tuple(
+            _parse_number(match.group(name)) for name in ("one", "two", "three")
+        )
+        position += match.end()
+    if body[position:].strip():
+        raise PatentParseError(
+            f"AAC seven-lens TABLE 13 has trailing tokens: {body[position:]!r}"
+        )
+    return rows
+
+
+def _parse_aac_seven_lens_exact_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the three exact, source-locked AAC seven-lens prescriptions."""
+
+    profile = _AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiments = tuple(
+        f"AAC seven-lens camera optical lens embodiment {index}"
+        for index in range(1, 4)
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"AAC seven-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"AAC seven-lens normalized text hash changed for {patent_id}"
+            )
+        if len(_AAC_SEVEN_LENS_EXACT_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("AAC seven-lens title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC seven-lens identity marker {marker!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError("AAC seven-lens section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("AAC seven-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"AAC seven-lens {section_name} section changed"
+                )
+
+        raw_section_markers = (
+            (
+                "background",
+                "<h3>Background/Summary</h3>",
+                "<h3>Description</h3>",
+            ),
+            (
+                "brief",
+                "<h3>Description</h3>",
+                "DESCRIPTION OF EMBODIMENTS<br />(14)",
+            ),
+            (
+                "detailed",
+                "DESCRIPTION OF EMBODIMENTS<br />(14)",
+                '<h3>Claims</h3>',
+            ),
+        )
+        for section_name, start_marker, end_marker in raw_section_markers:
+            try:
+                start = raw_text.index(start_marker)
+                end = raw_text.index(end_marker, start + len(start_marker))
+            except ValueError as exc:
+                raise PatentParseError(
+                    f"AAC seven-lens raw {section_name} boundary changed"
+                ) from exc
+            observed = tuple(
+                int(value)
+                for value in re.findall(
+                    r"(?:^|<br\s*/?>)\((\d+)\)",
+                    raw_text[start:end],
+                    flags=re.IGNORECASE,
+                )
+            )
+            bounds = profile["paragraph_ranges"][section_name]
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"AAC seven-lens {section_name} paragraph denominator changed"
+                )
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError("AAC seven-lens claim denominator changed")
+        declared_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"\(\d+\)\s+FIG\.\s*(\d+)\s+is\s+a\s+schematic",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _AAC_SEVEN_LENS_EXACT_FIGURES:
+            raise PatentParseError("AAC seven-lens FIGS. 1-12 denominator changed")
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 14)):
+            raise PatentParseError("AAC seven-lens TABLE 1-13 denominator changed")
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError("AAC seven-lens PPUBS table block changed")
+        formal_tables = tuple(
+            _aac_seven_lens_exact_formal_table(block.text) for block in blocks
+        )
+        formal_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_digests != profile["formal_table_sha256"]:
+            raise PatentParseError("AAC seven-lens formal table content changed")
+        for table_number in (3, 4, 7, 8, 11, 12):
+            rows = tuple(
+                re.findall(
+                    r"\bR(1[0-4]|[1-9])\b",
+                    formal_tables[table_number - 1],
+                )
+            )
+            if rows != tuple(str(value) for value in range(1, 15)):
+                raise PatentParseError(
+                    f"AAC seven-lens TABLE {table_number} auxiliary row denominator changed"
+                )
+        for phrase, expected in _AAC_SEVEN_LENS_EXACT_PHRASE_COUNTS.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC seven-lens phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        if re.search(r"\bEmbodiment\s+4\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError("AAC seven-lens source gained a fourth embodiment")
+
+        metadata_rows = _parse_aac_seven_lens_exact_metadata_table(
+            formal_tables[12]
+        )
+        narrative_rows = tuple(
+            tuple(_parse_number(value) for value in match)
+            for match in re.findall(
+                r"In this embodiment, the entrance pupil diameter of the camera "
+                rf"optical lens is\s+({NUMBER_PATTERN})\s+mm\.\s+The image height "
+                rf"of 1\.0H is\s+({NUMBER_PATTERN})\s+mm\.\s+The FOV\s+"
+                rf"\(field of view\) is\s+({NUMBER_PATTERN})°",
+                text,
+                re.IGNORECASE,
+            )
+        )
+        observed_metadata = tuple(
+            (
+                metadata_rows["f"][index],
+                metadata_rows["FNO"][index],
+                narrative_rows[index][2],
+                narrative_rows[index][0],
+                narrative_rows[index][1],
+            )
+            for index in range(3)
+        )
+        if observed_metadata != _AAC_SEVEN_LENS_EXACT_SYSTEM_METADATA:
+            raise PatentParseError("AAC seven-lens direct system metadata changed")
+
+        prescriptions: list[PatentPrescription] = []
+        for embodiment_number, (surface_table, asphere_table) in enumerate(
+            _AAC_SEVEN_LENS_EXACT_TABLE_BINDINGS,
+            start=1,
+        ):
+            surfaces = _parse_aac_seven_lens_exact_surface_table(
+                formal_tables[surface_table - 1],
+                table_number=surface_table,
+            )
+            coefficients = _parse_aac_seven_lens_exact_asphere_table(
+                formal_tables[asphere_table - 1],
+                table_number=asphere_table,
+            )
+            if set(coefficients) != set(range(1, 15)):
+                raise PatentParseError(
+                    f"AAC seven-lens embodiment {embodiment_number} asphere coverage changed"
+                )
+            for source_surface_number, values in coefficients.items():
+                surface = surfaces[source_surface_number]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(values)
+            focal_length, f_number, full_fov, _epd, _image_height = (
+                observed_metadata[embodiment_number - 1]
+            )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiments[embodiment_number - 1],
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_fov / 2.0,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+            prescriptions.append(prescription)
+    except Exception as exc:  # noqa: BLE001 - retain all three disclosed embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=prescription.embodiment,
+            prescription=prescription,
+        )
+        for index, prescription in enumerate(prescriptions, start=1)
     ]
 
 
