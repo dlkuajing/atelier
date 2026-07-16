@@ -12050,3 +12050,170 @@ def test_sunny_automotive_nineteen_lens_external_queue_is_source_bound() -> None
         ("CN202011560293.0A", "CN-114690368-B"),
         ("CN202110744979.3A", "CN-115561875-B"),
     ]
+
+
+def _variable_aperture_camera_module_b2_source() -> tuple[str, str]:
+    patent_id = "US-12613396-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "348196f4c11cb75b"
+        / "US-12613396-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def test_variable_aperture_camera_module_source_is_exact_architecture_terminal() -> None:
+    patent_id, raw_text = _variable_aperture_camera_module_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 10))
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        *[
+            "confirmed_no_prescription."
+            "variable_aperture_camera_module_architecture_only"
+            for _ in range(8)
+        ],
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ]
+
+
+def test_variable_aperture_camera_module_direct_fno_reopens_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _variable_aperture_camera_module_b2_source()
+    raw_text = original + " Direct embodiment FNO = 2.8."
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    profile = patent_to_zmx._VARIABLE_APERTURE_CAMERA_MODULE_SOURCE_PROFILES[
+        patent_id
+    ]
+    monkeypatch.setitem(
+        patent_to_zmx._VARIABLE_APERTURE_CAMERA_MODULE_SOURCE_PROFILES,
+        patent_id,
+        {
+            **profile,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 9
+    assert {str(attempt.error) for attempt in attempts} == {
+        "variable-aperture camera-module range metadata became a direct value"
+    }
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+
+
+def test_variable_aperture_camera_module_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-85407590"
+    )
+    audit = json.loads(
+        (quick_root / "family-85407590-raster-audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert audit["family_id"] == "85407590"
+    assert audit["drawing_sheet_count"] == 33
+    assert audit["table_count"] == 0
+    assert audit["figure_panels"] == [
+        *[f"1{letter}" for letter in "ABCDEFG"],
+        *[f"2{letter}" for letter in "ABCDEFGH"],
+        *[f"3{letter}" for letter in "ABCDEFGHIJKLMN"],
+        *[f"4{letter}" for letter in "ABCDEFGHIJ"],
+        "5A",
+        "5B",
+    ]
+    expected_drawing_pages = {
+        "US-12613396-B2": list(range(3, 36)),
+        "US-20240111133-A1": list(range(2, 35)),
+    }
+    for publication_id, drawing_pages in expected_drawing_pages.items():
+        publication = audit["publications"][publication_id]
+        assert publication["page_count"] == 45
+        assert publication["drawing_page_numbers"] == drawing_pages
+        assert publication["table_page_numbers"] == []
+        assert publication["decoded_raster_equality"] is True
+        contact_path = root / publication["contact_sheet"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == publication[
+            "contact_sha256"
+        ]
+
+        raster_sets: list[list[str]] = []
+        for wrapper in publication["wrappers"].values():
+            pdf_path = root / wrapper["path"]
+            assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper["sha256"]
+            reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+            assert len(reader.pages) == wrapper["page_count"] == 45
+            assert [
+                page_number
+                for page_number, page in enumerate(reader.pages, start=1)
+                if not (page.extract_text() or "")
+            ] == wrapper["blank_text_pages"] == list(range(1, 46))
+            page_hashes = [
+                patent_pdf_recovery._canonical_raster_sha256(
+                    patent_pdf_recovery._page_image(
+                        page,
+                        source=publication_id,
+                        page_number=page_number,
+                    )
+                )
+                for page_number, page in enumerate(reader.pages, start=1)
+            ]
+            assert page_hashes == wrapper["page_raster_sha256"]
+            assert hashlib.sha256(
+                json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+            ).hexdigest() == wrapper["raster_set_sha256"]
+            raster_sets.append(page_hashes)
+        assert raster_sets[0] == raster_sets[1]
+
+
+def test_variable_aperture_camera_module_external_queue_is_source_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    queue_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-85407590"
+        / "family-85407590-external-family-members.json"
+    )
+    queue = json.loads(queue_path.read_text(encoding="utf-8"))
+
+    assert queue["family_id"] == "85407590"
+    assert queue["current_frozen_cohort_roots"] == ["US-12613396"]
+    assert queue["discovery"]["source_url"] == (
+        "https://patents.google.com/patent/US20240111133A1/en"
+    )
+    assert queue["us_application_status"] == "active_grant"
+    assert [record["publication_id"] for record in queue["external_family_members"]] == [
+        "US-20240111133-A1",
+        "EP-4345537-A1",
+        "TW-I840980-B",
+        "CN-117850123-A",
+        "CN-218601649-U",
+        "TW-202416036-A",
+    ]

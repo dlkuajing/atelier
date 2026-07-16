@@ -1,0 +1,100 @@
+{
+  "application_number": "18/471424",
+  "applicant": "LARGAN PRECISION CO., LTD.",
+  "disclosed_item_denominator": {
+    "camera_module_embodiments": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "embodiment_3_bearing_examples": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "electronic_device_embodiment": 5,
+    "terminal_items": 9
+  },
+  "family_id": "85407590",
+  "figure_panels": [
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "1E",
+    "1F",
+    "1G",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "2E",
+    "2F",
+    "2G",
+    "2H",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "3E",
+    "3F",
+    "3G",
+    "3H",
+    "3I",
+    "3J",
+    "3K",
+    "3L",
+    "3M",
+    "3N",
+    "4A",
+    "4B",
+    "4C",
+    "4D",
+    "4E",
+    "4F",
+    "4G",
+    "4H",
+    "4I",
+    "4J",
+    "5A",
+    "5B"
+  ],
+  "official_html": {
+    "normalized_sha256": "bad032f18aa42d79303880be4052a4bae8a81f8100322af128e15656e4a54340",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/348196f4c11cb75b/US-12613396-B2.html",
+    "sha256": "348196f4c11cb75bcd44bdd31c0077009d6f563f87e56ace7a2b7fc9c9f75015"
+  },
+  "optical_prescription_markers": {
+    "abbe_number": 0,
+    "asphere_data_or_coefficients": 0,
+    "effective_focal_length": 0,
+    "ordered_surface_prescription": 0,
+    "ppubs_table_count": 0,
+    "radius_of_curvature": 0,
+    "refractive_index": 0
+  },
+  "priority": {
+    "application_number": "TW111137277",
+    "date": "2022-09-30"
+  },
+  "publication_id": "US-12613396-B2",
+  "publication_status": "United States Patent",
+  "range_metadata": {
+    "direct_embodiment_fno_count": 0,
+    "direct_embodiment_fov_count": 0,
+    "fno_condition": "0.9 <= FNO <= 5.6",
+    "fno_condition_count": 4,
+    "fov_condition": "50 degrees <= FOV <= 105 degrees",
+    "fov_condition_count": 4
+  },
+  "schema_version": 1,
+  "source_roles": {
+    "embodiments_1_4": "variable-aperture blade/rotating-element/lens-carrier/holder/bearing/filter/sensor module architecture",
+    "embodiment_3_examples_1_5": "bearing contact-point geometry variants",
+    "embodiment_5": "multi-camera smartphone/electronic-device wrapper"
+  },
+  "table_count": 0
+}

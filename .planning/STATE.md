@@ -56,7 +56,7 @@ same-layout family 为 `74187659`（`US-11719909`、`US-20210026108`），layout
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `23682c95...06d0`. Current roots: 340 parser review, 143 mixed, 111 terminal, 25 converted; items: 544 staging, 1413 parser review, 990 terminal, 28 conversion retry. Family 82157375's exact B2 source expands to 19 metadata terminals after 42 PPUBS tables, 20 figures, and four official all-page PDF wrappers prove direct EFL/FOV but no exact system F-number. `F/ENPD` and `F/EPD` remain source ratios and are not derived. Generic 153→152 roots/items and still ranks first by nonterminal roots; deterministic ordering selects Family 85407590 next. External-family and priority-document queues remain outside the frozen cohort, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `7a7a6245...6ae0c`. Current roots: 339 parser review, 143 mixed, 112 terminal, 25 converted; items: 544 staging, 1412 parser review, 999 terminal, 28 conversion retry. Family 85407590's exact B2 source expands to eight variable-aperture module/bearing architecture terminals and one device terminal after five embodiments, five third-embodiment bearing variants, 41 panels, and four official all-page PDF wrappers prove zero optical tables/prescriptions. Source-wide FNO/FOV ranges are not treated as embodiment metadata. Generic 152→151 roots/items and still ranks first by nonterminal roots; deterministic ordering selects Family 87936009 next. External-family queues remain outside the frozen cohort, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -226,25 +226,26 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260716-patent-generic-family-73978649` | complete-shovel-saturation-incomplete | Same-application B2/A1 records bind five examples, FIGS.1A-5D/23 panels, one 671-row 380-1050 nm reflectivity table, and complete 39-page official raster denominators. Examples 1-4 publish low-reflection coating/light-blocking architecture; Example 5 is the smartphone/camera wrapper. Neither text nor drawings publish an ordered surface prescription. The frozen root expands to five confirmed-no-prescription terminals; no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding only result attempt; result set `c9937f32...7e425`, summary `30e75e67...de9f`, after census `7e67aaf4...4ba7`; audit 619/619 corrupt=0; 399 offline patent tests, compile, Ruff, and diff check pass; CODE V zero. Same-application A1 and parent grant US-11852848-B2 are queued outside the cohort. Generic 154 roots remains first; Family 90845725 is next. |
 | `260716-patent-generic-family-90845725` | complete-shovel-saturation-incomplete | Exact A1 publication binds two near-eye folded three-lens prescriptions, TABLES 1-5, FIGS.1-10, and a complete 14-page official raster denominator. Surface/path and R1-R6 asphere data plus ENPD/image-height/FOV/ratios/track lengths are direct, but numeric system EFL and F-number are unpublished and not derived. The root expands to two metadata terminals; no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding only result attempt; result set `74ecf2b3...b1f15`, summary `0c7cd328...b2f57`, after census `0bb9f153...6a240`; audit 619/619 corrupt=0; 403 offline patent tests, compile, Ruff, and diff check pass; CODE V zero. Three CN/JP publications are queued outside the cohort. Generic 153 roots remains first; Family 82157375 is next. |
 | `260716-patent-generic-family-82157375` | complete-shovel-saturation-incomplete | Exact B2 source binds 19 seven-lens embodiments, TABLES 1-39 plus 40-1/40-2/40-3, FIGS.1-20, and complete 45/42-page B2/A1 official raster denominators. TABLES 1-38 are 19 surface/asphere pairs and the four system tables directly publish all EFL/FOV values, but no exact system F-number; `F/ENPD` and `F/EPD` are not substituted or derived. The root expands to 19 metadata terminals; no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding only result attempt; result set `23682c95...06d0`, summary `049b4cc9...78f8`, after census `eadbb9c2...7734`; audit 619/619 corrupt=0; 407 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. A1/WO family records and two CN priority documents are queued outside the cohort. Generic 152 roots remains first; Family 85407590 is next. |
+| `260716-patent-generic-family-85407590` | complete-shovel-saturation-incomplete | Exact B2 source binds four variable-aperture camera-module embodiments, five third-embodiment bearing contact variants, one multi-camera device embodiment, 41 panels, zero PPUBS/optical tables, and complete 45-page B2/A1 official raster denominators. FNO/FOV occur only as source-wide ranges and are not converted to embodiment metadata. The root expands to eight module/bearing architecture terminals plus one device terminal; no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding only result attempt; result set `7a7a6245...6ae0c`, summary `0de74ee2...1d43`, after census `07a2f534...83d7`; audit 619/619 corrupt=0; 411 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. Six US/EP/TW/CN family publications are queued outside the cohort. Generic 151 roots remains first; Family 87936009 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260716-patent-generic-family-82157375/260716-patent-generic-family-82157375-PLAN.md`,
+`.planning/quick/260716-patent-generic-family-85407590/260716-patent-generic-family-85407590-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (152 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (151 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `85407590`, root `US-12613396`,
-publication `US-12613396-B2`, layout
-`076d89457ec7f8b83b784c2a31d4511edb84e3f392d952f2b369cca38892f2c3`. The same layout also occurs
-in a different one-root family, so the family discriminator remains part of the stable key. Use
+deterministic root/item/layout/family ordering is Family ID `87936009`, root `US-12591118`,
+publication `US-12591118-B2`, layout
+`076d89457ec7f8b83b784c2a31d4511edb84e3f392d952f2b369cca38892f2c3`. It was the second family
+under the shared layout and remains source-isolated from the completed Family 85407590. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
 

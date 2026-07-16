@@ -459,6 +459,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_variable_aperture_camera_module_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_lens_barrel_absorbing_geometry_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2283,6 +2291,61 @@ _LOW_REFLECTION_LIGHT_BLOCKING_PHRASE_COUNTS = {
     "smart phone": 1,
     "image signal processor": 1,
     "optical image stabilization": 1,
+}
+_VARIABLE_APERTURE_CAMERA_MODULE_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Imaging\s+lens\s+assembly\s+module,\s*camera\s+module\s+"
+    r"and\s+electronic\s+device\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_VARIABLE_APERTURE_CAMERA_MODULE_DRAWINGS = (
+    *(("1", letter) for letter in "ABCDEFG"),
+    *(("2", letter) for letter in "ABCDEFGH"),
+    *(("3", letter) for letter in "ABCDEFGHIJKLMN"),
+    *(("4", letter) for letter in "ABCDEFGHIJ"),
+    ("5", "A"),
+    ("5", "B"),
+)
+_VARIABLE_APERTURE_CAMERA_MODULE_ITEM_LABELS = (
+    "Variable-aperture camera-module embodiment 1",
+    "Variable-aperture camera-module embodiment 2",
+    "Variable-aperture camera-module embodiment 3 bearing example 1",
+    "Variable-aperture camera-module embodiment 3 bearing example 2",
+    "Variable-aperture camera-module embodiment 3 bearing example 3",
+    "Variable-aperture camera-module embodiment 3 bearing example 4",
+    "Variable-aperture camera-module embodiment 3 bearing example 5",
+    "Variable-aperture camera-module embodiment 4",
+    "Multi-camera electronic-device embodiment 5",
+)
+_VARIABLE_APERTURE_CAMERA_MODULE_PHRASE_COUNTS = {
+    "blade set": 61,
+    "rotating element": 127,
+    "lens carrier": 190,
+    "bearing members": 49,
+    "through hole": 53,
+    "imaging surface": 73,
+    "holder portion": 68,
+    "camera module": 75,
+    "electronic device": 23,
+}
+_VARIABLE_APERTURE_CAMERA_MODULE_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12613396-B2": {
+        "raw_document_sha256": (
+            "348196f4c11cb75bcd44bdd31c0077009d6f563f87e56ace7a2b7fc9c9f75015"
+        ),
+        "normalized_text_sha256": (
+            "bad032f18aa42d79303880be4052a4bae8a81f8100322af128e15656e4a54340"
+        ),
+        "application_number": "18/471424",
+        "family_id": "85407590",
+        "owner_count": 2,
+        "identity_markers": (
+            "US 20240111133 A1 Apr. 04, 2024",
+            "This application claims priority to Taiwan Application Serial Number "
+            "111137277, filed Sep. 30, 2022",
+        ),
+    },
 }
 _FOLDED_LENS_BARREL_DRIVING_ONLY_TITLE_PATTERN = re.compile(
     r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*IMAGING\s+LENS\s+"
@@ -13657,6 +13720,255 @@ def _classify_low_reflection_light_blocking_architecture_only_attempts(
                         )
                     ),
                     detail=detail,
+                ),
+            )
+        )
+    return attempts
+
+
+def _classify_variable_aperture_camera_module_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 85407590 variable-aperture module architecture."""
+
+    profile = _VARIABLE_APERTURE_CAMERA_MODULE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=exc,
+            )
+            for index, label in enumerate(
+                _VARIABLE_APERTURE_CAMERA_MODULE_ITEM_LABELS,
+                start=1,
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"variable-aperture camera-module official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"variable-aperture camera-module normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_VARIABLE_APERTURE_CAMERA_MODULE_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError(
+                "variable-aperture camera-module title binding changed"
+            )
+        if len(
+            re.findall(
+                rf"Family\s+ID:\s*{re.escape(str(profile['family_id']))}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "variable-aperture camera-module Family ID binding changed"
+            )
+        owner = "LARGAN PRECISION CO., LTD."
+        if len(re.findall(re.escape(owner), text, re.IGNORECASE)) != profile[
+            "owner_count"
+        ]:
+            raise PatentParseError(
+                "variable-aperture camera-module owner binding changed"
+            )
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "variable-aperture camera-module application binding changed"
+            )
+        for marker in profile["identity_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"variable-aperture camera-module identity marker {marker!r} changed"
+                )
+
+        heading_numbers = tuple(
+            int(index)
+            for index, suffix in (
+                ("1", "st"),
+                ("2", "nd"),
+                ("3", "rd"),
+                ("4", "th"),
+                ("5", "th"),
+            )
+            if len(
+                re.findall(
+                    rf"<br\s*/?>\s*{index}{suffix}\s+Embodiment\s*<br\s*/?>",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            )
+            == 1
+        )
+        if heading_numbers != (1, 2, 3, 4, 5):
+            raise PatentParseError(
+                "variable-aperture camera-module five-embodiment denominator changed"
+            )
+        if re.search(r"\b6th\s+Embodiment\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "variable-aperture camera-module source gained a sixth embodiment"
+            )
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)DETAILED DESCRIPTION",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError(
+                "variable-aperture camera-module drawing description is missing"
+            )
+        drawings = tuple(
+            re.findall(
+                r"FIG\.\s*<b>(\d+)</b>([A-Z])</figref>\s+is\s+",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if drawings != _VARIABLE_APERTURE_CAMERA_MODULE_DRAWINGS:
+            raise PatentParseError(
+                "variable-aperture camera-module 41-panel drawing denominator changed"
+            )
+        drawing_text = normalize_patent_text(brief_match.group("body"))
+        for example_number, panel in enumerate("JKLMN", start=1):
+            pattern = (
+                rf"FIG\.\s*3\s*{panel}\s+is\s+a\s+schematic\s+view\s+of\s+the\s+"
+                rf"bearing\s+member\s+contacted\s+with\s+the\s+rotating\s+element\s+"
+                rf"and\s+the\s+lens\s+carrier\s+according\s+to\s+the\s+"
+                rf"{example_number}(?:st|nd|rd|th)\s+example\s+of\s+the\s+3rd\s+"
+                rf"embodiment\b"
+            )
+            if len(re.findall(pattern, drawing_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "variable-aperture camera-module third-embodiment bearing "
+                    f"example {example_number} binding changed"
+                )
+        if re.search(
+            r"\b(?:prescription|optical\s+data|lens\s+data|table)\b",
+            drawing_text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "variable-aperture camera-module drawings now reference "
+                "prescription data"
+            )
+
+        if re.search(r"TABLE-US-", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "variable-aperture camera-module source gained a PPUBS table"
+            )
+        for phrase, expected in _VARIABLE_APERTURE_CAMERA_MODULE_PHRASE_COUNTS.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"variable-aperture camera-module phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if len(
+            re.findall(
+                r"0\.9\s*\u2264\s*FNO\s*\u2264\s*5\.6",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 4:
+            raise PatentParseError(
+                "variable-aperture camera-module FNO range denominator changed"
+            )
+        if len(
+            re.findall(
+                r"50\s+degrees\s*\u2264\s*FOV\s*\u2264\s*105\s+degrees",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 4:
+            raise PatentParseError(
+                "variable-aperture camera-module FOV range denominator changed"
+            )
+        if re.search(
+            r"\b(?:FNO|FOV)\s*(?:=|is|of)\s*[-+]?\d",
+            text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "variable-aperture camera-module range metadata became a direct value"
+            )
+
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe(?:\s+(?:number|#))?\b|\brefractive\s+index\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|"
+            r"\boptical\s+(?:surface\s+)?(?:prescription|data)\b|"
+            r"\blens\s+(?:prescription|data)\b|\bprescription\b|"
+            r"\b(?:Surface|Surf)\s+(?:No\.?|#).{0,200}\bRadius\b"
+            r".{0,200}\b(?:Thickness|Distance)\b)",
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "variable-aperture camera-module disclosure contains a "
+                "prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all nine architecture states
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, label in enumerate(
+        _VARIABLE_APERTURE_CAMERA_MODULE_ITEM_LABELS,
+        start=1,
+    ):
+        device_wrapper = index == 9
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription."
+                        "camera_module_device_architecture_only"
+                        if device_wrapper
+                        else (
+                            "confirmed_no_prescription."
+                            "variable_aperture_camera_module_architecture_only"
+                        )
+                    ),
+                    detail=(
+                        "embodiment 5 publishes only the multi-camera smartphone, "
+                        "image-sensor, ISP, OIS, user-interface, and auxiliary-sensor "
+                        "wrapper; it has no optical surface prescription"
+                        if device_wrapper
+                        else (
+                            f"{label} publishes only variable-aperture blade, rotating "
+                            "element, lens-carrier, holder, bearing-contact, filter, "
+                            "sensor, and module geometry; source-wide FNO/FOV ranges "
+                            "are not embodiment prescriptions"
+                        )
+                    ),
                 ),
             )
         )
