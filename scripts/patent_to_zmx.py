@@ -3464,6 +3464,49 @@ _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
 _ABILITY_TWO_FIVE_LENS_PROFILE = "ability_two_five_lens_prescriptions_v1"
 _ABILITY_TWO_NINE_LENS_PROFILE = "ability_two_nine_lens_f_number_unpublished_v1"
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
+_ABILITY_FIVE_THREE_LENS_PROFILE = (
+    "ability_five_three_lens_f_number_unpublished_v1"
+)
+_ABILITY_FIVE_THREE_LENS_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+)
+_ABILITY_FIVE_THREE_LENS_ROLE_PAGE_NUMBERS = {
+    **{
+        f"ability_five_three_surface_{embodiment}": page_number
+        for embodiment, page_number in enumerate((4, 8, 12, 16, 20), start=1)
+    },
+    **{
+        f"ability_five_three_asphere_{embodiment}": page_number
+        for embodiment, page_number in enumerate((5, 9, 13, 17, 21), start=1)
+    },
+    "ability_five_three_meta": 22,
+}
+_ABILITY_FIVE_THREE_LENS_PUBLICATION_SOURCES = {
+    "US-20160085051-A1": {
+        "primary_html_sha256": (
+            "a389c98016a9f5af18165a30a2041fe29a761d3d37958ffce100e8bfb81ea50d"
+        ),
+        "normalized_text_sha256": (
+            "a7a4d8d7489ef8db8b76b64868fdcf31cfc32b37934a5c17f39484893f212b1f"
+        ),
+        "application_number": "14/858521",
+        "page_count": 27,
+    },
+    "US-9541733-B2": {
+        "primary_html_sha256": (
+            "e9fee581375c0ca2c0946fe8b27032c078f14aa82e90aa6365889cd4667319f0"
+        ),
+        "normalized_text_sha256": (
+            "5089537a9bb04df736b4cef2a4146e377b92aced134d7432870fddde145b205c"
+        ),
+        "application_number": "14/858521",
+        "page_count": 26,
+    },
+}
 _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
 _CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
@@ -6785,6 +6828,227 @@ def _ability_four_eight_lens_terminal_attempts(
     ]
 
 
+def _ability_five_three_lens_terminal_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    """Classify five complete prescriptions whose source omits F-number."""
+
+    publication_id = str(payload.get("publication_id"))
+    source_profile = _ABILITY_FIVE_THREE_LENS_PUBLICATION_SOURCES.get(publication_id)
+    if source_profile is None:
+        raise PatentParseError("Ability five-three-lens publication is not source-locked")
+    if payload.get("page_count") != source_profile["page_count"]:
+        raise PatentParseError("Ability five-three-lens PDF page count changed")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 11:
+        raise PatentParseError(
+            "Ability five-three-lens PDF must retain exactly eleven key pages"
+        )
+
+    f_number_pattern = re.compile(
+        r"(?:\bFNO\b|\bF\s*[- ]?number\b|\bF\s*/\s*#)",
+        flags=re.IGNORECASE,
+    )
+    for embodiment, (surface_figure, asphere_figure) in enumerate(
+        zip((3, 7, 11, 15, 19), (4, 8, 12, 16, 20), strict=True),
+        start=1,
+    ):
+        for kind, figure, minimum_numeric_count in (
+            ("surface", surface_figure, 25),
+            ("asphere", asphere_figure, 55),
+        ):
+            role = f"ability_five_three_{kind}_{embodiment}"
+            page = _ability_page(payload, role)
+            expected_page = _ABILITY_FIVE_THREE_LENS_ROLE_PAGE_NUMBERS[role]
+            if page.get("page_number") != expected_page:
+                raise PatentParseError(
+                    f"Ability five-three-lens role {role} is on the wrong page"
+                )
+            if page.get("rapidocr_rotation") is not None:
+                raise PatentParseError(
+                    f"Ability five-three-lens role {role} has an unexpected OCR rotation"
+                )
+            mirror_text = page.get("mirror_text")
+            if not isinstance(mirror_text, str):
+                raise PatentParseError(
+                    f"Ability five-three-lens role {role} mirror text is invalid"
+                )
+            sheet_number = expected_page - 1
+            if mirror_text and re.search(
+                rf"\bSheet\s+{sheet_number}\s+of\s*21\b",
+                mirror_text,
+                flags=re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    f"Ability five-three-lens role {role} lacks its sheet header"
+                )
+
+            tokens = list(page["rapidocr_tokens"])
+            token_text = " ".join(_ability_token_text(token) for token in tokens)
+            if f_number_pattern.search(mirror_text) or f_number_pattern.search(token_text):
+                raise PatentParseError(
+                    f"Ability five-three-lens role {role} may publish an F-number"
+                )
+            normalized_labels = {
+                re.sub(r"[^A-Z0-9]", "", _ability_token_text(token).upper())
+                for token in tokens
+            }
+            numeric_count = sum(
+                _ability_token_confidence(token) >= 0.90
+                and re.fullmatch(
+                    NUMBER_PATTERN,
+                    _ability_token_text(token),
+                    flags=re.IGNORECASE,
+                )
+                is not None
+                for token in tokens
+            )
+            if kind == "surface":
+                required_labels = {
+                    f"FIG{figure}",
+                    "RADIUSOF",
+                    "CURVATURE",
+                    "THICKNESS",
+                    "REFRACTIVE",
+                    "ABBE",
+                    "DISTANCEFN",
+                }
+                has_effective_focal = "EFFECTIVEFOCAL" in normalized_labels or {
+                    "EFFECTIVE",
+                    "FOCAL",
+                }.issubset(normalized_labels)
+            else:
+                required_labels = {f"FIG{figure}", "SURFACE", "B", "E", "F", "H"}
+                has_effective_focal = True
+            missing_labels = sorted(required_labels - normalized_labels)
+            if (
+                missing_labels
+                or not has_effective_focal
+                or numeric_count < minimum_numeric_count
+            ):
+                if not has_effective_focal:
+                    missing_labels.append("EFFECTIVE_FOCAL")
+                raise PatentParseError(
+                    f"Ability five-three-lens role {role} lacks complete table evidence: "
+                    f"missing={','.join(missing_labels)} numeric={numeric_count}"
+                )
+
+    meta_role = "ability_five_three_meta"
+    meta_page = _ability_page(payload, meta_role)
+    if meta_page.get("page_number") != _ABILITY_FIVE_THREE_LENS_ROLE_PAGE_NUMBERS[
+        meta_role
+    ]:
+        raise PatentParseError("Ability five-three-lens FIG. 21 is on the wrong page")
+    if meta_page.get("rapidocr_rotation") is not None:
+        raise PatentParseError("Ability five-three-lens FIG. 21 has an OCR rotation")
+    meta_mirror_text = meta_page.get("mirror_text")
+    if not isinstance(meta_mirror_text, str):
+        raise PatentParseError("Ability five-three-lens FIG. 21 mirror text is invalid")
+    if meta_mirror_text and re.search(
+        r"\bSheet\s+21\s+of\s*21\b",
+        meta_mirror_text,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError("Ability five-three-lens FIG. 21 lacks its sheet header")
+    meta_tokens = list(meta_page["rapidocr_tokens"])
+    meta_token_text = " ".join(_ability_token_text(token) for token in meta_tokens)
+    if f_number_pattern.search(meta_mirror_text) or f_number_pattern.search(meta_token_text):
+        raise PatentParseError("Ability five-three-lens FIG. 21 may publish an F-number")
+    meta_labels = {
+        re.sub(r"[^A-Z0-9]", "", _ability_token_text(token).upper())
+        for token in meta_tokens
+    }
+    required_meta_labels = {
+        "FIG21",
+        "FIRST",
+        "SECOND",
+        "THIRD",
+        "FOURTH",
+        "FIFTH",
+        "FOV",
+    }
+    meta_numeric_count = sum(
+        _ability_token_confidence(token) >= 0.90
+        and re.fullmatch(
+            NUMBER_PATTERN,
+            _ability_token_text(token),
+            flags=re.IGNORECASE,
+        )
+        is not None
+        for token in meta_tokens
+    )
+    if required_meta_labels - meta_labels or meta_numeric_count < 55:
+        raise PatentParseError(
+            "Ability five-three-lens FIG. 21 lacks five-embodiment comparison evidence"
+        )
+
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("Ability five-three-lens source facts are absent")
+    expected_values = {
+        ordinal: {
+            "entrance_pupil_diameter_mm": epd,
+            "focal_length_mm": focal_length,
+            "full_field_of_view_deg": fov,
+        }
+        for ordinal, epd, focal_length, fov in zip(
+            _ABILITY_FIVE_THREE_LENS_ORDINALS,
+            (0.666, 1.075, 1.178, 1.097, 1.124),
+            (1.619, 2.408, 2.393, 2.227, 2.716),
+            (84.0, 84.0, 84.0, 87.0, 77.4),
+            strict=True,
+        )
+    }
+    expected_facts = {
+        "primary_html_sha256": source_profile["primary_html_sha256"],
+        "normalized_text_sha256": source_profile["normalized_text_sha256"],
+        "family_id": "55525612",
+        "application_number": source_profile["application_number"],
+        "figure_binding_counts": {
+            f"FIG. {figure}": 1
+            for figure in (3, 4, 7, 8, 11, 12, 15, 16, 19, 20, 21)
+        },
+        "embodiment_detail_counts": dict.fromkeys(
+            _ABILITY_FIVE_THREE_LENS_ORDINALS,
+            1,
+        ),
+        "embodiment_system_values": expected_values,
+        "f_number_label_counts": {"FNO": 0, "F-number": 0, "F/#": 0},
+    }
+    for key, expected in expected_facts.items():
+        if facts.get(key) != expected:
+            raise PatentParseError(
+                f"Ability five-three-lens source fact {key!r} changed"
+            )
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=(
+                f"Ability three-lens {ordinal} embodiment "
+                f"(FIGS. {surface_figure}/{asphere_figure})"
+            ),
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code="metadata_unpublished.system_f_number_absent",
+                detail=(
+                    "official HTML and both exact-raster OCR views publish the complete "
+                    f"{ordinal} prescription but no system F-number"
+                ),
+            ),
+        )
+        for embodiment_number, (ordinal, surface_figure, asphere_figure) in enumerate(
+            zip(
+                _ABILITY_FIVE_THREE_LENS_ORDINALS,
+                (3, 7, 11, 15, 19),
+                (4, 8, 12, 16, 20),
+                strict=True,
+            ),
+            start=1,
+        )
+    ]
+
+
 def _validate_ability_pdf_source_linkage(payload: dict[str, Any]) -> None:
     """Validate the optional grant-to-prior-publication parser binding."""
 
@@ -7119,6 +7383,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _ability_two_nine_lens_terminal_attempts(payload)
     if profile == _ABILITY_FOUR_EIGHT_LENS_PROFILE:
         return _ability_four_eight_lens_terminal_attempts(payload)
+    if profile == _ABILITY_FIVE_THREE_LENS_PROFILE:
+        return _ability_five_three_lens_terminal_attempts(payload)
     if profile == _LARGAN_THREE_FIVE_LENS_PROFILE:
         return _parse_largan_three_five_lens_attempts(payload)
     if profile == _ABILITY_ZOOM_TWO_STATE_PROFILE:

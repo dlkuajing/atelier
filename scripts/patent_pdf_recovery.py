@@ -93,6 +93,66 @@ _ABILITY_FOUR_EIGHT_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 9 lists optical properties of the optical lenses",
 )
 _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished_v1"
+_ABILITY_FIVE_THREE_LENS_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+)
+_ABILITY_FIVE_THREE_LENS_SURFACE_FIGURES = (3, 7, 11, 15, 19)
+_ABILITY_FIVE_THREE_LENS_ASPHERE_FIGURES = (4, 8, 12, 16, 20)
+_ABILITY_FIVE_THREE_LENS_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for ordinal, surface_figure, asphere_figure in zip(
+        _ABILITY_FIVE_THREE_LENS_ORDINALS,
+        _ABILITY_FIVE_THREE_LENS_SURFACE_FIGURES,
+        _ABILITY_FIVE_THREE_LENS_ASPHERE_FIGURES,
+        strict=True,
+    )
+    for marker in (
+        f"FIG. {surface_figure} shows a table of optical parameters for optical lens "
+        f"elements and a filter of the {ordinal} embodiment",
+        f"FIG. {asphere_figure} shows a table of parameters for aspheric surfaces "
+        f"of the {ordinal} embodiment",
+    )
+) + (
+    "FIG. 21 shows a table of optical parameters for the first, second, third, "
+    "fourth and fifth embodiments of the optical lens assembly according to the "
+    "disclosure",
+)
+_ABILITY_FIVE_THREE_LENS_PROFILE = (
+    "ability_five_three_lens_f_number_unpublished_v1"
+)
+_ABILITY_FIVE_THREE_LENS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "a389c98016a9f5af18165a30a2041fe29a761d3d37958ffce100e8bfb81ea50d": {
+        "application_number": "14/858521",
+        "normalized_text_sha256": (
+            "a7a4d8d7489ef8db8b76b64868fdcf31cfc32b37934a5c17f39484893f212b1f"
+        ),
+        "page_count": 27,
+        "blank_mirror_pages": frozenset(),
+    },
+    "e9fee581375c0ca2c0946fe8b27032c078f14aa82e90aa6365889cd4667319f0": {
+        "application_number": "14/858521",
+        "normalized_text_sha256": (
+            "5089537a9bb04df736b4cef2a4146e377b92aced134d7432870fddde145b205c"
+        ),
+        "page_count": 26,
+        "blank_mirror_pages": frozenset({3, 4, 12, 17, 21}),
+    },
+}
+_ABILITY_FIVE_THREE_LENS_ROLE_PAGES = {
+    **{
+        f"ability_five_three_surface_{embodiment}": page_number - 1
+        for embodiment, page_number in enumerate((4, 8, 12, 16, 20), start=1)
+    },
+    **{
+        f"ability_five_three_asphere_{embodiment}": page_number - 1
+        for embodiment, page_number in enumerate((5, 9, 13, 17, 21), start=1)
+    },
+    "ability_five_three_meta": 21,
+}
 _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 7 is TABLE 1 which lists the optical data of the first embodiment",
     "FIG. 8 is TABLE 2 which lists the aspheric surface data of the first embodiment",
@@ -630,6 +690,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         return _ABILITY_TWO_NINE_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_FOUR_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
         return _ABILITY_FOUR_EIGHT_LENS_PROFILE
+    if digest in _ABILITY_FIVE_THREE_LENS_SOURCE_LAYOUTS and all(
+        marker in text for marker in _ABILITY_FIVE_THREE_LENS_REQUIRED_FIGURE_TEXT
+    ):
+        return _ABILITY_FIVE_THREE_LENS_PROFILE
     if all(marker in text for marker in _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT):
         return _LARGAN_THREE_FIVE_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT):
@@ -777,6 +841,87 @@ def _ability_four_eight_lens_source_facts(raw_html: str) -> dict[str, Any]:
             marker.split(" lists", maxsplit=1)[0]: text.count(marker)
             for marker in _ABILITY_FOUR_EIGHT_LENS_REQUIRED_FIGURE_TEXT
         },
+        "f_number_label_counts": {
+            "FNO": len(re.findall(r"\bFNO\b", text, flags=re.IGNORECASE)),
+            "F-number": len(
+                re.findall(r"\bF\s*[- ]?number\b", text, flags=re.IGNORECASE)
+            ),
+            "F/#": len(re.findall(r"\bF\s*/\s*#\b", text, flags=re.IGNORECASE)),
+        },
+    }
+
+
+def ability_five_three_lens_source_layout_for_sha256(
+    digest: str,
+) -> dict[str, Any]:
+    """Return the source-locked five-prescription PDF layout."""
+
+    layout = _ABILITY_FIVE_THREE_LENS_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Ability five-three-lens official HTML is not source-locked"
+        )
+    return {**layout, "role_pages": dict(_ABILITY_FIVE_THREE_LENS_ROLE_PAGES)}
+
+
+def _ability_five_three_lens_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    return ability_five_three_lens_source_layout_for_sha256(digest)
+
+
+def _ability_five_three_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind five image prescriptions and prove their F-number is unpublished."""
+
+    text = _normalized_html_text(raw_html)
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = ability_five_three_lens_source_layout_for_sha256(digest)
+    normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Ability five-three-lens normalized official HTML hash changed"
+        )
+
+    number = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)"
+    embodiment_values: dict[str, dict[str, float]] = {}
+    embodiment_detail_counts: dict[str, int] = {}
+    for ordinal in _ABILITY_FIVE_THREE_LENS_ORDINALS:
+        detail_pattern = re.compile(
+            rf"more detailed specification of (?:the|a) {ordinal} embodiment.*?"
+            rf"is as follows:\s*(?P<body>.*?)(?=\[\d{{4}}\]|\(\d+\))",
+            flags=re.IGNORECASE,
+        )
+        details = list(detail_pattern.finditer(text))
+        embodiment_detail_counts[ordinal] = len(details)
+        if len(details) != 1:
+            raise PatentPdfRecoveryError(
+                f"Ability five-three-lens {ordinal} embodiment detail count changed"
+            )
+        body = details[0].group("body")
+        values: dict[str, float] = {}
+        for label, pattern in {
+            "entrance_pupil_diameter_mm": rf"\bEPD\s*=\s*({number})",
+            "focal_length_mm": rf"(?<![A-Za-z0-9])f\s*=\s*({number})",
+            "full_field_of_view_deg": rf"\bFOV\s*=\s*({number})",
+        }.items():
+            matches = re.findall(pattern, body, flags=re.IGNORECASE)
+            if len(matches) != 1:
+                raise PatentPdfRecoveryError(
+                    f"Ability five-three-lens {ordinal} {label} count changed"
+                )
+            values[label] = float(matches[0])
+        embodiment_values[ordinal] = values
+
+    return {
+        "primary_html_sha256": digest,
+        "normalized_text_sha256": normalized_digest,
+        "family_id": "55525612",
+        "application_number": layout["application_number"],
+        "figure_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _ABILITY_FIVE_THREE_LENS_REQUIRED_FIGURE_TEXT
+        },
+        "embodiment_detail_counts": embodiment_detail_counts,
+        "embodiment_system_values": embodiment_values,
         "f_number_label_counts": {
             "FNO": len(re.findall(r"\bFNO\b", text, flags=re.IGNORECASE)),
             "F-number": len(
@@ -1362,6 +1507,11 @@ async def recover_ability_official_pdf_ocr(
         kodak_low_stress_layout = _kodak_low_stress_source_layout(primary_html)
         if mirror_pdf is None:
             raise PatentPdfRecoveryError("Kodak low-stress mirror PDF is unavailable")
+    ability_five_three_layout: dict[str, Any] | None = None
+    if profile == _ABILITY_FIVE_THREE_LENS_PROFILE:
+        ability_five_three_layout = _ability_five_three_lens_source_layout(primary_html)
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError("Ability five-three-lens mirror PDF is unavailable")
 
     official_reader = pypdf.PdfReader(io.BytesIO(official_pdf))
     mirror_reader = pypdf.PdfReader(io.BytesIO(mirror_pdf)) if mirror_pdf is not None else None
@@ -1394,6 +1544,16 @@ async def recover_ability_official_pdf_ocr(
         if blank_mirror_pages != expected_blank_pages:
             raise PatentPdfRecoveryError(
                 "Kodak low-stress OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
+            )
+    elif profile == _ABILITY_FIVE_THREE_LENS_PROFILE:
+        assert ability_five_three_layout is not None
+        expected_blank_pages = ability_five_three_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "Ability five-three-lens OCR overlay blank-page set changed: actual="
                 + ",".join(str(page) for page in sorted(blank_mirror_pages))
                 + " expected="
                 + ",".join(str(page) for page in sorted(expected_blank_pages))
@@ -1599,6 +1759,29 @@ async def recover_ability_official_pdf_ocr(
         }
         parser_profile = profile
         source_facts = _ability_four_eight_lens_source_facts(primary_html)
+    elif profile == _ABILITY_FIVE_THREE_LENS_PROFILE:
+        assert ability_five_three_layout is not None
+        if page_count != ability_five_three_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Ability five-three-lens PDF page count changed: "
+                f"actual={page_count} expected={ability_five_three_layout['page_count']}"
+            )
+        role_pages = dict(ability_five_three_layout["role_pages"])
+        for role, page_index in role_pages.items():
+            mirror_text = mirror_texts[page_index]
+            if mirror_text:
+                sheet_number = page_index
+                normalized_mirror = re.sub(r"\s+", " ", mirror_text)
+                if re.search(
+                    rf"\bSheet\s+{sheet_number}\s+of\s*21\b",
+                    normalized_mirror,
+                    flags=re.IGNORECASE,
+                ) is None:
+                    raise PatentPdfRecoveryError(
+                        f"Ability five-three-lens role {role} lacks its drawing-sheet header"
+                    )
+        parser_profile = profile
+        source_facts = _ability_five_three_lens_source_facts(primary_html)
     elif profile == _LARGAN_THREE_FIVE_LENS_PROFILE:
         role_pages = {
             "largan_surface_1": _figure_page(
