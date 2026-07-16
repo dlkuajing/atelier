@@ -2795,6 +2795,96 @@ def _circle_optics_seven_lens_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _kodak_low_stress_pdf_ocr_parser_input() -> bytes:
+    pages = []
+    page_specs = (
+        (
+            "c",
+            "kodak_projection_prescription",
+            36,
+            (
+                "FIG. 14A",
+                "Surface",
+                "RADIUS",
+                "THICKNESS",
+                "APERTURE",
+                "GLASS",
+                "OBJECT (SCREEN)",
+                "STOP",
+                "IMAGE (INT IMG)",
+            ),
+        ),
+        (
+            "d",
+            "kodak_relay_prescription",
+            37,
+            (
+                "FIG. 14B",
+                "Surface",
+                "RADIUS",
+                "THICKNESS",
+                "APERTURE",
+                "GLASS",
+                "OBJECT (DLP)",
+                "APERTURE STOP",
+                "INT IMAGE",
+            ),
+        ),
+    )
+    for prefix, role, page_number, labels in page_specs:
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": role,
+                "official_image_sha256": prefix * 64,
+                "mirror_text": "",
+                "rapidocr_rotation": "counterclockwise_90",
+                "rapidocr_tokens": [
+                    _ability_ocr_token(label, 100.0 + index * 20.0, 100.0)
+                    for index, label in enumerate(labels)
+                ],
+            }
+        )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "kodak_low_stress_two_lens_metadata_unpublished_v1",
+        "publication_id": "US-20140036377-A1",
+        "page_count": 61,
+        "source_facts": {
+            "primary_html_sha256": (
+                "2efe34e5641c40bcb2c93d330d9288271b19f2d851f1bba26e03aef85d269819"
+            ),
+            "normalized_text_sha256": (
+                "8affd3aaf0079a69bd7d4a8e68fb31a653b857f6bcbd352b9666d696cd2be572"
+            ),
+            "family_id": "44121309",
+            "application_number": "14/042755",
+            "required_text_counts": dict.fromkeys(
+                patent_pdf_recovery._KODAK_LOW_STRESS_REQUIRED_TEXT,
+                1,
+            ),
+            "f_number_context_counts": dict.fromkeys(
+                patent_pdf_recovery._KODAK_LOW_STRESS_F_NUMBER_CONTEXTS,
+                1,
+            ),
+            "numeric_system_value_assignment_counts": {
+                "F": 0,
+                "FNO": 0,
+                "FOV": 0,
+                "HFOV": 0,
+                "EFL": 0,
+            },
+            "effective_focal_length_count": 0,
+            "focal_length_count": 3,
+            "field_of_view_count": 1,
+            "prescription_count": 2,
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_four_lens_eleven_pdf_ocr_parser_input() -> bytes:
     pages = []
     figure_counts = {}
@@ -3904,6 +3994,60 @@ def test_circle_optics_source_facts_bind_layout_and_disclosure(
     assert facts["design_wavelengths_nm"] == [450, 587, 656]
 
 
+def test_kodak_low_stress_source_facts_bind_layout_and_metadata_gap(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = " ".join(
+        (
+            *patent_pdf_recovery._KODAK_LOW_STRESS_REQUIRED_TEXT,
+            *patent_pdf_recovery._KODAK_LOW_STRESS_F_NUMBER_CONTEXTS,
+            "focal length focal length focal length field of view",
+        )
+    )
+    digest = hashlib.sha256(source.encode("utf-8")).hexdigest()
+    normalized_digest = hashlib.sha256(
+        patent_pdf_recovery._normalized_html_text(source).encode("utf-8")
+    ).hexdigest()
+    layout = {
+        "application_number": "14/042755",
+        "normalized_text_sha256": normalized_digest,
+        "page_count": 61,
+        "blank_mirror_pages": frozenset({7, 37}),
+        "role_pages": {
+            "kodak_projection_prescription": 35,
+            "kodak_relay_prescription": 36,
+        },
+    }
+    monkeypatch.setitem(
+        patent_pdf_recovery._KODAK_LOW_STRESS_SOURCE_LAYOUTS,
+        digest,
+        layout,
+    )
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    assert (
+        patent_pdf_recovery.kodak_low_stress_source_layout_for_sha256(digest)
+        == layout
+    )
+    facts = patent_pdf_recovery._kodak_low_stress_source_facts(source)
+    assert facts["required_text_counts"] == dict.fromkeys(
+        patent_pdf_recovery._KODAK_LOW_STRESS_REQUIRED_TEXT,
+        1,
+    )
+    assert facts["f_number_context_counts"] == dict.fromkeys(
+        patent_pdf_recovery._KODAK_LOW_STRESS_F_NUMBER_CONTEXTS,
+        1,
+    )
+    assert facts["numeric_system_value_assignment_counts"] == dict.fromkeys(
+        ("F", "FNO", "FOV", "HFOV", "EFL"),
+        0,
+    )
+    assert facts["effective_focal_length_count"] == 0
+    assert facts["focal_length_count"] == 3
+    assert facts["field_of_view_count"] == 1
+    assert facts["prescription_count"] == 2
+
+
 def test_canonical_parser_input_records_explicit_rapidocr_rotation() -> None:
     payload = json.loads(
         patent_pdf_recovery._canonical_parser_input(
@@ -3915,6 +4059,40 @@ def test_canonical_parser_input_records_explicit_rapidocr_rotation() -> None:
     )
 
     assert payload["pages"][0]["rapidocr_rotation"] == "clockwise_90"
+
+
+def test_rapidocr_supports_counterclockwise_rotation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    image = np.zeros((2, 3, 3), dtype=np.uint8)
+    observed: dict[str, object] = {}
+
+    monkeypatch.setattr(patent_pdf_recovery.cv2, "imdecode", lambda *_args: image)
+
+    def fake_rotate(candidate: np.ndarray, code: int) -> np.ndarray:
+        observed["candidate"] = candidate
+        observed["code"] = code
+        return candidate
+
+    monkeypatch.setattr(patent_pdf_recovery.cv2, "rotate", fake_rotate)
+
+    class FakeRapidOcr:
+        def __call__(self, candidate: np.ndarray) -> tuple[list[object], None]:
+            observed["ocr_image"] = candidate
+            return [], None
+
+    monkeypatch.setattr(patent_pdf_recovery, "RapidOCR", FakeRapidOcr)
+
+    assert (
+        patent_pdf_recovery._rapidocr_tokens(
+            b"fixture",
+            rotation="counterclockwise_90",
+        )
+        == []
+    )
+    assert observed["candidate"] is image
+    assert observed["code"] == cv2.ROTATE_90_COUNTERCLOCKWISE
+    assert observed["ocr_image"] is image
 
 
 def test_genius_four_lens_eleven_source_facts_bind_every_figure() -> None:
@@ -4290,6 +4468,54 @@ def test_circle_optics_seven_lens_profile_fails_closed_on_source_drift() -> None
 
     assert len(attempts) == 1
     assert "required source-text bindings changed" in str(attempts[0].error)
+
+
+def test_kodak_low_stress_profile_retains_two_metadata_terminals() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _kodak_low_stress_pdf_ocr_parser_input().decode(),
+        patent_id="US-20140036377-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert all(attempt.error.status == "metadata_unpublished" for attempt in attempts)
+    assert {
+        attempt.error.reason_code for attempt in attempts
+    } == {"metadata_unpublished.prescription_specific_efl_and_field_absent"}
+
+
+def test_kodak_low_stress_profile_fails_closed_on_source_drift() -> None:
+    payload = json.loads(_kodak_low_stress_pdf_ocr_parser_input())
+    payload["source_facts"]["focal_length_count"] = 4
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id="US-20140036377-A1",
+    )
+
+    assert len(attempts) == 2
+    assert all(not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError) for attempt in attempts)
+    assert all("source fact 'focal_length_count' changed" in str(attempt.error) for attempt in attempts)
+
+
+def test_kodak_low_stress_profile_fails_closed_when_ocr_exposes_system_label() -> None:
+    payload = json.loads(_kodak_low_stress_pdf_ocr_parser_input())
+    payload["pages"][0]["rapidocr_tokens"].append(
+        _ability_ocr_token("EFL", 500.0, 500.0)
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id="US-20140036377-A1",
+    )
+
+    assert len(attempts) == 2
+    assert all(not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError) for attempt in attempts)
+    assert all("OCR may publish system metadata: EFL" in str(attempt.error) for attempt in attempts)
 
 
 def test_ability_zoom_two_state_profile_retains_each_state_failure() -> None:

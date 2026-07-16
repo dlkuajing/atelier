@@ -142,6 +142,71 @@ _CIRCLE_OPTICS_SEVEN_LENS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
         },
     },
 }
+_KODAK_LOW_STRESS_REQUIRED_TEXT = (
+    "FIG. 14A is a table specifying the lens design parameters for the third "
+    "exemplary projection lens of FIG. 12A",
+    "FIG. 14B is a table specifying the lens design parameters for the third "
+    "exemplary relay lens of FIG. 12C",
+    "The prescription for the third exemplary projection lens 270, shown in FIG. "
+    "12A, is provided in the table of FIG. 14A, with the data for radii (lens shape "
+    "or curvature), thicknesses, and materials included.",
+    "All the lens surfaces have spherical, rather than aspheric, toric, or "
+    "cylindrical profiles.",
+    "The prescription for the third exemplary relay lens 250, shown in FIG. 12C, "
+    "is provided in the table of FIG. 14B, with the data for radii, thicknesses, "
+    "and materials included.",
+    "The lens designs prescribed in FIGS. 14A and 14B, and shown in FIGS. 12A and "
+    "12C, were fabricated, assembled, and tested",
+)
+_KODAK_LOW_STRESS_F_NUMBER_CONTEXTS = (
+    "relay lens 250 is designed to collect and image F/6 light",
+    "projection lens 270 is preferably a faster lens (.about.F/3) than the relay "
+    "lens 250",
+    "projection lens 270 operates at F/2.5 or faster",
+)
+_KODAK_LOW_STRESS_TWO_LENS_PROFILE = (
+    "kodak_low_stress_two_lens_metadata_unpublished_v1"
+)
+_KODAK_LOW_STRESS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "2efe34e5641c40bcb2c93d330d9288271b19f2d851f1bba26e03aef85d269819": {
+        "application_number": "14/042755",
+        "normalized_text_sha256": (
+            "8affd3aaf0079a69bd7d4a8e68fb31a653b857f6bcbd352b9666d696cd2be572"
+        ),
+        "page_count": 61,
+        "blank_mirror_pages": frozenset({7, 23, 30, 34, 37, 39}),
+        "role_pages": {
+            "kodak_projection_prescription": 35,
+            "kodak_relay_prescription": 36,
+        },
+    },
+    "ddb70ad8434854ab534ae7fb26e1c015147b0ea1518c9ef792f5d112ede1c3e5": {
+        "application_number": "12/784520",
+        "normalized_text_sha256": (
+            "1c2a2c4c9be26ae4aa04bcbb80595ea827d5252f89a37c7210e2dc68595c0c98"
+        ),
+        "page_count": 60,
+        "blank_mirror_pages": frozenset({12, 14, 19, 21, 22, 26, 30, 39}),
+        "role_pages": {
+            "kodak_projection_prescription": 36,
+            "kodak_relay_prescription": 37,
+        },
+    },
+    "2e5c75ff60cb61628fb6c256aa18b23a43adbfc04a60fac0974f8a60027173e8": {
+        "application_number": "14/042755",
+        "normalized_text_sha256": (
+            "e0196b6186bec0b637bfee3cfc5bdcad39fb273a9275e7894199cb5eff9f857e"
+        ),
+        "page_count": 61,
+        "blank_mirror_pages": frozenset(
+            {12, 14, 19, 22, 23, 24, 28, 29, 30, 31, 34, 35, 38, 39}
+        ),
+        "role_pages": {
+            "kodak_projection_prescription": 36,
+            "kodak_relay_prescription": 37,
+        },
+    },
+}
 _GENIUS_FOUR_LENS_ELEVEN_OPTICAL_FIGURES = (2, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43)
 _GENIUS_FOUR_LENS_ELEVEN_ASPHERE_FIGURES = (4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44)
 _GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT = tuple(
@@ -549,6 +614,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT
     ):
         return _CIRCLE_OPTICS_SEVEN_LENS_PROFILE
+    if digest in _KODAK_LOW_STRESS_SOURCE_LAYOUTS and all(
+        marker in text for marker in _KODAK_LOW_STRESS_REQUIRED_TEXT
+    ):
+        return _KODAK_LOW_STRESS_TWO_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_REQUIRED_FIGURE_TEXT):
         return "ability_two_lens_prescriptions_v1"
     if all(marker in text for marker in _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
@@ -783,6 +852,70 @@ def _circle_optics_seven_lens_source_facts(raw_html: str) -> dict[str, Any]:
         "track_length_mm": 50.0,
         "image_width_mm": 3.9,
         "design_wavelengths_nm": [450, 587, 656],
+    }
+
+
+def kodak_low_stress_source_layout_for_sha256(digest: str) -> dict[str, Any]:
+    """Return the source-locked FIG. 14A/14B layout for one publication."""
+
+    layout = _KODAK_LOW_STRESS_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Kodak low-stress imaging-lens official HTML is not source-locked"
+        )
+    return layout
+
+
+def _kodak_low_stress_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    return kodak_low_stress_source_layout_for_sha256(digest)
+
+
+def _kodak_low_stress_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind published prescriptions and prove their system metadata is absent."""
+
+    text = _normalized_html_text(raw_html)
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = kodak_low_stress_source_layout_for_sha256(digest)
+    normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Kodak low-stress normalized official HTML hash changed"
+        )
+    assignments = {
+        label: len(
+            re.findall(
+                _SYSTEM_VALUE_PATTERN_TEMPLATE.format(label=re.escape(label)),
+                text,
+                flags=re.IGNORECASE,
+            )
+        )
+        for label in ("F", "FNO", "FOV", "HFOV", "EFL")
+    }
+    return {
+        "primary_html_sha256": digest,
+        "normalized_text_sha256": normalized_digest,
+        "family_id": "44121309",
+        "application_number": layout["application_number"],
+        "required_text_counts": {
+            marker: text.count(marker) for marker in _KODAK_LOW_STRESS_REQUIRED_TEXT
+        },
+        "f_number_context_counts": {
+            marker: text.count(marker) for marker in _KODAK_LOW_STRESS_F_NUMBER_CONTEXTS
+        },
+        "numeric_system_value_assignment_counts": assignments,
+        "effective_focal_length_count": len(
+            re.findall(r"\beffective focal length\b", text, flags=re.IGNORECASE)
+        ),
+        "focal_length_count": len(
+            re.findall(r"\bfocal length\b", text, flags=re.IGNORECASE)
+        ),
+        "field_of_view_count": len(
+            re.findall(r"\bfield of view\b", text, flags=re.IGNORECASE)
+        ),
+        "prescription_count": len(
+            re.findall(r"\bprescription\b", text, flags=re.IGNORECASE)
+        ),
     }
 
 
@@ -1089,6 +1222,8 @@ def _rapidocr_tokens(
         raise PatentPdfRecoveryError("official page image could not be decoded")
     if rotation == "clockwise_90":
         image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+    elif rotation == "counterclockwise_90":
+        image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
     elif rotation is not None:
         raise PatentPdfRecoveryError(f"unsupported RapidOCR rotation: {rotation}")
     engine = RapidOCR()
@@ -1222,6 +1357,11 @@ async def recover_ability_official_pdf_ocr(
     circle_optics_layout: dict[str, Any] | None = None
     if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
         circle_optics_layout = _circle_optics_seven_lens_source_layout(primary_html)
+    kodak_low_stress_layout: dict[str, Any] | None = None
+    if profile == _KODAK_LOW_STRESS_TWO_LENS_PROFILE:
+        kodak_low_stress_layout = _kodak_low_stress_source_layout(primary_html)
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError("Kodak low-stress mirror PDF is unavailable")
 
     official_reader = pypdf.PdfReader(io.BytesIO(official_pdf))
     mirror_reader = pypdf.PdfReader(io.BytesIO(mirror_pdf)) if mirror_pdf is not None else None
@@ -1244,6 +1384,16 @@ async def recover_ability_official_pdf_ocr(
         if blank_mirror_pages != expected_blank_pages:
             raise PatentPdfRecoveryError(
                 "Genius OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
+            )
+    elif profile == _KODAK_LOW_STRESS_TWO_LENS_PROFILE:
+        assert kodak_low_stress_layout is not None
+        expected_blank_pages = kodak_low_stress_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "Kodak low-stress OCR overlay blank-page set changed: actual="
                 + ",".join(str(page) for page in sorted(blank_mirror_pages))
                 + " expected="
                 + ",".join(str(page) for page in sorted(expected_blank_pages))
@@ -1303,6 +1453,17 @@ async def recover_ability_official_pdf_ocr(
         parser_profile = profile
         source_facts = _circle_optics_seven_lens_source_facts(primary_html)
         rapidocr_rotation = "clockwise_90"
+    elif profile == _KODAK_LOW_STRESS_TWO_LENS_PROFILE:
+        assert kodak_low_stress_layout is not None
+        if page_count != kodak_low_stress_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Kodak low-stress PDF page count changed: "
+                f"actual={page_count} expected={kodak_low_stress_layout['page_count']}"
+            )
+        role_pages = dict(kodak_low_stress_layout["role_pages"])
+        parser_profile = profile
+        source_facts = _kodak_low_stress_source_facts(primary_html)
+        rapidocr_rotation = "counterclockwise_90"
     elif profile == "ability_two_lens_prescriptions_v1":
         role_pages = {
             "surface_ol1": _figure_page(

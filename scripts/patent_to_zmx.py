@@ -3228,6 +3228,75 @@ _CIRCLE_OPTICS_SEVEN_LENS_PUBLICATION_SOURCES = {
         },
     },
 }
+_KODAK_LOW_STRESS_TWO_LENS_PROFILE = (
+    "kodak_low_stress_two_lens_metadata_unpublished_v1"
+)
+_KODAK_LOW_STRESS_REQUIRED_TEXT = (
+    "FIG. 14A is a table specifying the lens design parameters for the third "
+    "exemplary projection lens of FIG. 12A",
+    "FIG. 14B is a table specifying the lens design parameters for the third "
+    "exemplary relay lens of FIG. 12C",
+    "The prescription for the third exemplary projection lens 270, shown in FIG. "
+    "12A, is provided in the table of FIG. 14A, with the data for radii (lens shape "
+    "or curvature), thicknesses, and materials included.",
+    "All the lens surfaces have spherical, rather than aspheric, toric, or "
+    "cylindrical profiles.",
+    "The prescription for the third exemplary relay lens 250, shown in FIG. 12C, "
+    "is provided in the table of FIG. 14B, with the data for radii, thicknesses, "
+    "and materials included.",
+    "The lens designs prescribed in FIGS. 14A and 14B, and shown in FIGS. 12A and "
+    "12C, were fabricated, assembled, and tested",
+)
+_KODAK_LOW_STRESS_F_NUMBER_CONTEXTS = (
+    "relay lens 250 is designed to collect and image F/6 light",
+    "projection lens 270 is preferably a faster lens (.about.F/3) than the relay "
+    "lens 250",
+    "projection lens 270 operates at F/2.5 or faster",
+)
+_KODAK_LOW_STRESS_PUBLICATION_SOURCES: dict[str, dict[str, Any]] = {
+    "US-20140036377-A1": {
+        "primary_html_sha256": (
+            "2efe34e5641c40bcb2c93d330d9288271b19f2d851f1bba26e03aef85d269819"
+        ),
+        "normalized_text_sha256": (
+            "8affd3aaf0079a69bd7d4a8e68fb31a653b857f6bcbd352b9666d696cd2be572"
+        ),
+        "application_number": "14/042755",
+        "page_count": 61,
+        "role_page_numbers": {
+            "kodak_projection_prescription": 36,
+            "kodak_relay_prescription": 37,
+        },
+    },
+    "US-8649094-B2": {
+        "primary_html_sha256": (
+            "ddb70ad8434854ab534ae7fb26e1c015147b0ea1518c9ef792f5d112ede1c3e5"
+        ),
+        "normalized_text_sha256": (
+            "1c2a2c4c9be26ae4aa04bcbb80595ea827d5252f89a37c7210e2dc68595c0c98"
+        ),
+        "application_number": "12/784520",
+        "page_count": 60,
+        "role_page_numbers": {
+            "kodak_projection_prescription": 37,
+            "kodak_relay_prescription": 38,
+        },
+    },
+    "US-9069105-B2": {
+        "primary_html_sha256": (
+            "2e5c75ff60cb61628fb6c256aa18b23a43adbfc04a60fac0974f8a60027173e8"
+        ),
+        "normalized_text_sha256": (
+            "e0196b6186bec0b637bfee3cfc5bdcad39fb273a9275e7894199cb5eff9f857e"
+        ),
+        "application_number": "14/042755",
+        "page_count": 61,
+        "role_page_numbers": {
+            "kodak_projection_prescription": 37,
+            "kodak_relay_prescription": 38,
+        },
+    },
+}
 _GENIUS_FOUR_LENS_ELEVEN_PROFILE = "genius_four_lens_eleven_embodiment_census_v1"
 _GENIUS_NINE_LENS_ELEVEN_PROFILE = "genius_nine_lens_eleven_embodiment_census_v1"
 _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE = (
@@ -6600,6 +6669,156 @@ def _circle_optics_seven_lens_review_attempt(
     )
 
 
+def _kodak_low_stress_terminal_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    """Classify both spherical prescriptions only when their metadata gap is proven."""
+
+    embodiments = (
+        "Kodak third exemplary projection lens 270 (FIG. 14A)",
+        "Kodak third exemplary relay lens 250 (FIG. 14B)",
+    )
+    try:
+        publication_id = str(payload.get("publication_id"))
+        source_profile = _KODAK_LOW_STRESS_PUBLICATION_SOURCES.get(publication_id)
+        if source_profile is None:
+            raise PatentParseError("Kodak low-stress publication is not source-locked")
+        if payload.get("page_count") != source_profile["page_count"]:
+            raise PatentParseError("Kodak low-stress PDF page count changed")
+        pages = payload.get("pages")
+        if not isinstance(pages, list) or len(pages) != 2:
+            raise PatentParseError("Kodak low-stress parser input must retain two pages")
+
+        facts = payload.get("source_facts")
+        if not isinstance(facts, dict):
+            raise PatentParseError("Kodak low-stress source facts are absent")
+        expected_facts = {
+            "primary_html_sha256": source_profile["primary_html_sha256"],
+            "normalized_text_sha256": source_profile["normalized_text_sha256"],
+            "family_id": "44121309",
+            "application_number": source_profile["application_number"],
+            "required_text_counts": dict.fromkeys(
+                _KODAK_LOW_STRESS_REQUIRED_TEXT,
+                1,
+            ),
+            "f_number_context_counts": dict.fromkeys(
+                _KODAK_LOW_STRESS_F_NUMBER_CONTEXTS,
+                1,
+            ),
+            "numeric_system_value_assignment_counts": {
+                "F": 0,
+                "FNO": 0,
+                "FOV": 0,
+                "HFOV": 0,
+                "EFL": 0,
+            },
+            "effective_focal_length_count": 0,
+            "focal_length_count": 3,
+            "field_of_view_count": 1,
+            "prescription_count": 2,
+        }
+        for key, expected in expected_facts.items():
+            if facts.get(key) != expected:
+                raise PatentParseError(f"Kodak low-stress source fact {key!r} changed")
+
+        required_labels = {
+            "kodak_projection_prescription": (
+                "FIG14A",
+                "SURFACE",
+                "RADIUS",
+                "THICKNESS",
+                "APERTURE",
+                "GLASS",
+                "OBJECTSCREEN",
+                "STOP",
+                "IMAGEINTIMG",
+            ),
+            "kodak_relay_prescription": (
+                "FIG14B",
+                "SURFACE",
+                "RADIUS",
+                "THICKNESS",
+                "APERTURE",
+                "GLASS",
+                "OBJECTDLP",
+                "APERTURESTOP",
+                "INTIMAGE",
+            ),
+        }
+        forbidden_system_labels = frozenset({"EFL", "FNO", "FOV", "HFOV", "F"})
+        for role, page_number in source_profile["role_page_numbers"].items():
+            page = _ability_page(payload, role)
+            if page.get("page_number") != page_number:
+                raise PatentParseError(f"Kodak low-stress role {role} is on the wrong page")
+            if page.get("rapidocr_rotation") != "counterclockwise_90":
+                raise PatentParseError(f"Kodak low-stress role {role} lacks its OCR rotation")
+            if not isinstance(page.get("mirror_text"), str):
+                raise PatentParseError(f"Kodak low-stress role {role} mirror text is invalid")
+            normalized_labels = [
+                (
+                    re.sub(r"[^A-Z0-9]", "", _ability_token_text(token).upper()),
+                    _ability_token_confidence(token),
+                )
+                for token in page["rapidocr_tokens"]
+            ]
+            for label in required_labels[role]:
+                matches = [
+                    confidence
+                    for candidate, confidence in normalized_labels
+                    if candidate == label
+                    and confidence >= _ABILITY_OCR_LABEL_CONFIDENCE
+                ]
+                if len(matches) != 1:
+                    raise PatentParseError(
+                        f"Kodak low-stress role {role} label {label!r} occurs "
+                        f"{len(matches)} times above confidence gate"
+                    )
+            exposed_system_labels = sorted(
+                {
+                    candidate
+                    for candidate, confidence in normalized_labels
+                    if candidate in forbidden_system_labels
+                    and confidence >= _ABILITY_OCR_LABEL_CONFIDENCE
+                }
+            )
+            if exposed_system_labels:
+                raise PatentParseError(
+                    f"Kodak low-stress role {role} OCR may publish system metadata: "
+                    + ",".join(exposed_system_labels)
+                )
+    except Exception as exc:  # noqa: BLE001 - retain both source embodiments
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for number, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=(
+                    "metadata_unpublished.prescription_specific_efl_and_field_absent"
+                ),
+                detail=(
+                    f"official HTML and exact-raster OCR publish the {figure} spherical "
+                    "prescription, but no prescription-specific effective focal length "
+                    "or field value"
+                ),
+            ),
+        )
+        for number, (embodiment, figure) in enumerate(
+            zip(embodiments, ("FIG. 14A", "FIG. 14B"), strict=True),
+            start=1,
+        )
+    ]
+
+
 def _parse_ability_pdf_ocr_attempts(
     raw_text: str,
     *,
@@ -6635,6 +6854,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_ability_zoom_two_state_attempts(payload)
     if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
         return [_circle_optics_seven_lens_review_attempt(payload)]
+    if profile == _KODAK_LOW_STRESS_TWO_LENS_PROFILE:
+        return _kodak_low_stress_terminal_attempts(payload)
     if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
         return _parse_genius_four_lens_eleven_attempts(payload)
     if profile == _GENIUS_NINE_LENS_ELEVEN_PROFILE:
