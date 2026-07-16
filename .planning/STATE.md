@@ -27,16 +27,16 @@ foundation snapshot 的严格 audit 为 `saturation_complete=false`，明确 735
 当时 735 根均无保留全文。第三个 quick 现已为冻结的 619 个本地未覆盖根全部保留官方 PPUBS
 HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和账本。这是未合 main 的进行中证据，
 不是饱和完成声明；500 仅为历史进度标记。当前严格 replay result set 为
-`e4264482831b0e1bf06dd619cb7ded9ee649ee57c4f4c99eef7f300c739e1150`：619/619、
-missing=0、corrupt=0。Family ID `75759822` 的 `US-12216247-B2` 与
-`US-20220244497-A1` 已完成精确 HTML、完整 11-table denominator、官方/Google PDF 单嵌图
-逐页同像素与 drawing 审计。两份同申请文献各恢复五套 12-surface/6-asphere 处方；attempts
-3/4 将十个 item 写入 staging-only ZMX，规范化语义投影逐根相等。worker 的 5/5 edge-field
-光线均穿过 12 个表面，但 traced IMH 与来源 ImgH 有差异，因此十项仍为
-`converted_pending_intake`，不得外推为质量、正式 intake 或量产判定。Sunny 从 187 items /
-51 roots 降至 177 / 49，双 census SHA-256=
-`a7f8bea5e3b9f79beb1cd9a684d5b5fb9b399ebb7486455e83ffaf2f87231b74`。当前最大可执行桶
-回到 generic summary 183，其次 Sunny 177、AAC Raytech 174。
+`374086ddb8c43ac1732d4025ddce1ac2248ff08a265928dc21c84136bc0f01eb`：619/619、
+missing=0、corrupt=0。Family ID `86764397` 的 `US-12470822-B2` 与
+`US-20260039960-A1` 已完成精确 HTML、application/continuation、4 embodiment、3 example/table、
+15 drawing-sheet 与两份 official-only PDF 全分母审计。每份文献的三张表只含导线/弹性连接件
+几何，后三个实施例只含手机、多相机/TOF/折光叙述和车辆相机布置；两根 attempts 2/3 各生成
+六个 source-proven 终态，未调用 worker、未生成 receipt/ZMX。车辆 `40°<θ<90°` 覆盖范围未被
+误作镜头视场。Generic 从 183 items / 183 roots 降至 181 / 181，双 census SHA-256=
+`08763a8b21b6948b513237f755d633074c722b2bd9b5e5c6597b977968a612e1`。当前最大可执行桶仍为
+generic summary 181，其次 Sunny 177、AAC Raytech 174；按确定性排序，下一 family 为
+`84363056`（`US-12235418`、`US-20230067508`）。
 
 ## Current Position
 
@@ -50,7 +50,7 @@ missing=0、corrupt=0。Family ID `75759822` 的 `US-12216247-B2` 与
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `e4264482...1150`. Current roots: 367 parser review, 141 mixed, 86 terminal, 25 converted; items: 544 staging, 1410 parser review, 874 terminal, 28 conversion retry. Family 75759822 converts five exact prescriptions from each of two same-application publications to staging only; traced/published IMH discrepancy keeps all ten behind formal intake gates. Sunny 187→177 items and 51→49 roots. Generic summary 183 is next, then Sunny 177 and AAC 174. This is not source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `374086dd...01eb`. Current roots: 365 parser review, 141 mixed, 88 terminal, 25 converted; items: 544 staging, 1408 parser review, 886 terminal, 28 conversion retry. Family 86764397 expands each of two exact publications to three wire-geometry and three device-architecture terminals, with no worker/ZMX. Generic 183→181; next deterministic family is 84363056, then Sunny 177 and AAC 174. This is not source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -203,22 +203,25 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260716-patent-generic-family-44121309` | complete-largest-bucket-shovel-saturation-incomplete | Family 44121309 reduces generic metadata 189→186. Three exact HTML sources and three official/Google PDF pairs prove two spherical FIG. 14A/14B prescriptions per root, but publish no prescription-specific EFL or field. Generic F/6/about-F/3/F/2.5 contexts are rejected as substitutes. Six metadata terminals, no worker/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `dbf8a68e...0469a`, summary `17e7297f...114a`, after census `f47b2a27...106d`; audit 619/619 corrupt=0; 268 related tests+Ruff green; CODE V zero. Next family 46327306 has three roots. |
 | `260716-patent-generic-family-46327306` | complete-shovel-saturation-incomplete | Family 46327306 reduces generic metadata 186→183. Three exact HTML sources, 17 drawing groups/58 panels, two clinical tables, and three official/Google PDF pairs prove EDOF phase-element architecture and experiments but no optical surface prescription. Each root is one confirmed-no-prescription terminal; no worker/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `450f7be0...259f`, summary `dd00af1d...fcbe`, after census `ed3e4ee5...88ce`; audit 619/619 corrupt=0; 288 related tests+Ruff green; CODE V zero. Sunny metadata 187 is now the largest measured executable parser bucket. |
 | `260716-patent-sunny-family-75759822` | complete-shovel-saturation-incomplete | Two exact same-application publications each bind five 12-surface/6-asphere prescriptions and full-FOV metadata. Attempts 3/4 create ten staging-only candidates with stable semantic requests/responses/ZMX, but traced IMH differs from published ImgH, so formal intake remains pending. Result set `e4264482...1150`, summary `5f455956...561`, after census `a7f8bea5...1b74`; audit 619/619 corrupt=0; 307 offline patent tests pass; CODE V zero. Generic summary 183 is now largest. |
+| `260716-patent-generic-family-86764397` | complete-shovel-saturation-incomplete | Two exact Family 86764397 publications bind four formal embodiments, three first-embodiment wire-geometry examples/tables, and 15 drawing sheets. Each root expands to three wire-geometry and three device-architecture confirmed-no-prescription terminals; no worker/ZMX. Attempts 2/3 are semantic-equal excluding result attempt; result set `374086dd...01eb`, summary `6d6c9dda...ca18`, after census `08763a8b...12e1`; audit 619/619 corrupt=0; 311 offline patent tests pass; CODE V zero. Generic 181 remains largest; Family 84363056 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260716-patent-sunny-family-75759822/260716-patent-sunny-family-75759822-PLAN.md`,
+`.planning/quick/260716-patent-generic-family-86764397/260716-patent-generic-family-86764397-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (183), ahead of `sunny_embodiment_metadata_missing` (177) and
-`aac_raytech_summary_metadata_missing` (174). Select its largest exact family by the deterministic
-family/root/item/layout ordering, then use the same strict before/after census, source-proven
-layout, append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
+`generic_summary_metadata_missing` (181), ahead of `sunny_embodiment_metadata_missing` (177) and
+`aac_raytech_summary_metadata_missing` (174). Its next exact family under deterministic
+family/root/item/layout ordering is Family ID `84363056`, roots `US-12235418` and
+`US-20230067508`, layout `0aabd2e2...c970f`. Use the same strict before/after census,
+source-proven layout, append-only targeted replay, and full-pool audit contract. Remeasure after
+every shovel.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three

@@ -379,6 +379,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_shiftable_image_sensor_wire_geometry_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_lens_barrel_absorbing_geometry_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2151,6 +2157,108 @@ _FOLDED_LENS_BARREL_DRIVING_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "image sensor": 12,
             "FIG. 1 E is an optical surface schematic view": 2,
             "TABLE-US-00001": 1,
+        },
+    },
+}
+_SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_ONLY_TITLE_PATTERN = re.compile(
+    r"\bSHIFTABLE\s+CIRCUIT\s+ELEMENT\s*,\s*SHIFTABLE\s+IMAGE\s+SENSOR\s+"
+    r"MODULE\s*,\s*CAMERA\s+MODULE\s+AND\s+ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_TABLE_ROWS = (
+    "TABLE-US-00001 TABLE 1A the 1st example of the 1st embodiment "
+    "Dc (mm) 0.14 We (mm) 0.07 Wc (mm) 0.04 He (mm) 0.25 "
+    "Dc/Wc 3.5 We/He 0.28 N 28",
+    "TABLE-US-00002 TABLE 1B the 2nd example of the 1st embodiment "
+    "Dc (mm) 0.18 We (mm) 0.05 Wc (mm) 0.03 He (mm) 0.30 "
+    "Dc/Wc 6.0 We/He 0.167 N 36",
+    "TABLE-US-00003 TABLE 1C the 3rd example of the 1st embodiment "
+    "Dc (mm) 0.10 We (mm) 0.08 Wc (mm) 0.04 He (mm) 0.20 "
+    "Dc/Wc 2.5 We/He 0.40 N 32",
+)
+_SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_DRAWINGS = (
+    ("1", "A"),
+    ("1", "B"),
+    ("1", "C"),
+    ("1", "D"),
+    ("1", "E"),
+    ("1", "F"),
+    ("2", "A"),
+    ("2", "B"),
+    ("2", "C"),
+    ("2", "D"),
+    ("2", "E"),
+    ("3", ""),
+    ("4", "A"),
+    ("4", "B"),
+    ("4", "C"),
+)
+_SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_ONLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12470822-B2": {
+        "raw_document_sha256": (
+            "3086bf4acc39aeeae39659b5bebc51c39b46b1eed93c89bce69f572c087d0b30"
+        ),
+        "normalized_text_sha256": (
+            "2c1bc5322a375ec0c247ac1c595e78063ed76ffe8c1fb6ddd262dd4a30d85313"
+        ),
+        "application_number": "18/337472",
+        "heading_markers": (
+            "1st Embodiment (46)",
+            "2nd Embodiment (65)",
+            "3rd Embodiment (74)",
+            "4th Embodiment (78)",
+        ),
+        "relationship_markers": (
+            "US 20240007748 A1 Jan. 04, 2024",
+            "TW 112106819 Feb. 23, 2023",
+            "us-provisional-application US 63357070 20220630",
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 86764397": 1,
+            "shiftable image sensor module": 34,
+            "conductive wire units": 119,
+            "imaging lens assembly module": 16,
+            "ultra-wide angle camera module": 5,
+            "high resolution camera module": 4,
+            "telephoto camera module": 6,
+            "Time-Of-Flight (TOF) module": 1,
+            "fold the light": 1,
+            "different focal lengths": 1,
+        },
+    },
+    "US-20260039960-A1": {
+        "raw_document_sha256": (
+            "ae90751842fc7ce931d7f1302fe801b5f709fa7702ce52473cc129997e546044"
+        ),
+        "normalized_text_sha256": (
+            "d9976c5a5c704c92fe98d703c232357dd1632aedbca1d029e6af1bd5469dcfc8"
+        ),
+        "application_number": "19/353732",
+        "heading_markers": (
+            "1st Embodiment [0052]",
+            "2nd Embodiment [0068]",
+            "3rd Embodiment [0077]",
+            "4th Embodiment [0081]",
+        ),
+        "relationship_markers": (
+            "TW 112106819 Feb. 23, 2023",
+            "parent US continuation 18337472 20230620",
+            "parent-grant-document US 12470822 child US 19353732",
+            "us-provisional-application US 63357070 20220630",
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 86764397": 1,
+            "shiftable image sensor module": 36,
+            "conductive wire units": 102,
+            "imaging lens assembly module": 16,
+            "ultra-wide angle camera module": 5,
+            "high resolution camera module": 4,
+            "telephoto camera module": 6,
+            "Time-Of-Flight (TOF) module": 1,
+            "fold the light": 1,
+            "different focal lengths": 1,
         },
     },
 }
@@ -11214,6 +11322,228 @@ def _classify_folded_lens_barrel_driving_only_attempts(
             ),
         ),
     ]
+
+
+def _classify_shiftable_image_sensor_wire_geometry_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the six exact Family 86764397 source-declared items.
+
+    The first embodiment publishes three conductive-wire/elastic-connector
+    geometry examples.  Embodiments 2-4 publish smartphone, multi-camera/TOF,
+    folded-light, and vehicle camera placement architecture only.  The exact
+    official PPUBS sources and their 15-sheet official rasters publish no
+    optical surface prescription.  Source drift remains a parser failure.
+    """
+
+    profile = _SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiments = (
+        "Shiftable image-sensor wire geometry example 1",
+        "Shiftable image-sensor wire geometry example 2",
+        "Shiftable image-sensor wire geometry example 3",
+        "Multi-camera smartphone architecture embodiment 2",
+        "Multi-camera TOF and folded-light architecture embodiment 3",
+        "Vehicle camera-module architecture embodiment 4",
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "shiftable image-sensor wire official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "shiftable image-sensor wire normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if _SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_ONLY_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("shiftable image-sensor wire title binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "shiftable image-sensor wire application binding changed"
+            )
+        for marker in profile["relationship_markers"]:
+            observed = len(re.findall(re.escape(str(marker)), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    "shiftable image-sensor wire relationship marker "
+                    f"{marker!r} occurs {observed}; expected 1"
+                )
+
+        heading_matches = re.findall(
+            r"\b([1-9]\d*)(?:st|nd|rd|th)\s+Embodiment\s+"
+            r"(?:\(\d+\)|\[\d+\])",
+            text,
+            re.IGNORECASE,
+        )
+        if heading_matches != ["1", "2", "3", "4"]:
+            raise PatentParseError(
+                "shiftable image-sensor wire embodiment denominator changed"
+            )
+        for marker in profile["heading_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"shiftable image-sensor wire heading {marker!r} changed"
+                )
+
+        example_pairs = {
+            (int(example), int(embodiment))
+            for example, embodiment in re.findall(
+                r"\b(\d+)(?:st|nd|rd|th)\s+example\s+of\s+the\s+"
+                r"(\d+)(?:st|nd|rd|th)\s+embodiment\b",
+                text,
+                re.IGNORECASE,
+            )
+        }
+        if example_pairs != {(1, 1), (2, 1), (3, 1)}:
+            raise PatentParseError(
+                "shiftable image-sensor wire example denominator changed"
+            )
+        for index, row in enumerate(
+            _SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_TABLE_ROWS,
+            start=1,
+        ):
+            if len(re.findall(re.escape(row), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"shiftable image-sensor wire TABLE 1{'ABC'[index - 1]} binding changed"
+                )
+        if len(re.findall(r"TABLE-US-\d{5}", text, re.IGNORECASE)) != 3:
+            raise PatentParseError(
+                "shiftable image-sensor wire table denominator changed"
+            )
+
+        drawings = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+THE\s+DRAWINGS(?P<body>.*?)"
+            r"DETAILED\s+DESCRIPTION",
+            text,
+            re.IGNORECASE,
+        )
+        if drawings is None:
+            raise PatentParseError(
+                "shiftable image-sensor wire drawing description is missing"
+            )
+        drawing_refs = tuple(
+            (figure, panel.upper())
+            for figure, panel in re.findall(
+                r"\bFIG\.\s*([1-4])\s*([A-F]?)\s+is\s+",
+                drawings.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if drawing_refs != _SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_DRAWINGS:
+            raise PatentParseError(
+                "shiftable image-sensor wire 15-drawing denominator changed"
+            )
+        if re.search(
+            r"\b(?:table|prescription|optical\s+data|lens\s+data)\b",
+            drawings.group("body"),
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "shiftable image-sensor wire drawings now reference prescription data"
+            )
+
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"shiftable image-sensor wire phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if len(re.findall(r"\bfocal\s+lengths?\b", text, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "shiftable image-sensor wire nonnumeric focal-length narrative changed"
+            )
+        if len(
+            re.findall(
+                r"40\s+degrees\s*<\s*θ\s*<\s*90\s+degrees",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "shiftable image-sensor wire vehicle visual-angle range changed"
+            )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)?\b|\brefractive\s+index\b|"
+            r"\bSurface\s+(?:No\.|#)\s*|\bFno\b|\bF\s*[- ]?number\b|"
+            r"\bEFL\b|\beffective\s+focal\s+length\b|\bfield\s+of\s+view\b|"
+            r"\boptical\s+data\b|\blens\s+data\b|\bprescription\b|"
+            rf"\bfocal\s+lengths?\s*(?:=|:)\s*{NUMBER_PATTERN})",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "shiftable image-sensor wire disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all six source-declared items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, embodiment in enumerate(embodiments, start=1):
+        wire_geometry = index <= 3
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription."
+                        "shiftable_image_sensor_wire_geometry_only"
+                        if wire_geometry
+                        else (
+                            "confirmed_no_prescription."
+                            "camera_module_device_architecture_only"
+                        )
+                    ),
+                    detail=(
+                        f"TABLE 1{'ABC'[index - 1]} publishes only conductive-wire spacing, "
+                        "width, elastic-connector cross-section, ratios, and wire count; "
+                        "it has no optical surface prescription"
+                        if wire_geometry
+                        else (
+                            f"{embodiment} publishes only camera-module placement, sensor, "
+                            "device, capture, or light-folding architecture; it has no "
+                            "optical surface prescription"
+                        )
+                    ),
+                ),
+            )
+        )
+    return attempts
 
 
 def _classify_circle_optics_mechanical_only_attempts(

@@ -7573,6 +7573,154 @@ def test_folded_lens_barrel_driving_prescription_marker_fails_all(
     } == {"folded lens-barrel driving disclosure contains a prescription marker"}
 
 
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
+            "US-12470822-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "3086bf4acc39aeea",
+                "US-12470822-B2.html",
+            ),
+        ),
+        (
+            "US-20260039960-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "ae90751842fc7ce9",
+                "US-20260039960-A1.html",
+            ),
+        ),
+    ),
+)
+def test_shiftable_image_sensor_wire_exact_sources_are_terminal(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4, 5, 6]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert {
+        attempt.error.reason_code for attempt in attempts[:3]
+    } == {
+        "confirmed_no_prescription.shiftable_image_sensor_wire_geometry_only"
+    }
+    assert {
+        attempt.error.reason_code for attempt in attempts[3:]
+    } == {
+        "confirmed_no_prescription.camera_module_device_architecture_only"
+    }
+
+
+def _shiftable_image_sensor_wire_b2_source() -> tuple[str, str]:
+    patent_id = "US-12470822-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "3086bf4acc39aeea"
+        / "US-12470822-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_shiftable_image_sensor_wire_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    original = patent_to_zmx._SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_ONLY_SOURCE_PROFILES[
+        patent_id
+    ]
+    monkeypatch.setitem(
+        patent_to_zmx._SHIFTABLE_IMAGE_SENSOR_WIRE_GEOMETRY_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                patent_to_zmx.normalize_patent_text(raw_text).encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+
+def test_shiftable_image_sensor_wire_table_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _shiftable_image_sensor_wire_b2_source()
+    raw_text = original.replace(
+        "Dc/Wc 2.5 We/He 0.40 N 32",
+        "Dc/Wc 2.5 We/He 0.40 N 33",
+        1,
+    )
+    assert raw_text != original
+    _install_shiftable_image_sensor_wire_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 6
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "shiftable image-sensor wire TABLE 1C binding changed"
+    }
+
+
+def test_shiftable_image_sensor_wire_prescription_marker_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _shiftable_image_sensor_wire_b2_source()
+    raw_text = original.replace(
+        "The foregoing description, for purpose of explanation",
+        "Radius of curvature. The foregoing description, for purpose of explanation",
+        1,
+    )
+    assert raw_text != original
+    _install_shiftable_image_sensor_wire_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 6
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "shiftable image-sensor wire disclosure contains a prescription marker"
+    }
+
+
 def _circle_optics_mechanical_source_fixture(patent_id: str) -> str:
     drawings = []
     for figure in range(1, 29):
