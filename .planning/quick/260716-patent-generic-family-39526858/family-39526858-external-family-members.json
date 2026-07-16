@@ -1,0 +1,55 @@
+{
+  "current_frozen_cohort_roots": [
+    "US-20160088216",
+    "US-9699370"
+  ],
+  "external_family_members": [
+    {
+      "application_number": "13/964801",
+      "discovery_evidence": "US-20160088216-A1 cross-reference paragraph [0001]",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_id": "US-20140168787-A1",
+      "publication_root": "US-20140168787",
+      "publication_date": "2014-06-19"
+    },
+    {
+      "application_number": "13/964801",
+      "discovery_evidence": "US-20160088216-A1 cross-reference paragraph [0001]",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_id": "US-9207367-B2",
+      "publication_root": "US-9207367"
+    },
+    {
+      "application_number": "12/901242",
+      "discovery_evidence": "US-20160088216-A1 cross-reference paragraph [0001]",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_id": "US-20110017829-A1",
+      "publication_root": "US-20110017829",
+      "publication_date": "2011-01-27"
+    },
+    {
+      "application_number": "12/901242",
+      "discovery_evidence": "US-20160088216-A1 cross-reference paragraph [0001]",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_id": "US-8505822-B2",
+      "publication_root": "US-8505822"
+    },
+    {
+      "application_number": "11/897924",
+      "discovery_evidence": "US-20160088216-A1 cross-reference paragraph [0001]",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_id": "US-20080144185-A1",
+      "publication_root": "US-20080144185",
+      "publication_date": "2008-06-19"
+    },
+    {
+      "application_number": "11/897924",
+      "discovery_evidence": "US-20160088216-A1 cross-reference paragraph [0001]",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_id": "US-7813047-B2",
+      "publication_root": "US-7813047"
+    }
+  ],
+  "family_id": "39526858",
+  "schema_version": 1
+}

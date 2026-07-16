@@ -403,6 +403,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_deformable_lens_actuator_architecture_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_catadioptric_module_architecture_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2584,6 +2590,92 @@ _EDOF_MICROSCOPE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "focus scanning range is 2 mm, which is 125 times of the diffraction "
             "limited DOF": 1,
             "effective focal length": 2,
+        },
+    },
+}
+_DEFORMABLE_LENS_ACTUATOR_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*APPARATUS\s+AND\s+METHOD\s+COMPRISING\s+DEFORMABLE\s+"
+    r"LENS\s+ELEMENT\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_DEFORMABLE_LENS_ACTUATOR_DRAWINGS = (
+    *((f"FIG. {index}") for index in range(1, 20)),
+    "FIG. 20 and FIG. 21",
+    "FIGS. 22-24",
+    "FIG. 25",
+    "FIG. 26",
+    "FIG. 27",
+    "FIG. 28",
+)
+_DEFORMABLE_LENS_ACTUATOR_ITEM_LABEL = (
+    "Example 1 and deformable-lens actuator/imaging-terminal architecture"
+)
+_DEFORMABLE_LENS_ACTUATOR_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20160088216-A1": {
+        "raw_document_sha256": (
+            "041e2e327a607a20c6f625fa2ae0564e01ba97eb619c0a1dc58ca74a3e97c38f"
+        ),
+        "normalized_text_sha256": (
+            "1c68002ba8e35f10315564a2800c913f8175704ecf28d18988bf878c529aa3f1"
+        ),
+        "application_number": "14/958173",
+        "owner_count": 2,
+        "relationship_markers": (
+            "parent US continuation 13964801 20130812",
+            "parent US division 12901242 20101008",
+            "parent US division 11897924 20070831",
+            "us-provisional-application US 60961036 20070718",
+            "us-provisional-application US 60875245 20061215",
+        ),
+        "table_block_sha256": (
+            "f9098ad5d4e6f926191d8826f24cb04434aa138461b6a091983700c9d75159cc",
+            "3aafdbc43e7344646701f0eeef63e0be2f836b34515df9b06671ea437400eac9",
+            "298c7208ed2077f62f7ec40481e6cfe5c5627cc28f8ecdb65d12a6c8d880fe85",
+            "3d9f239b2926c84f8e066144894dff87dda8eeeb09e6a9494348fec386586188",
+        ),
+        "phrase_counts": {
+            "lens triplet imaging lens assembly of an IT5000 Image Engine": 1,
+            "focal length of 5.88 mm": 1,
+            "an F# of 6.6": 1,
+            "nominal fixed best focus distance of 36 inches": 1,
+            "half FOV": 2,
+            "lens element surface curvature": 1,
+            "The results are summarized in Table C below": 1,
+            "Various operator selectable configurations are summarized in Table D below": 1,
+        },
+    },
+    "US-9699370-B2": {
+        "raw_document_sha256": (
+            "88d9daf89b28d35136db8a275cfa6928e7d7ed2f80e1eae72635ded465457d96"
+        ),
+        "normalized_text_sha256": (
+            "3d8a5f8e677dc57ee70f3a8090ed6e2fee8f6ead1f42460f3d0c2f247e070189"
+        ),
+        "application_number": "14/958173",
+        "owner_count": 3,
+        "relationship_markers": (
+            "US 20160088216 A1 Mar. 24, 2016",
+            "continuation parent-doc US 13964801 20130812 US 9207367 child-doc US 14958173",
+            "division parent-doc US 12901242 20101008 US 8505822 child-doc US 13964801",
+            "division parent-doc US 11897924 20070831 US 7813047 child-doc US 12901242",
+            "us-provisional-application US 60961036 20070718",
+            "us-provisional-application US 60875245 20061215",
+        ),
+        "table_block_sha256": (
+            "ba57630b4d0d286d47030638201421994536399f4c096bf0150f42818b05f4e3",
+            "a5314a30588e0ed8f789b4f378c1915506640aae601cdb9bc08f29adff8ab7b5",
+            "298c7208ed2077f62f7ec40481e6cfe5c5627cc28f8ecdb65d12a6c8d880fe85",
+            "3d9f239b2926c84f8e066144894dff87dda8eeeb09e6a9494348fec386586188",
+        ),
+        "phrase_counts": {
+            "lens triplet imaging lens assembly of an IT5000 Image Engine": 1,
+            "focal length of 5.88 mm": 1,
+            "an F# of 6.6": 1,
+            "nominal fixed best focus distance of 36 inches": 1,
+            "half FOV": 2,
+            "lens element surface curvature": 1,
+            "The results are summarized in Table C below": 1,
+            "Various operator selectable configurations are summarized in Table D below": 1,
         },
     },
 }
@@ -13356,6 +13448,203 @@ def _classify_edof_microscope_examples_attempts(
         for index, (embodiment, (status, reason_code, detail)) in enumerate(
             zip(_EDOF_MICROSCOPE_ITEM_LABELS, outcomes, strict=True),
             start=1,
+        )
+    ]
+
+
+def _classify_deformable_lens_actuator_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the exact Family 39526858 actuator/terminal disclosure.
+
+    The one formal Example 1 benchmarks a deformable focus apparatus fitted to
+    a third-party IT5000 lens triplet.  Its focal length and F-number describe
+    that external assembly; neither the example nor the remaining architecture,
+    material, force-response, and control tables publish an ordered surface
+    prescription.
+    """
+
+    profile = _DEFORMABLE_LENS_ACTUATOR_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    embodiment = _DEFORMABLE_LENS_ACTUATOR_ITEM_LABEL
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"deformable-lens actuator official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"deformable-lens actuator normalized text hash changed for {patent_id}"
+            )
+        if len(_DEFORMABLE_LENS_ACTUATOR_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("deformable-lens actuator title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*39526858", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("deformable-lens actuator Family ID binding changed")
+
+        owner = "Hand Held Products, Inc."
+        if len(re.findall(re.escape(owner), text, re.IGNORECASE)) != profile[
+            "owner_count"
+        ]:
+            raise PatentParseError("deformable-lens actuator owner binding changed")
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("deformable-lens actuator application binding changed")
+        for marker in profile["relationship_markers"]:
+            observed = len(re.findall(re.escape(str(marker)), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"deformable-lens actuator relationship marker {marker!r} occurs "
+                    f"{observed}; expected 1"
+                )
+
+        formal_examples = tuple(
+            re.findall(r"(?<!End of )\bEXAMPLE\s+(\d+)\b", text, re.IGNORECASE)
+        )
+        if formal_examples != ("1",):
+            raise PatentParseError(
+                "deformable-lens actuator one-formal-example denominator changed"
+            )
+        if len(re.findall(r"\bEnd of Example 1\b", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("deformable-lens actuator Example 1 boundary changed")
+        if len(re.findall(r"\bexamples?\b", text, re.IGNORECASE)) != 24:
+            raise PatentParseError(
+                "deformable-lens actuator example-word accounting changed"
+            )
+
+        table_ids = tuple(re.findall(r"TABLE-US-(\d+)", raw_text, re.IGNORECASE))
+        if table_ids != ("00001", "00002", "00003", "00004"):
+            raise PatentParseError(
+                "deformable-lens actuator four-table denominator changed"
+            )
+        table_texts: list[str] = []
+        for table_id in table_ids:
+            match = re.search(
+                rf"TABLE-US-{table_id}(?P<body>.*?)<br\s*/?>",
+                raw_text,
+                re.DOTALL | re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    f"deformable-lens actuator TABLE-US-{table_id} body is missing"
+                )
+            table_texts.append(
+                normalize_patent_text(f"TABLE-US-{table_id}" + match.group("body"))
+            )
+        table_digests = tuple(
+            hashlib.sha256(table_text.encode("utf-8")).hexdigest()
+            for table_text in table_texts
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError("deformable-lens actuator table digest changed")
+        table_prefixes = (
+            "TABLE-US-00001 TABLE A Example Material and Sample Characteristics",
+            "TABLE-US-00002 TABLE B",
+            "TABLE-US-00003 TABLE C VOLTAGE DISTANCE MOVEMENT OF ACTUATOR BEST FOCUS",
+            "TABLE-US-00004 TABLE D Configuration Exposure Period and Lens Setting Coordination",
+        )
+        if any(
+            not table_text.startswith(prefix)
+            for table_text, prefix in zip(table_texts, table_prefixes, strict=True)
+        ):
+            raise PatentParseError("deformable-lens actuator table-role binding changed")
+
+        brief_match = re.search(
+            r"DETAILED DESCRIPTION OF THE DRAWINGS(?P<body>.*?)"
+            r"DETAILED DESCRIPTION(?:<|\s)",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError("deformable-lens actuator drawing description is missing")
+        drawing_text = normalize_patent_text(brief_match.group("body"))
+        drawing_rows = tuple(
+            re.findall(
+                r"(?:\[\d+\]|\(\d+\))\s+(FIGS?\..*?)"
+                r"(?=(?:\[\d+\]|\(\d+\))\s+FIG|$)",
+                drawing_text,
+                re.IGNORECASE,
+            )
+        )
+        drawing_declarations: list[str] = []
+        for row in drawing_rows:
+            declaration_match = re.match(
+                r"(FIGS?\.\s+\d+(?:\s+and\s+FIG\.\s+\d+|-\d+)?)\s+"
+                r"(?:is|are)",
+                row,
+                re.IGNORECASE,
+            )
+            if declaration_match is None:
+                raise PatentParseError(
+                    "deformable-lens actuator drawing declaration syntax changed"
+                )
+            drawing_declarations.append(declaration_match.group(1))
+        if tuple(drawing_declarations) != _DEFORMABLE_LENS_ACTUATOR_DRAWINGS:
+            raise PatentParseError(
+                "deformable-lens actuator 28-figure denominator changed"
+            )
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"deformable-lens actuator phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bAbbe(?:\s+(?:number|#))?\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\boptical\s+(?:surface\s+)?(?:prescription|data)\b|"
+            r"\blens\s+(?:prescription|data)\b)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "deformable-lens actuator disclosure contains a surface-prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=1,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "deformable_lens_actuator_and_imaging_terminal_architecture_only"
+                ),
+                detail=(
+                    "the exact retained disclosure has one formal Example 1 and four "
+                    "lettered tables covering materials, force profiles, fitted-actuator "
+                    "focus response, and lens-setting control; the published 5.88 mm "
+                    "focal length and F# 6.6 belong to the external IT5000 lens triplet, "
+                    "and neither it nor the 28 component/control figures supplies an "
+                    "ordered optical surface prescription"
+                ),
+            ),
         )
     ]
 

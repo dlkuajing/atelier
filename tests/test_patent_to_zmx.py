@@ -8709,6 +8709,191 @@ def test_edof_microscope_raster_audit_rehashes() -> None:
     ("patent_id", "path_parts"),
     (
         (
+            "US-20160088216-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "041e2e327a607a20",
+                "US-20160088216-A1.html",
+            ),
+        ),
+        (
+            "US-9699370-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "88d9daf89b28d351",
+                "US-9699370-B2.html",
+            ),
+        ),
+    ),
+)
+def test_deformable_lens_actuator_exact_sources_are_terminal(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].embodiment_number == 1
+    assert attempts[0].embodiment == (
+        "Example 1 and deformable-lens actuator/imaging-terminal architecture"
+    )
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert attempts[0].error.status == "confirmed_no_prescription"
+    assert attempts[0].error.reason_code == (
+        "confirmed_no_prescription."
+        "deformable_lens_actuator_and_imaging_terminal_architecture_only"
+    )
+
+
+def test_deformable_lens_actuator_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    audit_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-39526858"
+        / "family-39526858-raster-audit.json"
+    )
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+
+    assert audit["family_id"] == "39526858"
+    assert audit["numbered_figure_count"] == 28
+    assert audit["figure_declarations"] == [str(index) for index in range(1, 29)]
+    expected = {
+        "US-20160088216-A1": {
+            "page_count": 37,
+            "drawing_page_numbers": list(range(2, 18)),
+            "table_page_numbers": [23, 24, 26, 27, 31],
+        },
+        "US-9699370-B2": {
+            "page_count": 39,
+            "drawing_page_numbers": list(range(5, 21)),
+            "table_page_numbers": [26, 29, 30, 34],
+        },
+    }
+    for publication_id, record in audit["publications"].items():
+        pdf_path = root / record["retained_pdf_path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == record[
+            "retained_pdf_sha256"
+        ]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == expected[publication_id][
+            "page_count"
+        ]
+        assert sum(len(page.extract_text() or "") for page in reader.pages) == 0
+        assert record["text_layer_char_count"] == 0
+        page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=publication_id,
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(reader.pages, start=1)
+        ]
+        raster_set_sha256 = hashlib.sha256(
+            json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        assert raster_set_sha256 == record["raster_set_sha256"]
+
+        second_pdf_path = root / record["second_live_pdf_path"]
+        assert hashlib.sha256(second_pdf_path.read_bytes()).hexdigest() == record[
+            "second_live_pdf_sha256"
+        ]
+        second_reader = patent_pdf_recovery.pypdf.PdfReader(str(second_pdf_path))
+        second_page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=f"{publication_id} recheck",
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(second_reader.pages, start=1)
+        ]
+        assert second_page_hashes == page_hashes
+        assert record["second_live_raster_set_equal"] is True
+        assert record["drawing_page_numbers"] == expected[publication_id][
+            "drawing_page_numbers"
+        ]
+        assert len(record["drawing_page_numbers"]) == record["drawing_sheet_count"] == 16
+        assert record["table_page_numbers"] == expected[publication_id][
+            "table_page_numbers"
+        ]
+
+        contact_path = root / record["contact_sheet_path"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == record[
+            "contact_sheet_sha256"
+        ]
+
+
+def test_deformable_lens_actuator_external_family_queue_is_source_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-39526858"
+    )
+    queue = json.loads(
+        (quick_root / "family-39526858-external-family-members.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert queue["family_id"] == "39526858"
+    assert queue["current_frozen_cohort_roots"] == [
+        "US-20160088216",
+        "US-9699370",
+    ]
+    assert [
+        (record["application_number"], record["publication_id"])
+        for record in queue["external_family_members"]
+    ] == [
+        ("13/964801", "US-20140168787-A1"),
+        ("13/964801", "US-9207367-B2"),
+        ("12/901242", "US-20110017829-A1"),
+        ("12/901242", "US-8505822-B2"),
+        ("11/897924", "US-20080144185-A1"),
+        ("11/897924", "US-7813047-B2"),
+    ]
+    source = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "041e2e327a607a20"
+        / "US-20160088216-A1.html"
+    ).read_text(encoding="utf-8")
+    for marker in (
+        "13/964,801",
+        "2014/0168787",
+        "9,207,367",
+        "12/901,242",
+        "2011/0017829",
+        "8,505,822",
+        "11/897,924",
+        "2008/0144185",
+        "7,813,047",
+    ):
+        assert marker in source
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
             "US-12631860-B2",
             (
                 "data",
@@ -9079,6 +9264,58 @@ def _install_edof_microscope_drift_profile(
     )
 
 
+def _deformable_lens_actuator_b2_source() -> tuple[str, str]:
+    patent_id = "US-9699370-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "88d9daf89b28d351"
+        / "US-9699370-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_deformable_lens_actuator_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    original = patent_to_zmx._DEFORMABLE_LENS_ACTUATOR_SOURCE_PROFILES[patent_id]
+    table_hashes: list[str] = []
+    for table_id in ("00001", "00002", "00003", "00004"):
+        table_match = re.search(
+            rf"TABLE-US-{table_id}(?P<body>.*?)<br\s*/?>",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        assert table_match is not None
+        table_text = patent_to_zmx.normalize_patent_text(
+            f"TABLE-US-{table_id}" + table_match.group("body")
+        )
+        table_hashes.append(hashlib.sha256(table_text.encode("utf-8")).hexdigest())
+    monkeypatch.setitem(
+        patent_to_zmx._DEFORMABLE_LENS_ACTUATOR_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "table_block_sha256": tuple(table_hashes),
+            "phrase_counts": {
+                phrase: len(re.findall(re.escape(phrase), normalized, re.IGNORECASE))
+                for phrase in original["phrase_counts"]
+            },
+        },
+    )
+
+
 def _install_meta_optical_drift_profile(
     monkeypatch: pytest.MonkeyPatch,
     *,
@@ -9263,6 +9500,98 @@ def test_edof_microscope_published_required_metadata_reopens_all_five_items(
     assert all(
         not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
         for attempt in attempts
+    )
+
+
+def test_deformable_lens_actuator_source_hash_drift_reopens_parser_review() -> None:
+    patent_id, raw_text = _deformable_lens_actuator_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert str(attempts[0].error) == (
+        f"deformable-lens actuator official raw text hash changed for {patent_id}"
+    )
+
+
+def test_deformable_lens_actuator_table_drift_reopens_parser_review(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _deformable_lens_actuator_b2_source()
+    raw_text = original.replace("896 0.075 mm", "897 0.075 mm", 1)
+    assert raw_text != original
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    profile = patent_to_zmx._DEFORMABLE_LENS_ACTUATOR_SOURCE_PROFILES[patent_id]
+    monkeypatch.setitem(
+        patent_to_zmx._DEFORMABLE_LENS_ACTUATOR_SOURCE_PROFILES,
+        patent_id,
+        {
+            **profile,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert str(attempts[0].error) == "deformable-lens actuator table digest changed"
+
+
+def test_deformable_lens_actuator_drawing_drift_reopens_parser_review(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _deformable_lens_actuator_b2_source()
+    raw_text = original.replace(
+        '<figref idref="DRAWINGS">FIG. 28</figref> is a front perspective view',
+        '<figref idref="DRAWINGS">FIG. 29</figref> is a front perspective view',
+        1,
+    )
+    assert raw_text != original
+    _install_deformable_lens_actuator_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert str(attempts[0].error) == (
+        "deformable-lens actuator 28-figure denominator changed"
+    )
+
+
+def test_deformable_lens_actuator_prescription_marker_reopens_parser_review(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _deformable_lens_actuator_b2_source()
+    raw_text = original + " Surface No. 1 radius of curvature = 1.0 mm."
+    _install_deformable_lens_actuator_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert str(attempts[0].error) == (
+        "deformable-lens actuator disclosure contains a surface-prescription marker"
     )
 
 
