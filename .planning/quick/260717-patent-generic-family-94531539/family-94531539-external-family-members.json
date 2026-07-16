@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "family_id": "94531539",
+  "current_frozen_cohort_roots": [
+    "US-20250189695"
+  ],
+  "current_publication": "US-20250189695-A1",
+  "external_family_members": [
+    {
+      "publication_id": "JP3250120U",
+      "country": "JP",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "KR20250000908U",
+      "country": "KR",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN120111342A",
+      "country": "CN",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "TWI919493B",
+      "country": "TW",
+      "relationship": "priority application publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "source_note": "Google Patents family/country-status metadata cross-check; no external numeric value is borrowed into the retained US source classification."
+}

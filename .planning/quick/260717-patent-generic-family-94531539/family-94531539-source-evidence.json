@@ -1,0 +1,693 @@
+{
+  "schema_version": 1,
+  "family_id": "94531539",
+  "application_number": "18/964621",
+  "root_ids": [
+    "US-20250189695"
+  ],
+  "publication_id": "US-20250189695-A1",
+  "priority": {
+    "us_provisional": "63/606632",
+    "us_provisional_date": "2023-12-06",
+    "taiwan_application": "113139408",
+    "taiwan_date": "2024-10-16"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "source_publications": 1,
+    "official_pdf_pages": 68,
+    "drawing_sheets": 53,
+    "figure_panels": 53,
+    "formal_embodiments": 9,
+    "embodiment_1_examples": 7,
+    "embodiment_2_examples": 6,
+    "source_tables": 2,
+    "coating_layers": 70,
+    "r50_samples": 8,
+    "description_paragraphs": 189,
+    "claims": 29,
+    "terminal_items": 20
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/af4c1f9b7a42a688/US-20250189695-A1.html",
+    "raw_document_sha256": "af4c1f9b7a42a68846f8bc10625ccd770506a6cdb88dd0361a802314442cb44c",
+    "normalized_text_sha256": "11ba0b20ca5d703c45f0da2a588bda011ded4f399a53fb000cc957a3c2eb80b5",
+    "section_markers": {
+      "related": "RELATED APPLICATIONS",
+      "background": "BACKGROUND Technical Field",
+      "summary": "SUMMARY [0005]",
+      "brief": "BRIEF DESCRIPTION OF THE DRAWINGS",
+      "detailed": "DETAILED DESCRIPTION [0062]",
+      "claims": "Claims 1 . An image sensor module"
+    },
+    "section_sha256": {
+      "related": "90a334ab399a4d005fd4af288f683b1aa8a17f4aaef953bb6f133fdf0b9d0879",
+      "background": "f2417b6a7e50a4871525b2e6a7f57629dc17b983a5778b9a45be6212ee33e7c2",
+      "summary": "2070967f17e59d4522f487dac3fb6389fcb9dd89e7d1ab43336663fb97f7f21c",
+      "brief": "90ea20259f60e3c3b68ff8a08b4e76a3fe73d1eb631a73d463f5c3666be37452",
+      "detailed": "5f185f8eb853433a93f89f9a6b137a6f910bce9b6d59cdff6133f5253de32e7f",
+      "claims": "d7fb79f9a4618a0e9b4771689fff217b1bf2ec22fad2861b6a95b7bf7b94a7a4"
+    },
+    "paragraph_ranges": {
+      "related": [
+        1,
+        1
+      ],
+      "background": [
+        2,
+        4
+      ],
+      "summary": [
+        5,
+        7
+      ],
+      "brief": [
+        8,
+        61
+      ],
+      "detailed": [
+        62,
+        189
+      ]
+    },
+    "claim_range": [
+      1,
+      29
+    ],
+    "raw_drawing_section_sha256": "186c816f55f8aca44862378e9002b9d23f2d3346096e1c2b430bd33f57c3ca90",
+    "raw_figure_declarations": [
+      {
+        "paragraph": 9,
+        "panel": "1A"
+      },
+      {
+        "paragraph": 10,
+        "panel": "1B"
+      },
+      {
+        "paragraph": 11,
+        "panel": "1C"
+      },
+      {
+        "paragraph": 12,
+        "panel": "1D"
+      },
+      {
+        "paragraph": 13,
+        "panel": "1E"
+      },
+      {
+        "paragraph": 14,
+        "panel": "1F"
+      },
+      {
+        "paragraph": 15,
+        "panel": "1G"
+      },
+      {
+        "paragraph": 16,
+        "panel": "1H"
+      },
+      {
+        "paragraph": 17,
+        "panel": "11"
+      },
+      {
+        "paragraph": 18,
+        "panel": "1J"
+      },
+      {
+        "paragraph": 19,
+        "panel": "1K"
+      },
+      {
+        "paragraph": 20,
+        "panel": "1L"
+      },
+      {
+        "paragraph": 21,
+        "panel": "1M"
+      },
+      {
+        "paragraph": 22,
+        "panel": "1N"
+      },
+      {
+        "paragraph": 23,
+        "panel": "1O"
+      },
+      {
+        "paragraph": 24,
+        "panel": "1P"
+      },
+      {
+        "paragraph": 25,
+        "panel": "1Q"
+      },
+      {
+        "paragraph": 26,
+        "panel": "1R"
+      },
+      {
+        "paragraph": 27,
+        "panel": "1S"
+      },
+      {
+        "paragraph": 28,
+        "panel": "1T"
+      },
+      {
+        "paragraph": 29,
+        "panel": "1U"
+      },
+      {
+        "paragraph": 30,
+        "panel": "1V"
+      },
+      {
+        "paragraph": 31,
+        "panel": "1W"
+      },
+      {
+        "paragraph": 32,
+        "panel": "1X"
+      },
+      {
+        "paragraph": 33,
+        "panel": "1Y"
+      },
+      {
+        "paragraph": 34,
+        "panel": "2A"
+      },
+      {
+        "paragraph": 35,
+        "panel": "2B"
+      },
+      {
+        "paragraph": 36,
+        "panel": "2C"
+      },
+      {
+        "paragraph": 37,
+        "panel": "2D"
+      },
+      {
+        "paragraph": 38,
+        "panel": "2E"
+      },
+      {
+        "paragraph": 39,
+        "panel": "2F"
+      },
+      {
+        "paragraph": 40,
+        "panel": "2G"
+      },
+      {
+        "paragraph": 41,
+        "panel": "2H"
+      },
+      {
+        "paragraph": 42,
+        "panel": "21"
+      },
+      {
+        "paragraph": 43,
+        "panel": "2J"
+      },
+      {
+        "paragraph": 44,
+        "panel": "2K"
+      },
+      {
+        "paragraph": 45,
+        "panel": "2L"
+      },
+      {
+        "paragraph": 46,
+        "panel": "2M"
+      },
+      {
+        "paragraph": 47,
+        "panel": "3A"
+      },
+      {
+        "paragraph": 48,
+        "panel": "3B"
+      },
+      {
+        "paragraph": 49,
+        "panel": "3C"
+      },
+      {
+        "paragraph": 50,
+        "panel": "3D"
+      },
+      {
+        "paragraph": 51,
+        "panel": "3E"
+      },
+      {
+        "paragraph": 52,
+        "panel": "4A"
+      },
+      {
+        "paragraph": 53,
+        "panel": "4B"
+      },
+      {
+        "paragraph": 54,
+        "panel": "4C"
+      },
+      {
+        "paragraph": 55,
+        "panel": "4D"
+      },
+      {
+        "paragraph": 56,
+        "panel": "5A"
+      },
+      {
+        "paragraph": 57,
+        "panel": "5B"
+      },
+      {
+        "paragraph": 58,
+        "panel": "6"
+      },
+      {
+        "paragraph": 59,
+        "panel": "7"
+      },
+      {
+        "paragraph": 60,
+        "panel": "8"
+      },
+      {
+        "paragraph": 61,
+        "panel": "9"
+      }
+    ],
+    "canonical_raster_figure_panels": [
+      "1A",
+      "1B",
+      "1C",
+      "1D",
+      "1E",
+      "1F",
+      "1G",
+      "1H",
+      "1I",
+      "1J",
+      "1K",
+      "1L",
+      "1M",
+      "1N",
+      "1O",
+      "1P",
+      "1Q",
+      "1R",
+      "1S",
+      "1T",
+      "1U",
+      "1V",
+      "1W",
+      "1X",
+      "1Y",
+      "2A",
+      "2B",
+      "2C",
+      "2D",
+      "2E",
+      "2F",
+      "2G",
+      "2H",
+      "2I",
+      "2J",
+      "2K",
+      "2L",
+      "2M",
+      "3A",
+      "3B",
+      "3C",
+      "3D",
+      "3E",
+      "4A",
+      "4B",
+      "4C",
+      "4D",
+      "5A",
+      "5B",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "html_to_raster_label_repairs": [
+      {
+        "paragraph": 17,
+        "html_label": "11",
+        "raster_label": "1I"
+      },
+      {
+        "paragraph": 42,
+        "html_label": "21",
+        "raster_label": "2I"
+      }
+    ],
+    "tables": [
+      {
+        "number": 1,
+        "block_sha256": "8e8b363cdae7dc5ef8c501bd2c4069cf0a9f3e07f96caaec05a0363f3b05b535",
+        "formal_table_sha256": "9ac351b2340fef6b2690699a1216bbcddfd032f26d89d20e51ac2c78f51c5ef7",
+        "role": "70-layer H/L optical multilayer refractive-index group and thickness table"
+      },
+      {
+        "number": 2,
+        "block_sha256": "21418babf09332381b83eb548917ce214e123d1574f47f9cf3c79ee9c687ecdf",
+        "formal_table_sha256": "5becfeaea4f137efaba3f53c5c6e348b061554178f7da0706dd085c24a7bd78b",
+        "role": "eight filter-sample R50 values"
+      }
+    ],
+    "table_1_layer_sequence": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70
+    ],
+    "table_1_group_sequence": [
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L",
+      "H",
+      "L"
+    ],
+    "table_2_r50_values_nm": [
+      661,
+      670,
+      682,
+      692,
+      701,
+      664,
+      672,
+      681
+    ]
+  },
+  "optical_boundary": {
+    "source_phrase_counts": {
+      "optical multilayer deposition structure layer": 119,
+      "nano-rough surface": 80,
+      "nano-protruding structures": 37,
+      "reflecting element": 140,
+      "image sensor module": 78,
+      "camera module": 165,
+      "electronic device": 47,
+      "imaging lens assembly": 47,
+      "focal lengths": 1,
+      "aspheric surface": 10,
+      "refractive index": 6
+    },
+    "r50_marker_count": 22,
+    "prism_spacing_marker_count": 8,
+    "absorption_peak_marker_count": 1,
+    "absent_marker_counts": {
+      "Abbe": 0,
+      "radius of curvature": 0,
+      "curvature radius": 0,
+      "optical prescription": 0,
+      "lens prescription": 0,
+      "surface prescription": 0,
+      "surface number": 0,
+      "F-number": 0,
+      "FNO": 0,
+      "field of view": 0,
+      "angle of view": 0,
+      "numerical aperture": 0,
+      "EFL": 0,
+      "FOV": 0,
+      "TTL": 0
+    },
+    "generic_focal_length_context": "camera module with different focal lengths cooperated with the function of image processing",
+    "ordered_surface_prescription_published": false,
+    "system_efl_f_number_field_published": false,
+    "coating_or_r50_data_usable_as_surface_prescription": false
+  },
+  "terminal_items": [
+    {
+      "item_number": 1,
+      "label": "Folded image-sensor module embodiment 1 example 1",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 2,
+      "label": "Folded image-sensor module embodiment 1 example 2",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 3,
+      "label": "Folded image-sensor module embodiment 1 example 3",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 4,
+      "label": "Folded image-sensor module embodiment 1 example 4",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 5,
+      "label": "Folded image-sensor module embodiment 1 example 5",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 6,
+      "label": "Folded image-sensor module embodiment 1 example 6",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 7,
+      "label": "Folded image-sensor module embodiment 1 example 7",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 8,
+      "label": "Folded image-sensor module embodiment 2 example 1",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 9,
+      "label": "Folded image-sensor module embodiment 2 example 2",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 10,
+      "label": "Folded image-sensor module embodiment 2 example 3",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 11,
+      "label": "Folded image-sensor module embodiment 2 example 4",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 12,
+      "label": "Folded image-sensor module embodiment 2 example 5",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 13,
+      "label": "Folded image-sensor module embodiment 2 example 6",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 14,
+      "label": "Folded image-sensor camera-module embodiment 3",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 15,
+      "label": "Folded image-sensor camera-module embodiment 4",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+    },
+    {
+      "item_number": 16,
+      "label": "Smartphone multi-camera electronic-device embodiment 5",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_device_architecture_only"
+    },
+    {
+      "item_number": 17,
+      "label": "Unmanned-aerial-vehicle camera architecture embodiment 6",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_device_architecture_only"
+    },
+    {
+      "item_number": 18,
+      "label": "Vehicle camera architecture embodiment 7",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_device_architecture_only"
+    },
+    {
+      "item_number": 19,
+      "label": "Computer camera architecture embodiment 8",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_device_architecture_only"
+    },
+    {
+      "item_number": 20,
+      "label": "Wearable-device camera architecture embodiment 9",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_device_architecture_only"
+    }
+  ],
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-94531539/family-94531539-raster-audit.json",
+    "sha256": "ccbea3e75f836c76ddee016feb9b9c78a169ad705c7087fbb686dbace4800cc4"
+  }
+}

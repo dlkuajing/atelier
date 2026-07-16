@@ -14770,3 +14770,305 @@ def test_aac_five_lens_f_number_bound_replay_is_semantically_deterministic() -> 
         "87fa187194a547f93786253acb090331b465c989299f82de0df594ef4c453c92",
         "0a026f0f3b04978d6e7ce2aa9103deebcc423c65d215e7a7f9d9d2ba60bf6437",
     }
+
+
+def test_largan_folded_image_sensor_filter_source_has_twenty_terminals() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "af4c1f9b7a42a688"
+        / "US-20250189695-A1.html"
+    )
+    raw_text = source.read_text(encoding="utf-8")
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id="US-20250189695-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 21))
+    assert len(attempts) == 20
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.error.reason_code
+        == (
+            "confirmed_no_prescription."
+            "folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+        )
+        for attempt in attempts[:15]
+    )
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.error.reason_code
+        == "confirmed_no_prescription.camera_module_device_architecture_only"
+        for attempt in attempts[15:]
+    )
+
+    altered = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " EFL 4.0",
+        patent_id="US-20250189695-A1",
+    )
+    assert len(altered) == 20
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "raw text hash changed" in str(attempt.error)
+        for attempt in altered
+    )
+
+
+def test_largan_folded_image_sensor_filter_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-94531539"
+    evidence = json.loads(
+        (quick / "family-94531539-source-evidence.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["family_id"] == "94531539"
+    assert evidence["application_number"] == "18/964621"
+    assert evidence["root_ids"] == ["US-20250189695"]
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "source_publications": 1,
+        "official_pdf_pages": 68,
+        "drawing_sheets": 53,
+        "figure_panels": 53,
+        "formal_embodiments": 9,
+        "embodiment_1_examples": 7,
+        "embodiment_2_examples": 6,
+        "source_tables": 2,
+        "coating_layers": 70,
+        "r50_samples": 8,
+        "description_paragraphs": 189,
+        "claims": 29,
+        "terminal_items": 20,
+    }
+
+    html = evidence["official_html"]
+    source = root / html["path"]
+    raw_text = source.read_text(encoding="utf-8")
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    assert hashlib.sha256(raw_text.encode()).hexdigest() == html["raw_document_sha256"]
+    assert hashlib.sha256(normalized.encode()).hexdigest() == html["normalized_text_sha256"]
+
+    markers = html["section_markers"]
+    names = tuple(markers)
+    starts = {name: normalized.index(marker) for name, marker in markers.items()}
+    sections = {
+        name: normalized[
+            starts[name] : (
+                starts[names[index + 1]] if index + 1 < len(names) else len(normalized)
+            )
+        ]
+        for index, name in enumerate(names)
+    }
+    for name, section in sections.items():
+        assert hashlib.sha256(section.encode()).hexdigest() == html["section_sha256"][name]
+    for name, bounds in html["paragraph_ranges"].items():
+        assert [int(value) for value in re.findall(r"\[(\d{4})\]", sections[name])] == list(
+            range(bounds[0], bounds[1] + 1)
+        )
+    assert [
+        int(value)
+        for value in re.findall(
+            r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+            sections["claims"],
+            re.IGNORECASE,
+        )
+    ] == list(range(1, 30))
+
+    brief_start = raw_text.index("BRIEF DESCRIPTION OF THE DRAWINGS<br />")
+    brief_end = raw_text.index("DETAILED DESCRIPTION<br />", brief_start)
+    raw_brief = raw_text[brief_start:brief_end]
+    assert hashlib.sha256(raw_brief.encode()).hexdigest() == html["raw_drawing_section_sha256"]
+    figure_records: list[dict[str, int | str]] = []
+    for paragraph, body in re.findall(
+        r"\[(\d{4})\]\s*(.*?)(?=<br\s*/?>\[\d{4}\]|$)",
+        raw_brief,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        match = re.search(
+            r"<figref[^>]*>FIG\.\s*<b>([^<]+)</b>([A-Z]?)</figref>\s+(?:is|shows)",
+            body,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if match is not None:
+            figure_records.append(
+                {
+                    "paragraph": int(paragraph),
+                    "panel": f"{match.group(1)}{match.group(2)}",
+                }
+            )
+    assert figure_records == html["raw_figure_declarations"]
+    assert [record["paragraph"] for record in figure_records] == list(range(9, 62))
+    assert len(html["canonical_raster_figure_panels"]) == 53
+    assert html["html_to_raster_label_repairs"] == [
+        {"paragraph": 17, "html_label": "11", "raster_label": "1I"},
+        {"paragraph": 42, "html_label": "21", "raster_label": "2I"},
+    ]
+
+    blocks = patent_to_zmx._patent_table_blocks(normalized)
+    assert [block.number for block in blocks] == [1, 2]
+    for block, table in zip(blocks, html["tables"], strict=True):
+        assert hashlib.sha256(block.text.encode()).hexdigest() == table["block_sha256"]
+        formal = re.split(r"\s+\[\d{4}\]\s+", block.text, maxsplit=1)[0]
+        assert hashlib.sha256(formal.encode()).hexdigest() == table["formal_table_sha256"]
+    assert html["table_1_layer_sequence"] == list(range(1, 71))
+    assert html["table_1_group_sequence"] == [
+        "H" if number % 2 else "L" for number in range(1, 71)
+    ]
+    assert html["table_2_r50_values_nm"] == [661, 670, 682, 692, 701, 664, 672, 681]
+    assert set(evidence["optical_boundary"]["absent_marker_counts"].values()) == {0}
+    for marker in ("EFL", "FOV", "TTL", "FNO"):
+        assert re.search(rf"\b{marker}\b", normalized, re.IGNORECASE) is None
+    assert evidence["optical_boundary"]["ordered_surface_prescription_published"] is False
+    assert evidence["optical_boundary"]["system_efl_f_number_field_published"] is False
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=evidence["publication_id"],
+    )
+    assert len(attempts) == len(evidence["terminal_items"]) == 20
+    raster_audit = root / evidence["official_pdf_audit"]["path"]
+    assert (
+        hashlib.sha256(raster_audit.read_bytes()).hexdigest()
+        == evidence["official_pdf_audit"]["sha256"]
+    )
+
+    queue = json.loads(
+        (quick / "family-94531539-external-family-members.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert queue["current_frozen_cohort_roots"] == ["US-20250189695"]
+    assert {member["publication_id"] for member in queue["external_family_members"]} == {
+        "JP3250120U",
+        "KR20250000908U",
+        "CN120111342A",
+        "TWI919493B",
+    }
+    assert all(
+        member["disposition"] == "queue_after_frozen_619_root_cohort"
+        for member in queue["external_family_members"]
+    )
+
+
+def test_largan_folded_image_sensor_filter_pdf_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-94531539"
+    audit = json.loads(
+        (quick / "family-94531539-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    assert audit["family_id"] == "94531539"
+    assert audit["root_ids"] == ["US-20250189695"]
+    assert audit["page_count"] == 68
+    assert audit["drawing_page_range"] == [2, 54]
+    assert audit["drawing_sheet_count"] == 53
+    assert audit["specification_page_range"] == [55, 68]
+    assert audit["claims_page_range"] == [66, 68]
+    assert audit["claim_range"] == [1, 29]
+    assert audit["table_pages"] == {"1": 60, "2": 62}
+    assert audit["html_to_raster_label_repairs"] == [
+        {"paragraph": 17, "pdf_page": 10, "html_label": "11", "raster_label": "1I"},
+        {"paragraph": 42, "pdf_page": 34, "html_label": "21", "raster_label": "2I"},
+    ]
+
+    raster_sets: dict[str, list[str]] = {}
+    for label, wrapper in audit["wrappers"].items():
+        pdf_path = root / wrapper["path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper["sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == wrapper["page_count"] == 68
+        page_hashes: list[str] = []
+        image_counts: list[int] = []
+        text_lengths: list[int] = []
+        page_shapes: list[list[int]] = []
+        for page_number, page in enumerate(reader.pages, start=1):
+            image_counts.append(len(page.images))
+            text_lengths.append(len((page.extract_text() or "").strip()))
+            image_bytes = patent_pdf_recovery._page_image(
+                page,
+                source=f"US-20250189695-A1 {label}",
+                page_number=page_number,
+            )
+            page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(image_bytes))
+            decoded = cv2.imdecode(
+                np.frombuffer(image_bytes, dtype=np.uint8),
+                cv2.IMREAD_UNCHANGED,
+            )
+            assert decoded is not None
+            page_shapes.append([int(value) for value in decoded.shape])
+        assert image_counts == wrapper["page_image_counts"]
+        assert text_lengths == wrapper["page_text_lengths"]
+        assert page_shapes == wrapper["page_shapes"]
+        assert page_hashes == wrapper["page_raster_sha256"]
+        raster_sets[label] = page_hashes
+
+    assert raster_sets["official-live-1"] == raster_sets["official-live-2"]
+    assert raster_sets["official-live-1"] == raster_sets["google"]
+    for comparison in audit["decoded_raster_equality"].values():
+        assert comparison == {"all_equal": True, "equal_pages": 68}
+    for visual in audit["retained_visual_audits"]:
+        path = root / visual["path"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == visual["sha256"]
+
+
+def test_largan_folded_image_sensor_filter_replay_is_semantically_deterministic() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-94531539"
+    evidence = json.loads(
+        (quick / "family-94531539-replay-determinism.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["family_id"] == "94531539"
+    assert evidence["root_id"] == "US-20250189695"
+    assert evidence["item_count"] == 20
+    assert evidence["excluded_semantic_fields"] == ["result_attempt"]
+    assert evidence["semantic_equal"] is True
+    semantic_hashes: set[str] = set()
+    for attempt in evidence["attempts"]:
+        path = root / attempt["path"]
+        raw = path.read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == attempt["file_sha256"]
+        result = json.loads(raw)
+        assert result["result_attempt"] == attempt["result_attempt"]
+        assert result["root_state"] == "terminal"
+        assert result["reason_code"] == "terminal.all_disclosed_items_terminal"
+        assert len(result["items"]) == 20
+        assert all(
+            item["state"] == "terminal"
+            and item["terminal_status"] == "confirmed_no_prescription"
+            and item["conversion_attempt_id"] is None
+            and item["conversion_request_sha256"] is None
+            and item["prescription_fingerprint"] is None
+            for item in result["items"]
+        )
+        assert all(
+            item["reason_code"]
+            == (
+                "terminal.confirmed_no_prescription."
+                "folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+            )
+            for item in result["items"][:15]
+        )
+        assert all(
+            item["reason_code"]
+            == "terminal.confirmed_no_prescription.camera_module_device_architecture_only"
+            for item in result["items"][15:]
+        )
+        result.pop("result_attempt")
+        semantic_sha256 = hashlib.sha256(
+            json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        assert semantic_sha256 == attempt["semantic_sha256"]
+        assert semantic_sha256 == evidence["semantic_sha256"]
+        semantic_hashes.add(semantic_sha256)
+    assert semantic_hashes == {
+        "8d5c826e4d2f1f414fd4a21d01fc10037bd4a9215454572a7c2116efd4063a7b"
+    }

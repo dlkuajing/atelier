@@ -518,6 +518,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_folded_image_sensor_filter_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_low_reflection_light_blocking_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -2749,6 +2757,156 @@ _LOW_REFLECTION_LIGHT_BLOCKING_PHRASE_COUNTS = {
     "smart phone": 1,
     "image signal processor": 1,
     "optical image stabilization": 1,
+}
+_LARGAN_FOLDED_IMAGE_SENSOR_FILTER_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Image\s+sensor\s+module,\s*camera\s+module\s+and\s+"
+    r"electronic\s+device\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_LARGAN_FOLDED_IMAGE_SENSOR_FILTER_RAW_FIGURE_PANELS = (
+    *(f"1{letter}" for letter in "ABCDEFGH"),
+    "11",
+    *(f"1{letter}" for letter in "JKLMNOPQRSTUVWXY"),
+    *(f"2{letter}" for letter in "ABCDEFGH"),
+    "21",
+    *(f"2{letter}" for letter in "JKLM"),
+    *(f"3{letter}" for letter in "ABCDE"),
+    *(f"4{letter}" for letter in "ABCD"),
+    "5A",
+    "5B",
+    "6",
+    "7",
+    "8",
+    "9",
+)
+_LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ARCHITECTURE_REASON = (
+    "confirmed_no_prescription."
+    "folded_image_sensor_filter_and_nano_rough_surface_architecture_only"
+)
+_LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ITEM_PROFILES = (
+    *(
+        (
+            example_number,
+            f"Folded image-sensor module embodiment 1 example {example_number}",
+            _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ARCHITECTURE_REASON,
+        )
+        for example_number in range(1, 8)
+    ),
+    *(
+        (
+            7 + example_number,
+            f"Folded image-sensor module embodiment 2 example {example_number}",
+            _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ARCHITECTURE_REASON,
+        )
+        for example_number in range(1, 7)
+    ),
+    (
+        14,
+        "Folded image-sensor camera-module embodiment 3",
+        _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ARCHITECTURE_REASON,
+    ),
+    (
+        15,
+        "Folded image-sensor camera-module embodiment 4",
+        _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ARCHITECTURE_REASON,
+    ),
+    (
+        16,
+        "Smartphone multi-camera electronic-device embodiment 5",
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ),
+    (
+        17,
+        "Unmanned-aerial-vehicle camera architecture embodiment 6",
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ),
+    (
+        18,
+        "Vehicle camera architecture embodiment 7",
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ),
+    (
+        19,
+        "Computer camera architecture embodiment 8",
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ),
+    (
+        20,
+        "Wearable-device camera architecture embodiment 9",
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ),
+)
+_LARGAN_FOLDED_IMAGE_SENSOR_FILTER_PHRASE_COUNTS = {
+    "optical multilayer deposition structure layer": 119,
+    "nano-rough surface": 80,
+    "nano-protruding structures": 37,
+    "reflecting element": 140,
+    "image sensor module": 78,
+    "camera module": 165,
+    "electronic device": 47,
+    "imaging lens assembly": 47,
+    "focal lengths": 1,
+    "aspheric surface": 10,
+    "refractive index": 6,
+}
+_LARGAN_FOLDED_IMAGE_SENSOR_FILTER_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20250189695-A1": {
+        "raw_document_sha256": (
+            "af4c1f9b7a42a68846f8bc10625ccd770506a6cdb88dd0361a802314442cb44c"
+        ),
+        "normalized_text_sha256": (
+            "11ba0b20ca5d703c45f0da2a588bda011ded4f399a53fb000cc957a3c2eb80b5"
+        ),
+        "identity_markers": (
+            "Family ID: 94531539",
+            "Appl. No.: 18/964621",
+            "Largan Industrial Optics Co., Ltd.",
+            "TW 113139408 Oct. 16, 2024",
+            "US 63606632 20231206",
+            "This application claims priority to U.S. Provisional Application "
+            "Ser. No. 63/606,632, filed Dec. 6, 2023, and Taiwan Application "
+            "Ser. No. 113139408, filed Oct. 16, 2024",
+        ),
+        "section_markers": {
+            "related": "RELATED APPLICATIONS",
+            "background": "BACKGROUND Technical Field",
+            "summary": "SUMMARY [0005]",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION [0062]",
+            "claims": "Claims 1 . An image sensor module",
+        },
+        "section_sha256": {
+            "related": "90a334ab399a4d005fd4af288f683b1aa8a17f4aaef953bb6f133fdf0b9d0879",
+            "background": (
+                "f2417b6a7e50a4871525b2e6a7f57629dc17b983a5778b9a45be6212ee33e7c2"
+            ),
+            "summary": "2070967f17e59d4522f487dac3fb6389fcb9dd89e7d1ab43336663fb97f7f21c",
+            "brief": "90ea20259f60e3c3b68ff8a08b4e76a3fe73d1eb631a73d463f5c3666be37452",
+            "detailed": (
+                "5f185f8eb853433a93f89f9a6b137a6f910bce9b6d59cdff6133f5253de32e7f"
+            ),
+            "claims": "d7fb79f9a4618a0e9b4771689fff217b1bf2ec22fad2861b6a95b7bf7b94a7a4",
+        },
+        "paragraph_ranges": {
+            "related": (1, 1),
+            "background": (2, 4),
+            "summary": (5, 7),
+            "brief": (8, 61),
+            "detailed": (62, 189),
+        },
+        "claim_count": 29,
+        "table_block_sha256": (
+            "8e8b363cdae7dc5ef8c501bd2c4069cf0a9f3e07f96caaec05a0363f3b05b535",
+            "21418babf09332381b83eb548917ce214e123d1574f47f9cf3c79ee9c687ecdf",
+        ),
+        "formal_table_sha256": (
+            "9ac351b2340fef6b2690699a1216bbcddfd032f26d89d20e51ac2c78f51c5ef7",
+            "5becfeaea4f137efaba3f53c5c6e348b061554178f7da0706dd085c24a7bd78b",
+        ),
+        "table_2_r50_values": ("661", "670", "682", "692", "701", "664", "672", "681"),
+    },
 }
 _VARIABLE_APERTURE_CAMERA_MODULE_TITLE_PATTERN = re.compile(
     r"<h2[^>]*>\s*Imaging\s+lens\s+assembly\s+module,\s*camera\s+module\s+"
@@ -15912,6 +16070,345 @@ def _classify_lens_barrel_absorbing_geometry_only_attempts(
             )
         )
     return attempts
+
+
+def _classify_largan_folded_image_sensor_filter_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 94531539 filter/nano-surface architecture."""
+
+    profile = _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=item_number,
+                embodiment=label,
+                error=exc,
+            )
+            for item_number, label, _reason_code in (
+                _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ITEM_PROFILES
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter official raw text hash "
+                f"changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter normalized text hash "
+                f"changed for {patent_id}"
+            )
+        if (
+            len(
+                _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_TITLE_PATTERN.findall(
+                    raw_text
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter title binding changed"
+            )
+        for marker in profile["identity_markers"]:
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    "Largan folded image-sensor/filter identity marker "
+                    f"{marker!r} occurs {observed}; expected 1"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(
+            sorted(section_starts.values())
+        ):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile[
+            "section_sha256"
+        ].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan folded image-sensor/filter "
+                    f"{section_name} section changed"
+                )
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(
+                    r"\[(\d{4})\]",
+                    sections[section_name],
+                )
+            )
+            expected = tuple(range(bounds[0], bounds[1] + 1))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan folded image-sensor/filter "
+                    f"{section_name} paragraph denominator changed"
+                )
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter claim denominator changed"
+            )
+
+        try:
+            brief_start = raw_text.index(
+                "BRIEF DESCRIPTION OF THE DRAWINGS<br />"
+            )
+            brief_end = raw_text.index(
+                "DETAILED DESCRIPTION<br />",
+                brief_start,
+            )
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter raw drawing section changed"
+            ) from exc
+        raw_brief = raw_text[brief_start:brief_end]
+        figure_records: list[tuple[int, str]] = []
+        for paragraph, body in re.findall(
+            r"\[(\d{4})\]\s*(.*?)(?=<br\s*/?>\[\d{4}\]|$)",
+            raw_brief,
+            re.IGNORECASE | re.DOTALL,
+        ):
+            match = re.search(
+                r"<figref[^>]*>FIG\.\s*<b>([^<]+)</b>([A-Z]?)</figref>"
+                r"\s+(?:is|shows)",
+                body,
+                re.IGNORECASE | re.DOTALL,
+            )
+            if match is not None:
+                figure_records.append(
+                    (int(paragraph), f"{match.group(1)}{match.group(2)}")
+                )
+        if tuple(paragraph for paragraph, _panel in figure_records) != tuple(
+            range(9, 62)
+        ):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter 53-figure paragraph "
+                "denominator changed"
+            )
+        if tuple(panel for _paragraph, panel in figure_records) != (
+            _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_RAW_FIGURE_PANELS
+        ):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter raw figure labels changed"
+            )
+
+        normalized_brief = normalize_patent_text(raw_brief)
+        for embodiment_number, example_count in ((1, 7), (2, 6)):
+            observed_examples = tuple(
+                sorted(
+                    {
+                        int(value)
+                        for value in re.findall(
+                            rf"\b(\d+)(?:st|nd|rd|th)\s+example\s+of\s+the\s+"
+                            rf"{embodiment_number}(?:st|nd)\s+embodiment\b",
+                            normalized_brief,
+                            re.IGNORECASE,
+                        )
+                    }
+                )
+            )
+            if observed_examples != tuple(range(1, example_count + 1)):
+                raise PatentParseError(
+                    "Largan folded image-sensor/filter embodiment "
+                    f"{embodiment_number} example denominator changed"
+                )
+        suffixes = ("st", "nd", "rd", "th", "th", "th", "th", "th", "th")
+        for embodiment_number, suffix in enumerate(suffixes, start=1):
+            heading = f"&lt;{embodiment_number}{suffix} Embodiment&gt;"
+            if len(re.findall(re.escape(heading), raw_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Largan folded image-sensor/filter embodiment heading "
+                    f"{embodiment_number} changed"
+                )
+        if re.search(r"\b10th\s+Embodiment\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter source gained a tenth embodiment"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != (1, 2):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter TABLE 1-2 denominator changed"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter PPUBS table block changed"
+            )
+        formal_tables = tuple(
+            re.split(r"\s+\[\d{4}\]\s+", block.text, maxsplit=1)[0]
+            for block in blocks
+        )
+        formal_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_digests != profile["formal_table_sha256"]:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter formal table content changed"
+            )
+        layer_rows = tuple(
+            (int(layer), group, thickness)
+            for layer, group, thickness in re.findall(
+                r"(?<!\S)(\d{1,2})\s+([HL])\s+(\d+(?:\.\d+)?)",
+                formal_tables[0],
+            )
+        )
+        if tuple(layer for layer, _group, _thickness in layer_rows) != tuple(
+            range(1, 71)
+        ):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter 70-layer denominator changed"
+            )
+        if tuple(group for _layer, group, _thickness in layer_rows) != tuple(
+            "H" if layer % 2 else "L" for layer in range(1, 71)
+        ):
+            raise PatentParseError(
+                "Largan folded image-sensor/filter H/L layer sequence changed"
+            )
+        r50_groups = tuple(
+            value
+            for group in re.findall(
+                r"R50\s*\(nm\)\s+((?:\d+\s+){3}\d+)",
+                formal_tables[1],
+                re.IGNORECASE,
+            )
+            for value in group.split()
+        )
+        if r50_groups != profile["table_2_r50_values"]:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter eight R50 samples changed"
+            )
+
+        for phrase, expected in (
+            _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_PHRASE_COUNTS.items()
+        ):
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan folded image-sensor/filter phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        if len(re.findall(r"\bR\s*50\b", text, re.IGNORECASE)) != 22:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter R50 denominator changed"
+            )
+        if len(re.findall(r"\bSP\s*[12]?\b", text, re.IGNORECASE)) != 8:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter prism-spacing denominator changed"
+            )
+        if len(re.findall(r"\bAP\b", text, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter absorption-peak marker changed"
+            )
+        if len(
+            re.findall(
+                "camera module with different focal lengths cooperated with the "
+                "function of image processing",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter generic focal-length context changed"
+            )
+
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bAbbe(?:\s+(?:number|#))?\b|"
+            r"\baspheric?\s+(?:surface\s+)?"
+            r"(?:data|coefficients?|parameters?)\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|\bFNO\b|\bF-number\b|"
+            r"\bfield\s+of\s+view\b|\bangle\s+of\s+view\b|\bFOV\b|"
+            r"\bnumerical\s+aperture\b|"
+            r"\b(?:optical|lens|surface)\s+prescription\b|"
+            r"\bfocal\s+length\s*(?:=|is|of)\s*[-+]?\d)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "Largan folded image-sensor/filter disclosure gained an optical "
+                "prescription or direct system-metadata marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all 20 architecture variants
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=item_number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=(
+                    "the embodiment publishes only smartphone, vehicle, aircraft, "
+                    "computer, wearable-device, camera-module, image-sensor, and "
+                    "image-processing architecture; it has no ordered optical "
+                    "surface prescription"
+                    if item_number >= 16
+                    else (
+                        f"{label} publishes only folded light-path, prism or mirror, "
+                        "filter/coating, nano-rough-surface, sensor, lens-set placement, "
+                        "and module geometry; the 70-layer and R50 tables are coating "
+                        "and transmittance data, not an ordered optical prescription"
+                    )
+                ),
+            ),
+        )
+        for item_number, label, reason_code in (
+            _LARGAN_FOLDED_IMAGE_SENSOR_FILTER_ITEM_PROFILES
+        )
+    ]
 
 
 def _classify_low_reflection_light_blocking_architecture_only_attempts(
