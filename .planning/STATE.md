@@ -200,23 +200,23 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260715-patent-generic-family-77725725` | complete-largest-bucket-shovel-saturation-incomplete | Three exact Family 77725725 roots reduce generic metadata 195→192. Each independently expands to two terminals: folded lens-barrel driving/sensing architecture with only d1/d2 sensor distances, and multi-camera electronic-device architecture; no worker/ZMX. Attempts 2/3 are canonical-equal after excluding result identity; result set `3d12a5b3...3beb6`, summary `d2218257...6e138`, after-census `d9b439ac...f4bf7`; audit 619/619 corrupt=0; 247 focused tests+Ruff green; CODE V zero. |
 | `260715-patent-generic-family-74060373` | complete-largest-bucket-shovel-saturation-incomplete | Family 74060373 reduces generic metadata 192→189. US-12092800-B2 is an exact-source panoramic opto-mechanical terminal; US-12313825-B2 and US-20250284103-A1 retain explicit seven-lens FIG. 8C parser reviews because zero numeric table tokens meet 0.99. No ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `e0b098b9...4c180`, summary `2cdf8187...76237`, after census `d638c3c5...81db5`; audit 619/619 corrupt=0; 251 related tests+Ruff green; CODE V zero. |
 | `260716-patent-generic-family-44121309` | complete-largest-bucket-shovel-saturation-incomplete | Family 44121309 reduces generic metadata 189→186. Three exact HTML sources and three official/Google PDF pairs prove two spherical FIG. 14A/14B prescriptions per root, but publish no prescription-specific EFL or field. Generic F/6/about-F/3/F/2.5 contexts are rejected as substitutes. Six metadata terminals, no worker/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `dbf8a68e...0469a`, summary `17e7297f...114a`, after census `f47b2a27...106d`; audit 619/619 corrupt=0; 268 related tests+Ruff green; CODE V zero. Next family 46327306 has three roots. |
+| `260716-patent-generic-family-46327306` | complete-shovel-saturation-incomplete | Family 46327306 reduces generic metadata 186→183. Three exact HTML sources, 17 drawing groups/58 panels, two clinical tables, and three official/Google PDF pairs prove EDOF phase-element architecture and experiments but no optical surface prescription. Each root is one confirmed-no-prescription terminal; no worker/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `450f7be0...259f`, summary `dd00af1d...fcbe`, after census `ed3e4ee5...88ce`; audit 619/619 corrupt=0; 288 related tests+Ruff green; CODE V zero. Sunny metadata 187 is now the largest measured executable parser bucket. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260716-patent-generic-family-44121309/260716-patent-generic-family-44121309-PLAN.md`,
+`.planning/quick/260716-patent-generic-family-46327306/260716-patent-generic-family-46327306-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work remains the complete-cohort largest parser bucket:
 `sunny_embodiment_metadata_missing` (187), narrowly ahead of
-`generic_summary_metadata_missing` (186). Continue the active generic-family sequence with exact
-Family ID `46327306` roots `US-20080198482` / `US-7365917` / `US-7859769`, using the same strict
-before/after census, source-proven layout rules, append-only targeted replay, and full-pool audit
-contract; then remeasure the globally largest executable bucket rather than assuming priority.
+`generic_summary_metadata_missing` (183). Continue with the largest exact Sunny family under the
+same strict before/after census, source-proven layout, append-only targeted replay, and full-pool
+audit contract; remeasure after every shovel rather than assuming priority.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three

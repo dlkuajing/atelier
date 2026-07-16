@@ -784,6 +784,64 @@ def _install_imaging_lens_system_fixture_profile(
     return patent_id
 
 
+def _extended_depth_of_focus_architecture_only_fixture(
+    *,
+    prescription_marker: bool = False,
+    table_header_drift: bool = False,
+) -> str:
+    table_2_header = (
+        "Changed clinical endpoint."
+        if table_header_drift
+        else "Summary of the effect of the invented element on far vision."
+    )
+    parts = [
+        "OPTICAL METHOD AND SYSTEM FOR EXTENDED DEPTH OF FOCUS",
+        "Family ID: 46327306",
+        "extended depth of focus " * 2,
+        "phase mask " * 2,
+        "phase-affecting " * 2,
+        "non-diffractive " * 2,
+        "focal length " * 2,
+        "field of view " * 2,
+        "FIG. 1A is a schematic illustration",
+        "TABLE-US-00001 TABLE 1 Summary of the reading test.",
+        f"TABLE-US-00002 TABLE 2 {table_2_header}",
+    ]
+    if prescription_marker:
+        parts.append("Surface # Radius Thickness Abbe number")
+    return " ".join(parts)
+
+
+def _install_extended_depth_of_focus_fixture_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    text: str,
+) -> str:
+    patent_id = "US-EDOF-PHASE-ELEMENT-FIXTURE-A1"
+    normalized = patent_to_zmx.normalize_patent_text(text)
+    monkeypatch.setitem(
+        patent_to_zmx._EXTENDED_DEPTH_OF_FOCUS_ARCHITECTURE_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "architecture_phrase_counts": {
+                "Family ID: 46327306": 1,
+                "extended depth of focus": 3,
+                "phase mask": 2,
+                "phase-affecting": 2,
+                "non-diffractive": 2,
+                "focal length": 2,
+                "field of view": 2,
+            },
+            "drawing_anchor_counts": {
+                "FIG. 1A is a schematic illustration": 1,
+            },
+        },
+    )
+    return patent_id
+
+
 def _light_blocking_geometry_only_fixture(
     *,
     prescription_marker: bool = False,
@@ -6591,6 +6649,71 @@ def test_imaging_lens_system_classifier_refuses_source_hash_drift(
     assert isinstance(attempts[0].error, PatentParseError)
     assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
     assert "official text hash changed" in str(attempts[0].error)
+
+
+def test_extended_depth_of_focus_architecture_only_is_confirmed_no_prescription(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _extended_depth_of_focus_architecture_only_fixture()
+    patent_id = _install_extended_depth_of_focus_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription."
+        "extended_depth_of_focus_phase_element_architecture_only"
+    )
+
+
+def test_extended_depth_of_focus_classifier_refuses_prescription_marker(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _extended_depth_of_focus_architecture_only_fixture(
+        prescription_marker=True
+    )
+    patent_id = _install_extended_depth_of_focus_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "contains a prescription marker" in str(attempts[0].error)
+
+
+def test_extended_depth_of_focus_classifier_refuses_source_hash_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _extended_depth_of_focus_architecture_only_fixture()
+    patent_id = _install_extended_depth_of_focus_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "official text hash changed" in str(attempts[0].error)
+
+
+def test_extended_depth_of_focus_classifier_refuses_clinical_table_drift(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    text = _extended_depth_of_focus_architecture_only_fixture(table_header_drift=True)
+    patent_id = _install_extended_depth_of_focus_fixture_profile(monkeypatch, text)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(text, patent_id=patent_id)
+
+    assert len(attempts) == 1
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "clinical table 2 header changed" in str(attempts[0].error)
 
 
 def test_light_blocking_geometry_only_is_confirmed_no_prescription(

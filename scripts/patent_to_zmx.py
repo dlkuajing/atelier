@@ -514,6 +514,12 @@ def _parse_prescription_attempts(
         )
         if attempts:
             return attempts
+        attempts = _classify_extended_depth_of_focus_architecture_only_attempts(
+            text,
+            patent_id=patent_id,
+        )
+        if attempts:
+            return attempts
         attempts = _classify_light_blocking_geometry_only_attempts(
             text,
             patent_id=patent_id,
@@ -1922,6 +1928,78 @@ _IMAGING_LENS_SYSTEM_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]
             "equivalent focal length": 13,
             "thermal expansion coefficients": 1,
         },
+    },
+}
+_EXTENDED_DEPTH_OF_FOCUS_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
+    r"\bOPTICAL\s+METHOD\s+AND\s+SYSTEM\s+FOR\s+EXTENDED\s+DEPTH\s+OF\s+FOCUS\b",
+    flags=re.IGNORECASE,
+)
+_EXTENDED_DEPTH_OF_FOCUS_DRAWING_ANCHOR_COUNTS = {
+    "FIG. 1A is a schematic illustration": 1,
+    "FIG. 1B schematically illustrates another example": 1,
+    "FIG. 1C schematically illustrates yet another example": 1,
+    "1D and 1E show two examples, respectively": 1,
+    "2A to 2C show three examples, respectively": 1,
+    "3A to 3D illustrate the effect": 2,
+    "4A to 4I exemplify face images": 1,
+    "5A to 5I exemplify face images": 1,
+    "FIG. 6 shows the results of examining": 2,
+    "7A to 7D show experimental results": 1,
+    "8A to 8D and FIGS. 9A to 9H show experimental verification": 1,
+    "FIG. 10A illustrates the performance": 1,
+    "FIG. 10B illustrates the performance": 1,
+    "11A and 11B present two images": 2,
+    "12A-12B and 13 show the ophthalmic experimental results": 1,
+    "14A and 14B present the ophthalmic experimental results": 1,
+    "15A and 15B present the ophthalmic experimental results": 1,
+}
+_EXTENDED_DEPTH_OF_FOCUS_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20080198482-A1": {
+        "normalized_text_sha256": (
+            "db87ee2b05d34aa6f91336bdcae2ebfe0c6fa987abac1fab5b24ca7d6bc0986f"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 46327306": 1,
+            "extended depth of focus": 32,
+            "phase mask": 7,
+            "phase-affecting": 20,
+            "non-diffractive": 23,
+            "focal length": 8,
+            "field of view": 8,
+        },
+        "drawing_anchor_counts": _EXTENDED_DEPTH_OF_FOCUS_DRAWING_ANCHOR_COUNTS,
+    },
+    "US-7365917-B2": {
+        "normalized_text_sha256": (
+            "27b605d0ac827ead0cd9259b79f360db16d04fb474103d6f6d55dc6ff0ca35a8"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 46327306": 1,
+            "extended depth of focus": 33,
+            "phase mask": 7,
+            "phase-affecting": 22,
+            "non-diffractive": 25,
+            "focal length": 8,
+            "field of view": 8,
+        },
+        "drawing_anchor_counts": _EXTENDED_DEPTH_OF_FOCUS_DRAWING_ANCHOR_COUNTS,
+    },
+    "US-7859769-B2": {
+        "normalized_text_sha256": (
+            "04a44f2e0b41ccadac7b3d52f214e924e40d9d84c5fa06e36e5262f80d6f38e5"
+        ),
+        "architecture_phrase_counts": {
+            "Family ID: 46327306": 1,
+            "extended depth of focus": 40,
+            "phase mask": 48,
+            "phase-affecting": 19,
+            "non-diffractive": 22,
+            "focal length": 8,
+            "field of view": 8,
+        },
+        "drawing_anchor_counts": _EXTENDED_DEPTH_OF_FOCUS_DRAWING_ANCHOR_COUNTS,
     },
 }
 _LENS_BARREL_ABSORBING_GEOMETRY_ONLY_TITLE_PATTERN = re.compile(
@@ -10699,6 +10777,98 @@ def _classify_imaging_lens_system_architecture_only_attempts(
                     "the exact retained official PPUBS disclosure publishes multi-camera "
                     "lens-element arrangement and system-level equivalent focal ranges but "
                     "no optical surface prescription or prescription table"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_extended_depth_of_focus_architecture_only_attempts(
+    text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify three exact EDOF phase-element architecture disclosures."""
+
+    if _EXTENDED_DEPTH_OF_FOCUS_ARCHITECTURE_ONLY_TITLE_PATTERN.search(text) is None:
+        return []
+    profile = _EXTENDED_DEPTH_OF_FOCUS_ARCHITECTURE_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+    embodiment = "extended-depth-of-focus phase-element architecture"
+    try:
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"extended-depth-of-focus official text hash changed for {patent_id}"
+            )
+        blocks = _patent_table_blocks(text)
+        if [block.number for block in blocks] != [1, 2]:
+            raise PatentParseError(
+                "extended-depth-of-focus clinical table denominator changed"
+            )
+        required_table_headers = (
+            "Summary of the reading test.",
+            "Summary of the effect of the invented element on far vision.",
+        )
+        for block, header in zip(blocks, required_table_headers, strict=True):
+            if len(re.findall(re.escape(header), block.text, flags=re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"extended-depth-of-focus clinical table {block.number} header changed"
+                )
+        for phrase, expected in profile["architecture_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"extended-depth-of-focus phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile["drawing_anchor_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, flags=re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"extended-depth-of-focus drawing anchor {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bcurvature\s+radius\b|\bradius\s+of\s+curvature\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe\s+(?:number|#)\b|\bSurface\s+(?:No\.?|#|Number)\b|"
+            r"\bFno\b|\bF\s*[- ]?number\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|\boptical\s+data\b|"
+            r"\blens\s+parameters?\b|\bprescription\b|"
+            r"\b(?:Surface|Surf)\s+(?:No\.?|#).{0,200}\bRadius\b"
+            r".{0,200}\b(?:Thickness|Distance)\b)",
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "extended-depth-of-focus disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural drift
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "extended_depth_of_focus_phase_element_architecture_only"
+                ),
+                detail=(
+                    "the exact retained official PPUBS disclosure publishes EDOF "
+                    "phase-element architecture, simulations, experiments, and two "
+                    "clinical-result tables but no optical surface prescription"
                 ),
             ),
         )
