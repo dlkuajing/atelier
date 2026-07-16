@@ -8931,6 +8931,225 @@ def test_lens_barrel_absorbing_source_locked_prescription_marker_fails_all(
     } == {"lens-barrel absorbing disclosure contains a prescription marker"}
 
 
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
+            "US-12429633-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "e6faadbdb770bfd3",
+                "US-12429633-B2.html",
+            ),
+        ),
+        (
+            "US-20240077657-A1",
+            (
+                ".planning",
+                "quick",
+                "260716-patent-generic-family-73978649",
+                "source-review",
+                "US-20240077657-A1.html",
+            ),
+        ),
+    ),
+)
+def test_low_reflection_light_blocking_exact_sources_are_terminal(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4, 5]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+    assert {
+        attempt.error.reason_code for attempt in attempts[:4]
+    } == {
+        "confirmed_no_prescription."
+        "low_reflection_coating_and_light_blocking_architecture_only"
+    }
+    assert attempts[4].error.reason_code == (
+        "confirmed_no_prescription.camera_module_device_architecture_only"
+    )
+
+
+def test_low_reflection_light_blocking_prescription_marker_fails_all(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-12429633-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "e6faadbdb770bfd3"
+        / "US-12429633-B2.html"
+    )
+    original = source_path.read_text(encoding="utf-8")
+    raw_text = original + " radius of curvature"
+    profile = (
+        patent_to_zmx.
+        _LOW_REFLECTION_LIGHT_BLOCKING_ARCHITECTURE_ONLY_SOURCE_PROFILES[patent_id]
+    )
+    monkeypatch.setitem(
+        patent_to_zmx.
+        _LOW_REFLECTION_LIGHT_BLOCKING_ARCHITECTURE_ONLY_SOURCE_PROFILES,
+        patent_id,
+        {
+            **profile,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                patent_to_zmx.normalize_patent_text(raw_text).encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {
+        str(attempt.error) for attempt in attempts
+    } == {
+        "low-reflection light-blocking disclosure contains a prescription marker"
+    }
+
+
+def test_low_reflection_light_blocking_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-73978649"
+    )
+    audit = json.loads(
+        (quick_root / "family-73978649-raster-audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert audit["family_id"] == "73978649"
+    assert audit["numbered_figure_count"] == 5
+    assert len(audit["figure_declarations"]) == 23
+    expected = {
+        "US-12429633-B2": {
+            "drawing_page_numbers": list(range(3, 26)),
+            "table_page_numbers": list(range(29, 35)),
+        },
+        "US-20240077657-A1": {
+            "drawing_page_numbers": list(range(2, 25)),
+            "table_page_numbers": list(range(28, 34)),
+        },
+    }
+    first_raster_sets: dict[str, list[str]] = {}
+    for publication_id, record in audit["publications"].items():
+        assert record["drawing_page_numbers"] == expected[publication_id][
+            "drawing_page_numbers"
+        ]
+        assert record["drawing_sheet_count"] == 23
+        assert record["table_page_numbers"] == expected[publication_id][
+            "table_page_numbers"
+        ]
+        contact_path = root / record["contact_sheet"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == record[
+            "contact_sha256"
+        ]
+
+        publication_raster_sets: list[list[str]] = []
+        for wrapper in record["wrappers"].values():
+            pdf_path = root / wrapper["path"]
+            assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper[
+                "sha256"
+            ]
+            reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+            assert len(reader.pages) == wrapper["page_count"] == 39
+            assert sum(len(page.extract_text() or "") for page in reader.pages) == 0
+            page_hashes = [
+                patent_pdf_recovery._canonical_raster_sha256(
+                    patent_pdf_recovery._page_image(
+                        page,
+                        source=publication_id,
+                        page_number=page_number,
+                    )
+                )
+                for page_number, page in enumerate(reader.pages, start=1)
+            ]
+            assert page_hashes == wrapper["page_raster_sha256"]
+            publication_raster_sets.append(page_hashes)
+        assert all(
+            page_hashes == publication_raster_sets[0]
+            for page_hashes in publication_raster_sets[1:]
+        )
+        first_raster_sets[publication_id] = publication_raster_sets[0]
+
+    assert all(
+        left != right
+        for left, right in zip(
+            first_raster_sets["US-12429633-B2"],
+            first_raster_sets["US-20240077657-A1"],
+            strict=True,
+        )
+    )
+    assert audit["cross_publication_equality"] == {
+        "all_equal": False,
+        "equal_pages": 0,
+    }
+
+
+def test_low_reflection_light_blocking_external_queue_is_source_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-73978649"
+    )
+    queue = json.loads(
+        (quick_root / "family-73978649-external-family-members.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert queue["family_id"] == "73978649"
+    assert queue["current_frozen_cohort_roots"] == ["US-12429633"]
+    assert [
+        (record["application_number"], record["publication_id"])
+        for record in queue["external_family_members"]
+    ] == [
+        ("18/507179", "US-20240077657-A1"),
+        ("16/935378", "US-11852848-B2"),
+    ]
+    source = patent_to_zmx.normalize_patent_text(
+        (
+            root
+            / "data"
+            / "patent-lake"
+            / "uspto-ppubs-html"
+            / "USPAT"
+            / "e6faadbdb770bfd3"
+            / "US-12429633-B2.html"
+        ).read_text(encoding="utf-8")
+    )
+    for marker in (
+        "US 20240077657 A1 Mar. 07, 2024",
+        "16/935,378",
+        "11,852,848",
+    ):
+        assert marker in source
+
+
 def _folded_lens_barrel_driving_source_fixture(patent_id: str) -> str:
     return " ".join(
         (

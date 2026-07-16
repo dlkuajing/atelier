@@ -1,0 +1,40 @@
+{
+  "application_number": "18/507179",
+  "family_id": "73978649",
+  "parent_application_number": "16/935378",
+  "parent_grant_id": "US-11852848-B2",
+  "publications": {
+    "US-12429633-B2": {
+      "example_count": 5,
+      "figure_panel_count": 23,
+      "normalized_html_sha256": "afd8189dd1194c2f10013a2df2ea2041cfe1074bf42828045c093a5291207699",
+      "official_html_path": "data/patent-lake/uspto-ppubs-html/USPAT/e6faadbdb770bfd3/US-12429633-B2.html",
+      "official_html_sha256": "e6faadbdb770bfd33e48dc5224b7fafa2e87bc59f9a89724f19a82e7567982c7",
+      "official_pdf_live_sha256": [
+        "52f3c2d1e9d8a84acb8b510cd066bc0844f5764be64d905cd521765356b8c044",
+        "2f273acc29852e42e940ea2c361e204aca713370545a28109859a5defda7d5ee"
+      ],
+      "table_count": 1,
+      "table_role": "380-1050 nm reflectivity at 0/90/180/270 degrees",
+      "table_row_count": 671,
+      "table_sha256": "65f34f5a8fdaa637adc41437b234611c80ade9c6864537449e73e95695fd5d0f"
+    },
+    "US-20240077657-A1": {
+      "example_count": 5,
+      "figure_panel_count": 23,
+      "google_pdf_sha256": "a8dbbafe0cf1d18b4c335b3d30f3ce9e07df34911a687772e198cb23b08ee077",
+      "normalized_html_sha256": "7103db39751dc2da158f2c2e0065bc86db66f2388d629e5efb2bbd6d5279c342",
+      "official_html_path": ".planning/quick/260716-patent-generic-family-73978649/source-review/US-20240077657-A1.html",
+      "official_html_sha256": "d3fc6eaa25685839674e13d232e13e1ef52676d97cf209ca43bb0adccf3d1f53",
+      "official_pdf_live_sha256": [
+        "593439d6489e6a5667a854f3bc4d1bb2c4500c8346025985f2aca39627a786ed",
+        "fd4728529cd0738b7956112a1a6636c282baf2f70befd3c43452ff6f5ab3753a"
+      ],
+      "table_count": 1,
+      "table_role": "380-1050 nm reflectivity at 0/90/180/270 degrees",
+      "table_row_count": 671,
+      "table_sha256": "65f34f5a8fdaa637adc41437b234611c80ade9c6864537449e73e95695fd5d0f"
+    }
+  },
+  "schema_version": 1
+}

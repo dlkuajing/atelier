@@ -435,6 +435,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_low_reflection_light_blocking_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_lens_barrel_absorbing_geometry_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2191,6 +2199,74 @@ _LENS_BARREL_ABSORBING_GEOMETRY_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] 
             "image sensor": 8,
         },
     },
+}
+_LOW_REFLECTION_LIGHT_BLOCKING_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\s*,\s*CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_LOW_REFLECTION_LIGHT_BLOCKING_DRAWINGS = (
+    *(("1", panel) for panel in "ABCDEFG"),
+    *((str(index), panel) for index in range(2, 6) for panel in "ABCD"),
+)
+_LOW_REFLECTION_LIGHT_BLOCKING_ITEM_LABELS = (
+    "Low-reflection coating and light-blocking example 1",
+    "Low-reflection coating and light-blocking example 2",
+    "Low-reflection coating and light-blocking example 3",
+    "Low-reflection coating and light-blocking example 4",
+    "Smartphone camera-module architecture example 5",
+)
+_LOW_REFLECTION_LIGHT_BLOCKING_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12429633-B2": {
+        "raw_document_sha256": (
+            "e6faadbdb770bfd33e48dc5224b7fafa2e87bc59f9a89724f19a82e7567982c7"
+        ),
+        "normalized_text_sha256": (
+            "afd8189dd1194c2f10013a2df2ea2041cfe1074bf42828045c093a5291207699"
+        ),
+        "application_number": "18/507179",
+        "owner_count": 2,
+        "relationship_markers": (
+            "US 20240077657 A1 Mar. 07, 2024",
+            "continuation parent-doc US 16935378 20200722 US 11852848 "
+            "child-doc US 18507179",
+            "us-provisional-application US 62941937 20191129",
+        ),
+    },
+    "US-20240077657-A1": {
+        "raw_document_sha256": (
+            "d3fc6eaa25685839674e13d232e13e1ef52676d97cf209ca43bb0adccf3d1f53"
+        ),
+        "normalized_text_sha256": (
+            "7103db39751dc2da158f2c2e0065bc86db66f2388d629e5efb2bbd6d5279c342"
+        ),
+        "application_number": "18/507179",
+        "owner_count": 1,
+        "relationship_markers": (
+            "parent US continuation 16935378 20200722",
+            "us-provisional-application US 62941937 20191129",
+        ),
+    },
+}
+_LOW_REFLECTION_LIGHT_BLOCKING_TABLE_SHA256 = (
+    "65f34f5a8fdaa637adc41437b234611c80ade9c6864537449e73e95695fd5d0f"
+)
+_LOW_REFLECTION_LIGHT_BLOCKING_PHRASE_COUNTS = {
+    "low-reflection layer": 119,
+    "nano-microstructure": 117,
+    "carbon black layer": 78,
+    "coating layer": 74,
+    "light blocking element": 12,
+    "light blocking sheet": 6,
+    "optical lens elements": 11,
+    "such as the numbers, the structures, the surface shapes": 4,
+    "non-imaging stray light": 2,
+    "reflectivity result": 2,
+    "smart phone": 1,
+    "image signal processor": 1,
+    "optical image stabilization": 1,
 }
 _FOLDED_LENS_BARREL_DRIVING_ONLY_TITLE_PATTERN = re.compile(
     r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*IMAGING\s+LENS\s+"
@@ -13211,6 +13287,250 @@ def _classify_lens_barrel_absorbing_geometry_only_attempts(
                             "it has no optical surface prescription"
                         )
                     ),
+                ),
+            )
+        )
+    return attempts
+
+
+def _classify_low_reflection_light_blocking_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify all five exact Family 73978649 source-declared examples.
+
+    Examples 1-4 publish low-reflection carbon-black/nano/coating stacks on
+    barrel, spacer, retainer, or light-blocking components.  Example 5 is the
+    smartphone/camera-module wrapper.  The sole table is a 380-1050 nm
+    reflectivity experiment, not an ordered optical surface prescription.
+    """
+
+    profile = _LOW_REFLECTION_LIGHT_BLOCKING_ARCHITECTURE_ONLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=exc,
+            )
+            for index, label in enumerate(
+                _LOW_REFLECTION_LIGHT_BLOCKING_ITEM_LABELS,
+                start=1,
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"low-reflection light-blocking official raw text hash changed for "
+                f"{patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"low-reflection light-blocking normalized text hash changed for "
+                f"{patent_id}"
+            )
+        if (
+            _LOW_REFLECTION_LIGHT_BLOCKING_ARCHITECTURE_ONLY_TITLE_PATTERN.search(
+                text
+            )
+            is None
+        ):
+            raise PatentParseError("low-reflection light-blocking title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*73978649", text, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "low-reflection light-blocking Family ID binding changed"
+            )
+        owner = "Largan Precision Co., Ltd."
+        if len(re.findall(re.escape(owner), text, re.IGNORECASE)) != profile[
+            "owner_count"
+        ]:
+            raise PatentParseError(
+                "low-reflection light-blocking owner binding changed"
+            )
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "low-reflection light-blocking application binding changed"
+            )
+        for marker in profile["relationship_markers"]:
+            observed = len(re.findall(re.escape(str(marker)), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"low-reflection light-blocking relationship marker {marker!r} "
+                    f"occurs {observed}; expected 1"
+                )
+
+        headings = tuple(
+            index
+            for index, suffix in ((1, "ST"), (2, "ND"), (3, "RD"), (4, "TH"), (5, "TH"))
+            if len(
+                re.findall(
+                    rf"<br\s*/?>\s*{index}{suffix}\s+EXAMPLE\s*<br\s*/?>",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            )
+            == 1
+        )
+        if headings != (1, 2, 3, 4, 5):
+            raise PatentParseError(
+                "low-reflection light-blocking five-example denominator changed"
+            )
+
+        table_ids = tuple(re.findall(r"TABLE-US-(\d+)", raw_text, re.IGNORECASE))
+        if table_ids != ("00001",):
+            raise PatentParseError(
+                "low-reflection light-blocking one-table denominator changed"
+            )
+        table_match = re.search(
+            r"TABLE-US-00001(?P<body>.*?)<br\s*/?>",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if table_match is None:
+            raise PatentParseError(
+                "low-reflection light-blocking TABLE 1 body is missing"
+            )
+        table_text = normalize_patent_text(
+            "TABLE-US-00001" + table_match.group("body")
+        )
+        if (
+            hashlib.sha256(table_text.encode("utf-8")).hexdigest()
+            != _LOW_REFLECTION_LIGHT_BLOCKING_TABLE_SHA256
+        ):
+            raise PatentParseError(
+                "low-reflection light-blocking TABLE 1 digest changed"
+            )
+        if not table_text.startswith(
+            "TABLE-US-00001 TABLE 1 wavelength 0 degrees 90 degrees "
+            "180 degrees 270 degrees (nm) (%) (%) (%) (%)"
+        ):
+            raise PatentParseError(
+                "low-reflection light-blocking TABLE 1 column binding changed"
+            )
+        wavelengths = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?<![\d.])(\d{3,4})\s+[-+]?\d+\.\d+\s+[-+]?\d+\.\d+\s+"
+                r"[-+]?\d+\.\d+\s+[-+]?\d+\.\d+",
+                table_text,
+            )
+        )
+        if wavelengths != tuple(range(380, 1051)):
+            raise PatentParseError(
+                "low-reflection light-blocking TABLE 1 wavelength denominator changed"
+            )
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)DETAILED DESCRIPTION",
+            text,
+            re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError(
+                "low-reflection light-blocking drawing description is missing"
+            )
+        drawings = tuple(
+            re.findall(
+                r"FIG\.\s*(\d+)\s*([A-Z]?)\s+(?:is|shows|illustrates)",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if drawings != _LOW_REFLECTION_LIGHT_BLOCKING_DRAWINGS:
+            raise PatentParseError(
+                "low-reflection light-blocking 23-panel drawing denominator changed"
+            )
+        if re.search(
+            r"\b(?:prescription|optical\s+data|lens\s+data)\b",
+            brief_match.group("body"),
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "low-reflection light-blocking drawings now reference prescription data"
+            )
+
+        for phrase, expected in _LOW_REFLECTION_LIGHT_BLOCKING_PHRASE_COUNTS.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"low-reflection light-blocking phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\baspheric?\s+(?:surface\s+)?(?:data|coefficients?|parameters?)\b|"
+            r"\bAbbe(?:\s+(?:number|#))?\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|"
+            r"\bFno\b|\bF\s*[- ]?number\b|\bEFL\b|"
+            r"\beffective\s+focal\s+length\b|\bfield\s+of\s+view\b|\bHFOV\b|"
+            r"\boptical\s+(?:surface\s+)?(?:prescription|data)\b|"
+            r"\blens\s+(?:prescription|data)\b|\bprescription\b|"
+            r"\b(?:Surface|Surf)\s+(?:No\.?|#).{0,200}\bRadius\b"
+            r".{0,200}\b(?:Thickness|Distance)\b)",
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "low-reflection light-blocking disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all five explicit examples
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, label in enumerate(_LOW_REFLECTION_LIGHT_BLOCKING_ITEM_LABELS, start=1):
+        device_wrapper = index == 5
+        if index == 1:
+            detail = (
+                "example 1 publishes the carbon-black/nano/coating stack, component "
+                "geometry, and TABLE 1's 671 wavelength/azimuth reflectivity rows; "
+                "it has no ordered optical surface prescription"
+            )
+        elif device_wrapper:
+            detail = (
+                "example 5 publishes only the smartphone, camera-module, image-sensor, "
+                "ISP, OIS, user-interface, and capture-mode wrapper; it has no optical "
+                "surface prescription"
+            )
+        else:
+            detail = (
+                f"example {index} publishes only low-reflection coating stacks and "
+                "barrel, spacer, retainer, or light-blocking component arrangements; "
+                "it has no ordered optical surface prescription"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription."
+                        "camera_module_device_architecture_only"
+                        if device_wrapper
+                        else (
+                            "confirmed_no_prescription."
+                            "low_reflection_coating_and_light_blocking_architecture_only"
+                        )
+                    ),
+                    detail=detail,
                 ),
             )
         )

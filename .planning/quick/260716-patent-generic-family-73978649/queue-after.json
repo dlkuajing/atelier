@@ -1,0 +1,34 @@
+{
+  "executable_buckets": [
+    {
+      "affected_items": 154,
+      "affected_roots": 154,
+      "parser_signature": "generic_summary_metadata_missing"
+    },
+    {
+      "affected_items": 174,
+      "affected_roots": 55,
+      "parser_signature": "aac_raytech_summary_metadata_missing"
+    },
+    {
+      "affected_items": 177,
+      "affected_roots": 49,
+      "parser_signature": "sunny_embodiment_metadata_missing"
+    }
+  ],
+  "next_exact_group": {
+    "affected_items": 1,
+    "affected_roots": 1,
+    "family_id": "90845725",
+    "layout_signature": "034d4b1159aad065557f891167fa3927b7bec395baabaf7083552efaf8513573",
+    "publication_id": "US-20250271635-A1",
+    "root_id": "US-20250271635"
+  },
+  "ordering": [
+    "nonterminal_root_count_desc",
+    "item_count_desc",
+    "parser_layout_family_signature_ascending"
+  ],
+  "result_set_sha256": "c9937f32d5b1da58848c3f09dc0631585cebcbbd3c988000fd74554d4fa7e425",
+  "schema_version": 1
+}
