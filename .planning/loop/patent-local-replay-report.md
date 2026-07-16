@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `9a5bb4f9f35a0ac531d53cc02e0dd0b6d08ef7b6bbb55cf41f287270e7223da3`
+- result_set_sha256: `eb1d03194b2e6f7daa50d14f4fe4409518e0a63df7a7e2be1b4ad3a55bd6076e`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 544
 - `terminal`: 964
-- `parser_review_required`: 1406
+- `parser_review_required`: 1416
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1406
+- `parser_review_required.deterministic_parser_rejected`: 1416
 - `terminal.process_receipt_classified`: 726
 - `converted_pending_intake.process_isolated_zmx_ready`: 544
 - `terminal.metadata_unpublished.system_f_number_absent`: 46
@@ -105,7 +105,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `sunny_embodiment_metadata_missing`: 177
 - `aac_raytech_summary_metadata_missing`: 174
-- `generic_summary_metadata_missing`: 157
+- `generic_summary_metadata_missing`: 155
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
 - `asphere_section_missing`: 65
@@ -197,11 +197,23 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_aspheric_row_k_has_more_numeric_values_than_surfaces_extra_token`: 1
 - `other_dual_focus_asphere_table_label_token_confidence_n_is_below_n_genius_six_ten_dual_comparison_3_drawing_sheet_4393be90c96c`: 1
 - `other_dual_focus_asphere_table_label_token_confidence_n_is_below_n_genius_six_ten_dual_comparison_3_drawing_sheet_f1754f44eac7`: 1
+- `other_four_lens_asphere_heading_has_n_ocr_tokens_expected_n_four_lens_asphere_table_label_token_confidence_n_is_b_15d63a021e0c`: 1
+- `other_four_lens_optical_metadata_focus_has_n_exact_ocr_prefixes_four_lens_optical_table_label_token_confidence_n_66dc25f0bda9`: 1
+- `other_four_lens_optical_metadata_half_angular_field_has_n_exact_ocr_prefixes_four_lens_optical_table_label_token_cafd0158e099`: 1
+- `other_four_lens_optical_table_label_token_confidence_n_is_below_n_four_lens_asphere_table_label_token_confidence_840e623a9771`: 1
+- `other_four_lens_optical_table_label_token_confidence_n_is_below_n_four_lens_optical_table_label_token_has_n_exact_68371122e232`: 1
+- `other_four_lens_optical_table_label_token_has_n_exact_ocr_tokens_expected_n_four_lens_optical_table_label_token_c_8cfac629f7a8`: 1
+- `other_four_lens_optical_table_label_token_has_n_exact_ocr_tokens_expected_n_four_lens_optical_table_label_token_h_62f6bb167644`: 1
+- `other_four_lens_optical_table_label_token_has_n_exact_ocr_tokens_expected_n_four_lens_optical_table_label_token_h_c3659626b0f2`: 1
 - `other_genius_four_nine_optical_1_drawing_sheet_header_confidence_n_is_below_n_optical_table_label_token_confidenc_54aadedf7f87`: 1
 - `other_genius_four_nine_optical_2_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_hfov_has_n_e_e20bea602e99`: 1
 - `other_genius_four_nine_optical_4_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_fno_has_n_ex_7315390bf990`: 1
 - `other_genius_four_nine_optical_5_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_fno_confiden_7b66ba42eb3d`: 1
 - `other_genius_four_nine_optical_8_drawing_sheet_header_confidence_n_is_below_n_optical_metadata_label_efl_confiden_2f658b04f032`: 1
+- `other_genius_four_six_optical_1_drawing_sheet_header_confidence_n_is_below_n_four_lens_optical_table_label_token_6ca569da9245`: 1
+- `other_genius_four_six_optical_2_has_n_drawing_sheet_header_tokens_genius_four_six_optical_2_fig_n_confidence_n_is_23fd36a6132f`: 1
+- `other_genius_four_six_optical_3_fig_n_confidence_n_is_below_n_four_lens_asphere_table_label_token_has_n_exact_ocr_f3d20066357f`: 1
+- `other_genius_four_six_optical_3_fig_n_confidence_n_is_below_n_four_lens_optical_metadata_half_angular_field_has_n_227fbcfd77f3`: 1
 - `other_genius_nine_eleven_comparison_2_drawing_sheet_header_confidence_n_is_below_n`: 1
 - `other_genius_nine_eleven_optical_11_has_n_drawing_sheet_header_tokens_asphere_table_label_token_confidence_n_is_b_a0b5e5af2175`: 1
 - `other_genius_nine_eleven_optical_1_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confide_21df062a2c25`: 1

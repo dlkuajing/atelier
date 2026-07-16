@@ -3664,6 +3664,66 @@ def _genius_seven_lens_seven_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_four_lens_six_pdf_ocr_parser_input(publication_id: str) -> bytes:
+    root = Path(__file__).resolve().parents[1]
+    evidence_root = (
+        root
+        / ".planning/quick/260716-patent-generic-family-48495278"
+    )
+    ocr_audit = json.loads(
+        (evidence_root / "family-48495278-ocr-audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    source_paths = {
+        "US-20150138653-A1": (
+            root
+            / "data/patent-lake/uspto-ppubs-html/US-PGPUB/cc17913116d0dc5e/"
+            "US-20150138653-A1.html"
+        ),
+        "US-8976467-B2": (
+            root
+            / "data/patent-lake/uspto-ppubs-html/USPAT/dc2eefd750653fe9/"
+            "US-8976467-B2.html"
+        ),
+    }
+    source = source_paths[publication_id].read_text(encoding="utf-8")
+    facts = patent_pdf_recovery._genius_four_lens_six_source_facts(source)
+    layout = patent_pdf_recovery.genius_four_lens_six_source_layout_for_sha256(
+        facts["primary_html_sha256"]
+    )
+    pages = []
+    for audit_page in ocr_audit["publications"][publication_id]["pages"]:
+        audit_role = audit_page["role"]
+        role = (
+            "genius_four_six_comparison"
+            if audit_role == "comparison"
+            else f"genius_four_six_{audit_role}"
+        )
+        page_number = audit_page["page_number"]
+        pages.append(
+            {
+                "page_number": page_number,
+                "role": role,
+                "official_image_sha256": layout["page_image_sha256"][
+                    page_number - 1
+                ],
+                "mirror_text": audit_page["mirror_text"],
+                "rapidocr_tokens": audit_page["rapidocr_tokens"],
+            }
+        )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "genius_four_lens_six_embodiment_census_v1",
+        "publication_id": publication_id,
+        "page_count": layout["page_count"],
+        "source_facts": facts,
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_six_lens_ten_dual_focus_pdf_ocr_parser_input() -> bytes:
     pages = []
     for embodiment_number in range(1, 11):
@@ -4766,6 +4826,103 @@ def test_rapidocr_supports_counterclockwise_rotation(
     assert observed["ocr_image"] is image
 
 
+@pytest.mark.parametrize(
+    (
+        "source_path",
+        "application_number",
+        "page_count",
+        "blank_pages",
+        "owner_count",
+        "relationship_counts",
+    ),
+    (
+        (
+            Path(
+                "data/patent-lake/uspto-ppubs-html/US-PGPUB/cc17913116d0dc5e/"
+                "US-20150138653-A1.html"
+            ),
+            "14/608769",
+            36,
+            frozenset(),
+            1,
+            {
+                "continuation_parent_application": 1,
+                "related_parent_application": 1,
+                "parent_grant": 1,
+                "prior_publication": 0,
+            },
+        ),
+        (
+            Path(
+                "data/patent-lake/uspto-ppubs-html/USPAT/dc2eefd750653fe9/"
+                "US-8976467-B2.html"
+            ),
+            "13/757675",
+            31,
+            frozenset({12}),
+            2,
+            {
+                "continuation_parent_application": 0,
+                "related_parent_application": 0,
+                "parent_grant": 0,
+                "prior_publication": 1,
+            },
+        ),
+    ),
+)
+def test_genius_four_lens_six_sources_bind_full_denominator(
+    source_path: Path,
+    application_number: str,
+    page_count: int,
+    blank_pages: frozenset[int],
+    owner_count: int,
+    relationship_counts: dict[str, int],
+) -> None:
+    source = source_path.read_text(encoding="utf-8")
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._genius_four_lens_six_source_facts(source)
+    layout = patent_pdf_recovery.genius_four_lens_six_source_layout_for_sha256(
+        facts["primary_html_sha256"]
+    )
+    assert layout["application_number"] == application_number
+    assert layout["page_count"] == page_count
+    assert layout["blank_mirror_pages"] == blank_pages
+    assert len(layout["page_image_sha256"]) == page_count
+    assert len(layout["role_pages"]) == 13
+    assert facts["family_id"] == "48495278"
+    assert facts["application_number"] == application_number
+    assert facts["owner_count"] == owner_count
+    assert facts["priority_binding_counts"] == {
+        "CN201210328571.9": 2,
+        "CN201210437198.0": 2,
+    }
+    assert facts["relationship_binding_counts"] == relationship_counts
+    assert facts["prescription_count"] == 6
+    assert facts["lens_element_count"] == 4
+    assert len(facts["figure_binding_counts"]) == 12
+    assert set(facts["figure_binding_counts"].values()) == {1}
+    assert facts["comparison_binding_count"] == 1
+    assert set(facts["device_figure_binding_counts"].values()) == {1}
+    assert facts["declared_figure_numbers"] == list(range(1, 29))
+    assert facts["html_table_count"] == 0
+    assert facts["html_system_label_counts"] == dict.fromkeys(
+        ("FNO", "F-number", "F/#", "HFOV", "field of view"),
+        0,
+    )
+    assert not patent_pdf_recovery.ability_drawing_tables_declared(source + " ")
+
+
+def test_genius_four_lens_six_source_layout_rejects_changed_html() -> None:
+    with pytest.raises(
+        patent_pdf_recovery.PatentPdfRecoveryError,
+        match="official HTML is not source-locked",
+    ):
+        patent_pdf_recovery.genius_four_lens_six_source_layout_for_sha256(
+            "0" * 64
+        )
+
+
 def test_genius_four_lens_eleven_source_facts_bind_every_figure() -> None:
     markers = patent_pdf_recovery._GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT
     comparison = patent_pdf_recovery._GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
@@ -5433,6 +5590,75 @@ def test_genius_four_lens_eleven_profile_retains_every_embodiment() -> None:
         "optical/asphere/Fno census passed; numeric cell parser remains"
         in str(attempt.error)
         for attempt in attempts
+    )
+
+
+@pytest.mark.parametrize(
+    "publication_id",
+    ("US-20150138653-A1", "US-8976467-B2"),
+)
+def test_genius_four_lens_six_profile_retains_every_embodiment(
+    publication_id: str,
+) -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _genius_four_lens_six_pdf_ocr_parser_input(publication_id).decode(),
+        patent_id=publication_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 7))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(attempt.error is not None for attempt in attempts)
+    assert all(
+        "four-lens comparison label 'Fno' confidence" in str(attempt.error)
+        for attempt in attempts
+    )
+    assert all(
+        "numeric cell parser remains" not in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_genius_four_lens_six_profile_rejects_changed_source_fact() -> None:
+    payload = json.loads(
+        _genius_four_lens_six_pdf_ocr_parser_input("US-20150138653-A1")
+    )
+    payload["source_facts"]["declared_figure_numbers"] = list(range(1, 28))
+
+    with pytest.raises(
+        patent_to_zmx.PatentParseError,
+        match="source fact 'declared_figure_numbers' changed",
+    ):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-20150138653-A1",
+        )
+
+
+def test_genius_four_lens_six_profile_retains_raster_drift_per_embodiment() -> None:
+    payload = json.loads(
+        _genius_four_lens_six_pdf_ocr_parser_input("US-8976467-B2")
+    )
+    optical_page = next(
+        page
+        for page in payload["pages"]
+        if page["role"] == "genius_four_six_optical_1"
+    )
+    optical_page["official_image_sha256"] = "0" * 64
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id="US-8976467-B2",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 7))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert "genius_four_six_optical_1 official raster hash changed" in str(
+        attempts[0].error
+    )
+    assert all(
+        "genius_four_six_optical_1 official raster hash changed"
+        not in str(attempt.error)
+        for attempt in attempts[1:]
     )
 
 

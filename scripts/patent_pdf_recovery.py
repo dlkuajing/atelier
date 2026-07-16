@@ -380,6 +380,172 @@ _KODAK_LOW_STRESS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
         },
     },
 }
+_GENIUS_FOUR_LENS_SIX_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+)
+_GENIUS_FOUR_LENS_SIX_OPTICAL_FIGURES = (4, 8, 12, 16, 20, 24)
+_GENIUS_FOUR_LENS_SIX_ASPHERE_FIGURES = (5, 9, 13, 17, 21, 25)
+_GENIUS_FOUR_LENS_SIX_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for ordinal, optical_figure, asphere_figure in zip(
+        _GENIUS_FOUR_LENS_SIX_ORDINALS,
+        _GENIUS_FOUR_LENS_SIX_OPTICAL_FIGURES,
+        _GENIUS_FOUR_LENS_SIX_ASPHERE_FIGURES,
+        strict=True,
+    )
+    for marker in (
+        f"FIG. {optical_figure} is a table of optical data for each lens element of "
+        + (
+            "a first embodiment of an optical imaging lens according to the present disclosure"
+            if ordinal == "first"
+            else f"the optical imaging lens of a {ordinal} embodiment of the present disclosure"
+        ),
+        f"FIG. {asphere_figure} is a table of aspherical data of a {ordinal} embodiment "
+        "of the optical imaging lens according to the present disclosure",
+    )
+)
+_GENIUS_FOUR_LENS_SIX_COMPARISON_MARKER = (
+    "FIG. 26 is a table for the values of (T3/G.sub.34), (T4/T2), (G.sub.23/T4), "
+    "(G.sub.aa/ALT), [(T1+T3)/T4] and (EFL/ALT) of all six example embodiments"
+)
+_GENIUS_FOUR_LENS_SIX_DEVICE_MARKERS = (
+    "FIG. 27 is a structure of an example embodiment of a mobile device",
+    "FIG. 28 is a partially enlarged view of the structure of another example embodiment "
+    "of a mobile device",
+)
+_GENIUS_FOUR_LENS_SIX_PROFILE = "genius_four_lens_six_embodiment_census_v1"
+_GENIUS_FOUR_LENS_SIX_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "cc17913116d0dc5ee3b49fcaf720e69824f8fd1cf2ea4c79aa94e8ae1c1da145": {
+        "application_number": "14/608769",
+        "family_id": "48495278",
+        "normalized_text_sha256": (
+            "62d6440ae13e941f8dff3394a3b998eefb8f42f9815352a9bf509809f4fdd0b2"
+        ),
+        "page_count": 36,
+        "sheet_count": 27,
+        "blank_mirror_pages": frozenset(),
+        "owner_count": 1,
+        "relationship_binding_counts": {
+            "continuation_parent_application": 1,
+            "related_parent_application": 1,
+            "parent_grant": 1,
+            "prior_publication": 0,
+        },
+        "role_pages": {
+            **{f"genius_four_six_optical_{index}": page - 1 for index, page in enumerate((5, 9, 13, 17, 21, 25), 1)},
+            **{f"genius_four_six_asphere_{index}": page - 1 for index, page in enumerate((6, 10, 14, 18, 22, 26), 1)},
+            "genius_four_six_comparison": 26,
+        },
+        "role_sheets": {
+            **{f"genius_four_six_optical_{index}": sheet for index, sheet in enumerate((4, 8, 12, 16, 20, 24), 1)},
+            **{f"genius_four_six_asphere_{index}": sheet for index, sheet in enumerate((5, 9, 13, 17, 21, 25), 1)},
+            "genius_four_six_comparison": 26,
+        },
+        "page_image_sha256": (
+            "eba3e69c6a857c71a6abd8601b5cf2cd412584d4c105f6a89aa1a836008e5a03",
+            "377a9a6ad8c2bc24662734a8dc8ac12ac659e3f2bbe1a199fa8571bdb8e43c76",
+            "d438318e0ac8c13b03e26df1bc5862ecfab9bec904af4b62f019fa31aa988f66",
+            "d43ac07c9c7008afb14e2e60f69bdf48b79a3540387da9881d0a38d6ac318883",
+            "9d249fe0189a177db9ac81ffb6e2ad8ff575302b5ee8c7eaeec6c2ca0ee34f50",
+            "ad8ac6f5d64829490ead75ea1dd1ba0b02d127279845fee91a477911412828d4",
+            "6a5faeb25fc92bf0ea9d211cd6db72444ffdc9216727d5777f9f77884a8e27c4",
+            "56251d7c302a49edcc79e9cfd53cb497e0cdad400f03380d81dafcc77ad13248",
+            "5c6fbd73b319d021a462dc5bd855ce35fd6601f520953a344a65c52e9c255b3f",
+            "404a0fbf51e1feaf5910f0d6d816bd9fe5d0a7fb638d016a6f87df1dee00b5d6",
+            "6354d6d4007e06b136a1d54ff7a99e7185378f27e81875323efcc0c36e0825ea",
+            "de551b289eb5f0fe73d7022aad15d2d89ce9313f957cd6f671e7a3b7da14c7d2",
+            "9d676e82e1955a4242fa17ad035b6ef968cb2bf84cc677dff36d655d494312ce",
+            "8edf03f46622f8434ab588966841f6064f079ec1bd4275eeba7d40070cc32c46",
+            "2c7d797186fb8389b1b9d282d3865e5651fef49ccbb3b0f9397c05c768e5d58e",
+            "de6e1e03958c3959840c89c2c10b94c0e3449ba74fb46b9b0998ddca8618b7cc",
+            "138c6bd87a107fd0afa16051794b4e91b60afdfd0465a9e0b7d36d5a2af71c3e",
+            "a65cd61e092da236863bb9fdcc25035bee601a7ce409871f940d701f40ef0c3f",
+            "f7997f52517c35180fed021a7e233affb268df12fe7b57aeaae63a0e188e9d2a",
+            "6ae1491a6ad9bb9aff40e62a29c6f9c80faf185f464ec6cc4caa048975f046f1",
+            "843ddbd5225ac02a4d244b2af6413828e717131c1272f1b3fdcbd73f4aab36e1",
+            "c02043c31390e270af7749ee4b755c8d8938d8928750f24ea5c1b44aac8bc42c",
+            "b26c76db808d812b30b369d669d79f9a7668169bd46fb68df3359c2bb63c0f3c",
+            "d167d5d291a6287883c242c8877be85601fa2b1ddd75efb600205d1a87dc744e",
+            "393d0d646152ec61a109c6a91e0a031f7a3660964fb1eb79253d26e90f1c4f3e",
+            "98f942afded933a52aa9e9f401860ccd99ef4edb3e870e8b1294b1892b6a53f6",
+            "458b57fb31a6470ae9a0b6c64276d658775d0897d8cdc025207b1815939c8841",
+            "643a3bb060d7e6228893e0308582bc24d6fe64ad3a6c5f503fc67da768cca043",
+            "0aa5c7cb0b5032dd596fc622b51cedaf04bbd90ae2705837353412ad90055af3",
+            "901da321bb4db7928befb698a9e35353d59d35368adb1d09b064b593fbcf7c71",
+            "455f9dd6570530dd16befd78ce20f889c5559b35667b1dea4f36b2cb9a934863",
+            "eec5e8a06c008829f5aa977ebc00f335b5e16f9173a9862a108d00001167cd45",
+            "23659cb18871df2589673e77d9cd5fb09d98404ce6dd739150b0875c029abd1f",
+            "88a2e4b3af3cc92abb872e370ad9c8def2bc936cf8802ccd0fdd941ffcddb82b",
+            "e02e57c6ac46452406f0875b902de9e6e5ef4bd0d74694d872ad7806600f5188",
+            "5e88ebb04b1707ede9a39060b3a7c22e0c72ee6949718729ec145087692b80e8",
+        ),
+    },
+    "dc2eefd750653fe96b856789b279f2fe8b461cdf13fad7e39e9a89a03d38a2ed": {
+        "application_number": "13/757675",
+        "family_id": "48495278",
+        "normalized_text_sha256": (
+            "1501a3dce84f0b68734dbc8691f7e3bb6ddfb7127a9064be12a7a572ccaf8f9b"
+        ),
+        "page_count": 31,
+        "sheet_count": 21,
+        "blank_mirror_pages": frozenset({12}),
+        "owner_count": 2,
+        "relationship_binding_counts": {
+            "continuation_parent_application": 0,
+            "related_parent_application": 0,
+            "parent_grant": 0,
+            "prior_publication": 1,
+        },
+        "role_pages": {
+            **{f"genius_four_six_optical_{index}": page - 1 for index, page in enumerate((5, 8, 11, 14, 17, 20), 1)},
+            **{f"genius_four_six_asphere_{index}": page - 1 for index, page in enumerate((6, 9, 12, 15, 18, 21), 1)},
+            "genius_four_six_comparison": 21,
+        },
+        "role_sheets": {
+            **{f"genius_four_six_optical_{index}": sheet for index, sheet in enumerate((3, 6, 9, 12, 15, 18), 1)},
+            **{f"genius_four_six_asphere_{index}": sheet for index, sheet in enumerate((4, 7, 10, 13, 16, 19), 1)},
+            "genius_four_six_comparison": 20,
+        },
+        "page_image_sha256": (
+            "ce6167c277276d09b859f0a40bcc4d53774c26199e16d7c80e5fe7851e2c6084",
+            "b137bd70e57a6892256fe15e928c1c5093d1c7707149057e6fb41170fab4d349",
+            "4c57a58f1d47785323636d75949d182d236358214f9dae0f81a3570d7f074503",
+            "f554a92e4158368e1c6a673a11aa39f80a77e48cfa2971232e4c4894e8436a55",
+            "9acd706cb1f504223c31f38683ac5e759cb468c7ce732fca8c910230859224b7",
+            "85a85ad7702df5a54536627ce6f0badc0662c1f0ae1d41ca798bc26d5c238b66",
+            "e67dd19c796eaf0ec57a2f59a7d50032761ad05bd3079e22b77075dcba71d5dc",
+            "7b42e2fb609f4a65e7f688b029745a82c5733fd928361b220c937a2d18fccd7a",
+            "b753340ff88a7cdf3ecd335d36c74d831fb292bc5c5197b9f9dc80f5031e9f84",
+            "5015109f6564204450b473a56691680e0be25f1647f4fc54ed79853937d34c9e",
+            "79375eca336a336f899f47e4c55fbe49258c0d62e3d730f13792dbfd3ff209aa",
+            "59ea737b2084f8d98110b0796e2d77eb65fa7cf4100bf74ea8c8386a20bc6051",
+            "4f9441b07e94768c788464a6bf529356bff91b650d0c40e28d7ed34aebbe6a31",
+            "824f7aae24905e388a8dd5e8f345dd7e6128068e1ac8d42fe2d6c510c54a1cf0",
+            "3e5d6bd21351ef01d2415df561b197335051ecbe3ab1e85bf8bdb39b3580ecbe",
+            "25d252cce212da2a28e8b5631b75297891a34521aaa6619789bdfc518f5703ab",
+            "4eb5017feebe79289ef1373c0f1780b3512543c4e49be34e19353a32a96d4650",
+            "57cbae14699fd72b941d3eb750857d7eaf0a1b0d14b93d631cc8cc231630ca54",
+            "8a5d453bd90d91a90a46874e781ad7082afba5e0815b092880940c934e0f7900",
+            "78d4689c50bf90a39d822683365b3ffffe7d62ee227e520ce40ad68b93d18dce",
+            "fc380b9c77ca06c8a7fa2ad9f1960b6f79a04fdec825b20e41bc9f44db5e9a34",
+            "65dcc1c0c83c0fbd8bf87cc6415904a09cc818cee5caf79320934159a800aba7",
+            "d17b2a9ab3eb2ef602bcbabaa325c19284480a5c1c6b3ed67e4f5d37e16557d9",
+            "e7b8db441242e581597904874f902e9c585dc8583064562e19d554267d092ac4",
+            "fd40fdc774729fa4d3b392376846d0a97400c4cd9f14876c20ccc6bde3e0fb1f",
+            "8ebd1ad291064c05bf79dbd78f633614409f6883bb16785b77c8a808aebe27f7",
+            "53ca619e47d14027306c2620352fcfa880ae4bf07ee7222b9c9fcb5bb7cb2cbf",
+            "106163ee43aea4547361da1504155be803b49e5161f585037489d8b3bcd736da",
+            "f74332749e71067c225105383e1841f8a09c7da07c6d0e02ad1716901e5e1ed0",
+            "b66781143ddbd1beadaa11eac31fe078e760196a22ae6b33a410520bb274d51a",
+            "ccedc9df824aead3068ed3fbd09b646c9bc86bae4e265909571a7aff5f5900f5",
+        ),
+    },
+}
 _GENIUS_FOUR_LENS_ELEVEN_OPTICAL_FIGURES = (2, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43)
 _GENIUS_FOUR_LENS_ELEVEN_ASPHERE_FIGURES = (4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44)
 _GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT = tuple(
@@ -884,6 +1050,13 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         return _LARGAN_THREE_FIVE_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT):
         return _ABILITY_ZOOM_TWO_STATE_PROFILE
+    if (
+        digest in _GENIUS_FOUR_LENS_SIX_SOURCE_LAYOUTS
+        and all(marker in text for marker in _GENIUS_FOUR_LENS_SIX_REQUIRED_FIGURE_TEXT)
+        and text.count(_GENIUS_FOUR_LENS_SIX_COMPARISON_MARKER) == 1
+        and all(marker in text for marker in _GENIUS_FOUR_LENS_SIX_DEVICE_MARKERS)
+    ):
+        return _GENIUS_FOUR_LENS_SIX_PROFILE
     if all(marker in text for marker in _GENIUS_FOUR_LENS_ELEVEN_REQUIRED_FIGURE_TEXT) and all(
         marker in text for marker in _GENIUS_FOUR_LENS_ELEVEN_COMPARISON_MARKERS
     ):
@@ -1354,6 +1527,115 @@ def _kodak_low_stress_source_facts(raw_html: str) -> dict[str, Any]:
         "prescription_count": len(
             re.findall(r"\bprescription\b", text, flags=re.IGNORECASE)
         ),
+    }
+
+
+def genius_four_lens_six_source_layout_for_sha256(digest: str) -> dict[str, Any]:
+    """Return the source-locked six-embodiment official PDF layout."""
+
+    layout = _GENIUS_FOUR_LENS_SIX_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Genius four-lens six-embodiment official HTML is not source-locked"
+        )
+    return layout
+
+
+def _genius_four_lens_six_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = genius_four_lens_six_source_layout_for_sha256(digest)
+    normalized_digest = hashlib.sha256(
+        _normalized_html_text(raw_html).encode("utf-8")
+    ).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Genius four-lens six-embodiment normalized official HTML hash changed"
+        )
+    return layout
+
+
+def _genius_four_lens_six_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind six raster table pairs, comparison data, lineage, and all 28 figures."""
+
+    text = _normalized_html_text(raw_html)
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _genius_four_lens_six_source_layout(raw_html)
+    brief_start = text.find("BRIEF DESCRIPTION OF THE DRAWINGS")
+    brief_end = text.find("DETAILED DESCRIPTION OF THE INVENTION", brief_start)
+    if brief_start < 0 or brief_end < 0:
+        raise PatentPdfRecoveryError(
+            "Genius four-lens six-embodiment drawing denominator is absent"
+        )
+    brief_text = text[brief_start:brief_end]
+    declared_figures = sorted(
+        {
+            int(match.group(1))
+            for match in re.finditer(r"\bFIGS?\.\s*(\d+)", brief_text)
+        }
+    )
+    relationship_binding_counts = {
+        "continuation_parent_application": len(
+            re.findall(
+                r"continuation of U\.S\. patent application Ser\. No\. 13/757,675",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ),
+        "related_parent_application": text.count(
+            "parent US continuation 13757675 20130201"
+        ),
+        "parent_grant": text.count("parent-grant-document US 8976467"),
+        "prior_publication": text.count("US 20140071340 A1"),
+    }
+    priority_binding_counts = {
+        "CN201210328571.9": len(
+            re.findall(r"201210328571\.9|2012 1 0328571", text)
+        ),
+        "CN201210437198.0": len(
+            re.findall(r"201210437198\.0|2012 1 0437198", text)
+        ),
+    }
+    return {
+        "primary_html_sha256": digest,
+        "normalized_text_sha256": layout["normalized_text_sha256"],
+        "family_id": layout["family_id"],
+        "application_number": layout["application_number"],
+        "title_count": len(
+            re.findall(
+                r"Mobile device and optical imaging lens thereof",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ),
+        "owner_count": text.count("Genius Electronic Optical Co., Ltd."),
+        "priority_binding_counts": priority_binding_counts,
+        "relationship_binding_counts": relationship_binding_counts,
+        "prescription_count": 6,
+        "lens_element_count": 4,
+        "figure_binding_counts": {
+            marker: text.count(marker)
+            for marker in _GENIUS_FOUR_LENS_SIX_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_count": text.count(
+            _GENIUS_FOUR_LENS_SIX_COMPARISON_MARKER
+        ),
+        "device_figure_binding_counts": {
+            marker: text.count(marker)
+            for marker in _GENIUS_FOUR_LENS_SIX_DEVICE_MARKERS
+        },
+        "declared_figure_numbers": declared_figures,
+        "html_table_count": len(re.findall(r"<table\b", raw_html, flags=re.IGNORECASE)),
+        "html_system_label_counts": {
+            "FNO": len(re.findall(r"\bFNO\b", text, flags=re.IGNORECASE)),
+            "F-number": len(
+                re.findall(r"\bF\s*[- ]?number\b", text, flags=re.IGNORECASE)
+            ),
+            "F/#": len(re.findall(r"\bF/#\b", text, flags=re.IGNORECASE)),
+            "HFOV": len(re.findall(r"\bHFOV\b", text, flags=re.IGNORECASE)),
+            "field of view": len(
+                re.findall(r"\bfield of view\b", text, flags=re.IGNORECASE)
+            ),
+        },
     }
 
 
@@ -1969,6 +2251,13 @@ async def recover_ability_official_pdf_ocr(
     if (mirror_pdf is None) != (mirror_url is None):
         raise PatentPdfRecoveryError("Google OCR PDF URL/content availability differs")
 
+    genius_four_lens_six_layout: dict[str, Any] | None = None
+    if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
+        genius_four_lens_six_layout = _genius_four_lens_six_source_layout(primary_html)
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError(
+                "Genius four-lens six-embodiment mirror PDF is unavailable"
+            )
     genius_four_lens_layout: dict[str, Any] | None = None
     if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
         genius_four_lens_layout = _genius_four_lens_eleven_source_layout(primary_html)
@@ -2013,7 +2302,17 @@ async def recover_ability_official_pdf_ocr(
         for page_number, text in enumerate(mirror_texts, start=1)
         if not text.strip()
     }
-    if profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
+    if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
+        assert genius_four_lens_six_layout is not None
+        expected_blank_pages = genius_four_lens_six_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "Genius four-lens six-embodiment OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
+            )
+    elif profile == _GENIUS_FOUR_LENS_ELEVEN_PROFILE:
         assert genius_four_lens_layout is not None
         expected_blank_pages = genius_four_lens_layout["blank_mirror_pages"]
         if blank_mirror_pages != expected_blank_pages:
@@ -2113,10 +2412,27 @@ async def recover_ability_official_pdf_ocr(
             raise PatentPdfRecoveryError(
                 "Ability three-five-lens full PDF raster denominator changed"
             )
+    if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
+        assert genius_four_lens_six_layout is not None
+        expected_page_hashes = genius_four_lens_six_layout["page_image_sha256"]
+        if tuple(page_hashes) != expected_page_hashes:
+            raise PatentPdfRecoveryError(
+                "Genius four-lens six-embodiment full PDF raster denominator changed"
+            )
 
     rapidocr_rotation: str | None = None
     page_ocr_metadata: dict[str, dict[str, Any]] = {}
-    if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
+    if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
+        assert genius_four_lens_six_layout is not None
+        if page_count != genius_four_lens_six_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Genius four-lens six-embodiment PDF page count changed: "
+                f"actual={page_count} expected={genius_four_lens_six_layout['page_count']}"
+            )
+        role_pages = dict(genius_four_lens_six_layout["role_pages"])
+        parser_profile = profile
+        source_facts = _genius_four_lens_six_source_facts(primary_html)
+    elif profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
         assert circle_optics_layout is not None
         if page_count != circle_optics_layout["page_count"]:
             raise PatentPdfRecoveryError(
