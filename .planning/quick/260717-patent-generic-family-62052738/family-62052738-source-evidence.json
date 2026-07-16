@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "family_id": "62052738",
+  "application_number": "16/101656",
+  "publications": {
+    "US-10739565-B2": {
+      "root_id": "US-10739565",
+      "official_html": {
+        "path": "data/patent-lake/uspto-ppubs-html/USPAT/c53ccd5b2c25bd7a/US-10739565-B2.html",
+        "raw_document_sha256": "c53ccd5b2c25bd7adc2f224be00fbfe671c5e23b1771671c4f508d6b00a2657b",
+        "normalized_text_sha256": "fb4148f29c537e273eef98cfa822d30d321ccbda3dca44eadfc33b3d1923121a",
+        "raw_character_count": 44426,
+        "normalized_character_count": 30901,
+        "section_markers": {
+          "background": "FIELD OF THE PRESENT DISCLOSURE (1)",
+          "brief": "BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+          "detailed": "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS (10)",
+          "claims": "Claims 1. A camera optical lens comprising,"
+        },
+        "section_sha256": {
+          "background": "9c499f7d9390ab532fdcf0b39ef11c5ad90383a0e2d1b402bbb83ea5810bb0f5",
+          "brief": "f1c9edad0f0ac6aa74182f85197c49b2771711b43861d5432114a454960f7785",
+          "detailed": "024c85a8a63c8a23c678d9920f6e74a0766c140a99e21128f94c17652a2a7e91",
+          "claims": "173bbf4744c1addaf17e1204a3a5d67a4bbaa686c665f4551a439dd49abd8779"
+        }
+      },
+      "paragraph_pattern": "\\((\\d+)\\)",
+      "paragraph_ranges": {
+        "background": [
+          1,
+          2
+        ],
+        "brief": [
+          1,
+          9
+        ],
+        "detailed": [
+          10,
+          117
+        ]
+      },
+      "claim_range": [
+        1,
+        9
+      ],
+      "declared_figures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "tables": [
+        {
+          "number": 1,
+          "role": "embodiment 1 direct system and element focal lengths",
+          "block_sha256": "6934a231aaca14a052229aebedae067e5236e3a402972481608b50932beebbbd",
+          "formal_table_sha256": "707701a675ddc7c74f9b1bff26f18a0aa1a48f23077a795c6f79c2f4e60e62c4"
+        },
+        {
+          "number": 2,
+          "role": "embodiment 1 stop, five-lens, filter, and image-space prescription",
+          "block_sha256": "bf14c5ee01e2266161eb725911d6644e0dd478141e3f1ec35da5b9f0da7fdfde",
+          "formal_table_sha256": "eebd3fb7da4002cb212a81c4cff61cd9e67256ac87b76043f923131106612577"
+        },
+        {
+          "number": 3,
+          "role": "embodiment 1 R1-R10 conic plus A4-A16 asphere coefficients",
+          "block_sha256": "9368833ea0dd0356e4da40a9f0f06f75df3d8bba143c27a7f30ec0ff26c09e87",
+          "formal_table_sha256": "b2eab02d20b4fd0eab250fa51a5bc05a82d24028cc07841e16e483cf4b0075a9"
+        },
+        {
+          "number": 4,
+          "role": "embodiment 1 R1-R10 inflexion-point positions",
+          "block_sha256": "ee68c2c400c59272c8744b36e11d878bba9743466e714bbeacf7004fdff3997e",
+          "formal_table_sha256": "1d8903005bc6eb6f837a7c50d48c5b38e6354e26215dde17cdda23b673f62298"
+        },
+        {
+          "number": 5,
+          "role": "embodiment 1 R1-R10 arrest-point positions",
+          "block_sha256": "259ccc894ad5964bd2c908b40de97192ce31aba2fa4cd9adc5600d1cdca79c1c",
+          "formal_table_sha256": "2f6e1f866ad27b2cdfcafe7af2fd1b4e682f060d518ade1e7ed0fd6aed1251d6"
+        },
+        {
+          "number": 6,
+          "role": "embodiment 1 eight condition values",
+          "block_sha256": "6e565e79cb9c02b8519b05336ea827ccd5c7772eb43e630db088a751ff401d97",
+          "formal_table_sha256": "b4e771b542ce142558638c742a3e04f8f56e7e2fea976708f201fc3e09049d4e"
+        },
+        {
+          "number": 7,
+          "role": "embodiment 2 direct system and element focal lengths",
+          "block_sha256": "f746614f24f23b0f48cd1b8c5dc60c68d6771689274794015e397ad47efa06cf",
+          "formal_table_sha256": "3316b608d2efec2381d73c5a5837a201cb4868a924764b47d06fb95a45e39299"
+        },
+        {
+          "number": 8,
+          "role": "embodiment 2 stop, five-lens, filter, and image-space prescription",
+          "block_sha256": "75d91ca5e3d09281b4b8c1b884b403984a60f1621d8e10388a9155b4f8d1e6a3",
+          "formal_table_sha256": "482f4d71bb1aabfdb1ded8e851c0ed1ea71783bd21feb62354a9843e15266ddd"
+        },
+        {
+          "number": 9,
+          "role": "embodiment 2 R1-R10 conic plus A4-A16 asphere coefficients",
+          "block_sha256": "855aab5a13a4506988e44fe77f4b4f00c99f618c45c07f1880d6d1749219a209",
+          "formal_table_sha256": "f3684d72d1ceec5dfc985bf37b045af9cb672e39904d147f8d7ba7b74c1c38c6"
+        },
+        {
+          "number": 10,
+          "role": "embodiment 2 R1-R10 inflexion-point positions",
+          "block_sha256": "c9eb5026d8d09a5d866329f7753d90a6693bcca6bf76c62a862a05b9a0ab77b0",
+          "formal_table_sha256": "1e06b4533825adbaebfa62ed6d93ed8865a4169b19eb4af9d5fec9230757d29a"
+        },
+        {
+          "number": 11,
+          "role": "embodiment 2 R1-R10 arrest-point positions",
+          "block_sha256": "3a8cd396fd469920870d843379a5f45adfb9b5ae793ed03f02dbf65215a1edb6",
+          "formal_table_sha256": "b6661c08b378a6873a2684c2b5e0fb4f8e24c7fa39c2faa4665c6d7d67242e95"
+        },
+        {
+          "number": 12,
+          "role": "embodiment 2 eight condition values",
+          "block_sha256": "482e1d9760bba27dc0bf32526b472046ec14bf2f692e3e496dad44d86d4c22ef",
+          "formal_table_sha256": "cd55b647b09b301895c44fe1eaa41554ee4ae93970be405463a01d5644652bfc"
+        }
+      ]
+    },
+    "US-20190154990-A1": {
+      "root_id": "US-20190154990",
+      "official_html": {
+        "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/4e138b2b1f79af68/US-20190154990-A1.html",
+        "raw_document_sha256": "4e138b2b1f79af680e0958dfeab7d6092b337fe505d6d8b16b175c17e25f97f3",
+        "normalized_text_sha256": "e3c7b86b2af0b948c0519f4e082c7cf4241ce523f5495fc1a9bc139d689162a1",
+        "raw_character_count": 40632,
+        "normalized_character_count": 30239,
+        "section_markers": {
+          "background": "FIELD OF THE PRESENT DISCLOSURE [0001]",
+          "brief": "BRIEF DESCRIPTION OF THE DRAWINGS [0003]",
+          "detailed": "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS [0012]",
+          "claims": "Claims 1 . A camera optical lens comprising,"
+        },
+        "section_sha256": {
+          "background": "10b25d9b69f51e10929cfb8d638fab20b27baecda36b0989e1033ed1f2560022",
+          "brief": "9707ebd88140539cb00d65de7c83011003f54923b6e9bc5e825fa144bb7deb93",
+          "detailed": "77c66d5b86a425c5fad490614695d5379da995e74e88b84c896cab6ba08f1625",
+          "claims": "e2bfaaa0dae444224f766a624b0831c0cded6069d6efd6380959e60624dc7f84"
+        }
+      },
+      "paragraph_pattern": "\\[(\\d{4})\\]",
+      "paragraph_ranges": {
+        "background": [
+          1,
+          2
+        ],
+        "brief": [
+          3,
+          11
+        ],
+        "detailed": [
+          12,
+          107
+        ]
+      },
+      "claim_range": [
+        1,
+        10
+      ],
+      "declared_figures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "tables": [
+        {
+          "number": 1,
+          "role": "embodiment 1 direct system and element focal lengths",
+          "block_sha256": "26f7fd2f9a118f3b6c1b8294df5b9baf239e567cbfe5ba28cbdc967b56daef76",
+          "formal_table_sha256": "707701a675ddc7c74f9b1bff26f18a0aa1a48f23077a795c6f79c2f4e60e62c4"
+        },
+        {
+          "number": 2,
+          "role": "embodiment 1 stop, five-lens, filter, and image-space prescription",
+          "block_sha256": "59f607cf928aa05db62cbab2d81c52431b9e134366aeb0da6d25585b563be57c",
+          "formal_table_sha256": "65d9ede450984230998b49e4c18e66280476c2ed2df6129e6a0f726eb115862a"
+        },
+        {
+          "number": 3,
+          "role": "embodiment 1 R1-R10 conic plus A4-A16 asphere coefficients",
+          "block_sha256": "131876ff4cc5d032f16a19831762c8ba32608ff401ff4f5ca5a4c35f050e9764",
+          "formal_table_sha256": "b2eab02d20b4fd0eab250fa51a5bc05a82d24028cc07841e16e483cf4b0075a9"
+        },
+        {
+          "number": 4,
+          "role": "embodiment 1 R1-R10 inflexion-point positions",
+          "block_sha256": "d405ded5308733c6bd757e25cbc6bf020643c481e6bcc543144236a24815f885",
+          "formal_table_sha256": "d405ded5308733c6bd757e25cbc6bf020643c481e6bcc543144236a24815f885"
+        },
+        {
+          "number": 5,
+          "role": "embodiment 1 R1-R10 arrest-point positions",
+          "block_sha256": "68f7cce908db1ac7fd0e9bdeb096b9a5925015d97cdeb281f2ac62b7c432331b",
+          "formal_table_sha256": "2f6e1f866ad27b2cdfcafe7af2fd1b4e682f060d518ade1e7ed0fd6aed1251d6"
+        },
+        {
+          "number": 6,
+          "role": "embodiment 1 eight condition values",
+          "block_sha256": "a35bc4dceab5b89387e3616635cc7341687d22299d1ba76426dcbbac8c08cf78",
+          "formal_table_sha256": "46b4ddcaeb1232b35761bc01a0d11569d0ebec12fa0be36ef65c2deb8a1b5cdd"
+        },
+        {
+          "number": 7,
+          "role": "embodiment 2 direct system and element focal lengths",
+          "block_sha256": "30436540f48bcde01a934cdb89c2bdbf57e7a8e7cca6ce35a75e0fce6ace3cbc",
+          "formal_table_sha256": "3316b608d2efec2381d73c5a5837a201cb4868a924764b47d06fb95a45e39299"
+        },
+        {
+          "number": 8,
+          "role": "embodiment 2 stop, five-lens, filter, and image-space prescription",
+          "block_sha256": "d3e8402d84d6949724f9207d173f4a34c1aee2ce6aaba3d7d935b5ce61a69775",
+          "formal_table_sha256": "48d21684bb91e9df025f9a76e9a11dcfbecf5c7b28c91ef4f00e9e0738099c48"
+        },
+        {
+          "number": 9,
+          "role": "embodiment 2 R1-R10 conic plus A4-A16 asphere coefficients",
+          "block_sha256": "9d10dc1272ebf0886419db3f27ef0f93c2087548d41eb16ea163b360695c3ba8",
+          "formal_table_sha256": "f3684d72d1ceec5dfc985bf37b045af9cb672e39904d147f8d7ba7b74c1c38c6"
+        },
+        {
+          "number": 10,
+          "role": "embodiment 2 R1-R10 inflexion-point positions",
+          "block_sha256": "cf0a072bd18019383c6a8c09b0371e25c70e4a774c4f9ddcf66ccf46d0162c7f",
+          "formal_table_sha256": "cf0a072bd18019383c6a8c09b0371e25c70e4a774c4f9ddcf66ccf46d0162c7f"
+        },
+        {
+          "number": 11,
+          "role": "embodiment 2 R1-R10 arrest-point positions",
+          "block_sha256": "87c1e01fd27b5f8d0750bd6f266a351bd90d4cd4484cb1843f7e6bd600bcba87",
+          "formal_table_sha256": "b6661c08b378a6873a2684c2b5e0fb4f8e24c7fa39c2faa4665c6d7d67242e95"
+        },
+        {
+          "number": 12,
+          "role": "embodiment 2 eight condition values",
+          "block_sha256": "0b6d348ce5a3db83e8c4fa06a73d1695709c37ff36830c682cefe5e606d45a75",
+          "formal_table_sha256": "ba0e66cafc6365d0d040a22cf185d886eefe615029952c15566690cbc271b4a2"
+        }
+      ]
+    }
+  },
+  "identity": {
+    "title": "Camera optical lens",
+    "inventor": "Jianming Wang",
+    "b2_applicant": "AAC Acoustic Technologies (Shenzhen) Co., Ltd.",
+    "b2_assignee": "AAC Communication Technologies (Changzhou) Co., Ltd.",
+    "a1_applicant": "AAC Acoustic Technologies (Shenzhen) Co., Ltd.",
+    "priority_application": "CN201711143573.X",
+    "priority_date": "2017-11-17",
+    "same_application_publications": [
+      "US-20190154990-A1",
+      "US-10739565-B2"
+    ]
+  },
+  "denominator": {
+    "frozen_cohort_roots": 2,
+    "source_publications": 2,
+    "pdf_pages_per_publication": 12,
+    "drawing_sheets_per_publication": 5,
+    "figure_panels_per_publication": 8,
+    "source_tables_per_publication": 12,
+    "optical_embodiments_per_publication": 2,
+    "ordered_surface_rows_per_embodiment": 13,
+    "asphere_rows_per_embodiment": 10,
+    "asphere_values_per_row": 8,
+    "inflexion_rows_per_embodiment": 10,
+    "arrest_rows_per_embodiment": 10,
+    "condition_rows_per_embodiment": 8,
+    "b2_claims": 9,
+    "a1_claims": 10,
+    "terminal_items": 4
+  },
+  "embodiments": [
+    {
+      "embodiment_number": 1,
+      "focal_length_mm": {
+        "system": 3.833,
+        "f1": 2.986,
+        "f2": -9.834,
+        "f3": -22.571,
+        "f4": 2.284,
+        "f5": -1.831
+      },
+      "entrance_pupil_diameter_mm": 1.92,
+      "full_vision_field_image_height_mm": 3.261,
+      "diagonal_vision_field_angle_deg": 79.23,
+      "table_range": [
+        1,
+        6
+      ]
+    },
+    {
+      "embodiment_number": 2,
+      "focal_length_mm": {
+        "system": 3.821,
+        "f1": 2.986,
+        "f2": -9.835,
+        "f3": -22.692,
+        "f4": 2.282,
+        "f5": -1.838
+      },
+      "entrance_pupil_diameter_mm": 1.91,
+      "full_vision_field_image_height_mm": 3.261,
+      "diagonal_vision_field_angle_deg": 79.46,
+      "table_range": [
+        7,
+        12
+      ]
+    }
+  ],
+  "metadata_boundary": {
+    "object_distance_narrative_cm": 35,
+    "ttl_upper_bound_mm": 4.4,
+    "f_number_disclosure": "less than or equal to 2.0",
+    "f_number_bound_phrase_count_per_publication": 2,
+    "exact_embodiment_f_number_published": false,
+    "derived_f_number_allowed": false,
+    "reason": "entrance-pupil diameter and system focal length are not substituted to manufacture an exact source F-number"
+  },
+  "terminal_items": [
+    {
+      "root_id": "US-10739565",
+      "publication_id": "US-10739565-B2",
+      "embodiment_number": 1,
+      "label": "AAC camera optical lens embodiment 1",
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "root_id": "US-10739565",
+      "publication_id": "US-10739565-B2",
+      "embodiment_number": 2,
+      "label": "AAC camera optical lens embodiment 2",
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "root_id": "US-20190154990",
+      "publication_id": "US-20190154990-A1",
+      "embodiment_number": 1,
+      "label": "AAC camera optical lens embodiment 1",
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "root_id": "US-20190154990",
+      "publication_id": "US-20190154990-A1",
+      "embodiment_number": 2,
+      "label": "AAC camera optical lens embodiment 2",
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    }
+  ],
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-62052738/family-62052738-raster-audit.json",
+    "sha256": "48dda00ac0bdc8e1b48d245058842b0a6f3b9339d4a0876ccd9a25dad2856bc5"
+  }
+}

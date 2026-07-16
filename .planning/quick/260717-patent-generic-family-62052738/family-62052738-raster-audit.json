@@ -1,0 +1,634 @@
+{
+  "schema_version": 1,
+  "family_id": "62052738",
+  "root_ids": [
+    "US-10739565",
+    "US-20190154990"
+  ],
+  "application_number": "16/101656",
+  "decoded_raster_algorithm": "patent_pdf_recovery._canonical_raster_sha256 over each embedded page image decoded by patent_pdf_recovery._page_image",
+  "raster_set_algorithm": "sha256 of compact JSON ordered page_raster_sha256 list",
+  "publications": {
+    "US-10739565-B2": {
+      "role": "exact retained grant root publication and source-locked classifier input",
+      "official_pdf_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10739565",
+      "page_count": 12,
+      "cover_pages": [
+        1
+      ],
+      "drawing_page_range": [
+        2,
+        6
+      ],
+      "drawing_sheet_count": 5,
+      "figure_panels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "figure_panels_by_pdf_page": {
+        "2": [
+          "1"
+        ],
+        "3": [
+          "2",
+          "3"
+        ],
+        "4": [
+          "4",
+          "5"
+        ],
+        "5": [
+          "6",
+          "7"
+        ],
+        "6": [
+          "8"
+        ]
+      },
+      "specification_page_range": [
+        7,
+        11
+      ],
+      "description_internal_page_range": [
+        1,
+        10
+      ],
+      "claims_page_range": [
+        11,
+        12
+      ],
+      "claims_internal_page_range": [
+        10,
+        12
+      ],
+      "claim_range": [
+        1,
+        9
+      ],
+      "table_count": 12,
+      "raster_set_sha256": "3183a8269ab9b961da020f02057a01c76790c2ba75344601468de902fa2d50db",
+      "decoded_raster_equality": {
+        "live-1-vs-live-2": {
+          "all_equal": true,
+          "equal_pages": 12
+        }
+      },
+      "wrappers": {
+        "live-1": {
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-10739565-B2-live-1.pdf",
+          "bytes": 533538,
+          "sha256": "71428f8924e59a5e8b60ae857a77a968b467e14f0a6bfb585a852b43e67d0fed",
+          "page_count": 12,
+          "page_image_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "page_text_lengths": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "blank_text_pages": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "page_shapes": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "page_raster_sha256": [
+            "485f5c18fbd8594dc2c97a8f9d4441aed1e0b63a86cb3b5aa64bf19c6c2584bd",
+            "080f317cac91fa915b0d552a586a86f7117cd2e09d3ffc62042f03cdc4725cf6",
+            "5b50dd8954d7a0772942100c98f4f745b8cf5a7007a20a8b931a43024d8f1e1e",
+            "aa77e92c85824e7a262f6517cb89deab03478c1fa2b29ed5ec60c6b12eef0010",
+            "7e14711c6f2e4e040ff1f9b38a8cefeb7927864cb94ca1793388e4dd139c810e",
+            "82a60d19ed4344ba6990e4bce3b7c1250afcd614136beedd75d6a7a41d880dae",
+            "541def3fddc4b605cf2ec445ce9228a8f2b24d1f094ccb709753fbd7ec09bf7e",
+            "d1c04131920848bc293022d0ced2de20a2f52502f556bead7367df8a20fa2771",
+            "5415d59eb662863edb14abcdf109b17ac6823bc3bdba5bbef4e00ab14666c0fb",
+            "6d56d79da199890206ce0a79e6b5c63731fb7b4f4fdc88ef05e395ccc088d939",
+            "05c69d626ba742b7be3e6ab38874b9e4659fdcbcd57398ab531c5e1fd6042ac4",
+            "b36c7dd4827af94618a0881fa1b5915a2e3dbe89402260063ba7c035858d401c"
+          ]
+        },
+        "live-2": {
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-10739565-B2-live-2.pdf",
+          "bytes": 533538,
+          "sha256": "5e03c6a49c1712b7ef5b3af6d6cd4255baa685a71c2ab9b75a1abd5a8363948d",
+          "page_count": 12,
+          "page_image_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "page_text_lengths": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "blank_text_pages": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "page_shapes": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "page_raster_sha256": [
+            "485f5c18fbd8594dc2c97a8f9d4441aed1e0b63a86cb3b5aa64bf19c6c2584bd",
+            "080f317cac91fa915b0d552a586a86f7117cd2e09d3ffc62042f03cdc4725cf6",
+            "5b50dd8954d7a0772942100c98f4f745b8cf5a7007a20a8b931a43024d8f1e1e",
+            "aa77e92c85824e7a262f6517cb89deab03478c1fa2b29ed5ec60c6b12eef0010",
+            "7e14711c6f2e4e040ff1f9b38a8cefeb7927864cb94ca1793388e4dd139c810e",
+            "82a60d19ed4344ba6990e4bce3b7c1250afcd614136beedd75d6a7a41d880dae",
+            "541def3fddc4b605cf2ec445ce9228a8f2b24d1f094ccb709753fbd7ec09bf7e",
+            "d1c04131920848bc293022d0ced2de20a2f52502f556bead7367df8a20fa2771",
+            "5415d59eb662863edb14abcdf109b17ac6823bc3bdba5bbef4e00ab14666c0fb",
+            "6d56d79da199890206ce0a79e6b5c63731fb7b4f4fdc88ef05e395ccc088d939",
+            "05c69d626ba742b7be3e6ab38874b9e4659fdcbcd57398ab531c5e1fd6042ac4",
+            "b36c7dd4827af94618a0881fa1b5915a2e3dbe89402260063ba7c035858d401c"
+          ]
+        }
+      },
+      "retained_visual_audits": [
+        {
+          "role": "all-page contact review",
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-10739565-B2-contact-all-12.png",
+          "sha256": "8813b44c582c93642fcf53ef7fb119fdae52fc31c64c12b28977853504ea84a4"
+        },
+        {
+          "role": "specification/table/claim boundary review",
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-10739565-B2-boundary-pages-6-12.png",
+          "sha256": "9be521fc99eca3efda73c137f60793259f0317cd6b50eba8700e07ced69728b2"
+        }
+      ]
+    },
+    "US-20190154990-A1": {
+      "role": "same-application frozen-cohort publication; independently source-locked and never borrowed into B2",
+      "official_pdf_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20190154990",
+      "google_pdf_url": "https://patentimages.storage.googleapis.com/22/14/23/1cae1588f51998/US20190154990A1.pdf",
+      "page_count": 12,
+      "cover_pages": [
+        1
+      ],
+      "drawing_page_range": [
+        2,
+        6
+      ],
+      "drawing_sheet_count": 5,
+      "figure_panels": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "figure_panels_by_pdf_page": {
+        "2": [
+          "1"
+        ],
+        "3": [
+          "2",
+          "3"
+        ],
+        "4": [
+          "4",
+          "5"
+        ],
+        "5": [
+          "6",
+          "7"
+        ],
+        "6": [
+          "8"
+        ]
+      },
+      "specification_page_range": [
+        7,
+        11
+      ],
+      "description_internal_page_range": [
+        1,
+        5
+      ],
+      "claims_page_range": [
+        11,
+        12
+      ],
+      "claims_internal_page_range": [
+        5,
+        6
+      ],
+      "claim_range": [
+        1,
+        10
+      ],
+      "table_count": 12,
+      "raster_set_sha256": "c2a5a31aafbe7bc23f006f504fbcc288189fe702c28309199cacc16ef9427d38",
+      "decoded_raster_equality": {
+        "official-vs-google": {
+          "all_equal": true,
+          "equal_pages": 12
+        }
+      },
+      "wrappers": {
+        "official": {
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-20190154990-A1-official.pdf",
+          "bytes": 536086,
+          "sha256": "65306f6d3df965f7c16572f223c4738c28b907dc2efd3f9e8496d7d959f53d77",
+          "page_count": 12,
+          "page_image_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "page_text_lengths": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "blank_text_pages": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "page_shapes": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "page_raster_sha256": [
+            "e070166c6a7731561a5b8fd9d08feef5df4107f746e65accd058c26bb0bc0fd1",
+            "536d0b800205cf048d31f654be51ef8fcb0b337347d34d7fae8c8f22a53d2525",
+            "584a3b9af1972651a296434959c24c3b93546f92e50ee3010f171cce3d794b6b",
+            "fb74646e9915503eed95a42dd0f8755ba6c7dad9a713faf2bf945baa5c833307",
+            "a7e6450dde0b5403ba194c6e277865d476f151c26bf2b8f82944215a64ec41e1",
+            "2b3c454925f84b4126a302bc0b53504952115d31d66cf68f970bc0a9f207848a",
+            "7e356cec4821e05c6f94579402d5c03e4424a9827ddb765066051dbcf1b2fa29",
+            "5a99203271ce6f6bda39d9dcea678fc070414e83d0ea27c86b840e70643c950a",
+            "75c0ec49df2cbfd57d41bc273c3ec07fd2e3f3a97205a26abf40f1d31b64c89c",
+            "9bb8b6468b55bb4b4a8ea2276ede0b94f6e3a79a6ff411677f3037b01abb2adc",
+            "60c8bc345735dad903ffab47d2f15eacfbae4cc94732d5208a3b011b804a8fe4",
+            "d6b40b113c881023abc806d5db312d7c23f14f18dc626a063c7c91e47daa4636"
+          ]
+        },
+        "google": {
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-20190154990-A1-google.pdf",
+          "bytes": 859432,
+          "sha256": "944e95f1e20cab33b4dc3cd299761ead685555474eb74bb251edfb33a7001ac7",
+          "page_count": 12,
+          "page_image_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "page_text_lengths": [
+            1239,
+            96,
+            176,
+            209,
+            192,
+            154,
+            6552,
+            6302,
+            4937,
+            5316,
+            5023,
+            2938
+          ],
+          "blank_text_pages": [],
+          "page_shapes": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "page_raster_sha256": [
+            "e070166c6a7731561a5b8fd9d08feef5df4107f746e65accd058c26bb0bc0fd1",
+            "536d0b800205cf048d31f654be51ef8fcb0b337347d34d7fae8c8f22a53d2525",
+            "584a3b9af1972651a296434959c24c3b93546f92e50ee3010f171cce3d794b6b",
+            "fb74646e9915503eed95a42dd0f8755ba6c7dad9a713faf2bf945baa5c833307",
+            "a7e6450dde0b5403ba194c6e277865d476f151c26bf2b8f82944215a64ec41e1",
+            "2b3c454925f84b4126a302bc0b53504952115d31d66cf68f970bc0a9f207848a",
+            "7e356cec4821e05c6f94579402d5c03e4424a9827ddb765066051dbcf1b2fa29",
+            "5a99203271ce6f6bda39d9dcea678fc070414e83d0ea27c86b840e70643c950a",
+            "75c0ec49df2cbfd57d41bc273c3ec07fd2e3f3a97205a26abf40f1d31b64c89c",
+            "9bb8b6468b55bb4b4a8ea2276ede0b94f6e3a79a6ff411677f3037b01abb2adc",
+            "60c8bc345735dad903ffab47d2f15eacfbae4cc94732d5208a3b011b804a8fe4",
+            "d6b40b113c881023abc806d5db312d7c23f14f18dc626a063c7c91e47daa4636"
+          ]
+        }
+      },
+      "retained_visual_audits": [
+        {
+          "role": "all-page contact review",
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-20190154990-A1-contact-all-12.png",
+          "sha256": "0582bab817a6ce81f10a2a064d2899bbb6aed2b50560c2b0b3c6e2762acd6153"
+        },
+        {
+          "role": "specification/table/claim boundary review",
+          "path": ".planning/quick/260717-patent-generic-family-62052738/source-review/US-20190154990-A1-boundary-pages-6-12.png",
+          "sha256": "00d78344d854237d1c5124519b11711bb20036cc2dbe6a2adf755bf3c80fbf97"
+        }
+      ]
+    }
+  },
+  "cross_publication_raster_comparison": {
+    "basis": "ordered canonical decoded page rasters, B2 live-1 versus A1 official",
+    "page_counts_equal": true,
+    "total_pages_compared": 12,
+    "equal_pages": [],
+    "equal_page_count": 0,
+    "all_equal": false,
+    "disposition": "publication-specific evidence only; do not cross-borrow text, numeric values, paragraph numbers, claims, page boundaries, or raster truth"
+  },
+  "source_findings": [
+    "Both complete publications contain five drawing sheets with FIGS. 1-8, two five-lens prescriptions, twelve tables, and claims.",
+    "Both specifications occupy PDF pages 7-11 and claims begin on shared boundary page 11; B2 has claims 1-9 while A1 has claims 1-10.",
+    "Within each publication the independently obtained wrappers have identical decoded page rasters. The B2 and A1 rasters are publication-specific and have zero equal page positions.",
+    "Every prescription publishes direct focal length, surface/asphere data, image height, and diagonal vision-field angle, but only the system-wide inequality F-number <= 2.0 rather than an exact embodiment F-number."
+  ]
+}
