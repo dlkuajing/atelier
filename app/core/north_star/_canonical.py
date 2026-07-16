@@ -1,3 +1,10 @@
+"""Canonical JSON bytes and domain-separated SHA-256 hashing for the O-01 kernel.
+
+Deterministic serialization support consumed by the closed-world preregistration and
+default-deny ITT modules; domain separation keeps every content hash distinct. Pure
+UNRATIFIED support code — it grants no authority and cannot promote any north-star gate.
+"""
+
 from __future__ import annotations
 
 import hashlib

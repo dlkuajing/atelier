@@ -12,6 +12,7 @@ from app.core.north_star import (
     PIPELINE_NUMERATOR_VALUE,
     PREREGISTRATION_FREEZE_DOMAIN,
     AttemptObservation,
+    EligibilityDecision,
     FrozenPreregistration,
     IttObservations,
     IttReport,
@@ -93,6 +94,7 @@ def _spec(
         "draw_event_id": "draw-test-root",
         "protocol_package_hash": _digest(1),
         "protocol_authority_signature_set_hash": _digest(2),
+        "canonical_schema_template_hash": _digest(6),
         "sampling_frame_commitment_hash": _digest(3),
         "sampling_source_snapshot_hash": _digest(4),
         "minimum_claim_envelope_hash": _digest(5),
@@ -150,6 +152,9 @@ def _recompute(
         expected_preregistration_freeze_content_hash=(
             frozen.preregistration_freeze_content_hash
         ),
+        expected_canonical_schema_template_hash=(
+            frozen.canonical_schema_template_hash
+        ),
     )
 
 
@@ -168,17 +173,27 @@ def _with_rehashed_freeze_content(
 
 
 def test_recompute_itt_keeps_run_and_candidate_populations_distinct() -> None:
-    frozen = freeze_preregistration(_spec())
+    # Asymmetric on purpose: 2 runs per candidate makes the planned-run denominator (8)
+    # differ from the candidate-slot denominator (4), so a population swap is detectable.
+    frozen = freeze_preregistration(_spec(runs_per_candidate=2))
     observations = _observations(
         [
             "failed",
             "delivered",
             "delivered",
             "missing",
+            "missing",
+            "blocked",
             "blocked",
             "blocked",
             "contaminated",
             "missing",
+            "missing",
+            "missing",
+            "failed",
+            "failed",
+            "missing",
+            "non_converged",
         ]
     )
 
@@ -190,15 +205,16 @@ def test_recompute_itt_keeps_run_and_candidate_populations_distinct() -> None:
         == frozen.preregistration_freeze_content_hash
     )
     assert report.pipeline_delivery_rate.raw_numerator == 0
-    assert report.pipeline_delivery_rate.raw_denominator == 4
+    assert report.pipeline_delivery_rate.raw_denominator == 8
     assert report.pipeline_delivery_rate.rate == Fraction(0, 1)
     assert report.pipeline_delivery_rate.evidence_status == (
         "UNAVAILABLE_NO_VERIFIED_MACHINE_TERMINAL_EVIDENCE"
     )
     assert report.unverified_pipeline_delivery_diagnostic.raw_numerator == 2
-    assert report.unverified_pipeline_delivery_diagnostic.rate == Fraction(1, 2)
+    assert report.unverified_pipeline_delivery_diagnostic.raw_denominator == 8
+    assert report.unverified_pipeline_delivery_diagnostic.rate == Fraction(1, 4)
     assert report.unverified_pipeline_delivery_diagnostic.diagnostic_only is True
-    assert len(report.retained_attempt_observations) == 8
+    assert len(report.retained_attempt_observations) == 16
     assert [
         result.reported_terminal_state
         for result in report.ordered_unverified_run_terminal_diagnostics
@@ -206,10 +222,14 @@ def test_recompute_itt_keeps_run_and_candidate_populations_distinct() -> None:
         RunTerminalState.DELIVERED,
         RunTerminalState.DELIVERED,
         RunTerminalState.BLOCKED,
+        RunTerminalState.BLOCKED,
         RunTerminalState.MISSING,
+        RunTerminalState.MISSING,
+        RunTerminalState.FAILED,
+        RunTerminalState.NON_CONVERGED,
     ]
-    assert report.ordered_unverified_run_terminal_diagnostics[-1].contaminated_attempt_ids == (
-        "attempt-06",
+    assert report.ordered_unverified_run_terminal_diagnostics[4].contaminated_attempt_ids == (
+        "attempt-08",
     )
 
     worth = report.expert_worth_reviewing_rate_itt
@@ -220,27 +240,26 @@ def test_recompute_itt_keeps_run_and_candidate_populations_distinct() -> None:
         4,
         Fraction(0, 1),
     )
+    # Headline discrimination: the two frozen ITT populations must not be interchangeable.
+    assert report.pipeline_delivery_rate.raw_denominator != worth.raw_denominator
     assert worth.duplicate_clusters == ()
     assert worth.confidence_interval.lower is None
     assert worth.evidence_status == "UNAVAILABLE_NO_VERIFIED_EXPERT_LABEL_ENVELOPES"
     conditional = report.conditional_on_unverified_reported_delivery_diagnostics
     assert all(item.diagnostic_only for item in conditional)
     assert [item.raw_denominator for item in conditional] == [
-        2,
-        2,
+        1,
+        1,
     ]
     assert all(
-        sum(len(cluster.ordered_member_ids) for cluster in item.dependence_clusters) == 2
+        sum(len(cluster.ordered_member_ids) for cluster in item.dependence_clusters) == 1
         for item in conditional
     )
     selection = report.conditional_unverified_reported_delivery_selection
     assert selection.candidate_reported_delivery_aggregation_rule == (
         "any_non_rejected_run_reported_delivered"
     )
-    assert selection.ordered_selected_planned_candidate_slot_ids == (
-        "slot-00",
-        "slot-01",
-    )
+    assert selection.ordered_selected_planned_candidate_slot_ids == ("slot-00",)
 
 
 @pytest.mark.parametrize("terminal_state", list(RunTerminalState))
@@ -720,6 +739,9 @@ def test_recompute_requires_exact_frozen_root_model() -> None:
             expected_preregistration_freeze_content_hash=(
                 frozen.preregistration_freeze_content_hash
             ),
+            expected_canonical_schema_template_hash=(
+                frozen.canonical_schema_template_hash
+            ),
         )
 
 
@@ -840,6 +862,9 @@ def test_external_expected_freeze_hash_rejects_coherent_sampling_frame_swap() ->
             tampered,
             _observations(["missing"] * 8),
             expected_preregistration_freeze_content_hash=original_hash,
+            expected_canonical_schema_template_hash=(
+                frozen.canonical_schema_template_hash
+            ),
         )
 
 
@@ -853,4 +878,84 @@ def test_expected_freeze_hash_rejects_bytes() -> None:
             expected_preregistration_freeze_content_hash=(
                 frozen.preregistration_freeze_content_hash.encode()  # type: ignore[arg-type]
             ),
+            expected_canonical_schema_template_hash=(
+                frozen.canonical_schema_template_hash
+            ),
         )
+
+    with pytest.raises(ProtocolViolation, match="exact lowercase"):
+        recompute_itt(
+            frozen,
+            _observations(["missing"] * 8),
+            expected_preregistration_freeze_content_hash=(
+                frozen.preregistration_freeze_content_hash
+            ),
+            expected_canonical_schema_template_hash=(
+                frozen.canonical_schema_template_hash.encode()  # type: ignore[arg-type]
+            ),
+        )
+
+
+def test_external_schema_template_hash_rejects_internally_consistent_splice() -> None:
+    frozen = freeze_preregistration(_spec())
+    foreign_spec = _spec()
+    foreign_spec["canonical_schema_template_hash"] = _digest(77)
+    foreign = freeze_preregistration(foreign_spec)
+    observations = _observations(["missing"] * 8)
+
+    # The foreign object is fully internally self-consistent, and the attacker recomputes a
+    # coherent expected freeze-content hash for it. Only the separately retained canonical
+    # schema template hash catches the splice.
+    assert (
+        foreign.preregistration_freeze_content_hash
+        != frozen.preregistration_freeze_content_hash
+    )
+    with pytest.raises(
+        ProtocolViolation, match="externally expected canonical schema template hash mismatch"
+    ):
+        recompute_itt(
+            foreign,
+            observations,
+            expected_preregistration_freeze_content_hash=(
+                foreign.preregistration_freeze_content_hash
+            ),
+            expected_canonical_schema_template_hash=(
+                frozen.canonical_schema_template_hash
+            ),
+        )
+
+
+def test_ineligible_eligibility_decision_never_shrinks_itt_denominators() -> None:
+    all_eligible = freeze_preregistration(_spec())
+    partially_ineligible_spec = _spec()
+    partially_ineligible_spec["eligibility_rule"] = {
+        "rule_kind": "immutable_source_record_hash_allowlist",
+        "eligible_immutable_source_record_hashes": [_digest(20)],
+    }
+    partially_ineligible = freeze_preregistration(partially_ineligible_spec)
+    decisions = (
+        partially_ineligible.eligibility_decision_set_content.ordered_eligibility_decision_members
+    )
+    assert [member.decision for member in decisions] == [
+        EligibilityDecision.ELIGIBLE,
+        EligibilityDecision.INELIGIBLE,
+    ]
+    observations = _observations(["missing"] * 8)
+
+    baseline = _recompute(all_eligible, observations)
+    report = _recompute(partially_ineligible, observations)
+
+    for metric_name in (
+        "pipeline_delivery_rate",
+        "unverified_pipeline_delivery_diagnostic",
+        "expert_worth_reviewing_rate_itt",
+        "expert_production_usable_rate_itt",
+    ):
+        baseline_metric = getattr(baseline, metric_name)
+        report_metric = getattr(report, metric_name)
+        assert report_metric.raw_denominator == baseline_metric.raw_denominator
+        assert (
+            report_metric.original_planned_denominator
+            == baseline_metric.original_planned_denominator
+        )
+        assert report_metric.excluded_unit_count == 0

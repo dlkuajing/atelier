@@ -6,6 +6,7 @@ from copy import deepcopy
 from enum import StrEnum
 
 import pytest
+from pydantic import ValidationError
 
 from app.core.north_star import (
     ELIGIBILITY_DECISION_SET_DOMAIN,
@@ -17,6 +18,7 @@ from app.core.north_star import (
     PreregistrationSpec,
     ProtocolViolation,
     TargetIdentityMember,
+    UniformAllocationRule,
     freeze_preregistration,
 )
 
@@ -110,6 +112,7 @@ def make_spec(
         "draw_event_id": "draw-test-root",
         "protocol_package_hash": _digest(1),
         "protocol_authority_signature_set_hash": _digest(2),
+        "canonical_schema_template_hash": _digest(6),
         "sampling_frame_commitment_hash": _digest(3),
         "sampling_source_snapshot_hash": _digest(4),
         "minimum_claim_envelope_hash": _digest(5),
@@ -172,6 +175,58 @@ def test_freeze_recomputes_inline_domain_separated_mapping_and_eligibility() -> 
         )
 
 
+def test_hash_domain_constants_are_pinned_exact_literals() -> None:
+    assert (
+        PLANNED_IDENTITY_MAPPING_DOMAIN
+        == "atelier.north-star.planned-identity-mapping-content.v0.1"
+    )
+    assert ELIGIBILITY_RULE_DOMAIN == "atelier.north-star.eligibility-rule-content.v0.1"
+    assert ELIGIBILITY_INPUT_DOMAIN == "atelier.north-star.eligibility-input-content.v0.1"
+    assert (
+        ELIGIBILITY_DECISION_SET_DOMAIN
+        == "atelier.north-star.eligibility-decision-set-content.v0.1"
+    )
+    assert (
+        PREREGISTRATION_FREEZE_DOMAIN
+        == "atelier.north-star.o01-preregistration-freeze-content.v0.1"
+    )
+
+
+def test_canonical_schema_template_hash_is_bound_into_freeze_preimage() -> None:
+    base = freeze_preregistration(make_spec())
+    changed_spec = make_spec()
+    changed_spec["canonical_schema_template_hash"] = _digest(7)
+    changed = freeze_preregistration(changed_spec)
+
+    assert base.canonical_schema_template_hash == _digest(6)
+    assert changed.canonical_schema_template_hash == _digest(7)
+    assert (
+        base.preregistration_freeze_content.canonical_schema_template_hash == _digest(6)
+    )
+    assert base.preregistration_freeze_content_hash != changed.preregistration_freeze_content_hash
+
+
+@pytest.mark.parametrize(
+    "bad_hash",
+    [
+        "ab" * 31,
+        "ab" * 33,
+        "AB" * 32,
+        "zz" * 32,
+    ],
+)
+def test_canonical_schema_template_hash_rejects_malformed_formats(bad_hash: str) -> None:
+    schema_spec = make_spec()
+    schema_spec["canonical_schema_template_hash"] = bad_hash
+    with pytest.raises(ProtocolViolation):
+        freeze_preregistration(schema_spec)
+
+    sibling_spec = make_spec()
+    sibling_spec["protocol_package_hash"] = bad_hash
+    with pytest.raises(ProtocolViolation):
+        freeze_preregistration(sibling_spec)
+
+
 def test_freeze_uses_protocol_ordinals_not_lexical_identifier_order() -> None:
     frozen = freeze_preregistration(make_spec())
 
@@ -195,6 +250,50 @@ def test_freeze_rejects_missing_target_fields(missing_field: str) -> None:
 
     with pytest.raises(ProtocolViolation):
         freeze_preregistration(spec)
+
+
+@pytest.mark.parametrize(
+    "member_field_name",
+    [
+        "ordered_target_identity_members",
+        "ordered_candidate_slot_identity_members",
+        "ordered_planned_run_unit_identity_members",
+        "ordered_permitted_attempt_identity_members",
+    ],
+)
+def test_freeze_rejects_empty_member_arrays_as_protocol_violation(
+    member_field_name: str,
+) -> None:
+    spec = make_spec()
+    spec[member_field_name] = []
+
+    with pytest.raises(ProtocolViolation, match="must be nonempty") as exc_info:
+        freeze_preregistration(spec)
+    assert not isinstance(exc_info.value, ValidationError)
+
+
+def test_freeze_rejects_non_string_raw_mapping_key() -> None:
+    spec = make_spec()
+    spec[42] = "smuggled"  # type: ignore[index]
+
+    with pytest.raises(ProtocolViolation, match="input mapping keys must be exact strings"):
+        freeze_preregistration(spec)
+
+
+def test_freeze_rejects_embedded_model_inside_raw_payload() -> None:
+    in_dict = make_spec()
+    in_dict["allocation_rule"] = UniformAllocationRule.model_validate(
+        in_dict["allocation_rule"]
+    )
+    with pytest.raises(ProtocolViolation, match="exact JSON primitives"):
+        freeze_preregistration(in_dict)
+
+    in_list = make_spec()
+    in_list["ordered_target_identity_members"][0] = TargetIdentityMember.model_validate(  # type: ignore[index]
+        in_list["ordered_target_identity_members"][0]  # type: ignore[index]
+    )
+    with pytest.raises(ProtocolViolation, match="exact JSON primitives"):
+        freeze_preregistration(in_list)
 
 
 def test_freeze_rejects_candidate_id_alias_and_extra_fields() -> None:

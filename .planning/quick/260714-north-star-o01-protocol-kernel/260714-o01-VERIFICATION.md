@@ -30,6 +30,16 @@
   non-exact string key whose hash/equality hook could hide an extra or replace observations during
   validation. P2 findings covered premature `__class__`, metaclass `__name__`, and type-hash hooks
   on safe rejection paths plus deep cyclic or acyclic raw inputs leaking `RecursionError`.
+- A seventh-iteration adversarial review (39 agents) confirmed 11 findings: 2 BLOCKER resolved via
+  the backlog recorded execution split (2026-07-16) plus `canonical_schema_template_hash` binding,
+  1 MAJOR reproduced bug (raw `ValidationError` leak on empty member arrays, fixed), MAJOR
+  claim/coverage gaps closed with named tests, and 5 MINOR fixed. This slice's scope is **O-01a**
+  per the recorded execution split; the split assigns every O-01 clause and negative vector to
+  exactly one of O-01a–O-01e, and **O-01 parent closes only when O-01b–O-01e also close**. The
+  schema-template obligation implemented here is a BINDING check only: `recompute_itt` requires a
+  separately retained `expected_canonical_schema_template_hash` equal to the frozen bound value;
+  recomputation from exact final schema bytes under the out-of-band bootstrap suite and
+  cross-manifest equality land with X-00A/O-01c.
 
 ## Strict protocol and freeze assertions
 
@@ -37,6 +47,19 @@
   exact built-in dicts, lists, or tuples. Container subclasses, bytes, sets, frozensets, generators,
   non-string mapping keys, embedded models, and cyclic raw containers are rejected with
   `ProtocolViolation`.
+- Every rejection leaves through the uniform `ProtocolViolation` channel. Empty ordered member
+  arrays are rejected by an explicit nonempty pre-check before any content model is built, and all
+  derived mapping/eligibility/freeze content construction is wrapped in the same
+  `ValidationError`→`ProtocolViolation` translation `_as_model` uses, so raw pydantic
+  `ValidationError` can no longer leak from `freeze_preregistration`.
+- `canonical_schema_template_hash` is a required strict-`Digest` spec field (identical format
+  validation to sibling hash fields: exact lowercase 64-char hex), flows into the
+  freeze-content hash preimage, and is exposed on `FrozenPreregistration`. Every
+  `recompute_itt` call requires a separately retained
+  `expected_canonical_schema_template_hash` equal to the frozen bound value; a coherent foreign
+  frozen object with an attacker-recomputed expected freeze-content hash still rejects on this
+  binding. This is a BINDING check only (O-01a); byte-level recomputation and cross-manifest
+  equality belong to X-00A/O-01c.
 - Closed models are strict, frozen, and extra-forbid. A recursive exact model-graph check detects
   root or nested `model_copy(update=extra)` bypasses before `model_dump` can erase the extra field.
   It reads only exact built-in model storage and validates every field against its declared annotation
@@ -86,8 +109,13 @@
 - O-01 accepts no exclusion. Every reference remains enumerated as rejected, never shrinks its
   original denominator, and forces its scoped run/candidate not-passed in unverified conditional
   diagnostics.
-- Pipeline run units and expert candidate slots have separate denominators. Missing verified expert
-  evidence contributes zero; caller-submitted expert booleans are forbidden.
+- Pipeline run units and expert candidate slots have separate denominators, verified under an
+  asymmetric configuration (8 planned runs vs 4 candidate slots) so a population swap is
+  detectable, not masked by symmetric counts.
+- Eligibility decisions never shrink ITT denominators: a freeze containing an INELIGIBLE decision
+  yields exactly the same run/candidate denominators as the all-eligible case (ITT retention).
+- Missing verified expert evidence contributes zero; caller-submitted expert booleans are
+  forbidden.
 - Conditional-on-unverified-reported-delivery expert ratios are diagnostic only. Their dependence
   clusters are filtered to exactly their diagnostic denominator members and empty clusters are
   dropped.
@@ -98,25 +126,118 @@
 - Duplicate-cluster evidence and confidence intervals are explicitly unavailable. O-01 does not
   claim to implement the later pre-label duplicate verifier or a ratified confidence method.
 
+## Claim-to-test index
+
+Every claimed rejection or invariant vector above has at least one named test
+(`tests/test_north_star_protocol.py` / `tests/test_north_star_itt.py`):
+
+- Non-string raw mapping keys → `test_freeze_rejects_non_string_raw_mapping_key`.
+- BaseModel embedded in raw dict/list payload → `test_freeze_rejects_embedded_model_inside_raw_payload`.
+- Empty ordered member arrays reject as `ProtocolViolation`, never raw `ValidationError` →
+  `test_freeze_rejects_empty_member_arrays_as_protocol_violation` (all four arrays).
+- Raw container subclasses → `test_freeze_rejects_raw_container_subclasses`,
+  `test_freeze_rejects_raw_subclass_without_invoking_class_hook`,
+  `test_observations_reject_raw_container_subclasses`.
+- Bytes at scalar/enum boundaries → `test_freeze_rejects_bytes_at_scalar_and_enum_boundaries`,
+  `test_observations_reject_bytes`.
+- Sets/frozensets/generators → `test_freeze_rejects_unordered_or_streaming_containers`,
+  `test_observations_reject_unordered_or_streaming_containers`.
+- Cyclic raw containers → `test_freeze_rejects_cyclic_raw_containers`,
+  `test_observations_reject_cyclic_raw_container`.
+- Deep recursion normalized to `ProtocolViolation` → `test_freeze_wraps_deep_acyclic_raw_recursion`,
+  `test_observations_wrap_deep_cyclic_raw_recursion`.
+- `model_copy(update=extra)` bypass → `test_freeze_rejects_model_copy_extra_field_bypass`,
+  `test_observation_model_copy_extra_field_bypass_rejects`.
+- Missing/falsey Pydantic hidden slots → `test_freeze_rejects_missing_hidden_model_slots`,
+  `test_freeze_rejects_falsey_hidden_model_slots`, `test_observations_reject_missing_hidden_model_slots`,
+  `test_observations_reject_falsey_private_state`, `test_recompute_rejects_missing_frozen_model_slots`,
+  `test_recompute_rejects_falsey_frozen_extra_state`.
+- Model-storage dict subclasses → `test_freeze_rejects_root_model_storage_dict_subclass`,
+  `test_freeze_rejects_nested_model_storage_dict_subclass`,
+  `test_observations_reject_root_model_storage_dict_subclass`,
+  `test_observations_reject_nested_model_storage_dict_subclass`.
+- Non-exact string storage keys / physical duplicate keys →
+  `test_freeze_rejects_non_exact_model_storage_keys_without_hash_hook`,
+  `test_freeze_rejects_hidden_duplicate_storage_key_by_physical_count`,
+  `test_observations_reject_non_exact_storage_key_without_hash_hook`,
+  `test_recompute_rejects_non_exact_frozen_storage_key_without_hash_hook`.
+- Self-replacing containers → `test_freeze_rejects_dynamic_mapping_before_invoking_hook`,
+  `test_freeze_rejects_dynamic_list_before_invoking_hook`,
+  `test_observations_reject_dynamic_list_before_invoking_hook`.
+- No attacker class metadata reads on rejection →
+  `test_freeze_rejects_model_mismatch_without_reading_attacker_class_name`,
+  `test_freeze_rejects_raw_value_without_invoking_type_hash_hook`,
+  `test_freeze_rejects_raw_subclass_without_invoking_class_hook`.
+- Declared nested model subclasses → `test_freeze_rejects_declared_nested_model_subclass_fields`,
+  `test_observation_declared_model_subclass_fields_reject`.
+- Scalar normalization (`0`→`False`, foreign `StrEnum`, `str` subclass) →
+  `test_freeze_model_input_rejects_scalar_normalization`,
+  `test_frozen_model_input_rejects_scalar_normalization`.
+- Missing/extra/aliased fields, `candidate_id` alias →
+  `test_freeze_rejects_missing_target_fields`,
+  `test_freeze_rejects_candidate_id_alias_and_extra_fields`,
+  `test_unknown_exclusion_scope_and_candidate_id_alias_reject`.
+- Reserved `INITIAL_GENESIS` marker → `test_freeze_rejects_reserved_initial_genesis_as_a_primary_id`.
+- Contiguous ordinal ordering / no lexical fallback →
+  `test_freeze_rejects_reordered_or_gapped_targets`,
+  `test_freeze_uses_protocol_ordinals_not_lexical_identifier_order`.
+- Reversed/reparented candidate/run/attempt parentage →
+  `test_freeze_rejects_reparented_candidate_run_and_attempt`.
+- Duplicate primary IDs / allocation mismatch →
+  `test_freeze_rejects_duplicate_primary_ids_and_allocation_mismatch`.
+- Missing closed rule fields → `test_freeze_rejects_missing_closed_rule_fields`.
+- Domain-separated hash recomputation and pinned domain literals →
+  `test_freeze_recomputes_inline_domain_separated_mapping_and_eligibility`,
+  `test_hash_domain_constants_are_pinned_exact_literals`.
+- Submitted eligibility decisions / duplicate rule hashes →
+  `test_freeze_rejects_rule_duplicates_and_does_not_accept_submitted_decisions`.
+- Tampered nested hash / eligibility content / evaluation time →
+  `test_recompute_rejects_tampered_nested_hash_or_eligibility_content`,
+  `test_eligibility_evaluation_time_is_bound_and_recomputed`.
+- External expected freeze-content hash binding →
+  `test_external_expected_freeze_hash_rejects_coherent_sampling_frame_swap`,
+  `test_expected_freeze_hash_rejects_bytes`, `test_report_retains_exact_preregistration_freeze_binding`.
+- Canonical schema template hash binding (splice, preimage flow, malformed formats) →
+  `test_external_schema_template_hash_rejects_internally_consistent_splice`,
+  `test_canonical_schema_template_hash_is_bound_into_freeze_preimage`,
+  `test_canonical_schema_template_hash_rejects_malformed_formats`.
+- Exact frozen root model required → `test_recompute_requires_exact_frozen_root_model`.
+- Attempt-observation coverage exact/ordered/unique →
+  `test_attempt_observations_are_exact_closed_world_and_ordered`.
+- Retries never expand denominators → `test_retry_attempts_never_expand_pipeline_denominator`.
+- Closed terminal→numerator map → `test_exact_terminal_to_pipeline_numerator_map`.
+- Delivered run forbids later non-missing retry → `test_delivered_run_rejects_a_later_nonmissing_retry`.
+- Exclusion default-deny, denominator retention, forced not-passed →
+  `test_unverified_exclusions_never_shrink_itt_populations`,
+  `test_rejected_exclusions_force_reported_delivery_not_passed`.
+- Distinct run/candidate populations (asymmetric 8 vs 4) and contaminated-attempt retention →
+  `test_recompute_itt_keeps_run_and_candidate_populations_distinct`.
+- INELIGIBLE decisions never shrink ITT denominators →
+  `test_ineligible_eligibility_decision_never_shrinks_itt_denominators`.
+- Expert booleans are not a public input → `test_submitted_expert_booleans_are_not_a_public_input`.
+- Naked reported terminals change only diagnostics →
+  `test_naked_reported_terminals_can_change_only_diagnostics`.
+- Frozen candidate-level aggregation rule →
+  `test_multi_run_candidate_uses_frozen_reported_delivery_aggregation_rule`.
+
 ## Commands and current results
 
-```text
-PYTHONUTF8=1 uv run pytest tests/test_north_star_protocol.py tests/test_north_star_itt.py -q -k "not real" -m "not real_machine"
-91 passed in 0.35s
+Seventh-iteration fixed tree (this working tree):
 
-PYTHONUTF8=1 uv run ruff check app/core/north_star tests/test_north_star_protocol.py tests/test_north_star_itt.py
+```text
+PYTHONUTF8=1 ./.venv/Scripts/python.exe -m pytest tests/test_north_star_protocol.py tests/test_north_star_itt.py -q -k "not real" -m "not real_machine"
+105 passed in 0.95s
+
+PYTHONUTF8=1 ./.venv/Scripts/python.exe -m ruff check app/core/north_star tests/test_north_star_protocol.py tests/test_north_star_itt.py
 All checks passed!
 
-PYTHONUTF8=1 uv run mypy app/core/north_star
+PYTHONUTF8=1 ./.venv/Scripts/python.exe -m mypy app/core/north_star
 Success: no issues found in 4 source files
-
-git diff --check
-exit 0 (Windows line-ending conversion warnings only)
-
-PYTHONUTF8=1 uv run pytest -q -k "not real" -m "not real_machine"
-2267 passed, 1 skipped, 545 deselected, 6154 warnings in 1208.91s
 ```
 
+The sixth fixed tree previously passed the full offline regression suite
+(`2267 passed, 1 skipped, 545 deselected`); the full-suite rerun on the seventh fixed tree, three
+fresh independent read-only reviews, and the PR/CI/merge/main-CI release chain remain pending.
 The first full-regression attempt on the old `7f53436d` base exposed two pre-existing Windows CRLF
 hard-pin failures. They were isolated and released separately through PR #84; O-01 is based on
 `42803f8d`. No real-machine test, runner, CODE V process, holdout, or expert-review surface is

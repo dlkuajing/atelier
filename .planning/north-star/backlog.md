@@ -246,6 +246,88 @@ R-03 ─ O-09 final evidence/handoff release ─ H-04 final human decision.
   `$env:PYTHONUTF8='1'; uv run pytest tests/test_north_star_protocol.py tests/test_north_star_itt.py -q -k "not real" -m "not real_machine"`
   and `$env:PYTHONUTF8='1'; uv run ruff check app/core/north_star tests/test_north_star_protocol.py tests/test_north_star_itt.py`.
 - **Retry budget:** 1 implementation + at most 2 evidence-driven fix-forward.
+- **Recorded execution split (2026-07-16, adversarial-review remedy; no clause is deleted or
+  reworded):** the exit-criteria text above remains the single authoritative O-01 contract and O-01
+  closes only when every sub-node below has closed. This split assigns each clause and each named
+  negative vector to exactly one implementation sub-node so that no vector can be silently narrowed
+  by an implementation subset. Each sub-node carries its own retry budget of 1 implementation + at
+  most 2 evidence-driven fix-forward.
+  - **O-01a — preregistration/ITT kernel (this split's first slice):** sampling-frame, eligibility
+    rule, population-count and allocation freeze; `planned_identity_mapping_content_hash` and
+    `eligibility_decision_set_content_hash` domain-separated recomputation; contiguous
+    `draw_ordinal`/`candidate_slot_ordinal`/`run_ordinal`/`attempt_sequence` ordering; declared
+    runtime source path/inline content rule; `planned_candidate_slot_id` single-identifier rule;
+    run/attempt parentage, closed mutually exclusive terminal states, frozen retry/aggregation
+    mapping; exclusion default-deny with enumerated `RejectedExclusion` records (the acceptance
+    path is O-01e); distinct run-unit and candidate-slot ITT populations, exact
+    `pipeline_delivery_rate`/`expert_worth_reviewing_rate_itt`/`expert_production_usable_rate_itt`
+    formulas and raw report tuple; contaminated-attempt retention; diagnostic-only conditional
+    rates; unknown/unsigned input rejection; and `canonical_schema_template_hash` **binding**: the
+    freeze binds the externally supplied hash value and ITT recomputation rejects any frozen object
+    whose bound hash differs from the externally retained expected value (splice vector), while
+    recomputation *from exact final schema bytes under the out-of-band bootstrap suite* and equality
+    across governance anchor/protocol package/sealed manifest/activation objects necessarily lands
+    with X-00A and the sub-nodes that create those objects. Kernel-internal hash domain
+    `atelier.north-star.o01-preregistration-freeze-content.v0.1` must be registered in the next
+    canonical-schema draft revision. Vectors owned: reversed run/attempt parentage, mapping/
+    eligibility reorder or opaque roots, missing/ambiguous nested-content source paths,
+    canonical-schema-hash splice, `candidate_id`/`planned_candidate_slot_id` aliasing, source run
+    mapped to another slot, and the observation-scope dimension of "orphan or
+    cross-paired protected run/machine attempts" and of "incomplete-attempt success" (the
+    protected-run/machine dimension of both vectors is homed below with the machine lane).
+    Exact checks: the two commands above.
+  - **O-01b — active minimum-claim floor checkpoint verifier:** durable append-only atomic-CAS
+    high-water checkpoint, deterministic anti-rollback lineage and equal-or-broader verification
+    with scenario IDs exact in v0.1. Vectors owned: stale/forked floor rollback, changed scenario
+    set. Exact checks: `tests/test_north_star_floor_checkpoint.py` plus ruff, same flags.
+  - **O-01c — signer/approval/ordering/capability/sealed-manifest kernel:** unsigned message →
+    detached signature record → envelope/set with no self-hash; distinct protocol vs activation
+    approval message types; one out-of-band governance anchor covering protocol, activation,
+    custodian, broker, expert and final-GO signers; protocol→draw→activation ordering;
+    membership-proved single-use access capabilities advancing audit and consumed-index roots;
+    post-draw/pre-access sealed manifest atomically assigning actual IDs and eligibility; the
+    generalized per-instance dependency-DAG resolution over registered hash edges (the kernel
+    already enforces it for its own inline graph). Vectors owned: pre-draw actual-ID assignment,
+    cross-batch draw/activation replay. Exact checks:
+    `tests/test_north_star_signers_draw_activation.py` plus ruff, same flags.
+  - **O-01d — candidate prelabel binding manifest and custody-broker CAS freeze chain:**
+    `candidate_prelabel_binding_manifest` duplicate-free/disjoint/exhaustive partition with actual
+    byte/membership/label-view/fingerprint/equivalence-cluster/machine-evidence bindings; the
+    custody-broker-signed four-object freeze chain with `new_sequence == prior_sequence + 1`,
+    carried-forward consumed root, protected-run/machine link set binding, freeze-precedes-exposure
+    and no-run-after-freeze rules; duplicate-cluster membership evidence consumed by ITT
+    numerator/denominator rules. Vectors owned: candidate-byte/label-view/manifest swap, label or
+    view before signed CAS freeze, duplicate/overlapping/incomplete partition, same-byte-root
+    split, same-semantic-fingerprint split, producer-selected partition, second freeze, prior
+    candidate/cluster-peer exposure, duplicate-cluster split. Exact checks:
+    `tests/test_north_star_prelabel_freeze.py` plus ruff, same flags.
+  - **O-01e — registered exclusion-record acceptance path:** the domain-separated exclusion record
+    binding goal, active checkpoint/floor, protocol, batch, manifest, member, reason/evidence
+    policy, current pre-outcome audit head, independent raw evidence, protected validation
+    terminal, frozen automatic rule input/output, and official machine receipt; acceptance flows
+    only through complete verification, never shrinking the original denominator. Vectors owned:
+    cross-batch exclusion replay. Exact checks: `tests/test_north_star_exclusion_record.py` plus
+    ruff, same flags.
+  - **Vectors already homed by the DAG in later nodes (unchanged, remain mandatory there):**
+    nonblank or suggestion-bearing entry form and expert signature before required access or raw
+    human entry → O-06; orphan ticket or durable intent hidden behind an opaque retained-chain
+    hash → M-04/M-05; the protected-run/machine dimension of "orphan or cross-paired protected
+    run/machine attempts" and of "incomplete-attempt success" → M-04 (pre-spawn cross-pairing
+    rejection), M-05 (`protected_run_machine_attempt_link_set_manifest` complete-chain and
+    consumed-incomplete-never-success rules) and O-05 (bijection rederivation);
+    non-main/non-push/foreign-workflow/pre-merge main CI → O-07.
+  - **Clause homes for the two cross-cutting sentences:** "The single closed-world schema
+    implements separate immutable minimum-claim/protocol/activation/final signature sets" is
+    split as: minimum-claim floor signature-set verification → O-01b; protocol/activation/final
+    signature sets → O-01c. "Canonical hard invariants reject non-null but weaker ITT, retry,
+    exclusion, conditional-rate, cluster or label policies" is split as: ITT/retry/
+    conditional-rate policy invariants → O-01a (Literal-pinned rules, closed enums); cluster and
+    label policy invariants → O-01d; exclusion policy invariants → O-01e.
+  - **Downstream dependency resolution:** O-02/O-03/O-04 depend on O-01a; O-01d additionally
+    depends on O-01c (the four-object freeze chain builds on O-01c signer primitives); O-05
+    depends on O-01a, O-01d and O-01e (and on O-01c transitively via O-01d); O-06 depends on
+    O-01c and O-01d; H-01/H-03 consume O-01b/O-01c objects and O-07 requires O-01a–O-01e all
+    complete. References to "O-01" elsewhere in this document resolve to this split.
 
 ### O-02 — C1 EFL + IMH with derived-FOV exit semantics
 

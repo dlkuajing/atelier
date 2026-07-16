@@ -1,6 +1,15 @@
+"""Closed-world preregistration freeze kernel for north-star O-01a.
+
+Validates exact public payloads, freezes planned identity mappings and verifier-recomputed
+eligibility decisions, and binds them under domain-separated SHA-256 content hashes. Every
+violation is rejected fail-closed as ProtocolViolation, every output is UNRATIFIED, and nothing
+produced here can promote any north-star gate.
+"""
+
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from enum import StrEnum
 from typing import Annotated, Any, Literal, cast, get_args, get_origin
 
@@ -384,6 +393,7 @@ class PreregistrationSpec(_ClosedModel):
     draw_event_id: OpaqueId
     protocol_package_hash: Digest
     protocol_authority_signature_set_hash: Digest
+    canonical_schema_template_hash: Digest
     sampling_frame_commitment_hash: Digest
     sampling_source_snapshot_hash: Digest
     minimum_claim_envelope_hash: Digest
@@ -489,6 +499,7 @@ class EligibilityDecisionSetContent(_ClosedModel):
 
 class PreregistrationFreezeContent(_ClosedModel):
     domain_tag: Literal["atelier.north-star.o01-preregistration-freeze-content.v0.1"]
+    canonical_schema_template_hash: Digest
     sampling_frame_commitment_hash: Digest
     sampling_source_snapshot_hash: Digest
     minimum_claim_envelope_hash: Digest
@@ -522,6 +533,10 @@ class FrozenPreregistration(_ClosedModel):
     confirmatory_authorized: Literal[False]
     preregistration_freeze_content: PreregistrationFreezeContent
     preregistration_freeze_content_hash: Digest
+
+    @property
+    def canonical_schema_template_hash(self) -> str:
+        return self.preregistration_freeze_content.canonical_schema_template_hash
 
     @property
     def sampling_frame_commitment_hash(self) -> str:
@@ -572,10 +587,24 @@ class FrozenPreregistration(_ClosedModel):
         return self.preregistration_freeze_content.eligibility_decision_set_content_hash
 
 
+@contextmanager
+def _translated_protocol_errors() -> Iterator[None]:
+    """Translate every construction/validation failure into the uniform rejection channel."""
+
+    try:
+        yield
+    except ProtocolViolation:
+        raise
+    except RecursionError as exc:
+        raise ProtocolViolation("input nesting exceeds supported recursion depth") from exc
+    except (ValidationError, TypeError, ValueError) as exc:
+        raise ProtocolViolation(str(exc)) from exc
+
+
 def _as_model[ModelT: BaseModel](
     model_type: type[ModelT], value: BaseModel | Mapping[str, object]
 ) -> ModelT:
-    try:
+    with _translated_protocol_errors():
         source_model: BaseModel | None = None
         input_type = type(value)
         if input_type is model_type:
@@ -593,13 +622,7 @@ def _as_model[ModelT: BaseModel](
         validated = model_type.model_validate(payload, strict=True)
         if source_model is not None:
             _assert_exact_runtime_graph(source_model, validated, model_type.__name__)
-        return validated
-    except ProtocolViolation:
-        raise
-    except RecursionError as exc:
-        raise ProtocolViolation("input nesting exceeds supported recursion depth") from exc
-    except (ValidationError, TypeError, ValueError) as exc:
-        raise ProtocolViolation(str(exc)) from exc
+    return validated
 
 
 def _require_unique(values: list[str], label: str) -> None:
@@ -629,8 +652,9 @@ def _validate_mapping_members(
     actual = (len(targets), len(candidates), len(runs), len(attempts))
     if declared != actual:
         raise ProtocolViolation("declared mapping counts must equal exact member-array lengths")
-    if not all(actual):
-        raise ProtocolViolation("all mapping member sets must be nonempty")
+    # Nonemptiness needs no separate guard here: declared counts are PositiveInt model fields,
+    # so after the declared == actual check every member array is provably nonempty. The public
+    # nonempty rejection lives in freeze_preregistration, before any content model is built.
     if actual[1:] != (expected_candidate_count, expected_run_count, expected_attempt_count):
         raise ProtocolViolation("mapping member counts do not match the frozen allocation rule")
 
@@ -786,46 +810,56 @@ def freeze_preregistration(
 
     spec = _as_model(PreregistrationSpec, value)
     assert isinstance(spec, PreregistrationSpec)
-    mapping = _mapping_from_spec(spec)
-    _validate_mapping_members(mapping, spec.allocation_rule)
-    mapping_hash = exact_content_hash(
-        PLANNED_IDENTITY_MAPPING_DOMAIN, mapping.model_dump(mode="json")
-    )
-    rule_hash, decisions = _eligibility_decisions(
-        mapping=mapping,
-        mapping_hash=mapping_hash,
-        sampling_source_snapshot_hash=spec.sampling_source_snapshot_hash,
-        minimum_claim_envelope_hash=spec.minimum_claim_envelope_hash,
-        eligibility_rule=spec.eligibility_rule,
-        evaluated_at=spec.eligibility_evaluated_at,
-    )
-    decision_set_hash = exact_content_hash(
-        ELIGIBILITY_DECISION_SET_DOMAIN, decisions.model_dump(mode="json")
-    )
-    freeze_content = PreregistrationFreezeContent(
-        domain_tag="atelier.north-star.o01-preregistration-freeze-content.v0.1",
-        sampling_frame_commitment_hash=spec.sampling_frame_commitment_hash,
-        sampling_source_snapshot_hash=spec.sampling_source_snapshot_hash,
-        minimum_claim_envelope_hash=spec.minimum_claim_envelope_hash,
-        allocation_rule=spec.allocation_rule,
-        eligibility_rule=spec.eligibility_rule,
-        eligibility_rule_hash=rule_hash,
-        eligibility_evaluated_at=spec.eligibility_evaluated_at,
-        invalid_input_exclusion_reason_allowlist=spec.invalid_input_exclusion_reason_allowlist,
-        planned_identity_mapping_content=mapping,
-        planned_identity_mapping_content_hash=mapping_hash,
-        eligibility_decision_set_content=decisions,
-        eligibility_decision_set_content_hash=decision_set_hash,
-    )
-    freeze_content_hash = exact_content_hash(
-        PREREGISTRATION_FREEZE_DOMAIN, freeze_content.model_dump(mode="json")
-    )
-    frozen = FrozenPreregistration(
-        authority_status="UNRATIFIED",
-        confirmatory_authorized=False,
-        preregistration_freeze_content=freeze_content,
-        preregistration_freeze_content_hash=freeze_content_hash,
-    )
+    for member_field_name in (
+        "ordered_target_identity_members",
+        "ordered_candidate_slot_identity_members",
+        "ordered_planned_run_unit_identity_members",
+        "ordered_permitted_attempt_identity_members",
+    ):
+        if not getattr(spec, member_field_name):
+            raise ProtocolViolation(f"{member_field_name} must be nonempty")
+    with _translated_protocol_errors():
+        mapping = _mapping_from_spec(spec)
+        _validate_mapping_members(mapping, spec.allocation_rule)
+        mapping_hash = exact_content_hash(
+            PLANNED_IDENTITY_MAPPING_DOMAIN, mapping.model_dump(mode="json")
+        )
+        rule_hash, decisions = _eligibility_decisions(
+            mapping=mapping,
+            mapping_hash=mapping_hash,
+            sampling_source_snapshot_hash=spec.sampling_source_snapshot_hash,
+            minimum_claim_envelope_hash=spec.minimum_claim_envelope_hash,
+            eligibility_rule=spec.eligibility_rule,
+            evaluated_at=spec.eligibility_evaluated_at,
+        )
+        decision_set_hash = exact_content_hash(
+            ELIGIBILITY_DECISION_SET_DOMAIN, decisions.model_dump(mode="json")
+        )
+        freeze_content = PreregistrationFreezeContent(
+            domain_tag="atelier.north-star.o01-preregistration-freeze-content.v0.1",
+            canonical_schema_template_hash=spec.canonical_schema_template_hash,
+            sampling_frame_commitment_hash=spec.sampling_frame_commitment_hash,
+            sampling_source_snapshot_hash=spec.sampling_source_snapshot_hash,
+            minimum_claim_envelope_hash=spec.minimum_claim_envelope_hash,
+            allocation_rule=spec.allocation_rule,
+            eligibility_rule=spec.eligibility_rule,
+            eligibility_rule_hash=rule_hash,
+            eligibility_evaluated_at=spec.eligibility_evaluated_at,
+            invalid_input_exclusion_reason_allowlist=spec.invalid_input_exclusion_reason_allowlist,
+            planned_identity_mapping_content=mapping,
+            planned_identity_mapping_content_hash=mapping_hash,
+            eligibility_decision_set_content=decisions,
+            eligibility_decision_set_content_hash=decision_set_hash,
+        )
+        freeze_content_hash = exact_content_hash(
+            PREREGISTRATION_FREEZE_DOMAIN, freeze_content.model_dump(mode="json")
+        )
+        frozen = FrozenPreregistration(
+            authority_status="UNRATIFIED",
+            confirmatory_authorized=False,
+            preregistration_freeze_content=freeze_content,
+            preregistration_freeze_content_hash=freeze_content_hash,
+        )
     _assert_frozen_valid(frozen)
     return frozen
 

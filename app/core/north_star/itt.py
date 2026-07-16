@@ -1,3 +1,11 @@
+"""Default-deny intention-to-treat recomputation for north-star O-01a.
+
+Recomputes raw ITT reports from a fully revalidated frozen preregistration plus externally
+retained freeze-content and canonical-schema-template hash bindings. Exclusions are rejected by
+default and never shrink frozen denominators; caller-reported terminals stay diagnostic-only.
+Every report is UNRATIFIED and cannot promote any north-star gate.
+"""
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -375,31 +383,51 @@ def _rejected_exclusions(
     return tuple(rejected)
 
 
+def _require_exact_digest(value: str, label: str) -> None:
+    if (
+        type(value) is not str
+        or len(value) != 64
+        or any(char not in "0123456789abcdef" for char in value)
+    ):
+        raise ProtocolViolation(f"{label} must be an exact lowercase SHA-256 digest")
+
+
 def recompute_itt(
     frozen: FrozenPreregistration,
     value: IttObservations | dict[str, object],
     *,
     expected_preregistration_freeze_content_hash: str,
+    expected_canonical_schema_template_hash: str,
 ) -> IttReport:
-    """Recompute O-01 ITT counts against an externally retained freeze-content hash."""
+    """Recompute O-01 ITT counts against externally retained hash bindings.
+
+    ``expected_canonical_schema_template_hash`` is a BINDING check only (O-01a scope): the
+    frozen object must bind exactly the externally retained canonical schema template hash,
+    mirroring the externally retained expected freeze-content hash check. Recomputing that
+    hash from the exact final schema bytes under the out-of-band bootstrap suite, and the
+    equality checks across governance anchor, protocol package, sealed manifest, and
+    activation objects, land with X-00A/O-01c per the recorded execution split.
+    """
 
     frozen = _assert_frozen_valid(frozen)
-    if (
-        type(expected_preregistration_freeze_content_hash) is not str
-        or len(expected_preregistration_freeze_content_hash) != 64
-        or any(
-            char not in "0123456789abcdef"
-            for char in expected_preregistration_freeze_content_hash
-        )
-    ):
-        raise ProtocolViolation(
-            "expected preregistration freeze content hash must be an exact lowercase SHA-256 digest"
-        )
+    _require_exact_digest(
+        expected_preregistration_freeze_content_hash,
+        "expected preregistration freeze content hash",
+    )
     if (
         expected_preregistration_freeze_content_hash
         != frozen.preregistration_freeze_content_hash
     ):
         raise ProtocolViolation("externally expected preregistration freeze content hash mismatch")
+    _require_exact_digest(
+        expected_canonical_schema_template_hash,
+        "expected canonical schema template hash",
+    )
+    if (
+        expected_canonical_schema_template_hash
+        != frozen.canonical_schema_template_hash
+    ):
+        raise ProtocolViolation("externally expected canonical schema template hash mismatch")
     observations = _as_observations(value)
     rejected_exclusions = _rejected_exclusions(frozen, observations)
     rejected_run_ids = {
