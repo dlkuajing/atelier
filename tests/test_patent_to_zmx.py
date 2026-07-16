@@ -13008,3 +13008,238 @@ def test_largan_moving_group_replay_is_semantically_deterministic() -> None:
         "15": "31a006a6ba02333646e6709aa651b9a3ae03059446314a569806925f111be377",
         "19": "7d4236f9458f0a5dad99cb89f685d25f1ee0787d7057f7c5475a969d81fe7c55",
     }
+
+
+def test_near_ir_absorbing_polymer_source_is_confirmed_no_prescription() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "b15bbe88f5f5126c"
+        / "US-20180094086-A1.html"
+    )
+    raw_text = source.read_text(encoding="utf-8")
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id="US-20180094086-A1",
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].embodiment_number is None
+    assert attempts[0].embodiment == (
+        "Near-infrared absorbing polymer and cut-filter materials document"
+    )
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription."
+        "near_ir_absorbing_polymer_and_cut_filter_materials_only"
+    )
+
+    altered = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " Surface No. 1 Radius of Curvature 1.0",
+        patent_id="US-20180094086-A1",
+    )
+    assert len(altered) == 1
+    assert isinstance(altered[0].error, PatentParseError)
+    assert not isinstance(altered[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "raw text hash changed" in str(altered[0].error)
+
+
+def test_near_ir_absorbing_polymer_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-57585487"
+    evidence = json.loads(
+        (quick / "family-57585487-source-evidence.json").read_text(encoding="utf-8")
+    )
+    source = root / evidence["official_html"]["path"]
+    raw_text = source.read_text(encoding="utf-8")
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+
+    assert evidence["family_id"] == "57585487"
+    assert evidence["denominator"] == {
+        "numbered_paragraphs": 620,
+        "synthesis_examples": 24,
+        "near_ir_cut_filter_examples": 32,
+        "comparative_examples": 1,
+        "figure_panels": 4,
+        "drawing_sheets": 2,
+        "source_tables": 1,
+        "claims": 18,
+        "terminal_items": 1,
+    }
+    assert hashlib.sha256(raw_text.encode()).hexdigest() == evidence["official_html"][
+        "raw_document_sha256"
+    ]
+    assert hashlib.sha256(normalized.encode()).hexdigest() == evidence["official_html"][
+        "normalized_text_sha256"
+    ]
+    assert [int(value) for value in re.findall(r"\[(\d{4})\]", normalized)] == list(
+        range(1, 621)
+    )
+    table_match = re.search(
+        r"(?P<table>TABLE-US-00001\s+TABLE\s+1.*?)"
+        r"(?:<br\s*/?>\s*\[0605\])",
+        raw_text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    assert table_match is not None
+    table_text = patent_to_zmx.normalize_patent_text(table_match.group("table"))
+    assert hashlib.sha256(table_text.encode()).hexdigest() == evidence["table_1"][
+        "normalized_exact_body_sha256"
+    ]
+    assert len(
+        re.findall(
+            r"\b(?:Example\s+\d+|Comparative\s+Example\s+1)\s+"
+            r"[ABC]\s+[ABC]\s+[ABC]\b",
+            table_text,
+        )
+    ) == evidence["table_1"]["row_count"] == 33
+    assert set(evidence["prescription_marker_counts"].values()) == {0}
+    assert evidence["terminal_item"] == {
+        "embodiment_number": None,
+        "label": "Near-infrared absorbing polymer and cut-filter materials document",
+        "status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription."
+            "near_ir_absorbing_polymer_and_cut_filter_materials_only"
+        ),
+    }
+
+    queue = json.loads(
+        (quick / "family-57585487-external-family-members.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert queue["current_frozen_cohort_roots"] == ["US-20180094086"]
+    assert {member["publication_id"] for member in queue["external_family_members"]} == {
+        "WO2016208258A1",
+        "JP6563014B2",
+        "TW201700701A",
+    }
+    assert all(
+        member["disposition"] == "queue_after_frozen_619_root_cohort"
+        for member in queue["external_family_members"]
+    )
+
+
+def test_near_ir_absorbing_polymer_official_pdf_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-57585487"
+    audit = json.loads(
+        (quick / "family-57585487-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    assert audit["family_id"] == "57585487"
+    assert audit["publication_id"] == "US-20180094086-A1"
+    assert audit["page_count"] == 114
+    assert audit["figure_panels"] == ["1", "2", "3", "4"]
+    assert audit["drawing_page_numbers"] == [2, 3]
+    assert audit["description_start_page"] == 4
+    assert audit["description_paragraph_range"] == [1, 620]
+    assert audit["table_page_numbers"] == [112, 113]
+    assert audit["claims_start_page"] == 113
+
+    raster_hashes_by_wrapper: dict[str, list[str]] = {}
+    for label, wrapper in audit["wrappers"].items():
+        pdf_path = root / wrapper["path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper["sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == wrapper["page_count"] == 114
+        page_hashes: list[str] = []
+        image_counts: list[int] = []
+        text_lengths: list[int] = []
+        page_shapes: list[list[int]] = []
+        for page_number, page in enumerate(reader.pages, start=1):
+            image_counts.append(len(page.images))
+            text_lengths.append(len((page.extract_text() or "").strip()))
+            image_bytes = patent_pdf_recovery._page_image(
+                page,
+                source=f"US-20180094086-A1 {label}",
+                page_number=page_number,
+            )
+            page_hashes.append(
+                patent_pdf_recovery._canonical_raster_sha256(image_bytes)
+            )
+            decoded = cv2.imdecode(
+                np.frombuffer(image_bytes, dtype=np.uint8),
+                cv2.IMREAD_COLOR,
+            )
+            assert decoded is not None
+            page_shapes.append([int(decoded.shape[0]), int(decoded.shape[1])])
+        assert image_counts == wrapper["page_image_counts"] == [1] * 114
+        assert text_lengths == wrapper["page_text_lengths"]
+        assert wrapper["blank_text_pages"] == [
+            index + 1 for index, length in enumerate(text_lengths) if length == 0
+        ]
+        assert page_shapes == wrapper["page_shapes"]
+        assert page_hashes == wrapper["page_raster_sha256"]
+        raster_hashes_by_wrapper[label] = page_hashes
+
+    assert raster_hashes_by_wrapper["live-1"] == raster_hashes_by_wrapper["live-2"]
+    assert raster_hashes_by_wrapper["live-1"] == raster_hashes_by_wrapper["google"]
+    assert audit["decoded_raster_equality"] == {
+        "all_equal": True,
+        "equal_pages": 114,
+        "wrappers": ["live-1", "live-2", "google"],
+    }
+    raster_set_sha256 = hashlib.sha256(
+        json.dumps(
+            raster_hashes_by_wrapper["live-1"],
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    assert raster_set_sha256 == audit["raster_set_sha256"]
+    contact = root / audit["retained_contact_sheet"]
+    assert hashlib.sha256(contact.read_bytes()).hexdigest() == audit[
+        "retained_contact_sha256"
+    ]
+
+
+def test_near_ir_absorbing_polymer_replay_is_semantically_deterministic() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-57585487"
+    artifact = json.loads(
+        (quick / "family-57585487-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes: set[str] = set()
+    assert artifact["root_id"] == "US-20180094086"
+    assert artifact["family_id"] == "57585487"
+    assert artifact["item_count"] == 1
+    assert artifact["excluded_semantic_fields"] == ["result_attempt"]
+    assert [record["result_attempt"] for record in artifact["attempts"]] == [2, 3]
+    for expected in artifact["attempts"]:
+        result_path = root / expected["path"]
+        assert hashlib.sha256(result_path.read_bytes()).hexdigest() == expected[
+            "file_sha256"
+        ]
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        result.pop("result_attempt")
+        semantic_sha256 = hashlib.sha256(
+            json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        assert semantic_sha256 == expected["semantic_sha256"]
+        semantic_hashes.add(semantic_sha256)
+        assert result["root_state"] == "terminal"
+        assert result["reason_code"] == "terminal.all_disclosed_items_terminal"
+        assert len(result["items"]) == 1
+        assert result["items"][0]["terminal_status"] == "confirmed_no_prescription"
+        assert result["items"][0]["reason_code"] == (
+            "terminal.confirmed_no_prescription."
+            "near_ir_absorbing_polymer_and_cut_filter_materials_only"
+        )
+        assert result["items"][0]["conversion_attempt_id"] is None
+        assert result["items"][0]["prescription_fingerprint"] is None
+
+    assert artifact["semantic_equal"] is True
+    assert semantic_hashes == {
+        "3b7df3099b2bd195536f9f4d283cd893c3f1748ef4690993de1e2943f8074ad6"
+    }

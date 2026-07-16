@@ -475,6 +475,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_near_ir_absorbing_polymer_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_low_reflection_light_blocking_architecture_only_attempts(
             raw_text,
@@ -1989,6 +1995,26 @@ _IR_FILTER_COATING_ONLY_TITLE_PATTERN = re.compile(
     r"\bOPTICAL\s+LENS\s+ASSEMBLY\s+AND\s+IMAGING\s+LENS\s+WITH\s+"
     r"INFRARED\s+RAY\s+FILTERING\b",
     flags=re.IGNORECASE,
+)
+_NEAR_IR_ABSORBING_POLYMER_ONLY_TITLE_PATTERN = re.compile(
+    r"\bNEAR\s+INFRARED\s+ABSORBING\s+COMPOSITION\s*,\s*NEAR\s+INFRARED\s+"
+    r"CUT\s+FILTER\s*,\s*METHOD\s+OF\s+MANUFACTURING\s+NEAR\s+INFRARED\s+CUT\s+"
+    r"FILTER\s*,\s*DEVICE\s*,\s*METHOD\s+OF\s+MANUFACTURING\s+COPPER-CONTAINING\s+"
+    r"POLYMER\s*,\s*AND\s+COPPER-CONTAINING\s+POLYMER\b",
+    flags=re.IGNORECASE,
+)
+_NEAR_IR_ABSORBING_POLYMER_ONLY_SOURCE_PROFILES: dict[str, dict[str, str]] = {
+    "US-20180094086-A1": {
+        "raw_document_sha256": (
+            "b15bbe88f5f5126cc822a163a9ffa9b08b14494cb9518bbd8ec8e92fde3b59d7"
+        ),
+        "normalized_text_sha256": (
+            "bdb4f2afac99d59467421ead19a9ef4325737e969b37615c1a991cab99dc81ac"
+        ),
+    },
+}
+_NEAR_IR_ABSORBING_POLYMER_TABLE_SHA256 = (
+    "d969826f3d532a444ed1d82426229e58509dd63492a7990381042b03a7fa6c50"
 )
 _SURFACE_TEXTURE_ACQUISITION_ONLY_TITLE_PATTERN = re.compile(
     r"\bSYSTEM\s+AND\s+METHOD\s+FOR\s+ACQUIRING\s+IMAGES\s+OF\s+"
@@ -13720,6 +13746,195 @@ def _classify_ir_filter_coating_only_attempts(
                 detail=(
                     "all 78 official PPUBS tables disclose only thin-film material, layer "
                     "thickness, wavelength, or transmittance data; no optical surface "
+                    "prescription is published"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_near_ir_absorbing_polymer_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 57585487 chemistry/filter disclosure as no prescription."""
+
+    profile = _NEAR_IR_ABSORBING_POLYMER_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment = "Near-infrared absorbing polymer and cut-filter materials document"
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"near-IR absorbing polymer official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"near-IR absorbing polymer normalized text hash changed for {patent_id}"
+            )
+        if _NEAR_IR_ABSORBING_POLYMER_ONLY_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("near-IR absorbing polymer title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*57585487", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("near-IR absorbing polymer Family ID binding changed")
+        if len(re.findall(r"Appl\.\s*No\.:\s*15\s*/\s*821363", text)) != 1:
+            raise PatentParseError("near-IR absorbing polymer application binding changed")
+
+        paragraph_numbers = tuple(
+            int(value) for value in re.findall(r"\[(\d{4})\]", text)
+        )
+        if paragraph_numbers != tuple(range(1, 621)):
+            raise PatentParseError(
+                "near-IR absorbing polymer paragraph 0001-0620 denominator changed"
+            )
+        synthesis_headings = tuple(
+            int(value)
+            for value in re.findall(
+                r"<br\s*/?>\s*Synthesis\s+Example\s+(\d+)\s*<br\s*/?>",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        if synthesis_headings != tuple(range(1, 25)):
+            raise PatentParseError(
+                "near-IR absorbing polymer Synthesis Examples 1-24 denominator changed"
+            )
+        manufacturing_headings = tuple(
+            normalize_patent_text(match)
+            for match in re.findall(
+                r"<br\s*/?>\s*(Examples?\s+\d+(?:\s+to\s+\d+)?)\s*<br\s*/?>",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        if manufacturing_headings != (
+            "Example 1",
+            "Examples 2 to 19",
+            "Example 20",
+            "Example 21",
+            "Examples 22 to 26",
+            "Example 27",
+            "Example 28",
+            "Example 29",
+            "Example 30",
+            "Example 31",
+            "Example 32",
+        ):
+            raise PatentParseError(
+                "near-IR cut-filter manufacturing Examples 1-32 denominator changed"
+            )
+        comparative_headings = re.findall(
+            r"<br\s*/?>\s*Comparative\s+Example\s+(\d+)\s*<br\s*/?>",
+            raw_text,
+            re.IGNORECASE,
+        )
+        if comparative_headings != ["1"]:
+            raise PatentParseError(
+                "near-IR cut-filter Comparative Example 1 denominator changed"
+            )
+
+        brief = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+THE\s+DRAWINGS(?P<body>.*?)"
+            r"DESCRIPTION\s+OF\s+THE\s+PREFERRED\s+EMBODIMENTS",
+            text,
+            re.IGNORECASE,
+        )
+        if brief is None or tuple(
+            re.findall(
+                r"FIG\.\s*(\d+)\s+is\s+a\s+schematic",
+                brief.group("body"),
+                re.IGNORECASE,
+            )
+        ) != ("1", "2", "3", "4"):
+            raise PatentParseError("near-IR cut-filter FIGS. 1-4 denominator changed")
+
+        table_ids = tuple(re.findall(r"TABLE-US-(\d+)", raw_text, re.IGNORECASE))
+        if table_ids != ("00001",):
+            raise PatentParseError("near-IR cut-filter one-table denominator changed")
+        table_match = re.search(
+            r"(?P<table>TABLE-US-00001\s+TABLE\s+1.*?)"
+            r"(?:<br\s*/?>\s*\[0605\])",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if table_match is None:
+            raise PatentParseError("near-IR cut-filter TABLE 1 body is missing")
+        table_text = normalize_patent_text(table_match.group("table"))
+        if (
+            hashlib.sha256(table_text.encode("utf-8")).hexdigest()
+            != _NEAR_IR_ABSORBING_POLYMER_TABLE_SHA256
+        ):
+            raise PatentParseError("near-IR cut-filter TABLE 1 digest changed")
+        rows = tuple(
+            (label, first, second, third)
+            for label, first, second, third in re.findall(
+                r"\b((?:Example\s+\d+)|(?:Comparative\s+Example\s+1))\s+"
+                r"([ABC])\s+([ABC])\s+([ABC])\b",
+                table_text,
+                re.IGNORECASE,
+            )
+        )
+        expected_rows = tuple(
+            (
+                f"Example {index}",
+                "B",
+                "B" if index == 19 else "A",
+                "A",
+            )
+            for index in range(1, 33)
+        ) + (("Comparative Example 1", "C", "C", "A"),)
+        if rows != expected_rows:
+            raise PatentParseError(
+                "near-IR cut-filter TABLE 1 Example 1-32/comparative rows changed"
+            )
+
+        claims = raw_text.split("<h3>Claims</h3>", maxsplit=1)
+        if len(claims) != 2 or tuple(
+            int(value)
+            for value in re.findall(r"<b>(\d+)</b>\s*\.", claims[1], re.IGNORECASE)
+        ) != tuple(range(1, 19)):
+            raise PatentParseError("near-IR absorbing polymer claims 1-18 changed")
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|\brefractive\s+index\b|"
+            r"\bAbbe(?:\s+(?:number|#))?\b|\baspheric?\s+(?:surface\s+)?"
+            r"(?:data|coefficients?|parameters?)\b|\beffective\s+focal\s+length\b|"
+            r"\bfocal\s+length\b|\bF\s*[- ]?number\b|\bFNO\b|"
+            r"\bfield\s+of\s+view\b|\bHFOV\b|"
+            r"\boptical\s+(?:surface\s+)?(?:prescription|data)\b|"
+            r"\blens\s+(?:prescription|data)\b)",
+            re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "near-IR absorbing polymer disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural damage
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "near_ir_absorbing_polymer_and_cut_filter_materials_only"
+                ),
+                detail=(
+                    "the source-locked 24 synthesis examples, 32 near-infrared cut-filter "
+                    "manufacturing examples, one comparative example, four layer-stack "
+                    "figures, and heat/solvent-resistance TABLE 1 disclose only polymer, "
+                    "film, filter, and device materials; no ordered optical surface "
                     "prescription is published"
                 ),
             ),
