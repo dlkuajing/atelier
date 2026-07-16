@@ -395,6 +395,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_sunny_automotive_nineteen_lens_missing_f_number_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_endoscopic_three_lens_missing_f_number_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2425,6 +2433,70 @@ _ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES: dict[
             "b02909799206e6cb96aa6b264556a5ca84d7869c67c09ce9818f770a91f069a9",
             "5a27a1648e7b01f5f62604fad096a6489d2896e2fa378c08d4eb412d10de6eba",
             "3b09b3b9cc93b8c9eac2a600877be07f09e683e3df1a47807cea463aa8493394",
+        ),
+    },
+}
+_SUNNY_AUTOMOTIVE_NINETEEN_LENS_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Optical\s+lens\s+assembly\s+and\s+electronic\s+device\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_SUNNY_AUTOMOTIVE_NINETEEN_LENS_FIGURES = tuple(range(1, 21))
+_SUNNY_AUTOMOTIVE_NINETEEN_LENS_TABLE_TITLES = (
+    *(str(index) for index in range(1, 40)),
+    "40-1",
+    "40-2",
+    "40-3",
+)
+_SUNNY_AUTOMOTIVE_NINETEEN_LENS_SYSTEM_TABLE_SHA256 = (
+    "0a4a2426030db823644f8c8426ed6602f6959e9850856f7fd3fbd2b84175db39",
+    "34019ae05b7c098b2552afad386da06962985ce1abef86ae95188e8241de90e0",
+    "ebc4f85c9d6ef85bc6505b0a7da34f026bdfa5986ea1cfbe571b3c103e76f716",
+    "627a6a809e0a95331dab0321399019d3410b5118cb5501d4c7550c82bb83c0af",
+)
+_SUNNY_AUTOMOTIVE_NINETEEN_LENS_SYSTEM_ROWS = (
+    (
+        "F 15.23 14.26 15.87 16.06 15.33 14.16 15.36 H",
+        "FOV 30 30 30 30 30 30 30 ENPD",
+        "F/ENPD 1.66 1.68 1.68 1.68 1.68 1.68 1.75 arctan",
+    ),
+    (
+        "F 14.460 14.517 14.277 14.331 FOV",
+        "FOV 31.000 31.000 31.000 31.000 F1",
+        "F/EPD 1.645 1.645 1.645 1.645 (d4 + d5 + d6)/TTL",
+    ),
+    (
+        "F 14.435 14.887 13.819 13.818 FOV",
+        "FOV 31.000 31.000 31.000 31.000 F1",
+        "F/EPD 1.645 1.645 1.645 1.645 (d4 + d5 + d6)/TTL",
+        "|F6/F] 3.6635 3.8090 7.6029 7.4628 d7/TTL",
+    ),
+    (
+        "F 14.464 14.317 14.871 13.803 FOV",
+        "FOV 35.600 35.600 35.600 35.600 F1",
+        "F/EPD 1.645 1.645 1.645 1.645 (d4 + d5 + d6)/TTL",
+    ),
+)
+_SUNNY_AUTOMOTIVE_NINETEEN_LENS_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12591114-B2": {
+        "raw_document_sha256": (
+            "7128071564aad7e014695521977dcf5aeeaedb2aea3c546364066bdec1fbff8c"
+        ),
+        "normalized_text_sha256": (
+            "621c097f338cc411098b6d403e04a2b5c26cd6744925436ae188e55f82c41c1d"
+        ),
+        "application_number": "18/326553",
+        "family_id": "82157375",
+        "table_aggregate_sha256": (
+            "3034143515fc6d814a6b604e004be2e78c9f139c4676513343d91c0447e15135"
+        ),
+        "identity_markers": (
+            "Applicant: NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD (Ningbo, CN)",
+            "US 20230367104 A1 Nov. 16, 2023",
+            "CN 202011560293.0 Dec. 25, 2020",
+            "CN 202110744979.3 Jul. 01, 2021",
+            "WO PCT/CN2021/135070 20211202 PENDING",
         ),
     },
 }
@@ -13965,6 +14037,287 @@ def _classify_endoscopic_three_lens_missing_f_number_attempts(
                     "the official HTML and all-page official raster audit publish no "
                     "exact system F-number; aperture-stop position and curvature are "
                     "not substituted or used to derive it"
+                ),
+            ),
+        )
+        for index, embodiment in enumerate(embodiments, start=1)
+    ]
+
+
+def _classify_sunny_automotive_nineteen_lens_missing_f_number_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain 19 exact seven-lens prescriptions whose F-number is unpublished."""
+
+    profile = _SUNNY_AUTOMOTIVE_NINETEEN_LENS_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiments = tuple(
+        f"Sunny automotive seven-lens embodiment {index}"
+        for index in range(1, 20)
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Sunny automotive official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Sunny automotive normalized text hash changed for {patent_id}"
+            )
+        if len(_SUNNY_AUTOMOTIVE_NINETEEN_LENS_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Sunny automotive title binding changed")
+        if len(
+            re.findall(
+                rf"Family\s+ID:\s*{re.escape(str(profile['family_id']))}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Sunny automotive Family ID binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Sunny automotive application binding changed")
+        for marker in profile["identity_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"Sunny automotive identity marker {marker!r} changed"
+                )
+
+        heading_numbers = tuple(
+            int(number)
+            for number in re.findall(
+                r"<br\s*/?>\s*Embodiment\s+(\d+)\s*<br\s*/?>",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        if heading_numbers != tuple(range(1, 20)):
+            raise PatentParseError(
+                "Sunny automotive nineteen-embodiment heading denominator changed"
+            )
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)"
+            r"DETAILED DESCRIPTION OF EMBODIMENTS",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError("Sunny automotive drawing description is missing")
+        declared_figures = tuple(
+            int(figure)
+            for figure in re.findall(
+                r"FIG\.\s*<b>(\d+)</b></figref>\s+is\s+",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _SUNNY_AUTOMOTIVE_NINETEEN_LENS_FIGURES:
+            raise PatentParseError("Sunny automotive 20-figure denominator changed")
+        drawing_text = normalize_patent_text(brief_match.group("body"))
+        for embodiment_number in range(1, 20):
+            figure_binding = (
+                rf"FIG\.\s*{embodiment_number}\s+is\s+a\s+schematic\s+structural\s+"
+                rf"diagram\s+of\s+an\s+optical\s+lens\s+assembly\s+according\s+to\s+"
+                rf"Embodiment\s+{embodiment_number}\b"
+            )
+            if len(re.findall(figure_binding, drawing_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Sunny automotive embodiment "
+                    f"{embodiment_number} figure binding changed"
+                )
+        if len(re.findall(r"FIG\.\s*20\s+is\s+a\s+schematic\s+diagram", drawing_text)) != 1:
+            raise PatentParseError("Sunny automotive FIG. 20 ray-angle role changed")
+
+        for embodiment_number in range(1, 20):
+            surface_number = 2 * embodiment_number - 1
+            asphere_number = 2 * embodiment_number
+            surface_binding = (
+                rf"Table\s+{surface_number}\s+shows\s+.*?\s+in\s+"
+                rf"Embodiment\s+{embodiment_number}\."
+            )
+            asphere_binding = (
+                rf"Table\s+{asphere_number}(?:\s+below)?\s+(?:shows|gives)\s+.*?"
+                rf"\s+in\s+Embodiment\s+{embodiment_number}\."
+            )
+            if len(re.findall(surface_binding, text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Sunny automotive embodiment "
+                    f"{embodiment_number} surface-table binding changed"
+                )
+            if len(re.findall(asphere_binding, text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Sunny automotive embodiment "
+                    f"{embodiment_number} asphere-table binding changed"
+                )
+
+        table_pattern = re.compile(
+            r"(?P<full>TABLE-US-(?P<id>\d+)\s+TABLE\s+"
+            r"(?P<title>\d+(?:-\d+)?)(?P<body>.*?)<br\s*/?>)",
+            re.DOTALL | re.IGNORECASE,
+        )
+        table_records: list[dict[str, Any]] = []
+        table_bodies: list[str] = []
+        table_digests: list[str] = []
+        for match in table_pattern.finditer(raw_text):
+            full_text = normalize_patent_text(match.group("full"))
+            body = normalize_patent_text(match.group("body"))
+            digest = hashlib.sha256(full_text.encode("utf-8")).hexdigest()
+            table_records.append(
+                {
+                    "ppubs_id": int(match.group("id")),
+                    "title": match.group("title"),
+                    "sha256": digest,
+                }
+            )
+            table_bodies.append(body)
+            table_digests.append(digest)
+        if tuple(record["ppubs_id"] for record in table_records) != tuple(
+            range(1, 43)
+        ):
+            raise PatentParseError("Sunny automotive PPUBS table ID sequence changed")
+        if tuple(record["title"] for record in table_records) != (
+            _SUNNY_AUTOMOTIVE_NINETEEN_LENS_TABLE_TITLES
+        ):
+            raise PatentParseError("Sunny automotive PPUBS table title sequence changed")
+        aggregate_payload = json.dumps(
+            table_records,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        aggregate_digest = hashlib.sha256(
+            aggregate_payload.encode("utf-8")
+        ).hexdigest()
+        if aggregate_digest != profile["table_aggregate_sha256"]:
+            raise PatentParseError("Sunny automotive PPUBS table aggregate changed")
+        if tuple(table_digests[38:42]) != (
+            _SUNNY_AUTOMOTIVE_NINETEEN_LENS_SYSTEM_TABLE_SHA256
+        ):
+            raise PatentParseError("Sunny automotive system table digest changed")
+
+        first_surface_header = (
+            "surface radius of curvature thickness/distance refractive abbe number"
+        )
+        later_surface_header = (
+            "radius of thickness/ surface curvature R distance d refractive abbe number"
+        )
+        asphere_header = "surface number k A4 A6 A8 A10 A12 A14 A16"
+        for embodiment_number in range(1, 20):
+            surface_body = table_bodies[2 * embodiment_number - 2]
+            asphere_body = table_bodies[2 * embodiment_number - 1]
+            expected_surface_header = (
+                first_surface_header
+                if embodiment_number <= 7
+                else later_surface_header
+            )
+            if not surface_body.startswith(expected_surface_header):
+                raise PatentParseError(
+                    "Sunny automotive embodiment "
+                    f"{embodiment_number} surface-table structure changed"
+                )
+            if not asphere_body.startswith(asphere_header):
+                raise PatentParseError(
+                    "Sunny automotive embodiment "
+                    f"{embodiment_number} asphere-table structure changed"
+                )
+
+        for system_index, expected_rows in enumerate(
+            _SUNNY_AUTOMOTIVE_NINETEEN_LENS_SYSTEM_ROWS,
+            start=39,
+        ):
+            body = table_bodies[system_index - 1]
+            for expected_row in expected_rows:
+                if len(re.findall(re.escape(expected_row), body)) != 1:
+                    raise PatentParseError(
+                        f"Sunny automotive system TABLE {system_index} row changed"
+                    )
+
+        direct_f_values = re.findall(
+            r"\bF\s+((?:\d+(?:\.\d+)?\s+){6}\d+(?:\.\d+)?)\s+H\b",
+            table_bodies[38],
+        )
+        direct_f_values.extend(
+            re.findall(
+                r"\bF\s+((?:\d+(?:\.\d+)?\s+){3}\d+(?:\.\d+)?)\s+FOV\b",
+                body,
+            )[0]
+            for body in table_bodies[39:42]
+        )
+        if sum(len(values.split()) for values in direct_f_values) != 19:
+            raise PatentParseError("Sunny automotive direct EFL denominator changed")
+        direct_fov_values = re.findall(
+            r"\bFOV\s+((?:\d+(?:\.\d+)?\s+){6}\d+(?:\.\d+)?)\s+ENPD\b",
+            table_bodies[38],
+        )
+        direct_fov_values.extend(
+            re.findall(
+                r"\bFOV\s+((?:\d+(?:\.\d+)?\s+){3}\d+(?:\.\d+)?)\s+F1\b",
+                body,
+            )[0]
+            for body in table_bodies[39:42]
+        )
+        if sum(len(values.split()) for values in direct_fov_values) != 19:
+            raise PatentParseError("Sunny automotive direct FOV denominator changed")
+
+        forbidden_f_number_patterns = (
+            r"\bF\s*[- ]?number\b",
+            r"\bFNO\b",
+            r"\bF\s*/\s*(?:#|No\.?|Number|\d)",
+            r"\baperture\s+number\b",
+            r"\bnumerical\s+aperture\b",
+        )
+        for pattern in forbidden_f_number_patterns:
+            observed = len(re.findall(pattern, text, re.IGNORECASE))
+            if observed != 0:
+                raise PatentParseError(
+                    f"Sunny automotive nineteen-embodiment F-number marker "
+                    f"{pattern!r} occurs {observed}; expected 0"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all 19 optical embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code="metadata_unpublished.system_f_number_absent",
+                detail=(
+                    f"Tables {2 * index - 1}-{2 * index} publish the complete "
+                    "seven-lens surface/asphere prescription, and TABLE 39 or "
+                    "TABLES 40-1/40-2/40-3 publish direct EFL and FOV; the "
+                    "official HTML and all-page official raster audits publish no "
+                    "exact system F-number, so F/ENPD and F/EPD are retained as "
+                    "source ratios and are not substituted or derived"
                 ),
             ),
         )

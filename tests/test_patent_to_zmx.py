@@ -11872,3 +11872,181 @@ def test_patent_to_zmx_report_includes_failure_reason_counts(tmp_path: Path) -> 
     assert "- failure_reason_counts:" in report
     assert "  - PatentParseError: 1" in report
     assert "  - duplicate_prescription: 1" in report
+
+
+def _sunny_automotive_nineteen_lens_b2_source() -> tuple[str, str]:
+    patent_id = "US-12591114-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "7128071564aad7e0"
+        / "US-12591114-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def test_sunny_automotive_nineteen_lens_source_is_exact_metadata_terminal() -> None:
+    patent_id, raw_text = _sunny_automotive_nineteen_lens_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 20))
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code
+        == "metadata_unpublished.system_f_number_absent"
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+
+
+def test_sunny_automotive_nineteen_lens_published_f_number_reopens_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _sunny_automotive_nineteen_lens_b2_source()
+    raw_text = original.replace(
+        "BRIEF DESCRIPTION OF THE DRAWINGS",
+        "System F-number = 2.8. BRIEF DESCRIPTION OF THE DRAWINGS",
+        1,
+    )
+    assert raw_text != original
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    profile = patent_to_zmx._SUNNY_AUTOMOTIVE_NINETEEN_LENS_SOURCE_PROFILES[
+        patent_id
+    ]
+    monkeypatch.setitem(
+        patent_to_zmx._SUNNY_AUTOMOTIVE_NINETEEN_LENS_SOURCE_PROFILES,
+        patent_id,
+        {
+            **profile,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 19
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "Sunny automotive nineteen-embodiment F-number marker"
+        in str(attempt.error)
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+
+
+def test_sunny_automotive_nineteen_lens_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-82157375"
+    )
+    audit = json.loads(
+        (quick_root / "family-82157375-raster-audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert audit["family_id"] == "82157375"
+    assert audit["drawing_declarations"] == [str(index) for index in range(1, 21)]
+    assert audit["drawing_sheet_count"] == 7
+    assert audit["table_identifiers"] == [
+        *[str(index) for index in range(1, 40)],
+        "40-1",
+        "40-2",
+        "40-3",
+    ]
+    expected_layouts = {
+        "US-12591114-B2": {
+            "page_count": 45,
+            "drawing_pages": list(range(3, 10)),
+            "table_pages": list(range(20, 41)),
+        },
+        "US-20230367104-A1": {
+            "page_count": 42,
+            "drawing_pages": list(range(2, 9)),
+            "table_pages": list(range(20, 41)),
+        },
+    }
+    for publication_id, expected in expected_layouts.items():
+        publication = audit["publications"][publication_id]
+        assert publication["page_count"] == expected["page_count"]
+        assert publication["drawing_page_numbers"] == expected["drawing_pages"]
+        assert publication["table_page_numbers"] == expected["table_pages"]
+        assert publication["decoded_raster_equality"] is True
+        contact_path = root / publication["contact_sheet"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == publication[
+            "contact_sha256"
+        ]
+
+        raster_sets: list[list[str]] = []
+        for wrapper in publication["wrappers"].values():
+            pdf_path = root / wrapper["path"]
+            assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper["sha256"]
+            reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+            page_count = expected["page_count"]
+            assert len(reader.pages) == wrapper["page_count"] == page_count
+            assert [
+                page_number
+                for page_number, page in enumerate(reader.pages, start=1)
+                if not (page.extract_text() or "")
+            ] == wrapper["blank_text_pages"] == list(range(1, page_count + 1))
+            page_hashes = [
+                patent_pdf_recovery._canonical_raster_sha256(
+                    patent_pdf_recovery._page_image(
+                        page,
+                        source=publication_id,
+                        page_number=page_number,
+                    )
+                )
+                for page_number, page in enumerate(reader.pages, start=1)
+            ]
+            assert page_hashes == wrapper["page_raster_sha256"]
+            assert hashlib.sha256(
+                json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+            ).hexdigest() == wrapper["raster_set_sha256"]
+            raster_sets.append(page_hashes)
+        assert raster_sets[0] == raster_sets[1]
+
+
+def test_sunny_automotive_nineteen_lens_external_queue_is_source_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    queue_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-82157375"
+        / "family-82157375-external-family-members.json"
+    )
+    queue = json.loads(queue_path.read_text(encoding="utf-8"))
+
+    assert queue["family_id"] == "82157375"
+    assert queue["current_frozen_cohort_roots"] == ["US-12591114"]
+    assert queue["discovery"]["source_url"] == (
+        "https://patents.google.com/patent/US12591114B2/en"
+    )
+    assert queue["us_application_status"] == "active_grant"
+    assert [
+        (record["application_number"], record["publication_id"])
+        for record in queue["external_family_members"]
+    ] == [
+        ("US18/326553", "US-20230367104-A1"),
+        ("PCT/CN2021/135070", "WO-2022135103-A1"),
+    ]
+    assert [
+        (record["application_number"], record["publication_id"])
+        for record in queue["priority_documents"]
+    ] == [
+        ("CN202011560293.0A", "CN-114690368-B"),
+        ("CN202110744979.3A", "CN-115561875-B"),
+    ]

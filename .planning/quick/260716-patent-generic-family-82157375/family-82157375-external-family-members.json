@@ -1,0 +1,45 @@
+{
+  "current_frozen_cohort_roots": [
+    "US-12591114"
+  ],
+  "discovery": {
+    "retrieved_date": "2026-07-16",
+    "source": "Google Patents publications/family/country-status/also-published-as sections",
+    "source_url": "https://patents.google.com/patent/US12591114B2/en"
+  },
+  "external_family_members": [
+    {
+      "application_number": "US18/326553",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_date": "2023-11-16",
+      "publication_id": "US-20230367104-A1",
+      "publication_root": "US-20230367104",
+      "relationship": "same_us_application"
+    },
+    {
+      "application_number": "PCT/CN2021/135070",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_date": "2022-06-30",
+      "publication_id": "WO-2022135103-A1",
+      "publication_root": "WO-2022135103",
+      "relationship": "continuation_parent_and_also_published_as"
+    }
+  ],
+  "family_id": "82157375",
+  "priority_documents": [
+    {
+      "application_number": "CN202011560293.0A",
+      "disposition": "queue_as_priority_document_not_simple_family_member",
+      "priority_date": "2020-12-25",
+      "publication_id": "CN-114690368-B"
+    },
+    {
+      "application_number": "CN202110744979.3A",
+      "disposition": "queue_as_priority_document_not_simple_family_member",
+      "priority_date": "2021-07-01",
+      "publication_id": "CN-115561875-B"
+    }
+  ],
+  "schema_version": 1,
+  "us_application_status": "active_grant"
+}
