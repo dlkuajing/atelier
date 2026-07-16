@@ -3467,6 +3467,43 @@ _ABILITY_FOUR_EIGHT_LENS_PROFILE = "ability_four_eight_lens_f_number_unpublished
 _ABILITY_FIVE_THREE_LENS_PROFILE = (
     "ability_five_three_lens_f_number_unpublished_v1"
 )
+_AAC_TWO_THREE_LENS_PROFILE = "aac_two_three_lens_field_unpublished_v1"
+_AAC_TWO_THREE_LENS_PUBLICATION_SOURCES = {
+    "US-20160161712-A1": {
+        "primary_html_sha256": (
+            "d442fce31a21057546974505b5aa3e5361304ad8525afe7455a4cb438bfb5600"
+        ),
+        "normalized_text_sha256": (
+            "99c5ebf699ef689f6769d12e6a755c33eda8e3fac4021eccdf3f36abf693213d"
+        ),
+        "application_number": "14/832442",
+        "page_count": 7,
+        "table_block_sha256": [
+            "e2ec3a72c80cf18601e0ee782c9550d9feffd600aea8d06081b122c0955586f5",
+            "5c1f1c74edb0ba1ffd97f8b5d86808d4cae516047cf9059cd533d1d3facdb386",
+            "efb81b625b9f8f04857d955c7beee11576014688f8103baf4b312950bcc836e5",
+            "01ff5df296ef054c678b06fa3a1db72a3c96446e724e0fc6a60a8fec22afe39a",
+            "c006d1ce1ef4a7827d844fa46e812622007675de3b8473228d817430dc0812c5",
+        ],
+    },
+    "US-9810879-B2": {
+        "primary_html_sha256": (
+            "cd5bc9f6cab04ac685e4dca612a9b974767d03f6021fd7527230bdbafc7d3047"
+        ),
+        "normalized_text_sha256": (
+            "f4b1e6f46bcf5d0bb7ab11e94de42ab706d8a488f58df6cd6a572e54e0bf086f"
+        ),
+        "application_number": "14/832442",
+        "page_count": 7,
+        "table_block_sha256": [
+            "d69322ee49d979453728e3c539d7d3183aa3e2194696493b2e067d64bdad983f",
+            "7284512e5e41cef0396f8ed743fdad0db2f51b61ecc1d4c2ca50430c7686d49a",
+            "fe5eac295bf9b7dc5a45ad7cc26919d80f1e1ce507053800862a2009e0e0dfc0",
+            "c76b393f657e9556021def9b4de7cb2df010736be818ecb60797f490748e9700",
+            "a1263ba358ad89aec023c81b6cee8073f8fdf2968987eb7f3f5af4b99a2ce94b",
+        ],
+    },
+}
 _ABILITY_FIVE_THREE_LENS_ORDINALS = (
     "first",
     "second",
@@ -7049,6 +7086,130 @@ def _ability_five_three_lens_terminal_attempts(
     ]
 
 
+def _aac_two_three_lens_terminal_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    """Classify two complete prescriptions whose system field is unpublished."""
+
+    publication_id = str(payload.get("publication_id"))
+    source_profile = _AAC_TWO_THREE_LENS_PUBLICATION_SOURCES.get(publication_id)
+    if source_profile is None:
+        raise PatentParseError("AAC two-three-lens publication is not source-locked")
+    if payload.get("page_count") != source_profile["page_count"]:
+        raise PatentParseError("AAC two-three-lens PDF page count changed")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 2:
+        raise PatentParseError(
+            "AAC two-three-lens PDF must retain exactly two drawing sheets"
+        )
+
+    forbidden_field_pattern = re.compile(
+        r"(?:\bFOV\b|\bHFOV\b|\bfield\s+of\s+view\b|"
+        r"\bangle\s+of\s+view\b)",
+        flags=re.IGNORECASE,
+    )
+    for sheet_number, expected_figures in ((1, (1, 2)), (2, (3, 4))):
+        role = f"aac_two_three_drawing_sheet_{sheet_number}"
+        page = _ability_page(payload, role)
+        if page.get("page_number") != sheet_number + 1:
+            raise PatentParseError(
+                f"AAC two-three-lens drawing sheet {sheet_number} is on the wrong page"
+            )
+        mirror_text = page.get("mirror_text")
+        if not isinstance(mirror_text, str) or re.search(
+            rf"\bSheet\s+{sheet_number}\s+of\s*2\b",
+            mirror_text,
+            flags=re.IGNORECASE,
+        ) is None:
+            raise PatentParseError(
+                f"AAC two-three-lens drawing sheet {sheet_number} header changed"
+            )
+        token_texts = [
+            _ability_token_text(token)
+            for token in page["rapidocr_tokens"]
+            if _ability_token_confidence(token) >= 0.90
+        ]
+        normalized_tokens = {
+            re.sub(r"[^A-Z0-9]", "", token.upper()) for token in token_texts
+        }
+        expected_labels = {f"FIG{figure}" for figure in expected_figures}
+        if not expected_labels.issubset(normalized_tokens):
+            raise PatentParseError(
+                f"AAC two-three-lens drawing sheet {sheet_number} figure labels changed"
+            )
+        coordinate_text = " ".join(token_texts)
+        if forbidden_field_pattern.search(mirror_text) or forbidden_field_pattern.search(
+            coordinate_text
+        ):
+            raise PatentParseError(
+                f"AAC two-three-lens drawing sheet {sheet_number} may publish system field"
+            )
+
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("AAC two-three-lens source facts are absent")
+    expected_facts = {
+        "primary_html_sha256": source_profile["primary_html_sha256"],
+        "normalized_text_sha256": source_profile["normalized_text_sha256"],
+        "family_id": "53345880",
+        "application_number": source_profile["application_number"],
+        "figure_binding_counts": {
+            "FIG. 1": 1,
+            "FIG. 2": 1,
+            "FIG. 3": 1,
+            "FIG. 4": 1,
+        },
+        "table_numbers": [1, 2, 3, 4, 5],
+        "table_block_sha256": source_profile["table_block_sha256"],
+        "embodiment_table_bindings": {
+            "1": {"surface_table": 1, "asphere_table": 2},
+            "2": {"surface_table": 3, "asphere_table": 4},
+        },
+        "embodiment_system_values": {
+            "1": {
+                "focal_length_mm": 3.5246,
+                "f_number": 2.8,
+                "published_dof_deg": 33.41,
+            },
+            "2": {
+                "focal_length_mm": 2.3412,
+                "f_number": 2.6,
+                "published_dof_deg": 37.72,
+            },
+        },
+        "dof_label_count": 2,
+        "dof_expansion_count": 1,
+        "system_field_label_counts": {
+            "FOV": 0,
+            "HFOV": 0,
+            "field of view": 0,
+            "angle of view": 0,
+        },
+    }
+    for key, expected in expected_facts.items():
+        if facts.get(key) != expected:
+            raise PatentParseError(f"AAC two-three-lens source fact {key!r} changed")
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=f"AAC three-lens embodiment {embodiment_number}",
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code="metadata_unpublished.system_field_of_view_absent",
+                detail=(
+                    "official HTML publishes the complete surface/asphere prescription, "
+                    "focal length, F-number, and a value explicitly labeled DOF, while "
+                    "the full text and both exact-raster drawing sheets publish no FOV, "
+                    "HFOV, field-of-view, or angle-of-view field for embodiment "
+                    f"{embodiment_number}"
+                ),
+            ),
+        )
+        for embodiment_number in (1, 2)
+    ]
+
+
 def _validate_ability_pdf_source_linkage(payload: dict[str, Any]) -> None:
     """Validate the optional grant-to-prior-publication parser binding."""
 
@@ -7385,6 +7546,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _ability_four_eight_lens_terminal_attempts(payload)
     if profile == _ABILITY_FIVE_THREE_LENS_PROFILE:
         return _ability_five_three_lens_terminal_attempts(payload)
+    if profile == _AAC_TWO_THREE_LENS_PROFILE:
+        return _aac_two_three_lens_terminal_attempts(payload)
     if profile == _LARGAN_THREE_FIVE_LENS_PROFILE:
         return _parse_largan_three_five_lens_attempts(payload)
     if profile == _ABILITY_ZOOM_TWO_STATE_PROFILE:

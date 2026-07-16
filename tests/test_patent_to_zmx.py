@@ -2696,6 +2696,87 @@ def _ability_five_three_lens_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _aac_two_three_lens_pdf_ocr_parser_input() -> bytes:
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "aac_two_three_lens_field_unpublished_v1",
+        "publication_id": "US-20160161712-A1",
+        "page_count": 7,
+        "source_facts": {
+            "primary_html_sha256": (
+                "d442fce31a21057546974505b5aa3e5361304ad8525afe7455a4cb438bfb5600"
+            ),
+            "normalized_text_sha256": (
+                "99c5ebf699ef689f6769d12e6a755c33eda8e3fac4021eccdf3f36abf693213d"
+            ),
+            "family_id": "53345880",
+            "application_number": "14/832442",
+            "figure_binding_counts": {
+                "FIG. 1": 1,
+                "FIG. 2": 1,
+                "FIG. 3": 1,
+                "FIG. 4": 1,
+            },
+            "table_numbers": [1, 2, 3, 4, 5],
+            "table_block_sha256": [
+                "e2ec3a72c80cf18601e0ee782c9550d9feffd600aea8d06081b122c0955586f5",
+                "5c1f1c74edb0ba1ffd97f8b5d86808d4cae516047cf9059cd533d1d3facdb386",
+                "efb81b625b9f8f04857d955c7beee11576014688f8103baf4b312950bcc836e5",
+                "01ff5df296ef054c678b06fa3a1db72a3c96446e724e0fc6a60a8fec22afe39a",
+                "c006d1ce1ef4a7827d844fa46e812622007675de3b8473228d817430dc0812c5",
+            ],
+            "embodiment_table_bindings": {
+                "1": {"surface_table": 1, "asphere_table": 2},
+                "2": {"surface_table": 3, "asphere_table": 4},
+            },
+            "embodiment_system_values": {
+                "1": {
+                    "focal_length_mm": 3.5246,
+                    "f_number": 2.8,
+                    "published_dof_deg": 33.41,
+                },
+                "2": {
+                    "focal_length_mm": 2.3412,
+                    "f_number": 2.6,
+                    "published_dof_deg": 37.72,
+                },
+            },
+            "dof_label_count": 2,
+            "dof_expansion_count": 1,
+            "system_field_label_counts": {
+                "FOV": 0,
+                "HFOV": 0,
+                "field of view": 0,
+                "angle of view": 0,
+            },
+        },
+        "pages": [
+            {
+                "page_number": 2,
+                "role": "aac_two_three_drawing_sheet_1",
+                "official_image_sha256": "1" * 64,
+                "mirror_text": "Patent Application Publication Sheet 1 of 2 Fig. 1 Fig. 2",
+                "rapidocr_tokens": [
+                    _ability_ocr_token("Fig.1", 100.0, 100.0),
+                    _ability_ocr_token("Fig.2", 200.0, 100.0),
+                ],
+            },
+            {
+                "page_number": 3,
+                "role": "aac_two_three_drawing_sheet_2",
+                "official_image_sha256": "2" * 64,
+                "mirror_text": "Patent Application Publication Sheet 2 of 2 Fig. 3 Fig. 4",
+                "rapidocr_tokens": [
+                    _ability_ocr_token("Fig.3", 100.0, 100.0),
+                    _ability_ocr_token("Fig.4", 200.0, 100.0),
+                ],
+            },
+        ],
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _largan_surface_page(
     *,
     embodiment_number: int,
@@ -4166,6 +4247,57 @@ def test_ability_five_three_lens_sources_bind_five_prescriptions() -> None:
         assert not patent_pdf_recovery.ability_drawing_tables_declared(source + " ")
 
 
+def test_aac_two_three_lens_sources_bind_two_prescriptions_and_field_gap() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_paths = (
+        root
+        / "data/patent-lake/uspto-ppubs-html/US-PGPUB/d442fce31a210575/"
+        "US-20160161712-A1.html",
+        root
+        / "data/patent-lake/uspto-ppubs-html/USPAT/cd5bc9f6cab04ac6/"
+        "US-9810879-B2.html",
+    )
+
+    for source_path in source_paths:
+        source = source_path.read_text(encoding="utf-8")
+        assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+        facts = patent_pdf_recovery._aac_two_three_lens_source_facts(source)
+        assert facts["family_id"] == "53345880"
+        assert facts["application_number"] == "14/832442"
+        assert facts["figure_binding_counts"] == {
+            "FIG. 1": 1,
+            "FIG. 2": 1,
+            "FIG. 3": 1,
+            "FIG. 4": 1,
+        }
+        assert facts["table_numbers"] == [1, 2, 3, 4, 5]
+        assert facts["embodiment_table_bindings"] == {
+            "1": {"surface_table": 1, "asphere_table": 2},
+            "2": {"surface_table": 3, "asphere_table": 4},
+        }
+        assert facts["embodiment_system_values"] == {
+            "1": {
+                "focal_length_mm": 3.5246,
+                "f_number": 2.8,
+                "published_dof_deg": 33.41,
+            },
+            "2": {
+                "focal_length_mm": 2.3412,
+                "f_number": 2.6,
+                "published_dof_deg": 37.72,
+            },
+        }
+        assert facts["dof_label_count"] == 2
+        assert facts["dof_expansion_count"] == 1
+        assert facts["system_field_label_counts"] == {
+            "FOV": 0,
+            "HFOV": 0,
+            "field of view": 0,
+            "angle of view": 0,
+        }
+        assert not patent_pdf_recovery.ability_drawing_tables_declared(source + " ")
+
+
 def test_largan_three_five_lens_source_facts_bind_every_table() -> None:
     markers = patent_pdf_recovery._LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT
     source = " ".join(markers)
@@ -4673,6 +4805,55 @@ def test_ability_five_three_lens_profile_rejects_f_number_or_incomplete_table() 
         patent_to_zmx._parse_prescription_attempts(
             json.dumps(incomplete_payload),
             patent_id="US-20160085051-A1",
+        )
+
+
+def test_aac_two_three_lens_profile_records_two_field_terminals() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _aac_two_three_lens_pdf_ocr_parser_input().decode(),
+        patent_id="US-20160161712-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code
+        == "metadata_unpublished.system_field_of_view_absent"
+        for attempt in attempts
+    )
+    assert all("explicitly labeled DOF" in str(attempt.error) for attempt in attempts)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    (
+        ("field", "source fact 'system_field_label_counts' changed"),
+        ("dof", "source fact 'dof_expansion_count' changed"),
+        ("table", "source fact 'table_block_sha256' changed"),
+        ("drawing", "may publish system field"),
+    ),
+)
+def test_aac_two_three_lens_profile_fails_closed_on_source_drift(
+    mutation: str,
+    message: str,
+) -> None:
+    payload = json.loads(_aac_two_three_lens_pdf_ocr_parser_input())
+    if mutation == "field":
+        payload["source_facts"]["system_field_label_counts"]["FOV"] = 1
+    elif mutation == "dof":
+        payload["source_facts"]["dof_expansion_count"] = 0
+    elif mutation == "table":
+        payload["source_facts"]["table_block_sha256"][0] = "0" * 64
+    else:
+        payload["pages"][1]["rapidocr_tokens"].append(
+            _ability_ocr_token("HFOV", 300.0, 100.0)
+        )
+
+    with pytest.raises(PatentParseError, match=message):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-20160161712-A1",
         )
 
 
@@ -5602,6 +5783,83 @@ def test_convert_candidate_retains_five_three_lens_terminals_without_worker(
         attempt.reason_code == "metadata_unpublished.system_f_number_absent"
         for attempt in attempts
     )
+    assert all(
+        attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON"
+        for attempt in attempts
+    )
+    assert not (tmp_path / "staging").exists()
+
+
+def test_convert_candidate_retains_aac_two_three_field_terminals_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source_attempt = patent_to_zmx.SourceFetchAttempt(
+        publication_id="US-20160161712-A1",
+        source_bucket="US-PGPUB",
+        state=patent_to_zmx.SourceFetchState.RETAINED,
+        http_status=200,
+    )
+
+    async def fake_primary_fetch(*_args: object) -> patent_to_zmx.FetchedPatentHtml:
+        return patent_to_zmx.FetchedPatentHtml(
+            html="official HTML whose drawing audit requires PDF recovery",
+            source_bucket="US-PGPUB",
+            attempts=(source_attempt,),
+        )
+
+    async def fake_pdf_recovery(*_args: object, **_kwargs: object) -> object:
+        return patent_to_zmx.PatentPdfOcrRecovery(
+            publication_id="US-20160161712-A1",
+            official_pdf=b"%PDF-official-aac-two-three-lens",
+            official_pdf_url=(
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/"
+                "downloadPdf/20160161712"
+            ),
+            mirror_pdf=b"%PDF-mirror-aac-two-three-lens",
+            mirror_pdf_url=(
+                "https://patentimages.storage.googleapis.com/test/US20160161712A1.pdf"
+            ),
+            parser_input=_aac_two_three_lens_pdf_ocr_parser_input(),
+            page_count=7,
+            page_image_sha256=("1" * 64, "2" * 64),
+            key_page_numbers=(2, 3),
+            pypdf_version="fixture",
+            rapidocr_version="fixture",
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("metadata-terminal PDF audit must not launch a trace worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_primary_fetch)
+    monkeypatch.setattr(
+        patent_to_zmx,
+        "recover_ability_official_pdf_ocr",
+        fake_pdf_recovery,
+    )
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "not-recorded",
+            patent_to_zmx.PatentCandidate(
+                patent_id="US-20160161712-A1",
+                title="fixture",
+                source_url="https://example.invalid",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "staging",
+            raw_document_dir=tmp_path / "raw",
+            attempts_dir=tmp_path / "attempts",
+        )
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2]
+    assert all(attempt.status == "metadata_unpublished" for attempt in attempts)
+    assert {
+        attempt.reason_code for attempt in attempts
+    } == {"metadata_unpublished.system_field_of_view_absent"}
     assert all(
         attempt.parser_input_source_bucket == "USPTO-PDF-OCR-JSON"
         for attempt in attempts

@@ -1,0 +1,45 @@
+{
+  "after_census": {
+    "affected_items": 175,
+    "affected_roots": 175,
+    "artifact_sha256": "829fe330d4957de1127234154014d6c14e7b12556af4b80dff546d1b81824758",
+    "result_set_sha256": "3b35abd57d957037c12d2589b1e0c551b1f3bf86af67ebd443e17310ebaf37bb"
+  },
+  "before_census": {
+    "affected_items": 177,
+    "affected_roots": 177,
+    "artifact_sha256": "0e49a78f2284cc658cd4f23cfdb1540e935993634b212a3c5e55b5780bc20d50",
+    "result_set_sha256": "f8dcf2d0b10efa7aca20adddc3aced11750fd3865d4fd96622e05113b209ed72"
+  },
+  "cohort_sha256": "a84bf38f77daf42cb46a01eadbe3205dfefa1ba428382f7794dabda3c9c82e0d",
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "roots": {
+    "US-20160161712": [
+      {
+        "attempt": 2,
+        "result_sha256": "6f7914cd34739c7ae5f6c65f8f0b7085dd9dc9d16f3d03aa7ef37b5eddc13189",
+        "semantic_sha256": "c6cd2d10f5a4e40ec4fd4b846d26887a330222b8fd664eb7517884c11509f5db"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "b478174da96f5059b4c753a785f1928df4be2c90a64bdc0d3aa5285633a3196a",
+        "semantic_sha256": "c6cd2d10f5a4e40ec4fd4b846d26887a330222b8fd664eb7517884c11509f5db"
+      }
+    ],
+    "US-9810879": [
+      {
+        "attempt": 2,
+        "result_sha256": "51fcf224a514dd302e6a6674f67dc9810ec73abd6c3db334a713f074eb577211",
+        "semantic_sha256": "28b5406ce3d69aea6e32a2bf36dff36a64d63bd14a45bf722f7fcb1a622f7aa8"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "8ec8d112435eb11c42fcf6dbec784c7a3f8a70afeeccedfe300d6b1e1826817f",
+        "semantic_sha256": "28b5406ce3d69aea6e32a2bf36dff36a64d63bd14a45bf722f7fcb1a622f7aa8"
+      }
+    ]
+  },
+  "schema_version": 1
+}

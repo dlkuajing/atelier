@@ -124,6 +124,53 @@ _ABILITY_FIVE_THREE_LENS_REQUIRED_FIGURE_TEXT = tuple(
 _ABILITY_FIVE_THREE_LENS_PROFILE = (
     "ability_five_three_lens_f_number_unpublished_v1"
 )
+_AAC_TWO_THREE_LENS_PROFILE = "aac_two_three_lens_field_unpublished_v1"
+_AAC_TWO_THREE_LENS_REQUIRED_FIGURE_TEXT = (
+    "FIG. 1 is an illustrative structure of an imaging lens assembly related to a "
+    "first embodiment of the present disclosure.",
+    "FIG. 2 is an illustrative structure of an imaging lens assembly related to a "
+    "second embodiment of the present disclosure.",
+    "FIG. 3 shows a longitudinal spherical aberration curve, an astigmatic field "
+    "curve and a distortion curve of the imaging lens assembly shown in FIG. 1",
+    "FIG. 4 shows a longitudinal spherical aberration curve, an astigmatic field "
+    "curve and a distortion curve of the imaging lens assembly shown in FIG. 2",
+)
+_AAC_TWO_THREE_LENS_ROLE_PAGES = {
+    "aac_two_three_drawing_sheet_1": 1,
+    "aac_two_three_drawing_sheet_2": 2,
+}
+_AAC_TWO_THREE_LENS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "d442fce31a21057546974505b5aa3e5361304ad8525afe7455a4cb438bfb5600": {
+        "application_number": "14/832442",
+        "normalized_text_sha256": (
+            "99c5ebf699ef689f6769d12e6a755c33eda8e3fac4021eccdf3f36abf693213d"
+        ),
+        "page_count": 7,
+        "blank_mirror_pages": frozenset(),
+        "table_block_sha256": (
+            "e2ec3a72c80cf18601e0ee782c9550d9feffd600aea8d06081b122c0955586f5",
+            "5c1f1c74edb0ba1ffd97f8b5d86808d4cae516047cf9059cd533d1d3facdb386",
+            "efb81b625b9f8f04857d955c7beee11576014688f8103baf4b312950bcc836e5",
+            "01ff5df296ef054c678b06fa3a1db72a3c96446e724e0fc6a60a8fec22afe39a",
+            "c006d1ce1ef4a7827d844fa46e812622007675de3b8473228d817430dc0812c5",
+        ),
+    },
+    "cd5bc9f6cab04ac685e4dca612a9b974767d03f6021fd7527230bdbafc7d3047": {
+        "application_number": "14/832442",
+        "normalized_text_sha256": (
+            "f4b1e6f46bcf5d0bb7ab11e94de42ab706d8a488f58df6cd6a572e54e0bf086f"
+        ),
+        "page_count": 7,
+        "blank_mirror_pages": frozenset(),
+        "table_block_sha256": (
+            "d69322ee49d979453728e3c539d7d3183aa3e2194696493b2e067d64bdad983f",
+            "7284512e5e41cef0396f8ed743fdad0db2f51b61ecc1d4c2ca50430c7686d49a",
+            "fe5eac295bf9b7dc5a45ad7cc26919d80f1e1ce507053800862a2009e0e0dfc0",
+            "c76b393f657e9556021def9b4de7cb2df010736be818ecb60797f490748e9700",
+            "a1263ba358ad89aec023c81b6cee8073f8fdf2968987eb7f3f5af4b99a2ce94b",
+        ),
+    },
+}
 _ABILITY_FIVE_THREE_LENS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
     "a389c98016a9f5af18165a30a2041fe29a761d3d37958ffce100e8bfb81ea50d": {
         "application_number": "14/858521",
@@ -694,6 +741,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _ABILITY_FIVE_THREE_LENS_REQUIRED_FIGURE_TEXT
     ):
         return _ABILITY_FIVE_THREE_LENS_PROFILE
+    if digest in _AAC_TWO_THREE_LENS_SOURCE_LAYOUTS and all(
+        marker in text for marker in _AAC_TWO_THREE_LENS_REQUIRED_FIGURE_TEXT
+    ):
+        return _AAC_TWO_THREE_LENS_PROFILE
     if all(marker in text for marker in _LARGAN_THREE_FIVE_LENS_REQUIRED_FIGURE_TEXT):
         return _LARGAN_THREE_FIVE_LENS_PROFILE
     if all(marker in text for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT):
@@ -928,6 +979,107 @@ def _ability_five_three_lens_source_facts(raw_html: str) -> dict[str, Any]:
                 re.findall(r"\bF\s*[- ]?number\b", text, flags=re.IGNORECASE)
             ),
             "F/#": len(re.findall(r"\bF\s*/\s*#\b", text, flags=re.IGNORECASE)),
+        },
+    }
+
+
+def _aac_two_three_lens_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _AAC_TWO_THREE_LENS_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "AAC two-three-lens official HTML is not source-locked"
+        )
+    return {**layout, "role_pages": dict(_AAC_TWO_THREE_LENS_ROLE_PAGES)}
+
+
+def _aac_two_three_lens_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind two complete prescriptions and prove system field is unpublished."""
+
+    text = _normalized_html_text(raw_html)
+    layout = _aac_two_three_lens_source_layout(raw_html)
+    normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "AAC two-three-lens normalized official HTML hash changed"
+        )
+
+    table_pattern = re.compile(
+        r"\bTABLE-US-(?P<anchor>\d{5})\s+TABLE\s+(?P<number>\d+)\s+",
+        flags=re.IGNORECASE,
+    )
+    matches = list(table_pattern.finditer(text))
+    if [(match.group("anchor"), int(match.group("number"))) for match in matches] != [
+        (f"{number:05d}", number) for number in range(1, 6)
+    ]:
+        raise PatentPdfRecoveryError("AAC two-three-lens table denominator changed")
+    table_blocks = [
+        text[
+            match.start() : matches[index + 1].start()
+            if index + 1 < len(matches)
+            else len(text)
+        ]
+        for index, match in enumerate(matches)
+    ]
+    table_digests = tuple(
+        hashlib.sha256(block.encode("utf-8")).hexdigest() for block in table_blocks
+    )
+    if table_digests != layout["table_block_sha256"]:
+        raise PatentPdfRecoveryError("AAC two-three-lens table content changed")
+
+    number = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)"
+    system_values: dict[str, dict[str, float]] = {}
+    for embodiment, table_number in ((1, 1), (2, 3)):
+        header = re.search(
+            rf"\ATABLE-US-\d{{5}}\s+TABLE\s+{table_number}\s+Embodiment\s+"
+            rf"{embodiment}\s+f\s*=\s*(?P<f>{number})\s*mm\s*,\s*"
+            rf"Fno\s*=\s*(?P<fno>{number})\s*,\s*DOF"
+            rf"(?:\s*\(depth\s+of\s+feild\))?\s*=\s*(?P<dof>{number})°",
+            table_blocks[table_number - 1],
+            flags=re.IGNORECASE,
+        )
+        if header is None:
+            raise PatentPdfRecoveryError(
+                f"AAC two-three-lens embodiment {embodiment} system header changed"
+            )
+        system_values[str(embodiment)] = {
+            "focal_length_mm": float(header.group("f")),
+            "f_number": float(header.group("fno")),
+            "published_dof_deg": float(header.group("dof")),
+        }
+
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "normalized_text_sha256": normalized_digest,
+        "family_id": "53345880",
+        "application_number": layout["application_number"],
+        "figure_binding_counts": {
+            f"FIG. {number}": text.count(marker)
+            for number, marker in enumerate(
+                _AAC_TWO_THREE_LENS_REQUIRED_FIGURE_TEXT,
+                start=1,
+            )
+        },
+        "table_numbers": [1, 2, 3, 4, 5],
+        "table_block_sha256": list(table_digests),
+        "embodiment_table_bindings": {
+            "1": {"surface_table": 1, "asphere_table": 2},
+            "2": {"surface_table": 3, "asphere_table": 4},
+        },
+        "embodiment_system_values": system_values,
+        "dof_label_count": len(re.findall(r"\bDOF\b", text, re.IGNORECASE)),
+        "dof_expansion_count": len(
+            re.findall(r"DOF\s*\(depth\s+of\s+feild\)", text, re.IGNORECASE)
+        ),
+        "system_field_label_counts": {
+            "FOV": len(re.findall(r"\bFOV\b", text, re.IGNORECASE)),
+            "HFOV": len(re.findall(r"\bHFOV\b", text, re.IGNORECASE)),
+            "field of view": len(
+                re.findall(r"\bfield\s+of\s+view\b", text, re.IGNORECASE)
+            ),
+            "angle of view": len(
+                re.findall(r"\bangle\s+of\s+view\b", text, re.IGNORECASE)
+            ),
         },
     }
 
@@ -1512,6 +1664,11 @@ async def recover_ability_official_pdf_ocr(
         ability_five_three_layout = _ability_five_three_lens_source_layout(primary_html)
         if mirror_pdf is None:
             raise PatentPdfRecoveryError("Ability five-three-lens mirror PDF is unavailable")
+    aac_two_three_layout: dict[str, Any] | None = None
+    if profile == _AAC_TWO_THREE_LENS_PROFILE:
+        aac_two_three_layout = _aac_two_three_lens_source_layout(primary_html)
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError("AAC two-three-lens mirror PDF is unavailable")
 
     official_reader = pypdf.PdfReader(io.BytesIO(official_pdf))
     mirror_reader = pypdf.PdfReader(io.BytesIO(mirror_pdf)) if mirror_pdf is not None else None
@@ -1554,6 +1711,16 @@ async def recover_ability_official_pdf_ocr(
         if blank_mirror_pages != expected_blank_pages:
             raise PatentPdfRecoveryError(
                 "Ability five-three-lens OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
+            )
+    elif profile == _AAC_TWO_THREE_LENS_PROFILE:
+        assert aac_two_three_layout is not None
+        expected_blank_pages = aac_two_three_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "AAC two-three-lens OCR overlay blank-page set changed: actual="
                 + ",".join(str(page) for page in sorted(blank_mirror_pages))
                 + " expected="
                 + ",".join(str(page) for page in sorted(expected_blank_pages))
@@ -1782,6 +1949,26 @@ async def recover_ability_official_pdf_ocr(
                     )
         parser_profile = profile
         source_facts = _ability_five_three_lens_source_facts(primary_html)
+    elif profile == _AAC_TWO_THREE_LENS_PROFILE:
+        assert aac_two_three_layout is not None
+        if page_count != aac_two_three_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "AAC two-three-lens PDF page count changed: "
+                f"actual={page_count} expected={aac_two_three_layout['page_count']}"
+            )
+        role_pages = dict(aac_two_three_layout["role_pages"])
+        for sheet_number, page_index in enumerate(role_pages.values(), start=1):
+            normalized_mirror = re.sub(r"\s+", " ", mirror_texts[page_index])
+            if re.search(
+                rf"\bSheet\s+{sheet_number}\s+of\s*2\b",
+                normalized_mirror,
+                flags=re.IGNORECASE,
+            ) is None:
+                raise PatentPdfRecoveryError(
+                    f"AAC two-three-lens drawing sheet {sheet_number} header changed"
+                )
+        parser_profile = profile
+        source_facts = _aac_two_three_lens_source_facts(primary_html)
     elif profile == _LARGAN_THREE_FIVE_LENS_PROFILE:
         role_pages = {
             "largan_surface_1": _figure_page(
