@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `d1e244e12272e9752d3771da5e2d9ac1b193eae8e85983635054b4f5b0029981`
+- result_set_sha256: `261a2747bba7ce93612121c408404742b1f75871289c6999c9f05df7837b30e6`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 544
 - `terminal`: 944
-- `parser_review_required`: 1398
+- `parser_review_required`: 1410
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1398
+- `parser_review_required.deterministic_parser_rejected`: 1410
 - `terminal.process_receipt_classified`: 726
 - `converted_pending_intake.process_isolated_zmx_ready`: 544
 - `terminal.metadata_unpublished.system_f_number_absent`: 46
@@ -100,7 +100,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `sunny_embodiment_metadata_missing`: 177
 - `aac_raytech_summary_metadata_missing`: 174
-- `generic_summary_metadata_missing`: 163
+- `generic_summary_metadata_missing`: 161
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
 - `asphere_section_missing`: 65
@@ -127,6 +127,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6
 - `sekonix_surface_row_incomplete`: 6
+- `other_seven_lens_asphere_label_token_confidence_n_is_below_n`: 5
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a36_n`: 5
 - `other_ability_pdf_numeric_cell_at_n_n_has_n_values_above_confidence_gate`: 4
 - `other_ability_zoom_s15_abbe_number_token_token_confidence_n_is_below_n`: 4
@@ -168,6 +169,10 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_samsung_iris_embodiment_n_visible_state_source_conflict_table_n_labels_asphere_columns_n_n_although_table_n_cf6e78bfd274`: 2
 - `other_samsung_iris_embodiment_n_visible_state_source_conflict_table_n_radius_n_530f377_is_nonnumeric_table_n_surf_d618e1efb073`: 2
 - `other_sekonix_glass_code_cannot_be_split_deterministically_token`: 2
+- `other_seven_lens_asphere_label_token_has_n_tokens_expected_n`: 2
+- `other_seven_lens_optical_table_fragment_token_confidence_n_is_below_n`: 2
+- `other_seven_lens_optical_table_fragment_token_confidence_n_is_below_n_genius_seven_asphere_6_fig_n_confidence_n_i_67eafa827aac`: 2
+- `other_seven_lens_optical_table_fragment_token_confidence_n_is_below_n_seven_lens_asphere_label_token_confidence_n_is_below_n`: 2
 - `other_stop_thickness_is_not_numeric_d0`: 2
 - `other_sunny_asphere_row_s1_has_more_values_than_headers_token`: 2
 - `other_sunny_asphere_row_s5_has_more_values_than_headers_token`: 2
@@ -208,6 +213,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_genius_optical_6_has_n_drawing_sheet_header_tokens_optical_table_surface_n_confidence_n_is_below_n_asphere_f18cdf583033`: 1
 - `other_genius_optical_8_drawing_sheet_header_confidence_n_is_below_n_optical_table_has_n_accepted_radius_headers_a_d1e86cbc5855`: 1
 - `other_genius_optical_9_has_n_drawing_sheet_header_tokens_optical_table_surface_header_token_token_does_not_equal_5103393acf61`: 1
+- `other_genius_seven_optical_7_drawing_sheet_header_confidence_n_is_below_n_seven_lens_asphere_label_token_confiden_70e2cf9ec656`: 1
 - `other_genius_six_asphere_1_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_below_n`: 1
 - `other_genius_six_asphere_3_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_7c9ff752e955`: 1
 - `other_genius_six_asphere_4_drawing_sheet_header_confidence_n_is_below_n_asphere_table_label_token_confidence_n_is_ac80028645fd`: 1

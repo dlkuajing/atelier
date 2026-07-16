@@ -470,6 +470,69 @@ _GENIUS_EIGHT_LENS_FOURTEEN_COMPARISON_MARKERS = (
 _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE = (
     "genius_eight_lens_fourteen_embodiment_census_v1"
 )
+_GENIUS_SEVEN_LENS_SEVEN_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+)
+_GENIUS_SEVEN_LENS_SEVEN_OPTICAL_FIGURES = tuple(
+    20 + 2 * index for index in range(7)
+)
+_GENIUS_SEVEN_LENS_SEVEN_ASPHERE_FIGURES = tuple(
+    21 + 2 * index for index in range(7)
+)
+_GENIUS_SEVEN_LENS_SEVEN_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for ordinal, optical_figure, asphere_figure in zip(
+        _GENIUS_SEVEN_LENS_SEVEN_ORDINALS,
+        _GENIUS_SEVEN_LENS_SEVEN_OPTICAL_FIGURES,
+        _GENIUS_SEVEN_LENS_SEVEN_ASPHERE_FIGURES,
+        strict=True,
+    )
+    for marker in (
+        f"FIG. {optical_figure} shows the optical data of the {ordinal} example "
+        "of the optical imaging lens set.",
+        f"FIG. {asphere_figure} shows the aspheric surface data of the {ordinal} example.",
+    )
+)
+_GENIUS_SEVEN_LENS_SEVEN_COMPARISON_MARKERS = (
+    "FIG. 34 shows some important ratios in the examples.",
+    "FIG. 35 shows some important ratios in the examples.",
+)
+_GENIUS_SEVEN_LENS_SEVEN_SYSTEM_VALUES = (
+    {"ttl_mm": 5.56, "f_number": 1.6239, "image_height_mm": 3.241, "hfov_deg": 38.0038},
+    {"ttl_mm": 5.3991, "f_number": 1.6025, "image_height_mm": 3.238, "hfov_deg": 38.002},
+    {"ttl_mm": 5.3665, "f_number": 1.6197, "image_height_mm": 2.42, "hfov_deg": 30.1264},
+    {"ttl_mm": 5.3157, "f_number": 1.6115, "image_height_mm": 3.225, "hfov_deg": 37.9995},
+    {"ttl_mm": 5.3343, "f_number": 1.6059, "image_height_mm": 3.237, "hfov_deg": 37.9981},
+    {"ttl_mm": 5.0626, "f_number": 1.6014, "image_height_mm": 3.176, "hfov_deg": 37.9978},
+    {"ttl_mm": 5.5733, "f_number": 1.611, "image_height_mm": 3.238, "hfov_deg": 37.9627},
+)
+_GENIUS_SEVEN_LENS_SEVEN_PROFILE = "genius_seven_lens_seven_example_census_v1"
+_GENIUS_SEVEN_LENS_SEVEN_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "7a3936c854f9d03ed76cc79656f9fbcb69946c78a3020c9b43708d5a9b9b615b": {
+        "application_number": "18/743044",
+        "family_id": "59199108",
+        "normalized_text_sha256": (
+            "a1f8dbbf0ff28ef241acc6a1097965b42193956b46974fb998bacd0831ce9897"
+        ),
+        "page_count": 36,
+        "system_values": _GENIUS_SEVEN_LENS_SEVEN_SYSTEM_VALUES,
+    },
+    "1197f4ec4bb5df4a37e2b93c1bf5292aab4b2f27fdfede1e09e0d0a896807da8": {
+        "application_number": "18/743044",
+        "family_id": "59199108",
+        "normalized_text_sha256": (
+            "8d9964870318343219462cd3ad79b2d7b9666b5c059c52c29a758d50c194ecc1"
+        ),
+        "page_count": 36,
+        "system_values": _GENIUS_SEVEN_LENS_SEVEN_SYSTEM_VALUES,
+    },
+}
 _GENIUS_FOUR_LENS_NINE_OPTICAL_FIGURES = (8, 12, 16, 20, 24, 28, 32, 36, 40)
 _GENIUS_FOUR_LENS_NINE_ASPHERE_FIGURES = (9, 13, 17, 21, 25, 29, 33, 37, 41)
 _GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT = tuple(
@@ -668,6 +731,7 @@ _GENIUS_OFFICIAL_ONLY_PROFILES = frozenset(
         _GENIUS_FOUR_LENS_NINE_PROFILE,
         _GENIUS_NINE_LENS_ELEVEN_PROFILE,
         _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE,
+        _GENIUS_SEVEN_LENS_SEVEN_PROFILE,
         _CIRCLE_OPTICS_SEVEN_LENS_PROFILE,
     }
 )
@@ -763,6 +827,12 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _GENIUS_EIGHT_LENS_FOURTEEN_COMPARISON_MARKERS
     ):
         return _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE
+    if all(
+        marker in text for marker in _GENIUS_SEVEN_LENS_SEVEN_REQUIRED_FIGURE_TEXT
+    ) and all(
+        marker in text for marker in _GENIUS_SEVEN_LENS_SEVEN_COMPARISON_MARKERS
+    ):
+        return _GENIUS_SEVEN_LENS_SEVEN_PROFILE
     if all(marker in text for marker in _GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT) and all(
         marker in text for marker in _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
     ):
@@ -1311,6 +1381,86 @@ def _genius_eight_lens_fourteen_source_facts(raw_html: str) -> dict[str, Any]:
     }
 
 
+def genius_seven_lens_seven_source_layout_for_sha256(
+    digest: str,
+) -> dict[str, Any]:
+    """Return the source-locked seven-example official PDF layout."""
+
+    layout = _GENIUS_SEVEN_LENS_SEVEN_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Genius seven-lens seven-example official HTML is not source-locked"
+        )
+    return layout
+
+
+def _genius_seven_lens_seven_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = genius_seven_lens_seven_source_layout_for_sha256(digest)
+    normalized_digest = hashlib.sha256(
+        _normalized_html_text(raw_html).encode("utf-8")
+    ).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Genius seven-lens seven-example normalized official HTML hash changed"
+        )
+    return layout
+
+
+def _genius_seven_lens_seven_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind seven image-table pairs, their comparison sheets, and prose metadata."""
+
+    text = _normalized_html_text(raw_html)
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _genius_seven_lens_seven_source_layout(raw_html)
+    number = r"(?:\d+(?:\.\d*)?|\.\d+)"
+    system_pattern = re.compile(
+        rf"TTL is (?P<ttl>{number}) mm\. Fno is (?P<fno>{number})\. "
+        rf"The image height is (?P<image_height>{number}) mm\. "
+        rf"HFOV is (?P<hfov>{number}) degrees\.",
+        flags=re.IGNORECASE,
+    )
+    system_values = [
+        {
+            "ttl_mm": float(match.group("ttl")),
+            "f_number": float(match.group("fno")),
+            "image_height_mm": float(match.group("image_height")),
+            "hfov_deg": float(match.group("hfov")),
+        }
+        for match in system_pattern.finditer(text)
+    ]
+    example_heading_counts = {
+        ordinal: len(
+            re.findall(
+                rf"\b{ordinal}\s+example\s+(?:\[\d+\]|\(\d+\))\s+"
+                rf"Please refer to FIG\. {6 + 2 * index}\b",
+                text,
+                flags=re.IGNORECASE,
+            )
+        )
+        for index, ordinal in enumerate(_GENIUS_SEVEN_LENS_SEVEN_ORDINALS)
+    }
+    return {
+        "primary_html_sha256": digest,
+        "normalized_text_sha256": layout["normalized_text_sha256"],
+        "family_id": layout["family_id"],
+        "application_number": layout["application_number"],
+        "figure_binding_counts": {
+            marker: text.count(marker)
+            for marker in _GENIUS_SEVEN_LENS_SEVEN_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_counts": {
+            marker: text.count(marker)
+            for marker in _GENIUS_SEVEN_LENS_SEVEN_COMPARISON_MARKERS
+        },
+        "example_heading_counts": example_heading_counts,
+        "system_values": system_values,
+        "genius_applicant_assignee_count": text.count(
+            "Genius Electronic Optical (Xiamen) Co., Ltd."
+        ),
+    }
+
+
 def _genius_six_lens_five_source_facts(raw_html: str) -> dict[str, Any]:
     """Bind all five optical/asphere pairs and their two comparison sheets."""
 
@@ -1513,6 +1663,7 @@ def _rapidocr_tokens(
     image_bytes: bytes,
     *,
     rotation: str | None = None,
+    scale: float | None = None,
 ) -> list[dict[str, Any]]:
     image = cv2.imdecode(np.frombuffer(image_bytes, dtype=np.uint8), cv2.IMREAD_COLOR)
     if image is None:
@@ -1523,6 +1674,16 @@ def _rapidocr_tokens(
         image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
     elif rotation is not None:
         raise PatentPdfRecoveryError(f"unsupported RapidOCR rotation: {rotation}")
+    if scale is not None:
+        if not 0.0 < scale <= 1.0:
+            raise PatentPdfRecoveryError("RapidOCR scale must be in (0, 1]")
+        image = cv2.resize(
+            image,
+            None,
+            fx=scale,
+            fy=scale,
+            interpolation=cv2.INTER_AREA,
+        )
     engine = RapidOCR()
     result, _elapsed = engine(image)
     tokens: list[dict[str, Any]] = []
@@ -1545,6 +1706,7 @@ def _canonical_parser_input(
     profile: str | None = None,
     source_facts: dict[str, Any] | None = None,
     rapidocr_rotation: str | None = None,
+    page_ocr_metadata: dict[str, dict[str, Any]] | None = None,
 ) -> bytes:
     pages: list[dict[str, Any]] = []
     for page_number, role, image_sha256, mirror_text, tokens in key_pages:
@@ -1557,6 +1719,8 @@ def _canonical_parser_input(
         }
         if rapidocr_rotation is not None:
             page["rapidocr_rotation"] = rapidocr_rotation
+        if page_ocr_metadata is not None:
+            page.update(page_ocr_metadata.get(role, {}))
         pages.append(page)
     payload = {
         "schema_version": 1,
@@ -1769,6 +1933,7 @@ async def recover_ability_official_pdf_ocr(
         official_images.append(official_image)
 
     rapidocr_rotation: str | None = None
+    page_ocr_metadata: dict[str, dict[str, Any]] = {}
     if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
         assert circle_optics_layout is not None
         if page_count != circle_optics_layout["page_count"]:
@@ -2102,6 +2267,34 @@ async def recover_ability_official_pdf_ocr(
         role_pages["genius_eight_fourteen_comparison_2"] = 46
         parser_profile = profile
         source_facts = _genius_eight_lens_fourteen_source_facts(primary_html)
+    elif profile == _GENIUS_SEVEN_LENS_SEVEN_PROFILE:
+        layout = _genius_seven_lens_seven_source_layout(primary_html)
+        if page_count != layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Genius seven-lens seven-example PDF page count changed: "
+                f"actual={page_count} expected={layout['page_count']}"
+            )
+        role_pages = {}
+        for example in range(1, 8):
+            optical_page_index = 10 + (example - 1) * 2
+            optical_role = f"genius_seven_optical_{example}"
+            asphere_role = f"genius_seven_asphere_{example}"
+            role_pages[optical_role] = optical_page_index
+            role_pages[asphere_role] = optical_page_index + 1
+            page_ocr_metadata[optical_role] = {"rapidocr_scale": 0.5}
+            page_ocr_metadata[asphere_role] = {
+                "rapidocr_rotation": "clockwise_90",
+                "rapidocr_scale": 0.5,
+            }
+        role_pages["genius_seven_comparison_1"] = 24
+        role_pages["genius_seven_comparison_2"] = 25
+        page_ocr_metadata["genius_seven_comparison_1"] = {"rapidocr_scale": 0.5}
+        page_ocr_metadata["genius_seven_comparison_2"] = {
+            "rapidocr_rotation": "clockwise_90",
+            "rapidocr_scale": 0.5,
+        }
+        parser_profile = profile
+        source_facts = _genius_seven_lens_seven_source_facts(primary_html)
     elif profile == _GENIUS_FOUR_LENS_NINE_PROFILE:
         if page_count != 47:
             raise PatentPdfRecoveryError("Genius four-lens nine-embodiment PDF page count is not 47")
@@ -2193,6 +2386,7 @@ async def recover_ability_official_pdf_ocr(
 
     key_pages: list[tuple[int, str, str, str, list[dict[str, Any]]]] = []
     for role, page_index in sorted(role_pages.items(), key=lambda item: item[1]):
+        role_ocr_metadata = page_ocr_metadata.get(role, {})
         key_pages.append(
             (
                 page_index + 1,
@@ -2201,7 +2395,11 @@ async def recover_ability_official_pdf_ocr(
                 mirror_texts[page_index],
                 _rapidocr_tokens(
                     official_images[page_index],
-                    rotation=rapidocr_rotation,
+                    rotation=role_ocr_metadata.get(
+                        "rapidocr_rotation",
+                        rapidocr_rotation,
+                    ),
+                    scale=role_ocr_metadata.get("rapidocr_scale"),
                 ),
             )
         )
@@ -2212,6 +2410,7 @@ async def recover_ability_official_pdf_ocr(
         profile=parser_profile,
         source_facts=source_facts,
         rapidocr_rotation=rapidocr_rotation,
+        page_ocr_metadata=page_ocr_metadata or None,
     )
     from importlib.metadata import version
 

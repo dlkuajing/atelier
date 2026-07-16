@@ -58,6 +58,7 @@ from scripts.patent_pdf_recovery import (  # noqa: E402
     PatentPdfOcrRecovery,
     PatentPdfRecoveryError,
     genius_four_lens_eleven_source_layout_for_sha256,
+    genius_seven_lens_seven_source_layout_for_sha256,
     recover_ability_official_pdf_ocr,
 )
 
@@ -4216,6 +4217,7 @@ _GENIUS_NINE_LENS_ELEVEN_PROFILE = "genius_nine_lens_eleven_embodiment_census_v1
 _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE = (
     "genius_eight_lens_fourteen_embodiment_census_v1"
 )
+_GENIUS_SEVEN_LENS_SEVEN_PROFILE = "genius_seven_lens_seven_example_census_v1"
 _GENIUS_FOUR_LENS_NINE_PROFILE = "genius_four_lens_nine_embodiment_census_v1"
 _GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
 _GENIUS_SIX_LENS_NINE_PROFILE = "genius_six_lens_nine_embodiment_census_v1"
@@ -6832,6 +6834,260 @@ def _parse_genius_eight_lens_fourteen_attempts(
     return attempts
 
 
+def _genius_seven_page_binding_error(
+    page: dict[str, Any],
+    *,
+    page_number: int,
+    sheet_number: int,
+    figure_number: int,
+    role: str,
+    rotation: str | None,
+) -> str | None:
+    if page.get("page_number") != page_number:
+        return f"{role} is not retained on page {page_number}"
+    if page.get("rapidocr_scale") != 0.5:
+        return f"{role} lacks its source-locked 0.5 OCR scale"
+    if page.get("rapidocr_rotation") != rotation:
+        return f"{role} OCR rotation changed"
+    tokens = list(page.get("rapidocr_tokens") or [])
+    figure_pattern = re.compile(
+        rf"\bFIG\s*\.\s*{figure_number}\b",
+        flags=re.IGNORECASE,
+    )
+    figure_matches = [
+        token
+        for token in tokens
+        if figure_pattern.search(_ability_token_text(token))
+    ]
+    if len(figure_matches) != 1:
+        return f"{role} has {len(figure_matches)} FIG. {figure_number} OCR tokens"
+    figure_confidence = _ability_token_confidence(figure_matches[0])
+    if figure_confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+        return (
+            f"{role} FIG. {figure_number} confidence {figure_confidence:.6f} is below "
+            f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+        )
+    if rotation is None:
+        sheet_matches = [
+            token
+            for token in tokens
+            if f"Sheet {sheet_number} of 25" in _ability_token_text(token)
+        ]
+        if len(sheet_matches) != 1:
+            return f"{role} has {len(sheet_matches)} drawing-sheet header tokens"
+        sheet_confidence = _ability_token_confidence(sheet_matches[0])
+        if sheet_confidence < _ABILITY_OCR_LABEL_CONFIDENCE:
+            return (
+                f"{role} drawing-sheet header confidence {sheet_confidence:.6f} is below "
+                f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+    return None
+
+
+def _genius_seven_token_fragment_error(
+    tokens: list[dict[str, Any]],
+    fragment: str,
+    *,
+    context: str,
+    expected_count: int = 1,
+) -> str | None:
+    matches = [
+        token
+        for token in tokens
+        if fragment.casefold() in _ability_token_text(token).casefold()
+    ]
+    if len(matches) != expected_count:
+        return (
+            f"{context} fragment {fragment!r} has {len(matches)} OCR tokens; "
+            f"expected {expected_count}"
+        )
+    below_gate = [
+        _ability_token_confidence(token)
+        for token in matches
+        if _ability_token_confidence(token) < _ABILITY_OCR_LABEL_CONFIDENCE
+    ]
+    if below_gate:
+        return (
+            f"{context} fragment {fragment!r} confidence {min(below_gate):.6f} is below "
+            f"{_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+        )
+    return None
+
+
+def _genius_seven_optical_census_error(
+    page: dict[str, Any],
+    *,
+    ordinal: str,
+) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("EFL", "HFOV", "TTL", "Fno"):
+        error = _genius_six_metadata_label_error(tokens, label)
+        if error is not None:
+            return error
+    for fragment in (
+        f"{ordinal} Example",
+        "Curvature",
+        "Thickness",
+        "Refractive",
+        "Abbe",
+        "Focal Length",
+        "First Lens",
+        "Second Lens",
+        "Third Lens",
+        "Fourth Lens",
+        "Fifth Lens",
+        "Sixth Lens",
+        "Seventh Lens",
+    ):
+        error = _genius_seven_token_fragment_error(
+            tokens,
+            fragment,
+            context="seven-lens optical table",
+        )
+        if error is not None:
+            return error
+    return None
+
+
+def _genius_seven_asphere_census_error(page: dict[str, Any]) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("No", "K", "a2", "a4", "a6", "a8", "a10", "a12", "a14", "a16"):
+        matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).strip(" .:").casefold() == label.casefold()
+        ]
+        if len(matches) != 2:
+            return f"seven-lens asphere label {label!r} has {len(matches)} tokens; expected 2"
+        below_gate = [
+            _ability_token_confidence(token)
+            for token in matches
+            if _ability_token_confidence(token) < _ABILITY_OCR_LABEL_CONFIDENCE
+        ]
+        if below_gate:
+            return (
+                f"seven-lens asphere label {label!r} confidence {min(below_gate):.6f} "
+                f"is below {_ABILITY_OCR_LABEL_CONFIDENCE:.6f}"
+            )
+    return None
+
+
+def _parse_genius_seven_lens_seven_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError("Genius seven-lens input lacks official source facts")
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str) or re.fullmatch(
+        r"[0-9a-f]{64}", primary_digest
+    ) is None:
+        raise PatentParseError("Genius seven-lens official HTML hash is invalid")
+    try:
+        source_layout = genius_seven_lens_seven_source_layout_for_sha256(
+            primary_digest
+        )
+    except PatentPdfRecoveryError as exc:
+        raise PatentParseError(str(exc)) from exc
+    if payload.get("page_count") != source_layout["page_count"]:
+        raise PatentParseError("Genius seven-lens seven-example PDF page count changed")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 16:
+        raise PatentParseError(
+            "Genius seven-lens seven-example PDF must retain 16 key pages"
+        )
+    expected_source_facts = {
+        "normalized_text_sha256": source_layout["normalized_text_sha256"],
+        "family_id": source_layout["family_id"],
+        "application_number": source_layout["application_number"],
+        "system_values": list(source_layout["system_values"]),
+        "genius_applicant_assignee_count": 2,
+    }
+    for key, expected in expected_source_facts.items():
+        if facts.get(key) != expected:
+            raise PatentParseError(f"Genius seven-lens source fact {key!r} changed")
+    figure_counts = facts.get("figure_binding_counts")
+    comparison_counts = facts.get("comparison_binding_counts")
+    heading_counts = facts.get("example_heading_counts")
+    if (
+        not isinstance(figure_counts, dict)
+        or len(figure_counts) != 14
+        or set(figure_counts.values()) != {1}
+        or not isinstance(comparison_counts, dict)
+        or len(comparison_counts) != 2
+        or set(comparison_counts.values()) != {1}
+        or not isinstance(heading_counts, dict)
+        or list(heading_counts.values()) != [1] * 7
+    ):
+        raise PatentParseError("Genius seven-lens source bindings changed")
+
+    comparison_errors = []
+    for comparison, (page_number, figure_number, rotation) in enumerate(
+        ((25, 34, None), (26, 35, "clockwise_90")),
+        start=1,
+    ):
+        error = _genius_seven_page_binding_error(
+            _ability_page(payload, f"genius_seven_comparison_{comparison}"),
+            page_number=page_number,
+            sheet_number=page_number - 1,
+            figure_number=figure_number,
+            role=f"genius_seven_comparison_{comparison}",
+            rotation=rotation,
+        )
+        if error is not None:
+            comparison_errors.append(error)
+
+    ordinals = ("first", "second", "third", "fourth", "fifth", "sixth", "seventh")
+    attempts: list[_PrescriptionParseAttempt] = []
+    for example_number, ordinal in enumerate(ordinals, start=1):
+        optical_page_number = 11 + (example_number - 1) * 2
+        asphere_page_number = optical_page_number + 1
+        optical_role = f"genius_seven_optical_{example_number}"
+        asphere_role = f"genius_seven_asphere_{example_number}"
+        optical_page = _ability_page(payload, optical_role)
+        asphere_page = _ability_page(payload, asphere_role)
+        errors = [
+            error
+            for error in (
+                _genius_seven_page_binding_error(
+                    optical_page,
+                    page_number=optical_page_number,
+                    sheet_number=optical_page_number - 1,
+                    figure_number=20 + (example_number - 1) * 2,
+                    role=optical_role,
+                    rotation=None,
+                ),
+                _genius_seven_optical_census_error(
+                    optical_page,
+                    ordinal=ordinal,
+                ),
+                _genius_seven_page_binding_error(
+                    asphere_page,
+                    page_number=asphere_page_number,
+                    sheet_number=asphere_page_number - 1,
+                    figure_number=21 + (example_number - 1) * 2,
+                    role=asphere_role,
+                    rotation="clockwise_90",
+                ),
+                _genius_seven_asphere_census_error(asphere_page),
+                *comparison_errors,
+            )
+            if error is not None
+        ]
+        if not errors:
+            errors.append(
+                "Genius seven-lens seven-example census passed; numeric cell parser remains"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=example_number,
+                embodiment=f"Genius seven-lens {ordinal} example",
+                error=PatentParseError(" | ".join(errors)),
+            )
+        )
+    return attempts
+
+
 def _parse_genius_six_lens_five_attempts(
     payload: dict[str, Any],
 ) -> list[_PrescriptionParseAttempt]:
@@ -8125,6 +8381,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_genius_nine_lens_eleven_attempts(payload)
     if profile == _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE:
         return _parse_genius_eight_lens_fourteen_attempts(payload)
+    if profile == _GENIUS_SEVEN_LENS_SEVEN_PROFILE:
+        return _parse_genius_seven_lens_seven_attempts(payload)
     if profile == _GENIUS_FOUR_LENS_NINE_PROFILE:
         return _parse_genius_four_lens_nine_attempts(payload)
     if profile == _GENIUS_SIX_LENS_FIVE_PROFILE:

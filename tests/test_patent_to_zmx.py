@@ -3405,6 +3405,124 @@ def _genius_eight_lens_fourteen_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_seven_lens_seven_pdf_ocr_parser_input() -> bytes:
+    ordinals = ("first", "second", "third", "fourth", "fifth", "sixth", "seventh")
+    pages = []
+    for example_number, ordinal in enumerate(ordinals, start=1):
+        optical_page_number = 11 + (example_number - 1) * 2
+        asphere_page_number = optical_page_number + 1
+        optical_figure = 20 + (example_number - 1) * 2
+        asphere_figure = optical_figure + 1
+        optical_tokens = [
+            _ability_ocr_token(
+                f"Sheet {optical_page_number - 1} of 25",
+                700.0,
+                50.0,
+            ),
+            _ability_ocr_token(f"{ordinal.title()} Example", 100.0, 100.0),
+            *(
+                _ability_ocr_token(f"{label}=1", 100.0 + index * 100.0, 150.0)
+                for index, label in enumerate(("EFL", "HFOV", "TTL", "Fno"))
+            ),
+            *(
+                _ability_ocr_token(label, 100.0 + index * 100.0, 200.0)
+                for index, label in enumerate(
+                    ("Curvature", "Thickness", "Refractive", "Abbe", "Focal Length")
+                )
+            ),
+            *(
+                _ability_ocr_token(f"{name} Lens", 100.0, 250.0 + index * 30.0)
+                for index, name in enumerate(
+                    ("First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh")
+                )
+            ),
+            _ability_ocr_token(f"FIG. {optical_figure}", 700.0, 600.0),
+        ]
+        pages.append(
+            {
+                "page_number": optical_page_number,
+                "role": f"genius_seven_optical_{example_number}",
+                "official_image_sha256": str(example_number) * 64,
+                "mirror_text": "",
+                "rapidocr_scale": 0.5,
+                "rapidocr_tokens": optical_tokens,
+            }
+        )
+        asphere_tokens = [_ability_ocr_token(f"FIG. {asphere_figure}", 700.0, 50.0)]
+        for label in ("No.", "K", "a2", "a4", "a6", "a8", "a10", "a12", "a14", "a16"):
+            asphere_tokens.extend(
+                (
+                    _ability_ocr_token(label, 100.0, 100.0),
+                    _ability_ocr_token(label, 500.0, 100.0),
+                )
+            )
+        pages.append(
+            {
+                "page_number": asphere_page_number,
+                "role": f"genius_seven_asphere_{example_number}",
+                "official_image_sha256": str(example_number + 1) * 64,
+                "mirror_text": "",
+                "rapidocr_rotation": "clockwise_90",
+                "rapidocr_scale": 0.5,
+                "rapidocr_tokens": asphere_tokens,
+            }
+        )
+    pages.extend(
+        (
+            {
+                "page_number": 25,
+                "role": "genius_seven_comparison_1",
+                "official_image_sha256": "e" * 64,
+                "mirror_text": "",
+                "rapidocr_scale": 0.5,
+                "rapidocr_tokens": [
+                    _ability_ocr_token("Sheet 24 of 25", 700.0, 50.0),
+                    _ability_ocr_token("FIG. 34", 700.0, 100.0),
+                ],
+            },
+            {
+                "page_number": 26,
+                "role": "genius_seven_comparison_2",
+                "official_image_sha256": "f" * 64,
+                "mirror_text": "",
+                "rapidocr_rotation": "clockwise_90",
+                "rapidocr_scale": 0.5,
+                "rapidocr_tokens": [_ability_ocr_token("FIG. 35", 700.0, 100.0)],
+            },
+        )
+    )
+    primary_digest = "1197f4ec4bb5df4a37e2b93c1bf5292aab4b2f27fdfede1e09e0d0a896807da8"
+    layout = patent_pdf_recovery.genius_seven_lens_seven_source_layout_for_sha256(
+        primary_digest
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "genius_seven_lens_seven_example_census_v1",
+        "publication_id": "US-20240411113-A1",
+        "page_count": 36,
+        "source_facts": {
+            "primary_html_sha256": primary_digest,
+            "normalized_text_sha256": layout["normalized_text_sha256"],
+            "family_id": layout["family_id"],
+            "application_number": layout["application_number"],
+            "figure_binding_counts": dict.fromkeys(
+                patent_pdf_recovery._GENIUS_SEVEN_LENS_SEVEN_REQUIRED_FIGURE_TEXT,
+                1,
+            ),
+            "comparison_binding_counts": dict.fromkeys(
+                patent_pdf_recovery._GENIUS_SEVEN_LENS_SEVEN_COMPARISON_MARKERS,
+                1,
+            ),
+            "example_heading_counts": dict.fromkeys(ordinals, 1),
+            "system_values": list(layout["system_values"]),
+            "genius_applicant_assignee_count": 2,
+        },
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_six_lens_ten_dual_focus_pdf_ocr_parser_input() -> bytes:
     pages = []
     for embodiment_number in range(1, 11):
@@ -4554,6 +4672,47 @@ def test_genius_eight_lens_fourteen_source_facts_bind_every_figure() -> None:
     assert facts["genius_applicant_assignee_count"] == 2
 
 
+@pytest.mark.parametrize(
+    "source_path",
+    (
+        Path(
+            "data/patent-lake/uspto-ppubs-html/USPAT/7a3936c854f9d03e/"
+            "US-12298484-B2.html"
+        ),
+        Path(
+            "data/patent-lake/uspto-ppubs-html/US-PGPUB/1197f4ec4bb5df4a/"
+            "US-20240411113-A1.html"
+        ),
+    ),
+)
+def test_genius_seven_lens_seven_source_facts_are_exact(source_path: Path) -> None:
+    source = source_path.read_text(encoding="utf-8")
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    facts = patent_pdf_recovery._genius_seven_lens_seven_source_facts(source)
+    assert facts["family_id"] == "59199108"
+    assert facts["application_number"] == "18/743044"
+    assert len(facts["figure_binding_counts"]) == 14
+    assert set(facts["figure_binding_counts"].values()) == {1}
+    assert len(facts["comparison_binding_counts"]) == 2
+    assert set(facts["comparison_binding_counts"].values()) == {1}
+    assert list(facts["example_heading_counts"].values()) == [1] * 7
+    assert facts["system_values"] == list(
+        patent_pdf_recovery._GENIUS_SEVEN_LENS_SEVEN_SYSTEM_VALUES
+    )
+    assert facts["genius_applicant_assignee_count"] == 2
+
+
+def test_genius_seven_lens_seven_source_layout_rejects_changed_html() -> None:
+    with pytest.raises(
+        patent_pdf_recovery.PatentPdfRecoveryError,
+        match="official HTML is not source-locked",
+    ):
+        patent_pdf_recovery.genius_seven_lens_seven_source_layout_for_sha256(
+            "0" * 64
+        )
+
+
 def test_genius_four_lens_nine_source_facts_bind_every_figure() -> None:
     markers = patent_pdf_recovery._GENIUS_FOUR_LENS_NINE_REQUIRED_FIGURE_TEXT
     comparisons = patent_pdf_recovery._GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
@@ -5103,6 +5262,44 @@ def test_genius_eight_lens_fourteen_profile_retains_every_embodiment() -> None:
         in str(attempt.error)
         for attempt in attempts
     )
+
+
+def test_genius_seven_lens_seven_profile_retains_every_example() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _genius_seven_lens_seven_pdf_ocr_parser_input().decode(),
+        patent_id="US-20240411113-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 8))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "seven-lens seven-example census passed; numeric cell parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_genius_seven_lens_seven_profile_refuses_source_drift() -> None:
+    payload = json.loads(_genius_seven_lens_seven_pdf_ocr_parser_input())
+    payload["source_facts"]["application_number"] = "18/000000"
+
+    with pytest.raises(PatentParseError, match="source fact 'application_number' changed"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-20240411113-A1",
+        )
+
+
+def test_genius_seven_lens_seven_profile_records_ocr_provenance_drift() -> None:
+    payload = json.loads(_genius_seven_lens_seven_pdf_ocr_parser_input())
+    payload["pages"][0]["rapidocr_scale"] = 1.0
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id="US-20240411113-A1",
+    )
+
+    assert "lacks its source-locked 0.5 OCR scale" in str(attempts[0].error)
 
 
 def test_genius_eight_lens_fourteen_profile_refuses_source_binding_drift() -> None:
