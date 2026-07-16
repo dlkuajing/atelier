@@ -301,6 +301,18 @@ class _PatentTableBlock:
     end: int
 
 
+@dataclass(frozen=True)
+class _LarganMovingGroupSurfaceRow:
+    published_index: int
+    label: str
+    radius_mm: float
+    thickness_mm: float | None
+    material: str | None = None
+    nd: float | None = None
+    vd: float | None = None
+    surface_type: str | None = None
+
+
 def normalize_patent_text(value: str) -> str:
     """Return PPUBS HTML/plain text normalized for deterministic regex parsing."""
 
@@ -382,6 +394,12 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = _parse_huawei_popup_camera_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = _parse_largan_moving_group_macro_attempts(
         raw_text,
         patent_id=patent_id,
     )
@@ -1638,6 +1656,104 @@ _FOLDED_MACRO_TELE_SYSTEM_TABLES = {
     "230": (9, 10, 11, 8),
     "240": (13, 14, 16, 6),
     "290": (19, 20, 21, 8),
+}
+_LARGAN_MOVING_GROUP_SOURCE_PROFILES: dict[str, dict[str, str]] = {
+    "US-20250216652-A1": {
+        "raw_document_sha256": (
+            "a8ce8130d4420c435c79dffde20989df9035f1e32f2b2b19d01bb140ac55a018"
+        ),
+        "normalized_text_sha256": (
+            "70233e3a4c941838d0b20a08066a14a88b19cfe2e17c1c16ba47494736723c79"
+        ),
+    },
+}
+_LARGAN_MOVING_GROUP_TITLE_PATTERN = re.compile(
+    r"\bOPTICAL\s+PHOTOGRAPHING\s+LENS\s+ASSEMBLY,\s+IMAGING\s+APPARATUS\s+"
+    r"AND\s+ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_LARGAN_MOVING_GROUP_LAYOUTS: dict[int, dict[str, Any]] = {
+    1: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 17, 18),
+        "filter": 19,
+        "image": 21,
+    },
+    2: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 17, 18),
+        "filter": 19,
+        "image": 21,
+    },
+    3: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 17, 18),
+        "filter": 19,
+        "image": 21,
+    },
+    4: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 18),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 14, 15, 16, 17),
+        "filter": 19,
+        "image": 21,
+    },
+    5: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14, 17),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 18, 19),
+        "filter": 20,
+        "image": 22,
+    },
+    6: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 17, 18),
+        "filter": 19,
+        "image": 21,
+    },
+    7: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 17, 18),
+        "filter": 19,
+        "image": 21,
+    },
+    8: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14, 17),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 18, 19),
+        "filter": 20,
+        "image": 22,
+    },
+    9: {
+        "fold": "Prism",
+        "stops": (3, 8, 11, 14, 17),
+        "lens_surfaces": (4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 18, 19),
+        "filter": 20,
+        "image": 22,
+    },
+    10: {
+        "fold": "Mirror",
+        "stops": (2, 7, 10, 13, 18),
+        "lens_surfaces": (3, 4, 5, 6, 8, 9, 11, 12, 14, 15, 16, 17),
+        "filter": 19,
+        "image": 21,
+    },
+}
+_LARGAN_MOVING_GROUP_ASPHERE_MAX_ORDERS = {
+    1: ((20, 20, 26, 26), (28, 26, 28, 28), (28, 28, 30, 28)),
+    2: ((20, 20, 26, 26), (28, 26, 28, 28), (28, 28, 30, 28)),
+    3: ((20, 20, 26, 26), (30, 26, 28, 28), (28, 28, 30, 28)),
+    4: ((20, 18, 16, 16), (16, 16, 22, 22), (20, 24, 30, 30)),
+    5: ((20, 20, 26, 26), (28, 26, 28, 28), (28, 28, 30, 28)),
+    6: ((20, 20, 26, 26), (28, 26, 28, 28), (28, 28, 30, 28)),
+    7: ((20, 20, 26, 26), (28, 26, 28, 28), (28, 28, 30, 28)),
+    8: ((20, 20, 26, 26), (28, 26, 28, 28), (28, 28, 30, 28)),
+    10: ((20, 20, 26, 26), (26, 26, 28, 28), (28, 28, 28, 28)),
 }
 _LARGE_APERTURE_SCANNING_TELE_TITLE_PATTERN = re.compile(
     r"\bLARGE-APERTURE\s+COMPACT\s+SCANNING\s+TELE\s+CAMERAS\b",
@@ -11336,6 +11452,639 @@ def _parse_large_aperture_scanning_tele_coefficients(
             f"large-aperture scanning tele example {example} coefficient coverage changed"
         )
     return coefficients
+
+
+def _parse_largan_moving_group_macro_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the source-locked Largan infinity/macro moving-group family.
+
+    The official PPUBS text flattens blank cells in the asphere tables.  The
+    per-surface maximum orders below are therefore pinned to the official PDF
+    raster audit; numeric values still come only from the retained PPUBS text.
+    Finite-object states remain explicit nonterminal failures because the
+    replay tracer currently models an infinity conjugate.
+    """
+
+    profile = _LARGAN_MOVING_GROUP_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    labels = _largan_moving_group_attempt_labels()
+
+    def attempts_for_error(error: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=error,
+            )
+            for index, label in enumerate(labels, start=1)
+        ]
+
+    try:
+        raw_sha256 = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_sha256 != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Largan moving-group official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_sha256 != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Largan moving-group normalized text hash changed for {patent_id}"
+            )
+        if _LARGAN_MOVING_GROUP_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("Largan moving-group official title binding changed")
+        blocks = _suffixed_patent_table_blocks(text)
+        expected_blocks = {
+            (embodiment, suffix)
+            for embodiment in range(1, 11)
+            for suffix in (("A", "B", "C") if embodiment == 1 else ("A", "B", "C", "D"))
+        }
+        if set(blocks) != expected_blocks:
+            raise PatentParseError("Largan moving-group official 39-table inventory changed")
+        for embodiment in range(11, 16):
+            ordinal = _largan_ordinal(embodiment)
+            if re.search(rf"\b{ordinal}\s+Embodiment\b", text, re.IGNORECASE) is None:
+                raise PatentParseError(
+                    f"Largan moving-group {ordinal} architecture embodiment is missing"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the complete 25-item denominator
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment in range(1, 11):
+        state_values: dict[str, float] | None = None
+        metadata: dict[str, tuple[float, float, float, float]] | None = None
+        base_error: Exception | None = None
+        prescription: PatentPrescription | None = None
+        try:
+            state_values = _parse_largan_moving_group_states(
+                blocks[(embodiment, "C")],
+                embodiment=embodiment,
+            )
+            metadata = _parse_largan_moving_group_metadata(
+                blocks[(embodiment, "C" if embodiment == 1 else "D")],
+                embodiment=embodiment,
+            )
+            if embodiment == 9:
+                raise PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code=(
+                        "metadata_unpublished.surface_sequence_and_stop_radius_conflict"
+                    ),
+                    detail=(
+                        "official PDF page 33 / wrapper page 96 TABLE 9A leaves Surface 17 "
+                        "stop curvature blank, repeats Surface 20 for the filter back, and "
+                        "ends at Image Surface 21 although the fifth stop requires 0-22"
+                    ),
+                )
+            coefficients = _parse_largan_moving_group_coefficients(
+                blocks[(embodiment, "B")],
+                embodiment=embodiment,
+            )
+            surfaces = _parse_largan_moving_group_surfaces(
+                blocks[(embodiment, "A")],
+                embodiment=embodiment,
+                d1_mm=state_values["d1_infinity"],
+                d2_mm=state_values["d2_infinity"],
+                coefficients=coefficients,
+            )
+            f_mm, f_number, hfov_deg, _full_fov = metadata["infinity"]
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=f"Largan moving-group embodiment {embodiment} infinity",
+                focal_length_mm=f_mm,
+                f_number=f_number,
+                hfov_deg=hfov_deg,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain both states for this embodiment
+            base_error = exc
+
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment * 2 - 1,
+                embodiment=f"Largan moving-group embodiment {embodiment} infinity",
+                prescription=prescription if base_error is None else None,
+                error=base_error,
+            )
+        )
+        if isinstance(base_error, PatentTerminalParseError):
+            macro_error: Exception = base_error
+        elif base_error is not None:
+            macro_error = base_error
+        else:
+            assert state_values is not None
+            macro_error = PatentParseError(
+                "finite-object state is published but unsupported by the "
+                "infinity-conjugate replay model: object distance "
+                f"{state_values['object_distance_macro']:.3f} mm"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment * 2,
+                embodiment=f"Largan moving-group embodiment {embodiment} macro",
+                error=macro_error,
+            )
+        )
+
+    architecture_labels = labels[20:]
+    for number, label in enumerate(architecture_labels, start=21):
+        imaging_wrapper = number == 21
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription.imaging_apparatus_wrapper_only"
+                        if imaging_wrapper
+                        else "confirmed_no_prescription.electronic_device_wrapper_only"
+                    ),
+                    detail=(
+                        "11th embodiment publishes a camera-module, driving-apparatus, "
+                        "image-sensor, and previously disclosed lens-assembly wrapper; "
+                        "it adds no optical surface prescription"
+                        if imaging_wrapper
+                        else (
+                            f"{label} publishes only an electronic-device or smartphone "
+                            "arrangement around previously disclosed imaging apparatuses; "
+                            "it adds no optical surface prescription"
+                        )
+                    ),
+                ),
+            )
+        )
+    return attempts
+
+
+def _largan_moving_group_attempt_labels() -> list[str]:
+    labels = [
+        f"Largan moving-group embodiment {embodiment} {state}"
+        for embodiment in range(1, 11)
+        for state in ("infinity", "macro")
+    ]
+    labels.extend(
+        [
+            "Largan moving-group embodiment 11 imaging apparatus",
+            "Largan moving-group embodiment 12 electronic device",
+            "Largan moving-group embodiment 13 electronic device",
+            "Largan moving-group embodiment 14 electronic device",
+            "Largan moving-group embodiment 15 electronic device",
+        ]
+    )
+    return labels
+
+
+def _largan_ordinal(value: int) -> str:
+    if value <= 10:
+        return _ordinal_word(value)
+    return {11: "11th", 12: "12th", 13: "13th", 14: "14th", 15: "15th"}[value]
+
+
+def _largan_numeric_ordinal(value: int) -> str:
+    suffix = "th"
+    if value % 100 not in {11, 12, 13}:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(value % 10, "th")
+    return f"{value}{suffix}"
+
+
+def _parse_largan_moving_group_states(
+    table_text: str,
+    *,
+    embodiment: int,
+) -> dict[str, float]:
+    # The official TABLE 3C caption itself says ``3th Embodiment``; pin that
+    # exact non-numeric typo without altering any prescription value.
+    ordinal = "3th" if embodiment == 3 else _largan_numeric_ordinal(embodiment)
+    match = re.search(
+        rf"\ATABLE-US-\d+\s+TABLE\s+{embodiment}C\s+{ordinal}\s+Embodiment\s+"
+        rf"1st\s+mode\s+2nd\s+mode\s+Object\s+distance\s+\(mm\)\s+infinite\s+"
+        rf"Object\s+distance\s+\(mm\)\s+(?P<object>{NUMBER_PATTERN})\s+"
+        rf"D0\s+\(mm\)\s+infinite\s+D0\s+\(mm\)\s+(?P<d0>{NUMBER_PATTERN})\s+"
+        rf"D1\s+\(mm\)\s+(?P<d1l>{NUMBER_PATTERN})\s+D1\s+\(mm\)\s+"
+        rf"(?P<d1s>{NUMBER_PATTERN})\s+D2\s+\(mm\)\s+(?P<d2l>{NUMBER_PATTERN})\s+"
+        rf"D2\s+\(mm\)\s+(?P<d2s>{NUMBER_PATTERN})\b",
+        table_text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} TABLE {embodiment}C changed"
+        )
+    values = {
+        "object_distance_macro": _parse_number(match.group("object")),
+        "d0_macro": _parse_number(match.group("d0")),
+        "d1_infinity": _parse_number(match.group("d1l")),
+        "d1_macro": _parse_number(match.group("d1s")),
+        "d2_infinity": _parse_number(match.group("d2l")),
+        "d2_macro": _parse_number(match.group("d2s")),
+    }
+    if any(value <= 0.0 for value in values.values()):
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} has nonpositive mode spacing"
+        )
+    return values
+
+
+def _parse_largan_moving_group_metadata(
+    table_text: str,
+    *,
+    embodiment: int,
+) -> dict[str, tuple[float, float, float, float]]:
+    labels = ("fL", "FnoL", "HFOVL", "FOVL", "fS", "FnoS", "HFOVS", "FOVS")
+    values: dict[str, float] = {}
+    for label in labels:
+        if embodiment == 1:
+            pattern = rf"\b{label}\s*=\s*(?P<value>{NUMBER_PATTERN})\b"
+        else:
+            pattern = (
+                rf"\b{label}(?:\s+\[[^\]]+\])?\s+(?P<value>{NUMBER_PATTERN})\b"
+            )
+        match = re.search(pattern, table_text, re.IGNORECASE)
+        if match is None:
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} metadata missing {label}"
+            )
+        values[label] = _parse_number(match.group("value"))
+    for state, suffix in (("infinity", "L"), ("macro", "S")):
+        f_mm = values[f"f{suffix}"]
+        f_number = values[f"Fno{suffix}"]
+        hfov = values[f"HFOV{suffix}"]
+        full_fov = values[f"FOV{suffix}"]
+        if f_mm <= 0.0 or f_number <= 0.0 or not 0.0 < hfov < 90.0:
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} {state} metadata is invalid"
+            )
+        if not math.isclose(full_fov, hfov * 2.0, rel_tol=0.0, abs_tol=1e-12):
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} {state} HFOV/FOV conflict"
+            )
+    return {
+        "infinity": (values["fL"], values["FnoL"], values["HFOVL"], values["FOVL"]),
+        "macro": (values["fS"], values["FnoS"], values["HFOVS"], values["FOVS"]),
+    }
+
+
+def _parse_largan_moving_group_coefficients(
+    table_text: str,
+    *,
+    embodiment: int,
+) -> dict[int, dict[str, float]]:
+    body = re.split(r"\s\[\d{4}\]\s", table_text, maxsplit=1)[0]
+    section_matches = list(
+        re.finditer(
+            r"\bSurface\s+#\s+(?P<ids>\d+\s+\d+\s+\d+\s+\d+)\s+k=",
+            body,
+            re.IGNORECASE,
+        )
+    )
+    if len(section_matches) != 3:
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} coefficient groups changed"
+        )
+    layout = _LARGAN_MOVING_GROUP_LAYOUTS[embodiment]
+    expected_surface_ids = tuple(layout["lens_surfaces"])
+    observed_surface_ids: list[int] = []
+    coefficients: dict[int, dict[str, float]] = {}
+    max_order_groups = _LARGAN_MOVING_GROUP_ASPHERE_MAX_ORDERS[embodiment]
+    for group_index, section_match in enumerate(section_matches):
+        section_end = (
+            section_matches[group_index + 1].start()
+            if group_index + 1 < len(section_matches)
+            else len(body)
+        )
+        section = body[section_match.start() : section_end]
+        surface_ids = tuple(int(token) for token in section_match.group("ids").split())
+        observed_surface_ids.extend(surface_ids)
+        max_orders = max_order_groups[group_index]
+        row_matches = list(re.finditer(r"(?<!\S)(?P<label>k|A\d+)=", section, re.I))
+        expected_orders = range(4, max(max_orders) + 1, 2)
+        expected_labels = ["k", *(f"A{order}" for order in expected_orders)]
+        observed_labels = [match.group("label") for match in row_matches]
+        if [label.lower() for label in observed_labels] != [
+            label.lower() for label in expected_labels
+        ]:
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} coefficient row labels changed"
+            )
+        for row_index, row_match in enumerate(row_matches):
+            row_end = (
+                row_matches[row_index + 1].start()
+                if row_index + 1 < len(row_matches)
+                else len(section)
+            )
+            label = row_match.group("label")
+            order = None if label.lower() == "k" else int(label[1:])
+            active_surfaces = [
+                surface_id
+                for surface_id, max_order in zip(surface_ids, max_orders, strict=True)
+                if order is None or order <= max_order
+            ]
+            values = _largan_numeric_row(section[row_match.end() : row_end])
+            if len(values) != len(active_surfaces):
+                raise PatentParseError(
+                    f"Largan moving-group embodiment {embodiment} {label} cell occupancy "
+                    f"changed: expected {len(active_surfaces)}, found {len(values)}"
+                )
+            codev_label = "K" if order is None else ASPHERE_ORDER_TO_CODEV[order]
+            for surface_id, value in zip(active_surfaces, values, strict=True):
+                coefficients.setdefault(surface_id, {})[codev_label] = value
+    if tuple(observed_surface_ids) != expected_surface_ids:
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} asphere surface binding changed"
+        )
+    return coefficients
+
+
+def _largan_numeric_row(value: str) -> list[float]:
+    compact = re.sub(r"(?<=\d)\s+(?=E[-+]?\d+\b)", "", value, flags=re.IGNORECASE)
+    tokens = compact.split()
+    return [_parse_number(token) for token in tokens]
+
+
+def _parse_largan_moving_group_surfaces(
+    table_text: str,
+    *,
+    embodiment: int,
+    d1_mm: float,
+    d2_mm: float,
+    coefficients: dict[int, dict[str, float]],
+) -> list[PatentSurface]:
+    ordinal = _largan_numeric_ordinal(embodiment)
+    header = re.search(
+        rf"\ATABLE-US-\d+\s+TABLE\s+{embodiment}A\s+{ordinal}\s+Embodiment\s+"
+        r"(?:Surface\s+Focal\s+#|Focal\s+Surface\s+#)\s+Curvature\s+Radius\s+"
+        r"Thickness\s+Material\s+Index\s+Abbe\s+#\s+Length\s+",
+        table_text,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} surface header changed"
+        )
+    tokens = table_text[header.end() :].split()
+    pos = 0
+
+    def take(expected: str | None = None) -> str:
+        nonlocal pos
+        if pos >= len(tokens):
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} surface table is incomplete"
+            )
+        token = tokens[pos]
+        pos += 1
+        if expected is not None and token.lower() != expected.lower():
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} expected {expected}, "
+                f"found {token}"
+            )
+        return token
+
+    def take_index(expected: int) -> None:
+        actual = take()
+        if actual != str(expected):
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} surface table index break: "
+                f"expected {expected}, found {actual}"
+            )
+
+    def thickness(token: str) -> float | None:
+        upper = token.upper()
+        if upper == "D1":
+            return d1_mm
+        if upper == "D2":
+            return d2_mm
+        if _is_empty_value(token):
+            return None
+        return _parse_number(token)
+
+    take_index(0)
+    take("Object")
+    take("Plano")
+    take("D0")
+    layout = _LARGAN_MOVING_GROUP_LAYOUTS[embodiment]
+    lens_surfaces = tuple(layout["lens_surfaces"])
+    stops = tuple(layout["stops"])
+    filter_index = int(layout["filter"])
+    image_index = int(layout["image"])
+    rows: list[_LarganMovingGroupSurfaceRow] = []
+    stop_number_by_index = {index: number for number, index in enumerate(stops, start=1)}
+    for index in range(1, image_index + 1):
+        if index == 1 and layout["fold"] == "Prism":
+            take_index(index)
+            take("Prism")
+            take("Plano")
+            distance = thickness(take())
+            material = take()
+            nd = _parse_number(take())
+            vd = _parse_number(take())
+            take("--")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    index, "Fold Prism S1", 0.0, distance, material, nd, vd
+                )
+            )
+        elif index == 1 and layout["fold"] == "Mirror":
+            take_index(index)
+            take("Mirror")
+            take("Plano")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    index, "Fold Mirror", 0.0, thickness(take())
+                )
+            )
+        elif index == 2 and layout["fold"] == "Prism":
+            take_index(index)
+            take("Plano")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    index, "Fold Prism S2", 0.0, thickness(take())
+                )
+            )
+        elif index in stops:
+            take_index(index)
+            take("Stop")
+            take("Plano")
+            stop_number = stop_number_by_index[index]
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    index, f"Stop S{stop_number}", 0.0, thickness(take())
+                )
+            )
+        elif index in lens_surfaces:
+            lens_position = lens_surfaces.index(index)
+            lens_number = lens_position // 2 + 1
+            side_number = lens_position % 2 + 1
+            take_index(index)
+            if side_number == 1:
+                take("Lens")
+                take(str(lens_number))
+            radius = _parse_number(take())
+            take("ASP")
+            distance = thickness(take())
+            material = None
+            nd = None
+            vd = None
+            if side_number == 1:
+                material = take()
+                nd = _parse_number(take())
+                vd = _parse_number(take())
+                _parse_number(take())  # published element focal length
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    index,
+                    f"L{lens_number} S{side_number}",
+                    radius,
+                    distance,
+                    material,
+                    nd,
+                    vd,
+                    "ASP",
+                )
+            )
+        elif index == filter_index:
+            take_index(index)
+            take("Filter")
+            take("Plano")
+            distance = thickness(take())
+            material = take()
+            nd = _parse_number(take())
+            vd = _parse_number(take())
+            take("--")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    index, "Filter S1", 0.0, distance, material, nd, vd
+                )
+            )
+        elif index == filter_index + 1:
+            take_index(index)
+            take("Plano")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    index, "Filter S2", 0.0, thickness(take())
+                )
+            )
+        elif index == image_index:
+            take_index(index)
+            take("Image")
+            take("Plano")
+            if pos < len(tokens) and _is_empty_value(tokens[pos]):
+                pos += 1
+            rows.append(_LarganMovingGroupSurfaceRow(index, "Image", 0.0, None))
+        else:
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} has no row schema for "
+                f"surface {index}"
+            )
+    return _reorder_largan_moving_group_surfaces(
+        rows,
+        coefficients=coefficients,
+        embodiment=embodiment,
+    )
+
+
+def _reorder_largan_moving_group_surfaces(
+    rows: list[_LarganMovingGroupSurfaceRow],
+    *,
+    coefficients: dict[int, dict[str, float]],
+    embodiment: int,
+) -> list[PatentSurface]:
+    positioned: list[tuple[float, _LarganMovingGroupSurfaceRow]] = []
+    z_mm = 0.0
+    material_spans: list[tuple[float, float, str, float, float]] = []
+    for row_index, row in enumerate(rows):
+        positioned.append((z_mm, row))
+        if row_index == len(rows) - 1:
+            if row.label != "Image" or row.thickness_mm is not None:
+                raise PatentParseError(
+                    f"Largan moving-group embodiment {embodiment} image row changed"
+                )
+            continue
+        if row.thickness_mm is None:
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} surface "
+                f"{row.published_index} thickness is absent"
+            )
+        if row.material is not None:
+            if row.nd is None or row.vd is None or row.thickness_mm <= 0.0:
+                raise PatentParseError(
+                    f"Largan moving-group embodiment {embodiment} material span is invalid"
+                )
+            material_spans.append(
+                (z_mm, z_mm + row.thickness_mm, row.material, row.nd, row.vd)
+            )
+        z_mm += row.thickness_mm
+
+    ordered = sorted(positioned, key=lambda item: item[0])
+    for (first_z, _first), (second_z, _second) in zip(ordered, ordered[1:], strict=False):
+        if second_z - first_z <= 1e-12:
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} axial coordinates overlap"
+            )
+    if ordered[-1][1].label != "Image":
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} image is not the final surface"
+        )
+
+    surfaces: list[PatentSurface] = []
+    observed_coefficient_surfaces: set[int] = set()
+    for output_index, (surface_z, row) in enumerate(ordered, start=1):
+        if output_index < len(ordered):
+            next_z = ordered[output_index][0]
+            output_thickness = next_z - surface_z
+            midpoint = (surface_z + next_z) / 2.0
+            containing_spans = [
+                span for span in material_spans if span[0] < midpoint < span[1]
+            ]
+        else:
+            output_thickness = 0.0
+            containing_spans = []
+        if len(containing_spans) > 1:
+            raise PatentParseError(
+                f"Largan moving-group embodiment {embodiment} material spans overlap"
+            )
+        if containing_spans:
+            _start, _end, material, nd, vd = containing_spans[0]
+        else:
+            material = None
+            nd = None
+            vd = None
+        label = row.label
+        if label == "Stop S1":
+            label = "Stop"
+        elif label.startswith("Stop S"):
+            label = f"Dummy {label}"
+        row_coefficients = dict(coefficients.get(row.published_index, {}))
+        if row_coefficients:
+            observed_coefficient_surfaces.add(row.published_index)
+        surfaces.append(
+            PatentSurface(
+                index=output_index,
+                label=label,
+                radius_mm=row.radius_mm,
+                thickness_mm=output_thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=row.surface_type,
+                asphere_coefficients=row_coefficients,
+            )
+        )
+    if observed_coefficient_surfaces != set(coefficients):
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} coefficient surface is absent"
+        )
+    if any((surface.thickness_mm or 0.0) < 0.0 for surface in surfaces):
+        raise PatentParseError(
+            f"Largan moving-group embodiment {embodiment} retained a negative thickness"
+        )
+    return surfaces
 
 
 def _parse_folded_macro_tele_table_attempts(
