@@ -27,21 +27,22 @@ foundation snapshot 的严格 audit 为 `saturation_complete=false`，明确 735
 当时 735 根均无保留全文。第三个 quick 现已为冻结的 619 个本地未覆盖根全部保留官方 PPUBS
 HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和账本。这是未合 main 的进行中证据，
 不是饱和完成声明；500 仅为历史进度标记。当前严格 replay result set 为
-`261a2747bba7ce93612121c408404742b1f75871289c6999c9f05df7837b30e6`：619/619、
-missing=0、corrupt=0。Family ID `59199108` 的 `US-20240411113-A1` 与 `US-12298484-B2`
-（同 application `18/743044`）已闭合七个 examples、十四张 optical/asphere data 表、
-FIGS.1-35、两张 comparison figures 与两份 36 页 image-only official PDF 的全分母审计。
-每例均有七 lens rows，prose 直接发布 TTL/Fno/image height/HFOV，optical tables 直接发布
-EFL；但 dense rotated asphere panels 仍有低置信 label 或缺失 duplicate occurrence，不能
-修补、插值或从 family peer 借值。每根因此形成七个精确 parser review items，无 worker、
-request、receipt、candidate 或 ZMX。每根 attempts 2/3 除 `result_attempt` 外语义一致。两次
-官方下载 wrapper 不同但各自 36/36 decoded rasters 相同；retained official PDF 与 Google OCR
-overlay 也逐页 pixel-identical。Generic 从 163 items/roots 降至 161/161，两次 after census
+`df1f858e126d6cb4541f1cb33f17fb4513ca9cc8b83fa3a5bb0390379f1635df`：619/619、
+missing=0、corrupt=0。Family ID `89001540` 的 `US-20250102782-A1` 与 `US-12585096-B2`
+（同 application `18/402737`）已闭合七个 finite-object object-space telecentric nine-lens
+embodiments、TABLES 1-8、FIGS.1-28 与两份 29/27 页 image-only official PDF 的全分母审计。
+来源发布 lens prescription、system/component EFL、image height、NA/entrance pupil/部分 diagonal
+field，却不发布 beam-splitter material/index/dispersion 或 exact system F-number；Embodiment 1
+还缺 numeric angular field。TABLE 7 在 A1/B2 官方 raster 中均含未定义的 pre-G4 beam-splitter/
+stop spacing chain，不能修补。每根形成七个精确 source terminal items，无 worker、request、
+receipt、fingerprint、candidate 或 ZMX。每根 attempts 2/3 除 `result_attempt` 外语义一致。
+B2 两个 wrapper 的 27/27 decoded rasters 相同；A1 两个 live wrapper 与 Google wrapper 的
+29/29 decoded rasters 相同。Generic 从 161 items/roots 降至 159/159，两次 after census
 byte-identical，SHA-256=
-`b45149cc9a064b42e6cff9c84c7ab8db816a98c05b926296cf64bce980dd8432`。按非终态 root 数，
-generic 161 仍高于 AAC Raytech 55 roots/174 items 与 Sunny 49 roots/177 items；下一 exact
-same-layout family 为 `89001540`（`US-12585096`、`US-20250102782`），layout
-`b9a5003129240044611ce6b8dad3d06c889894df600e743ebec39b440bf639ee`。
+`65385b78274c0a2a2638011b05b8f830cba821aa4de7ccf0803da6e1a3af7d36`。按非终态 root 数，
+generic 159 仍高于 AAC Raytech 55 roots/174 items 与 Sunny 49 roots/177 items；下一 exact
+same-layout family 为 `74187659`（`US-11719909`、`US-20210026108`），layout
+`d41bca1a1ff33aa2d5675c95f3a2aa4f74b80207f9841b61b1ace11918a0071b`。
 
 ## Current Position
 
@@ -55,7 +56,7 @@ same-layout family 为 `89001540`（`US-12585096`、`US-20250102782`），layout
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `261a2747...30e6`. Current roots: 347 parser review, 143 mixed, 104 terminal, 25 converted; items: 544 staging, 1410 parser review, 944 terminal, 28 conversion retry. Each exact Family 59199108 publication expands to seven source-bound parser reviews because dense official asphere rasters still fail exact label/occurrence confidence gates; no value is repaired or borrowed and no worker/ZMX is created. Generic 163→161 roots/items and still ranks first by nonterminal roots; next deterministic same-layout family is 89001540. Ten direct parent-chain publications/grants plus prior external-family queues remain outside the frozen cohort, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `df1f858e...35df`. Current roots: 345 parser review, 143 mixed, 106 terminal, 25 converted; items: 544 staging, 1408 parser review, 958 terminal, 28 conversion retry. Each exact Family 89001540 publication expands to seven source-proven metadata terminals because beam-splitter material and exact system F-number are unpublished; Embodiment 1 also lacks numeric angular field and Embodiment 7 retains an official TABLE 7 spacing-identity contradiction. No value is inferred or repaired and no worker/ZMX is created. Generic 161→159 roots/items and still ranks first by nonterminal roots; next deterministic same-layout family is 74187659. External-family queues remain outside the frozen cohort, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -219,23 +220,24 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260716-patent-generic-family-60001556` | complete-shovel-saturation-incomplete | Same-application B2/A1 records bind five Examples, one identical TABLE 1 prescription, FIGS.1-42/72 panels, and 47-page/23-drawing-sheet official rasters. Example III publishes the surface prescription but no direct numeric EFL, F-number, or angular field; the other four Examples have no independent prescription. Each root expands to four confirmed-no-prescription terminals plus one metadata-unpublished terminal, with no worker/receipt/fingerprint/ZMX. Attempts 2/3 are semantic-equal excluding result attempt; result set `a20cd853...c38c9`, summary `d9511a52...b6cf8`, after census `45950d20...77b5f`; audit 619/619 corrupt=0; 367 offline patent tests pass; CODE V zero. Generic 165 roots remains first; Family 39526858 is next. |
 | `260716-patent-generic-family-39526858` | complete-shovel-saturation-incomplete | Same-application A1/B2 records bind one formal Example 1, four lettered materials/force/focus-response/control tables, FIGS.1-28, and 37/39-page official rasters. The 5.88 mm/F# 6.6 benchmark belongs to an external IT5000 triplet and neither source publishes its ordered surface prescription. Each root is one confirmed-no-prescription actuator/imaging-terminal architecture terminal; no worker/request/receipt/fingerprint/ZMX. Attempts 2/3 are semantic-equal excluding result attempt; result set `d1e244e1...29981`, summary `3c060a84...2351`, after census `334d9fb7...7ce5`; audit 619/619 corrupt=0; 369 offline patent tests pass; CODE V zero. Six direct parent-chain records are queued outside the frozen cohort. Generic 163 roots remains first; Family 59199108 is next. |
 | `260716-patent-generic-family-59199108` | complete-shovel-saturation-incomplete | Same-application A1/B2 records bind seven examples, 14 optical/asphere table figures, two comparison figures, FIGS.1-35, and 36-page/25-drawing-sheet official rasters. Prose publishes exact TTL/Fno/image-height/HFOV and optical tables publish EFL, but dense rotated asphere panels retain source-faithful low-confidence or missing duplicate labels. Each root expands to seven exact parser reviews; no numeric cell is repaired, no family-peer value is borrowed, and no worker/request/receipt/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding result attempt; result set `261a2747...30e6`, summary `293454d1...8e5d`, after census `b45149cc...8432`; audit 619/619 corrupt=0; 375 offline patent tests, compile, Ruff, and diff check pass; CODE V zero. Ten direct parent-chain records are queued outside the frozen cohort. Generic 161 roots remains first; Family 89001540 is next. |
+| `260716-patent-generic-family-89001540` | complete-shovel-saturation-incomplete | Same-application A1/B2 records bind seven finite-object object-space telecentric nine-lens embodiments, TABLES 1-8, FIGS.1-28, and 29/27-page official rasters. Beam-splitter material/index/dispersion and exact system F-number are unpublished; Embodiment 1 also lacks numeric angular field, while Embodiment 7 retains the same undefined spacing chain in both official rasters. Each root expands to seven source terminals; no value is inferred/repaired and no worker/request/receipt/fingerprint/candidate/ZMX is created. Attempts 2/3 are semantic-equal excluding result attempt; result set `df1f858e...35df`, summary `9a909055...696a`, after census `65385b78...7d36`; audit 619/619 corrupt=0; 386 offline patent tests, compile, Ruff, and diff check pass; CODE V zero. Generic 159 roots remains first; Family 74187659 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260716-patent-generic-family-59199108/260716-patent-generic-family-59199108-PLAN.md`,
+`.planning/quick/260716-patent-generic-family-89001540/260716-patent-generic-family-89001540-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (161 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (159 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `89001540`, roots `US-12585096` and
-`US-20250102782`, shared layout `b9a50031...39ee`. Use the same strict before/after census,
+deterministic root/item/layout/family ordering is Family ID `74187659`, roots `US-11719909` and
+`US-20210026108`, shared layout `d41bca1a...071b`. Use the same strict before/after census,
 source-proven layout, append-only targeted replay, and full-pool audit contract. Remeasure after
 every shovel.
 

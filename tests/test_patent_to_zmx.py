@@ -9384,6 +9384,29 @@ def _endoscopic_three_lens_b2_source() -> tuple[str, str]:
     return patent_id, source_path.read_text(encoding="utf-8")
 
 
+def _aac_telecentric_nine_lens_sources() -> tuple[tuple[str, str], ...]:
+    root = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+    )
+    sources = (
+        (
+            "US-12585096-B2",
+            root / "USPAT" / "5bd759cb65d3d981" / "US-12585096-B2.html",
+        ),
+        (
+            "US-20250102782-A1",
+            root / "US-PGPUB" / "0d6559cf26680516" / "US-20250102782-A1.html",
+        ),
+    )
+    return tuple(
+        (patent_id, source_path.read_text(encoding="utf-8"))
+        for patent_id, source_path in sources
+    )
+
+
 def _samsung_iris_b2_source() -> tuple[str, str]:
     patent_id = "US-11435552-B2"
     source_path = (
@@ -9845,6 +9868,130 @@ def _install_endoscopic_three_lens_drift_profile(
                 for block in blocks
             ),
         },
+    )
+
+
+def _install_aac_telecentric_nine_lens_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    blocks = patent_to_zmx._patent_table_blocks(normalized)
+    original = patent_to_zmx._AAC_TELECENTRIC_NINE_LENS_SOURCE_PROFILES[patent_id]
+    monkeypatch.setitem(
+        patent_to_zmx._AAC_TELECENTRIC_NINE_LENS_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "table_block_sha256": tuple(
+                hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+                for block in blocks
+            ),
+        },
+    )
+
+
+def test_aac_telecentric_nine_lens_sources_are_exact_metadata_terminals() -> None:
+    expected_reason_codes = [
+        "metadata_unpublished.beam_splitter_material_f_number_and_angular_field_absent",
+        *[
+            "metadata_unpublished.beam_splitter_material_and_f_number_absent"
+            for _ in range(5)
+        ],
+        (
+            "metadata_unpublished.beam_splitter_material_f_number_and_"
+            "table7_spacing_identity_absent"
+        ),
+    ]
+
+    for patent_id, raw_text in _aac_telecentric_nine_lens_sources():
+        attempts = patent_to_zmx._parse_prescription_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+
+        assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 8))
+        assert [
+            getattr(attempt.error, "reason_code", None) for attempt in attempts
+        ] == expected_reason_codes
+        assert all(
+            isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+            and attempt.error.status == "metadata_unpublished"
+            and attempt.prescription is None
+            for attempt in attempts
+        )
+
+
+def test_aac_telecentric_nine_lens_source_hash_drift_fails_all_items() -> None:
+    patent_id, raw_text = _aac_telecentric_nine_lens_sources()[0]
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 7
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        f"AAC telecentric nine-lens official raw text hash changed for {patent_id}"
+    }
+
+
+def test_aac_telecentric_nine_lens_published_f_number_reopens_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _aac_telecentric_nine_lens_sources()[0]
+    raw_text = original.replace(
+        "BRIEF DESCRIPTION OF DRAWINGS",
+        "System F-number 2.8. BRIEF DESCRIPTION OF DRAWINGS",
+        1,
+    )
+    assert raw_text != original
+    _install_aac_telecentric_nine_lens_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 7
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "AAC telecentric nine-lens F-number marker" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_aac_telecentric_nine_lens_table7_spacing_drift_reopens_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _aac_telecentric_nine_lens_sources()[0]
+    raw_text = original.replace("d.sub.6-BS= 4.550", "d.sub.6-BS= 4.551", 1)
+    assert raw_text != original
+    _install_aac_telecentric_nine_lens_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 7
+    assert {str(attempt.error) for attempt in attempts} == {
+        "AAC telecentric TABLE 7 undefined d6-BS spacing chain changed"
+    }
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
     )
 
 
@@ -10791,6 +10938,58 @@ def test_convert_candidate_retains_endoscopic_terminals_without_worker(
     assert {attempt.reason_code for attempt in attempts} == {
         "metadata_unpublished.system_f_number_absent"
     }
+    assert all(attempt.raw_document_path for attempt in attempts)
+    assert not (tmp_path / "zmx").exists() or not any((tmp_path / "zmx").iterdir())
+
+
+def test_convert_candidate_retains_aac_telecentric_terminals_without_worker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, raw_text = _aac_telecentric_nine_lens_sources()[0]
+
+    async def fake_fetch(
+        _client: object,
+        _token: str,
+        fetched_patent_id: str,
+    ) -> patent_to_zmx.FetchedPatentHtml:
+        assert fetched_patent_id == patent_id
+        return patent_to_zmx.FetchedPatentHtml(
+            html=raw_text,
+            source_bucket="USPAT",
+            attempts=(
+                patent_to_zmx.SourceFetchAttempt(
+                    publication_id=fetched_patent_id,
+                    source_bucket="USPAT",
+                    state=patent_to_zmx.SourceFetchState.RETAINED,
+                    http_status=200,
+                ),
+            ),
+        )
+
+    def forbidden_worker(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("metadata-unpublished outcomes must not launch a worker")
+
+    monkeypatch.setattr(patent_to_zmx, "_fetch_patent_html", fake_fetch)
+    monkeypatch.setattr(patent_to_zmx, "run_patent_conversion_attempt", forbidden_worker)
+    attempts = asyncio.run(
+        patent_to_zmx._convert_candidate(
+            object(),
+            "token",
+            patent_to_zmx.PatentCandidate(
+                patent_id=patent_id,
+                title="fixture",
+                source_url="",
+                pool_path=tmp_path / "pool.jsonl",
+                line_number=1,
+            ),
+            tmp_path / "zmx",
+            raw_document_dir=tmp_path / "raw",
+        )
+    )
+
+    assert [attempt.status for attempt in attempts] == ["metadata_unpublished"] * 7
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 8))
     assert all(attempt.raw_document_path for attempt in attempts)
     assert not (tmp_path / "zmx").exists() or not any((tmp_path / "zmx").iterdir())
 

@@ -1,0 +1,60 @@
+{
+  "after_census": {
+    "affected_items": 159,
+    "affected_roots": 159,
+    "artifact_sha256": "65385b78274c0a2a2638011b05b8f830cba821aa4de7ccf0803da6e1a3af7d36",
+    "independent_repeat_sha256": "65385b78274c0a2a2638011b05b8f830cba821aa4de7ccf0803da6e1a3af7d36",
+    "result_set_sha256": "df1f858e126d6cb4541f1cb33f17fb4513ca9cc8b83fa3a5bb0390379f1635df"
+  },
+  "before_census": {
+    "affected_items": 161,
+    "affected_roots": 161,
+    "artifact_sha256": "b45149cc9a064b42e6cff9c84c7ab8db816a98c05b926296cf64bce980dd8432",
+    "result_set_sha256": "261a2747bba7ce93612121c408404742b1f75871289c6999c9f05df7837b30e6"
+  },
+  "cohort_sha256": "e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b",
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "final_report_sha256": "d6d14b88c3a2df97fd7989e8bc8b7f6b388b7fc8eeb2412b5aaa8d7d14fc5cf0",
+  "final_result_set_sha256": "df1f858e126d6cb4541f1cb33f17fb4513ca9cc8b83fa3a5bb0390379f1635df",
+  "final_summary_sha256": "9a9090553c17c64363d1548da943bfb6770fd4a6c152e623ae13eadffa65696a",
+  "roots": {
+    "US-12585096": [
+      {
+        "attempt": 2,
+        "result_sha256": "b1b4af38b658f0e9569db8d903c5a646c52b103ab946be9de926795dd15521b8",
+        "semantic_sha256": "4cd5b646b350ef93f223faed27d54abbd04ce103ef38e556fba4877446f2d0d5"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "39ea8f8eabbc1fe064e82ed613c00d75042b7048d13a8e85f765619dc5e0220d",
+        "semantic_sha256": "4cd5b646b350ef93f223faed27d54abbd04ce103ef38e556fba4877446f2d0d5"
+      }
+    ],
+    "US-20250102782": [
+      {
+        "attempt": 2,
+        "result_sha256": "2ae5ee0ea572e9d6023f341c79c01ce75b98c6bde1a854f6153aaed1ec98ec20",
+        "semantic_sha256": "dc4097438e2311a546e782797da9be7c25a839aaae3614996c615bc54cbd02aa"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "658e6682e8001f6ac178f83a4bc2f360e6049c7cb594165811db1331b9212341",
+        "semantic_sha256": "dc4097438e2311a546e782797da9be7c25a839aaae3614996c615bc54cbd02aa"
+      }
+    ]
+  },
+  "schema_version": 1,
+  "strict_audit": {
+    "cohort_roots": 619,
+    "corrupt_results": 0,
+    "missing_roots": 0,
+    "root_state_counts": {
+      "converted_pending_intake": 25,
+      "mixed": 143,
+      "parser_review_required": 345,
+      "terminal": 106
+    }
+  }
+}

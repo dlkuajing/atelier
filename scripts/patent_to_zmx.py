@@ -380,6 +380,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_aac_telecentric_nine_lens_metadata_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_endoscopic_three_lens_missing_f_number_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2334,6 +2340,78 @@ _ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES: dict[
             "b02909799206e6cb96aa6b264556a5ca84d7869c67c09ce9818f770a91f069a9",
             "5a27a1648e7b01f5f62604fad096a6489d2896e2fa378c08d4eb412d10de6eba",
             "3b09b3b9cc93b8c9eac2a600877be07f09e683e3df1a47807cea463aa8493394",
+        ),
+    },
+}
+_AAC_TELECENTRIC_NINE_LENS_TITLE_PATTERN = re.compile(
+    r"\bInventor\(s\)\s+Teranishi;\s*Takaaki\s+CAMERA\s+TELECENTRIC\s+"
+    r"LENS\s+Abstract\b",
+    flags=re.IGNORECASE,
+)
+_AAC_TELECENTRIC_NINE_LENS_FIGURES = tuple(range(1, 29))
+_AAC_TELECENTRIC_NINE_LENS_EFL_ROW = (
+    "f 140.015 228.181 192.943 139.411 167.106 92.494 143.161"
+)
+_AAC_TELECENTRIC_NINE_LENS_ENTRANCE_PUPIL_DIAMETERS = (
+    "4633.628",
+    "5000.248",
+    "3592.504",
+    "3820.700",
+    "25971.381",
+    "2624.704",
+    "4516.334",
+)
+_AAC_TELECENTRIC_NINE_LENS_DIAGONAL_FIELDS = (
+    "0.01",
+    "0.03",
+    "0.02",
+    "0.00",
+    "0.03",
+    "0.02",
+)
+_AAC_TELECENTRIC_NINE_LENS_TABLE7_UNDEFINED_SPACING = (
+    "R6 32.940 d6= 0.000 d.sub.6-BS= 4.550 d.sub.BS= 35.000 "
+    "d.sub.BS-s1= 7.220 d.sub.s1-7= 5.600 G4"
+)
+_AAC_TELECENTRIC_NINE_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12585096-B2": {
+        "raw_document_sha256": (
+            "5bd759cb65d3d9815f6218a79994b91201eb58bb399bea6891abb5673f453987"
+        ),
+        "normalized_text_sha256": (
+            "50209f643a66dde1859ee71576e3558b832b9c47b12ff901ecb6db8acd11080c"
+        ),
+        "application_number": "18/402737",
+        "relationship_markers": ("US 20250102782 A1 Mar. 27, 2025",),
+        "table_block_sha256": (
+            "306ac2a003d6c899f1af8b1e5e36ab904d206f7728436dd02283354ee398814a",
+            "3b137d240c1109be142ad07fa20a9f8a44d946cac7b7724bdc1d96078811eb8e",
+            "5c2b5de92f194de2682276db18ad95e41750eae33a5005fd813b3de82235fa39",
+            "7e4aa7c6ba50443229b52b5125c432ac2202c2d706df3610b5419c06dba2613a",
+            "7dd9d610face823b542c774d07f1a037e10364f1425ff0e632118aed77f5958e",
+            "1891ea05d2dc0f86146f23d07a3d1529dfbf652242e47c652cfa8a2013281dee",
+            "c22d01feff15031f2b32b9dc9efd58d316cea6a71d03468e3f9377237a282a9c",
+            "b4ab1dcefdaef19c09e7eef199e4f8fbff3226576ff5ad4bbcb957a43a12109d",
+        ),
+    },
+    "US-20250102782-A1": {
+        "raw_document_sha256": (
+            "0d6559cf2668051684f43dc51245307286441d21d0c558ee66728d0d2f1c7625"
+        ),
+        "normalized_text_sha256": (
+            "3b9bfd136910fe58e15feeb9dc1b35c750eb3ac3aafd1ba21888faae42840fae"
+        ),
+        "application_number": "18/402737",
+        "relationship_markers": (),
+        "table_block_sha256": (
+            "b87e47bd6c8d5f4489e16543a95e96b99ab41f5e5068344d927367dcef946f2e",
+            "53c557ff64b95940ee122ce13ba71316e542737651a67a1bafa9b4d3d9d67746",
+            "8b1eb7a1114ddf5d771e93c859dff9ca583978c6cbaeaf910c88a607f3ed5cfb",
+            "f63364ebd339e8aefb7203245b2f7339ab4a97b3456b89654f2d666a89727961",
+            "9a13f5b1005584e322232be3fd3d5f945925da9355d427beab9e23aab9969544",
+            "cb5e18281bcd95a9f88321ed52d3ac73bb70142d03f66d314a470a902c83468c",
+            "ad1283c9ee8085d5afa8e7928c2177d6942ff8b6a05caa46af193ed8f86c75ef",
+            "507c0a28cf5c700e2dcf3ab78bba63c7ded99ba496d6ada8e5a81429e70e392b",
         ),
     },
 }
@@ -12879,6 +12957,332 @@ def _classify_endoscopic_three_lens_missing_f_number_attempts(
         )
         for index, embodiment in enumerate(embodiments, start=1)
     ]
+
+
+def _classify_aac_telecentric_nine_lens_metadata_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain exact Family 89001540 prescriptions with source-proven gaps."""
+
+    profile = _AAC_TELECENTRIC_NINE_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    embodiments = tuple(
+        f"AAC object-space telecentric nine-lens embodiment {index}"
+        for index in range(1, 8)
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"AAC telecentric nine-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"AAC telecentric nine-lens normalized text hash changed for {patent_id}"
+            )
+        if len(_AAC_TELECENTRIC_NINE_LENS_TITLE_PATTERN.findall(text)) != 1:
+            raise PatentParseError("AAC telecentric nine-lens title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*89001540", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("AAC telecentric nine-lens Family ID binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "AAC telecentric nine-lens application binding changed"
+            )
+        for marker in profile["relationship_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"AAC telecentric nine-lens relationship marker {marker!r} changed"
+                )
+
+        brief_match = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+DRAWINGS(?P<body>.*?)"
+            r"DESCRIPTION\s+OF\s+EMBODIMENTS",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError(
+                "AAC telecentric nine-lens drawing description is missing"
+            )
+        declared_figures = tuple(
+            int(figure)
+            for figure in re.findall(
+                r"FIG\.\s*<b>(\d+)</b></figref>\s+is\s+",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _AAC_TELECENTRIC_NINE_LENS_FIGURES:
+            raise PatentParseError(
+                "AAC telecentric nine-lens 28-figure denominator changed"
+            )
+        drawing_text = normalize_patent_text(brief_match.group("body"))
+        drawing_roles = (
+            len(
+                re.findall(
+                    r"structural\s+schematic\s+diagram",
+                    drawing_text,
+                    re.IGNORECASE,
+                )
+            ),
+            len(
+                re.findall(
+                    r"(?:structural\s+)?schematic\s+diagram\s+of\s+(?:the\s+)?"
+                    r"longitudinal\s+aberration",
+                    drawing_text,
+                    re.IGNORECASE,
+                )
+            ),
+            len(
+                re.findall(
+                    r"schematic\s+diagram\s+of\s+lateral\s+color",
+                    drawing_text,
+                    re.IGNORECASE,
+                )
+            ),
+            len(
+                re.findall(
+                    r"schematic\s+diagram\s+of\s+field\s+curvature\s+and\s+"
+                    r"distortion",
+                    drawing_text,
+                    re.IGNORECASE,
+                )
+            ),
+        )
+        if drawing_roles != (8, 7, 7, 7):
+            raise PatentParseError(
+                f"AAC telecentric nine-lens drawing roles changed: {drawing_roles}"
+            )
+
+        for embodiment_number in range(1, 8):
+            heading_pattern = (
+                rf"<br\s*/>\s*Embodiment\s+{embodiment_number}\s*<br\s*/>"
+            )
+            if len(re.findall(heading_pattern, raw_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "AAC telecentric nine-lens embodiment "
+                    f"{embodiment_number} heading changed"
+                )
+            table_binding = (
+                rf"Table\s+{embodiment_number}\s+shows\s+design\s+data\s+of\s+"
+                rf"(?:a|the)\s+"
+                rf"camera\s+telecentric\s+lens\s+{10 * embodiment_number}\s+as\s+"
+                rf"described\s+in\s+Embodiment\s+{embodiment_number}"
+            )
+            if len(re.findall(table_binding, text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "AAC telecentric nine-lens embodiment "
+                    f"{embodiment_number} table binding changed"
+                )
+        if re.search(r"<br\s*/>\s*Embodiment\s+8\s*<br\s*/>", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "AAC telecentric nine-lens source gained an eighth embodiment"
+            )
+
+        blocks = _patent_table_blocks(text)
+        table_numbers = tuple(block.number for block in blocks)
+        if table_numbers != tuple(range(1, 9)):
+            raise PatentParseError(
+                "AAC telecentric nine-lens table sequence is "
+                f"{table_numbers}; expected 1..8"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError("AAC telecentric nine-lens table digest changed")
+
+        for table_number, block in enumerate(blocks[:7], start=1):
+            expected_row_count = 2 if table_number == 1 else 1
+            for lens_number in range(1, 10):
+                if len(re.findall(rf"\bG{lens_number}\b", block.text)) != 1:
+                    raise PatentParseError(
+                        f"AAC telecentric TABLE {table_number} G{lens_number} row changed"
+                    )
+                for marker in (f"nd{lens_number}", f"v{lens_number}"):
+                    if (
+                        len(re.findall(rf"\b{marker}\b", block.text, re.IGNORECASE))
+                        != expected_row_count
+                    ):
+                        raise PatentParseError(
+                            f"AAC telecentric TABLE {table_number} {marker} row changed"
+                        )
+            for surface_number in range(1, 19):
+                if (
+                    len(re.findall(rf"\bR{surface_number}\b", block.text))
+                    != expected_row_count
+                ):
+                    raise PatentParseError(
+                        f"AAC telecentric TABLE {table_number} R{surface_number} row changed"
+                    )
+        if len(
+            re.findall(
+                re.escape(_AAC_TELECENTRIC_NINE_LENS_EFL_ROW),
+                blocks[7].text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("AAC telecentric nine-lens TABLE 8 EFL row changed")
+
+        for diameter in _AAC_TELECENTRIC_NINE_LENS_ENTRANCE_PUPIL_DIAMETERS:
+            if len(re.findall(rf"entrance\s+pupil\s+diameter.*?{diameter}\s+mm", text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"AAC telecentric nine-lens entrance-pupil value {diameter} changed"
+                )
+        if len(
+            re.findall(
+                r"full\s+field\s+of\s+view\s+image\s+height\s+is\s+18\.5\s+mm",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 7:
+            raise PatentParseError(
+                "AAC telecentric nine-lens full-field image-height denominator changed"
+            )
+        if len(
+            re.findall(
+                r"(?:the\s+)?numerical\s+aperture\s+is\s+0\.13",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "AAC telecentric nine-lens embodiment 1 numerical aperture changed"
+            )
+        for field in dict.fromkeys(_AAC_TELECENTRIC_NINE_LENS_DIAGONAL_FIELDS):
+            observed = len(
+                re.findall(
+                    rf"field\s+of\s+view\s+in\s+a\s+diagonal\s+direction\s+is\s+"
+                    rf"{re.escape(field)}°",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            expected = _AAC_TELECENTRIC_NINE_LENS_DIAGONAL_FIELDS.count(field)
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC telecentric nine-lens diagonal field {field}° changed"
+                )
+        for phrase, expected in {
+            "object-space telecentric design": 1,
+            "entrance pupil is located at infinity": 1,
+            "d11-BS: on-axis distance": 1,
+            "dBS: on-axis thickness of the beam splitting prism BS": 1,
+        }.items():
+            if len(re.findall(re.escape(phrase), text, re.IGNORECASE)) != expected:
+                raise PatentParseError(
+                    f"AAC telecentric nine-lens phrase {phrase!r} changed"
+                )
+
+        if len(
+            re.findall(
+                re.escape(_AAC_TELECENTRIC_NINE_LENS_TABLE7_UNDEFINED_SPACING),
+                blocks[6].text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "AAC telecentric TABLE 7 undefined d6-BS spacing chain changed"
+            )
+        for pattern in (
+            r"\bF\s*[- ]?number\b",
+            r"\bFNO\b",
+            r"\bF\s*/\s*(?:#|No\.?|Number|\d)",
+            r"\baperture\s+number\b",
+        ):
+            observed = len(re.findall(pattern, text, re.IGNORECASE))
+            if observed != 0:
+                raise PatentParseError(
+                    f"AAC telecentric nine-lens F-number marker {pattern!r} occurs "
+                    f"{observed}; expected 0"
+                )
+        for pattern in (
+            r"\bndBS\b",
+            r"\brefractive\s+index\b[^.]{0,120}\bbeam\s+splitting\s+prism\b",
+            r"\bAbbe\b[^.]{0,120}\bbeam\s+splitting\s+prism\b",
+        ):
+            observed = len(re.findall(pattern, text, re.IGNORECASE))
+            if observed != 0:
+                raise PatentParseError(
+                    f"AAC telecentric nine-lens prism-material marker {pattern!r} "
+                    f"occurs {observed}; expected 0"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all seven disclosed examples
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for index, embodiment in enumerate(embodiments, start=1):
+        if index == 1:
+            reason_code = (
+                "metadata_unpublished.beam_splitter_material_f_number_and_"
+                "angular_field_absent"
+            )
+            detail = (
+                "TABLE 1 publishes the nine-lens finite-object prescription, direct EFL, "
+                "NA 0.13, and full-field image height 18.5 mm, but no beam-splitter "
+                "refractive index/dispersion, exact system F-number, or angular field; "
+                "NA and entrance-pupil diameter are not converted to an F-number"
+            )
+        elif index == 7:
+            reason_code = (
+                "metadata_unpublished.beam_splitter_material_f_number_and_"
+                "table7_spacing_identity_absent"
+            )
+            detail = (
+                "TABLE 7 publishes direct EFL and diagonal field, but no beam-splitter "
+                "refractive index/dispersion or exact system F-number; both official HTML "
+                "versions and the official A1/B2 raster pages also publish an undefined "
+                "d6-BS/dBS/dBS-S1/dS1-7 chain before G4 in addition to the defined "
+                "d11-BS beam-splitter chain after G6, so no row is repaired or discarded"
+            )
+        else:
+            reason_code = (
+                "metadata_unpublished.beam_splitter_material_and_f_number_absent"
+            )
+            detail = (
+                f"TABLE {index} publishes the nine-lens finite-object prescription, "
+                "direct EFL, and diagonal field, but no beam-splitter refractive "
+                "index/dispersion or exact system F-number; numerical aperture and "
+                "entrance-pupil diameter are not substituted or used to derive it"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code=reason_code,
+                    detail=detail,
+                ),
+            )
+        )
+    return attempts
 
 
 def _parse_samsung_iris_surface_table(
