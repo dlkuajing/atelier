@@ -373,6 +373,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_sunny_fingerprint_wide_angle_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_lens_barrel_absorbing_geometry_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -12684,6 +12690,39 @@ _SUNNY_LONG_FOCUS_FOLDED_SOURCE_PROFILES: dict[str, dict[str, str]] = {
         "table_one_label": "I",
     },
 }
+_SUNNY_FINGERPRINT_WIDE_ANGLE_SOURCE_PROFILES: dict[str, dict[str, str]] = {
+    "US-12216247-B2": {
+        "raw_document_sha256": (
+            "52c751834233443040bbd188c77c584a5e9a38a3ac5e99cc30a8ec7ecf8dee2b"
+        ),
+        "normalized_text_sha256": (
+            "491a61d9331cb197685dd764a095c0ab3a5b6049352cc3e073373a6aeeae1039"
+        ),
+    },
+    "US-20220244497-A1": {
+        "raw_document_sha256": (
+            "f19c4e1fdb2e65940f9c998688aab0aa50cadddd2d5370973045788dba408cd0"
+        ),
+        "normalized_text_sha256": (
+            "e1e1bdcf7c26956d4fd3dda9088ff3f0576b039185b680f028ac05ff0b98d40b"
+        ),
+    },
+}
+_SUNNY_FINGERPRINT_WIDE_ANGLE_METADATA = (
+    (0.26, 2.62, 1.01, 149.9),
+    (0.30, 2.58, 0.96, 145.7),
+    (0.27, 2.75, 0.96, 142.9),
+    (0.29, 2.82, 1.04, 141.4),
+    (0.29, 2.81, 1.03, 144.0),
+)
+_SUNNY_FINGERPRINT_WIDE_ANGLE_F_NUMBERS = (1.40, 1.36, 1.38, 1.48, 1.49)
+_SUNNY_FINGERPRINT_WIDE_ANGLE_SURFACE_DIGESTS = (
+    "b19c6137166bb6de08b3890d56a858e4536cb3b5323b5e213cbd372f5f449917",
+    "ef8f3e7e8beb5468bf9b321d122ff9cf36d642c029386ceb73d407fec6cd7f0e",
+    "ba9f4a8a044d99cd4874a88f5f7136643c113cb90cd2ccebe508321601529e47",
+    "58241f6a7754971f27ed27c67c2b8a4916a1db06ecb81397ffbb8eeb67e01363",
+    "4dc41a30e934a00f5f23f741018c234b4ee6ff1f4b5b6819842e4cfc3f6901c7",
+)
 _SUNNY_LONG_FOCUS_FOLDED_SOURCE_ANCHOR_PATTERN = re.compile(
     r"\bTABLE-US-(?P<anchor>\d+)\s+TABLE\s+(?P<label>\d+|I)\s+",
     flags=re.IGNORECASE,
@@ -14296,6 +14335,204 @@ def _parse_sunny_long_focus_folded_attempts(
                 )
             )
     return attempts
+
+
+def _parse_sunny_fingerprint_wide_angle_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Recover all five source-locked Family 75759822 prescriptions.
+
+    The exact publications define FOV as the maximum/full field and publish a
+    numeric FOV for every embodiment.  ``PatentPrescription`` stores half
+    field, so division by two is a source-defined unit transform.  Published
+    ImgH remains provenance evidence: it is not substituted for paraxial
+    ``f*tan(HFOV)`` because the disclosed designs have distortion.
+    """
+
+    profile = _SUNNY_FINGERPRINT_WIDE_ANGLE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=f"Sunny fingerprint embodiment {index}",
+                error=exc,
+            )
+            for index in range(1, 6)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Sunny fingerprint official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Sunny fingerprint normalized text hash changed for {patent_id}"
+            )
+        if re.search(
+            rf"^{re.escape(patent_id)}\s+-\s+Patent\s+Public\s+Search\s+\|\s+USPTO\b"
+            r".*?\bOPTICAL\s+IMAGING\s+LENS\s+ASSEMBLY\s+AND\s+FINGERPRINT\s+"
+            r"IDENTIFICATION\s+DEVICE\s+Abstract\b",
+            text,
+            flags=re.IGNORECASE,
+        ) is None:
+            raise PatentParseError("Sunny fingerprint title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*75759822", text, flags=re.IGNORECASE)) != 1:
+            raise PatentParseError("Sunny fingerprint Family ID binding changed")
+        if len(re.findall(r"Appl\.\s*No\.:\s*17\s*/\s*575671", text)) != 1:
+            raise PatentParseError("Sunny fingerprint application binding changed")
+        if patent_id.upper() == "US-12216247-B2" and not _grant_binds_prior_publication(
+            raw_text,
+            "US-20220244497-A1",
+        ):
+            raise PatentParseError("Sunny fingerprint prior-publication binding changed")
+        if not _sunny_fov_is_full_angle(text):
+            raise PatentParseError("Sunny fingerprint full-FOV definition changed")
+
+        table_bindings = [
+            (int(match.group("anchor")), int(match.group("label")))
+            for match in re.finditer(
+                r"\bTABLE-US-(?P<anchor>\d+)\s+TABLE\s+(?P<label>\d+)\s+",
+                text,
+                flags=re.IGNORECASE,
+            )
+        ]
+        expected_table_bindings = [(index, index) for index in range(1, 12)]
+        if table_bindings != expected_table_bindings:
+            raise PatentParseError("Sunny fingerprint source tables 1-11 changed")
+        blocks = _patent_table_blocks(text)
+        if len(blocks) != 11 or [block.number for block in blocks] != list(range(1, 12)):
+            raise PatentParseError("Sunny fingerprint table-block denominator changed")
+        if [
+            index for index, block in enumerate(blocks) if _sunny_surface_block_signature(block.text)
+        ] != [0, 2, 4, 6, 8]:
+            raise PatentParseError("Sunny fingerprint surface-table positions changed")
+
+        metadata = _sunny_fingerprint_wide_angle_metadata(text)
+        if metadata != _SUNNY_FINGERPRINT_WIDE_ANGLE_METADATA:
+            raise PatentParseError("Sunny fingerprint embodiment metadata changed")
+        f_numbers = _sunny_group_row_values(
+            blocks,
+            label_patterns=_SUNNY_GROUP_FNO_LABELS,
+            embodiment_count=5,
+            reject_compound_fno=True,
+        )
+        if tuple(f_numbers or ()) != _SUNNY_FINGERPRINT_WIDE_ANGLE_F_NUMBERS:
+            raise PatentParseError("Sunny fingerprint F-number row changed")
+
+        prescriptions: list[PatentPrescription] = []
+        expected_rows = {"S01", "S02", "STO", *(f"S{index}" for index in range(1, 10))}
+        for embodiment_number in range(1, 6):
+            surface_block = blocks[(embodiment_number - 1) * 2]
+            coefficient_block = blocks[(embodiment_number - 1) * 2 + 1]
+            surfaces, index_by_row_key = _parse_sunny_surface_table(
+                surface_block.text,
+                embodiment_number=embodiment_number,
+            )
+            if set(index_by_row_key) != expected_rows:
+                raise PatentParseError(
+                    f"Sunny fingerprint embodiment {embodiment_number} surface sequence changed"
+                )
+            coefficients: dict[int, dict[str, float]] = {}
+            _parse_sunny_asphere_block_into(
+                coefficient_block.text,
+                index_by_row_key=index_by_row_key,
+                coefficients=coefficients,
+            )
+            expected_coefficient_indices = {
+                index_by_row_key[f"S{index}"] for index in range(1, 7)
+            }
+            if set(coefficients) != expected_coefficient_indices or any(
+                len(values) != 9 for values in coefficients.values()
+            ):
+                raise PatentParseError(
+                    f"Sunny fingerprint embodiment {embodiment_number} coefficients changed"
+                )
+            for surface in surfaces:
+                values = coefficients.get(surface.index)
+                if values is not None:
+                    surface.asphere_coefficients.update(values)
+                    surface.surface_type = "ASP"
+            if (
+                _sunny_fingerprint_wide_angle_surface_digest(surfaces)
+                != _SUNNY_FINGERPRINT_WIDE_ANGLE_SURFACE_DIGESTS[embodiment_number - 1]
+            ):
+                raise PatentParseError(
+                    f"Sunny fingerprint embodiment {embodiment_number} optical cells changed"
+                )
+
+            focal_length, _ttl, _published_imgh, full_fov = metadata[
+                embodiment_number - 1
+            ]
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=f"Sunny fingerprint embodiment {embodiment_number}",
+                focal_length_mm=focal_length,
+                f_number=_SUNNY_FINGERPRINT_WIDE_ANGLE_F_NUMBERS[embodiment_number - 1],
+                hfov_deg=full_fov / 2.0,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+            prescriptions.append(prescription)
+    except Exception as exc:  # noqa: BLE001 - retain all five disclosed embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=prescription.embodiment,
+            prescription=prescription,
+        )
+        for index, prescription in enumerate(prescriptions, start=1)
+    ]
+
+
+def _sunny_fingerprint_wide_angle_metadata(
+    text: str,
+) -> tuple[tuple[float, float, float, float], ...]:
+    pattern = re.compile(
+        r"\bIn\s+the\s+embodiment,\s+a\s+total\s+effective\s+focal\s+length\s+f\s+of\s+"
+        r"the\s+optical\s+imaging\s+lens\s+assembly\s+is\s+"
+        rf"(?P<f>{NUMBER_PATTERN})\s+mm\.\s+TTL\s+is\s+a\s+total\s+length\s+of\s+the\s+"
+        r"optical\s+imaging\s+lens\s+assembly\s*"
+        r"(?:\(i\.e\.,[^)]*\))?,\s+and\s+TTL\s+is\s+"
+        rf"(?P<ttl>{NUMBER_PATTERN})\s+mm\.\s+ImgH\s+is\s+a\s+half\s+of\s+a\s+diagonal\s+"
+        r"length\s+of\s+an\s+effective\s+pixel\s+region\s+on\s+the\s+imaging\s+surface\s+"
+        r"S\s*9\s+of\s+the\s+optical\s+imaging\s+lens\s+assembly,\s+and\s+ImgH\s+is\s+"
+        rf"(?P<imgh>{NUMBER_PATTERN})\s+mm\.\s+FOV\s+is\s+a\s+(?:maximum\s+)?field\s+of\s+"
+        r"view\s+of\s+the\s+optical\s+imaging\s+lens\s+assembly,\s+and\s+FOV\s+is\s+"
+        rf"(?:maximally\s+)?(?P<fov>{NUMBER_PATTERN})°\.",
+        flags=re.IGNORECASE,
+    )
+    return tuple(
+        tuple(_parse_number(match.group(field)) for field in ("f", "ttl", "imgh", "fov"))
+        for match in pattern.finditer(text)
+    )
+
+
+def _sunny_fingerprint_wide_angle_surface_digest(surfaces: list[PatentSurface]) -> str:
+    payload = [
+        (
+            surface.label,
+            surface.radius_mm,
+            surface.thickness_mm,
+            surface.nd,
+            surface.vd,
+            surface.surface_type,
+            sorted(surface.asphere_coefficients.items()),
+        )
+        for surface in surfaces
+    ]
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _sunny_long_focus_folded_source_blocks(

@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `450f7be019a47b6492afd0fc0849b2036d1f5071a452b386453cc3b76c47259f`
+- result_set_sha256: `e4264482831b0e1bf06dd619cb7ded9ee649ee57c4f4c99eef7f300c739e1150`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -18,9 +18,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root states
 
-- `converted_pending_intake`: 23
+- `converted_pending_intake`: 25
 - `terminal`: 86
-- `parser_review_required`: 369
+- `parser_review_required`: 367
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -28,9 +28,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item states
 
-- `converted_pending_intake`: 534
+- `converted_pending_intake`: 544
 - `terminal`: 874
-- `parser_review_required`: 1420
+- `parser_review_required`: 1410
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -48,16 +48,16 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 369
+- `parser_review_required.all_disclosed_items_rejected`: 367
 - `mixed_nonterminal.multiple_item_states`: 141
 - `terminal.all_disclosed_items_terminal`: 86
-- `converted_pending_intake.all_disclosed_items_converted`: 23
+- `converted_pending_intake.all_disclosed_items_converted`: 25
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1420
+- `parser_review_required.deterministic_parser_rejected`: 1410
 - `terminal.process_receipt_classified`: 722
-- `converted_pending_intake.process_isolated_zmx_ready`: 534
+- `converted_pending_intake.process_isolated_zmx_ready`: 544
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
 - `terminal.metadata_unpublished.system_f_number_absent`: 30
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -87,8 +87,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Parser failure signatures
 
-- `sunny_embodiment_metadata_missing`: 187
 - `generic_summary_metadata_missing`: 183
+- `sunny_embodiment_metadata_missing`: 177
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115

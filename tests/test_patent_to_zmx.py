@@ -7187,6 +7187,151 @@ def test_sunny_long_focus_source_locked_product_drift_fails_all_items(
     } == {"Sunny long-focus field-product token sequence changed"}
 
 
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
+            "US-12216247-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "52c7518342334430",
+                "US-12216247-B2.html",
+            ),
+        ),
+        (
+            "US-20220244497-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "f19c4e1fdb2e6594",
+                "US-20220244497-A1.html",
+            ),
+        ),
+    ),
+)
+def test_sunny_fingerprint_wide_angle_exact_sources_recover_all_five_embodiments(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4, 5]
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    assert [prescription.focal_length_mm for prescription in prescriptions] == pytest.approx(
+        [0.26, 0.30, 0.27, 0.29, 0.29]
+    )
+    assert [prescription.f_number for prescription in prescriptions] == pytest.approx(
+        [1.40, 1.36, 1.38, 1.48, 1.49]
+    )
+    assert [prescription.hfov_deg for prescription in prescriptions] == pytest.approx(
+        [74.95, 72.85, 71.45, 70.70, 72.00]
+    )
+    assert [prescription_fingerprint(prescription) for prescription in prescriptions] == [
+        "49bac5303aeebcea",
+        "d8f042c1b2c3a55e",
+        "64a36b2afe0001f8",
+        "9b5f2449551c89d2",
+        "55b063230f9e7c27",
+    ]
+    assert all(len(prescription.surfaces) == 12 for prescription in prescriptions)
+    assert all(
+        sum(surface.surface_type == "ASP" for surface in prescription.surfaces) == 6
+        for prescription in prescriptions
+    )
+    assert all(prescription.surfaces[0].nd == pytest.approx(1.52) for prescription in prescriptions)
+    assert all(prescription.surfaces[4].label == "Stop" for prescription in prescriptions)
+    assert all(prescription.surfaces[-1].label == "Surface S9" for prescription in prescriptions)
+
+
+def test_sunny_fingerprint_wide_angle_metadata_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-12216247-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "52c7518342334430"
+        / "US-12216247-B2.html"
+    )
+    raw_text = source_path.read_text(encoding="utf-8").replace(
+        "FOV is 149.9°",
+        "FOV is 149.8°",
+        1,
+    )
+    monkeypatch.setitem(
+        patent_to_zmx._SUNNY_FINGERPRINT_WIDE_ANGLE_SOURCE_PROFILES,
+        patent_id,
+        {
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                patent_to_zmx.normalize_patent_text(raw_text).encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Sunny fingerprint embodiment metadata changed"
+    }
+
+
+def test_sunny_fingerprint_wide_angle_optical_cell_drift_fails_all_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id = "US-12216247-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "52c7518342334430"
+        / "US-12216247-B2.html"
+    )
+    original = source_path.read_text(encoding="utf-8")
+    raw_text = original.replace(
+        "0.2445",
+        "0.2446",
+        1,
+    )
+    assert raw_text != original
+    monkeypatch.setitem(
+        patent_to_zmx._SUNNY_FINGERPRINT_WIDE_ANGLE_SOURCE_PROFILES,
+        patent_id,
+        {
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                patent_to_zmx.normalize_patent_text(raw_text).encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Sunny fingerprint embodiment 1 optical cells changed"
+    }
+
+
 def _lens_barrel_absorbing_source_fixture(patent_id: str) -> str:
     headings = " ".join(
         f"{index}{'st' if index == 1 else 'nd' if index == 2 else 'rd' if index == 3 else 'th'} "
