@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "family_id": "74529057",
+  "checked_at_utc": "2026-07-16T22:58:43.6517873Z",
+  "current_frozen_cohort_roots": ["US-20210364452"],
+  "classification_publication": "US-20210364452-A1",
+  "source_url": "https://patents.google.com/patent/US20210364452A1/en",
+  "external_family_members": [
+    {"publication_id": "US-11852595-B2", "application_number": "17/019421", "relationship": "same_application_grant", "publication_date": "2023-12-26", "frozen_cohort_membership": false},
+    {"publication_id": "TWI742687B", "application_number": "TW109117244A", "relationship": "priority_application_grant", "publication_date": "2021-10-11", "frozen_cohort_membership": false},
+    {"publication_id": "TW202144810A", "application_number": "TW109117244A", "relationship": "priority_application_publication", "publication_date": "2021-12-01", "frozen_cohort_membership": false},
+    {"publication_id": "CN212539582U", "application_number": "CN202021756843.1U", "relationship": "foreign_family_utility_model", "publication_date": "2021-02-12", "frozen_cohort_membership": false},
+    {"publication_id": "CN113776779A", "application_number": "CN202010846451.2A", "relationship": "foreign_family_application", "publication_date": "2021-12-10", "frozen_cohort_membership": false},
+    {"publication_id": "CN113776779B", "application_number": "CN202010846451.2A", "relationship": "foreign_family_grant", "publication_date": "2026-01-02", "frozen_cohort_membership": false}
+  ],
+  "queue_effect": "These six publications remain outside the frozen 619-root replay cohort. They are recorded for later family/source exhaustion and are not used to borrow numeric truth into the A1 classification."
+}

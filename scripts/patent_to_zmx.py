@@ -449,6 +449,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_largan_plastic_lens_inspection_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -3782,6 +3790,165 @@ _LARGAN_AUTOFOCUS_MODULE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "g=0.18 [mm]": 1,
             "g=0.23 [mm]": 1,
         },
+    },
+}
+
+_LARGAN_PLASTIC_LENS_INSPECTION_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*PLASTIC\s+LENS\s+ELEMENT\s+AND\s+IMAGING\s+LENS\s+"
+    r"ASSEMBLY\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_LARGAN_PLASTIC_LENS_INSPECTION_FIGURES = (
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "1E",
+    "1F",
+    "1G",
+    "1H",
+    "1I",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "2E",
+    "2F",
+    "2G",
+    "2H",
+    "2I",
+    "2J",
+    "2K",
+    "2L",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+)
+_LARGAN_PLASTIC_LENS_INSPECTION_ITEMS = (
+    (1, "Largan plastic-lens optical-inspection assembly first embodiment"),
+    (2, "Largan plastic-lens optical-inspection assembly second embodiment"),
+    (3, "Largan plastic-lens optical-inspection device third embodiment"),
+)
+_LARGAN_PLASTIC_LENS_INSPECTION_REASON_CODE = (
+    "confirmed_no_prescription."
+    "plastic_lens_optical_inspection_and_assembly_architecture_only"
+)
+_LARGAN_PLASTIC_LENS_INSPECTION_DEVICE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "electronic_device_camera_module_placement_architecture_only"
+)
+_LARGAN_PLASTIC_LENS_INSPECTION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20210364452-A1": {
+        "raw_document_sha256": (
+            "b9d1c7899e19e694c93851449a323d54c84c5ac47802af0821c4766603d253d2"
+        ),
+        "normalized_text_sha256": (
+            "1ea711b74a20c11380b110e5b67746d459bf0e7ee25c1aa9097fa2b88534d1f1"
+        ),
+        "family_id": "74529057",
+        "application_number": "17/019421",
+        "section_markers": {
+            "abstract": (
+                "Abstract A plastic lens element includes an optical effective portion"
+            ),
+            "background_summary": "Background/Summary RELATED APPLICATIONS",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . A plastic lens element, comprising:",
+        },
+        "section_sha256": {
+            "abstract": (
+                "6d129ff6c0eff6fbec86af3493d51bee2320a0728f97616628eeeb982c0a6ddc"
+            ),
+            "background_summary": (
+                "8b47e8e38f60032639538cbfa7a5e3c8dfd436d2bde68a38992618a8b15c71fa"
+            ),
+            "description": (
+                "9cd3f58d8aaf7394fd054a75cf92be8245ad07022070f9fcbe8b7f26697bab63"
+            ),
+            "claims": (
+                "d3f17a010239edbac669372e4adc5d200f7ebe40dc2bf14494bbde74b0cc16e7"
+            ),
+        },
+        "paragraph_ranges": {
+            "related_applications": (1, 1),
+            "background": (2, 3),
+            "summary": (4, 5),
+            "brief": (6, 31),
+            "detailed": (32, 96),
+        },
+        "embodiment_ranges": {
+            "1st Embodiment": (57, 72),
+            "2nd Embodiment": (73, 90),
+            "3rd Embodiment": (91, 95),
+        },
+        "claim_count": 25,
+        "identity_markers": {
+            "United States Patent Application Publication 20210364452": 1,
+            "Kind Code A1": 1,
+            "Publication Date November 25, 2021": 1,
+            "CHANG; Lin-An": 2,
+            "CHOU; Ming-Ta": 1,
+            "LIN; Cheng-Feng": 1,
+            "WENG; Liang-Chieh": 1,
+            "CHANG; Ming-Shun": 1,
+            "LARGAN PRECISION CO., LTD.": 1,
+            "Family ID: 74529057": 1,
+            "Appl. No.: 17/019421": 1,
+            "Filed: September 14, 2020": 1,
+            "TW 109117244 May. 22, 2020": 1,
+        },
+        "source_scope_phrase_counts": {
+            "1st Embodiment": 23,
+            "2nd Embodiment": 30,
+            "3rd Embodiment": 11,
+            "plastic lens element": 195,
+            "imaging lens assembly": 42,
+            "optical inspecting structure": 65,
+            "optical inspecting surface": 129,
+            "optical effective portion": 60,
+            "peripheral portion": 66,
+            "optical aspheric": 25,
+            "inflection point": 9,
+            "TABLE-US-": 8,
+            "critical angle": 8,
+            "refractive index": 10,
+            "minimum thickness": 6,
+            "central thickness": 4,
+            "roughness Ra": 1,
+            "image sensor": 5,
+            "electronic device": 15,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "radius": 0,
+            "radius of curvature": 0,
+            "curvature radius": 0,
+            "Abbe": 0,
+            "aspheric coefficient": 0,
+            "asphere coefficient": 0,
+            "surface number": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface prescription": 0,
+            "glass": 0,
+        },
+        "formal_table_sha256": (
+            "08a0e0ccd17cb750c869a02683a6eb9126376ae9f89343ed3fa682b741444872",
+            "aaf16fc923e6ea12dfa621e8372e4852a8722130367b275d199c878cae241b38",
+            "7413e5887b547f39635b7929602c8c5696423bd46ce8c1558db6ada278802f36",
+            "d0d49ca3b98cba097f13031eb87f9711f874cc149ce1a32fd631988e93435446",
+            "030b1309cd28a9644826424e3edd84bef786cece8d4511704aa28dc5011cfdf7",
+            "3add5035553fc938c661a808196fc9bf4c1f43bb0ac22347a122fb810df6497e",
+            "ee8bba0103f5318d0aa5aa15d9fafe56c6397c19c9775bb269592162530c0aca",
+            "653ace1605d5b5df031bcfb7fc88aeb8e3ba2930294e8626a89f612dcec57844",
+        ),
+        "raw_table_directive_count": 0,
     },
 }
 
@@ -19177,6 +19344,224 @@ def _classify_largan_autofocus_module_architecture_only_attempts(
             ),
         )
         for number, label in _LARGAN_AUTOFOCUS_MODULE_ITEMS
+    ]
+
+
+def _classify_largan_plastic_lens_inspection_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 74529057 optical-inspection architecture."""
+
+    profile = _LARGAN_PLASTIC_LENS_INSPECTION_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _LARGAN_PLASTIC_LENS_INSPECTION_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan plastic-lens inspection official raw text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_LARGAN_PLASTIC_LENS_INSPECTION_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError(
+                "Largan plastic-lens inspection title binding changed"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan plastic-lens inspection normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan plastic-lens inspection identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan plastic-lens inspection section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan plastic-lens inspection section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan plastic-lens inspection {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        claim_start = section_starts["claims"]
+        paragraphs: dict[int, str] = {}
+        for index, match in enumerate(paragraph_matches):
+            end = (
+                paragraph_matches[index + 1].start()
+                if index + 1 < len(paragraph_matches)
+                else claim_start
+            )
+            paragraphs[int(match.group(1))] = text[match.end() : end].strip()
+        if tuple(paragraphs) != tuple(range(1, 97)):
+            raise PatentParseError(
+                "Largan plastic-lens inspection paragraphs 0001-0096 changed"
+            )
+        expected_ranges = {
+            "related_applications": tuple(range(1, 2)),
+            "background": tuple(range(2, 4)),
+            "summary": tuple(range(4, 6)),
+            "brief": tuple(range(6, 32)),
+            "detailed": tuple(range(32, 97)),
+        }
+        for name, bounds in profile["paragraph_ranges"].items():
+            if expected_ranges[name] != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"Largan plastic-lens inspection {name} denominator changed"
+                )
+        for offset, figure in enumerate(
+            _LARGAN_PLASTIC_LENS_INSPECTION_FIGURES,
+            start=7,
+        ):
+            if not paragraphs[offset].startswith(f"FIG. {figure} is "):
+                raise PatentParseError(
+                    f"Largan plastic-lens inspection FIG. {figure} declaration changed"
+                )
+        if "1st Embodiment" not in paragraphs[57]:
+            raise PatentParseError(
+                "Largan plastic-lens inspection first embodiment boundary changed"
+            )
+        if "2nd Embodiment" not in paragraphs[72]:
+            raise PatentParseError(
+                "Largan plastic-lens inspection second embodiment boundary changed"
+            )
+        if "3rd Embodiment" not in paragraphs[90]:
+            raise PatentParseError(
+                "Largan plastic-lens inspection third embodiment boundary changed"
+            )
+        for bounds in profile["embodiment_ranges"].values():
+            if any(number not in paragraphs for number in range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    "Largan plastic-lens inspection embodiment denominator changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "Largan plastic-lens inspection claims 1-25 denominator changed"
+            )
+
+        table_matches = list(re.finditer(r"TABLE-US-(\d{5})", text))
+        if tuple(int(match.group(1)) for match in table_matches) != tuple(range(1, 9)):
+            raise PatentParseError(
+                "Largan plastic-lens inspection TABLE-US-00001..00008 changed"
+            )
+        table_digests: list[str] = []
+        for match in table_matches:
+            next_paragraph = re.search(r"\[\d{4}\]", text[match.end() :])
+            end = (
+                match.end() + next_paragraph.start()
+                if next_paragraph is not None
+                else claim_start
+            )
+            block = text[match.start() : end].strip()
+            table_digests.append(hashlib.sha256(block.encode("utf-8")).hexdigest())
+        if tuple(table_digests) != tuple(profile["formal_table_sha256"]):
+            raise PatentParseError(
+                "Largan plastic-lens inspection formal table contents changed"
+            )
+        if len(re.findall(r"<\?table", raw_text, re.IGNORECASE)) != int(
+            profile["raw_table_directive_count"]
+        ):
+            raise PatentParseError(
+                "Largan plastic-lens inspection raw table directives changed"
+            )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan plastic-lens inspection phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan plastic-lens inspection prescription phrase {phrase!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact imaging-lens-assembly embodiment publishes plastic-lens optical-"
+        "inspection angles, diameters, inspection/center thicknesses, refractive "
+        "indices, barrel alignment, adhesive, and assembly-yield data only; it "
+        "publishes no ordered optical surface prescription",
+        "the exact electronic-device embodiment reuses one of the disclosed imaging "
+        "lens assemblies and publishes smartphone placement and use architecture "
+        "only; it publishes no ordered optical surface prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _LARGAN_PLASTIC_LENS_INSPECTION_REASON_CODE
+                    if number <= 2
+                    else _LARGAN_PLASTIC_LENS_INSPECTION_DEVICE_REASON_CODE
+                ),
+                detail=details[0 if number <= 2 else 1],
+            ),
+        )
+        for number, label in _LARGAN_PLASTIC_LENS_INSPECTION_ITEMS
     ]
 
 
