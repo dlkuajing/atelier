@@ -381,6 +381,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_huawei_popup_camera_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_telecentric_nine_lens_metadata_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2347,6 +2353,45 @@ _VARIABLE_APERTURE_CAMERA_MODULE_SOURCE_PROFILES: dict[
         ),
     },
 }
+_HUAWEI_POPUP_CAMERA_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Electronic\s+device\s+having\s+a\s+lens\s+assembly\s+"
+    r"employing\s+an\s+avoidance\s+space\s+in\s+conjunction\s+with\s+a\s+"
+    r"total\s+track\s+length\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_HUAWEI_POPUP_CAMERA_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12591118-B2": {
+        "raw_document_sha256": (
+            "8f7df2cc433e510cb39cd9a5a9b28912c38683908d0f7b55ec5197715b93fa44"
+        ),
+        "normalized_text_sha256": (
+            "d30d8e3c5633b1de6d37375aa64852f63628cec45f293c5c93db1cc518098fb2"
+        ),
+        "application_number": "18/845222",
+        "family_id": "87936009",
+        "owner_count": 2,
+        "identity_markers": (
+            "US 20250199270 A1 Jun. 19, 2025",
+            "CN 202210240794.3 Mar. 10, 2022",
+            "PCT No.: PCT/CN2023/080164",
+            "PCT Pub. No.: WO2023/169441",
+        ),
+    },
+}
+_HUAWEI_POPUP_CAMERA_TABLE_TRIPLETS = (
+    (2, 3, 4, 7),
+    (5, 6, 7, 7),
+    (8, 9, 10, 7),
+    (11, 12, 13, 8),
+    (14, 15, 16, 8),
+)
+_HUAWEI_POPUP_CAMERA_METADATA = (
+    (8.38, 22.20, 1.69, 16.33, 87.01, 88.9),
+    (7.93, 21.02, 1.59, 16.33, 89.80, 88.9),
+    (8.23, 21.81, 1.57, 16.33, 87.83, 86.7),
+    (8.56, 22.67, 1.55, 16.34, 85.50, 85.4),
+    (8.60, 22.80, 1.55, 16.33, 85.17, 85.1),
+)
 _FOLDED_LENS_BARREL_DRIVING_ONLY_TITLE_PATTERN = re.compile(
     r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*IMAGING\s+LENS\s+"
     r"ASSEMBLY\s+DRIVING\s+MODULE\s+AND\s+ELECTRONIC\s+DEVICE\b",
@@ -13970,6 +14015,716 @@ def _classify_variable_aperture_camera_module_architecture_only_attempts(
                         )
                     ),
                 ),
+            )
+        )
+    return attempts
+
+
+def _huawei_popup_camera_table_blocks(text: str) -> dict[int, str]:
+    matches = list(re.finditer(r"\bTABLE-US-(?P<number>\d{5})\s+", text, re.IGNORECASE))
+    if [int(match.group("number")) for match in matches] != list(range(1, 17)):
+        raise PatentParseError("Huawei pop-up camera source tables 1-16 changed")
+    return {
+        number: text[
+            match.start() : matches[index + 1].start()
+            if index + 1 < len(matches)
+            else len(text)
+        ]
+        for index, match in enumerate(matches)
+        for number in (int(match.group("number")),)
+    }
+
+
+def _huawei_popup_camera_table_body(block: str) -> str:
+    return re.split(r"\s\(\d+\)\s", block, maxsplit=1)[0].strip()
+
+
+def _parse_huawei_popup_camera_surfaces(
+    block: str,
+    *,
+    table_number: int,
+    lens_count: int,
+    state: str,
+) -> list[PatentSurface]:
+    if state not in {"first", "second"}:
+        raise ValueError(f"unsupported Huawei pop-up camera state: {state}")
+    body = _huawei_popup_camera_table_body(block)
+    malformed_stop = (
+        "S2 Unlimited 1.1000 0.4000 -0.1500 Stop Unlimited -0.1500"
+    )
+    corrected_stop = (
+        "S2 Unlimited 1.1000 0.4000 Stop Unlimited -0.1500 -0.1500"
+    )
+    if table_number == 8:
+        if body.count(malformed_stop) != 1:
+            raise PatentParseError("Huawei pop-up TABLE 8 split stop row changed")
+        # TABLE 8 places the first Stop thickness before the row-spanned
+        # ``Stop`` label.  Reorder that exact source-locked token sequence;
+        # no optical value is altered or inferred.
+        body = body.replace(malformed_stop, corrected_stop, 1)
+    elif malformed_stop in body:
+        raise PatentParseError("Huawei pop-up split stop row moved to another table")
+
+    tokens = body.split()
+    if tokens.count("Object") != 1:
+        raise PatentParseError(f"Huawei pop-up TABLE {table_number} object row changed")
+    pos = tokens.index("Object")
+
+    def expect(value: str) -> None:
+        nonlocal pos
+        if pos >= len(tokens) or tokens[pos] != value:
+            observed = tokens[pos] if pos < len(tokens) else "<eof>"
+            raise PatentParseError(
+                f"Huawei pop-up TABLE {table_number} expected {value!r}, found {observed!r}"
+            )
+        pos += 1
+
+    def number(field_name: str) -> float:
+        nonlocal pos
+        if pos >= len(tokens):
+            raise PatentParseError(
+                f"Huawei pop-up TABLE {table_number} missing {field_name}"
+            )
+        token = tokens[pos]
+        pos += 1
+        try:
+            return _parse_number(token)
+        except PatentParseError as exc:
+            raise PatentParseError(
+                f"Huawei pop-up TABLE {table_number} {field_name} is not numeric: {token!r}"
+            ) from exc
+
+    def distance(field_name: str) -> float | None:
+        nonlocal pos
+        if pos >= len(tokens):
+            raise PatentParseError(
+                f"Huawei pop-up TABLE {table_number} missing {field_name}"
+            )
+        token = tokens[pos]
+        pos += 1
+        if token.casefold() == "unlimited":
+            return math.inf
+        return _distance_value(token, field_name=field_name)
+
+    def state_thickness(label: str) -> float | None:
+        second = distance(f"{label} second-state thickness")
+        first = distance(f"{label} first-state thickness")
+        return first if state == "first" else second
+
+    expect("Object")
+    expect("Unlimited")
+    expect("Unlimited")
+    expect("Unlimited")
+    expect("plane")
+
+    surfaces: list[PatentSurface] = []
+
+    def append_surface(
+        label: str,
+        *,
+        radius_mm: float | None,
+        thickness_mm: float | None,
+        nd: float | None = None,
+        vd: float | None = None,
+        material: str | None = None,
+    ) -> None:
+        index = len(surfaces) + 1
+        _validate_material_indices(surface_index=index, nd=nd, vd=vd)
+        surfaces.append(
+            PatentSurface(
+                index=index,
+                label=label,
+                radius_mm=radius_mm,
+                thickness_mm=thickness_mm,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    expect("CG")
+    expect("S1")
+    cover_front_radius = distance("cover front radius")
+    cover_front_thickness = state_thickness("cover front")
+    cover_nd = number("cover refractive index")
+    cover_vd = number("cover Abbe number")
+    append_surface(
+        "CG S1",
+        radius_mm=cover_front_radius,
+        thickness_mm=cover_front_thickness,
+        nd=cover_nd,
+        vd=cover_vd,
+        material="Glass",
+    )
+    expect("S2")
+    append_surface(
+        "CG S2",
+        radius_mm=distance("cover back radius"),
+        thickness_mm=state_thickness("cover back"),
+    )
+    expect("Stop")
+    append_surface(
+        "Stop",
+        radius_mm=distance("stop radius"),
+        thickness_mm=state_thickness("stop"),
+    )
+
+    for lens_number in range(1, lens_count + 1):
+        lens_label = f"L{lens_number}"
+        expect(lens_label)
+        expect("S1")
+        front_radius = distance(f"{lens_label} front radius")
+        front_thickness = state_thickness(f"{lens_label} front")
+        nd = number(f"{lens_label} refractive index")
+        vd = number(f"{lens_label} Abbe number")
+        append_surface(
+            f"{lens_label} S1",
+            radius_mm=front_radius,
+            thickness_mm=front_thickness,
+            nd=nd,
+            vd=vd,
+            material="Glass",
+        )
+        expect("S2")
+        append_surface(
+            f"{lens_label} S2",
+            radius_mm=distance(f"{lens_label} back radius"),
+            thickness_mm=state_thickness(f"{lens_label} back"),
+        )
+
+    expect("IR")
+    expect("S1")
+    ir_front_radius = distance("IR front radius")
+    ir_front_thickness = state_thickness("IR front")
+    ir_nd = number("IR refractive index")
+    ir_vd = number("IR Abbe number")
+    append_surface(
+        "IR S1",
+        radius_mm=ir_front_radius,
+        thickness_mm=ir_front_thickness,
+        nd=ir_nd,
+        vd=ir_vd,
+        material="Glass",
+    )
+    expect("S2")
+    append_surface(
+        "IR S2",
+        radius_mm=distance("IR back radius"),
+        thickness_mm=state_thickness("IR back"),
+    )
+    expect("Image")
+    image_radius = distance("image radius")
+    image_thickness = state_thickness("image")
+    append_surface("Image", radius_mm=image_radius, thickness_mm=image_thickness)
+
+    residue = tuple(tokens[pos:])
+    allowed_residue = {("plane",), ("1.44", "95.1", "plane")}
+    if residue not in allowed_residue:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} image-row residue changed: {residue!r}"
+        )
+    expected_surface_count = 2 * lens_count + 6
+    if len(surfaces) != expected_surface_count:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} has {len(surfaces)} surfaces; "
+            f"expected {expected_surface_count}"
+        )
+    return _reorder_huawei_popup_camera_internal_stop(
+        surfaces,
+        table_number=table_number,
+    )
+
+
+def _reorder_huawei_popup_camera_internal_stop(
+    surfaces: list[PatentSurface],
+    *,
+    table_number: int,
+) -> list[PatentSurface]:
+    """Represent the published negative stop distance in physical z order.
+
+    The source lists ``CG S2, Stop, L1 S1`` and publishes -0.1500 mm from
+    Stop to L1 S1.  Therefore the stop lies 0.1500 mm inside L1, after its
+    object-side surface.  Split the published L1 center thickness at that
+    exact axial coordinate and retain L1 glass on the zero-power stop plane.
+    The three transformed distances preserve the published total exactly.
+    """
+
+    if len(surfaces) < 5 or [surface.label for surface in surfaces[:5]] != [
+        "CG S1",
+        "CG S2",
+        "Stop",
+        "L1 S1",
+        "L1 S2",
+    ]:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} internal-stop neighborhood changed"
+        )
+    cover_back, stop, lens_front = surfaces[1:4]
+    if (
+        cover_back.thickness_mm is None
+        or stop.thickness_mm is None
+        or lens_front.thickness_mm is None
+        or not math.isclose(stop.thickness_mm, -0.15, rel_tol=0.0, abs_tol=1e-12)
+        or not math.isinf(stop.radius_mm or 0.0)
+        or lens_front.material is None
+        or lens_front.nd is None
+        or lens_front.vd is None
+    ):
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} internal-stop geometry changed"
+        )
+
+    cover_to_lens = cover_back.thickness_mm + stop.thickness_mm
+    lens_to_stop = -stop.thickness_mm
+    stop_to_lens_back = lens_front.thickness_mm + stop.thickness_mm
+    if min(cover_to_lens, lens_to_stop, stop_to_lens_back) <= 0.0:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} internal-stop split is non-positive"
+        )
+    if not math.isclose(
+        cover_to_lens + lens_to_stop + stop_to_lens_back,
+        cover_back.thickness_mm + stop.thickness_mm + lens_front.thickness_mm,
+        rel_tol=0.0,
+        abs_tol=1e-12,
+    ):
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} internal-stop axial sum changed"
+        )
+
+    reordered = [
+        surfaces[0],
+        replace(cover_back, thickness_mm=cover_to_lens),
+        replace(lens_front, thickness_mm=lens_to_stop),
+        replace(
+            stop,
+            thickness_mm=stop_to_lens_back,
+            material=lens_front.material,
+            nd=lens_front.nd,
+            vd=lens_front.vd,
+        ),
+        *surfaces[4:],
+    ]
+    return [replace(surface, index=index) for index, surface in enumerate(reordered, start=1)]
+
+
+def _parse_huawei_popup_camera_aspheres(
+    block: str,
+    *,
+    table_number: int,
+    lens_count: int,
+) -> dict[str, dict[str, float]]:
+    tokens = _huawei_popup_camera_table_body(block).split()
+    first_labels = ("K", "A2", "A4", "A6", "A8", "A10", "A12", "A14")
+    second_labels = ("A16", "A18", "A20", "A22", "A24", "A26", "A28", "A30")
+    try:
+        pos = tokens.index("K")
+    except ValueError as exc:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} lacks the K/A2-A14 header"
+        ) from exc
+    if tuple(tokens[pos : pos + len(first_labels)]) != first_labels:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} first coefficient header changed"
+        )
+    pos += len(first_labels)
+    coefficients: dict[str, dict[str, float]] = {}
+
+    def expect(value: str) -> None:
+        nonlocal pos
+        if pos >= len(tokens) or tokens[pos] != value:
+            observed = tokens[pos] if pos < len(tokens) else "<eof>"
+            raise PatentParseError(
+                f"Huawei pop-up TABLE {table_number} expected {value!r}, found {observed!r}"
+            )
+        pos += 1
+
+    def parse_rows(labels: tuple[str, ...]) -> None:
+        nonlocal pos
+        for lens_number in range(1, lens_count + 1):
+            expect(f"L{lens_number}")
+            for surface_label in ("S1", "S2"):
+                expect(surface_label)
+                row_key = f"L{lens_number} {surface_label}"
+                row = coefficients.setdefault(row_key, {})
+                for label in labels:
+                    if pos >= len(tokens):
+                        raise PatentParseError(
+                            f"Huawei pop-up TABLE {table_number} {row_key} ends at {label}"
+                        )
+                    raw_value = tokens[pos]
+                    pos += 1
+                    if re.fullmatch(NUMBER_PATTERN, raw_value, re.IGNORECASE) is None:
+                        if (
+                            table_number == 3
+                            and row_key == "L4 S2"
+                            and label == "A26"
+                            and raw_value == "2.2728-07"
+                        ):
+                            raise PatentTerminalParseError(
+                                status="metadata_unpublished",
+                                reason_code=(
+                                    "metadata_unpublished."
+                                    "asphere_a26_exponent_marker_absent"
+                                ),
+                                detail=(
+                                    "embodiment 1 TABLE 3 publishes L4 S2 A26 as "
+                                    "'2.2728-07' without an exponent marker in both the "
+                                    "official grant and prior-publication renderings; its "
+                                    "numeric value cannot be recovered without inference"
+                                ),
+                            )
+                        if (
+                            table_number == 12
+                            and row_key == "L2 S1"
+                            and label == "A24"
+                            and raw_value == "-5.39SE-06"
+                        ):
+                            raise PatentTerminalParseError(
+                                status="metadata_unpublished",
+                                reason_code=(
+                                    "metadata_unpublished."
+                                    "asphere_a24_numeric_token_malformed"
+                                ),
+                                detail=(
+                                    "embodiment 4 TABLE 12 publishes L2 S1 A24 as "
+                                    "'-5.39SE-06' with an alphabetic character inside "
+                                    "the mantissa in both the official grant and prior-"
+                                    "publication renderings; its numeric value cannot be "
+                                    "recovered without inference"
+                                ),
+                            )
+                        raise PatentParseError(
+                            f"Huawei pop-up TABLE {table_number} {row_key} {label} "
+                            f"is not numeric: {raw_value!r}"
+                        )
+                    value = _parse_number(raw_value)
+                    if label == "A2":
+                        if value != 0.0:
+                            raise PatentParseError(
+                                f"Huawei pop-up TABLE {table_number} publishes nonzero A2 "
+                                f"for {row_key}"
+                            )
+                        continue
+                    codev_label = (
+                        "K" if label == "K" else ASPHERE_ORDER_TO_CODEV[int(label[1:])]
+                    )
+                    if codev_label in row:
+                        raise PatentParseError(
+                            f"Huawei pop-up TABLE {table_number} duplicates {row_key} {label}"
+                        )
+                    row[codev_label] = value
+
+    parse_rows(first_labels)
+    if tuple(tokens[pos : pos + len(second_labels)]) != second_labels:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} A16-A30 header changed"
+        )
+    pos += len(second_labels)
+    parse_rows(second_labels)
+    if pos != len(tokens):
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} has trailing coefficient tokens: "
+            f"{tuple(tokens[pos:])!r}"
+        )
+    expected_rows = 2 * lens_count
+    if len(coefficients) != expected_rows or any(
+        len(row) != 15 for row in coefficients.values()
+    ):
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} coefficient denominator changed"
+        )
+    return coefficients
+
+
+def _parse_huawei_popup_camera_metadata(
+    block: str,
+    *,
+    table_number: int,
+) -> tuple[float, float, float, float, float, float]:
+    body = _huawei_popup_camera_table_body(block)
+    pattern = re.compile(
+        rf"\ATABLE-US-{table_number:05d}\s+Optical\s+parameter\s+"
+        rf"Total\s+focal\s+length\s+f/mm\s+(?P<f>{NUMBER_PATTERN})\s+"
+        rf"Equivalent\s+focal\s+length\s+f/mm\s+(?P<equivalent>{NUMBER_PATTERN})\s+"
+        rf"F-number\s+F#\s+(?P<fno>{NUMBER_PATTERN})\s+"
+        rf"Total\s+image\s+height\s+IH/mm\s+(?P<ih>{NUMBER_PATTERN})\s+"
+        rf"Field\s+of\s+view\s+FOV/degree\s+(?P<fov>{NUMBER_PATTERN})\s+"
+        rf"Retraction\s+ratio\s+(?P<ratio>{NUMBER_PATTERN})%\Z",
+        flags=re.IGNORECASE,
+    )
+    match = pattern.fullmatch(body)
+    if match is None:
+        raise PatentParseError(
+            f"Huawei pop-up TABLE {table_number} system metadata changed"
+        )
+    return tuple(
+        _parse_number(match.group(field))
+        for field in ("f", "equivalent", "fno", "ih", "fov", "ratio")
+    )
+
+
+def _parse_huawei_popup_camera_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse five working prescriptions and account for five storage states.
+
+    Each optical table publishes two axial-thickness columns.  The source
+    explicitly defines the first as a retracted, non-working state and the
+    second as the extended, working state.  Only the working state has system
+    metadata and is therefore converted; the first state is retained as a
+    source-proven metadata-unpublished terminal item.
+    """
+
+    profile = _HUAWEI_POPUP_CAMERA_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    labels = tuple(
+        label
+        for embodiment_number in range(1, 6)
+        for label in (
+            f"Huawei pop-up camera embodiment {embodiment_number} first non-working state",
+            f"Huawei pop-up camera embodiment {embodiment_number} second working state",
+        )
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=exc,
+            )
+            for index, label in enumerate(labels, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Huawei pop-up camera official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Huawei pop-up camera normalized text hash changed for {patent_id}"
+            )
+        if len(_HUAWEI_POPUP_CAMERA_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Huawei pop-up camera title binding changed")
+        if len(
+            re.findall(
+                rf"Family\s+ID:\s*{re.escape(str(profile['family_id']))}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Huawei pop-up camera Family ID binding changed")
+        owner = "HUAWEI TECHNOLOGIES CO., LTD."
+        if len(re.findall(re.escape(owner), text, re.IGNORECASE)) != profile["owner_count"]:
+            raise PatentParseError("Huawei pop-up camera owner binding changed")
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Huawei pop-up camera application binding changed")
+        for marker in profile["identity_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"Huawei pop-up camera identity marker {marker!r} changed"
+                )
+
+        heading_numbers = tuple(
+            number
+            for number in range(1, 6)
+            if len(
+                re.findall(
+                    rf"<br\s*/?>\s*Embodiment\s+{number}\s*<br\s*/?>",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            )
+            == 1
+        )
+        if heading_numbers != (1, 2, 3, 4, 5) or re.search(
+            r"<br\s*/?>\s*Embodiment\s+6\s*<br\s*/?>",
+            raw_text,
+            re.IGNORECASE,
+        ):
+            raise PatentParseError("Huawei pop-up camera embodiment denominator changed")
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF DRAWINGS(?P<body>.*?)DESCRIPTIONS OF REFERENCE NUMERALS",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError("Huawei pop-up camera drawing description is missing")
+        figure_numbers = tuple(
+            int(number)
+            for number in re.findall(
+                r"FIG\.\s*<b>(\d+)</b></figref>",
+                brief_match.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if figure_numbers != tuple(range(1, 24)):
+            raise PatentParseError("Huawei pop-up camera FIG. 1-23 denominator changed")
+        if len(re.findall(r"first state \(a non-working state\)", text, re.IGNORECASE)) != 5:
+            raise PatentParseError("Huawei pop-up camera non-working-state binding changed")
+        if len(re.findall(r"second state \(a working state\)", text, re.IGNORECASE)) != 5:
+            raise PatentParseError("Huawei pop-up camera working-state binding changed")
+        if len(
+            re.findall(
+                r"Field\s+of\s+view\s+\(Field\s+of\s+view,\s+FOV\s+for\s+short\):\s+"
+                r"An\s+included\s+angle.*?two\s+edges\s+of\s+a\s+maximum\s+range.*?"
+                r"is\s+referred\s+to\s+as\s+the\s+field\s+of\s+view\.",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Huawei pop-up camera full-FOV definition changed")
+
+        blocks = _huawei_popup_camera_table_blocks(text)
+        parsed: list[PatentPrescription | Exception] = []
+        for embodiment_number, (
+            surface_table,
+            coefficient_table,
+            metadata_table,
+            lens_count,
+        ) in enumerate(_HUAWEI_POPUP_CAMERA_TABLE_TRIPLETS, start=1):
+            working_surfaces = _parse_huawei_popup_camera_surfaces(
+                blocks[surface_table],
+                table_number=surface_table,
+                lens_count=lens_count,
+                state="second",
+            )
+            non_working_surfaces = _parse_huawei_popup_camera_surfaces(
+                blocks[surface_table],
+                table_number=surface_table,
+                lens_count=lens_count,
+                state="first",
+            )
+            if [surface.label for surface in working_surfaces] != [
+                surface.label for surface in non_working_surfaces
+            ]:
+                raise PatentParseError(
+                    f"Huawei pop-up embodiment {embodiment_number} state surface order changed"
+                )
+            state_deltas = {
+                working.label
+                for working, non_working in zip(
+                    working_surfaces,
+                    non_working_surfaces,
+                    strict=True,
+                )
+                if working.thickness_mm != non_working.thickness_mm
+            }
+            expected_deltas = {"CG S2", f"L{lens_count} S2"}
+            if state_deltas != expected_deltas:
+                raise PatentParseError(
+                    f"Huawei pop-up embodiment {embodiment_number} state deltas changed: "
+                    f"{sorted(state_deltas)!r}"
+                )
+
+            try:
+                coefficients = _parse_huawei_popup_camera_aspheres(
+                    blocks[coefficient_table],
+                    table_number=coefficient_table,
+                    lens_count=lens_count,
+                )
+            except PatentTerminalParseError as exc:
+                metadata = _parse_huawei_popup_camera_metadata(
+                    blocks[metadata_table],
+                    table_number=metadata_table,
+                )
+                if metadata != _HUAWEI_POPUP_CAMERA_METADATA[embodiment_number - 1]:
+                    raise PatentParseError(
+                        f"Huawei pop-up embodiment {embodiment_number} metadata changed"
+                    ) from exc
+                parsed.append(exc)
+                continue
+            for state_surfaces in (working_surfaces, non_working_surfaces):
+                for surface in state_surfaces:
+                    values = coefficients.get(surface.label)
+                    if values is not None:
+                        surface.asphere_coefficients.update(values)
+                        surface.surface_type = "ASP"
+                _validate_prescription_materials(
+                    PatentPrescription(
+                        patent_id=patent_id,
+                        embodiment="material validation only",
+                        focal_length_mm=1.0,
+                        f_number=1.0,
+                        hfov_deg=1.0,
+                        surfaces=state_surfaces,
+                    )
+                )
+
+            metadata = _parse_huawei_popup_camera_metadata(
+                blocks[metadata_table],
+                table_number=metadata_table,
+            )
+            if metadata != _HUAWEI_POPUP_CAMERA_METADATA[embodiment_number - 1]:
+                raise PatentParseError(
+                    f"Huawei pop-up embodiment {embodiment_number} metadata changed"
+                )
+            focal_length, _equivalent, f_number, _image_height, full_fov, _ratio = metadata
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=(
+                    f"Huawei pop-up camera embodiment {embodiment_number} "
+                    "second working state"
+                ),
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_fov / 2.0,
+                surfaces=working_surfaces,
+            )
+            _validate_prescription_materials(prescription)
+            parsed.append(prescription)
+    except Exception as exc:  # noqa: BLE001 - retain all ten disclosed states
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, outcome in enumerate(parsed, start=1):
+        first_attempt_number = 2 * embodiment_number - 1
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=first_attempt_number,
+                embodiment=labels[first_attempt_number - 1],
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code=(
+                        "metadata_unpublished."
+                        "non_working_retracted_state_has_no_system_metadata"
+                    ),
+                    detail=(
+                        f"embodiment {embodiment_number} first state is explicitly a "
+                        "retracted non-working storage state; the source publishes its "
+                        "axial thicknesses but no state-specific imaging-system metadata"
+                    ),
+                ),
+            )
+        )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=first_attempt_number + 1,
+                embodiment=labels[first_attempt_number],
+                error=outcome,
+            )
+            if isinstance(outcome, Exception)
+            else _PrescriptionParseAttempt(
+                embodiment_number=first_attempt_number + 1,
+                embodiment=outcome.embodiment,
+                prescription=outcome,
             )
         )
     return attempts

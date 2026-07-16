@@ -12217,3 +12217,353 @@ def test_variable_aperture_camera_module_external_queue_is_source_bound() -> Non
         "CN-218601649-U",
         "TW-202416036-A",
     ]
+
+
+def _huawei_popup_camera_b2_source() -> tuple[str, str]:
+    patent_id = "US-12591118-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "8f7df2cc433e510c"
+        / "US-12591118-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def test_huawei_popup_camera_source_accounts_for_all_ten_states() -> None:
+    patent_id, raw_text = _huawei_popup_camera_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 11))
+    assert [
+        attempt.error.reason_code
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        else None
+        for attempt in attempts
+    ] == [
+        "metadata_unpublished.non_working_retracted_state_has_no_system_metadata",
+        "metadata_unpublished.asphere_a26_exponent_marker_absent",
+        "metadata_unpublished.non_working_retracted_state_has_no_system_metadata",
+        None,
+        "metadata_unpublished.non_working_retracted_state_has_no_system_metadata",
+        None,
+        "metadata_unpublished.non_working_retracted_state_has_no_system_metadata",
+        "metadata_unpublished.asphere_a24_numeric_token_malformed",
+        "metadata_unpublished.non_working_retracted_state_has_no_system_metadata",
+        None,
+    ]
+    converted = [attempt.prescription for attempt in attempts if attempt.prescription]
+    assert [
+        (
+            prescription.focal_length_mm,
+            prescription.f_number,
+            prescription.hfov_deg,
+            len(prescription.surfaces),
+        )
+        for prescription in converted
+    ] == [
+        (7.93, 1.59, 44.9, 20),
+        (8.23, 1.57, 43.915, 20),
+        (8.60, 1.55, 42.585, 22),
+    ]
+    for prescription in converted:
+        aspheres = [
+            surface for surface in prescription.surfaces if surface.surface_type == "ASP"
+        ]
+        assert len(aspheres) in {14, 16}
+        assert {len(surface.asphere_coefficients) for surface in aspheres} == {15}
+        assert [surface.index for surface in prescription.surfaces] == list(
+            range(1, len(prescription.surfaces) + 1)
+        )
+        assert [surface.label for surface in prescription.surfaces[:5]] == [
+            "CG S1",
+            "CG S2",
+            "L1 S1",
+            "Stop",
+            "L1 S2",
+        ]
+        assert all(
+            surface.thickness_mm is None or surface.thickness_mm >= 0.0
+            for surface in prescription.surfaces
+        )
+
+    second_working = attempts[3].prescription
+    assert second_working is not None
+    assert second_working.surfaces[1].thickness_mm == pytest.approx(0.95)
+    assert second_working.surfaces[2].thickness_mm == pytest.approx(0.15)
+    assert second_working.surfaces[3].thickness_mm == pytest.approx(1.1508)
+    assert (
+        second_working.surfaces[3].material,
+        second_working.surfaces[3].nd,
+        second_working.surfaces[3].vd,
+    ) == ("Glass", 1.44, 95.1)
+    assert sum(
+        surface.thickness_mm or 0.0 for surface in second_working.surfaces[:4]
+    ) == pytest.approx(2.7508)
+
+
+def test_huawei_popup_camera_valid_a26_reopens_only_embodiment_one(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _huawei_popup_camera_b2_source()
+    raw_text = original.replace("2.2728−07", "2.272E−07", 1)
+    assert raw_text != original
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    profile = patent_to_zmx._HUAWEI_POPUP_CAMERA_SOURCE_PROFILES[patent_id]
+    monkeypatch.setitem(
+        patent_to_zmx._HUAWEI_POPUP_CAMERA_SOURCE_PROFILES,
+        patent_id,
+        {
+            **profile,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+        },
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert attempts[1].error is None
+    assert attempts[1].prescription is not None
+    assert attempts[1].prescription.focal_length_mm == 8.38
+    assert isinstance(attempts[7].error, patent_to_zmx.PatentTerminalParseError)
+    assert attempts[7].error.reason_code == (
+        "metadata_unpublished.asphere_a24_numeric_token_malformed"
+    )
+
+
+def test_huawei_popup_camera_source_hash_drift_reopens_all_states() -> None:
+    patent_id, original = _huawei_popup_camera_b2_source()
+    raw_text = original + " source drift"
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 10
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Huawei pop-up camera official raw text hash changed for US-12591118-B2"
+    }
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+
+
+def test_huawei_popup_camera_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-87936009"
+    )
+    evidence = json.loads(
+        (quick_root / "family-87936009-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert evidence["family_id"] == "87936009"
+    assert evidence["publication_id"] == "US-12591118-B2"
+    assert evidence["application_number"] == "18/845222"
+    assert evidence["figure_numbers"] == list(range(1, 24))
+    assert evidence["table_count"] == 16
+    assert [
+        (
+            triple["surface_table"],
+            triple["asphere_table"],
+            triple["system_table"],
+            triple["lens_count"],
+        )
+        for triple in evidence["table_triplets"]
+    ] == [
+        (2, 3, 4, 7),
+        (5, 6, 7, 7),
+        (8, 9, 10, 7),
+        (11, 12, 13, 8),
+        (14, 15, 16, 8),
+    ]
+    assert evidence["outcome_denominator"] == {
+        "converted_pending_intake": 1,
+        "metadata_unpublished": 7,
+        "terminal_items": 10,
+        "trace_failed": 2,
+    }
+    assert [item["outcome"] for item in evidence["working_state_outcomes"]] == [
+        "metadata_unpublished.asphere_a26_exponent_marker_absent",
+        "converted_pending_intake.process_isolated_zmx_ready",
+        "trace_failed",
+        "metadata_unpublished.asphere_a24_numeric_token_malformed",
+        "trace_failed",
+    ]
+
+    source_path = root / evidence["official_html"]["path"]
+    raw_text = source_path.read_text(encoding="utf-8")
+    assert hashlib.sha256(raw_text.encode("utf-8")).hexdigest() == evidence[
+        "official_html"
+    ]["sha256"]
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    assert hashlib.sha256(normalized.encode("utf-8")).hexdigest() == evidence[
+        "official_html"
+    ]["normalized_sha256"]
+
+
+def test_huawei_popup_camera_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-87936009"
+    )
+    audit = json.loads(
+        (quick_root / "family-87936009-raster-audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert audit["family_id"] == "87936009"
+    assert audit["drawing_sheet_count"] == 18
+    assert audit["figure_numbers"] == list(range(1, 24))
+    expected_publications = {
+        "US-12591118-B2": {
+            "drawing_pages": list(range(3, 21)),
+            "table_pages": list(range(28, 42)),
+            "contact_sha256": (
+                "a4dca1ded48efc73282b05a216ce44e3310e4157a00f524603ae72b7f0dd6424"
+            ),
+            "defect_pages": {
+                "TABLE 12 L2 S1 A24 malformed mantissa": 38,
+                "TABLE 3 L4 S2 A26 exponent marker absent": 31,
+            },
+        },
+        "US-20250199270-A1": {
+            "drawing_pages": list(range(2, 20)),
+            "table_pages": list(range(27, 42)),
+            "contact_sha256": (
+                "ecb5ac7816f0329dcff4fbe092f1528f373255d78aa213a33a5afa1c4b8bbc8e"
+            ),
+            "defect_pages": {
+                "TABLE 12 L2 S1 A24 malformed mantissa": 38,
+                "TABLE 3 L4 S2 A26 exponent marker absent": 30,
+            },
+        },
+    }
+    for publication_id, expected in expected_publications.items():
+        publication = audit["publications"][publication_id]
+        assert publication["page_count"] == 43
+        assert publication["drawing_page_numbers"] == expected["drawing_pages"]
+        assert publication["table_page_numbers"] == expected["table_pages"]
+        assert publication["key_numeric_defect_pages"] == expected["defect_pages"]
+        assert publication["decoded_raster_equality"] is True
+        contact_path = root / publication["contact_sheet"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == expected[
+            "contact_sha256"
+        ]
+
+        raster_sets: list[list[str]] = []
+        for wrapper in publication["wrappers"].values():
+            pdf_path = root / wrapper["path"]
+            assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper["sha256"]
+            reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+            assert len(reader.pages) == wrapper["page_count"] == 43
+            assert [
+                page_number
+                for page_number, page in enumerate(reader.pages, start=1)
+                if not (page.extract_text() or "")
+            ] == wrapper["blank_text_pages"] == list(range(1, 44))
+            page_hashes: list[str] = []
+            page_shapes: list[list[int]] = []
+            page_image_counts: list[int] = []
+            for page_number, page in enumerate(reader.pages, start=1):
+                page_image_counts.append(len(page.images))
+                page_image = patent_pdf_recovery._page_image(
+                    page,
+                    source=publication_id,
+                    page_number=page_number,
+                )
+                page_shapes.append(
+                    list(
+                        patent_pdf_recovery._decoded_raster(
+                            page_image,
+                            source=publication_id,
+                        ).shape
+                    )
+                )
+                page_hashes.append(
+                    patent_pdf_recovery._canonical_raster_sha256(page_image)
+                )
+            assert page_image_counts == wrapper["page_image_counts"]
+            assert page_shapes == wrapper["page_shapes"]
+            assert page_hashes == wrapper["page_raster_sha256"]
+            assert hashlib.sha256(
+                json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+            ).hexdigest() == wrapper["raster_set_sha256"]
+            raster_sets.append(page_hashes)
+        assert raster_sets[0] == raster_sets[1]
+
+
+def test_huawei_popup_camera_external_queue_is_source_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    queue_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-87936009"
+        / "family-87936009-external-family-members.json"
+    )
+    queue = json.loads(queue_path.read_text(encoding="utf-8"))
+
+    assert queue["family_id"] == "87936009"
+    assert queue["current_frozen_cohort_roots"] == ["US-12591118"]
+    assert queue["discovery"]["source_url"] == (
+        "https://patents.google.com/patent/US20250199270A1/en"
+    )
+    assert queue["us_application_status"] == "active_grant"
+    assert [record["publication_id"] for record in queue["external_family_members"]] == [
+        "US-20250199270-A1",
+        "CN-116774377-A",
+        "CN-116774377-B",
+        "WO-2023169441-A1",
+        "EP-4468051-A1",
+        "EP-4468051-A4",
+        "CN-118843814-A",
+        "CN-120103562-A",
+    ]
+
+
+def test_huawei_popup_camera_replay_determinism_artifact_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick_root = (
+        root / ".planning" / "quick" / "260716-patent-generic-family-87936009"
+    )
+    artifact = json.loads(
+        (quick_root / "family-87936009-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert artifact["root_id"] == "US-12591118"
+    assert [attempt["result_attempt"] for attempt in artifact["attempts"]] == [3, 4]
+    assert {attempt["semantic_sha256"] for attempt in artifact["attempts"]} == {
+        "fbdc95ccdfddadb296c5d4c2eb21fc72d4387d9590da2dfc8d71fd92c5f6fafd"
+    }
+    assert sorted(artifact["embodiments"]) == ["10", "4", "6"]
+    assert artifact["embodiments"]["4"]["candidate_zmx_sha256"] == (
+        "8a24f5c8ed0da05ed42457b4caf67e39f94fe7b3b01e220fb8c94fd0b22a9760"
+    )
+    assert artifact["embodiments"]["6"]["candidate_zmx_sha256"] is None
+    assert artifact["embodiments"]["10"]["candidate_zmx_sha256"] is None
+    staging_path = (
+        root
+        / "data"
+        / "zmx-staging"
+        / "patent-local-replay"
+        / "US-12591118-B2-e4.zmx"
+    )
+    assert hashlib.sha256(staging_path.read_bytes()).hexdigest() == artifact[
+        "embodiments"
+    ]["4"]["candidate_zmx_sha256"]
