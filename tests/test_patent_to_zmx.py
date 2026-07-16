@@ -16544,3 +16544,383 @@ def test_largan_plastic_lens_inspection_generic_census_retires_one_root() -> Non
         "affected_roots": 1,
         "affected_items": 1,
     }
+
+
+def test_sony_sensor_cover_nanostructure_source_has_twelve_terminals() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "ec9eabc5a6f28fdd"
+        / "US-12588309-B2.html"
+    )
+    raw_text = source.read_text(encoding="utf-8")
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id="US-12588309-B2",
+    )
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 13))
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Sony sensor-cover nanostructure first embodiment",
+        "Sony sensor-cover nanostructure second embodiment",
+        "Sony sensor-cover nanostructure third embodiment",
+        "Sony sensor-cover nanostructure fourth embodiment",
+        "Sony sensor-cover nanostructure fifth embodiment",
+        "Sony sensor-cover nanostructure sixth embodiment",
+        "Sony sensor-cover nanostructure seventh embodiment",
+        "Sony sensor-cover nanostructure eighth embodiment",
+        "Sony sensor-cover nanostructure ninth embodiment",
+        "Sony sensor-cover nanostructure tenth embodiment",
+        "Sony sensor-cover nanostructure eleventh embodiment",
+        "Sony sensor-cover nanostructure manufacturing twelfth embodiment",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts[:11]] == [
+        (
+            "confirmed_no_prescription."
+            "solid_state_image_sensor_translucent_cover_nanostructure_"
+            "architecture_only"
+        )
+    ] * 11
+    assert attempts[11].error.reason_code == (
+        "confirmed_no_prescription."
+        "solid_state_image_sensor_translucent_cover_manufacturing_"
+        "architecture_only"
+    )
+
+    altered = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " EFL 4.0",
+        patent_id="US-12588309-B2",
+    )
+    assert len(altered) == 12
+    assert all(attempt.prescription is None for attempt in altered)
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(
+            attempt.error,
+            patent_to_zmx.PatentTerminalParseError,
+        )
+        and "official raw text hash changed" in str(attempt.error)
+        for attempt in altered
+    )
+
+
+def test_sony_sensor_cover_nanostructure_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-79728652"
+    evidence = json.loads(
+        (quick / "family-79728652-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert evidence["family_id"] == "79728652"
+    assert evidence["root_ids"] == ["US-12588309"]
+    assert evidence["publication_id"] == "US-12588309-B2"
+    assert evidence["application_number"] == "18/005094"
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "outside_cohort_family_publications": 6,
+        "background_summary_paragraphs": 26,
+        "description_paragraphs": 204,
+        "drawing_declarations": 31,
+        "figure_panels": 55,
+        "source_tables": 0,
+        "explicit_embodiments": 12,
+        "sensor_cover_embodiments": 11,
+        "manufacturing_embodiments": 1,
+        "shared_graph_paragraphs": 9,
+        "claims": 20,
+        "classification_pdf_pages": 47,
+        "classification_drawing_sheets": 31,
+        "classification_specification_internal_pages": 28,
+        "terminal_items": 12,
+    }
+
+    html = evidence["official_html"]
+    source = root / html["path"]
+    raw_text = source.read_text(encoding="utf-8")
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    assert len(source.read_bytes()) == html["bytes"]
+    assert hashlib.sha256(raw_text.encode()).hexdigest() == html[
+        "raw_document_sha256"
+    ]
+    assert len(normalized) == html["normalized_characters"]
+    assert hashlib.sha256(normalized.encode()).hexdigest() == html[
+        "normalized_text_sha256"
+    ]
+
+    markers = html["section_markers"]
+    names = tuple(markers)
+    starts = {name: normalized.index(marker) for name, marker in markers.items()}
+    assert starts == html["section_positions"]
+    sections = {
+        name: normalized[
+            starts[name] : (
+                starts[names[index + 1]]
+                if index + 1 < len(names)
+                else len(normalized)
+            )
+        ]
+        for index, name in enumerate(names)
+    }
+    for name, section in sections.items():
+        assert hashlib.sha256(section.encode()).hexdigest() == html[
+            "section_sha256"
+        ][name]
+
+    def sequential_parenthetical_paragraphs(
+        section: str,
+        count: int,
+    ) -> dict[int, str]:
+        markers_found: list[tuple[int, int, int]] = []
+        cursor = 0
+        for number in range(1, count + 1):
+            match = re.search(rf"(?<!\d)\({number}\)\s", section[cursor:])
+            assert match is not None
+            start = cursor + match.start()
+            content_start = cursor + match.end()
+            markers_found.append((number, start, content_start))
+            cursor = content_start
+        return {
+            number: section[
+                content_start : (
+                    markers_found[index + 1][1]
+                    if index + 1 < len(markers_found)
+                    else len(section)
+                )
+            ].strip()
+            for index, (number, _, content_start) in enumerate(markers_found)
+        }
+
+    background = sequential_parenthetical_paragraphs(
+        sections["background_summary"],
+        26,
+    )
+    description = sequential_parenthetical_paragraphs(sections["description"], 204)
+    assert list(background) == list(range(1, 27))
+    assert list(description) == list(range(1, 205))
+    assert [
+        description[number][: len(prefix)]
+        for number, prefix in enumerate(html["figure_declaration_prefixes"], start=1)
+    ] == html["figure_declaration_prefixes"]
+    for paragraph, heading in html["heading_boundaries"].items():
+        assert description[int(paragraph)].endswith(heading)
+    assert [
+        int(value)
+        for value in re.findall(
+            r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+            sections["claims"],
+            re.IGNORECASE,
+        )
+    ] == list(range(1, 21))
+    for phrase, count in evidence["optical_boundary"]["absent_marker_counts"].items():
+        assert len(re.findall(re.escape(phrase), normalized, re.IGNORECASE)) == count
+    assert evidence["optical_boundary"]["ordered_surface_prescription_published"] is False
+    assert evidence["optical_boundary"]["image_only_prescription_found_in_pdf"] is False
+    assert evidence["optical_boundary"]["drawing_geometry_used_for_numeric_derivation"] is False
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=evidence["publication_id"],
+    )
+    assert len(attempts) == evidence["denominator"]["terminal_items"] == 12
+    for key in (
+        "official_pdf_audit",
+        "external_family_queue",
+        "replay_determinism",
+        "source_audit",
+    ):
+        artifact = root / evidence[key]["path"]
+        assert hashlib.sha256(artifact.read_bytes()).hexdigest() == evidence[key][
+            "sha256"
+        ]
+
+    queue = json.loads(
+        (quick / "family-79728652-external-family-members.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert queue["current_frozen_cohort_roots"] == ["US-12588309"]
+    assert len(queue["external_family_members"]) == 6
+    assert all(
+        member["frozen_cohort_membership"] is False
+        for member in queue["external_family_members"]
+    )
+
+
+def test_sony_sensor_cover_nanostructure_pdf_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-79728652"
+    audit = json.loads(
+        (quick / "family-79728652-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    assert audit["family_id"] == "79728652"
+    assert audit["root_ids"] == ["US-12588309"]
+    assert audit["publication_id"] == "US-12588309-B2"
+    assert audit["b2_independent_wrapper_check"]["http_status"] == 200
+    assert audit["b2_independent_wrapper_check"]["complete_pdf_link_present"] is False
+    raster_sets: dict[tuple[str, str], list[str]] = {}
+    for publication, publication_audit in audit["publications"].items():
+        assert publication_audit["page_count"] == 47
+        assert publication_audit["page_image_count"] == 1
+        assert publication_audit["page_shape"] == [3300, 2560]
+        assert publication_audit["page_structure"]["drawing_sheet_count"] == 31
+        assert publication_audit["page_structure"]["table_pages"] == []
+        for label, wrapper in publication_audit["wrappers"].items():
+            path = root / wrapper["path"]
+            assert len(path.read_bytes()) == wrapper["bytes"]
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == wrapper["sha256"]
+            reader = patent_pdf_recovery.pypdf.PdfReader(str(path))
+            assert len(reader.pages) == publication_audit["page_count"]
+            page_hashes: list[str] = []
+            text_lengths: list[int] = []
+            for page_number, page in enumerate(reader.pages, start=1):
+                assert len(page.images) == publication_audit["page_image_count"]
+                text_lengths.append(len(page.extract_text() or ""))
+                image = patent_pdf_recovery._page_image(
+                    page,
+                    source=f"{publication} {label}",
+                    page_number=page_number,
+                )
+                assert list(
+                    patent_pdf_recovery._decoded_raster(
+                        image,
+                        source=f"{publication} {label}",
+                    ).shape
+                ) == publication_audit["page_shape"]
+                page_hashes.append(
+                    patent_pdf_recovery._canonical_raster_sha256(image)
+                )
+            assert text_lengths == wrapper["page_text_lengths"]
+            assert page_hashes == publication_audit["page_raster_sha256"]
+            assert hashlib.sha256(
+                json.dumps(page_hashes, separators=(",", ":")).encode()
+            ).hexdigest() == publication_audit["raster_set_sha256"]
+            raster_sets[(publication, label)] = page_hashes
+
+    assert raster_sets[("US-12588309-B2", "official-live-1")] == raster_sets[
+        ("US-12588309-B2", "official-live-2")
+    ]
+    assert raster_sets[("US-20230261018-A1", "official")] == raster_sets[
+        ("US-20230261018-A1", "google")
+    ]
+    assert sum(
+        left == right
+        for left, right in zip(
+            raster_sets[("US-12588309-B2", "official-live-1")],
+            raster_sets[("US-20230261018-A1", "official")],
+            strict=True,
+        )
+    ) == 0
+    assert audit["same_position_raster_equality"][
+        "B2_vs_A1_official"
+    ] == {"compared_pages": 47, "equal_pages": 0}
+    for visual in audit["retained_visual_audits"]:
+        path = root / visual["path"]
+        assert len(path.read_bytes()) == visual["bytes"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == visual["sha256"]
+
+
+def test_sony_sensor_cover_nanostructure_replay_is_semantically_deterministic() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-79728652"
+    artifact = json.loads(
+        (quick / "family-79728652-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert artifact["family_id"] == "79728652"
+    assert artifact["root_id"] == "US-12588309"
+    assert artifact["item_count"] == 12
+    assert artifact["excluded_semantic_fields"] == ["result_attempt"]
+    assert artifact["semantic_equal"] is True
+    semantic_hashes: set[str] = set()
+    for attempt in artifact["attempts"]:
+        path = root / attempt["path"]
+        assert len(path.read_bytes()) == attempt["bytes"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == attempt[
+            "file_sha256"
+        ]
+        result = json.loads(path.read_text(encoding="utf-8"))
+        assert result.pop("result_attempt") == attempt["result_attempt"]
+        assert result["root_state"] == "terminal"
+        assert result["reason_code"] == "terminal.all_disclosed_items_terminal"
+        assert len(result["items"]) == 12
+        assert all(
+            item["state"] == "terminal"
+            and item["terminal_status"] == "confirmed_no_prescription"
+            and item["reason_code"] in artifact["terminal_reason_codes"]
+            and item["conversion_attempt_id"] is None
+            and item["conversion_request_sha256"] is None
+            and item["prescription_fingerprint"] is None
+            for item in result["items"]
+        )
+        assert sum(
+            item["reason_code"] == artifact["terminal_reason_codes"][0]
+            for item in result["items"]
+        ) == 11
+        assert sum(
+            item["reason_code"] == artifact["terminal_reason_codes"][1]
+            for item in result["items"]
+        ) == 1
+        semantic_sha256 = hashlib.sha256(
+            json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        assert semantic_sha256 == attempt["semantic_sha256"]
+        assert semantic_sha256 == artifact["semantic_sha256"]
+        semantic_hashes.add(semantic_sha256)
+    assert semantic_hashes == {artifact["semantic_sha256"]}
+    assert artifact["conversion_attempts"] == artifact["candidate_zmx_count"] == 0
+    assert artifact["matching_staging_zmx_count"] == 0
+
+
+def test_sony_sensor_cover_nanostructure_generic_census_retires_one_root() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-79728652"
+    before = json.loads(
+        (quick / "generic-residual-before-137.json").read_text(encoding="utf-8")
+    )
+    after_1_path = quick / "generic-residual-after-1.json"
+    after_2_path = quick / "generic-residual-after-2.json"
+    after = json.loads(after_1_path.read_text(encoding="utf-8"))
+
+    assert before["affected_roots"] == before["affected_items"] == 137
+    assert after["affected_roots"] == after["affected_items"] == 136
+    assert after["result_set_sha256"] == (
+        "30865890b2dd767e93e9cb33a8cf5292a22837799daf1dd7a3d7dcd30fda96f6"
+    )
+    assert after_1_path.read_bytes() == after_2_path.read_bytes()
+    assert hashlib.sha256(after_1_path.read_bytes()).hexdigest() == (
+        "736a7d5fedb9fd9c99084edba4b7050d0f4bf1ca23997f36ab8c4249bb0146e6"
+    )
+    assert all(item["root_id"] != "US-12588309" for item in after["items"])
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after["result_set_sha256"]
+    assert queue["next_exact_group"] == {
+        "family_id": "97107823",
+        "root_id": "US-20260086273",
+        "publication_id": "US-20260086273-A1",
+        "layout_signature": (
+            "18f601741e46968dd9aa08221b03b91587e37313eeac6ae406034b44be026e21"
+        ),
+        "raw_document_sha256": (
+            "40376642ef07b3d1e53469dce163bafdf89d54b4e4a205ae948071e7c25bc1b2"
+        ),
+        "title": "IMAGING LENS ASSEMBLY, CAMERA MODULE AND ELECTRONIC DEVICE",
+        "affected_roots": 1,
+        "affected_items": 1,
+    }

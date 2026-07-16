@@ -457,6 +457,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_sony_sensor_cover_nanostructure_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -3948,6 +3956,194 @@ _LARGAN_PLASTIC_LENS_INSPECTION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "ee8bba0103f5318d0aa5aa15d9fafe56c6397c19c9775bb269592162530c0aca",
             "653ace1605d5b5df031bcfb7fc88aeb8e3ba2930294e8626a89f612dcec57844",
         ),
+        "raw_table_directive_count": 0,
+    },
+}
+
+_SONY_SENSOR_COVER_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Solid-state\s+imaging\s+apparatus,\s+method\s+for\s+"
+    r"manufacturing\s+solid-state\s+imaging\s+apparatus,\s+and\s+electronic\s+"
+    r"apparatus\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_SONY_SENSOR_COVER_FIGURE_PREFIXES = (
+    "FIG. 1 is ",
+    "FIGS. 2 A- 2 C indicate ",
+    "FIG. 3 is ",
+    "FIG. 4 is ",
+    "FIG. 5 is ",
+    "FIGS. 6 A- 6 C indicate ",
+    "FIGS. 7 A- 7 B indicate ",
+    "FIGS. 8 A- 8 C indicate ",
+    "FIGS. 9 A- 9 B indicate ",
+    "FIGS. 10 A- 10 B indicate ",
+    "FIGS. 11 A- 11 B indicate ",
+    "FIG. 12 indicates ",
+    "FIG. 13 indicates ",
+    "FIG. 14 indicates ",
+    "FIG. 15 indicates ",
+    "FIGS. 16 A- 16 B indicate ",
+    "FIGS. 17 A- 17 B indicate ",
+    "FIGS. 18 A- 18 B indicate ",
+    "FIGS. 19 A- 19 B indicate ",
+    "FIGS. 20 A- 20 B indicate ",
+    "FIGS. 21 A- 21 B indicate ",
+    "FIGS. 22 A- 22 B indicate ",
+    "FIGS. 23 A- 23 B indicate ",
+    "FIGS. 24 A- 24 B indicate ",
+    "FIGS. 25 A- 25 B indicate ",
+    "FIG. 26 indicates ",
+    "FIG. 27 indicates ",
+    "FIG. 28 indicates ",
+    "FIG. 29 indicates ",
+    "FIGS. 30 A- 30 C indicate ",
+    "FIGS. 31 A- 31 C indicate ",
+)
+_SONY_SENSOR_COVER_ITEMS = (
+    (1, "Sony sensor-cover nanostructure first embodiment"),
+    (2, "Sony sensor-cover nanostructure second embodiment"),
+    (3, "Sony sensor-cover nanostructure third embodiment"),
+    (4, "Sony sensor-cover nanostructure fourth embodiment"),
+    (5, "Sony sensor-cover nanostructure fifth embodiment"),
+    (6, "Sony sensor-cover nanostructure sixth embodiment"),
+    (7, "Sony sensor-cover nanostructure seventh embodiment"),
+    (8, "Sony sensor-cover nanostructure eighth embodiment"),
+    (9, "Sony sensor-cover nanostructure ninth embodiment"),
+    (10, "Sony sensor-cover nanostructure tenth embodiment"),
+    (11, "Sony sensor-cover nanostructure eleventh embodiment"),
+    (12, "Sony sensor-cover nanostructure manufacturing twelfth embodiment"),
+)
+_SONY_SENSOR_COVER_REASON_CODE = (
+    "confirmed_no_prescription."
+    "solid_state_image_sensor_translucent_cover_nanostructure_architecture_only"
+)
+_SONY_SENSOR_COVER_MANUFACTURING_REASON_CODE = (
+    "confirmed_no_prescription."
+    "solid_state_image_sensor_translucent_cover_manufacturing_architecture_only"
+)
+_SONY_SENSOR_COVER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12588309-B2": {
+        "raw_document_sha256": (
+            "ec9eabc5a6f28fdd86b3685e102429aee393d7db2614149c72af9c14fbc16867"
+        ),
+        "normalized_text_sha256": (
+            "eb3963f94a7c90dc824b0ab29c65ec01eea3ecdf83b5c3a1530525a1180e8917"
+        ),
+        "family_id": "79728652",
+        "application_number": "18/005094",
+        "section_markers": {
+            "abstract": "Abstract There is provided a solid-state imaging apparatus",
+            "background_summary": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF DRAWINGS",
+            "claims": "Claims 1 . A solid-state imaging apparatus, comprising:",
+        },
+        "section_sha256": {
+            "abstract": (
+                "39fd11cb33a908cf07045de6435afa9bc9209de14d1c99fff807702888444f8c"
+            ),
+            "background_summary": (
+                "860e4ffc3acbee7b365d3b75518dee02806fc8d611a84ad6c969c6d60d9b7c0d"
+            ),
+            "description": (
+                "682cbbafeaa219f067a798590291feff03a7d51672387b6baae77b1def0a70e7"
+            ),
+            "claims": (
+                "47d3d78f47c00ee8cb782cfa877caa745260420833d534fa6d13d237f35e9b7c"
+            ),
+        },
+        "background_summary_paragraph_count": 26,
+        "description_paragraph_count": 204,
+        "embodiment_ranges": {
+            "Embodiment 1": (33, 129),
+            "Embodiment 2": (130, 132),
+            "Embodiment 3": (133, 136),
+            "Embodiment 4": (137, 140),
+            "Embodiment 5": (141, 144),
+            "Embodiment 6": (145, 148),
+            "Embodiment 7": (149, 152),
+            "Embodiment 8": (153, 155),
+            "Embodiment 9": (156, 158),
+            "Embodiment 10": (159, 160),
+            "Embodiment 11": (161, 163),
+            "Embodiment 12": (173, 180),
+        },
+        "heading_boundaries": {
+            32: "Embodiment 1",
+            129: "Embodiment 2",
+            132: "Embodiment 3",
+            136: "Embodiment 4",
+            140: "Embodiment 5",
+            144: "Embodiment 6",
+            148: "Embodiment 7",
+            152: "Embodiment 8",
+            155: "Embodiment 9",
+            158: "Embodiment 10",
+            160: "Embodiment 11",
+            163: "Graphs of Embodiments 1 and 5",
+            172: "Embodiment 12",
+        },
+        "claim_count": 20,
+        "identity_markers": {
+            "United States Patent 12588309": 1,
+            "Kind Code B2": 1,
+            "Date of Patent March 24, 2026": 1,
+            "Inventor(s) Baba; Tomohiko": 1,
+            "Applicant: SONY SEMICONDUCTOR SOLUTIONS CORPORATION": 1,
+            "Family ID: 79728652": 1,
+            "Assignee: Sony Semiconductor Solutions Corporation": 1,
+            "Appl. No.: 18/005094": 1,
+            "Filed (or PCT Filed): June 03, 2021": 1,
+            "PCT No.: PCT/JP2021/021231": 1,
+            "PCT Pub. No.: WO2022/018981": 1,
+            "US 20230261018 A1 Aug. 17, 2023": 1,
+            "JP 2020-124490 Jul. 21, 2020": 1,
+        },
+        "source_scope_phrase_counts": {
+            "solid-state imaging apparatus": 129,
+            "photoelectric conversion portion": 43,
+            "on-chip lens": 18,
+            "imaging lens assembly": 2,
+            "imaging lenses": 5,
+            "glass cover": 99,
+            "translucent member": 87,
+            "protruded portion": 205,
+            "FDTD method": 2,
+            "height H": 44,
+            "diameter R": 21,
+            "pitch P": 35,
+            "packaging ratio R/P": 20,
+            "transmittance": 60,
+            "reflectance": 14,
+            "incident angle": 25,
+            "refractive index": 8,
+            "wavelength": 17,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "radius": 0,
+            "curvature": 0,
+            "thickness": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "asphere": 0,
+            "aspheric coefficient": 0,
+            "asphere coefficient": 0,
+            "surface number": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface prescription": 0,
+            "lens material": 0,
+            "glass type": 0,
+            "optical axis": 0,
+        },
+        "formal_table_count": 0,
         "raw_table_directive_count": 0,
     },
 }
@@ -19562,6 +19758,228 @@ def _classify_largan_plastic_lens_inspection_architecture_only_attempts(
             ),
         )
         for number, label in _LARGAN_PLASTIC_LENS_INSPECTION_ITEMS
+    ]
+
+
+def _classify_sony_sensor_cover_nanostructure_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 79728652 sensor-cover architecture."""
+
+    profile = _SONY_SENSOR_COVER_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _SONY_SENSOR_COVER_ITEMS
+        ]
+
+    def sequential_parenthetical_paragraphs(
+        section: str,
+        *,
+        count: int,
+    ) -> dict[int, str]:
+        markers: list[tuple[int, int, int]] = []
+        cursor = 0
+        for number in range(1, count + 1):
+            match = re.search(
+                rf"(?<!\d)\({number}\)\s",
+                section[cursor:],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Sony sensor-cover parenthetical paragraph denominator "
+                    f"is missing paragraph {number}"
+                )
+            start = cursor + match.start()
+            content_start = cursor + match.end()
+            markers.append((number, start, content_start))
+            cursor = content_start
+        return {
+            number: section[
+                content_start : (
+                    markers[index + 1][1]
+                    if index + 1 < len(markers)
+                    else len(section)
+                )
+            ].strip()
+            for index, (number, _, content_start) in enumerate(markers)
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Sony sensor-cover official raw text hash changed for {patent_id}"
+            )
+        if len(_SONY_SENSOR_COVER_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Sony sensor-cover title binding changed")
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Sony sensor-cover normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Sony sensor-cover identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Sony sensor-cover section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Sony sensor-cover section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Sony sensor-cover {section_name} section changed"
+                )
+
+        background_summary_paragraphs = sequential_parenthetical_paragraphs(
+            sections["background_summary"],
+            count=int(profile["background_summary_paragraph_count"]),
+        )
+        if tuple(background_summary_paragraphs) != tuple(range(1, 27)):
+            raise PatentParseError(
+                "Sony sensor-cover Background/Summary paragraphs 1-26 changed"
+            )
+        description_paragraphs = sequential_parenthetical_paragraphs(
+            sections["description"],
+            count=int(profile["description_paragraph_count"]),
+        )
+        if tuple(description_paragraphs) != tuple(range(1, 205)):
+            raise PatentParseError(
+                "Sony sensor-cover Description paragraphs 1-204 changed"
+            )
+        for paragraph, prefix in enumerate(
+            _SONY_SENSOR_COVER_FIGURE_PREFIXES,
+            start=1,
+        ):
+            if not description_paragraphs[paragraph].startswith(prefix):
+                raise PatentParseError(
+                    f"Sony sensor-cover drawing declaration {paragraph} changed"
+                )
+        for paragraph, heading in profile["heading_boundaries"].items():
+            if not description_paragraphs[int(paragraph)].endswith(heading):
+                raise PatentParseError(
+                    f"Sony sensor-cover heading {heading!r} boundary changed"
+                )
+        for heading, bounds in profile["embodiment_ranges"].items():
+            if any(
+                number not in description_paragraphs
+                for number in range(bounds[0], bounds[1] + 1)
+            ):
+                raise PatentParseError(
+                    f"Sony sensor-cover {heading} denominator changed"
+                )
+        if tuple(range(164, 173)) != tuple(
+            number for number in description_paragraphs if 164 <= number <= 172
+        ):
+            raise PatentParseError(
+                "Sony sensor-cover shared graph paragraphs 164-172 changed"
+            )
+        if tuple(range(181, 205)) != tuple(
+            number for number in description_paragraphs if 181 <= number <= 204
+        ):
+            raise PatentParseError(
+                "Sony sensor-cover conclusion/configuration denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "Sony sensor-cover claims 1-20 denominator changed"
+            )
+        if len(re.findall(r"TABLE-US-\d+", text, re.IGNORECASE)) != int(
+            profile["formal_table_count"]
+        ):
+            raise PatentParseError("Sony sensor-cover formal table count changed")
+        if len(re.findall(r"<\?table", raw_text, re.IGNORECASE)) != int(
+            profile["raw_table_directive_count"]
+        ):
+            raise PatentParseError("Sony sensor-cover raw table directives changed")
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Sony sensor-cover phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Sony sensor-cover prescription phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact embodiment publishes CMOS/on-chip-lens/CSP layout and "
+        "translucent-cover protrusion material, geometry, FDTD transmission/"
+        "reflection, and device-placement data only; it publishes no ordered "
+        "imaging-lens surface prescription",
+        "the exact embodiment publishes lithography and etching of translucent-"
+        "cover protrusions only; it publishes no ordered imaging-lens surface "
+        "prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _SONY_SENSOR_COVER_REASON_CODE
+                    if number <= 11
+                    else _SONY_SENSOR_COVER_MANUFACTURING_REASON_CODE
+                ),
+                detail=details[0 if number <= 11 else 1],
+            ),
+        )
+        for number, label in _SONY_SENSOR_COVER_ITEMS
     ]
 
 

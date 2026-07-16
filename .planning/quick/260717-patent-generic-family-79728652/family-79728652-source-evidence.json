@@ -1,0 +1,279 @@
+{
+  "application_number": "18/005094",
+  "census": {
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-79728652/generic-residual-after-1.json",
+      "sha256": "736a7d5fedb9fd9c99084edba4b7050d0f4bf1ca23997f36ab8c4249bb0146e6"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-79728652/generic-residual-after-2.json",
+      "sha256": "736a7d5fedb9fd9c99084edba4b7050d0f4bf1ca23997f36ab8c4249bb0146e6"
+    },
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-79728652/generic-residual-before-137.json",
+      "sha256": "e66a1b8b8cd88b2496e3feb09ee486f883981c320ea899ad02b734b8939a678f"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-79728652/queue-after.json",
+      "sha256": "45e0df44205ad7113476832d5762455b89951d60a0571d59a03d0e3f2b6d99ff"
+    }
+  },
+  "denominator": {
+    "background_summary_paragraphs": 26,
+    "claims": 20,
+    "classification_drawing_sheets": 31,
+    "classification_pdf_pages": 47,
+    "classification_specification_internal_pages": 28,
+    "description_paragraphs": 204,
+    "drawing_declarations": 31,
+    "explicit_embodiments": 12,
+    "figure_panels": 55,
+    "frozen_cohort_roots": 1,
+    "manufacturing_embodiments": 1,
+    "outside_cohort_family_publications": 6,
+    "retained_classification_publications": 1,
+    "sensor_cover_embodiments": 11,
+    "shared_graph_paragraphs": 9,
+    "source_tables": 0,
+    "terminal_items": 12
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-79728652/family-79728652-external-family-members.json",
+    "sha256": "23c59a5cb6c5fd584637ff7a52d0c46dc9b4823dce6e658160de806fe8b19e5c"
+  },
+  "family_id": "79728652",
+  "inventors": [
+    "Baba; Tomohiko"
+  ],
+  "official_html": {
+    "background_summary_paragraph_range": [
+      1,
+      26
+    ],
+    "bytes": 120339,
+    "claim_range": [
+      1,
+      20
+    ],
+    "conclusion_configuration_reference_paragraph_range": [
+      181,
+      204
+    ],
+    "description_paragraph_range": [
+      1,
+      204
+    ],
+    "embodiment_ranges": {
+      "Embodiment 1": [
+        33,
+        129
+      ],
+      "Embodiment 10": [
+        159,
+        160
+      ],
+      "Embodiment 11": [
+        161,
+        163
+      ],
+      "Embodiment 12": [
+        173,
+        180
+      ],
+      "Embodiment 2": [
+        130,
+        132
+      ],
+      "Embodiment 3": [
+        133,
+        136
+      ],
+      "Embodiment 4": [
+        137,
+        140
+      ],
+      "Embodiment 5": [
+        141,
+        144
+      ],
+      "Embodiment 6": [
+        145,
+        148
+      ],
+      "Embodiment 7": [
+        149,
+        152
+      ],
+      "Embodiment 8": [
+        153,
+        155
+      ],
+      "Embodiment 9": [
+        156,
+        158
+      ]
+    },
+    "figure_declaration_paragraph_range": [
+      1,
+      31
+    ],
+    "figure_declaration_prefixes": [
+      "FIG. 1 is ",
+      "FIGS. 2 A- 2 C indicate ",
+      "FIG. 3 is ",
+      "FIG. 4 is ",
+      "FIG. 5 is ",
+      "FIGS. 6 A- 6 C indicate ",
+      "FIGS. 7 A- 7 B indicate ",
+      "FIGS. 8 A- 8 C indicate ",
+      "FIGS. 9 A- 9 B indicate ",
+      "FIGS. 10 A- 10 B indicate ",
+      "FIGS. 11 A- 11 B indicate ",
+      "FIG. 12 indicates ",
+      "FIG. 13 indicates ",
+      "FIG. 14 indicates ",
+      "FIG. 15 indicates ",
+      "FIGS. 16 A- 16 B indicate ",
+      "FIGS. 17 A- 17 B indicate ",
+      "FIGS. 18 A- 18 B indicate ",
+      "FIGS. 19 A- 19 B indicate ",
+      "FIGS. 20 A- 20 B indicate ",
+      "FIGS. 21 A- 21 B indicate ",
+      "FIGS. 22 A- 22 B indicate ",
+      "FIGS. 23 A- 23 B indicate ",
+      "FIGS. 24 A- 24 B indicate ",
+      "FIGS. 25 A- 25 B indicate ",
+      "FIG. 26 indicates ",
+      "FIG. 27 indicates ",
+      "FIG. 28 indicates ",
+      "FIG. 29 indicates ",
+      "FIGS. 30 A- 30 C indicate ",
+      "FIGS. 31 A- 31 C indicate "
+    ],
+    "formal_table_count": 0,
+    "heading_boundaries": {
+      "129": "Embodiment 2",
+      "132": "Embodiment 3",
+      "136": "Embodiment 4",
+      "140": "Embodiment 5",
+      "144": "Embodiment 6",
+      "148": "Embodiment 7",
+      "152": "Embodiment 8",
+      "155": "Embodiment 9",
+      "158": "Embodiment 10",
+      "160": "Embodiment 11",
+      "163": "Graphs of Embodiments 1 and 5",
+      "172": "Embodiment 12",
+      "32": "Embodiment 1"
+    },
+    "normalized_characters": 95367,
+    "normalized_text_sha256": "eb3963f94a7c90dc824b0ab29c65ec01eea3ecdf83b5c3a1530525a1180e8917",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/ec9eabc5a6f28fdd/US-12588309-B2.html",
+    "raw_document_sha256": "ec9eabc5a6f28fdd86b3685e102429aee393d7db2614149c72af9c14fbc16867",
+    "raw_table_directive_count": 0,
+    "section_markers": {
+      "abstract": "Abstract There is provided a solid-state imaging apparatus",
+      "background_summary": "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS",
+      "description": "Description BRIEF DESCRIPTION OF DRAWINGS",
+      "claims": "Claims 1 . A solid-state imaging apparatus, comprising:"
+    },
+    "section_positions": {
+      "abstract": 320,
+      "background_summary": 2471,
+      "description": 11739,
+      "claims": 89947
+    },
+    "section_sha256": {
+      "abstract": "39fd11cb33a908cf07045de6435afa9bc9209de14d1c99fff807702888444f8c",
+      "background_summary": "860e4ffc3acbee7b365d3b75518dee02806fc8d611a84ad6c969c6d60d9b7c0d",
+      "description": "682cbbafeaa219f067a798590291feff03a7d51672387b6baae77b1def0a70e7",
+      "claims": "47d3d78f47c00ee8cb782cfa877caa745260420833d534fa6d13d237f35e9b7c"
+    },
+    "shared_graph_paragraph_range": [
+      164,
+      172
+    ]
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-79728652/family-79728652-raster-audit.json",
+    "sha256": "0384d30da874ccb0ab3362d8d1df9bd4d08ccbb8be4b37fd013c5113acff9baa"
+  },
+  "optical_boundary": {
+    "absent_marker_counts": {
+      "Abbe": 0,
+      "F-number": 0,
+      "FNO": 0,
+      "FOV": 0,
+      "asphere": 0,
+      "asphere coefficient": 0,
+      "aspheric": 0,
+      "aspheric coefficient": 0,
+      "curvature": 0,
+      "effective focal length": 0,
+      "field of view": 0,
+      "focal length": 0,
+      "glass type": 0,
+      "lens material": 0,
+      "lens prescription": 0,
+      "optical axis": 0,
+      "optical prescription": 0,
+      "radius": 0,
+      "surface number": 0,
+      "surface prescription": 0,
+      "thickness": 0
+    },
+    "cross_publication_values_borrowed": false,
+    "direct_efl_f_number_field_metadata_published": false,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "image_only_prescription_found_in_pdf": false,
+    "ordered_surface_prescription_published": false,
+    "published_data_context": [
+      "CMOS sensor and CSP layer architecture",
+      "on-chip-lens and external imaging-lens placement",
+      "translucent-cover protrusion material and geometry",
+      "FDTD transmittance and reflectance graphs",
+      "lithography and etching manufacturing flow"
+    ],
+    "published_numeric_context": [
+      "height H 0.13-1.00 um",
+      "pitch P 0.23-0.70 um",
+      "example height/diameter/pitch 300/300/400 nm",
+      "SiO2/TiO2 refractive indices 1.45/2.5",
+      "incident angles 0/40/43 degrees",
+      "packaging ratio thresholds 35/60 percent",
+      "non-diffracted-light and transmittance/reflectance percentages"
+    ]
+  },
+  "owner": "Sony Semiconductor Solutions Corporation",
+  "priority_records": [
+    "JP 2020-124490 Jul. 21, 2020",
+    "PCT/JP2021/021231 Jun. 03, 2021"
+  ],
+  "publication_id": "US-12588309-B2",
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-79728652/family-79728652-replay-determinism.json",
+    "sha256": "4b372ee1f533192fe9e250975bbc6b8b77e0743458720596367354a976aa998f"
+  },
+  "root_ids": [
+    "US-12588309"
+  ],
+  "same_application_prior_publication": "US-20230261018-A1",
+  "saturation_boundary": "This exact frozen root is source-proven terminal. External-family closure, all remaining parser buckets, staging intake, macro replay support, and global source exhaustion remain open.",
+  "schema_version": 1,
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-79728652/family-79728652-source-audit.md",
+    "sha256": "bf9b12ac23fe19bbbe19ff7607090b47888ed8ea0a20e3d453aecd60488177b6"
+  },
+  "terminal_outcome": {
+    "candidate_zmx": 0,
+    "conversion_receipts": 0,
+    "conversion_requests": 0,
+    "manufacturing_item_count": 1,
+    "manufacturing_reason_code": "terminal.confirmed_no_prescription.solid_state_image_sensor_translucent_cover_manufacturing_architecture_only",
+    "prescription_fingerprints": 0,
+    "root_state": "terminal",
+    "sensor_cover_item_count": 11,
+    "sensor_cover_reason_code": "terminal.confirmed_no_prescription.solid_state_image_sensor_translucent_cover_nanostructure_architecture_only",
+    "terminal_status": "confirmed_no_prescription"
+  }
+}
