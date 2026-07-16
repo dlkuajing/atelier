@@ -7790,6 +7790,81 @@ def test_endoscopic_three_lens_exact_sources_are_terminal_when_f_number_absent(
     )
 
 
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
+            "US-11435552-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "fc7ffce9d6d1ba62",
+                "US-11435552-B2.html",
+            ),
+        ),
+        (
+            "US-20200041761-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "41a8a3a3a2183a91",
+                "US-20200041761-A1.html",
+            ),
+        ),
+    ),
+)
+def test_samsung_iris_exact_sources_retain_six_states_without_repairs(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 7))
+    assert [attempt.embodiment for attempt in attempts] == list(
+        patent_to_zmx._SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS
+    )
+    visible = attempts[0].prescription
+    ir = attempts[1].prescription
+    assert visible is not None and ir is not None
+    assert (visible.focal_length_mm, visible.f_number, visible.hfov_deg) == pytest.approx(
+        (3.75, 2.08, 36.7)
+    )
+    assert (len(visible.surfaces), len(ir.surfaces)) == (14, 17)
+    assert visible.reference_wavelength_um == pytest.approx(0.5876)
+    assert ir.reference_wavelength_um == pytest.approx(0.82)
+    assert prescription_fingerprint(visible) == "2f0f22ea16129b08"
+    assert prescription_fingerprint(ir) == "60e6e642c0aa3840"
+    assert sum(bool(surface.asphere_coefficients) for surface in visible.surfaces) == 10
+    assert sum(bool(surface.asphere_coefficients) for surface in ir.surfaces) == 10
+    assert visible.surfaces[0].asphere_coefficients["K"] == pytest.approx(-0.29816)
+    assert ir.surfaces[10].asphere_coefficients["K"] == pytest.approx(0.0)
+    assert ir.surfaces[7].nd == pytest.approx(1.50858)
+    assert ir.surfaces[8].nd == pytest.approx(1.52652)
+
+    assert all(attempt.prescription is None for attempt in attempts[2:])
+    assert [str(attempt.error) for attempt in attempts[2:]] == [
+        "Samsung iris embodiment 2 visible state source conflict: TABLE 6 labels "
+        "asphere columns 1-10 although TABLE 4 uses ST between surfaces 4 and 6",
+        "Samsung iris embodiment 2 IR state source conflict: TABLE 6 surface labels "
+        "are inconsistent and TABLE 7 publishes duplicate K rows for surfaces 7-2/7-3",
+        "Samsung iris embodiment 3 visible state source conflict: TABLE 8 radius "
+        "1.530f377 is nonnumeric, TABLE 10 surface labels are inconsistent, and "
+        "narrative/TABLE 11 system metadata disagree",
+        "Samsung iris embodiment 3 IR state source conflict: TABLE 10 labels asphere "
+        "columns 1-10 although TABLE 9 uses ST between surfaces 4 and 6, and "
+        "narrative/TABLE 11 system metadata disagree",
+    ]
+
+
 def test_endoscopic_three_lens_raster_audit_rehashes() -> None:
     root = Path(__file__).resolve().parents[1]
     audit_path = (
@@ -7852,6 +7927,71 @@ def test_endoscopic_three_lens_raster_audit_rehashes() -> None:
             hashlib.sha256(contact_path.read_bytes()).hexdigest()
             == record["contact_sheet_sha256"]
         )
+
+
+def test_samsung_iris_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    audit_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-63585563"
+        / "family-63585563-raster-audit.json"
+    )
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+
+    assert audit["family_id"] == "63585563"
+    assert audit["figure_declarations"] == [str(index) for index in range(1, 19)]
+    for publication_id, record in audit["publications"].items():
+        pdf_path = root / record["retained_pdf_path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == record[
+            "retained_pdf_sha256"
+        ]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == 34
+        assert sum(len(page.extract_text() or "") for page in reader.pages) == 0
+        assert record["text_layer_char_count"] == 0
+        page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=publication_id,
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(reader.pages, start=1)
+        ]
+        assert (
+            hashlib.sha256(
+                json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+            ).hexdigest()
+            == record["raster_set_sha256"]
+        )
+
+        second_pdf_path = root / record["second_live_pdf_path"]
+        assert hashlib.sha256(second_pdf_path.read_bytes()).hexdigest() == record[
+            "second_live_pdf_sha256"
+        ]
+        second_reader = patent_pdf_recovery.pypdf.PdfReader(str(second_pdf_path))
+        second_page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=f"{publication_id} recheck",
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(second_reader.pages, start=1)
+        ]
+        assert second_page_hashes == page_hashes
+        assert record["second_live_raster_set_equal"] is True
+        assert len(record["drawing_page_numbers"]) == record["drawing_sheet_count"] == 18
+        assert len(record["table_page_numbers"]) == 4
+
+        contact_path = root / record["contact_sheet_path"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == record[
+            "contact_sheet_sha256"
+        ]
 
 
 @pytest.mark.parametrize(
@@ -8593,6 +8733,46 @@ def _endoscopic_three_lens_b2_source() -> tuple[str, str]:
     return patent_id, source_path.read_text(encoding="utf-8")
 
 
+def _samsung_iris_b2_source() -> tuple[str, str]:
+    patent_id = "US-11435552-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "fc7ffce9d6d1ba62"
+        / "US-11435552-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_samsung_iris_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    blocks = patent_to_zmx._patent_table_blocks(normalized)
+    original = patent_to_zmx._SAMSUNG_IRIS_MOVING_GROUP_SOURCE_PROFILES[patent_id]
+    monkeypatch.setitem(
+        patent_to_zmx._SAMSUNG_IRIS_MOVING_GROUP_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "table_block_sha256": tuple(
+                hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+                for block in blocks
+            ),
+        },
+    )
+
+
 def _install_endoscopic_three_lens_drift_profile(
     monkeypatch: pytest.MonkeyPatch,
     *,
@@ -8714,6 +8894,67 @@ def test_endoscopic_three_lens_published_f_number_reopens_all_items(
         and "endoscopic three-lens F-number marker" in str(attempt.error)
         for attempt in attempts
     )
+
+
+def test_samsung_iris_source_hash_drift_fails_all_six_items() -> None:
+    patent_id, raw_text = _samsung_iris_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 6
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        f"Samsung iris official raw text hash changed for {patent_id}"
+    }
+
+
+def test_samsung_iris_figure_denominator_drift_fails_all_six_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _samsung_iris_b2_source()
+    raw_text = original.replace(
+        '<figref idref="DRAWINGS">FIG. 18</figref> is a block diagram',
+        '<figref idref="DRAWINGS">FIG. 19</figref> is a block diagram',
+        1,
+    )
+    assert raw_text != original
+    _install_samsung_iris_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 6
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Samsung iris 18-figure denominator changed"
+    }
+
+
+def test_samsung_iris_corrected_table8_reopens_source_profile(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _samsung_iris_b2_source()
+    raw_text = original.replace("1.530f377", "1.530377", 1)
+    assert raw_text != original
+    _install_samsung_iris_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 6
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Samsung iris TABLE 8 damaged-radius signature changed"
+    }
 
 
 def _install_catadioptric_module_drift_profile(

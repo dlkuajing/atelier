@@ -1,0 +1,1 @@
+{"detail":"PatentTraceError: ValueError: Wavelength out of range for this model.","efl_mm":null,"reason_code":"trace_failed.optical_trace_exception","request_sha256":"0aa14e47c0f04648a1d00de5cb4a0a4a81b6e82ca83ab2e982f1cc0d5fae5f60","schema_version":1,"status":"trace_failed","trace_audit":null}

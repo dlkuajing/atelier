@@ -385,6 +385,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_samsung_iris_moving_group_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_catadioptric_module_architecture_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2312,6 +2318,105 @@ _ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES: dict[
         ),
     },
 }
+_SAMSUNG_IRIS_MOVING_GROUP_TITLE_PATTERN = re.compile(
+    r"\bOPTICAL\s+LENS\s+ASSEMBLY\s+AND\s+ELECTRONIC\s+DEVICE\s+"
+    r"COMPRISING\s+SAME\b",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_IRIS_MOVING_GROUP_FIGURES = tuple(range(1, 19))
+_SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS = (
+    "Samsung iris numerical embodiment 1 visible state",
+    "Samsung iris numerical embodiment 1 IR state",
+    "Samsung iris numerical embodiment 2 visible state",
+    "Samsung iris numerical embodiment 2 IR state",
+    "Samsung iris numerical embodiment 3 visible state",
+    "Samsung iris numerical embodiment 3 IR state",
+)
+_SAMSUNG_IRIS_MOVING_GROUP_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11435552-B2": {
+        "raw_document_sha256": (
+            "fc7ffce9d6d1ba6245b1cee259c8e63a022c92314840324273e1022f96b73089"
+        ),
+        "normalized_text_sha256": (
+            "be2f3764ff09939c08c1f23718d4b4aa1855ea70384b6c71ac742dc98121edd0"
+        ),
+        "application_number": "16/485921",
+        "relationship_markers": ("US 20200041761 A1 Feb. 06, 2020",),
+        "table_block_sha256": (
+            "0b3ac9d62fa62d70b258ea142dde60abac804a772db170b0c5bdda04e40d026d",
+            "f0078b3f62c29f075de6c2488cbbefce0982e19f4ac0e82a9879fbd5edd1489b",
+            "5b92e95c4a868ec6cd00c75cb8b9124521bc14c68f01ec66f1ab6ec980b52474",
+            "bb23045ab19b6b0808d67d9db34bed6d506bfbfc3e74ba09aa6ecc9136f19bbb",
+            "46fc906c92a60d66c49ab540709d7ac446b864d1c62e2923f76ab9ac4efada4b",
+            "c3be6d3c1797c857a46d31c5eea70970919296494f77de0758b85c0466c20584",
+            "10d97bbe1daafa60e8d5db3898b0149b74a28bd62ed707a3e28544f3a60410bb",
+            "0d684c6ffc7ae7718da9b13e3000fd14016acdcdee06c5886c02db39ca3cd37e",
+            "ba00001020ce6977212c64169c8f415657df43cd8f50fef5319a16a2cfc74a08",
+            "9a0edf174bcc2ee8fb69797cd91bde24abb54a4445802173e981777cc26d1072",
+            "87e15e13c2bc9239447188467dfd84732419d942f743ecc8b7deb8ee3de43101",
+        ),
+    },
+    "US-20200041761-A1": {
+        "raw_document_sha256": (
+            "41a8a3a3a2183a9129cdde921874fc090aa2471a6af657a2f29195e47ceb2d38"
+        ),
+        "normalized_text_sha256": (
+            "182146469a92e0140562a94e9d85025d8036ca44d40a0918affc4d1a69c10e05"
+        ),
+        "application_number": "16/485921",
+        "relationship_markers": (),
+        "table_block_sha256": (
+            "6cf459faf11625bcf36dc0bd5b4b8cc5ea1b1dc6db132dbd08c83ab08b2cf494",
+            "53d266ca745434e9b3d2cbb551618102a210f8003ca7958dc18f494e7bf7f55e",
+            "7ff85931f9a0a64157f2ac7fdc28842423101e6778acada28e56fbef862f2484",
+            "00a4411af790acfeaef5c82c3a477b1004dab7dcd888a855e722be9d604b99eb",
+            "39ea1b5dfc5605d8752b1e1bc5f34e68efbffd9163159a7da61fcd2623172bde",
+            "7c057ce3c83bad154c67bb61cabdc265289c8beecefef75fd8ff7b65e756a3bd",
+            "bd135899388721c2ca05b8a059cc6eee172a4ebf40e9ee1a8daf1743b271cd95",
+            "0eb93268b525911ccfbda1a7d65a6391f8c3b7de156936d3a2335a1499ce514b",
+            "e8e42dce87472d8aeb5d978f887c375c0b68c74d2bea15c0174a9b9ba877a4b5",
+            "af9a1da31d2df9302f000ba165ae2ea551448e7c580f27ba5eab775280d12f65",
+            "14d512d8aca88610f6e379a5586a84d33ad20c0db7c3ee722143d761718d0a95",
+        ),
+    },
+}
+_SAMSUNG_IRIS_FIRST_VISIBLE_LAYOUT = (
+    (("obj",), False),
+    (("1*",), True),
+    (("2*",), False),
+    (("3*",), True),
+    (("4*",), False),
+    (("ST",), False),
+    (("6*",), True),
+    (("7*",), False),
+    (("8*",), True),
+    (("9*",), False),
+    (("10*",), True),
+    (("11*",), False),
+    (("12",), True),
+    (("13",), False),
+    (("IMG",), False),
+)
+_SAMSUNG_IRIS_FIRST_IR_LAYOUT = (
+    (("obj",), False),
+    (("1*",), True),
+    (("2*",), False),
+    (("3*",), True),
+    (("4*",), False),
+    (("ST",), False),
+    (("6*",), True),
+    (("7", "(7*-1)"), False),
+    (("7-2",), True),
+    (("7-3",), True),
+    (("7-4",), False),
+    (("8*",), True),
+    (("9*",), False),
+    (("10*",), True),
+    (("11*",), False),
+    (("12",), True),
+    (("13",), False),
+    (("IMG",), False),
+)
 _CATADIOPTRIC_MODULE_ARCHITECTURE_ONLY_TITLE_PATTERN = re.compile(
     r"\bIMAGING\s+LENS\s+ASSEMBLY\s+MODULE\s*,\s*CAMERA\s+MODULE\s+AND\s+"
     r"ELECTRONIC\s+DEVICE\b",
@@ -12252,6 +12357,469 @@ def _classify_endoscopic_three_lens_missing_f_number_attempts(
             ),
         )
         for index, embodiment in enumerate(embodiments, start=1)
+    ]
+
+
+def _parse_samsung_iris_surface_table(
+    table: _PatentTableBlock,
+    *,
+    layout: tuple[tuple[tuple[str, ...], bool], ...],
+) -> tuple[list[PatentSurface], dict[str, int], set[str]]:
+    """Parse one exact Family 63585563 state without renumbering source labels."""
+
+    prefix = f"TABLE-US-{table.number:05d} TABLE {table.number} LENS SURFACE R Dn nd vd "
+    if not table.text.startswith(prefix):
+        raise PatentParseError(
+            f"Samsung iris TABLE {table.number} surface header changed"
+        )
+    body = re.split(r"\s+(?:\(\d+\)|\[\d+\])\s+", table.text[len(prefix) :], maxsplit=1)[
+        0
+    ].strip()
+    tokens = body.split()
+    pos = 0
+    surfaces: list[PatentSurface] = []
+    index_by_source_label: dict[str, int] = {}
+    aspheric_source_labels: set[str] = set()
+    for label_tokens, has_material in layout:
+        actual_labels = tuple(tokens[pos : pos + len(label_tokens)])
+        if tuple(item.casefold() for item in actual_labels) != tuple(
+            item.casefold() for item in label_tokens
+        ):
+            raise PatentParseError(
+                f"Samsung iris TABLE {table.number} row label changed at "
+                f"{' '.join(label_tokens)}"
+            )
+        pos += len(label_tokens)
+        value_count = 4 if has_material else 2
+        value_tokens = tokens[pos : pos + value_count]
+        if len(value_tokens) != value_count:
+            raise PatentParseError(
+                f"Samsung iris TABLE {table.number} row {' '.join(label_tokens)} is incomplete"
+            )
+        pos += value_count
+        radius = _distance_value(
+            value_tokens[0],
+            field_name=(
+                f"Samsung iris TABLE {table.number} {' '.join(label_tokens)} radius"
+            ),
+        )
+        thickness = _distance_value(
+            value_tokens[1],
+            field_name=(
+                f"Samsung iris TABLE {table.number} {' '.join(label_tokens)} thickness"
+            ),
+        )
+        if thickness is None or not math.isfinite(thickness):
+            raise PatentParseError(
+                f"Samsung iris TABLE {table.number} {' '.join(label_tokens)} "
+                "thickness must be finite"
+            )
+        nd = vd = None
+        if has_material:
+            nd = _parse_number(value_tokens[2])
+            vd = _parse_number(value_tokens[3])
+            _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
+
+        raw_label = label_tokens[0].replace("*", "")
+        if raw_label.casefold() == "obj":
+            if radius != math.inf or thickness != 500.0 or has_material:
+                raise PatentParseError(
+                    f"Samsung iris TABLE {table.number} object row changed"
+                )
+            continue
+        surface_index = len(surfaces) + 1
+        if raw_label.upper() == "ST":
+            label = "Stop"
+        elif raw_label.upper() == "IMG":
+            label = "Image"
+        else:
+            label = f"Surface {raw_label}"
+            index_by_source_label[raw_label] = surface_index
+        if any("*" in token for token in label_tokens):
+            aspheric_source_labels.add(raw_label)
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material="Glass" if nd is not None else None,
+                nd=nd,
+                vd=vd,
+                surface_type=(
+                    "ASP" if raw_label in aspheric_source_labels else None
+                ),
+            )
+        )
+    if pos != len(tokens):
+        raise PatentParseError(
+            f"Samsung iris TABLE {table.number} has unbound trailing surface tokens"
+        )
+    if sum(surface.label == "Stop" for surface in surfaces) != 1:
+        raise PatentParseError(
+            f"Samsung iris TABLE {table.number} must contain exactly one stop"
+        )
+    if not surfaces or surfaces[-1].label != "Image":
+        raise PatentParseError(
+            f"Samsung iris TABLE {table.number} must terminate at IMG"
+        )
+    return surfaces, index_by_source_label, aspheric_source_labels
+
+
+def _parse_samsung_iris_first_asphere_table(
+    table: _PatentTableBlock,
+    *,
+    index_by_source_label: dict[str, int],
+) -> tuple[dict[int, dict[str, float]], tuple[str, ...]]:
+    source_labels = ("1", "2", "3", "4", "6", "7", "8", "9", "10", "11")
+    prefix = f"TABLE-US-{table.number:05d} TABLE {table.number} "
+    if not table.text.startswith(prefix):
+        raise PatentParseError("Samsung iris TABLE 3 asphere header changed")
+    body = re.split(r"\s+(?:\(\d+\)|\[\d+\])\s+", table.text[len(prefix) :], maxsplit=1)[
+        0
+    ].strip()
+    tokens = body.split()
+    if tuple(tokens[: len(source_labels)]) != source_labels:
+        raise PatentParseError("Samsung iris TABLE 3 surface labels changed")
+    pos = len(source_labels)
+    coefficients: dict[int, dict[str, float]] = {}
+    for row_label in ("K", "A", "B", "C", "D", "E", "F", "G", "H"):
+        if pos >= len(tokens) or tokens[pos] != row_label:
+            raise PatentParseError(
+                f"Samsung iris TABLE 3 coefficient row {row_label} changed"
+            )
+        pos += 1
+        row_tokens = tokens[pos : pos + len(source_labels)]
+        if len(row_tokens) != len(source_labels) or any(
+            re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE) is None
+            for token in row_tokens
+        ):
+            raise PatentParseError(
+                f"Samsung iris TABLE 3 coefficient row {row_label} is incomplete"
+            )
+        pos += len(source_labels)
+        for source_label, token in zip(source_labels, row_tokens, strict=True):
+            surface_index = index_by_source_label.get(source_label)
+            if surface_index is None:
+                raise PatentParseError(
+                    f"Samsung iris TABLE 3 references absent surface {source_label}"
+                )
+            coefficients.setdefault(surface_index, {})[row_label] = _parse_number(token)
+    if pos != len(tokens):
+        raise PatentParseError("Samsung iris TABLE 3 has unbound coefficient tokens")
+    return coefficients, source_labels
+
+
+def _samsung_iris_narrative_metadata(text: str) -> dict[int, tuple[float, float, float]]:
+    ordinal_numbers = {"first": 1, "second": 2, "third": 3}
+    pattern = re.compile(
+        rf"\bIn\s+the\s+(?P<ordinal>first|second|third)\s+numerical\s+embodiment\s*,\s*"
+        rf"F-number\s+is\s+(?P<fno>{NUMBER_PATTERN})\s*,\s*a\s+half\s+field\s+of\s+"
+        rf"view\s+is\s+(?P<hfov>{NUMBER_PATTERN})\s*°\s*,\s*and\s+an?\s+"
+        rf"(?:overall\s+)?focal\s+length\s*\(\s*f\s*\)\s+is\s+"
+        rf"(?P<f>{NUMBER_PATTERN})\s*mm\s*\.",
+        flags=re.IGNORECASE,
+    )
+    matches = list(pattern.finditer(text))
+    if len(matches) != 3:
+        raise PatentParseError("Samsung iris three narrative metadata rows changed")
+    metadata = {
+        ordinal_numbers[match.group("ordinal").lower()]: (
+            _parse_number(match.group("f")),
+            _parse_number(match.group("fno")),
+            _parse_number(match.group("hfov")),
+        )
+        for match in matches
+    }
+    if set(metadata) != {1, 2, 3}:
+        raise PatentParseError("Samsung iris narrative embodiment mapping changed")
+    return metadata
+
+
+def _samsung_iris_system_rows(table: _PatentTableBlock) -> dict[int, tuple[float, ...]]:
+    header = (
+        "TABLE-US-00011 TABLE 11 HALF FILED OF V3 - T34/ F f1 f2 f3 f4 f5 VIEW "
+        "OAL Fnumber T34 V2 f2/f OAL f.sub.IR "
+    )
+    if not table.text.startswith(header):
+        raise PatentParseError("Samsung iris TABLE 11 flattened header changed")
+    rows: dict[int, tuple[float, ...]] = {}
+    row_pattern = re.compile(
+        rf"\bEMBODIMENT\s+(?P<number>[1-3])\s+"
+        rf"(?P<values>(?:{NUMBER_PATTERN}\s+){{13}}{NUMBER_PATTERN})(?=\s)",
+        flags=re.IGNORECASE,
+    )
+    for match in row_pattern.finditer(table.text):
+        number = int(match.group("number"))
+        values = tuple(_parse_number(token) for token in match.group("values").split())
+        if number in rows or len(values) != 14:
+            raise PatentParseError("Samsung iris TABLE 11 row cardinality changed")
+        rows[number] = values
+    if set(rows) != {1, 2, 3}:
+        raise PatentParseError("Samsung iris TABLE 11 embodiment rows changed")
+    return rows
+
+
+def _parse_samsung_iris_moving_group_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Recover only unambiguous states from exact Family 63585563 sources.
+
+    The source declares three numerical embodiments with visible/IR lens-group
+    positions, so the denominator is six state items.  TABLES 6/10 conflict
+    with the surface numbering, TABLE 7 repeats the conic row label, TABLE 8
+    prints a nonnumeric radius, and embodiment 3's narrative/TABLE 11 system
+    values disagree.  Those source defects remain parser failures.
+    """
+
+    profile = _SAMSUNG_IRIS_MOVING_GROUP_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=exc,
+            )
+            for index, label in enumerate(_SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Samsung iris official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Samsung iris normalized text hash changed for {patent_id}"
+            )
+        if len(_SAMSUNG_IRIS_MOVING_GROUP_TITLE_PATTERN.findall(text)) != 1:
+            raise PatentParseError("Samsung iris title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*63585563", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("Samsung iris Family ID binding changed")
+        if len(
+            re.findall(
+                r"Samsung\s+Electronics\s+Co\.\s*,\s*Ltd\.",
+                text,
+                re.IGNORECASE,
+            )
+        ) < 1:
+            raise PatentParseError("Samsung iris owner binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Samsung iris application binding changed")
+        for marker in profile["relationship_markers"]:
+            if len(re.findall(re.escape(str(marker)), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"Samsung iris relationship marker {marker!r} changed"
+                )
+
+        drawings = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+DRAWINGS(?P<body>.*?)MODE\s+OF\s+DISCLOSURE",
+            text,
+            re.IGNORECASE,
+        )
+        if drawings is None:
+            raise PatentParseError("Samsung iris drawing description is missing")
+        declared_figures = tuple(
+            int(number)
+            for number in re.findall(
+                r"\bFIG\.\s*([1-9]\d*)\s+(?:illustrates|is)\b",
+                drawings.group("body"),
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _SAMSUNG_IRIS_MOVING_GROUP_FIGURES:
+            raise PatentParseError("Samsung iris 18-figure denominator changed")
+        headings = tuple(
+            ordinal.lower()
+            for ordinal in re.findall(
+                r"\b(First|Second|Third)\s+Numerical\s+Embodiment\s+"
+                r"(?=\(\d+\)|\[\d+\])",
+                text,
+                re.IGNORECASE,
+            )
+        )
+        if headings != ("first", "second", "third"):
+            raise PatentParseError("Samsung iris numerical-embodiment denominator changed")
+
+        blocks = _patent_table_blocks(text)
+        table_numbers = tuple(block.number for block in blocks)
+        if table_numbers != tuple(range(1, 12)):
+            raise PatentParseError(
+                f"Samsung iris table sequence is {table_numbers}; expected 1..11"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError("Samsung iris table digest changed")
+        if len(
+            re.findall(
+                r"K\s+denotes\s+a\s+conic\s+constant\s*,\s*A\s*,\s*B\s*,\s*C\s*,\s*"
+                r"and\s+D\s+denote\s+aspherical\s+coefficients",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Samsung iris asphere convention changed")
+
+        narrative_metadata = _samsung_iris_narrative_metadata(text)
+        system_rows = _samsung_iris_system_rows(blocks[10])
+        first_f, first_fno, first_hfov = narrative_metadata[1]
+        first_system = system_rows[1]
+        rounded_hfov = math.floor(first_hfov + 0.5)
+        if (
+            first_f != first_system[0]
+            or first_fno != first_system[8]
+            or rounded_hfov != first_system[6]
+        ):
+            raise PatentParseError(
+                "Samsung iris embodiment 1 narrative and TABLE 11 metadata disagree"
+            )
+
+        visible_surfaces, visible_indices, visible_aspheres = (
+            _parse_samsung_iris_surface_table(
+                blocks[0],
+                layout=_SAMSUNG_IRIS_FIRST_VISIBLE_LAYOUT,
+            )
+        )
+        visible_coefficients, table3_labels = _parse_samsung_iris_first_asphere_table(
+            blocks[2],
+            index_by_source_label=visible_indices,
+        )
+        if visible_aspheres != set(table3_labels):
+            raise PatentParseError(
+                "Samsung iris TABLE 1 stars and TABLE 3 surface labels disagree"
+            )
+        ir_surfaces, ir_indices, ir_aspheres = _parse_samsung_iris_surface_table(
+            blocks[1],
+            layout=_SAMSUNG_IRIS_FIRST_IR_LAYOUT,
+        )
+        ir_coefficients, ir_table3_labels = _parse_samsung_iris_first_asphere_table(
+            blocks[2],
+            index_by_source_label=ir_indices,
+        )
+        if ir_aspheres != set(ir_table3_labels):
+            raise PatentParseError(
+                "Samsung iris TABLE 2 stars and TABLE 3 surface labels disagree"
+            )
+        for surfaces, coefficients in (
+            (visible_surfaces, visible_coefficients),
+            (ir_surfaces, ir_coefficients),
+        ):
+            for surface in surfaces:
+                values = coefficients.get(surface.index)
+                if values is not None:
+                    surface.asphere_coefficients.update(values)
+                    surface.surface_type = "ASP"
+
+        # These exact defects are source facts, not inferred repairs.  Keeping
+        # the assertions makes any future corrected publication reopen parsing.
+        if re.search(
+            r"\ATABLE-US-00006\s+TABLE\s+6\s+1\s+2\s+3\s+4\s+5\s+6\s+7\s+8\s+9\s+10\s+K\s+",
+            blocks[5].text,
+        ) is None:
+            raise PatentParseError("Samsung iris TABLE 6 conflict signature changed")
+        table7_labels = tuple(
+            re.findall(r"(?<!\S)(K|A|B|C|D|E|F|G|H)(?=\s)", blocks[6].text)
+        )
+        if table7_labels != ("K", "A", "B", "C", "D", "E", "F", "G", "H", "K"):
+            raise PatentParseError("Samsung iris TABLE 7 duplicate-K signature changed")
+        if len(re.findall(r"(?<!\S)1\.530f377(?=\s)", blocks[7].text)) != 1:
+            raise PatentParseError("Samsung iris TABLE 8 damaged-radius signature changed")
+        if re.search(
+            r"\ATABLE-US-00010\s+TABLE\s+10\s+1\s+2\s+3\s+4\s+5\s+6\s+7\s+8\s+9\s+10\s+K\s+",
+            blocks[9].text,
+        ) is None:
+            raise PatentParseError("Samsung iris TABLE 10 conflict signature changed")
+        third_f, third_fno, third_hfov = narrative_metadata[3]
+        third_system = system_rows[3]
+        if (third_f, third_fno, third_hfov) == (
+            third_system[0],
+            third_system[8],
+            third_system[6],
+        ):
+            raise PatentParseError(
+                "Samsung iris embodiment 3 metadata conflict unexpectedly disappeared"
+            )
+
+        visible = PatentPrescription(
+            patent_id=patent_id,
+            embodiment=_SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS[0],
+            focal_length_mm=first_f,
+            f_number=first_fno,
+            hfov_deg=first_hfov,
+            surfaces=visible_surfaces,
+        )
+        ir = PatentPrescription(
+            patent_id=patent_id,
+            embodiment=_SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS[1],
+            focal_length_mm=first_f,
+            f_number=first_fno,
+            hfov_deg=first_hfov,
+            surfaces=ir_surfaces,
+            reference_wavelength_um=0.82,
+        )
+        _validate_prescription_materials(visible)
+        _validate_prescription_materials(ir)
+    except Exception as exc:  # noqa: BLE001 - retain all six disclosed state items
+        return attempts_for_error(exc)
+
+    source_errors = (
+        PatentParseError(
+            "Samsung iris embodiment 2 visible state source conflict: TABLE 6 labels "
+            "asphere columns 1-10 although TABLE 4 uses ST between surfaces 4 and 6"
+        ),
+        PatentParseError(
+            "Samsung iris embodiment 2 IR state source conflict: TABLE 6 surface labels "
+            "are inconsistent and TABLE 7 publishes duplicate K rows for surfaces 7-2/7-3"
+        ),
+        PatentParseError(
+            "Samsung iris embodiment 3 visible state source conflict: TABLE 8 radius "
+            "1.530f377 is nonnumeric, TABLE 10 surface labels are inconsistent, and "
+            "narrative/TABLE 11 system metadata disagree"
+        ),
+        PatentParseError(
+            "Samsung iris embodiment 3 IR state source conflict: TABLE 10 labels "
+            "asphere columns 1-10 although TABLE 9 uses ST between surfaces 4 and 6, "
+            "and narrative/TABLE 11 system metadata disagree"
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment=_SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS[0],
+            prescription=visible,
+        ),
+        _PrescriptionParseAttempt(
+            embodiment_number=2,
+            embodiment=_SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS[1],
+            prescription=ir,
+        ),
+        *[
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=_SAMSUNG_IRIS_MOVING_GROUP_ITEM_LABELS[index - 1],
+                error=error,
+            )
+            for index, error in enumerate(source_errors, start=3)
+        ],
     ]
 
 

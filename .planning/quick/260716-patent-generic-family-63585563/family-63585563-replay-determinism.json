@@ -1,0 +1,63 @@
+{
+  "after_census": {
+    "affected_items": 169,
+    "affected_roots": 169,
+    "artifact_sha256": "d0954acc3740191b51828a8714082029c7d8bfc7e21073d7b30806afaac26b91",
+    "result_set_sha256": "8ed2cd5a9ae470f96f4fa2dba96581a4430cd2a1c4f4affa807ef19d84275dd8"
+  },
+  "before_census": {
+    "affected_items": 171,
+    "affected_roots": 171,
+    "artifact_sha256": "2898b100a49776d942f9483ce8da74fe2571fe917148e89cd767042844f5f003",
+    "result_set_sha256": "5469f10337a7417451c8b2f1ee023642ca91cda47bc163c6a61360ea9f972243"
+  },
+  "cohort_sha256": "96427d414b524d75ccad35acaa8e2bd82a2540df25b1b180139383c33882cc58",
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt",
+      "items[].conversion_attempt_id"
+    ],
+    "receipt_evidence_projection": [
+      "status",
+      "reason_code",
+      "detail",
+      "request_sha256",
+      "timeout_seconds",
+      "candidate_zmx_published",
+      "worker_response.status",
+      "worker_response.reason_code",
+      "worker_response.detail",
+      "worker_response.request_sha256",
+      "worker_response.efl_mm",
+      "worker_response.trace_audit"
+    ],
+    "receipt_path_and_sha256_replaced_by_projected_content": true
+  },
+  "roots": {
+    "US-11435552": [
+      {
+        "attempt": 2,
+        "result_sha256": "c6ffc9c7d1c874b7c8f0f4ca084bc07f4af4012e3dabaedcf502b34490997dda",
+        "semantic_sha256": "6966236f5c289316c1f20abbf75557cfac9d35547de44b4c52017bb12256407f"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "452239336d87b31661064f1b90a7bc9731f17c314c2aeb8d291db6a5ca2bbdfd",
+        "semantic_sha256": "6966236f5c289316c1f20abbf75557cfac9d35547de44b4c52017bb12256407f"
+      }
+    ],
+    "US-20200041761": [
+      {
+        "attempt": 2,
+        "result_sha256": "18ec8727f6dcee3e3af003e96d567c441e9d5dca4a6e844e402a8067f4e31173",
+        "semantic_sha256": "6f0531c581ea896dc11df7819efdf93c5b9c14d33d8d1d51bf70c97f708730bb"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "74dcfab428bc2751327a492a31e06b1240672dc6bd2918f8f479cac2671700c3",
+        "semantic_sha256": "6f0531c581ea896dc11df7819efdf93c5b9c14d33d8d1d51bf70c97f708730bb"
+      }
+    ]
+  },
+  "schema_version": 1
+}
