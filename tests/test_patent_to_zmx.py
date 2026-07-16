@@ -8581,6 +8581,134 @@ def test_meta_optical_architecture_external_family_queue_is_source_bound() -> No
     ("patent_id", "path_parts"),
     (
         (
+            "US-10725279-B2",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "USPAT",
+                "df938fc2c5990798",
+                "US-10725279-B2.html",
+            ),
+        ),
+        (
+            "US-20190162945-A1",
+            (
+                "data",
+                "patent-lake",
+                "uspto-ppubs-html",
+                "US-PGPUB",
+                "eb7cb67e831cc1c6",
+                "US-20190162945-A1.html",
+            ),
+        ),
+    ),
+)
+def test_edof_microscope_exact_sources_classify_all_five_examples(
+    patent_id: str,
+    path_parts: tuple[str, ...],
+) -> None:
+    source_path = Path(__file__).resolve().parents[1].joinpath(*path_parts)
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        source_path.read_text(encoding="utf-8"),
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4, 5]
+    assert all(
+        attempt.prescription is None
+        and isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert [attempt.error.status for attempt in attempts] == [
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "metadata_unpublished",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+    ]
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        "confirmed_no_prescription.theoretical_imaging_analysis_only",
+        "confirmed_no_prescription.edof_microscope_architecture_only",
+        "metadata_unpublished."
+        "prescription_specific_efl_f_number_and_angular_field_absent",
+        "confirmed_no_prescription.metrology_results_only",
+        "confirmed_no_prescription.microscopy_experimental_results_only",
+    ]
+
+
+def test_edof_microscope_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    audit_path = (
+        root
+        / ".planning"
+        / "quick"
+        / "260716-patent-generic-family-60001556"
+        / "family-60001556-raster-audit.json"
+    )
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+
+    assert audit["family_id"] == "60001556"
+    assert audit["numbered_figure_count"] == 42
+    assert len(audit["figure_declarations"]) == 72
+    assert audit["table_text_sha256"] == (
+        "d7b844bdf21ef1792cb616673cd828e2a56a9800f15b8ab464aa46260149b1fc"
+    )
+    for publication_id, record in audit["publications"].items():
+        pdf_path = root / record["retained_pdf_path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == record[
+            "retained_pdf_sha256"
+        ]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == 47
+        assert sum(len(page.extract_text() or "") for page in reader.pages) == 0
+        assert record["text_layer_char_count"] == 0
+        page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=publication_id,
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(reader.pages, start=1)
+        ]
+        raster_set_sha256 = hashlib.sha256(
+            json.dumps(page_hashes, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        assert raster_set_sha256 == record["raster_set_sha256"]
+
+        second_pdf_path = root / record["second_live_pdf_path"]
+        assert hashlib.sha256(second_pdf_path.read_bytes()).hexdigest() == record[
+            "second_live_pdf_sha256"
+        ]
+        second_reader = patent_pdf_recovery.pypdf.PdfReader(str(second_pdf_path))
+        second_page_hashes = [
+            patent_pdf_recovery._canonical_raster_sha256(
+                patent_pdf_recovery._page_image(
+                    page,
+                    source=f"{publication_id} recheck",
+                    page_number=page_number,
+                )
+            )
+            for page_number, page in enumerate(second_reader.pages, start=1)
+        ]
+        assert second_page_hashes == page_hashes
+        assert record["second_live_raster_set_equal"] is True
+        assert len(record["drawing_page_numbers"]) == record["drawing_sheet_count"] == 23
+        assert record["table_page_numbers"] == [39]
+
+        contact_path = root / record["contact_sheet_path"]
+        assert hashlib.sha256(contact_path.read_bytes()).hexdigest() == record[
+            "contact_sheet_sha256"
+        ]
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "path_parts"),
+    (
+        (
             "US-12631860-B2",
             (
                 "data",
@@ -8902,6 +9030,55 @@ def _meta_optical_b2_source() -> tuple[str, str]:
     return patent_id, source_path.read_text(encoding="utf-8")
 
 
+def _edof_microscope_b2_source() -> tuple[str, str]:
+    patent_id = "US-10725279-B2"
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "df938fc2c5990798"
+        / "US-10725279-B2.html"
+    )
+    return patent_id, source_path.read_text(encoding="utf-8")
+
+
+def _install_edof_microscope_drift_profile(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    patent_id: str,
+    raw_text: str,
+) -> None:
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    table_match = re.search(
+        r"TABLE-US-00001(?P<body>.*?)<br\s*/?>",
+        raw_text,
+        re.DOTALL | re.IGNORECASE,
+    )
+    assert table_match is not None
+    table_text = patent_to_zmx.normalize_patent_text(
+        "TABLE-US-00001" + table_match.group("body")
+    )
+    original = patent_to_zmx._EDOF_MICROSCOPE_SOURCE_PROFILES[patent_id]
+    monkeypatch.setitem(
+        patent_to_zmx._EDOF_MICROSCOPE_SOURCE_PROFILES,
+        patent_id,
+        {
+            **original,
+            "raw_document_sha256": hashlib.sha256(raw_text.encode("utf-8")).hexdigest(),
+            "normalized_text_sha256": hashlib.sha256(
+                normalized.encode("utf-8")
+            ).hexdigest(),
+            "table_sha256": hashlib.sha256(table_text.encode("utf-8")).hexdigest(),
+            "phrase_counts": {
+                phrase: len(re.findall(re.escape(phrase), normalized, re.IGNORECASE))
+                for phrase in original["phrase_counts"]
+            },
+        },
+    )
+
+
 def _install_meta_optical_drift_profile(
     monkeypatch: pytest.MonkeyPatch,
     *,
@@ -8992,6 +9169,100 @@ def test_meta_optical_architecture_prescription_marker_reopens_parser_review(
     assert not isinstance(attempts[0].error, patent_to_zmx.PatentTerminalParseError)
     assert str(attempts[0].error) == (
         "meta-optical architecture disclosure contains a prescription marker"
+    )
+
+
+def test_edof_microscope_source_hash_drift_fails_all_five_items() -> None:
+    patent_id, raw_text = _edof_microscope_b2_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        f"EDOF microscope official raw text hash changed for {patent_id}"
+    }
+
+
+def test_edof_microscope_example_heading_drift_fails_all_five_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _edof_microscope_b2_source()
+    raw_text = original.replace(
+        "Example V: Experimental Demonstration of EDOF SIM",
+        "Example VI: Experimental Demonstration of EDOF SIM",
+        1,
+    )
+    assert raw_text != original
+    _install_edof_microscope_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "EDOF microscope five-example denominator changed"
+    }
+
+
+def test_edof_microscope_drawing_drift_fails_all_five_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _edof_microscope_b2_source()
+    raw_text = original.replace(
+        '<figref idref="DRAWINGS">FIGS. 42A-E</figref> illustrate, by examples',
+        '<figref idref="DRAWINGS">FIGS. 42A-F</figref> illustrate, by examples',
+        1,
+    )
+    assert raw_text != original
+    _install_edof_microscope_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 5
+    assert {str(attempt.error) for attempt in attempts} == {
+        "EDOF microscope 42-number/72-panel drawing denominator changed"
+    }
+
+
+def test_edof_microscope_published_required_metadata_reopens_all_five_items(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    patent_id, original = _edof_microscope_b2_source()
+    raw_text = original.replace(
+        "Imaging plane Infinity 0.0000 2.0769 <br />",
+        "Imaging plane Infinity 0.0000 2.0769 Effective focal length = 10 mm "
+        "F-number = 2.8 angular field of view = 12 degrees <br />",
+        1,
+    )
+    assert raw_text != original
+    _install_edof_microscope_drift_profile(
+        monkeypatch,
+        patent_id=patent_id,
+        raw_text=raw_text,
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "EDOF microscope required system metadata unexpectedly became numeric"
+    }
+    assert all(
+        not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
     )
 
 

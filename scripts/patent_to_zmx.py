@@ -397,6 +397,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_edof_microscope_examples_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_catadioptric_module_architecture_only_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2478,6 +2484,106 @@ _META_OPTICAL_LAYER_ARCHITECTURE_ONLY_SOURCE_PROFILES: dict[
             "transmittance": 22,
             "focal length": 3,
             "F number": 1,
+        },
+    },
+}
+_EDOF_MICROSCOPE_SOURCE_TITLE_PATTERN = re.compile(
+    r"\bSYSTEMS\s+AND\s+METHODS\s+FOR\s+EXTENDED\s+DEPTH-OF-FIELD\s+MICROSCOPY\b",
+    flags=re.IGNORECASE,
+)
+_EDOF_MICROSCOPE_EXAMPLE_HEADINGS = (
+    "Example I: Theoretical Analysis of Deconvolution-Free EDOF Microscopy",
+    "Example II: Infinity-Corrected EDOF Microscope",
+    "Example III: Infinity-Corrected Object-Space Telecentric Varifocal "
+    "Microscope Objective with Electrically Tunable Liquid-Filled Lens",
+    "Example IV: EDOF Microdeflectometry Results",
+    "Example V: Experimental Demonstration of EDOF SIM",
+)
+_EDOF_MICROSCOPE_FIGURE_EXPRESSIONS = (
+    *((str(index)) for index in range(1, 15)),
+    "15A and 15B",
+    *((str(index)) for index in range(16, 22)),
+    "22A and 22B",
+    "23",
+    "24",
+    "25A-C",
+    "26",
+    "27A and 27B",
+    "28",
+    "29",
+    "30",
+    "31A and 31B",
+    "32",
+    "33A and 33B",
+    "34A-C",
+    "35",
+    "36A and 36B",
+    "37A-E",
+    "38A-F",
+    "39A and 39B",
+    "40A-F",
+    "41A and 41B",
+    "42A-E",
+)
+_EDOF_MICROSCOPE_ITEM_LABELS = (
+    "Example I: theoretical analysis of deconvolution-free EDOF microscopy",
+    "Example II: infinity-corrected EDOF microscope architecture",
+    "Example III: telecentric varifocal microscope objective prescription",
+    "Example IV: EDOF microdeflectometry results",
+    "Example V: experimental EDOF structured-illumination microscopy results",
+)
+_EDOF_MICROSCOPE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-10725279-B2": {
+        "raw_document_sha256": (
+            "df938fc2c5990798bf030f1da721c9fa4896aa031470b01c576ccba18299f91b"
+        ),
+        "normalized_text_sha256": (
+            "4f33518c76f6b68854991c1d9b474f45d448b68c726b57f132071414915fa35c"
+        ),
+        "application_number": "16/092071",
+        "owner_count": 2,
+        "relationship_markers": (
+            "US 20190162945 A1 May. 30, 2019",
+            "us-provisional-application US 62320275 20160408",
+        ),
+        "table_sha256": (
+            "d7b844bdf21ef1792cb616673cd828e2a56a9800f15b8ab464aa46260149b1fc"
+        ),
+        "phrase_counts": {
+            "Table 1 (below) lists a design specification": 1,
+            "2 mm and the numerical aperture is 0.24 NA": 1,
+            "constant 2-mm diameter field of view with 0.25 NA": 2,
+            "working wavelength centered at 530 nm": 2,
+            "working wavelength at 550 nm": 1,
+            "focus scanning range is 2 mm, which is 125 times of the diffraction "
+            "limited DOF": 1,
+            "effective focal length": 2,
+        },
+    },
+    "US-20190162945-A1": {
+        "raw_document_sha256": (
+            "eb7cb67e831cc1c63467fbd8c93e1d2583395048fc8e78bbb764ffcd88095bbc"
+        ),
+        "normalized_text_sha256": (
+            "ec772f1c1b8a1ce6f1664c0c782d8466d5b9f9ccf5108593d54cea7d2660484f"
+        ),
+        "application_number": "16/092071",
+        "owner_count": 1,
+        "relationship_markers": (
+            "us-provisional-application US 62320275 20160408",
+        ),
+        "table_sha256": (
+            "d7b844bdf21ef1792cb616673cd828e2a56a9800f15b8ab464aa46260149b1fc"
+        ),
+        "phrase_counts": {
+            "Table 1 (below) lists a design specification": 1,
+            "2 mm and the numerical aperture is 0.24 NA": 1,
+            "constant 2-mm diameter field of view with 0.25 NA": 2,
+            "working wavelength centered at 530 nm": 2,
+            "working wavelength at 550 nm": 1,
+            "focus scanning range is 2 mm, which is 125 times of the diffraction "
+            "limited DOF": 1,
+            "effective focal length": 2,
         },
     },
 }
@@ -13047,6 +13153,209 @@ def _classify_meta_optical_layer_architecture_only_attempts(
                     "ordered optical surface prescription or prescription table"
                 ),
             ),
+        )
+    ]
+
+
+def _classify_edof_microscope_examples_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify all five source-declared examples in exact Family 60001556.
+
+    Example III publishes an ordered, spherical surface prescription in TABLE 1,
+    but no direct numeric EFL, F-number, or angular field for that prescription.
+    The other examples disclose analysis, architecture, or experimental results
+    without an independent ordered surface prescription.
+    """
+
+    profile = _EDOF_MICROSCOPE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(_EDOF_MICROSCOPE_ITEM_LABELS, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"EDOF microscope official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"EDOF microscope normalized text hash changed for {patent_id}"
+            )
+        if len(_EDOF_MICROSCOPE_SOURCE_TITLE_PATTERN.findall(text)) != 1:
+            raise PatentParseError("EDOF microscope title binding changed")
+        if len(re.findall(r"Family\s+ID:\s*60001556", text, re.IGNORECASE)) != 1:
+            raise PatentParseError("EDOF microscope Family ID binding changed")
+        owner = "Arizona Board of Regents on Behalf of the University of Arizona"
+        if len(re.findall(re.escape(owner), text, re.IGNORECASE)) != profile["owner_count"]:
+            raise PatentParseError("EDOF microscope owner binding changed")
+
+        application_number = str(profile["application_number"])
+        series, serial = application_number.split("/", maxsplit=1)
+        if len(
+            re.findall(
+                rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("EDOF microscope application binding changed")
+        for marker in profile["relationship_markers"]:
+            observed = len(re.findall(re.escape(str(marker)), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"EDOF microscope relationship marker {marker!r} occurs "
+                    f"{observed}; expected 1"
+                )
+
+        headings = tuple(
+            normalize_patent_text(match)
+            for match in re.findall(
+                r"Example\s+[IVX]+:\s+[^<\r\n]+",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        if headings != _EDOF_MICROSCOPE_EXAMPLE_HEADINGS:
+            raise PatentParseError("EDOF microscope five-example denominator changed")
+
+        table_ids = tuple(re.findall(r"TABLE-US-(\d+)", raw_text, re.IGNORECASE))
+        if table_ids != ("00001",):
+            raise PatentParseError("EDOF microscope one-table denominator changed")
+        table_match = re.search(
+            r"TABLE-US-00001(?P<body>.*?)<br\s*/?>",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if table_match is None:
+            raise PatentParseError("EDOF microscope TABLE 1 body is missing")
+        table_text = normalize_patent_text(
+            "TABLE-US-00001" + table_match.group("body")
+        )
+        table_digest = hashlib.sha256(table_text.encode("utf-8")).hexdigest()
+        if table_digest != profile["table_sha256"]:
+            raise PatentParseError("EDOF microscope TABLE 1 digest changed")
+        if not table_text.startswith(
+            "TABLE-US-00001 TABLE 1 Semi- Radius Thickness Diameter Surface Comment "
+            "[mm] [mm] Material [mm]"
+        ):
+            raise PatentParseError("EDOF microscope TABLE 1 column binding changed")
+        for row in (
+            "Focusing plane Infinity 2.5000 1.0000",
+            "Adaptive surface (EL- Infinity 1.9818 OL1024_UV_VIS_NIR 5.0000",
+            "Imaging plane Infinity 0.0000 2.0769",
+        ):
+            if len(re.findall(re.escape(row), table_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(f"EDOF microscope TABLE 1 row {row!r} changed")
+
+        brief_match = re.search(
+            r"BRIEF DESCRIPTION OF THE DRAWINGS(?P<body>.*?)DETAILED DESCRIPTION",
+            raw_text,
+            re.DOTALL | re.IGNORECASE,
+        )
+        if brief_match is None:
+            raise PatentParseError("EDOF microscope drawing description is missing")
+        figure_expressions = tuple(
+            re.findall(
+                r"(?:\(\d+\)|\[\d+\])\s+FIGS?\.\s+"
+                r"([0-9A-F]+(?:\s*(?:,|and|through|-)\s*[0-9A-F]+)*)\s+"
+                r"(?:(?:schematically|exemplarily)\s+)?"
+                r"(?:is|are|show|shows|illustrate|illustrates|demonstrate)",
+                normalize_patent_text(brief_match.group("body")),
+                re.IGNORECASE,
+            )
+        )
+        if figure_expressions != _EDOF_MICROSCOPE_FIGURE_EXPRESSIONS:
+            raise PatentParseError(
+                "EDOF microscope 42-number/72-panel drawing denominator changed"
+            )
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"EDOF microscope phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+
+        numeric_required_metadata_patterns = (
+            r"\beffective\s+focal\s+length\s*(?:=|:)\s*[-+]?\d",
+            r"\b(?:F\s*[- ]?number|FNO|F/#|aperture\s+number)\s*"
+            r"(?:=|:)\s*[-+]?\d",
+            r"\b(?:HFOV|half\s+field\s+of\s+view|angular\s+field\s+of\s+view)\s*"
+            r"(?:=|:)\s*[-+]?\d",
+        )
+        if any(
+            re.search(pattern, text, re.IGNORECASE) is not None
+            for pattern in numeric_required_metadata_patterns
+        ):
+            raise PatentParseError(
+                "EDOF microscope required system metadata unexpectedly became numeric"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all five source-declared items
+        return attempts_for_error(exc)
+
+    outcomes = (
+        (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.theoretical_imaging_analysis_only",
+            "Example I publishes theoretical EDOF imaging analysis without an ordered "
+            "optical surface prescription",
+        ),
+        (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.edof_microscope_architecture_only",
+            "Example II publishes an infinity-corrected EDOF microscope implementation "
+            "and performance targets but no ordered optical surface prescription",
+        ),
+        (
+            "metadata_unpublished",
+            "metadata_unpublished."
+            "prescription_specific_efl_f_number_and_angular_field_absent",
+            "Example III TABLE 1 publishes the ordered spherical surface prescription, "
+            "materials, clear diameters, stop, and wavelength context, but no direct "
+            "numeric EFL, F-number, or angular field bound to that prescription",
+        ),
+        (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.metrology_results_only",
+            "Example IV publishes EDOF microdeflectometry results without an independent "
+            "ordered optical surface prescription",
+        ),
+        (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.microscopy_experimental_results_only",
+            "Example V publishes structured-illumination microscopy results without an "
+            "independent ordered optical surface prescription",
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status=status,
+                reason_code=reason_code,
+                detail=detail,
+            ),
+        )
+        for index, (embodiment, (status, reason_code, detail)) in enumerate(
+            zip(_EDOF_MICROSCOPE_ITEM_LABELS, outcomes, strict=True),
+            start=1,
         )
     ]
 
