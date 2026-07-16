@@ -481,6 +481,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_xr_content_collaboration_only_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_low_reflection_light_blocking_architecture_only_attempts(
             raw_text,
@@ -2016,6 +2022,30 @@ _NEAR_IR_ABSORBING_POLYMER_ONLY_SOURCE_PROFILES: dict[str, dict[str, str]] = {
 _NEAR_IR_ABSORBING_POLYMER_TABLE_SHA256 = (
     "d969826f3d532a444ed1d82426229e58509dd63492a7990381042b03a7fa6c50"
 )
+_XR_CONTENT_COLLABORATION_ONLY_TITLE_PATTERN = re.compile(
+    r"\bDEVICES\s*,\s*METHODS\s*,\s*AND\s+GRAPHICAL\s+USER\s+INTERFACES\s+"
+    r"FOR\s+CONTENT\s+COLLABORATION\s+AND\s+SHARING\b",
+    flags=re.IGNORECASE,
+)
+_XR_CONTENT_COLLABORATION_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12663910-B2": {
+        "raw_document_sha256": (
+            "699f9e2331ebb851f1b7073f43a0b7521fa146860afbf935ac0d950b1f7e04d3"
+        ),
+        "normalized_text_sha256": (
+            "939ed8581f0e93eba97ad4e384c587fe7adf47ceddebc701c5e1b8e3908f9df5"
+        ),
+        "family_id": "93653416",
+        "application_number": "18/611377",
+        "prior_publication_marker": "US 20240402869 A1 Dec. 05, 2024",
+        "description_paragraph_count": 248,
+        "claim_count": 48,
+        "field_of_view_count": 21,
+        "lens_count": 35,
+        "optical_count": 55,
+        "curvature_count": 7,
+    },
+}
 _SURFACE_TEXTURE_ACQUISITION_ONLY_TITLE_PATTERN = re.compile(
     r"\bSYSTEM\s+AND\s+METHOD\s+FOR\s+ACQUIRING\s+IMAGES\s+OF\s+"
     r"SURFACE\s+TEXTURE\b",
@@ -13936,6 +13966,222 @@ def _classify_near_ir_absorbing_polymer_only_attempts(
                     "figures, and heat/solvent-resistance TABLE 1 disclose only polymer, "
                     "film, filter, and device materials; no ordered optical surface "
                     "prescription is published"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_xr_content_collaboration_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 93653416 XR user-interface disclosure as no prescription."""
+
+    profile = _XR_CONTENT_COLLABORATION_ONLY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiment = "XR content collaboration user-interface and device architecture"
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"XR content-collaboration official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"XR content-collaboration normalized text hash changed for {patent_id}"
+            )
+        if _XR_CONTENT_COLLABORATION_ONLY_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("XR content-collaboration title binding changed")
+        if (
+            len(
+                re.findall(
+                    rf"Family\s+ID:\s*{re.escape(str(profile['family_id']))}",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError("XR content-collaboration Family ID binding changed")
+        series, serial = str(profile["application_number"]).split("/", maxsplit=1)
+        if (
+            len(
+                re.findall(
+                    rf"Appl\.\s*No\.:\s*{re.escape(series)}\s*/\s*{re.escape(serial)}",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError("XR content-collaboration application binding changed")
+        if (
+            len(
+                re.findall(
+                    re.escape(str(profile["prior_publication_marker"])),
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError(
+                "XR content-collaboration prior-publication binding changed"
+            )
+
+        claims_marker = "Claims 1 . A computer system configured"
+        try:
+            description_start = text.index("BRIEF DESCRIPTION OF THE DRAWINGS")
+            claims_start = text.index(claims_marker, description_start)
+        except ValueError as exc:
+            raise PatentParseError(
+                "XR content-collaboration description/claim boundary changed"
+            ) from exc
+        description = text[description_start:claims_start]
+        paragraph_numbers = tuple(
+            int(value) for value in re.findall(r"\((\d+)\)", description)
+        )
+        paragraph_count = int(profile["description_paragraph_count"])
+        if paragraph_numbers != tuple(range(1, paragraph_count + 1)):
+            raise PatentParseError(
+                "XR content-collaboration paragraphs 1-248 denominator changed"
+            )
+
+        brief = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+THE\s+DRAWINGS(?P<body>.*?)"
+            r"DESCRIPTION\s+OF\s+EMBODIMENTS\s+\(13\)",
+            description,
+            re.IGNORECASE,
+        )
+        if brief is None:
+            raise PatentParseError(
+                "XR content-collaboration drawing description is missing"
+            )
+        brief_body = brief.group("body")
+        if tuple(
+            int(value) for value in re.findall(r"\((\d+)\)", brief_body)
+        ) != tuple(range(1, 13)):
+            raise PatentParseError(
+                "XR content-collaboration drawing paragraphs 1-12 changed"
+            )
+        declared_drawings = (
+            "FIG. 1 A is",
+            "FIGS. 1 B- 1 P are",
+            "FIG. 2 is",
+            "FIG. 3 is",
+            "FIG. 4 is",
+            "FIG. 5 is",
+            "FIG. 6 is",
+            "FIGS. 7 A- 7 R illustrate",
+            "FIG. 8 is",
+            "FIGS. 9 A- 9 K illustrate",
+            "FIG. 10 is",
+        )
+        for marker in declared_drawings:
+            if len(re.findall(re.escape(marker), brief_body, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"XR content-collaboration drawing marker {marker!r} changed"
+                )
+        nested_panel_markers = {
+            "FIGS. 7 P 2 A- 7 P 2 C": 2,
+            "FIGS. 9 J 2 A and 9 J 2 B": 1,
+        }
+        for marker, expected in nested_panel_markers.items():
+            if (
+                len(re.findall(re.escape(marker), description, re.IGNORECASE))
+                != expected
+            ):
+                raise PatentParseError(
+                    f"XR content-collaboration nested panel marker {marker!r} changed"
+                )
+
+        claims_text = text[claims_start:]
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+                claims_text,
+                re.IGNORECASE,
+            )
+        )
+        claim_count = int(profile["claim_count"])
+        if claim_numbers != tuple(range(1, claim_count + 1)):
+            raise PatentParseError(
+                "XR content-collaboration claims 1-48 denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "XR content-collaboration source unexpectedly contains a PPUBS table"
+            )
+
+        expected_term_counts = {
+            r"\bfield(?:s)?[- ]of[- ]view\b": int(profile["field_of_view_count"]),
+            r"\blens(?:es)?\b": int(profile["lens_count"]),
+            r"\boptical\b": int(profile["optical_count"]),
+            r"\bcurvature\b": int(profile["curvature_count"]),
+        }
+        source_scope = text[description_start:]
+        for pattern, expected in expected_term_counts.items():
+            observed = len(re.findall(pattern, source_scope, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"XR content-collaboration term {pattern!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        corrective_marker = (
+            "customized prescription lenses configured for corrective vision"
+        )
+        if len(re.findall(re.escape(corrective_marker), source_scope, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "XR content-collaboration corrective-lens narrative changed"
+            )
+        if len(re.findall(r"\bprescription\b", source_scope, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "XR content-collaboration prescription-word denominator changed"
+            )
+
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|\brefractive\s+index\b|"
+            r"\bAbbe(?:\s+(?:number|#))?\b|\baspheric?\s+(?:surface\s+)?"
+            r"(?:data|coefficients?|parameters?)\b|\beffective\s+focal\s+length\b|"
+            r"\bfocal\s+lengths?\b|\bF\s*[- ]?number\b|\bFNO\b|"
+            r"\boptical\s+(?:surface\s+)?(?:prescription|data)\b|"
+            r"\blens\s+(?:prescription|data)\b)",
+            re.IGNORECASE,
+        )
+        if prescription_marker.search(source_scope) is not None:
+            raise PatentParseError(
+                "XR content-collaboration disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact-source structural damage
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=None,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=None,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "xr_content_collaboration_user_interface_and_device_architecture_only"
+                ),
+                detail=(
+                    "the source-locked 248 description paragraphs, 52 drawing sheets with "
+                    "57 actual panels, zero tables, and claims 1-48 disclose XR content "
+                    "collaboration interfaces plus generic HMD/display/sensor/device "
+                    "architecture only; no ordered optical surface prescription is published"
                 ),
             ),
         )

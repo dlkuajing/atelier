@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "family_id": "93653416",
+  "root_id": "US-12663910",
+  "publication_id": "US-12663910-B2",
+  "application_number": "18/611377",
+  "title": "Devices, methods, and graphical user interfaces for content collaboration and sharing",
+  "filing_date": "2024-03-20",
+  "patent_date": "2026-06-23",
+  "official_prior_publication": {
+    "publication_id": "US-20240402869-A1",
+    "publication_date": "2024-12-05"
+  },
+  "official_priority_documents": [
+    {
+      "application_number": "US63/470821",
+      "filing_date": "2023-06-02"
+    },
+    {
+      "application_number": "US63/470895",
+      "filing_date": "2023-06-03"
+    }
+  ],
+  "official_html": {
+    "evidence_type": "uspto_ppubs_parser_input_html",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/699f9e2331ebb851/US-12663910-B2.html",
+    "raw_document_sha256": "699f9e2331ebb851f1b7073f43a0b7521fa146860afbf935ac0d950b1f7e04d3",
+    "normalized_text_sha256": "939ed8581f0e93eba97ad4e384c587fe7adf47ceddebc701c5e1b8e3908f9df5"
+  },
+  "public_mirror": {
+    "b2_status": "Google Patents B2 page returned HTTP 404 on 2026-07-17",
+    "prior_a1_page": "https://patents.google.com/patent/US20240402869A1/en",
+    "role": "relationship and shared drawing/specification cross-check only; never substituted for B2 claims or terminal truth"
+  },
+  "denominator": {
+    "pdf_pages": 108,
+    "references_cited_pages": 12,
+    "drawing_sheets": 52,
+    "declared_figure_groups": 10,
+    "actual_figure_panels": 57,
+    "description_paragraphs": 248,
+    "source_tables": 0,
+    "claims": 48,
+    "terminal_items": 1
+  },
+  "declared_figure_groups": [
+    "1A-1P",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7A-7R",
+    "8",
+    "9A-9K",
+    "10"
+  ],
+  "nested_figure_panels": [
+    "7P1",
+    "7P2A",
+    "7P2B",
+    "7P2C",
+    "9J1",
+    "9J2A",
+    "9J2B"
+  ],
+  "generic_optical_narrative_counts": {
+    "field_or_fields_of_view": 21,
+    "lens_or_lenses": 35,
+    "optical": 55,
+    "curvature": 7,
+    "customized_prescription_lenses_configured_for_corrective_vision": 1
+  },
+  "prescription_marker_counts": {
+    "focal_length": 0,
+    "effective_focal_length": 0,
+    "radius_of_curvature": 0,
+    "numbered_surface": 0,
+    "refractive_index": 0,
+    "abbe": 0,
+    "asphere_data_or_coefficients": 0,
+    "f_number_or_fno": 0,
+    "optical_prescription_or_data": 0,
+    "lens_prescription_or_data": 0
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-93653416/family-93653416-raster-audit.json",
+    "sha256": "899e7fa24eca88dddfc660421e05cdb45226d0bf0f1e89df066bffc64589dc39",
+    "b2_raster_set_sha256": "e440f43361cbe7f0653a31417c6ce19480ff3e5f2e957e46a80258901ef6a448",
+    "a1_raster_set_sha256": "cfec60104498165cccb27d584dbbfcc030ebd5b447f217da7d0d5072a57c0a9c"
+  },
+  "terminal_item": {
+    "embodiment_number": null,
+    "label": "XR content collaboration user-interface and device architecture",
+    "status": "confirmed_no_prescription",
+    "reason_code": "confirmed_no_prescription.xr_content_collaboration_user_interface_and_device_architecture_only"
+  },
+  "critical_source_defects": []
+}

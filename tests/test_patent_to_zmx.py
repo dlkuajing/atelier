@@ -13243,3 +13243,252 @@ def test_near_ir_absorbing_polymer_replay_is_semantically_deterministic() -> Non
     assert semantic_hashes == {
         "3b7df3099b2bd195536f9f4d283cd893c3f1748ef4690993de1e2943f8074ad6"
     }
+
+
+def test_xr_content_collaboration_source_is_confirmed_no_prescription() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "699f9e2331ebb851"
+        / "US-12663910-B2.html"
+    )
+    raw_text = source.read_text(encoding="utf-8")
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id="US-12663910-B2",
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].embodiment_number is None
+    assert attempts[0].embodiment == (
+        "XR content collaboration user-interface and device architecture"
+    )
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert error.status == "confirmed_no_prescription"
+    assert error.reason_code == (
+        "confirmed_no_prescription."
+        "xr_content_collaboration_user_interface_and_device_architecture_only"
+    )
+
+    altered = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " Surface No. 1 Radius of Curvature 1.0",
+        patent_id="US-12663910-B2",
+    )
+    assert len(altered) == 1
+    assert isinstance(altered[0].error, PatentParseError)
+    assert not isinstance(altered[0].error, patent_to_zmx.PatentTerminalParseError)
+    assert "raw text hash changed" in str(altered[0].error)
+
+
+def test_xr_content_collaboration_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-93653416"
+    evidence = json.loads(
+        (quick / "family-93653416-source-evidence.json").read_text(encoding="utf-8")
+    )
+    source = root / evidence["official_html"]["path"]
+    raw_text = source.read_text(encoding="utf-8")
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+
+    assert evidence["family_id"] == "93653416"
+    assert evidence["denominator"] == {
+        "pdf_pages": 108,
+        "references_cited_pages": 12,
+        "drawing_sheets": 52,
+        "declared_figure_groups": 10,
+        "actual_figure_panels": 57,
+        "description_paragraphs": 248,
+        "source_tables": 0,
+        "claims": 48,
+        "terminal_items": 1,
+    }
+    assert hashlib.sha256(raw_text.encode()).hexdigest() == evidence["official_html"][
+        "raw_document_sha256"
+    ]
+    assert hashlib.sha256(normalized.encode()).hexdigest() == evidence["official_html"][
+        "normalized_text_sha256"
+    ]
+    description_start = normalized.index("BRIEF DESCRIPTION OF THE DRAWINGS")
+    claims_start = normalized.index(
+        "Claims 1 . A computer system configured",
+        description_start,
+    )
+    assert [
+        int(value)
+        for value in re.findall(
+            r"\((\d+)\)",
+            normalized[description_start:claims_start],
+        )
+    ] == list(range(1, 249))
+    assert [
+        int(value)
+        for value in re.findall(
+            r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+            normalized[claims_start:],
+            re.IGNORECASE,
+        )
+    ] == list(range(1, 49))
+    assert patent_to_zmx._patent_table_blocks(normalized) == []
+    assert set(evidence["prescription_marker_counts"].values()) == {0}
+    assert evidence["terminal_item"] == {
+        "embodiment_number": None,
+        "label": "XR content collaboration user-interface and device architecture",
+        "status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription."
+            "xr_content_collaboration_user_interface_and_device_architecture_only"
+        ),
+    }
+    raster_audit = root / evidence["official_pdf_audit"]["path"]
+    assert hashlib.sha256(raster_audit.read_bytes()).hexdigest() == evidence[
+        "official_pdf_audit"
+    ]["sha256"]
+
+    queue = json.loads(
+        (quick / "family-93653416-external-family-members.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert queue["current_frozen_cohort_roots"] == ["US-12663910"]
+    assert {member["publication_id"] for member in queue["external_family_members"]} == {
+        "US-20240402869-A1",
+        "WO2024249046A1",
+    }
+    assert all(
+        member["disposition"] == "queue_after_frozen_619_root_cohort"
+        for member in queue["external_family_members"]
+    )
+
+
+def test_xr_content_collaboration_official_pdf_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-93653416"
+    audit = json.loads(
+        (quick / "family-93653416-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    assert audit["family_id"] == "93653416"
+    assert audit["publication_id"] == "US-12663910-B2"
+    assert audit["b2_page_count"] == 108
+    assert audit["references_cited_page_range"] == [2, 13]
+    assert audit["drawing_page_range"] == [14, 65]
+    assert audit["drawing_sheet_count"] == 52
+    assert audit["actual_figure_panel_count"] == 57
+    assert len(audit["actual_figure_panels_by_pdf_page"]) == 52
+    assert audit["specification_page_range"] == [66, 104]
+    assert audit["description_paragraph_range"] == [1, 248]
+    assert audit["claims_page_range"] == [105, 108]
+    assert audit["claim_range"] == [1, 48]
+    assert audit["table_count"] == 0
+
+    raster_hashes_by_wrapper: dict[str, list[str]] = {}
+    for label, wrapper in audit["wrappers"].items():
+        pdf_path = root / wrapper["path"]
+        assert hashlib.sha256(pdf_path.read_bytes()).hexdigest() == wrapper["sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == wrapper["page_count"]
+        page_hashes: list[str] = []
+        image_counts: list[int] = []
+        text_lengths: list[int] = []
+        page_shapes: list[list[int]] = []
+        for page_number, page in enumerate(reader.pages, start=1):
+            image_counts.append(len(page.images))
+            text_lengths.append(len((page.extract_text() or "").strip()))
+            image_bytes = patent_pdf_recovery._page_image(
+                page,
+                source=f"US-12663910-B2 {label}",
+                page_number=page_number,
+            )
+            page_hashes.append(
+                patent_pdf_recovery._canonical_raster_sha256(image_bytes)
+            )
+            decoded = cv2.imdecode(
+                np.frombuffer(image_bytes, dtype=np.uint8),
+                cv2.IMREAD_UNCHANGED,
+            )
+            assert decoded is not None
+            page_shapes.append([int(value) for value in decoded.shape])
+        assert image_counts == wrapper["page_image_counts"] == [1] * len(
+            reader.pages
+        )
+        assert text_lengths == wrapper["page_text_lengths"]
+        assert wrapper["blank_text_pages"] == [
+            index + 1 for index, length in enumerate(text_lengths) if length == 0
+        ]
+        assert page_shapes == wrapper["page_shapes"]
+        assert page_hashes == wrapper["page_raster_sha256"]
+        raster_hashes_by_wrapper[label] = page_hashes
+
+    assert raster_hashes_by_wrapper["b2-live-1"] == raster_hashes_by_wrapper[
+        "b2-live-2"
+    ]
+    assert raster_hashes_by_wrapper["a1-official"] == raster_hashes_by_wrapper[
+        "a1-google"
+    ]
+    b2_raster_set_sha256 = hashlib.sha256(
+        json.dumps(
+            raster_hashes_by_wrapper["b2-live-1"],
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    a1_raster_set_sha256 = hashlib.sha256(
+        json.dumps(
+            raster_hashes_by_wrapper["a1-official"],
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
+    assert b2_raster_set_sha256 == audit["b2_raster_set_sha256"]
+    assert a1_raster_set_sha256 == audit["a1_raster_set_sha256"]
+    for retained in audit["retained_visual_audits"]:
+        visual = root / retained["path"]
+        assert hashlib.sha256(visual.read_bytes()).hexdigest() == retained["sha256"]
+
+
+def test_xr_content_collaboration_replay_is_semantically_deterministic() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-93653416"
+    artifact = json.loads(
+        (quick / "family-93653416-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes: set[str] = set()
+    assert artifact["root_id"] == "US-12663910"
+    assert artifact["family_id"] == "93653416"
+    assert artifact["item_count"] == 1
+    assert artifact["excluded_semantic_fields"] == ["result_attempt"]
+    assert [record["result_attempt"] for record in artifact["attempts"]] == [2, 3]
+    for expected in artifact["attempts"]:
+        result_path = root / expected["path"]
+        assert hashlib.sha256(result_path.read_bytes()).hexdigest() == expected[
+            "file_sha256"
+        ]
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        result.pop("result_attempt")
+        semantic_sha256 = hashlib.sha256(
+            json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        assert semantic_sha256 == expected["semantic_sha256"]
+        semantic_hashes.add(semantic_sha256)
+        assert result["root_state"] == "terminal"
+        assert result["reason_code"] == "terminal.all_disclosed_items_terminal"
+        assert len(result["items"]) == 1
+        assert result["items"][0]["terminal_status"] == "confirmed_no_prescription"
+        assert result["items"][0]["reason_code"] == (
+            "terminal.confirmed_no_prescription."
+            "xr_content_collaboration_user_interface_and_device_architecture_only"
+        )
+        assert result["items"][0]["conversion_attempt_id"] is None
+        assert result["items"][0]["prescription_fingerprint"] is None
+
+    assert artifact["semantic_equal"] is True
+    assert semantic_hashes == {
+        "972120083a620518e0c4d68c52c014bec0c5a7bb925a23b61fb929ebc5ec02ef"
+    }

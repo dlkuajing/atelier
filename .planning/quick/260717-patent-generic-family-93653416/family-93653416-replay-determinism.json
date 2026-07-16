@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "family_id": "93653416",
+  "root_id": "US-12663910",
+  "publication_id": "US-12663910-B2",
+  "item_count": 1,
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12663910/attempt-0002/result.json",
+      "file_sha256": "636a27c975eba9a1914c335ac43d4141727f4493a336536c72a869fbe0e804f7",
+      "semantic_sha256": "972120083a620518e0c4d68c52c014bec0c5a7bb925a23b61fb929ebc5ec02ef"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12663910/attempt-0003/result.json",
+      "file_sha256": "7c9f1cedff9aeff2738ba9801793ad599e5d8051ebc94d1ee9cc712a2cced02d",
+      "semantic_sha256": "972120083a620518e0c4d68c52c014bec0c5a7bb925a23b61fb929ebc5ec02ef"
+    }
+  ],
+  "semantic_equal": true,
+  "semantic_sha256": "972120083a620518e0c4d68c52c014bec0c5a7bb925a23b61fb929ebc5ec02ef"
+}

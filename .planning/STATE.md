@@ -17,7 +17,7 @@ A–F。北极星现为 `ACTIVE`，66-object canonical schema 与 claim/contract
 `v0.1-draft` + `UNRATIFIED`，
 北极星 A–F 全 false，专家与制造指标 unavailable。技术闭环不等于北极星 go/no-go 已通过。
 
-**Patent saturation focus (2026-07-16, branch work):** `origin/main@42803f8` 起的独立
+**Patent saturation focus (2026-07-17, branch work):** `origin/main@42803f8` 起的独立
 `codex/patent-saturation-ledger` worktree 已建立 GSD quick 控制面。运行时重算为 714 个 USPTO
 元数据根、442 个正式设计（425 个专利设计、116 个美国专利根）、95 个本地池根有正式工件、
 619 个未覆盖；发现并集为 735 根（另 21 个正式根不在本地元数据池）。canonical snapshot
@@ -27,22 +27,21 @@ foundation snapshot 的严格 audit 为 `saturation_complete=false`，明确 735
 当时 735 根均无保留全文。第三个 quick 现已为冻结的 619 个本地未覆盖根全部保留官方 PPUBS
 HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和账本。这是未合 main 的进行中证据，
 不是饱和完成声明；500 仅为历史进度标记。当前严格 replay result set 为
-`df1f858e126d6cb4541f1cb33f17fb4513ca9cc8b83fa3a5bb0390379f1635df`：619/619、
-missing=0、corrupt=0。Family ID `89001540` 的 `US-20250102782-A1` 与 `US-12585096-B2`
-（同 application `18/402737`）已闭合七个 finite-object object-space telecentric nine-lens
-embodiments、TABLES 1-8、FIGS.1-28 与两份 29/27 页 image-only official PDF 的全分母审计。
-来源发布 lens prescription、system/component EFL、image height、NA/entrance pupil/部分 diagonal
-field，却不发布 beam-splitter material/index/dispersion 或 exact system F-number；Embodiment 1
-还缺 numeric angular field。TABLE 7 在 A1/B2 官方 raster 中均含未定义的 pre-G4 beam-splitter/
-stop spacing chain，不能修补。每根形成七个精确 source terminal items，无 worker、request、
-receipt、fingerprint、candidate 或 ZMX。每根 attempts 2/3 除 `result_attempt` 外语义一致。
-B2 两个 wrapper 的 27/27 decoded rasters 相同；A1 两个 live wrapper 与 Google wrapper 的
-29/29 decoded rasters 相同。Generic 从 161 items/roots 降至 159/159，两次 after census
-byte-identical，SHA-256=
-`65385b78274c0a2a2638011b05b8f830cba821aa4de7ccf0803da6e1a3af7d36`。按非终态 root 数，
-generic 159 仍高于 AAC Raytech 55 roots/174 items 与 Sunny 49 roots/177 items；下一 exact
-same-layout family 为 `74187659`（`US-11719909`、`US-20210026108`），layout
-`d41bca1a1ff33aa2d5675c95f3a2aa4f74b80207f9841b61b1ace11918a0071b`。
+`024ce7b876f23cf7fb767ba40cd54fc6cfe663c9ce64307cc4ee940cdda7248b`：619/619、
+missing=0、corrupt=0。Family ID `93653416` 的 `US-12663910-B2`（application
+`18/611377`，prior publication `US-20240402869-A1`）已闭合 paragraphs 0001-0248、claims
+1-48、52 个 drawing sheets、57 个实际 figure panels 与零 source tables 的全分母审计。两份
+官方 B2 wrapper 各有 108 个 image-only pages，全部 decoded rasters 一致；同 application A1
+官方 wrapper 与 Google mirror 各有 96 页，全部 decoded rasters 也一致。来源仅披露 XR 内容
+协作 GUI、设备架构和一处 corrective-vision lens 泛称，零 ordered-surface、focal-length、
+radius-of-curvature、index/Abbe、asphere-data、F-number 或 optical-prescription 数据，因此形成
+一个 exact-source confirmed-no-prescription document terminal，无 worker、request、receipt、
+fingerprint、candidate 或 ZMX。Attempts 2/3 除 `result_attempt` 外语义一致。Generic 从
+148 items/roots 降至 147/147，两次 after census byte-identical，SHA-256=
+`7be0f127b73856b487d2b413e8739579ec00257931c7117c90367c0d9332a0cc`。按非终态 root 数，
+generic 147 仍高于 AAC Raytech 55 roots/174 items 与 Sunny 49 roots/177 items；下一 exact
+family 为 `97227325`（`US-20260072233-A1`），layout
+`0bd47b379e8a4f9ddacc08226487784c91540cdc1aec8814da41ca0377f5c56e`。
 
 ## Current Position
 
@@ -56,7 +55,7 @@ same-layout family 为 `74187659`（`US-11719909`、`US-20210026108`），layout
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `f0745d7a...61a5b`. Current roots: 336 parser review, 145 mixed, 113 terminal, 25 converted; items: 551 staging, 1418 parser review, 1019 terminal, 28 conversion retry. Family 57585487's exact A1 source binds 24 polymer synthesis examples, 32 near-IR cut-filter manufacturing examples, one comparative example, FIGS.1-4 on two sheets, one heat/solvent-resistance table, 620 numbered paragraphs, and 18 claims. Two official plus one Google 114-page wrappers agree on all decoded page rasters. No prescription marker or hidden optical table exists, so the root becomes one source-locked confirmed-no-prescription materials terminal without worker/ZMX. Generic 149→148 roots/items and still ranks first by nonterminal roots; deterministic ordering selects Family 93653416 next. External-family queues, macro replay support, staging intake, and source exhaustion remain outside completion, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `024ce7b8...248b`. Current roots: 335 parser review, 145 mixed, 114 terminal, 25 converted; items: 551 staging, 1417 parser review, 1020 terminal, 28 conversion retry. Family 93653416's exact B2 source binds paragraphs 0001-0248, claims 1-48, 52 drawing sheets, 57 actual figure panels, and zero tables. Two official B2 108-page wrappers agree on every decoded raster; the same-application A1 official/Google 96-page pair does too. The source discloses XR content-collaboration GUI/device architecture but no ordered-surface prescription, so the root becomes one source-locked confirmed-no-prescription terminal without worker/ZMX. Generic 148→147 roots/items and remains first by nonterminal roots; deterministic ordering selects Family 97227325 next. External-family queues, macro replay support, staging intake, and source exhaustion remain outside completion, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -230,24 +229,25 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260716-patent-generic-family-87936009` | complete-shovel-saturation-incomplete | Exact B2 source binds five seven/eight-lens embodiments, ten retracted/working states, TABLES 1-16, FIGS.1-23, and complete 43-page B2/A1 official raster denominators. Five non-working states lack state-specific metadata; B2/A1 rasters independently confirm malformed `A26=2.2728-07` and `A24=-5.39SE-06`, which are not repaired. Three remaining working prescriptions parse exactly: Embodiments 3/5 trace-fail and Embodiment 2 creates one staging-only candidate with 3/5 finite rays. Attempts 3/4 are semantic-equal after permitted retry normalization; result set `9acd2262...bd35`, summary `4c36148a...a6df`, after census `9b94e589...dfb1`; audit 619/619 corrupt=0; 415 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. Eight US/CN/WO/EP family publications are queued outside the cohort. Generic 150 roots remains first; Family 95157884 is next. |
 | `260716-patent-generic-family-95157884` | complete-shovel-saturation-incomplete | Exact A1 source binds ten six-lens moving-group prescriptions, twenty infinity/macro states, five apparatus/device wrappers, 39 source tables, 64 figure panels, 62 drawing sheets, and two complete 106-page official wrappers with 106/106 decoded-raster equality. Nine intact infinity states parse exactly: six create staging-only candidates with 2/5-4/5 finite final rays and three trace-fail. Nine finite-object macro states remain explicit parser reviews because replay is infinity-conjugate only. Official page 96 proves the two ninth-embodiment states have a blank stop radius and conflicting terminal numbering; five architecture wrappers publish no additional prescription. Attempts 2/3 are semantic-equal after permitted retry/receipt normalization; result set `0955e458...b9429`, summary `880de370...97b11`, after census `1b0db2e5...03a73`; audit 619/619 corrupt=0; 421 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. Four CN/DE/TW family/priority publications are queued outside the cohort. Generic 149 roots remains first; Family 57585487 is next. |
 | `260717-patent-generic-family-57585487` | complete-shovel-saturation-incomplete | Exact A1 source binds 24 polymer synthesis examples, 32 near-IR cut-filter manufacturing examples, one comparative example, FIGS.1-4 on two sheets, TABLE 1 heat/solvent-resistance ratings, paragraphs 0001-0620, and claims 1-18. Two independently fetched official wrappers and one Google wrapper contain 114 image pages and agree on all 114 decoded rasters. Text and all-page contact review expose zero ordered-surface prescription markers or hidden optical tables, so the root becomes one `near_ir_absorbing_polymer_and_cut_filter_materials_only` terminal with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `f0745d7a...61a5b`, summary `d69b7c61...bf7c4`, after census `75a22680...dfe35`; audit 619/619 corrupt=0; 425 offline patent/guard tests pass. WO/JP/TW family publications are queued outside the cohort. Generic 148 roots remains first; Family 93653416 is next. |
+| `260717-patent-generic-family-93653416` | complete-shovel-saturation-incomplete | Exact B2 source binds an XR content-collaboration GUI/device disclosure, paragraphs 0001-0248, claims 1-48, zero tables, 52 drawing sheets, and 57 actual panels. Two official B2 wrappers contain 108 image pages and agree on every decoded raster; same-application A1 official/Google 96-page wrappers do too. The source has no ordered-surface, focal-length, radius/index/Abbe/asphere, F-number, or optical-prescription data, so the root becomes one `xr_content_collaboration_user_interface_and_device_architecture_only` terminal with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `024ce7b8...248b`, summary `20879bb5...d9a1`, after census `7be0f127...a0cc`; audit 619/619 corrupt=0; 443 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V zero. Same-application A1 and one PCT publication are queued outside the cohort. Generic 147 roots remains first; Family 97227325 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260717-patent-generic-family-57585487/260717-patent-generic-family-57585487-PLAN.md`,
+`.planning/quick/260717-patent-generic-family-93653416/260717-patent-generic-family-93653416-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (148 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (147 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `93653416`, root `US-12663910`,
-publication `US-12663910-B2`, layout
-`0aabd2e2b198ee98803e7cf82eb97bb23a0002646dd44ee8d5e0b4201e4c970f`. Use
+deterministic root/item/layout/family ordering is Family ID `97227325`, root/publication
+`US-20260072233-A1`, layout
+`0bd47b379e8a4f9ddacc08226487784c91540cdc1aec8814da41ca0377f5c56e`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
 
