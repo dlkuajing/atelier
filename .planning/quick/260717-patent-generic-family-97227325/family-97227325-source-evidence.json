@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "family_id": "97227325",
+  "publication_id": "US-20260072233-A1",
+  "root_id": "US-20260072233",
+  "application_number": "19/312524",
+  "title": "Imaging lens assembly, camera module, electronic device and mobile transportation",
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/5d4e18bb5e2829ed/US-20260072233-A1.html",
+    "raw_document_sha256": "5d4e18bb5e2829ede8469af4ec73b90c6f786d6f30ce068502649cb9f4e10893",
+    "normalized_text_sha256": "396721b0cf080db88d45c43a8e24514aee7da13872c11e88e9251ef560b58950"
+  },
+  "identity": {
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "filing_date": "2025-08-28",
+    "publication_date": "2026-03-12",
+    "priority_application": "TW113133800A",
+    "priority_date": "2024-09-06"
+  },
+  "denominator": {
+    "pdf_pages": 44,
+    "drawing_sheets": 30,
+    "figure_panels": 30,
+    "description_paragraphs": 116,
+    "source_tables": 2,
+    "claims": 30,
+    "formal_embodiments": 5,
+    "terminal_items": 5
+  },
+  "figure_panels": [
+    "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "1J", "1K", "1L",
+    "2A", "2B", "2C", "2D", "2E", "2F", "2G", "2H", "2I",
+    "3A", "3B", "3C", "3D", "3E", "4", "5A", "5B", "5C"
+  ],
+  "table_evidence": [
+    {
+      "table_number": 1,
+      "pdf_pages": [37, 38],
+      "normalized_span_sha256": "34830f7f3979f49d9648a7caa2b8d6010e251d1164b03ca8b3a6dd11b60145fb",
+      "role": "first-embodiment retainer and annular-light-blocking geometry"
+    },
+    {
+      "table_number": 2,
+      "pdf_pages": [39],
+      "normalized_span_sha256": "6b5d06c9d72be1d681378e1da752698c7ad0859ae817d93556b7318b23afe627",
+      "role": "second-embodiment retainer and annular-light-blocking geometry"
+    }
+  ],
+  "source_scope_phrase_counts": {
+    "annular light blocking structure": 73,
+    "strip-shaped wedge structures": 69,
+    "plastic lens barrel": 95,
+    "object-side retainer": 57,
+    "image-side retainer": 39,
+    "lens elements": 46,
+    "camera module": 51,
+    "electronic device": 42,
+    "mobile transportation": 19,
+    "focal lengths": 1,
+    "visual angle": 3,
+    "convex surface": 6,
+    "surface shape": 2
+  },
+  "prescription_marker_counts": {
+    "radius_or_curvature": 0,
+    "ordered_surface_number": 0,
+    "refractive_index": 0,
+    "abbe": 0,
+    "asphere_data_or_coefficients": 0,
+    "effective_focal_length": 0,
+    "f_number_or_fno": 0,
+    "optical_or_lens_prescription_data": 0
+  },
+  "terminal_items": [
+    {
+      "embodiment_number": 1,
+      "label": "Imaging lens assembly light-blocking and dual-retainer architecture embodiment 1",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_wedge_and_dual_retainer_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Imaging lens assembly light-blocking and dual-retainer architecture embodiment 2",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_wedge_and_dual_retainer_architecture_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Smartphone multi-camera architecture embodiment 3",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_device_architecture_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Smartphone multi-camera architecture embodiment 4",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_device_architecture_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Mobile transportation camera architecture embodiment 5",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.mobile_transportation_camera_module_architecture_only"
+    }
+  ],
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-97227325/family-97227325-raster-audit.json",
+    "sha256": "20625c7c19681c03ce6673f23e23eeab3f4327bafccf3775f608b96e8b7061d8"
+  },
+  "conclusion": "Five exact-source architecture terminals; no prescription worker or ZMX is authorized."
+}

@@ -488,6 +488,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_light_blocking_dual_retainer_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_low_reflection_light_blocking_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -2044,6 +2052,81 @@ _XR_CONTENT_COLLABORATION_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
         "lens_count": 35,
         "optical_count": 55,
         "curvature_count": 7,
+    },
+}
+_LIGHT_BLOCKING_DUAL_RETAINER_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\s*,\s*CAMERA\s+MODULE\s*,\s*"
+    r"ELECTRONIC\s+DEVICE\s+AND\s+MOBILE\s+TRANSPORTATION\b",
+    flags=re.IGNORECASE,
+)
+_LIGHT_BLOCKING_DUAL_RETAINER_FIGURE_PANELS = (
+    *(f"1{letter}" for letter in "ABCDEFGHIJKL"),
+    *(f"2{letter}" for letter in "ABCDEFGHI"),
+    *(f"3{letter}" for letter in "ABCDE"),
+    "4",
+    *(f"5{letter}" for letter in "ABC"),
+)
+_LIGHT_BLOCKING_DUAL_RETAINER_ITEM_PROFILES = (
+    (
+        1,
+        "Imaging lens assembly light-blocking and dual-retainer architecture embodiment 1",
+        "confirmed_no_prescription."
+        "light_blocking_wedge_and_dual_retainer_architecture_only",
+    ),
+    (
+        2,
+        "Imaging lens assembly light-blocking and dual-retainer architecture embodiment 2",
+        "confirmed_no_prescription."
+        "light_blocking_wedge_and_dual_retainer_architecture_only",
+    ),
+    (
+        3,
+        "Smartphone multi-camera architecture embodiment 3",
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ),
+    (
+        4,
+        "Smartphone multi-camera architecture embodiment 4",
+        "confirmed_no_prescription.camera_module_device_architecture_only",
+    ),
+    (
+        5,
+        "Mobile transportation camera architecture embodiment 5",
+        "confirmed_no_prescription."
+        "mobile_transportation_camera_module_architecture_only",
+    ),
+)
+_LIGHT_BLOCKING_DUAL_RETAINER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260072233-A1": {
+        "raw_document_sha256": (
+            "5d4e18bb5e2829ede8469af4ec73b90c6f786d6f30ce068502649cb9f4e10893"
+        ),
+        "normalized_text_sha256": (
+            "396721b0cf080db88d45c43a8e24514aee7da13872c11e88e9251ef560b58950"
+        ),
+        "family_id": "97227325",
+        "application_number": "19/312524",
+        "description_paragraph_count": 116,
+        "claim_count": 30,
+        "table_span_sha256": {
+            1: "34830f7f3979f49d9648a7caa2b8d6010e251d1164b03ca8b3a6dd11b60145fb",
+            2: "6b5d06c9d72be1d681378e1da752698c7ad0859ae817d93556b7318b23afe627",
+        },
+        "source_scope_phrase_counts": {
+            "annular light blocking structure": 73,
+            "strip-shaped wedge structures": 69,
+            "plastic lens barrel": 95,
+            "object-side retainer": 57,
+            "image-side retainer": 39,
+            "lens elements": 46,
+            "camera module": 51,
+            "electronic device": 42,
+            "mobile transportation": 19,
+            "focal lengths": 1,
+            "visual angle": 3,
+            "convex surface": 6,
+            "surface shape": 2,
+        },
     },
 }
 _SURFACE_TEXTURE_ACQUISITION_ONLY_TITLE_PATTERN = re.compile(
@@ -14186,6 +14269,224 @@ def _classify_xr_content_collaboration_only_attempts(
             ),
         )
     ]
+
+
+def _classify_light_blocking_dual_retainer_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 97227325 light-blocking/retainer architecture."""
+
+    profile = _LIGHT_BLOCKING_DUAL_RETAINER_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _LIGHT_BLOCKING_DUAL_RETAINER_ITEM_PROFILES
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"light-blocking dual-retainer official raw text hash changed for "
+                f"{patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"light-blocking dual-retainer normalized text hash changed for "
+                f"{patent_id}"
+            )
+        if _LIGHT_BLOCKING_DUAL_RETAINER_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("light-blocking dual-retainer title binding changed")
+        identity_markers = {
+            f"Family ID: {profile['family_id']}": 1,
+            f"Appl. No.: {profile['application_number']}": 1,
+            "LARGAN PRECISION CO., LTD.": 1,
+            "Taiwan Application Serial Number 113133800, filed Sep. 6, 2024": 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"light-blocking dual-retainer identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        try:
+            description_start = text.index("RELATED APPLICATIONS")
+            claims_start = text.index(
+                "Claims 1 . An imaging lens assembly having an optical axis",
+                description_start,
+            )
+        except ValueError as exc:
+            raise PatentParseError(
+                "light-blocking dual-retainer description/claim boundary changed"
+            ) from exc
+        source_scope = text[description_start:]
+        description = text[description_start:claims_start]
+        paragraph_numbers = tuple(
+            int(value) for value in re.findall(r"\[(\d+)\]", description)
+        )
+        paragraph_count = int(profile["description_paragraph_count"])
+        if paragraph_numbers != tuple(range(1, paragraph_count + 1)):
+            raise PatentParseError(
+                "light-blocking dual-retainer paragraphs 1-116 denominator changed"
+            )
+
+        brief = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+THE\s+DRAWINGS(?P<body>.*?)"
+            r"DETAILED\s+DESCRIPTION\s+\[0040\]",
+            description,
+            re.IGNORECASE,
+        )
+        if brief is None:
+            raise PatentParseError(
+                "light-blocking dual-retainer drawing description is missing"
+            )
+        brief_body = brief.group("body")
+        if tuple(
+            int(value) for value in re.findall(r"\[(\d+)\]", brief_body)
+        ) != tuple(range(9, 40)):
+            raise PatentParseError(
+                "light-blocking dual-retainer drawing paragraphs 9-39 changed"
+            )
+        for paragraph_number, panel in enumerate(
+            _LIGHT_BLOCKING_DUAL_RETAINER_FIGURE_PANELS,
+            start=10,
+        ):
+            spaced_panel = re.sub(r"(?<=\d)(?=[A-Z])", " ", panel)
+            marker = rf"\[{paragraph_number:04d}\]\s*FIG\.\s*{re.escape(spaced_panel)}\b"
+            if re.search(marker, brief_body, re.IGNORECASE) is None:
+                raise PatentParseError(
+                    f"light-blocking dual-retainer drawing panel {panel} changed"
+                )
+
+        embodiment_markers = (
+            "1st Embodiment [0062]",
+            "2nd Embodiment [0083]",
+            "3rd Embodiment [0099]",
+            "4th Embodiment [0108]",
+            "5th Embodiment [0112]",
+        )
+        for marker in embodiment_markers:
+            if len(re.findall(re.escape(marker), description, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"light-blocking dual-retainer embodiment marker {marker!r} changed"
+                )
+
+        claims_text = text[claims_start:]
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                claims_text,
+                re.IGNORECASE,
+            )
+        )
+        claim_count = int(profile["claim_count"])
+        if claim_numbers != tuple(range(1, claim_count + 1)):
+            raise PatentParseError(
+                "light-blocking dual-retainer claims 1-30 denominator changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if [block.number for block in table_blocks] != [1, 2]:
+            raise PatentParseError(
+                "light-blocking dual-retainer TABLES 1-2 denominator changed"
+            )
+        table_end_markers = {1: "[0082]", 2: "[0098]"}
+        for table_number, expected_digest in profile["table_span_sha256"].items():
+            start = source_scope.index(
+                f"TABLE-US-{int(table_number):05d} TABLE {int(table_number)}"
+            )
+            end = source_scope.index(table_end_markers[int(table_number)], start)
+            table_span = source_scope[start:end].strip()
+            table_digest = hashlib.sha256(table_span.encode("utf-8")).hexdigest()
+            if table_digest != expected_digest:
+                raise PatentParseError(
+                    f"light-blocking dual-retainer TABLE {table_number} changed"
+                )
+
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), source_scope, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"light-blocking dual-retainer phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        generic_focal_marker = (
+            "camera modules with different focal lengths cooperated with the function "
+            "of image processing"
+        )
+        if (
+            len(re.findall(re.escape(generic_focal_marker), source_scope, re.IGNORECASE))
+            != 1
+        ):
+            raise PatentParseError(
+                "light-blocking dual-retainer generic focal-length narrative changed"
+            )
+
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bSurface\s+(?:No\.?|#|Number)\s*\d+\b|\brefractive\s+index\b|"
+            r"\bAbbe(?:\s+(?:number|#))?\b|\baspheric?\s+(?:surface\s+)?"
+            r"(?:data|coefficients?|parameters?)\b|\beffective\s+focal\s+length\b|"
+            r"\bF\s*[- ]?number\b|\bFNO\b|"
+            r"\boptical\s+(?:surface\s+)?(?:prescription|data)\b|"
+            r"\blens\s+(?:prescription|data)\b)",
+            re.IGNORECASE,
+        )
+        if prescription_marker.search(source_scope) is not None:
+            raise PatentParseError(
+                "light-blocking dual-retainer disclosure contains a prescription marker"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain each exact-source item
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, label, reason_code in (
+        _LIGHT_BLOCKING_DUAL_RETAINER_ITEM_PROFILES
+    ):
+        if embodiment_number <= 2:
+            detail = (
+                "the exact retained source publishes lens ordering plus annular "
+                "light-blocking, barrel, retainer, and wedge geometry only; TABLES 1-2 "
+                "contain no ordered optical surface prescription"
+            )
+        elif embodiment_number <= 4:
+            detail = (
+                "the exact retained source publishes a smartphone multi-camera/device "
+                "architecture wrapper and no additional optical surface prescription"
+            )
+        else:
+            detail = (
+                "the exact retained source publishes a six-camera mobile-transportation "
+                "architecture wrapper and no additional optical surface prescription"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=reason_code,
+                    detail=detail,
+                ),
+            )
+        )
+    return attempts
 
 
 def _classify_lens_driving_mechanical_only_attempts(

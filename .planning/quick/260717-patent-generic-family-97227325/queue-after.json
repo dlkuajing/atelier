@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "result_set_sha256": "5a8c946bb4706f6a1673eab342b6db9fdf2e32758f44e64546b999c62d6ce9b8",
+  "ordering": [
+    "nonterminal_root_count_desc",
+    "item_count_desc",
+    "parser_layout_family_signature_ascending"
+  ],
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 146,
+      "affected_items": 146
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "90454980",
+    "root_id": "US-12669686",
+    "publication_id": "US-12669686-B2",
+    "layout_signature": "0e55269144af351368b53593199bf7f489422f556a15498977514c41404140d2",
+    "raw_document_sha256": "1f70d988271192e12f7ca1c6f557cea92a571323fed6f1550da08bad050c32c1",
+    "title": "Camera module with reflective and refractive member and electronic device including the same",
+    "affected_roots": 1,
+    "affected_items": 1
+  }
+}
