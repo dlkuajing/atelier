@@ -441,6 +441,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_largan_autofocus_module_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -3604,6 +3612,176 @@ _KANTATSU_SURFACE_MODIFICATION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "surface near the optical axis, both sides are aspherical surfaces"
             ),
         ),
+    },
+}
+
+_LARGAN_AUTOFOCUS_MODULE_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Imaging\s+lens\s+module\s+and\s+electronic\s+device\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_LARGAN_AUTOFOCUS_MODULE_FIGURES = tuple(range(1, 25))
+_LARGAN_AUTOFOCUS_MODULE_ITEMS = (
+    (1, "Largan autofocus imaging lens module first embodiment"),
+    (2, "Largan autofocus imaging lens module second embodiment"),
+    (3, "Largan autofocus imaging lens module third embodiment"),
+    (4, "Largan electronic device camera module fourth embodiment"),
+    (5, "Largan electronic device camera module fifth embodiment"),
+    (6, "Largan electronic device camera module sixth embodiment"),
+    (7, "Largan electronic device camera module seventh embodiment"),
+    (8, "Largan electronic device camera module eighth embodiment"),
+)
+_LARGAN_AUTOFOCUS_MODULE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "autofocus_lens_carrier_and_electromagnetic_drive_architecture_only"
+)
+_LARGAN_AUTOFOCUS_DEVICE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "electronic_device_camera_module_placement_architecture_only"
+)
+_LARGAN_AUTOFOCUS_MODULE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12663606-B2": {
+        "raw_document_sha256": (
+            "cf0bd438c94dc725481feca7c9f39bd0cc9605d69d9109575a0921ce4d2b5051"
+        ),
+        "normalized_text_sha256": (
+            "9bdd82f3cd2f59fdb563c0ada19e83426aff6247affc6a8e21be35260a32eb24"
+        ),
+        "family_id": "69286146",
+        "application_number": "18/402280",
+        "section_markers": {
+            "abstract": "Abstract An imaging lens module with auto focus function",
+            "background_summary": "Background/Summary RELATED APPLICATIONS",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": (
+                "Claims 1 . An imaging lens module with auto focus function"
+            ),
+        },
+        "section_sha256": {
+            "abstract": (
+                "4de2b8e8960b5dc0c617e3baf9b7add3c269dfc166be7efc028c79919fce898c"
+            ),
+            "background_summary": (
+                "011cf249c5da4951d9427228f742ce69c3e28882a9439a1e4d0a0be2d33832bc"
+            ),
+            "description": (
+                "c7e37f1c21848f2cbfa1730ea58cc9575b5aa4c69f08ac67358a063b94f679ea"
+            ),
+            "claims": (
+                "9c0ca4e122f73b196a2c50f67a8df1d9c5f2cffa96295d7051c46438491606fa"
+            ),
+        },
+        "paragraph_ranges": {
+            "related_applications": (1, 1),
+            "background": (1, 4),
+            "summary": (5, 13),
+            "brief": (1, 25),
+            "detailed": (26, 100),
+        },
+        "embodiment_ranges": {
+            "1st Embodiment": (47, 60),
+            "2nd Embodiment": (61, 73),
+            "3rd Embodiment": (74, 86),
+            "4th Embodiment": (87, 88),
+            "5th Embodiment": (89, 90),
+            "6th Embodiment": (91, 92),
+            "7th Embodiment": (93, 95),
+            "8th Embodiment": (96, 99),
+        },
+        "claim_count": 12,
+        "identity_markers": {
+            "United States Patent 12663606": 1,
+            "Kind Code B2": 1,
+            "Date of Patent June 23, 2026": 1,
+            (
+                "Inventors: Tsai; Chun-Hua (Taichung City, TW), Chou; Ming-Ta "
+                "(Taichung City, TW), Chang; Ming-Shun (Taichung City, TW)"
+            ): 1,
+            "Applicant: LARGAN DIGITAL CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 69286146": 1,
+            "Assignee: LARGAN DIGITAL CO., LTD. (Taichung City, TW)": 1,
+            "Appl. No.: 18/402280": 1,
+            "Filed: January 02, 2024": 1,
+            "US 20240134149 A1 Apr. 25, 2024": 1,
+            "US 20240231039 A9 Jul. 11, 2024": 1,
+            "TW 108122184 Jun. 25, 2019": 1,
+            (
+                "continuation parent-doc US 17970304 20221020 US 11899273 "
+                "child-doc US 18402280"
+            ): 1,
+            (
+                "continuation parent-doc US 16700995 20191202 US 11506861 "
+                "20221122 child-doc US 17970304"
+            ): 1,
+        },
+        "source_scope_phrase_counts": {
+            "1st Embodiment": 7,
+            "2nd Embodiment": 3,
+            "3rd Embodiment": 3,
+            "4th Embodiment": 3,
+            "5th Embodiment": 4,
+            "6th Embodiment": 3,
+            "7th Embodiment": 3,
+            "8th Embodiment": 3,
+            "imaging lens module": 75,
+            "imaging lens assembly": 110,
+            "electromagnetic driving component assembly": 35,
+            "lens carrier": 88,
+            "optical shielding plate": 48,
+            "optical lens element": 19,
+            "object-side lens element": 25,
+            "tip-end minimal aperture": 53,
+            "first annular mounting surface": 38,
+            "second annular mounting surface": 32,
+            "plate portions": 34,
+            "tapered surface": 39,
+            "straight structures": 18,
+            "entrance pupil diameter": 15,
+            "EPD": 28,
+            "cover glass": 37,
+            "image sensor": 11,
+            "plastic material": 3,
+            "aperture stop": 6,
+            "Lorentz force": 26,
+            "auto focus": 9,
+            "voice coil motor": 2,
+            "spherical bearing": 3,
+            "uniform thickness": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "radius of curvature": 0,
+            "curvature radius": 0,
+            "Abbe": 0,
+            "aspheric surface": 0,
+            "aspherical surface": 0,
+            "surface number": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface prescription": 0,
+            "refractive index": 0,
+        },
+        "specific_numeric_marker_counts": {
+            "\u03c6D=2.6 [mm]": 2,
+            "EPD/\u03c6D=0.61": 1,
+            "h=0.216 [mm]": 2,
+            "N=320": 1,
+            "\u03b8=90.0 [deg.]": 3,
+            "EPD/\u03c6min=1.0063": 1,
+            "EPD/\u03c6D=0.65": 1,
+            "EPD/\u03c6min=1.29": 1,
+            "\u03c6D=2.18 [mm]": 1,
+            "EPD/\u03c6D=0.75": 1,
+            "h=0.72 [mm]": 1,
+            "EPD/\u03c6min=1.19": 1,
+            "g=0.29 [mm]": 1,
+            "g=0.18 [mm]": 1,
+            "g=0.23 [mm]": 1,
+        },
     },
 }
 
@@ -18772,6 +18950,233 @@ def _classify_kantatsu_surface_modification_architecture_only_attempts(
             ),
         )
         for number, label in _KANTATSU_SURFACE_MODIFICATION_ITEMS
+    ]
+
+
+def _classify_largan_autofocus_module_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 69286146 autofocus/module architecture."""
+
+    profile = _LARGAN_AUTOFOCUS_MODULE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _LARGAN_AUTOFOCUS_MODULE_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan autofocus-module official raw text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_LARGAN_AUTOFOCUS_MODULE_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Largan autofocus-module title binding changed")
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan autofocus-module normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan autofocus-module identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan autofocus-module section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan autofocus-module section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan autofocus-module {section_name} section changed"
+                )
+
+        background_summary = sections["background_summary"]
+        description = sections["description"]
+        try:
+            spans = {
+                "related_applications": background_summary[
+                    background_summary.index("RELATED APPLICATIONS") :
+                    background_summary.index("BACKGROUND")
+                ],
+                "background": background_summary[
+                    background_summary.index("BACKGROUND") :
+                    background_summary.index("SUMMARY")
+                ],
+                "summary": background_summary[
+                    background_summary.index("SUMMARY") :
+                ],
+                "brief": description[
+                    description.index("BRIEF DESCRIPTION OF THE DRAWINGS") :
+                    description.index("DETAILED DESCRIPTION")
+                ],
+                "detailed": description[
+                    description.index("DETAILED DESCRIPTION") :
+                ],
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan autofocus-module subsection boundary changed"
+            ) from exc
+        for span_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value) for value in re.findall(r"\((\d+)\)", spans[span_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    "Largan autofocus-module "
+                    f"{span_name} paragraph denominator changed"
+                )
+
+        brief = spans["brief"]
+        for figure in _LARGAN_AUTOFOCUS_MODULE_FIGURES:
+            marker = rf"\({figure + 1}\)\s+FIG\.\s*{figure}\s+is\b"
+            if len(re.findall(marker, brief, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"Largan autofocus-module FIG. {figure} declaration changed"
+                )
+
+        detailed = spans["detailed"]
+        embodiment_markers = tuple(profile["embodiment_ranges"])
+        try:
+            embodiment_starts = {
+                marker: detailed.index(marker) for marker in embodiment_markers
+            }
+            conclusion_start = detailed.index("(100)")
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan autofocus-module embodiment boundary changed"
+            ) from exc
+        if tuple(embodiment_starts.values()) != tuple(
+            sorted(embodiment_starts.values())
+        ):
+            raise PatentParseError(
+                "Largan autofocus-module embodiment ordering changed"
+            )
+        for index, marker in enumerate(embodiment_markers):
+            end = (
+                embodiment_starts[embodiment_markers[index + 1]]
+                if index + 1 < len(embodiment_markers)
+                else conclusion_start
+            )
+            observed = tuple(
+                int(value)
+                for value in re.findall(
+                    r"\((\d+)\)",
+                    detailed[embodiment_starts[marker] : end],
+                )
+            )
+            bounds = profile["embodiment_ranges"][marker]
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"Largan autofocus-module {marker} denominator changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "Largan autofocus-module claims 1-12 denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Largan autofocus-module disclosure unexpectedly contains tables"
+            )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan autofocus-module phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan autofocus-module prescription phrase {phrase!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+        for marker, expected in profile["specific_numeric_marker_counts"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan autofocus-module numeric marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact imaging-lens-module embodiment publishes lens-carrier, shielding, "
+        "aperture, electromagnetic-drive, and mechanical-spacing data only; it "
+        "publishes no ordered optical surface prescription",
+        "the exact electronic-device embodiment reuses a disclosed camera module and "
+        "publishes device placement or use architecture only; it publishes no ordered "
+        "optical surface prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _LARGAN_AUTOFOCUS_MODULE_REASON_CODE
+                    if number <= 3
+                    else _LARGAN_AUTOFOCUS_DEVICE_REASON_CODE
+                ),
+                detail=details[0 if number <= 3 else 1],
+            ),
+        )
+        for number, label in _LARGAN_AUTOFOCUS_MODULE_ITEMS
     ]
 
 

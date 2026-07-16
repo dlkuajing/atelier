@@ -1,0 +1,440 @@
+{
+  "schema_version": 1,
+  "family_id": "69286146",
+  "root_ids": [
+    "US-12663606"
+  ],
+  "publication_id": "US-12663606-B2",
+  "application_number": "18/402280",
+  "title": "Imaging lens module and electronic device",
+  "assignee": "LARGAN DIGITAL CO., LTD.",
+  "inventors": [
+    "Tsai; Chun-Hua",
+    "Chou; Ming-Ta",
+    "Chang; Ming-Shun"
+  ],
+  "filing_date": "2024-01-02",
+  "patent_date": "2026-06-23",
+  "priority": {
+    "application": "TW108122184",
+    "date": "2019-06-25"
+  },
+  "continuation_parents": [
+    {
+      "application_number": "17/970304",
+      "grant": "US-11899273-B2"
+    },
+    {
+      "application_number": "16/700995",
+      "grant": "US-11506861-B2"
+    }
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_cross_check_publications": 2,
+    "continuation_parent_applications": 2,
+    "related_application_paragraphs": 1,
+    "background_paragraphs": 4,
+    "summary_paragraphs": 9,
+    "description_paragraphs": 100,
+    "drawing_declarations": 24,
+    "figure_panels": 24,
+    "source_tables": 0,
+    "explicit_embodiments": 8,
+    "lens_module_embodiments": 3,
+    "electronic_device_embodiments": 5,
+    "claims": 12,
+    "classification_pdf_pages": 35,
+    "classification_drawing_sheets": 24,
+    "classification_specification_internal_pages": 18,
+    "terminal_items": 8
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/cf0bd438c94dc725/US-12663606-B2.html",
+    "bytes": 93110,
+    "raw_document_sha256": "cf0bd438c94dc725481feca7c9f39bd0cc9605d69d9109575a0921ce4d2b5051",
+    "normalized_characters": 67125,
+    "normalized_text_sha256": "9bdd82f3cd2f59fdb563c0ada19e83426aff6247affc6a8e21be35260a32eb24",
+    "section_markers": {
+      "abstract": "Abstract An imaging lens module with auto focus function",
+      "background_summary": "Background/Summary RELATED APPLICATIONS",
+      "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+      "claims": "Claims 1 . An imaging lens module with auto focus function"
+    },
+    "section_positions": {
+      "abstract": 256,
+      "background_summary": 3772,
+      "description": 9868,
+      "claims": 60534
+    },
+    "section_sha256": {
+      "abstract": "4de2b8e8960b5dc0c617e3baf9b7add3c269dfc166be7efc028c79919fce898c",
+      "background_summary": "011cf249c5da4951d9427228f742ce69c3e28882a9439a1e4d0a0be2d33832bc",
+      "description": "c7e37f1c21848f2cbfa1730ea58cc9575b5aa4c69f08ac67358a063b94f679ea",
+      "claims": "9c0ca4e122f73b196a2c50f67a8df1d9c5f2cffa96295d7051c46438491606fa"
+    },
+    "paragraph_ranges": {
+      "related_applications": [
+        1,
+        1
+      ],
+      "background": [
+        1,
+        4
+      ],
+      "summary": [
+        5,
+        13
+      ],
+      "brief": [
+        1,
+        25
+      ],
+      "detailed": [
+        26,
+        100
+      ]
+    },
+    "figure_declaration_mapping": {
+      "paragraph_range": [
+        2,
+        25
+      ],
+      "figure_range": [
+        1,
+        24
+      ],
+      "rule": "brief-description paragraph n+1 declares FIG. n exactly once"
+    },
+    "embodiment_paragraph_ranges": {
+      "1": [
+        47,
+        60
+      ],
+      "2": [
+        61,
+        73
+      ],
+      "3": [
+        74,
+        86
+      ],
+      "4": [
+        87,
+        88
+      ],
+      "5": [
+        89,
+        90
+      ],
+      "6": [
+        91,
+        92
+      ],
+      "7": [
+        93,
+        95
+      ],
+      "8": [
+        96,
+        99
+      ],
+      "conclusion": [
+        100,
+        100
+      ]
+    },
+    "claim_range": [
+      1,
+      12
+    ]
+  },
+  "source_scope_phrase_counts": {
+    "imaging lens module": 75,
+    "imaging lens assembly": 110,
+    "electromagnetic driving component assembly": 35,
+    "lens carrier": 88,
+    "optical shielding plate": 48,
+    "optical lens element": 19,
+    "object-side lens element": 25,
+    "tip-end minimal aperture": 53,
+    "first annular mounting surface": 38,
+    "second annular mounting surface": 32,
+    "plate portions": 34,
+    "tapered surface": 39,
+    "straight structures": 18,
+    "entrance pupil diameter": 15,
+    "EPD": 28,
+    "cover glass": 37,
+    "image sensor": 11,
+    "plastic material": 3,
+    "aperture stop": 6,
+    "Lorentz force": 26,
+    "auto focus": 9,
+    "voice coil motor": 2,
+    "spherical bearing": 3,
+    "uniform thickness": 1
+  },
+  "mechanical_numeric_bindings": {
+    "general": [
+      {
+        "paragraph": 31,
+        "fields": {
+          "h": "0.15 mm <= h <= 1.3 mm",
+          "theta": "80 deg < theta < 100 deg"
+        }
+      },
+      {
+        "paragraph": 35,
+        "fields": {
+          "phi_D": "0.8 mm < phi_D <= 3.4 mm"
+        }
+      },
+      {
+        "paragraph": 36,
+        "fields": {
+          "EPD_over_phi_D": "0.55 < EPD/phi_D < 1.0"
+        }
+      },
+      {
+        "paragraph": 38,
+        "fields": {
+          "straight_structure_count_N": "65 < N < 700"
+        }
+      },
+      {
+        "paragraph": 40,
+        "fields": {
+          "theta": "85 deg < theta < 95 deg"
+        }
+      },
+      {
+        "paragraph": 41,
+        "fields": {
+          "EPD_over_phi_min": [
+            "0.90 < EPD/phi_min < 1.4",
+            "0.94 < EPD/phi_min < 1.36",
+            "0.98 < EPD/phi_min < 1.30"
+          ]
+        }
+      },
+      {
+        "paragraph": 42,
+        "fields": {
+          "h": "0.15 mm <= h <= 1.0 mm"
+        }
+      },
+      {
+        "paragraph": 43,
+        "fields": {
+          "g": "0.03 mm < g < 0.3 mm"
+        }
+      }
+    ],
+    "embodiments": [
+      {
+        "embodiment": 1,
+        "paragraphs": [
+          52,
+          53,
+          54,
+          56,
+          58,
+          60
+        ],
+        "fields": {
+          "phi_D_mm": 2.6,
+          "EPD_over_phi_D": 0.61,
+          "h_mm": 0.216,
+          "straight_structure_count_N": 320,
+          "theta_deg": 90.0,
+          "EPD_over_phi_min": 1.0063
+        }
+      },
+      {
+        "embodiment": 2,
+        "paragraphs": [
+          66,
+          67,
+          68,
+          71,
+          73
+        ],
+        "fields": {
+          "phi_D_mm": 2.6,
+          "EPD_over_phi_D": 0.65,
+          "h_mm": 0.216,
+          "theta_deg": 90.0,
+          "EPD_over_phi_min": 1.29
+        }
+      },
+      {
+        "embodiment": 3,
+        "paragraphs": [
+          79,
+          80,
+          81,
+          84,
+          86
+        ],
+        "fields": {
+          "phi_D_mm": 2.18,
+          "EPD_over_phi_D": 0.75,
+          "h_mm": 0.72,
+          "theta_deg": 90.0,
+          "EPD_over_phi_min": 1.19
+        }
+      },
+      {
+        "embodiment": 4,
+        "paragraph": 88,
+        "fields": {
+          "cover_glass_distance_g_mm": 0.29
+        }
+      },
+      {
+        "embodiment": 5,
+        "paragraph": 90,
+        "fields": {
+          "cover_glass_distance_g_mm": 0.18
+        }
+      },
+      {
+        "embodiment": 6,
+        "paragraph": 92,
+        "fields": {
+          "cover_glass_distance_g_mm": 0.23
+        }
+      },
+      {
+        "embodiment": 7,
+        "paragraphs": [
+          93,
+          95
+        ],
+        "fields": {
+          "device_role": "microlens/front-facing placement; no optical prescription"
+        }
+      },
+      {
+        "embodiment": 8,
+        "paragraphs": [
+          96,
+          99
+        ],
+        "fields": {
+          "device_role": "under-display placement; no optical prescription"
+        }
+      }
+    ],
+    "claims": [
+      {
+        "claim": 1,
+        "fields": [
+          "at least three lens elements",
+          "0.55 < EPD/phi_D < 1.0",
+          "0.15 mm <= h <= 1.3 mm"
+        ]
+      },
+      {
+        "claim": 5,
+        "fields": [
+          "65 < N < 700"
+        ]
+      },
+      {
+        "claim": 7,
+        "fields": [
+          "0.90 < EPD/phi_min < 1.4"
+        ]
+      },
+      {
+        "claim": 8,
+        "fields": [
+          "0.94 < EPD/phi_min < 1.36"
+        ]
+      },
+      {
+        "claim": 9,
+        "fields": [
+          "0.98 < EPD/phi_min < 1.30"
+        ]
+      },
+      {
+        "claim": 10,
+        "fields": [
+          "0.15 mm <= h <= 1.0 mm"
+        ]
+      },
+      {
+        "claim": 11,
+        "fields": [
+          "0.03 mm < g < 0.3 mm"
+        ]
+      }
+    ]
+  },
+  "optical_boundary": {
+    "absent_marker_counts": {
+      "focal length": 0,
+      "effective focal length": 0,
+      "F-number": 0,
+      "FNO": 0,
+      "field of view": 0,
+      "FOV": 0,
+      "radius of curvature": 0,
+      "curvature radius": 0,
+      "Abbe": 0,
+      "aspheric surface": 0,
+      "aspherical surface": 0,
+      "surface number": 0,
+      "optical prescription": 0,
+      "lens prescription": 0,
+      "surface prescription": 0,
+      "refractive index": 0
+    },
+    "thickness_occurrences": 1,
+    "thickness_context": "uniform wall thickness of the injection-molded lens-carrier object-side part",
+    "ordered_surface_prescription_published": false,
+    "image_only_prescription_found_in_pdf": false,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "conclusion": "Published values describe aperture, carrier, shielding, drive, and device-placement geometry. They are not a radius/thickness/glass/Abbe/asphere optical prescription and cannot be converted to ZMX."
+  },
+  "terminal_outcomes": [
+    {
+      "embodiment_numbers": [
+        1,
+        2,
+        3
+      ],
+      "count": 3,
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.autofocus_lens_carrier_and_electromagnetic_drive_architecture_only"
+    },
+    {
+      "embodiment_numbers": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "count": 5,
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_camera_module_placement_architecture_only"
+    }
+  ],
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-69286146/family-69286146-raster-audit.json",
+    "sha256": "903e7eb43981c6dfd1cd2f6e5c427c8f6c605af71983c60280dd09c388ee9917"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-69286146/family-69286146-external-family-members.json",
+    "sha256": "4da1d3ea5bc96a5a1b99b4afb130c12bb31b9aa828baca0417d52b54d1291ded"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-69286146/family-69286146-replay-determinism.json",
+    "sha256": "28ac899040d52c6c24b2051cd61e63a62debf5dba1276e60d1f1da6b2a57324f"
+  }
+}

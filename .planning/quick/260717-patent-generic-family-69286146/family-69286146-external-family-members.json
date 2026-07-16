@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "family_id": "69286146",
+  "title": "Imaging lens module and electronic device",
+  "priority_date": "2019-06-25",
+  "current_frozen_cohort_roots": [
+    "US-12663606"
+  ],
+  "current_publication": {
+    "publication_id": "US-12663606-B2",
+    "application_number": "18/402280",
+    "frozen_cohort_membership": true,
+    "relationship": "classification publication"
+  },
+  "external_family_members": [
+    {
+      "publication_id": "US-20240134149-A1",
+      "application_number": "18/402280",
+      "publication_date": "2024-04-25",
+      "frozen_cohort_membership": false,
+      "relationship": "same application prior publication"
+    },
+    {
+      "publication_id": "US-20240231039-A9",
+      "application_number": "18/402280",
+      "publication_date": "2024-07-11",
+      "frozen_cohort_membership": false,
+      "relationship": "same application corrected publication"
+    },
+    {
+      "publication_id": "US-20230039874-A1",
+      "application_number": "17/970304",
+      "publication_date": "2023-02-09",
+      "frozen_cohort_membership": false,
+      "relationship": "immediate continuation parent publication"
+    },
+    {
+      "publication_id": "US-11899273-B2",
+      "application_number": "17/970304",
+      "publication_date": "2024-02-13",
+      "frozen_cohort_membership": false,
+      "relationship": "immediate continuation parent grant"
+    },
+    {
+      "publication_id": "US-20200409028-A1",
+      "application_number": "16/700995",
+      "publication_date": "2020-12-31",
+      "frozen_cohort_membership": false,
+      "relationship": "earliest U.S. continuation parent publication"
+    },
+    {
+      "publication_id": "US-11506861-B2",
+      "application_number": "16/700995",
+      "publication_date": "2022-11-22",
+      "frozen_cohort_membership": false,
+      "relationship": "earliest U.S. continuation parent grant"
+    },
+    {
+      "publication_id": "TWI-695217-B",
+      "application_number": "TW108122184A",
+      "publication_date": "2020-06-01",
+      "frozen_cohort_membership": false,
+      "relationship": "Taiwan priority grant"
+    },
+    {
+      "publication_id": "TW-202101100-A",
+      "application_number": "TW108122184A",
+      "publication_date": "2021-01-01",
+      "frozen_cohort_membership": false,
+      "relationship": "Taiwan priority publication"
+    },
+    {
+      "publication_id": "CN-112130400-A",
+      "application_number": "CN201910667397.2A",
+      "frozen_cohort_membership": false,
+      "relationship": "Chinese priority-family publication"
+    },
+    {
+      "publication_id": "CN-112130400-B",
+      "application_number": "CN201910667397.2A",
+      "frozen_cohort_membership": false,
+      "relationship": "Chinese priority-family grant"
+    },
+    {
+      "publication_id": "CN-113933952-A",
+      "application_number": "CN202111331268.XA",
+      "publication_date": "2022-01-14",
+      "frozen_cohort_membership": false,
+      "relationship": "Chinese divisional publication"
+    },
+    {
+      "publication_id": "CN-113933952-B",
+      "application_number": "CN202111331268.XA",
+      "publication_date": "2024-07-26",
+      "frozen_cohort_membership": false,
+      "relationship": "Chinese divisional grant"
+    },
+    {
+      "publication_id": "CN-209979984-U",
+      "application_number": "CN201921161363.8U",
+      "frozen_cohort_membership": false,
+      "relationship": "Chinese utility-model family record"
+    }
+  ],
+  "sources": [
+    {
+      "kind": "official retained B2 HTML",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/cf0bd438c94dc725/US-12663606-B2.html"
+    },
+    {
+      "kind": "Google Patents same-application/family discovery cross-check",
+      "url": "https://patents.google.com/patent/US20240134149A1/en"
+    },
+    {
+      "kind": "Google Patents parent application cross-check",
+      "url": "https://patents.google.com/patent/US11899273B2/en"
+    },
+    {
+      "kind": "Google Patents earliest U.S. parent cross-check",
+      "url": "https://patents.google.com/patent/US11506861B2/en"
+    },
+    {
+      "kind": "Google Patents Taiwan/China priority-family cross-check",
+      "url": "https://patents.google.com/patent/TWI695217B/en"
+    },
+    {
+      "kind": "Google Patents Chinese divisional cross-check",
+      "url": "https://patents.google.com/patent/CN113933952B/zh"
+    }
+  ],
+  "queue_disposition": "All non-cohort publications remain queued for later source-scope expansion; none supplies numeric truth to the frozen B2 classification."
+}

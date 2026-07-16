@@ -27,23 +27,24 @@ foundation snapshot 的严格 audit 为 `saturation_complete=false`，明确 735
 当时 735 根均无保留全文。第三个 quick 现已为冻结的 619 个本地未覆盖根全部保留官方 PPUBS
 HTML 并生成严格回放结果，但尚未把这些非终态闭合进总饱和账本。这是未合 main 的进行中证据，
 不是饱和完成声明；500 仅为历史进度标记。当前严格 replay result set 为
-`bf48bcde2ed47b6e620475a9df50237d3c7d0b584c0d8578760ba14290b9c7d6`：619/619、
-missing=0、corrupt=0。Family ID `64459548` 的 `US-20210373283-A1`（application
-`17/344651`）已闭合 190 个顺序段落、claims 1-14、11 个 drawing declarations/23 个 panels、
-零 PPUBS tables 与两个 manufacturing embodiments。第二实施例复用第一实施例的五片树脂
-镜头组件，只改变 barrel/rear-ring construction。两份 independent official downloads 与 Google
-wrapper 均为 21 pages 且 decoded rasters 21/21 相同；parent publication
-`US-20180348479-A1` 的 official/Google wrappers 也为 21 pages 且内部 21/21 相同，但两 publication
-同位置 raster 0/21 相同，未跨 publication 借值。完整 HTML、drawings 与 claims 审计证明 source
-没有顺序 radius/thickness/material/Abbe/asphere-coefficient prescription，也没有 direct EFL、
-F-number 或 field metadata；两个 item 均成为
-`confirmed_no_prescription.lens_barrel_surface_modification_and_manufacturing_architecture_only`，
-没有 worker/request/receipt/fingerprint/candidate/ZMX。Attempts 2/3 仅排除 `result_attempt` 后语义
-一致，SHA-256=`60c5e46a8d15f97df102e72a9293c4f381b61e9f2c68ef87efa4c44e6cbbf4ff`。
-Generic 从 140 items/roots 降至 139/139，两次 after census byte-identical，SHA-256=
-`4879b3aac9d7ab0f953997dcbe9bfe2e3274bc0f50751c1c78b6b5bd506e2f5a`。按非终态 root 数，
-generic 139 仍高于 AAC Raytech 55 roots/174 items 与 Sunny 49 roots/177 items；同一最低剩余
-layout 下的下一 exact family 为 `69286146`（`US-12663606-B2`）。
+`f9ef042b0668b0dbe70eb55ff41b6e3dcbbe9f0658e533b17688d1e812dbc404`：619/619、
+missing=0、corrupt=0。Family ID `69286146` 的 `US-12663606-B2`（application
+`18/402280`）已闭合 related application 1、Background 1-4、Summary 5-13、Description 1-100、
+claims 1-12、FIGS.1-24、零 tables 与八个 explicit embodiments。前 3 个是 autofocus lens-module
+assemblies，后 5 个是 electronic-device placements。所有 EPD ratios、carrier/aperture dimensions、
+mounting angles、straight-structure counts、shielding ratios 与 cover-glass distances 均按段落绑定为
+mechanical data；唯一 thickness occurrence 是 injection-molded carrier wall thickness。两份 B2
+official containers 均为 35 image-only PDF pages 且 decoded rasters 35/35 相同；Google B2 为 404，
+没有用其他 publication 替代。A1/A9 的 official/Google wrappers 各自 35/35 相同，但 B2/A1/A9
+同位置 raster 均 0/35 相同，未跨 publication 借值。完整 text/raster 审计证明 source 没有 ordered
+radius/thickness/glass/Abbe/asphere prescription 或 direct EFL/F-number/field metadata；3 个 lens-module
+items 与 5 个 device items 均成为 source-proven `confirmed_no_prescription`，没有
+worker/request/receipt/fingerprint/candidate/ZMX。Attempts 2/3 仅排除 `result_attempt` 后语义一致，
+SHA-256=`f9d79dd3d96f5eb823caaeed2f0ea553eca57743441162d29af506a3c293bfda`。Generic
+从 139 items/roots 降至 138/138，两次 after census byte-identical，SHA-256=
+`96a45871d85becec8b50c3e4fda53bfc603a3acae393399814d9438bdd3b1b86`。按非终态 root 数，
+generic 138 仍高于 AAC Raytech 55 roots/174 items 与 Sunny 49 roots/177 items；同一最低剩余
+layout 下的下一 exact family 为 `74529057`（`US-20210364452-A1`）。
 
 ## Current Position
 
@@ -57,7 +58,7 @@ layout 下的下一 exact family 为 `69286146`（`US-12663606-B2`）。
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `bf48bcde...c7d6`. Current roots: 327 parser review, 145 mixed, 122 terminal, 25 converted; items: 551 staging, 1409 parser review, 1057 terminal, 28 conversion retry. Family 64459548 binds two five-resin-lens manufacturing embodiments, 190 paragraphs, claims 1-14, 11 drawing declarations/23 panels, zero tables, and complete current/parent 21-page raster denominators. Neither publication discloses an ordered optical prescription or direct EFL/F-number/field metadata; both items become source-proven architecture-only terminals with no worker/request/receipt/fingerprint/candidate/ZMX. Generic 140→139 roots/items and remains first by nonterminal roots; deterministic ordering selects Family 69286146 next. External-family queues, macro replay support, staging intake, and source exhaustion remain outside completion, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `f9ef042b...c404`. Current roots: 326 parser review, 145 mixed, 123 terminal, 25 converted; items: 551 staging, 1408 parser review, 1065 terminal, 28 conversion retry. Family 69286146 binds eight autofocus/device embodiments, Description 1-100, claims 1-12, FIGS.1-24, zero tables, and a complete 35-page B2 raster denominator. Published values are aperture/carrier/shielding/device geometry, not an ordered optical prescription; three lens-module plus five device items become source-proven architecture-only terminals with no worker/request/receipt/fingerprint/candidate/ZMX. Generic 139→138 roots/items and remains first by nonterminal roots; deterministic ordering selects Family 74529057 next. External-family queues, macro replay support, staging intake, and source exhaustion remain outside completion, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -239,23 +240,24 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260717-patent-generic-family-94531539` | complete-shovel-saturation-incomplete | Exact A1 source binds nine embodiments, thirteen subordinate structural examples, paragraphs 0001-0189, claims 1-29, TABLES 1-2, and 53 drawing panels. Two official and one Google 68-page image-only wrappers have distinct container hashes but agree on all decoded rasters. TABLE 1 is a 70-layer H/L coating stack and TABLE 2 has eight R50 samples; aspheric/refractive-index/focal-length language remains prism, coating, or generic device context, with no ordered optical prescription or direct EFL/F-number/field metadata. The root expands to fifteen folded sensor/filter/nano-surface architecture terminals plus five device-architecture terminals; no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt; result set `4f0c32cb...754b`, summary `3b2bc327...c572`, after census `d03bb802...f69`; audit 619/619 corrupt=0; 463 offline patent/guard tests pass; CODE V zero. JP/KR/CN/TW records are queued outside the cohort. Generic 141 roots remains first; Family 71121572 is next. |
 | `260717-patent-generic-family-71121572` | complete-shovel-saturation-incomplete | Exact B2 source binds three seven-lens prescriptions, 18 ordered surfaces/14 ASP surfaces each, direct EFL/FNO/full-FOV/pupil/image-height metadata, TABLES 1-13, FIGS.1-12, and claims 1-19. Two official plus one Google 18-page B2 wrappers agree on all decoded rasters; official/Google 17-page A1 wrappers do too, while B2/A1 have zero equal same-position rasters and are not cross-borrowed. Published negative aperture d0 values remain source-faithful. All three process-isolated full-field traces fail before candidate emission; attempts 2/3 are semantic-equal after permitted retry/receipt normalization. Result set `1d1abad3...4d43`, summary `3eda3b00...15a1`, report `9c6ff015...5d64`, after census `34faa5dd...ea55`; audit 619/619 corrupt=0; 468 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V and staging ZMX zero. US/JP/WO/CN external family/priority records remain queued. Generic 140 roots remains first; Family 64459548 is next. |
 | `260717-patent-generic-family-64459548` | complete-shovel-saturation-incomplete | Exact A1 source binds two five-resin-lens manufacturing embodiments, 190 sequential paragraphs, claims 1-14, 11 drawing declarations/23 panels, and zero tables. Two official plus one Google current-A1 wrappers agree on all 21 decoded rasters; official/Google parent-A1 wrappers also agree on all 21, while current/parent publications have zero equal same-position rasters and are not cross-borrowed. Full text and raster review finds no ordered optical prescription or direct EFL/F-number/field metadata, so both items become `lens_barrel_surface_modification_and_manufacturing_architecture_only` terminals with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt. Result set `bf48bcde...c7d6`, summary `0f56eae8...3a16`, report `2efdbba0...6c6cf`, after census `4879b3aa...2f5a`; audit 619/619 corrupt=0; 473 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V and matching staging ZMX zero. Parent US A1 plus CN/JP records remain queued outside the cohort. Generic 139 roots remains first; Family 69286146 is next. |
+| `260717-patent-generic-family-69286146` | complete-shovel-saturation-incomplete | Exact B2 source binds three autofocus lens-module plus five electronic-device embodiments, one related-application paragraph, Background 1-4, Summary 5-13, Description 1-100, claims 1-12, FIGS.1-24, and zero tables. Two official B2 containers agree on all 35 decoded rasters; Google B2 is 404 and is not substituted. Official/Google A1 and A9 wrappers each agree on all 35 rasters within publication, while B2/A1/A9 differ 35/35 and are not cross-borrowed. All numeric disclosures are paragraph-bound aperture/carrier/shielding/device geometry; no ordered prescription or direct EFL/F-number/field metadata exists. The root expands to eight architecture-only terminals with no worker/request/receipt/fingerprint/candidate/ZMX. Attempts 2/3 are semantic-equal excluding only result attempt. Result set `f9ef042b...c404`, summary `34a9f7ee...0b29`, report `30f27719...5e97`, after census `96a45871...1b86`; audit 619/619 corrupt=0; 478 offline patent/guard tests, compile, Ruff, and diff check pass; CODE V and matching staging ZMX zero. Thirteen US/TW/CN records remain queued outside the cohort. Generic 138 roots remains first; Family 74529057 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260717-patent-generic-family-64459548/260717-patent-generic-family-64459548-PLAN.md`,
+`.planning/quick/260717-patent-generic-family-69286146/260717-patent-generic-family-69286146-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (139 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (138 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `69286146`, root `US-12663606`,
-publication `US-12663606-B2`, layout
+deterministic root/item/layout/family ordering is Family ID `74529057`, root `US-20210364452`,
+publication `US-20210364452-A1`, layout
 `18f601741e46968dd9aa08221b03b91587e37313eeac6ae406034b44be026e21`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
