@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "1a8e93f1fbbfd4794f095a05714259623c5fdfa96e305914c7165adb128e92c7",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 124,
+      "affected_items": 124
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "97303742",
+    "root_ids": ["US-20260063876"],
+    "publication_ids": ["US-20260063876-A1"],
+    "title": "PHOTOGRAPHING OPTICAL LENS ASSEMBLY, IMAGE CAPTURING UNIT AND ELECTRONIC DEVICE",
+    "layout_signature": "297b1c1ba9abf3f874043970c27b8d54780b44ab02af67b419041d98fa39284f",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b86b4e0461152237/US-20260063876-A1.html",
+      "sha256": "b86b4e046115223760c4139e60c54ef0b3a14e2d8bfa2334388843d4fb57b68d"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

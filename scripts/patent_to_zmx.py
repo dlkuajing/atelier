@@ -470,6 +470,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_nanostructure_transmittance_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -7606,6 +7614,247 @@ _KANTATSU_SHARP_PANCAKE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             ),
             "raster_set_sha256": (
                 "349aa06335706fd41e5534b02b59ec79fdae8446a209632503ff8cdf889020f1"
+            ),
+        },
+    },
+}
+_LARGAN_NANOSTRUCTURE_TRANSMITTANCE_ITEMS = (
+    (1, "Largan nanostructure-transmittance imaging lens assembly first embodiment"),
+    (2, "Largan nanostructure-transmittance imaging lens assembly second embodiment"),
+    (3, "Largan nanostructure-transmittance imaging lens assembly third embodiment"),
+    (4, "Largan nanostructure-transmittance imaging lens assembly fourth embodiment"),
+    (5, "Largan nanostructure-transmittance imaging lens assembly fifth embodiment"),
+    (6, "Largan nanostructure-transmittance imaging lens assembly sixth embodiment"),
+    (7, "Largan nanostructure-transmittance electronic device seventh embodiment"),
+)
+_LARGAN_NANOSTRUCTURE_TRANSMITTANCE_FIGURES = (
+    (1, "A"),
+    (1, "B"),
+    (1, "C"),
+    (1, "D"),
+    (1, "E"),
+    (1, "F"),
+    (1, "G"),
+    (1, "H"),
+    (1, "I"),
+    (2, "A"),
+    (2, "B"),
+    (2, "C"),
+    (2, "D"),
+    (3, "A"),
+    (3, "B"),
+    (3, "C"),
+    (3, "D"),
+    (4, ""),
+    (5, ""),
+    (6, ""),
+    (7, "A"),
+    (7, "B"),
+    (8, "A"),
+    (8, "B"),
+)
+_LARGAN_NANOSTRUCTURE_TRANSMITTANCE_ITEM_TABLES = (
+    (4, 5, 6, 7),
+    (8, 9, 10, 11, 12),
+    (13, 14, 15, 16),
+    (17, 18),
+    (19, 20),
+    (21, 22),
+    (23,),
+)
+_LARGAN_NANOSTRUCTURE_TRANSMITTANCE_TABLE_NUMERIC_SHA256 = (
+    "61334ca7c1782aa4f2222f7140077b66e9e6843276eca87566dab72918a5f80d",
+    "569858c992cb877570cad4f09f01ddd777eb7b8606f19be3802268270a309a32",
+    "a2b8868728dfbca6bf92c63d60b0c835ab30da0fdd4315191a798a66c98846d8",
+    "f5a96b57cba041730b360d56467c57449c8c7d44facf1806e422dcd3ccf7b096",
+    "0f684d811768ad593c5cb4c939347ec2070357969abbc9a1d4fc846ddfcd28d6",
+    "c7b23b05307f586ce71aefe0643293f0c69285dca9c300ef76472981ddf3bea3",
+    "68cc6af45b53f9474d7d7689290f4b673f61c427acecd4ddd14f710eebe99051",
+    "dd2f648b5fb0da79e9da16da2ea6027a61264b510a5425929075f6f0a3c62a13",
+    "697a056ce75ceb465d37f10a84c40cb7142b9379236c084cff1eea42090b1afc",
+    "b936a3f4133edc14852da9eebb8f868e752664008ca38392ffa75ad125ef088b",
+    "b63b143a1928173bbcb0b13834fcd575b33af2452fe48b4cdd17b243b28f8b95",
+    "4aa59a23c72783001a7dd7f5e8b233f16b5e553077f6b97f4e781909cb8add5a",
+    "7e2e0e659cd9bef2f6ba85e74bc2254385f6077191e2e230b358315cda76b826",
+    "296d0be62868a4475f7a8c3c779ae8e1b8ddf998c3abc1fdff71e9e2828c7a05",
+    "41503b33bb22f3a1798496c4932d856f2541e9b50320175002c20aa8ad1442fa",
+    "79eef38e3e3067f6b24a17a2a096d022b4a015b6897043adde8e721dc071df88",
+    "e061e8002891c4875773c61dd6fa140fbb5de887f855b38688db73685617c9e8",
+    "56249a566e69687a8dbcc7adf9f40b3b7319b764088dd42247d718caf8d1a80c",
+    "d4007a123c57bdeefa0792478bbbf1a2f043e5e90f234892e6222fee72212e26",
+    "759c3f39f51bbc0d7b8a2c15d2002a552ee5c889a682656f34a0c4a2d027c592",
+    "2a0124c21cb41556e5ced1f0d3d89087cbf0225485020ce266688ead05b2cacc",
+    "273b8a16ba0bd8f807154ade2debbe2d2f4a4548431efc5c500b3239cb4044d9",
+    "2b1a0242d4257ce0026261ebaccb0bba55eea7195a74dfe7290088c46490224c",
+)
+_LARGAN_NANOSTRUCTURE_TRANSMITTANCE_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20260110882-A1": {
+        "raw_document_sha256": (
+            "372dcb8566efd3011fb0e1f032455f2ca7f25707c5e41fd3fe2d1b945d423da5"
+        ),
+        "normalized_text_sha256": (
+            "f109df102d8110e5304fd10e07abd61e65da208e14ff50855d0e95af46b5ca47"
+        ),
+        "section_markers": {
+            "abstract": (
+                "Abstract An imaging lens assembly includes an imaging lens element "
+                "assembly"
+            ),
+            "background_summary": "Background/Summary RELATED APPLICATIONS [0001]",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0014]",
+            "detailed": "DETAILED DESCRIPTION [0038]",
+            "claims": "Claims 1 . An imaging lens assembly, comprising:",
+        },
+        "section_sha256": {
+            "abstract": "d6dda45c2aa9c52e86fed7bc4839cf5d9bb4cb18690d913060e8d7f7bc8a4f91",
+            "background_summary": (
+                "84132178bbd44785922d02b85ca0fab8d7118b9a1b62ee025a56e47aa2e45a10"
+            ),
+            "brief": "49b6c4a1fc7d116d027d6b3916d36e1409f98c34712daf8e2d5b13708eb179b1",
+            "detailed": "47e574dac3defba6d5a2ac216ff9fd7ee23f6f4215f1d1c29939622ccde5b93d",
+            "claims": "5bdcbc18ca0843885dc67481a80dcc293ef6bf46afdc03161d2de092dbfdc85d",
+        },
+        "paragraph_sequence": tuple(range(1, 122)),
+        "paragraph_ranges": {
+            "background_summary": (1, 13),
+            "brief": (14, 37),
+            "detailed": (38, 121),
+        },
+        "item_paragraph_ranges": (
+            (53, 63),
+            (64, 73),
+            (74, 83),
+            (84, 93),
+            (94, 103),
+            (104, 112),
+            (113, 120),
+        ),
+        "claim_numbers": tuple(range(1, 23)),
+        "identity_markers": {
+            "Inventor(s) FAN; Chen-Wei et al. IMAGING LENS ASSEMBLY AND "
+            "ELECTRONIC DEVICE Abstract": 1,
+            "Family ID: 82656625": 1,
+            "Appl. No.: 19/426345": 1,
+            "Largan Precision Co., Ltd.": 1,
+            "TW 110140486": 1,
+            "63/219,861": 1,
+        },
+        "math_object_sha256": (
+            "604447f51b318b5f77a71f833b7ee560e0d105bfca9f95dc62567fc60c3e2ba2",
+            "d2a4eb379c46420e3a4e339a934f9a51198f7584f5fe4531f471b6ff9d217939",
+            "89da14a5830d6e16ee98f811c3ca7e514df1553b0d7fc4ec92834c6cf0e8a9fb",
+            "41e3e66124f14fbdaab060f8874073a73b6edd6af95ae317bec4ff9be282d2b1",
+            "7c8450b1bfa240f7119c51d949dc98e3dd1cddfaaa8e6b70c2a250193fd410ee",
+            "745a5b60c5c729334d7d64b4c5695911461d9c572af8087d75dfdaf84cc0b7d8",
+            "90f8e4763a2bfb4a260e01b591867be42537009d7d7ee8290baa2559a0e3fd0e",
+            "8fdaa0711c17cd7804ada25705e808221acaee4e08dcb68f5cd78c4c80cd74f9",
+            "5dc7c3cb05995a7f334dea66a0ade0b5de0a0fa229f11b8b2b329d9f2cdaf547",
+            "161417dfce8e7f0b8f09bea1b0910dd264a7315ebf4fbff08625b4baac8827bf",
+            "cb6bf64cc1318abf26eb125963c2d4d27e6b74d27255fc38b0bc2974aa33b149",
+            "135162b444d78a7989c183e8ac219a4b9f4d625bb81be0b75c18f6767e6e1f7a",
+            "afbcb14c347bb392539b108ee613c778beeaaba3b9bd3209c48c82c9ff008552",
+            "3bf520f1632888a4df04c71c9f178c5d857bc9042bb967ca8d62fe77a1a5422c",
+        ),
+        "pdf_audit": {
+            "page_count": 52,
+            "container_sha256": (
+                "2e6b9c2885c3611efb0f57615d5112a286c9a5f2fa6348520e7395bcf2ba1034"
+            ),
+            "google_html_sha256": (
+                "56e1368716093719d92c4964ef634da2085a651542ea523bab29a5ca93ba139a"
+            ),
+            "critical_page_numbers": (29, 47, 48, 49, 50, 51),
+            "critical_page_image_sha256": (
+                "779846d41d995b342e3dd68700f731fc76bbb0028252f9925bd40679ca254295",
+                "ddca77bf424746aaf877680614de8931c7d0a52a02a8673b49a2a598961b224b",
+                "15c0dec155e03daa52ed32f4e14be2d04091040d2e0ffad9b2581649692e6aa4",
+                "c14d5f98baec4983fcfe4df9f25d403c6b9bf220cddedf9a8710c162cc3d649d",
+                "2f88327393f4387efc478a41ae7d74fd65e51e72af103de2162b6bcf1e802740",
+                "aa8c12798836a02011f5f95900b7b450e3fa3d09f177614eafbf03fe620c9ff8",
+            ),
+            "raster_set_sha256": (
+                "18372c97b7be933e14945dab92b941f2f4170dec67f83666f4b550d5e1cc5edc"
+            ),
+        },
+    },
+    "US-12535654-B2": {
+        "raw_document_sha256": (
+            "bacadb00d92b98b585a53b225b82bd8723730c69ab2dbb0f365300c94c282032"
+        ),
+        "normalized_text_sha256": (
+            "16a119423f290319f8b57871eb5779022c44516419733382b8a63c96312ea493"
+        ),
+        "section_markers": {
+            "abstract": (
+                "Abstract An imaging lens assembly includes an imaging lens element "
+                "assembly"
+            ),
+            "background_summary": "Background/Summary RELATED APPLICATIONS (1)",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (25)",
+            "claims": (
+                "Claims 1 . An imaging lens assembly, an optical axis passing through "
+                "the imaging lens assembly"
+            ),
+        },
+        "section_sha256": {
+            "abstract": "b2299b370cf4d1d682758469ff7131d20926ef2b6dc17f1d621897a75fc7f1ce",
+            "background_summary": (
+                "ac45c6f765cee1ee80fc83d21d8062b271609e33df71ef4ed484df9b4f97cbae"
+            ),
+            "brief": "e779b6afb1ae9bbf0fb1b2431e0264289705b02445d45f85b1d4e1079a041def",
+            "detailed": "60665634d9f8d5511996bd025ed842c1522eba8195742970b68cb451f7bc7db3",
+            "claims": "f738ccb0769e88efa484a610eb4ee11e2ea70f83bbb9c076ca4dae48b79338cf",
+        },
+        "paragraph_sequence": (
+            tuple(range(1, 13)) + tuple(range(1, 25)) + tuple(range(25, 132))
+        ),
+        "paragraph_ranges": {
+            "background_summary": (1, 12),
+            "brief": (1, 24),
+            "detailed": (25, 131),
+        },
+        "item_paragraph_ranges": (
+            (43, 57),
+            (58, 72),
+            (73, 86),
+            (87, 98),
+            (99, 110),
+            (111, 121),
+            (122, 130),
+        ),
+        "claim_numbers": tuple(range(1, 26)),
+        "identity_markers": {
+            "Inventor(s) Fan; Chen-Wei et al. Imaging lens assembly and "
+            "electronic device Abstract": 1,
+            "Family ID: 82656625": 1,
+            "Appl. No.: 17/854092": 1,
+            "Largan Precision Co., Ltd.": 2,
+            "TW 110140486": 1,
+            "63/219,861": 1,
+        },
+        "math_object_sha256": (),
+        "pdf_audit": {
+            "page_count": 58,
+            "container_sha256": (
+                "c1ba7906b1095d89f8e3bb054dae34158bac51ceedf8bf32e6f7983b1b63be5d"
+            ),
+            "google_html_sha256": (
+                "f7471eb397963bb852df7a2cda5b4a8e35aa3416ce5085eccf27d313cb82ff1e"
+            ),
+            "critical_page_numbers": (31, 53, 54, 55, 56, 57),
+            "critical_page_image_sha256": (
+                "5c093e8415af4a5bef2af6bcbfaf85ba191f90d136815e50cbc7629540af78d1",
+                "84af2274436888f8e64cc2afea5de09bcc08f4070327cdd7a272720a39a30add",
+                "fa38365d9db4669a6a18aa280a13e98bcb3fb9c376770f867e1fecdd6fb10c02",
+                "1894d7e4ff3ecc84253fcc47a05eba27ce57264637530619d3a0301ba956d4cf",
+                "ddae99cdcd37c705c982caf32ded0c2a68d52384f7c4a0976f2890166c91846e",
+                "9f50e1337d322b63e178b782bb2ed9802a94d120fd5ed73fc6a6cc8374fde02f",
+            ),
+            "raster_set_sha256": (
+                "10c6756f29af027b98e60fe72308c0b8804a4f4d4427092f111966976c39a125"
             ),
         },
     },
@@ -22385,6 +22634,316 @@ def _assert_kantatsu_sharp_pancake_converter_capability_gap() -> None:
         raise PatentParseError(
             "Kantatsu/Sharp pancake mirror rebuild capability changed; re-evaluate conversion"
         )
+
+
+def _largan_nanostructure_transmittance_table_numeric_sha256(
+    block: _PatentTableBlock,
+) -> str:
+    payload = re.split(
+        r"\s(?:\[\d{4}\]|\(\d+\))\s",
+        block.text,
+        maxsplit=1,
+    )[0].strip()
+    marker = f"TABLE {block.number} "
+    if marker not in payload:
+        raise PatentParseError(
+            f"Largan nanostructure TABLE {block.number} payload boundary changed"
+        )
+    payload = payload[payload.index(marker) + len(marker) :]
+    values = re.findall(
+        rf"(?<![A-Za-z0-9_]){NUMBER_PATTERN}(?![A-Za-z0-9_])",
+        payload,
+        re.IGNORECASE,
+    )
+    canonical = sorted(values, key=lambda value: (float(value), value))
+    return hashlib.sha256("\n".join(canonical).encode("utf-8")).hexdigest()
+
+
+def _classify_largan_nanostructure_transmittance_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 82656625 coating/transmittance architectures."""
+
+    profile = _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan nanostructure identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan nanostructure-transmittance section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan nanostructure-transmittance {section_name} section changed"
+                )
+
+        if patent_id.upper().endswith("-A1"):
+            paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+            paragraph_numbers = tuple(
+                int(match.group(1)) for match in paragraph_matches
+            )
+            paragraphs = {
+                int(match.group(1)): text[
+                    match.start() : (
+                        paragraph_matches[index + 1].start()
+                        if index + 1 < len(paragraph_matches)
+                        else section_starts["claims"]
+                    )
+                ]
+                for index, match in enumerate(paragraph_matches)
+            }
+        else:
+            paragraph_matches = list(
+                re.finditer(
+                    r"(?:^|<br\s*/?>)\s*\((\d+)\)\s",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            )
+            paragraph_numbers = tuple(
+                int(match.group(1)) for match in paragraph_matches
+            )
+            detailed_start, detailed_end = profile["paragraph_ranges"]["detailed"]
+            detailed_count = detailed_end - detailed_start + 1
+            detailed_matches = paragraph_matches[-detailed_count:]
+            paragraphs = {
+                int(match.group(1)): raw_text[
+                    match.start() : (
+                        detailed_matches[index + 1].start()
+                        if index + 1 < len(detailed_matches)
+                        else len(raw_text)
+                    )
+                ]
+                for index, match in enumerate(detailed_matches)
+            }
+        if paragraph_numbers != profile["paragraph_sequence"]:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance paragraph denominator changed"
+            )
+
+        ordinal_markers = ("1st", "2nd", "3rd", "4th", "5th", "6th", "7th")
+        for item, bounds, tables, ordinal in zip(
+            _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_ITEMS,
+            profile["item_paragraph_ranges"],
+            _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_ITEM_TABLES,
+            ordinal_markers,
+            strict=True,
+        ):
+            number, _label = item
+            start, end = bounds
+            if any(paragraph not in paragraphs for paragraph in range(start, end + 1)):
+                raise PatentParseError(
+                    f"Largan nanostructure {ordinal} embodiment paragraph mapping changed"
+                )
+            item_text = " ".join(
+                paragraphs[paragraph] for paragraph in range(start, end + 1)
+            )
+            if f"according to the {ordinal} embodiment" not in item_text:
+                raise PatentParseError(
+                    f"Largan nanostructure {ordinal} embodiment binding changed"
+                )
+            for table_number in tables:
+                if f"TABLE {table_number} " not in item_text:
+                    raise PatentParseError(
+                        f"Largan nanostructure {ordinal} embodiment TABLE "
+                        f"{table_number} mapping changed"
+                    )
+            if number <= 6:
+                generic_shape_marker = (
+                    "optical features such as structures, surface shapes and so on of "
+                    "the lens elements can be disposed according to different imaging demand"
+                )
+                if len(re.findall(re.escape(generic_shape_marker), item_text, re.IGNORECASE)) != 1:
+                    raise PatentParseError(
+                        f"Largan nanostructure {ordinal} generic optical-shape marker changed"
+                    )
+            elif len(
+                re.findall(
+                    r"includes four imaging lens assemblies",
+                    item_text,
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    "Largan nanostructure seventh-embodiment camera binding changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance claim denominator changed"
+            )
+        figure_panels = tuple(
+            (int(number), suffix.upper())
+            for number, suffix in re.findall(
+                r"FIG\.\s*(\d+)\s*([A-I]?)\s+is",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_panels != _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_FIGURES:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance 24-panel figure denominator changed"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 24)):
+            raise PatentParseError(
+                "Largan nanostructure-transmittance 23-table denominator changed"
+            )
+        numeric_digests = tuple(
+            _largan_nanostructure_transmittance_table_numeric_sha256(block)
+            for block in blocks
+        )
+        if (
+            numeric_digests
+            != _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_TABLE_NUMERIC_SHA256
+        ):
+            raise PatentParseError(
+                "Largan nanostructure-transmittance table numeric payload changed"
+            )
+
+        math_objects = re.findall(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        math_digests = tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        )
+        if math_digests != profile["math_object_sha256"]:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance formula denominator changed"
+            )
+
+        if len(
+            re.findall(
+                re.escape(
+                    "optical features such as structures, surface shapes and so on"
+                ),
+                text,
+                re.IGNORECASE,
+            )
+        ) != 6:
+            raise PatentParseError(
+                "Largan nanostructure-transmittance generic optical-shape census changed"
+            )
+        absent_prescription_phrases = (
+            "focal length",
+            "F-number",
+            "radius of curvature",
+            "aspheric coefficient",
+            "aspherical coefficient",
+            "surface prescription",
+        )
+        for phrase in absent_prescription_phrases:
+            if re.search(re.escape(phrase), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "Largan nanostructure-transmittance source unexpectedly publishes "
+                    f"{phrase!r}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all seven exact-source items
+        return attempts_for_error(exc)
+
+    imaging_reason = (
+        "confirmed_no_prescription."
+        "imaging_lens_element_nanostructure_transmittance_architecture_only"
+    )
+    device_reason = (
+        "confirmed_no_prescription."
+        "electronic_device_multi_camera_placement_architecture_only"
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=imaging_reason if number <= 6 else device_reason,
+                detail=(
+                    f"the exact {ordinal_markers[number - 1]} imaging-lens embodiment "
+                    "publishes lens count/order, refractive indices, nanostructure and "
+                    "connection-film geometry, plus coating/transmittance data; it "
+                    "explicitly leaves surface shapes to imaging demand and publishes "
+                    "no ordered radius/thickness/material/asphere prescription, focal "
+                    "length, or F-number"
+                    if number <= 6
+                    else "the exact seventh embodiment publishes only a four-camera "
+                    "electronic-device arrangement and FOV ranges, reusing the preceding "
+                    "architecture without a seventh optical prescription"
+                ),
+            ),
+        )
+        for number, label in _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_ITEMS
+    ]
 
 
 def _classify_kantatsu_surface_modification_architecture_only_attempts(

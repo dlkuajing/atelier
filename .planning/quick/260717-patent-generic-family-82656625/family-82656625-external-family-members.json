@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "family_id": "82656625",
+  "frozen_cohort_root_ids": ["US-12535654", "US-20260110882"],
+  "retained_classification_publications": ["US-12535654-B2", "US-20260110882-A1"],
+  "retained_visual_family_context": ["US-20230037074-A1"],
+  "queue_only_records": [
+    {
+      "publication_id": "US-20230037074-A1",
+      "relationship": "prior publication of frozen parent application US 17/854092",
+      "evidence": "US-12535654-B2 prior-publication data and exact Google family/application events",
+      "official_pdf_audited": true,
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "EP4123345A1",
+      "relationship": "European publication in Google Family ID 82656625",
+      "evidence": "exact Google family wrapper",
+      "official_pdf_audited": false,
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "EP4123345B1",
+      "relationship": "European grant representative in Google Family ID 82656625",
+      "evidence": "exact Google family wrapper",
+      "official_pdf_audited": false,
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "DE202022103674U1",
+      "relationship": "German publication in Google Family ID 82656625",
+      "evidence": "exact Google family wrapper",
+      "official_pdf_audited": false,
+      "in_frozen_cohort": false
+    }
+  ],
+  "priority_records_without_numeric_import": ["US 63/219861", "TW 110140486"],
+  "numeric_truth_imported_from_queue_only_records": false,
+  "queue_only": true,
+  "saturation_complete": false
+}

@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "family_id": "82656625",
+  "root_ids": ["US-12535654", "US-20260110882"],
+  "publication_ids": ["US-12535654-B2", "US-20260110882-A1"],
+  "family_identity": {
+    "title": "IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "applicant_assignee": "Largan Precision Co., Ltd.",
+    "priority_applications": [
+      {"application": "US 63/219861", "date": "2021-07-09"},
+      {"application": "TW 110140486", "date": "2021-10-29"}
+    ],
+    "parent_application": "US 17/854092",
+    "parent_prior_publication": "US-20230037074-A1",
+    "parent_grant": "US-12535654-B2",
+    "continuation_application": "US 19/426345",
+    "continuation_publication": "US-20260110882-A1"
+  },
+  "publication_denominators": {
+    "US-20260110882-A1": {
+      "paragraph_ranges": {
+        "background_and_summary": [1, 13],
+        "brief_description_of_drawings": [14, 37],
+        "detailed_description": [38, 121]
+      },
+      "numbered_paragraphs": 121,
+      "claim_range": [1, 22],
+      "declared_figure_panels": 24,
+      "tagged_html_table_blocks": 23,
+      "mathml_objects": 14,
+      "official_pdf_pages": 52,
+      "drawing_pdf_pages": [2, 23],
+      "drawing_sheets": 22,
+      "specification_pdf_pages": [24, 52]
+    },
+    "US-12535654-B2": {
+      "paragraph_ranges": {
+        "background_and_summary": [1, 12],
+        "brief_description_of_drawings": [1, 24],
+        "detailed_description": [25, 131]
+      },
+      "numbered_paragraphs_including_grant_section_resets": 143,
+      "claim_range": [1, 25],
+      "declared_figure_panels": 24,
+      "tagged_html_table_blocks": 23,
+      "mathml_objects": 0,
+      "official_pdf_pages": 58,
+      "reference_pdf_pages": [2, 2],
+      "drawing_pdf_pages": [3, 24],
+      "drawing_sheets": 22,
+      "specification_pdf_pages": [25, 58]
+    }
+  },
+  "source_tables": {
+    "common_transmittance_models": [1, 2, 3],
+    "first_embodiment": [4, 5, 6, 7],
+    "second_embodiment": [8, 9, 10, 11, 12],
+    "third_embodiment": [13, 14, 15, 16],
+    "fourth_embodiment": [17, 18],
+    "fifth_embodiment": [19, 20],
+    "sixth_embodiment": [21, 22],
+    "seventh_embodiment": [23],
+    "shared_numeric_payload_hashes_all_23": true,
+    "shared_numeric_payload_set_sha256": "4bcde01be8ba0e6ae5af637d834d48888e7aad408c5e53b7727ef6f01c9872c6",
+    "text_payload_differences": {
+      "tables": [9, 18, 23],
+      "explanation": "Table 9 changes header hyphenation, Table 18 changes the N.sub.CS/Ncs label, and Table 23 changes FOV2/FOV3 row order; numeric multisets remain identical."
+    },
+    "published_data_classes": {
+      "tables_1_to_3": "transmittance-decay and simulated-transmittance models",
+      "tables_4_8_13_17_19_21": "lens-element refractive indices",
+      "tables_5_9_10_14": "measured transmittance spectra",
+      "tables_6_11_15": "average transmittance summaries",
+      "tables_7_12_16_18_20_22": "embodiment coating/transmittance conditions",
+      "table_23": "four camera-module visual-angle ranges"
+    }
+  },
+  "ledger_item_denominator": {
+    "distinct_family_items": 7,
+    "per_root_items": 7,
+    "frozen_cohort_roots": 2,
+    "replayed_items": 14,
+    "confirmed_no_prescription_items": 14,
+    "converted_items": 0,
+    "parser_review_items": 0,
+    "item_bindings": [
+      {"item_number": 1, "label": "Largan nanostructure-transmittance imaging lens assembly first embodiment", "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I"], "tables": [4, 5, 6, 7]},
+      {"item_number": 2, "label": "Largan nanostructure-transmittance imaging lens assembly second embodiment", "figures": ["2A", "2B", "2C", "2D"], "tables": [8, 9, 10, 11, 12]},
+      {"item_number": 3, "label": "Largan nanostructure-transmittance imaging lens assembly third embodiment", "figures": ["3A", "3B", "3C", "3D"], "tables": [13, 14, 15, 16]},
+      {"item_number": 4, "label": "Largan nanostructure-transmittance imaging lens assembly fourth embodiment", "figures": ["4"], "tables": [17, 18]},
+      {"item_number": 5, "label": "Largan nanostructure-transmittance imaging lens assembly fifth embodiment", "figures": ["5"], "tables": [19, 20]},
+      {"item_number": 6, "label": "Largan nanostructure-transmittance imaging lens assembly sixth embodiment", "figures": ["6"], "tables": [21, 22]},
+      {"item_number": 7, "label": "Largan nanostructure-transmittance electronic device seventh embodiment", "figures": ["7A", "7B"], "tables": [23]}
+    ],
+    "common_figures": ["8A", "8B"],
+    "common_tables": [1, 2, 3]
+  },
+  "paragraph_item_maps": {
+    "US-20260110882-A1": {
+      "common_detailed": [38, 52],
+      "items": [[53, 63], [64, 73], [74, 83], [84, 93], [94, 103], [104, 112], [113, 120]],
+      "global_conclusion": [121, 121]
+    },
+    "US-12535654-B2": {
+      "common_detailed": [25, 42],
+      "items": [[43, 57], [58, 72], [73, 86], [87, 98], [99, 110], [111, 121], [122, 130]],
+      "global_conclusion": [131, 131]
+    }
+  },
+  "prescription_boundary": {
+    "generic_surface_shape_sentence_per_publication": 6,
+    "published_focal_length_occurrences_per_publication": 0,
+    "published_f_number_occurrences_per_publication": 0,
+    "published_radius_of_curvature_occurrences_per_publication": 0,
+    "published_asphere_coefficient_occurrences_per_publication": 0,
+    "ordered_radius_thickness_material_asphere_prescriptions": 0,
+    "coating_examples_misclassified_as_optical_prescriptions": 0,
+    "table_23_fov_ranges_degrees": {"FOV1": [20, 50], "FOV2": [100, 130], "FOV3": [5, 20], "FOV4": [65, 95]},
+    "imaging_terminal_reason": "confirmed_no_prescription.imaging_lens_element_nanostructure_transmittance_architecture_only",
+    "device_terminal_reason": "confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only",
+    "external_family_numeric_values_imported": false,
+    "coordinate_values_synthesized": 0
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tagged_table_blocks": 0,
+    "unmapped_disclosed_items": 0,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "cross_publication_numeric_borrowing": false
+  }
+}
