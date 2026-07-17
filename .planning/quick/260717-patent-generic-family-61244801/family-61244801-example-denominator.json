@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "family_id": "61244801",
+  "publication_id": "US-11287601-B2",
+  "detailed_description_paragraph_range": [8, 87],
+  "source_declared_example_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37],
+  "source_declared_example_paragraph_numbers": [51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87],
+  "independent_claim_style_example_numbers": [1, 10, 19, 28, 37],
+  "dependency_groups": [
+    {
+      "base_example": 1,
+      "dependent_examples": [2, 3, 4, 5, 6, 7, 8, 9],
+      "architecture": "six lens elements, power-range-first formulation",
+      "ledger_item_number": 2
+    },
+    {
+      "base_example": 10,
+      "dependent_examples": [11, 12, 13, 14, 15, 16, 17, 18],
+      "architecture": "six lens elements, material-first formulation",
+      "ledger_item_number": 2
+    },
+    {
+      "base_example": 19,
+      "dependent_examples": [20, 21, 22, 23, 24, 25, 26, 27],
+      "architecture": "five lens elements, power-range-first formulation",
+      "ledger_item_number": 1
+    },
+    {
+      "base_example": 28,
+      "dependent_examples": [29, 30, 31, 32, 33, 34, 35, 36],
+      "architecture": "five lens elements, material-first formulation",
+      "ledger_item_number": 1
+    },
+    {
+      "base_example": 37,
+      "dependent_examples": [],
+      "architecture": "mobile device image-storage wrapper",
+      "ledger_item_number": 3
+    }
+  ],
+  "issued_claim_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+  "ledger_items": [
+    {
+      "item_number": 1,
+      "label": "Snap Sample Design 1 five-element imaging lens",
+      "source_coordinate_figures": [4, 5],
+      "reconciled_claim_style_examples": [19, 36],
+      "state": "parser_review_required"
+    },
+    {
+      "item_number": 2,
+      "label": "Snap Sample Design 2 six-element imaging lens",
+      "source_coordinate_figures": [6, 7],
+      "reconciled_claim_style_examples": [1, 18],
+      "state": "parser_review_required"
+    },
+    {
+      "item_number": 3,
+      "label": "Snap mobile-device image-storage wrapper",
+      "source_coordinate_figures": [],
+      "reconciled_claim_style_examples": [37, 37],
+      "state": "terminal",
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "reconciliation": {
+    "source_declared_examples": 37,
+    "source_named_sample_designs": 2,
+    "device_wrappers": 1,
+    "ledger_items": 3,
+    "unmapped_examples": 0,
+    "duplicate_claim_items_created": 0,
+    "coordinate_values_synthesized": 0,
+    "reason": "Examples 1-36 are claim-style dependency variants around five- or six-element architecture and publish no coordinate table beyond the two source-named Sample Designs; Example 37 is the only additional architecture wrapper."
+  },
+  "source_anomalies_retained_without_repair": [
+    "Example 24 prints one dn/dT exponent as 10.sup.6.",
+    "Example 36 references a sixth lens element inside the five-element example chain."
+  ]
+}

@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `4b299a664c099f7b20d23f204d4f4538572d63539726c35f993f4316003cd784`
+- result_set_sha256: `34dc2a55b427fa8b75525be4a86a312a65599663a0ac3083cf81415b0fb7a864`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,17 +20,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 25
 - `terminal`: 128
-- `parser_review_required`: 321
+- `parser_review_required`: 320
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 145
+- `mixed_nonterminal`: 146
 
 ## Item states
 
 - `converted_pending_intake`: 551
-- `terminal`: 1098
-- `parser_review_required`: 1403
+- `terminal`: 1099
+- `parser_review_required`: 1404
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 199
+- `confirmed_no_prescription`: 200
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 165
@@ -48,14 +48,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 321
-- `mixed_nonterminal.multiple_item_states`: 145
+- `parser_review_required.all_disclosed_items_rejected`: 320
+- `mixed_nonterminal.multiple_item_states`: 146
 - `terminal.all_disclosed_items_terminal`: 128
 - `converted_pending_intake.all_disclosed_items_converted`: 25
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1403
+- `parser_review_required.deterministic_parser_rejected`: 1404
 - `terminal.process_receipt_classified`: 734
 - `converted_pending_intake.process_isolated_zmx_ready`: 551
 - `terminal.metadata_unpublished.system_f_number_absent`: 70
@@ -75,9 +75,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.variable_aperture_camera_module_architecture_only`: 8
 - `terminal.confirmed_no_prescription.shiftable_image_sensor_wire_geometry_only`: 6
 - `terminal.metadata_unpublished.prescription_specific_efl_and_field_absent`: 6
+- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 5
 - `terminal.confirmed_no_prescription.lens_driving_mechanical_architecture_only`: 5
 - `terminal.metadata_unpublished.non_working_retracted_state_has_no_system_metadata`: 5
-- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 4
 - `terminal.confirmed_no_prescription.light_blocking_geometry_only`: 4
 - `terminal.confirmed_no_prescription.low_reflection_coating_and_light_blocking_architecture_only`: 4
 - `terminal.metadata_unpublished.prescription_specific_angular_field_absent`: 4
@@ -130,7 +130,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `sunny_embodiment_metadata_missing`: 177
 - `aac_raytech_summary_metadata_missing`: 174
-- `generic_summary_metadata_missing`: 133
+- `generic_summary_metadata_missing`: 132
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
 - `asphere_section_missing`: 65
@@ -318,6 +318,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_table_surface_n_confidence_n_is_below_n_asphere_table_surface_n_confidence_n_is_below_n`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
 - `other_samsung_even_order_embodiment_n_asphere_headers_must_be_s1_s8_and_s9_s16`: 1
+- `other_snap_sample_design_n_publishes_its_ordered_surface_and_asphere_prescription_in_figs_n_n_the_official_html_d_d28699caff6d`: 1
+- `other_snap_sample_design_n_publishes_its_ordered_surface_and_asphere_prescription_in_figs_n_n_the_official_html_p_b08f4d6fdcd1`: 1
 - `other_sunny_asphere_row_s12_has_more_values_than_headers_token`: 1
 - `other_sunny_s15_row_has_unexpected_extra_values_n_n_n_n`: 1
 - `other_sunny_s7_row_has_unexpected_extra_values_n_n_n_n`: 1

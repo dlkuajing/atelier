@@ -18034,3 +18034,343 @@ def test_aac_four_lens_f_number_unpublished_census_retires_one_root() -> None:
         "affected_roots": 1,
         "affected_items": 1,
     }
+
+
+def test_snap_six_lens_two_design_source_and_ocr_review_fail_closed() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "7910d5bca19dc438"
+        / "US-11287601-B2.html"
+    )
+    source = source_path.read_text(encoding="utf-8")
+
+    assert hashlib.sha256(source.encode()).hexdigest() == (
+        "7910d5bca19dc438a5ca8b159eb45327adc1e3aff91670babfde68745c4e8fd3"
+    )
+    assert patent_pdf_recovery._ability_layout_profile(source) == (
+        "snap_six_lens_two_design_ocr_review_v1"
+    )
+    facts = patent_pdf_recovery._snap_six_lens_two_design_source_facts(source)
+    assert facts["family_id"] == "61244801"
+    assert facts["application_number"] == "16/483973"
+    assert facts["paragraph_ranges"] == {
+        "priority_background_summary": [1, 6],
+        "brief_description": [1, 7],
+        "detailed_description": [8, 87],
+        "claims": [1, 18],
+    }
+    assert facts["figure_numbers"] == list(range(1, 9))
+    assert facts["formal_html_table_count"] == 0
+    assert facts["sample_design_count"] == 2
+    assert facts["source_declared_example_numbers"] == list(range(1, 38))
+    assert facts["source_declared_example_paragraph_numbers"] == list(range(51, 88))
+    assert facts["independent_claim_style_example_numbers"] == [1, 10, 19, 28, 37]
+    assert facts["dependent_claim_style_example_numbers"] == [
+        number for number in range(1, 38) if number not in {1, 10, 19, 28, 37}
+    ]
+    assert facts["claim_numbers"] == list(range(1, 19))
+    assert facts["ledger_item_mapping"] == {
+        "sample_design_1": {
+            "item_number": 1,
+            "lens_element_count": 5,
+            "claim_style_examples": [19, 36],
+        },
+        "sample_design_2": {
+            "item_number": 2,
+            "lens_element_count": 6,
+            "claim_style_examples": [1, 18],
+        },
+        "mobile_device_wrapper": {
+            "item_number": 3,
+            "claim_style_examples": [37, 37],
+        },
+    }
+    assert facts["design_1_lens_element_count"] == 5
+    assert facts["design_1_direct_system_metadata_present"] is False
+    assert facts["design_2_lens_element_count"] == 6
+    assert facts["design_2_metadata"] == {
+        "effective_focal_length_mm": 1.57,
+        "assembly_length_mm": 6.71,
+        "diagonal_field_of_view_deg": 115.0,
+        "image_circle_field_of_view_deg": 120.0,
+        "f_number": 2.4,
+        "image_height_mm": 1.98,
+    }
+    assert patent_pdf_recovery._ability_layout_profile(source + " ") is None
+
+    parser_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPTO-PDF-OCR-JSON"
+        / "be9e0b989e8b021b"
+        / "US-11287601-B2.json"
+    )
+    parser_input = parser_path.read_text(encoding="utf-8")
+    assert hashlib.sha256(parser_input.encode()).hexdigest() == (
+        "be9e0b989e8b021b3f408851d0a0c1db860deb7b0c09a3c13f128b2ac7d67ec5"
+    )
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        parser_input,
+        patent_id="US-11287601-B2",
+    )
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert [attempt.embodiment for attempt in attempts] == [
+        "Snap Sample Design 1 five-element imaging lens",
+        "Snap Sample Design 2 six-element imaging lens",
+        "Snap mobile-device image-storage wrapper",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert "51/51 of 60 coefficient exponent markers" in str(attempts[0].error)
+    assert "15 multi-cell tokens" in str(attempts[0].error)
+    assert "no Design-1-specific EFL" in str(attempts[0].error)
+    assert "48/33 of 50 coefficient exponent markers" in str(attempts[1].error)
+    assert "10 multi-cell tokens" in str(attempts[1].error)
+    assert "directly publishes EFL 1.57 mm, F/2.4" in str(attempts[1].error)
+    assert all(
+        "without coordinate repair" in str(attempt.error) for attempt in attempts[:2]
+    )
+    assert isinstance(attempts[2].error, patent_to_zmx.PatentTerminalParseError)
+    assert attempts[2].error.status == "confirmed_no_prescription"
+    assert attempts[2].error.reason_code == (
+        "confirmed_no_prescription.electronic_device_wrapper_only"
+    )
+    assert "claim-style examples 1-36" in str(attempts[2].error)
+
+    mutated = json.loads(parser_input)
+    mutated["source_facts"]["sample_design_count"] = 3
+    mutated_attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(mutated, sort_keys=True, separators=(",", ":")),
+        patent_id="US-11287601-B2",
+    )
+    assert len(mutated_attempts) == 3
+    assert all("source fact 'sample_design_count' changed" in str(a.error) for a in mutated_attempts)
+
+
+def test_snap_six_lens_two_design_retained_pdf_rasters_and_parser_input() -> None:
+    root = Path(__file__).resolve().parents[1]
+    review = (
+        root
+        / ".planning"
+        / "quick"
+        / "260717-patent-generic-family-61244801"
+        / "source-review"
+    )
+    layout = patent_pdf_recovery._SNAP_SIX_LENS_TWO_DESIGN_SOURCE_LAYOUTS[
+        "7910d5bca19dc438a5ca8b159eb45327adc1e3aff91670babfde68745c4e8fd3"
+    ]
+    expected_container_hashes = {
+        "official-1": "453a1b7eb9ca7af2f5a23fd72b11b8ead32a22e9859b319804498a1a420a3caf",
+        "official-2": "d4b0314fc95b19c73e50e6016a3c0c4344c3e66aa847e9db97017ae18d84c664",
+        "google": "a404b17068ef00c677def8ffcad8cd5be1c1acdbd0b54efab8ccd1c5378e0307",
+    }
+    paths = {
+        "official-1": review / "US-11287601-B2-official-1.pdf",
+        "official-2": review / "US-11287601-B2-official-2.pdf",
+        "google": review / "US-11287601-B2-google.pdf",
+    }
+    raster_sets: dict[str, list[str]] = {}
+    for label, path in paths.items():
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == expected_container_hashes[label]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(path))
+        assert len(reader.pages) == 19
+        page_hashes: list[str] = []
+        for page_number, page in enumerate(reader.pages, start=1):
+            assert len(page.images) == 1
+            image = patent_pdf_recovery._page_image(
+                page,
+                source=f"US-11287601-B2 {label}",
+                page_number=page_number,
+            )
+            decoded = patent_pdf_recovery._decoded_raster(
+                image,
+                source=f"US-11287601-B2 {label}",
+            )
+            assert decoded.shape == (3300, 2560)
+            page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(image))
+        assert tuple(page_hashes) == layout["page_image_sha256"]
+        raster_sets[label] = page_hashes
+    assert raster_sets["official-1"] == raster_sets["official-2"]
+    assert raster_sets["official-1"] == raster_sets["google"]
+
+    parser_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPTO-PDF-OCR-JSON"
+        / "be9e0b989e8b021b"
+        / "US-11287601-B2.json"
+    )
+    payload = json.loads(parser_path.read_text(encoding="utf-8"))
+    assert payload["parser_family"] == "ability_official_pdf_ocr_v1"
+    assert payload["profile"] == "snap_six_lens_two_design_ocr_review_v1"
+    assert payload["page_count"] == 19
+    assert [page["page_number"] for page in payload["pages"]] == [5, 6, 7, 8, 9]
+    assert [page["role"] for page in payload["pages"]] == list(
+        layout["role_pages"]
+    )
+    assert all(page["rapidocr_rotation"] == "clockwise_90" for page in payload["pages"])
+    assert [page["official_image_sha256"] for page in payload["pages"]] == [
+        layout["page_image_sha256"][index]
+        for index in layout["role_pages"].values()
+    ]
+
+
+def test_snap_six_lens_two_design_replay_and_denominator_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260717-patent-generic-family-61244801"
+    )
+    evidence = json.loads(
+        (quick / "family-61244801-source-evidence.json").read_text(encoding="utf-8")
+    )
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "outside_cohort_family_and_related_publications": 10,
+        "background_summary_paragraphs": 6,
+        "brief_description_paragraphs": 7,
+        "detailed_description_paragraphs": 80,
+        "claims": 18,
+        "source_declared_examples": 37,
+        "source_named_sample_designs": 2,
+        "figure_numbers": 8,
+        "drawing_sheets": 8,
+        "formal_html_tables": 0,
+        "image_data_tables": 5,
+        "classification_pdf_pages": 19,
+        "ledger_items": 3,
+        "parser_review_items": 2,
+        "terminal_items": 1,
+    }
+
+    for record in evidence["audits"].values():
+        path = root / record["path"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+    for record in evidence["retained_pdf_recovery"]["parser_inputs"]:
+        path = root / record["path"]
+        assert len(path.read_bytes()) == record["bytes"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+    for record in evidence["retained_pdf_recovery"]["manifests"]:
+        path = root / record["path"]
+        assert len(path.read_bytes()) == record["bytes"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+
+    denominator = json.loads(
+        (quick / "family-61244801-example-denominator.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert denominator["source_declared_example_numbers"] == list(range(1, 38))
+    assert denominator["source_declared_example_paragraph_numbers"] == list(
+        range(51, 88)
+    )
+    assert denominator["independent_claim_style_example_numbers"] == [
+        1,
+        10,
+        19,
+        28,
+        37,
+    ]
+    assert denominator["reconciliation"] == {
+        "source_declared_examples": 37,
+        "source_named_sample_designs": 2,
+        "device_wrappers": 1,
+        "ledger_items": 3,
+        "unmapped_examples": 0,
+        "duplicate_claim_items_created": 0,
+        "coordinate_values_synthesized": 0,
+        "reason": (
+            "Examples 1-36 are claim-style dependency variants around five- or "
+            "six-element architecture and publish no coordinate table beyond the two "
+            "source-named Sample Designs; Example 37 is the only additional architecture "
+            "wrapper."
+        ),
+    }
+    assert [item["state"] for item in denominator["ledger_items"]] == [
+        "parser_review_required",
+        "parser_review_required",
+        "terminal",
+    ]
+
+    replay = json.loads(
+        (quick / "family-61244801-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    semantics: list[str] = []
+    for record in replay["final_replays"]:
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+        payload = json.loads(raw)
+        assert payload["root_state"] == "mixed_nonterminal"
+        assert payload["reason_code"] == "mixed_nonterminal.multiple_item_states"
+        semantic = dict(payload)
+        semantic.pop("result_attempt")
+        semantic_bytes = json.dumps(
+            semantic,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        semantics.append(hashlib.sha256(semantic_bytes).hexdigest())
+        assert [item["state"] for item in payload["items"]] == [
+            "parser_review_required",
+            "parser_review_required",
+            "terminal",
+        ]
+        assert payload["items"][2]["reason_code"] == (
+            "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+        )
+    assert semantics == [replay["semantic_projection"]["sha256"]] * 2
+    assert replay["append_only_prefix"]["attempt_directories"] == [
+        "attempt-0001",
+        "attempt-0002",
+        "attempt-0003",
+        "attempt-0004",
+        "attempt-0005",
+    ]
+
+    summary_path = root / "data" / "patent-ledger" / "replay" / "local-uncovered" / "summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    assert hashlib.sha256(summary_path.read_bytes()).hexdigest() == evidence[
+        "replay_state"
+    ]["summary_sha256"]
+    assert summary["result_set_sha256"] == evidence["replay_state"][
+        "result_set_sha256"
+    ]
+    assert summary["root_state_counts"] == evidence["replay_state"][
+        "root_state_counts"
+    ]
+    assert summary["item_state_counts"] == evidence["replay_state"][
+        "item_state_counts"
+    ]
+
+    after_hashes = []
+    for key in ("after_1", "after_2"):
+        record = evidence["census"][key]
+        path = root / record["path"]
+        after_hashes.append(hashlib.sha256(path.read_bytes()).hexdigest())
+        census = json.loads(path.read_text(encoding="utf-8"))
+        assert census["affected_roots"] == census["affected_items"] == 132
+        assert census["result_set_sha256"] == evidence["replay_state"][
+            "result_set_sha256"
+        ]
+    assert after_hashes == [evidence["census"]["after_1"]["sha256"]] * 2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["next_cluster"]["family_id"] == "68533575"
+    assert queue["next_cluster"]["root_ids"] == ["US-20230418018"]
+    assert queue["saturation_complete"] is False

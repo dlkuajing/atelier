@@ -6596,6 +6596,57 @@ _ABILITY_FIVE_THREE_LENS_PUBLICATION_SOURCES = {
 }
 _LARGAN_THREE_FIVE_LENS_PROFILE = "largan_three_five_lens_prescriptions_v1"
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
+_SNAP_SIX_LENS_TWO_DESIGN_PROFILE = "snap_six_lens_two_design_ocr_review_v1"
+_SNAP_SIX_LENS_TWO_DESIGN_PUBLICATION_SOURCES = {
+    "US-11287601-B2": {
+        "primary_html_sha256": (
+            "7910d5bca19dc438a5ca8b159eb45327adc1e3aff91670babfde68745c4e8fd3"
+        ),
+        "normalized_text_sha256": (
+            "d675c20e5301723fb831bf0f842f66eabf5d210da4d28336e1a7413a5f1e1e63"
+        ),
+        "application_number": "16/483973",
+        "page_count": 19,
+        "role_page_numbers": {
+            "snap_power_ranges": 5,
+            "snap_surface_design_1": 6,
+            "snap_asphere_design_1": 7,
+            "snap_surface_design_2": 8,
+            "snap_asphere_design_2": 9,
+        },
+        "role_image_sha256": {
+            "snap_power_ranges": (
+                "8824110fa208d5c9925895403da341ddf6ac5a38158d652b60ee432f0a83c08f"
+            ),
+            "snap_surface_design_1": (
+                "49745b8de3d0aa105b624f2926d353a7b49083fb24ad6b0114fcf6ec8cebac45"
+            ),
+            "snap_asphere_design_1": (
+                "b4bf0c8478b2362eba3cb3c9a70554b73812525f0d04beb621536e00552e8de1"
+            ),
+            "snap_surface_design_2": (
+                "bfd126b5b583905013d02a12dc2f860a0e5ccea165073a4e37e366e30cc0f58c"
+            ),
+            "snap_asphere_design_2": (
+                "e8063fe29aa0fd8630b95ec33046a34c1c0c1e3d6b38b84b8d0f4adca1aa2c9f"
+            ),
+        },
+        "coefficient_exponent_counts": {
+            "1": {
+                "expected": 60,
+                "mirror": 51,
+                "rapidocr": 51,
+                "joined_tokens": 15,
+            },
+            "2": {
+                "expected": 50,
+                "mirror": 48,
+                "rapidocr": 33,
+                "joined_tokens": 10,
+            },
+        },
+    }
+}
 _CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
 _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT = (
     "provide lens prescription data for the lens",
@@ -11128,6 +11179,312 @@ def _validate_ability_pdf_source_linkage(payload: dict[str, Any]) -> None:
         raise PatentParseError("Ability PDF OCR source facts do not match linked HTML")
 
 
+def _snap_six_lens_two_design_review_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    """Retain both image-table designs and the source-declared device wrapper."""
+
+    embodiments = (
+        "Snap Sample Design 1 five-element imaging lens",
+        "Snap Sample Design 2 six-element imaging lens",
+        "Snap mobile-device image-storage wrapper",
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for number, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        publication_id = str(payload.get("publication_id"))
+        source_profile = _SNAP_SIX_LENS_TWO_DESIGN_PUBLICATION_SOURCES.get(
+            publication_id
+        )
+        if source_profile is None:
+            raise PatentParseError(
+                "Snap six-lens two-design publication is not source-locked"
+            )
+        if payload.get("page_count") != source_profile["page_count"]:
+            raise PatentParseError(
+                "Snap six-lens two-design PDF page count changed"
+            )
+        facts = payload.get("source_facts")
+        if not isinstance(facts, dict):
+            raise PatentParseError("Snap six-lens two-design source facts are absent")
+        expected_facts = {
+            "primary_html_sha256": source_profile["primary_html_sha256"],
+            "normalized_text_sha256": source_profile["normalized_text_sha256"],
+            "family_id": "61244801",
+            "application_number": source_profile["application_number"],
+            "pct_application": "PCT/US2018/017252",
+            "pct_publication": "WO2018/148301",
+            "prior_us_publication": "US 20200096726 A1",
+            "provisional_application": "US 62455983",
+            "paragraph_ranges": {
+                "priority_background_summary": [1, 6],
+                "brief_description": [1, 7],
+                "detailed_description": [8, 87],
+                "claims": [1, 18],
+            },
+            "figure_numbers": list(range(1, 9)),
+            "drawing_sheet_count": 8,
+            "formal_html_table_count": 0,
+            "sample_design_count": 2,
+            "source_declared_example_numbers": list(range(1, 38)),
+            "source_declared_example_paragraph_numbers": list(range(51, 88)),
+            "independent_claim_style_example_numbers": [1, 10, 19, 28, 37],
+            "dependent_claim_style_example_numbers": [
+                number
+                for number in range(1, 38)
+                if number not in {1, 10, 19, 28, 37}
+            ],
+            "claim_numbers": list(range(1, 19)),
+            "ledger_item_mapping": {
+                "sample_design_1": {
+                    "item_number": 1,
+                    "lens_element_count": 5,
+                    "claim_style_examples": [19, 36],
+                },
+                "sample_design_2": {
+                    "item_number": 2,
+                    "lens_element_count": 6,
+                    "claim_style_examples": [1, 18],
+                },
+                "mobile_device_wrapper": {
+                    "item_number": 3,
+                    "claim_style_examples": [37, 37],
+                },
+            },
+            "design_1_lens_element_count": 5,
+            "design_2_lens_element_count": 6,
+            "design_1_direct_system_metadata_present": False,
+            "design_2_metadata": {
+                "effective_focal_length_mm": 1.57,
+                "assembly_length_mm": 6.71,
+                "diagonal_field_of_view_deg": 115.0,
+                "image_circle_field_of_view_deg": 120.0,
+                "f_number": 2.4,
+                "image_height_mm": 1.98,
+            },
+        }
+        for key, expected in expected_facts.items():
+            if facts.get(key) != expected:
+                raise PatentParseError(
+                    f"Snap six-lens two-design source fact {key!r} changed"
+                )
+        expected_required_counts = {
+            "FIGS. 4 and 5 include tables showing a prescription of a first sample "
+            "imaging lens assembly design": 2,
+            "FIGS. 6 and 7 include tables showing a prescription of a second sample "
+            "imaging lens assembly design": 2,
+            "Design 1 omits the optional second element.": 1,
+            "Design 2 includes the optional second element.": 1,
+            "effective focal length of 1.57 mm": 1,
+            "field of view is set to 115 degrees at a diagonal, with 120 degrees to an "
+            "image circle": 1,
+            "f-number of the imaging lens assembly 10 is 2.4": 1,
+            "At an image height of 1.98 mm": 1,
+        }
+        if facts.get("required_text_counts") != expected_required_counts:
+            raise PatentParseError(
+                "Snap six-lens two-design required source-text bindings changed"
+            )
+
+        pages: dict[str, dict[str, Any]] = {}
+        for role, page_number in source_profile["role_page_numbers"].items():
+            page = _ability_page(payload, role)
+            if page.get("page_number") != page_number:
+                raise PatentParseError(f"Snap six-lens role {role} is on the wrong page")
+            if page.get("official_image_sha256") != source_profile[
+                "role_image_sha256"
+            ][role]:
+                raise PatentParseError(
+                    f"Snap six-lens role {role} official raster changed"
+                )
+            if page.get("rapidocr_rotation") != "clockwise_90":
+                raise PatentParseError(
+                    f"Snap six-lens role {role} lacks clockwise OCR rotation"
+                )
+            if not str(page.get("mirror_text", "")).strip():
+                raise PatentParseError(
+                    f"Snap six-lens role {role} lacks exact-raster mirror text"
+                )
+            pages[role] = page
+
+        if "Power for each lens element" not in str(
+            pages["snap_power_ranges"]["mirror_text"]
+        ):
+            raise PatentParseError("Snap six-lens FIG. 3 power-range table changed")
+    except Exception as exc:  # noqa: BLE001 - retain all three source-declared items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    exponent_pattern = re.compile(r"[Ee]\s*[+-]\s*\d{2}")
+    for design_number, embodiment in enumerate(embodiments[:2], start=1):
+        try:
+            surface_page = pages[f"snap_surface_design_{design_number}"]
+            asphere_page = pages[f"snap_asphere_design_{design_number}"]
+            surface_heading = (
+                f"Lens prescription for Sample Design {design_number} (Table 1 of 2)"
+            )
+            asphere_heading = (
+                f"Lens prescription for Sample Design {design_number} (Table 2 of 2)"
+            )
+            normalized_surface_mirror = re.sub(
+                r"[^A-Z0-9]", "", str(surface_page["mirror_text"]).upper()
+            )
+            normalized_asphere_mirror = re.sub(
+                r"[^A-Z0-9]", "", str(asphere_page["mirror_text"]).upper()
+            )
+            if re.sub(r"[^A-Z0-9]", "", surface_heading.upper()) not in (
+                normalized_surface_mirror
+            ):
+                raise PatentParseError(
+                    f"Snap Design {design_number} surface-table heading changed"
+                )
+            if re.sub(r"[^A-Z0-9]", "", asphere_heading.upper()) not in (
+                normalized_asphere_mirror
+            ):
+                raise PatentParseError(
+                    f"Snap Design {design_number} asphere-table heading changed"
+                )
+
+            normalized_surface_tokens = {
+                re.sub(r"[^A-Z0-9]", "", _ability_token_text(token).upper())
+                for token in surface_page["rapidocr_tokens"]
+                if _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+            }
+            required_surface_labels = {
+                f"LENSPRESCRIPTIONFORSAMPLEDESIGN{design_number}TABLE1OF2",
+                *(str(number) for number in range(1, 16)),
+            }
+            if not required_surface_labels.issubset(normalized_surface_tokens):
+                raise PatentParseError(
+                    f"Snap Design {design_number} surface-table denominator changed"
+                )
+            if "SURF" not in normalized_surface_mirror:
+                raise PatentParseError(
+                    f"Snap Design {design_number} surface-table label changed"
+                )
+            if re.search(
+                rf"FIG\s*\.\s*{2 + design_number * 2}\b",
+                str(surface_page["mirror_text"]),
+                flags=re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    f"Snap Design {design_number} surface-table figure binding changed"
+                )
+
+            coefficient_terms = (
+                ("A4", "A6", "A8", "A10", "A12", "A14")
+                if design_number == 1
+                else ("A4", "A6", "A8", "A10", "A12")
+            )
+            normalized_asphere_tokens = {
+                re.sub(r"[^A-Z0-9]", "", _ability_token_text(token).upper())
+                for token in asphere_page["rapidocr_tokens"]
+                if _ability_token_confidence(token) >= _ABILITY_OCR_LABEL_CONFIDENCE
+            }
+            required_asphere_labels = {
+                f"LENSPRESCRIPTIONFORSAMPLEDESIGN{design_number}TABLE2OF2",
+                *coefficient_terms,
+            }
+            if not required_asphere_labels.issubset(normalized_asphere_tokens):
+                raise PatentParseError(
+                    f"Snap Design {design_number} asphere-table labels changed"
+                )
+            if re.search(
+                rf"FIG\s*\.\s*{3 + design_number * 2}\b",
+                str(asphere_page["mirror_text"]),
+                flags=re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    f"Snap Design {design_number} asphere-table figure binding changed"
+                )
+
+            mirror_exponents = len(
+                exponent_pattern.findall(str(asphere_page["mirror_text"]))
+            )
+            rapidocr_exponents = sum(
+                len(exponent_pattern.findall(_ability_token_text(token)))
+                for token in asphere_page["rapidocr_tokens"]
+            )
+            joined_tokens = sum(
+                len(exponent_pattern.findall(_ability_token_text(token))) >= 2
+                for token in asphere_page["rapidocr_tokens"]
+            )
+            expected_counts = source_profile["coefficient_exponent_counts"][
+                str(design_number)
+            ]
+            observed_counts = {
+                "expected": expected_counts["expected"],
+                "mirror": mirror_exponents,
+                "rapidocr": rapidocr_exponents,
+                "joined_tokens": joined_tokens,
+            }
+            if observed_counts != expected_counts:
+                raise PatentParseError(
+                    f"Snap Design {design_number} coefficient OCR evidence changed: "
+                    f"{observed_counts!r}"
+                )
+            if (
+                mirror_exponents >= expected_counts["expected"]
+                and rapidocr_exponents >= expected_counts["expected"]
+                and joined_tokens == 0
+            ):
+                raise PatentParseError(
+                    f"Snap Design {design_number} OCR now exposes all coefficient cells; "
+                    "a reviewed conversion parser is required"
+                )
+            metadata_detail = (
+                "the official HTML publishes no Design-1-specific EFL, F-number, "
+                "field or image height; "
+                if design_number == 1
+                else "the official HTML directly publishes EFL 1.57 mm, F/2.4, "
+                "115-degree diagonal field and 1.98 mm image height; "
+            )
+            error: Exception = PatentParseError(
+                f"Snap Sample Design {design_number} publishes its ordered surface and "
+                f"asphere prescription in FIGS. {2 + design_number * 2}-"
+                f"{3 + design_number * 2}; {metadata_detail}the exact-raster Google/"
+                f"RapidOCR views expose only {mirror_exponents}/{rapidocr_exponents} "
+                f"of {expected_counts['expected']} coefficient exponent markers and "
+                f"RapidOCR joins {joined_tokens} multi-cell tokens; retained for parser "
+                "review without coordinate repair"
+            )
+        except Exception as exc:  # noqa: BLE001 - retain per-design failure
+            error = exc
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=design_number,
+                embodiment=embodiment,
+                error=error,
+            )
+        )
+    attempts.append(
+        _PrescriptionParseAttempt(
+            embodiment_number=3,
+            embodiment=embodiments[2],
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code="confirmed_no_prescription.electronic_device_wrapper_only",
+                detail=(
+                    "EXAMPLE 37 and FIG. 8 publish a processor, memory, digital-image "
+                    "storage, camera-module, and image-sensor wrapper around an imaging "
+                    "lens assembly selected from claim-style examples 1-36; they add no "
+                    "independent ordered optical surface prescription"
+                ),
+            ),
+        )
+    )
+    return attempts
+
+
 def _circle_optics_seven_lens_review_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -11432,6 +11789,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_largan_three_five_lens_attempts(payload)
     if profile == _ABILITY_ZOOM_TWO_STATE_PROFILE:
         return _parse_ability_zoom_two_state_attempts(payload)
+    if profile == _SNAP_SIX_LENS_TWO_DESIGN_PROFILE:
+        return _snap_six_lens_two_design_review_attempts(payload)
     if profile == _CIRCLE_OPTICS_SEVEN_LENS_PROFILE:
         return [_circle_optics_seven_lens_review_attempt(payload)]
     if profile == _KODAK_LOW_STRESS_TWO_LENS_PROFILE:

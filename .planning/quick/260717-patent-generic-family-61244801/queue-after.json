@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "current_bucket": {
+    "parser_signature": "generic_summary_metadata_missing",
+    "affected_roots": 132,
+    "affected_items": 132,
+    "result_set_sha256": "34dc2a55b427fa8b75525be4a86a312a65599663a0ac3083cf81415b0fb7a864"
+  },
+  "next_cluster": {
+    "family_id": "68533575",
+    "root_ids": ["US-20230418018"],
+    "publication_ids": ["US-20230418018-A1"],
+    "title": "Imaging-Based Transmitter for Free-Space Optical Communications",
+    "layout_signature": "1d4d179f22873560d591583b851d758fb28044fbbb4fee8b2721e31e97faf1d8",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/9a102bfef5cf345b/US-20230418018-A1.html",
+      "sha256": "9a102bfef5cf345b7b9325fce5915f82664a8db583b31f1f03175ed3b235de57"
+    },
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

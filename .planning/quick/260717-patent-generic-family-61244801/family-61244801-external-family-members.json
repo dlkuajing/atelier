@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "classification_family_id": "61244801",
+  "classification_publication": "US-11287601-B2",
+  "classification_application": "16/483973",
+  "outside_frozen_cohort": true,
+  "family_and_national_stage_publications": [
+    {"jurisdiction": "US", "publication_id": "US-20200096726-A1", "relationship": "same application prior publication"},
+    {"jurisdiction": "WO", "publication_id": "WO-2018148301-A1", "relationship": "PCT publication"},
+    {"jurisdiction": "CN", "publication_id": "CN-110249251-A", "relationship": "national stage"},
+    {"jurisdiction": "CN", "publication_id": "CN-110249251-B", "relationship": "national grant"},
+    {"jurisdiction": "EP", "publication_id": "EP-3580595-A1", "relationship": "regional publication"},
+    {"jurisdiction": "EP", "publication_id": "EP-3580595-B1", "relationship": "regional grant"},
+    {"jurisdiction": "KR", "publication_id": "KR-20190112126-A", "relationship": "national publication"},
+    {"jurisdiction": "KR", "publication_id": "KR-102355179-B1", "relationship": "national grant"}
+  ],
+  "related_continuation": {
+    "application_number": "17/705884",
+    "source_relationship": "continuation of application 16/483973",
+    "publications": ["US-20220326472-A1", "US-11835786-B2"]
+  },
+  "retained_public_cross_checks": [
+    {"publication_id": "WO-2018148301-A1", "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/WO-2018148301-A1-google.html", "bytes": 235383, "sha256": "03e3fac26a31d2ca0b5c42c3b40c9abd4cb28f135f65d78ed8b0feae20ef4485", "use": "family and national-stage route discovery only"},
+    {"publication_id": "CN-110249251-B", "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/CN110249251B-google.html", "bytes": 194143, "sha256": "18b37d4c741c2a1d9e9f5a8e531b7382d88e43e6dff95182db7c745719c50802", "use": "identity cross-check only"},
+    {"publication_id": "EP-3580595-B1", "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/EP3580595B1-google.html", "bytes": 263311, "sha256": "f6bf66f2aa81fa5dfa5c395e2f0deeb03688085f3140ffe8c087b00c9283b264", "use": "identity cross-check only"},
+    {"publication_id": "KR-102355179-B1", "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/KR102355179B1-google.html", "bytes": 245625, "sha256": "e2f73846c9b6a79e0f65d56a7574c1d9e3160176495df195adb98ff00ec4ff08", "use": "identity cross-check only"},
+    {"publication_id": "US-11835786-B2", "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US11835786B2-google.html", "bytes": 292712, "sha256": "74fb97de3149e4d5f8349e9872d2f77b206e38b9faee5c1b25b59d6dbf25f753", "use": "continuation relationship cross-check only"}
+  ],
+  "classification_boundary": "All listed records are queued for later source-specific official retrieval and independent classification. They do not inherit the frozen B2 root outcome, parser state, raster equivalence, or optical values."
+}

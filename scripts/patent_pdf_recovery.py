@@ -286,6 +286,58 @@ _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT = (
     "FIG. 6 lists the specific parameters of the optical lens of FIG. 1",
 )
 _ABILITY_ZOOM_TWO_STATE_PROFILE = "ability_zoom_two_state_census_v1"
+_SNAP_SIX_LENS_TWO_DESIGN_PROFILE = "snap_six_lens_two_design_ocr_review_v1"
+_SNAP_SIX_LENS_TWO_DESIGN_REQUIRED_TEXT = (
+    "FIGS. 4 and 5 include tables showing a prescription of a first sample "
+    "imaging lens assembly design",
+    "FIGS. 6 and 7 include tables showing a prescription of a second sample "
+    "imaging lens assembly design",
+    "Design 1 omits the optional second element.",
+    "Design 2 includes the optional second element.",
+    "effective focal length of 1.57 mm",
+    "field of view is set to 115 degrees at a diagonal, with 120 degrees to an "
+    "image circle",
+    "f-number of the imaging lens assembly 10 is 2.4",
+    "At an image height of 1.98 mm",
+)
+_SNAP_SIX_LENS_TWO_DESIGN_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "7910d5bca19dc438a5ca8b159eb45327adc1e3aff91670babfde68745c4e8fd3": {
+        "application_number": "16/483973",
+        "normalized_text_sha256": (
+            "d675c20e5301723fb831bf0f842f66eabf5d210da4d28336e1a7413a5f1e1e63"
+        ),
+        "page_count": 19,
+        "blank_mirror_pages": frozenset(),
+        "role_pages": {
+            "snap_power_ranges": 4,
+            "snap_surface_design_1": 5,
+            "snap_asphere_design_1": 6,
+            "snap_surface_design_2": 7,
+            "snap_asphere_design_2": 8,
+        },
+        "page_image_sha256": (
+            "486d2f2040192bb53af69337d8d374b928fc365f4378ea6e5d335667ba5271d9",
+            "909ddfec82ad0b5246a7e4f0d25b52bee7e532c6ba38f1b3440b9d1c4d9596db",
+            "eaca5b50fea4b279c35d8a317094e21ca0cf6e1b3adcb38f858602b4dc232715",
+            "544d4c74c7ab8cfabb9aeb809e7a876cc3b9d0cf69a2e16f1633711b17a9af9f",
+            "8824110fa208d5c9925895403da341ddf6ac5a38158d652b60ee432f0a83c08f",
+            "49745b8de3d0aa105b624f2926d353a7b49083fb24ad6b0114fcf6ec8cebac45",
+            "b4bf0c8478b2362eba3cb3c9a70554b73812525f0d04beb621536e00552e8de1",
+            "bfd126b5b583905013d02a12dc2f860a0e5ccea165073a4e37e366e30cc0f58c",
+            "e8063fe29aa0fd8630b95ec33046a34c1c0c1e3d6b38b84b8d0f4adca1aa2c9f",
+            "a146bbd217172444573359ee5c0f791c15daed459aeab45bb80b9ae7d8a23e6b",
+            "d93261af1f9db18fc7e151705f40d179d26863a32c9afec9005687f9efb223cb",
+            "4811237defcdde958ca706cc415370889afcf6da32966f87be12a7881414b18c",
+            "970beb6790a24c964031488f1283fd92441482c50c8047346b6934cb3ae0a720",
+            "21f1c25557131ba545e295b282dc1a520a22d32e2dca5961483d711476b5183f",
+            "581719c17f076c09b6cc8daec52f112ef02b4a7fb9dcb1dbe0ed57e020278e24",
+            "0991732fc27a1dcc0c5e2a5e957272429aa8e39b2283104ddc34a23fe49f0b51",
+            "83b634ced52d066a4b1f79e32552cf476a224eb743845c49340bec8e490cf81d",
+            "748df2a637820c92832d3d932a790a631aa62363654b4d72e7c1c35b4a02632e",
+            "388519915fcad6bb07ff1a995fa0823a7c2d0f7a41b710157d0d38235f4147f6",
+        ),
+    }
+}
 _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT = (
     "provide lens prescription data for the lens",
     "A prescription for this camera lens is given",
@@ -1013,6 +1065,10 @@ def _ability_layout_profile(raw_html: str) -> str | None:
 
     text = _normalized_html_text(raw_html)
     digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    if digest in _SNAP_SIX_LENS_TWO_DESIGN_SOURCE_LAYOUTS and all(
+        marker in text for marker in _SNAP_SIX_LENS_TWO_DESIGN_REQUIRED_TEXT
+    ):
+        return _SNAP_SIX_LENS_TWO_DESIGN_PROFILE
     if digest in _CIRCLE_OPTICS_SEVEN_LENS_SOURCE_LAYOUTS and all(
         marker in text for marker in _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT
     ):
@@ -1420,6 +1476,134 @@ def _ability_zoom_two_state_source_facts(raw_html: str) -> dict[str, Any]:
         "figure_binding_counts": {
             marker.split(" lists", maxsplit=1)[0]: text.count(marker)
             for marker in _ABILITY_ZOOM_TWO_STATE_REQUIRED_FIGURE_TEXT
+        },
+    }
+
+
+def _snap_six_lens_two_design_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _SNAP_SIX_LENS_TWO_DESIGN_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Snap six-lens two-design official HTML is not source-locked"
+        )
+    return layout
+
+
+def _snap_six_lens_two_design_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind both prescriptions, claim-style examples, and the device wrapper."""
+
+    text = _normalized_html_text(raw_html)
+    layout = _snap_six_lens_two_design_source_layout(raw_html)
+    normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Snap six-lens two-design normalized official HTML hash changed"
+        )
+    required_counts = {
+        marker: text.count(marker)
+        for marker in _SNAP_SIX_LENS_TWO_DESIGN_REQUIRED_TEXT
+    }
+    expected_counts = {
+        marker: 2 if marker.startswith("FIGS.") else 1
+        for marker in _SNAP_SIX_LENS_TWO_DESIGN_REQUIRED_TEXT
+    }
+    if required_counts != expected_counts:
+        raise PatentPdfRecoveryError(
+            "Snap six-lens two-design required source-text counts changed"
+        )
+    example_pairs = tuple(
+        (int(number), int(paragraph))
+        for number, paragraph in re.findall(
+            r"\bEXAMPLE\s+(\d+)\s+\((\d+)\)",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if example_pairs != tuple(zip(range(1, 38), range(51, 88), strict=True)):
+        raise PatentPdfRecoveryError(
+            "Snap six-lens two-design 37-example denominator changed"
+        )
+    independent_example_numbers = tuple(
+        int(number)
+        for number, _paragraph in re.findall(
+            r"\bEXAMPLE\s+(\d+)\s+\((\d+)\)\s+"
+            r"(?:An imaging lens assembly|A mobile device)",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if independent_example_numbers != (1, 10, 19, 28, 37):
+        raise PatentPdfRecoveryError(
+            "Snap six-lens two-design independent example anchors changed"
+        )
+    claims_text = text[text.rfind("Claims ") :]
+    claim_numbers = tuple(
+        int(number)
+        for number in re.findall(
+            r"(?:^|\s)(\d{1,2})\.\s+(?:An|The|A)\s+"
+            r"(?:imaging lens assembly|mobile device)",
+            claims_text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if claim_numbers != tuple(range(1, 19)):
+        raise PatentPdfRecoveryError(
+            "Snap six-lens two-design 18-claim denominator changed"
+        )
+    return {
+        "primary_html_sha256": hashlib.sha256(raw_html.encode("utf-8")).hexdigest(),
+        "normalized_text_sha256": normalized_digest,
+        "family_id": "61244801",
+        "application_number": layout["application_number"],
+        "pct_application": "PCT/US2018/017252",
+        "pct_publication": "WO2018/148301",
+        "prior_us_publication": "US 20200096726 A1",
+        "provisional_application": "US 62455983",
+        "required_text_counts": required_counts,
+        "paragraph_ranges": {
+            "priority_background_summary": [1, 6],
+            "brief_description": [1, 7],
+            "detailed_description": [8, 87],
+            "claims": [1, 18],
+        },
+        "figure_numbers": list(range(1, 9)),
+        "drawing_sheet_count": 8,
+        "formal_html_table_count": 0,
+        "sample_design_count": 2,
+        "source_declared_example_numbers": list(range(1, 38)),
+        "source_declared_example_paragraph_numbers": list(range(51, 88)),
+        "independent_claim_style_example_numbers": [1, 10, 19, 28, 37],
+        "dependent_claim_style_example_numbers": [
+            number for number in range(1, 38) if number not in {1, 10, 19, 28, 37}
+        ],
+        "claim_numbers": list(range(1, 19)),
+        "ledger_item_mapping": {
+            "sample_design_1": {
+                "item_number": 1,
+                "lens_element_count": 5,
+                "claim_style_examples": [19, 36],
+            },
+            "sample_design_2": {
+                "item_number": 2,
+                "lens_element_count": 6,
+                "claim_style_examples": [1, 18],
+            },
+            "mobile_device_wrapper": {
+                "item_number": 3,
+                "claim_style_examples": [37, 37],
+            },
+        },
+        "design_1_lens_element_count": 5,
+        "design_2_lens_element_count": 6,
+        "design_1_direct_system_metadata_present": False,
+        "design_2_metadata": {
+            "effective_focal_length_mm": 1.57,
+            "assembly_length_mm": 6.71,
+            "diagonal_field_of_view_deg": 115.0,
+            "image_circle_field_of_view_deg": 120.0,
+            "f_number": 2.4,
+            "image_height_mm": 1.98,
         },
     }
 
@@ -2251,6 +2435,15 @@ async def recover_ability_official_pdf_ocr(
     if (mirror_pdf is None) != (mirror_url is None):
         raise PatentPdfRecoveryError("Google OCR PDF URL/content availability differs")
 
+    snap_six_lens_layout: dict[str, Any] | None = None
+    if profile == _SNAP_SIX_LENS_TWO_DESIGN_PROFILE:
+        snap_six_lens_layout = _snap_six_lens_two_design_source_layout(
+            primary_html
+        )
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError(
+                "Snap six-lens two-design mirror PDF is unavailable"
+            )
     genius_four_lens_six_layout: dict[str, Any] | None = None
     if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
         genius_four_lens_six_layout = _genius_four_lens_six_source_layout(primary_html)
@@ -2302,7 +2495,17 @@ async def recover_ability_official_pdf_ocr(
         for page_number, text in enumerate(mirror_texts, start=1)
         if not text.strip()
     }
-    if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
+    if profile == _SNAP_SIX_LENS_TWO_DESIGN_PROFILE:
+        assert snap_six_lens_layout is not None
+        expected_blank_pages = snap_six_lens_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "Snap six-lens two-design OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
+            )
+    elif profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
         assert genius_four_lens_six_layout is not None
         expected_blank_pages = genius_four_lens_six_layout["blank_mirror_pages"]
         if blank_mirror_pages != expected_blank_pages:
@@ -2405,6 +2608,12 @@ async def recover_ability_official_pdf_ocr(
         page_hashes.append(_canonical_raster_sha256(official_image))
         official_images.append(official_image)
 
+    if profile == _SNAP_SIX_LENS_TWO_DESIGN_PROFILE:
+        assert snap_six_lens_layout is not None
+        if tuple(page_hashes) != snap_six_lens_layout["page_image_sha256"]:
+            raise PatentPdfRecoveryError(
+                "Snap six-lens two-design full PDF raster denominator changed"
+            )
     if profile == _ABILITY_THREE_FIVE_LENS_PROFILE:
         assert ability_three_five_layout is not None
         expected_page_hashes = ability_three_five_layout["page_image_sha256"]
@@ -2422,7 +2631,29 @@ async def recover_ability_official_pdf_ocr(
 
     rapidocr_rotation: str | None = None
     page_ocr_metadata: dict[str, dict[str, Any]] = {}
-    if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
+    if profile == _SNAP_SIX_LENS_TWO_DESIGN_PROFILE:
+        assert snap_six_lens_layout is not None
+        if page_count != snap_six_lens_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Snap six-lens two-design PDF page count changed: "
+                f"actual={page_count} expected={snap_six_lens_layout['page_count']}"
+            )
+        role_pages = dict(snap_six_lens_layout["role_pages"])
+        for role, page_index in role_pages.items():
+            sheet_number = page_index - 1
+            normalized_mirror = re.sub(r"\s+", " ", mirror_texts[page_index])
+            if re.search(
+                rf"\bSheet\s+{sheet_number}\s+of\s*8\b",
+                normalized_mirror,
+                flags=re.IGNORECASE,
+            ) is None:
+                raise PatentPdfRecoveryError(
+                    f"Snap six-lens role {role} lacks its drawing-sheet header"
+                )
+        parser_profile = profile
+        source_facts = _snap_six_lens_two_design_source_facts(primary_html)
+        rapidocr_rotation = "clockwise_90"
+    elif profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
         assert genius_four_lens_six_layout is not None
         if page_count != genius_four_lens_six_layout["page_count"]:
             raise PatentPdfRecoveryError(
