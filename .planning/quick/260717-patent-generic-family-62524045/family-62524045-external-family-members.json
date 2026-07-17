@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "family_id": "62524045",
+  "current_frozen_cohort_roots": [
+    "US-10775589"
+  ],
+  "classification_publication": "US-10775589-B2",
+  "family_applications": [
+    {
+      "application_id": "US-16/101621",
+      "priority_date": "2017-12-25",
+      "filing_date": "2018-08-13",
+      "title": "Camera optical lens"
+    },
+    {
+      "application_id": "CN-201711415992.4",
+      "priority_date": "2017-12-25",
+      "filing_date": "2017-12-25",
+      "title": "Image pickup optical lens"
+    },
+    {
+      "application_id": "JP-2018-141829",
+      "priority_date": "2017-12-25",
+      "filing_date": "2018-07-27",
+      "title": "Imaging lens"
+    }
+  ],
+  "external_family_members": [
+    {
+      "publication_id": "US-20190196146-A1",
+      "application_id": "US-16/101621",
+      "publication_date": "2019-06-27",
+      "relationship": "same US application prior publication",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    },
+    {
+      "publication_id": "CN-108169877-A",
+      "application_id": "CN-201711415992.4",
+      "publication_date": "2018-06-15",
+      "relationship": "priority-family publication",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    },
+    {
+      "publication_id": "CN-108169877-B",
+      "application_id": "CN-201711415992.4",
+      "publication_date": "2020-09-29",
+      "relationship": "priority-family grant",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    },
+    {
+      "publication_id": "JP-2019113821-A",
+      "application_id": "JP-2018-141829",
+      "publication_date": "2019-07-11",
+      "relationship": "priority-family publication",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    },
+    {
+      "publication_id": "JP-6564113-B2",
+      "application_id": "JP-2018-141829",
+      "publication_date": "2019-08-21",
+      "relationship": "priority-family grant",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    }
+  ],
+  "source_checks": [
+    {
+      "source": "USPTO retained B2 HTML",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/c6d4c09d9645c9d8/US-10775589-B2.html",
+      "raw_document_sha256": "c6d4c09d9645c9d874c1fea89c865b1b98b4abc40ecc9607fbefa3dffd62a8ac",
+      "facts": [
+        "US 20190196146 A1 is the prior publication for application 16/101621",
+        "CN 2017 1 1415992 filed 2017-12-25 is the foreign priority record"
+      ]
+    },
+    {
+      "source": "Google Patents exact B2 wrapper",
+      "url": "https://patents.google.com/patent/US10775589B2/en",
+      "checked_at_utc": "2026-07-17",
+      "http_status": 200,
+      "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-google.html",
+      "bytes": 161865,
+      "sha256": "07ad82f88f33b06fe446b29da3a151f43f94dc86b5770a73bae0820c8d33c402",
+      "use": "family discovery and cross-location only; never optical numeric truth"
+    }
+  ],
+  "queue_effect": "All five related publications remain outside the frozen 619-root cohort and do not alter the exact B2 classification or current replay denominator."
+}

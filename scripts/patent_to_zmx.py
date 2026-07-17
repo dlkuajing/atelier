@@ -481,6 +481,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_aac_four_lens_f_number_unpublished_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -3205,6 +3211,89 @@ _ENDOSCOPIC_THREE_LENS_MISSING_F_NUMBER_SOURCE_PROFILES: dict[
             "b02909799206e6cb96aa6b264556a5ca84d7869c67c09ce9818f770a91f069a9",
             "5a27a1648e7b01f5f62604fad096a6489d2896e2fa378c08d4eb412d10de6eba",
             "3b09b3b9cc93b8c9eac2a600877be07f09e683e3df1a47807cea463aa8493394",
+        ),
+    },
+}
+_AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Camera\s+Optical\s+Lens\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_FIGURES = tuple(range(1, 5))
+_AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_FOCAL_ROW = (
+    "TABLE-US-00001 TABLE 1 focal length (mm) f 2.618 f1 2.374 "
+    "f2 -4.599 f3 2.187 f4 -2.698 f12 3.8925 f123 2"
+)
+_AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_SYSTEM_METADATA = (
+    "1.247",
+    "2.297",
+    "84.00",
+)
+_AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_PHRASE_COUNTS = {
+    "pupil entering diameter of the camera optical lens is": 1,
+    "full vision field image height is": 1,
+    "vision field angle in the diagonal direction is": 1,
+    "Fresnel lens": 2,
+    "Embodiment 1": 1,
+}
+_AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-10775589-B2": {
+        "raw_document_sha256": (
+            "c6d4c09d9645c9d874c1fea89c865b1b98b4abc40ecc9607fbefa3dffd62a8ac"
+        ),
+        "normalized_text_sha256": (
+            "b1fdfcbb6cf77b97f72d148c328651ee5c5f735c1b3b9b58c62e522d38c5373a"
+        ),
+        "section_markers": {
+            "background": "Background/Summary FIELD OF THE PRESENT DISCLOSURE (1)",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS (6)",
+            "claims": "Claims 1. A camera optical lens comprising,",
+        },
+        "section_sha256": {
+            "background": (
+                "307d894fb243a41951699af2c0c1601bfb80e7ef7ded7c7c1a67f7443f194e8e"
+            ),
+            "brief": (
+                "e0cd3bae8b10972060d3803cf24be52f55adca54cab4faa1b8ca424d05c85213"
+            ),
+            "detailed": (
+                "367394623c37b5ea6981fd818a65c2351bc7a53cec19f343e4d88524c0971a3f"
+            ),
+            "claims": (
+                "2ca8e202e9417df58b0bfaa8712b52c4039d1ed7b92e2cd3ea5632f77da98b19"
+            ),
+        },
+        "paragraph_ranges": {
+            "background": (1, 2),
+            "brief": (1, 5),
+            "detailed": (6, 62),
+        },
+        "claim_count": 5,
+        "identity_markers": {
+            "Family ID: 62524045": 1,
+            "Appl. No.: 16/101621": 1,
+            "AAC Technologies Pte. Ltd.": 1,
+            "AAC Optics Solutions Pte. Ltd.": 1,
+            "US 20190196146 A1 Jun. 27, 2019": 1,
+            "CN 2017 1 1415992 Dec. 25, 2017": 1,
+        },
+        "table_block_sha256": (
+            "377468f0e40f01552cbeb91e65b7d85cccb004062f89cdd8532c8fa5054b8995",
+            "11ce10a991c8ed6d822187fab2245131fbffc8450b052ff21b0a71c2ab57ea76",
+            "0888d81fcf97f8ef5dba5ccd2ead9e12b88eeed733584e3dfff58c428d3a9319",
+            "25d15d34290fac47020d5f0d909eb3a419c0a0f781325bc4933dad473b98da20",
+            "21e3de20b6331a3aafc90ae602568cdeb9edcdcf482d14186b4931da269dda76",
+            "da74309a0c2cc8159429a37e69b77b76de8161a60932a096e853655cece66e80",
+        ),
+        "formal_table_sha256": (
+            "ddae2df3ede0d83ba49e39d91860c2f6ef6752f9409c29f473af3fa6c98fa2b0",
+            "befd4cc6542d9ae7a622750d6bfe1dfdf0b53e14ee338dcc2bcf73dcbd4d4642",
+            "8916530e6a37de2c3955ec15b78bb37ce9b0c3334b294525688c571cf86dc52e",
+            "6a4e473faf434a21e8cb385baf0a9afbfe91088f96df75686297c7f571740b38",
+            "1d02f56a53d4ce55e84f868b7002e03d3c6313f82c785cdf32a7161e4de8aede",
+            "9200682fb54b5f25b8bd851b87d32ed280fffc0a23d3c29812074dc2894e37a0",
         ),
     },
 }
@@ -20772,6 +20861,297 @@ def _classify_largan_variable_aperture_control_architecture_only_attempts(
             ),
         )
         for number, label in _LARGAN_VARIABLE_APERTURE_CONTROL_ITEMS
+    ]
+
+
+def _classify_aac_four_lens_f_number_unpublished_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain one exact AAC four-lens prescription whose F-number is unpublished."""
+
+    profile = _AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    embodiment = "AAC Fresnel/aspheric four-lens embodiment 1"
+
+    def attempt_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=1,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if (
+            len(
+                _AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_TITLE_PATTERN.findall(
+                    raw_text
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished title binding changed"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "AAC four-lens F-number-unpublished identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(
+            sorted(section_starts.values())
+        ):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "AAC four-lens F-number-unpublished "
+                    f"{section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\((\d+)\)", sections[section_name])
+            )
+            expected = tuple(range(bounds[0], bounds[1] + 1))
+            if observed != expected:
+                raise PatentParseError(
+                    "AAC four-lens F-number-unpublished "
+                    f"{section_name} paragraph denominator changed"
+                )
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished claims 1-5 denominator changed"
+            )
+        declared_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"\bFIG\.\s*(\d+)\s+(?=is|shows|presents)",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_FIGURES:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished FIGS. 1-4 denominator changed"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 7)):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished TABLES 1-6 denominator changed"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished PPUBS table block changed"
+            )
+        formal_tables = tuple(
+            re.split(
+                r"\s+(?:\(\d+\)|\[\d{4}\])\s+",
+                block.text,
+                maxsplit=1,
+            )[0]
+            for block in blocks
+        )
+        formal_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_digests != profile["formal_table_sha256"]:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished formal table content changed"
+            )
+        if (
+            formal_tables[0]
+            != _AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_FOCAL_ROW
+        ):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished direct focal-length row changed"
+            )
+
+        expected_surface_numbers = tuple(str(value) for value in range(1, 11))
+        if tuple(
+            re.findall(r"\bR(10|[1-9])\b", formal_tables[1])
+        ) != expected_surface_numbers:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished TABLE 2 surface denominator "
+                "changed"
+            )
+        if tuple(re.findall(r"\bL([1-4])\b", formal_tables[1])) != (
+            "1",
+            "2",
+            "3",
+            "4",
+        ):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished TABLE 2 lens denominator changed"
+            )
+        if tuple(re.findall(r"\bnd([1-4]|g)\b", formal_tables[1])) != (
+            "1",
+            "2",
+            "3",
+            "4",
+            "g",
+        ):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished TABLE 2 material denominator "
+                "changed"
+            )
+        if len(re.findall(r"\bInfinity\b", formal_tables[1])) != 3:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished TABLE 2 infinite-surface "
+                "denominator changed"
+            )
+
+        asphere_rows = tuple(
+            re.findall(
+                r"\bR([1-8])\s+(?:[+-]?\d\.\d{4}E[+-]\d{2}\s*){8}",
+                formal_tables[2],
+            )
+        )
+        if asphere_rows != tuple(str(value) for value in range(1, 9)):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished TABLE 3 eight-term asphere "
+                "denominator changed"
+            )
+        for table_number in (4, 5):
+            rows = tuple(
+                re.findall(r"\bR([1-8])\b", formal_tables[table_number - 1])
+            )
+            if rows != tuple(str(value) for value in range(1, 9)):
+                raise PatentParseError(
+                    "AAC four-lens F-number-unpublished "
+                    f"TABLE {table_number} auxiliary surface denominator changed"
+                )
+        if not formal_tables[5].startswith(
+            "TABLE-US-00006 TABLE 6 Embodiment 1 "
+        ):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished TABLE 6 embodiment binding "
+                "changed"
+            )
+
+        metadata = re.search(
+            r"pupil entering diameter of the camera optical lens is\s+"
+            r"(\d+(?:\.\d+)?)\s+mm,\s+the full vision field image height is\s+"
+            r"(\d+(?:\.\d+)?)\s+mm,\s+the vision field angle in the diagonal "
+            r"direction is\s+(\d+(?:\.\d+)?)",
+            text,
+            re.IGNORECASE,
+        )
+        if metadata is None or metadata.groups() != (
+            _AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_SYSTEM_METADATA
+        ):
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished direct system metadata changed"
+            )
+        for phrase, expected in (
+            _AAC_FOUR_LENS_F_NUMBER_UNPUBLISHED_PHRASE_COUNTS.items()
+        ):
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "AAC four-lens F-number-unpublished phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for pattern in (
+            r"\bF\s*[- ]?number\b",
+            r"\bFNO\b",
+            r"\bF\s*/\s*(?:#|No\.?|Number|\d)",
+            r"\bnumerical\s+aperture\b",
+        ):
+            if re.search(pattern, text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "AAC four-lens F-number-unpublished exact marker "
+                    f"{pattern!r} appeared"
+                )
+        if re.search(r"\bEmbodiment\s+2\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "AAC four-lens F-number-unpublished source gained a second "
+                "embodiment"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain the disclosed prescription
+        return attempt_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code="metadata_unpublished.system_f_number_absent",
+                detail=(
+                    "Tables 1-6 publish direct focal length, the complete four-lens/"
+                    "filter surface and eight-term asphere prescription, direct "
+                    "entrance-pupil diameter, image height, TTL and diagonal vision "
+                    "angle for the sole embodiment, but the exact retained "
+                    "publication gives no system F-number; entrance-pupil diameter "
+                    "is not substituted to derive one"
+                ),
+            ),
+        )
     ]
 
 

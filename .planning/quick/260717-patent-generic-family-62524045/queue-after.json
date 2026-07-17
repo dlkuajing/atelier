@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "result_set_sha256": "4b299a664c099f7b20d23f204d4f4538572d63539726c35f993f4316003cd784",
+  "ordering": [
+    "nonterminal_root_count_desc",
+    "item_count_desc",
+    "parser_layout_family_signature_ascending"
+  ],
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 133,
+      "affected_items": 133
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "61244801",
+    "root_id": "US-11287601",
+    "publication_id": "US-11287601-B2",
+    "layout_signature": "1d4d179f22873560d591583b851d758fb28044fbbb4fee8b2721e31e97faf1d8",
+    "raw_document_sha256": "7910d5bca19dc438a5ca8b159eb45327adc1e3aff91670babfde68745c4e8fd3",
+    "title": "Imaging lens assembly",
+    "affected_roots": 1,
+    "affected_items": 1
+  }
+}

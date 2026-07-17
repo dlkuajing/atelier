@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "family_id": "62524045",
+  "root_ids": [
+    "US-10775589"
+  ],
+  "publication_id": "US-10775589-B2",
+  "application_number": "16/101621",
+  "title": "Camera optical lens",
+  "applicant": "AAC Technologies Pte. Ltd.",
+  "assignee": "AAC Optics Solutions Pte. Ltd.",
+  "inventors": [
+    "SHI; Rongbao"
+  ],
+  "priority_records": [
+    "CN 2017 1 1415992 Dec. 25, 2017"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "outside_cohort_family_publications": 5,
+    "background_paragraphs": 2,
+    "drawing_description_paragraphs": 5,
+    "detailed_description_paragraphs": 57,
+    "drawing_declarations": 4,
+    "figure_panels": 4,
+    "source_tables": 6,
+    "formal_optical_embodiments": 1,
+    "ordered_surface_rows": 11,
+    "asphere_rows": 8,
+    "asphere_values_per_row": 8,
+    "inflexion_rows": 8,
+    "arrest_rows": 8,
+    "condition_rows": 6,
+    "claims": 5,
+    "classification_pdf_pages": 6,
+    "classification_drawing_sheets": 2,
+    "classification_specification_pages": 3,
+    "terminal_items": 1
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/c6d4c09d9645c9d8/US-10775589-B2.html",
+    "bytes": 27537,
+    "raw_characters": 27119,
+    "raw_document_sha256": "c6d4c09d9645c9d874c1fea89c865b1b98b4abc40ecc9607fbefa3dffd62a8ac",
+    "normalized_characters": 18844,
+    "normalized_text_sha256": "b1fdfcbb6cf77b97f72d148c328651ee5c5f735c1b3b9b58c62e522d38c5373a",
+    "section_markers": {
+      "background": "Background/Summary FIELD OF THE PRESENT DISCLOSURE (1)",
+      "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+      "detailed": "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS (6)",
+      "claims": "Claims 1. A camera optical lens comprising,"
+    },
+    "section_positions": {
+      "background": 2290,
+      "brief": 3888,
+      "detailed": 4623,
+      "claims": 17170
+    },
+    "section_lengths": {
+      "background": 1598,
+      "brief": 735,
+      "detailed": 12547,
+      "claims": 1674
+    },
+    "section_sha256": {
+      "background": "307d894fb243a41951699af2c0c1601bfb80e7ef7ded7c7c1a67f7443f194e8e",
+      "brief": "e0cd3bae8b10972060d3803cf24be52f55adca54cab4faa1b8ca424d05c85213",
+      "detailed": "367394623c37b5ea6981fd818a65c2351bc7a53cec19f343e4d88524c0971a3f",
+      "claims": "2ca8e202e9417df58b0bfaa8712b52c4039d1ed7b92e2cd3ea5632f77da98b19"
+    },
+    "paragraph_ranges": {
+      "background": [
+        1,
+        2
+      ],
+      "brief": [
+        1,
+        5
+      ],
+      "detailed": [
+        6,
+        62
+      ]
+    },
+    "figure_numbers": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "table_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "table_block_sha256": [
+      "377468f0e40f01552cbeb91e65b7d85cccb004062f89cdd8532c8fa5054b8995",
+      "11ce10a991c8ed6d822187fab2245131fbffc8450b052ff21b0a71c2ab57ea76",
+      "0888d81fcf97f8ef5dba5ccd2ead9e12b88eeed733584e3dfff58c428d3a9319",
+      "25d15d34290fac47020d5f0d909eb3a419c0a0f781325bc4933dad473b98da20",
+      "21e3de20b6331a3aafc90ae602568cdeb9edcdcf482d14186b4931da269dda76",
+      "da74309a0c2cc8159429a37e69b77b76de8161a60932a096e853655cece66e80"
+    ],
+    "formal_table_sha256": [
+      "ddae2df3ede0d83ba49e39d91860c2f6ef6752f9409c29f473af3fa6c98fa2b0",
+      "befd4cc6542d9ae7a622750d6bfe1dfdf0b53e14ee338dcc2bcf73dcbd4d4642",
+      "8916530e6a37de2c3955ec15b78bb37ce9b0c3334b294525688c571cf86dc52e",
+      "6a4e473faf434a21e8cb385baf0a9afbfe91088f96df75686297c7f571740b38",
+      "1d02f56a53d4ce55e84f868b7002e03d3c6313f82c785cdf32a7161e4de8aede",
+      "9200682fb54b5f25b8bd851b87d32ed280fffc0a23d3c29812074dc2894e37a0"
+    ],
+    "claim_range": [
+      1,
+      5
+    ]
+  },
+  "prescription_boundary": {
+    "lens_count": 4,
+    "filter_surface_count": 2,
+    "surface_radius_range": [
+      "R1",
+      "R10"
+    ],
+    "axial_distance_range": [
+      "d0",
+      "d10"
+    ],
+    "asphere_surface_range": [
+      "R1",
+      "R8"
+    ],
+    "asphere_terms": [
+      "k",
+      "A4",
+      "A6",
+      "A8",
+      "A10",
+      "A12",
+      "A14",
+      "A16"
+    ],
+    "system_focal_length_mm": 2.618,
+    "entrance_pupil_diameter_mm": 1.247,
+    "full_field_image_height_mm": 2.297,
+    "diagonal_field_angle_deg": 84.0,
+    "ttl_mm": 3.589,
+    "system_f_number_published": false,
+    "system_f_number_marker_counts": {
+      "F-number": 0,
+      "FNO": 0,
+      "F/#": 0,
+      "numerical aperture": 0
+    },
+    "derived_f_number_allowed": false,
+    "derivation_rejected": "system focal length divided by entrance-pupil diameter is not substituted for a directly published F-number",
+    "ordered_surface_prescription_published": true,
+    "direct_system_focal_length_published": true,
+    "direct_field_metadata_published": true,
+    "image_only_additional_prescription_found_in_pdf": false,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "cross_publication_values_borrowed": false
+  },
+  "terminal_outcome": {
+    "root_state": "terminal",
+    "terminal_status": "metadata_unpublished",
+    "terminal_items": 1,
+    "reason_code": "terminal.metadata_unpublished.system_f_number_absent",
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "4b299a664c099f7b20d23f204d4f4538572d63539726c35f993f4316003cd784",
+    "summary_sha256": "e385651ff7091d7b4196304d3137790697e02d2fb244627c4611c30f4dce27db",
+    "report_sha256": "b757d77e673a2d68ba246ea571b3a28c8c2fc3695e7205c36cb4a9f879cdbc38",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 145,
+      "parser_review_required": 321,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 128
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 551,
+      "parser_review_required": 1403,
+      "terminal": 1098
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-62524045/generic-residual-before-134.json",
+      "sha256": "c6c01e928cc81d85fa8170ec3db7b711553f7e8f880f0464dcafe0208aa3ebc0"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-62524045/generic-residual-after-1.json",
+      "sha256": "3d201d88347b39c0770e6e04115fecccef086c553904cbadc10afb421817a379"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-62524045/generic-residual-after-2.json",
+      "sha256": "3d201d88347b39c0770e6e04115fecccef086c553904cbadc10afb421817a379"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-62524045/queue-after.json",
+      "sha256": "5469479654c8712cd19ec62ce616bb07ae96c3bce6a06ec5902eb5d845a8c584"
+    }
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-62524045/family-62524045-raster-audit.json",
+    "sha256": "bcee805522434a390f3eb03207061731b8d3b3bf07abe95fa5872a439706034e"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-62524045/family-62524045-external-family-members.json",
+    "sha256": "d6c3cd7c26a808368413c8d07cd5a3ca9aa3536fd4e35a5cc1b9affa044c8d00"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-62524045/family-62524045-replay-determinism.json",
+    "sha256": "582cb18709031e10c346cf2687537f75b175860bb7c8a9e20d0c27687614b799"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-62524045/family-62524045-source-audit.md",
+    "sha256": "56ffc15caa45e01961d88ddd07c748f8fa1d928bbe521a4a9e0b262e27c4fc06"
+  },
+  "saturation_boundary": "This frozen root is source-proven metadata-unpublished terminal. Same-family external publications, all remaining parser buckets, staging intake, macro replay support and global source exhaustion remain open."
+}

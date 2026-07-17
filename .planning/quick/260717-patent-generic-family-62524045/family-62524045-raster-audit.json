@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "family_id": "62524045",
+  "root_ids": [
+    "US-10775589"
+  ],
+  "publication_id": "US-10775589-B2",
+  "application_number": "16/101621",
+  "independent_wrapper_check": {
+    "google": {
+      "url": "https://patents.google.com/patent/US10775589B2/en",
+      "checked_at_utc": "2026-07-17",
+      "http_status": 200,
+      "html": {
+        "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-google.html",
+        "bytes": 161865,
+        "sha256": "07ad82f88f33b06fe446b29da3a151f43f94dc86b5770a73bae0820c8d33c402",
+        "exact_publication_token_count": 21,
+        "exact_pdf_link_count": 2
+      },
+      "pdf_url": "https://patentimages.storage.googleapis.com/78/c6/7f/6026a3c195a260/US10775589.pdf",
+      "effect": "The exact wrapper corroborates identity and provides a text-layer mirror whose embedded page rasters equal the official publication 6/6; prescription truth remains bound to USPTO HTML and official rasters."
+    }
+  },
+  "official_pdf": {
+    "page_count": 6,
+    "page_image_count": 1,
+    "page_shape_counts": {
+      "3300x2560": 6
+    },
+    "page_structure": {
+      "cover_pages": [
+        1
+      ],
+      "drawing_page_range": [
+        2,
+        3
+      ],
+      "drawing_sheet_count": 2,
+      "figure_panel_count": 4,
+      "specification_pdf_page_range": [
+        4,
+        6
+      ],
+      "specification_column_number_range": [
+        1,
+        6
+      ],
+      "claims_pdf_pages": [
+        6
+      ],
+      "claims_column_numbers": [
+        6
+      ],
+      "table_pages": {
+        "5": [
+          1,
+          2,
+          3
+        ],
+        "6": [
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    "page_raster_sha256": [
+      "5112c1bfd196d48b847c6f44b1dbd9fb74f548559bbb2a7000a0b54b2959fd3d",
+      "8b181983d87fc6e3101fd07f790d44607deaab7905d3d95193416ca77a629e46",
+      "f56a9462a5964c9a1110ae60d1f6569f3357f3d3930851b22da171d855092304",
+      "8dafcde60e1046fd4581916bd3a5e3a517b8e4c0ab195a572039c4f0c41c2f5f",
+      "3fd1882f03e9882f53e05c4c589864e7f0d49639ca600794212a6aeef21c671f",
+      "b1b2ea0c321dd37148ccb7ce26162a68aa2460975fa57e6eaffdc2e622b37a31"
+    ],
+    "raster_set_sha256": "2762c90be9692599a1145f0f1aff62e832d3eab5c97bab991b15469bf24a8ff9",
+    "wrappers": {
+      "official-live-1": {
+        "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10775589",
+        "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-official-1.pdf",
+        "bytes": 350555,
+        "sha256": "99aa5b03c6243d5f261809f358e3e16f43fc22be1d4564953615969cccad46f0",
+        "text_characters_per_page": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "official-live-2": {
+        "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10775589?download=1",
+        "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-official-2.pdf",
+        "bytes": 350555,
+        "sha256": "00984880c7a17875467d4a26e04536344058d2ceb32f402eef2a7ca4db8f8558",
+        "text_characters_per_page": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "google-exact": {
+        "url": "https://patentimages.storage.googleapis.com/78/c6/7f/6026a3c195a260/US10775589.pdf",
+        "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-google.pdf",
+        "bytes": 523032,
+        "sha256": "cfaa168147a125235a844fe300e67c4ff13a3683ed672281eefd282021429374",
+        "text_characters_per_page": [
+          2437,
+          167,
+          190,
+          7153,
+          5202,
+          4568
+        ]
+      }
+    }
+  },
+  "same_position_raster_equality": {
+    "official-live-1_vs_official-live-2": {
+      "compared_pages": 6,
+      "equal_pages": 6
+    },
+    "official-live-1_vs_google-exact": {
+      "compared_pages": 6,
+      "equal_pages": 6
+    }
+  },
+  "retained_visual_audits": [
+    {
+      "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-contact-pages-1-6.png",
+      "bytes": 1474446,
+      "sha256": "45df422a0b58466f2e8ab0db3040967861938c6df30f162739d809c81bbdb103"
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-page-5.png",
+      "bytes": 750402,
+      "sha256": "c343b6f20704742b10521b48df87eca1f11ee8b14845a34faad3ccf315f6d68b"
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-62524045/source-review/US-10775589-B2-page-6.png",
+      "bytes": 699525,
+      "sha256": "de06d44ec9170ddbf5b9dc9f5fc9ec43e4345625dee9a894435577a536db3666"
+    }
+  ],
+  "source_truth_boundary": "USPTO HTML and two independently downloaded exact B2 official containers are primary. Google is a family/discovery mirror; its embedded rasters corroborate the official pages but its text layer is not used as optical numeric truth.",
+  "visual_conclusion": "All six page rasters, both drawing sheets, all four figure panels, all six tables and all five claims were inspected. The source publishes one ordered four-lens/filter prescription and direct focal length, entrance-pupil diameter, image height, TTL and diagonal field angle, but no direct system F-number."
+}
