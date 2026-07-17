@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "family_id": "100037253",
+  "root_id": "US-20260161906",
+  "publication_id": "US-20260161906-A1",
+  "identity": {
+    "application_number": "18/971924",
+    "applicant": "Zebra Technologies Corporation",
+    "inventors": ["Christopher P. Klicpera", "Nina Feinstein"],
+    "filed": "December 06, 2024",
+    "publication_date": "June 11, 2026",
+    "priority_or_related_application_disclosed": false
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/e5102e5dae5ccc64/US-20260161906-A1.html",
+    "bytes": 43143,
+    "raw_characters": 43014,
+    "raw_sha256": "e5102e5dae5ccc64bd4965edf4ed3539b7b4cdd3a7c24a37f70152be83c7eb21",
+    "normalized_characters": 38278,
+    "normalized_sha256": "e15433fd60dfcc20fc955afeee20e8df437ae0603e767f9222ae0be595f8d226"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_application_paragraphs": 0,
+    "background_numbered_paragraphs": 1,
+    "summary_numbered_paragraphs": 3,
+    "brief_numbered_paragraphs": 8,
+    "detailed_numbered_paragraphs": 26,
+    "claims": 20,
+    "declared_textual_figures": 5,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 3,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 3,
+    "replayed_ledger_items": 3,
+    "official_a1_pdf_pages": 12,
+    "official_a1_drawing_sheets": 5,
+    "source_label_discrepancies": 0
+  },
+  "sections": {
+    "abstract": {"position": 319, "characters": 1022, "sha256": "eb54ed7fdfd7e98135b15a87da3143c5995fd07138c45203f44b6ac39f479e4d"},
+    "background": {"position": 1341, "characters": 1145, "paragraphs": [1, 1], "sha256": "9edcf5c742a29f33f18cd14874fcce9b353d1418bbaa1947e591e929698f28b3"},
+    "summary": {"position": 2486, "characters": 3109, "paragraphs": [2, 4], "sha256": "b9d767b488afbf40e4775f9c4bea585d995a7960fb5a2b03e72e000f8fe60c0d"},
+    "brief": {"position": 5595, "characters": 2029, "paragraphs": [5, 12], "sha256": "cd6e05b664aed5ec95bcc0c1b5ff83796f9219a0e7866271ca547c5cc44ca395"},
+    "detailed": {"position": 7624, "characters": 24323, "paragraphs": [13, 38], "sha256": "e740ce0dc0e233addda3533f4d9c367b686b01b453015e1461c6d02cac56fbf7"},
+    "claims": {"position": 31947, "characters": 6331, "claims": [1, 20], "sha256": "46d866ee97bbd9d67a83b3faabed1a0c89caa19d464f685681d319e042b2de7c"}
+  },
+  "figures": ["1", "2", "3", "4", "5"],
+  "summary_items": [
+    {"paragraphs": [2, 2], "characters": 1236, "sha256": "8339458fb33cc8004185cebd77516edd181f0e6bbe5cb5ba8a8a75238415c9a6", "scope": "indicia reader apparatus"},
+    {"paragraphs": [3, 3], "characters": 882, "sha256": "6b2246261359e74906478101290834245709089612fafb52846e95f0ea5ef8b7", "scope": "indicia reader operating method"},
+    {"paragraphs": [4, 4], "characters": 980, "sha256": "77fa331472daeaaca5f22896fd437ff5476cf867c1a33526ffa61a43a24264db", "scope": "computer-readable medium"}
+  ],
+  "detailed_spans": [
+    {"paragraphs": [13, 20], "characters": 7571, "sha256": "d3399f2b64a1dc24a1768ef38d14a3e94baae6aeeb54a9d1fb240c6f60d80778", "scope": "reader form factors and generic imaging/illumination blocks"},
+    {"paragraphs": [21, 32], "characters": 8149, "sha256": "66ee5466a203b9f9d55ebec8db9c60474ca55041bb204a068cabf068bafbda14", "scope": "NPU display detection and dynamic operating modes"},
+    {"paragraphs": [33, 38], "characters": 8579, "sha256": "1051f2718c5bee36cc07158bec5bacbaeeaf378a4e5ecf1dd34b4b069c3e7fa9", "scope": "implementation and claim boilerplate"}
+  ],
+  "claim_families": [
+    {"claims": [1, 8], "characters": 2512, "sha256": "ecede22d954f56e8e4fb47a8d8f21835a9fed93f06d6924960ca32c22460160b", "scope": "indicia reader apparatus"},
+    {"claims": [9, 16], "characters": 2107, "sha256": "8a5614c294c83f2f872cb73d3b50e67150f595c2271dfa47a05af3fce577b1ce", "scope": "indicia reader operating method"},
+    {"claims": [17, 20], "characters": 1703, "sha256": "b2d839ff5fec393cbc79feae11bda93e269705232f0aed00c10acef1e5561c66", "scope": "computer-readable medium"}
+  ],
+  "prescription_marker_census": {
+    "focal length": 0,
+    "effective focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "FNO": 0,
+    "F/#": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "aspheric": 0,
+    "aspherical": 0,
+    "surface prescription": 0,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "surface no": 0,
+    "radius of curvature": 0,
+    "curvature radius": 0,
+    "thickness": 0,
+    "lens element": 0,
+    "field of view": 24,
+    "FOV": 6,
+    "field_context": "all occurrences are unnamed or symbolic reader coverage, never numeric angular field metadata",
+    "imaging lens assembly": 8,
+    "illumination lens": 1,
+    "optical imaging assembly": 3,
+    "image sensor": 23,
+    "illumination assembly": 10,
+    "working range": 3,
+    "NPU": 26,
+    "machine learning model": 16,
+    "cell-phone frame": 6,
+    "electronic display": 11
+  },
+  "items": [
+    {"embodiment_number": 1, "summary_paragraphs": [2, 2], "claims": [1, 8], "source_category": "indicia_reader_apparatus", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.indicia_reader_imaging_and_control_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 2, "summary_paragraphs": [3, 3], "claims": [9, 16], "source_category": "indicia_reader_operating_method", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.indicia_reader_operating_method_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 3, "summary_paragraphs": [4, 4], "claims": [17, 20], "source_category": "computer_readable_medium", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.indicia_reader_computer_readable_medium_only", "ordered_surface_prescription_rows": 0}
+  ],
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "reason": "The source functionally names an imaging lens assembly and symbolic field/working-range blocks but publishes only reader hardware, illumination, NPU/controller and mode-switching architecture; no ordered optical radius, spacing, material, conic, asphere or required numeric system metadata exists.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  }
+}

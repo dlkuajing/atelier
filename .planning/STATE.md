@@ -76,6 +76,23 @@ are 307 parser review, 148 mixed, 139 terminal and 25 converted; items are 1401 
 remains the largest executable bucket; deterministic ordering selects Family `100037253`
 (`US-20260161906-A1`) next. Parent/global patent saturation remains active and incomplete.
 
+**Patent saturation latest authoritative update (2026-07-17, Family 100037253):** This
+supersedes the Family 63246213 snapshot immediately above. Strict replay is 619/619 with
+missing=0, corrupt=0 and result set
+`d06a4e642a7a2e9f42f90b530e27b3f70f295385863cd67386e38616b2c71b7c`. Family `100037253`
+(`US-20260161906-A1`) reconciles three exact source items: an indicia-reader apparatus, its
+operating method and a computer-readable medium. The source functionally names imaging and
+illumination assemblies, an image sensor, NPU/controller and symbolic field/working-distance
+blocks, but publishes no ordered optical radius, spacing, material, conic, asphere or direct
+numeric angular-field prescription. All three items are source-proven confirmed-no-prescription
+terminals. The official A1 has 12 image-only pages and five drawing sheets; all decoded rasters,
+the contact sheet and nine critical pages were reviewed with no transcription, numeric derivation
+or cross-publication borrowing. Current roots are 306 parser review, 148 mixed, 140 terminal and
+25 converted; items are 1400 parser review, 1187 terminal, 561 staging and 28 conversion retry.
+Generic metadata is 116 roots/items and remains the largest executable bucket; deterministic
+ordering selects Family `38997638` (`US-7551370-B2`) next. Parent/global patent saturation
+remains active and incomplete.
+
 ## Current Position
 
 | Scope | Status |

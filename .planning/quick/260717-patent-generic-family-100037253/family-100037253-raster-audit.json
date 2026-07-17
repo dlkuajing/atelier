@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "family_id": "100037253",
+  "publication_id": "US-20260161906-A1",
+  "cross_publication_numeric_borrowing": false,
+  "numeric_derivation_from_rasters": false,
+  "official_pdf": {
+    "path": ".planning/quick/260717-patent-generic-family-100037253/source-review/US-20260161906-A1-official.pdf",
+    "bytes": 793085,
+    "sha256": "8a85c612091cb6b1b3392a6abccf389e3023960044528b696b3980f1692fdcd5",
+    "page_count": 12,
+    "decoded_raster_set_sha256": "a16b76847233605aa631eb7abe11ef7c7d6e6fac162f2481e0e0bfde1437d209",
+    "sections": {"cover": [1, 1], "drawings": [2, 6], "specification_and_claims": [7, 12]},
+    "pages": [
+      {"page": 1, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "fa721946c211dcb9c8bdad936ac74956bbf73916777114f20f11e4101c61c0c4"},
+      {"page": 2, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "a79305f941b88d218369363b941f98a3d62c3225a31003d63efb016bc57a60c8"},
+      {"page": 3, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "f0229cfe650c2e4d2c4c587dd07597063caa11b2205ae85da1373d059a961c4e"},
+      {"page": 4, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "dc3724df0b96b7dd83a567a053ceed7c1d3c74e6a6d2ee0fa51934e8931cfa10"},
+      {"page": 5, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "7d3ae8f2990223b04330021b8dbb5d535fda96b28ce59d1874694f42751fbee8"},
+      {"page": 6, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "ba34425b243bc33cc5f18456b8bc6046c247f439d8f7e86ebf8600626a2cde21"},
+      {"page": 7, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "2a0867d26dfaaf27054720bedc92b6792a21be62d497699eca46cdfca9f366ca"},
+      {"page": 8, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "6c912cf8ac1565d37eea054d7876c0beabea385b513a1aa5ad1faa87e6414959"},
+      {"page": 9, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "41e318872ae7bcb73bc94fc1353b5256c6b40aab84dc4b7fba62748fe21dbfc0"},
+      {"page": 10, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "e2e2aa0832d268409391d03a3b6f39ebaad83dd352218108f0ced690a065e939"},
+      {"page": 11, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "7e2502eb9e277c2e50329791bbaf3613199cb2e02a84152c3e6a556451126bfd"},
+      {"page": 12, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "a0ee44a61dbd4da0fb4279026c3e47f93e5a73fc323b545db95df4a5a5561683"}
+    ]
+  },
+  "visual_review": {
+    "all_page_contact_reviewed": true,
+    "contact": {
+      "path": ".planning/quick/260717-patent-generic-family-100037253/source-review/US-20260161906-A1-contact.png",
+      "bytes": 2182092,
+      "sha256": "4fb7592b5c2f3a83b20b4edceca7d5b1b7099c00971610b484da7a2373fe66df"
+    },
+    "critical_pages": [
+      {"page": 2, "bytes": 122282, "sha256": "8f754d268dca7767ea9e23fff197afa68bd8891b03dd3f6a2b85364e4238e774", "finding": "FIG. 1 is handheld-reader housing architecture."},
+      {"page": 3, "bytes": 96937, "sha256": "280e413c429f88547e4267cdbb53bd4df17dcfe69e2db2c9ae250e06b6917152", "finding": "FIG. 2 is presentation-reader housing and field-of-view architecture."},
+      {"page": 4, "bytes": 72776, "sha256": "6abfab1f947e807aa3f1d3abce9f6b3b69a3c23e977d72a58716935052bba4ba", "finding": "FIG. 3 is mobile-device/data-capture-module placement."},
+      {"page": 5, "bytes": 75278, "sha256": "2d806f3c1376586a2bc58ceeafa4aca79ae977bec04b6f7af7c6dec6aae0e04f", "finding": "FIG. 4 is a block diagram; imaging lens assembly 404 and illumination lens 412 are unparameterized boxes with symbolic WD1/WD2 only."},
+      {"page": 6, "bytes": 87730, "sha256": "1cf7043aac6c0d086a6fcaedefafe9296bc05095c3c82f0cb19afb496f37e7d0", "finding": "FIG. 5 is the NPU-driven cell-phone-versus-printed-indicia mode flowchart."},
+      {"page": 7, "bytes": 248458, "sha256": "8319f8f1166b9fb64852e7151788cb79ca9aed6d2b028e11c47be1ef051ac6c8", "finding": "Specification page 1 starts the same architecture-only disclosure."},
+      {"page": 9, "bytes": 265064, "sha256": "eb9923deb83a44fc9a0e43596ab870cbea8e6489b3490ada171be63ec451e1a8", "finding": "Specification page 3 describes NPU display detection and reader-mode changes, not lens design."},
+      {"page": 11, "bytes": 237121, "sha256": "5d77c173e157e68245942973919823be27028f9a1f34a936d7f2d55afceffff0", "finding": "Claims 1-12 bind apparatus and method architecture with a functionally named imaging lens assembly."},
+      {"page": 12, "bytes": 109045, "sha256": "88666bee4d6d345861d495e5a92d02f03d1f09ae47c29f322a95c6e03a34965c", "finding": "Claims 13-20 close the method and computer-readable-medium families without an optical prescription."}
+    ],
+    "ordered_optical_prescription_present": false,
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false
+  }
+}

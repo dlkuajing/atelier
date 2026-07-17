@@ -513,6 +513,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_zebra_indicia_reader_dynamic_mode_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8707,6 +8715,136 @@ _LARGAN_LIGHT_BLOCKING_SHEET_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "will not affect the focal length of the optical lens set 800": 1,
         },
     },
+}
+_ZEBRA_INDICIA_READER_DYNAMIC_MODE_ITEMS = (
+    (
+        1,
+        "Zebra dynamic-mode indicia reader apparatus",
+        "confirmed_no_prescription."
+        "indicia_reader_imaging_and_control_architecture_only",
+    ),
+    (
+        2,
+        "Zebra dynamic-mode indicia reader operating method",
+        "confirmed_no_prescription.indicia_reader_operating_method_only",
+    ),
+    (
+        3,
+        "Zebra dynamic-mode indicia reader computer-readable medium",
+        "confirmed_no_prescription."
+        "indicia_reader_computer_readable_medium_only",
+    ),
+)
+_ZEBRA_INDICIA_READER_DYNAMIC_MODE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260161906-A1": {
+        "raw_document_sha256": (
+            "e5102e5dae5ccc64bd4965edf4ed3539b7b4cdd3a7c24a37f70152be83c7eb21"
+        ),
+        "normalized_text_sha256": (
+            "e15433fd60dfcc20fc955afeee20e8df437ae0603e767f9222ae0be595f8d226"
+        ),
+        "section_markers": {
+            "abstract": "Abstract The present disclosure",
+            "background": "BACKGROUND [0001]",
+            "summary": "SUMMARY [0002]",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS [0005]",
+            "detailed": "DETAILED DESCRIPTION [0013]",
+            "claims": "Claims 1 . An indicia reader",
+        },
+        "section_sha256": {
+            "abstract": (
+                "eb54ed7fdfd7e98135b15a87da3143c5995fd07138c45203f44b6ac39f479e4d"
+            ),
+            "background": (
+                "9edcf5c742a29f33f18cd14874fcce9b353d1418bbaa1947e591e929698f28b3"
+            ),
+            "summary": (
+                "b9d767b488afbf40e4775f9c4bea585d995a7960fb5a2b03e72e000f8fe60c0d"
+            ),
+            "brief": (
+                "cd6e05b664aed5ec95bcc0c1b5ff83796f9219a0e7866271ca547c5cc44ca395"
+            ),
+            "detailed": (
+                "e740ce0dc0e233addda3533f4d9c367b686b01b453015e1461c6d02cac56fbf7"
+            ),
+            "claims": (
+                "46d866ee97bbd9d67a83b3faabed1a0c89caa19d464f685681d319e042b2de7c"
+            ),
+        },
+        "paragraph_ranges": {
+            "background": (1, 1),
+            "summary": (2, 4),
+            "brief": (5, 12),
+            "detailed": (13, 38),
+        },
+        "summary_item_sha256": (
+            "8339458fb33cc8004185cebd77516edd181f0e6bbe5cb5ba8a8a75238415c9a6",
+            "6b2246261359e74906478101290834245709089612fafb52846e95f0ea5ef8b7",
+            "77fa331472daeaaca5f22896fd437ff5476cf867c1a33526ffa61a43a24264db",
+        ),
+        "detailed_span_sha256": {
+            (13, 20): (
+                "d3399f2b64a1dc24a1768ef38d14a3e94baae6aeeb54a9d1fb240c6f60d80778"
+            ),
+            (21, 32): (
+                "66ee5466a203b9f9d55ebec8db9c60474ca55041bb204a068cabf068bafbda14"
+            ),
+            (33, 38): (
+                "1051f2718c5bee36cc07158bec5bacbaeeaf378a4e5ecf1dd34b4b069c3e7fa9"
+            ),
+        },
+        "claim_ranges": ((1, 8), (9, 16), (17, 20)),
+        "claim_span_sha256": (
+            "ecede22d954f56e8e4fb47a8d8f21835a9fed93f06d6924960ca32c22460160b",
+            "8a5614c294c83f2f872cb73d3b50e67150f595c2271dfa47a05af3fce577b1ce",
+            "b2d839ff5fec393cbc79feae11bda93e269705232f0aed00c10acef1e5561c66",
+        ),
+        "claim_numbers": tuple(range(1, 21)),
+        "identity_markers": {
+            "United States Patent Application Publication 20260161906": 1,
+            "Kind Code A1": 1,
+            "Publication Date June 11, 2026": 1,
+            "Dynamic Activation of Mobile Phone Frames in an Indicia Reader": 1,
+            "Applicant: Zebra Technologies Corporation (Lincolnshire, IL)": 1,
+            "Family ID: 100037253": 1,
+            "Appl. No.: 18/971924": 1,
+            "Filed: December 06, 2024": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "F/#": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+            "radius of curvature": 0,
+            "curvature radius": 0,
+            "thickness": 0,
+            "lens element": 0,
+        },
+        "source_scope_phrase_counts": {
+            "field of view": 24,
+            "FOV": 6,
+            "imaging lens assembly": 8,
+            "illumination lens": 1,
+            "optical imaging assembly": 3,
+            "image sensor": 23,
+            "illumination assembly": 10,
+            "working range": 3,
+            "NPU": 26,
+            "machine learning model": 16,
+            "cell-phone frame": 6,
+            "electronic display": 11,
+        },
+    }
 }
 _CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
 _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT = (
@@ -26043,6 +26181,218 @@ def _classify_largan_light_blocking_sheet_architecture_only_attempts(
             ),
         )
         for number, label, group in _LARGAN_LIGHT_BLOCKING_SHEET_ITEMS
+    ]
+
+
+def _classify_zebra_indicia_reader_dynamic_mode_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 100037253 indicia-reader architecture items."""
+
+    profile = _ZEBRA_INDICIA_READER_DYNAMIC_MODE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _ZEBRA_INDICIA_READER_DYNAMIC_MODE_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Zebra indicia-reader official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Zebra indicia-reader normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Zebra indicia-reader identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Zebra indicia-reader section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Zebra indicia-reader section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Zebra indicia-reader {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]\s", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"Zebra indicia-reader {section_name} paragraph denominator changed"
+                )
+
+        def numbered_paragraphs(section: str) -> dict[int, str]:
+            matches = list(re.finditer(r"\[(\d{4})\]\s", section))
+            return {
+                int(match.group(1)): section[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section)
+                    )
+                ]
+                for index, match in enumerate(matches)
+            }
+
+        summary_paragraphs = numbered_paragraphs(sections["summary"])
+        summary_digests = tuple(
+            hashlib.sha256(summary_paragraphs[number].strip().encode("utf-8")).hexdigest()
+            for number in range(2, 5)
+        )
+        if summary_digests != profile["summary_item_sha256"]:
+            raise PatentParseError(
+                "Zebra indicia-reader three-summary-item denominator changed"
+            )
+
+        detailed_paragraphs = numbered_paragraphs(sections["detailed"])
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                detailed_paragraphs[number] for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Zebra indicia-reader detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Zebra indicia-reader claims 1-20 denominator changed")
+        claims = {
+            int(match.group(1)): sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ]
+            for index, match in enumerate(claim_matches)
+        }
+        claim_span_digests = []
+        for start, end in profile["claim_ranges"]:
+            span = "".join(claims[number] for number in range(start, end + 1))
+            claim_span_digests.append(
+                hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            )
+        if tuple(claim_span_digests) != profile["claim_span_sha256"]:
+            raise PatentParseError(
+                "Zebra indicia-reader three-claim-family denominator changed"
+            )
+
+        figure_declarations = tuple(
+            int(number)
+            for number in re.findall(
+                r"\[\d{4}\]\s+FIG\.\s*(\d+)\s+(?:illustrates|is)\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_declarations != tuple(range(1, 6)):
+            raise PatentParseError("Zebra indicia-reader five-figure denominator changed")
+        if _patent_table_blocks(text):
+            raise PatentParseError("Zebra indicia-reader zero-table denominator changed")
+        if len(re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)) != 0:
+            raise PatentParseError("Zebra indicia-reader formula denominator changed")
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Zebra indicia-reader prescription phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Zebra indicia-reader scope phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all three exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact apparatus claim publishes an indicia-reader housing, image sensor, "
+        "functionally named imaging lens assembly, illumination assembly, NPU and "
+        "controller mode-switching architecture; it contains no ordered optical "
+        "surface prescription or required system metadata",
+        "the exact method claim publishes capture, display detection and reader-mode "
+        "switching operations only; it contains no independent optical prescription",
+        "the exact computer-readable-medium claim publishes instructions for capture, "
+        "display detection and reader-mode switching only; it contains no independent "
+        "optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _ZEBRA_INDICIA_READER_DYNAMIC_MODE_ITEMS
     ]
 
 
