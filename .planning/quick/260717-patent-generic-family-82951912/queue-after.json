@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "df9054f7d29128d7d9db857916c547ca7ce91b7a7a341876e1f3e3e31ca60780",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 119,
+      "affected_items": 119
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "80893318",
+    "root_ids": [
+      "US-12461279"
+    ],
+    "publication_ids": [
+      "US-12461279-B2"
+    ],
+    "application_number": "17/711168",
+    "title": "Plastic light-folding element, imaging lens assembly module and electronic device",
+    "layout_signature": "2ec408184be84f998b310f5f18828007f2100533407c1c462c56604e50ae0173",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 3,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/abdc62e122533c4e/US-12461279-B2.html",
+      "sha256": "abdc62e122533c4e77bac703c31ba41385de1caff48874b1431dac5b034a4ae2"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

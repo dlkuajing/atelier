@@ -497,6 +497,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_optical_reflecting_assembly_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8099,6 +8107,194 @@ _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_SOURCE_PROFILES: dict[
             "raster_set_sha256": (
                 "10c6756f29af027b98e60fe72308c0b8804a4f4d4427092f111966976c39a125"
             ),
+        },
+    },
+}
+_LARGAN_OPTICAL_REFLECTING_ASSEMBLY_ITEMS = (
+    (1, "Largan optical-reflecting assembly first embodiment"),
+    (2, "Largan structure-component second embodiment"),
+    (3, "Largan optical-reflecting assembly third embodiment"),
+    (4, "Largan structure-component fourth embodiment"),
+    (5, "Largan optical-reflecting assembly fifth embodiment"),
+    (6, "Largan structure-component sixth embodiment"),
+    (7, "Largan optical-reflecting assembly seventh embodiment"),
+    (8, "Largan smartphone multi-camera electronic-device eighth embodiment"),
+    (9, "Largan AR head-mounted-display electronic-device ninth embodiment"),
+)
+_LARGAN_OPTICAL_REFLECTING_ASSEMBLY_FIGURES = (
+    "1A",
+    "1B",
+    "10",
+    "1D",
+    "1E",
+    "1F",
+    "1G",
+    "1H",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "3E",
+    "3F",
+    "3G",
+    "3H",
+    "3I",
+    "4",
+    "5A",
+    "5B",
+    "5C",
+    "5D",
+    "5E",
+    "5F",
+    "5G",
+    "6",
+    "7A",
+    "7B",
+    "8A",
+    "8B",
+    "9A",
+    "9B",
+    "9C",
+)
+_LARGAN_OPTICAL_REFLECTING_ASSEMBLY_REASON_CODE = (
+    "confirmed_no_prescription."
+    "optical_reflecting_holder_structure_architecture_only"
+)
+_LARGAN_OPTICAL_REFLECTING_DEVICE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "electronic_device_multi_camera_placement_architecture_only"
+)
+_LARGAN_OPTICAL_REFLECTING_AR_REASON_CODE = (
+    "confirmed_no_prescription.ar_head_mounted_display_architecture_only"
+)
+_LARGAN_OPTICAL_REFLECTING_ASSEMBLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12591109-B2": {
+        "raw_document_sha256": (
+            "862996927fdd600646901ffc9a8e81f686b62949fca143201d665b3dc14390a7"
+        ),
+        "normalized_text_sha256": (
+            "3b6dbaf54bd5c36c9f2ef26c6c2a58478aa3d6de4307b64911224d6bc254e8b3"
+        ),
+        "section_markers": {
+            "background": "BACKGROUND",
+            "summary": "SUMMARY",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION",
+            "claims": "Claims 1 . An optical reflecting assembly, comprising:",
+        },
+        "section_sha256": {
+            "background": (
+                "4cf9c2aa511df33dd509ff56efb701b2e1395745a814d5a46d32d7ecc9941df8"
+            ),
+            "summary": (
+                "7bbb46cc28bc624e0b3b309b9aec625ed8930d2c60b874c0a1ecae5cd0244196"
+            ),
+            "brief": (
+                "0331a92af96debb8dd0f0adf6ba6577a90f323aab9adfdea4a933d8a1596d8bc"
+            ),
+            "detailed": (
+                "c00cd40608ecca6ece34dd384f45cea348d7e88442bf6fbb60fec9644c48fdbc"
+            ),
+            "claims": (
+                "240c8bb52542c99e036120f58f7b701e897d714eff29d25f48ac984bca58c141"
+            ),
+        },
+        "paragraph_ranges": {
+            "background": (1, 3),
+            "summary": (4, 6),
+            "brief": (1, 35),
+            "detailed": (36, 131),
+        },
+        "detailed_span_sha256": {
+            (36, 60): (
+                "47e8ecf044d047bb8029195f7d29479f20c693ee19f07966b2a40f32cbcedef3"
+            ),
+            (61, 75): (
+                "4f6ced6e12e4dfcabbe942f60697abea4876b70147025ef1ab8586dff6938b39"
+            ),
+            (76, 79): (
+                "887db943d7f176eac41086f2f659b2164166dd62b066ab64eae5a25e5fb59bad"
+            ),
+            (80, 93): (
+                "bc89f959a1c78aabaa525cc769f737c41b2ba6fa99a02a01d299b06ad0aacd8f"
+            ),
+            (94, 97): (
+                "e3c51a505b524992ab89919f610992fee9b1110bd813aec9f527175f282708df"
+            ),
+            (98, 111): (
+                "32fea7b630253dec160e22df6131ba49f3268fee61e0ea96f56fccae860b08d8"
+            ),
+            (112, 115): (
+                "d8d8fac14b7ce53ff0e98c1bb0ea5abfc86292804cdf21d2fb6392d0d4152571"
+            ),
+            (116, 119): (
+                "a411233228d129a1afa58cfb924388f9ef4f4ceaba33d6ecf92f29202b50f198"
+            ),
+            (120, 126): (
+                "7f9eb4e5ff613a3f7ded82f5b94bacd82eb04c0eacc41be6c3f99de08c54bd5d"
+            ),
+            (127, 130): (
+                "d31bbed8bf4aabe4cc90a7e6cee2b2584a1b642f68cbfcfe6db8adff9034b05e"
+            ),
+            (131, 131): (
+                "f8bfb8b0cdb13032602644bc9f4fee11702af9d6ba012b71247d9164a7e30a7a"
+            ),
+        },
+        "embodiment_ranges": (
+            (61, 75),
+            (76, 79),
+            (80, 93),
+            (94, 97),
+            (98, 111),
+            (112, 115),
+            (116, 119),
+            (120, 126),
+            (127, 130),
+        ),
+        "claim_numbers": tuple(range(1, 19)),
+        "identity_markers": {
+            "United States Patent 12591109": 1,
+            "Kind Code B2": 1,
+            "Date of Patent March 31, 2026": 1,
+            "Family ID: 82951912": 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Assignee: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Appl. No.: 17/930078": 1,
+            "Filed: September 07, 2022": 1,
+            "US 20230098359 A1 Mar. 30, 2023": 1,
+            "US 63247818 20210924": 1,
+        },
+        "table_payload_sha256": (
+            "e1f6dc941aef17ffac4ed81e45c99b9421148225d83f3920fe117605530d710d",
+            "49af56bcb746be07b3ad36023f1a7ff24a2a03c13a5e57f74d9536b65a38341e",
+            "b0dd3e1be5a41ff016d79fd7c741eca5486437a0345f5218ce7e8b4bb4ff3ce3",
+        ),
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "effective focal length": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+        },
+        "mechanical_phrase_counts": {
+            (
+                "can be a round corner, and a radius of curvature of the round "
+                "corner is related to the angle of the bending"
+            ): 4,
+            (
+                "metal plate with a thickness of 0.15 mm by the stamping process"
+            ): 4,
         },
     },
 }
@@ -24878,6 +25074,297 @@ def _classify_largan_nanostructure_transmittance_architecture_only_attempts(
             ),
         )
         for number, label in _LARGAN_NANOSTRUCTURE_TRANSMITTANCE_ITEMS
+    ]
+
+
+def _largan_optical_reflecting_table_rows(
+    raw_text: str,
+) -> tuple[tuple[str, float, float, float], ...]:
+    """Return the three exact mechanical TABLE rows from Family 82951912."""
+
+    text = normalize_patent_text(raw_text)
+    rows: list[tuple[str, float, float, float]] = []
+    for table_number in range(1, 4):
+        match = re.search(
+            rf"TABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+            r"(\S+\s+Embodiment)\s+\S*\.sub\.S\s+\(degree\)\s+"
+            rf"({NUMBER_PATTERN})\s+\S*\.sub\.E\s+\(degree\)\s+"
+            rf"({NUMBER_PATTERN})\s+D\.sub\.R\s+\(mm\)\s+({NUMBER_PATTERN})",
+            text,
+            re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Largan optical-reflecting TABLE {table_number} payload changed"
+            )
+        rows.append(
+            (
+                match.group(1),
+                float(match.group(2)),
+                float(match.group(3)),
+                float(match.group(4)),
+            )
+        )
+    return tuple(rows)
+
+
+def _classify_largan_optical_reflecting_assembly_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 82951912 reflecting-holder architecture items."""
+
+    profile = _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan optical-reflecting-assembly official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan optical-reflecting-assembly normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan optical-reflecting identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan optical-reflecting-assembly section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan optical-reflecting-assembly section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan optical-reflecting {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\((\d+)\)\s", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    "Largan optical-reflecting "
+                    f"{section_name} paragraph denominator changed"
+                )
+
+        detailed = sections["detailed"]
+        paragraph_matches = list(re.finditer(r"\((\d+)\)\s", detailed))
+        paragraphs = {
+            int(match.group(1)): detailed[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(detailed)
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(paragraphs[number] for number in range(start, end + 1))
+            observed_digest = hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan optical-reflecting detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        ordinal_markers = (
+            "1st",
+            "2nd",
+            "3rd",
+            "4th",
+            "5th",
+            "6th",
+            "7th",
+            "8th",
+            "9th",
+        )
+        for ordinal, bounds in zip(
+            ordinal_markers,
+            profile["embodiment_ranges"],
+            strict=True,
+        ):
+            start, end = bounds
+            item_text = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(
+                re.findall(
+                    rf"according to the {ordinal} embodiment",
+                    item_text,
+                    re.IGNORECASE,
+                )
+            ) < 1:
+                raise PatentParseError(
+                    f"Largan optical-reflecting {ordinal} embodiment binding changed"
+                )
+
+        figure_declarations = tuple(
+            f"{number}{suffix.upper()}"
+            for number, suffix in re.findall(
+                r"FIG\.\s*(\d+)\s*([A-Z]?)\s+is\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_declarations != _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_FIGURES:
+            raise PatentParseError(
+                "Largan optical-reflecting 34-figure declaration denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan optical-reflecting claims 1-18 denominator changed"
+            )
+
+        table_rows = _largan_optical_reflecting_table_rows(raw_text)
+        if table_rows != (
+            ("1st Embodiment", 90.0, 102.0, 0.76),
+            ("3th Embodiment", 135.0, 113.0, 0.21),
+            ("5th Embodiment", 105.0, 98.0, 0.16),
+        ):
+            raise PatentParseError(
+                "Largan optical-reflecting mechanical TABLE values changed"
+            )
+        table_payloads = tuple(
+            match.group()
+            for match in re.finditer(
+                rf"TABLE-US-\d{{5}}\s+TABLE\s+\d+\s+\S+\s+Embodiment\s+"
+                r"\S*\.sub\.S\s+\(degree\)\s+"
+                rf"{NUMBER_PATTERN}\s+\S*\.sub\.E\s+\(degree\)\s+"
+                rf"{NUMBER_PATTERN}\s+D\.sub\.R\s+\(mm\)\s+{NUMBER_PATTERN}",
+                text,
+                re.IGNORECASE,
+            )
+        )
+        table_digests = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        )
+        if table_digests != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "Largan optical-reflecting three-table payload denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan optical-reflecting prescription phrase {phrase!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["mechanical_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan optical-reflecting mechanical phrase {phrase!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+        if len(re.findall(r"radius of curvature", text, re.IGNORECASE)) != 4:
+            raise PatentParseError(
+                "Largan optical-reflecting radius-of-curvature context changed"
+            )
+        if len(re.findall(r"\bthickness\b", text, re.IGNORECASE)) != 4:
+            raise PatentParseError(
+                "Largan optical-reflecting thickness context changed"
+            )
+        if len(_patent_table_blocks(text)) != 3:
+            raise PatentParseError(
+                "Largan optical-reflecting source table denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all nine exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact optical-reflecting or structure-component embodiment publishes "
+        "reflector-holder, insert-molded metal support, bending-angle and mechanical "
+        "clearance architecture only; it publishes no ordered optical surface "
+        "prescription",
+        "the exact eighth embodiment publishes smartphone placement for four camera "
+        "modules and reuses the preceding reflecting architecture; it publishes no "
+        "eighth optical prescription",
+        "the exact ninth embodiment publishes an AR head-mounted-display wrapper and "
+        "reuses the preceding reflecting architecture; it publishes no ninth optical "
+        "prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_REASON_CODE
+                    if number <= 7
+                    else _LARGAN_OPTICAL_REFLECTING_DEVICE_REASON_CODE
+                    if number == 8
+                    else _LARGAN_OPTICAL_REFLECTING_AR_REASON_CODE
+                ),
+                detail=details[0 if number <= 7 else number - 7],
+            ),
+        )
+        for number, label in _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_ITEMS
     ]
 
 
