@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `dbbdf20c8ab4beb1c30abd1aeb8ea6b4752e32ce7f740404fad21f6aa16f834d`
+- result_set_sha256: `473b2a42b1efa8b19278a62d501b00e40436c9b89ba8393ff71bb98d50bebfec`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 551
 - `terminal`: 1108
-- `parser_review_required`: 1402
+- `parser_review_required`: 1409
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1402
+- `parser_review_required.deterministic_parser_rejected`: 1409
 - `terminal.process_receipt_classified`: 734
 - `converted_pending_intake.process_isolated_zmx_ready`: 551
 - `terminal.metadata_unpublished.system_f_number_absent`: 70
@@ -137,7 +137,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `sunny_embodiment_metadata_missing`: 177
 - `aac_raytech_summary_metadata_missing`: 174
-- `generic_summary_metadata_missing`: 130
+- `generic_summary_metadata_missing`: 129
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
 - `asphere_section_missing`: 65
@@ -154,6 +154,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_folded_macro_tele_system_n_whole_system_focal_token_f_is_not_officially_defined_as_efl`: 9
 - `other_asphere_table_label_token_confidence_n_is_below_n`: 8
 - `other_sunny_sto_value_is_not_numeric_surface`: 8
+- `ofilm_odd_power_asphere_unsupported`: 7
 - `other_kantatsu_example_n_surface_table_unit_is_nm_not_mm`: 7
 - `other_kantatsu_inline_example_n_object_image_rows_are_incomplete`: 7
 - `other_optical_metadata_label_fno_has_n_exact_ocr_prefixes_asphere_table_label_token_confidence_n_is_below_n`: 7
@@ -216,6 +217,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sunny_asphere_row_s5_has_more_values_than_headers_token`: 2
 - `other_sunny_long_focus_embodiment_n_publishes_p1_p2_mirrors_signed_coordinate_reversals_and_unlabeled_coordinate_0b6d77e09f4d`: 2
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r4_a2_n`: 2
+- `ofilm_first_embodiment_missing_radii_and_odd_asphere`: 1
 - `other_ability_ol1_asphere_cells_are_not_independently_classified_fail_closed`: 1
 - `other_ability_three_lens_row_s3_has_incomplete_material_data`: 1
 - `other_asphere_table_has_n_exact_surface_headers`: 1

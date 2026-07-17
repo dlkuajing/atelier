@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "root_id": "US-20260072245",
+  "publication_id": "US-20260072245-A1",
+  "normalization_rule": "remove only result_attempt before canonical JSON hashing",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260072245/attempt-0002/result.json",
+      "bytes": 6990,
+      "file_sha256": "985342f1ef719963ab6786227b4f4a9b3d116518776654b48ebf58cda9f57e6f"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260072245/attempt-0003/result.json",
+      "bytes": 6990,
+      "file_sha256": "2c956c9c308025eea6f013bee649ff7240fc73d54112ad919b189a45210cba9c"
+    }
+  ],
+  "semantic_sha256": "c2794e64b18b6dedb53e73e610d39f8d99ff09f19e62c31aaeab209a1dd125d2",
+  "semantic_equal": true,
+  "root_state": "parser_review_required",
+  "root_reason_code": "parser_review_required.all_disclosed_items_rejected",
+  "item_count": 8,
+  "item_state": "parser_review_required",
+  "conversion_requests": 0,
+  "conversion_receipts": 0,
+  "prescription_fingerprints": 0,
+  "candidate_zmx": 0
+}

@@ -449,6 +449,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_ofilm_four_lens_odd_asphere_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
@@ -7049,6 +7055,149 @@ _FOLDED_CAMERA_QCON_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             ),
             "raster_set_sha256": (
                 "6017cc18f7abe57255691b58236a897a3fdb4a005b802d3cf56f3a8b743fbeb5"
+            ),
+        },
+    }
+}
+_OFILM_FOUR_LENS_ODD_ASPHERE_ITEMS = (
+    (1, "OFILM four-lens first embodiment", (77, 86), (1, 2), 1, 2),
+    (2, "OFILM four-lens second embodiment", (87, 92), (3, 4), 3, 4),
+    (3, "OFILM four-lens third embodiment", (93, 98), (5, 6), 5, 6),
+    (4, "OFILM four-lens fourth embodiment", (99, 104), (7, 8), 7, 8),
+    (5, "OFILM four-lens fifth embodiment", (105, 109), (9, 10), 9, 10),
+    (6, "OFILM four-lens sixth embodiment", (110, 115), (11, 12), 11, 12),
+    (7, "OFILM four-lens seventh embodiment", (116, 121), (13, 14), 13, 14),
+    (8, "OFILM four-lens eighth embodiment", (122, 127), (15, 16), 15, 16),
+)
+_OFILM_FOUR_LENS_ODD_ASPHERE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260072245-A1": {
+        "raw_document_sha256": (
+            "0af7d9d9554ea04184d35858fe9f4134a0a9be1d166a1c3a6a47587aca65e257"
+        ),
+        "normalized_text_sha256": (
+            "0b9bf12f7656a75dc47ffdf115957d189b9b80e0c85a532350fb7576ccf2a704"
+        ),
+        "family_id": "94050343",
+        "application_number": "19/023962",
+        "priority_application": "CN 202411281039.5",
+        "section_markers": {
+            "abstract": (
+                "Abstract An optical lens, a camera module, and a terminal device "
+                "are provided."
+            ),
+            "background_summary": "Background/Summary FIELD [0001]",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0010]",
+            "detailed": "DETAILED DESCRIPTION [0029]",
+            "claims": "Claims 1 . An optical lens",
+        },
+        "section_sha256": {
+            "abstract": (
+                "fecec5d9c9190579616ac546e0033194ccd1a711e1e06915d8bf01ff984e7df5"
+            ),
+            "background_summary": (
+                "90859b3b78c8936f8eb145adb606d0bc4ba9bd14a87ec59a09ed61a502f0fdfe"
+            ),
+            "brief": (
+                "6e58590263da2a308d6d5c86318c1b04babdeac6cbc618810577b187397f220f"
+            ),
+            "detailed": (
+                "66e5c325350dbc5b43944d7076ddd91c7343f6a0f64263ae07bfe99e02ec4b4d"
+            ),
+            "claims": (
+                "87ec1a6e594125dc18e4d5d8bbd66350f420717b89f81f4cb4fd6e515b521da5"
+            ),
+        },
+        "paragraph_ranges": {
+            "background_summary": (1, 9),
+            "brief": (10, 28),
+            "detailed": (29, 131),
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "identity_markers": {
+            "OPTICAL LENS, CAMERA MODULE, AND TERMINAL DEVICE": 1,
+            "Family ID: 94050343": 1,
+            "Appl. No.: 19/023962": 1,
+            "Takashi; Sugiyama": 2,
+            "Jiangxi OFILM Optical Co.,Ltd.": 1,
+            "CN 202411281039.5": 1,
+        },
+        "table_block_sha256": {
+            1: "72a8bcf4074d3604aa4d54404e6c70f6fb679c5986af6e2ed6c2d4eae11d5444",
+            2: "140090b23aede15bd1e1d7ecd3624a9b2f39b06b04953438f30def909b1a83eb",
+            3: "d0445577f2dcc30db980410ac4e717c7a5ad988a2a082385a69cbaca51a0959e",
+            4: "a54fdb041357bc38a5488ffab90b6648a8f1172bd1baf98037b765c5a04b7a1e",
+            5: "072228ce45f94fd94052fd0e1b4891273a17a93f0ae83c939c64eb50d02031fc",
+            6: "68e1d074a99f821722bff476aed1e497175faefbde6a41f2b15ca30b96b59eb3",
+            7: "f9833696ef000d2d6f1f1154b12a83a3fdb7a3ad4f1c977c865fe3ab2e1896be",
+            8: "7add843b0e66b3b9e6754cc62fd2a5cb8ae5bc501b9b40ee4ba8a247723c5def",
+            9: "a7a4903c633973431e4eeb7c4348e5658d20327dbb7277604e6eecf9830d0686",
+            10: "3948291cbfad1efc0ba38e13f7df2cfd636744713ea354cd8b32019e6179a5bd",
+            11: "acadb517e9745d2ffae2fa9617296861d1ac4df4eaed1e01092794845d8a1e12",
+            12: "b4951c5cd4b1dd64bac9bb1a091c90562cb099bb4a541ffc1572623a6f913aa1",
+            13: "68858ff8f282eb6f6269cf8c26e5e38e7226f07c6712191b2f90de9f135d520c",
+            14: "06d1d0898c0e453aafbc780a2a47784a737159ac9540efdc7ef5623edcf1ab2f",
+            15: "2dbee95eca02dc497ede3c6ca0c043ddef3b5ce2548d6561b8e44aabb0da8511",
+            16: "bfc50d0bf60258218038338d61ae5514172f9b1ba88b2810ba12a686e1a28c59",
+            17: "e072f7323577eaef3ad5804bee85c5747eac92c2851a7bf6733894d23fd6b26b",
+        },
+        "system_values": {
+            1: (3.74, 2.2, 67.5, 8.12),
+            2: (3.47, 2.2, 69.5, 8.47),
+            3: (3.57, 2.2, 72.6, 8.60),
+            4: (3.57, 2.2, 72.5, 8.56),
+            5: (3.58, 2.2, 69.5, 8.34),
+            6: (3.64, 2.2, 69.5, 8.66),
+            7: (3.64, 2.2, 71.8, 8.67),
+            8: (3.64, 2.2, 71.9, 8.69),
+        },
+        "coefficient_labels": {
+            1: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16"),
+            2: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16"),
+            3: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16", "A18", "A20"),
+            4: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16", "A18", "A20"),
+            5: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16", "A18", "A20"),
+            6: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16", "A18"),
+            7: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16", "A18"),
+            8: ("K", "A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16", "A18"),
+        },
+        "odd_nonzero_surfaces": {
+            number: {"A3": (8, 9), "A5": (8, 9), "A7": (8, 9)}
+            for number in range(1, 9)
+        },
+        "formula_object_sha256": (
+            "194927a244c4cacfc5ef51989a885921e49d0cfb339e12a027e9496540a8a647"
+        ),
+        "source_phrase_counts": {
+            "K-A20 from top to bottom represent the types of aspherical coefficients": 1,
+            "A3 is cubic aspherical coefficient": 1,
+            "A4 is quadratic aspherical coefficient": 1,
+            "A5 is quintic aspherical coefficient": 1,
+            "A6 is sextic aspherical coefficient": 1,
+            "Ai is a coefficient corresponding to the i.sup.th high-order term": 1,
+            "the reference wavelength for the refractive index and Abbe number": 8,
+            "the reference wavelength for the focal length of each lens": 8,
+        },
+        "pdf_audit": {
+            "page_count": 31,
+            "drawing_sheet_count": 9,
+            "drawing_pdf_pages": tuple(range(2, 11)),
+            "container_sha256": {
+                "official_1": (
+                    "6eb9372714c7efd6f23c37366b83c4093d3f4c65b560c939a16ebd2ab23b5f30"
+                ),
+                "official_2": (
+                    "34ecf1b67dcb12944e08b94fc62f44eff4c889a80d6010681f4f9deb6b7cd4a4"
+                ),
+                "google_html": (
+                    "396b603d6619f23b192986250d7ca6903811012ae3f11f2e4f0df8b4e776c8d3"
+                ),
+            },
+            "critical_page_number": 19,
+            "critical_page_image_sha256": (
+                "0eca32b9bc9bbe62948b3ca011d0813a6721703db1c275dc9043764abb562164"
+            ),
+            "raster_set_sha256": (
+                "4f9faea5cc5337619de54ae2a6feed4db2e8724a25408c3940ee8e89389d2b16"
             ),
         },
     }
@@ -20805,6 +20954,308 @@ def _folded_camera_qcon_coefficient_rows(
         )
         for match in row_pattern.finditer(table_text)
         if 2 <= int(match.group("surface")) <= 17
+    ]
+
+
+def _classify_ofilm_four_lens_odd_asphere_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain all exact Family 94050343 prescriptions blocked by odd powers."""
+
+    profile = _OFILM_FOUR_LENS_ODD_ASPHERE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _surface_table, _coefficient_table in (
+                _OFILM_FOUR_LENS_ODD_ASPHERE_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"OFILM four-lens official raw text hash changed for {patent_id}"
+            )
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"OFILM four-lens normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"OFILM four-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError("OFILM four-lens section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("OFILM four-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"OFILM four-lens {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"OFILM four-lens {section_name} paragraph denominator changed"
+                )
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        if tuple(int(match.group(1)) for match in paragraph_matches) != tuple(
+            range(1, 132)
+        ):
+            raise PatentParseError("OFILM four-lens paragraphs 1-131 changed")
+        paragraphs = {
+            int(match.group(1)): text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                flags=re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("OFILM four-lens claims 1-20 changed")
+        for figure_number in range(1, 19):
+            paragraph_number = figure_number + 10
+            if len(
+                re.findall(
+                    rf"FIG\.\s*{figure_number}\b",
+                    paragraphs[paragraph_number],
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    f"OFILM four-lens FIG. {figure_number} declaration changed"
+                )
+
+        mapped_paragraphs: list[int] = []
+        mapped_figures: list[int] = []
+        mapped_tables: list[int] = []
+        for _number, _label, bounds, figures, surface_table, coefficient_table in (
+            _OFILM_FOUR_LENS_ODD_ASPHERE_ITEMS
+        ):
+            mapped_paragraphs.extend(range(bounds[0], bounds[1] + 1))
+            mapped_figures.extend(figures)
+            mapped_tables.extend((surface_table, coefficient_table))
+        if tuple(mapped_paragraphs) != tuple(range(77, 128)):
+            raise PatentParseError("OFILM four-lens item paragraph mapping changed")
+        if tuple(mapped_figures) != tuple(range(1, 17)):
+            raise PatentParseError("OFILM four-lens item figure mapping changed")
+        if tuple(mapped_tables) != tuple(range(1, 17)):
+            raise PatentParseError("OFILM four-lens item table mapping changed")
+
+        blocks = _ofilm_four_lens_source_blocks(text)
+        if set(blocks) != set(range(1, 18)):
+            raise PatentParseError("OFILM four-lens source-table denominator changed")
+        for number, expected_digest in profile["table_block_sha256"].items():
+            digest = hashlib.sha256(blocks[number].encode("utf-8")).hexdigest()
+            if digest != expected_digest:
+                raise PatentParseError(
+                    f"OFILM four-lens source table block {number} changed"
+                )
+
+        observed_system_values: dict[int, tuple[float, float, float, float]] = {}
+        for embodiment_number, table_number in enumerate(range(1, 17, 2), start=1):
+            observed_system_values[embodiment_number] = (
+                _ofilm_four_lens_system_values(blocks[table_number])
+            )
+        if observed_system_values != profile["system_values"]:
+            raise PatentParseError("OFILM four-lens system-value census changed")
+
+        for embodiment_number, table_number in enumerate(range(2, 17, 2), start=1):
+            rows = _ofilm_four_lens_coefficient_rows(blocks[table_number])
+            labels = tuple(label for label, _values in rows)
+            if labels != profile["coefficient_labels"][embodiment_number]:
+                raise PatentParseError(
+                    f"OFILM embodiment {embodiment_number} coefficient denominator changed"
+                )
+            odd_nonzero = {
+                label: tuple(
+                    surface
+                    for surface, value in zip((1, 2, 6, 7, 8, 9), values, strict=True)
+                    if value != 0.0
+                )
+                for label, values in rows
+                if label in {"A3", "A5", "A7"}
+            }
+            if odd_nonzero != profile["odd_nonzero_surfaces"][embodiment_number]:
+                raise PatentParseError(
+                    f"OFILM embodiment {embodiment_number} odd-asphere census changed"
+                )
+
+        if len(
+            re.findall(
+                r"6 third lens asphere -- 1\.986 .*? 7 asphere -- 0\.162",
+                blocks[1],
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "OFILM first-embodiment S6/S7 missing-radius evidence changed"
+            )
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"OFILM four-lens source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        formula_start = raw_text.index('<maths id="MATH-US-00001"')
+        formula_end = raw_text.index("</maths>", formula_start) + len("</maths>")
+        formula_digest = hashlib.sha256(
+            raw_text[formula_start:formula_end].encode("utf-8")
+        ).hexdigest()
+        if formula_digest != profile["formula_object_sha256"]:
+            raise PatentParseError("OFILM four-lens asphere formula object changed")
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentParseError(
+                (
+                    "OFILM first embodiment cannot be converted: official TABLE 1a "
+                    "publishes em dashes instead of Y radii for surfaces 6 and 7, "
+                    "and TABLE 1b publishes unsupported nonzero odd-power asphere "
+                    "terms A3/A5/A7 on surfaces 8 and 9"
+                )
+                if number == 1
+                else (
+                    f"OFILM embodiment {number} publishes unsupported nonzero "
+                    "odd-power asphere terms A3/A5/A7 on surfaces 8 and 9; "
+                    "PatentSurfaceInput and the CODE V XASPHERE mapping support only "
+                    "even powers"
+                )
+            ),
+        )
+        for number, label, _paragraphs, _figures, _surface_table, _coefficient_table in (
+            _OFILM_FOUR_LENS_ODD_ASPHERE_ITEMS
+        )
+    ]
+
+
+def _ofilm_four_lens_source_blocks(text: str) -> dict[int, str]:
+    matches = list(re.finditer(r"TABLE-US-(?P<number>\d{5})\b", text))
+    if len(matches) != 17:
+        raise PatentParseError("OFILM four-lens source must contain 17 tagged tables")
+    blocks: dict[int, str] = {}
+    for index, match in enumerate(matches):
+        number = int(match.group("number"))
+        if number in blocks:
+            raise PatentParseError(f"duplicate OFILM four-lens table block: {number}")
+        if index + 1 < len(matches):
+            end = matches[index + 1].start()
+        else:
+            try:
+                end = text.index("[0129]", match.end())
+            except ValueError as exc:
+                raise PatentParseError(
+                    "OFILM four-lens summary-table boundary changed"
+                ) from exc
+        blocks[number] = text[match.start() : end]
+    return blocks
+
+
+def _ofilm_four_lens_system_values(
+    table_text: str,
+) -> tuple[float, float, float, float]:
+    match = re.search(
+        rf"F\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm,\s*"
+        rf"FNO\s*=\s*(?P<fno>{NUMBER_PATTERN}),\s*"
+        rf"FOV\s*=\s*(?P<fov>{NUMBER_PATTERN})[^,]*,\s*"
+        rf"TTL\s*=\s*(?P<ttl>{NUMBER_PATTERN})\s*mm",
+        table_text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError("OFILM four-lens table lacks F/FNO/FOV/TTL values")
+    return tuple(
+        _parse_number(match.group(name)) for name in ("f", "fno", "fov", "ttl")
+    )
+
+
+def _ofilm_four_lens_coefficient_rows(
+    table_text: str,
+) -> list[tuple[str, tuple[float, ...]]]:
+    if (
+        len(
+            re.findall(
+                r"Surface numeral\s+1\s+2\s+6\s+7\s+8\s+9",
+                table_text,
+                re.IGNORECASE,
+            )
+        )
+        != 1
+    ):
+        raise PatentParseError("OFILM four-lens coefficient header changed")
+    row_pattern = re.compile(
+        r"(?:^|\s)(?P<label>K|A\d+)\s+"
+        + r"\s+".join(
+            rf"(?P<value{index}>{NUMBER_PATTERN})" for index in range(6)
+        ),
+        flags=re.IGNORECASE,
+    )
+    return [
+        (
+            match.group("label").upper(),
+            tuple(
+                _parse_number(match.group(f"value{index}")) for index in range(6)
+            ),
+        )
+        for match in row_pattern.finditer(table_text)
     ]
 
 

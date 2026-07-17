@@ -537,6 +537,14 @@ def parser_failure_signature(detail: str) -> str:
     patterns = (
         (r"^AAC Raytech summary metadata did not contain ", "aac_raytech_summary_metadata_missing"),
         (r"^Sunny embodiment \d+ metadata missing:", "sunny_embodiment_metadata_missing"),
+        (
+            r"^OFILM first embodiment cannot be converted:",
+            "ofilm_first_embodiment_missing_radii_and_odd_asphere",
+        ),
+        (
+            r"^OFILM embodiment \d+ publishes unsupported nonzero odd-power asphere terms",
+            "ofilm_odd_power_asphere_unsupported",
+        ),
         (r"^Sunny S\d+ value is not numeric:", "sunny_surface_value_not_numeric"),
         (r"^SEKONIX .* row is incomplete$", "sekonix_surface_row_incomplete"),
         (r"^SEKONIX .* radius is not numeric:", "sekonix_radius_not_numeric"),

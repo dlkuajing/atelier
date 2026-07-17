@@ -393,6 +393,16 @@ def test_replay_schemas_reject_unstructured_or_duplicate_outcomes() -> None:
             "sunny_embodiment_metadata_missing",
         ),
         (
+            "PatentParseError: OFILM first embodiment cannot be converted: official "
+            "TABLE 1a publishes em dashes instead of Y radii",
+            "ofilm_first_embodiment_missing_radii_and_odd_asphere",
+        ),
+        (
+            "PatentParseError: OFILM embodiment 8 publishes unsupported nonzero "
+            "odd-power asphere terms A3/A5/A7 on surfaces 8 and 9",
+            "ofilm_odd_power_asphere_unsupported",
+        ),
+        (
             "PatentParseError: SEKONIX surface 3600 row is incomplete",
             "sekonix_surface_row_incomplete",
         ),

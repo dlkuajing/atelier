@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "family_id": "94050343",
+  "root_id": "US-20260072245",
+  "publication_id": "US-20260072245-A1",
+  "application_number": "19/023962",
+  "paragraph_ranges": {
+    "background_and_summary": [1, 9],
+    "brief_description_of_drawings": [10, 28],
+    "detailed_description": [29, 131]
+  },
+  "claims": {
+    "active_range": [1, 20],
+    "optical_lens_claims": [1, 8],
+    "camera_module_claims": [9, 16],
+    "terminal_device_claims": [17, 20]
+  },
+  "figures": {
+    "declared_range": [1, 18],
+    "embodiment_pairs": {
+      "1": [1, 2],
+      "2": [3, 4],
+      "3": [5, 6],
+      "4": [7, 8],
+      "5": [9, 10],
+      "6": [11, 12],
+      "7": [13, 14],
+      "8": [15, 16]
+    },
+    "camera_module": 17,
+    "terminal_device": 18
+  },
+  "source_tables": {
+    "tagged_table_blocks": 17,
+    "prescription_blocks": 16,
+    "summary_blocks": 1,
+    "embodiment_bindings": {
+      "1": ["TABLE 1a", "TABLE 1b"],
+      "2": ["TABLE 2a", "TABLE 2b"],
+      "3": ["TABLE 3a", "TABLE 3b"],
+      "4": ["TABLE 4a", "TABLE 4b"],
+      "5": ["TABLE 5a", "TABLE 5b"],
+      "6": ["TABLE 6a", "TABLE 6b"],
+      "7": ["TABLE 7a", "TABLE 7b"],
+      "8": ["TABLE 8a", "TABLE 8b"]
+    },
+    "cross_embodiment_summary": "TABLE 9"
+  },
+  "formula_objects": {
+    "primary_html_total": 52,
+    "google_wrapper_total": 52,
+    "asphere_formula_id": "MATH-US-00001",
+    "primary_formula_sha256": "194927a244c4cacfc5ef51989a885921e49d0cfb339e12a027e9496540a8a647",
+    "google_formula_sha256": "e45f88516e023205e0789f58217337e3ff73a29d879df3fe76856a65479e7377",
+    "primary_formula_state": "summation operator and limits corrupted in MathML",
+    "google_formula_state": "summation operator present but limits absent",
+    "official_pdf_formula_state": "page 19 visibly publishes sum from i=3 through i=20 of Ai*r^i",
+    "published_power_labels": ["A3", "A4", "A5", "A6", "A7", "A8", "A10", "A12", "A14", "A16", "A18", "A20"],
+    "explicit_term_definitions": {
+      "A3": "cubic",
+      "A4": "quadratic",
+      "A5": "quintic",
+      "A6": "sextic"
+    }
+  },
+  "surface_denominator": {
+    "surface_rows_per_embodiment_including_object": 15,
+    "numbered_surface_range": [1, 14],
+    "lens_surface_numbers": [1, 2, 3, 4, 6, 7, 8, 9],
+    "diaphragm_surface_number": 5,
+    "filter_and_protective_glass_surface_numbers": [10, 11, 12, 13],
+    "image_surface_number": 14,
+    "asphere_surface_numbers": [1, 2, 6, 7, 8, 9],
+    "sphere_surface_numbers": [3, 4],
+    "nonzero_odd_power_surfaces": {
+      "A3": [8, 9],
+      "A5": [8, 9],
+      "A7": [8, 9]
+    },
+    "first_embodiment_missing_y_radius_surfaces": [6, 7]
+  },
+  "ledger_items": [
+    {
+      "item_number": 1,
+      "label": "OFILM four-lens first embodiment",
+      "paragraph_range": [77, 86],
+      "figures": [1, 2],
+      "tables": ["TABLE 1a", "TABLE 1b"],
+      "f_mm": 3.74,
+      "fno": 2.2,
+      "fov_deg": 67.5,
+      "ttl_mm": 8.12,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["surface 6 and 7 Y radii are em dashes", "nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    },
+    {
+      "item_number": 2,
+      "label": "OFILM four-lens second embodiment",
+      "paragraph_range": [87, 92],
+      "figures": [3, 4],
+      "tables": ["TABLE 2a", "TABLE 2b"],
+      "f_mm": 3.47,
+      "fno": 2.2,
+      "fov_deg": 69.5,
+      "ttl_mm": 8.47,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    },
+    {
+      "item_number": 3,
+      "label": "OFILM four-lens third embodiment",
+      "paragraph_range": [93, 98],
+      "figures": [5, 6],
+      "tables": ["TABLE 3a", "TABLE 3b"],
+      "f_mm": 3.57,
+      "fno": 2.2,
+      "fov_deg": 72.6,
+      "ttl_mm": 8.6,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    },
+    {
+      "item_number": 4,
+      "label": "OFILM four-lens fourth embodiment",
+      "paragraph_range": [99, 104],
+      "figures": [7, 8],
+      "tables": ["TABLE 4a", "TABLE 4b"],
+      "f_mm": 3.57,
+      "fno": 2.2,
+      "fov_deg": 72.5,
+      "ttl_mm": 8.56,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    },
+    {
+      "item_number": 5,
+      "label": "OFILM four-lens fifth embodiment",
+      "paragraph_range": [105, 109],
+      "figures": [9, 10],
+      "tables": ["TABLE 5a", "TABLE 5b"],
+      "f_mm": 3.58,
+      "fno": 2.2,
+      "fov_deg": 69.5,
+      "ttl_mm": 8.34,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    },
+    {
+      "item_number": 6,
+      "label": "OFILM four-lens sixth embodiment",
+      "paragraph_range": [110, 115],
+      "figures": [11, 12],
+      "tables": ["TABLE 6a", "TABLE 6b"],
+      "f_mm": 3.64,
+      "fno": 2.2,
+      "fov_deg": 69.5,
+      "ttl_mm": 8.66,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    },
+    {
+      "item_number": 7,
+      "label": "OFILM four-lens seventh embodiment",
+      "paragraph_range": [116, 121],
+      "figures": [13, 14],
+      "tables": ["TABLE 7a", "TABLE 7b"],
+      "f_mm": 3.64,
+      "fno": 2.2,
+      "fov_deg": 71.8,
+      "ttl_mm": 8.67,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    },
+    {
+      "item_number": 8,
+      "label": "OFILM four-lens eighth embodiment",
+      "paragraph_range": [122, 127],
+      "figures": [15, 16],
+      "tables": ["TABLE 8a", "TABLE 8b"],
+      "f_mm": 3.64,
+      "fno": 2.2,
+      "fov_deg": 71.9,
+      "ttl_mm": 8.69,
+      "outcome": "parser_review_required",
+      "blocking_facts": ["nonzero odd A3/A5/A7 on surfaces 8 and 9"]
+    }
+  ],
+  "reconciliation": {
+    "common_detailed_paragraphs": [29, 76],
+    "embodiment_paragraphs": [77, 127],
+    "summary_table_paragraph": 128,
+    "camera_module_paragraph": 129,
+    "terminal_device_paragraph": 130,
+    "closing_paragraph": 131,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tagged_table_blocks": 0,
+    "coordinate_values_synthesized": 0,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "external_family_coordinates_imported": false
+  }
+}
