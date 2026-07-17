@@ -93,6 +93,24 @@ Generic metadata is 116 roots/items and remains the largest executable bucket; d
 ordering selects Family `38997638` (`US-7551370-B2`) next. Parent/global patent saturation
 remains active and incomplete.
 
+**Patent saturation latest authoritative update (2026-07-17, Family 38997638):** This
+supersedes the Family 100037253 snapshot immediately above. Strict replay is 619/619 with
+missing=0, corrupt=0 and result set
+`e295fdfe60dfa528492c3d3e761ec603b51fad337a9042ed0a0080c98c5a5e58`. Family `38997638`
+(`US-7551370-B2`) reconciles four exact source items: the indicia-reader apparatus, means
+apparatus, operating method and negative-spherical-aberration imaging lens assembly. Generic
+lens placement, the aberration component, aperture stop and reader working-range values publish
+no ordered optical radius, spacing, material, conic, asphere coefficient or required numeric
+system prescription. All four items are source-proven confirmed-no-prescription terminals.
+Official B2 and same-application A1 each have eight image-only pages and three drawing sheets;
+all decoded rasters, both contact sheets and original-resolution pages 2-8 were reviewed. The A1
+`FIG. 6` versus corrected B2/textual `FIG. 4` discrepancy has no numeric effect, and there is no
+transcription, numeric derivation or cross-publication borrowing. Current roots are 305 parser
+review, 148 mixed, 141 terminal and 25 converted; items are 1399 parser review, 1191 terminal,
+561 staging and 28 conversion retry. Generic metadata is 115 roots/items and remains the largest
+executable bucket; deterministic ordering selects Family `65528235` (`US-20190294840-A1`)
+next. Parent/global patent saturation remains active and incomplete.
+
 ## Current Position
 
 | Scope | Status |

@@ -22734,3 +22734,286 @@ def test_zebra_indicia_reader_dynamic_mode_denominator_and_queue_artifacts() -> 
         "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d"
     )
     assert queue["saturation_complete"] is False
+
+
+def _symbol_negative_spherical_aberration_reader_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "99dc69471bf1e1a1"
+        / "US-7551370-B2.html"
+    )
+    return "US-7551370-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_symbol_negative_spherical_aberration_reader_reconciles_four_items() -> None:
+    patent_id, raw_text = _symbol_negative_spherical_aberration_reader_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 4
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert [
+        attempt.error.reason_code
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    ] == [
+        "confirmed_no_prescription."
+        "indicia_reader_negative_spherical_aberration_architecture_only",
+        "confirmed_no_prescription.indicia_reader_means_architecture_only",
+        "confirmed_no_prescription.indicia_reader_operating_method_only",
+        "confirmed_no_prescription."
+        "negative_spherical_aberration_lens_assembly_architecture_only",
+    ]
+
+
+def test_symbol_negative_spherical_aberration_reader_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _symbol_negative_spherical_aberration_reader_source()
+    changed = raw_text.replace("increased the working range over known lens assemblies by about 40%", "increased the working range over known lens assemblies by about 41%", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 4
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Symbol negative-spherical-aberration official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
+def test_symbol_negative_spherical_aberration_reader_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-38997638"
+    audit = json.loads(
+        (quick / "family-38997638-raster-audit.json").read_text(encoding="utf-8")
+    )
+    publications = ("US-7551370-B2", "US-20080030874-A1")
+
+    raster_sets: dict[str, set[str]] = {}
+    for publication_id in publications:
+        record = audit["publications"][publication_id]
+        pdf_path = root / record["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        assert len(pdf_bytes) == record["bytes"]
+        assert hashlib.sha256(pdf_bytes).hexdigest() == record["sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == 8
+        aggregate = hashlib.sha256()
+        page_hashes = set()
+        for page, page_record in zip(reader.pages, record["pages"], strict=True):
+            assert len(page.extract_text() or "") == page_record["text_characters"] == 0
+            assert len(page.images) == page_record["image_count"] == 1
+            image = page.images[0].image.convert("RGB")
+            assert [image.width, image.height] == page_record["size"]
+            page_hash = hashlib.sha256(
+                f"{image.width}x{image.height}:RGB:".encode() + image.tobytes()
+            ).hexdigest()
+            assert page_hash == page_record["raster_sha256"]
+            aggregate.update(bytes.fromhex(page_hash))
+            page_hashes.add(page_hash)
+        assert aggregate.hexdigest() == record["decoded_raster_set_sha256"]
+        raster_sets[publication_id] = page_hashes
+
+        contact = record["visual_review"]["contact"]
+        contact_bytes = (root / contact["path"]).read_bytes()
+        assert len(contact_bytes) == contact["bytes"]
+        assert hashlib.sha256(contact_bytes).hexdigest() == contact["sha256"]
+        for critical in record["visual_review"]["critical_pages"]:
+            path = quick / "source-review" / (
+                f"{publication_id}-page-{critical['page']}.png"
+            )
+            raw = path.read_bytes()
+            assert len(raw) == critical["bytes"]
+            assert hashlib.sha256(raw).hexdigest() == critical["sha256"]
+
+        assert record["sections"] == {
+            "cover": [1, 1],
+            "drawings": [2, 4],
+            "specification_and_claims": [5, 8],
+        }
+
+    assert raster_sets[publications[0]].isdisjoint(raster_sets[publications[1]])
+    assert audit["raster_intersection_count"] == 0
+    assert audit["source_label_discrepancies"] == [
+        {
+            "location": "drawing sheet 3 lower on-axis panel",
+            "US-20080030874-A1": "FIG. 6",
+            "US-7551370-B2": "FIG. 4",
+            "classification_source_text": "FIG. 4",
+            "numeric_effect": "none",
+        }
+    ]
+    assert audit["ordered_optical_prescription_present"] is False
+    assert audit["drawing_transcription_permitted"] is False
+    assert audit["numeric_derivation_permitted"] is False
+    assert audit["cross_publication_numeric_borrowing"] is False
+
+
+def test_symbol_negative_spherical_aberration_reader_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-38997638"
+    artifact = json.loads(
+        (quick / "family-38997638-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["semantic_equal"] is True
+    assert artifact["normalization"] == {
+        "outcome_fields_removed": [],
+        "removed_fields": ["result_attempt"],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "conversion_receipts": 0,
+        "conversion_requests": 0,
+        "item_state_counts": {"terminal": 4},
+        "prescription_fingerprints": 0,
+        "result_attempt": 3,
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "root_state": "terminal",
+        "staging_zmx": 0,
+        "terminal_status_counts": {"confirmed_no_prescription": 4},
+    }
+
+
+def test_symbol_negative_spherical_aberration_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-38997638"
+    evidence = json.loads(
+        (quick / "family-38997638-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    denominator = json.loads(
+        (quick / "family-38997638-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    assert denominator["denominator"] == {
+        "background_numbered_paragraphs": 6,
+        "brief_numbered_paragraphs": 5,
+        "claims": 20,
+        "confirmed_no_prescription_items": 4,
+        "declared_textual_figures": 5,
+        "detailed_numbered_paragraphs": 15,
+        "frozen_cohort_roots": 1,
+        "mathml_objects": 0,
+        "numbered_heading_markers": 4,
+        "official_b2_drawing_sheets": 3,
+        "official_b2_pdf_pages": 8,
+        "replayed_ledger_items": 4,
+        "retained_classification_publications": 1,
+        "same_application_a1_drawing_sheets": 3,
+        "same_application_a1_pdf_pages": 8,
+        "same_application_raster_publications": 1,
+        "source_declared_architecture_items": 4,
+        "source_declared_optical_prescriptions": 0,
+        "source_label_discrepancies": 1,
+        "summary_numbered_paragraphs": 8,
+        "tagged_html_tables": 0,
+    }
+    assert denominator["reconciliation"] == {
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_disclosed_items": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_tagged_tables": 0,
+    }
+    assert len(denominator["items"]) == 4
+    assert all(
+        item["terminal_status"] == "confirmed_no_prescription"
+        and item["ordered_surface_prescription_rows"] == 0
+        for item in denominator["items"]
+    )
+    assert denominator["prescription_marker_census"]["focal length"] == 0
+    assert denominator["prescription_marker_census"]["working range"] == 20
+    assert denominator["prescription_marker_census"][
+        "negative spherical aberration"
+    ] == 52
+    assert denominator["conversion_boundary"]["zmx_written"] == 0
+    assert denominator["conversion_boundary"]["code_v_used"] is False
+    assert denominator["conversion_boundary"]["drawing_transcription"] is False
+    assert denominator["conversion_boundary"][
+        "cross_publication_numeric_borrowing"
+    ] is False
+
+    for record in evidence["artifacts"].values():
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    for record in (
+        evidence["source"],
+        *evidence["official_pdfs"].values(),
+        *evidence["census"].values(),
+        evidence["replay_state"]["summary"],
+        evidence["replay_state"]["report"],
+    ):
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-116.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 116
+    assert after_1["affected_roots"] == after_1["affected_items"] == 115
+    assert after_2["affected_roots"] == after_2["affected_items"] == 115
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == evidence["replay_state"][
+        "result_set_sha256"
+    ]
+    assert queue["next_exact_group"]["family_id"] == "65528235"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20190294840"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20190294840-A1"
+    ]
+    assert queue["next_exact_group"]["marker_counts"]["full_field"] == 117
+    assert queue["saturation_complete"] is False

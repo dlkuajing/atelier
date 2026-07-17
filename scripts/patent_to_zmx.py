@@ -521,6 +521,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_symbol_negative_spherical_aberration_reader_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8843,6 +8851,164 @@ _ZEBRA_INDICIA_READER_DYNAMIC_MODE_SOURCE_PROFILES: dict[str, dict[str, Any]] = 
             "machine learning model": 16,
             "cell-phone frame": 6,
             "electronic display": 11,
+        },
+    }
+}
+_SYMBOL_NEGATIVE_SPHERICAL_ABERRATION_READER_ITEMS = (
+    (
+        1,
+        "Symbol negative-spherical-aberration indicia reader",
+        "confirmed_no_prescription."
+        "indicia_reader_negative_spherical_aberration_architecture_only",
+    ),
+    (
+        2,
+        "Symbol negative-spherical-aberration means reader",
+        "confirmed_no_prescription.indicia_reader_means_architecture_only",
+    ),
+    (
+        3,
+        "Symbol negative-spherical-aberration reader method",
+        "confirmed_no_prescription.indicia_reader_operating_method_only",
+    ),
+    (
+        4,
+        "Symbol negative-spherical-aberration imaging lens assembly",
+        "confirmed_no_prescription."
+        "negative_spherical_aberration_lens_assembly_architecture_only",
+    ),
+)
+_SYMBOL_NEGATIVE_SPHERICAL_ABERRATION_READER_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-7551370-B2": {
+        "raw_document_sha256": (
+            "99dc69471bf1e1a14492e5df58524cfd68197312c8e79f8393e45687fac6a1eb"
+        ),
+        "normalized_text_sha256": (
+            "2566c3732354e179b0828d55d7a702fb5366e3a50486405f6967f9154cb050eb"
+        ),
+        "section_markers": {
+            "abstract": "Abstract An imaging lens assembly",
+            "background": (
+                "Background/Summary (1) DESCRIPTION OF THE RELATED ART"
+            ),
+            "summary": "(8) SUMMARY OF THE INVENTION",
+            "brief": "Description (1) BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": (
+                "(7) DETAILED DESCRIPTION OF THE PREFERRED EMBODIMENTS"
+            ),
+            "claims": (
+                "Claims 1. A reader for electro-optically reading indicia"
+            ),
+        },
+        "section_sha256": {
+            "abstract": (
+                "0cd30d003aa01b667cff855fcbe566fd4e0979d75d85313c51872d6737ef32d5"
+            ),
+            "background": (
+                "9f7fbd7168a082418813d74feeeb11d8095c3d34333d87e83123993df3304ccb"
+            ),
+            "summary": (
+                "7a67b239c3a59bcf97105e42617f11ac91ce00aa7144eedbde523ef81e5ae7d4"
+            ),
+            "brief": (
+                "3c46dc00c119a56f96e69d904e6328d2bf90141054c237fb6c929345711d8753"
+            ),
+            "detailed": (
+                "bf73793b531a6c94d4e77c8c250bea38804450ba5dde40cb82a896fe4c3ee5f0"
+            ),
+            "claims": (
+                "f5a7ace1b47129a5a8c74222d2ea67cd57d9ba2049aaaf16b4a3da32da42ac1b"
+            ),
+        },
+        "paragraph_numbers": {
+            "background": tuple(range(1, 8)),
+            "summary": tuple(range(8, 17)),
+            "brief": tuple(range(1, 7)),
+            "detailed": tuple(range(7, 23)),
+        },
+        "summary_span_sha256": (
+            "fedb6de45a26e6744e62d4b5963f228df7212d5dc9b1ca51acc88a5cd2091abc"
+        ),
+        "detailed_span_sha256": {
+            (8, 13): (
+                "ce5b0c4c5cead699aa3d44dd277dae17f4505374b5e08831b040f7644902214e"
+            ),
+            (14, 18): (
+                "60631a751b4bd7bf40723d5afaf0c13a7e61212cf92ffb4bf884c4ac853dff62"
+            ),
+            (19, 22): (
+                "cf745deb266b7e8bae28afb68fa99e89d80f819fcffe3b5e953aad43a014fd12"
+            ),
+        },
+        "claim_ranges": ((1, 9), (10, 10), (11, 19), (20, 20)),
+        "claim_span_sha256": (
+            "16d66b43fa3a7873fd31c1f8af3b68fd299b16d533b8af89c14fd2edb3804a11",
+            "27692e63ff453b649665de3afa5ed965411a8bb7f691a4b76276c2b475fa7bc7",
+            "5f2bde28b75a9b9f83582460bab258fbdee0bba6cebe7ed8b70b976910a2ce1e",
+            "26243298818670bc8006688ab719327803a5ebd92347deedb56dfc6343653a32",
+        ),
+        "claim_numbers": tuple(range(1, 21)),
+        "identity_markers": {
+            "United States Patent 7551370": 1,
+            "Kind Code B2": 1,
+            "Date of Patent June 23, 2009": 1,
+            (
+                "Negative spherical aberration component-based imaging lens "
+                "assembly in imaging reader"
+            ): 1,
+            (
+                "Inventors: Vinogradov; Igor (Bay Shore, NY), Gurevich; "
+                "Vladimir (Stony Brook, NY), Tsi-Shi; David (Stony Brook, NY)"
+            ): 1,
+            "Family ID: 38997638": 1,
+            "Assignee: Symbol Technologies (Holtsville, NY)": 1,
+            "Appl. No.: 11/496335": 1,
+            "Filed: July 31, 2006": 1,
+            "US 20080030874 A1 Feb. 07, 2008": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "F/#": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+            "radius of curvature": 0,
+            "curvature radius": 0,
+            "thickness": 0,
+            "lens element": 0,
+        },
+        "source_scope_phrase_counts": {
+            "aspheric": 2,
+            "field of view": 7,
+            "working range": 20,
+            "negative spherical aberration": 52,
+            "aperture stop": 36,
+            "imaging lens assembly": 11,
+            "plurality of lenses": 3,
+            "concave surface": 4,
+            "flat surface": 4,
+            "optical powers": 1,
+            "WD1": 3,
+            "WD2": 5,
+            "phase plate": 3,
+            "plastic or glass": 1,
+            "640.times.480": 1,
+            "5 mil target": 1,
+            "about 40%": 1,
+            "about 7 inches": 1,
+            "about 10 inches": 1,
+            "about two inches": 1,
+            "about eight inches": 1,
         },
     }
 }
@@ -26393,6 +26559,242 @@ def _classify_zebra_indicia_reader_dynamic_mode_architecture_only_attempts(
             ),
         )
         for number, label, reason_code in _ZEBRA_INDICIA_READER_DYNAMIC_MODE_ITEMS
+    ]
+
+
+def _classify_symbol_negative_spherical_aberration_reader_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 38997638 reader/lens architecture items."""
+
+    profile = _SYMBOL_NEGATIVE_SPHERICAL_ABERRATION_READER_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _SYMBOL_NEGATIVE_SPHERICAL_ABERRATION_READER_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration official raw text hash "
+                f"changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Symbol negative-spherical-aberration identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Symbol negative-spherical-aberration "
+                    f"{section_name} section changed"
+                )
+
+        def numbered_paragraphs(section: str) -> dict[int, str]:
+            matches = list(re.finditer(r"\((\d+)\)\s", section))
+            return {
+                int(match.group(1)): section[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section)
+                    )
+                ]
+                for index, match in enumerate(matches)
+            }
+
+        paragraph_maps = {
+            name: numbered_paragraphs(sections[name])
+            for name in ("background", "summary", "brief", "detailed")
+        }
+        for section_name, expected_numbers in profile["paragraph_numbers"].items():
+            if tuple(paragraph_maps[section_name]) != expected_numbers:
+                raise PatentParseError(
+                    "Symbol negative-spherical-aberration "
+                    f"{section_name} paragraph denominator changed"
+                )
+
+        summary_span = "".join(
+            paragraph_maps["summary"][number] for number in range(9, 17)
+        )
+        summary_digest = hashlib.sha256(
+            summary_span.strip().encode("utf-8")
+        ).hexdigest()
+        if summary_digest != profile["summary_span_sha256"]:
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration summary span changed"
+            )
+
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                paragraph_maps["detailed"][number]
+                for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Symbol negative-spherical-aberration detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration claims denominator changed"
+            )
+        claims = {
+            int(match.group(1)): sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ]
+            for index, match in enumerate(claim_matches)
+        }
+        claim_span_digests = []
+        for start, end in profile["claim_ranges"]:
+            span = "".join(claims[number] for number in range(start, end + 1))
+            claim_span_digests.append(
+                hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            )
+        if tuple(claim_span_digests) != profile["claim_span_sha256"]:
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration four-claim-family "
+                "denominator changed"
+            )
+
+        figure_declarations = tuple(
+            (int(paragraph), int(figure))
+            for paragraph, figure in re.findall(
+                r"\((\d+)\)\s+FIG\.\s*(\d+)\s+is\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_declarations != tuple(zip(range(2, 7), range(1, 6), strict=True)):
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration five-figure denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration zero-table denominator changed"
+            )
+        if len(
+            re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)
+        ) != 0:
+            raise PatentParseError(
+                "Symbol negative-spherical-aberration formula denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Symbol negative-spherical-aberration prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Symbol negative-spherical-aberration scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all four exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact reader claims publish housing, imager, functionally named lens "
+        "assembly, negative-spherical-aberration component, aperture stop and "
+        "illumination architecture only; they contain no ordered optical surface "
+        "prescription or required system metadata",
+        "the exact means claim recasts the same reader, imaging means and lens means "
+        "architecture without an independent optical prescription",
+        "the exact method claims publish capture, illumination, component placement "
+        "and working-range extension operations without an independent prescription",
+        "the exact lens-assembly claim publishes only an aperture stop and a coplanar "
+        "negative-spherical-aberration component; it contains no ordered radii, "
+        "spacings, materials, conics or asphere coefficients",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in (
+            _SYMBOL_NEGATIVE_SPHERICAL_ABERRATION_READER_ITEMS
+        )
     ]
 
 
