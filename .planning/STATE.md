@@ -45,6 +45,21 @@ review、148 mixed、137 terminal、25 converted；items 为 1403 parser review�
 55 roots/174 items 与 Sunny 49 roots/177 items；下一 exact family 为 `80893318`
 （`US-12461279-B2`）。
 
+**Patent saturation latest authoritative update (2026-07-17):** This supersedes the earlier
+Family 82951912 snapshot above. Strict replay is 619/619 with missing=0, corrupt=0 and result set
+`8537d6a5f8f863c11725d848467d218c472535e4117dddeec7228ee44647da30`. Family `80893318`
+(`US-12461279-B2`) reconciles five exact source items: three plastic light-folding/reflective-film
+architectures and two smartphone camera-placement wrappers. TABLES 1/3 are film-layer indices and
+nanometer thicknesses; TABLE 2 is 671 wavelength/reflectivity rows. No ordered lens prescription or
+required focal-length/F-number/angular-field metadata exists, so all five items are source-proven
+confirmed-no-prescription terminals. Official B2/A1 each have 30 image-only pages and 17 drawing
+sheets; their complete contact sheets and eight critical pages were reviewed with no transcription,
+numeric derivation or cross-publication borrowing. Current roots are 308 parser review, 148 mixed,
+138 terminal and 25 converted; items are 1402 parser review, 1169 terminal, 561 staging and 28
+conversion retry. Generic metadata is 118 roots/items and remains the largest executable bucket;
+deterministic ordering selects Family `63246213` (`US-20230333291-A1`) next. Parent/global patent
+saturation remains active and incomplete.
+
 ## Current Position
 
 | Scope | Status |

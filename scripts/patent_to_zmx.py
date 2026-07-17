@@ -505,6 +505,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_plastic_light_folding_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8295,6 +8303,154 @@ _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_SOURCE_PROFILES: dict[
             (
                 "metal plate with a thickness of 0.15 mm by the stamping process"
             ): 4,
+        },
+    },
+}
+_LARGAN_PLASTIC_LIGHT_FOLDING_ITEMS = (
+    (1, "Largan plastic light-folding reflective-film first example"),
+    (2, "Largan dual plastic light-folding module second example"),
+    (3, "Largan multipass plastic light-folding reflective-film third example"),
+    (4, "Largan smartphone multi-camera electronic-device fourth example"),
+    (5, "Largan smartphone telephoto-camera electronic-device fifth example"),
+)
+_LARGAN_PLASTIC_LIGHT_FOLDING_FIGURES = (
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "1E",
+    "1F",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "4A",
+    "4B",
+    "4C",
+    "4D",
+    "4E",
+    "5",
+)
+_LARGAN_PLASTIC_LIGHT_FOLDING_REASON_CODE = (
+    "confirmed_no_prescription."
+    "plastic_light_folding_reflective_film_architecture_only"
+)
+_LARGAN_PLASTIC_LIGHT_FOLDING_DEVICE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "electronic_device_multi_camera_placement_architecture_only"
+)
+_LARGAN_PLASTIC_LIGHT_FOLDING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12461279-B2": {
+        "raw_document_sha256": (
+            "abdc62e122533c4e77bac703c31ba41385de1caff48874b1431dac5b034a4ae2"
+        ),
+        "normalized_text_sha256": (
+            "3fe77504fe89a02d1f44577764dc56a73e2f3b84cc17e8c9954c2f7752b0f733"
+        ),
+        "section_markers": {
+            "background": "BACKGROUND",
+            "summary": "SUMMARY",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION",
+            "claims": "Claims 1 . A plastic light-folding element, comprising:",
+        },
+        "section_sha256": {
+            "background": (
+                "d5748f28584546e09c85e9e5dbfaf6151e45194f721cb669fe973873c11b6d62"
+            ),
+            "summary": (
+                "ca2a0a144069e044291a1c76a3fe91359df3762a917fd172bea5f7d6845fb775"
+            ),
+            "brief": (
+                "b4aee8dc10f5d64281c20255ec7321b058c4a11c4affbb965f192e7907fdc25d"
+            ),
+            "detailed": (
+                "9aa1b2d63c5e14b98f03ba16545ac819b484da8341d445837d1b9c3bd5041f72"
+            ),
+            "claims": (
+                "1cc05e46895d54e477bce25968d7e1047bc6459c428956abaaa50ed2a619b27b"
+            ),
+        },
+        "paragraph_ranges": {
+            "background": (1, 2),
+            "summary": (3, 5),
+            "brief": (1, 17),
+            "detailed": (18, 79),
+        },
+        "detailed_span_sha256": {
+            (18, 31): (
+                "78bdd70ad42af9f9b8321f29f92f72035bb3f964a375559086a1e8ca5037baa3"
+            ),
+            (32, 48): (
+                "b45f814807118e54ae816c8e2a04904b09170946ebb25140d11ff1d21d0379aa"
+            ),
+            (49, 53): (
+                "595339c5d5ee118d06661094442987d1675712558e9bbcad2953abb8588a9405"
+            ),
+            (54, 63): (
+                "0d856e54f983452d19d842fa263b02a1c52b6f80aa3f86a6d376c3dcde581d44"
+            ),
+            (64, 73): (
+                "a38dd68d686236164c065ada15c90c0a74e841fb601bbb7fd563d93b5bc53997"
+            ),
+            (74, 78): (
+                "731a7767e6a279e7c359b16d866a8da49ef6c3da0d6d9adbfb76f9e7bfdb39f0"
+            ),
+            (79, 79): (
+                "2f2469ced70dd15ea0f8c54efdd1fc5ac0f21da38dfa22839d8d545231faca33"
+            ),
+        },
+        "example_ranges": ((32, 48), (49, 53), (54, 63), (64, 73), (74, 78)),
+        "claim_numbers": tuple(range(1, 10)),
+        "identity_markers": {
+            "United States Patent 12461279": 1,
+            "Kind Code B2": 1,
+            "Date of Patent November 04, 2025": 1,
+            "Family ID: 80893318": 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung, TW)": 1,
+            "Assignee: LARGAN PRECISION CO., LTD. (Taichung, TW)": 1,
+            "Appl. No.: 17/711168": 1,
+            "Filed: April 01, 2022": 1,
+            "US 20220373715 A1 Nov. 24, 2022": 1,
+            "TW 110130558 Aug. 18, 2021": 1,
+            "US 63191366 20210521": 1,
+        },
+        "table_payload_sha256": (
+            "17a2d21c98b8ee56d8b175032730df937f37d4c7da907734d3ba88ddf34ca625",
+            "3884b9ef9ca5ff8b2abb36f2dd1847a614a784c539bce5a5f6e1e53eec5e16ff",
+            "aeac6be64cee929c94956a91b537fb80e4c3a53a91ec25f9e352dd766095ee3e",
+        ),
+        "reflectivity_rows_sha256": (
+            "6605865429680f69c815f31010f077be30b0c01b38b1891137cfa4e9931be11d"
+        ),
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "radius of curvature": 0,
+            "curvature radius": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+        },
+        "source_scope_phrase_counts": {
+            "focal length": 1,
+            "refractive index": 30,
+            "thickness": 27,
+            "lens element": 10,
+            "Ag layer": 75,
+            "optical film": 96,
+            (
+                "imaging lens assembly module with different focal lengths "
+                "cooperated with the function of image processing"
+            ): 1,
+            "includes lens elements": 2,
         },
     },
 }
@@ -25365,6 +25521,312 @@ def _classify_largan_optical_reflecting_assembly_architecture_only_attempts(
             ),
         )
         for number, label in _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_ITEMS
+    ]
+
+
+def _largan_plastic_light_folding_coating_rows(
+    raw_text: str,
+) -> tuple[tuple[str, float, float, float, float, float, float], ...]:
+    """Return the exact thin-film rows in TABLES 1 and 3 of Family 80893318."""
+
+    text = normalize_patent_text(raw_text)
+    rows: list[tuple[str, float, float, float, float, float, float]] = []
+    for table_number in (1, 3):
+        match = re.search(
+            rf"TABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+            r"(\S+\s+example)\s+Nb\s+"
+            rf"({NUMBER_PATTERN})\s+db\s+\(nm\)\s+({NUMBER_PATTERN})\s+"
+            rf"Nt\s+({NUMBER_PATTERN})\s+dt\s+\(nm\)\s+({NUMBER_PATTERN})\s+"
+            rf"NAg\s+({NUMBER_PATTERN})\s+dAg\s+\(nm\)\s+({NUMBER_PATTERN})",
+            text,
+            re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Largan plastic-light-folding TABLE {table_number} payload changed"
+            )
+        rows.append(
+            (
+                match.group(1),
+                float(match.group(2)),
+                float(match.group(3)),
+                float(match.group(4)),
+                float(match.group(5)),
+                float(match.group(6)),
+                float(match.group(7)),
+            )
+        )
+    return tuple(rows)
+
+
+def _largan_plastic_light_folding_reflectivity_rows(
+    raw_text: str,
+) -> tuple[tuple[int, float], ...]:
+    """Return the exact 380-1050 nm reflectivity series from TABLE 2."""
+
+    text = normalize_patent_text(raw_text)
+    marker = "TABLE-US-00002 TABLE 2 wavelength (nm) reflectivity (%) "
+    try:
+        start = text.index(marker) + len(marker)
+        end = text.index("2nd Example (49)", start)
+    except ValueError as exc:
+        raise PatentParseError(
+            "Largan plastic-light-folding TABLE 2 boundary changed"
+        ) from exc
+    values = re.findall(
+        rf"({NUMBER_PATTERN})\s+({NUMBER_PATTERN})",
+        text[start:end].strip(),
+        re.IGNORECASE,
+    )
+    rows = tuple((int(wavelength), float(reflectivity)) for wavelength, reflectivity in values)
+    if tuple(row[0] for row in rows) != tuple(range(380, 1051)):
+        raise PatentParseError(
+            "Largan plastic-light-folding TABLE 2 wavelength denominator changed"
+        )
+    return rows
+
+
+def _classify_largan_plastic_light_folding_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 80893318 reflective-film architecture items."""
+
+    profile = _LARGAN_PLASTIC_LIGHT_FOLDING_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _LARGAN_PLASTIC_LIGHT_FOLDING_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan plastic-light-folding official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan plastic-light-folding normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan plastic-light-folding identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan plastic-light-folding section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan plastic-light-folding section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan plastic-light-folding {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\((\d+)\)\s", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    "Largan plastic-light-folding "
+                    f"{section_name} paragraph denominator changed"
+                )
+
+        detailed = sections["detailed"]
+        paragraph_matches = list(re.finditer(r"\((\d+)\)\s", detailed))
+        paragraphs = {
+            int(match.group(1)): detailed[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(detailed)
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(paragraphs[number] for number in range(start, end + 1))
+            observed_digest = hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan plastic-light-folding detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        ordinals = ("1st", "2nd", "3rd", "4th", "5th")
+        for ordinal, bounds in zip(
+            ordinals,
+            profile["example_ranges"],
+            strict=True,
+        ):
+            start, end = bounds
+            item_text = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            )
+            if re.search(
+                rf"according to the {ordinal} example",
+                item_text,
+                re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    f"Largan plastic-light-folding {ordinal} example binding changed"
+                )
+
+        figure_declarations = tuple(
+            f"{number}{suffix.upper()}"
+            for number, suffix in re.findall(
+                r"FIG\.\s*(\d+)\s*([A-Z]?)\s+is\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_declarations != _LARGAN_PLASTIC_LIGHT_FOLDING_FIGURES:
+            raise PatentParseError(
+                "Largan plastic-light-folding 17-figure denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan plastic-light-folding claims 1-9 denominator changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != (1, 2, 3):
+            raise PatentParseError(
+                "Largan plastic-light-folding three-table denominator changed"
+            )
+        table_boundaries = ((1, "(46)"), (2, "2nd Example (49)"), (3, "(62)"))
+        table_payloads = []
+        for table_number, end_marker in table_boundaries:
+            start = text.index(f"TABLE-US-{table_number:05d}")
+            end = text.index(end_marker, start)
+            table_payloads.append(text[start:end].strip())
+        table_digests = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        )
+        if table_digests != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "Largan plastic-light-folding table payload changed"
+            )
+
+        coating_rows = _largan_plastic_light_folding_coating_rows(raw_text)
+        if coating_rows != (
+            ("1st example", 1.6726, 20.0, 1.4618, 65.0, 0.051, 100.0),
+            ("3rd example", 1.6726, 20.0, 1.4618, 65.0, 0.051, 100.0),
+        ):
+            raise PatentParseError(
+                "Largan plastic-light-folding coating values changed"
+            )
+        reflectivity_rows = _largan_plastic_light_folding_reflectivity_rows(raw_text)
+        reflectivity_digest = hashlib.sha256(
+            "\n".join(
+                f"{wavelength},{reflectivity:g}"
+                for wavelength, reflectivity in reflectivity_rows
+            ).encode("utf-8")
+        ).hexdigest()
+        if reflectivity_digest != profile["reflectivity_rows_sha256"]:
+            raise PatentParseError(
+                "Largan plastic-light-folding reflectivity data changed"
+            )
+        if len(re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)) != 0:
+            raise PatentParseError(
+                "Largan plastic-light-folding formula denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan plastic-light-folding prescription phrase {phrase!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan plastic-light-folding scope phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all five exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact plastic light-folding example publishes folded-path placement, "
+        "Ag/oxide/intermediate reflective-film architecture, coating indices and "
+        "nanometer thicknesses, or wavelength reflectivity data; named lens elements "
+        "have no ordered optical surface prescription or required system metadata",
+        "the exact electronic-device example publishes smartphone camera-module "
+        "placement, selection or image-processing zoom architecture and reuses the preceding "
+        "modules; it publishes no independent optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _LARGAN_PLASTIC_LIGHT_FOLDING_REASON_CODE
+                    if number <= 3
+                    else _LARGAN_PLASTIC_LIGHT_FOLDING_DEVICE_REASON_CODE
+                ),
+                detail=details[0 if number <= 3 else 1],
+            ),
+        )
+        for number, label in _LARGAN_PLASTIC_LIGHT_FOLDING_ITEMS
     ]
 
 
