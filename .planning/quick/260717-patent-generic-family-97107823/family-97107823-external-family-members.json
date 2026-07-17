@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "family_id": "97107823",
+  "classification_publication": "US-20260086273-A1",
+  "current_frozen_cohort_roots": [
+    "US-20260086273"
+  ],
+  "source": {
+    "url": "https://patents.google.com/patent/US20260086273A1/en",
+    "accessed_at": "2026-07-17",
+    "scope": "family applications and country status records only"
+  },
+  "family_applications": [
+    {
+      "publication_id": "US-20260086273-A1",
+      "application_number": "19/337092",
+      "priority_date": "2024-09-26",
+      "filing_date": "2025-09-23",
+      "frozen_cohort_membership": true
+    }
+  ],
+  "external_family_members": [
+    {
+      "publication_id": "JP-2026059790-A",
+      "application_number": "JP2025159881A",
+      "publication_date": "2026-04-07",
+      "relationship": "docdb_family_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "CN-121742093-A",
+      "application_number": "CN202511374717.7A",
+      "publication_date": "2026-03-27",
+      "relationship": "docdb_family_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "EP-4718127-A2",
+      "application_number": "EP25204495.3A",
+      "publication_date": "2026-04-01",
+      "relationship": "docdb_family_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "KR-20260044813-A",
+      "application_number": "KR1020250139114A",
+      "publication_date": "2026-04-02",
+      "relationship": "docdb_family_publication",
+      "frozen_cohort_membership": false
+    }
+  ],
+  "priority_records": [
+    "US provisional 63/699249 filed 2024-09-26",
+    "TW 114132575 filed 2025-08-27"
+  ],
+  "queue_policy": "Outside-cohort family records remain queued for later independent official verification and do not supply values to the frozen US A1 root."
+}

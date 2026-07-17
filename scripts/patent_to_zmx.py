@@ -465,6 +465,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_largan_adjustable_aperture_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -4142,6 +4150,174 @@ _SONY_SENSOR_COVER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "lens material": 0,
             "glass type": 0,
             "optical axis": 0,
+        },
+        "formal_table_count": 0,
+        "raw_table_directive_count": 0,
+    },
+}
+
+_LARGAN_ADJUSTABLE_APERTURE_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*IMAGING\s+LENS\s+ASSEMBLY,\s+CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_LARGAN_ADJUSTABLE_APERTURE_FIGURE_PREFIXES = (
+    *(f"FIG. 1 {letter} is " for letter in "ABCDEFGHIJKLMNOPQ"),
+    *(f"FIG. 2 {letter} is " for letter in "ABCDEFG"),
+    "FIG. 3 A is ",
+    "FIG. 3 B is ",
+    "FIG. 4 is ",
+    "FIG. 5 is ",
+)
+_LARGAN_ADJUSTABLE_APERTURE_ITEMS = (
+    *(
+        (
+            number,
+            f"Largan adjustable-aperture first-embodiment example {number}",
+        )
+        for number in range(1, 8)
+    ),
+    (8, "Largan adjustable-aperture second-embodiment example 1"),
+    (9, "Largan adjustable-aperture second-embodiment example 2"),
+    (10, "Largan adjustable-aperture smartphone third embodiment"),
+    (11, "Largan adjustable-aperture drone fourth embodiment"),
+    (12, "Largan adjustable-aperture vehicle fifth embodiment"),
+)
+_LARGAN_ADJUSTABLE_APERTURE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "adjustable_aperture_light_blocking_sheet_architecture_only"
+)
+_LARGAN_ADJUSTABLE_APERTURE_DEVICE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "electronic_device_camera_module_placement_architecture_only"
+)
+_LARGAN_ADJUSTABLE_APERTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260086273-A1": {
+        "raw_document_sha256": (
+            "40376642ef07b3d1e53469dce163bafdf89d54b4e4a205ae948071e7c25bc1b2"
+        ),
+        "normalized_text_sha256": (
+            "472b7cb6b08a969b8ceb70c1425b30d93f6d8a7dc0a7ac051d432fa1a7993c62"
+        ),
+        "family_id": "97107823",
+        "application_number": "19/337092",
+        "section_markers": {
+            "abstract": "Abstract An imaging lens assembly",
+            "background_summary": "Background/Summary RELATED APPLICATIONS",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . An imaging lens assembly",
+        },
+        "section_sha256": {
+            "abstract": (
+                "bd5b0f2369252de593d4fad05b4fa4a5296851a0fc1e2c1a072c2e97925bce56"
+            ),
+            "background_summary": (
+                "c03ec3c64e57f39ab7a670b69dfb34c09dcfe98fe617d2b2fd014c94e4eaa1fd"
+            ),
+            "description": (
+                "2ef6842fd7c08a92b709d6aba5341ee1493c6c9a0bb673a0c019eb439883660a"
+            ),
+            "claims": (
+                "08d17481a7ed7c5cb372e3bb4be20dcc8a4c398175702092b9fd31ad589df640"
+            ),
+        },
+        "paragraph_count": 140,
+        "heading_boundaries": {
+            76: "1st Embodiment",
+            80: "1st Example of 1st Embodiment",
+            85: "2nd Example of 1st Embodiment",
+            89: "3rd Example of 1st Embodiment",
+            94: "4th Example of 1st Embodiment",
+            100: "5th Example of 1st Embodiment",
+            106: "6th Example of 1st Embodiment",
+            112: "7th Example of 1st Embodiment",
+            116: "2nd Embodiment",
+            119: "1st Example of 2nd Embodiment",
+            126: "2nd Example of 2nd Embodiment",
+            133: "3rd Embodiment",
+            137: "4th Embodiment",
+            138: "5th Embodiment",
+        },
+        "shared_embodiment_ranges": {
+            "1st Embodiment": (77, 80),
+            "2nd Embodiment": (117, 119),
+        },
+        "item_ranges": {
+            "1st Embodiment Example 1": (81, 85),
+            "1st Embodiment Example 2": (86, 89),
+            "1st Embodiment Example 3": (90, 94),
+            "1st Embodiment Example 4": (95, 100),
+            "1st Embodiment Example 5": (101, 106),
+            "1st Embodiment Example 6": (107, 112),
+            "1st Embodiment Example 7": (113, 116),
+            "2nd Embodiment Example 1": (120, 126),
+            "2nd Embodiment Example 2": (127, 133),
+            "3rd Embodiment": (134, 137),
+            "4th Embodiment": (138, 138),
+            "5th Embodiment": (139, 139),
+        },
+        "claim_count": 33,
+        "identity_markers": {
+            "United States Patent Application Publication 20260086273": 1,
+            "Kind Code A1": 1,
+            "Publication Date March 26, 2026": 1,
+            "Inventor(s) LAI; Yu-Chen et al.": 1,
+            (
+                "Inventors: LAI; Yu-Chen (Taichung City, TW), TSENG; Te-Sheng "
+                "(Taichung City, TW)"
+            ): 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 97107823": 1,
+            "Appl. No.: 19/337092": 1,
+            "Filed: September 23, 2025": 1,
+            "TW 114132575 Aug. 27, 2025": 1,
+            "us-provisional-application US 63699249 20240926": 1,
+        },
+        "source_scope_phrase_counts": {
+            "imaging lens assembly": 68,
+            "camera module": 64,
+            "electronic device": 33,
+            "adjustable aperture group": 89,
+            "rotatable light blocking sheets": 231,
+            "anti-bending sheet": 33,
+            "tapered surface": 68,
+            "optical axis": 236,
+            "lens elements": 111,
+            "image sensor": 4,
+            "lens barrel": 22,
+            "thickness": 39,
+            "T=0.05 mm": 4,
+            "T=0.035 mm": 1,
+            "T=0.06 mm": 2,
+            "T=0.023 mm": 1,
+            "S=0.049 mm": 1,
+            "T/S=0.469": 1,
+            "Ti=0.033 mm": 1,
+            "Tii=0.05 mm": 1,
+            "Ti/Tii=0.66": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "radius": 0,
+            "curvature": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "asphere": 0,
+            "aspheric coefficient": 0,
+            "asphere coefficient": 0,
+            "surface number": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface prescription": 0,
+            "lens material": 0,
+            "glass type": 0,
+            "glass": 0,
+            "refractive index": 0,
         },
         "formal_table_count": 0,
         "raw_table_directive_count": 0,
@@ -19980,6 +20156,216 @@ def _classify_sony_sensor_cover_nanostructure_architecture_only_attempts(
             ),
         )
         for number, label in _SONY_SENSOR_COVER_ITEMS
+    ]
+
+
+def _classify_largan_adjustable_aperture_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 97107823 adjustable-aperture architecture."""
+
+    profile = _LARGAN_ADJUSTABLE_APERTURE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _LARGAN_ADJUSTABLE_APERTURE_ITEMS
+        ]
+
+    def sequential_bracketed_paragraphs(
+        text: str,
+        *,
+        count: int,
+    ) -> dict[int, str]:
+        markers = list(re.finditer(r"\[(\d{4})\]", text))
+        if [int(marker.group(1)) for marker in markers] != list(
+            range(1, count + 1)
+        ):
+            raise PatentParseError(
+                "Largan adjustable-aperture paragraph denominator changed"
+            )
+        return {
+            number: text[
+                marker.end() : (
+                    markers[index + 1].start()
+                    if index + 1 < len(markers)
+                    else len(text)
+                )
+            ].strip()
+            for index, marker in enumerate(markers)
+            for number in (int(marker.group(1)),)
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Largan adjustable-aperture official raw text hash changed for "
+                f"{patent_id}"
+            )
+        if len(_LARGAN_ADJUSTABLE_APERTURE_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Largan adjustable-aperture title binding changed")
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Largan adjustable-aperture normalized text hash changed for "
+                f"{patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan adjustable-aperture identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan adjustable-aperture section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan adjustable-aperture section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan adjustable-aperture {section_name} section changed"
+                )
+
+        paragraphs = sequential_bracketed_paragraphs(
+            text,
+            count=int(profile["paragraph_count"]),
+        )
+        for paragraph, prefix in enumerate(
+            _LARGAN_ADJUSTABLE_APERTURE_FIGURE_PREFIXES,
+            start=14,
+        ):
+            if not paragraphs[paragraph].startswith(prefix):
+                raise PatentParseError(
+                    f"Largan adjustable-aperture drawing declaration {paragraph} "
+                    "changed"
+                )
+        if not paragraphs[41].endswith("DETAILED DESCRIPTION"):
+            raise PatentParseError(
+                "Largan adjustable-aperture drawing denominator changed"
+            )
+        for paragraph, heading in profile["heading_boundaries"].items():
+            if not paragraphs[int(paragraph)].endswith(heading):
+                raise PatentParseError(
+                    f"Largan adjustable-aperture heading {heading!r} changed"
+                )
+        for label, bounds in {
+            **profile["shared_embodiment_ranges"],
+            **profile["item_ranges"],
+        }.items():
+            if any(
+                number not in paragraphs
+                for number in range(int(bounds[0]), int(bounds[1]) + 1)
+            ):
+                raise PatentParseError(
+                    f"Largan adjustable-aperture {label} denominator changed"
+                )
+        if len(profile["item_ranges"]) != len(_LARGAN_ADJUSTABLE_APERTURE_ITEMS):
+            raise PatentParseError(
+                "Largan adjustable-aperture terminal-item denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "Largan adjustable-aperture claims 1-33 denominator changed"
+            )
+        if len(re.findall(r"TABLE-US-\d+", text, re.IGNORECASE)) != int(
+            profile["formal_table_count"]
+        ):
+            raise PatentParseError(
+                "Largan adjustable-aperture formal table count changed"
+            )
+        if len(re.findall(r"<\?table", raw_text, re.IGNORECASE)) != int(
+            profile["raw_table_directive_count"]
+        ):
+            raise PatentParseError(
+                "Largan adjustable-aperture raw table directives changed"
+            )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan adjustable-aperture phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan adjustable-aperture prescription phrase {phrase!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact example publishes adjustable-aperture light-blocking-sheet "
+        "shape, layering, coating, thickness, overlap, and anti-bending-sheet "
+        "ratios plus generic lens placement only; it publishes no ordered optical "
+        "surface prescription or EFL/F-number/field metadata",
+        "the exact embodiment publishes smartphone, drone, or vehicle camera-module "
+        "placement reusing the disclosed mechanical aperture architecture only; it "
+        "publishes no ordered optical surface prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _LARGAN_ADJUSTABLE_APERTURE_REASON_CODE
+                    if number <= 9
+                    else _LARGAN_ADJUSTABLE_APERTURE_DEVICE_REASON_CODE
+                ),
+                detail=details[0 if number <= 9 else 1],
+            ),
+        )
+        for number, label in _LARGAN_ADJUSTABLE_APERTURE_ITEMS
     ]
 
 
