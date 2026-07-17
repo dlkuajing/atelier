@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "family_id": "98774980",
+  "root_id": "US-20260086434",
+  "publication_id": "US-20260086434-A1",
+  "identity": {
+    "application_number": "19/331023",
+    "title": "IMAGING LENS DRIVING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant": "LARGAN DIGITAL CO., LTD.",
+    "filed": "2025-09-17",
+    "publication_date": "2026-03-26",
+    "kind_code": "A1",
+    "priority_application": "US 63/698,631",
+    "priority_date": "2024-09-25"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/9f1b2ec29ec7d488/US-20260086434-A1.html",
+    "bytes": 119369,
+    "raw_characters": 119346,
+    "raw_sha256": "9f1b2ec29ec7d488f0b76361d3e00bfbd92dda6d9e5264f0ac808a440c619510",
+    "normalized_characters": 94765,
+    "normalized_sha256": "b438c61c9feff79b339a7e92f99e66feecf233514bc7fb84e7d5a6138100a8ec"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_application_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 2,
+    "summary_numbered_paragraphs": 5,
+    "brief_drawing_numbered_paragraphs": 65,
+    "detailed_numbered_paragraphs": 78,
+    "total_numbered_paragraphs": 151,
+    "claims": 30,
+    "claim_families": 3,
+    "declared_figure_occurrences": 64,
+    "unique_declared_figure_labels": 63,
+    "tagged_html_tables": 3,
+    "mathml_objects": 11,
+    "source_declared_architecture_items": 10,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 10,
+    "replayed_ledger_items": 10,
+    "official_pdf_files": 0,
+    "retained_drawing_images": 0,
+    "unmapped_source_items": 0
+  },
+  "paragraph_spans": [
+    {"range": [1, 1], "role": "related applications"},
+    {"range": [2, 3], "role": "background"},
+    {"range": [4, 8], "role": "summary"},
+    {"range": [9, 73], "role": "brief description and 64 figure-label occurrences"},
+    {"range": [74, 91], "role": "shared driving-module architecture"},
+    {"range": [92, 92], "role": "embodiment introduction"},
+    {"range": [93, 102], "role": "first embodiment example 1 and TABLE 1"},
+    {"range": [103, 104], "role": "first embodiment example 2"},
+    {"range": [105, 115], "role": "second embodiment example 1 and TABLE 2"},
+    {"range": [116, 117], "role": "second embodiment example 2"},
+    {"range": [118, 128], "role": "third embodiment example 1 and TABLE 3"},
+    {"range": [129, 130], "role": "third embodiment example 2"},
+    {"range": [131, 133], "role": "fourth embodiment example 1"},
+    {"range": [134, 142], "role": "fifth smartphone wrapper"},
+    {"range": [143, 146], "role": "sixth folded-telephoto smartphone wrapper"},
+    {"range": [147, 150], "role": "seventh vehicle-camera wrapper"},
+    {"range": [151, 151], "role": "boilerplate"}
+  ],
+  "figure_denominator": {
+    "occurrences_by_group": {
+      "FIGS. 1A-1P": 16,
+      "FIGS. 2A-2P source declarations": 16,
+      "FIGS. 3A-3Q": 17,
+      "FIGS. 4A-4F": 6,
+      "FIGS. 5A-5E": 5,
+      "FIG. 6": 1,
+      "FIGS. 7A-7C": 3
+    },
+    "source_anomaly": "paragraph 28 declares FIG. 2O where sequence context would suggest FIG. 2C; paragraph 40 independently declares FIG. 2O",
+    "source_labels_repaired": false
+  },
+  "mechanical_tables": [
+    {
+      "table": 1,
+      "values": {"D_mm": 5.548, "Hn_mm": 2.841, "L_mm": 40.340, "L_over_D": 7.27, "Wc_mm": 8.515, "Wc_over_Wf": 7.62, "Wf_mm": 1.118, "Hn_over_D": 0.51},
+      "meaning": "first driving-module resilience-wiring-sheet mechanical envelope"
+    },
+    {
+      "table": 2,
+      "values": {"D_mm": 5.588, "Hn_mm": 1.687, "L_mm": 47.081, "L_over_D": 8.43, "Wc_mm": 5.06, "Wc_over_Wf": 5.27, "Wf_mm": 0.96, "Hn_over_D": 0.30},
+      "meaning": "second driving-module resilience-wiring-sheet mechanical envelope"
+    },
+    {
+      "table": 3,
+      "values": {"D_mm": 5.588, "Hn_mm": 1.687, "L_mm": 48.224, "L_over_D": 8.63, "Wc_mm": 5.58, "Wc_over_Wf": 5.81, "Wf_mm": 0.96, "Hn_over_D": 0.30},
+      "meaning": "third driving-module resilience-wiring-sheet mechanical envelope"
+    }
+  ],
+  "items": [
+    {"embodiment_number": 1, "label": "Largan first driving-module embodiment example 1", "paragraphs": [93, 102], "table": 1, "status": "confirmed_no_prescription", "reason_code": "resilience_wiring_sheet_driving_architecture_only"},
+    {"embodiment_number": 2, "label": "Largan first driving-module embodiment example 2", "paragraphs": [103, 104], "table": null, "status": "confirmed_no_prescription", "reason_code": "alternate_resilience_wiring_sheet_architecture_only"},
+    {"embodiment_number": 3, "label": "Largan second driving-module embodiment example 1", "paragraphs": [105, 115], "table": 2, "status": "confirmed_no_prescription", "reason_code": "dual_axis_camera_drive_architecture_only"},
+    {"embodiment_number": 4, "label": "Largan second driving-module embodiment example 2", "paragraphs": [116, 117], "table": null, "status": "confirmed_no_prescription", "reason_code": "alternate_dual_axis_wiring_architecture_only"},
+    {"embodiment_number": 5, "label": "Largan third driving-module embodiment example 1", "paragraphs": [118, 128], "table": 3, "status": "confirmed_no_prescription", "reason_code": "third_camera_drive_architecture_only"},
+    {"embodiment_number": 6, "label": "Largan third driving-module embodiment example 2", "paragraphs": [129, 130], "table": null, "status": "confirmed_no_prescription", "reason_code": "alternate_third_wiring_architecture_only"},
+    {"embodiment_number": 7, "label": "Largan fourth driving-module embodiment example 1", "paragraphs": [131, 133], "table": null, "status": "confirmed_no_prescription", "reason_code": "fourth_lens_carrier_wiring_architecture_only"},
+    {"embodiment_number": 8, "label": "Largan fifth electronic-device embodiment", "paragraphs": [134, 142], "table": null, "status": "confirmed_no_prescription", "reason_code": "multi_camera_smartphone_wrapper_only"},
+    {"embodiment_number": 9, "label": "Largan sixth electronic-device embodiment", "paragraphs": [143, 146], "table": null, "status": "confirmed_no_prescription", "reason_code": "folded_telephoto_smartphone_wrapper_only"},
+    {"embodiment_number": 10, "label": "Largan seventh vehicle-device embodiment", "paragraphs": [147, 150], "table": null, "status": "confirmed_no_prescription", "reason_code": "vehicle_multi_camera_wrapper_only"}
+  ],
+  "optical_scope": {
+    "imaging_lens_assembly_occurrences": 47,
+    "lens_carrier_occurrences": 119,
+    "optical_axis_occurrences": 99,
+    "image_sensor_occurrences": 12,
+    "image_surface_occurrences": 6,
+    "focal_length_occurrences": 1,
+    "visual_angle_occurrences": 3,
+    "interpretation": "driving-module mechanics and device wrappers only",
+    "ordered_surface_prescriptions": 0
+  },
+  "non_prescription_numeric_contexts": [
+    {"values": ["D", "Hn", "L", "Wc", "Wf"], "meaning": "resilience-wiring-sheet mechanical dimensions and ratios"},
+    {"value": "different focal lengths", "location": "paragraph 142", "meaning": "generic multi-camera zooming function"},
+    {"value": "40 < theta < 90 degrees", "location": "paragraph 148", "meaning": "vehicle camera placement coverage visual angle"}
+  ],
+  "forbidden_substitutions": [
+    "mechanical wiring-sheet dimensions for lens surface coordinates",
+    "generic imaging lens assembly for an ordered optical prescription",
+    "multi-camera focal-length wording for numeric system focal length",
+    "vehicle coverage angle for prescription-specific angular field",
+    "drawing coordinates for numeric prescription values"
+  ]
+}

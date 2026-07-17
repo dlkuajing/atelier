@@ -577,6 +577,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_imaging_lens_driving_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -10417,6 +10425,241 @@ _ZEBRA_WEIGH_PLATTER_POWER_STORAGE_SOURCE_PROFILES: dict[
             "0.5 oz": 1,
             "1 oz": 1,
             "2 oz": 1,
+        },
+    }
+}
+_LARGAN_IMAGING_LENS_DRIVING_ITEMS = (
+    (
+        1,
+        "Largan first driving-module embodiment example 1",
+        "confirmed_no_prescription.resilience_wiring_sheet_driving_architecture_only",
+    ),
+    (
+        2,
+        "Largan first driving-module embodiment example 2",
+        "confirmed_no_prescription.alternate_resilience_wiring_sheet_architecture_only",
+    ),
+    (
+        3,
+        "Largan second driving-module embodiment example 1",
+        "confirmed_no_prescription.dual_axis_camera_drive_architecture_only",
+    ),
+    (
+        4,
+        "Largan second driving-module embodiment example 2",
+        "confirmed_no_prescription.alternate_dual_axis_wiring_architecture_only",
+    ),
+    (
+        5,
+        "Largan third driving-module embodiment example 1",
+        "confirmed_no_prescription.third_camera_drive_architecture_only",
+    ),
+    (
+        6,
+        "Largan third driving-module embodiment example 2",
+        "confirmed_no_prescription.alternate_third_wiring_architecture_only",
+    ),
+    (
+        7,
+        "Largan fourth driving-module embodiment example 1",
+        "confirmed_no_prescription.fourth_lens_carrier_wiring_architecture_only",
+    ),
+    (
+        8,
+        "Largan fifth electronic-device embodiment",
+        "confirmed_no_prescription.multi_camera_smartphone_wrapper_only",
+    ),
+    (
+        9,
+        "Largan sixth electronic-device embodiment",
+        "confirmed_no_prescription.folded_telephoto_smartphone_wrapper_only",
+    ),
+    (
+        10,
+        "Largan seventh vehicle-device embodiment",
+        "confirmed_no_prescription.vehicle_multi_camera_wrapper_only",
+    ),
+)
+_LARGAN_IMAGING_LENS_DRIVING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260086434-A1": {
+        "raw_document_sha256": (
+            "9f1b2ec29ec7d488f0b76361d3e00bfbd92dda6d9e5264f0ac808a440c619510"
+        ),
+        "normalized_text_sha256": (
+            "b438c61c9feff79b339a7e92f99e66feecf233514bc7fb84e7d5a6138100a8ec"
+        ),
+        "section_markers": {
+            "preamble": "US-20260086434-A1",
+            "abstract": "Abstract An imaging lens driving module includes",
+            "related_metadata": (
+                "Related U.S. Application Data us-provisional-application "
+                "US 63698631 20240925"
+            ),
+            "related_applications": (
+                "Background/Summary RELATED APPLICATIONS [0001]"
+            ),
+            "background": "BACKGROUND Technical Field [0002]",
+            "summary": "SUMMARY [0004]",
+            "figures": "BRIEF DESCRIPTION OF THE DRAWINGS [0009]",
+            "detailed": "DETAILED DESCRIPTION [0074]",
+            "claims": "Claims 1 . An imaging lens driving module, comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "56ff96e9ce52ad0f7de9bfa6cd7ead62ef49bde96f09d827c2c2b1acd8bbc644"
+            ),
+            "abstract": (
+                "75e5346108942a7907677d580405c8c066b818c6e78bdb85ca373cab0598b2fd"
+            ),
+            "related_metadata": (
+                "33d9790cf48105fc11a989f5807316665f2439c48d1c1d5f3c16d8d34a6bae03"
+            ),
+            "related_applications": (
+                "96cc365e14192d58ee33289acb2d2983c5ae7d21eefa3c0a635f2d35f3aa6978"
+            ),
+            "background": (
+                "1d29f0e0241fb85e47fe66905fe1ac11990671304b1c53d8fe6faed64caf0667"
+            ),
+            "summary": (
+                "23368de9bc3bc46f2cf6acc93afd9344a57e493b39c2a4473640a95d9ee6a514"
+            ),
+            "figures": (
+                "01a5bd8ea392525c1a2e58284dbc2fe3e8b7f482f365e84b015405c967129930"
+            ),
+            "detailed": (
+                "e2d3ab0abf8dadbbc2f8deddf5fbb8f3aceeb1a9212aabac22166241d026dd85"
+            ),
+            "claims": (
+                "e7fed9aa3451c7944943b325f52b65dfd0d6cf132daba77144ad40689cf9159b"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "8dfb0fc147d918d478af3449ba8d5b463ced22d732feaf4bdaf0ee83f152a15a",
+            (2, 3): "41d0b7f3e0462107767ac012618773e43be12ac4b7f7c5b57de6df899b42e2bd",
+            (4, 8): "205f2b61e2c8bad07d2ccff602c7ff201851b3e6e6ec3725382dc24ff14ea189",
+            (9, 73): "487efec9653bb3d9e256f3b157b6c7d121e6f03b025d012ffd248b48ec4cad08",
+            (74, 91): "9889d0ea5db23a2ea667ddd7640e53f5ae413f6de11379048ee46bd9a55c37cd",
+            (92, 92): "76582735d3f99785f16f9bf69171618fdec37ef5e0180348a5293f3cde8795a7",
+            (93, 102): "05ac1e511ef6b036051ed24bc6c100b3dce6573e5bbc291628617fb21aff0ae4",
+            (103, 104): "642b0043b269faaa5ca71d5b439aae3b11c6ffe26b087d5c5f0e3a5e0d10bc06",
+            (105, 115): "2e99a8609b0212642d31229a91898810b65c8f9316e525eb8d5cccd45b1ac0f7",
+            (116, 117): "46ff8d2036b3daa8cc8c177e5606db4b91d6be3901fb72901192c766223d7768",
+            (118, 128): "534b9f79138d099a9348371b99075b3a62d5fdebc5b25ec535b25a7020d3ea53",
+            (129, 130): "c9bbbd7dd80947578128cbc4680f7901e5440aaa26d837500da2713d554b687f",
+            (131, 133): "976417fc734d90a871a9aec1f7d790e6fbf6e79bbf4b36876395dd0e4ed1d6fb",
+            (134, 142): "6f44235ed57d1dd24f7899fcedf9f95d0a52395a18dcc37cd1a75ff1988069f7",
+            (143, 146): "0fa6f9c70024c6a64fe8dac990e8f2ec6b1d24dd3baac7f2be913e7f03943a02",
+            (147, 150): "5b3e396d5070737a00fdfc6ad8a823e1b03bf992309b93e6697b0e9463c309a1",
+            (151, 151): "f1ca641cc661391baf29d83d7c6390b902d6a2c4e4ee069315b77b0a00e50d4f",
+        },
+        "item_ranges": (
+            (93, 102),
+            (103, 104),
+            (105, 115),
+            (116, 117),
+            (118, 128),
+            (129, 130),
+            (131, 133),
+            (134, 142),
+            (143, 146),
+            (147, 150),
+        ),
+        "item_markers": (
+            "FIG. 1 A is a three-dimensional view of a camera module 100",
+            "FIG. 1 M is a three-dimensional view of a resilience wiring sheet 180",
+            "FIG. 2 A is a three-dimensional view of a camera module 200",
+            "FIG. 2 M is a three-dimensional view of a resilience wiring sheet 280",
+            "FIG. 3 A is a three-dimensional view of a camera module 300",
+            "FIG. 3 N is a three-dimensional view of a resilience wiring sheet 380",
+            "FIG. 4 A is a three-dimensional view of a lens carrier 420",
+            "FIG. 5 A is a schematic view of an electronic device 10",
+            "FIG. 6 is a schematic view of an electronic device 20",
+            "FIG. 7 A is a schematic view of an electronic device applied to a vehicle 30",
+        ),
+        "figure_labels": (
+            "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H",
+            "1I", "1J", "1K", "1L", "1M", "1N", "1O", "1P",
+            "2A", "2B", "2O", "2D", "2E", "2F", "2G", "2H",
+            "2I", "2J", "2K", "2L", "2M", "2N", "2O", "2P",
+            "3A", "3B", "3C", "3D", "3E", "3F", "3G", "3H",
+            "3I", "3J", "3K", "3L", "3M", "3N", "3O", "3P", "3Q",
+            "4A", "4B", "4C", "4D", "4E", "4F",
+            "5A", "5B", "5C", "5D", "5E", "6", "7A", "7B", "7C",
+        ),
+        "table_prefix_sha256": (
+            "0e590422f22df4e091f777490df7320745f5303ef5326f043b1d6494e9f5419a",
+            "c0e1cf7d9a533676eeba885e7e148f8d446f4ca8f024994e744057726b6e2729",
+            "8e998e8241a610dc8533ff21045d69f6471fdb5377d9f6c07ffeee5944c1387c",
+        ),
+        "mathml_sha256": (
+            "9ae224bdc3d1e898bc1fd4009a3b8dc1bcd0bc1f01020621e0a7cb23b74cebc2",
+            "8eaf312091314aaef6f13495a7638719ecdf7c4035f9972c1afcfe07cd4fe420",
+            "228d24acbd95b83d7c56daf713f1031501f7e7bf9febb07535352fffed552e70",
+            "4e153960561a6d036787e26b529af3d683eef42e8421b0d35912f2bf547a10c2",
+            "923fbc609167b774527c28f2a9eae26d41a74d11a84d0782b31256cae2b48172",
+            "a707efa053fb4ffd611b5839b7ff984972e5ecf16fb99f8d75e7dbb27dfb967b",
+            "795237610adabb8d635b857d03ba2cdcb8035acb7590a94703bea977970a4ae0",
+            "e3f5ff18c4c118adae19154199c9a3af023a1c466c024ec8c2bc2d7f67d9165c",
+            "539b726e9b0b71c053744c798fb2005e1ce0e210db36d3103723a435ed4cdc58",
+            "2ef4cbc83e0bfbea1c7898887cf3d86bc42cf99ee3ba09a8a8cbf9927d0824ed",
+            "69745560e77d56b6555eea9f405097de6bfc87a0b1f3bd9b9474e1517c3efc19",
+        ),
+        "claim_families": (
+            tuple(range(1, 11)),
+            tuple(range(11, 21)),
+            tuple(range(21, 31)),
+        ),
+        "claim_family_sha256": (
+            "3b59ed935ccb5377d81ab5193db5a0300586c976dd48fbb28bc20074ec0c9df7",
+            "4c65a9a1e35c446f9a370106361d6054a011089d81bda654f71b5c8d1f9f3957",
+            "d5ee9cfec5d0a40e84a85f2a207e314aba4ff85ffd952064c0a2ecce4f6ff719",
+        ),
+        "identity_markers": {
+            "US-20260086434-A1": 1,
+            "Patent Application Publication 20260086434": 1,
+            "Kind Code A1": 1,
+            "Publication Date March 26, 2026": 1,
+            "IMAGING LENS DRIVING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE": 1,
+            "Applicant: LARGAN DIGITAL CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 98774980": 1,
+            "Appl. No.: 19/331023": 1,
+            "Filed: September 17, 2025": 1,
+            "63/698,631": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "radius": 0,
+            "curvature": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "material": 0,
+            "lens element": 0,
+            "image height": 0,
+            "aperture": 0,
+            "stop": 0,
+            "entrance pupil": 0,
+            "optical prescription": 0,
+        },
+        "source_scope_phrase_counts": {
+            "imaging lens assembly": 47,
+            "lens carrier": 119,
+            "resilience wiring sheet": 161,
+            "optical axis": 99,
+            "image sensor": 12,
+            "image surface": 6,
+            "focal length": 1,
+            "zooming function": 1,
+            "D (mm)": 3,
+            "Hn (mm)": 3,
+            "L (mm)": 3,
+            "Wc (mm)": 3,
+            "Wf (mm)": 3,
+            "visual angle": 3,
         },
     }
 }
@@ -29892,6 +30135,265 @@ def _classify_zebra_weigh_platter_power_storage_architecture_attempts(
         for number, label, reason_code in (
             _ZEBRA_WEIGH_PLATTER_POWER_STORAGE_ITEMS
         )
+    ]
+
+
+def _classify_largan_imaging_lens_driving_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 98774980 lens-driving architecture items."""
+
+    profile = _LARGAN_IMAGING_LENS_DRIVING_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _LARGAN_IMAGING_LENS_DRIVING_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan imaging-lens-driving official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan imaging-lens-driving normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan imaging-lens-driving identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan imaging-lens-driving section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan imaging-lens-driving section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan imaging-lens-driving {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 152)):
+            raise PatentParseError(
+                "Largan imaging-lens-driving numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            start, end = bounds
+            span = "".join(paragraphs[number] for number in range(start, end + 1))
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan imaging-lens-driving numbered paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Largan imaging-lens-driving source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(10, 74):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+([0-9]+(?:\s+[A-Z])?)\s+",
+                paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan imaging-lens-driving figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1).replace(" ", ""))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Largan imaging-lens-driving figure-label denominator changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != (1, 2, 3):
+            raise PatentParseError(
+                "Largan imaging-lens-driving table denominator changed"
+            )
+        table_prefix_digests = tuple(
+            hashlib.sha256(
+                re.split(r"\[\d{4}\]", block.text, maxsplit=1)[0]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for block in table_blocks
+        )
+        if table_prefix_digests != profile["table_prefix_sha256"]:
+            raise PatentParseError(
+                "Largan imaging-lens-driving mechanical table payload changed"
+            )
+
+        mathml_blocks = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        mathml_digests = tuple(
+            hashlib.sha256(block.encode("utf-8")).hexdigest()
+            for block in mathml_blocks
+        )
+        if mathml_digests != profile["mathml_sha256"]:
+            raise PatentParseError(
+                "Largan imaging-lens-driving MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 31):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Largan imaging-lens-driving claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 30
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 31)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Largan imaging-lens-driving three-claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan imaging-lens-driving prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan imaging-lens-driving scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all ten exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "paragraphs 93-102 and TABLE 1 publish the first resilience-wiring-sheet "
+        "drive arrangement and mechanical D/Hn/L/Wc/Wf ratios only; the imaging "
+        "lens assembly is generic and no optical surface prescription is present",
+        "paragraphs 103-104 publish an alternate first-embodiment resilience "
+        "wiring sheet only, without optical surface coordinates",
+        "paragraphs 105-115 and TABLE 2 publish a dual-axis camera drive and its "
+        "mechanical resilience-wiring-sheet ratios only, not a lens prescription",
+        "paragraphs 116-117 publish an alternate dual-axis resilience wiring "
+        "sheet only, without radius, spacing, material or asphere data",
+        "paragraphs 118-128 and TABLE 3 publish a third camera drive arrangement "
+        "and mechanical resilience-wiring-sheet ratios only",
+        "paragraphs 129-130 publish an alternate third-embodiment resilience "
+        "wiring sheet only, without an ordered optical design",
+        "paragraphs 131-133 publish a fourth lens-carrier wiring arrangement only; "
+        "the named lens carrier does not disclose a lens prescription",
+        "paragraphs 134-142 publish a multi-camera smartphone wrapper and generic "
+        "different-focal-length zooming only, without any constituent prescription",
+        "paragraphs 143-146 publish a folded-telephoto smartphone wrapper only; "
+        "no optical surfaces or design parameters are disclosed",
+        "paragraphs 147-150 publish vehicle camera placements and coverage visual "
+        "angles only; the 40-to-90-degree range is not a lens prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _LARGAN_IMAGING_LENS_DRIVING_ITEMS
     ]
 
 
