@@ -442,6 +442,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_folded_camera_qcon_missing_definitions_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -6874,6 +6882,173 @@ _FSO_TRANSMITTER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "1f8ce4abe31983f9d8dd081c456687e82a294d781fd339dcff11466914fb7111",
                 "5280f7738bc34273332dc79a7d77ec28d0dfb953f7db41465afcae7f332d7943",
                 "d9ccd984891ccb6ae14f1095ba1ddbf84b2f92fe27f50346e049a5e088e7aaf6",
+            ),
+        },
+    }
+}
+_FOLDED_CAMERA_QCON_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*FOLDED\s+CAMERA\s+LENS\s+DESIGNS\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_FOLDED_CAMERA_QCON_FIGURE_DECLARATIONS = (
+    (33, "FIG. 1 A illustrates"),
+    (34, "FIG. 1 B shows"),
+    (35, "FIG. 1 C illustrates"),
+    (36, "FIG. 2 A shows"),
+    (37, "FIG. 2 B shows"),
+    (38, "FIG. 2 C shows"),
+    (39, "FIG. 2 D shows"),
+    (40, "FIG. 2 E depicts"),
+    (41, "FIG. 3 A illustrates"),
+    (42, "FIG. 3 B illustrates"),
+    (43, "FIG. 4 provides"),
+    (44, "FIG. 5 provides"),
+    (45, "FIG. 6 provides"),
+    (46, "FIG. 7 shows"),
+)
+_FOLDED_CAMERA_QCON_ITEMS = (
+    (
+        1,
+        "Folded lens 204 shared axial-symmetric QT1 prescription",
+        ((58, 109), (126, 129)),
+        ("2A", "2C", "2D"),
+    ),
+    (
+        2,
+        "Folded cut lens 204-prime 5 mm directional-aperture variant",
+        ((110, 125),),
+        ("2B",),
+    ),
+    (
+        3,
+        "Folded cut lens 204-double-prime 4.9 mm directional-aperture variant",
+        ((130, 135),),
+        ("2E",),
+    ),
+)
+_FOLDED_CAMERA_QCON_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20230132659-A1": {
+        "raw_document_sha256": (
+            "f0df7ad3fbe33052eeeb9c1fb09e758a2cb18bf32fa2ba124256bc423c8020eb"
+        ),
+        "normalized_text_sha256": (
+            "ede976107a0aefc51e5da41ff066bae88b631c88e6deb806ea3b3cc884d34201"
+        ),
+        "family_id": "79728600",
+        "application_number": "17/607400",
+        "section_markers": {
+            "abstract": "Abstract Folded cameras with a total track length",
+            "background_summary": (
+                "Background/Summary CROSS REFERENCE TO EXISTING APPLICATIONS [0001]"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0032]",
+            "detailed": "DETAILED DESCRIPTION [0047]",
+            "claims": "Claims 1 . A folded camera, comprising:",
+        },
+        "section_sha256": {
+            "abstract": (
+                "eaa1ed089b0c4b668d01120f36fd0fc33ae42247f7295d7d26aebf627d333535"
+            ),
+            "background_summary": (
+                "c34a0c767410af4e46de99484805fee5248f33859c0bc08bf6d3cc3bb0ec4e71"
+            ),
+            "brief": (
+                "2675c442c33d05316501df2f42e3f7731842ea252acd5e6f35c642cc59d8b768"
+            ),
+            "detailed": (
+                "60f83c45f0583fb0a0781b4f102548694834dba7b7c3066cc0951fee8bc6291f"
+            ),
+            "claims": (
+                "2134fcdf0150e5008b6e15284f7ee95047bd86f0224918495fd121f78b6e9f5a"
+            ),
+        },
+        "paragraph_ranges": {
+            "background_summary": (1, 31),
+            "brief": (32, 46),
+            "detailed": (47, 138),
+        },
+        "claim_numbers": tuple(range(1, 37)),
+        "identity_markers": {
+            "FOLDED CAMERA LENS DESIGNS": 1,
+            "Family ID: 79728600": 1,
+            "Appl. No.: 17/607400": 1,
+            "PCT No.: PCT/IB2021/056357": 1,
+            "Corephotonics Ltd.": 1,
+            "Shabtay; Gal": 2,
+            "Goldenberg; Ephraim": 1,
+            "Rudnick; Roy": 1,
+            "Goulinski; Nadav": 1,
+        },
+        "table_block_sha256": {
+            1: "5e1d6a8b29e5f672bc4a178d16ef3cdedb428dfadbf5a299f76c28cbf76160f8",
+            2: "914fc1a74603248d865536d8fb678fc81049a51d3ad43406b184385a58ad3e78",
+            3: "02ced9a8afe72954a6cf8569de78a38bde489b8871d9b2088600c66e6bea66c3",
+        },
+        "qcon_nonzero_counts": {
+            "A4": 16,
+            "A5": 16,
+            "A6": 16,
+            "A7": 4,
+            "A8": 4,
+        },
+        "source_phrase_counts": {
+            "Tables 1-3": 1,
+            "Tables 1 and 2": 2,
+            "Q type 1 (QT1) surface sag formula": 1,
+            "conic parameter": 1,
+            "TABLE 3": 0,
+            "EFL=4.14 mm": 1,
+            "F/# =1.00": 1,
+            "Diagonal FOV = 80.4 deg.": 1,
+            (
+                "aperture radius for all surfaces of L.sub.6 and L.sub.8 as well as "
+                "surface S.sub.15 of L.sub.7 is to be replaced by 2.5 mm in the "
+                "y-direction"
+            ): 1,
+            (
+                "aperture radius for all surfaces of L.sub.6, and L.sub.8 as well as "
+                "of surfaces S.sub.11 of L.sub.5 and S.sub.15 of L.sub.7 is to be "
+                "replaced by 2.45 mm in y-direction"
+            ): 1,
+        },
+        "pdf_audit": {
+            "page_count": 19,
+            "drawing_sheet_count": 10,
+            "drawing_pdf_pages": tuple(range(2, 12)),
+            "container_sha256": {
+                "official_1": (
+                    "4daa9f5d71d87c7de35c70c5b4d30c7a4f0ad67ed78d978281399f730c1188d0"
+                ),
+                "official_2": (
+                    "ff41967ca078e4b5aff77adecee654cba9f91130ce2f0656a6769e97c1b2f92a"
+                ),
+                "google": (
+                    "d4e8da161b278cf53890d43693d882958579f7968684738d8ebc1f066035802a"
+                ),
+            },
+            "page_image_sha256": (
+                "1709478063403085adf810ef963dbdef44b5902361b2995a15db3f02697026cd",
+                "5d46c2eae46c7eee310b2323dcf2e7914f1f885e6a42649038d7414ad4b0fb17",
+                "95845710c722c749a0ac6ec95e2492acb67c1ba923186e456e378606add07c8d",
+                "18be620b25ffd78d8cb96b444d79f855776111f62e8052c71928686ecd908d9a",
+                "735c55ae459528f1043fbeaabae9c3de1a4569c6c5bd980c0fe1673fd2ca33c1",
+                "63df0ccd029b07cfc1d57e4c4a9893815d343c49fcec769be0d8fa62fe19ad0e",
+                "4e1afde45e546fa2a54488158570a9551b7839f79fa95b361ac3e440d4d193c1",
+                "bf52983a917b43da505f89e3e6de6af9797b3be57be064f3ad6024ba610380c1",
+                "53a59eb77da2a1e134e5283c7714ff0db49a1c86a9d6a16c882de935507a8312",
+                "1a29a27bed2885b26db7f7d9c75d4e021766957fdeeb4e9414f0554713204b3b",
+                "8bcdd99dda55063c32c2bff4ce419f7082b879b294936d07acd706552cc49f41",
+                "17682517cd77e4fb777d09cd038551b33b9648b352830dea8307ee304c985461",
+                "d1b8b61734273d1a7480d4c2f42908e1caa454dff9ee699525e9052b49637c60",
+                "1ced07a8afc40fe1f24c8a6ec62207dd090644832c3913af20548957baa0fdb4",
+                "f8d897affce101ed103d300d1bc89a963e61cb76e84677b3b459a06d52d42726",
+                "339cf90e18675d9aad70636166c93403a21010bdbcbf9b3e87c51e1aa89d1ece",
+                "10fd13d9e61916dc00d291c84d7d287b49a5674bafa674d20f9949c66db3e3fa",
+                "3834615e3644b93b548b2803847a9332aceb4f8ae29c52449fd67d854eda8f36",
+                "a99b0004222b94974d655a7dc0e581ce4e945511d4976aae43281b0081ae8f55",
+            ),
+            "raster_set_sha256": (
+                "6017cc18f7abe57255691b58236a897a3fdb4a005b802d3cf56f3a8b743fbeb5"
             ),
         },
     }
@@ -20365,6 +20540,271 @@ def _classify_fso_transmitter_architecture_and_models_attempts(
         for number, label, reason_code, _paragraphs, _figures in (
             _FSO_TRANSMITTER_ITEMS
         )
+    ]
+
+
+def _classify_folded_camera_qcon_missing_definitions_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 79728600 QT1 prescriptions with source gaps."""
+
+    profile = _FOLDED_CAMERA_QCON_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraph_ranges, _figures in (
+                _FOLDED_CAMERA_QCON_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"folded camera QT1 official raw text hash changed for {patent_id}"
+            )
+        if len(_FOLDED_CAMERA_QCON_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("folded camera QT1 title binding changed")
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"folded camera QT1 normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded camera QT1 identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError("folded camera QT1 section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("folded camera QT1 section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"folded camera QT1 {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"folded camera QT1 {section_name} paragraph denominator changed"
+                )
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        if tuple(int(match.group(1)) for match in paragraph_matches) != tuple(
+            range(1, 139)
+        ):
+            raise PatentParseError("folded camera QT1 paragraphs 1-138 changed")
+        paragraphs = {
+            int(match.group(1)): text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+                sections["claims"],
+                flags=re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("folded camera QT1 claims 1-36 changed")
+        for paragraph_number, marker in _FOLDED_CAMERA_QCON_FIGURE_DECLARATIONS:
+            if len(
+                re.findall(
+                    re.escape(marker), paragraphs[paragraph_number], re.IGNORECASE
+                )
+            ) != 1:
+                raise PatentParseError(
+                    f"folded camera QT1 figure marker {marker!r} changed"
+                )
+
+        mapped_paragraphs: list[int] = []
+        mapped_figures: list[str] = []
+        for _number, _label, ranges, figures in _FOLDED_CAMERA_QCON_ITEMS:
+            for bounds in ranges:
+                mapped_paragraphs.extend(range(bounds[0], bounds[1] + 1))
+            mapped_figures.extend(figures)
+        if len(mapped_paragraphs) != len(set(mapped_paragraphs)):
+            raise PatentParseError("folded camera QT1 item paragraph mapping overlaps")
+        if tuple(sorted(mapped_paragraphs)) != (
+            *range(58, 126),
+            *range(126, 136),
+        ):
+            raise PatentParseError("folded camera QT1 item paragraph mapping changed")
+        if tuple(mapped_figures) != ("2A", "2C", "2D", "2B", "2E"):
+            raise PatentParseError("folded camera QT1 five-system mapping changed")
+
+        blocks = _folded_camera_qcon_source_blocks(text)
+        if set(blocks) != {1, 2, 3}:
+            raise PatentParseError("folded camera QT1 source-table denominator changed")
+        for number, expected_digest in profile["table_block_sha256"].items():
+            digest = hashlib.sha256(blocks[number].encode("utf-8")).hexdigest()
+            if digest != expected_digest:
+                raise PatentParseError(
+                    f"folded camera QT1 source table block {number} changed"
+                )
+        if len(re.findall(r"\bQT1\b", blocks[1], re.IGNORECASE)) != 8:
+            raise PatentParseError("folded camera QT1 eight-lens type count changed")
+        if tuple(range(1, 21)) != tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s+(?=(?:A\.S|Lens\s+\d|Filter|Image|"
+                r"-?\d|Infinity))",
+                blocks[1],
+                flags=re.IGNORECASE,
+            )
+        ):
+            raise PatentParseError("folded camera QT1 surface-row denominator changed")
+
+        low_rows = _folded_camera_qcon_coefficient_rows(blocks[2])
+        high_rows = _folded_camera_qcon_coefficient_rows(blocks[3])
+        expected_surfaces = list(range(2, 18))
+        if [surface for surface, _values in low_rows] != expected_surfaces:
+            raise PatentParseError("folded camera QT1 Rnorm/A0-A3 rows changed")
+        if [surface for surface, _values in high_rows] != expected_surfaces:
+            raise PatentParseError("folded camera QT1 A4-A8 rows changed")
+        observed_nonzero = {
+            f"A{index + 4}": sum(values[index] != 0.0 for _surface, values in high_rows)
+            for index in range(5)
+        }
+        if observed_nonzero != profile["qcon_nonzero_counts"]:
+            raise PatentParseError("folded camera QT1 high-order coefficient census changed")
+
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"folded camera QT1 source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if re.search(r"<maths\b", raw_text, flags=re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "folded camera QT1 primary HTML now retains formula objects"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all three exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        (
+            "FIGS. 2A, 2C and 2D share the one 20-row lens-204 prescription with "
+            "EFL 4.14 mm, F/1.0 and 80.4-degree diagonal FOV, but all 16 lens "
+            "surfaces use QT1 coefficients through non-zero A8 while the official "
+            "formula defines only Q0-Q5, publishes no surface conic-parameter values, "
+            "and references an absent TABLE 3"
+        ),
+        (
+            "FIG. 2B inherits the same source-incomplete QT1 prescription and replaces "
+            "selected y-direction aperture radii with 2.5 mm to form non-circular cut "
+            "lens 204-prime; Q6-Q8 definitions, surface conic parameters and the "
+            "referenced TABLE 3 remain unpublished"
+        ),
+        (
+            "FIG. 2E inherits the same source-incomplete QT1 prescription and replaces "
+            "selected y-direction aperture radii with 2.45 mm to form non-circular cut "
+            "lens 204-double-prime; Q6-Q8 definitions, surface conic parameters and the "
+            "referenced TABLE 3 remain unpublished"
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=(
+                    "metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent"
+                ),
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, _paragraph_ranges, _figures in _FOLDED_CAMERA_QCON_ITEMS
+    ]
+
+
+def _folded_camera_qcon_source_blocks(text: str) -> dict[int, str]:
+    matches = list(re.finditer(r"TABLE-US-0000(?P<number>[123])\b", text))
+    if len(matches) != 3:
+        raise PatentParseError("folded camera QT1 must contain three tagged table blocks")
+    blocks: dict[int, str] = {}
+    for index, match in enumerate(matches):
+        number = int(match.group("number"))
+        if number in blocks:
+            raise PatentParseError(f"duplicate folded camera QT1 table block: {number}")
+        if index + 1 < len(matches):
+            end = matches[index + 1].start()
+        else:
+            try:
+                end = text.index("[0081]", match.end())
+            except ValueError as exc:
+                raise PatentParseError(
+                    "folded camera QT1 final table boundary changed"
+                ) from exc
+        blocks[number] = text[match.start() : end]
+    return blocks
+
+
+def _folded_camera_qcon_coefficient_rows(
+    table_text: str,
+) -> list[tuple[int, tuple[float, ...]]]:
+    row_pattern = re.compile(
+        r"(?:^|\s)(?P<surface>\d+)\s+"
+        + r"\s+".join(
+            rf"(?P<value{index}>{NUMBER_PATTERN})" for index in range(5)
+        ),
+        flags=re.IGNORECASE,
+    )
+    return [
+        (
+            int(match.group("surface")),
+            tuple(_parse_number(match.group(f"value{index}")) for index in range(5)),
+        )
+        for match in row_pattern.finditer(table_text)
+        if 2 <= int(match.group("surface")) <= 17
     ]
 
 

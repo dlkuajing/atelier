@@ -18628,3 +18628,329 @@ def test_fso_transmitter_replay_and_denominator_artifacts() -> None:
     assert queue["next_exact_group"]["family_id"] == "79728600"
     assert queue["next_exact_group"]["root_ids"] == ["US-20230132659"]
     assert queue["saturation_complete"] is False
+
+
+def test_folded_camera_qcon_source_is_three_metadata_terminals_and_fails_closed() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "f0df7ad3fbe33052"
+        / "US-20230132659-A1.html"
+    )
+    raw = source_path.read_text(encoding="utf-8")
+    assert hashlib.sha256(source_path.read_bytes()).hexdigest() == (
+        "f0df7ad3fbe33052eeeb9c1fb09e758a2cb18bf32fa2ba124256bc423c8020eb"
+    )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw,
+        patent_id="US-20230132659-A1",
+    )
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert [attempt.embodiment for attempt in attempts] == [
+        item[1] for item in patent_to_zmx._FOLDED_CAMERA_QCON_ITEMS
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code
+        == "metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent"
+        for attempt in attempts
+    )
+    assert "one 20-row lens-204 prescription" in str(attempts[0].error)
+    assert "defines only Q0-Q5" in str(attempts[0].error)
+    assert "2.5 mm" in str(attempts[1].error)
+    assert "2.45 mm" in str(attempts[2].error)
+
+    text = patent_to_zmx.normalize_patent_text(raw)
+    blocks = patent_to_zmx._folded_camera_qcon_source_blocks(text)
+    assert set(blocks) == {1, 2, 3}
+    assert "Surface # Comment Type Curvature Radius Thickness" in blocks[1]
+    assert "EFL=4.14 mm, F/# =1.00, Diagonal FOV = 80.4 deg." in blocks[1]
+    low_rows = patent_to_zmx._folded_camera_qcon_coefficient_rows(blocks[2])
+    high_rows = patent_to_zmx._folded_camera_qcon_coefficient_rows(blocks[3])
+    assert [surface for surface, _values in low_rows] == list(range(2, 18))
+    assert [surface for surface, _values in high_rows] == list(range(2, 18))
+    assert {
+        f"A{index + 4}": sum(values[index] != 0.0 for _surface, values in high_rows)
+        for index in range(5)
+    } == {"A4": 16, "A5": 16, "A6": 16, "A7": 4, "A8": 4}
+    assert text.count("Tables 1-3") == 1
+    assert text.count("TABLE 3") == 0
+    assert text.count("conic parameter") == 1
+
+    mutated = raw.replace("Tables 1-3", "Tables 1-2", 1)
+    assert mutated != raw
+    mutated_attempts = patent_to_zmx._parse_prescription_attempts(
+        mutated,
+        patent_id="US-20230132659-A1",
+    )
+    assert len(mutated_attempts) == 3
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "official raw text hash changed" in str(attempt.error)
+        for attempt in mutated_attempts
+    )
+
+
+def test_folded_camera_qcon_exact_wrappers_define_only_q0_through_q5() -> None:
+    root = Path(__file__).resolve().parents[1]
+    review = (
+        root
+        / ".planning"
+        / "quick"
+        / "260717-patent-generic-family-79728600"
+        / "source-review"
+    )
+    wrappers = {
+        "US-20230132659-A1-google.html": (
+            "1739e22255f7bcf4eb0b52d5ea2686242284b8390f529ac3c4a8cd3db0366cf5",
+            "MATH-US-00008",
+            [
+                "MATH-US-00001",
+                "MATH-US-00002",
+                "MATH-US-00003",
+                "MATH-US-00004",
+                "MATH-US-00005",
+                "MATH-US-00006",
+                "MATH-US-00007",
+                "MATH-US-00008",
+                "MATH-US-00009",
+            ],
+        ),
+        "US-12050308-B2-google.html": (
+            "f6ffcdcdadd4bb2208c7bdce4218187f30d699f68ac74417d496abbfb702a204",
+            "MATH-US-00002",
+            [
+                "MATH-US-00001",
+                "MATH-US-00001-2",
+                "MATH-US-00001-3",
+                "MATH-US-00001-4",
+                "MATH-US-00001-5",
+                "MATH-US-00001-6",
+                "MATH-US-00001-7",
+                "MATH-US-00001-8",
+                "MATH-US-00001-9",
+                "MATH-US-00002",
+                "MATH-US-00003",
+            ],
+        ),
+    }
+    for name, (expected_hash, formula_end_id, expected_ids) in wrappers.items():
+        path = review / name
+        raw = path.read_text(encoding="utf-8")
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == expected_hash
+        assert re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw, re.IGNORECASE) == (
+            expected_ids
+        )
+        formula_region = raw[
+            raw.index("MATH-US-00001") : raw.index(formula_end_id)
+        ]
+        plain_formula = " ".join(re.sub(r"<[^>]+>", " ", formula_region).split())
+        assert re.search(r"Q\s*5", plain_formula)
+        assert re.search(r"Q\s*6", plain_formula) is None
+        assert "A6" in raw and "A7" in raw and "A8" in raw
+        assert re.search(r"\bTABLE\s+3\b", raw, re.IGNORECASE) is None
+
+
+def test_folded_camera_qcon_retained_pdf_has_exact_full_raster_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    review = (
+        root
+        / ".planning"
+        / "quick"
+        / "260717-patent-generic-family-79728600"
+        / "source-review"
+    )
+    profile = patent_to_zmx._FOLDED_CAMERA_QCON_SOURCE_PROFILES[
+        "US-20230132659-A1"
+    ]["pdf_audit"]
+    paths = {
+        "official_1": review / "US-20230132659-A1-official-1.pdf",
+        "official_2": review / "US-20230132659-A1-official-2.pdf",
+        "google": review / "US-20230132659-A1-google.pdf",
+    }
+    raster_sets: dict[str, list[str]] = {}
+    for label, path in paths.items():
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == profile[
+            "container_sha256"
+        ][label]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(path))
+        assert len(reader.pages) == profile["page_count"] == 19
+        page_hashes: list[str] = []
+        for page_number, page in enumerate(reader.pages, start=1):
+            assert (page.extract_text() or "") == ""
+            assert len(page.images) == 1
+            image = patent_pdf_recovery._page_image(
+                page,
+                source=f"US-20230132659-A1 {label}",
+                page_number=page_number,
+            )
+            decoded = patent_pdf_recovery._decoded_raster(
+                image,
+                source=f"US-20230132659-A1 {label}",
+            )
+            assert decoded.shape == (3300, 2560)
+            page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(image))
+        assert tuple(page_hashes) == profile["page_image_sha256"]
+        raster_sets[label] = page_hashes
+    assert raster_sets["official_1"] == raster_sets["official_2"]
+    assert raster_sets["official_1"] == raster_sets["google"]
+    assert profile["drawing_sheet_count"] == 10
+    assert profile["drawing_pdf_pages"] == tuple(range(2, 12))
+
+
+def test_folded_camera_qcon_replay_and_denominator_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260717-patent-generic-family-79728600"
+    )
+    evidence = json.loads(
+        (quick / "family-79728600-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "retained_same_application_repair_checks": 1,
+        "background_and_summary_paragraphs": 31,
+        "drawing_description_paragraphs": 15,
+        "detailed_description_paragraphs": 92,
+        "total_numbered_paragraphs": 138,
+        "total_claim_denominator": 36,
+        "figure_panels": 14,
+        "tagged_html_table_blocks": 3,
+        "logical_published_tables": 2,
+        "referenced_missing_logical_tables": 1,
+        "primary_html_math_objects": 0,
+        "exact_a1_wrapper_math_objects": 9,
+        "same_application_b2_math_objects": 11,
+        "classification_pdf_pages": 19,
+        "classification_drawing_sheets": 10,
+        "classification_specification_pages": 8,
+        "ledger_items": 3,
+        "terminal_items": 3,
+    }
+
+    for key in (
+        "denominator_audit",
+        "official_pdf_audit",
+        "external_family_queue",
+        "replay_determinism",
+        "source_audit",
+    ):
+        record = evidence[key]
+        path = root / record["path"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+
+    denominator = json.loads(
+        (quick / "family-79728600-denominator.json").read_text(encoding="utf-8")
+    )
+    assert denominator["paragraph_ranges"] == {
+        "background_and_summary": [1, 31],
+        "brief_description_of_drawings": [32, 46],
+        "detailed_description": [47, 138],
+    }
+    assert denominator["claims"]["active_range"] == [1, 36]
+    assert len(denominator["figure_panels"]) == 14
+    assert denominator["source_tables"]["logical_tables"] == 2
+    assert denominator["source_tables"]["referenced_but_absent_logical_tables"] == [
+        "Table 3"
+    ]
+    assert denominator["formula_objects"]["defined_q_terms"] == [
+        "Q0",
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5",
+    ]
+    assert denominator["formula_objects"]["undefined_but_required_q_terms"] == [
+        "Q6",
+        "Q7",
+        "Q8",
+    ]
+    assert [item["item_number"] for item in denominator["ledger_items"]] == [
+        1,
+        2,
+        3,
+    ]
+    assert denominator["reconciliation"]["unmapped_detailed_paragraphs"] == 0
+    assert denominator["reconciliation"]["unmapped_figure_panels"] == 0
+    assert denominator["reconciliation"]["coordinate_values_synthesized"] == 0
+    assert denominator["reconciliation"]["external_standard_q_terms_imported"] is False
+
+    replay = json.loads(
+        (quick / "family-79728600-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    semantics: list[str] = []
+    for record in replay["attempts"]:
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["file_sha256"]
+        payload = json.loads(raw)
+        assert payload["root_state"] == "terminal"
+        assert payload["reason_code"] == "terminal.all_disclosed_items_terminal"
+        assert len(payload["items"]) == 3
+        assert all(item["state"] == "terminal" for item in payload["items"])
+        assert all(
+            item["reason_code"]
+            == "terminal.metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent"
+            for item in payload["items"]
+        )
+        assert all(
+            item["conversion_attempt_id"] is None
+            and item["conversion_request_sha256"] is None
+            and item["prescription_fingerprint"] is None
+            for item in payload["items"]
+        )
+        semantic = dict(payload)
+        semantic.pop("result_attempt")
+        semantic_bytes = json.dumps(
+            semantic,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()
+        semantics.append(hashlib.sha256(semantic_bytes).hexdigest())
+    assert semantics == [replay["semantic_sha256"]] * 2
+
+    # Later append-only shovels legitimately replace the live summary. These
+    # literals bind the contemporaneous snapshot without pinning mutable state.
+    assert evidence["replay_state"]["summary_sha256"] == (
+        "b6c11b2249998f94542622543f0fed3d88ee9ef62c5c46ace84f703954b87007"
+    )
+    assert evidence["replay_state"]["report_sha256"] == (
+        "1c60b7b454a85a66949b62530eb20d7ef3757b721febaf1e69226d7ea676d60b"
+    )
+    assert sum(evidence["replay_state"]["root_state_counts"].values()) == 619
+
+    after_hashes = []
+    for key in ("after_1", "after_2"):
+        record = evidence["census"][key]
+        path = root / record["path"]
+        after_hashes.append(hashlib.sha256(path.read_bytes()).hexdigest())
+        census = json.loads(path.read_text(encoding="utf-8"))
+        assert census["affected_roots"] == census["affected_items"] == 130
+        assert census["result_set_sha256"] == evidence["replay_state"][
+            "result_set_sha256"
+        ]
+    assert after_hashes == [evidence["census"]["after_1"]["sha256"]] * 2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["next_exact_group"]["family_id"] == "94050343"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260072245"]
+    assert queue["saturation_complete"] is False

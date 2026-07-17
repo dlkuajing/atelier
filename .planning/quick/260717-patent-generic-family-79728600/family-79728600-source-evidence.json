@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "family_id": "79728600",
+  "root_ids": [
+    "US-20230132659"
+  ],
+  "publication_id": "US-20230132659-A1",
+  "application_number": "17/607400",
+  "title": "FOLDED CAMERA LENS DESIGNS",
+  "applicant": "Corephotonics Ltd.",
+  "inventors": [
+    "Gal Shabtay",
+    "Ephraim Goldenberg",
+    "Roy Rudnick",
+    "Nadav Goulinski"
+  ],
+  "priority_date": "2020-07-22",
+  "filing_date": "2021-07-14",
+  "publication_date": "2023-05-04",
+  "related_applications": {
+    "international_parent": "PCT/IB2021/056357",
+    "provisional_priority": "US-63/054862",
+    "same_application_later_grant": "US-12050308-B2",
+    "continuation_child_grants": ["US-12392999-B2", "US-12571999-B2"]
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "retained_same_application_repair_checks": 1,
+    "background_and_summary_paragraphs": 31,
+    "drawing_description_paragraphs": 15,
+    "detailed_description_paragraphs": 92,
+    "total_numbered_paragraphs": 138,
+    "total_claim_denominator": 36,
+    "figure_panels": 14,
+    "tagged_html_table_blocks": 3,
+    "logical_published_tables": 2,
+    "referenced_missing_logical_tables": 1,
+    "primary_html_math_objects": 0,
+    "exact_a1_wrapper_math_objects": 9,
+    "same_application_b2_math_objects": 11,
+    "classification_pdf_pages": 19,
+    "classification_drawing_sheets": 10,
+    "classification_specification_pages": 8,
+    "ledger_items": 3,
+    "terminal_items": 3
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f0df7ad3fbe33052/US-20230132659-A1.html",
+    "bytes": 57732,
+    "raw_characters": 57322,
+    "raw_document_sha256": "f0df7ad3fbe33052eeeb9c1fb09e758a2cb18bf32fa2ba124256bc423c8020eb",
+    "normalized_characters": 49149,
+    "normalized_text_sha256": "ede976107a0aefc51e5da41ff066bae88b631c88e6deb806ea3b3cc884d34201",
+    "section_positions": {
+      "abstract": 270,
+      "background_summary": 1283,
+      "brief": 9619,
+      "detailed": 11928,
+      "claims": 42841
+    },
+    "section_lengths": {
+      "abstract": 1013,
+      "background_summary": 8336,
+      "brief": 2309,
+      "detailed": 30913,
+      "claims": 6308
+    },
+    "section_sha256": {
+      "abstract": "eaa1ed089b0c4b668d01120f36fd0fc33ae42247f7295d7d26aebf627d333535",
+      "background_summary": "c34a0c767410af4e46de99484805fee5248f33859c0bc08bf6d3cc3bb0ec4e71",
+      "brief": "2675c442c33d05316501df2f42e3f7731842ea252acd5e6f35c642cc59d8b768",
+      "detailed": "60f83c45f0583fb0a0781b4f102548694834dba7b7c3066cc0951fee8bc6291f",
+      "claims": "2134fcdf0150e5008b6e15284f7ee95047bd86f0224918495fd121f78b6e9f5a"
+    },
+    "paragraph_ranges": {
+      "background_summary": [1, 31],
+      "brief": [32, 46],
+      "detailed": [47, 138]
+    },
+    "claim_range": [1, 36],
+    "figure_panels": [
+      "1A", "1B", "1C", "2A", "2B", "2C", "2D", "2E", "3A", "3B",
+      "4", "5", "6", "7"
+    ],
+    "tagged_table_block_sha256": {
+      "TABLE-US-00001": "5e1d6a8b29e5f672bc4a178d16ef3cdedb428dfadbf5a299f76c28cbf76160f8",
+      "TABLE-US-00002": "914fc1a74603248d865536d8fb678fc81049a51d3ad43406b184385a58ad3e78",
+      "TABLE-US-00003": "02ced9a8afe72954a6cf8569de78a38bde489b8871d9b2088600c66e6bea66c3"
+    }
+  },
+  "prescription_boundary": {
+    "published_base_prescriptions": 1,
+    "published_surface_rows": 20,
+    "published_lens_surface_rows": 16,
+    "published_qt1_coefficient_max": "A8",
+    "published_q_definition_max": "Q5",
+    "missing_q_definitions": ["Q6", "Q7", "Q8"],
+    "published_surface_conic_values": 0,
+    "referenced_logical_table_3_present": false,
+    "unique_optical_variants": 3,
+    "convertible_variants": 0,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "external_qcon_standard_imported": false,
+    "coordinate_values_synthesized": 0
+  },
+  "terminal_outcome": {
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "terminal_status": "metadata_unpublished",
+    "terminal_reason_code": "terminal.metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent",
+    "terminal_items": 3,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "dbbdf20c8ab4beb1c30abd1aeb8ea6b4752e32ce7f740404fad21f6aa16f834d",
+    "summary_sha256": "b6c11b2249998f94542622543f0fed3d88ee9ef62c5c46ace84f703954b87007",
+    "report_sha256": "1c60b7b454a85a66949b62530eb20d7ef3757b721febaf1e69226d7ea676d60b",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 146,
+      "parser_review_required": 318,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 130
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 551,
+      "parser_review_required": 1402,
+      "terminal": 1108
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-79728600/generic-residual-before-131.json",
+      "sha256": "724c1d807bdd4ce89bb862343b592aabefccf18fe4d5534a248922ed59cde1ec"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-79728600/generic-residual-after-1.json",
+      "sha256": "ed5f2b6889b826c76177a31cff97dfeeb4e3c4744cdd28be7feddb5bb2edc166"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-79728600/generic-residual-after-2.json",
+      "sha256": "ed5f2b6889b826c76177a31cff97dfeeb4e3c4744cdd28be7feddb5bb2edc166"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-79728600/queue-after.json",
+      "sha256": "4b1e509957e69ec18594e7d3e81c57b506f2285bcef10f0e765ac25a2a0e15e5"
+    }
+  },
+  "denominator_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-79728600/family-79728600-denominator.json",
+    "sha256": "a4a3c402fc4e9d6b72425ef9e604c4d42257054c00dff08ea903568041f71f36"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-79728600/family-79728600-raster-audit.json",
+    "sha256": "7af84b944933e4c65b18e3711385c70ee856bc605133ffad5734a4762f4f8e92"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-79728600/family-79728600-external-family-members.json",
+    "sha256": "986232b2a8c7c19e0e81fa8afbdc09586af6d42124410f0f04cce95be937b020"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-79728600/family-79728600-replay-determinism.json",
+    "sha256": "7c7fc5c47b6368863739f7bb923741182f3c237b5a6f9563209f22d02119f589"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-79728600/family-79728600-source-audit.md",
+    "sha256": "c58d765f924b1ad733114d77af8aaec2dd6085780386410c2c06be97e29289d7"
+  },
+  "saturation_boundary": "This frozen root is source-proven metadata-unpublished terminal. Same-family external publications, all remaining parser buckets, staging intake, macro replay support and global source exhaustion remain open."
+}

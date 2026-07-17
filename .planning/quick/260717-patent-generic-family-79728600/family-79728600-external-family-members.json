@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "family_id": "79728600",
+  "current_frozen_cohort_roots": [
+    "US-20230132659"
+  ],
+  "classification_publication": "US-20230132659-A1",
+  "priority_chain": [
+    {
+      "application_id": "US-63/054862",
+      "filing_date": "2020-07-22",
+      "relationship": "provisional priority application",
+      "publications": []
+    },
+    {
+      "application_id": "PCT/IB2021/056357",
+      "filing_date": "2021-07-14",
+      "relationship": "international parent",
+      "publications": ["WO-2022018582-A1"]
+    },
+    {
+      "application_id": "US-17/607400",
+      "filing_date": "2021-07-14",
+      "relationship": "classification application; 371 national stage",
+      "publications": ["US-20230132659-A1", "US-12050308-B2"]
+    },
+    {
+      "application_id": "US-18/755732",
+      "filing_date": "2024-06-27",
+      "relationship": "continuation child",
+      "publications": ["US-12392999-B2"]
+    },
+    {
+      "application_id": "US-19/274583",
+      "filing_date": "2025-07-20",
+      "relationship": "continuation child",
+      "publications": ["US-12571999-B2"]
+    }
+  ],
+  "retained_same_application_publication": {
+    "publication_id": "US-12050308-B2",
+    "application_id": "US-17/607400",
+    "relationship": "same application later grant",
+    "retained_path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-12050308-B2-google.html",
+    "bytes": 611133,
+    "sha256": "f6ffcdcdadd4bb2208c7bdce4218187f30d699f68ac74417d496abbfb702a204",
+    "frozen_cohort_membership": false,
+    "repair_result": "The same-application grant still defines Q0-Q5 only and still publishes neither Q6-Q8 definitions, per-surface conic values nor a logical Table 3."
+  },
+  "other_us_and_pct_publications": [
+    {"publication_id": "WO-2022018582-A1", "application_id": "PCT/IB2021/056357", "frozen_cohort_membership": false, "state": "queued_outside_frozen_cohort"},
+    {"publication_id": "US-12392999-B2", "application_id": "US-18/755732", "frozen_cohort_membership": false, "state": "queued_outside_frozen_cohort"},
+    {"publication_id": "US-12571999-B2", "application_id": "US-19/274583", "frozen_cohort_membership": false, "state": "queued_outside_frozen_cohort"}
+  ],
+  "foreign_family_applications_from_exact_wrapper": [
+    {"application_id": "EP-21847019.3", "representative_publication": "EP-4014083-A4", "filing_date": "2021-07-14"},
+    {"application_id": "CN-202410587800.1", "representative_publication": "CN-118363148-A", "filing_date": "2021-07-14"},
+    {"application_id": "JP-2022553112", "representative_publication": "JP-7663591-B2", "filing_date": "2021-07-14"},
+    {"application_id": "KR-1020257003547", "representative_publication": "KR-20250023591-A", "filing_date": "2021-07-14"},
+    {"application_id": "KR-1020217035143", "representative_publication": "KR-102765964-B1", "filing_date": "2021-07-14"},
+    {"application_id": "JP-2024199551", "representative_publication": "JP-2025015680-A", "filing_date": "2024-11-15"}
+  ],
+  "frozen_cohort_membership_check": {
+    "searched_identifiers": [
+      "US-12050308", "WO-2022018582", "US-12392999", "US-12571999",
+      "EP-4014083", "CN-118363148", "JP-7663591", "KR-20250023591",
+      "KR-102765964", "JP-2025015680"
+    ],
+    "matches": 0
+  },
+  "queue_effect": "Only US-20230132659 is in the frozen 619-root cohort. External family members do not alter this exact A1 classification; the same-application B2 was checked only for a possible source repair and did not supply one."
+}
