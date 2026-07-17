@@ -184,6 +184,27 @@ terminal, 561 staging and 28 conversion retry. Generic metadata is 111 roots/ite
 the largest executable bucket; deterministic ordering selects Family `97107726`
 (`US-12425721-B1`) next. Parent/global patent saturation remains active and incomplete.
 
+**Patent saturation latest authoritative update (2026-07-17, Family 97107726):** This
+supersedes the Family 95155833 snapshot immediately above. Strict replay is 619/619 with
+missing=0, corrupt=0 and result set
+`290aa22efc7e5bc983b3fe3b5b880b04cf9b36d5ce679cfdd1b46d7a8d102acd`. Family `97107726`
+(`US-12425721-B1`) reconciles eight exact source items: a setting-analysis calibration process,
+motorized camera calibration system, stepped-barcode calibration target, iterative setting
+search, lens/camera setting selection, machine-learning calibration process, calibration
+computing architecture and generic computing-environment wrapper. The sampled `f/2.8` and
+`f/1.8` values are camera-setting vectors, while every radius is a target radius/fraction; no
+item publishes an ordered optical radius, spacing, material, conic, asphere, stop or complete
+required system prescription. All eight items are source-proven confirmed-no-prescription
+terminals. The retained USPTO HTML is the classification truth. The recorded USPTO PDF endpoint
+returns 404; one official Gazette exemplar was retained and reviewed, while Google declares nine
+drawings whose direct image requests return 403, so no full-drawing review is claimed. There is
+no drawing transcription, numeric derivation, cross-publication borrowing, worker, request,
+receipt, fingerprint, candidate, staging ZMX or formal intake, and CODE V is unused. Current
+roots are 300 parser review, 148 mixed, 146 terminal and 25 converted; items are 1394 parser
+review, 1229 terminal, 561 staging and 28 conversion retry. Generic metadata is 110 roots/items
+and remains the largest executable bucket; deterministic ordering selects Family `97917964`
+(`US-20250378431-A1`) next. Parent/global patent saturation remains active and incomplete.
+
 ## Current Position
 
 | Scope | Status |
@@ -196,7 +217,7 @@ the largest executable bucket; deterministic ordering selects Family `97107726`
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `58b441fc...f651`. Current roots: 301 parser review, 148 mixed, 145 terminal, 25 converted; items: 561 staging, 1395 parser review, 1221 terminal, 28 conversion retry. Frozen Family 95155833 reconciles five camera hardware-button UI items; all are source-proven confirmed-no-prescription terminals because optical terminology is limited to UI state, simulated effects or generic device architecture and no ordered optical prescription is published. Official B2/A1 publications contain 150/130 image-only pages and 56 drawing sheets each; all 280 rasters, contacts and 18 critical pages were reviewed without transcription, numeric derivation or cross-publication borrowing. No worker/request/receipt/fingerprint/candidate/staging ZMX/formal intake is produced, and CODE V is unused. Generic 112→111 roots/items remains first by nonterminal roots; deterministic ordering selects Family 97107726 next. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `290aa22e...02acd`. Current roots: 300 parser review, 148 mixed, 146 terminal, 25 converted; items: 561 staging, 1394 parser review, 1229 terminal, 28 conversion retry. Frozen Family 97107726 reconciles eight calibration-process/system/target/search/selection/ML/computing items; all are source-proven confirmed-no-prescription terminals because sampled `f/2.8`/`f/1.8` values are camera-setting vectors, target radii are not lens radii, and no ordered optical prescription is published. The retained USPTO HTML is the classification truth; the USPTO PDF endpoint returns 404, one official Gazette exemplar was reviewed, and Google-declared drawing images returned 403, so no full-drawing review is claimed. No worker/request/receipt/fingerprint/candidate/staging ZMX/formal intake is produced, and CODE V is unused. Generic 111→110 roots/items remains first by nonterminal roots; deterministic ordering selects Family 97917964 next. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -402,17 +423,20 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260717-patent-generic-family-95155833/260717-patent-generic-family-95155833-PLAN.md`,
+`.planning/quick/260717-patent-generic-family-97107726/260717-patent-generic-family-97107726-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (111 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (110 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
 deterministic root/item/layout/family ordering is Family ID `97107726`, root
 `US-12425721`, publication `US-12425721-B1`, layout
+`309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d`; that shovel is
+source-reconciled and validated. The next exact family is Family ID `97917964`, root
+`US-20250378431`, publication `US-20250378431-A1`, layout
 `309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.

@@ -23097,6 +23097,71 @@ def test_apple_hardware_button_ui_source_drift_fails_closed() -> None:
     }
 
 
+def _amazon_lens_calibration_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "ced8908e46d666e0"
+        / "US-12425721-B1.html"
+    )
+    return "US-12425721-B1", source_path.read_text(encoding="utf-8")
+
+
+def test_amazon_lens_calibration_reconciles_eight_items() -> None:
+    patent_id, raw_text = _amazon_lens_calibration_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 9))
+    assert [
+        attempt.error.reason_code
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    ] == [
+        "confirmed_no_prescription."
+        "lens_characterization_decode_performance_process_only",
+        "confirmed_no_prescription."
+        "motorized_camera_setting_calibration_system_only",
+        "confirmed_no_prescription.stepped_barcode_calibration_target_only",
+        "confirmed_no_prescription.iterative_camera_setting_search_process_only",
+        "confirmed_no_prescription."
+        "lens_and_camera_setting_selection_process_only",
+        "confirmed_no_prescription."
+        "machine_learning_camera_setting_calibration_process_only",
+        "confirmed_no_prescription.lens_calibration_computing_architecture_only",
+        "confirmed_no_prescription.generic_computing_environment_wrapper_only",
+    ]
+
+
+def test_amazon_lens_calibration_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _amazon_lens_calibration_source()
+    changed = raw_text.replace("f/2.8", "f/2.80", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 8
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Amazon lens-calibration official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
 def test_symbol_negative_spherical_aberration_reader_raster_audit_rehashes() -> None:
     root = Path(__file__).resolve().parents[1]
     quick = root / ".planning" / "quick" / "260717-patent-generic-family-38997638"
@@ -24260,4 +24325,209 @@ def test_apple_hardware_button_ui_denominator_and_queue_artifacts() -> None:
     assert queue["next_exact_group"]["root_ids"] == ["US-12425721"]
     assert queue["next_exact_group"]["publication_ids"] == ["US-12425721-B1"]
     assert queue["next_exact_group"]["marker_counts"]["full_field"] == 4
+    assert queue["saturation_complete"] is False
+
+
+def test_amazon_lens_calibration_source_availability_artifact() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-97107726"
+    artifact = json.loads(
+        (quick / "family-97107726-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    source = artifact["retained_source"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 106178
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+
+    assert artifact["uspto_pdf_probe"] == {
+        "url": (
+            "https://ppubs.uspto.gov/dirsearch-public/print/downloadPdf/"
+            "US-12425721-B1"
+        ),
+        "http_status": 404,
+        "file_retained": False,
+        "numeric_source": False,
+    }
+    drawing = artifact["uspto_official_gazette"]["exemplary_drawing"]
+    drawing_bytes = (root / drawing["path"]).read_bytes()
+    assert len(drawing_bytes) == drawing["bytes"] == 23729
+    assert hashlib.sha256(drawing_bytes).hexdigest() == drawing["sha256"]
+    assert drawing["format"] == "GIF"
+    assert drawing["size"] == [290, 400]
+
+    mirror = artifact["google_patents_mirror"]
+    assert mirror["publication_description"] == "Patent (no pre-grant publication)"
+    assert mirror["declared_full_drawing_image_links"] == 9
+    assert mirror["declared_pdf_links"] == 0
+    assert mirror["direct_image_probe_status"] == 403
+    assert mirror["retained_drawing_images"] == 0
+    assert artifact["source_policy"]["classification_truth"] == (
+        "retained USPTO full-text HTML only"
+    )
+    assert artifact["source_policy"]["drawing_transcription_permitted"] is False
+    assert artifact["source_policy"]["numeric_derivation_permitted"] is False
+
+
+def test_amazon_lens_calibration_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-97107726"
+    artifact = json.loads(
+        (quick / "family-97107726-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert len(set(semantic_hashes)) == 1
+    assert semantic_hashes[0] == artifact["semantic_sha256"]
+    assert artifact["semantic_equal"] is True
+    assert artifact["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 8},
+        "terminal_status_counts": {"confirmed_no_prescription": 8},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+
+def test_amazon_lens_calibration_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-97107726"
+    evidence = json.loads(
+        (quick / "family-97107726-source-evidence.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-97107726-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "pregrant_publications": 0,
+        "background_numbered_paragraphs": 1,
+        "brief_drawing_numbered_paragraphs": 9,
+        "detailed_numbered_paragraphs": 89,
+        "claims": 20,
+        "claim_families": 3,
+        "declared_textual_figures": 8,
+        "tagged_html_tables": 0,
+        "mathml_objects": 0,
+        "source_declared_architecture_items": 8,
+        "source_declared_optical_prescriptions": 0,
+        "confirmed_no_prescription_items": 8,
+        "replayed_ledger_items": 8,
+        "uspto_official_gazette_exemplary_drawings": 1,
+        "google_patents_declared_drawing_images": 9,
+        "retained_mirror_drawing_images": 0,
+        "official_pdf_files": 0,
+    }
+    assert denominator["reconciliation"] == {
+        "unmapped_background_paragraphs": 0,
+        "unmapped_brief_paragraphs": 0,
+        "unmapped_detailed_paragraphs": 0,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_disclosed_items": 0,
+        "unmapped_tagged_tables": 0,
+        "unmapped_mathml_objects": 0,
+    }
+    assert [item["number"] for item in denominator["items"]] == list(range(1, 9))
+    assert [item["figure"] for item in denominator["items"]] == [
+        str(number) for number in range(1, 9)
+    ]
+    assert all(
+        item["terminal_status"] == "confirmed_no_prescription"
+        and item["ordered_surface_prescription_rows"] == 0
+        for item in denominator["items"]
+    )
+    assert denominator["numeric_setting_examples"] == [
+        {
+            "paragraph": 14,
+            "target_distance": "1 meter",
+            "focus_distance": "1 meter",
+            "aperture_value": "f/2.8",
+            "role": "first sampled camera setting vector",
+            "optical_prescription_value": False,
+        },
+        {
+            "paragraph": 14,
+            "target_distance": "2 meters",
+            "focus_distance": "10 centimeters",
+            "aperture_value": "f/1.8",
+            "role": "second sampled camera setting vector",
+            "optical_prescription_value": False,
+        },
+    ]
+    assert all(
+        count == 0
+        for count in denominator["absent_prescription_marker_census"].values()
+    )
+    assert denominator["source_semantics"]["ordered_optical_prescription_present"] is False
+    assert denominator["conversion_boundary"]["staging_zmx"] == 0
+    assert denominator["conversion_boundary"]["formal_intake"] == 0
+    assert denominator["conversion_boundary"]["code_v_used"] is False
+
+    for record in evidence["artifacts"].values():
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    for record in (
+        evidence["source"],
+        evidence["official_gazette_exemplary_drawing"],
+        *evidence["census"].values(),
+        evidence["replay_state"]["summary"],
+        evidence["replay_state"]["report"],
+    ):
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-111.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 111
+    assert after_1["affected_roots"] == after_1["affected_items"] == 110
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == evidence["replay_state"][
+        "result_set_sha256"
+    ]
+    assert queue["next_exact_group"]["family_id"] == "97917964"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20250378431"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20250378431-A1"
+    ]
+    assert queue["next_exact_group"]["marker_counts"]["full_field"] == 6
     assert queue["saturation_complete"] is False

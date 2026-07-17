@@ -561,6 +561,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_amazon_lens_calibration_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -10027,6 +10035,214 @@ _APPLE_HARDWARE_BUTTON_UI_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "telephoto": 7,
             "wide-angle": 7,
             "image sensor": 0,
+        },
+    }
+}
+_AMAZON_LENS_CALIBRATION_ITEMS = (
+    (
+        1,
+        "Amazon setting-analysis calibration process",
+        "confirmed_no_prescription."
+        "lens_characterization_decode_performance_process_only",
+    ),
+    (
+        2,
+        "Amazon motorized camera calibration system",
+        "confirmed_no_prescription."
+        "motorized_camera_setting_calibration_system_only",
+    ),
+    (
+        3,
+        "Amazon stepped barcode calibration target",
+        "confirmed_no_prescription.stepped_barcode_calibration_target_only",
+    ),
+    (
+        4,
+        "Amazon iterative camera setting exploration process",
+        "confirmed_no_prescription.iterative_camera_setting_search_process_only",
+    ),
+    (
+        5,
+        "Amazon lens and camera setting selection process",
+        "confirmed_no_prescription."
+        "lens_and_camera_setting_selection_process_only",
+    ),
+    (
+        6,
+        "Amazon machine-learning camera setting process",
+        "confirmed_no_prescription."
+        "machine_learning_camera_setting_calibration_process_only",
+    ),
+    (
+        7,
+        "Amazon setting-analysis computing architecture",
+        "confirmed_no_prescription.lens_calibration_computing_architecture_only",
+    ),
+    (
+        8,
+        "Amazon generic web-service environment",
+        "confirmed_no_prescription.generic_computing_environment_wrapper_only",
+    ),
+)
+_AMAZON_LENS_CALIBRATION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12425721-B1": {
+        "raw_document_sha256": (
+            "ced8908e46d666e070d1f9776d6a3bf9865bd446f3acd7687116603843a8a7a2"
+        ),
+        "normalized_text_sha256": (
+            "3b2e515f42acc51458889f01b5c0a34b2216ebcd145812d2263312432e1e07d2"
+        ),
+        "section_markers": {
+            "preamble": "US-12425721-B1",
+            "abstract": (
+                "Abstract Techniques for optical lens characterization and "
+                "calibration are described herein"
+            ),
+            "references": "References Cited",
+            "background": "Background/Summary BACKGROUND (1)",
+            "figures": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (10)",
+            "claims": "Claims 1. A computer-implemented method",
+        },
+        "section_sha256": {
+            "preamble": (
+                "ff149a093b753b7aa875197472b5a4413318f7421b486f4de7260e6abc6b9497"
+            ),
+            "abstract": (
+                "adcc893d1344954df9e555ce6dccf173e4207eae5be8a859831565caa1d28535"
+            ),
+            "references": (
+                "fc7ee7d46770f226c42eaead40383ac6efefbdb4ca8f11e878d65ad2b25e749c"
+            ),
+            "background": (
+                "73273134e9db10bd5f1c5b0dccb0abbf7cc194e2ffc6147f5d6b532ffe392d2a"
+            ),
+            "figures": (
+                "7c2530fd24a82d498ff9d1538c5d3d0bf10b1d13152919b169e772acdcb3b2fb"
+            ),
+            "detailed": (
+                "79b0b235dd24aea19af7760aec039b113aad9e4cd4e8e2f37c6a2f0c90824d04"
+            ),
+            "claims": (
+                "9588129812ceb6c6ea60e6aa338117574af883496d66894b713d3485ccfd4b70"
+            ),
+        },
+        "detailed_span_sha256": {
+            (10, 14): (
+                "3754b4dc2b383381cdb891c82805eb1bc5c0797fa2a9d444bf4f857ee33b944f"
+            ),
+            (15, 30): (
+                "8fcb68d0480c43d93de6813372fd78ffcb45914ff9aed06b3776fef0587c9c4d"
+            ),
+            (31, 33): (
+                "b1f1e3304c822e35a2a2422e967a486c2cf100a4d11c81855107ddde1dd41ce0"
+            ),
+            (34, 35): (
+                "0a02488e926414540cde48641a0499feb5fce2be8442384ebbea865244a18694"
+            ),
+            (36, 48): (
+                "e96c24a72dbc42c708b954c1f89546dff80adf264fd1e4943b8b5a52d6094983"
+            ),
+            (49, 55): (
+                "88d6e1ee51ea82eacc43f6c6fe6a270c4f20d4e37072285ce2a83039d93318c6"
+            ),
+            (56, 67): (
+                "f2faad09a53c8d527bac959f03b356e00ceeed55a94b5bd7a74b97ffd76f7deb"
+            ),
+            (68, 81): (
+                "9623c0e85a198144590b92adf4e36a3c44551c0ffa3b45e343207708be421d6f"
+            ),
+            (82, 92): (
+                "3159445a003216945a2cce2b03c5c50a07d88b8174ea93e185aede3c7346e3d6"
+            ),
+            (93, 98): (
+                "a5f178996c91bc088a554c57a8c5281d80ef365b9f1b03d9eb53a3961628d777"
+            ),
+        },
+        "item_ranges": (
+            (15, 30),
+            (31, 33),
+            (34, 35),
+            (36, 48),
+            (49, 55),
+            (56, 67),
+            (68, 81),
+            (82, 92),
+        ),
+        "item_markers": (
+            "FIG. 1 illustrates an example block diagram 100",
+            "FIG. 2 illustrates an example system 200",
+            "FIG. 3 illustrates an example target 208",
+            "FIG. 4 illustrates an illustrates an example flowchart",
+            "FIG. 5 illustrates an illustrates an example flowchart",
+            "FIG. 6 illustrates an illustrates an example flowchart",
+            "FIG. 7 illustrates an example schematic architecture 700",
+            "FIG. 8 illustrates aspects of an example environment 800",
+        ),
+        "claim_families": (
+            tuple(range(1, 5)),
+            tuple(range(5, 14)),
+            tuple(range(14, 21)),
+        ),
+        "claim_family_sha256": (
+            "3a797ae8634f42ed15c0d54b4b157893a937fd54ebcd962195ea3c8a610ab250",
+            "9a41ad977fc6e83b5e0731f2a198e320dbb74dbcc9e4396ce32a6e1b1d01d5fb",
+            "2ff749bf3c0172b820a37b17de78923808e9c2a250ede614e5c1f9d027bb3f39",
+        ),
+        "identity_markers": {
+            "US-12425721-B1": 1,
+            "United States Patent 12425721": 1,
+            "Kind Code B1": 1,
+            "Date of Patent September 23, 2025": 1,
+            "Optical lens characterization and calibration": 17,
+            "Applicant: Amazon Technologies, Inc. (Seattle, WA)": 1,
+            "Family ID: 97107726": 1,
+            "Assignee: Amazon Technologies, Inc. (Seattle, WA)": 1,
+            "Appl. No.: 18/540492": 1,
+            "Filed: December 14, 2023": 1,
+        },
+        "figure_declaration_prefixes": (
+            "FIG. 1 illustrates an example block diagram",
+            "FIG. 2 illustrates an example system",
+            "FIG. 3 illustrates an example target",
+            "FIG. 4 illustrates an illustrates an example flowchart",
+            "FIG. 5 illustrates an illustrates an example flowchart",
+            "FIG. 6 illustrates an illustrates an example flowchart",
+            "FIG. 7 illustrates an example schematic architecture",
+            "FIG. 8 illustrates an environment",
+        ),
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "focal length": 0,
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "surface": 0,
+            "radius of curvature": 0,
+            "optical prescription": 0,
+            "lens element": 0,
+            "image height": 0,
+            "aperture stop": 0,
+            "entrance pupil": 0,
+        },
+        "source_scope_phrase_counts": {
+            "lens": 96,
+            "camera": 179,
+            "aperture": 29,
+            "field of view": 4,
+            "radius": 6,
+            "focus distance": 30,
+            "working distance": 9,
+            "barcode": 177,
+            "optical axis": 12,
+            "depth of field": 5,
+            "f/2.8": 1,
+            "f/1.8": 1,
         },
     }
 }
@@ -29024,6 +29240,267 @@ def _classify_apple_hardware_button_ui_architecture_attempts(
             ),
         )
         for number, label, reason_code in _APPLE_HARDWARE_BUTTON_UI_ITEMS
+    ]
+
+
+def _classify_amazon_lens_calibration_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 97107726 calibration and computing items."""
+
+    profile = _AMAZON_LENS_CALIBRATION_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _AMAZON_LENS_CALIBRATION_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section: str,
+        *,
+        first: int,
+        last: int,
+    ) -> dict[int, str]:
+        matches = [
+            match
+            for match in re.finditer(r"\((\d+)\)", section)
+            if first <= int(match.group(1)) <= last
+        ]
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != tuple(range(first, last + 1)):
+            raise PatentParseError(
+                "Amazon lens-calibration numbered-paragraph denominator "
+                f"{first}-{last} changed"
+            )
+        return {
+            number: section[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section)
+                )
+            ]
+            for index, (number, match) in enumerate(zip(numbers, matches, strict=True))
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Amazon lens-calibration official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Amazon lens-calibration normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Amazon lens-calibration identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Amazon lens-calibration section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Amazon lens-calibration section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Amazon lens-calibration {section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"], first=1, last=1
+        )
+        if len(background_paragraphs) != 1:
+            raise PatentParseError(
+                "Amazon lens-calibration background denominator changed"
+            )
+
+        figure_paragraphs = numbered_paragraphs(
+            sections["figures"], first=1, last=9
+        )
+        for paragraph_number, prefix in enumerate(
+            profile["figure_declaration_prefixes"], start=2
+        ):
+            expected_prefix = f"({paragraph_number}) {prefix}"
+            if not figure_paragraphs[paragraph_number].startswith(expected_prefix):
+                raise PatentParseError(
+                    "Amazon lens-calibration figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+
+        detailed_paragraphs = numbered_paragraphs(
+            sections["detailed"], first=10, last=98
+        )
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                detailed_paragraphs[number] for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Amazon lens-calibration detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        for bounds, item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            start, end = bounds
+            item_text = "".join(
+                detailed_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(
+                re.findall(re.escape(item_marker), item_text, re.IGNORECASE)
+            ) != 1:
+                raise PatentParseError(
+                    "Amazon lens-calibration item binding "
+                    f"{item_marker!r} changed"
+                )
+        overview = "".join(detailed_paragraphs[number] for number in range(10, 15))
+        for aperture_value in ("f/2.8", "f/1.8"):
+            if len(re.findall(re.escape(aperture_value), overview, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Amazon lens-calibration sampled aperture setting "
+                    f"{aperture_value} changed"
+                )
+
+        claims_section = sections["claims"]
+        claim_offsets = []
+        cursor = len("Claims ")
+        for claim_number in range(1, 21):
+            marker = f"{claim_number}. "
+            offset = claims_section.find(marker, cursor)
+            if offset < 0:
+                raise PatentParseError(
+                    "Amazon lens-calibration claims denominator changed"
+                )
+            claim_offsets.append((claim_number, offset))
+            cursor = offset + len(marker)
+        claims = {
+            claim_number: claims_section[
+                offset : (
+                    claim_offsets[index + 1][1]
+                    if index + 1 < len(claim_offsets)
+                    else len(claims_section)
+                )
+            ]
+            for index, (claim_number, offset) in enumerate(claim_offsets)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Amazon lens-calibration three-claim-family denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Amazon lens-calibration zero-HTML-table denominator changed"
+            )
+        if re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        ):
+            raise PatentParseError(
+                "Amazon lens-calibration zero-MathML denominator changed"
+            )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Amazon lens-calibration prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Amazon lens-calibration scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact FIG. 1 process publishes camera-setting sampling, barcode decode "
+        "performance, a machine-learning model and a settings instruction only; its "
+        "f/2.8 and f/1.8 values are sampled aperture settings, not a prescription",
+        "the exact FIG. 2 system publishes a rail, focus/aperture gears, motors, a "
+        "controller, a camera and a target only, without optical surface coordinates",
+        "the exact FIG. 3 target publishes stepped barcode geometry; every radius "
+        "reference is target geometry and not an optical surface radius",
+        "the exact FIG. 4 process publishes iterative exploration of target distance, "
+        "focus, aperture and decode performance only",
+        "the exact FIG. 5 process publishes database selection of a lens and camera "
+        "settings by decode performance only, without either lens prescription",
+        "the exact FIG. 6 process publishes machine-learning selection and controller "
+        "application of camera setting values only",
+        "the exact FIG. 7 item publishes setting-analysis computer, user-device and "
+        "camera-controller architecture only",
+        "the exact FIG. 8 item publishes a generic web-service computing environment "
+        "only, without an independent optical design",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _AMAZON_LENS_CALIBRATION_ITEMS
     ]
 
 
