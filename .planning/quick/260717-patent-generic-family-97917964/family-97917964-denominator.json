@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "family_id": "97917964",
+  "root_id": "US-20250378431",
+  "publication_id": "US-20250378431-A1",
+  "identity": {
+    "application_number": "18/737949",
+    "title": "Weigh Platter with Power Storage",
+    "applicant": "ZEBRA TECHNOLOGIES CORPORATION",
+    "filed": "2024-06-08",
+    "publication_date": "2025-12-11",
+    "kind_code": "A1",
+    "continuity_or_priority_claim": null
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/75fa0b3069bfe33a/US-20250378431-A1.html",
+    "bytes": 47909,
+    "raw_characters": 47825,
+    "raw_sha256": "75fa0b3069bfe33a78d1e7662f4afeba4de902eb67a040dd3158ecb5ace9c472",
+    "normalized_characters": 42577,
+    "normalized_sha256": "643d5e8f86c91feb07c504240866e89664a69aea5ac658925b89144667b8ff5f"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_numbered_paragraphs": 2,
+    "summary_numbered_paragraphs": 3,
+    "brief_drawing_numbered_paragraphs": 8,
+    "detailed_numbered_paragraphs": 31,
+    "claims": 22,
+    "claim_families": 2,
+    "declared_textual_figures": 6,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 2,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 2,
+    "replayed_ledger_items": 2,
+    "official_pdf_files": 0,
+    "retained_drawing_images": 0,
+    "unmapped_source_items": 0
+  },
+  "paragraph_spans": [
+    {"range": [1, 2], "role": "background"},
+    {"range": [3, 5], "role": "summary and two independent architecture items"},
+    {"range": [6, 13], "role": "brief description and FIGS. 1-6 declarations"},
+    {"range": [14, 19], "role": "reader, generic imaging and weighing context"},
+    {"range": [20, 27], "role": "platter-embedded subsystem alternatives"},
+    {"range": [28, 31], "role": "wireless and wired power-transfer arrangements"},
+    {"range": [32, 34], "role": "storage/control block and placement"},
+    {"range": [35, 40], "role": "selective charging, data transfer and device variants"},
+    {"range": [41, 44], "role": "boilerplate"}
+  ],
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Zebra indicia-reader weigh-platter power-storage architecture",
+      "source_summary_paragraphs": [4],
+      "source_claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "shared_figures": [1, 2, 3, 4, 5, 6],
+      "shared_detailed_paragraphs": [14, 40],
+      "status": "confirmed_no_prescription",
+      "reason_code": "indicia_reader_weigh_platter_power_storage_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Zebra data-capture-device weigh-platter power-storage architecture",
+      "source_summary_paragraphs": [5],
+      "source_claims": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+      "shared_figures": [1, 2, 3, 4, 5, 6],
+      "shared_detailed_paragraphs": [14, 40],
+      "status": "confirmed_no_prescription",
+      "reason_code": "data_capture_device_weigh_platter_power_storage_architecture_only"
+    }
+  ],
+  "optical_scope": {
+    "lens_occurrences": 2,
+    "imaging_lens_assembly_occurrences": 2,
+    "field_of_view_occurrences": 3,
+    "fields_of_view_occurrences": 2,
+    "fov_occurrences": 6,
+    "camera_occurrences": 2,
+    "image_sensor_occurrences": 2,
+    "interpretation": "generic reader/imaging background and platter subsystem placement only",
+    "ordered_surface_prescriptions": 0
+  },
+  "numeric_contexts": [
+    {
+      "value": "2 mm",
+      "locations": ["paragraph 31", "claim 10", "claim 21"],
+      "meaning": "minimum downward-travel clearance of the weigh platter"
+    },
+    {
+      "values": ["0.5 oz", "1 oz", "2 oz"],
+      "locations": ["paragraph 35"],
+      "meaning": "example positive-weight thresholds for charge control"
+    }
+  ],
+  "forbidden_substitutions": [
+    "generic imaging assembly for an ordered lens prescription",
+    "field-of-view wording for numeric angular field metadata",
+    "platter clearance for optical spacing",
+    "weight thresholds for optical design values",
+    "drawing coordinates for numeric prescription values"
+  ]
+}

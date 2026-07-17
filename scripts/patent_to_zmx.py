@@ -569,6 +569,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_zebra_weigh_platter_power_storage_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -10243,6 +10251,172 @@ _AMAZON_LENS_CALIBRATION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "depth of field": 5,
             "f/2.8": 1,
             "f/1.8": 1,
+        },
+    }
+}
+_ZEBRA_WEIGH_PLATTER_POWER_STORAGE_ITEMS = (
+    (
+        1,
+        "Zebra indicia-reader weigh-platter power-storage architecture",
+        "confirmed_no_prescription."
+        "indicia_reader_weigh_platter_power_storage_architecture_only",
+    ),
+    (
+        2,
+        "Zebra data-capture-device weigh-platter power-storage architecture",
+        "confirmed_no_prescription."
+        "data_capture_device_weigh_platter_power_storage_architecture_only",
+    ),
+)
+_ZEBRA_WEIGH_PLATTER_POWER_STORAGE_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20250378431-A1": {
+        "raw_document_sha256": (
+            "75fa0b3069bfe33a78d1e7662f4afeba4de902eb67a040dd3158ecb5ace9c472"
+        ),
+        "normalized_text_sha256": (
+            "643d5e8f86c91feb07c504240866e89664a69aea5ac658925b89144667b8ff5f"
+        ),
+        "section_markers": {
+            "preamble": "US-20250378431-A1",
+            "abstract": (
+                "Abstract The present disclosure describes various embodiments"
+            ),
+            "background": "BACKGROUND [0001]",
+            "summary": "SUMMARY [0003]",
+            "figures": "BRIEF DESCRIPTION OF THE DRAWINGS [0006]",
+            "detailed": "DETAILED DESCRIPTION [0014]",
+            "claims": "Claims 1 . An indicia reader comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "dfb91b524f74d669e2d9aa06f1e968511cb734b224c79fdb4bbc516836603f98"
+            ),
+            "abstract": (
+                "e2789449f3e0ea9d308c4de44713804f0af465380191265e7f7a71897bfa69db"
+            ),
+            "background": (
+                "cff1b208681669f559b1b05e377def97732b4bf35fe539522891371f2acb26aa"
+            ),
+            "summary": (
+                "2e22e0857f09eb2e4fd1c261c2e325095007e7ce9a7269dcd7e1d3882ab0ef76"
+            ),
+            "figures": (
+                "da37571dc604224173ca5d3e54b53e5ea95c0a032ed0e6c976db516166625423"
+            ),
+            "detailed": (
+                "8465c4d7687ea17dd749ed0d1dfdb8be69e04668b7161505dd03e9a9dc2eb016"
+            ),
+            "claims": (
+                "92bd3d4ce9c5ab656ed5e25637f61116007d37d9a84997b72a0b009f677b2ffe"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 2): (
+                "0a20571a1bbb5e4f5a3a57d86a0b529bac1628968dbf58375f70de5b4f8959b6"
+            ),
+            (3, 5): (
+                "31cecb65544386dad27c1388210dc2585e33c92e136c31c4ed6f42d50b7433eb"
+            ),
+            (6, 13): (
+                "9a41f771cc37db21a65d0d91fa963f4760a570b8967884355b687dff58cffd27"
+            ),
+            (14, 19): (
+                "8720e98342b262ed875e8f1cc7fb76825baf6151e1b5fd6fd86f9686d9c981fd"
+            ),
+            (20, 27): (
+                "000ab1dc3ce2a3f550fdc9ceb027ccab4c8df641fc3a41e73d1b4ae19b0ad697"
+            ),
+            (28, 31): (
+                "2f5172050a1e1c4088a3d1329eb0e62f0db16f935e6f4d06f4e2db8344a8235b"
+            ),
+            (32, 34): (
+                "b6cac3ab84007395e3cc35f07db0ca2dc6eb0394f0ba16e6b0f32a88768e7e41"
+            ),
+            (35, 40): (
+                "6f58457b282a7bf014b8d20a772926e4a46b5eb68d61595704313a8cb117b5f6"
+            ),
+            (41, 44): (
+                "34495b8419c928789dd183324fec71f0bbbd3f65025713c7cdda8fc74f1ad9f7"
+            ),
+        },
+        "item_markers": (
+            (
+                4,
+                "In an embodiment, the present invention is an indicia reader "
+                "comprising:",
+            ),
+            (
+                5,
+                "In another embodiment, the present invention is a data capture "
+                "device comprising:",
+            ),
+        ),
+        "claim_families": (tuple(range(1, 12)), tuple(range(12, 23))),
+        "claim_family_sha256": (
+            "91a8c3c4d1c2ebf230554322cb864e5b8a0e89d3421163958285b9116032b5c0",
+            "ae735044d22f9265d6c42e8b1b14879e17bc3dd0d9352ac05353fc22fb1b6447",
+        ),
+        "identity_markers": {
+            "US-20250378431-A1": 1,
+            "Patent Application Publication 20250378431": 1,
+            "Kind Code A1": 1,
+            "Publication Date December 11, 2025": 1,
+            "Weigh Platter with Power Storage": 1,
+            "Applicant: ZEBRA TECHNOLOGIES CORPORATION (Lincolnshire, IL)": 1,
+            "Family ID: 97917964": 1,
+            "Appl. No.: 18/737949": 1,
+            "Filed: June 08, 2024": 1,
+        },
+        "figure_declaration_prefixes": (
+            "FIG. 1 is an example indicia reader",
+            "FIG. 2 is a perspective view of an example indicia reader",
+            "FIG. 3 is a top-perspective view of the example indicia reader",
+            "FIG. 4 is another example of a platter and its supporting structure",
+            "FIG. 5 is an example block diagram of an indicia reader",
+            "FIG. 6 is a simplified cross-section of an indicia reader",
+        ),
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "focal length": 0,
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "radius": 0,
+            "curvature": 0,
+            "optical prescription": 0,
+            "lens element": 0,
+            "image height": 0,
+            "aperture": 0,
+            "entrance pupil": 0,
+        },
+        "source_scope_phrase_counts": {
+            "weigh platter": 50,
+            "power storage assembly": 40,
+            "power storage unit": 19,
+            "power source assembly": 28,
+            "load cell": 28,
+            "inductive coil": 14,
+            "field of view": 3,
+            "fields of view": 2,
+            "FOV": 6,
+            "lens": 2,
+            "imaging lens assembly": 2,
+            "camera": 2,
+            "image sensor": 2,
+            "imaging assembly": 4,
+            "optical components": 2,
+            "optical path": 1,
+            "2 mm": 3,
+            "0.5 oz": 1,
+            "1 oz": 1,
+            "2 oz": 1,
         },
     }
 }
@@ -29501,6 +29675,223 @@ def _classify_amazon_lens_calibration_architecture_attempts(
             ),
         )
         for number, label, reason_code in _AMAZON_LENS_CALIBRATION_ITEMS
+    ]
+
+
+def _classify_zebra_weigh_platter_power_storage_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 97917964 weigh-platter power architectures."""
+
+    profile = _ZEBRA_WEIGH_PLATTER_POWER_STORAGE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _ZEBRA_WEIGH_PLATTER_POWER_STORAGE_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Zebra weigh-platter official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Zebra weigh-platter normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Zebra weigh-platter identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Zebra weigh-platter section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Zebra weigh-platter section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Zebra weigh-platter {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 45)):
+            raise PatentParseError(
+                "Zebra weigh-platter numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            start, end = bounds
+            span = "".join(paragraphs[number] for number in range(start, end + 1))
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Zebra weigh-platter numbered paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        for paragraph_number, prefix in enumerate(
+            profile["figure_declaration_prefixes"], start=7
+        ):
+            expected_prefix = f"[{paragraph_number:04d}] {prefix}"
+            if not paragraphs[paragraph_number].startswith(expected_prefix):
+                raise PatentParseError(
+                    "Zebra weigh-platter figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+        for paragraph_number, item_marker in profile["item_markers"]:
+            if len(
+                re.findall(
+                    re.escape(item_marker),
+                    paragraphs[paragraph_number],
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    "Zebra weigh-platter source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        claims_section = sections["claims"]
+        claim_matches = list(
+            re.finditer(r"(?<!\d)(\d{1,2}) \. ", claims_section)
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 23)):
+            raise PatentParseError("Zebra weigh-platter claims denominator changed")
+        claims = {
+            number: claims_section[
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(claims_section)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(claim_numbers, claim_matches, strict=True)
+            )
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Zebra weigh-platter two-claim-family denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Zebra weigh-platter zero-HTML-table denominator changed"
+            )
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError(
+                "Zebra weigh-platter zero-MathML denominator changed"
+            )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Zebra weigh-platter prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Zebra weigh-platter scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain both exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "summary paragraph 4 and claims 1-11 publish an indicia reader, load cell, "
+        "weigh platter, power-source/storage assemblies and optional embedded "
+        "subsystems only; the generic imaging lens/FOV background contains no "
+        "ordered optical surface prescription",
+        "summary paragraph 5 and claims 12-22 publish the overlapping data-capture "
+        "device and claim 20 names only an imaging assembly plus decoder; no lens "
+        "radius, spacing, material, conic, asphere, stop or system prescription is "
+        "published",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in (
+            _ZEBRA_WEIGH_PLATTER_POWER_STORAGE_ITEMS
+        )
     ]
 
 

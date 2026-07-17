@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `290aa22efc7e5bc983b3fe3b5b880b04cf9b36d5ce679cfdd1b46d7a8d102acd`
+- result_set_sha256: `9043abe67b562809797b4c1f73ab16ba8858763598f03d0881abe07cbeb2c019`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 25
-- `terminal`: 146
-- `parser_review_required`: 300
+- `terminal`: 147
+- `parser_review_required`: 299
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 561
-- `terminal`: 1229
-- `parser_review_required`: 1394
+- `terminal`: 1231
+- `parser_review_required`: 1393
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 310
+- `confirmed_no_prescription`: 312
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 181
@@ -48,14 +48,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 300
+- `parser_review_required.all_disclosed_items_rejected`: 299
 - `mixed_nonterminal.multiple_item_states`: 148
-- `terminal.all_disclosed_items_terminal`: 146
+- `terminal.all_disclosed_items_terminal`: 147
 - `converted_pending_intake.all_disclosed_items_converted`: 25
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1394
+- `parser_review_required.deterministic_parser_rejected`: 1393
 - `terminal.process_receipt_classified`: 738
 - `converted_pending_intake.process_isolated_zmx_ready`: 561
 - `terminal.metadata_unpublished.system_f_number_absent`: 71
@@ -136,6 +136,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.commercial_camera_lens_lab_results_only`: 1
 - `terminal.confirmed_no_prescription.configurable_hardware_button_settings_user_interface_only`: 1
 - `terminal.confirmed_no_prescription.context_sensitive_camera_hardware_button_user_interface_only`: 1
+- `terminal.confirmed_no_prescription.data_capture_device_weigh_platter_power_storage_architecture_only`: 1
 - `terminal.confirmed_no_prescription.dual_working_range_imaging_engine_aiming_architecture_only`: 1
 - `terminal.confirmed_no_prescription.dye_aggregate_film_and_optical_filter_materials_only`: 1
 - `terminal.confirmed_no_prescription.externally_sourced_rectilinear_lens_model_only`: 1
@@ -149,6 +150,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.indicia_reader_imaging_and_control_architecture_only`: 1
 - `terminal.confirmed_no_prescription.indicia_reader_means_architecture_only`: 1
 - `terminal.confirmed_no_prescription.indicia_reader_negative_spherical_aberration_architecture_only`: 1
+- `terminal.confirmed_no_prescription.indicia_reader_weigh_platter_power_storage_architecture_only`: 1
 - `terminal.confirmed_no_prescription.ir_filter_coating_tables_only`: 1
 - `terminal.confirmed_no_prescription.iterative_camera_setting_search_process_only`: 1
 - `terminal.confirmed_no_prescription.laser_safety_aiming_constraint_only`: 1
@@ -186,7 +188,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 110
+- `generic_summary_metadata_missing`: 109
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62
