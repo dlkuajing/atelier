@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "70f401d6eed9d416e81a098e179b9a764c9244589f9d089d337b24a88c4dea80",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 113, "affected_items": 113},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "89620713",
+    "root_ids": ["US-20240272406"],
+    "publication_ids": ["US-20240272406-A1"],
+    "application_number": "18/642955",
+    "title": "OPTICAL IMAGING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 2, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b299af6070ba4f93/US-20240272406-A1.html",
+      "sha256": "b299af6070ba4f9342cf8a79e5f5cf806cd5d93695b6f2f867b0307239e546f9"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

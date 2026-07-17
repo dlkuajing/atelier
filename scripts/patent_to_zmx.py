@@ -537,6 +537,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_microsoft_colorblind_image_rendering_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -9267,6 +9275,208 @@ _SYMBOL_LENS_ASSEMBLY_ALIGNMENT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "IEC 60825": 1,
             "7 mrad cone": 3,
             "1 mW": 6,
+        },
+    }
+}
+_MICROSOFT_COLORBLIND_IMAGE_RENDERING_ITEMS = (
+    (
+        1,
+        "Microsoft colorblind-accessible image-rendering system",
+        "confirmed_no_prescription."
+        "colorblind_image_rendering_system_architecture_only",
+    ),
+    (
+        2,
+        "Microsoft colorblind-accessible image-rendering method",
+        "confirmed_no_prescription.colorblind_image_rendering_method_only",
+    ),
+    (
+        3,
+        "Microsoft color-vision-deficiency transformation-model method",
+        "confirmed_no_prescription."
+        "color_vision_deficiency_transformation_model_method_only",
+    ),
+    (
+        4,
+        "Microsoft colorblind image-rendering machine-readable medium",
+        "confirmed_no_prescription."
+        "colorblind_image_rendering_machine_readable_medium_only",
+    ),
+)
+_MICROSOFT_COLORBLIND_IMAGE_RENDERING_FIGURE_REFS = (
+    "FIGS. 1 A and 1 B",
+    "FIGS. 1 A and 1 B",
+    "FIG. 2",
+    "FIGS. 3 A- 3 C",
+    "FIGS. 4 A- 4 C",
+    "FIGS. 5 A and 5 B",
+    "FIGS. 6 A- 6 C",
+    "FIG. 7",
+    "FIG. 8",
+    "FIG. 9",
+)
+_MICROSOFT_COLORBLIND_IMAGE_RENDERING_FIGURE_PANELS = (
+    "1A",
+    "1B",
+    "1A",
+    "1B",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "4A",
+    "4B",
+    "4C",
+    "5A",
+    "5B",
+    "6A",
+    "6B",
+    "6C",
+    "7",
+    "8",
+    "9",
+)
+_MICROSOFT_COLORBLIND_IMAGE_RENDERING_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-11783729-B2": {
+        "raw_document_sha256": (
+            "7a5a9cc3ba92de76af68d8cf0e51d06e5f1c77c0b45feceaf50a5382f7b632ad"
+        ),
+        "normalized_text_sha256": (
+            "3be90bda9dbddf3c5cd071c11fa5cfd008e64e7d195bbd39da63d97a6686eef2"
+        ),
+        "section_markers": {
+            "abstract": (
+                "Abstract Systems and methods for providing "
+                "colorblind-accessible versions"
+            ),
+            "background": "Background/Summary BACKGROUND (1)",
+            "summary": "SUMMARY (4)",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (11)",
+            "claims": (
+                "Claims 1. A method of generating a color vision deficiency "
+                "image transformation model"
+            ),
+        },
+        "section_sha256": {
+            "abstract": (
+                "d28f4b47826513a608b40ed07d1baf773c8433662271c5d5464db39b94987804"
+            ),
+            "background": (
+                "ebdb4349946235616a4506862f94928a875926d2210ebf1002306a78ab8d809a"
+            ),
+            "summary": (
+                "cdade465192c14024a9260a901c982e716b240de25b9b4935d219ec74a0ab577"
+            ),
+            "brief": (
+                "d5dcdecb0663e759233285eaa5b682b9f449f7d0171b5d56a908dca979486858"
+            ),
+            "detailed": (
+                "c7d20f2da99b6ad3455fbcc9d553aaa3ced3fc860ccd8e7302ea40da0c83bf41"
+            ),
+            "claims": (
+                "f3380803c67f3a48664c31ff3b90503448f2195778610637e775890bbdd51e37"
+            ),
+        },
+        "paragraph_numbers": {
+            "background": tuple(range(1, 4)),
+            "summary": tuple(range(4, 8)),
+            "brief": tuple(range(1, 11)),
+            "detailed": tuple(range(11, 90)),
+        },
+        "summary_item_sha256": {
+            4: "32d3a88f36df48b7c7cc96ac411a1af9844ce35b149a4dad575e2e639c53dd01",
+            5: "28c2c121aedea25f295f80b2d39859279bb29d7b5ecac98dc61ac3621c857671",
+            6: "2313ee75b6057a476e9537b670b24446bbb602b81fc055a7b55bee8c2cbbbafe",
+        },
+        "detailed_span_sha256": {
+            (11, 20): (
+                "80772e745f6227a6071afc86b04f4284ea9e65fd2f66c9af7ff2d858871668c9"
+            ),
+            (21, 31): (
+                "42fc7d297ab2bf1b5ba434bb6e2604906a956cb9aba9254dbd8fc9b7e29ac200"
+            ),
+            (32, 44): (
+                "549456dcab585b9d397291d7232b8f8aee041953c5f9486841e51578b4e2bb82"
+            ),
+            (45, 50): (
+                "6d542ceaca1e06e7413b84c77786d11fd4f20eba6aee0c701cb30be149b865dd"
+            ),
+            (51, 66): (
+                "b266d093ae982fcd306c60105813d7c35700846c2c5ff8b78c9fec57ec6e5ef6"
+            ),
+            (67, 74): (
+                "b1a36e8a60fe50e519929b587d695aeb10a9f44752f6fddd5a21fdc28e292f08"
+            ),
+            (75, 89): (
+                "ae463240ed5d8f2a0917b7f94fb4c1dc47c88f1ab138a6f206e9604cbf60c44c"
+            ),
+        },
+        "claim_ranges": ((1, 8), (9, 16)),
+        "claim_span_sha256": (
+            "79a667c539ca4add32149f1434f415d00a67a57bd82b856b8f99bdc68050f120",
+            "5a8567f3656300b4867d508fbe020b51ec8fb07ee21526467d4c4aa63a7e8832",
+        ),
+        "claim_numbers": tuple(range(1, 17)),
+        "identity_markers": {
+            "United States Patent 11783729": 1,
+            "Kind Code B2": 1,
+            "Date of Patent October 10, 2023": 1,
+            (
+                "Colorblind assistive technology system and method to improve "
+                "image rendering for color vision deficient users by determining "
+                "an estimated color value having a minimum color distance from a "
+                "target color value"
+            ): 1,
+            (
+                "Applicant: MICROSOFT TECHNOLOGY LICENSING, LLC "
+                "(Redmond, WA)"
+            ): 1,
+            "Family ID: 76444624": 1,
+            "Appl. No.: 17/017662": 1,
+            "Filed: September 10, 2020": 1,
+            "US 20220076590 A1 Mar. 10, 2022": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "F/#": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+            "radius of curvature": 0,
+            "radius curvature": 0,
+            "curvature radius": 0,
+            "thickness": 0,
+            "lens element": 0,
+            "aperture stop": 0,
+            "conic": 0,
+            "ordered surface": 0,
+        },
+        "source_scope_phrase_counts": {
+            "camera": 24,
+            "field of view": 1,
+            "camera optical lens": 1,
+            "optical lens": 1,
+            "display device": 28,
+            "source image": 16,
+            "rendering image": 16,
+            "color distance": 14,
+            "machine-readable medium": 18,
+            "Pseudocode Listing": 31,
+            "lookup table": 1,
+            "color vision deficiency": 26,
+            "image sensor": 0,
         },
     }
 }
@@ -27303,6 +27513,268 @@ def _classify_symbol_lens_assembly_alignment_architecture_attempts(
         )
         for number, label, reason_code, _summary_paragraph in (
             _SYMBOL_LENS_ASSEMBLY_ALIGNMENT_ITEMS
+        )
+    ]
+
+
+def _classify_microsoft_colorblind_image_rendering_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 76444624 color-rendering software items."""
+
+    profile = _MICROSOFT_COLORBLIND_IMAGE_RENDERING_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _MICROSOFT_COLORBLIND_IMAGE_RENDERING_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Microsoft colorblind-image-rendering identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Microsoft colorblind-image-rendering "
+                    f"{section_name} section changed"
+                )
+
+        def numbered_paragraphs(section: str) -> dict[int, str]:
+            matches = list(re.finditer(r"\((\d+)\)\s", section))
+            return {
+                int(match.group(1)): section[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section)
+                    )
+                ]
+                for index, match in enumerate(matches)
+            }
+
+        paragraph_maps = {
+            name: numbered_paragraphs(sections[name])
+            for name in ("background", "summary", "brief", "detailed")
+        }
+        for section_name, expected_numbers in profile["paragraph_numbers"].items():
+            if tuple(paragraph_maps[section_name]) != expected_numbers:
+                raise PatentParseError(
+                    "Microsoft colorblind-image-rendering "
+                    f"{section_name} paragraph denominator changed"
+                )
+
+        for paragraph, expected_digest in profile["summary_item_sha256"].items():
+            observed_digest = hashlib.sha256(
+                paragraph_maps["summary"][paragraph].strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Microsoft colorblind-image-rendering summary item "
+                    f"paragraph {paragraph} changed"
+                )
+
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                paragraph_maps["detailed"][number]
+                for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Microsoft colorblind-image-rendering detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering claims denominator changed"
+            )
+        claims = {
+            int(match.group(1)): sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ]
+            for index, match in enumerate(claim_matches)
+        }
+        claim_span_digests = []
+        for start, end in profile["claim_ranges"]:
+            span = "".join(claims[number] for number in range(start, end + 1))
+            claim_span_digests.append(
+                hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            )
+        if tuple(claim_span_digests) != profile["claim_span_sha256"]:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering two-granted-claim-family "
+                "denominator changed"
+            )
+
+        brief_match = re.search(
+            r"<h3>Description</h3>\s*<p>(.*?)DETAILED DESCRIPTION",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if brief_match is None:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering drawing section changed"
+            )
+        figure_refs = tuple(
+            normalize_patent_text(value)
+            for value in re.findall(
+                r"<figref\b[^>]*>(.*?)</figref>",
+                brief_match.group(1),
+                re.IGNORECASE | re.DOTALL,
+            )
+        )
+        if figure_refs != _MICROSOFT_COLORBLIND_IMAGE_RENDERING_FIGURE_REFS:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering figure declarations changed"
+            )
+        panels = _MICROSOFT_COLORBLIND_IMAGE_RENDERING_FIGURE_PANELS
+        if len(panels) != 19 or len(set(panels)) != 17:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering figure panel denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering zero-HTML-table denominator changed"
+            )
+        if len(
+            re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)
+        ) != 0:
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering MathML denominator changed"
+            )
+        pseudocode_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"Pseudocode Listing\s+(\d+)\s*:", text, re.IGNORECASE
+            )
+        )
+        if pseudocode_numbers != tuple(range(1, 12)):
+            raise PatentParseError(
+                "Microsoft colorblind-image-rendering 11-pseudocode-listing "
+                "denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Microsoft colorblind-image-rendering prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Microsoft colorblind-image-rendering scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all four exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact system item publishes processors, camera/image capture, display, "
+        "pixel-color simulation and rendered-image software architecture only; its "
+        "single camera optical-lens reference is functional and contains no ordered "
+        "optical surface prescription or required system metadata",
+        "the exact image-rendering method publishes source-pixel selection, color "
+        "translation, display and adjustment operations without an independent "
+        "optical prescription",
+        "the exact transformation-model method publishes color-value simulation, "
+        "minimum color-distance selection and eleven pseudocode listings without "
+        "an optical prescription",
+        "the exact machine-readable-medium claim recasts the color-value simulation "
+        "and image-rendering operations as executable instructions without an "
+        "independent optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in (
+            _MICROSOFT_COLORBLIND_IMAGE_RENDERING_ITEMS
         )
     ]
 
