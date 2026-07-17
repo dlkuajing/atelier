@@ -463,6 +463,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_kantatsu_sharp_pancake_reflective_path_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
@@ -7404,6 +7410,203 @@ _SAMSUNG_FOLDED_FOUR_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "critical_page_number": 32,
             "critical_page_image_sha256": "17d332993781063bf6b0fbaa4161e580ff61198a8631db8c62baa25e19f10517",
             "raster_set_sha256": "6972325da0cebecad662f50b946977d13f6c93a05b8ff564ac36ede36e100fa6",
+        },
+    },
+}
+_KANTATSU_SHARP_PANCAKE_ITEMS = (
+    (1, "Kantatsu/Sharp pancake optical system Example 1", (1, 2), 1),
+    (2, "Kantatsu/Sharp pancake optical system Example 2", (3, 4), 2),
+    (3, "Kantatsu/Sharp pancake optical system Example 3", (5, 6), 3),
+)
+_KANTATSU_SHARP_PANCAKE_FIGURES = (
+    (1, ""),
+    (2, ""),
+    (3, ""),
+    (4, ""),
+    (5, ""),
+    (6, ""),
+    (7, ""),
+    (8, "A"),
+    (8, "B"),
+)
+_KANTATSU_SHARP_PANCAKE_SYSTEM_VALUES = {
+    1: (16.29, 2.04, 45.0, 13.36, 32.0),
+    2: (15.18, 1.90, 45.0, 12.62, 30.60),
+    3: (15.52, 1.94, 45.0, 12.94, 30.60),
+}
+_KANTATSU_SHARP_PANCAKE_SINGLE_LENS_FOCAL_LENGTHS = {
+    1: (68.119, 68.119),
+    2: (60.623, 60.623),
+    3: (65.331, 65.331),
+}
+_KANTATSU_SHARP_PANCAKE_TABLE_PAYLOAD_SHA256 = (
+    "6e8f3ada11312cb4c290a99350193dc6e34865a7ac63240c5d141a003bbe272a",
+    "eb27a222549e2d5daa184bfd90c681e3f767b7323af8fd717719f5a9b398990a",
+    "5524c5c5d7b4bf9e14169e0047b7a825d8258cbd78f130699cdabe46466b53d8",
+    "878dcc3fd35fcba792fae86ebf2f4a9455f4ee501454931673de8f83284e7e84",
+)
+_KANTATSU_SHARP_PANCAKE_PHRASE_COUNTS = {
+    "first reflective polarizing plate": 15,
+    "second reflective polarizing plate": 16,
+    "first quarter wave plate": 18,
+    "second quarter wave plate": 20,
+    "half mirror": 44,
+    "light of a path 1": 1,
+    "light of a path 2": 1,
+    "reflective surface": 6,
+    "Fno represents an F-number": 1,
+    "pupil distance is set to 12 mm": 1,
+}
+_KANTATSU_SHARP_PANCAKE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20240168282-A1": {
+        "raw_document_sha256": (
+            "dcf6c0eaa43bee30ad267546a06066df3e534dcad14551b1c934d32c30deedd6"
+        ),
+        "normalized_text_sha256": (
+            "758a4f42c15361f40d2675a6b2e0789303e8c04cc0724d26091aba5b580cfcbf"
+        ),
+        "section_markers": {
+            "abstract": (
+                "Abstract An optical system includes, in order from a pupil surface side"
+            ),
+            "background_summary": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATION [0001]"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0076]",
+            "detailed": "DESCRIPTION OF THE EMBODIMENTS [0085]",
+            "claims": (
+                "Claims 1 . An optical system comprising in order from a pupil surface side"
+            ),
+        },
+        "section_sha256": {
+            "abstract": "cf9dc1f47d6a9db91c81291db37b1cbdadf4ff1d90a48bfbb7449be070458870",
+            "background_summary": (
+                "b8835cd8ac654465aff8eba059f0ad0fe7dd65c4852acd1022b148802ca124bb"
+            ),
+            "brief": "74b9a1beefbc061b407c7208fdaeb436b32e80fc9b12bb47f2ed2cd4292cc4b5",
+            "detailed": "b813dd46d4512e2e5fa370b6f6a1acf099b024cf88687c09f8dd0527e33097e3",
+            "claims": "080f2f9cd0d87986b73fc80286d0f142e5e5629158e02658c86b9b632a23e6a1",
+        },
+        "paragraph_sequence": tuple(range(1, 121)),
+        "paragraph_ranges": {
+            "background_summary": (1, 75),
+            "brief": (76, 84),
+            "detailed": (85, 120),
+        },
+        "item_paragraph_ranges": ((110, 112), (113, 115), (116, 118)),
+        "claim_numbers": tuple(range(1, 8)),
+        "identity_markers": {
+            "Inventor(s) Maruyama; Ryo et al. OPTICAL SYSTEM Abstract": 1,
+            "Family ID: 91069629": 1,
+            "Appl. No.: 18/499185": 1,
+            "JP 2022-185927": 1,
+            "Kantatsu Co., Ltd": 2,
+            "Sharp Display Technology Corporation": 2,
+        },
+        "table_block_sha256": (
+            "b83ea82ab5c37f954983dd24ecc28859bdf9a0cc5f1da8bb26db294e6571ac2b",
+            "f115fba481c8ebba26ed5daa1a320eb82c9a106d8705851c77fe537a24ce14d5",
+            "b6cc55a55263d2b9926e5f63da3ab025f0bd43461052bdde253292b56014fea0",
+            "3392801c18115a1726e8ce8f13626dad2456b5f75ecee25798c3c37f1c7b6d76",
+        ),
+        "math_object_sha256": (
+            "ab0a2bc5a47f88646dcb3f3ab8e72115c0f585f7ee8d1163f98de1942448bff8"
+        ),
+        "pdf_audit": {
+            "page_count": 18,
+            "drawing_pdf_pages": tuple(range(2, 10)),
+            "container_sha256": (
+                "92bf4c35e7a99e44f7fe7bf2b0f113977e8c297a528518c4a4f7de6a3bab2198"
+            ),
+            "google_html_sha256": (
+                "dc2dde25d6ac2c536236b3cec8a92672b4a503f5f23526b0616207c0c4466fa4"
+            ),
+            "critical_page_numbers": (15, 16, 17),
+            "critical_page_image_sha256": (
+                "73e1e274af5fd5f8632250632b47804ac9ec347901be2c13511dfb93c7ace5f2",
+                "2c77d6af683ef0fd7d0bbcd94ad3faf1eeec86fd9375025fc0ad30a51619c1c2",
+                "71febfb0d9f4882a7921bd1ea0666fd33c71c7c9a240ec4a800c7f0941a7c33a",
+            ),
+            "raster_set_sha256": (
+                "2890af7fcd3a43a0849a87232b8d9add92be06050901cc53e0016242d59e3266"
+            ),
+        },
+    },
+    "US-12517327-B2": {
+        "raw_document_sha256": (
+            "4d14f86284478feacf48c7a7bc4677775b0fc351522e57a9065f1889e8c88793"
+        ),
+        "normalized_text_sha256": (
+            "171b81a790ba69c2ff508a46daf07bda210c4aa7d3d6e50011d3fbc5456fc7d1"
+        ),
+        "section_markers": {
+            "abstract": (
+                "Abstract An optical system includes, in order from a pupil surface side"
+            ),
+            "background_summary": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATION (1)"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DESCRIPTION OF THE EMBODIMENTS (10)",
+            "claims": (
+                "Claims 1 . An optical system comprising in order from a pupil surface side"
+            ),
+        },
+        "section_sha256": {
+            "abstract": "c34938cee9ff8d362c16150b0090e6fa5b3301822f34f51d48d1093c25a67c48",
+            "background_summary": (
+                "471f53b9650a59d01ae0a7c9886ed5d064c9e54d2632d584c3d8d550805ea2c0"
+            ),
+            "brief": "30f44999e0a5458ef8134cbe43752361f796f258fda25c3dc8b1fe446df8f702",
+            "detailed": "bec1a6f319441b518fc152012ee3b3e625705ff338e5ffb297457db6d9e6b97f",
+            "claims": "026449c95e681901bf4044f6e752f37bd6498e9deabec1eb6412c5bf9c0dac57",
+        },
+        "paragraph_sequence": (
+            tuple(range(1, 75)) + tuple(range(1, 10)) + tuple(range(10, 51))
+        ),
+        "paragraph_ranges": {
+            "background_summary": (1, 74),
+            "brief": (1, 9),
+            "detailed": (10, 50),
+        },
+        "item_paragraph_ranges": ((36, 39), (40, 43), (44, 47)),
+        "claim_numbers": tuple(range(1, 8)),
+        "identity_markers": {
+            "Inventor(s) Maruyama; Ryo et al. Optical system Abstract": 1,
+            "Family ID: 91069629": 1,
+            "Appl. No.: 18/499185": 1,
+            "US 20240168282 A1 May. 23, 2024": 1,
+            "JP 2022-185927": 1,
+            "Kantatsu Co., Ltd": 2,
+            "Sharp Display Technology Corporation": 2,
+        },
+        "table_block_sha256": (
+            "eaeb676941c722e48c6a3a82431ef58f17f0a1bc0cd6b2e9593056b0adc2a3bc",
+            "080db5a805609d9e9cf389d0898271a52c7ab54ad6eaf9fb37036be3c919b179",
+            "2cb7fb752cd5b2abb4327cba65aedd89cd6dd0dfe2507cc639698c8514bc7a4e",
+            "b5bf6384fb1ab155a797c6d0eb9306231c3b98ee97801b51a1da9d3d6c45363a",
+        ),
+        "math_object_sha256": (
+            "d1d18a85016cf85e66d8e04834c8c04f688ad34d76ab42d826706d6f2f12d48a"
+        ),
+        "pdf_audit": {
+            "page_count": 18,
+            "drawing_pdf_pages": tuple(range(2, 10)),
+            "container_sha256": (
+                "0228c930653f7ce2d128ac03b22efd2583295a6042450d2f2ff395c0ac20b0d9"
+            ),
+            "google_html_sha256": (
+                "183e6222c3135baf4ba9e669b277f61e677aadecc9ab0c0fb27b21717bbc3dc2"
+            ),
+            "critical_page_numbers": (15, 16, 17),
+            "critical_page_image_sha256": (
+                "3ca07a73f90b574a223b5a2f04e5898cf56679735f2d6f5382c14ee608e1b6de",
+                "d5dd2a86477bd7477318d3f5a4ebdc34337a39f295e247452cc9e70896813079",
+                "1523b1e9544bfe483cb63e10ccfe3f38a9ada4e3966eab635ef617b5ac094f30",
+            ),
+            "raster_set_sha256": (
+                "349aa06335706fd41e5534b02b59ec79fdae8446a209632503ff8cdf889020f1"
+            ),
         },
     },
 }
@@ -21736,6 +21939,452 @@ def _samsung_folded_four_lens_table13_rows(
             raise PatentParseError(f"Samsung folded four-lens TABLE 13 row {label} not found")
         rows[label] = tuple(match.group("values").split())
     return rows
+
+
+def _classify_kantatsu_sharp_pancake_reflective_path_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain exact Family 91069629 prescriptions blocked by path semantics."""
+
+    profile = _KANTATSU_SHARP_PANCAKE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _figures, _table_number in _KANTATSU_SHARP_PANCAKE_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Kantatsu/Sharp pancake official raw text hash changed for {patent_id}"
+            )
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Kantatsu/Sharp pancake normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Kantatsu/Sharp pancake section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake {section_name} section changed"
+                )
+
+        if patent_id.upper().endswith("-A1"):
+            paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+            paragraph_numbers = tuple(
+                int(match.group(1)) for match in paragraph_matches
+            )
+            paragraphs = {
+                int(match.group(1)): text[
+                    match.start() : (
+                        paragraph_matches[index + 1].start()
+                        if index + 1 < len(paragraph_matches)
+                        else section_starts["claims"]
+                    )
+                ]
+                for index, match in enumerate(paragraph_matches)
+            }
+            item_offsets = (0, 1)
+        else:
+            paragraph_matches = list(
+                re.finditer(
+                    r"(?:^|<br\s*/?>)\s*\((\d+)\)\s",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            )
+            paragraph_numbers = tuple(
+                int(match.group(1)) for match in paragraph_matches
+            )
+            detailed_count = profile["paragraph_ranges"]["detailed"][1] - 9
+            detailed_matches = paragraph_matches[-detailed_count:]
+            paragraphs = {
+                int(match.group(1)): raw_text[
+                    match.start() : (
+                        detailed_matches[index + 1].start()
+                        if index + 1 < len(detailed_matches)
+                        else len(raw_text)
+                    )
+                ]
+                for index, match in enumerate(detailed_matches)
+            }
+            item_offsets = (0, 2)
+        if paragraph_numbers != profile["paragraph_sequence"]:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake numbered-paragraph denominator changed"
+            )
+
+        for item, bounds in zip(
+            _KANTATSU_SHARP_PANCAKE_ITEMS,
+            profile["item_paragraph_ranges"],
+            strict=True,
+        ):
+            number, _label, _figures, table_number = item
+            start, end = bounds
+            if tuple(range(start, end + 1)) != tuple(
+                paragraph for paragraph in range(start, end + 1) if paragraph in paragraphs
+            ):
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake Example {number} paragraph mapping changed"
+                )
+            required = (
+                f"The basic lens data are shown in Table {table_number} below",
+                f"The optical system of Example {number}",
+            )
+            for offset, phrase in zip(item_offsets, required, strict=True):
+                if phrase not in paragraphs[start + offset]:
+                    raise PatentParseError(
+                        f"Kantatsu/Sharp pancake Example {number} item binding changed"
+                    )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                flags=re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Kantatsu/Sharp pancake claims 1-7 changed")
+        figure_panels = tuple(
+            (int(number), suffix.upper())
+            for number, suffix in re.findall(
+                r"FIG\.\s*(\d+)\s*([AB]?)\s+(?:is|are)",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_panels != _KANTATSU_SHARP_PANCAKE_FIGURES:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake nine-panel figure denominator changed"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != (1, 2, 3, 4):
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake source-table denominator changed"
+            )
+        block_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in blocks
+        )
+        if block_digests != profile["table_block_sha256"]:
+            raise PatentParseError("Kantatsu/Sharp pancake source table changed")
+        payload_digests = tuple(
+            hashlib.sha256(
+                _kantatsu_sharp_pancake_table_payload(block).encode("utf-8")
+            ).hexdigest()
+            for block in blocks
+        )
+        if payload_digests != _KANTATSU_SHARP_PANCAKE_TABLE_PAYLOAD_SHA256:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake cross-publication table payload changed"
+            )
+
+        system_values = {
+            block.number: _kantatsu_sharp_pancake_system_values(block.text)
+            for block in blocks[:3]
+        }
+        if system_values != _KANTATSU_SHARP_PANCAKE_SYSTEM_VALUES:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake direct system-value census changed"
+            )
+        single_lens_focals = {
+            block.number: _kantatsu_sharp_pancake_single_lens_focals(block.text)
+            for block in blocks[:3]
+        }
+        if single_lens_focals != _KANTATSU_SHARP_PANCAKE_SINGLE_LENS_FOCAL_LENGTHS:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake single-lens focal-length census changed"
+            )
+
+        for block in blocks[:3]:
+            rows = _kantatsu_sharp_pancake_surface_rows(block.text)
+            if tuple(row[0] for row in rows) != tuple(range(1, 30)):
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake TABLE {block.number} surface sequence changed"
+                )
+            if tuple(row[0] for row in rows if row[1]) != (6, 11, 18, 23):
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake TABLE {block.number} asphere mapping changed"
+                )
+            if tuple(row[0] for row in rows if row[2] == "reflective surface") != (
+                8,
+                14,
+            ):
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake TABLE {block.number} reflection mapping changed"
+                )
+            if tuple(row[0] for row in rows if row[4] < 0.0) != (9, 10, 11, 13):
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake TABLE {block.number} return path changed"
+                )
+            asphere_text = block.text[block.text.index("Aspherical surface data") :]
+            coefficient_labels = tuple(
+                re.findall(r"(?<!\w)(A(?:4|6|8|10|12|14|16|18|20))(?!\w)", asphere_text)
+            )
+            if coefficient_labels != (
+                "A4",
+                "A6",
+                "A8",
+                "A10",
+                "A12",
+                "A14",
+                "A16",
+                "A18",
+                "A20",
+            ):
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake TABLE {block.number} asphere order changed"
+                )
+            if len(re.findall(r"Display surface Infinity", block.text)) != 1:
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake TABLE {block.number} display surface changed"
+                )
+
+        for phrase, expected in _KANTATSU_SHARP_PANCAKE_PHRASE_COUNTS.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Kantatsu/Sharp pancake phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+
+        math_matches = list(re.finditer(r'<maths id="MATH-US-00001"', raw_text, re.IGNORECASE))
+        if len(math_matches) != 1:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake asphere formula denominator changed"
+            )
+        math_start = math_matches[0].start()
+        try:
+            math_end = raw_text.index("</maths>", math_start) + len("</maths>")
+        except ValueError as exc:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake asphere formula boundary changed"
+            ) from exc
+        math_digest = hashlib.sha256(
+            raw_text[math_start:math_end].encode("utf-8")
+        ).hexdigest()
+        if math_digest != profile["math_object_sha256"]:
+            raise PatentParseError(
+                "Kantatsu/Sharp pancake asphere formula object changed"
+            )
+        _assert_kantatsu_sharp_pancake_converter_capability_gap()
+    except Exception as exc:  # noqa: BLE001 - retain all three exact-source items
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentParseError(
+                f"Kantatsu/Sharp pancake Example {number} publishes complete f/Fno/"
+                "half-field/image-height/TTL metadata, 29 sequential path rows, "
+                "reflective surfaces 8 and 14, negative-thickness return segments, "
+                "and even-asphere coefficients through A20; PatentSurfaceInput, "
+                "CodeVSurfaceReadout, and the ZMX rebuild path cannot represent the "
+                "source's half-mirror, reflective-polarizer, quarter-wave-plate, and "
+                "two-branch polarization/multipass semantics without synthesizing a "
+                "different optical system"
+            ),
+        )
+        for number, label, _figures, _table_number in _KANTATSU_SHARP_PANCAKE_ITEMS
+    ]
+
+
+def _kantatsu_sharp_pancake_table_payload(block: _PatentTableBlock) -> str:
+    if block.number <= 3:
+        boundary = r"\s(?:\[\d{4}\]|\(\d+\))\s(?=The optical system of Example)"
+    else:
+        boundary = r"\s(?:\[\d{4}\]|\(\d+\))\s(?=In the case of applying)"
+    parts = re.split(boundary, block.text, maxsplit=1)
+    if len(parts) != 2:
+        raise PatentParseError(
+            f"Kantatsu/Sharp pancake TABLE {block.number} payload boundary changed"
+        )
+    return parts[0].strip()
+
+
+def _kantatsu_sharp_pancake_system_values(
+    table_text: str,
+) -> tuple[float, float, float, float, float]:
+    match = re.search(
+        rf"f\s*=\s*(?P<f>{NUMBER_PATTERN})\s+"
+        rf"Fno\s*=\s*(?P<fno>{NUMBER_PATTERN})\s+"
+        rf"ω\(°\)\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s+"
+        rf"ih\s*=\s*(?P<ih>{NUMBER_PATTERN})\s+"
+        rf"TTL\s*=\s*(?P<ttl>{NUMBER_PATTERN})",
+        table_text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError(
+            "Kantatsu/Sharp pancake table lacks direct f/Fno/half-field/ih/TTL values"
+        )
+    return tuple(
+        _parse_number(match.group(name)) for name in ("f", "fno", "hfov", "ih", "ttl")
+    )
+
+
+def _kantatsu_sharp_pancake_single_lens_focals(table_text: str) -> tuple[float, float]:
+    match = re.search(
+        rf"Single lens data Lens Starting surface Focal length\s+"
+        rf"1\s+5\s+(?P<first>{NUMBER_PATTERN})\s+"
+        rf"2\s+23\s+(?P<second>{NUMBER_PATTERN})",
+        table_text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError(
+            "Kantatsu/Sharp pancake table lacks both single-lens focal lengths"
+        )
+    return (_parse_number(match.group("first")), _parse_number(match.group("second")))
+
+
+def _kantatsu_sharp_pancake_surface_rows(
+    table_text: str,
+) -> tuple[tuple[int, bool, str | None, str, float], ...]:
+    try:
+        start = table_text.index("Surface data")
+        end = table_text.index("Single lens data", start)
+    except ValueError as exc:
+        raise PatentParseError(
+            "Kantatsu/Sharp pancake surface-table boundary changed"
+        ) from exc
+    surface_text = table_text[start:end]
+    pattern = re.compile(
+        r"(?<!\S)(?P<index>\d+)(?P<asphere>\*)?"
+        r"(?:\s+\((?P<label>pupil surface|reflective surface)\))?\s+"
+        r"(?P<radius>Infinity|-?\d+\.\d+)\s+"
+        r"(?P<thickness>-?\d+\.\d+)",
+        re.IGNORECASE,
+    )
+    return tuple(
+        (
+            int(match.group("index")),
+            match.group("asphere") == "*",
+            match.group("label").lower() if match.group("label") else None,
+            match.group("radius"),
+            _parse_number(match.group("thickness")),
+        )
+        for match in pattern.finditer(surface_text)
+    )
+
+
+def _assert_kantatsu_sharp_pancake_converter_capability_gap() -> None:
+    expected_surface_fields = (
+        "index",
+        "label",
+        "radius_mm",
+        "thickness_mm",
+        "material",
+        "nd",
+        "vd",
+        "surface_type",
+        "asphere_coefficients",
+    )
+    if tuple(PatentSurface.__dataclass_fields__) != expected_surface_fields:
+        raise PatentParseError(
+            "Kantatsu/Sharp pancake PatentSurface capability contract changed; "
+            "re-evaluate conversion"
+        )
+    if tuple(PatentSurfaceInput.model_fields) != expected_surface_fields:
+        raise PatentParseError(
+            "Kantatsu/Sharp pancake PatentSurfaceInput capability contract changed; "
+            "re-evaluate conversion"
+        )
+    if tuple(CodeVSurfaceReadout.__dataclass_fields__) != (
+        "index",
+        "radius_y_mm",
+        "thickness_mm",
+        "semi_diameter_mm",
+        "glass",
+        "nd",
+        "vd",
+        "surface_type",
+        "is_stop",
+        "asphere_coefficients",
+        "vd_source",
+    ):
+        raise PatentParseError(
+            "Kantatsu/Sharp pancake CodeVSurfaceReadout capability contract changed; "
+            "re-evaluate conversion"
+        )
+
+    probe = PatentPrescription(
+        patent_id="reflection-capability-probe",
+        embodiment="reflection capability probe",
+        focal_length_mm=1.0,
+        f_number=2.0,
+        hfov_deg=1.0,
+        surfaces=[
+            PatentSurface(
+                index=1,
+                label="reflective capability probe",
+                radius_mm=0.0,
+                thickness_mm=0.0,
+                material="MIRROR",
+                nd=None,
+                vd=None,
+                surface_type="MIRROR",
+            )
+        ],
+    )
+    readout = build_readout_from_prescription(probe)
+    from app.core.engines.zmx_writer import build_zmx_from_codev_readout
+
+    zmx_text = build_zmx_from_codev_readout(readout)
+    if readout.surfaces[0].glass is not None or any(
+        marker in zmx_text for marker in ("GLAS MIRROR", "TYPE MIRROR")
+    ):
+        raise PatentParseError(
+            "Kantatsu/Sharp pancake mirror rebuild capability changed; re-evaluate conversion"
+        )
 
 
 def _classify_kantatsu_surface_modification_architecture_only_attempts(

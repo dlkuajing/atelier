@@ -19597,3 +19597,355 @@ def test_ofilm_four_lens_replay_and_denominator_artifacts() -> None:
     assert queue["next_exact_group"]["family_id"] == "90040110"
     assert queue["next_exact_group"]["root_ids"] == ["US-20250327997"]
     assert queue["saturation_complete"] is False
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "relative_path"),
+    (
+        (
+            "US-20240168282-A1",
+            (
+                "data/patent-lake/uspto-ppubs-html/US-PGPUB/"
+                "dcf6c0eaa43bee30/US-20240168282-A1.html"
+            ),
+        ),
+        (
+            "US-12517327-B2",
+            (
+                ".planning/quick/260717-patent-generic-family-91069629/"
+                "source-review/US-12517327-B2-uspto.html"
+            ),
+        ),
+    ),
+)
+def test_kantatsu_sharp_pancake_family_retains_three_path_capability_reviews(
+    patent_id: str,
+    relative_path: str,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_path = root / relative_path
+    raw = source_path.read_text(encoding="utf-8")
+    profile = patent_to_zmx._KANTATSU_SHARP_PANCAKE_SOURCE_PROFILES[patent_id]
+    assert hashlib.sha256(source_path.read_bytes()).hexdigest() == profile[
+        "raw_document_sha256"
+    ]
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw, patent_id=patent_id)
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3]
+    assert [attempt.embodiment for attempt in attempts] == [
+        item[1] for item in patent_to_zmx._KANTATSU_SHARP_PANCAKE_ITEMS
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "complete f/Fno/half-field/image-height/TTL metadata" in str(attempt.error)
+        and "reflective surfaces 8 and 14" in str(attempt.error)
+        and "two-branch polarization/multipass semantics" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "relative_path"),
+    (
+        (
+            "US-20240168282-A1",
+            (
+                "data/patent-lake/uspto-ppubs-html/US-PGPUB/"
+                "dcf6c0eaa43bee30/US-20240168282-A1.html"
+            ),
+        ),
+        (
+            "US-12517327-B2",
+            (
+                ".planning/quick/260717-patent-generic-family-91069629/"
+                "source-review/US-12517327-B2-uspto.html"
+            ),
+        ),
+    ),
+)
+def test_kantatsu_sharp_pancake_family_fails_closed_on_source_drift(
+    patent_id: str,
+    relative_path: str,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    raw = (root / relative_path).read_text(encoding="utf-8")
+    mutated = raw.replace("Fno = 2.04", "Fno = 2.05", 1)
+    assert mutated != raw
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        mutated,
+        patent_id=patent_id,
+    )
+    assert len(attempts) == 3
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "official raw text hash changed" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_kantatsu_sharp_pancake_family_has_one_shared_numeric_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    sources = {
+        "US-20240168282-A1": (
+            root
+            / "data"
+            / "patent-lake"
+            / "uspto-ppubs-html"
+            / "US-PGPUB"
+            / "dcf6c0eaa43bee30"
+            / "US-20240168282-A1.html"
+        ),
+        "US-12517327-B2": (
+            root
+            / ".planning"
+            / "quick"
+            / "260717-patent-generic-family-91069629"
+            / "source-review"
+            / "US-12517327-B2-uspto.html"
+        ),
+    }
+    publication_payload_hashes: dict[str, tuple[str, ...]] = {}
+    for patent_id, source_path in sources.items():
+        text = patent_to_zmx.normalize_patent_text(
+            source_path.read_text(encoding="utf-8")
+        )
+        blocks = patent_to_zmx._patent_table_blocks(text)
+        assert [block.number for block in blocks] == [1, 2, 3, 4]
+        publication_payload_hashes[patent_id] = tuple(
+            hashlib.sha256(
+                patent_to_zmx._kantatsu_sharp_pancake_table_payload(block).encode()
+            ).hexdigest()
+            for block in blocks
+        )
+        assert publication_payload_hashes[patent_id] == (
+            patent_to_zmx._KANTATSU_SHARP_PANCAKE_TABLE_PAYLOAD_SHA256
+        )
+        assert {
+            block.number: patent_to_zmx._kantatsu_sharp_pancake_system_values(
+                block.text
+            )
+            for block in blocks[:3]
+        } == patent_to_zmx._KANTATSU_SHARP_PANCAKE_SYSTEM_VALUES
+        assert {
+            block.number: patent_to_zmx._kantatsu_sharp_pancake_single_lens_focals(
+                block.text
+            )
+            for block in blocks[:3]
+        } == patent_to_zmx._KANTATSU_SHARP_PANCAKE_SINGLE_LENS_FOCAL_LENGTHS
+        for block in blocks[:3]:
+            rows = patent_to_zmx._kantatsu_sharp_pancake_surface_rows(block.text)
+            assert [row[0] for row in rows] == list(range(1, 30))
+            assert [row[0] for row in rows if row[1]] == [6, 11, 18, 23]
+            assert [row[0] for row in rows if row[2] == "reflective surface"] == [
+                8,
+                14,
+            ]
+            assert [row[0] for row in rows if row[4] < 0.0] == [9, 10, 11, 13]
+    assert len(set(publication_payload_hashes.values())) == 1
+
+
+def test_kantatsu_sharp_pancake_converter_gap_is_bound_to_current_dtos() -> None:
+    assert "reflection_mode" not in patent_to_zmx.PatentSurfaceInput.model_fields
+    assert "polarization" not in patent_to_zmx.PatentSurfaceInput.model_fields
+    assert "path_branch" not in patent_to_zmx.PatentSurfaceInput.model_fields
+    assert "is_reflective" not in patent_to_zmx.CodeVSurfaceReadout.__dataclass_fields__
+    assert patent_to_zmx._assert_kantatsu_sharp_pancake_converter_capability_gap() is None
+
+
+def test_kantatsu_sharp_pancake_pdf_raster_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-91069629"
+    audit = json.loads(
+        (quick / "family-91069629-raster-audit.json").read_text(encoding="utf-8")
+    )
+    assert audit["family_id"] == "91069629"
+    assert audit["numeric_derivation_from_rasters"] is False
+    assert audit["cross_publication_numeric_borrowing"] is False
+
+    for patent_id, publication in audit["publications"].items():
+        profile = patent_to_zmx._KANTATSU_SHARP_PANCAKE_SOURCE_PROFILES[
+            patent_id
+        ]["pdf_audit"]
+        google = publication["google_html"]
+        google_path = root / google["path"]
+        google_bytes = google_path.read_bytes()
+        assert len(google_bytes) == google["bytes"]
+        assert (
+            hashlib.sha256(google_bytes).hexdigest()
+            == google["sha256"]
+            == profile["google_html_sha256"]
+        )
+
+        official = publication["official_pdf"]
+        pdf_path = root / official["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        assert len(pdf_bytes) == official["bytes"]
+        assert (
+            hashlib.sha256(pdf_bytes).hexdigest()
+            == official["sha256"]
+            == profile["container_sha256"]
+        )
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == official["page_count"] == profile["page_count"] == 18
+        page_hashes = []
+        for page_number, (page, expected) in enumerate(
+            zip(reader.pages, official["pages"], strict=True),
+            start=1,
+        ):
+            assert expected["page"] == page_number
+            assert len(page.extract_text() or "") == expected["text_characters"] == 0
+            assert len(page.images) == expected["image_count"] == 1
+            image = patent_pdf_recovery._page_image(
+                page,
+                source=patent_id,
+                page_number=page_number,
+            )
+            decoded = patent_pdf_recovery._decoded_raster(image, source=patent_id)
+            assert list(decoded.shape) == expected["shape"]
+            page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(image))
+        assert page_hashes == [page["sha256"] for page in official["pages"]]
+        assert (
+            hashlib.sha256("\n".join(page_hashes).encode()).hexdigest()
+            == official["canonical_raster_set_sha256"]
+            == profile["raster_set_sha256"]
+        )
+        critical_numbers = official["critical_page_numbers"]
+        assert tuple(critical_numbers) == profile["critical_page_numbers"] == (15, 16, 17)
+        critical_hashes = [page_hashes[number - 1] for number in critical_numbers]
+        assert critical_hashes == official["critical_page_image_sha256"]
+        assert critical_hashes == list(profile["critical_page_image_sha256"])
+
+
+def test_kantatsu_sharp_pancake_replay_and_evidence_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-91069629"
+    evidence = json.loads(
+        (quick / "family-91069629-source-evidence.json").read_text(encoding="utf-8")
+    )
+    assert evidence["root_ids"] == ["US-20240168282"]
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_source_publications": 2,
+        "distinct_family_items": 3,
+        "disclosed_optical_prescriptions_per_root": 3,
+        "replayed_ledger_items": 3,
+        "parser_review_items": 3,
+        "terminal_items": 0,
+        "converted_items": 0,
+        "declared_figure_panels_per_publication": 9,
+        "tagged_html_tables_per_publication": 4,
+        "mathml_objects_per_publication": 1,
+        "claims_per_publication": 7,
+        "official_pdf_pages_per_publication": 18,
+        "drawing_sheets_per_publication": 8,
+    }
+    for key in (
+        "denominator_audit",
+        "official_pdf_audit",
+        "external_family_queue",
+        "replay_determinism",
+        "source_audit",
+    ):
+        record = evidence[key]
+        path = root / record["path"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+
+    denominator = json.loads(
+        (quick / "family-91069629-denominator.json").read_text(encoding="utf-8")
+    )
+    assert denominator["ledger_item_denominator"] == {
+        "converted_items": 0,
+        "distinct_family_items": 3,
+        "frozen_cohort_roots": 1,
+        "parser_review_items": 3,
+        "per_root_items": 3,
+        "replayed_items": 3,
+        "terminal_items": 0,
+    }
+    assert denominator["reconciliation"]["unmapped_disclosed_items"] == 0
+    assert denominator["reconciliation"]["unmapped_declared_figure_panels"] == 0
+    assert denominator["reconciliation"]["unmapped_tagged_table_blocks"] == 0
+    assert denominator["converter_capability_boundary"] == {
+        **denominator["converter_capability_boundary"],
+        "half_mirror_semantics_supported": False,
+        "mirror_material_survives_patent_readout": False,
+        "multi_branch_polarization_path_supported": False,
+        "quarter_wave_plate_semantics_supported": False,
+        "reflective_polarizer_semantics_supported": False,
+    }
+
+    replay = json.loads(
+        (quick / "family-91069629-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert replay["permitted_normalization"] == ["result_attempt"]
+    assert replay["worker_or_zmx_created"] is False
+    assert replay["strict_replay"]["roots_with_results"] == 619
+    assert replay["strict_replay"]["cohort_roots"] == 619
+    assert replay["strict_replay"]["missing_results"] == 0
+    assert replay["strict_replay"]["corrupt_results"] == 0
+    record = replay["roots"]["US-20240168282"]
+    assert [item["result_attempt"] for item in record["attempts"]] == [2, 3]
+    assert len(
+        {
+            item["semantic_sha256_excluding_result_attempt"]
+            for item in record["attempts"]
+        }
+    ) == 1
+    assert record["root_state"] == "parser_review_required"
+    assert record["items"] == record["parser_review_items"] == 3
+    assert record["conversion_attempt_ids_present"] == 0
+    assert record["conversion_request_sha256_present"] == 0
+    assert record["prescription_fingerprints_present"] == 0
+    for attempt_number in (2, 3):
+        result_path = (
+            root
+            / "data"
+            / "patent-ledger"
+            / "replay"
+            / "local-uncovered"
+            / "results"
+            / "US-20240168282"
+            / f"attempt-{attempt_number:04d}"
+            / "result.json"
+        )
+        payload = json.loads(result_path.read_text(encoding="utf-8"))
+        assert payload["root_state"] == "parser_review_required"
+        assert payload["reason_code"] == (
+            "parser_review_required.all_disclosed_items_rejected"
+        )
+        assert len(payload["items"]) == 3
+        assert all(
+            item["state"] == "parser_review_required"
+            and item["reason_code"]
+            == "parser_review_required.deterministic_parser_rejected"
+            and item["conversion_attempt_id"] is None
+            and item["conversion_request_sha256"] is None
+            and item["prescription_fingerprint"] is None
+            for item in payload["items"]
+        )
+
+    before = json.loads(
+        (quick / "generic-residual-before-127.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 127
+    after_hashes = []
+    for name in ("generic-residual-after-1.json", "generic-residual-after-2.json"):
+        path = quick / name
+        after_hashes.append(hashlib.sha256(path.read_bytes()).hexdigest())
+        after = json.loads(path.read_text(encoding="utf-8"))
+        assert after["affected_roots"] == after["affected_items"] == 126
+        assert after["result_set_sha256"] == evidence["replay_state"][
+            "result_set_sha256"
+        ]
+    assert after_hashes == [evidence["census"]["after_1"]["sha256"]] * 2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["next_exact_group"]["family_id"] == "82656625"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260110882"]
+    assert queue["saturation_complete"] is False

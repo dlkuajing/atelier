@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "family_id": "91069629",
+  "title": "OPTICAL SYSTEM",
+  "applicant_assignee": ["Kantatsu Co., Ltd.", "Sharp Display Technology Corporation"],
+  "root_ids": ["US-20240168282"],
+  "publications": {
+    "US-20240168282-A1": {
+      "application_number": "18/499185",
+      "filing_date": "2023-10-31",
+      "publication_date": "2024-05-23",
+      "cohort_role": "frozen root publication"
+    },
+    "US-12517327-B2": {
+      "application_number": "18/499185",
+      "grant_date": "2026-01-06",
+      "cohort_role": "same-application queue-only source-drift witness"
+    }
+  },
+  "priority_applications": [
+    {"application": "JP2022-185927", "date": "2022-11-21"}
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_source_publications": 2,
+    "distinct_family_items": 3,
+    "disclosed_optical_prescriptions_per_root": 3,
+    "replayed_ledger_items": 3,
+    "parser_review_items": 3,
+    "terminal_items": 0,
+    "converted_items": 0,
+    "declared_figure_panels_per_publication": 9,
+    "tagged_html_tables_per_publication": 4,
+    "mathml_objects_per_publication": 1,
+    "claims_per_publication": 7,
+    "official_pdf_pages_per_publication": 18,
+    "drawing_sheets_per_publication": 8
+  },
+  "official_html": {
+    "US-20240168282-A1": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/dcf6c0eaa43bee30/US-20240168282-A1.html",
+      "bytes": 65199,
+      "raw_document_sha256": "dcf6c0eaa43bee30ad267546a06066df3e534dcad14551b1c934d32c30deedd6",
+      "normalized_characters": 45812,
+      "normalized_text_sha256": "758a4f42c15361f40d2675a6b2e0789303e8c04cc0724d26091aba5b580cfcbf",
+      "paragraph_ranges": {"background_summary": [1, 75], "brief": [76, 84], "detailed": [85, 120]}
+    },
+    "US-12517327-B2": {
+      "path": ".planning/quick/260717-patent-generic-family-91069629/source-review/US-12517327-B2-uspto.html",
+      "bytes": 69434,
+      "raw_document_sha256": "4d14f86284478feacf48c7a7bc4677775b0fc351522e57a9065f1889e8c88793",
+      "normalized_characters": 46522,
+      "normalized_text_sha256": "171b81a790ba69c2ff508a46daf07bda210c4aa7d3d6e50011d3fbc5456fc7d1",
+      "paragraph_ranges": {"background_summary": [1, 74], "brief": [1, 9], "detailed": [10, 50]}
+    }
+  },
+  "prescription_boundary": {
+    "prescription_tables": [1, 2, 3],
+    "conditional_expression_table": 4,
+    "ordered_path_rows_per_prescription": 29,
+    "display_surface_rows_per_prescription": 1,
+    "reflective_surface_rows": [8, 14],
+    "negative_thickness_return_rows": [9, 10, 11, 13],
+    "asphere_path_rows": [6, 11, 18, 23],
+    "unique_asphere_lens_surfaces": [6, 23],
+    "asphere_orders": ["A4", "A6", "A8", "A10", "A12", "A14", "A16", "A18", "A20"],
+    "cross_publication_table_payloads_identical": true,
+    "cross_publication_numeric_borrowing": false,
+    "coordinate_values_synthesized": 0,
+    "raster_coordinates_transcribed": false
+  },
+  "converter_capability_boundary": {
+    "half_mirror_semantics_supported": false,
+    "reflective_polarizer_semantics_supported": false,
+    "quarter_wave_plate_semantics_supported": false,
+    "multi_branch_polarization_path_supported": false,
+    "mirror_material_survives_patent_readout": false,
+    "negative_thickness_is_sufficient": false
+  },
+  "nonterminal_outcome": {
+    "root_state": "parser_review_required",
+    "reason_code": "parser_review_required.all_disclosed_items_rejected",
+    "item_reason_code": "parser_review_required.deterministic_parser_rejected",
+    "capability_gap": "reflective pancake polarization/multipass semantics",
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "813663383d10880ca64f1566b24c1e31e1bcae3f67a3154872334f3c4d9138b6",
+    "summary_sha256": "36042d580d3b7a03f08a479de2d38f69de221ded0afa50e8f16c8d3064a6c58e",
+    "report_sha256": "ec4977fc1cce21de9c1f689b954a49aa925fd339319bc6b299a6324ac06294f6",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "root_state_counts": {"conversion_retry_required": 0, "converted_pending_intake": 25, "mixed_nonterminal": 146, "parser_review_required": 316, "source_exhausted_pending_alternates": 0, "source_retry_required": 0, "terminal": 132},
+    "item_state_counts": {"conversion_retry_required": 28, "converted_pending_intake": 551, "parser_review_required": 1409, "terminal": 1122}
+  },
+  "census": {
+    "before": {"path": ".planning/quick/260717-patent-generic-family-91069629/generic-residual-before-127.json", "sha256": "c49e747edad2b43338f6e66cdac13ff74f64cc3cfa3b666626c7f066c385f3ff"},
+    "after_1": {"path": ".planning/quick/260717-patent-generic-family-91069629/generic-residual-after-1.json", "sha256": "867f457ff8b86660401a175781cd71f30c19523de91a9da9dc2a58c86d1dceb3"},
+    "after_2": {"path": ".planning/quick/260717-patent-generic-family-91069629/generic-residual-after-2.json", "sha256": "867f457ff8b86660401a175781cd71f30c19523de91a9da9dc2a58c86d1dceb3"},
+    "queue_after": {"path": ".planning/quick/260717-patent-generic-family-91069629/queue-after.json", "sha256": "b97542f10e78541ccc1ce7901926294db9446e9e7693a49d17649aca4c35cf93"}
+  },
+  "denominator_audit": {"path": ".planning/quick/260717-patent-generic-family-91069629/family-91069629-denominator.json", "sha256": "b3778f221935a45203190a6fb15a661deafda0dba5897d8d19312d4b2e3ba146"},
+  "official_pdf_audit": {"path": ".planning/quick/260717-patent-generic-family-91069629/family-91069629-raster-audit.json", "sha256": "9ba23668eaeb5053ca992721858a5679a0d9419fceb5cc879fe222a7b58d4c3c"},
+  "external_family_queue": {"path": ".planning/quick/260717-patent-generic-family-91069629/family-91069629-external-family-members.json", "sha256": "44d4a65d1b2f042fc3188c4d44fb91db928e42c3091251655a82f2f83952ebc1"},
+  "replay_determinism": {"path": ".planning/quick/260717-patent-generic-family-91069629/family-91069629-replay-determinism.json", "sha256": "16c6a77b5d7f90755e73c0a6b150acee6d87101ea7c012a995047c637a463e04"},
+  "source_audit": {"path": ".planning/quick/260717-patent-generic-family-91069629/family-91069629-source-audit.md", "sha256": "a9d9d3df91a1e5f7c18708e6026e963df9cf7504a7827301da23bec182cc314b"},
+  "saturation_boundary": "The frozen root is an exact three-item nonterminal result, but converter capability, the 126-root generic bucket, other parser buckets, formal intake, external-family queue and global patent/source exhaustion remain open."
+}

@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `3cebf1af8fdca1a2b6163da8c257a5538268bdf8f897714532745ccc36f06926`
+- result_set_sha256: `813663383d10880ca64f1566b24c1e31e1bcae3f67a3154872334f3c4d9138b6`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -30,7 +30,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 551
 - `terminal`: 1122
-- `parser_review_required`: 1407
+- `parser_review_required`: 1409
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -55,7 +55,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1407
+- `parser_review_required.deterministic_parser_rejected`: 1409
 - `terminal.process_receipt_classified`: 734
 - `converted_pending_intake.process_isolated_zmx_ready`: 551
 - `terminal.metadata_unpublished.system_f_number_absent`: 70
@@ -138,7 +138,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `sunny_embodiment_metadata_missing`: 177
 - `aac_raytech_summary_metadata_missing`: 174
-- `generic_summary_metadata_missing`: 127
+- `generic_summary_metadata_missing`: 126
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
 - `asphere_section_missing`: 65
@@ -302,6 +302,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_kantatsu_inline_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 1
 - `other_kantatsu_inline_example_n_source_surface_sequence_is_unsupported_or_damaged_n_n_n_n_n_n_n_n_n_n_n_n_n_n_n`: 1
 - `other_kantatsu_inline_example_n_stop_row_is_malformed`: 1
+- `other_kantatsu_sharp_pancake_example_n_publishes_complete_f_fno_half_field_image_height_ttl_metadata_n_sequential_4d20b32aaac7`: 1
+- `other_kantatsu_sharp_pancake_example_n_publishes_complete_f_fno_half_field_image_height_ttl_metadata_n_sequential_78a0b8e75a09`: 1
+- `other_kantatsu_sharp_pancake_example_n_publishes_complete_f_fno_half_field_image_height_ttl_metadata_n_sequential_d83ab9635d3a`: 1
 - `other_kantatsu_six_lens_example_n_coefficient_a14_for_source_surface_n_is_malformed_e_n`: 1
 - `other_kantatsu_six_lens_example_n_coefficient_label_expected_a16_found_end`: 1
 - `other_largan_surface_label_token_confidence_n_is_below_n`: 1
