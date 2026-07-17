@@ -585,6 +585,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_wnc_camera_antenna_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -10660,6 +10668,168 @@ _LARGAN_IMAGING_LENS_DRIVING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "Wc (mm)": 3,
             "Wf (mm)": 3,
             "visual angle": 3,
+        },
+    }
+}
+_WNC_CAMERA_ANTENNA_ITEMS = (
+    (
+        1,
+        "WNC first camera-unit antenna-module embodiment",
+        "confirmed_no_prescription.camera_unit_antenna_radiator_architecture_only",
+    ),
+    (
+        2,
+        "WNC second coupled-trace antenna-module embodiment",
+        "confirmed_no_prescription.coupled_trace_camera_antenna_architecture_only",
+    ),
+    (
+        3,
+        "WNC third composite camera-module embodiment",
+        "confirmed_no_prescription.imaging_lens_assembly_antenna_trace_architecture_only",
+    ),
+    (
+        4,
+        "WNC fourth notebook electronic-device embodiment",
+        "confirmed_no_prescription.notebook_camera_antenna_module_wrapper_only",
+    ),
+)
+_WNC_CAMERA_ANTENNA_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260113525-A1": {
+        "raw_document_sha256": (
+            "870114a2e77a7d438bf07372a4d1cc73f576082bf2139507bb04abdb66e2e58e"
+        ),
+        "normalized_text_sha256": (
+            "899513a4673f100d23d544f55ec03c19375c0008bd170b3e8ee35f732663fa35"
+        ),
+        "section_markers": {
+            "preamble": "US-20260113525-A1",
+            "abstract": "Abstract An antenna module includes",
+            "related_metadata": (
+                "Related U.S. Application Data us-provisional-application "
+                "US 63691498 20240906"
+            ),
+            "related_applications": (
+                "Background/Summary RELATED APPLICATIONS [0001]"
+            ),
+            "background": "BACKGROUND Technical Field [0002]",
+            "summary": "SUMMARY [0006]",
+            "figures": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0010]",
+            "detailed": "DETAILED DESCRIPTION [0021]",
+            "claims": "Claims 1 . An antenna module comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "6903d08397a8b49cb1d8f8a0020ef3accba3ab117057ef47f3165808e80c7cfa"
+            ),
+            "abstract": (
+                "c5de523dceac2f61e2647e8ed34917c50eab9ff9309481baddd3c3ea21ae48d0"
+            ),
+            "related_metadata": (
+                "09a63eaf77772468d7c345b1953690583cf1e3d5b65d49c69da1aeb923b468da"
+            ),
+            "related_applications": (
+                "daa39011b9b24ede96143a036f7bd5d6c652fcc07d6a7f0eddeb718da6d1ab12"
+            ),
+            "background": (
+                "02ac5887fbd99f8e3e97fe4a63a87cdc541133bc8be493ce943ef6baa76f8afc"
+            ),
+            "summary": (
+                "ea9abe397759666541d561b1c2e44886b8644f427852382c0b4b7125d402f503"
+            ),
+            "figures": (
+                "0066e0be2260620a3db5b5cafae2b5f90cca6f73c32a49cd5e25f0d4afd5dc4c"
+            ),
+            "detailed": (
+                "0fdaad2cfc5f87f87e730610e4c0acecaabbd72ea655918e1051c8fcd8edb525"
+            ),
+            "claims": (
+                "400d1f830e2cdcec14ced8e444b71f495399f9e8ddb1ae8f4f9a52ace56779d7"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "4cd05864c03044b1d2421142b89823eed40244e4bed213f627a57d605c096875",
+            (2, 5): "6f300a14035fcb1e6d77a2fd427cd1a5151d30a20e0977e7b266cd2155a0b004",
+            (6, 9): "ca02b9ff87259ab519f9a48f949d884470a8a524772db00009013bffb3320e64",
+            (10, 20): "7e66132013ebe42a0c58ac02554e90227d740f37726873c6b6af97fe3f751d5d",
+            (21, 22): "44b28a6627104b5e8f3c45f0301d9a53fec169508452ba3b0e3b5966ebe14ba7",
+            (23, 35): "a554a74e0fe78ff013267455351c6f4ec0e3aec64193706c374a7dd5c332fa7f",
+            (36, 44): "d8385b6d8fc965687e71715ff5e13d311facddef069208c1148a69a94ad89bf7",
+            (45, 47): "e9e83a647638a9c8cb193b065cfd165c15cbd2a5adf33a9e0dce47b87a47717f",
+            (48, 50): "e5ce64f3a32efcac2a3fb159a816a82c485910fa4a277d894f2b1b428408350c",
+            (51, 52): "2faa4fae1c262d3f1e7ee3fcbcee07b53122603017f4b9aabd62d4917b189496",
+        },
+        "item_ranges": ((23, 35), (36, 44), (45, 47), (48, 50)),
+        "item_markers": (
+            "FIG. 1 A illustrates a top view of an antenna module 100 according to a first embodiment",
+            "FIG. 2 A illustrates a top view of an antenna module 200 according to a second embodiment",
+            "FIG. 3 illustrates a top view of an antenna module 300 according to a third embodiment",
+            "FIG. 4 illustrates a schematic diagram of an electronic device 400 according to a fourth embodiment",
+        ),
+        "figure_labels": (
+            "1A", "1B", "1C", "1D", "1E", "2A", "2B", "2C", "3", "4",
+        ),
+        "table_prefix_sha256": (
+            "f72e44bdade8e339358fc7f5d24e44758aca3dbb0a5b83144de25154350d6004",
+        ),
+        "claim_families": (
+            tuple(range(1, 17)),
+            tuple(range(17, 19)),
+            tuple(range(19, 21)),
+        ),
+        "claim_family_sha256": (
+            "d299146714549cb97620357c6af33f14d5bd79ccaf692b562e70f30f4fc565ba",
+            "ae009d81662670771aece12d576ff56a7bcae41554421d65abeb7452c09e14b1",
+            "916d9eab1a2bb7ba0d1da1af117f7f62cbac7fcc967086d96cfad3f45f585a9e",
+        ),
+        "identity_markers": {
+            "US-20260113525-A1": 1,
+            "Patent Application Publication 20260113525": 1,
+            "Kind Code A1": 1,
+            "Publication Date April 23, 2026": 1,
+            "ANTENNA MODULE, CAMERA MODULE AND ELECTRONIC DEVICE": 1,
+            "Applicant: WNC Corporation (Hsinchu, TW)": 1,
+            "Family ID: 99480653": 1,
+            "Appl. No.: 19/317450": 1,
+            "Filed: September 03, 2025": 1,
+            "63/691,498": 1,
+            "TW 114121816": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "focal length": 0,
+            "radius": 0,
+            "curvature": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "material": 0,
+            "lens element": 0,
+            "image height": 0,
+            "aperture": 0,
+            "stop": 0,
+            "field of view": 0,
+            "optical prescription": 0,
+        },
+        "source_scope_phrase_counts": {
+            "antenna module": 69,
+            "camera module": 15,
+            "camera unit": 25,
+            "imaging lens assembly": 15,
+            "lens set": 9,
+            "electronic photosensitive element": 11,
+            "image sensor": 5,
+            "electronic device": 32,
+            "VSWR": 5,
+            "GHz": 5,
+            "frequency": 12,
+            "wavelength": 2,
+            "40 mm": 1,
+            "0.1 mm": 6,
+            "0.3 mm": 3,
         },
     }
 }
@@ -30394,6 +30564,240 @@ def _classify_largan_imaging_lens_driving_architecture_attempts(
             ),
         )
         for number, label, reason_code in _LARGAN_IMAGING_LENS_DRIVING_ITEMS
+    ]
+
+
+def _classify_wnc_camera_antenna_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 99480653 camera/antenna architectures."""
+
+    profile = _WNC_CAMERA_ANTENNA_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _WNC_CAMERA_ANTENNA_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "WNC camera-antenna official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "WNC camera-antenna normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "WNC camera-antenna identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "WNC camera-antenna section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("WNC camera-antenna section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"WNC camera-antenna {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 53)):
+            raise PatentParseError(
+                "WNC camera-antenna numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            start, end = bounds
+            span = "".join(paragraphs[number] for number in range(start, end + 1))
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "WNC camera-antenna numbered paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "WNC camera-antenna source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(11, 21):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+([0-9]+(?:\s+[A-Z])?)\s+",
+                paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "WNC camera-antenna figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1).replace(" ", ""))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "WNC camera-antenna figure-label denominator changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != (1,):
+            raise PatentParseError("WNC camera-antenna table denominator changed")
+        table_prefix_digests = tuple(
+            hashlib.sha256(
+                re.split(r"\[\d{4}\]", block.text, maxsplit=1)[0]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for block in table_blocks
+        )
+        if table_prefix_digests != profile["table_prefix_sha256"]:
+            raise PatentParseError(
+                "WNC camera-antenna VSWR table payload changed"
+            )
+
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError("WNC camera-antenna zero-MathML denominator changed")
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 21):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "WNC camera-antenna claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 20
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 21)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "WNC camera-antenna three-claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "WNC camera-antenna prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "WNC camera-antenna scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all four exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "paragraphs 23-35 and TABLE 1 publish a camera unit used as part of an "
+        "antenna radiator, circuit-board traces, antenna dimensions and VSWR/efficiency "
+        "performance only; no ordered optical surface prescription is present",
+        "paragraphs 36-44 publish a second camera-unit antenna arrangement with a "
+        "quarter-wavelength overlap and coupled third signal trace only; GHz, spacing "
+        "and wavelength values are antenna parameters, not lens prescription data",
+        "paragraphs 45-47 and claims 17-18 name only a generic imaging lens assembly, "
+        "lens set and photosensitive element on an antenna-signal circuit board; no "
+        "lens radius, spacing, material, stop or system prescription is disclosed",
+        "paragraphs 48-50 and claims 19-20 publish a notebook wrapper that reuses the "
+        "preceding antenna/camera modules without an independent optical design",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _WNC_CAMERA_ANTENNA_ITEMS
     ]
 
 

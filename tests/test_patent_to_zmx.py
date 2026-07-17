@@ -23285,6 +23285,64 @@ def test_largan_imaging_lens_driving_source_drift_fails_closed() -> None:
     }
 
 
+def _wnc_camera_antenna_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "870114a2e77a7d43"
+        / "US-20260113525-A1.html"
+    )
+    return "US-20260113525-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_wnc_camera_antenna_reconciles_four_items() -> None:
+    patent_id, raw_text = _wnc_camera_antenna_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4]
+    assert [
+        attempt.error.reason_code
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    ] == [
+        "confirmed_no_prescription.camera_unit_antenna_radiator_architecture_only",
+        "confirmed_no_prescription."
+        "coupled_trace_camera_antenna_architecture_only",
+        "confirmed_no_prescription."
+        "imaging_lens_assembly_antenna_trace_architecture_only",
+        "confirmed_no_prescription.notebook_camera_antenna_module_wrapper_only",
+    ]
+
+
+def test_wnc_camera_antenna_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _wnc_camera_antenna_source()
+    changed = raw_text.replace("1.43", "1.44", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 4
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "WNC camera-antenna official raw text hash changed " f"for {patent_id}"
+    }
+
+
 def test_symbol_negative_spherical_aberration_reader_raster_audit_rehashes() -> None:
     root = Path(__file__).resolve().parents[1]
     quick = root / ".planning" / "quick" / "260717-patent-generic-family-38997638"
@@ -24970,6 +25028,172 @@ def test_largan_imaging_lens_driving_denominator_and_queue_artifacts() -> None:
     assert queue["next_exact_group"]["publication_ids"] == [
         "US-20260113525-A1"
     ]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+
+def test_wnc_camera_antenna_source_availability_artifact() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-99480653"
+    artifact = json.loads(
+        (quick / "family-99480653-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    source = artifact["retained_source"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 48021
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+    assert artifact["uspto_pdf_probe"] == {
+        "url": (
+            "https://ppubs.uspto.gov/dirsearch-public/print/downloadPdf/"
+            "US-20260113525-A1"
+        ),
+        "http_status": 404,
+        "verified_client": "Python urllib.request",
+        "file_retained": False,
+        "numeric_source": False,
+    }
+    assert artifact["drawing_source"] == {
+        "declared_textual_figures": 10,
+        "retained_drawing_images": 0,
+        "full_drawing_review_claimed": False,
+        "classification_dependency": False,
+    }
+    assert artifact["source_policy"]["classification_truth"] == (
+        "retained USPTO HTML only"
+    )
+    assert artifact["source_policy"]["drawing_transcription_permitted"] is False
+    assert artifact["source_policy"]["numeric_derivation_permitted"] is False
+
+
+def test_wnc_camera_antenna_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-99480653"
+    artifact = json.loads(
+        (quick / "family-99480653-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert len(set(semantic_hashes)) == 1
+    assert semantic_hashes[0] == artifact["semantic_sha256"]
+    assert artifact["semantic_equal"] is True
+    assert artifact["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "item_state_counts": {"terminal": 4},
+        "terminal_status_counts": {"confirmed_no_prescription": 4},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+
+def test_wnc_camera_antenna_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-99480653"
+    evidence = json.loads(
+        (quick / "family-99480653-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    denominator = json.loads(
+        (quick / "family-99480653-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "related_application_numbered_paragraphs": 1,
+        "background_numbered_paragraphs": 4,
+        "summary_numbered_paragraphs": 4,
+        "brief_drawing_numbered_paragraphs": 11,
+        "detailed_numbered_paragraphs": 32,
+        "total_numbered_paragraphs": 52,
+        "claims": 20,
+        "claim_families": 3,
+        "declared_textual_figures": 10,
+        "tagged_html_tables": 1,
+        "antenna_performance_table_rows": 9,
+        "mathml_objects": 0,
+        "source_declared_architecture_items": 4,
+        "source_declared_optical_prescriptions": 0,
+        "confirmed_no_prescription_items": 4,
+        "replayed_ledger_items": 4,
+        "official_pdf_files": 0,
+        "retained_drawing_images": 0,
+        "unmapped_source_items": 0,
+    }
+    assert [item["embodiment_number"] for item in denominator["items"]] == [
+        1,
+        2,
+        3,
+        4,
+    ]
+    assert all(
+        item["status"] == "confirmed_no_prescription"
+        for item in denominator["items"]
+    )
+    assert len(denominator["antenna_performance_table"]["rows"]) == 9
+    assert denominator["optical_scope"]["ordered_surface_prescriptions"] == 0
+
+    for record in evidence["artifacts"]:
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    for record in (
+        evidence["source"],
+        *evidence["census"].values(),
+        *evidence["replay_attempts"],
+        evidence["ledger"]["summary"],
+        evidence["ledger"]["report"],
+    ):
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-108.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 108
+    assert after_1["affected_roots"] == after_1["affected_items"] == 107
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == evidence["ledger"]["result_set_sha256"]
+    assert queue["next_exact_group"]["family_id"] == "48982045"
+    assert queue["next_exact_group"]["root_ids"] == ["US-8820942"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-8820942-B2"]
     assert queue["next_exact_group"]["layout_signature"] == min(
         after_2["layout_signature_counts"]
     )

@@ -249,6 +249,27 @@ conversion retry. Generic metadata is 108 roots/items and remains the largest ex
 deterministic ordering selects Family `99480653` (`US-20260113525-A1`) next. Parent/global patent
 saturation remains active and incomplete.
 
+**Patent saturation latest authoritative update (2026-07-17, Family 99480653):** This
+supersedes the Family 98774980 snapshot immediately above. Strict replay is 619/619 with
+missing=0, corrupt=0 and result set
+`e24815b37caf7679a86256c00d1f239b6437758c29484c9dc6f70b7b5bde3e67`. Family `99480653`
+(`US-20260113525-A1`) reconciles all 52 numbered paragraphs, claims 1-20, three claim families,
+ten figure declarations, one nine-row antenna performance table and four exact source items. The
+first two items use a camera unit/circuit-board trace as part of an antenna radiator; the third
+names only a generic imaging lens assembly, lens set and photosensitive element on an antenna
+board; the fourth is a notebook wrapper. GHz/VSWR values, quarter wavelength, 40 mm board length
+and 0.1/0.3 mm coupling spacings are antenna/circuit geometry. The source publishes no ordered
+optical radius, spacing, material, conic, asphere, stop, EFL, F-number, image-height or angular-field
+prescription, so all four items are source-proven confirmed-no-prescription terminals. The retained
+USPTO HTML is classification truth; the PDF endpoint returns 404, no raster is retained and no
+full-drawing review is claimed. There is no drawing transcription, numeric derivation,
+related-family borrowing, worker, request, receipt, fingerprint, candidate, staging ZMX or formal
+intake, and CODE V is unused. Current roots are 297 parser review, 148 mixed, 149 terminal and 25
+converted; items are 1391 parser review, 1245 terminal, 561 staging and 28 conversion retry.
+Generic metadata is 107 roots/items and remains the largest executable bucket; deterministic
+ordering selects Family `48982045` (`US-8820942-B2`) next. Parent/global patent saturation remains
+active and incomplete.
+
 ## Current Position
 
 | Scope | Status |
@@ -261,7 +282,7 @@ saturation remains active and incomplete.
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `5b4f099d...a89e`. Current roots: 298 parser review, 148 mixed, 148 terminal, 25 converted; items: 561 staging, 1392 parser review, 1241 terminal, 28 conversion retry. Frozen Family 98774980 reconciles seven exact driving-module examples and three device wrappers. Its three tables and eleven formulas publish resilience-wiring-sheet mechanics only; generic lens/focal-length/vehicle-angle wording supplies no ordered optical prescription. All ten items are source-proven confirmed-no-prescription terminals. The retained USPTO HTML is classification truth; the PDF endpoint returns 404, no raster is retained and no full-drawing review is claimed. No worker/request/receipt/fingerprint/candidate/staging ZMX/formal intake is produced, and CODE V is unused. Generic 109->108 roots/items remains first by nonterminal roots; deterministic ordering selects Family 99480653 next. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `e24815b3...3e67`. Current roots: 297 parser review, 148 mixed, 149 terminal, 25 converted; items: 561 staging, 1391 parser review, 1245 terminal, 28 conversion retry. Frozen Family 99480653 reconciles two camera-unit antenna architectures, one generic composite camera module and one notebook wrapper. Its only table is nine GHz/VSWR antenna rows; board lengths, coupling spacings and quarter wavelength are antenna geometry, not optical data. No ordered optical prescription is published, so all four items are source-proven confirmed-no-prescription terminals. The retained USPTO HTML is classification truth; the PDF endpoint returns 404, no raster is retained and no full-drawing review is claimed. No worker/request/receipt/fingerprint/candidate/staging ZMX/formal intake is produced, and CODE V is unused. Generic 108->107 roots/items remains first by nonterminal roots; deterministic ordering selects Family 48982045 next. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -462,24 +483,25 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260717-patent-generic-family-75614661` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 19/384402, Korean priority, paragraphs 1-91, FIGS.1-10, TABLES 1-12, ten MathML objects and claims 1-12. Five surface/asphere pairs plus direct f/FNO/full-FOV metadata define five seven-lens examples. Examples 1/2/4/5 parse completely, including coincident powered/aspheric stops in examples 4/5; example 3 remains a precise parser review because all fourteen TABLE 5 lens radii conflict with TABLE 6. No conflicting value, drawing coordinate or related-family coordinate is substituted. The 22-page official PDF has ten drawing sheets and one raster per page; every page is hashed and critical table pages are visually checked. Attempts 3/4 are semantic-equal after only append-only receipt identity/path/hash normalization; four raw receipt chains remain committed and classify trace timeout, one item remains parser review, and no staging ZMX/formal intake exists. Result set `e6b551ee...a5d`, summary `7ed17fd3...8ff`, report `16d40be0...d23`; audit 619/619 corrupt=0; focused 6/6, all 547 offline patent tests and guard 5/5 pass; Ruff/compile/32-JSON/hash/diff/formal-contamination checks pass; CODE V zero. Generic 120 roots remains first; Family 82951912 is next. |
 | `260717-patent-generic-family-82951912` | complete-shovel-saturation-incomplete | Exact B2 source reconciles application 17/930078, prior A1, one related-application paragraph, Background 1-3, Summary 4-6, drawing descriptions 1-35, Detailed Description 36-131, claims 1-18, 34 textual figure declarations, three tagged mechanical tables, zero MathML objects and nine source items. Embodiments 1-7 publish reflector-holder/insert-molded stamped support architecture; embodiment 8 is a four-camera smartphone wrapper and embodiment 9 is an AR head-mounted/display wrapper. Every curvature-radius occurrence is a stamped round corner and every thickness occurrence is a 0.15 mm metal plate; no ordered optical prescription or focal length/F-number/field metadata exists. All nine items become confirmed-no-prescription terminals. Official B2/A1 are each 44 image-only pages with 32 drawing sheets; text says FIG.10 while the panel says FIG.1C, retained without transcription or derivation. Attempts 2/3 are semantic-equal excluding only result attempt. Result set `df9054f7...60780`, summary `44122a90...cd73`, report `cbea4375...dccc`; audit 619/619 corrupt=0; focused 5/5, all 552 offline patent tests and guard 5/5 pass; Ruff/compile/JSON/hash/diff/formal-contamination checks pass; CODE V zero. Generic 119 roots remains first; Family 80893318 is next. |
 | `260717-patent-generic-family-98774980` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 19/331023, provisional US63/698631, paragraphs 1-151, claims 1-30, 64 figure declarations/63 unique labels, three tagged mechanical tables, eleven MathML objects and ten source items. Seven examples publish resilience-wiring-sheet/lens-carrier/camera-drive architecture; three wrappers publish smartphone, folded-telephoto and vehicle-camera placement. Tables contain only D/Hn/L/Wc/Wf mechanics, the sole focal-length phrase is generic zooming and the vehicle visual angle is coverage. All ten items become confirmed-no-prescription terminals without source-label repair, drawing transcription, derivation, family borrowing or formal output. PDF endpoint 404; no raster/full-drawing claim. Attempts 2/3 semantic-equal excluding only result attempt. Result set `5b4f099d...a89e`, summary `5eac1373...1a0d`, report `fd4e34dd...52eab`, after census `8c10d69c...ab9f`; audit 619/619 corrupt=0; focused 5/5, all 607 offline patent tests and guard 5/5 pass; CODE V zero. Generic 108 roots remains first; Family 99480653 is next. |
+| `260717-patent-generic-family-99480653` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 19/317450, US/TW priorities, paragraphs 1-52, claims 1-20, ten figure declarations, one tagged nine-row antenna table, zero MathML and four source items. Two items integrate camera-unit traces into antenna radiators; one names a generic imaging lens assembly/lens set/photosensitive element on an antenna board; one is a notebook wrapper. GHz/VSWR, quarter wavelength and board/coupling dimensions are antenna data. All four items become confirmed-no-prescription terminals without drawing transcription, derivation, family borrowing or formal output. PDF endpoint 404; no raster/full-drawing claim. Attempts 2/3 semantic-equal excluding only result attempt. Result set `e24815b3...3e67`, summary `91dcd231...8868`, report `28216762...0ba4`, after census `7078708e...fb66`; audit 619/619 corrupt=0; focused 5/5, all 612 offline patent tests and guard 5/5 pass; CODE V zero. Generic 107 roots remains first; Family 48982045 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260717-patent-generic-family-98774980/260717-patent-generic-family-98774980-PLAN.md`,
+`.planning/quick/260717-patent-generic-family-99480653/260717-patent-generic-family-99480653-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (108 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (107 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `99480653`, root
-`US-20260113525`, publication `US-20260113525-A1`, layout
-`36dd9de558f5145f6ba0f0477792e739cd01e4dc1984c721ffff2a38ecd80261`. Use
+deterministic root/item/layout/family ordering is Family ID `48982045`, root
+`US-8820942`, publication `US-8820942-B2`, layout
+`398622f52ff511311c349f40626f79b6e19bad3e73c2c0586750234eb69b3715`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
 
