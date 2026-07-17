@@ -7464,6 +7464,114 @@ def test_folded_macro_tele_requires_official_half_field_definition() -> None:
     assert all("Half FOV/HFOV definition not found" in str(attempt.error) for attempt in attempts)
 
 
+def _samsung_seven_lens_five_example_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "efa6c9872a90688f"
+        / "US-20260063874-A1.html"
+    )
+    return "US-20260063874-A1", source.read_text(encoding="utf-8")
+
+
+def test_samsung_seven_lens_parses_four_and_retains_third_source_conflict() -> None:
+    patent_id, raw_text = _samsung_seven_lens_five_example_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4, 5]
+    assert [
+        attempt.embodiment for attempt in attempts
+    ] == list(patent_to_zmx._SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_LABELS)
+    successful = [attempt.prescription for attempt in attempts if attempt.prescription]
+    assert len(successful) == 4
+    assert [prescription.embodiment for prescription in successful] == [
+        patent_to_zmx._SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_LABELS[index]
+        for index in (0, 1, 3, 4)
+    ]
+
+    first = successful[0]
+    assert (first.focal_length_mm, first.f_number, first.hfov_deg) == pytest.approx(
+        (3.303, 1.850, 50.015)
+    )
+    assert len(first.surfaces) == 18
+    assert patent_to_zmx._stop_surface_index(first.surfaces) == 5
+    first_surfaces = {surface.index: surface for surface in first.surfaces}
+    assert first_surfaces[1].radius_mm == pytest.approx(-4.7643)
+    assert first_surfaces[1].asphere_coefficients["J"] == pytest.approx(0.7511)
+    assert first_surfaces[16].material == "Filter"
+
+    fourth = successful[2]
+    assert (fourth.focal_length_mm, fourth.f_number, fourth.hfov_deg) == pytest.approx(
+        (3.346, 1.870, 50.200)
+    )
+    assert len(fourth.surfaces) == 17
+    assert patent_to_zmx._stop_surface_index(fourth.surfaces) == 6
+    fourth_surfaces = {surface.index: surface for surface in fourth.surfaces}
+    assert fourth_surfaces[6].label == "Aperture Stop / Lens 3 back"
+    assert fourth_surfaces[6].surface_type == "ASP"
+    assert fourth_surfaces[6].radius_mm == pytest.approx(-2.1393)
+    assert fourth_surfaces[6].asphere_coefficients["J"] == pytest.approx(1569.3064)
+
+    conflict = attempts[2]
+    assert conflict.prescription is None
+    assert isinstance(conflict.error, PatentParseError)
+    assert not isinstance(conflict.error, patent_to_zmx.PatentTerminalParseError)
+    assert str(conflict.error) == (
+        "Samsung seven-lens example 3 source conflict: all 14 lens-surface "
+        "radii in TABLE 5 disagree with the R column in TABLE 6"
+    )
+
+
+def test_samsung_seven_lens_coincident_stop_writes_xasphere(tmp_path: Path) -> None:
+    patent_id, raw_text = _samsung_seven_lens_five_example_source()
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    prescription = attempts[3].prescription
+    assert prescription is not None
+
+    readout = patent_to_zmx.build_readout_from_prescription(prescription)
+    output = tmp_path / "samsung-seven-lens-example-4.zmx"
+    patent_to_zmx._write_patent_readout_zmx(readout, output, name="samsung-seven")
+    zmx = output.read_text(encoding="ascii")
+    surface_6 = re.search(r"SURF 6(?P<body>.*?)(?=SURF 7)", zmx, re.DOTALL)
+    assert surface_6 is not None
+    assert "STOP" in surface_6.group("body")
+    assert "TYPE XASPHERE" in surface_6.group("body")
+    assert "XDAT 11 -1769.7" in surface_6.group("body")
+    assert "XDAT 12 1569.3064" in surface_6.group("body")
+
+
+def test_samsung_seven_lens_exact_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _samsung_seven_lens_five_example_source()
+    changed = raw_text.replace("100.03", "100.04", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and str(attempt.error)
+        == f"Samsung seven-lens official raw text hash changed for {patent_id}"
+        for attempt in attempts
+    )
+
+
 def test_parse_samsung_wide_fov_embodiment_pairs_and_full_field() -> None:
     prescriptions = parse_patent_prescriptions(
         SAMSUNG_WIDE_FOV_TEXT,
@@ -21226,4 +21334,264 @@ def test_softeye_roi_vision_denominator_and_queue_artifacts() -> None:
     queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
     assert queue["next_exact_group"]["family_id"] == "75614661"
     assert queue["next_exact_group"]["root_ids"] == ["US-20260063874"]
+    assert queue["saturation_complete"] is False
+
+
+def test_samsung_seven_lens_five_example_pdf_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-75614661"
+    audit = json.loads(
+        (quick / "family-75614661-raster-audit.json").read_text(encoding="utf-8")
+    )
+    pdf = audit["official_pdf"]
+    pdf_path = root / pdf["path"]
+    raw = pdf_path.read_bytes()
+    assert len(raw) == pdf["bytes"] == 1_015_681
+    assert hashlib.sha256(raw).hexdigest() == pdf["sha256"]
+
+    reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+    assert len(reader.pages) == pdf["page_count"] == 22
+    aggregate = hashlib.sha256()
+    for page, record in zip(reader.pages, pdf["pages"], strict=True):
+        assert len(page.extract_text() or "") == record["text_characters"] == 0
+        assert len(page.images) == record["image_count"] == 1
+        image = page.images[0].image.convert("RGB")
+        assert [image.width, image.height] == record["decoded_raster_size"]
+        page_hash = hashlib.sha256(
+            f"{image.width}x{image.height}:RGB:".encode() + image.tobytes()
+        ).hexdigest()
+        assert page_hash == record["raster_sha256"]
+        aggregate.update(bytes.fromhex(page_hash))
+    assert aggregate.hexdigest() == pdf["decoded_raster_set_sha256"]
+
+    for record in [audit["contact_sheet"], *audit["critical_pages"]]:
+        image_record = record.get("extracted_png", record)
+        image_path = root / image_record["path"]
+        image_bytes = image_path.read_bytes()
+        assert len(image_bytes) == image_record["bytes"]
+        assert hashlib.sha256(image_bytes).hexdigest() == image_record["sha256"]
+
+    assert audit["page_classes"] == {
+        "cover": [1],
+        "description_and_claims": list(range(12, 23)),
+        "drawing_sheets": list(range(2, 12)),
+        "numeric_table_pages": list(range(15, 22)),
+    }
+    assert audit["visual_review"] == {
+        "cross_publication_numeric_borrowing": False,
+        "drawing_transcription": False,
+        "example_4_stop_is_on_table_7_surface_s6": True,
+        "example_5_stop_is_on_table_9_surface_s6": True,
+        "html_stop_wrap_checked_against_pdf": True,
+        "numeric_derivation_from_rasters": False,
+        "table_5_and_table_6_radius_conflict_visually_confirmed": True,
+    }
+
+
+def test_samsung_seven_lens_five_example_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-75614661"
+    artifact = json.loads(
+        (quick / "family-75614661-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["result_attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        if record["result_attempt"] not in (3, 4):
+            continue
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        for item in result["items"]:
+            if item["conversion_attempt_id"] is not None:
+                item["conversion_attempt_id"] = re.sub(
+                    r":attempt-\d+$",
+                    ":attempt-NORMALIZED",
+                    item["conversion_attempt_id"],
+                )
+            for evidence in item["evidence"]:
+                if evidence["evidence_type"] != "patent_conversion_receipt":
+                    continue
+                evidence["path"] = re.sub(
+                    r"/attempt-\d+/receipt\.json$",
+                    "/attempt-NORMALIZED/receipt.json",
+                    evidence["path"],
+                )
+                evidence["sha256"] = "NORMALIZED_RECEIPT_SHA256"
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    determinism = artifact["result_determinism"]
+    assert semantic_hashes == [determinism["semantic_sha256"]] * 2
+    assert determinism["semantic_equal"] is True
+    assert determinism["normalization"]["outcome_fields_removed"] == []
+    assert determinism["normalization"]["request_fields_removed"] == []
+    assert determinism["normalization"]["coverage_fields_removed"] == []
+
+    normalized_pairs = []
+    for group in artifact["receipt_determinism"]["groups"]:
+        receipts = {}
+        for record in group["records"]:
+            for key in ("receipt", "request_file", "stdout_log", "stderr_log"):
+                file_record = record[key]
+                file_bytes = (root / file_record["path"]).read_bytes()
+                assert len(file_bytes) == file_record["bytes"]
+                assert (
+                    hashlib.sha256(file_bytes).hexdigest()
+                    == file_record["file_sha256"]
+                )
+            stderr_text = (root / record["stderr_log"]["path"]).read_text(
+                encoding="utf-8"
+            )
+            assert len(stderr_text.splitlines()) == record["stderr_log"]["line_count"]
+            assert stderr_text.count("RealReferenceStrategy failed") == record[
+                "stderr_log"
+            ]["fallback_warning_count"]
+
+            receipt = json.loads((root / record["receipt"]["path"]).read_text())
+            assert receipt["status"] == record["status"] == "trace_timeout"
+            assert receipt["reason_code"] == record["reason_code"]
+            assert receipt["request_sha256"] == record["request_sha256"]
+            assert receipt["timeout_seconds"] == record["timeout_seconds"]
+            for key in (
+                "attempt_id",
+                "receipt_path",
+                "request_path",
+                "stderr_path",
+                "stdout_path",
+                "retry_number",
+                "elapsed_seconds",
+                "stderr_sha256",
+            ):
+                receipt.pop(key, None)
+            process_kill = receipt["process_kill"]
+            receipt["process_kill"] = {
+                key: process_kill[key]
+                for key in ("method", "returncode")
+                if key in process_kill
+            }
+            process_reap = receipt["process_reap"]
+            receipt["process_reap"] = {
+                key: process_reap[key]
+                for key in ("method", "reaped", "returncode")
+                if key in process_reap
+            }
+            receipts[record["attempt_number"]] = hashlib.sha256(
+                canonical_json_bytes(receipt)
+            ).hexdigest()
+
+        first, second = group["determinism_pair"]
+        paired_records = {
+            record["attempt_number"]: record for record in group["records"]
+        }
+        assert paired_records[first]["timeout_seconds"] == 120.0
+        assert paired_records[second]["timeout_seconds"] == 120.0
+        assert receipts[first] == receipts[second]
+        assert receipts[first] == group["normalized_receipt_sha256"]
+        normalized_pairs.append(group["normalized_equal"])
+
+    assert normalized_pairs == [True, True, True, True]
+    receipt_normalization = artifact["receipt_determinism"]["normalization"]
+    assert receipt_normalization["outcome_fields_removed"] == []
+    assert receipt_normalization["request_fields_removed"] == []
+    assert artifact["final_state"] == {
+        "conversion_receipts": 4,
+        "conversion_requests": 4,
+        "item_state_counts": {"parser_review_required": 1, "terminal": 4},
+        "parser_review_items": 1,
+        "prescription_fingerprints": 4,
+        "result_attempt": 4,
+        "root_reason_code": "mixed_nonterminal.multiple_item_states",
+        "root_state": "mixed_nonterminal",
+        "staging_zmx": 0,
+        "terminal_status_counts": {"trace_timeout": 4},
+    }
+
+
+def test_samsung_seven_lens_five_example_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-75614661"
+    evidence = json.loads(
+        (quick / "family-75614661-source-evidence.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-75614661-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    assert denominator["reconciliation"] == {
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_disclosed_items": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_tagged_table_blocks": 0,
+    }
+    assert denominator["denominator"]["disclosed_optical_examples"] == 5
+    assert denominator["denominator"]["representable_prescriptions"] == 4
+    assert denominator["denominator"]["source_conflict_prescriptions"] == 1
+    assert len(denominator["third_example_radius_conflicts"]) == 14
+    assert [item["source_state"] for item in denominator["items"]] == [
+        "representable_prescription",
+        "representable_prescription",
+        "source_conflict",
+        "representable_prescription",
+        "representable_prescription",
+    ]
+    assert [item["stop_surface"] for item in denominator["items"]] == [
+        5,
+        5,
+        None,
+        6,
+        6,
+    ]
+
+    for record in evidence["artifacts"].values():
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    for record in (
+        evidence["source"],
+        evidence["official_pdf"],
+        evidence["census"]["before"],
+        evidence["census"]["after_1"],
+        evidence["census"]["after_2"],
+        evidence["replay_state"]["summary"],
+        evidence["replay_state"]["report"],
+    ):
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-121.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 121
+    assert after_1["affected_roots"] == after_1["affected_items"] == 120
+    assert after_2["affected_roots"] == after_2["affected_items"] == 120
+    after_1.pop("result_set_sha256")
+    after_2.pop("result_set_sha256")
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["next_exact_group"]["family_id"] == "82951912"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12591109"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-12591109-B2"]
+    assert queue["next_exact_group"]["layout_signature"] == (
+        "2c5dd9f4c30cb120e3ae35c3b81995c494aa9e4481dfc6f4d79a8fb5f198ac38"
+    )
     assert queue["saturation_complete"] is False

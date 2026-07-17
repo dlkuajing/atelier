@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `99331d16a122487191dc8c17ef597fa17f2a33794474ced3c5b954163e009fa8`
+- result_set_sha256: `e6b551ee0be48a1d09612a3366320d285d652812bd997fab1bc196d6d5329a5d`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,16 +20,16 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 25
 - `terminal`: 136
-- `parser_review_required`: 311
+- `parser_review_required`: 310
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 147
+- `mixed_nonterminal`: 148
 
 ## Item states
 
 - `converted_pending_intake`: 561
-- `terminal`: 1151
+- `terminal`: 1155
 - `parser_review_required`: 1404
 - `conversion_retry_required`: 28
 
@@ -43,20 +43,20 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 181
 - `trace_failed`: 625
-- `trace_timeout`: 109
+- `trace_timeout`: 113
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 311
-- `mixed_nonterminal.multiple_item_states`: 147
+- `parser_review_required.all_disclosed_items_rejected`: 310
+- `mixed_nonterminal.multiple_item_states`: 148
 - `terminal.all_disclosed_items_terminal`: 136
 - `converted_pending_intake.all_disclosed_items_converted`: 25
 
 ## Item reason codes
 
 - `parser_review_required.deterministic_parser_rejected`: 1404
-- `terminal.process_receipt_classified`: 734
+- `terminal.process_receipt_classified`: 738
 - `converted_pending_intake.process_isolated_zmx_ready`: 561
 - `terminal.metadata_unpublished.system_f_number_absent`: 71
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
@@ -142,7 +142,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `sunny_embodiment_metadata_missing`: 177
 - `aac_raytech_summary_metadata_missing`: 174
-- `generic_summary_metadata_missing`: 121
+- `generic_summary_metadata_missing`: 120
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
 - `asphere_section_missing`: 65
@@ -335,6 +335,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_table_surface_n_confidence_n_is_below_n_asphere_table_surface_n_confidence_n_is_below_n`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
 - `other_samsung_even_order_embodiment_n_asphere_headers_must_be_s1_s8_and_s9_s16`: 1
+- `other_samsung_seven_lens_example_n_source_conflict_all_n_lens_surface_radii_in_table_n_disagree_with_the_r_column_in_table_n`: 1
 - `other_snap_sample_design_n_publishes_its_ordered_surface_and_asphere_prescription_in_figs_n_n_the_official_html_d_d28699caff6d`: 1
 - `other_snap_sample_design_n_publishes_its_ordered_surface_and_asphere_prescription_in_figs_n_n_the_official_html_p_b08f4d6fdcd1`: 1
 - `other_sunny_asphere_row_s12_has_more_values_than_headers_token`: 1

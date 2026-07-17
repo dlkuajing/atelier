@@ -562,6 +562,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_samsung_seven_lens_five_example_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_samsung_iris_moving_group_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2352,6 +2358,28 @@ _SAMSUNG_EIGHT_LENS_ASPHERE_HEADER_PATTERN = re.compile(
 )
 _SAMSUNG_EIGHT_LENS_ASPHERE_CONTINUATION_PATTERN = re.compile(
     r"\bSurface\s+No\.\s+F\s+G\s+H\s+J\s+",
+    flags=re.IGNORECASE,
+)
+_SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_SOURCE_PROFILES = {
+    "US-20260063874-A1": {
+        "raw_document_sha256": (
+            "efa6c9872a90688f543d804e5145f113167cdd900db49108f70e5def0180094a"
+        ),
+        "normalized_text_sha256": (
+            "df0fce200fc3fb932895ba5e7dfeaf0f48dde5bfde82e4223c752548f8508dd9"
+        ),
+        "family_id": "75614661",
+        "application_number": "19/384402",
+    },
+}
+_SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_LABELS = tuple(
+    f"Samsung seven-lens wide-angle example {number}" for number in range(1, 6)
+)
+_SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_TABLE_BINDING_PATTERN = re.compile(
+    r"\bTables?\s+(?P<surface_table>\d+)\s+and\s+(?:Table\s+)?"
+    r"(?P<asphere_table>\d+)\s+illustrate\s+lens\s+characteristics\s+and\s+"
+    r"aspherical\s+values\s+of\s+the\s+imaging\s+lens\s+system\s+"
+    r"(?P<system>\d+)\b",
     flags=re.IGNORECASE,
 )
 _IR_FILTER_COATING_ONLY_TITLE_PATTERN = re.compile(
@@ -17680,6 +17708,442 @@ def _validate_samsung_ten_lens_undefined_high_order_table(
         raise PatentParseError(
             f"Samsung ten-lens embodiment {embodiment_number} has no non-zero L-P evidence"
         )
+
+
+def _parse_samsung_seven_lens_five_example_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the exact five-example Samsung seven-lens continuation.
+
+    Four examples publish mutually consistent surface/asphere table pairs. The
+    third publishes 14 radii in TABLE 5 that conflict with the R column in
+    TABLE 6, so that one item remains fail-closed instead of selecting either
+    official value set.
+    """
+
+    profile = _SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=_SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_LABELS[number - 1],
+                error=exc,
+            )
+            for number in range(1, 6)
+        ]
+
+    try:
+        raw_sha256 = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_sha256 != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Samsung seven-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_sha256 != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Samsung seven-lens normalized text hash changed for {patent_id}"
+            )
+        identity_markers = {
+            "United States Patent Application Publication 20260063874 Kind Code A1": 1,
+            "IMAGING LENS SYSTEM Abstract": 1,
+            f"Family ID: {profile['family_id']}": 1,
+            f"Appl. No.: {profile['application_number']}": 1,
+            "parent-grant-document US 12493170": 1,
+            "parent-grant-document US 11899171": 1,
+            "KR 10-2020-0046525 Apr. 17, 2020": 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung seven-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        paragraph_numbers = tuple(int(value) for value in re.findall(r"\[(\d{4})\]", text))
+        if paragraph_numbers != tuple(range(1, 92)):
+            raise PatentParseError("Samsung seven-lens paragraph 0001-0091 denominator changed")
+        brief = re.search(
+            r"BRIEF\s+DESCRIPTION\s+OF\s+DRAWINGS(?P<body>.*?)DETAILED\s+DESCRIPTION",
+            text,
+            re.IGNORECASE,
+        )
+        if brief is None or tuple(
+            int(value)
+            for value in re.findall(r"FIG\.\s*(\d+)\s+(?:illustrates|is)\b", brief.group("body"))
+        ) != tuple(range(1, 11)):
+            raise PatentParseError("Samsung seven-lens FIGS. 1-10 denominator changed")
+        math_ids = tuple(
+            re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw_text, re.IGNORECASE)
+        )
+        if math_ids != (
+            "MATH-US-00001",
+            "MATH-US-00002",
+            "MATH-US-00002-2",
+            "MATH-US-00002-3",
+            "MATH-US-00002-4",
+            "MATH-US-00002-5",
+            "MATH-US-00002-6",
+            "MATH-US-00002-7",
+            "MATH-US-00002-8",
+            "MATH-US-00002-9",
+        ):
+            raise PatentParseError("Samsung seven-lens ten-MathML denominator changed")
+        if len(re.findall(r"\bA\s+to\s+J[”\"]\s+are\s+aspheric\s+constants\b", text)) != 1:
+            raise PatentParseError("Samsung seven-lens A-J asphere definition changed")
+        if len(
+            re.findall(
+                r"[“\"]FOV[”\"]\s+is\s+a\s+field\s+of\s+view\s+of\s+the\s+"
+                r"imaging\s+lens\s+system",
+                text,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError("Samsung seven-lens full-field FOV definition changed")
+
+        blocks = _numbered_patent_table_blocks(text)
+        if set(blocks) != set(range(1, 13)):
+            raise PatentParseError("Samsung seven-lens family must contain TABLE 1 through 12")
+        bindings = [
+            (
+                int(match.group("surface_table")),
+                int(match.group("asphere_table")),
+                int(match.group("system")),
+            )
+            for match in _SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_TABLE_BINDING_PATTERN.finditer(
+                text
+            )
+        ]
+        if bindings != [
+            (1, 2, 100),
+            (3, 4, 200),
+            (5, 6, 300),
+            (7, 8, 400),
+            (9, 10, 500),
+        ]:
+            raise PatentParseError("Samsung seven-lens table/system bindings changed")
+        metadata = _parse_samsung_seven_lens_five_example_metadata(blocks[11])
+        _validate_samsung_seven_lens_conditional_table(blocks[12])
+        for number, (_focal_length, _f_number, full_fov) in metadata.items():
+            system = number * 100
+            if len(
+                re.findall(
+                    rf"\bimaging\s+lens\s+system\s+{system}\s+has\s+a\s+field\s+of\s+"
+                    rf"view\s+of\s+{full_fov:.2f}\s+degrees\b",
+                    text,
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    f"Samsung seven-lens example {number} narrative FOV binding changed"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the complete five-item set
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number in range(1, 6):
+        embodiment = _SAMSUNG_SEVEN_LENS_FIVE_EXAMPLE_LABELS[number - 1]
+        try:
+            surfaces = _parse_samsung_seven_lens_five_example_surface_table(
+                blocks[number * 2 - 1],
+                example_number=number,
+            )
+            precise = _parse_samsung_seven_lens_five_example_asphere_table(
+                blocks[number * 2],
+                example_number=number,
+            )
+            by_index = {surface.index: surface for surface in surfaces}
+            conflicts = tuple(
+                surface_index
+                for surface_index, (radius, _coefficients) in precise.items()
+                if not math.isclose(
+                    by_index[surface_index].radius_mm or 0.0,
+                    radius,
+                    rel_tol=0.0,
+                    abs_tol=0.0005001,
+                )
+            )
+            if number == 3:
+                expected_conflicts = (1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+                if conflicts != expected_conflicts:
+                    raise PatentParseError(
+                        "Samsung seven-lens example 3 TABLE 5/6 conflict signature changed"
+                    )
+                raise PatentParseError(
+                    "Samsung seven-lens example 3 source conflict: all 14 lens-surface "
+                    "radii in TABLE 5 disagree with the R column in TABLE 6"
+                )
+            if conflicts:
+                raise PatentParseError(
+                    f"Samsung seven-lens example {number} surface/asphere radius conflicts: "
+                    f"{list(conflicts)}"
+                )
+            for surface_index, (radius, coefficients) in precise.items():
+                surface = by_index[surface_index]
+                surface.radius_mm = radius
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(coefficients)
+            focal_length, f_number, full_fov = metadata[number]
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiment,
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_fov / 2.0,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain source outcome per example
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=embodiment,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _parse_samsung_seven_lens_five_example_metadata(
+    table_text: str,
+) -> dict[int, tuple[float, float, float]]:
+    header = re.search(
+        r"\bFirst\s+Second\s+Third\s+Fourth\s+Fifth\s+Remark\s+"
+        r"Example\s+Example\s+Example\s+Example\s+Example\s+",
+        table_text,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError("Samsung seven-lens TABLE 11 example header changed")
+    focal_lengths = _samsung_seven_lens_exact_five_value_row(table_text, "f")
+    f_numbers = _samsung_seven_lens_exact_five_value_row(table_text, "f number")
+    full_fovs = _samsung_seven_lens_exact_five_value_row(table_text, "FOV")
+    return dict(
+        enumerate(
+            zip(focal_lengths, f_numbers, full_fovs, strict=True),
+            start=1,
+        )
+    )
+
+
+def _samsung_seven_lens_exact_five_value_row(
+    table_text: str,
+    label: str,
+) -> tuple[float, ...]:
+    matches = list(
+        re.finditer(
+            rf"(?<!\S){re.escape(label)}(?!\S)\s+"
+            rf"(?P<values>(?:{NUMBER_PATTERN}\s+){{4}}{NUMBER_PATTERN})(?!\S)",
+            table_text,
+            re.IGNORECASE,
+        )
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Samsung seven-lens five-value row {label!r} is missing or ambiguous"
+        )
+    return tuple(_parse_number(value) for value in matches[0].group("values").split())
+
+
+def _validate_samsung_seven_lens_conditional_table(table_text: str) -> None:
+    if re.search(
+        r"\bConditional\s+First\s+Second\s+Third\s+Fourth\s+Fifth\s+"
+        r"Expression\s+Example\s+Example\s+Example\s+Example\s+Example\s+",
+        table_text,
+        re.IGNORECASE,
+    ) is None:
+        raise PatentParseError("Samsung seven-lens TABLE 12 example header changed")
+    for label in (
+        "TTL/ImgH",
+        "D12/D23",
+        "D23/D34",
+        "f3/f2",
+        "TTL/f",
+        "Tmax/Tmin",
+        "Tmax/ImgH",
+    ):
+        _samsung_seven_lens_exact_five_value_row(table_text, label)
+
+
+def _parse_samsung_seven_lens_five_example_surface_table(
+    table_text: str,
+    *,
+    example_number: int,
+) -> list[PatentSurface]:
+    if re.search(
+        r"\bRefrac-\s+Surface\s+Radius\s+of\s+Thickness/\s+tive\s+Abbe\s+"
+        r"Effective\s+No\.\s+Remark\s+Curvature\s+Distance\s+Index\s+Number\s+Radius\s+",
+        table_text,
+        re.IGNORECASE,
+    ) is None:
+        raise PatentParseError(
+            f"Samsung seven-lens example {example_number} surface header changed"
+        )
+    body = re.split(r"\s+\[\d{4}\]\s+", table_text, maxsplit=1)[0]
+    starts = list(re.finditer(r"(?<!\S)S(?P<index>\d+)\s+", body, re.IGNORECASE))
+    expected_last = 18 if example_number <= 3 else 17
+    if [int(match.group("index")) for match in starts] != list(range(1, expected_last + 1)):
+        raise PatentParseError(
+            f"Samsung seven-lens example {example_number} surface sequence changed"
+        )
+    if example_number <= 3:
+        lens_pairs = ((1, 2), (3, 4), (6, 7), (8, 9), (10, 11), (12, 13), (14, 15))
+        stop_index, filter_pair, image_index = 5, (16, 17), 18
+    else:
+        lens_pairs = ((1, 2), (3, 4), (5, 6), (7, 8), (9, 10), (11, 12), (13, 14))
+        stop_index, filter_pair, image_index = 6, (15, 16), 17
+    material_indices = {front for front, _back in lens_pairs} | {filter_pair[0]}
+    stop_mentions: list[int] = []
+    surfaces: list[PatentSurface] = []
+    for row_number, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = starts[row_number + 1].start() if row_number + 1 < len(starts) else len(body)
+        tokens = body[match.end() : end].split()
+        values = [
+            token
+            for token in tokens
+            if token.upper() in {"INFINITY", "INF"}
+            or re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
+        ]
+        if "STOP" in " ".join(tokens).upper():
+            stop_mentions.append(surface_index)
+        expected_values = 5 if surface_index in material_indices else 3
+        if len(values) != expected_values:
+            raise PatentParseError(
+                f"Samsung seven-lens example {example_number} S{surface_index} has "
+                f"{len(values)} values; expected {expected_values}"
+            )
+        radius = _distance_value(values[0], field_name=f"Samsung seven-lens S{surface_index} radius")
+        thickness = _distance_value(
+            values[1],
+            field_name=f"Samsung seven-lens S{surface_index} thickness",
+        )
+        nd = vd = None
+        material = None
+        if surface_index in material_indices:
+            nd = _parse_number(values[2])
+            vd = _parse_number(values[3])
+            effective_radius = _parse_number(values[4])
+            _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+            material = "Filter" if surface_index == filter_pair[0] else "Plastic"
+        else:
+            effective_radius = _parse_number(values[2])
+        if effective_radius <= 0.0:
+            raise PatentParseError(
+                f"Samsung seven-lens example {example_number} S{surface_index} "
+                "effective radius must be positive"
+            )
+        label = f"Surface {surface_index}"
+        for lens_number, (front, back) in enumerate(lens_pairs, start=1):
+            if surface_index == front:
+                label = f"Lens {lens_number} front"
+            elif surface_index == back:
+                label = f"Lens {lens_number} back"
+        if surface_index == stop_index:
+            label = (
+                "Stop"
+                if example_number <= 3
+                else "Aperture Stop / Lens 3 back"
+            )
+        elif surface_index == filter_pair[0]:
+            label = "Filter front"
+        elif surface_index == filter_pair[1]:
+            label = "Filter back"
+        elif surface_index == image_index:
+            label = "Imaging Plane"
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+    if stop_mentions != [stop_index]:
+        raise PatentParseError(
+            f"Samsung seven-lens example {example_number} stop binding changed: "
+            f"{stop_mentions}"
+        )
+    return surfaces
+
+
+def _parse_samsung_seven_lens_five_example_asphere_table(
+    table_text: str,
+    *,
+    example_number: int,
+) -> dict[int, tuple[float, dict[str, float]]]:
+    first_header = re.search(
+        r"\bSurface\s+No\.\s+R\s+K\s+A\s+B\s+C\s+D\s+",
+        table_text,
+        re.IGNORECASE,
+    )
+    second_header = re.search(
+        r"\bSurface\s+No\.\s+E\s+F\s+G\s+H\s+J\s+",
+        table_text,
+        re.IGNORECASE,
+    )
+    if first_header is None or second_header is None or second_header.start() <= first_header.end():
+        raise PatentParseError(
+            f"Samsung seven-lens example {example_number} asphere headers changed"
+        )
+    expected_indices = (
+        (1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+        if example_number <= 3
+        else tuple(range(1, 15))
+    )
+
+    def rows(section: str, width: int) -> dict[int, tuple[float, ...]]:
+        section = re.split(r"\s+\[\d{4}\]\s+", section, maxsplit=1)[0]
+        starts = list(re.finditer(r"(?<!\S)S(?P<index>\d+)\s+", section, re.IGNORECASE))
+        if tuple(int(match.group("index")) for match in starts) != expected_indices:
+            raise PatentParseError(
+                f"Samsung seven-lens example {example_number} asphere row sequence changed"
+            )
+        parsed: dict[int, tuple[float, ...]] = {}
+        for row_number, match in enumerate(starts):
+            end = starts[row_number + 1].start() if row_number + 1 < len(starts) else len(section)
+            tokens = section[match.end() : end].split()
+            if len(tokens) != width or any(
+                re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE) is None for token in tokens
+            ):
+                raise PatentParseError(
+                    f"Samsung seven-lens example {example_number} asphere S"
+                    f"{match.group('index')} row width changed"
+                )
+            parsed[int(match.group("index"))] = tuple(_parse_number(token) for token in tokens)
+        return parsed
+
+    first_rows = rows(table_text[first_header.end() : second_header.start()], 6)
+    second_rows = rows(table_text[second_header.end() :], 5)
+    result: dict[int, tuple[float, dict[str, float]]] = {}
+    for surface_index in expected_indices:
+        radius, conic, a, b, c, d = first_rows[surface_index]
+        e, f, g, h, j = second_rows[surface_index]
+        result[surface_index] = (
+            radius,
+            dict(zip(("K", "A", "B", "C", "D", "E", "F", "G", "H", "J"),
+                     (conic, a, b, c, d, e, f, g, h, j), strict=True)),
+        )
+    return result
 
 
 def _parse_samsung_wide_fov_table_attempts(
