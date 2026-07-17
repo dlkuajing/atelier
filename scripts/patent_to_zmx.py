@@ -601,6 +601,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_baolun_starry_sky_lamp_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -10992,6 +11000,168 @@ _DELTA_LIGHT_DIVIDING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "air interval surface": 2,
             "fields of view": 2,
             "field of view": 0,
+        },
+    }
+}
+_BAOLUN_STARRY_SKY_LAMP_ITEMS = (
+    (
+        1,
+        "Baolun dynamic starry-sky lamp optical architecture",
+        "confirmed_no_prescription.dynamic_starry_sky_lamp_optical_architecture_only",
+    ),
+)
+_BAOLUN_STARRY_SKY_LAMP_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12092276-B2": {
+        "raw_document_sha256": (
+            "0071f38b2b89c02e2caaf7121233eb1beeccde171d4a474d54f845661ffcf933"
+        ),
+        "normalized_text_sha256": (
+            "a6b5217a668ddf7c5f9e286b61086043dc259d6187e36a5aab3dafc5c54ed7d8"
+        ),
+        "section_markers": {
+            "preamble": "US-12092276-B2",
+            "abstract": "Abstract Disclosed is a lamp having a dynamic starry sky effect.",
+            "prior_publication": (
+                "Prior Publication Data Document Identifier Publication Date "
+                "US 20240159369 A1 May. 16, 2024"
+            ),
+            "priority": (
+                "Foreign Application Priority Data CN 202111018116.4 Aug. 31, 2021"
+            ),
+            "related_metadata": (
+                "Related U.S. Application Data continuation parent-doc WO "
+                "PCT/CN2021/122618 20211008 PENDING child-doc US 18417865"
+            ),
+            "related_applications": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS (1)"
+            ),
+            "technical_field": "TECHNICAL FIELD (1)",
+            "background": "BACKGROUND (2)",
+            "summary": "(3) In order to solve defects in the prior art",
+            "figures": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION OF THE EMBODIMENTS (5)",
+            "claims": "Claims 1. A lamp having a dynamic starry sky effect",
+        },
+        "section_sha256": {
+            "preamble": (
+                "7b50faaee9b76b2e2bc37c2a15ea93556d1dbd658f5b4a888ff4c8c06fd9ec4e"
+            ),
+            "abstract": (
+                "b827d9ba9de64339c0571703720e332ba97495a7418016f756b161635be26016"
+            ),
+            "prior_publication": (
+                "8a64ec0df292c5392c0365dfba951a016a89bb8641dac4eb64c7eae90bc294ca"
+            ),
+            "priority": (
+                "a32ea9b37ee9ad9db057b15f23b9218a42c55ad8d4067503328518ddf1759672"
+            ),
+            "related_metadata": (
+                "39c6e78255ac2165ce0137729155e99228e3da168aab7e8cd9ab375d55189bb0"
+            ),
+            "related_applications": (
+                "af444427658c412cb3a015d5f083fad1a963ea0a7ac0374042a1d463bd910b4b"
+            ),
+            "technical_field": (
+                "cf09657e8f45048973bf14e2c60e524cc24e3b4565363d0ef661551d5557ad7b"
+            ),
+            "background": (
+                "5948901417e995e5737631fe155e344d169de4d78db566eb3d88264580859928"
+            ),
+            "summary": (
+                "27555e982cb78898ecdde21d525e157d8eef61055f0735aa2bfa7b4e64dcd337"
+            ),
+            "figures": (
+                "0cd03a056c79b660fa779ebf79838b01adefa2651dcef7b83ea8a6e11ade78ef"
+            ),
+            "detailed": (
+                "827926a35a3da127338d4c071f03cc15ea5198bf772112cad7d41989a2491448"
+            ),
+            "claims": (
+                "231731c3bae07d6d293c750367bf34cbb6bde3f618258db8c59d9a44d3e7e5fd"
+            ),
+        },
+        "related_span_sha256": {
+            (1, 1): "6553bdcc75164ed72a852609033481943cd0cae388afc11c4e20136605308ff7",
+        },
+        "main_span_sha256": {
+            (1, 2): "29b5691c8632c994d554d9b8dc1ba8a17d5ef9b2dcc1bc7f6665f4a673635728",
+            (3, 19): "509344f87a7076fbd8e5aeb468fbc47e1f485df5c92d46d587dc35fd6de46223",
+        },
+        "description_span_sha256": {
+            (1, 5): "34d64064b56bd1912e464c6a7a96716ced60d66c2c1a60402eda9c4307bdc1ad",
+            (6, 7): "712a4614fbdb938c718fa83bc2bf77577945098ad5422e8d945ec041e06866ae",
+            (8, 8): "25d0d2884081d615d9d2e8f0e76f78ad2feb661188a498700817669fa5f52eb9",
+            (9, 14): "6bcd95cccbbfb64d06b224546300781a74beba3b3a748d23a65589450d57a5bf",
+            (15, 17): "fdf192e35f96970b1a44878ac684e9689441e5f43dd97f92aae9ac501e99487a",
+            (18, 20): "535f1094d70cb693b760d414c22a6793d92d5e1a815b683d1fb8c97ba63c5472",
+        },
+        "item_range": (6, 19),
+        "item_marker": (
+            "As shown in FIGS. 1 - 3 , a lamp having a dynamic starry sky effect "
+            "includes"
+        ),
+        "figure_labels": ("1", "2", "3"),
+        "claim_family": tuple(range(1, 11)),
+        "claim_family_sha256": (
+            "be36daa75ab3fedfbc72703cf7901462f0259f909f2e7afa5b9d582c18ee086a"
+        ),
+        "identity_markers": {
+            "US-12092276-B2": 1,
+            "United States Patent 12092276": 1,
+            "Kind Code B2": 1,
+            "Date of Patent September 17, 2024": 1,
+            "Lamp having dynamic starry sky effect": 1,
+            "Applicant: Guangdong Baolun Electronics Co., Ltd. (Guangdong, CN)": 1,
+            "Family ID: 78342471": 1,
+            "Assignee: GUANGDONG BAOLUN ELECTRONICS CO., LTD. (Guangzhou, CN)": 1,
+            "Appl. No.: 18/417865": 1,
+            "Filed: January 19, 2024": 1,
+            "US 20240159369 A1": 1,
+            "CN 202111018116.4": 1,
+            "PCT/CN2021/122618": 2,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "radius": 0,
+            "curvature": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "thickness": 0,
+            "aperture": 0,
+            "stop": 0,
+            "image height": 0,
+            "field of view": 0,
+            "optical prescription": 0,
+            " mm": 0,
+            " nm": 0,
+        },
+        "source_scope_phrase_counts": {
+            "optical integrating lens": 23,
+            "roller beam splitter": 49,
+            "starry sky laser assembly": 39,
+            "starry sky mirror disc": 40,
+            "first light source": 40,
+            "second light source": 28,
+            "optical imaging lens assembly": 7,
+            "lens cone": 24,
+            "color sheets": 13,
+            "strip-shaped lenses": 8,
+            "small lenses": 11,
+            "regular pentagonal prism": 3,
+            "hollow pentagonal prism": 1,
+            "108 degrees": 1,
+            "embossed tempered glass": 1,
+            "transparent glass": 1,
+            "10 strip-shaped lenses": 1,
+            "140+ square small lenses": 2,
+            "1540+": 2,
+            "11 pieces of non-coincident light": 1,
         },
     }
 }
@@ -31220,6 +31390,265 @@ def _classify_delta_light_dividing_architecture_attempts(
             ),
         )
         for number, label, reason_code in _DELTA_LIGHT_DIVIDING_ITEMS
+    ]
+
+
+def _classify_baolun_starry_sky_lamp_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 78342471 lamp optical architecture."""
+
+    profile = _BAOLUN_STARRY_SKY_LAMP_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _BAOLUN_STARRY_SKY_LAMP_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\((\d+)\)", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"Baolun starry-sky lamp {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Baolun starry-sky lamp official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Baolun starry-sky lamp normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Baolun starry-sky lamp identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Baolun starry-sky lamp section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Baolun starry-sky lamp section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Baolun starry-sky lamp {section_name} section changed"
+                )
+
+        related_text = text[
+            section_starts["related_applications"] : section_starts["technical_field"]
+        ]
+        related_paragraphs = numbered_paragraphs(
+            related_text,
+            expected_numbers=(1,),
+            label="related-applications paragraph",
+        )
+        main_text = text[section_starts["technical_field"] : section_starts["figures"]]
+        main_paragraphs = numbered_paragraphs(
+            main_text,
+            expected_numbers=tuple(range(1, 20)),
+            label="technical/background/summary paragraph",
+        )
+        description_text = text[
+            section_starts["figures"] : section_starts["claims"]
+        ]
+        description_paragraphs = numbered_paragraphs(
+            description_text,
+            expected_numbers=tuple(range(1, 21)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (related_paragraphs, profile["related_span_sha256"], "related"),
+            (main_paragraphs, profile["main_span_sha256"], "main"),
+            (
+                description_paragraphs,
+                profile["description_span_sha256"],
+                "description",
+            ),
+        ):
+            for bounds, expected_digest in span_hashes.items():
+                start, end = bounds
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                )
+                observed_digest = hashlib.sha256(
+                    span.strip().encode("utf-8")
+                ).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        "Baolun starry-sky lamp "
+                        f"{label} paragraph span {start}-{end} changed"
+                    )
+
+        start, end = profile["item_range"]
+        item_text = "".join(
+            description_paragraphs[number] for number in range(start, end + 1)
+        )
+        if (
+            len(
+                re.findall(
+                    re.escape(profile["item_marker"]), item_text, re.IGNORECASE
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError(
+                "Baolun starry-sky lamp source-item binding changed"
+            )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(1, 4):
+            match = re.match(
+                r"\(\d+\) FIG\.\s+([0-9]+)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Baolun starry-sky lamp figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Baolun starry-sky lamp figure-label denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Baolun starry-sky lamp zero-table denominator changed"
+            )
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError(
+                "Baolun starry-sky lamp zero-MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in profile["claim_family"]:
+            claim_start = claims_section.find(f"{claim_number}. ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Baolun starry-sky lamp claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number}. ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[index] : (
+                    claim_starts[index + 1]
+                    if index + 1 < len(claim_starts)
+                    else len(claims_section)
+                )
+            ]
+            for index, claim_number in enumerate(profile["claim_family"])
+        }
+        claim_family_digest = hashlib.sha256(
+            "".join(claims[number] for number in profile["claim_family"])
+            .strip()
+            .encode("utf-8")
+        ).hexdigest()
+        if claim_family_digest != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Baolun starry-sky lamp claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Baolun starry-sky lamp prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Baolun starry-sky lamp scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the exact-source item
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=(
+                    "the sole independent claim family and Description paragraphs 6-19 "
+                    "publish a dynamic starry-sky lamp path made from generic optical "
+                    "integrators, an optical imaging lens assembly, a laser lens cone, a "
+                    "small-lens mirror disc and a five-flat-lens roller beam splitter; the "
+                    "108-degree prism angle, glass type and component/light-dot counts are "
+                    "architecture data, while no ordered radius, spacing, thickness, index, "
+                    "Abbe, asphere, stop, focal-length, F-number, image-height or field "
+                    "prescription is disclosed"
+                ),
+            ),
+        )
+        for number, label, reason_code in _BAOLUN_STARRY_SKY_LAMP_ITEMS
     ]
 
 
