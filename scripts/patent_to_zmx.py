@@ -529,6 +529,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_symbol_lens_assembly_alignment_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -9009,6 +9017,256 @@ _SYMBOL_NEGATIVE_SPHERICAL_ABERRATION_READER_SOURCE_PROFILES: dict[
             "about 10 inches": 1,
             "about two inches": 1,
             "about eight inches": 1,
+        },
+    }
+}
+_SYMBOL_LENS_ASSEMBLY_ALIGNMENT_ITEMS = (
+    (
+        1,
+        "Symbol dual-linear-FOV barcode reader and aiming assembly",
+        "confirmed_no_prescription."
+        "barcode_reader_dual_linear_fov_aiming_architecture_only",
+        5,
+    ),
+    (
+        2,
+        "Symbol dual-linear-FOV barcode reader manufacturing method",
+        "confirmed_no_prescription.barcode_reader_manufacturing_method_only",
+        6,
+    ),
+    (
+        3,
+        "Symbol free-floating lens/chassis installation and alignment method",
+        "confirmed_no_prescription."
+        "free_floating_lens_chassis_installation_alignment_method_only",
+        7,
+    ),
+    (
+        4,
+        "Symbol imaging-apparatus chassis/lens alignment",
+        "confirmed_no_prescription."
+        "imaging_apparatus_lens_chassis_alignment_architecture_only",
+        8,
+    ),
+    (
+        5,
+        "Symbol barcode-reader chassis/lens alignment",
+        "confirmed_no_prescription."
+        "barcode_reader_lens_chassis_alignment_architecture_only",
+        9,
+    ),
+    (
+        6,
+        "Symbol chassis/lens assembly",
+        "confirmed_no_prescription.lens_chassis_assembly_architecture_only",
+        10,
+    ),
+    (
+        7,
+        "Symbol dual-working-range imaging engine and aiming pattern",
+        "confirmed_no_prescription."
+        "dual_working_range_imaging_engine_aiming_architecture_only",
+        11,
+    ),
+    (
+        8,
+        "Symbol aiming sub-portion spacing outside far FOV",
+        "confirmed_no_prescription."
+        "aiming_pattern_subportion_spacing_architecture_only",
+        12,
+    ),
+    (
+        9,
+        "Symbol aiming intensity at second near working distance",
+        "confirmed_no_prescription."
+        "aiming_intensity_at_second_near_working_distance_only",
+        13,
+    ),
+    (
+        10,
+        "Symbol ambient-to-aiming intensity ratio",
+        "confirmed_no_prescription.ambient_intensity_ratio_control_only",
+        14,
+    ),
+    (
+        11,
+        "Symbol aiming laser-safety constraint",
+        "confirmed_no_prescription.laser_safety_aiming_constraint_only",
+        15,
+    ),
+)
+_SYMBOL_LENS_ASSEMBLY_ALIGNMENT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20190294840-A1": {
+        "raw_document_sha256": (
+            "ddba61d78743da423824842d82885f01f6272a2575b856129f9d4d2d287575b9"
+        ),
+        "normalized_text_sha256": (
+            "32da6aa8a323a2a259061523e866b61d730755b7da69026a99f816457968eba6"
+        ),
+        "section_markers": {
+            "abstract": "Abstract The present disclosure",
+            "field_background": "Background/Summary FIELD OF INVENTION",
+            "summary": "SUMMARY [0004]",
+            "brief": "Description DRAWINGS [0017]",
+            "detailed": "DETAILED DESCRIPTION [0036]",
+            "claims": "Claims 1 . A method",
+        },
+        "section_sha256": {
+            "abstract": (
+                "9b41fa0403cc68e882412d57e98677d4a3a073195df3ef21dbf5f707c4b6a5c8"
+            ),
+            "field_background": (
+                "f08317f77580f4a55741e0fbc1821aed43b3cbccb1ce46575d13ce99b580ff91"
+            ),
+            "summary": (
+                "4032a44e8d802d6ec72c0896974a8beb44e9f8501afcb8ef8097fc8b0e619505"
+            ),
+            "brief": (
+                "012ef5a59d62293bedc1da544bf09f83cca71f95c8b2c90ef9721c9bb8b99891"
+            ),
+            "detailed": (
+                "2ae7cbe8d2f1d19c8cb27d0b9282a25905052e92e157c0d941402cdea7c342f3"
+            ),
+            "claims": (
+                "838099939ac31cd606ed73a2e5aa387d70384325336d5b221050db67332cf1ad"
+            ),
+        },
+        "paragraph_numbers": {
+            "field_background": tuple(range(1, 4)),
+            "summary": tuple(range(4, 17)),
+            "brief": tuple(range(17, 36)),
+            "detailed": tuple(range(36, 73)),
+        },
+        "summary_item_sha256": {
+            5: "6b04c024db0821f667f3476c8e3eafe969c9e34c1cbe18f2f0a505259a125a3e",
+            6: "02b062ef6e408d196f9b6b1c593a41a7b6d1c415172ac13f573104f2e1fe3e96",
+            7: "927e3c0da275b2f0918a5bed9e105ef214205add11821cff6b42d1ac18e63dcf",
+            8: "532b4e7253d69499f5bfc859a87ee68f459add536becf1dd849cf80ee0fde758",
+            9: "0e0592662da220cf586eb97ce1c7d23b398287c4808472e32f6199dcc88d1e4a",
+            10: "4f30f97449bb47cbdc1da720b75f6bdf1ca09962e1cfa1b0d6e5c5393582ffb5",
+            11: "7d8fba3e03d8972893e2d82470da600872f9565a4cc9d77913b6acc4801fb5e9",
+            12: "049adf3aab0b792500025a866ca02ff0938348265c2b1dfa630987a1df1ddc00",
+            13: "3cf6b872e4fc11ddbeaba17a5bf34002171bdcfef2e0327a4b51a9fa33ff1940",
+            14: "0a3f04757ba3cf6def0adb5a109e3d05d89257e225166b23c643f5a6d1430365",
+            15: "c8df4f053f8c174c09e3c536b7c07439eb3b03e4d361f3a5ef356249d0a7bdd3",
+        },
+        "detailed_span_sha256": {
+            (36, 43): (
+                "79aeeeb0c667b8ee14924edeee73aa3af8bfd64b394bbae55a6312dfec5534c7"
+            ),
+            (44, 51): (
+                "8d41bb91176771c570b9a4782708c5ce60963e1bde2de86323281808a2aeac06"
+            ),
+            (52, 66): (
+                "939e572c0f044dbb0b92dfc242b7c3a88c0854e3664f93c6509a9df5f20fc944"
+            ),
+            (67, 72): (
+                "755aa74c79e672304c43612eb93666977e59720ed0b8804ec94160ffbd2c5a83"
+            ),
+        },
+        "claim_ranges": ((1, 8), (9, 13), (14, 18), (19, 21)),
+        "claim_span_sha256": (
+            "2ad2e11d9a6384fd25d2551766a48cd0cd10ec5789fe4ee0479678ff4cc9beb7",
+            "fa921cc788afff2efc392277476e8b48196a037d2545c1b187055f8012969e9a",
+            "06586899b61535d2c7ee9d82839c3912162bd998f122b0fc71dc133cdb32a7eb",
+            "8ea8703a1ece3cff260e359bf4f4f8f0e76e8b2a48f0e5bbbf6d0fc46785b228",
+        ),
+        "claim_numbers": tuple(range(1, 22)),
+        "figure_declarations": (
+            (17, ("1",)),
+            (18, ("2",)),
+            (19, ("3A",)),
+            (20, ("3B",)),
+            (21, ("3C",)),
+            (22, ("4",)),
+            (23, ("5",)),
+            (24, ("6",)),
+            (25, ("7",)),
+            (26, ("8",)),
+            (27, ("9",)),
+            (28, ("10",)),
+            (29, ("11",)),
+            (30, ("12",)),
+            (31, ("13",)),
+            (32, ("14",)),
+            (33, ("15", "16")),
+            (34, ("17A",)),
+            (35, ("17B",)),
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication 20190294840": 1,
+            "Kind Code A1": 1,
+            "Publication Date September 26, 2019": 1,
+            (
+                "DEVICES SYSTEMS AND METHODS FOR ALIGNMENT OF LENS "
+                "ASSEMBLIES WITHIN A CHASSIS"
+            ): 1,
+            (
+                "Inventors: Drzymala; Mark (Saint James, NY), Wittenberg; Carl D. "
+                "(Water Mill, NY), Barkan; Edward (Miller Place, NY)"
+            ): 1,
+            "Applicant: SYMBOL TECHNOLOGIES, LLC (Lincolnshire, IL)": 1,
+            "Family ID: 65528235": 1,
+            "Appl. No.: 15/928206": 1,
+            "Filed: March 22, 2018": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "F/#": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+            "radius of curvature": 0,
+            "radius curvature": 0,
+            "curvature radius": 0,
+            "thickness": 0,
+            "lens element": 0,
+        },
+        "source_scope_phrase_counts": {
+            "optical element": 2,
+            "field of view": 8,
+            "FOV": 109,
+            "working distance": 91,
+            "working range": 3,
+            "lens assembly": 98,
+            "imaging assembly": 68,
+            "imaging engine": 8,
+            "aiming assembly": 22,
+            "aiming beam shaper": 4,
+            "beam shaper": 14,
+            "micro-lens": 5,
+            "prism": 4,
+            "fold mirror": 2,
+            "optical properties": 1,
+            "central axis": 11,
+            "clearance": 3,
+            "free-floating": 7,
+            "hardened adhesive": 12,
+            "light intensity": 23,
+            "foot-candles": 3,
+            "mrad": 3,
+            "mW": 7,
+            "FWD1": 10,
+            "FWD2": 18,
+            "NWD1": 9,
+            "NWD2": 16,
+            "linear aiming light pattern": 17,
+            "0.2 degrees": 1,
+            "0.6 degrees": 1,
+            "630 nm": 2,
+            "680 nm": 2,
+            "IEC 60825": 1,
+            "7 mrad cone": 3,
+            "1 mW": 6,
         },
     }
 }
@@ -26794,6 +27052,257 @@ def _classify_symbol_negative_spherical_aberration_reader_architecture_attempts(
         )
         for number, label, reason_code in (
             _SYMBOL_NEGATIVE_SPHERICAL_ABERRATION_READER_ITEMS
+        )
+    ]
+
+
+def _classify_symbol_lens_assembly_alignment_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 65528235 lens-alignment/aiming items."""
+
+    profile = _SYMBOL_LENS_ASSEMBLY_ALIGNMENT_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code, _summary_paragraph in (
+                _SYMBOL_LENS_ASSEMBLY_ALIGNMENT_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment "
+                    f"{section_name} section changed"
+                )
+
+        def numbered_paragraphs(section: str) -> dict[int, str]:
+            matches = list(re.finditer(r"\[(\d{4})\]\s", section))
+            return {
+                int(match.group(1)): section[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section)
+                    )
+                ]
+                for index, match in enumerate(matches)
+            }
+
+        paragraph_maps = {
+            name: numbered_paragraphs(sections[name])
+            for name in ("field_background", "summary", "brief", "detailed")
+        }
+        for section_name, expected_numbers in profile["paragraph_numbers"].items():
+            if tuple(paragraph_maps[section_name]) != expected_numbers:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment "
+                    f"{section_name} paragraph denominator changed"
+                )
+
+        for paragraph, expected_digest in profile["summary_item_sha256"].items():
+            observed_digest = hashlib.sha256(
+                paragraph_maps["summary"][paragraph].strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment summary item "
+                    f"paragraph {paragraph} changed"
+                )
+
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                paragraph_maps["detailed"][number]
+                for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment claims denominator changed"
+            )
+        claims = {
+            int(match.group(1)): sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ]
+            for index, match in enumerate(claim_matches)
+        }
+        claim_span_digests = []
+        for start, end in profile["claim_ranges"]:
+            span = "".join(claims[number] for number in range(start, end + 1))
+            claim_span_digests.append(
+                hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            )
+        if tuple(claim_span_digests) != profile["claim_span_sha256"]:
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment four-claim-family "
+                "denominator changed"
+            )
+
+        for paragraph, panels in profile["figure_declarations"]:
+            if len(panels) == 1:
+                marker = rf"FIG\.\s*{re.escape(panels[0])}\s+"
+            else:
+                marker = (
+                    rf"FIGS\.\s*{re.escape(panels[0])}-"
+                    rf"{re.escape(panels[-1])}\s+"
+                )
+            if len(
+                re.findall(
+                    marker,
+                    paragraph_maps["brief"][paragraph],
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment drawing declaration "
+                    f"paragraph {paragraph} changed"
+                )
+        figure_panels = tuple(
+            panel
+            for _paragraph, panels in profile["figure_declarations"]
+            for panel in panels
+        )
+        if len(figure_panels) != 20 or len(set(figure_panels)) != 20:
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment 20-panel denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment zero-table denominator changed"
+            )
+        if len(
+            re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)
+        ) != 0:
+            raise PatentParseError(
+                "Symbol lens-assembly-alignment formula denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Symbol lens-assembly-alignment scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all 11 exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact reader item publishes near/far linear fields of view and aiming-assembly placement but no ordered optical surface prescription or required system metadata",
+        "the exact manufacturing item publishes reader assembly, image testing, and aiming alignment operations without an independent optical prescription",
+        "the exact installation item publishes a free-floating lens assembly, chassis slot, clearance, image-based alignment, and hardened adhesive without an ordered optical prescription",
+        "the exact imaging-apparatus item publishes chassis, sensor, window, slot, protrusion, and adhesive alignment architecture without an ordered optical prescription",
+        "the exact barcode-reader item applies the same chassis/lens alignment architecture to a reader housing without an ordered optical prescription",
+        "the exact chassis/lens item publishes cavity, slot, protrusion, clearance, and adhesive retention only; one or more optical elements remain functionally named",
+        "the exact imaging-engine item publishes two working ranges, two imaging assemblies, and an aiming pattern without ordered lens-surface data",
+        "the exact aiming-pattern item constrains sub-portion spacing relative to the far field of view without prescribing an optical train",
+        "the exact intensity item constrains aiming-pattern brightness at a named working distance without prescribing an optical train",
+        "the exact ambient-ratio item constrains aiming-pattern intensity relative to ambient illumination without prescribing an optical train",
+        "the exact laser-safety item constrains wavelength, angular spread, and power of an aiming pattern; its beam shaper remains functional architecture rather than an optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code, _summary_paragraph in (
+            _SYMBOL_LENS_ASSEMBLY_ALIGNMENT_ITEMS
         )
     ]
 

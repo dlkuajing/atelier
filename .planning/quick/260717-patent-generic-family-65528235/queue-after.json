@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "ca7e22772b69b793e94d6e4bfb7eacafd2687891d6ce178e9ac608d6f4f23c7b",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 114, "affected_items": 114},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "76444624",
+    "root_ids": ["US-11783729"],
+    "publication_ids": ["US-11783729-B2"],
+    "application_number": "17/017662",
+    "title": "Colorblind assistive technology system and method to improve image rendering for color vision deficient users by determining an estimated color value having a minimum color distance from a target color value",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 1, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/7a5a9cc3ba92de76/US-11783729-B2.html",
+      "sha256": "7a5a9cc3ba92de76af68d8cf0e51d06e5f1c77c0b45feceaf50a5382f7b632ad"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}
