@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "family_id": "68533575",
+  "current_frozen_cohort_roots": [
+    "US-20230418018"
+  ],
+  "classification_publication": "US-20230418018-A1",
+  "applications": [
+    {
+      "application_id": "US-18/139799",
+      "filing_date": "2023-04-26",
+      "relationship": "classification application; continuation",
+      "publications": ["US-20230418018-A1", "US-12147086-B2"]
+    },
+    {
+      "application_id": "US-16/417464",
+      "filing_date": "2019-05-20",
+      "relationship": "continuation parent",
+      "publications": ["US-20190353868-A1", "US-11668893-B2"]
+    },
+    {
+      "application_id": "US-62/673410",
+      "filing_date": "2018-05-18",
+      "relationship": "provisional priority application",
+      "publications": []
+    }
+  ],
+  "external_same_family_publications": [
+    {
+      "publication_id": "US-12147086-B2",
+      "application_id": "US-18/139799",
+      "relationship": "same application later grant",
+      "retained_path": ".planning/quick/260717-patent-generic-family-68533575/source-review/US-12147086-B2-uspto.html",
+      "bytes": 67669,
+      "sha256": "cf8aa8e277493bcf18db8404474ff8f54fa6be26f6f5f3f7314b87cb3b861ba8",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    },
+    {
+      "publication_id": "US-20190353868-A1",
+      "application_id": "US-16/417464",
+      "relationship": "continuation-parent publication",
+      "retained_path": ".planning/quick/260717-patent-generic-family-68533575/source-review/US-20190353868-A1-uspto.html",
+      "bytes": 66295,
+      "sha256": "e3c35794bfb4fc7c0b2af3fdbe7cde5fd11e85ca3d365b521d0f731967475aae",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    },
+    {
+      "publication_id": "US-11668893-B2",
+      "application_id": "US-16/417464",
+      "relationship": "continuation-parent grant",
+      "retained_path": ".planning/quick/260717-patent-generic-family-68533575/source-review/US-11668893-B2-uspto.html",
+      "bytes": 70941,
+      "sha256": "761c3c3d0f26f63c760ce8ff652c4735c95dfe34b8a8c3754727850aa419ad19",
+      "frozen_cohort_membership": false,
+      "state": "queued_outside_frozen_cohort"
+    }
+  ],
+  "externally_cited_model_source": {
+    "family_id": "45064288",
+    "application_id": "US-13/110549",
+    "title": "Optical system and optical apparatus including the optical system",
+    "publications": [
+      {
+        "publication_id": "US-20110299179-A1",
+        "retained_path": ".planning/quick/260717-patent-generic-family-68533575/source-review/US-20110299179-A1-uspto.html",
+        "bytes": 87421,
+        "sha256": "1c0575d99c0c29e5f857455194cbd0300ac038fde58bdc6839cb91316a0474be"
+      },
+      {
+        "publication_id": "US-8427762-B2",
+        "retained_path": ".planning/quick/260717-patent-generic-family-68533575/source-review/US-8427762-B2-uspto.html",
+        "bytes": 90428,
+        "sha256": "b1b25ecbafc8836982bf3d1c237c44b14aee6e2e947a2c9e536058d5710083c1"
+      }
+    ],
+    "boundary": "The classification source cites lens 6 only as a comparable rectilinear model because its prototype Canon prescription was unavailable. No coordinates from this different family are imported."
+  },
+  "queue_effect": "All three same-family publications outside the classification A1 and both cited-model publications are outside the frozen 619-root cohort. They do not alter the exact A1 classification or replay denominator."
+}

@@ -434,6 +434,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_fso_transmitter_architecture_and_models_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -6644,6 +6652,229 @@ _SNAP_SIX_LENS_TWO_DESIGN_PUBLICATION_SOURCES = {
                 "rapidocr": 33,
                 "joined_tokens": 10,
             },
+        },
+    }
+}
+_FSO_TRANSMITTER_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Imaging-Based\s+Transmitter\s+for\s+Free-Space\s+"
+    r"Optical\s+Communications\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_FSO_TRANSMITTER_FIGURE_DECLARATIONS = (
+    (11, ("FIG. 1 shows",)),
+    (12, ("FIG. 2 shows",)),
+    (13, ("FIG. 3 A shows",)),
+    (14, ("FIG. 3 B shows",)),
+    (15, ("FIG. 3 C shows",)),
+    (16, ("FIG. 4 shows",)),
+    (17, ("FIG. 5 shows",)),
+    (18, ("FIG. 6 shows",)),
+    (19, ("FIG. 7 shows",)),
+    (20, ("FIGS. 8 and 9 show",)),
+    (21, ("FIGS. 10 A and 10 B provides",)),
+    (22, ("FIG. 11 shows",)),
+    (23, ("FIG. 12 shows",)),
+    (
+        24,
+        (
+            "FIG. 13 A is",
+            "13 B is an exact ray tracing",
+            "FIG. 13 C shows",
+        ),
+    ),
+    (25, ("FIG. 14 A show", "FIG. 14 B shows")),
+)
+_FSO_TRANSMITTER_ITEMS = (
+    (
+        1,
+        "FOC transmitter/receiver controller and imaging-lens architecture",
+        "confirmed_no_prescription.free_space_optical_communications_architecture_only",
+        (26, 52),
+        ("1", "2", "3A", "3B", "3C", "4", "5", "6", "7"),
+    ),
+    (
+        2,
+        "OLED monocentric imaging-transmitter performance model",
+        "confirmed_no_prescription.monocentric_transmitter_performance_model_only",
+        (54, 55),
+        ("8", "9"),
+    ),
+    (
+        3,
+        "FOC pixel-clustering electronics example",
+        "confirmed_no_prescription.pixel_clustering_electronics_only",
+        (56, 59),
+        ("10A", "10B"),
+    ),
+    (
+        4,
+        "Commercial camera-lens beam-steering laboratory demonstration",
+        "confirmed_no_prescription.commercial_camera_lens_lab_results_only",
+        (60, 61),
+        ("11", "12"),
+    ),
+    (
+        5,
+        "Externally sourced 30-degree rectilinear-lens ray-trace model",
+        "confirmed_no_prescription.externally_sourced_rectilinear_lens_model_only",
+        (62, 67),
+        ("13A", "13B", "13C"),
+    ),
+    (
+        6,
+        "Unidentified ZEMAX-database 100-degree fish-eye performance model",
+        "confirmed_no_prescription.unidentified_zemax_fisheye_performance_model_only",
+        (68, 75),
+        ("14A", "14B"),
+    ),
+)
+_FSO_TRANSMITTER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20230418018-A1": {
+        "raw_document_sha256": (
+            "9a102bfef5cf345b7b9325fce5915f82664a8db583b31f1f03175ed3b235de57"
+        ),
+        "normalized_text_sha256": (
+            "99ac7108c0dc88df7e9f3d4008c1ce6ef04b8dae79ba2c524ecfa0c2d90995ad"
+        ),
+        "family_id": "68533575",
+        "application_number": "18/139799",
+        "section_markers": {
+            "abstract": "Abstract An imaging transmitter (Tx)",
+            "background_summary": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0011]",
+            "detailed": "DETAILED DESCRIPTION [0026]",
+            "claims": (
+                "Claims 1 - 20 . (canceled) 21 . A method of multiplexed "
+                "free-space optical communications"
+            ),
+        },
+        "section_sha256": {
+            "abstract": (
+                "7d4514c12efedb16ffc4380b274a87e5a4610212df216b04af573e574a1658fc"
+            ),
+            "background_summary": (
+                "379969d8fe56116169e56d139e9ad4f01b29392d87483f128e3510c7fcb73b31"
+            ),
+            "brief": (
+                "c2d0bb0c4259d4fb70e25034d4ce7a2cffe6e148f6fcebf21a09ad230cc8f227"
+            ),
+            "detailed": (
+                "1aef771894427ded21664996e71436b4890ad47255638af16a41d36c5c575917"
+            ),
+            "claims": (
+                "7a48d881f890e0083d848e9fddb40b3bff653a3799be39ba1195f13be38cc976"
+            ),
+        },
+        "paragraph_ranges": {
+            "background_summary": (1, 10),
+            "brief": (11, 25),
+            "detailed": (26, 77),
+        },
+        "cancelled_claim_range": (1, 20),
+        "active_claim_numbers": tuple(range(21, 34)),
+        "identity_markers": {
+            "Imaging-Based Transmitter for Free-Space Optical Communications": 1,
+            "Family ID: 68533575": 1,
+            "Appl. No.: 18/139799": 1,
+            "University of Central Florida Research Foundation, Inc.": 1,
+            "Renshaw; Christopher Kyle": 2,
+            "Saghaye Polkoo; Sajad": 1,
+            (
+                "parent US continuation 16417464 20190520 parent-grant-document "
+                "US 11668893 child US 18139799"
+            ): 1,
+            "us-provisional-application US 62673410 20180518": 1,
+        },
+        "source_scope_phrase_counts": {
+            "imaging lens assembly": 27,
+            "pixel controller": 28,
+            "emitter array": 51,
+            "photodetector array": 8,
+            "beam-splitter": 9,
+            "fast-steering mirror": 3,
+            "waveguide structure": 7,
+            "beam steering mirror": 2,
+            "grating": 11,
+            "monocentric lens assembly": 1,
+            "commercially available components": 2,
+            "rectilinear lens": 3,
+            "fish-eye lens": 6,
+            "ZEMAX": 5,
+            "exact ray tracing": 5,
+            "specific Examples": 2,
+            "prescription of the Canon lens was not available": 1,
+            "U.S. Pat. No. 8,427,762B2, lens 6": 1,
+            "an example 1000 FOV fish-eye lens from the ZEMAX database": 1,
+            "EFL=0.732-50 mm": 1,
+        },
+        "prescription_phrase_counts": {
+            "prescription": 1,
+            "lens prescription": 0,
+            "optical prescription": 0,
+            "surface prescription": 0,
+            "radius of curvature": 0,
+            "curvature radius": 0,
+            "surface number": 0,
+            "surface no.": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspheric coefficient": 0,
+            "aspherical coefficient": 0,
+            "thickness": 0,
+        },
+        "math_ids": (
+            "MATH-US-00001",
+            "MATH-US-00001-2",
+            "MATH-US-00001-3",
+        ),
+        "pdf_audit": {
+            "page_count": 29,
+            "drawing_sheet_count": 20,
+            "drawing_pdf_pages": tuple(range(2, 22)),
+            "container_sha256": {
+                "official_1": (
+                    "1e6eaf70b14955669046e7be8bf84d6e6d5e2437bf6bc7c2b9fb828f763d0fcf"
+                ),
+                "official_2": (
+                    "8de57c5b7c5bfbcb743eb018de71f469219dbd1433de0053b695b208ecd32c9c"
+                ),
+                "google": (
+                    "4bbf8af43cf59658068f4689829866ce80899a51a19a414d2b1d39af517840fa"
+                ),
+            },
+            "page_image_sha256": (
+                "60498ff239db3b9eec9cb4b9f5b382034f3c898cd6d6f9fb860cb003e918380e",
+                "53e6b73a84fde95573055985f98e788b626058f5702f8597a12ffd26b91614eb",
+                "f1f5efce73f19e95d7b772b0b3fe8aafdab954ad1def4cb8f5b63338f0b94e8d",
+                "f1eb7c639c2347f3e91d4ad33fa50b0eb8462792338cf8a2e087bf330c9baea2",
+                "5f4ef9dffc21b41344d63b57b26b01c31f4ebaf6c800b22cdc4f170c57de3346",
+                "733fa585ae79ea549461202cc6ed6be300632627c191e0bc34cbe0d40fbb3132",
+                "7ee48013532f2ca6071a7050e098e1f4b94be1878f3ce1195fe5ecec8246992d",
+                "033643bc2f03f020d7d611015b0203b2310110f76804ca6d70ca9a5b5ec99578",
+                "a111850aa45908946022c4b451888572624edf0a9c16b9bfb7e837579d5d904e",
+                "6c32d1a7a0ff625ebcbf4409a4ae7328f6c467111b1dd59d5c6fdd886c41fcc1",
+                "74b730f37cfb749f4f0be9f0eedcc844e2b9c769ef1c7b87b584fe0a72080018",
+                "fd401101f7c306d414add623fe9ab6c8ea1f18bd190090502a91047b0b07e5e8",
+                "ee6f080625d26ddf61551198c0bbfaf077b60c58add63c1b8f1b7cddcb29d378",
+                "5049caeb681727003dfd301d7a9cd70029568ba6c5d8a1cefdf91846c71ae2e5",
+                "9e58b834f8a7bc00472f3df0d058fe52c3b9094b40bee096b603a82539970daf",
+                "b8258e03234d4f40925371cdf71254d90d87cdf1c22281d25a7b2e56c092e25d",
+                "d18ef3a540c10dc72e5ca20509e8df2cec6e3335a5db461f52785a35061ac53a",
+                "0e4b56367ef9e3ea8974c9b1afa001f472d52f00bd765c7c26b8e82416fbf536",
+                "86f35ba420ddd15e8b56f5a15e5e5c43d9137cda2c6f528e1f582c66d3e59b0f",
+                "cc10bb151e1f02a90628090457a0a676ea1444ca0dfbf51a5cab1e40bb644d20",
+                "5f820ce68293dba051b540f68994e91de7b2f4273002fb7098e1f8f836407e06",
+                "c2339b1e04fcebb4dc7cea09eb050b07110fbbee693a4994d1cce528aec5753b",
+                "1d1f56db39a821a75fd7b2b4b1fa9d6fa4470d63dfc72751ee73f1dc96661c98",
+                "d6691767363815adf9cd25917fa851d58d288bad14b9a7e34a6da6b26dd283bc",
+                "13b069ef8547f624b1d30b0f5eee78d6b440cf03816bdfb743c3e3081d5edee1",
+                "168b65b3b3bb60271698258bde8613fea23b5c437fd2ae3da393fcfad60a7b9e",
+                "1f8ce4abe31983f9d8dd081c456687e82a294d781fd339dcff11466914fb7111",
+                "5280f7738bc34273332dc79a7d77ec28d0dfb953f7db41465afcae7f332d7943",
+                "d9ccd984891ccb6ae14f1095ba1ddbf84b2f92fe27f50346e049a5e088e7aaf6",
+            ),
         },
     }
 }
@@ -19873,6 +20104,267 @@ def _parse_aac_seven_lens_exact_attempts(
             prescription=prescription,
         )
         for index, prescription in enumerate(prescriptions, start=1)
+    ]
+
+
+def _classify_fso_transmitter_architecture_and_models_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 68533575 architecture and performance models."""
+
+    profile = _FSO_TRANSMITTER_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason, _paragraphs, _figures in (
+                _FSO_TRANSMITTER_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"FSO transmitter official raw text hash changed for {patent_id}"
+            )
+        if len(_FSO_TRANSMITTER_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("FSO transmitter title binding changed")
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"FSO transmitter normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"FSO transmitter identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "FSO transmitter section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("FSO transmitter section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"FSO transmitter {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"FSO transmitter {section_name} paragraph denominator changed"
+                )
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 78)):
+            raise PatentParseError("FSO transmitter paragraphs 1-77 changed")
+        paragraphs = {
+            int(match.group(1)): text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+
+        cancelled_claim = re.findall(
+            r"\b(\d+)\s*-\s*(\d+)\s*\.\s*\(canceled\)",
+            sections["claims"],
+            flags=re.IGNORECASE,
+        )
+        expected_cancelled = tuple(str(value) for value in profile["cancelled_claim_range"])
+        if cancelled_claim != [expected_cancelled]:
+            raise PatentParseError("FSO transmitter cancelled claims 1-20 changed")
+        active_claims = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+                sections["claims"],
+                flags=re.IGNORECASE,
+            )
+        )
+        if active_claims != profile["active_claim_numbers"]:
+            raise PatentParseError("FSO transmitter active claims 21-33 changed")
+
+        for paragraph_number, markers in _FSO_TRANSMITTER_FIGURE_DECLARATIONS:
+            paragraph = paragraphs[paragraph_number]
+            for marker in markers:
+                if len(re.findall(re.escape(marker), paragraph, re.IGNORECASE)) != 1:
+                    raise PatentParseError(
+                        f"FSO transmitter figure marker {marker!r} changed"
+                    )
+        mapped_paragraphs: list[int] = []
+        mapped_figures: list[str] = []
+        for _number, _label, _reason, bounds, figures in _FSO_TRANSMITTER_ITEMS:
+            mapped_paragraphs.extend(range(bounds[0], bounds[1] + 1))
+            mapped_figures.extend(figures)
+        if tuple(sorted(mapped_paragraphs)) != (
+            *range(26, 53),
+            *range(54, 76),
+        ) or len(mapped_paragraphs) != len(set(mapped_paragraphs)):
+            raise PatentParseError("FSO transmitter item paragraph mapping changed")
+        if tuple(mapped_figures) != (
+            "1",
+            "2",
+            "3A",
+            "3B",
+            "3C",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10A",
+            "10B",
+            "11",
+            "12",
+            "13A",
+            "13B",
+            "13C",
+            "14A",
+            "14B",
+        ):
+            raise PatentParseError("FSO transmitter 20-panel item mapping changed")
+        non_item_markers = {
+            53: (
+                "Disclosed embodiments of the invention are further illustrated by "
+                "the following specific Examples"
+            ),
+            76: "While various disclosed embodiments have been described above",
+            77: "Although disclosed embodiments have been illustrated and described",
+        }
+        for paragraph_number, marker in non_item_markers.items():
+            if len(
+                re.findall(
+                    re.escape(marker),
+                    paragraphs[paragraph_number],
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    f"FSO transmitter non-item paragraph {paragraph_number} changed"
+                )
+
+        if _patent_table_blocks(text) or re.search(
+            r"<table\b", raw_text, flags=re.IGNORECASE
+        ):
+            raise PatentParseError(
+                "FSO transmitter official HTML unexpectedly contains a table"
+            )
+        math_ids = tuple(
+            re.findall(r'<maths\s+id="([^"]+)"', raw_text, flags=re.IGNORECASE)
+        )
+        if math_ids != profile["math_ids"]:
+            raise PatentParseError("FSO transmitter three-equation denominator changed")
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"FSO transmitter source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase, expected in profile["prescription_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"FSO transmitter prescription phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all six exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        (
+            "FIGS. 1-7 and active claims 21-33 publish emitter/detector arrays, "
+            "electronic and optical pixel controllers, a beam splitter, a fast-steering "
+            "mirror, waveguide and grating variants around a generic imaging lens "
+            "assembly; no ordered optical surface prescription is published"
+        ),
+        (
+            "FIGS. 8-9 publish an OLED/monocentric performance model and an image-only "
+            "power budget with EFL 12 mm and F/1.5, but only identify two unspecified "
+            "glass compositions and a central aperture; radii, thicknesses, glass "
+            "identities and ordered surfaces are absent"
+        ),
+        (
+            "FIGS. 10A-10B publish row/column addressing and beam/iFOV pixel-clustering "
+            "electronics only; they add no optical surface prescription"
+        ),
+        (
+            "FIGS. 11-12 report a laboratory demonstration using an unidentified "
+            "commercial 50 mm camera lens near 30 degrees FOV and measured beam "
+            "divergence; no lens model or ordered surface coordinates are published"
+        ),
+        (
+            "FIGS. 13A-13C report ray-trace results for a comparable 50 mm F/1.8 "
+            "rectilinear lens from external US 8,427,762 B2 lens 6 because the source "
+            "explicitly states that the Canon-lens prescription was unavailable; no "
+            "external coordinates are imported into this publication"
+        ),
+        (
+            "FIGS. 14A-14B report scaled performance for an unnamed 100-degree fish-eye "
+            "from the ZEMAX database, including EFL/F-number and performance results, "
+            "but publish neither a recoverable database identity nor ordered surface "
+            "coordinates"
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code, _paragraphs, _figures in (
+            _FSO_TRANSMITTER_ITEMS
+        )
     ]
 
 

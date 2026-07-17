@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "family_id": "68533575",
+  "root_id": "US-20230418018",
+  "publication_id": "US-20230418018-A1",
+  "item_count": 6,
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "semantic_equal": true,
+  "semantic_sha256": "661aa6905be1abf88cedb0582ccd830f88070e203c93e44b9f5c23e3af75fe30",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.free_space_optical_communications_architecture_only",
+    "terminal.confirmed_no_prescription.monocentric_transmitter_performance_model_only",
+    "terminal.confirmed_no_prescription.pixel_clustering_electronics_only",
+    "terminal.confirmed_no_prescription.commercial_camera_lens_lab_results_only",
+    "terminal.confirmed_no_prescription.externally_sourced_rectilinear_lens_model_only",
+    "terminal.confirmed_no_prescription.unidentified_zemax_fisheye_performance_model_only"
+  ],
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20230418018/attempt-0002/result.json",
+      "bytes": 6068,
+      "file_sha256": "9dfffbeb424fda5823cb7cf84de34087bf48e25f28bd4185037dd299d5b6347c",
+      "semantic_sha256": "661aa6905be1abf88cedb0582ccd830f88070e203c93e44b9f5c23e3af75fe30"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20230418018/attempt-0003/result.json",
+      "bytes": 6068,
+      "file_sha256": "7f49dd636ed38ef209a629b7d0c9632475e1007942aecd88f15237a6327f9f29",
+      "semantic_sha256": "661aa6905be1abf88cedb0582ccd830f88070e203c93e44b9f5c23e3af75fe30"
+    }
+  ],
+  "conversion_attempts": 0,
+  "conversion_requests": 0,
+  "prescription_fingerprints": 0,
+  "candidate_zmx_count": 0,
+  "matching_staging_zmx_count": 0
+}

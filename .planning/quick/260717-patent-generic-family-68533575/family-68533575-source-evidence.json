@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "family_id": "68533575",
+  "root_ids": [
+    "US-20230418018"
+  ],
+  "publication_id": "US-20230418018-A1",
+  "application_number": "18/139799",
+  "title": "Imaging-Based Transmitter for Free-Space Optical Communications",
+  "applicant": "University of Central Florida Research Foundation, Inc.",
+  "inventors": [
+    "Christopher Kyle Renshaw",
+    "Sajad Saghaye Polkoo"
+  ],
+  "filing_date": "2023-04-26",
+  "publication_date": "2023-12-28",
+  "related_applications": {
+    "continuation_parent": "US-16/417464",
+    "parent_grant": "US-11668893-B2",
+    "provisional_priority": "US-62/673410",
+    "same_application_later_grant": "US-12147086-B2"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "outside_cohort_same_family_publications": 3,
+    "background_and_summary_paragraphs": 10,
+    "drawing_description_paragraphs": 15,
+    "detailed_description_paragraphs": 52,
+    "total_numbered_paragraphs": 77,
+    "cancelled_claims": 20,
+    "active_claims": 13,
+    "total_claim_denominator": 33,
+    "figure_panels": 20,
+    "html_tables": 0,
+    "math_objects": 3,
+    "classification_pdf_pages": 29,
+    "classification_drawing_sheets": 20,
+    "classification_specification_pages": 8,
+    "ledger_items": 6,
+    "terminal_items": 6
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/9a102bfef5cf345b/US-20230418018-A1.html",
+    "bytes": 63517,
+    "raw_characters": 63324,
+    "raw_document_sha256": "9a102bfef5cf345b7b9325fce5915f82664a8db583b31f1f03175ed3b235de57",
+    "normalized_characters": 54384,
+    "normalized_text_sha256": "99ac7108c0dc88df7e9f3d4008c1ce6ef04b8dae79ba2c524ecfa0c2d90995ad",
+    "pdf_recovery_normalized_characters": 54597,
+    "pdf_recovery_normalized_sha256": "f8a073aaa0f7489d2d939458bb9103ffe2f1fb94fa1bc698779149112964f48f",
+    "section_positions": {
+      "abstract": 325,
+      "background_summary": 1895,
+      "brief": 8134,
+      "detailed": 12156,
+      "claims": 49848
+    },
+    "section_lengths": {
+      "abstract": 1570,
+      "background_summary": 6239,
+      "brief": 4022,
+      "detailed": 37692,
+      "claims": 4536
+    },
+    "section_sha256": {
+      "abstract": "7d4514c12efedb16ffc4380b274a87e5a4610212df216b04af573e574a1658fc",
+      "background_summary": "379969d8fe56116169e56d139e9ad4f01b29392d87483f128e3510c7fcb73b31",
+      "brief": "c2d0bb0c4259d4fb70e25034d4ce7a2cffe6e148f6fcebf21a09ad230cc8f227",
+      "detailed": "1aef771894427ded21664996e71436b4890ad47255638af16a41d36c5c575917",
+      "claims": "7a48d881f890e0083d848e9fddb40b3bff653a3799be39ba1195f13be38cc976"
+    },
+    "paragraph_ranges": {
+      "background_summary": [1, 10],
+      "brief": [11, 25],
+      "detailed": [26, 77]
+    },
+    "cancelled_claim_range": [1, 20],
+    "active_claim_range": [21, 33],
+    "figure_panels": [
+      "1", "2", "3A", "3B", "3C", "4", "5", "6", "7", "8", "9",
+      "10A", "10B", "11", "12", "13A", "13B", "13C", "14A", "14B"
+    ],
+    "math_ids": ["MATH-US-00001", "MATH-US-00001-2", "MATH-US-00001-3"]
+  },
+  "prescription_boundary": {
+    "ordered_surface_prescriptions_published": 0,
+    "surface_radius_markers": 0,
+    "surface_number_markers": 0,
+    "refractive_index_markers": 0,
+    "abbe_markers": 0,
+    "asphere_coefficient_markers": 0,
+    "thickness_markers": 0,
+    "figure_8_system_metadata": {
+      "efl_mm": 12,
+      "f_number": 1.5,
+      "is_ordered_surface_prescription": false
+    },
+    "commercial_lab_lens_identified": false,
+    "external_rectilinear_source": "US-8427762-B2 lens 6",
+    "external_rectilinear_coordinates_imported": false,
+    "zemax_fisheye_database_identity_recoverable": false,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "coordinate_values_synthesized": 0,
+    "source_anomalies_preserved": ["1000 FOV", "EFL=0.732-50 mm"]
+  },
+  "terminal_outcome": {
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "terminal_status": "confirmed_no_prescription",
+    "terminal_items": 6,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "7da144baddc8b5dade06f31fd89e0dac674ac7f2f16ba16a71c0005185152187",
+    "summary_sha256": "79c970231db1ae2dff7134e51022f9e0440b86faa8a1d640e32a7bdb598328fd",
+    "report_sha256": "67c07340ca008e8cbc7cb6f6f22457b93640797c8f1c9b089b8bc0c76c6d5623",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 146,
+      "parser_review_required": 319,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 129
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 551,
+      "parser_review_required": 1403,
+      "terminal": 1105
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-68533575/generic-residual-before-132.json",
+      "sha256": "cc6bd6ecfb513873ae7b079b45187b44607ef9732b510e3eed62c72844f449d1"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-68533575/generic-residual-after-1.json",
+      "sha256": "724c1d807bdd4ce89bb862343b592aabefccf18fe4d5534a248922ed59cde1ec"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-68533575/generic-residual-after-2.json",
+      "sha256": "724c1d807bdd4ce89bb862343b592aabefccf18fe4d5534a248922ed59cde1ec"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-68533575/queue-after.json",
+      "sha256": "ef3ee4f311dbeb6404eb198d0a27c0e31d5bcdf42fb526f60e37b85ddd30b9c9"
+    }
+  },
+  "denominator_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-68533575/family-68533575-denominator.json",
+    "sha256": "23714b0564cd8804cfbf2c02ade8dbe5fd4fdb66566aad84031b65459325690b"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-68533575/family-68533575-raster-audit.json",
+    "sha256": "6c4fe5ee0c9e9257606d89d6106a87fb9b4712a1b23493d5af86d152feaa0fee"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-68533575/family-68533575-external-family-members.json",
+    "sha256": "607099f8607220a97f4ebc30e3dcac3077809987a9e18cd0b20eb617b0904603"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-68533575/family-68533575-replay-determinism.json",
+    "sha256": "ab23dbd178b7a5231da4710640da01e245a5e2316f9ff82194415a7de5023b79"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-68533575/family-68533575-source-audit.md",
+    "sha256": "2e4ec303205082d39b7d6a4974ad2e5640678311077b2bc33e224aa36f7571b1"
+  },
+  "saturation_boundary": "This frozen root is source-proven confirmed-no-prescription terminal. Same-family external publications, all remaining parser buckets, staging intake, macro replay support and global source exhaustion remain open."
+}
