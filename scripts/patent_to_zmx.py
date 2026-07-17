@@ -553,6 +553,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_apple_hardware_button_ui_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -9744,6 +9752,281 @@ _LARGAN_FOLDED_NANOSTRUCTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "anti-reflective light blocking membrane layer": 60,
             "nanostructure": 80,
             "light path folding element": 171,
+        },
+    }
+}
+_APPLE_HARDWARE_BUTTON_UI_ITEMS = (
+    (
+        1,
+        "Apple different-hardware-button camera control user interface",
+        "confirmed_no_prescription."
+        "camera_hardware_button_media_capture_routing_user_interface_only",
+    ),
+    (
+        2,
+        "Apple camera touch-control reconfiguration user interface",
+        "confirmed_no_prescription."
+        "camera_hardware_button_touch_control_reconfiguration_user_interface_only",
+    ),
+    (
+        3,
+        "Apple context-sensitive camera hardware-button user interface",
+        "confirmed_no_prescription."
+        "context_sensitive_camera_hardware_button_user_interface_only",
+    ),
+    (
+        4,
+        "Apple configurable hardware-button settings user interface",
+        "confirmed_no_prescription."
+        "configurable_hardware_button_settings_user_interface_only",
+    ),
+    (
+        5,
+        "Apple press-type camera function user interface",
+        "confirmed_no_prescription."
+        "camera_hardware_button_press_type_user_interface_only",
+    ),
+)
+_APPLE_HARDWARE_BUTTON_UI_FIGURES = (
+    "1A",
+    "1B",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "3E",
+    "3F",
+    "3G",
+    "4A",
+    "4B",
+    "5A",
+    "5B",
+    "5C",
+    "5D",
+    "5E",
+    "5F",
+    "5G",
+    "5H",
+    *tuple(f"6{letter}" for letter in "ABCDEFGHIJKLMNOPQRSTUVWX"),
+    "7",
+    "8",
+    *tuple(f"9{letter}" for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+    "10",
+    "11",
+    *tuple(f"12{letter}" for letter in "ABCDEFGHIJK"),
+    "13",
+)
+_APPLE_HARDWARE_BUTTON_UI_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12671891-B2": {
+        "raw_document_sha256": (
+            "8883f36f994bd4534c66df17defcff1dc536d69cf2fe8bcf136bacd27364cfc5"
+        ),
+        "normalized_text_sha256": (
+            "78a5ad905c09991b31b00c8c3fa182fa574d1193c5e4bc05b7b32dbffca266cd"
+        ),
+        "section_markers": {
+            "preamble": "US-12671891-B2",
+            "abstract": (
+                "Abstract User interfaces integrating one or more hardware "
+                "buttons are described"
+            ),
+            "references": "References Cited",
+            "background_summary": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS (1)"
+            ),
+            "figures": "Description DESCRIPTION OF THE FIGURES (1)",
+            "detailed": "DESCRIPTION OF EMBODIMENTS (21)",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "preamble": (
+                "cd136a640419d7689fbcaf9deb39b6215b91b680146482e74be34778bc0dd3bb"
+            ),
+            "abstract": (
+                "3a18566a82fe194ddb370882702e4c231610c333e76f5bcbb0cddb0ba089d9c8"
+            ),
+            "references": (
+                "520a99065c537e9d85dbef2c2fac03b50c4923ef6b325adbf98afe86369259f2"
+            ),
+            "background_summary": (
+                "94e541002064beab4419aa902a8aba65ebe8fdb84cbd70bc3d2263933c19369e"
+            ),
+            "figures": (
+                "7c1370954cf64785feaf9c701fa957b3e5fc74d36cc6cabd719f6a78dabf613b"
+            ),
+            "detailed": (
+                "d1ce877e22953fca6d838aa8a793cd0114ccfa6f56b883a50b097be1ebfcc728"
+            ),
+            "claims": (
+                "9c1abfeb11a8539cf4e6cff629b6097d4fe1e834bb2db6344f50e9dc402793e7"
+            ),
+        },
+        "subsection_sha256": {
+            "related": (
+                "6fccfa947dc72d42098f54775df61d997768de66723cb3df95c1627aa40658f1"
+            ),
+            "field": (
+                "358a32e1c96d69e5634adb97c42031dacbd0d4806a9387b5477a76514915e38a"
+            ),
+            "background": (
+                "e69fe0034cffb6447ed8e2e4f704a5eac99a9dc333b69cf5975ac89e78505adf"
+            ),
+            "summary": (
+                "6fb87b6e29f81f78c069ffad7a417a6febca8cf2526bdefb9c6116f9d7495ad0"
+            ),
+        },
+        "summary_span_sha256": {
+            (3, 3): (
+                "b98d76655d600c3a1ee936f2c90a2ce18a4c18dc90d67f6f966d36fbccbae499"
+            ),
+            (4, 4): (
+                "989420279b4675e19ee5cf830c349c0cc6c7176a6225c39e6a0fbcb8cf30fa48"
+            ),
+            (5, 10): (
+                "0eb84f67b7213b83ae49ea8d0851a1bb2f6e0ff7697010f05ef149d47eb90520"
+            ),
+            (11, 16): (
+                "01ce1ea97a4549c87798d497de00714f178be287d97792e1549bf407e518e5aa"
+            ),
+            (17, 22): (
+                "9d35478af3a02d49af47d0fcd65388b72995be40a8259f5bad4d03cb8c9ac114"
+            ),
+            (23, 28): (
+                "43f04d9831fa7199ee8d8a214f2c81720d65b8f455c16442e1f877717cf914eb"
+            ),
+            (29, 34): (
+                "f6b1016e895f3596020cb68c6ccbe183a2e2898e462142b3cd1b4d01b96ad3c2"
+            ),
+            (35, 35): (
+                "1d8fd2708be46f5c895520879afca164bccee593a08b13fe9cd485dc90f5e9fa"
+            ),
+            (36, 36): (
+                "626e1ae219ef9032e9393a9f84dae6617dac5ff34c73d7475924ed9f3244506e"
+            ),
+        },
+        "detailed_span_sha256": {
+            (21, 172): (
+                "ce650abfaa908f649fadeaa8681b7e55760f313e53222e8f01c563a8ac829e6b"
+            ),
+            (173, 220): (
+                "ca1b43368ba7f80e73771e4c1c7538c9bbbbc497db62ef70294cf22c3cacc092"
+            ),
+            (221, 260): (
+                "b2541d4432823ba8d0d2c3b79f260754a1ab5ced4aaef03ff9a5ae0561f43f74"
+            ),
+            (261, 297): (
+                "1ea71a0b9d7373499a12dc8508921205b78ed7453cbf5c62bd5c5a1c07677265"
+            ),
+            (298, 319): (
+                "fa7d08b14b8d878108773b4f62e927a9b29b9f4ac2e60b67c3d6dfa01ed456e0"
+            ),
+            (320, 348): (
+                "a4fb521df782e76495e873e2002a2c89f2934545dc3564b538b79f89094018da"
+            ),
+            (349, 356): (
+                "fea9f9feb45f1aee6328989a30f5a93f60a98d1ab4c9d3ba17db9746e11d80fe"
+            ),
+        },
+        "item_ranges": (
+            (173, 220),
+            (221, 260),
+            (261, 297),
+            (298, 319),
+            (320, 348),
+        ),
+        "item_method_markers": (
+            "Method 700 is performed",
+            "Method 800 is performed",
+            "Method 1000 is performed",
+            "Method 1100 is performed",
+            "Method 1300 is performed",
+        ),
+        "claim_families": (
+            tuple(range(1, 21)),
+            (21, *tuple(range(23, 33))),
+            (22, *tuple(range(33, 43))),
+        ),
+        "claim_family_sha256": (
+            "deada9701aabc34e68b25405e468970b28d2d1da99d714a325095aa71805cbde",
+            "b03fc87a1bec1e293b19b6c80f54cfd8b4127ab8e8733396a774e4bff775714f",
+            "7ed1bccb2197bc110252849aba4b5e27157b75630968ecc5ac12f1c5667bfac6",
+        ),
+        "identity_markers": {
+            "US-12671891-B2": 1,
+            "United States Patent 12671891": 1,
+            "Kind Code B2": 1,
+            "Date of Patent June 30, 2026": 1,
+            "User interfaces integrating hardware buttons": 2,
+            "Applicant: Apple Inc. (Cupertino, CA)": 1,
+            "Family ID: 95155833": 1,
+            "Assignee: Apple Inc. (Cupertino, CA)": 1,
+            "Appl. No.: 18/781667": 1,
+            "Filed: July 23, 2024": 1,
+            "US 20250110574 A1 Apr. 03, 2025": 1,
+            "US 63541755 20230929": 1,
+        },
+        "figure_declaration_prefixes": (
+            "FIG. 1 A is",
+            "FIG. 1 B is",
+            "FIG. 2 illustrates",
+            "FIG. 3 A is",
+            "FIGS. 3 B- 3 G illustrate",
+            "FIG. 4 A illustrates",
+            "FIG. 4 B illustrates",
+            "FIG. 5 A illustrates",
+            "FIG. 5 B is",
+            "FIGS. 5 C- 5 D illustrate",
+            "FIGS. 5 E- 5 H illustrate",
+            "FIGS. 6 A- 6 X illustrate",
+            "FIG. 7 is",
+            "FIG. 8 is",
+            "FIGS. 9 A- 9 Z illustrate",
+            "FIG. 10 is",
+            "FIG. 11 is",
+            "FIGS. 12 A- 12 K illustrate",
+            "FIG. 13 is",
+        ),
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "F/#": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+            "radius of curvature": 0,
+            "radius curvature": 0,
+            "curvature radius": 0,
+            "thickness": 0,
+            "refractive index": 0,
+            "aperture stop": 0,
+            "entrance pupil": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "ordered surface": 0,
+            "image height": 0,
+            "IMH": 0,
+        },
+        "source_scope_phrase_counts": {
+            "camera": 843,
+            "focal length": 12,
+            "f-stop": 59,
+            "synthetic depth-of-field": 222,
+            "field-of-view": 32,
+            "lens": 50,
+            "lens selection": 13,
+            "optical sensor": 21,
+            "depth camera": 16,
+            "zoom": 36,
+            "telephoto": 7,
+            "wide-angle": 7,
+            "image sensor": 0,
         },
     }
 }
@@ -28398,6 +28681,349 @@ def _classify_largan_folded_nanostructure_architecture_attempts(
             ),
         )
         for number, label, reason_code in _LARGAN_FOLDED_NANOSTRUCTURE_ITEMS
+    ]
+
+
+def _classify_apple_hardware_button_ui_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 95155833 camera/button UI items."""
+
+    profile = _APPLE_HARDWARE_BUTTON_UI_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _APPLE_HARDWARE_BUTTON_UI_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section: str,
+        *,
+        first: int,
+        last: int,
+    ) -> dict[int, str]:
+        matches = [
+            match
+            for match in re.finditer(r"\((\d+)\)", section)
+            if first <= int(match.group(1)) <= last
+        ]
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != tuple(range(first, last + 1)):
+            raise PatentParseError(
+                "Apple hardware-button UI numbered-paragraph denominator "
+                f"{first}-{last} changed"
+            )
+        return {
+            number: section[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section)
+                )
+            ]
+            for index, (number, match) in enumerate(zip(numbers, matches, strict=True))
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Apple hardware-button UI official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Apple hardware-button UI normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Apple hardware-button UI identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Apple hardware-button UI section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Apple hardware-button UI section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Apple hardware-button UI {section_name} section changed"
+                )
+
+        background_summary = sections["background_summary"]
+        subsection_markers = {
+            "related": "CROSS-REFERENCE TO RELATED APPLICATIONS (1)",
+            "field": "FIELD (1)",
+            "background": "BACKGROUND (2)",
+            "summary": "BRIEF SUMMARY (3)",
+        }
+        try:
+            subsection_starts = {
+                name: background_summary.index(marker)
+                for name, marker in subsection_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Apple hardware-button UI summary subsection boundary changed"
+            ) from exc
+        subsection_names = tuple(subsection_markers)
+        if tuple(subsection_starts.values()) != tuple(
+            sorted(subsection_starts.values())
+        ):
+            raise PatentParseError(
+                "Apple hardware-button UI summary subsection ordering changed"
+            )
+        subsections = {
+            name: background_summary[
+                subsection_starts[name] : (
+                    subsection_starts[subsection_names[index + 1]]
+                    if index + 1 < len(subsection_names)
+                    else len(background_summary)
+                )
+            ]
+            for index, name in enumerate(subsection_names)
+        }
+        for subsection_name, expected_digest in profile[
+            "subsection_sha256"
+        ].items():
+            observed_digest = hashlib.sha256(
+                subsections[subsection_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Apple hardware-button UI "
+                    f"{subsection_name} subsection changed"
+                )
+
+        summary_paragraphs = numbered_paragraphs(
+            subsections["summary"], first=3, last=36
+        )
+        for bounds, expected_digest in profile["summary_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                summary_paragraphs[number]
+                for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Apple hardware-button UI summary paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        figure_paragraphs = numbered_paragraphs(
+            sections["figures"], first=1, last=20
+        )
+        for paragraph_number, prefix in enumerate(
+            profile["figure_declaration_prefixes"], start=2
+        ):
+            expected_prefix = f"({paragraph_number}) {prefix}"
+            if not figure_paragraphs[paragraph_number].startswith(expected_prefix):
+                raise PatentParseError(
+                    "Apple hardware-button UI figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+        if len(_APPLE_HARDWARE_BUTTON_UI_FIGURES) != 86 or len(
+            set(_APPLE_HARDWARE_BUTTON_UI_FIGURES)
+        ) != 86:
+            raise PatentParseError(
+                "Apple hardware-button UI 86-panel figure denominator changed"
+            )
+
+        detailed_paragraphs = numbered_paragraphs(
+            sections["detailed"], first=21, last=356
+        )
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                detailed_paragraphs[number]
+                for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Apple hardware-button UI detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        item_texts = []
+        for bounds, method_marker in zip(
+            profile["item_ranges"],
+            profile["item_method_markers"],
+            strict=True,
+        ):
+            start, end = bounds
+            item_text = "".join(
+                detailed_paragraphs[number]
+                for number in range(start, end + 1)
+            )
+            if len(
+                re.findall(re.escape(method_marker), item_text, re.IGNORECASE)
+            ) != 1:
+                raise PatentParseError(
+                    "Apple hardware-button UI item binding "
+                    f"{method_marker!r} changed"
+                )
+            item_texts.append(item_text)
+        if len(
+            re.findall(
+                "f-stop value, which defines a ratio between the focal length",
+                item_texts[0],
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "Apple hardware-button UI simulated f-stop binding changed"
+            )
+        if len(
+            re.findall(
+                "digital processing to simulate capture with the particular focal length",
+                item_texts[2],
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "Apple hardware-button UI simulated focal-length binding changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_offsets = []
+        cursor = len("Claims ")
+        for claim_number in range(1, 43):
+            marker = f"{claim_number} . "
+            offset = claims_section.find(marker, cursor)
+            if offset < 0:
+                raise PatentParseError(
+                    "Apple hardware-button UI claims denominator changed"
+                )
+            claim_offsets.append((claim_number, offset))
+            cursor = offset + len(marker)
+        claims = {
+            claim_number: claims_section[
+                offset : (
+                    claim_offsets[index + 1][1]
+                    if index + 1 < len(claim_offsets)
+                    else len(claims_section)
+                )
+            ]
+            for index, (claim_number, offset) in enumerate(claim_offsets)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Apple hardware-button UI three-claim-family denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Apple hardware-button UI zero-HTML-table denominator changed"
+            )
+        if re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        ):
+            raise PatentParseError(
+                "Apple hardware-button UI zero-MathML denominator changed"
+            )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Apple hardware-button UI prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Apple hardware-button UI scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all five exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact first technique publishes camera media-capture routing, synthetic "
+        "depth-of-field display behavior and distinct hardware-button inputs only; "
+        "its f-stop values are explicitly simulated UI settings, and it publishes no "
+        "ordered optical surface prescription or required system metadata",
+        "the exact second technique publishes removal, addition and selection of "
+        "camera touch controls in response to hardware-button press types only, "
+        "without an independent optical prescription",
+        "the exact third technique publishes context-sensitive camera operations, "
+        "application launching, crop/zoom simulation and camera switching only; its "
+        "22/24/28 mm values are UI crop choices rather than an ordered prescription",
+        "the exact fourth technique publishes a configurable settings menu, setting "
+        "association and multiple-press UI behavior only; all 42 issued claims recast "
+        "that interaction without an independent optical prescription",
+        "the exact fifth technique publishes press-type routing between a synthetic "
+        "depth-of-field operation and media capture only; its focal-plane and f-stop "
+        "references are simulated image effects, not an optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _APPLE_HARDWARE_BUTTON_UI_ITEMS
     ]
 
 

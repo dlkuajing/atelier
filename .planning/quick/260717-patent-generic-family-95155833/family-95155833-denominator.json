@@ -1,0 +1,625 @@
+{
+  "schema_version": 1,
+  "family_id": "95155833",
+  "root_id": "US-12671891",
+  "publication_id": "US-12671891-B2",
+  "identity": {
+    "application_number": "18/781667",
+    "title": "User interfaces integrating hardware buttons",
+    "applicant": "Apple Inc.",
+    "assignee": "Apple Inc.",
+    "filed": "July 23, 2024",
+    "patent_date": "June 30, 2026",
+    "prior_publication": "US-20250110574-A1",
+    "prior_publication_date": "April 3, 2025",
+    "provisional_application": "63/541755",
+    "provisional_filed": "September 29, 2023"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/8883f36f994bd453/US-12671891-B2.html",
+    "bytes": 1039010,
+    "raw_characters": 1037639,
+    "raw_sha256": "8883f36f994bd4534c66df17defcff1dc536d69cf2fe8bcf136bacd27364cfc5",
+    "normalized_characters": 702782,
+    "normalized_sha256": "78a5ad905c09991b31b00c8c3fa182fa574d1193c5e4bc05b7b32dbffca266cd",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_raster_publications": 1,
+    "cross_reference_numbered_paragraphs": 1,
+    "field_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 1,
+    "brief_summary_numbered_paragraphs": 34,
+    "figure_description_numbered_paragraphs": 20,
+    "detailed_numbered_paragraphs": 336,
+    "claims": 42,
+    "prior_publication_total_claims": 157,
+    "prior_publication_canceled_claims": 135,
+    "prior_publication_active_claims": 22,
+    "declared_textual_figure_statements": 19,
+    "declared_textual_figure_panels": 86,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 5,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 5,
+    "replayed_ledger_items": 5,
+    "official_patent_pdf_pages": 150,
+    "official_patent_reference_pages": 22,
+    "official_patent_drawing_sheets": 56,
+    "prior_publication_pdf_pages": 130,
+    "prior_publication_drawing_sheets": 56,
+    "prior_publication_claim_count_differences": 1,
+    "source_label_discrepancy_types": 3,
+    "source_label_discrepancy_occurrences": 4
+  },
+  "sections": {
+    "preamble": {
+      "position": 0,
+      "characters": 259,
+      "sha256": "cd136a640419d7689fbcaf9deb39b6215b91b680146482e74be34778bc0dd3bb"
+    },
+    "abstract": {
+      "position": 259,
+      "characters": 1625,
+      "sha256": "3a18566a82fe194ddb370882702e4c231610c333e76f5bcbb0cddb0ba089d9c8"
+    },
+    "references": {
+      "position": 1884,
+      "characters": 159073,
+      "sha256": "520a99065c537e9d85dbef2c2fac03b50c4923ef6b325adbf98afe86369259f2"
+    },
+    "background_summary": {
+      "position": 160957,
+      "characters": 43518,
+      "sha256": "94e541002064beab4419aa902a8aba65ebe8fdb84cbd70bc3d2263933c19369e"
+    },
+    "figures": {
+      "position": 204475,
+      "characters": 3148,
+      "sha256": "7c1370954cf64785feaf9c701fa957b3e5fc74d36cc6cabd719f6a78dabf613b"
+    },
+    "detailed": {
+      "position": 207623,
+      "characters": 476969,
+      "sha256": "d1ce877e22953fca6d838aa8a793cd0114ccfa6f56b883a50b097be1ebfcc728"
+    },
+    "claims": {
+      "position": 684592,
+      "characters": 18190,
+      "sha256": "9c1abfeb11a8539cf4e6cff629b6097d4fe1e834bb2db6344f50e9dc402793e7"
+    }
+  },
+  "subsections": {
+    "related": {
+      "position": 160976,
+      "characters": 307,
+      "sha256": "6fccfa947dc72d42098f54775df61d997768de66723cb3df95c1627aa40658f1"
+    },
+    "field": {
+      "position": 161283,
+      "characters": 191,
+      "sha256": "358a32e1c96d69e5634adb97c42031dacbd0d4806a9387b5477a76514915e38a"
+    },
+    "background": {
+      "position": 161474,
+      "characters": 458,
+      "sha256": "e69fe0034cffb6447ed8e2e4f704a5eac99a9dc333b69cf5975ac89e78505adf"
+    },
+    "summary": {
+      "position": 161932,
+      "characters": 42543,
+      "sha256": "6fb87b6e29f81f78c069ffad7a417a6febca8cf2526bdefb9c6116f9d7495ad0"
+    }
+  },
+  "summary_spans": [
+    {
+      "paragraphs": [
+        3,
+        3
+      ],
+      "characters": 705,
+      "sha256": "b98d76655d600c3a1ee936f2c90a2ce18a4c18dc90d67f6f966d36fbccbae499",
+      "scope": "problem context"
+    },
+    {
+      "paragraphs": [
+        4,
+        4
+      ],
+      "characters": 743,
+      "sha256": "989420279b4675e19ee5cf830c349c0cc6c7176a6225c39e6a0fbcb8cf30fa48",
+      "scope": "efficiency benefit"
+    },
+    {
+      "paragraphs": [
+        5,
+        10
+      ],
+      "characters": 8844,
+      "sha256": "0eb84f67b7213b83ae49ea8d0851a1bb2f6e0ff7697010f05ef149d47eb90520",
+      "scope": "different hardware buttons route camera capture and synthetic depth display"
+    },
+    {
+      "paragraphs": [
+        11,
+        16
+      ],
+      "characters": 9269,
+      "sha256": "01ce1ea97a4549c87798d497de00714f178be287d97792e1549bf407e518e5aa",
+      "scope": "hardware-button press types reconfigure camera touch controls"
+    },
+    {
+      "paragraphs": [
+        17,
+        22
+      ],
+      "characters": 6586,
+      "sha256": "9d35478af3a02d49af47d0fcd65388b72995be40a8259f5bad4d03cb8c9ac114",
+      "scope": "context-sensitive button responses inside and outside a camera application"
+    },
+    {
+      "paragraphs": [
+        23,
+        28
+      ],
+      "characters": 7155,
+      "sha256": "43f04d9831fa7199ee8d8a214f2c81720d65b8f455c16442e1f877717cf914eb",
+      "scope": "configurable settings and functions associated with a hardware button"
+    },
+    {
+      "paragraphs": [
+        29,
+        34
+      ],
+      "characters": 8447,
+      "sha256": "f6b1016e895f3596020cb68c6ccbe183a2e2898e462142b3cd1b4d01b96ad3c2",
+      "scope": "different press types control different camera functions"
+    },
+    {
+      "paragraphs": [
+        35,
+        35
+      ],
+      "characters": 440,
+      "sha256": "1d8fd2708be46f5c895520879afca164bccee593a08b13fe9cd485dc90f5e9fa",
+      "scope": "storage-medium implementation boilerplate"
+    },
+    {
+      "paragraphs": [
+        36,
+        36
+      ],
+      "characters": 331,
+      "sha256": "626e1ae219ef9032e9393a9f84dae6617dac5ff34c73d7475924ed9f3244506e",
+      "scope": "efficiency benefit"
+    }
+  ],
+  "detailed_spans": [
+    {
+      "paragraphs": [
+        21,
+        172
+      ],
+      "characters": 137196,
+      "sha256": "ce650abfaa908f649fadeaa8681b7e55760f313e53222e8f01c563a8ac829e6b",
+      "scope": "generic device, event handling, touch input and API framework"
+    },
+    {
+      "paragraphs": [
+        173,
+        220
+      ],
+      "characters": 91282,
+      "sha256": "ca1b43368ba7f80e73771e4c1c7538c9bbbbc497db62ef70294cf22c3cacc092",
+      "scope": "item 1: FIGS.6A-6X and method 700"
+    },
+    {
+      "paragraphs": [
+        221,
+        260
+      ],
+      "characters": 85204,
+      "sha256": "b2541d4432823ba8d0d2c3b79f260754a1ab5ced4aaef03ff9a5ae0561f43f74",
+      "scope": "item 2: method 800"
+    },
+    {
+      "paragraphs": [
+        261,
+        297
+      ],
+      "characters": 62452,
+      "sha256": "1ea71a0b9d7373499a12dc8508921205b78ed7453cbf5c62bd5c5a1c07677265",
+      "scope": "item 3: FIGS.9A-9Z and method 1000"
+    },
+    {
+      "paragraphs": [
+        298,
+        319
+      ],
+      "characters": 44331,
+      "sha256": "fa7d08b14b8d878108773b4f62e927a9b29b9f4ac2e60b67c3d6dfa01ed456e0",
+      "scope": "item 4: method 1100"
+    },
+    {
+      "paragraphs": [
+        320,
+        348
+      ],
+      "characters": 49258,
+      "sha256": "a4fb521df782e76495e873e2002a2c89f2934545dc3564b538b79f89094018da",
+      "scope": "item 5: FIGS.12A-12K and method 1300"
+    },
+    {
+      "paragraphs": [
+        349,
+        356
+      ],
+      "characters": 7212,
+      "sha256": "fea9f9feb45f1aee6328989a30f5a93f60a98d1ab4c9d3ba17db9746e11d80fe",
+      "scope": "implementation and personal-information boilerplate"
+    }
+  ],
+  "claim_families": [
+    {
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "characters": 8724,
+      "sha256": "deada9701aabc34e68b25405e468970b28d2d1da99d714a325095aa71805cbde",
+      "scope": "computer-system claims",
+      "mapped_item": "item 4"
+    },
+    {
+      "claims": [
+        21,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "characters": 5117,
+      "sha256": "b03fc87a1bec1e293b19b6c80f54cfd8b4127ab8e8733396a774e4bff775714f",
+      "scope": "non-transitory-storage-medium claims",
+      "mapped_item": "item 4"
+    },
+    {
+      "claims": [
+        22,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ],
+      "characters": 4340,
+      "sha256": "7ed1bccb2197bc110252849aba4b5e27157b75630968ecc5ac12f1c5667bfac6",
+      "scope": "method claims",
+      "mapped_item": "item 4"
+    }
+  ],
+  "figure_panels": [
+    "1A",
+    "1B",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "3E",
+    "3F",
+    "3G",
+    "4A",
+    "4B",
+    "5A",
+    "5B",
+    "5C",
+    "5D",
+    "5E",
+    "5F",
+    "5G",
+    "5H",
+    "6A",
+    "6B",
+    "6C",
+    "6D",
+    "6E",
+    "6F",
+    "6G",
+    "6H",
+    "6I",
+    "6J",
+    "6K",
+    "6L",
+    "6M",
+    "6N",
+    "6O",
+    "6P",
+    "6Q",
+    "6R",
+    "6S",
+    "6T",
+    "6U",
+    "6V",
+    "6W",
+    "6X",
+    "7",
+    "8",
+    "9A",
+    "9B",
+    "9C",
+    "9D",
+    "9E",
+    "9F",
+    "9G",
+    "9H",
+    "9I",
+    "9J",
+    "9K",
+    "9L",
+    "9M",
+    "9N",
+    "9O",
+    "9P",
+    "9Q",
+    "9R",
+    "9S",
+    "9T",
+    "9U",
+    "9V",
+    "9W",
+    "9X",
+    "9Y",
+    "9Z",
+    "10",
+    "11",
+    "12A",
+    "12B",
+    "12C",
+    "12D",
+    "12E",
+    "12F",
+    "12G",
+    "12H",
+    "12I",
+    "12J",
+    "12K",
+    "13"
+  ],
+  "items": [
+    {
+      "item": 1,
+      "label": "Apple different-hardware-button camera control user interface",
+      "summary_paragraphs": [
+        5,
+        10
+      ],
+      "detailed_paragraphs": [
+        173,
+        220
+      ],
+      "characters": 91282,
+      "sha256": "ca1b43368ba7f80e73771e4c1c7538c9bbbbc497db62ef70294cf22c3cacc092",
+      "scope": "camera capture routing and synthetic depth-of-field UI",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.camera_hardware_button_media_capture_routing_user_interface_only",
+      "published_ui_numeric_context": {
+        "simulated_f_stop_examples": [
+          "f/1.4",
+          "f/2.8",
+          "f/8",
+          "f/4.5"
+        ]
+      }
+    },
+    {
+      "item": 2,
+      "label": "Apple camera touch-control reconfiguration user interface",
+      "summary_paragraphs": [
+        11,
+        16
+      ],
+      "detailed_paragraphs": [
+        221,
+        260
+      ],
+      "characters": 85204,
+      "sha256": "b2541d4432823ba8d0d2c3b79f260754a1ab5ced4aaef03ff9a5ae0561f43f74",
+      "scope": "camera touch-control reconfiguration UI",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.camera_hardware_button_touch_control_reconfiguration_user_interface_only"
+    },
+    {
+      "item": 3,
+      "label": "Apple context-sensitive camera hardware-button user interface",
+      "summary_paragraphs": [
+        17,
+        22
+      ],
+      "detailed_paragraphs": [
+        261,
+        297
+      ],
+      "characters": 62452,
+      "sha256": "1ea71a0b9d7373499a12dc8508921205b78ed7453cbf5c62bd5c5a1c07677265",
+      "scope": "context-sensitive camera/application button UI",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.context_sensitive_camera_hardware_button_user_interface_only",
+      "published_ui_numeric_context": {
+        "crop_or_simulated_focal_length_mm": [
+          22,
+          24,
+          28
+        ],
+        "zoom_examples": [
+          "0.5?",
+          "1?",
+          "2?"
+        ]
+      }
+    },
+    {
+      "item": 4,
+      "label": "Apple configurable hardware-button settings user interface",
+      "summary_paragraphs": [
+        23,
+        28
+      ],
+      "detailed_paragraphs": [
+        298,
+        319
+      ],
+      "characters": 44331,
+      "sha256": "fa7d08b14b8d878108773b4f62e927a9b29b9f4ac2e60b67c3d6dfa01ed456e0",
+      "scope": "configurable hardware-button settings UI",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.configurable_hardware_button_settings_user_interface_only"
+    },
+    {
+      "item": 5,
+      "label": "Apple press-type camera function user interface",
+      "summary_paragraphs": [
+        29,
+        34
+      ],
+      "detailed_paragraphs": [
+        320,
+        348
+      ],
+      "characters": 49258,
+      "sha256": "a4fb521df782e76495e873e2002a2c89f2934545dc3564b538b79f89094018da",
+      "scope": "press-type camera function UI",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.camera_hardware_button_press_type_user_interface_only",
+      "published_ui_numeric_context": {
+        "synthetic_depth_of_field": true
+      }
+    }
+  ],
+  "prescription_marker_census": {
+    "camera": 843,
+    "focal length": 12,
+    "f-stop": 59,
+    "synthetic depth-of-field": 222,
+    "depth-of-field": 250,
+    "field-of-view": 32,
+    "lens": 50,
+    "main lens": 1,
+    "lens selection": 13,
+    "optical sensor": 21,
+    "depth camera": 16,
+    "zoom": 36,
+    "telephoto": 7,
+    "wide-angle": 7
+  },
+  "absent_prescription_marker_census": {
+    "effective focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "FNO": 0,
+    "F/#": 0,
+    "Abbe": 0,
+    "aspheric": 0,
+    "aspherical": 0,
+    "surface prescription": 0,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "surface no": 0,
+    "radius of curvature": 0,
+    "radius curvature": 0,
+    "curvature radius": 0,
+    "thickness": 0,
+    "refractive index": 0,
+    "aperture stop": 0,
+    "entrance pupil": 0,
+    "conic": 0,
+    "coefficient": 0,
+    "ordered surface": 0,
+    "image height": 0,
+    "IMH": 0,
+    "image sensor": 0
+  },
+  "source_label_discrepancies": [
+    {
+      "paragraphs": [
+        320,
+        320
+      ],
+      "occurrences": 1,
+      "published_label": "FIGS. 13 and 14",
+      "audit_effect": "FIG.14 is not declared and no FIG.14 drawing sheet exists; no numeric evidence is inferred"
+    },
+    {
+      "paragraphs": [
+        326,
+        327
+      ],
+      "occurrences": 2,
+      "published_label": "FIG. 10 D",
+      "audit_effect": "the surrounding FIG.12 sequence is retained without silently relabeling either occurrence"
+    },
+    {
+      "paragraphs": [
+        348,
+        348
+      ],
+      "occurrences": 1,
+      "published_label": "method 1100 (FIG. 11)",
+      "audit_effect": "the copied method reference is retained and is not used to remap item 5"
+    }
+  ],
+  "conversion_boundary": {
+    "reason": "The patent publishes computer/device, hardware-button, camera application, crop/zoom and synthetic depth-of-field user-interface behavior only. Its focal-length values are crop, digital simulation or camera-switching choices and its f-stop values are explicitly simulated. It publishes no ordered radii, spacings, materials, conics, asphere coefficients, stop, numeric image height, system EFL or physical F-number prescription.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_disclosed_items": 0
+  }
+}

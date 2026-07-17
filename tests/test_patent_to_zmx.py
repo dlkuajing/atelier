@@ -23026,6 +23026,77 @@ def test_largan_folded_nanostructure_source_drift_fails_closed() -> None:
     }
 
 
+def _apple_hardware_button_ui_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "8883f36f994bd453"
+        / "US-12671891-B2.html"
+    )
+    return "US-12671891-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_apple_hardware_button_ui_reconciles_five_items() -> None:
+    patent_id, raw_text = _apple_hardware_button_ui_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 6))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert [
+        attempt.error.reason_code
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    ] == [
+        "confirmed_no_prescription."
+        "camera_hardware_button_media_capture_routing_user_interface_only",
+        "confirmed_no_prescription."
+        "camera_hardware_button_touch_control_reconfiguration_user_interface_only",
+        "confirmed_no_prescription."
+        "context_sensitive_camera_hardware_button_user_interface_only",
+        "confirmed_no_prescription."
+        "configurable_hardware_button_settings_user_interface_only",
+        "confirmed_no_prescription."
+        "camera_hardware_button_press_type_user_interface_only",
+    ]
+
+
+def test_apple_hardware_button_ui_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _apple_hardware_button_ui_source()
+    changed = raw_text.replace("focal length", "focal-length", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Apple hardware-button UI official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
 def test_symbol_negative_spherical_aberration_reader_raster_audit_rehashes() -> None:
     root = Path(__file__).resolve().parents[1]
     quick = root / ".planning" / "quick" / "260717-patent-generic-family-38997638"
@@ -23930,4 +24001,263 @@ def test_largan_folded_nanostructure_denominator_and_queue_artifacts() -> None:
     assert queue["next_exact_group"]["root_ids"] == ["US-12671891"]
     assert queue["next_exact_group"]["publication_ids"] == ["US-12671891-B2"]
     assert queue["next_exact_group"]["marker_counts"]["full_field"] == 32
+    assert queue["saturation_complete"] is False
+
+
+def test_apple_hardware_button_ui_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-95155833"
+    audit = json.loads(
+        (quick / "family-95155833-raster-audit.json").read_text(encoding="utf-8")
+    )
+    publications = ("US-12671891-B2", "US-20250110574-A1")
+    expected_pages = {"US-12671891-B2": 150, "US-20250110574-A1": 130}
+    expected_sections = {
+        "US-12671891-B2": {
+            "cover": [1, 1],
+            "references_cited": [2, 23],
+            "drawings": [24, 79],
+            "specification_and_claims": [80, 150],
+        },
+        "US-20250110574-A1": {
+            "cover": [1, 1],
+            "drawings": [2, 57],
+            "specification_and_claims": [58, 130],
+        },
+    }
+
+    raster_sets: dict[str, set[str]] = {}
+    for publication_id in publications:
+        record = audit["publications"][publication_id]
+        pdf_path = root / record["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        assert len(pdf_bytes) == record["bytes"]
+        assert hashlib.sha256(pdf_bytes).hexdigest() == record["sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == expected_pages[publication_id]
+        assert record["drawing_sheet_count"] == 56
+        assert record["sections"] == expected_sections[publication_id]
+
+        aggregate = hashlib.sha256()
+        page_hashes = set()
+        for page, page_record in zip(reader.pages, record["pages"], strict=True):
+            assert len(page.extract_text() or "") == page_record["text_characters"] == 0
+            assert len(page.images) == page_record["image_count"] == 1
+            image = page.images[0].image.convert("RGB")
+            assert [image.width, image.height] == page_record["size"]
+            page_hash = hashlib.sha256(
+                f"{image.width}x{image.height}:RGB:".encode() + image.tobytes()
+            ).hexdigest()
+            assert page_hash == page_record["raster_sha256"]
+            aggregate.update(bytes.fromhex(page_hash))
+            page_hashes.add(page_hash)
+        assert aggregate.hexdigest() == record["decoded_raster_set_sha256"]
+        raster_sets[publication_id] = page_hashes
+
+        contact = record["visual_review"]["contact"]
+        contact_bytes = (root / contact["path"]).read_bytes()
+        assert len(contact_bytes) == contact["bytes"]
+        assert hashlib.sha256(contact_bytes).hexdigest() == contact["sha256"]
+        for critical_page in record["visual_review"]["critical_pages"]:
+            critical_bytes = (root / critical_page["path"]).read_bytes()
+            assert len(critical_bytes) == critical_page["bytes"]
+            assert hashlib.sha256(critical_bytes).hexdigest() == critical_page["sha256"]
+
+    assert raster_sets[publications[0]].isdisjoint(raster_sets[publications[1]])
+    assert audit["raster_intersection_count"] == 0
+    assert audit["claim_count_cross_check"] == {
+        "US-12671891-B2": {"total": 42, "canceled": 0, "active": 42},
+        "US-20250110574-A1": {"total": 157, "canceled": 135, "active": 22},
+        "effect": (
+            "the A1 publication cancels claims 1-135 and retains claims 136-157; "
+            "the B2 grant issues 42 claims limited to the configurable hardware-button "
+            "settings interaction, and neither claim set publishes an ordered optical "
+            "prescription"
+        ),
+    }
+    assert audit["mathml_object_count"] == 0
+    assert audit["tagged_html_table_count"] == 0
+    assert audit["ordered_optical_prescription_present"] is False
+    assert audit["drawing_transcription_permitted"] is False
+    assert audit["numeric_derivation_permitted"] is False
+    assert audit["cross_publication_numeric_borrowing"] is False
+
+
+def test_apple_hardware_button_ui_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-95155833"
+    artifact = json.loads(
+        (quick / "family-95155833-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["semantic_equal"] is True
+    assert artifact["normalization"] == {
+        "outcome_fields_removed": [],
+        "removed_fields": ["result_attempt"],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "conversion_receipts": 0,
+        "conversion_requests": 0,
+        "item_state_counts": {"terminal": 5},
+        "prescription_fingerprints": 0,
+        "result_attempt": 3,
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "root_state": "terminal",
+        "staging_zmx": 0,
+        "terminal_status_counts": {"confirmed_no_prescription": 5},
+    }
+
+
+def test_apple_hardware_button_ui_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-95155833"
+    evidence = json.loads(
+        (quick / "family-95155833-source-evidence.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-95155833-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    assert denominator["denominator"] == {
+        "background_numbered_paragraphs": 1,
+        "brief_summary_numbered_paragraphs": 34,
+        "claims": 42,
+        "confirmed_no_prescription_items": 5,
+        "cross_reference_numbered_paragraphs": 1,
+        "declared_textual_figure_panels": 86,
+        "declared_textual_figure_statements": 19,
+        "detailed_numbered_paragraphs": 336,
+        "field_numbered_paragraphs": 1,
+        "figure_description_numbered_paragraphs": 20,
+        "frozen_cohort_roots": 1,
+        "mathml_objects": 0,
+        "official_patent_drawing_sheets": 56,
+        "official_patent_pdf_pages": 150,
+        "official_patent_reference_pages": 22,
+        "prior_publication_active_claims": 22,
+        "prior_publication_canceled_claims": 135,
+        "prior_publication_claim_count_differences": 1,
+        "prior_publication_drawing_sheets": 56,
+        "prior_publication_pdf_pages": 130,
+        "prior_publication_total_claims": 157,
+        "replayed_ledger_items": 5,
+        "retained_classification_publications": 1,
+        "same_application_raster_publications": 1,
+        "source_declared_architecture_items": 5,
+        "source_declared_optical_prescriptions": 0,
+        "source_label_discrepancy_occurrences": 4,
+        "source_label_discrepancy_types": 3,
+        "tagged_html_tables": 0,
+    }
+    assert denominator["reconciliation"] == {
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_disclosed_items": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_tagged_tables": 0,
+    }
+    assert len(denominator["summary_spans"]) == 9
+    assert len(denominator["detailed_spans"]) == 7
+    assert len(denominator["claim_families"]) == 3
+    assert len(denominator["figure_panels"]) == 86
+    assert len(denominator["items"]) == 5
+    assert all(
+        item["terminal_status"] == "confirmed_no_prescription"
+        and item["ordered_surface_prescription_rows"] == 0
+        for item in denominator["items"]
+    )
+    markers = denominator["prescription_marker_census"]
+    assert markers["focal length"] == 12
+    assert markers["f-stop"] == 59
+    assert markers["synthetic depth-of-field"] == 222
+    assert markers["field-of-view"] == 32
+    assert markers["lens selection"] == 13
+    assert all(
+        count == 0
+        for count in denominator["absent_prescription_marker_census"].values()
+    )
+    assert denominator["conversion_boundary"]["zmx_written"] == 0
+    assert denominator["conversion_boundary"]["formal_intake"] == 0
+    assert denominator["conversion_boundary"]["code_v_used"] is False
+    assert denominator["conversion_boundary"]["drawing_transcription"] is False
+    assert denominator["conversion_boundary"]["numeric_derivation_from_rasters"] is False
+    assert denominator["conversion_boundary"][
+        "cross_publication_numeric_borrowing"
+    ] is False
+
+    for record in evidence["artifacts"].values():
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    for record in (
+        evidence["source"],
+        *evidence["official_pdfs"].values(),
+        *evidence["census"].values(),
+        evidence["replay_state"]["summary"],
+        evidence["replay_state"]["report"],
+    ):
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-112.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 112
+    assert after_1["affected_roots"] == after_1["affected_items"] == 111
+    assert after_2["affected_roots"] == after_2["affected_items"] == 111
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == evidence["replay_state"][
+        "result_set_sha256"
+    ]
+    assert queue["executable_buckets"] == [
+        {
+            "parser_signature": "generic_summary_metadata_missing",
+            "affected_roots": 111,
+            "affected_items": 111,
+        },
+        {
+            "parser_signature": "aac_raytech_summary_metadata_missing",
+            "affected_roots": 55,
+            "affected_items": 174,
+        },
+        {
+            "parser_signature": "sunny_embodiment_metadata_missing",
+            "affected_roots": 49,
+            "affected_items": 177,
+        },
+    ]
+    assert queue["next_exact_group"]["family_id"] == "97107726"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12425721"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-12425721-B1"]
+    assert queue["next_exact_group"]["marker_counts"]["full_field"] == 4
     assert queue["saturation_complete"] is False

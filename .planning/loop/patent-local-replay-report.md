@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `40fb3df65d25a15fb24a7a474d8cc3964111ee5c1209ed5873b417b94d5dcecc`
+- result_set_sha256: `58b441fcdfed487d3bdf21d16787515390f3c85feeb3a4958c03de7deec7f651`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 25
-- `terminal`: 144
-- `parser_review_required`: 302
+- `terminal`: 145
+- `parser_review_required`: 301
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 561
-- `terminal`: 1216
-- `parser_review_required`: 1396
+- `terminal`: 1221
+- `parser_review_required`: 1395
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 297
+- `confirmed_no_prescription`: 302
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 181
@@ -48,14 +48,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 302
+- `parser_review_required.all_disclosed_items_rejected`: 301
 - `mixed_nonterminal.multiple_item_states`: 148
-- `terminal.all_disclosed_items_terminal`: 144
+- `terminal.all_disclosed_items_terminal`: 145
 - `converted_pending_intake.all_disclosed_items_converted`: 25
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1396
+- `parser_review_required.deterministic_parser_rejected`: 1395
 - `terminal.process_receipt_classified`: 738
 - `converted_pending_intake.process_isolated_zmx_ready`: 561
 - `terminal.metadata_unpublished.system_f_number_absent`: 71
@@ -126,11 +126,16 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.barcode_reader_dual_linear_fov_aiming_architecture_only`: 1
 - `terminal.confirmed_no_prescription.barcode_reader_lens_chassis_alignment_architecture_only`: 1
 - `terminal.confirmed_no_prescription.barcode_reader_manufacturing_method_only`: 1
+- `terminal.confirmed_no_prescription.camera_hardware_button_media_capture_routing_user_interface_only`: 1
+- `terminal.confirmed_no_prescription.camera_hardware_button_press_type_user_interface_only`: 1
+- `terminal.confirmed_no_prescription.camera_hardware_button_touch_control_reconfiguration_user_interface_only`: 1
 - `terminal.confirmed_no_prescription.color_vision_deficiency_transformation_model_method_only`: 1
 - `terminal.confirmed_no_prescription.colorblind_image_rendering_machine_readable_medium_only`: 1
 - `terminal.confirmed_no_prescription.colorblind_image_rendering_method_only`: 1
 - `terminal.confirmed_no_prescription.colorblind_image_rendering_system_architecture_only`: 1
 - `terminal.confirmed_no_prescription.commercial_camera_lens_lab_results_only`: 1
+- `terminal.confirmed_no_prescription.configurable_hardware_button_settings_user_interface_only`: 1
+- `terminal.confirmed_no_prescription.context_sensitive_camera_hardware_button_user_interface_only`: 1
 - `terminal.confirmed_no_prescription.dual_working_range_imaging_engine_aiming_architecture_only`: 1
 - `terminal.confirmed_no_prescription.dye_aggregate_film_and_optical_filter_materials_only`: 1
 - `terminal.confirmed_no_prescription.externally_sourced_rectilinear_lens_model_only`: 1
@@ -173,7 +178,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 112
+- `generic_summary_metadata_missing`: 111
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62

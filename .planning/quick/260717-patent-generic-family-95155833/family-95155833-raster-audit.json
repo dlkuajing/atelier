@@ -1,0 +1,3004 @@
+{
+  "schema_version": 1,
+  "family_id": "95155833",
+  "publications": {
+    "US-12671891-B2": {
+      "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-official.pdf",
+      "bytes": 13838019,
+      "sha256": "90494595485aab29e40346c5c1aacd44a9ccfdfe7b7dbdc3ff837773385665b3",
+      "page_count": 150,
+      "drawing_sheet_count": 56,
+      "sections": {
+        "cover": [
+          1,
+          1
+        ],
+        "references_cited": [
+          2,
+          23
+        ],
+        "drawings": [
+          24,
+          79
+        ],
+        "specification_and_claims": [
+          80,
+          150
+        ]
+      },
+      "decoded_raster_set_sha256": "fee943c16a9688388cb68bb40240baa747b09e8b668adece883a047676ff791c",
+      "pages": [
+        {
+          "page": 1,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8790a4169cea96740ba821c6ec9cbb8747ff075f83cbc01b18e2d81708532e19"
+        },
+        {
+          "page": 2,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8f78437dadf21e57edc46956b6a09eed91bd7c1f5c6fdefba924126eb475fa6e"
+        },
+        {
+          "page": 3,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ab2cc2b5844edc39048a595a373fea38066339ea4ed7d0f66f5a12af94973f20"
+        },
+        {
+          "page": 4,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "83d0b10c90af6992f4057f178517171a329190fb9ef53270b0fc744ba21bec86"
+        },
+        {
+          "page": 5,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c24a7694a854cf1b2bfa63d537966f4c109b87d3709b6d61cba41b0f49b1bf72"
+        },
+        {
+          "page": 6,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ca8ea1901a85839cdcc2fe8198c4123113fa3b2b2e67c85786f43f1d7da3bf23"
+        },
+        {
+          "page": 7,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "47c81fbc22784568b5c3fb9dda221116b29d28cf25c229d602d551478d132b71"
+        },
+        {
+          "page": 8,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2c783a750bcd4105703501c427e69fc687ad9a44d99980bb9a77cdb4b5f9affd"
+        },
+        {
+          "page": 9,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3538d4a008855b170fb7da712a8cea274379cbd321556e54b5d63daf3eac2096"
+        },
+        {
+          "page": 10,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3e8781de0c89de3dbe3783353aba969d2f9010ee9c677f792cde2974a4309f33"
+        },
+        {
+          "page": 11,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "dc208d93380c9967c44c8ceed48239f1e5419547ee407a6358a9e4ce87975f60"
+        },
+        {
+          "page": 12,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "dc92a5c133343940211239d9bbba9a4d073d17f360841ba9cd203430aba27d2e"
+        },
+        {
+          "page": 13,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c7c8aa90cff65b6d64a1ddfad15ba6d5fad6ab83979238940bcf1a289d862c33"
+        },
+        {
+          "page": 14,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b3b1d7f0191c96dee510765a396919f9cd831f78aab0d29bd5f9f0485b8fb303"
+        },
+        {
+          "page": 15,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b0b469f42171a111051f11f234de44b14f71597e96db2f64c771c87be6dab7eb"
+        },
+        {
+          "page": 16,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5887bdd97be18ac537548210474c7f8b281366eba6ade1834a5b022e6a573b73"
+        },
+        {
+          "page": 17,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1151bbbb229172e5a238a76dc5ceb24045b4d897d190bd4086cbce11fdca930d"
+        },
+        {
+          "page": 18,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "13366a335f7a14da85688193abcd809fab3a869b269ef545ca5749680fdafd8e"
+        },
+        {
+          "page": 19,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6f4b85ccf3b01a5f209c3cb0e26649c8def242e100a0ec33ea045358a2f1a6bb"
+        },
+        {
+          "page": 20,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "807bf20ff2cd452bdb012f89acf6ef502d14ac29bd8c01669b083088f0fe1099"
+        },
+        {
+          "page": 21,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "cad07775406ebb4ca795b6625e82c3ef1211d0ecb32f69a0433c1b926ec5de65"
+        },
+        {
+          "page": 22,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3c6dc9dd55857e007f816ee3c8a91f6dc5639a01ace257455faaa493208d7ea8"
+        },
+        {
+          "page": 23,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1191f7bc101dbdeaf9d350be5ef0253eda3d27c0265130d6aac1f357af158af1"
+        },
+        {
+          "page": 24,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8432e125ab9a23958a443755b4f6e5d14ce1df36a0f0ca6af39af8a25efc75e8"
+        },
+        {
+          "page": 25,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "907a20f3a1c2c3bc730eaff7d9227ebaa5ba4f8e1a59baa9e9d09905f3ba37a3"
+        },
+        {
+          "page": 26,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "303201001475fce297083093343026afb97840a6569bf1a75f74665ec0ac688f"
+        },
+        {
+          "page": 27,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "91fac0c5c537b61b790bded53f6c339a4a3bab4a176b8fc24f930d389c4610ec"
+        },
+        {
+          "page": 28,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b3ba361e6497ab9dc2b0f4e1df37308f4b32bcb46b92ccdb77c221ce25f6720d"
+        },
+        {
+          "page": 29,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9ca3f8f6fb956f6b192eb33bc85ea708d35d2e317667df9d066dab7a5c5823be"
+        },
+        {
+          "page": 30,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6f36b178c24766b397d64a40f9f08862cefb33677a70e18b9a54d79ec77cdff7"
+        },
+        {
+          "page": 31,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3f7214c005b7a45ba93736c4f2e9df6d234068a67c683255f474f60673c0accc"
+        },
+        {
+          "page": 32,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7b63f13008cb0a165144063fa8059c16571f2a684b6b106c5548e84ad52b8bb3"
+        },
+        {
+          "page": 33,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "27cdb1ac33a06b1756e6d56de6681607153295fb0cfdd7e59843979283d72597"
+        },
+        {
+          "page": 34,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8a77740f50a4c7632e9a2c84df35b9e559d0b1b07e4795475bc5643f19f52346"
+        },
+        {
+          "page": 35,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "47f42b62703ed92b24283d62c40e4dc77cdbf552b44fba570adaa73191384553"
+        },
+        {
+          "page": 36,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e43b7221fe5ecabaf5e2c3b0b5011240f7eb19ee98dd1ba3b3bf495382e2a34c"
+        },
+        {
+          "page": 37,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2ce78479d3381072a24da0209c3b1bd0572ead18676bfaa432c7da3d1730d774"
+        },
+        {
+          "page": 38,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b1f65f11390d15e19d97ed8a8f1fd82034d10ae9e6b7ba589d8aeb1f60f9c352"
+        },
+        {
+          "page": 39,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f409a9d995c752c43d3fcefe1874619ddb89f9884bb05046ea5c2bf52b687c18"
+        },
+        {
+          "page": 40,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "794a8dc6c9b1b092ddecf1683b3af2ae3d73bbce99564086d97f0012c8e1f0a6"
+        },
+        {
+          "page": 41,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "95666bac8eaa98d2e15adff2995bccda8526aee6de43b6a40b663f190656d337"
+        },
+        {
+          "page": 42,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f1f5e6cc1028d339956aed91b43ffc258e4649055c1eea2999797ea9a1417d0a"
+        },
+        {
+          "page": 43,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ecf3fad9fd5d31968b8c27923207bd318bb0143fc1d30d8d2ece47e2355b7075"
+        },
+        {
+          "page": 44,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e2f6bf868ec26cee7ad660d0d9811e2949aae7754b4d94658de1bcca6ff9c11b"
+        },
+        {
+          "page": 45,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c68e5b2c8a8c0761ed1d4b9a18126dcf844aa32429076b7c6e106e5d98437a0c"
+        },
+        {
+          "page": 46,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f9d756e89b654583a8ae9e83951a2ed8f5deb6a6391f4cc0172a0a3d1268fe20"
+        },
+        {
+          "page": 47,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d2d4f5bc4203c64e8c08601595882c6a712c58a6563f717a77193f7892353d81"
+        },
+        {
+          "page": 48,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "51ae53dd893f0c543c883ba34121f863c1b4618610acdff286fc211ff21a08fb"
+        },
+        {
+          "page": 49,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8cf498e097b2b21f0aa02963cb35b4f58a9846797980e8dd0413a06a181a8edb"
+        },
+        {
+          "page": 50,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1e69fb5f68cdc231ba973e2cdb3d81fc72a977826199c6a0dfa6bea3578bb741"
+        },
+        {
+          "page": 51,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8633faefccb3b575cc2e4f07d1691be02ee2e8ebeb676754b85ea951ecbc06c6"
+        },
+        {
+          "page": 52,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c4bf13769e972d8cb2ebbb95eb96850fdd776c1896777d0dee3ae62887da48fc"
+        },
+        {
+          "page": 53,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8e12088f052b8d2202d197a267731849e212614fb61081c348293288eea76ae4"
+        },
+        {
+          "page": 54,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5ae0251d2ddd0ebe1586cb2d54e029528e791c9bf52904e037997d78c9c33619"
+        },
+        {
+          "page": 55,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "17baf3486fab73fad5573764c79410dc643730bbb3dd723c336709e74881bd00"
+        },
+        {
+          "page": 56,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8d26214b99187c3b206da56ca9f3e7d75f08f9b6cca90e1dd90a362c6c203491"
+        },
+        {
+          "page": 57,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "86c1a07dcb0fbccd6aa30cef6245c1a967f57eedf33630cc25f087f9c4a017c6"
+        },
+        {
+          "page": 58,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ac5ba9468673b858fa04e60d207553c7c51c623a220067e1f497c07da8b8c7a4"
+        },
+        {
+          "page": 59,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1692edac4c0a162e3139ba3f4036fef6a4c8900ffd9ccbe5c056d6cb3c6d1109"
+        },
+        {
+          "page": 60,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2cc18f7cc6edc36384771cddc630a57e392111def0ed1675f45a7c4fdd561f57"
+        },
+        {
+          "page": 61,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9592df9fcf7c1e87700f204d899875c97ca7feef61f8682e377aa30b36285b2a"
+        },
+        {
+          "page": 62,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f7413c2a5cfa5490788e4c88a350b97254a6e94d3752c1fb18c01d440459e4e5"
+        },
+        {
+          "page": 63,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "02a0b8d12340d5dea186bf0e2b84e8ad6f48c243f7bc5e75599fe9182c24fec8"
+        },
+        {
+          "page": 64,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0c2d6bfd93a9d792ea1068598243057e2da2676887e6f6ce8ca9fb62a214566b"
+        },
+        {
+          "page": 65,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4f6ed8d174a7aa60e4cfad86b09b780c21010bad1b65ea052c3f3284f0d912ba"
+        },
+        {
+          "page": 66,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1dd23374e285bb46bd3c2fe9f35dc4ae7dcfd6f25b84d4d8405fd6cb7004e3e5"
+        },
+        {
+          "page": 67,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "402c3994b76e87cdcb61eea39d018aa3962ab7e28c960d77dbd3a4c1100698c7"
+        },
+        {
+          "page": 68,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a6a85b765b73e715e980befa42cf483244957aa28c6ed65a5ca8385e4450094a"
+        },
+        {
+          "page": 69,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "41300885e688ddaddbf2d57a996f749e9bf6befe1c5f4f397fc69b0d2c219c3f"
+        },
+        {
+          "page": 70,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "754b0a221c4c4cfabe7e5755811dbe1bea83e68108760d47df3a67689bd3f168"
+        },
+        {
+          "page": 71,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f37b8f713af5f09a1195666eb4d913b161f6e148b4fbab9f2f18bb178e4b3088"
+        },
+        {
+          "page": 72,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8415853ab6fc01622f96a3f4818ae97ab4ee41e98cf00d16e4fcc426410d9de1"
+        },
+        {
+          "page": 73,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c94c01a564b0ef7850e53820bfceb26dd0b8f53b45d21149f4383107f5600657"
+        },
+        {
+          "page": 74,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c37743e64c68c60de7382e927d247a3a490f1a3c9abb029d65929cdfd09d46d4"
+        },
+        {
+          "page": 75,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f80bae89dede31360b9b877e8594bb0c621092642a5e64f1413eba51ea8ace99"
+        },
+        {
+          "page": 76,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0329ffeddae5f67b02082aaed8abf269670f724c7f97bd23b42619509618a0c9"
+        },
+        {
+          "page": 77,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "21ca007566f619e87c641eb0e77e219a5fd25e816ce0f8fdc53646c00cdc21bf"
+        },
+        {
+          "page": 78,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c4752c185eb72b95e1578dbf89c326a8ccb590fee86d512cd2503201d9938df6"
+        },
+        {
+          "page": 79,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d804e9014b6bb550d6b4eb45810afb8672c8524aba32e7e13792e0618399ca90"
+        },
+        {
+          "page": 80,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c7c5c85f938e3e8401424b2e04380003203ddd2191454847a596af17cc7b16c7"
+        },
+        {
+          "page": 81,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5fb6d743d31177a5cb1712390aef641a92e2455e04580d16d95cd546f41dc7f3"
+        },
+        {
+          "page": 82,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f2e7ebf15c8fc415df502601acfe8da0ec967fe4a15369a0f447ce784d8c333b"
+        },
+        {
+          "page": 83,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "497f3e4c7ebceb73dd9b9009a4d7f8950815997512abf2b7c9616f23c7eeb513"
+        },
+        {
+          "page": 84,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "122b78c1de4b49f3469a95f01d30e20dfc53ff92c5186ff54555c31f283938b1"
+        },
+        {
+          "page": 85,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e302c5355b21448a624e660af683592c9a25efd2ae87e2d3f1c44412bb4c28a5"
+        },
+        {
+          "page": 86,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e18e5d6963954588c63492e569089f62d9583dc76ca6957744c0ece3db6d9e6a"
+        },
+        {
+          "page": 87,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "bef6b87bfa4dd3f975efde5920bcdafcf8b9c81b9e603d5153af5dac74998d30"
+        },
+        {
+          "page": 88,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6381ff3d079998ad304a6a7ce2937cc728ce3f66cdf2f09a5e2480b3a62e6021"
+        },
+        {
+          "page": 89,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6a98b048a1eaeda981bec29225cbfabc053b7e04bdc4464b323a453666a099e2"
+        },
+        {
+          "page": 90,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "35e8b8cc87e2c27eda0aef86e079d0d91b3f52c2a3f4d4d74fc2c078fd4f22a4"
+        },
+        {
+          "page": 91,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "14df3d74a41788f0d071500477cf31fad626b73e1e1af588d64e000da1ce1888"
+        },
+        {
+          "page": 92,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "052faee5bddbf3affb7eaba7f567aabf18736d8ad4f72fa789bf0539d807b6c4"
+        },
+        {
+          "page": 93,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5b165005c17cc830c051ee5d5d13ce74b9998a2fdb45308c9d580043f1618194"
+        },
+        {
+          "page": 94,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2ffce299b9260b85287ab7c49a245ba1f3a27009c9a2e7a119fae68689cb7353"
+        },
+        {
+          "page": 95,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "fc96d683a234c9292f35291775b57e85455673508c88dcde27d551458588ef7f"
+        },
+        {
+          "page": 96,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "67133560be1778ef3e6edb048a4cc0e2a5ccc7bc46f5c3ccbc81fecdb88d7387"
+        },
+        {
+          "page": 97,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "62bbfec00b05a285e48974fc14ecfcb236f6245a1401f05977aa1bd021693b72"
+        },
+        {
+          "page": 98,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a98475bc80e1846e34021036f38893e8743e8caaf903f38087fa494dcf290363"
+        },
+        {
+          "page": 99,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4f479882eac0f3f64379ea130be4406e761976b205bc67ce7f8fa47e48317ef4"
+        },
+        {
+          "page": 100,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7a735eed97d5a8f3cda72161b538e5d9140dd95c0974f50a99987d1dd60694da"
+        },
+        {
+          "page": 101,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "28f1e9dc04dcd15cc1b103afa180d6d3190a15e9b071e07a7d2dfa4e38ae0058"
+        },
+        {
+          "page": 102,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9d02c90ec6e467aba73582df9059cfa32706113d2489134029572d56f2c2f6a4"
+        },
+        {
+          "page": 103,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "dacc065616dbebb21640a16123ebf1cee35c3156c1f3d38016f94f91f7b6cf65"
+        },
+        {
+          "page": 104,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "27a85acdd8fa5e72b0116b1c0ce9ade044a8e6be96afe58b7a017b3f6b2925e6"
+        },
+        {
+          "page": 105,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ab165104d504cc10fda75b9b4366c6957df28352fae95161054daab0606930c5"
+        },
+        {
+          "page": 106,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "342d225292150fd77eb7b9dbef6cebd9b0c57f62d9e6f4e3543250d785d6ba24"
+        },
+        {
+          "page": 107,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ee0237a531ba08345c3258c7a306da43769d54333254a96f14f62d9be9cda06c"
+        },
+        {
+          "page": 108,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "625e69bf8a39af50b07db17be7aaafc121c6252f7f4b54eb61f2b00379dc98cd"
+        },
+        {
+          "page": 109,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9475d28c370ea6340e56c933adcd18f554e502c396bf1a18cb07eea4464b7587"
+        },
+        {
+          "page": 110,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "504b7c01ddf26abdda12399c2f141f34754b63c6f04d05965befa54ef985c7a7"
+        },
+        {
+          "page": 111,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "231838b6ca3cfbe0ffdd8905010a3b2221dedcd1ff4ebcf979b7056a0e6b45e3"
+        },
+        {
+          "page": 112,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "02c5ac50e3ed5840bc4649483267ac0dad2907cdfe0f844e93e89662ed048abc"
+        },
+        {
+          "page": 113,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3ab737c474101c3d7b4f226cd4e6a1c773654c98cb6ba16c2a43c491099093d6"
+        },
+        {
+          "page": 114,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b9a62b2a943d1c91872d92339bbc2dad36ebb72dd1447b03af56c5f49832d633"
+        },
+        {
+          "page": 115,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "198862b6a11362fda465b3ead35c878784ae3e1b849689836d362681b080539c"
+        },
+        {
+          "page": 116,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3b3704488320230247ba9ea94ebab984989c05fe4b1e34c11699d14640fdfac8"
+        },
+        {
+          "page": 117,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "24d5e71f6b8cb1cf5bbfba2d95c051d6eb15d8aaec1a2a990cd92f339abb64ae"
+        },
+        {
+          "page": 118,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b0e120bce16185b3c59c10423501769bb88f7b34758229be8d6f09bf1d943e97"
+        },
+        {
+          "page": 119,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d5c8def04356e86930ad3c6e4cad99db292d78461ee52581f65512d4884b58d1"
+        },
+        {
+          "page": 120,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "fd28f34cf3e8ff2535055c0060ce084933faacee44ed01119e808dd5657c9004"
+        },
+        {
+          "page": 121,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6400f13e14f0e5615ddd8bd9c7a1c86558cc50bd9f67a1759880f3facd703bd7"
+        },
+        {
+          "page": 122,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5a116976e81e2492792a791dfe2c874a95d2d82630e462fa9cbbd13f32f73ec6"
+        },
+        {
+          "page": 123,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e5cd33be6872ecc1ce96699f2666eb55a7e3df58e21e937e1ca0ded0a9f2442c"
+        },
+        {
+          "page": 124,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7f11d9ffbc791b5346715cee73326bbfd457fa0cfcc71eea647fe969e830b9d8"
+        },
+        {
+          "page": 125,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b35e4858ab68c8f1da8f3e565738c97548469a8ad78ffb6d3903cd72726344e3"
+        },
+        {
+          "page": 126,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a0a92ac5187132da967666fcd69a6d8d3d74f8b65386f5a50f750d411392725d"
+        },
+        {
+          "page": 127,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "835c4715a743e6a76781a4a0c5bb1ec7244bf6a1ffc63bca7904cc5c8a5b4e0e"
+        },
+        {
+          "page": 128,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7a08c1b6032bc3ff35dbf33487f6b455c05657c6d5400afe8f8794f143b4295e"
+        },
+        {
+          "page": 129,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7cd7276bce691a217647228ce30176065543b06d1497d46ea35c9956e415fbfe"
+        },
+        {
+          "page": 130,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b9d5f482190c63c5353428a430b51e223fe87dd5230b8260f30cadaa818c5bbe"
+        },
+        {
+          "page": 131,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9df38ab3a9c384ea9e9e27a98c624de476ceff67e189bccc6150ff91d3fea237"
+        },
+        {
+          "page": 132,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "887d0f490d56cf72867efef08ce3cb751e8cccce3334b82eeb1bbad369b9136c"
+        },
+        {
+          "page": 133,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7ae39fc6aceb92148ff61f330642c8a8becd2c5ca033e50b26218a07d2ae789b"
+        },
+        {
+          "page": 134,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e0c72ff742cc51a68d8f86ddeafb1ebe07f28037e6f92aeb9e64da2cc161d450"
+        },
+        {
+          "page": 135,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "27aef5942dfd9ad11f085d4a7eaf9ec124803a5e44389489252b166ed3063e17"
+        },
+        {
+          "page": 136,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "910be539cd6e05d4a73fe3f1afd7a160106ca91e7aa667e91e74e124b187e05f"
+        },
+        {
+          "page": 137,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "cc5604124dcf3d279d9a732e3836a5a677b0d60ac5cfeadd82c3564fd989c006"
+        },
+        {
+          "page": 138,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6a3fabfe99d950437cababb5d23ddd3bd9b6549bc66736dcf5457519450b6626"
+        },
+        {
+          "page": 139,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a80eeb1b84a4a216e090f68db48d0bf5aad23ddb421fcd882b77a964afcc2d91"
+        },
+        {
+          "page": 140,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0fc4899655dc984629755c03078eef49488a3ad60f9a90f5e84fb5cb12a13048"
+        },
+        {
+          "page": 141,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ee434b7f6c2a87d424c3e592003a27e149716e514db9df322932d375186e24b1"
+        },
+        {
+          "page": 142,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0a47a4af0d9780f6d337163bd978ba735041f830a58207426bf740696155c9f0"
+        },
+        {
+          "page": 143,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "897e0d9c592df62bdcf2e242152da7ce8126c96837fac9af4ede94ef906a14f2"
+        },
+        {
+          "page": 144,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1f4193a59ec5d285d0d02747a268f27fb517f3c713b02275906559f6a26015a6"
+        },
+        {
+          "page": 145,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7eb8f757887f4c010739e75d56544aceae8314e8d8e3ad9bb59bed8822c2ab63"
+        },
+        {
+          "page": 146,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f3ecb1568d6084d2389f739b19586448bfca9b407bb319b20d779ea7751d2cfc"
+        },
+        {
+          "page": 147,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "77aee1548514460d66d83649f200ee3a8141e478fe6db106725f0920a67eb318"
+        },
+        {
+          "page": 148,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ceef0cf18d5be16d984d372c3598c2e894b07cccab09483ae568ce496b703acc"
+        },
+        {
+          "page": 149,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "dd8e286293bbfc5123da30113fc72478dbf11464b71b98f4d1bfd1a54a6f191c"
+        },
+        {
+          "page": 150,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "05922e8f22aa7d355ce5eebe631002796ee53f6a5311c857cbf11b00323a0f97"
+        }
+      ],
+      "visual_review": {
+        "contact": {
+          "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-official-contact.png",
+          "bytes": 3900819,
+          "sha256": "b7e1d059091738347eb3922fc3bc206f07b2916a60f1b9882f636bdf2bcbd2ff"
+        },
+        "critical_pages": [
+          {
+            "page": 1,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p001.png",
+            "bytes": 92392,
+            "sha256": "76726c04281a08b04bb54c590c34313649ae7836d225d223cf567f3f89b079e9"
+          },
+          {
+            "page": 23,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p023.png",
+            "bytes": 32366,
+            "sha256": "7bfe13c3e7a8e07663809fafe32ce91ccd2bc464b20a623797ea68f1afca4124"
+          },
+          {
+            "page": 24,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p024.png",
+            "bytes": 93997,
+            "sha256": "d0fc8e489d8d16c70e2eb755503e3f8376724fb4d6f13736a6101415fb2f06c6"
+          },
+          {
+            "page": 25,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p025.png",
+            "bytes": 59377,
+            "sha256": "3abb3e6874fb4a0f24c748b7d8d0205005acaccf7e629a5aedef9a99643af2b8"
+          },
+          {
+            "page": 79,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p079.png",
+            "bytes": 48685,
+            "sha256": "feecc79924b26b01bcb8cb03c77b8a9562a0c3e186782d18b4eebafb3a52c268"
+          },
+          {
+            "page": 80,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p080.png",
+            "bytes": 149441,
+            "sha256": "bb95e18ea2bc003527086e7d40497d57bfeab42bbf63fd8c338174a31d5448fb"
+          },
+          {
+            "page": 147,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p147.png",
+            "bytes": 152243,
+            "sha256": "b0c428fe02c5a692af039e679a29afb0f2dda01cfea7d3f7662b1823dc7b7c8d"
+          },
+          {
+            "page": 148,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p148.png",
+            "bytes": 144259,
+            "sha256": "2496b6b79124545c731ec70e431b278d0bdb7464186c88516f5f1c6201665cb5"
+          },
+          {
+            "page": 149,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p149.png",
+            "bytes": 138536,
+            "sha256": "ac3d7afc5b8036fb74c7ad2f296d63d41076c06c8acef73485acd70d4d0bd268"
+          },
+          {
+            "page": 150,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-12671891-B2-p150.png",
+            "bytes": 57503,
+            "sha256": "54472dc36cac4b2b6da38afc94c2331f3fa3069d8fc02fd1701dbc88a5f0b576"
+          }
+        ]
+      }
+    },
+    "US-20250110574-A1": {
+      "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-official.pdf",
+      "bytes": 11662606,
+      "sha256": "101dfb430f563681093aef888a5d92865f6ec4803f37de30ec2f6c5d40f4baf0",
+      "page_count": 130,
+      "drawing_sheet_count": 56,
+      "sections": {
+        "cover": [
+          1,
+          1
+        ],
+        "drawings": [
+          2,
+          57
+        ],
+        "specification_and_claims": [
+          58,
+          130
+        ]
+      },
+      "decoded_raster_set_sha256": "1e89a76a0dd2ca12426e34ca1121fa0cb8d3b42aaefd674faae189c25f105de0",
+      "pages": [
+        {
+          "page": 1,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "cf9694f3c344cc357b02c426f675e631204874b04a4538590943ccb6496ebb08"
+        },
+        {
+          "page": 2,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9a28e2107d0dc09264865efc0e6ddf7bfde59382e45d16b6b3960f4605c9e04c"
+        },
+        {
+          "page": 3,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c3f3722a1edae1867cd0cd3098fc77001e037d0eec78f078e488c175e67acc54"
+        },
+        {
+          "page": 4,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6c4214e208bbeca1c14162128c3334ca48e255b956e45d0bfd462745d8c75cd1"
+        },
+        {
+          "page": 5,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "54a30c6eb88adc23469bdfc1273854459699247ce6e164492bbbf8716777bd3d"
+        },
+        {
+          "page": 6,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "224a7abc06f5aefe076bc8cf4fb73c9f1b33f831703a667fabf0acd16aca2b55"
+        },
+        {
+          "page": 7,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a2633a3be8b171fce65e231a6951cb131c6871be279bf1ac4d32a2e36bed2fc2"
+        },
+        {
+          "page": 8,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c2fcc8e315d8dd71176c86396bc7e4177d59c9ac99e7031d3209961c61c7b2a6"
+        },
+        {
+          "page": 9,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7c9d94d87d7c9d1fae8f0837549fdbb91f812103e6c8a4fc7a6d317be34da867"
+        },
+        {
+          "page": 10,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4b3dbb5ba911541a948dffad5d18883b0cf33a6f7876df8a2a257e1b8a658035"
+        },
+        {
+          "page": 11,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2b04093f17fe6b5e7c2905497e0d32175011de17f3d46d70a51ea6d029e1aefb"
+        },
+        {
+          "page": 12,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0aca1ea375f76bb3e2b324d0efd01f36aac4ecf35e78a64cb38bb63bf73aa92e"
+        },
+        {
+          "page": 13,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4d539f7bb67677bc302400479745dd9075ed6bfc4bda8f46455b401a0c0f8e10"
+        },
+        {
+          "page": 14,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "295a2fee98076067c7af5aedc299badbf529299cbba70dff657cefc21b87af45"
+        },
+        {
+          "page": 15,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "810c89224486405db9a2dc3cbf8c30906a796d8134599f9948e94af7393c2771"
+        },
+        {
+          "page": 16,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3ebcad5ae2289c1b055bd0af39cb6f1e4fbae590e54b1cc242c88b1c295043f3"
+        },
+        {
+          "page": 17,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a751102464830cdde2909806df20e85592aa8bf4d11fd045637f7a67f8d59590"
+        },
+        {
+          "page": 18,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8a054d038ce9e3097136105815b164422eb533d2bfe8e291c22eda2b8463e22c"
+        },
+        {
+          "page": 19,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1bddae412516faa6d32324b370851496981a468aa73d36a12c1879a593283a3d"
+        },
+        {
+          "page": 20,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d3f3bcb801c15c495fc9a63403382aca22c1568a9f2e5abbfda54e2e474c13e9"
+        },
+        {
+          "page": 21,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7de055e17c644fe7376097acebef32d78a618d487f5389e83f52a41f88a1a149"
+        },
+        {
+          "page": 22,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "439e9cf21bc48757b7a11ddc1e164b84d719950854d6faeaf9d03dd0c43a9639"
+        },
+        {
+          "page": 23,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e7e65986e538e27ddc3c78c70d007d3c86626ebd625b50bdc5b3d0ae360fdd25"
+        },
+        {
+          "page": 24,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "50613800be21951d032d966294ee3c86869580167398549ce02a81dd05e8e6ba"
+        },
+        {
+          "page": 25,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ce875c530d57978164b89656df0b83bfc8e54d8b78de6677b68d84945fb0e335"
+        },
+        {
+          "page": 26,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "bf0b652f734753538dcec5c60168360d00a5444f6f246eb479ea27559ebb4625"
+        },
+        {
+          "page": 27,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "dfdea0ce330cc502f8ae281814ea7e342745cc2468693e1a8bd2cb636cd6039d"
+        },
+        {
+          "page": 28,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8a030142b64ebcc5822f64d8f8b24fb14f72ceebcb8dc67f4485e4b08af05bb3"
+        },
+        {
+          "page": 29,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "82c2b08d22431e1503a31433f54f286b1855d9e33a4a560fd4d06c65c5588690"
+        },
+        {
+          "page": 30,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e80012c302cd5dcb2dcbb3808ccce5e3a2b4ed64ea2c29ed510928c370ee67b5"
+        },
+        {
+          "page": 31,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d92ea1992ddeced358083bb997f7061c6e684de4b62093300f4b0bd43c5e8ec0"
+        },
+        {
+          "page": 32,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "702b81cca2e6c9798cf78d1fefefc1564941062486595d67396abad87d3dc178"
+        },
+        {
+          "page": 33,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "43b659e2a5a757684037801db209a3a0819ada616ab92ab252123ed4e78a76b3"
+        },
+        {
+          "page": 34,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f12eb4dbc3ac88ed607553bc121be61ad9fc48f42c42972fce421a60773aac42"
+        },
+        {
+          "page": 35,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f0f2d74f9dadbf60998301bda1fb3a1057dee8e13146961e6b7e369fb39dcd20"
+        },
+        {
+          "page": 36,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "fac3d8162887e16ef7cb54aace61f623db6ecbe7813090c39c82e0acf56251b8"
+        },
+        {
+          "page": 37,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0cc7a7993197c15a75b9bbbb2fcaafc383ccc49feca88fcff710625c78203c8d"
+        },
+        {
+          "page": 38,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b649c00b0afc6d48873c29b64b2b3051378b0cbba4cc501681d1487dafe75b4a"
+        },
+        {
+          "page": 39,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c3ea93d6820a24c1057da87d7d3c1b2b27d0b14e5c83e684a63664068a806b5e"
+        },
+        {
+          "page": 40,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4c9404a2fac5dee9cbae38dc3f4313912ffa3586a4134b3f45bb756ae8184415"
+        },
+        {
+          "page": 41,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "82342b4aad53a2fcfe1617be922c439eb1ae9c9abbc7acb37233f984b4693609"
+        },
+        {
+          "page": 42,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "858ae6b9d7af7a5f88c799a5c793845e3616f08cef3ab6b8a92374502f9dde25"
+        },
+        {
+          "page": 43,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a131bf79aa63422f2ab3c2cc26a5a6720692e1132920bfc457adaa84ece77a29"
+        },
+        {
+          "page": 44,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "10eccd36bea10dd9f70e8707da1d035750ab630aa35e3de2259d4931765a20e1"
+        },
+        {
+          "page": 45,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "bbec17ab1d5efaa9da418f6db422af8c65e8e6706820de5c542f8c2fe5320b26"
+        },
+        {
+          "page": 46,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "208e87610421cff83d972342e5587de52dd02d48aaad4436f1805ab552c69c40"
+        },
+        {
+          "page": 47,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d9a27efac0f74c8538b7fc51425892606a8f200d51fbb3c68f5d1ad1f5a3a3e3"
+        },
+        {
+          "page": 48,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "48912b6ee63506db357413ce08ca26e4d0c3e02d67806c8725808578c287cef3"
+        },
+        {
+          "page": 49,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b888dedf88f2574149c171be4defdb048ffd6ad89dee4876f60147f6d893adb6"
+        },
+        {
+          "page": 50,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "43fc902af04811573eb804c0b24b5bc52e0144f03ec74073ca0c391245406f0c"
+        },
+        {
+          "page": 51,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e0fd8cad6f79c95e1295b3de59e517469d257b7833b77c86bc21ec5f3e151cd9"
+        },
+        {
+          "page": 52,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "521aa9db951b3448dabaf79c6bc4355a500db5fedc185c0fd3fc3a6ab9decfcc"
+        },
+        {
+          "page": 53,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2b01d987e74c7c194c9beabe571ce11f016ece9c391e46bd499dfda815ba19ed"
+        },
+        {
+          "page": 54,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "51af4a3b4f1b902cbb9ea0a06c1fb3c5c59371fd00c779ea0ed97d0bd2199c67"
+        },
+        {
+          "page": 55,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "94d71a3b60a77dc8fc2d6ca72e0307deb1e3a3587c18302dd93eb14a99653c1f"
+        },
+        {
+          "page": 56,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "30c69cbdd0394df01d15def1b5b7099b3a58d03c086a15cf801717d31250c696"
+        },
+        {
+          "page": 57,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "caf26facf72daaf6f1772f12f9e518cc4101e457e9b88ab181c2eef8f66d2763"
+        },
+        {
+          "page": 58,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "bb69d07463635914f6cc4e901735890a7a4f58ae91cd3d88f79a7f8eb596f101"
+        },
+        {
+          "page": 59,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "500fc1258e10034412ba7d6a711a43a9f860c1101880aa9cc867dabe42369890"
+        },
+        {
+          "page": 60,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a9462b9787a2ae6ca81f09e83617485c05b845872c7dc10bd0ce4757d4b49833"
+        },
+        {
+          "page": 61,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4ad1a147ca9246365eaa399dd1b0ec2b83161b8adf1d001b6e491bfa601ac2c0"
+        },
+        {
+          "page": 62,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "10d9614bfd63f5b12ea83ecf591be8c6f7c651030649de587dd6abeb5fd5da5a"
+        },
+        {
+          "page": 63,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3ad1113f5e778fb30fc2587c7fc079b995639191d0ef2454296e83efbda74be5"
+        },
+        {
+          "page": 64,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "885d1b67b6378a8da1308ee8f16a4bf6668bb024a64f0ac5ff043b8a7b0b950b"
+        },
+        {
+          "page": 65,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4892d6a6ed14e87ded41403db618ccd0c7f07a1c855d8d3d7dcf2d60f21073c1"
+        },
+        {
+          "page": 66,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "799421bebb060423f28c144009d68c449880b200df53fff06f05214f1e6caf31"
+        },
+        {
+          "page": 67,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9c3a868735bbf6d5cbb702cc15656388da6f010c334df08b1a47a2027b997791"
+        },
+        {
+          "page": 68,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "81458dc19d13516abd10a8c39475d371d06edc3032f75f0af75af33626f33365"
+        },
+        {
+          "page": 69,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "39b1c5ceaf31886535b104b54b60058c6fcac5b92e4910a1cb5e979ee820a5e2"
+        },
+        {
+          "page": 70,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "51813c73d1c470fd16b21fd962b47c544842ff5fd03eb0313ef4ed1575731452"
+        },
+        {
+          "page": 71,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "883b5ecc215d25eee9e42d0e92bfc528672d44ddad07549330dab10b857da8a9"
+        },
+        {
+          "page": 72,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "907d8689cbb18e828e8da7c8a0d4627c2195c239ca6ed94cb900eb9500a43967"
+        },
+        {
+          "page": 73,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a39427b166330298b06e970c0ada68db9e7ca3901445755f1bdf57018fe59ef7"
+        },
+        {
+          "page": 74,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "021bc5d987e942b9ffe83ad6052787a1bbaefb6246ebe4f6f1bc3a8c07200f64"
+        },
+        {
+          "page": 75,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3f420598447d5899b855e54e9abfb1ea2226b6c83d41410a36b9fb05f98bde8b"
+        },
+        {
+          "page": 76,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "210563ef06d8be7b683a8c5ddf9e583ebc72bc1da48d4f848d8443091cb2782b"
+        },
+        {
+          "page": 77,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9b56ee140dc4e86659b4ecf0df39cfe1dc7116e580a0dd6e8a56ce576e1b6127"
+        },
+        {
+          "page": 78,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "546339bceb20171612e3ee614f88897928d9293066c0d0759e18e23b07e8dfda"
+        },
+        {
+          "page": 79,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "68f78f8fcea542a6f77635d809ce2d6d75101773704e29bcd82ea3650cf2775e"
+        },
+        {
+          "page": 80,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0980864207e7332f16e2669a76929d9264d89485f900d13cddfec1ee9523d04f"
+        },
+        {
+          "page": 81,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2b1f21d2e8a08808ab402bdc49688b59e7cf795c8b000cdb562cca5b4b1f5669"
+        },
+        {
+          "page": 82,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "23c35241a87f13ecca706def8810eaa1b01fdebeab10bf1b05fda2f97dde5c2a"
+        },
+        {
+          "page": 83,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ca94729fac8fb0d76ba2614a126aa5002152196ddfe06628979f92f074eb0095"
+        },
+        {
+          "page": 84,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9069439c9eee6f04d75466ca7ed4c60f92e3a412f1b93f51302b33c0b2d9118b"
+        },
+        {
+          "page": 85,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "03334d9d75a614cd441008f533ca4033220f20f74c903fdf22aa323860b88062"
+        },
+        {
+          "page": 86,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2c3530d2029422dc7b17efcf86dd6ce48d986c25e94d6bc73916f4d648ecf7f2"
+        },
+        {
+          "page": 87,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "43c403fdc8b0bb2fbd2cfbe7e9d62754215a52ef9c344050f0074baf8bef66f6"
+        },
+        {
+          "page": 88,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9ccdfff8da3fd584e60982730984d1f94038fe9f7be595357a6786d7a4655c37"
+        },
+        {
+          "page": 89,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "def1f4b5a64a666cc7a344e584b689e7fa2fbdd965efad5a09053bf20edc7dc2"
+        },
+        {
+          "page": 90,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3b77fd2bf96dee6491d44f9e80338fbb5c9d56dce174d2b62ba4c2bd509322f7"
+        },
+        {
+          "page": 91,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "01418a4506d8b1ca72c6bf158ca610686523c77c1efdecf40203d57af746519e"
+        },
+        {
+          "page": 92,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "62441df50eed372b2ff2df0c22fa1b6e3a9d3fc38ab64759ebc3693fdfc45962"
+        },
+        {
+          "page": 93,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "bab2cc30619602b06e78f8479251762d8f834ddef37d661819e7c2cb5c21bcdf"
+        },
+        {
+          "page": 94,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "33319b0d21052071711002f7737b45c61aa0c14c2ff1c457c3ca6d87a3cd2744"
+        },
+        {
+          "page": 95,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "becfc2754fc1e00f2102b306e7f2b14a50784454d31bd0ee95cfeb12999c7c6c"
+        },
+        {
+          "page": 96,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5e574a241fbc2c688c3f18a4a018b6b753829f2776aa8ce29e41ecac33994476"
+        },
+        {
+          "page": 97,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7d7f657fc531e9ea582358d4b6fa1c32840021faa84c4d6f1a344126df62c5fd"
+        },
+        {
+          "page": 98,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0aaf13ca66f899c9fc14ddcb73a703d36fc8a92d300f5f46427f4d85ed359f06"
+        },
+        {
+          "page": 99,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "916cccb8ef7206543fa7d840a40bf7b43386bd041f37bb4c0913abbb64b11f4d"
+        },
+        {
+          "page": 100,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2c9400adb91c8b85f24078c78ea9217d509b1c2535d5188590cd797db5a2b9ed"
+        },
+        {
+          "page": 101,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "29029a20ce03f8a718337c4e6df8c54adeb7853b8de60366a388d460f1dc32fe"
+        },
+        {
+          "page": 102,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "bb349d6819608d3afe7f685b4bce7551c843f621142133281342649e4aab650b"
+        },
+        {
+          "page": 103,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "fbd0c6a7c56bd68d410dcf2ed93ec4d5993456ef6e67a67a46236a5c3ea838b7"
+        },
+        {
+          "page": 104,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d1c7bff5e283349560f817fae33d2c0c941317648cc0038acc025d25c4f8a833"
+        },
+        {
+          "page": 105,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "540974053b4a759df6f992f1811c9c99b3d3df47d836144a871553955e4a1406"
+        },
+        {
+          "page": 106,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "77d96429c66d43b985c9739223474a7dbc6d30f6c1e56bd668f9d22897bcdab1"
+        },
+        {
+          "page": 107,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "26eb0e4b8c37248f9ff9c4f37f6e183eaca1334d9ec275a67f89e51064ca1057"
+        },
+        {
+          "page": 108,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9ac5fa7a7b47af5f5b1bb335cd27aa2579046c0cfa8c885a0998c687d27cfe87"
+        },
+        {
+          "page": 109,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4385a64c19664fd15939cf7903fded7bae0edd57fc1cdd091d6ecc8a016ea63a"
+        },
+        {
+          "page": 110,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4fc2b111c3b76c0669d2449e2027964b3727be44348cf3df3aa2834e96d0e9da"
+        },
+        {
+          "page": 111,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c1dbc38c927097f94c1b00add5675fde9cca130c45422d1d3cd6954542dc4588"
+        },
+        {
+          "page": 112,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "612005a36e78b0190ec5a9de57b549b97973adf97c991ae3d92320e36591434d"
+        },
+        {
+          "page": 113,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b50244b751a32e6af2a2ab188bb932deb30375ad31da75ffefeffe71fec3eb22"
+        },
+        {
+          "page": 114,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "12771c934ab0b6eb8226408cb6c62d6aaab2a657bbf3b4daeacaada1950b9684"
+        },
+        {
+          "page": 115,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0e185ab79f73ae9ac3c7818272a8e8b627684aa5b9e58d6f9a857caea7b2ac8c"
+        },
+        {
+          "page": 116,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0fcf4f8868f884840f6a0cf84803ea3d9934e8f806dd3bcb49d778ad9f5043d3"
+        },
+        {
+          "page": 117,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8235f5410b7a84d5bb6e0348bce672f302a646f7aac0746aebb68fda67e767cb"
+        },
+        {
+          "page": 118,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "21b1f96ae3855714884ba78dbce18a0bf70556e857436a964f62f565c016751e"
+        },
+        {
+          "page": 119,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "315c485fceb2d251de1f14324b14c1f1c98aae8f59af5438ab9f10ef70a5ff7b"
+        },
+        {
+          "page": 120,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9882037df674a5bf63e13de90978ef2605173a93d1daf50688d070a47fdf09d1"
+        },
+        {
+          "page": 121,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c08d4c2838b05f780dc804b87a1be983c342d718968fe7391c8f90d2aef7b76d"
+        },
+        {
+          "page": 122,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "671cf3342d0da21484aaee42745febc17e476abc8eb6719b4e35397eb5516980"
+        },
+        {
+          "page": 123,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "db41d3d97448c234ef1891ef44c1bd5cf9cba83a15ed10bb3a8cf5d1276848cd"
+        },
+        {
+          "page": 124,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d77cdbf8d888204d4827ad7317726dc6dc9c736860da3ca81893460a5d9a416d"
+        },
+        {
+          "page": 125,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4780d4355125de3399dab457e26de1a5bfaf017aefbd39c1003c9afb3cbc7132"
+        },
+        {
+          "page": 126,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8d25cc97e4e24306137d86e6079ae1e540c42e4e61172721ce9339ae5bf6c9b4"
+        },
+        {
+          "page": 127,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9a3166eb171b1d6f38ca5b199911568ce9ae98eadb2abaf89a1fad335a6c84d3"
+        },
+        {
+          "page": 128,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4944fd36b5ad7f2e0ca631bc1b521998fcbc3025c58aeb8ca73bd7b557c6c4de"
+        },
+        {
+          "page": 129,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a00aa174dab468af0f240067b6ea879f2a1b0117fb003d5f88973e0ed7899971"
+        },
+        {
+          "page": 130,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "bda3af8b519f75d9f7a78b568e26b1d89b7b9dacd49809d41f9d93a49ff903d6"
+        }
+      ],
+      "visual_review": {
+        "contact": {
+          "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-official-contact.png",
+          "bytes": 3326828,
+          "sha256": "44b30ec2b020d4b25287f139730249489dffa4a3ada8722cd3d3f4aa1be896f8"
+        },
+        "critical_pages": [
+          {
+            "page": 1,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p001.png",
+            "bytes": 79729,
+            "sha256": "ea3cf017762762d472c72c7e6de3a574872d914b4de2a62a51ea222060907f6a"
+          },
+          {
+            "page": 2,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p002.png",
+            "bytes": 94044,
+            "sha256": "e30512885cd74920a163f9f7c94c454d9e84b450a2b44294307416d4428e141b"
+          },
+          {
+            "page": 57,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p057.png",
+            "bytes": 48724,
+            "sha256": "eedb5c094061ebd560ee60941250d79ddd62ffb16c3081341c7d183a309507e9"
+          },
+          {
+            "page": 58,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p058.png",
+            "bytes": 149804,
+            "sha256": "25f62e31a86c7eb2e7bde453ad936457a64dd6e04e8e2faaf19a73b86571fd7b"
+          },
+          {
+            "page": 127,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p127.png",
+            "bytes": 162287,
+            "sha256": "d6e70d59d65cc759671b408a248048a42b9a331406fc1f35968de8fee7b07ce7"
+          },
+          {
+            "page": 128,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p128.png",
+            "bytes": 160010,
+            "sha256": "479c728a83593105148d97648b4cdd25fa17df33c28c35b33698c90a8386263e"
+          },
+          {
+            "page": 129,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p129.png",
+            "bytes": 140647,
+            "sha256": "0b0410160418d7b6807bd8a94e0feb08419e653da220af9e052fb4e9b288e2af"
+          },
+          {
+            "page": 130,
+            "path": ".planning/quick/260717-patent-generic-family-95155833/source-review/US-20250110574-A1-p130.png",
+            "bytes": 134292,
+            "sha256": "652ad37cd7b8a427d2bcfb4cd75e3067e00e6bf73ee39d24b54845bac7a7a7ba"
+          }
+        ]
+      }
+    }
+  },
+  "raster_intersection_count": 0,
+  "claim_count_cross_check": {
+    "US-12671891-B2": {
+      "total": 42,
+      "canceled": 0,
+      "active": 42
+    },
+    "US-20250110574-A1": {
+      "total": 157,
+      "canceled": 135,
+      "active": 22
+    },
+    "effect": "the A1 publication cancels claims 1-135 and retains claims 136-157; the B2 grant issues 42 claims limited to the configurable hardware-button settings interaction, and neither claim set publishes an ordered optical prescription"
+  },
+  "mathml_object_count": 0,
+  "tagged_html_table_count": 0,
+  "ordered_optical_prescription_present": false,
+  "drawing_transcription_permitted": false,
+  "numeric_derivation_permitted": false,
+  "cross_publication_numeric_borrowing": false
+}
