@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "family_id": "100215250",
+  "classification_publication": "US-20260177728-A1",
+  "current_frozen_cohort_roots": [
+    "US-20260177728"
+  ],
+  "sources": [
+    {
+      "url": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0983ed7859a2af0a/US-20260177728-A1.html",
+      "accessed_at": "2026-07-17",
+      "scope": "US identity, application and provisional priority"
+    },
+    {
+      "url": "https://ipvietnam.gov.vn/documents/20182/2434205/CB461A1.pdf/58b76294-dcaa-41ca-ba4e-f05801f6ed93",
+      "accessed_at": "2026-07-17",
+      "scope": "official Vietnam gazette record on page 199"
+    }
+  ],
+  "family_applications": [
+    {
+      "publication_id": "US-20260177728-A1",
+      "application_number": "19/422716",
+      "priority_date": "2024-12-24",
+      "filing_date": "2025-12-17",
+      "frozen_cohort_membership": true
+    }
+  ],
+  "external_family_members": [
+    {
+      "publication_id": "VN-126009-A",
+      "application_number": "1-2025-10121",
+      "publication_date": "2026-06-15",
+      "filing_date": "2025-12-23",
+      "relationship": "source_verified_shared_priority_title_applicant_and_inventors",
+      "shared_priority": "US provisional 63/738684 filed 2024-12-24",
+      "frozen_cohort_membership": false
+    }
+  ],
+  "priority_records": [
+    "US provisional 63/738684 filed 2024-12-24"
+  ],
+  "search_boundary": "Google exact patent wrapper returned 404. PatSnap exposed the exact US publication but no family table. Public exact-number/title/inventor/priority searches found the official Vietnam gazette record above and no other source-verifiable publication in this shovel.",
+  "queue_policy": "The outside-cohort Vietnam publication remains queued for later independent full-text verification and supplies no values to the frozen US A1 root."
+}

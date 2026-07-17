@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "result_set_sha256": "5523856b03f9ca42d312e2f0a80dfb55357564f4aafb9708450e21d91f64164f",
+  "ordering": [
+    "nonterminal_root_count_desc",
+    "item_count_desc",
+    "parser_layout_family_signature_ascending"
+  ],
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 134,
+      "affected_items": 134
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "62524045",
+    "root_id": "US-10775589",
+    "publication_id": "US-10775589-B2",
+    "layout_signature": "19719169f4ef5125fe0458d09371430b1d5fd76beea22c87a2973f8a238ec87c",
+    "raw_document_sha256": "c6d4c09d9645c9d874c1fea89c865b1b98b4abc40ecc9607fbefa3dffd62a8ac",
+    "title": "Camera optical lens",
+    "affected_roots": 1,
+    "affected_items": 1
+  }
+}

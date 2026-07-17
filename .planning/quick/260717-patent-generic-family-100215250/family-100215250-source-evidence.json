@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "family_id": "100215250",
+  "root_ids": [
+    "US-20260177728"
+  ],
+  "publication_id": "US-20260177728-A1",
+  "application_number": "19/422716",
+  "owner": "LARGAN PRECISION CO., LTD.",
+  "inventors": [
+    "HONG; Zheng-Zhi",
+    "FAN; Chen-Wei"
+  ],
+  "priority_records": [
+    "US provisional 63/738684 Dec. 24, 2024"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "outside_cohort_family_publications": 1,
+    "related_application_paragraphs": 1,
+    "background_paragraphs": 2,
+    "summary_paragraphs": 6,
+    "description_paragraphs": 74,
+    "drawing_declarations": 18,
+    "figure_panels": 18,
+    "source_tables": 0,
+    "formal_embodiments": 4,
+    "shared_variable_aperture_embodiments": 1,
+    "named_hall_connection_examples": 2,
+    "standalone_variable_aperture_embodiments": 1,
+    "device_placement_embodiments": 2,
+    "claims": 22,
+    "classification_pdf_pages": 29,
+    "classification_drawing_sheets": 18,
+    "classification_specification_internal_pages": 10,
+    "terminal_items": 5
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0983ed7859a2af0a/US-20260177728-A1.html",
+    "bytes": 73277,
+    "raw_characters": 73277,
+    "raw_document_sha256": "0983ed7859a2af0abc688760dc8f6e892da42fa3188e9bd513fe429f0e41596e",
+    "normalized_characters": 63734,
+    "normalized_text_sha256": "cc11bc734ac5dcb311f992c3cd46e85f62448ebc6fd89ce5d9999c33db3a427a",
+    "section_markers": {
+      "abstract": "Abstract A variable aperture module",
+      "background_summary": "Background/Summary RELATED APPLICATIONS",
+      "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+      "claims": "Claims 1 . A variable aperture module"
+    },
+    "section_positions": {
+      "abstract": 324,
+      "background_summary": 1553,
+      "description": 10785,
+      "claims": 53202
+    },
+    "section_sha256": {
+      "abstract": "ef92ad5107452eefaa595de49bb41152a75ab96b72662cb74c4548f461a68274",
+      "background_summary": "2039986d6a5611711dab30eb8111c0ee1294ae6b87b250a8daca87e617963e93",
+      "description": "14ec4e5d2c1f56f0b8a8810fed7df40ba8061eb9239ea6967be7b14b97db11b4",
+      "claims": "83b0cca551c79214e7a7d1d41d7c99ea8791355526040e7ea982921b5f9409f8"
+    },
+    "section_lengths": {
+      "abstract": 1229,
+      "background_summary": 9232,
+      "description": 42417,
+      "claims": 10532
+    },
+    "paragraph_range": [
+      1,
+      83
+    ],
+    "figure_declaration_paragraph_range": [
+      11,
+      28
+    ],
+    "figure_declaration_prefixes": [
+      "FIG. 1 A is ",
+      "FIG. 1 B is ",
+      "FIG. 1 C is ",
+      "FIG. 1 D is ",
+      "FIG. 1 E is ",
+      "FIG. 1 F is ",
+      "FIG. 1 G is ",
+      "FIG. 1 H is ",
+      "FIG. 1 I is ",
+      "FIG. 2 A is ",
+      "FIG. 2 B is ",
+      "FIG. 2 C is ",
+      "FIG. 3 A is ",
+      "FIG. 3 B is ",
+      "FIG. 3 C is ",
+      "FIG. 3 D is ",
+      "FIG. 3 E is ",
+      "FIG. 4 is "
+    ],
+    "heading_boundaries": {
+      "56": "1st Embodiment",
+      "66": "2nd Embodiment",
+      "69": "3rd Embodiment",
+      "78": "4th Embodiment"
+    },
+    "example_start_prefixes": {
+      "61": "Please refer to FIG. 1 F and FIG. 1 G . FIG. 1 F is a schematic view of the flexible printed circuit board 160 according to the 1st example of the 1st embodiment",
+      "64": "Please refer to FIG. 1 F , FIG. 1 G , FIG. 1 H and FIG. 1 I . FIG. 1 H is a schematic view of the flexible printed circuit board 160 according to the 2nd example of the 1st embodiment"
+    },
+    "shared_embodiment_ranges": {
+      "1st Embodiment": [
+        57,
+        60
+      ]
+    },
+    "terminal_item_ranges": {
+      "1st Embodiment Example 1": [
+        61,
+        63
+      ],
+      "1st Embodiment Example 2": [
+        64,
+        66
+      ],
+      "2nd Embodiment": [
+        67,
+        69
+      ],
+      "3rd Embodiment": [
+        70,
+        78
+      ],
+      "4th Embodiment": [
+        79,
+        82
+      ]
+    },
+    "claim_range": [
+      1,
+      22
+    ],
+    "formal_table_count": 0,
+    "raw_table_directive_count": 0
+  },
+  "optical_boundary": {
+    "prescription_marker_counts": {
+      "focal length": 1,
+      "effective focal length": 0,
+      "F-number": 0,
+      "FNO": 0,
+      "field of view": 0,
+      "FOV": 0,
+      "view angle": 0,
+      "radius": 0,
+      "curvature": 0,
+      "Abbe": 0,
+      "aspheric": 0,
+      "asphere": 0,
+      "aspheric coefficient": 0,
+      "asphere coefficient": 0,
+      "surface number": 0,
+      "optical prescription": 0,
+      "lens prescription": 0,
+      "surface prescription": 0,
+      "lens material": 0,
+      "glass type": 0,
+      "glass": 0,
+      "refractive index": 0,
+      "lens elements": 0
+    },
+    "focal_length_occurrence_paragraphs": [
+      78
+    ],
+    "focal_length_context": "digital zoom combines camera modules with different focal lengths; no numeric system focal length is published",
+    "published_numeric_context": [
+      "six aperture blades in paragraph 0058"
+    ],
+    "published_data_context": [
+      "blade/fixing/rotating portion architecture",
+      "magnet and driving-coil placement",
+      "Hall-element parallel and buffered connection examples",
+      "position-detection and feedback-control signals",
+      "smartphone multi-camera and digital-zoom placement"
+    ],
+    "ordered_surface_prescription_published": false,
+    "direct_efl_f_number_field_metadata_published": false,
+    "image_only_prescription_found_in_pdf": false,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "cross_publication_values_borrowed": false
+  },
+  "terminal_outcome": {
+    "root_state": "terminal",
+    "terminal_status": "confirmed_no_prescription",
+    "aperture_control_item_count": 3,
+    "aperture_control_reason_code": "terminal.confirmed_no_prescription.variable_aperture_magnet_hall_control_architecture_only",
+    "device_item_count": 2,
+    "device_reason_code": "terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only",
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "5523856b03f9ca42d312e2f0a80dfb55357564f4aafb9708450e21d91f64164f",
+    "summary_sha256": "bad71bc0945e9a09de76237f676e8649c4397773566eb4505883459354d89899",
+    "report_sha256": "988f5e368c6617aada975a0047ad6b3c15577de7254adacfb4a3deb3bba47a57",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 145,
+      "parser_review_required": 322,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 127
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 551,
+      "parser_review_required": 1404,
+      "terminal": 1097
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-100215250/generic-residual-before-135.json",
+      "sha256": "7466080417e23277b7d74ab87ec747226bc95f33027e338e0417f225268764b9"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-100215250/generic-residual-after-1.json",
+      "sha256": "c6c01e928cc81d85fa8170ec3db7b711553f7e8f880f0464dcafe0208aa3ebc0"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-100215250/generic-residual-after-2.json",
+      "sha256": "c6c01e928cc81d85fa8170ec3db7b711553f7e8f880f0464dcafe0208aa3ebc0"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-100215250/queue-after.json",
+      "sha256": "93be1ab725c4542c04479ad2ac41875c0fad9fbcdf7ec31c632b9deeea4c45a5"
+    }
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-100215250/family-100215250-raster-audit.json",
+    "sha256": "0278f6a463645153ab1ee556aca3977dd62e4e13f9a64c8c2da8c28a7cfbf50c"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-100215250/family-100215250-external-family-members.json",
+    "sha256": "8e165eabe930071c77734d08f459f02971f277e8759460b1b721480002d6dc7f"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-100215250/family-100215250-replay-determinism.json",
+    "sha256": "c288c88564cea598a7eacad6869cac645431092bfd77895c94d5156e7501c277"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-100215250/family-100215250-source-audit.md",
+    "sha256": "8780f96a588cd0c472cbd97632d9db977f03ba7534f7afadf05d8bdec6af01d0"
+  },
+  "saturation_boundary": "This frozen root is source-proven terminal. The Vietnam priority-linked publication, all remaining parser buckets, staging intake, macro replay support and global source exhaustion remain open."
+}

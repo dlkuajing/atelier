@@ -473,6 +473,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_largan_variable_aperture_control_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_five_lens_f_number_bound_attempts(
         raw_text,
         patent_id=patent_id,
@@ -4318,6 +4326,165 @@ _LARGAN_ADJUSTABLE_APERTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "glass type": 0,
             "glass": 0,
             "refractive index": 0,
+        },
+        "formal_table_count": 0,
+        "raw_table_directive_count": 0,
+    },
+}
+
+_LARGAN_VARIABLE_APERTURE_CONTROL_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*VARIABLE\s+APERTURE\s+MODULE,\s*IMAGING\s+LENS\s+ASSEMBLY\s+"
+    r"MODULE\s+AND\s+ELECTRONIC\s+DEVICE\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_LARGAN_VARIABLE_APERTURE_CONTROL_FIGURE_PREFIXES = (
+    *(f"FIG. 1 {letter} is " for letter in "ABCDEFGHI"),
+    *(f"FIG. 2 {letter} is " for letter in "ABC"),
+    *(f"FIG. 3 {letter} is " for letter in "ABCDE"),
+    "FIG. 4 is ",
+)
+_LARGAN_VARIABLE_APERTURE_CONTROL_ITEMS = (
+    (
+        1,
+        "Largan variable-aperture first-embodiment hall-connection example 1",
+    ),
+    (
+        2,
+        "Largan variable-aperture first-embodiment hall-connection example 2",
+    ),
+    (
+        3,
+        "Largan variable-aperture second-embodiment dual-purpose magnet architecture",
+    ),
+    (4, "Largan variable-aperture smartphone third embodiment"),
+    (5, "Largan variable-aperture smartphone fourth embodiment"),
+)
+_LARGAN_VARIABLE_APERTURE_CONTROL_REASON_CODE = (
+    "confirmed_no_prescription."
+    "variable_aperture_magnet_hall_control_architecture_only"
+)
+_LARGAN_VARIABLE_APERTURE_CONTROL_DEVICE_REASON_CODE = (
+    "confirmed_no_prescription."
+    "electronic_device_multi_camera_placement_architecture_only"
+)
+_LARGAN_VARIABLE_APERTURE_CONTROL_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260177728-A1": {
+        "raw_document_sha256": (
+            "0983ed7859a2af0abc688760dc8f6e892da42fa3188e9bd513fe429f0e41596e"
+        ),
+        "normalized_text_sha256": (
+            "cc11bc734ac5dcb311f992c3cd46e85f62448ebc6fd89ce5d9999c33db3a427a"
+        ),
+        "family_id": "100215250",
+        "application_number": "19/422716",
+        "section_markers": {
+            "abstract": "Abstract A variable aperture module",
+            "background_summary": "Background/Summary RELATED APPLICATIONS",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . A variable aperture module",
+        },
+        "section_sha256": {
+            "abstract": (
+                "ef92ad5107452eefaa595de49bb41152a75ab96b72662cb74c4548f461a68274"
+            ),
+            "background_summary": (
+                "2039986d6a5611711dab30eb8111c0ee1294ae6b87b250a8daca87e617963e93"
+            ),
+            "description": (
+                "14ec4e5d2c1f56f0b8a8810fed7df40ba8061eb9239ea6967be7b14b97db11b4"
+            ),
+            "claims": (
+                "83b0cca551c79214e7a7d1d41d7c99ea8791355526040e7ea982921b5f9409f8"
+            ),
+        },
+        "paragraph_count": 83,
+        "heading_boundaries": {
+            56: "1st Embodiment",
+            66: "2nd Embodiment",
+            69: "3rd Embodiment",
+            78: "4th Embodiment",
+        },
+        "example_start_prefixes": {
+            61: (
+                "Please refer to FIG. 1 F and FIG. 1 G . FIG. 1 F is a schematic "
+                "view of the flexible printed circuit board 160 according to the "
+                "1st example of the 1st embodiment"
+            ),
+            64: (
+                "Please refer to FIG. 1 F , FIG. 1 G , FIG. 1 H and FIG. 1 I . "
+                "FIG. 1 H is a schematic view of the flexible printed circuit board "
+                "160 according to the 2nd example of the 1st embodiment"
+            ),
+        },
+        "shared_embodiment_ranges": {
+            "1st Embodiment": (57, 60),
+        },
+        "item_ranges": {
+            "1st Embodiment Example 1": (61, 63),
+            "1st Embodiment Example 2": (64, 66),
+            "2nd Embodiment": (67, 69),
+            "3rd Embodiment": (70, 78),
+            "4th Embodiment": (79, 82),
+        },
+        "claim_count": 22,
+        "identity_markers": {
+            "United States Patent Application Publication 20260177728": 1,
+            "Kind Code A1": 1,
+            "Publication Date June 25, 2026": 1,
+            "Inventor(s) HONG; Zheng-Zhi et al.": 1,
+            (
+                "Inventors: HONG; Zheng-Zhi (Taichung City, TW), FAN; Chen-Wei "
+                "(Taichung City, TW)"
+            ): 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 100215250": 1,
+            "Appl. No.: 19/422716": 1,
+            "Filed: December 17, 2025": 1,
+            "us-provisional-application US 63738684 20241224": 1,
+        },
+        "source_scope_phrase_counts": {
+            "variable aperture module": 80,
+            "imaging lens assembly": 55,
+            "electronic device": 40,
+            "blade set": 27,
+            "light through hole": 47,
+            "position detecting unit": 52,
+            "hall element": 221,
+            "magnet": 254,
+            "driving coil": 82,
+            "flexible printed circuit board": 38,
+            "OR gate function": 20,
+            "optical axis": 6,
+            "image sensor": 1,
+            "focal length": 1,
+            "different focal lengths": 1,
+            "a number of the blades 111 is 6": 1,
+            "1st example of the 1st embodiment": 5,
+            "2nd example of the 1st embodiment": 4,
+        },
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "view angle": 0,
+            "radius": 0,
+            "curvature": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "asphere": 0,
+            "aspheric coefficient": 0,
+            "asphere coefficient": 0,
+            "surface number": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface prescription": 0,
+            "lens material": 0,
+            "glass type": 0,
+            "glass": 0,
+            "refractive index": 0,
+            "lens elements": 0,
         },
         "formal_table_count": 0,
         "raw_table_directive_count": 0,
@@ -20366,6 +20533,245 @@ def _classify_largan_adjustable_aperture_architecture_only_attempts(
             ),
         )
         for number, label in _LARGAN_ADJUSTABLE_APERTURE_ITEMS
+    ]
+
+
+def _classify_largan_variable_aperture_control_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 100215250 variable-aperture control architecture."""
+
+    profile = _LARGAN_VARIABLE_APERTURE_CONTROL_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _LARGAN_VARIABLE_APERTURE_CONTROL_ITEMS
+        ]
+
+    def sequential_bracketed_paragraphs(
+        text: str,
+        *,
+        count: int,
+    ) -> dict[int, str]:
+        markers = list(re.finditer(r"\[(\d{4})\]", text))
+        if [int(marker.group(1)) for marker in markers] != list(
+            range(1, count + 1)
+        ):
+            raise PatentParseError(
+                "Largan variable-aperture control paragraph denominator changed"
+            )
+        return {
+            number: text[
+                marker.end() : (
+                    markers[index + 1].start()
+                    if index + 1 < len(markers)
+                    else len(text)
+                )
+            ].strip()
+            for index, marker in enumerate(markers)
+            for number in (int(marker.group(1)),)
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan variable-aperture control official raw text hash changed "
+                f"for {patent_id}"
+            )
+        if len(
+            _LARGAN_VARIABLE_APERTURE_CONTROL_TITLE_PATTERN.findall(raw_text)
+        ) != 1:
+            raise PatentParseError(
+                "Largan variable-aperture control title binding changed"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan variable-aperture control normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan variable-aperture control identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan variable-aperture control section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan variable-aperture control section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan variable-aperture control "
+                    f"{section_name} section changed"
+                )
+
+        paragraphs = sequential_bracketed_paragraphs(
+            text,
+            count=int(profile["paragraph_count"]),
+        )
+        for paragraph, prefix in enumerate(
+            _LARGAN_VARIABLE_APERTURE_CONTROL_FIGURE_PREFIXES,
+            start=11,
+        ):
+            if not paragraphs[paragraph].startswith(prefix):
+                raise PatentParseError(
+                    "Largan variable-aperture control drawing declaration "
+                    f"{paragraph} changed"
+                )
+        if not paragraphs[28].endswith("DETAILED DESCRIPTION"):
+            raise PatentParseError(
+                "Largan variable-aperture control drawing denominator changed"
+            )
+        for paragraph, heading in profile["heading_boundaries"].items():
+            if not paragraphs[int(paragraph)].endswith(heading):
+                raise PatentParseError(
+                    "Largan variable-aperture control heading "
+                    f"{heading!r} changed"
+                )
+        for paragraph, prefix in profile["example_start_prefixes"].items():
+            if not paragraphs[int(paragraph)].startswith(prefix):
+                raise PatentParseError(
+                    "Largan variable-aperture control example boundary "
+                    f"{paragraph} changed"
+                )
+        for label, bounds in {
+            **profile["shared_embodiment_ranges"],
+            **profile["item_ranges"],
+        }.items():
+            if any(
+                number not in paragraphs
+                for number in range(int(bounds[0]), int(bounds[1]) + 1)
+            ):
+                raise PatentParseError(
+                    "Largan variable-aperture control "
+                    f"{label} denominator changed"
+                )
+        if len(profile["item_ranges"]) != len(
+            _LARGAN_VARIABLE_APERTURE_CONTROL_ITEMS
+        ):
+            raise PatentParseError(
+                "Largan variable-aperture control terminal-item denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+            raise PatentParseError(
+                "Largan variable-aperture control claims 1-22 denominator changed"
+            )
+        if len(re.findall(r"TABLE-US-\d+", text, re.IGNORECASE)) != int(
+            profile["formal_table_count"]
+        ):
+            raise PatentParseError(
+                "Largan variable-aperture control formal table count changed"
+            )
+        if len(re.findall(r"<\?table", raw_text, re.IGNORECASE)) != int(
+            profile["raw_table_directive_count"]
+        ):
+            raise PatentParseError(
+                "Largan variable-aperture control raw table directives changed"
+            )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan variable-aperture control phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan variable-aperture control prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        focal_paragraphs = tuple(
+            number
+            for number, paragraph in paragraphs.items()
+            if re.search(r"\bfocal lengths?\b", paragraph, re.IGNORECASE)
+        )
+        if focal_paragraphs != (78,) or (
+            "different focal lengths cooperated with the function of image processing"
+            not in paragraphs[78]
+        ):
+            raise PatentParseError(
+                "Largan variable-aperture control focal-length narrative changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "the exact example or embodiment publishes blade, magnet, Hall-element, "
+        "driving-coil, circuit, and feedback-control architecture plus generic lens "
+        "placement only; it publishes no ordered optical surface prescription or "
+        "direct EFL/F-number/field metadata",
+        "the exact embodiment publishes smartphone multi-camera placement and "
+        "digital zoom narrative reusing the disclosed mechanical aperture-control "
+        "architecture only; it publishes no ordered optical surface prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _LARGAN_VARIABLE_APERTURE_CONTROL_REASON_CODE
+                    if number <= 3
+                    else _LARGAN_VARIABLE_APERTURE_CONTROL_DEVICE_REASON_CODE
+                ),
+                detail=details[0 if number <= 3 else 1],
+            ),
+        )
+        for number, label in _LARGAN_VARIABLE_APERTURE_CONTROL_ITEMS
     ]
 
 
