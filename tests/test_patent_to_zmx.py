@@ -20985,3 +20985,245 @@ def test_tesseland_freeform_reflector_denominator_and_queue_artifacts() -> None:
     assert queue["next_exact_group"]["family_id"] == "92714478"
     assert queue["next_exact_group"]["root_ids"] == ["US-12670673"]
     assert queue["saturation_complete"] is False
+
+
+def _softeye_roi_vision_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "b3c5d9bc53fd030f"
+        / "US-12670673-B2.html"
+    )
+    return "US-12670673-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_softeye_roi_vision_reconciles_single_architecture_item() -> None:
+    patent_id, raw_text = _softeye_roi_vision_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    attempt = attempts[0]
+    assert attempt.embodiment_number == 1
+    assert attempt.embodiment == (
+        "FIGS. 1-9 smart-glasses ROI vision augmentation architecture"
+    )
+    assert attempt.prescription is None
+    assert isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    assert attempt.error.status == "confirmed_no_prescription"
+    assert attempt.error.reason_code == (
+        "confirmed_no_prescription."
+        "smart_glasses_roi_vision_processing_architecture_only"
+    )
+
+    assert patent_to_zmx._softeye_roi_vision_camera_table_rows(raw_text) == (
+        (108, 1.8, 24.0, "wide", "1/1.33", 0.8, 83.0),
+        (10, 4.9, 240.0, "periscope", "1/3.24", 1.22, 10.0),
+        (10, 2.4, 72.0, "telephoto", "1/3.24", 1.22, 35.0),
+        (10, 2.2, 13.0, "ultrawide", "1/2.55", 1.4, 120.0),
+    )
+
+
+def test_softeye_roi_vision_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _softeye_roi_vision_source()
+    changed = raw_text.replace("F/1.8", "F/1.9", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].prescription is None
+    assert isinstance(attempts[0].error, PatentParseError)
+    assert not isinstance(
+        attempts[0].error,
+        patent_to_zmx.PatentTerminalParseError,
+    )
+    assert str(attempts[0].error) == (
+        f"SoftEye ROI vision official raw text hash changed for {patent_id}"
+    )
+
+
+def test_softeye_roi_vision_pdf_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-92714478"
+    audit = json.loads(
+        (quick / "family-92714478-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    raster_sets: dict[str, set[str]] = {}
+    for key, pdf_key in (
+        ("official_b2", None),
+        ("same_application_a1", "patentimages_pdf"),
+    ):
+        record = audit[key]
+        pdf = record if pdf_key is None else record[pdf_key]
+        path = root / pdf["path"]
+        raw = path.read_bytes()
+        assert len(raw) == pdf["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == pdf["sha256"]
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(path))
+        assert len(reader.pages) == record["pages"]
+        aggregate = hashlib.sha256()
+        hashes = set()
+        for page in reader.pages:
+            assert len(page.extract_text() or "") == 0
+            assert len(page.images) == 1
+            image = page.images[0].image.convert("RGB")
+            assert [image.width, image.height] == record["decoded_raster_size"]
+            page_hash = hashlib.sha256(
+                f"{image.width}x{image.height}:RGB:".encode() + image.tobytes()
+            ).hexdigest()
+            aggregate.update(bytes.fromhex(page_hash))
+            hashes.add(page_hash)
+        assert aggregate.hexdigest() == record["decoded_raster_set_sha256"]
+        raster_sets[key] = hashes
+
+    assert raster_sets["official_b2"].isdisjoint(
+        raster_sets["same_application_a1"]
+    )
+    assert (
+        audit["same_application_a1"][
+            "exact_same_position_or_cross_position_pixel_matches_with_b2"
+        ]
+        == 0
+    )
+    for record in audit["contact_sheets"] + audit["critical_b2_pages"]:
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    assert audit["official_b2"]["drawing_pdf_pages"] == list(range(3, 12))
+    assert audit["official_b2"]["table_1_pdf_page"] == 13
+    assert audit["visual_review"]["ordered_surface_prescription_observed"] is False
+    assert audit["visual_review"]["numeric_derivation_from_rasters"] is False
+
+
+def test_softeye_roi_vision_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-92714478"
+    artifact = json.loads(
+        (quick / "family-92714478-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    semantic_hashes = []
+
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["semantic_equal"] is True
+    assert artifact["item_state_counts"] == {"terminal": 1}
+    assert artifact["terminal_status_counts"] == {
+        "confirmed_no_prescription": 1
+    }
+    assert artifact["conversion_receipts"] == artifact["staging_zmx"] == 0
+
+
+def test_softeye_roi_vision_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-92714478"
+    evidence = json.loads(
+        (quick / "family-92714478-source-evidence.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-92714478-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "source_declared_architecture_items": 1,
+        "source_declared_optical_prescriptions": 0,
+        "replayed_ledger_items": 1,
+        "confirmed_no_prescription_items": 1,
+        "background_numbered_paragraphs": 6,
+        "description_numbered_paragraphs": 207,
+        "declared_figures": 9,
+        "source_table_markers": 1,
+        "commodity_camera_rows": 4,
+        "mathml_objects": 0,
+        "claims": 25,
+        "official_pdf_pages": 31,
+        "drawing_sheets": 9,
+    }
+    assert denominator["reconciliation"] == {
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_source_table_markers": 0,
+        "unmapped_table_rows": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_claims": 0,
+        "unmapped_disclosed_items": 0,
+    }
+    assert len(denominator["items"]) == 1
+    assert denominator["items"][0]["terminal_status"] == (
+        "confirmed_no_prescription"
+    )
+    assert denominator["conversion_boundary"] == {
+        "zmx_written": 0,
+        "formal_intake": 0,
+        "code_v_used": False,
+        "drawing_numeric_derivation": False,
+        "cross_publication_numeric_borrowing": False,
+        "commodity_lens_substitution": False,
+        "reason": (
+            "The source names telephoto, wide-angle and periscope camera modules "
+            "and publishes commodity camera characteristics, but publishes no "
+            "ordered radius, spacing, material, conic or asphere surface prescription."
+        ),
+    }
+
+    for key in (
+        "denominator_audit",
+        "official_pdf_audit",
+        "external_family_queue",
+        "replay_determinism",
+        "source_audit",
+    ):
+        path = root / evidence[key]["path"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == evidence[key]["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-122.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 122
+    assert after_1["affected_roots"] == after_1["affected_items"] == 121
+    assert after_2["affected_roots"] == after_2["affected_items"] == 121
+    after_1.pop("result_set_sha256")
+    after_2.pop("result_set_sha256")
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["next_exact_group"]["family_id"] == "75614661"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260063874"]
+    assert queue["saturation_complete"] is False

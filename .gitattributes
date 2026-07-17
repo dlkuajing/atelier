@@ -9,6 +9,9 @@ data/patent-lake/uspto-ppubs-html/**/*.html binary
 .planning/quick/260717-patent-generic-family-56417699/*.json text eol=lf
 .planning/quick/260717-patent-generic-family-56417699/*.md text eol=lf
 data/patent-ledger/replay/local-uncovered/results/US-10782453/**/result.json text eol=lf
+.planning/quick/260717-patent-generic-family-92714478/*.json text eol=lf
+.planning/quick/260717-patent-generic-family-92714478/*.md text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-12670673/**/result.json text eol=lf
 data/patent-ledger/replay/local-uncovered/summary.json text eol=lf
 .planning/loop/patent-local-replay-report.md text eol=lf
 .planning/quick/**/*.png filter=lfs diff=lfs merge=lfs -text

@@ -417,6 +417,13 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+
+    source_locked_attempts = _classify_softeye_roi_vision_architecture_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_telecentric_nine_lens_metadata_attempts(
         raw_text,
         patent_id=patent_id,
@@ -1936,6 +1943,70 @@ _TESSELAND_FREEFORM_REFLECTOR_FIG3_REASON = (
 )
 _TESSELAND_FREEFORM_REFLECTOR_ARCHITECTURE_REASON = (
     "confirmed_no_prescription.freeform_reflective_hmd_architecture_only"
+)
+_SOFTEYE_ROI_VISION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12670673-B2": {
+        "raw_document_sha256": (
+            "b3c5d9bc53fd030fdf9e0dd09f3d31c6e637599149a1f59d037925e078dc6d98"
+        ),
+        "normalized_text_sha256": (
+            "43b018c93a0bebfe3f711950b465ed3780ec37fa757fda285a1c77dad66402cd"
+        ),
+        "section_markers": {
+            "abstract": (
+                "Apparatus and methods for augmenting vision with region-of-interest "
+                "based processing Abstract"
+            ),
+            "background": "Background/Summary RELATED APPLICATIONS (1)",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (10)",
+            "claims": "Claims 1 . A smart glasses apparatus",
+        },
+        "section_sha256": {
+            "abstract": "55cfb4a40203e35f5658f9c781fa28b34b2feb595a2d6b89428870a92447d119",
+            "background": "b2349191bd3e49a34a261f74f8e800d301e68adcfe59487335c7fa5958d53b04",
+            "brief": "2d28459e9ad370c9a7a6775bcbe679e659e4bb25dda101ed7380fd189fa1e226",
+            "detailed": "cec49147c24ef6487533689ae560151ebba83aee0dea86065e72cba1c92b9155",
+            "claims": "4a2690b7857a076abce3cd1fd48707b4d0c9198703e0fc195974c4161ce050c0",
+        },
+        "table_1_payload_sha256": (
+            "2d2aa15cbe1de3ed35f30877cd02dad898875abe1ee356997c7de474c5b639eb"
+        ),
+        "pdf_audit": {
+            "official_pages": 31,
+            "drawing_pdf_pages": tuple(range(3, 12)),
+            "table_pdf_page": 13,
+            "official_container_sha256": (
+                "fd54a4af1769290f0ea441c7a9cb19dd8b2206ded24d94d8d4d5c0c386da45ad"
+            ),
+            "official_raster_set_sha256": (
+                "98bd1551e983d1a302216609fce9d406089422706e6c2a6e50ac62b14d80fd6c"
+            ),
+            "official_contact_sheet_sha256": (
+                "4fd6f260ae20f674baf29f958886012a98f1a4b66758a945a4987dd28f3c78d7"
+            ),
+            "same_application_a1_google_html_sha256": (
+                "f3ffd7f77ae92de414e8d9a6e5fd6fefd5db8be882e8c512ae84073fdae4bc03"
+            ),
+            "same_application_a1_container_sha256": (
+                "bfc10f5419dca85ee93ee41439507766821379ac63615840164a70cee21df065"
+            ),
+            "same_application_a1_pages": 30,
+            "same_application_a1_contact_sheet_sha256": (
+                "7b66bbfe4554899765d1f3627aa7bd5964a5df144f7efa26641a2526a3894303"
+            ),
+        },
+    },
+}
+_SOFTEYE_ROI_VISION_TITLE = (
+    "Apparatus and methods for augmenting vision with region-of-interest based processing"
+)
+_SOFTEYE_ROI_VISION_ITEM_LABEL = (
+    "FIGS. 1-9 smart-glasses ROI vision augmentation architecture"
+)
+_SOFTEYE_ROI_VISION_REASON = (
+    "confirmed_no_prescription."
+    "smart_glasses_roi_vision_processing_architecture_only"
 )
 _LARGAN_FOLDED_PRISM_FIXED_EMBODIMENT_PARAGRAPHS = {
     1: 115,
@@ -16668,6 +16739,314 @@ def _tesseland_freeform_reflector_table_rows(
             _parse_number(row.group("mirror_2")),
         )
     return rows
+
+
+def _classify_softeye_roi_vision_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the exact SoftEye ROI smart-glasses architecture fail-closed.
+
+    The single source item spans all four usage scenarios and the shared system,
+    frame, sensor and ROI-flow drawings. TABLE 1 is explicitly a commodity-camera
+    comparison, not four lens prescriptions. No surface prescription is published.
+    """
+
+    profile = _SOFTEYE_ROI_VISION_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempt_for_error(error: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=1,
+                embodiment=_SOFTEYE_ROI_VISION_ITEM_LABEL,
+                error=error,
+            )
+        ]
+
+    try:
+        raw_sha256 = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_sha256 != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"SoftEye ROI vision official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_sha256 != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"SoftEye ROI vision normalized text hash changed for {patent_id}"
+            )
+
+        identity_markers = {
+            "Inventor(s) Park; Edwin Chongwoo": 1,
+            "Family ID: 92714478": 1,
+            "Appl. No.: 18/185364": 1,
+            "Filed: March 16, 2023": 1,
+            "US 20240312147 A1 Sep. 19, 2024": 1,
+            _SOFTEYE_ROI_VISION_TITLE: 3,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"SoftEye ROI vision identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError("SoftEye ROI vision section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("SoftEye ROI vision section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_sha256 in profile["section_sha256"].items():
+            observed_sha256 = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_sha256 != expected_sha256:
+                raise PatentParseError(
+                    f"SoftEye ROI vision {section_name} section changed"
+                )
+
+        paragraph_matches = list(
+            re.finditer(
+                r"(?:^|<br\s*/?>)\s*\((\d+)\)\s*",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 7)) + tuple(range(1, 208)):
+            raise PatentParseError(
+                "SoftEye ROI vision six-background plus 207-description paragraph "
+                "denominator changed"
+            )
+        description_matches = paragraph_matches[6:]
+        description_paragraphs = {
+            int(match.group(1)): normalize_patent_text(
+                raw_text[
+                    match.start() : (
+                        description_matches[index + 1].start()
+                        if index + 1 < len(description_matches)
+                        else len(raw_text)
+                    )
+                ]
+            )
+            for index, match in enumerate(description_matches)
+        }
+        if set(description_paragraphs) != set(range(1, 208)):
+            raise PatentParseError(
+                "SoftEye ROI vision description paragraph mapping is incomplete"
+            )
+
+        figure_declarations = tuple(
+            int(value)
+            for value in re.findall(
+                r"\(\d+\)\s+FIG\.\s*(\d+)\s+(?:is|depicts)\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_declarations != tuple(range(1, 10)):
+            raise PatentParseError("SoftEye ROI vision FIGS. 1-9 denominator changed")
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != 22:
+            raise PatentParseError(
+                "SoftEye ROI vision figure-reference denominator changed"
+            )
+        figure_anchors = {
+            1: "telephoto usage scenario",
+            2: "industrial usage scenario",
+            3: "law enforcement scenario",
+            4: "corporate networking scenario",
+            5: "exemplary sensory augmentation system",
+            6: "graphical representation of a physical frame",
+            7: "various sensors of the sensor subsystem",
+            8: "generalized implementation of region-of-interest based processing",
+            9: "chronological sequence of region-of-interest based processing",
+        }
+        for figure, anchor in figure_anchors.items():
+            if len(
+                re.findall(
+                    re.escape(anchor),
+                    description_paragraphs[figure],
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    f"SoftEye ROI vision FIG. {figure} binding changed"
+                )
+
+        table_markers = tuple(re.findall(r"TABLE-US-(\d{5})", text, re.IGNORECASE))
+        if table_markers != ("00001",):
+            raise PatentParseError("SoftEye ROI vision TABLE denominator changed")
+        table_match = re.search(
+            r"TABLE-US-00001(?P<body>.*?)<br\s*/?>\s*\(16\)",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if table_match is None:
+            raise PatentParseError("SoftEye ROI vision TABLE 1 boundary changed")
+        table_payload = normalize_patent_text(table_match.group("body"))
+        if (
+            hashlib.sha256(table_payload.encode("utf-8")).hexdigest()
+            != profile["table_1_payload_sha256"]
+        ):
+            raise PatentParseError("SoftEye ROI vision TABLE 1 payload changed")
+        table_rows = _softeye_roi_vision_camera_table_rows(raw_text)
+        expected_rows = (
+            (108, 1.8, 24.0, "wide", "1/1.33", 0.8, 83.0),
+            (10, 4.9, 240.0, "periscope", "1/3.24", 1.22, 10.0),
+            (10, 2.4, 72.0, "telephoto", "1/3.24", 1.22, 35.0),
+            (10, 2.2, 13.0, "ultrawide", "1/2.55", 1.4, 120.0),
+        )
+        if table_rows != expected_rows:
+            raise PatentParseError(
+                "SoftEye ROI vision four commodity-camera TABLE 1 rows changed"
+            )
+
+        if re.search(r"<maths\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError("SoftEye ROI vision formula denominator changed")
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, 26)):
+            raise PatentParseError("SoftEye ROI vision claims 1-25 changed")
+
+        related_applications = tuple(
+            re.findall(
+                r"U\.S\. patent application Ser\. No\. ([0-9/,]+)",
+                sections["background"],
+                re.IGNORECASE,
+            )
+        )
+        if related_applications != (
+            "18/061,203",
+            "18/061,226",
+            "18/061,257",
+            "18/185,362",
+            "18/185,366",
+        ):
+            raise PatentParseError(
+                "SoftEye ROI vision five related-application links changed"
+            )
+
+        source_scope_markers = {
+            "Practical Considerations for Smart Glasses": 1,
+            "Camera-Based Imaging and Human Perception": 2,
+            "Intent-Based Processing of a Region-of-Interest": 1,
+            "Notable Variant, Telephoto “Super” Vision": 1,
+            "Notable Variant, Computer-Vision Assisted Search": 1,
+            "Notable Variant, Database Assisted Search": 1,
+            "Notable Use Case: Cataloging Salient Events": 1,
+            "System Architecture": 1,
+            "Camera Module": 4,
+            "Display Module": 7,
+            "A camera lens bends (distorts) light to focus on the camera sensor": 1,
+            "any camera lens or set of camera lenses may be substituted with equal success": 1,
+        }
+        for marker, expected in source_scope_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"SoftEye ROI vision source marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        absent_prescription_phrases = (
+            "radius of curvature",
+            "aspheric coefficient",
+            "aspherical coefficient",
+            "surface prescription",
+            "ordered surface",
+            "conic",
+            "thickness",
+            "glass material",
+            "refractive index",
+            "F-number",
+            "Fno",
+        )
+        for phrase in absent_prescription_phrases:
+            if re.search(re.escape(phrase), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "SoftEye ROI vision source unexpectedly publishes "
+                    f"{phrase!r}; re-evaluate terminal classification"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the complete exact-source item
+        return attempt_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=1,
+            embodiment=_SOFTEYE_ROI_VISION_ITEM_LABEL,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_SOFTEYE_ROI_VISION_REASON,
+                detail=(
+                    "the exact source publishes four commodity-camera comparison rows, "
+                    "four usage-scenario drawings, and shared smart-glasses system, "
+                    "frame, sensor and ROI-processing architecture; it names telephoto, "
+                    "wide-angle and periscope modules but publishes no ordered radius, "
+                    "spacing, material, conic or asphere surface prescription, so no "
+                    "commodity lens model or drawing coordinate is substituted"
+                ),
+            ),
+        )
+    ]
+
+
+def _softeye_roi_vision_camera_table_rows(
+    raw_text: str,
+) -> tuple[tuple[int, float, float, str, str, float, float], ...]:
+    match = re.search(
+        r"TABLE-US-00001(?P<body>.*?)<br\s*/?>\s*\(16\)",
+        raw_text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if match is None:
+        raise PatentParseError("SoftEye ROI vision TABLE 1 boundary changed")
+    table_text = normalize_patent_text(match.group("body"))
+    rows = []
+    for row in re.finditer(
+        rf"(?P<resolution>\d+)\s+MPixels\s+F/(?P<fstop>{NUMBER_PATTERN})\s+"
+        rf"(?P<focal>{NUMBER_PATTERN})\s+mm\s+\((?P<kind>[a-z-]+)\)\s+"
+        rf"(?P<sensor>1/{NUMBER_PATTERN})(?:′′|″|'')\s+"
+        rf"(?P<pixel>{NUMBER_PATTERN})\s+μm\s+(?P<fov>{NUMBER_PATTERN})°",
+        table_text,
+        re.IGNORECASE,
+    ):
+        rows.append(
+            (
+                int(row.group("resolution")),
+                _parse_number(row.group("fstop")),
+                _parse_number(row.group("focal")),
+                row.group("kind").lower(),
+                row.group("sensor"),
+                _parse_number(row.group("pixel")),
+                _parse_number(row.group("fov")),
+            )
+        )
+    return tuple(rows)
 
 
 def _parse_folded_macro_tele_table_attempts(
