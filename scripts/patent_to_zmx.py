@@ -411,6 +411,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_tesseland_freeform_reflector_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_telecentric_nine_lens_metadata_attempts(
         raw_text,
         patent_id=patent_id,
@@ -1844,6 +1850,92 @@ _LARGAN_FOLDED_PRISM_FIXED_TITLE_PATTERN = re.compile(
     r"\bPHOTOGRAPHING\s+OPTICAL\s+LENS\s+ASSEMBLY,\s+IMAGE\s+CAPTURING\s+UNIT\s+"
     r"AND\s+ELECTRONIC\s+DEVICE\b",
     flags=re.IGNORECASE,
+)
+_TESSELAND_FREEFORM_REFLECTOR_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-10782453-B2": {
+        "raw_document_sha256": (
+            "2b7b7c65164b82404ce5b37f939fa020461ec07d94003182ca828f39d30cb43b"
+        ),
+        "normalized_text_sha256": (
+            "d8339ee8d5243e007faffeb2af4ec75298c0cad66aa50f0f14b4118c278637f8"
+        ),
+        "section_markers": {
+            "abstract": "Display devices with reflectors Abstract",
+            "background_summary": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS (1)"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (14)",
+            "claims": "Claims 1. A display device comprising:",
+        },
+        "section_sha256": {
+            "abstract": "5ef335adca1eccf7e7e1644f42538499020fe0d5bf79b387e0c028c630c0dfec",
+            "background_summary": (
+                "a4f8ce04a69ffcda8a39ca4caeb093e6ae85e4889fffc8a6f4f5d7dfff89270d"
+            ),
+            "brief": "11e1838c5f4e5b6880f5cd4bbf81d679368798fc0fba9ab24e7fd9b87a460e11",
+            "detailed": "8e4da44f014cf356e38cda31569da8c5b7047ea06f4b65a8ca13eff5713fc67c",
+            "claims": "c5a0d06893a1ccdd2697fca6321b8d3e091363f09444185de1477963aeaed66f",
+        },
+        "table_1_payload_sha256": (
+            "38eb06e09f5b9cd1f0b92673f58ae620e8942217982bbec0c0018c4ffb96eed3"
+        ),
+        "math_object_sha256": (
+            "5894652cd47a344fb5c045ebfa60ce991ed7669b652e9d29cd66ad6f16ff4cc1",
+            "425c887c4c9396c94da51b118157ec0138905839659595c1eb593e5544735795",
+            "76a62d54b8b4e6d30651ac16f383b2b2cb940f5bc956d94f09bed49ffa24d4a3",
+        ),
+        "pdf_audit": {
+            "page_count": 17,
+            "drawing_pdf_pages": tuple(range(3, 11)),
+            "table_pdf_pages": (14, 15),
+            "official_container_sha256": (
+                "254260f3d19ff1391f7b393eb85694b8e60d08492474f2e36384cc499b31d1b7"
+            ),
+            "patentimages_container_sha256": (
+                "f28882d7cfb1e80f2dab60f498e8033886f13d2a41f8c3cc24e99fcd2d8ea696"
+            ),
+            "google_html_sha256": (
+                "efada8ea2f8a45937fd73ad110356ca682d8a820b4985ab7d2b47902fcbd3c01"
+            ),
+            "same_application_a1_google_html_sha256": (
+                "b770b0619b1fcdb04071ab881d91bee87f9231fa6f8f2443140c558b0a7abef5"
+            ),
+            "critical_page_image_sha256": (
+                "26907f5b17e07933dcc121c10181dc27b4f7d9d0a094d04b981882464700f91c",
+                "ca9a4627fb5490470101bb869ff699a83814ab634e1bed5f97796ae886ccf401",
+                "28730d5f5ae513d3406998de19799e5e59f725d536e45cabfada2b6c6ceadabd",
+            ),
+            "raster_set_sha256": (
+                "4cb396516fea6618b725b7a4d78d74cabca9a21850b1c810843ad20699330527"
+            ),
+            "contact_sheet_sha256": (
+                "6088314bc2e511dad9f4bc6ee5c42e3f855a4c23bd179d83106d9d7f3fb84a9d"
+            ),
+        },
+    },
+}
+_TESSELAND_FREEFORM_REFLECTOR_TITLE_PATTERN = re.compile(
+    r"\bDisplay\s+devices\s+with\s+reflectors\b",
+    flags=re.IGNORECASE,
+)
+_TESSELAND_FREEFORM_REFLECTOR_ITEMS = (
+    (3, "FIG. 3 two-mirror free-form VR HMD", (20, 28)),
+    (4, "FIG. 4 two-mirror plus exit-lens VR HMD", (29, 29)),
+    (5, "FIG. 5 display-side-lens two-mirror VR HMD", (30, 30)),
+    (6, "FIG. 6 inter-mirror-lens two-mirror VR HMD", (31, 31)),
+    (7, "FIG. 7 four-free-form-surface VR HMD", (32, 32)),
+    (8, "FIG. 8 free-form wedge and lens VR HMD", (33, 33)),
+    (9, "FIG. 9 see-through two-mirror AR HMD", (35, 35)),
+    (10, "FIG. 10 see-through two-mirror plus lens AR HMD", (36, 36)),
+    (11, "FIG. 11 four-free-form-surface AR HMD", (37, 37)),
+    (12, "FIG. 12 free-form wedge and lens AR HMD", (38, 38)),
+)
+_TESSELAND_FREEFORM_REFLECTOR_FIG3_REASON = (
+    "metadata_unpublished.system_f_number_absent"
+)
+_TESSELAND_FREEFORM_REFLECTOR_ARCHITECTURE_REASON = (
+    "confirmed_no_prescription.freeform_reflective_hmd_architecture_only"
 )
 _LARGAN_FOLDED_PRISM_FIXED_EMBODIMENT_PARAGRAPHS = {
     1: 115,
@@ -16184,6 +16276,398 @@ def _validate_largan_folded_prism_fixed_summary(
             f"Largan folded-prism fixed embodiment {embodiment} summary conflicts with TABLE "
             f"{embodiment}A"
         )
+
+
+def _classify_tesseland_freeform_reflector_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the ten exact Tesseland free-form HMD designs fail-closed.
+
+    FIG. 3 publishes a numerical two-mirror Legendre free-form model, but no
+    prescription-specific aperture or F-number.  FIGS. 4-12 publish optical
+    paths and selected system fields without their own surface prescriptions.
+    The current sequential rotational prescription contract must not flatten
+    these non-sequential free-form reflective systems or derive coordinates
+    from the drawings.
+    """
+
+    profile = _TESSELAND_FREEFORM_REFLECTOR_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(error: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=figure,
+                embodiment=label,
+                error=error,
+            )
+            for figure, label, _paragraphs in _TESSELAND_FREEFORM_REFLECTOR_ITEMS
+        ]
+
+    try:
+        raw_sha256 = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_sha256 != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Tesseland free-form reflector official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_sha256 != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Tesseland free-form reflector normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_TESSELAND_FREEFORM_REFLECTOR_TITLE_PATTERN.findall(text)) != 1:
+            raise PatentParseError("Tesseland free-form reflector title binding changed")
+
+        identity_markers = {
+            "Inventor(s) Benitez; Pablo et al. Display devices with reflectors Abstract": 1,
+            "Family ID: 56417699": 1,
+            "Appl. No.: 15/545636": 1,
+            "PCT No.: PCT/US2016/014162": 1,
+            "PCT Pub. No.: WO2016/160099": 1,
+            "US 20180003978 A1 Jan. 04, 2018": 1,
+            "us-provisional-application US 62208235 20150821": 1,
+            "us-provisional-application US 62105905 20150121": 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Tesseland free-form reflector identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Tesseland free-form reflector section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Tesseland free-form reflector section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_sha256 in profile["section_sha256"].items():
+            observed_sha256 = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_sha256 != expected_sha256:
+                raise PatentParseError(
+                    f"Tesseland free-form reflector {section_name} section changed"
+                )
+
+        paragraph_matches = list(
+            re.finditer(
+                r"(?:^|<br\s*/?>)\s*\((\d+)\)\s*",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        expected_paragraphs = tuple(range(1, 32)) + tuple(range(1, 41))
+        if paragraph_numbers != expected_paragraphs:
+            raise PatentParseError(
+                "Tesseland free-form reflector 31 summary and 40 description "
+                "paragraph denominator changed"
+            )
+        detailed_matches = paragraph_matches[-40:]
+        detailed_paragraphs = {
+            int(match.group(1)): normalize_patent_text(
+                raw_text[
+                    match.start() : (
+                        detailed_matches[index + 1].start()
+                        if index + 1 < len(detailed_matches)
+                        else len(raw_text)
+                    )
+                ]
+            )
+            for index, match in enumerate(detailed_matches)
+        }
+        mapped_item_paragraphs = {
+            paragraph
+            for _figure, _label, bounds in _TESSELAND_FREEFORM_REFLECTOR_ITEMS
+            for paragraph in range(bounds[0], bounds[1] + 1)
+        }
+        general_paragraphs = set(range(14, 20)) | {34, 39, 40}
+        if mapped_item_paragraphs | general_paragraphs != set(range(14, 41)):
+            raise PatentParseError(
+                "Tesseland free-form reflector detailed-paragraph mapping is incomplete"
+            )
+
+        item_anchors = {
+            3: ("FIG. 3 shows a two-mirror embodiment", "focal length f=52 mm"),
+            4: ("field of view of the design shown in FIG. 3 can be increased",),
+            5: ("FIG. 5 shows an embodiment",),
+            6: ("Another embodiment is presented in FIG. 6",),
+            7: ("FIG. 7 shows a configuration",),
+            8: ("Another design is presented in FIG. 8",),
+            9: ("The design shown in FIG. 3 can be easily adapted for AR",),
+            10: ("The design shown in FIG. 4 can be adapted for AR as shown in FIG. 10",),
+            11: ("The embodiment shown in FIG. 11 is an adaptation",),
+            12: ("The embodiment shown in FIG. 12 is the adaptation",),
+        }
+        for figure, _label, bounds in _TESSELAND_FREEFORM_REFLECTOR_ITEMS:
+            item_text = " ".join(
+                detailed_paragraphs[paragraph]
+                for paragraph in range(bounds[0], bounds[1] + 1)
+            )
+            for anchor in item_anchors[figure]:
+                if len(re.findall(re.escape(anchor), item_text, re.IGNORECASE)) != 1:
+                    raise PatentParseError(
+                        f"Tesseland free-form reflector FIG. {figure} item binding changed"
+                    )
+
+        figure_declarations = tuple(
+            int(value)
+            for value in re.findall(
+                r"\(\d+\)\s+FIG\.\s*(\d+)\s+shows\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_declarations != tuple(range(1, 13)):
+            raise PatentParseError(
+                "Tesseland free-form reflector FIGS. 1-12 denominator changed"
+            )
+        if sections["brief"].count("(prior art)") != 2:
+            raise PatentParseError(
+                "Tesseland free-form reflector prior-art drawing boundary changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != 51:
+            raise PatentParseError(
+                "Tesseland free-form reflector figure-reference denominator changed"
+            )
+
+        table_markers = tuple(
+            re.findall(r"TABLE-US-(\d{5})", text, re.IGNORECASE)
+        )
+        if table_markers != ("00001", "00002"):
+            raise PatentParseError(
+                "Tesseland free-form reflector source-table denominator changed"
+            )
+        table_match = re.search(
+            r"TABLE-US-00002(?P<body>.*?)<br\s*/?>\s*\(28\)",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if table_match is None:
+            raise PatentParseError("Tesseland free-form reflector TABLE 1 boundary changed")
+        table_payload = normalize_patent_text(table_match.group("body"))
+        if (
+            hashlib.sha256(table_payload.encode("utf-8")).hexdigest()
+            != profile["table_1_payload_sha256"]
+        ):
+            raise PatentParseError("Tesseland free-form reflector TABLE 1 payload changed")
+        table_rows = _tesseland_freeform_reflector_table_rows(raw_text)
+        expected_keys = tuple((x_order, y_order) for x_order in range(0, 11, 2) for y_order in range(11))
+        if tuple(table_rows) != expected_keys:
+            raise PatentParseError(
+                "Tesseland free-form reflector 66 Legendre coefficient rows changed"
+            )
+        if (
+            sum(first != 0.0 for first, _second in table_rows.values()) != 36
+            or sum(second != 0.0 for _first, second in table_rows.values()) != 36
+        ):
+            raise PatentParseError(
+                "Tesseland free-form reflector nonzero coefficient occupancy changed"
+            )
+        for bounds in (
+            "x.sub.min -18 -27",
+            "x.sub.max 18 27",
+            "y.sub.min -16 -16",
+            "y.sub.max 16 16",
+        ):
+            if len(re.findall(re.escape(bounds), table_payload, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"Tesseland free-form reflector TABLE 1 bound {bounds!r} changed"
+                )
+
+        math_objects = re.findall(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        math_ids = tuple(
+            re.search(r'id="([^"]+)"', item, re.IGNORECASE).group(1)
+            for item in math_objects
+        )
+        math_sha256 = tuple(
+            hashlib.sha256(item.encode("utf-8")).hexdigest() for item in math_objects
+        )
+        if math_ids != ("MATH-US-00001", "MATH-US-00002", "MATH-US-00003") or (
+            math_sha256 != profile["math_object_sha256"]
+        ):
+            raise PatentParseError(
+                "Tesseland free-form reflector three-formula denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, 15)):
+            raise PatentParseError(
+                "Tesseland free-form reflector claims 1-14 denominator changed"
+            )
+
+        source_scope_markers = {
+            "field of view The horizontal and vertical full angles": 1,
+            "focal length f=52 mm": 1,
+            "35° of vertical FoV and 60° of horizontal FoV": 1,
+            "The origin of the global coordinate system (x,y,z)=(0, 0, 0)": 1,
+            "The local coordinate system 312 for mirror 302": 1,
+            "The local coordinate system 313 for mirror 303": 1,
+            "Coordinates are given in mm.": 1,
+            "10.sup.th order polynomial": 1,
+        }
+        for marker, expected in source_scope_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Tesseland free-form reflector source marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        f_number_mentions = tuple(
+            match.group(0)
+            for match in re.finditer(
+                r"\bF\s*[- ]?number\b|\bFno\b",
+                text,
+                re.IGNORECASE,
+            )
+        )
+        if f_number_mentions != ("F-number",) or "low F-number is presented" not in sections[
+            "background_summary"
+        ]:
+            raise PatentParseError(
+                "Tesseland free-form reflector system F-number absence changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all ten source-declared designs
+        return attempts_for_error(exc)
+
+    architecture_details = {
+        4: (
+            "FIG. 4 publishes a two-mirror plus exit-lens path, 70° vertical and "
+            "100° horizontal full fields and a 55 mm display, but no mirror or lens "
+            "surface coordinates, free-form coefficients, material, aperture, or F-number"
+        ),
+        5: (
+            "FIG. 5 publishes the placement of a lens before two mirrors and says its "
+            "field matches FIG. 3, but publishes no FIG. 5 surface prescription"
+        ),
+        6: (
+            "FIG. 6 publishes the placement of a lens between two mirrors and says its "
+            "field matches FIG. 3, but publishes no FIG. 6 surface prescription"
+        ),
+        7: (
+            "FIG. 7 publishes a four-free-form-surface refract-reflect-reflect-refract "
+            "path, 70° vertical and 100° horizontal full fields and a 55 mm display, "
+            "but no surface coordinates, coefficients, material, aperture, or F-number"
+        ),
+        8: (
+            "FIG. 8 publishes a two-solid-lens free-form wedge path with metallic and "
+            "TIR reflection at a low-index gap, but no surface coordinates, coefficients, "
+            "material prescription, aperture, or F-number"
+        ),
+        9: (
+            "FIG. 9 adapts FIG. 3 to a semitransparent AR mirror and adds a frontward "
+            "substrate surface, but publishes no complete FIG. 9 surface prescription"
+        ),
+        10: (
+            "FIG. 10 adapts FIG. 4 to AR with semitransparent mirror and corrective "
+            "substrate surfaces, but publishes no complete FIG. 10 surface prescription"
+        ),
+        11: (
+            "FIG. 11 adapts FIG. 7 to AR with a second transparent piece and an "
+            "environment path, but publishes no complete FIG. 11 surface prescription"
+        ),
+        12: (
+            "FIG. 12 adapts FIG. 8 to AR with a semitransparent surface and an additional "
+            "transparent piece, but publishes no complete FIG. 12 surface prescription"
+        ),
+    }
+    attempts = [
+        _PrescriptionParseAttempt(
+            embodiment_number=3,
+            embodiment=_TESSELAND_FREEFORM_REFLECTOR_ITEMS[0][1],
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_TESSELAND_FREEFORM_REFLECTOR_FIG3_REASON,
+                detail=(
+                    "FIG. 3 publishes f=52 mm, 35° vertical and 60° horizontal full "
+                    "fields, display/mirror coordinate frames, rectangular domains and "
+                    "all 66 tenth-order Legendre coefficient pairs for two free-form "
+                    "mirrors, but no prescription-specific aperture or F-number; no "
+                    "typical eye-pupil diameter is substituted and no drawing coordinate "
+                    "is derived"
+                ),
+            ),
+        )
+    ]
+    attempts.extend(
+        _PrescriptionParseAttempt(
+            embodiment_number=figure,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_TESSELAND_FREEFORM_REFLECTOR_ARCHITECTURE_REASON,
+                detail=architecture_details[figure],
+            ),
+        )
+        for figure, label, _paragraphs in _TESSELAND_FREEFORM_REFLECTOR_ITEMS[1:]
+    )
+    return attempts
+
+
+def _tesseland_freeform_reflector_table_rows(
+    raw_text: str,
+) -> dict[tuple[int, int], tuple[float, float]]:
+    match = re.search(
+        r"TABLE-US-00002(?P<body>.*?)<br\s*/?>\s*\(28\)",
+        raw_text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if match is None:
+        raise PatentParseError("Tesseland free-form reflector TABLE 1 boundary changed")
+    table_text = normalize_patent_text(match.group("body"))
+    rows: dict[tuple[int, int], tuple[float, float]] = {}
+    for row in re.finditer(
+        rf"c\.sub\.(?P<x_order>\d+),(?P<y_order>\d+)\s+"
+        rf"(?P<mirror_1>{NUMBER_PATTERN})\s+(?P<mirror_2>{NUMBER_PATTERN})",
+        table_text,
+        re.IGNORECASE,
+    ):
+        key = (int(row.group("x_order")), int(row.group("y_order")))
+        if key in rows:
+            raise PatentParseError(
+                f"Tesseland free-form reflector TABLE 1 duplicate coefficient {key}"
+            )
+        rows[key] = (
+            _parse_number(row.group("mirror_1")),
+            _parse_number(row.group("mirror_2")),
+        )
+    return rows
 
 
 def _parse_folded_macro_tele_table_attempts(

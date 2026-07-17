@@ -20722,3 +20722,266 @@ def test_largan_folded_prism_fixed_denominator_and_queue_artifacts() -> None:
     assert queue["next_exact_group"]["family_id"] == "56417699"
     assert queue["next_exact_group"]["root_ids"] == ["US-10782453"]
     assert queue["saturation_complete"] is False
+
+
+def _tesseland_freeform_reflector_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "2b7b7c65164b8240"
+        / "US-10782453-B2.html"
+    )
+    return "US-10782453-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_tesseland_freeform_reflector_reconciles_all_ten_designs() -> None:
+    patent_id, raw_text = _tesseland_freeform_reflector_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(3, 13))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert attempts[0].error.status == "metadata_unpublished"
+    assert (
+        attempts[0].error.reason_code
+        == "metadata_unpublished.system_f_number_absent"
+    )
+    assert all(
+        attempt.error.status == "confirmed_no_prescription"
+        and attempt.error.reason_code
+        == "confirmed_no_prescription.freeform_reflective_hmd_architecture_only"
+        for attempt in attempts[1:]
+    )
+
+    rows = patent_to_zmx._tesseland_freeform_reflector_table_rows(raw_text)
+    assert tuple(rows) == tuple(
+        (x_order, y_order)
+        for x_order in range(0, 11, 2)
+        for y_order in range(11)
+    )
+    assert len(rows) == 66
+    assert sum(first != 0.0 for first, _second in rows.values()) == 36
+    assert sum(second != 0.0 for _first, second in rows.values()) == 36
+    assert rows[(0, 0)] == pytest.approx((-1.42507, -2.59056))
+    assert rows[(10, 0)] == pytest.approx((-0.00240235, 0.0005887))
+
+
+def test_tesseland_freeform_reflector_source_drift_fails_all_designs() -> None:
+    patent_id, raw_text = _tesseland_freeform_reflector_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 10
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        f"Tesseland free-form reflector official raw text hash changed for {patent_id}"
+    }
+
+
+def test_tesseland_freeform_reflector_pdf_rasters_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-56417699"
+    audit = json.loads(
+        (quick / "family-56417699-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    official = audit["official_pdf"]
+    mirror = audit["patentimages_pdf"]
+    official_path = root / official["path"]
+    mirror_path = root / mirror["path"]
+    assert len(official_path.read_bytes()) == official["bytes"]
+    assert hashlib.sha256(official_path.read_bytes()).hexdigest() == official["sha256"]
+    assert len(mirror_path.read_bytes()) == mirror["bytes"]
+    assert hashlib.sha256(mirror_path.read_bytes()).hexdigest() == mirror["sha256"]
+
+    official_reader = patent_pdf_recovery.pypdf.PdfReader(str(official_path))
+    mirror_reader = patent_pdf_recovery.pypdf.PdfReader(str(mirror_path))
+    assert len(official_reader.pages) == len(mirror_reader.pages) == 17
+    page_hashes = []
+    for page_number, (official_page, mirror_page) in enumerate(
+        zip(official_reader.pages, mirror_reader.pages, strict=True),
+        start=1,
+    ):
+        assert len(official_page.extract_text() or "") == 0
+        assert len(official_page.images) == len(mirror_page.images) == 1
+        official_image = patent_pdf_recovery._page_image(
+            official_page,
+            source="US-10782453-B2 official",
+            page_number=page_number,
+        )
+        mirror_image = patent_pdf_recovery._page_image(
+            mirror_page,
+            source="US-10782453-B2 patentimages",
+            page_number=page_number,
+        )
+        official_raster = patent_pdf_recovery._decoded_raster(
+            official_image,
+            source="US-10782453-B2 official",
+        )
+        mirror_raster = patent_pdf_recovery._decoded_raster(
+            mirror_image,
+            source="US-10782453-B2 patentimages",
+        )
+        assert list(official_raster.shape) == audit["decoded_shape_per_page"]
+        assert np.array_equal(official_raster, mirror_raster)
+        page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(official_image))
+
+    assert page_hashes == audit["page_raster_sha256"]
+    assert hashlib.sha256("\n".join(page_hashes).encode()).hexdigest() == audit[
+        "raster_set_sha256"
+    ]
+    assert audit["drawing_pdf_pages"] == list(range(3, 11))
+    assert audit["table_pdf_pages"] == [14, 15]
+    assert audit["critical_page_image_sha256"] == [
+        page_hashes[number - 1] for number in audit["critical_page_numbers"]
+    ]
+    contact = root / audit["contact_sheet"]["path"]
+    assert hashlib.sha256(contact.read_bytes()).hexdigest() == audit["contact_sheet"][
+        "sha256"
+    ]
+    for key in ("google_html", "same_application_a1_google_html"):
+        path = root / audit[key]["path"]
+        assert len(path.read_bytes()) == audit[key]["bytes"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == audit[key]["sha256"]
+    assert audit["visual_review"]["numeric_derivation_from_rasters"] is False
+
+
+def test_tesseland_freeform_reflector_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-56417699"
+    artifact = json.loads(
+        (quick / "family-56417699-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    semantic_hashes = []
+
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["semantic_equal"] is True
+    assert artifact["item_state_counts"] == {"terminal": 10}
+    assert artifact["terminal_status_counts"] == {
+        "metadata_unpublished": 1,
+        "confirmed_no_prescription": 9,
+    }
+    assert artifact["conversion_receipts"] == artifact["staging_zmx"] == 0
+
+
+def test_tesseland_freeform_reflector_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-56417699"
+    evidence = json.loads(
+        (quick / "family-56417699-source-evidence.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-56417699-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "source_declared_designs": 10,
+        "numerical_freeform_designs": 1,
+        "architecture_only_designs": 9,
+        "replayed_ledger_items": 10,
+        "metadata_unpublished_items": 1,
+        "confirmed_no_prescription_items": 9,
+        "declared_figures": 12,
+        "source_table_markers": 2,
+        "numerical_table_coefficient_rows": 66,
+        "mathml_objects": 3,
+        "claims": 14,
+        "official_pdf_pages": 17,
+        "drawing_sheets": 8,
+    }
+    assert denominator["reconciliation"] == {
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_source_table_markers": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_claims": 0,
+        "unmapped_disclosed_items": 0,
+    }
+    assert len(denominator["items"]) == 10
+    assert denominator["items"][0]["terminal_status"] == "metadata_unpublished"
+    assert all(
+        item["terminal_status"] == "confirmed_no_prescription"
+        for item in denominator["items"][1:]
+    )
+    assert denominator["conversion_boundary"] == {
+        "zmx_written": 0,
+        "formal_intake": 0,
+        "code_v_used": False,
+        "drawing_numeric_derivation": False,
+        "cross_publication_numeric_borrowing": False,
+        "reason": (
+            "FIG. 3 lacks a prescription-specific aperture/F-number and the source "
+            "designs are non-sequential free-form reflective AR/VR systems; "
+            "FIGS. 4-12 lack their own complete surface prescriptions."
+        ),
+    }
+
+    for key in (
+        "denominator_audit",
+        "official_pdf_audit",
+        "external_family_queue",
+        "replay_determinism",
+        "source_audit",
+    ):
+        path = root / evidence[key]["path"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == evidence[key]["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-123.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 123
+    assert after_1["affected_roots"] == after_1["affected_items"] == 122
+    assert after_2["affected_roots"] == after_2["affected_items"] == 122
+    after_1.pop("result_set_sha256")
+    after_2.pop("result_set_sha256")
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["next_exact_group"]["family_id"] == "92714478"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12670673"]
+    assert queue["saturation_complete"] is False

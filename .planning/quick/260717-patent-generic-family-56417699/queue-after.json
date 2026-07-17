@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "0d53acbc0356a1976079a9df02cea776e97c5503361e77126c0f6d9d2060d830",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 122, "affected_items": 122},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "92714478",
+    "root_ids": ["US-12670673"],
+    "publication_ids": ["US-12670673-B2"],
+    "application_number": "18/185364",
+    "title": "Apparatus and methods for augmenting vision with region-of-interest based processing",
+    "layout_signature": "2bc0ff0946a59f9eef46374bd3d0a45b6fdf91b76522118178b50f8b56be77a7",
+    "raw_document": {"path": "data/patent-lake/uspto-ppubs-html/USPAT/b3c5d9bc53fd030f/US-12670673-B2.html", "sha256": "b3c5d9bc53fd030fdf9e0dd09f3d31c6e637599149a1f59d037925e078dc6d98"},
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}
