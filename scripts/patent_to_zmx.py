@@ -456,6 +456,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_samsung_folded_four_lens_six_embodiment_missing_metadata_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_kantatsu_surface_modification_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -7201,6 +7209,203 @@ _OFILM_FOUR_LENS_ODD_ASPHERE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             ),
         },
     }
+}
+_SAMSUNG_FOLDED_FOUR_LENS_ITEMS = (
+    (1, "Samsung folded four-lens first embodiment", (74, 100), (1, 9), 1, 2),
+    (2, "Samsung folded four-lens second embodiment", (101, 113), (10, 11), 3, 4),
+    (3, "Samsung folded four-lens third embodiment", (114, 126), (12, 13), 5, 6),
+    (4, "Samsung folded four-lens fourth embodiment", (127, 139), (14, 15), 7, 8),
+    (5, "Samsung folded four-lens fifth embodiment", (140, 152), (16, 17), 9, 10),
+    (6, "Samsung folded four-lens sixth embodiment", (153, 165), (18, 19), 11, 12),
+    (7, "Samsung electronic-device wrapper", (167, 175), (20,), None, None),
+)
+_SAMSUNG_FOLDED_FOUR_LENS_METADATA_REASON = (
+    "metadata_unpublished.prescription_specific_f_number_and_angular_field_absent"
+)
+_SAMSUNG_FOLDED_FOUR_LENS_WRAPPER_REASON = (
+    "confirmed_no_prescription.electronic_device_wrapper_only"
+)
+_SAMSUNG_FOLDED_FOUR_LENS_TABLE13_ROWS = {
+    "f": ("18.000", "18.000", "16.000", "16.000", "18.000", "18.000"),
+    "f1": ("12.161", "11.395", "20.818", "19.717", "13.225", "13.282"),
+    "f2": ("-92.715", "446.972", "14.629", "15.554", "160.555", "519.879"),
+    "f3": ("32.012", "25.419", "-14.060", "-14.322", "51.259", "46.267"),
+    "f4": ("-14.761", "-9.741", "--", "--", "-17.025", "-17.311"),
+    "TTL": ("21.794", "21.465", "19.906", "20.260", "23.410", "23.011"),
+    "BFL": ("18.044", "17.715", "16.956", "17.310", "19.660", "19.261"),
+    "ImgHT": ("2.100", "2.100", "2.100", "2.100", "2.400", "2.400"),
+}
+_SAMSUNG_FOLDED_FOUR_LENS_MISSING_METADATA_PATTERNS = (
+    r"\bF[ -]?number\b",
+    r"\bFNO\b",
+    r"\bF\s*/\s*#",
+    r"\bF\s*/\s*No\.?\b",
+    r"\bnumerical\s+aperture\b",
+    r"\bHFOV\b",
+    r"\bFOV\b",
+    r"\bfield[ -]of[ -]view\b",
+    r"\bangle\s+of\s+view\b",
+    r"\bangular\s+field\b",
+    r"\bfield\s+angle\b",
+    r"\bvision\s+field\b",
+)
+_SAMSUNG_FOLDED_FOUR_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20250327997-A1": {
+        "raw_document_sha256": ("f6c6fd1b68f084d086dcbbe3423dcbbee7093dfd472771b2b1fd1fd8474d9858"),
+        "normalized_text_sha256": (
+            "7db8a8ba9f9d4f94c2699e9fc30db5eb589b6d79cf50ce630f3df0890782e36a"
+        ),
+        "section_markers": {
+            "abstract": "Abstract An imaging lens system is provided.",
+            "background_summary": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS [0001]"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS [0023]",
+            "detailed": "DETAILED DESCRIPTION [0042]",
+            "claims": "Claims 1 . An imaging lens system",
+        },
+        "section_sha256": {
+            "abstract": "c5548db0a2db64c4a5cb7a9200d39b5b9547f8a6f3257e8dc65f1d56ba53df7f",
+            "background_summary": "f36bcacab345889951b5d55f674d2716d8737a1793f4e9ccf867f391e296d31f",
+            "brief": "3f7835376be302bd4bee601323de76d818f83b6a475ef2695df87f53c4375f38",
+            "detailed": "7616511322d22ba1614528ba08b42260dd007c27bc9fee2a7dcf0035b38b7a3c",
+            "claims": "3e854079eedc1c175ebd58d33b4f495ae961f4abdf492bd7764207b57b7557aa",
+        },
+        "paragraph_pattern": r"\[(\d{4})\]",
+        "paragraph_ranges": {
+            "background_summary": (1, 22),
+            "brief": (23, 41),
+            "detailed": (42, 175),
+        },
+        "item_paragraph_ranges": (
+            (74, 100),
+            (101, 113),
+            (114, 126),
+            (127, 139),
+            (140, 152),
+            (153, 165),
+            (167, 175),
+        ),
+        "claim_numbers": tuple(range(1, 10)),
+        "identity_markers": {
+            "Inventor(s) JEONG; You Jin et al. IMAGING LENS SYSTEM Abstract": 1,
+            "Family ID: 90040110": 1,
+            "Appl. No.: 19/259670": 1,
+            "parent US continuation 18362008 20230731": 1,
+            "parent-grant-document US 12386154 child US 19259670": 1,
+            "KR 10-2022-0156668": 1,
+            "KR 10-2022-0156741": 1,
+            "KR 10-2023-0039586": 1,
+            "Samsung Electro-Mechanics Co., Ltd.": 2,
+        },
+        "table_block_sha256": (
+            "a5c6a75eef12e021c098d92ffec908d01055507bfc8a9e904a1c85612dfb8de6",
+            "1d1d5da1db743a7edd04925e2133a26daf0bc354d79c3248c5e506187771d261",
+            "29a9c95a3e96490827c3ff518be1a8ccde85d0b264c46d81ed6b27047e3b2a6c",
+            "3fd7fbf298ce532ff4fada7eab18c556279059894e3ecc5b7f78e3681ab66e7b",
+            "2ad3ef5b5886d94510652b646f6702c56701527ddc8b9fe935f1d09a5a7dd502",
+            "035c9bb233a249dacde7c8bebe07ce27822120ffd2eb9e297ad48b3bf11f7367",
+            "44f94a8bd50bf31cbea5685c9785209d1bc726e20f33524abaa86e1604b65a04",
+            "90c270904bb0d88a5eb9282808bc22eda6e16e726ad5690562ebb6bff86dcf06",
+            "925ddee15e29d702ddecab46bbabd74e79c801a404c32ac68e2613f3fc0e1846",
+            "17fac43b82aef2c4e8df2c721bd3ac57d57001e8a50eba650da74dec3f949911",
+            "e10d8d9ff302b5fe4491e4887aa51506afbfd5513f3a5025f3cc015fedf74381",
+            "f32626d765c520eae541b293e2ea99e43ef5b89715b9be3a26426bfcb1691a55",
+            "b31915b0a73c8abfd7e3f9a74073cf2b050a51a928ae13fae3a5456c9f69d495",
+            "80eebfe388f6f13262f7083dce2bba6f0f008c0c9c274b2873aab6e3e7dc53f7",
+            "c86082fab56448b213bff74dc8a32422a0124a857fa7f075be1856dd24d61a16",
+        ),
+        "math_object_sha256": (
+            "0f04db16fd1f330711288de12db8474ff271108360cb0723e8dffa81fb1117ed",
+            "a5c7d79aadea2ac3609910a2df150ffebfec1c7e7e82f05c2a0e32394c662bb8",
+            "e7ef5c1a601d052bd9050b7f0cc2af6f60d4b800611b84fd1be7836bd2328f4d",
+            "d216cadde64bbed2f35f4a1845896d6e77ce8578f1d72df109ed9f17c67fcf4d",
+        ),
+        "pdf_audit": {
+            "page_count": 33,
+            "drawing_pdf_pages": tuple(range(2, 20)),
+            "container_sha256": "7bccce5290180d0197928fbd13203ed2c3a6c37b270fd50fa311ffc1e760b53d",
+            "google_html_sha256": "3644beb9852251523f9034a114cb6bf850dee014a21cd4338a48b35fe544f636",
+            "critical_page_number": 32,
+            "critical_page_image_sha256": "2e3064bb7a96f58bebdbc7cbc57154f1f4f22ed2ff30da383d139d3128460c68",
+            "raster_set_sha256": "7241833a92e68c78fed1e28ddf5e2c17d18944593cba2dcd209b63ded1e2468f",
+        },
+    },
+    "US-12386154-B2": {
+        "raw_document_sha256": ("5cbe9f3922a660099c4a05f55a523494ec22ba692680a957af780b24a60a3212"),
+        "normalized_text_sha256": (
+            "fac3ea44dc9aae1f838d000fdb1b32713f795d0ae82d3ae54a8824fdc835d8f9"
+        ),
+        "section_markers": {
+            "abstract": "Abstract An imaging lens system is provided.",
+            "background_summary": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS (1)"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (20)",
+            "claims": "Claims 1. An imaging lens system",
+        },
+        "section_sha256": {
+            "abstract": "173c7a39416ed1d2060fe32e6ec8b5e65d8eabfb0c679112b91ba83c955ab21e",
+            "background_summary": "c5233a1915ee40e3d90151ebd8c84008415b4130031c958e3776ccbb815261c2",
+            "brief": "4ae538261afe6a7cc3e175eb7277c2a7a197ad4edbcf8fd8f20071c323b25263",
+            "detailed": "41d2e5cdc5e69c856e79c372df8e4725476d51254236062c40b17966a3ade5cc",
+            "claims": "7b91d0745c885996f0ea2e78ca0703052be2326ce029e93245f11b934f794ebc",
+        },
+        "paragraph_pattern": r"\((\d+)\)",
+        "paragraph_ranges": {
+            "background_summary": (1, 22),
+            "brief": (1, 19),
+            "detailed": (20, 169),
+        },
+        "item_paragraph_ranges": (
+            (53, 81),
+            (82, 96),
+            (97, 111),
+            (112, 126),
+            (127, 141),
+            (142, 156),
+            (161, 169),
+        ),
+        "claim_numbers": tuple(range(1, 10)),
+        "identity_markers": {
+            "Inventor(s) Jeong; You Jin et al. Imaging lens system Abstract": 1,
+            "Family ID: 90040110": 1,
+            "Appl. No.: 18/362008": 1,
+            "US 20240168265 A1 May. 23, 2024": 1,
+            "KR 10-2022-0156668": 1,
+            "KR 10-2022-0156741": 1,
+            "KR 10-2023-0039586": 1,
+            "Samsung Electro-Mechanics Co., Ltd.": 2,
+        },
+        "table_block_sha256": (
+            "28f8ec29bd3f02deba9d4c66afeb7963acffac197eb4d440fa0d03aedb8e81d0",
+            "353bcec00671440e7e3d09a2d2481b6d3678a361b64aca6e98aa03b12f67c10f",
+            "54dfacca0f6f6cf811fbd82e514ade42c83fef56814e78e1f6ac17a572d4c42d",
+            "748bc2f5d9b7fd7919851273642f092b7ae2452e0bbf3cc9be55d765ceb92933",
+            "3410df067cb14d2ffb2081c75ce628a2d45b48268bf35477095fbfcb5fa3552b",
+            "e8a7ffe3f53f1f98c02bdbdc18af8352f9af8a21609b8a9c49bcbc7c7fd3b7ef",
+            "1a8597d18a7d369694b529eec77a892e7bffa97f3f56ff2f46eb379376b0f078",
+            "734e62585e3f03392c679230520c21d967cb091d2d4dbc12857729a818688c38",
+            "f5dc9b7fb9c414bb347b078460008452f99202c5b9da66c548d5fa9a985aa811",
+            "470e494352df53c76e2393de56931f50c65aff82808d9077e2f6737fe6e6e218",
+            "567af7fda83606b0c0ec886d0a51cd2c0b29a6cb9911a1c441e8451ebde3aeda",
+            "9c47fea0834d424e349710aaba136044236e61d5b975565678d02b1996104945",
+            "30b41327b134924519fa84122b9560f7c894c89603736d08e472920a80159652",
+            "4a046f46cbec7d722ab0313a958288656df8ed757a1ae2ca86f90a26e15f9a68",
+            "a833f7de063b291404ec2c6db1de08c27d87c93eeee1844590aaa1e83bd0fa59",
+        ),
+        "math_object_sha256": ("739655cb83eabbde9d6ab5b143e4682ff7aca146ec027276a8a428d1cef7a32f",),
+        "pdf_audit": {
+            "page_count": 33,
+            "drawing_pdf_pages": tuple(range(3, 21)),
+            "container_sha256": "4dba15ddda095030c1c2f1db2bd9b902e9964f991e0ed2b20461e009e1e161f0",
+            "google_html_sha256": "443d3b559053c00dcd02c60457a7b6eec238730ad159b35a6c9f38274c300dd7",
+            "critical_page_number": 32,
+            "critical_page_image_sha256": "17d332993781063bf6b0fbaa4161e580ff61198a8631db8c62baa25e19f10517",
+            "raster_set_sha256": "6972325da0cebecad662f50b946977d13f6c93a05b8ff564ac36ede36e100fa6",
+        },
+    },
 }
 _CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
 _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT = (
@@ -21257,6 +21462,280 @@ def _ofilm_four_lens_coefficient_rows(
         )
         for match in row_pattern.finditer(table_text)
     ]
+
+
+def _classify_samsung_folded_four_lens_six_embodiment_missing_metadata_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 90040110 disclosures without inventing metadata."""
+
+    profile = _SAMSUNG_FOLDED_FOUR_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _surface_table, _asphere_table in (
+                _SAMSUNG_FOLDED_FOUR_LENS_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Samsung folded four-lens official raw text hash changed for {patent_id}"
+            )
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Samsung folded four-lens normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung folded four-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {name: text.index(marker) for name, marker in section_markers.items()}
+        except ValueError as exc:
+            raise PatentParseError("Samsung folded four-lens section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Samsung folded four-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(f"Samsung folded four-lens {section_name} section changed")
+
+        paragraph_pattern = profile["paragraph_pattern"]
+        section_paragraphs: dict[str, tuple[int, ...]] = {}
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value) for value in re.findall(paragraph_pattern, sections[section_name])
+            )
+            expected = tuple(range(bounds[0], bounds[1] + 1))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung folded four-lens {section_name} paragraph denominator changed"
+                )
+            section_paragraphs[section_name] = observed
+
+        item_ranges = profile["item_paragraph_ranges"]
+        if (
+            item_ranges != tuple(item[2] for item in _SAMSUNG_FOLDED_FOUR_LENS_ITEMS)
+            and patent_id.upper() != "US-12386154-B2"
+        ):
+            # The A1 numbering is the canonical item map; B2 intentionally resets
+            # grant-description numbering and therefore carries its own exact map.
+            raise PatentParseError("Samsung folded four-lens item paragraph mapping changed")
+        detailed_paragraphs = set(section_paragraphs["detailed"])
+        for bounds in item_ranges:
+            if not set(range(bounds[0], bounds[1] + 1)).issubset(detailed_paragraphs):
+                raise PatentParseError(
+                    "Samsung folded four-lens item paragraphs left the detailed description"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                flags=re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Samsung folded four-lens claims 1-9 changed")
+
+        figure_declarations = (
+            "FIG. 1 illustrates",
+            "FIG. 2 illustrates",
+            "FIG. 3 illustrates",
+            "FIG. 4 illustrates",
+            "FIGS. 5 A, 5 B, 5 C, 5 D, and 5 E illustrate",
+            "FIGS. 6 , 7 , and 8 are",
+            *(f"FIG. {number} illustrates" for number in range(9, 21)),
+        )
+        for declaration in figure_declarations:
+            observed = len(re.findall(re.escape(declaration), sections["brief"], re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"Samsung folded four-lens declaration {declaration!r} occurs "
+                    f"{observed}; expected 1"
+                )
+
+        blocks = _patent_table_blocks(text)
+        if [block.number for block in blocks] != list(range(1, 16)):
+            raise PatentParseError("Samsung folded four-lens source-table denominator changed")
+        for block, expected_digest in zip(blocks, profile["table_block_sha256"], strict=True):
+            observed_digest = hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Samsung folded four-lens source table {block.number} changed"
+                )
+
+        expected_surface_ends = {1: 19, 3: 17, 5: 17, 7: 15, 9: 19, 11: 19}
+        for table_number, final_surface in expected_surface_ends.items():
+            surface_numbers = tuple(
+                dict.fromkeys(
+                    int(value)
+                    for value in re.findall(
+                        r"(?<![A-Za-z0-9])S(\d+)\b",
+                        blocks[table_number - 1].text,
+                    )
+                )
+            )
+            if surface_numbers != tuple(range(1, final_surface + 1)):
+                raise PatentParseError(
+                    f"Samsung folded four-lens table {table_number} surface sequence changed"
+                )
+
+        expected_asphere_headers = {
+            2: ((1, 2, 3, 4), (5, 6, 7, 8)),
+            4: ((1, 2, 3, 4), (5, 6, 7, 8)),
+            6: ((1, 2, 3), (4, 5, 6)),
+            8: ((1, 2, 3), (4, 5, 6)),
+            10: ((1, 2, 3, 4), (5, 6, 7, 8)),
+            12: ((1, 2, 3, 4), (5, 6, 7, 8)),
+        }
+        row_labels = ("K", "A", "B", "C", "D", "E", "F", "G", "H", "J")
+        for table_number, expected_headers in expected_asphere_headers.items():
+            table_text = blocks[table_number - 1].text
+            headers = tuple(
+                tuple(int(value) for value in re.findall(r"S(\d+)", match))
+                for match in re.findall(
+                    r"Surface no\.\s+((?:S\d+\s+)+)K\b",
+                    table_text,
+                    re.IGNORECASE,
+                )
+            )
+            if headers != expected_headers:
+                raise PatentParseError(
+                    f"Samsung folded four-lens table {table_number} asphere headers changed"
+                )
+            observed_labels = tuple(
+                match.group(1).upper()
+                for match in re.finditer(
+                    r"(?<!\S)(K|A|B|C|D|E|F|G|H|J)\s+(?=[+-]?\d)",
+                    table_text,
+                    re.IGNORECASE,
+                )
+            )
+            if observed_labels != row_labels + row_labels:
+                raise PatentParseError(
+                    f"Samsung folded four-lens table {table_number} coefficient rows changed"
+                )
+
+        table13_rows = _samsung_folded_four_lens_table13_rows(blocks[12].text)
+        if table13_rows != _SAMSUNG_FOLDED_FOUR_LENS_TABLE13_ROWS:
+            raise PatentParseError("Samsung folded four-lens TABLE 13 values changed")
+
+        math_objects = re.findall(r"<maths\b.*?</maths>", raw_text, re.I | re.S)
+        math_hashes = tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest() for math_object in math_objects
+        )
+        if math_hashes != profile["math_object_sha256"]:
+            raise PatentParseError("Samsung folded four-lens MathML object denominator changed")
+        for phrase, expected in {
+            "A to H and J indicate aspherical constants": 1,
+            "Tables 13 to 15 below each illustrate the optical characteristic values": 1,
+            (
+                "An example electronic device, in accordance with one or more "
+                "embodiments, will be described with reference to FIG. 20"
+            ): 1,
+        }.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung folded four-lens source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for pattern in _SAMSUNG_FOLDED_FOUR_LENS_MISSING_METADATA_PATTERNS:
+            if re.search(pattern, text, re.IGNORECASE):
+                raise PatentParseError(
+                    "Samsung folded four-lens missing-metadata denominator changed: "
+                    f"source now matches {pattern!r}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all seven source-bound items
+        return attempts_for_error(exc)
+
+    attempts = [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_SAMSUNG_FOLDED_FOUR_LENS_METADATA_REASON,
+                detail=(
+                    f"Samsung Family 90040110 embodiment {number} publishes exact "
+                    f"surface/asphere tables {surface_table}/{asphere_table} and TABLE "
+                    "13 focal/TTL/BFL/ImgHT values, but neither retained official "
+                    "publication discloses a prescription-specific F-number or angular "
+                    "field; aperture geometry is not substituted and no value is derived"
+                ),
+            ),
+        )
+        for number, label, _paragraphs, _figures, surface_table, asphere_table in (
+            _SAMSUNG_FOLDED_FOUR_LENS_ITEMS[:6]
+        )
+    ]
+    attempts.append(
+        _PrescriptionParseAttempt(
+            embodiment_number=7,
+            embodiment=_SAMSUNG_FOLDED_FOUR_LENS_ITEMS[6][1],
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_SAMSUNG_FOLDED_FOUR_LENS_WRAPPER_REASON,
+                detail=(
+                    "Samsung Family 90040110 FIG. 20 electronic-device embodiment "
+                    "only mounts the previously disclosed imaging lens system, image "
+                    "sensor, and portable-terminal components; it publishes no seventh "
+                    "optical prescription"
+                ),
+            ),
+        )
+    )
+    return attempts
+
+
+def _samsung_folded_four_lens_table13_rows(
+    table_text: str,
+) -> dict[str, tuple[str, ...]]:
+    token = rf"(?:{NUMBER_PATTERN}|--)"
+    rows: dict[str, tuple[str, ...]] = {}
+    for label in _SAMSUNG_FOLDED_FOUR_LENS_TABLE13_ROWS:
+        match = re.search(
+            rf"(?<!\S){re.escape(label)}\s+"
+            rf"(?P<values>{token}(?:\s+{token}){{5}})",
+            table_text,
+        )
+        if match is None:
+            raise PatentParseError(f"Samsung folded four-lens TABLE 13 row {label} not found")
+        rows[label] = tuple(match.group("values").split())
+    return rows
 
 
 def _classify_kantatsu_surface_modification_architecture_only_attempts(

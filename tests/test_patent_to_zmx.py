@@ -19058,6 +19058,338 @@ def test_ofilm_four_lens_source_binding_fails_closed_for_every_embodiment() -> N
     )
 
 
+@pytest.mark.parametrize(
+    ("patent_id", "relative_path"),
+    (
+        (
+            "US-20250327997-A1",
+            "US-PGPUB/f6c6fd1b68f084d0/US-20250327997-A1.html",
+        ),
+        (
+            "US-12386154-B2",
+            "USPAT/5cbe9f3922a66009/US-12386154-B2.html",
+        ),
+    ),
+)
+def test_samsung_folded_four_lens_family_classifies_all_seven_items(
+    patent_id: str,
+    relative_path: str,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_path = root / "data" / "patent-lake" / "uspto-ppubs-html" / relative_path
+    raw = source_path.read_text(encoding="utf-8")
+    profile = patent_to_zmx._SAMSUNG_FOLDED_FOUR_LENS_SOURCE_PROFILES[patent_id]
+    assert hashlib.sha256(source_path.read_bytes()).hexdigest() == profile["raw_document_sha256"]
+
+    attempts = patent_to_zmx._parse_prescription_attempts(raw, patent_id=patent_id)
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 8))
+    assert [attempt.embodiment for attempt in attempts] == [
+        item[1] for item in patent_to_zmx._SAMSUNG_FOLDED_FOUR_LENS_ITEMS
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        and attempt.error.reason_code
+        == "metadata_unpublished.prescription_specific_f_number_and_angular_field_absent"
+        and "no value is derived" in str(attempt.error)
+        for attempt in attempts[:6]
+    )
+    wrapper = attempts[6]
+    assert isinstance(wrapper.error, patent_to_zmx.PatentTerminalParseError)
+    assert wrapper.error.status == "confirmed_no_prescription"
+    assert wrapper.error.reason_code == ("confirmed_no_prescription.electronic_device_wrapper_only")
+    assert "no seventh optical prescription" in str(wrapper.error)
+
+
+@pytest.mark.parametrize(
+    ("patent_id", "relative_path"),
+    (
+        (
+            "US-20250327997-A1",
+            "US-PGPUB/f6c6fd1b68f084d0/US-20250327997-A1.html",
+        ),
+        (
+            "US-12386154-B2",
+            "USPAT/5cbe9f3922a66009/US-12386154-B2.html",
+        ),
+    ),
+)
+def test_samsung_folded_four_lens_family_fails_closed_on_source_drift(
+    patent_id: str,
+    relative_path: str,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_path = root / "data" / "patent-lake" / "uspto-ppubs-html" / relative_path
+    raw = source_path.read_text(encoding="utf-8")
+    mutated = raw.replace("18.000", "18.001", 1)
+    assert mutated != raw
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        mutated,
+        patent_id=patent_id,
+    )
+    assert len(attempts) == 7
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and "official raw text hash changed" in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_samsung_folded_four_lens_family_has_one_shared_numeric_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_paths = {
+        "US-20250327997-A1": (
+            root
+            / "data"
+            / "patent-lake"
+            / "uspto-ppubs-html"
+            / "US-PGPUB"
+            / "f6c6fd1b68f084d0"
+            / "US-20250327997-A1.html"
+        ),
+        "US-12386154-B2": (
+            root
+            / "data"
+            / "patent-lake"
+            / "uspto-ppubs-html"
+            / "USPAT"
+            / "5cbe9f3922a66009"
+            / "US-12386154-B2.html"
+        ),
+    }
+    table_payload_hashes: dict[str, list[str]] = {}
+    expected_common_hashes = [
+        "96bbed08bc520b7ec8aa50ff39f85064b7ca2eae4fc93ce3e1dfd4a0494c5bb1",
+        "8dc7198964fa8df2badc89b4c27d5db92bfdaddcebef6635b5ccc55c37e7b0d7",
+        "40358955e26f0c7a884f5541ca96164157a085544962411008a09708d3369f49",
+        "78bc6ae7a0c3c0bf4580230bb3c7e370be15bcdb7610de25d79fc5c6bdb3f6a4",
+        "412392e7feaf42d67cf2b18ef6a8ed2b3e7fe7701fd258318bd35fcde2c78046",
+        "5ae10fb42d9d49947766f95a537e568c8bf12b0437642565445026addc9f0695",
+        "74bccfb6889de6c9fd56e0ca573b8c3db50bd153aa0f8acba41397cef006f154",
+        "7ed3c32ca92f70c4788c1cb045cb2fc3357a4b160916e87d4157b5b84a1785b3",
+        "fc7a1c5ac113c84cba57ca32e437c17ba7b42bb851b3ff13369a1b75d693389a",
+        "61fbea05d9c4ea4fa41881b23d033a510a1e92ed34f8a8cb8ddf14c3350782ac",
+        "dfa94ea3d5ebdc149ee1d2f26ebf2eaee3ae82d2432a25c3b8253b5a2913267a",
+        "dbade82a5634f2a1b51a6ae703172617263856ec7a7bc1efaf9b896c124f29ee",
+        "51ba7f98b6f0888b4d93b94256d5f0ab010c79ee31ce628129843deba0ca0c15",
+    ]
+
+    for patent_id, source_path in source_paths.items():
+        raw = source_path.read_text(encoding="utf-8")
+        text = patent_to_zmx.normalize_patent_text(raw)
+        blocks = patent_to_zmx._patent_table_blocks(text)
+        assert [block.number for block in blocks] == list(range(1, 16))
+        table_payload_hashes[patent_id] = []
+        for block in blocks[:13]:
+            payload = re.split(r"\s(?:\[\d{4}\]|\(\d+\))\s", block.text, maxsplit=1)[0].strip()
+            table_payload_hashes[patent_id].append(
+                hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            )
+        assert (
+            patent_to_zmx._samsung_folded_four_lens_table13_rows(blocks[12].text)
+            == patent_to_zmx._SAMSUNG_FOLDED_FOUR_LENS_TABLE13_ROWS
+        )
+        assert all(
+            re.search(pattern, text, re.IGNORECASE) is None
+            for pattern in (patent_to_zmx._SAMSUNG_FOLDED_FOUR_LENS_MISSING_METADATA_PATTERNS)
+        )
+
+    assert table_payload_hashes["US-20250327997-A1"] == expected_common_hashes
+    assert table_payload_hashes["US-12386154-B2"] == expected_common_hashes
+
+
+def test_samsung_folded_four_lens_family_pdf_raster_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-90040110"
+    audit = json.loads((quick / "family-90040110-raster-audit.json").read_text(encoding="utf-8"))
+    assert audit["family_id"] == "90040110"
+    assert audit["numeric_derivation_from_rasters"] is False
+    assert audit["cross_publication_numeric_borrowing"] is False
+
+    for patent_id, publication in audit["publications"].items():
+        profile = patent_to_zmx._SAMSUNG_FOLDED_FOUR_LENS_SOURCE_PROFILES[patent_id]["pdf_audit"]
+        google = publication["google_html"]
+        google_path = root / google["path"]
+        assert len(google_path.read_bytes()) == google["bytes"]
+        assert (
+            hashlib.sha256(google_path.read_bytes()).hexdigest()
+            == google["sha256"]
+            == profile["google_html_sha256"]
+        )
+        google_raw = google_path.read_text(encoding="utf-8")
+        assert "citation_pdf_url" not in google_raw and "pdfLink" not in google_raw
+
+        official = publication["official_pdf"]
+        pdf_path = root / official["path"]
+        assert len(pdf_path.read_bytes()) == official["bytes"]
+        assert (
+            hashlib.sha256(pdf_path.read_bytes()).hexdigest()
+            == official["sha256"]
+            == profile["container_sha256"]
+        )
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == official["page_count"] == profile["page_count"] == 33
+        page_hashes = []
+        for page_number, (page, expected) in enumerate(
+            zip(reader.pages, official["pages"], strict=True),
+            start=1,
+        ):
+            assert expected["page"] == page_number
+            assert (page.extract_text() or "") == ""
+            assert len(page.images) == expected["image_count"] == 1
+            image = patent_pdf_recovery._page_image(
+                page,
+                source=patent_id,
+                page_number=page_number,
+            )
+            decoded = patent_pdf_recovery._decoded_raster(
+                image,
+                source=patent_id,
+            )
+            assert list(decoded.shape) == expected["shape"]
+            page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(image))
+        assert page_hashes == [page["sha256"] for page in official["pages"]]
+        assert (
+            hashlib.sha256("\n".join(page_hashes).encode()).hexdigest()
+            == (official["canonical_raster_set_sha256"])
+            == profile["raster_set_sha256"]
+        )
+        critical_page = official["critical_page_number"]
+        assert critical_page == profile["critical_page_number"] == 32
+        assert (
+            page_hashes[critical_page - 1]
+            == official["critical_page_image_sha256"]
+            == profile["critical_page_image_sha256"]
+        )
+
+
+def test_samsung_folded_four_lens_family_replay_and_evidence_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-90040110"
+    evidence = json.loads(
+        (quick / "family-90040110-source-evidence.json").read_text(encoding="utf-8")
+    )
+    assert evidence["root_ids"] == ["US-12386154", "US-20250327997"]
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 2,
+        "retained_classification_publications": 2,
+        "retained_exact_google_wrappers": 2,
+        "retained_official_pdf_containers": 2,
+        "distinct_family_items": 7,
+        "disclosed_optical_prescriptions_per_publication": 6,
+        "electronic_device_wrappers_per_publication": 1,
+        "replayed_ledger_items": 14,
+        "metadata_unpublished_items": 12,
+        "confirmed_no_prescription_items": 2,
+        "declared_figures_per_publication": 20,
+        "declared_figure_panels_per_publication": 24,
+        "tagged_html_tables_per_publication": 15,
+        "claims_per_publication": 9,
+        "official_pdf_pages_per_publication": 33,
+        "drawing_sheets_per_publication": 18,
+    }
+    for key in (
+        "denominator_audit",
+        "official_pdf_audit",
+        "external_family_queue",
+        "replay_determinism",
+        "source_audit",
+    ):
+        record = evidence[key]
+        path = root / record["path"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+
+    denominator = json.loads(
+        (quick / "family-90040110-denominator.json").read_text(encoding="utf-8")
+    )
+    assert denominator["ledger_item_denominator"] == {
+        **denominator["ledger_item_denominator"],
+        "distinct_family_items": 7,
+        "per_root_items": 7,
+        "frozen_cohort_roots": 2,
+        "replayed_items": 14,
+        "optical_prescriptions_per_root": 6,
+        "electronic_device_wrappers_per_root": 1,
+    }
+    assert (
+        denominator["required_metadata_boundary"]["published_prescription_specific_f_number_values"]
+        == 0
+    )
+    assert (
+        denominator["required_metadata_boundary"][
+            "published_prescription_specific_angular_field_values"
+        ]
+        == 0
+    )
+    assert denominator["reconciliation"]["unmapped_disclosed_items"] == 0
+
+    replay = json.loads(
+        (quick / "family-90040110-replay-determinism.json").read_text(encoding="utf-8")
+    )
+    assert replay["permitted_normalization"] == ["result_attempt"]
+    assert replay["worker_or_zmx_created"] is False
+    assert (
+        replay["strict_replay"]["roots_with_results"]
+        == replay["strict_replay"]["cohort_roots"]
+        == 619
+    )
+    assert replay["strict_replay"]["missing_results"] == 0
+    assert replay["strict_replay"]["corrupt_results"] == 0
+    for root_id, record in replay["roots"].items():
+        assert [item["result_attempt"] for item in record["attempts"]] == [2, 3]
+        assert (
+            len({item["semantic_sha256_excluding_result_attempt"] for item in record["attempts"]})
+            == 1
+        )
+        assert record["root_state"] == "terminal"
+        assert record["items"] == 7
+        assert record["metadata_unpublished_items"] == 6
+        assert record["confirmed_no_prescription_items"] == 1
+        assert record["conversion_attempt_ids_present"] == 0
+        assert record["conversion_request_sha256_present"] == 0
+        assert record["prescription_fingerprints_present"] == 0
+        for attempt_number in (2, 3):
+            result_path = (
+                root
+                / "data"
+                / "patent-ledger"
+                / "replay"
+                / "local-uncovered"
+                / "results"
+                / root_id
+                / f"attempt-{attempt_number:04d}"
+                / "result.json"
+            )
+            payload = json.loads(result_path.read_text(encoding="utf-8"))
+            assert payload["root_state"] == "terminal"
+            assert len(payload["items"]) == 7
+            assert all(
+                item["conversion_attempt_id"] is None
+                and item["conversion_request_sha256"] is None
+                and item["prescription_fingerprint"] is None
+                for item in payload["items"]
+            )
+
+    before = json.loads((quick / "generic-residual-before-129.json").read_text(encoding="utf-8"))
+    assert before["affected_roots"] == before["affected_items"] == 129
+    after_hashes = []
+    for name in ("generic-residual-after-1.json", "generic-residual-after-2.json"):
+        path = quick / name
+        after_hashes.append(hashlib.sha256(path.read_bytes()).hexdigest())
+        after = json.loads(path.read_text(encoding="utf-8"))
+        assert after["affected_roots"] == after["affected_items"] == 127
+        assert after["result_set_sha256"] == evidence["replay_state"]["result_set_sha256"]
+    assert after_hashes == [evidence["census"]["after_1"]["sha256"]] * 2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["next_exact_group"]["family_id"] == "91069629"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20240168282"]
+    assert queue["saturation_complete"] is False
+
+
 def test_ofilm_four_lens_exact_wrapper_and_pdf_raster_denominator() -> None:
     root = Path(__file__).resolve().parents[1]
     quick = (

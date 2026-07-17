@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "family_id": "90040110",
+  "title": "IMAGING LENS SYSTEM",
+  "applicant_assignee": "Samsung Electro-Mechanics Co., Ltd.",
+  "root_ids": ["US-12386154", "US-20250327997"],
+  "publications": {
+    "US-12386154-B2": {
+      "application_number": "18/362008",
+      "filing_date": "2023-07-31",
+      "grant_date": "2025-08-12",
+      "prior_publication": "US-20240168265-A1"
+    },
+    "US-20250327997-A1": {
+      "application_number": "19/259670",
+      "filing_date": "2025-07-03",
+      "publication_date": "2025-10-23",
+      "relationship": "continuation of application 18/362008 and child of US-12386154"
+    }
+  },
+  "priority_applications": [
+    {"application": "KR 10-2022-0156668", "date": "2022-11-21"},
+    {"application": "KR 10-2022-0156741", "date": "2022-11-21"},
+    {"application": "KR 10-2023-0039586", "date": "2023-03-27"}
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 2,
+    "retained_classification_publications": 2,
+    "retained_exact_google_wrappers": 2,
+    "retained_official_pdf_containers": 2,
+    "distinct_family_items": 7,
+    "disclosed_optical_prescriptions_per_publication": 6,
+    "electronic_device_wrappers_per_publication": 1,
+    "replayed_ledger_items": 14,
+    "metadata_unpublished_items": 12,
+    "confirmed_no_prescription_items": 2,
+    "declared_figures_per_publication": 20,
+    "declared_figure_panels_per_publication": 24,
+    "tagged_html_tables_per_publication": 15,
+    "claims_per_publication": 9,
+    "official_pdf_pages_per_publication": 33,
+    "drawing_sheets_per_publication": 18
+  },
+  "official_html": {
+    "US-12386154-B2": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/5cbe9f3922a66009/US-12386154-B2.html",
+      "bytes": 111677,
+      "raw_characters": 109792,
+      "raw_document_sha256": "5cbe9f3922a660099c4a05f55a523494ec22ba692680a957af780b24a60a3212",
+      "normalized_characters": 84867,
+      "normalized_text_sha256": "fac3ea44dc9aae1f838d000fdb1b32713f795d0ae82d3ae54a8824fdc835d8f9",
+      "section_positions": {"abstract": 236, "background_summary": 4601, "brief": 10292, "detailed": 12732, "claims": 82635},
+      "section_lengths": {"abstract": 4365, "background_summary": 5691, "brief": 2440, "detailed": 69903, "claims": 2232},
+      "paragraph_ranges": {"background_summary": [1, 22], "brief": [1, 19], "detailed": [20, 169]},
+      "mathml_objects": 1
+    },
+    "US-20250327997-A1": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f6c6fd1b68f084d0/US-20250327997-A1.html",
+      "bytes": 98248,
+      "raw_characters": 96363,
+      "raw_document_sha256": "f6c6fd1b68f084d086dcbbe3423dcbbee7093dfd472771b2b1fd1fd8474d9858",
+      "normalized_characters": 82004,
+      "normalized_text_sha256": "7db8a8ba9f9d4f94c2699e9fc30db5eb589b6d79cf50ce630f3df0890782e36a",
+      "section_positions": {"abstract": 269, "background_summary": 1546, "brief": 7377, "detailed": 9863, "claims": 79558},
+      "section_lengths": {"abstract": 1277, "background_summary": 5831, "brief": 2486, "detailed": 69695, "claims": 2446},
+      "paragraph_ranges": {"background_summary": [1, 22], "brief": [23, 41], "detailed": [42, 175]},
+      "mathml_objects": 4
+    }
+  },
+  "prescription_boundary": {
+    "surface_asphere_table_pairs": [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]],
+    "summary_tables": [13, 14, 15],
+    "table_13_published_fields": ["f", "f1", "f2", "f3", "f4", "TTL", "BFL", "ImgHT"],
+    "published_prescription_specific_f_number_values": 0,
+    "published_prescription_specific_angular_field_values": 0,
+    "f_number_derived_from_aperture_geometry": false,
+    "angular_field_derived_from_focal_length_and_image_height": false,
+    "external_family_numeric_values_imported": false,
+    "coordinate_values_synthesized": 0
+  },
+  "terminal_outcome": {
+    "root_state": "terminal",
+    "metadata_reason_code": "terminal.metadata_unpublished.prescription_specific_f_number_and_angular_field_absent",
+    "wrapper_reason_code": "terminal.confirmed_no_prescription.electronic_device_wrapper_only",
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "3cebf1af8fdca1a2b6163da8c257a5538268bdf8f897714532745ccc36f06926",
+    "summary_sha256": "38d766ca3f83e73de9fb294e3a80a1d97138266a88dd5ecb7c8e67800d9c4edb",
+    "report_sha256": "1573d434b455030bb5d08139bae908aa377149cadda491d130aeb1ad5a936d79",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "root_state_counts": {"conversion_retry_required": 0, "converted_pending_intake": 25, "mixed_nonterminal": 146, "parser_review_required": 316, "source_exhausted_pending_alternates": 0, "source_retry_required": 0, "terminal": 132},
+    "item_state_counts": {"conversion_retry_required": 28, "converted_pending_intake": 551, "parser_review_required": 1407, "terminal": 1122}
+  },
+  "census": {
+    "before": {"path": ".planning/quick/260717-patent-generic-family-90040110/generic-residual-before-129.json", "sha256": "30789176a88f5909b80e4f3a9fb73aa703ea37fe03e45170077e422fa6b8d97e"},
+    "after_1": {"path": ".planning/quick/260717-patent-generic-family-90040110/generic-residual-after-1.json", "sha256": "c49e747edad2b43338f6e66cdac13ff74f64cc3cfa3b666626c7f066c385f3ff"},
+    "after_2": {"path": ".planning/quick/260717-patent-generic-family-90040110/generic-residual-after-2.json", "sha256": "c49e747edad2b43338f6e66cdac13ff74f64cc3cfa3b666626c7f066c385f3ff"},
+    "queue_after": {"path": ".planning/quick/260717-patent-generic-family-90040110/queue-after.json", "sha256": "aef4de25218b545ea0298330f9a01666c54d6aec8fd0362c1ba3ef586bc45278"}
+  },
+  "denominator_audit": {"path": ".planning/quick/260717-patent-generic-family-90040110/family-90040110-denominator.json", "sha256": "0cd3190828f0e1d2ece9ea88a9f4621b03fac145efee4f243a64f8b37e438a90"},
+  "official_pdf_audit": {"path": ".planning/quick/260717-patent-generic-family-90040110/family-90040110-raster-audit.json", "sha256": "18ddba5993512e28b802054c499bf5e31df07619f0ee8415ec6d9c67e5fa6434"},
+  "external_family_queue": {"path": ".planning/quick/260717-patent-generic-family-90040110/family-90040110-external-family-members.json", "sha256": "296f95d3d10368b439c93aec7ecc673412c5c33ee216291b8850eb20d6930f09"},
+  "replay_determinism": {"path": ".planning/quick/260717-patent-generic-family-90040110/family-90040110-replay-determinism.json", "sha256": "d77c204165f099bb4e3cb7d13cd40ffd9f54fff4362a71b7c1518637857c4e80"},
+  "source_audit": {"path": ".planning/quick/260717-patent-generic-family-90040110/family-90040110-source-audit.md", "sha256": "24d4568016ffe2a7bcbde22445aacf4501d7b972301b201448edc27a5d6b07ae"},
+  "saturation_boundary": "Both frozen roots are exact seven-item terminal results, but the 127-root generic bucket, other parser buckets, formal intake, external-family queue and global patent/source exhaustion remain open."
+}
