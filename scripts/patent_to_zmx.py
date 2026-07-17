@@ -505,6 +505,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_light_blocking_sheet_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8451,6 +8459,252 @@ _LARGAN_PLASTIC_LIGHT_FOLDING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "cooperated with the function of image processing"
             ): 1,
             "includes lens elements": 2,
+        },
+    },
+}
+_LARGAN_LIGHT_BLOCKING_SHEET_ITEMS = (
+    (1, "Largan light-blocking sheet first embodiment", "sheet"),
+    (2, "Largan light-blocking sheet second embodiment", "sheet"),
+    (3, "Largan light-blocking sheet third embodiment", "sheet"),
+    (4, "Largan light-blocking sheet fourth embodiment", "sheet"),
+    (5, "Largan light-blocking sheet fifth embodiment", "sheet"),
+    (6, "Largan light-blocking sheet sixth embodiment", "sheet"),
+    (7, "Largan imaging-lens-assembly seventh embodiment", "assembly"),
+    (8, "Largan imaging-lens-assembly eighth embodiment", "assembly"),
+    (9, "Largan imaging-lens-assembly ninth embodiment", "assembly"),
+    (10, "Largan light-blocking sheet tenth embodiment", "sheet"),
+    (11, "Largan light-blocking sheet eleventh embodiment", "sheet"),
+    (12, "Largan imaging-lens-assembly twelfth embodiment", "assembly"),
+    (13, "Largan smartphone electronic-device thirteenth embodiment", "device"),
+    (14, "Largan tablet electronic-device fourteenth embodiment", "device"),
+    (15, "Largan wearable electronic-device fifteenth embodiment", "device"),
+)
+_LARGAN_LIGHT_BLOCKING_SHEET_REASON_CODES = {
+    "sheet": (
+        "confirmed_no_prescription."
+        "light_blocking_sheet_mechanical_architecture_only"
+    ),
+    "assembly": (
+        "confirmed_no_prescription."
+        "imaging_lens_assembly_mechanical_placement_architecture_only"
+    ),
+    "device": (
+        "confirmed_no_prescription."
+        "electronic_device_camera_placement_architecture_only"
+    ),
+}
+_LARGAN_LIGHT_BLOCKING_SHEET_FIGURES = (
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "2A",
+    "2B",
+    "3A",
+    "3B",
+    "4A",
+    "4B",
+    "5A",
+    "5B",
+    "6A",
+    "6B",
+    "7A",
+    "7B",
+    "7C",
+    "7D",
+    "8A",
+    "8B",
+    "8C",
+    "8D",
+    "9A",
+    "9B",
+    "9C",
+    "9D",
+    "10A",
+    "10B",
+    "10C",
+    "10D",
+    "11A",
+    "11B",
+    "11C",
+    "11D",
+    "12A",
+    "12B",
+    "12C",
+    "12D",
+    "13A",
+    "13B",
+    "13C",
+    "14",
+    "15",
+    "16",
+)
+_LARGAN_LIGHT_BLOCKING_SHEET_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20230333291-A1": {
+        "raw_document_sha256": (
+            "e8753c9f075c714919b3115bbed61303b0670f742d157cdae1f91b58058774c1"
+        ),
+        "normalized_text_sha256": (
+            "5ec343ed1bea2c441b61b0b761c287ade6d0d1a4cb7e39e1c3675da6939c9434"
+        ),
+        "section_markers": {
+            "related": "RELATED APPLICATIONS",
+            "background": "BACKGROUND Technical Field",
+            "summary": "SUMMARY [0005]",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION",
+            "claims": "Claims 1 . A light blocking sheet",
+        },
+        "section_sha256": {
+            "related": (
+                "c339d477f63416bd20a7ea3ae5064b59a2c3ff959f16f17916a9b50a5ec7ad0d"
+            ),
+            "background": (
+                "58cae8bc35eb6d6235c73440b9885f099c2ac361efd9fc130bceab25313a8edc"
+            ),
+            "summary": (
+                "28652eac4b90a69cc8f8efd3bd0339b01e3913a917563b35ebb094bfe68bbd7c"
+            ),
+            "brief": (
+                "f97b33d1b02451241d3f07be52ca40052451f947401e394d9d041541098b93ce"
+            ),
+            "detailed": (
+                "11edcb7ff4ed57860f4c04f5c4e837afd5abf94a32e983af6c22b523f9949ded"
+            ),
+            "claims": (
+                "14db66beacd620ab819d0497fd70ab05ffae9a2c6ac87e588a642e63601ea4a9"
+            ),
+        },
+        "paragraph_ranges": {
+            "related": (1, 1),
+            "background": (2, 4),
+            "summary": (5, 17),
+            "brief": (18, 61),
+            "detailed": (62, 230),
+        },
+        "item_ranges": (
+            (62, 78),
+            (79, 93),
+            (94, 102),
+            (103, 111),
+            (112, 120),
+            (121, 129),
+            (130, 147),
+            (148, 164),
+            (165, 180),
+            (181, 193),
+            (194, 206),
+            (207, 222),
+            (223, 227),
+            (228, 228),
+            (229, 229),
+        ),
+        "detailed_span_sha256": {
+            (62, 78): (
+                "8d370c929019d62591a6d8d7974fa30b0864416e7c7eb707c0fe9a9a31554f3f"
+            ),
+            (79, 93): (
+                "b5d2318144a32498bc6b439fa2f7e3b5615b1acec00509b1f28da99694653af9"
+            ),
+            (94, 102): (
+                "345fdc7e4c8050f435849d50f3afb700188202a1972752a2ab102395bdce22c9"
+            ),
+            (103, 111): (
+                "7f545d7b9fc8fefa13df4ef99137ec3899702984cc311274a1e4fc8b87218633"
+            ),
+            (112, 120): (
+                "84e7b4a74beb1cd522d8f69d77b28b8aa2a14482b82983fb85d6aa544b9522bb"
+            ),
+            (121, 129): (
+                "a4b714ac22f4c2c50658363fca2c229951729317617c79ef7b0439be03aa5fe9"
+            ),
+            (130, 147): (
+                "72013d9bf3935aa08f6ea39224d8df78a963e7bd2963da96c7930381fa339510"
+            ),
+            (148, 164): (
+                "1844f5e8f939f2cd6b61233dd92441fab73251a8e35b17a5bbb726510b53f448"
+            ),
+            (165, 180): (
+                "a2de384956dc877913ca43b5b4537536d8e94f779f9a6082125e6f2b73509f4a"
+            ),
+            (181, 193): (
+                "b2a367625b28b1ce6082c0bde134266e82d472a3b3f155e64489b1918342b520"
+            ),
+            (194, 206): (
+                "9f8ce22f1630825f7a7fe612047a9872e0573e9c9510c1c3d370f6116a2c4963"
+            ),
+            (207, 222): (
+                "ee51b3bdbdbfd3e365d3a42c1834cf202994396c3554b531283ae7bb867e0d44"
+            ),
+            (223, 227): (
+                "0a84f6721430916d5bd67e1213888738498acaed87bde6ac77bc983541b5504d"
+            ),
+            (228, 228): (
+                "6529d4266b5a203fe200b5440f9472c46b62008c1725d30e91bd37c9cadedffa"
+            ),
+            (229, 229): (
+                "58da827debd3f16e4e010a0e0df521017832159af038be56bac99b6756c3c898"
+            ),
+            (230, 230): (
+                "39c858d3ba48e719991db30e246195eee050a62eab02184c07422eebe4cca8db"
+            ),
+        },
+        "claim_numbers": tuple(range(1, 16)),
+        "identity_markers": {
+            "United States Patent Application Publication 20230333291": 1,
+            "Kind Code A1": 1,
+            "Publication Date October 19, 2023": 1,
+            "Family ID: 63246213": 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Appl. No.: 18/337142": 1,
+            "Filed: June 19, 2023": 1,
+            "TW 106106466 Feb. 24, 2017": 1,
+            "TW 106113646 Apr. 24, 2017": 1,
+            "parent US continuation 17076849 20201022": 1,
+            "parent-grant-document US 11719863": 1,
+        },
+        "table_payload_sha256": (
+            "4f537c7bbbf4cbad6dce4b4981a219f23055aae57a7c94b00b25c10f959c51cb",
+            "af54e99b022da8a7ded573a390ca2ff623720d494db0e796b6b63f5268762c67",
+            "9f8df9a96aad90de17d84f40df9a7dc5f508ec3d9e1989a9797ebedf9726cbf6",
+            "ae1b4971659a72d7d160e54a17aa5c4da547d78557a5557204eed68b6424b2e0",
+            "a49a4f044cbbee4b4120b19c38ca414ff39934d6969048fcb6f08c6276ca8008",
+            "1f162d7e5b52929ef3232ff2bfb09a50ee518f21a5f27b6e2729b523bdfd3510",
+            "6324daf907c74d52d46a231d3ef6f40d56969bec6753a02a1802510ee151ee8e",
+            "aa55cc44679f87778cbe48fd69633467816e70d75036434ff342d1502fca743c",
+            "0c72dca0ef2ff735486b06fcc7b1f965651ad2bc24a82cc529f48cd1d23933ec",
+            "e71a2b63979b7fc2d5feef5526ad82d5b9a502ccca5516f367d2ea36c5a5c001",
+            "088cf6aeeb92a90ac63b92f32d1a8851f1026df233cdfdb9e0bca4443abf2b16",
+            "c5e8fe5dbb3bc3d993727739dff6d5d477689d616c072aa4f91209c8c0633976",
+        ),
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+            "curvature radius": 0,
+        },
+        "source_scope_phrase_counts": {
+            "focal length": 1,
+            "radius of curvature": 12,
+            "thickness": 8,
+            "lens element": 176,
+            "optical lens set": 67,
+            "imaging lens assembly": 81,
+            "light blocking sheet": 365,
+            "some details about lens elements are omitted": 4,
+            "includes lens elements": 4,
+            "in order from an object side to an image side": 4,
+            "aperture stop": 7,
+            "will not affect the focal length of the optical lens set 800": 1,
         },
     },
 }
@@ -25521,6 +25775,274 @@ def _classify_largan_optical_reflecting_assembly_architecture_only_attempts(
             ),
         )
         for number, label in _LARGAN_OPTICAL_REFLECTING_ASSEMBLY_ITEMS
+    ]
+
+
+def _largan_light_blocking_sheet_table_payloads(raw_text: str) -> tuple[str, ...]:
+    """Return the exact 12 mechanical table payloads in Family 63246213."""
+
+    text = normalize_patent_text(raw_text)
+    ordinals = (
+        "2nd",
+        "3rd",
+        "4th",
+        "5th",
+        "6th",
+        "7th",
+        "8th",
+        "9th",
+        "10th",
+        "11th",
+        "12th",
+        "13th",
+    )
+    payloads = []
+    for table_number, next_ordinal in enumerate(ordinals, start=1):
+        marker = f"TABLE-US-{table_number:05d}"
+        try:
+            start = text.index(marker)
+            end = text.index(f"{next_ordinal} Embodiment [", start)
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan light-blocking-sheet mechanical table boundary changed"
+            ) from exc
+        payloads.append(text[start:end].strip())
+    return tuple(payloads)
+
+
+def _classify_largan_light_blocking_sheet_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 63246213 light-blocking and placement items."""
+
+    profile = _LARGAN_LIGHT_BLOCKING_SHEET_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _group in _LARGAN_LIGHT_BLOCKING_SHEET_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan light-blocking-sheet official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan light-blocking-sheet normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan light-blocking-sheet identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan light-blocking-sheet section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan light-blocking-sheet section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan light-blocking-sheet {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]\s", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    "Largan light-blocking-sheet "
+                    f"{section_name} paragraph denominator changed"
+                )
+
+        detailed = sections["detailed"]
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]\s", detailed))
+        paragraphs = {
+            int(match.group(1)): detailed[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(detailed)
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+        for bounds, expected_digest in profile["detailed_span_sha256"].items():
+            start, end = bounds
+            span = "".join(paragraphs[number] for number in range(start, end + 1))
+            observed_digest = hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan light-blocking-sheet detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        ordinals = (
+            "1st",
+            "2nd",
+            "3rd",
+            "4th",
+            "5th",
+            "6th",
+            "7th",
+            "8th",
+            "9th",
+            "10th",
+            "11th",
+            "12th",
+            "13th",
+            "14th",
+            "15th",
+        )
+        for ordinal, bounds in zip(ordinals, profile["item_ranges"], strict=True):
+            start, end = bounds
+            item_text = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            )
+            if re.search(
+                rf"according to the {ordinal} embodiment",
+                item_text,
+                re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    f"Largan light-blocking-sheet {ordinal} embodiment binding changed"
+                )
+
+        figure_declarations = tuple(
+            f"{number}{suffix.upper()}"
+            for number, suffix in re.findall(
+                r"\[\d{4}\]\s+FIG\.\s*(\d+)\s*([A-Z]?)\s+(?:is|shows)\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_declarations != _LARGAN_LIGHT_BLOCKING_SHEET_FIGURES:
+            raise PatentParseError(
+                "Largan light-blocking-sheet 44-figure denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan light-blocking-sheet claims 1-15 denominator changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != tuple(range(1, 13)):
+            raise PatentParseError(
+                "Largan light-blocking-sheet 12-table denominator changed"
+            )
+        table_payloads = _largan_light_blocking_sheet_table_payloads(raw_text)
+        table_digests = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        )
+        if table_digests != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "Largan light-blocking-sheet mechanical table payload changed"
+            )
+        if len(re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)) != 0:
+            raise PatentParseError(
+                "Largan light-blocking-sheet formula denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan light-blocking-sheet prescription phrase {phrase!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan light-blocking-sheet scope phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all 15 exact-source items
+        return attempts_for_error(exc)
+
+    details = {
+        "sheet": (
+            "the exact light-blocking-sheet embodiment publishes aperture-baffle hole, "
+            "arc/line, film thickness or related mechanical geometry only; it contains "
+            "no ordered optical surface prescription or required system metadata"
+        ),
+        "assembly": (
+            "the exact imaging-lens-assembly embodiment expressly omits lens details and "
+            "publishes barrel, receiving-space, aperture-stop and lens-placement geometry "
+            "only; it contains no ordered optical surface prescription or required system "
+            "metadata"
+        ),
+        "device": (
+            "the exact electronic-device embodiment publishes smartphone, tablet or wearable "
+            "camera placement and reuses the preceding imaging assembly; it contains no "
+            "independent optical prescription"
+        ),
+    }
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_LARGAN_LIGHT_BLOCKING_SHEET_REASON_CODES[group],
+                detail=details[group],
+            ),
+        )
+        for number, label, group in _LARGAN_LIGHT_BLOCKING_SHEET_ITEMS
     ]
 
 

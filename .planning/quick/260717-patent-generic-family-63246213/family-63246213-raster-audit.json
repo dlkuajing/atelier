@@ -1,0 +1,1414 @@
+{
+  "schema_version": 1,
+  "family_id": "63246213",
+  "classifier_publication_id": "US-20230333291-A1",
+  "cross_publication_numeric_borrowing": false,
+  "numeric_derivation_from_rasters": false,
+  "raster_intersection_count": 0,
+  "raster_comparison": "The official A1 and B2 PDFs share no decoded page-raster SHA-256 values; B2 is corroboration only and is not classifier input.",
+  "US-20230333291-A1": {
+    "publication_role": "frozen_classifier_source_and_raster_corroboration",
+    "path": ".planning/quick/260717-patent-generic-family-63246213/source-review/US-20230333291-A1-official.pdf",
+    "sections": {"cover": [1, 1], "drawings": [2, 46], "specification_and_claims": [47, 68]},
+    "all_page_contact_reviewed": true,
+    "contact_path": ".planning/quick/260717-patent-generic-family-63246213/source-review/US-20230333291-A1-contact.png",
+    "critical_pages": [
+      {"page": 50, "bytes": 232860, "sha256": "1491c0cb6684768b2f1c8d14f5b6c33a308f2027c2cf2aacfc0809a5590380f3", "finding": "TABLE 1 is light-blocking-sheet mechanical geometry."},
+      {"page": 55, "bytes": 231505, "sha256": "463ea7f1c0000c8908a4f4df25678bdf5f7418b28cd8bbba5342671cab367745", "finding": "TABLE 6 is light-blocking-sheet mechanical geometry."},
+      {"page": 60, "bytes": 233749, "sha256": "124f35525bad5df07559c08f3d3dac8852826c43f6dd72b43791c3b6a2601251", "finding": "TABLE 8 contains imaging-assembly placement dimensions, not an optical surface prescription."},
+      {"page": 65, "bytes": 225709, "sha256": "97d585a13c5cb28b880b9b11444a1891ee9ac7a1facc987349673dff5e0df6d6", "finding": "TABLE 12 contains placement dimensions and the thirteenth electronic-device embodiment begins."},
+      {"page": 68, "bytes": 48797, "sha256": "070ce063660ecc82175c93467273b2a5c4e5bc2109f4c783e54c08e4bcf7f1fd", "finding": "Claim 15 closes on electronic-device camera placement architecture."}
+    ],
+    "pdf_pages": 68,
+    "pdf_bytes": 3359824,
+    "pdf_sha256": "4a2330e646728747ccf46aa703d8e5aa8372ba76c131f3a5575443aecc453280",
+    "decoded_raster_set_sha256": "c19882001d39fab935df805092109d43447d6b0becd968e0ef4a6d366e575e55",
+    "contact_bytes": 3307813,
+    "contact_sha256": "f48f505b38b430916166dfa8d0c4433efed1ad142905a43755a956f8b12e8a02",
+    "pages": [
+      {
+        "page": 1,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "a314a68df1db9fc61bae6eda62d45d060dff261b520f55af232a6957038e95d1"
+      },
+      {
+        "page": 2,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1b0128ce7f72c1ad397f21c7a7a3f0a5427264a63117f5f40ce6da626d152ef4"
+      },
+      {
+        "page": 3,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "64d5f3996f5e520128cd771df2bf58ddc5872b507afd63ca175705d912870920"
+      },
+      {
+        "page": 4,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "5e175c81384d50c8736485a49b3511bc288fba64c80726aff5c63072c7e9123d"
+      },
+      {
+        "page": 5,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "93f107e88b49adf4daa59d92c05efe4e422c6de073dc18f7aa126b987bf7f64f"
+      },
+      {
+        "page": 6,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "d646711c6b6cdb3318002df29d64df78abfd895a4d922eb0a746cbabb01bb73d"
+      },
+      {
+        "page": 7,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "402bb92f4302f731e28144ad8a02e1b3d06cd4e733517420523bea7974783acd"
+      },
+      {
+        "page": 8,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c9d73929d974a8b8af931618c33c58e112453913d1c07e96713de10ed623b33d"
+      },
+      {
+        "page": 9,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "bde81e2ed22b03fde19afbd8036a4c8396498dc7e376bc951264aa2f13c3c8dc"
+      },
+      {
+        "page": 10,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "65dd63b60d95cfe567cdd4edee272867e17dc9c84bd90e9ce6001e176ac206be"
+      },
+      {
+        "page": 11,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "448cc67431f8bd3693507562a9e2e770dd9078d711fd791ab6e6aa0d8e58e241"
+      },
+      {
+        "page": 12,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "6d7a166934eaca48170e2765e0eaf83c98b079eb354aa7213c4607a003000dc7"
+      },
+      {
+        "page": 13,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "bc8cd757a881e81efd90ba8f99fdb9637a6d3465573c0e830d9df794cedab4ed"
+      },
+      {
+        "page": 14,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "57a37dc148b7f04c57c75d94c5d247c3be5c11465faacd4239cbbdd977b5cb49"
+      },
+      {
+        "page": 15,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "d8100f0b9448e8ce954dab37ba786700daf127543eae1e9d172b86ec4e412648"
+      },
+      {
+        "page": 16,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "acc74761e08b50e8e6fdc405e3ad942fa892e45d897141bf2ec5dfe0fae56a81"
+      },
+      {
+        "page": 17,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "21d9a289a5f699102f3cd55629da1928b5b246d9a6714320ca95f3921e36121f"
+      },
+      {
+        "page": 18,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "af91c5f06c2593d3405ba42b5c9fd60a957629d5f12a8b1d6255b4c581ccc7fd"
+      },
+      {
+        "page": 19,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "270e895e02d307587c4e3abd2f76a06c400c9f7761afa3f58735ff4401037fa5"
+      },
+      {
+        "page": 20,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "cf1d9167f88bb13e14b42b376123194a1f893bff478eb1bf43c77de745979da4"
+      },
+      {
+        "page": 21,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "16b0b16ab169af25ce6a86f6e2f249da905be219795d6081a4bef336147f3be5"
+      },
+      {
+        "page": 22,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "3e567f5b1740d021b93770132fc0b6da32256edd5a8049a61f76ac95ac2888dc"
+      },
+      {
+        "page": 23,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e001e0cc220db7ac701bff5af035d3dc364600cf073e09eb67f0449df64c37f3"
+      },
+      {
+        "page": 24,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "5e8aec2984794eb82a4dea766e86d6e3ef273040377f9343e16823ba7f7921c9"
+      },
+      {
+        "page": 25,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "f84fe04a11ceae0ee000d1e4697a6918aa16e7e2fef166a1c321e140b950f526"
+      },
+      {
+        "page": 26,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "5049fe792ef61b239b8baca63d02756690e705c80e729c7f54cec6478c28b6e4"
+      },
+      {
+        "page": 27,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "2a641929bc2b8c30749f96456fa9bb6c2ab91b51ba2b4ed6d6497503e8279186"
+      },
+      {
+        "page": 28,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "86a74af70cd03124e43b837edbb002f1f2699f1b110ec4b6f1f446d57c48b2f0"
+      },
+      {
+        "page": 29,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "9bb41702eb1adf265dc2d909257c0e670f343a8afe3be7be0288004296f55bd0"
+      },
+      {
+        "page": 30,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "09add7fb49b7faa35bbf41c4c9404b06897ef7cde6a78203d9bc9402fa69f0d5"
+      },
+      {
+        "page": 31,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "99e84a7feeb22f50158f029627b6aaaf3998058d79562e947c7636fb69d7b340"
+      },
+      {
+        "page": 32,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "6f6d2f768574e7c5c86f24fb86cb20b10c3a97ce131cd0a915588588217b6b9e"
+      },
+      {
+        "page": 33,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "d54df78166087da9839dae716140c9152b007e550910af9a13b46e7898450b06"
+      },
+      {
+        "page": 34,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "609180880a290fccfc79bd2df760da5503187fdc929224c6f3b90b9a296fbda4"
+      },
+      {
+        "page": 35,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "16b7322e207ef1e9ca92cce46d6ebca5f8d7b68e315b157a3749ff5f6e9838a6"
+      },
+      {
+        "page": 36,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "8ea27f02d09d19eb76d9309c3d2bdd3fbcbbb03adfbe015a2cac41af92e09316"
+      },
+      {
+        "page": 37,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1b451a167a3d83bf561f1febc869e59d7e6d3a5b81b1ce51954f02f9d58af1f0"
+      },
+      {
+        "page": 38,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "eecba4ba99f01f33718511a9540d1b62296898b3980015c46667c85d9e29fafb"
+      },
+      {
+        "page": 39,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1ee3369f3b905e80642f031404ae4bc1e13103be80d9ed75532fc5a3ef1faeed"
+      },
+      {
+        "page": 40,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "716604ed675dd5d1f88089c8269473db2b36c1dab5dc1eaf73c74345eb977f41"
+      },
+      {
+        "page": 41,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "7f62d2ef6cb37aea18e2d88d9871f6d29059da0cd4a8e85b0ee429d34c36cf98"
+      },
+      {
+        "page": 42,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "fc817ed31eb73be8ffaaa32e640c5142890982d5d3962e78020edab20c9b06fe"
+      },
+      {
+        "page": 43,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "b73fae93e7a9156c8161ea53767b852c3e6cdaedf40cb98f0ebacb83addb5112"
+      },
+      {
+        "page": 44,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "50b4dbabe76d74293b4d53fc5d6c75b884e59c54c294e1222a01b6f394c41d81"
+      },
+      {
+        "page": 45,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e7225a31f110a589f5e079eabedee905284af77c90af2fde02e3b48c4fc13ca6"
+      },
+      {
+        "page": 46,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "d7aba4623e8c6049dee148225ec04b7fa5bb6cf81f401e6d3b04eca2985ef50c"
+      },
+      {
+        "page": 47,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "231185f3ae91315c765e8dbf0697ce350c9ba145af1cdd97ec8a2a49df72a675"
+      },
+      {
+        "page": 48,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1d283537c5639f1ba184dfc8758cbf461de898b74050bdd0e7784242cb3daedb"
+      },
+      {
+        "page": 49,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c22d28e9f77c72025bd98c3dbddba02778f7c84c2dce9a6c2aad70116b3ad373"
+      },
+      {
+        "page": 50,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "08f68de62424c5c4c36e44af6e2c419cdde9e184f0cfb5db1ec8554c0c6debf9"
+      },
+      {
+        "page": 51,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "98decab10081b1dd0c7e256b8ae68cbfb9bdbaaec55c18258f7f45714804a5ae"
+      },
+      {
+        "page": 52,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "39034a14bab4e62cf5019e79050f5d1627620b29343881b5f2941c9beedc45ac"
+      },
+      {
+        "page": 53,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "7421a94eeb8662643bc33f6236f0b6eebf19de4bd8401238132ef9b79035d556"
+      },
+      {
+        "page": 54,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "6c1ec474ee68ae3bd1d080f849d1bccdd5beef4e503b4dbaee6488a92d8fc83c"
+      },
+      {
+        "page": 55,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "b70a4a0357d280632d1c9cdd18ffe2c180506fcf77c37ac35360279f93ffd762"
+      },
+      {
+        "page": 56,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "4b83c6676ad760779af73c1e2d0bcdff807c2e8b4313b4c5f287860d5985dcde"
+      },
+      {
+        "page": 57,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "4368a87725bdf96c586f38f70ad2823b2727155c93f270bb76966bc9013e63af"
+      },
+      {
+        "page": 58,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "3a717db9a6e86d9a8d1fe0e293c3722e72656124f9727c9f3c968d9ff9fe4e7a"
+      },
+      {
+        "page": 59,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c57c23691a1033a15d72957cd54ce194405686cf43f833713b058327b72fe681"
+      },
+      {
+        "page": 60,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1d6eaaeefeaa94a2fb0b89aa118b8b5a824e770eea335b99165922f44c25f107"
+      },
+      {
+        "page": 61,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "398c4fe59cfd32dbe200fc83ac542a41629b450a3079a8982806a47424b56e40"
+      },
+      {
+        "page": 62,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "91aade41c5f846cff0ba5144da43cecff6d0d258ac33d1bf01589ee9b038cc72"
+      },
+      {
+        "page": 63,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "ef48072c7888b9ccdcfeed0ca652c9d92e1d0c2396669c28af226c8f236bd241"
+      },
+      {
+        "page": 64,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "308d549ea46209fa8948f36a5e6aebb39a20e83175e6f9b232d608fc3d9052ce"
+      },
+      {
+        "page": 65,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "dc320a2e81643475a7fd9a33babfed40eae9737d08874c951b7f390835b0c347"
+      },
+      {
+        "page": 66,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "89d99ac1e97e9f1d8dd6fbcb12ebcc6ff336e271799e4ab0732976b0b3e23e56"
+      },
+      {
+        "page": 67,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "7e872c3a5b89dadf29a9d454adf247d194a89148e91e9392a69c96e3a54db12c"
+      },
+      {
+        "page": 68,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1f38b770d76703e5668b53e1fda5828ddb4acd128e8fdf7487eef2a89dfdb3d5"
+      }
+    ]
+  },
+  "US-12189149-B2": {
+    "publication_role": "same_application_grant_raster_corroboration_only",
+    "path": ".planning/quick/260717-patent-generic-family-63246213/source-review/US-12189149-B2-official.pdf",
+    "sections": {"cover": [1, 1], "references": [2, 3], "drawings": [4, 48], "specification_and_claims": [49, 68]},
+    "all_page_contact_reviewed": true,
+    "contact_path": ".planning/quick/260717-patent-generic-family-63246213/source-review/US-12189149-B2-contact.png",
+    "critical_pages": [
+      {"page": 52, "bytes": 244683, "sha256": "a0081d75390645054b4ff5b065c1d839d21e1c8c96d1fc172891a5cfccd3aaa2", "finding": "TABLE 2 is light-blocking-sheet mechanical geometry."},
+      {"page": 57, "bytes": 241335, "sha256": "8ee1e7ccddff790bc5475664d3480e3df97dde395b6655b1f9a99f1dcc7bffb3", "finding": "The assembly names six lens elements and receiving structures but omits optical surface data."},
+      {"page": 62, "bytes": 235446, "sha256": "76c9921e88fe87c55e234b337752905859a6d075e662ffb65aaa5ab21cdbb23b", "finding": "The tenth embodiment remains light-blocking-sheet mechanics."},
+      {"page": 65, "bytes": 247485, "sha256": "1b72d87864be144aa3f43e4a09d683e4f37ebad1ea9564e6c327d6e0368d0cc3", "finding": "TABLE 12 is placement geometry and the thirteenth device embodiment begins."},
+      {"page": 67, "bytes": 206377, "sha256": "1186fee8dbfdeb66f5657949ae5620957376606171ed5f09d951585b37bf7626", "finding": "Claims 1-15 are sheet, assembly-placement, and device-placement architecture."},
+      {"page": 68, "bytes": 35584, "sha256": "34452c01e825a2d022cea481563455d7bc89a4dbafed8a289b843039a7869ff0", "finding": "The final claim text closes without an optical prescription."}
+    ],
+    "pdf_pages": 68,
+    "pdf_bytes": 3358907,
+    "pdf_sha256": "3eb50fe5845f36bd28781227bc007a1cc964a488cd921ec092673b691974ebb2",
+    "decoded_raster_set_sha256": "97876ab39e127c331cba489b94b52a962e812144578967bdc43ed1e8bc50dd6a",
+    "contact_bytes": 3295610,
+    "contact_sha256": "84257a1a0ac9d473886db326008fe2c1911d211ff26e9e8767116548f795c23c",
+    "pages": [
+      {
+        "page": 1,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "574a6a0d0d9aaa07c07e7abeb53af71d108b7695e215e38cb2d605176625d37a"
+      },
+      {
+        "page": 2,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "532a42d845352b829d46b9c17478104dba1a0a476e4ad38ac920ce3141087115"
+      },
+      {
+        "page": 3,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "2677b69f6a8f6d9c1df536a677baae9930225e5202f0d43ca37c33185c16dadf"
+      },
+      {
+        "page": 4,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "da2ae9aebee337a6a3cd694cac17b9877631679b13197076f5989b02fb94936a"
+      },
+      {
+        "page": 5,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e052660a2138f604062c76ab81dc0fb9091cd4971f15af27363d5709c6730796"
+      },
+      {
+        "page": 6,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "28e64b4814dc9b4d6cc7007abfa8efcbfaeb71eb85d999a640885e43fe99fd64"
+      },
+      {
+        "page": 7,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "0e09dddc5241a970a4ea94fc379aec207a3329e5a585a6d6e492c35114fea6e8"
+      },
+      {
+        "page": 8,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "723d8312b7a2415d62bb31236045f1e64ced52d2159d6b6eb14756a8981add6d"
+      },
+      {
+        "page": 9,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "8e82e9eeb9adf57a629b14c8f3b4d05a759e4cfe90b0abedeb5634305182501c"
+      },
+      {
+        "page": 10,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "9a67f75c1aa18c42912923ee3d3f24d469531b64bbe75a90df852ab6bd5bbd3a"
+      },
+      {
+        "page": 11,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "b8158da71d4d05c4e57d657b712f64bd6790adba61efa44035c283c45581fc79"
+      },
+      {
+        "page": 12,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "b874bb6bef9c5d27c725a18078a268e97b0802f95836108cfe4ff14be6c8cf50"
+      },
+      {
+        "page": 13,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "37077c2fecb032a8b5254b32cddb8b154f3e9bf68fb821e5c033c54c37a31f2e"
+      },
+      {
+        "page": 14,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c0e204319a2d75c7b8b204202562928f67dd727b900025ecea67a6f4862b63db"
+      },
+      {
+        "page": 15,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "7211366506f3b65f1d8e059fd0d19dcae7f9da82d2b189cc607504bf815fc070"
+      },
+      {
+        "page": 16,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "5742a1b13c4ab102784ac92fe4478333931046ebb45cfb86233a700a6f54fb33"
+      },
+      {
+        "page": 17,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "14bbc56f8213764681c454d029409928a6263a2732c9b83b5fb1d034b335d78b"
+      },
+      {
+        "page": 18,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "6f3808f9ac9b6e32d17f27070eb204aa27b42c980c2a85326fd84fbca56a8968"
+      },
+      {
+        "page": 19,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "d05c2729a458bd3544d236adc533e1ff3797f12f52916c6935c1dbc254c1abad"
+      },
+      {
+        "page": 20,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "335db34729e22e241bbf55fc9e2a2806a6ba6a4e62e351524395d245f2d99d75"
+      },
+      {
+        "page": 21,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "3796a740457ead4ff742258584f41a3c1c3c14b2e2d16507b78f2433ef6da9ea"
+      },
+      {
+        "page": 22,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e7223edc81309e99b0e923b68af45205b377540448339829f72a48672b9bb9af"
+      },
+      {
+        "page": 23,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c4c8fbfad4c21cd7486198bca89821bb40a10bbb105b2049380a158420495119"
+      },
+      {
+        "page": 24,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "7a1aaf36c156fa13ad1e11f8a75fa0ca9a81069a8a0520536b06571ed833b781"
+      },
+      {
+        "page": 25,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "7d2e50d6290d53e5abf810fa13a1a6000473710bdc06d040fe661fa042f74ea4"
+      },
+      {
+        "page": 26,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "85cf033ee83160756aaa459327d2e940f87019bf718bae6dd28a47ef0f415717"
+      },
+      {
+        "page": 27,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "434096c47f3955b577a3a37689e2184c697a7a5859f10f72c34fb110f37d8caa"
+      },
+      {
+        "page": 28,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "9414a763085dc340bb798d578ba480b785b89bfff0b9ecb281e02969e48f9b48"
+      },
+      {
+        "page": 29,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e7acf706af4ac3200959a3f96c052a22f02c1f93be2536fd710b0cebf7fd1cd1"
+      },
+      {
+        "page": 30,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "a56890e57127f1c2f1ad9d38283856a76c8d78f08312f0f0a37355d1c38afead"
+      },
+      {
+        "page": 31,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "343c59382866cf95b6e41962d46cceb31b75c52644c0b10fcca13a52019c8ddc"
+      },
+      {
+        "page": 32,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e721d87121779af00bad94c580653be7d32d2fe77154fffb8b4c33bf23b39c87"
+      },
+      {
+        "page": 33,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "afc80de1ad5a9e3f3cb377334933eb542ebf8f9905baf52f3cef1818f3e2e4dc"
+      },
+      {
+        "page": 34,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "6ad08fb826cbe96d3a2d8af5d7910354cd7f8e68df43021a6a64eaaf63de321a"
+      },
+      {
+        "page": 35,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "ea627f4b217b8ada0ba57a0a419f25753f1e61ebc7f1e23bd61deae82f0e9614"
+      },
+      {
+        "page": 36,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "89325f51fc87b00aaabe94fa0ea34152eebea596d2da5e5410dde0f58cad8e9c"
+      },
+      {
+        "page": 37,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "4b4e171dac1cb791eb6bcaf9121aa512759c4f5edda8bc1922dac6f6d40d4582"
+      },
+      {
+        "page": 38,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "81756344d84896caf78c0a3358702da1039f800c276510366fd9a57f89165127"
+      },
+      {
+        "page": 39,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "a318c790668ded946b71a151016ac66024ab8f8292ae8663d63dd0f128b3db28"
+      },
+      {
+        "page": 40,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "55a2c72ab1c90903c6fab31978cfe2cabd5f1768d66c4218f0aa7fd8b2d4dd47"
+      },
+      {
+        "page": 41,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e1a20e531929409a0a64b32bb276917de0f43cf5e29211a6285a41bd12314c63"
+      },
+      {
+        "page": 42,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "f61c84b61c51b6839b3e08992828a196a008b7b377b64c00cfb03eb29396f72f"
+      },
+      {
+        "page": 43,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c76174cd9d2f8f75bdfb64bee281fd3b93f772c35cfa8f8fd9f77427c66aa918"
+      },
+      {
+        "page": 44,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "28d4cb5c3e1bd16e870d3862325a0af46f7e1ae1b8dc32db50757285524150a7"
+      },
+      {
+        "page": 45,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c67ed1561b5b2f5a1e48777a40b34ca0a6dd223248f95959469f1b56a53c5240"
+      },
+      {
+        "page": 46,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "0698835fb2bc59d208c4dcdc1990281b25cd874bb653a4bd57c4a0fb80cbc41a"
+      },
+      {
+        "page": 47,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "a5be65ebe937b6eca28428854da48d4a836cdf410e12482d1c8717a29fd53503"
+      },
+      {
+        "page": 48,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "fbabf5da9c5717a2a0e5a30ff640344b60be2aec963251bc53609a8f83ff5a28"
+      },
+      {
+        "page": 49,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "c6ed6764e2e8cc33a12da880bf956318c36090bd6d1d027a11eba08017876f37"
+      },
+      {
+        "page": 50,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "222d44e6cc8d4e648a7df47ec26331eefdff103d31ae437b967dc3583e4337da"
+      },
+      {
+        "page": 51,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "75d6c9306a7017dcd43717a9a9014b3f2f10622f295434b3b4d44f63dc3e1a58"
+      },
+      {
+        "page": 52,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "63c8f683612dd622be070e752f1a8702c6991ba88a7d50dfd686fda76f9e7d85"
+      },
+      {
+        "page": 53,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "d80cc8440f78deb7b59599949f76bf7d5cec7b6faeba377d0dd653d84d47d11d"
+      },
+      {
+        "page": 54,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "dd6c3dc0a9829cc22c7d3cb04602074be9905274f4c6962ded4c14ff3f3ddefe"
+      },
+      {
+        "page": 55,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "44fee1a8a4cd9b2e25a6d0c56bf554f07048c452b660785615595f834b4db38e"
+      },
+      {
+        "page": 56,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "42d93a566a694e559db53d5a9f5b910a56c00e09501819e415daeadc03464883"
+      },
+      {
+        "page": 57,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1dc985e9b6fcc4c3324e3325ef7c77ddb6640b719f01b6039b6e63d0a3ab903f"
+      },
+      {
+        "page": 58,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "4fead692b6d20968ff97db368b228013838d29b020f550dccce4e2c8750dc7e9"
+      },
+      {
+        "page": 59,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "a6434a841cd1a191b710a930e4ee06d1ba1671c5e9b35b7caca3f5967aa32eca"
+      },
+      {
+        "page": 60,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "bf13939d74b92787ae45772ce8d81ef8c321db48bb8cfe016ffd66aa5d43662f"
+      },
+      {
+        "page": 61,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "8aa63e2bdf445d1a6750975c03819f5c40cf34267b895246a864acfce05a47d4"
+      },
+      {
+        "page": 62,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "12598b204ea1b6c00cf4b96be092f7380f82d6d1656694b70a869064f6671b54"
+      },
+      {
+        "page": 63,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "bc29cc735ffbcdcc0a16874ecf590cbbda0e1d494c44305360b6e7cd18d71494"
+      },
+      {
+        "page": 64,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "e3cbc6fd7fa79f6588486273378a34e4e96ebbe5598880d67b7e7391a06f5dc6"
+      },
+      {
+        "page": 65,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "1a9754a53de9bca0fc9bea29886560358750ad96a75372a5009c783f6a1b22a2"
+      },
+      {
+        "page": 66,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "913dee1d2aa4ea9bd8e9d1951aac30a6bf10a30cb577ace5d4015f4c2e3924cd"
+      },
+      {
+        "page": 67,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "9021c2b114f4ff8394453067964591405516e7624eb05c17359c981d3cbfa860"
+      },
+      {
+        "page": 68,
+        "text_characters": 0,
+        "image_count": 1,
+        "size": [
+          2560,
+          3300
+        ],
+        "raster_sha256": "d382290b66380bccebf6120a9bf5d322625b9bc75b9a43bb99c4ed7a506a141b"
+      }
+    ]
+  }
+}

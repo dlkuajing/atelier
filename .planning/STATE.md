@@ -60,6 +60,22 @@ conversion retry. Generic metadata is 118 roots/items and remains the largest ex
 deterministic ordering selects Family `63246213` (`US-20230333291-A1`) next. Parent/global patent
 saturation remains active and incomplete.
 
+**Patent saturation latest authoritative update (2026-07-17, Family 63246213):** This
+supersedes the Family 80893318 snapshot immediately above. Strict replay is 619/619 with
+missing=0, corrupt=0 and result set
+`0278c809e43a9b92dce1b8365533c195e764073c169e5d618f791468773ddf40`. Family `63246213`
+(`US-20230333291-A1`) reconciles 15 exact source items: eight light-blocking-sheet mechanical
+embodiments, four imaging-assembly placement embodiments that expressly omit lens details, and
+three electronic-device camera-placement wrappers. The 12 tagged tables contain sheet or
+placement dimensions, not optical surface sequences; no ordered optical prescription exists.
+All 15 items are source-proven confirmed-no-prescription terminals. Official A1/B2 each have 68
+image-only pages and 45 drawing sheets; complete contact sheets and 11 critical pages were
+reviewed with no transcription, numeric derivation or cross-publication borrowing. Current roots
+are 307 parser review, 148 mixed, 139 terminal and 25 converted; items are 1401 parser review,
+1184 terminal, 561 staging and 28 conversion retry. Generic metadata is 117 roots/items and
+remains the largest executable bucket; deterministic ordering selects Family `100037253`
+(`US-20260161906-A1`) next. Parent/global patent saturation remains active and incomplete.
+
 ## Current Position
 
 | Scope | Status |
