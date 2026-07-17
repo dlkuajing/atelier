@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "40fb3df65d25a15fb24a7a474d8cc3964111ee5c1209ed5873b417b94d5dcecc",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 112,
+      "affected_items": 112
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "95155833",
+    "root_ids": [
+      "US-12671891"
+    ],
+    "publication_ids": [
+      "US-12671891-B2"
+    ],
+    "application_number": "18/781667",
+    "title": "User interfaces integrating hardware buttons",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 32,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/8883f36f994bd453/US-12671891-B2.html",
+      "sha256": "8883f36f994bd4534c66df17defcff1dc536d69cf2fe8bcf136bacd27364cfc5"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

@@ -1,0 +1,968 @@
+{
+  "schema_version": 1,
+  "family_id": "89620713",
+  "publications": {
+    "US-20240272406-A1": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/source-review/US-20240272406-A1-official.pdf",
+      "bytes": 2790189,
+      "sha256": "683bc327121bcc9148705e4600f5484ff4d92774abc94457968cef2bff7b7c2b",
+      "page_count": 40,
+      "drawing_sheet_count": 27,
+      "sections": {
+        "cover": [
+          1,
+          1
+        ],
+        "drawings": [
+          2,
+          28
+        ],
+        "specification_and_claims": [
+          29,
+          40
+        ]
+      },
+      "decoded_raster_set_sha256": "7fc2cafab8766ce4731a016a3c9c5bf5a45b588a449126f5e914d637c9e7fdfa",
+      "pages": [
+        {
+          "page": 1,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7bc778e04542b4fd1e2c0ea504fb93e80c2ebac3a72678996844f8923d7a2571"
+        },
+        {
+          "page": 2,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "58bd26077868e7a264fb052b44b234dd265c94b3b899f334b2d1b3b5e1822e7a"
+        },
+        {
+          "page": 3,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "b0089f68008fb68601923437a71e8656c4498810c3dea3dba1aa435fbddcf682"
+        },
+        {
+          "page": 4,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "95337ed9a33c51506a8fc5801aa4e3e2f86c313dd7bfac1b7d98116caf017a42"
+        },
+        {
+          "page": 5,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9551c289a95358d3682b46a406c4b613cae81fbcc17df5a759f94a718aebc6f3"
+        },
+        {
+          "page": 6,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1a78d4b9b31b6789b1c3c82eac2f142cdc900c7ec6c975676acdf44fdf467465"
+        },
+        {
+          "page": 7,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8743994e86121d1bcad7743fe2ca780e9cce886729d71aeeea3651d6d9246eae"
+        },
+        {
+          "page": 8,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "56cfafcb7a685589dc5f3098978d0ef3521fdf70fb52b2c20ffb7f5440a4bb28"
+        },
+        {
+          "page": 9,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "6cd9e0f0825dd45ba5b0399df1446507e767ebe571b80f202091cdf79c2f04af"
+        },
+        {
+          "page": 10,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3ceb445e038a74e27ece11638beae4bbc2c109902c7d515f2871d97c1ed3c3e5"
+        },
+        {
+          "page": 11,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d69234f11ab6d895d82627c262eb34197f4b0d78c1c74f7224f06104226b6ae5"
+        },
+        {
+          "page": 12,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "fe75b61f9914cc20b4bd418382e39a60dacac204fc81726067574d4af2ef1755"
+        },
+        {
+          "page": 13,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3b5ff91da7931f71379b1fc20abfdc37bf581dc81c36fa9bad00f0cc0f2aed0d"
+        },
+        {
+          "page": 14,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "dccf42433144a8dc16be9bc39f49a4ecc84c23b9dd0f6e32129820e390a1038f"
+        },
+        {
+          "page": 15,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9998fc47c490056afeaf57217e38da1de18c48e269a26b54a06f7db994834c2d"
+        },
+        {
+          "page": 16,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "62e67f76d17ffa867bde504c61be6db3e6e45e3edd464e17e756f7a3992f8837"
+        },
+        {
+          "page": 17,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "0bf0a84b2c15d5168584bff828dc2a4aa1e66e935cffb1475bab3061bf84413e"
+        },
+        {
+          "page": 18,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d9198f07335e0334d12aa02f9c54eac094fe70dca20aa52d71bf4f06d155c366"
+        },
+        {
+          "page": 19,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3c98dec0c8c952611195cca59b35a9d7169f462421ae245b8b9f7cdc9e80dfe9"
+        },
+        {
+          "page": 20,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "421d573199fb810b0422429ee2e41d69b8109fccb32a9233b3f0c6045ffaf2d0"
+        },
+        {
+          "page": 21,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "cc4d5136f2a06cabd74d2a1d714868d51769d9be3a602f76d5a5424e9c696313"
+        },
+        {
+          "page": 22,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "036193a3fdcff5f3263321a1b4ea37522a89054a12a6dcdc7780147e2750f23a"
+        },
+        {
+          "page": 23,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "23e859b0b8ad900ea057b05ad7796251732b14211114ecba0f244b00b11bb1c5"
+        },
+        {
+          "page": 24,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3bd185faca2628593bf31941d20a2d16a72ba86211ba848f51b22d72d0b2d5a1"
+        },
+        {
+          "page": 25,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1085fd598a7ba7a3b7dda1391769317837b7ca2c722cc3e8d8adb719b79940d5"
+        },
+        {
+          "page": 26,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "768431b3d91ecd376ce629230205ec54611d6d7aeae71ca21cb8517d943c64a1"
+        },
+        {
+          "page": 27,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "683d270b1fd88c6b937bbdff55145c13510c6827c7184116510c7d902a01a20e"
+        },
+        {
+          "page": 28,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "cde52fd6ca84a32346420ba6ea60301fcc72e94721b33000ed37ffbb5b236dda"
+        },
+        {
+          "page": 29,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "89835d7bf7463e77f897da6d82870c6cbc8ad95ac52d8818c345e48ecfb763c9"
+        },
+        {
+          "page": 30,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3d1a0d099e99ce8833eee0a80248530c96977a97cfd845770cdb78b319328f40"
+        },
+        {
+          "page": 31,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d27d7fef641a631a349e3dda2a9c5bfb5df59048d0997e04bafc4942568ae2ae"
+        },
+        {
+          "page": 32,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9d7086bdb9f5d454c49454ac9a69fe8cd81db9e9a1ef7a038bfd9a840ff51c6e"
+        },
+        {
+          "page": 33,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "933c8971103311a5bb63f325dc0499b9c6e8007bda9d82970ed7e3e2a032be5e"
+        },
+        {
+          "page": 34,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5f8619cc9c854779ed9b13b901b210b46ae35a99644a7a7361b83538724932da"
+        },
+        {
+          "page": 35,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "77a3f540d562d0dc5eafb2f0348c963f92740e6fafa2ade0e66096140dc3a1fc"
+        },
+        {
+          "page": 36,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "d02a891a42b7d5120cf4d562a8e2c6351b5442795dcbd32aa49afe4b03043dcb"
+        },
+        {
+          "page": 37,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "fc137ea78b4329f2806635cee9da3488a7835bb966bfbc4b4fc8666bf0508917"
+        },
+        {
+          "page": 38,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "81e49e37014a210da9be24ccbc480fd46686bdfa77eeafdff88672447b3355b2"
+        },
+        {
+          "page": 39,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2550,
+            3300
+          ],
+          "raster_sha256": "a79245b8ced28b893b0598d2057c83ce5d139f218090943f6f3a51d2c33a3ed9"
+        },
+        {
+          "page": 40,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2550,
+            3300
+          ],
+          "raster_sha256": "fc0bcba9c48727f4aa5dfbe6a12aa77329ca8fbf42a2b53b0dd3527ed51e0d61"
+        }
+      ],
+      "visual_review": {
+        "contact": {
+          "path": ".planning/quick/260717-patent-generic-family-89620713/source-review/US-20240272406-A1-official-contact.png",
+          "bytes": 1801077,
+          "sha256": "78e666bed6c837a256bece5cc57cc56e9b49d6ef0e8c91f531532ef9626b574d"
+        },
+        "critical_pages": [
+          {
+            "page": 1,
+            "bytes": 149647,
+            "sha256": "f06ec479d2f5c27ff7b214f9393e6540f7e8d2d19708af7d246693a35f897eef"
+          },
+          {
+            "page": 29,
+            "bytes": 248968,
+            "sha256": "8b4c8f3029c947df2b667cd2570afd65d7b1dcc8227ef8dc1dacf012400d9136"
+          },
+          {
+            "page": 30,
+            "bytes": 258997,
+            "sha256": "6353c53c474deb7d4120c9921a01b2b2aa33a73fd2c26c80c5c80f98b223ad5e"
+          },
+          {
+            "page": 31,
+            "bytes": 254010,
+            "sha256": "db6c61310d29be38446a62534699c422257378a3ecb0f63fb6d93a4ee8fa70ab"
+          },
+          {
+            "page": 32,
+            "bytes": 266103,
+            "sha256": "d84489beba2d5f1d77a7ba5a5987385782f0d21d5a037a28057098f54cba759b"
+          },
+          {
+            "page": 33,
+            "bytes": 264746,
+            "sha256": "0116637a8a11a0d8009873b92cbf85f6a116688d546cc6041835bcb23c4d97c0"
+          },
+          {
+            "page": 34,
+            "bytes": 270719,
+            "sha256": "409bd3d476ae3df85815a27c0a85ee343b06078c43ce5a5080b901361fd8b350"
+          },
+          {
+            "page": 35,
+            "bytes": 264410,
+            "sha256": "94ee705a4f03bc690a2e9f4f3bc4aed8727ec2ad7034a51bbb8adbc0e4dd3cc1"
+          },
+          {
+            "page": 36,
+            "bytes": 263322,
+            "sha256": "4130800bf2218f5ee2d10f39232301dd1ddcd738f8e44365e71fb4a38b468b56"
+          },
+          {
+            "page": 37,
+            "bytes": 254275,
+            "sha256": "d1ba357688ff1ec7f53769205d986ae9bf9d7277c7034005955b78bff49969cf"
+          },
+          {
+            "page": 38,
+            "bytes": 257833,
+            "sha256": "550068e3acddf9d23da45f663b1c5d3b96bd42a80c417a2ba668cb72874c314b"
+          },
+          {
+            "page": 39,
+            "bytes": 228585,
+            "sha256": "18ebfb5bd6b0f11ce5ac46df3a1ac6b72de1a9d91c26cb3ba1711b7fdbc0be16"
+          },
+          {
+            "page": 40,
+            "bytes": 47146,
+            "sha256": "5feb1883ce5b474406f0a30dc431dd66b361e22caf20b96ce9d7f1c4b52c9c89"
+          }
+        ]
+      }
+    },
+    "US-20240241352-A1": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/source-review/US-20240241352-A1-official.pdf",
+      "bytes": 2841907,
+      "sha256": "c0e34129475c17558f6be6b529e529827cbb887d260cefd798a6f7a60421e34c",
+      "page_count": 40,
+      "drawing_sheet_count": 27,
+      "sections": {
+        "cover": [
+          1,
+          1
+        ],
+        "drawings": [
+          2,
+          28
+        ],
+        "specification_and_claims": [
+          29,
+          40
+        ]
+      },
+      "decoded_raster_set_sha256": "94061034521a1c6ddb564ed13b86b8cf21546cb3cf1ac2e19f263c79ada5d87e",
+      "pages": [
+        {
+          "page": 1,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "cc652afbd255923a121bd1ddb8d7e2f90b0e093000f12af9248576cb7a08da27"
+        },
+        {
+          "page": 2,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a52dc2af52a4b57c60194331c6f89ecd05888b1cb3005cd2d8fb4872c21b6ae7"
+        },
+        {
+          "page": 3,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f1285a34e3159935490c955d9a49b8380749fc5beab4a0f696a37cad8334e614"
+        },
+        {
+          "page": 4,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "10b99853b06a96f1b0eb8f5fc39a4ff2c5d33634438114f85b21718287235590"
+        },
+        {
+          "page": 5,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "f536ba8cc53f24c6b78aa8fb9ea7939aa5dafefe2c82be1e5be428ed609a704a"
+        },
+        {
+          "page": 6,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "73db3ea2d5524f85bbf44d812d1399deb4230f4ce733707fcbc3e63ac339dc6f"
+        },
+        {
+          "page": 7,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "be86f41858dc9b1e3cff04cb5ad7e5d804cd7f6a489e0999c2233ea7769b5a77"
+        },
+        {
+          "page": 8,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "5314312ee235f83161e3b7b50a3def361ec14f187c8a062afe997b0d8779f4ca"
+        },
+        {
+          "page": 9,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "75f5c1b69f4af65bb3e49afb61f2dbd64436a368df06943e08918752003f4062"
+        },
+        {
+          "page": 10,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "df2e7b5bea1e464cdb603d6a3e1916ad6e01b10fc0d5172086d5df372cd202bb"
+        },
+        {
+          "page": 11,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "e607163e1a178bd66066a59a396da58c0b04f623207d29144acfb11d43e1b8cf"
+        },
+        {
+          "page": 12,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "2cd94c38bed2e164f7d3af450406a1f66c72a06b07d4c8aaa5069382c7b0a56e"
+        },
+        {
+          "page": 13,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "065639790899073c61abd159fdca0632e5c06e9bae1299f1dbe63282fcbcdc16"
+        },
+        {
+          "page": 14,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "23842f285d6a6c2e9df14b9bab2b33d8536f5243b5a111c69ff2e07eed1234ac"
+        },
+        {
+          "page": 15,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "737992b754793c66bf362fb71123eb80afa424095aa6687d8912fe07c24a4d36"
+        },
+        {
+          "page": 16,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "cae1364d5fc9724b9c3e4d33cb49a1fe196a40dad6d152d6ca6e4a5028a6d93b"
+        },
+        {
+          "page": 17,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "002c639894b20ef8102a8b8c543ed7416502bbed37c23ebe890fcf2ece8803c8"
+        },
+        {
+          "page": 18,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "070ece18651efee1d4e6acc7c67b6799b2d415ee81417bea6fd21f15cd091ccf"
+        },
+        {
+          "page": 19,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4d5728961250db260073ccb9182bcbbe904b3c72c00673b0c9b6c794970fea6c"
+        },
+        {
+          "page": 20,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ff433657dd00681eb223a03a83e8f2070196cdd4646e09fbcd194bc435756717"
+        },
+        {
+          "page": 21,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "78a7596db52d6470a1d358ae0b49d36539f0c7acd42c27dbc68c2f9ea94ac5fd"
+        },
+        {
+          "page": 22,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4ab3d2ec4ea804d36e4f1910fe98910ce2ced07af49ec1c9c0c657b786523486"
+        },
+        {
+          "page": 23,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "586541f7f6c10aec3908786ff60e38f707269fb8317d315ec87dd4d85df965c8"
+        },
+        {
+          "page": 24,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "4219f45b3875155e3416cbd2c00eef8e3e1e804bf58dbf55d30350fb7ca8990e"
+        },
+        {
+          "page": 25,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "780b5131dcf4fdaec9be335f3210381873a6f34daa7c2ff6537f9e6a2af18c28"
+        },
+        {
+          "page": 26,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "9081f9ae0629a7c009eaf26438b4c62ddbce7a1b30658c8ff8a4eee64bad89b9"
+        },
+        {
+          "page": 27,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "a22f168b19e3295f1086ea4fe34a56888c70283015fb8dbbd4e87e22659858b7"
+        },
+        {
+          "page": 28,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "8ffd1ec3a46bcdf8400163f15d710a21fcfe1fe2a80c9bf35df39e5f339cfc9d"
+        },
+        {
+          "page": 29,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "afcd6896f7f5da8af69a2fd17902f793c73a4e6e147743e857fdea68b99b21cd"
+        },
+        {
+          "page": 30,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "7d5a7995f074c51f2815214dc604bc8b2af210e7e43b0b68a4b7870bb0a76bd1"
+        },
+        {
+          "page": 31,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "c8262a80658948c4714212dc774d5de1ee6bce1170dfba7c5aadaa4ac00c79d0"
+        },
+        {
+          "page": 32,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "84a9c8b4a444cb8b871c5786b570300e50879d770062877439b90de2eef26851"
+        },
+        {
+          "page": 33,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "281b4da56299e7d12a457d1c6ff7902d2690ea1539eb3e42dd5650233380e337"
+        },
+        {
+          "page": 34,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "ac0019e740d1ee7de3de67b0b7d7ece39ee21636aa238bfea5965557e17a706d"
+        },
+        {
+          "page": 35,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "1ffcffe6e79810c7e3ffc1a991ec6e365cde99ab85548ffbbe5a8a5e8d98e970"
+        },
+        {
+          "page": 36,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "3a76709426f3743fc0e0789af84ef9b0c225d18d004bfa69319f7a2bcf5d929d"
+        },
+        {
+          "page": 37,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "09ad4c4183510f8f048de7e747a148c33e23c46c6b2213cb719f0f41b92a51d4"
+        },
+        {
+          "page": 38,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2560,
+            3300
+          ],
+          "raster_sha256": "392f00a1e2078e64359f43140977d18c2c6c456c0f0cdcc3efcad4414a7414ba"
+        },
+        {
+          "page": 39,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2550,
+            3300
+          ],
+          "raster_sha256": "d51c2d263bee6e86e6e81790ef6406c60ffc5cc383a87e84271943e69364d0dc"
+        },
+        {
+          "page": 40,
+          "text_characters": 0,
+          "image_count": 1,
+          "size": [
+            2550,
+            3300
+          ],
+          "raster_sha256": "4dbe994a5db4a4065d4e85e5772eb1680ef8d2336ec26bb96bad3c8ff9a79d5b"
+        }
+      ],
+      "visual_review": {
+        "contact": {
+          "path": ".planning/quick/260717-patent-generic-family-89620713/source-review/US-20240241352-A1-official-contact.png",
+          "bytes": 1837077,
+          "sha256": "a3617e17535c3fe25ca524e737888b7fdfcce733d2de0010e7f118d7a03023bd"
+        },
+        "critical_pages": [
+          {
+            "page": 1,
+            "bytes": 146392,
+            "sha256": "38f54650f6e6f5a6fc77edd7875f0f50ce1198c4101bcf6fe3babce414ac129f"
+          },
+          {
+            "page": 29,
+            "bytes": 249896,
+            "sha256": "98aed3a6921942d51e93a414e5b91226eb662af609b765b17208f09d5a3482c1"
+          },
+          {
+            "page": 39,
+            "bytes": 221893,
+            "sha256": "25b248fcb276878588b0fd874d28316a34b0298973ab4d7af3eee1291368bda2"
+          },
+          {
+            "page": 40,
+            "bytes": 152945,
+            "sha256": "10a17770987566317109cf1d992250d42d7f70ed9f10d05c2973c9a3e6f1a657"
+          }
+        ]
+      }
+    }
+  },
+  "raster_intersection_count": 0,
+  "claim_count_cross_check": {
+    "US-20240272406-A1": 16,
+    "US-20240241352-A1": 30,
+    "effect": "continuation publication narrows the parent application claim set to one folded optical-imaging-module family plus camera-module and electronic-device wrappers; neither publication discloses an ordered optical prescription"
+  },
+  "mathml_object_count": 2,
+  "ordered_optical_prescription_present": false,
+  "drawing_transcription_permitted": false,
+  "numeric_derivation_permitted": false,
+  "cross_publication_numeric_borrowing": false
+}

@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `70f401d6eed9d416e81a098e179b9a764c9244589f9d089d337b24a88c4dea80`
+- result_set_sha256: `40fb3df65d25a15fb24a7a474d8cc3964111ee5c1209ed5873b417b94d5dcecc`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 25
-- `terminal`: 143
-- `parser_review_required`: 303
+- `terminal`: 144
+- `parser_review_required`: 302
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 561
-- `terminal`: 1206
-- `parser_review_required`: 1397
+- `terminal`: 1216
+- `parser_review_required`: 1396
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 287
+- `confirmed_no_prescription`: 297
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 181
@@ -48,14 +48,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 303
+- `parser_review_required.all_disclosed_items_rejected`: 302
 - `mixed_nonterminal.multiple_item_states`: 148
-- `terminal.all_disclosed_items_terminal`: 143
+- `terminal.all_disclosed_items_terminal`: 144
 - `converted_pending_intake.all_disclosed_items_converted`: 25
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1397
+- `parser_review_required.deterministic_parser_rejected`: 1396
 - `terminal.process_receipt_classified`: 738
 - `converted_pending_intake.process_isolated_zmx_ready`: 561
 - `terminal.metadata_unpublished.system_f_number_absent`: 71
@@ -74,11 +74,12 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.metadata_unpublished.stop_axial_coordinate_absent`: 10
 - `terminal.confirmed_no_prescription.adjustable_aperture_light_blocking_sheet_architecture_only`: 9
 - `terminal.confirmed_no_prescription.electronic_device_camera_module_placement_architecture_only`: 9
+- `terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only`: 9
 - `terminal.confirmed_no_prescription.freeform_reflective_hmd_architecture_only`: 9
 - `terminal.metadata_unpublished.configuration_hfov_and_qcon_q6_definition_absent`: 9
 - `terminal.confirmed_no_prescription.light_blocking_sheet_mechanical_architecture_only`: 8
 - `terminal.confirmed_no_prescription.variable_aperture_camera_module_architecture_only`: 8
-- `terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only`: 7
+- `terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only`: 7
 - `terminal.confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only`: 7
 - `terminal.confirmed_no_prescription.shiftable_image_sensor_wire_geometry_only`: 6
 - `terminal.metadata_unpublished.prescription_specific_efl_and_field_absent`: 6
@@ -154,6 +155,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.smart_glasses_roi_vision_processing_architecture_only`: 1
 - `terminal.confirmed_no_prescription.solid_state_image_sensor_translucent_cover_manufacturing_architecture_only`: 1
 - `terminal.confirmed_no_prescription.unidentified_zemax_fisheye_performance_model_only`: 1
+- `terminal.confirmed_no_prescription.vehicle_multi_camera_placement_architecture_only`: 1
 - `terminal.confirmed_no_prescription.xr_content_collaboration_user_interface_and_device_architecture_only`: 1
 - `terminal.metadata_unpublished.asphere_a24_numeric_token_malformed`: 1
 - `terminal.metadata_unpublished.asphere_a26_exponent_marker_absent`: 1
@@ -171,7 +173,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 113
+- `generic_summary_metadata_missing`: 112
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62

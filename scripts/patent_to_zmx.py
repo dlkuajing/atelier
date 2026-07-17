@@ -545,6 +545,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_folded_nanostructure_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -9477,6 +9485,265 @@ _MICROSOFT_COLORBLIND_IMAGE_RENDERING_SOURCE_PROFILES: dict[
             "lookup table": 1,
             "color vision deficiency": 26,
             "image sensor": 0,
+        },
+    }
+}
+_LARGAN_FOLDED_NANOSTRUCTURE_ITEMS = (
+    (
+        1,
+        "Largan folded-nanostructure optical imaging module first example",
+        "confirmed_no_prescription."
+        "folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+    ),
+    (
+        2,
+        "Largan folded-nanostructure optical imaging module second example",
+        "confirmed_no_prescription."
+        "folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+    ),
+    (
+        3,
+        "Largan folded-nanostructure optical imaging module third example",
+        "confirmed_no_prescription."
+        "folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+    ),
+    (
+        4,
+        "Largan folded-nanostructure optical imaging module fourth example",
+        "confirmed_no_prescription."
+        "folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+    ),
+    (
+        5,
+        "Largan folded-nanostructure optical imaging module fifth example",
+        "confirmed_no_prescription."
+        "folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+    ),
+    (
+        6,
+        "Largan folded-nanostructure optical imaging module sixth example",
+        "confirmed_no_prescription."
+        "folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+    ),
+    (
+        7,
+        "Largan folded-nanostructure optical imaging module seventh example",
+        "confirmed_no_prescription."
+        "folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+    ),
+    (
+        8,
+        "Largan folded-nanostructure electronic device eighth example",
+        "confirmed_no_prescription."
+        "electronic_device_multi_camera_placement_architecture_only",
+    ),
+    (
+        9,
+        "Largan folded-nanostructure electronic device ninth example",
+        "confirmed_no_prescription."
+        "electronic_device_multi_camera_placement_architecture_only",
+    ),
+    (
+        10,
+        "Largan folded-nanostructure vehicle device tenth example",
+        "confirmed_no_prescription."
+        "vehicle_multi_camera_placement_architecture_only",
+    ),
+)
+_LARGAN_FOLDED_NANOSTRUCTURE_FIGURES = (
+    "1A",
+    "1B",
+    "1C",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "3A",
+    "3B",
+    "3C",
+    "4A",
+    "4B",
+    "4C",
+    "5A",
+    "5B",
+    "5C",
+    "6A",
+    "6B",
+    "7A",
+    "7B",
+    "7C",
+    "8A",
+    "8B",
+    "8C",
+    "8D",
+    "8E",
+    "9",
+    "10A",
+    "10B",
+    "10C",
+)
+_LARGAN_FOLDED_NANOSTRUCTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20240272406-A1": {
+        "raw_document_sha256": (
+            "b299af6070ba4f9342cf8a79e5f5cf806cd5d93695b6f2f867b0307239e546f9"
+        ),
+        "normalized_text_sha256": (
+            "f46a725345908f1253f4b832dea934b6e209a6f0593f9c000e9bf861c43be104"
+        ),
+        "section_markers": {
+            "abstract": (
+                "Abstract An optical imaging module includes an optical imaging "
+                "lens assembly"
+            ),
+            "background_summary": (
+                "Background/Summary RELATED APPLICATIONS [0001]"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0008]",
+            "detailed": "DETAILED DESCRIPTION [0039]",
+            "claims": "Claims 1 . An optical imaging module, comprising:",
+        },
+        "section_sha256": {
+            "abstract": (
+                "1f27bd803f2a9a51934e79b8b4d0250fb8bffc998a9785186672c8ff2f6645ce"
+            ),
+            "background_summary": (
+                "a07044e32953c6b2074933997025fd6ffdc8b7144543ba5cf9f99755fdd21b5a"
+            ),
+            "brief": (
+                "f703b72a2c0fcf09bfa320df363f758cb8d5549ab964d078f0bb6d6c07746379"
+            ),
+            "detailed": (
+                "52864579e879ad84c9e39f8022d7b3018ca9f7163fcf23937183e0bd9fc9b632"
+            ),
+            "claims": (
+                "22ff2b13ac1bbe63e68f0afeb19de06b8cdb8074120bcb274775b031815b390e"
+            ),
+        },
+        "paragraph_ranges": {
+            "background_summary": (1, 7),
+            "brief": (8, 38),
+            "detailed": (39, 112),
+        },
+        "summary_item_sha256": {
+            4: "1887b4b3dbcdfa53846775e5f8cda985f96ab425e2b466fa6d866d5dafbaf130",
+            5: "effdb70b1175ad3c9cfb7c835d6f94705504027d890f4da712102787ab441cc5",
+            6: "2f25fefadeb410463f9f092594ca952d9524c691cfd3d9d682845adb23e5c3b0",
+            7: "531853d3c2b2ea8a8e357e4deac8e4aa433a6bed0b0d7589d80f88f044f98c9e",
+        },
+        "detailed_span_sha256": {
+            (39, 58): (
+                "eddb9de648b1bbffc9ac1419c611ad39ed9930032abc32a131e10dc773dd4f78"
+            ),
+            (59, 63): (
+                "2198ba6a2f677ab0e3992bcd1df35cd088976841a02db22da3038636ec72f121"
+            ),
+            (64, 68): (
+                "b548666b48432396cd674f5cf52c0adb926f522c599324ccb085e6f28be731da"
+            ),
+            (69, 74): (
+                "a7b33a1ad19782c758a28431910f496118bc31f59edf2ef8b83f4ab8414d61a4"
+            ),
+            (75, 79): (
+                "8a4b3b7aca957f6776c926eb7a3dcde8901157187ed072d9adb0da584c77b7c0"
+            ),
+            (80, 84): (
+                "8476fc72d7062ee9c5985aae8de443c2eabc9f9f06687d2a19980cd687b45ccf"
+            ),
+            (85, 89): (
+                "5db508872dc9a9d54273c59cbf358eeba0ae3b07509766e5ee47231650aed78a"
+            ),
+            (90, 94): (
+                "39e752cea7d89fc760349452c0a4c5f44c28aa52869fed3a26b42baf95f1ce6e"
+            ),
+            (95, 103): (
+                "66392ab6ba02f9d63e8ecf5dc4dd289cc17c5571742f21a6e8df90aedce47a8f"
+            ),
+            (104, 107): (
+                "7067b0474da9374ea2d66d676dfda3457ed530196ecf4d23164ccd5b0615a4f4"
+            ),
+            (108, 111): (
+                "6e1b19da87a9c84ae4ebbf9b0f7ec0bcc3f93f3d6e66bb67c7ad0df00252eabc"
+            ),
+            (112, 112): (
+                "c82666be0d44fa1057c24ef4578083a96e6ce7b33a6dace2dd6866b1e9f11079"
+            ),
+        },
+        "item_ranges": (
+            (59, 63),
+            (64, 68),
+            (69, 74),
+            (75, 79),
+            (80, 84),
+            (85, 89),
+            (90, 94),
+            (95, 103),
+            (104, 107),
+            (108, 111),
+        ),
+        "item_numeric_markers": (
+            ("BS", "99.5"),
+            ("RS", "235.3"),
+            ("BS", "66.1"),
+            ("RS", "173.5"),
+            ("BS", "110.7"),
+            ("BS", "56.6"),
+            ("RS", "218.0"),
+        ),
+        "claim_ranges": ((1, 14), (15, 15), (16, 16)),
+        "claim_span_sha256": (
+            "5e7641b27e4e1518433f361be4bc2c3efb1deda3d1715a2795fa6720a1e3fc5b",
+            "39c1b1b9f2d1e46768331b45b97932c2c95a75ee1194a996fe5ddb9fc4e5982e",
+            "f61de82681f7cbded8e9a3ff389be3bdc72af0de0af8f8f0fef1d2d0f78fe1dd",
+        ),
+        "claim_numbers": tuple(range(1, 17)),
+        "identity_markers": {
+            "United States Patent Application Publication 20240272406": 1,
+            "Kind Code A1": 1,
+            "Publication Date August 15, 2024": 1,
+            "OPTICAL IMAGING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE": 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 89620713": 1,
+            "Appl. No.: 18/642955": 1,
+            "Filed: April 23, 2024": 1,
+            "TW 112135457 Sep. 18, 2023": 1,
+            "parent US continuation 18413330 20240116 PENDING": 1,
+            "US 63480111 20230117": 1,
+        },
+        "math_object_sha256": (
+            "a14baeb146717282caf2cf2c11c5fde498ca56af80dc7bd57e966a86a775a573",
+            "7ec2737bb108ce7e820039590599f995ab56d535054cf9c506ecb5d96a9e4f9d",
+        ),
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "F/#": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aspherical": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "surface no": 0,
+            "radius of curvature": 0,
+            "radius curvature": 0,
+            "curvature radius": 0,
+            "thickness": 0,
+            "aperture stop": 0,
+            "conic": 0,
+            "ordered surface": 0,
+        },
+        "source_scope_phrase_counts": {
+            "focal length": 9,
+            "back focal length": 8,
+            "field of view": 2,
+            "refractive index": 4,
+            "optical lens element": 30,
+            "image sensor": 33,
+            "anti-reflective light blocking membrane layer": 60,
+            "nanostructure": 80,
+            "light path folding element": 171,
         },
     }
 }
@@ -27776,6 +28043,361 @@ def _classify_microsoft_colorblind_image_rendering_architecture_attempts(
         for number, label, reason_code in (
             _MICROSOFT_COLORBLIND_IMAGE_RENDERING_ITEMS
         )
+    ]
+
+
+def _classify_largan_folded_nanostructure_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 89620713 folded-module architecture items."""
+
+    profile = _LARGAN_FOLDED_NANOSTRUCTURE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _LARGAN_FOLDED_NANOSTRUCTURE_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan folded-nanostructure official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan folded-nanostructure normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan folded-nanostructure identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan folded-nanostructure section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(
+            sorted(section_starts.values())
+        ):
+            raise PatentParseError(
+                "Largan folded-nanostructure section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan folded-nanostructure "
+                    f"{section_name} section changed"
+                )
+
+        def numbered_paragraphs(section: str) -> dict[int, str]:
+            matches = list(re.finditer(r"\[(\d{4})\]", section))
+            return {
+                int(match.group(1)): section[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section)
+                    )
+                ]
+                for index, match in enumerate(matches)
+            }
+
+        paragraph_maps = {
+            name: numbered_paragraphs(sections[name])
+            for name in ("background_summary", "brief", "detailed")
+        }
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            start, end = bounds
+            if tuple(paragraph_maps[section_name]) != tuple(
+                range(start, end + 1)
+            ):
+                raise PatentParseError(
+                    "Largan folded-nanostructure "
+                    f"{section_name} paragraph denominator changed"
+                )
+
+        for paragraph, expected_digest in profile["summary_item_sha256"].items():
+            observed_digest = hashlib.sha256(
+                paragraph_maps["background_summary"][paragraph]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan folded-nanostructure summary item "
+                    f"paragraph {paragraph} changed"
+                )
+
+        detailed_paragraphs = paragraph_maps["detailed"]
+        for bounds, expected_digest in profile[
+            "detailed_span_sha256"
+        ].items():
+            start, end = bounds
+            span = "".join(
+                detailed_paragraphs[number]
+                for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan folded-nanostructure detailed paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        ordinals = (
+            "1st",
+            "2nd",
+            "3rd",
+            "4th",
+            "5th",
+            "6th",
+            "7th",
+            "8th",
+            "9th",
+            "10th",
+        )
+        item_texts: list[str] = []
+        for bounds, ordinal in zip(
+            profile["item_ranges"],
+            ordinals,
+            strict=True,
+        ):
+            start, end = bounds
+            item_text = "".join(
+                detailed_paragraphs[number]
+                for number in range(start, end + 1)
+            )
+            if re.search(
+                rf"according (?:to )?the {ordinal} Example",
+                item_text,
+                re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    "Largan folded-nanostructure "
+                    f"{ordinal} example binding changed"
+                )
+            item_texts.append(item_text)
+
+        for item_text, (variable, value), ordinal in zip(
+            item_texts[:7],
+            profile["item_numeric_markers"],
+            ordinals[:7],
+            strict=True,
+        ):
+            if len(
+                re.findall(
+                    rf"size\s+{variable}\b.*?\bis\s+{re.escape(value)}\s+nm",
+                    item_text,
+                    re.IGNORECASE,
+                )
+            ) != 1:
+                raise PatentParseError(
+                    "Largan folded-nanostructure "
+                    f"{ordinal} nanostructure-size binding changed"
+                )
+            if "at least one optical lens element" not in item_text.lower():
+                raise PatentParseError(
+                    "Largan folded-nanostructure "
+                    f"{ordinal} generic lens-element binding changed"
+                )
+        if len(
+            re.findall(
+                "different focal lengths cooperated with the function of image processing",
+                item_texts[7],
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "Largan folded-nanostructure eighth-example digital-zoom "
+                "binding changed"
+            )
+        if len(
+            re.findall(
+                "ultra-wide angle camera modules",
+                item_texts[8],
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "Largan folded-nanostructure ninth-example camera-placement "
+                "binding changed"
+            )
+        if len(
+            re.findall(
+                r"40 degrees\s*<\s*0\s*<\s*90 degrees",
+                item_texts[9],
+                re.IGNORECASE,
+            )
+        ) != 1:
+            raise PatentParseError(
+                "Largan folded-nanostructure tenth-example vehicle-field "
+                "binding changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan folded-nanostructure claims denominator changed"
+            )
+        claims = {
+            int(match.group(1)): sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ]
+            for index, match in enumerate(claim_matches)
+        }
+        claim_span_digests = []
+        for start, end in profile["claim_ranges"]:
+            span = "".join(claims[number] for number in range(start, end + 1))
+            claim_span_digests.append(
+                hashlib.sha256(span.strip().encode("utf-8")).hexdigest()
+            )
+        if tuple(claim_span_digests) != profile["claim_span_sha256"]:
+            raise PatentParseError(
+                "Largan folded-nanostructure three-claim-family "
+                "denominator changed"
+            )
+
+        figure_panels = []
+        for paragraph in range(9, 39):
+            match = re.match(
+                r"\[\d{4}\]\s+FIG\.\s*(\d+)\s*([A-Z]?)\s+(?:is|shows)\b",
+                paragraph_maps["brief"][paragraph],
+                re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan folded-nanostructure figure declaration "
+                    f"paragraph {paragraph} changed"
+                )
+            figure_panels.append(
+                f"{match.group(1)}{match.group(2).upper()}"
+            )
+        if tuple(figure_panels) != _LARGAN_FOLDED_NANOSTRUCTURE_FIGURES:
+            raise PatentParseError(
+                "Largan folded-nanostructure 30-panel figure denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Largan folded-nanostructure zero-HTML-table denominator changed"
+            )
+        math_objects = re.findall(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        math_digests = tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        )
+        if math_digests != profile["math_object_sha256"]:
+            raise PatentParseError(
+                "Largan folded-nanostructure two-distance-formula "
+                "denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan folded-nanostructure prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan folded-nanostructure scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all ten exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        *(
+            "the exact folded optical-imaging example publishes only lens-element, "
+            "folding-surface, light-blocking-membrane and nanostructure architecture; "
+            "its BS/RS value is coating microstructure data, and no ordered optical "
+            "radius, spacing, material, conic, asphere or required F-number metadata "
+            "is published"
+            for _ in range(7)
+        ),
+        "the exact eighth example publishes smartphone multi-camera placement and "
+        "image-processing digital zoom across unspecified focal lengths, without an "
+        "independent optical prescription",
+        "the exact ninth example publishes smartphone ultra-wide, wide, telephoto "
+        "and time-of-flight camera placement, reusing examples 1-7 without an "
+        "independent optical prescription",
+        "the exact tenth example publishes six vehicle-camera locations and a "
+        "40-to-90-degree placement field range, reusing examples 1-7 without an "
+        "independent optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _LARGAN_FOLDED_NANOSTRUCTURE_ITEMS
     ]
 
 
