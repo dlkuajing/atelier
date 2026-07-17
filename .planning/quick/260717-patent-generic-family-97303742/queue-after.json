@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "18e49565f06f31a676036f4f123381f660c7f5b185ba3f0e12a2190169d4dc21",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 123,
+      "affected_items": 123
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "56417699",
+    "root_ids": ["US-10782453"],
+    "publication_ids": ["US-10782453-B2"],
+    "title": "Display devices with reflectors",
+    "layout_signature": "2a4c4e8491d8e8c45dbcd210cebb872ae50ae25ba83857a7b35f136ee4a74591",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/2b7b7c65164b8240/US-10782453-B2.html",
+      "sha256": "2b7b7c65164b82404ce5b37f939fa020461ec07d94003182ca828f39d30cb43b"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

@@ -405,6 +405,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_largan_folded_prism_fixed_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_telecentric_nine_lens_metadata_attempts(
         raw_text,
         patent_id=patent_id,
@@ -1820,6 +1826,52 @@ _LARGAN_MOVING_GROUP_SOURCE_PROFILES: dict[str, dict[str, str]] = {
             "70233e3a4c941838d0b20a08066a14a88b19cfe2e17c1c16ba47494736723c79"
         ),
     },
+}
+_LARGAN_FOLDED_PRISM_FIXED_SOURCE_PROFILES: dict[str, dict[str, str]] = {
+    "US-20260063876-A1": {
+        "raw_document_sha256": (
+            "b86b4e046115223760c4139e60c54ef0b3a14e2d8bfa2334388843d4fb57b68d"
+        ),
+        "normalized_text_sha256": (
+            "a1b4dc0b60b9526b01ceff3a53a193189e6048db230939b1a5eea8f5e6a2c6b9"
+        ),
+        "math_id_set_sha256": (
+            "0546402424df3c0dabdbd840437d7fc956c8dabfa059f731e4b303f7792e7dc5"
+        ),
+    },
+}
+_LARGAN_FOLDED_PRISM_FIXED_TITLE_PATTERN = re.compile(
+    r"\bPHOTOGRAPHING\s+OPTICAL\s+LENS\s+ASSEMBLY,\s+IMAGE\s+CAPTURING\s+UNIT\s+"
+    r"AND\s+ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_LARGAN_FOLDED_PRISM_FIXED_EMBODIMENT_PARAGRAPHS = {
+    1: 115,
+    2: 159,
+    3: 168,
+    4: 179,
+    5: 188,
+    6: 199,
+    7: 210,
+    8: 221,
+    9: 232,
+    10: 242,
+    11: 253,
+    12: 256,
+    13: 260,
+    14: 263,
+}
+_LARGAN_FOLDED_PRISM_FIXED_STOPS = {
+    1: (3, 10),
+    2: (3, 10),
+    3: (5, 10),
+    4: (3, 10),
+    5: (3, 10),
+    6: (3, 10),
+    7: (3, 10),
+    8: (3, 10),
+    9: (3, 10),
+    10: (3, 10),
 }
 _LARGAN_MOVING_GROUP_TITLE_PATTERN = re.compile(
     r"\bOPTICAL\s+PHOTOGRAPHING\s+LENS\s+ASSEMBLY,\s+IMAGING\s+APPARATUS\s+"
@@ -15485,7 +15537,9 @@ def _reorder_largan_moving_group_surfaces(
     *,
     coefficients: dict[int, dict[str, float]],
     embodiment: int,
+    context: str | None = None,
 ) -> list[PatentSurface]:
+    error_context = context or f"Largan moving-group embodiment {embodiment}"
     positioned: list[tuple[float, _LarganMovingGroupSurfaceRow]] = []
     z_mm = 0.0
     material_spans: list[tuple[float, float, str, float, float]] = []
@@ -15493,20 +15547,16 @@ def _reorder_largan_moving_group_surfaces(
         positioned.append((z_mm, row))
         if row_index == len(rows) - 1:
             if row.label != "Image" or row.thickness_mm is not None:
-                raise PatentParseError(
-                    f"Largan moving-group embodiment {embodiment} image row changed"
-                )
+                raise PatentParseError(f"{error_context} image row changed")
             continue
         if row.thickness_mm is None:
             raise PatentParseError(
-                f"Largan moving-group embodiment {embodiment} surface "
+                f"{error_context} surface "
                 f"{row.published_index} thickness is absent"
             )
         if row.material is not None:
             if row.nd is None or row.vd is None or row.thickness_mm <= 0.0:
-                raise PatentParseError(
-                    f"Largan moving-group embodiment {embodiment} material span is invalid"
-                )
+                raise PatentParseError(f"{error_context} material span is invalid")
             material_spans.append(
                 (z_mm, z_mm + row.thickness_mm, row.material, row.nd, row.vd)
             )
@@ -15515,13 +15565,9 @@ def _reorder_largan_moving_group_surfaces(
     ordered = sorted(positioned, key=lambda item: item[0])
     for (first_z, _first), (second_z, _second) in zip(ordered, ordered[1:], strict=False):
         if second_z - first_z <= 1e-12:
-            raise PatentParseError(
-                f"Largan moving-group embodiment {embodiment} axial coordinates overlap"
-            )
+            raise PatentParseError(f"{error_context} axial coordinates overlap")
     if ordered[-1][1].label != "Image":
-        raise PatentParseError(
-            f"Largan moving-group embodiment {embodiment} image is not the final surface"
-        )
+        raise PatentParseError(f"{error_context} image is not the final surface")
 
     surfaces: list[PatentSurface] = []
     observed_coefficient_surfaces: set[int] = set()
@@ -15537,9 +15583,7 @@ def _reorder_largan_moving_group_surfaces(
             output_thickness = 0.0
             containing_spans = []
         if len(containing_spans) > 1:
-            raise PatentParseError(
-                f"Largan moving-group embodiment {embodiment} material spans overlap"
-            )
+            raise PatentParseError(f"{error_context} material spans overlap")
         if containing_spans:
             _start, _end, material, nd, vd = containing_spans[0]
         else:
@@ -15568,14 +15612,578 @@ def _reorder_largan_moving_group_surfaces(
             )
         )
     if observed_coefficient_surfaces != set(coefficients):
-        raise PatentParseError(
-            f"Largan moving-group embodiment {embodiment} coefficient surface is absent"
-        )
+        raise PatentParseError(f"{error_context} coefficient surface is absent")
     if any((surface.thickness_mm or 0.0) < 0.0 for surface in surfaces):
-        raise PatentParseError(
-            f"Largan moving-group embodiment {embodiment} retained a negative thickness"
-        )
+        raise PatentParseError(f"{error_context} retained a negative thickness")
     return surfaces
+
+
+def _parse_largan_folded_prism_fixed_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse one source-locked Largan folded-prism fixed-focus family.
+
+    The official tables publish the powered prism as two refracting surfaces
+    along the unfolded ray path.  They do not publish a separate powered mirror
+    row.  Four embodiments publish one negative axial segment adjacent to the
+    zero-power first stop; the same axial-coordinate reorder used by the
+    retained Largan moving-group family makes that published unfolded path
+    sequential without inventing a reflective-surface prescription.
+    """
+
+    profile = _LARGAN_FOLDED_PRISM_FIXED_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    labels = _largan_folded_prism_fixed_attempt_labels()
+
+    def attempts_for_error(error: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=error,
+            )
+            for index, label in enumerate(labels, start=1)
+        ]
+
+    try:
+        raw_sha256 = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_sha256 != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Largan folded-prism fixed official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_sha256 != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Largan folded-prism fixed normalized text hash changed for {patent_id}"
+            )
+        _validate_largan_folded_prism_fixed_document(
+            raw_text,
+            text=text,
+            math_id_set_sha256=profile["math_id_set_sha256"],
+        )
+        blocks = _suffixed_patent_table_blocks(text)
+        expected_blocks = {(1, "A"), (1, "B")} | {
+            (embodiment, suffix)
+            for embodiment in range(2, 11)
+            for suffix in ("A", "B", "C")
+        }
+        if set(blocks) != expected_blocks:
+            raise PatentParseError(
+                "Largan folded-prism fixed official 29-table inventory changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - preserve the complete 14-item denominator
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment in range(1, 11):
+        label = labels[embodiment - 1]
+        try:
+            coefficients = _parse_largan_folded_prism_fixed_coefficients(
+                blocks[(embodiment, "B")],
+                embodiment=embodiment,
+            )
+            surfaces, metadata = _parse_largan_folded_prism_fixed_surfaces(
+                blocks[(embodiment, "A")],
+                embodiment=embodiment,
+                coefficients=coefficients,
+            )
+            if embodiment >= 2:
+                _validate_largan_folded_prism_fixed_summary(
+                    blocks[(embodiment, "C")],
+                    embodiment=embodiment,
+                    metadata=metadata,
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=label,
+                focal_length_mm=metadata[0],
+                f_number=metadata[1],
+                hfov_deg=metadata[2],
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain every disclosed prescription
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment,
+                    embodiment=label,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment,
+                embodiment=label,
+                prescription=prescription,
+            )
+        )
+
+    for embodiment, label in enumerate(labels[10:], start=11):
+        image_capturing_unit = embodiment == 11
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription.image_capturing_unit_wrapper_only"
+                        if image_capturing_unit
+                        else "confirmed_no_prescription.electronic_device_wrapper_only"
+                    ),
+                    detail=(
+                        "11th embodiment publishes an image-sensor, focus-control, lens-"
+                        "driving, shake-correction and previously disclosed photographing-"
+                        "lens-assembly wrapper; it adds no optical surface prescription"
+                        if image_capturing_unit
+                        else (
+                            f"{label} publishes only an electronic-device arrangement around "
+                            "previously disclosed image-capturing units; it adds no optical "
+                            "surface prescription"
+                        )
+                    ),
+                ),
+            )
+        )
+    return attempts
+
+
+def _largan_folded_prism_fixed_attempt_labels() -> list[str]:
+    labels = [
+        f"Largan folded-prism fixed embodiment {embodiment}"
+        for embodiment in range(1, 11)
+    ]
+    labels.extend(
+        [
+            "Largan folded-prism fixed embodiment 11 image capturing unit",
+            "Largan folded-prism fixed embodiment 12 electronic device",
+            "Largan folded-prism fixed embodiment 13 electronic device",
+            "Largan folded-prism fixed embodiment 14 electronic device",
+        ]
+    )
+    return labels
+
+
+def _validate_largan_folded_prism_fixed_document(
+    raw_text: str,
+    *,
+    text: str,
+    math_id_set_sha256: str,
+) -> None:
+    if _LARGAN_FOLDED_PRISM_FIXED_TITLE_PATTERN.search(text) is None:
+        raise PatentParseError("Largan folded-prism fixed official title binding changed")
+    if text.count("Family ID: 97303742") != 1:
+        raise PatentParseError("Largan folded-prism fixed Family ID binding changed")
+    if text.count("Appl. No.: 18/932225") != 1:
+        raise PatentParseError("Largan folded-prism fixed application binding changed")
+
+    paragraph_numbers = tuple(
+        int(match.group(1)) for match in re.finditer(r"\[(\d{4})\]", text)
+    )
+    if paragraph_numbers != tuple(range(1, 267)):
+        raise PatentParseError(
+            "Largan folded-prism fixed paragraph inventory is not consecutive 1-266"
+        )
+    brief_start = text.find("BRIEF DESCRIPTION OF THE DRAWINGS")
+    detailed_start = text.find("DETAILED DESCRIPTION")
+    claims_start = text.find("Claims 1 .")
+    if not 0 <= brief_start < detailed_start < claims_start:
+        raise PatentParseError("Largan folded-prism fixed section ordering changed")
+    brief = text[brief_start:detailed_start]
+    figure_declarations = tuple(
+        (int(match.group(1)), int(match.group(2)), match.group(3).lower())
+        for match in re.finditer(
+            r"\[(\d{4})\]\s+FIG\.\s+(\d+)\s+(is|shows)\b",
+            brief,
+            flags=re.IGNORECASE,
+        )
+    )
+    expected_figures = tuple(
+        (
+            paragraph,
+            figure,
+            "shows" if figure % 3 == 0 and figure <= 30 else (
+                "shows" if figure >= 38 else "is"
+            ),
+        )
+        for paragraph, figure in zip(range(14, 59), range(1, 46), strict=True)
+    )
+    if figure_declarations != expected_figures:
+        raise PatentParseError(
+            "Largan folded-prism fixed drawing declarations are not FIGS. 1-45"
+        )
+
+    embodiment_starts = tuple(
+        (int(match.group(1)), int(match.group(2)))
+        for match in re.finditer(
+            r"(?<!\w)((?:[1-9]|10|11|12|13|14))(?:st|nd|rd|th)\s+"
+            r"Embodiment\s+\[(\d{4})\]",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if embodiment_starts != tuple(_LARGAN_FOLDED_PRISM_FIXED_EMBODIMENT_PARAGRAPHS.items()):
+        raise PatentParseError("Largan folded-prism fixed embodiment denominator changed")
+
+    claims = text[claims_start:]
+    claim_numbers = tuple(
+        int(match.group(1))
+        for match in re.finditer(r"(?<!\S)(\d{1,2})\s+\.", claims)
+    )
+    if claim_numbers != tuple(range(1, 29)):
+        raise PatentParseError("Largan folded-prism fixed claim inventory changed")
+
+    math_ids = re.findall(r'id="(MATH-US-[^"]+)"', raw_text, flags=re.IGNORECASE)
+    math_digest = hashlib.sha256(
+        json.dumps(math_ids, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if len(math_ids) != 61 or math_digest != math_id_set_sha256:
+        raise PatentParseError("Largan folded-prism fixed MathML inventory changed")
+
+    if re.search(
+        r"\bhalf\s+of\s+a\s+maximum\s+field\s+of\s+view\s+of\s+the\s+"
+        r"photographing\s+optical\s+lens\s+assembly\s+is\s+HFOV\b",
+        text,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError("Largan folded-prism fixed half-field definition changed")
+    if re.search(
+        r"\bentrance\s+pupil\s+diameter\s+of\s+the\s+photographing\s+optical\s+"
+        r"lens\s+assembly\s+corresponding\s+to\s+a\s+maximum\s+entrance\s+pupil\s+"
+        r"diameter\s+direction\s+of\s+the\s+aperture\s+stop\s+is\s+EPDmax\b",
+        text,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError("Largan folded-prism fixed EPDmax definition changed")
+
+
+def _parse_largan_folded_prism_fixed_surfaces(
+    table_text: str,
+    *,
+    embodiment: int,
+    coefficients: dict[int, dict[str, float]],
+) -> tuple[list[PatentSurface], tuple[float, float, float]]:
+    ordinal = _largan_numeric_ordinal(embodiment)
+    header = re.search(
+        rf"\ATABLE-US-\d+\s+TABLE\s+{embodiment}A\s+{ordinal}\s+Embodiment\s+"
+        rf"f\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm,\s*"
+        rf"f/EPDmax\s*=\s*(?P<fno>{NUMBER_PATTERN}),\s*"
+        rf"HFOV\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s*deg\.\s+"
+        r"Surface\s+#\s+Curvature\s+Radius\s+Thickness\s+Material\s+Index\s+"
+        r"Abbe\s+#\s+Focal\s+Length\s+",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} surface header changed"
+        )
+    metadata = tuple(
+        _parse_number(header.group(field)) for field in ("f", "fno", "hfov")
+    )
+    if metadata[0] <= 0.0 or metadata[1] <= 0.0 or not 0.0 < metadata[2] < 90.0:
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} metadata is invalid"
+        )
+    remainder = table_text[header.end() :]
+    note_match = re.search(r"\s+Note:\s+", remainder, flags=re.IGNORECASE)
+    if note_match is None:
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} table note is absent"
+        )
+    tokens = remainder[: note_match.start()].split()
+    note = remainder[note_match.end() :]
+    position = 0
+
+    def take(expected: str | None = None) -> str:
+        nonlocal position
+        if position >= len(tokens):
+            raise PatentParseError(
+                f"Largan folded-prism fixed embodiment {embodiment} surface table is incomplete"
+            )
+        token = tokens[position]
+        position += 1
+        if expected is not None and token.casefold() != expected.casefold():
+            raise PatentParseError(
+                f"Largan folded-prism fixed embodiment {embodiment} expected {expected}, "
+                f"found {token}"
+            )
+        return token
+
+    take("0")
+    take("Object")
+    take("Infinity")
+    take("Infinity")
+    stops = _LARGAN_FOLDED_PRISM_FIXED_STOPS[embodiment]
+    optic_first_surfaces = (
+        {1: 1, 2: 3, 3: 6, 4: 8, 5: 11, 6: 13}
+        if embodiment == 3
+        else {1: 1, 2: 4, 3: 6, 4: 8, 5: 11, 6: 13}
+    )
+    optic_by_first_surface = {
+        surface: optic for optic, surface in optic_first_surfaces.items()
+    }
+    optic_by_second_surface = {
+        surface + 1: optic for optic, surface in optic_first_surfaces.items()
+    }
+    rows: list[_LarganMovingGroupSurfaceRow] = []
+    for surface_index in range(1, 18):
+        take(str(surface_index))
+        if surface_index in optic_by_first_surface:
+            optic = optic_by_first_surface[surface_index]
+            take("Optic")
+            take(str(optic))
+            radius = _parse_number(take())
+            take("(ASP)")
+            thickness = _parse_number(take())
+            material = take()
+            nd = _parse_number(take())
+            vd = _parse_number(take())
+            _parse_number(take())  # published element focal length
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    f"E{optic} S1",
+                    radius,
+                    thickness,
+                    material,
+                    nd,
+                    vd,
+                    "ASP",
+                )
+            )
+        elif surface_index in optic_by_second_surface:
+            optic = optic_by_second_surface[surface_index]
+            radius = _parse_number(take())
+            take("(ASP)")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    f"E{optic} S2",
+                    radius,
+                    _parse_number(take()),
+                    surface_type="ASP",
+                )
+            )
+        elif surface_index in stops:
+            take("Stop")
+            take("Plano")
+            stop_number = stops.index(surface_index) + 1
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    f"Stop S{stop_number}",
+                    0.0,
+                    _parse_number(take()),
+                )
+            )
+        elif surface_index == 15:
+            take("Filter")
+            take("Plano")
+            thickness = _parse_number(take())
+            material = take("Glass")
+            nd = _parse_number(take())
+            vd = _parse_number(take())
+            take("--")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    "Filter S1",
+                    0.0,
+                    thickness,
+                    material,
+                    nd,
+                    vd,
+                )
+            )
+        elif surface_index == 16:
+            take("Plano")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    "Filter S2",
+                    0.0,
+                    _parse_number(take()),
+                )
+            )
+        elif surface_index == 17:
+            take("Image")
+            take("Plano")
+            take("--")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(surface_index, "Image", 0.0, None)
+            )
+        else:
+            raise PatentParseError(
+                f"Largan folded-prism fixed embodiment {embodiment} has no row schema "
+                f"for surface {surface_index}"
+            )
+    if position != len(tokens):
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} surface table has "
+            "unconsumed cells"
+        )
+
+    for stop_number, surface_index in enumerate(stops, start=1):
+        match = re.search(
+            rf"\bAn\s+effective\s+radius\s+of\s+the\s+stop\s+S{stop_number}\s+"
+            rf"\(Surface\s+{surface_index}\)\s+is\s+(?P<radius>{NUMBER_PATTERN})\s+mm\.",
+            note,
+            flags=re.IGNORECASE,
+        )
+        if match is None or _parse_number(match.group("radius")) <= 0.0:
+            raise PatentParseError(
+                f"Largan folded-prism fixed embodiment {embodiment} stop S{stop_number} "
+                "radius binding changed"
+            )
+    if re.search(
+        r"\bReference\s+wavelength\s+is\s+587\.6\s+nm\s+\(d-line\)\.",
+        note,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} wavelength binding changed"
+        )
+    if re.search(
+        r"\bThe\s+first\s+optical\s+element\s+E1\s+is\s+a\s+prism\s+having\s+"
+        r"refractive\s+power\.",
+        note,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} prism binding changed"
+        )
+
+    surfaces = _reorder_largan_moving_group_surfaces(
+        rows,
+        coefficients=coefficients,
+        embodiment=embodiment,
+        context=f"Largan folded-prism fixed embodiment {embodiment}",
+    )
+    return surfaces, metadata
+
+
+def _parse_largan_folded_prism_fixed_coefficients(
+    table_text: str,
+    *,
+    embodiment: int,
+) -> dict[int, dict[str, float]]:
+    body = re.split(r"\s\[\d{4}\]\s", table_text, maxsplit=1)[0]
+    headers = list(
+        re.finditer(
+            r"\bSurface\s+#\s+(?P<ids>(?:\d+\s+){5}\d+)\s+k=",
+            body,
+            flags=re.IGNORECASE,
+        )
+    )
+    if len(headers) != 2:
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} coefficient groups changed"
+        )
+    expected_surfaces = (
+        (1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14)
+        if embodiment == 3
+        else (1, 2, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14)
+    )
+    observed_surfaces: list[int] = []
+    coefficients: dict[int, dict[str, float]] = {}
+    for section_index, header in enumerate(headers):
+        section_end = headers[section_index + 1].start() if section_index == 0 else len(body)
+        section = body[header.start() : section_end]
+        surface_ids = tuple(int(token) for token in header.group("ids").split())
+        observed_surfaces.extend(surface_ids)
+        row_matches = list(
+            re.finditer(r"(?<!\S)(?P<label>k|A\d+)=", section, flags=re.IGNORECASE)
+        )
+        expected_labels = (
+            ("k", "A4", "A6", "A8", "A10", "A12")
+            if embodiment == 8 and section_index == 0
+            else (
+                ("k", "A4", "A6", "A8", "A10", "A12", "A14")
+                if embodiment == 8
+                else ("k", "A4", "A6", "A8", "A10")
+            )
+        )
+        if tuple(match.group("label") for match in row_matches) != expected_labels:
+            raise PatentParseError(
+                f"Largan folded-prism fixed embodiment {embodiment} coefficient labels changed"
+            )
+        for row_index, row_match in enumerate(row_matches):
+            row_end = (
+                row_matches[row_index + 1].start()
+                if row_index + 1 < len(row_matches)
+                else len(section)
+            )
+            value_tokens = section[row_match.end() : row_end].split()
+            if len(value_tokens) != len(surface_ids):
+                raise PatentParseError(
+                    f"Largan folded-prism fixed embodiment {embodiment} "
+                    f"{row_match.group('label')} cell occupancy changed"
+                )
+            label = row_match.group("label")
+            codev_label = (
+                "K" if label.casefold() == "k" else ASPHERE_ORDER_TO_CODEV[int(label[1:])]
+            )
+            for surface_id, token in zip(surface_ids, value_tokens, strict=True):
+                if _is_empty_value(token):
+                    continue
+                coefficients.setdefault(surface_id, {})[codev_label] = _parse_number(token)
+    if tuple(observed_surfaces) != expected_surfaces or set(coefficients) != set(expected_surfaces):
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} asphere binding changed"
+        )
+    return coefficients
+
+
+def _validate_largan_folded_prism_fixed_summary(
+    table_text: str,
+    *,
+    embodiment: int,
+    metadata: tuple[float, float, float],
+) -> None:
+    if re.search(
+        rf"\ATABLE-US-\d+\s+TABLE\s+{embodiment}C\s+Values\s+of\s+Optical\s+"
+        r"and\s+Physical\s+Parameters/Definitions\b",
+        table_text,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} summary header changed"
+        )
+
+    def exact_value(label: str) -> float:
+        match = re.search(
+            rf"(?<!\S){label}\s+(?P<value>{NUMBER_PATTERN})\b",
+            table_text,
+            flags=re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Largan folded-prism fixed embodiment {embodiment} summary missing {label}"
+            )
+        return _parse_number(match.group("value"))
+
+    summary = (
+        exact_value(r"f\s+\[mm\]"),
+        exact_value(r"f/EPDmax"),
+        exact_value(r"HFOV\s+\[deg\.\]"),
+    )
+    full_fov = exact_value(r"FOV\s+\[deg\.\]")
+    if summary != metadata or not math.isclose(
+        full_fov,
+        metadata[2] * 2.0,
+        rel_tol=0.0,
+        abs_tol=1e-12,
+    ):
+        raise PatentParseError(
+            f"Largan folded-prism fixed embodiment {embodiment} summary conflicts with TABLE "
+            f"{embodiment}A"
+        )
 
 
 def _parse_folded_macro_tele_table_attempts(
