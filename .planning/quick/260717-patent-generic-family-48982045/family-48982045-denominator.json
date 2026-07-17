@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "family_id": "48982045",
+  "root_id": "US-8820942",
+  "publication_id": "US-8820942-B2",
+  "identity": {
+    "application_number": "13/530530",
+    "title": "Light dividing structure and optical machine system comprising the same",
+    "applicant": "Wang; Yuchang",
+    "assignee": "Delta Electronics, Inc.",
+    "filed": "2012-06-22",
+    "patent_date": "2014-09-02",
+    "kind_code": "B2",
+    "prior_publication": {"publication": "US 20130215391 A1", "date": "2013-08-22"},
+    "priority_applications": [
+      {"application": "TW 101105162 A", "date": "2012-02-17"}
+    ]
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/018ce5b5fa64cf01/US-8820942-B2.html",
+    "bytes": 45664,
+    "raw_characters": 45664,
+    "raw_sha256": "018ce5b5fa64cf01c286a57e9d4f7cec09ee186be8d93cf42e2456210a6f52e7",
+    "normalized_characters": 37459,
+    "normalized_sha256": "114f5663c7489a38f640ef21114902d6439e89e4bd59addd772bd8af0d1e93c1"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "priority_and_related_numbered_paragraphs": 3,
+    "background_numbered_paragraphs": 9,
+    "summary_numbered_paragraphs": 5,
+    "brief_drawing_numbered_paragraphs": 8,
+    "detailed_numbered_paragraphs": 22,
+    "total_numbered_paragraphs": 47,
+    "claims": 27,
+    "claim_families": 2,
+    "declared_textual_figures": 7,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 2,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 2,
+    "replayed_ledger_items": 2,
+    "official_pdf_files": 0,
+    "retained_drawing_images": 0,
+    "unmapped_source_items": 0
+  },
+  "paragraph_spans": {
+    "background_and_summary": [
+      {"range": [1, 3], "role": "priority and related applications"},
+      {"range": [4, 12], "role": "background"},
+      {"range": [13, 17], "role": "summary and two independent architecture aspects"}
+    ],
+    "description": [
+      {"range": [1, 8], "role": "brief description and seven figure declarations"},
+      {"range": [9, 10], "role": "preferred-embodiment heading and shared system introduction"},
+      {"range": [11, 22], "role": "four-prism light-dividing architecture"},
+      {"range": [23, 29], "role": "multi-view projection optical-machine architecture"},
+      {"range": [30, 30], "role": "closing boilerplate"}
+    ]
+  },
+  "figures": ["1", "2", "3A", "3B", "4A", "4B", "5"],
+  "claim_families": [
+    {"range": [1, 14], "role": "light dividing structure"},
+    {"range": [15, 27], "role": "optical machine system"}
+  ],
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Delta four-prism light-dividing architecture",
+      "description_paragraphs": [11, 22],
+      "claim_context": [1, 14],
+      "status": "confirmed_no_prescription",
+      "reason_code": "four_prism_light_dividing_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Delta multi-view projection optical-machine architecture",
+      "description_paragraphs": [23, 29],
+      "claim_context": [15, 27],
+      "status": "confirmed_no_prescription",
+      "reason_code": "multi_view_projection_optical_machine_architecture_only"
+    }
+  ],
+  "optical_scope": {
+    "light_dividing_structure_occurrences": 47,
+    "optical_machine_system_occurrences": 29,
+    "reflecting_lens_assembly_occurrences": 30,
+    "relay_lens_occurrences": 32,
+    "reflecting_mirror_occurrences": 16,
+    "imaging_lens_assembly_occurrences": 10,
+    "camera_lens_occurrences": 2,
+    "digital_micromirror_occurrences": 17,
+    "interpretation": "component identities and ray-path topology only",
+    "ordered_surface_prescriptions": 0
+  },
+  "non_prescription_numeric_contexts": [
+    {
+      "values": "first through fourth prism",
+      "meaning": "four component identities and sequential connectivity, not surface radii or spacings"
+    },
+    {
+      "values": "four reflecting lens assemblies, eight relay lenses and five reflecting mirrors",
+      "location": "description paragraphs 23-29",
+      "meaning": "projection-path component counts, not independent prescriptions"
+    },
+    {
+      "value": "acute angle",
+      "location": "description paragraph 11 and claims",
+      "meaning": "unnumbered prism topology relationship"
+    }
+  ],
+  "forbidden_substitutions": [
+    "prism connectivity or an unnumbered acute angle for an optical surface prescription",
+    "projection-path component counts for lens surface counts or spacings",
+    "generic imaging-lens or camera-lens wording for an ordered prescription",
+    "drawing coordinates for numeric prescription values",
+    "prior-publication or related-family values for missing source data"
+  ]
+}

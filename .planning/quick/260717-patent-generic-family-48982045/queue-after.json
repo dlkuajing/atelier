@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "f2ef7dfeb977ae87f8e1a1090f757b9628545c426d13968467889985930f25e1",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 106, "affected_items": 106},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "78342471",
+    "root_ids": ["US-12092276"],
+    "publication_ids": ["US-12092276-B2"],
+    "application_number": "18/417865",
+    "title": "Lamp having dynamic starry sky effect",
+    "applicant": "Guangdong Baolun Electronics Co., Ltd.",
+    "layout_signature": "398622f52ff511311c349f40626f79b6e19bad3e73c2c0586750234eb69b3715",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 0, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/0071f38b2b89c02e/US-12092276-B2.html",
+      "sha256": "0071f38b2b89c02e2caaf7121233eb1beeccde171d4a474d54f845661ffcf933"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

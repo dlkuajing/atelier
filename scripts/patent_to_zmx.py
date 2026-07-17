@@ -593,6 +593,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_delta_light_dividing_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -10830,6 +10838,160 @@ _WNC_CAMERA_ANTENNA_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "40 mm": 1,
             "0.1 mm": 6,
             "0.3 mm": 3,
+        },
+    }
+}
+_DELTA_LIGHT_DIVIDING_ITEMS = (
+    (
+        1,
+        "Delta four-prism light-dividing architecture",
+        "confirmed_no_prescription.four_prism_light_dividing_architecture_only",
+    ),
+    (
+        2,
+        "Delta multi-view projection optical-machine architecture",
+        "confirmed_no_prescription.multi_view_projection_optical_machine_architecture_only",
+    ),
+)
+_DELTA_LIGHT_DIVIDING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-8820942-B2": {
+        "raw_document_sha256": (
+            "018ce5b5fa64cf01c286a57e9d4f7cec09ee186be8d93cf42e2456210a6f52e7"
+        ),
+        "normalized_text_sha256": (
+            "114f5663c7489a38f640ef21114902d6439e89e4bd59addd772bd8af0d1e93c1"
+        ),
+        "section_markers": {
+            "preamble": "US-8820942-B2",
+            "abstract": "Abstract A light dividing structure used",
+            "prior_publication": (
+                "Prior Publication Data Document Identifier Publication Date "
+                "US 20130215391 A1 Aug. 22, 2013"
+            ),
+            "priority": (
+                "Foreign Application Priority Data TW 101105162 A Feb. 17, 2012"
+            ),
+            "related_applications": (
+                "Background/Summary (1) This application claims priority"
+            ),
+            "background": "(4) BACKGROUND OF THE INVENTION",
+            "summary": "(13) SUMMARY OF THE INVENTION",
+            "figures": "Description (1) BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "(9) DESCRIPTION OF THE PREFERRED EMBODIMENT",
+            "claims": (
+                "Claims 1. A light dividing structure for use in an optical machine system"
+            ),
+        },
+        "section_sha256": {
+            "preamble": (
+                "cca5e058c86f4059b079b863c74b756c75fd40aaafbab7855995551e2e074b62"
+            ),
+            "abstract": (
+                "63c3d2a21a8a8b0c4d623c815aee34c02814e6746f003167dfa74abeb2cc2f8a"
+            ),
+            "prior_publication": (
+                "2c29129aaecd70b04bed756a66c295aa01e1984dfe9242f9babf662d4023a196"
+            ),
+            "priority": (
+                "f09de7bac9d85435a14d5fce121f89524e2590580847c1d218dc70aac3359e1a"
+            ),
+            "related_applications": (
+                "21653b60ee381e081f55936ccbfa1482da8085292782694d76c52ba23d123f8d"
+            ),
+            "background": (
+                "f7b9250c0edb8ae6eef85557468b153402e26d08eb82034925714d9b1f1a5618"
+            ),
+            "summary": (
+                "21240ae75d0ba9f7741704963eb9eb6d266fefdc6d0aab7419b0cba0e50355a2"
+            ),
+            "figures": (
+                "883bbdd40f30e6f12a2eb5864448c659bc980c4abc0707fe2f39f4290a350555"
+            ),
+            "detailed": (
+                "eeb0596fe9e05fb3d68b02d5367efd9030fbd5872515641afa9eacce3da7eaff"
+            ),
+            "claims": (
+                "50d1f3812b45d98fca49084cad047d3b5ba80b41ef5d7f188f6dbdcd8438d38b"
+            ),
+        },
+        "background_span_sha256": {
+            (1, 3): "4ea8e06489d5a12e421c5756b5399ef0620ab317b66fa5c8fb3626844406697e",
+            (4, 12): "ba377dbe4ef91364748a0c51c49b9fceb39fc2ad2112cbb5d232d85daf40db3d",
+            (13, 17): "9a8fca50fd5f44256bee35f202c49f6543e9e097b63e2bb7954d8c3f73421942",
+        },
+        "description_span_sha256": {
+            (1, 8): "313ed7355df503ddd179e8ce55aec782513aba83cc03fe84c1bfa21777586c3a",
+            (9, 10): "480a3395072d5ed35a16ec72389212df5fc089d9c931307f79a73489c8482843",
+            (11, 22): "e67603a39e7e67e4665560c5407b924b3cad826db113ef5f8c29712322e7d7b6",
+            (23, 29): "8322569090b8fad04377b5c59ca2dc4640f0120eb7694af12170b3c6f7c4d7b3",
+            (30, 30): "258f501ddbf9b9bd1501bcac49fb5d0feb64eab9928702c3220a7a99f5dcb0d1",
+        },
+        "item_ranges": ((11, 22), (23, 29)),
+        "item_markers": (
+            (
+                "As shown in FIG. 2, in this embodiment, the light dividing structure "
+                "200 comprises"
+            ),
+            "In reference to both FIGS. 1 and 5, in the preferred embodiment",
+        ),
+        "figure_labels": ("1", "2", "3A", "3B", "4A", "4B", "5"),
+        "claim_families": (tuple(range(1, 15)), tuple(range(15, 28))),
+        "claim_family_sha256": (
+            "9aaa28f91e7d9f8eb8f37438d750e4b28b924ef41cdfec19d42e7108477b1465",
+            "e3bd2827ed766c3be41e2ac1a931ee44a3cef49da96b05f7153ff695dcacb048",
+        ),
+        "identity_markers": {
+            "US-8820942-B2": 1,
+            "United States Patent 8820942": 1,
+            "Kind Code B2": 1,
+            "Date of Patent September 02, 2014": 1,
+            "Light dividing structure and optical machine system comprising the same": 1,
+            "Applicant: Wang; Yuchang (Taoyuan Hsien, TW)": 1,
+            "Family ID: 48982045": 1,
+            "Assignee: Delta Electronics, Inc. (N/A, TW)": 1,
+            "Appl. No.: 13/530530": 1,
+            "Filed: June 22, 2012": 1,
+            "US 20130215391 A1": 1,
+            "TW 101105162 A": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "radius": 0,
+            "curvature": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "material": 0,
+            "thickness": 0,
+            "aperture": 0,
+            "stop": 0,
+            "image height": 0,
+            "optical prescription": 0,
+            " mm": 0,
+            " nm": 0,
+            "degree": 0,
+        },
+        "source_scope_phrase_counts": {
+            "light dividing structure": 47,
+            "optical machine system": 29,
+            "first prism": 43,
+            "second prism": 28,
+            "third prism": 39,
+            "fourth prism": 26,
+            "reflecting lens assembly": 30,
+            "relay lens": 32,
+            "reflecting mirror": 16,
+            "imaging lens assembly": 10,
+            "camera lens": 2,
+            "digital micromirror": 17,
+            "air interval surface": 2,
+            "fields of view": 2,
+            "field of view": 0,
         },
     }
 }
@@ -30798,6 +30960,266 @@ def _classify_wnc_camera_antenna_architecture_attempts(
             ),
         )
         for number, label, reason_code in _WNC_CAMERA_ANTENNA_ITEMS
+    ]
+
+
+def _classify_delta_light_dividing_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 48982045 prism/projection architectures."""
+
+    profile = _DELTA_LIGHT_DIVIDING_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _DELTA_LIGHT_DIVIDING_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Delta light-dividing official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Delta light-dividing normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Delta light-dividing identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Delta light-dividing section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Delta light-dividing section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Delta light-dividing {section_name} section changed"
+                )
+
+        background_text = text[
+            section_starts["related_applications"] : section_starts["figures"]
+        ]
+        background_matches = list(re.finditer(r"\((\d+)\)", background_text))
+        background_numbers = tuple(
+            int(match.group(1)) for match in background_matches
+        )
+        if background_numbers != tuple(range(1, 18)):
+            raise PatentParseError(
+                "Delta light-dividing background/summary denominator changed"
+            )
+        background_paragraphs = {
+            number: background_text[
+                match.start() : (
+                    background_matches[index + 1].start()
+                    if index + 1 < len(background_matches)
+                    else len(background_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(background_numbers, background_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["background_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                background_paragraphs[number] for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Delta light-dividing background/summary paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        description_text = text[
+            section_starts["figures"] : section_starts["claims"]
+        ]
+        description_matches = list(re.finditer(r"\((\d+)\)", description_text))
+        description_numbers = tuple(
+            int(match.group(1)) for match in description_matches
+        )
+        if description_numbers != tuple(range(1, 31)):
+            raise PatentParseError(
+                "Delta light-dividing description denominator changed"
+            )
+        description_paragraphs = {
+            number: description_text[
+                match.start() : (
+                    description_matches[index + 1].start()
+                    if index + 1 < len(description_matches)
+                    else len(description_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(description_numbers, description_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["description_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Delta light-dividing description paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Delta light-dividing source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(2, 9):
+            match = re.match(
+                r"\(\d+\) FIG\.\s+([0-9]+[A-Z]?)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Delta light-dividing figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Delta light-dividing figure-label denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError("Delta light-dividing zero-table denominator changed")
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError("Delta light-dividing zero-MathML denominator changed")
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 28):
+            claim_start = claims_section.find(f"{claim_number}. ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Delta light-dividing claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number}. ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 27
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 28)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Delta light-dividing two-claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Delta light-dividing prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Delta light-dividing scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain both exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "description paragraphs 11-22 and claims 1-14 publish a four-prism "
+        "light-dividing path topology with reflecting/exiting surfaces and only an "
+        "unnumbered acute-angle relationship; no radius, spacing, material, stop, "
+        "focal-length or ordered optical prescription is disclosed",
+        "description paragraphs 23-29 and claims 15-27 publish a multi-view "
+        "projection architecture composed of light-combining/total-reflection prisms, "
+        "digital micromirrors, reflecting lens assemblies, relay lenses, reflecting "
+        "mirrors and a generic imaging lens assembly; none receives an independent "
+        "surface prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _DELTA_LIGHT_DIVIDING_ITEMS
     ]
 
 

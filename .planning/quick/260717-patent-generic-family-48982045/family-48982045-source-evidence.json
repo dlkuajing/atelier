@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "family_id": "48982045",
+  "application_number": "13/530530",
+  "root_ids": ["US-8820942"],
+  "publication_ids": ["US-8820942-B2"],
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/018ce5b5fa64cf01/US-8820942-B2.html",
+    "bytes": 45664,
+    "sha256": "018ce5b5fa64cf01c286a57e9d4f7cec09ee186be8d93cf42e2456210a6f52e7"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "priority_and_related_numbered_paragraphs": 3,
+    "background_numbered_paragraphs": 9,
+    "summary_numbered_paragraphs": 5,
+    "brief_drawing_numbered_paragraphs": 8,
+    "detailed_numbered_paragraphs": 22,
+    "total_numbered_paragraphs": 47,
+    "claims": 27,
+    "claim_families": 2,
+    "declared_textual_figures": 7,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 2,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 2,
+    "replayed_ledger_items": 2,
+    "official_pdf_files": 0,
+    "retained_drawing_images": 0,
+    "unmapped_source_items": 0
+  },
+  "semantic_replay_sha256": "65d0c5fc1ee64f8328d1abdc1f0f22b0e169b44eda0d28fd28e1a4ba46b9913b",
+  "census": {
+    "before": {"path": ".planning/quick/260717-patent-generic-family-48982045/generic-residual-before-107.json", "bytes": 66212, "sha256": "7078708e499455953cebe74b3db7d6e0eabf8995eb6b75483bb3572a52befb66", "affected_roots": 107, "affected_items": 107},
+    "after_1": {"path": ".planning/quick/260717-patent-generic-family-48982045/generic-residual-after-1.json", "bytes": 65662, "sha256": "b2dcc025282b84ce3bb3fb774dae3541f911b4a9735788719869309f713fa0f4", "affected_roots": 106, "affected_items": 106},
+    "after_2": {"path": ".planning/quick/260717-patent-generic-family-48982045/generic-residual-after-2.json", "bytes": 65662, "sha256": "b2dcc025282b84ce3bb3fb774dae3541f911b4a9735788719869309f713fa0f4", "affected_roots": 106, "affected_items": 106}
+  },
+  "replay_attempts": [
+    {"path": "data/patent-ledger/replay/local-uncovered/results/US-8820942/attempt-0002/result.json", "bytes": 2536, "sha256": "925e5736c8b2596d061aa5883790db6b1ee26f8449f9f919c140ee7afe0ddf28"},
+    {"path": "data/patent-ledger/replay/local-uncovered/results/US-8820942/attempt-0003/result.json", "bytes": 2536, "sha256": "19cf316868684940a2a42efa71d2c20fa1f144dde305a59ece330bfe19613d44"}
+  ],
+  "ledger": {
+    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 34192, "sha256": "6bbf55788049a48f76a0cd33b17fe2b9c8b009ee5569e0ad0eab8e08aca3e548"},
+    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 35513, "sha256": "6d856a1c22f82395ab17ec819bf5f0ba87d04a02f6421069024ee3326db43f99"},
+    "result_set_sha256": "f2ef7dfeb977ae87f8e1a1090f757b9628545c426d13968467889985930f25e1",
+    "strict_roots_with_results": 619,
+    "strict_roots_total": 619,
+    "missing": 0,
+    "corrupt": 0
+  },
+  "artifacts": [
+    {"path": ".planning/quick/260717-patent-generic-family-48982045/family-48982045-denominator.json", "bytes": 4756, "sha256": "a7f3edfa50fce7723d243a15066b56edcb26454b94423941d11bc45e44041377"},
+    {"path": ".planning/quick/260717-patent-generic-family-48982045/family-48982045-source-availability.json", "bytes": 1054, "sha256": "a5e84e4bf2c9b41bde81944f7581b26882491981c2395af1121978cb55997a87"},
+    {"path": ".planning/quick/260717-patent-generic-family-48982045/family-48982045-replay-determinism.json", "bytes": 1381, "sha256": "ee2836dd70f7e2e9bcf2a8c95a932c067c30e5f870ed49170bc60932b2ceb637"},
+    {"path": ".planning/quick/260717-patent-generic-family-48982045/queue-after.json", "bytes": 1520, "sha256": "f5d16cb827e4f93a486f7bf3fb1e97332425e95185a697f26aef17e03a2137a6"},
+    {"path": ".planning/quick/260717-patent-generic-family-48982045/family-48982045-source-audit.md", "bytes": 3281, "sha256": "6275527ffe71e45527104221a28d90fe4917dec70997685e1da8d213e9b12896"}
+  ],
+  "formal_outputs": {"worker_requests": 0, "worker_receipts": 0, "prescription_fingerprints": 0, "candidate_zmx": 0, "staging_zmx": 0, "formal_intake": 0, "codev_calls": 0},
+  "next_exact_group": {"family_id": "78342471", "root_ids": ["US-12092276"], "publication_ids": ["US-12092276-B2"]},
+  "saturation_complete": false
+}
