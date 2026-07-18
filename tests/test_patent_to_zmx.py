@@ -36333,3 +36333,375 @@ def test_corephotonics_double_folded_tele_denominator_queue_and_evidence() -> No
     assert evidence["ledger"]["corrupt_results"] == 0
     assert evidence["next_exact_group"]["family_id"] == "78957411"
     assert evidence["saturation_complete"] is False
+
+
+def _largan_antireflective_air_gap_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "afda18a5a638aa20"
+        / "US-20250130396-A1.html"
+    )
+    return "US-20250130396-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_largan_antireflective_air_gap_reconciles_four_architecture_items_and_wrapper() -> None:
+    patent_id, raw_text = _largan_antireflective_air_gap_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 6))
+    assert [attempt.embodiment for attempt in attempts] == [
+        item[1] for item in patent_to_zmx._LARGAN_ANTIREFLECTIVE_AIR_GAP_ITEMS
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.error.reason_code
+        == (
+            "confirmed_no_prescription."
+            "antireflective_nanostructure_air_gap_geometry_only"
+        )
+        and "no ordered radius/thickness/material/asphere prescription"
+        in str(attempt.error)
+        for attempt in attempts[:4]
+    )
+    wrapper = attempts[4].error
+    assert isinstance(wrapper, patent_to_zmx.PatentTerminalParseError)
+    assert wrapper.status == "confirmed_no_prescription"
+    assert wrapper.reason_code == (
+        "confirmed_no_prescription.electronic_device_wrapper_only"
+    )
+    assert "without an additional optical prescription" in str(wrapper)
+
+
+def test_largan_antireflective_air_gap_source_drift_fails_all_five_items_closed() -> None:
+    patent_id, raw_text = _largan_antireflective_air_gap_source()
+    changed = raw_text.replace(
+        "numbers, structures, surface shapes, and etc.",
+        "numbers, structures, surface forms, and etc.",
+        1,
+    )
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Largan anti-reflective air-gap official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
+def test_largan_antireflective_air_gap_source_denominator_and_table_hashes() -> None:
+    patent_id, raw_text = _largan_antireflective_air_gap_source()
+    profile = patent_to_zmx._LARGAN_ANTIREFLECTIVE_AIR_GAP_SOURCE_PROFILES[
+        patent_id
+    ]
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+
+    assert hashlib.sha256(raw_text.encode("utf-8")).hexdigest() == profile[
+        "raw_document_sha256"
+    ]
+    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == profile[
+        "normalized_text_sha256"
+    ]
+    assert tuple(int(value) for value in re.findall(r"\[(\d{4})\]", text)) == tuple(
+        range(1, 79)
+    )
+    blocks = patent_to_zmx._patent_table_blocks(text)
+    assert tuple(block.number for block in blocks) == (1, 2, 3, 4)
+    assert {
+        block.number: hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+        for block in blocks
+    } == profile["table_block_sha256"]
+    assert {
+        block.number: hashlib.sha256(
+            patent_to_zmx._largan_antireflective_air_gap_table_payload(block).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        for block in blocks
+    } == profile["table_payload_sha256"]
+    assert len(re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)) == 8
+    assert profile["claim_numbers"] == tuple(range(1, 12))
+    assert profile["independent_claim_numbers"] == (1, 11)
+    assert patent_to_zmx._LARGAN_ANTIREFLECTIVE_AIR_GAP_FIGURES == (
+        "1A",
+        "1B",
+        "2A",
+        "2B",
+        "3A",
+        "3B",
+        "4A",
+        "4B",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9A",
+        "9B",
+    )
+
+
+def test_largan_antireflective_air_gap_source_artifacts_are_exact() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-78957411"
+    availability = json.loads(
+        (quick / "family-78957411-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    source = availability["retained_html"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 76_397
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+    assert source["characters"] == 76_345
+    assert source["normalized_characters"] == 61_629
+    assert source["flattened_tables"] == 4
+    assert source["mathml_objects"] == 8
+
+    facts = json.loads(
+        (quick / "family-78957411-source-facts.json").read_text(encoding="utf-8")
+    )
+    assert [item.get("assembly") or item.get("device") for item in facts["items"]] == [
+        100,
+        200,
+        300,
+        400,
+        10,
+    ]
+    assert all(item["ledger_state"] == "terminal" for item in facts["items"])
+    assert all(
+        item["terminal_status"] == "confirmed_no_prescription"
+        for item in facts["items"]
+    )
+    assert not any(facts["formal_outputs"].values())
+    assert facts["reconciliation"] == {
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_tables": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_source_items": 0,
+    }
+
+    denominator = json.loads(
+        (quick / "family-78957411-denominator.json").read_text(encoding="utf-8")
+    )
+    assert denominator["denominator"]["total_numbered_paragraphs"] == 78
+    assert denominator["denominator"]["claims"] == 11
+    assert denominator["denominator"]["declared_figure_panels"] == 14
+    assert denominator["denominator"]["flattened_tables"] == 4
+    assert denominator["denominator"]["replayed_ledger_items"] == 5
+    assert denominator["denominator"]["confirmed_no_prescription_items"] == 5
+    assert denominator["prescription_boundary"]["ordered_optical_prescription_tables"] == 0
+    assert not any(denominator["formal_outputs"].values())
+
+
+def test_largan_antireflective_air_gap_official_pdf_and_rasters_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-78957411"
+    audit = json.loads(
+        (quick / "family-78957411-raster-audit.json").read_text(encoding="utf-8")
+    )
+    profile = patent_to_zmx._LARGAN_ANTIREFLECTIVE_AIR_GAP_SOURCE_PROFILES[
+        "US-20250130396-A1"
+    ]["official_pdf"]
+    pdf_path = root / profile["path"]
+    pdf_bytes = pdf_path.read_bytes()
+    assert len(pdf_bytes) == profile["bytes"] == audit["official_pdf"]["bytes"]
+    assert hashlib.sha256(pdf_bytes).hexdigest() == profile["container_sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+    assert len(reader.pages) == profile["page_count"] == 24
+
+    raster_hashes = []
+    for page_number, (page, expected) in enumerate(
+        zip(reader.pages, audit["pages"], strict=True),
+        start=1,
+    ):
+        assert expected["page"] == page_number
+        assert len(page.extract_text() or "") == expected["text_characters"] == 0
+        images = list(page.images)
+        assert len(images) == expected["image_count"] == 1
+        decoded = cv2.imdecode(
+            np.frombuffer(images[0].data, dtype=np.uint8),
+            cv2.IMREAD_UNCHANGED,
+        )
+        assert decoded is not None
+        assert [decoded.shape[1], decoded.shape[0]] == expected[
+            "decoded_raster_dimensions"
+        ]
+        digest = hashlib.sha256(np.ascontiguousarray(decoded).tobytes()).hexdigest()
+        assert digest == expected["decoded_raster_sha256"]
+        raster_hashes.append(digest)
+        retained = expected["retained_png"]
+        retained_bytes = (root / retained["path"]).read_bytes()
+        assert len(retained_bytes) == retained["bytes"]
+        assert hashlib.sha256(retained_bytes).hexdigest() == retained["sha256"]
+
+    raster_set_sha256 = hashlib.sha256(
+        ("\n".join(raster_hashes) + "\n").encode("utf-8")
+    ).hexdigest()
+    assert raster_set_sha256 == profile["decoded_raster_set_sha256"]
+    assert raster_set_sha256 == audit["official_pdf"]["decoded_raster_set_sha256"]
+    assert audit["page_roles"] == {
+        "cover": [1],
+        "drawing_sheets": list(range(2, 15)),
+        "specification_pages": list(range(15, 23)),
+        "table_pages": list(range(18, 23)),
+        "claims_pages": [23, 24],
+    }
+    assert audit["visual_review"]["image_enhancement_used"] is False
+    assert audit["visual_review"]["drawing_geometry_measured"] is False
+    assert audit["visual_review"]["sem_geometry_measured"] is False
+    assert audit["visual_review"]["reflectance_graphs_digitized"] is False
+    assert audit["adjudication"]["numeric_derivation_from_rasters"] is False
+
+
+def test_largan_antireflective_air_gap_replay_is_semantic_and_worker_free() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-78957411"
+    replay = json.loads(
+        (quick / "family-78957411-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    semantic_hashes = []
+    for record in replay["attempts"]:
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["file_sha256"]
+        result = json.loads(raw)
+        assert result["result_attempt"] == record["result_attempt"]
+        assert result["root_state"] == "terminal"
+        assert result["reason_code"] == "terminal.all_disclosed_items_terminal"
+        assert len(result["items"]) == 5
+        assert all(
+            item["state"] == "terminal"
+            and item["terminal_status"] == "confirmed_no_prescription"
+            and item["conversion_attempt_id"] is None
+            and item["conversion_request_sha256"] is None
+            and item["prescription_fingerprint"] is None
+            for item in result["items"]
+        )
+        semantic = dict(result)
+        semantic.pop("result_attempt")
+        digest = hashlib.sha256(canonical_json_bytes(semantic)).hexdigest()
+        assert digest == record["semantic_sha256"]
+        semantic_hashes.append(digest)
+
+    assert semantic_hashes == [replay["semantic_sha256"]] * 2
+    assert replay["semantic_equal"] is True
+    assert replay["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert replay["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 5},
+        "terminal_status_counts": {"confirmed_no_prescription": 5},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+    assert not any(
+        (root / "data" / "patent-conversion-attempts" / "local-replay").glob(
+            "*20250130396*"
+        )
+    )
+
+
+def test_largan_antireflective_air_gap_denominator_queue_and_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-78957411"
+    before = json.loads(
+        (quick / "generic-residual-before-76.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 76
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 75
+    assert after_1["result_set_sha256"] == (
+        "0f8b7b951a365edc65a324ce5ab9349c5645e6d89b62a81d94406ff2025a0d8b"
+    )
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after_2["result_set_sha256"]
+    assert queue["next_exact_group"]["family_id"] == "84322717"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12656584"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-12656584-B2"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-78957411-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "00ab2070c0a6dc0aea503fa54c1c02df25c169a4d1a26c31c3ea567edc7f309d"
+    )
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["strict_roots_total"] == 619
+    assert evidence["ledger"]["missing"] == 0
+    assert evidence["ledger"]["corrupt"] == 0
+    assert evidence["formal_outputs"] == {
+        "worker_requests": 0,
+        "worker_receipts": 0,
+        "prescription_fingerprints": 0,
+        "candidate_zmx": 0,
+        "staging_zmx": 0,
+        "formal_intake": 0,
+        "codev_calls": 0,
+    }
+    assert len(evidence["terminal_items"]) == 5
+    assert evidence["next_exact_group"] == queue["next_exact_group"]
+    assert evidence["saturation_complete"] is False

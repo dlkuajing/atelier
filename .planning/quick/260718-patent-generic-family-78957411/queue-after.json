@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260718-patent-generic-family-78957411/generic-residual-after-2.json",
+  "result_set_sha256": "0f8b7b951a365edc65a324ce5ab9349c5645e6d89b62a81d94406ff2025a0d8b",
+  "generic_residual_roots": 75,
+  "generic_residual_items": 75,
+  "next_exact_group": {
+    "family_id": "84322717",
+    "root_ids": ["US-12656584"],
+    "publication_ids": ["US-12656584-B2"],
+    "application_number": "18/526988",
+    "title": "Imaging lens assembly, camera module and imaging device",
+    "first_inventor": "Katsuragi; Daigo",
+    "applicant": "GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP., LTD.",
+    "assignee": "GUANGDONG OPPO MOBILE TELECOMMUNICATION CORP., LTD.",
+    "layout_signature": "6973e2ab4c8f6c7c0cdb8c11973deb0a1908fbf623deac3167e58eb0e1b1573a",
+    "layout_signature_count": 1,
+    "table_count": 45,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 14,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/4c49c1f0f7b88434/US-12656584-B2.html",
+      "sha256": "4c49c1f0f7b88434639b5ffddd557efe1333044a14517a802bf2d0388e6a38a5"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

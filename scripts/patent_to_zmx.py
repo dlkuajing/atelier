@@ -479,6 +479,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_antireflective_air_gap_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_folded_camera_qcon_missing_definitions_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8502,6 +8510,176 @@ _FOLDED_CAMERA_QCON_FIGURE_DECLARATIONS = (
     (45, "FIG. 6 provides"),
     (46, "FIG. 7 shows"),
 )
+_LARGAN_ANTIREFLECTIVE_AIR_GAP_ITEMS = (
+    (
+        1,
+        "Largan anti-reflective nanostructure imaging lens assembly 100",
+        100,
+        (35, 44),
+        ("1A", "1B", "5"),
+        1,
+    ),
+    (
+        2,
+        "Largan anti-reflective nanostructure imaging lens assembly 200",
+        200,
+        (45, 53),
+        ("2A", "2B", "6"),
+        2,
+    ),
+    (
+        3,
+        "Largan anti-reflective nanostructure imaging lens assembly 300",
+        300,
+        (54, 62),
+        ("3A", "3B"),
+        3,
+    ),
+    (
+        4,
+        "Largan anti-reflective nanostructure imaging lens assembly 400",
+        400,
+        (63, 72),
+        ("4A", "4B"),
+        4,
+    ),
+    (
+        5,
+        "Largan electronic device 10 wrapper",
+        10,
+        (73, 77),
+        ("9A", "9B"),
+        None,
+    ),
+)
+_LARGAN_ANTIREFLECTIVE_AIR_GAP_FIGURES = (
+    "1A",
+    "1B",
+    "2A",
+    "2B",
+    "3A",
+    "3B",
+    "4A",
+    "4B",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9A",
+    "9B",
+)
+_LARGAN_ANTIREFLECTIVE_AIR_GAP_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20250130396-A1": {
+        "raw_document_sha256": (
+            "afda18a5a638aa206b285b3bdc7013ac715a16659cabd44e955f0799dfe49de2"
+        ),
+        "normalized_text_sha256": (
+            "03e00d80aebfce82e4eeda5c728c7846ce7c0d5de8c1ba42fdc40b59428f07bc"
+        ),
+        "layout_signature": (
+            "685058ff309a7229a046151e2af431ecc05a0e4f7645ed983ed2572588b7deb3"
+        ),
+        "family_id": "78957411",
+        "application_number": "18/991878",
+        "section_markers": {
+            "abstract": "Abstract An imaging lens assembly has an optical axis",
+            "background_summary": "Background/Summary RELATED APPLICATIONS [0001]",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0006]",
+            "detailed": "DETAILED DESCRIPTION [0021]",
+            "claims": (
+                "Claims 1 . An imaging lens assembly, having an optical axis"
+            ),
+        },
+        "section_sha256": {
+            "abstract": "0c3c5b835fa4e47720fffee8c634093eff0e347338c2704bdc8d288d54563db6",
+            "background_summary": (
+                "19a0d9a132e1aaf42837d908e46819c29a4be2c04e40c9353881d371c204a8ae"
+            ),
+            "brief": "42b43d88e8720b39828f84fb5d26f6bfa11d4395775a6abcc1f34c357c5f3ba3",
+            "detailed": "bc2f6aec9bc261d12e9047cb758b54eef5b8c670b4f76955bdb0b24ebb732d10",
+            "claims": "00c4f2b932a0c20eafe53127909803ed583159a2745646ab0e7210d4bb61003d",
+        },
+        "paragraph_sequence": tuple(range(1, 79)),
+        "paragraph_ranges": {
+            "related_applications": (1, 1),
+            "background": (2, 3),
+            "summary": (4, 5),
+            "brief": (6, 20),
+            "detailed": (21, 78),
+        },
+        "claim_numbers": tuple(range(1, 12)),
+        "independent_claim_numbers": (1, 11),
+        "identity_markers": {
+            (
+                "Inventor(s) CHANG; Chien-Pang et al. IMAGING LENS ASSEMBLY "
+                "AND ELECTRONIC DEVICE Abstract"
+            ): 1,
+            "Family ID: 78957411": 1,
+            "Appl. No.: 18/991878": 1,
+            "LARGAN PRECISION CO., LTD.": 1,
+            "17/545,001": 1,
+            "63/129,833": 1,
+        },
+        "table_block_sha256": {
+            1: "a13b13aae2af46241a6f9aa058c128f5c83387143ee50b2f040222ab3dbd9652",
+            2: "3705f06217b9ad6b48dffb9cbfa1822c2cb575b7b8aad532ee26cec3a48b933c",
+            3: "f48a7f87aabd643cddcf963abd087702696032ad2295aee9e708c953283dfc19",
+            4: "9d63312b59f7b110c2abcb88a7ac75b3e8128929a2bac92293db0d38407336a4",
+        },
+        "table_payload_sha256": {
+            1: "91a704bce4e5a9405eedd0bb787510ebd193255624a05e146f3a1ced3276031a",
+            2: "9a4c26207aa8ca4cd05c5a6ab80f10a58ac87818bac4de75d52fcdc937113fc5",
+            3: "225d0ef6e0ce515c37b77d85a51df78591b80a0b94a6dba2c6cb6358be0132d4",
+            4: "72d83c58d9f600c422acc181c7af70e2022f2f96abe1e995ccb452d2c50e47a5",
+        },
+        "math_object_sha256": (
+            "656e3cc8f70a026b7b3101460563fe9ea46b2358010f5e9a562ba64200e5b9fb",
+            "3b4f3465aad408ab23082d8707df8747fb203c3dad0a5d9f25e54320bf89737f",
+            "01f91c904a9bc31f14c0fba47a58d8ec8aa8687b27af54dc0c6038dc1c1456d3",
+            "e7a15d154d8eb8bd1c95a61aee9844a9abd71f296c6d2a6c94e4da3f9d832b8e",
+            "685f1d7b3c6a2765be10ec5b759f30459e371915ef128fbd05bb6401b1a0d66c",
+            "3bc3da9edd4dcb4f91d66223eabdcf132dec404450773e405499655e0787acae",
+            "b7d636dd795dee86e9f6b3f28419ae42d6deb39a1edb56cd192f523dde5c2c69",
+            "d179cbdb7e59c0b978d76e6801dcf2534e8dfc061998c1a3698d00b9c4b64f12",
+        ),
+        "required_text_counts": {
+            "optical features of lens elements of the imaging lens assembly": 4,
+            "numbers, structures, surface shapes, and etc.": 4,
+            "data of the different embodiments are obtained from experiments": 1,
+            "a number of the imaging lens assemblies 11 is three": 1,
+        },
+        "absent_prescription_phrases": (
+            "radius of curvature",
+            "refractive index",
+            "Abbe number",
+            "focal length",
+            "F-number",
+            "Fno",
+            "field of view",
+            "aperture stop",
+            "diaphragm",
+            "aspheric coefficient",
+            "aspherical coefficient",
+            "surface prescription",
+        ),
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/7bf6899a8c40186a/"
+                "US-20250130396-A1.pdf"
+            ),
+            "bytes": 1577151,
+            "container_sha256": (
+                "7bf6899a8c40186a8f8f47d44917a47b3275fc7abc873c2504e34e78061ec7ed"
+            ),
+            "page_count": 24,
+            "decoded_raster_set_sha256": (
+                "2d6ce04424d43eb4d0b355162a579543f8cc1dacc6805bfe9862baca8db9c8c7"
+            ),
+        },
+    }
+}
+
+
 _FOLDED_CAMERA_QCON_ITEMS = (
     (
         1,
@@ -35204,6 +35382,289 @@ def _validate_corephotonics_double_folded_qt1_system(
         raise PatentParseError(
             "Corephotonics system 600 expected non-zero A6/A7 coefficients changed"
         )
+
+
+def _largan_antireflective_air_gap_table_payload(
+    block: _PatentTableBlock,
+) -> str:
+    """Return one exact mechanical table payload before the next paragraph."""
+
+    parts = re.split(r"\s\[\d{4}\]\s", block.text, maxsplit=1)
+    payload = parts[0].strip()
+    if len(parts) != 2 or f"TABLE {block.number} " not in payload:
+        raise PatentParseError(
+            f"Largan anti-reflective air-gap TABLE {block.number} boundary changed"
+        )
+    return payload
+
+
+def _classify_largan_antireflective_air_gap_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 78957411 mechanical/coating items without prescriptions."""
+
+    profile = _LARGAN_ANTIREFLECTIVE_AIR_GAP_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _assembly, _paragraphs, _figures, _table in (
+                _LARGAN_ANTIREFLECTIVE_AIR_GAP_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan anti-reflective air-gap official raw text hash changed "
+                f"for {patent_id}"
+            )
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan anti-reflective air-gap normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan anti-reflective identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan anti-reflective air-gap section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan anti-reflective air-gap section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan anti-reflective air-gap {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != profile["paragraph_sequence"]:
+            raise PatentParseError(
+                "Largan anti-reflective air-gap paragraph denominator changed"
+            )
+        paragraphs = {
+            int(match.group(1)): text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+
+        ordinals = ("1st", "2nd", "3rd", "4th", "5th")
+        generic_shape_marker = (
+            "optical features of lens elements of the imaging lens assembly"
+        )
+        for (
+            number,
+            _label,
+            assembly,
+            bounds,
+            _figures,
+            table_number,
+        ) in _LARGAN_ANTIREFLECTIVE_AIR_GAP_ITEMS:
+            start, end = bounds
+            if any(paragraph not in paragraphs for paragraph in range(start, end + 1)):
+                raise PatentParseError(
+                    f"Largan anti-reflective {ordinals[number - 1]} item mapping changed"
+                )
+            item_text = " ".join(
+                paragraphs[paragraph] for paragraph in range(start, end + 1)
+            )
+            if number <= 4:
+                item_marker = (
+                    f"imaging lens assembly {assembly} according to the "
+                    f"{ordinals[number - 1]} embodiment"
+                )
+                if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) < 1:
+                    raise PatentParseError(
+                        f"Largan anti-reflective assembly {assembly} binding changed"
+                    )
+                if (
+                    len(
+                        re.findall(
+                            re.escape(generic_shape_marker),
+                            item_text,
+                            re.IGNORECASE,
+                        )
+                    )
+                    != 1
+                ):
+                    raise PatentParseError(
+                        f"Largan anti-reflective assembly {assembly} generic-shape "
+                        "boundary changed"
+                    )
+                if table_number is None or f"TABLE {table_number} " not in item_text:
+                    raise PatentParseError(
+                        f"Largan anti-reflective assembly {assembly} table mapping changed"
+                    )
+            elif (
+                len(
+                    re.findall(
+                        r"electronic device 10 according to the 5th embodiment",
+                        item_text,
+                        re.IGNORECASE,
+                    )
+                )
+                != 1
+                or "a number of the imaging lens assemblies 11 is three"
+                not in item_text
+            ):
+                raise PatentParseError(
+                    "Largan anti-reflective electronic-device wrapper binding changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan anti-reflective air-gap claim denominator changed"
+            )
+
+        figure_panels = tuple(
+            f"{number}{suffix.upper()}"
+            for number, suffix in re.findall(
+                r"FIG\.\s*(\d+)\s*([A-Z]?)\s+shows",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_panels != _LARGAN_ANTIREFLECTIVE_AIR_GAP_FIGURES:
+            raise PatentParseError(
+                "Largan anti-reflective air-gap 14-panel figure denominator changed"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != (1, 2, 3, 4):
+            raise PatentParseError(
+                "Largan anti-reflective air-gap four-table denominator changed"
+            )
+        for block in blocks:
+            block_digest = hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            if block_digest != profile["table_block_sha256"][block.number]:
+                raise PatentParseError(
+                    f"Largan anti-reflective air-gap TABLE {block.number} changed"
+                )
+            payload = _largan_antireflective_air_gap_table_payload(block)
+            payload_digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            if payload_digest != profile["table_payload_sha256"][block.number]:
+                raise PatentParseError(
+                    f"Largan anti-reflective TABLE {block.number} payload changed"
+                )
+
+        math_objects = re.findall(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        math_digests = tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        )
+        if math_digests != profile["math_object_sha256"]:
+            raise PatentParseError(
+                "Largan anti-reflective air-gap MathML denominator changed"
+            )
+
+        for phrase, expected in profile["required_text_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan anti-reflective source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for phrase in profile["absent_prescription_phrases"]:
+            if re.search(re.escape(phrase), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "Largan anti-reflective air-gap source unexpectedly publishes "
+                    f"{phrase!r}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all five exact-source items
+        return attempts_for_error(exc)
+
+    imaging_reason = (
+        "confirmed_no_prescription."
+        "antireflective_nanostructure_air_gap_geometry_only"
+    )
+    device_reason = "confirmed_no_prescription.electronic_device_wrapper_only"
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=imaging_reason if number <= 4 else device_reason,
+                detail=(
+                    f"the exact {ordinals[number - 1]} embodiment publishes only "
+                    "anti-reflective nanostructure, air-gap, diameter, barrel, spacer, "
+                    "retainer and light-blocking geometry; it leaves lens numbers, "
+                    "structures and surface shapes to imaging requirements and publishes "
+                    "no ordered radius/thickness/material/asphere prescription, focal "
+                    "length or F-number"
+                    if number <= 4
+                    else "the exact fifth embodiment publishes only an electronic-device "
+                    "wrapper with three selectable preceding imaging assemblies, sensors, "
+                    "drivers and stabilizers, without an additional optical prescription"
+                ),
+            ),
+        )
+        for number, label, _assembly, _paragraphs, _figures, _table in (
+            _LARGAN_ANTIREFLECTIVE_AIR_GAP_ITEMS
+        )
+    ]
 
 
 def _classify_folded_camera_qcon_missing_definitions_attempts(
