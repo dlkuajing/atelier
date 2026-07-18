@@ -23449,6 +23449,85 @@ def test_baolun_starry_sky_lamp_source_drift_fails_closed() -> None:
     )
 
 
+def _sunny_automotive_heated_optical_device_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "be795020aa39b3b6"
+        / "US-12345877-B2.html"
+    )
+    return "US-12345877-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_sunny_automotive_heated_optical_device_reconciles_fifteen_items() -> None:
+    patent_id, raw_text = _sunny_automotive_heated_optical_device_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 16))
+    assert [
+        attempt.error.reason_code
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    ] == [
+        "confirmed_no_prescription."
+        "first_configuration_preferred_heating_architecture_only",
+        "confirmed_no_prescription.first_configuration_dot_pin_variant_only",
+        "confirmed_no_prescription."
+        "first_configuration_clear_region_wavy_ring_variant_only",
+        "confirmed_no_prescription."
+        "first_configuration_parallel_multi_ring_variant_only",
+        "confirmed_no_prescription."
+        "first_configuration_series_multi_ring_variant_only",
+        "confirmed_no_prescription.first_configuration_open_arc_variant_only",
+        "confirmed_no_prescription."
+        "first_configuration_variable_width_ring_variant_only",
+        "confirmed_no_prescription."
+        "first_configuration_side_region_heating_variant_only",
+        "confirmed_no_prescription.first_configuration_manufacturing_method_only",
+        "confirmed_no_prescription."
+        "second_configuration_preferred_conductive_contact_architecture_only",
+        "confirmed_no_prescription."
+        "second_configuration_split_conductive_element_variant_only",
+        "confirmed_no_prescription."
+        "second_configuration_thermal_insulator_variant_only",
+        "confirmed_no_prescription."
+        "second_configuration_l_shaped_conductive_element_variant_only",
+        "confirmed_no_prescription.second_configuration_manufacturing_method_only",
+        "confirmed_no_prescription."
+        "second_configuration_injected_conductive_paste_variant_only",
+    ]
+
+
+def test_sunny_automotive_heated_optical_device_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _sunny_automotive_heated_optical_device_source()
+    changed = raw_text.replace("December 24, 2020", "December 25, 2020", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 15
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Sunny Automotive heated optical device official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
 def test_symbol_negative_spherical_aberration_reader_raster_audit_rehashes() -> None:
     root = Path(__file__).resolve().parents[1]
     quick = root / ".planning" / "quick" / "260717-patent-generic-family-38997638"
@@ -25612,6 +25691,202 @@ def test_baolun_starry_sky_lamp_denominator_and_queue_artifacts() -> None:
     assert queue["next_exact_group"]["family_id"] == "74036960"
     assert queue["next_exact_group"]["root_ids"] == ["US-12345877"]
     assert queue["next_exact_group"]["publication_ids"] == ["US-12345877-B2"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+
+def test_sunny_automotive_heated_optical_device_official_pdf_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-74036960"
+    availability = json.loads(
+        (quick / "family-74036960-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    audit = json.loads(
+        (quick / "family-74036960-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    record = audit["retained_pdf"]
+    pdf_path = root / record["path"]
+    pdf_bytes = pdf_path.read_bytes()
+    assert len(pdf_bytes) == record["bytes"] == 2912935
+    assert hashlib.sha256(pdf_bytes).hexdigest() == record["container_sha256"]
+    reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+    assert len(reader.pages) == record["page_count"] == 38
+
+    page_hashes = []
+    for page in reader.pages:
+        assert len(page.extract_text() or "") == 0
+        assert len(page.images) == 1
+        page_hash = patent_pdf_recovery._canonical_raster_sha256(
+            page.images[0].data
+        )
+        page_hashes.append(page_hash)
+
+    assert page_hashes == audit["page_raster_sha256"]
+    assert hashlib.sha256(("\n".join(page_hashes) + "\n").encode()).hexdigest() == (
+        record["decoded_raster_set_sha256"]
+    )
+    assert record["single_raster_pages"] == 38
+    assert record["text_layer_characters"] == 0
+    assert audit["page_roles"]["drawing_sheets"] == list(range(3, 19))
+    reconciliation = audit["drawing_reconciliation"]
+    assert reconciliation["drawing_sheet_count"] == 16
+    assert reconciliation["declared_figure_count"] == 40
+    assert reconciliation["located_figure_count"] == 40
+    assert reconciliation["unmapped_declared_figures"] == []
+    assert reconciliation["unexplained_raster_figures"] == []
+    assert audit["full_page_raster_review_claimed"] is True
+    assert audit["numeric_derivation_from_rasters"] is False
+    assert audit["drawing_coordinates_transcribed"] is False
+
+    assert availability["official_pdf"]["container_sha256"] == record[
+        "container_sha256"
+    ]
+    assert availability["official_pdf"]["decoded_raster_set_sha256"] == record[
+        "decoded_raster_set_sha256"
+    ]
+    assert availability["drawing_source"] == {
+        "declared_textual_figures": 40,
+        "located_raster_figures": 40,
+        "drawing_sheets": 16,
+        "drawing_pdf_pages": list(range(3, 19)),
+        "full_page_raster_review_claimed": True,
+        "classification_dependency": True,
+    }
+    assert availability["source_policy"]["classification_truth"] == (
+        "retained USPTO HTML plus retained exact official decoded-raster set"
+    )
+    assert availability["source_policy"]["numeric_derivation_permitted"] is False
+
+
+def test_sunny_automotive_heated_optical_device_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-74036960"
+    artifact = json.loads(
+        (quick / "family-74036960-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["semantic_equal"] is True
+    assert artifact["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "item_state_counts": {"terminal": 15},
+        "terminal_status_counts": {"confirmed_no_prescription": 15},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+
+def test_sunny_automotive_heated_optical_device_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260717-patent-generic-family-74036960"
+    evidence = json.loads(
+        (quick / "family-74036960-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    denominator = json.loads(
+        (quick / "family-74036960-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "related_application_numbered_paragraphs": 1,
+        "technical_field_numbered_paragraphs": 1,
+        "background_numbered_paragraphs": 8,
+        "summary_numbered_paragraphs": 92,
+        "brief_drawing_numbered_paragraphs": 40,
+        "detailed_numbered_paragraphs": 105,
+        "total_numbered_paragraphs": 247,
+        "claims": 19,
+        "claim_families": 4,
+        "declared_textual_figures": 40,
+        "located_raster_figures": 40,
+        "tagged_html_tables": 0,
+        "mathml_objects": 0,
+        "source_declared_architecture_items": 15,
+        "source_declared_optical_prescriptions": 0,
+        "confirmed_no_prescription_items": 15,
+        "replayed_ledger_items": 15,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 38,
+        "retained_page_rasters": 38,
+        "retained_drawing_sheets": 16,
+        "unmapped_source_items": 0,
+        "unmapped_declared_figures": 0,
+    }
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 16)
+    )
+    assert all(
+        item["status"] == "confirmed_no_prescription"
+        for item in denominator["items"]
+    )
+    assert denominator["optical_scope"]["ordered_surface_prescriptions"] == 0
+
+    for record in evidence["artifacts"]:
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    for record in (
+        evidence["source"],
+        evidence["official_pdf"],
+        *evidence["census"].values(),
+        *evidence["replay_attempts"],
+        evidence["ledger"]["summary"],
+        evidence["ledger"]["report"],
+    ):
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-105.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 105
+    assert after_1["affected_roots"] == after_1["affected_items"] == 104
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == evidence["ledger"]["result_set_sha256"]
+    assert queue["next_exact_group"]["family_id"] == "92715390"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12663695"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-12663695-B2"]
     assert queue["next_exact_group"]["layout_signature"] == min(
         after_2["layout_signature_counts"]
     )

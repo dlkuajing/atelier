@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "family_id": "74036960",
+  "publication_id": "US-12345877-B2",
+  "authority": "USPTO Patent Public Search image service",
+  "request": {
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12345877",
+    "authentication": "anonymous PPUBS session token passed as requestToken and x-access-token",
+    "http_status": 200,
+    "content_type": "application/pdf"
+  },
+  "retained_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/ae693e897b02893e/US-12345877-B2.pdf",
+    "bytes": 2912935,
+    "container_sha256": "ae693e897b02893e0fce0f855a9c341f8d2525a67f89ef9f608336bb9ef8b4fc",
+    "page_count": 38,
+    "single_raster_pages": 38,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "6b1656d993d22d4c1a9b233df7cc1311c999ce568d902479d69d5a17b8a2bc1c"
+  },
+  "repeat_probe": {
+    "container_sha256": "6d9bf91b1241485af6c413ede02431c9b98ec2dc95de8874e4c5da0da2de741c",
+    "bytes": 2912935,
+    "container_equal": false,
+    "decoded_page_rasters_equal": true,
+    "meaning": "the USPTO service regenerates PDF container metadata, while every decoded page raster remains byte-identical"
+  },
+  "page_roles": {
+    "front_matter": [1, 2],
+    "drawing_sheets": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    "specification_and_claims": [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]
+  },
+  "drawing_reconciliation": {
+    "drawing_sheet_count": 16,
+    "declared_figure_count": 40,
+    "located_figure_count": 40,
+    "unmapped_declared_figures": [],
+    "unexplained_raster_figures": [],
+    "sheet_figures": {
+      "3": ["1", "2A"],
+      "4": ["2B", "2C", "2D", "2E", "2F"],
+      "5": ["3", "4"],
+      "6": ["5A", "5B", "5C", "6A", "6B"],
+      "7": ["7A", "7B", "8", "9"],
+      "8": ["10"],
+      "9": ["11"],
+      "10": ["12", "13"],
+      "11": ["14A", "14B"],
+      "12": ["14C", "14D"],
+      "13": ["15A", "15B", "15C", "15D"],
+      "14": ["16A", "16B"],
+      "15": ["17"],
+      "16": ["18A", "18B", "18C", "18D"],
+      "17": ["19", "20"],
+      "18": ["21"]
+    },
+    "review_result": "all drawing sheets contain only lens/barrel cross-sections, heater rings, conductive contacts or manufacturing flow; no hidden optical prescription table is present"
+  },
+  "page_raster_sha256": [
+    "a6051bc528ddb5af65c112ce43b14eb17032843d1239a50ea3d2090a15af4006",
+    "ed0aa3b74ca14bafcd5cfd84ac24928a5ddaf718ea4d0cb8926af8c620edb52f",
+    "356a307ab97a35c365edeaa6265b21db9e07a6b6383a9ccf9730c3d4bde6edf7",
+    "eaeb2fa9c220638068df7d9b980d4a3e6449ad0dbf64ef43bbefbea4482cd817",
+    "dde3a1cc041b2b373d23a51ef33273f6ff79ba8f3c2670e5adf21d0103fd0b91",
+    "82b073450e371601a03243857a56177ffddb3db2ed48ccf35c6f56197b803551",
+    "2ea2930c33683e2b65797aa6a53f625755ed3d4e13dd57f71efe7ee6a7a3ad85",
+    "d3bd57e6e1b728046f90312677506c373dc9ea4f7dbee7b51aec6cddff19916c",
+    "2a3f92c9869029dde3cc2c44251400665cbfafdbea18dce4e06a6bc00cd415a4",
+    "9cf253a3db42356911922d6aa76dfde7ac1d53a95b08d991c2cbd2ebc8cb5a13",
+    "720f4cbbba9020d4d90d02d3a0060b9a4c5a4fde5724f51f773a871dfc8730b3",
+    "6abbdebbd69a047df5f1ee3dbd12b603da73773743c30fcbee6f3d63deacd35d",
+    "55e87e8c48cabbf0fa5ff0db4d3285c732e2a778d7f0872b3e2d0669768b673d",
+    "b9b08b638b7afac2fdd81799ab8f91a4b81e8cabf611000532ffd94be839e0fb",
+    "7077267cc1ec2344e8839ec474d2d0be2f06032664e10b8e3381087b917b6cf2",
+    "d9bb3b5cf64228d0bb354ae3d70564498266121eaab993ceb90972cff1bcfdd3",
+    "ba22f27f82073d125f458a157f6ceb306ed1c01845513722858ac3fd7931f3cc",
+    "e201f93abb1590971584419feda37bb113a0e03f585c3295d804df6a92860cd3",
+    "928c9b915759a27067410a3ec35070d7f4499b6b77fe31ba2aaa64df4ef41fde",
+    "603472f4dcc892fabce40a17fff16433946fcc0b327cd10f9ef4049b48b37ba7",
+    "16b9c2e2a0af6195a9dc7f73a2a2a99e03f4041cb11fd4494a0707933139c31b",
+    "d7ede91b69f0515d1c0e21967c5de35574ed4d1c17c7ddb14e4fcdcce8c8472d",
+    "d0840c63eadd150af1f03b307c1a4e8fd7997547d196e3cb9d6de1e000f59132",
+    "a207cfb3756340dca0bafb2d2c008127c10b66f2966c4bd0f394a482d167ff86",
+    "498e7d4d6d43c478cbb2b33aa9b4b46c0b7b84b28e2f88226c5e569bb41a97d2",
+    "61f97a4d8b818367191469375594446ad8d10d4ab641d2cd585b888747e18012",
+    "719b4b898f6878db85385360fc0da3c5747ece6451f5141f6fc3b939570d75b7",
+    "5d42acbf03ad9ca82da709cfba3fddff633825011b62ce9c3951c11910bf002c",
+    "1c3a301598d12e96273901ba4c6e6862508d37886fbcd50f510cd9f29cc0fc16",
+    "c9f8f73381263660ad994da4ebb02a3e848217758f27b5cea24af5859890e01d",
+    "78ac52cd2f51903dfb7c93981e2b090ee24fb5fd7abf59b4cd2254ff05c81243",
+    "3776bfe32f9cebc30ddc7618d4d24f72f9edb8c6f0268290a9ad0d2819a01419",
+    "49604fee368faafe1fbc58f99789d26fe99965ecc75ce66ccd6a047bfe55991c",
+    "5ab3379dbcf5bcdc844a706e267f83eed7a15f7c05312b1cf4980843c5ddbd73",
+    "08f33c6db941369831c588603ebfe696bb25c61909215a36b2aec7c273ffe1da",
+    "9469908c19a112079edce75921de4fccecfb820c5f1968379725060a9a596274",
+    "f6c4ecb3813bee3346d4d35928e14b238e80e4b82fd9f72497e054348d07a6fe",
+    "bd3605bed3c50522febdf45c4c4a2f9a94f0c6a209d7a4b721fa8e02105590cc"
+  ],
+  "contact_sheets": [
+    {
+      "path": ".planning/quick/260717-patent-generic-family-74036960/us12345877-official-pages-1-20-contact.png",
+      "bytes": 1198951,
+      "sha256": "462119bfac82250ed83bb9189bf7bf3920f62f07112483e07509f56d4e538a95"
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-74036960/us12345877-official-pages-21-38-contact.png",
+      "bytes": 3564554,
+      "sha256": "8592ad232fb6fa4432926909540af66cc448a51cab3919dd807b77e3bbffe480"
+    }
+  ],
+  "numeric_derivation_from_rasters": false,
+  "drawing_coordinates_transcribed": false,
+  "full_page_raster_review_claimed": true
+}

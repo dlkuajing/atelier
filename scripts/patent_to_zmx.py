@@ -7,6 +7,7 @@ import asyncio
 import contextlib
 import hashlib
 import html
+import io
 import json
 import math
 import re
@@ -21,6 +22,7 @@ from typing import Any
 
 import httpx
 import numpy as np
+import pypdf
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -57,6 +59,7 @@ from scripts.patent_pdf_recovery import (  # noqa: E402
     PatentPdfCachedSources,
     PatentPdfOcrRecovery,
     PatentPdfRecoveryError,
+    _canonical_raster_sha256,
     genius_four_lens_eleven_source_layout_for_sha256,
     genius_four_lens_six_source_layout_for_sha256,
     genius_seven_lens_seven_source_layout_for_sha256,
@@ -602,6 +605,14 @@ def _parse_prescription_attempts(
         return source_locked_attempts
     source_locked_attempts = (
         _classify_baolun_starry_sky_lamp_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
+        _classify_sunny_automotive_heated_optical_device_architecture_attempts(
             raw_text,
             patent_id=patent_id,
         )
@@ -11162,6 +11173,330 @@ _BAOLUN_STARRY_SKY_LAMP_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "140+ square small lenses": 2,
             "1540+": 2,
             "11 pieces of non-coincident light": 1,
+        },
+    }
+}
+_SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_ITEMS = (
+    (
+        1,
+        "Sunny Automotive first-configuration preferred heating architecture",
+        "confirmed_no_prescription."
+        "first_configuration_preferred_heating_architecture_only",
+    ),
+    (
+        2,
+        "Sunny Automotive first-configuration dot-pin variant",
+        "confirmed_no_prescription.first_configuration_dot_pin_variant_only",
+    ),
+    (
+        3,
+        "Sunny Automotive first-configuration clear-region wavy-ring variant",
+        "confirmed_no_prescription."
+        "first_configuration_clear_region_wavy_ring_variant_only",
+    ),
+    (
+        4,
+        "Sunny Automotive first-configuration parallel multi-ring variant",
+        "confirmed_no_prescription."
+        "first_configuration_parallel_multi_ring_variant_only",
+    ),
+    (
+        5,
+        "Sunny Automotive first-configuration series multi-ring variant",
+        "confirmed_no_prescription."
+        "first_configuration_series_multi_ring_variant_only",
+    ),
+    (
+        6,
+        "Sunny Automotive first-configuration open-arc variant",
+        "confirmed_no_prescription.first_configuration_open_arc_variant_only",
+    ),
+    (
+        7,
+        "Sunny Automotive first-configuration variable-width ring variant",
+        "confirmed_no_prescription."
+        "first_configuration_variable_width_ring_variant_only",
+    ),
+    (
+        8,
+        "Sunny Automotive first-configuration side-region heating variant",
+        "confirmed_no_prescription."
+        "first_configuration_side_region_heating_variant_only",
+    ),
+    (
+        9,
+        "Sunny Automotive first-configuration manufacturing method",
+        "confirmed_no_prescription.first_configuration_manufacturing_method_only",
+    ),
+    (
+        10,
+        "Sunny Automotive second-configuration preferred conductive-contact architecture",
+        "confirmed_no_prescription."
+        "second_configuration_preferred_conductive_contact_architecture_only",
+    ),
+    (
+        11,
+        "Sunny Automotive second-configuration split conductive-element variant",
+        "confirmed_no_prescription."
+        "second_configuration_split_conductive_element_variant_only",
+    ),
+    (
+        12,
+        "Sunny Automotive second-configuration thermal-insulator variant",
+        "confirmed_no_prescription."
+        "second_configuration_thermal_insulator_variant_only",
+    ),
+    (
+        13,
+        "Sunny Automotive second-configuration L-shaped conductive-element variant",
+        "confirmed_no_prescription."
+        "second_configuration_l_shaped_conductive_element_variant_only",
+    ),
+    (
+        14,
+        "Sunny Automotive second-configuration manufacturing method",
+        "confirmed_no_prescription.second_configuration_manufacturing_method_only",
+    ),
+    (
+        15,
+        "Sunny Automotive second-configuration injected conductive-paste variant",
+        "confirmed_no_prescription."
+        "second_configuration_injected_conductive_paste_variant_only",
+    ),
+)
+_SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-12345877-B2": {
+        "raw_document_sha256": (
+            "be795020aa39b3b691a170b6d367bfc2d926397372c3c5ddcae865570237bfe6"
+        ),
+        "normalized_text_sha256": (
+            "7f015070a42891a56bcda4e2f783e0e7a9e2e39e5d61cfc992cabd0626b0b21f"
+        ),
+        "section_markers": {
+            "preamble": "US-12345877-B2",
+            "abstract": "Abstract An optical device and use thereof are provided.",
+            "pct_metadata": "PCT No.: PCT/CN2020/094311",
+            "prior_publication": (
+                "Prior Publication Data Document Identifier Publication Date "
+                "US 20220357572 A1 Nov. 10, 2022"
+            ),
+            "priority": (
+                "Foreign Application Priority Data CN 201910520733.0 Jun. 17, 2019 "
+                "CN 201910699837.2 Jul. 31, 2019"
+            ),
+            "related_applications": (
+                "Background/Summary (1) The present application is a national stage"
+            ),
+            "technical_field": "TECHNICAL FIELD (2)",
+            "background": "BACKGROUND (3)",
+            "summary": "SUMMARY (11)",
+            "figures": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (41)",
+            "claims": "Claims 1. An optical device, comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "93e3f637dc4fbc457f4e7a430b6a54a685486a7fcdaeab338a7a2dd560a14868"
+            ),
+            "abstract": (
+                "3fa023b663adf878400d0afbe6bf368e7bd7b19e7fcd1aeae86182fb4b0dbee7"
+            ),
+            "pct_metadata": (
+                "349160b9f6935619788e322c3e064b16a02b2361ce2039ddecfd440e78e3e81d"
+            ),
+            "prior_publication": (
+                "50d41c412ce3bce2d5eb553c9bc3de28277688b61a6463c351ee74869066578c"
+            ),
+            "priority": (
+                "edbf61bb1def49f3781ae57ca3aa9457005c8477e58583515219e729549387f8"
+            ),
+            "related_applications": (
+                "e4e64ee5040384fb17b77889b49773db3f4d4d1b8d8c1920a2604cc0ab1ff7a2"
+            ),
+            "technical_field": (
+                "d43c64332e69a038948cba7e81934f89fcace9c0243194c14342c9414b618f3d"
+            ),
+            "background": (
+                "cd3b87701a461b95ad2647e58287a2308b2b8bc2b0367520a9b1150df795a6b3"
+            ),
+            "summary": (
+                "3a9de0aeee6d45729d18ad12101081b0dfbda8c16b760088b03e715938024117"
+            ),
+            "figures": (
+                "e812eb924c377dddcc77cc8336afcdd4e1ad0fbffaa4fd2fe640ac5fe7e21a5f"
+            ),
+            "detailed": (
+                "55eca2e73bd1127ac8d4480344168f5e3a26d0e66e7f00e60ad37234b92a2ea7"
+            ),
+            "claims": (
+                "3973af5854c5efe0b3bb8499acf004c8c24bd08358c44b4123970d2762897524"
+            ),
+        },
+        "background_span_sha256": {
+            (1, 1): "de7be7f0b6fec5e0bd688539deaf2023217929ae2fb244d581bed654d9e497b0",
+            (2, 2): "f3b69f52a08c543aacfd9d59c58f0195f0fe0a56a158371e9d6b8e1c2af65b65",
+            (3, 10): "3282d95bbe46bc1f9d95ffc91d9c1cf54a6753b95e3de425b84b4e2ce8335f2d",
+            (11, 21): "b25955cac13c4c0fab571ace2ab97b6ecfde9d849b2cb7a58bfdf4e869ca0599",
+            (22, 44): "2a560dc13854e27588dd842ba12d0a3171bed35d1a8622d214a8ca30571f35df",
+            (45, 50): "bfe98438f056b42989d520fc1c4cb05e84523818bba06762f533394db4ed096b",
+            (51, 61): "7bd44f11286a66fc74143afea2c81d80376c1dbb280172f532dc2f8e4fc26575",
+            (62, 88): "07720baa1786b0e10932d7c5a5f340a96a41aecc69b1cbc9939daa24b60c3bac",
+            (89, 100): "03abcc60fdb5eaa7f94ad2a1b078b59734c751cfda122d6afb03c7f9ab3964cd",
+            (101, 102): "23a4e01706ee411024b7dca23d1117967a2d7574f9dbd64e245ac8ae55bed15d",
+        },
+        "description_span_sha256": {
+            (1, 40): "2d9804c2c55d2a6c83e62bb6606c5ae165e07f74afda26f55bd9076ef7935fa6",
+            (41, 45): "f0d31b168d80c5131ba35136cac5483d2a2aebf7a8b4deb24c18e1f23c344af9",
+            (46, 69): "582353396fef43cf8eee9c746a69e1b6af3e95c0c4c7afb2e47c2834f0e75fe5",
+            (70, 70): "5f352e8e80c84d4286d50f9f32487ad5ae45d35a6d6ff89f97ed27938cf72c24",
+            (71, 80): "b18c19f464fd42be6af4910be5740a4703dbbe9691eb42029a7ef8686686ee42",
+            (81, 82): "0dbfb095696e70a5ab339986a689d5a8d8b84b8f91e57a8e0103c640c464a615",
+            (83, 84): "ea01a07cab2742375133eeb9bb017b16c3524a0d1099a69b763fa097a1acb19c",
+            (85, 85): "0e9527727fb37c29984d95f7f36b1fa198b25da415a76ce7483e35458e3a3f0c",
+            (86, 87): "6ffbfd6b8fcceabb814396f559a3b62b0629d265568432c4d28edcbb60a7f1e3",
+            (88, 90): "1a7193cfe0ac4cda13564e380e7045b3fc26f45a6b8787ce1321a496e11ab045",
+            (91, 96): "acab58d390acc3ba88f269df50ea65742c7063e8f031b052c584c7ede9b1e61a",
+            (97, 97): "72375c1ab71c86e2e0744b6ea9f8eb44b35bf1208dee238a99e73361bf9d565e",
+            (98, 116): "46c95a29af9041b20d7d684ee97d4ab07356a30ef0e6a4596e0f3728a20e9bdc",
+            (117, 118): "7635bb7da1f779b67b6e514671053a4ed788992c87839ef887656211eb7f186a",
+            (119, 128): "89bc006ee368b61187fce4ed6c2cfa8a2d7d682a40f086063699d5e9f3c5785a",
+            (129, 136): "db3170679dce7ec3d26914f35852058c9444d62c096aa66d43d5183477c0fd92",
+            (137, 140): "16a858c522e7434fd5cf719d9c5b1b12c08b849ec2885673f8b3a72853e77484",
+            (141, 144): "042b7651caa094776195ca2a945b06745d762473640ee354bba1bba8dc5311f3",
+            (145, 145): "2d1eedd3cc078effa6289f3feb13436c603b79fd004773dc3c49fdb67e178758",
+        },
+        "item_ranges": (
+            (46, 69),
+            (70, 70),
+            (71, 80),
+            (81, 82),
+            (83, 84),
+            (85, 85),
+            (86, 87),
+            (88, 90),
+            (91, 96),
+            (98, 116),
+            (117, 118),
+            (119, 128),
+            (129, 136),
+            (137, 140),
+            (141, 144),
+        ),
+        "item_markers": (
+            "An optical device 100 according to a preferred embodiment of the "
+            "present disclosure in a first configuration form",
+            "in the first modified implementation of this preferred embodiment",
+            "In the second modified implementation of this embodiment",
+            "in the third modified implementation of this embodiment",
+            "in the fourth modified implementation of this embodiment",
+            "in the fifth modified implementation of this embodiment",
+            "in the sixth modified implementation of this embodiment",
+            "In the seventh modified implementation of this embodiment",
+            "this embodiment further provides a method for manufacturing the "
+            "optical device",
+            "An optical device 100 according to a preferred embodiment of the "
+            "present disclosure in the second configuration form",
+            "in the first modified implementation of this embodiment",
+            "in the second modified implementation of this embodiment",
+            "in the third modified implementation of this embodiment",
+            "Further provided in this embodiment is a method for manufacturing "
+            "the optical device 100",
+            "An optical device 100 A of the first modified implementation of the "
+            "present disclosure in the second configuration form",
+        ),
+        "figure_labels": (
+            "1", "2A", "2B", "2C", "2D", "2E", "2F", "3", "4", "5A",
+            "5B", "5C", "6A", "6B", "7A", "7B", "8", "9", "10", "11",
+            "12", "13", "14A", "14B", "14C", "14D", "15A", "15B", "15C",
+            "15D", "16A", "16B", "17", "18A", "18B", "18C", "18D", "19",
+            "20", "21",
+        ),
+        "claim_families": (
+            tuple(range(1, 9)),
+            tuple(range(9, 18)),
+            (18,),
+            (19,),
+        ),
+        "claim_family_sha256": (
+            "220eaf72c12ba2530de9c9f0d931138e5922fcf89f426a52a416a2f1d9f0c8ee",
+            "81cffd19c1ef68cb43deefbd59b5a46d5faac236671679cf91aeba4bf3cb8c43",
+            "637efd7141b8cb82d3153a31e2dbfd27207ff156bbffc6fcaf0f9972f38c2e8e",
+            "87a24eaadaacd166e8d8df40ffdcaa95d0b3fc5e4c83f125aadbf5b2805359e8",
+        ),
+        "identity_markers": {
+            "US-12345877-B2": 1,
+            "United States Patent 12345877": 1,
+            "Kind Code B2": 1,
+            "Date of Patent July 01, 2025": 1,
+            "Inventor(s) Huang; Hujun et al. Optical device and use thereof": 1,
+            "Applicant: NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD. "
+            "(Yuyao Ningbo, CN)": 1,
+            "Family ID: 74036960": 1,
+            "Assignee: NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD. (Yuyao, CN)": 1,
+            "Appl. No.: 17/619967": 1,
+            "Filed (or PCT Filed): June 04, 2020": 1,
+            "PCT/CN2020/094311": 2,
+            "WO2020/253541": 1,
+            "US 20220357572 A1": 1,
+            "CN 201910520733.0": 1,
+            "CN 201910699837.2": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "radius": 0,
+            "curvature": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "thickness": 0,
+            "aperture": 0,
+            "stop": 0,
+            "image height": 0,
+            "field of view": 0,
+            "optical prescription": 0,
+            " mm": 0,
+            " nm": 0,
+            "degree": 0,
+        },
+        "source_scope_phrase_counts": {
+            "lens element": 367,
+            "lens barrel": 75,
+            "heating element": 499,
+            "conductive element": 269,
+            "optical device": 156,
+            "vehicle": 23,
+            "embodiment": 136,
+            "example": 15,
+            "FIG.": 71,
+            "material": 34,
+            "ITO film": 6,
+            "thermal insulating member": 54,
+            "conductive paste": 15,
+            "power supply": 41,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/USPTO-PDF/"
+                "ae693e897b02893e/US-12345877-B2.pdf"
+            ),
+            "bytes": 2912935,
+            "sha256": (
+                "ae693e897b02893e0fce0f855a9c341f8d2525a67f89ef9f608336bb9ef8b4fc"
+            ),
+            "page_count": 38,
+            "single_raster_page_count": 38,
+            "drawing_page_numbers": tuple(range(3, 19)),
+            "drawing_sheet_count": 16,
+            "raster_set_sha256": (
+                "6b1656d993d22d4c1a9b233df7cc1311c999ce568d902479d69d5a17b8a2bc1c"
+            ),
         },
     }
 }
@@ -31649,6 +31984,364 @@ def _classify_baolun_starry_sky_lamp_architecture_attempts(
             ),
         )
         for number, label, reason_code in _BAOLUN_STARRY_SKY_LAMP_ITEMS
+    ]
+
+
+def _classify_sunny_automotive_heated_optical_device_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 74036960 heated optical-device architectures."""
+
+    profile = _SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_ITEMS
+            )
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\((\d+)\)", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"Sunny Automotive heated optical device {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device official raw text hash "
+                f"changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device normalized text hash "
+                f"changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Sunny Automotive heated optical device section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device "
+                    f"{section_name} section changed"
+                )
+
+        background_text = text[
+            section_starts["related_applications"] : section_starts["figures"]
+        ]
+        background_paragraphs = numbered_paragraphs(
+            background_text,
+            expected_numbers=tuple(range(1, 103)),
+            label="background/summary paragraph",
+        )
+        description_text = text[
+            section_starts["figures"] : section_starts["claims"]
+        ]
+        description_paragraphs = numbered_paragraphs(
+            description_text,
+            expected_numbers=tuple(range(1, 146)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (
+                background_paragraphs,
+                profile["background_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_span_sha256"],
+                "description",
+            ),
+        ):
+            for bounds, expected_digest in span_hashes.items():
+                start, end = bounds
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                )
+                observed_digest = hashlib.sha256(
+                    span.strip().encode("utf-8")
+                ).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        "Sunny Automotive heated optical device "
+                        f"{label} paragraph span {start}-{end} changed"
+                    )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_ITEMS)
+            == 15
+        ):
+            raise PatentParseError(
+                "Sunny Automotive heated optical device source-item denominator changed"
+            )
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(1, 41):
+            match = re.match(
+                r"\(\d+\) FIG\.\s+([0-9]+(?:\s+[A-Z])?)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device figure declaration "
+                    f"paragraph {paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1).replace(" ", ""))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device figure-label denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Sunny Automotive heated optical device zero-table denominator changed"
+            )
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError(
+                "Sunny Automotive heated optical device zero-MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 20):
+            claim_start = claims_section.find(f"{claim_number}. ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number}. ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 19
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 20)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device four-claim-family "
+                "denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Sunny Automotive heated optical device official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device official raster-page "
+                "denominator changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Sunny Automotive heated optical device official PDF gained a text layer"
+            )
+        if (
+            len(pdf_profile["drawing_page_numbers"])
+            != pdf_profile["drawing_sheet_count"]
+            or pdf_profile["drawing_page_numbers"] != tuple(range(3, 19))
+        ):
+            raise PatentParseError(
+                "Sunny Automotive heated optical device drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all 15 exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML and all 38 exact official page rasters contain "
+        "40 declared figures across 16 drawing sheets, zero text tables and zero "
+        "MathML; the drawings publish only lens/barrel/heater/contact geometry, "
+        "while no ordered radius, spacing, thickness, refractive-index, Abbe, "
+        "conic, asphere, stop, focal-length, F-number, image-height or field "
+        "prescription is disclosed"
+    )
+    details = (
+        "Description paragraphs 46-69 publish the first-configuration preferred "
+        "lens/barrel architecture with clear-region ITO and non-clear-region "
+        f"heating elements; {common}",
+        "Description paragraph 70 changes the first heating pins to dot-like "
+        f"structures without publishing optical surface data; {common}",
+        "Description paragraphs 71-80 publish a clear-region film plus wavy-ring "
+        f"heater whose D1/D2/D3 labels carry no numeric values; {common}",
+        "Description paragraphs 81-82 publish two-to-five parallel heating rings "
+        f"for resistance adjustment only; {common}",
+        "Description paragraphs 83-84 and claim 1 publish series-connected heating "
+        f"rings and series ports only; {common}",
+        "Description paragraph 85 publishes an open arc-shaped heater and terminal "
+        f"placement only; {common}",
+        "Description paragraphs 86-87 and claim 19 publish a single variable-width "
+        f"annular heating wire only; {common}",
+        "Description paragraphs 88-90 publish side-region and combined clear/non-clear "
+        f"heater placement only; {common}",
+        "Description paragraphs 91-96 publish the first-configuration assembly method "
+        f"for the same heaters and pins without an independent optical design; {common}",
+        "Description paragraphs 98-116 and claims 9-17 publish the second-configuration "
+        f"conductive-contact, adhesive and fixing architecture only; {common}",
+        "Description paragraphs 117-118 publish split first/second conductive elements "
+        f"and their electrical joint only; {common}",
+        "Description paragraphs 119-128 publish a thermal-insulating ring and retained "
+        f"conductive contacts only; {common}",
+        "Description paragraphs 129-136 publish L-shaped conductive elements and "
+        f"alternative terminal/contact placements only; {common}",
+        "Description paragraphs 137-140 and claim 18 publish the second-configuration "
+        f"manufacturing method without an independent optical design; {common}",
+        "Description paragraphs 141-144 and claim 15 publish conductive paste cured in "
+        f"noncommunicating lens-barrel channels only; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in (
+            _SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_ITEMS
+        )
     ]
 
 
