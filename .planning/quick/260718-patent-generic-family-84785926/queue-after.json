@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/root/publication order",
+  "result_set_sha256": "a29c2d4457752b19044ab2c4e79b00e9cc65195b777c590583a85392badcf523",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 100, "affected_items": 100},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "82818949",
+    "root_ids": ["US-20230296863"],
+    "publication_ids": ["US-20230296863-A1"],
+    "application_number": "18/154079",
+    "title": "LENS ELEMENT, IMAGING LENS ASSEMBLY, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "layout_signature": "398622f52ff511311c349f40626f79b6e19bad3e73c2c0586750234eb69b3715",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 0, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f596732d311d4d24/US-20230296863-A1.html",
+      "sha256": "f596732d311d4d244cc22d4181af268d6aa9ed9823e6afa587436d4d703e3bbb"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

@@ -23843,6 +23843,307 @@ def _sunny_split_lens_alignment_source() -> tuple[str, str]:
     return "US-20220413251-A1", source_path.read_text(encoding="utf-8")
 
 
+def _medimaging_pupil_tracking_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "1d6c54415df59f35"
+        / "US-20230000344-A1.html"
+    )
+    return "US-20230000344-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_medimaging_pupil_tracking_reconciles_eight_items() -> None:
+    patent_id, raw_text = _medimaging_pupil_tracking_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 9))
+    assert [
+        attempt.error.reason_code
+        for attempt in attempts
+        if isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    ] == [
+        "confirmed_no_prescription.fundus_camera_imaging_architecture_only",
+        "confirmed_no_prescription.pupil_image_preprocessing_method_only",
+        "confirmed_no_prescription.pupil_contour_fitting_alignment_method_only",
+        "confirmed_no_prescription.external_display_operator_alignment_variant_only",
+        "confirmed_no_prescription.internal_display_self_alignment_optical_path_only",
+        "confirmed_no_prescription.tonometer_pupil_tracking_wrapper_only",
+        "confirmed_no_prescription."
+        "corneal_topography_pupil_tracking_wrapper_only",
+        "confirmed_no_prescription."
+        "automatic_refractometer_pupil_tracking_wrapper_only",
+    ]
+
+
+def test_medimaging_pupil_tracking_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _medimaging_pupil_tracking_source()
+    changed = raw_text.replace("January 05, 2023", "January 06, 2023", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 8
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Medimaging pupil tracking official raw text hash changed " f"for {patent_id}"
+    }
+
+
+def test_medimaging_pupil_tracking_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-84785926"
+    audit = json.loads(
+        (quick / "family-84785926-raster-audit.json").read_text(encoding="utf-8")
+    )
+    record = audit["retained_pdf"]
+    pdf_path = root / record["path"]
+    pdf_bytes = pdf_path.read_bytes()
+    assert len(pdf_bytes) == record["bytes"] == 856_098
+    assert hashlib.sha256(pdf_bytes).hexdigest() == record["container_sha256"]
+    reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+    assert len(reader.pages) == record["page_count"] == 15
+
+    page_hashes = []
+    text_characters = 0
+    for page, expected_hash in zip(
+        reader.pages, audit["page_raster_sha256"], strict=True
+    ):
+        assert len(page.images) == 1
+        page_image = page.images[0]
+        image = page_image.image.convert("RGB")
+        assert [image.width, image.height] == record["raster_dimensions"]
+        page_hash = patent_pdf_recovery._canonical_raster_sha256(page_image.data)
+        assert page_hash == expected_hash
+        page_hashes.append(page_hash)
+        text_characters += len(page.extract_text() or "")
+    assert text_characters == record["text_layer_characters"] == 0
+    assert hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest() == record["decoded_raster_set_sha256"]
+
+    assert audit["page_roles"] == {
+        "front_matter": [1],
+        "drawing_sheets": list(range(2, 10)),
+        "specification_and_claims": list(range(10, 16)),
+    }
+    drawing = audit["drawing_reconciliation"]
+    assert drawing["drawing_sheet_count"] == 8
+    assert drawing["figure_declaration_paragraphs"] == 8
+    assert drawing["declared_figure_panel_count"] == 12
+    assert drawing["located_figure_panel_count"] == 12
+    assert drawing["unmapped_declared_figure_panels"] == []
+    assert drawing["unexplained_raster_figure_panels"] == []
+    assert sorted(
+        figure
+        for figures in drawing["sheet_figures"].values()
+        for figure in figures
+    ) == ["1", "2", "3", "4a", "4b", "4c", "4d", "5a", "5b", "6", "7", "8"]
+
+    for contact in audit["contact_sheets"]:
+        raw = (root / contact["path"]).read_bytes()
+        assert len(raw) == contact["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == contact["sha256"]
+    assert audit["repeat_probe"]["container_equal"] is False
+    assert audit["repeat_probe"]["decoded_page_rasters_equal"] is True
+    assert audit["numeric_derivation_from_rasters"] is False
+    assert audit["drawing_coordinates_transcribed"] is False
+    assert audit["full_page_raster_review_claimed"] is True
+
+
+def test_medimaging_pupil_tracking_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-84785926"
+    artifact = json.loads(
+        (quick / "family-84785926-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["semantic_equal"] is True
+    assert artifact["normalization"] == {
+        "outcome_fields_removed": [],
+        "removed_fields": ["result_attempt"],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "conversion_receipts": 0,
+        "conversion_requests": 0,
+        "item_state_counts": {"terminal": 8},
+        "prescription_fingerprints": 0,
+        "result_attempt": 3,
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "root_state": "terminal",
+        "staging_zmx": 0,
+        "terminal_status_counts": {"confirmed_no_prescription": 8},
+    }
+
+
+def test_medimaging_pupil_tracking_denominator_queue_and_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-84785926"
+    evidence = json.loads(
+        (quick / "family-84785926-source-evidence.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-84785926-denominator.json").read_text(encoding="utf-8")
+    )
+    availability = json.loads(
+        (quick / "family-84785926-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    assert denominator["denominator"] == {
+        "background_numbered_paragraphs": 3,
+        "brief_drawing_numbered_paragraphs": 9,
+        "claim_families": 2,
+        "claims": 27,
+        "confirmed_no_prescription_items": 8,
+        "declared_textual_figure_panels": 12,
+        "detailed_numbered_paragraphs": 18,
+        "field_numbered_paragraphs": 1,
+        "frozen_cohort_roots": 1,
+        "located_raster_figure_panels": 12,
+        "mathml_objects": 0,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 15,
+        "replayed_ledger_items": 8,
+        "retained_classification_publications": 1,
+        "retained_drawing_sheets": 8,
+        "retained_page_rasters": 15,
+        "source_declared_architecture_items": 8,
+        "source_declared_optical_prescriptions": 0,
+        "summary_numbered_paragraphs": 4,
+        "tagged_html_tables": 0,
+        "total_numbered_paragraphs": 35,
+        "unmapped_claims": 0,
+        "unmapped_declared_figure_panels": 0,
+        "unmapped_source_items": 0,
+    }
+    assert len(denominator["items"]) == 8
+    assert all(
+        item["embodiment_number"] == index
+        and item["status"] == "confirmed_no_prescription"
+        and item["reason_code"].endswith(
+            ("method_only", "variant_only", "architecture_only", "optical_path_only", "wrapper_only")
+        )
+        for index, item in enumerate(denominator["items"], start=1)
+    )
+    mapped_claims = [
+        claim for claims in denominator["claim_mapping"].values() for claim in claims
+    ]
+    assert sorted(set(mapped_claims)) == list(range(1, 28))
+    assert mapped_claims.count(17) == 3
+    assert sorted(
+        figure
+        for figures in denominator["figure_groups"].values()
+        for figure in figures
+    ) == ["1", "2", "3", "4a", "4b", "4c", "4d", "5a", "5b", "6", "7", "8"]
+    assert denominator["prescription_marker_census"]["focal length"] == 18
+    assert denominator["prescription_marker_census"]["radius"] == 2
+    assert denominator["prescription_marker_census"]["radius of curvature"] == 0
+    assert denominator["optical_scope"]["ordered_surface_prescriptions"] == 0
+
+    assert availability["official_pdf"]["page_count"] == 15
+    assert availability["official_pdf"]["single_raster_pages"] == 15
+    assert availability["drawing_source"]["drawing_sheets"] == 8
+    assert availability["drawing_source"]["declared_textual_figure_panels"] == 12
+    assert availability["drawing_source"]["located_raster_figure_panels"] == 12
+    assert availability["source_policy"]["drawing_transcription_permitted"] is False
+    assert availability["source_policy"]["numeric_derivation_permitted"] is False
+
+    for record in evidence["artifacts"]:
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    for record in (
+        evidence["source"],
+        evidence["official_pdf"],
+        *evidence["census"].values(),
+        *evidence["replay_attempts"],
+        evidence["ledger"]["summary"],
+        evidence["ledger"]["report"],
+    ):
+        path = root / record["path"]
+        raw = path.read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+
+    before = json.loads(
+        (quick / "generic-residual-before-101.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 101
+    assert after_1["affected_roots"] == after_1["affected_items"] == 100
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == evidence["ledger"]["result_set_sha256"]
+    assert queue["next_exact_group"]["family_id"] == "82818949"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20230296863"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20230296863-A1"
+    ]
+    assert queue["next_exact_group"]["raw_document"] == {
+        "evidence_type": "uspto_ppubs_parser_input_html",
+        "path": (
+            "data/patent-lake/uspto-ppubs-html/US-PGPUB/"
+            "f596732d311d4d24/US-20230296863-A1.html"
+        ),
+        "sha256": (
+            "f596732d311d4d244cc22d4181af268d6aa9ed9823e6afa587436d4d703e3bbb"
+        ),
+    }
+    assert queue["saturation_complete"] is False
+    assert evidence["formal_outputs"] == {
+        "candidate_zmx": 0,
+        "codev_calls": 0,
+        "formal_intake": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+        "worker_receipts": 0,
+        "worker_requests": 0,
+    }
+    assert evidence["saturation_complete"] is False
+
+
 def test_sunny_split_lens_alignment_reconciles_eight_items() -> None:
     patent_id, raw_text = _sunny_split_lens_alignment_source()
 

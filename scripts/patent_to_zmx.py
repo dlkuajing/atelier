@@ -637,6 +637,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_medimaging_pupil_tracking_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
@@ -12075,6 +12081,219 @@ _SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_SOURCE_PROFILES: dict[str, dict[str, Any]] = 
             "drawing_sheet_count": 10,
             "raster_set_sha256": (
                 "f7cf7109d57fc0861b8c4b9de851ded3d249ff49faef97cf39f1ce43338f6589"
+            ),
+        },
+    }
+}
+_MEDIMAGING_PUPIL_TRACKING_ITEMS = (
+    (
+        1,
+        "Medimaging fundus-camera imaging architecture",
+        "confirmed_no_prescription.fundus_camera_imaging_architecture_only",
+    ),
+    (
+        2,
+        "Medimaging pupil-image preprocessing method",
+        "confirmed_no_prescription.pupil_image_preprocessing_method_only",
+    ),
+    (
+        3,
+        "Medimaging pupil-contour fitting and alignment method",
+        "confirmed_no_prescription.pupil_contour_fitting_alignment_method_only",
+    ),
+    (
+        4,
+        "Medimaging external-display operator-alignment variant",
+        "confirmed_no_prescription.external_display_operator_alignment_variant_only",
+    ),
+    (
+        5,
+        "Medimaging internal-display self-alignment optical path",
+        "confirmed_no_prescription.internal_display_self_alignment_optical_path_only",
+    ),
+    (
+        6,
+        "Medimaging tonometer pupil-tracking wrapper",
+        "confirmed_no_prescription.tonometer_pupil_tracking_wrapper_only",
+    ),
+    (
+        7,
+        "Medimaging corneal-topography pupil-tracking wrapper",
+        "confirmed_no_prescription."
+        "corneal_topography_pupil_tracking_wrapper_only",
+    ),
+    (
+        8,
+        "Medimaging automatic-refractometer pupil-tracking wrapper",
+        "confirmed_no_prescription."
+        "automatic_refractometer_pupil_tracking_wrapper_only",
+    ),
+)
+_MEDIMAGING_PUPIL_TRACKING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20230000344-A1": {
+        "raw_document_sha256": (
+            "1d6c54415df59f35abb5ed70964fd6c93fdae82c84db869d444ca71037910305"
+        ),
+        "normalized_text_sha256": (
+            "f3b6969ec10743d2ddbb79db58148afe254e082a5dad136637d5edafd6175384"
+        ),
+        "section_markers": {
+            "preamble": "US-20230000344-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract A pupil tracking method includes",
+            "background": "Background/Summary BACKGROUND OF THE INVENTION",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . A pupil tracking method",
+        },
+        "section_sha256": {
+            "preamble": (
+                "e581be72ad873ff610ba88d673332c81ad753c105f3c76d94a2b745533e28330"
+            ),
+            "abstract": (
+                "0fe7b50264e40a4a2a74a618e36e026eeb382b06a24215c085e2ee048cfaee33"
+            ),
+            "background": (
+                "b528413c366c288b44b803fa9359a7c352e58fc75c8bf1a4bf802b4dd33bdeb3"
+            ),
+            "description": (
+                "fa94ef6dad128c8dea0ac29f5a59927f050a08b02afaab4253772800bab10523"
+            ),
+            "claims": (
+                "9b32cdaa26d853451dd4ac36607defa9416995a1005e70107bf190b1e0c05cc2"
+            ),
+        },
+        "background_span_sha256": {
+            (1, 1): "9ecf7f8323c41d8ab051dcbd9332c597be5172007ed909e7ba8b635e5c4cd23b",
+            (2, 4): "0d642d1332ffa792b8787456b4070647c62210036a24da907c9341683ae05c51",
+            (5, 8): "0f84ec71f598d909e3758dd61c4a9d55f6c0174519e3ab9f88bb31ea038922e5",
+        },
+        "description_span_sha256": {
+            (9, 17): "97cd4ca72352ab96db4d2c0fb6a478cef8bd18c2a066704865ed3dcbb5c6a161",
+            (18, 18): "b59fa9a0a42d611f31ca8037295d621e888d0a43e6b27046b6555102da37c68c",
+            (19, 21): "09f16313aab7505d5ac09871e547e4d39ff94e3f80181e8a05d27c8d52cd1009",
+            (22, 26): "a1203928da115753b488600dd05cbea6c2c45eb8a3486fb1fabcaae567b81fac",
+            (27, 28): "a5bc1b9e689013bbbc559fb110f794731f59c40e1f8055f9b3d2c2c7dbc1181d",
+            (29, 29): "b45562941ccfef20f7b9944ee85d4a3e1306eb8a99ebb3feae6850e6e07d5e5b",
+            (30, 30): "ceebf90199f8ad453e203f941b3bebaa770969f168fb280e737fff7919fc9bdf",
+            (31, 31): "fddfa63cf673780cb6013ad4ac2036694aabb20510dafff7b4b2074c9cb5c10b",
+            (32, 32): "de322b73f45cc6de27e13464a8db7312eb3f3e393f0d61a2fc309734f989eaab",
+            (33, 33): "e7d3d8424eb7a86a9b71e118ad26e21ec310c891b255ffe0705cd0ee2cfb6503",
+            (34, 34): "bb962c13021ba0abc72ad0e138c5a667aee4036c816c07c134603d67d867d5c6",
+            (35, 35): "ae7c80d57180cb12d6c8f18021a54bc4bc8b246129e5fb27ebd436f394af3507",
+        },
+        "item_ranges": (
+            (19, 21),
+            (22, 26),
+            (27, 28),
+            (29, 29),
+            (30, 30),
+            (31, 31),
+            (32, 32),
+            (33, 33),
+        ),
+        "item_markers": (
+            "The ophthalmology inspection device of the present invention uses an "
+            "imaging system",
+            "The signal processing element 106 is electrically connected with the "
+            "image sensor 104",
+            "Return to the description of the pupil tracking method shown in FIG. 2",
+            "Refer to FIG. 2 . In one embodiment, the signal processing element 106 "
+            "generates",
+            "In one embodiment, the subject himself may operate the ophthalmology "
+            "inspection device",
+            "The pupil tracking method of the present invention is applicable to "
+            "different ophthalmology inspection devices",
+            "Refer to FIG. 7 for a fundamental structure of a corneal topography "
+            "device",
+            "Refer to FIG. 8 for a fundamental structure of an automatic refractometer",
+        ),
+        "figure_labels": (
+            "1",
+            "2",
+            "3",
+            "4a",
+            "4b",
+            "4c",
+            "4d",
+            "5a",
+            "5b",
+            "6",
+            "7",
+            "8",
+        ),
+        "claim_families": (tuple(range(1, 13)), tuple(range(13, 28))),
+        "claim_family_sha256": (
+            "ff26eb94328724461eb9485845ddbf47a58408c4e9f8c8ed5413ad7b646ebf00",
+            "2b2c4047e4d10a618ca4770ba99b14a9a6694b0b53d917ad73c811df77a80112",
+        ),
+        "identity_markers": {
+            "US-20230000344-A1": 1,
+            "United States Patent Application Publication 20230000344": 1,
+            "Kind Code A1": 1,
+            "Publication Date January 05, 2023": 1,
+            "Inventor(s) Lin; Yu Chian et al. OPHTHALMOLOGY INSPECTION DEVICE AND "
+            "PUPIL TRACKING METHOD": 1,
+            "Applicant: Medimaging Integrated Solution, Inc.": 1,
+            "Family ID: 84785926": 1,
+            "Appl. No.: 17/854607": 1,
+            "Filed: June 30, 2022": 1,
+            "TW 110124054 Jun. 30, 2021": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "Fno": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "image height": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "aspheric": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "aperture stop": 0,
+            "optical prescription": 0,
+            "radius of curvature": 0,
+            "refractive index": 0,
+            "thickness": 0,
+            "optical surface": 0,
+        },
+        "source_scope_phrase_counts": {
+            "focal length": 18,
+            "radius": 2,
+            "curvature": 3,
+            "imaging lens assembly": 18,
+            "display lens assembly": 8,
+            "liquid-state lens": 3,
+            "object lens": 4,
+            "relay lens": 1,
+            "condenser lens": 1,
+            "light splitter": 3,
+            "stereo camera": 5,
+            "fundus camera": 22,
+            "tonometer": 6,
+            "corneal topography device": 6,
+            "automatic refractometer": 6,
+            "minimum enclosing circle": 9,
+            "binary conversion": 19,
+            "indication signal": 19,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/USPTO-PDF/"
+                "fa4b0a092ec61ada/US-20230000344-A1.pdf"
+            ),
+            "bytes": 856098,
+            "sha256": (
+                "fa4b0a092ec61ada6398b9355e1fcf5e00a8c9a5eac1be183f078e13c152145a"
+            ),
+            "page_count": 15,
+            "single_raster_page_count": 15,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 10)),
+            "drawing_sheet_count": 8,
+            "raster_set_sha256": (
+                "b7f22b32742c50277a8c6b0ad62fa6415aa678f9a79cb1ccc821615e622cb631"
             ),
         },
     }
@@ -33956,6 +34175,370 @@ def _classify_sunny_split_lens_active_alignment_attempts(
             ),
         )
         for number, label, reason_code in _SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_ITEMS
+    ]
+
+
+def _classify_medimaging_pupil_tracking_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 84785926 pupil-tracking/device architectures."""
+
+    profile = _MEDIMAGING_PUPIL_TRACKING_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _MEDIMAGING_PUPIL_TRACKING_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\[(\d{4})\]", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"Medimaging pupil tracking {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Medimaging pupil tracking identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Medimaging pupil tracking section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Medimaging pupil tracking section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Medimaging pupil tracking {section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"],
+            expected_numbers=tuple(range(1, 9)),
+            label="background/summary paragraph",
+        )
+        description_paragraphs = numbered_paragraphs(
+            sections["description"],
+            expected_numbers=tuple(range(9, 36)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (
+                background_paragraphs,
+                profile["background_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_span_sha256"],
+                "description",
+            ),
+        ):
+            for bounds, expected_digest in span_hashes.items():
+                start, end = bounds
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                )
+                observed_digest = hashlib.sha256(
+                    span.strip().encode("utf-8")
+                ).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        "Medimaging pupil tracking "
+                        f"{label} paragraph span {start}-{end} changed"
+                    )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_MEDIMAGING_PUPIL_TRACKING_ITEMS)
+            == 8
+        ):
+            raise PatentParseError(
+                "Medimaging pupil tracking source-item denominator changed"
+            )
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Medimaging pupil tracking source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(10, 13):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+(\d+)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Medimaging pupil tracking single-figure declaration "
+                    f"paragraph {paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if re.match(
+            r"\[0013\] FIGS\. 4 a - 4 d are images",
+            description_paragraphs[13],
+        ) is None:
+            raise PatentParseError(
+                "Medimaging pupil tracking FIGS.4a-4d declaration changed"
+            )
+        figure_labels.extend(("4a", "4b", "4c", "4d"))
+        if re.match(
+            r"\[0014\] FIGS\. 5 a and 5 b are indication signals",
+            description_paragraphs[14],
+        ) is None:
+            raise PatentParseError(
+                "Medimaging pupil tracking FIGS.5a-5b declaration changed"
+            )
+        figure_labels.extend(("5a", "5b"))
+        for paragraph_number in range(15, 18):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+(\d+)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Medimaging pupil tracking single-figure declaration "
+                    f"paragraph {paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking figure-label denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Medimaging pupil tracking zero-table denominator changed"
+            )
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError(
+                "Medimaging pupil tracking zero-MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 28):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Medimaging pupil tracking claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 27
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 28)
+        }
+        for claim_family, expected_digest in zip(
+            profile["claim_families"],
+            profile["claim_family_sha256"],
+            strict=True,
+        ):
+            observed_digest = hashlib.sha256(
+                "".join(claims[number] for number in claim_family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Medimaging pupil tracking claim-family denominator changed"
+                )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Medimaging pupil tracking prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Medimaging pupil tracking scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Medimaging pupil tracking official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Medimaging pupil tracking official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking official raster-page denominator changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Medimaging pupil tracking official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Medimaging pupil tracking official PDF gained a text layer"
+            )
+        if (
+            len(pdf_profile["drawing_page_numbers"])
+            != pdf_profile["drawing_sheet_count"]
+            or pdf_profile["drawing_page_numbers"] != tuple(range(2, 10))
+        ):
+            raise PatentParseError(
+                "Medimaging pupil tracking drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML and all 15 exact official page rasters contain "
+        "12 declared figure panels across eight drawing sheets, zero text tables and "
+        "zero MathML; focal-length language describes focus adjustment by moving an "
+        "image sensor/display/lens or changing an unspecified liquid-lens curvature, "
+        "while no ordered optical radius, spacing, material, refractive-index, Abbe, "
+        "conic, asphere, stop, effective-focal-length, F-number, image-height or "
+        "angular-field prescription is disclosed"
+    )
+    details = (
+        "Description paragraphs 19-21 and claims 13 and 16 publish the fundus-camera "
+        f"illumination, generic imaging assembly, sensor and focus-drive architecture; {common}",
+        "Description paragraphs 22-26 and claims 1, 3-8 and 18-23 publish image "
+        f"resizing, filtering, enhancement, binarization and morphology only; {common}",
+        "Description paragraphs 27-28 and claims 9-12 and 24-27 publish contour "
+        f"variance, circle/ellipse fitting and motor alignment logic; {common}",
+        "Description paragraph 29 and claims 2 and 15 publish external-display "
+        f"operator alignment indications; {common}",
+        "Description paragraph 30 and claim 14 publish an internal-display, display-lens "
+        f"and light-splitter self-alignment path; {common}",
+        "Description paragraph 31 and claim 17 publish a tonometer wrapper sharing the "
+        f"pupil-tracking components; {common}",
+        "Description paragraph 32 and claim 17 publish a corneal-topography wrapper "
+        f"sharing the pupil-tracking components; {common}",
+        "Description paragraph 33 and claim 17 publish an automatic-refractometer "
+        f"wrapper with generic object/display/fogging lenses; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _MEDIMAGING_PUPIL_TRACKING_ITEMS
     ]
 
 
