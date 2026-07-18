@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "family_id": "98902256",
+  "root_id": "US-20260063880",
+  "publication_id": "US-20260063880-A1",
+  "application_number": "19/304678",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/adc36ef0434e925c/US-20260063880-A1.html",
+    "bytes": 86402,
+    "raw_sha256": "adc36ef0434e925c8098a9f57f2621a0828321c00a696058443fc4f2ac0a22d1",
+    "normalized_characters": 65750,
+    "normalized_sha256": "142e7fd688eb9ef226bf092d482c6c3a1aa7859bdd518ecc9a7546915e70ae6c"
+  },
+  "section_sha256": {
+    "related": "8a86119a52438b553b360ef0abadc756abc8aeeef574348ddaea355e525692e2",
+    "background": "ea4451aa2619dcefefde3cff54ab0f26864977917ad859f0f82e39a3df55e09c",
+    "summary": "e4946366fb7e23a9b5e3201dfc02ba0c8990d68afc14ce9288a8525fafa9472e",
+    "figures": "be5dac962c53dce4a0b1cf4de3d69890000e2dfe275829210e626b2803cfaaf7",
+    "detailed": "858447fbc9e2e047f752debba2cd6b1b2403bf80fc292185f6b4a419b6e30787",
+    "claims": "32aa0e7cb8b005761f2a06a2520fdfff4c6ee6ba3944486bbb2ce2858d116e39"
+  },
+  "paragraph_span_sha256": [
+    {"range": [1, 1], "sha256": "1677bc2d01e5fbd91f5c13e3b1aee53d1b36a57e12ccb6a85ff4e63fa7a95f7a"},
+    {"range": [2, 3], "sha256": "3197760d1a2e054de63ff5b71594d10e2cb27fa0f86775ec5fcaff31064d20b3"},
+    {"range": [4, 7], "sha256": "42d960fe7a2090bef4b1afda0e432838d188a7efa233ffb39664b839c7f39e3f"},
+    {"range": [8, 36], "sha256": "8fae323874be4c9d24fe7c7d696fef325a2a57452fd7d320b1d2888b21813493"},
+    {"range": [37, 63], "sha256": "00f83c7ba5f388411a63bd87d389791c7cbe60b241cbcf3d279e8bb31f212144"},
+    {"range": [64, 73], "sha256": "242397b1833b6cbe627005b70963c343507413b7f28a33685bc23f89aa93fa52"},
+    {"range": [74, 74], "sha256": "06493eab21384774731afe18c660e9782d386bda655bbeed127d52076595c191"},
+    {"range": [75, 82], "sha256": "8a3e7cbbb7d52eddb6cf693a36b9d20bb16acc61530f604c3e30c4588bc7976c"},
+    {"range": [83, 89], "sha256": "9071207a61416e23085be547d3c33412717540d24e84e0aa1f5eb74fdce4f3d3"},
+    {"range": [90, 98], "sha256": "18ebb7e922937153499894768b9cf88cde1456ae8390f0da82b08cf46361411c"},
+    {"range": [99, 102], "sha256": "b9a2326d4b7624fadbe032910fe704e1e2124c3b129078c2f0b8e5546f47912e"},
+    {"range": [103, 103], "sha256": "ff846cdfe7a7d5dda9d060d2b1cdf69ff1e33c3fd4cddec07673b10c5c1aa80b"}
+  ],
+  "figure_labels": [
+    "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I",
+    "2A", "2B", "2C", "2D", "2E", "2F", "2G",
+    "3A", "3B", "3C", "3D", "3E", "3F",
+    "4A", "4B", "4C", "4D", "4E", "5"
+  ],
+  "table_payload_sha256": [
+    {"table": "1A", "paragraph": 70, "sha256": "e0696a48b0d9295f9809961eeb4e99a958f9a4344fbdcf715f26867cd39c1114"},
+    {"table": "1B", "paragraph": 72, "sha256": "7768dafaaf12e7bb44ec0c2687d8657e33f3a8b547ca66dfce631f6fa3539fe4"},
+    {"table": "2A", "paragraph": 80, "sha256": "bdd149caea3a176630f82f7af3d56382753fc11ec40db8942df9581e9809d4f4"},
+    {"table": "2B", "paragraph": 81, "sha256": "35d698f6762f8b958edc87855db16655d3f03f9a03606adeda635674e0355e2b"}
+  ],
+  "mathml": {
+    "objects": 18,
+    "joined_raw_sha256": "5508e8ab47cc6896e4fca8cbdbf7e497aafea9c5a5ffbc53f4db65ef0d3be069",
+    "meaning": "reflection-film layer-distance, thickness, reflectance and step-height inequalities"
+  },
+  "claim_groups": [
+    {"subject": "plastic optical folding element", "claims": [1, 23], "sha256": "7365d3b57e2fb02429c66975f0364d52d1ef154f64717c44311818c676c3555f"},
+    {"subject": "imaging lens module", "claims": [24, 25], "sha256": "c928e51766fe6be53d9d5b515db535a87c5f549a36cb25f8d1bb621154b34781"},
+    {"subject": "electronic device", "claims": [26, 27], "sha256": "8cb58328823e8689f49a3f3c2205a9154440bff74988a24df3fac0bbf8a38edc"}
+  ],
+  "independent_claim_heads": [1, 13, 24, 25, 26, 27],
+  "item_bindings": [
+    {"item": 1, "paragraphs": [64, 73], "marker": "FIG. 1 A is a schematic view of an imaging lens module 100"},
+    {"item": 2, "paragraphs": [74, 74], "marker": "FIG. 1 I is a three-dimensional view of the plastic optical folding element 110 according to the 2nd example"},
+    {"item": 3, "paragraphs": [75, 82], "marker": "FIG. 2 A is a schematic view of an imaging lens module 200"},
+    {"item": 4, "paragraphs": [83, 89], "marker": "FIG. 3 A is a schematic view of an imaging lens module 300"},
+    {"item": 5, "paragraphs": [90, 98], "marker": "FIG. 4 A is a schematic view of an electronic device 40"},
+    {"item": 6, "paragraphs": [99, 102], "marker": "FIG. 5 is a schematic view of an electronic device 50"}
+  ],
+  "phrase_counts": {
+    "plastic optical folding element": 111,
+    "reflection film": 106,
+    "Ag layer": 89,
+    "blocking layer": 67,
+    "lens element": 15,
+    "optical axis": 22,
+    "image surface": 8,
+    "curvature": 9,
+    "thickness": 30,
+    "material": 21,
+    "focal length": 1,
+    "zoom function": 1,
+    "radius": 0,
+    "effective focal length": 0,
+    "F-number": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "asphere": 0,
+    "conic": 0,
+    "coefficient": 0,
+    "image height": 0,
+    "aperture stop": 0,
+    "entrance pupil": 0,
+    "optical prescription": 0
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/c7f15ebf2d3af42c/US-20260063880-A1.pdf",
+    "bytes": 1604370,
+    "sha256": "c7f15ebf2d3af42c9cb1ee3b08f656c70256d34f766fc8b7d4ede56cf3843129",
+    "pages": 37,
+    "drawing_page_range": [2, 26],
+    "table_pages": [31, 32, 33],
+    "text_layer_characters": 0,
+    "canonical_raster_set_sha256": "72c5771436731298b746bcadee420bbb43d1803bf4003ef1e8948a159566717a"
+  },
+  "classification": {
+    "source_items": 6,
+    "ordered_optical_prescriptions": 0,
+    "confirmed_no_prescription": 6,
+    "worker_runs": 0,
+    "formal_outputs": 0
+  }
+}

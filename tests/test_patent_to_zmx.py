@@ -21496,6 +21496,336 @@ def test_tesseland_tir_display_evidence_rehashes_every_reference() -> None:
     assert evidence["saturation_complete"] is False
 
 
+def _largan_plastic_optical_folding_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "adc36ef0434e925c"
+        / "US-20260063880-A1.html"
+    )
+    return "US-20260063880-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_largan_plastic_optical_folding_reconciles_six_items() -> None:
+    patent_id, raw_text = _largan_plastic_optical_folding_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 7))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        "confirmed_no_prescription."
+        "plastic_optical_folding_reflective_film_architecture_only",
+        "confirmed_no_prescription."
+        "plastic_optical_folding_reflective_film_architecture_only",
+        "confirmed_no_prescription."
+        "plastic_optical_folding_reflective_film_architecture_only",
+        "confirmed_no_prescription."
+        "plastic_optical_folding_reflective_film_architecture_only",
+        "confirmed_no_prescription."
+        "electronic_device_multi_camera_placement_architecture_only",
+        "confirmed_no_prescription."
+        "electronic_device_multi_camera_placement_architecture_only",
+    ]
+
+
+def test_largan_plastic_optical_folding_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _largan_plastic_optical_folding_source()
+    changed = raw_text.replace("340.05", "340.06", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 6
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Largan plastic-optical-folding official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
+def test_largan_plastic_optical_folding_official_pdf_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile = patent_to_zmx._LARGAN_PLASTIC_OPTICAL_FOLDING_SOURCE_PROFILES[
+        "US-20260063880-A1"
+    ]["official_pdf"]
+    pdf_bytes = (root / profile["path"]).read_bytes()
+
+    assert len(pdf_bytes) == profile["bytes"] == 1_604_370
+    assert hashlib.sha256(pdf_bytes).hexdigest() == profile["sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+    assert len(reader.pages) == profile["page_count"] == 37
+
+    page_hashes = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        page_images = list(page.images)
+        assert len(page_images) == 1
+        expected_dimensions = (
+            profile["narrow_raster_dimensions"]
+            if page_number in profile["narrow_raster_page_numbers"]
+            else profile["common_raster_dimensions"]
+        )
+        assert page_images[0].image.size == expected_dimensions
+        page_hashes.append(
+            patent_pdf_recovery._canonical_raster_sha256(page_images[0].data)
+        )
+        assert (page.extract_text() or "") == ""
+    raster_set_sha256 = hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest()
+    assert raster_set_sha256 == profile["raster_set_sha256"]
+    for page_number, expected in profile["key_page_raster_sha256"].items():
+        assert page_hashes[page_number - 1] == expected
+
+
+def test_largan_plastic_optical_folding_source_and_raster_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-98902256"
+    availability = json.loads(
+        (quick / "family-98902256-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    source = availability["retained_html"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 86_402
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+    pdf = availability["official_pdf"]
+    pdf_bytes = (root / pdf["path"]).read_bytes()
+    assert len(pdf_bytes) == pdf["bytes"] == 1_604_370
+    assert hashlib.sha256(pdf_bytes).hexdigest() == pdf["container_sha256"]
+    assert availability["drawing_source"]["drawing_pdf_page_range"] == [2, 26]
+    assert availability["source_policy"]["numeric_derivation_permitted"] is False
+    assert (
+        availability["source_policy"]["reflectance_graph_digitization_permitted"]
+        is False
+    )
+
+    raster = json.loads(
+        (quick / "family-98902256-raster-audit.json").read_text(encoding="utf-8")
+    )
+    assert raster["official_pdf"]["canonical_raster_set_sha256"] == pdf[
+        "decoded_raster_set_sha256"
+    ]
+    assert raster["drawing_scope"] == {
+        "pdf_page_range": [2, 26],
+        "drawing_sheets": 25,
+        "declared_panels": 28,
+        "table_pages": [31, 32, 33],
+    }
+    assert raster["visual_review"]["enhancement_applied"] is False
+    assert (
+        raster["visual_review"]["drawing_measurement_or_numeric_derivation"]
+        is False
+    )
+    contact = raster["visual_review"]["contact_sheet"]
+    contact_bytes = (root / contact["path"]).read_bytes()
+    assert len(contact_bytes) == contact["bytes"]
+    assert hashlib.sha256(contact_bytes).hexdigest() == contact["sha256"]
+    assert len(raster["pages"]) == 37
+    for expected_page, record in enumerate(raster["pages"], start=1):
+        assert record["page"] == expected_page
+        retained = record["retained_png"]
+        raw = (root / retained["path"]).read_bytes()
+        assert len(raw) == retained["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == retained["sha256"]
+        decoded = cv2.imdecode(np.frombuffer(raw, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+        assert decoded is not None
+        assert [decoded.shape[1], decoded.shape[0]] == retained["dimensions"]
+
+
+def test_largan_plastic_optical_folding_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-98902256"
+    artifact = json.loads(
+        (quick / "family-98902256-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in artifact["attempts"]:
+        result_bytes = (root / record["path"]).read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["semantic_equal"] is True
+    assert artifact["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 6},
+        "terminal_status_counts": {"confirmed_no_prescription": 6},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+
+def test_largan_plastic_optical_folding_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-98902256"
+    denominator = json.loads(
+        (quick / "family-98902256-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "related_application_numbered_paragraphs": 1,
+        "background_numbered_paragraphs": 2,
+        "summary_numbered_paragraphs": 4,
+        "brief_drawing_numbered_paragraphs": 29,
+        "detailed_numbered_paragraphs": 67,
+        "total_numbered_paragraphs": 103,
+        "claims": 27,
+        "claim_subject_groups": 3,
+        "independent_claim_heads": 6,
+        "declared_figure_occurrences": 28,
+        "unique_declared_figure_labels": 28,
+        "flattened_html_tables": 4,
+        "mathml_objects": 18,
+        "source_declared_architecture_items": 6,
+        "source_declared_optical_prescriptions": 0,
+        "confirmed_no_prescription_items": 6,
+        "replayed_ledger_items": 6,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 37,
+        "retained_page_rasters": 37,
+        "official_drawing_sheets": 25,
+        "retained_drawing_panels": 28,
+        "unmapped_source_items": 0,
+    }
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 7)
+    )
+    assert all(
+        item["status"] == "confirmed_no_prescription"
+        for item in denominator["items"]
+    )
+    assert denominator["reflection_film_tables"][0]["rows"] == 13
+    assert denominator["reflection_film_tables"][2]["rows"] == 12
+    assert denominator["optical_scope"]["ordered_surface_prescriptions"] == 0
+
+    before = json.loads(
+        (quick / "generic-residual-before-85.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 85
+    assert after_1["affected_roots"] == after_1["affected_items"] == 84
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == (
+        "43f504d428bcb42f3f7c579cd304097d2588f6385824c68b79145949615182da"
+    )
+    assert queue["next_exact_group"]["family_id"] == "97524399"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260147219"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20260147219-A1"
+    ]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+
+def test_largan_plastic_optical_folding_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-98902256"
+    evidence = json.loads(
+        (quick / "family-98902256-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    denominator = json.loads(
+        (quick / "family-98902256-denominator.json").read_text(encoding="utf-8")
+    )
+
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+
+    assert len(records) == 27
+    assert evidence["denominator"] == denominator["denominator"]
+    assert evidence["semantic_replay_sha256"] == (
+        "f242fdcfa5f3cff34cee642b1ce424c44a4459fb9eeb3a5d6d69f4351d4e4f4d"
+    )
+    summary = json.loads(
+        (root / evidence["ledger"]["summary"]["path"]).read_text(
+            encoding="utf-8"
+        )
+    )
+    assert summary["cohort_roots"] == summary["roots_with_results"] == 619
+    assert summary["missing_root_ids"] == []
+    assert summary["corrupt_result_paths"] == []
+    assert summary["result_set_sha256"] == evidence["ledger"][
+        "result_set_sha256"
+    ]
+    assert evidence["formal_outputs"] == {
+        "worker_requests": 0,
+        "worker_receipts": 0,
+        "prescription_fingerprints": 0,
+        "candidate_zmx": 0,
+        "staging_zmx": 0,
+        "formal_intake": 0,
+        "codev_calls": 0,
+    }
+    assert evidence["next_exact_group"]["family_id"] == "97524399"
+    assert evidence["saturation_complete"] is False
+
+
 def _softeye_roi_vision_source() -> tuple[str, str]:
     root = Path(__file__).resolve().parents[1]
     source_path = (
