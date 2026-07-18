@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "family_id": "77292582",
+  "root_id": "US-20230090281",
+  "publication_id": "US-20230090281-A1",
+  "identity": {
+    "application_number": "17/798838",
+    "title": "Panoramic camera system for enhanced sensing",
+    "inventors": [
+      "Kurtz; Andrew F.",
+      "Bowron; John",
+      "Niazi; Zakariya",
+      "Krisiloff; Allen",
+      "Muir; Christopher M.",
+      "Stanchus; Robert"
+    ],
+    "applicant": "Circle Optics, Inc.",
+    "assignee": null,
+    "filed": "February 09, 2021",
+    "publication_date": "March 23, 2023",
+    "pct_number": "PCT/US21/17284",
+    "national_stage_of": "PCT/US2021/17284",
+    "related_international_applications": [
+      "PCT/US2020/039197",
+      "PCT/US2020/039200",
+      "PCT/US2020/039201",
+      "PCT/US2020/066702"
+    ],
+    "direct_provisional_application": "US-62972532"
+  },
+  "source_counts": {
+    "background_summary_paragraphs": 7,
+    "description_paragraphs": 165,
+    "total_numbered_paragraphs": 172,
+    "claims": 20,
+    "independent_claim_families": 1,
+    "declared_figure_panels": 28,
+    "drawing_sheets": 28,
+    "prescription_tables": 0,
+    "equation_placeholders": 0,
+    "tagged_html_tables": 0,
+    "html_image_tags": 0,
+    "mathml_objects": 0,
+    "source_items": 11
+  },
+  "optical_design_disclosures": [
+    {
+      "embodiment_number": 1,
+      "name": "baseline low-parallax objective lens 120",
+      "figures": ["2A", "2B"],
+      "description_paragraphs": [41, 43],
+      "published": "compressor, pre-stop and post-stop lens-group schematic and ray paths",
+      "missing": "ordered surface radii, spacings, materials and asphere coefficients",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 2,
+      "name": "multi-compressor low-parallax objective lens 320",
+      "figures": ["8"],
+      "description_paragraphs": [94, 104],
+      "published": "ten-element schematic, group counts, partial first-element radii, 5.64 mm focal length, F/2.8 image-side speed and field/image-size context",
+      "missing": "complete ordered surface radii, spacings, materials and asphere coefficients",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 4,
+      "name": "1.5x objective-plus-relay optical system",
+      "figures": ["9"],
+      "description_paragraphs": [106, 107],
+      "supporting_paragraphs": [131, 138],
+      "published": "objective/relay schematic, nominal 1.5x relay and coherent-optimization architecture",
+      "missing": "complete ordered surface prescriptions for both objective and relay",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 6,
+      "name": "2x coherent truncated-icosahedral objective-plus-relay system",
+      "figures": ["15B"],
+      "description_paragraphs": [145, 146],
+      "published": "schematic plus F/2.8, half-field, image size, dimensions, 2x relay magnification and performance metrics",
+      "missing": "complete ordered surface radii, spacings, materials and asphere coefficients for objective and relay",
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "enhanced_sensing_configurations": [
+    {
+      "embodiment_number": 3,
+      "name": "direct primary-image-plane imaging or event sensor channel",
+      "figures": ["8", "11"],
+      "description_paragraphs": [105, 105],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 5,
+      "name": "beam-split multi-modal objective-plus-relay channel",
+      "figures": ["15A"],
+      "description_paragraphs": [139, 144],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 7,
+      "name": "MEMS-scanned laser range-finding channel",
+      "figures": ["16A"],
+      "description_paragraphs": [151, 152],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 8,
+      "name": "optical-phased-array laser range-finding channel",
+      "figures": ["16B", "16C"],
+      "description_paragraphs": [153, 159],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 9,
+      "name": "directionally controlled flash-LIDAR channel",
+      "figures": ["16D"],
+      "description_paragraphs": [160, 165],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 10,
+      "name": "light-field depth-sensing channel",
+      "figures": ["16E"],
+      "description_paragraphs": [166, 166],
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "claimed_system_items": [
+    {
+      "embodiment_number": 11,
+      "claims": [1, 20],
+      "scope": "coherently optimized low-parallax objective-plus-relay imaging system and dependent parallax, color, beam-split, sensor, depth-sensing, dome, multi-channel, stop-imaging and display variants",
+      "independent_numerical_prescription": false,
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "metadata_boundary": {
+    "effective_focal_length_occurrences": 0,
+    "generic_focal_length_occurrences": 11,
+    "prescription_occurrences": 0,
+    "ordered_surface_table_occurrences": 0,
+    "partial_figure_8_first_element_radii": true,
+    "partial_values_form_a_complete_prescription": false,
+    "numeric_system_assignments": {
+      "F": 0,
+      "FNO": 0,
+      "FOV": 0,
+      "HFOV": 0,
+      "EFL": 1
+    },
+    "efl_assignment_context": "EPID/EFL ratio only; it is not an effective-focal-length assignment",
+    "drawing_coordinates_transcribed": false,
+    "numeric_values_derived_from_rasters": false,
+    "related_application_values_borrowed": false
+  },
+  "result": {
+    "ledger_items": 11,
+    "confirmed_no_prescription": 11,
+    "metadata_unpublished": 0,
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

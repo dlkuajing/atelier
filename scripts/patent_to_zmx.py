@@ -659,6 +659,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_circle_optics_enhanced_sensing_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_sunny_split_lens_active_alignment_attempts(
         raw_text,
         patent_id=patent_id,
@@ -14085,6 +14093,263 @@ _KODAK_LOW_THERMAL_STRESS_IMAGING_SYSTEM_SOURCE_PROFILES: dict[
             },
             "raster_set_sha256": (
                 "ce3c93ccfecf8926ef2f9ba8b42c9d88b9f5ea69436bad4d3cabeb2f28275af2"
+            ),
+        },
+    }
+}
+
+
+_CIRCLE_OPTICS_ENHANCED_SENSING_ITEMS = (
+    (
+        1,
+        "Circle Optics baseline low-parallax objective lens 120",
+        (
+            "confirmed_no_prescription."
+            "baseline_low_parallax_objective_schematic_only"
+        ),
+    ),
+    (
+        2,
+        "Circle Optics multi-compressor low-parallax objective lens 320",
+        (
+            "confirmed_no_prescription."
+            "multicompressor_objective_partial_values_only"
+        ),
+    ),
+    (
+        3,
+        "Circle Optics direct primary-plane sensing channel",
+        (
+            "confirmed_no_prescription."
+            "direct_primary_plane_sensor_architecture_only"
+        ),
+    ),
+    (
+        4,
+        "Circle Optics 1.5x objective-plus-relay system",
+        (
+            "confirmed_no_prescription."
+            "one_point_five_x_objective_relay_schematic_only"
+        ),
+    ),
+    (
+        5,
+        "Circle Optics beam-split multi-modal objective-plus-relay channel",
+        (
+            "confirmed_no_prescription."
+            "beam_split_multimodal_channel_architecture_only"
+        ),
+    ),
+    (
+        6,
+        "Circle Optics 2x coherent objective-plus-relay system",
+        (
+            "confirmed_no_prescription."
+            "two_x_coherent_objective_relay_partial_values_only"
+        ),
+    ),
+    (
+        7,
+        "Circle Optics MEMS-scanned laser range-finding channel",
+        "confirmed_no_prescription.mems_lidar_channel_architecture_only",
+    ),
+    (
+        8,
+        "Circle Optics optical-phased-array laser range-finding channel",
+        "confirmed_no_prescription.opa_lidar_channel_architecture_only",
+    ),
+    (
+        9,
+        "Circle Optics flash-LIDAR channel",
+        "confirmed_no_prescription.flash_lidar_channel_architecture_only",
+    ),
+    (
+        10,
+        "Circle Optics light-field depth-sensing channel",
+        (
+            "confirmed_no_prescription."
+            "light_field_depth_channel_architecture_only"
+        ),
+    ),
+    (
+        11,
+        "Circle Optics claimed coherent low-parallax imaging system",
+        (
+            "confirmed_no_prescription."
+            "claimed_coherent_imaging_system_architecture_only"
+        ),
+    ),
+)
+_CIRCLE_OPTICS_ENHANCED_SENSING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20230090281-A1": {
+        "raw_document_sha256": (
+            "6150d268fd1a6db65c9e1cd5bb9e467b9c90ee4151a8e4653835e20f8b78a792"
+        ),
+        "normalized_text_sha256": (
+            "327e0d7784ca823a7699a9807fbace1d2b67ffe64395148094512bcac5896262"
+        ),
+        "identity_markers": {
+            "PANORAMIC CAMERA SYSTEM FOR ENHANCED SENSING": 1,
+            "Family ID: 77292582": 1,
+            "Applicant: Circle Optics, Inc. (Rochester, NY)": 1,
+            "Appl. No.: 17/798838": 1,
+            "PCT No.: PCT/US21/17284": 1,
+            "PCT/US2020/039197": 2,
+            "PCT/US2020/039200": 2,
+            "PCT/US2020/039201": 2,
+            "PCT/US2020/066702": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20230090281-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract This application generally describes",
+            "background": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": (
+                "Claims 1 . An imaging system for use in a low parallax"
+            ),
+        },
+        "section_sha256": {
+            "preamble": (
+                "3ca5b0f849562a729c0ebcb7270a3d26348ad896812d0dc4cc40ed928d4c2f7c"
+            ),
+            "abstract": (
+                "235ff7448fe836e14953edaedf14a5988a118a7f4f4a8b1278f8609c338ac314"
+            ),
+            "background": (
+                "b2f8c9203b15a36a97a2bb39117b572c685bf9ca342cf522abff402a9d122d8f"
+            ),
+            "description": (
+                "2deb5f826abcc59e5c124aed7e1ff0c6b4789b24d9ebb31ccb6e883cf9e4b402"
+            ),
+            "claims": (
+                "991b5f04075df6e376756f9a3e9eb35826815399181a9b5fc93ea426104131ec"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "4d37de6c8d4b79ba4e51b8156f687ed46e56ae6a08f188638e306f4e5fd6c0c6",
+            (2, 2): "48960f90d39ad7bed3cd1bb89c251295f2f24827686f4a780548f724202db680",
+            (3, 7): "07efbef749c716d460048969b6847e0340107062dc6dd567046c25572eae9e68",
+            (8, 33): "ad06eee57a5327f52f97cebf9b6148331c1defcb88f4f16b756bea80961c1475",
+            (34, 93): "00e9f7b0d9207866a088ccb61ccc49359f82e67846dea5e8096e2565ab29916d",
+            (94, 104): "c579e41acb1a87ebb63d79605b4dedd402e4267c197051bd856cacf975933b28",
+            (105, 105): "11b81f1dbb1a14da69eda7be3c7c31a04381131229740940ad3825335a68e204",
+            (106, 107): "37bb251cc1fb4bfa468bc1cd728184904e1e149e3ff72d6778f9715c8982ab67",
+            (108, 130): "6b9e7b1f020caffad47c2b122619cb65e3fb23c1bcf6f5adbf115302bc34b0c8",
+            (131, 138): "113cb35ed251ed6d19d81dc52edffc3f3162b3f22b9fded9abe49ba8566a55ad",
+            (139, 144): "7b4766614400184d7d00d4f74ed83c227dd512477c75b116d33255e379039d22",
+            (145, 146): "aa40406001318515c4616f9bf5a379b44503815c754e8b6f8b69a4996974a0ff",
+            (147, 150): "75434f471419e3032b80e2ecacd091eeff059971f283114d89f351029b05ad11",
+            (151, 152): "9fc55d90bf12a931932e2a6a0cf23766ff28f33217c49d267c90cf901e4fb737",
+            (153, 159): "684dcfd1688713b28712382297d54ff32ac376fb2f65540e5035a726122a423a",
+            (160, 165): "a3a56b0cc467ad51a6a8e19f7cf132a45e5f9a4ec81b06f3212c2cbbca1884d9",
+            (166, 166): "de3192569f208a7ba09166a30a21a77609707b0378ea9e70b86a0ce28dd0fc38",
+            (167, 172): "9f3ba4fd17455a88277b8014ce495d004545f0a99089bd065a1abd4fb9252601",
+        },
+        "claim_family_span_sha256": {
+            (1, 20): "8eb6e5c395ab87bf9f0ff727f888d0e3d2fa7c6bef2cfe04f0e821cf8747be49"
+        },
+        "figure_labels": (
+            "1",
+            "2A",
+            "2B",
+            "3",
+            "4",
+            "5A",
+            "5B",
+            "5C",
+            "5D",
+            "5E",
+            "5F",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12A",
+            "12B",
+            "13",
+            "14",
+            "15A",
+            "15B",
+            "16A",
+            "16B",
+            "16C",
+            "16D",
+            "16E",
+        ),
+        "source_phrase_counts": {
+            "FIG. 2 A": 11,
+            "FIG. 2 B": 8,
+            "FIG. 8": 27,
+            "FIG. 9": 14,
+            "FIG. 15 A": 11,
+            "FIG. 15 B": 3,
+            "FIG. 16 A": 3,
+            "FIG. 16 B": 3,
+            "FIG. 16 C": 2,
+            "FIG. 16 D": 2,
+            "FIG. 16 E": 2,
+            "prescription": 0,
+            "effective focal length": 0,
+            "focal length": 11,
+            "F-number": 3,
+            "F number": 0,
+            "FNO": 0,
+            "field of view": 19,
+            "full field": 4,
+            "half-FOV": 2,
+            "image height": 0,
+            "radius": 3,
+            "radii": 0,
+            "thickness": 5,
+            "aperture stop": 43,
+            "aspheric": 2,
+            "relay optical system": 41,
+            "event sensor": 13,
+            "MEMS mirror": 10,
+            "optical phased array": 7,
+            "flash LIDAR": 7,
+            "light field": 11,
+        },
+        "numeric_system_value_assignment_counts": {
+            "F": 0,
+            "FNO": 0,
+            "FOV": 0,
+            "HFOV": 0,
+            "EFL": 1,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/ffceeded95c9e93fb/"
+                "US-20230090281-A1.pdf"
+            ),
+            "bytes": 4_378_947,
+            "sha256": (
+                "ffceeded95c9e93fb24b57aca5014cb1ebd856c5cefa1f9e58525427630520c7"
+            ),
+            "page_count": 57,
+            "single_raster_page_count": 57,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 30)),
+            "drawing_sheet_count": 28,
+            "key_page_raster_sha256": {
+                3: "3aa1feb6a8106e18b07128a319784d8a2907a13a8366e3cd37605c41972aa26b",
+                4: "9129514cf0e1888d9013df981841b9d613e0ad9242a363d3a827d6e48c5d5b34",
+                15: "d85c278adfe6e7ea6267ec372666c454358feba1faa963aa313a4e5401f0e2cf",
+                16: "daf4ed3e19e1009d3411d9ffc6f3c44c878b65ebf314960925c8a1d6779b4f4d",
+                23: "4b4cb9491b040c0a9d96a43e26e6c03f74eb209f0e0c5dc1a735b9dd14432ca5",
+                24: "99d52924887132eb7818f6586c44f4d1992f6f7bc8c3fb784b56a263626aaec9",
+                25: "d02755dafe2dd225a18e6677dada13122aaabc7179a69d16eb81f2fd5a4a8269",
+                26: "13e50b2fb1a4f750496a5dfe151c8206203a7b067dd315f3b73a05e775d7213c",
+                27: "78e4c7a6f1e72323612ada6e21475f05dd3e576263d1eb479d064cbda16c1242",
+                28: "cd19615a7075422fd6e3c6b4b7fe1dd288fb8728114c30128221792e026bec93",
+                29: "37142b538883d9abd8740b5c5cbb38a32caa99bf0c2524fb3348f30269664539",
+            },
+            "raster_set_sha256": (
+                "e4fd2d602b607a401b42a43fbbc7b3f5a4cb4fb61a1d758a2c526b379016ad08"
             ),
         },
     }
@@ -39389,6 +39654,331 @@ def _classify_kodak_low_thermal_stress_imaging_system_attempts(
         for number, label, reason_code in (
             _KODAK_LOW_THERMAL_STRESS_IMAGING_SYSTEM_ITEMS
         )
+    ]
+
+
+def _classify_circle_optics_enhanced_sensing_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify all exact-source items in Family 77292582."""
+
+    profile = _CIRCLE_OPTICS_ENHANCED_SENSING_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _CIRCLE_OPTICS_ENHANCED_SENSING_ITEMS
+            )
+        ]
+
+    def validate_spans(
+        paragraphs: dict[int, str],
+        expected_spans: dict[tuple[int, int], str],
+        *,
+        section_name: str,
+    ) -> None:
+        for (start, end), expected_digest in expected_spans.items():
+            span = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            ).strip()
+            observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Circle Optics enhanced-sensing "
+                    f"{section_name} span {start}-{end} changed"
+                )
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official raw text hash "
+                f"changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing normalized text hash "
+                f"changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = text.count(marker)
+            if observed != expected:
+                raise PatentParseError(
+                    "Circle Optics enhanced-sensing identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Circle Optics enhanced-sensing "
+                    f"{section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 173)):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing 172-paragraph denominator changed"
+            )
+        claims_start = section_starts["claims"]
+        paragraphs = {
+            number: text[
+                paragraph_matches[number - 1].start() : (
+                    paragraph_matches[number].start()
+                    if number < 172
+                    else claims_start
+                )
+            ].strip()
+            for number in range(1, 173)
+        }
+        validate_spans(
+            paragraphs,
+            profile["paragraph_span_sha256"],
+            section_name="paragraph",
+        )
+
+        claims_section = sections["claims"]
+        claim_matches = list(
+            re.finditer(
+                r"(?<!\d)(\d{1,2})\s*\.\s+(?=[A-Z])",
+                claims_section,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 21)):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing 20-claim denominator changed"
+            )
+        claims = {
+            number: claims_section[
+                claim_matches[number - 1].start() : (
+                    claim_matches[number].start()
+                    if number < 20
+                    else len(claims_section)
+                )
+            ].strip()
+            for number in range(1, 21)
+        }
+        validate_spans(
+            claims,
+            profile["claim_family_span_sha256"],
+            section_name="claim",
+        )
+
+        if len(profile["figure_labels"]) != 28:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing 28-figure-panel denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing zero-tagged-table layout changed"
+            )
+        if re.findall(r"<table\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official HTML gained table tags"
+            )
+        if re.findall(r"<img\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official HTML gained image tags"
+            )
+        if re.findall(r"<(?:maths?|svg|figure)\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official HTML gained visual tags"
+            )
+        if re.findall(r"##[^#]+##", text):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing equation denominator changed"
+            )
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Circle Optics enhanced-sensing source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        assignments = {
+            label: len(
+                re.findall(
+                    rf"(?<![A-Z0-9_]){re.escape(label)}\s*(?:=|:)",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            for label in ("F", "FNO", "FOV", "HFOV", "EFL")
+        }
+        if assignments != profile["numeric_system_value_assignment_counts"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing numeric system metadata changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Circle Optics enhanced-sensing official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Circle Optics enhanced-sensing official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(
+                _canonical_raster_sha256(page_images[0].data)
+            )
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing raster-page denominator changed"
+            )
+        for page_number, expected_digest in pdf_profile[
+            "key_page_raster_sha256"
+        ].items():
+            if page_raster_hashes[page_number - 1] != expected_digest:
+                raise PatentParseError(
+                    "Circle Optics enhanced-sensing key page "
+                    f"{page_number} raster changed"
+                )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing official PDF gained a text layer"
+            )
+        if not (
+            pdf_profile["drawing_page_numbers"] == tuple(range(2, 30))
+            and pdf_profile["drawing_sheet_count"] == 28
+        ):
+            raise PatentParseError(
+                "Circle Optics enhanced-sensing drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all 11 exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the exact A1 source contains 172 continuous numbered paragraphs, 20 "
+        "claims, one independent claim family, 28 declared figure panels, 28 "
+        "drawing sheets and zero prescription tables. All 57 exact official "
+        "page rasters were retained and rehashed; no numeric value is measured "
+        "from a drawing, inferred, or borrowed from a related application"
+    )
+    details = (
+        "Paragraphs 41-43 and FIGS. 2A-2B publish the baseline low-parallax "
+        "objective's compressor, pre-stop and post-stop schematic only; no "
+        f"ordered surface radii, spacings, materials or aspheres are supplied; {common}",
+        "Paragraphs 94-104 and FIG. 8 publish group and element counts, only "
+        "the first compressor element's two radii, a 5.64 mm focal length, "
+        "F/2.8 image-side speed and field/image-size context, but not the "
+        "remaining ordered radii, any complete spacing sequence, complete "
+        f"materials or asphere coefficients; {common}",
+        "Paragraph 105 and FIGS. 8/11 publish a direct primary-image-plane "
+        "imaging or event-sensor channel architecture, not an independent "
+        f"numerical optical prescription; {common}",
+        "Paragraphs 106-107 and 131-138 plus FIG. 9 publish an objective with "
+        "a nominal 1.5x imaging relay and coherent-optimization architecture, "
+        f"but no complete ordered prescription for either optical system; {common}",
+        "Paragraphs 139-144 and FIG. 15A publish a beam-split multi-modal "
+        "objective-plus-relay channel plus sensor, zoom, focus and steering "
+        f"variants, not a complete numerical optical prescription; {common}",
+        "Paragraphs 145-146 and FIG. 15B publish F/2.8, half-fields, image "
+        "size, system dimensions, 2x relay magnification and performance "
+        "metrics, but no complete ordered objective or relay prescription; "
+        f"{common}",
+        "Paragraphs 151-152 and FIG. 16A publish a MEMS-scanned laser "
+        "range-finding architecture sharing objective and relay paths, not a "
+        f"numerical optical prescription; {common}",
+        "Paragraphs 153-159 and FIGS. 16B-16C publish an optical-phased-array "
+        "range-finding architecture and its common stop-plane integration, "
+        f"not a numerical optical prescription; {common}",
+        "Paragraphs 160-165 and FIG. 16D publish a directionally controlled "
+        "flash-LIDAR channel plus shared filtering and chromatic-compensation "
+        f"variants, not a numerical optical prescription; {common}",
+        "Paragraph 166 and FIG. 16E publish a light-field depth-sensing "
+        "channel with a microlens or pinhole array, not an independent "
+        f"numerical optical prescription; {common}",
+        "Claims 1-20 and paragraphs 167-172 publish one coherent low-parallax "
+        "objective-plus-relay system family with dependent parallax, color, "
+        "beam-split, sensor, depth-sensing, dome, multi-channel, stop-imaging, "
+        f"display and relay-technology variants, not a numerical prescription; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status=reason_code.split(".", 1)[0],
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _CIRCLE_OPTICS_ENHANCED_SENSING_ITEMS
     ]
 
 

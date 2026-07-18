@@ -145,9 +145,9 @@
     },
     "missing_root_ids": [],
     "report": {
-      "bytes": 42946,
+      "bytes": 43899,
       "path": ".planning/loop/patent-local-replay-report.md",
-      "sha256": "bc9b3ab1a8a9ef47457ae8e6ba3f982fea83ded0226bc7fb948d5f34e7d2a645"
+      "sha256": "90e35c0038e615f6e58d8af115f1119cf69f4976e6b33eb1315ca15c45e91579"
     },
     "result_set_sha256": "e6b551ee0be48a1d09612a3366320d285d652812bd997fab1bc196d6d5329a5d",
     "root_state_counts": {
@@ -161,9 +161,9 @@
     },
     "roots_with_results": 619,
     "summary": {
-      "bytes": 41385,
+      "bytes": 42305,
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "sha256": "8f233300dc3026ad8788a64b50787435b6756e97539c0a06116971a52a92d2cf"
+      "sha256": "3d057c7fa39866fa61af630da2b12b2dabd19caf916da8eca31e3269ea8d62af"
     },
     "terminal_status_counts": {
       "confirmed_no_prescription": 236,
