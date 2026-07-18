@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/root/publication order",
+  "result_set_sha256": "d0141d9d189ca4c431f52765022549a7eb75a00e71e37ac6180ea273e53075a9",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 97, "affected_items": 97},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "86451284",
+    "root_ids": ["US-20260072253"],
+    "publication_ids": ["US-20260072253-A1"],
+    "application_number": "19/393716",
+    "title": "IMAGING LENS SYSTEM",
+    "applicant": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "layout_signature": "3bf4788767b08ba4bd8be137b2ba0c39cb03bfc71f95429fd9aee25900ffc628",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 7, "example_anchor": 0, "f_number": 1, "full_field": 0, "half_field": 1},
+    "table_count": 16,
+    "raw_document": {"evidence_type": "uspto_ppubs_parser_input_html", "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/1d13b30b11551e9e/US-20260072253-A1.html", "sha256": "1d13b30b11551e9e40d92414d9e5580fba18766d4393c98a079ea146453e9a6f"},
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

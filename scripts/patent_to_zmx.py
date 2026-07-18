@@ -655,6 +655,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_largan_folded_light_blocking_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
@@ -12714,6 +12720,229 @@ _ABILITY_THREE_FOUR_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             ),
             "raster_set_sha256": (
                 "1876cabda170446490b897f726323f5891e1616b0515247b7525ceb51685b7aa"
+            ),
+        },
+    }
+}
+_LARGAN_FOLDED_LIGHT_BLOCKING_ITEMS = (
+    (
+        1,
+        "Largan first-embodiment first light-blocking structure example",
+        "first_embodiment_first_light_blocking_structure_example_only",
+    ),
+    (
+        2,
+        "Largan first-embodiment second light-blocking structure example",
+        "first_embodiment_second_light_blocking_structure_example_only",
+    ),
+    (
+        3,
+        "Largan first-embodiment third light-blocking structure example",
+        "first_embodiment_third_light_blocking_structure_example_only",
+    ),
+    (
+        4,
+        "Largan second-embodiment first light-blocking structure example",
+        "second_embodiment_first_light_blocking_structure_example_only",
+    ),
+    (
+        5,
+        "Largan second-embodiment second light-blocking structure example",
+        "second_embodiment_second_light_blocking_structure_example_only",
+    ),
+    (
+        6,
+        "Largan third-embodiment light-blocking structure example",
+        "third_embodiment_light_blocking_structure_example_only",
+    ),
+    (
+        7,
+        "Largan fourth-embodiment multi-camera smartphone wrapper",
+        "fourth_embodiment_multi_camera_smartphone_wrapper_only",
+    ),
+    (
+        8,
+        "Largan fifth-embodiment folded-telephoto smartphone wrapper",
+        "fifth_embodiment_folded_telephoto_smartphone_wrapper_only",
+    ),
+    (
+        9,
+        "Largan sixth-embodiment vehicle-camera placement wrapper",
+        "sixth_embodiment_vehicle_camera_placement_wrapper_only",
+    ),
+)
+_LARGAN_FOLDED_LIGHT_BLOCKING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20240272407-A1": {
+        "raw_document_sha256": (
+            "91eafa8d923962424abb898086549ed7e7b7b26048ea6757de282b39409dc8d9"
+        ),
+        "normalized_text_sha256": (
+            "35f2270882029598db583178288a509b55266108bfa182bfb2de20abfd71111e"
+        ),
+        "section_markers": {
+            "preamble": "US-20240272407-A1",
+            "abstract": (
+                "Abstract An optical imaging module includes an optical imaging lens assembly"
+            ),
+            "background": "Background/Summary RELATED APPLICATIONS [0001]",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0008]",
+            "claims": "Claims 1 . An optical imaging module, comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "59dc6d32bf8e9c92c4cecc4d61cca32712d99a1202fd86c5d7fbb98bec45b56e"
+            ),
+            "abstract": (
+                "b517a1e403177f06c4dae517ed594c54bc6f58b7e0b7af9534876aab212818d5"
+            ),
+            "background": (
+                "212832662aa4e38e0f092b79864b481f68659b2ed1f66b5098d0144209bb5d87"
+            ),
+            "description": (
+                "36bab72946a487574a7297515a16b9d1255b8a0fa22edcb8c67c7648ba72aa20"
+            ),
+            "claims": (
+                "b58c8430eb1908274cafb56f9f5cc2202a4c9a3943de0832d5108123d6b16f2d"
+            ),
+        },
+        "background_paragraph_span_sha256": {
+            (1, 1): "756de23a5e991c3f6a27abfcf5a0b74f8f81ddb3be778fc14b7ccaa6e3c6ac9d",
+            (2, 2): "c462b140bbb3fe7d691fd5bbdce370bd71aa9d7da8cea08c223bf8fcfb5a5f8f",
+            (3, 4): "e43d828c3b8e9693c62f9d65ee171bcad7e315a22eeea7596e088b338c4754d3",
+            (5, 7): "252db405eb4e183436344e407fcdc19837c16f185de4014d2de54fd479c2bf20",
+        },
+        "description_paragraph_span_sha256": {
+            (8, 39): "a88ff443d289157122fc5ebf6acfc48401903b766fa7d601bf835e7e69b92f81",
+            (40, 58): "a0435ba88ee7e63233a218a06c1593b09e31b4000a06e5fc0ca91906f592bf66",
+            (59, 69): "90e5b9ac5d01f55fbd83b7c4701b9392475056e6bc59a959994655de2e3c9e47",
+            (70, 77): "8c3cecdd4ca330cb5e79ac19ebde63b153eb29d195d2aab2c64794770db2f9f6",
+            (78, 82): "fe06c092185789ead2426d635bc343464206c0de621f952be81796f0bc8c8193",
+            (83, 92): "b9f76be4bc666ff1bc7ea668ece4485088e93363a68e91483fd0f04c2d7c7bfe",
+            (93, 96): "305325d956b729d7e5fdee35b58c063c896f70b70a7e12317bd6581843855ecc",
+            (97, 100): "bd731179cf9156743f54a99599088b8cf6134e1caa9267b8bfe160ec6430c1db",
+            (101, 101): "6d6f6d4adae60f6c5ee9c34c62bf52b52a95fde604e1cb4ae97effbb30aa2cce",
+        },
+        "item_ranges": (
+            (59, 65),
+            (66, 67),
+            (68, 69),
+            (70, 74),
+            (75, 77),
+            (78, 82),
+            (83, 92),
+            (93, 96),
+            (97, 100),
+        ),
+        "item_markers": (
+            "[0061] FIG. 1 D is a schematic view of the light blocking element 130",
+            "[0066] FIG. 1 G is a schematic view of the light blocking element 130",
+            "[0068] FIG. 1 J is a schematic view of the light blocking element 130",
+            "[0072] FIG. 2 C is a partial enlarged view of the light blocking element 230",
+            "[0075] FIG. 2 E is a partial enlarged view of the light blocking element 230",
+            "[0080] FIG. 3 C is a schematic view of the light blocking element 330",
+            "[0083] FIG. 4 A is a schematic view of an electronic device 40",
+            "[0093] FIG. 5 is a schematic view of an electronic device 50",
+            "[0097] FIG. 6 A shows a schematic view of a vehicle device 600",
+        ),
+        "figure_labels": (
+            "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I",
+            "1J", "1K", "1L", "2A", "2B", "2C", "2D", "2E", "2F",
+            "3A", "3B", "3C", "3D", "4A", "4B", "4C", "4D", "4E",
+            "5", "6A", "6B", "6C",
+        ),
+        "table_sha256": (
+            "e171811aa45851d915763a82b6cacc1cceb3f0e334a3f374aef78280ffbfb0dc",
+            "4b32801ad4917ce9bf68a67a151d32a6711fdeadc91a4f990e9f608f36087417",
+            "14b4eb8b7ae17e86f5b491c58124fb0a94aae4785e536b6f31f1b95d07da99eb",
+        ),
+        "table_prefixes": (
+            "TABLE-US-00001 TABLE 1 1st Example of 1st Embodiment N1 2 N2S 360 N2T 720 N1 + N2T 722",
+            "TABLE-US-00002 TABLE 2 2nd Example of 1st Embodiment N1 2 N2S 720 N2T 1440 N1 + N2T 1442",
+            "TABLE-US-00003 TABLE 3 2nd Example of 2nd Embodiment N1 4 N2S 85 N2T 340 N1 + N2T 344",
+        ),
+        "mathml_sha256": (
+            "9886c944c5e15625af08da1f25df74b482bd546a8a60980f2d80c9061e5cec3f",
+            "46dfe59afdeddca6876b5ccac775c47a4baa735b83593e209c5928833b2fcca9",
+            "d985a07126495d33ad1e8063913e550978ccba71cdb9ca64fd7ee8c6c2a43f4e",
+            "074e773e59f2d5b40d29785bbbb7e2b17bb41232771d510e89b864dc324dd549",
+        ),
+        "claim_sha256": (
+            "a5f56ce3e3f05bcac39c700b9af46f02b3c52b27beadcf65f9f7c4f3886d7956",
+            "422631091213e7a7757d460daea125ebeda14fb7a08318f6de0da2bbc5ad2520",
+            "411f8157961cd2016fab29f5139fc46d0aee6af417e3704ecc3a8be5751f1221",
+            "1dde69b4c3e0920f9a6b4b0615f696d7a8535bed8fb1b2c9944e94db279c3f4f",
+            "7488604ac22b862fb99ce282549a86e30dd162e869e68af3a4d01e0061d5c3d3",
+            "f5ebd306076b87bc0acaee84faa2852a5c3095e5a3dd3107d4f620b36d526b56",
+            "cf25f7c9e7a6ee45be6b1872c09bc4d299a500d6550c05cd8fe56e9d6ab2e0bc",
+            "6d81c3ff276cf40e60ab4a33fe366459e4f02b24a30d4d6e1a55384445c1da6e",
+            "e045578945305aa78cf7381377efc64530c76f00c4b0d6080c4c199126c65989",
+            "8f74df8377925b0f96f874fe23be42495b12c833bf773deba2bf519db3ba66a1",
+            "183e8649de7b67096dad6f8983fd209dbf3be1c067b626bd114f0cd349232290",
+            "7de85692187ac12133466b296acbb07c768d27bcbd116bd9a0b23afd258f3531",
+        ),
+        "identity_markers": {
+            "US-20240272407-A1": 1,
+            "United States Patent Application Publication 20240272407": 1,
+            "Kind Code A1": 1,
+            "Publication Date August 15, 2024": 1,
+            "Applicant: LARGAN PRECISION CO., LTD.": 1,
+            "Family ID: 89620688": 1,
+            "Appl. No.: 18/642968": 1,
+            "Filed: April 23, 2024": 1,
+            "parent US continuation 18414590 20240117 PENDING": 1,
+            "US 63480310 20230118": 1,
+        },
+        "prescription_phrase_counts": {
+            "FNO": 0,
+            "F-number": 0,
+            "F number": 0,
+            "F/#": 0,
+            "HFOV": 0,
+            "FOV": 0,
+            "image height": 0,
+            "effective focal length": 0,
+            "radius of curvature": 0,
+            "aspheric": 0,
+            "refractive index": 0,
+            "Abbe number": 0,
+            "focal length": 1,
+            "field of view": 2,
+            "angle of view": 1,
+        },
+        "architecture_phrase_counts": {
+            "optical lens element": 24,
+            "first anti-reflective structures": 65,
+            "second anti-reflective structures": 40,
+            "1st Embodiment": 29,
+            "2nd Embodiment": 15,
+            "3rd Embodiment": 13,
+            "4th Embodiment": 13,
+            "5th Embodiment": 4,
+            "6th Embodiment": 8,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/USPTO-PDF/"
+                "80d684b34e96cd5a/US-20240272407-A1.pdf"
+            ),
+            "bytes": 1631744,
+            "sha256": (
+                "80d684b34e96cd5a24c2b3619fa6a95e50645f9b174641566e5ac747fc86de77"
+            ),
+            "page_count": 40,
+            "single_raster_page_count": 40,
+            "common_raster_dimensions": (2560, 3300),
+            "common_raster_page_count": 39,
+            "last_raster_dimensions": (2550, 3300),
+            "drawing_page_numbers": tuple(range(2, 33)),
+            "drawing_sheet_count": 31,
+            "table_page_numbers": (36, 37),
+            "table_page_raster_sha256": (
+                "3b723278d859ab6765d809b4a9721133ee2c8b54ee72f4ac07841b613ab1561a",
+                "8b865905e6575cc46339f267eb16d2bcc81029f304d4d5ab823c26657989659f",
+            ),
+            "raster_set_sha256": (
+                "6f6b9491f7d7fa8931b59909fb27c87a66284284e9ae2154973a827e01a70b2a"
             ),
         },
     }
@@ -35631,6 +35860,371 @@ def _classify_ability_three_four_lens_attempts(
             ),
         )
         for number, label in _ABILITY_THREE_FOUR_LENS_ITEMS
+    ]
+
+
+def _classify_largan_folded_light_blocking_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 89620688 light-blocking/device examples."""
+
+    profile = _LARGAN_FOLDED_LIGHT_BLOCKING_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _LARGAN_FOLDED_LIGHT_BLOCKING_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\[(\d{4})\]", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"Largan folded light-blocking {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan folded light-blocking identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan folded light-blocking section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan folded light-blocking section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan folded light-blocking "
+                    f"{section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"],
+            expected_numbers=tuple(range(1, 8)),
+            label="background/summary paragraph",
+        )
+        description_paragraphs = numbered_paragraphs(
+            sections["description"],
+            expected_numbers=tuple(range(8, 102)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (
+                background_paragraphs,
+                profile["background_paragraph_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_paragraph_span_sha256"],
+                "description",
+            ),
+        ):
+            for (start, end), expected_digest in span_hashes.items():
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                ).strip()
+                observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        "Largan folded light-blocking "
+                        f"{label} paragraph span {start}-{end} changed"
+                    )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_LARGAN_FOLDED_LIGHT_BLOCKING_ITEMS)
+            == 9
+        ):
+            raise PatentParseError(
+                "Largan folded light-blocking source-item denominator changed"
+            )
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number]
+                for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Largan folded light-blocking source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(9, 40):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+(\d)(?:\s+([A-Z]))?\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan folded light-blocking figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1) + (match.group(2) or ""))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Largan folded light-blocking figure-label denominator changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != (1, 2, 3):
+            raise PatentParseError(
+                "Largan folded light-blocking tagged-table denominator changed"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in table_blocks
+        )
+        if table_digests != profile["table_sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking mechanical-table payloads changed"
+            )
+        for block, expected_prefix in zip(
+            table_blocks, profile["table_prefixes"], strict=True
+        ):
+            if not block.text.startswith(expected_prefix):
+                raise PatentParseError(
+                    "Largan folded light-blocking mechanical-table schema changed"
+                )
+
+        mathml_blocks = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        mathml_digests = tuple(
+            hashlib.sha256(block.encode("utf-8")).hexdigest()
+            for block in mathml_blocks
+        )
+        if mathml_digests != profile["mathml_sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 13):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Largan folded light-blocking claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claim_digests = tuple(
+            hashlib.sha256(
+                claims_section[
+                    position : (
+                        claim_starts[index + 1]
+                        if index + 1 < len(claim_starts)
+                        else len(claims_section)
+                    )
+                ]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for index, position in enumerate(claim_starts)
+        )
+        if claim_digests != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking twelve-claim denominator changed"
+            )
+
+        for group_name in (
+            "prescription_phrase_counts",
+            "architecture_phrase_counts",
+        ):
+            for phrase, expected in profile[group_name].items():
+                observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+                if observed != expected:
+                    raise PatentParseError(
+                        "Largan folded light-blocking source phrase "
+                        f"{phrase!r} occurs {observed}; expected {expected}"
+                    )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Largan folded light-blocking official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Largan folded light-blocking official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Largan folded light-blocking official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            expected_dimensions = (
+                pdf_profile["common_raster_dimensions"]
+                if page_number <= pdf_profile["common_raster_page_count"]
+                else pdf_profile["last_raster_dimensions"]
+            )
+            if image.size != expected_dimensions:
+                raise PatentParseError(
+                    "Largan folded light-blocking official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Largan folded light-blocking official raster-page denominator changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Largan folded light-blocking official PDF gained a text layer"
+            )
+        if (
+            len(pdf_profile["drawing_page_numbers"])
+            != pdf_profile["drawing_sheet_count"]
+            or pdf_profile["drawing_page_numbers"] != tuple(range(2, 33))
+        ):
+            raise PatentParseError(
+                "Largan folded light-blocking drawing-sheet denominator changed"
+            )
+        table_page_hashes = tuple(
+            page_raster_hashes[page_number - 1]
+            for page_number in pdf_profile["table_page_numbers"]
+        )
+        if table_page_hashes != pdf_profile["table_page_raster_sha256"]:
+            raise PatentParseError(
+                "Largan folded light-blocking table-page rasters changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all nine exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML and all 40 exact official page rasters contain "
+        "31 declared figure panels across 31 drawing sheets, three tagged mechanical "
+        "tables and four claim-condition MathML objects; the tables publish N1/N2S/N2T "
+        "anti-reflective-structure counts only, while no ordered optical radius, spacing, "
+        "material, refractive-index, Abbe, conic, asphere, stop, effective-focal-length, "
+        "F-number, image-height or prescription-specific angular-field data is disclosed"
+    )
+    details = (
+        "paragraphs 59-65, FIGS. 1A-1F and TABLE 1 publish a folded path, an unspecified "
+        f"at-least-one lens element and a first light-blocking structure example; {common}",
+        "paragraphs 66-67, FIGS. 1G-1I and TABLE 2 publish the second first-embodiment "
+        f"light-blocking structure example only; {common}",
+        "paragraphs 68-69 and FIGS. 1J-1L publish the third first-embodiment "
+        f"light-blocking structure example only; {common}",
+        "paragraphs 70-74 and FIGS. 2A-2D publish the first second-embodiment "
+        f"light-blocking structure example only; {common}",
+        "paragraphs 75-77, FIGS. 2E-2F and TABLE 3 publish the second "
+        f"second-embodiment light-blocking structure example only; {common}",
+        "paragraphs 78-82 and FIGS. 3A-3D publish the third-embodiment "
+        f"light-blocking structure example only; {common}",
+        "paragraphs 83-92 and FIGS. 4A-4E publish a multi-camera smartphone wrapper "
+        f"with generic different-focal-length modules only; {common}",
+        "paragraphs 93-96 and FIG. 5 publish a smartphone wrapper with a generic "
+        f"folded-telephoto module only; {common}",
+        "paragraphs 97-100 and FIGS. 6A-6C publish vehicle camera placements and a "
+        f"40-to-90-degree coverage angle only; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=f"confirmed_no_prescription.{reason_code}",
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _LARGAN_FOLDED_LIGHT_BLOCKING_ITEMS
     ]
 
 
