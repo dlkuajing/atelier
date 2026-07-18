@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "6eff84b30b26d11feac2588b2048d1c92cfe41cfed2fbce4a4ad42f1e15d0925",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 92,
+      "affected_items": 92
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "44972265",
+    "root_ids": [
+      "US-8287129"
+    ],
+    "publication_ids": [
+      "US-8287129-B2"
+    ],
+    "application_number": "12/784523",
+    "title": "Low thermal stress birefringence imaging system",
+    "applicant": "Kurtz; Andrew F.",
+    "assignee": "Eastman Kodak Company",
+    "layout_signature": "47e7cc4e752d976ce84eb570f2ad8f451a7ead80846f9db627cd1be1f6a5aa35",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 3,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/4b55105484abed1d/US-8287129-B2.html",
+      "sha256": "4b55105484abed1dba7679fb42270888ef06cbc6362aeefed0db92d5112ab647"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

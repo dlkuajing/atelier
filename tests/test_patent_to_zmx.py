@@ -24491,9 +24491,11 @@ def test_ogp_telecentric_zoom_evidence_rehashes_every_reference() -> None:
     assert summary["cohort_roots"] == summary["roots_with_results"] == 619
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
-    assert summary["result_set_sha256"] == evidence["ledger"][
-        "result_set_sha256"
-    ]
+    # This evidence preserves the result-set snapshot recorded by the prior shovel;
+    # the shared summary path intentionally advances as later roots are reconciled.
+    assert evidence["ledger"]["result_set_sha256"] == (
+        "42f5ac5e6fdda75c04fcd1489a927c8ce46359d7e08aa252c2138d0470934768"
+    )
     assert evidence["semantic_replay_sha256"] == (
         "0e5314f3793453d4414ed0551ec7d6c529c346a3174a615f708a5f64eabe737c"
     )
@@ -24874,14 +24876,456 @@ def test_samsung_animal_capture_evidence_rehashes_every_reference() -> None:
     assert summary["cohort_roots"] == summary["roots_with_results"] == 619
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
-    assert summary["result_set_sha256"] == evidence["ledger"][
-        "result_set_sha256"
-    ]
+    # This evidence preserves the result-set snapshot recorded by the prior shovel;
+    # the shared summary path intentionally advances as later roots are reconciled.
+    assert evidence["ledger"]["result_set_sha256"] == (
+        "42f5ac5e6fdda75c04fcd1489a927c8ce46359d7e08aa252c2138d0470934768"
+    )
     assert evidence["semantic_replay_sha256"] == (
         "1e26b36d83a82a3d52990ebf7c6ed8286ea2640ab7ae333cef0a8b7d516e46e4"
     )
     assert not any(evidence["formal_outputs"].values())
     assert evidence["next_exact_group"]["family_id"] == "44259669"
+    assert evidence["saturation_complete"] is False
+
+
+def _kodak_stress_birefringence_design_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "3ffa3ae9c30d2e8e"
+        / "US-8504328-B2.html"
+    )
+    return "US-8504328-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_kodak_stress_birefringence_design_reconciles_nine_items() -> None:
+    patent_id, raw_text = _kodak_stress_birefringence_design_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 10))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert [attempt.error.status for attempt in attempts] == [
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "metadata_unpublished",
+        "metadata_unpublished",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+    ]
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        (
+            "confirmed_no_prescription."
+            "first_projection_lens_schematic_materials_and_performance_only"
+        ),
+        (
+            "confirmed_no_prescription."
+            "first_relay_lens_schematic_materials_and_performance_only"
+        ),
+        (
+            "confirmed_no_prescription."
+            "second_projection_lens_schematic_materials_and_performance_only"
+        ),
+        (
+            "confirmed_no_prescription."
+            "second_relay_lens_schematic_materials_and_performance_only"
+        ),
+        (
+            "metadata_unpublished."
+            "prescription_specific_efl_f_number_and_angular_field_absent"
+        ),
+        (
+            "metadata_unpublished."
+            "prescription_specific_efl_f_number_and_angular_field_absent"
+        ),
+        (
+            "confirmed_no_prescription."
+            "stress_birefringence_two_group_lens_design_method_only"
+        ),
+        (
+            "confirmed_no_prescription."
+            "stress_birefringence_one_or_more_group_lens_design_method_only"
+        ),
+        (
+            "confirmed_no_prescription."
+            "stress_birefringence_merit_function_lens_design_method_only"
+        ),
+    ]
+    assert "no ordered surface radii or spacings" in str(attempts[0].error)
+    assert "exact-raster FIG. 14A" in str(attempts[4].error)
+    assert "general F/6 relay context is not substituted" in str(attempts[5].error)
+    assert "claims 1-18" in str(attempts[6].error)
+    assert all("no numeric value is measured" in str(item.error) for item in attempts)
+
+
+def test_kodak_stress_birefringence_design_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _kodak_stress_birefringence_design_source()
+    changed = raw_text.replace("August 06, 2013", "August 07, 2013", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 9
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Kodak stress-birefringence official raw text hash changed for "
+        "US-8504328-B2"
+    }
+
+
+def test_kodak_stress_birefringence_design_source_profile_closes_denominator() -> None:
+    patent_id, raw_text = _kodak_stress_birefringence_design_source()
+    profile = (
+        patent_to_zmx._KODAK_STRESS_BIREFRINGENCE_DESIGN_SOURCE_PROFILES[
+            patent_id
+        ]
+    )
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    section_markers = profile["section_markers"]
+    section_names = tuple(section_markers)
+    section_starts = {
+        name: text.index(marker) for name, marker in section_markers.items()
+    }
+    sections = {
+        name: text[
+            section_starts[name] : (
+                section_starts[section_names[index + 1]]
+                if index + 1 < len(section_names)
+                else len(text)
+            )
+        ]
+        for index, name in enumerate(section_names)
+    }
+
+    assert hashlib.sha256(raw_text.encode("utf-8")).hexdigest() == profile[
+        "raw_document_sha256"
+    ]
+    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == profile[
+        "normalized_text_sha256"
+    ]
+    assert {
+        name: hashlib.sha256(section.encode("utf-8")).hexdigest()
+        for name, section in sections.items()
+    } == profile["section_sha256"]
+    assert len(profile["background_paragraph_span_sha256"]) == 4
+    assert len(profile["description_paragraph_span_sha256"]) == 17
+    assert len(profile["claim_family_span_sha256"]) == 3
+    assert len(profile["figure_labels"]) == 42
+    assert len(patent_to_zmx._KODAK_STRESS_BIREFRINGENCE_DESIGN_ITEMS) == 9
+    assert patent_to_zmx._patent_table_blocks(text) == []
+    assert re.findall(r"<table\b|<img\b|<maths\b", raw_text, re.IGNORECASE) == []
+    assert {
+        placeholder: text.count(placeholder)
+        for placeholder in profile["equation_placeholder_counts"]
+    } == profile["equation_placeholder_counts"]
+
+
+def test_kodak_stress_birefringence_design_official_pdf_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile = (
+        patent_to_zmx._KODAK_STRESS_BIREFRINGENCE_DESIGN_SOURCE_PROFILES[
+            "US-8504328-B2"
+        ]["official_pdf"]
+    )
+    pdf_path = root / profile["path"]
+    pdf_bytes = pdf_path.read_bytes()
+
+    assert len(pdf_bytes) == profile["bytes"] == 3_385_711
+    assert hashlib.sha256(pdf_bytes).hexdigest() == profile["sha256"]
+    reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+    assert len(reader.pages) == profile["page_count"] == 62
+    page_hashes = []
+    text_characters = 0
+    for page_number, page in enumerate(reader.pages, start=1):
+        assert len(page.images) == 1
+        page_image = page.images[0]
+        assert page_image.image.convert("RGB").size == profile[
+            "raster_dimensions"
+        ]
+        page_hash = patent_pdf_recovery._canonical_raster_sha256(page_image.data)
+        if page_number in profile["key_page_raster_sha256"]:
+            assert page_hash == profile["key_page_raster_sha256"][page_number]
+        page_hashes.append(page_hash)
+        text_characters += len(page.extract_text() or "")
+    assert hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest() == profile["raster_set_sha256"]
+    assert text_characters == 0
+    assert profile["drawing_page_numbers"] == tuple(range(3, 42))
+    assert profile["drawing_sheet_count"] == 39
+
+
+def test_kodak_stress_birefringence_denominator_closes_every_item() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-44259669"
+    denominator = json.loads(
+        (quick / "family-44259669-denominator.json").read_text(encoding="utf-8")
+    )
+    facts = json.loads(
+        (quick / "family-44259669-source-facts.json").read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "queue_only_same_application_publications": 1,
+        "cross_referenced_sibling_applications": 2,
+        "background_summary_numbered_paragraphs": 43,
+        "description_numbered_paragraphs": 164,
+        "total_numbered_paragraphs": 207,
+        "claims": 29,
+        "independent_claim_families": 3,
+        "declared_textual_figure_panels": 42,
+        "located_raster_figure_panels": 42,
+        "retained_drawing_sheets": 39,
+        "declared_tabular_figure_panels": 12,
+        "located_tabular_figure_panels": 12,
+        "tagged_html_tables": 0,
+        "optical_prescription_tables": 2,
+        "equation_placeholders": 5,
+        "mathml_objects": 0,
+        "html_image_tags": 0,
+        "source_disclosed_items": 9,
+        "named_lens_design_examples": 6,
+        "lens_design_method_items": 3,
+        "confirmed_no_prescription_items": 7,
+        "metadata_unpublished_items": 2,
+        "replayed_ledger_items": 9,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 62,
+        "retained_page_rasters": 62,
+        "unmapped_claims": 0,
+        "unmapped_declared_figure_panels": 0,
+        "unmapped_tabular_figure_panels": 0,
+        "unmapped_equation_placeholders": 0,
+        "unmapped_source_items": 0,
+    }
+    assert denominator["denominator"]["source_disclosed_items"] == len(
+        denominator["items"]
+    )
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 10)
+    )
+    assert [item["terminal_status"] for item in denominator["items"]].count(
+        "confirmed_no_prescription"
+    ) == 7
+    assert [item["terminal_status"] for item in denominator["items"]].count(
+        "metadata_unpublished"
+    ) == 2
+    assert [item["claims"] for item in denominator["items"][-3:]] == [
+        [1, 18],
+        [19, 28],
+        [29, 29],
+    ]
+    assert facts["source_counts"]["source_items"] == 9
+    assert len(facts["lens_examples"]) == 6
+    assert len(facts["method_items"]) == 3
+    assert facts["result"] == {
+        "ledger_items": 9,
+        "confirmed_no_prescription": 7,
+        "metadata_unpublished": 2,
+        "worker_requests": 0,
+        "worker_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+        "formal_intake": 0,
+        "codev_calls": 0,
+    }
+    assert denominator["representability_boundary"]["formal_output_permitted"] is False
+    assert not any(denominator["formal_outputs"].values())
+
+
+def test_kodak_stress_birefringence_raster_audit_rehashes_visuals() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-44259669"
+    audit = json.loads(
+        (quick / "family-44259669-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    assert audit["official_pdf"]["page_count"] == 62
+    assert len(audit["official_pdf"]["page_raster_sha256"]) == 62
+    assert audit["official_pdf"]["drawing_page_numbers"] == list(range(3, 42))
+    assert len(audit["figure_pages"]) == 42
+    assert len(audit["table_figure_labels"]) == 12
+    assert audit["prescription_figure_labels"] == ["14A", "14B"]
+    assert audit["prescription_page_numbers"] == [37, 38]
+    assert audit["visual_review"]["original_resolution_pages_viewed"] == [
+        31,
+        33,
+        37,
+        38,
+    ]
+    assert audit["visual_review"]["prescription_specific_system_labels_visible"] == []
+    assert audit["visual_review"]["numeric_cells_transcribed"] is False
+    assert audit["visual_review"]["drawing_coordinates_measured"] is False
+    for name, record in audit["review_artifacts"].items():
+        content = (quick / "pdf-review" / name).read_bytes()
+        assert len(content) == record["bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+
+
+def test_kodak_stress_birefringence_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-44259669"
+    replay = json.loads(
+        (quick / "family-44259669-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in replay["attempts"]:
+        attempt_bytes = (root / record["path"]).read_bytes()
+        assert len(attempt_bytes) == record["bytes"]
+        assert hashlib.sha256(attempt_bytes).hexdigest() == record["file_sha256"]
+        payload = json.loads(attempt_bytes)
+        assert payload.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+    assert len(set(semantic_hashes)) == 1
+    assert semantic_hashes[0] == replay["semantic_sha256"] == (
+        "1af099ffe4eee2481479e41b25534eaf2ac459583ecf44785a0507b2b46a2479"
+    )
+    assert replay["semantic_equal"] is True
+    assert replay["intermediate_runtime_failures"] == []
+    assert replay["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 9},
+        "terminal_status_counts": {
+            "confirmed_no_prescription": 7,
+            "metadata_unpublished": 2,
+        },
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+
+def test_kodak_stress_birefringence_queue_and_census_are_deterministic() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-44259669"
+    before = json.loads(
+        (quick / "generic-residual-before-93.json").read_text(encoding="utf-8")
+    )
+    after_1_path = quick / "generic-residual-after-1.json"
+    after_2_path = quick / "generic-residual-after-2.json"
+    after_1 = json.loads(after_1_path.read_text(encoding="utf-8"))
+    after_2 = json.loads(after_2_path.read_text(encoding="utf-8"))
+    sunny = json.loads((quick / "sunny-census-after.json").read_text(encoding="utf-8"))
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+
+    assert (before["affected_roots"], before["affected_items"]) == (93, 93)
+    assert (after_1["affected_roots"], after_1["affected_items"]) == (92, 92)
+    assert after_1_path.read_bytes() == after_2_path.read_bytes()
+    assert after_1["result_set_sha256"] == after_2["result_set_sha256"] == (
+        "6eff84b30b26d11feac2588b2048d1c92cfe41cfed2fbce4a4ad42f1e15d0925"
+    )
+    assert sunny["affected_roots"] == 49
+    assert sunny["affected_items"] == 177
+    assert not any(item["root_id"] == "US-8504328" for item in after_1["items"])
+    assert queue["executable_buckets"] == [
+        {
+            "parser_signature": "generic_summary_metadata_missing",
+            "affected_roots": 92,
+            "affected_items": 92,
+        },
+        {
+            "parser_signature": "aac_raytech_summary_metadata_missing",
+            "affected_roots": 55,
+            "affected_items": 174,
+        },
+        {
+            "parser_signature": "sunny_embodiment_metadata_missing",
+            "affected_roots": 49,
+            "affected_items": 177,
+        },
+    ]
+    assert queue["next_exact_group"]["family_id"] == "44972265"
+    assert queue["next_exact_group"]["root_ids"] == ["US-8287129"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-8287129-B2"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_1["layout_signature_counts"]
+    )
+    next_source = (root / queue["next_exact_group"]["raw_document"]["path"]).read_text(
+        encoding="utf-8"
+    )
+    assert "Family ID: 44972265" in patent_to_zmx.normalize_patent_text(next_source)
+    assert queue["saturation_complete"] is False
+
+
+def test_kodak_stress_birefringence_evidence_rehashes_every_reference() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-44259669"
+    denominator = json.loads(
+        (quick / "family-44259669-denominator.json").read_text(encoding="utf-8")
+    )
+    evidence = json.loads(
+        (quick / "family-44259669-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    source_content = (root / evidence["source"]["path"]).read_bytes()
+    assert len(source_content) == evidence["source"]["bytes"]
+    assert (
+        hashlib.sha256(source_content).hexdigest()
+        == evidence["source"]["raw_sha256"]
+    )
+    for record in (
+        evidence["official_pdf"],
+        *evidence["replay_attempts"],
+        evidence["ledger"]["summary"],
+        evidence["ledger"]["report"],
+        *evidence["census"].values(),
+        *evidence["artifacts"],
+        *evidence["visual_artifacts"],
+    ):
+        content = (root / record["path"]).read_bytes()
+        assert len(content) == record["bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+    summary = json.loads(
+        (root / evidence["ledger"]["summary"]["path"]).read_text(
+            encoding="utf-8"
+        )
+    )
+    assert summary["cohort_roots"] == summary["roots_with_results"] == 619
+    assert summary["missing_root_ids"] == []
+    assert summary["corrupt_result_paths"] == []
+    assert summary["result_set_sha256"] == evidence["ledger"][
+        "result_set_sha256"
+    ]
+    assert evidence["semantic_replay_sha256"] == (
+        "1af099ffe4eee2481479e41b25534eaf2ac459583ecf44785a0507b2b46a2479"
+    )
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["next_exact_group"]["family_id"] == "44972265"
     assert evidence["saturation_complete"] is False
 
 

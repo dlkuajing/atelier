@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "family_id": "44259669",
+  "root_ids": [
+    "US-8504328"
+  ],
+  "publication_ids": [
+    "US-8504328-B2"
+  ],
+  "application_number": "12/784521",
+  "same_application_prior_publication": "US-20110288824-A1",
+  "cross_referenced_sibling_applications": [
+    "12/784520",
+    "12/784523"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "queue_only_same_application_publications": 1,
+    "cross_referenced_sibling_applications": 2,
+    "background_summary_numbered_paragraphs": 43,
+    "description_numbered_paragraphs": 164,
+    "total_numbered_paragraphs": 207,
+    "claims": 29,
+    "independent_claim_families": 3,
+    "declared_textual_figure_panels": 42,
+    "located_raster_figure_panels": 42,
+    "retained_drawing_sheets": 39,
+    "declared_tabular_figure_panels": 12,
+    "located_tabular_figure_panels": 12,
+    "tagged_html_tables": 0,
+    "optical_prescription_tables": 2,
+    "equation_placeholders": 5,
+    "mathml_objects": 0,
+    "html_image_tags": 0,
+    "source_disclosed_items": 9,
+    "named_lens_design_examples": 6,
+    "lens_design_method_items": 3,
+    "confirmed_no_prescription_items": 7,
+    "metadata_unpublished_items": 2,
+    "replayed_ledger_items": 9,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 62,
+    "retained_page_rasters": 62,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tabular_figure_panels": 0,
+    "unmapped_equation_placeholders": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "related_applications": [
+      1,
+      2
+    ],
+    "field": [
+      3,
+      4
+    ],
+    "background": [
+      5,
+      31
+    ],
+    "summary": [
+      32,
+      43
+    ],
+    "brief_drawings": [
+      1,
+      38
+    ],
+    "detailed_description": [
+      39,
+      163
+    ],
+    "parts_list": [
+      164,
+      164
+    ]
+  },
+  "claim_mapping": {
+    "two_group_imaging_lens_design_method": [
+      1,
+      18
+    ],
+    "one_or_more_group_lens_system_design_method": [
+      19,
+      28
+    ],
+    "merit_function_lens_design_method": [
+      29,
+      29
+    ]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Kodak first exemplary projection lens 270 (FIG. 6A)",
+      "description_paragraphs": [
+        60,
+        61
+      ],
+      "figures": [
+        "6A",
+        "6B",
+        "9A"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.first_projection_lens_schematic_materials_and_performance_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Kodak first exemplary relay lens 250 (FIG. 6C)",
+      "description_paragraphs": [
+        62,
+        64
+      ],
+      "figures": [
+        "6C",
+        "6D",
+        "9B"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.first_relay_lens_schematic_materials_and_performance_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Kodak second exemplary projection lens 270 (FIG. 10A)",
+      "description_paragraphs": [
+        96,
+        98
+      ],
+      "figures": [
+        "10A",
+        "10B",
+        "11A"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.second_projection_lens_schematic_materials_and_performance_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Kodak second exemplary relay lens 250 (FIG. 10C)",
+      "description_paragraphs": [
+        99,
+        100
+      ],
+      "figures": [
+        "10C",
+        "10D",
+        "11B"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.second_relay_lens_schematic_materials_and_performance_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Kodak third exemplary projection lens 270 (FIG. 14A)",
+      "description_paragraphs": [
+        101,
+        111
+      ],
+      "shared_test_paragraphs": [
+        116,
+        117
+      ],
+      "figures": [
+        "12A",
+        "12B",
+        "13A",
+        "14A"
+      ],
+      "claims": [],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_and_angular_field_absent"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Kodak third exemplary relay lens 250 (FIG. 14B)",
+      "description_paragraphs": [
+        112,
+        117
+      ],
+      "figures": [
+        "12C",
+        "12D",
+        "13B",
+        "14B"
+      ],
+      "claims": [],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_and_angular_field_absent"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Kodak two-group stress-birefringence lens-design method",
+      "summary_paragraphs": [
+        33,
+        43
+      ],
+      "description_paragraphs": [
+        131,
+        161
+      ],
+      "figures": [
+        "16",
+        "17"
+      ],
+      "claims": [
+        1,
+        18
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.stress_birefringence_two_group_lens_design_method_only"
+    },
+    {
+      "embodiment_number": 8,
+      "label": "Kodak one-or-more-group stress-birefringence lens-design method",
+      "description_paragraphs": [
+        142,
+        147
+      ],
+      "figures": [],
+      "claims": [
+        19,
+        28
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.stress_birefringence_one_or_more_group_lens_design_method_only"
+    },
+    {
+      "embodiment_number": 9,
+      "label": "Kodak stress-birefringence merit-function lens-design method",
+      "description_paragraphs": [
+        118,
+        130
+      ],
+      "figures": [
+        "15"
+      ],
+      "claims": [
+        29,
+        29
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.stress_birefringence_merit_function_lens_design_method_only"
+    }
+  ],
+  "merged_or_excluded_disclosures": [
+    {
+      "scope": "FIGS. 1A-5B, 7A-8D and projector/imaging context",
+      "treatment": "background, prior art, system context, intensity distributions and glass-data support; not independent prescriptions"
+    },
+    {
+      "scope": "MTF and stress tables FIGS. 6B/6D, 9A/9B, 10B/10D, 11A/11B, 12B/12D and 13A/13B",
+      "treatment": "performance evidence bound to the corresponding six named lens examples"
+    },
+    {
+      "scope": "asphere, diffractive element, polarization compensator, coated mirror, F-theta and zoom variants",
+      "treatment": "dependent features merged into the claim family from which they depend; none publishes an independent numerical prescription"
+    },
+    {
+      "scope": "US-20110288824-A1",
+      "treatment": "same-application prior publication identified but outside the frozen 619-root cohort; no separate root closure claimed"
+    },
+    {
+      "scope": "applications 12/784520 and 12/784523",
+      "treatment": "cross-referenced sibling applications in different families; no numeric value borrowed"
+    }
+  ],
+  "representability_boundary": {
+    "first_four_examples_publish_ordered_surface_sequences": false,
+    "third_projection_prescription_published": true,
+    "third_relay_prescription_published": true,
+    "third_prescriptions_publish_surface_radii": true,
+    "third_prescriptions_publish_surface_spacings": true,
+    "third_prescriptions_publish_optical_materials": true,
+    "third_prescriptions_publish_stop_location": true,
+    "third_prescriptions_publish_effective_focal_length": false,
+    "third_prescriptions_publish_exact_system_f_number": false,
+    "third_prescriptions_publish_angular_field": false,
+    "drawing_transcription_used": false,
+    "numeric_derivation_from_rasters_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

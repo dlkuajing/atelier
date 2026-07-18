@@ -643,6 +643,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_kodak_stress_birefringence_design_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_sunny_split_lens_active_alignment_attempts(
         raw_text,
         patent_id=patent_id,
@@ -13519,6 +13527,274 @@ _SAMSUNG_ANIMAL_CAPTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
         },
     }
 }
+_KODAK_STRESS_BIREFRINGENCE_DESIGN_ITEMS = (
+    (
+        1,
+        "Kodak first exemplary projection lens 270 (FIG. 6A)",
+        (
+            "confirmed_no_prescription."
+            "first_projection_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        2,
+        "Kodak first exemplary relay lens 250 (FIG. 6C)",
+        (
+            "confirmed_no_prescription."
+            "first_relay_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        3,
+        "Kodak second exemplary projection lens 270 (FIG. 10A)",
+        (
+            "confirmed_no_prescription."
+            "second_projection_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        4,
+        "Kodak second exemplary relay lens 250 (FIG. 10C)",
+        (
+            "confirmed_no_prescription."
+            "second_relay_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        5,
+        "Kodak third exemplary projection lens 270 (FIG. 14A)",
+        (
+            "metadata_unpublished."
+            "prescription_specific_efl_f_number_and_angular_field_absent"
+        ),
+    ),
+    (
+        6,
+        "Kodak third exemplary relay lens 250 (FIG. 14B)",
+        (
+            "metadata_unpublished."
+            "prescription_specific_efl_f_number_and_angular_field_absent"
+        ),
+    ),
+    (
+        7,
+        "Kodak two-group stress-birefringence lens-design method",
+        (
+            "confirmed_no_prescription."
+            "stress_birefringence_two_group_lens_design_method_only"
+        ),
+    ),
+    (
+        8,
+        "Kodak one-or-more-group stress-birefringence lens-design method",
+        (
+            "confirmed_no_prescription."
+            "stress_birefringence_one_or_more_group_lens_design_method_only"
+        ),
+    ),
+    (
+        9,
+        "Kodak stress-birefringence merit-function lens-design method",
+        (
+            "confirmed_no_prescription."
+            "stress_birefringence_merit_function_lens_design_method_only"
+        ),
+    ),
+)
+_KODAK_STRESS_BIREFRINGENCE_DESIGN_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-8504328-B2": {
+        "raw_document_sha256": (
+            "3ffa3ae9c30d2e8e2e3a6a39a2242a3a756bf6b56efe73a56598292bc4f37b26"
+        ),
+        "normalized_text_sha256": (
+            "c97a1fb20cff449e49571000299f6ebbba58e70bdfbdab76f1c461c39a85444d"
+        ),
+        "identity_markers": {
+            "Designing lenses using stress birefringence performance criterion": 1,
+            "Family ID: 44259669": 1,
+            "Assignee: Eastman Kodak Company (Rochester, NY)": 1,
+            "Appl. No.: 12/784521": 1,
+            "US 20110288824 A1 Nov. 24, 2011": 1,
+            "U.S. patent application Ser. No. 12/784,520": 1,
+            "U.S. patent application Ser. No. 12/784,523": 1,
+        },
+        "section_markers": {
+            "preamble": "US-8504328-B2 - Patent Public Search | USPTO",
+            "abstract": "Abstract A method for designing an imaging lens",
+            "background": (
+                "Background/Summary (1) CROSS-REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "description": "Description (1) BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1. A method for designing an imaging lens",
+        },
+        "section_sha256": {
+            "preamble": (
+                "1436f021eeac2bc04a1d1cbdd984b00ebc65301e5073f8b31701b636b9cb51ba"
+            ),
+            "abstract": (
+                "295e09be5c18632bb726cd0eed83c162dbfcac125a67fff698933648efba7ecb"
+            ),
+            "background": (
+                "26bc05f21ff9e5a8697b7dc68da5c0d8bfc52de7c7b68b9a3f5cf838d416ce33"
+            ),
+            "description": (
+                "602805588f7e762a49640443a4684363cdaa5e930e5cfacae905dd239d670fce"
+            ),
+            "claims": (
+                "84bc6b9e8117e90997515a2a372aa0366bb6cb11db02624ccda842dea17f8efe"
+            ),
+        },
+        "background_paragraph_span_sha256": {
+            (1, 2): "5b012b1c41a313c44019e51dd2a63451a97f9e17394545c6100f896d8aa90d4b",
+            (3, 4): "f46d1f1be0f8d6b7a5ce81c8d6acb410156f94990d546982b4a338902b40ce47",
+            (5, 31): "f3e17e56de2e44f019c93f4038d337f96584f29a7df0b3aeaae056b60f63fd10",
+            (32, 43): "1907abe5c85ec71320324905079588ccd705908c6e9f45a279415732b1d88ef2",
+        },
+        "description_paragraph_span_sha256": {
+            (1, 38): "142136baf553b51c2824303f22ebc34512fd0c987f226d1a5ff9036e4508f1a7",
+            (39, 59): "5a9062872fb42623f9b1988dcadad8bfb839915536415e4e90ade8256d161ddb",
+            (60, 64): "ce8c35fef74162810a50743cbe431ece104fe1bc961b64fb4d22ce875de46892",
+            (65, 93): "76b9e410aaec46142785d5b9c973db3274a1181e29ab8b25ee64441605daf114",
+            (94, 95): "deeaef839882ec511f6afbd90c88b21cba6e64aa2b3d07277ab864632809b6c9",
+            (96, 98): "506b12144be28103f7100a2121439ab7521d3fa873f423b4ff27e547763e146d",
+            (99, 100): "2eef4704fd13b0299ff5d5761213abd19b35d3df65c5519a3b1455b27e06e70e",
+            (101, 111): "01ca3f0019e2d4aa7e9192412244cd47c62a0944731f44d69fe6542ceb552372",
+            (112, 117): "058efed918d94b6b9a9c8262d599b13d8669deeea5d2714d6a098d99fe916a1b",
+            (118, 122): "2c47cc74de5a9e7f2f0bb4368cb1181b31df2d362a652c6edfcb0ce6a63dd418",
+            (123, 130): "9354327f2d8da31743174061631beb2313d8171de79fde6f57a5f1f426e9da41",
+            (131, 133): "564a331f46f92fa6820d26ac74700092e2b90c5d8b842e55b40b0c5951d5fb95",
+            (134, 144): "adfc2c8394f2c5a0c8c5a8ab90e50296aabb0427861bcc528fbcce33c14d3fe9",
+            (145, 150): "a808a488d14470c42829465acc71909bac4cd5608da84c8db1f311ee5e92d7d8",
+            (151, 161): "2e6bdd4e52c927cab903f2777331e7cfa7a2c1e97d9557c9bece392402cee390",
+            (162, 163): "8a2a3af67b5302f54e4f6e85866ffa484232d7e15f785777c848db205a51fc4a",
+            (164, 164): "3e2a57eb6f57091de6cbf1354b0d0bbf0a27ac508272b3bacd3d749a89c65d1a",
+        },
+        "claim_family_span_sha256": {
+            (1, 18): "ae64866ed3b3d57cb3182e4c4687a3cda73489c3240d3588c8633819715a4d26",
+            (19, 28): "189409ef4e99b599a0375729d67ff7c857db9c01c16fb5b24a51d06d1f034df7",
+            (29, 29): "b485d1c3994e5df66ec51f0895ddbe55803c0674a5cb92a5db9ec19de430af5e",
+        },
+        "figure_labels": (
+            "1A",
+            "1B",
+            "2",
+            "3A",
+            "3B",
+            "4",
+            "5A",
+            "5B",
+            "6A",
+            "6B",
+            "6C",
+            "6D",
+            "7A",
+            "7B",
+            "7C",
+            "7D",
+            "7E",
+            "7F",
+            "7G",
+            "8A",
+            "8B",
+            "8C",
+            "8D",
+            "9A",
+            "9B",
+            "10A",
+            "10B",
+            "10C",
+            "10D",
+            "11A",
+            "11B",
+            "12A",
+            "12B",
+            "12C",
+            "12D",
+            "13A",
+            "13B",
+            "14A",
+            "14B",
+            "15",
+            "16",
+            "17",
+        ),
+        "source_phrase_counts": {
+            "first exemplary projection lens": 10,
+            "first exemplary relay lens": 9,
+            "second exemplary projection lens": 11,
+            "second exemplary relay lens": 10,
+            "third exemplary projection lens": 13,
+            "third exemplary relay lens": 13,
+            "FIG. 14A": 2,
+            "FIG. 14B": 2,
+            "prescription": 2,
+            "effective focal length": 0,
+            "focal length": 4,
+            "F-number": 1,
+            "F number": 0,
+            "FNO": 0,
+            "field of view": 1,
+            "full field": 0,
+            "half field": 0,
+            "radius": 0,
+            "radii": 3,
+            "thickness": 25,
+            "aperture stop": 49,
+            "aspheric": 14,
+            "FIG. 15": 4,
+            "FIG. 16": 3,
+            "FIG. 17": 2,
+            "diffractive optical element": 7,
+            "polarization compensator": 18,
+            "first surface mirror": 5,
+            "multilayer coating": 2,
+        },
+        "numeric_system_value_assignment_counts": {
+            "F": 0,
+            "FNO": 0,
+            "FOV": 0,
+            "HFOV": 0,
+            "EFL": 0,
+        },
+        "equation_placeholder_counts": {
+            "##EQU00001##": 1,
+            "##EQU00002##": 1,
+            "##EQU00003##": 1,
+            "##EQU00004##": 1,
+            "##EQU00005##": 1,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/be84647fde0378db/"
+                "US-8504328-B2.pdf"
+            ),
+            "bytes": 3_385_711,
+            "sha256": (
+                "be84647fde0378db7be3d2a6df16bb9ed6acfad8d8992a9f35a8a90b09e01bd3"
+            ),
+            "page_count": 62,
+            "single_raster_page_count": 62,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(3, 42)),
+            "drawing_sheet_count": 39,
+            "key_page_raster_sha256": {
+                11: "4372a79d2a803f90a44a8e29229a06039676c32abeafad50f4bebc144dd4b276",
+                13: "79e3723a1843fc55e4626205cdda77b6898dd336f2cb27ae384c74084e5243f3",
+                25: "ec62c2f80f87db768f59398bc378ba2868623a4330400af81cf0692a65b1d4b6",
+                27: "aeae7175464421ca4a708fb83e04b6c2007a2a4271bab1f124ff29b5952ea007",
+                31: "504fa8314ece3e980c8a2813733b82026f4b9a4334a9726ee9efcaf6a15d641f",
+                33: "194d375f43da0b2acfb37accd64b6fea96a4b64f015e3b1bf5e1cecd2154492f",
+                37: "3263f891cde7ef7bbe295bdaa4a6fe7dc76dbfecebc587ce08f86a2f6dec8506",
+                38: "9e525001a29c177b8dc8d50585aed29115dc953b73a7cf4e88b7306fd08d88a1",
+            },
+            "raster_set_sha256": (
+                "18acd7528ecb9af1a5844ef03e11ac90a33083f7c153ec1a5e14b69411d30652"
+            ),
+        },
+    }
+}
+
+
 _SEKONIX_SMALL_LENS_QCON_ITEMS = (
     (1, "SEKONIX first six-lens Qcon prescription"),
     (2, "SEKONIX second six-lens Qcon prescription"),
@@ -38094,6 +38370,359 @@ def _classify_samsung_animal_capture_attempts(
             ),
         )
         for number, label, reason_code in _SAMSUNG_ANIMAL_CAPTURE_ITEMS
+    ]
+
+
+def _classify_kodak_stress_birefringence_design_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify every exact-source lens and method item in Family 44259669."""
+
+    profile = _KODAK_STRESS_BIREFRINGENCE_DESIGN_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _KODAK_STRESS_BIREFRINGENCE_DESIGN_ITEMS
+            )
+        ]
+
+    def numbered_paragraphs(
+        section: str,
+        count: int,
+        *,
+        section_name: str,
+    ) -> dict[int, str]:
+        starts: list[int] = []
+        cursor = 0
+        for number in range(1, count + 1):
+            marker = f"({number}) "
+            position = section.find(marker, cursor)
+            if position < 0:
+                raise PatentParseError(
+                    "Kodak stress-birefringence "
+                    f"{section_name} paragraph {number} is absent"
+                )
+            starts.append(position)
+            cursor = position + len(marker)
+        return {
+            number: section[
+                starts[number - 1] : (
+                    starts[number] if number < count else len(section)
+                )
+            ].strip()
+            for number in range(1, count + 1)
+        }
+
+    def validate_spans(
+        paragraphs: dict[int, str],
+        expected_spans: dict[tuple[int, int], str],
+        *,
+        section_name: str,
+    ) -> None:
+        for (start, end), expected_digest in expected_spans.items():
+            span = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            ).strip()
+            observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Kodak stress-birefringence "
+                    f"{section_name} paragraph span {start}-{end} changed"
+                )
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = text.count(marker)
+            if observed != expected:
+                raise PatentParseError(
+                    "Kodak stress-birefringence identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Kodak stress-birefringence section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Kodak stress-birefringence section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Kodak stress-birefringence "
+                    f"{section_name} section changed"
+                )
+
+        background = numbered_paragraphs(
+            sections["background"],
+            43,
+            section_name="background/summary",
+        )
+        description = numbered_paragraphs(
+            sections["description"],
+            164,
+            section_name="description",
+        )
+        validate_spans(
+            background,
+            profile["background_paragraph_span_sha256"],
+            section_name="background/summary",
+        )
+        validate_spans(
+            description,
+            profile["description_paragraph_span_sha256"],
+            section_name="description",
+        )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 30):
+            marker = "Claims 1. " if claim_number == 1 else f" {claim_number}. "
+            claim_start = claims_section.find(marker, cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Kodak stress-birefringence 29-claim denominator changed"
+                )
+            claim_start += len("Claims ") if claim_number == 1 else 1
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number}. ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 29
+                    else len(claims_section)
+                )
+            ].strip()
+            for claim_number in range(1, 30)
+        }
+        validate_spans(
+            claims,
+            profile["claim_family_span_sha256"],
+            section_name="claim",
+        )
+
+        if len(profile["figure_labels"]) != 42:
+            raise PatentParseError(
+                "Kodak stress-birefringence 42-figure-panel denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Kodak stress-birefringence zero-tagged-table layout changed"
+            )
+        if re.findall(r"<table\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Kodak stress-birefringence official HTML gained table tags"
+            )
+        if re.findall(r"<img\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Kodak stress-birefringence official HTML gained image tags"
+            )
+        if re.findall(r"<maths\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Kodak stress-birefringence official HTML gained MathML"
+            )
+        for placeholder, expected in profile[
+            "equation_placeholder_counts"
+        ].items():
+            observed = text.count(placeholder)
+            if observed != expected:
+                raise PatentParseError(
+                    "Kodak stress-birefringence equation placeholder "
+                    f"{placeholder!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Kodak stress-birefringence source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        assignments = {
+            label: len(
+                re.findall(
+                    rf"(?<![A-Z0-9_]){re.escape(label)}\s*(?:=|:)",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            for label in ("F", "FNO", "FOV", "HFOV", "EFL")
+        }
+        if assignments != profile["numeric_system_value_assignment_counts"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence numeric system metadata changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Kodak stress-birefringence official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Kodak stress-birefringence official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(
+                _canonical_raster_sha256(page_images[0].data)
+            )
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence official raster-page denominator changed"
+            )
+        for page_number, expected_digest in pdf_profile[
+            "key_page_raster_sha256"
+        ].items():
+            if page_raster_hashes[page_number - 1] != expected_digest:
+                raise PatentParseError(
+                    "Kodak stress-birefringence key page "
+                    f"{page_number} raster changed"
+                )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Kodak stress-birefringence official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Kodak stress-birefringence official PDF gained a text layer"
+            )
+        if not (
+            pdf_profile["drawing_page_numbers"] == tuple(range(3, 42))
+            and pdf_profile["drawing_sheet_count"] == 39
+        ):
+            raise PatentParseError(
+                "Kodak stress-birefringence drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all nine exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the exact B2 source contains 43 background/summary paragraphs, 164 "
+        "description paragraphs, 29 claims, 42 declared figure panels, 39 "
+        "drawing sheets, 12 tabular figure panels and two prescription tables. "
+        "All 62 exact official page rasters were retained and rehashed; no "
+        "numeric value is measured from a drawing, inferred, or borrowed from "
+        "the cross-referenced sibling applications"
+    )
+    details = (
+        "Paragraphs 60-61 and FIGS. 6A-6B publish the first projection lens's "
+        "six-element schematic, glasses and MTF only; no ordered surface radii "
+        f"or spacings are supplied; {common}",
+        "Paragraphs 62-64 and FIGS. 6C-6D publish the first relay lens's "
+        "seven-element schematic, glasses, MTF and system performance only; no "
+        f"ordered surface radii or spacings are supplied; {common}",
+        "Paragraphs 96-98 and FIGS. 10A-10B publish the second projection "
+        "lens's eight-element schematic, glasses, stress metrics and MTF only; "
+        f"no ordered surface radii or spacings are supplied; {common}",
+        "Paragraphs 99-100 and FIGS. 10C-10D publish the second relay lens's "
+        "seven-element schematic, glasses, stress metrics and MTF only; no "
+        f"ordered surface radii or spacings are supplied; {common}",
+        "Paragraphs 101-111 and exact-raster FIG. 14A publish the third "
+        "projection lens's complete spherical surface table with surface, "
+        "radius, thickness, aperture and glass fields, but no prescription-"
+        "specific effective focal length, exact system F-number or angular "
+        "field. The general about-F/3 preference and F/2.5-or-faster variant "
+        f"are not substituted; {common}",
+        "Paragraphs 112-117 and exact-raster FIG. 14B publish the third relay "
+        "lens's complete spherical surface table with surface, radius, "
+        "thickness, aperture and glass fields, but no prescription-specific "
+        "effective focal length, exact system F-number or angular field. The "
+        f"general F/6 relay context is not substituted; {common}",
+        "Summary paragraphs 33-40, description paragraphs 131-161 and claims "
+        "1-18 publish a two-group computer-assisted lens-design method plus "
+        "dependent metric, glass, asphere, diffractive, compensator and coated-"
+        f"mirror variants, not an independent numerical prescription; {common}",
+        "Description paragraphs 145-147 and claims 19-28 publish a generalized "
+        "one-or-more-group lens-design method plus thermal modeling, F-theta "
+        f"and zoom variants, not an independent numerical prescription; {common}",
+        "Description paragraphs 118-130 and claim 29 publish a merit-function "
+        "optimization method whose output would specify a design, but do not "
+        f"publish an independent numerical prescription; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status=reason_code.split(".", 1)[0],
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in (
+            _KODAK_STRESS_BIREFRINGENCE_DESIGN_ITEMS
+        )
     ]
 
 
