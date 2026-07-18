@@ -24156,6 +24156,366 @@ def test_samsung_seven_eight_lens_denominator_queue_and_evidence() -> None:
     assert queue["saturation_complete"] is False
 
 
+def _sekonix_small_lens_qcon_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "db9ea5f722c47ae3"
+        / "US-12498545-B2.html"
+    )
+    return "US-12498545-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_sekonix_small_lens_qcon_reconciles_five_terminals() -> None:
+    patent_id, raw_text = _sekonix_small_lens_qcon_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 6))
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        "metadata_unpublished.surface_radius_conflicts_table_1_2",
+        "metadata_unpublished.surface_radius_conflict_table_3_4",
+        "metadata_unpublished.surface_radius_conflict_table_5_6",
+        "metadata_unpublished.required_system_efl_f_number_and_angular_field_absent",
+        "metadata_unpublished.surface_radius_malformed_and_conflicting_table_9_10",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert "S8 1.6411/1.84110E+00" in str(attempts[0].error)
+    assert "S10 34.2167/34.2157" in str(attempts[1].error)
+    assert "S4 1.6720/1.57195" in str(attempts[2].error)
+    assert "publish no effective focal length, F-number" in str(attempts[3].error)
+    assert "-2.76644.8+00" in str(attempts[4].error)
+
+
+def test_sekonix_small_lens_qcon_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _sekonix_small_lens_qcon_source()
+    changed = raw_text.replace("December 16, 2025", "December 17, 2025", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "SEKONIX small-lens Qcon official raw text hash changed for "
+        f"{patent_id}"
+    }
+
+
+def test_sekonix_small_lens_qcon_tables_are_source_bound() -> None:
+    patent_id, raw_text = _sekonix_small_lens_qcon_source()
+    profile = patent_to_zmx._SEKONIX_SMALL_LENS_QCON_SOURCE_PROFILES[patent_id]
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+
+    payloads = patent_to_zmx._sekonix_small_lens_qcon_table_payloads(text)
+
+    assert len(payloads) == 10
+    assert tuple(
+        hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        for payload in payloads
+    ) == profile["table_payload_sha256"]
+    assert patent_to_zmx._sekonix_small_lens_qcon_radius_conflicts(payloads) == (
+        (
+            ("8", "1.6411", "1.84110.E+00"),
+            ("11", "-0.6224", "-8.22449.E-01"),
+            ("12", "-3.9286", "-3.92882.E+00"),
+        ),
+        (("10", "34.2167", "3.42157.E+01"),),
+        (("4", "1.6720", "1.57195.E+00"),),
+        (),
+        (
+            ("6", "-2.7664", "-2.76644.8+00"),
+            ("7", "Infinity", "1.00000.E+03"),
+            ("10", "-35.6526", "-3.56528.E+01"),
+        ),
+    ) == profile["radius_conflicts"]
+    expected_surface_rows = [
+        "Object",
+        "1",
+        "2",
+        "Stop",
+        *[str(number) for number in range(4, 16)],
+        "Image",
+    ]
+    expected_qcon_rows = ["2", "Stop", *[str(number) for number in range(4, 14)]]
+    for embodiment_number in range(1, 6):
+        assert list(
+            patent_to_zmx._sekonix_small_lens_surface_radius_tokens(
+                payloads[embodiment_number * 2 - 2]
+            )
+        ) == expected_surface_rows
+        assert list(
+            patent_to_zmx._sekonix_small_lens_qcon_radius_tokens(
+                payloads[embodiment_number * 2 - 1]
+            )
+        ) == expected_qcon_rows
+
+
+def test_sekonix_small_lens_qcon_raster_audit_rehashes_both_publications() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-85177416"
+    raster = json.loads(
+        (quick / "family-85177416-raster-audit.json").read_text(encoding="utf-8")
+    )
+    profile = patent_to_zmx._SEKONIX_SMALL_LENS_QCON_SOURCE_PROFILES[
+        "US-12498545-B2"
+    ]
+    profile_by_publication = {
+        record["publication_id"]: record for record in profile["official_pdfs"]
+    }
+
+    assert len(raster["sources"]) == 2
+    for record in raster["sources"]:
+        expected = profile_by_publication[record["publication_id"]]
+        pdf_path = root / record["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        assert len(pdf_bytes) == record["bytes"] == expected["bytes"]
+        assert (
+            hashlib.sha256(pdf_bytes).hexdigest()
+            == record["container_sha256"]
+            == expected["sha256"]
+        )
+
+        reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == expected["page_count"] == 25
+        page_hashes = []
+        text_characters = 0
+        narrow_pages = set(expected["narrow_raster_page_numbers"])
+        for page_number, (page, expected_hash) in enumerate(
+            zip(reader.pages, record["page_raster_sha256"], strict=True),
+            start=1,
+        ):
+            assert len(page.images) == 1
+            page_image = page.images[0]
+            image = page_image.image.convert("RGB")
+            expected_dimensions = (
+                expected["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else expected["common_raster_dimensions"]
+            )
+            assert image.size == expected_dimensions
+            page_hash = patent_pdf_recovery._canonical_raster_sha256(page_image.data)
+            assert page_hash == expected_hash
+            page_hashes.append(page_hash)
+            text_characters += len(page.extract_text() or "")
+        assert text_characters == record["text_layer_characters"] == 0
+        assert hashlib.sha256(
+            ("\n".join(page_hashes) + "\n").encode("utf-8")
+        ).hexdigest() == record["decoded_raster_set_sha256"] == expected[
+            "raster_set_sha256"
+        ]
+        assert [
+            page_hashes[page_number - 1]
+            for page_number in expected["table_page_numbers"]
+        ] == list(expected["table_page_raster_sha256"])
+
+    assert raster["cross_publication_review"] == {
+        "same_application_number": True,
+        "grant_prior_publication_binding": "US 20230048740 A1 Feb. 16, 2023",
+        "table_conflicts_repeated_in_both_sources": True,
+        "conflict_examples": [1, 2, 3, 5],
+        "consistent_but_system_metadata_absent_examples": [4],
+    }
+    for visual in raster["visual_artifacts"]:
+        path = root / visual["path"]
+        content = path.read_bytes()
+        assert len(content) == visual["bytes"]
+        assert hashlib.sha256(content).hexdigest() == visual["sha256"]
+        assert visual["visual_reviewed"] is True
+
+
+def test_sekonix_small_lens_qcon_source_facts_close_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-85177416"
+    facts = json.loads(
+        (quick / "family-85177416-source-facts.json").read_text(encoding="utf-8")
+    )
+
+    assert facts["denominator"] == {
+        "document_pages_per_official_pdf": 25,
+        "official_pdf_sources": 2,
+        "drawing_sheets_per_source": 12,
+        "declared_figures": 12,
+        "located_figures": 12,
+        "tagged_html_tables": 10,
+        "recovered_tables": 10,
+        "mathml_objects": 9,
+        "claims": 7,
+        "background_summary_paragraphs": 20,
+        "description_paragraphs": 125,
+        "total_numbered_paragraphs": 145,
+        "source_disclosed_items": 5,
+        "metadata_unpublished_items": 5,
+        "unmapped_source_items": 0,
+    }
+    assert [item["paragraph_range"] for item in facts["items"]] == [
+        [37, 55],
+        [56, 72],
+        [73, 88],
+        [89, 104],
+        [105, 121],
+    ]
+    assert [item["conflict_surfaces"] for item in facts["items"]] == [
+        ["8", "11", "12"],
+        ["10"],
+        ["4"],
+        [],
+        ["6", "7", "10"],
+    ]
+    assert all(
+        item["terminal_status"] == "metadata_unpublished"
+        for item in facts["items"]
+    )
+    assert facts["representability_boundary"]["formal_output_permitted"] is False
+    assert not any(facts["formal_outputs"].values())
+
+
+def test_sekonix_small_lens_qcon_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-85177416"
+    replay = json.loads(
+        (quick / "family-85177416-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in replay["attempts"]:
+        attempt_path = root / record["path"]
+        attempt_bytes = attempt_path.read_bytes()
+        assert len(attempt_bytes) == record["bytes"]
+        assert hashlib.sha256(attempt_bytes).hexdigest() == record["file_sha256"]
+        payload = json.loads(attempt_bytes)
+        assert payload.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert len(set(semantic_hashes)) == 1
+    assert semantic_hashes[0] == replay["semantic_sha256"] == (
+        "c58c7db8608ef0c05a7d2d5462d3ccc43630c80a5c11b24278f5d302f762a99e"
+    )
+    assert replay["semantic_equal"] is True
+    assert replay["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert replay["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 5},
+        "terminal_status_counts": {"metadata_unpublished": 5},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+
+def test_sekonix_small_lens_qcon_denominator_queue_and_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-85177416"
+    denominator = json.loads(
+        (quick / "family-85177416-denominator.json").read_text(encoding="utf-8")
+    )
+    evidence = json.loads(
+        (quick / "family-85177416-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    after = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == evidence["denominator"]
+    counts = denominator["denominator"]
+    assert counts["total_numbered_paragraphs"] == 145
+    assert counts["claims"] == 7
+    assert counts["declared_textual_figures"] == 12
+    assert counts["tagged_html_tables"] == 10
+    assert counts["mathml_objects"] == 9
+    assert counts["source_disclosed_items"] == 5
+    assert counts["metadata_unpublished_items"] == 5
+    assert counts["unmapped_source_items"] == 0
+    assert len(denominator["items"]) == 5
+    assert denominator["representability_boundary"][
+        "source_conflicted_surface_radius_items"
+    ] == [1, 2, 3, 5]
+    assert denominator["representability_boundary"][
+        "effective_focal_length_published"
+    ] is False
+    assert not any(denominator["formal_outputs"].values())
+
+    assert evidence["semantic_replay_sha256"] == (
+        "c58c7db8608ef0c05a7d2d5462d3ccc43630c80a5c11b24278f5d302f762a99e"
+    )
+    for record in (
+        evidence["source"],
+        *evidence["official_pdfs"],
+        *evidence["replay_attempts"],
+        evidence["ledger"]["summary"],
+        evidence["ledger"]["report"],
+        *evidence["census"].values(),
+        *evidence["artifacts"],
+    ):
+        path = root / record["path"]
+        content = path.read_bytes()
+        assert len(content) == record["bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+    assert evidence["ledger"] == {
+        **evidence["ledger"],
+        "result_set_sha256": (
+            "d6f7f079db46225c64cff3a464f42ae718627642a1d20b4eda8235b42cd34f17"
+        ),
+        "strict_roots_with_results": 619,
+        "strict_roots_total": 619,
+        "missing": 0,
+        "corrupt": 0,
+    }
+    assert not any(evidence["formal_outputs"].values())
+
+    assert after["affected_roots"] == after["affected_items"] == 95
+    assert queue["executable_buckets"][0] == {
+        "parser_signature": "generic_summary_metadata_missing",
+        "affected_roots": 95,
+        "affected_items": 95,
+    }
+    assert queue["next_exact_group"]["family_id"] == "23219584"
+    assert queue["next_exact_group"]["root_ids"] == ["US-6292306"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-6292306-B1"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+
 def _largan_folded_light_blocking_source() -> tuple[str, str]:
     root = Path(__file__).resolve().parents[1]
     source_path = (

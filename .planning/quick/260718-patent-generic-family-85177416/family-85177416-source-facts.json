@@ -1,0 +1,1020 @@
+{
+  "schema_version": "patent-family-source-facts/v1",
+  "family_id": "85177416",
+  "root_id": "US-12498545",
+  "publication_id": "US-12498545-B2",
+  "prior_publication_id": "US-20230048740-A1",
+  "application_number": "17/813265",
+  "layout_signature": "3d684a6bcca86c1d718a3ccbbfd08dfe9660ecce94f9c9b2fdfbc2814c921d3e",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/db9ea5f722c47ae3/US-12498545-B2.html",
+    "bytes": 86790,
+    "characters": 83120,
+    "sha256": "db9ea5f722c47ae3cf3b90ee77f8862813d2e410fffd9f7929cff4dba2f561ab",
+    "normalized_characters": 68164,
+    "normalized_sha256": "36f7edb358a323333a32d072441047c10a3ae0b056218eed7e88284ee555198b"
+  },
+  "identity_counts": {
+    "US-12498545-B2": 1,
+    "United States Patent 12498545": 1,
+    "Kind Code B2": 1,
+    "Date of Patent December 16, 2025": 1,
+    "Applicant: SEKONIX CO., LTD.": 1,
+    "Family ID: 85177416": 1,
+    "Appl. No.: 17/813265": 1,
+    "Filed: July 18, 2022": 1,
+    "US 20230048740 A1 Feb. 16, 2023": 1,
+    "KR 10-2021-0098990 Jul. 28, 2021": 1
+  },
+  "section_markers": {
+    "preamble": "US-12498545-B2 - Patent Public Search | USPTO",
+    "abstract": "Abstract Disclosed is a small lens system",
+    "background": "Background/Summary CROSS REFERENCE TO RELATED APPLICATION",
+    "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+    "claims": "Claims 1 . A small lens system comprising"
+  },
+  "section_starts": {
+    "preamble": 0,
+    "abstract": 238,
+    "background": 2034,
+    "description": 8229,
+    "claims": 65474
+  },
+  "section_sha256": {
+    "preamble": "af4d03c2080137e251ae0815e04867679c1a2556cbc70da9ad546d2a64e76a87",
+    "abstract": "a692ffd11994d8b0e39de3f251e112bc0b645aad1aadc069db43cf3bf710d4a5",
+    "background": "8d9f2f8cfffade0f488d6a75cae0e2dda76ac0d03377c1269a7fac33dbed7e28",
+    "description": "5793ab368f924bb59f903135ee0e4bfbd5c70c16adce37d3ab36dd9ba2bef822",
+    "claims": "0cbb0732e8ec1c08176f6b115d558b6ac6d02497ff542828ff9e291b6573e096"
+  },
+  "paragraphs": {
+    "background_summary_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "description_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125
+    ],
+    "background_summary_span_sha256": {
+      "1-1": "c256b93bdc36a0aec47d7c05fb9a86ae75993d7bbb9b592fbfbcf3298635344d",
+      "2-11": "930fbfd0f8d86db2f7cf237e70d909f047baf3850098aff73f37d1a27fd8eb59",
+      "12-20": "1ceecfc45ad1c4764c34e4c9e0b5ba7882e207f142b0f4fabb80bd4d7bed53f8"
+    },
+    "description_span_sha256": {
+      "1-12": "6feeaf44a1808401fde04818f73ff2057eb72363aa7a25407e0374f1a01b8d14",
+      "13-36": "798b6048b04352669fadada47ce313ded2f744bfd174ff400e45c00dcb73260b",
+      "37-55": "d6a70f84178742667c4e2ae0c00a2eeeb4a428314037b8b9158875addc4aa212",
+      "56-72": "218a897c2700b30fb885b26d0d7cb00f53b8eac37ac52d9ac966865f19963656",
+      "73-88": "1a0773aa72d9fb6cea0105d0b4e31b0e72ee77815112f38a3f5ad8f38ff5ec7f",
+      "89-104": "5d3c34822a278c42a7ebe49ae6a2a149d79e1c0adfed8c41fd3602e291f96da7",
+      "105-121": "ca3b91d61438322f5654ce33b74a678946a10bc0e460f8ddb4466633ea846714",
+      "122-125": "d4ad8c3b90191fe7da30d5ae98fd2ed0206ac6497304a92e75ec8a64af146e33"
+    }
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "SEKONIX first six-lens Qcon prescription",
+      "paragraph_range": [
+        37,
+        55
+      ],
+      "figure_numbers": [
+        3,
+        4
+      ],
+      "table_numbers": [
+        1,
+        2
+      ],
+      "marker": "(37) FIG. 3 is a view showing a first embodiment of a small lens system with alleviated sensitivity according to the present invention.",
+      "paragraph_span_sha256": "d6a70f84178742667c4e2ae0c00a2eeeb4a428314037b8b9158875addc4aa212",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_conflicts_table_1_2",
+      "conflict_surfaces": [
+        "8",
+        "11",
+        "12"
+      ],
+      "required_system_metadata_absent": [
+        "effective_focal_length",
+        "f_number",
+        "angular_field"
+      ]
+    },
+    {
+      "embodiment_number": 2,
+      "label": "SEKONIX second six-lens Qcon prescription",
+      "paragraph_range": [
+        56,
+        72
+      ],
+      "figure_numbers": [
+        5,
+        6
+      ],
+      "table_numbers": [
+        3,
+        4
+      ],
+      "marker": "(56) FIG. 5 is a view showing a second embodiment of the small lens system with alleviated sensitivity according to the present invention.",
+      "paragraph_span_sha256": "218a897c2700b30fb885b26d0d7cb00f53b8eac37ac52d9ac966865f19963656",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_conflict_table_3_4",
+      "conflict_surfaces": [
+        "10"
+      ],
+      "required_system_metadata_absent": [
+        "effective_focal_length",
+        "f_number",
+        "angular_field"
+      ]
+    },
+    {
+      "embodiment_number": 3,
+      "label": "SEKONIX third six-lens Qcon prescription",
+      "paragraph_range": [
+        73,
+        88
+      ],
+      "figure_numbers": [
+        7,
+        8
+      ],
+      "table_numbers": [
+        5,
+        6
+      ],
+      "marker": "(73) FIG. 7 is a view showing a third embodiment of the small lens system with alleviated sensitivity according to the present invention.",
+      "paragraph_span_sha256": "1a0773aa72d9fb6cea0105d0b4e31b0e72ee77815112f38a3f5ad8f38ff5ec7f",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_conflict_table_5_6",
+      "conflict_surfaces": [
+        "4"
+      ],
+      "required_system_metadata_absent": [
+        "effective_focal_length",
+        "f_number",
+        "angular_field"
+      ]
+    },
+    {
+      "embodiment_number": 4,
+      "label": "SEKONIX fourth six-lens Qcon prescription",
+      "paragraph_range": [
+        89,
+        104
+      ],
+      "figure_numbers": [
+        9,
+        10
+      ],
+      "table_numbers": [
+        7,
+        8
+      ],
+      "marker": "(89) FIG. 9 is a view showing a fourth embodiment of the small lens system with alleviated sensitivity according to the present invention.",
+      "paragraph_span_sha256": "5d3c34822a278c42a7ebe49ae6a2a149d79e1c0adfed8c41fd3602e291f96da7",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.required_system_efl_f_number_and_angular_field_absent",
+      "conflict_surfaces": [],
+      "required_system_metadata_absent": [
+        "effective_focal_length",
+        "f_number",
+        "angular_field"
+      ]
+    },
+    {
+      "embodiment_number": 5,
+      "label": "SEKONIX fifth six-lens Qcon prescription",
+      "paragraph_range": [
+        105,
+        121
+      ],
+      "figure_numbers": [
+        11,
+        12
+      ],
+      "table_numbers": [
+        9,
+        10
+      ],
+      "marker": "(105) FIG. 11 is a view showing a fifth embodiment of the small lens system with alleviated sensitivity according to the present invention.",
+      "paragraph_span_sha256": "ca3b91d61438322f5654ce33b74a678946a10bc0e460f8ddb4466633ea846714",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_malformed_and_conflicting_table_9_10",
+      "conflict_surfaces": [
+        "6",
+        "7",
+        "10"
+      ],
+      "required_system_metadata_absent": [
+        "effective_focal_length",
+        "f_number",
+        "angular_field"
+      ]
+    }
+  ],
+  "table_inventory": {
+    "count": 10,
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "surface_tables": [
+      1,
+      3,
+      5,
+      7,
+      9
+    ],
+    "qcon_tables": [
+      2,
+      4,
+      6,
+      8,
+      10
+    ],
+    "surface_row_sequence": [
+      "Object",
+      "1",
+      "2",
+      "Stop",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "Image"
+    ],
+    "qcon_surface_sequence": [
+      "2",
+      "Stop",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13"
+    ],
+    "payload_lengths": [
+      780,
+      3359,
+      779,
+      3346,
+      779,
+      3338,
+      780,
+      3357,
+      780,
+      3343
+    ],
+    "payload_sha256": [
+      "00fbae9bf891312158f03593f12ece3ac450fc7556cc69720354ac882af45c22",
+      "89d730ba927db23f42ba4316097ddf713e004990e8cb74d9885a7e6bb266eeb6",
+      "75d0b5004576e322f0f64c6bf4a1dc1e6aff5a9f61f86b3c33bc24799803cfd2",
+      "4eae76feddc931a554532c6c2d7db8328acf7f657dd84018b66fa2726b2e5726",
+      "5acef5f6cd2b4954bb109484544f5619fa5284eb30522dd4978cdacdfc0846d1",
+      "d5cf7ceec1f63542ed3127980ec08727b6fd5b41a7898e85f851e54d974d3959",
+      "5f5a366c87ca25d22b02724ac6db7e3e4ceeb03460fcb12566a3dfffdee8af63",
+      "bc4f269191d763e58b9c0348ddcbb9ea8ff74fa2134dd3ca0da4c74e486ed015",
+      "106616b4dfb91b1817cd8e13b18ff077ea5e9e93602fcecfc29555d907ce269f",
+      "69ebe6a6b50ae28a7e641a7d07856aecb54dca038c98df0ea387c46c38d24881"
+    ]
+  },
+  "radius_reconciliation": [
+    {
+      "embodiment_number": 1,
+      "surface_table": 1,
+      "qcon_table": 2,
+      "rounding_tolerance_mm": 5.01e-05,
+      "conflict_surfaces": [
+        "8",
+        "11",
+        "12"
+      ],
+      "rows": [
+        {
+          "surface": "2",
+          "surface_table_radius": "2.1199",
+          "qcon_table_y_radius": "2.11986.E+00",
+          "absolute_delta_mm": 3.999999999981796e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "Stop",
+          "surface_table_radius": "2.0649",
+          "qcon_table_y_radius": "2.06492.E+00",
+          "absolute_delta_mm": 1.9999999999686935e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "4",
+          "surface_table_radius": "1.3159",
+          "qcon_table_y_radius": "1.31591.E+00",
+          "absolute_delta_mm": 9.999999999843467e-06,
+          "state": "consistent"
+        },
+        {
+          "surface": "5",
+          "surface_table_radius": "-7.3890",
+          "qcon_table_y_radius": "-7.38900.E+00",
+          "absolute_delta_mm": 0.0,
+          "state": "consistent"
+        },
+        {
+          "surface": "6",
+          "surface_table_radius": "-3.5406",
+          "qcon_table_y_radius": "-3.54059.E+00",
+          "absolute_delta_mm": 1.0000000000065512e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "7",
+          "surface_table_radius": "Infinity",
+          "qcon_table_y_radius": "1.00000.E+18",
+          "absolute_delta_mm": null,
+          "state": "consistent"
+        },
+        {
+          "surface": "8",
+          "surface_table_radius": "1.6411",
+          "qcon_table_y_radius": "1.84110.E+00",
+          "absolute_delta_mm": 0.19999999999999996,
+          "state": "conflict"
+        },
+        {
+          "surface": "9",
+          "surface_table_radius": "1.8476",
+          "qcon_table_y_radius": "1.84765.E+00",
+          "absolute_delta_mm": 5.0000000000105516e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "10",
+          "surface_table_radius": "12.2632",
+          "qcon_table_y_radius": "1.22632.E+01",
+          "absolute_delta_mm": 0.0,
+          "state": "consistent"
+        },
+        {
+          "surface": "11",
+          "surface_table_radius": "-0.6224",
+          "qcon_table_y_radius": "-8.22449.E-01",
+          "absolute_delta_mm": 0.20004900000000003,
+          "state": "conflict"
+        },
+        {
+          "surface": "12",
+          "surface_table_radius": "-3.9286",
+          "qcon_table_y_radius": "-3.92882.E+00",
+          "absolute_delta_mm": 0.000220000000000109,
+          "state": "conflict"
+        },
+        {
+          "surface": "13",
+          "surface_table_radius": "0.5125",
+          "qcon_table_y_radius": "5.12524.E-01",
+          "absolute_delta_mm": 2.4000000000024002e-05,
+          "state": "consistent"
+        }
+      ]
+    },
+    {
+      "embodiment_number": 2,
+      "surface_table": 3,
+      "qcon_table": 4,
+      "rounding_tolerance_mm": 5.01e-05,
+      "conflict_surfaces": [
+        "10"
+      ],
+      "rows": [
+        {
+          "surface": "2",
+          "surface_table_radius": "2.5613",
+          "qcon_table_y_radius": "2.56135.E+00",
+          "absolute_delta_mm": 4.999999999988347e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "Stop",
+          "surface_table_radius": "2.5264",
+          "qcon_table_y_radius": "2.52642.E+00",
+          "absolute_delta_mm": 1.9999999999686935e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "4",
+          "surface_table_radius": "1.4644",
+          "qcon_table_y_radius": "1.46442.E+00",
+          "absolute_delta_mm": 2.0000000000131024e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "5",
+          "surface_table_radius": "-4.0313",
+          "qcon_table_y_radius": "-4.03126.E+00",
+          "absolute_delta_mm": 4.000000000026205e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "6",
+          "surface_table_radius": "-2.9268",
+          "qcon_table_y_radius": "-2.92680.E+00",
+          "absolute_delta_mm": 0.0,
+          "state": "consistent"
+        },
+        {
+          "surface": "7",
+          "surface_table_radius": "Infinity",
+          "qcon_table_y_radius": "1.00000.E+18",
+          "absolute_delta_mm": null,
+          "state": "consistent"
+        },
+        {
+          "surface": "8",
+          "surface_table_radius": "1.8469",
+          "qcon_table_y_radius": "1.84685.E+00",
+          "absolute_delta_mm": 4.999999999988347e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "9",
+          "surface_table_radius": "1.7843",
+          "qcon_table_y_radius": "1.78434.E+00",
+          "absolute_delta_mm": 4.0000000000040004e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "10",
+          "surface_table_radius": "34.2167",
+          "qcon_table_y_radius": "3.42157.E+01",
+          "absolute_delta_mm": 0.0010000000000047748,
+          "state": "conflict"
+        },
+        {
+          "surface": "11",
+          "surface_table_radius": "-0.6075",
+          "qcon_table_y_radius": "-6.07545.E-01",
+          "absolute_delta_mm": 4.499999999996174e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "12",
+          "surface_table_radius": "-2.0283",
+          "qcon_table_y_radius": "-2.02833.E+00",
+          "absolute_delta_mm": 2.9999999999752447e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "13",
+          "surface_table_radius": "0.6470",
+          "qcon_table_y_radius": "6.47022.E-01",
+          "absolute_delta_mm": 2.199999999996649e-05,
+          "state": "consistent"
+        }
+      ]
+    },
+    {
+      "embodiment_number": 3,
+      "surface_table": 5,
+      "qcon_table": 6,
+      "rounding_tolerance_mm": 5.01e-05,
+      "conflict_surfaces": [
+        "4"
+      ],
+      "rows": [
+        {
+          "surface": "2",
+          "surface_table_radius": "2.5725",
+          "qcon_table_y_radius": "2.57247.E+00",
+          "absolute_delta_mm": 2.9999999999752447e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "Stop",
+          "surface_table_radius": "2.5375",
+          "qcon_table_y_radius": "2.53754.E+00",
+          "absolute_delta_mm": 3.999999999981796e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "4",
+          "surface_table_radius": "1.6720",
+          "qcon_table_y_radius": "1.57195.E+00",
+          "absolute_delta_mm": 0.10004999999999997,
+          "state": "conflict"
+        },
+        {
+          "surface": "5",
+          "surface_table_radius": "-3.6487",
+          "qcon_table_y_radius": "-3.64872.E+00",
+          "absolute_delta_mm": 2.0000000000131024e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "6",
+          "surface_table_radius": "-2.7843",
+          "qcon_table_y_radius": "-2.78434.E+00",
+          "absolute_delta_mm": 3.999999999981796e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "7",
+          "surface_table_radius": "Infinity",
+          "qcon_table_y_radius": "1.00000.E+18",
+          "absolute_delta_mm": null,
+          "state": "consistent"
+        },
+        {
+          "surface": "8",
+          "surface_table_radius": "2.3376",
+          "qcon_table_y_radius": "2.33758.E+00",
+          "absolute_delta_mm": 2.0000000000131024e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "9",
+          "surface_table_radius": "2.1658",
+          "qcon_table_y_radius": "2.16580.E+00",
+          "absolute_delta_mm": 0.0,
+          "state": "consistent"
+        },
+        {
+          "surface": "10",
+          "surface_table_radius": "-6.0252",
+          "qcon_table_y_radius": "-6.02521.E+00",
+          "absolute_delta_mm": 1.0000000000509601e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "11",
+          "surface_table_radius": "-0.5614",
+          "qcon_table_y_radius": "-5.61356.E-01",
+          "absolute_delta_mm": 4.4000000000044004e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "12",
+          "surface_table_radius": "-2.0165",
+          "qcon_table_y_radius": "-2.01649.E+00",
+          "absolute_delta_mm": 1.0000000000065512e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "13",
+          "surface_table_radius": "0.7453",
+          "qcon_table_y_radius": "7.45324.E-01",
+          "absolute_delta_mm": 2.4000000000024002e-05,
+          "state": "consistent"
+        }
+      ]
+    },
+    {
+      "embodiment_number": 4,
+      "surface_table": 7,
+      "qcon_table": 8,
+      "rounding_tolerance_mm": 5.01e-05,
+      "conflict_surfaces": [],
+      "rows": [
+        {
+          "surface": "2",
+          "surface_table_radius": "2.1555",
+          "qcon_table_y_radius": "2.15554.E+00",
+          "absolute_delta_mm": 3.999999999981796e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "Stop",
+          "surface_table_radius": "2.0997",
+          "qcon_table_y_radius": "2.09973.E+00",
+          "absolute_delta_mm": 3.0000000000196536e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "4",
+          "surface_table_radius": "1.3069",
+          "qcon_table_y_radius": "1.30688.E+00",
+          "absolute_delta_mm": 1.999999999990898e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "5",
+          "surface_table_radius": "-9.0425",
+          "qcon_table_y_radius": "-9.04247.E+00",
+          "absolute_delta_mm": 3.0000000000640625e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "6",
+          "surface_table_radius": "-3.8328",
+          "qcon_table_y_radius": "-3.83285.E+00",
+          "absolute_delta_mm": 4.999999999988347e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "7",
+          "surface_table_radius": "Infinity",
+          "qcon_table_y_radius": "1.00000.E+18",
+          "absolute_delta_mm": null,
+          "state": "consistent"
+        },
+        {
+          "surface": "8",
+          "surface_table_radius": "1.6475",
+          "qcon_table_y_radius": "1.64755.E+00",
+          "absolute_delta_mm": 5.0000000000105516e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "9",
+          "surface_table_radius": "1.8441",
+          "qcon_table_y_radius": "1.84412.E+00",
+          "absolute_delta_mm": 1.999999999990898e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "10",
+          "surface_table_radius": "10.9167",
+          "qcon_table_y_radius": "1.09167.E+01",
+          "absolute_delta_mm": 0.0,
+          "state": "consistent"
+        },
+        {
+          "surface": "11",
+          "surface_table_radius": "-0.6254",
+          "qcon_table_y_radius": "-6.25370.E-01",
+          "absolute_delta_mm": 2.999999999997449e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "12",
+          "surface_table_radius": "-3.7977",
+          "qcon_table_y_radius": "-3.79772.E+00",
+          "absolute_delta_mm": 2.0000000000131024e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "13",
+          "surface_table_radius": "0.5150",
+          "qcon_table_y_radius": "5.14971.E-01",
+          "absolute_delta_mm": 2.9000000000056758e-05,
+          "state": "consistent"
+        }
+      ]
+    },
+    {
+      "embodiment_number": 5,
+      "surface_table": 9,
+      "qcon_table": 10,
+      "rounding_tolerance_mm": 5.01e-05,
+      "conflict_surfaces": [
+        "6",
+        "7",
+        "10"
+      ],
+      "rows": [
+        {
+          "surface": "2",
+          "surface_table_radius": "2.5665",
+          "qcon_table_y_radius": "2.56650.E+00",
+          "absolute_delta_mm": 0.0,
+          "state": "consistent"
+        },
+        {
+          "surface": "Stop",
+          "surface_table_radius": "2.5316",
+          "qcon_table_y_radius": "2.53157.E+00",
+          "absolute_delta_mm": 3.0000000000196536e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "4",
+          "surface_table_radius": "1.5034",
+          "qcon_table_y_radius": "1.50343.E+00",
+          "absolute_delta_mm": 2.999999999997449e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "5",
+          "surface_table_radius": "-3.8070",
+          "qcon_table_y_radius": "-3.80696.E+00",
+          "absolute_delta_mm": 3.999999999981796e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "6",
+          "surface_table_radius": "-2.7664",
+          "qcon_table_y_radius": "-2.76644.8+00",
+          "absolute_delta_mm": null,
+          "state": "nonnumeric"
+        },
+        {
+          "surface": "7",
+          "surface_table_radius": "Infinity",
+          "qcon_table_y_radius": "1.00000.E+03",
+          "absolute_delta_mm": null,
+          "state": "conflict"
+        },
+        {
+          "surface": "8",
+          "surface_table_radius": "1.9422",
+          "qcon_table_y_radius": "1.94219.E+00",
+          "absolute_delta_mm": 9.999999999843467e-06,
+          "state": "consistent"
+        },
+        {
+          "surface": "9",
+          "surface_table_radius": "1.8553",
+          "qcon_table_y_radius": "1.85533.E+00",
+          "absolute_delta_mm": 2.999999999997449e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "10",
+          "surface_table_radius": "-35.6526",
+          "qcon_table_y_radius": "-3.56528.E+01",
+          "absolute_delta_mm": 0.00019999999999953388,
+          "state": "conflict"
+        },
+        {
+          "surface": "11",
+          "surface_table_radius": "-0.5939",
+          "qcon_table_y_radius": "-5.93942.E-01",
+          "absolute_delta_mm": 4.199999999998649e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "12",
+          "surface_table_radius": "-2.0563",
+          "qcon_table_y_radius": "-2.05633.E+00",
+          "absolute_delta_mm": 3.0000000000196536e-05,
+          "state": "consistent"
+        },
+        {
+          "surface": "13",
+          "surface_table_radius": "0.6705",
+          "qcon_table_y_radius": "6.70538.E-01",
+          "absolute_delta_mm": 3.799999999998249e-05,
+          "state": "consistent"
+        }
+      ]
+    }
+  ],
+  "mathml": {
+    "count": 9,
+    "sha256": [
+      "8a2fcebfb21ceaa23ea5d7e255acbebdad0a01b23c7e8e0b368cc725a1451cef",
+      "210835de9558fddfe0e515eb9367850e18f4aa8263cc83fd307423298e7249d0",
+      "71a137dfa18d992d712c72755e7d0b213c534e8ce2d73c3f58330c26e96fac61",
+      "df8bff69e56ea38f05c98ba3d5ced35ea9d729f0fb7ec831d97e27602f28586b",
+      "a75ae62af673599937c0cbd0b8106f42c8808f39b15f4de28f23e72f172ce83c",
+      "3888de01abfd60027c122f40708fde3a06d1b56b162c24f9cc75bd8449e9dbf0",
+      "40a53528989bddbfc50f63e52ad8a982dae35ded205388a57b99743f6243884d",
+      "d83101bce150d449f935984f3ce0ba6a84099e69764b6e563dd467ba6ee7520a",
+      "1947996dffd947adc5fef0e7dbb75bcc73a91c6184233eb6b931cb7910179a81"
+    ]
+  },
+  "claims": {
+    "count": 7,
+    "sha256": [
+      "4ea71b5cad0af2d4d49cf9a0b4fab11b7f34225c7f418858791ddacf3793dca5",
+      "247db578be27e620675422a09322aeedfd95464f01ddd51933ecd10f987334d7",
+      "9509a0ad2113905246643986285aefa6373b9951882da26c57fe825f5a791d58",
+      "3cd892f99f110420087939ce590e0155c486ab34baffc3a87d236a949ce3ad39",
+      "dda0f7c279437f61a5c56d5d037bf9cd1b289e25f0775a170d019270a31f6461",
+      "45192f3b7b8ef83c6b1bb6c8e9041e0a2ea2fc47748443e84cbfada806821919",
+      "028bef6c6dbd3fc9bb342dd88d0e272ca2f6e1409b43bff2c161a4347d69f4d9"
+    ]
+  },
+  "source_phrase_counts": {
+    "First Embodiment": 15,
+    "Second Embodiment": 15,
+    "Third Embodiment": 15,
+    "Fourth Embodiment": 15,
+    "Fifth Embodiment": 15,
+    "Example": 0,
+    "Embodiment": 77,
+    "effective focal length": 0,
+    "focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "Fno": 0,
+    "field of view": 0,
+    "angle of view": 0,
+    "FOV": 0,
+    "image height": 28,
+    "stop": 18,
+    "aperture": 5,
+    "Y Radius": 11,
+    "Qcon Coefficient": 145,
+    "TOPL/Himg": 13
+  },
+  "denominator": {
+    "document_pages_per_official_pdf": 25,
+    "official_pdf_sources": 2,
+    "drawing_sheets_per_source": 12,
+    "declared_figures": 12,
+    "located_figures": 12,
+    "tagged_html_tables": 10,
+    "recovered_tables": 10,
+    "mathml_objects": 9,
+    "claims": 7,
+    "background_summary_paragraphs": 20,
+    "description_paragraphs": 125,
+    "total_numbered_paragraphs": 145,
+    "source_disclosed_items": 5,
+    "metadata_unpublished_items": 5,
+    "unmapped_source_items": 0
+  },
+  "representability_boundary": {
+    "qcon_basis_defined": true,
+    "qcon_basis_conversion_implemented": false,
+    "prescription_surface_radius_conflicts_in_items": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "required_system_metadata_absent_in_items": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "effective_focal_length_published": false,
+    "f_number_published": false,
+    "angular_field_published": false,
+    "image_height_published": true,
+    "stop_row_published": true,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0
+  }
+}

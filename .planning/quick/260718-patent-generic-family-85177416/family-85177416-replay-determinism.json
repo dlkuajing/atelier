@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "family_id": "85177416",
+  "root_id": "US-12498545",
+  "publication_id": "US-12498545-B2",
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12498545/attempt-0002/result.json",
+      "bytes": 6622,
+      "file_sha256": "7a2efe11ab095a9734a906a000485c0e27e0d6a5f2e3f8cd8e707f8b35f935f8",
+      "result_attempt": 2,
+      "semantic_sha256": "c58c7db8608ef0c05a7d2d5462d3ccc43630c80a5c11b24278f5d302f762a99e"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12498545/attempt-0003/result.json",
+      "bytes": 6622,
+      "file_sha256": "c43768660077919a31bc5159bca5fcd7903347e81c304ef93476f157cb4cee98",
+      "result_attempt": 3,
+      "semantic_sha256": "c58c7db8608ef0c05a7d2d5462d3ccc43630c80a5c11b24278f5d302f762a99e"
+    }
+  ],
+  "semantic_sha256": "c58c7db8608ef0c05a7d2d5462d3ccc43630c80a5c11b24278f5d302f762a99e",
+  "semantic_equal": true,
+  "normalization": {
+    "removed_fields": [
+      "result_attempt"
+    ],
+    "outcome_fields_removed": [],
+    "request_fields_removed": [],
+    "runtime_paths_normalized": false
+  },
+  "final_state": {
+    "result_attempt": 3,
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "item_state_counts": {
+      "terminal": 5
+    },
+    "terminal_status_counts": {
+      "metadata_unpublished": 5
+    },
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0
+  }
+}

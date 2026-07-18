@@ -661,6 +661,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_sekonix_small_lens_qcon_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_largan_folded_light_blocking_attempts(
         raw_text,
         patent_id=patent_id,
@@ -13170,6 +13176,224 @@ _SAMSUNG_SEVEN_EIGHT_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "8325129c56f7a2163d03dc3cf30ff67118f6a87f7b5572234da6dd04435a72b5"
             ),
         },
+    }
+}
+_SEKONIX_SMALL_LENS_QCON_ITEMS = (
+    (1, "SEKONIX first six-lens Qcon prescription"),
+    (2, "SEKONIX second six-lens Qcon prescription"),
+    (3, "SEKONIX third six-lens Qcon prescription"),
+    (4, "SEKONIX fourth six-lens Qcon prescription"),
+    (5, "SEKONIX fifth six-lens Qcon prescription"),
+)
+_SEKONIX_SMALL_LENS_QCON_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12498545-B2": {
+        "raw_document_sha256": (
+            "db9ea5f722c47ae3cf3b90ee77f8862813d2e410fffd9f7929cff4dba2f561ab"
+        ),
+        "normalized_text_sha256": (
+            "36f7edb358a323333a32d072441047c10a3ae0b056218eed7e88284ee555198b"
+        ),
+        "section_markers": {
+            "preamble": "US-12498545-B2 - Patent Public Search | USPTO",
+            "abstract": "Abstract Disclosed is a small lens system",
+            "background": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATION"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . A small lens system comprising",
+        },
+        "section_sha256": {
+            "preamble": (
+                "af4d03c2080137e251ae0815e04867679c1a2556cbc70da9ad546d2a64e76a87"
+            ),
+            "abstract": (
+                "a692ffd11994d8b0e39de3f251e112bc0b645aad1aadc069db43cf3bf710d4a5"
+            ),
+            "background": (
+                "8d9f2f8cfffade0f488d6a75cae0e2dda76ac0d03377c1269a7fac33dbed7e28"
+            ),
+            "description": (
+                "5793ab368f924bb59f903135ee0e4bfbd5c70c16adce37d3ab36dd9ba2bef822"
+            ),
+            "claims": (
+                "0cbb0732e8ec1c08176f6b115d558b6ac6d02497ff542828ff9e291b6573e096"
+            ),
+        },
+        "background_paragraph_span_sha256": {
+            (1, 1): "c256b93bdc36a0aec47d7c05fb9a86ae75993d7bbb9b592fbfbcf3298635344d",
+            (2, 11): "930fbfd0f8d86db2f7cf237e70d909f047baf3850098aff73f37d1a27fd8eb59",
+            (12, 20): "1ceecfc45ad1c4764c34e4c9e0b5ba7882e207f142b0f4fabb80bd4d7bed53f8",
+        },
+        "description_paragraph_span_sha256": {
+            (1, 12): "6feeaf44a1808401fde04818f73ff2057eb72363aa7a25407e0374f1a01b8d14",
+            (13, 36): "798b6048b04352669fadada47ce313ded2f744bfd174ff400e45c00dcb73260b",
+            (37, 55): "d6a70f84178742667c4e2ae0c00a2eeeb4a428314037b8b9158875addc4aa212",
+            (56, 72): "218a897c2700b30fb885b26d0d7cb00f53b8eac37ac52d9ac966865f19963656",
+            (73, 88): "1a0773aa72d9fb6cea0105d0b4e31b0e72ee77815112f38a3f5ad8f38ff5ec7f",
+            (89, 104): "5d3c34822a278c42a7ebe49ae6a2a149d79e1c0adfed8c41fd3602e291f96da7",
+            (105, 121): "ca3b91d61438322f5654ce33b74a678946a10bc0e460f8ddb4466633ea846714",
+            (122, 125): "d4ad8c3b90191fe7da30d5ae98fd2ed0206ac6497304a92e75ec8a64af146e33",
+        },
+        "item_ranges": ((37, 55), (56, 72), (73, 88), (89, 104), (105, 121)),
+        "item_markers": (
+            "(37) FIG. 3 is a view showing a first embodiment of a small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "(56) FIG. 5 is a view showing a second embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "(73) FIG. 7 is a view showing a third embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "(89) FIG. 9 is a view showing a fourth embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "(105) FIG. 11 is a view showing a fifth embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+        ),
+        "table_payload_sha256": (
+            "00fbae9bf891312158f03593f12ece3ac450fc7556cc69720354ac882af45c22",
+            "89d730ba927db23f42ba4316097ddf713e004990e8cb74d9885a7e6bb266eeb6",
+            "75d0b5004576e322f0f64c6bf4a1dc1e6aff5a9f61f86b3c33bc24799803cfd2",
+            "4eae76feddc931a554532c6c2d7db8328acf7f657dd84018b66fa2726b2e5726",
+            "5acef5f6cd2b4954bb109484544f5619fa5284eb30522dd4978cdacdfc0846d1",
+            "d5cf7ceec1f63542ed3127980ec08727b6fd5b41a7898e85f851e54d974d3959",
+            "5f5a366c87ca25d22b02724ac6db7e3e4ceeb03460fcb12566a3dfffdee8af63",
+            "bc4f269191d763e58b9c0348ddcbb9ea8ff74fa2134dd3ca0da4c74e486ed015",
+            "106616b4dfb91b1817cd8e13b18ff077ea5e9e93602fcecfc29555d907ce269f",
+            "69ebe6a6b50ae28a7e641a7d07856aecb54dca038c98df0ea387c46c38d24881",
+        ),
+        "radius_conflicts": (
+            (
+                ("8", "1.6411", "1.84110.E+00"),
+                ("11", "-0.6224", "-8.22449.E-01"),
+                ("12", "-3.9286", "-3.92882.E+00"),
+            ),
+            (("10", "34.2167", "3.42157.E+01"),),
+            (("4", "1.6720", "1.57195.E+00"),),
+            (),
+            (
+                ("6", "-2.7664", "-2.76644.8+00"),
+                ("7", "Infinity", "1.00000.E+03"),
+                ("10", "-35.6526", "-3.56528.E+01"),
+            ),
+        ),
+        "mathml_sha256": (
+            "8a2fcebfb21ceaa23ea5d7e255acbebdad0a01b23c7e8e0b368cc725a1451cef",
+            "210835de9558fddfe0e515eb9367850e18f4aa8263cc83fd307423298e7249d0",
+            "71a137dfa18d992d712c72755e7d0b213c534e8ce2d73c3f58330c26e96fac61",
+            "df8bff69e56ea38f05c98ba3d5ced35ea9d729f0fb7ec831d97e27602f28586b",
+            "a75ae62af673599937c0cbd0b8106f42c8808f39b15f4de28f23e72f172ce83c",
+            "3888de01abfd60027c122f40708fde3a06d1b56b162c24f9cc75bd8449e9dbf0",
+            "40a53528989bddbfc50f63e52ad8a982dae35ded205388a57b99743f6243884d",
+            "d83101bce150d449f935984f3ce0ba6a84099e69764b6e563dd467ba6ee7520a",
+            "1947996dffd947adc5fef0e7dbb75bcc73a91c6184233eb6b931cb7910179a81",
+        ),
+        "claim_sha256": (
+            "4ea71b5cad0af2d4d49cf9a0b4fab11b7f34225c7f418858791ddacf3793dca5",
+            "247db578be27e620675422a09322aeedfd95464f01ddd51933ecd10f987334d7",
+            "9509a0ad2113905246643986285aefa6373b9951882da26c57fe825f5a791d58",
+            "3cd892f99f110420087939ce590e0155c486ab34baffc3a87d236a949ce3ad39",
+            "dda0f7c279437f61a5c56d5d037bf9cd1b289e25f0775a170d019270a31f6461",
+            "45192f3b7b8ef83c6b1bb6c8e9041e0a2ea2fc47748443e84cbfada806821919",
+            "028bef6c6dbd3fc9bb342dd88d0e272ca2f6e1409b43bff2c161a4347d69f4d9",
+        ),
+        "identity_markers": {
+            "US-12498545-B2": 1,
+            "United States Patent 12498545": 1,
+            "Kind Code B2": 1,
+            "Date of Patent December 16, 2025": 1,
+            "Applicant: SEKONIX CO., LTD.": 1,
+            "Family ID: 85177416": 1,
+            "Appl. No.: 17/813265": 1,
+            "Filed: July 18, 2022": 1,
+            "US 20230048740 A1 Feb. 16, 2023": 1,
+            "KR 10-2021-0098990 Jul. 28, 2021": 1,
+        },
+        "source_phrase_counts": {
+            "First Embodiment": 15,
+            "Second Embodiment": 15,
+            "Third Embodiment": 15,
+            "Fourth Embodiment": 15,
+            "Fifth Embodiment": 15,
+            "Example": 0,
+            "Embodiment": 77,
+            "effective focal length": 0,
+            "focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "Fno": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "FOV": 0,
+            "image height": 28,
+            "stop": 18,
+            "aperture": 5,
+            "Y Radius": 11,
+            "Qcon Coefficient": 145,
+            "TOPL/Himg": 13,
+        },
+        "official_pdfs": (
+            {
+                "publication_id": "US-12498545-B2",
+                "path": (
+                    "data/patent-lake/uspto-ppubs-pdf/44a3a3a119208da7/"
+                    "US-12498545-B2.pdf"
+                ),
+                "bytes": 1_269_840,
+                "sha256": (
+                    "44a3a3a119208da754f17486e91212f7b910a227399487167f843d8decf8842c"
+                ),
+                "page_count": 25,
+                "single_raster_page_count": 25,
+                "common_raster_dimensions": (2560, 3300),
+                "narrow_raster_dimensions": (2550, 3300),
+                "narrow_raster_page_numbers": (14, 15, 16, 17, 19, 21, 22, 24),
+                "drawing_page_numbers": tuple(range(2, 14)),
+                "table_page_numbers": tuple(range(16, 25)),
+                "table_page_raster_sha256": (
+                    "10f3be9aeaaf72aa62086664401bfb54589a2143b75a17f0bd8476fe6a84729e",
+                    "795ad779e32057f6bea980ef686ccb826cb75260cf75b285141320fc9108f44c",
+                    "a4bdf792700a8c861d6f44126636f785fb612f0ab7e5d864cab17af91ae3059e",
+                    "7d6ca852591c1dfa0fe08976fe195740ff6c4aa818067be4a680f1e4c7b4f141",
+                    "69ce4d298a909adfc66b421bec1b1f9761311d05c9152b591649d084a27a06ae",
+                    "37c36f17ec00423a8b6984df50bc8e8053c31df838e602eac81ae3e8ff4ae097",
+                    "a7f2e46fbe0d390ab3919bee231abfd1da78d2caa9b6d1bcc2b0addbbd50a577",
+                    "efe94d0bab20aa456390d864af1675c45e0b77af2acd1f8707708fa76f97845a",
+                    "b3da870adb8d7b2806cd66350680e77399699b6968150c82d9535f13df5fbfa0",
+                ),
+                "raster_set_sha256": (
+                    "f378196d84083d23e907d6914edc246a79e0de45821dd6c806f8350eb9c17bef"
+                ),
+            },
+            {
+                "publication_id": "US-20230048740-A1",
+                "path": (
+                    "data/patent-lake/uspto-ppubs-pdf/fbc820010625450a/"
+                    "US-20230048740-A1.pdf"
+                ),
+                "bytes": 1_282_773,
+                "sha256": (
+                    "fbc820010625450a53d6f7b85c5bdb7d199503959ea8d10803a99b6d57fea32c"
+                ),
+                "page_count": 25,
+                "single_raster_page_count": 25,
+                "common_raster_dimensions": (2560, 3300),
+                "narrow_raster_dimensions": (2550, 3300),
+                "narrow_raster_page_numbers": (14, 15, 17, 18, 19, 21, 22, 24, 25),
+                "drawing_page_numbers": tuple(range(2, 14)),
+                "table_page_numbers": tuple(range(17, 25)),
+                "table_page_raster_sha256": (
+                    "8cf4ed5c623372ec7b4a91e19a76c9e2c48435370c9a6c35abad670e72b39a1d",
+                    "7125b71f5dc2c3628b76643475b30aa3115e928e708007dd81abd267b75b32ff",
+                    "61f3a917cea345189973aed09a6a558bc88addebd1c9e32fb98294b729c1cfc6",
+                    "ec4e1128b164cda512eca4cb4b2fc3716a1604d5b1e01e557756ac3efeea317c",
+                    "20f9954d9aced60e732564a8896a9bae4f1063077c1527927c3c3f7511fb5787",
+                    "86b6608dba2271366985aba4de9106041b65746d9646cab03af6235a30bb1c40",
+                    "1b871282bd5468ff08121f79ac99889594a45adc89892a0bec236544aae4ffb6",
+                    "d160090e5dd49b1bbc0090943e9599a2e5f0b4b8099b08d8976228e72a85c517",
+                ),
+                "raster_set_sha256": (
+                    "e02da3ffe0d97ec412e9f0b09c25a4f3ef450678ba441cee2be9c42f420bb59a"
+                ),
+            },
+        ),
     }
 }
 _CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
@@ -36938,6 +37162,516 @@ def _classify_samsung_seven_eight_lens_attempts(
             ),
         )
     )
+    return attempts
+
+
+def _sekonix_small_lens_qcon_table_payloads(text: str) -> tuple[str, ...]:
+    """Return the ten exact TABLE payloads without following prose."""
+
+    matches = list(re.finditer(r"TABLE-US-(\d{5})\s+TABLE\s+(\d+)\s+", text))
+    source_numbers = tuple(int(match.group(1)) for match in matches)
+    display_numbers = tuple(int(match.group(2)) for match in matches)
+    expected = tuple(range(1, 11))
+    if source_numbers != expected or display_numbers != expected:
+        raise PatentParseError(
+            "SEKONIX small-lens Qcon family must contain TABLE 1 through 10"
+        )
+
+    payloads: list[str] = []
+    for index, match in enumerate(matches):
+        end_candidates = [len(text)]
+        if index + 1 < len(matches):
+            end_candidates.append(matches[index + 1].start())
+        next_paragraph = re.search(r"\s\(\d+\)\s", text[match.end() :])
+        if next_paragraph is not None:
+            end_candidates.append(match.end() + next_paragraph.start())
+        claims_start = text.find(" Claims ", match.end())
+        if claims_start >= 0:
+            end_candidates.append(claims_start)
+        payloads.append(text[match.start() : min(end_candidates)].strip())
+    return tuple(payloads)
+
+
+def _sekonix_small_lens_surface_radius_tokens(table_text: str) -> dict[str, str]:
+    row_matches = list(
+        re.finditer(
+            r"(?<!\S)(Object|Image|Stop|(?:[1-9]|1[0-5]))\s+"
+            r"(Sphere|Qcon)\s+",
+            table_text,
+        )
+    )
+    labels = tuple(match.group(1) for match in row_matches)
+    expected = (
+        "Object",
+        "1",
+        "2",
+        "Stop",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "Image",
+    )
+    if labels != expected:
+        raise PatentParseError("SEKONIX small-lens surface-row sequence changed")
+
+    radii: dict[str, str] = {}
+    for index, match in enumerate(row_matches):
+        row_end = (
+            row_matches[index + 1].start()
+            if index + 1 < len(row_matches)
+            else len(table_text)
+        )
+        row_tokens = table_text[match.end() : row_end].split()
+        if not row_tokens:
+            raise PatentParseError(
+                f"SEKONIX small-lens surface {match.group(1)} row is empty"
+            )
+        radii[match.group(1)] = row_tokens[0]
+    return radii
+
+
+def _sekonix_small_lens_qcon_radius_tokens(table_text: str) -> dict[str, str]:
+    radii: dict[str, str] = {}
+    for match in re.finditer(
+        r"(?<!\S)Surface\s+"
+        r"((?:(?:2|Stop|[4-9]|1[0-3])\s+){6})"
+        r"Y Radius\s+(.*?)\s+Normalization Radius",
+        table_text,
+    ):
+        labels = match.group(1).split()
+        values = match.group(2).split()
+        if len(labels) != len(values):
+            raise PatentParseError("SEKONIX small-lens Qcon radius row is ragged")
+        radii.update(zip(labels, values, strict=True))
+    expected = ("2", "Stop", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13")
+    if tuple(radii) != expected:
+        raise PatentParseError("SEKONIX small-lens Qcon surface sequence changed")
+    return radii
+
+
+def _sekonix_small_lens_qcon_radius_conflicts(
+    payloads: tuple[str, ...],
+) -> tuple[tuple[tuple[str, str, str], ...], ...]:
+    """Reconcile four-decimal surface radii with precise Qcon Y radii."""
+
+    if len(payloads) != 10:
+        raise PatentParseError("SEKONIX small-lens table-pair denominator changed")
+    conflicts: list[tuple[tuple[str, str, str], ...]] = []
+    for embodiment_number in range(1, 6):
+        surface_radii = _sekonix_small_lens_surface_radius_tokens(
+            payloads[embodiment_number * 2 - 2]
+        )
+        qcon_radii = _sekonix_small_lens_qcon_radius_tokens(
+            payloads[embodiment_number * 2 - 1]
+        )
+        item_conflicts: list[tuple[str, str, str]] = []
+        for label, qcon_token in qcon_radii.items():
+            surface_token = surface_radii[label]
+            surface_value = qcon_value = None
+            if surface_token.lower() == "infinity":
+                surface_value = math.inf
+            else:
+                with contextlib.suppress(PatentParseError):
+                    surface_value = _sekonix_number(surface_token)
+            with contextlib.suppress(PatentParseError):
+                qcon_value = _sekonix_number(qcon_token)
+
+            matches = False
+            if surface_value is not None and qcon_value is not None:
+                if math.isinf(surface_value):
+                    matches = abs(qcon_value) >= 1e17
+                else:
+                    # The surface table prints four decimal places.  The paired
+                    # Qcon table prints at least five; 0.00005 mm is therefore
+                    # the largest ordinary nearest-rounding delta.
+                    matches = math.isclose(
+                        surface_value,
+                        qcon_value,
+                        rel_tol=0.0,
+                        abs_tol=0.0000501,
+                    )
+            if not matches:
+                item_conflicts.append((label, surface_token, qcon_token))
+        conflicts.append(tuple(item_conflicts))
+    return tuple(conflicts)
+
+
+def _classify_sekonix_small_lens_qcon_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the five exact Family 85177416 Qcon prescriptions."""
+
+    profile = _SEKONIX_SMALL_LENS_QCON_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in _SEKONIX_SMALL_LENS_QCON_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\((\d+)\)", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"SEKONIX small-lens Qcon {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(zip(numbers, matches, strict=True))
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"SEKONIX small-lens Qcon identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("SEKONIX small-lens Qcon section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"SEKONIX small-lens Qcon {section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"],
+            expected_numbers=tuple(range(1, 21)),
+            label="background/summary paragraph",
+        )
+        description_paragraphs = numbered_paragraphs(
+            sections["description"],
+            expected_numbers=tuple(range(1, 126)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (
+                background_paragraphs,
+                profile["background_paragraph_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_paragraph_span_sha256"],
+                "description",
+            ),
+        ):
+            for (start, end), expected_digest in span_hashes.items():
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                ).strip()
+                observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        f"SEKONIX small-lens Qcon {label} paragraph span "
+                        f"{start}-{end} changed"
+                    )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_SEKONIX_SMALL_LENS_QCON_ITEMS)
+            == 5
+        ):
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon source-item denominator changed"
+            )
+        for (start, end), marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"SEKONIX small-lens Qcon source-item marker {marker!r} changed"
+                )
+
+        if "FIGS. 1 and 2 are views showing conventional small lens systems" not in (
+            description_paragraphs[2]
+        ):
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon prior-art figure declaration changed"
+            )
+        for figure_number in range(3, 13):
+            if re.match(
+                rf"\({figure_number}\) FIG\. {figure_number} is a view ",
+                description_paragraphs[figure_number],
+            ) is None:
+                raise PatentParseError(
+                    "SEKONIX small-lens Qcon figure denominator changed at "
+                    f"FIG. {figure_number}"
+                )
+
+        table_payloads = _sekonix_small_lens_qcon_table_payloads(text)
+        table_digests = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        )
+        if table_digests != profile["table_payload_sha256"]:
+            raise PatentParseError("SEKONIX small-lens Qcon table payloads changed")
+        radius_conflicts = _sekonix_small_lens_qcon_radius_conflicts(table_payloads)
+        if radius_conflicts != profile["radius_conflicts"]:
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon radius-conflict signature changed"
+            )
+        for table_number in range(2, 11, 2):
+            payload = table_payloads[table_number - 1]
+            if not (
+                payload.count("Y Radius") == 2
+                and payload.count("Normalization Radius") == 2
+                and len(
+                    re.findall(r"(?<!\d)4th Qcon Coefficient", payload)
+                )
+                == 2
+                and payload.count("30th Qcon Coefficient") == 2
+            ):
+                raise PatentParseError(
+                    f"SEKONIX small-lens TABLE {table_number} Qcon schema changed"
+                )
+
+        mathml_blocks = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        mathml_digests = tuple(
+            hashlib.sha256(block.encode("utf-8")).hexdigest()
+            for block in mathml_blocks
+        )
+        if mathml_digests != profile["mathml_sha256"]:
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 8):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "SEKONIX small-lens Qcon claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claim_digests = tuple(
+            hashlib.sha256(
+                claims_section[
+                    position : (
+                        claim_starts[index + 1]
+                        if index + 1 < len(claim_starts)
+                        else len(claims_section)
+                    )
+                ]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for index, position in enumerate(claim_starts)
+        )
+        if claim_digests != profile["claim_sha256"]:
+            raise PatentParseError(
+                "SEKONIX small-lens Qcon seven-claim denominator changed"
+            )
+
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"SEKONIX small-lens Qcon source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        for pdf_profile in profile["official_pdfs"]:
+            pdf_path = ROOT / pdf_profile["path"]
+            pdf_bytes = pdf_path.read_bytes()
+            publication_id = pdf_profile["publication_id"]
+            if len(pdf_bytes) != pdf_profile["bytes"]:
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} PDF byte count changed"
+                )
+            if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} PDF hash changed"
+                )
+            pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+            if len(pdf_reader.pages) != pdf_profile["page_count"]:
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} PDF page count changed"
+                )
+            page_raster_hashes: list[str] = []
+            text_layer_characters = 0
+            narrow_pages = frozenset(pdf_profile["narrow_raster_page_numbers"])
+            for page_number, page in enumerate(pdf_reader.pages, start=1):
+                page_images = list(page.images)
+                if len(page_images) != 1:
+                    raise PatentParseError(
+                        f"SEKONIX small-lens {publication_id} page {page_number} "
+                        f"contains {len(page_images)} rasters; expected one"
+                    )
+                image = page_images[0].image.convert("RGB")
+                expected_dimensions = (
+                    pdf_profile["narrow_raster_dimensions"]
+                    if page_number in narrow_pages
+                    else pdf_profile["common_raster_dimensions"]
+                )
+                if image.size != expected_dimensions:
+                    raise PatentParseError(
+                        f"SEKONIX small-lens {publication_id} page {page_number} "
+                        "raster dimensions changed"
+                    )
+                page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+                text_layer_characters += len(page.extract_text() or "")
+            if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} raster denominator changed"
+                )
+            raster_set_digest = hashlib.sha256(
+                ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+            ).hexdigest()
+            if raster_set_digest != pdf_profile["raster_set_sha256"]:
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} raster set changed"
+                )
+            if text_layer_characters != 0:
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} PDF gained a text layer"
+                )
+            if pdf_profile["drawing_page_numbers"] != tuple(range(2, 14)):
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} drawing denominator changed"
+                )
+            table_page_hashes = tuple(
+                page_raster_hashes[page_number - 1]
+                for page_number in pdf_profile["table_page_numbers"]
+            )
+            if table_page_hashes != pdf_profile["table_page_raster_sha256"]:
+                raise PatentParseError(
+                    f"SEKONIX small-lens {publication_id} table-page rasters changed"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain all five exact-source items
+        return attempts_for_error(exc)
+
+    conflict_details = (
+        "TABLE 1 versus TABLE 2 publishes S8 1.6411/1.84110E+00, S11 "
+        "-0.6224/-0.822449 and S12 -3.9286/-3.92882; the same conflicts are "
+        "visible in B2 PDF pages 16-17 and A1 PDF page 17",
+        "TABLE 3 versus TABLE 4 publishes S10 34.2167/34.2157, a 0.0010 mm "
+        "difference outside the 0.0000501 mm four-decimal rounding envelope; "
+        "the same conflict is visible in B2 PDF pages 18-19 and A1 PDF pages 18-19",
+        "TABLE 5 versus TABLE 6 publishes S4 1.6720/1.57195, a 0.10005 mm "
+        "difference repeated on B2 and A1 PDF page 20",
+        "",
+        "TABLE 9 versus TABLE 10 publishes S6 -2.7664/-2.76644.8+00 "
+        "(the latter is nonnumeric), S7 Infinity/1.00000E+03 and S10 "
+        "-35.6526/-35.6528; the same defects are visible on B2 and A1 PDF page 23",
+    )
+    reason_codes = (
+        "metadata_unpublished.surface_radius_conflicts_table_1_2",
+        "metadata_unpublished.surface_radius_conflict_table_3_4",
+        "metadata_unpublished.surface_radius_conflict_table_5_6",
+        "metadata_unpublished.required_system_efl_f_number_and_angular_field_absent",
+        "metadata_unpublished.surface_radius_malformed_and_conflicting_table_9_10",
+    )
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label in _SEKONIX_SMALL_LENS_QCON_ITEMS:
+        if conflict_details[number - 1]:
+            detail = (
+                f"{conflict_details[number - 1]}; therefore the official same-application "
+                "sources do not publish one unique ordered radius set for this "
+                "prescription. The complete 145 numbered paragraphs, FIGS. 1-12, "
+                "TABLES 1-10, nine MathML objects, seven claims and both 25-page "
+                "official PDFs were reconciled. They also publish no effective focal "
+                "length, F-number or prescription-specific angular field, and no such "
+                "value is inferred from image height or TOPL/Himg."
+            )
+        else:
+            detail = (
+                "TABLES 7/8 and FIGS. 9/10 bind the fourth prescription and publish "
+                "a complete internally consistent surface/material/Qcon-coefficient "
+                "set, a stop row and image height. The complete 145 numbered "
+                "paragraphs, FIGS. 1-12, TABLES 1-10, nine MathML objects, seven "
+                "claims and both 25-page official PDFs publish no effective focal "
+                "length, F-number or prescription-specific angular field; those "
+                "required system values are not inferred from image height or TOPL/Himg."
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code=reason_codes[number - 1],
+                    detail=detail,
+                ),
+            )
+        )
     return attempts
 
 
