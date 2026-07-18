@@ -852,6 +852,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_magicam_composite_photography_missing_image_height_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_samsung_seven_lens_five_example_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2951,6 +2959,218 @@ _SAMSUNG_FIVE_EXAMPLE_EIGHT_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "raster_set_sha256": (
                 "60e5e5276326d245f3c45d5ad0614a7a8510e0a479120aea91f965aa65eaa97e"
             ),
+        },
+    }
+}
+_MAGICAM_COMPOSITE_PHOTOGRAPHY_ITEMS = (
+    (
+        1,
+        "Magicam television foreground narrow-angle prescription",
+        1,
+        "narrow-angle",
+        2.184,
+        2.8,
+        10.89,
+    ),
+    (
+        2,
+        "Magicam television foreground wide-angle prescription",
+        2,
+        "wide-angle",
+        0.728,
+        2.8,
+        30.0,
+    ),
+    (
+        3,
+        "Magicam television background wide-angle prescription",
+        3,
+        "wide-angle",
+        0.728,
+        11.0,
+        30.0,
+    ),
+    (
+        4,
+        "Magicam television background narrow-angle prescription",
+        3,
+        "narrow-angle",
+        2.184,
+        11.0,
+        10.89,
+    ),
+    (
+        5,
+        "Magicam movie background wide-angle prescription",
+        4,
+        "wide-angle",
+        1.061,
+        11.0,
+        30.0,
+    ),
+    (
+        6,
+        "Magicam movie background narrow-angle prescription",
+        4,
+        "narrow-angle",
+        3.165,
+        11.0,
+        10.89,
+    ),
+    (
+        7,
+        "Magicam movie foreground narrow-angle prescription",
+        5,
+        "narrow-angle",
+        3.165,
+        2.8,
+        10.89,
+    ),
+    (
+        8,
+        "Magicam movie foreground wide-angle prescription",
+        6,
+        "wide-angle",
+        1.06,
+        2.8,
+        30.0,
+    ),
+)
+_MAGICAM_COMPOSITE_PHOTOGRAPHY_WRAPPER = (
+    9,
+    "Magicam coordinated composite photography system wrapper",
+)
+_MAGICAM_COMPOSITE_PHOTOGRAPHY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-4249805-A": {
+        "raw_document_sha256": (
+            "25b5e668414a45ca2afcd5251205e28833c0c09fa1808779a96cc11fdd16cdb1"
+        ),
+        "normalized_text_sha256": (
+            "ec7b8a9b40a335f210d7f70ee5216074a84dbe0d3aa964450dcfe98ffafb7e3d"
+        ),
+        "identity_markers": {
+            "United States Patent Application 4249805 Kind Code A": 1,
+            "Date of Patent February 10, 1981": 1,
+            "Inventor(s) Hilbert; Robert S. et al.": 1,
+            "Composite photography system Abstract": 1,
+            "Family ID: 21816074": 1,
+            "Assignee: Magicam, Inc.": 1,
+            "Appl. No.: 06/023591": 1,
+            "Filed: March 26, 1979": 1,
+        },
+        "section_markers": {
+            "preamble": "US-4249805-A",
+            "abstract": "Abstract A composite photography system",
+            "background": (
+                "Background/Summary (1) BACKGROUND OF THE INVENTION"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1. In a composite photography system",
+        },
+        "section_sha256": {
+            "preamble": (
+                "63b7388e3e0c51d453d792fec66f4e34b7a505f45980b7ec8673b64f8081079c"
+            ),
+            "abstract": (
+                "d74724ffd9919b1a6d864ccf192c53c376f4a8d954e45bc7a9fbaba45f83ddea"
+            ),
+            "background": (
+                "1cb2729693d0f0b1a03a365d075515cbd1c2187354a627128bf0ebe508f946af"
+            ),
+            "description": (
+                "f3b748f98de86ce72cd46b2903ef9305afe92659d0f11af511e2054eda070115"
+            ),
+            "claims": (
+                "6db09e13ee19d7fc7ca2386f293c7c8fed4fcaeffad44e6d85f0a8bd8af0365c"
+            ),
+        },
+        "description_paragraph_span_sha256": {
+            (1, 23): "8aebde0300e9d98a8c73d3aab604fcb9ffca073f4a986f91404e0da4240d3798",
+            (24, 26): "92ce09c31f1774dbf25b638d0c9892505d0e6d84e6a1a68cba156a94eb73091d",
+            (27, 35): "f228c774e334d19c6d9bcb87d68aa7b89f9de94eb4eedafe8e8d79d55b5b2572",
+            (36, 39): "e89664db54df2f52b7900bd9fe99d7971df9c1f4381823cafa6c602571d4e10a",
+            (40, 45): "2a1d01823a3bc5bade452124b3124a956e1cfae97d424c2df4c7049adcf179aa",
+            (46, 50): "1dfb0f7fca56b9012f68e0a6acbd36f205d8a3ec218b5cb240b37900dbb5c53a",
+            (51, 55): "fe1d46c501d0ddec9cb65e884d51eca504dc8216a7a7375242ecbcef5b40d267",
+            (56, 59): "f87130602ac44c639429368f974b2ca6a54756db36e8624e384cbaef5d489eb6",
+            (60, 61): "96705c734b67a5af2d02faf0f96f399548065f2a5b8c491c245c1dc12339f270",
+        },
+        "brief_drawing_sha256": (
+            "0e946381f202167267db53cdecb0824b67b1378a65a6dd5668f54a0275802912"
+        ),
+        "table_paragraph_sha256": {
+            34: "e3a42aa610f09c3a8bb239ca2a3337cabcd2e9cba9025b76c271fdc59eb4dfb9",
+            39: "23358800e2784daac06294758fc7f217f77f43605d1c511762e255e0c8722467",
+            45: "d2e070b9fc18a5309ecb0a0c46b3f6198d81c73e777eaed203c18c5551122bfd",
+            50: "e1406eb338da7bfd7b909d34cbb8a5e969133e379b2458c40a50f01267a6bef6",
+            55: "89d2deee3d8b7f26ddc2b667c6ba364a60174f22b708d4976db831acb2e2578a",
+            59: "04519e8b350456be72003169a10859abac35928a37a96c43975d9e5b1e09dcbf",
+        },
+        "independent_claim_numbers": (1, 17, 39),
+        "source_phrase_counts": {
+            "TABLE 1": 2,
+            "TABLE 2": 2,
+            "TABLE 3": 2,
+            "TABLE 4": 2,
+            "TABLE 5": 2,
+            "TABLE 6": 2,
+            "effective focal length": 8,
+            "F/2.8": 4,
+            "F/11": 3,
+            "image height": 1,
+            "35 mm motion picture format": 1,
+            "APERTURE STOP": 19,
+            "1.487/40.4": 1,
+            "1.487/70.4": 9,
+            "##STR1##": 1,
+            "##STR2##": 1,
+            "##STR3##": 1,
+            "##STR4##": 1,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/bf50e985949b792d/"
+                "US-4249805-A.pdf"
+            ),
+            "bytes": 1_468_403,
+            "sha256": (
+                "bf50e985949b792dbff17d239823a1555bb8fb64d1b60077d3b0ca92d292185d"
+            ),
+            "page_count": 22,
+            "single_raster_page_count": 22,
+            "raster_dimensions": (2320, 3408),
+            "drawing_page_numbers": tuple(range(2, 9)),
+            "drawing_sheet_count": 7,
+            "table_page_numbers": tuple(range(13, 18)),
+            "correction_page_number": 22,
+            "key_page_numbers": (2, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 22),
+            "key_page_raster_sha256": (
+                "6d4ee6d254a1b53107a01eb4457bd72edb048b108b3329180d37aff4bd88089c",
+                "5b7f1db8461a95484c804c91a92113fb8d021417f91945bdc0ed17344aa2804b",
+                "d51da73b621b9dc3e7438d2e21c530fcbc9f6af83b98f5a2328d22670fd2ba1b",
+                "fdca67468248a321b9fbb45830e41fad11695fa3a6f6b1b4370b1c213ae56d73",
+                "b932f582d8a89ef7cba9b6ec7929d8bb48d452f8f8f2c21ef69748eb1e4c0aae",
+                "11fb1cac46e02abbed4a67fb1afbc03a7d0f4e2c2827e9acfc08f26e0259229f",
+                "8b5fe94ec82010e1f4fb2fcdc016940834ce9c1d88789489035ca3d23a58bbaf",
+                "ed1282a4b8032c8be4e1824286beff99a8e6a4c280918c5fb0ca386a6e0f996d",
+                "e8251bcc90ac1872980927be344d963a5f21f6dd9704a25c8511f2eaed3e74a2",
+                "6f6266ffd3a5b8643084f9a48ab7b9dc40bf63b196795809df630cb643a98070",
+                "ea3d72254d7266093dd9e79f82a4800230887ff77d71c089a8e385f463e9fe27",
+                "babd5cb038ae7cba66f02570715120c7c93de01a75a1882ae03ea1b7c7a67e01",
+                "4096ec46ed48b32a1d75e477a507ea309fd04b12474276a08bcac64cd81a6e1c",
+            ),
+            "raster_set_sha256": (
+                "d665607f33310bce89d9af0681f6d6a6aeb2de373d22f72ad07c9d0aac5b5687"
+            ),
+        },
+        "correction_certificate": {
+            "date": "July 21, 1981",
+            "table_3_stop_parenthesis_deleted": True,
+            "table_4_c": 0.00441495,
+            "table_4_d": 0.000174108,
+            "column_15_line_62": "+/-1.6%",
+            "table_6_l7_corrected_nd_vd": "1.487/70.4",
+            "claim_22_asphere_parenthesis_inserted": True,
         },
     }
 }
@@ -27418,6 +27638,368 @@ def _parse_samsung_five_example_eight_lens_attempts(
                 prescription=prescription,
             )
         )
+    return attempts
+
+
+def _classify_magicam_composite_photography_missing_image_height_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify eight exact lens modes whose absolute image height is unpublished."""
+
+    profile = _MAGICAM_COMPOSITE_PHOTOGRAPHY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    all_items = tuple(
+        (number, label)
+        for number, label, *_unused in _MAGICAM_COMPOSITE_PHOTOGRAPHY_ITEMS
+    ) + (_MAGICAM_COMPOSITE_PHOTOGRAPHY_WRAPPER,)
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label in all_items
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                "Magicam composite-photography official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                "Magicam composite-photography normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Magicam composite-photography identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Magicam composite-photography section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Magicam composite-photography section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Magicam composite-photography {section_name} section changed"
+                )
+
+        background_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?<!\S)\((\d+)\)\s+", sections["background"]
+            )
+        )
+        if background_numbers != (
+            *range(1, 13),
+            1975,
+            *range(13, 21),
+        ):
+            raise PatentParseError(
+                "Magicam composite-photography background denominator changed"
+            )
+
+        paragraph_matches = list(
+            re.finditer(r"(?<!\S)\((\d+)\)\s+", sections["description"])
+        )
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 62)):
+            raise PatentParseError(
+                "Magicam composite-photography description paragraph denominator changed"
+            )
+        paragraphs = {
+            number: sections["description"][
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(sections["description"])
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for (start, end), expected_digest in profile[
+            "description_paragraph_span_sha256"
+        ].items():
+            span = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            ).strip()
+            if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    "Magicam composite-photography description paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        brief_start = sections["description"].index(
+            "BRIEF DESCRIPTION OF THE DRAWINGS"
+        )
+        brief = sections["description"][
+            brief_start : paragraph_matches[0].start()
+        ].strip()
+        if hashlib.sha256(brief.encode("utf-8")).hexdigest() != profile[
+            "brief_drawing_sha256"
+        ]:
+            raise PatentParseError(
+                "Magicam composite-photography FIGS. 1-25 declaration changed"
+            )
+        if not (
+            all(f"FIG. {number} is" in brief for number in range(1, 9))
+            and "FIGS. 9 through 24" in brief
+            and "FIG. 25 is" in brief
+        ):
+            raise PatentParseError(
+                "Magicam composite-photography figure denominator changed"
+            )
+
+        for paragraph_number, expected_digest in profile[
+            "table_paragraph_sha256"
+        ].items():
+            payload = paragraphs[paragraph_number].strip()
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    "Magicam composite-photography TABLE paragraph "
+                    f"{paragraph_number} changed"
+                )
+        if not (
+            "The effective focal length is 2.184 and the field is .+-.10.89.degree."
+            in paragraphs[33]
+            and "The effective focal length is 0.728 while the field of view is .+-.30.degree."
+            in paragraphs[38]
+            and "The lens has a F. No. of F/11" in paragraphs[42]
+            and "The effective focal length is 0.728" in paragraphs[43]
+            and "effective focal length of 2.184" in paragraphs[43]
+            and "The lens has an F. No. of F/11" in paragraphs[47]
+            and "effective focal length is 1.061" in paragraphs[49]
+            and "effective focal length for the telephoto mode of operation is 3.165"
+            in paragraphs[49]
+            and "movie foreground camera lens system of F/2.8" in paragraphs[52]
+            and "The effective focal length is 3.165" in paragraphs[54]
+            and "an F. No. of F/2.8" in paragraphs[56]
+            and "effective focal length is 1.06" in paragraphs[58]
+        ):
+            raise PatentParseError(
+                "Magicam composite-photography prescription metadata binding changed"
+            )
+
+        claims = sections["claims"]
+        claim_starts = []
+        cursor = 0
+        for claim_number in range(1, 55):
+            claim_start = claims.find(f"{claim_number}. ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Magicam composite-photography 54-claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number}. ")
+        if "55. " in claims[cursor:]:
+            raise PatentParseError(
+                "Magicam composite-photography claim denominator expanded"
+            )
+        independent_claims = tuple(
+            claim_number
+            for claim_number, start in enumerate(claim_starts, start=1)
+            if claims[start:].startswith(
+                (f"{claim_number}. In ", f"{claim_number}. A coordinated ")
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Magicam composite-photography independent claim families changed"
+            )
+
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Magicam composite-photography source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        if any(
+            re.search(pattern, raw_text, re.IGNORECASE) is not None
+            for pattern in (r"<table\b", r"<maths?\b", r"<img\b")
+        ):
+            raise PatentParseError(
+                "Magicam composite-photography retained HTML tag denominator changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Magicam composite-photography official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Magicam composite-photography official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Magicam composite-photography official PDF page count changed"
+            )
+        page_raster_hashes = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Magicam composite-photography official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            if page_images[0].image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Magicam composite-photography official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(
+                _canonical_raster_sha256(page_images[0].data)
+            )
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Magicam composite-photography raster-page denominator changed"
+            )
+        if hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest() != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Magicam composite-photography official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Magicam composite-photography official PDF gained a text layer"
+            )
+        if not (
+            len(pdf_profile["drawing_page_numbers"])
+            == pdf_profile["drawing_sheet_count"]
+            == 7
+            and pdf_profile["drawing_page_numbers"] == tuple(range(2, 9))
+            and pdf_profile["table_page_numbers"] == tuple(range(13, 18))
+            and pdf_profile["correction_page_number"] == 22
+        ):
+            raise PatentParseError(
+                "Magicam composite-photography official PDF page roles changed"
+            )
+        key_page_hashes = tuple(
+            page_raster_hashes[page_number - 1]
+            for page_number in pdf_profile["key_page_numbers"]
+        )
+        if key_page_hashes != pdf_profile["key_page_raster_sha256"]:
+            raise PatentParseError(
+                "Magicam composite-photography key-page rasters changed"
+            )
+        correction = profile["correction_certificate"]
+        if correction != {
+            "date": "July 21, 1981",
+            "table_3_stop_parenthesis_deleted": True,
+            "table_4_c": 0.00441495,
+            "table_4_d": 0.000174108,
+            "column_15_line_62": "+/-1.6%",
+            "table_6_l7_corrected_nd_vd": "1.487/70.4",
+            "claim_22_asphere_parenthesis_inserted": True,
+        }:
+            raise PatentParseError(
+                "Magicam composite-photography correction certificate binding changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all nine source items
+        return attempts_for_error(exc)
+
+    attempts = []
+    for (
+        number,
+        label,
+        table_number,
+        mode,
+        focal_length_in,
+        f_number,
+        half_field_deg,
+    ) in _MAGICAM_COMPOSITE_PHOTOGRAPHY_ITEMS:
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code="metadata_unpublished.absolute_image_height_absent",
+                    detail=(
+                        f"TABLE {table_number} {mode} source item publishes ordered "
+                        "radii, axial spacings, refractive-index/Abbe data, aperture "
+                        f"stop, focal length {focal_length_in:g} inches, F/{f_number:g} "
+                        f"and half-field {half_field_deg:g} degrees, but neither the "
+                        "official HTML nor the correction-certified official PDF "
+                        "directly publishes an absolute image height; no value is "
+                        "derived from focal length/field or nominal media format"
+                    ),
+                ),
+            )
+        )
+    wrapper_number, wrapper_label = _MAGICAM_COMPOSITE_PHOTOGRAPHY_WRAPPER
+    attempts.append(
+        _PrescriptionParseAttempt(
+            embodiment_number=wrapper_number,
+            embodiment=wrapper_label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    "confirmed_no_prescription."
+                    "composite_photography_system_wrapper_only"
+                ),
+                detail=(
+                    "FIG. 1 and independent claims 1, 17 and 39 disclose the "
+                    "coordinated registered-matte camera/control wrapper; its optical "
+                    "prescriptions are exactly the eight foreground/background mode "
+                    "items already retained, and the wrapper publishes no additional "
+                    "distinct ordered lens prescription"
+                ),
+            ),
+        )
+    )
     return attempts
 
 

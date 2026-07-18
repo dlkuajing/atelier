@@ -33588,6 +33588,410 @@ def test_samsung_five_example_eight_lens_raster_audit_rehashes() -> None:
     }
 
 
+def _magicam_composite_photography_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "25b5e668414a45ca"
+        / "US-4249805-A.html"
+    )
+    return "US-4249805-A", source_path.read_text(encoding="utf-8")
+
+
+def test_magicam_composite_photography_reconciles_nine_source_items() -> None:
+    patent_id, raw_text = _magicam_composite_photography_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 10))
+    assert [attempt.embodiment for attempt in attempts[:8]] == [
+        item[1] for item in patent_to_zmx._MAGICAM_COMPOSITE_PHOTOGRAPHY_ITEMS
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert [attempt.error.status for attempt in attempts] == [
+        "metadata_unpublished",
+    ] * 8 + ["confirmed_no_prescription"]
+    assert {
+        attempt.error.reason_code for attempt in attempts[:8] if attempt.error
+    } == {"metadata_unpublished.absolute_image_height_absent"}
+    assert attempts[8].error.reason_code == (
+        "confirmed_no_prescription.composite_photography_system_wrapper_only"
+    )
+    assert all(
+        "no value is derived from focal length/field or nominal media format"
+        in str(attempt.error)
+        for attempt in attempts[:8]
+    )
+
+
+def test_magicam_composite_photography_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _magicam_composite_photography_source()
+    changed = raw_text.replace("February 10, 1981", "February 11, 1981", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 9
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Magicam composite-photography official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
+def test_magicam_composite_photography_source_denominator_is_bound() -> None:
+    patent_id, raw_text = _magicam_composite_photography_source()
+    profile = patent_to_zmx._MAGICAM_COMPOSITE_PHOTOGRAPHY_SOURCE_PROFILES[
+        patent_id
+    ]
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    description_start = text.index(profile["section_markers"]["description"])
+    claims_start = text.index(profile["section_markers"]["claims"])
+    description = text[description_start:claims_start]
+    paragraphs = list(re.finditer(r"(?<!\S)\((\d+)\)\s+", description))
+
+    assert [int(match.group(1)) for match in paragraphs] == list(range(1, 62))
+    assert len(re.findall(r"(?m)(?:^|\s)(\d+)\. ", text[claims_start:])) >= 54
+    assert profile["independent_claim_numbers"] == (1, 17, 39)
+    assert len(profile["table_paragraph_sha256"]) == 6
+    assert [item[2] for item in patent_to_zmx._MAGICAM_COMPOSITE_PHOTOGRAPHY_ITEMS] == [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        6,
+    ]
+    assert [item[4:] for item in patent_to_zmx._MAGICAM_COMPOSITE_PHOTOGRAPHY_ITEMS] == [
+        (2.184, 2.8, 10.89),
+        (0.728, 2.8, 30.0),
+        (0.728, 11.0, 30.0),
+        (2.184, 11.0, 10.89),
+        (1.061, 11.0, 30.0),
+        (3.165, 11.0, 10.89),
+        (3.165, 2.8, 10.89),
+        (1.06, 2.8, 30.0),
+    ]
+    assert profile["source_phrase_counts"]["effective focal length"] == 8
+    assert profile["source_phrase_counts"]["image height"] == 1
+    assert profile["correction_certificate"] == {
+        "date": "July 21, 1981",
+        "table_3_stop_parenthesis_deleted": True,
+        "table_4_c": 0.00441495,
+        "table_4_d": 0.000174108,
+        "column_15_line_62": "+/-1.6%",
+        "table_6_l7_corrected_nd_vd": "1.487/70.4",
+        "claim_22_asphere_parenthesis_inserted": True,
+    }
+    assert re.search(r"<table\b", raw_text, re.IGNORECASE) is None
+    assert re.search(r"<maths?\b", raw_text, re.IGNORECASE) is None
+    assert re.search(r"<img\b", raw_text, re.IGNORECASE) is None
+
+
+def test_magicam_composite_photography_official_pdf_rehashes() -> None:
+    profile = patent_to_zmx._MAGICAM_COMPOSITE_PHOTOGRAPHY_SOURCE_PROFILES[
+        "US-4249805-A"
+    ]["official_pdf"]
+    root = Path(__file__).resolve().parents[1]
+    pdf_bytes = (root / profile["path"]).read_bytes()
+
+    assert len(pdf_bytes) == profile["bytes"] == 1_468_403
+    assert hashlib.sha256(pdf_bytes).hexdigest() == profile["sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+    assert len(reader.pages) == profile["page_count"] == 22
+    page_hashes = []
+    for page in reader.pages:
+        page_images = list(page.images)
+        assert len(page_images) == 1
+        assert page_images[0].image.size == profile["raster_dimensions"]
+        assert (page.extract_text() or "") == ""
+        page_hashes.append(
+            patent_pdf_recovery._canonical_raster_sha256(page_images[0].data)
+        )
+    assert hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest() == profile["raster_set_sha256"]
+    assert profile["drawing_page_numbers"] == tuple(range(2, 9))
+    assert profile["table_page_numbers"] == tuple(range(13, 18))
+    assert profile["correction_page_number"] == 22
+    assert tuple(
+        page_hashes[page_number - 1]
+        for page_number in profile["key_page_numbers"]
+    ) == profile["key_page_raster_sha256"]
+
+
+def test_magicam_composite_photography_denominator_and_replay_are_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-21816074"
+    )
+    denominator = json.loads(
+        (quick / "family-21816074-denominator.json").read_text(encoding="utf-8")
+    )
+    counts = denominator["denominator"]
+
+    assert counts["source_disclosed_items"] == 9
+    assert counts["numerical_prescription_modes"] == 8
+    assert counts["composite_system_wrappers"] == 1
+    assert counts["metadata_unpublished_items"] == 8
+    assert counts["confirmed_no_prescription_items"] == 1
+    assert counts["replayed_ledger_items"] == 9
+    assert counts["unmapped_source_items"] == 0
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 10)
+    )
+    assert [item["table"] for item in denominator["items"]] == [
+        1,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        6,
+        None,
+    ]
+    assert denominator["representability_boundary"][
+        "absolute_image_height_published"
+    ] is False
+    assert denominator["representability_boundary"][
+        "image_height_derived_from_focal_length_and_field"
+    ] is False
+    assert denominator["representability_boundary"][
+        "image_height_borrowed_from_nominal_media_format"
+    ] is False
+    assert denominator["representability_boundary"][
+        "wrapper_has_ninth_ordered_prescription"
+    ] is False
+    assert not any(denominator["formal_outputs"].values())
+
+    artifact = json.loads(
+        (quick / "family-21816074-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert artifact["semantic_equal"] is True
+    assert artifact["semantic_sha256"] == (
+        "ed1c985871e8600f00fe2f88b76efdf13ee107d8c47063e0fb757c994d37c981"
+    )
+    assert artifact["normalization"] == {
+        "outcome_fields_removed": [],
+        "removed_fields": ["result_attempt"],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["final_state"] == {
+        "conversion_receipts": 0,
+        "conversion_requests": 0,
+        "item_state_counts": {"terminal": 9},
+        "prescription_fingerprints": 0,
+        "result_attempt": 3,
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "root_state": "terminal",
+        "staging_zmx": 0,
+        "terminal_status_counts": {
+            "confirmed_no_prescription": 1,
+            "metadata_unpublished": 8,
+        },
+    }
+
+
+def test_magicam_composite_photography_source_artifacts_are_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-21816074"
+    )
+    facts = json.loads(
+        (quick / "family-21816074-source-facts.json").read_text(encoding="utf-8")
+    )
+    availability = json.loads(
+        (quick / "family-21816074-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert facts["source"]["sha256"] == (
+        "25b5e668414a45ca2afcd5251205e28833c0c09fa1808779a96cc11fdd16cdb1"
+    )
+    assert facts["paragraphs"]["background_summary_numbers"] == list(
+        range(1, 21)
+    )
+    assert facts["paragraphs"]["description_numbers"] == list(range(1, 62))
+    assert len(facts["drawings"]["declared_figures"]) == 25
+    assert len(facts["prescription_items"]) == 8
+    assert facts["system_wrapper"]["independent_claim_numbers"] == [1, 17, 39]
+    assert facts["correction_certificate"] == {
+        "claim_22_asphere_parenthesis_inserted": True,
+        "column_15_line_62": "+/-1.6%",
+        "date": "July 21, 1981",
+        "official_pdf_page": 22,
+        "table_3_stop_parenthesis_deleted": True,
+        "table_4_c": 0.00441495,
+        "table_4_d": 0.000174108,
+        "table_6_l7_corrected_nd_vd": "1.487/70.4",
+    }
+    assert not any(facts["formal_outputs"].values())
+
+    html = availability["retained_html"]
+    raw = (root / html["path"]).read_bytes()
+    assert len(raw) == html["bytes"]
+    assert hashlib.sha256(raw).hexdigest() == html["sha256"]
+    official_pdf = availability["endpoint_checks"][0]
+    pdf_raw = (root / official_pdf["path"]).read_bytes()
+    assert len(pdf_raw) == official_pdf["bytes"]
+    assert hashlib.sha256(pdf_raw).hexdigest() == official_pdf["container_sha256"]
+    assert availability["source_policy"][
+        "missing_image_height_repaired_by_inference"
+    ] is False
+    assert availability["source_policy"][
+        "nominal_media_format_used_as_image_height"
+    ] is False
+
+
+def test_magicam_composite_photography_queue_and_evidence_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-21816074"
+    )
+    before = json.loads(
+        (quick / "generic-residual-before-79.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 79
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 78
+    assert after_1["result_set_sha256"] == (
+        "a5ba3123a2b21e649aec69ea2a1316a9446bc340bcc172717e6b8d1fd4d56501"
+    )
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["generic_residual_roots"] == queue["generic_residual_items"] == 78
+    assert queue["next_exact_group"]["family_id"] == "78471711"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12169351"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-12169351-B2"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["next_exact_group"]["table_count"] == 3
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-21816074-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "ed1c985871e8600f00fe2f88b76efdf13ee107d8c47063e0fb757c994d37c981"
+    )
+    assert evidence["candidate_outputs"] == {
+        "confirmed_no_prescription_terminal_items": 1,
+        "conversion_receipts": 0,
+        "conversion_requests": 0,
+        "metadata_unpublished_terminal_items": 8,
+        "staging_zmx": 0,
+    }
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["missing_results"] == 0
+    assert evidence["ledger"]["corrupt_results"] == 0
+    assert evidence["next_exact_group"] == queue["next_exact_group"]
+    assert evidence["saturation_complete"] is False
+
+
+def test_magicam_composite_photography_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-21816074"
+    )
+    audit = json.loads(
+        (quick / "family-21816074-raster-audit.json").read_text(encoding="utf-8")
+    )
+    official_pdf = audit["sources"][0]
+
+    assert official_pdf["page_count"] == 22
+    assert official_pdf["single_raster_page_count"] == 22
+    assert official_pdf["text_layer_characters"] == 0
+    assert official_pdf["decoded_raster_set_sha256"] == (
+        "d665607f33310bce89d9af0681f6d6a6aeb2de373d22f72ad07c9d0aac5b5687"
+    )
+    assert len(official_pdf["page_raster_sha256"]) == 22
+    assert official_pdf["raster_dimensions"] == [2320, 3408]
+    for record in audit["visual_artifacts"]:
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    assert audit["visual_review"] == {
+        "absolute_image_height_present": False,
+        "contact_sheet_reviewed": True,
+        "correction_page_reviewed_at_original_detail": 22,
+        "drawing_measurement_used": False,
+        "drawing_pages_reviewed_at_original_detail": list(range(2, 9)),
+        "first_claim_page_reviewed_at_original_detail": 18,
+        "image_enhancement_used": False,
+        "original_pages_reviewed": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            22,
+        ],
+        "raster_numeric_transcription_used": False,
+        "table_pages_reviewed_at_original_detail": list(range(13, 18)),
+    }
+
+
 def _samsung_thermal_eight_lens_source() -> tuple[str, str]:
     root = Path(__file__).resolve().parents[1]
     source_path = (

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "selection_policy": "generic bucket before AAC Raytech/Sunny; then minimum layout signature and root-first stable grouping",
+  "result_set_sha256": "a5ba3123a2b21e649aec69ea2a1316a9446bc340bcc172717e6b8d1fd4d56501",
+  "generic_residual_roots": 78,
+  "generic_residual_items": 78,
+  "next_exact_group": {
+    "family_id": "78471711",
+    "root_ids": ["US-12169351"],
+    "publication_ids": ["US-12169351-B2"],
+    "application_number": "17/405071",
+    "title": "Imaging lens assembly, image capturing apparatus and electronic device",
+    "assignee": "Largan Precision Co., Ltd.",
+    "layout_signature": "669c74453c256b9c8b70aacf6e499b3b25f467446459a157baa5754adea100cb",
+    "layout_signature_count": 1,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 84,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 3,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/86c15343d390d69d/US-12169351-B2.html",
+      "sha256": "86c15343d390d69dbb9fef7209d6b0852ea0b89ec4d1eac71a67e06d44e2b5f4"
+    }
+  },
+  "saturation_complete": false
+}
