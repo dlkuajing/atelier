@@ -471,6 +471,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _parse_corephotonics_compact_double_folded_tele_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_folded_camera_qcon_missing_definitions_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8233,6 +8241,243 @@ _FSO_TRANSMITTER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "1f8ce4abe31983f9d8dd081c456687e82a294d781fd339dcff11466914fb7111",
                 "5280f7738bc34273332dc79a7d77ec28d0dfb953f7db41465afcae7f332d7943",
                 "d9ccd984891ccb6ae14f1095ba1ddbf84b2f92fe27f50346e049a5e088e7aaf6",
+            ),
+        },
+    }
+}
+_COREPHOTONICS_DOUBLE_FOLDED_TELE_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*COMPACT\s+DOUBLE\s+FOLDED\s+TELE\s+CAMERAS\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_COREPHOTONICS_DOUBLE_FOLDED_TELE_SYSTEMS = (300, 320, 350, 400, 500, 600, 700)
+_COREPHOTONICS_DOUBLE_FOLDED_TELE_ITEMS = (
+    (1, "Corephotonics double-folded lens system 300", 300, (141, 152), ("3A",), (2, 3)),
+    (2, "Corephotonics cut-G2 lens system 320", 320, (153, 153), ("3B",), (2, 3)),
+    (
+        3,
+        "Corephotonics dual-cut lens system 350",
+        350,
+        (154, 163),
+        ("3C", "3D", "3E"),
+        (4, 3),
+    ),
+    (4, "Corephotonics double-folded lens system 400", 400, (164, 164), ("4",), (5, 6)),
+    (5, "Corephotonics one-group lens system 500", 500, (165, 167), ("5",), (7, 8)),
+    (6, "Corephotonics QT1 lens system 600", 600, (168, 168), ("6",), (9, 10)),
+    (
+        7,
+        "Corephotonics prism-folded lens system 700",
+        700,
+        (169, 180),
+        ("7A", "7B", "7C"),
+        (11, 12, 13),
+    ),
+)
+_COREPHOTONICS_DOUBLE_FOLDED_TELE_FIGURE_DECLARATIONS = tuple(
+    zip(
+        range(68, 90),
+        (
+            "1A",
+            "1B",
+            "1C",
+            "1D",
+            "2A",
+            "2B",
+            "2C",
+            "2D",
+            "3A",
+            "3B",
+            "3C",
+            "3D",
+            "3E",
+            "4",
+            "5",
+            "6",
+            "7A",
+            "7B",
+            "7C",
+            "8A",
+            "8B",
+            "8C",
+        ),
+        strict=True,
+    )
+)
+_COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260129276-A1": {
+        "raw_document_sha256": (
+            "6ba8e50cc7143544b238cab4cb0aa74be777228a2795532b4d1be529aacba0fb"
+        ),
+        "normalized_text_sha256": (
+            "cb7ae6ada4fc16336ff8e5fe0429455e4d016d3db4fa581e6beb944032964c43"
+        ),
+        "family_id": "86240812",
+        "application_number": "19/439370",
+        "section_markers": {
+            "abstract": "Abstract ",
+            "background_summary": "Background/Summary ",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION [0090]",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "abstract": "3f47a98082e97a601dc7b39e812f4026772adfebd92951d6805516438085e2a1",
+            "background_summary": (
+                "dc484165136140ee9ee70c792239bfca71bad2233b54c1a480231a0814a1393d"
+            ),
+            "brief": "26910310dd569b502a2e35eb3264869a20937f47b62ea2a4634e1252969126ab",
+            "detailed": "e171a78877aee29055a122b7e7749b8d6c416ecb8ebf81e77560ebc32ed403a3",
+            "claims": "744171155dd62a547a30b97f15768404b39d80a94a136043275258bbb413af12",
+        },
+        "paragraph_ranges": {
+            "background_summary": (1, 66),
+            "brief": (67, 89),
+            "detailed": (90, 194),
+        },
+        "paragraph_span_sha256": {
+            (1, 66): "5be1a07f3c13e76a76115ce9c08b9d79ff7e68ffdd82943a6946483b39cffcb6",
+            (67, 89): "90324b0276c9c014c5f128dc7d41486ad6f94435c41c8de92dab3230ceef2e82",
+            (90, 140): "2d2d9ad8bc97b0e9cb03c3d80e7ca8957e4a430126d4de81630604391684b8ac",
+            (141, 152): "be12ecafdd693e58b9e189333bbe07539114c3a3db5ae2029919d4e411c60588",
+            (153, 153): "deb123b406dca6a1908f4c34fc026803af49e860f6bf6ec3d2615de70e6fb0a8",
+            (154, 163): "28a52def186f525aedff6afcd05ce049af66651495624c681f8c314b7cdadc6f",
+            (164, 164): "0dbe88c3ce571e92c325345cee915e24751ff6a58aa9bc690b5110269ab20793",
+            (165, 167): "9e93cb1f67223ba51ba798f7a2bae4ae1445ea606e1f429fbc082db3c8c20a62",
+            (168, 168): "270d2a67d4f2d26cff5549ef830d80f0b4457b2dbc17a3374c5f5944dfa3565a",
+            (169, 180): "41625f3bfd308c2106720126b2e6c7b595f5b5bde6c09c0c61667b059b79c054",
+            (181, 189): "ba19fdaa38c00882595de2d1960e9630286a7e1905ece9d0c9a9fde739c0f4e1",
+            (190, 194): "8ff1368a2309c06b83f99cf59f208cd6d6e792192a73a24fbc199c257afcfd4a",
+        },
+        "claim_numbers": tuple(range(1, 22)),
+        "independent_claim_numbers": (1, 19),
+        "claim_sha256": (
+            "ab5d51ebcee2799c85d883fd3e3e3604dad69c1bbdebfe5f4d5b88f87dff481a",
+            "7c70d8c05ff1d20e63a5236f22fbedcb3f24a146feff13013bd5a70deb69053c",
+            "43e2718753a628993a7df7ec90fb25e95485232a1f404b9dfc0280be02073ca4",
+            "20af8ad17ce9672597f09fc039049a288b892ba5e158d972d2d0303c0e07471d",
+            "49c24ddf29a96d477ddded6301a230566e7ddc0880a17a98f5d5123ac6f8113c",
+            "96b3cf10417f7ba03049dba8518c26e00c0056eaba6e2f89ff75a425e80cf445",
+            "00ad4c251bfa4525e19880cae46b8fecef5876b0f4f0f0225d5d4e700b813377",
+            "9a01cde1c57633da6a0efdb957e0e4fe71879c7132b03de071e1b5c70f97f5b5",
+            "76d5a42319cbc8b9f9fd45ee93f58f3062fdb9ff9d4c0a8940c69b394c2d4702",
+            "a1e2f75e83259f93ee8cbc8a8c2081cd1d98f18119a4834a25d91878999be9b4",
+            "4a5c50d8b50dde1eb9299b98e35830e2fb21835e60151fe56a09f4086438629c",
+            "595cbdb8c5d95c532bdc956aa6c20de11646a6edc68fd467cd93b8542b0b8af9",
+            "40bc9023fa3c6fa947e44f55927e327109005389ac9266f6d7a5f2b4bd947027",
+            "c6eb08c8e8db7c1d396097c3c583857dd4a4e9362eb496ff686284c755b4643a",
+            "5ada2a7732d337d215c58914f4db25e7dfc3a8a90cb79c7e963e3c3ca9c74ea0",
+            "c1362da35dd367a152971f1cb4104b13415b1b731b9263095df26527796f6568",
+            "170e29cc7540c63e38c155f7953f8caab42bbef87ac0607623763733835e0689",
+            "13d691c8cbe23c50a62e16055cd58f0bab147c6599a1e2718ef6645f4823d82e",
+            "c02a85ae1c8691fed63fca0a35903b2c3ce772d4096d3448fc8897123bf58acf",
+            "c388d19a7b995d55cf23a5d4fa709ef03b7fecea9e7d4c23d52d2436fd83e0b7",
+            "1a28268ee16365b90edb0d8724f9bf043c9f153b72e0141a248f5cb2ee6dafb7",
+        ),
+        "table_block_sha256": {
+            1: "0343b947759313a99c233a6dfe38db8d71890a5e2af5e40435efe7023fb50f2e",
+            2: "e6d891bf16240e0b9fc70c05753476f0e539d44bc1de5820b0982c9e9151285f",
+            3: "64e69829ad83542cf449cd8140c553407d6b1f862ae795d1a866fb7cc3702379",
+            4: "02a938bf9c03476f4d051f72e619ee2744b0ecadc16bb66db4c2465f80c7fbea",
+            5: "a01b37dfdd8fdadb0bf9c42303ff8dcaf8fa44e8f9f1cec60e455bbe5ebcd48a",
+            6: "f671c9474fa07c726d470da4605b7e7866380947d35bacac66022b8f5d8a63e9",
+            7: "2220b45ad1ad0146eb0454f2465b8ef115deb1bb516e091dd7e6dbd5227d4ddd",
+            8: "4c9da3cce71e72976c86afcd8a7f39758b221c9e9e2f9a9a7f32a6de23171d18",
+            9: "655b4664e2f93dd1359e73305fad9ae9ffa5bb5b6be5227a05d31c183881dd8f",
+            10: "e28cad352a1ff74943833e6f23e45383ad0e3d876d52d446d2e9b3d15fb6fcce",
+            11: "b362abe102c2cb36f674c31831d3d7f16a33cb9263786c31a38f3631bed41f6f",
+            12: "09322f9a7aa97584b2e3201ad433c001e52d10d7d79bac52e18f7864a599a128",
+            13: "10ffb1e8a7709ed3646bc949a98488d6a6046797ccab9942b43ab6477a3d6b37",
+        },
+        "table_block_token_counts": {
+            1: 437,
+            2: 157,
+            3: 71,
+            4: 160,
+            5: 160,
+            6: 113,
+            7: 130,
+            8: 99,
+            9: 145,
+            10: 109,
+            11: 146,
+            12: 99,
+            13: 36,
+        },
+        "math_block_sha256": (
+            "6cdd67430e81c6f5575a9cf16e414e2d1bdd59014aa9b217784a8fedc1f9839d",
+            "412697cc2d7cc1ebcd6d5ddf0c40642662f1155a228fc1257c8be54800b882d4",
+            "20ff7d09ebf23f8a4e90d3f44109c7a729f7f6ae7af9976723aeabc77babfd69",
+            "78950d113bb308e9d063ea16492a768998e6d8d3e8ff81704dba2a7a48765f4a",
+            "725ed8f6adb2cbe15671817b4baf2f34e29af9e3805685faf4cbbc8af0899fb4",
+            "8937147b5108dc2f83bee5fda220040734326e0eefa80f3e646893f75de1520f",
+            "73dd677c7618ca3a8834e970d52262bc15a5018e85352f4628ee645a77cc467d",
+            "a8abcf4732a99deed5c2b8504e5c7593301e36f6ac25548e69ba35bf815850e6",
+        ),
+        "qcon_defined_orders": tuple(range(0, 6)),
+        "qcon_published_orders": tuple(range(0, 8)),
+        "table_1_metadata": {
+            "efl_mm": (21.48, 21.48, 21.48, 21.48, 16.63, 18.01, 19.61),
+            "f_number": (3.07, 3.07, 2.98, 2.76, 2.93, 3.10, 2.96),
+            "hfov_deg": (12.68, 12.68, 12.68, 13.90, 10.20, 17.50, 10.25),
+            "sensor_diagonal_mm": (9.30, 9.30, 9.30, 10.50, 6.00, 9.30, 7.14),
+        },
+        "detailed_metadata": {
+            300: (21.48, 3.07, 12.68),
+            350: (21.48, 2.98, 12.68),
+            400: (21.480, 2.686, 13.9),
+            500: (16.6, 2.77, 6.16),
+            600: (18.005, 3.104, 17.5),
+            700: (19.613, 2.96, 10.25),
+        },
+        "identity_markers": {
+            "COMPACT DOUBLE FOLDED TELE CAMERAS": 1,
+            "Family ID: 86240812": 1,
+            "Appl. No.: 19/439370": 1,
+            "Corephotonics Ltd.": 1,
+            "Goldenberg; Ephraim": 2,
+            "PCT/IB2022/060175": 2,
+        },
+        "source_phrase_counts": {
+            "The FOV is given as half FOV (HFOV).": 1,
+            "lens system 320 is identical to optical lens system 300": 1,
+            "Except for the lens apertures (DA/2, see Table 1)": 1,
+            "Surface types of optical lens system 350 are defined in Table 4": 1,
+            "Q type 1 (QT1) surface sag formula": 1,
+            "image height": 0,
+            "IMGHT": 0,
+            "image circle": 0,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/9aa5d8cf7174ba97/"
+                "US-20260129276-A1.pdf"
+            ),
+            "bytes": 1788858,
+            "sha256": "9aa5d8cf7174ba974d4c6ea84bf0edc33e0697e1cf72427fed81b2446608c475",
+            "page_count": 29,
+            "single_raster_page_count": 29,
+            "text_layer_characters": 0,
+            "common_raster_dimensions": (2560, 3300),
+            "raster_dimension_exceptions": {21: (2550, 3300)},
+            "drawing_page_numbers": tuple(range(2, 15)),
+            "table_page_numbers": tuple(range(20, 28)),
+            "claim_page_numbers": (28, 29),
+            "raster_set_sha256": (
+                "b57c80f63456407146f29885f970c95fecb0c4efcb42ab7558e7607ec725d9c5"
+            ),
+            "key_page_numbers": (1, 15, 20, 21, 22, 23, 24, 25, 26, 27, 29),
+            "key_page_raster_sha256": (
+                "32ddaf3c6cf852d5ce9dff76ce43d9431b29738b0ec1fa51921872a434cf92fa",
+                "1297b05182f46b72467c41215e30dcb1744b5dabaccf055bd72ec8e8fb1adb7b",
+                "5a33223c3f5ea10870e97de97fdfbcdbc9fd2b95ded5bf71a9ca9e815097f3b5",
+                "74eead8d1186f10d16dfb4b262d2f3739b4af6c431531c894f2c7796ec6aa56c",
+                "977b3c76e3e5e90ceca6538af88ba242fe1ba802a1b8e3d0e92506db62786fd9",
+                "f00f8d7a5c7d06aab02d0a0b972e6bc2753761e8b581fe607bacffd27df4ef18",
+                "9ffabfd9f443f5ae319dc84e7fccae8ef651912d17cb298f8e20c7c2fd4a0d1e",
+                "72a623c9b1efd89a55de6e7131078527ad29f482da922cee0f645913b40e1c21",
+                "b014354a15615ec94c329ff393a73d7f2984522130cd7993caf8b0252acacdf1",
+                "120bb545fba0c37068ce45ecf41d1eb6afcd4b239d925d43be5a572cd5fa28ca",
+                "898ccdd00ed076a054ea1ddd98c59c7be76f6bda5ec10ae67980331057c41b6c",
             ),
         },
     }
@@ -34184,6 +34429,781 @@ def _classify_fso_transmitter_architecture_and_models_attempts(
             _FSO_TRANSMITTER_ITEMS
         )
     ]
+
+
+_COREPHOTONICS_DOUBLE_FOLDED_META_PATTERN = re.compile(
+    rf"\b(?:Example|Embodiment)\s+(?P<system>\d+)\s+"
+    rf"EFL\s*=\s*(?P<efl>{NUMBER_PATTERN})\s*mm,?\s+"
+    rf"F\s+number\s*=\s*(?P<fno>{NUMBER_PATTERN}),?\s+"
+    rf"HFOV\s*=\s*(?P<hfov>{NUMBER_PATTERN})\s*(?:degree|deg\.?)",
+    re.IGNORECASE,
+)
+_COREPHOTONICS_DOUBLE_FOLDED_SURFACE_HEADER_PATTERN = re.compile(
+    r"\bAperture\s+Surface\s+Curvature\s+Radius\s+Focal\s+#\s+"
+    r"Comment\s+Type\s+Radius\s+Thickness\s+\(DA/2\)\s+"
+    r"Material\s+Index\s+Abbe\s+#\s+Length\s+",
+    re.IGNORECASE,
+)
+_COREPHOTONICS_DOUBLE_FOLDED_ROW_PATTERN = re.compile(
+    r"(?<!\S)(?P<index>\d+)\s+"
+    r"(?=(?:A\.S\.|Lens\s+\d+|Mirror\d*|Filter|Image|Prism|"
+    r"ASP\b|QT1\b|Plano\b|Infinity\b|[-+]?(?:\d|\.)))",
+    re.IGNORECASE,
+)
+_COREPHOTONICS_DOUBLE_FOLDED_COEFFICIENT_HEADER_PATTERN = re.compile(
+    r"\bAspheric\s+Coefficients\s+Surface\s+#\s+"
+    r"(?P<labels>(?:(?:Conic|\d+(?:\.sup\.)?(?:st|nd|rd|th))\s+)+)(?=\d+\s)",
+    re.IGNORECASE,
+)
+
+
+def _parse_corephotonics_compact_double_folded_tele_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the exact seven-system compact double-folded Tele disclosure.
+
+    The retained publication directly supplies sequential unfolded surface
+    tables. Signed axial distances are reordered only by their published
+    cumulative coordinates; no drawing coordinate is measured or synthesized.
+    System 600 remains terminal because its QT1 table publishes non-zero A6/A7
+    coefficients while the same publication defines only Q0 through Q5.
+    """
+
+    profile = _COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(error: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=error,
+            )
+            for number, label, _system, _paragraphs, _figures, _tables in (
+                _COREPHOTONICS_DOUBLE_FOLDED_TELE_ITEMS
+            )
+        ]
+
+    try:
+        _text, _paragraphs, blocks, table_1_metadata = (
+            _validate_corephotonics_compact_double_folded_tele_document(
+                raw_text,
+                patent_id=patent_id,
+                profile=profile,
+            )
+        )
+    except Exception as exc:  # noqa: BLE001 - preserve all seven source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    parsed: dict[int, PatentPrescription] = {}
+    for number, label, system, _paragraph_range, _figures, tables in (
+        _COREPHOTONICS_DOUBLE_FOLDED_TELE_ITEMS
+    ):
+        try:
+            if system == 320:
+                source = parsed.get(300)
+                if source is None:
+                    source = _parse_corephotonics_double_folded_prescription(
+                        blocks[2],
+                        blocks[3],
+                        system=300,
+                        patent_id=patent_id,
+                        embodiment=label,
+                        expected_metadata=profile["detailed_metadata"][300],
+                    )
+                metadata = tuple(
+                    table_1_metadata[field][1]
+                    for field in ("efl_mm", "f_number", "hfov_deg")
+                )
+                if metadata != profile["detailed_metadata"][300]:
+                    raise PatentParseError(
+                        "Corephotonics system 320 inherited metadata changed"
+                    )
+                prescription = replace(
+                    source,
+                    embodiment=label,
+                    surfaces=[
+                        replace(
+                            surface,
+                            asphere_coefficients=dict(surface.asphere_coefficients),
+                        )
+                        for surface in source.surfaces
+                    ],
+                )
+            elif system == 600:
+                _validate_corephotonics_double_folded_qt1_system(
+                    blocks[tables[0]],
+                    blocks[tables[1]],
+                    system=system,
+                    expected_metadata=profile["detailed_metadata"][system],
+                )
+                attempts.append(
+                    _PrescriptionParseAttempt(
+                        embodiment_number=number,
+                        embodiment=label,
+                        error=PatentTerminalParseError(
+                            status="metadata_unpublished",
+                            reason_code=(
+                                "metadata_unpublished."
+                                "qcon_q6_q7_basis_definitions_absent"
+                            ),
+                            detail=(
+                                "Tables 9/10 directly publish the 14-row system-600 "
+                                "surface prescription, EFL 18.005 mm, F/3.104, HFOV "
+                                "17.5 degrees, norm radii and non-zero QT1 A0-A7 "
+                                "coefficients for surfaces 2-9, but equations 1/1.2-1.7 "
+                                "define only Q0-Q5; Q6/Q7 are not substituted or "
+                                "converted from an external convention"
+                            ),
+                        ),
+                    )
+                )
+                continue
+            else:
+                coefficient_table = 3 if system == 350 else tables[1]
+                prescription = _parse_corephotonics_double_folded_prescription(
+                    blocks[tables[0]],
+                    blocks[coefficient_table],
+                    system=system,
+                    patent_id=patent_id,
+                    embodiment=label,
+                    expected_metadata=profile["detailed_metadata"][system],
+                )
+            parsed[system] = prescription
+        except Exception as exc:  # noqa: BLE001 - fail each disclosed system independently
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=label,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                prescription=prescription,
+            )
+        )
+
+    # The check is deliberately after per-item assembly so an accidental
+    # denominator change cannot disappear behind the generic parser.
+    if len(attempts) != 7:
+        return attempts_for_error(
+            PatentParseError("Corephotonics seven-system denominator changed")
+        )
+    return attempts
+
+
+def _validate_corephotonics_compact_double_folded_tele_document(
+    raw_text: str,
+    *,
+    patent_id: str,
+    profile: dict[str, Any],
+) -> tuple[str, dict[int, str], dict[int, str], dict[str, tuple[float, ...]]]:
+    raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+    if raw_digest != profile["raw_document_sha256"]:
+        raise PatentParseError(
+            f"Corephotonics compact double-folded official raw text hash changed for {patent_id}"
+        )
+    if len(_COREPHOTONICS_DOUBLE_FOLDED_TELE_TITLE_PATTERN.findall(raw_text)) != 1:
+        raise PatentParseError("Corephotonics compact double-folded title binding changed")
+
+    text = normalize_patent_text(raw_text)
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+        "normalized_text_sha256"
+    ]:
+        raise PatentParseError(
+            f"Corephotonics compact double-folded normalized text hash changed for {patent_id}"
+        )
+    for marker, expected in profile["identity_markers"].items():
+        observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+        if observed != expected:
+            raise PatentParseError(
+                f"Corephotonics compact double-folded identity marker {marker!r} "
+                f"occurs {observed}; expected {expected}"
+            )
+
+    section_markers = profile["section_markers"]
+    section_names = tuple(section_markers)
+    try:
+        section_starts = {
+            name: text.index(marker) for name, marker in section_markers.items()
+        }
+    except ValueError as exc:
+        raise PatentParseError(
+            "Corephotonics compact double-folded section boundary changed"
+        ) from exc
+    if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+        raise PatentParseError(
+            "Corephotonics compact double-folded section ordering changed"
+        )
+    sections = {
+        name: text[
+            section_starts[name] : (
+                section_starts[section_names[index + 1]]
+                if index + 1 < len(section_names)
+                else len(text)
+            )
+        ]
+        for index, name in enumerate(section_names)
+    }
+    for name, expected_digest in profile["section_sha256"].items():
+        if hashlib.sha256(sections[name].encode("utf-8")).hexdigest() != expected_digest:
+            raise PatentParseError(
+                f"Corephotonics compact double-folded {name} section changed"
+            )
+
+    paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+    if tuple(int(match.group(1)) for match in paragraph_matches) != tuple(
+        range(1, 195)
+    ):
+        raise PatentParseError(
+            "Corephotonics compact double-folded paragraphs 1-194 changed"
+        )
+    paragraphs = {
+        int(match.group(1)): text[
+            match.start() : (
+                paragraph_matches[index + 1].start()
+                if index + 1 < len(paragraph_matches)
+                else section_starts["claims"]
+            )
+        ]
+        for index, match in enumerate(paragraph_matches)
+    }
+    for section_name, bounds in profile["paragraph_ranges"].items():
+        observed = tuple(
+            int(value) for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+        )
+        if observed != tuple(range(bounds[0], bounds[1] + 1)):
+            raise PatentParseError(
+                f"Corephotonics compact double-folded {section_name} paragraph range changed"
+            )
+    for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+        start, end = bounds
+        span = text[
+            paragraph_matches[start - 1].start() : (
+                paragraph_matches[end].start()
+                if end < len(paragraph_matches)
+                else section_starts["claims"]
+            )
+        ]
+        if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+            raise PatentParseError(
+                "Corephotonics compact double-folded paragraph span "
+                f"{start}-{end} changed"
+            )
+
+    for paragraph_number, label in _COREPHOTONICS_DOUBLE_FOLDED_TELE_FIGURE_DECLARATIONS:
+        match = re.fullmatch(r"(?P<number>\d+)(?P<suffix>[A-Z]?)", label)
+        assert match is not None
+        marker = f"FIG. {match.group('number')}"
+        if match.group("suffix"):
+            marker += f" {match.group('suffix')}"
+        if len(re.findall(re.escape(marker), paragraphs[paragraph_number], re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                f"Corephotonics compact double-folded figure {label} declaration changed"
+            )
+
+    claim_matches = list(
+        re.finditer(
+            r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+            sections["claims"],
+            re.IGNORECASE,
+        )
+    )
+    claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+    if claim_numbers != profile["claim_numbers"]:
+        raise PatentParseError("Corephotonics compact double-folded claims 1-21 changed")
+    claim_hashes = tuple(
+        hashlib.sha256(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ]
+            .strip()
+            .encode("utf-8")
+        ).hexdigest()
+        for index, match in enumerate(claim_matches)
+    )
+    if claim_hashes != profile["claim_sha256"]:
+        raise PatentParseError(
+            "Corephotonics compact double-folded individual claim hashes changed"
+        )
+
+    table_blocks = _patent_table_blocks(text)
+    if [block.number for block in table_blocks] != list(range(1, 14)):
+        raise PatentParseError(
+            "Corephotonics compact double-folded TABLE sequence is not 1-13"
+        )
+    source_blocks = {block.number: block.text for block in table_blocks}
+    blocks = {
+        number: _corephotonics_double_folded_exact_table_block(
+            source_blocks[number],
+            token_count=profile["table_block_token_counts"][number],
+        )
+        for number in source_blocks
+    }
+    for number, expected_digest in profile["table_block_sha256"].items():
+        if hashlib.sha256(blocks[number].encode("utf-8")).hexdigest() != expected_digest:
+            raise PatentParseError(
+                f"Corephotonics compact double-folded TABLE {number} changed"
+            )
+
+    math_blocks = tuple(
+        match.group(0)
+        for match in re.finditer(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)
+    )
+    math_hashes = tuple(
+        hashlib.sha256(block.encode("utf-8")).hexdigest() for block in math_blocks
+    )
+    if math_hashes != profile["math_block_sha256"]:
+        raise PatentParseError(
+            "Corephotonics compact double-folded eight MathML blocks changed"
+        )
+
+    for phrase, expected in profile["source_phrase_counts"].items():
+        observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+        if observed != expected:
+            raise PatentParseError(
+                f"Corephotonics compact double-folded source phrase {phrase!r} "
+                f"occurs {observed}; expected {expected}"
+            )
+
+    table_1_metadata = _corephotonics_double_folded_table_1_metadata(blocks[1])
+    if table_1_metadata != profile["table_1_metadata"]:
+        raise PatentParseError(
+            "Corephotonics compact double-folded TABLE 1 metadata rows changed"
+        )
+    return text, paragraphs, blocks, table_1_metadata
+
+
+def _corephotonics_double_folded_exact_table_block(
+    source_block: str,
+    *,
+    token_count: int,
+) -> str:
+    """Trim one normalized TABLE-US block to its frozen source fragment."""
+
+    tokens = source_block.split()
+    if len(tokens) < token_count:
+        raise PatentParseError(
+            "Corephotonics compact double-folded exact table fragment shortened"
+        )
+    return " ".join(tokens[:token_count])
+
+
+def _corephotonics_double_folded_table_1_metadata(
+    table_text: str,
+) -> dict[str, tuple[float, ...]]:
+    boundaries = {
+        "efl_mm": ("EFL", "EFL-G1"),
+        "f_number": ("f number", "HFOV"),
+        "hfov_deg": ("HFOV", "SD"),
+        "sensor_diagonal_mm": ("SD", "T1"),
+    }
+    rows: dict[str, tuple[float, ...]] = {}
+    for field_name, (label, next_label) in boundaries.items():
+        match = re.search(
+            rf"\b{re.escape(label)}\s+(?P<values>.*?)\s+{re.escape(next_label)}\b",
+            table_text,
+            re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Corephotonics TABLE 1 {field_name} row not found"
+            )
+        values = tuple(
+            _parse_number(value)
+            for value in re.findall(NUMBER_PATTERN, match.group("values"), re.IGNORECASE)
+        )
+        if len(values) != 7:
+            raise PatentParseError(
+                f"Corephotonics TABLE 1 {field_name} row has {len(values)} values"
+            )
+        rows[field_name] = values
+    return rows
+
+
+def _parse_corephotonics_double_folded_prescription(
+    surface_text: str,
+    coefficient_text: str,
+    *,
+    system: int,
+    patent_id: str,
+    embodiment: str,
+    expected_metadata: tuple[float, float, float],
+) -> PatentPrescription:
+    metadata, surfaces = _parse_corephotonics_double_folded_surface_table(
+        surface_text,
+        system=system,
+    )
+    if metadata != expected_metadata:
+        raise PatentParseError(
+            f"Corephotonics system {system} detailed EFL/F-number/HFOV changed"
+        )
+    expected_surface_ids = (
+        [*range(2, 6), *range(7, 15)]
+        if system in {300, 350, 400}
+        else list(range(2, 10))
+    )
+    coefficients = _parse_corephotonics_double_folded_asphere_table(
+        coefficient_text,
+        expected_surface_ids=expected_surface_ids,
+        system=system,
+    )
+    for surface in surfaces:
+        if surface.index in coefficients:
+            surface.asphere_coefficients.update(coefficients[surface.index])
+            surface.surface_type = "ASP"
+
+    if system == 700:
+        _unfold_corephotonics_system_700_prism_material(surfaces)
+    rows = [
+        _LarganMovingGroupSurfaceRow(
+            published_index=surface.index,
+            label=surface.label,
+            radius_mm=surface.radius_mm if surface.radius_mm is not None else 0.0,
+            thickness_mm=surface.thickness_mm,
+            material=surface.material,
+            nd=surface.nd,
+            vd=surface.vd,
+            surface_type=surface.surface_type,
+        )
+        for surface in surfaces
+    ]
+    reordered = _reorder_largan_moving_group_surfaces(
+        rows,
+        coefficients=coefficients,
+        embodiment=system,
+        context=f"Corephotonics double-folded system {system}",
+    )
+    prescription = PatentPrescription(
+        patent_id=patent_id,
+        embodiment=embodiment,
+        focal_length_mm=metadata[0],
+        f_number=metadata[1],
+        hfov_deg=metadata[2],
+        surfaces=reordered,
+    )
+    _validate_prescription_materials(prescription)
+    if any((surface.thickness_mm or 0.0) < 0.0 for surface in reordered):
+        raise PatentParseError(
+            f"Corephotonics system {system} retained a negative sequential thickness"
+        )
+    return prescription
+
+
+def _parse_corephotonics_double_folded_surface_table(
+    table_text: str,
+    *,
+    system: int,
+) -> tuple[tuple[float, float, float], list[PatentSurface]]:
+    metadata_match = _COREPHOTONICS_DOUBLE_FOLDED_META_PATTERN.search(table_text)
+    if metadata_match is None or int(metadata_match.group("system")) != system:
+        raise PatentParseError(
+            f"Corephotonics system {system} detailed metadata header not found"
+        )
+    metadata = tuple(
+        _parse_number(metadata_match.group(field)) for field in ("efl", "fno", "hfov")
+    )
+    header = _COREPHOTONICS_DOUBLE_FOLDED_SURFACE_HEADER_PATTERN.search(
+        table_text,
+        metadata_match.end(),
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Corephotonics system {system} surface header changed"
+        )
+    candidates = list(
+        _COREPHOTONICS_DOUBLE_FOLDED_ROW_PATTERN.finditer(table_text, header.end())
+    )
+    starts: list[re.Match[str]] = []
+    expected_index = 1
+    for match in candidates:
+        if int(match.group("index")) != expected_index:
+            continue
+        starts.append(match)
+        expected_index += 1
+    expected_rows = 18 if system in {300, 350, 400} else 14 if system in {500, 600} else 16
+    if [int(match.group("index")) for match in starts] != list(
+        range(1, expected_rows + 1)
+    ):
+        raise PatentParseError(
+            f"Corephotonics system {system} surface row denominator changed"
+        )
+
+    surfaces: list[PatentSurface] = []
+    for row_number, match in enumerate(starts):
+        index = int(match.group("index"))
+        end = starts[row_number + 1].start() if row_number + 1 < len(starts) else len(table_text)
+        row_text = re.split(r"\s\[\d{4}\]\s", table_text[match.end() : end], maxsplit=1)[0]
+        if system == 600 and index == 14:
+            row_text = row_text.split(
+                " axis. I-OPFE 606 is tilted by β = 47 degrees",
+                1,
+            )[0]
+        tokens = row_text.split()
+        label = f"Surface {index}"
+        if tokens and tokens[0].upper() == "A.S.":
+            label = "Stop"
+            tokens.pop(0)
+        elif len(tokens) >= 2 and tokens[0].lower() == "lens" and tokens[1].isdigit():
+            label = f"Lens {tokens[1]}"
+            del tokens[:2]
+        elif tokens and (
+            re.fullmatch(r"Mirror\d*", tokens[0], re.IGNORECASE)
+            or tokens[0].lower() in {"filter", "image", "prism"}
+        ):
+            label = tokens.pop(0).capitalize()
+
+        surface_type = None
+        if tokens and tokens[0].upper() in {"PLANO", "ASP", "QT1"}:
+            raw_type = tokens.pop(0).upper()
+            surface_type = raw_type if raw_type in {"ASP", "QT1"} else None
+
+        prism_blank_radius = system == 700 and index in {11, 12, 13}
+        if prism_blank_radius:
+            radius = math.inf
+        else:
+            if not tokens:
+                raise PatentParseError(
+                    f"Corephotonics system {system} surface {index} radius missing"
+                )
+            radius = _distance_value(
+                tokens.pop(0),
+                field_name=f"Corephotonics system {system} surface {index} radius",
+            )
+        if not tokens:
+            raise PatentParseError(
+                f"Corephotonics system {system} surface {index} thickness missing"
+            )
+        thickness_token = tokens.pop(0)
+        thickness = (
+            None
+            if _is_empty_value(thickness_token)
+            else _distance_value(
+                thickness_token,
+                field_name=f"Corephotonics system {system} surface {index} thickness",
+            )
+        )
+
+        aperture_required = (
+            label == "Stop"
+            or label.startswith("Lens")
+            or label.startswith("Mirror")
+            or label == "Prism"
+        )
+        if tokens and not _material_token(tokens[0]):
+            aperture_token = tokens.pop(0)
+            if not _is_empty_value(aperture_token):
+                _parse_number(aperture_token)
+        elif aperture_required:
+            raise PatentParseError(
+                f"Corephotonics system {system} surface {index} aperture missing"
+            )
+
+        material = None
+        nd = vd = None
+        if tokens and _material_token(tokens[0]):
+            material = tokens.pop(0)
+            if len(tokens) < 2:
+                raise PatentParseError(
+                    f"Corephotonics system {system} surface {index} material indices missing"
+                )
+            nd = _parse_number(tokens.pop(0))
+            vd = _parse_number(tokens.pop(0))
+            _validate_material_indices(surface_index=index, nd=nd, vd=vd)
+        if tokens:
+            _parse_number(tokens.pop(0))  # published element focal length
+        if tokens:
+            raise PatentParseError(
+                f"Corephotonics system {system} surface {index} has trailing data: "
+                + " ".join(tokens)
+            )
+        surfaces.append(
+            PatentSurface(
+                index=index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=surface_type,
+            )
+        )
+    if surfaces[-1].label != "Image" or surfaces[-1].thickness_mm is not None:
+        raise PatentParseError(
+            f"Corephotonics system {system} image row changed"
+        )
+    if sum(surface.label == "Stop" for surface in surfaces) != 1:
+        raise PatentParseError(
+            f"Corephotonics system {system} must publish exactly one stop"
+        )
+    return metadata, surfaces
+
+
+def _parse_corephotonics_double_folded_asphere_table(
+    table_text: str,
+    *,
+    expected_surface_ids: list[int],
+    system: int,
+) -> dict[int, dict[str, float]]:
+    source = re.split(r"\s\[\d{4}\]\s", table_text, maxsplit=1)[0]
+    headers = list(
+        _COREPHOTONICS_DOUBLE_FOLDED_COEFFICIENT_HEADER_PATTERN.finditer(source)
+    )
+    if not headers:
+        raise PatentParseError(
+            f"Corephotonics system {system} asphere header not found"
+        )
+    coefficients: dict[int, dict[str, float]] = {}
+    observed_labels: list[str] = []
+    for header_number, header in enumerate(headers):
+        labels = [
+            label.replace(".sup.", "")
+            for label in header.group("labels").split()
+        ]
+        observed_labels.extend(labels)
+        end = headers[header_number + 1].start() if header_number + 1 < len(headers) else len(source)
+        tokens = re.findall(NUMBER_PATTERN, source[header.end() : end], re.IGNORECASE)
+        row_width = len(labels) + 1
+        if len(tokens) != len(expected_surface_ids) * row_width:
+            raise PatentParseError(
+                f"Corephotonics system {system} asphere section {header_number + 1} "
+                f"has {len(tokens)} numeric cells"
+            )
+        position = 0
+        for expected_surface in expected_surface_ids:
+            actual_surface = int(_parse_number(tokens[position]))
+            position += 1
+            if actual_surface != expected_surface:
+                raise PatentParseError(
+                    f"Corephotonics system {system} asphere surface index break: "
+                    f"expected {expected_surface}, found {actual_surface}"
+                )
+            for label in labels:
+                value = _parse_number(tokens[position])
+                position += 1
+                if label.lower() == "conic":
+                    codev_label = "K"
+                else:
+                    order = int(re.match(r"\d+", label).group(0))
+                    if order not in SUPPORTED_ASPHERE_ORDERS:
+                        if abs(value) > 0.0:
+                            raise PatentParseError(
+                                f"unsupported Corephotonics system {system} asphere "
+                                f"term: S{expected_surface}:A{order}={value:.3g}"
+                            )
+                        continue
+                    codev_label = ASPHERE_ORDER_TO_CODEV[order]
+                coefficients.setdefault(expected_surface, {})[codev_label] = value
+    expected_orders = ["Conic", "4th", "6th", "8th"]
+    if system == 400:
+        expected_orders.extend(("10th", "12th"))
+    elif system in {500, 700}:
+        expected_orders.extend(("10th", "12th", "14th", "16th"))
+    if observed_labels != expected_orders:
+        raise PatentParseError(
+            f"Corephotonics system {system} asphere order coverage changed"
+        )
+    if set(coefficients) != set(expected_surface_ids):
+        raise PatentParseError(
+            f"Corephotonics system {system} asphere surface coverage changed"
+        )
+    return coefficients
+
+
+def _unfold_corephotonics_system_700_prism_material(
+    surfaces: list[PatentSurface],
+) -> None:
+    by_index = {surface.index: surface for surface in surfaces}
+    entry = by_index[11]
+    fold = by_index[12]
+    exit_surface = by_index[13]
+    if (
+        entry.label != "Prism"
+        or fold.label != "Mirror2"
+        or exit_surface.label != "Prism"
+        or entry.material is None
+        or (entry.nd, entry.vd) != (exit_surface.nd, exit_surface.vd)
+        or fold.material is not None
+    ):
+        raise PatentParseError(
+            "Corephotonics system 700 three-surface prism material binding changed"
+        )
+    entry.label = "Prism entry"
+    fold.label = "Prism fold mirror"
+    fold.material = entry.material
+    fold.nd = entry.nd
+    fold.vd = entry.vd
+    exit_surface.label = "Prism exit"
+    exit_surface.material = None
+    exit_surface.nd = None
+    exit_surface.vd = None
+
+
+def _validate_corephotonics_double_folded_qt1_system(
+    surface_text: str,
+    coefficient_text: str,
+    *,
+    system: int,
+    expected_metadata: tuple[float, float, float],
+) -> None:
+    metadata, surfaces = _parse_corephotonics_double_folded_surface_table(
+        surface_text,
+        system=system,
+    )
+    if metadata != expected_metadata or [surface.index for surface in surfaces] != list(
+        range(1, 15)
+    ):
+        raise PatentParseError("Corephotonics system 600 surface/metadata binding changed")
+    source = re.split(r"\s\[\d{4}\]\s", coefficient_text, maxsplit=1)[0]
+    low_header = re.search(
+        r"Aspheric\s+Coefficients\s+Surface\s+#\s+Norm\s+Radius\s+A0\s+A1\s+A2\s+A3\s+",
+        source,
+        re.IGNORECASE,
+    )
+    high_header = re.search(
+        r"Aspheric\s+Coefficients\s+Surface\s+#\s+A4\s+A5\s+A6\s+A7\s+",
+        source,
+        re.IGNORECASE,
+    )
+    if low_header is None or high_header is None or low_header.start() >= high_header.start():
+        raise PatentParseError("Corephotonics system 600 QT1 coefficient headers changed")
+
+    def rows(region: str, width: int) -> list[list[float]]:
+        values = [
+            _parse_number(token)
+            for token in re.findall(NUMBER_PATTERN, region, re.IGNORECASE)
+        ]
+        if len(values) != 8 * width:
+            raise PatentParseError(
+                f"Corephotonics system 600 QT1 section has {len(values)} numeric cells"
+            )
+        return [values[index : index + width] for index in range(0, len(values), width)]
+
+    low_rows = rows(source[low_header.end() : high_header.start()], 6)
+    high_rows = rows(source[high_header.end() :], 5)
+    if [int(row[0]) for row in low_rows] != list(range(2, 10)) or [
+        int(row[0]) for row in high_rows
+    ] != list(range(2, 10)):
+        raise PatentParseError("Corephotonics system 600 QT1 surface coverage changed")
+    if any(row[-2] == 0.0 or row[-1] == 0.0 for row in high_rows):
+        raise PatentParseError(
+            "Corephotonics system 600 expected non-zero A6/A7 coefficients changed"
+        )
 
 
 def _classify_folded_camera_qcon_missing_definitions_attempts(

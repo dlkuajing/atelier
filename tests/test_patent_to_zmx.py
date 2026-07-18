@@ -35729,3 +35729,607 @@ def test_oflm_seven_lens_missing_image_height_queue_and_evidence() -> None:
     assert evidence["ledger"]["corrupt_results"] == 0
     assert evidence["next_exact_group"]["family_id"] == "75907839"
     assert evidence["saturation_complete"] is False
+
+
+def _corephotonics_double_folded_tele_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "6ba8e50cc7143544"
+        / "US-20260129276-A1.html"
+    )
+    return "US-20260129276-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_corephotonics_double_folded_tele_reconciles_six_prescriptions_and_qt1_terminal() -> None:
+    patent_id, raw_text = _corephotonics_double_folded_tele_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 8))
+    assert [attempt.prescription is not None for attempt in attempts] == [
+        True,
+        True,
+        True,
+        True,
+        True,
+        False,
+        True,
+    ]
+    terminal = attempts[5].error
+    assert isinstance(terminal, patent_to_zmx.PatentTerminalParseError)
+    assert terminal.status == "metadata_unpublished"
+    assert terminal.reason_code == (
+        "metadata_unpublished.qcon_q6_q7_basis_definitions_absent"
+    )
+
+    prescriptions = [
+        attempt.prescription
+        for attempt in attempts
+        if attempt.prescription is not None
+    ]
+    assert [len(prescription.surfaces) for prescription in prescriptions] == [
+        18,
+        18,
+        18,
+        18,
+        14,
+        16,
+    ]
+    assert [prescription.focal_length_mm for prescription in prescriptions] == [
+        21.48,
+        21.48,
+        21.48,
+        21.48,
+        16.6,
+        19.613,
+    ]
+    assert [prescription.f_number for prescription in prescriptions] == [
+        3.07,
+        3.07,
+        2.98,
+        2.686,
+        2.77,
+        2.96,
+    ]
+    assert [prescription.hfov_deg for prescription in prescriptions] == [
+        12.68,
+        12.68,
+        12.68,
+        13.9,
+        6.16,
+        10.25,
+    ]
+    for prescription in prescriptions:
+        assert all((surface.thickness_mm or 0.0) >= 0.0 for surface in prescription.surfaces)
+        assert prescription.surfaces[1].label == "Stop"
+        assert prescription.surfaces[-1].label == "Image"
+        assert math.isclose(
+            prescription.image_height_mm,
+            prescription.focal_length_mm
+            * math.tan(math.radians(prescription.hfov_deg)),
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        )
+
+    assert prescription_fingerprint(prescriptions[0]) == prescription_fingerprint(
+        prescriptions[1]
+    )
+    assert prescription_fingerprint(prescriptions[0]) != prescription_fingerprint(
+        prescriptions[2]
+    )
+    assert [
+        surface.asphere_coefficients
+        for surface in prescriptions[0].surfaces
+        if surface.asphere_coefficients
+    ] == [
+        surface.asphere_coefficients
+        for surface in prescriptions[2].surfaces
+        if surface.asphere_coefficients
+    ]
+
+
+def test_corephotonics_double_folded_tele_detailed_metadata_wins_over_table_1() -> None:
+    patent_id, raw_text = _corephotonics_double_folded_tele_source()
+    profile = patent_to_zmx._COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES[
+        patent_id
+    ]
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    system_400 = attempts[3].prescription
+    system_500 = attempts[4].prescription
+    assert system_400 is not None
+    assert system_500 is not None
+    assert (system_400.focal_length_mm, system_400.f_number, system_400.hfov_deg) == (
+        21.48,
+        2.686,
+        13.9,
+    )
+    assert (system_500.focal_length_mm, system_500.f_number, system_500.hfov_deg) == (
+        16.6,
+        2.77,
+        6.16,
+    )
+    assert profile["table_1_metadata"]["f_number"][3:5] == (2.76, 2.93)
+    assert profile["table_1_metadata"]["hfov_deg"][4] == 10.20
+    assert profile["table_1_metadata"]["sensor_diagonal_mm"][4] == 6.00
+    assert not math.isclose(system_500.image_height_mm, 3.00, abs_tol=1e-12)
+
+
+def test_corephotonics_double_folded_tele_signed_stop_and_prism_unfolding_are_source_bound() -> None:
+    patent_id, raw_text = _corephotonics_double_folded_tele_source()
+    profile = patent_to_zmx._COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES[
+        patent_id
+    ]
+    _text, _paragraphs, blocks, _table_1 = (
+        patent_to_zmx._validate_corephotonics_compact_double_folded_tele_document(
+            raw_text,
+            patent_id=patent_id,
+            profile=profile,
+        )
+    )
+    for system, table_number in ((300, 2), (350, 4), (400, 5), (500, 7), (600, 9), (700, 11)):
+        _metadata, raw_surfaces = (
+            patent_to_zmx._parse_corephotonics_double_folded_surface_table(
+                blocks[table_number],
+                system=system,
+            )
+        )
+        assert raw_surfaces[0].label == "Stop"
+        assert raw_surfaces[0].thickness_mm is not None
+        assert raw_surfaces[0].thickness_mm < 0.0
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    system_700 = attempts[6].prescription
+    assert system_700 is not None
+    prism_surfaces = system_700.surfaces[10:13]
+    assert [surface.label for surface in prism_surfaces] == [
+        "Prism entry",
+        "Prism fold mirror",
+        "Prism exit",
+    ]
+    assert [surface.material for surface in prism_surfaces] == [
+        "Glass",
+        "Glass",
+        None,
+    ]
+    assert [(surface.nd, surface.vd) for surface in prism_surfaces] == [
+        (1.85, 23.8),
+        (1.85, 23.8),
+        (None, None),
+    ]
+
+
+def test_corephotonics_double_folded_tele_source_drift_fails_all_seven_items_closed() -> None:
+    patent_id, raw_text = _corephotonics_double_folded_tele_source()
+    changed = raw_text.replace("EFL = 21.48 mm", "EFL = 21.49 mm", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 7
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Corephotonics compact double-folded official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
+def test_corephotonics_double_folded_tele_source_denominator_and_exact_table_hashes() -> None:
+    patent_id, raw_text = _corephotonics_double_folded_tele_source()
+    profile = patent_to_zmx._COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES[
+        patent_id
+    ]
+    text, paragraphs, blocks, table_1 = (
+        patent_to_zmx._validate_corephotonics_compact_double_folded_tele_document(
+            raw_text,
+            patent_id=patent_id,
+            profile=profile,
+        )
+    )
+
+    assert tuple(paragraphs) == tuple(range(1, 195))
+    assert tuple(blocks) == tuple(range(1, 14))
+    assert {
+        number: hashlib.sha256(block.encode("utf-8")).hexdigest()
+        for number, block in blocks.items()
+    } == profile["table_block_sha256"]
+    assert table_1 == profile["table_1_metadata"]
+    assert len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)) == 8
+    assert len(re.findall(r"\[(\d{4})\]", text)) == 194
+    assert profile["claim_numbers"] == tuple(range(1, 22))
+    assert profile["independent_claim_numbers"] == (1, 19)
+    assert len(patent_to_zmx._COREPHOTONICS_DOUBLE_FOLDED_TELE_FIGURE_DECLARATIONS) == 22
+    assert profile["qcon_defined_orders"] == tuple(range(0, 6))
+    assert profile["qcon_published_orders"] == tuple(range(0, 8))
+
+
+def test_corephotonics_double_folded_tele_official_pdf_rehashes_without_raster_inference() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile = patent_to_zmx._COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES[
+        "US-20260129276-A1"
+    ]["official_pdf"]
+    pdf_bytes = (root / profile["path"]).read_bytes()
+
+    assert len(pdf_bytes) == profile["bytes"] == 1_788_858
+    assert hashlib.sha256(pdf_bytes).hexdigest() == profile["sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+    assert len(reader.pages) == profile["page_count"] == 29
+
+    page_hashes = []
+    key_page_hashes = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        page_images = list(page.images)
+        assert len(page_images) == 1
+        expected_dimensions = profile["raster_dimension_exceptions"].get(
+            page_number,
+            profile["common_raster_dimensions"],
+        )
+        assert page_images[0].image.size == expected_dimensions
+        assert (page.extract_text() or "") == ""
+        page_hash = patent_pdf_recovery._canonical_raster_sha256(
+            page_images[0].data
+        )
+        page_hashes.append(page_hash)
+        if page_number in profile["key_page_numbers"]:
+            key_page_hashes.append(page_hash)
+
+    assert len(page_hashes) == profile["single_raster_page_count"]
+    assert tuple(key_page_hashes) == profile["key_page_raster_sha256"]
+    assert hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest() == profile["raster_set_sha256"]
+    assert profile["drawing_page_numbers"] == tuple(range(2, 15))
+    assert profile["table_page_numbers"] == tuple(range(20, 28))
+    assert profile["claim_page_numbers"] == (28, 29)
+
+
+def test_corephotonics_double_folded_tele_source_and_raster_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-86240812"
+    availability = json.loads(
+        (quick / "family-86240812-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    source = availability["retained_html"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 92_723
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+    assert source["normalized_characters"] == 73_487
+    assert source["flattened_tables"] == 13
+    assert source["mathml_objects"] == 8
+    assert source["embedded_img_tags"] == 0
+
+    pdf = availability["official_pdf"]
+    pdf_bytes = (root / pdf["path"]).read_bytes()
+    assert len(pdf_bytes) == pdf["bytes"] == 1_788_858
+    assert hashlib.sha256(pdf_bytes).hexdigest() == pdf["container_sha256"]
+    assert pdf["page_count"] == pdf["single_raster_pages"] == 29
+    assert pdf["text_layer_characters"] == 0
+    assert availability["source_policy"]["coordinate_transform_synthesis_permitted"] is False
+    assert availability["source_policy"]["source_value_repair_permitted"] is False
+    assert availability["source_policy"]["related_family_numeric_borrowing_permitted"] is False
+
+    raster = json.loads(
+        (quick / "family-86240812-raster-audit.json").read_text(encoding="utf-8")
+    )
+    assert raster["official_pdf"]["decoded_raster_set_sha256"] == pdf[
+        "decoded_raster_set_sha256"
+    ]
+    assert raster["page_roles"] == {
+        "cover": [1],
+        "drawing_sheets": list(range(2, 15)),
+        "specification_pages": list(range(15, 28)),
+        "table_pages": list(range(20, 28)),
+        "claims_pages": [28, 29],
+    }
+    assert len(raster["pages"]) == 29
+    aggregate = hashlib.sha256()
+    for page_number, record in enumerate(raster["pages"], start=1):
+        assert record["page"] == page_number
+        assert record["text_characters"] == 0
+        assert record["image_count"] == 1
+        expected_dimensions = [2550, 3300] if page_number == 21 else [2560, 3300]
+        assert record["decoded_raster_dimensions"] == expected_dimensions
+        aggregate.update(record["decoded_raster_sha256"].encode("utf-8"))
+        aggregate.update(b"\n")
+        retained = record["retained_png"]
+        png_bytes = (root / retained["path"]).read_bytes()
+        assert len(png_bytes) == retained["bytes"]
+        assert hashlib.sha256(png_bytes).hexdigest() == retained["sha256"]
+        decoded = cv2.imdecode(
+            np.frombuffer(png_bytes, dtype=np.uint8), cv2.IMREAD_UNCHANGED
+        )
+        assert decoded is not None
+        assert [decoded.shape[1], decoded.shape[0]] == expected_dimensions
+    assert aggregate.hexdigest() == pdf["decoded_raster_set_sha256"]
+    contact = raster["contact_sheet"]
+    contact_bytes = (root / contact["path"]).read_bytes()
+    assert len(contact_bytes) == contact["bytes"]
+    assert hashlib.sha256(contact_bytes).hexdigest() == contact["sha256"]
+    assert raster["visual_review"]["image_enhancement_used"] is False
+    assert raster["visual_review"]["drawing_geometry_measured"] is False
+    assert raster["visual_review"]["raster_numeric_cells_transcribed"] is False
+    assert raster["adjudication"]["numeric_derivation_from_rasters"] is False
+    assert raster["adjudication"]["drawing_coordinate_inference"] is False
+
+    facts = json.loads(
+        (quick / "family-86240812-source-facts.json").read_text(encoding="utf-8")
+    )
+    assert [item["system"] for item in facts["items"]] == [
+        300,
+        320,
+        350,
+        400,
+        500,
+        600,
+        700,
+    ]
+    assert [item["ledger_state"] for item in facts["items"]] == [
+        "converted_pending_intake",
+        "converted_pending_intake",
+        "converted_pending_intake",
+        "converted_pending_intake",
+        "converted_pending_intake",
+        "terminal",
+        "converted_pending_intake",
+    ]
+    assert facts["items"][5]["defined_q_orders"] == list(range(0, 6))
+    assert facts["items"][5]["published_q_orders"] == list(range(0, 8))
+    assert facts["representation_boundary"]["directional_cut_apertures_encoded_by_current_axisymmetric_zmx"] is False
+    assert facts["representation_boundary"]["conversion_state_is_formal_intake"] is False
+    assert not any(facts["formal_outputs"].values())
+
+
+def test_corephotonics_double_folded_tele_replay_is_semantic_and_worker_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-86240812"
+    artifact = json.loads(
+        (quick / "family-86240812-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    runtime_attempt = re.compile(r"attempt-\d{4}")
+    semantic_hashes = []
+    worker_hashes = []
+
+    for record in artifact["attempts"]:
+        result_path = root / record["path"]
+        result_bytes = result_path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        receipt_hashes = {str(number): None for number in range(1, 8)}
+        exact_worker_hashes = {
+            name: {str(number): None for number in range(1, 8)}
+            for name in (
+                "request_sha256",
+                "response_sha256",
+                "candidate_zmx_sha256",
+                "stdout_sha256",
+                "stderr_sha256",
+            )
+        }
+        for item in result["items"]:
+            if item["conversion_attempt_id"] is None:
+                continue
+            number = str(item["embodiment_number"])
+            item["conversion_attempt_id"] = runtime_attempt.sub(
+                "attempt-*", item["conversion_attempt_id"]
+            )
+            receipt_evidence = next(
+                evidence
+                for evidence in item["evidence"]
+                if evidence["evidence_type"] == "patent_conversion_receipt"
+            )
+            receipt_path = root / receipt_evidence["path"]
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt.pop("elapsed_seconds")
+            receipt.pop("retry_number")
+            for key, value in tuple(receipt.items()):
+                if isinstance(value, str) and (
+                    key == "attempt_id" or key.endswith("_path")
+                ):
+                    receipt[key] = runtime_attempt.sub("attempt-*", value)
+            receipt_hash = hashlib.sha256(canonical_json_bytes(receipt)).hexdigest()
+            receipt_hashes[number] = receipt_hash
+            for name, filename in (
+                ("request_sha256", "request.json"),
+                ("response_sha256", "response.json"),
+                ("candidate_zmx_sha256", "candidate.zmx"),
+                ("stdout_sha256", "stdout.log"),
+                ("stderr_sha256", "stderr.log"),
+            ):
+                worker_path = receipt_path.parent / filename
+                exact_worker_hashes[name][number] = (
+                    hashlib.sha256(worker_path.read_bytes()).hexdigest()
+                    if worker_path.exists()
+                    else None
+                )
+            receipt_evidence["path"] = runtime_attempt.sub(
+                "attempt-*", receipt_evidence["path"]
+            )
+            receipt_evidence["sha256"] = f"semantic:{receipt_hash}"
+        assert receipt_hashes == record["receipt_semantic_sha256"]
+        for name, hashes in exact_worker_hashes.items():
+            assert hashes == record[name]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+        worker_hashes.append(exact_worker_hashes)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert worker_hashes[0] == worker_hashes[1]
+    assert artifact["semantic_equal"] is True
+    assert artifact["result_normalization"]["outcome_fields_removed"] == []
+    assert artifact["result_normalization"]["request_or_response_fields_removed"] == []
+    assert artifact["exact_worker_payload_equal"] == {
+        "request_json": True,
+        "response_json": True,
+        "candidate_zmx": True,
+        "stdout_log": True,
+        "stderr_log": True,
+    }
+    assert artifact["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "mixed_nonterminal",
+        "root_reason_code": "mixed_nonterminal.multiple_item_states",
+        "item_state_counts": {"converted_pending_intake": 6, "terminal": 1},
+        "terminal_status_counts": {"metadata_unpublished": 1},
+        "conversion_requests": 6,
+        "conversion_receipts": 6,
+        "prescription_fingerprints": 6,
+        "staging_zmx": 6,
+        "formal_intake_items": 0,
+    }
+    assert artifact["strict_replay"]["cohort_roots"] == 619
+    assert artifact["strict_replay"]["roots_with_results"] == 619
+    assert artifact["strict_replay"]["missing_results"] == 0
+    assert artifact["strict_replay"]["corrupt_results"] == 0
+    assert artifact["codev_calls"] == 0
+
+
+def test_corephotonics_double_folded_tele_denominator_queue_and_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-86240812"
+    denominator = json.loads(
+        (quick / "family-86240812-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "background_summary_numbered_paragraphs": 66,
+        "brief_drawing_numbered_paragraphs": 23,
+        "module_context_numbered_paragraphs": 51,
+        "prescription_item_numbered_paragraphs": 40,
+        "af_ois_numbered_paragraphs": 9,
+        "closing_numbered_paragraphs": 5,
+        "total_numbered_paragraphs": 194,
+        "claims": 21,
+        "independent_claim_families": 2,
+        "declared_figure_panels": 22,
+        "flattened_tables": 13,
+        "lens_system_summary_tables": 1,
+        "surface_prescription_tables": 6,
+        "asphere_or_qt1_coefficient_tables": 5,
+        "prism_mechanical_tables": 1,
+        "ordered_optical_surface_rows": 116,
+        "asphere_coefficient_rows": 40,
+        "qt1_coefficient_rows": 8,
+        "item_bound_coefficient_rows_including_explicit_reuse": 72,
+        "mathml_objects": 8,
+        "source_disclosed_optical_systems": 7,
+        "replayed_ledger_items": 7,
+        "converted_pending_intake_items": 6,
+        "metadata_unpublished_items": 1,
+        "formal_intake_items": 0,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 29,
+        "retained_page_rasters": 29,
+        "official_drawing_sheets": 13,
+        "official_table_pages": 8,
+        "official_claim_pages": 2,
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_tables": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_source_items": 0,
+    }
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 8)
+    )
+    assert denominator["representation_boundary"]["system_600_q6_q7_definitions_available"] is False
+    assert denominator["representation_boundary"]["conversion_state_is_formal_intake"] is False
+    assert not any(denominator["formal_outputs"].values())
+
+    before = json.loads(
+        (quick / "generic-residual-before-77.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 77
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 76
+    assert after_1["result_set_sha256"] == (
+        "2fd10d202f3eff06d47e99656510d7eb0035c61a0afd161b788247a450a649a4"
+    )
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after_2["result_set_sha256"]
+    assert queue["next_exact_group"]["family_id"] == "78957411"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20250130396"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20250130396-A1"
+    ]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-86240812-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "c6fcde14a6e59fab93d97fd52f543ee28fb70983e7bb88e0705457d8b61d6061"
+    )
+    assert evidence["candidate_outputs"] == {
+        "conversion_requests": 6,
+        "conversion_receipts": 6,
+        "converted_pending_intake_items": 6,
+        "metadata_unpublished_items": 1,
+        "staging_zmx": 6,
+    }
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["missing_results"] == 0
+    assert evidence["ledger"]["corrupt_results"] == 0
+    assert evidence["next_exact_group"]["family_id"] == "78957411"
+    assert evidence["saturation_complete"] is False
