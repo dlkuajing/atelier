@@ -619,6 +619,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_samsung_camera_module_support_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
@@ -11496,6 +11502,201 @@ _SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_SOURCE_PROFILES: dict[
             "drawing_sheet_count": 16,
             "raster_set_sha256": (
                 "6b1656d993d22d4c1a9b233df7cc1311c999ce568d902479d69d5a17b8a2bc1c"
+            ),
+        },
+    }
+}
+_SAMSUNG_CAMERA_MODULE_SUPPORT_ITEMS = (
+    (
+        1,
+        "Samsung first camera-module aperture architecture",
+        "confirmed_no_prescription.first_camera_module_aperture_architecture_only",
+    ),
+    (
+        2,
+        "Samsung camera-actuator lens-motion architecture",
+        "confirmed_no_prescription.camera_actuator_lens_motion_architecture_only",
+    ),
+    (
+        3,
+        "Samsung first connection-substrate support architecture",
+        "confirmed_no_prescription."
+        "first_connection_substrate_support_architecture_only",
+    ),
+    (
+        4,
+        "Samsung dual-extension aperture-substrate RF-PCB architecture",
+        "confirmed_no_prescription."
+        "dual_extension_aperture_substrate_rf_pcb_architecture_only",
+    ),
+    (
+        5,
+        "Samsung split support-bridge connection-substrate variant",
+        "confirmed_no_prescription."
+        "split_support_bridge_connection_substrate_variant_only",
+    ),
+    (
+        6,
+        "Samsung crossed coupling connection-substrate variant",
+        "confirmed_no_prescription."
+        "crossed_coupling_connection_substrate_variant_only",
+    ),
+)
+_SAMSUNG_CAMERA_MODULE_SUPPORT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12663695-B2": {
+        "raw_document_sha256": (
+            "344973b24234452b0a0178358d493bac58dfa26f48b5b7281f52d296782fd19e"
+        ),
+        "normalized_text_sha256": (
+            "98e14b06e59e9f83872ced3317013cc8575d844e0b858dcd13188d663c445c81"
+        ),
+        "section_markers": {
+            "preamble": "US-12663695-B2",
+            "abstract": "Abstract A camera module",
+            "background": "Background/Summary CROSS-REFERENCE",
+            "figures": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION (31)",
+            "claims": "Claims 1 . A camera module",
+        },
+        "section_sha256": {
+            "preamble": (
+                "da4c90b0d6947c3d239083098234224653c8c2456974aac07087572e51a4385b"
+            ),
+            "abstract": (
+                "04751d68f0e1e3bcbc219e7d5d4c6292535018d60c62d2c0a5bb8b5edd002e9e"
+            ),
+            "background": (
+                "80e41bfc860ac65df3c7a33ea6a76eb477effd19f9193b77088432521b1563af"
+            ),
+            "figures": (
+                "4d9c7088ce958b7ea4756b9e0fe38c929c11c31de4cd96c2e0ea9de684d1b52b"
+            ),
+            "detailed": (
+                "7325781f6b156250e2e6957a90bc22083b4f9002b1ebd495952ecff76ce573df"
+            ),
+            "claims": (
+                "5c73b8b6f2e29f61fb4c42fcc08778603e897628e84d7da14f84da9a6249f858"
+            ),
+        },
+        "background_span_sha256": {
+            (1, 1): "4b95f0edf1b48711a7b89d5a1750d68b0be566e92723da4f00a576fc4d1d45fa",
+            (2, 8): "19ffa213fbbc5480c68bb23d782e56045e1d9ca09d24ff7e228998a158dc9adb",
+            (9, 25): "3079153a037ae65c4ffa0fa5748d34d185a0a84a2f91928872d18ef9b353c7df",
+            (26, 30): "1f80bf5dbbea756e670d65638b21b649a518aa09a20b6e1c1ea3afe5e6ca7ead",
+            (31, 33): "1ab3589de16b88f4cc7df9262cef35564ad19783cf5366d4c32399ccc1170314",
+            (34, 34): "1a206434c38a9cf6f9ed51097d779888c45fc30a075e74c27cdc2c516df9acfb",
+        },
+        "description_span_sha256": {
+            (1, 29): "cfc443553828b64be46ee037468dedf0c4df04e4baad88d8cdddb9e5d20f4e5e",
+            (30, 30): "92aa1cd0f2c7a0510941aa5b1f7f087b68ce37a860984da53d01ec225e155ca5",
+            (31, 45): "bef1333521009bdeabddb4a2d5e9f180fed4d06b70bd35b07bea535ba7eddcbf",
+            (46, 178): "e8e371c75c1681a5663154cfff80cae5abf1fe469402e92ca4d017434a6a322c",
+            (179, 308): "cfcd96b52ac9762e71a1d66756b6939862609df8a31b94a96d36a06f8e4dc4ea",
+            (309, 334): "4fe73ed7d61a90723d9bdaf65fb5937e1e3be1d5128b3bff9f82a081dae5a4a1",
+            (335, 368): "45ccecbcbc7b88411644818837e66323945915a026b362092d01a45aad2610f8",
+            (369, 372): "c9c36c68ed4043f7e4e5b63c22755d01fe8c02818b9d85b9530918a785f15119",
+            (373, 377): "0d81fbfad3336645005963ea68f7b3a5605877e7d98bceeb5335ef08fb75a8f1",
+            (378, 378): "36bd0b6853f564e38f544e85484b40840ea5376d1c02c4d8b68915da5659e091",
+        },
+        "item_ranges": (
+            (46, 178),
+            (179, 308),
+            (309, 334),
+            (335, 368),
+            (369, 372),
+            (373, 377),
+        ),
+        "item_markers": (
+            "a camera module 1 according to an example embodiment of the present "
+            "disclosure includes an aperture module 2 and a camera actuator 3",
+            "a camera actuator 3 according to an example embodiment of the present "
+            "disclosure includes a lens module 2000",
+            "a camera actuator 3 includes a connection substrate 8000",
+            "according to another example embodiment of the present disclosure "
+            "includes an aperture module",
+            "Referring to FIG. 29 , a support portion",
+            "Referring to FIG. 30 , a first coupling portion",
+        ),
+        "figure_labels": tuple(str(number) for number in range(1, 31)),
+        "claim_families": (
+            tuple(range(1, 15)),
+            tuple(range(15, 20)),
+            tuple(range(20, 23)),
+        ),
+        "claim_family_sha256": (
+            "14f759c2122a0470133806dabc08dc2492ef7e5255c73de46b01c998cb2b918b",
+            "c885b6333ab84bc078ee7c427e20e4b7025308d9c9deedf07e6bcffd16f49753",
+            "946c22e7222d602572b047a703992a1769e4615f7b73410e5a9e3298811b6186",
+        ),
+        "identity_markers": {
+            "US-12663695-B2": 1,
+            "United States Patent 12663695": 1,
+            "Kind Code B2": 1,
+            "Date of Patent June 23, 2026": 1,
+            "Inventor(s) Lee; Kyung Hun et al. Camera module": 1,
+            "Applicant: SAMSUNG ELECTRO-MECHANICS CO., LTD.": 1,
+            "Family ID: 92715390": 1,
+            "Assignee: Samsung Electro-Mechanics Co., Ltd.": 1,
+            "Appl. No.: 18/587176": 1,
+            "Filed: February 26, 2024": 1,
+            "US 20240310694 A1": 1,
+            "KR 10-2023-0034108": 1,
+            "KR 10-2023-0117213": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "aspheric": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "image height": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "optical prescription": 0,
+            "optical surface": 0,
+            "lens element": 0,
+            "aperture stop": 0,
+            " mm": 0,
+            " nm": 0,
+            "millimeter": 0,
+            "nanometer": 0,
+        },
+        "source_scope_phrase_counts": {
+            "radius": 5,
+            "curvature": 10,
+            "thickness": 1,
+            "at least one lens": 1,
+            "lens barrel": 36,
+            "lens module": 130,
+            "aperture module": 90,
+            "connection substrate": 53,
+            "image sensor": 20,
+            "magnet portion": 31,
+            "coil portion": 30,
+            "rolling portion": 14,
+            "degree": 1,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/USPTO-PDF/"
+                "b37eaa8fa35e054a/US-12663695-B2.pdf"
+            ),
+            "bytes": 2608048,
+            "sha256": (
+                "b37eaa8fa35e054a46a6e44fb2d41ab7523caea7cba799867fae469fee2a247d"
+            ),
+            "page_count": 43,
+            "single_raster_page_count": 43,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(3, 27)),
+            "drawing_sheet_count": 24,
+            "raster_set_sha256": (
+                "f1a90812378ea669b063966ec2e914e95e9e34e4999823119f4af4be1398988a"
             ),
         },
     }
@@ -32342,6 +32543,351 @@ def _classify_sunny_automotive_heated_optical_device_architecture_attempts(
         for number, label, reason_code in (
             _SUNNY_AUTOMOTIVE_HEATED_OPTICAL_DEVICE_ITEMS
         )
+    ]
+
+
+def _classify_samsung_camera_module_support_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 92715390 camera-module support architectures."""
+
+    profile = _SAMSUNG_CAMERA_MODULE_SUPPORT_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _SAMSUNG_CAMERA_MODULE_SUPPORT_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\((\d+)\)", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"Samsung camera-module support {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Samsung camera-module support official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Samsung camera-module support normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Samsung camera-module support identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Samsung camera-module support section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Samsung camera-module support section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Samsung camera-module support "
+                    f"{section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"],
+            expected_numbers=tuple(range(1, 35)),
+            label="background/summary paragraph",
+        )
+        description_text = text[
+            section_starts["figures"] : section_starts["claims"]
+        ]
+        description_paragraphs = numbered_paragraphs(
+            description_text,
+            expected_numbers=tuple(range(1, 379)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (
+                background_paragraphs,
+                profile["background_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_span_sha256"],
+                "description",
+            ),
+        ):
+            for bounds, expected_digest in span_hashes.items():
+                start, end = bounds
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                )
+                observed_digest = hashlib.sha256(
+                    span.strip().encode("utf-8")
+                ).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        "Samsung camera-module support "
+                        f"{label} paragraph span {start}-{end} changed"
+                    )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_SAMSUNG_CAMERA_MODULE_SUPPORT_ITEMS)
+            == 6
+        ):
+            raise PatentParseError(
+                "Samsung camera-module support source-item denominator changed"
+            )
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Samsung camera-module support source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(1, 29):
+            match = re.match(
+                r"\(\d+\) FIG\.\s+(\d+)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Samsung camera-module support figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if not re.match(
+            r"\(29\) FIGS\. 29 and 30 are modified examples",
+            description_paragraphs[29],
+        ):
+            raise PatentParseError(
+                "Samsung camera-module support compound figure declaration changed"
+            )
+        figure_labels.extend(("29", "30"))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Samsung camera-module support figure-label denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Samsung camera-module support zero-table denominator changed"
+            )
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError(
+                "Samsung camera-module support zero-MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 23):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Samsung camera-module support claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 22
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 23)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Samsung camera-module support three-claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Samsung camera-module support prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Samsung camera-module support scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Samsung camera-module support official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Samsung camera-module support official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Samsung camera-module support official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Samsung camera-module support official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Samsung camera-module support official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Samsung camera-module support official raster-page denominator changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Samsung camera-module support official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Samsung camera-module support official PDF gained a text layer"
+            )
+        if (
+            len(pdf_profile["drawing_page_numbers"])
+            != pdf_profile["drawing_sheet_count"]
+            or pdf_profile["drawing_page_numbers"] != tuple(range(3, 27))
+        ):
+            raise PatentParseError(
+                "Samsung camera-module support drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all six exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML and all 43 exact official page rasters contain "
+        "30 declared figures across 24 drawing sheets, zero text tables and zero "
+        "MathML; the drawings publish only camera, aperture, actuator, barrel, "
+        "support, substrate and circuit-board geometry, while no ordered optical "
+        "radius, spacing, material, refractive-index, Abbe, conic, asphere, stop, "
+        "focal-length, F-number, image-height or field prescription is disclosed"
+    )
+    details = (
+        "Description paragraphs 46-178 publish the first camera module, blade, base, "
+        f"rotating-body, aperture-driver, magnet/coil, rolling and yoke architecture; {common}",
+        "Description paragraphs 179-308 publish a hollow lens barrel with at least "
+        "one generic lens plus focus/shake carriers, magnets, coils, balls, stoppers "
+        f"and an image sensor; {common}",
+        "Description paragraphs 309-334 publish the first flexible connection-"
+        "substrate moving/fixed/support, case and printed-circuit architecture; "
+        f"{common}",
+        "Description paragraphs 335-368 publish the second dual-extension aperture "
+        "substrate and RF-PCB moving/fixed/support architecture; "
+        f"{common}",
+        "Description paragraphs 369-372 and FIG. 29 publish separated first and "
+        f"second support bridges between four coupling portions; {common}",
+        "Description paragraphs 373-377 and FIG. 30 publish the crossed adjacent and "
+        f"overlapping coupling layout only; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _SAMSUNG_CAMERA_MODULE_SUPPORT_ITEMS
     ]
 
 
