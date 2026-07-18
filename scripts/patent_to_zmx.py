@@ -860,6 +860,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_largan_lens_barrel_glue_void_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_samsung_seven_lens_five_example_attempts(
         raw_text,
         patent_id=patent_id,
@@ -3171,6 +3179,256 @@ _MAGICAM_COMPOSITE_PHOTOGRAPHY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "column_15_line_62": "+/-1.6%",
             "table_6_l7_corrected_nd_vd": "1.487/70.4",
             "claim_22_asphere_parenthesis_inserted": True,
+        },
+    }
+}
+_LARGAN_LENS_BARREL_GLUE_VOID_ITEMS = (
+    (
+        1,
+        "Largan first imaging-lens-assembly barrel/glue/void embodiment",
+        "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only",
+    ),
+    (
+        2,
+        "Largan second imaging-lens-assembly barrel/glue/void embodiment",
+        "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only",
+    ),
+    (
+        3,
+        "Largan third imaging-lens-assembly barrel/glue/void embodiment",
+        "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only",
+    ),
+    (
+        4,
+        "Largan image-capturing-apparatus wrapper",
+        "confirmed_no_prescription.image_capturing_apparatus_wrapper_only",
+    ),
+    (
+        5,
+        "Largan electronic-device wrapper",
+        "confirmed_no_prescription.electronic_device_wrapper_only",
+    ),
+)
+_LARGAN_LENS_BARREL_GLUE_VOID_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12169351-B2": {
+        "raw_document_sha256": (
+            "86c15343d390d69dbb9fef7209d6b0852ea0b89ec4d1eac71a67e06d44e2b5f4"
+        ),
+        "normalized_text_sha256": (
+            "66b6a725ff77dad6684caf9ac4170ec0309392c836d7ce831d996e71448361a9"
+        ),
+        "identity_markers": {
+            "United States Patent 12169351 Kind Code B2": 1,
+            "Date of Patent December 17, 2024": 1,
+            "Inventor(s) Su; Heng-Yi et al.": 1,
+            "Imaging lens assembly, image capturing apparatus and electronic device Abstract": 1,
+            "Family ID: 78471711": 1,
+            "Assignee: LARGAN PRECISION CO., LTD.": 1,
+            "Appl. No.: 17/405071": 1,
+            "Filed: August 18, 2021": 1,
+            "US 20220100057 A1 Mar. 31, 2022": 1,
+            "US 63083228 20200925": 1,
+        },
+        "section_markers": {
+            "preamble": "US-12169351-B2",
+            "abstract": "Abstract An imaging lens assembly",
+            "related": "Background/Summary RELATED APPLICATIONS",
+            "background": "BACKGROUND Technical Field",
+            "summary": "SUMMARY (3)",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION (28)",
+            "claims": "Claims 1. An imaging lens assembly",
+        },
+        "section_sha256": {
+            "preamble": (
+                "d6af2f1a99801b2fa206420f119edfb5c5d0a8f02496eda7b7f535a5789ccf02"
+            ),
+            "abstract": (
+                "200e21996d195e3b6a99f54432c049d18d4b280cc0fbf9430f1ded9e6f878d90"
+            ),
+            "related": (
+                "eacde799a4d8513523111b3efa29202fa926b3fcc21f60ec33e19b21adcc3216"
+            ),
+            "background": (
+                "5c2241611bb3f6b1cf1b354108025b1ec3d35669b93ef6ef4bc9381ce9150a55"
+            ),
+            "summary": (
+                "80c79d37ef25581432723755646ae36741123ff3de79868894ad764244ea61f1"
+            ),
+            "description": (
+                "9d66bf6610884cc780c172803cd0150ccf995ce3583835792dd631a7fa1ddf46"
+            ),
+            "detailed": (
+                "f55b4a0d456d248cd7ec5bec680ca45306aee63af6d9c22612dd9e0a19353608"
+            ),
+            "claims": (
+                "6daf289769f7f90d22aa8da0aacf77f82000efd6607c654b3bfe28ab23f00c97"
+            ),
+        },
+        "paragraph_sequences": {
+            "related": (1,),
+            "background": (1, 2),
+            "summary": (3, 4, 5),
+            "description": tuple(range(1, 28)),
+            "detailed": tuple(range(28, 89)),
+        },
+        "paragraph_span_sha256": {
+            ("description", 1, 8): (
+                "544b22ebb0b2ef02ec1fba50efdd1d7427058b707759ae641808f5ade50be704"
+            ),
+            ("description", 9, 15): (
+                "07810c56a3bd7f3fcdac9d6d8e208098b64bf9d31739f4d42864b161d0faf6f9"
+            ),
+            ("description", 16, 23): (
+                "9578e12ae1ceed8be403a7ea057973088a31852cecc5fb5d1a7b2f0a46908811"
+            ),
+            ("description", 24, 27): (
+                "0c7cc6f858ea0a18722b4def6006d6b757b1ce0716e6d15a30320ea802729fac"
+            ),
+            ("detailed", 28, 43): (
+                "781036b95707481ccf7b773bfd0e35e6bca25c9529bc5c40d94fc4f5148ffeeb"
+            ),
+            ("detailed", 44, 56): (
+                "5577757d2759faa8b6729e77c2ca097e13e5eaf29f801ad6a15ecc390a1b3977"
+            ),
+            ("detailed", 57, 69): (
+                "e7ac0a0e81bd6a10afd2f7ba740f3418578c62fbc1523eae275dc2b0c5a52d94"
+            ),
+            ("detailed", 70, 82): (
+                "26a261ccdcf0a8d44c0cb28912c52b791a986c476f934e703dab28096a54e54b"
+            ),
+            ("detailed", 83, 88): (
+                "fb8bec767dc77d52dbacd56452f8f744dd19df0e472bd26b980e697913e2362a"
+            ),
+        },
+        "table_paragraph_sha256": {
+            56: "9f7f1b997f44b67ad8b96eafa939c89286070431112fa9960642b2aab7554bbe",
+            69: "ad97534148ec82f80f021c4186ff8c292d2c07360fc64ffff086b6fcba45ff35",
+            82: "db9081eaee252c81efa34ebf5af0d023601bbd2fa6a87ee2399a6d8dab9e7d16",
+        },
+        "table_values": (
+            (1, 20.0, 5.35, 4.82, 1.11),
+            (2, 20.0, 4.95, 4.3, 1.15),
+            (3, 20.0, 4.95, 4.3, 1.15),
+        ),
+        "claim_sha256": (
+            "947f95d6041ecc7636f15951711d70b29f3e85800fb951012290a5ed771cde75",
+            "3721245aa1f1ebc37e36d27296be9384ff4d6ed5a29456d5a4ab8f2f9bfb1c58",
+            "224a1deddf0d7635517fbc35417d504faef9200beed6cdab830c9168af193a67",
+            "fe7b01616a2aebe6f2d2a8576ae48e57585fb536e6c704b31777616929616ae7",
+            "aecbe806226c3a3f4e84586cad6e01f17aa59874a93e709d6625edf0289db0d9",
+            "186ed9a75ca04e8bcfc843f1855170c244c779f81450196babc5f1174a7359fc",
+            "3615a6cd4ddd8ab9aebacd5913490cbc1914794693f35b1ce045a09c83402de2",
+            "a5ee224aaef43ae0bbf301c5d295cc34e175a3b4a07d0f0804366745f6c982c8",
+            "001a56d67f111c1e1b32889a85c6fc526973defe741e71ed51af920dd5735fd5",
+            "424a73ab5a012ff3581d4a8b13652176e23c7933b61e19110a843dbd584c5bf3",
+        ),
+        "independent_claim_numbers": (1, 9, 10),
+        "source_phrase_counts": {
+            "TABLE 1": 2,
+            "TABLE 2": 2,
+            "TABLE 3": 2,
+            "TABLE-US-00001": 1,
+            "TABLE-US-00002": 1,
+            "TABLE-US-00003": 1,
+            "radius of curvature": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "aspheric": 0,
+            "aperture stop": 0,
+            "focal length": 4,
+            "effective focal length": 0,
+            "F-number": 0,
+            "field of view": 0,
+            "image height": 0,
+            "surface shapes": 3,
+            "other optical elements according to demand": 3,
+            "image capturing apparatus": 17,
+            "electronic device": 20,
+        },
+        "source_figure_labels": (
+            "1A",
+            "1B",
+            "10",
+            "1D",
+            "1E",
+            "1F",
+            "1G",
+            "2A",
+            "2B",
+            "2C",
+            "2D",
+            "2E",
+            "2F",
+            "2G",
+            "3A",
+            "3B",
+            "3C",
+            "3D",
+            "3E",
+            "3F",
+            "3G",
+            "3H",
+            "4A",
+            "4B",
+            "4C",
+            "4D",
+        ),
+        "source_label_discrepancy": {
+            "html_brief_label": "FIG. 10",
+            "official_b2_page": 5,
+            "official_raster_label": "Fig. 1C",
+            "numeric_effect": False,
+        },
+        "official_pdfs": {
+            "US-12169351-B2": {
+                "path": (
+                    "data/patent-lake/uspto-ppubs-pdf/d50dff1009a33c0a/"
+                    "US-12169351-B2.pdf"
+                ),
+                "bytes": 2_244_167,
+                "sha256": (
+                    "d50dff1009a33c0a6a093145b36cbf82c0cd752db58acb19c33eec3f4e780ef7"
+                ),
+                "page_count": 36,
+                "single_raster_page_count": 36,
+                "raster_dimensions": (2560, 3300),
+                "raster_set_sha256": (
+                    "4fd9f14d0794a5bb9df8ba2c72e96a5870913daccc13c8915ac34921c4648a7b"
+                ),
+                "key_page_numbers": (5, 32, 33, 35, 36),
+                "key_page_raster_sha256": (
+                    "16e8f2be1f240ae2ec291ee54f37632371696dd95a36635212537e9d562f0944",
+                    "181335d0026bf3fc69eaba51048edf72f1963f4b07eb1567b76bc1495493649c",
+                    "2a27b69134912c97475b908f54d82dcbad3d8dd9d47b1e8d4d4907e8ab585299",
+                    "2c49918e9afb450f99faae460209789bd7e0d2a60dfcace0df197c4a2c84146d",
+                    "d20fd96bd27eea6a149dd5dcec249b1831a6530ae9268e1769d608429b0e291a",
+                ),
+                "drawing_page_numbers": tuple(range(3, 29)),
+                "drawing_sheet_count": 26,
+                "table_page_numbers": (32, 33, 35),
+                "claim_page_numbers": (35, 36),
+            },
+            "US-20220100057-A1": {
+                "path": (
+                    "data/patent-lake/uspto-ppubs-pdf/209fe0fc098b23fb/"
+                    "US-20220100057-A1.pdf"
+                ),
+                "bytes": 2_220_649,
+                "sha256": (
+                    "209fe0fc098b23fb3d0ae09c8e772f0cf8bfbf6d11c47ee808ed7a7a4fe98c6b"
+                ),
+                "page_count": 35,
+                "single_raster_page_count": 35,
+                "raster_dimensions": (2560, 3300),
+                "raster_set_sha256": (
+                    "69425fbfc61efcc5adc5f4e246282d458f80ce2c5eea49cf1f36da95d98534e2"
+                ),
+            },
+        },
+        "official_pdf_comparison": {
+            "same_position_equal_pages": 0,
+            "shared_rasters_anywhere": 0,
         },
     }
 }
@@ -28000,6 +28258,357 @@ def _classify_magicam_composite_photography_missing_image_height_attempts(
             ),
         )
     )
+    return attempts
+
+
+def _classify_largan_lens_barrel_glue_void_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact lens-barrel/glue/void embodiments without prescriptions."""
+
+    profile = _LARGAN_LENS_BARREL_GLUE_VOID_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _LARGAN_LENS_BARREL_GLUE_VOID_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan lens-barrel/glue/void identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void {section_name} section changed"
+                )
+
+        paragraph_maps: dict[str, dict[int, str]] = {}
+        for section_name, expected_numbers in profile[
+            "paragraph_sequences"
+        ].items():
+            section = sections[section_name]
+            matches = list(re.finditer(r"(?<!\S)\((\d+)\)\s+", section))
+            observed_numbers = tuple(int(match.group(1)) for match in matches)
+            if observed_numbers != expected_numbers:
+                raise PatentParseError(
+                    "Largan lens-barrel/glue/void paragraph denominator changed "
+                    f"for {section_name}"
+                )
+            paragraph_maps[section_name] = {
+                number: section[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section)
+                    )
+                ]
+                for index, (number, match) in enumerate(
+                    zip(observed_numbers, matches, strict=True)
+                )
+            }
+        for (
+            section_name,
+            start,
+            end,
+        ), expected_digest in profile["paragraph_span_sha256"].items():
+            span = "".join(
+                paragraph_maps[section_name][number]
+                for number in range(start, end + 1)
+            ).strip()
+            if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    "Largan lens-barrel/glue/void paragraph span "
+                    f"{section_name}:{start}-{end} changed"
+                )
+
+        detailed_paragraphs = paragraph_maps["detailed"]
+        for paragraph_number, expected_digest in profile[
+            "table_paragraph_sha256"
+        ].items():
+            payload = detailed_paragraphs[paragraph_number].strip()
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    "Largan lens-barrel/glue/void table paragraph "
+                    f"{paragraph_number} changed"
+                )
+        for table_number, d_um, phi_i_mm, phi_1_mm, ratio in profile[
+            "table_values"
+        ]:
+            paragraph_number = {1: 56, 2: 69, 3: 82}[table_number]
+            expected_table = (
+                f"TABLE-US-{table_number:05d} TABLE {table_number} "
+                f"{table_number}{'st' if table_number == 1 else 'nd' if table_number == 2 else 'rd'} "
+                f"embodiment d (um) {d_um:g} phi i (mm) {phi_i_mm:g} "
+                f"phi 1(mm) {phi_1_mm:g} phi i/phi1 {ratio:g}"
+            )
+            if expected_table not in detailed_paragraphs[paragraph_number]:
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void TABLE {table_number} values changed"
+                )
+
+        figure_labels = tuple(
+            match.replace(" ", "")
+            for match in re.findall(
+                r"FIG\. (\d+(?: [A-Z])?) is ",
+                sections["description"],
+            )
+        )
+        if figure_labels != profile["source_figure_labels"]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void figure denominator changed"
+            )
+        discrepancy = profile["source_label_discrepancy"]
+        if discrepancy != {
+            "html_brief_label": "FIG. 10",
+            "official_b2_page": 5,
+            "official_raster_label": "Fig. 1C",
+            "numeric_effect": False,
+        }:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void source-label discrepancy changed"
+            )
+
+        claims = sections["claims"]
+        claim_starts = []
+        cursor = 0
+        for claim_number in range(1, 11):
+            claim_start = claims.find(f"{claim_number}. ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Largan lens-barrel/glue/void 10-claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number}. ")
+        if "11. " in claims[cursor:]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void claim denominator expanded"
+            )
+        claim_payloads = tuple(
+            claims[
+                start : (
+                    claim_starts[index + 1]
+                    if index + 1 < len(claim_starts)
+                    else len(claims)
+                )
+            ].strip()
+            for index, start in enumerate(claim_starts)
+        )
+        if tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in claim_payloads
+        ) != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void claim payload changed"
+            )
+        independent_claims = tuple(
+            claim_number
+            for claim_number, payload in enumerate(claim_payloads, start=1)
+            if payload.startswith(f"{claim_number}. An ")
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void independent claims changed"
+            )
+
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan lens-barrel/glue/void source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        if any(
+            re.search(pattern, raw_text, re.IGNORECASE) is not None
+            for pattern in (r"<table\b", r"<maths?\b", r"<img\b")
+        ):
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void retained HTML tag denominator changed"
+            )
+
+        decoded_raster_hashes: dict[str, tuple[str, ...]] = {}
+        for publication_id, pdf_profile in profile["official_pdfs"].items():
+            pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+            if len(pdf_bytes) != pdf_profile["bytes"]:
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void {publication_id} PDF byte count changed"
+                )
+            if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void {publication_id} PDF hash changed"
+                )
+            reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+            if len(reader.pages) != pdf_profile["page_count"]:
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void {publication_id} page count changed"
+                )
+            page_hashes = []
+            text_layer_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                page_images = list(page.images)
+                if len(page_images) != 1:
+                    raise PatentParseError(
+                        f"Largan lens-barrel/glue/void {publication_id} page "
+                        f"{page_number} contains {len(page_images)} rasters; expected one"
+                    )
+                if page_images[0].image.size != pdf_profile["raster_dimensions"]:
+                    raise PatentParseError(
+                        f"Largan lens-barrel/glue/void {publication_id} page "
+                        f"{page_number} raster dimensions changed"
+                    )
+                page_hashes.append(_canonical_raster_sha256(page_images[0].data))
+                text_layer_characters += len(page.extract_text() or "")
+            if len(page_hashes) != pdf_profile["single_raster_page_count"]:
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void {publication_id} raster denominator changed"
+                )
+            if hashlib.sha256(
+                ("\n".join(page_hashes) + "\n").encode("utf-8")
+            ).hexdigest() != pdf_profile["raster_set_sha256"]:
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void {publication_id} raster set changed"
+                )
+            if text_layer_characters != 0:
+                raise PatentParseError(
+                    f"Largan lens-barrel/glue/void {publication_id} gained a text layer"
+                )
+            decoded_raster_hashes[publication_id] = tuple(page_hashes)
+
+        primary_pdf = profile["official_pdfs"]["US-12169351-B2"]
+        if not (
+            primary_pdf["drawing_page_numbers"] == tuple(range(3, 29))
+            and primary_pdf["drawing_sheet_count"] == 26
+            and primary_pdf["table_page_numbers"] == (32, 33, 35)
+            and primary_pdf["claim_page_numbers"] == (35, 36)
+        ):
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void primary PDF page roles changed"
+            )
+        primary_page_hashes = decoded_raster_hashes["US-12169351-B2"]
+        if tuple(
+            primary_page_hashes[page_number - 1]
+            for page_number in primary_pdf["key_page_numbers"]
+        ) != primary_pdf["key_page_raster_sha256"]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void primary key-page rasters changed"
+            )
+        prior_page_hashes = decoded_raster_hashes["US-20220100057-A1"]
+        comparison = {
+            "same_position_equal_pages": sum(
+                left == right
+                for left, right in zip(
+                    primary_page_hashes, prior_page_hashes, strict=False
+                )
+            ),
+            "shared_rasters_anywhere": len(
+                set(primary_page_hashes) & set(prior_page_hashes)
+            ),
+        }
+        if comparison != profile["official_pdf_comparison"]:
+            raise PatentParseError(
+                "Largan lens-barrel/glue/void B2/A1 raster relationship changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all five source items
+        return attempts_for_error(exc)
+
+    attempts = []
+    table_values = profile["table_values"]
+    for number, label, reason_code in _LARGAN_LENS_BARREL_GLUE_VOID_ITEMS:
+        if number <= 3:
+            table_number, d_um, phi_i_mm, phi_1_mm, ratio = table_values[number - 1]
+            detail = (
+                f"embodiment {number} publishes a structural order of five plastic "
+                "lens-element labels plus barrel/retainer/glue/void/image-surface "
+                f"architecture; TABLE {table_number} contains only air-gap d={d_um:g} "
+                f"um, outer diameters phi_i={phi_i_mm:g} mm and phi_1={phi_1_mm:g} "
+                f"mm, and ratio {ratio:g}; the source expressly leaves lens count, "
+                "structures, surface shapes and other optical elements to imaging "
+                "demand and publishes no ordered optical radii, numeric axial "
+                "spacings, optical materials/index/Abbe data, conics/aspheres, stop, "
+                "or direct numeric EFL/F-number/field/image height"
+            )
+        elif number == 4:
+            detail = (
+                "summary paragraph 4, detailed paragraph 41 and independent claim 9 "
+                "only wrap the already mapped imaging-lens assemblies in an image "
+                "capturing apparatus and publish no additional ordered prescription"
+            )
+        else:
+            detail = (
+                "summary paragraph 5, detailed paragraphs 42 and 83-87, FIGS. 4A-4D "
+                "and independent claim 10 wrap the image-capturing apparatus and "
+                "sensor in an electronic device; the device may use any of the first "
+                "three assemblies and publishes no additional ordered prescription"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=reason_code,
+                    detail=detail,
+                ),
+            )
+        )
     return attempts
 
 

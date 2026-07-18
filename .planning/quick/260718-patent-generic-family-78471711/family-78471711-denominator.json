@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "family_id": "78471711",
+  "application_number": "17/405071",
+  "root_ids": ["US-12169351"],
+  "publication_ids": ["US-12169351-B2", "US-20220100057-A1"],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "retained_lineage_publications": 1,
+    "related_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 2,
+    "summary_numbered_paragraphs": 3,
+    "brief_description_numbered_paragraphs": 27,
+    "detailed_numbered_paragraphs": 61,
+    "total_section_numbered_paragraphs": 94,
+    "claims": 10,
+    "independent_claims": 3,
+    "declared_textual_figures": 26,
+    "located_raster_figures": 26,
+    "tagged_html_tables": 0,
+    "flattened_mechanical_tables": 3,
+    "flattened_optical_tables": 0,
+    "mathml_objects": 0,
+    "html_image_tags": 0,
+    "source_disclosed_items": 5,
+    "lens_barrel_glue_void_architecture_items": 3,
+    "image_capturing_apparatus_wrappers": 1,
+    "electronic_device_wrappers": 1,
+    "confirmed_no_prescription_items": 5,
+    "replayed_ledger_items": 5,
+    "official_pdf_files": 2,
+    "primary_official_pdf_pages": 36,
+    "lineage_official_pdf_pages": 35,
+    "primary_retained_page_rasters": 36,
+    "primary_retained_drawing_sheets": 26,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "related": [1, 1],
+    "background": [1, 2],
+    "summary": [3, 5],
+    "brief_description": [1, 27],
+    "common_architecture": [28, 43],
+    "first_imaging_lens_assembly": [44, 56],
+    "second_imaging_lens_assembly": [57, 69],
+    "third_imaging_lens_assembly": [70, 82],
+    "electronic_device": [83, 88]
+  },
+  "figure_mapping": {
+    "first_imaging_lens_assembly": {"figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G"], "official_pdf_pages": [3, 4, 5, 6, 7, 8, 9], "source_item": 1},
+    "second_imaging_lens_assembly": {"figures": ["2A", "2B", "2C", "2D", "2E", "2F", "2G"], "official_pdf_pages": [10, 11, 12, 13, 14, 15, 16], "source_item": 2},
+    "third_imaging_lens_assembly": {"figures": ["3A", "3B", "3C", "3D", "3E", "3F", "3G", "3H"], "official_pdf_pages": [17, 18, 19, 20, 21, 22, 23, 24], "source_item": 3},
+    "electronic_device": {"figures": ["4A", "4B", "4C", "4D"], "official_pdf_pages": [25, 26, 27, 28], "source_item": 5},
+    "html_label_discrepancy": {"brief_paragraph": 4, "html_label": "10", "official_label": "1C", "official_pdf_page": 5, "numeric_effect": false}
+  },
+  "table_mapping": {
+    "TABLE 1": {"detailed_paragraph": 56, "official_pdf_page": 32, "source_item": 1, "data_role": "mechanical_air_gap_outer_diameters_and_ratio"},
+    "TABLE 2": {"detailed_paragraph": 69, "official_pdf_page": 33, "source_item": 2, "data_role": "mechanical_air_gap_outer_diameters_and_ratio"},
+    "TABLE 3": {"detailed_paragraph": 82, "official_pdf_page": 35, "source_item": 3, "data_role": "mechanical_air_gap_outer_diameters_and_ratio"}
+  },
+  "claim_mapping": {
+    "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "independent_claims": [1, 9, 10],
+    "assembly_claims": [1, 2, 3, 4, 5, 6, 7, 8],
+    "image_capturing_apparatus_claim": 9,
+    "electronic_device_claim": 10,
+    "official_pdf_pages": [35, 36]
+  },
+  "items": [
+    {"embodiment_number": 1, "label": "Largan first imaging-lens-assembly barrel/glue/void embodiment", "table": 1, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only"},
+    {"embodiment_number": 2, "label": "Largan second imaging-lens-assembly barrel/glue/void embodiment", "table": 2, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only"},
+    {"embodiment_number": 3, "label": "Largan third imaging-lens-assembly barrel/glue/void embodiment", "table": 3, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only"},
+    {"embodiment_number": 4, "label": "Largan image-capturing-apparatus wrapper", "table": null, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.image_capturing_apparatus_wrapper_only"},
+    {"embodiment_number": 5, "label": "Largan electronic-device wrapper", "table": null, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"}
+  ],
+  "representability_boundary": {
+    "three_mechanical_tables_published": true,
+    "ordered_surface_radii_published": false,
+    "numeric_optical_axial_spacings_published": false,
+    "index_abbe_published": false,
+    "conic_asphere_coefficients_published": false,
+    "aperture_stop_published": false,
+    "effective_focal_length_published": false,
+    "f_number_published": false,
+    "field_published": false,
+    "absolute_image_height_published": false,
+    "mechanical_dimensions_promoted_to_optical_prescription": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "prior_publication_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  },
+  "terminal_outcome": {
+    "status_counts": {"confirmed_no_prescription": 5},
+    "reason_code_counts": {"confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only": 3, "confirmed_no_prescription.image_capturing_apparatus_wrapper_only": 1, "confirmed_no_prescription.electronic_device_wrapper_only": 1},
+    "item_count": 5,
+    "unmapped_source_items": 0
+  }
+}

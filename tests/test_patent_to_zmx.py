@@ -33992,6 +33992,427 @@ def test_magicam_composite_photography_raster_audit_rehashes() -> None:
     }
 
 
+def _largan_lens_barrel_glue_void_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "86c15343d390d69d"
+        / "US-12169351-B2.html"
+    )
+    return "US-12169351-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_largan_lens_barrel_glue_void_reconciles_five_source_items() -> None:
+    patent_id, raw_text = _largan_lens_barrel_glue_void_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 6))
+    assert [attempt.embodiment for attempt in attempts] == [
+        item[1] for item in patent_to_zmx._LARGAN_LENS_BARREL_GLUE_VOID_ITEMS
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only",
+        "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only",
+        "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only",
+        "confirmed_no_prescription.image_capturing_apparatus_wrapper_only",
+        "confirmed_no_prescription.electronic_device_wrapper_only",
+    ]
+    assert all(
+        "no ordered optical radii" in str(attempt.error)
+        for attempt in attempts[:3]
+    )
+    assert all(
+        "no additional ordered prescription" in str(attempt.error)
+        for attempt in attempts[3:]
+    )
+
+
+def test_largan_lens_barrel_glue_void_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _largan_lens_barrel_glue_void_source()
+    changed = raw_text.replace("December 17, 2024", "December 18, 2024", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Largan lens-barrel/glue/void official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
+def test_largan_lens_barrel_glue_void_source_denominator_is_bound() -> None:
+    patent_id, raw_text = _largan_lens_barrel_glue_void_source()
+    profile = patent_to_zmx._LARGAN_LENS_BARREL_GLUE_VOID_SOURCE_PROFILES[
+        patent_id
+    ]
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+
+    assert profile["paragraph_sequences"] == {
+        "related": (1,),
+        "background": (1, 2),
+        "summary": (3, 4, 5),
+        "description": tuple(range(1, 28)),
+        "detailed": tuple(range(28, 89)),
+    }
+    assert len(profile["source_figure_labels"]) == 26
+    assert profile["source_figure_labels"][2] == "10"
+    assert profile["source_label_discrepancy"] == {
+        "html_brief_label": "FIG. 10",
+        "official_b2_page": 5,
+        "official_raster_label": "Fig. 1C",
+        "numeric_effect": False,
+    }
+    assert profile["table_values"] == (
+        (1, 20.0, 5.35, 4.82, 1.11),
+        (2, 20.0, 4.95, 4.3, 1.15),
+        (3, 20.0, 4.95, 4.3, 1.15),
+    )
+    assert len(profile["table_paragraph_sha256"]) == 3
+    assert len(profile["claim_sha256"]) == 10
+    assert profile["independent_claim_numbers"] == (1, 9, 10)
+    assert profile["source_phrase_counts"]["focal length"] == 4
+    for phrase in (
+        "radius of curvature",
+        "refractive index",
+        "Abbe",
+        "aspheric",
+        "aperture stop",
+        "effective focal length",
+        "F-number",
+        "field of view",
+        "image height",
+    ):
+        assert profile["source_phrase_counts"][phrase] == 0
+    assert "The overall focal length of the imaging lens assembly" in text
+    assert re.search(r"<table\b", raw_text, re.IGNORECASE) is None
+    assert re.search(r"<maths?\b", raw_text, re.IGNORECASE) is None
+    assert re.search(r"<img\b", raw_text, re.IGNORECASE) is None
+
+
+def test_largan_lens_barrel_glue_void_official_pdfs_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile = patent_to_zmx._LARGAN_LENS_BARREL_GLUE_VOID_SOURCE_PROFILES[
+        "US-12169351-B2"
+    ]
+    decoded: dict[str, list[str]] = {}
+
+    for publication_id, pdf_profile in profile["official_pdfs"].items():
+        pdf_bytes = (root / pdf_profile["path"]).read_bytes()
+        assert len(pdf_bytes) == pdf_profile["bytes"]
+        assert hashlib.sha256(pdf_bytes).hexdigest() == pdf_profile["sha256"]
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        assert len(reader.pages) == pdf_profile["page_count"]
+        page_hashes = []
+        for page in reader.pages:
+            page_images = list(page.images)
+            assert len(page_images) == 1
+            assert page_images[0].image.size == pdf_profile["raster_dimensions"]
+            assert (page.extract_text() or "") == ""
+            page_hashes.append(
+                patent_pdf_recovery._canonical_raster_sha256(page_images[0].data)
+            )
+        assert hashlib.sha256(
+            ("\n".join(page_hashes) + "\n").encode("utf-8")
+        ).hexdigest() == pdf_profile["raster_set_sha256"]
+        decoded[publication_id] = page_hashes
+
+    primary = profile["official_pdfs"]["US-12169351-B2"]
+    assert primary["drawing_page_numbers"] == tuple(range(3, 29))
+    assert primary["table_page_numbers"] == (32, 33, 35)
+    assert primary["claim_page_numbers"] == (35, 36)
+    assert tuple(
+        decoded["US-12169351-B2"][page_number - 1]
+        for page_number in primary["key_page_numbers"]
+    ) == primary["key_page_raster_sha256"]
+    assert sum(
+        left == right
+        for left, right in zip(
+            decoded["US-12169351-B2"],
+            decoded["US-20220100057-A1"],
+            strict=False,
+        )
+    ) == 0
+    assert not (
+        set(decoded["US-12169351-B2"])
+        & set(decoded["US-20220100057-A1"])
+    )
+
+
+def test_largan_lens_barrel_glue_void_denominator_and_replay_are_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-78471711"
+    )
+    denominator = json.loads(
+        (quick / "family-78471711-denominator.json").read_text(encoding="utf-8")
+    )
+    counts = denominator["denominator"]
+
+    assert counts["source_disclosed_items"] == 5
+    assert counts["lens_barrel_glue_void_architecture_items"] == 3
+    assert counts["image_capturing_apparatus_wrappers"] == 1
+    assert counts["electronic_device_wrappers"] == 1
+    assert counts["confirmed_no_prescription_items"] == 5
+    assert counts["replayed_ledger_items"] == 5
+    assert counts["unmapped_source_items"] == 0
+    assert counts["declared_textual_figures"] == 26
+    assert counts["located_raster_figures"] == 26
+    assert counts["flattened_mechanical_tables"] == 3
+    assert counts["flattened_optical_tables"] == 0
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 6)
+    )
+    assert [item["table"] for item in denominator["items"]] == [1, 2, 3, None, None]
+    boundary = denominator["representability_boundary"]
+    assert boundary["ordered_surface_radii_published"] is False
+    assert boundary["numeric_optical_axial_spacings_published"] is False
+    assert boundary["mechanical_dimensions_promoted_to_optical_prescription"] is False
+    assert boundary["prior_publication_numeric_borrowing_used"] is False
+    assert boundary["formal_output_permitted"] is False
+    assert not any(denominator["formal_outputs"].values())
+
+    artifact = json.loads(
+        (quick / "family-78471711-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert artifact["semantic_equal"] is True
+    assert artifact["semantic_sha256"] == (
+        "1ee284d27b916c2826368d92eafcf59375ca3766a2ea17b227fd8aa5461e0189"
+    )
+    assert artifact["normalization"] == {
+        "outcome_fields_removed": [],
+        "removed_fields": ["result_attempt"],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    semantic_hashes: set[str] = set()
+    for attempt in artifact["attempts"]:
+        path = root / attempt["path"]
+        raw = path.read_bytes()
+        assert len(raw) == attempt["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == attempt["file_sha256"]
+        result = json.loads(raw)
+        assert result.pop("result_attempt") == attempt["result_attempt"]
+        semantic_sha256 = hashlib.sha256(
+            json.dumps(result, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        assert semantic_sha256 == attempt["semantic_sha256"]
+        semantic_hashes.add(semantic_sha256)
+    assert semantic_hashes == {artifact["semantic_sha256"]}
+    assert artifact["final_state"] == {
+        "conversion_receipts": 0,
+        "conversion_requests": 0,
+        "item_state_counts": {"terminal": 5},
+        "prescription_fingerprints": 0,
+        "result_attempt": 3,
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "root_state": "terminal",
+        "staging_zmx": 0,
+        "terminal_status_counts": {"confirmed_no_prescription": 5},
+    }
+
+
+def test_largan_lens_barrel_glue_void_source_artifacts_are_bound() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-78471711"
+    )
+    facts = json.loads(
+        (quick / "family-78471711-source-facts.json").read_text(encoding="utf-8")
+    )
+    availability = json.loads(
+        (quick / "family-78471711-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert facts["source"]["sha256"] == (
+        "86c15343d390d69dbb9fef7209d6b0852ea0b89ec4d1eac71a67e06d44e2b5f4"
+    )
+    assert facts["section_offsets"] == {
+        "abstract": 286,
+        "background": 4826,
+        "claims": 55166,
+        "description": 7469,
+        "detailed": 10791,
+        "preamble": 0,
+        "related": 4632,
+        "summary": 5692,
+    }
+    assert len(facts["drawings"]["official_raster_labels"]) == 26
+    assert facts["drawings"]["source_label_discrepancy"] == {
+        "html_brief_label": "FIG. 10",
+        "numeric_effect": False,
+        "official_b2_page": 5,
+        "official_raster_label": "Fig. 1C",
+        "repair_or_inference_used": False,
+    }
+    assert len(facts["table_paragraphs"]) == 3
+    assert all(not table["optical_prescription"] for table in facts["table_paragraphs"])
+    assert facts["source_phrase_counts"]["radius of curvature"] == 0
+    assert facts["source_phrase_counts"]["effective focal length"] == 0
+    assert facts["source_phrase_counts"]["image height"] == 0
+    assert len(facts["source_items"]) == 5
+    assert not any(facts["formal_outputs"].values())
+
+    html = availability["retained_html"]
+    raw = (root / html["path"]).read_bytes()
+    assert len(raw) == html["bytes"]
+    assert hashlib.sha256(raw).hexdigest() == html["sha256"]
+    for official_pdf in availability["endpoint_checks"]:
+        pdf_raw = (root / official_pdf["path"]).read_bytes()
+        assert len(pdf_raw) == official_pdf["bytes"]
+        assert hashlib.sha256(pdf_raw).hexdigest() == official_pdf["container_sha256"]
+    assert availability["publication_reconciliation"][
+        "prior_publication_used_for_numeric_classification"
+    ] is False
+    assert availability["source_policy"][
+        "mechanical_dimensions_promoted_to_prescription"
+    ] is False
+
+
+def test_largan_lens_barrel_glue_void_queue_and_evidence_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-78471711"
+    )
+    before = json.loads(
+        (quick / "generic-residual-before-78.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 78
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 77
+    assert after_1["result_set_sha256"] == (
+        "12c3080c61c9de456501a0c92126a2bee874fda912582d4bf991156cc1103a01"
+    )
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["generic_residual_roots"] == queue["generic_residual_items"] == 77
+    assert queue["next_exact_group"]["family_id"] == "86240812"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260129276"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20260129276-A1"
+    ]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["next_exact_group"]["table_count"] == 13
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-78471711-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "1ee284d27b916c2826368d92eafcf59375ca3766a2ea17b227fd8aa5461e0189"
+    )
+    assert evidence["candidate_outputs"] == {
+        "confirmed_no_prescription_terminal_items": 5,
+        "conversion_receipts": 0,
+        "conversion_requests": 0,
+        "staging_zmx": 0,
+    }
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["missing_results"] == 0
+    assert evidence["ledger"]["corrupt_results"] == 0
+    assert evidence["next_exact_group"] == queue["next_exact_group"]
+    assert evidence["saturation_complete"] is False
+
+
+def test_largan_lens_barrel_glue_void_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root / ".planning" / "quick" / "260718-patent-generic-family-78471711"
+    )
+    audit = json.loads(
+        (quick / "family-78471711-raster-audit.json").read_text(encoding="utf-8")
+    )
+    primary, prior = audit["sources"]
+
+    assert primary["page_count"] == primary["single_raster_page_count"] == 36
+    assert prior["page_count"] == prior["single_raster_page_count"] == 35
+    assert primary["text_layer_characters"] == prior["text_layer_characters"] == 0
+    assert primary["decoded_raster_set_sha256"] == (
+        "4fd9f14d0794a5bb9df8ba2c72e96a5870913daccc13c8915ac34921c4648a7b"
+    )
+    assert prior["decoded_raster_set_sha256"] == (
+        "69425fbfc61efcc5adc5f4e246282d458f80ce2c5eea49cf1f36da95d98534e2"
+    )
+    assert primary["drawing_page_numbers"] == list(range(3, 29))
+    assert primary["table_page_numbers"] == [32, 33, 35]
+    assert primary["claim_page_numbers"] == [35, 36]
+    assert len(audit["visual_artifacts"]) == 37
+    assert [record.get("page_number") for record in audit["visual_artifacts"][1:]] == list(
+        range(1, 37)
+    )
+    for record in audit["visual_artifacts"]:
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+    assert audit["visual_review"] == {
+        "claim_pages_reviewed_at_original_detail": [35, 36],
+        "contact_sheet_reviewed": True,
+        "context_page_reviewed_at_original_detail": 34,
+        "drawing_measurement_used": False,
+        "image_enhancement_used": False,
+        "label_discrepancy_page_reviewed_at_original_detail": 5,
+        "ordered_optical_prescription_present": False,
+        "original_pages_reviewed": [5, 32, 33, 34, 35, 36],
+        "raster_numeric_transcription_used": False,
+        "table_pages_reviewed_at_original_detail": [32, 33, 35],
+    }
+
+
 def _samsung_thermal_eight_lens_source() -> tuple[str, str]:
     root = Path(__file__).resolve().parents[1]
     source_path = (
