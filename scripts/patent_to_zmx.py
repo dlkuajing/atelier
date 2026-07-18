@@ -421,6 +421,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_tesseland_tir_display_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
 
     source_locked_attempts = _classify_softeye_roi_vision_architecture_attempts(
         raw_text,
@@ -2191,6 +2197,155 @@ _TESSELAND_FREEFORM_REFLECTOR_FIG3_REASON = (
 )
 _TESSELAND_FREEFORM_REFLECTOR_ARCHITECTURE_REASON = (
     "confirmed_no_prescription.freeform_reflective_hmd_architecture_only"
+)
+_TESSELAND_TIR_DISPLAY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20180003862-A1": {
+        "raw_document_sha256": (
+            "c0b0dd470d7afc4b394ee42c585dd42a5b8edadfc6d9e25dae281a4ec7221e17"
+        ),
+        "normalized_text_sha256": (
+            "18e5f126e119d7a7e2149f1df71688d8b0a71ae5842e340c1d6e34c93e13c912"
+        ),
+        "section_markers": {
+            "abstract": "DISPLAY DEVICE WITH TOTAL INTERNAL REFLECTION Abstract",
+            "background_summary": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS [0001]"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS [0058]",
+            "detailed": "DETAILED DESCRIPTION [0102]",
+            "claims": "Claims 1 . A display device comprising:",
+        },
+        "section_sha256": {
+            "abstract": "840142efb6791b9a04d4b46c6e190cd6d3792b3f412dede329ff8f4504d7d305",
+            "background_summary": (
+                "f205df51865d291741991e9389e9db50170bdb29297a1199742648f822ddfb6e"
+            ),
+            "brief": "fe6c45b8543b5eb81e89c14f561c47fe782d823eca2d8b514fd337386fdd0f6d",
+            "detailed": "5cc56e4a49435cdad4c8b1890e37b2177d5b457fd78169ffde989c4204a3e9a1",
+            "claims": "ba0dc72e0ab5466230ca1c07edc1bb32246995587c302a25ad040773de94f9e9",
+        },
+        "item_span_sha256": (
+            "ff99121b46b55321d30c705586e71d2a44fe5c4e669c03baf843d848f57ebf90",
+            "07a4b0a27b27c00447862daaa3061c4e8ffadfd044d015a781dd7bc6af4e24e2",
+            "2b06d4ec907d027dbbfe4fb9b846899fcd6e161805944a65588166caec0d6ad1",
+            "27292cf2cb1c57f2dc8b27debfd99a906de86a49aff8c75bac5af6d185e825b6",
+            "196d9d847d99b6c01050124d885dea1e247c454fcafc9cb12046c30985dbea83",
+            "8b8dee308c99152988f7c1bba491934b66e0e94acebb0677f9903bdc1ac85b29",
+            "674e4de935587ad48850a4c2b3111f05fe98eb2e6d94237ea0f4723abae4f66c",
+            "9473769916178c6ae8a40d934014564e623bd2d6142efa26fa87f88ec0942f7e",
+            "57582e2661c0c14f4e2d1c121eee63ac59169a0d72a353d44943cfe26f4bcd90",
+            "e317e9e6d242419da7a7c3e7c19b86c403232eaab69cae1d0c69142f3d682f88",
+            "8050907b7958455706bbdc0205966a106c449827ef66a2be10d3ff21e3686bd5",
+            "e76ebf7e54c7ddb0542971088117181641279a7f5b020e3dd6df1f751282897f",
+            "bf19d36bc7a08b19bb57a1d625b0ecc4719e7395e7db8fa728e5e254aa66c9f6",
+            "456d76000088214469d97686315d6b884eca4b757c5bb193bfdaf80e6059aa86",
+            "c8d86ca72a5fa593f5ee476ec76ca42257471685366074f2cdae241e895c5f7b",
+            "40713510146233783149cbda61fe65825b7c230b5ee3ef2fd2dd6dd37be37f37",
+            "26a1cbc5ce9757ada385d5317ec945ad6c8ec4daae6268eb875ce19b959f1c31",
+            "736981ba9f1184b01deb62a8f6a6d158340e84a3aaf621b415e447373de24771",
+            "358c06f6416cd15c1ca462f840d41887b572563a65d51150f8165f9599e93053",
+            "dd3d4a3b042f5d51d4d30e9ceb2bb4933fe9ca720bd543b7ef05308566819391",
+            "286f9aa0fb06d2267905c3d40f01a3c26a2b665190d8b2f2b425b0dd51c3d41f",
+            "bdd334de3c6e743db573157d5210cc12cf1dd6430a9769306a66ea20b84c31f6",
+            "5513d340fbc85e8c103781fbc6d778262ccc7bcc4a377049980e163aebe0c455",
+            "320e0e37d33aa47bce034bbf853b47f4a0ef22a0ad97d594d724aef86cd997ef",
+            "55ace9983fda6bbdbe34659846548fce29a8c4583aa7626ccd41e538a66b7fd8",
+            "1afe35687f47f9aa02b2f5f5371e5bb46257aa3d93f3239ada2a43b76427868c",
+            "4015fca54be1b22281ea4bfe6ab02643004131333af9f0f95cbdda3ee995fbe0",
+            "cc3f165a694820ed14b36d5e405c674c37a752ca3f8575cea83de8719cb9928e",
+        ),
+        "figure_declaration_sha256": (
+            "8aa8d7354d223cc8791eda15af1c8ddd7b37ca3066720aa72b3de964a821c540"
+        ),
+        "figure_reference_payload_sha256": (
+            "b2257c6aff1417999cddb44ee9fc2dc0c14e18347e744a455d133ca17f584e03"
+        ),
+        "table_payload_sha256": (
+            "c359a42316e44b15dc101072ba997783c34afc3d6dcb8724481a4346a69e6b03",
+            "b6df69a31ee7dd47e57e24219f59bd13d5f9525f0e8f45e28516fb69dd10c808",
+            "7983b1e3782f904d1b35e018e94b993c3ce8aa4a4775af7457ef07b5d7d15e9e",
+            "052f1d5b9189391fad4503e17688dafd9fa099941d8f2498c8594b18d0640fe6",
+        ),
+        "performance_value_sha256": (
+            "2d72116acb6d4f6dd2daf5b8e02d65d71ad1f44729dfe76f936591f77a97ca8f",
+            "d85c5248acc3c0d287702021d1f2effb5d0a7f53a28d9ec5fe2a7762ec37b0fa",
+        ),
+        "math_object_sha256": (
+            "0183cc780800b41ecb4356a8ba3dc3478c82d543b36e8cb613364c0d6ef56a1c",
+            "52ab86f70abe6a21698f9b1d3afc2a05b1200dea08056de232924f574482f9d1",
+            "342d7c594b8fc50580e2f2e2c44fade3eca4e1efbbdf63909d468447f53e2a13",
+            "346879589aeccff5e2dbd5681bdc913ba1a2ac21a64f4490f9d0751729391cca",
+        ),
+        "pdf_audit": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/d1bfcf30669b549d/"
+                "US-20180003862-A1.pdf"
+            ),
+            "page_count": 47,
+            "cover_pdf_pages": (1,),
+            "drawing_pdf_pages": tuple(range(2, 28)),
+            "specification_pdf_pages": tuple(range(28, 48)),
+            "table_pdf_pages": (40, 41, 42, 43, 44),
+            "official_container_sha256": (
+                "d1bfcf30669b549d02f2a0515a17bec0f88ce8ea9ed9f74407201fe2d0205a21"
+            ),
+            "raster_set_sha256": (
+                "30b791062e5e844ce20601da899e4559f1e7a2fd4c1ff6ae90ef751c8a3ded0f"
+            ),
+        },
+    },
+}
+_TESSELAND_TIR_DISPLAY_TITLE_PATTERN = re.compile(
+    r"\bDISPLAY\s+DEVICE\s+WITH\s+TOTAL\s+INTERNAL\s+REFLECTION\b",
+    flags=re.IGNORECASE,
+)
+_TESSELAND_TIR_DISPLAY_ITEMS = (
+    (1, "FIGS. 6-7 single RXIR large/shared-display design", (104, 105, 106), ("6", "7")),
+    (2, "FIGS. 8-9A single RXIR microdisplay/shared-display design", (107,), ("8", "9A")),
+    (3, "FIG. 9B curved-display single RXIR design", (108,), ("9B",)),
+    (4, "FIG. 10 RXIR plus RXR design", (109, 110), ("10",)),
+    (5, "FIG. 11 RXIR plus RR design and 2x2 variant", (111, 112, 113), ("11",)),
+    (6, "FIG. 12 twofold superposable RXIR design and outboard rotation", (114, 115, 116, 142), ("12",)),
+    (7, "FIG. 13 eye-tracking integration", (117,), ("13",)),
+    (8, "FIG. 14 rotated common-display RXIR design", (118,), ("14",)),
+    (9, "FIG. 15 separately manufactured twofold RXIR design", (119,), ("15",)),
+    (10, "FIG. 16 three/five-lenslet central-RR design", (120,), ("16",)),
+    (11, "FIG. 17 central-RR design with added refractive lens", (121,), ("17",)),
+    (12, "FIGS. 18-20 fourfold RXIR shared-display design", (122, 123, 124), ("18", "19", "20")),
+    (13, "FIG. 21 display-side additional-lens design", (125, 126), ("21",)),
+    (14, "FIG. 22 decoupled flat-mirror design", (127,), ("22",)),
+    (15, "FIG. 23 eye-side Fresnel/free-form-lens design", (128, 129, 130, 131), ("23",)),
+    (16, "FIG. 24 central RXIR plus peripheral RR design", (132, 133, 134), ("24",)),
+    (17, "FIG. 25 low-index-gap design", (135, 136, 137, 138, 139, 140), ("25",)),
+    (18, "FIG. 26 dual-mirror RXIR design", (141,), ("26",)),
+    (19, "FIG. 27 non-superposable tilted-flat-display design", (143, 144, 145), ("27",)),
+    (20, "FIG. 28 non-superposable curved-display design", (146,), ("28",)),
+    (21, "FIGS. 29-31 human-resolution-adapted fourfold design", (147, 148, 149, 150, 151, 152, 153), ("29", "30", "31A", "31B")),
+    (22, "FIGS. 32-34 detailed twofold free-form numerical design", (154, 155, 156, 157, 158, 159, 160, 161), ("32", "33", "34")),
+    (23, "FIGS. 35 and 36A-36B two-lenslet TDM designs", (162, 163, 164, 165), ("35", "36A", "36B")),
+    (24, "FIGS. 36C-37 four-lenslet TDM and DMD-illumination designs", (166, 167), ("36C", "37")),
+    (25, "FIGS. 38-39 polarizer and half-wave stray-light control", (168, 169, 170, 171), ("38", "39")),
+    (26, "FIG. 15 joined-surface black-absorber variant", (172,), ("15",)),
+    (27, "FIG. 40 central black-piece stray-light control", (173,), ("40",)),
+    (28, "FIG. 41 black-painted-surface stray-light control", (174,), ("41",)),
+)
+_TESSELAND_TIR_DISPLAY_DECLARED_FIGURES = (
+    "1", "2", "3", "4", "5", "6", "7", "8", "9A", "9B", "10", "11", "12",
+    "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24",
+    "25", "26", "27", "28", "29", "30", "31A", "31B", "32", "33", "34", "35",
+    "36", "37", "38", "39", "40", "41",
+)
+_TESSELAND_TIR_DISPLAY_ACTUAL_FIGURES = (
+    "1", "2", "3", "4", "5", "6", "7", "8", "9A", "9B", "10", "11", "12",
+    "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24",
+    "25", "26", "27", "28", "29", "30", "31A", "31B", "32", "33", "34", "35",
+    "36A", "36B", "36C", "37", "38", "39", "40", "41",
+)
+_TESSELAND_TIR_DISPLAY_NUMERICAL_REASON = (
+    "metadata_unpublished.required_optical_material_and_exact_system_f_number_absent"
+)
+_TESSELAND_TIR_DISPLAY_ARCHITECTURE_REASON = (
+    "confirmed_no_prescription.freeform_tir_display_architecture_only"
 )
 _SOFTEYE_ROI_VISION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
     "US-12670673-B2": {
@@ -24604,6 +24759,452 @@ def _tesseland_freeform_reflector_table_rows(
             _parse_number(row.group("mirror_2")),
         )
     return rows
+
+
+def _classify_tesseland_tir_display_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify all 28 exact Tesseland RXIR/TIR display disclosures fail-closed.
+
+    The numerical FIGS. 32-34 design publishes five tenth-order Legendre
+    free-form surfaces and performance tables, but it omits optical material
+    data and an exact system F-number.  The other disclosures are optical
+    architectures or functional variants without complete prescriptions.  No
+    drawing coordinate, inferred F-number, or value from the related
+    application ``15/545636`` is admitted.
+    """
+
+    profile = _TESSELAND_TIR_DISPLAY_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(error: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=item_number,
+                embodiment=label,
+                error=error,
+            )
+            for item_number, label, _paragraphs, _figures in _TESSELAND_TIR_DISPLAY_ITEMS
+        ]
+
+    try:
+        raw_sha256 = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_sha256 != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Tesseland TIR display official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_sha256 != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Tesseland TIR display normalized text hash changed for {patent_id}"
+            )
+        if len(_TESSELAND_TIR_DISPLAY_TITLE_PATTERN.findall(text)) != 1:
+            raise PatentParseError("Tesseland TIR display title binding changed")
+
+        identity_markers = {
+            (
+                "Inventor(s) BENITEZ; PABLO et al. DISPLAY DEVICE WITH TOTAL "
+                "INTERNAL REFLECTION Abstract"
+            ): 1,
+            "Applicant: TESSELAND LLC (Glendale, CA)": 1,
+            "Family ID: 56417699": 1,
+            "Appl. No.: 15/545626": 1,
+            "PCT No.: PCT/US2016/014155": 1,
+            "Filed (or PCT Filed): January 20, 2016": 1,
+            "Publication Date January 04, 2018": 1,
+            "us-provisional-application US 62105905 20150121": 1,
+            "us-provisional-application US 62208235 20150821": 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Tesseland TIR display identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Tesseland TIR display section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Tesseland TIR display section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_sha256 in profile["section_sha256"].items():
+            observed_sha256 = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_sha256 != expected_sha256:
+                raise PatentParseError(
+                    f"Tesseland TIR display {section_name} section changed"
+                )
+
+        subsection_headings = (
+            "1. References Cited",
+            "2. Definitions",
+            "3. State of the Art",
+            "4. Embodiments with a Single RXIR Lenslet",
+            "5. Embodiments with Multiple Superposable RXIR Lenslets",
+            "6. Embodiments with Non-Superposable RXIR Lenslets",
+            "7. Adapting the Design to the Human Eye Resolution",
+            "8. Detailed Example of a 2-Fold Superposable Optics",
+            "9. Embodiments with Time Division Multiplexing",
+            "10. Control of Stray-Light",
+        )
+        heading_positions = []
+        for heading in subsection_headings:
+            if len(re.findall(re.escape(heading), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"Tesseland TIR display subsection {heading!r} changed"
+                )
+            heading_positions.append(text.lower().index(heading.lower()))
+        if heading_positions != sorted(heading_positions):
+            raise PatentParseError("Tesseland TIR display subsection ordering changed")
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]\s*", text))
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 177)):
+            raise PatentParseError(
+                "Tesseland TIR display paragraphs 0001-0176 denominator changed"
+            )
+        claim_start = section_starts["claims"]
+        paragraphs = {
+            int(match.group(1)): text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else claim_start
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+        mapped_paragraphs: set[int] = set()
+        for item, expected_sha256 in zip(
+            _TESSELAND_TIR_DISPLAY_ITEMS,
+            profile["item_span_sha256"],
+            strict=True,
+        ):
+            item_number, _label, item_paragraphs, _figures = item
+            overlap = mapped_paragraphs.intersection(item_paragraphs)
+            if overlap:
+                raise PatentParseError(
+                    f"Tesseland TIR display item {item_number} overlaps paragraphs "
+                    f"{sorted(overlap)}"
+                )
+            mapped_paragraphs.update(item_paragraphs)
+            item_payload = " ".join(paragraphs[number] for number in item_paragraphs)
+            if hashlib.sha256(item_payload.encode("utf-8")).hexdigest() != expected_sha256:
+                raise PatentParseError(
+                    f"Tesseland TIR display item {item_number} paragraph binding changed"
+                )
+        if mapped_paragraphs != set(range(104, 175)):
+            raise PatentParseError(
+                "Tesseland TIR display 28-item paragraph reconciliation changed"
+            )
+
+        figure_declarations = tuple(
+            match.group(1).upper()
+            for number in range(59, 102)
+            if (
+                match := re.search(
+                    r"\bFIG\.\s*([0-9]+(?:[A-Z])?)\b",
+                    paragraphs[number],
+                    re.IGNORECASE,
+                )
+            )
+            is not None
+        )
+        if figure_declarations != _TESSELAND_TIR_DISPLAY_DECLARED_FIGURES:
+            raise PatentParseError(
+                "Tesseland TIR display 43 figure declarations changed"
+            )
+        declaration_sha256 = hashlib.sha256(
+            "\n".join(figure_declarations).encode("utf-8")
+        ).hexdigest()
+        if declaration_sha256 != profile["figure_declaration_sha256"]:
+            raise PatentParseError(
+                "Tesseland TIR display figure declaration payload changed"
+            )
+        figure_reference_payloads = [
+            normalize_patent_text(payload)
+            for payload in re.findall(
+                r"<figref\b[^>]*>(.*?)</figref>",
+                raw_text,
+                re.IGNORECASE | re.DOTALL,
+            )
+        ]
+        if len(figure_reference_payloads) != 229:
+            raise PatentParseError(
+                "Tesseland TIR display figure-reference denominator changed"
+            )
+        figure_reference_sha256 = hashlib.sha256(
+            "\n".join(figure_reference_payloads).encode("utf-8")
+        ).hexdigest()
+        if figure_reference_sha256 != profile["figure_reference_payload_sha256"]:
+            raise PatentParseError(
+                "Tesseland TIR display figure-reference payload changed"
+            )
+        actual_figures = {
+            match.group(1).upper()
+            for payload in figure_reference_payloads
+            for match in re.finditer(
+                r"\bFIGS?\.\s*([0-9]+(?:[A-Z])?)",
+                payload,
+                re.IGNORECASE,
+            )
+        }
+        if {"36A", "36B", "36C"}.issubset(actual_figures):
+            actual_figures.discard("36")
+        if actual_figures != set(_TESSELAND_TIR_DISPLAY_ACTUAL_FIGURES):
+            raise PatentParseError(
+                "Tesseland TIR display 45 actual figure panels changed"
+            )
+
+        table_markers = tuple(
+            re.findall(r"TABLE-US-(\d{5})", raw_text, re.IGNORECASE)
+        )
+        if table_markers != ("00001", "00002", "00003", "00004"):
+            raise PatentParseError(
+                "Tesseland TIR display four source-table objects changed"
+            )
+        if tuple(block.number for block in _patent_table_blocks(text)) != (1, 2, 2):
+            raise PatentParseError(
+                "Tesseland TIR display numbered table headers changed"
+            )
+        table_starts = [
+            raw_text.index(f"TABLE-US-{marker}") for marker in table_markers
+        ]
+        table_ends = (
+            raw_text.index("[0022]", table_starts[0]),
+            raw_text.index("[0157]", table_starts[1]),
+            table_starts[3],
+            raw_text.index(
+                "9. Embodiments with Time Division Multiplexing",
+                table_starts[3],
+            ),
+        )
+        table_payloads = tuple(
+            normalize_patent_text(raw_text[start:end])
+            for start, end in zip(table_starts, table_ends, strict=True)
+        )
+        table_payload_sha256 = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        )
+        if table_payload_sha256 != profile["table_payload_sha256"]:
+            raise PatentParseError("Tesseland TIR display table payload changed")
+        table_1_row_ids = tuple(
+            int(value) for value in re.findall(r"\bC(\d+):", table_payloads[1])
+        )
+        expected_table_1_row_ids = (
+            tuple(range(1, 16))
+            + tuple(range(27, 37))
+            + tuple(range(49, 58))
+            + tuple(range(71, 80))
+            + tuple(range(93, 98))
+        )
+        if table_1_row_ids != expected_table_1_row_ids:
+            raise PatentParseError(
+                "Tesseland TIR display TABLE 1 48 explicit rows changed"
+            )
+        performance_values = tuple(
+            tuple(re.findall(NUMBER_PATTERN, payload.split("RMS", 1)[1]))
+            for payload in table_payloads[2:]
+        )
+        if tuple(len(values) // 3 for values in performance_values) != (173, 249) or any(
+            len(values) % 3 for values in performance_values
+        ):
+            raise PatentParseError(
+                "Tesseland TIR display performance-table row denominator changed"
+            )
+        performance_value_sha256 = tuple(
+            hashlib.sha256("\n".join(values).encode("utf-8")).hexdigest()
+            for values in performance_values
+        )
+        if performance_value_sha256 != profile["performance_value_sha256"]:
+            raise PatentParseError(
+                "Tesseland TIR display performance-table values changed"
+            )
+        if (
+            "Table 2 and Table 3 show the root-mean-square (RMS) diameters"
+            not in text
+            or "Table 3 corresponds to the situation when the eye is gazing frontwards"
+            not in text
+            or not all(payload.startswith("TABLE-US-0000") for payload in table_payloads)
+            or not table_payloads[2].startswith("TABLE-US-00003 TABLE 2")
+            or not table_payloads[3].startswith("TABLE-US-00004 TABLE 2")
+        ):
+            raise PatentParseError(
+                "Tesseland TIR display official duplicate TABLE 2 heading changed"
+            )
+
+        math_objects = re.findall(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        math_ids = tuple(
+            re.search(r'id="([^"]+)"', item, re.IGNORECASE).group(1)
+            for item in math_objects
+        )
+        math_sha256 = tuple(
+            hashlib.sha256(item.encode("utf-8")).hexdigest() for item in math_objects
+        )
+        if math_ids != tuple(f"MATH-US-{number:05d}" for number in range(1, 5)) or (
+            math_sha256 != profile["math_object_sha256"]
+        ):
+            raise PatentParseError(
+                "Tesseland TIR display four-formula denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, 17)):
+            raise PatentParseError(
+                "Tesseland TIR display claims 1-16 denominator changed"
+            )
+        claim_family_heads = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*A\s+(?:display device|headgear)\b",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_family_heads != (1, 15):
+            raise PatentParseError(
+                "Tesseland TIR display two claim-family heads changed"
+            )
+
+        numerical_scope_markers = {
+            "one thin freeform lens where rays suffer two refractions": 1,
+            "another lens where rays suffer 4 deflections on 3 freeform surfaces": 1,
+            "10.sup.th order polynomial": 1,
+            "(x,y,z)=(0, 0, 44.00)": 1,
+            "(x,y,z)=(0, 0, 29.04540)": 1,
+            "(x,y,z)=(0, 15.5041, 27.85875)": 1,
+            "(x,y,z)=(0, 0, 25.00)": 1,
+            "(x,y,z)=(0, 0, 24.50)": 1,
+            "(x,y,z)=(0, 0, 24.00)": 1,
+            "pupil diameter of 4 mm": 1,
+            "focal length about 26 mm": 1,
+            (
+                "The horizontal field of view is 108 degrees and vertical field of view "
+                "is 93 degrees"
+            ): 1,
+        }
+        for marker, expected in numerical_scope_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Tesseland TIR display numerical marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        f_number_mentions = tuple(
+            match.group(0)
+            for match in re.finditer(
+                r"\bF\s*[- ]?number\b|\bFno\b|F/#",
+                text,
+                re.IGNORECASE,
+            )
+        )
+        if f_number_mentions != ("F-number",) or (
+            "wedge-shaped prism-lens having free-form surfaces and low F-number"
+            not in sections["background_summary"]
+        ):
+            raise PatentParseError(
+                "Tesseland TIR display exact system F-number absence changed"
+            )
+        missing_material_markers = (
+            r"\brefractive\s+index\b",
+            r"\bAbbe\b",
+            r"\bwavelength\b",
+            r"\bPMMA\b",
+            r"\bBK7\b",
+            r"\bdispersion\b",
+        )
+        if any(re.search(pattern, text, re.IGNORECASE) for pattern in missing_material_markers):
+            raise PatentParseError(
+                "Tesseland TIR display required optical-material absence changed"
+            )
+        if (
+            len(re.findall(r"\bmaterial\b", text, re.IGNORECASE)) != 5
+            or len(re.findall(r"\bpolychromatic\b", text, re.IGNORECASE)) != 1
+            or len(re.findall(r"\bfocal\s+length\b", text, re.IGNORECASE)) != 15
+        ):
+            raise PatentParseError(
+                "Tesseland TIR display source-scope lexical denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all 28 source-declared items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for item_number, label, item_paragraphs, figures in _TESSELAND_TIR_DISPLAY_ITEMS:
+        paragraph_labels = ", ".join(f"[{number:04d}]" for number in item_paragraphs)
+        figure_labels = ", ".join(f"FIG. {figure}" for figure in figures)
+        if item_number == 22:
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_TESSELAND_TIR_DISPLAY_NUMERICAL_REASON,
+                detail=(
+                    "Paragraphs [0154]-[0161], FIGS. 32-34 and the three numbered "
+                    "source tables publish five tenth-order Legendre free-form surface "
+                    "domains and coefficients, six local origins, 4 mm pupil performance, "
+                    "about 26 mm front focal length and 108 by 93 degree full fields. "
+                    "They publish no prescription-specific optical material, refractive "
+                    "index, Abbe number, wavelength or exact system F-number. The 4 mm "
+                    "pupil and approximate focal length are not converted to an inferred "
+                    "F/#, and the non-sequential RXIR/free-form path is not flattened into "
+                    "the current rotational sequential ZMX contract."
+                ),
+            )
+        else:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_TESSELAND_TIR_DISPLAY_ARCHITECTURE_REASON,
+                detail=(
+                    f"{label} is bound to source paragraphs {paragraph_labels} and "
+                    f"{figure_labels}. The source discloses its optical topology or "
+                    "functional variant but not a complete prescription-specific set of "
+                    "free-form surfaces, local frames, optical material and exact system "
+                    "F-number. The RXIR/TIR/reflective topology is not flattened into the "
+                    "current rotational sequential ZMX contract, and no value is derived "
+                    "from a drawing or borrowed from related application 15/545636."
+                ),
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=item_number,
+                embodiment=label,
+                error=error,
+            )
+        )
+    return attempts
 
 
 def _classify_softeye_roi_vision_architecture_attempts(

@@ -21199,6 +21199,303 @@ def test_tesseland_freeform_reflector_denominator_and_queue_artifacts() -> None:
     assert queue["saturation_complete"] is False
 
 
+def _tesseland_tir_display_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "c0b0dd470d7afc4b"
+        / "US-20180003862-A1.html"
+    )
+    return "US-20180003862-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_tesseland_tir_display_reconciles_all_28_disclosures() -> None:
+    patent_id, raw_text = _tesseland_tir_display_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 29))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    numerical = attempts[21]
+    assert numerical.error.status == "metadata_unpublished"
+    assert numerical.error.reason_code == (
+        "metadata_unpublished."
+        "required_optical_material_and_exact_system_f_number_absent"
+    )
+    assert all(
+        attempt.error.status == "confirmed_no_prescription"
+        and attempt.error.reason_code
+        == "confirmed_no_prescription.freeform_tir_display_architecture_only"
+        for attempt in attempts
+        if attempt.embodiment_number != 22
+    )
+
+
+def test_tesseland_tir_display_source_drift_fails_all_disclosures() -> None:
+    patent_id, raw_text = _tesseland_tir_display_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text + " publication revision",
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 28
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        f"Tesseland TIR display official raw text hash changed for {patent_id}"
+    }
+
+
+def test_tesseland_tir_display_pdf_rasters_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260718-patent-generic-family-56417699-root-20180003862"
+    )
+    audit = json.loads(
+        (
+            quick
+            / "family-56417699-root-US-20180003862-raster-audit.json"
+        ).read_text(encoding="utf-8")
+    )
+    pdf = audit["official_pdf"]
+    pdf_path = root / pdf["path"]
+
+    pdf_bytes = pdf_path.read_bytes()
+    assert len(pdf_bytes) == pdf["bytes"]
+    assert hashlib.sha256(pdf_bytes).hexdigest() == pdf["sha256"]
+    reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+    assert len(reader.pages) == audit["page_count"] == 47
+    page_hashes = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        assert len(page.extract_text() or "") == 0
+        assert len(page.images) == 1
+        image = patent_pdf_recovery._page_image(
+            page,
+            source="US-20180003862-A1 official",
+            page_number=page_number,
+        )
+        raster = patent_pdf_recovery._decoded_raster(
+            image,
+            source="US-20180003862-A1 official",
+        )
+        assert list(raster.shape) == audit["decoded_shape_per_page"]
+        page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(image))
+
+    assert page_hashes == audit["page_raster_sha256"]
+    assert hashlib.sha256("\n".join(page_hashes).encode()).hexdigest() == audit[
+        "raster_set_sha256"
+    ]
+    assert audit["cover_pdf_pages"] == [1]
+    assert audit["drawing_pdf_pages"] == list(range(2, 28))
+    assert audit["specification_pdf_pages"] == list(range(28, 48))
+    assert audit["table_pdf_pages"] == [40, 41, 42, 43, 44]
+    assert audit["visual_review"]["numeric_derivation_from_rasters"] is False
+
+
+def test_tesseland_tir_display_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260718-patent-generic-family-56417699-root-20180003862"
+    )
+    artifact = json.loads(
+        (
+            quick
+            / "family-56417699-root-US-20180003862-replay-determinism.json"
+        ).read_text(encoding="utf-8")
+    )
+    semantic_hashes = []
+
+    for record in artifact["attempts"]:
+        path = root / record["path"]
+        result_bytes = path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert artifact["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert artifact["semantic_equal"] is True
+    assert artifact["item_state_counts"] == {"terminal": 28}
+    assert artifact["terminal_status_counts"] == {
+        "confirmed_no_prescription": 27,
+        "metadata_unpublished": 1,
+    }
+    assert artifact["conversion_receipts"] == artifact["staging_zmx"] == 0
+
+
+def test_tesseland_tir_display_denominator_and_queue_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260718-patent-generic-family-56417699-root-20180003862"
+    )
+    denominator = json.loads(
+        (
+            quick / "family-56417699-root-US-20180003862-denominator.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "source_declared_items": 28,
+        "numerical_freeform_items": 1,
+        "architecture_or_function_items": 27,
+        "replayed_ledger_items": 28,
+        "metadata_unpublished_items": 1,
+        "confirmed_no_prescription_items": 27,
+        "numbered_paragraphs": 176,
+        "mapped_item_paragraphs": 71,
+        "brief_figure_declarations": 43,
+        "actual_figure_panels": 45,
+        "figure_reference_tags": 229,
+        "raw_table_objects": 4,
+        "numbered_table_headers": 3,
+        "mathml_objects": 4,
+        "claims": 16,
+        "claim_family_heads": 2,
+        "official_pdf_pages": 47,
+        "drawing_sheets": 26,
+        "specification_pages": 20,
+    }
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 29)
+    )
+    assert denominator["items"][21]["terminal_status"] == "metadata_unpublished"
+    assert all(
+        item["terminal_status"] == "confirmed_no_prescription"
+        for item in denominator["items"]
+        if item["embodiment_number"] != 22
+    )
+    assert denominator["table_denominator"]["numbered_heading_sequence"] == [1, 2, 2]
+    assert denominator["table_denominator"][
+        "official_duplicate_table_2_heading_preserved"
+    ] is True
+    assert denominator["numerical_item_boundary"]["derived_f_number"] is None
+    assert denominator["conversion_boundary"]["zmx_written"] == 0
+    assert denominator["conversion_boundary"]["formal_intake"] == 0
+    assert denominator["conversion_boundary"]["code_v_used"] is False
+    assert denominator["conversion_boundary"]["drawing_numeric_derivation"] is False
+    assert denominator["conversion_boundary"][
+        "cross_application_numeric_borrowing"
+    ] is False
+
+    before = json.loads(
+        (quick / "generic-residual-before-86.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 86
+    assert after_1["affected_roots"] == after_1["affected_items"] == 85
+    assert after_2["affected_roots"] == after_2["affected_items"] == 85
+    after_1.pop("result_set_sha256")
+    after_2.pop("result_set_sha256")
+    assert after_1 == after_2
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["executable_buckets"][0] == {
+        "parser_signature": "generic_summary_metadata_missing",
+        "affected_roots": 85,
+        "affected_items": 85,
+    }
+    assert queue["next_exact_group"]["family_id"] == "98902256"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260063880"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20260063880-A1"
+    ]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+
+def test_tesseland_tir_display_evidence_rehashes_every_reference() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260718-patent-generic-family-56417699-root-20180003862"
+    )
+    denominator = json.loads(
+        (
+            quick / "family-56417699-root-US-20180003862-denominator.json"
+        ).read_text(encoding="utf-8")
+    )
+    evidence = json.loads(
+        (
+            quick / "family-56417699-root-US-20180003862-source-evidence.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    for record in (
+        evidence["source"],
+        evidence["official_pdf"],
+        *evidence["census"].values(),
+        *evidence["replay_attempts"],
+        evidence["ledger"]["summary"],
+        evidence["ledger"]["report"],
+        *evidence["artifacts"],
+    ):
+        content = (root / record["path"]).read_bytes()
+        assert len(content) == record["bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+    summary = json.loads(
+        (root / evidence["ledger"]["summary"]["path"]).read_text(
+            encoding="utf-8"
+        )
+    )
+    assert summary["cohort_roots"] == summary["roots_with_results"] == 619
+    assert summary["missing_root_ids"] == []
+    assert summary["corrupt_result_paths"] == []
+    assert evidence["ledger"]["result_set_sha256"] == (
+        "8cd11657f735cefad351f4bcfc1c57de8724c34cda726879a6bf9632ac6b136d"
+    )
+    assert evidence["semantic_replay_sha256"] == (
+        "9cecc9e12e61605e68cfd5cb7cdfb8d8262da567501af61ee70db5b06d932bf3"
+    )
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["next_exact_group"]["family_id"] == "98902256"
+    assert evidence["saturation_complete"] is False
+
+
 def _softeye_roi_vision_source() -> tuple[str, str]:
     root = Path(__file__).resolve().parents[1]
     source_path = (

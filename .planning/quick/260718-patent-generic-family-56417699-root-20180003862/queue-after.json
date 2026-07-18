@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "8cd11657f735cefad351f4bcfc1c57de8724c34cda726879a6bf9632ac6b136d",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 85,
+      "affected_items": 85
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "98902256",
+    "root_ids": ["US-20260063880"],
+    "publication_ids": ["US-20260063880-A1"],
+    "application_number": "19/304678",
+    "title": "PLASTIC OPTICAL FOLDING ELEMENT, IMAGING LENS MODULE AND ELECTRONIC DEVICE",
+    "first_inventor": "HSU; Shih-Jung",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": "LARGAN PRECISION CO., LTD.",
+    "layout_signature": "5727913bc8e7a3c835d31c0d4171258cfcb6a1f2c7521ff7eed1e5fc78c65898",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 54,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 4,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/adc36ef0434e925c/US-20260063880-A1.html",
+      "sha256": "adc36ef0434e925c8098a9f57f2621a0828321c00a696058443fc4f2ac0a22d1"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}
