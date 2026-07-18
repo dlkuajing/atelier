@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "selection_policy": "generic residual first; minimum layout signature, then stable root/publication order",
+  "result_set_sha256": "cd76b7242668f9b6b42c2a2a79a03eec26961c99c8836437ecd46f8fc9bcfac7",
+  "generic_residual_roots": 83,
+  "generic_residual_items": 83,
+  "next_exact_group": {
+    "family_id": "97226532",
+    "root_ids": [
+      "US-20260063870"
+    ],
+    "publication_ids": [
+      "US-20260063870-A1"
+    ],
+    "application_number": "19/085529",
+    "title": "IMAGING LENS SYSTEM",
+    "first_inventor": "KIM; Hyuk Joo",
+    "applicant": "Samsung Electro-Mechanics Co., Ltd.",
+    "assignee": "Samsung Electro-Mechanics Co., Ltd.",
+    "layout_signature": "5f11500ac688fb1ba38deecf30caca4a22d401f4e9cca2a81c5795ec8dffcec0",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 14,
+      "example_anchor": 0,
+      "f_number": 1,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "table_count": 17,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/200d56a3a5dbf491/US-20260063870-A1.html",
+      "sha256": "200d56a3a5dbf4913e37af18d64f3ea90dbf8c9e738cd9fb93af19a316a16b34"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

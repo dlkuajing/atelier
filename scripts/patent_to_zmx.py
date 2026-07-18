@@ -800,6 +800,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_newmax_folded_three_lens_missing_f_number_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_four_lens_f_number_unpublished_attempts(
         raw_text,
         patent_id=patent_id,
@@ -45696,6 +45704,456 @@ def _classify_largan_variable_aperture_control_architecture_only_attempts(
         )
         for number, label in _LARGAN_VARIABLE_APERTURE_CONTROL_ITEMS
     ]
+
+
+_NEWMAX_FOLDED_THREE_LENS_ITEMS = (
+    (1, "NEWMAX folded three-lens first embodiment", (37, 57), (1, 2, 3, 4)),
+    (2, "NEWMAX folded three-lens second embodiment", (58, 63), (5, 6, 7, 8)),
+    (3, "NEWMAX folded three-lens third embodiment", (64, 69), (9, 10, 11, 12)),
+    (4, "NEWMAX folded three-lens fourth embodiment", (70, 75), (13, 14, 15, 16)),
+    (5, "NEWMAX folded three-lens fifth embodiment", (76, 81), (17, 18, 19, 20)),
+    (6, "NEWMAX folded three-lens sixth embodiment", (82, 87), (21, 22, 23, 24)),
+    (7, "NEWMAX head-mounted electronic-device wrapper", (88, 95), ()),
+)
+_NEWMAX_FOLDED_THREE_LENS_METADATA_REASON = (
+    "metadata_unpublished.system_f_number_absent"
+)
+_NEWMAX_FOLDED_THREE_LENS_WRAPPER_REASON = (
+    "confirmed_no_prescription.electronic_device_wrapper_only"
+)
+_NEWMAX_FOLDED_THREE_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260147219-A1": {
+        "raw_document_sha256": (
+            "08078faa3d16975e12990aad5bcfbd922e0d95b0263040261b19a2e6d06abf72"
+        ),
+        "normalized_text_sha256": (
+            "efe2d28dee38b66bae28d7c1aa65e5090b4f46f19ebaad98cc65ba17b0204395"
+        ),
+        "identity_markers": {
+            "OPTICAL LENS ASSEMBLY AND ELECTRONIC DEVICE": 2,
+            "HUANG; Ching-Yun": 2,
+            "TSAI; Fei-Hsin": 1,
+            "Applicant: NEWMAX TECHNOLOGY CO., LTD.": 1,
+            "Assignee:": 0,
+            "Family ID: 97524399": 1,
+            "Appl. No.: 19/052311": 1,
+            "TW 113145085 Nov. 22, 2024": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260147219-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract An optical lens assembly includes:",
+            "background": (
+                "Background/Summary BACKGROUND Field of the Invention [0001]"
+            ),
+            "summary": "SUMMARY [0005]",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS [0024]",
+            "detailed": "DETAILED DESCRIPTION [0032]",
+            "claims": "Claims 1 . An optical lens assembly comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "94e9aec58da33aefa73717df9039fb73d73f1c5d12bfc4edbb204bd89e26fc6a"
+            ),
+            "abstract": (
+                "db31270046676ea9c738b17f3b6a850adcef4082d017495c38c621d8cb57de6e"
+            ),
+            "background": (
+                "c95399e2f6497904f478c7c5715ed6df8a90bfed15fd968c476ba0b1a48422e6"
+            ),
+            "summary": (
+                "40b34e40e5f8e9b677e798d180ce1a2f541d8805af409fc57f2046a2c89a251f"
+            ),
+            "brief": (
+                "0fe69ad476cd23c742a674c6addc0fbc32469366409f8d43f9f0d820571039d6"
+            ),
+            "detailed": (
+                "e3c6ac4d893faec8ac02b4c30f2ab59ffa0a2f855c9a72d648026d8d82072eaf"
+            ),
+            "claims": (
+                "a1cd046845b691479b517de4224da50937a889bf1c9dc0ad91d62f0b518b62c8"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 4): "0968c8b3d3d88bd0e067f0d5ce711797cec157a55288984add5dd96c37a738e6",
+            (5, 23): "f0caf88d8c0d22c8368fb6cb27d7d9dcd83747a61c5173de49850630ee5874c0",
+            (24, 31): "257219f00e8b3b92356345ee6ac4721b9fa0f7e4ea39ad0b115920f57553a922",
+            (32, 36): "561e331bf65fc5bbe023c565ff205cb6bc2d015633c0b9be83fffcf96a4bdd82",
+            (37, 57): "e99308379805670b77ac7043a0309f2dcc81222df7b974441bab9e5a709e6403",
+            (58, 63): "2582f062865f61ce850a607bc8d118a01bcb522c2dc7b237d0352c8db76be838",
+            (64, 69): "15c498631ddff36faff73c1d0fbbbd6f05cbc0937721bee73c3e1c1f31ec7b2d",
+            (70, 75): "ccc2575e370569e7662c842db4fb4811f2a2a89a215b80880b669e472be6edbc",
+            (76, 81): "51ae58e7ffca369fd2dc3e247c354b3e64a04f7160cd4f3c4124cf216d288dfe",
+            (82, 87): "24aec4530fca83fdcaa2d152ad6a55bcbb58059d086655d84d9d13abd9c19baa",
+            (88, 95): "5bf8267a63fadb87c1d087976c70fdc84c084985b3cb18ffea59ea54be60625e",
+        },
+        "table_payload_sha256": (
+            "cec04c5f530ba93805a7cb5e077852481e6e3e671dd304a228736b0a9d730542",
+            "8ee873af506749a14bacae8891689dd0c34812bc5d75023023f9f1fc4dd0b825",
+            "3e521852a3f95dff7df189a6a048df760fb45dac765e691a3d00033782c8410d",
+            "a1d345bf6d1d039d97c9fc5cc79cb3dd5c239e1848e042403204b94b6c1d3c8f",
+            "9f345caea93fba0e8bf5b88340768cfef8a36af39d54f3bef8bd94fa284c04d0",
+            "b3153c7c64f7f3816446dca95284067ae92cee312d73462bd87f2a768852760e",
+            "dddf3d09760284783816d6a08269acd1f4257abc58207a93d057f0faa9cff9ff",
+            "2fca9bb624c6aae2d04e01464e70b68eaaad1b889e42fb19ae22c9b4c031f719",
+            "d94d9e1daa48930d990d93d1a5092353763dbe6aebe4f52eba82525775fbf2d5",
+            "d2f7c23dce615d2c8877509550c6573ea608025bfb3ecfba095efb86eba5b8a8",
+            "32c12ed0e8dd2894049c506573e654ef868f37e782b31a0bc9194e3c1c93aadd",
+            "8e0817f6588eb1b515822240d31e516499db9fe9d89dd47e7ae308d0cb75b383",
+            "a640414f93ab5a2fa44704e85b28366d14711c8afd3c14a633973af5f3c8ce74",
+            "ecf06e37772732f2368fc34a0aee58386dcfa939e61ec8d7ae2d3b3f6f55832f",
+            "552b1a8a2445d447aa2f841ac48ca30e813fdbe0b107d336e9f43962654e3c5d",
+            "522594f274a6ed47f10dc305886a41c4463863d5f641f22584b098c23ddbd374",
+            "be2c9d3464f26343ccd444c9432b9537aad7ed967cf706d62fb10c3073dc60da",
+            "083d13bffc8a4a15b9a2e9647df6ef0dceff4f93fd81af5bf90c0626cd0cfbde",
+            "dd03ce95efac5c2010b5c05c4f58b2ab30f6ab210db0b410ce449b26c233b554",
+            "274bdc38a256e1165abd440445249a1851aba1f03e207df1c7a97bdcb1fb8915",
+            "16f2847ed31da421df10bf80ba60020f15e1a8d4bca9a063f88a208b92f2d50c",
+            "c819edc9c18c46d2a7430960bab6e4538495704f53bd40ada6580081714ff451",
+            "183f9cb59645809522d8ed6b55fe328efa17bfe416e52b574c711fd2fea8221c",
+            "2e9a7636ea76e335007c623e6cbb5c84dbcc4a3cf5b42a95951a52399e537013",
+        ),
+        "system_values": {
+            1: (16.09, 8.00, 94.70),
+            2: (16.94, 9.00, 90.14),
+            3: (16.09, 9.00, 100.34),
+            4: (16.35, 9.00, 95.20),
+            5: (16.98, 9.00, 95.07),
+            6: (16.74, 9.00, 90.14),
+        },
+        "claim_numbers": tuple(range(1, 15)),
+        "ordered_math_id_sha256": (
+            "8acc13bcda599fd3f879067b613d3065417ad2660a1bd4ea67e361b078f1b844"
+        ),
+        "figure_labels": ("1A", "1B", "2", "3", "4", "5", "6", "7"),
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/0fab48e04e9cb148/"
+                "US-20260147219-A1.pdf"
+            ),
+            "bytes": 1_220_496,
+            "sha256": (
+                "0fab48e04e9cb148119466accb52c8e1921f3416a9b30067bf675bd2c7b100de"
+            ),
+            "page_count": 24,
+            "drawing_page_numbers": tuple(range(2, 10)),
+            "table_page_numbers": tuple(range(13, 24)),
+            "narrow_raster_page_numbers": (10, 11, 12),
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "page_raster_sha256": (
+                "bd29e276cd06d4d5872da2fba8f5430c54b3a2cc0435092f6e3362f054cd8a3f",
+                "a848273bb8f9642a93e370c164f2edaf331682149275e02e9ce557728e7c84fb",
+                "5230201b8b9ab116351a09614c937442a9de3ed00bdbbbc4daae28f4d223de7c",
+                "a8b9a54c180954894351feb4b036b0ef5cb95fe12be333531e4f94cf29ad4e44",
+                "58357861503cbd6495c76ef385f61ecaac294ad906b9e16d15b94db58f9c4a09",
+                "705e1e2a09b775d0802a6bcca4972dbea0926224dc6fc85560a3f82c85f2a7b6",
+                "7c16f20224cea60b4ecd0174a809ad3db0607755d0ee9754f4a176763c712261",
+                "5d5e6740830edaa988b69c228af0da2399c5c276e5729ced6422579d8934f3e4",
+                "85b43adda6221e33318b22e93e5b93e7b8b3f2caa745293a7921e469a8137d9c",
+                "7471b268c8359bde2ff63c277b03d66292c60d7d22471d261c808312f1ec9620",
+                "a7fb5c436338ad979fac61598fbcb24793b0f8b323ea70afc892708d39df80b6",
+                "77cacbd398349bda1ead0a8b0a8d867ee044d0da3aafd2414bd5b1c21d95a476",
+                "d8c032c4289f69242888f0333459485eb457bc0135a0a47d119b0bd563c73c6f",
+                "c2716d2a2e025f712f39aba346ad5141f9b28b4fb959498d22f6e0be154ec878",
+                "fa7606602d4405452efb8974ea725a28dcd4dc49908464be031dc3a009e5f674",
+                "aa14ce2133d8afcf5853a88480c92775b7dbeeeff57f809583268bee99dee9d7",
+                "764923a2a6328656619e75a6ce5b043fb853ed2b1439643e685e35f4d20aa6b8",
+                "e0ff2cda90be3ed1e3cefbfa513a094a2e46dde58ed61277b1dea3536cc83b50",
+                "639c0968829dc13dad0792924cdd26c8985cc6aa740a8fbe04f9ff2a379eb5c2",
+                "5a8f2aada06c30e30b82102eaec7a9513305c58df363120c0dc6ed3fae52c010",
+                "7102e85354579d09045ccf88886b574b8d5211e0d30852564e3d417055b8affe",
+                "0c912b6790706d2c456d55d77496c7f9957dcce042b00f4b44facbcc902b1899",
+                "db41061f903f7d462825b4694c699156ea66982ba40d7b829e3dbb4bf601858b",
+                "2f1f920938ffc2b4d65ae12c1b9d28ad109b51bdf9f61da9e0d77f2423f02f8a",
+            ),
+            "raster_set_sha256": (
+                "41e852dcb51b482a99a41a2194e06dc36f70d6e08034f46fe6d829c2265044bc"
+            ),
+        },
+    }
+}
+
+
+def _classify_newmax_folded_three_lens_missing_f_number_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain six exact NEWMAX prescriptions without deriving F-number."""
+
+    profile = _NEWMAX_FOLDED_THREE_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _tables in (
+                _NEWMAX_FOLDED_THREE_LENS_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"NEWMAX folded-three-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"NEWMAX folded-three-lens normalized text hash changed for {patent_id}"
+            )
+
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"NEWMAX folded-three-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "NEWMAX folded-three-lens section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "NEWMAX folded-three-lens section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"NEWMAX folded-three-lens {section_name} section changed"
+                )
+
+        paragraph_matches = list(
+            re.finditer(r"\[(\d{4})\]", text[: section_starts["claims"]])
+        )
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 96)):
+            raise PatentParseError(
+                "NEWMAX folded-three-lens numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"NEWMAX folded-three-lens paragraph span {bounds} changed"
+                )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != tuple(range(1, 25)):
+            raise PatentParseError(
+                "NEWMAX folded-three-lens 24-table denominator changed"
+            )
+        table_payloads = tuple(
+            re.split(
+                r"\s(?:\[\d{4}\]|Claims\s+1\s*\.)\s",
+                block.text,
+                maxsplit=1,
+            )[0].strip()
+            for block in table_blocks
+        )
+        table_digests = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        )
+        if table_digests != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "NEWMAX folded-three-lens table payload digest changed"
+            )
+
+        metadata_pattern = re.compile(
+            rf"\bf\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm,\s*"
+            rf"EPD\s*\(entrance pupil diameter\)\s*=\s*"
+            rf"(?P<epd>{NUMBER_PATTERN})\s*mm,\s*FOV\s*=\s*"
+            rf"(?P<fov>{NUMBER_PATTERN})°",
+            re.IGNORECASE,
+        )
+        for embodiment_number in range(1, 7):
+            surface_table_number = 4 * embodiment_number - 3
+            surface_payload = table_payloads[surface_table_number - 1]
+            match = metadata_pattern.search(surface_payload)
+            if match is None:
+                raise PatentParseError(
+                    "NEWMAX folded-three-lens direct f/EPD/FOV header changed"
+                )
+            observed_values = tuple(
+                _parse_number(match.group(name)) for name in ("f", "epd", "fov")
+            )
+            if observed_values != profile["system_values"][embodiment_number]:
+                raise PatentParseError(
+                    f"NEWMAX folded-three-lens embodiment {embodiment_number} "
+                    "system header changed"
+                )
+            if (
+                len(re.findall(r"\bMirror\b", surface_payload)) != 2
+                or "0 Stop" not in surface_payload
+                or "18 Image" not in surface_payload
+                or surface_payload.count("The reference wavelength is 550 nm.") != 1
+            ):
+                raise PatentParseError(
+                    f"NEWMAX folded-three-lens embodiment {embodiment_number} "
+                    "folded surface-table structure changed"
+                )
+            asphere_payload = table_payloads[surface_table_number]
+            if (
+                "Aspheric Coefficients Surface 1 2 6, 12" not in asphere_payload
+                or "Surface 7, 13 14 15" not in asphere_payload
+                or tuple(re.findall(r"\b(K|A\d+):", asphere_payload))
+                != ("K", "A2", "A4", "A6", "A8", "A10", "A12", "A14", "A16", "A18", "A20")
+                * 2
+            ):
+                raise PatentParseError(
+                    f"NEWMAX folded-three-lens embodiment {embodiment_number} "
+                    "asphere-table structure changed"
+                )
+
+        forbidden_f_number_patterns = (
+            r"\bF\s*[- ]?number\b",
+            r"\bFNO\b",
+            r"\bF\s*/\s*(?:#|No\.?|Number|\d)",
+            r"\baperture\s+number\b",
+            r"\bnumerical\s+aperture\b",
+        )
+        for pattern in forbidden_f_number_patterns:
+            if re.search(pattern, text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "NEWMAX folded-three-lens source may now publish a system F-number"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "NEWMAX folded-three-lens 14-claim denominator changed"
+            )
+        if not sections["claims"].endswith(
+            "a controller disposed in the housing and electrically connected to the "
+            "image source."
+        ):
+            raise PatentParseError(
+                "NEWMAX folded-three-lens electronic-device claim changed"
+            )
+
+        math_ids = tuple(
+            re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw_text, re.IGNORECASE)
+        )
+        if len(math_ids) != 27 or hashlib.sha256(
+            "\n".join(math_ids).encode("utf-8")
+        ).hexdigest() != profile["ordered_math_id_sha256"]:
+            raise PatentParseError(
+                "NEWMAX folded-three-lens MathML denominator changed"
+            )
+        if re.search(r"<img\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "NEWMAX folded-three-lens retained HTML image denominator changed"
+            )
+
+        figure_labels = tuple(
+            re.sub(r"\s+", "", label).upper()
+            for number in range(24, 32)
+            for label in re.findall(
+                r"FIG\.\s*(\d+\s*[AB]?)\s+is",
+                paragraphs[number],
+                re.IGNORECASE,
+            )
+        )
+        if figure_labels != profile["figure_labels"]:
+            raise PatentParseError(
+                "NEWMAX folded-three-lens eight-figure denominator changed"
+            )
+        if (
+            "includes an optical lens assembly described in any one of the first "
+            "to sixth embodiments"
+            not in paragraphs[93]
+        ):
+            raise PatentParseError(
+                "NEWMAX folded-three-lens device-wrapper inheritance changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all seven source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, tables in _NEWMAX_FOLDED_THREE_LENS_ITEMS:
+        if number <= 6:
+            detail = (
+                f"Tables {tables[0]}-{tables[-1]} publish the exact folded "
+                "three-lens surface/asphere prescription, direct focal length, "
+                "entrance-pupil diameter, full FOV, image height, and stop row; "
+                "the official HTML and all-page exact-raster audit publish no "
+                "direct system F-number, so f/EPD is not substituted or derived"
+            )
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_NEWMAX_FOLDED_THREE_LENS_METADATA_REASON,
+                detail=detail,
+            )
+        else:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_NEWMAX_FOLDED_THREE_LENS_WRAPPER_REASON,
+                detail=(
+                    "paragraphs 92-95, FIG. 7, and claim 14 place an optical lens "
+                    "assembly selected from the first through sixth embodiments "
+                    "inside a head-mounted electronic device; they disclose no "
+                    "seventh optical prescription"
+                ),
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=error,
+            )
+        )
+    return attempts
 
 
 def _classify_aac_four_lens_f_number_unpublished_attempts(

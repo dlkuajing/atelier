@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "family_id": "97524399",
+  "publication_id": "US-20260147219-A1",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/08078faa3d16975e/US-20260147219-A1.html",
+    "bytes": 85759,
+    "sha256": "08078faa3d16975e12990aad5bcfbd922e0d95b0263040261b19a2e6d06abf72",
+    "classification_role": "primary exact official text and table source"
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/0fab48e04e9cb148/US-20260147219-A1.pdf",
+    "bytes": 1220496,
+    "container_sha256": "0fab48e04e9cb148119466accb52c8e1921f3416a9b30067bf675bd2c7b100de",
+    "page_count": 24,
+    "single_raster_pages": 24,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "41e852dcb51b482a99a41a2194e06dc36f70d6e08034f46fe6d829c2265044bc"
+  },
+  "drawing_source": {
+    "declared_textual_figures": 8,
+    "located_raster_figures": 8,
+    "drawing_sheets": 8,
+    "drawing_pdf_pages": [2, 3, 4, 5, 6, 7, 8, 9],
+    "full_page_contact_reviewed": true,
+    "original_resolution_pages_reviewed": [9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    "classification_dependency": true
+  },
+  "source_policy": {
+    "classification_truth": "retained exact USPTO HTML plus retained exact official decoded-raster set",
+    "raster_numeric_transcription_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "numeric_derivation_permitted": false,
+    "cross_publication_borrowing_permitted": false,
+    "system_f_number_derivation_from_f_and_epd_permitted": false
+  }
+}

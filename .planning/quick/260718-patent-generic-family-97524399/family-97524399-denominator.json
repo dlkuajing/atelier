@@ -1,0 +1,444 @@
+{
+  "schema_version": 1,
+  "family_id": "97524399",
+  "root_id": "US-20260147219",
+  "publication_id": "US-20260147219-A1",
+  "identity": {
+    "application_number": "19/052311",
+    "title": "OPTICAL LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "applicant": "NEWMAX TECHNOLOGY CO., LTD.",
+    "assignee": null,
+    "inventors": [
+      "HUANG; Ching-Yun",
+      "TSAI; Fei-Hsin"
+    ],
+    "filed": "2025-02-13",
+    "publication_date": "2026-05-28",
+    "kind_code": "A1",
+    "priority_application": "TW 113145085",
+    "priority_date": "2024-11-22"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/08078faa3d16975e/US-20260147219-A1.html",
+    "bytes": 85759,
+    "raw_characters": 84511,
+    "raw_sha256": "08078faa3d16975e12990aad5bcfbd922e0d95b0263040261b19a2e6d06abf72",
+    "normalized_characters": 65362,
+    "normalized_sha256": "efe2d28dee38b66bae28d7c1aa65e5090b4f46f19ebaad98cc65ba17b0204395"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_numbered_paragraphs": 4,
+    "summary_numbered_paragraphs": 19,
+    "brief_drawing_numbered_paragraphs": 8,
+    "detailed_numbered_paragraphs": 64,
+    "total_numbered_paragraphs": 95,
+    "claims": 14,
+    "independent_claim_families": 2,
+    "declared_textual_figure_panels": 8,
+    "tagged_html_tables": 24,
+    "mathml_objects": 27,
+    "source_disclosed_optical_prescriptions": 6,
+    "source_disclosed_device_wrappers": 1,
+    "source_disclosed_items": 7,
+    "metadata_unpublished_items": 6,
+    "confirmed_no_prescription_items": 1,
+    "replayed_ledger_items": 7,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 24,
+    "retained_page_rasters": 24,
+    "official_drawing_sheets": 8,
+    "official_table_pages": 11,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "paragraph_spans": [
+    {
+      "range": [
+        1,
+        4
+      ],
+      "role": "background",
+      "characters": 1025,
+      "sha256": "0968c8b3d3d88bd0e067f0d5ce711797cec157a55288984add5dd96c37a738e6"
+    },
+    {
+      "range": [
+        5,
+        23
+      ],
+      "role": "summary",
+      "characters": 5902,
+      "sha256": "f0caf88d8c0d22c8368fb6cb27d7d9dcd83747a61c5173de49850630ee5874c0"
+    },
+    {
+      "range": [
+        24,
+        31
+      ],
+      "role": "brief description and eight figure declarations",
+      "characters": 1015,
+      "sha256": "257219f00e8b3b92356345ee6ac4721b9fa0f7e4ea39ad0b115920f57553a922"
+    },
+    {
+      "range": [
+        32,
+        36
+      ],
+      "role": "shared optical-assembly definitions",
+      "characters": 2385,
+      "sha256": "561e331bf65fc5bbe023c565ff205cb6bc2d015633c0b9be83fffcf96a4bdd82"
+    },
+    {
+      "range": [
+        37,
+        57
+      ],
+      "role": "first prescription and TABLES 1-4",
+      "characters": 12564,
+      "sha256": "e99308379805670b77ac7043a0309f2dcc81222df7b974441bab9e5a709e6403"
+    },
+    {
+      "range": [
+        58,
+        63
+      ],
+      "role": "second prescription and TABLES 5-8",
+      "characters": 6386,
+      "sha256": "2582f062865f61ce850a607bc8d118a01bcb522c2dc7b237d0352c8db76be838"
+    },
+    {
+      "range": [
+        64,
+        69
+      ],
+      "role": "third prescription and TABLES 9-12",
+      "characters": 6383,
+      "sha256": "15c498631ddff36faff73c1d0fbbbd6f05cbc0937721bee73c3e1c1f31ec7b2d"
+    },
+    {
+      "range": [
+        70,
+        75
+      ],
+      "role": "fourth prescription and TABLES 13-16",
+      "characters": 6508,
+      "sha256": "ccc2575e370569e7662c842db4fb4811f2a2a89a215b80880b669e472be6edbc"
+    },
+    {
+      "range": [
+        76,
+        81
+      ],
+      "role": "fifth prescription and TABLES 17-20",
+      "characters": 6605,
+      "sha256": "51ae58e7ffca369fd2dc3e247c354b3e64a04f7160cd4f3c4124cf216d288dfe"
+    },
+    {
+      "range": [
+        82,
+        87
+      ],
+      "role": "sixth prescription and TABLES 21-24",
+      "characters": 6331,
+      "sha256": "24aec4530fca83fdcaa2d152ad6a55bcbb58059d086655d84d9d13abd9c19baa"
+    },
+    {
+      "range": [
+        88,
+        95
+      ],
+      "role": "shared material notes and head-mounted electronic-device wrapper",
+      "characters": 3085,
+      "sha256": "5bf8267a63fadb87c1d087976c70fdc84c084985b3cb18ffea59ea54be60625e"
+    }
+  ],
+  "table_groups": [
+    {
+      "embodiment_number": 1,
+      "tables": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "roles": [
+        "surface prescription",
+        "asphere coefficients",
+        "remaining direct parameters",
+        "conditional ratios"
+      ]
+    },
+    {
+      "embodiment_number": 2,
+      "tables": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "roles": [
+        "surface prescription",
+        "asphere coefficients",
+        "remaining direct parameters",
+        "conditional ratios"
+      ]
+    },
+    {
+      "embodiment_number": 3,
+      "tables": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "roles": [
+        "surface prescription",
+        "asphere coefficients",
+        "remaining direct parameters",
+        "conditional ratios"
+      ]
+    },
+    {
+      "embodiment_number": 4,
+      "tables": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "roles": [
+        "surface prescription",
+        "asphere coefficients",
+        "remaining direct parameters",
+        "conditional ratios"
+      ]
+    },
+    {
+      "embodiment_number": 5,
+      "tables": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "roles": [
+        "surface prescription",
+        "asphere coefficients",
+        "remaining direct parameters",
+        "conditional ratios"
+      ]
+    },
+    {
+      "embodiment_number": 6,
+      "tables": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "roles": [
+        "surface prescription",
+        "asphere coefficients",
+        "remaining direct parameters",
+        "conditional ratios"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "NEWMAX folded three-lens first embodiment",
+      "paragraphs": [
+        37,
+        57
+      ],
+      "tables": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "system_f_number_absent",
+      "published_system_values": {
+        "f_mm": 16.09,
+        "entrance_pupil_diameter_mm": 8.0,
+        "full_fov_deg": 94.7
+      },
+      "published_system_f_number": null
+    },
+    {
+      "embodiment_number": 2,
+      "label": "NEWMAX folded three-lens second embodiment",
+      "paragraphs": [
+        58,
+        63
+      ],
+      "tables": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "system_f_number_absent",
+      "published_system_values": {
+        "f_mm": 16.94,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 90.14
+      },
+      "published_system_f_number": null
+    },
+    {
+      "embodiment_number": 3,
+      "label": "NEWMAX folded three-lens third embodiment",
+      "paragraphs": [
+        64,
+        69
+      ],
+      "tables": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "system_f_number_absent",
+      "published_system_values": {
+        "f_mm": 16.09,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 100.34
+      },
+      "published_system_f_number": null
+    },
+    {
+      "embodiment_number": 4,
+      "label": "NEWMAX folded three-lens fourth embodiment",
+      "paragraphs": [
+        70,
+        75
+      ],
+      "tables": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "system_f_number_absent",
+      "published_system_values": {
+        "f_mm": 16.35,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 95.2
+      },
+      "published_system_f_number": null
+    },
+    {
+      "embodiment_number": 5,
+      "label": "NEWMAX folded three-lens fifth embodiment",
+      "paragraphs": [
+        76,
+        81
+      ],
+      "tables": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "system_f_number_absent",
+      "published_system_values": {
+        "f_mm": 16.98,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 95.07
+      },
+      "published_system_f_number": null
+    },
+    {
+      "embodiment_number": 6,
+      "label": "NEWMAX folded three-lens sixth embodiment",
+      "paragraphs": [
+        82,
+        87
+      ],
+      "tables": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "system_f_number_absent",
+      "published_system_values": {
+        "f_mm": 16.74,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 90.14
+      },
+      "published_system_f_number": null
+    },
+    {
+      "embodiment_number": 7,
+      "label": "NEWMAX head-mounted electronic-device wrapper",
+      "paragraphs": [
+        88,
+        95
+      ],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "electronic_device_wrapper_only",
+      "inherits_prescription_items": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "required_metadata_boundary": {
+    "direct_focal_length_values": 6,
+    "direct_entrance_pupil_diameter_values": 6,
+    "direct_full_fov_values": 6,
+    "direct_image_height_values": 6,
+    "direct_stop_rows": 6,
+    "direct_system_f_number_values": 0,
+    "derived_f_over_epd_values_permitted": false,
+    "classification": "six prescriptions are source-terminal because system F-number is directly unpublished"
+  },
+  "folded_path_boundary": {
+    "published_surface_rows_per_prescription": 19,
+    "surface_index_range": [
+      0,
+      18
+    ],
+    "mirror_rows_per_prescription": 2,
+    "negative_thickness_segment_present": true,
+    "partial_reflective_partial_transmissive_element_present": true,
+    "reflective_polarizer_present": true,
+    "sequential_converter_invoked": false
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "forbidden_substitutions": [
+    "focal length divided by entrance pupil diameter for directly published system F-number",
+    "full FOV divided by two for any unpublished half-field convention",
+    "folded multipass table flattened into a sequential prescription",
+    "drawing geometry measured for coordinates or metadata",
+    "applicant identity inferred as assignee identity",
+    "values borrowed from another publication or family"
+  ]
+}
