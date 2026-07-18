@@ -440,21 +440,25 @@ items are 1376 parser review, 1336 terminal, 561 staging and 28 conversion retry
 is 92 roots/items and remains the largest executable bucket; deterministic ordering selects Family
 `44972265` (`US-8287129-B2`) next. Parent/global patent saturation remains active and incomplete.
 
-**Patent saturation latest authoritative update (2026-07-18, Family 81258214):** This
+**Patent saturation latest authoritative update (2026-07-18, Family 94732062):** This
 supersedes every earlier patent snapshot in this file. Strict replay is 619/619 with missing=0,
-corrupt=0 and result set `5a9124d16b675ebd135d3b26c1ec9986d8727315d17d2087af1ea63ad507615e`.
-Exact `US-20220128799-A1` binds application `17/364492`, Family `81258214`, Ability Enterprise
-identity, Taiwan priority `109137408`, 66 numbered paragraphs, claims 1-20 in three independent
-families, eleven figure panels, seven printed table panels, one MathML asphere equation and four
-complete prescriptions. The official fifteen-page image-only PDF and Google OCR wrapper have
-pixel-identical decoded rasters; printed numeric cells are accepted only after independent
-same-raster OCR agreement, with no geometry measurement or enhancement. OL1/OL2 retain 26 rows
-and S19/S20 even aspheres; spherical OL3/OL4 retain 28 rows. Attempts 2/3 produce four distinct
-staging candidates and are semantic-equal after only recorded runtime identity and receipt
-normalization. Current roots are 279 parser review, 148 mixed, 166 terminal and 26 converted;
-items are 1373 parser review, 1358 terminal, 565 staging and 28 conversion retry. Generic metadata
-is 89 roots/items and remains the largest executable bucket; deterministic ordering selects Family
-`94732062` (`US-20260181269-A1`) next. Parent/global patent saturation remains active and incomplete.
+corrupt=0 and result set `10b873228f5b8b9d5e64c8e435e17ffac4d71432eea96dff89270accbdab646c`.
+Exact `US-20260181269-A1` binds application `19/545464`, Family `94732062`, Samsung ownership,
+two Korean priorities through `PCT/KR2024/007723`, 320 consecutive numbered paragraphs, claims
+1-20, eighteen declared figures/nineteen drawing panels, zero tagged tables, zero MathML objects
+and three source items. The electronic-device item, corresponding operating method and
+computer-readable-medium wrapper publish multi-camera timing and exposure-control architecture;
+paragraphs 80-89 and 289-294 plus FIGS.3/18 show only generic camera/lens-assembly blocks, with no
+ordered optical radius, spacing, material, conic, asphere, stop or system-metadata prescription.
+All three items therefore become distinct confirmed-no-prescription terminals. The retained
+official PDF has 50 image-only pages, one 2560x3300 raster per page and nineteen drawing panels on
+pages 2-20; all rasters reconcile and FIGS.3/18 were reviewed at original resolution without
+enhancement or geometry measurement. Attempts 2/3 are canonical-equal excluding only
+`result_attempt`, with no worker/request/receipt/fingerprint/candidate/ZMX/formal intake. Current
+roots are 278 parser review, 148 mixed, 167 terminal and 26 converted; items are 1372 parser review,
+1361 terminal, 565 staging and 28 conversion retry. Generic metadata is 88 roots/items and remains
+the largest executable bucket; deterministic ordering selects Family `90535253`
+(`US-20240118520-A1`) next. Parent/global patent saturation remains active and incomplete.
 
 ## Current Position
 
@@ -468,7 +472,7 @@ is 89 roots/items and remains the largest executable bucket; deterministic order
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `5a9124d1...615e`. Current roots: 279 parser review, 148 mixed, 166 terminal, 26 converted; items: 565 staging, 1373 parser review, 1358 terminal, 28 conversion retry. Family 81258214 reconciles four complete Ability wide-angle prescriptions from exact official rasters plus an independently agreeing same-raster OCR overlay. OL1/OL2 retain 26 rows and two even aspheres each; spherical OL3/OL4 retain 28 rows. Two append-only replays yield four distinct staging candidates with semantic-equal outcomes after only recorded runtime normalization; no formal intake or CODE V call occurs. Generic 90->89 roots/items remains first by nonterminal roots; deterministic ordering selects Family 94732062 next. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `10b87322...b646c`. Current roots: 278 parser review, 148 mixed, 167 terminal, 26 converted; items: 565 staging, 1372 parser review, 1361 terminal, 28 conversion retry. Family 94732062 reconciles Samsung's exact multi-camera timing/exposure-control A1 into three device/method/medium items. The 320 paragraphs, claims 1-20, nineteen drawing panels and generic lens-assembly references publish no ordered optical prescription; all three items become confirmed-no-prescription without raster measurement, inference, family borrowing, formal intake or CODE V. Attempts 2/3 are semantic-equal excluding only result attempt. Generic 89->88 roots/items remains first by nonterminal roots; deterministic ordering selects Family 90535253 next. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -689,24 +693,25 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260718-patent-generic-family-44972265` | complete-shovel-saturation-incomplete | Exact B2 source independently reconciles application 12/784523, Eastman Kodak ownership, 204 numbered paragraphs, claims 1-25, 42 figure panels, five equation placeholders and eleven independent items: six projection/relay designs, two design workflows and three system-claim families. The first four designs publish no ordered prescription; FIGS.14A/14B publish complete third projection/relay surface tables but no prescription-specific EFL, exact F-number or angular field. The two prescriptions become metadata-unpublished and the other nine items become confirmed-no-prescription without drawing transcription, metadata derivation, sibling-family borrowing or formal output. The retained official PDF has 61 image-only pages/39 drawing sheets; every page raster and all panels reconcile, and twelve original-resolution pages establish layouts, prescriptions, methods, FIG.17 and the page-2 non-drawing boundary. Attempts 2/3 are semantic-equal excluding only result attempt at `4f799a84...25c1a8`. Result set `a009a80a...81875`, summary `8f233300...d2cf`, report `bc9b3ab1...a645`, after census `95fad641...fda6`; audit 619/619 corrupt=0; focused 9/9, file regression 617/617, all 711 offline patent tests and guard 5/5 pass; compile, Ruff, 61 evidence/648 path-hash references, 66-null/22-empty-coverage and four-scope formal-contamination checks pass; CODE V zero. The first file sweep timed out at 304 seconds without a verdict; the next sweep exposed only the prior-shovel result-set snapshot assertion, which was made historical like existing predecessors before the complete passing sweep. All 31 prior shared summary/report references were mechanically refreshed while preserving their result-set snapshots. Generic 91 roots remains first; Family 77292582 is next. |
 | `260718-patent-generic-family-77292582` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 17/798838, Circle Optics identity, PCT/US21/17284, four queue-only related international applications, 172 numbered paragraphs, claims 1-20, 28 figure panels/drawing sheets, zero tables/equations and eleven source items. Four optical designs publish either schematics or partial values: FIG.8 supplies two first-element radii plus partial system data and FIG.15B supplies performance/packaging values, but no item supplies a complete ordered objective/relay prescription. Six direct/beam-split/MEMS/OPA/flash-LIDAR/light-field channels plus one claim family are architecture-only. All eleven become confirmed-no-prescription terminals without raster numeric transcription, drawing measurement, coordinate synthesis, related-application borrowing or formal output. The retained official PDF has 57 image-only 2560x3300 pages and 28 drawing sheets; every raster/panel reconciles and twelve relevant original pages were reviewed without enhancement. Attempts 2/3 are semantic-equal excluding only result attempt at `deca1000...8c8c3`. Result set `9d5afa23...35562`, summary `3d057c7f...d62af`, report `90e35c00...91579`, after census `8507263b...a767`; audit 619/619 corrupt=0; focused 9/9, file regression 626/626, all 720 offline patent tests and guard 5/5 pass; compile, Ruff, JSON, 62 evidence/683 path-hash references, 66-null/22-empty-coverage and four-scope formal-contamination checks pass; CODE V zero. One 5-second tool timeout terminated an initial file sweep without a verdict; the subsequent 331.39-second complete sweep passed. All 32 prior shared summary/report references were refreshed while preserving historical result-set snapshots. Generic 90 roots remains first; Family 81258214 is next. |
 | `260718-patent-generic-family-81258214` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 17/364492, Ability Enterprise identity, Taiwan priority, 66 numbered paragraphs, claims 1-20 in three independent families, eleven figure panels, seven printed table panels, one MathML equation and four complete wide-angle prescriptions. Official and Google OCR PDFs contain fifteen pixel-identical decoded rasters; every finite printed numeric cell independently agrees across OCR views, with no enhancement or drawing-geometry measurement. OL1/OL2 retain 26 rows and S19/S20 even aspheres; spherical OL3/OL4 retain 28 rows. All four pass process-isolated validation and produce four distinct staging ZMX files. Attempts 2/3 are semantic-equal after only recorded runtime identity/path/receipt normalization at `f2b85fee...a9f0`. Result set `5a9124d1...615e`, summary `0a40be70...419e`, report `6b1f901a...80af`, after census `56974bcf...cddec`; audit 619/619 corrupt=0; focused 4/4, file regression 630/630, remaining patent 94/94 and guard 5/5 pass; compile, Ruff, 72 JSON, 63 evidence/730 path-hash references, terminal/converted-output and four-scope contamination checks pass; CODE V zero. The first complete sweep exposed only the prior Family 77292582 live-summary pointer; targeted 2/2 and the second full sweep passed after alignment. Generic 89 roots remains first; Family 94732062 is next. |
+| `260718-patent-generic-family-94732062` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 19/545464, Samsung identity, two Korean priorities through PCT/KR2024/007723, 320 consecutive paragraphs, claims 1-20, eighteen declared figures/nineteen drawing panels, zero tagged tables/MathML and three source items. The device, operating-method and computer-readable-medium items publish only multi-camera timing/exposure-control architecture; generic lens-assembly references in paragraphs 80-89 and 289-294 plus FIGS.3/18 contain no ordered optical prescription. All three become confirmed-no-prescription terminals without inference, raster measurement, family borrowing or formal output. The retained official PDF has 50 image-only pages and nineteen drawing panels; every raster reconciles and FIGS.3/18 were reviewed at original resolution. Attempts 2/3 are semantic-equal excluding only result attempt at `f3f90961...285b1`. Result set `10b87322...b646c`, summary `48bd3453...b6edd`, report `da01ed63...17255`, after census `eb535369...b98c`; audit 619/619 corrupt=0; focused 9/9, full file regression 639/639, remaining patent 94/94 and guard 5/5 pass; compile, Ruff, 47 JSON, 64 evidence files/606 referenced hashes, 18-null/6-empty-coverage and four-scope formal-contamination checks pass. All 34 prior shared summary/report references and one prior live-result-set pointer were aligned before the passing sweep. Generic 88 roots remains first; Family 90535253 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260718-patent-generic-family-81258214/260718-patent-generic-family-81258214-PLAN.md`,
+`.planning/quick/260718-patent-generic-family-94732062/260718-patent-generic-family-94732062-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (89 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (88 roots/items), ahead by root count of
 `aac_raytech_summary_metadata_missing` (55 roots/174 items) and
 `sunny_embodiment_metadata_missing` (49 roots/177 items). Its next exact family under
-deterministic parser/layout/family/root/publication ordering is Family ID `94732062`, root
-`US-20260181269`, publication `US-20260181269-A1`, layout
-`47e7cc4e752d976ce84eb570f2ad8f451a7ead80846f9db627cd1be1f6a5aa35`. Use
+deterministic parser/layout/family/root/publication ordering is Family ID `90535253`, root
+`US-20240118520`, publication `US-20240118520-A1`, layout
+`50d77537d1a790ed464997f1b6f9d490417bc0b53440bfd788b44d48c66ebc91`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
 

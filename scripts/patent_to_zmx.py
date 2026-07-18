@@ -638,6 +638,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_samsung_multi_camera_control_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_samsung_animal_capture_attempts(
         raw_text,
         patent_id=patent_id,
@@ -13548,6 +13554,236 @@ _SAMSUNG_ANIMAL_CAPTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             ),
             "raster_set_sha256": (
                 "08278de281a7e4df6c553149f606d416d6e6fe7a3e0fd17f9feea4b93f96c22b"
+            ),
+        },
+    }
+}
+_SAMSUNG_MULTI_CAMERA_CONTROL_ITEMS = (
+    (
+        1,
+        "Samsung multi-camera timing and exposure-control electronic device architecture",
+        (
+            "confirmed_no_prescription."
+            "multi_camera_timing_exposure_control_electronic_device_architecture_only"
+        ),
+    ),
+    (
+        2,
+        "Samsung multi-camera timing and exposure-control operating method",
+        (
+            "confirmed_no_prescription."
+            "multi_camera_timing_exposure_control_operating_method_only"
+        ),
+    ),
+    (
+        3,
+        "Samsung multi-camera timing and exposure-control computer-readable medium wrapper",
+        (
+            "confirmed_no_prescription."
+            "multi_camera_timing_exposure_control_computer_readable_medium_wrapper_only"
+        ),
+    ),
+)
+_SAMSUNG_MULTI_CAMERA_CONTROL_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260181269-A1": {
+        "raw_document_sha256": (
+            "33fcb6ace32ad6347fa9dbf5d07b48e00dfbdbf52dfe4123715c373678239c19"
+        ),
+        "normalized_text_sha256": (
+            "bc0c653fbae8ad73fddc2357c5a6e5d804c9f154997f5045836dc4abdb12782f"
+        ),
+        "identity_markers": {
+            "ELECTRONIC DEVICE COMPRISING PLURALITY OF CAMERAS, AND OPERATING METHOD THEREOF": 1,
+            "Publication Date June 25, 2026": 1,
+            (
+                "Inventors: PARK; Kyoungkeun (Suwon-si, KR), OH; Byungil "
+                "(Suwon-si, KR), KIM; Bosung (Suwon-si, KR), KIM; Jihyun "
+                "(Suwon-si, KR), PARK; Minyoung (Suwon-si, KR), JEONG; Jaeoh "
+                "(Suwon-si, KR)"
+            ): 1,
+            "Applicant: Samsung Electronics Co., Ltd.": 1,
+            "Family ID: 94732062": 1,
+            "Appl. No.: 19/545464": 1,
+            "Filed: February 20, 2026": 1,
+            "KR 10-2023-0108976 Aug. 21, 2023": 1,
+            "KR 10-2023-0158179 Nov. 15, 2023": 1,
+            "PCT/KR2024/007723": 2,
+        },
+        "section_markers": {
+            "preamble": "US-20260181269-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract An electronic device is provided.",
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATION(S) [0001]"
+            ),
+            "description": (
+                "Description BRIEF DESCRIPTION OF THE DRAWINGS [0013]"
+            ),
+            "claims": "Claims 1 . An electronic device comprising",
+        },
+        "section_sha256": {
+            "preamble": (
+                "dd77c1530ddbf93d545c82090230205016e7b15fae17b4709f803de9ca2a14c4"
+            ),
+            "abstract": (
+                "c4a77ae169a30f6240a570d758b36b918562395607115fcbe20ca1ad03e21bf9"
+            ),
+            "background": (
+                "a130e83871a0db56a66c05d38740529529d243e5193eb43c78c2a47a2bdb4bda"
+            ),
+            "description": (
+                "62f0e721cf973f2021a30379249781e8943f8855468850e1996c32a0c655e6d8"
+            ),
+            "claims": (
+                "9fd418bd60624f3c77e3e57ae1679b315ec297a7d2dad7ddf3fed4c8dd67ed44"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "dc1dc45773cce6a6ffcda6846f6f717f78c1d80ccb9efdf48a8a11be3a1fa8a9",
+            (2, 2): "3a14ea905d7ee6c2b9a3cbd14144f15d04aa7da54acad6081b072086406eac62",
+            (3, 6): "b624d941bcae8c93c4413e0dadaaa8532e913e3a485772023fd4e27a2d29139d",
+            (7, 12): "9f663d52dada611eed62e945c7cb0d0cf1438efccbe1e7b1780769b2135ae0d0",
+            (13, 33): "08ba2f82d56c4c9fb04f0ed810fc36b9aeff30e3bfba8d0841b19031034f6d9f",
+            (34, 42): "0fad9480bf096b3afe6a9253780288c98dc21d108fe835fb5f9129bb0f0fdc2e",
+            (43, 67): "7a52ff7901351bbad0a26f5dbb812ceedec5ba1b435c66bb7b794f2c200f76c8",
+            (68, 90): "50130acd9f06dcf9d98f1aad77c8d4ac44475dc0e771a897f3418b20359bcea7",
+            (91, 114): "12b05bfcbfe460f9544ebae542911d0f236df4d4e8422cc957dd6af256e78ec7",
+            (115, 127): "d8a6d943a607158a192f8aa00f9fbaa373239f3a555ecd1e8dda4f7ba0c237b6",
+            (128, 138): "4603caefa3a874417d38af4d70459bd47fe98b765f1666d78e8a199cd5e6e811",
+            (139, 145): "1c9db61accdf7ea5f200a4b6a416810124e851d29ff77d58ecff34513c897457",
+            (146, 165): "df171addfe2c68a0675a0542203ccecda1f08945c86d3221c33dbfff17f7c0d7",
+            (166, 183): "8d52185f769d250e3db96e01f87775030df7ed7915b99f37268047a15b5bc764",
+            (184, 208): "4917fe4fc8e91035fa8a17250f9c9528f3d958f9792b60c63d36351fd1764139",
+            (209, 220): "e6e59ce4f04e78d4489db0247386dfc959268281972838c48db734caae47a758",
+            (221, 230): "986e10ee2cd4fa3332ebf61b319805de2b41bb771db99e76f8480739b7713563",
+            (231, 236): "cd9c4c65eeba46ed6ae014258fcc662f80f3acba49cba702d49d001110c71ef7",
+            (237, 240): "60f4a5dbaeb8c1d769cb71016a2f2938942ffb66e66aa522de2e643ea2d054a5",
+            (241, 251): "d6855ab0f34b7a6b8cc4975f2a7564e7a1ae54c000a645fb1e3cde6733bddda5",
+            (252, 255): "8cc1ff1b1fe8fb66a21fc6d0c020d635ce7f675899f3861209e96b5d085867de",
+            (256, 259): "ce45ac0b7f437752406f3d39d43c6b132c5e987537fe269d4a57188ec9dfe4ea",
+            (260, 288): "e207a112704673fe17050a613733a08e8df9ddd78a70395d0bfd0d8aeff9329d",
+            (289, 294): "7f0a3a9bb9cff47be01cee21ae0f9eb57e2cdc3e5bf282bb5bc8779d3265d65c",
+            (295, 305): "f22b3dfe624967122a2048d51a9006caef29cdd48dd52e36fdc48da973c144ce",
+            (306, 314): "5ef288812038170300e6b19844b92d17ae6081efe3c0c7b6001ecdf0d0a192c0",
+            (315, 320): "fd61d94f62551d93ca3559008a9b12609dbfea823af98d5d80b5ed6caeaa62c5",
+        },
+        "brief_drawings_sha256": (
+            "22c2ab6afda5ea91026d43f6f5527d623ee7b2f024fc1731ea7cbb9c7941b865"
+        ),
+        "figure_labels": (
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10A", "10B",
+            "11", "12", "13", "14", "15", "16", "17", "18",
+        ),
+        "claim_sha256": (
+            "c3c87694c022da27d6b0364667d61653b6f0603ce27930400eb4f5676b5ac935",
+            "734521646f2b1351ae926818bc7fee341c8d522fcf5e492b0aeae7e89f007437",
+            "27bd2811ac98dd7e4adf0bb893ee437ed4f9b4b1088c21e7f1efdb669260c851",
+            "90eeb1dc9f5ada213ff809054b275baa4649e5dfc7845ffa28b4d4a93be4f828",
+            "ea87cb6a5f1bc00a3ad22c31b245b92f0b1ff0839c1b657c15c769a4c6a80ca2",
+            "3404375575aae929e03563ef34ca223ebc84436228c746301dbe107b12ba91cd",
+            "a2104ce973bf7a209fb33587e3d030cb84a73e6c9b21a7108886c78cc6091254",
+            "116ee4c6181c649748c6c03818a9ac7070cdceaa36a242b28fe911ce796298ee",
+            "17d0f11c4a2875bb3917b0e74e189028ad10109d19a55396559ffaf2d99dd62e",
+            "152b581bd68bd296bae49abfc0830ccad91035a0588c3c25d7136b4b174dc02b",
+            "9af0e8b6fc20b3e95a342a059432c7a7f0b792cec7031ee03641cd6d38d49ac5",
+            "4600b9f4d20993b20d0aaa6255b5e22e94bf789edfb23a2b189cae5cbb724299",
+            "1ab8198dd18556cf53a781a4ed986c9261f4d3f332dfe5b0e1bd4b625dbedd57",
+            "8431d4fd08a0b2d0658587688dc7bc8b84b528b92605c0fa24f5efaa89335f54",
+            "d83f82a546fd531339270b1f39b2190f2268545a45bc021db05ab5c4de3889fe",
+            "68eb639cecb5ce315d0cc80f21f826147b6c618df674a1b34a4a6960416686cc",
+            "d5914880eba11dccce7e08f2ba89d59255ff7a391aab6cf6eeaf208d3f84bed9",
+            "1e988da1239034ace4bb84e19cf766b0afcd93fa3832accf832b57b79a0fce49",
+            "3ec9f4f9e6933557f5daf7fc0dc4f4a8aa4017e5207cae52ce2ea640baf1e50a",
+            "b4edf027f28249adee68d527d1c5cb6e21c3d5a17cc8d137bac0a037f502c166",
+        ),
+        "source_phrase_counts": {
+            "lens": 38,
+            "lens assembly": 18,
+            "camera module": 149,
+            "image sensor": 706,
+            "focal length": 3,
+            "f-number": 1,
+            "field of view": 7,
+            "radius": 0,
+            "thickness": 0,
+            "aperture": 0,
+            "asphere": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "conic": 0,
+            "optical zoom": 1,
+            "exposure value": 311,
+            "framerate": 17,
+            "time stamp": 195,
+            "effective focal length": 0,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/2db0e5937ad6d635/"
+                "US-20260181269-A1.pdf"
+            ),
+            "bytes": 4_074_659,
+            "sha256": (
+                "2db0e5937ad6d6357895225a4ccc5ef407e422f51ecf708c2f4f47658192a4ab"
+            ),
+            "page_count": 50,
+            "single_raster_page_count": 50,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 21)),
+            "drawing_sheet_count": 19,
+            "page_raster_sha256": (
+                "26234affb63446ba137e2bf346c8ec504b093ebf859337f0c4c600d3136c4603",
+                "c496c16e50824ff653299aef27d27826e989cd8ed0e1321980d334dd150c504e",
+                "dbae36ff7ecd7366d169e99dd1242bfe79cd65f78dae0970365f033332e2dddd",
+                "266ff95d73f2466d9bb2e892b69e2b52103210b3ba7c3a76bc6635a5c0e95592",
+                "620449555959ea9f7734efb12136f9e2b6c16e0dd1800aec48523017672ed99d",
+                "119f9fe9faf44f6eb14f8cf4484eefdbcc379b0d37ac5d833030cf64ed9a5bff",
+                "7e80e80457db94a922d67209e9e94e96e419fd8f0630fca4537006b607110c4a",
+                "d859c81e0f33a298ecd60b7a80ae4392b75a61ea2f002cfedf4fa94fc3a47bf8",
+                "d8e9ffc04b378f7c161ede971e0874705ae75c6ce0a153fdae90ea2b7d4517e2",
+                "77d23f7f38962f1c505ac3a856dffa88862ae33f10019282da0db3561f638c49",
+                "b616f088b1b53e9177e6e46355f0d888dfb40ce930cb4ae8d362473db5ca150e",
+                "e407ce100726250df61dce8bf50780c4a7cb9c9e22d6a0c208745e2d913468a9",
+                "e6d73dd35113d071edad2049afe91fce409246b2ab2f8c531c8fc4686161b860",
+                "c9f3e92d73a023d9f313a8b952680bba00ff3cb63b8aa628f9a9ccec54f057ff",
+                "c0157233d6cbd04d317b42f263d324b98d7d9f86e0869e728f0fb883fc1ca7a0",
+                "775d5222122d86106bd2b19cbd0d3c17abfc641bc2d2bc7c679bc6fb393d3ce0",
+                "eae1624eaefd3f9e9418fb71d7e68569ab64113c27cc14160b65b8c5407a87b0",
+                "702642cbe9e9d89fe9f50c8cc52d8d2cdb9025fb439f5115d265c7b198ec7164",
+                "80df87f4bce67dac25deac387fefd142781c71d63cf13521230ff694c4068908",
+                "65eebbdcda6f8cfa3a0fb3590e6310af3fba18e6edc5bac1848994db9ea0d4e3",
+                "074e30bd293a562cb893c54dfd1ba9ee0845474b2f82febf3430580177fd600d",
+                "7f0efcda7ab7cd6923b0d3b332134f10db56bdc9dc213c4854b4defa7bc5b5ae",
+                "81db1009ef12ce48ed09613e2b4ddb99f8a78256c09bd86b096404447304d4de",
+                "f163d4e3a6ef1d0083332693da2e18159ed30aff1aa8dcc682cbb303a22b744a",
+                "133321dbb1066bf195ce092f4ba492d0b02a33c199d5b8d6cf398dc0fadbdfe7",
+                "35912e6b465d0cf6cb0d24def0e63ed3d8b0df2ee45b36ab84d4c8107685943f",
+                "bafc7b0c6d70b49e4901dc66351537e1c62b8ddb9147515283fe42f1407c9f24",
+                "7e1e9093a0cb2384c00473c58b69acde4806a1c73bbd39b820bfe8c8be9304e0",
+                "b921b770f2193dd46bd0aab4e455492b8a8c85a1dccbe46421fe8a191d13701f",
+                "d59985197ede68466a11f41b48c2f31e8e9db566026581aaf7953637151ac9d7",
+                "2f24045568a79f8a66ac9c04e19639b74025f56a38ca60cbfa7f82e6e1aa6a14",
+                "693cbd5e3a30302cab93c511b72bdaad72085215d74fc0d8a0779441d94530de",
+                "5614036538627bc2c32519b3ec5299962c5e0ff0084994ae56a7b146df2c2712",
+                "f1af65567e664ab360bdfb6bae0928f27af8ef4246fb1f92ae87a1dd95150a46",
+                "a8d57e13cb06af3fd7e4faec69ada9e2b496144edce65542ff63e3a63277abc5",
+                "026deadbb9b438c6665f0b9bde38ad56986dc7772e79971e07d50ecab9daa704",
+                "3d0c32fdef2bedf740fcfd6ea800e8d3a8b2f6b3a812dab335f3162c20a03fa3",
+                "fa13b03410521d18e246b92a7b0ff18de48e3a034c490cebbb5b4420aa5fe105",
+                "8a2b0e6a5d3a25dea82939365297eebcec227389e3b369b59325ad5ef73519c2",
+                "b8a2f995a1d37a6b93369177f1d643af9a21503d0a2d3fe1f5e279058fa86a0f",
+                "f29b3ae48016b8ab2fe11e7a436f009a40d978b8cd9a6aa94a49f72bb1e95b5d",
+                "dc4f460844ea8c607c2abb9f2ab7777b4f82fc3fb835958e9dfdd0c4e269010e",
+                "8e431b5c9b325857e3f320b6cf6bd4a8d7ba54feeac485d8d4ae54c648f28746",
+                "35a60f285289f08ea0f26b1e582404ecd013ec2ee72d52bfdca2655a9e4e5626",
+                "ad0e5bbfe526c2a9ee7dc31f9ef3086117695e4c483530edbff1b0507f8f3066",
+                "534258d8113c0dd3d2c3ae94f50c2ad22891bea8bf87666cd44c4ba8e5008dfd",
+                "ba38c138e703613ea6fcc3e3416ab615f363c973fb82643c9e31fc8b47f1e16a",
+                "0a3f7bd75e490178ff2005d6c67accd99005b62a0141fee2e3cca78f1464dc64",
+                "27ef7616d93b3c7e6eb6ca37ff9b83112fbc9f19025923262694462dfb646a3f",
+                "195b419216e4ee95c8d8f2b8b6d9428c2cae7914aa86f48c4f45c71ab41bd9b8",
+            ),
+            "raster_set_sha256": (
+                "64c138d14041fde57a530f085c606df19051e3b78a6598d8b3fc6793d5a81694"
             ),
         },
     }
@@ -39577,6 +39813,305 @@ def _classify_samsung_animal_capture_attempts(
             ),
         )
         for number, label, reason_code in _SAMSUNG_ANIMAL_CAPTURE_ITEMS
+    ]
+
+
+def _classify_samsung_multi_camera_control_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 94732062 multi-camera control disclosures."""
+
+    profile = _SAMSUNG_MULTI_CAMERA_CONTROL_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _SAMSUNG_MULTI_CAMERA_CONTROL_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Samsung multi-camera-control identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Samsung multi-camera-control section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Samsung multi-camera-control section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Samsung multi-camera-control {section_name} section changed"
+                )
+
+        numbered_text = text[
+            section_starts["background"] : section_starts["claims"]
+        ]
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", numbered_text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 321)):
+            raise PatentParseError(
+                "Samsung multi-camera-control 320-paragraph denominator changed"
+            )
+        paragraphs = {
+            paragraph_number: numbered_text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(numbered_text)
+                )
+            ]
+            for index, (paragraph_number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for (start, end), expected_digest in profile[
+            "paragraph_span_sha256"
+        ].items():
+            span = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            ).strip()
+            observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Samsung multi-camera-control paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        detailed_description_start = text.index(
+            "DETAILED DESCRIPTION", section_starts["description"]
+        )
+        brief_drawings = text[
+            section_starts["description"] : detailed_description_start
+        ]
+        if (
+            hashlib.sha256(brief_drawings.encode("utf-8")).hexdigest()
+            != profile["brief_drawings_sha256"]
+        ):
+            raise PatentParseError(
+                "Samsung multi-camera-control drawing declarations changed"
+            )
+        figure_labels = []
+        for paragraph_number in range(14, 33):
+            match = re.match(
+                r"\[\d{4}\] FIG\. (\d+)(?: ([AB]))?\b",
+                paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Samsung multi-camera-control figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1) + (match.group(2) or ""))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control 19-panel figure denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Samsung multi-camera-control zero-table denominator changed"
+            )
+        if re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        ):
+            raise PatentParseError(
+                "Samsung multi-camera-control zero-MathML denominator changed"
+            )
+        if re.findall(r"<img\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Samsung multi-camera-control zero-HTML-image denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 21):
+            marker = f"{claim_number} . "
+            claim_start = claims_section.find(marker, cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Samsung multi-camera-control 20-claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(marker)
+        claim_digests = tuple(
+            hashlib.sha256(
+                claims_section[
+                    claim_start : (
+                        claim_starts[index + 1]
+                        if index + 1 < len(claim_starts)
+                        else len(claims_section)
+                    )
+                ]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for index, claim_start in enumerate(claim_starts)
+        )
+        if claim_digests != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control 20-claim content changed"
+            )
+
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Samsung multi-camera-control source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Samsung multi-camera-control official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Samsung multi-camera-control official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control official raster-page denominator changed"
+            )
+        if tuple(page_raster_hashes) != pdf_profile["page_raster_sha256"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control official page rasters changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Samsung multi-camera-control official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Samsung multi-camera-control official PDF gained a text layer"
+            )
+        if not (
+            len(pdf_profile["drawing_page_numbers"])
+            == pdf_profile["drawing_sheet_count"]
+            == len(profile["figure_labels"])
+            and pdf_profile["drawing_page_numbers"] == tuple(range(2, 21))
+        ):
+            raise PatentParseError(
+                "Samsung multi-camera-control drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all three exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML contains 320 consecutively numbered paragraphs, "
+        "20 claims, 18 nominal figures rendered as 19 declared panels, zero optical "
+        "tables, zero MathML objects and zero HTML image tags, and all 50 exact "
+        "official page rasters have been reviewed. Paragraphs 80-89 and 289-294 "
+        "plus FIGS. 3 and 18 identify only generic camera and lens-assembly blocks; "
+        "their possible properties include field of view, focal length, autofocus, "
+        "F-number and optical zoom, but they disclose no ordered optical radius, "
+        "spacing, material, refractive-index, Abbe, conic, asphere, stop, effective-"
+        "focal-length, F-number, image-height or field prescription. No value is "
+        "inferred, measured from a raster drawing, or borrowed from another family"
+    )
+    details = (
+        "Paragraph 9, detailed device embodiments in paragraphs 43-305 and claims "
+        "1-10 publish an electronic device that coordinates image-sensor timestamps, "
+        "output timing, exposure values, synchronized capture and preview display; "
+        f"{common}",
+        "Paragraphs 10 and 306-314 plus claims 11-19 publish the corresponding "
+        f"multi-camera timing and exposure-control operating method; {common}",
+        "Paragraphs 11 and 315-319 plus claim 20 publish only a non-transitory "
+        f"computer-readable-medium wrapper for those operations; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _SAMSUNG_MULTI_CAMERA_CONTROL_ITEMS
     ]
 
 

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "family_id": "94732062",
+  "publication_id": "US-20260181269-A1",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/33fcb6ace32ad634/US-20260181269-A1.html",
+    "bytes": 230113,
+    "characters": 229991,
+    "sha256": "33fcb6ace32ad6347fa9dbf5d07b48e00dfbdbf52dfe4123715c373678239c19",
+    "normalized_characters": 209080,
+    "normalized_sha256": "bc0c653fbae8ad73fddc2357c5a6e5d804c9f154997f5045836dc4abdb12782f"
+  },
+  "official_pdf": {
+    "authority": "USPTO Patent Public Search image service",
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20260181269",
+    "request_authentication": "anonymous USPTO Patent Public Search session token",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "path": "data/patent-lake/uspto-ppubs-pdf/2db0e5937ad6d635/US-20260181269-A1.pdf",
+    "bytes": 4074659,
+    "container_sha256": "2db0e5937ad6d6357895225a4ccc5ef407e422f51ecf708c2f4f47658192a4ab",
+    "page_count": 50,
+    "single_raster_pages": 50,
+    "raster_dimensions": [2560, 3300],
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "64c138d14041fde57a530f085c606df19051e3b78a6598d8b3fc6793d5a81694"
+  },
+  "drawing_source": {
+    "declared_nominal_figures": 18,
+    "declared_textual_panels": 19,
+    "located_raster_panels": 19,
+    "drawing_sheets": 19,
+    "drawing_pdf_pages": [
+      2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+    ],
+    "full_page_contact_review_claimed": true,
+    "figure_3_original_resolution_reviewed": true,
+    "figure_18_original_resolution_reviewed": true,
+    "classification_dependency": true,
+    "source_discrepancies": []
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO A1 HTML plus retained exact official A1 decoded-raster set",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "generic_camera_attributes_used_as_prescription_metadata": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}
