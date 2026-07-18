@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "publication_id": "US-20220128799-A1",
+  "official_pdf_sha256": "5266c4f2c494405c56110450d8e132331adbc50253acc086f7c94fd50962d438",
+  "ocr_overlay_pdf_sha256": "b28a41188fd2333b78de79827b17580316c8607f4e19e7b037dd712db2ea4692",
+  "page_count": 15,
+  "official_text_chars": 0,
+  "overlay_text_chars": 50152,
+  "decoded_raster_identity": {
+    "equal_pages": 15,
+    "different_pages": 0,
+    "raster_set_sha256": "9f00ea4599c07ad6ae436eed0b0e00d87c899d6c67c57167cabcef4f68c84db5"
+  },
+  "page_image_sha256": [
+    "4ef52ae5d6852de547aa472d6f1b06e0371cb0d2183427c60a968194db717f75",
+    "3c637fadb8e75f8c26345d5e23646df6d41f8b24ec306fdf5088d97e3b4156d0",
+    "09f6afdc224b74d847887a94b99981ff8b38910e25723b1211f602753bbc1cde",
+    "cb4a63306832a0b5cf2aecd01a1da9e2e271301d6f7d8153a727fd2267070585",
+    "9371c416e210e0a261f18ab18829f25f209f08e61cf0142303f9b2e9e5f5091b",
+    "a2606c3749d2ce4a9daa7675e5fb3d92c28ffc07a653c624b60ce51110605059",
+    "43b1fea857b9f02b1548828ba6957770702c70196c74bb377bac72b667c3703b",
+    "ffc7ba9d6ecb54ab4b61e698848c3f40f40a41703da0058d46307269e1eb96e6",
+    "ec52a3f6cf8c9220f70befbc7e664c9cb9b2c3d3ade4998ddb5490266f708e1f",
+    "129f5497ef90829b1a7193108528fe53c85a0703373bb8da814759d66be41b8f",
+    "69a797c0f10cf6fa32ddf9a1aeb74c5e101a0fe5930a8ee911f830c37fab621d",
+    "dcb63d8b3b00281b56e4c964f65ef5f5b454b2464318bb16dd21fb5403609e3b",
+    "b47421f3d07ef9914d0bde508bc84eeec633a1e338f1c7ad8a96fd8fad11d8db",
+    "ee7f34aa4ee49e3e2c5a9cfe279c577f5ead8bcc7773ba5b838dd37e81404e79",
+    "880f8774647ac0eb1e1925c45458d62fd3a7dda32116e53e609cdae39327e231"
+  ],
+  "key_pages": [
+    {
+      "page": 3,
+      "figures": ["3A", "3B"],
+      "rapidocr_tokens": 194,
+      "reviewed_original_resolution": true
+    },
+    {
+      "page": 4,
+      "figures": ["4A", "4B"],
+      "rapidocr_tokens": 194,
+      "reviewed_original_resolution": true
+    },
+    {
+      "page": 6,
+      "figures": ["7"],
+      "rapidocr_tokens": 180,
+      "reviewed_original_resolution": true
+    },
+    {
+      "page": 7,
+      "figures": ["8"],
+      "rapidocr_tokens": 180,
+      "reviewed_original_resolution": true
+    },
+    {
+      "page": 8,
+      "figures": ["9"],
+      "rapidocr_tokens": 63,
+      "reviewed_original_resolution": true
+    }
+  ],
+  "visual_review": {
+    "contact_sheet": ".planning/quick/260718-patent-generic-family-81258214/pdf-review/contact-sheet-pages-01-15.png",
+    "retained_original_pages": 15,
+    "enhancement_used": false,
+    "drawing_geometry_measured": false,
+    "numeric_values_accepted_only_from_printed_tables": true
+  }
+}

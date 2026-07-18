@@ -4619,6 +4619,53 @@ def test_ability_three_five_lens_sources_bind_full_denominator_and_field_gap() -
         assert not patent_pdf_recovery.ability_drawing_tables_declared(source + " ")
 
 
+def test_ability_four_wide_angle_source_binds_complete_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data/patent-lake/uspto-ppubs-html/US-PGPUB/d3357394ccefdb40/"
+        "US-20220128799-A1.html"
+    )
+    source = source_path.read_text(encoding="utf-8")
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    layout = patent_pdf_recovery._ability_four_wide_angle_source_layout(source)
+    assert layout["page_count"] == 15
+    assert len(layout["page_image_sha256"]) == 15
+    assert layout["role_pages"] == {
+        "ability_four_wide_prescription_ol1": 2,
+        "ability_four_wide_prescription_ol2": 3,
+        "ability_four_wide_prescription_ol3": 5,
+        "ability_four_wide_prescription_ol4": 6,
+        "ability_four_wide_system_meta": 7,
+    }
+    facts = patent_pdf_recovery._ability_four_wide_angle_source_facts(source)
+    assert facts["family_id"] == "81258214"
+    assert facts["application_number"] == "17/364492"
+    assert facts["paragraph_ranges"] == {
+        "background_summary": [1, 8],
+        "description": [9, 66],
+        "claims": [1, 20],
+    }
+    assert facts["brief_description_panels"] == [
+        "1",
+        "2",
+        "3A",
+        "3B",
+        "4A",
+        "4B",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+    ]
+    assert facts["independent_claim_numbers"] == [1, 8, 14]
+    assert facts["sample_design_count"] == 4
+    assert facts["lens_element_counts"] == [10, 10, 11, 11]
+    assert not patent_pdf_recovery.ability_drawing_tables_declared(source + " ")
+
+
 def test_aac_two_three_lens_sources_bind_two_prescriptions_and_field_gap() -> None:
     root = Path(__file__).resolve().parents[1]
     source_paths = (
@@ -5981,6 +6028,61 @@ def test_ability_three_lens_pdf_profile_rejects_source_binding_drift() -> None:
             json.dumps(payload),
             patent_id="US-11175479-B2",
         )
+
+
+def _ability_four_wide_retained_parser_input() -> bytes:
+    root = Path(__file__).resolve().parents[1]
+    return (
+        root
+        / "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-JSON/"
+        "9acb6227113faa82/US-20220128799-A1.json"
+    ).read_bytes()
+
+
+def test_ability_four_wide_profile_parses_all_complete_prescriptions() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _ability_four_wide_retained_parser_input().decode(),
+        patent_id="US-20220128799-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == [1, 2, 3, 4]
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    assert [
+        (prescription.focal_length_mm, prescription.f_number, prescription.hfov_deg)
+        for prescription in prescriptions
+        if prescription is not None
+    ] == pytest.approx(
+        [(2.07, 2.08, 80.0), (2.09, 2.02, 80.0), (2.14, 2.05, 80.0), (2.13, 1.99, 80.0)]
+    )
+    assert [len(prescription.surfaces) for prescription in prescriptions if prescription] == [
+        26,
+        26,
+        28,
+        28,
+    ]
+    assert [
+        [surface.label for surface in prescription.surfaces if surface.surface_type == "ASP"]
+        for prescription in prescriptions
+        if prescription is not None
+    ] == [["S19", "S20"], ["S19", "S20"], [], []]
+
+
+def test_ability_four_wide_profile_rejects_cross_ocr_cell_drift() -> None:
+    payload = json.loads(_ability_four_wide_retained_parser_input())
+    tokens = payload["pages"][0]["rapidocr_tokens"]
+    radius = next(token for token in tokens if token["text"] == "14.26")
+    radius["text"] = "14.27"
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        json.dumps(payload),
+        patent_id="US-20220128799-A1",
+    )
+
+    assert attempts[0].prescription is None
+    assert "OCR views disagree" in str(attempts[0].error)
+    assert all(attempt.prescription is not None for attempt in attempts[1:])
 
 
 def test_ability_two_five_lens_profile_retains_each_disclosed_ocr_failure() -> None:
@@ -30697,3 +30799,144 @@ def test_sunny_automotive_heated_optical_device_denominator_and_queue_artifacts(
         after_2["layout_signature_counts"]
     )
     assert queue["saturation_complete"] is False
+
+
+def test_ability_four_wide_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-81258214"
+    evidence = json.loads(
+        (quick / "family-81258214-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                path = root / str(value["path"])
+                raw = path.read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+
+    assert len(records) == 47
+    assert evidence["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "background_summary_numbered_paragraphs": 8,
+        "description_numbered_paragraphs": 58,
+        "total_numbered_paragraphs": 66,
+        "claims": 20,
+        "independent_claim_families": 3,
+        "declared_textual_figure_panels": 11,
+        "located_raster_figure_panels": 11,
+        "retained_drawing_sheets": 7,
+        "drawing_table_panels": 7,
+        "tagged_html_tables": 0,
+        "mathml_objects": 1,
+        "source_disclosed_designs": 4,
+        "complete_representable_prescriptions": 4,
+        "replayed_ledger_items": 4,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 15,
+        "retained_page_rasters": 15,
+        "unmapped_claims": 0,
+        "unmapped_declared_figure_panels": 0,
+        "unmapped_source_items": 0,
+    }
+
+    denominator = json.loads(
+        (quick / "family-81258214-denominator.json").read_text(encoding="utf-8")
+    )
+    assert denominator["source_disclosed_design_count"] == 4
+    assert denominator["source_disclosed_claim_family_count"] == 3
+    assert [item["item"] for item in denominator["items"]] == [
+        "OL1",
+        "OL2",
+        "OL3",
+        "OL4",
+    ]
+    assert all(
+        item["result_state"] == "converted_pending_intake"
+        for item in denominator["items"]
+    )
+
+    raster = json.loads(
+        (quick / "family-81258214-raster-audit.json").read_text(encoding="utf-8")
+    )
+    assert raster["decoded_raster_identity"] == {
+        "equal_pages": 15,
+        "different_pages": 0,
+        "raster_set_sha256": (
+            "9f00ea4599c07ad6ae436eed0b0e00d87c899d6c67c57167cabcef4f68c84db5"
+        ),
+    }
+    assert raster["visual_review"]["enhancement_used"] is False
+    assert raster["visual_review"]["drawing_geometry_measured"] is False
+
+    determinism = json.loads(
+        (quick / "family-81258214-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert determinism["attempts"][0]["semantic_sha256"] == determinism[
+        "attempts"
+    ][1]["semantic_sha256"] == evidence["semantic_replay_sha256"]
+    assert [item["prescription_fingerprint"] for item in evidence["converted_items"]] == [
+        "9b781da45ed76ca1",
+        "e0ec9deaa3bf8474",
+        "a6aff31d07fef464",
+        "eddd2a8eb50de005",
+    ]
+    assert evidence["formal_outputs"] == {
+        "worker_requests": 8,
+        "worker_receipts": 8,
+        "conversion_attempt_ids": 8,
+        "prescription_fingerprints": 4,
+        "staging_zmx": 4,
+        "formal_intake": 0,
+        "codev_calls": 0,
+    }
+
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 89
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == evidence["ledger"]["result_set_sha256"]
+    assert queue["next_exact_group"] == evidence["next_exact_group"] | {
+        "marker_counts": {
+            "effective_focal_length": 0,
+            "embodiment_anchor": 0,
+            "example_anchor": 0,
+            "f_number": 1,
+            "full_field": 8,
+            "half_field": 0,
+        },
+        "table_count": 0,
+        "raw_document": {
+            "evidence_type": "uspto_ppubs_parser_input_html",
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/US-PGPUB/"
+                "33fcb6ace32ad634/US-20260181269-A1.html"
+            ),
+            "sha256": (
+                "33fcb6ace32ad6347fa9dbf5d07b48e00dfbdbf52dfe4123715c373678239c19"
+            ),
+        },
+    }
+    assert queue["saturation_complete"] is evidence["saturation_complete"] is False

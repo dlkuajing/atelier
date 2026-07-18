@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "5a9124d16b675ebd135d3b26c1ec9986d8727315d17d2087af1ea63ad507615e",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 89,
+      "affected_items": 89
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "94732062",
+    "root_ids": ["US-20260181269"],
+    "publication_ids": ["US-20260181269-A1"],
+    "application_number": "19/545464",
+    "title": "ELECTRONIC DEVICE COMPRISING PLURALITY OF CAMERAS, AND OPERATING METHOD THEREOF",
+    "first_inventor": "PARK; Kyoungkeun",
+    "applicant": "Samsung Electronics Co., Ltd.",
+    "assignee": null,
+    "layout_signature": "47e7cc4e752d976ce84eb570f2ad8f451a7ead80846f9db627cd1be1f6a5aa35",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 1,
+      "full_field": 8,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/33fcb6ace32ad634/US-20260181269-A1.html",
+      "sha256": "33fcb6ace32ad6347fa9dbf5d07b48e00dfbdbf52dfe4123715c373678239c19"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

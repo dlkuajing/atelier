@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "family_id": "81258214",
+  "root_id": "US-20220128799",
+  "publication_id": "US-20220128799-A1",
+  "application_number": "17/364492",
+  "title": "Optical lens",
+  "first_inventor": "CHEN; Jung-Yao",
+  "applicant": "ABILITY ENTERPRISE CO., LTD.",
+  "assignee": null,
+  "priority": {
+    "country": "TW",
+    "application_number": "109137408",
+    "date": "2020-10-28"
+  },
+  "filed": "2021-06-30",
+  "published": "2022-04-28",
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/d3357394ccefdb40/US-20220128799-A1.html",
+    "bytes": 51919,
+    "raw_sha256": "d3357394ccefdb4090c9d5b607403cd512476db65630c5c51e812b7dd8ba8962",
+    "recovery_normalized_chars": 42792,
+    "recovery_normalized_sha256": "aa900faf648f952352ff44833795275d2bacb74631279f798fbe7d478846a33c",
+    "parser_normalized_chars": 42711,
+    "parser_normalized_sha256": "3893832b0d4f2c0e13e4255138d6dd2a3cd5519cc275cb8277768cec03b43288"
+  },
+  "denominator": {
+    "paragraph_numbers": [1, 66],
+    "paragraph_count": 66,
+    "background_summary_paragraphs": [1, 8],
+    "description_paragraphs": [9, 66],
+    "claim_numbers": [1, 20],
+    "claim_count": 20,
+    "independent_claim_numbers": [1, 8, 14],
+    "brief_description_panels": ["1", "2", "3A", "3B", "4A", "4B", "5", "6", "7", "8", "9"],
+    "drawing_sheet_count": 7,
+    "image_table_panels": ["3A", "3B", "4A", "4B", "7", "8", "9"],
+    "formal_html_table_count": 0,
+    "html_image_count": 0,
+    "mathml_equation_count": 1,
+    "complete_prescription_count": 4,
+    "lens_element_counts": [10, 10, 11, 11]
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/5266c4f2c494405c/US-20220128799-A1.pdf",
+    "bytes": 886635,
+    "sha256": "5266c4f2c494405c56110450d8e132331adbc50253acc086f7c94fd50962d438",
+    "page_count": 15,
+    "one_raster_per_page": true,
+    "page_raster_shape": [3300, 2560],
+    "text_chars": 0
+  },
+  "ocr_overlay_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-html/GOOGLE-OCR-PDF/b28a41188fd2333b/US-20220128799-A1.pdf",
+    "bytes": 1334320,
+    "sha256": "b28a41188fd2333b78de79827b17580316c8607f4e19e7b037dd712db2ea4692",
+    "page_count": 15,
+    "decoded_rasters_equal_official": 15,
+    "text_chars": 50152
+  },
+  "canonical_parser_input": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-JSON/9acb6227113faa82/US-20220128799-A1.json",
+    "bytes": 104254,
+    "sha256": "9acb6227113faa827f2620a640edb310e2d8d90939e5cb0fc46334f2894fad1d",
+    "profile": "ability_four_wide_angle_prescriptions_v1",
+    "key_pages": [3, 4, 6, 7, 8],
+    "rapidocr_token_counts": [194, 194, 180, 180, 63]
+  },
+  "system_rows": {
+    "focal_length_mm": [2.07, 2.09, 2.14, 2.13],
+    "ttl_mm": [25.0, 24.8, 29.0, 29.0],
+    "f_number": [2.08, 2.02, 2.05, 1.99],
+    "image_height_mm": [2.9, 2.9, 2.9, 2.9],
+    "full_fov_deg": [160.0, 160.0, 160.0, 160.0],
+    "hfov_deg": [80.0, 80.0, 80.0, 80.0],
+    "r1_mm": [14.26, 14.52, 15.32, 13.74],
+    "r2_mm": [5.72, 5.74, 6.16, 6.12]
+  },
+  "prescriptions": [
+    {
+      "label": "OL1",
+      "surface_figure": "3A",
+      "asphere_figure": "3B",
+      "lens_elements": 10,
+      "ordered_rows": 26,
+      "aspheric_surfaces": ["S19", "S20"],
+      "published_thickness_sum_mm": 25.02,
+      "prescription_fingerprint": "9b781da45ed76ca1",
+      "zmx_sha256": "f882ef1602f25cf74fbad458bd35179a7fe5d023c346513170878e87802cc4b1"
+    },
+    {
+      "label": "OL2",
+      "surface_figure": "4A",
+      "asphere_figure": "4B",
+      "lens_elements": 10,
+      "ordered_rows": 26,
+      "aspheric_surfaces": ["S19", "S20"],
+      "published_thickness_sum_mm": 24.925,
+      "prescription_fingerprint": "e0ec9deaa3bf8474",
+      "zmx_sha256": "e5a2f103a1d1b961538ac46f0b964754cad985e30ab2c5e57864ca525052bbfc"
+    },
+    {
+      "label": "OL3",
+      "surface_figure": "7",
+      "asphere_figure": null,
+      "lens_elements": 11,
+      "ordered_rows": 28,
+      "aspheric_surfaces": [],
+      "published_thickness_sum_mm": 28.94,
+      "prescription_fingerprint": "a6aff31d07fef464",
+      "zmx_sha256": "b7a3d215a90b2d22218a8905e1f648a20793dab422042cf402e148bd63cc03de"
+    },
+    {
+      "label": "OL4",
+      "surface_figure": "8",
+      "asphere_figure": null,
+      "lens_elements": 11,
+      "ordered_rows": 28,
+      "aspheric_surfaces": [],
+      "published_thickness_sum_mm": 28.91,
+      "prescription_fingerprint": "eddd2a8eb50de005",
+      "zmx_sha256": "8ba9a48a113a531d6d9067d947973bf8ca3ecc977ec0f15a834af2da4d32e4c5"
+    }
+  ]
+}

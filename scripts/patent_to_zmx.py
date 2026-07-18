@@ -60,6 +60,7 @@ from scripts.patent_pdf_recovery import (  # noqa: E402
     PatentPdfOcrRecovery,
     PatentPdfRecoveryError,
     _canonical_raster_sha256,
+    ability_four_wide_angle_source_layout_for_sha256,
     genius_four_lens_eleven_source_layout_for_sha256,
     genius_four_lens_six_source_layout_for_sha256,
     genius_seven_lens_seven_source_layout_for_sha256,
@@ -6961,6 +6962,14 @@ _ABILITY_THREE_LENS_PROFILE = "ability_three_lens_prescriptions_v1"
 _ABILITY_THREE_FIVE_LENS_PROFILE = (
     "ability_three_five_lens_angular_field_unpublished_v1"
 )
+_ABILITY_FOUR_WIDE_ANGLE_PROFILE = "ability_four_wide_angle_prescriptions_v1"
+_ABILITY_FOUR_WIDE_ANGLE_ROLE_PAGE_NUMBERS = {
+    "ability_four_wide_prescription_ol1": 3,
+    "ability_four_wide_prescription_ol2": 4,
+    "ability_four_wide_prescription_ol3": 6,
+    "ability_four_wide_prescription_ol4": 7,
+    "ability_four_wide_system_meta": 8,
+}
 _ABILITY_THREE_FIVE_LENS_ROLE_PAGE_NUMBERS = {
     "ability_three_five_prescription_ol1": 5,
     "ability_three_five_prescription_ol2": 6,
@@ -14759,6 +14768,23 @@ _ABILITY_TWO_FIVE_SURFACE_LABELS = (
     *(f"S{i}" for i in range(5, 15)),
 )
 _ABILITY_TWO_FIVE_ASPHERE_LABELS = ("S3", "S4", "S7", "S8", "S9", "S10")
+_ABILITY_FOUR_WIDE_OL12_SURFACE_LABELS = (
+    *(f"S{i}" for i in range(1, 9)),
+    "STO",
+    *(f"S{i}" for i in range(9, 25)),
+    "IMA",
+)
+_ABILITY_FOUR_WIDE_OL34_SURFACE_LABELS = (
+    *(f"S{i}" for i in range(1, 7)),
+    "S21",
+    "S22",
+    "S7",
+    "S8",
+    "STO",
+    *(f"S{i}" for i in range(9, 21)),
+    *(f"S{i}" for i in range(23, 27)),
+    "IMA",
+)
 
 
 def _ability_token_center(token: dict[str, Any]) -> tuple[float, float]:
@@ -15865,6 +15891,624 @@ def _parse_ability_two_five_lens_attempts(
             )
             _validate_prescription_materials(prescription)
         except Exception as exc:  # noqa: BLE001 - retain each disclosed optical lens
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    error=exc,
+                )
+            )
+        else:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=embodiment_number,
+                    embodiment=embodiment,
+                    prescription=prescription,
+                )
+            )
+    return attempts
+
+
+def _ability_four_wide_number_token(
+    tokens: list[dict[str, Any]],
+    *,
+    x: float,
+    y: float,
+    context: str,
+    required: bool = True,
+) -> dict[str, Any] | None:
+    """Read one source-locked cell; low OCR confidence still needs overlay agreement."""
+
+    candidates = [
+        token
+        for token in tokens
+        if abs(_ability_token_center(token)[0] - x) <= _ABILITY_COLUMN_X_TOLERANCE
+        and abs(_ability_token_center(token)[1] - y) <= _ABILITY_ROW_Y_TOLERANCE
+        and re.fullmatch(NUMBER_PATTERN, _ability_token_text(token), re.IGNORECASE)
+        and _ability_token_confidence(token) >= 0.65
+    ]
+    if len(candidates) > 1 or (required and len(candidates) != 1):
+        raise PatentParseError(
+            f"Ability four-wide-angle {context} has {len(candidates)} numeric OCR tokens"
+        )
+    return candidates[0] if candidates else None
+
+
+def _ability_four_wide_overlay_number_counter(text: str) -> Counter[str]:
+    normalized = re.sub(r"([Ee])\s*([+-])\s*(\d+)", r"\1\2\3", text)
+    pattern = re.compile(
+        rf"(?<![A-Za-z0-9])(?P<number>{NUMBER_PATTERN})(?![A-Za-z0-9])",
+        flags=re.IGNORECASE,
+    )
+    return Counter(match.group("number").casefold() for match in pattern.finditer(normalized))
+
+
+def _ability_four_wide_validate_overlay_numbers(
+    page: dict[str, Any],
+    values: list[str],
+    *,
+    context: str,
+) -> None:
+    mirror_text = page.get("mirror_text")
+    if not isinstance(mirror_text, str) or not mirror_text.strip():
+        raise PatentParseError(f"Ability four-wide-angle {context} lacks overlay text")
+    expected = Counter(value.casefold() for value in values)
+    observed = _ability_four_wide_overlay_number_counter(mirror_text)
+    missing = expected - observed
+    if missing:
+        detail = ",".join(f"{value}:{count}" for value, count in sorted(missing.items()))
+        raise PatentParseError(
+            f"Ability four-wide-angle {context} OCR views disagree: {detail}"
+        )
+
+
+def _ability_four_wide_figure_token(
+    tokens: list[dict[str, Any]],
+    figure: str,
+) -> dict[str, Any]:
+    pattern = re.compile(
+        rf"^FIG\s*\.\s*{re.escape(figure)}$",
+        flags=re.IGNORECASE,
+    )
+    matches = [
+        token
+        for token in tokens
+        if pattern.fullmatch(_ability_token_text(token))
+        and _ability_token_confidence(token) >= 0.90
+    ]
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Ability four-wide-angle FIG. {figure} has {len(matches)} accepted OCR tokens"
+        )
+    return matches[0]
+
+
+def _ability_four_wide_surface_table(
+    page: dict[str, Any],
+    *,
+    expected_labels: tuple[str, ...],
+    surface_figure: str,
+    flat_labels: frozenset[str],
+    filter_labels: frozenset[str],
+    cover_labels: frozenset[str],
+) -> list[PatentSurface]:
+    tokens = list(page["rapidocr_tokens"])
+    surface_header = _ability_unique_token(tokens, "Surface", min_confidence=0.95)
+    curvature_header = _ability_unique_token(tokens, "Curvature", min_confidence=0.95)
+    index_header = _ability_unique_token(tokens, "index", min_confidence=0.95)
+    abbe_header = _ability_unique_token(tokens, "Abbe", min_confidence=0.95)
+    surface_x, header_y = _ability_token_center(surface_header)
+    radius_x, _ = _ability_token_center(curvature_header)
+    nd_x, _ = _ability_token_center(index_header)
+    vd_x, _ = _ability_token_center(abbe_header)
+    millimeter_headers = [
+        token
+        for token in tokens
+        if _ability_token_text(token).casefold() == "(mm)"
+        and _ability_token_confidence(token) >= 0.95
+        and radius_x + _ABILITY_COLUMN_X_TOLERANCE
+        < _ability_token_center(token)[0]
+        < nd_x
+    ]
+    if len(millimeter_headers) != 1:
+        raise PatentParseError(
+            "Ability four-wide-angle thickness column is ambiguous"
+        )
+    thickness_x, _ = _ability_token_center(millimeter_headers[0])
+    figure_token = _ability_four_wide_figure_token(tokens, surface_figure)
+    _, figure_y = _ability_token_center(figure_token)
+
+    expected_casefold = {label.casefold() for label in expected_labels}
+    row_tokens = [
+        token
+        for token in tokens
+        if header_y < _ability_token_center(token)[1] < figure_y
+        and abs(_ability_token_center(token)[0] - surface_x)
+        <= _ABILITY_COLUMN_X_TOLERANCE
+        and _ability_token_text(token).casefold() in expected_casefold
+        and _ability_token_confidence(token) >= 0.90
+    ]
+    row_tokens.sort(key=lambda token: _ability_token_center(token)[1])
+    observed_labels = tuple(_ability_token_text(token).upper() for token in row_tokens)
+    if observed_labels != tuple(label.upper() for label in expected_labels):
+        raise PatentParseError(
+            "Ability four-wide-angle surface row sequence mismatch: "
+            + ",".join(observed_labels)
+        )
+
+    overlay_values: list[str] = []
+    surfaces: list[PatentSurface] = []
+    for label, row_token in zip(expected_labels, row_tokens, strict=True):
+        _, row_y = _ability_token_center(row_token)
+        canonical = label.upper()
+        radius_token = _ability_four_wide_number_token(
+            tokens,
+            x=radius_x,
+            y=row_y,
+            context=f"{surface_figure} {canonical} radius",
+        )
+        assert radius_token is not None
+        radius_text = _ability_token_text(radius_token)
+        if canonical in flat_labels:
+            if radius_text != "8":
+                raise PatentParseError(
+                    f"Ability four-wide-angle {surface_figure} {canonical} "
+                    "does not retain the infinity alias"
+                )
+            radius = None
+        else:
+            radius = _parse_number(radius_text)
+            overlay_values.append(radius_text)
+
+        if canonical == "IMA":
+            thickness = 0.0
+        else:
+            thickness_token = _ability_four_wide_number_token(
+                tokens,
+                x=thickness_x,
+                y=row_y,
+                context=f"{surface_figure} {canonical} thickness",
+            )
+            assert thickness_token is not None
+            thickness_text = _ability_token_text(thickness_token)
+            thickness = _parse_number(thickness_text)
+            overlay_values.append(thickness_text)
+
+        nd_token = _ability_four_wide_number_token(
+            tokens,
+            x=nd_x,
+            y=row_y,
+            context=f"{surface_figure} {canonical} refractive index",
+            required=False,
+        )
+        vd_token = _ability_four_wide_number_token(
+            tokens,
+            x=vd_x,
+            y=row_y,
+            context=f"{surface_figure} {canonical} Abbe number",
+            required=False,
+        )
+        if (nd_token is None) != (vd_token is None):
+            raise PatentParseError(
+                f"Ability four-wide-angle {surface_figure} {canonical} "
+                "has incomplete material metadata"
+            )
+        nd = _parse_number(_ability_token_text(nd_token)) if nd_token is not None else None
+        vd = _parse_number(_ability_token_text(vd_token)) if vd_token is not None else None
+        if nd_token is not None and vd_token is not None:
+            overlay_values.extend(
+                (_ability_token_text(nd_token), _ability_token_text(vd_token))
+            )
+        _validate_material_indices(surface_index=len(surfaces) + 1, nd=nd, vd=vd)
+
+        if canonical == "STO":
+            output_label = "Stop"
+        elif canonical in filter_labels:
+            output_label = "Filter"
+        elif canonical in cover_labels:
+            output_label = "Cover"
+        elif canonical == "IMA":
+            output_label = "Image"
+        else:
+            output_label = canonical
+        surfaces.append(
+            PatentSurface(
+                index=len(surfaces) + 1,
+                label=output_label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=None,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    _ability_four_wide_validate_overlay_numbers(
+        page,
+        overlay_values,
+        context=f"FIG. {surface_figure} surface table",
+    )
+    return surfaces
+
+
+def _ability_four_wide_aspheres(
+    page: dict[str, Any],
+    *,
+    surface_figure: str,
+    asphere_figure: str,
+) -> dict[str, dict[str, float]]:
+    tokens = list(page["rapidocr_tokens"])
+    surface_boundary = _ability_four_wide_figure_token(tokens, surface_figure)
+    asphere_boundary = _ability_four_wide_figure_token(tokens, asphere_figure)
+    _, start_y = _ability_token_center(surface_boundary)
+    _, end_y = _ability_token_center(asphere_boundary)
+    column_tokens: dict[str, dict[str, Any]] = {}
+    for label in ("S19", "S20"):
+        matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).casefold() == label.casefold()
+            and start_y < _ability_token_center(token)[1] < end_y
+            and _ability_token_confidence(token) >= 0.90
+        ]
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Ability four-wide-angle FIG. {asphere_figure} column {label} "
+                f"has {len(matches)} OCR tokens"
+            )
+        column_tokens[label] = matches[0]
+
+    coefficient_labels = ("K", "A2", "A4", "A6", "A8", "A10", "A12")
+    row_tokens: dict[str, dict[str, Any]] = {}
+    for label in coefficient_labels:
+        matches = [
+            token
+            for token in tokens
+            if _ability_token_text(token).casefold() == label.casefold()
+            and start_y < _ability_token_center(token)[1] < end_y
+            and _ability_token_confidence(token) >= 0.85
+        ]
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Ability four-wide-angle FIG. {asphere_figure} row {label} "
+                f"has {len(matches)} OCR tokens"
+            )
+        row_tokens[label] = matches[0]
+
+    overlay_values: list[str] = []
+    raw_rows: dict[str, dict[str, float]] = {"S19": {}, "S20": {}}
+    for coefficient_label in coefficient_labels:
+        _, row_y = _ability_token_center(row_tokens[coefficient_label])
+        for surface_label, column_token in column_tokens.items():
+            column_x, _ = _ability_token_center(column_token)
+            value_token = _ability_four_wide_number_token(
+                tokens,
+                x=column_x,
+                y=row_y,
+                context=(
+                    f"FIG. {asphere_figure} {surface_label} {coefficient_label}"
+                ),
+            )
+            assert value_token is not None
+            value_text = _ability_token_text(value_token)
+            overlay_values.append(value_text)
+            raw_rows[surface_label][coefficient_label] = _parse_number(value_text)
+
+    _ability_four_wide_validate_overlay_numbers(
+        page,
+        overlay_values,
+        context=f"FIG. {asphere_figure} asphere table",
+    )
+    coefficients: dict[str, dict[str, float]] = {}
+    for surface_label, row in raw_rows.items():
+        if row["K"] != 0.0 or row["A2"] != 0.0:
+            raise PatentParseError(
+                f"Ability four-wide-angle {surface_label} has unsupported K/A2"
+            )
+        coefficients[surface_label] = {
+            label: row[label] for label in ("A4", "A6", "A8", "A10", "A12")
+        }
+    return coefficients
+
+
+def _ability_four_wide_system_meta(
+    page: dict[str, Any],
+) -> list[dict[str, float]]:
+    tokens = list(page["rapidocr_tokens"])
+    column_tokens = [
+        _ability_unique_token(tokens, label, min_confidence=0.95)
+        for label in ("OL1", "OL2", "OL3", "OL4")
+    ]
+    column_xs = [_ability_token_center(token)[0] for token in column_tokens]
+    row_patterns = {
+        "focal_length_mm": re.compile(r"^F\s*\(mm\)$", re.IGNORECASE),
+        "ttl_mm": re.compile(r"^TTL\s*\(mm\)$", re.IGNORECASE),
+        "f_number": re.compile(r"^Fno$", re.IGNORECASE),
+        "image_height_mm": re.compile(r"^Y'\s*\(mm\)$", re.IGNORECASE),
+        "full_fov_deg": re.compile(r"^FOV\s*\([^)]*\)$", re.IGNORECASE),
+        "ttl_over_f": re.compile(r"^TTL/F$", re.IGNORECASE),
+        "fno_ttl_over_fov_y": re.compile(r"^\(Fno\*TTL\)/\(FOV\*Y[^)]*\)$", re.IGNORECASE),
+        "f_over_y": re.compile(r"^F/Y['’]?$", re.IGNORECASE),
+        "r1_mm": re.compile(r"^R1\s*\(mm\)$", re.IGNORECASE),
+        "r2_mm": re.compile(r"^R2\s*\(mm\)$", re.IGNORECASE),
+        "r_shape": re.compile(r"^\(R1-R2\)/\(R1\+R2\)$", re.IGNORECASE),
+    }
+    rows: dict[str, list[float]] = {}
+    overlay_values: list[str] = []
+    for name, pattern in row_patterns.items():
+        matches = [
+            token
+            for token in tokens
+            if pattern.fullmatch(re.sub(r"\s+", "", _ability_token_text(token)))
+            and _ability_token_confidence(token) >= 0.85
+        ]
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"Ability four-wide-angle metadata row {name} has {len(matches)} OCR labels"
+            )
+        _, row_y = _ability_token_center(matches[0])
+        values: list[float] = []
+        for column, x in enumerate(column_xs, start=1):
+            value_token = _ability_four_wide_number_token(
+                tokens,
+                x=x,
+                y=row_y,
+                context=f"metadata {name} OL{column}",
+            )
+            assert value_token is not None
+            value_text = _ability_token_text(value_token)
+            overlay_values.append(value_text)
+            values.append(_parse_number(value_text))
+        rows[name] = values
+    _ability_four_wide_validate_overlay_numbers(
+        page,
+        overlay_values,
+        context="FIG. 9 system table",
+    )
+
+    metadata = [
+        {name: values[index] for name, values in rows.items()}
+        for index in range(4)
+    ]
+    for item in metadata:
+        f = item["focal_length_mm"]
+        ttl = item["ttl_mm"]
+        fno = item["f_number"]
+        image_height = item["image_height_mm"]
+        full_fov = item["full_fov_deg"]
+        r1 = item["r1_mm"]
+        r2 = item["r2_mm"]
+        if f <= 0.0 or ttl <= 0.0 or fno <= 0.0 or image_height <= 0.0:
+            raise PatentParseError(
+                "Ability four-wide-angle system metadata is outside physical bounds"
+            )
+        if not 0.0 < full_fov < 180.0:
+            raise PatentParseError(
+                "Ability four-wide-angle full field is outside (0, 180)"
+            )
+        checks = (
+            (item["ttl_over_f"], ttl / f, 0.01),
+            (item["fno_ttl_over_fov_y"], fno * ttl / (full_fov * image_height), 0.002),
+            (item["f_over_y"], f / image_height, 0.005),
+            (item["r_shape"], (r1 - r2) / (r1 + r2), 0.005),
+        )
+        if any(
+            not math.isclose(published, calculated, rel_tol=0.0, abs_tol=tolerance)
+            for published, calculated, tolerance in checks
+        ):
+            raise PatentParseError(
+                "Ability four-wide-angle FIG. 9 redundant relations disagree"
+            )
+    return metadata
+
+
+def _parse_ability_four_wide_angle_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError(
+            "Ability four-wide-angle input lacks official source facts"
+        )
+    primary_digest = facts.get("primary_html_sha256")
+    if not isinstance(primary_digest, str):
+        raise PatentParseError("Ability four-wide-angle official HTML hash is invalid")
+    try:
+        source_layout = ability_four_wide_angle_source_layout_for_sha256(primary_digest)
+    except PatentPdfRecoveryError as exc:
+        raise PatentParseError(str(exc)) from exc
+    expected_facts = {
+        "normalized_text_sha256": source_layout["normalized_text_sha256"],
+        "family_id": source_layout["family_id"],
+        "application_number": source_layout["application_number"],
+        "figure_binding_counts": {
+            "surface_ol1": 2,
+            "asphere_ol1": 2,
+            "surface_ol2": 2,
+            "asphere_ol2": 2,
+            "surface_ol3": 2,
+            "surface_ol4": 2,
+            "system_meta": 2,
+        },
+        "paragraph_ranges": {
+            "background_summary": [1, 8],
+            "description": [9, 66],
+            "claims": [1, 20],
+        },
+        "brief_description_panels": [
+            "1",
+            "2",
+            "3A",
+            "3B",
+            "4A",
+            "4B",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+        ],
+        "claim_numbers": list(range(1, 21)),
+        "independent_claim_numbers": [1, 8, 14],
+        "formal_html_table_count": 0,
+        "mathml_equation_count": 1,
+        "sample_design_count": 4,
+        "lens_element_counts": [10, 10, 11, 11],
+    }
+    if any(facts.get(key) != value for key, value in expected_facts.items()):
+        raise PatentParseError(
+            "Ability four-wide-angle official source denominator changed"
+        )
+    if payload.get("page_count") != source_layout["page_count"]:
+        raise PatentParseError("Ability four-wide-angle PDF page count changed")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 5:
+        raise PatentParseError(
+            "Ability four-wide-angle PDF must retain exactly five key pages"
+        )
+
+    role_profiles = (
+        (
+            "ability_four_wide_prescription_ol1",
+            "3A",
+            "3B",
+            _ABILITY_FOUR_WIDE_OL12_SURFACE_LABELS,
+            frozenset({"STO", "S21", "S22", "S23", "S24", "IMA"}),
+            frozenset({"S21", "S22"}),
+            frozenset({"S23", "S24"}),
+        ),
+        (
+            "ability_four_wide_prescription_ol2",
+            "4A",
+            "4B",
+            _ABILITY_FOUR_WIDE_OL12_SURFACE_LABELS,
+            frozenset({"STO", "S21", "S22", "S23", "S24", "IMA"}),
+            frozenset({"S21", "S22"}),
+            frozenset({"S23", "S24"}),
+        ),
+        (
+            "ability_four_wide_prescription_ol3",
+            "7",
+            None,
+            _ABILITY_FOUR_WIDE_OL34_SURFACE_LABELS,
+            frozenset({"STO", "S23", "S24", "S25", "S26", "IMA"}),
+            frozenset({"S23", "S24"}),
+            frozenset({"S25", "S26"}),
+        ),
+        (
+            "ability_four_wide_prescription_ol4",
+            "8",
+            None,
+            _ABILITY_FOUR_WIDE_OL34_SURFACE_LABELS,
+            frozenset({"STO", "S23", "S24", "S25", "S26", "IMA"}),
+            frozenset({"S23", "S24"}),
+            frozenset({"S25", "S26"}),
+        ),
+    )
+    prescription_pages: list[dict[str, Any]] = []
+    for role, surface_figure, asphere_figure, *_rest in role_profiles:
+        page = _ability_page(payload, role)
+        page_number = _ABILITY_FOUR_WIDE_ANGLE_ROLE_PAGE_NUMBERS[role]
+        page_index = page_number - 1
+        if page.get("page_number") != page_number:
+            raise PatentParseError(f"Ability four-wide-angle role {role} is on the wrong page")
+        if page.get("official_image_sha256") != source_layout["page_image_sha256"][page_index]:
+            raise PatentParseError(f"Ability four-wide-angle role {role} raster hash changed")
+        mirror_text = page.get("mirror_text")
+        figures = (surface_figure,) if asphere_figure is None else (surface_figure, asphere_figure)
+        if not isinstance(mirror_text, str) or any(
+            re.search(
+                rf"\bFIG\s*\.\s*{re.escape(figure)}\b",
+                mirror_text,
+                flags=re.IGNORECASE,
+            )
+            is None
+            for figure in figures
+        ):
+            raise PatentParseError(f"Ability four-wide-angle role {role} lacks figure markers")
+        prescription_pages.append(page)
+
+    meta_role = "ability_four_wide_system_meta"
+    meta_page = _ability_page(payload, meta_role)
+    meta_page_number = _ABILITY_FOUR_WIDE_ANGLE_ROLE_PAGE_NUMBERS[meta_role]
+    if (
+        meta_page.get("page_number") != meta_page_number
+        or meta_page.get("official_image_sha256")
+        != source_layout["page_image_sha256"][meta_page_number - 1]
+    ):
+        raise PatentParseError("Ability four-wide-angle FIG. 9 page binding changed")
+    metadata = _ability_four_wide_system_meta(meta_page)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number, (profile, page, meta) in enumerate(
+        zip(role_profiles, prescription_pages, metadata, strict=True),
+        start=1,
+    ):
+        (
+            _role,
+            surface_figure,
+            asphere_figure,
+            surface_labels,
+            flat_labels,
+            filter_labels,
+            cover_labels,
+        ) = profile
+        embodiment = f"Ability wide-angle optical lens OL{embodiment_number}"
+        try:
+            surfaces = _ability_four_wide_surface_table(
+                page,
+                expected_labels=surface_labels,
+                surface_figure=surface_figure,
+                flat_labels=flat_labels,
+                filter_labels=filter_labels,
+                cover_labels=cover_labels,
+            )
+            if asphere_figure is not None:
+                coefficient_rows = _ability_four_wide_aspheres(
+                    page,
+                    surface_figure=surface_figure,
+                    asphere_figure=asphere_figure,
+                )
+                surface_by_label = {surface.label: surface for surface in surfaces}
+                for label, coefficients in coefficient_rows.items():
+                    surface = surface_by_label[label]
+                    surface.surface_type = "ASP"
+                    surface.asphere_coefficients.update(coefficients)
+
+            if not math.isclose(
+                sum(surface.thickness_mm for surface in surfaces),
+                meta["ttl_mm"],
+                rel_tol=0.0,
+                abs_tol=0.005 * (len(surfaces) - 1) + 1e-12,
+            ):
+                raise PatentParseError(
+                    f"Ability OL{embodiment_number} surface thicknesses disagree with TTL"
+                )
+            if not math.isclose(
+                float(surfaces[0].radius_mm),
+                meta["r1_mm"],
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ) or not math.isclose(
+                float(surfaces[1].radius_mm),
+                meta["r2_mm"],
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ):
+                raise PatentParseError(
+                    f"Ability OL{embodiment_number} FIG. 9 R1/R2 linkage disagrees"
+                )
+            prescription = PatentPrescription(
+                patent_id=str(payload["publication_id"]),
+                embodiment=embodiment,
+                focal_length_mm=meta["focal_length_mm"],
+                f_number=meta["f_number"],
+                hfov_deg=meta["full_fov_deg"] / 2.0,
+                surfaces=surfaces,
+            )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain all four disclosed lenses
             attempts.append(
                 _PrescriptionParseAttempt(
                     embodiment_number=embodiment_number,
@@ -19702,6 +20346,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_ability_three_lens_attempts(payload)
     if profile == _ABILITY_THREE_FIVE_LENS_PROFILE:
         return _ability_three_five_lens_terminal_attempts(payload)
+    if profile == _ABILITY_FOUR_WIDE_ANGLE_PROFILE:
+        return _parse_ability_four_wide_angle_attempts(payload)
     if profile == _ABILITY_TWO_FIVE_LENS_PROFILE:
         return _parse_ability_two_five_lens_attempts(payload)
     if profile == _ABILITY_TWO_NINE_LENS_PROFILE:

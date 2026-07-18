@@ -125,6 +125,51 @@ _ABILITY_THREE_FIVE_LENS_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
         ),
     },
 }
+_ABILITY_FOUR_WIDE_ANGLE_PROFILE = "ability_four_wide_angle_prescriptions_v1"
+_ABILITY_FOUR_WIDE_ANGLE_BINDING_PATTERNS = {
+    "surface_ol1": r"FIG\s*\.\s*3\s*A\s+lists\s+each\s+lens\s+parameter",
+    "asphere_ol1": r"FIG\s*\.\s*3\s*B\s+lists\s+aspheric\s+coefficients",
+    "surface_ol2": r"FIG\s*\.\s*4\s*A\s+lists\s+each\s+lens\s+parameter",
+    "asphere_ol2": r"FIG\s*\.\s*4\s*B\s+lists\s+aspheric\s+coefficients",
+    "surface_ol3": r"FIG\s*\.\s*7\s+lists\s+each\s+lens\s+parameter",
+    "surface_ol4": r"FIG\s*\.\s*8\s+lists\s+each\s+lens\s+parameter",
+    "system_meta": r"FIG\s*\.\s*9\s+lists\s+the\s+specific\s+parameters",
+}
+_ABILITY_FOUR_WIDE_ANGLE_ROLE_PAGES = {
+    "ability_four_wide_prescription_ol1": 2,
+    "ability_four_wide_prescription_ol2": 3,
+    "ability_four_wide_prescription_ol3": 5,
+    "ability_four_wide_prescription_ol4": 6,
+    "ability_four_wide_system_meta": 7,
+}
+_ABILITY_FOUR_WIDE_ANGLE_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "d3357394ccefdb4090c9d5b607403cd512476db65630c5c51e812b7dd8ba8962": {
+        "application_number": "17/364492",
+        "family_id": "81258214",
+        "normalized_text_sha256": (
+            "aa900faf648f952352ff44833795275d2bacb74631279f798fbe7d478846a33c"
+        ),
+        "page_count": 15,
+        "blank_mirror_pages": frozenset(),
+        "page_image_sha256": (
+            "4ef52ae5d6852de547aa472d6f1b06e0371cb0d2183427c60a968194db717f75",
+            "3c637fadb8e75f8c26345d5e23646df6d41f8b24ec306fdf5088d97e3b4156d0",
+            "09f6afdc224b74d847887a94b99981ff8b38910e25723b1211f602753bbc1cde",
+            "cb4a63306832a0b5cf2aecd01a1da9e2e271301d6f7d8153a727fd2267070585",
+            "9371c416e210e0a261f18ab18829f25f209f08e61cf0142303f9b2e9e5f5091b",
+            "a2606c3749d2ce4a9daa7675e5fb3d92c28ffc07a653c624b60ce51110605059",
+            "43b1fea857b9f02b1548828ba6957770702c70196c74bb377bac72b667c3703b",
+            "ffc7ba9d6ecb54ab4b61e698848c3f40f40a41703da0058d46307269e1eb96e6",
+            "ec52a3f6cf8c9220f70befbc7e664c9cb9b2c3d3ade4998ddb5490266f708e1f",
+            "129f5497ef90829b1a7193108528fe53c85a0703373bb8da814759d66be41b8f",
+            "69a797c0f10cf6fa32ddf9a1aeb74c5e101a0fe5930a8ee911f830c37fab621d",
+            "dcb63d8b3b00281b56e4c964f65ef5f5b454b2464318bb16dd21fb5403609e3b",
+            "b47421f3d07ef9914d0bde508bc84eeec633a1e338f1c7ad8a96fd8fad11d8db",
+            "ee7f34aa4ee49e3e2c5a9cfe279c577f5ead8bcc7773ba5b838dd37e81404e79",
+            "880f8774647ac0eb1e1925c45458d62fd3a7dda32116e53e609cdae39327e231",
+        ),
+    },
+}
 _ABILITY_TWO_FIVE_LENS_REQUIRED_FIGURE_TEXT = (
     "FIG. 3A shows each lens parameter of the optical lens of FIG. 1",
     "FIG. 3B shows each coefficient of a mathematical formula of aspheric surface "
@@ -1082,6 +1127,11 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         for pattern in _ABILITY_THREE_FIVE_LENS_BINDING_PATTERNS.values()
     ):
         return _ABILITY_THREE_FIVE_LENS_PROFILE
+    if digest in _ABILITY_FOUR_WIDE_ANGLE_SOURCE_LAYOUTS and all(
+        re.search(pattern, text, flags=re.IGNORECASE) is not None
+        for pattern in _ABILITY_FOUR_WIDE_ANGLE_BINDING_PATTERNS.values()
+    ):
+        return _ABILITY_FOUR_WIDE_ANGLE_PROFILE
     if all(marker in text for marker in _ABILITY_REQUIRED_FIGURE_TEXT):
         return "ability_two_lens_prescriptions_v1"
     if all(marker in text for marker in _ABILITY_EIGHT_LENS_REQUIRED_FIGURE_TEXT):
@@ -2006,6 +2056,122 @@ def _ability_three_five_lens_source_facts(raw_html: str) -> dict[str, Any]:
     }
 
 
+def ability_four_wide_angle_source_layout_for_sha256(
+    digest: str,
+) -> dict[str, Any]:
+    """Return the source-locked four-prescription wide-angle layout."""
+
+    layout = _ABILITY_FOUR_WIDE_ANGLE_SOURCE_LAYOUTS.get(digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Ability four-wide-angle official HTML is not source-locked"
+        )
+    return {**layout, "role_pages": dict(_ABILITY_FOUR_WIDE_ANGLE_ROLE_PAGES)}
+
+
+def _ability_four_wide_angle_source_layout(raw_html: str) -> dict[str, Any]:
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    return ability_four_wide_angle_source_layout_for_sha256(digest)
+
+
+def _ability_four_wide_angle_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind four complete prescriptions and their 160-degree system table."""
+
+    text = _normalized_html_text(raw_html)
+    digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _ability_four_wide_angle_source_layout(raw_html)
+    normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Ability four-wide-angle normalized official HTML hash changed"
+        )
+
+    figure_binding_counts = {
+        role: len(re.findall(pattern, text, flags=re.IGNORECASE))
+        for role, pattern in _ABILITY_FOUR_WIDE_ANGLE_BINDING_PATTERNS.items()
+    }
+    if figure_binding_counts != {
+        "surface_ol1": 2,
+        "asphere_ol1": 2,
+        "surface_ol2": 2,
+        "asphere_ol2": 2,
+        "surface_ol3": 2,
+        "surface_ol4": 2,
+        "system_meta": 2,
+    }:
+        raise PatentPdfRecoveryError(
+            "Ability four-wide-angle official figure-binding denominator changed"
+        )
+
+    paragraph_numbers = tuple(
+        int(number) for number in re.findall(r"\[(\d{4})\]", text)
+    )
+    if paragraph_numbers != tuple(range(1, 67)):
+        raise PatentPdfRecoveryError(
+            "Ability four-wide-angle 66-paragraph denominator changed"
+        )
+    brief_description_panels = tuple(
+        re.findall(
+            r"\[(?:0009|001[0-9])\]\s+FIG\s*\.\s*(\d+[AB]?)",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if brief_description_panels != (
+        "1",
+        "2",
+        "3A",
+        "3B",
+        "4A",
+        "4B",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+    ):
+        raise PatentPdfRecoveryError(
+            "Ability four-wide-angle 11-panel drawing denominator changed"
+        )
+    claims_text = text[text.rfind("Claims ") :]
+    claim_numbers = tuple(
+        int(number)
+        for number in re.findall(
+            r"(?:^|\s)(\d{1,2})\s*\.\s+(?:An|The)\s+optical\s+lens",
+            claims_text,
+            flags=re.IGNORECASE,
+        )
+    )
+    if claim_numbers != tuple(range(1, 21)):
+        raise PatentPdfRecoveryError(
+            "Ability four-wide-angle 20-claim denominator changed"
+        )
+    if raw_html.count('<maths id="MATH-US-00001"') != 1:
+        raise PatentPdfRecoveryError(
+            "Ability four-wide-angle MathML equation denominator changed"
+        )
+
+    return {
+        "primary_html_sha256": digest,
+        "normalized_text_sha256": normalized_digest,
+        "family_id": layout["family_id"],
+        "application_number": layout["application_number"],
+        "figure_binding_counts": figure_binding_counts,
+        "paragraph_ranges": {
+            "background_summary": [1, 8],
+            "description": [9, 66],
+            "claims": [1, 20],
+        },
+        "brief_description_panels": list(brief_description_panels),
+        "claim_numbers": list(claim_numbers),
+        "independent_claim_numbers": [1, 8, 14],
+        "formal_html_table_count": 0,
+        "mathml_equation_count": 1,
+        "sample_design_count": 4,
+        "lens_element_counts": [10, 10, 11, 11],
+    }
+
+
 def genius_seven_lens_seven_source_layout_for_sha256(
     digest: str,
 ) -> dict[str, Any]:
@@ -2474,6 +2640,11 @@ async def recover_ability_official_pdf_ocr(
         ability_three_five_layout = _ability_three_five_lens_source_layout(primary_html)
         if mirror_pdf is None:
             raise PatentPdfRecoveryError("Ability three-five-lens mirror PDF is unavailable")
+    ability_four_wide_layout: dict[str, Any] | None = None
+    if profile == _ABILITY_FOUR_WIDE_ANGLE_PROFILE:
+        ability_four_wide_layout = _ability_four_wide_angle_source_layout(primary_html)
+        if mirror_pdf is None:
+            raise PatentPdfRecoveryError("Ability four-wide-angle mirror PDF is unavailable")
     aac_two_three_layout: dict[str, Any] | None = None
     if profile == _AAC_TWO_THREE_LENS_PROFILE:
         aac_two_three_layout = _aac_two_three_lens_source_layout(primary_html)
@@ -2555,6 +2726,16 @@ async def recover_ability_official_pdf_ocr(
                 + " expected="
                 + ",".join(str(page) for page in sorted(expected_blank_pages))
             )
+    elif profile == _ABILITY_FOUR_WIDE_ANGLE_PROFILE:
+        assert ability_four_wide_layout is not None
+        expected_blank_pages = ability_four_wide_layout["blank_mirror_pages"]
+        if blank_mirror_pages != expected_blank_pages:
+            raise PatentPdfRecoveryError(
+                "Ability four-wide-angle OCR overlay blank-page set changed: actual="
+                + ",".join(str(page) for page in sorted(blank_mirror_pages))
+                + " expected="
+                + ",".join(str(page) for page in sorted(expected_blank_pages))
+            )
     elif profile == _AAC_TWO_THREE_LENS_PROFILE:
         assert aac_two_three_layout is not None
         expected_blank_pages = aac_two_three_layout["blank_mirror_pages"]
@@ -2620,6 +2801,13 @@ async def recover_ability_official_pdf_ocr(
         if tuple(page_hashes) != expected_page_hashes:
             raise PatentPdfRecoveryError(
                 "Ability three-five-lens full PDF raster denominator changed"
+            )
+    if profile == _ABILITY_FOUR_WIDE_ANGLE_PROFILE:
+        assert ability_four_wide_layout is not None
+        expected_page_hashes = ability_four_wide_layout["page_image_sha256"]
+        if tuple(page_hashes) != expected_page_hashes:
+            raise PatentPdfRecoveryError(
+                "Ability four-wide-angle full PDF raster denominator changed"
             )
     if profile == _GENIUS_FOUR_LENS_SIX_PROFILE:
         assert genius_four_lens_six_layout is not None
@@ -2695,6 +2883,16 @@ async def recover_ability_official_pdf_ocr(
         role_pages = dict(ability_three_five_layout["role_pages"])
         parser_profile = profile
         source_facts = _ability_three_five_lens_source_facts(primary_html)
+    elif profile == _ABILITY_FOUR_WIDE_ANGLE_PROFILE:
+        assert ability_four_wide_layout is not None
+        if page_count != ability_four_wide_layout["page_count"]:
+            raise PatentPdfRecoveryError(
+                "Ability four-wide-angle PDF page count changed: "
+                f"actual={page_count} expected={ability_four_wide_layout['page_count']}"
+            )
+        role_pages = dict(ability_four_wide_layout["role_pages"])
+        parser_profile = profile
+        source_facts = _ability_four_wide_angle_source_facts(primary_html)
     elif profile == "ability_two_lens_prescriptions_v1":
         role_pages = {
             "surface_ol1": _figure_page(
