@@ -651,6 +651,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_kodak_low_thermal_stress_imaging_system_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_sunny_split_lens_active_alignment_attempts(
         raw_text,
         patent_id=patent_id,
@@ -13789,6 +13797,294 @@ _KODAK_STRESS_BIREFRINGENCE_DESIGN_SOURCE_PROFILES: dict[str, dict[str, Any]] = 
             },
             "raster_set_sha256": (
                 "18acd7528ecb9af1a5844ef03e11ac90a33083f7c153ec1a5e14b69411d30652"
+            ),
+        },
+    }
+}
+
+
+_KODAK_LOW_THERMAL_STRESS_IMAGING_SYSTEM_ITEMS = (
+    (
+        1,
+        "Kodak first exemplary projection lens 270 (FIG. 6A)",
+        (
+            "confirmed_no_prescription."
+            "first_projection_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        2,
+        "Kodak first exemplary relay lens 250 (FIG. 6C)",
+        (
+            "confirmed_no_prescription."
+            "first_relay_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        3,
+        "Kodak second exemplary projection lens 270 (FIG. 10A)",
+        (
+            "confirmed_no_prescription."
+            "second_projection_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        4,
+        "Kodak second exemplary relay lens 250 (FIG. 10C)",
+        (
+            "confirmed_no_prescription."
+            "second_relay_lens_schematic_materials_and_performance_only"
+        ),
+    ),
+    (
+        5,
+        "Kodak third exemplary projection lens 270 (FIG. 14A)",
+        (
+            "metadata_unpublished."
+            "prescription_specific_efl_f_number_and_angular_field_absent"
+        ),
+    ),
+    (
+        6,
+        "Kodak third exemplary relay lens 250 (FIG. 14B)",
+        (
+            "metadata_unpublished."
+            "prescription_specific_efl_f_number_and_angular_field_absent"
+        ),
+    ),
+    (
+        7,
+        "Kodak merit-function stress-birefringence lens-design method (FIG. 15)",
+        "confirmed_no_prescription.merit_function_lens_design_method_only",
+    ),
+    (
+        8,
+        "Kodak substitution stress-birefringence lens-design method (FIG. 16)",
+        "confirmed_no_prescription.substitution_lens_design_method_only",
+    ),
+    (
+        9,
+        "Kodak stop-adjacent lens-group imaging system",
+        (
+            "confirmed_no_prescription."
+            "stop_adjacent_lens_group_system_architecture_only"
+        ),
+    ),
+    (
+        10,
+        "Kodak highest-power-density lens-group imaging system",
+        (
+            "confirmed_no_prescription."
+            "highest_power_density_system_architecture_only"
+        ),
+    ),
+    (
+        11,
+        "Kodak low-stress laser projection system",
+        "confirmed_no_prescription.laser_projection_system_architecture_only",
+    ),
+)
+_KODAK_LOW_THERMAL_STRESS_IMAGING_SYSTEM_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-8287129-B2": {
+        "raw_document_sha256": (
+            "4b55105484abed1dba7679fb42270888ef06cbc6362aeefed0db92d5112ab647"
+        ),
+        "normalized_text_sha256": (
+            "b054e605872fb431ef155c206b68c85220440526a3571c79216c424408b4d2df"
+        ),
+        "identity_markers": {
+            "Low thermal stress birefringence imaging system": 1,
+            "Family ID: 44972265": 1,
+            "Assignee: Eastman Kodak Company (Rochester, NY)": 1,
+            "Appl. No.: 12/784523": 1,
+            "US 20110285963 A1 Nov. 24, 2011": 1,
+            "2011/0288824": 1,
+            "2011/0292505": 1,
+        },
+        "section_markers": {
+            "preamble": "US-8287129-B2 - Patent Public Search | USPTO",
+            "abstract": (
+                "Abstract An imaging system having reduced susceptibility"
+            ),
+            "background": (
+                "Background/Summary (1) CROSS-REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "description": "Description (1) BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": (
+                "Claims 1. An imaging system having reduced susceptibility"
+            ),
+        },
+        "section_sha256": {
+            "preamble": (
+                "a0bb3bc0081c66843b7bee20e7a76e5945ae141cdb68e06c947f73e075ee454a"
+            ),
+            "abstract": (
+                "23d5b1599a4dcb3b3bc1c38f76196a9a2d90a2cfb47981e9e1cf8a3271bed204"
+            ),
+            "background": (
+                "c33a9012e300f460fc06245fce3fe4a622c509ca2a4a4821e3fde234d1047e49"
+            ),
+            "description": (
+                "d75803259778e746f8564935df1103088d366f0cf8b71f5dab2bfb48238f92ab"
+            ),
+            "claims": (
+                "c1d8235ac8fa4c0edee14afa7a4e5aa58e4a53a2c85a206d6abda4d8df994241"
+            ),
+        },
+        "background_paragraph_span_sha256": {
+            (1, 2): "61c4f6641b1a59eef1304f41105d2f0d01a79221e8e44fdaf9b70a8429596d01",
+            (3, 4): "f46d1f1be0f8d6b7a5ce81c8d6acb410156f94990d546982b4a338902b40ce47",
+            (5, 31): "4b53a338f6aee0828d32c784f4a987d1ab929a678c9294f40a09a4b3dcb4759a",
+            (32, 40): "8a10698503628403b4a309f0fcdbc863e02c719833968f97e31812db01e06538",
+        },
+        "description_paragraph_span_sha256": {
+            (1, 38): "142136baf553b51c2824303f22ebc34512fd0c987f226d1a5ff9036e4508f1a7",
+            (39, 60): "d086e093dd1884b64a57e97353228a3c6ca3668ff263b7014937f372fa050f1c",
+            (61, 62): "10dde0843acc3825c9cf0b52926c37003243e0087a30a3fea99b7d4cc12a1069",
+            (63, 64): "e697e7233974dc84a29f2c44752caf887b2e6493beb4886ef5c0ade02637866c",
+            (65, 93): "e4a655e12cfebed99ca7ff8306c63d95d2f88e852b830bcf2b7be7290543ecf8",
+            (94, 95): "deeaef839882ec511f6afbd90c88b21cba6e64aa2b3d07277ab864632809b6c9",
+            (96, 98): "1b0fa47cff26f23fb40a8c64c75d360f320acd3bcd314925d03d9a418ccde20f",
+            (99, 100): "2eef4704fd13b0299ff5d5761213abd19b35d3df65c5519a3b1455b27e06e70e",
+            (101, 111): "01ca3f0019e2d4aa7e9192412244cd47c62a0944731f44d69fe6542ceb552372",
+            (112, 117): "1ff6918465a9f07507bfa5dc5e2bdd2206a2fbc65bc9ca5d4f8ceddc7bdf1d4c",
+            (118, 122): "0ea6d5bbc3cd7bc5fef31f2adce708b565b80ed79ccb160c0446a7006f98fba6",
+            (123, 130): "9354327f2d8da31743174061631beb2313d8171de79fde6f57a5f1f426e9da41",
+            (131, 133): "564a331f46f92fa6820d26ac74700092e2b90c5d8b842e55b40b0c5951d5fb95",
+            (134, 144): "0d65744f32fe83ece98b509bd32e04408eeb5d54d1751e4dea448f3373d31ddf",
+            (145, 150): "488168d1d7877b70b7fd79f0d350c40371cd60c9580e5f5ac2eef7e23d9b19d7",
+            (151, 161): "2e6bdd4e52c927cab903f2777331e7cfa7a2c1e97d9557c9bece392402cee390",
+            (162, 164): "cfe821f45d448296bebecd39ecbacc3cc1bc15dc2f9a5051efc6f61e6ae782b2",
+        },
+        "claim_family_span_sha256": {
+            (1, 19): "cd7583b71365554ba72714cf3ad230cc8711d4204c45d4090c9632249ae9de54",
+            (20, 20): "01273cd4b4f606dc46a69592a52bc3576a7cf35cafd5303e925131f6a4e00731",
+            (21, 25): "7fa506076b645641f7a28bc9d4b891a19124d3affe70b00172d8b07758781d21",
+        },
+        "figure_labels": (
+            "1A",
+            "1B",
+            "2",
+            "3A",
+            "3B",
+            "4",
+            "5A",
+            "5B",
+            "6A",
+            "6B",
+            "6C",
+            "6D",
+            "7A",
+            "7B",
+            "7C",
+            "7D",
+            "7E",
+            "7F",
+            "7G",
+            "8A",
+            "8B",
+            "8C",
+            "8D",
+            "9A",
+            "9B",
+            "10A",
+            "10B",
+            "10C",
+            "10D",
+            "11A",
+            "11B",
+            "12A",
+            "12B",
+            "12C",
+            "12D",
+            "13A",
+            "13B",
+            "14A",
+            "14B",
+            "15",
+            "16",
+            "17",
+        ),
+        "source_phrase_counts": {
+            "first exemplary projection lens": 10,
+            "first exemplary relay lens": 9,
+            "second exemplary projection lens": 11,
+            "second exemplary relay lens": 10,
+            "third exemplary projection lens": 13,
+            "third exemplary relay lens": 13,
+            "FIG. 14A": 2,
+            "FIG. 14B": 2,
+            "prescription": 2,
+            "effective focal length": 0,
+            "focal length": 3,
+            "F-number": 1,
+            "F number": 0,
+            "FNO": 0,
+            "field of view": 1,
+            "full field": 0,
+            "half field": 0,
+            "image height": 0,
+            "radius": 0,
+            "radii": 3,
+            "thickness": 19,
+            "aperture stop": 68,
+            "aspheric": 14,
+            "FIG. 15": 4,
+            "FIG. 16": 3,
+            "FIG. 17": 2,
+            "diffractive optical element": 8,
+            "polarization compensator": 18,
+            "first surface mirror": 5,
+            "multilayer coating": 2,
+            "F/6": 1,
+            "F/3": 1,
+            "F/2.5": 1,
+        },
+        "numeric_system_value_assignment_counts": {
+            "F": 0,
+            "FNO": 0,
+            "FOV": 0,
+            "HFOV": 0,
+            "EFL": 0,
+        },
+        "equation_placeholder_counts": {
+            "##EQU00001##": 1,
+            "##EQU00002##": 1,
+            "##EQU00003##": 1,
+            "##EQU00004##": 1,
+            "##EQU00005##": 1,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/fd396e2147b34601/"
+                "US-8287129-B2.pdf"
+            ),
+            "bytes": 3_346_072,
+            "sha256": (
+                "fd396e2147b34601029577285fa4396255bf334e163647c56fa9b5c3503e38ee"
+            ),
+            "page_count": 61,
+            "single_raster_page_count": 61,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(3, 42)),
+            "drawing_sheet_count": 39,
+            "key_page_raster_sha256": {
+                11: "270d9f07e6f0e2132aa562666206d569b5498daf613fa9c7904b680f5fb51895",
+                13: "512047fbc5977e822dba8c4a6d640fdebe1765014f6f56de02f168ee842a075c",
+                25: "86887f6c3c781c8e72b264e0cedb5b4daf1e975058e8fb29547c2dae21e4fa7c",
+                27: "50c8df851327b091d6c769610b6cdb231c2068801f047b1a70f472bf8135839b",
+                31: "37b2283d43aa7379da4391cd3a2ad8efc33a01dd07740739cfaa0d3c0362df61",
+                33: "48edd84dd4dbe4eeac4cc1a2679725faa1229a665693c02e9f8d378e0bc09269",
+                37: "b8b54e8f0779033b72c808d4a17ff922398461ff3ff6d6115e53572a08ddaa92",
+                38: "3cf2633832600dccb8d574c3a8ef05f5f2194a48a67ab33d05a2b323cfa918ea",
+                39: "d961c9eb63c3a6d78c31b23f603a57c73cefab2169cb29e96ead7015ac7129b9",
+                40: "a68331b14978ea583c736f854b16c3887a7f0cc5c4c0c8983531a3a9f341d6b3",
+                41: "11b6c371ea808b36bdb339753338a55b5d661f4708b7208d73bd07824ffc3139",
+            },
+            "raster_set_sha256": (
+                "ce3c93ccfecf8926ef2f9ba8b42c9d88b9f5ea69436bad4d3cabeb2f28275af2"
             ),
         },
     }
@@ -38722,6 +39018,376 @@ def _classify_kodak_stress_birefringence_design_attempts(
         )
         for number, label, reason_code in (
             _KODAK_STRESS_BIREFRINGENCE_DESIGN_ITEMS
+        )
+    ]
+
+
+def _classify_kodak_low_thermal_stress_imaging_system_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify all exact-source items in Family 44972265."""
+
+    profile = _KODAK_LOW_THERMAL_STRESS_IMAGING_SYSTEM_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in (
+                _KODAK_LOW_THERMAL_STRESS_IMAGING_SYSTEM_ITEMS
+            )
+        ]
+
+    def numbered_paragraphs(
+        section: str,
+        count: int,
+        *,
+        section_name: str,
+    ) -> dict[int, str]:
+        starts: list[int] = []
+        cursor = 0
+        for number in range(1, count + 1):
+            marker = f"({number}) "
+            position = section.find(marker, cursor)
+            if position < 0:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system "
+                    f"{section_name} paragraph {number} is absent"
+                )
+            starts.append(position)
+            cursor = position + len(marker)
+        return {
+            number: section[
+                starts[number - 1] : (
+                    starts[number] if number < count else len(section)
+                )
+            ].strip()
+            for number in range(1, count + 1)
+        }
+
+    def validate_spans(
+        paragraphs: dict[int, str],
+        expected_spans: dict[tuple[int, int], str],
+        *,
+        section_name: str,
+    ) -> None:
+        for (start, end), expected_digest in expected_spans.items():
+            span = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            ).strip()
+            observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system "
+                    f"{section_name} paragraph span {start}-{end} changed"
+                )
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official raw text "
+                f"hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system normalized text "
+                f"hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = text.count(marker)
+            if observed != expected:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system "
+                    f"{section_name} section changed"
+                )
+
+        background = numbered_paragraphs(
+            sections["background"],
+            40,
+            section_name="background/summary",
+        )
+        description = numbered_paragraphs(
+            sections["description"],
+            164,
+            section_name="description",
+        )
+        validate_spans(
+            background,
+            profile["background_paragraph_span_sha256"],
+            section_name="background/summary",
+        )
+        validate_spans(
+            description,
+            profile["description_paragraph_span_sha256"],
+            section_name="description",
+        )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 26):
+            marker = "Claims 1. " if claim_number == 1 else f" {claim_number}. "
+            claim_start = claims_section.find(marker, cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system 25-claim "
+                    "denominator changed"
+                )
+            claim_start += len("Claims ") if claim_number == 1 else 1
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number}. ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 25
+                    else len(claims_section)
+                )
+            ].strip()
+            for claim_number in range(1, 26)
+        }
+        validate_spans(
+            claims,
+            profile["claim_family_span_sha256"],
+            section_name="claim",
+        )
+
+        if len(profile["figure_labels"]) != 42:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system 42-figure-panel "
+                "denominator changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system zero-tagged-table "
+                "layout changed"
+            )
+        if re.findall(r"<table\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official HTML gained "
+                "table tags"
+            )
+        if re.findall(r"<img\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official HTML gained "
+                "image tags"
+            )
+        if re.findall(r"<maths?\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official HTML gained MathML"
+            )
+        for placeholder, expected in profile[
+            "equation_placeholder_counts"
+        ].items():
+            observed = text.count(placeholder)
+            if observed != expected:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system equation placeholder "
+                    f"{placeholder!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        assignments = {
+            label: len(
+                re.findall(
+                    rf"(?<![A-Z0-9_]){re.escape(label)}\s*(?:=|:)",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            for label in ("F", "FNO", "FOV", "HFOV", "EFL")
+        }
+        if assignments != profile["numeric_system_value_assignment_counts"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system numeric system "
+                "metadata changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official PDF byte "
+                "count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official PDF page "
+                "count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(
+                _canonical_raster_sha256(page_images[0].data)
+            )
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official raster-page "
+                "denominator changed"
+            )
+        for page_number, expected_digest in pdf_profile[
+            "key_page_raster_sha256"
+        ].items():
+            if page_raster_hashes[page_number - 1] != expected_digest:
+                raise PatentParseError(
+                    "Kodak low-thermal-stress imaging-system key page "
+                    f"{page_number} raster changed"
+                )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system official PDF gained a "
+                "text layer"
+            )
+        if not (
+            pdf_profile["drawing_page_numbers"] == tuple(range(3, 42))
+            and pdf_profile["drawing_sheet_count"] == 39
+        ):
+            raise PatentParseError(
+                "Kodak low-thermal-stress imaging-system drawing-sheet "
+                "denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all 11 exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the exact B2 source contains 40 background/summary paragraphs, 164 "
+        "description paragraphs, 25 claims, 42 declared figure panels, 39 "
+        "drawing sheets, 12 tabular figure panels and two prescription tables. "
+        "All 61 exact official page rasters were retained and rehashed; no "
+        "numeric value is measured from a drawing, inferred, or borrowed from "
+        "the cross-referenced sibling publications"
+    )
+    details = (
+        "Paragraphs 61-62 and FIGS. 6A-6B publish the first projection lens's "
+        "six-element schematic, glasses and MTF only; no ordered surface radii "
+        f"or spacings are supplied; {common}",
+        "Paragraphs 63-64 and FIGS. 6C-6D publish the first relay lens's "
+        "seven-element schematic, glasses, MTF and system performance only; no "
+        f"ordered surface radii or spacings are supplied; {common}",
+        "Paragraphs 96-98 and FIGS. 10A-10B publish the second projection "
+        "lens's eight-element schematic, glasses, stress metrics and MTF only; "
+        f"no ordered surface radii or spacings are supplied; {common}",
+        "Paragraphs 99-100 and FIGS. 10C-10D publish the second relay lens's "
+        "seven-element schematic, glasses, stress metrics and MTF only; no "
+        f"ordered surface radii or spacings are supplied; {common}",
+        "Paragraphs 101-111 and exact-raster FIG. 14A publish the third "
+        "projection lens's complete spherical surface table with surface, "
+        "radius, thickness, aperture and glass fields, but no prescription-"
+        "specific effective focal length, exact system F-number or angular "
+        "field. The general about-F/3 preference and F/2.5-or-faster variant "
+        f"are not substituted; {common}",
+        "Paragraphs 112-117 and exact-raster FIG. 14B publish the third relay "
+        "lens's complete spherical surface table with surface, radius, "
+        "thickness, aperture and glass fields, but no prescription-specific "
+        "effective focal length, exact system F-number or angular field. The "
+        f"general F/6 relay context is not substituted; {common}",
+        "Description paragraphs 118-130 and FIG. 15 publish a merit-function "
+        "optimization workflow whose output would specify a lens design, not "
+        f"an independent numerical prescription; {common}",
+        "Description paragraphs 131-144 and FIG. 16 publish a manual or semi-"
+        "automated glass-substitution workflow, not an independent numerical "
+        f"prescription; {common}",
+        "Summary paragraphs 33-40, description paragraphs 145-161 and claims "
+        "1-19 publish a stop-adjacent lens-group imaging-system architecture "
+        "plus dependent metric, glass, asphere, diffractive, compensator and "
+        f"coated-mirror variants, not a numerical prescription; {common}",
+        "Description paragraphs 139-144 and claim 20 publish a highest-power-"
+        "density lens-group imaging-system architecture, not an independent "
+        f"numerical prescription; {common}",
+        "Description paragraphs 39-57 and claims 21-25 publish a laser relay-"
+        "plus-projection system architecture plus dependent metric, despeckler "
+        f"and stereoscopic variants, not a numerical prescription; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status=reason_code.split(".", 1)[0],
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in (
+            _KODAK_LOW_THERMAL_STRESS_IMAGING_SYSTEM_ITEMS
         )
     ]
 
