@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "family_id": "65634646",
+  "publication_id": "US-20220413251-A1",
+  "authority": "USPTO Patent Public Search image service",
+  "request": {
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20220413251",
+    "authentication": "anonymous PPUBS session token passed as requestToken and x-access-token",
+    "http_status": 200,
+    "content_type": "application/pdf"
+  },
+  "retained_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/d95e5ada6f747f21/US-20220413251-A1.pdf",
+    "bytes": 1621127,
+    "container_sha256": "d95e5ada6f747f2175f04197c3a662f0517763803ee89a9ad0170aeb45c00e26",
+    "page_count": 22,
+    "single_raster_pages": 22,
+    "raster_dimensions": [2560, 3300],
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "f7cf7109d57fc0861b8c4b9de851ded3d249ff49faef97cf39f1ce43338f6589"
+  },
+  "repeat_probe": {
+    "container_sha256": "6a460b9a8ab777cc340e3e557938dc808f5a017df8e4064252b353eff8fe34c4",
+    "bytes": 1621127,
+    "container_equal": false,
+    "decoded_page_rasters_equal": true,
+    "meaning": "the USPTO service regenerates PDF container metadata, while every decoded page raster remains byte-identical"
+  },
+  "page_roles": {
+    "front_matter": [1],
+    "drawing_sheets": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "specification_and_claims": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+  },
+  "drawing_reconciliation": {
+    "drawing_sheet_count": 10,
+    "figure_declaration_paragraphs": 22,
+    "declared_figure_count": 22,
+    "located_figure_count": 22,
+    "sheet_figures": {
+      "2": [1, 2],
+      "3": [3, 4, 5],
+      "4": [6, 7, 8],
+      "5": [9, 10, 11],
+      "6": [12, 13],
+      "7": [14],
+      "8": [15, 16],
+      "9": [17],
+      "10": [18, 19, 20],
+      "11": [21, 22]
+    },
+    "unmapped_declared_figures": [],
+    "unexplained_raster_figures": [],
+    "source_discrepancies": []
+  },
+  "page_raster_sha256": [
+    "2482e00b308d0f795c81ac6cd35b0478b0374eb9b1bb83f9d0e0ac14a41b1a00",
+    "7fcd1a8e04fa863a346df9aed33b83f7aed4243f853155a9b6ee16b76f2b0236",
+    "40e735ae7cb3df0f095a7ce6280eedb99229071fd71b7b292a19c3ebbfd6a1cd",
+    "8ecba4b23f0b7ee8cc4d77738d414b47d7235faf1330d2cfbf7687ae5b1c53ec",
+    "70031735f9391731264e62a7c61b380833069ff414b7c34e550868697d79abbc",
+    "acb2609dcda4758fb12d458a581b415e40af87ec4ccac160289b2647bfb9e164",
+    "570288755d046ac987f3fd2827ceb655931dc9c29bc2ec7ae2b6c4b02eb0eb40",
+    "de1cdf479424407f266403b8b611874e3c3bddd30b47a96d0089deb71bd1e11b",
+    "d1d2cc955f3d0f2d9e6cb3e9f090786be55befb5d9cfcc261bd8cfb17ec288bc",
+    "c34ab7c708d945ca0dcddfece1ad60ff7865b9903b776b59b67cb08db4753cc0",
+    "5d8a928a0f2e532cf15f93deffd416f5967fb6f3f346db9ccb95aa7c5b7e735c",
+    "acf452d68e73064627abc2d4d131d27171304967c4e3a4e29c227677437d8bb4",
+    "de6cc494465d863c7cd19e83690d6272eb4d80c7da8898f876a3923eb034510e",
+    "f7e751b71b1e6a56df6f6d9c9ba51e1530994c8bdbdce3dac81f4c44299879dc",
+    "4d31ec0763ac2b130d048d0dec12e7747a92d008726ea73465096c2120b0bfaf",
+    "0b6e49c96dc09490ee86f78a37cafa0e58237dd0b80fadeb8f47ffb72126d283",
+    "e12e74ecd7aa552652489c3d9c7264efca9e4e1eace196dc02da412314b5edfc",
+    "98a079a1ada2c9780df4ecff51aa7c9348b9ae19208251a5363eb1f0214390e3",
+    "230b44e5b0289ecdd8d33aa548b337324a614e17afa0b4c37d9f194abe7e3fff",
+    "683c5f457de5b56c3a49a3804ffca152f8fffb3d93300684a22dac80300cfbdf",
+    "f49f212f19c386aa051fc889e4228676542e03e06cc9e138fdf84db3e87c93bc",
+    "47b9f560f2984a92f2fb06d4918ea72f3e6bc37bcda4d81e97401c02348371ea"
+  ],
+  "contact_sheets": [
+    {
+      "path": ".planning/quick/260718-patent-generic-family-65634646/us20220413251-official-pages-1-22-contact.png",
+      "pages": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+      "bytes": 2455297,
+      "sha256": "70eff6532eed871910f0a77657a73c4fa27c6522d13304a2644aad94d2afa7da"
+    }
+  ],
+  "numeric_derivation_from_rasters": false,
+  "drawing_coordinates_transcribed": false,
+  "full_page_raster_review_claimed": true
+}

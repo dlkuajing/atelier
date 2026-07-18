@@ -631,6 +631,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_sunny_split_lens_active_alignment_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
@@ -11865,6 +11871,210 @@ _SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_SOURCE_PROFILES: dict[
             "drawing_sheet_count": 5,
             "raster_set_sha256": (
                 "e6597371c4854e7e458a7f6180b327fd7565f7f10fce2ecdfc2a53862843d306"
+            ),
+        },
+    }
+}
+_SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_ITEMS = (
+    (
+        1,
+        "Sunny split-lens preparation and six-degree positioning method",
+        "confirmed_no_prescription.split_lens_six_degree_positioning_method_only",
+    ),
+    (
+        2,
+        "Sunny image-based MTF measurement and staged alignment method",
+        "confirmed_no_prescription.mtf_defocus_staged_alignment_method_only",
+    ),
+    (
+        3,
+        "Sunny bonding and welding fixation variants",
+        "confirmed_no_prescription.sub_lens_fixation_process_variants_only",
+    ),
+    (
+        4,
+        "Sunny target-surface and field-curvature matching variant",
+        "confirmed_no_prescription."
+        "target_surface_field_curvature_matching_variant_only",
+    ),
+    (
+        5,
+        "Sunny paired-target inclination compensation variant",
+        "confirmed_no_prescription."
+        "paired_target_inclination_compensation_variant_only",
+    ),
+    (
+        6,
+        "Sunny iterative small-range readjustment variant",
+        "confirmed_no_prescription.iterative_small_range_readjustment_variant_only",
+    ),
+    (
+        7,
+        "Sunny assembled split-lens camera module architecture",
+        "confirmed_no_prescription.split_lens_camera_module_architecture_only",
+    ),
+    (
+        8,
+        "Sunny motor-on autofocus compensation variant",
+        "confirmed_no_prescription.motor_on_autofocus_compensation_variant_only",
+    ),
+)
+_SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20220413251-A1": {
+        "raw_document_sha256": (
+            "19ef45fc80889ee6e941038e0834f98fb708320c896d3f26fd681c1aedd30ae1"
+        ),
+        "normalized_text_sha256": (
+            "2478106de3096573507fef005d43109c8f96054ff700317f78710c2c65ea397e"
+        ),
+        "section_markers": {
+            "preamble": "US-20220413251-A1 - Patent Public Search | USPTO",
+            "abstract": (
+                "Abstract The present invention provides a method for assembling "
+                "a camera module"
+            ),
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . A method for assembling a camera module",
+        },
+        "section_sha256": {
+            "preamble": (
+                "6d34401ef26d4d1b0b466149ad1f1b9613bf108f1056ed5daed397c11b5680d6"
+            ),
+            "abstract": (
+                "f84074f0189f47bf4cb367e88bb7a883165852cb4125eef3ab0cf9572f0af90d"
+            ),
+            "background": (
+                "6a3364f5abd4ae5b532f3907ff2fba84c423165dda1763ba50c42b5eab989601"
+            ),
+            "description": (
+                "cac71ff09b65e593d7889d678aa4a46b88aa7b8e345b32b1e39a382687365b44"
+            ),
+            "claims": (
+                "f1be98f72817bdf8e13b66462ed16503b862f033f3414ed6c23691d53a82341d"
+            ),
+        },
+        "background_span_sha256": {
+            (1, 1): "c9f2528f136e99b4328aea667583a7ca2565376c0fa0ca8cf478536269415807",
+            (2, 2): "4ce8dab71e8f6ef0435a81292a5903c2dd29ac585abf19a6d2f586cf1dbd7947",
+            (3, 7): "b81bd0977414eea84e6b50d6363a087f75ee1bdae961f40dea714bb729f9bead",
+            (8, 63): "41477c2901b5c424e655131d2b0fb68b30889c454cd7c11c3b009f9965164884",
+        },
+        "description_span_sha256": {
+            (64, 86): "568dd9e7f75f739c8e9ce55593feaf930c63cd55deced165849473cb17f6ef41",
+            (87, 93): "a3d78bda49952de3cdbb65b216615038ee474b7306cff4399c36d73f54a4379c",
+            (94, 104): "ccf8c52d562180e8235b0a0185aea7ff9d09cccadc49e731af7f59e4ba58f001",
+            (105, 117): "1cb23d1f49375f6f8828bf9a0bf7a699bf3661de0686c50d7d6c0febb9de3c37",
+            (118, 120): "83c4c2ab57b0daf3461689ff4cbf6ee8f470445dd4fc60aaa2fd87b6cfbba8aa",
+            (121, 123): "30aeee308ca26c24101da09665973ebd0f5b83139e5ef758a9b394955b0ec46f",
+            (124, 124): "b57aaeffbc606cae0c9a4deddebfa45f06f6e83a008ab9e84c224fd4067ae510",
+            (125, 129): "7739e5b1d949838ed21e48919edc8fef8782da9e1538cbb4b6ee72ca54acdb17",
+            (130, 140): "337dd64ac0379719a34e3737a2f3dae1a92cc62186472b6096f89dd790248dd8",
+            (141, 141): "932380e242883fbe9670c45e0c5294ee5e133702bdb4b8a53939f368ec867335",
+            (142, 142): "10b41db7f1801efc0fabd79a258073704fab0fee3d55fd7bee4dc865b4b1b3bd",
+        },
+        "item_ranges": (
+            (94, 104),
+            (105, 117),
+            (118, 120),
+            (121, 123),
+            (124, 124),
+            (125, 129),
+            (130, 140),
+            (141, 141),
+        ),
+        "item_markers": (
+            "FIG. 1 is a flow chart of a method for assembling a camera module",
+            "Further, in an embodiment, a method for obtaining the actual measured "
+            "resolution",
+            "In step 400 , the first sub-lens assembly 1000",
+            "Further, in an embodiment, step 300 may further include",
+            "Further, in an embodiment, in step 320 , targets are set in pair",
+            "Further, in an embodiment, in step 310 , the first sub-lens assembly "
+            "is moved",
+            "According to an embodiment of the present invention, a camera module "
+            "obtained",
+            "Further, in an embodiment, the second sub-lens assembly 2000 may "
+            "further include a motor",
+        ),
+        "figure_labels": tuple(str(number) for number in range(1, 23)),
+        "claim_families": (tuple(range(1, 14)), tuple(range(14, 20))),
+        "claim_family_sha256": (
+            "a3f18337ffb23cea8cd38b6b002ac4c016666949945177351576e5e1d70dd6c1",
+            "1d7a5ae881e35a97d6e5aac1078cf1c11841d5d1c346b8615a1de8dc9b29c2b0",
+        ),
+        "identity_markers": {
+            "US-20220413251-A1": 1,
+            "United States Patent Application Publication 20220413251": 1,
+            "Kind Code A1": 1,
+            "Publication Date December 29, 2022": 1,
+            "Inventor(s) Wang; Mingzhu et al. CAMERA MODULE AND METHOD FOR "
+            "ASSEMBLING SAME": 1,
+            "Applicant: NINGBO SUNNY OPOTECH CO., LTD.": 1,
+            "Family ID: 65634646": 1,
+            "Appl. No.: 17/900484": 1,
+            "Filed: August 31, 2022": 1,
+            "CN 201710814250.2 Sep. 11, 2017": 1,
+            "PCT/CN2018/083923": 2,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "Fno": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "image height": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "aspheric": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "aperture stop": 0,
+            "optical prescription": 0,
+            "refractive power": 0,
+        },
+        "source_scope_phrase_counts": {
+            "radius of curvature": 1,
+            "refractive index": 2,
+            "thickness": 4,
+            "optical surface": 9,
+            "lens barrel": 36,
+            "MTF": 13,
+            "resolution defocusing curve": 26,
+            "80% field": 4,
+            "0 to 15 \u03bcm": 3,
+            "smaller than 0.5\u00b0": 3,
+            "10 \u03bcm and 50 \u03bcm": 3,
+            "+/-5 \u03bcm": 3,
+            "less than 10 mm": 1,
+            "six degrees of freedom": 5,
+            "bonding": 6,
+            "laser welding": 3,
+            "ultrasonic welding": 3,
+            "non-active alignment": 7,
+            "target surface": 11,
+            "field curvature": 2,
+            "motor": 33,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/USPTO-PDF/"
+                "d95e5ada6f747f21/US-20220413251-A1.pdf"
+            ),
+            "bytes": 1621127,
+            "sha256": (
+                "d95e5ada6f747f2175f04197c3a662f0517763803ee89a9ad0170aeb45c00e26"
+            ),
+            "page_count": 22,
+            "single_raster_page_count": 22,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 12)),
+            "drawing_sheet_count": 10,
+            "raster_set_sha256": (
+                "f7cf7109d57fc0861b8c4b9de851ded3d249ff49faef97cf39f1ce43338f6589"
             ),
         },
     }
@@ -33407,6 +33617,345 @@ def _classify_sekonix_self_aligning_lens_assembly_attempts(
             ),
         )
         for number, label, reason_code in _SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_ITEMS
+    ]
+
+
+def _classify_sunny_split_lens_active_alignment_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 65634646 split-lens alignment architectures."""
+
+    profile = _SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\[(\d{4})\]", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"Sunny split-lens alignment {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sunny split-lens alignment identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Sunny split-lens alignment section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Sunny split-lens alignment section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Sunny split-lens alignment {section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"],
+            expected_numbers=tuple(range(1, 64)),
+            label="background/summary paragraph",
+        )
+        description_paragraphs = numbered_paragraphs(
+            sections["description"],
+            expected_numbers=tuple(range(64, 143)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (
+                background_paragraphs,
+                profile["background_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_span_sha256"],
+                "description",
+            ),
+        ):
+            for bounds, expected_digest in span_hashes.items():
+                start, end = bounds
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                )
+                observed_digest = hashlib.sha256(
+                    span.strip().encode("utf-8")
+                ).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        "Sunny split-lens alignment "
+                        f"{label} paragraph span {start}-{end} changed"
+                    )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_ITEMS)
+            == 8
+        ):
+            raise PatentParseError(
+                "Sunny split-lens alignment source-item denominator changed"
+            )
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Sunny split-lens alignment source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(65, 87):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+(\d+)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Sunny split-lens alignment figure declaration "
+                    f"paragraph {paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment figure-label denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Sunny split-lens alignment zero-table denominator changed"
+            )
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError(
+                "Sunny split-lens alignment zero-MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 20):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Sunny split-lens alignment claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 19
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 20)
+        }
+        for claim_family, expected_digest in zip(
+            profile["claim_families"],
+            profile["claim_family_sha256"],
+            strict=True,
+        ):
+            observed_digest = hashlib.sha256(
+                "".join(claims[number] for number in claim_family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Sunny split-lens alignment claim-family denominator changed"
+                )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sunny split-lens alignment prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sunny split-lens alignment scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Sunny split-lens alignment official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Sunny split-lens alignment official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment official raster-page denominator changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Sunny split-lens alignment official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Sunny split-lens alignment official PDF gained a text layer"
+            )
+        if (
+            len(pdf_profile["drawing_page_numbers"])
+            != pdf_profile["drawing_sheet_count"]
+            or pdf_profile["drawing_page_numbers"] != tuple(range(2, 12))
+        ):
+            raise PatentParseError(
+                "Sunny split-lens alignment drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML and all 22 exact official page rasters contain "
+        "22 declared figures across ten drawing sheets, zero text tables and zero "
+        "MathML; the published 80% test field, MTF/defocus curves, micron offsets, "
+        "sub-half-degree tilt, mechanical clearances and sub-10-mm module diameter "
+        "describe assembly measurement or package geometry, while no ordered optical "
+        "radius, spacing, material, refractive-index, Abbe, conic, asphere, stop, "
+        "focal-length, F-number, image-height or field-of-view prescription is disclosed"
+    )
+    details = (
+        "Description paragraphs 94-104 and claims 1-3 and 13 publish split first/second "
+        f"sub-lens preparation, non-active pre-assembly and six-degree positioning; {common}",
+        "Description paragraphs 105-117 and claims 4-9 publish image-derived MTF/defocus "
+        f"measurement and staged in-plane/tilt alignment; {common}",
+        "Description paragraphs 118-120 and claims 11-12 publish adhesive, laser, "
+        f"ultrasonic and intermediate-member fixation processes; {common}",
+        "Description paragraphs 121-123 publish axial target-surface matching and a "
+        f"+/-5-micron measured field-curvature range; {common}",
+        "Description paragraph 124 publishes paired chart targets and image-plane "
+        f"inclination-vector compensation; {common}",
+        "Description paragraphs 125-129 and claim 10 publish iterative reduced-range "
+        f"translation and tilt readjustment; {common}",
+        "Description paragraphs 130-140 and claims 14-19 publish the resulting split-lens "
+        f"camera module, connecting medium, axis offsets and structural clearances; {common}",
+        "Description paragraph 141 publishes motor-on autofocus/reed-deformation "
+        f"compensation during alignment; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _SUNNY_SPLIT_LENS_ACTIVE_ALIGNMENT_ITEMS
     ]
 
 
