@@ -589,6 +589,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_flexible_wire_aperture_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_wnc_camera_antenna_architecture_attempts(
             raw_text,
             patent_id=patent_id,
@@ -10806,6 +10814,249 @@ _LARGAN_IMAGING_LENS_DRIVING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "Wc (mm)": 3,
             "Wf (mm)": 3,
             "visual angle": 3,
+        },
+    }
+}
+_LARGAN_FLEXIBLE_WIRE_APERTURE_ITEMS = (
+    (
+        1,
+        "Largan first driving-module embodiment primary example",
+        "confirmed_no_prescription.flexible_wire_plate_driving_architecture_only",
+    ),
+    (
+        2,
+        "Largan first driving-module embodiment alternate example",
+        "confirmed_no_prescription.alternate_flexible_wire_plate_architecture_only",
+    ),
+    (
+        3,
+        "Largan second driving-module embodiment",
+        "confirmed_no_prescription.second_flexible_wire_plate_drive_architecture_only",
+    ),
+    (
+        4,
+        "Largan third driving-module embodiment",
+        "confirmed_no_prescription.third_variable_aperture_drive_architecture_only",
+    ),
+    (
+        5,
+        "Largan fourth driving-module embodiment",
+        "confirmed_no_prescription.fourth_variable_aperture_drive_architecture_only",
+    ),
+    (
+        6,
+        "Largan fifth electronic-device embodiment",
+        "confirmed_no_prescription.multi_camera_smartphone_wrapper_only",
+    ),
+    (
+        7,
+        "Largan sixth electronic-device embodiment",
+        "confirmed_no_prescription.folded_telephoto_smartphone_wrapper_only",
+    ),
+    (
+        8,
+        "Largan seventh vehicle-device embodiment",
+        "confirmed_no_prescription.vehicle_multi_camera_wrapper_only",
+    ),
+)
+_LARGAN_FLEXIBLE_WIRE_APERTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260086429-A1": {
+        "raw_document_sha256": (
+            "2d0745df79927e892aab44144dcff53fd384f2f7fb1d290ec9ad81dabb6cfece"
+        ),
+        "normalized_text_sha256": (
+            "ec0442b7f2ce2cb4b21a6f9bc27ac04e96c95d155d24dd4ac04d0f8511d1853c"
+        ),
+        "section_markers": {
+            "preamble": "US-20260086429-A1",
+            "abstract": "Abstract An imaging lens driving module includes",
+            "related_metadata": (
+                "Related U.S. Application Data us-provisional-application "
+                "US 63698637 20240925"
+            ),
+            "related_applications": "Background/Summary RELATED APPLICATIONS [0001]",
+            "background": "BACKGROUND Technical Field [0002]",
+            "summary": "SUMMARY [0005]",
+            "figures": "BRIEF DESCRIPTION OF THE DRAWINGS [0010]",
+            "detailed": "DETAILED DESCRIPTION [0043]",
+            "claims": "Claims 1 . An imaging lens driving module, comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "bacdb83b9428cf574076d70ee656242af2ae7f611631022fdc3c1e42405fac7d"
+            ),
+            "abstract": (
+                "852b15cef0ed81eca770eac1abeba03440ada29892285fde1846f2019c6e75f9"
+            ),
+            "related_metadata": (
+                "e600f747c065548ba48095c33dd0c57917c026d23b0767d8582f58934d3d74f3"
+            ),
+            "related_applications": (
+                "f1dde325180ebd4c58be480ac3a4b2ce7024c2e285063db868ce4c6de1e22b95"
+            ),
+            "background": (
+                "c8c1c6f785a1e7b7dc5c98ab571ce47bdb5873d27b1fc8ae21fc76cbcc73b52d"
+            ),
+            "summary": (
+                "c92a5f4123e93f97fa402a032cebffe11772a7a8c8b57355a6fbbdc4565717bb"
+            ),
+            "figures": (
+                "7d21e0ad606b757e22ac60f7710e158ec1d739be2a05d982b184ab94bf0b76f2"
+            ),
+            "detailed": (
+                "7119a6e6c50c9eecae60723fa0beb9ea81858761002bf63b2f5cc216075a8171"
+            ),
+            "claims": (
+                "673b6ecd2b245229fd52e53294873b4fc7d53b2e6b9a939429f549b218c5948b"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "f9342815f9164346e871a8fa23a7a8bb328ef50c8999d24908e87751b5c999c9",
+            (2, 4): "d497d305b3d777fafbd05e2249480be267f215603a5cc35bc3c995cab4b4ab6e",
+            (5, 9): "d5ccd8514b7e80d33502292261a15f285ab5c2fe907d1e2564e978b5ff63979d",
+            (10, 42): "bfd29f2dfc208390bc204f7a58f292593f54e981a7c00ae82ed85529d47f722c",
+            (43, 79): "d4b94d6f188d44b1ed0f77916ebaf567e476d6528d99fd648f4e798c2120f10f",
+            (80, 94): "377ea9a7cecf3a75a06315629ed39eec7b86e31c47a92edcb49518e79a2e4a27",
+            (95, 98): "95bd18f84dc07e7caa6d2c406cd661cacb6df2863fc3447a3e409a67ddc9e5f0",
+            (99, 104): "cddb96233ee23259f855b306954d9d1bbe4cc79ef60ac7cbf62f64f311820610",
+            (105, 112): "14bc6230f3d83176dcf7c1b3a7db443dcfa80e00de86f81de2c1fec02590bd93",
+            (113, 120): "0715ac89254486fca214bb722a1a2363716cae9988ab621440f8a091a8bfe972",
+            (121, 130): "91c0521dacf7d675137209ad4dbf46cc935874be7b357380a806274ba468958c",
+            (131, 134): "8c9660d0348bd27eab12a6b2e171fe0b7110e69198fa19f1513fa626d59d28fe",
+            (135, 138): "2575e1fe0c8fb46c2443ba30bce885e6811c7e481940fb5dbb25ea76c871b240",
+            (139, 139): "e6266674449ce00a9d6538a127af47664954505983d71522630c1c0594babc4e",
+        },
+        "item_ranges": (
+            (80, 94),
+            (95, 98),
+            (99, 104),
+            (105, 112),
+            (113, 120),
+            (121, 130),
+            (131, 134),
+            (135, 138),
+        ),
+        "item_markers": (
+            "FIG. 1 A is a schematic view of a camera module 100",
+            "FIG. 1 L is a three dimensional view of a flexible wire plate 150 a",
+            "FIG. 2 A is a plan view of a flexible wire plate 250",
+            "FIG. 3 A is an exploded view of a variable aperture element 330",
+            "FIG. 4 A is an exploded view of a variable aperture element 430",
+            "FIG. 5 A is a schematic view of an electronic device 10",
+            "FIG. 6 is a schematic view of an electronic device 20",
+            "FIG. 7 A is a schematic view of a vehicle instrument 30",
+        ),
+        "figure_labels": (
+            "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H",
+            "1I", "1J", "1K", "1L", "1M", "1N", "1O",
+            "2A", "2B", "2C", "2D", "2E", "3A", "3B", "4A", "4B",
+            "5A", "5B", "5C", "5D", "5E", "6", "7A", "7B", "7C",
+        ),
+        "table_prefix_sha256": (
+            "0d81049c6eb06a86496b0d1e8751b6e9b8b4f479987454688dea98fa426ffa50",
+            "944ef88e2017d96c5bb6a2c2823d7b61a67ca5e444e0af6308624a19a36e42cb",
+            "34019f4cc2ccb1764da39f741579200df4b8a2466cad21eee58438d8398b2a6a",
+            "8df41b95b62e4fe624befd155572b67df5b07d7eb44c2449d591f20e94c722e9",
+        ),
+        "mathml_sha256": (
+            "9ae224bdc3d1e898bc1fd4009a3b8dc1bcd0bc1f01020621e0a7cb23b74cebc2",
+            "160f258975269309449f6a5cc9de955f5d6fd8868becb0c8cb5b55c2074eaf14",
+            "9e32c20658ab0813565ad52cc1e948234e815f7df598d09fab7df80a3f3e863b",
+            "8962f195d2edd7db5eb2fc127d287a2e0ea39b9bb02699d3596cf59802d66147",
+            "b6cca81b1d3a37809b20e5ec1033e763b6066dd084df316db6dd2175495ab57f",
+            "0ee10e328b5b06fcb29c5963cd4a6f92f77d2a7f66b0b199263e570e86161625",
+            "20775349383d4cc1b1761d556b5be3f98ba81308ccc3058b33113b61fbc614e2",
+            "54b9e9cee5647450b57fc7e93349e0f99cb3a53ad99e5fae563f971fb1578423",
+            "11cd378d289330e09cd7c51d0fa91240533f61ad0091e6d9d0f3749378f8174b",
+            "33de0b444278e71eeb865c0559d647c846c980fc9aeeaa6bc23e8816829ee7aa",
+            "8690b3b468e8992b3a0d2fd5be718410e1e975e618ddaecd2ab3fed9dc8e8ddf",
+            "b5e2583d0185009eb2d557dab6e8f51d270a5806fc0b69fcd24c9c90d891b7d5",
+        ),
+        "claim_families": (
+            tuple(range(1, 13)),
+            tuple(range(13, 24)),
+            tuple(range(24, 36)),
+        ),
+        "claim_family_sha256": (
+            "9d46c289bba70840b5ba8977e0cdc78dd532d884f874dc12b9357b9c67af8d86",
+            "c97723524a55c2f8c9bcd79827bdd05950a6eb66608086aea41272a34e48d538",
+            "b87db5dad90ee7e132fddf45083abf641a5e7e6a3094e8547831c7d163c3266c",
+        ),
+        "identity_markers": {
+            "US-20260086429-A1": 1,
+            "Patent Application Publication 20260086429": 1,
+            "Kind Code A1": 1,
+            "Publication Date March 26, 2026": 1,
+            "IMAGING LENS DRIVING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE": 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 98695135": 1,
+            "Appl. No.: 19/333463": 1,
+            "Filed: September 19, 2025": 1,
+            "63/698,637": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "F-number": 0,
+            "Fno": 0,
+            "F/#": 0,
+            "radius": 0,
+            "curvature": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "lens element": 0,
+            "image height": 0,
+            "aperture stop": 0,
+            "stop": 0,
+            "entrance pupil": 0,
+            "optical prescription": 0,
+        },
+        "source_scope_phrase_counts": {
+            "imaging lens assembly": 53,
+            "lens carrier": 83,
+            "flexible wire plate": 131,
+            "optical axis": 45,
+            "image sensor": 15,
+            "image surface": 7,
+            "focal length": 1,
+            "zoom function": 1,
+            "visual angle": 3,
+            "material": 5,
+            "D (mm)": 4,
+            "Hn (mm)": 2,
+            "L (mm)": 4,
+            "Wc (mm)": 4,
+            "Wf (mm)": 4,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/182bb637cd1da4e5/"
+                "US-20260086429-A1.pdf"
+            ),
+            "bytes": 3_153_508,
+            "sha256": (
+                "182bb637cd1da4e53e2466fc6518e2c08ab61f7c19ca5e94a36bb6e19bf6158c"
+            ),
+            "page_count": 51,
+            "single_raster_page_count": 51,
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_page_numbers": (48, 49, 50),
+            "narrow_raster_dimensions": (2550, 3300),
+            "key_page_raster_sha256": {
+                2: "8a0e15c98909b0435370f16229a2c7fb4169653465306f140ff414cd357f7280",
+                10: "398fb038df865c09aa9609207a7d86a04998ec6de3d17981e15c744c0a7a1cee",
+                22: "9dc2f37515bf721e039a9b2f56b54578485c6630e7f633bce9e366c95a0cf3f8",
+                26: "a34e591d8d5d70c63339d1c2489ec78e9427884bac8cfc0eb5d2fba063b44a1d",
+                34: "64c6b5a305e9aa9c1ded3ec584f18fbbaeff2717478a7f0f8496ec389bdd4f65",
+                42: "dad3c94379feb3a8b37020332ea1a7624b14d259afc454e26ddaf190534a07fe",
+                43: "6b18cbb5599c3787561fbde3edc0d96398582d61cf864d07edbbd60f23f673e7",
+                44: "528cc80a3b13738864b6b01e3c3847444752e4c0d816ddf495b06b445cacc674",
+                45: "b31e28e5b3e46a52ef0d04dbc414572cc8f852465c71d91571480d19d2f3e61f",
+            },
+            "raster_set_sha256": (
+                "d35564935421e27a99bb30780c7e21f9f3e0de68f2f00d6affa9264d796bca2a"
+            ),
         },
     }
 }
@@ -35419,6 +35670,327 @@ def _classify_largan_imaging_lens_driving_architecture_attempts(
             ),
         )
         for number, label, reason_code in _LARGAN_IMAGING_LENS_DRIVING_ITEMS
+    ]
+
+
+def _classify_largan_flexible_wire_aperture_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 98695135 flexible-wire aperture-drive items."""
+
+    profile = _LARGAN_FLEXIBLE_WIRE_APERTURE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _LARGAN_FLEXIBLE_WIRE_APERTURE_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan flexible-wire aperture section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan flexible-wire aperture section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture "
+                    f"{section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 140)):
+            raise PatentParseError(
+                "Largan flexible-wire aperture numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            start, end = bounds
+            span = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            ).strip()
+            observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture numbered paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(10, 43):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+([0-9]+(?:\s+[A-Z])?)\s+",
+                paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1).replace(" ", ""))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture figure-label denominator changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != (1, 2, 3, 4):
+            raise PatentParseError(
+                "Largan flexible-wire aperture table denominator changed"
+            )
+        table_prefix_digests = tuple(
+            hashlib.sha256(
+                re.split(r"\[\d{4}\]", block.text, maxsplit=1)[0]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for block in table_blocks
+        )
+        if table_prefix_digests != profile["table_prefix_sha256"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture mechanical table payload changed"
+            )
+
+        mathml_blocks = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        mathml_digests = tuple(
+            hashlib.sha256(block.encode("utf-8")).hexdigest()
+            for block in mathml_blocks
+        )
+        if mathml_digests != profile["mathml_sha256"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 36):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 35
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 36)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture three-claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = set(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if image.size != expected_dimensions:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(
+                _canonical_raster_sha256(page_images[0].data)
+            )
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture official raster-page denominator changed"
+            )
+        for page_number, expected_digest in pdf_profile[
+            "key_page_raster_sha256"
+        ].items():
+            if page_raster_hashes[page_number - 1] != expected_digest:
+                raise PatentParseError(
+                    "Largan flexible-wire aperture official PDF page "
+                    f"{page_number} raster changed"
+                )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Largan flexible-wire aperture official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Largan flexible-wire aperture official PDF gained a text layer"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    details = (
+        "paragraphs 80-94 and TABLE 1 publish the first flexible-wire, variable-"
+        "aperture and lens-carrier drive arrangement plus mechanical D/Hn/L/Wc/Wf "
+        "dimensions only; no ordered optical surface prescription is present",
+        "paragraphs 95-98 publish an alternate first-embodiment flexible wire "
+        "plate only, without optical radius, spacing, glass or asphere data",
+        "paragraphs 99-104 and TABLE 2 publish the second flexible-wire drive "
+        "arrangement and its mechanical dimensions only; the source-reported "
+        "Hn/D value is retained without reinterpretation as optical data",
+        "paragraphs 105-112 and TABLE 3 publish a third variable-aperture and "
+        "lens-carrier drive arrangement plus mechanical dimensions only",
+        "paragraphs 113-120 and TABLE 4 publish a fourth variable-aperture and "
+        "lens-carrier drive arrangement plus mechanical dimensions only",
+        "paragraphs 121-130 publish a multi-camera smartphone wrapper and generic "
+        "different-focal-length zooming only, without constituent prescriptions",
+        "paragraphs 131-134 publish a folded-telephoto smartphone wrapper only; "
+        "no optical surfaces or prescription-specific system metadata are disclosed",
+        "paragraphs 135-138 publish vehicle camera placements and coverage visual "
+        "angles only; the 40-to-90-degree range is not a lens prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _LARGAN_FLEXIBLE_WIRE_APERTURE_ITEMS
     ]
 
 

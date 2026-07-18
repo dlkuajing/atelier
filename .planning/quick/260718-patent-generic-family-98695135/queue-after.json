@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "0478e606d1a2462c967ad1fe27831bcc0c45be033205db0db222c0e9e29019e5",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 86,
+      "affected_items": 86
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "56417699",
+    "root_ids": ["US-20180003862"],
+    "publication_ids": ["US-20180003862-A1"],
+    "application_number": "15/545626",
+    "title": "DISPLAY DEVICE WITH TOTAL INTERNAL REFLECTION",
+    "first_inventor": "BENITEZ; PABLO",
+    "applicant": "TESSELAND LLC",
+    "assignee": "TESSELAND LLC",
+    "layout_signature": "56f1ebc262c10313a9b8468973068f90a82286bd0992eb71a4d2a31eb66af02a",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 1,
+      "example_anchor": 0,
+      "f_number": 1,
+      "full_field": 40,
+      "half_field": 0
+    },
+    "table_count": 3,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/c0b0dd470d7afc4b/US-20180003862-A1.html",
+      "sha256": "c0b0dd470d7afc4b394ee42c585dd42a5b8edadfc6d9e25dae281a4ec7221e17"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

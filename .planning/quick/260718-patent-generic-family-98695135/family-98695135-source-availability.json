@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "family_id": "98695135",
+  "publication_id": "US-20260086429-A1",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2d0745df79927e89/US-20260086429-A1.html",
+    "bytes": 128780,
+    "sha256": "2d0745df79927e892aab44144dcff53fd384f2f7fb1d290ec9ad81dabb6cfece",
+    "normalized_characters": 110034,
+    "normalized_sha256": "ec0442b7f2ce2cb4b21a6f9bc27ac04e96c95d155d24dd4ac04d0f8511d1853c"
+  },
+  "official_pdf": {
+    "authority": "USPTO Patent Public Search image service",
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20260086429",
+    "request_authentication": "anonymous direct download",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "path": "data/patent-lake/uspto-ppubs-pdf/182bb637cd1da4e5/US-20260086429-A1.pdf",
+    "bytes": 3153508,
+    "container_sha256": "182bb637cd1da4e53e2466fc6518e2c08ab61f7c19ca5e94a36bb6e19bf6158c",
+    "page_count": 51,
+    "single_raster_pages": 51,
+    "common_raster_dimensions": [2560, 3300],
+    "narrow_raster_page_numbers": [48, 49, 50],
+    "narrow_raster_dimensions": [2550, 3300],
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "d35564935421e27a99bb30780c7e21f9f3e0de68f2f00d6affa9264d796bca2a"
+  },
+  "drawing_source": {
+    "declared_figure_occurrences": 33,
+    "unique_declared_figure_labels": 33,
+    "located_raster_panels": 33,
+    "drawing_sheets": 33,
+    "drawing_pdf_page_range": [2, 34],
+    "full_page_contact_review_claimed": true,
+    "original_resolution_pages_reviewed": [2, 10, 22, 26, 34, 42, 43, 44, 45, 46, 47],
+    "classification_dependency": true,
+    "source_discrepancies": [
+      "TABLE 2 publishes Hn/D=0.319; the value is retained verbatim without arithmetic repair."
+    ]
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO A1 HTML plus retained exact official A1 decoded-raster set",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "table_values_recomputed_or_corrected": false,
+    "aperture_hole_used_as_stop_coordinate": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}
