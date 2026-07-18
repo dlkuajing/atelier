@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "family_id": "94819907",
+  "application_number": "19/549670",
+  "root_ids": [
+    "US-20260189780"
+  ],
+  "publication_ids": [
+    "US-20260189780-A1"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 7,
+    "description_numbered_paragraphs": 127,
+    "total_numbered_paragraphs": 134,
+    "claims": 20,
+    "declared_textual_figures": 8,
+    "located_raster_figures": 8,
+    "tagged_html_tables": 0,
+    "optical_prescription_tables": 0,
+    "mathml_objects": 1,
+    "html_image_tags": 0,
+    "source_disclosed_items": 3,
+    "electronic_device_architectures": 1,
+    "operating_methods": 1,
+    "computer_readable_medium_wrappers": 1,
+    "ordered_optical_surface_rows": 0,
+    "confirmed_no_prescription_items": 3,
+    "replayed_ledger_items": 3,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 25,
+    "retained_page_rasters": 25,
+    "retained_drawing_sheets": 8,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "related_application": [
+      1,
+      1
+    ],
+    "field_and_background": [
+      2,
+      4
+    ],
+    "summary_items": [
+      5,
+      7
+    ],
+    "brief_drawings_and_transition": [
+      8,
+      16
+    ],
+    "generic_electronic_device_environment": [
+      17,
+      43
+    ],
+    "generic_camera_module": [
+      44,
+      49
+    ],
+    "animal_motion_exposure_implementation": [
+      50,
+      105
+    ],
+    "electronic_device_item_restatement": [
+      106,
+      115
+    ],
+    "operating_method_item_restatement": [
+      116,
+      125
+    ],
+    "computer_readable_medium_item": [
+      126,
+      126
+    ],
+    "closing_boilerplate": [
+      127,
+      134
+    ]
+  },
+  "figure_labels": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+  ],
+  "claim_mapping": {
+    "electronic_device_architecture": [
+      1,
+      10
+    ],
+    "operating_method": [
+      11,
+      19
+    ],
+    "computer_readable_medium_wrapper": [
+      20,
+      20
+    ]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Samsung animal-motion exposure-control electronic device architecture",
+      "summary_paragraphs": [
+        5,
+        5
+      ],
+      "description_paragraphs": [
+        50,
+        115
+      ],
+      "claims": [
+        1,
+        10
+      ],
+      "reason_code": "confirmed_no_prescription.animal_motion_exposure_control_electronic_device_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Samsung animal-motion exposure-control operating method",
+      "summary_paragraphs": [
+        6,
+        6
+      ],
+      "description_paragraphs": [
+        116,
+        125
+      ],
+      "claims": [
+        11,
+        19
+      ],
+      "reason_code": "confirmed_no_prescription.animal_motion_exposure_control_method_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Samsung animal-motion exposure-control computer-readable medium wrapper",
+      "summary_paragraphs": [
+        7,
+        7
+      ],
+      "description_paragraphs": [
+        126,
+        126
+      ],
+      "claims": [
+        20,
+        20
+      ],
+      "reason_code": "confirmed_no_prescription.animal_motion_exposure_control_computer_readable_medium_wrapper_only"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": false,
+    "surface_radii_published": false,
+    "surface_spacing_published": false,
+    "optical_materials_published": false,
+    "refractive_indices_published": false,
+    "abbe_numbers_published": false,
+    "conic_or_asphere_coefficients_published": false,
+    "stop_location_published": false,
+    "effective_focal_length_published": false,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "image_height_published": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

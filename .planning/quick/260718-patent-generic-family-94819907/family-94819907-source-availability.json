@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "family_id": "94819907",
+  "publication_id": "US-20260189780-A1",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f09d347b82b7f263/US-20260189780-A1.html",
+    "bytes": 122259,
+    "characters": 122054,
+    "sha256": "f09d347b82b7f26364e8230bef44350cfd2e62d202468e7b85d6183b94ed87b2",
+    "normalized_characters": 106242,
+    "normalized_sha256": "e6548aee997e8f6cea293fa3805e39f5aa0c160e54aec49f1eaa150155d44903"
+  },
+  "official_pdf": {
+    "authority": "USPTO Patent Public Search image service",
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20260189780",
+    "request_authentication": "none observed",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "path": "data/patent-lake/uspto-ppubs-pdf/101064164dcfe94c/US-20260189780-A1.pdf",
+    "bytes": 2039812,
+    "container_sha256": "101064164dcfe94c4608bd837140594176a54a2a46a757b6da64b3b640822181",
+    "page_count": 25,
+    "single_raster_pages": 25,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "08278de281a7e4df6c553149f606d416d6e6fe7a3e0fd17f9feea4b93f96c22b"
+  },
+  "drawing_source": {
+    "declared_textual_figures": 8,
+    "located_raster_figures": 8,
+    "drawing_sheets": 8,
+    "drawing_pdf_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "full_page_contact_review_claimed": true,
+    "figure_2_original_resolution_reviewed": true,
+    "classification_dependency": true,
+    "source_discrepancies": []
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO A1 HTML plus retained exact official A1 decoded-raster set",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "generic_camera_attributes_used_as_prescription_metadata": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

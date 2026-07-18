@@ -2,8 +2,12 @@
   "schema_version": 1,
   "family_id": "82818949",
   "application_number": "18/154079",
-  "root_ids": ["US-20230296863"],
-  "publication_ids": ["US-20230296863-A1"],
+  "root_ids": [
+    "US-20230296863"
+  ],
+  "publication_ids": [
+    "US-20230296863-A1"
+  ],
   "source": {
     "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f596732d311d4d24/US-20230296863-A1.html",
     "bytes": 88334,
@@ -87,13 +91,13 @@
   "ledger": {
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 39984,
-      "sha256": "c50619a1a83cae412725e50b2eccb96f49b5d8bf0efc04294f0c19ac18f35850"
+      "bytes": 40280,
+      "sha256": "6e5852ad5f7e31eff77d6b5fa799607653ffdfd38ddcc666ad9246371f05f07b"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 41500,
-      "sha256": "abe1c064e50a359842a399ab10a0106ee27f550accaeb2a4cd3dda5d5f5efc41"
+      "bytes": 41805,
+      "sha256": "e38756df0a38c15c58a2265e7c4275586ffa1068680aaae8944708f3efb9ece3"
     },
     "result_set_sha256": "95fe1daefb7ea970805324eb77b2376ab57d0dc1a71a8520dc91531c01f3a6ec",
     "strict_roots_with_results": 619,
@@ -102,13 +106,41 @@
     "corrupt": 0
   },
   "artifacts": [
-    {"path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-denominator.json", "bytes": 10025, "sha256": "17f5d3643e572de37f8b8e638dc8f29117bc3a91177933c5d0d7d2ba0dcc2094"},
-    {"path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-source-availability.json", "bytes": 1938, "sha256": "a1c54adebd8dad60df4a1b6a134ee25ec9b5199983c8b19317c3962eca390102"},
-    {"path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-raster-audit.json", "bytes": 5326, "sha256": "e48eb4682776aac55c1eff1d3e3c747553d8049bcafd478d7d640595f203adc8"},
-    {"path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-replay-determinism.json", "bytes": 1501, "sha256": "db96ed50208bdf078d09642bc9c6ccf9027103e6d91639f7126f67079948e76c"},
-    {"path": ".planning/quick/260718-patent-generic-family-82818949/queue-after.json", "bytes": 1504, "sha256": "70924f5a42626105759fe0eb87d4fd9643ce513d4b5cf3d720d90559b7724999"},
-    {"path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-source-audit.md", "bytes": 6223, "sha256": "ef3ebeba7b234888f4858c3e27a1d38215aa19c96e5b653c51e21d2d42448f02"},
-    {"path": ".planning/quick/260718-patent-generic-family-82818949/us20230296863-official-pages-1-35-contact.png", "bytes": 1081036, "sha256": "a465935f634acd043eff934c19edb307952d189acdf14d34b5b790550458f11d"}
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-denominator.json",
+      "bytes": 10025,
+      "sha256": "17f5d3643e572de37f8b8e638dc8f29117bc3a91177933c5d0d7d2ba0dcc2094"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-source-availability.json",
+      "bytes": 1938,
+      "sha256": "a1c54adebd8dad60df4a1b6a134ee25ec9b5199983c8b19317c3962eca390102"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-raster-audit.json",
+      "bytes": 5326,
+      "sha256": "e48eb4682776aac55c1eff1d3e3c747553d8049bcafd478d7d640595f203adc8"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-replay-determinism.json",
+      "bytes": 1501,
+      "sha256": "db96ed50208bdf078d09642bc9c6ccf9027103e6d91639f7126f67079948e76c"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/queue-after.json",
+      "bytes": 1504,
+      "sha256": "70924f5a42626105759fe0eb87d4fd9643ce513d4b5cf3d720d90559b7724999"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-source-audit.md",
+      "bytes": 6223,
+      "sha256": "ef3ebeba7b234888f4858c3e27a1d38215aa19c96e5b653c51e21d2d42448f02"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/us20230296863-official-pages-1-35-contact.png",
+      "bytes": 1081036,
+      "sha256": "a465935f634acd043eff934c19edb307952d189acdf14d34b5b790550458f11d"
+    }
   ],
   "formal_outputs": {
     "worker_requests": 0,
@@ -121,8 +153,12 @@
   },
   "next_exact_group": {
     "family_id": "51743335",
-    "root_ids": ["US-9360657"],
-    "publication_ids": ["US-9360657-B2"]
+    "root_ids": [
+      "US-9360657"
+    ],
+    "publication_ids": [
+      "US-9360657-B2"
+    ]
   },
   "saturation_complete": false
 }

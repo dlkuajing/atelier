@@ -637,6 +637,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_samsung_animal_capture_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_sunny_split_lens_active_alignment_attempts(
         raw_text,
         patent_id=patent_id,
@@ -13340,6 +13346,175 @@ _OGP_TELECENTRIC_ZOOM_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             ),
             "raster_set_sha256": (
                 "6baf8536ec8d590fd70816b35081847c41a5911af359826ecfc29d5fe37caebb"
+            ),
+        },
+    }
+}
+_SAMSUNG_ANIMAL_CAPTURE_ITEMS = (
+    (
+        1,
+        "Samsung animal-motion exposure-control electronic device architecture",
+        (
+            "confirmed_no_prescription."
+            "animal_motion_exposure_control_electronic_device_architecture_only"
+        ),
+    ),
+    (
+        2,
+        "Samsung animal-motion exposure-control operating method",
+        "confirmed_no_prescription.animal_motion_exposure_control_method_only",
+    ),
+    (
+        3,
+        "Samsung animal-motion exposure-control computer-readable medium wrapper",
+        (
+            "confirmed_no_prescription."
+            "animal_motion_exposure_control_computer_readable_medium_wrapper_only"
+        ),
+    ),
+)
+_SAMSUNG_ANIMAL_CAPTURE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260189780-A1": {
+        "raw_document_sha256": (
+            "f09d347b82b7f26364e8230bef44350cfd2e62d202468e7b85d6183b94ed87b2"
+        ),
+        "normalized_text_sha256": (
+            "e6548aee997e8f6cea293fa3805e39f5aa0c160e54aec49f1eaa150155d44903"
+        ),
+        "identity_markers": {
+            "METHOD FOR CAPTURING IMAGE INCLUDING ANIMAL, AND ELECTRONIC DEVICE THEREFOR": 1,
+            "Applicant: SAMSUNG ELECTRONICS CO., LTD.": 1,
+            "Family ID: 94819907": 1,
+            "Appl. No.: 19/549670": 1,
+            "KR 10-2023-0111980 Aug. 25, 2023": 1,
+            "KR 10-2023-0157729 Nov. 14, 2023": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260189780-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract An electronic device according to an embodiment",
+            "background": "Background/Summary [0001]",
+            "description": "Description BRIEF DESCRIPTION OF DRAWINGS",
+            "claims": "Claims 1 . An electronic device comprising",
+        },
+        "section_sha256": {
+            "preamble": (
+                "c32d18457288423b6ac786bd50aa4d951da04b4be8d0fed38a0a6403eda5ce3a"
+            ),
+            "abstract": (
+                "6ab98edecae14f436efaa77a0cf6d5ce30a2ff99f2b24d7fd94caef3208972b3"
+            ),
+            "background": (
+                "5a4467a8b4d1dd223d39759fbab5036331b44258a71a43cd102391fe8bfa9b6a"
+            ),
+            "description": (
+                "1b0280fc370406c094127b66f97b71e5b31d44f98260d5dac0a4b2fb0fb2a771"
+            ),
+            "claims": (
+                "c4a72f5ffba969955b2db8a052b3ff87d30645a0d105bf3a44568d5e3eec4a0a"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "745bfb114a8e629417681128558e6b75e0eac6b1c81f78a2b7e3ccd485e2ee19",
+            (2, 4): "10b7c70f0554b8ff1643d42befcf79fa34094227aa807f8a4f69b3f5817fb44a",
+            (5, 7): "c4625bf2d0ab8f96ee1c3a21d3e13baef4b7d6cbeaa370d97a75ade51b74b164",
+            (8, 16): "291e8e3b892063da417c1ff4347f9e4c8e14ac88e6fa09f60ea1ad38c1b0ffea",
+            (17, 43): "0a2f57cf2636bdbae442bfacefc46b6492b995f7209ea2549d9cbcf1b4311751",
+            (44, 49): "bed98ecc88dee6539310f7342a022ac61c31be7320c87fa8d545bd50248ba249",
+            (50, 105): "d5c3e23600711b40fa5b5d9ecb7473b32544ae6a707ac19d46f4ece553c7d241",
+            (106, 115): "3501ffdc308c77f302a0f954c7b131ff433f614397081f54ed0e656a702eacbb",
+            (116, 125): "bef598849f75f7f6ebbc0bd1f6bcace90a16c6de0e7d5af8b5e1dfa5df818107",
+            (126, 126): "befb2803d3d47c9c15f2866911505a8ed2a8b209b69d3ec169670f6f5030de37",
+            (127, 134): "e55bdd6e70ef4c62e6dace185d49f654d2886d918c70093c4b3819d4d23a8ce7",
+        },
+        "brief_drawings_sha256": (
+            "2c6768185e2e503964393ed566ff8f14e792071f5150ff6a2e8176b7f68798c8"
+        ),
+        "mathml_sha256": (
+            "f696d74fafa25096f6e39ca1352ccd7746dafe34cbf1104cc48dfb1fbcff96cb",
+        ),
+        "figure_labels": tuple(str(number) for number in range(1, 9)),
+        "claim_sha256": (
+            "b4f6d7fbcda422a9af6cd93a3fc6f304e8af9d250505fe177fc7e3a5bcb426f8",
+            "f9c0221d8c29cdb5242abdafc8fbfa5061934cb796362f441b743085a5565dee",
+            "2f41cbd4396fb95be65c26d886383a20766eb0535742e71e9c42981a32c6141e",
+            "c3ba5ab8c1915241b84d7e2482e6a36c3d0f9302e63cc094957edc31b41fe2de",
+            "0645d35a936c516d305393a83b9a2354a99bc9ccdc425a22c400001b44a57c9b",
+            "263573a1ab8abbf65bb8ab3aacc874010978f0f0f88b974fe3234436f27ce700",
+            "2c2f2fd63c1cbbebf69d9608e5c889b654cfeaf22640e24e85a87d7a2d1b79a8",
+            "c97360db51b8e0def731641b90e7fbe631bcad43cf2f6c3dd59e6ecaee043e39",
+            "7d698e62261231f29df3f8f5c224ebc6ab4902271b18ca5a4f7921ad916ea074",
+            "f6b084f3dd020df443807c47f7d327f0c0f2aa7e7a0951e51c8ac37b6bf41cad",
+            "450aff3f526e235edd627ecf336b104ea1c7d60f24fa3c32815625e3ce6ec551",
+            "022091325760efe09c0ccdb5b2c51afb4b141e78a18982db1b27c21cf2596ff1",
+            "bd314691ef743735d34e72641c34f64d922cc5a501422b7de0e95ad5f508a031",
+            "7b0fd8ef622852bd71f114a8f4d67c8568159b667754b73be5d3060380864108",
+            "848576c937ecc49b478a1eb6e41005bb513bec85d673c770f2096ef5b9b465f1",
+            "2795740927d958e6df25090310e95283b7e2be88b9bd6ca22c3e9e042c0fcd79",
+            "10e1768b2a46f0d4f7b153105d4b97cfd4f61c211951297a9eb520facb3e4010",
+            "c51bc265de3ec2e3add8d8d9a0e36b4f2db322a43cf55fadd21291ecb9e0f7ff",
+            "576752e0d7f59719e7a23e82f6babe7bf1c550812bf97756c9ad58b762432252",
+            "0bf6ef1df7021dc88f6282268a4dfe465f8134eb82813b37239c93fd6b116bcf",
+        ),
+        "source_phrase_counts": {
+            "lens": 17,
+            "focal length": 1,
+            "f number": 1,
+            "field of view": 0,
+            "view angle": 1,
+            "radius": 0,
+            "thickness": 0,
+            "aperture": 0,
+            "exposure value": 65,
+            "shutter speed": 55,
+            "sharpness": 54,
+            "color correction": 50,
+            "optical flow": 24,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/101064164dcfe94c/"
+                "US-20260189780-A1.pdf"
+            ),
+            "bytes": 2_039_812,
+            "sha256": (
+                "101064164dcfe94c4608bd837140594176a54a2a46a757b6da64b3b640822181"
+            ),
+            "page_count": 25,
+            "single_raster_page_count": 25,
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "narrow_raster_page_numbers": (17,),
+            "drawing_page_numbers": tuple(range(2, 10)),
+            "drawing_sheet_count": 8,
+            "page_raster_sha256": (
+                "994dec0fa86a68bfb95cda5f76ae4a3c1eb1df80d9d48e1ed8edadb5bae16bf5",
+                "c163abdf1b93e4873f85f1da5c590d4aa81546e42d3b29832b2680b66f00366c",
+                "84670efa400700bc013e922c2a19110d0659eb49ff6cc45c83a84572fc5472cc",
+                "585f75001d1673bdf6173ad7eaa14e9063452b08d3138b6c2783526fbef82780",
+                "4f2144b8f4a9a05281bddb1f771f6a336e650fcfc6bd3c08739f8523606225a3",
+                "61c7270b39222408df868e736b9d61dfdbafd74599d986bd247f4de2b0e0aa0b",
+                "12dcb76cab247a67fc76db469018985150fbe342e2d1f16141022c77c7fd7adf",
+                "8ad97017fdf75f42599b832acfbbe092cafed2d43cbb6baf8da0b7895ce73b5e",
+                "7a91910e40e523de06357bd81e6fa14216fb771e54b4b6a5a7f864a91fff048d",
+                "3599dbfe97ae6aa8129f8d776daa2e8ba033836c12f48d2f208a389aed96156e",
+                "a191fcf96f724d50e0142c9315386d57b4496f52345bcce92663ba34c5e5e620",
+                "53e332e6228a7d076bac5a8d3716f9dc8c59f8936183874a678b1c25292bc625",
+                "fb34d5202987d15d73095a27fdc337c60d7034f7acb9b14888dfd79d4e53fc86",
+                "181828506979f83812f7eeaaca38bbf9c70125e801bb6173892ca47a7d0b2078",
+                "ab3cd676cb2e3f4f2bc443c0b27beed3589455a47b74f94e52be7969d562466e",
+                "bd8fe61fb4a96f30b4fefe6d3a8837101503a13d62a2dc4d771a375d6370eb3e",
+                "1e38b3cda5cc5fcbb580bb379aae58bede0f1fba3495eb8deec2d160bf6cb40b",
+                "7f530a60921383ffea852f3650659e732640d83f605ee678af64193168e11c45",
+                "126f7f6b825b8348581b30e863a4888d5c20430264558a9b42b15188bfbebd03",
+                "eec2adc7404f6254772be7a6bb3e0237826ce4df9c7d8981fcc635e4e03068cf",
+                "c1b85c571984d9c03d4bedaa1c539879f4ed1b586df870bc39ee970b48e9a119",
+                "beec25bc0574a5f9bf29c8a1b5f0f6ee1a2dbd539889cf094927dea30c6e19c7",
+                "1821ed7e96baf1bb1eaa0963b312d1233c5b2e2fbff58cd155a8b1f43651636d",
+                "7248e06530168dd2249d3716144996f840d2636ea42dc46ef5dba53e6644af5c",
+                "a5df8b2fc6bbac127a4c9a972a48dabea1747448f44a1658bc4ae9d924e95fba",
+            ),
+            "raster_set_sha256": (
+                "08278de281a7e4df6c553149f606d416d6e6fe7a3e0fd17f9feea4b93f96c22b"
             ),
         },
     }
@@ -37620,6 +37795,305 @@ def _classify_ogp_telecentric_zoom_attempts(
                 ),
             ),
         )
+    ]
+
+
+def _classify_samsung_animal_capture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 94819907 animal-capture control disclosures."""
+
+    profile = _SAMSUNG_ANIMAL_CAPTURE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _SAMSUNG_ANIMAL_CAPTURE_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Samsung animal-capture official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Samsung animal-capture normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Samsung animal-capture identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Samsung animal-capture section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Samsung animal-capture section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Samsung animal-capture {section_name} section changed"
+                )
+
+        numbered_text = text[
+            section_starts["background"] : section_starts["claims"]
+        ]
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", numbered_text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 135)):
+            raise PatentParseError(
+                "Samsung animal-capture 134-paragraph denominator changed"
+            )
+        paragraphs = {
+            paragraph_number: numbered_text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(numbered_text)
+                )
+            ]
+            for index, (paragraph_number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for (start, end), expected_digest in profile[
+            "paragraph_span_sha256"
+        ].items():
+            span = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            ).strip()
+            observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Samsung animal-capture paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        detailed_description_start = text.index(
+            "DETAILED DESCRIPTION", section_starts["description"]
+        )
+        brief_drawings = text[
+            section_starts["description"] : detailed_description_start
+        ]
+        if (
+            hashlib.sha256(brief_drawings.encode("utf-8")).hexdigest()
+            != profile["brief_drawings_sha256"]
+        ):
+            raise PatentParseError(
+                "Samsung animal-capture drawing declarations changed"
+            )
+        figure_labels = []
+        for paragraph_number in range(8, 16):
+            match = re.match(
+                r"\[\d{4}\] FIG\. (\d+) is ", paragraphs[paragraph_number]
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Samsung animal-capture figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Samsung animal-capture eight-figure denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Samsung animal-capture zero-table denominator changed"
+            )
+        mathml_digests = tuple(
+            hashlib.sha256(item.encode("utf-8")).hexdigest()
+            for item in re.findall(
+                r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+            )
+        )
+        if mathml_digests != profile["mathml_sha256"]:
+            raise PatentParseError(
+                "Samsung animal-capture motion-equation MathML changed"
+            )
+        if re.findall(r"<img\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Samsung animal-capture zero-HTML-image denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 21):
+            marker = f"{claim_number} . "
+            claim_start = claims_section.find(marker, cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Samsung animal-capture 20-claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(marker)
+        claim_digests = tuple(
+            hashlib.sha256(
+                claims_section[
+                    claim_start : (
+                        claim_starts[index + 1]
+                        if index + 1 < len(claim_starts)
+                        else len(claims_section)
+                    )
+                ]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for index, claim_start in enumerate(claim_starts)
+        )
+        if claim_digests != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Samsung animal-capture 20-claim content changed"
+            )
+
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Samsung animal-capture source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Samsung animal-capture official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError("Samsung animal-capture official PDF hash changed")
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Samsung animal-capture official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = set(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Samsung animal-capture official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if image.size != expected_dimensions:
+                raise PatentParseError(
+                    "Samsung animal-capture official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Samsung animal-capture official raster-page denominator changed"
+            )
+        if tuple(page_raster_hashes) != pdf_profile["page_raster_sha256"]:
+            raise PatentParseError(
+                "Samsung animal-capture official page rasters changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Samsung animal-capture official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Samsung animal-capture official PDF gained a text layer"
+            )
+        if not (
+            len(pdf_profile["drawing_page_numbers"])
+            == pdf_profile["drawing_sheet_count"]
+            == len(profile["figure_labels"])
+            and pdf_profile["drawing_page_numbers"] == tuple(range(2, 10))
+        ):
+            raise PatentParseError(
+                "Samsung animal-capture drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all three exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML contains 134 consecutively numbered paragraphs, "
+        "20 claims, eight declared figures, zero optical tables and one MathML "
+        "motion-estimation equation, "
+        "and all 25 exact official page rasters have been reviewed. Paragraph 45 "
+        "and FIG. 2 identify only a generic lens-assembly block whose possible "
+        "attributes include view angle, focal length, autofocus, F number or optical "
+        "zoom; they disclose no ordered optical radius, spacing, material, "
+        "refractive-index, Abbe, conic, asphere, stop, effective-focal-length, "
+        "F-number, image-height or field prescription. No value is inferred, "
+        "measured from a raster drawing, or borrowed from another family"
+    )
+    details = (
+        "Paragraphs 5 and 50-115 plus claims 1-10 publish an electronic device "
+        "that identifies animal movement and selects exposure, shutter, sharpness "
+        f"and color-correction controls; {common}",
+        "Paragraphs 6 and 116-125 plus claims 11-19 publish the corresponding "
+        f"animal-motion image-capture operating method; {common}",
+        "Paragraphs 7 and 126 plus claim 20 publish only a non-transitory computer-"
+        f"readable-medium wrapper for that operating method; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _SAMSUNG_ANIMAL_CAPTURE_ITEMS
     ]
 
 

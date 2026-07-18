@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "42f5ac5e6fdda75c04fcd1489a927c8ce46359d7e08aa252c2138d0470934768",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 93,
+      "affected_items": 93
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "44259669",
+    "root_ids": [
+      "US-8504328"
+    ],
+    "publication_ids": [
+      "US-8504328-B2"
+    ],
+    "application_number": "12/784521",
+    "title": "Designing lenses using stress birefringence performance criterion",
+    "applicant": "Bietry; Joseph R.",
+    "assignee": "Eastman Kodak Company",
+    "layout_signature": "47e7cc4e752d976ce84eb570f2ad8f451a7ead80846f9db627cd1be1f6a5aa35",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 4,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/3ffa3ae9c30d2e8e/US-8504328-B2.html",
+      "sha256": "3ffa3ae9c30d2e8e2e3a6a39a2242a3a756bf6b56efe73a56598292bc4f37b26"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}
