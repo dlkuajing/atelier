@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "family_id": "82818661",
+  "root_id": "US-20260056353",
+  "publication_id": "US-20260056353-A1",
+  "retained_sources": {
+    "official_html": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/bff6870e0ecf8024/US-20260056353-A1.html",
+      "bytes": 111754,
+      "sha256": "bff6870e0ecf8024336d03a2917255f277cbb94ec76ed8eb8b164c35dbff2396"
+    },
+    "official_pdf": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/ef8fa323cb6bae4c/US-20260056353-A1.pdf",
+      "bytes": 2206945,
+      "sha256": "ef8fa323cb6bae4c8d1e7a74b8d35814068d8929a94a0e89c17c8b69d94c3a6f"
+    }
+  },
+  "source_availability": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/family-82818661-source-availability.json",
+    "bytes": 2411,
+    "sha256": "1cebe7b7ccd424eef205148158537e9570b7127e4039d818797ff315b14c9c07"
+  },
+  "source_facts": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/family-82818661-source-facts.json",
+    "bytes": 8807,
+    "sha256": "fea9f35333835077632623b0e5cb1a50f00907cfe672944c25e309e0479f6dec"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/family-82818661-source-audit.md",
+    "bytes": 4597,
+    "sha256": "063a92af7ab7b48e8991f3a76d4da934dafc13bdd918620edb18ffd28427f823"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/family-82818661-raster-audit.json",
+    "bytes": 34083,
+    "sha256": "7cd60761ab157bd9013d041ed386aa38ab8c8b3c6118234e18b18b678236d604"
+  },
+  "denominator_audit": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/family-82818661-denominator.json",
+    "bytes": 5327,
+    "sha256": "372675b5dd09d344151a0b29243a9628fdf76c7f94622df285454aca39f3f8ec"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/family-82818661-replay-determinism.json",
+    "bytes": 1808,
+    "sha256": "5b7cc764f7fbc37c3e2a339b4c246936ea64ecaeacf9a3586ce3d4b460dd6ea0"
+  },
+  "frozen_generic_census": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/generic-residual-before-82.json",
+    "bytes": 51292,
+    "sha256": "fc2915529dd7fdefde96217420ed2b48e3b83731fda512d612f71df1565e48c6"
+  },
+  "after_generic_census_1": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/generic-residual-after-1.json",
+    "bytes": 50650,
+    "sha256": "ad867836a41180c59ee8465f0bf31c2880d0b53a07bfa0fbe9ae9fa7236ed984"
+  },
+  "after_generic_census_2": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/generic-residual-after-2.json",
+    "bytes": 50650,
+    "sha256": "fccb4d9be886f7e722c9059325c0665085f6341bc6699510cb0e4992113653a6"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260718-patent-generic-family-82818661/queue-after.json",
+    "bytes": 1373,
+    "sha256": "1a4e2113377e3ed1d47686e18b5ecb242141e70be711fd192fec5a57f1a0fff9"
+  },
+  "replay_results": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260056353/attempt-0002/result.json",
+      "bytes": 6952,
+      "sha256": "b3242f15cd6d615d3f62bf3457bd758975d5624b48a34dfb29fd35fd8d05ab0e"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260056353/attempt-0003/result.json",
+      "bytes": 6952,
+      "sha256": "6a5d0a2ffa37fe40e457e7389837e0806f325baf2053b09accb4cc330d2f9d30"
+    }
+  ],
+  "semantic_replay_sha256": "3ba5e96fd429f1dfb9e443ba37a74fc88431128a8f2e747fc5e1ee6e694d4ffd",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "total_numbered_paragraphs": 173,
+    "claims": 17,
+    "independent_claim_families": 2,
+    "declared_figure_paragraphs": 51,
+    "tagged_html_tables": 5,
+    "experimental_lens_assembly_samples": 39,
+    "light_blocking_geometry_examples": 14,
+    "mathml_objects": 11,
+    "html_custom_character_images": 1,
+    "source_disclosed_items": 7,
+    "ordered_optical_surface_rows": 0,
+    "confirmed_no_prescription_items": 7,
+    "replayed_ledger_items": 7,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_paragraphs": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "candidate_outputs": {
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0
+  },
+  "formal_outputs": {
+    "case_index_entries": 0,
+    "case_json": 0,
+    "expert_backed_items": 0,
+    "intake_manifests": 0
+  },
+  "codev_calls": 0,
+  "ledger": {
+    "strict_roots_with_results": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "result_set_sha256": "3b091362a87c21e0dc156f49c39c140e034b0775772ae9f288a730aba55dd518",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 44289,
+      "sha256": "87fb70f55d8d4a5928c9d46a7454a5de6d6b0acddda98641e75883bb791f4758"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 45949,
+      "sha256": "fd9ba562ebbcbc924941531d6919c073b0e7a6782338c651f8b65b9a48a938cf"
+    }
+  },
+  "next_exact_group": {
+    "family_id": "94658603",
+    "root_ids": ["US-20260118635"],
+    "publication_ids": ["US-20260118635-A1"],
+    "layout_signature": "65033b8cec3386b0d135f137768209b81b14acd9e8c842c24f0f53c0d7c16652",
+    "layout_signature_count": 1,
+    "marker_counts": {
+      "effective_focal_length": 76,
+      "embodiment_anchor": 88,
+      "example_anchor": 0,
+      "f_number": 17,
+      "full_field": 79,
+      "half_field": 0
+    },
+    "table_count": 13,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/3fe547f20905b87a/US-20260118635-A1.html",
+      "sha256": "3fe547f20905b87a7b338b6c45437edcfe8bf5649d00e3e8bb28a2174fff9c60"
+    }
+  },
+  "saturation_complete": false
+}

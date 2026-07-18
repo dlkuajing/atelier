@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "selection_policy": "generic bucket before AAC Raytech/Sunny; then minimum layout signature and root-first stable grouping",
+  "result_set_sha256": "3b091362a87c21e0dc156f49c39c140e034b0775772ae9f288a730aba55dd518",
+  "generic_residual_roots": 81,
+  "generic_residual_items": 81,
+  "next_exact_group": {
+    "family_id": "94658603",
+    "root_ids": ["US-20260118635"],
+    "publication_ids": ["US-20260118635-A1"],
+    "application_number": "19/281010",
+    "title": "OPTICAL LENS, IMAGE MODULE, AND TERMINAL DEVICE",
+    "first_inventor": "LAN; Binli",
+    "applicant": "Jiangxi OFLM Optical Co., Ltd.",
+    "assignee": null,
+    "layout_signature": "65033b8cec3386b0d135f137768209b81b14acd9e8c842c24f0f53c0d7c16652",
+    "layout_signature_count": 1,
+    "marker_counts": {
+      "effective_focal_length": 76,
+      "embodiment_anchor": 88,
+      "example_anchor": 0,
+      "f_number": 17,
+      "full_field": 79,
+      "half_field": 0
+    },
+    "table_count": 13,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/3fe547f20905b87a/US-20260118635-A1.html",
+      "sha256": "3fe547f20905b87a7b338b6c45437edcfe8bf5649d00e3e8bb28a2174fff9c60"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

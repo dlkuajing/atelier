@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "family_id": "82818661",
+  "publication_id": "US-20260056353-A1",
+  "application_number": "19/373897",
+  "title": "CAMERA MODULE AND ELECTRONIC DEVICE",
+  "inventors": [
+    "CHENG; Jyun-Jia",
+    "LAI; Yu-Chen",
+    "CHOU; Ming-Ta",
+    "HUANG; Chen-Yi"
+  ],
+  "applicant": "LARGAN PRECISION CO., LTD.",
+  "filing_date": "2025-10-30",
+  "publication_date": "2026-02-26",
+  "priority_and_lineage": [
+    {
+      "jurisdiction": "US",
+      "application_number": "17/815279",
+      "date": "2022-07-27",
+      "relationship": "continuation parent",
+      "grant": "US-12493141"
+    },
+    {
+      "jurisdiction": "US",
+      "application_number": "63/232271",
+      "date": "2021-08-12",
+      "relationship": "provisional priority"
+    },
+    {
+      "jurisdiction": "TW",
+      "application_number": "111101558",
+      "date": "2022-01-13",
+      "relationship": "foreign priority"
+    }
+  ],
+  "source_hashes": {
+    "raw_document_sha256": "bff6870e0ecf8024336d03a2917255f277cbb94ec76ed8eb8b164c35dbff2396",
+    "normalized_text_sha256": "26ff37458755b4166736664be130cfa730182155dfcbf3ac559e15739e51e083",
+    "section_sha256": {
+      "preamble": "1dd269ab14e6a77de05585bd23e8377d67dddc99037aecfb03b6ad7b84461ba3",
+      "abstract": "570183b1fd9b08b2e8bf98778e80e48d948c218e38f3e943a7e1cfd8403d433d",
+      "background": "955d0766b0495a60e73f7c6bb335845a0cf5012ac513533588fc5260868b6ea4",
+      "summary": "dd548a89adec9ed9c9f6d618a36af6b927258603880c2df7f0e211557757bdfc",
+      "brief": "b38f29818cc5f2c5e9df945f85d9edcb96df97cf9df3702b6c8f1f840bfcc668",
+      "detailed": "2df4112faec2fe26ff122b60632a1867e960017adaa23284e7091beba9262ad8",
+      "claims": "4e531cd467f2ccb4e2d4b52e59674283241b98b80e37d7af367b0da9450b69d2"
+    },
+    "paragraph_span_sha256": {
+      "1-7": "0b21eee28385b31ccedfc93c57dca4e720b289667abf862f94fbbec16f43e3c5",
+      "8-19": "36653b08da18673ca20662f0b700397823618c5e0a853364384fd3484ca57866",
+      "20-71": "c381199bf6c82dd5a4e5ff63a34aae257b44f0473e275cd0fbb65560d2bf648b",
+      "72-112": "7c8318836757a38e80b70bd52efa3fe5c58c851514b76a86f5b56591528dbac0",
+      "113-123": "ad593fd392991bc3e58d9aca04796392f30595577cebd0bb4a17eb620a61ef59",
+      "124-132": "cf35cddb7ff2c1586d5af98047ff88abb15c1616258e8468e2ea62f21b507292",
+      "133-142": "8f047f5af660c03d4b2bc48c54716276f932de337f0e3175a971272555285068",
+      "143-148": "f39654448eff78253b3dbedf902dbf0e6c4b62b6dc602572441beb3aff919323",
+      "149-155": "480038b809267e709879fe8a9a57e2a6630cfeee21e965fe3d621926fd2a85ab",
+      "156-168": "00ffe2c21409498108252dca8a0523da128d8a8cc15571053d9970cc67ee88aa",
+      "169-172": "5a4502d6e7ac84bd4b31e4b69f1cdc5f7c7fa20b97460d2a0ee541cccfa4bf55",
+      "173-173": "d87f9a3005b5d7beb68f7e6f8fab2e8bbd0c25fb277a8b0f8cd9a1801d1c04a9"
+    },
+    "table_payload_sha256": [
+      "7ac0b4a548811942fa9c2118f5d754cc8296064d942725613e91adb51ce55372",
+      "6eff70c3c95a886c93c6848e9b94aa3c28ad348a61a63dc09a83a6a26951b5de",
+      "d7d7cbd9f0fbfd5492f6e48e0c91adefada171960a3af07578062f9645559d9d",
+      "9b9ed2a2aced9e8d14ce91cce74a25924cc6a936ff273baf171b2fd1b75a839e",
+      "bcd6e31ef54676790dfe199c4eedf19715fbf0171181214d86b42a19b06573b4"
+    ],
+    "mathml_objects": 11
+  },
+  "source_phrase_counts": {
+    "lens element": 92,
+    "plastic lens element": 65,
+    "light-blocking layer": 162,
+    "equivalent focal length": 5,
+    "actual focal length": 1,
+    "field of view": 22,
+    "surface morphology": 7,
+    "optical features": 5,
+    "radius of curvature": 0,
+    "curvature radius": 0,
+    "aspheric coefficient": 0,
+    "aspherical coefficient": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "F-number": 0,
+    "Fno": 0,
+    "effective focal length": 0,
+    "surface prescription": 0
+  },
+  "table_reconciliation": [
+    {
+      "table": 1,
+      "paragraph": 111,
+      "rows": 39,
+      "role": "experimental light-blocking-layer measurements across lens assemblies; sample 36 is the control"
+    },
+    {
+      "table": 2,
+      "paragraph": 122,
+      "rows": 14,
+      "role": "FIG. 1I through FIG. 1V compensation-layer thickness/extension geometry examples"
+    },
+    {
+      "table": 3,
+      "paragraph": 123,
+      "rows": 10,
+      "role": "first-embodiment image-height, relative-illumination, half-field and light-blocking-layer properties"
+    },
+    {
+      "table": 4,
+      "paragraph": 130,
+      "rows": 10,
+      "role": "second-embodiment image-height, relative-illumination, half-field and light-blocking-layer properties"
+    },
+    {
+      "table": 5,
+      "paragraph": 141,
+      "rows": 12,
+      "role": "third-embodiment image-height, relative-illumination, half-field and light-blocking-layer properties"
+    }
+  ],
+  "optical_context": {
+    "paragraph_111": "Table 1 explicitly identifies its 39 rows as experimental light-blocking-layer data, including a control sample; the rows are not independent ordered prescriptions.",
+    "paragraphs_114_125_134_145_151": "Each applicable embodiment says lens number, configuration, surface morphology and other optical features may be arranged according to imaging demand.",
+    "paragraphs_164_168": "The sixth embodiment publishes camera-placement field and equivalent-focal-length ranges, then says equivalent values are estimates and actual focal length may differ.",
+    "ordered_optical_surface_prescription_found": false,
+    "prescription_specific_numeric_optical_metadata_found": false
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Largan first camera-module light-blocking compensation embodiment",
+      "description_paragraphs": [113, 123],
+      "reason_code": "confirmed_no_prescription.camera_module_light_blocking_compensation_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Largan second camera-module light-blocking compensation embodiment",
+      "description_paragraphs": [124, 132],
+      "reason_code": "confirmed_no_prescription.camera_module_light_blocking_compensation_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Largan third folded-reflector light-blocking compensation embodiment",
+      "description_paragraphs": [133, 142],
+      "reason_code": "confirmed_no_prescription.folded_reflector_light_blocking_compensation_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Largan fourth single-assembly projection imaging embodiment",
+      "description_paragraphs": [143, 148],
+      "reason_code": "confirmed_no_prescription.projection_imaging_module_light_blocking_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Largan fifth dual-assembly projection imaging embodiment",
+      "description_paragraphs": [149, 155],
+      "reason_code": "confirmed_no_prescription.projection_imaging_module_light_blocking_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Largan sixth multi-camera electronic-device embodiment",
+      "description_paragraphs": [156, 168],
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Largan seventh head-mounted electronic-device embodiment",
+      "description_paragraphs": [169, 172],
+      "reason_code": "confirmed_no_prescription.head_mounted_projection_device_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": false,
+    "surface_radii_published": false,
+    "surface_spacing_published": false,
+    "complete_ordered_optical_material_sequence_published": false,
+    "refractive_indices_published": false,
+    "abbe_numbers_published": false,
+    "conic_or_asphere_coefficients_published": false,
+    "stop_location_published": false,
+    "effective_focal_length_published": false,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "prescription_specific_image_height_published": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

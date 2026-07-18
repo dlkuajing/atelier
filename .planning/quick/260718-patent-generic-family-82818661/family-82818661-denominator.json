@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "family_id": "82818661",
+  "application_number": "19/373897",
+  "root_ids": ["US-20260056353"],
+  "publication_ids": ["US-20260056353-A1"],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_background_numbered_paragraphs": 7,
+    "summary_numbered_paragraphs": 12,
+    "brief_drawing_numbered_paragraphs": 52,
+    "generic_detailed_numbered_paragraphs": 41,
+    "item_numbered_paragraphs": 60,
+    "closing_numbered_paragraphs": 1,
+    "total_numbered_paragraphs": 173,
+    "claims": 17,
+    "independent_claim_families": 2,
+    "declared_figure_paragraphs": 51,
+    "tagged_html_tables": 5,
+    "experimental_lens_assembly_samples": 39,
+    "light_blocking_geometry_examples": 14,
+    "mathml_objects": 11,
+    "html_custom_character_images": 1,
+    "source_disclosed_items": 7,
+    "camera_module_embodiments": 3,
+    "projection_imaging_module_embodiments": 2,
+    "electronic_device_embodiments": 2,
+    "ordered_optical_surface_rows": 0,
+    "confirmed_no_prescription_items": 7,
+    "replayed_ledger_items": 7,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 54,
+    "retained_page_rasters": 54,
+    "retained_drawing_sheets": 39,
+    "official_table_pages": 5,
+    "official_claim_pages": 2,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_paragraphs": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "related_applications_and_background": [1, 7],
+    "summary": [8, 19],
+    "brief_drawings": [20, 71],
+    "generic_detailed_description": [72, 112],
+    "first_embodiment": [113, 123],
+    "second_embodiment": [124, 132],
+    "third_embodiment": [133, 142],
+    "fourth_embodiment": [143, 148],
+    "fifth_embodiment": [149, 155],
+    "sixth_embodiment": [156, 168],
+    "seventh_embodiment": [169, 172],
+    "closing_boilerplate": [173, 173]
+  },
+  "claim_mapping": {
+    "camera_module_family": [1, 16],
+    "electronic_device_family": [17, 17],
+    "claim_11_custom_character_marker_present": true
+  },
+  "table_mapping": {
+    "experimental_light_blocking_samples": [1, 1],
+    "first_embodiment_geometry_and_measurements": [2, 3],
+    "second_embodiment_measurements": [4, 4],
+    "third_embodiment_measurements": [5, 5]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Largan first camera-module light-blocking compensation embodiment",
+      "description_paragraphs": [113, 123],
+      "reason_code": "confirmed_no_prescription.camera_module_light_blocking_compensation_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Largan second camera-module light-blocking compensation embodiment",
+      "description_paragraphs": [124, 132],
+      "reason_code": "confirmed_no_prescription.camera_module_light_blocking_compensation_architecture_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Largan third folded-reflector light-blocking compensation embodiment",
+      "description_paragraphs": [133, 142],
+      "reason_code": "confirmed_no_prescription.folded_reflector_light_blocking_compensation_architecture_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Largan fourth single-assembly projection imaging embodiment",
+      "description_paragraphs": [143, 148],
+      "reason_code": "confirmed_no_prescription.projection_imaging_module_light_blocking_architecture_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Largan fifth dual-assembly projection imaging embodiment",
+      "description_paragraphs": [149, 155],
+      "reason_code": "confirmed_no_prescription.projection_imaging_module_light_blocking_architecture_only"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Largan sixth multi-camera electronic-device embodiment",
+      "description_paragraphs": [156, 168],
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Largan seventh head-mounted electronic-device embodiment",
+      "description_paragraphs": [169, 172],
+      "reason_code": "confirmed_no_prescription.head_mounted_projection_device_architecture_only"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": false,
+    "surface_radii_published": false,
+    "surface_spacing_published": false,
+    "complete_ordered_optical_material_sequence_published": false,
+    "refractive_indices_published": false,
+    "abbe_numbers_published": false,
+    "conic_or_asphere_coefficients_published": false,
+    "stop_location_published": false,
+    "effective_focal_length_published": false,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "prescription_specific_image_height_published": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

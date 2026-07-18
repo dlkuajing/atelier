@@ -733,9 +733,9 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260718-patent-generic-family-97226532/queue-after.json`, then open the next
-GSD quick for Family `82818661` / root `US-20260056353` / publication
-`US-20260056353-A1`,
+`.planning/quick/260718-patent-generic-family-82818661/queue-after.json`, then open the next
+GSD quick for Family `94658603` / root `US-20260118635` / publication
+`US-20260118635-A1`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the

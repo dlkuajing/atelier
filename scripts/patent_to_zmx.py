@@ -814,6 +814,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_largan_light_blocking_compensation_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_four_lens_f_number_unpublished_attempts(
         raw_text,
         patent_id=patent_id,
@@ -46617,6 +46625,409 @@ def _parse_samsung_thermal_eight_lens_attempts(
             )
         )
     return attempts
+
+
+_LARGAN_LIGHT_BLOCKING_COMPENSATION_ITEMS = (
+    (1, "Largan first camera-module light-blocking compensation embodiment", (113, 123)),
+    (2, "Largan second camera-module light-blocking compensation embodiment", (124, 132)),
+    (3, "Largan third folded-reflector light-blocking compensation embodiment", (133, 142)),
+    (4, "Largan fourth single-assembly projection imaging embodiment", (143, 148)),
+    (5, "Largan fifth dual-assembly projection imaging embodiment", (149, 155)),
+    (6, "Largan sixth multi-camera electronic-device embodiment", (156, 168)),
+    (7, "Largan seventh head-mounted electronic-device embodiment", (169, 172)),
+)
+_LARGAN_LIGHT_BLOCKING_COMPENSATION_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20260056353-A1": {
+        "raw_document_sha256": (
+            "bff6870e0ecf8024336d03a2917255f277cbb94ec76ed8eb8b164c35dbff2396"
+        ),
+        "normalized_text_sha256": (
+            "26ff37458755b4166736664be130cfa730182155dfcbf3ac559e15739e51e083"
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication 20260056353 Kind Code A1": 1,
+            "CAMERA MODULE AND ELECTRONIC DEVICE Abstract": 1,
+            "CHENG; Jyun-Jia": 2,
+            "Applicant: LARGAN PRECISION CO., LTD.": 1,
+            "Family ID: 82818661": 1,
+            "Appl. No.: 19/373897": 1,
+            "TW 111101558 Jan. 13, 2022": 1,
+            "parent US continuation 17815279 20220727": 1,
+            "parent-grant-document US 12493141": 1,
+            "us-provisional-application US 63232271 20210812": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260056353-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract A camera module includes an imaging lens assembly",
+            "background": "Background/Summary RELATED APPLICATIONS [0001]",
+            "summary": "SUMMARY [0008]",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0020]",
+            "detailed": "DETAILED DESCRIPTION [0072]",
+            "claims": "Claims 1 . A camera module, comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "1dd269ab14e6a77de05585bd23e8377d67dddc99037aecfb03b6ad7b84461ba3"
+            ),
+            "abstract": (
+                "570183b1fd9b08b2e8bf98778e80e48d948c218e38f3e943a7e1cfd8403d433d"
+            ),
+            "background": (
+                "955d0766b0495a60e73f7c6bb335845a0cf5012ac513533588fc5260868b6ea4"
+            ),
+            "summary": (
+                "dd548a89adec9ed9c9f6d618a36af6b927258603880c2df7f0e211557757bdfc"
+            ),
+            "brief": (
+                "b38f29818cc5f2c5e9df945f85d9edcb96df97cf9df3702b6c8f1f840bfcc668"
+            ),
+            "detailed": (
+                "2df4112faec2fe26ff122b60632a1867e960017adaa23284e7091beba9262ad8"
+            ),
+            "claims": (
+                "4e531cd467f2ccb4e2d4b52e59674283241b98b80e37d7af367b0da9450b69d2"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 7): "0b21eee28385b31ccedfc93c57dca4e720b289667abf862f94fbbec16f43e3c5",
+            (8, 19): "36653b08da18673ca20662f0b700397823618c5e0a853364384fd3484ca57866",
+            (20, 71): "c381199bf6c82dd5a4e5ff63a34aae257b44f0473e275cd0fbb65560d2bf648b",
+            (72, 112): "7c8318836757a38e80b70bd52efa3fe5c58c851514b76a86f5b56591528dbac0",
+            (113, 123): "ad593fd392991bc3e58d9aca04796392f30595577cebd0bb4a17eb620a61ef59",
+            (124, 132): "cf35cddb7ff2c1586d5af98047ff88abb15c1616258e8468e2ea62f21b507292",
+            (133, 142): "8f047f5af660c03d4b2bc48c54716276f932de337f0e3175a971272555285068",
+            (143, 148): "f39654448eff78253b3dbedf902dbf0e6c4b62b6dc602572441beb3aff919323",
+            (149, 155): "480038b809267e709879fe8a9a57e2a6630cfeee21e965fe3d621926fd2a85ab",
+            (156, 168): "00ffe2c21409498108252dca8a0523da128d8a8cc15571053d9970cc67ee88aa",
+            (169, 172): "5a4502d6e7ac84bd4b31e4b69f1cdc5f7c7fa20b97460d2a0ee541cccfa4bf55",
+            (173, 173): "d87f9a3005b5d7beb68f7e6f8fab2e8bbd0c25fb277a8b0f8cd9a1801d1c04a9",
+        },
+        "table_payload_sha256": (
+            "7ac0b4a548811942fa9c2118f5d754cc8296064d942725613e91adb51ce55372",
+            "6eff70c3c95a886c93c6848e9b94aa3c28ad348a61a63dc09a83a6a26951b5de",
+            "d7d7cbd9f0fbfd5492f6e48e0c91adefada171960a3af07578062f9645559d9d",
+            "9b9ed2a2aced9e8d14ce91cce74a25924cc6a936ff273baf171b2fd1b75a839e",
+            "bcd6e31ef54676790dfe199c4eedf19715fbf0171181214d86b42a19b06573b4",
+        ),
+        "math_object_sha256": (
+            "78806f5fca0b31804a3eba7a8cfb747f6d7ff9086b3b6bf1e9d9d442e58b9da6",
+            "42bd64d54cbdc1342634298831ee4c406b9c8766eb4975df545341458521dfbf",
+            "871a2829cefad28ae49dee0349b9f2ef2e80e49ff1b2a0639001d629c9d6901c",
+            "abc87e04ac1496e55b71544cb3bc6a5ca53da0cd33ef7029cb89b5b358abb850",
+            "73f365f49d4cb3fc2084602ca96b65588b76d1055f6d3230fc106c48d684cf88",
+            "09f54e1df335ecc98f0da101226ab340123d63ee46ba4df0ed8ccab853e98c44",
+            "7ad32ce4866e2014471c3f852a9b8d285103f54a14a14e19dbd1b5f43e1ef329",
+            "a566213f12b7d2c7eb57087ba5662e0922871fac2782b69d75a06f54bb1dbf9d",
+            "0956f68048d5daab1d052746837b37ed1c3153633337295d3e308e8e438c3433",
+            "bcb386609e24ed56d5258fb40708f940e59b6f8df9e52864a03a86dc1e64b781",
+            "10a2508546d390ad903cebc8517b306524d44ccbacfcc8a8dbf09d441e147ff0",
+        ),
+        "claim_numbers": tuple(range(1, 18)),
+        "independent_claim_numbers": (1, 17),
+        "figure_declaration_count": 51,
+        "sample_count": 39,
+        "light_blocking_geometry_example_count": 14,
+        "official_pdf": {
+            "url": (
+                "https://image-ppubs.uspto.gov/dirsearch-public/print/"
+                "downloadPdf/20260056353"
+            ),
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/ef8fa323cb6bae4c/"
+                "US-20260056353-A1.pdf"
+            ),
+            "bytes": 2_206_945,
+            "sha256": (
+                "ef8fa323cb6bae4c8d1e7a74b8d35814068d8929a94a0e89c17c8b69d94c3a6f"
+            ),
+            "page_count": 54,
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "narrow_raster_page_numbers": (53, 54),
+            "raster_set_sha256": (
+                "2ec8accab03edf2f0a590ed27f3b2e2db04b6dba15648145172cc487a91ce902"
+            ),
+            "drawing_page_numbers": tuple(range(2, 41)),
+            "table_page_numbers": tuple(range(46, 51)),
+            "claims_page_numbers": (53, 54),
+        },
+    }
+}
+
+
+def _classify_largan_light_blocking_compensation_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify seven exact Largan light-blocking/camera-device architectures."""
+
+    profile = _LARGAN_LIGHT_BLOCKING_COMPENSATION_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs in (
+                _LARGAN_LIGHT_BLOCKING_COMPENSATION_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan light-blocking compensation official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan light-blocking compensation normalized text hash changed "
+                f"for {patent_id}"
+            )
+
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan light-blocking compensation identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan light-blocking compensation section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan light-blocking compensation section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan light-blocking compensation {section_name} section changed"
+                )
+
+        paragraph_matches = list(
+            re.finditer(r"\[(\d{4})\]", text[: section_starts["claims"]])
+        )
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 174)):
+            raise PatentParseError(
+                "Largan light-blocking compensation paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Largan light-blocking compensation paragraph span {bounds} changed"
+                )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != tuple(range(1, 6)):
+            raise PatentParseError(
+                "Largan light-blocking compensation five-table denominator changed"
+            )
+        table_payloads = tuple(
+            re.split(
+                r"\s(?:\[\d{4}\]|Claims\s+1\s*\.)\s",
+                block.text,
+                maxsplit=1,
+            )[0].strip()
+            for block in table_blocks
+        )
+        if tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        ) != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "Largan light-blocking compensation table payload digest changed"
+            )
+
+        sample_rows = re.findall(
+            rf"(?<!\S)(\d{{2}})\s+([3-9])\s+({NUMBER_PATTERN})\s+"
+            rf"({NUMBER_PATTERN})\s+({NUMBER_PATTERN})\s+({NUMBER_PATTERN})(?!\S)",
+            table_payloads[0],
+            re.IGNORECASE,
+        )
+        if tuple(int(row[0]) for row in sample_rows) != tuple(range(1, 40)):
+            raise PatentParseError(
+                "Largan light-blocking compensation 39-sample denominator changed"
+            )
+        geometry_rows = re.findall(
+            rf"FIG\.\s*1([I-V])\s+({NUMBER_PATTERN})\s+({NUMBER_PATTERN})\s+"
+            rf"({NUMBER_PATTERN})(?!\S)",
+            table_payloads[1],
+            re.IGNORECASE,
+        )
+        if tuple(row[0].upper() for row in geometry_rows) != tuple("IJKLMNOPQRSTUV"):
+            raise PatentParseError(
+                "Largan light-blocking compensation 14-example denominator changed"
+            )
+
+        figure_paragraphs = tuple(paragraphs[number] for number in range(21, 72))
+        if (
+            len(figure_paragraphs) != profile["figure_declaration_count"]
+            or any("FIG." not in paragraph for paragraph in figure_paragraphs)
+        ):
+            raise PatentParseError(
+                "Largan light-blocking compensation 51-figure denominator changed"
+            )
+        for number, _label, bounds in _LARGAN_LIGHT_BLOCKING_COMPENSATION_ITEMS:
+            ordinal = ("1st", "2nd", "3rd", "4th", "5th", "6th", "7th")[
+                number - 1
+            ]
+            if f"according to the {ordinal} embodiment" not in paragraphs[bounds[0]]:
+                raise PatentParseError(
+                    f"Largan light-blocking compensation embodiment {number} binding changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan light-blocking compensation 17-claim denominator changed"
+            )
+        independent_claims = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?:A\s+camera\s+module|An\s+electronic\s+device),",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Largan light-blocking compensation independent claims changed"
+            )
+
+        math_objects = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        if tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        ) != profile["math_object_sha256"]:
+            raise PatentParseError(
+                "Largan light-blocking compensation MathML denominator changed"
+            )
+        custom_images = re.findall(r"<img\b[^>]*>", raw_text, re.IGNORECASE)
+        if len(custom_images) != 1 or "text missing or illegible when filed" not in (
+            custom_images[0]
+        ):
+            raise PatentParseError(
+                "Largan light-blocking compensation claim-11 image marker changed"
+            )
+
+        absent_prescription_markers = (
+            "radius of curvature",
+            "curvature radius",
+            "aspheric coefficient",
+            "aspherical coefficient",
+            "refractive index",
+            "Abbe",
+            "F-number",
+            "Fno",
+            "effective focal length",
+            "surface prescription",
+        )
+        for marker in absent_prescription_markers:
+            if re.search(re.escape(marker), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "Largan light-blocking compensation source unexpectedly publishes "
+                    f"{marker!r}"
+                )
+        if len(re.findall(r"\bequivalent\s+focal\s+length\b", text, re.IGNORECASE)) != 5:
+            raise PatentParseError(
+                "Largan light-blocking compensation placement focal-length ranges changed"
+            )
+        if len(re.findall(r"\bactual\s+focal\s+length\b", text, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "Largan light-blocking compensation focal-length disclaimer changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all seven source items
+        return attempts_for_error(exc)
+
+    reasons = (
+        "camera_module_light_blocking_compensation_architecture_only",
+        "camera_module_light_blocking_compensation_architecture_only",
+        "folded_reflector_light_blocking_compensation_architecture_only",
+        "projection_imaging_module_light_blocking_architecture_only",
+        "projection_imaging_module_light_blocking_architecture_only",
+        "electronic_device_multi_camera_placement_architecture_only",
+        "head_mounted_projection_device_architecture_only",
+    )
+    details = (
+        "the exact first embodiment publishes six plastic lens elements plus light-blocking compensation geometry and illumination/field measurements, but explicitly leaves surface morphology to imaging demand and provides no ordered optical prescription",
+        "the exact second embodiment reuses the first camera-module system with the light-blocking layer on a different plastic-lens configuration; it provides no independent ordered optical prescription",
+        "the exact third embodiment publishes four plastic lens elements and a folding reflective element plus light-blocking compensation geometry, but provides no ordered radii, spacings, materials, asphere coefficients, stop, or system F-number",
+        "the exact fourth embodiment publishes a five-element projection/image-source architecture and light-blocking layer placement, while leaving surface morphology and other optical features to imaging demand",
+        "the exact fifth embodiment publishes a dual-assembly five-element projection/image-source architecture with a folding reflector and light-blocking placement, but no ordered optical prescription",
+        "the exact sixth embodiment publishes multi-camera smartphone placement, capture controls, and estimated equivalent-focal-length/field ranges only; it does not disclose the camera modules' optical prescriptions",
+        "the exact seventh embodiment publishes a head-mounted waveguide/projection placement architecture reusing the fourth/fifth imaging modules and discloses no new optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=f"confirmed_no_prescription.{reasons[number - 1]}",
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, _paragraphs in _LARGAN_LIGHT_BLOCKING_COMPENSATION_ITEMS
+    ]
 
 
 def _samsung_thermal_exact_seven_value_row(
