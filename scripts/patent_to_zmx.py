@@ -631,6 +631,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_ogp_telecentric_zoom_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_sunny_split_lens_active_alignment_attempts(
         raw_text,
         patent_id=patent_id,
@@ -13174,6 +13180,166 @@ _SAMSUNG_SEVEN_EIGHT_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             ),
             "raster_set_sha256": (
                 "8325129c56f7a2163d03dc3cf30ff67118f6a87f7b5572234da6dd04435a72b5"
+            ),
+        },
+    }
+}
+_OGP_TELECENTRIC_ZOOM_ITEM = (
+    1,
+    "Optical Gaging Products telecentric zoom prescription and variants",
+)
+_OGP_TELECENTRIC_ZOOM_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-6292306-B1": {
+        "raw_document_sha256": (
+            "79baca6bd83e0d395aedfb916b7af7afa388706a6030b2706f6ef1c112430ba6"
+        ),
+        "normalized_text_sha256": (
+            "2f691be3ea31819fb33602b18f23a630f6e127de3f4c0b9917ae911680c80dce"
+        ),
+        "identity_markers": {
+            "Family ID: 23219584": 1,
+            "Assignee: Optical Gaging Products, Inc.": 1,
+            "Appl. No.: 09/314343": 1,
+            "Telecentric zoom lens system for video based inspection system": 1,
+        },
+        "section_markers": {
+            "background": "Background/Summary",
+            "description": "Description THE DRAWINGS",
+            "claims": "Claims 1. In a video inspection apparatus",
+        },
+        "section_sha256": {
+            "background": (
+                "cd158be645f319c362d60a8868c458628ae46e424790695792f4889ad18082bc"
+            ),
+            "description": (
+                "f378ff75d4bbe756c8feb8ebab88fee27a2437a25bbbaa2304eb22c3c364a9be"
+            ),
+            "claims": (
+                "1acd6648c693dfb519537ec80f3a4bf3a184a4de6e54cd23889cc84668398771"
+            ),
+        },
+        "background_paragraph_span_sha256": {
+            (1, 7): "5192aa5dfb261d86db8bdfb493071d4f7c8f945f04c8c7cdd093d334f513c70d",
+            (8, 10): "96b0a5c930ee18876f0b7bbb78f8e749cb213f47f58f40a148e85958f95dd81c",
+        },
+        "description_paragraph_span_sha256": {
+            (1, 2): "a660e9a90178af9fddb84b5e73dc10c952f46626f7245290b1ef05ef99c0be3d",
+            (3, 11): "0ef75bf163fba5f28cc3e901beb23ee9bd4ff31aa08141b07d437c027074fe0a",
+            (12, 17): "1ce353c78bdda83015d5cc3588dc4285ed7b21d2b88cb9177b24094ef6339db0",
+            (18, 19): "01d7b16a20c09b3a055b8f5e84bc850aab21f52ee95a14bbfd5a7c5e6e1dc164",
+        },
+        "drawings_prefix_sha256": (
+            "0df81be0fc5e49ea16d6204b079150a8e8e5f9e31c1309d8f504bf146a88fc96"
+        ),
+        "lens_table_sha256": (
+            "bb894075b12c801d607a4c6fa388b7b8d3d2eb33d22e4fe1247b2bbaeed0f396"
+        ),
+        "magnification_table_sha256": (
+            "07225957c8b8bb89a863ba7b30dd64cc443d5f55c4acb489cf43d0c5d3cee3df"
+        ),
+        "lens_surface_labels": (
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S16",
+            "S17",
+            "S19",
+            "S20",
+            "S21",
+            "S22",
+            "S23",
+            "S24",
+            "S25",
+            "S26",
+            "S27",
+            "S28",
+            "S29",
+            "S30",
+        ),
+        "magnification_rows": (
+            ".8 .times. 2.6 58.8 3.9 25.2",
+            "1.8 .times. 6.0 44.0 .5 43.4",
+            "4.8 .times. 16.0 16.6 4.6 66.7",
+            "8.0 .times. 27.0 1.3 12.9 73.7",
+        ),
+        "claim_sha256": (
+            "9ea9cbede56408a0391b2b46f7ed035061f5e098efae063425fa894291fa6008",
+            "f8fd91e35859363a9bc2be414305032910960a10a54db7d67803023028b7e0a2",
+            "133cbde80414970eb39c81fa38e9e9160b9a28f9e20aabf785f1003d32c3b4e2",
+            "5d88a85b76fbbc0c60af661bd06ee858690c31e55289912f40667bf81868e9a5",
+            "b8836e85de486386731c74e0564d25f552b0b17358037b9fbaf99ada4b9106a9",
+            "d4b718c720c665ae404b932330ae6d80654127a0c6aaa85c2c9d5c989239bd9c",
+            "71e6b7a473e8ba70f6e9bd4a2410933ce9ffaeaa227e4bff67c332dc2980e08b",
+            "4aac5625e11acac279044075363dbf97ba655bb9e00c3d70b3aedb0e4a9c9aa4",
+            "e064004b01f5a56b02e9aaa9c7a9ac61c8f3ad47d94bce505a3dd71c9236b5ce",
+            "0708a39b3c12311da5dc61c5b434538f1e96cd12b2bc33150c616e3c12973ac3",
+            "1301a499fae17ea6128aec1a099429c53a3fb646e1f784c8bca81aa9b57093b8",
+            "2454c3d04b64d1554bebbf33389edc8cdb9d6ff7d689dc83b88891d5849db6ff",
+            "751ac3ae401865ea0b19c2bf04b2e95e07676bb811cdcde99e3016b0d789bb31",
+            "67b1ade6f375a62365cf450a991162d0e09a01343536ff4071ad2b904ed4b26c",
+            "4fb4f943fba1c603f4f87503b45d3e59e794270f0bc739e9ecdbb1c7c4a3743f",
+            "fc975b91ed7aabf07d9e53128eaa0b55317af809684b5a11e416c81e066156f2",
+            "0e2a3ecbad7617c69865e52dea1a3ec2e95cc787cbdf949f209d687c5ed30b9c",
+        ),
+        "source_phrase_counts": {
+            "constant F/20 at the image": 2,
+            "aspheric surface": 2,
+            "focal length": 1,
+            "field of view": 0,
+            "image height": 0,
+            "0.8.times.F/25": 3,
+            "8.times.F/2.5": 2,
+            "achromatic quarter-wave retardation plate": 1,
+            "various alternative commercially available similar objective lenses": 1,
+            "fixed lens groups could be changed to give a different 10:1 zoom": 1,
+            "motions of the lens groups could be controlled by means other than cams": 1,
+            "rear group 34 could be changed or an additional rear group could be added": 1,
+        },
+        "required_fixed_air_gaps": (
+            "S5-S6",
+            "S8-S9(stop)",
+            "S9(stop)-S10",
+            "S12-S13",
+            "S14-S15",
+            "S24-S25",
+            "S26-S27",
+            "S28-S29",
+        ),
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/bc113bc6e9130fea/"
+                "US-6292306-B1.pdf"
+            ),
+            "bytes": 478_406,
+            "sha256": (
+                "bc113bc6e9130fea7a05ca4cc5d7be394923dbc1fdebe73c75242227a8a81d8b"
+            ),
+            "page_count": 7,
+            "single_raster_page_count": 7,
+            "raster_dimensions": (2320, 3408),
+            "drawing_page_numbers": (2, 3),
+            "table_page_numbers": (5, 6),
+            "page_raster_sha256": (
+                "de6b07e4eb6231761d0c5200d045f771a22a6416ed7274d550367878509516fd",
+                "991bf8187730be7efdf134455c0822ebf0aed1f28c5095d511791653227416b8",
+                "695674fb663fcb22270a581a116f4019e04d7dd48d43e7d51a9c7ad24c576c5d",
+                "69741e94cf9773017e68743651f9cb7215b18ff35f024e79d5c9032a168dae9e",
+                "c16deada0e97a1950ffb3f5425dd63e04d610c078f9ea9a003d61f61463905e0",
+                "c41cc8bcffa23beedb0c08ff99a71940eca0c4e84fb9cf324d3dd325f33a7746",
+                "4b10f60e566029603c28b1f5926048afeff7dca8d5822da45139c96bc289a143",
+            ),
+            "raster_set_sha256": (
+                "6baf8536ec8d590fd70816b35081847c41a5911af359826ecfc29d5fe37caebb"
             ),
         },
     }
@@ -37163,6 +37329,298 @@ def _classify_samsung_seven_eight_lens_attempts(
         )
     )
     return attempts
+
+
+def _classify_ogp_telecentric_zoom_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the exact Family 23219584 telecentric zoom disclosure."""
+
+    profile = _OGP_TELECENTRIC_ZOOM_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    number, label = _OGP_TELECENTRIC_ZOOM_ITEM
+
+    def attempt_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        section_label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\((\d+)\)", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"OGP telecentric zoom {section_label} denominator changed"
+            )
+        return {
+            paragraph_number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (paragraph_number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "OGP telecentric zoom official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "OGP telecentric zoom normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"OGP telecentric zoom identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "OGP telecentric zoom section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("OGP telecentric zoom section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"OGP telecentric zoom {section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"],
+            expected_numbers=tuple(range(1, 11)),
+            section_label="background/summary paragraph",
+        )
+        description_paragraphs = numbered_paragraphs(
+            sections["description"],
+            expected_numbers=tuple(range(1, 20)),
+            section_label="description paragraph",
+        )
+        for paragraph_map, span_hashes, section_label in (
+            (
+                background_paragraphs,
+                profile["background_paragraph_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_paragraph_span_sha256"],
+                "description",
+            ),
+        ):
+            for (start, end), expected_digest in span_hashes.items():
+                span = "".join(
+                    paragraph_map[paragraph_number]
+                    for paragraph_number in range(start, end + 1)
+                ).strip()
+                observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        f"OGP telecentric zoom {section_label} paragraph span "
+                        f"{start}-{end} changed"
+                    )
+
+        drawings_prefix = sections["description"].split("(1)", maxsplit=1)[0].strip()
+        if (
+            hashlib.sha256(drawings_prefix.encode("utf-8")).hexdigest()
+            != profile["drawings_prefix_sha256"]
+        ):
+            raise PatentParseError("OGP telecentric zoom drawing declarations changed")
+
+        lens_table_start = text.index("LENS TABLE")
+        lens_table = text[lens_table_start : text.index("(15)", lens_table_start)].strip()
+        if (
+            hashlib.sha256(lens_table.encode("utf-8")).hexdigest()
+            != profile["lens_table_sha256"]
+        ):
+            raise PatentParseError("OGP telecentric zoom lens table changed")
+        surface_labels = tuple(re.findall(r"\bS\d+\b", lens_table))
+        if surface_labels != profile["lens_surface_labels"]:
+            raise PatentParseError(
+                "OGP telecentric zoom lens-table surface denominator changed"
+            )
+
+        magnification_table_start = text.index("MAGNIFICATION TABLE")
+        magnification_table = text[
+            magnification_table_start : text.index("(17)", magnification_table_start)
+        ].strip()
+        if (
+            hashlib.sha256(magnification_table.encode("utf-8")).hexdigest()
+            != profile["magnification_table_sha256"]
+        ):
+            raise PatentParseError("OGP telecentric zoom magnification table changed")
+        for row in profile["magnification_rows"]:
+            if magnification_table.count(row) != 1:
+                raise PatentParseError(
+                    f"OGP telecentric zoom magnification row {row!r} changed"
+                )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 18):
+            marker = f"{claim_number}. "
+            claim_start = claims_section.find(marker, cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "OGP telecentric zoom claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(marker)
+        claim_digests = tuple(
+            hashlib.sha256(
+                claims_section[
+                    claim_start : (
+                        claim_starts[index + 1]
+                        if index + 1 < len(claim_starts)
+                        else len(claims_section)
+                    )
+                ]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for index, claim_start in enumerate(claim_starts)
+        )
+        if claim_digests != profile["claim_sha256"]:
+            raise PatentParseError(
+                "OGP telecentric zoom seventeen-claim denominator changed"
+            )
+
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"OGP telecentric zoom source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("OGP telecentric zoom PDF byte count changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError("OGP telecentric zoom PDF hash changed")
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError("OGP telecentric zoom PDF page count changed")
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    f"OGP telecentric zoom PDF page {page_number} contains "
+                    f"{len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    f"OGP telecentric zoom PDF page {page_number} dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "OGP telecentric zoom PDF raster denominator changed"
+            )
+        if tuple(page_raster_hashes) != pdf_profile["page_raster_sha256"]:
+            raise PatentParseError("OGP telecentric zoom PDF page rasters changed")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError("OGP telecentric zoom PDF raster set changed")
+        if text_layer_characters != 0:
+            raise PatentParseError("OGP telecentric zoom PDF gained a text layer")
+        if not (
+            pdf_profile["drawing_page_numbers"] == (2, 3)
+            and pdf_profile["table_page_numbers"] == (5, 6)
+        ):
+            raise PatentParseError(
+                "OGP telecentric zoom PDF visual denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - preserve this exact source item
+        return attempt_for_error(exc)
+
+    missing_gaps = ", ".join(profile["required_fixed_air_gaps"])
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=(
+                    "metadata_unpublished.required_fixed_air_spacings_"
+                    "asphere_coefficients_and_system_focal_length_field_absent"
+                ),
+                detail=(
+                    "The official B1 HTML and seven-page image-only PDF bind one "
+                    "telecentric zoom system across four tabulated states "
+                    "(0.8x, 1.8x, 4.8x and 8.0x). The Lens Table publishes 27 "
+                    "surface radii and 17 glass-element thickness/material rows, "
+                    "while the Magnification Table publishes stop diameter and the "
+                    "three moving-group separations X/Y/Z for all four states. It "
+                    "does not publish the required fixed air spacings "
+                    f"({missing_gaps}); S2 is expressly aspheric but no conic or "
+                    "asphere coefficients are published; and no system effective "
+                    "focal length, image height or angular field is published. The "
+                    "constant image F/20 and the 0.8x F/25 through 8x F/2.5 range "
+                    "do not supply those missing values. The alternate retardation-"
+                    "plate/air-spaced objective, commercial infinity-corrected "
+                    "objectives, changed fixed-group powers, non-cam motion, and "
+                    "changed/additional rear group are qualitative variants rather "
+                    "than independent numerical prescriptions. No spacing, "
+                    "asphere, focal-length or field value is measured from drawings, "
+                    "inferred, or borrowed from another publication."
+                ),
+            ),
+        )
+    ]
 
 
 def _sekonix_small_lens_qcon_table_payloads(text: str) -> tuple[str, ...]:

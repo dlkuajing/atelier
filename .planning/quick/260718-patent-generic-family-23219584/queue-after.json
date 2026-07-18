@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "10baa7c069cf8619b947e5ccffaaee58299c09c52569659ed65ba7cba6ca0540",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 94,
+      "affected_items": 94
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "94819907",
+    "root_ids": [
+      "US-20260189780"
+    ],
+    "publication_ids": [
+      "US-20260189780-A1"
+    ],
+    "application_number": "19/549670",
+    "title": "METHOD FOR CAPTURING IMAGE INCLUDING ANIMAL, AND ELECTRONIC DEVICE THEREFOR",
+    "applicant": "SAMSUNG ELECTRONICS CO., LTD.",
+    "layout_signature": "437fa2555cbad39206a20353ea2dc5e5c7dba01ccf65749ed1c49baa7cfdaa4b",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 1,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f09d347b82b7f263/US-20260189780-A1.html",
+      "sha256": "f09d347b82b7f26364e8230bef44350cfd2e62d202468e7b85d6183b94ed87b2"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

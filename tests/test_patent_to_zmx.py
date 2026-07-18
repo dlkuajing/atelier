@@ -24156,6 +24156,352 @@ def test_samsung_seven_eight_lens_denominator_queue_and_evidence() -> None:
     assert queue["saturation_complete"] is False
 
 
+def _ogp_telecentric_zoom_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "79baca6bd83e0d39"
+        / "US-6292306-B1.html"
+    )
+    return "US-6292306-B1", source_path.read_text(encoding="utf-8")
+
+
+def test_ogp_telecentric_zoom_closes_one_metadata_terminal() -> None:
+    patent_id, raw_text = _ogp_telecentric_zoom_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    attempt = attempts[0]
+    assert attempt.embodiment_number == 1
+    assert attempt.embodiment == (
+        "Optical Gaging Products telecentric zoom prescription and variants"
+    )
+    assert attempt.prescription is None
+    assert isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+    assert attempt.error.status == "metadata_unpublished"
+    assert attempt.error.reason_code == (
+        "metadata_unpublished.required_fixed_air_spacings_asphere_coefficients_"
+        "and_system_focal_length_field_absent"
+    )
+    detail = str(attempt.error)
+    assert "27 surface radii and 17 glass-element" in detail
+    assert "0.8x, 1.8x, 4.8x and 8.0x" in detail
+    assert "S8-S9(stop)" in detail
+    assert "S2 is expressly aspheric" in detail
+    assert "no system effective focal length, image height or angular field" in detail
+    assert "No spacing, asphere, focal-length or field value is measured" in detail
+
+
+def test_ogp_telecentric_zoom_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _ogp_telecentric_zoom_source()
+    changed = raw_text.replace("September 18, 2001", "September 19, 2001", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 1
+    error = attempts[0].error
+    assert isinstance(error, patent_to_zmx.PatentParseError)
+    assert not isinstance(error, patent_to_zmx.PatentTerminalParseError)
+    assert str(error) == (
+        "OGP telecentric zoom official raw text hash changed for US-6292306-B1"
+    )
+
+
+def test_ogp_telecentric_zoom_tables_are_source_bound() -> None:
+    patent_id, raw_text = _ogp_telecentric_zoom_source()
+    profile = patent_to_zmx._OGP_TELECENTRIC_ZOOM_SOURCE_PROFILES[patent_id]
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+
+    lens_start = text.index("LENS TABLE")
+    lens_table = text[lens_start : text.index("(15)", lens_start)].strip()
+    magnification_start = text.index("MAGNIFICATION TABLE")
+    magnification_table = text[
+        magnification_start : text.index("(17)", magnification_start)
+    ].strip()
+
+    assert hashlib.sha256(lens_table.encode("utf-8")).hexdigest() == (
+        profile["lens_table_sha256"]
+    )
+    assert tuple(re.findall(r"\bS\d+\b", lens_table)) == profile[
+        "lens_surface_labels"
+    ]
+    assert hashlib.sha256(magnification_table.encode("utf-8")).hexdigest() == (
+        profile["magnification_table_sha256"]
+    )
+    assert all(
+        magnification_table.count(row) == 1
+        for row in profile["magnification_rows"]
+    )
+    assert profile["required_fixed_air_gaps"] == (
+        "S5-S6",
+        "S8-S9(stop)",
+        "S9(stop)-S10",
+        "S12-S13",
+        "S14-S15",
+        "S24-S25",
+        "S26-S27",
+        "S28-S29",
+    )
+
+
+def test_ogp_telecentric_zoom_official_pdf_raster_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile = patent_to_zmx._OGP_TELECENTRIC_ZOOM_SOURCE_PROFILES[
+        "US-6292306-B1"
+    ]["official_pdf"]
+    pdf_path = root / profile["path"]
+    pdf_bytes = pdf_path.read_bytes()
+
+    assert len(pdf_bytes) == profile["bytes"] == 478_406
+    assert hashlib.sha256(pdf_bytes).hexdigest() == profile["sha256"]
+    reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+    assert len(reader.pages) == profile["page_count"] == 7
+    page_hashes = []
+    text_characters = 0
+    for page in reader.pages:
+        assert len(page.images) == 1
+        page_image = page.images[0]
+        assert page_image.image.convert("RGB").size == profile["raster_dimensions"]
+        page_hashes.append(
+            patent_pdf_recovery._canonical_raster_sha256(page_image.data)
+        )
+        text_characters += len(page.extract_text() or "")
+    assert tuple(page_hashes) == profile["page_raster_sha256"]
+    assert hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest() == profile["raster_set_sha256"]
+    assert text_characters == 0
+    assert profile["drawing_page_numbers"] == (2, 3)
+    assert profile["table_page_numbers"] == (5, 6)
+
+
+def test_ogp_telecentric_zoom_source_facts_close_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-23219584"
+    denominator = json.loads(
+        (quick / "family-23219584-denominator.json").read_text(encoding="utf-8")
+    )
+    facts = json.loads(
+        (quick / "family-23219584-source-facts.json").read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "background_summary_numbered_paragraphs": 10,
+        "description_numbered_paragraphs": 19,
+        "total_numbered_paragraphs": 29,
+        "claims": 17,
+        "declared_textual_figures": 5,
+        "located_raster_figures": 5,
+        "tagged_html_tables": 0,
+        "flattened_optical_tables": 2,
+        "mathml_objects": 0,
+        "html_image_tags": 0,
+        "source_disclosed_items": 1,
+        "primary_numerical_zoom_systems": 1,
+        "qualitative_dependent_variants": 5,
+        "zoom_states": 4,
+        "ordered_radius_rows": 27,
+        "glass_element_thickness_material_rows": 17,
+        "published_variable_group_spacing_columns": 3,
+        "unpublished_required_fixed_air_gaps": 8,
+        "metadata_unpublished_items": 1,
+        "replayed_ledger_items": 1,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 7,
+        "retained_page_rasters": 7,
+        "retained_drawing_sheets": 2,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_tables": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_source_items": 0,
+    }
+    rows = facts["lens_table"]["rows"]
+    assert len(rows) == 27
+    assert sum(row["thickness_mm"] is not None for row in rows) == 17
+    assert facts["lens_table"]["air_spacing_column_present"] is False
+    assert len(facts["magnification_table"]["rows"]) == 4
+    assert facts["magnification_table"]["rows"][0] == {
+        "magnification": "0.8x",
+        "stop_diameter_mm": 2.6,
+        "X_mm": 58.8,
+        "Y_mm": 3.9,
+        "Z_mm": 25.2,
+    }
+    assert len(facts["required_unpublished_metadata"]["fixed_air_gaps"]) == 8
+    assert len(facts["qualitative_variants"]) == 5
+    assert facts["item"]["terminal_status"] == "metadata_unpublished"
+    assert facts["representability_boundary"]["formal_output_permitted"] is False
+    assert not any(facts["formal_outputs"].values())
+
+
+def test_ogp_telecentric_zoom_raster_audit_rehashes_visual_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-23219584"
+    audit = json.loads(
+        (quick / "family-23219584-raster-audit.json").read_text(encoding="utf-8")
+    )
+    source = audit["sources"][0]
+    pdf_path = root / source["path"]
+    pdf_bytes = pdf_path.read_bytes()
+
+    assert len(pdf_bytes) == source["bytes"]
+    assert hashlib.sha256(pdf_bytes).hexdigest() == source["container_sha256"]
+    reader = patent_pdf_recovery.pypdf.PdfReader(str(pdf_path))
+    page_hashes = []
+    for page, expected_hash in zip(
+        reader.pages, source["page_raster_sha256"], strict=True
+    ):
+        assert len(page.images) == 1
+        page_image = page.images[0]
+        assert list(page_image.image.convert("RGB").size) == source[
+            "raster_dimensions"
+        ]
+        page_hash = patent_pdf_recovery._canonical_raster_sha256(page_image.data)
+        assert page_hash == expected_hash
+        page_hashes.append(page_hash)
+    assert hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest() == source["decoded_raster_set_sha256"]
+    assert [page_hashes[number - 1] for number in source["table_pages"]] == source[
+        "table_page_raster_sha256"
+    ]
+    assert audit["visual_review"]["lens_table_air_spacing_column_present"] is False
+    assert audit["visual_review"]["drawing_measurement_used"] is False
+    for visual in audit["visual_artifacts"]:
+        content = (root / visual["path"]).read_bytes()
+        assert len(content) == visual["bytes"]
+        assert hashlib.sha256(content).hexdigest() == visual["sha256"]
+        assert visual["visual_reviewed"] is True
+
+
+def test_ogp_telecentric_zoom_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-23219584"
+    replay = json.loads(
+        (quick / "family-23219584-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    semantic_hashes = []
+    for record in replay["attempts"]:
+        attempt_bytes = (root / record["path"]).read_bytes()
+        assert len(attempt_bytes) == record["bytes"]
+        assert hashlib.sha256(attempt_bytes).hexdigest() == record["file_sha256"]
+        payload = json.loads(attempt_bytes)
+        assert payload.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode(
+                "utf-8"
+            )
+        ).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+    assert len(set(semantic_hashes)) == 1
+    assert semantic_hashes[0] == replay["semantic_sha256"] == (
+        "0e5314f3793453d4414ed0551ec7d6c529c346a3174a615f708a5f64eabe737c"
+    )
+    assert replay["semantic_equal"] is True
+    assert replay["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 1},
+        "terminal_status_counts": {"metadata_unpublished": 1},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+
+def test_ogp_telecentric_zoom_queue_and_census_are_deterministic() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-23219584"
+    before = json.loads(
+        (quick / "generic-residual-before-95.json").read_text(encoding="utf-8")
+    )
+    after_1_path = quick / "generic-residual-after-1.json"
+    after_2_path = quick / "generic-residual-after-2.json"
+    after_1 = json.loads(after_1_path.read_text(encoding="utf-8"))
+    after_2 = json.loads(after_2_path.read_text(encoding="utf-8"))
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+
+    assert (before["affected_roots"], before["affected_items"]) == (95, 95)
+    assert (after_1["affected_roots"], after_1["affected_items"]) == (94, 94)
+    assert after_1_path.read_bytes() == after_2_path.read_bytes()
+    assert after_1["result_set_sha256"] == after_2["result_set_sha256"] == (
+        "10baa7c069cf8619b947e5ccffaaee58299c09c52569659ed65ba7cba6ca0540"
+    )
+    assert not any(item["root_id"] == "US-6292306" for item in after_1["items"])
+    assert queue["executable_buckets"][0] == {
+        "parser_signature": "generic_summary_metadata_missing",
+        "affected_roots": 94,
+        "affected_items": 94,
+    }
+    assert queue["next_exact_group"]["family_id"] == "94819907"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260189780"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-20260189780-A1"]
+    assert queue["saturation_complete"] is False
+
+
+def test_ogp_telecentric_zoom_evidence_rehashes_every_reference() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-23219584"
+    denominator = json.loads(
+        (quick / "family-23219584-denominator.json").read_text(encoding="utf-8")
+    )
+    evidence = json.loads(
+        (quick / "family-23219584-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert evidence["denominator"] == denominator["denominator"]
+    for record in (
+        evidence["source"],
+        *evidence["official_pdfs"],
+        *evidence["replay_attempts"],
+        evidence["ledger"]["summary"],
+        evidence["ledger"]["report"],
+        *evidence["census"].values(),
+        *evidence["artifacts"],
+    ):
+        content = (root / record["path"]).read_bytes()
+        assert len(content) == record["bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+    summary = json.loads(
+        (root / evidence["ledger"]["summary"]["path"]).read_text(encoding="utf-8")
+    )
+    assert summary["cohort_roots"] == summary["roots_with_results"] == 619
+    assert summary["missing_root_ids"] == []
+    assert summary["corrupt_result_paths"] == []
+    assert summary["result_set_sha256"] == evidence["ledger"][
+        "result_set_sha256"
+    ]
+    assert evidence["semantic_replay_sha256"] == (
+        "0e5314f3793453d4414ed0551ec7d6c529c346a3174a615f708a5f64eabe737c"
+    )
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["next_exact_group"]["family_id"] == "94819907"
+    assert evidence["saturation_complete"] is False
+
+
 def _sekonix_small_lens_qcon_source() -> tuple[str, str]:
     root = Path(__file__).resolve().parents[1]
     source_path = (
