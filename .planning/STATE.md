@@ -334,6 +334,29 @@ review, 148 mixed, 153 terminal and 25 converted; items are 1387 parser review, 
 executable bucket; deterministic ordering selects Family `82219880` (`US-20220214515-A1`) next.
 Parent/global patent saturation remains active and incomplete.
 
+**Patent saturation latest authoritative update (2026-07-18, Family 82219880):** This
+supersedes the Family 92715390 snapshot above and completed quick-task row below. Strict replay is
+619/619 with missing=0, corrupt=0 and result set
+`4b5b2bac669d69837349efc14b5a00fd4ef3a64bc4e9b44a5ec2f436c31560a5`. Family `82219880`
+(`US-20220214515-A1`) reconciles application `17/567768`, Korean priority, one related paragraph,
+one field paragraph, Background paragraphs 3-14, Summary paragraphs 15-25, drawing paragraphs
+26-31, Detailed Description paragraphs 32-71, claims 1-10, one claim family, ten textual figures,
+zero tagged tables, zero MathML and five source items. The items publish the primary point-contact
+alignment pair, cascading multi-lens coupling, annular and discrete coupling variants, plus
+barrel-fit/blocking-film integration. R>0.05 mm and 60 degrees<V<120 degrees constrain only the
+effective-diameter-external mechanical coupling; no ordered optical prescription is published, so
+all five are source-proven confirmed-no-prescription terminals. The official 11-page image-only PDF
+has five drawing sheets and one raster per page; FIGS.1-10 resolve paragraph 61's isolated
+`FIGS. 8 to 19` typo, and all pages were reviewed without coordinate transcription, numeric
+derivation or family borrowing. Attempts 2/3 are semantic-equal after removing only
+`result_attempt`; no worker/request/receipt/fingerprint/candidate/staging ZMX/formal intake exists,
+and CODE V is unused. The preceding queue's wrong `USPAT/1887...` source binding was corrected to
+the census/attempt-proven `US-PGPUB/ea78...` source and its evidence hash refreshed. Current roots
+are 292 parser review, 148 mixed, 154 terminal and 25 converted; items are 1386 parser review,
+1274 terminal, 561 staging and 28 conversion retry. Generic metadata is 102 roots/items and remains
+the largest executable bucket; deterministic ordering selects Family `65634646`
+(`US-20220413251-A1`) next. Parent/global patent saturation remains active and incomplete.
+
 ## Current Position
 
 | Scope | Status |
@@ -346,7 +369,7 @@ Parent/global patent saturation remains active and incomplete.
 | Phase 16 Stage C | 完成技术证据闭环；PR #76/#78/#79/#81。48-run matrix + 单 exact target production/export。 |
 | Loop2 G | PR #82 / main CI `29233888562` success；heartbeat 当前 inventory 不存在，但 deletion operation receipt 未保留，G 的该子项不可独立重算。 |
 | North-star control plane | ACTIVE / UNRATIFIED；A–F=false。历史固定树 `57c305f/2b3c73d`、`a5ea60e/930767a`、`ff76ae0/4317805`、`d9e0e75/00c7af0`、`bd2e1cf/cf9c6f3`、`aca7241/53c2455`、`ead809c/b140543`、`8acb078/5856f8d`、`0915ccf/7e004a0`、`2c74a54/5784bac`、`02f9d17/7abf1b6` 与 `ab7ce4d/f2ff988` 均被独立只读审查拒绝，不能发布；`8acb078`、`2c74a54` 与 `ab7ce4d` 的同树 RELEASE_GIT_CI PASS 均被其他 scope finding 作废，`0915ccf`、`02f9d17` 的 RELEASE_GIT_CI 自身为 CHANGES_REQUIRED。tracked STATE 不自证承载它的 commit/tree、worktree 状态、fresh review、PR、CI 或 merge；O-07 只能由 merge 后树外签发的 registered RUN_CODE_RELEASE package 证明且不闭任何 A–F，O-09 detached release evidence 才可能闭 F。 |
-| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `54db9199...ed01`. Current roots: 293 parser review, 148 mixed, 153 terminal, 25 converted; items: 561 staging, 1387 parser review, 1269 terminal, 28 conversion retry. Frozen Family 92715390 reconciles six aperture/actuator/connection-substrate mechanical architectures as source-proven confirmed-no-prescription terminals. The retained official PDF has 43 image-only pages, 24 drawing sheets and all FIGS.1-30; no transcription, numeric derivation, family borrowing or formal output exists, and CODE V is unused. Generic 104->103 roots/items remains first by nonterminal roots; deterministic ordering selects Family 82219880 next. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
+| Patent saturation | ACTIVE / INCOMPLETE. Frozen replay is 619/619, missing=0, corrupt=0, result set `4b5b2bac...560a5`. Current roots: 292 parser review, 148 mixed, 154 terminal, 25 converted; items: 561 staging, 1386 parser review, 1274 terminal, 28 conversion retry. Frozen Family 82219880 reconciles five self-aligning mechanical coupling architectures as source-proven confirmed-no-prescription terminals. The retained official PDF has 11 image-only pages, five drawing sheets and all FIGS.1-10; no transcription, numeric derivation, family borrowing or formal output exists, and CODE V is unused. Generic 103->102 roots/items remains first by nonterminal roots; deterministic ordering selects Family 65634646 next. The prior queue's wrong source binding was corrected to the census/attempt-proven retained HTML. External-family repair, reflective/odd-power representation, staging intake and source exhaustion remain outside completion, so this is not family/source/global saturation. |
 
 **Release truth:** PR #81 merge
 `9249f97834a3bff52bb38e3e6ff456c7ec0aaec3`；PR CI run `29227838587`
@@ -552,23 +575,24 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260717-patent-generic-family-78342471` | complete-shovel-saturation-incomplete | Exact B2 source reconciles application 18/417865, PCT continuation and Chinese priority, 40 numbered paragraphs across related, summary and description sections, claims 1-10, three figures, zero tables/MathML and one source item. The dynamic starry-sky lamp uses generic optical integrators, an imaging assembly, lens cone, mirror facets and a five-flat-plate roller splitter. The 108-degree pentagon angle, flat-plate glass and component/beam/dot counts do not form a constituent prescription. The item becomes confirmed-no-prescription without drawing transcription, derivation, prior-publication/family borrowing or formal output. PDF endpoint 404; no raster/full-drawing claim. Attempts 2/3 semantic-equal excluding only result attempt. Result set `dd7ba998...5768`, summary `14b5b56f...32b0b`, report `48dc79a0...dd729`, after census `a3d0c883...90a7f`; audit 619/619 corrupt=0; focused 5/5, all 622 offline patent tests and guard 5/5 pass; CODE V zero. Generic 105 roots remains first; Family 74036960 is next. |
 | `260717-patent-generic-family-74036960` | complete-shovel-saturation-incomplete | Exact B2 source reconciles application 17/619967, PCT/WO/prior-US/two-CN relationships, 247 numbered paragraphs, claims 1-19, 40 figures, zero tables/MathML and fifteen heater/conductor/manufacturing architecture items. None publishes an ordered constituent-lens prescription, so all fifteen become confirmed-no-prescription terminals without coordinate synthesis, raster numeric derivation, family borrowing or formal output. The retained official 38-page image-only PDF has sixteen drawing sheets; all page rasters and 40 declared figures reconcile and were visually reviewed. Attempts 2/3 are semantic-equal excluding only result attempt. Result set `e78d0ddc...0ea4`, summary `a771180e...cbb`, report `68de72a1...f624`, after census `29e903bd...86c`; audit 619/619 corrupt=0; focused 5/5, all 627 offline patent tests and guard 5/5 pass; compile, Ruff, deterministic census and 370 referenced hashes pass; CODE V/formal contamination zero. Generic 104 roots remains first; Family 92715390 is next. |
 | `260718-patent-generic-family-92715390` | complete-shovel-saturation-incomplete | Exact B2 source reconciles application 18/587176, prior A1/two-KR relationships, 412 numbered paragraphs, claims 1-22, 30 figures, zero tables/MathML and six aperture/actuator/connection-substrate architecture items. Generic lens wording and mechanical radius/curvature/thickness data publish no ordered constituent-lens prescription, so all six become confirmed-no-prescription terminals without coordinate synthesis, raster numeric derivation, family borrowing or formal output. The retained official 43-page image-only PDF has 24 drawing sheets; all page rasters and FIGS.1-30 reconcile and were visually reviewed. Attempts 2/3 are semantic-equal excluding only result attempt. Result set `54db9199...ed01`, summary `e301d5c1...956d`, report `f9622c0f...933b`, after census `38f87925...c7bb`; audit 619/619 corrupt=0; focused 5/5, all 632 offline patent tests and guard 5/5 pass; compile and Ruff pass; CODE V/formal contamination zero. Generic 103 roots remains first; Family 82219880 is next. |
+| `260718-patent-generic-family-82219880` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 17/567768, Korean priority, 71 numbered paragraphs, claims 1-10, ten figures, zero tables/MathML and five point-contact/cascading/annular/discrete/barrel-fit architecture items. R>0.05 mm and the 60-120-degree apex angle apply outside the effective diameter; no ordered constituent-lens prescription is published, so all five become confirmed-no-prescription terminals without coordinate synthesis, raster numeric derivation, family borrowing or formal output. The retained official 11-page image-only PDF has five drawing sheets; all page rasters and FIGS.1-10 reconcile and resolve paragraph 61's isolated FIGS.8-19 typo. Attempts 2/3 are semantic-equal excluding only result attempt. Result set `4b5b2bac...560a5`, summary `dfb0348d...c65f`, report `5dfe1fa4...ec7c`, after census `4989892e...ee1`; audit 619/619 corrupt=0; focused 5/5, all 637 offline patent tests and guard 5/5 pass; Ruff passes. The prior queue source binding was corrected and evidence-refreshed. Generic 102 roots remains first; Family 65634646 is next. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, resume from
-`.planning/quick/260718-patent-generic-family-92715390/260718-patent-generic-family-92715390-PLAN.md`,
+`.planning/quick/260718-patent-generic-family-82219880/260718-patent-generic-family-82219880-PLAN.md`,
 then preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (103 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (102 roots/items), ahead by root count of
 `sunny_embodiment_metadata_missing` (49 roots/177 items) and
 `aac_raytech_summary_metadata_missing` (55 roots/174 items). Its next exact family under
-deterministic root/item/layout/family ordering is Family ID `82219880`, root
-`US-20220214515`, publication `US-20220214515-A1`, layout
+deterministic parser/layout/root/publication ordering is Family ID `65634646`, root
+`US-20220413251`, publication `US-20220413251-A1`, layout
 `398622f52ff511311c349f40626f79b6e19bad3e73c2c0586750234eb69b3715`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.

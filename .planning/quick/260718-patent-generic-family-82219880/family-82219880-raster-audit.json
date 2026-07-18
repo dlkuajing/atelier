@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "family_id": "82219880",
+  "publication_id": "US-20220214515-A1",
+  "authority": "USPTO Patent Public Search image service",
+  "request": {
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20220214515",
+    "authentication": "anonymous PPUBS session token passed as requestToken and x-access-token",
+    "http_status": 200,
+    "content_type": "application/pdf"
+  },
+  "retained_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/91ef3be440b9950d/US-20220214515-A1.pdf",
+    "bytes": 619049,
+    "container_sha256": "91ef3be440b9950d1df6708b8581a0afd67308e1ff5a03396c75ac7ccb47be7f",
+    "page_count": 11,
+    "single_raster_pages": 11,
+    "raster_dimensions": [2560, 3300],
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "e6597371c4854e7e458a7f6180b327fd7565f7f10fce2ecdfc2a53862843d306"
+  },
+  "repeat_probe": {
+    "container_sha256": "0551d43d1065c849fddc3c24610982dc4e13676848bc5dea315273c6a37690af",
+    "bytes": 619049,
+    "container_equal": false,
+    "decoded_page_rasters_equal": true,
+    "meaning": "the USPTO service regenerates PDF container metadata, while every decoded page raster remains byte-identical"
+  },
+  "page_roles": {
+    "front_matter": [1],
+    "drawing_sheets": [2, 3, 4, 5, 6],
+    "specification_and_claims": [7, 8, 9, 10, 11]
+  },
+  "drawing_reconciliation": {
+    "drawing_sheet_count": 5,
+    "figure_declaration_paragraphs": 5,
+    "declared_figure_count": 10,
+    "located_figure_count": 10,
+    "sheet_figures": {
+      "2": [1, 2],
+      "3": [3, 4],
+      "4": [5, 6, 7],
+      "5": [8, 9],
+      "6": [10]
+    },
+    "unmapped_declared_figures": [],
+    "unexplained_raster_figures": [],
+    "paragraph_61_typo": {
+      "observed": "FIGS. 8 to 19",
+      "same_paragraph_correction": "FIGS. 8 to 10",
+      "brief_declaration": "FIGS. 8 to 10",
+      "official_drawing_sheet_result": "FIGS. 8, 9 and 10 only"
+    }
+  },
+  "page_raster_sha256": [
+    "6e9d18a7f456a1ae895562f03b264956cb8684bae57f3bfa77b0c5f4c0f1c97b",
+    "e61f452aab134246dfe58890c9f59703c07b507d17969fc503109e456cd2e2b9",
+    "4bbbdf0c7c4104a02e9c31b270da9179d05f68ce924e25092c921beeec36c3a1",
+    "a67e6ed87e6419272cb5ccb36f988810e5ad077c9193ea79569be11a8136e7ef",
+    "e76db47b77dddd65f3f9c472df54a24277a72f96cdbfd4c428124422d166be0f",
+    "5edc00f94b3f4ead6bfb3cd3d7a7d1336067386fb142fd469239838ef88133d2",
+    "727cdac1023229bc04959de6dac6ee68af7a5d99ed66544794871e1cfec7d41a",
+    "7c54ec67dbb2def820e0a01548564a44946dcf61f9bdf150ad7b9825d5a99a26",
+    "dda3b16ee89ef090ed782b9ef4223af496ab25baf4333ce7866fe805d579a507",
+    "430e381e423ff30c609377dca75ce78fd4451a7c9d96d57ac9e8ab09fd864ebb",
+    "751f32502d0c8918a8736ff3350040f3f330a91e45ee4736aa4824195dbc8bcf"
+  ],
+  "contact_sheets": [
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82219880/us20220214515-official-pages-1-11-contact.png",
+      "pages": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "bytes": 1978454,
+      "sha256": "e576d869bd13e897a9bef88ad305aa358fcfadb5b0d44aa4782ba15a4fa34541"
+    }
+  ],
+  "numeric_derivation_from_rasters": false,
+  "drawing_coordinates_transcribed": false,
+  "full_page_raster_review_claimed": true
+}

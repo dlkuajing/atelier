@@ -625,6 +625,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_sekonix_self_aligning_lens_assembly_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
@@ -11697,6 +11703,168 @@ _SAMSUNG_CAMERA_MODULE_SUPPORT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "drawing_sheet_count": 24,
             "raster_set_sha256": (
                 "f1a90812378ea669b063966ec2e914e95e9e34e4999823119f4af4be1398988a"
+            ),
+        },
+    }
+}
+_SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_ITEMS = (
+    (
+        1,
+        "Sekonix primary pair point-contact alignment architecture",
+        "confirmed_no_prescription."
+        "primary_pair_point_contact_alignment_architecture_only",
+    ),
+    (
+        2,
+        "Sekonix cascaded multi-lens coupling architecture",
+        "confirmed_no_prescription."
+        "cascaded_multi_lens_coupling_architecture_only",
+    ),
+    (
+        3,
+        "Sekonix annular coupling-shape variant",
+        "confirmed_no_prescription.annular_coupling_shape_variant_only",
+    ),
+    (
+        4,
+        "Sekonix discrete coupling-position variant",
+        "confirmed_no_prescription.discrete_coupling_position_variant_only",
+    ),
+    (
+        5,
+        "Sekonix barrel-fit and blocking-film integration",
+        "confirmed_no_prescription.barrel_fit_blocking_film_integration_only",
+    ),
+)
+_SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20220214515-A1": {
+        "raw_document_sha256": (
+            "ea78c079f9603bb02ea061a2ddf1174f686f4e48d2e5c8a0184b5c307ed390dd"
+        ),
+        "normalized_text_sha256": (
+            "0508bcaa9996a3bb71f81b763e1445d844768ae9d31a9e710a459c957ab10f7a"
+        ),
+        "section_markers": {
+            "preamble": "US-20220214515-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract A self-aligning camera lens assembly",
+            "background": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATION"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . A self-aligning camera lens assembly",
+        },
+        "section_sha256": {
+            "preamble": (
+                "5e6e2e2a24c0e7d5d475065c7043c3bbd9df49de8d7dc70e5c857369d52b8dd0"
+            ),
+            "abstract": (
+                "36e97ff09131bf44e6abcd0fdccfa9aca19f9c69405a7cc3f329a82bb6f4421e"
+            ),
+            "background": (
+                "097b252435c8c66cd7b1fa82a393c85791a8fd525b55c4de0cd812fc64c43f6a"
+            ),
+            "description": (
+                "2dd238cb14912c3b75aaaf3cbd7cb4580d1b36b72dfd2aeae9c9d421442f1607"
+            ),
+            "claims": (
+                "7a9a46cd8aefd463fe553042207f4ab64491ecca5d562c7b92f5a40158575401"
+            ),
+        },
+        "background_span_sha256": {
+            (1, 1): "abf4a3b4c98d4402c641b85db7cd2555a80c66bc3bc6685940ea19be4744b56f",
+            (2, 2): "a589487c8696d7dadd40e20ce904ababe2446faa231eee7a3ebf314c0b1dcf66",
+            (3, 14): "58c883f162dd8bacefa4d686ec791b168ddb824bd7ac0b3be0dc135bf38ef1cc",
+            (15, 25): "e5e18e1b04a0fc67cc7f3bd3e2e47d14a2f1ba72976e3c8115dda8ecbbed80f8",
+        },
+        "description_span_sha256": {
+            (26, 31): "c28b030f77f5125ee2007570862af366519982d1d731bf11e74ba97f5e1ffe34",
+            (32, 54): "3a5d494f5740c22f171ebc09783e5a7e41d734b92e00dd5d4f4fa3165d7b59c6",
+            (55, 60): "37dcd0bbcf8c27fef2d24af6cd8434d771e580cf747e18a4224301db91230582",
+            (61, 63): "fb43917602915a51593e9463052db0cbc2c60f7a6fe6d5c97515db67f699e385",
+            (64, 66): "040b47e8b8d30acb10b8a46ea2ce8a8a47887d27647ee79f53472ac6d56ae267",
+            (67, 71): "514c1d24d986b1b788ec4c8cbc79c1d8afaa1372ee7ce5987681c1b7cfd3965a",
+        },
+        "item_ranges": ((32, 54), (55, 60), (61, 63), (64, 66), (67, 71)),
+        "item_markers": (
+            "As an embodiment of the present disclosure, the front lens is the "
+            "first lens 100 positioned at an object",
+            "If the second lens 200 and the third lens 300 have a coupling portion",
+            "According to the embodiment of FIG. 8",
+            "Further, as shown in FIGS. 9 and 10",
+            "Meanwhile, an optical path blocking film 700 may be inserted",
+        ),
+        "figure_labels": tuple(str(number) for number in range(1, 11)),
+        "claim_family": tuple(range(1, 11)),
+        "claim_family_sha256": (
+            "a22cc388e217b26e10517675dd4597b4ca44e5c5d5317c43e53249cbd994bd43"
+        ),
+        "identity_markers": {
+            "US-20220214515-A1": 1,
+            "United States Patent Application Publication 20220214515": 1,
+            "Kind Code A1": 1,
+            "Publication Date July 07, 2022": 1,
+            "Inventor(s) CHOI; Byeong Ha et al. SELF-ALIGNING CAMERA LENS ASSEMBLY": 1,
+            "Applicant: SEKONIX CO., LTD.": 1,
+            "Family ID: 82219880": 1,
+            "Assignee: SEKONIX CO., LTD.": 1,
+            "Appl. No.: 17/567768": 1,
+            "Filed: January 03, 2022": 1,
+            "KR 10-2021-0001170": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "Fno": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "image height": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "aspheric": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "aperture stop": 0,
+            "optical prescription": 0,
+            "optical surface": 0,
+        },
+        "source_scope_phrase_counts": {
+            "radius": 10,
+            "curvature": 10,
+            "thickness": 1,
+            "0.05 mm": 10,
+            "effective diameter": 34,
+            "coupling portion": 74,
+            "coupling groove": 57,
+            "point contact": 11,
+            "lens barrel": 34,
+            "four to seven lenses": 3,
+            "non-spherical plastic lenses": 1,
+            "refractive power": 1,
+            "distortion": 1,
+            "aberration": 1,
+            "light path blocking film": 2,
+            "optical axes": 35,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/USPTO-PDF/"
+                "91ef3be440b9950d/US-20220214515-A1.pdf"
+            ),
+            "bytes": 619049,
+            "sha256": (
+                "91ef3be440b9950d1df6708b8581a0afd67308e1ff5a03396c75ac7ccb47be7f"
+            ),
+            "page_count": 11,
+            "single_raster_page_count": 11,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 7)),
+            "drawing_sheet_count": 5,
+            "raster_set_sha256": (
+                "e6597371c4854e7e458a7f6180b327fd7565f7f10fce2ecdfc2a53862843d306"
             ),
         },
     }
@@ -32888,6 +33056,357 @@ def _classify_samsung_camera_module_support_attempts(
             ),
         )
         for number, label, reason_code in _SAMSUNG_CAMERA_MODULE_SUPPORT_ITEMS
+    ]
+
+
+def _classify_sekonix_self_aligning_lens_assembly_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 82219880 self-aligning mechanical architectures."""
+
+    profile = _SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_ITEMS
+        ]
+
+    def numbered_paragraphs(
+        section_text: str,
+        *,
+        expected_numbers: tuple[int, ...],
+        label: str,
+    ) -> dict[int, str]:
+        matches = list(re.finditer(r"\[(\d{4})\]", section_text))
+        numbers = tuple(int(match.group(1)) for match in matches)
+        if numbers != expected_numbers:
+            raise PatentParseError(
+                f"Sekonix self-aligning lens {label} denominator changed"
+            )
+        return {
+            number: section_text[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(section_text)
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(numbers, matches, strict=True)
+            )
+        }
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Sekonix self-aligning lens section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Sekonix self-aligning lens section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Sekonix self-aligning lens {section_name} section changed"
+                )
+
+        background_paragraphs = numbered_paragraphs(
+            sections["background"],
+            expected_numbers=tuple(range(1, 26)),
+            label="background/summary paragraph",
+        )
+        description_paragraphs = numbered_paragraphs(
+            sections["description"],
+            expected_numbers=tuple(range(26, 72)),
+            label="description paragraph",
+        )
+        for paragraph_map, span_hashes, label in (
+            (
+                background_paragraphs,
+                profile["background_span_sha256"],
+                "background/summary",
+            ),
+            (
+                description_paragraphs,
+                profile["description_span_sha256"],
+                "description",
+            ),
+        ):
+            for bounds, expected_digest in span_hashes.items():
+                start, end = bounds
+                span = "".join(
+                    paragraph_map[number] for number in range(start, end + 1)
+                )
+                observed_digest = hashlib.sha256(
+                    span.strip().encode("utf-8")
+                ).hexdigest()
+                if observed_digest != expected_digest:
+                    raise PatentParseError(
+                        "Sekonix self-aligning lens "
+                        f"{label} paragraph span {start}-{end} changed"
+                    )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_ITEMS)
+            == 5
+        ):
+            raise PatentParseError(
+                "Sekonix self-aligning lens source-item denominator changed"
+            )
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                description_paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(27, 30):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+(\d+)\s+",
+                description_paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens single-figure declaration "
+                    f"paragraph {paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1))
+        if re.match(
+            r"\[0030\] FIGS\. 4 to 7 are schematic views",
+            description_paragraphs[30],
+        ) is None:
+            raise PatentParseError(
+                "Sekonix self-aligning lens FIGS.4-7 declaration changed"
+            )
+        figure_labels.extend(str(number) for number in range(4, 8))
+        if re.match(
+            r"\[0031\] FIGS\. 8 to 10 are schematic views",
+            description_paragraphs[31],
+        ) is None:
+            raise PatentParseError(
+                "Sekonix self-aligning lens FIGS.8-10 declaration changed"
+            )
+        figure_labels.extend(str(number) for number in range(8, 11))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens figure-label denominator changed"
+            )
+        paragraph_61 = description_paragraphs[61]
+        if not (
+            paragraph_61.count("FIGS. 8 to 19") == 1
+            and paragraph_61.count("FIGS. 8 to 10") == 1
+        ):
+            raise PatentParseError(
+                "Sekonix self-aligning lens paragraph 61 figure typo changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Sekonix self-aligning lens zero-table denominator changed"
+            )
+        if re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL):
+            raise PatentParseError(
+                "Sekonix self-aligning lens zero-MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 11):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens claim denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 10
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 11)
+        }
+        claim_family_digest = hashlib.sha256(
+            "".join(claims[number] for number in profile["claim_family"])
+            .strip()
+            .encode("utf-8")
+        ).hexdigest()
+        if claim_family_digest != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Sekonix self-aligning lens official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens official raster-page denominator changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Sekonix self-aligning lens official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Sekonix self-aligning lens official PDF gained a text layer"
+            )
+        if (
+            len(pdf_profile["drawing_page_numbers"])
+            != pdf_profile["drawing_sheet_count"]
+            or pdf_profile["drawing_page_numbers"] != tuple(range(2, 7))
+        ):
+            raise PatentParseError(
+                "Sekonix self-aligning lens drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all five exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML and all 11 exact official page rasters contain "
+        "ten declared figures across five drawing sheets, zero text tables and zero "
+        "MathML; the published 0.05 mm radius and 60-to-120-degree angle constrain "
+        "the effective-diameter-external mechanical coupling, while no ordered "
+        "optical radius, spacing, material, refractive-index, Abbe, conic, asphere, "
+        "stop, focal-length, F-number, image-height or field prescription is disclosed"
+    )
+    details = (
+        "Description paragraphs 32-54 and claims 1-3, 7 and 10 publish the primary "
+        f"front/rear-lens point-contact alignment structure; {common}",
+        "Description paragraphs 55-60 and claim 4 publish optional repetition of "
+        f"coupling portions and grooves through the third/fourth or all lenses; {common}",
+        "Description paragraphs 61-63 and claim 5 publish the circular annular "
+        f"coupling-shape variant shown in FIG. 8; {common}",
+        "Description paragraphs 64-66 and claim 6 publish one or more symmetric "
+        f"discrete coupling positions shown in FIGS. 9-10; {common}",
+        "Description paragraphs 67-71 and claims 8-9 publish barrel fitting, an "
+        f"optical-path blocking film and balanced assembly force only; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _SEKONIX_SELF_ALIGNING_LENS_ASSEMBLY_ITEMS
     ]
 
 
