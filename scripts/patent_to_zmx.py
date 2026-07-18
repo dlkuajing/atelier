@@ -643,6 +643,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_largan_spiral_protrusion_lens_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_plastic_light_folding_architecture_only_attempts(
             raw_text,
@@ -12294,6 +12300,249 @@ _MEDIMAGING_PUPIL_TRACKING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "drawing_sheet_count": 8,
             "raster_set_sha256": (
                 "b7f22b32742c50277a8c6b0ad62fa6415aa678f9a79cb1ccc821615e622cb631"
+            ),
+        },
+    }
+}
+_LARGAN_SPIRAL_PROTRUSION_LENS_ITEMS = (
+    (
+        1,
+        "Largan first spiral-protrusion lens-element example",
+        "confirmed_no_prescription.first_spiral_protrusion_lens_element_example_only",
+    ),
+    (
+        2,
+        "Largan second spiral-protrusion lens-element example",
+        "confirmed_no_prescription.second_spiral_protrusion_lens_element_example_only",
+    ),
+    (
+        3,
+        "Largan third spiral-protrusion lens-element example",
+        "confirmed_no_prescription.third_spiral_protrusion_lens_element_example_only",
+    ),
+    (
+        4,
+        "Largan fourth spiral-protrusion lens-element example",
+        "confirmed_no_prescription.fourth_spiral_protrusion_lens_element_example_only",
+    ),
+    (
+        5,
+        "Largan fifth spiral-protrusion lens-element example",
+        "confirmed_no_prescription.fifth_spiral_protrusion_lens_element_example_only",
+    ),
+    (
+        6,
+        "Largan multi-camera smartphone electronic-device example",
+        "confirmed_no_prescription.multi_camera_smartphone_wrapper_only",
+    ),
+    (
+        7,
+        "Largan folded-telephoto smartphone electronic-device example",
+        "confirmed_no_prescription.folded_telephoto_smartphone_wrapper_only",
+    ),
+    (
+        8,
+        "Largan vehicle camera-placement electronic-device example",
+        "confirmed_no_prescription.vehicle_camera_placement_wrapper_only",
+    ),
+)
+_LARGAN_SPIRAL_PROTRUSION_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20230296863-A1": {
+        "raw_document_sha256": (
+            "f596732d311d4d244cc22d4181af268d6aa9ed9823e6afa587436d4d703e3bbb"
+        ),
+        "normalized_text_sha256": (
+            "ade58492e6841201a8866fc7cdc5eca0eebb2af874a0c025aac3da77ac8d8003"
+        ),
+        "section_markers": {
+            "preamble": "US-20230296863-A1",
+            "abstract": "Abstract A lens element includes an optical effective portion",
+            "related_applications": "Background/Summary RELATED APPLICATIONS [0001]",
+            "technical_field": "BACKGROUND Technical Field [0002]",
+            "related_art": "Description of Related Art [0003]",
+            "summary": "SUMMARY [0004]",
+            "figures": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0012]",
+            "detailed": "DETAILED DESCRIPTION [0035]",
+            "claims": (
+                "Claims 1 . A lens element, having a central axis, and comprising:"
+            ),
+        },
+        "section_sha256": {
+            "preamble": (
+                "cce5708ff1932222f59f67ee31fb70bfd3510cbceb0c2f3af46253630fb3a1d7"
+            ),
+            "abstract": (
+                "640f3faf69ee3554ce98ba9afb1cfdef326257127dd2cbe3be858627ca75cb6d"
+            ),
+            "related_applications": (
+                "9e49f982ecb6e11012817b8184179e1d3df6aa59a3311fead336999e3cf93e4d"
+            ),
+            "technical_field": (
+                "c4a73244f8f3714f3d9fec48ac1873f6e1ae8063655a4e8aa46797513a4209ed"
+            ),
+            "related_art": (
+                "2a9810f5db18c8803ebb523029a4d278f603478c36392c0548b940b80c101ea1"
+            ),
+            "summary": (
+                "2855e6daa150ecc6cfc14076bbf166ae9157b264af3f5337a348613b6ff194fe"
+            ),
+            "figures": (
+                "93f1ba1c780bbdf4ddd932c3111dd5d32979ac21c7f39106f236d01b8564606f"
+            ),
+            "detailed": (
+                "c044be069b078ca3e2672f87143d98a9712f1cc9ddcbffcc62ab7cdc0bb801f2"
+            ),
+            "claims": (
+                "542552a358437b0912ebeb942f588e57d33f685c0c2b5d187e62a378c9ef14a1"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "11fc1a508f2ef1d6a3c41c727757fad49e419782d596f1e0a457b761f8126ec2",
+            (2, 2): "225fb01adc5518b6ffc44da588da3d99e3a097b2d78ce440c708510949aba1af",
+            (3, 3): "3f40680b20146ee3e2419226171ca0d95fdaf2b25f88916dba43e0db95ba1bd9",
+            (4, 11): "49028d930ba39485a68a414f71c712b9e8d6e10c786a0743823ba0bbe370a484",
+            (12, 34): "9699f081a38ef926ae36716c02a8cd5138a95d101f5c08482f52ee6fef68ac34",
+            (35, 58): "a7cc2403e3da41b5730d3df8aa6684810b78131fa9caf74c44daf6736ff3cc73",
+            (59, 71): "40307bcf5b7d88e205c92c23a8c1ba555d79927fbe549e8582c52db08d45d1f5",
+            (72, 81): "741e3b23c81e7dc3b3ba56566b42d413f51de5bccb8ab9524e108e89b454dd94",
+            (82, 91): "5c89a9621974961abba7a9bf8e00584139eb664f0555b7bfa3e12c6b276a1a57",
+            (92, 101): "49aaa47f2f44232be1ab35385a41c29e228cefabcb4fce3519bf801a29f92ce0",
+            (102, 111): "fac6e4427e4e7f30a3e530776df2a941bcd8c2a74ff4f2e7192775ab13075cda",
+            (112, 121): "051564079f76a65378dbace1b8e821969def7f3b2854d32026573bcf391f61f7",
+            (122, 126): "9ed12aa9b2766bc6e09236e447e80180595688223d66948a6a4d33176149b594",
+            (127, 131): "18c290ddcc37369aa66294a0c2f0fbbf464c8debd9c131f75016765389ff0818",
+            (132, 132): "0dc3dd4f44308eab9ad675e28b0f610fd0dea3684f785903489e97ed015563eb",
+        },
+        "item_ranges": (
+            (59, 71),
+            (72, 81),
+            (82, 91),
+            (92, 101),
+            (102, 111),
+            (112, 121),
+            (122, 126),
+            (127, 131),
+        ),
+        "item_markers": (
+            "FIG. 1 A is a schematic view of an imaging lens assembly 10",
+            "FIG. 2 A is a three dimensional view of the lens element 220",
+            "FIG. 3 A is a three dimensional view of the lens element 320",
+            "FIG. 4 A is a schematic view of the lens element 420",
+            "FIG. 5 A is a schematic view of the lens element 520",
+            "FIG. 6 A is a schematic view of an electronic device 60",
+            "FIG. 7 is a schematic view of an electronic device 70",
+            "FIG. 8 A is a schematic view of a vehicle instrument 80",
+        ),
+        "figure_labels": (
+            "1A", "1B", "1C", "1D", "2A", "2B", "2C", "3A", "3B", "3C",
+            "4A", "4B", "5A", "5B", "6A", "6B", "6C", "6D", "6E", "7",
+            "8A", "8B", "8C",
+        ),
+        "flattened_table_sha256": (
+            "53f6ea3b980fa26ac541eeb8b6f30f10d6e778da1658e42617ae19efeb5bff43",
+            "cb6437f61760005c46666bf3e659364c65fb35760494872d0e564c0a10509bac",
+            "a01bac43cc72aaf6be6653e70b2a7af495c22f7510ebe77a44c15465c3132045",
+            "381a86e56f68c6e80aedfffbd0a255485b4694d64d99334ec8644d55b6a6cb3f",
+            "ec6f2d6aced427782f83c8cb9f986c41388a7a01a22eff0fb32cb8dd00b9ec39",
+        ),
+        "mathml_sha256": (
+            "29d874fa776b37bee4b6972bfda7f0bda7db6c510ac99e829a7cb454eb842b4a",
+            "d3c5745448ff1ae47ac13a4a19b440a7622b12b71368536d86fa43e3cf947d42",
+            "8547e8959f984efcc9d30bb18dd687c97d79587d20e8ecc532df7030a6218551",
+            "ae87c00297a7b18de2ff84fcfb711e0e240198212879b85ee051b5bd97c635dd",
+            "999b02480ff55e6c9d4b1516c0549204dc83016b8bb96b75ab279d82f5530bf4",
+            "a48427171060b6123f3d8c44d35a19c70ec21ded605a87d9a4c4b1944acfdee0",
+            "fe44271ab6fcd5061a57716d11d22187da3ee183432835ac274c9e7c78148ace",
+            "8cf5c1f95d414668683503dc7162a1d9d5ff46d1a719c9923a98227f4c5499a5",
+            "46c616bd64a88c01afe086f918fecfcb475bd7f4cd4dde34855611f037695f24",
+            "06a4aec80372911c5325c67939d5bfef9bbccf46e6ced470e9c52f97e75ba8ef",
+            "a3bf8cde34d05869376f2b71afe2b10993016fc6d0cd7a2df199b052966bf7ac",
+        ),
+        "claim_families": (tuple(range(1, 14)), tuple(range(14, 26))),
+        "claim_family_sha256": (
+            "03343d25c9eb3d9950bceb2e4bd040dd7e5180195de603ac6addb15396c36516",
+            "f321da8b72991f7fdb00a69ba2e1acd689a8568ea11447cde7e50c25830e3ede",
+        ),
+        "identity_markers": {
+            "US-20230296863-A1": 1,
+            "Patent Application Publication 20230296863": 1,
+            "Kind Code A1": 1,
+            "Publication Date September 21, 2023": 1,
+            "LENS ELEMENT, IMAGING LENS ASSEMBLY, CAMERA MODULE AND ELECTRONIC DEVICE": 1,
+            "Applicant: LARGAN PRECISION CO., LTD.": 1,
+            "Family ID: 82818949": 1,
+            "Appl. No.: 18/154079": 1,
+            "Filed: January 13, 2023": 1,
+            "TW 111107139 Feb. 25, 2022": 1,
+        },
+        "absent_prescription_phrase_counts": {
+            "effective focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "Fno": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "image height": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "conic": 0,
+            "coefficient": 0,
+            "aperture stop": 0,
+            "optical prescription": 0,
+            "radius": 0,
+            "curvature": 0,
+            "refractive index": 0,
+            "thickness": 0,
+        },
+        "source_scope_phrase_counts": {
+            "focal length": 1,
+            "aspheric": 5,
+            "optical surface": 110,
+            "first optical surface": 62,
+            "second optical surface": 48,
+            "protruding structure": 180,
+            "spiral path": 80,
+            "visual angle": 3,
+            "imaging lens assembly": 35,
+            "lens element": 155,
+            "camera module": 56,
+            "electronic device": 42,
+            "plastic lens barrel": 18,
+            "image sensor": 16,
+            "optical anti-shake mechanism": 5,
+            "ultra-wide angle camera module": 5,
+            "high resolution camera module": 4,
+            "telephoto camera module": 6,
+            "spacing distance": 32,
+            "central distance": 20,
+            "DS-DE": 10,
+            "t/CT": 9,
+            "DS/ψ": 6,
+            "S1/S2": 7,
+            "injection molding": 7,
+            "gate trace": 14,
+            "receiving surface": 21,
+            "TOF": 4,
+            "fold the light": 1,
+            "automotive camera module": 1,
+            "rearview mirror": 4,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-html/USPTO-PDF/"
+                "e165cca0842ee3fb/US-20230296863-A1.pdf"
+            ),
+            "bytes": 1908885,
+            "sha256": (
+                "e165cca0842ee3fb81461e6a83aa3b195a2d4e38098060379871e2a9f028b3ed"
+            ),
+            "page_count": 35,
+            "single_raster_page_count": 35,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 25)),
+            "drawing_sheet_count": 23,
+            "raster_set_sha256": (
+                "acbf9220ab511c4998f5f2dfbe7d80341a1e05857db0991c432d6f139099515b"
             ),
         },
     }
@@ -34539,6 +34788,342 @@ def _classify_medimaging_pupil_tracking_attempts(
             ),
         )
         for number, label, reason_code in _MEDIMAGING_PUPIL_TRACKING_ITEMS
+    ]
+
+
+def _classify_largan_spiral_protrusion_lens_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 82818949 lens-element/device examples."""
+
+    profile = _LARGAN_SPIRAL_PROTRUSION_LENS_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code in _LARGAN_SPIRAL_PROTRUSION_LENS_ITEMS
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Largan spiral-protrusion lens section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan spiral-protrusion lens {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 133)):
+            raise PatentParseError(
+                "Largan spiral-protrusion lens numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ]
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            start, end = bounds
+            span = "".join(paragraphs[number] for number in range(start, end + 1))
+            observed_digest = hashlib.sha256(
+                span.strip().encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens numbered paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        if not (
+            len(profile["item_ranges"])
+            == len(profile["item_markers"])
+            == len(_LARGAN_SPIRAL_PROTRUSION_LENS_ITEMS)
+            == 8
+        ):
+            raise PatentParseError(
+                "Largan spiral-protrusion lens source-item denominator changed"
+            )
+        for (start, end), item_marker in zip(
+            profile["item_ranges"], profile["item_markers"], strict=True
+        ):
+            item_text = "".join(
+                paragraphs[number] for number in range(start, end + 1)
+            )
+            if len(re.findall(re.escape(item_marker), item_text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens source-item binding "
+                    f"{item_marker!r} changed"
+                )
+
+        figure_labels: list[str] = []
+        for paragraph_number in range(12, 35):
+            match = re.match(
+                r"\[\d{4}\] FIG\.\s+([0-9]+(?:\s+[A-Z])?)\s+",
+                paragraphs[paragraph_number],
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            figure_labels.append(match.group(1).replace(" ", ""))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens figure-label denominator changed"
+            )
+
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Largan spiral-protrusion lens tagged-HTML-table denominator changed"
+            )
+        flattened_table_ids = tuple(re.findall(r"TABLE-US-(\d{5})", text))
+        if flattened_table_ids != tuple(f"{number:05d}" for number in range(1, 6)):
+            raise PatentParseError(
+                "Largan spiral-protrusion lens flattened-table identifier denominator changed"
+            )
+        flattened_tables = tuple(
+            match.group(1).strip()
+            for match in re.finditer(
+                r"(TABLE-US-\d+\s+.*?)(?=(?:\d+(?:st|nd|rd|th) Example\s+)?\[\d{4}\])",
+                text,
+                re.DOTALL,
+            )
+        )
+        flattened_table_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in flattened_tables
+        )
+        if flattened_table_digests != profile["flattened_table_sha256"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens five mechanical-table payloads changed"
+            )
+
+        mathml_blocks = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        mathml_digests = tuple(
+            hashlib.sha256(block.encode("utf-8")).hexdigest()
+            for block in mathml_blocks
+        )
+        if mathml_digests != profile["mathml_sha256"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens MathML denominator changed"
+            )
+
+        claims_section = sections["claims"]
+        claim_starts: list[int] = []
+        cursor = 0
+        for claim_number in range(1, 26):
+            claim_start = claims_section.find(f"{claim_number} . ", cursor)
+            if claim_start < 0:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens claims denominator changed"
+                )
+            claim_starts.append(claim_start)
+            cursor = claim_start + len(f"{claim_number} . ")
+        claims = {
+            claim_number: claims_section[
+                claim_starts[claim_number - 1] : (
+                    claim_starts[claim_number]
+                    if claim_number < 25
+                    else len(claims_section)
+                )
+            ]
+            for claim_number in range(1, 26)
+        }
+        claim_family_digests = tuple(
+            hashlib.sha256(
+                "".join(claims[number] for number in family)
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for family in profile["claim_families"]
+        )
+        if claim_family_digests != profile["claim_family_sha256"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens two-claim-family denominator changed"
+            )
+
+        for phrase, expected in profile[
+            "absent_prescription_phrase_counts"
+        ].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens prescription phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens scope phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens official PDF hash changed"
+            )
+        pdf_reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(pdf_reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(pdf_reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; expected one"
+                )
+            image = page_images[0].image.convert("RGB")
+            if image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Largan spiral-protrusion lens official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(page_images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile["single_raster_page_count"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens official raster-page denominator changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Largan spiral-protrusion lens official PDF gained a text layer"
+            )
+        if (
+            len(pdf_profile["drawing_page_numbers"])
+            != pdf_profile["drawing_sheet_count"]
+            or pdf_profile["drawing_page_numbers"] != tuple(range(2, 25))
+        ):
+            raise PatentParseError(
+                "Largan spiral-protrusion lens drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    common = (
+        "the complete official HTML and all 35 exact official page rasters contain "
+        "23 declared figure panels across 23 drawing sheets, five flattened mechanical "
+        "tables and 11 claim-condition MathML objects; the tables publish DS, DE, S1, "
+        "S2, alpha, t, CT and psi geometry only, while no complete ordered surface "
+        "radius/spacing/material/index/Abbe/conic/asphere-coefficient/stop/system-metadata "
+        "prescription is disclosed"
+    )
+    details = (
+        "paragraphs 59-71, FIGS. 1A-1D and TABLE 1 publish lens element 125, a generic "
+        f"six-element assembly sequence and spiral protrusion/molding geometry; {common}",
+        "paragraphs 72-81, FIGS. 2A-2C and TABLE 2 publish lens element 220 and alternate "
+        f"spiral protrusion geometry only; {common}",
+        "paragraphs 82-91, FIGS. 3A-3C and TABLE 3 publish lens element 320 and alternate "
+        f"spiral protrusion geometry only; {common}",
+        "paragraphs 92-101, FIGS. 4A-4B and TABLE 4 publish lens element 420 and alternate "
+        f"spiral protrusion geometry only; {common}",
+        "paragraphs 102-111, FIGS. 5A-5B and TABLE 5 publish lens element 520 and alternate "
+        f"spiral protrusion geometry only; {common}",
+        "paragraphs 112-121 and FIGS. 6A-6E publish a multi-camera smartphone wrapper, "
+        f"generic ultra-wide/high-resolution/telephoto modules and different-focal-length zooming; {common}",
+        "paragraphs 122-126 and FIG. 7 publish a smartphone wrapper with generic folded "
+        f"telephoto and TOF modules only; {common}",
+        "paragraphs 127-131 and FIGS. 8A-8C publish vehicle camera placements and a "
+        f"40-to-90-degree coverage visual angle only; {common}",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, reason_code in _LARGAN_SPIRAL_PROTRUSION_LENS_ITEMS
     ]
 
 
