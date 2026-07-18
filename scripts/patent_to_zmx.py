@@ -808,6 +808,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_samsung_thermal_eight_lens_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_four_lens_f_number_unpublished_attempts(
         raw_text,
         patent_id=patent_id,
@@ -46154,6 +46160,684 @@ def _classify_newmax_folded_three_lens_missing_f_number_attempts(
             )
         )
     return attempts
+
+
+_SAMSUNG_THERMAL_EIGHT_LENS_ITEMS = (
+    (1, "Samsung thermal eight-lens first embodiment", (82, 86), (1, 2), (1, 2)),
+    (2, "Samsung thermal eight-lens second embodiment", (87, 91), (3, 4), (3, 4)),
+    (3, "Samsung thermal eight-lens third embodiment", (92, 96), (5, 6), (5, 6)),
+    (4, "Samsung thermal eight-lens fourth embodiment", (97, 101), (7, 8), (7, 8)),
+    (5, "Samsung thermal eight-lens fifth embodiment", (102, 106), (9, 10), (9, 10)),
+    (6, "Samsung thermal eight-lens sixth embodiment", (107, 111), (11, 12), (11, 12)),
+    (7, "Samsung thermal eight-lens seventh embodiment", (112, 116), (13, 14), (13, 14)),
+)
+_SAMSUNG_THERMAL_EIGHT_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260063870-A1": {
+        "raw_document_sha256": (
+            "200d56a3a5dbf4913e37af18d64f3ea90dbf8c9e738cd9fb93af19a316a16b34"
+        ),
+        "normalized_text_sha256": (
+            "5f61d14bccf070d97d84860baec56dbe1caf32adbf74fb13c6d36e0decc059c7"
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication 20260063870 Kind Code A1": 1,
+            "IMAGING LENS SYSTEM Abstract": 1,
+            "KIM; Hyuk Joo": 2,
+            "SON; Ju Hwa": 1,
+            "CHAE; Kyu Min": 1,
+            "JO; Yong Joo": 1,
+            "Applicant: Samsung Electro-Mechanics Co., Ltd.": 1,
+            "Assignee: Samsung Electro-Mechanics Co., Ltd.": 1,
+            "Family ID: 97226532": 1,
+            "Appl. No.: 19/085529": 1,
+            "KR 10-2024-0121066 Sep. 05, 2024": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260063870-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract An imaging lens system includes a first lens,",
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS [0001]"
+            ),
+            "summary": "SUMMARY [0005]",
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS [0027]",
+            "detailed": "DETAILED DESCRIPTION [0042]",
+            "claims": "Claims 1 . An imaging lens system comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "9a0af3d10b58c1d5c48bfec2e4b48283e39cb892fd206812261029c6bc7284ba"
+            ),
+            "abstract": (
+                "1483481a7ec9d47ea9906d609b8a96c19614c222020842d4112ace3341168338"
+            ),
+            "background": (
+                "b5e8f686be287ca49a1c6df7dfc66d3847bd85b3272772d5a8f30e7935b6ae0a"
+            ),
+            "summary": (
+                "af2ef2747eacc16d7e0053d084ac72bf91f870f15a62a938583141e90c087426"
+            ),
+            "brief": (
+                "ed1c4c2c2276c29b1046d55cf164825882c9903f905de838f39ecaee66c5ff1a"
+            ),
+            "detailed": (
+                "2c819223edb053b11d3a6c10b3eee800c26648018d086a931f13acbd854d15ea"
+            ),
+            "claims": (
+                "13fcbfb348fa113b093b7f3a501cad5ee11c7eaacb6ff2467292a9ce78273287"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 4): "cfc36a5afc9f495524b4f2f395731dbb8ef74f4d4bb8c3173a941e0bb24987f9",
+            (5, 26): "00b989499f7c795255d3816045cc740dc271e4ddd31f1241d7e9eac8599e2a41",
+            (27, 40): "287ed4622e7dae3ebb0d52134e7c085a93cb8c3eae2d48c9a39e18d16f9c0d44",
+            (41, 81): "234b9b1886dcb92f4707ba3e5ec3758b9bc811fe6f85382109b40f68b91eb2e2",
+            (82, 86): "5037230ae96eea847cb986f3537db7c7647365daeeb03473b59a95732bbda880",
+            (87, 91): "e60f16b811bbb818b14bd9d31bafc407f6339f2bdb2df62364a8d317dfcf0380",
+            (92, 96): "6253fff54e27339e06b0b57202c6181cb6128b40bc2bfff78063618f91be36f7",
+            (97, 101): "4d7eb29048467970f9cafe3589bad98db1913f61f09335a0ed2e9118c6a09a3c",
+            (102, 106): "2e2b1eac22edfe8c5ca9fd797ad365fdf393685cd780db4a8989ef6e91977267",
+            (107, 111): "a46b6d3c430fcdbcdfa92f2cdae1365c21f5b21ab0d4789b43c482553daa12c7",
+            (112, 116): "38a5b4b12eb74c3653ba2123c71a2fe2995474c6282c0f62f04782b5e480c805",
+            (117, 119): "5694d3cb6fffdf944ad7a78e1254474e979c9104ba3af7a945602917db72e441",
+        },
+        "table_payload_sha256": (
+            "afe000b35ad0689ed055599f8751139c1ac117b7d9795c88f88583a8592bd141",
+            "e42256af457af71009bb532c2f62de407123f26212ea03fe3bd060bf039bf966",
+            "8497924d90979bad0bb78089d04651440dc814dcb9108aaa378d6677289c173d",
+            "a647c660d0f52fa8489389dc564318cfdb1368c5c58b7433d375dbe933fc7a52",
+            "4d62a00df0c1622b15097099523148b91aa1c2572e8794d06c203bd8c95d6517",
+            "d3bdd63f69688a2a0d1ff8260100cfdebd5753198c769f831392d15a3a3f0966",
+            "157a12426477295cdca5f3c31009b4bb064ba805dcfe17b1200a0dc6e37ce368",
+            "8d544417638a6624fce8d0afd4077a4d09ded9ba237564c25c55bdfd022ac3d3",
+            "6a4c0413ba3f4e9a86c5183bbccd715201e6735ce6d0a9d47ce98609f1ad1db7",
+            "79bb3d523534a86515ec7e90730a74abd64b4580868dfb624c6077a05270e676",
+            "4de27f08a2fa9d53b5fcc5d40de35948ecd9cc9fee8625cd71a853044d7f78b4",
+            "1fe6b51aba2a58cd2edf4c570a45ecf0fe073f0463d88e2fe998e40614814135",
+            "75e3f30ca891dfa24f4103298e5d2accf4f754ed5fdfb2c3e42c912a265d92d3",
+            "9f1b3e648efeba1fbf08abfa543e7da14a94cf0660ce710710a164e055f5ebd3",
+            "16d5a57393e1aef672544396d03ce95718669dc380ad6f1536e0cfb1fba2eeec",
+            "f0333f02548cce03a89e5f0b003cbbff2d5dbb7cb4b6df6e9c521021f8253b6c",
+            "624e3b1b916e6927f6e51dbd79b28b000d5156d1ffee070035f0deed34dbf2a9",
+        ),
+        "metadata": {
+            "f": (3.9490, 3.9490, 3.9818, 3.9600, 3.9730, 3.9758, 3.9645),
+            "f number": (1.6000,) * 7,
+            "IMGHT": (9.2520,) * 7,
+            "FOV": (138.4000,) * 7,
+            "TTL": (30.0000, 30.0000, 30.0000, 30.0001, 29.9975, 29.9981, 30.0002),
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 10, 19),
+        "ordered_math_id_sha256": (
+            "29fbd83aad10835537056b3fb91c7fb3d471d2023b3cc6d446882ae4541e3351"
+        ),
+        "asphere_equation_math_sha256": (
+            "a83ac4227cc519e07964c93434a3a09d572166f81beb2480928188e9a402582f"
+        ),
+        "figure_labels": tuple(range(1, 15)),
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/767eb5435ef8860b/"
+                "US-20260063870-A1.pdf"
+            ),
+            "bytes": 1_209_670,
+            "sha256": (
+                "767eb5435ef8860b0932c85328f7469071426da5776788ee5630806aa456ed12"
+            ),
+            "page_count": 28,
+            "drawing_page_numbers": tuple(range(2, 16)),
+            "table_page_numbers": tuple(range(21, 28)),
+            "narrow_raster_page_numbers": (18, 19, 20, 27, 28),
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "page_raster_sha256": (
+                "878c3700640992d3eb1705a1515caab4c54fbf8597da9b75a36cc3512c7f1b4a",
+                "73c5b073d21c395bc2129539643d531c923543c1ebefa0761606424d8a756acb",
+                "483edac37e0fea56ad4e3713c7fcf4ab98de1f22f4758c1a9da0f47313ff640e",
+                "fb83668b04b2e45e34603ed14e02bc15d91b4f178527c5a7a68e6f4e0c384207",
+                "8d3f5e59ab10ca0ed897694404a8c35e7b7d6602c291d053c558385e881d7cb4",
+                "42da08fac2090e28d1c4d20c72549c735babf0180b0db6841a125d91184cfb50",
+                "a9a4f7d1f3322ce5fb47c51e2595dd9b2ba32686a083707534080adde5885399",
+                "784d751712ca8ad12b07aa3277dfc4832b264c01885ad7b3b19f35fb6a5d3191",
+                "2084a213ae67ea86177e9c6bd80c8523b46ca790cab170e0976a6a5f00533c25",
+                "d49cb3f272cf698097fdf6d2d11dab0ff519c345009ae3791ae95afd0a26ddd9",
+                "fb5d5cf8af8d01d4260dc090866865772b789e7f629719282406651277ff053e",
+                "1fe6dc78bccbea5925ee255bd15b046c94e456e4555664a59ba9721a3715808a",
+                "1bb610843b9b755fec51119cd9f1b76648911ce700e8fc54489f4d8ddec4fb64",
+                "309957c23b696d12764e8593bbc21c8260fe4735d7289cc309f9c564bf728aee",
+                "8d2b3c9db80b770885262b77ebb55216b1632c37572fdd80b2e984cee356d75f",
+                "272d0cf20c4b1798b11f766b2cd87749344069a60a4e154323cfbb0032080b0d",
+                "d7e7d11428adca0429a6251fba71f3efcf6653a5d41292a0c446567215e2eed1",
+                "d99d31dcf6da01bfb6576609aa6a185665da16e2ac258552a9204655f69f9937",
+                "8ce892fbc85f91aa9cbe9996e87b0b231ce68cf5f4a1b612fb6cac88c4bffa04",
+                "de717f7f841778279264826cef141a75a429225e4dbf71878f9f0cdb1faade99",
+                "50d8bb592a3590194f129ac18c9faceb1ded8d4b873781b55e3495c94ee57f6b",
+                "eeb154c69d57f424836decb7baf7158d3b36e7e67b078cc9c16af4bd16b7a750",
+                "58b0b30bb67dfda52930c76abe2aa25526a51bce2264c9b92032eeb13ac5f451",
+                "527697500ba6802f1a62a19b910db29d9eb2833b83e422e97d857920b96b344a",
+                "9404ada1a210516e6a7b8d4194e4482fc99d967aef86c69a47557e70f4842b68",
+                "dae1b163782687032025cbc659a7a4bf93a69e7900ea85438b2c406b3d05f935",
+                "8150b10a583d2fd1cc724d0ce4f0273a834c29ee502275f482f1d0eb1a45f043",
+                "660ef3bc00e2105ef991c2af5391c4bca67c4b5370c413735a342c31a143b133",
+            ),
+            "raster_set_sha256": (
+                "5255d947d50c94f9aa3df2b8fbaa67ec18737edc49a0a1454288cccedd636581"
+            ),
+        },
+    }
+}
+
+
+def _parse_samsung_thermal_eight_lens_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse seven exact thermally stable Samsung eight-lens prescriptions."""
+
+    profile = _SAMSUNG_THERMAL_EIGHT_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _tables, _figures in (
+                _SAMSUNG_THERMAL_EIGHT_LENS_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Samsung thermal eight-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Samsung thermal eight-lens normalized text hash changed for {patent_id}"
+            )
+
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Samsung thermal eight-lens section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Samsung thermal eight-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens {section_name} section changed"
+                )
+
+        paragraph_matches = list(
+            re.finditer(r"\[(\d{4})\]", text[: section_starts["claims"]])
+        )
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 120)):
+            raise PatentParseError(
+                "Samsung thermal eight-lens numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens paragraph span {bounds} changed"
+                )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != tuple(range(1, 18)):
+            raise PatentParseError(
+                "Samsung thermal eight-lens 17-table denominator changed"
+            )
+        table_payloads = tuple(
+            re.split(
+                r"\s(?:\[\d{4}\]|Claims\s+1\s*\.)\s",
+                block.text,
+                maxsplit=1,
+            )[0].strip()
+            for block in table_blocks
+        )
+        if tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        ) != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "Samsung thermal eight-lens table payload digest changed"
+            )
+
+        for number, _label, paragraph_bounds, table_numbers, figure_numbers in (
+            _SAMSUNG_THERMAL_EIGHT_LENS_ITEMS
+        ):
+            table_paragraph = paragraphs[paragraph_bounds[1]]
+            expected_binding = (
+                f"Tables {table_numbers[0]} and {table_numbers[1]} below illustrate "
+                "lens characteristics and aspherical values of the imaging lens system "
+                f"{number * 100} ."
+            )
+            if expected_binding not in table_paragraph:
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens embodiment {number} table binding changed"
+                )
+            figure_paragraph = paragraphs[paragraph_bounds[0]]
+            if (
+                f"FIG. {figure_numbers[0]} is a configuration diagram" not in figure_paragraph
+                or f"FIG. {figure_numbers[1]} illustrates aberration curves"
+                not in figure_paragraph
+            ):
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens embodiment {number} figure binding changed"
+                )
+
+        figure_labels = tuple(
+            int(value)
+            for value in re.findall(
+                r"FIG\.\s*(\d+)\s+(?:is|illustrates)\b",
+                "".join(paragraphs[number] for number in range(27, 41)),
+                re.IGNORECASE,
+            )
+        )
+        if figure_labels != profile["figure_labels"]:
+            raise PatentParseError(
+                "Samsung thermal eight-lens FIGS. 1-14 denominator changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Samsung thermal eight-lens 20-claim denominator changed"
+            )
+        independent_claims = tuple(
+            int(match.group(1))
+            for match in re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*An\s+imaging\s+lens\s+system\s+comprising:",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Samsung thermal eight-lens independent-claim families changed"
+            )
+
+        math_ids = tuple(
+            re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw_text, re.IGNORECASE)
+        )
+        if len(math_ids) != 24 or hashlib.sha256(
+            ("\n".join(math_ids) + "\n").encode("utf-8")
+        ).hexdigest() != profile["ordered_math_id_sha256"]:
+            raise PatentParseError(
+                "Samsung thermal eight-lens MathML denominator changed"
+            )
+        equation_match = re.search(
+            r'<maths\b[^>]*\bid="MATH-US-00004"[^>]*>.*?</maths>',
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if equation_match is None or hashlib.sha256(
+            re.sub(r"\s+", " ", equation_match.group(0)).strip().encode("utf-8")
+        ).hexdigest() != profile["asphere_equation_math_sha256"]:
+            raise PatentParseError(
+                "Samsung thermal eight-lens A-H asphere equation changed"
+            )
+        if re.search(r"<img\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Samsung thermal eight-lens retained HTML image denominator changed"
+            )
+
+        metadata = {
+            label: _samsung_thermal_exact_seven_value_row(table_payloads[14], label)
+            for label in ("f", "f number", "IMGHT", "FOV", "TTL")
+        }
+        if metadata != profile["metadata"]:
+            raise PatentParseError(
+                "Samsung thermal eight-lens TABLE 15 metadata changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all seven source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, tables, _figures in (
+        _SAMSUNG_THERMAL_EIGHT_LENS_ITEMS
+    ):
+        try:
+            surfaces = _parse_samsung_thermal_surface_table(
+                table_payloads[tables[0] - 1],
+                embodiment_number=number,
+            )
+            coefficients = _parse_samsung_thermal_asphere_table(
+                table_payloads[tables[1] - 1],
+                embodiment_number=number,
+            )
+            by_index = {surface.index: surface for surface in surfaces}
+            if not set(coefficients).issubset(by_index):
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens embodiment {number} coefficients "
+                    "reference an unknown surface"
+                )
+            for surface_index, values in coefficients.items():
+                surface = by_index[surface_index]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(values)
+            published_ttl = metadata["TTL"][number - 1]
+            axial_sum = sum(
+                surface.thickness_mm or 0.0 for surface in surfaces
+            )
+            if not math.isclose(
+                axial_sum,
+                published_ttl,
+                rel_tol=0.0,
+                abs_tol=0.00021,
+            ):
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens embodiment {number} surface sum "
+                    "does not close to TABLE 15 TTL"
+                )
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=label,
+                focal_length_mm=metadata["f"][number - 1],
+                f_number=metadata["f number"][number - 1],
+                hfov_deg=metadata["FOV"][number - 1] / 2.0,
+                surfaces=surfaces,
+            )
+            if metadata["IMGHT"][number - 1] <= 0.0:
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens embodiment {number} IMGHT is not positive"
+                )
+            _validate_prescription_materials(prescription)
+        except Exception as exc:  # noqa: BLE001 - retain source outcome per embodiment
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=label,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                prescription=prescription,
+            )
+        )
+    return attempts
+
+
+def _samsung_thermal_exact_seven_value_row(
+    table_text: str,
+    label: str,
+) -> tuple[float, ...]:
+    matches = list(
+        re.finditer(
+            rf"(?<!\S){re.escape(label)}(?!\S)\s+"
+            rf"(?P<values>(?:{NUMBER_PATTERN}\s+){{6}}{NUMBER_PATTERN})(?!\S)",
+            table_text,
+            re.IGNORECASE,
+        )
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Samsung thermal eight-lens seven-value row {label!r} is missing or ambiguous"
+        )
+    return tuple(
+        _parse_number(value) for value in matches[0].group("values").split()
+    )
+
+
+def _parse_samsung_thermal_surface_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> list[PatentSurface]:
+    try:
+        body = table_text[table_text.index(" S1 ") + 1 :]
+    except ValueError as exc:
+        raise PatentParseError(
+            f"Samsung thermal eight-lens embodiment {embodiment_number} S1 row missing"
+        ) from exc
+    starts = list(re.finditer(r"(?<!\S)S(?P<index>\d+)\s+", body, re.IGNORECASE))
+    if tuple(int(match.group("index")) for match in starts) != tuple(range(1, 20)):
+        raise PatentParseError(
+            f"Samsung thermal eight-lens embodiment {embodiment_number} "
+            "surface sequence must be S1-S19"
+        )
+
+    source_labels = {
+        1: ("1st", "Lens"),
+        3: ("2nd", "Lens"),
+        5: ("3rd", "Lens"),
+        7: ("4th", "Lens"),
+        9: ("Stop",),
+        10: ("5th", "Lens"),
+        12: ("6th", "Lens"),
+        13: ("7th", "Lens"),
+        15: ("8th", "Lens"),
+        17: ("Filter",),
+    }
+    material_labels = {
+        1: "Glass",
+        3: "Glass",
+        5: "Plastic",
+        7: "Glass",
+        10: "Plastic",
+        12: "Glass",
+        13: "Glass",
+        15: "Plastic",
+        17: "Filter",
+    }
+    output_labels = {
+        1: "Lens 1 front",
+        2: "Lens 1 back",
+        3: "Lens 2 front",
+        4: "Lens 2 back",
+        5: "Lens 3 front",
+        6: "Lens 3 back",
+        7: "Lens 4 front",
+        8: "Lens 4 back",
+        9: "Stop",
+        10: "Lens 5 front",
+        11: "Lens 5 back",
+        12: "Lens 6 front",
+        13: "Lens 6 back / Lens 7 front",
+        14: "Lens 7 back",
+        15: "Lens 8 front",
+        16: "Lens 8 back",
+        17: "Filter front",
+        18: "Filter back",
+        19: "Image",
+    }
+    surfaces: list[PatentSurface] = []
+    for row_number, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = starts[row_number + 1].start() if row_number + 1 < len(starts) else len(body)
+        tokens = body[match.end() : end].split()
+        if surface_index == 19:
+            if len(tokens) < 2 or tokens[0] != "Imaging" or tokens[-1] != "Plane":
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens embodiment {embodiment_number} "
+                    "S19 Imaging Plane label changed"
+                )
+            values = tokens[1:-1]
+        else:
+            expected_label = source_labels.get(surface_index, ())
+            if tuple(tokens[: len(expected_label)]) != expected_label:
+                raise PatentParseError(
+                    f"Samsung thermal eight-lens embodiment {embodiment_number} "
+                    f"S{surface_index} label changed"
+                )
+            values = tokens[len(expected_label) :]
+        material = material_labels.get(surface_index)
+        expected_values = 5 if material is not None else 3
+        if len(values) != expected_values:
+            raise PatentParseError(
+                f"Samsung thermal eight-lens embodiment {embodiment_number} "
+                f"S{surface_index} has {len(values)} values; expected {expected_values}"
+            )
+        if any(
+            value.upper() not in {"INFINITY", "INF"}
+            and re.fullmatch(NUMBER_PATTERN, value, re.IGNORECASE) is None
+            for value in values
+        ):
+            raise PatentParseError(
+                f"Samsung thermal eight-lens embodiment {embodiment_number} "
+                f"S{surface_index} has a nonnumeric value"
+            )
+        radius = _distance_value(
+            values[0],
+            field_name=f"Samsung thermal S{surface_index} radius",
+        )
+        thickness = _distance_value(
+            values[1],
+            field_name=f"Samsung thermal S{surface_index} thickness",
+        )
+        nd = vd = None
+        if material is not None:
+            effective_radius = _parse_number(values[2])
+            nd = _parse_number(values[3])
+            vd = _parse_number(values[4])
+            _validate_material_indices(surface_index=surface_index, nd=nd, vd=vd)
+        else:
+            effective_radius = _parse_number(values[2])
+        if effective_radius <= 0.0:
+            raise PatentParseError(
+                f"Samsung thermal eight-lens embodiment {embodiment_number} "
+                f"S{surface_index} effective radius must be positive"
+            )
+        surfaces.append(
+            PatentSurface(
+                index=surface_index,
+                label=output_labels[surface_index],
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+    stop = surfaces[8]
+    if stop.label != "Stop" or stop.radius_mm is None or not math.isinf(stop.radius_mm):
+        raise PatentParseError(
+            f"Samsung thermal eight-lens embodiment {embodiment_number} stop row changed"
+        )
+    return surfaces
+
+
+def _parse_samsung_thermal_asphere_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> dict[int, dict[str, float]]:
+    header = re.search(
+        r"Surface\s+No\.\s+(?P<surfaces>(?:S\d+\s+){6})(?P<body>k\s+.*)$",
+        table_text,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Samsung thermal eight-lens embodiment {embodiment_number} "
+            "asphere header changed"
+        )
+    surface_indices = tuple(
+        int(value) for value in re.findall(r"S(\d+)", header.group("surfaces"))
+    )
+    expected_surfaces = (
+        (5, 6, 10, 11, 12, 14)
+        if embodiment_number == 7
+        else (5, 6, 10, 11, 15, 16)
+    )
+    if surface_indices != expected_surfaces:
+        raise PatentParseError(
+            f"Samsung thermal eight-lens embodiment {embodiment_number} "
+            f"asphere surfaces are {surface_indices}; expected {expected_surfaces}"
+        )
+    expected_labels = (
+        ("K", "A", "B", "C", "D", "E", "F", "G", "H")
+        if embodiment_number == 1
+        else ("K", "A", "B", "C", "D", "E", "F", "G")
+    )
+    tokens = header.group("body").split()
+    coefficients = {surface_index: {} for surface_index in surface_indices}
+    position = 0
+    observed_labels: list[str] = []
+    while position < len(tokens):
+        label = tokens[position].upper()
+        observed_labels.append(label)
+        position += 1
+        values = tokens[position : position + len(surface_indices)]
+        if len(values) != len(surface_indices) or any(
+            re.fullmatch(NUMBER_PATTERN, value, re.IGNORECASE) is None
+            for value in values
+        ):
+            raise PatentParseError(
+                f"Samsung thermal eight-lens embodiment {embodiment_number} "
+                f"coefficient row {label} is incomplete"
+            )
+        for surface_index, value in zip(surface_indices, values, strict=True):
+            coefficients[surface_index][label] = _parse_number(value)
+        position += len(surface_indices)
+    if tuple(observed_labels) != expected_labels:
+        raise PatentParseError(
+            f"Samsung thermal eight-lens embodiment {embodiment_number} "
+            f"coefficient rows are {tuple(observed_labels)}; expected {expected_labels}"
+        )
+    return coefficients
 
 
 def _classify_aac_four_lens_f_number_unpublished_attempts(

@@ -33189,3 +33189,481 @@ def test_newmax_folded_three_lens_source_evidence_rehashes() -> None:
     assert not any(evidence["formal_outputs"].values())
     assert evidence["next_exact_group"]["family_id"] == "97226532"
     assert evidence["saturation_complete"] is False
+
+
+def _samsung_thermal_eight_lens_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "200d56a3a5dbf491"
+        / "US-20260063870-A1.html"
+    )
+    return "US-20260063870-A1", source_path.read_text(encoding="utf-8")
+
+
+def test_samsung_thermal_eight_lens_reconciles_seven_prescriptions() -> None:
+    patent_id, raw_text = _samsung_thermal_eight_lens_source()
+    profile = patent_to_zmx._SAMSUNG_THERMAL_EIGHT_LENS_SOURCE_PROFILES[
+        patent_id
+    ]
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 8))
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    assert [prescription.focal_length_mm for prescription in prescriptions] == list(
+        profile["metadata"]["f"]
+    )
+    assert [prescription.f_number for prescription in prescriptions] == [1.6] * 7
+    assert [prescription.hfov_deg for prescription in prescriptions] == [69.2] * 7
+
+    expected_materials = {
+        1: "Glass",
+        3: "Glass",
+        5: "Plastic",
+        7: "Glass",
+        10: "Plastic",
+        12: "Glass",
+        13: "Glass",
+        15: "Plastic",
+        17: "Filter",
+    }
+    expected_aspheres = [
+        {5, 6, 10, 11, 15, 16},
+        {5, 6, 10, 11, 15, 16},
+        {5, 6, 10, 11, 15, 16},
+        {5, 6, 10, 11, 15, 16},
+        {5, 6, 10, 11, 15, 16},
+        {5, 6, 10, 11, 15, 16},
+        {5, 6, 10, 11, 12, 14},
+    ]
+    for item_number, prescription in enumerate(prescriptions, start=1):
+        assert prescription is not None
+        assert [surface.index for surface in prescription.surfaces] == list(
+            range(1, 20)
+        )
+        assert prescription.surfaces[8].label == "Stop"
+        assert prescription.surfaces[-1].label == "Image"
+        assert {
+            surface.index: surface.material
+            for surface in prescription.surfaces
+            if surface.material is not None
+        } == expected_materials
+        assert {
+            surface.index
+            for surface in prescription.surfaces
+            if surface.surface_type == "ASP"
+        } == expected_aspheres[item_number - 1]
+        assert math.isclose(
+            sum(surface.thickness_mm or 0.0 for surface in prescription.surfaces),
+            profile["metadata"]["TTL"][item_number - 1],
+            rel_tol=0.0,
+            abs_tol=0.00021,
+        )
+    assert prescriptions[4].surfaces[-1].thickness_mm == -0.0257
+    assert prescriptions[5].surfaces[-1].thickness_mm == -0.0097
+
+
+def test_samsung_thermal_eight_lens_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _samsung_thermal_eight_lens_source()
+    changed = raw_text.replace("138.4000", "138.5000", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 7
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "Samsung thermal eight-lens official raw text hash changed "
+        f"for {patent_id}"
+    }
+
+
+def test_samsung_thermal_eight_lens_table_and_metadata_denominator() -> None:
+    patent_id, raw_text = _samsung_thermal_eight_lens_source()
+    profile = patent_to_zmx._SAMSUNG_THERMAL_EIGHT_LENS_SOURCE_PROFILES[
+        patent_id
+    ]
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    blocks = patent_to_zmx._patent_table_blocks(text)
+
+    assert [block.number for block in blocks] == list(range(1, 18))
+    table_payloads = [
+        re.split(
+            r"\s(?:\[\d{4}\]|Claims\s+1\s*\.)\s",
+            block.text,
+            maxsplit=1,
+        )[0].strip()
+        for block in blocks
+    ]
+    assert tuple(
+        hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        for payload in table_payloads
+    ) == profile["table_payload_sha256"]
+    assert profile["metadata"] == {
+        "f": (3.949, 3.949, 3.9818, 3.96, 3.973, 3.9758, 3.9645),
+        "f number": (1.6,) * 7,
+        "IMGHT": (9.252,) * 7,
+        "FOV": (138.4,) * 7,
+        "TTL": (30.0, 30.0, 30.0, 30.0001, 29.9975, 29.9981, 30.0002),
+    }
+    assert [item[2] for item in patent_to_zmx._SAMSUNG_THERMAL_EIGHT_LENS_ITEMS] == [
+        (82, 86),
+        (87, 91),
+        (92, 96),
+        (97, 101),
+        (102, 106),
+        (107, 111),
+        (112, 116),
+    ]
+    assert [item[3] for item in patent_to_zmx._SAMSUNG_THERMAL_EIGHT_LENS_ITEMS] == [
+        (1, 2),
+        (3, 4),
+        (5, 6),
+        (7, 8),
+        (9, 10),
+        (11, 12),
+        (13, 14),
+    ]
+    assert len(re.findall(r"\[\d{4}\]", text[: text.index("Claims 1 .")])) == 119
+    assert profile["claim_numbers"] == tuple(range(1, 21))
+    assert profile["independent_claim_numbers"] == (1, 10, 19)
+    assert profile["figure_labels"] == tuple(range(1, 15))
+    assert len(re.findall(r'<maths\b[^>]*\bid="[^"]+"', raw_text)) == 24
+    assert re.search(r"<img\b", raw_text, re.IGNORECASE) is None
+
+
+def test_samsung_thermal_eight_lens_official_pdf_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile = patent_to_zmx._SAMSUNG_THERMAL_EIGHT_LENS_SOURCE_PROFILES[
+        "US-20260063870-A1"
+    ]["official_pdf"]
+    pdf_bytes = (root / profile["path"]).read_bytes()
+
+    assert len(pdf_bytes) == profile["bytes"] == 1_209_670
+    assert hashlib.sha256(pdf_bytes).hexdigest() == profile["sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+    assert len(reader.pages) == profile["page_count"] == 28
+
+    page_hashes = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        page_images = list(page.images)
+        assert len(page_images) == 1
+        expected_dimensions = (
+            profile["narrow_raster_dimensions"]
+            if page_number in profile["narrow_raster_page_numbers"]
+            else profile["common_raster_dimensions"]
+        )
+        assert page_images[0].image.size == expected_dimensions
+        assert (page.extract_text() or "") == ""
+        page_hashes.append(
+            patent_pdf_recovery._canonical_raster_sha256(page_images[0].data)
+        )
+
+    assert tuple(page_hashes) == profile["page_raster_sha256"]
+    assert hashlib.sha256(
+        ("\n".join(page_hashes) + "\n").encode("utf-8")
+    ).hexdigest() == profile["raster_set_sha256"]
+    assert profile["drawing_page_numbers"] == tuple(range(2, 16))
+    assert profile["table_page_numbers"] == tuple(range(21, 28))
+
+
+def test_samsung_thermal_eight_lens_source_and_raster_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-97226532"
+    availability = json.loads(
+        (quick / "family-97226532-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    source = availability["retained_html"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 85_686
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+    assert source["embedded_img_tags"] == 0
+    pdf = availability["official_pdf"]
+    pdf_bytes = (root / pdf["path"]).read_bytes()
+    assert len(pdf_bytes) == pdf["bytes"] == 1_209_670
+    assert hashlib.sha256(pdf_bytes).hexdigest() == pdf["container_sha256"]
+    assert pdf["page_count"] == pdf["single_raster_pages"] == 28
+    assert pdf["text_layer_characters"] == 0
+    assert (
+        availability["source_policy"]["numeric_derivation_from_rasters_permitted"]
+        is False
+    )
+    assert (
+        availability["source_policy"]["related_family_numeric_borrowing_permitted"]
+        is False
+    )
+
+    raster = json.loads(
+        (quick / "family-97226532-raster-audit.json").read_text(encoding="utf-8")
+    )
+    assert raster["official_pdf"]["decoded_raster_set_sha256"] == pdf[
+        "decoded_raster_set_sha256"
+    ]
+    assert raster["page_roles"] == {
+        "cover": [1],
+        "drawing_sheets": list(range(2, 16)),
+        "specification_pages": list(range(16, 29)),
+        "asphere_equation_pages": [20],
+        "table_pages": list(range(21, 28)),
+        "claims_pages": [27, 28],
+    }
+    assert len(raster["pages"]) == 28
+    for page_number, record in enumerate(raster["pages"], start=1):
+        assert record["page"] == page_number
+        assert record["text_characters"] == 0
+        assert record["image_count"] == 1
+        retained = record["retained_png"]
+        png_bytes = (root / retained["path"]).read_bytes()
+        assert len(png_bytes) == retained["bytes"]
+        assert hashlib.sha256(png_bytes).hexdigest() == retained["sha256"]
+        decoded = cv2.imdecode(
+            np.frombuffer(png_bytes, dtype=np.uint8), cv2.IMREAD_UNCHANGED
+        )
+        assert decoded is not None
+        assert [decoded.shape[1], decoded.shape[0]] == retained["dimensions"]
+    assert raster["visual_review"]["enhancement_applied"] is False
+    assert raster["visual_review"]["drawing_geometry_measured"] is False
+    assert raster["visual_review"]["raster_numeric_cells_transcribed"] is False
+    assert raster["adjudication"]["performance_plot_labels_used_as_prescription_metadata"] is False
+    assert raster["adjudication"]["numeric_derivation_from_rasters"] is False
+
+
+def test_samsung_thermal_eight_lens_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-97226532"
+    artifact = json.loads(
+        (quick / "family-97226532-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    runtime_attempt = re.compile(r"attempt-\d{4}")
+    semantic_hashes = []
+    worker_hashes = []
+
+    for record in artifact["attempts"]:
+        result_path = root / record["path"]
+        result_bytes = result_path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        receipt_hashes = {}
+        exact_worker_hashes = {
+            "request_sha256": {},
+            "response_sha256": {},
+            "candidate_zmx_sha256": {},
+            "stdout_sha256": {},
+            "stderr_sha256": {},
+        }
+        for item in result["items"]:
+            number = str(item["embodiment_number"])
+            item["conversion_attempt_id"] = runtime_attempt.sub(
+                "attempt-*", item["conversion_attempt_id"]
+            )
+            receipt_evidence = next(
+                evidence
+                for evidence in item["evidence"]
+                if evidence["evidence_type"] == "patent_conversion_receipt"
+            )
+            receipt_path = root / receipt_evidence["path"]
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt.pop("elapsed_seconds")
+            receipt.pop("retry_number")
+            for key, value in tuple(receipt.items()):
+                if isinstance(value, str) and (
+                    key == "attempt_id" or key.endswith("_path")
+                ):
+                    receipt[key] = runtime_attempt.sub("attempt-*", value)
+            receipt_hash = hashlib.sha256(canonical_json_bytes(receipt)).hexdigest()
+            receipt_hashes[number] = receipt_hash
+            for name, filename in (
+                ("request_sha256", "request.json"),
+                ("response_sha256", "response.json"),
+                ("candidate_zmx_sha256", "candidate.zmx"),
+                ("stdout_sha256", "stdout.log"),
+                ("stderr_sha256", "stderr.log"),
+            ):
+                worker_path = receipt_path.parent / filename
+                exact_worker_hashes[name][number] = (
+                    hashlib.sha256(worker_path.read_bytes()).hexdigest()
+                    if worker_path.exists()
+                    else None
+                )
+            receipt_evidence["path"] = runtime_attempt.sub(
+                "attempt-*", receipt_evidence["path"]
+            )
+            receipt_evidence["sha256"] = f"semantic:{receipt_hash}"
+        assert receipt_hashes == record["receipt_semantic_sha256"]
+        for name, hashes in exact_worker_hashes.items():
+            assert hashes == record[name]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+        worker_hashes.append(exact_worker_hashes)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert worker_hashes[0] == worker_hashes[1]
+    assert artifact["semantic_equal"] is True
+    assert artifact["result_normalization"]["outcome_fields_removed"] == []
+    assert artifact["result_normalization"]["request_or_response_fields_removed"] == []
+    assert artifact["final_state"] == {
+        "result_attempt": 4,
+        "root_state": "mixed_nonterminal",
+        "root_reason_code": "mixed_nonterminal.multiple_item_states",
+        "item_state_counts": {"converted_pending_intake": 4, "terminal": 3},
+        "terminal_status_counts": {"trace_failed": 3},
+        "conversion_requests": 7,
+        "conversion_receipts": 7,
+        "prescription_fingerprints": 7,
+        "staging_zmx": 4,
+        "formal_intake_items": 0,
+    }
+    assert artifact["strict_replay"]["cohort_roots"] == 619
+    assert artifact["strict_replay"]["roots_with_results"] == 619
+    assert artifact["strict_replay"]["missing_results"] == 0
+    assert artifact["strict_replay"]["corrupt_results"] == 0
+    assert artifact["codev_calls"] == 0
+
+
+def test_samsung_thermal_eight_lens_denominator_queue_and_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-97226532"
+    denominator = json.loads(
+        (quick / "family-97226532-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "background_numbered_paragraphs": 4,
+        "summary_numbered_paragraphs": 22,
+        "brief_drawing_numbered_paragraphs": 14,
+        "pre_prescription_detailed_numbered_paragraphs": 41,
+        "prescription_numbered_paragraphs": 35,
+        "closing_detailed_numbered_paragraphs": 3,
+        "total_numbered_paragraphs": 119,
+        "claims": 20,
+        "independent_claim_families": 3,
+        "declared_figures": 14,
+        "tagged_html_tables": 17,
+        "mathml_objects": 24,
+        "source_disclosed_optical_prescriptions": 7,
+        "replayed_ledger_items": 7,
+        "converted_pending_intake_items": 4,
+        "trace_failed_terminal_items": 3,
+        "formal_intake_items": 0,
+        "official_pdf_files": 1,
+        "official_pdf_pages": 28,
+        "retained_page_rasters": 28,
+        "official_drawing_sheets": 14,
+        "official_table_pages": 7,
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_tables": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_source_items": 0,
+    }
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(
+        range(1, 8)
+    )
+    assert [item["ledger_state"] for item in denominator["items"]] == [
+        "converted_pending_intake",
+        "terminal",
+        "terminal",
+        "terminal",
+        "converted_pending_intake",
+        "converted_pending_intake",
+        "converted_pending_intake",
+    ]
+    assert [
+        item["embodiment_number"]
+        for item in denominator["items"]
+        if item["terminal_status"] == "trace_failed"
+    ] == [2, 3, 4]
+    assert denominator["prescription_boundary"]["source_imght_mm"] == [9.252] * 7
+    assert denominator["prescription_boundary"]["conversion_state_is_formal_intake"] is False
+    assert not any(denominator["reconciliation"].values())
+
+    before = json.loads(
+        (quick / "generic-residual-before-83.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 83
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 82
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after_2["result_set_sha256"]
+    assert queue["next_exact_group"]["family_id"] == "82818661"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260056353"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20260056353-A1"
+    ]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-97226532-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "b86aeff0280d3a2e488cc6e3f2bcb322dd202b239a1a364bf4782ec179d00ac1"
+    )
+    assert evidence["candidate_outputs"] == {
+        "conversion_requests": 7,
+        "conversion_receipts": 7,
+        "staging_zmx": 4,
+        "converted_pending_intake_items": 4,
+        "trace_failed_terminal_items": 3,
+    }
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["missing_results"] == 0
+    assert evidence["ledger"]["corrupt_results"] == 0
+    assert evidence["saturation_complete"] is False
