@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "family_id": "90535253",
+  "application_number": "18/306676",
+  "root_ids": [
+    "US-20240118520"
+  ],
+  "publication_ids": [
+    "US-20240118520-A1"
+  ],
+  "title": "IMAGING LENS SYSTEM AND ELECTRONIC DEVICE HAVING THE SAME",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f72e752aba1ccbdb/US-20240118520-A1.html",
+    "bytes": 76012,
+    "sha256": "f72e752aba1ccbdb0fcc09e45ecd23dbea549b6d39f677ed0d466d21b2c7e96e"
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/d529e3c09704284b/US-20240118520-A1.pdf",
+    "bytes": 1266189,
+    "sha256": "d529e3c09704284b6996880483f6a519704a5de6c9b45bdd76cccd2bfdfd7007",
+    "publication_id": "US-20240118520-A1"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 7,
+    "description_numbered_paragraphs": 93,
+    "total_numbered_paragraphs": 100,
+    "claims": 20,
+    "declared_nominal_figures": 9,
+    "declared_textual_figure_panels": 10,
+    "located_raster_figure_panels": 10,
+    "tagged_html_tables": 21,
+    "optical_prescription_tables": 20,
+    "comparison_tables": 1,
+    "mathml_objects": 1,
+    "inline_formula_equations": 3,
+    "html_image_tags": 0,
+    "source_disclosed_items": 7,
+    "generic_lens_architectures": 2,
+    "numerical_lens_designs": 4,
+    "electronic_device_camera_wrappers": 1,
+    "ordered_optical_surface_rows": 66,
+    "asphere_surface_rows": 67,
+    "confirmed_no_prescription_items": 3,
+    "metadata_unpublished_items": 4,
+    "replayed_ledger_items": 7,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 23,
+    "retained_page_rasters": 23,
+    "retained_drawing_sheets": 9,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "semantic_replay_sha256": "3c2aeb1c2c49f14ead9bec04a4c973e47833ae3577cf9fb502abb72e3187f38d",
+  "census": {
+    "before": {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/generic-residual-before-88.json",
+      "bytes": 55132,
+      "sha256": "eb535369b64b72ac4581dbf577195e66dc76ede186392e0db99bf823baebb98c",
+      "affected_roots": 88,
+      "affected_items": 88
+    },
+    "after_1": {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/generic-residual-after-1.json",
+      "bytes": 54490,
+      "sha256": "367476a905eaca89aa388fff31ba060d742cb5490b0a966e177d82b5b4e7a670",
+      "affected_roots": 87,
+      "affected_items": 87
+    },
+    "after_2": {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/generic-residual-after-2.json",
+      "bytes": 54490,
+      "sha256": "367476a905eaca89aa388fff31ba060d742cb5490b0a966e177d82b5b4e7a670",
+      "affected_roots": 87,
+      "affected_items": 87
+    }
+  },
+  "replay_attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20240118520/attempt-0002/result.json",
+      "bytes": 9258,
+      "sha256": "e4a988d6f08d96d15e3b86afff8226aa53310485c7188bf4f1e33c424e27ed4a"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20240118520/attempt-0003/result.json",
+      "bytes": 9258,
+      "sha256": "20d6cce4dd6b5340cbd47cb17a4465994b7c9310d12f136d9c9e89f48ecdc51e"
+    }
+  ],
+  "ledger": {
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 43195,
+      "sha256": "68a05034a676e839c4211f6eb370af0e66a3b31775ac66d51bdf7d97feff7adb"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 44819,
+      "sha256": "e806c1dcefd155534ac5381a2dbce7fa3b130b6cfda3bfe89a0eb0cf6eaacd91"
+    },
+    "result_set_sha256": "1b9794864254687a10fc20b29307e6a071d1a3d0355c3674fd57c39911c73973",
+    "strict_roots_with_results": 619,
+    "strict_roots_total": 619,
+    "missing": 0,
+    "corrupt": 0
+  },
+  "artifacts": [
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/family-90535253-denominator.json",
+      "bytes": 5366,
+      "sha256": "a46c8b13dfbd8bcafc6d5b10213a956b1500069d6838d18f2e38287394295b1b"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/family-90535253-raster-audit.json",
+      "bytes": 10599,
+      "sha256": "260b35c4c00f6f54849fa316d35fefcd26d7227d56b03139afb4bfbfdcfa8b78"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/family-90535253-replay-determinism.json",
+      "bytes": 1536,
+      "sha256": "8976854a637acc4e1917c712d21d1e11ffc6d0b17f61e3d3d4f2554bf6ab6150"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/family-90535253-source-audit.md",
+      "bytes": 4462,
+      "sha256": "a672421b649abececea7f66569779368591e5bbc321b84032b7bc234b5de71df"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/family-90535253-source-availability.json",
+      "bytes": 2213,
+      "sha256": "92bce5992a7dad59274a2a1c2c468efd7316d08812247cfb758d4a678a9189b8"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/family-90535253-source-facts.json",
+      "bytes": 11064,
+      "sha256": "c641baab4bea75d87d73aba80ea21c938f741898df9fbae3cf834feea73b9286"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/queue-after.json",
+      "bytes": 1726,
+      "sha256": "0aff435b825352f8dcd2af5bfb89675aad0c02d1a3f1fa5684a90eb495ee2ec5"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/contact-sheet-pages-01-23.png",
+      "bytes": 148794,
+      "sha256": "bc84f67eef9c966c37ae29325397b46c27cb4d14ac9ead62a001ca6c40556b2e"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-02.png",
+      "bytes": 29652,
+      "sha256": "09d73bb81e64f3892b715df00b13621313cf2afa7a67b3adcf478c581c757a7c"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-03.png",
+      "bytes": 56750,
+      "sha256": "fce7e90ad8acd5dc5cfe65b171b0ebfdf26a4aea486b88ec3719598651136cfa"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-04.png",
+      "bytes": 55409,
+      "sha256": "3b48fd1b9d66f9a4ad018c186b6613539e8a26a86676479f3998a61e4310b51c"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-05.png",
+      "bytes": 56138,
+      "sha256": "2461289bb447c0e79c95dde159d6d5829ddd4d43baad096c2e5aa924ba5f3cab"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-06.png",
+      "bytes": 55761,
+      "sha256": "3b79c14ec979bd143b0c26e2aea6531a01dca7b07f357f2a4824dbd323bcbf5b"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-14.png",
+      "bytes": 75715,
+      "sha256": "dcefce9bca41f1394c2212cc90bfc75fccfc8c015fa98bb790b50ddb1f995832"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-16.png",
+      "bytes": 61421,
+      "sha256": "b7fdf9aa58fabadaffefb0bf3c1eb0373341c838b1aa4189c5643b3e853d50ab"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-18.png",
+      "bytes": 72189,
+      "sha256": "6d595e3c078354565d357452ed84ebc2c3ee0e5a975e68def383e66cc52023d5"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-20.png",
+      "bytes": 158256,
+      "sha256": "8d25c51485c32a80d62969940ccd475c1dca3f6921d37b842206c576dd924676"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/pdf-review/page-21.png",
+      "bytes": 154618,
+      "sha256": "40da3f19f488ac69e14f7a2872ec409c3fe5832aa3c7369f3474522639335003"
+    }
+  ],
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  },
+  "next_exact_group": {
+    "family_id": "98695135",
+    "root_ids": ["US-20260086429"],
+    "publication_ids": ["US-20260086429-A1"],
+    "application_number": "19/333463",
+    "title": "IMAGING LENS DRIVING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "first_inventor": "SU; Heng-Yi",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": null,
+    "layout_signature": "53f2233bcf64e5fc13f11327c22c752c370f2b115e6501ccc0ec7134842bb92d",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 58,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 4,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2d0745df79927e89/US-20260086429-A1.html",
+      "sha256": "2d0745df79927e892aab44144dcff53fd384f2f7fb1d290ec9ad81dabb6cfece"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

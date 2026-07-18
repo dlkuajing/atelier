@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "family_id": "90535253",
+  "application_number": "18/306676",
+  "root_ids": [
+    "US-20240118520"
+  ],
+  "publication_ids": [
+    "US-20240118520-A1"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 7,
+    "description_numbered_paragraphs": 93,
+    "total_numbered_paragraphs": 100,
+    "claims": 20,
+    "declared_nominal_figures": 9,
+    "declared_textual_figure_panels": 10,
+    "located_raster_figure_panels": 10,
+    "tagged_html_tables": 21,
+    "optical_prescription_tables": 20,
+    "comparison_tables": 1,
+    "mathml_objects": 1,
+    "inline_formula_equations": 3,
+    "html_image_tags": 0,
+    "source_disclosed_items": 7,
+    "generic_lens_architectures": 2,
+    "numerical_lens_designs": 4,
+    "electronic_device_camera_wrappers": 1,
+    "ordered_optical_surface_rows": 66,
+    "asphere_surface_rows": 67,
+    "confirmed_no_prescription_items": 3,
+    "metadata_unpublished_items": 4,
+    "replayed_ledger_items": 7,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 23,
+    "retained_page_rasters": 23,
+    "retained_drawing_sheets": 9,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "priority": [1, 1],
+    "background_and_summary": [2, 7],
+    "brief_drawings": [8, 17],
+    "generic_seven_lens_architecture": [18, 41],
+    "imaging_lens_system_100a": [42, 49],
+    "imaging_lens_system_100b": [50, 54],
+    "imaging_lens_system_100c": [55, 59],
+    "imaging_lens_system_100d": [60, 68],
+    "electronic_device_and_camera_module": [69, 93],
+    "closing_boilerplate": [94, 100]
+  },
+  "figure_labels": [
+    "1", "2", "3", "4", "5", "6", "7", "8", "9A", "9B"
+  ],
+  "claim_mapping": {
+    "generic_seven_lens_architecture": [1, 10],
+    "generic_eight_lens_architecture": [11, 15],
+    "electronic_device_camera_wrapper": [16, 20]
+  },
+  "table_mapping": {
+    "imaging_lens_system_100a": [1, 5],
+    "imaging_lens_system_100b": [6, 10],
+    "imaging_lens_system_100c": [11, 15],
+    "imaging_lens_system_100d": [16, 21]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Samsung generic seven-lens imaging architecture (FIG. 1)",
+      "paragraphs": [18, 41],
+      "claims": [1, 10],
+      "figures": ["1"],
+      "tables": [],
+      "reason_code": "confirmed_no_prescription.generic_seven_lens_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Samsung imaging lens system 100a (FIG. 2)",
+      "paragraphs": [42, 49],
+      "claims": [],
+      "figures": ["2"],
+      "tables": [1, 2, 3, 4, 5],
+      "reason_code": "metadata_unpublished.imaging_lens_100a_stop_axial_coordinate_absent"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Samsung imaging lens system 100b (FIG. 3)",
+      "paragraphs": [50, 54],
+      "claims": [],
+      "figures": ["3"],
+      "tables": [6, 7, 8, 9, 10],
+      "reason_code": "metadata_unpublished.imaging_lens_100b_stop_axial_coordinate_absent"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Samsung imaging lens system 100c (FIG. 4)",
+      "paragraphs": [55, 59],
+      "claims": [],
+      "figures": ["4"],
+      "tables": [11, 12, 13, 14, 15],
+      "reason_code": "metadata_unpublished.imaging_lens_100c_stop_axial_coordinate_absent"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Samsung imaging lens system 100d (FIG. 5)",
+      "paragraphs": [60, 68],
+      "claims": [],
+      "figures": ["5"],
+      "tables": [16, 17, 18, 19, 20, 21],
+      "reason_code": "metadata_unpublished.imaging_lens_100d_stop_axial_coordinate_absent"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Samsung generic eight-lens imaging architecture",
+      "paragraphs": [32, 32],
+      "claims": [11, 15],
+      "figures": [],
+      "tables": [],
+      "reason_code": "confirmed_no_prescription.generic_eight_lens_architecture_only"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Samsung electronic-device and multi-camera-module wrapper",
+      "paragraphs": [69, 93],
+      "claims": [16, 20],
+      "figures": ["6", "7", "8", "9A", "9B"],
+      "tables": [],
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": true,
+    "surface_radii_published": true,
+    "surface_spacing_published": true,
+    "optical_materials_published": true,
+    "refractive_indices_published": true,
+    "abbe_numbers_published": true,
+    "conic_or_asphere_coefficients_published": true,
+    "stop_location_published": false,
+    "effective_focal_length_published": true,
+    "prescription_specific_f_number_published": true,
+    "prescription_specific_angular_field_published": true,
+    "image_height_published": true,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}
