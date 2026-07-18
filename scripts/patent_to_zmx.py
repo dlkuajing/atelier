@@ -484,6 +484,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_oflm_seven_lens_missing_image_height_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_folded_four_lens_six_embodiment_missing_metadata_attempts(
             raw_text,
@@ -7899,6 +7905,167 @@ _OFILM_FOUR_LENS_ODD_ASPHERE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "raster_set_sha256": (
                 "4f9faea5cc5337619de54ae2a6feed4db2e8724a25408c3940ee8e89389d2b16"
             ),
+        },
+    }
+}
+_OFLM_SEVEN_LENS_MISSING_IMAGE_HEIGHT_ITEMS = (
+    (1, "OFLM seven-lens first embodiment", (78, 86), (1, 2), 1, 2),
+    (2, "OFLM seven-lens second embodiment", (87, 91), (3, 4), 3, 4),
+    (3, "OFLM seven-lens third embodiment", (92, 96), (5, 6), 5, 6),
+    (4, "OFLM seven-lens fourth embodiment", (97, 101), (7, 8), 7, 8),
+    (5, "OFLM seven-lens fifth embodiment", (102, 106), (9, 10), 9, 10),
+    (6, "OFLM seven-lens sixth embodiment", (107, 111), (11, 12), 11, 12),
+    (7, "OFLM image-module wrapper", (113, 113), (13,), None, None),
+    (8, "OFLM terminal-device wrapper", (114, 114), (14,), None, None),
+)
+_OFLM_SEVEN_LENS_IMAGE_HEIGHT_REASON = (
+    "metadata_unpublished.prescription_specific_absolute_image_height_absent"
+)
+_OFLM_SEVEN_LENS_THIRD_EMBODIMENT_REASON = (
+    "metadata_unpublished.absolute_image_height_absent_and_table3a_abbe_outside_"
+    "physical_bounds"
+)
+_OFLM_SEVEN_LENS_IMAGE_MODULE_REASON = (
+    "confirmed_no_prescription.image_module_wrapper_only"
+)
+_OFLM_SEVEN_LENS_TERMINAL_DEVICE_REASON = (
+    "confirmed_no_prescription.terminal_device_wrapper_only"
+)
+_OFLM_SEVEN_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260118635-A1": {
+        "raw_document_sha256": (
+            "3fe547f20905b87a7b338b6c45437edcfe8bf5649d00e3e8bb28a2174fff9c60"
+        ),
+        "normalized_text_sha256": (
+            "bc78e256ea789a7bf9a5f0c9e39e6a5f970e0807703ad12d8fd6985c53d054aa"
+        ),
+        "family_id": "94658603",
+        "application_number": "19/281010",
+        "priority_application": "CN 202411545209.6",
+        "section_markers": {
+            "abstract": "Abstract An optical lens includes:",
+            "background": "Background/Summary FIELD [0001]",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0010]",
+            "detailed": "DETAILED DESCRIPTION [0024]",
+            "claims": "Claims 1 . An optical lens",
+        },
+        "section_sha256": {
+            "abstract": "459f6ac310405c7973cfc806b39cc20c29831bb4f5246cee8faf0b707b592c30",
+            "background": "9675b883260b229e765e4289f9545f0353c00fd1fbdbc96f0582baf74ee12741",
+            "brief": "4bdc3f3f7d18bdc23777a5cf3193879e188d4950b5637fe6659dd2ebddc6fbb0",
+            "detailed": "b20040285d648dd2a1c0b9ba33602ae4e2c79a11784ad8af1325f23abf41abd1",
+            "claims": "32ef1141d9a0ac98837eb803b2164ec02c3a7c218882f91820f14a77fafce1be",
+        },
+        "paragraph_ranges": {
+            "background": (1, 9),
+            "brief": (10, 23),
+            "detailed": (24, 115),
+        },
+        "paragraph_span_sha256": {
+            (24, 77): "3adeb00c6b81114f8ed60cf226e7e8160dad1629506bca73ee72a69e72d1ecac",
+            (78, 86): "814126855a373e32ed2b75b8d93adf42c72ab40536cd96369d45f5f5dbe3944f",
+            (87, 91): "6cfd8063cbfd244dbbb64e99b092c8436abbcfae8bdaf2740c8bba83c4c8b07b",
+            (92, 96): "01bb3a1e1098f981d6d28fe0794a8d43fc15dbf18e10672333421b69a7653ddc",
+            (97, 101): "94080efb54672a991c1bab0a454ae22cc22348bfd740f9d5c44eadc4aca5a38b",
+            (102, 106): "85f796941f98325d8fabe4a2590f4624c51bf9d4ac6178cef1edd41cc6590d27",
+            (107, 111): "c5626ab02cfe82fc023287c22d6f585d5e7798874c28aa34bc510f6ce9660a06",
+            (112, 112): "fe3bfa2de0abbcdd4c97c860f4a128b1c167b75b20bd57483b029fc6e69197ae",
+            (113, 113): "00782097109e053814f2d72900e6428fd3ff5724b331871a80a443031dc4026b",
+            (114, 114): "402ce9c609d1fc6a9833ef92a291344408748899bca9e6193f73a216cbe886a9",
+            (115, 115): "474ad8ac0b75a614627824c69225b88b071ac2563291a92016cda80577b11b4b",
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 19, 20),
+        "identity_markers": {
+            "OPTICAL LENS, IMAGE MODULE, AND TERMINAL DEVICE": 1,
+            "Family ID: 94658603": 1,
+            "Appl. No.: 19/281010": 1,
+            "Jiangxi OFLM Optical Co., Ltd.": 1,
+            "CN 202411545209.6": 1,
+            "LAN; Binli": 2,
+            "ZHU; Xingxing": 1,
+            "ZENG; Han": 1,
+        },
+        "table_payload_sha256": (
+            "51131cc1279468ce97de5ea1a92bb1305adb59072c4003cfd2df3ffc66fe0483",
+            "e4e108d0d277a34430bd9d3a9470893f4774bfdfecc44d05f15279ed0ca6110d",
+            "70d83d0272fbddbe838e5c6e69ebcdc5feb76f90f347a65a3deb0e011df7bf85",
+            "493a05a9460a4837b320690b5e4c68856a4de6e0909162b2f6f8e3019ecb64b4",
+            "646715ddad47261732e1e4ba1a26431ddd6768a5f18515be9624961e05ccaa24",
+            "6698f962c8c57ade30d91721f7a92ff83a61a3eedd8d0a2736e39bc4ff85bb91",
+            "545b014df6d353e109c97fcbe48913acff38a15e7e1d40fa1c34a456f14d2540",
+            "63ae5cda48ea37c7da576397ad1261bc72179eca97de51cdcb2a2eab01c187a9",
+            "025c88ee2a1d4d6154b9b5168e8e1e1325ee24e455dbe86d9831f09bde1d00b0",
+            "098a5a7d83365e0ed0b78c71c7ea2734826c21991e23c115e6afcaac97055e35",
+            "7f8b888c45184dd77d53594b95cd1e11c8932feaf0ed75ce41a69fddb901230a",
+            "61908d1f7f8dfaf8953500fca8c933ff2a2d3411c2ba0a9ae4927081d461c8d4",
+            "c5dcb765f31a8252c3f25bf992bbb3647d44e664680272f489917fa86345a265",
+        ),
+        "math_object_sha256": (
+            "ae3422d32772e25089d1b09d1155e06b3feb681e1e731b4c218095beec28f272",
+            "1d5c96e146688ab3020e470b0a3417ac6c8622b5c071a8fd9c3bc1830d59c955",
+            "a31abb4f328a0e712d2670ccc40180790fbbc90851a1a7baf175326ce36573d9",
+            "2d7b6a0c551c0569f5c60ae069bf4fa70fff642245ed947b1d8dd929d99bbc6a",
+            "d187e4c982b26bfe5fcd7569351a793f4fa4eb4032dc4966f050382bb37652dc",
+            "48787f62571a0b0d980396835aa1e4e7abf93d22387b047d67742bc508b0d89b",
+            "f0bbe3f72c758694baf3b2c7bc7fd4322727d34c6232b337f6c96f7059afdb74",
+            "705535b624207411eda95a0b7dee108040258a3f0a345ef8f423c4be9185842d",
+            "d7a18a41f300f2181f8043a758cdfd67069d0af389b7344ecc864462a47db258",
+            "32bfbddbe02409c7045008a81e145802063fc79ed48105cd2cb3aeb08922d4ac",
+            "7ea355a9d08947580809b115e238156b3113a130ec01503735038c1b493727e7",
+            "5cf72fc213cb840133d83cb9d7e85a851278ddee3f220225c5bbdd1c1d7a1a5b",
+            "2a54d46f632797bd1f22fb853a89884a9251ad04a3a305e3f04427fba735ce51",
+            "fa744acdb4e3fd346ff403f0fb9f956d0c417744c6b2ed97f3f9a44f2a7e57e9",
+            "b6631b4296af038dfe8e96db3f8a549ea3206255f72ad7053630364997e61177",
+            "7d3aec225617180230e432b962bb072b3a329a50bfd2bf3ce8cc0bd343ce9f9d",
+            "e1957568231d628dd52e361a1f8adc89341b9585ad5212379269aac13382d227",
+            "969663b3e9700557853a1d39fe7a87294a49de9a9ae891772721fd680acc2f35",
+            "2ab2a70432d080198282f178855ba1ff226cd84bcd2dca61044499cc88918a04",
+            "342dcfe474826abe3c3e7a66ed10451719c1ac1f4ff4d2771639d919d5edfeca",
+            "cbf31a670c3810b405f76905fb7eba4f0d7d8a6aad27b99b2b90378140a5571a",
+            "578857a6b7427e1d05c27a9e97c9d58a1d02a978e71310678dcec9fc953af1e3",
+            "d9c5b51bf88050d16bd37532275be3631d01e604e9d3393d56d711f210298588",
+        ),
+        "system_values": {
+            1: (4.0546, 1.63, 140.0),
+            2: (4.0406, 1.64, 140.0),
+            3: (4.0459, 1.64, 140.13),
+            4: (4.0363, 1.63, 140.17),
+            5: (4.0367, 1.63, 145.0),
+            6: (4.0472, 1.64, 150.0),
+        },
+        "table7_rows": {
+            "FOV": ("140.0", "140.0", "140.1", "140.2", "145", "150"),
+            "TTL/F": ("7.3943", "7.4204", "7.4106", "7.4282", "7.4269", "7.4077"),
+            "TTL/ImgH": ("6.4843", "6.4685", "6.4732", "6.4690", "6.2813", "6.0816"),
+            "ImgH/F": ("1.1403", "1.1471", "1.1448", "1.1483", "1.1824", "1.2180"),
+            "FNO": ("1.63", "1.64", "1.64", "1.63", "1.63", "1.64"),
+        },
+        "pdf_audit": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/33e0828c31517d8b/"
+                "US-20260118635-A1.pdf"
+            ),
+            "bytes": 2_006_772,
+            "container_sha256": (
+                "33e0828c31517d8b3aed46b6188e705191d82a9789d526921d321814ffcfbd0c"
+            ),
+            "page_count": 28,
+            "drawing_pdf_pages": tuple(range(2, 9)),
+            "table_pdf_pages": tuple(range(19, 26)),
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_page_numbers": (18, 26, 27, 28),
+            "narrow_raster_dimensions": (2550, 3300),
+            "raster_set_sha256": (
+                "84466d371fda110f132af84bc0ebc13fcef54cb6bed6782bafccb6a012b13651"
+            ),
+            "critical_page_raster_sha256": {
+                12: "c5d3440deeefdeaf8b97618396b690b6a2fa13893e44efad0dd04b6b9bbce184",
+                18: "1f6152efac2278ff3c69d9bc3a4024e9ed89bb7adaf42731614c25d014cbc758",
+                21: "f6bbf7c616f8448b97d6a238c4849f96458fca03680e3e669beffb9834ca20e0",
+                24: "efb11c69edb49b656ec981a93cb8d7aba4894d2b9988fd6aa9aa06bc2a674119",
+                25: "1a46bb3e854e88d83d87b897c0d9a4857064e97658ffc2581a519065da6cb449",
+            },
         },
     }
 }
@@ -32575,6 +32742,440 @@ def _ofilm_four_lens_coefficient_rows(
         )
         for match in row_pattern.finditer(table_text)
     ]
+
+
+def _classify_oflm_seven_lens_missing_image_height_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 94658603 without deriving absolute image height."""
+
+    profile = _OFLM_SEVEN_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _surface_table, _asphere_table in (
+                _OFLM_SEVEN_LENS_MISSING_IMAGE_HEIGHT_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"OFLM seven-lens official raw text hash changed for {patent_id}"
+            )
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"OFLM seven-lens normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"OFLM seven-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError("OFLM seven-lens section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("OFLM seven-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"OFLM seven-lens {section_name} section changed"
+                )
+
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"OFLM seven-lens {section_name} paragraph denominator changed"
+                )
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 116)):
+            raise PatentParseError("OFLM seven-lens paragraphs 1-115 changed")
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"OFLM seven-lens paragraph span {bounds} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("OFLM seven-lens claims 1-20 changed")
+        independent_claims = tuple(
+            number
+            for number, match in zip(claim_numbers, claim_matches, strict=True)
+            if re.match(
+                r"\s*(?:An optical lens|An image module|A terminal device)",
+                sections["claims"][match.end() :],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError("OFLM seven-lens independent claims changed")
+
+        declared_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"\[\d{4}\]\s+FIG\.\s*(\d+)\s+is\s+a",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != tuple(range(1, 15)):
+            raise PatentParseError("OFLM seven-lens FIGS. 1-14 denominator changed")
+        mapped_figures = tuple(
+            figure
+            for _number, _label, _bounds, figures, _surface_table, _asphere_table in (
+                _OFLM_SEVEN_LENS_MISSING_IMAGE_HEIGHT_ITEMS
+            )
+            for figure in figures
+        )
+        if mapped_figures != declared_figures:
+            raise PatentParseError("OFLM seven-lens item-to-figure mapping changed")
+
+        payloads = _oflm_seven_lens_source_payloads(text)
+        payload_digests = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in payloads
+        )
+        if payload_digests != profile["table_payload_sha256"]:
+            raise PatentParseError("OFLM seven-lens source table payload changed")
+
+        system_values: dict[int, tuple[float, float, float]] = {}
+        surface_row_markers = (
+            "1 First lens sphere",
+            "2 sphere",
+            "3 Second sphere",
+            "4 lens sphere",
+            "5 Third sphere",
+            "6 lens sphere",
+            "7 Aperture sphere",
+            "8 Fourth sphere",
+            "9 lens sphere",
+            "10 Fifth sphere",
+            "11 Sixth sphere",
+            "12 lens sphere",
+            "13 Seventh asphere",
+            "14 lens asphere",
+            "15 Filter sphere",
+            "16 sphere",
+            "17 Protective sphere",
+            "18 glass sphere",
+            "19 Image sphere",
+        )
+        expected_coefficient_labels = (
+            "K",
+            "A4",
+            "A6",
+            "A8",
+            "A10",
+            "A12",
+            "A14",
+            "A16",
+        )
+        for embodiment_number in range(1, 7):
+            surface_payload = payloads[2 * embodiment_number - 2]
+            asphere_payload = payloads[2 * embodiment_number - 1]
+            system_values[embodiment_number] = _oflm_seven_lens_system_values(
+                surface_payload,
+                embodiment_number=embodiment_number,
+            )
+            cursor = 0
+            for marker in surface_row_markers:
+                position = surface_payload.find(marker, cursor)
+                if position < 0:
+                    raise PatentParseError(
+                        f"OFLM seven-lens embodiment {embodiment_number} "
+                        f"surface marker {marker!r} changed"
+                    )
+                cursor = position + len(marker)
+            if len(re.findall(r"\bglass\b", surface_payload, re.IGNORECASE)) != 10:
+                raise PatentParseError(
+                    f"OFLM seven-lens embodiment {embodiment_number} material rows changed"
+                )
+            coefficient_labels = tuple(
+                match.group(1).upper()
+                for match in re.finditer(
+                    r"(?<!\S)(K|A4|A6|A8|A10|A12|A14|A16)\s+"
+                    rf"{NUMBER_PATTERN}\s+{NUMBER_PATTERN}",
+                    asphere_payload,
+                    re.IGNORECASE,
+                )
+            )
+            if coefficient_labels != expected_coefficient_labels:
+                raise PatentParseError(
+                    f"OFLM seven-lens embodiment {embodiment_number} "
+                    "asphere coefficient rows changed"
+                )
+        if system_values != profile["system_values"]:
+            raise PatentParseError("OFLM seven-lens direct F/FNO/FOV values changed")
+
+        third_abbe_marker = "8 Fourth sphere 8.983 3.05 glass 1.437 1.95 15.940"
+        if len(re.findall(re.escape(third_abbe_marker), payloads[4])) != 1:
+            raise PatentParseError(
+                "OFLM seven-lens TABLE 3a direct Vd=1.95 evidence changed"
+            )
+        table7_rows = _oflm_seven_lens_table7_rows(payloads[12])
+        if table7_rows != profile["table7_rows"]:
+            raise PatentParseError("OFLM seven-lens TABLE 7 ratio rows changed")
+
+        direct_image_height_patterns = (
+            rf"\bImgH\s*=\s*{NUMBER_PATTERN}\s*mm\b",
+            rf"\bIMGHT\s+{NUMBER_PATTERN}\b",
+            rf"\bimage\s+height(?:\s+of\s+1\.0H)?\s+(?:is|=)\s*"
+            rf"{NUMBER_PATTERN}\s*mm\b",
+        )
+        for pattern in direct_image_height_patterns:
+            if re.search(pattern, text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "OFLM seven-lens source may now publish absolute image height"
+                )
+
+        math_objects = re.findall(r"<maths\b.*?</maths>", raw_text, re.I | re.S)
+        math_hashes = tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        )
+        if math_hashes != profile["math_object_sha256"]:
+            raise PatentParseError("OFLM seven-lens MathML denominator changed")
+        if re.search(r"<img\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError("OFLM seven-lens retained HTML gained an image tag")
+
+        for phrase, expected in {
+            "the reference wavelength for the refractive index and Abbe number": 6,
+            "Table 7 shows the values of FOV": 1,
+            "The present disclosure also discloses an image module 200": 1,
+            "The present disclosure also discloses a terminal device 300": 1,
+        }.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"OFLM seven-lens source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("OFLM seven-lens official PDF byte count changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError("OFLM seven-lens official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError("OFLM seven-lens official PDF page count changed")
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = frozenset(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"OFLM seven-lens PDF page {page_number} contains "
+                    f"{len(images)} rasters; expected one"
+                )
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if images[0].image.size != expected_dimensions:
+                raise PatentParseError(
+                    f"OFLM seven-lens PDF page {page_number} dimensions changed"
+                )
+            raster_digest = _canonical_raster_sha256(images[0].data)
+            page_raster_hashes.append(raster_digest)
+            expected_critical = pdf_profile["critical_page_raster_sha256"].get(
+                page_number
+            )
+            if expected_critical is not None and raster_digest != expected_critical:
+                raise PatentParseError(
+                    f"OFLM seven-lens critical PDF page {page_number} changed"
+                )
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError("OFLM seven-lens official PDF raster set changed")
+        if text_layer_characters != 0:
+            raise PatentParseError("OFLM seven-lens official PDF gained a text layer")
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact-source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, _figures, surface_table, _asphere_table in (
+        _OFLM_SEVEN_LENS_MISSING_IMAGE_HEIGHT_ITEMS
+    ):
+        if number <= 6:
+            focal_length, f_number, full_fov = profile["system_values"][number]
+            detail = (
+                f"OFLM Family 94658603 embodiment {number} TABLES "
+                f"{surface_table}a/{surface_table}b publish 19 ordered rows, "
+                "surface 7 aperture placement, glass nd/Vd values, S13/S14 "
+                "K/A4-A16 coefficients, and direct "
+                f"F={focal_length:g} mm, FNO={f_number:g}, full FOV={full_fov:g} "
+                "degrees. TABLE 7 publishes only TTL/ImgH, ImgH/F, SD11/ImgH, "
+                "FOV*F/ImgH and F*tan(FOV/2)/ImgH ratios; neither the complete "
+                "115-paragraph official HTML nor the 28-page exact-raster PDF "
+                "publishes a direct absolute image height, and no ratio is used "
+                "to derive one"
+            )
+            reason_code = _OFLM_SEVEN_LENS_IMAGE_HEIGHT_REASON
+            if number == 3:
+                detail += (
+                    ". TABLE 3a additionally publishes Vd=1.95 with nd=1.437 "
+                    "for the fourth lens on both official views, outside the "
+                    f"existing physical Vd range {VD_PHYSICAL_RANGE}; it is "
+                    "retained verbatim and not repaired to another embodiment's value"
+                )
+                reason_code = _OFLM_SEVEN_LENS_THIRD_EMBODIMENT_REASON
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=reason_code,
+                detail=detail,
+            )
+        elif number == 7:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_OFLM_SEVEN_LENS_IMAGE_MODULE_REASON,
+                detail=(
+                    "paragraph 113, FIG. 13 and independent claim 19 only place "
+                    "the above-mentioned optical lens with a photosensitive chip; "
+                    "they publish no seventh optical prescription"
+                ),
+            )
+        else:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_OFLM_SEVEN_LENS_TERMINAL_DEVICE_REASON,
+                detail=(
+                    "paragraph 114, FIG. 14 and independent claim 20 only place "
+                    "the above-mentioned image module in a housing; they publish "
+                    "no eighth optical prescription"
+                ),
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=error,
+            )
+        )
+    return attempts
+
+
+def _oflm_seven_lens_source_payloads(text: str) -> tuple[str, ...]:
+    matches = list(re.finditer(r"TABLE-US-(\d{5})\b", text))
+    if tuple(int(match.group(1)) for match in matches) != tuple(range(1, 14)):
+        raise PatentParseError("OFLM seven-lens must contain tagged TABLES 1-13")
+    payloads: list[str] = []
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        payload = re.split(
+            r"\s(?:\[\d{4}\]|Claims\s+1\s*\.)\s",
+            text[match.start() : end],
+            maxsplit=1,
+        )[0].strip()
+        payloads.append(payload)
+    return tuple(payloads)
+
+
+def _oflm_seven_lens_system_values(
+    table_text: str,
+    *,
+    embodiment_number: int,
+) -> tuple[float, float, float]:
+    match = re.search(
+        rf"TABLE\s+{embodiment_number}a\s+\S+\s+embodiment\s+"
+        rf"F\s*=\s*(?P<f>{NUMBER_PATTERN})\s*mm,\s*"
+        rf"FNO\s*=\s*(?P<fno>{NUMBER_PATTERN}),\s*"
+        rf"FOV\s*=\s*(?P<fov>{NUMBER_PATTERN})°",
+        table_text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        raise PatentParseError(
+            f"OFLM seven-lens TABLE {embodiment_number}a direct F/FNO/FOV changed"
+        )
+    return tuple(_parse_number(match.group(name)) for name in ("f", "fno", "fov"))
+
+
+def _oflm_seven_lens_table7_rows(
+    table_text: str,
+) -> dict[str, tuple[str, ...]]:
+    rows: dict[str, tuple[str, ...]] = {}
+    value = rf"{NUMBER_PATTERN}°?"
+    for label in ("FOV", "TTL/F", "TTL/ImgH", "ImgH/F", "FNO"):
+        match = re.search(
+            rf"(?<!\S){re.escape(label)}\s+"
+            rf"(?P<values>{value}(?:\s+{value}){{5}})",
+            table_text,
+        )
+        if match is None:
+            raise PatentParseError(f"OFLM seven-lens TABLE 7 row {label} changed")
+        rows[label] = tuple(token.rstrip("°") for token in match.group("values").split())
+    return rows
 
 
 def _classify_samsung_folded_four_lens_six_embodiment_missing_metadata_attempts(
