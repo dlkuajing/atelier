@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-99635674/generic-residual-after-2.json",
+  "result_set_sha256": "8c844a949b720dd79c9750508b0aff3f5a5fefe93f4956c94d28be248eb458e9",
+  "generic_residual_roots": 65,
+  "generic_residual_items": 65,
+  "next_exact_group": {
+    "family_id": "66532282",
+    "root_ids": [
+      "US-10739564"
+    ],
+    "publication_ids": [
+      "US-10739564-B2"
+    ],
+    "application_number": "16/101640",
+    "title": "Camera optical lens",
+    "first_inventor": "Wang; Jianming",
+    "applicant": "AAC Acoustic Technologies (Shenzhen) Co., Ltd.",
+    "assignee": "AAC Communication Technologies (Changzhou) Co., Ltd.",
+    "layout_signature": "7910de94e39a834a4c00f9678a94eba30b4248a19abbea74a8c351d776bc98e2",
+    "layout_signature_count": 1,
+    "table_count": 12,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 22,
+      "example_anchor": 0,
+      "f_number": 2,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/b8aafd0ef41e2c01/US-10739564-B2.html",
+      "sha256": "b8aafd0ef41e2c015ed9d5a2335ea891e1c8c5b87a652f7703da2f7cb5585941"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `868fcfde145c084b6e95433b142b10fb0da5993bc1507abaa0058b0771dd4aa0`
+- result_set_sha256: `8c844a949b720dd79c9750508b0aff3f5a5fefe93f4956c94d28be248eb458e9`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 27
-- `terminal`: 183
-- `parser_review_required`: 256
+- `terminal`: 184
+- `parser_review_required`: 255
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 587
-- `terminal`: 1511
-- `parser_review_required`: 1351
+- `terminal`: 1526
+- `parser_review_required`: 1350
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 515
+- `confirmed_no_prescription`: 530
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 250
@@ -48,14 +48,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 256
-- `terminal.all_disclosed_items_terminal`: 183
+- `parser_review_required.all_disclosed_items_rejected`: 255
+- `terminal.all_disclosed_items_terminal`: 184
 - `mixed_nonterminal.multiple_item_states`: 153
 - `converted_pending_intake.all_disclosed_items_converted`: 27
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1351
+- `parser_review_required.deterministic_parser_rejected`: 1350
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 587
 - `terminal.metadata_unpublished.system_f_number_absent`: 79
@@ -69,6 +69,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only`: 15
 - `terminal.metadata_unpublished.prescription_specific_f_number_and_angular_field_absent`: 15
 - `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 14
+- `terminal.confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only`: 13
 - `terminal.confirmed_no_prescription.catadioptric_thin_film_and_module_architecture_only`: 12
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only`: 12
 - `terminal.confirmed_no_prescription.imaging_lens_element_nanostructure_transmittance_architecture_only`: 12
@@ -116,6 +117,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.deformable_lens_actuator_and_imaging_terminal_architecture_only`: 2
 - `terminal.confirmed_no_prescription.edof_microscope_architecture_only`: 2
 - `terminal.confirmed_no_prescription.electronic_device_camera_placement_and_digital_zoom_wrapper_only`: 2
+- `terminal.confirmed_no_prescription.electronic_device_multi_camera_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.encapsulated_camera_cord_controller_and_tether_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.first_projection_lens_schematic_materials_and_performance_only`: 2
 - `terminal.confirmed_no_prescription.first_relay_lens_schematic_materials_and_performance_only`: 2
@@ -348,8 +350,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 66
 - `asphere_section_missing`: 65
+- `generic_summary_metadata_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62
 - `generic_surface_table_index_break`: 35

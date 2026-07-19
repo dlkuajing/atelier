@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "family_id": "99635674",
+  "root_id": "US-20260126648",
+  "publication_id": "US-20260126648-A1",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_primary_publications": 1,
+    "related_application_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 2,
+    "summary_numbered_paragraphs": 3,
+    "brief_description_numbered_paragraphs": 37,
+    "generic_detailed_architecture_numbered_paragraphs": 24,
+    "shared_assembly_numbered_paragraphs": 4,
+    "item_numbered_paragraphs": 44,
+    "closing_numbered_paragraphs": 1,
+    "total_numbered_paragraphs": 116,
+    "claims": 24,
+    "independent_claims": 2,
+    "declared_figure_panels": 36,
+    "official_pdf_pages_per_container": 39,
+    "official_pdf_drawing_pages": 25,
+    "official_pdf_specification_pages": 11,
+    "official_pdf_table_pages": 7,
+    "official_pdf_claim_pages": 2,
+    "flattened_table_us_objects": 13,
+    "html_table_tags": 0,
+    "mathml_objects": 13,
+    "source_disclosed_light_blocking_sheet_examples": 13,
+    "source_disclosed_device_wrapper_items": 2,
+    "source_disclosed_items": 15,
+    "source_disclosed_complete_prescriptions": 0,
+    "ordered_optical_surface_rows": 0,
+    "optical_coefficient_rows": 0,
+    "published_assembly_focal_length_values": 13,
+    "published_aperture_ratio_F_values": 13,
+    "replayed_ledger_items": 15,
+    "parser_review_required_items": 0,
+    "metadata_unpublished_items": 0,
+    "confirmed_no_prescription_items": 15,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "corroborating_pdf_containers": 2,
+    "distinct_decoded_page_rasters": 39,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "items": [
+    {
+      "number": 1,
+      "label": "Largan first-embodiment light-blocking-sheet example 1",
+      "paragraphs": [
+        70,
+        71
+      ],
+      "figures": [
+        "2A",
+        "2B"
+      ],
+      "tables": [
+        1
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan first-embodiment light-blocking-sheet example 2",
+      "paragraphs": [
+        72,
+        73
+      ],
+      "figures": [
+        "3A",
+        "3B"
+      ],
+      "tables": [
+        2
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan first-embodiment light-blocking-sheet example 3",
+      "paragraphs": [
+        74,
+        75
+      ],
+      "figures": [
+        "4A",
+        "4B"
+      ],
+      "tables": [
+        3
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan first-embodiment light-blocking-sheet example 4",
+      "paragraphs": [
+        76,
+        77
+      ],
+      "figures": [
+        "5A",
+        "5B"
+      ],
+      "tables": [
+        4
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan first-embodiment light-blocking-sheet example 5",
+      "paragraphs": [
+        78,
+        79
+      ],
+      "figures": [
+        "6A",
+        "6B"
+      ],
+      "tables": [
+        5
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan first-embodiment light-blocking-sheet example 6",
+      "paragraphs": [
+        80,
+        81
+      ],
+      "figures": [
+        "7A",
+        "7B"
+      ],
+      "tables": [
+        6
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan first-embodiment light-blocking-sheet example 7",
+      "paragraphs": [
+        82,
+        83
+      ],
+      "figures": [
+        "8A",
+        "8B"
+      ],
+      "tables": [
+        7
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 8,
+      "label": "Largan first-embodiment light-blocking-sheet example 8",
+      "paragraphs": [
+        84,
+        88
+      ],
+      "figures": [
+        "8C",
+        "8D"
+      ],
+      "tables": [
+        8
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 9,
+      "label": "Largan second-embodiment light-blocking-sheet example 1",
+      "paragraphs": [
+        91,
+        93
+      ],
+      "figures": [
+        "10A",
+        "10B"
+      ],
+      "tables": [
+        9
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 10,
+      "label": "Largan second-embodiment light-blocking-sheet example 2",
+      "paragraphs": [
+        94,
+        95
+      ],
+      "figures": [
+        "11A",
+        "11B"
+      ],
+      "tables": [
+        10
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 11,
+      "label": "Largan second-embodiment light-blocking-sheet example 3",
+      "paragraphs": [
+        96,
+        97
+      ],
+      "figures": [
+        "12A",
+        "12B"
+      ],
+      "tables": [
+        11
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 12,
+      "label": "Largan second-embodiment light-blocking-sheet example 4",
+      "paragraphs": [
+        98,
+        99
+      ],
+      "figures": [
+        "13A",
+        "13B"
+      ],
+      "tables": [
+        12
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 13,
+      "label": "Largan second-embodiment light-blocking-sheet example 5",
+      "paragraphs": [
+        100,
+        103
+      ],
+      "figures": [
+        "13C",
+        "13D"
+      ],
+      "tables": [
+        13
+      ],
+      "group": "sheet",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only"
+    },
+    {
+      "number": 14,
+      "label": "Largan third-embodiment electronic-device wrapper",
+      "paragraphs": [
+        104,
+        112
+      ],
+      "figures": [
+        "14A",
+        "14B",
+        "14C",
+        "14D",
+        "14E"
+      ],
+      "tables": [],
+      "group": "device",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_wrapper_only"
+    },
+    {
+      "number": 15,
+      "label": "Largan fourth-embodiment electronic-device wrapper",
+      "paragraphs": [
+        113,
+        115
+      ],
+      "figures": [
+        "15"
+      ],
+      "tables": [],
+      "group": "device",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_wrapper_only"
+    }
+  ],
+  "shared_context": [
+    {
+      "role": "background_summary",
+      "paragraphs": [
+        1,
+        6
+      ]
+    },
+    {
+      "role": "brief_drawing_declarations",
+      "paragraphs": [
+        7,
+        43
+      ]
+    },
+    {
+      "role": "generic_light_blocking_architecture",
+      "paragraphs": [
+        44,
+        67
+      ]
+    },
+    {
+      "role": "first_embodiment_shared_five_lens_assembly",
+      "paragraphs": [
+        68,
+        69
+      ],
+      "figures": [
+        "1A",
+        "1B"
+      ]
+    },
+    {
+      "role": "second_embodiment_shared_seven_lens_assembly",
+      "paragraphs": [
+        89,
+        90
+      ],
+      "figures": [
+        "9A",
+        "9B"
+      ]
+    },
+    {
+      "role": "closing",
+      "paragraphs": [
+        116,
+        116
+      ]
+    }
+  ],
+  "prescription_boundary": {
+    "ordered_optical_prescription_published": false,
+    "ordered_optical_surface_rows": 0,
+    "optical_radius_or_spacing_rows": 0,
+    "optical_material_rows": 0,
+    "asphere_formulae_or_coefficients": 0,
+    "radius_of_curvature_phrase_occurrences": 0,
+    "refractive_index_phrase_occurrences": 0,
+    "abbe_number_phrase_occurrences": 0,
+    "aspheric_phrase_occurrences": 0,
+    "image_height_phrase_occurrences": 0,
+    "thirteen_tables_are_light_blocking_geometry_only": true,
+    "five_and_seven_lens_sequences_name_elements_but_publish_no_surface_data": true,
+    "f_and_F_values_do_not_supply_a_lens_prescription": true
+  },
+  "formal_outputs": {
+    "case_index_entries": 0,
+    "case_json": 0,
+    "intake_manifests": 0,
+    "expert_backed_items": 0
+  }
+}
