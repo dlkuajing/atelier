@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `476349656fe93db72ed775925da2e272e223823b81de79911fec1fe0979acf19`
+- result_set_sha256: `87fb5953031c07176bdc6cf49e72de0f19b307eabfbbe4f41c07ca917f3f8a9b`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 27
-- `terminal`: 181
-- `parser_review_required`: 258
+- `terminal`: 182
+- `parser_review_required`: 257
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 587
-- `terminal`: 1490
-- `parser_review_required`: 1353
+- `terminal`: 1501
+- `parser_review_required`: 1352
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,24 +38,24 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 509
+- `confirmed_no_prescription`: 515
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
-- `metadata_unpublished`: 235
+- `metadata_unpublished`: 240
 - `trace_failed`: 631
 - `trace_timeout`: 115
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 258
-- `terminal.all_disclosed_items_terminal`: 181
+- `parser_review_required.all_disclosed_items_rejected`: 257
+- `terminal.all_disclosed_items_terminal`: 182
 - `mixed_nonterminal.multiple_item_states`: 153
 - `converted_pending_intake.all_disclosed_items_converted`: 27
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1353
+- `parser_review_required.deterministic_parser_rejected`: 1352
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 587
 - `terminal.metadata_unpublished.system_f_number_absent`: 79
@@ -139,6 +139,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.metadata_unpublished.configuration_effective_focal_length_and_numeric_semi_fov_absent`: 2
 - `terminal.metadata_unpublished.prescription_specific_angular_field_absent_and_r1_sign_conflicted`: 2
 - `terminal.metadata_unpublished.prescription_specific_efl_and_f_number_absent`: 2
+- `terminal.metadata_unpublished.qcon_q6_q7_basis_definitions_absent`: 2
 - `terminal.metadata_unpublished.surface_sequence_and_stop_radius_conflict`: 2
 - `terminal.confirmed_no_prescription.aiming_intensity_at_second_near_working_distance_only`: 1
 - `terminal.confirmed_no_prescription.aiming_pattern_subportion_spacing_architecture_only`: 1
@@ -209,6 +210,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.first_spiral_protrusion_lens_element_example_only`: 1
 - `terminal.confirmed_no_prescription.flash_lidar_channel_architecture_only`: 1
 - `terminal.confirmed_no_prescription.flexible_wire_plate_driving_architecture_only`: 1
+- `terminal.confirmed_no_prescription.folded_passive_poc_mirror_architecture_only`: 1
 - `terminal.confirmed_no_prescription.folded_reflector_light_blocking_compensation_architecture_only`: 1
 - `terminal.confirmed_no_prescription.four_prism_light_dividing_architecture_only`: 1
 - `terminal.confirmed_no_prescription.fourth_embodiment_multi_camera_smartphone_wrapper_only`: 1
@@ -220,6 +222,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.fundus_camera_imaging_architecture_only`: 1
 - `terminal.confirmed_no_prescription.generic_computing_environment_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.generic_eight_lens_architecture_only`: 1
+- `terminal.confirmed_no_prescription.generic_one_group_pop_out_architecture_only`: 1
 - `terminal.confirmed_no_prescription.generic_seven_lens_architecture_only`: 1
 - `terminal.confirmed_no_prescription.head_mounted_projection_device_architecture_only`: 1
 - `terminal.confirmed_no_prescription.highest_power_density_system_architecture_only`: 1
@@ -234,6 +237,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.indicia_reader_means_architecture_only`: 1
 - `terminal.confirmed_no_prescription.indicia_reader_negative_spherical_aberration_architecture_only`: 1
 - `terminal.confirmed_no_prescription.indicia_reader_weigh_platter_power_storage_architecture_only`: 1
+- `terminal.confirmed_no_prescription.inner_passive_poc_spring_architecture_only`: 1
 - `terminal.confirmed_no_prescription.internal_display_self_alignment_optical_path_only`: 1
 - `terminal.confirmed_no_prescription.ir_filter_coating_tables_only`: 1
 - `terminal.confirmed_no_prescription.iterative_camera_setting_search_process_only`: 1
@@ -258,11 +262,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.multi_camera_timing_exposure_control_operating_method_only`: 1
 - `terminal.confirmed_no_prescription.multi_view_projection_optical_machine_architecture_only`: 1
 - `terminal.confirmed_no_prescription.multicompressor_objective_partial_values_only`: 1
+- `terminal.confirmed_no_prescription.multiwire_sma_actuator_architecture_only`: 1
 - `terminal.confirmed_no_prescription.near_ir_absorbing_polymer_and_cut_filter_materials_only`: 1
 - `terminal.confirmed_no_prescription.negative_spherical_aberration_lens_assembly_architecture_only`: 1
 - `terminal.confirmed_no_prescription.notebook_camera_antenna_module_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.one_point_five_x_objective_relay_schematic_only`: 1
 - `terminal.confirmed_no_prescription.opa_lidar_channel_architecture_only`: 1
+- `terminal.confirmed_no_prescription.outer_passive_poc_gear_architecture_only`: 1
+- `terminal.confirmed_no_prescription.outer_passive_poc_magnetic_spring_architecture_only`: 1
 - `terminal.confirmed_no_prescription.paired_target_inclination_compensation_variant_only`: 1
 - `terminal.confirmed_no_prescription.panoramic_opto_mechanical_architecture_only`: 1
 - `terminal.confirmed_no_prescription.pixel_clustering_electronics_only`: 1
@@ -315,7 +322,10 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.metadata_unpublished.imaging_lens_100b_stop_axial_coordinate_absent`: 1
 - `terminal.metadata_unpublished.imaging_lens_100c_stop_axial_coordinate_absent`: 1
 - `terminal.metadata_unpublished.imaging_lens_100d_stop_axial_coordinate_absent`: 1
-- `terminal.metadata_unpublished.qcon_q6_q7_basis_definitions_absent`: 1
+- `terminal.metadata_unpublished.qcon_q6_q10_basis_definitions_and_surface_index_mapping_absent`: 1
+- `terminal.metadata_unpublished.qcon_q6_q11_basis_definitions_absent`: 1
+- `terminal.metadata_unpublished.qcon_q6_q7_basis_definitions_and_system_stop_absent`: 1
+- `terminal.metadata_unpublished.qcon_q6_q9_basis_definitions_absent`: 1
 - `terminal.metadata_unpublished.required_fixed_air_spacings_asphere_coefficients_and_system_focal_length_field_absent`: 1
 - `terminal.metadata_unpublished.required_optical_material_and_exact_system_f_number_absent`: 1
 - `terminal.metadata_unpublished.required_system_efl_f_number_and_angular_field_absent`: 1
@@ -337,7 +347,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 68
+- `generic_summary_metadata_missing`: 67
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62

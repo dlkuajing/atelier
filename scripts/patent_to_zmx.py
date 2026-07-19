@@ -514,6 +514,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_corephotonics_slim_pop_out_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_antireflective_air_gap_architecture_attempts(
             raw_text,
@@ -9236,6 +9242,385 @@ _COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "120bb545fba0c37068ce45ecf41d1eb6afcd4b239d925d43be5a572cd5fa28ca",
                 "898ccdd00ed076a054ea1ddd98c59c7be76f6bda5ec10ae67980331057c41b6c",
             ),
+        },
+    }
+}
+_COREPHOTONICS_SLIM_PO_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*SLIM\s+POP-OUT\s+WIDE\s+CAMERA\s+LENSES\s+AND\s+"
+    r"POP-OUT\s+CAMERA\s+ACTUATORS\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_COREPHOTONICS_SLIM_PO_ITEMS = (
+    {
+        "number": 1,
+        "label": "Corephotonics generic one-group pop-out lens system 250",
+        "system": 250,
+        "paragraphs": (53, 56),
+        "figures": ("2C", "2D"),
+        "tables": (),
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.generic_one_group_pop_out_architecture_only"
+        ),
+        "detail": (
+            "Paragraphs 53-56 and FIGS. 2C/2D directly disclose a generic one-group "
+            "pop-out lens whose internal spacings remain fixed while BFL collapses, but "
+            "publish no ordered radii, optical spacings, materials or Q-type coefficients"
+        ),
+    },
+    {
+        "number": 2,
+        "label": "Corephotonics QT1 pop-out lens system 300",
+        "system": 300,
+        "paragraphs": (60, 78),
+        "figures": ("3",),
+        "tables": (1, 2),
+        "terminal_status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.qcon_q6_q9_basis_definitions_absent",
+        "detail": (
+            "Tables 1/2 directly publish the 22-row system-300 prescription, EFL "
+            "11.58 mm, F/2.0, HFOV 41.35 degrees and non-zero Q-type A0-A9 "
+            "coefficients, but equation 1 defines only Q0-Q5; Q6-Q9 are not "
+            "substituted or imported from an external convention"
+        ),
+    },
+    {
+        "number": 3,
+        "label": "Corephotonics QT1 pop-out lens system 400",
+        "system": 400,
+        "paragraphs": (79, 91),
+        "figures": ("4",),
+        "tables": (3, 4),
+        "terminal_status": "metadata_unpublished",
+        "reason_code": (
+            "metadata_unpublished."
+            "qcon_q6_q10_basis_definitions_and_surface_index_mapping_absent"
+        ),
+        "detail": (
+            "Tables 3/4 directly publish EFL 11.51 mm, F/1.91, HFOV 43.91 "
+            "degrees and Q-type A0-A10 coefficients, but equation 1 defines only "
+            "Q0-Q5 and the source table itself repeats printed surface indices "
+            "14/15 for lenses 8 and 9; neither missing basis functions nor surface "
+            "identity are repaired"
+        ),
+    },
+    {
+        "number": 4,
+        "label": "Corephotonics QT1 pop-out lens system 500",
+        "system": 500,
+        "paragraphs": (92, 92),
+        "figures": ("5",),
+        "tables": (5, 6),
+        "terminal_status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.qcon_q6_q7_basis_definitions_absent",
+        "detail": (
+            "Tables 5/6 directly publish the 20-row system-500 prescription, EFL "
+            "11.53 mm, F/1.675, HFOV 41.862 degrees and non-zero Q-type A0-A7 "
+            "coefficients, but equation 1 defines only Q0-Q5; Q6/Q7 remain absent"
+        ),
+    },
+    {
+        "number": 5,
+        "label": "Corephotonics QT1 pop-out lens system 600",
+        "system": 600,
+        "paragraphs": (93, 93),
+        "figures": ("6",),
+        "tables": (7, 8),
+        "terminal_status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.qcon_q6_q11_basis_definitions_absent",
+        "detail": (
+            "Tables 7/8 directly publish the 22-row system-600 prescription, EFL "
+            "11.256 mm, F/2, HFOV 42.9 degrees and non-zero Q-type A0-A11 "
+            "coefficients, but equation 1 defines only Q0-Q5; Q6-Q11 remain absent"
+        ),
+    },
+    {
+        "number": 6,
+        "label": "Corephotonics QT1 pop-out lens system 700",
+        "system": 700,
+        "paragraphs": (94, 104),
+        "figures": ("7",),
+        "tables": (9, 10),
+        "terminal_status": "metadata_unpublished",
+        "reason_code": (
+            "metadata_unpublished."
+            "qcon_q6_q7_basis_definitions_and_system_stop_absent"
+        ),
+        "detail": (
+            "Tables 9/10 directly publish the 15-row system-700 prescription, EFL "
+            "8.78 mm, F/1.40, HFOV 38.33 degrees and non-zero Q-type A0-A7 "
+            "coefficients, but equation 1 defines only Q0-Q5 and Table 9 publishes "
+            "no aperture-stop row or stop coordinate; neither gap is inferred"
+        ),
+    },
+    {
+        "number": 7,
+        "label": "Corephotonics inner passive pop-out camera 800",
+        "system": 800,
+        "paragraphs": (105, 109),
+        "figures": ("8A", "8B", "8C"),
+        "tables": (),
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.inner_passive_poc_spring_architecture_only"
+        ),
+        "detail": (
+            "Paragraphs 105-109 and FIGS. 8A-8C publish the foldable-phone, inner "
+            "passive camera and spring architecture without a lens prescription"
+        ),
+    },
+    {
+        "number": 8,
+        "label": "Corephotonics outer passive pop-out camera 900",
+        "system": 900,
+        "paragraphs": (110, 113),
+        "figures": ("9A", "9B", "9C"),
+        "tables": (),
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription."
+            "outer_passive_poc_magnetic_spring_architecture_only"
+        ),
+        "detail": (
+            "Paragraphs 110-113 and FIGS. 9A-9C publish the outer passive camera "
+            "and magnetic-spring architecture without a lens prescription"
+        ),
+    },
+    {
+        "number": 9,
+        "label": "Corephotonics geared passive pop-out camera 1000",
+        "system": 1000,
+        "paragraphs": (114, 116),
+        "figures": ("10A", "10B"),
+        "tables": (),
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.outer_passive_poc_gear_architecture_only"
+        ),
+        "detail": (
+            "Paragraphs 114-116 and FIGS. 10A/10B publish the hinge-coupled gear "
+            "actuator and camera packaging without a lens prescription"
+        ),
+    },
+    {
+        "number": 10,
+        "label": "Corephotonics folded passive pop-out camera 1100",
+        "system": 1100,
+        "paragraphs": (117, 118),
+        "figures": ("11A", "11B"),
+        "tables": (),
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.folded_passive_poc_mirror_architecture_only"
+        ),
+        "detail": (
+            "Paragraphs 117-118 and FIGS. 11A/11B publish the folded passive camera, "
+            "mirror motion and housing geometry without an ordered lens prescription"
+        ),
+    },
+    {
+        "number": 11,
+        "label": "Corephotonics multiwire SMA camera actuator 1200",
+        "system": 1200,
+        "paragraphs": (119, 120),
+        "figures": ("12",),
+        "tables": (),
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.multiwire_sma_actuator_architecture_only"
+        ),
+        "detail": (
+            "Paragraphs 119-120 and FIG. 12 publish a consecutively operated "
+            "multiwire SMA actuator without any optical prescription"
+        ),
+    },
+)
+_COREPHOTONICS_SLIM_PO_FIGURE_DECLARATIONS = tuple(
+    zip(
+        range(25, 49),
+        (
+            "1 A",
+            "1 B",
+            "1 C",
+            "1 D",
+            "2 A",
+            "2 B",
+            "2 C",
+            "2 D",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8 A",
+            "8 B",
+            "8 C",
+            "9 A",
+            "9 B",
+            "9 C",
+            "10 A",
+            "10 B",
+            "11 A",
+            "11 B",
+            "12",
+        ),
+        strict=True,
+    )
+)
+_COREPHOTONICS_SLIM_PO_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260153710-A1": {
+        "raw_document_sha256": (
+            "188dbb739fd8d71378d568a9d8d9d94dd06931b1c5ae9a0c7373836a4b31f36e"
+        ),
+        "normalized_text_sha256": (
+            "1f76127a058bbbfc3302e0c04bfcf460429ac45f8feeab2a6bca13f98d9f3239"
+        ),
+        "family_id": "88793298",
+        "application_number": "19/424607",
+        "section_markers": {
+            "abstract": "Abstract ",
+            "background_summary": "Background/Summary ",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION [0049]",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "abstract": "e95581f1f9821276745cb4e4de75b90edeefcefd295e91af86ee9750373e3fe6",
+            "background_summary": (
+                "66dcc3b5ffb0d1cbbaa5cad2df8a86f9abf237a064738ccfd181ea93a0df163e"
+            ),
+            "brief": "ec6683bc4b798abd105cdd524a57195827b988563fb5c603f17e638113e441f6",
+            "detailed": "946b928aeea011cbbea20126f14ad0363e6df3e0cf9c1eb874bd9d002fbfd8a4",
+            "claims": "c5b3e8ecf0387ee71831313f4b3854ff1faa96a9e924fe949e5bfb8c20774d14",
+        },
+        "paragraph_span_sha256": {
+            (1, 23): "03c02b5d6b9d7c3bd8f084a5f30d62bd3de96dde84a80740355ea6c037b78906",
+            (24, 48): "df8dd41c462ccf54d043213d015e47a8f43e396bb73b52c53134b4380c968d06",
+            (49, 52): "83fc18da93f8e504cc2dd949fea7acbdf5102040aec312bcef8534358380cc83",
+            (53, 56): "962f351f568499d06aeb859d5e3202a090b0c5711786db73186db61b397c9a84",
+            (57, 59): "98edee5a97089be81c378b08931dca69103a888bcd203bafaae42d12f1c0969e",
+            (60, 78): "411b0c8c412e0ba16a9eac45b4964deaa9db25d3b1cadffbbafc8be3719bcf75",
+            (79, 91): "9d39ded39b4b89d8372ab5552505f2e9354d59ae1d56e4ce7db1cea0dca63ff4",
+            (92, 92): "efef90eff107f1a683610591eae6647d9d5f4cbd0c0d70bdee7adf461ab74825",
+            (93, 93): "ea283719e61c2a7721fd7b780b211dba8acc52d30556efbfd6e34562a056cf18",
+            (94, 104): "c03dc0910e0e7ce8c39d4c8f263573baa8cd403de4a0fd95fdfb980ba2057415",
+            (105, 109): "2f4405772538722f0a8c227a94c26c15b32f9d53050a36adc20512c077667463",
+            (110, 113): "31cce92b45cac5955846e6599fb9732cd84666510b8501e6210a7dce9fa9edb9",
+            (114, 116): "408711aaf1e2362f31c4c42ad867658de789211815c2ebd37fdb85761b4d988a",
+            (117, 118): "d0e19c31fcf56561e27b7f27516cd80d8b987ee0844c8a765de0987547e74ab6",
+            (119, 120): "19391946257e7fec451fc760844b5fbf2dd258e9ec29020a5eb9f6ab6805a48d",
+            (121, 125): "ed58065ce1edb3f19df532f3693de94ffb97bd70b750dbe37277ff58907b74fb",
+        },
+        "claim_numbers": tuple(range(1, 20)),
+        "independent_claim_numbers": (1,),
+        "table_payload_sha256": {
+            1: "83b16a6bff2d3fb05f5b03a1a6756722a10153f5dcc1f24a416837a7b3e0fa8d",
+            2: "b003d312bcf8b1ccaa04252871f563ea2dbad69c7f2619f8fad31acc3e23f01e",
+            3: "3d14f1c5b0d7a6985c5fdecb91761ec8ba6913e1879ece123445838cbf303d35",
+            4: "b9490feac2eccef4e88c79464e8b752ab768fc740a8f3f26b983fd9a3ce5c15d",
+            5: "a5363be2c531eb9495bfdfde2eba65ccdbee3b190fd7bcb309c6fe8a57c9b7c2",
+            6: "43c61602d60f062aa36e47e9dfaad5e73dd67ac8554072736096da6f01e6536a",
+            7: "f379d18ed16afbd98fc20ca3c2f29353a82a51cae68e3f58b45fd16b546c0b13",
+            8: "39375c2b72047643b93e4558dbc8de0f08c8437f1b938fa2107530e9df76d375",
+            9: "0c4967fba6774869d0cd4db550dbb4f56c688bd2373a30b797e9ab83bae361c1",
+            10: "f9922d1c6a929dc3722afd2e71038d1fe208246ddbe85fd5652d85ad44e6d31f",
+            11: "cff1654199f779b5c523767c354f613bdb171f1d321fbed94518a427898fc21b",
+        },
+        "table_payload_token_counts": {
+            1: 227,
+            2: 275,
+            3: 193,
+            4: 276,
+            5: 178,
+            6: 177,
+            7: 193,
+            8: 295,
+            9: 142,
+            10: 136,
+            11: 234,
+        },
+        "math_block_sha256": (
+            "f3b2042e230c2eae88c6a132cd004b91217b9cc3ca00e6f6e28784c364dcfc68",
+            "edeef9340f32e2d95a5c92e985fefbb82dfbc87b7555a376710ef2d201eb16c1",
+            "2ac9c7964bee34bd883afad75508cb9dd97fac71c8c73fa0bb1d2ecdc0a276ea",
+            "61842e1baa462f72a3796781d220304362019e6125fab04f264e5db968180ad4",
+            "f667bd18b8741b8eea36cb8849daa42f027a89a829087aa2bfbd7f83e1e1ed50",
+            "f9adae33281a41b08d4ea1e0375f2c892c7eee91b6fbb880ee7ef8d5799b6ead",
+            "cd8c21d246c53e6997be488e7615b052bcd1f9d8b4efd6cb40776b02c5de9f5e",
+            "62f2cd7128e6e919fec720587d94439a3e772911abf6d98bb71576e3103a27f5",
+            "a01d78b6665be43e2a8c9bf784b946b7a866916607e38541e33f14fa24fa7125",
+        ),
+        "identity_markers": {
+            "SLIM POP-OUT WIDE CAMERA LENSES AND POP-OUT CAMERA ACTUATORS": 1,
+            "Family ID: 88793298": 1,
+            "Appl. No.: 19/424607": 1,
+            "Corephotonics Ltd.": 1,
+            "Goldenberg; Ephraim": 2,
+            "19/117,048": 1,
+            "PCT/IB2023/061327": 2,
+        },
+        "source_phrase_counts": {
+            "Q type 1 (QT1) surface sag formula": 1,
+            "The FOV is given as half FOV (HFOV).": 1,
+            "Detailed optical data and surface data for PO lens": 5,
+            "TABLE-US-": 11,
+            "image height": 0,
+            "IMGHT": 0,
+            "image circle": 0,
+        },
+        "qcon_defined_orders": tuple(range(0, 6)),
+        "qcon_published_orders": {
+            300: tuple(range(0, 10)),
+            400: tuple(range(0, 11)),
+            500: tuple(range(0, 8)),
+            600: tuple(range(0, 12)),
+            700: tuple(range(0, 8)),
+        },
+        "surface_row_counts": {300: 22, 400: 22, 500: 20, 600: 22, 700: 15},
+        "coefficient_row_counts": {300: 18, 400: 18, 500: 16, 600: 18, 700: 12},
+        "direct_metadata": {
+            300: (11.58, 2.0, 41.35),
+            400: (11.51, 1.91, 43.91),
+            500: (11.53, 1.675, 41.862),
+            600: (11.256, 2.0, 42.9),
+            700: (8.78, 1.40, 38.33),
+        },
+        "explicit_stop": {300: True, 400: True, 500: True, 600: True, 700: False},
+        "official_pdf": {
+            "containers": (
+                {
+                    "path": (
+                        "data/patent-lake/uspto-ppubs-pdf/21dbc4bed8f1b276/"
+                        "US-20260153710-A1.pdf"
+                    ),
+                    "bytes": 1_827_604,
+                    "sha256": (
+                        "21dbc4bed8f1b276d15f90badfeab7929c080ca25557cbb56b32ceff8b071fdf"
+                    ),
+                },
+                {
+                    "path": (
+                        "data/patent-lake/uspto-ppubs-pdf/42403fff6bbf10aa/"
+                        "US-20260153710-A1.pdf"
+                    ),
+                    "bytes": 1_827_604,
+                    "sha256": (
+                        "42403fff6bbf10aaddde113ad849c461616bf51f85f4c8ee962a7518d158efd3"
+                    ),
+                },
+            ),
+            "page_count": 30,
+            "single_raster_page_count": 30,
+            "text_layer_characters": 0,
+            "common_raster_dimensions": (2560, 3300),
+            "raster_dimension_exceptions": {18: (2550, 3300), 21: (2550, 3300)},
+            "page_record_set_sha256": (
+                "00a8525f4a7e8dbac1d7c4da476e5377b121803772c046b27ba723809552721a"
+            ),
+            "drawing_page_numbers": tuple(range(2, 18)),
+            "specification_page_numbers": tuple(range(18, 31)),
+            "table_page_numbers": tuple(range(21, 28)),
+            "claim_page_numbers": (30,),
         },
     }
 }
@@ -38684,6 +39069,329 @@ def _validate_corephotonics_double_folded_qt1_system(
         raise PatentParseError(
             "Corephotonics system 600 expected non-zero A6/A7 coefficients changed"
         )
+
+
+def _corephotonics_slim_po_exact_table_payloads(
+    text: str,
+    *,
+    claims_start: int,
+) -> tuple[str, ...]:
+    """Return source-ordered TABLE-US payloads before following paragraphs."""
+
+    matches = list(
+        re.finditer(
+            r"(?<!\S)TABLE-US-(\d{5})(?=\s)",
+            text[:claims_start],
+        )
+    )
+    observed = tuple(int(match.group(1)) for match in matches)
+    if observed != tuple(range(1, 12)):
+        raise PatentParseError(
+            "Corephotonics slim pop-out family must contain TABLE-US-00001 "
+            "through TABLE-US-00011"
+        )
+
+    payloads: list[str] = []
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else claims_start
+        payload = re.split(
+            r"\s\[\d{4}\]\s",
+            text[match.start() : end],
+            maxsplit=1,
+        )[0].strip()
+        payloads.append(payload)
+    return tuple(payloads)
+
+
+def _validate_corephotonics_slim_pop_out_document(
+    raw_text: str,
+    *,
+    patent_id: str,
+    profile: dict[str, Any],
+) -> tuple[str, dict[int, str], tuple[str, ...]]:
+    """Validate the exact source used to close Family 88793298."""
+
+    if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+        "raw_document_sha256"
+    ]:
+        raise PatentParseError(
+            f"Corephotonics slim pop-out official raw text hash changed for {patent_id}"
+        )
+    if len(_COREPHOTONICS_SLIM_PO_TITLE_PATTERN.findall(raw_text)) != 1:
+        raise PatentParseError("Corephotonics slim pop-out title binding changed")
+
+    text = normalize_patent_text(raw_text)
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+        "normalized_text_sha256"
+    ]:
+        raise PatentParseError(
+            f"Corephotonics slim pop-out normalized text hash changed for {patent_id}"
+        )
+    for marker, expected_count in profile["identity_markers"].items():
+        observed_count = text.count(marker)
+        if observed_count != expected_count:
+            raise PatentParseError(
+                f"Corephotonics slim pop-out identity marker {marker!r} occurs "
+                f"{observed_count}; expected {expected_count}"
+            )
+
+    section_markers = profile["section_markers"]
+    section_names = tuple(section_markers)
+    try:
+        section_starts = {
+            name: text.index(marker) for name, marker in section_markers.items()
+        }
+    except ValueError as exc:
+        raise PatentParseError(
+            "Corephotonics slim pop-out section boundary changed"
+        ) from exc
+    if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+        raise PatentParseError("Corephotonics slim pop-out section ordering changed")
+    sections = {
+        name: text[
+            section_starts[name] : (
+                section_starts[section_names[index + 1]]
+                if index + 1 < len(section_names)
+                else len(text)
+            )
+        ].strip()
+        for index, name in enumerate(section_names)
+    }
+    for name, expected_digest in profile["section_sha256"].items():
+        observed_digest = hashlib.sha256(sections[name].encode("utf-8")).hexdigest()
+        if observed_digest != expected_digest:
+            raise PatentParseError(
+                f"Corephotonics slim pop-out {name} section changed"
+            )
+
+    claims_start = section_starts["claims"]
+    paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text[:claims_start]))
+    if tuple(int(match.group(1)) for match in paragraph_matches) != tuple(
+        range(1, 126)
+    ):
+        raise PatentParseError(
+            "Corephotonics slim pop-out paragraphs 1-125 changed"
+        )
+    paragraphs = {
+        int(match.group(1)): text[
+            match.start() : (
+                paragraph_matches[index + 1].start()
+                if index + 1 < len(paragraph_matches)
+                else claims_start
+            )
+        ].strip()
+        for index, match in enumerate(paragraph_matches)
+    }
+    for (start, end), expected_digest in profile["paragraph_span_sha256"].items():
+        span = " ".join(paragraphs[number] for number in range(start, end + 1))
+        observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+        if observed_digest != expected_digest:
+            raise PatentParseError(
+                "Corephotonics slim pop-out paragraph span "
+                f"{start}-{end} changed"
+            )
+
+    for paragraph_number, label in _COREPHOTONICS_SLIM_PO_FIGURE_DECLARATIONS:
+        marker = f"FIG. {label}"
+        if paragraphs[paragraph_number].count(marker) != 1:
+            raise PatentParseError(
+                f"Corephotonics slim pop-out figure {label} declaration changed"
+            )
+
+    item_paragraphs: set[int] = set()
+    item_tables: list[int] = []
+    for item in _COREPHOTONICS_SLIM_PO_ITEMS:
+        start, end = item["paragraphs"]
+        numbers = set(range(start, end + 1))
+        if item_paragraphs & numbers:
+            raise PatentParseError(
+                "Corephotonics slim pop-out disclosed-item paragraph ranges overlap"
+            )
+        item_paragraphs.update(numbers)
+        item_tables.extend(item["tables"])
+    expected_item_paragraphs = set(range(53, 57)) | set(range(60, 121))
+    if item_paragraphs != expected_item_paragraphs:
+        raise PatentParseError(
+            "Corephotonics slim pop-out disclosed-item paragraph denominator changed"
+        )
+    if tuple(item_tables) != tuple(range(1, 11)):
+        raise PatentParseError(
+            "Corephotonics slim pop-out disclosed-item table binding changed"
+        )
+
+    claim_matches = list(
+        re.finditer(
+            r"(?<!\S)(\d{1,2})\s*\.\s+(?=(?:A|The)\s+lens\s+system)",
+            sections["claims"],
+            flags=re.IGNORECASE,
+        )
+    )
+    observed_claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+    if observed_claim_numbers != profile["claim_numbers"]:
+        raise PatentParseError("Corephotonics slim pop-out claim sequence changed")
+    observed_independent_claims = tuple(
+        int(match.group(1))
+        for match in claim_matches
+        if sections["claims"][match.end() :].startswith("A lens system")
+    )
+    if observed_independent_claims != profile["independent_claim_numbers"]:
+        raise PatentParseError(
+            "Corephotonics slim pop-out independent-claim binding changed"
+        )
+
+    table_payloads = _corephotonics_slim_po_exact_table_payloads(
+        text,
+        claims_start=claims_start,
+    )
+    for table_number, payload in enumerate(table_payloads, start=1):
+        observed_digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        if observed_digest != profile["table_payload_sha256"][table_number]:
+            raise PatentParseError(
+                f"Corephotonics slim pop-out TABLE-US-{table_number:05d} changed"
+            )
+        if len(payload.split()) != profile["table_payload_token_counts"][table_number]:
+            raise PatentParseError(
+                f"Corephotonics slim pop-out TABLE-US-{table_number:05d} token "
+                "count changed"
+            )
+
+    expected_headers = {
+        2: "Aspheric Coefficients Surface # A4 A5 A6 A7 A8 A9",
+        4: "Aspheric Coefficients Surface # A5 A6 A7 A8 A9 A10",
+        6: "Surface Norm # Radius A0 A1 A2 A3 A4 A5 A6 A7",
+        8: "Aspheric Coefficients Surface # A6 A7 A8 A9 A10 A11",
+        10: "Surface # Rnorm A0 A1 A2 A3 A4 A5 A6 A7",
+    }
+    for table_number, header in expected_headers.items():
+        if table_payloads[table_number - 1].count(header) != 1:
+            raise PatentParseError(
+                f"Corephotonics slim pop-out TABLE {table_number} high-order "
+                "coefficient header changed"
+            )
+
+    math_blocks = tuple(
+        match.group(0)
+        for match in re.finditer(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)
+    )
+    observed_math_hashes = tuple(
+        hashlib.sha256(block.encode("utf-8")).hexdigest() for block in math_blocks
+    )
+    if observed_math_hashes != profile["math_block_sha256"]:
+        raise PatentParseError("Corephotonics slim pop-out MathML objects changed")
+    math_text = " ".join(
+        re.sub(
+            r"\s+",
+            " ",
+            unicodedata.normalize(
+                "NFKC",
+                html.unescape(re.sub(r"<[^>]+>", " ", block)),
+            ),
+        )
+        for block in math_blocks
+    )
+    observed_qcon_orders = tuple(
+        int(value)
+        for value in re.findall(r"Q\s+([0-9]+)\s+con", math_text, re.IGNORECASE)
+    )
+    if observed_qcon_orders != profile["qcon_defined_orders"]:
+        raise PatentParseError(
+            "Corephotonics slim pop-out published Q-con basis definitions changed"
+        )
+
+    for phrase, expected_count in profile["source_phrase_counts"].items():
+        observed_count = text.count(phrase)
+        if observed_count != expected_count:
+            raise PatentParseError(
+                f"Corephotonics slim pop-out source phrase {phrase!r} occurs "
+                f"{observed_count}; expected {expected_count}"
+            )
+
+    systems = (300, 400, 500, 600, 700)
+    if tuple(profile["qcon_published_orders"]) != systems:
+        raise PatentParseError(
+            "Corephotonics slim pop-out QT1 system denominator changed"
+        )
+    if sum(profile["surface_row_counts"].values()) != 101:
+        raise PatentParseError(
+            "Corephotonics slim pop-out surface-row denominator changed"
+        )
+    if sum(profile["coefficient_row_counts"].values()) != 82:
+        raise PatentParseError(
+            "Corephotonics slim pop-out coefficient-row denominator changed"
+        )
+    if tuple(profile["direct_metadata"]) != systems:
+        raise PatentParseError(
+            "Corephotonics slim pop-out direct-metadata binding changed"
+        )
+    if profile["explicit_stop"] != {
+        300: True,
+        400: True,
+        500: True,
+        600: True,
+        700: False,
+    }:
+        raise PatentParseError(
+            "Corephotonics slim pop-out aperture-stop evidence changed"
+        )
+    if "14 Lens 8" not in table_payloads[2] or "14 Lens 9" not in table_payloads[2]:
+        raise PatentParseError(
+            "Corephotonics slim pop-out TABLE 3 repeated surface indices changed"
+        )
+    if "A.S." in table_payloads[8]:
+        raise PatentParseError(
+            "Corephotonics slim pop-out TABLE 9 now publishes an aperture stop"
+        )
+
+    return text, paragraphs, table_payloads
+
+
+def _classify_corephotonics_slim_pop_out_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 88793298 without inventing Q-type basis functions."""
+
+    profile = _COREPHOTONICS_SLIM_PO_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=item["number"],
+                embodiment=item["label"],
+                error=exc,
+            )
+            for item in _COREPHOTONICS_SLIM_PO_ITEMS
+        ]
+
+    try:
+        _validate_corephotonics_slim_pop_out_document(
+            raw_text,
+            patent_id=patent_id,
+            profile=profile,
+        )
+    except Exception as exc:  # noqa: BLE001 - retain all disclosed items
+        return attempts_for_error(exc)
+
+    attempts = [
+        _PrescriptionParseAttempt(
+            embodiment_number=item["number"],
+            embodiment=item["label"],
+            error=PatentTerminalParseError(
+                status=item["terminal_status"],
+                reason_code=item["reason_code"],
+                detail=item["detail"],
+            ),
+        )
+        for item in _COREPHOTONICS_SLIM_PO_ITEMS
+    ]
+    if len(attempts) != 11:
+        raise PatentParseError(
+            "Corephotonics slim pop-out disclosed-item denominator changed"
+        )
+    return attempts
 
 
 def _largan_antireflective_air_gap_table_payload(

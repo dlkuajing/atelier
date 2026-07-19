@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-88793298/generic-residual-after-2.json",
+  "result_set_sha256": "87fb5953031c07176bdc6cf49e72de0f19b307eabfbbe4f41c07ca917f3f8a9b",
+  "generic_residual_roots": 67,
+  "generic_residual_items": 67,
+  "next_exact_group": {
+    "family_id": "100208972",
+    "root_ids": [
+      "US-12663617"
+    ],
+    "publication_ids": [
+      "US-12663617-B2"
+    ],
+    "application_number": "18/786504",
+    "title": "Folded camera lens designs",
+    "first_inventor": "Rudnick; Roy et al.",
+    "applicant": "Corephotonics Ltd.",
+    "assignee": "Corephotonics Ltd.",
+    "layout_signature": "74f038d2014d38eb66ed6079df2f1b8b70a8142f7105c55d205cc7d7f8dd5aa3",
+    "layout_signature_count": 1,
+    "table_count": 33,
+    "marker_counts": {
+      "effective_focal_length": 18,
+      "embodiment_anchor": 0,
+      "example_anchor": 10,
+      "f_number": 17,
+      "full_field": 7,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/7659bdaf0b85b075/US-12663617-B2.html",
+      "sha256": "7659bdaf0b85b0754e4d388e51a81dcb525e8048781ce1855007962f0927e696"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

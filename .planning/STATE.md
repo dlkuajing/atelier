@@ -746,24 +746,26 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | `260719-patent-generic-family-66534470` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 16/101628, Family ID 66534470, 108 numbered paragraphs, ten actual claims numbered 1,2,4-11 with missing claim 3 preserved, eight figure panels, 12 tables, 52 inline-formula instructions and two complete five-lens prescriptions. Both publish ordered surfaces, materials, aspheres, EFL, entrance-pupil diameter, image height and diagonal field, but only the inequality F-number <=1.8; exact per-item F-number is absent and is not derived from f/EPD. Both close as metadata-unpublished without conversion or formal output. Three retained PDF wrappers decode to the same 11 original rasters at `5233249c...89d9`. Attempts 2/3 are semantic-equal excluding only result attempt at `0e493281...91557`; result set `15ed5e0d...fdd3f`; audit 619/619 corrupt=0. Complete offline coverage is 3528 passed/1 skipped/10 real-machine deselected before the separately passing sealed-evidence test; focused 6/6, guard 5/5 and evidence/output/protected-path audits pass; CODE V zero. Generic 69 roots remains first; Family 90040108 root US-12669685 is next. |
 
 | `260719-patent-generic-family-90040108` | complete-shovel-saturation-incomplete | Exact B2 content authority reconciles application 18/763174, Family ID 90040108, 24 Background/Summary items, 169 Description paragraphs, claims 1-11 with claims 1/11 independent, FIGS.1-11, 13 flattened tables, 34 MathML objects, five complete multi-reflection prescriptions and one electronic-device wrapper. The five prescriptions publish 95 ordered path rows, 48 lens/asphere surfaces and direct EFL/image-height values, but no system stop or stop coordinate, F-number, or prescription-specific angular field; f/ImgHT is not used to derive metadata and folds are not flattened. All five close as metadata-unpublished; the wrapper closes as confirmed-no-prescription, without worker/request/receipt/fingerprint/ZMX/formal intake. Same-application A1 has two byte-identical 27-page image-only PDF containers and 11 drawing sheets; reviewed original rasters corroborate layout only, without enhancement, measurement or numeric transcription. Attempts 2/3 are semantic-equal excluding only result attempt at `4a0f2aa9...8a5e2c`; result set `47634965...9acf19`; audit 619/619 corrupt=0. Focused 5/5, full patent file 785/785, composite complete offline coverage 3534 passed/1 skipped/10 real-machine deselected and guard 5/5 pass; Ruff, compile, JSON, 83 historical evidence manifests/1087 complete references, formal-output, contamination, protected-path, diff and primary-repository audits pass; CODE V zero. Fifty-four historical manifests refresh shared summary/report pointers and four explicit live result-set fields align. Generic 68 roots remains first; Family 88793298 root US-20260153710 is next. |
+| `260719-patent-generic-family-88793298` | complete-shovel-saturation-incomplete | Exact US-20260153710-A1 reconciles application 19/424607, Family ID 88793298, 125 continuous paragraphs, claims 1-19, 24 declared panels, 11 flattened tables, nine MathML objects and 11 source items. Five complete QT1 prescriptions publish 101 surface rows, 82 coefficient rows and direct EFL/F-number/HFOV values, but equation 1 defines only Q0-Q5 while tables publish through Q7/Q9/Q10/Q11; Table 3 repeats printed indices 14/15 and system 700 lacks a stop. These five close as exact metadata-unpublished terminals; six architecture-only lens/camera/actuator items close as confirmed-no-prescription. Two distinct 30-page official PDF containers decode to identical original rasters; review used no enhancement, measurement or numeric transcription. Attempts 2/3 are semantic-equal at `8c662b89...f2161a`; generic 68→67; result set `87fb5953...f3f8a9b`; census `a59d4378...67c8dad`; strict audit 619/619 corrupt=0. Full offline 3540 passed/1 skipped/10 real-machine deselected, focused 5/5 and guard 15/15 pass; no conversion or formal output exists and CODE V remains zero. Family 100208972 / US-12663617-B2 is next; parent saturation remains incomplete. |
 
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, preserve the completed GSD quick
-`.planning/quick/260719-patent-generic-family-90040108/260719-patent-generic-family-90040108-PLAN.md`
-and immediately open the next GSD quick for deterministic Family `88793298` / root
-`US-20260153710` / publication `US-20260153710-A1`, application `19/424607`, while
-preserving completed Family 66534470, Family 67207110, Family 96807780 and all prior quicks plus
+For patent saturation work, Family `88793298` / root `US-20260153710` / publication
+`US-20260153710-A1` is closed by GSD quick
+`.planning/quick/260719-patent-generic-family-88793298/260719-patent-generic-family-88793298-PLAN.md`.
+Open the next GSD quick from this committed state for deterministic Family `100208972` /
+root `US-12663617` / publication `US-12663617-B2`, application `18/786504`, while
+preserving completed Family 88793298, Family 90040108, Family 66534470 and all prior quicks plus
 the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input while
 replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
 from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-generic residual contains 68 roots/items at result set
-`476349656fe93db72ed775925da2e272e223823b81de79911fec1fe0979acf19`.
-The selected family has layout
-`731aa3ed6b61ddff0ef04728dc9ba7c2bc48e7e6780b49d108ddfbb43f2e6140`.
+generic residual contains 67 roots/items at result set
+`87fb5953031c07176bdc6cf49e72de0f19b307eabfbbe4f41c07ca917f3f8a9b`.
+The next family has layout
+`74f038d2014d38eb66ed6079df2f1b8b70a8142f7105c55d205cc7d7f8dd5aa3`.
 Use the same strict before/after census, source-proven layout, append-only targeted replay,
 and full-pool audit contract. Remeasure after every shovel; parent saturation remains
 incomplete.
