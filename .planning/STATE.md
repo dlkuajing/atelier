@@ -743,23 +743,24 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, resume by opening the next GSD quick for deterministic
-Family `96807780` / root `US-20250389925` / publication `US-20250389925-A1`,
-application `19/243071`, while preserving the completed Family 90360259 quick at
-`.planning/quick/260719-patent-generic-family-90360259/` and all prior quicks plus
-the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
-while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
-chat or historical free-text reports. Before any test sweep, confirm the
-non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (72 roots/items), ahead by root count of
-`aac_raytech_summary_metadata_missing` (55 roots/174 items) and
-`sunny_embodiment_metadata_missing` (49 roots/177 items). Its next exact family under
-deterministic parser/layout/family/root/publication ordering is Family ID `96807780`, root
-`US-20250389925`, publication `US-20250389925-A1`, layout
-`6dc4e6e37739e25dcb4235df16178a5a62d768b20fb0a59c3c5ea162b20f9249`. Use
-the same strict before/after census, source-proven layout,
-append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
+For patent saturation work, preserve the completed GSD quick
+`.planning/quick/260719-patent-generic-family-96807780/` for deterministic Family
+`96807780` / root `US-20250389925` / publication `US-20250389925-A1`, application
+`19/243071`, plus all prior quicks and the cohort-pinned
+`data/patent-ledger/snapshot.json`; rebuilding that frozen input while replay staging is
+active invalidates strict cohort audit. Family 96807780 closes ten exact
+confirmed-no-prescription items, moves the generic residual from 72 to 71 roots/items,
+and leaves the strict ledger at 619/619 with zero missing/corrupt results and result set
+`61ae246e8bc734049babb17ecfa96140705cf740472f812478efa58c47f8dc30`.
+Never infer terminal outcomes from chat or historical free-text reports. Before any test
+sweep, confirm the non-`real_machine` CODE V subprocess guard is active and inventory is
+zero. The next exact family under deterministic parser/layout/family/root/publication
+ordering is Family ID `67207110`, root `US-12013514`, publication `US-12013514-B2`,
+application `17/553988`, layout
+`6e3292bca1d7fe209679f67c6ed13c7a271080a949793d9ead276d3f8212a213`.
+Use the same strict before/after census, source-proven layout, append-only targeted replay,
+and full-pool audit contract. Remeasure after every shovel; parent saturation remains
+incomplete.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three

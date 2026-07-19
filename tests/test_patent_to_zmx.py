@@ -38151,3 +38151,464 @@ def test_encapsulated_optical_camera_source_evidence_rehashes() -> None:
         for name in ("family_id", "root_ids", "publication_ids")
     }
     assert evidence["saturation_complete"] is False
+
+
+def _largan_image_lens_outer_diameter_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    patent_id = "US-20250389925-A1"
+    path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "be27298a96714a19"
+        / f"{patent_id}.html"
+    )
+    return patent_id, path.read_text(encoding="utf-8")
+
+
+def test_largan_image_lens_outer_diameter_has_exact_ten_item_boundary() -> None:
+    patent_id, raw_text = _largan_image_lens_outer_diameter_source()
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    items = patent_to_zmx._LARGAN_IMAGE_LENS_OUTER_DIAMETER_ITEMS
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 11))
+    assert [attempt.embodiment for attempt in attempts] == [item[1] for item in items]
+    assert patent_to_zmx._LARGAN_IMAGE_LENS_OUTER_DIAMETER_FIGURE_PANELS == (
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E",
+        "1F",
+        "1G",
+        "1H",
+        "1I",
+        "1J",
+        "1K",
+        "1L",
+        "1M",
+        "2A",
+        "2B",
+        "2C",
+        "2D",
+        "2E",
+        "2F",
+        "2G",
+        "2H",
+        "2I",
+        "3A",
+        "3B",
+        "3C",
+        "3D",
+        "3E",
+        "3F",
+        "4A",
+        "4B",
+        "4C",
+        "4D",
+        "4E",
+        "5",
+        "6A",
+        "6B",
+        "6C",
+    )
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "confirmed_no_prescription"
+        and attempt.prescription is None
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        item[5] for item in items
+    ]
+    assert all("ordered optical surface prescription" in str(attempt.error) for attempt in attempts)
+    assert "visual angle is not treated as a lens angular-field prescription" in str(
+        attempts[-1].error
+    )
+
+
+def test_largan_image_lens_outer_diameter_source_drift_fails_all_ten_items() -> None:
+    patent_id, raw_text = _largan_image_lens_outer_diameter_source()
+    mutated = raw_text.replace("S/CT 1.549", "S/CT 1.548", 1)
+    assert mutated != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        mutated,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 10
+    assert all(type(attempt.error) is patent_to_zmx.PatentParseError for attempt in attempts)
+    assert all(
+        "official raw text hash changed" in str(attempt.error) for attempt in attempts
+    )
+
+
+def test_largan_image_lens_outer_diameter_source_artifacts_are_exact() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-96807780"
+    availability = json.loads(
+        (quick / "family-96807780-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    source = availability["retained_html"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 121_958
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+    raw_text = source_bytes.decode("utf-8")
+    assert len(raw_text) == source["characters"] == 121_732
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    assert len(normalized) == source["normalized_characters"] == 99_629
+    assert hashlib.sha256(normalized.encode("utf-8")).hexdigest() == source[
+        "normalized_sha256"
+    ]
+    assert source["flattened_tables"] == 3
+    assert source["maths_tags"] == 22
+    assert availability["official_pdf"]["endpoint_container_sha256_stable"] is False
+    assert availability["source_policy"]["official_a1_html_is_content_authority"] is True
+    assert availability["source_policy"]["official_pdf_used_for_layout_confirmation_only"] is True
+    assert not any(
+        availability["source_policy"][name]
+        for name in (
+            "image_enhancement_permitted",
+            "drawing_geometry_measurement_permitted",
+            "raster_numeric_transcription_permitted",
+            "related_application_numeric_borrowing_permitted",
+            "source_value_repair_permitted",
+            "visual_angle_reclassified_as_lens_field_permitted",
+            "generic_focal_length_wording_used_as_numeric_metadata",
+        )
+    )
+
+    facts = json.loads(
+        (quick / "family-96807780-source-facts.json").read_text(encoding="utf-8")
+    )
+    assert [item["embodiment_number"] for item in facts["items"]] == list(
+        range(1, 11)
+    )
+    assert all(
+        item["ledger_state"] == "terminal"
+        and item["terminal_status"] == "confirmed_no_prescription"
+        for item in facts["items"]
+    )
+    assert [item["paragraphs"] for item in facts["items"]] == [
+        list(item[2])
+        for item in patent_to_zmx._LARGAN_IMAGE_LENS_OUTER_DIAMETER_ITEMS
+    ]
+    assert facts["claims"]["count"] == 39
+    assert facts["claims"]["independent_claims"] == [1, 16, 26, 33]
+    assert facts["claims"]["maths_objects"] == 22
+    assert all(
+        value == 0
+        for name, value in facts["prescription_boundary"].items()
+        if name.startswith("published_") or name == "ordered_optical_surface_rows"
+    )
+    assert not any(
+        value
+        for name, value in facts["prescription_boundary"].items()
+        if name.endswith("_reclassified_as_optical")
+        or name.endswith("_reclassified_as_lens_field")
+        or name.endswith("_measured")
+        or name.endswith("_borrowed")
+        or name.endswith("_transcribed")
+    )
+
+    denominator = json.loads(
+        (quick / "family-96807780-denominator.json").read_text(encoding="utf-8")
+    )
+    counts = denominator["denominator"]
+    assert counts["background_summary_numbered_paragraphs"] == 9
+    assert counts["brief_drawing_numbered_paragraphs"] == 37
+    assert counts["detailed_numbered_paragraphs"] == 79
+    assert counts["description_numbered_paragraphs"] == 116
+    assert counts["total_numbered_paragraphs_including_background_summary"] == 125
+    assert counts["claims"] == 39
+    assert counts["independent_claims"] == 4
+    assert counts["declared_figure_panels"] == 37
+    assert counts["flattened_tables"] == 3
+    assert counts["maths_objects"] == 22
+    assert counts["source_disclosed_items"] == counts["replayed_ledger_items"] == 10
+    assert counts["source_disclosed_optical_prescriptions"] == 0
+    assert counts["confirmed_no_prescription_items"] == 10
+    assert counts["conversion_requests"] == counts["conversion_receipts"] == 0
+    assert all(counts[name] == 0 for name in counts if name.startswith("unmapped_"))
+    assert not any(denominator["formal_outputs"].values())
+
+
+def test_largan_image_lens_outer_diameter_official_pdf_is_exact() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-96807780"
+    profile = patent_to_zmx._LARGAN_IMAGE_LENS_OUTER_DIAMETER_SOURCE_PROFILES[
+        "US-20250389925-A1"
+    ]
+    pdf = profile["official_pdf"]
+    audit = json.loads(
+        (quick / "family-96807780-raster-audit.json").read_text(encoding="utf-8")
+    )
+    pdf_bytes = (root / pdf["path"]).read_bytes()
+    assert len(pdf_bytes) == pdf["bytes"] == 2_670_002
+    assert hashlib.sha256(pdf_bytes).hexdigest() == pdf["retained_container_sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+    assert len(reader.pages) == pdf["page_count"] == 53
+    page_hashes = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        assert (page.extract_text() or "") == ""
+        images = list(page.images)
+        assert len(images) == 1
+        expected_dimensions = (
+            pdf["narrow_raster_dimensions"]
+            if page_number in pdf["narrow_raster_page_numbers"]
+            else pdf["standard_raster_dimensions"]
+        )
+        assert images[0].image.size == expected_dimensions
+        page_hash = patent_pdf_recovery._canonical_raster_sha256(images[0].data)
+        page_hashes.append(page_hash)
+        retained = (
+            quick / "pdf-review" / f"page-{page_number:02d}-original.png"
+        ).read_bytes()
+        assert patent_pdf_recovery._canonical_raster_sha256(retained) == page_hash
+    assert page_hashes == [page["decoded_raster_sha256"] for page in audit["pages"]]
+    assert (
+        hashlib.sha256(("\n".join(page_hashes) + "\n").encode("utf-8")).hexdigest()
+        == pdf["raster_set_sha256"]
+        == audit["official_pdf"]["decoded_raster_set_sha256"]
+    )
+    assert pdf["drawing_page_numbers"] == tuple(range(2, 39))
+    assert pdf["table_page_numbers"] == (45, 47, 48)
+    assert pdf["claim_page_numbers"] == (50, 51, 52, 53)
+    assert audit["official_endpoint_observations"]["container_sha256_stable"] is False
+    assert audit["official_endpoint_observations"][
+        "consecutive_fetches_with_identical_decoded_raster_set"
+    ] == 2
+
+
+def test_largan_image_lens_outer_diameter_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-96807780"
+    audit = json.loads(
+        (quick / "family-96807780-raster-audit.json").read_text(encoding="utf-8")
+    )
+    assert audit["page_roles"] == {
+        "cover": [1],
+        "drawing_sheets": list(range(2, 39)),
+        "specification_pages": list(range(39, 54)),
+        "table_pages": [45, 47, 48],
+        "claims_pages": [50, 51, 52, 53],
+    }
+    assert audit["reviewed_original_pages"] == [
+        1,
+        2,
+        15,
+        24,
+        30,
+        35,
+        36,
+        38,
+        39,
+        45,
+        46,
+        47,
+        48,
+        50,
+        51,
+        52,
+        53,
+    ]
+    assert len(audit["pages"]) == 53
+    raster_hashes = []
+    for page_number, page in enumerate(audit["pages"], start=1):
+        assert page["page"] == page_number
+        assert page["text_characters"] == 0
+        assert page["image_count"] == 1
+        assert page["decoded_raster_dimensions"] == (
+            [2550, 3300] if page_number >= 50 else [2560, 3300]
+        )
+        raster_hashes.append(page["decoded_raster_sha256"])
+        retained = page["retained_png"]
+        png_bytes = (root / retained["path"]).read_bytes()
+        assert len(png_bytes) == retained["bytes"]
+        assert hashlib.sha256(png_bytes).hexdigest() == retained["sha256"]
+        assert patent_pdf_recovery._canonical_raster_sha256(png_bytes) == page[
+            "decoded_raster_sha256"
+        ]
+    assert (
+        hashlib.sha256(("\n".join(raster_hashes) + "\n").encode("utf-8")).hexdigest()
+        == audit["official_pdf"]["decoded_raster_set_sha256"]
+    )
+    assert audit["review_policy"] == {
+        "original_rasters_only": True,
+        "image_enhancement_used": False,
+        "drawing_geometry_measured": False,
+        "numeric_transcription_from_raster": False,
+        "raster_inference_used": False,
+    }
+    contact = audit["contact_sheet"]
+    contact_bytes = (root / contact["path"]).read_bytes()
+    assert len(contact_bytes) == contact["bytes"]
+    assert hashlib.sha256(contact_bytes).hexdigest() == contact["sha256"]
+    assert contact["dimensions"] == [1280, 3630]
+
+
+def test_largan_image_lens_outer_diameter_replay_is_semantic_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-96807780"
+    replay = json.loads(
+        (quick / "family-96807780-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    semantic_hashes = []
+    for record in replay["attempts"]:
+        result_bytes = (root / record["path"]).read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+        assert result["root_state"] == "terminal"
+        assert result["reason_code"] == "terminal.all_disclosed_items_terminal"
+        assert len(result["items"]) == 10
+        assert all(
+            item["state"] == "terminal"
+            and item["terminal_status"] == "confirmed_no_prescription"
+            and item["conversion_attempt_id"] is None
+            and item["conversion_request_sha256"] is None
+            and item["prescription_fingerprint"] is None
+            and item["coverage"] == {}
+            for item in result["items"]
+        )
+        assert result["source_attempts"] == [
+            {
+                "exception_type": None,
+                "http_status": 200,
+                "publication_id": "US-20250389925-A1",
+                "source_bucket": "US-PGPUB",
+                "state": "retained",
+            }
+        ]
+
+    assert semantic_hashes == [replay["semantic_sha256"]] * 2
+    assert replay["semantic_equal"] is True
+    assert replay["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert replay["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 10},
+        "terminal_status_counts": {"confirmed_no_prescription": 10},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+        "formal_intake_items": 0,
+    }
+    assert replay["strict_replay"] == {
+        "cohort_roots": 619,
+        "roots_with_results": 619,
+        "missing_results": 0,
+        "corrupt_results": 0,
+    }
+    assert replay["codev_calls"] == 0
+
+
+def test_largan_image_lens_outer_diameter_census_and_queue() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-96807780"
+    before = json.loads(
+        (quick / "generic-residual-before-72.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 72
+    assert before["result_set_sha256"] == (
+        "80a90c22445f45e69a987dad0aeda4fb2c7c32ac0d6944d0aedda81281dc0ad5"
+    )
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 71
+    assert after_1["result_set_sha256"] == (
+        "61ae246e8bc734049babb17ecfa96140705cf740472f812478efa58c47f8dc30"
+    )
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after_2["result_set_sha256"]
+    assert queue["generic_residual_roots"] == queue["generic_residual_items"] == 71
+    assert queue["next_exact_group"]["family_id"] == "67207110"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12013514"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-12013514-B2"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["next_exact_group"]["layout_signature_count"] == 1
+    assert queue["saturation_complete"] is False
+
+
+def test_largan_image_lens_outer_diameter_source_evidence_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-96807780"
+    evidence = json.loads(
+        (quick / "family-96807780-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "1005aad9b5d10bb4d7c7b4d9822bdbf690f150f413e87c2adf196e738ba2d4e9"
+    )
+    assert evidence["ledger"]["result_set_sha256"] == (
+        "61ae246e8bc734049babb17ecfa96140705cf740472f812478efa58c47f8dc30"
+    )
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["strict_roots_total"] == 619
+    assert evidence["ledger"]["missing"] == 0
+    assert evidence["ledger"]["corrupt"] == 0
+    assert evidence["replay_outcome"] == {
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "confirmed_no_prescription_items": 10,
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "candidate_zmx": 0,
+        "staging_zmx": 0,
+        "codev_calls": 0,
+    }
+    assert not any(evidence["formal_outputs"].values())
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert evidence["next_exact_group"] == {
+        name: queue["next_exact_group"][name]
+        for name in ("family_id", "root_ids", "publication_ids")
+    }
+    assert evidence["saturation_complete"] is False

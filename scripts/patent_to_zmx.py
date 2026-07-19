@@ -475,6 +475,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_image_lens_outer_diameter_geometry_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_fso_transmitter_architecture_and_models_attempts(
             raw_text,
             patent_id=patent_id,
@@ -5215,6 +5223,187 @@ _ENCAPSULATED_OPTICAL_CAMERA_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "raster_set_sha256": (
                 "433e6cddbf1b564b6d8c6741ae8739ee294bbefcc3073c1d6dadb4c7ffc92ebd"
             ),
+        },
+    },
+}
+
+_LARGAN_IMAGE_LENS_OUTER_DIAMETER_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*IMAGE\s+LENS\s+ELEMENT,\s*IMAGING\s+LENS\s+ASSEMBLY\s+"
+    r"AND\s+ELECTRONIC\s+DEVICE\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_LARGAN_IMAGE_LENS_OUTER_DIAMETER_FIGURE_PANELS = (
+    "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "1J",
+    "1K", "1L", "1M", "2A", "2B", "2C", "2D", "2E", "2F", "2G",
+    "2H", "2I", "3A", "3B", "3C", "3D", "3E", "3F", "4A", "4B",
+    "4C", "4D", "4E", "5", "6A", "6B", "6C",
+)
+_LARGAN_IMAGE_LENS_OUTER_DIAMETER_ITEMS = (
+    (
+        1,
+        "First embodiment, first example image lens element 100 and imaging lens assembly 10",
+        (74, 82),
+        ("1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I"),
+        ("1A",),
+        "confirmed_no_prescription."
+        "image_lens_outer_diameter_stripe_and_molding_geometry_only",
+    ),
+    (
+        2,
+        "First embodiment, second example image lens element 100a",
+        (83, 84),
+        ("1J",),
+        (),
+        "confirmed_no_prescription."
+        "image_lens_outer_diameter_stripe_and_molding_geometry_only",
+    ),
+    (
+        3,
+        "First embodiment, third example image lens element 100b",
+        (85, 86),
+        ("1K",),
+        (),
+        "confirmed_no_prescription."
+        "image_lens_outer_diameter_stripe_and_molding_geometry_only",
+    ),
+    (
+        4,
+        "First embodiment, fourth example image lens element 100c",
+        (87, 88),
+        ("1L",),
+        (),
+        "confirmed_no_prescription."
+        "image_lens_outer_diameter_stripe_and_molding_geometry_only",
+    ),
+    (
+        5,
+        "First embodiment, fifth example image lens element 100d",
+        (89, 90),
+        ("1M",),
+        (),
+        "confirmed_no_prescription."
+        "image_lens_outer_diameter_stripe_and_molding_geometry_only",
+    ),
+    (
+        6,
+        "Second embodiment, first example image lens element 200 and imaging lens assembly 20",
+        (91, 98),
+        ("2A", "2B", "2C", "2D", "2E", "2F", "2G", "2H", "2I"),
+        ("2A",),
+        "confirmed_no_prescription."
+        "image_lens_outer_diameter_stripe_and_molding_geometry_only",
+    ),
+    (
+        7,
+        "Third embodiment, first example image lens element 300 and imaging lens assembly 30",
+        (99, 107),
+        ("3A", "3B", "3C", "3D", "3E", "3F"),
+        ("3A",),
+        "confirmed_no_prescription."
+        "image_lens_outer_diameter_stripe_and_molding_geometry_only",
+    ),
+    (
+        8,
+        "Fourth embodiment smartphone electronic device 40",
+        (108, 116),
+        ("4A", "4B", "4C", "4D", "4E"),
+        (),
+        "confirmed_no_prescription."
+        "electronic_device_camera_placement_and_digital_zoom_wrapper_only",
+    ),
+    (
+        9,
+        "Fifth embodiment smartphone electronic device 50",
+        (117, 120),
+        ("5",),
+        (),
+        "confirmed_no_prescription."
+        "electronic_device_camera_placement_and_digital_zoom_wrapper_only",
+    ),
+    (
+        10,
+        "Sixth embodiment vehicle instrument 60",
+        (121, 124),
+        ("6A", "6B", "6C"),
+        (),
+        "confirmed_no_prescription."
+        "vehicle_camera_placement_and_visual_angle_wrapper_only",
+    ),
+)
+_LARGAN_IMAGE_LENS_OUTER_DIAMETER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20250389925-A1": {
+        "family_id": "96807780",
+        "application_number": "19/243071",
+        "raw_document_sha256": (
+            "be27298a96714a19583ff4551cb38afa67ffc23572072354ccbf8bbebaf008ec"
+        ),
+        "normalized_text_sha256": (
+            "3e6f0b10f216e844ba1931c56bbb1049ee9fb029f43772892ddb69b04ada2a3d"
+        ),
+        "identity_markers": {
+            "Family ID: 96807780": 1,
+            "Appl. No.: 19/243071": 1,
+            "PAN; Chun-Jui": 2,
+            "CHANG; Lin-An": 1,
+            "HSU; Chih-Wen": 1,
+            "LARGAN PRECISION CO., LTD.": 1,
+            "Filed: June 19, 2025": 1,
+            "Publication Date December 25, 2025": 1,
+            "US 63663757 20240625": 1,
+        },
+        "section_sha256": {
+            "background": "66203e396ff7c86043660d16dd25ebf64cb944cc29f153e6991cce802501cc41",
+            "description": "6d0eaaa74cdf7b509c36f2c095885c7a27739e507d959fd2c9f63e50ef3050de",
+            "claims": "4cef9d01b388d6d359229f66151e839b6ede7c4811ea878168280291e2e60b11",
+        },
+        "paragraph_span_sha256": {
+            (10, 46): "1c72e92d42705b490cb0088af1cd77b0e1cbc8e2e23fa4eeaeecbc54196d845a",
+            (47, 73): "04d48d6640ef235c4a699194b3b708e33c837bf4a69bd2fe1764971c00a2eabd",
+            (74, 82): "56446e81bb3568a9b3ee4f07dc1c51149186d249bfcde3d78c35e0a35e7eb28b",
+            (83, 84): "ba989745460baa4b5cb14afbaa41288344aa7ae2a6dced99288ce3e708002f65",
+            (85, 86): "b23181a61819b10fd3c0bf9a7ee8e8daf23088606f478b1614a102b357812eca",
+            (87, 88): "2cd06914eeb8064adfa7cce13a93bb44f616c017b554ac0f39ffa23be4c2b37b",
+            (89, 90): "521dd90933d4d56150319301f5592a908e3fd7218e8963a25fab101e57d383d4",
+            (91, 98): "9e7f2a80c16c332104450ff4f5d6aedfdb8e66f578f92b76b3fe87a0e372aa14",
+            (99, 107): "4c4a43a19be3d216a893e8dfd110528625f2c21086335d9127863ac66bfe676d",
+            (108, 116): "147a7df0f762769baf784fc6fce897514a52f7c0fcd119ffd2a0b55cdd3e7592",
+            (117, 120): "c773154129edf88ac8f51917de1e4028fd4f29256eee61ef0d077b16600067fc",
+            (121, 124): "7fcbd682e3dc38cd8d47a563dc708e26c43553f97010e539f6aa11c90d2b1686",
+            (125, 125): "a0415d591dab3d239317da87a952d2c0638d8743bb253e55961111c284b4d3ca",
+        },
+        "table_fragment_sha256": {
+            "raw": (
+                "3a4e0e9173bdd428686405c4a54837d571129cfbbc5faf357b3409945c397df4",
+                "a4293191e8f1517aa0631ccbf0b2539c210b6c678459002757f3b99d69c9e2d8",
+                "7add29a39eece513dfdb66b9f1fe1ddafbb37a2d016cf8def03c4901aab04344",
+            ),
+            "normalized": (
+                "9b371248211c561ed8d4964f23a7e8de7519284f08a94296d59360e8b1c889e0",
+                "5054f91939b1efba2ece6304722a4486492adef05a1091e3ca564359fcbe10d8",
+                "84a93e94ddd9ac72ca80ed485de950d396b94e7ea36a5929f972f4fd4403b15c",
+            ),
+        },
+        "maths_object_count": 22,
+        "maths_object_hash_set_sha256": (
+            "d875a877cc401c355417030d81ad4fb607af491e51ab1d6d095c13a753dd8c85"
+        ),
+        "official_pdf": {
+            "path": "data/patent-lake/uspto-ppubs-pdf/06b8e527534d4d96/US-20250389925-A1.pdf",
+            "bytes": 2670002,
+            "retained_container_sha256": (
+                "06b8e527534d4d966d6f512581e314badfb0cad3d0c5dda5f9b9091657bd20a7"
+            ),
+            "page_count": 53,
+            "standard_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "narrow_raster_page_numbers": (50, 51, 52, 53),
+            "drawing_page_numbers": tuple(range(2, 39)),
+            "table_page_numbers": (45, 47, 48),
+            "claim_page_numbers": (50, 51, 52, 53),
+            "raster_set_sha256": (
+                "92c970fd18bc8c1fa5bf152b7981b90a5b1e039617c39c3cd94749f050d7e614"
+            ),
+            "endpoint_container_sha256_stable": False,
         },
     },
 }
@@ -35739,6 +35928,332 @@ def _classify_encapsulated_optical_camera_attempts(
         for index, (embodiment, error) in enumerate(
             zip(_ENCAPSULATED_OPTICAL_CAMERA_ITEMS, outcomes, strict=True),
             start=1,
+        )
+    ]
+
+
+def _classify_largan_image_lens_outer_diameter_geometry_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify all ten exact Family 96807780 source-declared items.
+
+    The first seven items disclose lens outer-diameter stripe, gate, and molding
+    geometry without an ordered optical prescription. The final three items add
+    smartphone or vehicle placement wrappers without another prescription.
+    """
+
+    profile = _LARGAN_IMAGE_LENS_OUTER_DIAMETER_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _tables, _reason in (
+                _LARGAN_IMAGE_LENS_OUTER_DIAMETER_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if len(
+            _LARGAN_IMAGE_LENS_OUTER_DIAMETER_TITLE_PATTERN.findall(raw_text)
+        ) != 1:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter title binding changed"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan image-lens outer-diameter identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_specs = (
+            ("background", "<h3>Background/Summary</h3>", "<h3>Description</h3>"),
+            ("description", "<h3>Description</h3>", "<h3>Claims</h3>"),
+            ("claims", "<h3>Claims</h3>", None),
+        )
+        raw_sections: dict[str, str] = {}
+        for name, start_marker, end_marker in section_specs:
+            try:
+                start = raw_text.index(start_marker)
+                end = (
+                    raw_text.index(end_marker, start + len(start_marker))
+                    if end_marker is not None
+                    else len(raw_text)
+                )
+            except ValueError as exc:
+                raise PatentParseError(
+                    f"Largan image-lens outer-diameter raw {name} boundary changed"
+                ) from exc
+            raw_section = raw_text[start:end]
+            raw_sections[name] = raw_section
+            digest = hashlib.sha256(
+                normalize_patent_text(raw_section).encode("utf-8")
+            ).hexdigest()
+            if digest != profile["section_sha256"][name]:
+                raise PatentParseError(
+                    f"Largan image-lens outer-diameter {name} section changed"
+                )
+
+        background_numbers = tuple(
+            int(value)
+            for value in re.findall(r"\[(\d{4})\]", raw_sections["background"])
+        )
+        if background_numbers != tuple(range(1, 10)):
+            raise PatentParseError(
+                "Largan image-lens outer-diameter background denominator changed"
+            )
+        raw_description = raw_sections["description"]
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", raw_description))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(10, 126)):
+            raise PatentParseError(
+                "Largan image-lens outer-diameter description denominator changed"
+            )
+        paragraphs = {
+            int(match.group(1)): normalize_patent_text(
+                raw_description[
+                    match.start() : (
+                        paragraph_matches[index + 1].start()
+                        if index + 1 < len(paragraph_matches)
+                        else len(raw_description)
+                    )
+                ]
+            )
+            for index, match in enumerate(paragraph_matches)
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            first, last = bounds
+            span = " ".join(paragraphs[number] for number in range(first, last + 1))
+            if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    "Largan image-lens outer-diameter paragraph span "
+                    f"{first}-{last} changed"
+                )
+
+        figure_panels: list[str] = []
+        for paragraph_number in range(10, 47):
+            match = re.search(
+                r"\bFIG\s*\.\s*(\d+)\s*([A-Z])?\b",
+                paragraphs[paragraph_number],
+                re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan image-lens outer-diameter figure declaration missing "
+                    f"at paragraph {paragraph_number}"
+                )
+            figure_panels.append(
+                f"{match.group(1)}{(match.group(2) or '').upper()}"
+            )
+        if tuple(figure_panels) != _LARGAN_IMAGE_LENS_OUTER_DIAMETER_FIGURE_PANELS:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter figure-panel denominator changed"
+            )
+
+        table_numbers = tuple(
+            int(value) for value in re.findall(r"TABLE-US-(\d{5})", raw_text)
+        )
+        if table_numbers != (1, 2, 3):
+            raise PatentParseError(
+                "Largan image-lens outer-diameter TABLE 1A-3A inventory changed"
+            )
+        raw_table_digests = []
+        normalized_table_digests = []
+        for number in table_numbers:
+            marker = f"TABLE-US-{number:05d}"
+            start = raw_text.index(marker)
+            try:
+                end = raw_text.index("<br />", start) + len("<br />")
+            except ValueError as exc:
+                raise PatentParseError(
+                    "Largan image-lens outer-diameter flattened table boundary changed"
+                ) from exc
+            fragment = raw_text[start:end]
+            raw_table_digests.append(
+                hashlib.sha256(fragment.encode("utf-8")).hexdigest()
+            )
+            normalized_table_digests.append(
+                hashlib.sha256(
+                    normalize_patent_text(fragment).encode("utf-8")
+                ).hexdigest()
+            )
+        if tuple(raw_table_digests) != profile["table_fragment_sha256"]["raw"]:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter raw table fragment changed"
+            )
+        if tuple(normalized_table_digests) != profile["table_fragment_sha256"][
+            "normalized"
+        ]:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter normalized table fragment changed"
+            )
+
+        maths_objects = re.findall(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if len(maths_objects) != profile["maths_object_count"]:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter MathML denominator changed"
+            )
+        maths_hashes = [
+            hashlib.sha256(value.encode("utf-8")).hexdigest()
+            for value in maths_objects
+        ]
+        maths_set_digest = hashlib.sha256(
+            ("\n".join(maths_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if maths_set_digest != profile["maths_object_hash_set_sha256"]:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter MathML objects changed"
+            )
+
+        claims = normalize_patent_text(raw_sections["claims"])
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                claims,
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 40)):
+            raise PatentParseError(
+                "Largan image-lens outer-diameter claim denominator changed"
+            )
+        independent_claims = []
+        for index, match in enumerate(claim_matches):
+            end = (
+                claim_matches[index + 1].start()
+                if index + 1 < len(claim_matches)
+                else len(claims)
+            )
+            claim = claims[match.start() : end]
+            if re.search(r"\bclaim(?:s)?\s+\d+", claim, re.IGNORECASE) is None:
+                independent_claims.append(int(match.group(1)))
+        if independent_claims != [1, 16, 26, 33]:
+            raise PatentParseError(
+                "Largan image-lens outer-diameter independent-claim binding changed"
+            )
+
+        item_markers = {
+            74: "1st Embodiment",
+            83: "2nd example of the 1st embodiment",
+            85: "3rd example of the 1st embodiment",
+            87: "4th example of the 1st embodiment",
+            89: "5th example of the 1st embodiment",
+            91: "2nd Embodiment",
+            99: "3rd Embodiment",
+            108: "electronic device 40",
+            117: "electronic device 50",
+            121: "vehicle instrument 60",
+        }
+        for paragraph_number, marker in item_markers.items():
+            if marker not in paragraphs[paragraph_number]:
+                raise PatentParseError(
+                    "Largan image-lens outer-diameter item marker changed at "
+                    f"paragraph {paragraph_number}"
+                )
+        prohibited_prescription_markers = (
+            r"\bEFL\b",
+            r"\bF\s*/\s*NO\b",
+            r"\bAbbe\b",
+            r"\brefractive\s+index\b",
+            r"\bradius\s+of\s+curvature\b",
+            r"\baspheric\s+coefficient",
+            r"\bimage\s+height\b",
+        )
+        for marker in prohibited_prescription_markers:
+            if re.search(marker, text, re.IGNORECASE):
+                raise PatentParseError(
+                    "Largan image-lens outer-diameter unexpected prescription "
+                    f"marker {marker!r}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the complete ten-item denominator
+        return attempts_for_error(exc)
+
+    outcomes: list[PatentTerminalParseError] = []
+    for number, _label, paragraphs, _figures, tables, reason_code in (
+        _LARGAN_IMAGE_LENS_OUTER_DIAMETER_ITEMS
+    ):
+        first, last = paragraphs
+        if number <= 7:
+            table_detail = (
+                f" and mechanical outer-diameter Table {tables[0]}"
+                if tables
+                else ""
+            )
+            detail = (
+                f"Paragraphs {first}-{last}{table_detail} disclose only image-lens "
+                "outer-diameter stripe, gate, shrinking-region, molding, or assembly "
+                "geometry, with no ordered optical surface prescription or complete "
+                "system metadata"
+            )
+        elif number <= 9:
+            detail = (
+                f"Paragraphs {first}-{last} disclose smartphone camera placement, "
+                "captured-image examples, or digital zoom behavior without an "
+                "additional ordered optical surface prescription"
+            )
+        else:
+            detail = (
+                f"Paragraphs {first}-{last} disclose vehicle camera placement and "
+                "scene-coverage visual angle only; the visual angle is not treated as "
+                "a lens angular-field prescription and no ordered optical surface "
+                "prescription is published"
+            )
+        outcomes.append(
+            PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=detail,
+            )
+        )
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=error,
+        )
+        for (
+            number,
+            label,
+            _paragraphs,
+            _figures,
+            _tables,
+            _reason,
+        ), error in zip(
+            _LARGAN_IMAGE_LENS_OUTER_DIAMETER_ITEMS,
+            outcomes,
+            strict=True,
         )
     ]
 
