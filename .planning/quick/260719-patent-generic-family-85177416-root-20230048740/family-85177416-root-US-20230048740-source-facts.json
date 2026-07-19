@@ -1,0 +1,113 @@
+{
+  "schema_version": "patent-root-source-facts/v1",
+  "family_id": "85177416",
+  "root_id": "US-20230048740",
+  "publication_id": "US-20230048740-A1",
+  "application_number": "17/813265",
+  "title": "SMALL LENS SYSTEM",
+  "applicant": "SEKONIX CO., LTD.",
+  "layout_signature": "80cedad88fbd49b881b101050c1c78dd7ea546979e3e0e535dc752db7b0ba2d0",
+  "exact_profile": {
+    "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/source-review/derived-source-profile.json",
+    "bytes": 9073,
+    "sha256": "76f35b6277bfab82c5ca4feb7fb6d5f1b649105c7134f702cd785d9eae3f6c55"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/048729a45c619311/US-20230048740-A1.html",
+    "bytes": 84154,
+    "characters": 80500,
+    "sha256": "048729a45c61931128bc183893d588fc871cf608c69fb2ea08e98fced1e84f6b",
+    "normalized_characters": 67902,
+    "normalized_sha256": "ba5ebe24a3f30d5e27f0507039ab3e1e62db574a6c39761383095c33eee3e5ee"
+  },
+  "identity": {
+    "publication_date": "February 16, 2023",
+    "filed": "July 18, 2022",
+    "priority": "KR 10-2021-0098990 Jul. 28, 2021",
+    "family_id": "85177416",
+    "application_number": "17/813265"
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "SEKONIX first six-lens Qcon prescription",
+      "description_paragraphs": [54, 67],
+      "figures": [3, 4],
+      "tables": [1, 2],
+      "conflict_tokens": [["8", "1.6411", "1.84110.E+00"], ["11", "-0.6224", "-8.22449.E-01"], ["12", "-3.9286", "-3.92882.E+00"]],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_conflicts_table_1_2"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "SEKONIX second six-lens Qcon prescription",
+      "description_paragraphs": [68, 80],
+      "figures": [5, 6],
+      "tables": [3, 4],
+      "conflict_tokens": [["10", "34.2167", "3.42157.E+01"]],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_conflict_table_3_4"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "SEKONIX third six-lens Qcon prescription",
+      "description_paragraphs": [81, 93],
+      "figures": [7, 8],
+      "tables": [5, 6],
+      "conflict_tokens": [["4", "1.6720", "1.57195.E+00"]],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_conflict_table_5_6"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "SEKONIX fourth six-lens Qcon prescription",
+      "description_paragraphs": [94, 106],
+      "figures": [9, 10],
+      "tables": [7, 8],
+      "conflict_tokens": [],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.required_system_efl_f_number_and_angular_field_absent"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "SEKONIX fifth six-lens Qcon prescription",
+      "description_paragraphs": [107, 119],
+      "figures": [11, 12],
+      "tables": [9, 10],
+      "conflict_tokens": [["6", "-2.7664", "-2.76644.8+00"], ["7", "Infinity", "1.00000.E+03"], ["10", "-35.652", "-3.56528.E+01"]],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.surface_radius_malformed_and_conflicting_table_9_10"
+    }
+  ],
+  "table_inventory": {
+    "count": 10,
+    "surface_tables": [1, 3, 5, 7, 9],
+    "qcon_tables": [2, 4, 6, 8, 10],
+    "surface_row_sequence": ["Object", "1", "2", "Stop", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "Image"],
+    "qcon_surface_sequence": ["2", "Stop", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"]
+  },
+  "direct_system_metadata": {
+    "effective_focal_length_published": false,
+    "f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "image_height_published": true,
+    "stop_row_published": true
+  },
+  "source_defects_preserved_without_repair": {
+    "-2.76644.8+00": 1,
+    "-35.652 6": 1,
+    "-4.16535.E05": 1,
+    ".sup. 3.22295E-01": 1,
+    "|SAG511<0.5": 1
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

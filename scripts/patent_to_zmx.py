@@ -19267,7 +19267,262 @@ _SEKONIX_SMALL_LENS_QCON_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 ),
             },
         ),
-    }
+    },
+    "US-20230048740-A1": {
+        "raw_document_sha256": (
+            "048729a45c61931128bc183893d588fc871cf608c69fb2ea08e98fced1e84f6b"
+        ),
+        "normalized_text_sha256": (
+            "ba5ebe24a3f30d5e27f0507039ab3e1e62db574a6c39761383095c33eee3e5ee"
+        ),
+        "paragraph_pattern": r"\[(\d{4})\]",
+        "background_paragraph_numbers": tuple(range(1, 20)),
+        "description_paragraph_numbers": tuple(range(20, 124)),
+        "section_markers": {
+            "preamble": "US-20230048740-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract Disclosed is a small lens system",
+            "background": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATION"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 . A small lens system comprising",
+        },
+        "section_sha256": {
+            "preamble": (
+                "2ad55300b7136854091f005caa53c282a767d85f7057c14319b1402e31d46879"
+            ),
+            "abstract": (
+                "16bad8431e475d5fc040c0a588fa77b45f9c725467bd1302808459d6e0e38f22"
+            ),
+            "background": (
+                "9ae15f8e2b75639f47b538ba8281144f56f16b73ce2941257059930c9f37eb6a"
+            ),
+            "description": (
+                "6e1dad892685c0e16c023a90fefa7d2cb8b35bf089afe15ebf8cd4143795080a"
+            ),
+            "claims": (
+                "1263691f13ba12ba0cdf71d8c44cf3f5ef60e9f6e27db3a9d4c6630d0e32483c"
+            ),
+        },
+        "background_paragraph_span_sha256": {
+            (1, 1): "d0498014724831228bc6e8f6e74db1e4568e7eab5e47b375df8f57d209d12b98",
+            (2, 11): "b06007c476faa0b03600b68900c66c350b82c51c596a4008f90f0a20f1990870",
+            (12, 19): "d1fe9061a3dac01678f105f95c1d6b7c8817c665175760924e6d447cade9a06a",
+        },
+        "description_paragraph_span_sha256": {
+            (20, 31): "ee304885766abdec0752c0db7e3c569b7c1435505b680d2844146c88986fee1b",
+            (32, 53): "b20d159f617bc07f17946a90f7898005d7ce54a5e2b31aa5ca8091b0d3215ec6",
+            (54, 67): "ca8d341b27124f14acd310124b48d6050832765fe6293d53a697bee58acfd5f4",
+            (68, 80): "71426d4f5a4dc78f6e5418e3943ec4a0518f7a291ce2c7be592556ee142ff9ef",
+            (81, 93): "53ced42d7f3c933746b889b6bd993a31ef4c4fde3675395b411c586936d234ea",
+            (94, 106): "699b1c2c1c55e847c81aa6c45cd2158df55ae09e342a01fffeedfd13b4b53c3a",
+            (107, 119): "14ae5e3cb13e08be27c463c53687a4b4d9cd51330546c6646bc7676488f7f076",
+            (120, 123): "ca56a574d304067e901c283663b04faa7d45b391c711364450af1fa9190ec29f",
+        },
+        "item_ranges": ((54, 67), (68, 80), (81, 93), (94, 106), (107, 119)),
+        "item_markers": (
+            "[0054] FIG. 3 is a view showing a first embodiment of a small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "[0068] FIG. 5 is a view showing a second embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "[0081] FIG. 7 is a view showing a third embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "[0094] FIG. 9 is a view showing a fourth embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+            "[0107] FIG. 11 is a view showing a fifth embodiment of the small lens "
+            "system with alleviated sensitivity according to the present invention.",
+        ),
+        "figure_declarations": (
+            (21, "FIGS. 1 and 2 are views showing conventional small lens systems"),
+            (22, "FIG. 3 is a view showing a first embodiment"),
+            (23, "FIG. 4 is a view showing aberration according to a first embodiment"),
+            (24, "FIG. 5 is a view showing a second embodiment"),
+            (25, "FIG. 6 is a view showing aberration according to a second embodiment"),
+            (26, "FIG. 7 is a view showing a third embodiment"),
+            (27, "FIG. 8 is a view showing aberration according to a third embodiment"),
+            (28, "FIG. 9 is a view showing a fourth embodiment"),
+            (29, "FIG. 10 is a view showing aberration according to a fourth embodiment"),
+            (30, "FIG. 11 is a view showing a fifth embodiment"),
+            (31, "FIG. 12 is a view showing aberration according to a fifth embodiment"),
+        ),
+        "table_payload_sha256": (
+            "371282b025b5459b8988169c6adfbff1e97b5a27316320081967bc7ddd0c2219",
+            "740eb475482d16ba8ceaa34da2bac3544efc7d3d0cecd4d35453010f5315e824",
+            "747d9d1d0cc68cf5cfa2c1d99c9118783d35258aff43a3119b35cab740679990",
+            "97c2cc1f619001abb1f68406d5afc537334cbb5ace18d60eaba239842216a187",
+            "e4cab44fb63124f84d3c8d0ef61c6787d74f9725a76da654508548dd6f087506",
+            "3cbd5c9b674f963d3df1dc9c494dc337aa18565d500c32cd9d20b85e83ac1e69",
+            "c253d308305ee4b048bedd5157427ed7e4df3584ab24af0f25ec5e2472afe35f",
+            "85f7a60e5510ea6683cb43eb553f23c08cb009aa458d889c15a98dc7d45852c5",
+            "094e27304f6b35c6f976653d585c283a3924c417bbe05d8cd59167c6b511f24a",
+            "cd6094a0b5a155b3411ec320acab67862cfdf4df2280780dca717df8e0c22675",
+        ),
+        "radius_conflicts": (
+            (
+                ("8", "1.6411", "1.84110.E+00"),
+                ("11", "-0.6224", "-8.22449.E-01"),
+                ("12", "-3.9286", "-3.92882.E+00"),
+            ),
+            (("10", "34.2167", "3.42157.E+01"),),
+            (("4", "1.6720", "1.57195.E+00"),),
+            (),
+            (
+                ("6", "-2.7664", "-2.76644.8+00"),
+                ("7", "Infinity", "1.00000.E+03"),
+                ("10", "-35.652", "-3.56528.E+01"),
+            ),
+        ),
+        "mathml_sha256": (
+            "2e4bab355dc6c2664bc141e34ccbd7751c79827bbab3517fd3b4c1d4ab16dae6",
+            "0039f26e384c349f8020f5aae5a2cbf8f88a16a87a3a470ee6284921195903c6",
+            "cb89fa479de73e742ced5a032c1e0ef8e8c5567aa2c535717f1a0a5f6205d58d",
+            "76d8c00f9f6dcea4581864a63576ea3a3cb19c8501223bfd723f9b7dbde70648",
+            "eb9ce9daaaad0c98763e5db3d3cf9729f55cd5e46c19d5557b36538f4b85f9ea",
+            "34a0bc376fbc69632e69e040a2b43ac47ab8a6186508a8e257af619501401578",
+            "70933152f79063067f6659239c30a3797717423a914e68f6a59ca897ebdf68f7",
+            "c0a725335e8b667d6708c8479bf789cd98d98484bcb662c9dc7f20efdd60c2bb",
+            "1947996dffd947adc5fef0e7dbb75bcc73a91c6184233eb6b931cb7910179a81",
+        ),
+        "claim_sha256": (
+            "b40fe6e7a6816f8e85b8b16892c5b9f58ff8d1fb8461478e17dc55ebd19fcadb",
+            "37d39e710e6f11fdfe9ed726a1128a02e166112519fa60b295a39deacd78a71f",
+            "9509a0ad2113905246643986285aefa6373b9951882da26c57fe825f5a791d58",
+            "3cd892f99f110420087939ce590e0155c486ab34baffc3a87d236a949ce3ad39",
+            "494eaf47d2de15c81dea9469632f3b96794971944c5926a82c8e2e4747c63727",
+            "45192f3b7b8ef83c6b1bb6c8e9041e0a2ea2fc47748443e84cbfada806821919",
+            "028bef6c6dbd3fc9bb342dd88d0e272ca2f6e1409b43bff2c161a4347d69f4d9",
+        ),
+        "identity_markers": {
+            "US-20230048740-A1": 1,
+            "Patent Application Publication 20230048740": 1,
+            "Kind Code A1": 1,
+            "Publication Date February 16, 2023": 1,
+            "Applicant: SEKONIX CO., LTD.": 1,
+            "Family ID: 85177416": 1,
+            "Assignee: SEKONIX CO., LTD.": 1,
+            "Appl. No.: 17/813265": 1,
+            "Filed: July 18, 2022": 1,
+            "KR 10-2021-0098990 Jul. 28, 2021": 1,
+        },
+        "source_phrase_counts": {
+            "First Embodiment": 15,
+            "Second Embodiment": 15,
+            "Third Embodiment": 15,
+            "Fourth Embodiment": 15,
+            "Fifth Embodiment": 15,
+            "Example": 0,
+            "Embodiment": 77,
+            "effective focal length": 0,
+            "focal length": 0,
+            "F-number": 0,
+            "F number": 0,
+            "Fno": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "FOV": 0,
+            "image height": 28,
+            "stop": 18,
+            "aperture": 5,
+            "Y Radius": 11,
+            "Qcon Coefficient": 146,
+            "TOPL/Himg": 13,
+            "-2.76644.8+00": 1,
+            "-35.652 6": 1,
+            "-4.16535.E05": 1,
+            ".sup. 3.22295E-01": 1,
+            "|SAG511<0.5": 1,
+        },
+        "official_pdfs": (
+            {
+                "publication_id": "US-20230048740-A1",
+                "path": (
+                    ".planning/quick/260719-patent-generic-family-85177416-"
+                    "root-20230048740/source-review/US-20230048740-A1-official-1.pdf"
+                ),
+                "bytes": 1_282_773,
+                "sha256": (
+                    "d10e7023fb9879d9b9b82eea29ac820aaf412ba81fba13683d0854bd127114a9"
+                ),
+                "page_count": 25,
+                "single_raster_page_count": 25,
+                "common_raster_dimensions": (2560, 3300),
+                "narrow_raster_dimensions": (2550, 3300),
+                "narrow_raster_page_numbers": (14, 15, 17, 18, 19, 21, 22, 24, 25),
+                "drawing_page_numbers": tuple(range(2, 14)),
+                "table_page_numbers": tuple(range(17, 25)),
+                "table_page_raster_sha256": (
+                    "8cf4ed5c623372ec7b4a91e19a76c9e2c48435370c9a6c35abad670e72b39a1d",
+                    "7125b71f5dc2c3628b76643475b30aa3115e928e708007dd81abd267b75b32ff",
+                    "61f3a917cea345189973aed09a6a558bc88addebd1c9e32fb98294b729c1cfc6",
+                    "ec4e1128b164cda512eca4cb4b2fc3716a1604d5b1e01e557756ac3efeea317c",
+                    "20f9954d9aced60e732564a8896a9bae4f1063077c1527927c3c3f7511fb5787",
+                    "86b6608dba2271366985aba4de9106041b65746d9646cab03af6235a30bb1c40",
+                    "1b871282bd5468ff08121f79ac99889594a45adc89892a0bec236544aae4ffb6",
+                    "d160090e5dd49b1bbc0090943e9599a2e5f0b4b8099b08d8976228e72a85c517",
+                ),
+                "raster_set_sha256": (
+                    "e02da3ffe0d97ec412e9f0b09c25a4f3ef450678ba441cee2be9c42f420bb59a"
+                ),
+            },
+            {
+                "publication_id": "US-20230048740-A1",
+                "path": (
+                    ".planning/quick/260719-patent-generic-family-85177416-"
+                    "root-20230048740/source-review/US-20230048740-A1-official-2.pdf"
+                ),
+                "bytes": 1_282_773,
+                "sha256": (
+                    "c5c2f0135b94e358f25ad51d4e41414738a0f985cbf2233c78e2b11effaede4d"
+                ),
+                "page_count": 25,
+                "single_raster_page_count": 25,
+                "common_raster_dimensions": (2560, 3300),
+                "narrow_raster_dimensions": (2550, 3300),
+                "narrow_raster_page_numbers": (14, 15, 17, 18, 19, 21, 22, 24, 25),
+                "drawing_page_numbers": tuple(range(2, 14)),
+                "table_page_numbers": tuple(range(17, 25)),
+                "table_page_raster_sha256": (
+                    "8cf4ed5c623372ec7b4a91e19a76c9e2c48435370c9a6c35abad670e72b39a1d",
+                    "7125b71f5dc2c3628b76643475b30aa3115e928e708007dd81abd267b75b32ff",
+                    "61f3a917cea345189973aed09a6a558bc88addebd1c9e32fb98294b729c1cfc6",
+                    "ec4e1128b164cda512eca4cb4b2fc3716a1604d5b1e01e557756ac3efeea317c",
+                    "20f9954d9aced60e732564a8896a9bae4f1063077c1527927c3c3f7511fb5787",
+                    "86b6608dba2271366985aba4de9106041b65746d9646cab03af6235a30bb1c40",
+                    "1b871282bd5468ff08121f79ac99889594a45adc89892a0bec236544aae4ffb6",
+                    "d160090e5dd49b1bbc0090943e9599a2e5f0b4b8099b08d8976228e72a85c517",
+                ),
+                "raster_set_sha256": (
+                    "e02da3ffe0d97ec412e9f0b09c25a4f3ef450678ba441cee2be9c42f420bb59a"
+                ),
+            },
+        ),
+        "conflict_details": (
+            "TABLE 1 versus TABLE 2 publishes S8 1.6411/1.84110E+00, S11 "
+            "-0.6224/-0.822449 and S12 -3.9286/-3.92882; fresh A1 original "
+            "raster page 17 preserves the same printed conflicts",
+            "TABLE 3 versus TABLE 4 publishes S10 34.2167/34.2157, a 0.0010 mm "
+            "difference outside the 0.0000501 mm four-decimal rounding envelope; "
+            "fresh A1 original raster pages 18-19 preserve the same conflict",
+            "TABLE 5 versus TABLE 6 publishes S4 1.6720/1.57195, a 0.10005 mm "
+            "difference; fresh A1 original raster page 20 preserves it",
+            "",
+            "TABLE 9 versus TABLE 10 publishes S6 -2.7664/-2.76644.8+00 "
+            "(the latter is nonnumeric), S7 Infinity/1.00000E+03 and S10 "
+            "-35.652/-35.6528; fresh A1 original raster pages 23-24 preserve "
+            "the printed defects",
+        ),
+        "reconciliation_detail": (
+            "The exact A1 source has 123 continuously numbered paragraphs, "
+            "FIGS. 1-12, TABLES 1-10, nine MathML objects, seven claims and two "
+            "freshly fetched 25-page official A1 PDF containers. It publishes no "
+            "effective focal length, F-number or prescription-specific angular "
+            "field, and no such value is inferred from image height or TOPL/Himg."
+        ),
+        "conflict_resolution": (
+            "therefore the exact A1 source does not publish one unique ordered "
+            "radius set for this prescription."
+        ),
+    },
 }
 _CIRCLE_OPTICS_SEVEN_LENS_PROFILE = "circle_optics_seven_lens_ocr_review_v1"
 _CIRCLE_OPTICS_SEVEN_LENS_REQUIRED_TEXT = (
@@ -53361,7 +53616,12 @@ def _classify_sekonix_small_lens_qcon_attempts(
         expected_numbers: tuple[int, ...],
         label: str,
     ) -> dict[int, str]:
-        matches = list(re.finditer(r"\((\d+)\)", section_text))
+        matches = list(
+            re.finditer(
+                profile.get("paragraph_pattern", r"\((\d+)\)"),
+                section_text,
+            )
+        )
         numbers = tuple(int(match.group(1)) for match in matches)
         if numbers != expected_numbers:
             raise PatentParseError(
@@ -53433,12 +53693,16 @@ def _classify_sekonix_small_lens_qcon_attempts(
 
         background_paragraphs = numbered_paragraphs(
             sections["background"],
-            expected_numbers=tuple(range(1, 21)),
+            expected_numbers=profile.get(
+                "background_paragraph_numbers", tuple(range(1, 21))
+            ),
             label="background/summary paragraph",
         )
         description_paragraphs = numbered_paragraphs(
             sections["description"],
-            expected_numbers=tuple(range(1, 126)),
+            expected_numbers=profile.get(
+                "description_paragraph_numbers", tuple(range(1, 126))
+            ),
             label="description paragraph",
         )
         for paragraph_map, span_hashes, label in (
@@ -53484,21 +53748,37 @@ def _classify_sekonix_small_lens_qcon_attempts(
                     f"SEKONIX small-lens Qcon source-item marker {marker!r} changed"
                 )
 
-        if "FIGS. 1 and 2 are views showing conventional small lens systems" not in (
-            description_paragraphs[2]
-        ):
-            raise PatentParseError(
-                "SEKONIX small-lens Qcon prior-art figure declaration changed"
-            )
-        for figure_number in range(3, 13):
-            if re.match(
-                rf"\({figure_number}\) FIG\. {figure_number} is a view ",
-                description_paragraphs[figure_number],
-            ) is None:
+        figure_declarations = profile.get("figure_declarations")
+        if figure_declarations is None:
+            if "FIGS. 1 and 2 are views showing conventional small lens systems" not in (
+                description_paragraphs[2]
+            ):
                 raise PatentParseError(
-                    "SEKONIX small-lens Qcon figure denominator changed at "
-                    f"FIG. {figure_number}"
+                    "SEKONIX small-lens Qcon prior-art figure declaration changed"
                 )
+            for figure_number in range(3, 13):
+                if re.match(
+                    rf"\({figure_number}\) FIG\. {figure_number} is a view ",
+                    description_paragraphs[figure_number],
+                ) is None:
+                    raise PatentParseError(
+                        "SEKONIX small-lens Qcon figure denominator changed at "
+                        f"FIG. {figure_number}"
+                    )
+        else:
+            for paragraph_number, declaration in figure_declarations:
+                observed = len(
+                    re.findall(
+                        re.escape(declaration),
+                        description_paragraphs[paragraph_number],
+                        re.IGNORECASE,
+                    )
+                )
+                if observed != 1:
+                    raise PatentParseError(
+                        "SEKONIX small-lens Qcon figure declaration changed at "
+                        f"paragraph {paragraph_number}"
+                    )
 
         table_payloads = _sekonix_small_lens_qcon_table_payloads(text)
         table_digests = tuple(
@@ -53647,7 +53927,7 @@ def _classify_sekonix_small_lens_qcon_attempts(
     except Exception as exc:  # noqa: BLE001 - retain all five exact-source items
         return attempts_for_error(exc)
 
-    conflict_details = (
+    conflict_details = profile.get("conflict_details", (
         "TABLE 1 versus TABLE 2 publishes S8 1.6411/1.84110E+00, S11 "
         "-0.6224/-0.822449 and S12 -3.9286/-3.92882; the same conflicts are "
         "visible in B2 PDF pages 16-17 and A1 PDF page 17",
@@ -53660,6 +53940,19 @@ def _classify_sekonix_small_lens_qcon_attempts(
         "TABLE 9 versus TABLE 10 publishes S6 -2.7664/-2.76644.8+00 "
         "(the latter is nonnumeric), S7 Infinity/1.00000E+03 and S10 "
         "-35.6526/-35.6528; the same defects are visible on B2 and A1 PDF page 23",
+    ))
+    reconciliation_detail = profile.get(
+        "reconciliation_detail",
+        "The complete 145 numbered paragraphs, FIGS. 1-12, TABLES 1-10, "
+        "nine MathML objects, seven claims and both 25-page official PDFs were "
+        "reconciled. They also publish no effective focal length, F-number or "
+        "prescription-specific angular field, and no such value is inferred from "
+        "image height or TOPL/Himg.",
+    )
+    conflict_resolution = profile.get(
+        "conflict_resolution",
+        "therefore the official same-application sources do not publish one unique "
+        "ordered radius set for this prescription.",
     )
     reason_codes = (
         "metadata_unpublished.surface_radius_conflicts_table_1_2",
@@ -53672,23 +53965,14 @@ def _classify_sekonix_small_lens_qcon_attempts(
     for number, label in _SEKONIX_SMALL_LENS_QCON_ITEMS:
         if conflict_details[number - 1]:
             detail = (
-                f"{conflict_details[number - 1]}; therefore the official same-application "
-                "sources do not publish one unique ordered radius set for this "
-                "prescription. The complete 145 numbered paragraphs, FIGS. 1-12, "
-                "TABLES 1-10, nine MathML objects, seven claims and both 25-page "
-                "official PDFs were reconciled. They also publish no effective focal "
-                "length, F-number or prescription-specific angular field, and no such "
-                "value is inferred from image height or TOPL/Himg."
+                f"{conflict_details[number - 1]}; {conflict_resolution} "
+                f"{reconciliation_detail}"
             )
         else:
             detail = (
                 "TABLES 7/8 and FIGS. 9/10 bind the fourth prescription and publish "
                 "a complete internally consistent surface/material/Qcon-coefficient "
-                "set, a stop row and image height. The complete 145 numbered "
-                "paragraphs, FIGS. 1-12, TABLES 1-10, nine MathML objects, seven "
-                "claims and both 25-page official PDFs publish no effective focal "
-                "length, F-number or prescription-specific angular field; those "
-                "required system values are not inferred from image height or TOPL/Himg."
+                f"set, a stop row and image height. {reconciliation_detail}"
             )
         attempts.append(
             _PrescriptionParseAttempt(

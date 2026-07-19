@@ -28610,6 +28610,400 @@ def _sekonix_small_lens_qcon_source() -> tuple[str, str]:
     return "US-12498545-B2", source_path.read_text(encoding="utf-8")
 
 
+def _sekonix_small_lens_qcon_a1_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "048729a45c619311"
+        / "US-20230048740-A1.html"
+    )
+    return "US-20230048740-A1", source_path.read_text(encoding="utf-8")
+
+
+def _sekonix_small_lens_qcon_a1_quick() -> Path:
+    return (
+        Path(__file__).resolve().parents[1]
+        / ".planning"
+        / "quick"
+        / "260719-patent-generic-family-85177416-root-20230048740"
+    )
+
+
+def test_sekonix_small_lens_qcon_a1_reconciles_five_terminals() -> None:
+    patent_id, raw_text = _sekonix_small_lens_qcon_a1_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 6))
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        and attempt.error.status == "metadata_unpublished"
+        for attempt in attempts
+    )
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        "metadata_unpublished.surface_radius_conflicts_table_1_2",
+        "metadata_unpublished.surface_radius_conflict_table_3_4",
+        "metadata_unpublished.surface_radius_conflict_table_5_6",
+        "metadata_unpublished.required_system_efl_f_number_and_angular_field_absent",
+        "metadata_unpublished.surface_radius_malformed_and_conflicting_table_9_10",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert "S8 1.6411/1.84110E+00" in str(attempts[0].error)
+    assert "S10 34.2167/34.2157" in str(attempts[1].error)
+    assert "S4 1.6720/1.57195" in str(attempts[2].error)
+    assert "publishes no effective focal length, F-number" in str(attempts[3].error)
+    assert "-2.76644.8+00" in str(attempts[4].error)
+    for attempt in attempts:
+        detail = str(attempt.error)
+        assert "exact A1 source" in detail
+        assert "B2" not in detail
+        assert "US-12498545" not in detail
+
+
+def test_sekonix_small_lens_qcon_a1_source_drift_fails_closed() -> None:
+    patent_id, raw_text = _sekonix_small_lens_qcon_a1_source()
+    changed = raw_text.replace("February 16, 2023", "February 17, 2023", 1)
+    assert changed != raw_text
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        changed,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 5
+    assert all(
+        isinstance(attempt.error, patent_to_zmx.PatentParseError)
+        and not isinstance(attempt.error, patent_to_zmx.PatentTerminalParseError)
+        for attempt in attempts
+    )
+    assert {str(attempt.error) for attempt in attempts} == {
+        "SEKONIX small-lens Qcon official raw text hash changed for "
+        f"{patent_id}"
+    }
+
+
+def test_sekonix_small_lens_qcon_a1_profile_closes_exact_denominator() -> None:
+    patent_id, raw_text = _sekonix_small_lens_qcon_a1_source()
+    quick = _sekonix_small_lens_qcon_a1_quick()
+    derived = json.loads(
+        (quick / "source-review" / "derived-source-profile.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    profile = patent_to_zmx._SEKONIX_SMALL_LENS_QCON_SOURCE_PROFILES[patent_id]
+
+    assert derived["publication_id"] == patent_id
+    assert derived["family_id"] == "85177416"
+    assert derived["application_number"] == "17/813265"
+    assert (
+        hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        == derived["source"]["sha256"]
+        == profile["raw_document_sha256"]
+    )
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+    assert (
+        hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        == derived["source"]["normalized_sha256"]
+        == profile["normalized_text_sha256"]
+    )
+    assert derived["denominator"] == {
+        "background_summary_paragraphs": 19,
+        "brief_description_paragraphs": 12,
+        "detailed_description_paragraphs": 92,
+        "description_paragraphs": 104,
+        "total_numbered_paragraphs": 123,
+        "claims": 7,
+        "independent_claims": 1,
+        "declared_figure_panels": 12,
+        "prior_art_figure_panels": 2,
+        "current_embodiment_figure_panels": 10,
+        "flattened_tables": 10,
+        "surface_tables": 5,
+        "qcon_tables": 5,
+        "mathml_objects": 9,
+        "source_items": 5,
+        "prescription_items": 5,
+    }
+    assert derived["item_ranges"] == [
+        [54, 67],
+        [68, 80],
+        [81, 93],
+        [94, 106],
+        [107, 119],
+    ]
+    assert tuple(
+        tuple(tuple(conflict) for conflict in item)
+        for item in derived["radius_conflicts"]
+    ) == profile["radius_conflicts"]
+    suspicious_tokens = {
+        "-2.76644.8+00": 1,
+        "-35.652 6": 1,
+        "-4.16535.E05": 1,
+        ".sup. 3.22295E-01": 1,
+        "|SAG511<0.5": 1,
+    }
+    assert derived["suspicious_source_tokens"] == suspicious_tokens
+    assert derived["source_phrase_counts"] | suspicious_tokens == profile[
+        "source_phrase_counts"
+    ]
+
+
+def test_sekonix_small_lens_qcon_a1_rehashes_fresh_pdf_rasters() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = _sekonix_small_lens_qcon_a1_quick()
+    derived = json.loads(
+        (quick / "source-review" / "derived-pdf-profile.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    profile = patent_to_zmx._SEKONIX_SMALL_LENS_QCON_SOURCE_PROFILES[
+        "US-20230048740-A1"
+    ]
+
+    assert derived["decoded_page_records_equal"] is True
+    assert len(derived["containers"]) == len(profile["official_pdfs"]) == 2
+    assert len({item["sha256"] for item in derived["containers"]}) == 2
+    for record, expected in zip(
+        derived["containers"], profile["official_pdfs"], strict=True
+    ):
+        pdf_path = root / record["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        assert len(pdf_bytes) == record["bytes"] == expected["bytes"]
+        assert (
+            hashlib.sha256(pdf_bytes).hexdigest()
+            == record["sha256"]
+            == expected["sha256"]
+        )
+        reader = pypdf.PdfReader(str(pdf_path))
+        assert len(reader.pages) == record["page_count"] == 25
+        page_hashes = []
+        text_characters = 0
+        for page, page_record in zip(
+            reader.pages, record["page_records"], strict=True
+        ):
+            assert len(page.images) == 1
+            page_image = page.images[0]
+            image = page_image.image
+            assert list(image.size) == page_record["dimensions"]
+            assert image.mode == page_record["mode"] == "1"
+            page_hash = patent_pdf_recovery._canonical_raster_sha256(page_image.data)
+            assert page_hash == page_record["raster_sha256"]
+            page_hashes.append(page_hash)
+            text_characters += len(page.extract_text() or "")
+        assert text_characters == record["text_layer_characters"] == 0
+        assert hashlib.sha256(
+            ("\n".join(page_hashes) + "\n").encode("utf-8")
+        ).hexdigest() == record["raster_set_sha256"] == expected[
+            "raster_set_sha256"
+        ]
+
+    assert len(derived["retained_original_pngs"]) == 25
+    first_page_hashes = [
+        item["raster_sha256"] for item in derived["containers"][0]["page_records"]
+    ]
+    for png_path, expected_hash in zip(
+        derived["retained_original_pngs"], first_page_hashes, strict=True
+    ):
+        assert patent_pdf_recovery._canonical_raster_sha256(
+            (root / png_path).read_bytes()
+        ) == expected_hash
+
+
+def test_sekonix_small_lens_qcon_a1_closes_root_qualified_artifacts() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = _sekonix_small_lens_qcon_a1_quick()
+    facts = json.loads(
+        (
+            quick
+            / "family-85177416-root-US-20230048740-source-facts.json"
+        ).read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (
+            quick
+            / "family-85177416-root-US-20230048740-denominator.json"
+        ).read_text(encoding="utf-8")
+    )
+    availability = json.loads(
+        (
+            quick
+            / "family-85177416-root-US-20230048740-source-availability.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert facts["root_id"] == "US-20230048740"
+    assert facts["publication_id"] == "US-20230048740-A1"
+    assert facts["application_number"] == "17/813265"
+    assert "prior_publication_id" not in facts
+    assert [item["description_paragraphs"] for item in facts["items"]] == [
+        [54, 67],
+        [68, 80],
+        [81, 93],
+        [94, 106],
+        [107, 119],
+    ]
+    assert [item["terminal_status"] for item in facts["items"]] == [
+        "metadata_unpublished"
+    ] * 5
+    assert facts["direct_system_metadata"] == {
+        "effective_focal_length_published": False,
+        "f_number_published": False,
+        "prescription_specific_angular_field_published": False,
+        "image_height_published": True,
+        "stop_row_published": True,
+    }
+    assert not any(facts["formal_outputs"].values())
+    profile_ref = facts["exact_profile"]
+    profile_bytes = (root / profile_ref["path"]).read_bytes()
+    assert len(profile_bytes) == profile_ref["bytes"]
+    assert hashlib.sha256(profile_bytes).hexdigest() == profile_ref["sha256"]
+
+    assert denominator["root_ids"] == ["US-20230048740"]
+    assert denominator["publication_ids"] == ["US-20230048740-A1"]
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_classification_publications": 1,
+        "background_summary_numbered_paragraphs": 19,
+        "brief_description_numbered_paragraphs": 12,
+        "detailed_description_numbered_paragraphs": 92,
+        "description_numbered_paragraphs": 104,
+        "total_numbered_paragraphs": 123,
+        "claims": 7,
+        "independent_claims": 1,
+        "declared_figure_panels": 12,
+        "prior_art_figure_panels": 2,
+        "current_embodiment_figure_panels": 10,
+        "flattened_tables": 10,
+        "mathml_objects": 9,
+        "source_disclosed_items": 5,
+        "optical_prescription_items": 5,
+        "surface_prescription_tables": 5,
+        "qcon_coefficient_tables": 5,
+        "system_parameter_tables": 0,
+        "ordered_surface_rows": 85,
+        "qcon_surface_rows": 60,
+        "metadata_unpublished_items": 5,
+        "replayed_ledger_items": 5,
+        "official_pdf_files": 2,
+        "official_pdf_pages": 50,
+        "decoded_page_rasters": 50,
+        "unique_retained_original_page_pngs": 25,
+        "navigation_only_contact_sheets": 4,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_tables": 0,
+        "unmapped_mathml_objects": 0,
+        "unmapped_source_items": 0,
+    }
+    assert not any(denominator["formal_outputs"].values())
+
+    assert availability["root_id"] == "US-20230048740"
+    assert len(availability["official_pdf_fetches"]) == 2
+    assert {
+        record["decoded_raster_set_sha256"]
+        for record in availability["official_pdf_fetches"]
+    } == {"e02da3ffe0d97ec412e9f0b09c25a4f3ef450678ba441cee2be9c42f420bb59a"}
+    assert availability["source_policy"]["historical_same_family_root_used"] is False
+    assert availability["source_policy"]["numeric_derivation_permitted"] is False
+
+
+def test_sekonix_small_lens_qcon_a1_replay_queue_and_evidence_are_stable() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = _sekonix_small_lens_qcon_a1_quick()
+    replay = json.loads(
+        (
+            quick
+            / "family-85177416-root-US-20230048740-replay-determinism.json"
+        ).read_text(encoding="utf-8")
+    )
+    evidence = json.loads(
+        (
+            quick
+            / "family-85177416-root-US-20230048740-source-evidence.json"
+        ).read_text(encoding="utf-8")
+    )
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+
+    semantic_hashes = []
+    for record in replay["attempts"]:
+        result_path = root / record["path"]
+        result_bytes = result_path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+    assert replay["semantic_equal"] is True
+    assert replay["semantic_sha256"] == evidence["semantic_replay_sha256"]
+    assert set(semantic_hashes) == {replay["semantic_sha256"]}
+    assert replay["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "terminal",
+        "root_reason_code": "terminal.all_disclosed_items_terminal",
+        "item_state_counts": {"terminal": 5},
+        "terminal_status_counts": {"metadata_unpublished": 5},
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "staging_zmx": 0,
+    }
+
+    assert canonical_json_bytes(after_1) == canonical_json_bytes(after_2)
+    assert after_1["affected_roots"] == after_1["affected_items"] == 61
+    assert after_1["result_set_sha256"] == queue["result_set_sha256"] == evidence[
+        "ledger"
+    ]["result_set_sha256"]
+    minimum_signature = min(after_1["layout_signature_counts"])
+    selected = [
+        item
+        for item in after_1["items"]
+        if item["layout_signature"] == minimum_signature
+    ]
+    assert queue["next_exact_group"]["layout_signature"] == minimum_signature
+    assert queue["next_exact_group"]["root_ids"] == [
+        item["root_id"] for item in selected
+    ] == ["US-20260169265"]
+    assert queue["next_exact_group"]["family_id"] == "94801574"
+    assert evidence["next_exact_group"]["root_ids"] == ["US-20260169265"]
+    assert evidence["saturation_complete"] is False
+    assert not any(evidence["formal_outputs"].values())
+
+    for group in (evidence["official_pdfs"], evidence["replay_attempts"], evidence["artifacts"]):
+        for record in group:
+            content = (root / record["path"]).read_bytes()
+            assert len(content) == record["bytes"]
+            assert hashlib.sha256(content).hexdigest() == record["sha256"]
+    for record in evidence["census"].values():
+        content = (root / record["path"]).read_bytes()
+        assert len(content) == record["bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+    for record in (evidence["ledger"]["summary"], evidence["ledger"]["report"]):
+        content = (root / record["path"]).read_bytes()
+        assert len(content) == record["bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+
+    summary = json.loads((root / evidence["ledger"]["summary"]["path"]).read_text(encoding="utf-8"))
+    assert summary["cohort_roots"] == summary["roots_with_results"] == 619
+    assert summary["missing_root_ids"] == []
+    assert summary["corrupt_result_paths"] == []
+    assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"]
+
+
 def test_sekonix_small_lens_qcon_reconciles_five_terminals() -> None:
     patent_id, raw_text = _sekonix_small_lens_qcon_source()
 
@@ -39438,7 +39832,7 @@ def test_aac_family_66534470_source_evidence_rehashes_every_reference() -> None:
         "result_set_sha256"
     ]
     assert evidence["ledger"]["result_set_sha256"] == (
-        "5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf"
+        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -40345,7 +40739,7 @@ def test_corephotonics_family_88793298_source_evidence_rehashes_every_reference(
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf"
+        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -40744,7 +41138,7 @@ def test_corephotonics_family_100208972_source_evidence_rehashes_every_reference
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf"
+        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -41166,7 +41560,7 @@ def test_largan_family_99635674_source_evidence_rehashes_every_reference() -> No
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf"
+        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -41487,7 +41881,7 @@ def test_aac_family_66532282_source_evidence_rehashes_every_reference() -> None:
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf"
+        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -41834,7 +42228,7 @@ def test_newmax_family_84189606_source_evidence_rehashes_every_reference() -> No
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf"
+        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {

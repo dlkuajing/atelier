@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/generic-residual-after-2.json",
+  "result_set_sha256": "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5",
+  "generic_residual_roots": 61,
+  "generic_residual_items": 61,
+  "next_exact_group": {
+    "family_id": "94801574",
+    "root_ids": [
+      "US-20260169265"
+    ],
+    "publication_ids": [
+      "US-20260169265-A1"
+    ],
+    "application_number": "19/034574",
+    "title": "OPTICAL IMAGING LENS",
+    "first_inventor": "Lin; Hai",
+    "applicant": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+    "assignee": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+    "layout_signature": "83a95106c28f8f22f1996e32e629036f2d4bfba1905786dc1291a1101327edd3",
+    "layout_signature_count": 1,
+    "table_count": 2,
+    "marker_counts": {
+      "effective_focal_length": 28,
+      "embodiment_anchor": 137,
+      "example_anchor": 0,
+      "f_number": 31,
+      "full_field": 14,
+      "half_field": 51
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0ec8d06ad327d41b/US-20260169265-A1.html",
+      "sha256": "0ec8d06ad327d41be5573d8b69fa6597d94c9f239eda657c5a050f3c121e61a3"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}
