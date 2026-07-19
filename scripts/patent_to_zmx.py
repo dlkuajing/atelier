@@ -471,6 +471,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _parse_oppo_shared_rear_dual_focal_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _parse_corephotonics_compact_double_folded_tele_attempts(
             raw_text,
             patent_id=patent_id,
@@ -8486,6 +8494,245 @@ _COREPHOTONICS_DOUBLE_FOLDED_TELE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "b014354a15615ec94c329ff393a73d7f2984522130cd7993caf8b0252acacdf1",
                 "120bb545fba0c37068ce45ecf41d1eb6afcd4b239d925d43be5a572cd5fa28ca",
                 "898ccdd00ed076a054ea1ddd98c59c7be76f6bda5ec10ae67980331057c41b6c",
+            ),
+        },
+    }
+}
+_OPPO_SHARED_REAR_DUAL_FOCAL_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Imaging\s+lens\s+assembly,\s+camera\s+module\s+and\s+"
+    r"imaging\s+device\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_OPPO_SHARED_REAR_DUAL_FOCAL_ITEMS = (
+    (1, "OPPO example 1 short focal length", 1, "short", (79, 97), (3, 5), (1, 2, 3, 4)),
+    (2, "OPPO example 1 long focal length", 1, "long", (79, 97), (4, 6), (5, 6, 7, 8)),
+    (3, "OPPO example 2 short focal length", 2, "short", (98, 113), (7, 9), (10, 11, 12, 13)),
+    (4, "OPPO example 2 long focal length", 2, "long", (98, 113), (8, 10), (14, 15, 16, 17)),
+    (5, "OPPO example 3 short focal length", 3, "short", (114, 129), (11, 13), (19, 20, 21, 22)),
+    (6, "OPPO example 3 long focal length", 3, "long", (114, 129), (12, 14), (23, 24, 25, 26)),
+    (7, "OPPO example 4 short focal length", 4, "short", (130, 145), (15, 17), (28, 29, 30, 31)),
+    (8, "OPPO example 4 long focal length", 4, "long", (130, 145), (16, 18), (32, 33, 34, 35)),
+    (9, "OPPO example 5 short focal length", 5, "short", (146, 163), (19, 21), (37, 38, 39, 40)),
+    (10, "OPPO example 5 long focal length", 5, "long", (146, 163), (20, 22), (41, 42, 43, 44)),
+)
+_OPPO_SHARED_REAR_DUAL_FOCAL_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12656584-B2": {
+        "family_id": "84322717",
+        "application_number": "18/526988",
+        "prior_publication_id": "US-20240134168-A1",
+        "raw_document_sha256": ("4c49c1f0f7b88434639b5ffddd557efe1333044a14517a802bf2d0388e6a38a5"),
+        "normalized_text_sha256": (
+            "a769839300a2b2fa29467f2b6b308a0df1bc8743b54c4373d7480cbfeeb984a0"
+        ),
+        "identity_markers": {
+            "Family ID: 84322717": 1,
+            "Appl. No.: 18/526988": 1,
+            "GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP., LTD.": 1,
+            "GUANGDONG OPPO MOBILE TELECOMMUNICATION CORP., LTD.": 1,
+            "Katsuragi; Daigo": 2,
+            "PCT/CN2021/098016": 3,
+            "US 20240134168 A1": 1,
+        },
+        "section_markers": {
+            "abstract": "Abstract ",
+            "background_summary": "Background/Summary ",
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "abstract": "848c20e5c69b9ae49748ae044a52bd1a2fda9bb3848129ee9eb7fa23e105c2a1",
+            "background_summary": (
+                "0316df741e3acda561e56489100eb67a58e69ba268ffc286fa9d5d668c05931c"
+            ),
+            "description": ("15d64768a96af7d884df67ec180a433d0dd6f95aaa092da25ecfccbf6425196f"),
+            "claims": "c844bcc498ea312a0500c698b71cf6386608806f3d2e8dcc1739e01368129bc9",
+        },
+        "paragraph_span_sha256": {
+            (1, 23): "62ed9e193ccbde0a4dc75763ec178147ecc2237790efe3662a1d0882aada0460",
+            (24, 78): "bdf1f4ae3c3e7ad6ad87fe1028b24e027cdd39daf6a43ec048b6e671acdaf4f4",
+            (79, 97): "20e8de5f0daba1436b1ca3cf9f387adc206c2cd9d671c46adab4f63502bef66c",
+            (98, 113): "1ee0eaa5589e30c6d190f947c48b17581a9145ebfd4c7c345f7d35d177da9930",
+            (114, 129): "4e5fa7b5524b85e0c79cd9a1471fc0fe77990a830d9d449f9bcdb891b38a6ab8",
+            (130, 145): "248542eff44e5dc2b405b141e7499ade3fc5549083d36759239d03c639fda01c",
+            (146, 163): "096c2f41cbb3dac2bab5060583c24e2deaad73d8a6f323930e0770ec48053bd7",
+            (164, 170): "cae0142d4443a031123d2e28dcd882ff0aa29a9a60d3ce0fee62b3494e4e4863",
+        },
+        "formula_paragraph_sha256": (
+            "1b4b51da804e02ab28ca016b7f8335ea213883fb6e0401e08db076bbb92c5b42"
+        ),
+        "claim_numbers": tuple(range(1, 14)),
+        "independent_claim_numbers": (1, 10, 13),
+        "figure_numbers": tuple(range(1, 23)),
+        "table_payload_sha256": (
+            "ada731403bc472f5daaeea0e4d8c1876deb464e43d9d752ca357b8223f6deb34",
+            "db22e1521c94afe25afcf3288edb58083fa6f8e5c8cd18353bb7fd6e09995247",
+            "1b5ea5b60abae101acf6d5ee9a8ee5895003ffe3e94c057ae3040888b1ca72ae",
+            "d36a592aea92330117fd899734c322d3e2762b6fe9c7fbff914c746d08ec5262",
+            "7fc2bf142f3f23bd711931835c741aac8b77e410bf7e093684526a61215ab001",
+            "a5177e46bde733b52b3cbfa3c27d1c445e61d63efaa726820b626d59383a766d",
+            "ba2041cc2087bcc280c7ef338d3f7f01af496bc4377dc85aba9ead2785a4ebfa",
+            "8d0685a8cfcf834246f45b003d442614ce227b567ad9c9324ea85bda4904aba4",
+            "0a1b95837e3a9c73a059884002b41b4ba7a73511259bc50567fbad1af16531f5",
+            "83b81a9d429f09d4a930768b353b3423bb19c023f7d9fd03ea1544243f393056",
+            "3506347a604f42909f4b74818d1a17a12170a7ef2e80f729c038df81715762c5",
+            "d9fd64f5d676d2563feee4e4554c9d2bf7add9e1a8f3a8e71a9b8d8b9e99009a",
+            "2524704969663c81dbccf019a55a48242a6bf52c3eded2e8efc72608178ae734",
+            "9fd14ac0f921b09d8f067118a6cc76493637d6dc185b03912fe513802e3106d4",
+            "a005f3fab288f95e85916196557a2125179f709eebf0fddf5b06ae27f301ca42",
+            "79d1e191e3a31626db1e9d351801816432720b51277f2951bff51d49769dbd40",
+            "d5c7f669d9f9eef277cb00ef76a29c8f95a078cb6708a4cf7c86583b85e8521f",
+            "408364c1c22985266a10f4f1c45c6b9cde2cbea0218cd899adde41b8336a0f47",
+            "f1ecb85be20c30589627f9d7c13b828e273bb469494ddb057773b82bf97a010c",
+            "20f4632ab270bcb3dfd1429aae43c659bb640892fa7e932b74af21c654a0eb2c",
+            "34529f51fb1255eac452bded2298c30fa274dbd3ef121a93389e353909b3efe4",
+            "73c8bbf1d2933e8539017459b1210a7cd5ed04f58a7c774d5e1c1c87d7084421",
+            "ec0d30e4701864977e79bbc63c98d9b5493645f5e8ec38f5d888e38e1370e66f",
+            "9e62a9db757759208fae34a2b90e655f2bd2f4384b7d955515af78cde3b18a09",
+            "6e5826b8220932281c1ac1830a199765a77d1e97881b9bfb8dbd0d9e6de37aee",
+            "c80055bc4d74f175ab24268df7cefefda3a581efecceda90bbb7cf42d459f8d5",
+            "03af23536b8ebf0e7c36274d2f74df935891b4d11cd6b23202bcc344bb360c5a",
+            "7a421363aae853b41d728485930275455deec9e5c7715bd2a7558d871bfd3113",
+            "210c8f7ceedc119293e64770acc7cc6345bfb86739a16e0869c32c79fab230ec",
+            "790991414369de1a8fc42bff5a297be4700a9fb39c2b890b2aae1ddb0310db67",
+            "124e32f7a703bf6816e7ac4a3b07222837f351a8bc4895f1141eb98f729aff1f",
+            "615e17bc0c918b97a94862ddfed465b2d36acdc78c64bcdebf520c60a88cee1b",
+            "7cf04da957deb91d3b87a52e2f289cd4c45c257be0d19ee098b22a9ff5967207",
+            "e4fe79ff2913bd1914ebf57babf407048d538383be1c998734bd5cbfe2cc7a55",
+            "d6cd7c9b15476396884d3f0c3fcc3b5e23302d0798fd4b4b2f7b69a63cf16ea3",
+            "8fe2e41b67b8c21f7351357edfa160d53513f4bd3e0bc497cb18cc2601f99256",
+            "a1f28fb2dca3e68fefeb830a19f3ed7f41b6f37c5a38d2cd60541dcb045bfccc",
+            "7c9780635ce2c87a5df941cfb762446b949e85fdbfb3b72224bfa2bb8b2488e7",
+            "84127cebebd6c9385edcff63aa12e289a72bf2ff4ece9dae3135c67aa0b77787",
+            "babaf131403e8d99728da108de3d2e7febffd806b8ff1f0ca9ee11129ee5e57a",
+            "2edd081de2c8e885514bdb303a45a4a1eeb6bc75ba370b99a888b1e57b795dd6",
+            "2c98c85145522b490df5b213e352cdf2c4e4af55cfdf183093ce3ab321cdead3",
+            "9085477248f7ff02a0b33be974d39a2d600ae5a982d8e120304429bc689642b8",
+            "9223cb8addd6763103b32ed31269a69b0754e905f85833ea037ff4c07e70321e",
+            "e734473015987287788356dac496ad335a00a53eebce2820fdc28106641f7df5",
+        ),
+        "table_payload_token_counts": (
+            73,
+            18,
+            22,
+            255,
+            73,
+            18,
+            22,
+            247,
+            57,
+            74,
+            18,
+            22,
+            255,
+            73,
+            18,
+            22,
+            247,
+            57,
+            73,
+            18,
+            22,
+            255,
+            73,
+            18,
+            22,
+            247,
+            57,
+            85,
+            20,
+            22,
+            301,
+            85,
+            20,
+            22,
+            293,
+            58,
+            85,
+            20,
+            22,
+            303,
+            85,
+            20,
+            22,
+            293,
+            58,
+        ),
+        "published_metadata": {
+            3: (13.72, 2.87, 19.82, 16.57, 7.87, 8.70, 2.35),
+            7: (20.00, 3.54, 13.60, 24.56, 7.92, 16.64, 2.35),
+            12: (15.00, 2.74, 18.17, 19.84, 9.63, 10.21, 2.35),
+            16: (20.99, 3.74, 12.96, 27.74, 6.53, 21.21, 2.35),
+            21: (13.00, 2.77, 20.95, 16.87, 6.66, 10.21, 2.35),
+            25: (20.98, 3.74, 12.97, 27.74, 6.53, 21.21, 2.35),
+            30: (22.00, 2.95, 12.51, 30.61, 8.96, 21.65, 2.35),
+            34: (27.01, 3.58, 10.18, 38.56, 7.35, 31.11, 2.35),
+            39: (18.30, 2.90, 14.21, 25.59, 7.33, 18.25, 2.35),
+            43: (25.00, 4.03, 10.27, 35.15, 10.89, 24.25, 2.35),
+        },
+        "surface_distance_sums_mm": {
+            1: 16.574,
+            5: 24.559,
+            10: 19.842,
+            14: 27.738,
+            19: 16.874,
+            23: 27.737,
+            28: 30.612,
+            32: 38.457,
+            37: 25.587,
+            41: 35.150,
+        },
+        "source_internal_sum_exception": {
+            "surface_table": 32,
+            "metadata_table": 34,
+            "difference_mm": 0.103,
+        },
+        "coefficient_radius_sign_exception": {
+            "example": 4,
+            "surface_ids": (8, 9, 10, 11, 12, 13),
+            "coefficient_tables": (31, 35),
+            "surface_tables": (28, 32),
+        },
+        "official_pdf": {
+            "path": ("data/patent-lake/uspto-ppubs-pdf/7f3e55c77a56cefb/US-12656584-B2.pdf"),
+            "bytes": 2_187_468,
+            "sha256": "7f3e55c77a56cefb87b93ea7dc562e6b9f4ea1bd192aa1f9de99a6c584bb648e",
+            "page_count": 45,
+            "single_raster_page_count": 45,
+            "text_layer_characters": 0,
+            "raster_dimensions": (2560, 3300),
+            "canonical_raster_set_sha256": (
+                "3d9add1e0ceb9febc9fe8c0202a9f9cb835c9a6cc94ad7511bd8a231958e67e9"
+            ),
+            "decoded_raster_set_sha256": (
+                "6d8c500d0d743a6f020b43e3cccef62176f681ca44fe00d8c20ce904276a72c7"
+            ),
+            "drawing_page_numbers": tuple(range(2, 24)),
+            "specification_page_numbers": tuple(range(24, 44)),
+            "table_page_numbers": tuple(range(29, 44)),
+            "claim_page_numbers": (44, 45),
+        },
+        "prior_publication": {
+            "html_path": (
+                "data/patent-lake/uspto-ppubs-html/US-PGPUB/5051d586bf1ceb98/US-20240134168-A1.html"
+            ),
+            "html_bytes": 127_238,
+            "html_sha256": ("5051d586bf1ceb98249134d480d75437f52cb76eb6f2b28e6da671d1f925a2b7"),
+            "normalized_characters": 112_144,
+            "normalized_sha256": (
+                "3e07223492134bb5f806d31a7a440eb77be7c4bcca11db76698e4d15d03cb5f3"
+            ),
+            "pdf_path": ("data/patent-lake/uspto-ppubs-pdf/efbbf43a0e577142/US-20240134168-A1.pdf"),
+            "pdf_bytes": 2_048_544,
+            "pdf_sha256": ("efbbf43a0e57714200b3380731a2bbf5be6be3af19a295cdd0b0f9a0d1bc6339"),
+            "pdf_page_count": 46,
+            "pdf_single_raster_page_count": 46,
+            "pdf_text_layer_characters": 0,
+            "pdf_raster_dimensions": (2560, 3300),
+            "pdf_canonical_raster_set_sha256": (
+                "de6ebe3fc2734e06444b37ca0e04faeb325dc7cc005ec083728b571b767e38f2"
+            ),
+            "pdf_decoded_raster_set_sha256": (
+                "f87a061be76d1971c6e0b6cee87f3b5302947073f3fd1033fcbc1b5970f48214"
             ),
         },
     }
@@ -34609,6 +34856,591 @@ def _classify_fso_transmitter_architecture_and_models_attempts(
     ]
 
 
+_OPPO_SHARED_REAR_TABLE_MARKER_PATTERN = re.compile(
+    r"TABLE-US-(?P<identifier>\d{5})\s+TABLE\s+(?P<number>\d+)\s+",
+    re.IGNORECASE,
+)
+_OPPO_SHARED_REAR_SURFACE_ROW_PATTERN = re.compile(
+    r"(?<!\S)(?P<index>\d+)\((?P<label>[^)]+)\)\s*",
+    re.IGNORECASE,
+)
+_OPPO_SHARED_REAR_COEFFICIENT_GROUP_PATTERN = re.compile(
+    r"(?P<header>(?:S\d+\([^)]+\)\s+)+)R\s+"
+    r"(?P<body>.*?)(?=(?:S\d+\([^)]+\)\s+)+R\s+|$)",
+    re.IGNORECASE,
+)
+
+
+def _parse_oppo_shared_rear_dual_focal_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the exact five paired OPPO short/long folded prescriptions.
+
+    The publication supplies axial ray-path distances but no mirror apertures or
+    three-dimensional coordinates.  Each plane mirror is therefore retained as
+    a material-free plane in the unfolded scalar sequential path.  The source's
+    terminal ``Image Plane`` row carries the filter-to-sensor air distance, so it
+    is represented as the filter exit and followed by a zero-thickness image.
+    """
+
+    profile = _OPPO_SHARED_REAR_DUAL_FOCAL_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _example, _mode, _paragraphs, _figures, _tables in (
+                _OPPO_SHARED_REAR_DUAL_FOCAL_ITEMS
+            )
+        ]
+
+    try:
+        _text, _paragraphs, payloads = _validate_oppo_shared_rear_dual_focal_document(
+            raw_text,
+            patent_id=patent_id,
+            profile=profile,
+        )
+    except Exception as exc:  # noqa: BLE001 - preserve all ten source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    parsed: dict[tuple[int, str], PatentPrescription] = {}
+    for (
+        number,
+        label,
+        example,
+        mode,
+        _paragraphs,
+        _figures,
+        tables,
+    ) in _OPPO_SHARED_REAR_DUAL_FOCAL_ITEMS:
+        surface_table, _focal_table, metadata_table, coefficient_table = tables
+        try:
+            prescription = _parse_oppo_shared_rear_dual_focal_prescription(
+                payloads[surface_table],
+                payloads[metadata_table],
+                payloads[coefficient_table],
+                patent_id=patent_id,
+                embodiment=label,
+                example=example,
+                mode=mode,
+                surface_table=surface_table,
+                metadata_table=metadata_table,
+                profile=profile,
+            )
+            parsed[(example, mode)] = prescription
+        except Exception as exc:  # noqa: BLE001 - fail each disclosed path independently
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=label,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                prescription=prescription,
+            )
+        )
+
+    if len(attempts) != 10:
+        return attempts_for_error(PatentParseError("OPPO ten-path denominator changed"))
+    if all(attempt.error is None for attempt in attempts):
+        try:
+            for example in range(1, 6):
+                short_rear = [
+                    surface for surface in parsed[(example, "short")].surfaces if surface.index >= 8
+                ]
+                long_rear = [
+                    surface for surface in parsed[(example, "long")].surfaces if surface.index >= 8
+                ]
+                if short_rear != long_rear:
+                    raise PatentParseError(
+                        f"OPPO example {example} shared rear group changed between paths"
+                    )
+        except Exception as exc:  # noqa: BLE001 - semantic family binding is all-or-none
+            return attempts_for_error(exc)
+    return attempts
+
+
+def _validate_oppo_shared_rear_dual_focal_document(
+    raw_text: str,
+    *,
+    patent_id: str,
+    profile: dict[str, Any],
+) -> tuple[str, dict[int, str], dict[int, str]]:
+    raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+    if raw_digest != profile["raw_document_sha256"]:
+        raise PatentParseError(f"OPPO shared-rear official raw text hash changed for {patent_id}")
+    if len(_OPPO_SHARED_REAR_DUAL_FOCAL_TITLE_PATTERN.findall(raw_text)) != 1:
+        raise PatentParseError("OPPO shared-rear title binding changed")
+
+    text = normalize_patent_text(raw_text)
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile["normalized_text_sha256"]:
+        raise PatentParseError(f"OPPO shared-rear normalized text hash changed for {patent_id}")
+    for marker, expected in profile["identity_markers"].items():
+        observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+        if observed != expected:
+            raise PatentParseError(
+                f"OPPO shared-rear identity marker {marker!r} occurs {observed}; "
+                f"expected {expected}"
+            )
+
+    section_markers = profile["section_markers"]
+    section_names = tuple(section_markers)
+    try:
+        section_starts = {name: text.index(marker) for name, marker in section_markers.items()}
+    except ValueError as exc:
+        raise PatentParseError("OPPO shared-rear section boundary changed") from exc
+    if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+        raise PatentParseError("OPPO shared-rear section ordering changed")
+    sections = {
+        name: text[
+            section_starts[name] : (
+                section_starts[section_names[index + 1]]
+                if index + 1 < len(section_names)
+                else len(text)
+            )
+        ]
+        for index, name in enumerate(section_names)
+    }
+    for name, expected_digest in profile["section_sha256"].items():
+        if hashlib.sha256(sections[name].encode("utf-8")).hexdigest() != expected_digest:
+            raise PatentParseError(f"OPPO shared-rear {name} section changed")
+
+    description_start = raw_text.find("<h3>Description</h3>")
+    claims_start = raw_text.find("<h3>Claims</h3>")
+    if description_start < 0 or claims_start <= description_start:
+        raise PatentParseError("OPPO shared-rear raw description boundary changed")
+    raw_description = raw_text[description_start:claims_start]
+    paragraph_matches = list(re.finditer(r"<br\s*/?>\((\d+)\)", raw_description, re.IGNORECASE))
+    if tuple(int(match.group(1)) for match in paragraph_matches) != tuple(range(1, 171)):
+        raise PatentParseError("OPPO shared-rear paragraphs 1-170 changed")
+    paragraphs = {
+        int(match.group(1)): normalize_patent_text(
+            raw_description[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(raw_description)
+                )
+            ]
+        )
+        for index, match in enumerate(paragraph_matches)
+    }
+    for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+        start, end = bounds
+        span = " ".join(paragraphs[number] for number in range(start, end + 1))
+        if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+            raise PatentParseError(f"OPPO shared-rear paragraph span {start}-{end} changed")
+
+    if (
+        hashlib.sha256(paragraphs[76].encode("utf-8")).hexdigest()
+        != profile["formula_paragraph_sha256"]
+    ):
+        raise PatentParseError("OPPO shared-rear asphere formula paragraph changed")
+    if (
+        "Z=C×h 2/{1+(1 -K×C 2 ×h 2)1⁄2 }+ΣAn×h n" not in paragraphs[76]
+        or "integer greater than or equal to 3" not in paragraphs[77]
+        or "K is a conic constant (second-order aspheric coefficient)" not in paragraphs[78]
+    ):
+        raise PatentParseError("OPPO shared-rear asphere convention binding changed")
+    if (
+        "Di” indicates a value of a distance on the optical axis between the i-th "
+        "surface and the (i+1)-th surface (mm)."
+        not in paragraphs[75]
+        or "wavelength 587.6 nm" not in paragraphs[75]
+    ):
+        raise PatentParseError("OPPO shared-rear distance/material unit definition changed")
+
+    claim_matches = list(
+        re.finditer(
+            r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+            sections["claims"],
+            re.IGNORECASE,
+        )
+    )
+    claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+    if claim_numbers != profile["claim_numbers"]:
+        raise PatentParseError("OPPO shared-rear claims 1-13 changed")
+    independent = tuple(
+        number
+        for number, match in zip(claim_numbers, claim_matches, strict=True)
+        if "according to claim"
+        not in sections["claims"][
+            match.start() : (
+                claim_matches[number].start()
+                if number < len(claim_matches)
+                else len(sections["claims"])
+            )
+        ].casefold()
+    )
+    if independent != profile["independent_claim_numbers"]:
+        raise PatentParseError("OPPO shared-rear independent-claim binding changed")
+
+    brief = " ".join(paragraphs[number] for number in range(1, 24))
+    figures = tuple(
+        int(value) for value in re.findall(r"FIG\.\s*(\d+)\s+is\s+a", brief, re.IGNORECASE)
+    )
+    if figures != profile["figure_numbers"]:
+        raise PatentParseError("OPPO shared-rear 22-panel figure denominator changed")
+
+    payloads = _oppo_shared_rear_dual_focal_table_payloads(raw_text)
+    if tuple(payloads) != tuple(range(1, 46)):
+        raise PatentParseError("OPPO shared-rear TABLE sequence is not 1-45")
+    payload_hashes = tuple(
+        hashlib.sha256(payloads[number].encode("utf-8")).hexdigest() for number in range(1, 46)
+    )
+    if payload_hashes != profile["table_payload_sha256"]:
+        raise PatentParseError("OPPO shared-rear exact TABLE payloads changed")
+    token_counts = tuple(len(payloads[number].split()) for number in range(1, 46))
+    if token_counts != profile["table_payload_token_counts"]:
+        raise PatentParseError("OPPO shared-rear TABLE token coverage changed")
+    if tuple(number for number in payloads if number % 9 == 0) != (9, 18, 27, 36, 45):
+        raise PatentParseError("OPPO shared-rear five conditional-table bindings changed")
+    return text, paragraphs, payloads
+
+
+def _oppo_shared_rear_dual_focal_table_payloads(raw_text: str) -> dict[int, str]:
+    matches = list(_OPPO_SHARED_REAR_TABLE_MARKER_PATTERN.finditer(raw_text))
+    if [int(match.group("number")) for match in matches] != list(range(1, 46)):
+        raise PatentParseError("OPPO shared-rear flattened TABLE denominator changed")
+    if [int(match.group("identifier")) for match in matches] != list(range(1, 46)):
+        raise PatentParseError("OPPO shared-rear TABLE-US identifiers changed")
+
+    payloads: dict[int, str] = {}
+    for index, match in enumerate(matches):
+        limit = matches[index + 1].start() if index + 1 < len(matches) else len(raw_text)
+        fragment = raw_text[match.start() : limit]
+        paragraph_end = re.search(r"<br\s*/?>\s*\(\d+\)", fragment, re.IGNORECASE)
+        if paragraph_end is None:
+            raise PatentParseError(
+                f"OPPO shared-rear TABLE {match.group('number')} raw boundary changed"
+            )
+        payloads[int(match.group("number"))] = normalize_patent_text(
+            fragment[: paragraph_end.start()]
+        )
+    return payloads
+
+
+def _parse_oppo_shared_rear_dual_focal_prescription(
+    surface_text: str,
+    metadata_text: str,
+    coefficient_text: str,
+    *,
+    patent_id: str,
+    embodiment: str,
+    example: int,
+    mode: str,
+    surface_table: int,
+    metadata_table: int,
+    profile: dict[str, Any],
+) -> PatentPrescription:
+    metadata = _parse_oppo_shared_rear_metadata_table(
+        metadata_text,
+        mode=mode,
+        table_number=metadata_table,
+    )
+    if metadata != profile["published_metadata"][metadata_table]:
+        raise PatentParseError(f"OPPO example {example} {mode} published metadata changed")
+    surfaces = _parse_oppo_shared_rear_surface_table(
+        surface_text,
+        example=example,
+        mode=mode,
+    )
+    observed_sum = sum(surface.thickness_mm or 0.0 for surface in surfaces)
+    if not math.isclose(
+        observed_sum,
+        profile["surface_distance_sums_mm"][surface_table],
+        rel_tol=0.0,
+        abs_tol=1e-9,
+    ):
+        raise PatentParseError(f"OPPO example {example} {mode} source Di sum changed")
+
+    coefficients, exact_radii = _parse_oppo_shared_rear_coefficient_table(
+        coefficient_text,
+        surfaces=surfaces,
+        example=example,
+        mode=mode,
+    )
+    for surface in surfaces:
+        if surface.index in coefficients:
+            surface.radius_mm = exact_radii[surface.index]
+            surface.asphere_coefficients.update(coefficients[surface.index])
+            surface.surface_type = "ASP"
+
+    prescription = PatentPrescription(
+        patent_id=patent_id,
+        embodiment=embodiment,
+        focal_length_mm=metadata[0],
+        f_number=metadata[1],
+        hfov_deg=metadata[2] / 2.0,
+        surfaces=surfaces,
+        reference_wavelength_um=0.5876,
+    )
+    _validate_prescription_materials(prescription)
+    if any((surface.thickness_mm or 0.0) < 0.0 for surface in surfaces):
+        raise PatentParseError(
+            f"OPPO example {example} {mode} retained a negative sequential thickness"
+        )
+    return prescription
+
+
+def _parse_oppo_shared_rear_metadata_table(
+    table_text: str,
+    *,
+    mode: str,
+    table_number: int,
+) -> tuple[float, float, float, float, float, float, float]:
+    suffix = "w" if mode == "short" else "t"
+    path_prefix = "W" if mode == "short" else "T"
+    pattern = re.compile(
+        rf"TABLE-US-\d{{5}}\s+TABLE\s+{table_number}\s+"
+        rf"f\s+{suffix}\s+(?P<f>{NUMBER_PATTERN})\s+"
+        rf"Fno\s+(?P<fno>{NUMBER_PATTERN})\s+"
+        rf"2ω\s+(?P<full_field>{NUMBER_PATTERN})\s+"
+        rf"Σ\s+{path_prefix}\s+d\s+(?P<total>{NUMBER_PATTERN})\s+"
+        rf"Σ\s+{path_prefix}Ld1\s+(?P<front>{NUMBER_PATTERN})\s+"
+        rf"Σ\s+{path_prefix}Ld2\s+(?P<rear>{NUMBER_PATTERN})\s+"
+        rf"Yh_{suffix}\s+(?P<image_height>{NUMBER_PATTERN})",
+        re.IGNORECASE,
+    )
+    match = pattern.fullmatch(table_text)
+    if match is None:
+        raise PatentParseError(f"OPPO {mode} metadata TABLE {table_number} layout changed")
+    return tuple(
+        _parse_number(match.group(field))
+        for field in (
+            "f",
+            "fno",
+            "full_field",
+            "total",
+            "front",
+            "rear",
+            "image_height",
+        )
+    )
+
+
+def _parse_oppo_shared_rear_surface_table(
+    table_text: str,
+    *,
+    example: int,
+    mode: str,
+) -> list[PatentSurface]:
+    if re.search(r"\bSi\s+Ri\s+Di\s+Ndi\s+ν\s+di\b", table_text) is None:
+        raise PatentParseError(f"OPPO example {example} {mode} surface header changed")
+    starts = list(_OPPO_SHARED_REAR_SURFACE_ROW_PATTERN.finditer(table_text))
+    expected_last = 13 if example <= 3 else 15
+    if [int(match.group("index")) for match in starts] != list(range(1, expected_last + 1)):
+        raise PatentParseError(f"OPPO example {example} {mode} surface denominator changed")
+
+    surfaces: list[PatentSurface] = []
+    stop_count = mirror_count = filter_count = published_image_count = 0
+    for position, match in enumerate(starts):
+        index = int(match.group("index"))
+        source_label = re.sub(r"\s+", " ", match.group("label")).strip()
+        end = starts[position + 1].start() if position + 1 < len(starts) else len(table_text)
+        value_region = re.sub(
+            r"(?<!\S)-\s+(?=\d)",
+            "-",
+            table_text[match.end() : end],
+        )
+        values = [_parse_number(value) for value in re.findall(NUMBER_PATTERN, value_region, re.I)]
+        if source_label == "Virtual Surface":
+            if index != 1 or values:
+                raise PatentParseError(f"OPPO example {example} {mode} virtual surface row changed")
+            continue
+
+        radius = math.inf
+        material = None
+        nd = vd = None
+        surface_type = None
+        if re.fullmatch(r"L\d+(?:w|t)?\s+(?:1st|2nd)\s+Surface", source_label, re.I):
+            if len(values) not in {2, 4}:
+                raise PatentParseError(
+                    f"OPPO example {example} {mode} lens surface {index} row changed"
+                )
+            radius, thickness = values[:2]
+            if len(values) == 4:
+                material = "Glass"
+                nd, vd = values[2:]
+                _validate_material_indices(surface_index=index, nd=nd, vd=vd)
+            label = source_label
+        elif source_label == "Aperture Stop":
+            if len(values) != 1:
+                raise PatentParseError(f"OPPO example {example} {mode} aperture-stop row changed")
+            stop_count += 1
+            label = "Stop"
+            thickness = values[0]
+        elif source_label in {"First Mirror", "Second Mirror"}:
+            if len(values) != 1:
+                raise PatentParseError(f"OPPO example {example} {mode} mirror row changed")
+            mirror_count += 1
+            label = source_label
+            thickness = values[0]
+        elif source_label == "Optical Filter":
+            if len(values) != 3:
+                raise PatentParseError(f"OPPO example {example} {mode} optical-filter row changed")
+            filter_count += 1
+            label = "Optical filter entry"
+            thickness, nd, vd = values
+            material = "Glass"
+            _validate_material_indices(surface_index=index, nd=nd, vd=vd)
+        elif source_label == "Image Plane":
+            if len(values) != 1:
+                raise PatentParseError(
+                    f"OPPO example {example} {mode} published image-plane row changed"
+                )
+            published_image_count += 1
+            label = "Optical filter exit (published Image Plane row)"
+            thickness = values[0]
+        else:
+            raise PatentParseError(
+                f"OPPO example {example} {mode} unsupported surface label {source_label!r}"
+            )
+        surfaces.append(
+            PatentSurface(
+                index=index,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=surface_type,
+            )
+        )
+
+    if (stop_count, mirror_count, filter_count, published_image_count) != (1, 1, 1, 1):
+        raise PatentParseError(f"OPPO example {example} {mode} plane-surface roles changed")
+    expected_mirror = "First Mirror" if mode == "short" else "Second Mirror"
+    if sum(surface.label == expected_mirror for surface in surfaces) != 1:
+        raise PatentParseError(f"OPPO example {example} {mode} path-to-mirror binding changed")
+    surfaces.append(
+        PatentSurface(
+            index=expected_last + 1,
+            label="Image",
+            radius_mm=math.inf,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    return surfaces
+
+
+def _parse_oppo_shared_rear_coefficient_table(
+    table_text: str,
+    *,
+    surfaces: list[PatentSurface],
+    example: int,
+    mode: str,
+) -> tuple[dict[int, dict[str, float]], dict[int, float]]:
+    groups = list(_OPPO_SHARED_REAR_COEFFICIENT_GROUP_PATTERN.finditer(table_text))
+    if len(groups) != 3:
+        raise PatentParseError(
+            f"OPPO example {example} {mode} coefficient group denominator changed"
+        )
+    expected_surface_ids = [
+        surface.index
+        for surface in surfaces
+        if re.fullmatch(r"L\d+(?:w|t)?\s+(?:1st|2nd)\s+Surface", surface.label, re.I)
+    ]
+    observed_surface_ids: list[int] = []
+    coefficients: dict[int, dict[str, float]] = {}
+    exact_radii: dict[int, float] = {}
+    surface_by_index = {surface.index: surface for surface in surfaces}
+    expected_rows = ["R", "K", *(f"A{order}" for order in range(3, 21))]
+
+    for group in groups:
+        surface_ids = [int(value) for value in re.findall(r"S(\d+)\(", group.group("header"), re.I)]
+        observed_surface_ids.extend(surface_ids)
+        body = "R " + group.group("body")
+        row_matches = list(re.finditer(r"(?<!\S)(R|K|A(?:[3-9]|1\d|20))\s+", body, re.I))
+        if [match.group(1).upper() for match in row_matches] != expected_rows:
+            raise PatentParseError(f"OPPO example {example} {mode} R/K/A3-A20 coverage changed")
+        for row_index, row_match in enumerate(row_matches):
+            end = (
+                row_matches[row_index + 1].start()
+                if row_index + 1 < len(row_matches)
+                else len(body)
+            )
+            value_region = re.sub(
+                r"(?<!\S)-\s+(?=\d)",
+                "-",
+                body[row_match.end() : end],
+            )
+            values = [
+                _parse_number(value) for value in re.findall(NUMBER_PATTERN, value_region, re.I)
+            ]
+            if len(values) != len(surface_ids):
+                raise PatentParseError(
+                    f"OPPO example {example} {mode} coefficient row "
+                    f"{row_match.group(1)} width changed"
+                )
+            label = row_match.group(1).upper()
+            for surface_id, value in zip(surface_ids, values, strict=True):
+                if label == "R":
+                    rounded_radius = surface_by_index[surface_id].radius_mm
+                    same_sign = rounded_radius is not None and math.isclose(
+                        rounded_radius, value, rel_tol=0.0, abs_tol=0.000501
+                    )
+                    # Official Tables 28/32 reverse every shared-rear R sign in
+                    # example 4, while exact Tables 31/35 and the published
+                    # L3/L4/L5 focal-length signs agree with one another.  This
+                    # narrowly source-locked exception selects the exact R rows.
+                    published_sign_exception = (
+                        example == 4
+                        and surface_id in {8, 9, 10, 11, 12, 13}
+                        and rounded_radius is not None
+                        and math.isclose(
+                            rounded_radius,
+                            -value,
+                            rel_tol=0.0,
+                            abs_tol=0.000501,
+                        )
+                    )
+                    if not same_sign and not published_sign_exception:
+                        raise PatentParseError(
+                            f"OPPO example {example} {mode} exact radius S{surface_id} "
+                            "does not reconcile to the surface table"
+                        )
+                    exact_radii[surface_id] = value
+                elif label == "K":
+                    # Source: sqrt(1-Ks*C^2*h^2); CODE V/Zemax:
+                    # sqrt(1-(1+Kcv)*C^2*h^2).  Thus Kcv = Ks - 1 exactly.
+                    coefficients.setdefault(surface_id, {})["K"] = value - 1.0
+                else:
+                    order = int(label[1:])
+                    if order % 2:
+                        if value != 0.0:
+                            raise PatentParseError(
+                                f"OPPO example {example} {mode} unsupported non-zero odd "
+                                f"asphere S{surface_id}:A{order}={value:.3g}"
+                            )
+                        continue
+                    coefficients.setdefault(surface_id, {})[ASPHERE_ORDER_TO_CODEV[order]] = value
+
+    if observed_surface_ids != expected_surface_ids:
+        raise PatentParseError(f"OPPO example {example} {mode} asphere surface coverage changed")
+    if set(coefficients) != set(expected_surface_ids) or set(exact_radii) != set(
+        expected_surface_ids
+    ):
+        raise PatentParseError(f"OPPO example {example} {mode} exact coefficient binding changed")
+    return coefficients, exact_radii
 _COREPHOTONICS_DOUBLE_FOLDED_META_PATTERN = re.compile(
     rf"\b(?:Example|Embodiment)\s+(?P<system>\d+)\s+"
     rf"EFL\s*=\s*(?P<efl>{NUMBER_PATTERN})\s*mm,?\s+"

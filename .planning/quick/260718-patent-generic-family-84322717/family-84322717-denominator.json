@@ -1,0 +1,463 @@
+{
+  "schema_version": 1,
+  "family_id": "84322717",
+  "root_id": "US-12656584",
+  "publication_id": "US-12656584-B2",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_primary_publications": 1,
+    "same_application_corroborating_publications": 1,
+    "brief_drawing_numbered_paragraphs": 23,
+    "shared_architecture_and_definition_numbered_paragraphs": 55,
+    "example_numbered_paragraphs": 85,
+    "closing_numbered_paragraphs": 7,
+    "total_numbered_paragraphs": 170,
+    "claims": 13,
+    "independent_claim_families": 3,
+    "declared_figure_panels": 22,
+    "flattened_tables": 45,
+    "surface_prescription_tables": 10,
+    "lens_focal_length_tables": 10,
+    "system_metadata_tables": 10,
+    "asphere_coefficient_tables": 10,
+    "conditional_expression_tables": 5,
+    "ordered_published_surface_rows": 138,
+    "modeled_sequential_surfaces_including_appended_images": 138,
+    "asphere_surfaces": 88,
+    "coefficient_rows_per_asphere_group": 20,
+    "asphere_numeric_cells_including_exact_r_and_k": 1760,
+    "published_odd_asphere_cells": 792,
+    "published_nonzero_odd_asphere_cells": 0,
+    "published_even_asphere_cells": 792,
+    "inline_formula_pairs": 31,
+    "source_disclosed_paired_examples": 5,
+    "source_disclosed_optical_prescription_items": 10,
+    "camera_module_or_imaging_device_wrappers_with_additional_prescriptions": 0,
+    "replayed_ledger_items": 10,
+    "converted_pending_intake_items": 10,
+    "formal_intake_items": 0,
+    "official_pdf_files": 2,
+    "official_pdf_pages": 91,
+    "retained_primary_page_rasters": 45,
+    "official_primary_drawing_sheets": 22,
+    "official_primary_table_pages": 15,
+    "official_primary_claim_pages": 2,
+    "source_internal_arithmetic_exceptions": 1,
+    "source_internal_radius_sign_exception_groups": 1,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_source_items": 0
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "OPPO example 1 short focal length",
+      "example": 1,
+      "path": "short",
+      "paragraphs": [
+        79,
+        97
+      ],
+      "figures": [
+        3,
+        5
+      ],
+      "tables": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "condition_table": 9,
+      "surface_rows": 13,
+      "asphere_surfaces": 8,
+      "focal_length_mm": 13.72,
+      "f_number": 2.87,
+      "published_full_field_deg": 19.82,
+      "parsed_half_field_deg": 9.91,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 16.57,
+      "surface_row_distance_sum_mm": 16.574,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "9e0451a098de596c"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "OPPO example 1 long focal length",
+      "example": 1,
+      "path": "long",
+      "paragraphs": [
+        79,
+        97
+      ],
+      "figures": [
+        4,
+        6
+      ],
+      "tables": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "condition_table": 9,
+      "surface_rows": 13,
+      "asphere_surfaces": 8,
+      "focal_length_mm": 20.0,
+      "f_number": 3.54,
+      "published_full_field_deg": 13.6,
+      "parsed_half_field_deg": 6.8,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 24.56,
+      "surface_row_distance_sum_mm": 24.559,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "50c70f5206d99925"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "OPPO example 2 short focal length",
+      "example": 2,
+      "path": "short",
+      "paragraphs": [
+        98,
+        113
+      ],
+      "figures": [
+        7,
+        9
+      ],
+      "tables": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "condition_table": 18,
+      "surface_rows": 13,
+      "asphere_surfaces": 8,
+      "focal_length_mm": 15.0,
+      "f_number": 2.74,
+      "published_full_field_deg": 18.17,
+      "parsed_half_field_deg": 9.085,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 19.84,
+      "surface_row_distance_sum_mm": 19.842,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "a3d08b003783e83d"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "OPPO example 2 long focal length",
+      "example": 2,
+      "path": "long",
+      "paragraphs": [
+        98,
+        113
+      ],
+      "figures": [
+        8,
+        10
+      ],
+      "tables": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "condition_table": 18,
+      "surface_rows": 13,
+      "asphere_surfaces": 8,
+      "focal_length_mm": 20.99,
+      "f_number": 3.74,
+      "published_full_field_deg": 12.96,
+      "parsed_half_field_deg": 6.48,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 27.74,
+      "surface_row_distance_sum_mm": 27.738,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "ccc6f6182346b57c"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "OPPO example 3 short focal length",
+      "example": 3,
+      "path": "short",
+      "paragraphs": [
+        114,
+        129
+      ],
+      "figures": [
+        11,
+        13
+      ],
+      "tables": [
+        19,
+        20,
+        21,
+        22
+      ],
+      "condition_table": 27,
+      "surface_rows": 13,
+      "asphere_surfaces": 8,
+      "focal_length_mm": 13.0,
+      "f_number": 2.77,
+      "published_full_field_deg": 20.95,
+      "parsed_half_field_deg": 10.475,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 16.87,
+      "surface_row_distance_sum_mm": 16.874,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "aa24129aa75feb46"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "OPPO example 3 long focal length",
+      "example": 3,
+      "path": "long",
+      "paragraphs": [
+        114,
+        129
+      ],
+      "figures": [
+        12,
+        14
+      ],
+      "tables": [
+        23,
+        24,
+        25,
+        26
+      ],
+      "condition_table": 27,
+      "surface_rows": 13,
+      "asphere_surfaces": 8,
+      "focal_length_mm": 20.98,
+      "f_number": 3.74,
+      "published_full_field_deg": 12.97,
+      "parsed_half_field_deg": 6.485,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 27.74,
+      "surface_row_distance_sum_mm": 27.737,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "c8be2fbdad7ae496"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "OPPO example 4 short focal length",
+      "example": 4,
+      "path": "short",
+      "paragraphs": [
+        130,
+        145
+      ],
+      "figures": [
+        15,
+        17
+      ],
+      "tables": [
+        28,
+        29,
+        30,
+        31
+      ],
+      "condition_table": 36,
+      "surface_rows": 15,
+      "asphere_surfaces": 10,
+      "focal_length_mm": 22.0,
+      "f_number": 2.95,
+      "published_full_field_deg": 12.51,
+      "parsed_half_field_deg": 6.255,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 30.61,
+      "surface_row_distance_sum_mm": 30.612,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "c78f64ab7a7abdc2"
+    },
+    {
+      "embodiment_number": 8,
+      "label": "OPPO example 4 long focal length",
+      "example": 4,
+      "path": "long",
+      "paragraphs": [
+        130,
+        145
+      ],
+      "figures": [
+        16,
+        18
+      ],
+      "tables": [
+        32,
+        33,
+        34,
+        35
+      ],
+      "condition_table": 36,
+      "surface_rows": 15,
+      "asphere_surfaces": 10,
+      "focal_length_mm": 27.01,
+      "f_number": 3.58,
+      "published_full_field_deg": 10.18,
+      "parsed_half_field_deg": 5.09,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 38.56,
+      "surface_row_distance_sum_mm": 38.457,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "91c102e917a35ca6"
+    },
+    {
+      "embodiment_number": 9,
+      "label": "OPPO example 5 short focal length",
+      "example": 5,
+      "path": "short",
+      "paragraphs": [
+        146,
+        163
+      ],
+      "figures": [
+        19,
+        21
+      ],
+      "tables": [
+        37,
+        38,
+        39,
+        40
+      ],
+      "condition_table": 45,
+      "surface_rows": 15,
+      "asphere_surfaces": 10,
+      "focal_length_mm": 18.3,
+      "f_number": 2.9,
+      "published_full_field_deg": 14.21,
+      "parsed_half_field_deg": 7.105,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 25.59,
+      "surface_row_distance_sum_mm": 25.587,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "2e5ee9aa3e418b62"
+    },
+    {
+      "embodiment_number": 10,
+      "label": "OPPO example 5 long focal length",
+      "example": 5,
+      "path": "long",
+      "paragraphs": [
+        146,
+        163
+      ],
+      "figures": [
+        20,
+        22
+      ],
+      "tables": [
+        41,
+        42,
+        43,
+        44
+      ],
+      "condition_table": 45,
+      "surface_rows": 15,
+      "asphere_surfaces": 10,
+      "focal_length_mm": 25.0,
+      "f_number": 4.03,
+      "published_full_field_deg": 10.27,
+      "parsed_half_field_deg": 5.135,
+      "published_image_height_mm": 2.35,
+      "published_path_length_mm": 35.15,
+      "surface_row_distance_sum_mm": 35.15,
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "52cf36fc216fcf18"
+    }
+  ],
+  "context_ranges": [
+    {
+      "role": "brief drawing declarations",
+      "paragraphs": [
+        1,
+        23
+      ]
+    },
+    {
+      "role": "architecture, definitions and asphere convention",
+      "paragraphs": [
+        24,
+        78
+      ]
+    },
+    {
+      "role": "first example",
+      "paragraphs": [
+        79,
+        97
+      ]
+    },
+    {
+      "role": "second example",
+      "paragraphs": [
+        98,
+        113
+      ]
+    },
+    {
+      "role": "third example",
+      "paragraphs": [
+        114,
+        129
+      ]
+    },
+    {
+      "role": "fourth example",
+      "paragraphs": [
+        130,
+        145
+      ]
+    },
+    {
+      "role": "fifth example",
+      "paragraphs": [
+        146,
+        163
+      ]
+    },
+    {
+      "role": "closing boilerplate",
+      "paragraphs": [
+        164,
+        170
+      ]
+    }
+  ],
+  "representation_boundary": {
+    "full_field_to_half_field_transform": "HFOV = published 2? / 2",
+    "source_conic_formula": "sqrt(1-K_source*C^2*h^2)",
+    "codev_conic_formula": "sqrt(1-(1+K_codev)*C^2*h^2)",
+    "conic_transform": "K_codev = K_source - 1",
+    "all_published_k_source_values": 0.0,
+    "all_written_k_codev_values": -1.0,
+    "all_odd_a3_through_a19_values_zero": true,
+    "mirrors_retained_as_material_free_planes": true,
+    "mirror_apertures_or_3d_coordinates_synthesized": false,
+    "published_image_plane_row_represented_as_filter_exit_with_terminal_air_gap": true,
+    "direct_image_height_substituted_for_pipeline_sanity_formula": false,
+    "conversion_state_is_formal_intake": false
+  },
+  "formal_outputs": {
+    "case_index_entries": 0,
+    "case_json": 0,
+    "intake_manifests": 0,
+    "expert_backed_items": 0
+  }
+}

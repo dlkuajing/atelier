@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260718-patent-generic-family-84322717/generic-residual-after-2.json",
+  "result_set_sha256": "ed561776087212b38801f262b725409b314ccf1b9cb1c2be86195ca58f1b21bb",
+  "generic_residual_roots": 74,
+  "generic_residual_items": 74,
+  "next_exact_group": {
+    "family_id": "63165840",
+    "root_ids": [
+      "US-10197774"
+    ],
+    "publication_ids": [
+      "US-10197774-B1"
+    ],
+    "application_number": "15/864483",
+    "title": "Camera optical lens",
+    "first_inventor": "Teraoka; Hiroyuki",
+    "applicant": "AAC Technologies Pte. Ltd.",
+    "assignee": "AAC TECHNOLOGIES PTE. LTD.",
+    "layout_signature": "cdb378a2ea907881cf8f5905ecec12d8ad312afe330cf196be9fa46b41ac0a49",
+    "layout_signature_count": 1,
+    "table_count": 13,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 34,
+      "example_anchor": 0,
+      "f_number": 4,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/1887b838473fcde0/US-10197774-B1.html",
+      "sha256": "1887b838473fcde0aa10edc6b1d88235c8fa194523749ff63dbe3e68deb1a696"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

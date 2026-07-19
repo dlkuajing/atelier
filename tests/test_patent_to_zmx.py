@@ -35731,6 +35731,587 @@ def test_oflm_seven_lens_missing_image_height_queue_and_evidence() -> None:
     assert evidence["saturation_complete"] is False
 
 
+def _oppo_shared_rear_dual_focal_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "4c49c1f0f7b88434"
+        / "US-12656584-B2.html"
+    )
+    return "US-12656584-B2", source_path.read_text(encoding="utf-8")
+
+
+def test_oppo_shared_rear_dual_focal_reconciles_all_ten_paths() -> None:
+    patent_id, raw_text = _oppo_shared_rear_dual_focal_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert len(attempts) == 10
+    assert all(attempt.error is None for attempt in attempts)
+    prescriptions = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in prescriptions)
+    parsed = [prescription for prescription in prescriptions if prescription is not None]
+    assert [
+        (
+            prescription.focal_length_mm,
+            prescription.f_number,
+            prescription.hfov_deg,
+            prescription.reference_wavelength_um,
+        )
+        for prescription in parsed
+    ] == [
+        (13.72, 2.87, 9.91, 0.5876),
+        (20.00, 3.54, 6.80, 0.5876),
+        (15.00, 2.74, 9.085, 0.5876),
+        (20.99, 3.74, 6.48, 0.5876),
+        (13.00, 2.77, 10.475, 0.5876),
+        (20.98, 3.74, 6.485, 0.5876),
+        (22.00, 2.95, 6.255, 0.5876),
+        (27.01, 3.58, 5.09, 0.5876),
+        (18.30, 2.90, 7.105, 0.5876),
+        (25.00, 4.03, 5.135, 0.5876),
+    ]
+    assert [len(prescription.surfaces) for prescription in parsed] == [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        15,
+        15,
+        15,
+        15,
+    ]
+    assert [
+        pytest.approx(sum(surface.thickness_mm or 0.0 for surface in prescription.surfaces))
+        for prescription in parsed
+    ] == [
+        16.574,
+        24.559,
+        19.842,
+        27.738,
+        16.874,
+        27.737,
+        30.612,
+        38.457,
+        25.587,
+        35.150,
+    ]
+
+    expected_terminal_air = (0.072, 0.072, 0.202, 0.202, 0.201, 0.201, 0.103, 0.103, 0.103, 0.103)
+    for prescription, terminal_air in zip(parsed, expected_terminal_air, strict=True):
+        assert prescription.surfaces[-3].label == "Optical filter entry"
+        assert prescription.surfaces[-3].material == "Glass"
+        assert prescription.surfaces[-2].label == (
+            "Optical filter exit (published Image Plane row)"
+        )
+        assert prescription.surfaces[-2].material is None
+        assert prescription.surfaces[-2].thickness_mm == terminal_air
+        assert prescription.surfaces[-1].label == "Image"
+        assert prescription.surfaces[-1].thickness_mm == 0.0
+        mirror = next(surface for surface in prescription.surfaces if "Mirror" in surface.label)
+        assert math.isinf(mirror.radius_mm)
+        assert mirror.material is None
+        aspheres = [surface for surface in prescription.surfaces if surface.surface_type == "ASP"]
+        assert aspheres
+        assert all(
+            set(surface.asphere_coefficients) == {"K", "A", "B", "C", "D", "E", "F", "G", "H", "J"}
+            for surface in aspheres
+        )
+        assert all(surface.asphere_coefficients["K"] == -1.0 for surface in aspheres)
+
+    for example in range(5):
+        short = parsed[example * 2]
+        long = parsed[example * 2 + 1]
+        assert [surface for surface in short.surfaces if surface.index >= 8] == [
+            surface for surface in long.surfaces if surface.index >= 8
+        ]
+
+
+def test_oppo_shared_rear_dual_focal_source_exceptions_are_explicit_and_narrow() -> None:
+    patent_id, raw_text = _oppo_shared_rear_dual_focal_source()
+    profile = patent_to_zmx._OPPO_SHARED_REAR_DUAL_FOCAL_SOURCE_PROFILES[patent_id]
+    payloads = patent_to_zmx._oppo_shared_rear_dual_focal_table_payloads(raw_text)
+    attempts = patent_to_zmx._parse_prescription_attempts(raw_text, patent_id=patent_id)
+    parsed = [attempt.prescription for attempt in attempts]
+    assert all(prescription is not None for prescription in parsed)
+
+    exception = profile["coefficient_radius_sign_exception"]
+    assert exception == {
+        "example": 4,
+        "surface_ids": (8, 9, 10, 11, 12, 13),
+        "coefficient_tables": (31, 35),
+        "surface_tables": (28, 32),
+    }
+    rounded = patent_to_zmx._parse_oppo_shared_rear_surface_table(
+        payloads[28],
+        example=4,
+        mode="short",
+    )
+    assert [surface.radius_mm for surface in rounded if 8 <= surface.index <= 13] == [
+        -18.649,
+        -16.960,
+        -8.702,
+        43.701,
+        14.661,
+        -11.794,
+    ]
+    example_4_short = parsed[6]
+    assert example_4_short is not None
+    assert [
+        surface.radius_mm for surface in example_4_short.surfaces if 8 <= surface.index <= 13
+    ] == [
+        18.64896654,
+        16.95974663,
+        8.702493241,
+        -43.70077847,
+        -14.66066909,
+        11.79359706,
+    ]
+
+    sum_exception = profile["source_internal_sum_exception"]
+    assert sum_exception == {
+        "surface_table": 32,
+        "metadata_table": 34,
+        "difference_mm": 0.103,
+    }
+    published = profile["published_metadata"][34][3]
+    source_rows = profile["surface_distance_sums_mm"][32]
+    assert published - source_rows == pytest.approx(0.103)
+
+
+def test_oppo_shared_rear_dual_focal_source_denominators_and_prior_publication() -> None:
+    root = Path(__file__).resolve().parents[1]
+    patent_id, raw_text = _oppo_shared_rear_dual_focal_source()
+    profile = patent_to_zmx._OPPO_SHARED_REAR_DUAL_FOCAL_SOURCE_PROFILES[patent_id]
+
+    text, paragraphs, payloads = patent_to_zmx._validate_oppo_shared_rear_dual_focal_document(
+        raw_text,
+        patent_id=patent_id,
+        profile=profile,
+    )
+    assert tuple(paragraphs) == tuple(range(1, 171))
+    assert tuple(payloads) == tuple(range(1, 46))
+    assert profile["claim_numbers"] == tuple(range(1, 14))
+    assert profile["independent_claim_numbers"] == (1, 10, 13)
+    assert profile["figure_numbers"] == tuple(range(1, 23))
+    assert len(patent_to_zmx._OPPO_SHARED_REAR_DUAL_FOCAL_ITEMS) == 10
+    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == profile["normalized_text_sha256"]
+    assert "Z=C×h 2/{1+(1 -K×C 2 ×h 2)1⁄2 }+ΣAn×h n" in paragraphs[76]
+
+    prior = profile["prior_publication"]
+    prior_bytes = (root / prior["html_path"]).read_bytes()
+    assert len(prior_bytes) == prior["html_bytes"]
+    assert hashlib.sha256(prior_bytes).hexdigest() == prior["html_sha256"]
+    prior_text = prior_bytes.decode("utf-8")
+    assert (
+        hashlib.sha256(patent_to_zmx.normalize_patent_text(prior_text).encode("utf-8")).hexdigest()
+        == prior["normalized_sha256"]
+    )
+    prior_matches = list(patent_to_zmx._OPPO_SHARED_REAR_TABLE_MARKER_PATTERN.finditer(prior_text))
+    assert [int(match.group("number")) for match in prior_matches] == list(range(1, 46))
+    prior_payloads = {}
+    for index, match in enumerate(prior_matches):
+        end = (
+            prior_matches[index + 1].start() if index + 1 < len(prior_matches) else len(prior_text)
+        )
+        normalized_fragment = patent_to_zmx.normalize_patent_text(prior_text[match.start() : end])
+        token_count = profile["table_payload_token_counts"][index]
+        prior_payloads[index + 1] = " ".join(normalized_fragment.split()[:token_count])
+
+    def numeric_sequence(value: str) -> tuple[str, ...]:
+        joined_signs = re.sub(r"(?<!\S)-\s+(?=\d)", "-", value)
+        return tuple(re.findall(patent_to_zmx.NUMBER_PATTERN, joined_signs, re.IGNORECASE))
+
+    for number in range(1, 46):
+        grant_numbers = numeric_sequence(payloads[number])
+        prior_numbers = numeric_sequence(prior_payloads[number])
+        assert prior_numbers[: len(grant_numbers)] == grant_numbers
+        if number == 9:
+            assert prior_numbers[len(grant_numbers) :] == ("0104",)
+        elif number == 27:
+            assert prior_numbers[len(grant_numbers) :] == ("0117",)
+        else:
+            assert len(prior_numbers) == len(grant_numbers)
+
+
+def test_oppo_shared_rear_dual_focal_odd_asphere_and_source_drift_fail_closed() -> None:
+    patent_id, raw_text = _oppo_shared_rear_dual_focal_source()
+    payloads = patent_to_zmx._oppo_shared_rear_dual_focal_table_payloads(raw_text)
+    surfaces = patent_to_zmx._parse_oppo_shared_rear_surface_table(
+        payloads[1],
+        example=1,
+        mode="short",
+    )
+    corrupt_coefficients = payloads[4].replace(
+        "A3 0.000000000000000E+00",
+        "A3 1.000000000000000E-09",
+        1,
+    )
+    with pytest.raises(PatentParseError, match="unsupported non-zero odd asphere"):
+        patent_to_zmx._parse_oppo_shared_rear_coefficient_table(
+            corrupt_coefficients,
+            surfaces=surfaces,
+            example=1,
+            mode="short",
+        )
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text.replace("84322717", "84322718", 1),
+        patent_id=patent_id,
+    )
+    assert len(attempts) == 10
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert {str(attempt.error) for attempt in attempts} == {
+        "OPPO shared-rear official raw text hash changed for US-12656584-B2"
+    }
+
+
+def test_oppo_shared_rear_dual_focal_official_pdfs_rehash_without_raster_inference() -> None:
+    root = Path(__file__).resolve().parents[1]
+    profile = patent_to_zmx._OPPO_SHARED_REAR_DUAL_FOCAL_SOURCE_PROFILES["US-12656584-B2"]
+    sources = (
+        (
+            profile["official_pdf"],
+            "path",
+            "bytes",
+            "sha256",
+            "page_count",
+            "single_raster_page_count",
+            "text_layer_characters",
+            "raster_dimensions",
+            "canonical_raster_set_sha256",
+        ),
+        (
+            profile["prior_publication"],
+            "pdf_path",
+            "pdf_bytes",
+            "pdf_sha256",
+            "pdf_page_count",
+            "pdf_single_raster_page_count",
+            "pdf_text_layer_characters",
+            "pdf_raster_dimensions",
+            "pdf_canonical_raster_set_sha256",
+        ),
+    )
+    for (
+        source,
+        path_key,
+        bytes_key,
+        digest_key,
+        pages_key,
+        raster_count_key,
+        text_key,
+        dimensions_key,
+        raster_digest_key,
+    ) in sources:
+        pdf_bytes = (root / source[path_key]).read_bytes()
+        assert len(pdf_bytes) == source[bytes_key]
+        assert hashlib.sha256(pdf_bytes).hexdigest() == source[digest_key]
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        assert len(reader.pages) == source[pages_key]
+        page_hashes = []
+        text_characters = 0
+        for page in reader.pages:
+            page_images = list(page.images)
+            assert len(page_images) == 1
+            assert page_images[0].image.size == source[dimensions_key]
+            page_hashes.append(patent_pdf_recovery._canonical_raster_sha256(page_images[0].data))
+            text_characters += len(page.extract_text() or "")
+        assert len(page_hashes) == source[raster_count_key]
+        assert text_characters == source[text_key] == 0
+        assert (
+            hashlib.sha256(("\n".join(page_hashes) + "\n").encode("utf-8")).hexdigest()
+            == source[raster_digest_key]
+        )
+
+
+def test_oppo_shared_rear_dual_focal_replay_is_semantic_and_worker_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-84322717"
+    artifact = json.loads(
+        (quick / "family-84322717-replay-determinism.json").read_text(encoding="utf-8")
+    )
+    runtime_attempt = re.compile(r"attempt-\d{4}")
+    semantic_hashes = []
+    worker_hashes = []
+
+    for record in artifact["attempts"]:
+        result_path = root / record["path"]
+        result_bytes = result_path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        receipt_hashes = {str(number): None for number in range(1, 11)}
+        exact_worker_hashes = {
+            name: {str(number): None for number in range(1, 11)}
+            for name in (
+                "request_sha256",
+                "response_sha256",
+                "candidate_zmx_sha256",
+                "stdout_sha256",
+                "stderr_sha256",
+                "staging_zmx_sha256",
+            )
+        }
+        for item in result["items"]:
+            number = str(item["embodiment_number"])
+            item["conversion_attempt_id"] = runtime_attempt.sub(
+                "attempt-*", item["conversion_attempt_id"]
+            )
+            receipt_evidence = next(
+                evidence
+                for evidence in item["evidence"]
+                if evidence["evidence_type"] == "patent_conversion_receipt"
+            )
+            staging_evidence = next(
+                evidence
+                for evidence in item["evidence"]
+                if evidence["evidence_type"] == "staging_zmx"
+            )
+            receipt_path = root / receipt_evidence["path"]
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt.pop("elapsed_seconds")
+            receipt.pop("retry_number")
+            for key, value in tuple(receipt.items()):
+                if isinstance(value, str) and (key == "attempt_id" or key.endswith("_path")):
+                    receipt[key] = runtime_attempt.sub("attempt-*", value)
+            receipt_hash = hashlib.sha256(canonical_json_bytes(receipt)).hexdigest()
+            receipt_hashes[number] = receipt_hash
+            for name, filename in (
+                ("request_sha256", "request.json"),
+                ("response_sha256", "response.json"),
+                ("candidate_zmx_sha256", "candidate.zmx"),
+                ("stdout_sha256", "stdout.log"),
+                ("stderr_sha256", "stderr.log"),
+            ):
+                worker_path = receipt_path.parent / filename
+                exact_worker_hashes[name][number] = hashlib.sha256(
+                    worker_path.read_bytes()
+                ).hexdigest()
+            staging_path = root / staging_evidence["path"]
+            exact_worker_hashes["staging_zmx_sha256"][number] = hashlib.sha256(
+                staging_path.read_bytes()
+            ).hexdigest()
+            receipt_evidence["path"] = runtime_attempt.sub("attempt-*", receipt_evidence["path"])
+            receipt_evidence["sha256"] = f"semantic:{receipt_hash}"
+        assert receipt_hashes == record["receipt_semantic_sha256"]
+        for name, hashes in exact_worker_hashes.items():
+            assert hashes == record[name]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+        worker_hashes.append(exact_worker_hashes)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert worker_hashes[0] == worker_hashes[1]
+    assert artifact["semantic_equal"] is True
+    assert artifact["result_normalization"]["outcome_fields_removed"] == []
+    assert artifact["result_normalization"]["request_or_response_fields_removed"] == []
+    assert all(artifact["exact_worker_payload_equal"].values())
+    assert artifact["final_state"] == {
+        "result_attempt": 3,
+        "root_state": "converted_pending_intake",
+        "root_reason_code": "converted_pending_intake.all_disclosed_items_converted",
+        "item_state_counts": {"converted_pending_intake": 10},
+        "terminal_status_counts": {},
+        "conversion_requests": 10,
+        "conversion_receipts": 10,
+        "prescription_fingerprints": 10,
+        "staging_zmx": 10,
+        "formal_intake_items": 0,
+    }
+    assert artifact["strict_replay"]["cohort_roots"] == 619
+    assert artifact["strict_replay"]["roots_with_results"] == 619
+    assert artifact["strict_replay"]["missing_results"] == 0
+    assert artifact["strict_replay"]["corrupt_results"] == 0
+    assert artifact["strict_replay"]["result_set_sha256"] == (
+        "ed561776087212b38801f262b725409b314ccf1b9cb1c2be86195ca58f1b21bb"
+    )
+    assert artifact["codev_calls"] == 0
+
+
+def test_oppo_shared_rear_dual_focal_denominator_queue_and_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-84322717"
+    denominator = json.loads(
+        (quick / "family-84322717-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert denominator["denominator"] == {
+        "frozen_cohort_roots": 1,
+        "retained_primary_publications": 1,
+        "same_application_corroborating_publications": 1,
+        "brief_drawing_numbered_paragraphs": 23,
+        "shared_architecture_and_definition_numbered_paragraphs": 55,
+        "example_numbered_paragraphs": 85,
+        "closing_numbered_paragraphs": 7,
+        "total_numbered_paragraphs": 170,
+        "claims": 13,
+        "independent_claim_families": 3,
+        "declared_figure_panels": 22,
+        "flattened_tables": 45,
+        "surface_prescription_tables": 10,
+        "lens_focal_length_tables": 10,
+        "system_metadata_tables": 10,
+        "asphere_coefficient_tables": 10,
+        "conditional_expression_tables": 5,
+        "ordered_published_surface_rows": 138,
+        "modeled_sequential_surfaces_including_appended_images": 138,
+        "asphere_surfaces": 88,
+        "coefficient_rows_per_asphere_group": 20,
+        "asphere_numeric_cells_including_exact_r_and_k": 1760,
+        "published_odd_asphere_cells": 792,
+        "published_nonzero_odd_asphere_cells": 0,
+        "published_even_asphere_cells": 792,
+        "inline_formula_pairs": 31,
+        "source_disclosed_paired_examples": 5,
+        "source_disclosed_optical_prescription_items": 10,
+        "camera_module_or_imaging_device_wrappers_with_additional_prescriptions": 0,
+        "replayed_ledger_items": 10,
+        "converted_pending_intake_items": 10,
+        "formal_intake_items": 0,
+        "official_pdf_files": 2,
+        "official_pdf_pages": 91,
+        "retained_primary_page_rasters": 45,
+        "official_primary_drawing_sheets": 22,
+        "official_primary_table_pages": 15,
+        "official_primary_claim_pages": 2,
+        "source_internal_arithmetic_exceptions": 1,
+        "source_internal_radius_sign_exception_groups": 1,
+        "unmapped_numbered_paragraphs": 0,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_tables": 0,
+        "unmapped_source_items": 0,
+    }
+    assert [item["embodiment_number"] for item in denominator["items"]] == list(range(1, 11))
+    assert all(item["ledger_state"] == "converted_pending_intake" for item in denominator["items"])
+    assert denominator["representation_boundary"]["conic_transform"] == ("K_codev = K_source - 1")
+    assert denominator["representation_boundary"]["all_odd_a3_through_a19_values_zero"] is True
+    assert denominator["representation_boundary"]["conversion_state_is_formal_intake"] is False
+    assert not any(denominator["formal_outputs"].values())
+
+    before = json.loads((quick / "generic-residual-before-75.json").read_text(encoding="utf-8"))
+    after_1 = json.loads((quick / "generic-residual-after-1.json").read_text(encoding="utf-8"))
+    after_2 = json.loads((quick / "generic-residual-after-2.json").read_text(encoding="utf-8"))
+    assert before["affected_roots"] == before["affected_items"] == 75
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 74
+    assert after_1["result_set_sha256"] == (
+        "ed561776087212b38801f262b725409b314ccf1b9cb1c2be86195ca58f1b21bb"
+    )
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after_2["result_set_sha256"]
+    assert queue["generic_residual_roots"] == queue["generic_residual_items"] == 74
+    assert queue["next_exact_group"]["family_id"] == "63165840"
+    assert queue["next_exact_group"]["root_ids"] == ["US-10197774"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-10197774-B1"]
+    assert queue["next_exact_group"]["application_number"] == "15/864483"
+    assert queue["next_exact_group"]["layout_signature"] == (
+        "cdb378a2ea907881cf8f5905ecec12d8ad312afe330cf196be9fa46b41ac0a49"
+    )
+    assert queue["next_exact_group"]["layout_signature_count"] == min(
+        after_2["layout_signature_counts"].values()
+    )
+    assert queue["next_exact_group"]["raw_document"]["sha256"] == (
+        "1887b838473fcde0aa10edc6b1d88235c8fa194523749ff63dbe3e68deb1a696"
+    )
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-84322717-source-evidence.json").read_text(encoding="utf-8")
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "b1ea4876a77ee4679565ae163eabd60a6da9411cb07a3d36dbe0f7869004acdc"
+    )
+    assert len(evidence["conversion_artifacts"]) == 10
+    assert evidence["ledger"]["strict_roots_total"] == 619
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["missing"] == 0
+    assert evidence["ledger"]["corrupt"] == 0
+    assert evidence["safety"]["codev_calls"] == 0
+    assert evidence["safety"]["formal_intake_items"] == 0
+    assert evidence["next_exact_group"]["family_id"] == "63165840"
+    assert evidence["saturation_complete"] is False
+
+
+def test_oppo_shared_rear_dual_focal_original_raster_artifacts_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260718-patent-generic-family-84322717"
+    audit = json.loads((quick / "family-84322717-raster-audit.json").read_text(encoding="utf-8"))
+
+    assert audit["page_roles"] == {
+        "cover": [1],
+        "drawing_sheets": list(range(2, 24)),
+        "specification_pages": list(range(24, 44)),
+        "table_pages": list(range(29, 44)),
+        "claims_pages": [44, 45],
+    }
+    assert audit["reviewed_original_pages"] == [1, 24, 28, 29, 37, 38, 39, 42, 43, 44, 45]
+    assert audit["review_policy"] == {
+        "original_rasters_only": True,
+        "image_enhancement_used": False,
+        "drawing_geometry_measured": False,
+        "numeric_transcription_from_raster": False,
+        "raster_inference_used": False,
+    }
+    assert audit["official_pdf"]["page_count"] == 45
+    assert audit["official_pdf"]["single_raster_pages"] == 45
+    assert audit["official_pdf"]["text_layer_characters"] == 0
+    assert len(audit["pages"]) == 45
+
+    aggregate = hashlib.sha256()
+    for page_number, record in enumerate(audit["pages"], start=1):
+        assert record["page"] == page_number
+        assert record["text_characters"] == 0
+        assert record["image_count"] == 1
+        assert record["decoded_raster_dimensions"] == [2560, 3300]
+        aggregate.update(record["decoded_raster_sha256"].encode("utf-8"))
+        aggregate.update(b"\n")
+        retained = record["retained_png"]
+        png_bytes = (root / retained["path"]).read_bytes()
+        assert len(png_bytes) == retained["bytes"]
+        assert hashlib.sha256(png_bytes).hexdigest() == retained["sha256"]
+        decoded = cv2.imdecode(np.frombuffer(png_bytes, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+        assert decoded is not None
+        assert [decoded.shape[1], decoded.shape[0]] == [2560, 3300]
+    assert aggregate.hexdigest() == audit["official_pdf"]["decoded_raster_set_sha256"]
+    assert audit["official_pdf"]["decoded_raster_set_sha256"] == (
+        "6d8c500d0d743a6f020b43e3cccef62176f681ca44fe00d8c20ce904276a72c7"
+    )
+
+    contact = audit["contact_sheet"]
+    contact_bytes = (root / contact["path"]).read_bytes()
+    assert len(contact_bytes) == contact["bytes"]
+    assert hashlib.sha256(contact_bytes).hexdigest() == contact["sha256"]
 def _corephotonics_double_folded_tele_source() -> tuple[str, str]:
     root = Path(__file__).resolve().parents[1]
     source_path = (
