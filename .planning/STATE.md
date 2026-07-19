@@ -737,26 +737,27 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | `260719-patent-generic-family-63165840` | complete-shovel-saturation-incomplete | Exact B1 source reconciles application 15/864483, Family ID 63165840, 125 numbered background/description paragraphs, claims 1-11, 12 figures, 13 tables, 22 formula pairs and three complete six-lens prescriptions. All three retain Stop plus R1-R14, 12 even-asphere surfaces and direct focal length/F-number/diagonal-FOV/EPD/image-height/TTL metadata. The prose's R13/R14 seventh-lens role conflict, Embodiment 3 TABLE 9/TABLE 13 thickness/material conflict and detailed-spacing/rounded-TTL deltas remain explicit without repair; TABLE 9 is the direct ordered authority. The 16-page image-only official PDF and every retained original raster reconcile at `1d4172fe...76c61` without enhancement, measurement or raster transcription. Attempts 3/4 are semantic-equal at `2ce5a426...c61ca8`; Embodiment 2 creates one receipt-backed staging candidate, while 1/3 terminate trace-failed; formal intake is zero. Result set `6b2a5222...37059c`; audit twice 619/619 corrupt=0. Focused 7/7 and complete offline repository 3501 passed/1 skipped/10 real-machine deselected; compile, Ruff, JSON, 79 evidence manifests/1169 path-SHA records/1012 complete triples, formal-output, protected-path, diff and primary-repository checks pass; CODE V zero. Forty-nine prior live summary/report manifests plus four explicit live result-set fields align. Generic 73 roots remains first; Family 90360259 root US-12554108 is next. |
 
+| `260719-patent-generic-family-90360259` | complete-shovel-saturation-incomplete | Exact B2 source reconciles application 18/535096, Family ID 90360259, 9 Background/Summary paragraphs, 103 Description paragraphs, claims 1-21 with claim 1 independent, 31 figure panels, two flattened tables and five source items. System 300 publishes 13 sequential surfaces including object/image, direct wavelength/system metadata, a 10.0000-mm finite object and `DECENTER(1)` Z=3.5000 mm. Repository surface DTOs lack coordinate-break fields and the readout builder creates `ANG` infinity-conjugate fields, so item 1 remains an exact parser review without coordinate transform or infinity substitution. Examples A-D add only encapsulated electromechanical wrappers around reused lens/system context and close as four confirmed-no-prescription terminals. The 37-page image-only official PDF and all original rasters reconcile at `433e6cdd...c92ebd` without enhancement, measurement or raster transcription. Attempts 2/3 are semantic-equal after removing only result attempt at `3eba8d05...430e64`; no worker, fingerprint, candidate, ZMX or formal intake exists. Result set `80a90c22...c0ad5`; audit twice 619/619 corrupt=0. Focused 8/8, parser file 760/760 and complete offline repository 3509 passed/1 skipped/10 real-machine deselected; Ruff, evidence, output and protected-path checks pass; CODE V zero. Fifty prior manifests refresh 100 live summary/report records and five explicitly live result-set pointers while historical snapshots remain fixed. Generic 72 roots remains first; Family 96807780 root US-20250389925 is next. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, preserve the completed GSD quick
-`.planning/quick/260719-patent-generic-family-63165840/260719-patent-generic-family-63165840-PLAN.md`
-and open the next exact GSD quick for deterministic Family `90360259` / root
-`US-12554108` / publication `US-12554108-B2`, application `18/535096`, while preserving
-the completed Family 84322717 quick and all prior quicks plus
+For patent saturation work, resume by opening the next GSD quick for deterministic
+Family `96807780` / root `US-20250389925` / publication `US-20250389925-A1`,
+application `19/243071`, while preserving the completed Family 90360259 quick at
+`.planning/quick/260719-patent-generic-family-90360259/` and all prior quicks plus
 the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input
 while replay staging is active invalidates strict cohort audit. Never infer terminal outcomes from
 chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
 highest-value executable work is the complete-cohort largest parser bucket:
-`generic_summary_metadata_missing` (73 roots/items), ahead by root count of
+`generic_summary_metadata_missing` (72 roots/items), ahead by root count of
 `aac_raytech_summary_metadata_missing` (55 roots/174 items) and
 `sunny_embodiment_metadata_missing` (49 roots/177 items). Its next exact family under
-deterministic parser/layout/family/root/publication ordering is Family ID `90360259`, root
-`US-12554108`, publication `US-12554108-B2`, layout
-`6d90966b3a4c5b0ea9329e0e9c65608c16e4290f79f2cbfef53534e4927ef66a`. Use
+deterministic parser/layout/family/root/publication ordering is Family ID `96807780`, root
+`US-20250389925`, publication `US-20250389925-A1`, layout
+`6dc4e6e37739e25dcb4235df16178a5a62d768b20fb0a59c3c5ea162b20f9249`. Use
 the same strict before/after census, source-proven layout,
 append-only targeted replay, and full-pool audit contract. Remeasure after every shovel.
 

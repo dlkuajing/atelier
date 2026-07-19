@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "family_id": "90360259",
+  "root_id": "US-12554108",
+  "publication_id": "US-12554108-B2",
+  "application_number": "18/535096",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/ea9d8f51756c81d7/US-12554108-B2.html",
+    "bytes": 148245,
+    "characters": 147840,
+    "normalized_characters": 126994,
+    "sha256": "ea9d8f51756c81d71009d54236622bd2b7db6618b1abb2755e8810e5e8ff61de",
+    "normalized_sha256": "7cd17b1e352ee8b480cd26950b54bfa5e6c20cdca4cf0f1ae355f319f8cb3577",
+    "flattened_tables": 2,
+    "inline_formula_pairs": 0,
+    "embedded_img_tags": 0,
+    "html_table_tags": 0,
+    "maths_tags": 0
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/cbb65336cd7ab10b/US-12554108-B2.pdf",
+    "bytes": 3029713,
+    "container_sha256": "cbb65336cd7ab10bdb2f4e1ed0729bf4265b527741eed3c14dfc06e3ad2ba55b",
+    "page_count": 37,
+    "single_raster_pages": 37,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "433e6cddbf1b564b6d8c6741ae8739ee294bbefcc3073c1d6dadb4c7ffc92ebd"
+  },
+  "bibliography": {
+    "title": "Encapsulated optical imaging camera",
+    "inventors": [
+      "Banerjee; Bhaskar",
+      "Akkayyagari; Balaji",
+      "Wan; Zijian"
+    ],
+    "applicant": "OMNISCIENT IMAGING, INC.",
+    "assignee": "Omniscient Imaging, Inc.",
+    "filed": "2023-12-11",
+    "patent_date": "2026-02-17"
+  },
+  "lineage": {
+    "same_application_prior_us_publication": {
+      "publication_id": "US-20240103255-A1",
+      "publication_date": "2024-03-28"
+    },
+    "continuation_in_part_parent_application": "18/212865",
+    "related_application_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_b2_html_is_numeric_authority": true,
+    "official_pdf_used_for_layout_confirmation_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_application_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "coordinate_transform_inference_permitted": false,
+    "infinity_conjugate_substitution_permitted": false
+  }
+}

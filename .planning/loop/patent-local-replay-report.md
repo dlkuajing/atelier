@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `6b2a5222ab9f47f1a8530019ec8bf7bc039920373d49b73b8871428abb37059c`
+- result_set_sha256: `80a90c22445f45e69a987dad0aeda4fb2c7c32ac0d6944d0aedda81281dc0ad5`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,16 +20,16 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 27
 - `terminal`: 177
-- `parser_review_required`: 263
+- `parser_review_required`: 262
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 152
+- `mixed_nonterminal`: 153
 
 ## Item states
 
 - `converted_pending_intake`: 587
-- `terminal`: 1461
+- `terminal`: 1465
 - `parser_review_required`: 1357
 - `conversion_retry_required`: 28
 
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 487
+- `confirmed_no_prescription`: 491
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 228
@@ -48,9 +48,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 263
+- `parser_review_required.all_disclosed_items_rejected`: 262
 - `terminal.all_disclosed_items_terminal`: 177
-- `mixed_nonterminal.multiple_item_states`: 152
+- `mixed_nonterminal.multiple_item_states`: 153
 - `converted_pending_intake.all_disclosed_items_converted`: 27
 
 ## Item reason codes
@@ -110,6 +110,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.compact_barcode_telephoto_architecture_only`: 2
 - `terminal.confirmed_no_prescription.deformable_lens_actuator_and_imaging_terminal_architecture_only`: 2
 - `terminal.confirmed_no_prescription.edof_microscope_architecture_only`: 2
+- `terminal.confirmed_no_prescription.encapsulated_camera_cord_controller_and_tether_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.first_projection_lens_schematic_materials_and_performance_only`: 2
 - `terminal.confirmed_no_prescription.first_relay_lens_schematic_materials_and_performance_only`: 2
 - `terminal.confirmed_no_prescription.folded_reflective_refractive_member_and_stray_light_simulation_architecture_only`: 2
@@ -180,6 +181,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.dye_aggregate_film_and_optical_filter_materials_only`: 1
 - `terminal.confirmed_no_prescription.dynamic_starry_sky_lamp_optical_architecture_only`: 1
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only`: 1
+- `terminal.confirmed_no_prescription.encapsulated_camera_electromagnetic_wrapper_only`: 1
+- `terminal.confirmed_no_prescription.encapsulated_camera_wire_loop_and_method_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.external_display_operator_alignment_variant_only`: 1
 - `terminal.confirmed_no_prescription.externally_sourced_rectilinear_lens_model_only`: 1
 - `terminal.confirmed_no_prescription.fifth_embodiment_folded_telephoto_smartphone_wrapper_only`: 1
@@ -328,7 +331,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 73
+- `generic_summary_metadata_missing`: 72
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62
@@ -526,6 +529,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sunny_s15_row_has_unexpected_extra_values_n_n_n_n`: 1
 - `other_sunny_s7_row_has_unexpected_extra_values_n_n_n_n`: 1
 - `other_sunny_sto_value_is_not_numeric_s7_aas`: 1
+- `other_system_n_table_n_publishes_a_n_mm_finite_object_and_a_decenter_n_coordinate_break_with_z_n_mm_patentsurface_65853f9e4cf0`: 1
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a32_n`: 1
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r2_a32_n`: 1
 - `other_unsupported_nonzero_fujifilm_asphere_terms_s5_a3_n_s6_a3_n_s16_a3_n_s17_a3_n`: 1

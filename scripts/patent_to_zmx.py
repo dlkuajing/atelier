@@ -468,6 +468,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_encapsulated_optical_camera_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_fso_transmitter_architecture_and_models_attempts(
             raw_text,
@@ -5137,6 +5143,77 @@ _AAC_TERAOKA_SIX_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "66e734249bb45c99a83220cf155029665f4426407a9982cb6a2f0f6729681918",
                 "f060dc61e76e280170edc4d442fa125e4a5211bf2f88be40afd2c6293a6ed774",
                 "024cb1befecaab7694cbb393df12df7cddf6ec32f0b102a5e88bb2b27e2f03be",
+            ),
+        },
+    },
+}
+
+_ENCAPSULATED_OPTICAL_CAMERA_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Encapsulated\s+optical\s+imaging\s+camera\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_ENCAPSULATED_OPTICAL_CAMERA_ITEMS = (
+    "Encapsulated optical imaging system 300 finite-object prescription",
+    "Encapsulated optoelectromechanical Example A",
+    "Encapsulated optoelectromechanical Example B",
+    "Encapsulated optoelectromechanical Example C",
+    "Encapsulated electromagnetic-camera Example D",
+)
+_ENCAPSULATED_OPTICAL_CAMERA_FIGURE_PANELS = (
+    "1", "2", "3", "4", "5", "6", "7", "8", "9A", "9B", "10A", "10B",
+    "11", "12", "13", "14", "15A", "15B", "16", "17", "18", "19A", "19B",
+    "20A", "20B", "21", "22", "23", "24", "25A", "25B",
+)
+_ENCAPSULATED_OPTICAL_CAMERA_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12554108-B2": {
+        "family_id": "90360259",
+        "application_number": "18/535096",
+        "raw_document_sha256": (
+            "ea9d8f51756c81d71009d54236622bd2b7db6618b1abb2755e8810e5e8ff61de"
+        ),
+        "normalized_text_sha256": (
+            "7cd17b1e352ee8b480cd26950b54bfa5e6c20cdca4cf0f1ae355f319f8cb3577"
+        ),
+        "identity_markers": {
+            "Family ID: 90360259": 1,
+            "Appl. No.: 18/535096": 1,
+            "Banerjee; Bhaskar": 2,
+            "OMNISCIENT IMAGING, INC.": 2,
+            "Document Identifier Publication Date US 20240103255 A1 Mar. 28, 2024": 1,
+        },
+        "section_sha256": {
+            "background": "2dff7df00d195f7edffab23c18e9dfdf575df992cd053f7eb270f67e6b79dd13",
+            "description": "7cd0fe23b8233fa6794cc835cd5b4aff9b8f88d6f0ec32bd3d3abcc40fd9b79d",
+            "claims": "1d64356bf0805045dc196c071c203f7a4e689a400bc6760db33ff470c205c34d",
+        },
+        "paragraph_span_sha256": {
+            (1, 22): "b65d7e08106f5d398d1cbaf4bd68516d434632546a9d642f77294573459fdccb",
+            (23, 39): "8802adfc0c2720a0b537685258ddfed5efdd8e1f1d89ceb2633eb4b559e909c4",
+            (40, 48): "4e5ad6fe0ea4d93dfdb3606018ba73701e5ab2f5f3c87474d4e0ab30a593b296",
+            (49, 49): "65dd8ab0c8b939e7c7c9df47003d14eec25225bf30dab3c21f7a1166def51ccc",
+            (50, 68): "5868bd51c9d92190209190fdc79422acabf035e62db701faa29e7538e86e707a",
+            (69, 75): "6f1645e94f5ec240aac827ed92a5ad1a112582f8f5d4e4fa2be5a6f5ee1dafae",
+            (76, 86): "f3b90ec2c0e1a8fe0c391a3ffe37fe7b5f959b781e50267acf593a8d0e9d8e91",
+            (87, 96): "8f0d6bf031023568b85382403d8533f45ec16f2aa603ea3a2afb7c8782851195",
+            (97, 103): "033aa51c10d3895c91e3fa8092bd3c2f75c31f300fcaf1488869b3a88c53fc19",
+        },
+        "table_block_sha256": (
+            "f5c3e326a9f630c8a14a7ba02afd663d118a67b64ff8ba27bbe5837d72bae422",
+            "748d498ff47cb444a52f1fb9d2dda1ea0f19908937503650e68b7f4e0c1981cc",
+        ),
+        "official_pdf": {
+            "path": "data/patent-lake/uspto-ppubs-pdf/cbb65336cd7ab10b/US-12554108-B2.pdf",
+            "bytes": 3029713,
+            "container_sha256": (
+                "cbb65336cd7ab10bdb2f4e1ed0729bf4265b527741eed3c14dfc06e3ad2ba55b"
+            ),
+            "page_count": 37,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(3, 20)),
+            "table_page_numbers": (25, 26, 27),
+            "claim_page_numbers": (36, 37),
+            "raster_set_sha256": (
+                "433e6cddbf1b564b6d8c6741ae8739ee294bbefcc3073c1d6dadb4c7ffc92ebd"
             ),
         },
     },
@@ -35384,6 +35461,285 @@ def _parse_aac_teraoka_six_lens_exact_attempts(
             prescription=prescription,
         )
         for index, prescription in enumerate(prescriptions, start=1)
+    ]
+
+
+def _classify_encapsulated_optical_camera_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify all five exact Family 90360259 source-declared items.
+
+    System 300 publishes an ordered prescription and complete system metadata,
+    but its used-conjugate table contains a finite object and a Code V coordinate
+    break. The replay DTO cannot carry that break and the readout builder always
+    creates ANG fields, so this item remains a precise parser-review failure.
+    Examples A-D add wrappers without another ordered prescription.
+    """
+
+    profile = _ENCAPSULATED_OPTICAL_CAMERA_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(
+                _ENCAPSULATED_OPTICAL_CAMERA_ITEMS,
+                start=1,
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"encapsulated optical camera official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"encapsulated optical camera normalized text hash changed for {patent_id}"
+            )
+        if len(_ENCAPSULATED_OPTICAL_CAMERA_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("encapsulated optical camera title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"encapsulated optical camera identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_specs = (
+            ("background", "<h3>Background/Summary</h3>", "<h3>Description</h3>", 1, 9),
+            ("description", "<h3>Description</h3>", "<h3>Claims</h3>", 1, 103),
+            ("claims", "<h3>Claims</h3>", None, None, None),
+        )
+        raw_sections: dict[str, str] = {}
+        for name, start_marker, end_marker, first, last in section_specs:
+            try:
+                start = raw_text.index(start_marker)
+                end = (
+                    raw_text.index(end_marker, start + len(start_marker))
+                    if end_marker is not None
+                    else len(raw_text)
+                )
+            except ValueError as exc:
+                raise PatentParseError(
+                    f"encapsulated optical camera raw {name} boundary changed"
+                ) from exc
+            raw_section = raw_text[start:end]
+            raw_sections[name] = raw_section
+            section_digest = hashlib.sha256(
+                normalize_patent_text(raw_section).encode("utf-8")
+            ).hexdigest()
+            if section_digest != profile["section_sha256"][name]:
+                raise PatentParseError(
+                    f"encapsulated optical camera {name} section changed"
+                )
+            if first is not None and last is not None:
+                observed = tuple(
+                    int(value)
+                    for value in re.findall(
+                        r"(?:^|<br\s*/?>)\((\d+)\)",
+                        raw_section,
+                        re.IGNORECASE,
+                    )
+                )
+                if observed != tuple(range(first, last + 1)):
+                    raise PatentParseError(
+                        f"encapsulated optical camera {name} paragraph denominator changed"
+                    )
+
+        raw_description = raw_sections["description"]
+        paragraph_matches = list(
+            re.finditer(
+                r"(?:^|<br\s*/?>)\((\d+)\)",
+                raw_description,
+                re.IGNORECASE,
+            )
+        )
+        paragraphs = {
+            int(match.group(1)): normalize_patent_text(
+                raw_description[
+                    match.start() : (
+                        paragraph_matches[index + 1].start()
+                        if index + 1 < len(paragraph_matches)
+                        else len(raw_description)
+                    )
+                ]
+            )
+            for index, match in enumerate(paragraph_matches)
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            first, last = bounds
+            span = " ".join(paragraphs[number] for number in range(first, last + 1))
+            if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"encapsulated optical camera paragraph span {first}-{last} changed"
+                )
+
+        claims = normalize_patent_text(raw_sections["claims"])
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                claims,
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 22)):
+            raise PatentParseError("encapsulated optical camera claim denominator changed")
+        independent_claims = []
+        for index, match in enumerate(claim_matches):
+            end = (
+                claim_matches[index + 1].start()
+                if index + 1 < len(claim_matches)
+                else len(claims)
+            )
+            claim = claims[match.start() : end]
+            if re.search(r"\bclaim\s+\d+", claim, re.IGNORECASE) is None:
+                independent_claims.append(int(match.group(1)))
+        if independent_claims != [1]:
+            raise PatentParseError(
+                "encapsulated optical camera independent-claim binding changed"
+            )
+        if len(_ENCAPSULATED_OPTICAL_CAMERA_FIGURE_PANELS) != 31 or len(
+            set(_ENCAPSULATED_OPTICAL_CAMERA_FIGURE_PANELS)
+        ) != len(_ENCAPSULATED_OPTICAL_CAMERA_FIGURE_PANELS):
+            raise PatentParseError(
+                "encapsulated optical camera figure-panel denominator changed"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != (1, 2):
+            raise PatentParseError("encapsulated optical camera TABLE 1-2 inventory changed")
+        block_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in blocks
+        )
+        if block_digests != profile["table_block_sha256"]:
+            raise PatentParseError("encapsulated optical camera PPUBS table block changed")
+
+        prescription_text = paragraphs[41]
+        required_prescription_fragments = (
+            "OBJECT (OBJ) 10.0000 10.0000 AIR 140.1046 -5.0000",
+            "(310) 5.0000 CX 4.5000 CC 0.5000 9.8000 8.8000 ACRYLIC",
+            "DECENTERING CONSTANTS DECENTER X Y Z ALPHA BETA GAMMA "
+            "D(1) 0.0000 0.0000 3.5000 0.0000 0.0000 0.0000",
+            "REFERENCE WAVELENGTH = 525.0 NM SPECTRAL REGION = 450.0-600.0 NM",
+            "INFINITE CONJUGATES EFL = 0.6061 BFL = 0.6606 FFL = -1.5775 "
+            "F/NO = 4.3708",
+            "AT USED CONJUGATES REDUCTION = 0.0720 FINITE F/NO = 4.5005 "
+            "OBJECT DIST = 10.0000 TOTAL TRACK = 12.5066 IMAGE DIST = 0.6864 "
+            "OAL = 1.8202",
+            "PARAXIAL IMAGE HT = 0.6956 IMAGE DIST = 0.7042 "
+            "SEMI-FIELD ANGLE = 88.0000",
+        )
+        for fragment in required_prescription_fragments:
+            if prescription_text.count(fragment) != 1:
+                raise PatentParseError(
+                    f"encapsulated optical camera TABLE 1 fragment changed: {fragment!r}"
+                )
+        material_rows = (
+            "NSK16_SCHOTT 1.619768 1.621829 1.624331 1.627429 1.631356",
+            "NFK5_SCHOTT 1.487054 1.488449 1.490126 1.492185 1.494774",
+            "NLAF2_SCHOTT 1.742950 1.746246 1.750303 1.755407 1.761994",
+            "NBASF64_SCHOTT 1.702905 1.706442 1.710819 1.716362 1.723582",
+            "ACRYLIC 1.491227 1.492930 1.495024 1.497652 1.501027",
+        )
+        for row in material_rows:
+            if paragraphs[47].count(row) != 1:
+                raise PatentParseError(
+                    f"encapsulated optical camera TABLE 2 material row changed: {row!r}"
+                )
+        wrapper_markers = {
+            50: "An example 1000 of the embodiment 100",
+            69: "A related embodiment 1500",
+            76: "FIGS. 19 A, 19 B illustrate another related embodiment",
+            87: "Yet another related embodiment 2100",
+        }
+        for paragraph, marker in wrapper_markers.items():
+            if marker not in paragraphs[paragraph]:
+                raise PatentParseError(
+                    f"encapsulated optical camera Example marker changed at paragraph {paragraph}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the complete five-item denominator
+        return attempts_for_error(exc)
+
+    outcomes: tuple[Exception, ...] = (
+        PatentParseError(
+            "system 300 TABLE 1 publishes a 10.0000 mm finite object and a "
+            "DECENTER(1) coordinate break with Z=3.5000 mm; PatentSurface and "
+            "PatentSurfaceInput have no coordinate-break fields while "
+            "build_readout_from_prescription creates ANG infinity-conjugate fields, "
+            "so no coordinate transform or infinity substitution is performed"
+        ),
+        PatentTerminalParseError(
+            status="confirmed_no_prescription",
+            reason_code=(
+                "confirmed_no_prescription."
+                "encapsulated_camera_cord_controller_and_tether_wrapper_only"
+            ),
+            detail=(
+                "Example A paragraphs 50-68 publish the lens holder, traction cords, "
+                "controller, electronics, and tether around reused optical lens 114, "
+                "but no additional ordered optical surface prescription"
+            ),
+        ),
+        PatentTerminalParseError(
+            status="confirmed_no_prescription",
+            reason_code=(
+                "confirmed_no_prescription."
+                "encapsulated_camera_cord_controller_and_tether_wrapper_only"
+            ),
+            detail=(
+                "Example B paragraphs 69-75 publish alternate traction-cord, wire, "
+                "controller, and tether mechanics around reused optical lens 114, "
+                "but no additional ordered optical surface prescription"
+            ),
+        ),
+        PatentTerminalParseError(
+            status="confirmed_no_prescription",
+            reason_code=(
+                "confirmed_no_prescription."
+                "encapsulated_camera_wire_loop_and_method_wrapper_only"
+            ),
+            detail=(
+                "Example C paragraphs 76-86 publish spiral wire-loop packaging and a "
+                "camera-use method around reused optical lens 114, but no additional "
+                "ordered optical surface prescription"
+            ),
+        ),
+        PatentTerminalParseError(
+            status="confirmed_no_prescription",
+            reason_code=(
+                "confirmed_no_prescription."
+                "encapsulated_camera_electromagnetic_wrapper_only"
+            ),
+            detail=(
+                "Example D paragraphs 87-96 publish an electromagnetic tilting camera "
+                "whose lens 2124 may reuse lens 114 properties, but no additional "
+                "ordered optical surface prescription"
+            ),
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=embodiment,
+            error=error,
+        )
+        for index, (embodiment, error) in enumerate(
+            zip(_ENCAPSULATED_OPTICAL_CAMERA_ITEMS, outcomes, strict=True),
+            start=1,
+        )
     ]
 
 

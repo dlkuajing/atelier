@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "family_id": "90360259",
+  "root_id": "US-12554108",
+  "publication_id": "US-12554108-B2",
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Encapsulated optical imaging system 300 finite-object prescription",
+      "paragraphs": [40, 48],
+      "figures": ["3", "4", "5", "6", "7", "8"],
+      "tables": [1, 2],
+      "published_sequential_surfaces_including_object_and_image": 13,
+      "powered_optical_elements": 5,
+      "internal_lens_elements": 4,
+      "aperture_stop_surface": 9,
+      "reference_wavelength_nm": 525.0,
+      "spectral_region_nm": [450.0, 600.0],
+      "infinite_conjugate_efl_mm": 0.6061,
+      "infinite_conjugate_f_number": 4.3708,
+      "used_conjugate_f_number": 4.5005,
+      "used_object_distance_mm": 10.0,
+      "published_semi_field_angle_deg": 88.0,
+      "decenter_1": {
+        "x_mm": 0.0,
+        "y_mm": 0.0,
+        "z_mm": 3.5,
+        "alpha_deg": 0.0,
+        "beta_deg": 0.0,
+        "gamma_deg": 0.0
+      },
+      "ledger_state": "parser_review_required",
+      "terminal_status": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "conversion_requested": false
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Encapsulated optoelectromechanical Example A",
+      "paragraphs": [50, 68],
+      "figures": ["10A", "10B", "11", "12", "13", "14", "25A", "25B"],
+      "tables": [],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "additional_ordered_prescriptions": 0
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Encapsulated optoelectromechanical Example B",
+      "paragraphs": [69, 75],
+      "figures": ["15A", "15B", "16", "17", "18"],
+      "tables": [],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "additional_ordered_prescriptions": 0
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Encapsulated optoelectromechanical Example C",
+      "paragraphs": [76, 86],
+      "figures": ["9A", "9B", "19A", "19B", "20A", "20B"],
+      "tables": [],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "additional_ordered_prescriptions": 0
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Encapsulated electromagnetic-camera Example D",
+      "paragraphs": [87, 96],
+      "figures": ["21", "22", "23", "24"],
+      "claims": [1, 21],
+      "tables": [],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "additional_ordered_prescriptions": 0
+    }
+  ],
+  "shared_context": [
+    {
+      "role": "background and summary",
+      "paragraphs": [1, 9]
+    },
+    {
+      "role": "brief description of drawings",
+      "paragraphs": [1, 22]
+    },
+    {
+      "role": "encapsulated-system overview and definitions",
+      "paragraphs": [23, 39],
+      "figures": ["1", "2"]
+    },
+    {
+      "role": "optoelectromechanical wrapper introduction",
+      "paragraphs": [49, 49]
+    },
+    {
+      "role": "closing boilerplate",
+      "paragraphs": [97, 103]
+    }
+  ],
+  "representation_boundary": {
+    "finite_object_is_published": true,
+    "coordinate_break_is_published": true,
+    "patent_surface_coordinate_break_fields": 0,
+    "readout_field_definition": "ANG",
+    "coordinate_transform_inferred": false,
+    "infinity_state_substituted": false,
+    "surface_rows_repaired": false,
+    "related_application_values_borrowed": false,
+    "raster_values_transcribed": false
+  }
+}
