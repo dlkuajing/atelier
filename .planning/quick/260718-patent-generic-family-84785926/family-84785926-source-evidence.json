@@ -88,12 +88,12 @@
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
       "bytes": 47224,
-      "sha256": "c761a74126ff3b049460b04dfdcb7c02cc3b072818cfcb2b83ada897bb348151"
+      "sha256": "a1cd628812d56c8a0431b1ba1f96bc9048ed6f3d4d4862b565bfdbbd623cadf0"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
       "bytes": 48986,
-      "sha256": "712a43014c2960bb502c367cb3b4b3e29204debf96eaa27879ce615661019442"
+      "sha256": "be2f9ac76749f545507a5bc7c257d11c10a0437b48f5584591a710e4ce20951b"
     },
     "result_set_sha256": "a29c2d4457752b19044ab2c4e79b00e9cc65195b777c590583a85392badcf523",
     "strict_roots_with_results": 619,

@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "family_id": "66532282",
+  "root_id": "US-10739564",
+  "publication_id": "US-10739564-B2",
+  "denominators": {
+    "retained_content_authority_documents": 1,
+    "numbered_background_paragraphs": 2,
+    "numbered_brief_paragraphs": 9,
+    "numbered_detailed_paragraphs": 107,
+    "numbered_paragraph_occurrences": 118,
+    "claims": 9,
+    "independent_claims": 1,
+    "declared_figure_panels": 8,
+    "official_drawing_sheets": 5,
+    "flattened_tables": 12,
+    "inline_formula_processing_instructions": 50,
+    "mathml_objects": 0,
+    "source_items": 2,
+    "complete_ordered_prescriptions": 2
+  },
+  "document_boundaries": {
+    "section_paragraph_ranges": {
+      "background": [
+        1,
+        2
+      ],
+      "brief": [
+        1,
+        9
+      ],
+      "detailed": [
+        10,
+        116
+      ]
+    },
+    "detailed_preamble": [
+      10,
+      10
+    ],
+    "closing_boilerplate": [
+      116,
+      116
+    ]
+  },
+  "claims": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "independent": [
+      1
+    ]
+  },
+  "figures": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "item_bindings": [
+      {
+        "item_number": 1,
+        "figures": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "item_number": 2,
+        "figures": [
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    ]
+  },
+  "tables": [
+    {
+      "number": 1,
+      "paragraph": 24,
+      "role": "focal_length",
+      "formal_sha256": "32241a99f7851426ac54e2b57c6624738822aea32fc4035edb6eae97f93c53d9"
+    },
+    {
+      "number": 2,
+      "paragraph": 33,
+      "role": "ordered_surface_material",
+      "formal_sha256": "7fde70966d4eb8d34251c3c57771dad3518e18ecd22026d7c6b678a24fe32954"
+    },
+    {
+      "number": 3,
+      "paragraph": 61,
+      "role": "asphere_coefficients",
+      "formal_sha256": "ece2490a3a2c67652e7952af8ae9ba1285645ba25fdf762b4645c5fd8d178ad6"
+    },
+    {
+      "number": 4,
+      "paragraph": 63,
+      "role": "inflexion_points",
+      "formal_sha256": "104adbf02231bf1ba1fff891bd571abb14583090fa3372841acad1a505f50190"
+    },
+    {
+      "number": 5,
+      "paragraph": 64,
+      "role": "arrest_points",
+      "formal_sha256": "60a849af89411e147eafe83476a8d821ee32f7ad7c1367dcab59da384083598e"
+    },
+    {
+      "number": 6,
+      "paragraph": 68,
+      "role": "condition_values",
+      "formal_sha256": "4821dd1ea3b988b03d9ee1d4f45a153279da0e60829b89868bc8e539565752e9"
+    },
+    {
+      "number": 7,
+      "paragraph": 72,
+      "role": "focal_length",
+      "formal_sha256": "335c5a097c52c3798363ab1ad89732668dafa40f9d53a001ecabd502a0586967"
+    },
+    {
+      "number": 8,
+      "paragraph": 80,
+      "role": "ordered_surface_material",
+      "formal_sha256": "5910e1f2145ab43e5ba4ca1f909197ce43943729c98b7f33b7c442f52cf7b015"
+    },
+    {
+      "number": 9,
+      "paragraph": 108,
+      "role": "asphere_coefficients",
+      "formal_sha256": "ed6bc4116253640e169ac79c1338752073287ad8654349dc7aaff9636b39ca71"
+    },
+    {
+      "number": 10,
+      "paragraph": 110,
+      "role": "inflexion_points",
+      "formal_sha256": "552f206f920da9875b3dc10ba66cd5c521fda8238dc92f3581c2aae6dbc5894f"
+    },
+    {
+      "number": 11,
+      "paragraph": 111,
+      "role": "arrest_points",
+      "formal_sha256": "3ed208bb2d2362a5532f278496639a6ff072fc41b3cac854d48471438927236a"
+    },
+    {
+      "number": 12,
+      "paragraph": 114,
+      "role": "condition_values",
+      "formal_sha256": "ef058b7a781b84149bbc0e2badf505b718dff365c96d546bfed4acfe99f2f18e"
+    }
+  ],
+  "items": [
+    {
+      "item_number": 1,
+      "label": "AAC camera optical lens embodiment 1",
+      "detailed_paragraphs": [
+        11,
+        69
+      ],
+      "figures": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "tables": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "focal_length_mm": 3.354,
+      "entrance_pupil_diameter_mm": 1.86,
+      "full_vision_field_image_height_mm": 2.9335,
+      "diagonal_vision_field_angle_deg": 81.39,
+      "exact_f_number": null,
+      "f_number_upper_bound": 1.8,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item_number": 2,
+      "label": "AAC camera optical lens embodiment 2",
+      "detailed_paragraphs": [
+        70,
+        115
+      ],
+      "figures": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "tables": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "focal_length_mm": 3.367,
+      "entrance_pupil_diameter_mm": 1.87,
+      "full_vision_field_image_height_mm": 2.9335,
+      "diagonal_vision_field_angle_deg": 81.21,
+      "exact_f_number": null,
+      "f_number_upper_bound": 1.8,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    }
+  ],
+  "terminal_counts": {
+    "metadata_unpublished.system_f_number_absent": 2
+  },
+  "conversion_count": 0,
+  "formal_output_count": 0,
+  "saturation_complete": false
+}
