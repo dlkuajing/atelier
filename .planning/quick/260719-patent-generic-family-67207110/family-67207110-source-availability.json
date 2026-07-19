@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "family_id": "67207110",
+  "root_id": "US-12013514",
+  "publication_id": "US-12013514-B2",
+  "application_number": "17/553988",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/c2751a82f5b846e8/US-12013514-B2.html",
+    "bytes": 72058,
+    "characters": 72058,
+    "normalized_characters": 53252,
+    "sha256": "c2751a82f5b846e884ffd0d09419f17e4188dee928bbb68637a536b7095530fd",
+    "normalized_sha256": "825ae99665f818ff884a17c6e4c8106ca361ffbd8d19f74631471ec977b426c9",
+    "flattened_tables": 4,
+    "maths_tags": 0,
+    "embedded_img_tags": 0,
+    "html_table_tags": 0
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/693fb63371a4c5ee/US-12013514-B2.pdf",
+    "bytes": 1259597,
+    "retained_container_sha256": "693fb63371a4c5eef62859890fedd8725deddce9b1bbbadaa0135d50b5ab64cc",
+    "page_count": 26,
+    "single_raster_pages": 26,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "bcd7c856fe3cb54ab37f098105e5288f44acde421786fd550378486cb64ec489",
+    "endpoint_container_sha256_stable": false,
+    "endpoint_decoded_raster_set_stable_across_consecutive_fetches": true
+  },
+  "bibliography": {
+    "title": "Imaging lens assembly, camera module and electronic device",
+    "inventors": ["Chou; Ming-Ta", "Luo; Ruei-Yang"],
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": "LARGAN PRECISION CO., LTD.",
+    "filed": "2021-12-17",
+    "patent_date": "2024-06-18",
+    "prior_publication": "US-20220107483-A1"
+  },
+  "lineage": {
+    "continuation_parent_application": "16/505926",
+    "continuation_parent_grant": "US-11237361",
+    "taiwan_priority_application": "107214451",
+    "taiwan_priority_filed": "2018-10-24",
+    "related_application_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_b2_html_is_content_authority": true,
+    "official_pdf_used_for_layout_confirmation_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_application_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "figure_label_discrepancy_silently_repaired": false,
+    "mechanical_spacing_values_reclassified_as_optical": false
+  }
+}

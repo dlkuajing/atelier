@@ -483,6 +483,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_largan_spacing_ring_and_blocking_sheet_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_fso_transmitter_architecture_and_models_attempts(
             raw_text,
             patent_id=patent_id,
@@ -5402,6 +5410,169 @@ _LARGAN_IMAGE_LENS_OUTER_DIAMETER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "claim_page_numbers": (50, 51, 52, 53),
             "raster_set_sha256": (
                 "92c970fd18bc8c1fa5bf152b7981b90a5b1e039617c39c3cd94749f050d7e614"
+            ),
+            "endpoint_container_sha256_stable": False,
+        },
+    },
+}
+
+_LARGAN_SPACING_RING_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\s*,\s*CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+_LARGAN_SPACING_RING_BRIEF_FIGURE_TOKENS = (
+    "1A",
+    "1B",
+    "10",
+    "2A",
+    "2B",
+    "2C",
+    "3A",
+    "3B",
+    "3C",
+    "4A",
+    "4B",
+    "5A",
+    "5B",
+    "5C",
+    "6",
+    "7",
+)
+_LARGAN_SPACING_RING_ITEMS = (
+    (
+        1,
+        "First embodiment five-lens imaging lens assembly 100",
+        (35, 43),
+        ("1A", "1B", "1C"),
+        ("1",),
+        "confirmed_no_prescription."
+        "imaging_lens_spacing_ring_and_blocking_sheet_geometry_only",
+    ),
+    (
+        2,
+        "Second embodiment five-lens imaging lens assembly 200",
+        (44, 52),
+        ("2A", "2B", "2C"),
+        ("2",),
+        "confirmed_no_prescription."
+        "imaging_lens_spacing_ring_and_blocking_sheet_geometry_only",
+    ),
+    (
+        3,
+        "Third embodiment five-lens imaging lens assembly 300",
+        (53, 62),
+        ("3A", "3B", "3C"),
+        ("3",),
+        "confirmed_no_prescription."
+        "imaging_lens_spacing_ring_and_blocking_sheet_geometry_only",
+    ),
+    (
+        4,
+        "Fourth embodiment five-lens imaging lens assembly 400",
+        (63, 72),
+        ("4A", "4B"),
+        ("4",),
+        "confirmed_no_prescription."
+        "imaging_lens_spacing_ring_and_blocking_sheet_geometry_only",
+    ),
+    (
+        5,
+        "Fifth embodiment smartphone electronic device 500",
+        (73, 77),
+        ("5A", "5B", "5C"),
+        (),
+        "confirmed_no_prescription."
+        "electronic_device_camera_module_integration_wrapper_only",
+    ),
+    (
+        6,
+        "Sixth embodiment tablet electronic device 600",
+        (78, 78),
+        ("6",),
+        (),
+        "confirmed_no_prescription."
+        "electronic_device_camera_module_integration_wrapper_only",
+    ),
+    (
+        7,
+        "Seventh embodiment wearable electronic device 700",
+        (79, 79),
+        ("7",),
+        (),
+        "confirmed_no_prescription."
+        "electronic_device_camera_module_integration_wrapper_only",
+    ),
+)
+_LARGAN_SPACING_RING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12013514-B2": {
+        "family_id": "67207110",
+        "application_number": "17/553988",
+        "raw_document_sha256": (
+            "c2751a82f5b846e884ffd0d09419f17e4188dee928bbb68637a536b7095530fd"
+        ),
+        "normalized_text_sha256": (
+            "825ae99665f818ff884a17c6e4c8106ca361ffbd8d19f74631471ec977b426c9"
+        ),
+        "identity_markers": {
+            "Family ID: 67207110": 1,
+            "Appl. No.: 17/553988": 1,
+            "Chou; Ming-Ta": 2,
+            "Luo; Ruei-Yang": 1,
+            "LARGAN PRECISION CO., LTD.": 2,
+            "Filed: December 17, 2021": 1,
+            "Date of Patent June 18, 2024": 1,
+            "US 20220107483 A1": 1,
+            "TW 107214451 Oct. 24, 2018": 1,
+            (
+                "continuation parent-doc US 16505926 20190709 US 11237361 "
+                "child-doc US 17553988"
+            ): 1,
+        },
+        "section_sha256": {
+            "background": "081b3d4bf86a8a222f6185d07da12b7ef22c1b071d38919f9940c0cc4a584d4b",
+            "description": "0a1d4db599f7169d5a7c5a8107ba693fb37132969412455d995a4d3581f242c2",
+            "claims": "5128077b912c759556754cfd8a6eea65004c3069c1e9fa8507e6bbabe2dd7388",
+        },
+        "paragraph_span_sha256": {
+            (1, 17): "41feab3f13f2d03049af6fd31bb8681423c192107f4b95053a1c2006ebb80608",
+            (18, 34): "98c264c3c94a83c1d533c07efab20b5af341e27147c03d7305a613eda5bb9ff7",
+            (35, 43): "fc5f8701309407640c3fd0d5d6039c97fbc3214377895e6b0d92f80b6e6340d6",
+            (44, 52): "ef634175e9b87e8c55ebcb9daa8ba754ca412cb3b49c43816ecfbc91e1146090",
+            (53, 62): "764f6511b3093422f2771b8961e481475add921fae65ea1b6cc082e9f34036cc",
+            (63, 72): "31f2251989693e7da0f0ac28df679aa6d59fa3d8e93c23f82acbb98476c3d49d",
+            (73, 77): "8bfd6aaf1ee7ceaf8ce61a47c81a871a7a730e7bdddbae1b5c3407fe26ebc2d8",
+            (78, 78): "6748aaa9791629e132eadf8b5e71fae29744b907c1a0fb1229eb36dceef6cd84",
+            (79, 79): "62a6a95b1c0bd2d74c1f7694c5c7029328adc7af014198fbaf2ec4b903689cfc",
+            (80, 80): "7bac98c316b9a76994ab59069a366acc5996d3c09d1b7db508a8c21f659067ec",
+        },
+        "table_fragment_sha256": {
+            "raw": (
+                "73c1af1a40281216a93c485753060c3728f18fbdfcf14201800a9f82ea53e97c",
+                "b6870f5425884d45ab9de01bb45cf7f35e1c6cf136c821aa0bd03e7984b377c0",
+                "77238b91a939c799380a2955d204b0fc38e35aa8c2fd7e2b0a36ed0e1ddce0be",
+                "c54c5e573c638fd797bac7e9e949ea7fb987d01d8d070cee0b6f945555c3484b",
+            ),
+            "normalized": (
+                "2405ef9b5e6620ee021f154a917661729acdff3bc373795d9b38b81966c5203c",
+                "d1be58c8fad3e9821c6654a94b54163e5a4f987695e3e84479f7ff2a85768507",
+                "4275e7220beae58e152389cbd842314ce9ceb9921bdb8d780e07fce2d8ef2284",
+                "42b0c8ba23e93f374162887de453f3accb1377804989ce8161a12f4646922541",
+            ),
+        },
+        "official_pdf": {
+            "path": "data/patent-lake/uspto-ppubs-pdf/693fb63371a4c5ee/US-12013514-B2.pdf",
+            "bytes": 1259597,
+            "retained_container_sha256": (
+                "693fb63371a4c5eef62859890fedd8725deddce9b1bbbadaa0135d50b5ab64cc"
+            ),
+            "page_count": 26,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(3, 19)),
+            "table_page_numbers": (21, 22, 23, 24),
+            "claim_page_numbers": (25, 26),
+            "raster_set_sha256": (
+                "bcd7c856fe3cb54ab37f098105e5288f44acde421786fd550378486cb64ec489"
             ),
             "endpoint_container_sha256_stable": False,
         },
@@ -36255,6 +36426,287 @@ def _classify_largan_image_lens_outer_diameter_geometry_attempts(
             outcomes,
             strict=True,
         )
+    ]
+
+
+def _classify_largan_spacing_ring_and_blocking_sheet_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the seven exact Family 67207110 source-declared items."""
+
+    profile = _LARGAN_SPACING_RING_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _tables, _reason in (
+                _LARGAN_SPACING_RING_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Largan spacing-ring official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Largan spacing-ring normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_LARGAN_SPACING_RING_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Largan spacing-ring title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan spacing-ring identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_specs = (
+            ("background", "<h3>Background/Summary</h3>", "<h3>Description</h3>"),
+            ("description", "<h3>Description</h3>", "<h3>Claims</h3>"),
+            ("claims", "<h3>Claims</h3>", None),
+        )
+        raw_sections: dict[str, str] = {}
+        for name, start_marker, end_marker in section_specs:
+            try:
+                start = raw_text.index(start_marker)
+                end = (
+                    raw_text.index(end_marker, start + len(start_marker))
+                    if end_marker is not None
+                    else len(raw_text)
+                )
+            except ValueError as exc:
+                raise PatentParseError(
+                    f"Largan spacing-ring raw {name} boundary changed"
+                ) from exc
+            raw_section = raw_text[start:end]
+            raw_sections[name] = raw_section
+            digest = hashlib.sha256(
+                normalize_patent_text(raw_section).encode("utf-8")
+            ).hexdigest()
+            if digest != profile["section_sha256"][name]:
+                raise PatentParseError(f"Largan spacing-ring {name} section changed")
+
+        background_numbers = tuple(
+            int(value)
+            for value in re.findall(r"\((\d+)\)", raw_sections["background"])
+        )
+        if background_numbers != (1, 1, 2, 3, 4, 5, 6):
+            raise PatentParseError(
+                "Largan spacing-ring related/background denominator changed"
+            )
+
+        raw_description = raw_sections["description"]
+        paragraph_matches = list(re.finditer(r"\((\d+)\)", raw_description))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 81)):
+            raise PatentParseError(
+                "Largan spacing-ring description denominator changed"
+            )
+        paragraphs = {
+            int(match.group(1)): normalize_patent_text(
+                raw_description[
+                    match.start() : (
+                        paragraph_matches[index + 1].start()
+                        if index + 1 < len(paragraph_matches)
+                        else len(raw_description)
+                    )
+                ]
+            )
+            for index, match in enumerate(paragraph_matches)
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            first, last = bounds
+            span = " ".join(paragraphs[number] for number in range(first, last + 1))
+            if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Largan spacing-ring paragraph span {first}-{last} changed"
+                )
+
+        brief_tokens: list[str] = []
+        for paragraph_number in range(2, 18):
+            match = re.search(
+                r"\bFIG\s*\.\s*(\d+)\s*([A-Z])?\b",
+                paragraphs[paragraph_number],
+                re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan spacing-ring figure declaration missing at paragraph "
+                    f"{paragraph_number}"
+                )
+            brief_tokens.append(
+                f"{match.group(1)}{(match.group(2) or '').upper()}"
+            )
+        if tuple(brief_tokens) != _LARGAN_SPACING_RING_BRIEF_FIGURE_TOKENS:
+            raise PatentParseError(
+                "Largan spacing-ring figure declaration denominator changed"
+            )
+        if not (
+            re.search(r"\bFIG\s*\.\s*10\b", paragraphs[4], re.IGNORECASE)
+            and re.search(r"\bFIG\s*\.\s*10\b", paragraphs[35], re.IGNORECASE)
+            and re.search(r"\bFIG\s*\.\s*1\s*C\b", paragraphs[42], re.IGNORECASE)
+        ):
+            raise PatentParseError(
+                "Largan spacing-ring FIG. 10/FIG. 1C source discrepancy changed"
+            )
+
+        table_numbers = tuple(
+            int(value) for value in re.findall(r"TABLE-US-(\d{5})", raw_text)
+        )
+        if table_numbers != (1, 2, 3, 4):
+            raise PatentParseError("Largan spacing-ring table inventory changed")
+        raw_table_digests = []
+        normalized_table_digests = []
+        for number in table_numbers:
+            marker = f"TABLE-US-{number:05d}"
+            start = raw_text.index(marker)
+            try:
+                end = raw_text.index("<br />", start) + len("<br />")
+            except ValueError as exc:
+                raise PatentParseError(
+                    "Largan spacing-ring flattened table boundary changed"
+                ) from exc
+            fragment = raw_text[start:end]
+            raw_table_digests.append(
+                hashlib.sha256(fragment.encode("utf-8")).hexdigest()
+            )
+            normalized_table_digests.append(
+                hashlib.sha256(
+                    normalize_patent_text(fragment).encode("utf-8")
+                ).hexdigest()
+            )
+        if tuple(raw_table_digests) != profile["table_fragment_sha256"]["raw"]:
+            raise PatentParseError("Largan spacing-ring raw table fragments changed")
+        if tuple(normalized_table_digests) != profile["table_fragment_sha256"][
+            "normalized"
+        ]:
+            raise PatentParseError(
+                "Largan spacing-ring normalized table fragments changed"
+            )
+        if re.search(r"<maths\b", raw_text, re.IGNORECASE):
+            raise PatentParseError("Largan spacing-ring MathML inventory changed")
+
+        claims = normalize_patent_text(raw_sections["claims"])
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                claims,
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 14)):
+            raise PatentParseError("Largan spacing-ring claim denominator changed")
+        independent_claims = []
+        for index, match in enumerate(claim_matches):
+            end = (
+                claim_matches[index + 1].start()
+                if index + 1 < len(claim_matches)
+                else len(claims)
+            )
+            claim = claims[match.start() : end]
+            if re.search(r"\bclaim(?:s)?\s+\d+", claim, re.IGNORECASE) is None:
+                independent_claims.append(int(match.group(1)))
+        if independent_claims != [1]:
+            raise PatentParseError(
+                "Largan spacing-ring independent-claim binding changed"
+            )
+
+        item_markers = {
+            35: "electronic device 100",
+            44: "electronic device 200",
+            53: "electronic device 300",
+            63: "electronic device 400",
+            73: "electronic device 500",
+            78: "electronic device 600",
+            79: "electronic device 700",
+        }
+        for paragraph_number, marker in item_markers.items():
+            if marker not in paragraphs[paragraph_number]:
+                raise PatentParseError(
+                    f"Largan spacing-ring item marker changed at paragraph "
+                    f"{paragraph_number}"
+                )
+        prohibited_prescription_markers = (
+            r"\bEFL\b",
+            r"\beffective\s+focal\s+length\b",
+            r"\bF\s*/\s*NO\b",
+            r"\bF-number\b",
+            r"\bAbbe\b",
+            r"\brefractive\s+index\b",
+            r"\bradius\s+of\s+curvature\b",
+            r"\baspheric\s+coefficient",
+            r"\bimage\s+height\b",
+            r"\baperture\s+stop\b",
+            r"\b(?:half|full)\s+field\b",
+        )
+        for marker in prohibited_prescription_markers:
+            if re.search(marker, text, re.IGNORECASE):
+                raise PatentParseError(
+                    f"Largan spacing-ring unexpected prescription marker {marker!r}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain the seven-item denominator
+        return attempts_for_error(exc)
+
+    outcomes: list[PatentTerminalParseError] = []
+    for number, _label, bounds, _figures, tables, reason_code in (
+        _LARGAN_SPACING_RING_ITEMS
+    ):
+        first, last = bounds
+        if number <= 4:
+            detail = (
+                f"Paragraphs {first}-{last} and mechanical spacing-ring Table "
+                f"{tables[0]} disclose five named lens elements, blocking sheets, "
+                "and t1/t2/d assembly geometry, but no ordered optical surface "
+                "prescription or complete system metadata"
+            )
+        else:
+            device = {5: "smartphone", 6: "tablet", 7: "wearable device"}[number]
+            detail = (
+                f"Paragraphs {first}-{last} disclose a {device} integration wrapper "
+                "around a reused camera module, but no additional ordered optical "
+                "surface prescription"
+            )
+        outcomes.append(
+            PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=detail,
+            )
+        )
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=error,
+        )
+        for (
+            number,
+            label,
+            _paragraphs,
+            _figures,
+            _tables,
+            _reason,
+        ), error in zip(_LARGAN_SPACING_RING_ITEMS, outcomes, strict=True)
     ]
 
 

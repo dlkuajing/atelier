@@ -739,25 +739,27 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | `260719-patent-generic-family-90360259` | complete-shovel-saturation-incomplete | Exact B2 source reconciles application 18/535096, Family ID 90360259, 9 Background/Summary paragraphs, 103 Description paragraphs, claims 1-21 with claim 1 independent, 31 figure panels, two flattened tables and five source items. System 300 publishes 13 sequential surfaces including object/image, direct wavelength/system metadata, a 10.0000-mm finite object and `DECENTER(1)` Z=3.5000 mm. Repository surface DTOs lack coordinate-break fields and the readout builder creates `ANG` infinity-conjugate fields, so item 1 remains an exact parser review without coordinate transform or infinity substitution. Examples A-D add only encapsulated electromechanical wrappers around reused lens/system context and close as four confirmed-no-prescription terminals. The 37-page image-only official PDF and all original rasters reconcile at `433e6cdd...c92ebd` without enhancement, measurement or raster transcription. Attempts 2/3 are semantic-equal after removing only result attempt at `3eba8d05...430e64`; no worker, fingerprint, candidate, ZMX or formal intake exists. Result set `80a90c22...c0ad5`; audit twice 619/619 corrupt=0. Focused 8/8, parser file 760/760 and complete offline repository 3509 passed/1 skipped/10 real-machine deselected; Ruff, evidence, output and protected-path checks pass; CODE V zero. Fifty prior manifests refresh 100 live summary/report records and five explicitly live result-set pointers while historical snapshots remain fixed. Generic 72 roots remains first; Family 96807780 root US-20250389925 is next. |
 
+| `260719-patent-generic-family-96807780` | complete-shovel-saturation-incomplete | Exact A1 source reconciles application 19/243071, Family ID 96807780, nine Background/Summary paragraphs, 116 Description paragraphs, claims 1-39 with four independent claims, 37 figure panels, three mechanical tables, 22 MathML objects and ten source items. Seven image-lens-element embodiments publish outer-diameter stripe/gate/shrinking-region/molding geometry only; smartphone, folded-camera and vehicle wrappers add no prescription. All ten become confirmed-no-prescription without drawing transcription, derivation, family borrowing or formal output. The 53-page image-only PDF and complete original-raster denominator reconcile at `92c970fd...0d7e614`. Attempts 2/3 are semantic-equal excluding only result attempt at `1005aad9...d4e9`; result set `61ae246e...dc30`; audit 619/619 corrupt=0. Full offline coverage is 3516 passed/1 skipped/10 real-machine deselected plus a separately passing evidence test; focused 7/7, prior evidence 21/21 and guard 5/5 pass; Ruff, compile, JSON, evidence, formal-output, protected-path, diff and primary-repository audits pass; CODE V zero. Generic 71 roots remains first; Family 67207110 root US-12013514 is next. |
+
+| `260719-patent-generic-family-67207110` | complete-shovel-saturation-incomplete | Exact B2 source reconciles application 17/553988, Family ID 67207110, one related-application paragraph, six Background/Summary paragraphs, 80 Description paragraphs, claims 1-13 with claim 1 independent, 16 declared figures, four mechanical spacing-ring tables and seven source items. Four five-lens assembly embodiments publish only named elements, blocking sheets and t1/t2/d mechanics; smartphone, tablet and wearable wrappers add no prescription. All seven become confirmed-no-prescription without raster transcription, numeric derivation, label repair, family borrowing or formal output. The 26-page image-only official PDF has 16 drawing sheets; every original raster reconciles at `bcd7c856...ec489`. The source's FIG.10/FIG.1C discrepancy remains explicit. Attempts 2/3 are semantic-equal excluding only result attempt at `7c20127e...d86bc`; result set `2366d288...47af3`; audit 619/619 corrupt=0. Focused 7/7, prior evidence 22/22, guard 5/5 and the complete offline repository sweep pass 3523 tests with one skipped and ten real-machine tests deselected; Ruff, compile, JSON, formal-output, contamination, protected-path, diff and primary-repository audits pass; CODE V zero. Generic 70 roots remains first; Family 66534470 root US-20190154987 is next. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, preserve the completed GSD quick
-`.planning/quick/260719-patent-generic-family-96807780/` for deterministic Family
-`96807780` / root `US-20250389925` / publication `US-20250389925-A1`, application
-`19/243071`, plus all prior quicks and the cohort-pinned
-`data/patent-ledger/snapshot.json`; rebuilding that frozen input while replay staging is
-active invalidates strict cohort audit. Family 96807780 closes ten exact
-confirmed-no-prescription items, moves the generic residual from 72 to 71 roots/items,
-and leaves the strict ledger at 619/619 with zero missing/corrupt results and result set
-`61ae246e8bc734049babb17ecfa96140705cf740472f812478efa58c47f8dc30`.
-Never infer terminal outcomes from chat or historical free-text reports. Before any test
-sweep, confirm the non-`real_machine` CODE V subprocess guard is active and inventory is
-zero. The next exact family under deterministic parser/layout/family/root/publication
-ordering is Family ID `67207110`, root `US-12013514`, publication `US-12013514-B2`,
-application `17/553988`, layout
-`6e3292bca1d7fe209679f67c6ed13c7a271080a949793d9ead276d3f8212a213`.
+`.planning/quick/260719-patent-generic-family-67207110/260719-patent-generic-family-67207110-PLAN.md`
+and immediately open the next GSD quick for deterministic Family `66534470` / root
+`US-20190154987` / publication `US-20190154987-A1`, application `16/101628`, while
+preserving Family 96807780 and all prior quicks plus
+the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input while
+replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
+from chat or historical free-text reports. Before any test sweep, confirm the
+non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
+generic residual contains 70 roots/items at result set
+`2366d288e7a831f4d700e9d60a7236dc3da2f0aaaaa656e4e98ec5191d547af3`.
+The selected family has layout
+`7208bff953e2e49213cd4b83bc0534045ca01f661b2776ede84b75cb635f0671`.
 Use the same strict before/after census, source-proven layout, append-only targeted replay,
 and full-pool audit contract. Remeasure after every shovel; parent saturation remains
 incomplete.
