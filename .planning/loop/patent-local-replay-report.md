@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `87fb5953031c07176bdc6cf49e72de0f19b307eabfbbe4f41c07ca917f3f8a9b`
+- result_set_sha256: `868fcfde145c084b6e95433b142b10fb0da5993bc1507abaa0058b0771dd4aa0`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 27
-- `terminal`: 182
-- `parser_review_required`: 257
+- `terminal`: 183
+- `parser_review_required`: 256
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 587
-- `terminal`: 1501
-- `parser_review_required`: 1352
+- `terminal`: 1511
+- `parser_review_required`: 1351
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -41,21 +41,21 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `confirmed_no_prescription`: 515
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
-- `metadata_unpublished`: 240
+- `metadata_unpublished`: 250
 - `trace_failed`: 631
 - `trace_timeout`: 115
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 257
-- `terminal.all_disclosed_items_terminal`: 182
+- `parser_review_required.all_disclosed_items_rejected`: 256
+- `terminal.all_disclosed_items_terminal`: 183
 - `mixed_nonterminal.multiple_item_states`: 153
 - `converted_pending_intake.all_disclosed_items_converted`: 27
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1352
+- `parser_review_required.deterministic_parser_rejected`: 1351
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 587
 - `terminal.metadata_unpublished.system_f_number_absent`: 79
@@ -73,6 +73,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only`: 12
 - `terminal.confirmed_no_prescription.imaging_lens_element_nanostructure_transmittance_architecture_only`: 12
 - `terminal.confirmed_no_prescription.solid_state_image_sensor_translucent_cover_nanostructure_architecture_only`: 11
+- `terminal.metadata_unpublished.prescription_specific_angular_field_absent`: 11
 - `terminal.metadata_unpublished.beam_splitter_material_and_f_number_absent`: 10
 - `terminal.confirmed_no_prescription.adjustable_aperture_light_blocking_sheet_architecture_only`: 9
 - `terminal.confirmed_no_prescription.electronic_device_camera_module_placement_architecture_only`: 9
@@ -97,7 +98,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.light_blocking_geometry_only`: 4
 - `terminal.confirmed_no_prescription.low_reflection_coating_and_light_blocking_architecture_only`: 4
 - `terminal.confirmed_no_prescription.plastic_optical_folding_reflective_film_architecture_only`: 4
-- `terminal.metadata_unpublished.prescription_specific_angular_field_absent`: 4
 - `terminal.metadata_unpublished.system_field_of_view_absent`: 4
 - `terminal.confirmed_no_prescription.autofocus_lens_carrier_and_electromagnetic_drive_architecture_only`: 3
 - `terminal.confirmed_no_prescription.electronic_device_camera_module_integration_wrapper_only`: 3
@@ -109,6 +109,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.plastic_light_folding_reflective_film_architecture_only`: 3
 - `terminal.confirmed_no_prescription.variable_aperture_magnet_hall_control_architecture_only`: 3
 - `terminal.metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent`: 3
+- `terminal.metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent`: 3
 - `terminal.confirmed_no_prescription.barcode_scanner_architecture_only`: 2
 - `terminal.confirmed_no_prescription.camera_module_light_blocking_compensation_architecture_only`: 2
 - `terminal.confirmed_no_prescription.compact_barcode_telephoto_architecture_only`: 2
@@ -347,7 +348,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 67
+- `generic_summary_metadata_missing`: 66
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62

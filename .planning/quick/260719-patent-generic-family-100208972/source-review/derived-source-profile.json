@@ -1,0 +1,1135 @@
+{
+  "raw_chars": 167495,
+  "raw_bytes": 170886,
+  "raw_sha256": "7659bdaf0b85b0754e4d388e51a81dcb525e8048781ce1855007962f0927e696",
+  "normalized_chars": 67058,
+  "normalized_sha256": "109c17a4cb24af11db088fc0240f171f67a1336c533be419e0219954c8c22921",
+  "section_markers": {
+    "abstract": "Abstract Folded lens modules",
+    "background_summary": "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS",
+    "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+    "detailed": "DETAILED DESCRIPTION",
+    "claims": "Claims 1 . A lens assembly"
+  },
+  "section_sha256": {
+    "abstract": "cfbc386733c9abd3ea13dd4a5fc29c0a798e8da1f8c88df8f5d5a3ac542aa26a",
+    "background_summary": "433c7c3ddf49f0b043e6cc510516c2497a89297d09caaf7ea51907148bbbb0ef",
+    "brief": "89ba471e6df986e7f582acb00f273b4ff3b754edd606899be84d07cbc39e36bf",
+    "detailed": "bed41cc85e431e568cb375f019518b34f59ede9a7fcaba3958874209dc9ad5a8",
+    "claims": "2d6b31b71cfe161b30f82a6e23a46cdca9f43bc2d4e3b38dc9b126ee32ff17ee"
+  },
+  "background_paragraph_numbers": [
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "description_paragraph_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107
+  ],
+  "paragraph_span_sha256": {
+    "1-21": "bbf85750f57b1c49accbb1b12b1f58cf9d9e837bc05ecd791784b0fa84765c8d",
+    "22-53": "d0727c8793e6870de8e8409602897cbd5317b43cb7b8ceb7dfb65487a32103be",
+    "54-70": "f2ae5b1a8efe95019ac8f8b2643e7f4098b1478f24a3da70e9a69291ce4a7921",
+    "71-100": "b3fa75ebc8e0d6fa3f74540029fc1074388cef73a42223edc998472ae59ec0a2",
+    "101-104": "9d9405713fbf98f2ce760e10080c495568b748e3efdc6ae69724553d0c808c57",
+    "105-107": "2e788dcf47b9acc868272094dda4e956795e0ea7f94259a55b64712d8605fe83"
+  },
+  "claim_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
+  "claim_sha256": [
+    "af6223a46fbacb173ea2500e096777fb51441e59ac2eb7fbcb86f4f05db34cc4",
+    "945959cf61ae28e383a42495fe5ddd54f28e38808bff64322177a564cfbe4a98",
+    "ae6ffcdcb5b46d195246ceb627c54aced04216df9cc264e643102e9efad047aa",
+    "44266f101a702872311739092539af1fa1f5b76dcfa5f5d57ebe0a864cdf3a46",
+    "54e59aefab476f6b6fbd73bf767d58f8937772c0a23bc9975c68e9125df2f128",
+    "37bb70d4b692877039911e562ff2ff7c162d3acc7793496a6fa5d544a7bda094",
+    "00a8bb2a670316dd655b77fd7052cbe53cff4fb6d89edd82c605abd213123f35",
+    "a112fd5c3ead8d14f599653106e6d98bddbbd6d9881931c66e54e13e9a09dc59",
+    "39e112af395861e7d9b6ed2d67222ce606ae3b1b4ea8545f3baf35fc4ae341f6",
+    "369943ab32b3bce852a793a667e8bcdbc67eaf2442982bb783509253f3bb84fe",
+    "902afb4045c532ef3baad3680c9558f14f3501cd0d389ba7991286675d3fcf94",
+    "a8f193bd499df9b8ae26fd1d93fd0c69de70f41d0e4cd2227ad568a7a2a9e22c",
+    "b38e754e3b047cd20039522aff7d29789cf1338b4e6ea33ebd007d3b9246faa5",
+    "f6a304f3349423832ddcf1781544275270f4a6051e78b10c5d23189e3da2b61e",
+    "4990f6c81d9587347df3f6f8f04af6021ab7c6efcb1f98c13dc11cee1256e915",
+    "3b892b98f501b28f10872104c163a68017b05e941808c8f4210e3b6c306b8fad",
+    "dc5c9ee7922fd48f842a121ea35cab760f4c6bdd255103793a6eb1e126d52573",
+    "af63b1c60d6929be04d56c856eb6688f4930696f86e4125bd7701b8d84327f81",
+    "357a21d306571ce06bec30f768ceded3968ba310edd2f318af5eb34a953c594e",
+    "4333fc9e6b37b60b5216b1c2e83142f72cf6a6ebd28fcc5555ad615a53b236e3",
+    "92aabf0f5de0174e4c4da41e46116a975216924d129e0326fb8d8b44ff26d51f"
+  ],
+  "identity_counts": {
+    "FOLDED CAMERA LENS DESIGNS": 1,
+    "Family ID: 100208972": 1,
+    "Appl. No.: 18/786504": 1,
+    "US 20260029623 A1": 1,
+    "US 16604009 US 12078868": 1,
+    "PCT/IB2019/053662": 2,
+    "Corephotonics Ltd.": 2,
+    "Rudnick; Roy": 2,
+    "Dror; Michael": 1,
+    "Goldenberg; Ephraim": 1,
+    "Shabtay; Gal": 1,
+    "Bachar; Gil": 1
+  },
+  "figure_declarations": [
+    {
+      "paragraph": 2,
+      "label": "1 A",
+      "count": 1
+    },
+    {
+      "paragraph": 3,
+      "label": "1 B",
+      "count": 1
+    },
+    {
+      "paragraph": 4,
+      "label": "1 C",
+      "count": 1
+    },
+    {
+      "paragraph": 5,
+      "label": "1 D",
+      "count": 1
+    },
+    {
+      "paragraph": 6,
+      "label": "2 A",
+      "count": 1
+    },
+    {
+      "paragraph": 7,
+      "label": "2 B",
+      "count": 1
+    },
+    {
+      "paragraph": 8,
+      "label": "3 A",
+      "count": 1
+    },
+    {
+      "paragraph": 9,
+      "label": "3 B",
+      "count": 1
+    },
+    {
+      "paragraph": 10,
+      "label": "4",
+      "count": 1
+    },
+    {
+      "paragraph": 11,
+      "label": "5",
+      "count": 1
+    },
+    {
+      "paragraph": 12,
+      "label": "6",
+      "count": 1
+    },
+    {
+      "paragraph": 13,
+      "label": "7",
+      "count": 1
+    },
+    {
+      "paragraph": 14,
+      "label": "8",
+      "count": 1
+    },
+    {
+      "paragraph": 15,
+      "label": "9",
+      "count": 1
+    },
+    {
+      "paragraph": 16,
+      "label": "10",
+      "count": 1
+    },
+    {
+      "paragraph": 17,
+      "label": "11",
+      "count": 1
+    },
+    {
+      "paragraph": 18,
+      "label": "12",
+      "count": 1
+    },
+    {
+      "paragraph": 19,
+      "label": "13",
+      "count": 1
+    },
+    {
+      "paragraph": 20,
+      "label": "14 A",
+      "count": 1
+    },
+    {
+      "paragraph": 21,
+      "label": "14 B",
+      "count": 1
+    }
+  ],
+  "table_paragraphs": {
+    "1": 71,
+    "2": 72,
+    "3": 73,
+    "4": 74,
+    "5": 75,
+    "6": 76,
+    "7": 77,
+    "8": 78,
+    "9": 79,
+    "10": 80,
+    "11": 81,
+    "12": 82,
+    "13": 83,
+    "14": 84,
+    "15": 85,
+    "16": 86,
+    "17": 87,
+    "18": 88,
+    "19": 89,
+    "20": 90,
+    "21": 91,
+    "22": 92,
+    "23": 93,
+    "24": 94,
+    "25": 95,
+    "26": 96,
+    "27": 97,
+    "28": 98,
+    "29": 99,
+    "30": 100,
+    "31": 101,
+    "32": 102,
+    "33": 104
+  },
+  "table_payload_sha256": {
+    "1": "0152b821b6a7412e775dadad40d02a0777fcf6a06cc43c93e3543287c7c424c0",
+    "2": "b103e3ef2bea0d023d4e34f8498e84e409fba446102c9c163ebb13d11a87f781",
+    "3": "9c9d4ace253fcb72886591c6eff6aaea1a44d66f4e75ee648b752c85cf60568b",
+    "4": "09310347044bddee09e3b00be33035952a30fdb2035d3c18c7841e3e3f2fb1de",
+    "5": "ed9cf6bea972ce195d6a48385ac0be51efa1ea1db407d5801306a711edabc99b",
+    "6": "2485a06bb21e7e435092b7bc34f6c7c6f806e78f1311a83e2a442630605ce953",
+    "7": "6678f30f39a38e216f99a41552458f27396711a1033b45da4cf50f825678512d",
+    "8": "9e3d8a8fe1db8f74b821b8219c9e135ba63fcbc04d6a4ac3bf9099eb560d1b16",
+    "9": "aeeca143f494060b40096ef1c84e03a97e33f11c2760a198b39a6f7d5a16ab5b",
+    "10": "5623f50b460cf1f5f2aa39c0e9e4323ee4bc254d4f3accd3210b3ca05a1e9668",
+    "11": "fb72684bde1de39c5c1064021029498cc01b0482e2318299cee48f75a59f85bb",
+    "12": "02032e22d92a9e6011722fc4b91a334c0c9f9839487c36b743a0eee2e268c182",
+    "13": "289905e09193d99a79250f63bdccd5ccbacf4ad73ac47583a288feb9d05119ec",
+    "14": "2eb372ba6d2fd9e10d7329d827724019cecf8ec91077834cb0d88bbd915e03ad",
+    "15": "a348d630b9cad0d4bf88331d26ba982438d1e6eba0f0ea6454d45ca0b3646429",
+    "16": "f2c5e841379d8fab2981a6fd2fc1bb2cb9adf7d723ba75af84a4fb0c3f4763b2",
+    "17": "600efcaf833c3f5fcb0e2a1a13bad1d31cbed8f0018873efe856a4bf6944dd31",
+    "18": "b8faa13b5421873e9fe23019516c0c75dd243fba4da657300f5f2d15359141e5",
+    "19": "ee5c9f92b730720e1aaf61ca14017df91004ffe3a41cebb4ea29092aea533cae",
+    "20": "2bc8bed5b0dedbecb19272ec513ddbdfcd372800f40813edb24626db33867df5",
+    "21": "3bff28896987adc7043f3f63dccf28de7dfd83055ddb2b698b8b4329a61f3965",
+    "22": "95dd63fcf5a93e7f657149857accf05f361e52d0a94562c4313fb734889e8288",
+    "23": "e9386f6137b0e18437267d21bbe4af374df1ac0a4b1eee8ac0122f7a1978d7ee",
+    "24": "2097f7ec90f25701ef84f267a9cda51b169f2013c07270c53d788b392da6cc09",
+    "25": "87371ec758851ddb2348a3e898a37b0bb15314c6235882f8ba632245865c10a4",
+    "26": "37b49d24141f52fea6e9c84723b427b39c3ef77771c4af767c6eacc528a275f4",
+    "27": "e186b783fec56b9b6c909fa8d52a11b4ad75356b975ca8794911f0f1e06f4acc",
+    "28": "b6bcff2f20b306fcc619a8d58843f4fe8826fe22c071914c0c2d071f461b8511",
+    "29": "42dc603b0bf7344f8ed2f23469992c77a512afc1655c60206f870bb151e22e35",
+    "30": "0b92226684b7aba9d085b4a10ea8b7eb9bd248f1de5edc87abda7f26efa34dcd",
+    "31": "f51d9ef61e1c382d5d808736233537ece641c668e41c4f9c687e553de060f1c6",
+    "32": "3b7fded71d0ed1d437d6f994f5c9e106a1296ccd1ec033647684bdab2a57298f",
+    "33": "7c1eb29e57aeb9f71c2769c6a8c63a0e12d6e9f213ac3af2398040b2610c1570"
+  },
+  "table_payload_token_counts": {
+    "1": 33,
+    "2": 92,
+    "3": 75,
+    "4": 35,
+    "5": 113,
+    "6": 103,
+    "7": 35,
+    "8": 113,
+    "9": 103,
+    "10": 35,
+    "11": 113,
+    "12": 103,
+    "13": 35,
+    "14": 113,
+    "15": 103,
+    "16": 35,
+    "17": 113,
+    "18": 103,
+    "19": 35,
+    "20": 113,
+    "21": 85,
+    "22": 35,
+    "23": 113,
+    "24": 85,
+    "25": 33,
+    "26": 95,
+    "27": 75,
+    "28": 35,
+    "29": 114,
+    "30": 72,
+    "31": 68,
+    "32": 363,
+    "33": 531
+  },
+  "summary_values": {
+    "1": {
+      "efl": 13.809,
+      "ttl": 13.612,
+      "fno": 2.735,
+      "img": 2.93,
+      "bfl": 4.932
+    },
+    "2": {
+      "efl": 15.001,
+      "ttl": 14.472,
+      "fno": 2.727,
+      "img": 2.93,
+      "bfl": 7.617
+    },
+    "3": {
+      "efl": 10.911,
+      "ttl": 10.585,
+      "fno": 2.819,
+      "img": 2.62,
+      "bfl": 5.0
+    },
+    "4": {
+      "efl": 12.166,
+      "ttl": 11.856,
+      "fno": 2.704,
+      "img": 2.62,
+      "bfl": 6.382
+    },
+    "5": {
+      "efl": 12.02,
+      "ttl": 11.216,
+      "fno": 2.671,
+      "img": 2.62,
+      "bfl": 6.412
+    },
+    "6": {
+      "efl": 15.0,
+      "ttl": 14.507,
+      "fno": 2.727,
+      "img": 2.93,
+      "bfl": 6.75
+    },
+    "7": {
+      "efl": 16.142,
+      "ttl": 14.963,
+      "fno": 2.612,
+      "img": 2.93,
+      "bfl": 7.459
+    },
+    "8": {
+      "efl": 14.955,
+      "ttl": 14.056,
+      "fno": 2.69,
+      "img": 2.93,
+      "bfl": 6.566
+    },
+    "9": {
+      "efl": 11.19,
+      "ttl": 11.135,
+      "fno": 2.59,
+      "img": 2.62,
+      "bfl": 4.303
+    },
+    "10": {
+      "efl": 7.97,
+      "ttl": 7.78,
+      "fno": 2.148,
+      "img": 2.93,
+      "bfl": 3.266
+    }
+  },
+  "surface_row_sequences": {
+    "1": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "2": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "3": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "4": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "5": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "6": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "7": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "8": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "9": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "10": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ]
+  },
+  "coefficient_row_sequences": {
+    "1": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "2": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "3": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "4": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "5": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "6": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "7": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "8": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "9": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "10": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ]
+  },
+  "coefficient_kinds": {
+    "1": "even_A1_A7",
+    "2": "qcon_A0_A5",
+    "3": "qcon_A0_A5",
+    "4": "qcon_A0_A5",
+    "5": "qcon_A0_A5",
+    "6": "qcon_A0_A5",
+    "7": "qcon_A0_A5",
+    "8": "qcon_A0_A5",
+    "9": "even_A1_A7",
+    "10": "even_A1_A7"
+  },
+  "explicit_stop": {
+    "1": false,
+    "2": true,
+    "3": true,
+    "4": true,
+    "5": true,
+    "6": true,
+    "7": true,
+    "8": true,
+    "9": false,
+    "10": false
+  },
+  "math_block_sha256": [
+    "72bce3401f35e88dcda14eda8681746ef1c8d2e0469b5634f354401fdac2a00d",
+    "d7cd6f59060efd130b496adee922a6d32cd8550a0c4f5f673d1988c3d3b8d743",
+    "edc84a5914102ed2b75ec1f1c8730dafc04e7a53b54820a4a019c093af26a738",
+    "6cae3028444760d5bcdcad1d5267a2230ba64226c6be5ed34878308ece785567",
+    "19162d3ff528576d8aa980c5034e76eae8bbab31ad3c5e216fd142ea1aa79a07",
+    "68cc6c1def9d17b009be23b12b9f3d6a9f27037384179aec59b67e7d4534efbc",
+    "b95a8d73acbf36e9e60c53711f459efbb5d3a5b3f008268751f5e485ab53dbff",
+    "f9588aeb5e4ff6b9704c91d8656ebbd9a78c46cadaf743b8ecbd9c6e9ca1aa34",
+    "60e87c780798655e2bd36ca45d08154d1c69dd77ec0d2d2fe51ace7420eef534"
+  ],
+  "source_counts": {
+    "Detailed optical data and surface data are given in tables below for ten lens": 1,
+    "TABLE-US-": 33,
+    "HFOV": 0,
+    "degrees": 0,
+    "field of view": 2,
+    "FOV": 5
+  },
+  "pdf_containers": [
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/5071e02eeccb50da/US-12663617-B2.pdf",
+      "bytes": 2020213,
+      "sha256": "5071e02eeccb50da20555d92de83d0eef4347c7b6c7efd475e8540908562112b",
+      "page_count": 34,
+      "single_raster_pages": 34,
+      "text_layer_characters": 0
+    },
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/e2f200952619052e/US-12663617-B2.pdf",
+      "bytes": 2020213,
+      "sha256": "e2f200952619052e793e777ba6b50d7eb7db4ebfd76f92d14d5025f36fcc52de",
+      "page_count": 34,
+      "single_raster_pages": 34,
+      "text_layer_characters": 0
+    }
+  ],
+  "decoded_records_equal": true,
+  "page_records": [
+    {
+      "page": 1,
+      "hash": "21d6d5250f5df1f6c70518e1304fea0f050fc52779202e008f5e1e942e911292",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 52692
+    },
+    {
+      "page": 2,
+      "hash": "6a5ab1173a8335437abaa155a7e42b38f448dea2b0f2ede4446a334f0afb4a49",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 78148
+    },
+    {
+      "page": 3,
+      "hash": "139ba7817b20b98b5fe273e3ef88949e1e5460141f0db99a5e10135c70cf9add",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 78628
+    },
+    {
+      "page": 4,
+      "hash": "0cddf7c3e2a5e983cdade63bee6b28d610de8c2c903069e566e69d7eae1c5638",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 23220
+    },
+    {
+      "page": 5,
+      "hash": "5c95530bef38b097877b43d3ef05c6df2d5de9cd174512ac468615015443c0da",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 18578
+    },
+    {
+      "page": 6,
+      "hash": "b0e89d44af61933c92b49ec06a14bb6ae86bbc04ce1ea624d6c6cfdedd2b6023",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 38626
+    },
+    {
+      "page": 7,
+      "hash": "bdb172ebe7d74e2a3168ba1bb749e94a7cd516fa63e7eaf11cb53a46055c4bc2",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 85786
+    },
+    {
+      "page": 8,
+      "hash": "3dcfba4b4fce7684bef3f0359db40438e34c56a1ebb72c1d0d5dde602be9e11a",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 16500
+    },
+    {
+      "page": 9,
+      "hash": "2efd44af074802702cfb7c5e1a63bc8267ce91688f2f240ba82169d53115fbad",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 33600
+    },
+    {
+      "page": 10,
+      "hash": "ce3b73245197738e3102b9dea97cd17c833129801fa2f4d1f71851c874fa5d30",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 112516
+    },
+    {
+      "page": 11,
+      "hash": "e0fbba13db0fce6b0d10acff213b384e1f52378da471a1b2071d3cd86b1c006b",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 86050
+    },
+    {
+      "page": 12,
+      "hash": "bb468f2ce3c026e664aacbfd27bf181db371e255f0b02558b1c88e208f9dcd91",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 87324
+    },
+    {
+      "page": 13,
+      "hash": "017d944e5e6cbee01510e53a1d77c7c608a6de3a3f6f54141b88c1ff1bd7c76d",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 87220
+    },
+    {
+      "page": 14,
+      "hash": "c84d80f5726ea2f1410e39af2d59a5dc74bc886a825470e9fb9b332a008c2a64",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 93362
+    },
+    {
+      "page": 15,
+      "hash": "96d0b290604fca7b5ea611ea6f23d42b21caf4ff9aa1357f534d370009d74b49",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 79616
+    },
+    {
+      "page": 16,
+      "hash": "44d681861b96dc7b28fcf09faf18230dc20be7beabba527dc8eb7ed1ec03f809",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 84434
+    },
+    {
+      "page": 17,
+      "hash": "2122fe8132b7a3c0b87efed41022a0fc6d6df2e0d7c7a6cd8b5392d085987374",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 82554
+    },
+    {
+      "page": 18,
+      "hash": "2c1c38ec1ee3058c11a4254cfa05af8b0a041f2352413742014b67621cda04bc",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 25258
+    },
+    {
+      "page": 19,
+      "hash": "cbaf8f71e80c65b1d5fe14665f3dfa2e163ab83ce68a5484a61abee9375abc60",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 109832
+    },
+    {
+      "page": 20,
+      "hash": "f9eff3455941a69979ad247c66197efc4abc42dc43a445770a7b9603001104af",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 26478
+    },
+    {
+      "page": 21,
+      "hash": "e037f62c651f72ac2c8752357e0752a63f171e98dff02508b85220160bd5a479",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 113224
+    },
+    {
+      "page": 22,
+      "hash": "8d624e6a56036a942a9fb1598f522cb089a5e2b5085eb5a104c071e7d6b0c068",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 122420
+    },
+    {
+      "page": 23,
+      "hash": "5fa7aaf1fbf7d969ed47cc8ac28bd490feb20195e1c606293e945631b0a83298",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 124784
+    },
+    {
+      "page": 24,
+      "hash": "dea337abc8e3d4df18ff9865b61cb0fef5910739460de3094e5e0c0abe773555",
+      "shape": [
+        3300,
+        2550
+      ],
+      "bytes": 92818
+    },
+    {
+      "page": 25,
+      "hash": "1c0b6bedfd23d060021e2d0a44d52d237d624e1af44b433ba204b0e244cd500a",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 27212
+    },
+    {
+      "page": 26,
+      "hash": "3e37b5930dbe5e3a676605322feb96faedcc40a62468f2dc0ec8e8cc73d9d781",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 32394
+    },
+    {
+      "page": 27,
+      "hash": "57d69bfb8c3b114cf76a0d9199fa90bac6ddeb141b0f96eb3027ff3ed4df3055",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 33852
+    },
+    {
+      "page": 28,
+      "hash": "631d311ce090e52ed177bd94a356dca4808f807aee2b27b5fbef57c1e11f4d22",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 26874
+    },
+    {
+      "page": 29,
+      "hash": "e0b42ff595d3a5326ad850af10634c21bfd54e245791429d1fc20e960cb45489",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 32380
+    },
+    {
+      "page": 30,
+      "hash": "28b09253bfe685b7b74aa4992b80e63cadbee4633fde7b687ef876577a7e8d2f",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 30188
+    },
+    {
+      "page": 31,
+      "hash": "719ead72ad10291b9eac523bd2bcc1770c6bc5b6ee87d9325fc28e398636f843",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 28430
+    },
+    {
+      "page": 32,
+      "hash": "0e5ebe6549d0e9bd2f12ba4a55e2e5b3ccdd904b55dc3155b00dba3ca2e8f5d6",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 43596
+    },
+    {
+      "page": 33,
+      "hash": "19537ab0e09da63bb4e87ed481422df3936b379cd420db32c2508b60a47d7555",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 54134
+    },
+    {
+      "page": 34,
+      "hash": "ecaab1c4f689abb4ce6f974daf8757ca1b853001d95989250349bde16f179495",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 67528
+    }
+  ],
+  "page_record_set_sha256": "b29f8bac77cf96664cc2943a99a0cf9cc2bf4fc5ae3b52e4a4f9790014901221"
+}

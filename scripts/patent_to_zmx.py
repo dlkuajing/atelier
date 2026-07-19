@@ -520,6 +520,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_corephotonics_folded_ten_example_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_antireflective_air_gap_architecture_attempts(
             raw_text,
@@ -9621,6 +9627,248 @@ _COREPHOTONICS_SLIM_PO_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "specification_page_numbers": tuple(range(18, 31)),
             "table_page_numbers": tuple(range(21, 28)),
             "claim_page_numbers": (30,),
+        },
+    }
+}
+_COREPHOTONICS_FOLDED_TEN_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Folded\s+camera\s+lens\s+designs\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_COREPHOTONICS_FOLDED_TEN_ITEMS = (
+    (1, "Corephotonics folded lens example 1", (71, 73), ("2A", "2B"), (1, 2, 3)),
+    (2, "Corephotonics folded lens example 2", (74, 76), ("6",), (4, 5, 6)),
+    (3, "Corephotonics folded lens example 3", (77, 79), ("7",), (7, 8, 9)),
+    (4, "Corephotonics folded lens example 4", (80, 82), ("8",), (10, 11, 12)),
+    (5, "Corephotonics folded lens example 5", (83, 85), ("9",), (13, 14, 15)),
+    (6, "Corephotonics folded lens example 6", (86, 88), ("10",), (16, 17, 18)),
+    (7, "Corephotonics folded lens example 7", (89, 91), ("11",), (19, 20, 21)),
+    (8, "Corephotonics folded lens example 8", (92, 94), ("12",), (22, 23, 24)),
+    (9, "Corephotonics folded lens example 9", (95, 97), ("13",), (25, 26, 27)),
+    (10, "Corephotonics folded lens example 10", (98, 100), ("14A", "14B"), (28, 29, 30)),
+)
+_COREPHOTONICS_FOLDED_TEN_FIGURE_DECLARATIONS = tuple(
+    zip(
+        range(2, 22),
+        (
+            "1 A",
+            "1 B",
+            "1 C",
+            "1 D",
+            "2 A",
+            "2 B",
+            "3 A",
+            "3 B",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14 A",
+            "14 B",
+        ),
+        strict=True,
+    )
+)
+_COREPHOTONICS_FOLDED_TEN_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12663617-B2": {
+        "raw_document_sha256": (
+            "7659bdaf0b85b0754e4d388e51a81dcb525e8048781ce1855007962f0927e696"
+        ),
+        "normalized_text_sha256": (
+            "109c17a4cb24af11db088fc0240f171f67a1336c533be419e0219954c8c22921"
+        ),
+        "family_id": "100208972",
+        "application_number": "18/786504",
+        "prior_publication_id": "US-20260029623-A1",
+        "section_markers": {
+            "abstract": "Abstract Folded lens modules",
+            "background_summary": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION",
+            "claims": "Claims 1 . A lens assembly",
+        },
+        "section_sha256": {
+            "abstract": "cfbc386733c9abd3ea13dd4a5fc29c0a798e8da1f8c88df8f5d5a3ac542aa26a",
+            "background_summary": (
+                "433c7c3ddf49f0b043e6cc510516c2497a89297d09caaf7ea51907148bbbb0ef"
+            ),
+            "brief": "89ba471e6df986e7f582acb00f273b4ff3b754edd606899be84d07cbc39e36bf",
+            "detailed": "bed41cc85e431e568cb375f019518b34f59ede9a7fcaba3958874209dc9ad5a8",
+            "claims": "2d6b31b71cfe161b30f82a6e23a46cdca9f43bc2d4e3b38dc9b126ee32ff17ee",
+        },
+        "paragraph_span_sha256": {
+            (1, 21): "bbf85750f57b1c49accbb1b12b1f58cf9d9e837bc05ecd791784b0fa84765c8d",
+            (22, 53): "d0727c8793e6870de8e8409602897cbd5317b43cb7b8ceb7dfb65487a32103be",
+            (54, 70): "f2ae5b1a8efe95019ac8f8b2643e7f4098b1478f24a3da70e9a69291ce4a7921",
+            (71, 100): "b3fa75ebc8e0d6fa3f74540029fc1074388cef73a42223edc998472ae59ec0a2",
+            (101, 104): "9d9405713fbf98f2ce760e10080c495568b748e3efdc6ae69724553d0c808c57",
+            (105, 107): "2e788dcf47b9acc868272094dda4e956795e0ea7f94259a55b64712d8605fe83",
+        },
+        "claim_numbers": tuple(range(1, 22)),
+        "independent_claim_numbers": (1,),
+        "identity_markers": {
+            "FOLDED CAMERA LENS DESIGNS": 1,
+            "Family ID: 100208972": 1,
+            "Appl. No.: 18/786504": 1,
+            "US 20260029623 A1": 1,
+            "US 16604009 US 12078868": 1,
+            "PCT/IB2019/053662": 2,
+            "Corephotonics Ltd.": 2,
+            "Rudnick; Roy": 2,
+            "Dror; Michael": 1,
+            "Goldenberg; Ephraim": 1,
+            "Shabtay; Gal": 1,
+            "Bachar; Gil": 1,
+        },
+        "table_payload_sha256": (
+            "0152b821b6a7412e775dadad40d02a0777fcf6a06cc43c93e3543287c7c424c0",
+            "b103e3ef2bea0d023d4e34f8498e84e409fba446102c9c163ebb13d11a87f781",
+            "9c9d4ace253fcb72886591c6eff6aaea1a44d66f4e75ee648b752c85cf60568b",
+            "09310347044bddee09e3b00be33035952a30fdb2035d3c18c7841e3e3f2fb1de",
+            "ed9cf6bea972ce195d6a48385ac0be51efa1ea1db407d5801306a711edabc99b",
+            "2485a06bb21e7e435092b7bc34f6c7c6f806e78f1311a83e2a442630605ce953",
+            "6678f30f39a38e216f99a41552458f27396711a1033b45da4cf50f825678512d",
+            "9e3d8a8fe1db8f74b821b8219c9e135ba63fcbc04d6a4ac3bf9099eb560d1b16",
+            "aeeca143f494060b40096ef1c84e03a97e33f11c2760a198b39a6f7d5a16ab5b",
+            "5623f50b460cf1f5f2aa39c0e9e4323ee4bc254d4f3accd3210b3ca05a1e9668",
+            "fb72684bde1de39c5c1064021029498cc01b0482e2318299cee48f75a59f85bb",
+            "02032e22d92a9e6011722fc4b91a334c0c9f9839487c36b743a0eee2e268c182",
+            "289905e09193d99a79250f63bdccd5ccbacf4ad73ac47583a288feb9d05119ec",
+            "2eb372ba6d2fd9e10d7329d827724019cecf8ec91077834cb0d88bbd915e03ad",
+            "a348d630b9cad0d4bf88331d26ba982438d1e6eba0f0ea6454d45ca0b3646429",
+            "f2c5e841379d8fab2981a6fd2fc1bb2cb9adf7d723ba75af84a4fb0c3f4763b2",
+            "600efcaf833c3f5fcb0e2a1a13bad1d31cbed8f0018873efe856a4bf6944dd31",
+            "b8faa13b5421873e9fe23019516c0c75dd243fba4da657300f5f2d15359141e5",
+            "ee5c9f92b730720e1aaf61ca14017df91004ffe3a41cebb4ea29092aea533cae",
+            "2bc8bed5b0dedbecb19272ec513ddbdfcd372800f40813edb24626db33867df5",
+            "3bff28896987adc7043f3f63dccf28de7dfd83055ddb2b698b8b4329a61f3965",
+            "95dd63fcf5a93e7f657149857accf05f361e52d0a94562c4313fb734889e8288",
+            "e9386f6137b0e18437267d21bbe4af374df1ac0a4b1eee8ac0122f7a1978d7ee",
+            "2097f7ec90f25701ef84f267a9cda51b169f2013c07270c53d788b392da6cc09",
+            "87371ec758851ddb2348a3e898a37b0bb15314c6235882f8ba632245865c10a4",
+            "37b49d24141f52fea6e9c84723b427b39c3ef77771c4af767c6eacc528a275f4",
+            "e186b783fec56b9b6c909fa8d52a11b4ad75356b975ca8794911f0f1e06f4acc",
+            "b6bcff2f20b306fcc619a8d58843f4fe8826fe22c071914c0c2d071f461b8511",
+            "42dc603b0bf7344f8ed2f23469992c77a512afc1655c60206f870bb151e22e35",
+            "0b92226684b7aba9d085b4a10ea8b7eb9bd248f1de5edc87abda7f26efa34dcd",
+            "f51d9ef61e1c382d5d808736233537ece641c668e41c4f9c687e553de060f1c6",
+            "3b7fded71d0ed1d437d6f994f5c9e106a1296ccd1ec033647684bdab2a57298f",
+            "7c1eb29e57aeb9f71c2769c6a8c63a0e12d6e9f213ac3af2398040b2610c1570",
+        ),
+        "table_payload_token_counts": (
+            33, 92, 75, 35, 113, 103, 35, 113, 103, 35, 113, 103, 35,
+            113, 103, 35, 113, 103, 35, 113, 85, 35, 113, 85, 33, 95,
+            75, 35, 114, 72, 68, 363, 531,
+        ),
+        "direct_metadata": {
+            1: (13.809, 13.612, 2.735, 2.930, 4.932),
+            2: (15.001, 14.472, 2.727, 2.930, 7.617),
+            3: (10.911, 10.585, 2.819, 2.620, 5.000),
+            4: (12.166, 11.856, 2.704, 2.620, 6.382),
+            5: (12.020, 11.216, 2.671, 2.620, 6.412),
+            6: (15.000, 14.507, 2.727, 2.930, 6.750),
+            7: (16.142, 14.963, 2.612, 2.930, 7.459),
+            8: (14.955, 14.056, 2.690, 2.930, 6.566),
+            9: (11.190, 11.135, 2.590, 2.620, 4.303),
+            10: (7.970, 7.780, 2.148, 2.930, 3.266),
+        },
+        "surface_row_sequences": {
+            1: tuple(range(0, 12)),
+            2: tuple(range(1, 15)),
+            3: tuple(range(1, 15)),
+            4: tuple(range(1, 15)),
+            5: tuple(range(1, 15)),
+            6: tuple(range(1, 15)),
+            7: tuple(range(1, 15)),
+            8: tuple(range(1, 15)),
+            9: tuple(range(1, 12)),
+            10: tuple(range(1, 14)),
+        },
+        "coefficient_row_sequences": {
+            1: tuple(range(1, 9)),
+            2: tuple(range(2, 12)),
+            3: tuple(range(2, 12)),
+            4: tuple(range(2, 12)),
+            5: tuple(range(2, 12)),
+            6: tuple(range(2, 12)),
+            7: tuple(range(4, 12)),
+            8: tuple(range(4, 12)),
+            9: tuple(range(1, 9)),
+            10: tuple(range(1, 11)),
+        },
+        "explicit_stop": {
+            1: False,
+            2: True,
+            3: True,
+            4: True,
+            5: True,
+            6: True,
+            7: True,
+            8: True,
+            9: False,
+            10: False,
+        },
+        "math_block_sha256": (
+            "72bce3401f35e88dcda14eda8681746ef1c8d2e0469b5634f354401fdac2a00d",
+            "d7cd6f59060efd130b496adee922a6d32cd8550a0c4f5f673d1988c3d3b8d743",
+            "edc84a5914102ed2b75ec1f1c8730dafc04e7a53b54820a4a019c093af26a738",
+            "6cae3028444760d5bcdcad1d5267a2230ba64226c6be5ed34878308ece785567",
+            "19162d3ff528576d8aa980c5034e76eae8bbab31ad3c5e216fd142ea1aa79a07",
+            "68cc6c1def9d17b009be23b12b9f3d6a9f27037384179aec59b67e7d4534efbc",
+            "b95a8d73acbf36e9e60c53711f459efbb5d3a5b3f008268751f5e485ab53dbff",
+            "f9588aeb5e4ff6b9704c91d8656ebbd9a78c46cadaf743b8ecbd9c6e9ca1aa34",
+            "60e87c780798655e2bd36ca45d08154d1c69dd77ec0d2d2fe51ace7420eef534",
+        ),
+        "source_phrase_counts": {
+            "Detailed optical data and surface data are given in tables below for ten lens": 1,
+            "TABLE-US-": 33,
+            "HFOV": 0,
+            "degrees": 0,
+            "field of view": 2,
+            "FOV": 5,
+        },
+        "official_pdf": {
+            "containers": (
+                {
+                    "path": (
+                        "data/patent-lake/uspto-ppubs-pdf/5071e02eeccb50da/"
+                        "US-12663617-B2.pdf"
+                    ),
+                    "bytes": 2_020_213,
+                    "sha256": (
+                        "5071e02eeccb50da20555d92de83d0eef4347c7b6c7efd475e8540908562112b"
+                    ),
+                },
+                {
+                    "path": (
+                        "data/patent-lake/uspto-ppubs-pdf/e2f200952619052e/"
+                        "US-12663617-B2.pdf"
+                    ),
+                    "bytes": 2_020_213,
+                    "sha256": (
+                        "e2f200952619052e793e777ba6b50d7eb7db4ebfd76f92d14d5025f36fcc52de"
+                    ),
+                },
+            ),
+            "page_count": 34,
+            "single_raster_page_count": 34,
+            "text_layer_characters": 0,
+            "common_raster_dimensions": (2560, 3300),
+            "raster_dimension_exceptions": {24: (2550, 3300)},
+            "page_record_set_sha256": (
+                "b29f8bac77cf96664cc2943a99a0cf9cc2bf4fc5ae3b52e4a4f9790014901221"
+            ),
+            "drawing_page_numbers": tuple(range(5, 21)),
+            "specification_page_numbers": tuple(range(21, 35)),
+            "table_page_numbers": tuple(range(25, 34)),
+            "claim_page_numbers": (34,),
         },
     }
 }
@@ -39390,6 +39638,441 @@ def _classify_corephotonics_slim_pop_out_attempts(
     if len(attempts) != 11:
         raise PatentParseError(
             "Corephotonics slim pop-out disclosed-item denominator changed"
+        )
+    return attempts
+
+
+def _corephotonics_folded_ten_table_payloads(
+    paragraphs: dict[int, str],
+) -> tuple[str, ...]:
+    """Return the 33 exact flattened table objects from Family 100208972."""
+
+    table_paragraphs = {number: 70 + number for number in range(1, 33)}
+    table_paragraphs[33] = 104
+    payloads: list[str] = []
+    for table_number in range(1, 34):
+        paragraph_number = table_paragraphs[table_number]
+        payload = re.sub(
+            r"^\(\d+\)\s+",
+            "",
+            paragraphs[paragraph_number],
+            count=1,
+        ).strip()
+        payload = re.split(
+            r"\s+(?:Example\s+\d+|Sign of Refractive Elements:)\s*$",
+            payload,
+            maxsplit=1,
+            flags=re.IGNORECASE,
+        )[0].strip()
+        prefix = f"TABLE-US-{table_number:05d} TABLE {table_number} "
+        if not payload.startswith(prefix):
+            raise PatentParseError(
+                f"Corephotonics folded-ten TABLE {table_number} binding changed"
+            )
+        payloads.append(payload)
+    return tuple(payloads)
+
+
+def _validate_corephotonics_folded_ten_document(
+    raw_text: str,
+    *,
+    patent_id: str,
+    profile: dict[str, Any],
+) -> tuple[str, dict[int, str], tuple[str, ...]]:
+    """Validate the exact B2 source used to close Family 100208972."""
+
+    if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+        "raw_document_sha256"
+    ]:
+        raise PatentParseError(
+            f"Corephotonics folded-ten official raw text hash changed for {patent_id}"
+        )
+    if len(_COREPHOTONICS_FOLDED_TEN_TITLE_PATTERN.findall(raw_text)) != 1:
+        raise PatentParseError("Corephotonics folded-ten title binding changed")
+
+    text = normalize_patent_text(raw_text)
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+        "normalized_text_sha256"
+    ]:
+        raise PatentParseError(
+            f"Corephotonics folded-ten normalized text hash changed for {patent_id}"
+        )
+    for marker, expected_count in profile["identity_markers"].items():
+        observed_count = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+        if observed_count != expected_count:
+            raise PatentParseError(
+                f"Corephotonics folded-ten identity marker {marker!r} occurs "
+                f"{observed_count}; expected {expected_count}"
+            )
+
+    section_markers = profile["section_markers"]
+    section_names = tuple(section_markers)
+    try:
+        section_starts = {
+            name: text.index(marker) for name, marker in section_markers.items()
+        }
+    except ValueError as exc:
+        raise PatentParseError(
+            "Corephotonics folded-ten section boundary changed"
+        ) from exc
+    if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+        raise PatentParseError("Corephotonics folded-ten section ordering changed")
+    sections = {
+        name: text[
+            section_starts[name] : (
+                section_starts[section_names[index + 1]]
+                if index + 1 < len(section_names)
+                else len(text)
+            )
+        ].strip()
+        for index, name in enumerate(section_names)
+    }
+    for name, expected_digest in profile["section_sha256"].items():
+        observed_digest = hashlib.sha256(sections[name].encode("utf-8")).hexdigest()
+        if observed_digest != expected_digest:
+            raise PatentParseError(f"Corephotonics folded-ten {name} section changed")
+
+    background_numbers = tuple(
+        int(value)
+        for value in re.findall(
+            r"(?<!\S)\((\d+)\)\s+",
+            sections["background_summary"],
+        )
+    )
+    if background_numbers != (1, 1, *range(2, 15)):
+        raise PatentParseError(
+            "Corephotonics folded-ten 15 Background/Summary paragraph anchors changed"
+        )
+
+    description = text[section_starts["brief"] : section_starts["claims"]]
+    paragraph_matches = list(re.finditer(r"(?<!\S)\((\d+)\)\s+", description))
+    if tuple(int(match.group(1)) for match in paragraph_matches) != tuple(
+        range(1, 108)
+    ):
+        raise PatentParseError(
+            "Corephotonics folded-ten description paragraphs 1-107 changed"
+        )
+    paragraphs = {
+        int(match.group(1)): description[
+            match.start() : (
+                paragraph_matches[index + 1].start()
+                if index + 1 < len(paragraph_matches)
+                else len(description)
+            )
+        ].strip()
+        for index, match in enumerate(paragraph_matches)
+    }
+    for (start, end), expected_digest in profile["paragraph_span_sha256"].items():
+        span = " ".join(paragraphs[number] for number in range(start, end + 1))
+        observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+        if observed_digest != expected_digest:
+            raise PatentParseError(
+                f"Corephotonics folded-ten paragraph span {start}-{end} changed"
+            )
+
+    for paragraph_number, label in _COREPHOTONICS_FOLDED_TEN_FIGURE_DECLARATIONS:
+        marker = f"FIG. {label}"
+        if len(re.findall(re.escape(marker), paragraphs[paragraph_number], re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                f"Corephotonics folded-ten figure {label} declaration changed"
+            )
+
+    item_paragraphs: set[int] = set()
+    item_tables: list[int] = []
+    item_figures: list[str] = []
+    for _number, _label, bounds, figures, tables in _COREPHOTONICS_FOLDED_TEN_ITEMS:
+        numbers = set(range(bounds[0], bounds[1] + 1))
+        if item_paragraphs & numbers:
+            raise PatentParseError(
+                "Corephotonics folded-ten item paragraph ranges overlap"
+            )
+        item_paragraphs.update(numbers)
+        item_tables.extend(tables)
+        item_figures.extend(figures)
+    if item_paragraphs != set(range(71, 101)):
+        raise PatentParseError(
+            "Corephotonics folded-ten item paragraph denominator changed"
+        )
+    if tuple(item_tables) != tuple(range(1, 31)):
+        raise PatentParseError("Corephotonics folded-ten item table binding changed")
+    if tuple(item_figures) != (
+        "2A",
+        "2B",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14A",
+        "14B",
+    ):
+        raise PatentParseError("Corephotonics folded-ten item figure binding changed")
+    if paragraphs[54].count("ten lens assembly embodiments Ex1 to Ex10") != 1:
+        raise PatentParseError(
+            "Corephotonics folded-ten ten-example declaration changed"
+        )
+
+    claim_matches = list(
+        re.finditer(
+            r"(?<!\S)(\d{1,2})\s*\.\s+(?=(?:A|The)\s+lens\s+assembly)",
+            sections["claims"],
+            flags=re.IGNORECASE,
+        )
+    )
+    claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+    if claim_numbers != profile["claim_numbers"]:
+        raise PatentParseError("Corephotonics folded-ten claims 1-21 changed")
+    independent_claims = tuple(
+        int(match.group(1))
+        for match in claim_matches
+        if sections["claims"][match.end() :].startswith("A lens assembly")
+    )
+    if independent_claims != profile["independent_claim_numbers"]:
+        raise PatentParseError(
+            "Corephotonics folded-ten independent-claim binding changed"
+        )
+
+    observed_table_markers = tuple(
+        int(value) for value in re.findall(r"TABLE-US-(\d{5})", description)
+    )
+    if observed_table_markers != tuple(range(1, 34)):
+        raise PatentParseError(
+            "Corephotonics folded-ten TABLE-US-00001 through TABLE-US-00033 changed"
+        )
+    table_payloads = _corephotonics_folded_ten_table_payloads(paragraphs)
+    for table_number, payload in enumerate(table_payloads, start=1):
+        observed_digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        if observed_digest != profile["table_payload_sha256"][table_number - 1]:
+            raise PatentParseError(
+                f"Corephotonics folded-ten TABLE {table_number} changed"
+            )
+        if len(payload.split()) != profile["table_payload_token_counts"][
+            table_number - 1
+        ]:
+            raise PatentParseError(
+                f"Corephotonics folded-ten TABLE {table_number} token count changed"
+            )
+
+    summary_pattern = re.compile(
+        rf"\bEFL\s+(?P<efl>{NUMBER_PATTERN})\s+"
+        rf"TTL\s+(?P<ttl>{NUMBER_PATTERN})\s+"
+        rf"F/#\s+(?P<fno>{NUMBER_PATTERN})\s+"
+        rf"SDL/2\s+(?P<image_height>{NUMBER_PATTERN})\s+"
+        rf"BFL\s+(?P<bfl>{NUMBER_PATTERN})",
+        flags=re.IGNORECASE,
+    )
+    surface_row_pattern = re.compile(
+        r"(?<!\S)(\d+)\s+(?=(?:Evn-asph|Flat|Stop|QED_TYPE_1|STANDARD|Image)\b)",
+        flags=re.IGNORECASE,
+    )
+    coefficient_row_pattern = re.compile(
+        r"(?<![\w.+-])(\d{1,2})\s+"
+        r"(?=[+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:E[+-]?\d+)?)",
+        flags=re.IGNORECASE,
+    )
+    for number, _label, _bounds, _figures, tables in (
+        _COREPHOTONICS_FOLDED_TEN_ITEMS
+    ):
+        summary_table, surface_table, coefficient_table = tables
+        summary_payload = table_payloads[summary_table - 1]
+        metadata_match = summary_pattern.search(summary_payload)
+        if metadata_match is None:
+            raise PatentParseError(
+                f"Corephotonics folded-ten example {number} direct metadata changed"
+            )
+        metadata = tuple(
+            _parse_number(metadata_match.group(name))
+            for name in ("efl", "ttl", "fno", "image_height", "bfl")
+        )
+        if metadata != profile["direct_metadata"][number]:
+            raise PatentParseError(
+                f"Corephotonics folded-ten example {number} metadata binding changed"
+            )
+        if re.search(
+            r"\b(?:FOV|HFOV|DFOV)\b|field\s+of\s+view|degrees?",
+            summary_payload,
+            re.IGNORECASE,
+        ):
+            raise PatentParseError(
+                f"Corephotonics folded-ten example {number} summary now has angular field"
+            )
+
+        surface_payload = table_payloads[surface_table - 1]
+        surface_rows = tuple(int(value) for value in surface_row_pattern.findall(surface_payload))
+        if number == 1 and re.search(r"\bK\s+0\s+Infinity\b", surface_payload):
+            surface_rows = (0, *surface_rows)
+        if surface_rows != profile["surface_row_sequences"][number]:
+            raise PatentParseError(
+                f"Corephotonics folded-ten example {number} surface rows changed"
+            )
+        explicit_stop = bool(
+            re.search(
+                r"(?<!\S)\d+\s+Stop\s+(?:stop\s+)?Infinity\b",
+                surface_payload,
+                re.IGNORECASE,
+            )
+        )
+        if explicit_stop is not profile["explicit_stop"][number]:
+            raise PatentParseError(
+                f"Corephotonics folded-ten example {number} stop evidence changed"
+            )
+
+        coefficient_payload = table_payloads[coefficient_table - 1]
+        if number in {1, 9, 10}:
+            header_pattern = r"\bA1\s+A2\s+A3\s+A4\s+A5\s+A6\s+A7\b"
+        else:
+            header_pattern = r"\bA0\s+A1\s+A2\s+A3\s+A4\s+A5\b"
+        header = re.search(header_pattern, coefficient_payload)
+        if header is None:
+            raise PatentParseError(
+                f"Corephotonics folded-ten example {number} coefficient header changed"
+            )
+        coefficient_rows = tuple(
+            int(value)
+            for value in coefficient_row_pattern.findall(
+                coefficient_payload[header.end() :]
+            )
+        )
+        if coefficient_rows != profile["coefficient_row_sequences"][number]:
+            raise PatentParseError(
+                f"Corephotonics folded-ten example {number} coefficient rows changed"
+            )
+
+    math_blocks = tuple(
+        match.group(0)
+        for match in re.finditer(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+    )
+    math_hashes = tuple(
+        hashlib.sha256(block.encode("utf-8")).hexdigest() for block in math_blocks
+    )
+    if math_hashes != profile["math_block_sha256"]:
+        raise PatentParseError("Corephotonics folded-ten nine MathML objects changed")
+    qcon_orders = tuple(
+        int(value)
+        for value in re.findall(
+            r"<msubsup>\s*<mi>Q</mi>\s*<mn>(\d+)</mn>",
+            raw_text,
+            re.IGNORECASE,
+        )
+    )
+    even_orders = tuple(
+        int(value)
+        for value in re.findall(
+            r"<msub>\s*<mi>A</mi>\s*<mn>(\d+)</mn>\s*</msub>",
+            raw_text,
+            re.IGNORECASE,
+        )
+    )
+    if qcon_orders != tuple(range(0, 6)) or even_orders != tuple(range(1, 8)):
+        raise PatentParseError(
+            "Corephotonics folded-ten Q0-Q5 or even A1-A7 definitions changed"
+        )
+
+    for phrase, expected_count in profile["source_phrase_counts"].items():
+        observed_count = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+        if observed_count != expected_count:
+            raise PatentParseError(
+                f"Corephotonics folded-ten source phrase {phrase!r} occurs "
+                f"{observed_count}; expected {expected_count}"
+            )
+    if re.search(r"<table\b|<img\b", raw_text, re.IGNORECASE) is not None:
+        raise PatentParseError(
+            "Corephotonics folded-ten retained HTML table/image-tag layout changed"
+        )
+
+    return text, paragraphs, table_payloads
+
+
+def _classify_corephotonics_folded_ten_example_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 100208972 without deriving its missing angular fields."""
+
+    profile = _COREPHOTONICS_FOLDED_TEN_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _bounds, _figures, _tables in (
+                _COREPHOTONICS_FOLDED_TEN_ITEMS
+            )
+        ]
+
+    try:
+        _validate_corephotonics_folded_ten_document(
+            raw_text,
+            patent_id=patent_id,
+            profile=profile,
+        )
+    except Exception as exc:  # noqa: BLE001 - retain all ten source-bound examples
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _bounds, _figures, tables in (
+        _COREPHOTONICS_FOLDED_TEN_ITEMS
+    ):
+        summary_table, surface_table, coefficient_table = tables
+        efl, _ttl, f_number, image_height, _bfl = profile["direct_metadata"][number]
+        row_count = len(profile["surface_row_sequences"][number])
+        coefficient_count = len(profile["coefficient_row_sequences"][number])
+        even_asphere = number in {1, 9, 10}
+        formula_detail = (
+            "the published even-asphere formula and A1-A7 coefficients"
+            if even_asphere
+            else "the published QED_TYPE_1 Q0-Q5 formula and A0-A5 coefficients"
+        )
+        missing_stop = not profile["explicit_stop"][number]
+        reason_code = (
+            "metadata_unpublished.system_stop_and_"
+            "prescription_specific_angular_field_absent"
+            if missing_stop
+            else "metadata_unpublished.prescription_specific_angular_field_absent"
+        )
+        detail = (
+            f"Corephotonics Family 100208972 Ex{number} TABLES "
+            f"{summary_table}/{surface_table}/{coefficient_table} publish "
+            f"{row_count} ordered source rows, {coefficient_count} coefficient "
+            f"rows, {formula_detail}, direct EFL={efl:g} mm, F/#={f_number:g} "
+            f"and SDL/2={image_height:g} mm. The exact 122 numbered source "
+            "paragraphs, 33 tables, nine MathML objects, 20 declared figure "
+            "panels and 21 claims contain only relational Wide/Tele FOV language "
+            "and no prescription-specific numeric angular field; SDL/2 and EFL "
+            "are not used to derive one"
+        )
+        if missing_stop:
+            detail += (
+                f". TABLE {surface_table} also publishes no aperture-stop row or "
+                "stop axial coordinate; no system stop is inferred"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code=reason_code,
+                    detail=detail,
+                ),
+            )
+        )
+    if len(attempts) != 10:
+        raise PatentParseError(
+            "Corephotonics folded-ten disclosed-item denominator changed"
         )
     return attempts
 
