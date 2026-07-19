@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "family_id": "66534470",
+  "root_id": "US-20190154987",
+  "publication_id": "US-20190154987-A1",
+  "source_integrity": {
+    "raw_document_sha256": "a3eb280f62b994a6447e73fe4c3fcd7605b16576bd3b387e2f6e28b53d0744b2",
+    "normalized_text_sha256": "4e5ee37b7855ea8c1d8d201ac7b9addfdae92936976dfdbe75396a7ac761bd2e",
+    "section_sha256": {
+      "background": "10b25d9b69f51e10929cfb8d638fab20b27baecda36b0989e1033ed1f2560022",
+      "brief": "9707ebd88140539cb00d65de7c83011003f54923b6e9bc5e825fa144bb7deb93",
+      "detailed": "2b9b97c263a97781a977e311588bbfefa4461b9d3ee81ba231de39925208a5f3",
+      "claims": "4316bfe15edabe46d4a30a2d1c026419a12c6a257dde36137f01e29a0ce90bea"
+    },
+    "paragraph_ranges": {
+      "background": [1, 2],
+      "brief": [3, 11],
+      "detailed": [12, 108]
+    },
+    "paragraph_span_sha256": {
+      "1-2": "e821099d5508d77172b9422eb6617e1f9ee5358f38ee7e6b1bba3dd43b99cb4f",
+      "3-11": "e9ca8992ec4c7ba49bbc461752b4615ffda9671fcc62ba44c472e1dbc72d44e7",
+      "12-12": "8449a5ab0236c0e341c07cd86b0cf02bb4f51d6a8abd3ee725d6f3e4bfa72eef",
+      "13-66": "6b1f90e3a0c68be0bd3ac31944bff2d47353fb5af3d416a3733ddea14606ed5e",
+      "67-107": "ee21fd71239e8c87a96c3abb86dac73ab34b9b24c497871efb31bdce71ec795e",
+      "108-108": "931fdbca4b20612938508e512222a66663ee78b53a85a25c907f955280ee0668"
+    },
+    "table_fragments": [
+      {"table": 1, "block_characters": 476, "block_sha256": "3e28cb1445065ebfad39879ad284fa5d5ac16df9ef8fa53aa777a8a84de92e8a", "formal_characters": 98, "formal_sha256": "ac6fbe5ee2df4234dce8286c891aa9652d80b6a0c10427a33dc3174240f0bb76"},
+      {"table": 2, "block_characters": 3295, "block_sha256": "b27c6b0f60908fc762fdec81fb35d05cedb9caee38ae676774807fe0f2e80000", "formal_characters": 530, "formal_sha256": "b483283536126d88bd3e29be742f0c85e379b3c0bdf99ee35137dcf1458d5cc1"},
+      {"table": 3, "block_characters": 2119, "block_sha256": "229f501b6d268229e8093de83c48b706171988a2c73d3f992b09f7867e2fc169", "formal_characters": 1040, "formal_sha256": "69e46b161d61b1fe8477363f5f25858951504e4071f0f33b15170a92a5f3a5a3"},
+      {"table": 4, "block_characters": 262, "block_sha256": "185ed5af5bb27eca87b96cd72b88e406e4eeada29af35a848b3c88fdc96def07", "formal_characters": 262, "formal_sha256": "185ed5af5bb27eca87b96cd72b88e406e4eeada29af35a848b3c88fdc96def07"},
+      {"table": 5, "block_characters": 789, "block_sha256": "d29704fa0b267221eedd410d6c97c7d2175eb34247e1fd546909c59345dd2155", "formal_characters": 171, "formal_sha256": "06ed35c67772c61710d6c3783f1de97d1bc0d8eca7890cb6a8028d7421c48b19"},
+      {"table": 6, "block_characters": 852, "block_sha256": "9c6a68435cf58ff3db0b77f10cc48063174cb1f6a0f11be933e276eeb0eb657f", "formal_characters": 330, "formal_sha256": "3ffc825c0da85a4b957ed09fdacb80bbb546e97ca330e30603b8667ce5c6551a"},
+      {"table": 7, "block_characters": 482, "block_sha256": "e9404d388036d2522676dc4026e850e822d6c70fe8012857d5b0d491292b7671", "formal_characters": 98, "formal_sha256": "5a0185f69e273e07ea73b2ca804e4af95935a565dfd78e6a7cbbc1200b30bf10"},
+      {"table": 8, "block_characters": 3311, "block_sha256": "6a01b4fb589311a241ba9240efe2cb32f2c9885fcbbec5f2f7962921d0f6ce78", "formal_characters": 530, "formal_sha256": "97cb0a6be95d45e0b2cc1cf81403a3d64f08ff1b9f035670170ee2c5d47b216b"},
+      {"table": 9, "block_characters": 2121, "block_sha256": "81bec7636cb5549169dbab75dfa3232780c5749c5a0d81a286e7b544833ed3b8", "formal_characters": 1040, "formal_sha256": "9f55b397128d5553e2d62cabd0ac46f5c40e48bf0353d02d108dcd289ee9da46"},
+      {"table": 10, "block_characters": 257, "block_sha256": "11555caaa09b957f741c2cf4218ad4bb1e87c879ebeee16862134778f40bf8ee", "formal_characters": 257, "formal_sha256": "11555caaa09b957f741c2cf4218ad4bb1e87c879ebeee16862134778f40bf8ee"},
+      {"table": 11, "block_characters": 639, "block_sha256": "e926e225a9000b5abc92651433a64b84711648cf68317e9943744b96eea759c7", "formal_characters": 172, "formal_sha256": "dbf92daf33722ad2e7d4ca2b323b9768b821c268bbcb3acc9566aac140297902"},
+      {"table": 12, "block_characters": 4414, "block_sha256": "b391be018dc90e391010887b0a102be9f36d0f81cc219662c4a7898505ee24fc", "formal_characters": 316, "formal_sha256": "5455352908d33a6d70d3935525299189112932710487ff9a8e26831474247a87"}
+    ],
+    "mathml_objects": 0,
+    "inline_formula_processing_instructions": 52
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "AAC camera optical lens embodiment 1",
+      "paragraphs": [13, 66],
+      "figures": [1, 2, 3, 4],
+      "tables": [1, 2, 3, 4, 5, 6],
+      "ordered_surface_rows": 13,
+      "asphere_rows": 10,
+      "asphere_values_per_row": 8,
+      "inflexion_rows": 10,
+      "arrest_rows": 10,
+      "condition_rows": 10,
+      "direct_system_metadata": {"efl_mm": 3.764, "entrance_pupil_diameter_mm": 2.09, "image_height_mm": 3.261, "diagonal_field_angle_deg": 80.84, "ttl_upper_bound_mm": 4.48},
+      "f_number_disclosure": "less than or equal to 1.8",
+      "exact_f_number_published": false,
+      "ledger_state": "terminal",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "AAC camera optical lens embodiment 2",
+      "paragraphs": [67, 107],
+      "figures": [5, 6, 7, 8],
+      "tables": [7, 8, 9, 10, 11, 12],
+      "ordered_surface_rows": 13,
+      "asphere_rows": 10,
+      "asphere_values_per_row": 8,
+      "inflexion_rows": 10,
+      "arrest_rows": 10,
+      "condition_rows": 10,
+      "direct_system_metadata": {"efl_mm": 3.75, "entrance_pupil_diameter_mm": 2.08, "image_height_mm": 3.261, "diagonal_field_angle_deg": 81.08, "ttl_upper_bound_mm": 4.48},
+      "f_number_disclosure": "inherited system-wide upper bound less than or equal to 1.8",
+      "exact_f_number_published": false,
+      "ledger_state": "terminal",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    }
+  ],
+  "shared_context": [
+    {"role": "field and background", "paragraphs": [1, 2]},
+    {"role": "brief description of eight figure panels", "paragraphs": [3, 11]},
+    {"role": "detailed-description preamble", "paragraphs": [12, 12]},
+    {"role": "closing boilerplate", "paragraphs": [108, 108]}
+  ],
+  "figures": {"declared": [1, 2, 3, 4, 5, 6, 7, 8], "official_drawing_sheets": 4},
+  "claims": {
+    "source_number_sequence": [1, 2, 4, 5, 6, 7, 8, 9, 10, 11],
+    "count": 10,
+    "independent_claims": [1],
+    "missing_source_number": 3,
+    "missing_number_confirmed_in_html_and_original_raster": true,
+    "silently_repaired": false
+  },
+  "prescription_boundary": {
+    "complete_ordered_optical_prescriptions": 2,
+    "ordered_surface_rows": 26,
+    "published_curvature_radius_rows": 24,
+    "published_optical_material_rows": 12,
+    "published_asphere_rows": 20,
+    "published_asphere_values": 160,
+    "published_efl_values": 2,
+    "published_entrance_pupil_diameter_values": 2,
+    "published_image_height_values": 2,
+    "published_diagonal_field_angle_values": 2,
+    "published_exact_f_number_values": 0,
+    "f_number_upper_bound": 1.8,
+    "f_number_upper_bound_phrase_occurrences": 2,
+    "derived_f_number_used": false,
+    "raster_values_transcribed": false,
+    "drawing_geometry_measured": false,
+    "related_application_values_borrowed": false,
+    "source_claim_number_repaired": false
+  }
+}

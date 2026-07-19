@@ -748,18 +748,18 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, preserve the completed GSD quick
-`.planning/quick/260719-patent-generic-family-67207110/260719-patent-generic-family-67207110-PLAN.md`
-and immediately open the next GSD quick for deterministic Family `66534470` / root
-`US-20190154987` / publication `US-20190154987-A1`, application `16/101628`, while
-preserving Family 96807780 and all prior quicks plus
+`.planning/quick/260719-patent-generic-family-66534470/260719-patent-generic-family-66534470-PLAN.md`
+and immediately open the next GSD quick for deterministic Family `90040108` / root
+`US-12669685` / publication `US-12669685-B2`, application `18/763174`, while
+preserving Family 67207110, Family 96807780 and all prior quicks plus
 the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input while
 replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
 from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-generic residual contains 70 roots/items at result set
-`2366d288e7a831f4d700e9d60a7236dc3da2f0aaaaa656e4e98ec5191d547af3`.
+generic residual contains 69 roots/items at result set
+`15ed5e0dd0ef68fa3bf15bfa0f3ff38b4ffa2e564f0209a8d0173147209fdd3f`.
 The selected family has layout
-`7208bff953e2e49213cd4b83bc0534045ca01f661b2776ede84b75cb635f0671`.
+`72138ccf7c158de1d4c17c114bb2146d4ca4d06ae451b82a56bfed23f5966b3a`.
 Use the same strict before/after census, source-proven layout, append-only targeted replay,
 and full-pool audit contract. Remeasure after every shovel; parent saturation remains
 incomplete.

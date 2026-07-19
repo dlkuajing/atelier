@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "family_id": "66534470",
+  "root_id": "US-20190154987",
+  "publication_id": "US-20190154987-A1",
+  "application_number": "16/101628",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a3eb280f62b994a6/US-20190154987-A1.html",
+    "bytes": 43215,
+    "characters": 42527,
+    "normalized_characters": 31408,
+    "sha256": "a3eb280f62b994a6447e73fe4c3fcd7605b16576bd3b387e2f6e28b53d0744b2",
+    "normalized_sha256": "4e5ee37b7855ea8c1d8d201ac7b9addfdae92936976dfdbe75396a7ac761bd2e",
+    "flattened_tables": 12,
+    "mathml_tags": 0,
+    "inline_formula_processing_instructions": 52,
+    "embedded_img_tags": 0,
+    "html_table_tags": 0
+  },
+  "official_pdf_endpoint": {
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20190154987",
+    "page_count": 11,
+    "single_raster_pages": 11,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "5233249c04eac2310c3d92d82ed584866f4ad059fd6e5d483269257dce7a89d9",
+    "consecutive_container_sha256_stable": false,
+    "consecutive_decoded_raster_set_stable": true,
+    "retained_fetches": [
+      {
+        "path": ".planning/quick/260719-patent-generic-family-66534470/source-review/US-20190154987-A1-official-1.pdf",
+        "bytes": 547661,
+        "sha256": "a54562c0eb337010da185cad115958318933d94d5ca80b84ffc1701c386b15a0"
+      },
+      {
+        "path": ".planning/quick/260719-patent-generic-family-66534470/source-review/US-20190154987-A1-official-2.pdf",
+        "bytes": 547661,
+        "sha256": "c72f4228fbcbcf27b501c15e41319e7132b1579b1689ca91de91d422cb77ace4"
+      }
+    ]
+  },
+  "corroborating_google_wrapper": {
+    "pdf_path": ".planning/quick/260719-patent-generic-family-66534470/source-review/US-20190154987-A1-google.pdf",
+    "pdf_bytes": 878375,
+    "pdf_sha256": "559afbfdb08c0ef9029dbcfe1fb46f5200a95a72d41f3724eb4a3e0910e83bc9",
+    "html_path": ".planning/quick/260719-patent-generic-family-66534470/source-review/US-20190154987-A1-google.html",
+    "html_bytes": 245226,
+    "html_sha256": "659031f24b9e2aae04488552a60ae2f948ff4b1b213793a1757f2759c19002c9",
+    "decoded_raster_set_matches_official": true,
+    "content_authority": false
+  },
+  "bibliography": {
+    "title": "Camera Optical Lens",
+    "inventor": "Wang; Jianming",
+    "applicant": "AAC Acoustic Technologies (Shenzhen) Co., Ltd.",
+    "assignee_in_retained_source": null,
+    "filed": "2018-08-13",
+    "publication_date": "2019-05-23"
+  },
+  "lineage": {
+    "priority_applications": ["CN 201711143550.9", "CN 201711143761.2"],
+    "priority_date": "2017-11-17",
+    "related_application_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_a1_html_is_content_authority": true,
+    "official_pdf_used_for_layout_confirmation_only": true,
+    "google_wrapper_used_for_layout_corroboration_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_application_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "missing_claim_number_silently_repaired": false,
+    "derived_f_number_permitted": false
+  }
+}

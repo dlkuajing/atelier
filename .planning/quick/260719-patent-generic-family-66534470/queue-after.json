@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-66534470/generic-residual-after-2.json",
+  "result_set_sha256": "15ed5e0dd0ef68fa3bf15bfa0f3ff38b4ffa2e564f0209a8d0173147209fdd3f",
+  "generic_residual_roots": 69,
+  "generic_residual_items": 69,
+  "next_exact_group": {
+    "family_id": "90040108",
+    "root_ids": ["US-12669685"],
+    "publication_ids": ["US-12669685-B2"],
+    "application_number": "18/763174",
+    "title": "Imaging lens system",
+    "first_inventor": "Huh; Jae Hyuk et al.",
+    "applicant": "Samsung Electro-Mechanics Co., Ltd.",
+    "assignee": "Samsung Electro-Mechanics Co., Ltd.",
+    "layout_signature": "72138ccf7c158de1d4c17c114bb2146d4ca4d06ae451b82a56bfed23f5966b3a",
+    "layout_signature_count": 1,
+    "table_count": 13,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/397f9b112f230f49/US-12669685-B2.html",
+      "sha256": "397f9b112f230f49f57a45eef135a3af102b2b0dec1779b1863ce9f592ca28c5"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

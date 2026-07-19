@@ -4854,6 +4854,103 @@ _AAC_FIVE_LENS_F_NUMBER_BOUND_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "ba0e66cafc6365d0d040a22cf185d886eefe615029952c15566690cbc271b4a2",
         ),
     },
+    "US-20190154987-A1": {
+        "raw_document_sha256": (
+            "a3eb280f62b994a6447e73fe4c3fcd7605b16576bd3b387e2f6e28b53d0744b2"
+        ),
+        "normalized_text_sha256": (
+            "4e5ee37b7855ea8c1d8d201ac7b9addfdae92936976dfdbe75396a7ac761bd2e"
+        ),
+        "section_markers": {
+            "background": "FIELD OF THE PRESENT DISCLOSURE [0001]",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS [0003]",
+            "detailed": "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS [0012]",
+            "claims": "Claims 1 . A camera optical lens comprising,",
+        },
+        "section_sha256": {
+            "background": (
+                "10b25d9b69f51e10929cfb8d638fab20b27baecda36b0989e1033ed1f2560022"
+            ),
+            "brief": (
+                "9707ebd88140539cb00d65de7c83011003f54923b6e9bc5e825fa144bb7deb93"
+            ),
+            "detailed": (
+                "2b9b97c263a97781a977e311588bbfefa4461b9d3ee81ba231de39925208a5f3"
+            ),
+            "claims": (
+                "4316bfe15edabe46d4a30a2d1c026419a12c6a257dde36137f01e29a0ce90bea"
+            ),
+        },
+        "paragraph_pattern": r"\[(\d{4})\]",
+        "paragraph_ranges": {
+            "background": (1, 2),
+            "brief": (3, 11),
+            "detailed": (12, 108),
+        },
+        # Claim 3 is absent in both the retained official HTML and original
+        # official page raster. Preserve the publication's denominator rather
+        # than silently repairing its numbering.
+        "claim_numbers": (1, 2, 4, 5, 6, 7, 8, 9, 10, 11),
+        "identity_markers": {
+            "Family ID: 66534470": 1,
+            "Appl. No.: 16/101628": 1,
+            "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 1,
+            "CN 201711143550.9 Nov. 17, 2017": 1,
+            "CN 201711143761.2 Nov. 17, 2017": 1,
+        },
+        "table_block_sha256": (
+            "3e28cb1445065ebfad39879ad284fa5d5ac16df9ef8fa53aa777a8a84de92e8a",
+            "b27c6b0f60908fc762fdec81fb35d05cedb9caee38ae676774807fe0f2e80000",
+            "229f501b6d268229e8093de83c48b706171988a2c73d3f992b09f7867e2fc169",
+            "185ed5af5bb27eca87b96cd72b88e406e4eeada29af35a848b3c88fdc96def07",
+            "d29704fa0b267221eedd410d6c97c7d2175eb34247e1fd546909c59345dd2155",
+            "9c6a68435cf58ff3db0b77f10cc48063174cb1f6a0f11be933e276eeb0eb657f",
+            "e9404d388036d2522676dc4026e850e822d6c70fe8012857d5b0d491292b7671",
+            "6a01b4fb589311a241ba9240efe2cb32f2c9885fcbbec5f2f7962921d0f6ce78",
+            "81bec7636cb5549169dbab75dfa3232780c5749c5a0d81a286e7b544833ed3b8",
+            "11555caaa09b957f741c2cf4218ad4bb1e87c879ebeee16862134778f40bf8ee",
+            "e926e225a9000b5abc92651433a64b84711648cf68317e9943744b96eea759c7",
+            "b391be018dc90e391010887b0a102be9f36d0f81cc219662c4a7898505ee24fc",
+        ),
+        "formal_table_sha256": (
+            "ac6fbe5ee2df4234dce8286c891aa9652d80b6a0c10427a33dc3174240f0bb76",
+            "b483283536126d88bd3e29be742f0c85e379b3c0bdf99ee35137dcf1458d5cc1",
+            "69e46b161d61b1fe8477363f5f25858951504e4071f0f33b15170a92a5f3a5a3",
+            "185ed5af5bb27eca87b96cd72b88e406e4eeada29af35a848b3c88fdc96def07",
+            "06ed35c67772c61710d6c3783f1de97d1bc0d8eca7890cb6a8028d7421c48b19",
+            "3ffc825c0da85a4b957ed09fdacb80bbb546e97ca330e30603b8667ce5c6551a",
+            "5a0185f69e273e07ea73b2ca804e4af95935a565dfd78e6a7cbbc1200b30bf10",
+            "97cb0a6be95d45e0b2cc1cf81403a3d64f08ff1b9f035670170ee2c5d47b216b",
+            "9f55b397128d5553e2d62cabd0ac46f5c40e48bf0353d02d108dcd289ee9da46",
+            "11555caaa09b957f741c2cf4218ad4bb1e87c879ebeee16862134778f40bf8ee",
+            "dbf92daf33722ad2e7d4ca2b323b9768b821c268bbcb3acc9566aac140297902",
+            "5455352908d33a6d70d3935525299189112932710487ff9a8e26831474247a87",
+        ),
+        "focal_rows": (
+            "TABLE-US-00001 TABLE 1 focal length (mm) f 3.764 f1 3.205 "
+            "f2 -10.499 f3 -31.093 f4 2.247 f5 -1.915",
+            "TABLE-US-00007 TABLE 7 focal length (mm) f 3.750 f1 3.210 "
+            "f2 -10.540 f3 -30.540 f4 2.247 f5 -1.921",
+        ),
+        "system_metadata": (
+            ("2.09", "3.261", "80.84"),
+            ("2.08", "3.261", "81.08"),
+        ),
+        "phrase_counts": {
+            (
+                "the total optical length TTL of the camera optical lens 10 is "
+                "less than or equal to 4.48 mm"
+            ): 1,
+            (
+                "the aperture F number of the camera optical lens is less than "
+                "or equal to 1.8"
+            ): 2,
+            "pupil entering diameter of the camera optical lens is": 2,
+            "full vision field image height is": 2,
+            "vision field angle in the diagonal direction is": 2,
+        },
+        "f_number_upper_bound": "1.8",
+    },
 }
 
 _AAC_SEVEN_LENS_EXACT_TITLE_PATTERN = re.compile(
@@ -54671,7 +54768,12 @@ def _classify_aac_five_lens_f_number_bound_attempts(
                 re.IGNORECASE,
             )
         )
-        if claim_numbers != tuple(range(1, int(profile["claim_count"]) + 1)):
+        expected_claim_numbers = tuple(profile.get("claim_numbers", ()))
+        if not expected_claim_numbers:
+            expected_claim_numbers = tuple(
+                range(1, int(profile["claim_count"]) + 1)
+            )
+        if claim_numbers != expected_claim_numbers:
             raise PatentParseError("AAC five-lens F-number-bound claim denominator changed")
         declared_figures = tuple(
             int(value)
@@ -54705,7 +54807,10 @@ def _classify_aac_five_lens_f_number_bound_attempts(
         )
         if formal_digests != profile["formal_table_sha256"]:
             raise PatentParseError("AAC five-lens F-number-bound formal table content changed")
-        if (formal_tables[0], formal_tables[6]) != (_AAC_FIVE_LENS_F_NUMBER_BOUND_FOCAL_ROWS):
+        expected_focal_rows = tuple(
+            profile.get("focal_rows", _AAC_FIVE_LENS_F_NUMBER_BOUND_FOCAL_ROWS)
+        )
+        if (formal_tables[0], formal_tables[6]) != expected_focal_rows:
             raise PatentParseError("AAC five-lens F-number-bound direct focal-length rows changed")
 
         expected_surface_numbers = tuple(str(value) for value in range(1, 13))
@@ -54770,9 +54875,19 @@ def _classify_aac_five_lens_f_number_bound_attempts(
                 re.IGNORECASE,
             )
         )
-        if metadata != _AAC_FIVE_LENS_F_NUMBER_BOUND_SYSTEM_METADATA:
+        expected_metadata = tuple(
+            profile.get(
+                "system_metadata",
+                _AAC_FIVE_LENS_F_NUMBER_BOUND_SYSTEM_METADATA,
+            )
+        )
+        if metadata != expected_metadata:
             raise PatentParseError("AAC five-lens F-number-bound direct system metadata changed")
-        for phrase, expected in _AAC_FIVE_LENS_F_NUMBER_BOUND_PHRASE_COUNTS.items():
+        expected_phrase_counts = profile.get(
+            "phrase_counts",
+            _AAC_FIVE_LENS_F_NUMBER_BOUND_PHRASE_COUNTS,
+        )
+        for phrase, expected in expected_phrase_counts.items():
             observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
             if observed != expected:
                 raise PatentParseError(
@@ -54795,6 +54910,7 @@ def _classify_aac_five_lens_f_number_bound_attempts(
     except Exception as exc:  # noqa: BLE001 - retain both disclosed prescriptions
         return attempts_for_error(exc)
 
+    f_number_upper_bound = str(profile.get("f_number_upper_bound", "2.0"))
     return [
         _PrescriptionParseAttempt(
             embodiment_number=index,
@@ -54807,7 +54923,8 @@ def _classify_aac_five_lens_f_number_bound_attempts(
                     "the complete five-lens/filter surface and asphere prescription, "
                     "and direct diagonal vision-field angle, but the exact retained "
                     "publication gives only the system-wide inequality F-number <= "
-                    "2.0; entrance-pupil diameter is not substituted to derive an "
+                    f"{f_number_upper_bound}; entrance-pupil diameter is not "
+                    "substituted to derive an "
                     "embodiment F-number"
                 ),
             ),
