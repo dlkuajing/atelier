@@ -1,0 +1,332 @@
+{
+  "schema_version": 1,
+  "family_id": "63853856",
+  "root_id": "US-10514523",
+  "publication_id": "US-10514523-B2",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_primary_publications": 1,
+    "background_summary_numbered_paragraphs": 47,
+    "brief_drawing_numbered_paragraphs": 33,
+    "detailed_numbered_paragraphs": 210,
+    "description_numbered_paragraphs": 243,
+    "total_numbered_paragraphs_including_background_summary": 290,
+    "claims": 27,
+    "independent_claims": 4,
+    "declared_figure_panels": 32,
+    "flattened_table_us_objects": 28,
+    "formal_optical_tables": 12,
+    "surface_prescription_tables": 6,
+    "asphere_coefficient_tables": 6,
+    "inline_formula_processing_instructions": 2,
+    "mathml_objects": 0,
+    "custom_character_image_tags": 3,
+    "source_disclosed_optical_prescription_items": 6,
+    "electronic_device_deployment_wrapper_items": 8,
+    "source_items": 14,
+    "ordered_published_surface_rows_including_object_and_image": 103,
+    "modeled_sequential_surfaces_excluding_objects": 61,
+    "modeled_asphere_surfaces": 42,
+    "modeled_even_asphere_terms_per_surface": 8,
+    "modeled_even_asphere_numeric_cells": 336,
+    "replayed_ledger_items": 14,
+    "converted_pending_intake_items": 4,
+    "terminal_metadata_unpublished_items": 2,
+    "terminal_confirmed_no_prescription_items": 8,
+    "worker_requests": 4,
+    "worker_receipts": 4,
+    "prescription_fingerprints": 4,
+    "candidate_zmx": 4,
+    "staging_zmx": 4,
+    "formal_intake_items": 0,
+    "official_pdf_files": 2,
+    "unique_official_pdf_pages": 63,
+    "retained_primary_page_rasters": 63,
+    "official_primary_drawing_sheets": 32,
+    "official_primary_table_pages": 15,
+    "official_primary_claim_pages": 4,
+    "unmapped_background_summary_paragraphs": 0,
+    "unmapped_description_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_flattened_tables": 0,
+    "unmapped_formal_tables": 0,
+    "unmapped_formula_processing_instructions": 0,
+    "unmapped_custom_character_images": 0,
+    "unmapped_source_items": 0
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "paragraphs": [
+        65,
+        127
+      ],
+      "classification": "conversion_candidate",
+      "ordered_surface_rows_including_object_and_image": 17,
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "prescription_fingerprint": "4fa08fa02e4d5fcc"
+    },
+    {
+      "embodiment_number": 2,
+      "paragraphs": [
+        128,
+        152
+      ],
+      "classification": "metadata_unpublished",
+      "ordered_surface_rows_including_object_and_image": 20,
+      "ledger_state": "terminal",
+      "terminal_status": "metadata_unpublished",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 3,
+      "paragraphs": [
+        153,
+        175
+      ],
+      "classification": "metadata_unpublished",
+      "ordered_surface_rows_including_object_and_image": 18,
+      "ledger_state": "terminal",
+      "terminal_status": "metadata_unpublished",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 4,
+      "paragraphs": [
+        176,
+        197
+      ],
+      "classification": "conversion_candidate",
+      "ordered_surface_rows_including_object_and_image": 15,
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "prescription_fingerprint": "c1868631fb55c0c7"
+    },
+    {
+      "embodiment_number": 5,
+      "paragraphs": [
+        198,
+        220
+      ],
+      "classification": "conversion_candidate",
+      "ordered_surface_rows_including_object_and_image": 18,
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "prescription_fingerprint": "72b5ff5a0a07b5fd"
+    },
+    {
+      "embodiment_number": 6,
+      "paragraphs": [
+        221,
+        241
+      ],
+      "classification": "conversion_candidate",
+      "ordered_surface_rows_including_object_and_image": 15,
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "prescription_fingerprint": "326394cc7b84a1c5"
+    },
+    {
+      "embodiment_number": 7,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 8,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 9,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 10,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 11,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 12,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 13,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    },
+    {
+      "embodiment_number": 14,
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ordered_surface_rows_including_object_and_image": null,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "prescription_fingerprint": null
+    }
+  ],
+  "context_ranges": [
+    {
+      "role": "background and summary",
+      "paragraphs": [
+        1,
+        47
+      ]
+    },
+    {
+      "role": "brief description of drawings",
+      "paragraphs": [
+        1,
+        33
+      ]
+    },
+    {
+      "role": "shared architecture and definitions",
+      "paragraphs": [
+        34,
+        64
+      ]
+    },
+    {
+      "role": "optical prescription 1",
+      "paragraphs": [
+        65,
+        127
+      ]
+    },
+    {
+      "role": "optical prescription 2",
+      "paragraphs": [
+        128,
+        152
+      ]
+    },
+    {
+      "role": "optical prescription 3",
+      "paragraphs": [
+        153,
+        175
+      ]
+    },
+    {
+      "role": "optical prescription 4",
+      "paragraphs": [
+        176,
+        197
+      ]
+    },
+    {
+      "role": "optical prescription 5",
+      "paragraphs": [
+        198,
+        220
+      ]
+    },
+    {
+      "role": "optical prescription 6",
+      "paragraphs": [
+        221,
+        241
+      ]
+    },
+    {
+      "role": "eight electronic-device deployment wrappers",
+      "paragraphs": [
+        242,
+        242
+      ]
+    },
+    {
+      "role": "closing boilerplate",
+      "paragraphs": [
+        243,
+        243
+      ]
+    }
+  ],
+  "representation_boundary": {
+    "FST_HEP_used_as_direct_f_number_items": [
+      1,
+      4,
+      5,
+      6
+    ],
+    "FST_REP_undefined_items": [
+      2,
+      3
+    ],
+    "undefined_REP_repaired_to_HEP": false,
+    "source_numeric_cells_repaired": false,
+    "related_family_numeric_borrowing_used": false,
+    "raster_numeric_transcription_used": false,
+    "object_rows_excluded_from_sequential_models": true,
+    "source_image_rows_retained_as_zero_thickness_model_images": true,
+    "conversion_state_is_formal_intake": false
+  },
+  "formal_outputs": {
+    "case_index_entries": 0,
+    "case_json": 0,
+    "intake_manifests": 0,
+    "expert_backed_items": 0
+  }
+}

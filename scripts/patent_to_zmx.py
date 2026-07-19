@@ -900,6 +900,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_ability_weatherproof_system_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_samsung_thermal_eight_lens_attempts(
         raw_text,
         patent_id=patent_id,
@@ -56463,6 +56469,635 @@ def _classify_newmax_varifocal_head_mounted_missing_f_number_attempts(
                 embodiment_number=number,
                 embodiment=label,
                 error=error,
+            )
+        )
+    return attempts
+
+
+_ABILITY_WEATHERPROOF_ITEMS = (
+    (
+        1,
+        "Ability weatherproof optical image capturing system first embodiment",
+        (65, 127),
+        (1, 2),
+        None,
+    ),
+    (
+        2,
+        "Ability weatherproof optical image capturing system second embodiment",
+        (128, 152),
+        (3, 4),
+        None,
+    ),
+    (
+        3,
+        "Ability weatherproof optical image capturing system third embodiment",
+        (153, 175),
+        (5, 6),
+        None,
+    ),
+    (
+        4,
+        "Ability weatherproof optical image capturing system fourth embodiment",
+        (176, 197),
+        (7, 8),
+        None,
+    ),
+    (
+        5,
+        "Ability weatherproof optical image capturing system fifth embodiment",
+        (198, 220),
+        (9, 10),
+        None,
+    ),
+    (
+        6,
+        "Ability weatherproof optical image capturing system sixth embodiment",
+        (221, 241),
+        (11, 12),
+        None,
+    ),
+    (
+        7,
+        "Ability mobile-communication-device deployment wrapper",
+        (242, 242),
+        (),
+        "7A",
+    ),
+    (
+        8,
+        "Ability mobile-information-device deployment wrapper",
+        (242, 242),
+        (),
+        "7B",
+    ),
+    (9, "Ability smart-watch deployment wrapper", (242, 242), (), "7C"),
+    (
+        10,
+        "Ability smart-head-mounted-device deployment wrapper",
+        (242, 242),
+        (),
+        "7D",
+    ),
+    (
+        11,
+        "Ability network-surveillance-device deployment wrapper",
+        (242, 242),
+        (),
+        "7E",
+    ),
+    (
+        12,
+        "Ability in-vehicle-imaging-device deployment wrapper",
+        (242, 242),
+        (),
+        "7F",
+    ),
+    (
+        13,
+        "Ability unmanned-aerial-vehicle deployment wrapper",
+        (242, 242),
+        (),
+        "7G",
+    ),
+    (
+        14,
+        "Ability extreme-sport-imaging-device deployment wrapper",
+        (242, 242),
+        (),
+        "7H",
+    ),
+)
+_ABILITY_WEATHERPROOF_UNDEFINED_REP_REASON = (
+    "metadata_unpublished.undefined_fst_rep_ratio"
+)
+_ABILITY_WEATHERPROOF_WRAPPER_REASON = (
+    "confirmed_no_prescription.electronic_device_deployment_wrapper_only"
+)
+_ABILITY_WEATHERPROOF_METADATA = {
+    1: ("3.378", "HEP", "2.8", "68.560", 17, 6, 7),
+    2: ("3.5130", "REP", "2.8", "68.9333", 20, 7, 9),
+    3: ("3.5699", "REP", "2.8", "69.2861", 18, 6, 7),
+    4: ("1.0576", "HEP", "2.0", "65.8659", 15, 5, 5),
+    5: ("3.4793", "HEP", "2.8", "68.6529", 18, 6, 7),
+    6: ("2.41135", "HEP", "2.22", "36", 15, 4, 5),
+}
+_ABILITY_WEATHERPROOF_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-10514523-B2": {
+        "raw_document_sha256": (
+            "0c93198ad6094f8057d5df45a399a8bbd615f6286790c5a87632a1447a81b902"
+        ),
+        "normalized_text_sha256": (
+            "364862001802743e678893603c8985b69a128ce8c810324a64cfac7ddb8b8303"
+        ),
+        "identity_markers": {
+            "Optical image capturing system and electronic device": 1,
+            "Lai; Chien-Hsun": 2,
+            "Applicant: ABILITY OPTO-ELECTRONICS TECHNOLOGY CO.LTD.": 1,
+            "Assignee: ABILITY OPTO-ELECTRONICS TECHNOLOGY CO. LTD.": 1,
+            "Family ID: 63853856": 1,
+            "Appl. No.: 15/671765": 1,
+            "US 20180307000 A1 Oct. 25, 2018": 1,
+            "TW 106113530 A Apr. 21, 2017": 1,
+        },
+        "section_markers": {
+            "preamble": "US-10514523-B2 - Patent Public Search | USPTO",
+            "abstract": (
+                "Abstract An optical image capturing system and an electronic "
+                "using the same are disclosed."
+            ),
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATION (1)"
+            ),
+            "summary": "SUMMARY OF THE INVENTION (6)",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": (
+                "DETAILED DESCRIPTION OF THE PREFERRED EMBODIMENTS (34)"
+            ),
+            "claims": "Claims 1. An optical image capturing system, comprising:",
+        },
+        "section_sha256": {
+            "preamble": "3bf9a1b154e488fb3d90b62868a08a3c3854ff8426980df3736175d55256086d",
+            "abstract": "6517351da266a6db459cac164533f33c07c4ae5e5f130e206355caeeca61ce27",
+            "background": "a0908bab8eb50654cd936b463ffc61e4fcdfb0c6d2236a5ea8b21e7ae2e5e154",
+            "summary": "3504af96ae8b8789c299f0dcb9114d2a5ad3f0e9f7e601f0a8722537dd7c8b12",
+            "brief": "2330d68e9e5f4d4a453a1169429a6a7075e0859733f0e2ddf1621dfd119244f2",
+            "detailed": "5af9b734de44100e8374f3a3f70955609305c4a228d3350cfbef0adae96c0ef2",
+            "claims": "52f3cbe75940731ee0c9551f23f5801c1bb743c5c82249533a640115ce36851d",
+        },
+        "paragraph_span_sha256": {
+            (34, 64): "3afb7fdcf642cd1e86977cf46467185aa0fc8015900d2fd0f5a7954521537d8d",
+            (65, 127): "665465eca4fe69cb9f28a02428f96a86102f56ecb8b71738045fad5c29c4c712",
+            (128, 152): "55dd4f8c9bc1aa4180a6f9ee6ab5cc927184675f6e7c498ee73e6f2d33f830de",
+            (153, 175): "838640cc6c8d3ab5643405386f01cff8283ed035b2273e4e964756dd762b1661",
+            (176, 197): "556bfcd81186897a6719e1c5e0944a5711bfd57f78351cfcef9ed6a898b09468",
+            (198, 220): "cbaca05876d9f5bfbcbd9d3880cdb5a2d3f2ea05cfba7f2fca0f55de56808d0e",
+            (221, 241): "b900e544ef89a92f5e825874bd7a6ab950b672231fd99dae47fa57b76801cd30",
+            (242, 242): "ac224f8a6dc2931de708e6edb3bc1d2145267ff5a13917d1e0f1bcf8c52a89b5",
+            (243, 243): "6e3ce02fb1eda314c335b5a5c810d9d150a74a986349e32f353b38cd0458d902",
+        },
+        "formal_table_payload_sha256": (
+            "061078bb52e36f47ef0fb1a22386f88e7535fec3a0f45cb7887063aec9b58fda",
+            "a34fada8483ab9c48412c687ee1d98dfcdc4f2f0b9b832d7b3e5e6c9ab4b8ef3",
+            "288ec5b15400bd84d9e784b500762c8bbcf2d9834318db9e7e16602f93c3d0e4",
+            "f684f548db10c93b024bb7d887b26f2781644884f8880c75f0aed99585364aff",
+            "0d07e11521ec7836c0ef82efd066ad88e602117168007bc75a836d8bcf7b4415",
+            "2c0b4cb09a18fe9c1e43349fbc01c70e7f610f772f9375158ed938fc5cae79df",
+            "b04917084df9551e1465d09cb0b4aa4bd0a4b00224eb93b84b476e00bb2d07ef",
+            "56e9e7291821c3ee7eddeb40ef0990f9a7356f19169feb8be15398b7569e1312",
+            "ab3b557b202601c5ff3a395ffade0328e13919b691fea1b9daa82589ef58bba2",
+            "4587c6dcd922a76d2d3ec60b4b568a37f187c0899c7881fdfb1bff6e77c1e24b",
+            "edd87c9c9f65365a007d3185839a4d189a3dbe48edd036c93167924615c1f554",
+            "783fb580e116ee337fef4500565662ff64930a0438433dc458e49ca77a5fa06e",
+        ),
+        "claim_numbers": tuple(range(1, 28)),
+        "figure_labels": tuple(
+            [f"{number}{suffix}" for number in range(1, 7) for suffix in "ABCD"]
+            + [f"7{suffix}" for suffix in "ABCDEFGH"]
+        ),
+        "inline_asphere_formula_sha256": (
+            "119000d5f88bd8b46570439f4b903d7eaaac4aa8f0eb5cb3e01dba8d10459cd3"
+        ),
+        "ordered_img_tag_sha256": (
+            "34442d8724f653fd8d733f046dbdcf7486140b81b8fe01925d0251ccedd7202d"
+        ),
+    }
+}
+_ABILITY_WEATHERPROOF_HEADER_RE = re.compile(
+    rf"The parameters of the lenses of the "
+    rf"(?P<ordinal>first|second|third|fourth|fifth|sixth) embodiment "
+    rf"FST\s*=\s*(?P<fst>{NUMBER_PATTERN})\s*mm;\s*"
+    rf"FST/(?P<pupil>HEP|REP)\s*=\s*(?P<ratio>{NUMBER_PATTERN});\s*"
+    rf"HAF\s*=\s*(?P<haf>{NUMBER_PATTERN})\s*deg",
+    re.IGNORECASE,
+)
+
+
+def _ability_weatherproof_paragraphs(section: str) -> dict[int, str]:
+    matches = [
+        match
+        for match in re.finditer(r"\((\d{1,3})\)", section)
+        if 34 <= int(match.group(1)) <= 243
+    ]
+    numbers = tuple(int(match.group(1)) for match in matches)
+    if numbers != tuple(range(34, 244)):
+        raise PatentParseError(
+            "Ability weatherproof detailed-paragraph denominator changed"
+        )
+    return {
+        number: section[
+            match.start() : (
+                matches[index + 1].start()
+                if index + 1 < len(matches)
+                else len(section)
+            )
+        ].strip()
+        for index, (number, match) in enumerate(
+            zip(numbers, matches, strict=True)
+        )
+    }
+
+
+def _parse_ability_weatherproof_surface_table(
+    block_text: str,
+    *,
+    embodiment_number: int,
+    header: re.Match[str],
+) -> list[PatentSurface]:
+    table_region = re.split(
+        r"\bReference wavelength\b",
+        block_text[header.end() :],
+        maxsplit=1,
+        flags=re.IGNORECASE,
+    )[0]
+    table_region = re.sub(
+        r"\b(\d+)\s*\.\s*sup\s*\.\s*(?:st|nd|rd|th)\s+lens\b",
+        r"Lens \1",
+        table_region,
+        flags=re.IGNORECASE,
+    )
+    table_region = table_region.replace("6.sup.th ens", "Lens 6")
+    table_region = table_region.replace("Aperature", "Aperture")
+    table_region = re.sub(
+        r"\bImagez?\s+plane\b",
+        "Image",
+        table_region,
+        flags=re.IGNORECASE,
+    )
+    if embodiment_number == 1:
+        table_region, replacements = re.subn(
+            rf"(14\s+Infrared\s+{NUMBER_PATTERN}\s+{NUMBER_PATTERN})\s+"
+            rf"({NUMBER_PATTERN})\s+({NUMBER_PATTERN})\s+rays\s+filter\s+plane",
+            r"\1 Glass \2 \3 rays filter plane",
+            table_region,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+        if replacements != 1:
+            raise PatentParseError(
+                "Ability weatherproof first-embodiment glass-filter binding changed"
+            )
+    if embodiment_number == 6:
+        table_region, replacements = re.subn(
+            rf"(3\s+Lens\s+2\s+{NUMBER_PATTERN}\s+{NUMBER_PATTERN})\s+"
+            rf"({NUMBER_PATTERN}\s+{NUMBER_PATTERN}\s+{NUMBER_PATTERN})\s+"
+            rf"(4\s+{NUMBER_PATTERN}\s+{NUMBER_PATTERN})\s+plastic",
+            r"\1 plastic \2 \3",
+            table_region,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+        if replacements != 1:
+            raise PatentParseError(
+                "Ability weatherproof sixth-embodiment second-lens binding changed"
+            )
+    return _parse_surface_table(table_region)
+
+
+def _parse_ability_weatherproof_asphere_table(
+    block_text: str,
+) -> tuple[dict[int, dict[str, float]], list[str]]:
+    payload = re.split(r"\s\(\d{1,3}\)\s", block_text, maxsplit=1)[0]
+    payload = re.sub(r"\bsurface\b", "Surface", payload, flags=re.IGNORECASE)
+    return _parse_asphere_coefficients(payload, 0, section_end=len(payload))
+
+
+def _parse_ability_weatherproof_system_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse four source-locked Ability systems and retain ten exact terminals."""
+
+    profile = _ABILITY_WEATHERPROOF_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _tables, _figure in (
+                _ABILITY_WEATHERPROOF_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Ability weatherproof official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Ability weatherproof normalized text hash changed for {patent_id}"
+            )
+
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Ability weatherproof identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Ability weatherproof section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Ability weatherproof section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for name, expected in profile["section_sha256"].items():
+            if hashlib.sha256(sections[name].encode("utf-8")).hexdigest() != expected:
+                raise PatentParseError(
+                    f"Ability weatherproof {name} section changed"
+                )
+
+        for section_name, expected_numbers in (
+            ("background", tuple(range(1, 6))),
+            ("summary", tuple(range(6, 48))),
+            ("brief", tuple(range(1, 34))),
+        ):
+            numbers = tuple(
+                int(value)
+                for value in re.findall(r"\((\d{1,3})\)", sections[section_name])
+            )
+            if numbers != expected_numbers:
+                raise PatentParseError(
+                    f"Ability weatherproof {section_name} paragraph denominator changed"
+                )
+        paragraphs = _ability_weatherproof_paragraphs(sections["detailed"])
+        for bounds, expected in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number]
+                for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected:
+                raise PatentParseError(
+                    f"Ability weatherproof paragraph span {bounds} changed"
+                )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != tuple(range(1, 13)):
+            raise PatentParseError(
+                "Ability weatherproof 12-formal-table denominator changed"
+            )
+        table_payloads = tuple(
+            re.split(r"\s\(\d{1,3}\)\s", block.text, maxsplit=1)[0].strip()
+            for block in table_blocks
+        )
+        if tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        ) != profile["formal_table_payload_sha256"]:
+            raise PatentParseError(
+                "Ability weatherproof formal-table payload digest changed"
+            )
+        flattened_table_ids = tuple(
+            int(value)
+            for value in re.findall(r"\bTABLE-US-(\d{5})\b", text)
+        )
+        if flattened_table_ids != tuple(range(1, 29)):
+            raise PatentParseError(
+                "Ability weatherproof 28-flattened-table denominator changed"
+            )
+
+        headers: dict[int, re.Match[str]] = {}
+        for number in range(1, 7):
+            header = _ABILITY_WEATHERPROOF_HEADER_RE.search(
+                table_blocks[(number - 1) * 2].text
+            )
+            if header is None:
+                raise PatentParseError(
+                    f"Ability weatherproof embodiment {number} metadata header changed"
+                )
+            expected = _ABILITY_WEATHERPROOF_METADATA[number]
+            observed = (
+                header.group("fst"),
+                header.group("pupil").upper(),
+                header.group("ratio"),
+                header.group("haf"),
+            )
+            if observed != expected[:4]:
+                raise PatentParseError(
+                    f"Ability weatherproof embodiment {number} metadata changed"
+                )
+            headers[number] = header
+        if text.count("FST/REP") != 2 or len(
+            re.findall(r"\bREP\b", text, re.IGNORECASE)
+        ) != 2:
+            raise PatentParseError(
+                "Ability weatherproof undefined FST/REP boundary changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Ability weatherproof 27-claim denominator changed")
+        for marker in (
+            "12. An optical image capturing system, comprising:",
+            "22. An optical image capturing system, comprising:",
+            "24. An electronic device, comprising:",
+        ):
+            if sections["claims"].count(marker) != 1:
+                raise PatentParseError(
+                    "Ability weatherproof independent-claim boundary changed"
+                )
+
+        figure_labels = tuple(
+            re.sub(r"\s+", "", label).upper()
+            for label in re.findall(
+                r"FIG\.\s*(\d+\s*[A-H])\s+(?:is|shows)",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_labels != profile["figure_labels"]:
+            raise PatentParseError(
+                "Ability weatherproof 32-panel figure denominator changed"
+            )
+
+        formula_markers = list(
+            re.finditer(r"<\?in-line-formulae[^>]*\?>", raw_text, re.IGNORECASE)
+        )
+        if len(formula_markers) != 2:
+            raise PatentParseError(
+                "Ability weatherproof inline formula denominator changed"
+            )
+        formula_payload = raw_text[
+            formula_markers[0].start() : formula_markers[1].end()
+        ]
+        if hashlib.sha256(formula_payload.encode("utf-8")).hexdigest() != profile[
+            "inline_asphere_formula_sha256"
+        ]:
+            raise PatentParseError(
+                "Ability weatherproof inline asphere formula changed"
+            )
+        if re.search(r"<maths\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Ability weatherproof MathML denominator changed"
+            )
+        image_tags = re.findall(r"<img\b[^>]*>", raw_text, re.IGNORECASE)
+        if len(image_tags) != 3 or hashlib.sha256(
+            "\n".join(image_tags).encode("utf-8")
+        ).hexdigest() != profile["ordered_img_tag_sha256"]:
+            raise PatentParseError(
+                "Ability weatherproof custom-character image denominator changed"
+            )
+
+        for marker, expected in (
+            ("Table 9 and Table in", 1),
+            ("Aperature", 1),
+            ("Imagez plane", 1),
+            ("6.sup.th ens", 1),
+        ):
+            if text.count(marker) != expected:
+                raise PatentParseError(
+                    f"Ability weatherproof retained anomaly {marker!r} changed"
+                )
+        for _number, _label, _paragraphs, _tables, figure in (
+            _ABILITY_WEATHERPROOF_ITEMS[6:]
+        ):
+            if f"FIG. {figure}" not in paragraphs[242]:
+                raise PatentParseError(
+                    f"Ability weatherproof wrapper FIG. {figure} boundary changed"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain every exact source item
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, tables, figure in _ABILITY_WEATHERPROOF_ITEMS:
+        if number in {2, 3}:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=label,
+                    error=PatentTerminalParseError(
+                        status="metadata_unpublished",
+                        reason_code=_ABILITY_WEATHERPROOF_UNDEFINED_REP_REASON,
+                        detail=(
+                            f"Table {tables[0]} publishes a complete ordered "
+                            "prescription, a stop and HAF, but prints FST/REP; "
+                            "REP is not defined anywhere in the retained B2 source, "
+                            "so it is not repaired to HEP or used as an F-number"
+                        ),
+                    ),
+                )
+            )
+            continue
+        if figure is not None:
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=label,
+                    error=PatentTerminalParseError(
+                        status="confirmed_no_prescription",
+                        reason_code=_ABILITY_WEATHERPROOF_WRAPPER_REASON,
+                        detail=(
+                            f"paragraph 242 and FIG. {figure} deploy one of the six "
+                            "disclosed optical systems in an electronic-device "
+                            "wrapper and publish no additional prescription"
+                        ),
+                    ),
+                )
+            )
+            continue
+
+        try:
+            surface_block = table_blocks[(number - 1) * 2]
+            coefficient_block = table_blocks[(number - 1) * 2 + 1]
+            surfaces = _parse_ability_weatherproof_surface_table(
+                surface_block.text,
+                embodiment_number=number,
+                header=headers[number],
+            )
+            expected = _ABILITY_WEATHERPROOF_METADATA[number]
+            if (
+                tuple(surface.index for surface in surfaces)
+                != tuple(range(expected[4]))
+                or sum(surface.label.startswith("Lens ") for surface in surfaces)
+                != expected[5]
+                or [
+                    surface.index
+                    for surface in surfaces
+                    if "STOP" in surface.label.upper()
+                ]
+                != [expected[6]]
+                or surfaces[-1].label != "Image"
+            ):
+                raise PatentParseError(
+                    f"Ability weatherproof embodiment {number} surface structure changed"
+                )
+            coefficients, unsupported = _parse_ability_weatherproof_asphere_table(
+                coefficient_block.text
+            )
+            if unsupported:
+                raise PatentParseError(
+                    "unsupported nonzero Ability weatherproof asphere terms: "
+                    + ", ".join(unsupported[:8])
+                )
+            for surface in surfaces:
+                surface.asphere_coefficients.update(
+                    coefficients.get(surface.index, {})
+                )
+                if surface.asphere_coefficients:
+                    surface.surface_type = "ASP"
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=label,
+                focal_length_mm=_parse_number(expected[0]),
+                f_number=_parse_number(expected[2]),
+                hfov_deg=_parse_number(expected[3]),
+                surfaces=surfaces[1:],
+                reference_wavelength_um=0.555,
+                unsupported_asphere_terms=unsupported,
+            )
+            _validate_prescription_materials(prescription)
+            build_readout_from_prescription(prescription)
+        except Exception as exc:  # noqa: BLE001 - per-embodiment fail-loud ledger
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=number,
+                    embodiment=label,
+                    error=exc,
+                )
+            )
+            continue
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                prescription=prescription,
             )
         )
     return attempts

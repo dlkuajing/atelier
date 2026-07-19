@@ -1,0 +1,645 @@
+{
+  "schema_version": 1,
+  "family_id": "63853856",
+  "root_id": "US-10514523",
+  "publication_id": "US-10514523-B2",
+  "application_number": "15/671765",
+  "identity": {
+    "title": "Optical image capturing system and electronic device",
+    "inventors": [
+      "Lai; Chien-Hsun",
+      "Chang; Yeong-Ming",
+      "Tsai; Chen-Hung",
+      "Chen; Ying-Jung",
+      "Liu; Yao-Wei",
+      "Yang; Hui-Hsuan"
+    ],
+    "applicant": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO.LTD.",
+    "assignee": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO. LTD.",
+    "filed": "2017-08-08",
+    "patent_date": "2019-12-24",
+    "priority_application": "TW 106113530 A (2017-04-21)",
+    "prior_us_publication": "US-20180307000-A1 (2018-10-25)"
+  },
+  "source_denominator": {
+    "background_summary_numbered_paragraphs": 47,
+    "brief_drawing_numbered_paragraphs": 33,
+    "detailed_numbered_paragraphs": 210,
+    "description_numbered_paragraphs": 243,
+    "claims": 27,
+    "independent_claims": [
+      1,
+      12,
+      22,
+      24
+    ],
+    "declared_figure_panels": [
+      "1A",
+      "1B",
+      "1C",
+      "1D",
+      "2A",
+      "2B",
+      "2C",
+      "2D",
+      "3A",
+      "3B",
+      "3C",
+      "3D",
+      "4A",
+      "4B",
+      "4C",
+      "4D",
+      "5A",
+      "5B",
+      "5C",
+      "5D",
+      "6A",
+      "6B",
+      "6C",
+      "6D",
+      "7A",
+      "7B",
+      "7C",
+      "7D",
+      "7E",
+      "7F",
+      "7G",
+      "7H"
+    ],
+    "drawing_sheets": 32,
+    "flattened_table_us_objects": 28,
+    "formal_optical_tables": 12,
+    "inline_formula_processing_instructions": 2,
+    "mathml_objects": 0,
+    "custom_character_image_tags": 3,
+    "source_disclosed_optical_prescriptions": 6,
+    "electronic_device_deployment_wrappers": 8,
+    "source_items": 14
+  },
+  "table_roles": [
+    {
+      "table": 1,
+      "embodiment": 1,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 2,
+      "embodiment": 1,
+      "role": "even-asphere coefficients"
+    },
+    {
+      "table": 3,
+      "embodiment": 2,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 4,
+      "embodiment": 2,
+      "role": "even-asphere coefficients"
+    },
+    {
+      "table": 5,
+      "embodiment": 3,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 6,
+      "embodiment": 3,
+      "role": "even-asphere coefficients"
+    },
+    {
+      "table": 7,
+      "embodiment": 4,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 8,
+      "embodiment": 4,
+      "role": "even-asphere coefficients"
+    },
+    {
+      "table": 9,
+      "embodiment": 5,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 10,
+      "embodiment": 5,
+      "role": "even-asphere coefficients"
+    },
+    {
+      "table": 11,
+      "embodiment": 6,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 12,
+      "embodiment": 6,
+      "role": "even-asphere coefficients"
+    }
+  ],
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Ability weatherproof optical image capturing system embodiment 1",
+      "paragraphs": [
+        65,
+        127
+      ],
+      "classification": "conversion_candidate",
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "formal_tables": [
+        1,
+        2
+      ],
+      "flattened_table_us_ids": [
+        1,
+        2,
+        3
+      ],
+      "physical_lens_count": 6,
+      "ordered_surface_rows_including_object_and_image": 17,
+      "surface_index_range": [
+        0,
+        16
+      ],
+      "stop_surface_index": 7,
+      "reference_wavelength_nm": 555,
+      "system_values": {
+        "fst_mm": 3.378,
+        "printed_ratio_label": "FST/HEP",
+        "printed_ratio_value": 2.8,
+        "haf_deg": 68.56
+      },
+      "modeled_sequential_surfaces_excluding_object": 16,
+      "modeled_asphere_surfaces": 12,
+      "prescription_fingerprint": "4fa08fa02e4d5fcc",
+      "conversion_request_sha256": "fc1ef50abf87c19c21fa485ceb78c40afb5fbd35a8105b285924bf7a960c3718",
+      "coverage": {
+        "aperture_interpolated_surfaces": "none",
+        "asphere_surfaces": 12,
+        "d": "16/16",
+        "f_mm": 3.378,
+        "f_number": 2.8,
+        "finite_final_rays": "5/5",
+        "hfov_deg": 68.56,
+        "nd_vd": "7/16",
+        "r": "16/16",
+        "real_image_height_mm": 3.7519118630500543,
+        "reference_wavelength_um": 0.555,
+        "sanity_image_height_mm": 8.601958046326892,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
+        "surfaces": 16
+      },
+      "staging_zmx": {
+        "evidence_type": "staging_zmx",
+        "path": "data/zmx-staging/patent-local-replay/US-10514523-B2-e1.zmx",
+        "sha256": "2936c21304c410f41efb0a7112224f0a8fb0c945127cf4d3bd1986196f3e3c54"
+      }
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Ability weatherproof optical image capturing system embodiment 2",
+      "paragraphs": [
+        128,
+        152
+      ],
+      "classification": "metadata_unpublished",
+      "ledger_state": "terminal",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "terminal.metadata_unpublished.undefined_fst_rep_ratio",
+      "formal_tables": [
+        3,
+        4
+      ],
+      "flattened_table_us_ids": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "physical_lens_count": 7,
+      "ordered_surface_rows_including_object_and_image": 20,
+      "surface_index_range": [
+        0,
+        19
+      ],
+      "stop_surface_index": 9,
+      "reference_wavelength_nm": 555,
+      "system_values": {
+        "fst_mm": 3.513,
+        "printed_ratio_label": "FST/REP",
+        "printed_ratio_value": 2.8,
+        "haf_deg": 68.9333
+      }
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Ability weatherproof optical image capturing system embodiment 3",
+      "paragraphs": [
+        153,
+        175
+      ],
+      "classification": "metadata_unpublished",
+      "ledger_state": "terminal",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "terminal.metadata_unpublished.undefined_fst_rep_ratio",
+      "formal_tables": [
+        5,
+        6
+      ],
+      "flattened_table_us_ids": [
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "physical_lens_count": 6,
+      "ordered_surface_rows_including_object_and_image": 18,
+      "surface_index_range": [
+        0,
+        17
+      ],
+      "stop_surface_index": 7,
+      "reference_wavelength_nm": 555,
+      "system_values": {
+        "fst_mm": 3.5699,
+        "printed_ratio_label": "FST/REP",
+        "printed_ratio_value": 2.8,
+        "haf_deg": 69.2861
+      }
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Ability weatherproof optical image capturing system embodiment 4",
+      "paragraphs": [
+        176,
+        197
+      ],
+      "classification": "conversion_candidate",
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "formal_tables": [
+        7,
+        8
+      ],
+      "flattened_table_us_ids": [
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "physical_lens_count": 5,
+      "ordered_surface_rows_including_object_and_image": 15,
+      "surface_index_range": [
+        0,
+        14
+      ],
+      "stop_surface_index": 5,
+      "reference_wavelength_nm": 555,
+      "system_values": {
+        "fst_mm": 1.0576,
+        "printed_ratio_label": "FST/HEP",
+        "printed_ratio_value": 2.0,
+        "haf_deg": 65.8659
+      },
+      "modeled_sequential_surfaces_excluding_object": 14,
+      "modeled_asphere_surfaces": 10,
+      "prescription_fingerprint": "c1868631fb55c0c7",
+      "conversion_request_sha256": "ab2c04ed4bd6c99d036bdf792b8a7fc2ce136ea4d9ae9c17a7a7cbd12fafc02d",
+      "coverage": {
+        "aperture_interpolated_surfaces": "none",
+        "asphere_surfaces": 10,
+        "d": "14/14",
+        "f_mm": 1.0576,
+        "f_number": 2.0,
+        "finite_final_rays": "4/5",
+        "hfov_deg": 65.8659,
+        "nd_vd": "6/14",
+        "r": "14/14",
+        "real_image_height_mm": 1.4672579437385114,
+        "reference_wavelength_um": 0.555,
+        "sanity_image_height_mm": 2.3605243177214734,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
+        "surfaces": 14
+      },
+      "staging_zmx": {
+        "evidence_type": "staging_zmx",
+        "path": "data/zmx-staging/patent-local-replay/US-10514523-B2-e4.zmx",
+        "sha256": "5613cad53828f9f114ce1be4519e9d9e74892619b35ccf6c6c83009f29f6424f"
+      }
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Ability weatherproof optical image capturing system embodiment 5",
+      "paragraphs": [
+        198,
+        220
+      ],
+      "classification": "conversion_candidate",
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "formal_tables": [
+        9,
+        10
+      ],
+      "flattened_table_us_ids": [
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "physical_lens_count": 6,
+      "ordered_surface_rows_including_object_and_image": 18,
+      "surface_index_range": [
+        0,
+        17
+      ],
+      "stop_surface_index": 7,
+      "reference_wavelength_nm": 555,
+      "system_values": {
+        "fst_mm": 3.4793,
+        "printed_ratio_label": "FST/HEP",
+        "printed_ratio_value": 2.8,
+        "haf_deg": 68.6529
+      },
+      "modeled_sequential_surfaces_excluding_object": 17,
+      "modeled_asphere_surfaces": 12,
+      "prescription_fingerprint": "72b5ff5a0a07b5fd",
+      "conversion_request_sha256": "13a36d684edd5accd5dfd95189d439aed9279aa6e4c592ca345fffd59f1b9745",
+      "coverage": {
+        "aperture_interpolated_surfaces": "none",
+        "asphere_surfaces": 12,
+        "d": "17/17",
+        "f_mm": 3.4793,
+        "f_number": 2.8,
+        "finite_final_rays": "5/5",
+        "hfov_deg": 68.6529,
+        "nd_vd": "7/17",
+        "r": "17/17",
+        "real_image_height_mm": 3.747935373540188,
+        "reference_wavelength_um": 0.555,
+        "sanity_image_height_mm": 8.902312795058222,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
+        "surfaces": 17
+      },
+      "staging_zmx": {
+        "evidence_type": "staging_zmx",
+        "path": "data/zmx-staging/patent-local-replay/US-10514523-B2-e5.zmx",
+        "sha256": "93507e0c7c7b572e9deb7eaf330a00edee6ec5573dcf5bb970d1a400f4ede7e5"
+      }
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Ability weatherproof optical image capturing system embodiment 6",
+      "paragraphs": [
+        221,
+        241
+      ],
+      "classification": "conversion_candidate",
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "formal_tables": [
+        11,
+        12
+      ],
+      "flattened_table_us_ids": [
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "physical_lens_count": 4,
+      "ordered_surface_rows_including_object_and_image": 15,
+      "surface_index_range": [
+        0,
+        14
+      ],
+      "stop_surface_index": 5,
+      "reference_wavelength_nm": 555,
+      "system_values": {
+        "fst_mm": 2.41135,
+        "printed_ratio_label": "FST/HEP",
+        "printed_ratio_value": 2.22,
+        "haf_deg": 36.0
+      },
+      "modeled_sequential_surfaces_excluding_object": 14,
+      "modeled_asphere_surfaces": 8,
+      "prescription_fingerprint": "326394cc7b84a1c5",
+      "conversion_request_sha256": "3a157145438a06b64bda1ddf40dc5308d9856d69eed72e14ec05e6fd43d8d801",
+      "coverage": {
+        "aperture_interpolated_surfaces": "none",
+        "asphere_surfaces": 8,
+        "d": "14/14",
+        "f_mm": 2.41135,
+        "f_number": 2.22,
+        "finite_final_rays": "4/5",
+        "hfov_deg": 36.0,
+        "nd_vd": "6/14",
+        "r": "14/14",
+        "real_image_height_mm": 0.5544430173799193,
+        "reference_wavelength_um": 0.555,
+        "sanity_image_height_mm": 1.7519483249057268,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
+        "surfaces": 14
+      },
+      "staging_zmx": {
+        "evidence_type": "staging_zmx",
+        "path": "data/zmx-staging/patent-local-replay/US-10514523-B2-e6.zmx",
+        "sha256": "727800c3a69f337fadb99033121b35beb176ae73a01f63d6d7ce01387a6be42b"
+      }
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Ability electronic-device deployment wrapper: mobile communication device / smartphone",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7A"
+      ]
+    },
+    {
+      "embodiment_number": 8,
+      "label": "Ability electronic-device deployment wrapper: mobile information device / notebook",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7B"
+      ]
+    },
+    {
+      "embodiment_number": 9,
+      "label": "Ability electronic-device deployment wrapper: smart watch",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7C"
+      ]
+    },
+    {
+      "embodiment_number": 10,
+      "label": "Ability electronic-device deployment wrapper: smart head-mounted device / smart hat",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7D"
+      ]
+    },
+    {
+      "embodiment_number": 11,
+      "label": "Ability electronic-device deployment wrapper: network surveillance device / IP cam",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7E"
+      ]
+    },
+    {
+      "embodiment_number": 12,
+      "label": "Ability electronic-device deployment wrapper: in-vehicle imaging device",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7F"
+      ]
+    },
+    {
+      "embodiment_number": 13,
+      "label": "Ability electronic-device deployment wrapper: unmanned aerial vehicle",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7G"
+      ]
+    },
+    {
+      "embodiment_number": 14,
+      "label": "Ability electronic-device deployment wrapper: extreme sport imaging device",
+      "paragraphs": [
+        242,
+        242
+      ],
+      "classification": "confirmed_no_prescription",
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only",
+      "figures": [
+        "7H"
+      ]
+    }
+  ],
+  "source_anomalies_retained_verbatim": [
+    "FST/REP (Tables 3 and 5)",
+    "Table 9 and Table in",
+    "Aperature (Table 7)",
+    "Imagez plane (Table 11)",
+    "6.sup.th ens (Table 1)",
+    "10.sup.-6/? (Table 7 auxiliary data)",
+    "three custom-character image placeholders"
+  ],
+  "published_internal_normalizations": [
+    {
+      "scope": "embodiment 1 filter material token",
+      "action": "bind directly published nd/vd filter row to Glass because its same-item prose explicitly states glass",
+      "numeric_repair": false
+    },
+    {
+      "scope": "embodiment 6 second-lens material token order",
+      "action": "rebind flattened plastic token to the directly identified second-lens row without changing any numeric token",
+      "numeric_repair": false
+    },
+    {
+      "scope": "Image plane / Imagez plane terminal labels",
+      "action": "normalize exact terminal labels to Image and preserve zero image thickness",
+      "numeric_repair": false
+    }
+  ],
+  "metadata_boundary": {
+    "fst_hep_convertible_items": [
+      1,
+      4,
+      5,
+      6
+    ],
+    "undefined_fst_rep_items": [
+      2,
+      3
+    ],
+    "rep_definition_occurrences": 0,
+    "numeric_repair_permitted": false,
+    "raster_numeric_transcription_permitted": false
+  },
+  "reconciliation": {
+    "unmapped_background_summary_paragraphs": 0,
+    "unmapped_description_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_flattened_tables": 0,
+    "unmapped_formal_tables": 0,
+    "unmapped_formula_processing_instructions": 0,
+    "unmapped_custom_character_images": 0,
+    "unmapped_source_items": 0
+  },
+  "formal_outputs": {
+    "worker_requests": 4,
+    "worker_receipts": 4,
+    "prescription_fingerprints": 4,
+    "candidate_zmx": 4,
+    "staging_zmx": 4,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

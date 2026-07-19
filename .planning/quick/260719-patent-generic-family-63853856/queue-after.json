@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-63853856/generic-residual-after-2.json",
+  "result_set_sha256": "5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf",
+  "generic_residual_roots": 62,
+  "generic_residual_items": 62,
+  "next_exact_group": {
+    "family_id": "85177416",
+    "root_ids": [
+      "US-20230048740"
+    ],
+    "publication_ids": [
+      "US-20230048740-A1"
+    ],
+    "application_number": "17/813265",
+    "title": "SMALL LENS SYSTEM",
+    "first_inventor": "CHOI; Soon Cheol",
+    "applicant": "SEKONIX CO., LTD.",
+    "assignee": "SEKONIX CO., LTD.",
+    "layout_signature": "80cedad88fbd49b881b101050c1c78dd7ea546979e3e0e535dc752db7b0ba2d0",
+    "layout_signature_count": 1,
+    "table_count": 10,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 75,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/048729a45c619311/US-20230048740-A1.html",
+      "sha256": "048729a45c61931128bc183893d588fc871cf608c69fb2ea08e98fced1e84f6b"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

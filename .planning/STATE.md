@@ -753,24 +753,28 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | `260719-patent-generic-family-84189606` | complete-shovel-saturation-incomplete | Exact US-12474548-B2 binds application 17/892929, Family ID 84189606, prior US-20230341659-A1, two Taiwanese priorities, 159 numbered specification paragraphs, 20 claims with claims 1/15 independent, 19 panels, 32 flattened tables, one MathML object, eight complete varifocal folded prescriptions and one head-mounted-device wrapper. Each prescription publishes ordered surface/material/asphere data plus direct near/far EFL, entrance pupil, full FOV and image height, but no exact system F-number; EFL/EPD is not used to derive it. All eight close as `metadata_unpublished.system_f_number_absent`; the wrapper closes as `confirmed_no_prescription.electronic_device_wrapper_only`, without worker/request/receipt/fingerprint/candidate/ZMX/formal intake. Two distinct official PDF wrappers decode to the same 35 canonical original page records; review used no enhancement, OCR repair, measurement or numeric transcription. Attempts 2/3 are semantic-equal excluding only result attempt at `05afd54f...e1e1d`; generic 64→63; result set `5b34ec3b...ac240`; census `f7bd985b...19daa`; strict audit 619/619 corrupt=0. The exhaustive non-real-machine split passes 3562 tests with one skipped and ten real-machine tests deselected; focused pre-seal 4/4, guard 15/15, compile, Ruff, JSON, historical evidence, formal-output, contamination, protected-path, diff and primary-repository audits pass; CODE V zero. Fifty-nine historical manifests refresh shared live pointers while historical snapshots remain fixed. Family 63853856 / US-10514523-B2 is next; parent saturation remains incomplete. |
 
+| `260719-patent-generic-family-63853856` | complete-shovel-saturation-incomplete | Exact US-10514523-B2 binds application 15/671765, Family ID 63853856, prior US-20180307000-A1, Taiwanese priority TW106113530, 290 numbered Background/Summary/Description paragraphs, claims 1-27 with claims 1/12/22/24 independent, 32 declared panels, 28 flattened TABLE-US objects, 12 formal optical tables, two inline-formula instructions, three custom-character images and 14 source items. Six complete prescriptions publish 103 ordered surface rows; Embodiments 1/4/5/6 directly publish stop, focal length, exact FST/HEP, half view angle and 555-nm reference metadata and create four receipt-backed staging candidates. Embodiments 2/3 print undefined FST/REP and close as metadata-unpublished without repair; eight device wrappers close as confirmed-no-prescription. Two distinct official PDF containers decode to the same 63 original page rasters at `57db7ce6...a60f4`, reviewed without enhancement, OCR repair, measurement or numeric transcription. Attempts 2/3 have equal canonical business semantics at `47bd073b...fbfb` under documented runtime normalization and byte-identical worker payloads; generic 63→62; result set `5f9c6fd2...15bf`; census `2650b8cb...3bd`; strict audit 619/619 corrupt=0. Complete offline coverage passes 3569 tests/1 skipped/10 real-machine deselected; focused 6/6, guard 5/5, compile, Ruff, JSON, evidence, formal-output, contamination, protected-path, diff and primary-repository audits pass; CODE V and orphan-process inventories are zero. Sixty historical manifests refresh only shared summary/report live records and ten explicit live result-set fields. Family 85177416 / US-20230048740-A1 is next; parent saturation remains incomplete. |
+| `260719-patent-generic-family-85177416-root-20230048740` | active-shovel-saturation-incomplete | Root-qualified GSD quick opened before source investigation because Family 85177416 already has a historical quick for distinct root US-12498545. Current root/publication US-20230048740 / US-20230048740-A1, application 17/813265, title SMALL LENS SYSTEM, retained HTML 84,154 bytes at `048729a4...f6b`, layout `80cedad8...2d0`, and the committed 62-root/item census at result set `5f9c6fd2...15bf` are frozen. Queue marker counts remain routing observations only. Exact source, denominator and item reconciliation is active; no conclusion is borrowed from the same-family/different-root quick. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, seal the completed GSD quick
-`.planning/quick/260719-patent-generic-family-84189606/260719-patent-generic-family-84189606-PLAN.md`,
-then open the next quick from its committed 63-root census for deterministic Family
-`63853856` / root and publication `US-10514523` / `US-10514523-B2`, application
-`15/671765`, while preserving completed Family 84189606, Family 66532282 and all prior
-quicks plus
+For patent saturation work, continue the active root-qualified GSD quick
+`.planning/quick/260719-patent-generic-family-85177416-root-20230048740/260719-patent-generic-family-85177416-root-20230048740-PLAN.md`
+for deterministic Family `85177416` / root and publication `US-20230048740` /
+`US-20230048740-A1`, application `17/813265`, while preserving completed Family 63853856,
+Family 84189606 and all prior quicks plus
 the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input while
 replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
 from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-generic residual contains 63 roots/items at result set
-`5b34ec3b55d94014cccc167b88b83ccc039e7e9e9229c7ab5f683a56343ac240`.
+generic residual contains 62 roots/items at result set
+`5f9c6fd2e235203e318334f6aac44dae1a1f270e549aed82fae77fa7016015bf`.
 The next family has layout
-`7f12be2ecad1a77e0198ca00007b8489e54f691372d96701b03e82495cb7e4aa`.
+`80cedad88fbd49b881b101050c1c78dd7ea546979e3e0e535dc752db7b0ba2d0`.
+Family ID `85177416` also appears in an older quick for root `US-12498545`; preserve
+root-level separation and do not borrow source facts, denominators, metadata or outcomes.
 Use the same strict before/after census, source-proven layout, append-only targeted replay,
 and full-pool audit contract. Remeasure after every shovel; parent saturation remains
 incomplete.
