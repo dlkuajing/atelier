@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `15ed5e0dd0ef68fa3bf15bfa0f3ff38b4ffa2e564f0209a8d0173147209fdd3f`
+- result_set_sha256: `476349656fe93db72ed775925da2e272e223823b81de79911fec1fe0979acf19`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 27
-- `terminal`: 180
-- `parser_review_required`: 259
+- `terminal`: 181
+- `parser_review_required`: 258
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 587
-- `terminal`: 1484
-- `parser_review_required`: 1354
+- `terminal`: 1490
+- `parser_review_required`: 1353
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,24 +38,24 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 508
+- `confirmed_no_prescription`: 509
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
-- `metadata_unpublished`: 230
+- `metadata_unpublished`: 235
 - `trace_failed`: 631
 - `trace_timeout`: 115
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 259
-- `terminal.all_disclosed_items_terminal`: 180
+- `parser_review_required.all_disclosed_items_rejected`: 258
+- `terminal.all_disclosed_items_terminal`: 181
 - `mixed_nonterminal.multiple_item_states`: 153
 - `converted_pending_intake.all_disclosed_items_converted`: 27
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1354
+- `parser_review_required.deterministic_parser_rejected`: 1353
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 587
 - `terminal.metadata_unpublished.system_f_number_absent`: 79
@@ -68,7 +68,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.barrel_spacer_geometry_only`: 15
 - `terminal.confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only`: 15
 - `terminal.metadata_unpublished.prescription_specific_f_number_and_angular_field_absent`: 15
-- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 13
+- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 14
 - `terminal.confirmed_no_prescription.catadioptric_thin_film_and_module_architecture_only`: 12
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only`: 12
 - `terminal.confirmed_no_prescription.imaging_lens_element_nanostructure_transmittance_architecture_only`: 12
@@ -90,6 +90,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.lens_driving_mechanical_architecture_only`: 5
 - `terminal.metadata_unpublished.non_working_retracted_state_has_no_system_metadata`: 5
 - `terminal.metadata_unpublished.prescription_specific_absolute_image_height_absent`: 5
+- `terminal.metadata_unpublished.system_stop_f_number_and_angular_field_absent`: 5
 - `terminal.confirmed_no_prescription.antireflective_nanostructure_air_gap_geometry_only`: 4
 - `terminal.confirmed_no_prescription.imaging_lens_assembly_mechanical_placement_architecture_only`: 4
 - `terminal.confirmed_no_prescription.imaging_lens_spacing_ring_and_blocking_sheet_geometry_only`: 4
@@ -336,7 +337,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 69
+- `generic_summary_metadata_missing`: 68
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62
