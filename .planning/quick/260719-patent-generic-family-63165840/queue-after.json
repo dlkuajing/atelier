@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-63165840/generic-residual-after-2.json",
+  "result_set_sha256": "6b2a5222ab9f47f1a8530019ec8bf7bc039920373d49b73b8871428abb37059c",
+  "generic_residual_roots": 73,
+  "generic_residual_items": 73,
+  "next_exact_group": {
+    "family_id": "90360259",
+    "root_ids": [
+      "US-12554108"
+    ],
+    "publication_ids": [
+      "US-12554108-B2"
+    ],
+    "application_number": "18/535096",
+    "title": "Encapsulated optical imaging camera",
+    "first_inventor": "Banerjee; Bhaskar",
+    "applicant": "OMNISCIENT IMAGING, INC.",
+    "assignee": "Omniscient Imaging, Inc.",
+    "layout_signature": "6d90966b3a4c5b0ea9329e0e9c65608c16e4290f79f2cbfef53534e4927ef66a",
+    "layout_signature_count": 1,
+    "table_count": 2,
+    "marker_counts": {
+      "effective_focal_length": 1,
+      "embodiment_anchor": 32,
+      "example_anchor": 2,
+      "f_number": 0,
+      "full_field": 31,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/ea9d8f51756c81d7/US-12554108-B2.html",
+      "sha256": "ea9d8f51756c81d71009d54236622bd2b7db6618b1abb2755e8810e5e8ff61de"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

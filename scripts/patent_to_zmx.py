@@ -462,6 +462,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_aac_teraoka_six_lens_exact_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_fso_transmitter_architecture_and_models_attempts(
             raw_text,
@@ -4940,6 +4946,199 @@ _AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "56863afcb922893ed60cdea338df2fe7206011ee2d4885b9c06bdbb54260e243",
             "33fd2a7c17638f25c63c6680cae3cec20a0b4340404b15252867cec9589dd5c6",
         ),
+    },
+}
+
+_AAC_TERAOKA_SIX_LENS_EXACT_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Camera\s+optical\s+lens\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_AAC_TERAOKA_SIX_LENS_EXACT_FIGURES = tuple(range(1, 13))
+_AAC_TERAOKA_SIX_LENS_EXACT_TABLE_BINDINGS = ((1, 2), (5, 6), (9, 10))
+_AAC_TERAOKA_SIX_LENS_EXACT_SYSTEM_METADATA = (
+    (4.569, 2.2, 80.73, 2.077, 3.928, 5.200),
+    (4.353, 2.2, 83.41, 1.978, 3.928, 5.201),
+    (4.604, 2.2, 80.34, 2.093, 3.928, 5.201),
+)
+_AAC_TERAOKA_SIX_LENS_DETAILED_CENTER_THICKNESSES = (
+    (0.591, 0.328, 0.513, 0.355, 0.442, 0.276),
+    (0.533, 0.304, 0.646, 0.654, 0.375, 0.302),
+    (0.635, 0.199, 0.162, 0.410, 0.699, 0.250),
+)
+_AAC_TERAOKA_SIX_LENS_SUMMARY_CENTER_THICKNESSES = (
+    (0.591, 0.328, 0.513, 0.355, 0.442, 0.276),
+    (0.533, 0.304, 0.646, 0.654, 0.375, 0.302),
+    (0.600, 0.319, 0.486, 0.353, 0.369, 0.403),
+)
+_AAC_TERAOKA_SIX_LENS_DETAILED_MATERIALS = (
+    (
+        (1.5439, 55.95),
+        (1.6448, 22.44),
+        (1.5439, 55.95),
+        (1.6355, 23.97),
+        (1.5352, 56.12),
+        (1.7130, 53.87),
+    ),
+    (
+        (1.5439, 55.95),
+        (1.6448, 22.44),
+        (1.5439, 55.95),
+        (1.6355, 23.97),
+        (1.5352, 56.12),
+        (1.9020, 25.10),
+    ),
+    (
+        (1.5439, 55.95),
+        (1.6448, 22.44),
+        (1.7410, 52.64),
+        (1.6355, 23.97),
+        (1.5352, 56.12),
+        (1.5352, 56.12),
+    ),
+)
+_AAC_TERAOKA_SIX_LENS_SUMMARY_MATERIALS = (
+    (
+        (1.5439, 55.9524),
+        (1.6448, 22.4361),
+        (1.5439, 55.9524),
+        (1.6355, 23.9718),
+        (1.5352, 56.1153),
+        (1.7130, 53.8671),
+    ),
+    (
+        (1.5439, 55.9524),
+        (1.6448, 22.4361),
+        (1.5439, 55.9524),
+        (1.6355, 23.9718),
+        (1.5352, 56.1153),
+        (1.9020, 25.1014),
+    ),
+    (
+        (1.5439, 55.9524),
+        (1.6448, 22.4361),
+        (1.5439, 55.9524),
+        (1.6355, 23.9718),
+        (1.5352, 56.1153),
+        (1.7410, 52.6365),
+    ),
+)
+_AAC_TERAOKA_SIX_LENS_SURFACE_DISTANCE_SUMS_MM = (5.201, 5.199, 5.202)
+_AAC_TERAOKA_SIX_LENS_TTL_ROUNDING_DELTAS_MM = (0.001, 0.002, 0.001)
+_AAC_TERAOKA_SIX_LENS_PHRASE_COUNTS = {
+    "pupil entering diameter of the camera optical lens is": 3,
+    "full vision field image height is 3.928 mm": 3,
+    "vision field angle in the diagonal direction is": 3,
+    "R 13 : The curvature radius of the object side surface of the seventh lens L 7 ;": 1,
+    "R 14 : The curvature radius of the image side surface of the seventh lens L 7 ;": 1,
+    "ndg: The refractive power of the d line of the optical filter GF;": 1,
+    "vg: The abbe number of the optical filter GF;": 1,
+    "the sixth lens is made of glass material": 1,
+    "the camera optical lens 10 comprises 6 lenses": 1,
+}
+_AAC_TERAOKA_SIX_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-10197774-B1": {
+        "family_id": "63165840",
+        "application_number": "15/864483",
+        "raw_document_sha256": ("1887b838473fcde0aa10edc6b1d88235c8fa194523749ff63dbe3e68deb1a696"),
+        "normalized_text_sha256": (
+            "ac350ae7365778dbb2e1299283667b9f999d9a66160133863e47b7c00c287cff"
+        ),
+        "identity_markers": {
+            "Family ID: 63165840": 1,
+            "Appl. No.: 15/864483": 1,
+            "Teraoka; Hiroyuki": 2,
+            "Zhang; Lei": 1,
+            "Wang; Yanmei": 1,
+            "Zhang; Yang": 1,
+            "AAC Technologies Pte. Ltd.": 2,
+            "CN 2017 1 1151223 Nov. 18, 2017": 1,
+            "CN 2017 1 1151235 Nov. 18, 2017": 1,
+        },
+        "section_markers": {
+            "background": ("Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS (1)"),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": ("DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS (14)"),
+            "claims": "Claims 1. A camera optical lens comprising,",
+        },
+        "section_sha256": {
+            "background": ("555cefc6d9f5b4792ab86f430826a30eefcd7f860c63704b52304bc9e7fb9864"),
+            "brief": ("4bd5c5b7c1a2525008ab546eb10e110789dcf46f4b3ca12d8e76e3f48b985cf1"),
+            "detailed": ("1c9e94bbd705495b6f1c6275c0fc3c42418f73804d75c5e1803c01656d9711ad"),
+            "claims": ("881c1d69e933eaaaf4bddb5d1c818b4278fbca5416ae2463ba877f59688c9290"),
+        },
+        "paragraph_span_sha256": {
+            (1, 13): ("9dde894b3f1ca1486f1f1a4c1a90228a03689ddbf18ad4b7680e38f0eeea2ab4"),
+            (14, 33): ("17b00047d75cb28ff3acddd32cc90654be7700ad07fbab692d63e1901e5f09ee"),
+            (34, 97): ("c66c9f77c9e1f5525fa89be48fe7f954b5c861284aed2b4c7582a19b152fef1c"),
+            (98, 108): ("6ff13882f142b4ba85ddabe000a7399669b8f737abbcaa5c509e5c885b695e60"),
+            (109, 119): ("0f81ee6f32309d6b6465cad077b26cff7af0b6dca9bfc44d0f05f8e8c4ece3e7"),
+            (120, 121): ("33d9bad65fbe4464ea39d084a0cddb4d84f5111f15f030eb0e2258b1bb599bd8"),
+        },
+        "table_block_sha256": (
+            "0601c357342e2492d96e034db0404b373a7f89a660e095c53d25268e65ccf0ec",
+            "b21d433c0f70754eddd25b9caf1dbf939150588b92d0b0238b046c487e57fd2b",
+            "6591b28b5863bf82577742d23108cd948056296997621f61ade015bed1c49195",
+            "e7f890ca6ada1218355e6f76fb6d850619156b7cfb32b25f832ecea0ec580fa9",
+            "7234c8d772b1971120d88cd2ea865c32036ddc32fe4fbb07ccff396ca16fdf4c",
+            "a34a3a9bd5fd68d29999de8dce69a2a61db25a2e54c05c181e06492d9f47642e",
+            "89976c92e67fa0eff84c3955314f16a9184f329096ebdd8e47029ec332184ae2",
+            "ec7fae0396e575064f1ac1202f71bbeee82d80d20318cf862fd9da0d0a8ed461",
+            "b18f96fbc3cfc36ae51dd5c8e6c4a75b982ddc022ddac0e5c0f88d7922830e70",
+            "5e606dcbc138c8515e27f44013b97049790127c192fe29cb4c9f8ada0b9f2cc1",
+            "c95b2c5fbd29453f1d4455b98eb337539cab5ed0d5bd23cda1674c9ac50bc8ff",
+            "9cc2fae5d36e6ca6db29e403854bea25bbae5f493517778ee41a69ac80cdd527",
+            "f31197742888754093ea266bca2ae2440ebc1eadf05c1913e9bfedbfaaac1aeb",
+        ),
+        "formal_table_sha256": (
+            "6c4d65d0f5ea85ec0570cea3aa3187e72db50a61a27af1e1af8c1c8c10820beb",
+            "6d5bba31d99b04a1751faba6944a5f19550c90157a8231f10c624cc5d0997027",
+            "67747505f702ca8fc00fdefc55f07dea358e01c7ae4cb9091b00c675e90b89d1",
+            "fe5e1fe34703924bbde188121a3302f88afec3af774a9b83b9b1e7fefd35bbda",
+            "df65eece8ea13dcbeb74b32c6c83a047c705b5b9e2d2f79a1747c7fa56de445f",
+            "17787aaf1f6b788f4ba53bb1f9f8dc428f31aa38e2c6dccc90c53abcfe8173f2",
+            "31cc2ca840d0fa9c7c082d69faac6d60b176f2d8f26238c831280b1f1e6ceef0",
+            "a1c67d9e01eaa24dc1c9a0519a17ab76e2c5c2ae473135ef8ccac416bf6d08be",
+            "e31f25043d7485a98b87badbfad7905703f54887b8f0ec6ae3633e474809c878",
+            "2702c1ea566db6111aa54d3a25c2c477a2fff547b1721b7f938f7bbbdedeb5e7",
+            "baa98ef202cd1325077247cc56b4fcaa6f41fdeadaf660d30edee737a717bd10",
+            "c419a2575885b74191e94d16cfff00ae481586d323b1a8db9bb3528325813f56",
+            "83994701536ef012399915ecd81fe9f3913958033037ab39c5c5c52f15a0b614",
+        ),
+        "official_pdf": {
+            "path": ("data/patent-lake/uspto-ppubs-pdf/caa2faf6a6f9b710/US-10197774-B1.pdf"),
+            "bytes": 893622,
+            "container_sha256": (
+                "caa2faf6a6f9b7109d9838667b0da40142f4c51d5e7e2280094e78db7403ffcb"
+            ),
+            "page_count": 16,
+            "single_raster_page_count": 16,
+            "text_layer_characters": 0,
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 9)),
+            "table_page_numbers": tuple(range(11, 16)),
+            "claim_page_numbers": (15, 16),
+            "raster_set_sha256": (
+                "1d4172fe2cb85efd4166a362b90f4dbb39fd88dbdf5d3c20d8ed72e1aef76c61"
+            ),
+            "page_raster_sha256": (
+                "9eadd5fb6726106a54e91dcf5e0ab95ec279b6b9f9032a21d2033b18a2b2fc1a",
+                "81bad7ad20ec48c8fe8582c193ade2666f3ed7d24ca2c1a2ed4ce6e472bbc613",
+                "16ec6a56fcecec119fd79f0ab1fdd18bef08ccec99e6442e0a9be269a1193c2c",
+                "a82d6c97e2cb62373379744f386995d0993f7376678c58a4882250a4c4b77b67",
+                "59c2569fb46b5b1324d5db79584c28aa9fdb755342b85f3e096f206b84539016",
+                "f95d34a047c1fc182954538005a77ec818b50483115922d29a4ed301f6547df9",
+                "70d8e4163776736d97f5dc51dea8db12bff4810a2869a9b5b53ea0edf0ea92a8",
+                "870119c896620ce5d9a4740a96efdc9d4d798e3cf69f35bf02597c03ebf1dcbc",
+                "e2e1bf64f199bd5ce9817c26fbcc58665eb8c4d6f44ef8b5127d238b5d1167fc",
+                "b5766c96b5e4a0c871ab2086f71c4939d93da909fccc8b1595f67b5b889efc26",
+                "be3141773b563d937879d6ddd22494c89a8d115b98c1380b8678443834ded086",
+                "400b832d89a2ab2dbbedbb8fcdfb9f30e1e5ff1d0b9554858fcab816c4b6cf8f",
+                "1a85befdeaf446ca5f74e8e69e274c6845f0c0b7a66593fcb571347441a9dbe0",
+                "66e734249bb45c99a83220cf155029665f4426407a9982cb6a2f0f6729681918",
+                "f060dc61e76e280170edc4d442fa125e4a5211bf2f88be40afd2c6293a6ed774",
+                "024cb1befecaab7694cbb393df12df7cddf6ec32f0b102a5e88bb2b27e2f03be",
+            ),
+        },
     },
 }
 
@@ -34583,6 +34782,599 @@ def _parse_aac_seven_lens_exact_attempts(
             _validate_prescription_materials(prescription)
             prescriptions.append(prescription)
     except Exception as exc:  # noqa: BLE001 - retain all three disclosed embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=prescription.embodiment,
+            prescription=prescription,
+        )
+        for index, prescription in enumerate(prescriptions, start=1)
+    ]
+
+
+def _parse_aac_teraoka_six_lens_surface_table(
+    table: str,
+    *,
+    table_number: int,
+) -> list[PatentSurface]:
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"R\s+d\s+nd\s+v\s+d\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(f"AAC Teraoka six-lens TABLE {table_number} surface header changed")
+    body = table[header.end() :]
+    position = 0
+
+    def take(pattern: str, *, context: str) -> re.Match[str]:
+        nonlocal position
+        match = re.match(pattern, body[position:], flags=re.IGNORECASE)
+        if match is None:
+            raise PatentParseError(
+                f"AAC Teraoka six-lens TABLE {table_number} {context} changed near "
+                f"{body[position : position + 80]!r}"
+            )
+        position += match.end()
+        return match
+
+    stop = take(
+        rf"S1\s+Infinity\s+d0\s*=\s*(?P<thickness>{NUMBER_PATTERN})\s+",
+        context="aperture row",
+    )
+    surfaces = [
+        PatentSurface(
+            index=1,
+            label="Stop",
+            radius_mm=math.inf,
+            thickness_mm=_parse_number(stop.group("thickness")),
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    ]
+
+    for source_surface in range(1, 15):
+        row = take(
+            rf"\s*R{source_surface}\s+(?P<radius>Infinity|{NUMBER_PATTERN})\s+"
+            rf"d{source_surface}\s*=\s*(?P<thickness>{NUMBER_PATTERN})",
+            context=f"R{source_surface} radius/thickness row",
+        )
+        radius = _distance_value(
+            row.group("radius"),
+            field_name=(f"AAC Teraoka TABLE {table_number} R{source_surface} radius"),
+        )
+        thickness = _parse_number(row.group("thickness"))
+        material = None
+        nd = vd = None
+        if source_surface % 2 == 1:
+            material_marker = "g" if source_surface == 13 else str((source_surface + 1) // 2)
+            material_row = take(
+                rf"\s+nd{material_marker}\s+(?P<nd>{NUMBER_PATTERN})\s+"
+                rf"v\s+{material_marker}\s+(?P<vd>{NUMBER_PATTERN})",
+                context=f"R{source_surface} material row",
+            )
+            nd = _parse_number(material_row.group("nd"))
+            vd = _parse_number(material_row.group("vd"))
+            if source_surface == 13:
+                material = "Filter"
+            elif source_surface == 11:
+                material = "Glass"
+            else:
+                material = "Plastic"
+            _validate_material_indices(
+                surface_index=source_surface + 1,
+                nd=nd,
+                vd=vd,
+            )
+
+        if source_surface <= 12:
+            lens_number = (source_surface + 1) // 2
+            side = 1 if source_surface % 2 else 2
+            label = f"L{lens_number} S{side}"
+        else:
+            # Paragraphs 52-69 call R13/R14 a seventh lens, but the same
+            # publication's claim 2, FIGS. 1/5/9, ndg/vg definitions and
+            # detailed table material row identify a six-lens train plus GF.
+            # The source profile freezes that printed conflict; no value is
+            # repaired and the detailed prescription table remains authority.
+            label = f"GF S{source_surface - 12}"
+        surfaces.append(
+            PatentSurface(
+                index=source_surface + 1,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    if body[position:].strip():
+        raise PatentParseError(
+            f"AAC Teraoka six-lens TABLE {table_number} has trailing tokens: "
+            f"{body[position : position + 120]!r}"
+        )
+    surfaces.append(
+        PatentSurface(
+            index=16,
+            label="Image",
+            radius_mm=math.inf,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    expected_labels = [
+        "Stop",
+        *(f"L{lens} S{side}" for lens in range(1, 7) for side in (1, 2)),
+        "GF S1",
+        "GF S2",
+        "Image",
+    ]
+    if [surface.label for surface in surfaces] != expected_labels:
+        raise PatentParseError(f"AAC Teraoka six-lens TABLE {table_number} surface order changed")
+    return surfaces
+
+
+def _parse_aac_teraoka_six_lens_asphere_table(
+    table: str,
+    *,
+    table_number: int,
+) -> dict[int, dict[str, float]]:
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"Conic\s+Index\s+Aspherical\s+Surface\s+Index\s+"
+        r"k\s+A4\s+A6\s+A8\s+A10\s+A12\s+A14\s+A16\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(f"AAC Teraoka six-lens TABLE {table_number} asphere header changed")
+    tokens = table[header.end() :].split()
+    position = 0
+    labels = ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    coefficients: dict[int, dict[str, float]] = {}
+    for source_surface in range(1, 13):
+        expected_row = f"R{source_surface}"
+        if position >= len(tokens) or tokens[position].upper() != expected_row.upper():
+            observed = tokens[position] if position < len(tokens) else "<eof>"
+            raise PatentParseError(
+                f"AAC Teraoka six-lens TABLE {table_number} expected "
+                f"{expected_row}, found {observed}"
+            )
+        position += 1
+        values = tokens[position : position + len(labels)]
+        if len(values) != len(labels) or any(
+            re.fullmatch(NUMBER_PATTERN, token, flags=re.IGNORECASE) is None for token in values
+        ):
+            raise PatentParseError(
+                f"AAC Teraoka six-lens TABLE {table_number} {expected_row} "
+                "coefficient row is incomplete"
+            )
+        coefficients[source_surface] = {
+            ("K" if label == "K" else ASPHERE_ORDER_TO_CODEV[int(label[1:])]): _parse_number(value)
+            for label, value in zip(labels, values, strict=True)
+        }
+        position += len(labels)
+    if position != len(tokens):
+        raise PatentParseError(
+            f"AAC Teraoka six-lens TABLE {table_number} asphere table has "
+            f"trailing tokens: {tuple(tokens[position:])!r}"
+        )
+    return coefficients
+
+
+def _parse_aac_teraoka_six_lens_summary_table(
+    table: str,
+) -> dict[str, Any]:
+    header = re.match(
+        r"\ATABLE-US-00013\s+TABLE\s+13\s+Embodiment\s+1\s+"
+        r"Embodiment\s+2\s+Embodiment\s+3\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError("AAC Teraoka six-lens TABLE 13 header changed")
+
+    def row(label: str) -> tuple[float, float, float]:
+        pattern = re.compile(
+            rf"(?<![\w/]){re.escape(label)}(?![\w/])\s+"
+            rf"(?P<one>{NUMBER_PATTERN})\s+(?P<two>{NUMBER_PATTERN})\s+"
+            rf"(?P<three>{NUMBER_PATTERN})(?:\s+|\Z)",
+            flags=re.IGNORECASE,
+        )
+        matches = list(pattern.finditer(table))
+        if len(matches) != 1:
+            raise PatentParseError(
+                f"AAC Teraoka six-lens TABLE 13 row {label!r} occurs {len(matches)} times"
+            )
+        match = matches[0]
+        return tuple(_parse_number(match.group(name)) for name in ("one", "two", "three"))
+
+    center_thicknesses = tuple(
+        tuple(row(label)[index] for label in ("d1", "d3", "d5", "d7", "d9", "d11"))
+        for index in range(3)
+    )
+    nd_rows = {lens: row(f"n{lens}") for lens in range(1, 7)}
+    vd_rows = {lens: row(f"v{lens}") for lens in range(1, 7)}
+    materials = tuple(
+        tuple((nd_rows[lens][index], vd_rows[lens][index]) for lens in range(1, 7))
+        for index in range(3)
+    )
+    return {
+        "focal_lengths_mm": row("f"),
+        "f_numbers": row("Fno"),
+        "ttl_mm": row("TTL"),
+        "center_thicknesses_mm": center_thicknesses,
+        "materials": materials,
+    }
+
+
+def _parse_aac_teraoka_six_lens_exact_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the exact three Teraoka/AAC six-lens prescriptions."""
+
+    profile = _AAC_TERAOKA_SIX_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiments = tuple(
+        f"AAC Teraoka six-lens camera optical lens embodiment {index}" for index in range(1, 4)
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"AAC Teraoka six-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"AAC Teraoka six-lens normalized text hash changed for {patent_id}"
+            )
+        if len(_AAC_TERAOKA_SIX_LENS_EXACT_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("AAC Teraoka six-lens title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {name: text.index(marker) for name, marker in section_markers.items()}
+        except ValueError as exc:
+            raise PatentParseError("AAC Teraoka six-lens section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("AAC Teraoka six-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(f"AAC Teraoka six-lens {section_name} section changed")
+
+        raw_ranges = (
+            (
+                "background",
+                "<h3>Background/Summary</h3>",
+                "<h3>Description</h3>",
+                1,
+                4,
+            ),
+            (
+                "description",
+                "<h3>Description</h3>",
+                "<h3>Claims</h3>",
+                1,
+                121,
+            ),
+        )
+        for name, start_marker, end_marker, first, last in raw_ranges:
+            try:
+                start = raw_text.index(start_marker)
+                end = raw_text.index(end_marker, start + len(start_marker))
+            except ValueError as exc:
+                raise PatentParseError(f"AAC Teraoka six-lens raw {name} boundary changed") from exc
+            observed = tuple(
+                int(value)
+                for value in re.findall(
+                    r"(?:^|<br\s*/?>)\((\d+)\)",
+                    raw_text[start:end],
+                    flags=re.IGNORECASE,
+                )
+            )
+            if observed != tuple(range(first, last + 1)):
+                raise PatentParseError(f"AAC Teraoka six-lens {name} paragraph denominator changed")
+
+        description_start = raw_text.index("<h3>Description</h3>")
+        description_end = raw_text.index("<h3>Claims</h3>", description_start)
+        raw_description = raw_text[description_start:description_end]
+        paragraph_matches = list(
+            re.finditer(
+                r"(?:^|<br\s*/?>)\((\d+)\)",
+                raw_description,
+                re.IGNORECASE,
+            )
+        )
+        paragraphs = {
+            int(match.group(1)): normalize_patent_text(
+                raw_description[
+                    match.start() : (
+                        paragraph_matches[index + 1].start()
+                        if index + 1 < len(paragraph_matches)
+                        else len(raw_description)
+                    )
+                ]
+            )
+            for index, match in enumerate(paragraph_matches)
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            first, last = bounds
+            span = " ".join(paragraphs[number] for number in range(first, last + 1))
+            if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens paragraph span {first}-{last} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 12)):
+            raise PatentParseError("AAC Teraoka six-lens claim denominator changed")
+        independent_claims = []
+        for index, match in enumerate(claim_matches):
+            end = (
+                claim_matches[index + 1].start()
+                if index + 1 < len(claim_matches)
+                else len(sections["claims"])
+            )
+            if "claim 1" not in sections["claims"][match.start() : end].casefold():
+                independent_claims.append(int(match.group(1)))
+        if independent_claims != [1]:
+            raise PatentParseError("AAC Teraoka six-lens independent-claim binding changed")
+
+        declared_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"\(\d+\)\s+FIG\.\s*(\d+)\s+(?:is|shows|presents)",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _AAC_TERAOKA_SIX_LENS_EXACT_FIGURES:
+            raise PatentParseError("AAC Teraoka six-lens FIGS. 1-12 changed")
+
+        formula_counts = []
+        for fragment in (raw_description, raw_text[description_end:]):
+            lead = len(
+                re.findall(
+                    r"<\?in-line-formulae\b[^?]*\bend=[\"']lead[\"'][^?]*\?>",
+                    fragment,
+                    re.IGNORECASE,
+                )
+            )
+            tail = len(
+                re.findall(
+                    r"<\?in-line-formulae\b[^?]*\bend=[\"']tail[\"'][^?]*\?>",
+                    fragment,
+                    re.IGNORECASE,
+                )
+            )
+            formula_counts.append((lead, tail))
+        if formula_counts != [(1, 1), (21, 21)]:
+            raise PatentParseError("AAC Teraoka six-lens inline-formula denominator changed")
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 14)):
+            raise PatentParseError("AAC Teraoka six-lens TABLE 1-13 changed")
+        block_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in blocks
+        )
+        if block_digests != profile["table_block_sha256"]:
+            raise PatentParseError("AAC Teraoka six-lens PPUBS table block changed")
+        formal_tables = tuple(_aac_seven_lens_exact_formal_table(block.text) for block in blocks)
+        formal_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest() for table in formal_tables
+        )
+        if formal_digests != profile["formal_table_sha256"]:
+            raise PatentParseError("AAC Teraoka six-lens formal table changed")
+        expected_auxiliary_rows = tuple(
+            (lens, side) for lens in range(1, 7) for side in range(1, 3)
+        )
+        for table_number in (3, 4, 7, 8, 11, 12):
+            observed_rows = tuple(
+                (int(lens), int(side))
+                for lens, side in re.findall(
+                    r"\bP([1-6])R([12])\b",
+                    formal_tables[table_number - 1],
+                    re.IGNORECASE,
+                )
+            )
+            if observed_rows != expected_auxiliary_rows:
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens TABLE {table_number} auxiliary row denominator changed"
+                )
+        for phrase, expected in _AAC_TERAOKA_SIX_LENS_PHRASE_COUNTS.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens phrase {phrase!r} occurs {observed}; expected {expected}"
+                )
+        if re.search(r"\bEmbodiment\s+4\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError("AAC Teraoka six-lens source gained a fourth embodiment")
+
+        summary = _parse_aac_teraoka_six_lens_summary_table(formal_tables[12])
+        narrative_rows = tuple(
+            tuple(_parse_number(value) for value in match)
+            for match in re.findall(
+                r"In this embodiment, the pupil entering diameter of the camera "
+                rf"optical lens is\s+({NUMBER_PATTERN})\s+mm,\s+the full vision "
+                rf"field image height is\s+({NUMBER_PATTERN})\s+mm,\s+the vision "
+                rf"field angle in the diagonal direction is\s+({NUMBER_PATTERN})°",
+                text,
+                re.IGNORECASE,
+            )
+        )
+        if len(narrative_rows) != 3:
+            raise PatentParseError("AAC Teraoka six-lens narrative system metadata changed")
+        observed_metadata = tuple(
+            (
+                summary["focal_lengths_mm"][index],
+                summary["f_numbers"][index],
+                narrative_rows[index][2],
+                narrative_rows[index][0],
+                narrative_rows[index][1],
+                summary["ttl_mm"][index],
+            )
+            for index in range(3)
+        )
+        if observed_metadata != _AAC_TERAOKA_SIX_LENS_EXACT_SYSTEM_METADATA:
+            raise PatentParseError("AAC Teraoka six-lens direct system metadata changed")
+        if (
+            summary["center_thicknesses_mm"] != _AAC_TERAOKA_SIX_LENS_SUMMARY_CENTER_THICKNESSES
+            or summary["materials"] != _AAC_TERAOKA_SIX_LENS_SUMMARY_MATERIALS
+        ):
+            raise PatentParseError("AAC Teraoka six-lens TABLE 13 summary rows changed")
+
+        prescriptions: list[PatentPrescription] = []
+        for embodiment_number, (surface_table, asphere_table) in enumerate(
+            _AAC_TERAOKA_SIX_LENS_EXACT_TABLE_BINDINGS,
+            start=1,
+        ):
+            surfaces = _parse_aac_teraoka_six_lens_surface_table(
+                formal_tables[surface_table - 1],
+                table_number=surface_table,
+            )
+            coefficients = _parse_aac_teraoka_six_lens_asphere_table(
+                formal_tables[asphere_table - 1],
+                table_number=asphere_table,
+            )
+            if set(coefficients) != set(range(1, 13)):
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens embodiment {embodiment_number} asphere coverage changed"
+                )
+            for source_surface, values in coefficients.items():
+                surface = surfaces[source_surface]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(values)
+
+            direct_thicknesses = tuple(
+                surfaces[source_surface].thickness_mm for source_surface in (1, 3, 5, 7, 9, 11)
+            )
+            direct_materials = tuple(
+                (
+                    surfaces[source_surface].nd,
+                    surfaces[source_surface].vd,
+                )
+                for source_surface in (1, 3, 5, 7, 9, 11)
+            )
+            index = embodiment_number - 1
+            if (
+                direct_thicknesses != (_AAC_TERAOKA_SIX_LENS_DETAILED_CENTER_THICKNESSES[index])
+                or direct_materials != _AAC_TERAOKA_SIX_LENS_DETAILED_MATERIALS[index]
+            ):
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens embodiment {embodiment_number} "
+                    "detailed prescription values changed"
+                )
+
+            summary_thicknesses = summary["center_thicknesses_mm"][index]
+            summary_materials = summary["materials"][index]
+            if embodiment_number < 3:
+                if summary_thicknesses != direct_thicknesses or any(
+                    summary_nd != direct_nd or round(summary_vd, 2) != direct_vd
+                    for (summary_nd, summary_vd), (direct_nd, direct_vd) in zip(
+                        summary_materials,
+                        direct_materials,
+                        strict=True,
+                    )
+                ):
+                    raise PatentParseError(
+                        f"AAC Teraoka six-lens embodiment {embodiment_number} "
+                        "summary/detail reconciliation changed"
+                    )
+            elif summary_thicknesses == direct_thicknesses or summary_materials == direct_materials:
+                raise PatentParseError(
+                    "AAC Teraoka six-lens embodiment 3 published TABLE 9/TABLE 13 "
+                    "conflict disappeared"
+                )
+
+            distance_sum = sum(surface.thickness_mm or 0.0 for surface in surfaces[1:15])
+            if not math.isclose(
+                distance_sum,
+                _AAC_TERAOKA_SIX_LENS_SURFACE_DISTANCE_SUMS_MM[index],
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ):
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens embodiment {embodiment_number} "
+                    "detailed distance sum changed"
+                )
+            ttl_delta = abs(distance_sum - summary["ttl_mm"][index])
+            if not math.isclose(
+                ttl_delta,
+                _AAC_TERAOKA_SIX_LENS_TTL_ROUNDING_DELTAS_MM[index],
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ):
+                raise PatentParseError(
+                    f"AAC Teraoka six-lens embodiment {embodiment_number} "
+                    "published TTL reconciliation changed"
+                )
+
+            focal_length, f_number, full_fov, _epd, _image_height, _ttl = observed_metadata[index]
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiments[index],
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_fov / 2.0,
+                surfaces=surfaces,
+                reference_wavelength_um=0.5876,
+            )
+            _validate_prescription_materials(prescription)
+            prescriptions.append(prescription)
+    except Exception as exc:  # noqa: BLE001 - retain all three embodiments
         return attempts_for_error(exc)
 
     return [

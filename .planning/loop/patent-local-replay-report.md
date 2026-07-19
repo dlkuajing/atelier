@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `ed561776087212b38801f262b725409b314ccf1b9cb1c2be86195ca58f1b21bb`
+- result_set_sha256: `6b2a5222ab9f47f1a8530019ec8bf7bc039920373d49b73b8871428abb37059c`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,17 +20,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 27
 - `terminal`: 177
-- `parser_review_required`: 264
+- `parser_review_required`: 263
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 151
+- `mixed_nonterminal`: 152
 
 ## Item states
 
-- `converted_pending_intake`: 586
-- `terminal`: 1459
-- `parser_review_required`: 1358
+- `converted_pending_intake`: 587
+- `terminal`: 1461
+- `parser_review_required`: 1357
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -42,22 +42,22 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 228
-- `trace_failed`: 629
+- `trace_failed`: 631
 - `trace_timeout`: 115
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 264
+- `parser_review_required.all_disclosed_items_rejected`: 263
 - `terminal.all_disclosed_items_terminal`: 177
-- `mixed_nonterminal.multiple_item_states`: 151
+- `mixed_nonterminal.multiple_item_states`: 152
 - `converted_pending_intake.all_disclosed_items_converted`: 27
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1358
-- `terminal.process_receipt_classified`: 744
-- `converted_pending_intake.process_isolated_zmx_ready`: 586
+- `parser_review_required.deterministic_parser_rejected`: 1357
+- `terminal.process_receipt_classified`: 746
+- `converted_pending_intake.process_isolated_zmx_ready`: 587
 - `terminal.metadata_unpublished.system_f_number_absent`: 77
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
 - `conversion_retry_required.patent_budget_exhausted`: 28
@@ -328,7 +328,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `aac_raytech_summary_metadata_missing`: 174
 - `sunny_surface_value_not_numeric`: 117
 - `generic_surface_radius_not_numeric`: 115
-- `generic_summary_metadata_missing`: 74
+- `generic_summary_metadata_missing`: 73
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62

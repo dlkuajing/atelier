@@ -37286,3 +37286,493 @@ def test_largan_antireflective_air_gap_denominator_queue_and_evidence() -> None:
     assert len(evidence["terminal_items"]) == 5
     assert evidence["next_exact_group"] == queue["next_exact_group"]
     assert evidence["saturation_complete"] is False
+
+
+def _aac_teraoka_six_lens_source() -> tuple[str, str]:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "1887b838473fcde0"
+        / "US-10197774-B1.html"
+    )
+    return "US-10197774-B1", source_path.read_text(encoding="utf-8")
+
+
+def test_aac_teraoka_six_lens_reconciles_three_exact_prescriptions() -> None:
+    patent_id, raw_text = _aac_teraoka_six_lens_source()
+    prescriptions = patent_to_zmx.parse_patent_prescriptions(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert [prescription.embodiment for prescription in prescriptions] == [
+        "AAC Teraoka six-lens camera optical lens embodiment 1",
+        "AAC Teraoka six-lens camera optical lens embodiment 2",
+        "AAC Teraoka six-lens camera optical lens embodiment 3",
+    ]
+    assert [prescription.focal_length_mm for prescription in prescriptions] == [
+        4.569,
+        4.353,
+        4.604,
+    ]
+    assert [prescription.f_number for prescription in prescriptions] == [2.2] * 3
+    assert [prescription.hfov_deg for prescription in prescriptions] == [
+        40.365,
+        41.705,
+        40.17,
+    ]
+    assert [prescription.reference_wavelength_um for prescription in prescriptions] == [0.5876] * 3
+    assert [prescription.surfaces[0].thickness_mm for prescription in prescriptions] == [
+        -0.200,
+        -0.200,
+        -0.250,
+    ]
+
+    expected_labels = [
+        "Stop",
+        *(f"L{lens} S{side}" for lens in range(1, 7) for side in (1, 2)),
+        "GF S1",
+        "GF S2",
+        "Image",
+    ]
+    for prescription in prescriptions:
+        assert [surface.label for surface in prescription.surfaces] == expected_labels
+        assert len(prescription.surfaces) == 16
+        assert [
+            surface.index for surface in prescription.surfaces if surface.asphere_coefficients
+        ] == list(range(2, 14))
+        assert all(
+            set(surface.asphere_coefficients) == {"K", "A", "B", "C", "D", "E", "F", "G"}
+            for surface in prescription.surfaces[1:13]
+        )
+        assert prescription.surfaces[11].material == "Glass"
+        assert prescription.surfaces[13].material == "Filter"
+        assert prescription.surfaces[14].material is None
+
+    observed_thicknesses = tuple(
+        tuple(
+            prescription.surfaces[source_surface].thickness_mm
+            for source_surface in (1, 3, 5, 7, 9, 11)
+        )
+        for prescription in prescriptions
+    )
+    assert observed_thicknesses == (patent_to_zmx._AAC_TERAOKA_SIX_LENS_DETAILED_CENTER_THICKNESSES)
+    observed_materials = tuple(
+        tuple(
+            (
+                prescription.surfaces[source_surface].nd,
+                prescription.surfaces[source_surface].vd,
+            )
+            for source_surface in (1, 3, 5, 7, 9, 11)
+        )
+        for prescription in prescriptions
+    )
+    assert observed_materials == patent_to_zmx._AAC_TERAOKA_SIX_LENS_DETAILED_MATERIALS
+    assert [
+        sum(surface.thickness_mm or 0.0 for surface in prescription.surfaces[1:15])
+        for prescription in prescriptions
+    ] == pytest.approx([5.201, 5.199, 5.202], abs=1e-12)
+    assert len({patent_to_zmx.prescription_fingerprint(item) for item in prescriptions}) == 3
+
+
+def test_aac_teraoka_six_lens_source_conflicts_are_exact_and_narrow() -> None:
+    patent_id, raw_text = _aac_teraoka_six_lens_source()
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    blocks = patent_to_zmx._patent_table_blocks(text)
+    formal = tuple(patent_to_zmx._aac_seven_lens_exact_formal_table(block.text) for block in blocks)
+    summary = patent_to_zmx._parse_aac_teraoka_six_lens_summary_table(formal[12])
+    prescriptions = patent_to_zmx.parse_patent_prescriptions(
+        raw_text,
+        patent_id=patent_id,
+    )
+
+    assert summary["center_thicknesses_mm"] == (
+        patent_to_zmx._AAC_TERAOKA_SIX_LENS_SUMMARY_CENTER_THICKNESSES
+    )
+    assert summary["materials"] == (patent_to_zmx._AAC_TERAOKA_SIX_LENS_SUMMARY_MATERIALS)
+    assert (
+        summary["center_thicknesses_mm"][:2]
+        == (patent_to_zmx._AAC_TERAOKA_SIX_LENS_DETAILED_CENTER_THICKNESSES[:2])
+    )
+    assert (
+        summary["center_thicknesses_mm"][2]
+        != (patent_to_zmx._AAC_TERAOKA_SIX_LENS_DETAILED_CENTER_THICKNESSES[2])
+    )
+    assert summary["materials"][2] != (patent_to_zmx._AAC_TERAOKA_SIX_LENS_DETAILED_MATERIALS[2])
+    assert prescriptions[2].surfaces[5].thickness_mm == 0.162
+    assert prescriptions[2].surfaces[5].nd == 1.7410
+    assert prescriptions[2].surfaces[11].nd == 1.5352
+    assert summary["center_thicknesses_mm"][2][2] == 0.486
+    assert summary["materials"][2][2] == (1.5439, 55.9524)
+    assert summary["materials"][2][5] == (1.7410, 52.6365)
+    assert patent_to_zmx._AAC_RAYTECH_SURFACE_HEADER_PATTERN.search(text) is None
+
+    assert (
+        text.count(
+            "R 13 : The curvature radius of the object side surface of the seventh lens L 7 ;"
+        )
+        == 1
+    )
+    assert text.count("ndg: The refractive power of the d line of the optical filter GF;") == 1
+    assert text.count("the camera optical lens 10 comprises 6 lenses") == 1
+
+    mutated = raw_text.replace(
+        "R5 10.577 d5 = 0.162",
+        "R5 10.578 d5 = 0.162",
+        1,
+    )
+    assert mutated != raw_text
+    with pytest.raises(
+        patent_to_zmx.PatentParseError,
+        match="official raw text hash changed",
+    ):
+        patent_to_zmx.parse_patent_prescriptions(mutated, patent_id=patent_id)
+
+
+def test_aac_teraoka_six_lens_source_denominators_and_official_pdf() -> None:
+    patent_id, raw_text = _aac_teraoka_six_lens_source()
+    profile = patent_to_zmx._AAC_TERAOKA_SIX_LENS_SOURCE_PROFILES[patent_id]
+    text = patent_to_zmx.normalize_patent_text(raw_text)
+    assert hashlib.sha256(raw_text.encode("utf-8")).hexdigest() == (profile["raw_document_sha256"])
+    assert hashlib.sha256(text.encode("utf-8")).hexdigest() == (profile["normalized_text_sha256"])
+    assert [block.number for block in patent_to_zmx._patent_table_blocks(text)] == list(
+        range(1, 14)
+    )
+    assert (
+        len(
+            re.findall(
+                r"<\?in-line-formulae\b[^?]*\bend=[\"']lead[\"'][^?]*\?>",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        == 22
+    )
+    assert (
+        len(
+            re.findall(
+                r"<\?in-line-formulae\b[^?]*\bend=[\"']tail[\"'][^?]*\?>",
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        == 22
+    )
+
+    root = Path(__file__).resolve().parents[1]
+    pdf = profile["official_pdf"]
+    pdf_bytes = (root / pdf["path"]).read_bytes()
+    assert len(pdf_bytes) == pdf["bytes"] == 893_622
+    assert hashlib.sha256(pdf_bytes).hexdigest() == pdf["container_sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+    assert len(reader.pages) == pdf["page_count"] == 16
+    page_hashes = []
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-63165840"
+    for page_number, page in enumerate(reader.pages, start=1):
+        assert (page.extract_text() or "") == ""
+        images = list(page.images)
+        assert len(images) == 1
+        assert images[0].image.size == pdf["raster_dimensions"]
+        page_hash = patent_pdf_recovery._canonical_raster_sha256(images[0].data)
+        page_hashes.append(page_hash)
+        retained = (quick / "pdf-review" / f"page-{page_number:02d}-original.png").read_bytes()
+        assert patent_pdf_recovery._canonical_raster_sha256(retained) == page_hash
+    assert tuple(page_hashes) == pdf["page_raster_sha256"]
+    assert (
+        hashlib.sha256(("\n".join(page_hashes) + "\n").encode("utf-8")).hexdigest()
+        == pdf["raster_set_sha256"]
+    )
+    assert pdf["drawing_page_numbers"] == tuple(range(2, 9))
+    assert pdf["table_page_numbers"] == tuple(range(11, 16))
+    assert pdf["claim_page_numbers"] == (15, 16)
+
+
+def test_aac_teraoka_six_lens_source_artifacts_are_exact() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-63165840"
+    availability = json.loads(
+        (quick / "family-63165840-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    source = availability["retained_html"]
+    source_bytes = (root / source["path"]).read_bytes()
+    assert len(source_bytes) == source["bytes"] == 56_298
+    assert hashlib.sha256(source_bytes).hexdigest() == source["sha256"]
+    assert source["characters"] == 54_727
+    assert source["normalized_characters"] == 41_072
+    assert source["flattened_tables"] == 13
+    assert source["inline_formula_pairs"] == 22
+    assert availability["source_policy"]["source_value_repair_permitted"] is False
+    assert (
+        availability["source_policy"]["related_family_numeric_borrowing_permitted"]
+        is False
+    )
+
+    facts = json.loads(
+        (quick / "family-63165840-source-facts.json").read_text(encoding="utf-8")
+    )
+    assert [item["embodiment_number"] for item in facts["items"]] == [1, 2, 3]
+    assert [item["ledger_state"] for item in facts["items"]] == [
+        "terminal",
+        "converted_pending_intake",
+        "terminal",
+    ]
+    assert [item["terminal_status"] for item in facts["items"]] == [
+        "trace_failed",
+        None,
+        "trace_failed",
+    ]
+    assert len(facts["published_internal_exceptions"]) == 3
+    assert all(
+        exception["numeric_repair"] is False
+        for exception in facts["published_internal_exceptions"]
+    )
+    assert facts["reconciliation"] == {
+        "unmapped_background_summary_paragraphs": 0,
+        "unmapped_description_paragraphs": 0,
+        "unmapped_claims": 0,
+        "unmapped_declared_figures": 0,
+        "unmapped_tables": 0,
+        "unmapped_formula_pairs": 0,
+        "unmapped_source_items": 0,
+    }
+    assert facts["formal_outputs"] == {
+        "worker_requests": 3,
+        "worker_receipts": 3,
+        "prescription_fingerprints": 3,
+        "candidate_zmx": 1,
+        "staging_zmx": 1,
+        "formal_intake": 0,
+        "codev_calls": 0,
+    }
+
+
+def test_aac_teraoka_six_lens_replay_is_semantic_and_worker_equal() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-63165840"
+    artifact = json.loads(
+        (quick / "family-63165840-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    runtime_attempt = re.compile(r"attempt-\d{4}")
+    semantic_hashes = []
+    worker_hashes = []
+
+    for record in artifact["attempts"]:
+        result_path = root / record["path"]
+        result_bytes = result_path.read_bytes()
+        assert len(result_bytes) == record["bytes"]
+        assert hashlib.sha256(result_bytes).hexdigest() == record["file_sha256"]
+        result = json.loads(result_bytes)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        receipt_hashes = {str(number): None for number in range(1, 4)}
+        exact_worker_hashes = {
+            name: {str(number): None for number in range(1, 4)}
+            for name in (
+                "request_sha256",
+                "response_sha256",
+                "candidate_zmx_sha256",
+                "stdout_sha256",
+                "stderr_sha256",
+            )
+        }
+        for item in result["items"]:
+            number = str(item["embodiment_number"])
+            assert item["conversion_attempt_id"] is not None
+            item["conversion_attempt_id"] = runtime_attempt.sub(
+                "attempt-*", item["conversion_attempt_id"]
+            )
+            receipt_evidence = next(
+                evidence
+                for evidence in item["evidence"]
+                if evidence["evidence_type"] == "patent_conversion_receipt"
+            )
+            receipt_path = root / receipt_evidence["path"]
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt.pop("elapsed_seconds")
+            receipt.pop("retry_number")
+            for key, value in tuple(receipt.items()):
+                if isinstance(value, str) and (
+                    key == "attempt_id" or key.endswith("_path")
+                ):
+                    receipt[key] = runtime_attempt.sub("attempt-*", value)
+            receipt_hash = hashlib.sha256(canonical_json_bytes(receipt)).hexdigest()
+            receipt_hashes[number] = receipt_hash
+            for name, filename in (
+                ("request_sha256", "request.json"),
+                ("response_sha256", "response.json"),
+                ("candidate_zmx_sha256", "candidate.zmx"),
+                ("stdout_sha256", "stdout.log"),
+                ("stderr_sha256", "stderr.log"),
+            ):
+                worker_path = receipt_path.parent / filename
+                exact_worker_hashes[name][number] = (
+                    hashlib.sha256(worker_path.read_bytes()).hexdigest()
+                    if worker_path.exists()
+                    else None
+                )
+            receipt_evidence["path"] = runtime_attempt.sub(
+                "attempt-*", receipt_evidence["path"]
+            )
+            receipt_evidence["sha256"] = f"semantic:{receipt_hash}"
+        assert receipt_hashes == record["receipt_semantic_sha256"]
+        for name, hashes in exact_worker_hashes.items():
+            assert hashes == record[name]
+        semantic_hash = hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        assert semantic_hash == record["semantic_sha256"]
+        semantic_hashes.append(semantic_hash)
+        worker_hashes.append(exact_worker_hashes)
+
+    assert semantic_hashes == [artifact["semantic_sha256"]] * 2
+    assert worker_hashes[0] == worker_hashes[1]
+    assert artifact["semantic_equal"] is True
+    assert all(artifact["exact_worker_payload_equal"].values())
+    assert artifact["result_normalization"]["outcome_fields_removed"] == []
+    assert artifact["result_normalization"]["request_or_response_fields_removed"] == []
+    assert artifact["final_state"] == {
+        "result_attempt": 4,
+        "root_state": "mixed_nonterminal",
+        "root_reason_code": "mixed_nonterminal.multiple_item_states",
+        "item_state_counts": {"converted_pending_intake": 1, "terminal": 2},
+        "terminal_status_counts": {"trace_failed": 2},
+        "conversion_requests": 3,
+        "conversion_receipts": 3,
+        "prescription_fingerprints": 3,
+        "staging_zmx": 1,
+        "formal_intake_items": 0,
+    }
+    assert artifact["strict_replay"]["cohort_roots"] == 619
+    assert artifact["strict_replay"]["roots_with_results"] == 619
+    assert artifact["strict_replay"]["missing_results"] == 0
+    assert artifact["strict_replay"]["corrupt_results"] == 0
+    assert artifact["codev_calls"] == 0
+
+
+def test_aac_teraoka_six_lens_denominator_queue_and_evidence() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-63165840"
+    denominator = json.loads(
+        (quick / "family-63165840-denominator.json").read_text(encoding="utf-8")
+    )
+    counts = denominator["denominator"]
+    assert counts["source_disclosed_optical_prescription_items"] == 3
+    assert counts["ordered_published_surface_rows"] == 45
+    assert counts["modeled_sequential_surfaces_including_appended_images"] == 48
+    assert counts["asphere_surfaces"] == 36
+    assert counts["even_asphere_numeric_cells"] == 288
+    assert counts["converted_pending_intake_items"] == 1
+    assert counts["terminal_trace_failed_items"] == 2
+    assert counts["formal_intake_items"] == 0
+    assert all(counts[name] == 0 for name in counts if name.startswith("unmapped_"))
+    assert denominator["representation_boundary"]["table_9_is_embodiment_3_ordered_prescription_authority"] is True
+    assert denominator["representation_boundary"]["table_13_conflicts_retained_without_numeric_repair"] is True
+    assert not any(denominator["formal_outputs"].values())
+
+    before = json.loads(
+        (quick / "generic-residual-before-74.json").read_text(encoding="utf-8")
+    )
+    after_1 = json.loads(
+        (quick / "generic-residual-after-1.json").read_text(encoding="utf-8")
+    )
+    after_2 = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    assert before["affected_roots"] == before["affected_items"] == 74
+    assert after_1 == after_2
+    assert after_1["affected_roots"] == after_1["affected_items"] == 73
+    assert after_1["result_set_sha256"] == (
+        "6b2a5222ab9f47f1a8530019ec8bf7bc039920373d49b73b8871428abb37059c"
+    )
+
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after_2["result_set_sha256"]
+    assert queue["next_exact_group"]["family_id"] == "90360259"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12554108"]
+    assert queue["next_exact_group"]["publication_ids"] == ["US-12554108-B2"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after_2["layout_signature_counts"]
+    )
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-63165840-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == (
+        "2ce5a426544fc44d3e767e0162e6f5a950fc9fd6c4b2f56025552bfea4c61ca8"
+    )
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["strict_roots_total"] == 619
+    assert evidence["ledger"]["missing"] == 0
+    assert evidence["ledger"]["corrupt"] == 0
+    assert len(evidence["conversion_artifacts"]) == 3
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["next_exact_group"] == queue["next_exact_group"]
+    assert evidence["saturation_complete"] is False
+
+
+def test_aac_teraoka_six_lens_raster_audit_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260719-patent-generic-family-63165840"
+    audit = json.loads(
+        (quick / "family-63165840-raster-audit.json").read_text(encoding="utf-8")
+    )
+    assert audit["page_roles"] == {
+        "cover": [1],
+        "drawing_sheets": list(range(2, 9)),
+        "specification_pages": list(range(9, 17)),
+        "table_pages": list(range(11, 16)),
+        "claims_pages": [15, 16],
+    }
+    assert audit["reviewed_original_pages"] == [1, 2, 9, 11, 12, 13, 14, 15, 16]
+    assert len(audit["pages"]) == 16
+    raster_hashes = []
+    for page_number, page in enumerate(audit["pages"], start=1):
+        assert page["page"] == page_number
+        assert page["text_characters"] == 0
+        assert page["image_count"] == 1
+        assert page["decoded_raster_dimensions"] == [2560, 3300]
+        raster_hashes.append(page["decoded_raster_sha256"])
+        retained = page["retained_png"]
+        png_bytes = (root / retained["path"]).read_bytes()
+        assert len(png_bytes) == retained["bytes"]
+        assert hashlib.sha256(png_bytes).hexdigest() == retained["sha256"]
+        assert patent_pdf_recovery._canonical_raster_sha256(png_bytes) == page[
+            "decoded_raster_sha256"
+        ]
+    assert (
+        hashlib.sha256(("\n".join(raster_hashes) + "\n").encode("utf-8")).hexdigest()
+        == audit["official_pdf"]["decoded_raster_set_sha256"]
+    )
+    assert audit["review_policy"] == {
+        "original_rasters_only": True,
+        "image_enhancement_used": False,
+        "drawing_geometry_measured": False,
+        "numeric_transcription_from_raster": False,
+        "raster_inference_used": False,
+    }
+    assert audit["adjudication"]["summary_table_13_values_used_to_repair_table_9"] is False
