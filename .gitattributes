@@ -19,6 +19,10 @@ data/patent-ledger/replay/local-uncovered/summary.json text eol=lf
 data/patent-ledger/replay/local-uncovered/results/US-20260063874/**/result.json text eol=lf
 data/patent-conversion-attempts/local-replay/US-20260063874-A1-*/**/*.json text eol=lf
 data/patent-conversion-attempts/local-replay/US-20260063874-A1-*/**/*.log -text -diff
+.planning/quick/260720-patent-generic-family-63252479/*.json text eol=lf
+.planning/quick/260720-patent-generic-family-63252479/*.md text eol=lf
+.planning/quick/260720-patent-generic-family-63252479/source-review/*.json text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-20250284086/**/result.json text eol=lf
 .planning/quick/**/*.png filter=lfs diff=lfs merge=lfs -text
 .planning/quick/**/*.pdf filter=lfs diff=lfs merge=lfs -text
 .planning/quick/**/*.tif filter=lfs diff=lfs merge=lfs -text

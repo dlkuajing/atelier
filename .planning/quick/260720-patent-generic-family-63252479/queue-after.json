@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260720-patent-generic-family-63252479/generic-residual-after-2.json",
+  "result_set_sha256": "f937b4ca67fedbbab72c71f4a5262b9bc46d2e44fc7b5a9ca9325d86d1bfba49",
+  "generic_residual_roots": 56,
+  "generic_residual_items": 56,
+  "next_exact_group": {
+    "family_id": "66892676",
+    "root_ids": ["US-11340422"],
+    "publication_ids": ["US-11340422-B2"],
+    "application_number": "16/677665",
+    "title": "Camera optical lens",
+    "first_inventor": "Oinuma; Kenji et al.",
+    "applicant": "AAC Optics Solutions Pte. Ltd.",
+    "assignee": "AAC Optics Solutions Pte. Ltd.",
+    "layout_signature": "90178fba5da020a679a55c2c7b978863c47fd52b3ddc4282de37468d8e5d9499",
+    "layout_signature_count": 1,
+    "table_count": 13,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 33,
+      "example_anchor": 0,
+      "f_number": 5,
+      "full_field": 6,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/b03d59be4ac55485/US-11340422-B2.html",
+      "sha256": "b03d59be4ac5548574734b28cdc7c4540b970990b5068084e486fc4ef556d0de"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

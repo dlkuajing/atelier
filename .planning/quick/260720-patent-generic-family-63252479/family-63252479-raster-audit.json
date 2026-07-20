@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "family_id": "63252479",
+  "root_id": "US-20250284086",
+  "publication_id": "US-20250284086-A1",
+  "containers": [
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/85eb58e3bd20b491/US-20250284086-A1.pdf",
+      "bytes": 2829592,
+      "sha256": "85eb58e3bd20b4913258ec21e8e2fb4001119b9e416b9f329d22de5a5bbedaf0",
+      "page_count": 47,
+      "single_raster_pages": 47,
+      "text_layer_characters": 0
+    },
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/66d8fbd505f61497/US-20250284086-A1.pdf",
+      "bytes": 2829592,
+      "sha256": "66d8fbd505f61497b1d7db82a6325b544256f03d1d7483a8bbde87155776ff5b",
+      "page_count": 47,
+      "single_raster_pages": 47,
+      "text_layer_characters": 0
+    }
+  ],
+  "wrapper_comparison": {
+    "container_bytes_equal": true,
+    "container_sha256_equal": false,
+    "decoded_page_records_equal": true,
+    "raster_shapes": [[3300, 2550], [3300, 2560]]
+  },
+  "page_records": {
+    "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/derived-source-profile.json",
+    "field": "page_records",
+    "count": 47,
+    "page_record_set_sha256": "8e1744589413cf0c3331483320106af0d764c021c989ab2e4421bbdddc7a6dd2",
+    "serialization": "UTF-8 NDJSON with final newline and key order bytes,hash,page,shape",
+    "canonical_raster_hash_sequence_sha256": "a6cc57bb2e5f1c25fd5fbcbb1bc22269990007731d0b8c768bfe7c9f5580d7b8"
+  },
+  "page_roles": {
+    "title": [1],
+    "drawing_pages": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+    "specification_pages": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47],
+    "table_pages": [37, 38, 39],
+    "claim_pages": [47]
+  },
+  "reviewed_original_pages": [1, 30, 36, 37, 38, 39, 47],
+  "retained_page_pngs": [
+    {"page": 1, "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-page-1.png", "bytes": 223042, "sha256": "5cbafc7217e35c66d3ba543acc05ffa6f03b8a3022f30fd23bcea35134467abf", "shape": [3300, 2560]},
+    {"page": 30, "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-page-30.png", "bytes": 350272, "sha256": "7236d6c1a626c90ced25ba03493721406625b14dc46e6c7c16ef634466778d5c", "shape": [3300, 2560]},
+    {"page": 36, "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-page-36.png", "bytes": 304448, "sha256": "cd992e11503ca05eda8675627fd0020e98c5df3a586089d116fe929ce9d82e1e", "shape": [3300, 2550]},
+    {"page": 37, "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-page-37.png", "bytes": 175464, "sha256": "05c5004c78451cb5043de67ba2470fd7e49cd6893cae92e78f5360e5115b9fd2", "shape": [3300, 2560]},
+    {"page": 38, "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-page-38.png", "bytes": 221298, "sha256": "197c7f349a3ad7f58e71d012ca666bd0ab82803c865fd9960d64617395b02b75", "shape": [3300, 2560]},
+    {"page": 39, "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-page-39.png", "bytes": 328869, "sha256": "ed060960d3c6d6c301c47a073813fad6ba7d434789168537aec7128b239c81df", "shape": [3300, 2550]},
+    {"page": 47, "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-page-47.png", "bytes": 217454, "sha256": "072ccf5167664d31ccef928a4d7900ee310cdfaf9d0b567e79c7a568c5503583", "shape": [3300, 2560]}
+  ],
+  "contact_sheets": [
+    {
+      "pages": [1, 47],
+      "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-contact-all-47.png",
+      "bytes": 3394759,
+      "sha256": "63cf4b8f376e68ae1e3c8a1adf7a42888f4dd5e65df39be772a3e00a63f18a0b",
+      "shape": [3080, 2380, 3]
+    }
+  ],
+  "review_conclusions": {
+    "original_raster_only": true,
+    "image_enhancement_used": false,
+    "drawing_measurement_used": false,
+    "numeric_transcription_used": false,
+    "layout_corroborates_html": true,
+    "tables_1_through_8_printed_on_pages_37_through_39": true,
+    "table_7_prints_no_object_row_0": true,
+    "table_8_prints_blank_coefficient_cells": true,
+    "blank_cells_imputed_as_zero": false,
+    "numeric_angular_field_found": false,
+    "html_remains_content_authority": true
+  }
+}

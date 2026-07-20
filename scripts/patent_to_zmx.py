@@ -532,6 +532,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_corephotonics_front_aperture_folded_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_largan_aperture_sheet_example_attempts(
         raw_text,
         patent_id=patent_id,
@@ -41950,6 +41958,841 @@ def _classify_corephotonics_folded_ten_example_attempts(
     if len(attempts) != 10:
         raise PatentParseError(
             "Corephotonics folded-ten disclosed-item denominator changed"
+        )
+    return attempts
+
+
+_COREPHOTONICS_FRONT_APERTURE_FOLDED_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*FOLDED\s+CAMERA\s+LENS\s+DESIGNS\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_COREPHOTONICS_FRONT_APERTURE_FOLDED_FIGURE_DECLARATIONS = tuple(
+    zip(
+        range(64, 116),
+        (
+            "1 A",
+            "1 B",
+            "1 C",
+            "1 D",
+            "2 A",
+            "2 B",
+            "3 A",
+            "3 B",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9 A",
+            "9 B",
+            "10",
+            "11 A",
+            "11 B",
+            "11 C",
+            "11 D",
+            "11 E",
+            "11 F",
+            "12",
+            "13 A",
+            "13 B",
+            "13 C",
+            "14",
+            "15",
+            "16",
+            "17 A",
+            "17 B",
+            "17 C",
+            "17 D",
+            "18 A",
+            "18 B",
+            "18 C",
+            "19 A",
+            "19 B",
+            "20",
+            "21 A",
+            "21 B",
+            "22",
+            "23",
+            "24",
+            "25 A",
+            "25 B",
+            "25 C",
+            "25 D",
+            "26 A",
+            "26 B",
+            "26 C",
+            "27",
+        ),
+        strict=True,
+    )
+)
+_COREPHOTONICS_FRONT_APERTURE_FOLDED_ITEMS = (
+    {
+        "number": 1,
+        "label": "Corephotonics front-aperture prescription Tables 1-2",
+        "kind": "prescription",
+        "paragraph_ranges": ((173, 182),),
+        "figures": ("2 A", "2 B"),
+        "tables": (1, 2),
+        "metadata": (13.8, 13.6, 2.76, 5.86, 4.93),
+        "surface_rows": tuple(range(0, 12)),
+        "coefficient_rows": tuple(range(1, 9)),
+        "stop_bound": True,
+    },
+    {
+        "number": 2,
+        "label": "Corephotonics shared FIGS. 6-9 prescription Tables 3-4",
+        "kind": "prescription",
+        "paragraph_ranges": ((183, 192),),
+        "figures": ("6", "7", "8", "9 A", "9 B"),
+        "tables": (3, 4),
+        "metadata": (11.2, 11.1, 2.5, 5.24, 4.3),
+        "surface_rows": tuple(range(0, 12)),
+        "coefficient_rows": tuple(range(1, 9)),
+        "stop_bound": False,
+    },
+    {
+        "number": 3,
+        "label": "Corephotonics front-aperture prescription Tables 5-6",
+        "kind": "prescription",
+        "paragraph_ranges": ((193, 202), (361, 361)),
+        "figures": ("20",),
+        "tables": (5, 6),
+        "metadata": (16.0, 15.0, 2.7, 5.86, 6.9),
+        "surface_rows": tuple(range(0, 14)),
+        "coefficient_rows": tuple(range(1, 11)),
+        "stop_bound": True,
+    },
+    {
+        "number": 4,
+        "label": "Corephotonics dual-large-element prescription Tables 7-8",
+        "kind": "prescription",
+        "paragraph_ranges": ((203, 214), (363, 363)),
+        "figures": ("21 A", "21 B"),
+        "tables": (7, 8),
+        "metadata": (7.97, 7.78, 2.2, 5.86, 3.23),
+        "surface_rows": tuple(range(1, 14)),
+        "coefficient_rows": tuple(range(1, 11)),
+        "stop_bound": False,
+    },
+    {
+        "number": 5,
+        "label": "Corephotonics lens module 60",
+        "kind": "mechanical",
+        "paragraph_ranges": ((270, 273),),
+        "figures": ("6",),
+    },
+    {
+        "number": 6,
+        "label": "Corephotonics lens module 70",
+        "kind": "mechanical",
+        "paragraph_ranges": ((274, 281),),
+        "figures": ("7",),
+    },
+    {
+        "number": 7,
+        "label": "Corephotonics lens module 80",
+        "kind": "mechanical",
+        "paragraph_ranges": ((284, 290),),
+        "figures": ("8",),
+    },
+    {
+        "number": 8,
+        "label": "Corephotonics lens module 90A",
+        "kind": "mechanical",
+        "paragraph_ranges": ((291, 292),),
+        "figures": ("9 A",),
+    },
+    {
+        "number": 9,
+        "label": "Corephotonics lens module 90B variant",
+        "kind": "mechanical",
+        "paragraph_ranges": ((293, 293),),
+        "figures": ("9 B",),
+    },
+    {
+        "number": 10,
+        "label": "Corephotonics lens module 1000",
+        "kind": "mechanical",
+        "paragraph_ranges": ((294, 297),),
+        "figures": ("10",),
+    },
+    {
+        "number": 11,
+        "label": "Corephotonics lens module 1000 alternative barrel",
+        "kind": "mechanical",
+        "paragraph_ranges": ((298, 298),),
+        "figures": ("10",),
+    },
+    {
+        "number": 12,
+        "label": "Corephotonics lens module 1100",
+        "kind": "mechanical",
+        "paragraph_ranges": ((299, 304),),
+        "figures": ("11 A", "11 B", "11 C", "11 D", "11 E", "11 F"),
+    },
+    {
+        "number": 13,
+        "label": "Corephotonics lens module 1380-B",
+        "kind": "mechanical",
+        "paragraph_ranges": ((309, 316),),
+        "figures": ("13 A", "13 B"),
+    },
+    {
+        "number": 14,
+        "label": "Corephotonics lens module 1380-C",
+        "kind": "mechanical",
+        "paragraph_ranges": ((317, 317),),
+        "figures": ("13 A", "13 C"),
+    },
+    {
+        "number": 15,
+        "label": "Corephotonics lens module 1700",
+        "kind": "mechanical",
+        "paragraph_ranges": ((318, 320), (322, 326)),
+        "figures": ("17 A", "17 B", "17 C"),
+    },
+    {
+        "number": 16,
+        "label": "Corephotonics lens module 1701",
+        "kind": "mechanical",
+        "paragraph_ranges": ((321, 326),),
+        "figures": ("17 D",),
+    },
+    {
+        "number": 17,
+        "label": "Corephotonics lens module 1800",
+        "kind": "mechanical",
+        "paragraph_ranges": ((327, 329),),
+        "figures": ("18 A", "18 B", "18 C"),
+    },
+    {
+        "number": 18,
+        "label": "Corephotonics lens module 1900",
+        "kind": "mechanical",
+        "paragraph_ranges": ((330, 335),),
+        "figures": ("19 A", "19 B"),
+    },
+    {
+        "number": 19,
+        "label": "Corephotonics lens module 2200",
+        "kind": "mechanical",
+        "paragraph_ranges": ((364, 365),),
+        "figures": ("22",),
+    },
+    {
+        "number": 20,
+        "label": "Corephotonics lens module 2300",
+        "kind": "mechanical",
+        "paragraph_ranges": ((366, 369),),
+        "figures": ("23",),
+    },
+    {
+        "number": 21,
+        "label": "Corephotonics lens module 2400",
+        "kind": "mechanical",
+        "paragraph_ranges": ((370, 370),),
+        "figures": ("24",),
+    },
+    {
+        "number": 22,
+        "label": "Corephotonics lens module 2500",
+        "kind": "mechanical",
+        "paragraph_ranges": ((371, 383),),
+        "figures": ("25 A", "25 B", "25 C", "25 D"),
+    },
+    {
+        "number": 23,
+        "label": "Corephotonics lens module 2600",
+        "kind": "mechanical",
+        "paragraph_ranges": ((384, 385), (387, 387)),
+        "figures": ("26 A", "26 B"),
+    },
+    {
+        "number": 24,
+        "label": "Corephotonics lens module 2601",
+        "kind": "mechanical",
+        "paragraph_ranges": ((386, 387),),
+        "figures": ("26 C",),
+    },
+    {
+        "number": 25,
+        "label": "Corephotonics lens module 2700",
+        "kind": "mechanical",
+        "paragraph_ranges": ((388, 388),),
+        "figures": ("27",),
+    },
+    {
+        "number": 26,
+        "label": "Corephotonics known folded and dual-camera architectures",
+        "kind": "camera_wrapper",
+        "paragraph_ranges": ((120, 131),),
+        "figures": ("1 A", "1 B", "1 C", "1 D"),
+    },
+    {
+        "number": 27,
+        "label": "Corephotonics lens-module manufacturing method",
+        "kind": "manufacturing",
+        "paragraph_ranges": ((305, 308),),
+        "figures": ("12",),
+    },
+    {
+        "number": 28,
+        "label": "Corephotonics image-production and device integration",
+        "kind": "device_integration",
+        "paragraph_ranges": ((336, 345),),
+        "figures": (),
+    },
+    {
+        "number": 29,
+        "label": "Corephotonics scanning and stitched Tele imaging",
+        "kind": "stitched_imaging",
+        "paragraph_ranges": ((346, 360),),
+        "figures": ("14", "15", "16"),
+    },
+    {
+        "number": 30,
+        "label": "Corephotonics mobile-device multi-camera claim wrapper",
+        "kind": "claim_wrapper",
+        "paragraph_ranges": (),
+        "figures": (),
+        "claims": tuple(range(1, 21)),
+    },
+)
+_COREPHOTONICS_FRONT_APERTURE_FOLDED_SHARED_PARAGRAPH_RANGES = (
+    (1, 119),
+    (132, 172),
+    (215, 269),
+    (282, 283),
+    (362, 362),
+    (389, 391),
+)
+_COREPHOTONICS_FRONT_APERTURE_FOLDED_SHARED_FIGURES = (
+    "3 A",
+    "3 B",
+    "4",
+    "5",
+)
+_COREPHOTONICS_FRONT_APERTURE_FOLDED_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20250284086-A1": {
+        "raw_document_sha256": (
+            "67c144ce4c85777eb2d938fb609997aa48742fb1247a2e8880321fb47492773d"
+        ),
+        "normalized_text_sha256": (
+            "76be399fe0f40a3d37aa8da061fc0da06c7a1b07e743f3a4b656921b4224bcfe"
+        ),
+        "family_id": "63252479",
+        "application_number": "19/218688",
+        "section_markers": {
+            "abstract": "Abstract Digital cameras",
+            "background_summary": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION [0116]",
+            "claims": "Claims 1 . A mobile device",
+        },
+        "section_sha256": {
+            "abstract": "3192bdb20ab93d6a78dbbc3ccfda8d5bc0339e065629c421a2156f21db850b7a",
+            "background_summary": (
+                "32a54f4ff7567adb09dda0510c2ea4a104c6da01454b6b480f451b3372bf0dc9"
+            ),
+            "brief": "74269993e165f4c7ca93bb2bd38cd3928d8dbe839c4364c65b8d91a67445c61f",
+            "detailed": "6385ac1b880468c8997d7a02470e8237087d419e2d88e442cfb9f2b11e8bfebe",
+            "claims": "8ead9a2919b77c4a5b54b47e2d38416baf9cfb859b6ca53a34d8a6476986209f",
+        },
+        "identity_markers": {
+            "FOLDED CAMERA LENS DESIGNS": 1,
+            "Family ID: 63252479": 1,
+            "Appl. No.: 19/218688": 1,
+            "United States Patent Application Publication 20250284086": 1,
+            "PCT/IB2018/050988": 2,
+            "Applicant: Corephotonics Ltd.": 1,
+            "Shabtay; Gal": 2,
+            "Goldenberg; Ephraim": 1,
+            "Dror; Michael": 1,
+            "Yedid; Itay": 1,
+            "Bachar; Gil": 1,
+        },
+        "figure_declarations_sha256": (
+            "73829d23d8cb0f6c70ad1adc1c3675f90dd76f34833620ddc97883b6e935fb77"
+        ),
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1,),
+        "table_payload_sha256": (
+            "1f348b2b68bdeba6ab11b4a5f7a06a65f41a13a4839deec0bd3765d7cffb2341",
+            "bf37716f4ddec7bc1000cc64d6a918a49c103bec00cfec5596161d82d40f1cc6",
+            "8c9e0660e95467341ef6236f7a7b32a10b363c8133b2e1f74e58238fad7569ed",
+            "82c16ba09ec32f03d1c87fad3d2a24c666585ade9c6a18a6e744f1cc4a0877bb",
+            "25c3264a4bce1013507505d702a4da1e3ceca1bc7db31d9da4847812adb12995",
+            "effbf214c61ab126da1aa449f3c261798265f1f933a15bd0cffe1b512a90776c",
+            "ae5726de97a92937ad03836c22433b8f1540bec9bd27d8f8dd0ad80be633977e",
+            "8581c749768008c8153ea28c609a8e758ede99165104cbef40ce2607b40fa283",
+        ),
+        "table_payload_token_counts": (68, 75, 68, 75, 81, 91, 90, 72),
+        "math_block_sha256": (
+            "ab801cbc9f4e21eb197e9d0a351bab51c5d79182d7d04d22402fe6d4f56203e5",
+            "93bee64472a90e94ab062be0e392e375523fd9e4c0311f499f0b3d6ff362add8",
+        ),
+        "source_phrase_counts": {
+            "Detailed optical data and surface data are given in Tables 1-2": 1,
+            "TABLE-US-": 8,
+            "sensor diagonal": 6,
+            "aperture stop": 10,
+            "HFOV": 0,
+            "degrees": 0,
+            "field of view": 8,
+            "FOV": 39,
+        },
+    }
+}
+
+
+def _corephotonics_front_aperture_exact_table_payloads(
+    text: str,
+) -> tuple[str, ...]:
+    """Return the exact eight flattened TABLE-US payloads from Family 63252479."""
+
+    payloads: list[str] = []
+    for table_number in range(1, 9):
+        marker = f"TABLE-US-{table_number:05d}"
+        try:
+            start = text.index(marker)
+        except ValueError as exc:
+            raise PatentParseError(
+                f"Corephotonics front-aperture TABLE {table_number} is absent"
+            ) from exc
+        tail_start = start + len(marker)
+        boundaries: list[int] = []
+        if table_number < 8:
+            next_marker = f"TABLE-US-{table_number + 1:05d}"
+            try:
+                boundaries.append(text.index(next_marker, tail_start))
+            except ValueError as exc:
+                raise PatentParseError(
+                    "Corephotonics front-aperture sequential TABLE binding changed"
+                ) from exc
+        paragraph = re.search(r"\[\d{4}\]\s+", text[tail_start:])
+        if paragraph is not None:
+            boundaries.append(tail_start + paragraph.start())
+        if not boundaries:
+            raise PatentParseError(
+                f"Corephotonics front-aperture TABLE {table_number} end changed"
+            )
+        payload = text[start : min(boundaries)].strip()
+        expected_prefix = f"{marker} TABLE {table_number} "
+        if not payload.startswith(expected_prefix):
+            raise PatentParseError(
+                f"Corephotonics front-aperture TABLE {table_number} label changed"
+            )
+        payloads.append(payload)
+    return tuple(payloads)
+
+
+def _validate_corephotonics_front_aperture_folded_document(
+    raw_text: str,
+    *,
+    patent_id: str,
+    profile: dict[str, Any],
+) -> tuple[str, dict[int, str], tuple[str, ...]]:
+    """Validate the exact A1 source used to close Family 63252479."""
+
+    if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+        "raw_document_sha256"
+    ]:
+        raise PatentParseError(
+            "Corephotonics front-aperture official raw text hash changed for "
+            f"{patent_id}"
+        )
+    if (
+        len(_COREPHOTONICS_FRONT_APERTURE_FOLDED_TITLE_PATTERN.findall(raw_text))
+        != 1
+    ):
+        raise PatentParseError("Corephotonics front-aperture title binding changed")
+
+    text = normalize_patent_text(raw_text)
+    if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+        "normalized_text_sha256"
+    ]:
+        raise PatentParseError(
+            "Corephotonics front-aperture normalized text hash changed for "
+            f"{patent_id}"
+        )
+    for marker, expected_count in profile["identity_markers"].items():
+        observed_count = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+        if observed_count != expected_count:
+            raise PatentParseError(
+                f"Corephotonics front-aperture identity marker {marker!r} occurs "
+                f"{observed_count}; expected {expected_count}"
+            )
+
+    section_markers = profile["section_markers"]
+    section_names = tuple(section_markers)
+    try:
+        section_starts = {
+            name: text.index(marker) for name, marker in section_markers.items()
+        }
+    except ValueError as exc:
+        raise PatentParseError(
+            "Corephotonics front-aperture section boundary changed"
+        ) from exc
+    if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+        raise PatentParseError("Corephotonics front-aperture section ordering changed")
+    sections = {
+        name: text[
+            section_starts[name] : (
+                section_starts[section_names[index + 1]]
+                if index + 1 < len(section_names)
+                else len(text)
+            )
+        ]
+        for index, name in enumerate(section_names)
+    }
+    for name, expected_digest in profile["section_sha256"].items():
+        observed_digest = hashlib.sha256(sections[name].encode("utf-8")).hexdigest()
+        if observed_digest != expected_digest:
+            raise PatentParseError(
+                f"Corephotonics front-aperture {name} section changed"
+            )
+
+    paragraph_matches_by_section = {
+        section_name: list(
+            re.finditer(r"\[(\d{4})\]\s+", sections[section_name])
+        )
+        for section_name in ("background_summary", "brief", "detailed")
+    }
+    expected_sequences = {
+        "background_summary": tuple(range(1, 63)),
+        "brief": tuple(range(63, 116)),
+        "detailed": tuple(range(116, 392)),
+    }
+    paragraphs: dict[int, str] = {}
+    for section_name, matches in paragraph_matches_by_section.items():
+        observed_sequence = tuple(int(match.group(1)) for match in matches)
+        if observed_sequence != expected_sequences[section_name]:
+            raise PatentParseError(
+                "Corephotonics front-aperture numbered paragraph sequence changed"
+            )
+        section_text = sections[section_name]
+        paragraphs.update(
+            {
+                int(match.group(1)): section_text[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section_text)
+                    )
+                ].strip()
+                for index, match in enumerate(matches)
+            }
+        )
+    if tuple(paragraphs) != tuple(range(1, 392)):
+        raise PatentParseError(
+            "Corephotonics front-aperture paragraphs 1-391 changed"
+        )
+
+    figure_declarations = "\n".join(
+        paragraphs[number]
+        for number, _label in (
+            _COREPHOTONICS_FRONT_APERTURE_FOLDED_FIGURE_DECLARATIONS
+        )
+    )
+    if hashlib.sha256(figure_declarations.encode("utf-8")).hexdigest() != profile[
+        "figure_declarations_sha256"
+    ]:
+        raise PatentParseError(
+            "Corephotonics front-aperture 52 figure declarations changed"
+        )
+    for paragraph_number, label in (
+        _COREPHOTONICS_FRONT_APERTURE_FOLDED_FIGURE_DECLARATIONS
+    ):
+        if not paragraphs[paragraph_number].startswith(
+            f"[{paragraph_number:04d}] FIG. {label}"
+        ):
+            raise PatentParseError(
+                f"Corephotonics front-aperture figure {label} binding changed"
+            )
+
+    claims = sections["claims"]
+    claim_matches = list(re.finditer(r"(?<!\S)(\d{1,2})\s*\.\s+", claims))
+    claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+    if claim_numbers != profile["claim_numbers"]:
+        raise PatentParseError("Corephotonics front-aperture claims 1-20 changed")
+    claim_bodies = tuple(
+        claims[
+            match.start() : (
+                claim_matches[index + 1].start()
+                if index + 1 < len(claim_matches)
+                else len(claims)
+            )
+        ].strip()
+        for index, match in enumerate(claim_matches)
+    )
+    independent_claims = tuple(
+        number
+        for number, body in zip(claim_numbers, claim_bodies, strict=True)
+        if re.search(r"\bof\s+claim\s+\d+\b", body, re.IGNORECASE) is None
+    )
+    if independent_claims != profile["independent_claim_numbers"]:
+        raise PatentParseError(
+            "Corephotonics front-aperture independent-claim binding changed"
+        )
+
+    table_markers = tuple(
+        int(value) for value in re.findall(r"TABLE-US-(\d{5})", text)
+    )
+    if table_markers != tuple(range(1, 9)):
+        raise PatentParseError(
+            "Corephotonics front-aperture TABLE-US-00001 through TABLE-US-00008 changed"
+        )
+    table_payloads = _corephotonics_front_aperture_exact_table_payloads(text)
+    for table_number, payload in enumerate(table_payloads, start=1):
+        if hashlib.sha256(payload.encode("utf-8")).hexdigest() != profile[
+            "table_payload_sha256"
+        ][table_number - 1]:
+            raise PatentParseError(
+                f"Corephotonics front-aperture TABLE {table_number} changed"
+            )
+        if len(payload.split()) != profile["table_payload_token_counts"][
+            table_number - 1
+        ]:
+            raise PatentParseError(
+                f"Corephotonics front-aperture TABLE {table_number} token count changed"
+            )
+
+    math_blocks = tuple(
+        match.group(0)
+        for match in re.finditer(
+            r"<maths\b.*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+    )
+    math_hashes = tuple(
+        hashlib.sha256(block.encode("utf-8")).hexdigest() for block in math_blocks
+    )
+    if math_hashes != profile["math_block_sha256"]:
+        raise PatentParseError(
+            "Corephotonics front-aperture two MathML objects changed"
+        )
+    for phrase, expected_count in profile["source_phrase_counts"].items():
+        observed_count = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+        if observed_count != expected_count:
+            raise PatentParseError(
+                f"Corephotonics front-aperture source phrase {phrase!r} occurs "
+                f"{observed_count}; expected {expected_count}"
+            )
+
+    items = _COREPHOTONICS_FRONT_APERTURE_FOLDED_ITEMS
+    if len(items) != 30 or tuple(item["number"] for item in items) != tuple(
+        range(1, 31)
+    ):
+        raise PatentParseError(
+            "Corephotonics front-aperture disclosed-item denominator changed"
+        )
+    item_tables = tuple(
+        table
+        for item in items
+        for table in item.get("tables", ())
+    )
+    if item_tables != tuple(range(1, 9)):
+        raise PatentParseError(
+            "Corephotonics front-aperture item table binding changed"
+        )
+    covered_paragraphs = {
+        number
+        for item in items
+        for start, end in item["paragraph_ranges"]
+        for number in range(start, end + 1)
+    }
+    covered_paragraphs.update(
+        number
+        for start, end in (
+            _COREPHOTONICS_FRONT_APERTURE_FOLDED_SHARED_PARAGRAPH_RANGES
+        )
+        for number in range(start, end + 1)
+    )
+    if covered_paragraphs != set(range(1, 392)):
+        raise PatentParseError(
+            "Corephotonics front-aperture paragraph coverage changed"
+        )
+    declared_figures = {
+        label
+        for _paragraph_number, label in (
+            _COREPHOTONICS_FRONT_APERTURE_FOLDED_FIGURE_DECLARATIONS
+        )
+    }
+    covered_figures = {
+        figure for item in items for figure in item["figures"]
+    } | set(_COREPHOTONICS_FRONT_APERTURE_FOLDED_SHARED_FIGURES)
+    if covered_figures != declared_figures:
+        raise PatentParseError(
+            "Corephotonics front-aperture figure coverage changed"
+        )
+    covered_claims = {
+        claim for item in items for claim in item.get("claims", ())
+    }
+    if covered_claims != set(profile["claim_numbers"]):
+        raise PatentParseError(
+            "Corephotonics front-aperture claim coverage changed"
+        )
+
+    prescription_text = " ".join(paragraphs[number] for number in range(173, 215))
+    prescription_text += " " + " ".join(table_payloads)
+    if re.search(
+        r"\b(?:FOV|HFOV|DFOV)\b|field\s+of\s+view|degrees?",
+        prescription_text,
+        re.IGNORECASE,
+    ):
+        raise PatentParseError(
+            "Corephotonics front-aperture prescriptions now have an angular field"
+        )
+    if "aperture stop\u201d 206" not in paragraphs[221].lower():
+        raise PatentParseError(
+            "Corephotonics front-aperture lens module 200 stop binding changed"
+        )
+    if "description above referring to lens module 200 holds also" not in paragraphs[
+        361
+    ].lower():
+        raise PatentParseError(
+            "Corephotonics front-aperture lens module 2000 inheritance changed"
+        )
+    if "TABLE-US-00007 TABLE 7" not in table_payloads[6]:
+        raise PatentParseError(
+            "Corephotonics front-aperture TABLE 7 printed-row binding changed"
+        )
+    if " 0 Infinity " in table_payloads[6]:
+        raise PatentParseError(
+            "Corephotonics front-aperture TABLE 7 unexpectedly gained object row 0"
+        )
+    return text, paragraphs, table_payloads
+
+
+def _classify_corephotonics_front_aperture_folded_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 63252479 without deriving unpublished angular fields."""
+
+    profile = _COREPHOTONICS_FRONT_APERTURE_FOLDED_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=item["number"],
+                embodiment=item["label"],
+                error=exc,
+            )
+            for item in _COREPHOTONICS_FRONT_APERTURE_FOLDED_ITEMS
+        ]
+
+    try:
+        _validate_corephotonics_front_aperture_folded_document(
+            raw_text,
+            patent_id=patent_id,
+            profile=profile,
+        )
+    except Exception as exc:  # noqa: BLE001 - retain all 30 source-bound items
+        return attempts_for_error(exc)
+
+    terminal_reason_by_kind = {
+        "mechanical": (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.mechanical_lens_module_geometry_only",
+            "publishes barrel, cavity, spacer, assembly or lens-height geometry only",
+        ),
+        "camera_wrapper": (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.folded_dual_camera_architecture_wrapper_only",
+            "publishes known folded-camera and Wide/Tele camera architecture only",
+        ),
+        "manufacturing": (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.lens_module_manufacturing_method_only",
+            "publishes lens-module insertion, alignment and attachment steps only",
+        ),
+        "device_integration": (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.image_production_and_device_integration_wrapper_only",
+            "publishes image-production and computerized-device integration only",
+        ),
+        "stitched_imaging": (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.scanning_stitched_image_processing_wrapper_only",
+            "publishes rotating-reflector scanning and image stitching only",
+        ),
+        "claim_wrapper": (
+            "confirmed_no_prescription",
+            "confirmed_no_prescription.mobile_device_multi_camera_wrapper_only",
+            "claims a mobile-device multi-camera architecture without a numeric lens prescription",
+        ),
+    }
+    attempts: list[_PrescriptionParseAttempt] = []
+    for item in _COREPHOTONICS_FRONT_APERTURE_FOLDED_ITEMS:
+        if item["kind"] == "prescription":
+            efl, ttl, f_number, sensor_diagonal, bfl = item["metadata"]
+            missing_stop = not item["stop_bound"]
+            reason_code = (
+                "metadata_unpublished.system_stop_and_"
+                "prescription_specific_angular_field_absent"
+                if missing_stop
+                else "metadata_unpublished.prescription_specific_angular_field_absent"
+            )
+            surface_count = len(item["surface_rows"])
+            coefficient_count = len(item["coefficient_rows"])
+            detail = (
+                f"Corephotonics Family 63252479 item {item['number']} TABLES "
+                f"{item['tables'][0]}/{item['tables'][1]} publish {surface_count} "
+                f"ordered source rows and {coefficient_count} asphere-coefficient "
+                f"rows, with direct EFL={efl:g} mm, TTL={ttl:g} mm, "
+                f"F/#={f_number:g}, sensor diagonal={sensor_diagonal:g} mm and "
+                f"BFL={bfl:g} mm. The exact 391 numbered paragraphs, eight "
+                "tables, two MathML objects, 52 declared figure panels and 20 "
+                "claims publish no prescription-specific numeric angular field; "
+                "sensor diagonal and EFL are not used to derive one, and no "
+                "related application is used to borrow one"
+            )
+            if missing_stop:
+                detail += (
+                    ". The publication also supplies no system-level stop binding "
+                    "for this prescription; a stop is not inferred from another "
+                    "module, a spacer, or the general f-number definition"
+                )
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=reason_code,
+                detail=detail,
+            )
+        else:
+            status, reason_code, item_detail = terminal_reason_by_kind[item["kind"]]
+            detail = (
+                f"Corephotonics Family 63252479 item {item['number']} "
+                f"{item['label']} {item_detail}. Its exact source paragraphs, "
+                "figures and/or claims contain no ordered radius/thickness/material "
+                "prescription to convert"
+            )
+            error = PatentTerminalParseError(
+                status=status,
+                reason_code=reason_code,
+                detail=detail,
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=item["number"],
+                embodiment=item["label"],
+                error=error,
+            )
+        )
+    if len(attempts) != 30:
+        raise PatentParseError(
+            "Corephotonics front-aperture disclosed-item denominator changed"
         )
     return attempts
 

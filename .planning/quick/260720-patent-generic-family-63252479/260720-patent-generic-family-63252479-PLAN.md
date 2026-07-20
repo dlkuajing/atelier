@@ -1,6 +1,6 @@
 # Quick Plan: Patent generic family 63252479
 
-**Status:** Active — entry snapshot frozen; parent saturation remains incomplete
+**Status:** Complete shovel — parent saturation remains incomplete
 **Date:** 2026-07-20
 **Parent:** Global patent saturation ledger (incomplete)
 
@@ -47,22 +47,22 @@ invariant.
   the exact completed entry snapshot.
 - [x] Copy the current 57-family generic residual census byte-for-byte and record the
   single selected root.
-- [ ] Reconcile bibliography, application/family/priority lineage, all section,
+- [x] Reconcile bibliography, application/family/priority lineage, all section,
   paragraph, claim, figure, equation and table-equivalent denominators.
-- [ ] Establish every source item independently of recognized prescriptions, generic
+- [x] Establish every source item independently of recognized prescriptions, generic
   optical terminology, queue marker counts and title wording.
-- [ ] Bind ordered surfaces, spacings, materials, aspheres and required system metadata
+- [x] Bind ordered surfaces, spacings, materials, aspheres and required system metadata
   only to the exact item and publication that directly provide them.
-- [ ] Fetch and inspect official PDF/original rasters only where exact text does not
+- [x] Fetch and inspect official PDF/original rasters only where exact text does not
   settle layout or printed-token boundaries; never enhance, measure or infer values.
-- [ ] Add the narrowest exact parser/classifier support only after source reconciliation;
+- [x] Add the narrowest exact parser/classifier support only after source reconciliation;
   do not modify generic heuristics, scoring, physical gates or protected redlines.
-- [ ] Replay twice under the frozen 180-second worker / 1,500-second patent budgets,
+- [x] Replay twice under the frozen 180-second worker / 1,500-second patent budgets,
   compare normalized business semantics, audit all 619 roots and rebuild census twice.
-- [ ] Refresh only live shared-ledger pointers while preserving historical snapshots.
-- [ ] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
+- [x] Refresh only live shared-ledger pointers while preserving historical snapshots.
+- [x] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
   contamination/protected-path/diff/primary-repository audits and CODE V inventory.
-- [ ] Update STATE and decisions, mark this quick complete, commit atomically and select
+- [x] Update STATE and decisions, mark this quick complete, commit atomically and select
   the next residual family without claiming global saturation.
 
 ## Constraints
@@ -73,3 +73,40 @@ invariant.
   source-proven metadata and existing quality gates.
 - Preserve source typography and item boundaries; do not repair, derive, interpolate,
   synthesize coordinates or borrow from related applications.
+
+## Completion evidence
+
+- Exact A1 source binds application `19/218688`, Family ID `63252479`, Corephotonics
+  ownership, continuation application `18/314866`, 391 consecutive numbered paragraphs,
+  20 claims with claim 1 independent, 52 declared figure panels, eight flattened
+  `TABLE-US` payloads, two MathML objects and 30 source items with no unmapped denominator.
+- Four complete prescriptions publish 51 ordered surface rows and 36 coefficient rows.
+  All four omit prescription-specific angular field; items 2/4 also omit an exact system
+  stop. They close as precise `metadata_unpublished` terminals without deriving field
+  from sensor diagonal/EFL, synthesizing a stop or borrowing from a related application.
+- Twenty-one mechanical module/variant items and five architecture/process/claim wrappers
+  disclose no complete prescription and close as exact `confirmed_no_prescription`
+  terminals. Table 7's printed missing row 0 and Table 8's blank coefficient cells remain
+  unchanged; no blank is imputed or numeric token repaired.
+- Two independent 2,829,592-byte official PDFs contain 47 image-only pages. Their wrapper
+  hashes differ, while decoded page records are identical at
+  `8e1744589413cf0c3331483320106af0d764c021c989ab2e4421bbdddc7a6dd2`.
+  Original-raster review used no enhancement, OCR repair, measurement or transcription.
+- Append-only attempts 2/3 are semantic-equal after removing only `result_attempt` at
+  `975930894b236f3c40601ebb11935e7cda62e1daaae8502e2fe9213e19274e6c`;
+  there are zero worker requests, receipts, fingerprints, candidate/staging ZMX, formal
+  intake items or CODE V calls.
+- Strict audit is 619/619 with missing=0 and corrupt=0 at result set
+  `f937b4ca67fedbbab72c71f4a5262b9bc46d2e44fc7b5a9ca9325d86d1bfba49`.
+  The two final generic censuses are byte-identical at
+  `0465ffb9e35f62f7d893e460714e00ca49868e012b9e824782db8b81436daccd`
+  and reduce 57 to 56 roots/items.
+- Complete non-`real_machine` coverage passes 3,613 tests with one skipped and ten
+  real-machine tests deselected. The patent file's exhaustive split covers all 864 tests;
+  focused family 5/5, guard 5/5, Ruff, compilation, 80 changed JSON documents, evidence,
+  formal-output, contamination, protected-path, diff, primary-repository and process
+  inventory audits pass; CODE V and patent worker inventories are zero.
+- Sixty-six historical source-evidence manifests refresh only shared live summary/report
+  records and explicit live result-set fields while historical snapshots remain fixed.
+  Stable ordering selects Family `66892676`, root/publication `US-11340422` /
+  `US-11340422-B2`, next. Global patent/source saturation remains active and incomplete.

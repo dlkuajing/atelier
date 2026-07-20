@@ -1,0 +1,1888 @@
+{
+  "raw_chars": 138285,
+  "raw_bytes": 139856,
+  "raw_sha256": "67c144ce4c85777eb2d938fb609997aa48742fb1247a2e8880321fb47492773d",
+  "normalized_chars": 116920,
+  "normalized_sha256": "76be399fe0f40a3d37aa8da061fc0da06c7a1b07e743f3a4b656921b4224bcfe",
+  "section_markers": {
+    "abstract": "Abstract Digital cameras",
+    "background_summary": "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS",
+    "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+    "detailed": "DETAILED DESCRIPTION [0116]",
+    "claims": "Claims 1 . A mobile device"
+  },
+  "section_sha256": {
+    "abstract": "3192bdb20ab93d6a78dbbc3ccfda8d5bc0339e065629c421a2156f21db850b7a",
+    "background_summary": "32a54f4ff7567adb09dda0510c2ea4a104c6da01454b6b480f451b3372bf0dc9",
+    "brief": "74269993e165f4c7ca93bb2bd38cd3928d8dbe839c4364c65b8d91a67445c61f",
+    "detailed": "6385ac1b880468c8997d7a02470e8237087d419e2d88e442cfb9f2b11e8bfebe",
+    "claims": "8ead9a2919b77c4a5b54b47e2d38416baf9cfb859b6ca53a34d8a6476986209f"
+  },
+  "background_paragraph_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62
+  ],
+  "description_paragraph_numbers": [
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150,
+    151,
+    152,
+    153,
+    154,
+    155,
+    156,
+    157,
+    158,
+    159,
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    209,
+    210,
+    211,
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228,
+    229,
+    230,
+    231,
+    232,
+    233,
+    234,
+    235,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248,
+    249,
+    250,
+    251,
+    252,
+    253,
+    254,
+    255,
+    256,
+    257,
+    258,
+    259,
+    260,
+    261,
+    262,
+    263,
+    264,
+    265,
+    266,
+    267,
+    268,
+    269,
+    270,
+    271,
+    272,
+    273,
+    274,
+    275,
+    276,
+    277,
+    278,
+    279,
+    280,
+    281,
+    282,
+    283,
+    284,
+    285,
+    286,
+    287,
+    288,
+    289,
+    290,
+    291,
+    292,
+    293,
+    294,
+    295,
+    296,
+    297,
+    298,
+    299,
+    300,
+    301,
+    302,
+    303,
+    304,
+    305,
+    306,
+    307,
+    308,
+    309,
+    310,
+    311,
+    312,
+    313,
+    314,
+    315,
+    316,
+    317,
+    318,
+    319,
+    320,
+    321,
+    322,
+    323,
+    324,
+    325,
+    326,
+    327,
+    328,
+    329,
+    330,
+    331,
+    332,
+    333,
+    334,
+    335,
+    336,
+    337,
+    338,
+    339,
+    340,
+    341,
+    342,
+    343,
+    344,
+    345,
+    346,
+    347,
+    348,
+    349,
+    350,
+    351,
+    352,
+    353,
+    354,
+    355,
+    356,
+    357,
+    358,
+    359,
+    360,
+    361,
+    362,
+    363,
+    364,
+    365,
+    366,
+    367,
+    368,
+    369,
+    370,
+    371,
+    372,
+    373,
+    374,
+    375,
+    376,
+    377,
+    378,
+    379,
+    380,
+    381,
+    382,
+    383,
+    384,
+    385,
+    386,
+    387,
+    388,
+    389,
+    390,
+    391
+  ],
+  "paragraph_span_sha256": {
+    "1-62": "4d058b67da25161edd5c9cee15f638ab5e7958f484aa8fa015a56726e745316d",
+    "63-115": "77b9873faa22f136f55cb425a7a9894d33058259d42b30e416a1d9896302269c",
+    "116-151": "ee6d142a27539b7146c32769a84e35ac09df55d720746008da79033779e3baf2",
+    "152-172": "46f8667063cb8d11f4edc972f1c1d3038f46d92ec8ed1adf64328e31b29a03c7",
+    "173-222": "be93895deb20d4f6b807f42b5b30cc368a089f7b81daa1b2b1873843be5269f5",
+    "223-269": "0589acff831184ee62153a15764be438b1525caf2b762b24348291a5b5193658",
+    "270-335": "c2b8c617a968e5d67531acf82e21e1a3026ddef05a9029ce29be5e3dafc25689",
+    "336-363": "df8540ce929256c59e179bc27655523cdfedc0c92ec3161f857236f95e3d54b7",
+    "364-388": "0e291ad190f9bbf3afb0791af8c4258565ec4e03ad7020e55b272796093307e2",
+    "389-391": "6a24659f51787b77897fb9411413dc610720c9a68047e2ae17dcefbffcd4e061"
+  },
+  "claim_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "claim_sha256": [
+    "c8c8dea48f87f73311bddedf8c584099990ffabfabe203bedd686c950177b637",
+    "9fad810dd32f27e309dddd951cc21023a606616fece55023293764f1eff003f8",
+    "2207ae8c75419740646dd382fae91f531adc562023babe1710753d7c50af9c1e",
+    "244cc70a346dc622fe87be46dda92e945017ff397269f6f8943e8381fcacdfc6",
+    "ffa0f0b3372f68369e72ed8e9e45ee0c05651bd0e91001df023b6d9c7f11e4ff",
+    "161854ae97d16c446d894e8fda4f763b995dea87cdf882b14050d5342e404dd7",
+    "86c482828181cc2017a62742a06e129a7dffc372932370ddb8cc20b3c3157e5d",
+    "0279e22c727b32720348af01ca817f51e18e29bd479a313e6db0ceb85dde207b",
+    "5b581ffb7a9cca14be346e0cb56c5f8e014fa260d5146b0325604b4aa38532f1",
+    "fe07f19a2115e120c4906c9d8da6dfefb7a278e400f6e59dd9ff6fd9c5df87b3",
+    "3619685070fcb79cda1280517fea0f904353efcef03c1c219a5e88a27052094e",
+    "83bba8ce0f6a46c15455994f2e04c48c7552c452aaf8fbfc0198afa82f8374ce",
+    "a39798b51bbb8b914d8e55ebae4c3e50daf691752f8b3f529cc28eea0688cd68",
+    "9a4b6c3aeb6f399079fb8219aca4c2a792e8691f7afe29ef39c093bb4e1d049a",
+    "663c0bc0dc6b5b3c3dd08421b48b892e1a7aeb46e85e03d6f35c67c84319c1ad",
+    "543781a808c0edf103dfa32d38880ab364b0404bcf202f6a2f2403a743624fb5",
+    "ff63bbe2d3f2ab0912aa8ec3ba2ed8003903c62e1b27bec10ef943a9b16a9f8d",
+    "d210efa42563980e95ae96e3ec74e8d55f3da966d804425d490ee86b9eb9e770",
+    "4ef5ee6735822a952f9038ea52a7cb6862aafd9e9574c76ad11f3595764b940a",
+    "5723a24ff9659cfcab2a656bd92c697e49980dc0c16d7e8b27a7852f965f0266"
+  ],
+  "identity_counts": {
+    "FOLDED CAMERA LENS DESIGNS": 1,
+    "Family ID: 63252479": 1,
+    "Appl. No.: 19/218688": 1,
+    "United States Patent Application Publication 20250284086": 1,
+    "PCT/IB2018/050988": 2,
+    "Applicant: Corephotonics Ltd.": 1,
+    "Shabtay; Gal": 2,
+    "Goldenberg; Ephraim": 1,
+    "Dror; Michael": 1,
+    "Yedid; Itay": 1,
+    "Bachar; Gil": 1
+  },
+  "figure_declarations": [
+    {
+      "paragraph": 64,
+      "label": "1 A",
+      "sha256": "70869c440ae9e720fdd04189bea4d57ceff2e3a27c409c13483c2fbfd6dff91e"
+    },
+    {
+      "paragraph": 65,
+      "label": "1 B",
+      "sha256": "2d60f5fe5d92b7bd1fe9a71463bdeb69223f0590f64a2185afa0569106878cf6"
+    },
+    {
+      "paragraph": 66,
+      "label": "1 C",
+      "sha256": "26d56403660296d6a5c17583cc38102d5e44e7a1c4b1e54ab0d3d21fbc3e6215"
+    },
+    {
+      "paragraph": 67,
+      "label": "1 D",
+      "sha256": "4eacbd7b68d5ad44434c61b999f71de91650bd12eed58e53b4d9ba490d62c3c8"
+    },
+    {
+      "paragraph": 68,
+      "label": "2 A",
+      "sha256": "94c9e307498433fc6e63c4157b5e43e3894c206713ba6a82b4d9c855a3380169"
+    },
+    {
+      "paragraph": 69,
+      "label": "2 B",
+      "sha256": "66115adf309b18a07700c294a94605e2a2828351dfd0623e9f00ee6a9857052f"
+    },
+    {
+      "paragraph": 70,
+      "label": "3 A",
+      "sha256": "9e728d71ebfc3be5f5c5b4135e6db66836e6782ae3ef30b96b2f5762d4db34ef"
+    },
+    {
+      "paragraph": 71,
+      "label": "3 B",
+      "sha256": "6a2857687686757d79ebd5c13e4ee5c3335ff9d6101f7207b271401c621135ae"
+    },
+    {
+      "paragraph": 72,
+      "label": "4",
+      "sha256": "51c5077e6a932742e39855f1fdb383a4c51929c8c2211026a9e09e792d371569"
+    },
+    {
+      "paragraph": 73,
+      "label": "5",
+      "sha256": "54e8f36805a485f48586179bfeaf875397ec41637b22134aacb984501480396a"
+    },
+    {
+      "paragraph": 74,
+      "label": "6",
+      "sha256": "1361b3ed16ae61b7ce350f70327820882bf082b867fad6fcc48d8acb464106eb"
+    },
+    {
+      "paragraph": 75,
+      "label": "7",
+      "sha256": "2e3171d0e50d4c814d4beee2d54affe22d9044d4ce9d7a2f95f82b6c2d06ea89"
+    },
+    {
+      "paragraph": 76,
+      "label": "8",
+      "sha256": "a1f6ffcd7fdfec159a1c2caff3e1a5c9e67c2264b456d4e8954d22ff88f29758"
+    },
+    {
+      "paragraph": 77,
+      "label": "9 A",
+      "sha256": "fae9704433f491437b940693b841623f108ea8014bf1c653a8a8d94a9bf810bc"
+    },
+    {
+      "paragraph": 78,
+      "label": "9 B",
+      "sha256": "ef4fad76a05c1982817754cad8f3b464a339469741759d4178b7d556b99dd13f"
+    },
+    {
+      "paragraph": 79,
+      "label": "10",
+      "sha256": "82f2a3b9973b414f65cc07d30076b763e4e5f89cf3bcbdd00138feb0a929ad2a"
+    },
+    {
+      "paragraph": 80,
+      "label": "11 A",
+      "sha256": "fe9c0d5ab86c8034496dd563c2dfe5a73691cc43cf3b4ae63e23b69e18fa9d39"
+    },
+    {
+      "paragraph": 81,
+      "label": "11 B",
+      "sha256": "f287200e9967299c9f2ef95f4e9ac4faaa0ce30251425243afb3068dde8e2ac7"
+    },
+    {
+      "paragraph": 82,
+      "label": "11 C",
+      "sha256": "7f9b830d6be152236689cbed5393f871d0cdcc522dbf83b506cb4d63f4903a3b"
+    },
+    {
+      "paragraph": 83,
+      "label": "11 D",
+      "sha256": "c97a9b5c9a0904659865db7d86d1b1b295d783fe4af06b221d0ea360bd38b113"
+    },
+    {
+      "paragraph": 84,
+      "label": "11 E",
+      "sha256": "684489461f24a27098d666642d51761733fcea06fa1443c70a45efcf12f391f0"
+    },
+    {
+      "paragraph": 85,
+      "label": "11 F",
+      "sha256": "012b5d7ae6da2cbdccdb3a4055b23737070131b127406aa2b225b6e425c0dece"
+    },
+    {
+      "paragraph": 86,
+      "label": "12",
+      "sha256": "3d8a4a7ecb85e23e65698caa4f5179f82fb58c3b26deed37e29b251b85b5962e"
+    },
+    {
+      "paragraph": 87,
+      "label": "13 A",
+      "sha256": "8d6674771495bc3da5705ee6fd1bce03b1ee00fd6f80ace50f033195c5c9ddcb"
+    },
+    {
+      "paragraph": 88,
+      "label": "13 B",
+      "sha256": "4137b7eed3abfccb039e4e961a0941e070d0cc09815d5b6ab551d674c67ed820"
+    },
+    {
+      "paragraph": 89,
+      "label": "13 C",
+      "sha256": "c9638b9fdead1d2d57f313e7ce0214b071465b78cae31199578d9bd7efb9965b"
+    },
+    {
+      "paragraph": 90,
+      "label": "14",
+      "sha256": "cbb0618866738a8a4e577d890dd40cc1582502408fcf6d4faf04dafbc845f812"
+    },
+    {
+      "paragraph": 91,
+      "label": "15",
+      "sha256": "e5e74f21f48f39a223d7e9d5d1f93d1962570d13f1d8078cb3f4331f6d7e2712"
+    },
+    {
+      "paragraph": 92,
+      "label": "16",
+      "sha256": "0cb5d460c1d31cf61f4b7683d951df39e889d0cb706cee30163fbb35ced375bc"
+    },
+    {
+      "paragraph": 93,
+      "label": "17 A",
+      "sha256": "930e99f2bd24602e13d314d89899b959b72a9cf3a080705a6a2fbacdeae5d2ea"
+    },
+    {
+      "paragraph": 94,
+      "label": "17 B",
+      "sha256": "dc336d7e779bcbd9b7689ba2830f257e71aeb84795e831332d875c2de768d751"
+    },
+    {
+      "paragraph": 95,
+      "label": "17 C",
+      "sha256": "4d23675a3e34e7d18de33a6fcbe5527d61539afcd81cae78f91e3be263bcbd88"
+    },
+    {
+      "paragraph": 96,
+      "label": "17 D",
+      "sha256": "f04b0f5a944d7544f83da9388bea42b81996f8e822a679506378f48e2d265e0c"
+    },
+    {
+      "paragraph": 97,
+      "label": "18 A",
+      "sha256": "8b9ecc52b40c532335c9fe10c1dae41066ec05f005d8deee3785f4ccd3b3b8bc"
+    },
+    {
+      "paragraph": 98,
+      "label": "18 B",
+      "sha256": "2606f5bed3924cfee9df2dab3cd2d8f770b8aedbefbf31f3179e7a21e1e56774"
+    },
+    {
+      "paragraph": 99,
+      "label": "18 C",
+      "sha256": "c0fe425528382d3c6e46a2a98d2d2a9e12cb35a97dc7137ddb5127aac4a74615"
+    },
+    {
+      "paragraph": 100,
+      "label": "19 A",
+      "sha256": "c8c098b5818105cfa8735552f6940c2a2789a4dfa49b59da257622e3809e3b6d"
+    },
+    {
+      "paragraph": 101,
+      "label": "19 B",
+      "sha256": "20dadf5063ed710b294a92c952ae45c0c6505f3305a71b93292c4f6c6270c28a"
+    },
+    {
+      "paragraph": 102,
+      "label": "20",
+      "sha256": "2647243d5aa6ce7d84306da3613ccfa46d3ba290c5c74f2219fa7d000f087ea3"
+    },
+    {
+      "paragraph": 103,
+      "label": "21 A",
+      "sha256": "c2c60cbcc8fa7758c4d4325e08fd42a4cef59de5e523e64ae3bb0ac9197c4939"
+    },
+    {
+      "paragraph": 104,
+      "label": "21 B",
+      "sha256": "55fcf02b7008f98084090580377783e7e83eb4e7b38ecf12bc5b270ff770a159"
+    },
+    {
+      "paragraph": 105,
+      "label": "22",
+      "sha256": "444f83aa27ad140f3da91f3fb0fa9f2ba888c1af54368642bf752831e6c2b5af"
+    },
+    {
+      "paragraph": 106,
+      "label": "23",
+      "sha256": "b33145ecabbbd3234243647fe358a44b283858d50e1bc3f0a97f85ce31f50ece"
+    },
+    {
+      "paragraph": 107,
+      "label": "24",
+      "sha256": "4b0fd9a451b5083d40bf66134f4c38901eb1cd5f55da9f2fb2f0e299750301f7"
+    },
+    {
+      "paragraph": 108,
+      "label": "25 A",
+      "sha256": "ea1692c396d32a711ab73c07a183d41bed365af2c98095ac6f1412b3b049c85c"
+    },
+    {
+      "paragraph": 109,
+      "label": "25 B",
+      "sha256": "c187c31b15a7b08d5e199242480571d9ca6993933b9de1d7e40e9b1f0d7349f3"
+    },
+    {
+      "paragraph": 110,
+      "label": "25 C",
+      "sha256": "c80763cc1b2d1b4e9fe746810b60cfa8974e0fc845c2ee56f77414cf202b4756"
+    },
+    {
+      "paragraph": 111,
+      "label": "25 D",
+      "sha256": "b90fda248f4a99475d57b170defff3acc60a08347a8adbbb5c7e2c7c30de225f"
+    },
+    {
+      "paragraph": 112,
+      "label": "26 A",
+      "sha256": "d9c0f633642c21486d084870eb3ba255511eca87e741bbbe7a258541113f0505"
+    },
+    {
+      "paragraph": 113,
+      "label": "26 B",
+      "sha256": "ab4c61bcb1b8d865a23f8aacd70a8ef299a8e23d25eee330d761a30949d42557"
+    },
+    {
+      "paragraph": 114,
+      "label": "26 C",
+      "sha256": "a767aa1cd5b4ec4bdca65ab5a4195b8d5c856a134a0440be8d837480cdbfc70d"
+    },
+    {
+      "paragraph": 115,
+      "label": "27",
+      "sha256": "2990693c8d572d4028b310da7e3f324201f7d16faa5d445e61221383cde8caf4"
+    }
+  ],
+  "figure_declarations_sha256": "73829d23d8cb0f6c70ad1adc1c3675f90dd76f34833620ddc97883b6e935fb77",
+  "table_payload_sha256": {
+    "1": "1f348b2b68bdeba6ab11b4a5f7a06a65f41a13a4839deec0bd3765d7cffb2341",
+    "2": "bf37716f4ddec7bc1000cc64d6a918a49c103bec00cfec5596161d82d40f1cc6",
+    "3": "8c9e0660e95467341ef6236f7a7b32a10b363c8133b2e1f74e58238fad7569ed",
+    "4": "82c16ba09ec32f03d1c87fad3d2a24c666585ade9c6a18a6e744f1cc4a0877bb",
+    "5": "25c3264a4bce1013507505d702a4da1e3ceca1bc7db31d9da4847812adb12995",
+    "6": "effbf214c61ab126da1aa449f3c261798265f1f933a15bd0cffe1b512a90776c",
+    "7": "ae5726de97a92937ad03836c22433b8f1540bec9bd27d8f8dd0ad80be633977e",
+    "8": "8581c749768008c8153ea28c609a8e758ede99165104cbef40ce2607b40fa283"
+  },
+  "table_payload_token_counts": {
+    "1": 68,
+    "2": 75,
+    "3": 68,
+    "4": 75,
+    "5": 81,
+    "6": 91,
+    "7": 90,
+    "8": 72
+  },
+  "items": [
+    {
+      "number": 1,
+      "label": "Corephotonics front-aperture prescription Tables 1-2",
+      "kind": "prescription",
+      "paragraph_ranges": [
+        [
+          173,
+          182
+        ]
+      ],
+      "figures": [
+        "2 A",
+        "2 B"
+      ],
+      "tables": [
+        1,
+        2
+      ],
+      "metadata": [
+        13.8,
+        13.6,
+        2.76,
+        5.86,
+        4.93
+      ],
+      "surface_rows": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "coefficient_rows": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "stop_bound": true
+    },
+    {
+      "number": 2,
+      "label": "Corephotonics shared FIGS. 6-9 prescription Tables 3-4",
+      "kind": "prescription",
+      "paragraph_ranges": [
+        [
+          183,
+          192
+        ]
+      ],
+      "figures": [
+        "6",
+        "7",
+        "8",
+        "9 A",
+        "9 B"
+      ],
+      "tables": [
+        3,
+        4
+      ],
+      "metadata": [
+        11.2,
+        11.1,
+        2.5,
+        5.24,
+        4.3
+      ],
+      "surface_rows": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "coefficient_rows": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "stop_bound": false
+    },
+    {
+      "number": 3,
+      "label": "Corephotonics front-aperture prescription Tables 5-6",
+      "kind": "prescription",
+      "paragraph_ranges": [
+        [
+          193,
+          202
+        ],
+        [
+          361,
+          361
+        ]
+      ],
+      "figures": [
+        "20"
+      ],
+      "tables": [
+        5,
+        6
+      ],
+      "metadata": [
+        16.0,
+        15.0,
+        2.7,
+        5.86,
+        6.9
+      ],
+      "surface_rows": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "coefficient_rows": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "stop_bound": true
+    },
+    {
+      "number": 4,
+      "label": "Corephotonics dual-large-element prescription Tables 7-8",
+      "kind": "prescription",
+      "paragraph_ranges": [
+        [
+          203,
+          214
+        ],
+        [
+          363,
+          363
+        ]
+      ],
+      "figures": [
+        "21 A",
+        "21 B"
+      ],
+      "tables": [
+        7,
+        8
+      ],
+      "metadata": [
+        7.97,
+        7.78,
+        2.2,
+        5.86,
+        3.23
+      ],
+      "surface_rows": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "coefficient_rows": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "stop_bound": false
+    },
+    {
+      "number": 5,
+      "label": "Corephotonics lens module 60",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          270,
+          273
+        ]
+      ],
+      "figures": [
+        "6"
+      ]
+    },
+    {
+      "number": 6,
+      "label": "Corephotonics lens module 70",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          274,
+          281
+        ]
+      ],
+      "figures": [
+        "7"
+      ]
+    },
+    {
+      "number": 7,
+      "label": "Corephotonics lens module 80",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          284,
+          290
+        ]
+      ],
+      "figures": [
+        "8"
+      ]
+    },
+    {
+      "number": 8,
+      "label": "Corephotonics lens module 90A",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          291,
+          292
+        ]
+      ],
+      "figures": [
+        "9 A"
+      ]
+    },
+    {
+      "number": 9,
+      "label": "Corephotonics lens module 90B variant",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          293,
+          293
+        ]
+      ],
+      "figures": [
+        "9 B"
+      ]
+    },
+    {
+      "number": 10,
+      "label": "Corephotonics lens module 1000",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          294,
+          297
+        ]
+      ],
+      "figures": [
+        "10"
+      ]
+    },
+    {
+      "number": 11,
+      "label": "Corephotonics lens module 1000 alternative barrel",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          298,
+          298
+        ]
+      ],
+      "figures": [
+        "10"
+      ]
+    },
+    {
+      "number": 12,
+      "label": "Corephotonics lens module 1100",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          299,
+          304
+        ]
+      ],
+      "figures": [
+        "11 A",
+        "11 B",
+        "11 C",
+        "11 D",
+        "11 E",
+        "11 F"
+      ]
+    },
+    {
+      "number": 13,
+      "label": "Corephotonics lens module 1380-B",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          309,
+          316
+        ]
+      ],
+      "figures": [
+        "13 A",
+        "13 B"
+      ]
+    },
+    {
+      "number": 14,
+      "label": "Corephotonics lens module 1380-C",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          317,
+          317
+        ]
+      ],
+      "figures": [
+        "13 A",
+        "13 C"
+      ]
+    },
+    {
+      "number": 15,
+      "label": "Corephotonics lens module 1700",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          318,
+          320
+        ],
+        [
+          322,
+          326
+        ]
+      ],
+      "figures": [
+        "17 A",
+        "17 B",
+        "17 C"
+      ]
+    },
+    {
+      "number": 16,
+      "label": "Corephotonics lens module 1701",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          321,
+          326
+        ]
+      ],
+      "figures": [
+        "17 D"
+      ]
+    },
+    {
+      "number": 17,
+      "label": "Corephotonics lens module 1800",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          327,
+          329
+        ]
+      ],
+      "figures": [
+        "18 A",
+        "18 B",
+        "18 C"
+      ]
+    },
+    {
+      "number": 18,
+      "label": "Corephotonics lens module 1900",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          330,
+          335
+        ]
+      ],
+      "figures": [
+        "19 A",
+        "19 B"
+      ]
+    },
+    {
+      "number": 19,
+      "label": "Corephotonics lens module 2200",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          364,
+          365
+        ]
+      ],
+      "figures": [
+        "22"
+      ]
+    },
+    {
+      "number": 20,
+      "label": "Corephotonics lens module 2300",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          366,
+          369
+        ]
+      ],
+      "figures": [
+        "23"
+      ]
+    },
+    {
+      "number": 21,
+      "label": "Corephotonics lens module 2400",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          370,
+          370
+        ]
+      ],
+      "figures": [
+        "24"
+      ]
+    },
+    {
+      "number": 22,
+      "label": "Corephotonics lens module 2500",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          371,
+          383
+        ]
+      ],
+      "figures": [
+        "25 A",
+        "25 B",
+        "25 C",
+        "25 D"
+      ]
+    },
+    {
+      "number": 23,
+      "label": "Corephotonics lens module 2600",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          384,
+          385
+        ],
+        [
+          387,
+          387
+        ]
+      ],
+      "figures": [
+        "26 A",
+        "26 B"
+      ]
+    },
+    {
+      "number": 24,
+      "label": "Corephotonics lens module 2601",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          386,
+          387
+        ]
+      ],
+      "figures": [
+        "26 C"
+      ]
+    },
+    {
+      "number": 25,
+      "label": "Corephotonics lens module 2700",
+      "kind": "mechanical",
+      "paragraph_ranges": [
+        [
+          388,
+          388
+        ]
+      ],
+      "figures": [
+        "27"
+      ]
+    },
+    {
+      "number": 26,
+      "label": "Corephotonics known folded and dual-camera architectures",
+      "kind": "camera_wrapper",
+      "paragraph_ranges": [
+        [
+          120,
+          131
+        ]
+      ],
+      "figures": [
+        "1 A",
+        "1 B",
+        "1 C",
+        "1 D"
+      ]
+    },
+    {
+      "number": 27,
+      "label": "Corephotonics lens-module manufacturing method",
+      "kind": "manufacturing",
+      "paragraph_ranges": [
+        [
+          305,
+          308
+        ]
+      ],
+      "figures": [
+        "12"
+      ]
+    },
+    {
+      "number": 28,
+      "label": "Corephotonics image-production and device integration",
+      "kind": "device_integration",
+      "paragraph_ranges": [
+        [
+          336,
+          345
+        ]
+      ],
+      "figures": []
+    },
+    {
+      "number": 29,
+      "label": "Corephotonics scanning and stitched Tele imaging",
+      "kind": "stitched_imaging",
+      "paragraph_ranges": [
+        [
+          346,
+          360
+        ]
+      ],
+      "figures": [
+        "14",
+        "15",
+        "16"
+      ]
+    },
+    {
+      "number": 30,
+      "label": "Corephotonics mobile-device multi-camera claim wrapper",
+      "kind": "claim_wrapper",
+      "paragraph_ranges": [],
+      "figures": [],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    }
+  ],
+  "shared_paragraph_ranges": [
+    [
+      1,
+      119
+    ],
+    [
+      132,
+      172
+    ],
+    [
+      215,
+      269
+    ],
+    [
+      282,
+      283
+    ],
+    [
+      362,
+      362
+    ],
+    [
+      389,
+      391
+    ]
+  ],
+  "shared_figures": [
+    "3 A",
+    "3 B",
+    "4",
+    "5"
+  ],
+  "math_block_sha256": [
+    "ab801cbc9f4e21eb197e9d0a351bab51c5d79182d7d04d22402fe6d4f56203e5",
+    "93bee64472a90e94ab062be0e392e375523fd9e4c0311f499f0b3d6ff362add8"
+  ],
+  "source_counts": {
+    "Detailed optical data and surface data are given in Tables 1-2": 1,
+    "TABLE-US-": 8,
+    "sensor diagonal": 6,
+    "aperture stop": 10,
+    "HFOV": 0,
+    "degrees": 0,
+    "field of view": 8,
+    "FOV": 39
+  },
+  "pdf_containers": [
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/85eb58e3bd20b491/US-20250284086-A1.pdf",
+      "bytes": 2829592,
+      "sha256": "85eb58e3bd20b4913258ec21e8e2fb4001119b9e416b9f329d22de5a5bbedaf0",
+      "page_count": 47,
+      "single_raster_pages": 47,
+      "text_layer_characters": 0
+    },
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/66d8fbd505f61497/US-20250284086-A1.pdf",
+      "bytes": 2829592,
+      "sha256": "66d8fbd505f61497b1d7db82a6325b544256f03d1d7483a8bbde87155776ff5b",
+      "page_count": 47,
+      "single_raster_pages": 47,
+      "text_layer_characters": 0
+    }
+  ],
+  "decoded_records_equal": true,
+  "page_records": [
+    {
+      "page": 1,
+      "hash": "e71ad9ef1f9295ec780a2651bd3959892cb22434028a5bf185eb5d9e9ac28573",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 59792
+    },
+    {
+      "page": 2,
+      "hash": "d3837acfb33242c33602c8bf843d50479a6a38348c4826c8f20a858fa223a4d7",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 18290
+    },
+    {
+      "page": 3,
+      "hash": "b7882942066aadfb8f6aa11251ea778ef82b09aac8c4edb7c0bb2a19abaa559d",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 42450
+    },
+    {
+      "page": 4,
+      "hash": "5b2e34e18faa0a1dcbfeba50321fe0eca8f9b076636a38f8a19fb467a316f7f0",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 62836
+    },
+    {
+      "page": 5,
+      "hash": "7f18a20c0f65c2598f04336413476fef67d342c36342ff9de2ab1a1391074dd7",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 16054
+    },
+    {
+      "page": 6,
+      "hash": "c1bcf4b948f2583e95a06f8ed7f5edae454340160ad7b367574a9c8cfabc88f9",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 33076
+    },
+    {
+      "page": 7,
+      "hash": "e54e0b4e9262e4963637dd85861f361654c6cc28b2a05dcf5055268f7191d5f2",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 117162
+    },
+    {
+      "page": 8,
+      "hash": "913176de4c767bac32017c0479c93f0bbdda0426eb405e957007b9279c9b094e",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 48630
+    },
+    {
+      "page": 9,
+      "hash": "2c65c6d891e5b98dc1a91752186b047862cab052573181040de5f08a1a2fbc1d",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 26390
+    },
+    {
+      "page": 10,
+      "hash": "2d2a21233c2db00c749471a45551745ac6c589b8a9873c1b1b07f5865470c91a",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 32310
+    },
+    {
+      "page": 11,
+      "hash": "d25fde73e942cd205b50f81e50525dfc482b02ba222c1d06eef5d8966b5d5852",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 35052
+    },
+    {
+      "page": 12,
+      "hash": "23e431c4f61507d53aa84341c6d9b82c1795e5eba970838b9a73b50ca6fab494",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 31680
+    },
+    {
+      "page": 13,
+      "hash": "c7fa1bf361e9fda08fe0d73669da7914303d82a738487f1fb25dd4b3c8d5e299",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 37524
+    },
+    {
+      "page": 14,
+      "hash": "e90269dd59b6295cd5b2ce4444e9567f0aba765f3ed69b928053a54d466ffc9c",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 26588
+    },
+    {
+      "page": 15,
+      "hash": "832b67d9f767d46ac32ec8cbf4ed658cf5320100aaeb17d659d2008f04978c48",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 34256
+    },
+    {
+      "page": 16,
+      "hash": "0c628e10d259b9b8f6c4a08ddbe3aefcdbb8cf319c9b97cdec5d0dd1f9b01771",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 17676
+    },
+    {
+      "page": 17,
+      "hash": "c954e689c0fe8a2f59c8e2c65b7360edccdcdd48f7e28fee6c3d8e9d7ffce60f",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 40690
+    },
+    {
+      "page": 18,
+      "hash": "8c148a9e0f83a2d79803ec093ad1efb526fe0c6ce376f00350fa0dc44750bd81",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 31014
+    },
+    {
+      "page": 19,
+      "hash": "9929b67536615ee5a78b6a98e5a92768024f0af95f20e54e366ae11b656a7804",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 34794
+    },
+    {
+      "page": 20,
+      "hash": "4789e68d690ed44832ec1fc014720541f94aa647cbf0666182110e1339eca4bd",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 36282
+    },
+    {
+      "page": 21,
+      "hash": "cf89ac39ec91e2254f1ec436d3e6e7510705a79b81c587ad02cc6def931a36ef",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 26522
+    },
+    {
+      "page": 22,
+      "hash": "e642fdec5f721cfd81edd092fd9f574f20d7c394c3efc23065f1ab7c81d63464",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 86010
+    },
+    {
+      "page": 23,
+      "hash": "e065fb356be6cc4417dc0468632b0db469a3d77e3bc72b454eca8bf885ebb9f6",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 24992
+    },
+    {
+      "page": 24,
+      "hash": "d388e2e091cb90b3365e698619d453bab18f5f653ab745675ffb8f29ecb12e45",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 31006
+    },
+    {
+      "page": 25,
+      "hash": "9d09c90406936b667fa60c6f99addc13c5ca0c9b3992b4165fd2a82f62439847",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 21732
+    },
+    {
+      "page": 26,
+      "hash": "df82533702c27de62a2cfd1958523c42d0cda486c73f905e26adeaf2f16fd3a9",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 27546
+    },
+    {
+      "page": 27,
+      "hash": "d00f4e6c637c97b79f0cd0a9b54c42578cbbfc56554f519fe2a8df5395587050",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 19172
+    },
+    {
+      "page": 28,
+      "hash": "f1960fe93107eca1249ee27786ada259f8a5fbe7c64286141d936e9b69a919b6",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 26174
+    },
+    {
+      "page": 29,
+      "hash": "e4c9f030474eac6510cb58d7eb7cebfe460d3f9ef218bc870298f018132998e3",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 27920
+    },
+    {
+      "page": 30,
+      "hash": "2e9347528cd46823fffdcd39a3b73f588fad6a8be62d13595b6ba47af7c422c7",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 108894
+    },
+    {
+      "page": 31,
+      "hash": "61ce33fe6e9605b94ed1a2fcea423014fe01a3bc8e8a9ecb2f543a18e36c595f",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 116434
+    },
+    {
+      "page": 32,
+      "hash": "7a85aeadd52707ccafcb79543c513851de2349bda64d0abda7512e51a4251ac2",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 113672
+    },
+    {
+      "page": 33,
+      "hash": "8edc26701f67ae7139e45b6dfed1aa6eb9ce4e6b8e78a40c19334ffed7dfae6e",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 104056
+    },
+    {
+      "page": 34,
+      "hash": "5948167073be691fe7ce7c57a5c3308a1d6fec92ba007bafb3f7b2aa71f2bf95",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 119028
+    },
+    {
+      "page": 35,
+      "hash": "381482de218aa3ff5f45c37781784ba512efb4042ababfa9a927c17c5189a1b4",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 124326
+    },
+    {
+      "page": 36,
+      "hash": "b6539fcad8ac63f5feb4909a6ce1c9daf29e1c3b6c6e861801bd9ab2715fa028",
+      "shape": [
+        3300,
+        2550
+      ],
+      "bytes": 89258
+    },
+    {
+      "page": 37,
+      "hash": "b9079aae09d2b54b06ea98a977eab22be3843237f7e9bc34ff8afc21c58773cd",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 53008
+    },
+    {
+      "page": 38,
+      "hash": "238a753bafde5437e3dda3baa42b38120708baa277be6e9e0b87b4ef1882334e",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 67682
+    },
+    {
+      "page": 39,
+      "hash": "2abf6c509ba89e699fc91c87eba3a3076d205ad08e9ae5c958ba2635d3cbff52",
+      "shape": [
+        3300,
+        2550
+      ],
+      "bytes": 99938
+    },
+    {
+      "page": 40,
+      "hash": "8eb1029a060d19ca75c29d61558675bdd7510eba0bfc41d8a0a8542aaa6535fa",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 120568
+    },
+    {
+      "page": 41,
+      "hash": "6f11ee5ece741ab29bc5b3def9b81f6366db4adfe5ccdab1f44acfd7be4c401e",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 118246
+    },
+    {
+      "page": 42,
+      "hash": "09fbaeb3de9defa97187863bb1b0c76c33780b8432ebeb164f47c745fae92525",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 121890
+    },
+    {
+      "page": 43,
+      "hash": "d92e60ad5b05adf49c1bcec55d243acee190ee505c074b4316d2f00615cde4ec",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 115266
+    },
+    {
+      "page": 44,
+      "hash": "3a01c63ec216828263f55006781b813b3d98472a18a41303ebcc80720a03e19e",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 123470
+    },
+    {
+      "page": 45,
+      "hash": "21c7b3281024fe0bce06fdac3d75abf55ff930102d0ab6d004b8c5460b9827d2",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 119510
+    },
+    {
+      "page": 46,
+      "hash": "a42dfc16b5a4abc6916325b9db74f53871be29eda6d49d68683cc7cb5d4e269c",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 114964
+    },
+    {
+      "page": 47,
+      "hash": "dcab5b5866553bc44c3fb21ff51c02ce5d643d032859eae00eaecb467615b545",
+      "shape": [
+        3300,
+        2560
+      ],
+      "bytes": 66878
+    }
+  ],
+  "page_record_set_sha256": "8e1744589413cf0c3331483320106af0d764c021c989ab2e4421bbdddc7a6dd2"
+}
