@@ -5220,6 +5220,7 @@ _AAC_SEVEN_LENS_EXACT_PHRASE_COUNTS = {
 }
 _AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
     "US-11467375-B2": {
+        "title_text": "Camera optical lens",
         "raw_document_sha256": (
             "d06dcb7578f86ca8533ef6858e662c4b2bca133a9e0813636b2362182baecd40"
         ),
@@ -5252,6 +5253,20 @@ _AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "detailed": (14, 147),
         },
         "claim_count": 19,
+        "system_metadata": _AAC_SEVEN_LENS_EXACT_SYSTEM_METADATA,
+        "metadata_table_layout": "standard",
+        "narrative_layout": "uniform_1_0h",
+        "lens_materials": (
+            "Glass",
+            "Glass",
+            "Plastic",
+            "Plastic",
+            "Plastic",
+            "Plastic",
+            "Plastic",
+        ),
+        "auxiliary_row_style": "R1_R14",
+        "phrase_counts": _AAC_SEVEN_LENS_EXACT_PHRASE_COUNTS,
         "identity_markers": {
             "Family ID: 71121572": 1,
             "Appl. No.: 16/675252": 1,
@@ -5291,6 +5306,124 @@ _AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "33fd2a7c17638f25c63c6680cae3cec20a0b4340404b15252867cec9589dd5c6",
         ),
     },
+}
+
+_AAC_SEVEN_LENS_EXACT_SOURCE_PROFILES["US-11137579-B2"] = {
+    "title_text": (
+        "Camera optical lens comprising seven lenses of +--++--, ++-+++- or "
+        "++--++- refractive powers"
+    ),
+    "raw_document_sha256": (
+        "4be2295462a5590711d3b293a93b928c16e2ca0ec4085b9555dbe63aa71bdd7c"
+    ),
+    "normalized_text_sha256": (
+        "5c681b26b0bbbb4d65da7aac503d26ffd507a4a248b12a34008a740071cd50d2"
+    ),
+    "section_markers": {
+        "background": "Background/Summary TECHNICAL FIELD (1)",
+        "brief": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+        "detailed": "DESCRIPTION OF EMBODIMENTS (14)",
+        "claims": "Claims 1. A camera optical lens, comprising,",
+    },
+    "section_sha256": {
+        "background": (
+            "be9272d04802ed90867bf58a533bc9c433dfef0930a2779820c33ef362f99dc0"
+        ),
+        "brief": (
+            "3d9a72a4323bd5e5b897d52bbf1e74efd13971ff59fee2c7bb519887f93b301f"
+        ),
+        "detailed": (
+            "2639fefeca0c6ce5dedd814dd9727d0df59ac92f460b8d35a3bece1de3d5cd86"
+        ),
+        "claims": (
+            "c845a98f1a3750f7dc0d36f901340cd3cf22648fc062abccf575ad128cce999d"
+        ),
+    },
+    "paragraph_ranges": {
+        "background": (1, 2),
+        "brief": (1, 13),
+        "detailed": (14, 94),
+    },
+    "claim_count": 19,
+    "system_metadata": (
+        (4.065, 1.78, 75.99, 2.880, 4.000),
+        (3.872, 1.78, 82.89, 2.175, 3.715),
+        (3.720, 1.78, 85.18, 2.090, 3.715),
+    ),
+    "metadata_table_layout": "split_seventh_lens_ratio",
+    "narrative_layout": "mixed_pupil_entering",
+    "lens_materials": (
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Glass",
+        "Plastic",
+    ),
+    "surface_abbe_symbols": {
+        1: ("\u03bd", "\u03bd", "\u03bd", "v", "\u03bd", "\u03bd", "\u03bd", "\u03bd"),
+        5: ("\u03bd",) * 8,
+        9: ("\u03bd",) * 8,
+    },
+    "auxiliary_row_style": "P1R1_P7R2",
+    "stop_distances_mm": (-0.330, -0.295, -0.224),
+    "derived_spacing_sums_mm": (5.760, 5.635, 5.699),
+    "inline_formula_pair_count": 1,
+    "mathml_element_count": 0,
+    "phrase_counts": {
+        "the camera optical lens has a pupil entering diameter of 2.88 mm": 1,
+        "entrance pupil diameter of the camera optical lens is": 2,
+        "image height of 1.0 H is 3.715 mm": 2,
+        "FNO 1.78 1.78 1.78": 1,
+        (
+            "Here, K is a conic coefficient, and A4, A6, A8, A10, A12, "
+            "A14 and A16 are aspheric surface coefficients."
+        ): 1,
+        "S1: aperture": 1,
+        "R16: curvature radius of an image side surface of the optical filter GF": 1,
+        "A focal length of the seventh lens L7 is P": 1,
+        "v 4 56.03": 1,
+        "(R13 + R14)/ 0.52 0.74 1.03 (R13 - R14)": 1,
+    },
+    "identity_markers": {
+        "Family ID: 71123577": 1,
+        "Appl. No.: 16/675251": 1,
+        "AAC Optics Solutions Pte. Ltd.": 2,
+        "US 20200209559 A1 Jul. 02, 2020": 1,
+        "CN 201811614499.X Dec. 27, 2018": 1,
+        "CN 201811616005.1 Dec. 27, 2018": 1,
+    },
+    "table_block_sha256": (
+        "c8379558384a81e8c48bea5a5521260e6b62ae44cefc0911fe60545d5bd8aa15",
+        "d8c38f9d0b841100446d1a73b2f2f9bb3765e5de677010c18e41b7b1c46efab2",
+        "79a140bace7f91bb29358871e8514711bc5b05474ad3221078beafc627fb6e44",
+        "7bf9c53ad6c87a813962ae5caec89aee14f7f1277b231dd13b0aa57bd48f36b9",
+        "3f422b35d7f9a6aac07e2045756c45b8c44a1bc1ed50b42c5c7bbfe5625d3c73",
+        "f465297d5a9c82c6ae11b60e49a96a286da8076b0c930349e53b324afcab5d76",
+        "d7903767335003587ead705dd0b33c047ef81ae1064d841b4ec0a5f2ab824e3b",
+        "c8a193e01cf2cac151b67c3470e8ac94c1478fe1c83eecab398f7344af5c3e0d",
+        "578d3b9b94a968e0e3320903072b62091b667434da7ef8f9153cc8d2ee123f77",
+        "b2a21f1423f6398cf2e18445da65b765b08278a848099ab7d60c7cddce54e332",
+        "41c9702b82ea8b339332fa8da47254216be76ef434dc1c383481dbe41339f9d9",
+        "f104ecc591ee1c33c5555283505a11dde6f5ce06b4207a51e0b713638a13fdee",
+        "df8eaf37291fc64bf51867e5c3622e5d6a3122f11494daf499d09bdb82d1f5c7",
+    ),
+    "formal_table_sha256": (
+        "e9b979713cdcf27af7907c38d97d38acd27418f5814baa2f38198a6e024c670e",
+        "beff0d44150972b713d5fb81a20d737c15487c6802c3b18764a1c94ea2cdc1e7",
+        "b76ea7d3367c7ffede1089c41cf70937bbd35ec0b43c61abdfbc91c5bb75791a",
+        "087fe144bbe99486a8db5c8b6e430bbdc67c1a3b1adc756d464de12dcfd80a9e",
+        "e53cbe60eebfb53da983fb18898b5048d8a23f1f60b1aac1392444e5e6623297",
+        "438b928f3d11db33087a23b94a51db522362dfdfccaa037718b1059edd6b3a1a",
+        "a2981b9bb34214703c22c5c1441e7fc0d2fc617e961027a0e06d715c5737f128",
+        "20b65f10a2ca8976341cc455a1fddaf9d82b307cd687c42c79d9d6594ff91489",
+        "a2774a9a2113b2647cf9e2191b3287e6fe01c64c9181ebaca650cfdf823ae0d7",
+        "b96bcd42a21b75c9a7005e4b9934c071755d4b3890daeeed4bccb6ef96fc118b",
+        "2e6adcd94c26a159ddef1dffad94b012a33b917c92fbd44cd2edbb4d2c99a578",
+        "ab54daa607ea0e68721157c7686bff6b3371200abd5926694d5ce6feb4c939c9",
+        "28b1e490cbaf78c6d952777e7957fc6f4cfb5f72119f64e3b4f8424fb0806e02",
+    ),
 }
 
 _AAC_TERAOKA_SIX_LENS_EXACT_TITLE_PATTERN = re.compile(
@@ -37815,9 +37948,30 @@ def _parse_aac_seven_lens_exact_surface_table(
     table: str,
     *,
     table_number: int,
+    lens_materials: tuple[str, ...] | None = None,
+    abbe_symbols: tuple[str, ...] | None = None,
 ) -> list[PatentSurface]:
+    if lens_materials is None:
+        lens_materials = (
+            "Glass",
+            "Glass",
+            "Plastic",
+            "Plastic",
+            "Plastic",
+            "Plastic",
+            "Plastic",
+        )
+    if len(lens_materials) != 7:
+        raise PatentParseError("AAC seven-lens material profile must contain seven lenses")
+    if abbe_symbols is None:
+        abbe_symbols = ("\u03bd",) * 8
+    if len(abbe_symbols) != 8:
+        raise PatentParseError(
+            "AAC seven-lens Abbe-symbol profile must contain seven lenses and GF"
+        )
     header = re.match(
-        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+R\s+d\s+nd\s+ν\s+d\s+",
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+R\s+d\s+nd\s+"
+        rf"{re.escape(abbe_symbols[0])}\s+d\s+",
         table,
         flags=re.IGNORECASE,
     )
@@ -37873,9 +38027,11 @@ def _parse_aac_seven_lens_exact_surface_table(
             material_marker = (
                 "g" if surface_number == 15 else str((surface_number + 1) // 2)
             )
+            material_index = 7 if surface_number == 15 else (surface_number - 1) // 2
             material_row = take(
                 rf"\s+nd{material_marker}\s+(?P<nd>{NUMBER_PATTERN})\s+"
-                rf"ν\s+{material_marker}\s+(?P<vd>{NUMBER_PATTERN})",
+                rf"{re.escape(abbe_symbols[material_index])}\s+{material_marker}\s+"
+                rf"(?P<vd>{NUMBER_PATTERN})",
                 context=f"R{surface_number} material row",
             )
             nd = _parse_number(material_row.group("nd"))
@@ -37883,7 +38039,7 @@ def _parse_aac_seven_lens_exact_surface_table(
             material = (
                 "Filter"
                 if surface_number == 15
-                else ("Glass" if surface_number <= 3 else "Plastic")
+                else lens_materials[material_index]
             )
             _validate_material_indices(
                 surface_index=surface_number + 1,
@@ -38067,8 +38223,29 @@ def _parse_aac_seven_lens_exact_attempts(
             raise PatentParseError(
                 f"AAC seven-lens normalized text hash changed for {patent_id}"
             )
-        if len(_AAC_SEVEN_LENS_EXACT_TITLE_PATTERN.findall(raw_text)) != 1:
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            flags=re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
             raise PatentParseError("AAC seven-lens title binding changed")
+        if "inline_formula_pair_count" in profile:
+            expected_formula_pairs = int(profile["inline_formula_pair_count"])
+            lead_count = raw_text.count(
+                '<?in-line-formulae description="In-line Formulae" end="lead"?>'
+            )
+            tail_count = raw_text.count(
+                '<?in-line-formulae description="In-line Formulae" end="tail"?>'
+            )
+            if (lead_count, tail_count) != (
+                expected_formula_pairs,
+                expected_formula_pairs,
+            ):
+                raise PatentParseError("AAC seven-lens inline-formula denominator changed")
+        if "mathml_element_count" in profile:
+            mathml_count = len(re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE))
+            if mathml_count != int(profile["mathml_element_count"]):
+                raise PatentParseError("AAC seven-lens MathML denominator changed")
         for marker, expected in profile["identity_markers"].items():
             observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
             if observed != expected:
@@ -38183,18 +38360,31 @@ def _parse_aac_seven_lens_exact_attempts(
         )
         if formal_digests != profile["formal_table_sha256"]:
             raise PatentParseError("AAC seven-lens formal table content changed")
+        auxiliary_style = profile["auxiliary_row_style"]
+        if auxiliary_style == "R1_R14":
+            auxiliary_pattern = r"\bR(1[0-4]|[1-9])\b"
+            expected_auxiliary_rows = tuple(str(value) for value in range(1, 15))
+        elif auxiliary_style == "P1R1_P7R2":
+            auxiliary_pattern = r"\b(P[1-7]R[12])\b"
+            expected_auxiliary_rows = tuple(
+                f"P{lens}R{side}" for lens in range(1, 8) for side in (1, 2)
+            )
+        else:
+            raise PatentParseError(
+                f"AAC seven-lens auxiliary row style {auxiliary_style!r} is unknown"
+            )
         for table_number in (3, 4, 7, 8, 11, 12):
             rows = tuple(
                 re.findall(
-                    r"\bR(1[0-4]|[1-9])\b",
+                    auxiliary_pattern,
                     formal_tables[table_number - 1],
                 )
             )
-            if rows != tuple(str(value) for value in range(1, 15)):
+            if rows != expected_auxiliary_rows:
                 raise PatentParseError(
                     f"AAC seven-lens TABLE {table_number} auxiliary row denominator changed"
                 )
-        for phrase, expected in _AAC_SEVEN_LENS_EXACT_PHRASE_COUNTS.items():
+        for phrase, expected in profile["phrase_counts"].items():
             observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
             if observed != expected:
                 raise PatentParseError(
@@ -38204,20 +38394,25 @@ def _parse_aac_seven_lens_exact_attempts(
         if re.search(r"\bEmbodiment\s+4\b", text, re.IGNORECASE) is not None:
             raise PatentParseError("AAC seven-lens source gained a fourth embodiment")
 
-        metadata_rows = _parse_aac_seven_lens_exact_metadata_table(
-            formal_tables[12]
-        )
-        narrative_rows = tuple(
-            tuple(_parse_number(value) for value in match)
-            for match in re.findall(
-                r"In this embodiment, the entrance pupil diameter of the camera "
-                rf"optical lens is\s+({NUMBER_PATTERN})\s+mm\.\s+The image height "
-                rf"of 1\.0H is\s+({NUMBER_PATTERN})\s+mm\.\s+The FOV\s+"
-                rf"\(field of view\) is\s+({NUMBER_PATTERN})°",
-                text,
-                re.IGNORECASE,
+        metadata_layout = profile["metadata_table_layout"]
+        if metadata_layout == "standard":
+            metadata_rows = _parse_aac_seven_lens_exact_metadata_table(
+                formal_tables[12]
             )
+        elif metadata_layout == "split_seventh_lens_ratio":
+            metadata_rows = _parse_aac_seven_lens_split_ratio_metadata_table(
+                formal_tables[12]
+            )
+        else:
+            raise PatentParseError(
+                f"AAC seven-lens metadata layout {metadata_layout!r} is unknown"
+            )
+        narrative_rows = _parse_aac_seven_lens_exact_narrative_rows(
+            text,
+            layout=profile["narrative_layout"],
         )
+        if len(narrative_rows) != 3:
+            raise PatentParseError("AAC seven-lens system narrative denominator changed")
         observed_metadata = tuple(
             (
                 metadata_rows["f"][index],
@@ -38228,7 +38423,7 @@ def _parse_aac_seven_lens_exact_attempts(
             )
             for index in range(3)
         )
-        if observed_metadata != _AAC_SEVEN_LENS_EXACT_SYSTEM_METADATA:
+        if observed_metadata != profile["system_metadata"]:
             raise PatentParseError("AAC seven-lens direct system metadata changed")
 
         prescriptions: list[PatentPrescription] = []
@@ -38239,7 +38434,29 @@ def _parse_aac_seven_lens_exact_attempts(
             surfaces = _parse_aac_seven_lens_exact_surface_table(
                 formal_tables[surface_table - 1],
                 table_number=surface_table,
+                lens_materials=profile["lens_materials"],
+                abbe_symbols=profile.get("surface_abbe_symbols", {}).get(
+                    surface_table
+                ),
             )
+            if "stop_distances_mm" in profile:
+                expected_stop = profile["stop_distances_mm"][embodiment_number - 1]
+                if surfaces[0].thickness_mm != expected_stop:
+                    raise PatentParseError(
+                        f"AAC seven-lens embodiment {embodiment_number} signed stop "
+                        "distance changed"
+                    )
+            if "derived_spacing_sums_mm" in profile:
+                observed_sum = round(
+                    sum(surface.thickness_mm for surface in surfaces[1:17]),
+                    3,
+                )
+                expected_sum = profile["derived_spacing_sums_mm"][embodiment_number - 1]
+                if observed_sum != expected_sum:
+                    raise PatentParseError(
+                        f"AAC seven-lens embodiment {embodiment_number} derived "
+                        "d1-d16 spacing sum changed"
+                    )
             coefficients = _parse_aac_seven_lens_exact_asphere_table(
                 formal_tables[asphere_table - 1],
                 table_number=asphere_table,
@@ -39073,6 +39290,113 @@ def _parse_aac_oinuma_six_lens_summary_table(table: str) -> dict[str, tuple[floa
             f"{tuple(tokens[position:])!r}"
         )
     return rows
+
+
+def _parse_aac_seven_lens_split_ratio_metadata_table(
+    table: str,
+) -> dict[str, tuple[float, float, float]]:
+    header = re.match(
+        r"\ATABLE-US-00013\s+TABLE\s+13\s+Parameters\s+and\s+conditions\s+"
+        r"Embodiment\s+1\s+Embodiment\s+2\s+Embodiment\s+3\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError("AAC seven-lens split-ratio TABLE 13 header changed")
+    body = table[header.end() :]
+    position = 0
+    rows: dict[str, tuple[float, float, float]] = {}
+
+    def take_row(label: str, *, stored_label: str | None = None) -> None:
+        nonlocal position
+        match = re.match(
+            rf"{re.escape(label)}\s+(?P<one>{NUMBER_PATTERN})\s+"
+            rf"(?P<two>{NUMBER_PATTERN})\s+(?P<three>{NUMBER_PATTERN})(?:\s+|\Z)",
+            body[position:],
+            flags=re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"AAC seven-lens split-ratio TABLE 13 row {label!r} changed near "
+                f"{body[position : position + 100]!r}"
+            )
+        rows[stored_label or label] = tuple(
+            _parse_number(match.group(name)) for name in ("one", "two", "three")
+        )
+        position += match.end()
+
+    for label in ("f", "f1", "f2", "f3", "f4", "f5", "f6", "f7"):
+        take_row(label)
+    take_row("Fno", stored_label="FNO")
+    take_row("f3/f4")
+    take_row("f1/f")
+
+    ratio = re.match(
+        rf"\(R13\s+\+\s+R14\)/\s+(?P<one>{NUMBER_PATTERN})\s+"
+        rf"(?P<two>{NUMBER_PATTERN})\s+(?P<three>{NUMBER_PATTERN})\s+"
+        r"\(R13\s+-\s+R14\)(?:\s+|\Z)",
+        body[position:],
+        flags=re.IGNORECASE,
+    )
+    if ratio is None:
+        raise PatentParseError(
+            "AAC seven-lens split-ratio TABLE 13 seventh-lens ratio row changed"
+        )
+    rows["(R13 + R14)/(R13 - R14)"] = tuple(
+        _parse_number(ratio.group(name)) for name in ("one", "two", "three")
+    )
+    position += ratio.end()
+    take_row("d11/TTL")
+    if body[position:].strip():
+        raise PatentParseError(
+            "AAC seven-lens split-ratio TABLE 13 has trailing tokens: "
+            f"{body[position:]!r}"
+        )
+    return rows
+
+
+def _parse_aac_seven_lens_exact_narrative_rows(
+    text: str,
+    *,
+    layout: str,
+) -> tuple[tuple[float, float, float], ...]:
+    if layout == "uniform_1_0h":
+        return tuple(
+            tuple(_parse_number(value) for value in match)
+            for match in re.findall(
+                r"In this embodiment, the entrance pupil diameter of the camera "
+                rf"optical lens is\s+({NUMBER_PATTERN})\s+mm\.\s+The image height "
+                rf"of 1\.0H is\s+({NUMBER_PATTERN})\s+mm\.\s+The FOV\s+"
+                rf"\(field of view\) is\s+({NUMBER_PATTERN})\N{{DEGREE SIGN}}",
+                text,
+                re.IGNORECASE,
+            )
+        )
+    if layout != "mixed_pupil_entering":
+        raise PatentParseError(f"AAC seven-lens narrative layout {layout!r} is unknown")
+
+    first_rows = re.findall(
+        r"In this embodiment, the camera optical lens has a pupil entering diameter "
+        rf"of\s+({NUMBER_PATTERN})\s+mm,\s+a full vision field image height of\s+"
+        rf"({NUMBER_PATTERN})\s+mm\s+and a FOV\s+\(field of view\)\s+of\s+"
+        rf"({NUMBER_PATTERN})\N{{DEGREE SIGN}}\s+in a diagonal direction",
+        text,
+        re.IGNORECASE,
+    )
+    remaining_rows = re.findall(
+        r"In this embodiment, the entrance pupil diameter of the camera optical "
+        rf"lens is\s+({NUMBER_PATTERN})\s+mm\.\s+The image height of 1\.0 H is\s+"
+        rf"({NUMBER_PATTERN})\s+mm\.\s+The FOV\s+\(field of view\)\s+is\s+"
+        rf"({NUMBER_PATTERN})\N{{DEGREE SIGN}}",
+        text,
+        re.IGNORECASE,
+    )
+    if len(first_rows) != 1 or len(remaining_rows) != 2:
+        raise PatentParseError("AAC seven-lens mixed narrative denominator changed")
+    return tuple(
+        tuple(_parse_number(value) for value in match)
+        for match in (*first_rows, *remaining_rows)
+    )
 
 
 def _parse_aac_oinuma_six_lens_exact_attempts(

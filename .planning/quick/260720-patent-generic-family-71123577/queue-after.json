@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260720-patent-generic-family-71123577/generic-residual-after-2.json",
+  "result_set_sha256": "d0b165d96a6fc2a0fa9505f812d430b4979e4cd92880324b9629dd8634a6559d",
+  "generic_residual_roots": 54,
+  "generic_residual_items": 54,
+  "next_exact_group": {
+    "family_id": "89536570",
+    "root_ids": [
+      "US-20260029620"
+    ],
+    "publication_ids": [
+      "US-20260029620-A1"
+    ],
+    "application_number": "18/993007",
+    "title": "IMAGING LENS SYSTEM, CAMERA MODULE, IN-VEHICLE SYSTEM, AND VEHICLE",
+    "first_inventor": "SHIMOEDA; Yukihiro",
+    "applicant": "Maxell, Ltd.",
+    "assignee": "Maxell, Ltd.",
+    "layout_signature": "925ec854f290ca2fe8603f5fe7a2a96962c85ad3ef408f36773d3b185d660840",
+    "layout_signature_count": 1,
+    "table_count": 10,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 9,
+      "example_anchor": 59,
+      "f_number": 12,
+      "full_field": 0,
+      "half_field": 2
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/5bfe5e9cc6c4dee6/US-20260029620-A1.html",
+      "sha256": "5bfe5e9cc6c4dee627a45e3bfcfd3c5f61725e3fe00155c487b6cc56b47196da"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}
