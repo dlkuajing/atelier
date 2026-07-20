@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "family_id": "89536570",
+  "current_frozen_cohort_roots": [
+    "US-20260029620"
+  ],
+  "current_publication": "US-20260029620-A1",
+  "discovery": {
+    "source_url": "https://patents.google.com/patent/US20260029620A1/en",
+    "country_status": [
+      "US",
+      "JP",
+      "CN",
+      "WO"
+    ]
+  },
+  "external_family_members": [
+    {
+      "publication_id": "JP-2024011615-A",
+      "country": "JP",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN-119301497-A",
+      "country": "CN",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "WO-2024014188-A1",
+      "country": "WO",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "source_note": "Google Patents family and country-status metadata are used only for queue reconciliation; no external-family numeric value is borrowed into the retained A1 classifier."
+}

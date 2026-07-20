@@ -580,6 +580,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_maxell_cemented_wide_angle_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_multi_reflection_five_example_missing_metadata_attempts(
             raw_text,
@@ -70808,6 +70814,919 @@ def _is_empty_value(token: str) -> bool:
 
 def _is_next_surface_index(token: str, expected: int) -> bool:
     return token.isdigit() and int(token) == expected
+
+
+_MAXELL_CEMENTED_WIDE_ANGLE_ITEMS = (
+    (
+        1,
+        "Maxell cemented six-lens Example 1",
+        (53, 75),
+        ("1", "2A", "2B", "2C", "2D"),
+        (1, 2),
+        tuple(range(1, 12)),
+    ),
+    (
+        2,
+        "Maxell cemented six-lens Example 2",
+        (76, 79),
+        ("3", "4A", "4B", "4C", "4D"),
+        (3, 4),
+        tuple(range(1, 12)),
+    ),
+    (
+        3,
+        "Maxell cemented six-lens Example 3",
+        (80, 83),
+        ("5", "6A", "6B", "6C", "6D"),
+        (5, 6),
+        tuple(range(1, 12)),
+    ),
+    (
+        4,
+        "Maxell cemented six-lens Example 4",
+        (84, 95),
+        ("7", "8A", "8B", "8C", "8D"),
+        (7, 8),
+        tuple(range(1, 12)),
+    ),
+    (
+        5,
+        "Maxell camera-module wrapper",
+        (52, 96),
+        (),
+        (),
+        (12,),
+    ),
+    (
+        6,
+        "Maxell in-vehicle-system wrapper",
+        (97, 104),
+        ("9", "10"),
+        (),
+        (13,),
+    ),
+    (
+        7,
+        "Maxell vehicle wrapper",
+        (97, 98),
+        ("9",),
+        (),
+        (14,),
+    ),
+)
+_MAXELL_CEMENTED_MISSING_METADATA_REASON = (
+    "metadata_unpublished.adhesive_layer_refractive_index_and_dispersion_and_"
+    "absolute_image_height_absent"
+)
+_MAXELL_CEMENTED_CAMERA_WRAPPER_REASON = (
+    "confirmed_no_prescription.camera_module_wrapper_only"
+)
+_MAXELL_CEMENTED_IN_VEHICLE_WRAPPER_REASON = (
+    "confirmed_no_prescription.in_vehicle_system_wrapper_only"
+)
+_MAXELL_CEMENTED_VEHICLE_WRAPPER_REASON = (
+    "confirmed_no_prescription.vehicle_wrapper_only"
+)
+_MAXELL_CEMENTED_WIDE_ANGLE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260029620-A1": {
+        "family_id": "89536570",
+        "application_number": "18/993007",
+        "pct_application_number": "PCT/JP2023/021110",
+        "priority_application": "JP 2022-113781",
+        "title_text": (
+            "IMAGING LENS SYSTEM, CAMERA MODULE, IN-VEHICLE SYSTEM, AND VEHICLE"
+        ),
+        "raw_document_sha256": (
+            "5bfe5e9cc6c4dee627a45e3bfcfd3c5f61725e3fe00155c487b6cc56b47196da"
+        ),
+        "normalized_text_sha256": (
+            "2906db731f51b2f3b4d7284d9d41bf9afb50869af0fad4ace34bc6bed60c1f81"
+        ),
+        "section_markers": {
+            "background": "Background/Summary TECHNICAL FIELD",
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS",
+            "detailed": "DESCRIPTION OF EMBODIMENTS",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "background": (
+                "f58b29268702c54e37deb577d71a6de1e17c550191daa0db408b25b960766042"
+            ),
+            "brief": (
+                "ea8e9687607fbe71cc5ff5fef626f931fc7a3b746c982125658e1b713d75f08d"
+            ),
+            "detailed": (
+                "6bdce7549965fe546657a85ce4b8ee81afe80e1295f9d8f2146d4310a80dc95e"
+            ),
+            "claims": (
+                "80c9075dd8f50eeca82e00afb53b296b0fab14b49f05d25b00ea23e1d2d26e2d"
+            ),
+        },
+        "paragraph_ranges": {
+            "background": (1, 8),
+            "brief": (9, 30),
+            "detailed": (31, 126),
+        },
+        "paragraph_span_sha256": {
+            (1, 8): "e6a734bca75650936aeee298b55f549a3c29c741d2a619e412e4de5425e5da94",
+            (9, 30): "ff28869d6166ecde2d3c2a6dd5e5eb7b78841cef46ec9a7a7c4c6bfb13768812",
+            (31, 51): "d9231716deb247643436594ee26548411a002c96e949f7f713d760bf71f07e26",
+            (52, 96): "ad0d2c79b8463a28f9103dc413a91aba8bff9e2acc161cbe24f2a3be8eba05cf",
+            (97, 104): "2e5175ac34fc19801d6226176c651036b541f0fd6c337dd4e023502243b5da95",
+            (105, 126): "b12381c0375da7371ba6a2d43d29dcd7e03394149e56ebff37f4f17a20e80957",
+            (53, 75): "0abbb25c4ce204d4c2695985447345e76e8b0a01749893343e552c02a0c0ce05",
+            (76, 79): "8c8b36be98be177143f5da46d3fd7289a7dc60eaeb6d9b695837f825e2015b4b",
+            (80, 83): "fa709fe288c4e002f50265f66c3670044402a0541cd93d2f695d46beb8e9d0ab",
+            (84, 95): "23c16cfe495048fb7728104d0f43923129eb5de7db278c206258c9ba08a3ce26",
+        },
+        "claim_numbers": tuple(range(1, 15)),
+        "independent_claim_numbers": (1, 12, 13, 14),
+        "figure_panels": (
+            "1",
+            "2A",
+            "2B",
+            "2C",
+            "2D",
+            "3",
+            "4A",
+            "4B",
+            "4C",
+            "4D",
+            "5",
+            "6A",
+            "6B",
+            "6C",
+            "6D",
+            "7",
+            "8A",
+            "8B",
+            "8C",
+            "8D",
+            "9",
+            "10",
+        ),
+        "figref_count": 78,
+        "identity_markers": {
+            "Family ID: 89536570": 1,
+            "Appl. No.: 18/993007": 1,
+            "PCT/JP2023/021110": 1,
+            "JP 2022-113781": 1,
+            "June 07, 2023": 1,
+            "Jul. 15, 2022": 2,
+            "SHIMOEDA; Yukihiro": 2,
+            "Maxell, Ltd.": 2,
+        },
+        "table_block_sha256": (
+            "c73a61253c92286ac54bed33288234ea26376d25cca8acdc872637de6a477298",
+            "ff4aac396e9f662380d058ab299baf3409eaedc7a44d450645cb2c2a969bc3fc",
+            "018883dcc727512b9ed8bb9cca9b181aaed04bb96e8d80b309b9b478020db9d3",
+            "5112d3caff626f0615d154dffb5558f94000a66ffd8499c7228a140cd284a98d",
+            "6d3940c3bc9ac95429a453281327d8aa6492bd16976e8562886254b5f1d34c75",
+            "60a1001de3d5aa9db462b39867af895bad96ae26d9442eb21bccbb73f18f21ce",
+            "54a60c019f542b34ba08fec1470c1f9e8137dd83e38ba449230d33f50f386a9c",
+            "73b37a99c42039b771776fde00259ea609bc8b5d78ce29075b903a3b8ad21aad",
+            "893900524d9f60a49a59532b63482e759e3e151e22305803560f3cb0cc276f45",
+            "c52d24714353e1aac8fe6ef415f7691cf7fd5eb293f3939d0e75d1f4655fc167",
+        ),
+        "formal_table_sha256": (
+            "bcdcc2438cfbd3297519dffcce54b6d43cc91bfd61cfa6674324613a9061b039",
+            "c11933597f83fb5819ae5a970a49750c496bc2f80f8d20f68c34ffe64a1e9655",
+            "97682461226a5d6378ba4712887cff01e34de113f12dd3411662ebf14ac5b3b3",
+            "76e46ba5e357b77aea5025ec3bffb97003b62e53a5a663264937489f4881c4d9",
+            "28c6796b76ff860937947008dcff4dba7d1304769c5f4906314fe7479328c164",
+            "8d5fe7ff2ea5951362c801f41ee2b36c66758272e04626d5b1d1cc33b633b3f6",
+            "be07be5a07f63cc39c8ca8866a38f21ef41cdee8996f06bbd65073ff88714424",
+            "9bf78f23ca41d56e9fe57d18d42c06202d4b9d040bd135a13ef1d25391649d92",
+            "186f31f7ed4ae59f8dc6f9a721f0d8a71f02e10be302c4304a5035d78d055e14",
+            "7221e432e41200cc17d85b30ecacdab726a08845b5905890fd9079fda64a54a2",
+        ),
+        "math_object_sha256": (
+            "6c7d4817d68e236df59c3b54f8a502163ace022ac18f2e2e0009b904667c58af",
+            "0161aa25407882002433ea65bdcc4ead5dd347193f2f5558f2b483f1c27cc582",
+            "6c7d4817d68e236df59c3b54f8a502163ace022ac18f2e2e0009b904667c58af",
+            "0161aa25407882002433ea65bdcc4ead5dd347193f2f5558f2b483f1c27cc582",
+            "e20edf4a95a2acf1a378d04f933f1ca58d2c38985bf19df77bdf121e88f65512",
+            "fc04785a987c9c6aff13cc88061a0bb082b5f6be2960d2bc13b23e6e73227137",
+            "acd75da39fc9242aeac1e68a2f909f312337d677c01fc30add5e33c67ec70636",
+            "217445d426e5044f07a55b2b3439ebe365e36dd64b4c8f320718c6226e8bf42c",
+            "7fda91a50f8209a1af26aeccd577bb01a31a6474d5489924667c55a9ca81495b",
+            "af61c304471445571ee8b8f11df590aa7bf2e41e33ba856c5c37eeeab11291e0",
+            "e9bee0194d789014ffa156ee37ce352d8b1c4e485036a4ee9f3ea7a065cd461e",
+            "8028edd3001e6d63a8695728acef337310d372aadc69e82674d5e9d72c518920",
+            "8028edd3001e6d63a8695728acef337310d372aadc69e82674d5e9d72c518920",
+            "8028edd3001e6d63a8695728acef337310d372aadc69e82674d5e9d72c518920",
+            "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91",
+            "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91",
+            "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91",
+            "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91",
+        ),
+        "system_values": {
+            "F Number": (2.00, 2.05, 2.05, 2.03),
+            "Whole angle of view": (214.2, 216.4, 217.6, 216.6),
+            "Entire system focal length f": (0.919, 0.966, 0.944, 0.850),
+            "f4/f": (3.17, 2.86, 2.58, 3.67),
+            "vd4": (61.2, 63.4, 75.5, 55.5),
+            "dNd4/dt": (3.500, -3.200, -3.800, 4.000),
+            "f56/f": (4.82, 5.54, 5.78, 4.56),
+            "f1": (-5.506, -5.536, -5.578, -5.497),
+            "f2": (-2.105, -2.189, -1.993, -2.096),
+            "f3": (4.847, 4.992, 4.934, 4.499),
+            "f4": (2.918, 2.757, 2.432, 3.119),
+            "f5": (-9.462, -2.249, -2.217, -2.257),
+            "f6": (3.367, 2.035, 2.158, 1.888),
+            "f56": (4.434, 5.345, 5.454, 3.871),
+        },
+        "focus_shift_rows": {
+            1: (0.0, 4.0, -2.0, 9.0, 4.0, 10.0),
+            2: (0.0, 7.0, -6.0, 3.0, 1.0, 2.0),
+            3: (0.0, 11.0, -13.0, -5.0, 0.0, -9.0),
+            4: (0.0, -1.0, 6.0, 13.0, 2.0, 16.0),
+        },
+        "pdf_audit": {
+            "path": (
+                ".planning/quick/260720-patent-generic-family-89536570/"
+                "source-review/US-20260029620-A1-official-live-1.pdf"
+            ),
+            "bytes": 1105054,
+            "container_sha256": (
+                "6867a1d4b3fb03459344e4e768d39d238859e1bfa94edb51c2b43fc1948e1c53"
+            ),
+            "page_count": 34,
+            "narrow_raster_page_numbers": (24, 25, 26, 27, 33, 34),
+            "narrow_raster_dimensions": (2550, 3300),
+            "common_raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 24)),
+            "table_page_numbers": tuple(range(27, 32)),
+            "claims_page_numbers": (33, 34),
+            "critical_page_raster_sha256": {
+                1: "b508b32e55f61647adae3b34d5ae78a4c083555826ca6803f084b4efc489108f",
+                27: "d64da73c2984229c37e0437aceffcd32ad3fbaac067771ea7c9bde6b16d6311b",
+                28: "6d4b76b5e5e12408464b29d564019f0c8d85ebf8b9cb5fc683e82195b74d118d",
+                29: "f8a0793e46d3c362316410a7cf0207261dba90db85643b0f37a7e62b2dc72020",
+                30: "bbdb7919224933ae8aabf8dbb567ab96cd235c0b1eca28b92012fd23f99bf6d9",
+                31: "34402555756525ee07a2e791e530c589ba0803387f13cc71b367588b3b209087",
+                33: "e8c94596547a062b99ce3d205c905aa250ba95b529b510867f9bdb4eb2a76f24",
+                34: "76faeeec53dd8680bf3f9f9dc8b0351f8998946db555d980aca02a25aa6159ac",
+            },
+            "raster_set_sha256": (
+                "747563bacb0c9797a721d6e17f4237b7c94ae6ca209673b7a5aca6630bc2f8c1"
+            ),
+        },
+    }
+}
+
+
+def _maxell_cemented_formal_table(block: str) -> str:
+    """Return only the tagged table, excluding its following numbered paragraph."""
+
+    return re.split(r"\s+\[\d{4}\]\s+", block, maxsplit=1)[0]
+
+
+def _parse_maxell_cemented_surface_table(
+    table: str,
+    *,
+    table_number: int,
+) -> list[PatentSurface]:
+    """Parse one exact S1-S18 Maxell table while retaining the unknown cement."""
+
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"Surface\s+Number\s+Curvature\s+Radius\s+\(mm\)\s+"
+        r"Thickness\s+\(mm\)\s+nd\s+\S*d\s+",
+        table,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Maxell cemented TABLE {table_number} surface header changed"
+        )
+    body = table[header.end() :]
+    position = 0
+    published_materials = {
+        1: "Glass",
+        3: "Plastic",
+        5: "Plastic",
+        9: "Glass",
+        11: "Plastic",
+        13: "Plastic",
+        15: "Filter",
+        17: "CoverGlass",
+    }
+    surfaces: list[PatentSurface] = []
+    for surface_number in range(1, 19):
+        match = re.match(
+            rf"\s*S{surface_number}\s+"
+            r"(?P<asphere>\*\s+)?"
+            r"(?P<stop>\(STOP\)\s+)?"
+            rf"(?P<radius>INF|{NUMBER_PATTERN})\s+"
+            rf"(?P<thickness>{NUMBER_PATTERN})"
+            rf"(?:\s+(?P<nd>{NUMBER_PATTERN})\s+(?P<vd>{NUMBER_PATTERN}))?"
+            rf"(?=\s+S{surface_number + 1}\s+|\Z)",
+            body[position:],
+            re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Maxell cemented TABLE {table_number} S{surface_number} row changed "
+                f"near {body[position : position + 100]!r}"
+            )
+        nd = _parse_number(match.group("nd")) if match.group("nd") else None
+        vd = _parse_number(match.group("vd")) if match.group("vd") else None
+        has_published_material = surface_number in published_materials
+        if has_published_material != (nd is not None and vd is not None):
+            raise PatentParseError(
+                f"Maxell cemented TABLE {table_number} S{surface_number} material "
+                "column occupancy changed"
+            )
+        material = published_materials.get(surface_number)
+        if surface_number == 12:
+            material = "Cement"
+        surfaces.append(
+            PatentSurface(
+                index=surface_number,
+                label="Stop" if match.group("stop") else f"S{surface_number}",
+                radius_mm=_distance_value(
+                    match.group("radius"),
+                    field_name=(
+                        f"Maxell TABLE {table_number} S{surface_number} radius"
+                    ),
+                ),
+                thickness_mm=_parse_number(match.group("thickness")),
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type="ASP" if match.group("asphere") else None,
+            )
+        )
+        position += match.end()
+    if body[position:].strip():
+        raise PatentParseError(
+            f"Maxell cemented TABLE {table_number} has trailing surface tokens: "
+            f"{body[position:]!r}"
+        )
+    surfaces.append(
+        PatentSurface(
+            index=19,
+            label="Image",
+            radius_mm=math.inf,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    return surfaces
+
+
+def _parse_maxell_cemented_asphere_table(
+    table: str,
+    *,
+    table_number: int,
+) -> dict[int, dict[str, float]]:
+    """Parse both four-surface blocks and all K/A4-A16 cells."""
+
+    prefix = rf"TABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+    match = re.match(prefix, table, re.IGNORECASE)
+    if match is None:
+        raise PatentParseError(
+            f"Maxell cemented TABLE {table_number} asphere prefix changed"
+        )
+    body = table[match.end() :]
+    position = 0
+    coefficients: dict[int, dict[str, float]] = {}
+    for surface_numbers in ((3, 4, 5, 6), (11, 12, 13, 14)):
+        header = r"\s*" + r"\s+".join(
+            rf"Lens\s+Surface\s+S{surface_number}"
+            for surface_number in surface_numbers
+        ) + r"\s+"
+        header_match = re.match(header, body[position:], re.IGNORECASE)
+        if header_match is None:
+            raise PatentParseError(
+                f"Maxell cemented TABLE {table_number} header for surfaces "
+                f"{surface_numbers} changed"
+            )
+        position += header_match.end()
+        for order in (0, 4, 6, 8, 10, 12, 14, 16):
+            label_pattern = "k" if order == 0 else rf"\S+\.sub\.{order}"
+            row = re.match(
+                rf"{label_pattern}\s+"
+                rf"(?P<one>{NUMBER_PATTERN})\s+"
+                rf"(?P<two>{NUMBER_PATTERN})\s+"
+                rf"(?P<three>{NUMBER_PATTERN})\s+"
+                rf"(?P<four>{NUMBER_PATTERN})(?:\s+|\Z)",
+                body[position:],
+                re.IGNORECASE,
+            )
+            if row is None:
+                raise PatentParseError(
+                    f"Maxell cemented TABLE {table_number} coefficient row "
+                    f"{order or 'K'} changed near {body[position : position + 100]!r}"
+                )
+            coefficient = "K" if order == 0 else ASPHERE_ORDER_TO_CODEV[order]
+            for surface_number, group_name in zip(
+                surface_numbers,
+                ("one", "two", "three", "four"),
+                strict=True,
+            ):
+                coefficients.setdefault(surface_number, {})[coefficient] = (
+                    _parse_number(row.group(group_name))
+                )
+            position += row.end()
+    if body[position:].strip():
+        raise PatentParseError(
+            f"Maxell cemented TABLE {table_number} has trailing asphere tokens: "
+            f"{body[position:]!r}"
+        )
+    return coefficients
+
+
+def _parse_maxell_cemented_system_table(
+    table: str,
+) -> dict[str, tuple[float, float, float, float]]:
+    header = re.match(
+        r"\ATABLE-US-00009\s+TABLE\s+9\s+"
+        r"Example\s+1\s+Example\s+2\s+Example\s+3\s+Example\s+4\s+",
+        table,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError("Maxell cemented TABLE 9 header changed")
+    body = table[header.end() :]
+    position = 0
+    row_patterns = (
+        ("F Number", r"F\s+Number"),
+        ("Whole angle of view", r"Whole\s+angle\s+of\s+view"),
+        (
+            "Entire system focal length f",
+            r"Entire\s+system\s+focal\s+length\s+f",
+        ),
+        ("f4/f", r"f4/f"),
+        ("vd4", r"\S*d4"),
+        ("dNd4/dt", r"dNd4/dt"),
+        ("f56/f", r"f56/f"),
+        ("f1", r"f1"),
+        ("f2", r"f2"),
+        ("f3", r"f3"),
+        ("f4", r"f4"),
+        ("f5", r"f5"),
+        ("f6", r"f6"),
+        ("f56", r"f56"),
+    )
+    rows: dict[str, tuple[float, float, float, float]] = {}
+    for label, label_pattern in row_patterns:
+        row = re.match(
+            rf"{label_pattern}\s+"
+            rf"(?P<one>{NUMBER_PATTERN})\s+"
+            rf"(?P<two>{NUMBER_PATTERN})\s+"
+            rf"(?P<three>{NUMBER_PATTERN})\s+"
+            rf"(?P<four>{NUMBER_PATTERN})(?:\s+|\Z)",
+            body[position:],
+            re.IGNORECASE,
+        )
+        if row is None:
+            raise PatentParseError(
+                f"Maxell cemented TABLE 9 row {label!r} changed near "
+                f"{body[position : position + 100]!r}"
+            )
+        rows[label] = tuple(
+            _parse_number(row.group(group_name))
+            for group_name in ("one", "two", "three", "four")
+        )
+        position += row.end()
+    if body[position:].strip():
+        raise PatentParseError(
+            f"Maxell cemented TABLE 9 has trailing tokens: {body[position:]!r}"
+        )
+    return rows
+
+
+def _parse_maxell_focus_shift_table(
+    table: str,
+) -> dict[int, tuple[float, float, float, float, float, float]]:
+    if re.match(r"\ATABLE-US-00010\s+TABLE\s+10\s+", table, re.IGNORECASE) is None:
+        raise PatentParseError("Maxell cemented TABLE 10 header changed")
+    tokens = table.split()
+    tail = tokens[-28:]
+    if len(tail) != 28:
+        raise PatentParseError("Maxell cemented TABLE 10 row denominator changed")
+    rows: dict[int, tuple[float, float, float, float, float, float]] = {}
+    for index in range(4):
+        chunk = tail[index * 7 : (index + 1) * 7]
+        expected_example = index + 1
+        if chunk[0] != str(expected_example):
+            raise PatentParseError(
+                f"Maxell cemented TABLE 10 Example {expected_example} row changed"
+            )
+        if any(re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE) is None for token in chunk[1:]):
+            raise PatentParseError(
+                f"Maxell cemented TABLE 10 Example {expected_example} value changed"
+            )
+        rows[expected_example] = tuple(_parse_number(token) for token in chunk[1:])
+    return rows
+
+
+def _classify_maxell_cemented_wide_angle_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 89536570 without inventing cement or image metadata."""
+
+    profile = _MAXELL_CEMENTED_WIDE_ANGLE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _tables, _claims in (
+                _MAXELL_CEMENTED_WIDE_ANGLE_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Maxell cemented official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Maxell cemented normalized text hash changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Maxell cemented title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Maxell cemented identity marker {marker!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError("Maxell cemented section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Maxell cemented section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Maxell cemented {section_name} section changed"
+                )
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"Maxell cemented {section_name} paragraph denominator changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 127)):
+            raise PatentParseError("Maxell cemented paragraphs 1-126 changed")
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Maxell cemented paragraph span {bounds} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Maxell cemented claims 1-14 changed")
+        independent_claims = tuple(
+            number
+            for number, match in zip(claim_numbers, claim_matches, strict=True)
+            if re.match(
+                r"\s*(?:An imaging lens system|A camera module|"
+                r"An in-vehicle system|A vehicle)\b",
+                sections["claims"][match.end() :],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError("Maxell cemented independent claims changed")
+
+        figure_panels = tuple(
+            f"{number}{suffix.upper()}"
+            for number, suffix in re.findall(
+                r"\[\d{4}\]\s+FIG\.\s*(\d+)\s*([A-D]?)\s+is\s+",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_panels != profile["figure_panels"]:
+            raise PatentParseError("Maxell cemented 22-panel figure denominator changed")
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError("Maxell cemented FIGREF denominator changed")
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 11)):
+            raise PatentParseError("Maxell cemented TABLES 1-10 denominator changed")
+        table_block_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_block_digests != profile["table_block_sha256"]:
+            raise PatentParseError("Maxell cemented PPUBS table block changed")
+        formal_tables = tuple(
+            _maxell_cemented_formal_table(block.text) for block in blocks
+        )
+        formal_table_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_table_digests != profile["formal_table_sha256"]:
+            raise PatentParseError("Maxell cemented formal table content changed")
+
+        for embodiment_number, surface_table_number in enumerate((1, 3, 5, 7), 1):
+            asphere_table_number = surface_table_number + 1
+            surfaces = _parse_maxell_cemented_surface_table(
+                formal_tables[surface_table_number - 1],
+                table_number=surface_table_number,
+            )
+            if [surface.index for surface in surfaces] != list(range(1, 20)):
+                raise PatentParseError(
+                    f"Maxell cemented Example {embodiment_number} modeled surface "
+                    "denominator changed"
+                )
+            published_material_rows = tuple(
+                surface.index
+                for surface in surfaces
+                if surface.nd is not None and surface.vd is not None
+            )
+            if published_material_rows != (1, 3, 5, 9, 11, 13, 15, 17):
+                raise PatentParseError(
+                    f"Maxell cemented Example {embodiment_number} material rows changed"
+                )
+            cement = surfaces[11]
+            if not (
+                cement.index == 12
+                and cement.material == "Cement"
+                and cement.thickness_mm == 0.020
+                and cement.nd is None
+                and cement.vd is None
+            ):
+                raise PatentParseError(
+                    f"Maxell cemented Example {embodiment_number} unpublished "
+                    "adhesive layer evidence changed"
+                )
+            if not (surfaces[6].label == "Stop" and surfaces[6].radius_mm == math.inf):
+                raise PatentParseError(
+                    f"Maxell cemented Example {embodiment_number} S7 stop changed"
+                )
+            coefficients = _parse_maxell_cemented_asphere_table(
+                formal_tables[asphere_table_number - 1],
+                table_number=asphere_table_number,
+            )
+            if set(coefficients) != {3, 4, 5, 6, 11, 12, 13, 14}:
+                raise PatentParseError(
+                    f"Maxell cemented Example {embodiment_number} asphere surfaces changed"
+                )
+            if any(
+                tuple(values) != ("K", "A", "B", "C", "D", "E", "F", "G")
+                for values in coefficients.values()
+            ):
+                raise PatentParseError(
+                    f"Maxell cemented Example {embodiment_number} K/A4-A16 "
+                    "coverage changed"
+                )
+            for source_surface_number, values in coefficients.items():
+                surfaces[source_surface_number - 1].asphere_coefficients.update(values)
+
+        system_values = _parse_maxell_cemented_system_table(formal_tables[8])
+        if system_values != profile["system_values"]:
+            raise PatentParseError("Maxell cemented TABLE 9 system values changed")
+        if _parse_maxell_focus_shift_table(formal_tables[9]) != profile[
+            "focus_shift_rows"
+        ]:
+            raise PatentParseError("Maxell cemented TABLE 10 focus-shift rows changed")
+
+        math_objects = re.findall(r"<math(?:\s|>).*?</math>", raw_text, re.I | re.S)
+        math_hashes = tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        )
+        if math_hashes != profile["math_object_sha256"]:
+            raise PatentParseError("Maxell cemented MathML denominator changed")
+        for phrase, expected in {
+            "adhesive layer having a thickness of 0.020 mm on the axis": 1,
+            "wavelength ray of 550 nm": 1,
+            "image height": 3,
+            "half angle of view": 2,
+        }.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Maxell cemented source phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        direct_image_height_patterns = (
+            rf"\bImgH\s*=\s*{NUMBER_PATTERN}\s*mm\b",
+            rf"\bIMGHT\s+{NUMBER_PATTERN}\b",
+            rf"\bimage\s+height(?:\s+of\s+1\.0H)?\s+(?:is|=)\s*"
+            rf"{NUMBER_PATTERN}\s*mm\b",
+            rf"\b(?:sensor|capturing\s+element|imaging\s+surface)\s+"
+            rf"(?:size|height|diagonal)\s*(?:is|=)?\s*{NUMBER_PATTERN}\s*mm\b",
+        )
+        if any(
+            re.search(pattern, text, re.IGNORECASE) is not None
+            for pattern in direct_image_height_patterns
+        ):
+            raise PatentParseError(
+                "Maxell cemented source may now publish absolute image height"
+            )
+        adhesive_material_patterns = (
+            r"adhesive.{0,160}(?:refractive\s+index|Abbe|dispersion)",
+            r"(?:refractive\s+index|Abbe|dispersion).{0,160}adhesive",
+        )
+        if any(
+            re.search(pattern, text, re.IGNORECASE) is not None
+            for pattern in adhesive_material_patterns
+        ):
+            raise PatentParseError(
+                "Maxell cemented source may now publish adhesive optical constants"
+            )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("Maxell cemented official PDF byte count changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError("Maxell cemented official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError("Maxell cemented official PDF page count changed")
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = frozenset(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Maxell cemented PDF page {page_number} contains {len(images)} "
+                    "rasters; expected one"
+                )
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if images[0].image.size != expected_dimensions:
+                raise PatentParseError(
+                    f"Maxell cemented PDF page {page_number} dimensions changed"
+                )
+            raster_digest = _canonical_raster_sha256(images[0].data)
+            page_raster_hashes.append(raster_digest)
+            expected_critical = pdf_profile["critical_page_raster_sha256"].get(
+                page_number
+            )
+            if expected_critical is not None and raster_digest != expected_critical:
+                raise PatentParseError(
+                    f"Maxell cemented critical PDF page {page_number} changed"
+                )
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError("Maxell cemented official PDF raster set changed")
+        if text_layer_characters != 0:
+            raise PatentParseError("Maxell cemented official PDF gained a text layer")
+        if not (
+            pdf_profile["drawing_page_numbers"] == tuple(range(2, 24))
+            and pdf_profile["table_page_numbers"] == tuple(range(27, 32))
+            and pdf_profile["claims_page_numbers"] == (33, 34)
+        ):
+            raise PatentParseError("Maxell cemented official PDF page roles changed")
+    except Exception as exc:  # noqa: BLE001 - retain all seven source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, _figures, tables, _claims in (
+        _MAXELL_CEMENTED_WIDE_ANGLE_ITEMS
+    ):
+        if number <= 4:
+            surface_table, asphere_table = tables
+            focal_length = profile["system_values"]["Entire system focal length f"][
+                number - 1
+            ]
+            f_number = profile["system_values"]["F Number"][number - 1]
+            full_fov = profile["system_values"]["Whole angle of view"][number - 1]
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_MAXELL_CEMENTED_MISSING_METADATA_REASON,
+                detail=(
+                    f"Family 89536570 Example {number} TABLES {surface_table}/"
+                    f"{asphere_table} publish S1-S18, S7 stop, eight complete "
+                    "K/A4-A16 aspheres, lens/filter/cover nd-vd rows, and TABLE 9 "
+                    f"direct f={focal_length:g} mm, F/{f_number:g}, whole field "
+                    f"{full_fov:g} degrees at 550 nm. Paragraph 65 and S12-S13 "
+                    "directly establish a 0.020 mm adhesive layer between L5 and "
+                    "L6, but the official source publishes neither that layer's "
+                    "refractive index/dispersion nor a direct absolute image height. "
+                    "The adhesive is not replaced by air, image height is not "
+                    "derived from focal length/field, and no family member is borrowed"
+                ),
+            )
+        elif number == 5:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_MAXELL_CEMENTED_CAMERA_WRAPPER_REASON,
+                detail=(
+                    "paragraph 52, paragraph 96 and independent claim 12 place the "
+                    "four already enumerated imaging-lens examples with a capturing "
+                    "element; they publish no fifth ordered optical prescription"
+                ),
+            )
+        elif number == 6:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_MAXELL_CEMENTED_IN_VEHICLE_WRAPPER_REASON,
+                detail=(
+                    "paragraphs 97-104, FIGS. 9-10 and independent claim 13 add "
+                    "capture, controller, memory and information-processing "
+                    "architecture around the above camera module; they publish no "
+                    "additional ordered optical prescription"
+                ),
+            )
+        else:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_MAXELL_CEMENTED_VEHICLE_WRAPPER_REASON,
+                detail=(
+                    "FIG. 9, paragraphs 97-98 and independent claim 14 place the "
+                    "above in-vehicle system and an output apparatus on a vehicle; "
+                    "they publish no additional ordered optical prescription"
+                ),
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=error,
+            )
+        )
+    return attempts
 
 
 def _fujifilm_surface_marker(token: str) -> tuple[int, bool, bool] | None:

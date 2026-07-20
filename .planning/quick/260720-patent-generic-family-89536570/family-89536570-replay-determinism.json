@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "family_id": "89536570",
+  "root_id": "US-20260029620",
+  "publication_id": "US-20260029620-A1",
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260029620/attempt-0002/result.json",
+      "bytes": 7933,
+      "file_sha256": "5f4920ec650da2d22603d7bbb931da8cc945f5135c0dd84079bf19af02243a69",
+      "result_attempt": 2,
+      "semantic_sha256": "26a53a80faa621cfb03e7f889e3363f69f500409dd3e0d8817ad9101ccc95bee"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260029620/attempt-0003/result.json",
+      "bytes": 7933,
+      "file_sha256": "1320571fe315e2a1d434b205b97b5c33211d0c78f2d103a1bdd567bdeab51802",
+      "result_attempt": 3,
+      "semantic_sha256": "26a53a80faa621cfb03e7f889e3363f69f500409dd3e0d8817ad9101ccc95bee"
+    }
+  ],
+  "semantic_sha256": "26a53a80faa621cfb03e7f889e3363f69f500409dd3e0d8817ad9101ccc95bee",
+  "semantic_equal": true,
+  "result_normalization": {
+    "removed_fields": [
+      "result_attempt"
+    ],
+    "outcome_fields_removed": [],
+    "request_or_response_fields_removed": []
+  },
+  "final_state": {
+    "result_attempt": 3,
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "item_state_counts": {
+      "terminal": 7
+    },
+    "terminal_status_counts": {
+      "confirmed_no_prescription": 3,
+      "metadata_unpublished": 4
+    },
+    "conversion_requests": 0,
+    "conversion_attempts": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0
+  },
+  "strict_replay": {
+    "cohort_roots": 619,
+    "roots_with_results": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 29,
+      "mixed_nonterminal": 155,
+      "parser_review_required": 244,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 191
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 609,
+      "parser_review_required": 1357,
+      "terminal": 1603
+    },
+    "terminal_status_counts": {
+      "confirmed_no_prescription": 574,
+      "duplicate": 0,
+      "externally_blocked": 0,
+      "fulltext_unavailable": 0,
+      "intaken": 0,
+      "metadata_unpublished": 283,
+      "parser_family_missing": 0,
+      "quality_rejected": 0,
+      "trace_failed": 631,
+      "trace_timeout": 115
+    },
+    "result_set_sha256": "4c2f70bdfa72844b6dec9d93353823ea4c0bc8597cb437d70a05d9596eaeb756"
+  },
+  "worker_outputs_absent": true,
+  "codev_calls": 0
+}
