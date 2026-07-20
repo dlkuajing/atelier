@@ -23,6 +23,16 @@ data/patent-conversion-attempts/local-replay/US-20260063874-A1-*/**/*.log -text 
 .planning/quick/260720-patent-generic-family-63252479/*.md text eol=lf
 .planning/quick/260720-patent-generic-family-63252479/source-review/*.json text eol=lf
 data/patent-ledger/replay/local-uncovered/results/US-20250284086/**/result.json text eol=lf
+.planning/quick/260720-patent-generic-family-66892676/*.json text eol=lf
+.planning/quick/260720-patent-generic-family-66892676/*.md text eol=lf
+.planning/quick/260720-patent-generic-family-66892676/source-review/*.json text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-11340422/**/result.json text eol=lf
+data/patent-conversion-attempts/local-replay/US-11340422-B2-*/**/*.json text eol=lf
+data/patent-conversion-attempts/local-replay/US-11340422-B2-*/**/*.log -text -diff
+data/patent-conversion-attempts/local-replay/US-11340422-B2-*/**/*.zmx -text -diff
+data/zmx-staging/patent-local-replay/US-11340422-B2-*.zmx -text -diff
+.planning/quick/260720-patent-generic-family-71123577/*.json text eol=lf
+.planning/quick/260720-patent-generic-family-71123577/*.md text eol=lf
 .planning/quick/**/*.png filter=lfs diff=lfs merge=lfs -text
 .planning/quick/**/*.pdf filter=lfs diff=lfs merge=lfs -text
 .planning/quick/**/*.tif filter=lfs diff=lfs merge=lfs -text

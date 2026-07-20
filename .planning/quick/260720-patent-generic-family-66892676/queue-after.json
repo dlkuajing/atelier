@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260720-patent-generic-family-66892676/generic-residual-after-2.json",
+  "result_set_sha256": "9795bb868624b08ba6eaf0c566ee012b0146def6b07f027c7cd7ce65094f04c6",
+  "generic_residual_roots": 55,
+  "generic_residual_items": 55,
+  "next_exact_group": {
+    "family_id": "71123577",
+    "root_ids": [
+      "US-11137579"
+    ],
+    "publication_ids": [
+      "US-11137579-B2"
+    ],
+    "application_number": "16/675251",
+    "title": "Camera optical lens comprising seven lenses of +--++--, ++-+++- or ++--++- refractive powers",
+    "first_inventor": "Zhao; Xiaonan et al.",
+    "applicant": "AAC Optics Solutions Pte. Ltd.",
+    "assignee": "AAC Optics Solutions Pte. Ltd.",
+    "layout_signature": "920f3e7c460ca677111ad215558e5185a95b5fca222c4a147cccc08d45c12533",
+    "layout_signature_count": 1,
+    "table_count": 13,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 33,
+      "example_anchor": 0,
+      "f_number": 5,
+      "full_field": 6,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/4be2295462a55907/US-11137579-B2.html",
+      "sha256": "4be2295462a5590711d3b293a93b928c16e2ca0ec4085b9555dbe63aa71bdd7c"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

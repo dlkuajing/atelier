@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "family_id": "66892676",
+  "root_id": "US-11340422",
+  "publication_id": "US-11340422-B2",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/b03d59be4ac55485/US-11340422-B2.html",
+    "bytes": 57675,
+    "sha256": "b03d59be4ac5548574734b28cdc7c4540b970990b5068084e486fc4ef556d0de",
+    "characters": 55696,
+    "normalized_characters": 41754,
+    "flattened_tables": 13,
+    "inline_formula_pairs": 41
+  },
+  "official_pdf_fetches": [
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/e70d324db1cd1c32/US-11340422-B2.pdf",
+      "bytes": 929507,
+      "sha256": "e70d324db1cd1c320da94147dd77c63202e65c7d636112f7485eb673eac86bfa",
+      "page_count": 18,
+      "single_raster_pages": 18,
+      "text_layer_characters": 0
+    },
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/3739627946974e5c/US-11340422-B2.pdf",
+      "bytes": 929507,
+      "sha256": "3739627946974e5c9c6a54f57b95616a1461be88c1337c1816692a34a40249ad",
+      "page_count": 18,
+      "single_raster_pages": 18,
+      "text_layer_characters": 0
+    }
+  ],
+  "decoded_wrapper_comparison": {
+    "container_bytes_equal": true,
+    "container_sha256_equal": false,
+    "decoded_page_records_equal": true,
+    "page_record_set_sha256": "244e6ec824a079f6f8eed3d2bdfc46a47342dc2d528add93da5db0bfcb08d5a9",
+    "raster_hash_sequence_sha256": "4fac59bde1a5564927642f25a951c8419e5978329d7ae4f68b9f307e67bc53a4"
+  },
+  "google_family_wrapper": {
+    "path": ".planning/quick/260720-patent-generic-family-66892676/source-review/US-11340422-B2-google.html",
+    "bytes": 295060,
+    "sha256": "425ce1fa4973a8be30848eceed240cb2990b93621dfaaac7382ff277bc2a4e2c"
+  },
+  "lineage": {
+    "application_number": "16/677665",
+    "prior_publication": "US-20200209530-A1",
+    "printed_foreign_priority_application": "CN 20181161443.8",
+    "priority_date": "2018-12-27",
+    "google_family_id": "66892676",
+    "google_us_application_count": 1,
+    "google_representative_grants": [
+      "US-11340422-B2",
+      "JP-6778469-B2",
+      "CN-109856763-B"
+    ],
+    "google_alternate_cn_identifiers": [
+      "CN201811614438.3",
+      "CN201811614438.3A"
+    ],
+    "identifier_discrepancy_preserved": true
+  },
+  "source_policy": {
+    "official_html_is_numeric_authority": true,
+    "official_pdf_used_for_layout_only": true,
+    "original_rasters_only": true,
+    "source_value_repair_permitted": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "drawing_measurement_permitted": false,
+    "raster_numeric_transcription_used": false,
+    "image_enhancement_used": false
+  }
+}

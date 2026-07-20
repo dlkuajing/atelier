@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "family_id": "66892676",
+  "root_id": "US-11340422",
+  "publication_id": "US-11340422-B2",
+  "application_number": "16/677665",
+  "title": "Camera optical lens",
+  "inventors": [
+    "Oinuma; Kenji",
+    "Zhang; Lei",
+    "Wang; Yanmei",
+    "Cui; Yuanshan"
+  ],
+  "applicant": "AAC Optics Solutions Pte. Ltd.",
+  "assignee": "AAC Optics Solutions Pte. Ltd.",
+  "filed": "2019-11-08",
+  "patent_date": "2022-05-24",
+  "items": [
+    {
+      "item_number": 1,
+      "item_id": "US-11340422-B2:e1",
+      "embodiment": "AAC Oinuma six-lens camera optical lens embodiment 1",
+      "surface_table": 1,
+      "asphere_table": 2,
+      "inflexion_table": 3,
+      "arrest_table": 4,
+      "published_surface_rows": 15,
+      "modeled_surfaces": 16,
+      "asphere_surfaces": 12,
+      "asphere_numeric_cells": 96,
+      "system_metadata": {
+        "focal_length_mm": 3.245,
+        "f_number": 2.0,
+        "published_full_fov_deg": 89.76,
+        "modeled_hfov_deg": 44.88,
+        "entrance_pupil_diameter_mm": 1.6225,
+        "image_height_1_0h_mm": 3.284,
+        "reference_wavelength_um": 0.5876
+      },
+      "published_stop_distance_mm": -0.1,
+      "published_d1_through_d14_sum_mm": 4.5,
+      "lens_materials": [
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic"
+      ],
+      "filter_material": "Filter",
+      "prescription_fingerprint": "5f955ff1b3f94ac8",
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "conversion_request_sha256": "a61a30a379e107bdeebc86953acd8f2806e85ac23bd890fffc334e7c50b49ad1",
+      "receipt": {
+        "path": "data/patent-conversion-attempts/local-replay/US-11340422-B2-AAC-Oinuma-six-lens-camera-optical-lens-embodiment-1-a61a30a379e107bd/attempt-0002/receipt.json",
+        "bytes": 3145,
+        "sha256": "6cd965bfc442c4f0e243dc86c755152fcd25199523db1c1c3a6c919bb41a4cae"
+      },
+      "staging_zmx": {
+        "path": "data/zmx-staging/patent-local-replay/US-11340422-B2-e1.zmx",
+        "bytes": 6887,
+        "sha256": "f0fbfab29e933cdc68ee6216050ad0b8b1b1b1402b424f78ad252d8906bbd483"
+      }
+    },
+    {
+      "item_number": 2,
+      "item_id": "US-11340422-B2:e2",
+      "embodiment": "AAC Oinuma six-lens camera optical lens embodiment 2",
+      "surface_table": 5,
+      "asphere_table": 6,
+      "inflexion_table": 7,
+      "arrest_table": 8,
+      "published_surface_rows": 15,
+      "modeled_surfaces": 16,
+      "asphere_surfaces": 12,
+      "asphere_numeric_cells": 96,
+      "system_metadata": {
+        "focal_length_mm": 3.236,
+        "f_number": 2.0,
+        "published_full_fov_deg": 90.13,
+        "modeled_hfov_deg": 45.065,
+        "entrance_pupil_diameter_mm": 1.6181,
+        "image_height_1_0h_mm": 3.284,
+        "reference_wavelength_um": 0.5876
+      },
+      "published_stop_distance_mm": -0.1,
+      "published_d1_through_d14_sum_mm": 4.499,
+      "lens_materials": [
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic"
+      ],
+      "filter_material": "Filter",
+      "prescription_fingerprint": "98583947dc14f6da",
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "conversion_request_sha256": "82e607072517bce9243d79105d0a7ddb7eaec135689afa2ed7281bb45a8fc00c",
+      "receipt": {
+        "path": "data/patent-conversion-attempts/local-replay/US-11340422-B2-AAC-Oinuma-six-lens-camera-optical-lens-embodiment-2-82e607072517bce9/attempt-0002/receipt.json",
+        "bytes": 3147,
+        "sha256": "a03f2aa649fb654375b915644b3960607b785da9c4b655e26cfdff252c461a5c"
+      },
+      "staging_zmx": {
+        "path": "data/zmx-staging/patent-local-replay/US-11340422-B2-e2.zmx",
+        "bytes": 6883,
+        "sha256": "cd0ec60c3b69ed30700bd461f52fb190496e4d52632794769a11a7d89911df6d"
+      }
+    },
+    {
+      "item_number": 3,
+      "item_id": "US-11340422-B2:e3",
+      "embodiment": "AAC Oinuma six-lens camera optical lens embodiment 3",
+      "surface_table": 9,
+      "asphere_table": 10,
+      "inflexion_table": 11,
+      "arrest_table": 12,
+      "published_surface_rows": 15,
+      "modeled_surfaces": 16,
+      "asphere_surfaces": 12,
+      "asphere_numeric_cells": 96,
+      "system_metadata": {
+        "focal_length_mm": 3.157,
+        "f_number": 2.1,
+        "published_full_fov_deg": 91.28,
+        "modeled_hfov_deg": 45.64,
+        "entrance_pupil_diameter_mm": 1.5035,
+        "image_height_1_0h_mm": 3.284,
+        "reference_wavelength_um": 0.5876
+      },
+      "published_stop_distance_mm": -0.05,
+      "published_d1_through_d14_sum_mm": 4.497,
+      "lens_materials": [
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic",
+        "Plastic"
+      ],
+      "filter_material": "Filter",
+      "prescription_fingerprint": "a74a7fa456067c0c",
+      "ledger_state": "converted_pending_intake",
+      "reason_code": "converted_pending_intake.process_isolated_zmx_ready",
+      "conversion_request_sha256": "1f32c50f4831696371d26d1903a031f4e210cc7dd483c1e633c2b03e09217b47",
+      "receipt": {
+        "path": "data/patent-conversion-attempts/local-replay/US-11340422-B2-AAC-Oinuma-six-lens-camera-optical-lens-embodiment-3-1f32c50f48316963/attempt-0002/receipt.json",
+        "bytes": 3143,
+        "sha256": "8dc829979952048f91f7a037c500495aca063e57e137ecd374430b448d595e16"
+      },
+      "staging_zmx": {
+        "path": "data/zmx-staging/patent-local-replay/US-11340422-B2-e3.zmx",
+        "bytes": 6877,
+        "sha256": "0055e31b4c77bd1f89913354c23ca16d5b71e9345e45d33cb8316d3a2fd5f4b5"
+      }
+    }
+  ],
+  "shared_summary_table": {
+    "f": [
+      3.245,
+      3.236,
+      3.157
+    ],
+    "f1": [
+      23.922,
+      20.776,
+      17.366
+    ],
+    "f2": [
+      5.505,
+      5.663,
+      5.999
+    ],
+    "f3": [
+      131.102,
+      130.587,
+      150.384
+    ],
+    "f4": [
+      5.957,
+      6.358,
+      5.857
+    ],
+    "f5": [
+      -4.168,
+      -4.178,
+      -4.037
+    ],
+    "f6": [
+      5.755,
+      5.508,
+      5.304
+    ],
+    "f12": [
+      4.614,
+      4.555,
+      4.537
+    ],
+    "FNO": [
+      2.0,
+      2.0,
+      2.1
+    ],
+    "f1/f": [
+      7.37,
+      6.42,
+      5.5
+    ],
+    "R1/d1": [
+      9.07,
+      11.24,
+      14.21
+    ]
+  },
+  "source_conflicts": [
+    {
+      "scope": "claims 5 and 7",
+      "printed_claim_text": [
+        "R3/R4 are labeled third/fourth-lens surfaces while d3 remains second-lens thickness",
+        "R5/R6 are labeled fifth/sixth-lens surfaces while d5 remains third-lens thickness"
+      ],
+      "prescription_authority": "ordered surface tables 1/5/9 plus detailed six-lens sequence",
+      "repaired": false
+    },
+    {
+      "scope": "TABLE 2/6/10 header",
+      "printed_token": "Asphencal",
+      "normalized_or_repaired": false
+    },
+    {
+      "scope": "CN priority identifier",
+      "official_b2_printed": "CN 20181161443.8",
+      "google_alternates": [
+        "CN201811614438.3",
+        "CN201811614438.3A"
+      ],
+      "reconciled_by_mutation": false
+    }
+  ],
+  "modeling_conventions": {
+    "published_full_fov_to_hfov": "divide by two",
+    "reference_wavelength_um": 0.5876,
+    "reference_wavelength_basis": "d-line representation convention",
+    "ttl_derived_or_claim_bound_used_as_exact": false,
+    "negative_stop_distances_preserved": true
+  },
+  "formal_outputs": {
+    "worker_requests": 3,
+    "worker_receipts": 3,
+    "prescription_fingerprints": 3,
+    "candidate_zmx": 3,
+    "staging_zmx": 3,
+    "formal_intake": 0,
+    "codev_calls": 0
+  },
+  "unmapped_source_items": 0
+}

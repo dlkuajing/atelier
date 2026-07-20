@@ -474,6 +474,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_aac_oinuma_six_lens_exact_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_encapsulated_optical_camera_attempts(
         raw_text,
         patent_id=patent_id,
@@ -5476,6 +5482,174 @@ _AAC_TERAOKA_SIX_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
                 "f060dc61e76e280170edc4d442fa125e4a5211bf2f88be40afd2c6293a6ed774",
                 "024cb1befecaab7694cbb393df12df7cddf6ec32f0b102a5e88bb2b27e2f03be",
             ),
+        },
+    },
+}
+
+_AAC_OINUMA_SIX_LENS_EXACT_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Camera\s+optical\s+lens\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_AAC_OINUMA_SIX_LENS_EXACT_FIGURES = tuple(range(1, 13))
+_AAC_OINUMA_SIX_LENS_EXACT_TABLE_BINDINGS = ((1, 2), (5, 6), (9, 10))
+_AAC_OINUMA_SIX_LENS_EXACT_SYSTEM_METADATA = (
+    (3.245, 2.00, 89.76, 1.6225, 3.284),
+    (3.236, 2.00, 90.13, 1.6181, 3.284),
+    (3.157, 2.10, 91.28, 1.5035, 3.284),
+)
+_AAC_OINUMA_SIX_LENS_SURFACE_DISTANCE_SUMS_MM = (4.500, 4.499, 4.497)
+_AAC_OINUMA_SIX_LENS_STOP_DISTANCES_MM = (-0.100, -0.100, -0.050)
+_AAC_OINUMA_SIX_LENS_PHRASE_COUNTS = {
+    "the entrance pupil diameter of the camera optical lens is": 3,
+    "The image height of 1.0H is": 3,
+    "The FOV (field of view) is": 3,
+    (
+        "The first lens L1, the second lens L2, the third lens L3, the fourth "
+        "lens L4, the fifth lens L5 and the sixth lens L6 are all made of a "
+        "plastic material."
+    ): 1,
+    "R3 denotes a curvature radius of the object side surface of the third lens": 1,
+    "R4 denotes a curvature radius of the image side surface of the fourth lens": 1,
+    "R5 denotes a curvature radius of the object side surface of the fifth lens": 1,
+    "R6 denotes a curvature radius of the image side surface of the sixth lens": 1,
+}
+_AAC_OINUMA_SIX_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11340422-B2": {
+        "family_id": "66892676",
+        "application_number": "16/677665",
+        "raw_document_sha256": (
+            "b03d59be4ac5548574734b28cdc7c4540b970990b5068084e486fc4ef556d0de"
+        ),
+        "normalized_text_sha256": (
+            "87e018810776f87b6ccf45a4449b532cc2e4641b37df82f27d8a0b7359f50145"
+        ),
+        "identity_markers": {
+            "Family ID: 66892676": 1,
+            "Appl. No.: 16/677665": 1,
+            "Oinuma; Kenji": 2,
+            "Zhang; Lei": 1,
+            "Wang; Yanmei": 1,
+            "Cui; Yuanshan": 1,
+            "AAC Optics Solutions Pte. Ltd.": 2,
+            "US 20200209530 A1": 1,
+            "CN 20181161443.8": 1,
+        },
+        "section_markers": {
+            "background": "Background/Summary TECHNICAL FIELD (1)",
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+            "detailed": "DESCRIPTION OF EMBODIMENTS (14)",
+            "claims": "Claims 1. A camera optical lens,",
+        },
+        "section_sha256": {
+            "background": (
+                "be9272d04802ed90867bf58a533bc9c433dfef0930a2779820c33ef362f99dc0"
+            ),
+            "brief": (
+                "3d9a72a4323bd5e5b897d52bbf1e74efd13971ff59fee2c7bb519887f93b301f"
+            ),
+            "detailed": (
+                "d7ffddc91c7f890c4f41d964338b958cb5274209a5e2209434dc3bc15fc0a537"
+            ),
+            "claims": (
+                "0c9def5fab78f3ef5321fff131baf0713b8e7b01cb7d198b7489bf19c93e47d1"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 2): "e90bb9a0f0f855d6e95cc7329311ead332505b4720bbee9940f1d8b5ca9b1c77",
+            (1, 13): "cfa9fc082ce3fa97753f23ba0203b9ab0fcc2054a30963a8cb9f56be57b2ce00",
+            (14, 50): "de0ef04dc16fc1fd01050f9fdbdf808bfaa0f125d5e6a692f0744613b151513f",
+            (51, 113): "983c7a2009625c5b2be4f67b418d4b95e4b644b15e8d0d64d0bd92dcf1877efa",
+            (114, 124): "c6bef9be418636f571e65b97e467a6b8ba45fda95563bc1efe7814642a67094a",
+            (125, 136): "df5e5fd4cbe58482279799c687b8b49a5e04790a2dbcb28992e018457b34f5d1",
+            (137, 137): "008dfa07ad2777d305b3fcdb730ce57abf829aaa9e9a010bdaf3851f60a8664b",
+        },
+        "table_block_sha256": (
+            "291439579cf5a4dda21ba91fd86d041cff61bed1160e00150bcc70d0909d0d45",
+            "fffc32f76937845334b48100a832128792c80c380487d558fbdd59672b93d319",
+            "5cfc2c35f730cb8403a3ca2e5d55557c5afede29acdadd5ba3b52d3a5c95b37c",
+            "7f78245342b016fab534bb2690a444474525c99881472d08feebfbd4c3dbef08",
+            "0eded9e6891fa9e11c9634bb83cde1f4ef6cacf5836f641f1cc3e0908724ffb6",
+            "28c23ac297b7d66b80744fd18701d1048884ef881cb5b59dc324fa73094ca30d",
+            "36c9f8dc96da7f796ab6b2d2c750854ebfc8b544a6189ea2980bebb01abf042f",
+            "46b2a1849e8fc22b42a9462c22829edb2f5478c2439497339f71c768f15bdcb2",
+            "f3066439884e6dec654c6e1f049b3171d13591ddbff17f6ed1955c21291dd1df",
+            "af4fe0f1a80cb2e0a381ff1d8f15754ce84c8361499a04e4fc2efee2ac6aa52c",
+            "0a547b4b87e91a8ecc96c6533842a9af5c0d5ef4b60a3f580f623fc4a42e77ea",
+            "d033da81c319269dc1aa6996e98d7fc776e02d41b4941b34ebfea0c11daa5eef",
+            "ad7f6274f68cd3335e11f14fdfff97825300c77164f136335f0ada03739de4d3",
+        ),
+        "formal_table_sha256": (
+            "a1eaca3a4e15d658548aee7e9f04d3eef951b51e71c801221aac1dc12bb4ce20",
+            "705d49c7378400d0c3199e07a56cd208f17d4eea40e1478f76bbf39a8e491420",
+            "e4080c7b6a79f7f921dc2c578665b33889c1cf6e7ae32fc964667b6c078cb80c",
+            "790b39ca3caf4958cfda025a8c3ba0086291148bb084f51af8cffcff7262bc41",
+            "24cae98da59e102e6cae9e14458e015b43dc90426a6a5d3702d665b6cf706c0e",
+            "495367019b2225641cc9e55d7c9ce5e92637be33bceb7ccfe02c86f2ad7bcaee",
+            "d442d50c2511594c22349b9d2bcd159372251e4abcee3ba2f5eb0b7107bc5f4f",
+            "ab47d6ffa6e7100034cb841706ab3fb9b9b17622e111bdbc7dd00071c2b3d6e4",
+            "a7d2d75dd3342a7e5ff76bfe25062e8bc11e31aa2ddf1776d3f6035ab49ee7cc",
+            "a646d3bba4ae73e576de55be13984362291a61ce61f76361679d9841f0a42e5f",
+            "46fee115b8405b7ca12608f571aded60df6cffe8207c5753f5187d71fe309e6e",
+            "3c8ab7488ab03b7c1679f1048d63f5eb63053428126bc83e8ef8e3e0ea3daa8e",
+            "12bb264f16390eebca17ea6815da915a4f38dc4a6529a9ab9cd0660481163b45",
+        ),
+        "official_pdf": {
+            "containers": (
+                {
+                    "path": (
+                        "data/patent-lake/uspto-ppubs-pdf/e70d324db1cd1c32/"
+                        "US-11340422-B2.pdf"
+                    ),
+                    "bytes": 929507,
+                    "sha256": (
+                        "e70d324db1cd1c320da94147dd77c63202e65c7d636112f7485eb673eac86bfa"
+                    ),
+                },
+                {
+                    "path": (
+                        "data/patent-lake/uspto-ppubs-pdf/3739627946974e5c/"
+                        "US-11340422-B2.pdf"
+                    ),
+                    "bytes": 929507,
+                    "sha256": (
+                        "3739627946974e5c9c6a54f57b95616a1461be88c1337c1816692a34a40249ad"
+                    ),
+                },
+            ),
+            "bytes": 929507,
+            "page_count": 18,
+            "single_raster_page_count": 18,
+            "text_layer_characters": 0,
+            "raster_dimensions": (2560, 3300),
+            "page_record_set_sha256": (
+                "244e6ec824a079f6f8eed3d2bdfc46a47342dc2d528add93da5db0bfcb08d5a9"
+            ),
+            "raster_hash_sequence_sha256": (
+                "4fac59bde1a5564927642f25a951c8419e5978329d7ae4f68b9f307e67bc53a4"
+            ),
+            "page_raster_sha256": (
+                "5348ffb6235fa14889d3cc3fcdf5a9470c0b22c2d32f690f340bd63489199897",
+                "b0b5370ac276d6814d745c7cf43da2549095c25ddbdb60b115f4e8cdf00800db",
+                "52b1cd14a631026063debb985587b91f6a1f4d7533410e9f5f71651a3ceb9ea7",
+                "94d3e77ab4686ae24febab388e2b601adbc6ba5f69c79588b74b442b3deb179f",
+                "c9701cfbb47118f63ce652e49d5952a086be033316bea2876fd142f8d6e0b86d",
+                "05ce45865437f07204500761ae237f0ddf14cb120e2250c9d391508b15d29ccb",
+                "5dca594a88c3474a6032e3948a80a0ed568d604792778db0f0fd44785cb967d8",
+                "a3e5ee5e58d5d24a66149e7bb95884fba78437008f82a71abceb2a06b126d15a",
+                "f9b22a5ae63a1532e146f4cc41472fc023c0097624fb9f43b30025fcc54375a2",
+                "8ca9112f2fae6e7278c37c9b757064935eb4a9ce6eaac9d2e30f2e66abfac482",
+                "27958480a109db535e3190eb5adbd08005052dfa8a57cfaaa7424628a36408be",
+                "587c5ac955a06107c88ca51d36c3a10def2056ac69ae6f5ccbb222ca61f0edb2",
+                "cd059398897349e3b54424a52bad38763d77446761a0848649fa8163d90ceb2c",
+                "63494286bb4f4189deca35ad3c1bb6ce7f66c2a735f1cfa2b8fee3c25a6d48ca",
+                "894f7a1eb1c42899b78ece1335adcb2b49e2221f089010461738128cd3709eb1",
+                "5a8740d56668017d37a16d17e60325df7ecf068a927fefea9de58aa70a2ceef7",
+                "c98b7c8b053be0282afd5ea8244355384273d4f24fe5ed40200755fe90e01741",
+                "dcb924c7823b047a806995cf9b83ba86d34dc551f0cd1c36f2fcd88fe8c738d8",
+            ),
+            "drawing_page_numbers": tuple(range(2, 11)),
+            "table_page_numbers": (13, 14, 15, 16),
+            "claim_page_numbers": (16, 17, 18),
         },
     },
 }
@@ -38685,6 +38859,526 @@ def _parse_aac_teraoka_six_lens_exact_attempts(
             _validate_prescription_materials(prescription)
             prescriptions.append(prescription)
     except Exception as exc:  # noqa: BLE001 - retain all three embodiments
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=index,
+            embodiment=prescription.embodiment,
+            prescription=prescription,
+        )
+        for index, prescription in enumerate(prescriptions, start=1)
+    ]
+
+
+def _parse_aac_oinuma_six_lens_surface_table(
+    table: str,
+    *,
+    table_number: int,
+) -> list[PatentSurface]:
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"R\s+d\s+nd\s+v\s+d\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(f"AAC Oinuma six-lens TABLE {table_number} surface header changed")
+    body = table[header.end() :]
+    position = 0
+
+    def take(pattern: str, *, context: str) -> re.Match[str]:
+        nonlocal position
+        match = re.match(pattern, body[position:], flags=re.IGNORECASE)
+        if match is None:
+            raise PatentParseError(
+                f"AAC Oinuma six-lens TABLE {table_number} {context} changed near "
+                f"{body[position : position + 80]!r}"
+            )
+        position += match.end()
+        return match
+
+    stop = take(
+        rf"S1\s+Infinity\s+d0\s*=\s*(?P<thickness>{NUMBER_PATTERN})\s+",
+        context="aperture row",
+    )
+    surfaces = [
+        PatentSurface(
+            index=1,
+            label="Stop",
+            radius_mm=math.inf,
+            thickness_mm=_parse_number(stop.group("thickness")),
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    ]
+
+    for source_surface in range(1, 15):
+        row = take(
+            rf"\s*R{source_surface}\s+(?P<radius>Infinity|{NUMBER_PATTERN})\s+"
+            rf"d{source_surface}\s*=\s*(?P<thickness>{NUMBER_PATTERN})",
+            context=f"R{source_surface} radius/thickness row",
+        )
+        radius = _distance_value(
+            row.group("radius"),
+            field_name=f"AAC Oinuma TABLE {table_number} R{source_surface} radius",
+        )
+        thickness = _parse_number(row.group("thickness"))
+        material = None
+        nd = vd = None
+        if source_surface % 2 == 1:
+            material_marker = "g" if source_surface == 13 else str((source_surface + 1) // 2)
+            material_row = take(
+                rf"\s+nd{material_marker}\s+(?P<nd>{NUMBER_PATTERN})\s+"
+                rf"v\s+{material_marker}\s+(?P<vd>{NUMBER_PATTERN})",
+                context=f"R{source_surface} material row",
+            )
+            nd = _parse_number(material_row.group("nd"))
+            vd = _parse_number(material_row.group("vd"))
+            material = "Filter" if source_surface == 13 else "Plastic"
+            _validate_material_indices(
+                surface_index=source_surface + 1,
+                nd=nd,
+                vd=vd,
+            )
+
+        if source_surface <= 12:
+            lens_number = (source_surface + 1) // 2
+            side = 1 if source_surface % 2 else 2
+            label = f"L{lens_number} S{side}"
+        else:
+            label = f"GF S{source_surface - 12}"
+        surfaces.append(
+            PatentSurface(
+                index=source_surface + 1,
+                label=label,
+                radius_mm=radius,
+                thickness_mm=thickness,
+                material=material,
+                nd=nd,
+                vd=vd,
+                surface_type=None,
+            )
+        )
+
+    if body[position:].strip():
+        raise PatentParseError(
+            f"AAC Oinuma six-lens TABLE {table_number} has trailing tokens: "
+            f"{body[position : position + 120]!r}"
+        )
+    surfaces.append(
+        PatentSurface(
+            index=16,
+            label="Image",
+            radius_mm=math.inf,
+            thickness_mm=0.0,
+            material=None,
+            nd=None,
+            vd=None,
+            surface_type=None,
+        )
+    )
+    expected_labels = [
+        "Stop",
+        *(f"L{lens} S{side}" for lens in range(1, 7) for side in (1, 2)),
+        "GF S1",
+        "GF S2",
+        "Image",
+    ]
+    if [surface.label for surface in surfaces] != expected_labels:
+        raise PatentParseError(f"AAC Oinuma six-lens TABLE {table_number} surface order changed")
+    return surfaces
+
+
+def _parse_aac_oinuma_six_lens_asphere_table(
+    table: str,
+    *,
+    table_number: int,
+) -> dict[int, dict[str, float]]:
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"Conic\s+coefficient\s+Asphencal\s+surface\s+coefficients\s+"
+        r"k\s+A4\s+A6\s+A8\s+A10\s+A12\s+A14\s+A16\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(f"AAC Oinuma six-lens TABLE {table_number} asphere header changed")
+    tokens = table[header.end() :].split()
+    position = 0
+    labels = ("K", "A4", "A6", "A8", "A10", "A12", "A14", "A16")
+    coefficients: dict[int, dict[str, float]] = {}
+    for source_surface in range(1, 13):
+        expected_row = f"R{source_surface}"
+        if position >= len(tokens) or tokens[position].upper() != expected_row.upper():
+            observed = tokens[position] if position < len(tokens) else "<eof>"
+            raise PatentParseError(
+                f"AAC Oinuma six-lens TABLE {table_number} expected "
+                f"{expected_row}, found {observed}"
+            )
+        position += 1
+        values = tokens[position : position + len(labels)]
+        if len(values) != len(labels) or any(
+            re.fullmatch(NUMBER_PATTERN, token, flags=re.IGNORECASE) is None for token in values
+        ):
+            raise PatentParseError(
+                f"AAC Oinuma six-lens TABLE {table_number} {expected_row} "
+                "coefficient row is incomplete"
+            )
+        coefficients[source_surface] = {
+            ("K" if label == "K" else ASPHERE_ORDER_TO_CODEV[int(label[1:])]): _parse_number(value)
+            for label, value in zip(labels, values, strict=True)
+        }
+        position += len(labels)
+    if position != len(tokens):
+        raise PatentParseError(
+            f"AAC Oinuma six-lens TABLE {table_number} asphere table has "
+            f"trailing tokens: {tuple(tokens[position:])!r}"
+        )
+    return coefficients
+
+
+def _parse_aac_oinuma_six_lens_summary_table(table: str) -> dict[str, tuple[float, ...]]:
+    header = re.match(
+        r"\ATABLE-US-00013\s+TABLE\s+13\s+Parameters\s+and\s+conditions\s+"
+        r"Embodiment\s+1\s+Embodiment\s+2\s+Embodiment\s+3\s+",
+        table,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError("AAC Oinuma six-lens TABLE 13 header changed")
+
+    tokens = table[header.end() :].split()
+    position = 0
+    rows: dict[str, tuple[float, ...]] = {}
+    for label in ("f", "f1", "f2", "f3", "f4", "f5", "f6", "f12", "FNO", "f1/f", "R1/d1"):
+        if position >= len(tokens) or tokens[position].casefold() != label.casefold():
+            observed = tokens[position] if position < len(tokens) else "<eof>"
+            raise PatentParseError(
+                f"AAC Oinuma six-lens TABLE 13 expected row {label!r}, found {observed!r}"
+            )
+        position += 1
+        values = tokens[position : position + 3]
+        if len(values) != 3 or any(
+            re.fullmatch(NUMBER_PATTERN, token, flags=re.IGNORECASE) is None for token in values
+        ):
+            raise PatentParseError(f"AAC Oinuma six-lens TABLE 13 row {label!r} is incomplete")
+        rows[label] = tuple(_parse_number(value) for value in values)
+        position += 3
+    if position != len(tokens):
+        raise PatentParseError(
+            "AAC Oinuma six-lens TABLE 13 has trailing tokens: "
+            f"{tuple(tokens[position:])!r}"
+        )
+    return rows
+
+
+def _parse_aac_oinuma_six_lens_exact_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the exact three Oinuma/AAC six-lens prescriptions."""
+
+    profile = _AAC_OINUMA_SIX_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    embodiments = tuple(
+        f"AAC Oinuma six-lens camera optical lens embodiment {index}" for index in range(1, 4)
+    )
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for index, embodiment in enumerate(embodiments, start=1)
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"AAC Oinuma six-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"AAC Oinuma six-lens normalized text hash changed for {patent_id}"
+            )
+        if len(_AAC_OINUMA_SIX_LENS_EXACT_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("AAC Oinuma six-lens title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {name: text.index(marker) for name, marker in section_markers.items()}
+        except ValueError as exc:
+            raise PatentParseError("AAC Oinuma six-lens section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("AAC Oinuma six-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(f"AAC Oinuma six-lens {section_name} section changed")
+
+        raw_ranges = (
+            ("background", "<h3>Background/Summary</h3>", "<h3>Description</h3>", 1, 2),
+            ("description", "<h3>Description</h3>", "<h3>Claims</h3>", 1, 137),
+        )
+        for name, start_marker, end_marker, first, last in raw_ranges:
+            try:
+                start = raw_text.index(start_marker)
+                end = raw_text.index(end_marker, start + len(start_marker))
+            except ValueError as exc:
+                raise PatentParseError(f"AAC Oinuma six-lens raw {name} boundary changed") from exc
+            observed = tuple(
+                int(value)
+                for value in re.findall(
+                    r"(?:^|<br\s*/?>)\((\d+)\)",
+                    raw_text[start:end],
+                    flags=re.IGNORECASE,
+                )
+            )
+            if observed != tuple(range(first, last + 1)):
+                raise PatentParseError(f"AAC Oinuma six-lens {name} paragraph denominator changed")
+
+        background_start = raw_text.index("<h3>Background/Summary</h3>")
+        description_start = raw_text.index("<h3>Description</h3>")
+        description_end = raw_text.index("<h3>Claims</h3>", description_start)
+        raw_background = raw_text[background_start:description_start]
+        raw_description = raw_text[description_start:description_end]
+
+        def numbered_paragraphs(fragment: str) -> dict[int, str]:
+            matches = list(
+                re.finditer(r"(?:^|<br\s*/?>)\((\d+)\)", fragment, re.IGNORECASE)
+            )
+            return {
+                int(match.group(1)): normalize_patent_text(
+                    fragment[
+                        match.start() : (
+                            matches[index + 1].start()
+                            if index + 1 < len(matches)
+                            else len(fragment)
+                        )
+                    ]
+                )
+                for index, match in enumerate(matches)
+            }
+
+        background_paragraphs = numbered_paragraphs(raw_background)
+        description_paragraphs = numbered_paragraphs(raw_description)
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            first, last = bounds
+            paragraphs = background_paragraphs if bounds == (1, 2) else description_paragraphs
+            span = " ".join(paragraphs[number] for number in range(first, last + 1))
+            if hashlib.sha256(span.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens paragraph span {first}-{last} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 20)):
+            raise PatentParseError("AAC Oinuma six-lens claim denominator changed")
+        independent_claims = []
+        for index, match in enumerate(claim_matches):
+            end = (
+                claim_matches[index + 1].start()
+                if index + 1 < len(claim_matches)
+                else len(sections["claims"])
+            )
+            claim_text = sections["claims"][match.start() : end]
+            if re.search(r"\bclaim\s+\d+\b", claim_text, re.IGNORECASE) is None:
+                independent_claims.append(int(match.group(1)))
+        if independent_claims != [1]:
+            raise PatentParseError("AAC Oinuma six-lens independent-claim binding changed")
+
+        declared_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"\(\d+\)\s+FIG\.\s*(\d+)\s+(?:is|shows|presents)",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != _AAC_OINUMA_SIX_LENS_EXACT_FIGURES:
+            raise PatentParseError("AAC Oinuma six-lens FIGS. 1-12 changed")
+
+        formula_counts = []
+        for fragment in (raw_description, raw_text[description_end:]):
+            lead = len(
+                re.findall(
+                    r"<\?in-line-formulae\b[^?]*\bend=[\"']lead[\"'][^?]*\?>",
+                    fragment,
+                    re.IGNORECASE,
+                )
+            )
+            tail = len(
+                re.findall(
+                    r"<\?in-line-formulae\b[^?]*\bend=[\"']tail[\"'][^?]*\?>",
+                    fragment,
+                    re.IGNORECASE,
+                )
+            )
+            formula_counts.append((lead, tail))
+        if formula_counts != [(1, 1), (40, 40)]:
+            raise PatentParseError("AAC Oinuma six-lens inline-formula denominator changed")
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 14)):
+            raise PatentParseError("AAC Oinuma six-lens TABLE 1-13 changed")
+        block_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in blocks
+        )
+        if block_digests != profile["table_block_sha256"]:
+            raise PatentParseError("AAC Oinuma six-lens PPUBS table block changed")
+        formal_tables = tuple(_aac_seven_lens_exact_formal_table(block.text) for block in blocks)
+        formal_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest() for table in formal_tables
+        )
+        if formal_digests != profile["formal_table_sha256"]:
+            raise PatentParseError("AAC Oinuma six-lens formal table changed")
+        expected_auxiliary_rows = tuple(
+            (lens, side) for lens in range(1, 7) for side in range(1, 3)
+        )
+        for table_number in (3, 4, 7, 8, 11, 12):
+            observed_rows = tuple(
+                (int(lens), int(side))
+                for lens, side in re.findall(
+                    r"\bP([1-6])R([12])\b",
+                    formal_tables[table_number - 1],
+                    re.IGNORECASE,
+                )
+            )
+            if observed_rows != expected_auxiliary_rows:
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens TABLE {table_number} auxiliary row denominator changed"
+                )
+        for phrase, expected in _AAC_OINUMA_SIX_LENS_PHRASE_COUNTS.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens phrase {phrase!r} occurs {observed}; expected {expected}"
+                )
+        if re.search(r"\bEmbodiment\s+4\b", text, re.IGNORECASE) is not None:
+            raise PatentParseError("AAC Oinuma six-lens source gained a fourth embodiment")
+
+        summary = _parse_aac_oinuma_six_lens_summary_table(formal_tables[12])
+        narrative_rows = tuple(
+            tuple(_parse_number(value) for value in match)
+            for match in re.findall(
+                r"In this embodiment, the entrance pupil diameter of the camera optical lens "
+                rf"is\s+({NUMBER_PATTERN})\s+mm\.\s+The image height of 1\.0H is\s+"
+                rf"({NUMBER_PATTERN})\s+mm\.\s+The FOV \(field of view\) is\s+"
+                rf"({NUMBER_PATTERN})[^.\s]*\.",
+                text,
+                re.IGNORECASE,
+            )
+        )
+        if len(narrative_rows) != 3:
+            raise PatentParseError("AAC Oinuma six-lens narrative system metadata changed")
+        observed_metadata = tuple(
+            (
+                summary["f"][index],
+                summary["FNO"][index],
+                narrative_rows[index][2],
+                narrative_rows[index][0],
+                narrative_rows[index][1],
+            )
+            for index in range(3)
+        )
+        if observed_metadata != _AAC_OINUMA_SIX_LENS_EXACT_SYSTEM_METADATA:
+            raise PatentParseError("AAC Oinuma six-lens direct system metadata changed")
+
+        prescriptions: list[PatentPrescription] = []
+        for embodiment_number, (surface_table, asphere_table) in enumerate(
+            _AAC_OINUMA_SIX_LENS_EXACT_TABLE_BINDINGS,
+            start=1,
+        ):
+            surfaces = _parse_aac_oinuma_six_lens_surface_table(
+                formal_tables[surface_table - 1],
+                table_number=surface_table,
+            )
+            coefficients = _parse_aac_oinuma_six_lens_asphere_table(
+                formal_tables[asphere_table - 1],
+                table_number=asphere_table,
+            )
+            if set(coefficients) != set(range(1, 13)):
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens embodiment {embodiment_number} asphere coverage changed"
+                )
+            for source_surface, values in coefficients.items():
+                surface = surfaces[source_surface]
+                surface.surface_type = "ASP"
+                surface.asphere_coefficients.update(values)
+
+            index = embodiment_number - 1
+            if surfaces[0].thickness_mm != _AAC_OINUMA_SIX_LENS_STOP_DISTANCES_MM[index]:
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens embodiment {embodiment_number} stop distance changed"
+                )
+            distance_sum = sum(surface.thickness_mm or 0.0 for surface in surfaces[1:15])
+            if not math.isclose(
+                distance_sum,
+                _AAC_OINUMA_SIX_LENS_SURFACE_DISTANCE_SUMS_MM[index],
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ):
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens embodiment {embodiment_number} "
+                    "detailed distance sum changed"
+                )
+            if any(surfaces[source_surface].material != "Plastic" for source_surface in (1, 3, 5, 7, 9, 11)):
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens embodiment {embodiment_number} lens material changed"
+                )
+            if surfaces[13].material != "Filter":
+                raise PatentParseError(
+                    f"AAC Oinuma six-lens embodiment {embodiment_number} filter material changed"
+                )
+
+            focal_length, f_number, full_fov, _epd, _image_height = observed_metadata[index]
+            prescription = PatentPrescription(
+                patent_id=patent_id,
+                embodiment=embodiments[index],
+                focal_length_mm=focal_length,
+                f_number=f_number,
+                hfov_deg=full_fov / 2.0,
+                surfaces=surfaces,
+                reference_wavelength_um=0.5876,
+            )
+            _validate_prescription_materials(prescription)
+            prescriptions.append(prescription)
+    except Exception as exc:  # noqa: BLE001 - retain all three disclosed embodiments
         return attempts_for_error(exc)
 
     return [
