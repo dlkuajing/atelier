@@ -1,0 +1,303 @@
+{
+  "schema_version": 1,
+  "family_id": "59685373",
+  "root_id": "US-11236215",
+  "publication_id": "US-11236215-B2",
+  "application_number": "16/104657",
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/d5eee1bd8a6bb6dd/US-11236215-B2.html",
+    "bytes": 230336,
+    "sha256": "d5eee1bd8a6bb6dde3a4f62a4a2fdf6589e89a5071322e9de2487086199ba543",
+    "raw_document_sha256": "d5eee1bd8a6bb6dde3a4f62a4a2fdf6589e89a5071322e9de2487086199ba543",
+    "normalized_text_sha256": "bc0a34c022af57c120d72df5bd8245064fe5658432cfbaa586d67875a499b490",
+    "raw_character_count": 229247,
+    "normalized_character_count": 213519,
+    "section_sha256": {
+      "cross_reference": "51c560b95ae96c32aa8ae337ea1c2968954d4873bb32d81c25250f2967c4b8bc",
+      "background": "94eafef0ccf4814b17cf213ea7437cf8609368bb91a41ab3ebc9fa27224d60cf",
+      "summary": "ab1f2b88f9c076cc9f0aaf7fcdb8f6da12df1b35f6c5397495da04aea5618230",
+      "brief_description_of_drawings": "0a8886add0de3bc61eea364ff87c1edad91677c1c796bbf2cec16b06e169a531",
+      "description_of_preferred_embodiments": "7519ea956f0c5be2bfa0d6ad9c4567b24f7749e42cc653f1d099130755026cc5",
+      "claims": "0114d56285820537ddab84d05105b98d4639c930e546a4a3f540bf746c938e3f"
+    },
+    "raw_section_sha256": {
+      "cross_reference": "111aedbf78eadf544009eca840fcb7c3e12293d4c9f0fca9aa4fbdc2d57fd44f",
+      "background": "eaa366d90ffe85b2af9702b49b757a081e731902074995e45187192176182f1a",
+      "summary": "daad442acc29a6e5f838127052dd35cbfcd7c2bc1ecb0b6beaf915bda40a0edf",
+      "brief_description_of_drawings": "df0a32c6f3dea2d7072775143f2e65e9a7e9078def03cbde51217544f57330e5",
+      "description_of_preferred_embodiments": "207ebbe6318bf5c8eb47bf449a6009f307c0060fb0bb0cb98f3d0cbcafa13414",
+      "claims": "b305eca3f2a57f266ac649b4d2884086f44515fccf5b9eced94f54f33481428e"
+    }
+  },
+  "identity": {
+    "title": "Curable composition, cured film, optical filter, laminate, solid image pickup element, image display device, and infrared sensor",
+    "inventors": [
+      "Sasaki; Daisuke"
+    ],
+    "applicant": "FUJIFILM Corporation",
+    "assignee": "FUJIFILM Corporation",
+    "filed_date": "2018-08-17",
+    "prior_publication_id": "US-20180355149-A1",
+    "priority_application": "JP2016-033748",
+    "priority_date": "2016-02-25",
+    "parent_application": "PCT/JP2017/002801",
+    "parent_filed_date": "2017-01-26"
+  },
+  "denominator": {
+    "b2_pdf_pages": 46,
+    "a1_pdf_pages": 47,
+    "cross_reference_paragraphs": 1,
+    "background_paragraphs": 3,
+    "summary_paragraphs": 60,
+    "brief_drawing_paragraphs": 1,
+    "detailed_description_paragraphs": 516,
+    "source_tables": 13,
+    "material_filter_examples": 33,
+    "comparative_examples": 4,
+    "sensor_assembly_examples": 1,
+    "total_experimental_records": 38,
+    "chemical_structure_tokens": 41,
+    "inline_formula_pairs": 4,
+    "claims": 19,
+    "drawing_sheets": 1,
+    "figure_panels": 1,
+    "terminal_items": 1
+  },
+  "tables": [
+    {
+      "number": 1,
+      "role": "cyanine compound S-1 through S-4 substitutions",
+      "block_sha256": "92ca166b42a6e26ee191351ee6ecbc947a33a31f421900eeff15824eec6531cd",
+      "formal_table_sha256": "ee0bd5850d8c9b738fa55f917ff5964c0ad526dacd9020523c81b64087e499ca"
+    },
+    {
+      "number": 2,
+      "role": "cyanine compound S-5 through S-8 substitutions",
+      "block_sha256": "d2cb08608896603c6a7f02155e488bb3ddc2b5ae520d7f1ae83534d8ae052fe8",
+      "formal_table_sha256": "2691434f977ae35597d94842a0e2a11752ee583d6ef7924917495a863cfd8723"
+    },
+    {
+      "number": 3,
+      "role": "cyanine compound S-9 through S-12 substitutions",
+      "block_sha256": "175258c59dd34805ec21b630ff57d182d84373e31a69ebe11719921ca112bb4f",
+      "formal_table_sha256": "b3b9345362570282493a06e9ddd56afb2c721d69ff9752bf5b615140547ee8fb"
+    },
+    {
+      "number": 4,
+      "role": "cyanine compound S-13 through S-16 substitutions",
+      "block_sha256": "471e811a0a689c5664c625a3a898f1051a950647f2cfd92820bf91afca6eeb29",
+      "formal_table_sha256": "a509627a2096116ae8e2b00fa8e75a8487aa7e43982fc0a2775ab1d606e5da28"
+    },
+    {
+      "number": 5,
+      "role": "cyanine compound S-17 through S-20 substitutions",
+      "block_sha256": "1c5266018338e962d90d09c7bb0385404837e9c0efb19128283010f5fbf3b11c",
+      "formal_table_sha256": "7f15112adb10c3fe49aa5bc4799eeb410c593e8a100263bc0df3ed2ef48b0d2f"
+    },
+    {
+      "number": 6,
+      "role": "cyanine compound S-21 through S-24 substitutions",
+      "block_sha256": "10fc145ccb4e4b504e9daf3f8de8b988b0ef5e1f9268c3c94ac50727328802c0",
+      "formal_table_sha256": "b088b50011f324cacb470792f625e0992665b6c9f215b52098b27afd03a0a5bb"
+    },
+    {
+      "number": 7,
+      "role": "cyanine compound I-1 through I-4 substitutions",
+      "block_sha256": "84458d6d3f79e046690ad0164789610878b6b328f9c7bdc7bb58c1a5932e7087",
+      "formal_table_sha256": "09673fc165485a2f2f84d7de9eb998c3b5d4f9a7f69d6521ccaf6aa0b0222065"
+    },
+    {
+      "number": 8,
+      "role": "cyanine compound I-5 through I-8 substitutions",
+      "block_sha256": "21a6e3336d39aa13157a9458c14eaff8d6eed9a83697e28e3495656ff90d326f",
+      "formal_table_sha256": "a6d2bc54ecab996cd1470090f5b6cf8407bfecaa34f67341e6b7e9117115c0c9"
+    },
+    {
+      "number": 9,
+      "role": "cyanine compound I-9 through I-12 substitutions",
+      "block_sha256": "0728d57e8b6f7a94685e05ffdde67be8a5ee028e2f76db9e804aa99759a36c4b",
+      "formal_table_sha256": "769c8bc3e4d574a2a357ac2bd362ab9ea26a83e6429e0c3a3a1c5684a6e9f369"
+    },
+    {
+      "number": 10,
+      "role": "diimmonium compound D-series substitutions and anions",
+      "block_sha256": "0b22824bcade81602eb642f7adb118eb0fb609a30e6d0dcb06f02630cf028c81",
+      "formal_table_sha256": "400b69e56c76899ec52e0a9021299b4eec98cdea38d9399d14ac9c0e383b7f33"
+    },
+    {
+      "number": 11,
+      "role": "eight visible-light-shielding colorant ratio combinations",
+      "block_sha256": "27142b01967111a13a4df0d447c512bc008e1dadf273172532fa908a3fc7a737",
+      "formal_table_sha256": "87c07e55f64c72cf1c97e71b2aa59421de8fcff716f0460a34a39dc5b2ac980e"
+    },
+    {
+      "number": 12,
+      "role": "Examples 1-31 and Comparative Examples 1-4 compound/additive composition rows",
+      "block_sha256": "7bf13e70edcb09f9e127a14569eddf96a1af59125375059e6f971975c637a2d5",
+      "formal_table_sha256": "0228d13ccd770b072ca4c5fafba0c948b9724a73345dce69c8b998bf90c53c31"
+    },
+    {
+      "number": 13,
+      "role": "Examples 1-33 and Comparative Examples 1-4 heat/surface/transparency evaluation rows",
+      "block_sha256": "849331f35b4d93454b9363068bd2d0c7f829085a2490aece5e0d71af4062259f",
+      "formal_table_sha256": "40a2feb8cf24c4f3d56d59b73457976d7ea7ae06fc952cb3574c36d0fd45dea7"
+    }
+  ],
+  "figure": {
+    "panel": "1",
+    "role": "infrared-sensor layer-stack schematic",
+    "reference_labels": {
+      "110": "solid image pickup element",
+      "111": "near infrared cut filter",
+      "112": "color filter",
+      "114": "infrared transmitting filter",
+      "115": "microlens",
+      "116": "planarizing layer"
+    }
+  },
+  "source_scope_phrase_counts": {
+    "curable composition": 124,
+    "cured film": 80,
+    "optical filter": 19,
+    "laminate": 15,
+    "solid image pickup element": 27,
+    "image display device": 12,
+    "infrared sensor": 14,
+    "near infrared cut filter": 49,
+    "infrared transmitting filter": 32,
+    "Test Example": 2,
+    "Comparative Example": 5,
+    "Example": 392,
+    "focal length": 0,
+    "effective focal length": 0,
+    "F-number": 0,
+    "FNO": 0,
+    "field of view": 0,
+    "FOV": 0,
+    "radius": 0,
+    "curvature": 0,
+    "Abbe": 0,
+    "asphere": 0,
+    "prescription": 0,
+    "surface number": 0,
+    "refractive index": 1,
+    "lens": 11,
+    "microlens": 5
+  },
+  "refractive_index_context": [
+    "paragraph 439 low-refractive-index pixel partition wall"
+  ],
+  "terminal_items": [
+    {
+      "embodiment_number": 1,
+      "label": "Curable-composition, film, filter, laminate and sensor materials disclosure",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.curable_composition_film_filter_and_sensor_materials_only"
+    }
+  ],
+  "replay_state": {
+    "semantic_equal": true,
+    "semantic_sha256": "fea5fbec46a82ea334d92a2c48b4f5a8dffcf0494087c1f76208ffc67793fd89",
+    "attempts": [
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-11236215/attempt-0002/result.json",
+        "bytes": 1561,
+        "sha256": "2592b0267a2251292decf36b88c8d4542cf78fba303279ea6fbd9cb0d419ad51"
+      },
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-11236215/attempt-0003/result.json",
+        "bytes": 1561,
+        "sha256": "0b5aa85e6ba0e126f06f50b8198906604ff4f5067814d18f2ba1acf07d64d1e7"
+      }
+    ]
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/generic-residual-before-53.json",
+      "bytes": 32944,
+      "sha256": "2cb348318948f18d2bb4b24c9e91785b35e2549bebcf6281104ac6f30ad57eb5",
+      "affected_roots": 53
+    },
+    "after_1": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/generic-residual-after-1.json",
+      "bytes": 32319,
+      "sha256": "ee50167ffd8e352edffe09bfd260203202bd2c1bc4c72da1cffc140a861033f9",
+      "affected_roots": 52
+    },
+    "after_2": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/generic-residual-after-2.json",
+      "bytes": 32319,
+      "sha256": "ee50167ffd8e352edffe09bfd260203202bd2c1bc4c72da1cffc140a861033f9",
+      "affected_roots": 52
+    },
+    "result_set_sha256": "7ceb486beba9ba9e58d20a5059e4c635734b6f4f560291bfd875c03139e59b4c"
+  },
+  "shared_ledger": {
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 49410,
+      "sha256": "530a4d829440e043501b75d76beabb5328b0f73a8971f2e3ad02d21c4af2d755"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 51241,
+      "sha256": "e0f7657978a0e6854ebb487fa411aee3ef098af82c643cafaee3792259fa41c3"
+    },
+    "strict_roots_with_results": 619,
+    "expected_roots": 619,
+    "missing": 0,
+    "corrupt": 0
+  },
+  "supporting_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/family-59685373-source-audit.md",
+      "bytes": 3993,
+      "sha256": "7af90802b0672076c838ed0146adf19307a9f26d9f0f09f0c3b7d95f1f050c87"
+    },
+    "official_pdf_audit": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/family-59685373-raster-audit.json",
+      "bytes": 28597,
+      "sha256": "492f3f56030fbc7209876ed8bf5d49c73c087026f6a3fbc9d8e18ddf5295ed43"
+    },
+    "external_family_queue": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/family-59685373-external-family-members.json",
+      "bytes": 2553,
+      "sha256": "786b626c6a4f332c36db622079ee1892e582d1348d60bc481cd0390df151f1bd"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/family-59685373-replay-determinism.json",
+      "bytes": 1597,
+      "sha256": "d4c938a4ea7ce21f66fbdd714bf6a7f9201dad1df51e96b54d0555e89fcab49e"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/queue-after.json",
+      "bytes": 1373,
+      "sha256": "7225b512163e892b379ff8ab9a84864f1f2252186e81b0661772d92a0bb670a0"
+    }
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "formal_outputs": {
+    "optical_case_created": false,
+    "zmx_created": false,
+    "formal_intake_changed": false
+  },
+  "next_exact_group": {
+    "family_id": "53214261",
+    "root_ids": [
+      "US-9618727"
+    ],
+    "publication_ids": [
+      "US-9618727-B2"
+    ]
+  },
+  "saturation_complete": false
+}

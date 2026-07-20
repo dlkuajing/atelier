@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "family_id": "59685373",
+  "current_frozen_cohort_roots": [
+    "US-11236215"
+  ],
+  "same_application_publications": [
+    {
+      "publication_id": "US-20180355149-A1",
+      "application_number": "16/104657",
+      "disposition": "audited_same_root_cross_check_only"
+    },
+    {
+      "publication_id": "US-11236215-B2",
+      "application_number": "16/104657",
+      "disposition": "current_frozen_cohort_root_publication"
+    }
+  ],
+  "provider_grouping_note": "The retained official B2 source reports Family ID 59685373. Same-application A1/B2 evidence remains publication-specific, and no numeric value is borrowed from any related publication.",
+  "external_family_members": [
+    {
+      "publication_id": "WO2017145637A1",
+      "application_number": "PCT/JP2017/002801",
+      "relationship": "related parent PCT publication",
+      "priority_date": "2016-02-25",
+      "publication_date": "2017-08-31",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JPWO2017145637A1",
+      "application_number": "JP2018501080A",
+      "relationship": "also published as",
+      "priority_date": "2016-02-25",
+      "publication_date": "2018-12-06",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP6637154B2",
+      "application_number": "JP2018501080A",
+      "relationship": "also published as",
+      "priority_date": "2016-02-25",
+      "publication_date": "2020-01-29",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "TW201800500A",
+      "application_number": "TW106104196A",
+      "relationship": "also published as",
+      "priority_date": "2016-02-25",
+      "publication_date": "2018-01-01",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "TWI699405B",
+      "application_number": "TW106104196A",
+      "relationship": "also published as",
+      "priority_date": "2016-02-25",
+      "publication_date": "2020-07-21",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "cross_check_source": {
+    "url": "https://patents.google.com/patent/US11236215B2/en",
+    "observed_fields": [
+      "US application 16/104657 with publications US20180355149A1 and US11236215B2",
+      "JP priority application JP2016-033748 dated 2016-02-25",
+      "PCT/JP2017/002801 with WO2017145637A1",
+      "JP2018501080A with JPWO2017145637A1 and JP6637154B2",
+      "TW106104196A with TW201800500A and TWI699405B"
+    ]
+  }
+}

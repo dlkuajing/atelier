@@ -1087,6 +1087,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_fujifilm_curable_optical_filter_materials_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_folded_image_sensor_filter_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -3936,6 +3944,131 @@ _DYE_AGGREGATE_OPTICAL_FILTER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "surface number": 0,
             "refractive index": 3,
             "lens": 10,
+            "microlens": 5,
+        },
+    },
+}
+_FUJIFILM_CURABLE_OPTICAL_FILTER_TITLE_PATTERN = re.compile(
+    r"\bCURABLE\s+COMPOSITION\s*,\s*CURED\s+FILM\s*,\s*OPTICAL\s+FILTER\s*,\s*"
+    r"LAMINATE\s*,\s*SOLID\s+IMAGE\s+PICKUP\s+ELEMENT\s*,\s*IMAGE\s+DISPLAY\s+"
+    r"DEVICE\s*,\s*AND\s+INFRARED\s+SENSOR\b",
+    flags=re.IGNORECASE,
+)
+_FUJIFILM_CURABLE_OPTICAL_FILTER_ITEM = (
+    1,
+    "Curable-composition, film, filter, laminate and sensor materials disclosure",
+    "confirmed_no_prescription."
+    "curable_composition_film_filter_and_sensor_materials_only",
+)
+_FUJIFILM_CURABLE_OPTICAL_FILTER_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-11236215-B2": {
+        "raw_document_sha256": (
+            "d5eee1bd8a6bb6dde3a4f62a4a2fdf6589e89a5071322e9de2487086199ba543"
+        ),
+        "normalized_text_sha256": (
+            "bc0a34c022af57c120d72df5bd8245064fe5658432cfbaa586d67875a499b490"
+        ),
+        "family_id": "59685373",
+        "application_number": "16/104657",
+        "section_sha256": {
+            "cross_reference": (
+                "51c560b95ae96c32aa8ae337ea1c2968954d4873bb32d81c25250f2967c4b8bc"
+            ),
+            "background": (
+                "94eafef0ccf4814b17cf213ea7437cf8609368bb91a41ab3ebc9fa27224d60cf"
+            ),
+            "summary": (
+                "ab1f2b88f9c076cc9f0aaf7fcdb8f6da12df1b35f6c5397495da04aea5618230"
+            ),
+            "brief": (
+                "0a8886add0de3bc61eea364ff87c1edad91677c1c796bbf2cec16b06e169a531"
+            ),
+            "detailed": (
+                "7519ea956f0c5be2bfa0d6ad9c4567b24f7749e42cc653f1d099130755026cc5"
+            ),
+            "claims": (
+                "0114d56285820537ddab84d05105b98d4639c930e546a4a3f540bf746c938e3f"
+            ),
+        },
+        "raw_section_sha256": {
+            "cross_reference": (
+                "111aedbf78eadf544009eca840fcb7c3e12293d4c9f0fca9aa4fbdc2d57fd44f"
+            ),
+            "background": (
+                "eaa366d90ffe85b2af9702b49b757a081e731902074995e45187192176182f1a"
+            ),
+            "summary": (
+                "daad442acc29a6e5f838127052dd35cbfcd7c2bc1ecb0b6beaf915bda40a0edf"
+            ),
+            "brief": (
+                "df0a32c6f3dea2d7072775143f2e65e9a7e9078def03cbde51217544f57330e5"
+            ),
+            "detailed": (
+                "207ebbe6318bf5c8eb47bf449a6009f307c0060fb0bb0cb98f3d0cbcafa13414"
+            ),
+            "claims": (
+                "b305eca3f2a57f266ac649b4d2884086f44515fccf5b9eced94f54f33481428e"
+            ),
+        },
+        "table_block_sha256": (
+            "92ca166b42a6e26ee191351ee6ecbc947a33a31f421900eeff15824eec6531cd",
+            "d2cb08608896603c6a7f02155e488bb3ddc2b5ae520d7f1ae83534d8ae052fe8",
+            "175258c59dd34805ec21b630ff57d182d84373e31a69ebe11719921ca112bb4f",
+            "471e811a0a689c5664c625a3a898f1051a950647f2cfd92820bf91afca6eeb29",
+            "1c5266018338e962d90d09c7bb0385404837e9c0efb19128283010f5fbf3b11c",
+            "10fc145ccb4e4b504e9daf3f8de8b988b0ef5e1f9268c3c94ac50727328802c0",
+            "84458d6d3f79e046690ad0164789610878b6b328f9c7bdc7bb58c1a5932e7087",
+            "21a6e3336d39aa13157a9458c14eaff8d6eed9a83697e28e3495656ff90d326f",
+            "0728d57e8b6f7a94685e05ffdde67be8a5ee028e2f76db9e804aa99759a36c4b",
+            "0b22824bcade81602eb642f7adb118eb0fb609a30e6d0dcb06f02630cf028c81",
+            "27142b01967111a13a4df0d447c512bc008e1dadf273172532fa908a3fc7a737",
+            "7bf13e70edcb09f9e127a14569eddf96a1af59125375059e6f971975c637a2d5",
+            "849331f35b4d93454b9363068bd2d0c7f829085a2490aece5e0d71af4062259f",
+        ),
+        "formal_table_sha256": (
+            "ee0bd5850d8c9b738fa55f917ff5964c0ad526dacd9020523c81b64087e499ca",
+            "2691434f977ae35597d94842a0e2a11752ee583d6ef7924917495a863cfd8723",
+            "b3b9345362570282493a06e9ddd56afb2c721d69ff9752bf5b615140547ee8fb",
+            "a509627a2096116ae8e2b00fa8e75a8487aa7e43982fc0a2775ab1d606e5da28",
+            "7f15112adb10c3fe49aa5bc4799eeb410c593e8a100263bc0df3ed2ef48b0d2f",
+            "b088b50011f324cacb470792f625e0992665b6c9f215b52098b27afd03a0a5bb",
+            "09673fc165485a2f2f84d7de9eb998c3b5d4f9a7f69d6521ccaf6aa0b0222065",
+            "a6d2bc54ecab996cd1470090f5b6cf8407bfecaa34f67341e6b7e9117115c0c9",
+            "769c8bc3e4d574a2a357ac2bd362ab9ea26a83e6429e0c3a3a1c5684a6e9f369",
+            "400b69e56c76899ec52e0a9021299b4eec98cdea38d9399d14ac9c0e383b7f33",
+            "87c07e55f64c72cf1c97e71b2aa59421de8fcff716f0460a34a39dc5b2ac980e",
+            "0228d13ccd770b072ca4c5fafba0c948b9724a73345dce69c8b998bf90c53c31",
+            "40a2feb8cf24c4f3d56d59b73457976d7ea7ae06fc952cb3574c36d0fd45dea7",
+        ),
+        "source_scope_phrase_counts": {
+            "curable composition": 124,
+            "cured film": 80,
+            "optical filter": 19,
+            "laminate": 15,
+            "solid image pickup element": 27,
+            "image display device": 12,
+            "infrared sensor": 14,
+            "near infrared cut filter": 49,
+            "infrared transmitting filter": 32,
+            "Test Example": 2,
+            "Comparative Example": 5,
+            "Example": 392,
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "field of view": 0,
+            "FOV": 0,
+            "radius": 0,
+            "curvature": 0,
+            "Abbe": 0,
+            "asphere": 0,
+            "prescription": 0,
+            "surface number": 0,
+            "refractive index": 1,
+            "lens": 11,
             "microlens": 5,
         },
     },
@@ -35695,6 +35828,393 @@ def _classify_dye_aggregate_optical_filter_materials_only_attempts(
                     "Comparative Examples, six material/process tables, and one "
                     "infrared-sensor layer-stack figure, but no ordered optical "
                     "surface prescription"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_fujifilm_curable_optical_filter_materials_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 59685373 composition/filter disclosure."""
+
+    profile = _FUJIFILM_CURABLE_OPTICAL_FILTER_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+    embodiment_number, embodiment, reason_code = (
+        _FUJIFILM_CURABLE_OPTICAL_FILTER_ITEM
+    )
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if _FUJIFILM_CURABLE_OPTICAL_FILTER_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter title binding changed"
+            )
+
+        identity_markers = {
+            f"Family ID: {profile['family_id']}": 1,
+            f"Appl. No.: {profile['application_number']}": 1,
+            "FUJIFILM Corporation": 2,
+            "US 20180355149 A1 Dec. 13, 2018": 1,
+            "PCT/JP2017/002801": 4,
+            "JP2016-033748": 1,
+            "Japanese Patent Application No. 2016-033748": 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Fujifilm curable optical-filter identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = (
+            (
+                "cross_reference",
+                "CROSS-REFERENCE TO RELATED APPLICATIONS (1)",
+            ),
+            (
+                "background",
+                "BACKGROUND OF THE INVENTION 1. Field of the Invention (1)",
+            ),
+            ("summary", "SUMMARY OF THE INVENTION (4)"),
+            ("brief", "BRIEF DESCRIPTION OF THE DRAWINGS (1)"),
+            (
+                "detailed",
+                "DESCRIPTION OF THE PREFERRED EMBODIMENTS (2)",
+            ),
+            ("claims", "Claims 1. A curable composition comprising:"),
+        )
+        try:
+            starts = {name: text.index(marker) for name, marker in section_markers}
+        except ValueError as exc:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter normalized section boundary changed"
+            ) from exc
+        if tuple(starts.values()) != tuple(sorted(starts.values())):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter normalized section ordering changed"
+            )
+        ordered_names = tuple(name for name, _marker in section_markers)
+        sections = {
+            name: text[
+                starts[name] : (
+                    starts[ordered_names[index + 1]]
+                    if index + 1 < len(ordered_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(ordered_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Fujifilm curable optical-filter {section_name} section changed"
+                )
+
+        raw_section_markers = (
+            ("cross_reference", "CROSS-REFERENCE TO RELATED APPLICATIONS"),
+            ("background", "BACKGROUND OF THE INVENTION"),
+            ("summary", "SUMMARY OF THE INVENTION"),
+            ("brief", "BRIEF DESCRIPTION OF THE DRAWINGS"),
+            ("detailed", "DESCRIPTION OF THE PREFERRED EMBODIMENTS"),
+            ("claims", "<h3>Claims</h3>"),
+        )
+        try:
+            raw_starts = {
+                name: raw_text.index(marker)
+                for name, marker in raw_section_markers
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter raw section boundary changed"
+            ) from exc
+        if tuple(raw_starts.values()) != tuple(sorted(raw_starts.values())):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter raw section ordering changed"
+            )
+        raw_ordered_names = tuple(name for name, _marker in raw_section_markers)
+        raw_sections = {
+            name: raw_text[
+                raw_starts[name] : (
+                    raw_starts[raw_ordered_names[index + 1]]
+                    if index + 1 < len(raw_ordered_names)
+                    else len(raw_text)
+                )
+            ]
+            for index, name in enumerate(raw_ordered_names)
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_sha256"
+        ].items():
+            observed_digest = hashlib.sha256(
+                raw_sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Fujifilm curable optical-filter raw {section_name} section changed"
+                )
+
+        structural_paragraph_pattern = re.compile(
+            r"(?:<p>|<br\s*/?>|\n)\s*\((\d+)\)",
+            re.IGNORECASE,
+        )
+        expected_paragraphs = {
+            "cross_reference": (1,),
+            "background": tuple(range(1, 4)),
+            "summary": tuple(range(4, 64)),
+            "brief": (1,),
+            "detailed": tuple(range(2, 518)),
+        }
+        for section_name, expected in expected_paragraphs.items():
+            observed = tuple(
+                int(value)
+                for value in structural_paragraph_pattern.findall(
+                    raw_sections[section_name]
+                )
+            )
+            if observed != expected:
+                raise PatentParseError(
+                    f"Fujifilm curable optical-filter {section_name} paragraph "
+                    "denominator changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, 20)):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter claims 1-19 denominator changed"
+            )
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 14)):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter TABLE 1-13 denominator changed"
+            )
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter PPUBS table block changed"
+            )
+        table_end_markers = (
+            "(97)",
+            "(98)",
+            "(99)",
+            "(100)",
+            "(101)",
+            "(102)",
+            "(104)",
+            "(105)",
+            "(106)",
+            "(125)",
+            "(214)",
+            "(476)",
+            "(507)",
+        )
+        formal_tables: list[str] = []
+        for block, end_marker in zip(blocks, table_end_markers, strict=True):
+            if end_marker not in block.text:
+                raise PatentParseError(
+                    f"Fujifilm curable optical-filter TABLE {block.number} end changed"
+                )
+            formal_tables.append(block.text.split(end_marker, 1)[0])
+        formal_table_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_table_digests != profile["formal_table_sha256"]:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter formal table content changed"
+            )
+
+        table_12_examples = tuple(
+            int(value)
+            for value in re.findall(
+                r"\bExample\s+(\d+)\b", formal_tables[11], re.IGNORECASE
+            )
+        )
+        if table_12_examples != (*range(1, 32), 1, 2, 3, 4):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter TABLE 12 experimental denominator "
+                "changed"
+            )
+        if len(re.findall(r"\bComparative\b", formal_tables[11])) != 4:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter TABLE 12 comparative rows changed"
+            )
+        table_13_examples = tuple(
+            int(value)
+            for value in re.findall(
+                r"\bExample\s+(\d+)\b", formal_tables[12], re.IGNORECASE
+            )
+        )
+        if table_13_examples != (*range(1, 34), 1, 2, 3, 4):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter TABLE 13 experimental denominator "
+                "changed"
+            )
+        if len(re.findall(r"\bComparative\b", formal_tables[12])) != 4:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter TABLE 13 comparative rows changed"
+            )
+
+        structure_numbers = tuple(
+            int(value) for value in re.findall(r"##STR(\d{5})##", text)
+        )
+        if structure_numbers != (
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            16,
+            17,
+            18,
+            25,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+        ):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter chemical-structure denominator changed"
+            )
+        figure_numbers = tuple(re.findall(r"\bFIG\.\s*(\d+)", text, re.IGNORECASE))
+        if figure_numbers != ("1", "1"):
+            raise PatentParseError(
+                "Fujifilm curable optical-filter single-figure denominator changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != 2:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter figref denominator changed"
+            )
+        if len(re.findall(r"<\?in-line-formulae\b", raw_text, re.IGNORECASE)) != 8:
+            raise PatentParseError(
+                "Fujifilm curable optical-filter inline-formula denominator changed"
+            )
+
+        context_markers = {
+            "EXAMPLES (459)": 1,
+            "Test Example 1": 1,
+            "Examples 1 to 31 and Comparative Examples 1 to 4": 2,
+            "Example 32 (484)": 1,
+            "Example 33 (485)": 1,
+            "Test Example 2 Example 101 (509)": 1,
+            "FIG. 1 is a schematic diagram showing an embodiment of an infrared sensor.": 1,
+            "110 : solid image pickup element": 1,
+            "111 : near infrared cut filter": 1,
+            "112 : color filter": 1,
+            "114 : infrared transmitting filter": 1,
+            "115 : microlens": 1,
+            "116 : planarizing layer": 1,
+            (
+                "The configuration of the solid image pickup element is not "
+                "particularly limited as long as the solid image pickup element "
+                "functions."
+            ): 1,
+            (
+                "This filter was incorporated into a solid image pickup element "
+                "using a well-known method."
+            ): 1,
+            (
+                "the cured film according to the present invention can be used, "
+                "for example, as a lens that has a function of absorbing and cutting "
+                "near infrared light"
+            ): 1,
+        }
+        for marker, expected in context_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Fujifilm curable optical-filter context marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Fujifilm curable optical-filter phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain exact source-scoped item
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=(
+                    "the exact retained source publishes 33 Examples, four "
+                    "Comparative Examples, one sensor-assembly Example 101, thirteen "
+                    "materials/process tables and one infrared-sensor layer-stack "
+                    "figure, but no ordered optical surface prescription"
                 ),
             ),
         )
