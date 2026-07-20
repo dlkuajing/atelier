@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "family_id": "97232688",
+  "root_id": "US-20250314947",
+  "publication_id": "US-20250314947-A1",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250314947/attempt-0002/result.json",
+      "bytes": 2049,
+      "sha256": "0fc8638eb616c18e615b5588ec035b5e06a1c25bad09715eebba0491853c0745",
+      "file_sha256": "0fc8638eb616c18e615b5588ec035b5e06a1c25bad09715eebba0491853c0745",
+      "semantic_sha256": "44bf46e8d0f3d4e5473993eb31297c51526418b741080483d88a8f728740c30d"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250314947/attempt-0003/result.json",
+      "bytes": 2049,
+      "sha256": "5336bde211836162a763f2b009676b814d63815263a3127d1ded2ece84307613",
+      "file_sha256": "5336bde211836162a763f2b009676b814d63815263a3127d1ded2ece84307613",
+      "semantic_sha256": "44bf46e8d0f3d4e5473993eb31297c51526418b741080483d88a8f728740c30d"
+    }
+  ],
+  "semantic_sha256": "44bf46e8d0f3d4e5473993eb31297c51526418b741080483d88a8f728740c30d",
+  "semantic_equal": true,
+  "normalization": {
+    "removed_fields": [
+      "result_attempt"
+    ],
+    "outcome_fields_removed": [],
+    "request_fields_removed": [],
+    "runtime_paths_normalized": false
+  },
+  "final_state": {
+    "result_attempt": 3,
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "item_state_counts": {
+      "terminal": 1
+    },
+    "terminal_status_counts": {
+      "confirmed_no_prescription": 1
+    },
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_outputs": 0
+  },
+  "strict_replay": {
+    "cohort_roots": 619,
+    "roots_with_results": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "result_set_sha256": "2840befbc0e97793f60021cd4dd61f96e1c5703d083a2f3ff9498fb53d16b44b"
+  },
+  "intermediate_runtime_failures": [],
+  "codev_calls": 0
+}

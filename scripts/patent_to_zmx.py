@@ -778,6 +778,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_circle_optics_mounting_systems_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_sunny_split_lens_active_alignment_attempts(
         raw_text,
         patent_id=patent_id,
@@ -7615,6 +7623,210 @@ _CIRCLE_OPTICS_MECHANICAL_ONLY_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
             "FIG. 8 depicts an image sensor with a sensor mount having adjustors": 1,
             "FIG. 21 depicts an alternate configuration for an improved multi-camera "
             "projection device": 1,
+        },
+    },
+}
+_CIRCLE_OPTICS_MOUNTING_SYSTEMS_TITLE_PATTERN = re.compile(
+    r"\bMOUNTING\s+SYSTEMS\s+FOR\s+MULTI-CAMERA\s+IMAGERS\b",
+    flags=re.IGNORECASE,
+)
+_CIRCLE_OPTICS_MOUNTING_SYSTEMS_FIGURE_LABELS = (
+    "1",
+    "2A",
+    "2B",
+    "3",
+    "4",
+    "5A",
+    "5B",
+    "5C",
+    "5D",
+    "5E",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13A",
+    "13B",
+    "14A",
+    "14B",
+    "15",
+    "16",
+    "17",
+    "18A",
+    "18B-1",
+    "18B-2",
+    "19",
+    "20",
+    "21",
+    "22A",
+    "22B",
+    "23",
+    "24",
+)
+_CIRCLE_OPTICS_MOUNTING_SYSTEMS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20250314947-A1": {
+        "raw_document_sha256": (
+            "650093e2071264d9eaf88d76aa8518c033095250c2f73321c019d0656d29a546"
+        ),
+        "normalized_text_sha256": (
+            "6ad25d418ce82889e3beab1d61a9b937b1bff84581055c3656ff6ae9ecf40a2a"
+        ),
+        "identity_markers": {
+            "MOUNTING SYSTEMS FOR MULTI-CAMERA IMAGERS": 1,
+            "Family ID: 97232688": 1,
+            "Assignee: Circle Optics, Inc. (Rochester, NY)": 1,
+            "Appl. No.: 19/239600": 1,
+            "parent US continuation 17908158 20220830": 1,
+            "parent-grant-document US 12332549 child US 19239600": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20250314947-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract A low parallax imaging device includes",
+            "background": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF DRAWINGS",
+            "claims": "Claims 1 . An imaging device comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "e03a7e766e99f419443416350b3d1c5bf8ab3cf1112490042b0605dfe4bd5588"
+            ),
+            "abstract": (
+                "d7a2f2e042e6fcb036b1b09c28bc6fc68f461142983a3396457368f90ac02f70"
+            ),
+            "background": (
+                "b0052dd835119cb365e490e43a9e8a568a34ff3d78fc805a219dc589818fc042"
+            ),
+            "description": (
+                "ec347f2e5d05c3a150f724d16f150f3f1c7b87f58990a892d9c26af39a07589f"
+            ),
+            "claims": (
+                "13326047442f5cfecddb80a866af6f3c290c12e077975fbfc11d22a109482096"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 1): "7d70cbcd66d36d90c0a3faaecb6db9e765c828c9a88dfff5d5eb451a89878292",
+            (3, 8): "9ad648f6b0b1d258c475e9c762130bd25703e70a1d1c3d6bdd52379a52d6502b",
+            (9, 39): "62f1cfea1e8f7324886a0a298045d0bd0da31ecc983ae85214b0275a003ed7c2",
+            (40, 57): "f8c8b9058031da53797aa7986b5325bffe83e25f5b541fed3e24ac0023fec2de",
+            (58, 99): "fa5fcec20fa43e5494914a6d01f39466b7ecec5025c75aaac13603ce9c347259",
+            (100, 103): "f4c0f53ebec7dabc8854cb1fcf1d7f2bbcb5481e4442adcb42874f499e3371b9",
+            (104, 124): "9e9c407a3990b37d8837a2faa24e3b1e3aa8221260f13c35027ddaf8dc7cc9ed",
+            (125, 150): "88c8ac36a74f042556e49eb37f48de2fff81f5f47ceb0efba1f213601b43fd2a",
+            (151, 179): "c8bd5569fbe6e82544fa22c56ca0b96536747d1ab316ccc44c5a96b45d8e2cc7",
+            (180, 191): "95b305d1b62bbf3ff44d4733f7886cb6ef57b64b79a46182cf991d133dc76a9f",
+            (192, 202): "c014d2360d4e15fda53ec31ee74a0aab0be074298684c5dead5026f14ef58cdf",
+        },
+        "claim_family_span_sha256": {
+            (1, 20): "25c976477621bd88b1ad39d63e61c1602acb66226e835f807478ddfdda56bd52",
+        },
+        "drawing_figref_texts": (
+            "FIG. 1",
+            "FIGS. 2A and 2B",
+            "FIG. 3",
+            "FIG. 4",
+            "FIGS. 5A",
+            "FIG. 5B",
+            "FIG. 5B",
+            "FIG. 5A",
+            "FIG. 5C",
+            "FIG. 5D",
+            "FIG. 5E",
+            "FIG. 6",
+            "FIG. 7",
+            "FIG. 8",
+            "FIG. 9",
+            "FIG. 10",
+            "FIG. 11",
+            "FIG. 12",
+            "FIG. 13A",
+            "FIG. 13B",
+            "FIG. 14A",
+            "FIG. 14B",
+            "FIG. 15",
+            "FIG. 16",
+            "FIG. 17",
+            "FIG. 18A",
+            "FIG. 18B-1",
+            "FIG. 10",
+            "FIG. 18B-2",
+            "FIG. 18A",
+            "FIG. 19",
+            "FIG. 9",
+            "FIG. 17",
+            "FIG. 20",
+            "FIG. 21",
+            "FIG. 22A",
+            "FIG. 22B",
+            "FIG. 22A",
+            "FIG. 23",
+            "FIG. 24",
+        ),
+        "figure_labels": _CIRCLE_OPTICS_MOUNTING_SYSTEMS_FIGURE_LABELS,
+        "figref_tag_count": 273,
+        "source_phrase_counts": {
+            "outer compressor": 11,
+            "aperture stop": 19,
+            "image plane": 36,
+            "aspheric surfaces": 1,
+            "ZEMAX": 1,
+            "Code V": 2,
+            "focal length (EFL)": 1,
+            "EFL or magnification": 1,
+            "F-number": 2,
+            "F/#": 1,
+            "Abbe number": 1,
+            "1:1": 1,
+            "2.75:1": 1,
+            "tunable lens": 3,
+        },
+        "numeric_system_value_assignment_counts": {
+            "F": 0,
+            "FNO": 0,
+            "FOV": 0,
+            "HFOV": 0,
+            "EFL": 0,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/cfb46b1c068612b1/"
+                "US-20250314947-A1.pdf"
+            ),
+            "bytes": 6_083_694,
+            "sha256": (
+                "cfb46b1c068612b1570387a382085da35d95d91ed9ac78a565e9458027ccef02"
+            ),
+            "alternate_container_sha256": (
+                "824bbf3844043678f5267256e36f3a667661b65de0fda20d326b4d869a112334"
+            ),
+            "page_count": 64,
+            "single_raster_page_count": 64,
+            "raster_mode": "1",
+            "raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 35)),
+            "drawing_sheet_count": 33,
+            "key_page_raster_sha256": {
+                1: "fe08bbb6c8084ef6cd4a3cc8e5d4076126a85fec15b0f4d26277e2bcfd12a0e8",
+                2: "77ab089a87caaf033691300a490e434d7623ccd8b56a8fd3d8576e0bf73d4d50",
+                3: "87bcf660749743ac9fb53d7f4f8d6bec3a926ce5618c9d5785a40584a8e1be56",
+                4: "f76a34a84aab67a076a860ae7c914636799ce49e8a7b06698039e61a6b0f5556",
+                19: "2524ca24a7cc76f298c921c35244df8fd4588156d18df6330472cab773dcaa1b",
+                21: "bb0de95563b2290c6ba6408af11a4b2d933f9ce08708623177873be5611bb872",
+                30: "140b122aacaf1cc50ef0a206cd15abbb2b6d7255d54c03364878dd328c755d2d",
+                31: "28de0e0427506bece716547d56c9324ade593e8785ac5d7fa35a599a6c509f28",
+                32: "03a06356a430e9af9de5b724777699da36bd8228a8d9f3fac8fee62832cc9481",
+                34: "7b606df1ae4f00272da4c2b3708f9bcbed1030d2daaa359a576f032b27bc98a4",
+                35: "924eba2918123e3ebdeb804ed10263f5f8aa9473bdf0f60d9c61435128daf48a",
+                63: "c1748a73e4b0a6575b1938355e2fca79387b8f1be1dcab1ee7210f087b8baee2",
+                64: "6b8fec3478a48d03d583f4e785d2e05a62d8d8286e96aa7aaf6a7a40a1411dd5",
+            },
+            "raster_set_sha256": (
+                "db3343adfe90ccf5910cfb702344a823ddf72291092b745079c1045eb966a34f"
+            ),
         },
     },
 }
@@ -62556,6 +62768,366 @@ def _classify_circle_optics_mechanical_only_attempts(
             error=error,
         )
     ]
+
+
+def _classify_circle_optics_mounting_systems_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the exact mounting-system disclosure in Family 97232688."""
+
+    profile = _CIRCLE_OPTICS_MOUNTING_SYSTEMS_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+    embodiment = "Circle Optics multi-camera mounting and opto-mechanical system"
+
+    def attempt_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=1,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+
+    def validate_spans(
+        records: dict[int, str],
+        expected_spans: dict[tuple[int, int], str],
+        *,
+        section_name: str,
+    ) -> None:
+        for (start, end), expected_digest in expected_spans.items():
+            span = "".join(
+                records[number] for number in range(start, end + 1)
+            ).strip()
+            observed_digest = hashlib.sha256(span.encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Circle Optics mounting-system "
+                    f"{section_name} span {start}-{end} changed"
+                )
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if _CIRCLE_OPTICS_MOUNTING_SYSTEMS_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError(
+                "Circle Optics mounting-system title binding changed"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = text.count(marker)
+            if observed != expected:
+                raise PatentParseError(
+                    "Circle Optics mounting-system identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Circle Optics mounting-system section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(
+            sorted(section_starts.values())
+        ):
+            raise PatentParseError(
+                "Circle Optics mounting-system section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "Circle Optics mounting-system "
+                    f"{section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        expected_paragraph_numbers = (1, *range(3, 203))
+        if paragraph_numbers != expected_paragraph_numbers:
+            raise PatentParseError(
+                "Circle Optics mounting-system 201-paragraph denominator changed"
+            )
+        claims_start = section_starts["claims"]
+        paragraphs = {
+            int(match.group(1)): text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else claims_start
+                )
+            ].strip()
+            for index, match in enumerate(paragraph_matches)
+        }
+        validate_spans(
+            paragraphs,
+            profile["paragraph_span_sha256"],
+            section_name="paragraph",
+        )
+
+        claims_section = sections["claims"]
+        claim_matches = list(
+            re.finditer(
+                r"(?<!\d)(\d{1,2})\s*\.\s+(?=[A-Z])",
+                claims_section,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 21)):
+            raise PatentParseError(
+                "Circle Optics mounting-system 20-claim denominator changed"
+            )
+        claims = {
+            int(match.group(1)): claims_section[
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(claims_section)
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        }
+        validate_spans(
+            claims,
+            profile["claim_family_span_sha256"],
+            section_name="claim",
+        )
+        if (
+            re.search(r"\bclaim\s+\d+\b", claims[1], re.IGNORECASE)
+            is not None
+        ):
+            raise PatentParseError(
+                "Circle Optics mounting-system independent claim binding changed"
+            )
+        if any(
+            re.search(
+                r"\bclaim\s+\d+\b", claims[number], re.IGNORECASE
+            )
+            is None
+            for number in range(2, 21)
+        ):
+            raise PatentParseError(
+                "Circle Optics mounting-system dependent claim binding changed"
+            )
+
+        drawing_start = raw_text.index("[0009]")
+        drawing_end = raw_text.index("[0040]", drawing_start)
+        drawing_source = raw_text[drawing_start:drawing_end]
+        drawing_figrefs = tuple(
+            " ".join(
+                html.unescape(re.sub(r"<[^>]+>", "", body)).split()
+            )
+            for body in re.findall(
+                r"<figref\b[^>]*>(.*?)</figref>",
+                drawing_source,
+                re.IGNORECASE | re.DOTALL,
+            )
+        )
+        if drawing_figrefs != profile["drawing_figref_texts"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system drawing-reference sequence changed"
+            )
+        if (
+            profile["figure_labels"]
+            != _CIRCLE_OPTICS_MOUNTING_SYSTEMS_FIGURE_LABELS
+        ):
+            raise PatentParseError(
+                "Circle Optics mounting-system 34-panel denominator changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_tag_count"
+        ]:
+            raise PatentParseError(
+                "Circle Optics mounting-system figref-tag census changed"
+            )
+        if _patent_table_blocks(text):
+            raise PatentParseError(
+                "Circle Optics mounting-system zero-table layout changed"
+            )
+        if re.findall(r"<table\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Circle Optics mounting-system official HTML gained table tags"
+            )
+        if re.findall(r"<img\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Circle Optics mounting-system official HTML gained image tags"
+            )
+        if re.findall(r"<(?:maths?|svg|figure)\b", raw_text, re.IGNORECASE):
+            raise PatentParseError(
+                "Circle Optics mounting-system official HTML gained visual tags"
+            )
+        if re.findall(r"##[^#]+##", text):
+            raise PatentParseError(
+                "Circle Optics mounting-system equation denominator changed"
+            )
+        for phrase, expected in profile["source_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Circle Optics mounting-system source phrase "
+                    f"{phrase!r} occurs {observed}; expected {expected}"
+                )
+        assignments = {
+            label: len(
+                re.findall(
+                    rf"(?<![A-Z0-9_]){re.escape(label)}\s*(?:=|:)",
+                    text,
+                    re.IGNORECASE,
+                )
+            )
+            for label in ("F", "FNO", "FOV", "HFOV", "EFL")
+        }
+        if assignments != profile["numeric_system_value_assignment_counts"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system numeric system metadata changed"
+            )
+        prescription_marker = re.compile(
+            r"(?:\bradius\s+of\s+curvature\b|\bcurvature\s+radius\b|"
+            r"\bsurface\s+radii\b|\bSurface\s+(?:No\.|#)\s*|"
+            r"\baspher(?:e|ic|ical)\s+(?:surface\s+)?"
+            r"(?:data|coefficients?|parameters?)\b|"
+            r"\bconic\s+(?:constant|coefficient)\b|"
+            r"\boptical\s+data\b|\blens\s+data\b|"
+            r"\blens\s+prescription\b)",
+            flags=re.IGNORECASE,
+        )
+        if prescription_marker.search(text) is not None:
+            raise PatentParseError(
+                "Circle Optics mounting-system disclosure contains a "
+                "prescription marker"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system official PDF byte count changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            page_images = list(page.images)
+            if len(page_images) != 1:
+                raise PatentParseError(
+                    "Circle Optics mounting-system official PDF page "
+                    f"{page_number} contains {len(page_images)} rasters; "
+                    "expected one"
+                )
+            page_image = page_images[0]
+            if page_image.image.mode != pdf_profile["raster_mode"]:
+                raise PatentParseError(
+                    "Circle Optics mounting-system official PDF page "
+                    f"{page_number} raster mode changed"
+                )
+            if page_image.image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    "Circle Optics mounting-system official PDF page "
+                    f"{page_number} raster dimensions changed"
+                )
+            page_raster_hashes.append(
+                _canonical_raster_sha256(page_image.data)
+            )
+            text_layer_characters += len(page.extract_text() or "")
+        if len(page_raster_hashes) != pdf_profile[
+            "single_raster_page_count"
+        ]:
+            raise PatentParseError(
+                "Circle Optics mounting-system raster-page denominator changed"
+            )
+        for page_number, expected_digest in pdf_profile[
+            "key_page_raster_sha256"
+        ].items():
+            if page_raster_hashes[page_number - 1] != expected_digest:
+                raise PatentParseError(
+                    "Circle Optics mounting-system key page "
+                    f"{page_number} raster changed"
+                )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Circle Optics mounting-system official raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Circle Optics mounting-system official PDF gained a text layer"
+            )
+        if not (
+            pdf_profile["drawing_page_numbers"] == tuple(range(2, 35))
+            and pdf_profile["drawing_sheet_count"] == 33
+        ):
+            raise PatentParseError(
+                "Circle Optics mounting-system drawing-sheet denominator changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain the exact source item
+        return attempt_for_error(exc)
+
+    error = PatentTerminalParseError(
+        status="confirmed_no_prescription",
+        reason_code=(
+            "confirmed_no_prescription."
+            "multi_camera_mounting_and_opto_mechanical_architecture_only"
+        ),
+        detail=(
+            "the exact A1 source publishes one imaging-device claim family "
+            "across 201 numbered paragraphs (source paragraph [0002] is "
+            "absent), 20 claims with claim 1 as the sole independent claim, "
+            "34 declared figure panels on 33 drawing sheets, and zero tables "
+            "or equations. It provides lens forms, example glasses/index/"
+            "Abbe context, generic EFL/F-number/FOV/relay-magnification "
+            "guidance, and mounting, cooling, calibration, electronics and "
+            "relay architecture, but no ordered surface radii, spacings, "
+            "material sequence, conics, or asphere coefficients. All 64 "
+            "original official page rasters were retained and rehashed; no "
+            "numeric value is measured from a drawing, inferred, or borrowed "
+            "from the continuation parent"
+        ),
+    )
+    return attempt_for_error(error)
 
 
 def _classify_light_blocking_geometry_only_attempts(
