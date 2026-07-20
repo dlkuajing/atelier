@@ -1,0 +1,227 @@
+{
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "result_sha256": "ed3894d487311ec955e36d7f9b5850d7ad7bb0fc450f6900bfd29bfbafd1d249",
+      "semantic_sha256": "6b3aea918004bfc9ea3a499ef336bcd0fd6e038c1712b925e922d66be0002ea5"
+    },
+    {
+      "result_attempt": 3,
+      "result_sha256": "3a176eccb99b13a238186c2f5e42a943182a002674c769aecce630e8dfba5a0d",
+      "semantic_sha256": "6b3aea918004bfc9ea3a499ef336bcd0fd6e038c1712b925e922d66be0002ea5"
+    }
+  ],
+  "exact_worker_payload_equal": {
+    "candidate_zmx": true,
+    "request_json": true,
+    "response_json": true
+  },
+  "family_id": "93648264",
+  "items": {
+    "1": {
+      "candidate_zmx_sha256": "cd7d038f65b669fa9ec43e8019a74835b0e5040e5928dfd0995d65fbf16364e7",
+      "conversion_request_sha256": "8067761f156dc3de6225b536743690bc462ee875b705de7435c0e439839a6920",
+      "item_id": "US-20250231379-A1:e1",
+      "prescription_fingerprint": "309c835a70c7528e",
+      "receipt_semantic_sha256": "99d216722906b74852bec58ea1fb6e94f779e6ab65b2e5cbaafec7067fbfbd17",
+      "receipt_sha256_by_result_attempt": {
+        "2": "40319f7a3417e26117f3f635af5289d4248a727c02c45737ddc150d804368977",
+        "3": "e0b8731f329fe00314356a8fb350ba20ea3d567e63647e0cb2acfb33c64e2cc2"
+      },
+      "request_sha256": "e93baf08ef873f7a042dc1ef55e7656c03029d60bbad3af17b832a68442d2370",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e1.zmx",
+      "staging_zmx_sha256": "cd7d038f65b669fa9ec43e8019a74835b0e5040e5928dfd0995d65fbf16364e7",
+      "worker_response_sha256": "ad2e5c05e032edb8df711b582d411cd91e6e8ebb81839310f2250d35d8d48a2e"
+    },
+    "11": {
+      "candidate_zmx_sha256": "11997e113021a5b04d4863633b62e84ca08f21f3917768c335ff3b156625109b",
+      "conversion_request_sha256": "f4ac98419f43fe1cf73ec04b14043f55ea6f5e0c16e2c39e8c8ca736b7d45124",
+      "item_id": "US-20250231379-A1:e11",
+      "prescription_fingerprint": "e5980743faa0d07a",
+      "receipt_semantic_sha256": "ccb215a16eb6979cb220ae58dc871a3e335c490c8cc4ecdac88bf3b354b1ec72",
+      "receipt_sha256_by_result_attempt": {
+        "2": "d6a5a528cf556b2ee1ecd48c2c1b1adb5a8b441d6e576bf2b88a45cd621a3f2c",
+        "3": "457bde24659a2e1fe4b015c53e602bf9cabdbf8aafc706c4fa548d0c258259a4"
+      },
+      "request_sha256": "7a29fbbedc0ae98b3a8f0ecf4229ff31d16c3934d7e1e988eaf9c50aad70dd4c",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e11.zmx",
+      "staging_zmx_sha256": "11997e113021a5b04d4863633b62e84ca08f21f3917768c335ff3b156625109b",
+      "worker_response_sha256": "3dc0ffeb9ddba1f153e8ca700f3004e0b512cfffbf67232527cd92ccf4dce19f"
+    },
+    "13": {
+      "candidate_zmx_sha256": "6a52805d2d68191b963b8ea78693da93bbb07c5de9ab24ac33367133427ec11f",
+      "conversion_request_sha256": "d6d5a25b82c6fd35394956a623a02da8559a5fc470075c2f18ca7c41f5ce7f8c",
+      "item_id": "US-20250231379-A1:e13",
+      "prescription_fingerprint": "e14daa4e2db0da9f",
+      "receipt_semantic_sha256": "a3928c5be094519398a2a3d85afaa96a57044aef5b1cbdbc586bfc14bffd0530",
+      "receipt_sha256_by_result_attempt": {
+        "2": "b932be7c27b9789d5a188ffd5c86c9be65daa85d859cc75c4a32261ba18be370",
+        "3": "a8c8029eed629e22979e8dfa8acd3d3898510554cef6629284eb30c51a3e5f52"
+      },
+      "request_sha256": "8c01364768c749d9a8b59021ffe77e27aa09d4da0fd1fd15e5b0ca984f454b25",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e13.zmx",
+      "staging_zmx_sha256": "6a52805d2d68191b963b8ea78693da93bbb07c5de9ab24ac33367133427ec11f",
+      "worker_response_sha256": "c1fc1f88bea1f356e3a16f678ffc850f54f220a1de9f543803c79d46c39e75fe"
+    },
+    "15": {
+      "candidate_zmx_sha256": "2e9c9bb2f007973c97d3bf9f03879594885851af8121ddcdb178f43f657f4824",
+      "conversion_request_sha256": "085564e9d86e93167dc51a287121e3c5be6bb28da8f5ea0acc3bd8885d1775a3",
+      "item_id": "US-20250231379-A1:e15",
+      "prescription_fingerprint": "42f74776e3cff462",
+      "receipt_semantic_sha256": "cd91dee9e096b8630ab25a392ad2aa8531c1ff00bb441256ff83949993cc4c2d",
+      "receipt_sha256_by_result_attempt": {
+        "2": "ca048202e629f0dc0c985d98328b4efaee1d315798772e952382e293aaafa66a",
+        "3": "cc9d66721448c4c53166a923b6b49be49758e0d794d9d33ec8105cc01516e7c4"
+      },
+      "request_sha256": "cc06664580d4f6f0bde555af696edbb388f9957f9535bede90f06dae71a66df3",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e15.zmx",
+      "staging_zmx_sha256": "2e9c9bb2f007973c97d3bf9f03879594885851af8121ddcdb178f43f657f4824",
+      "worker_response_sha256": "b8e46cc6e8a6b3b5108d523508e0654931d05e762fd2568b3477af33b7349121"
+    },
+    "17": {
+      "candidate_zmx_sha256": "be52fcbbae37d3b0d823553a73d8060d3ac0e07e575dd0676e19e54ea1143b4a",
+      "conversion_request_sha256": "bd2d3a95e05dce7c51b6f8bbcae136f62ec92992a9f7849cd16b51c7f3b2b562",
+      "item_id": "US-20250231379-A1:e17",
+      "prescription_fingerprint": "aa0078ac8dffec2d",
+      "receipt_semantic_sha256": "32e2528319fbabadf1ebc2343ac09d1730c10ac1a1b24bd1427b08560d8fce89",
+      "receipt_sha256_by_result_attempt": {
+        "2": "df33565ca1fd8d14be08597bcc44cd51d87d2cbb9edaa3e0742ddf219b35c9e8",
+        "3": "e86efd9480c960fcd57def1cdef98363b078854b7fc74876c52e322c3e47a580"
+      },
+      "request_sha256": "cfbe624925bcef5dbe6a2da96b10b5309f351881084ec4258d3a67af43f53f3d",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e17.zmx",
+      "staging_zmx_sha256": "be52fcbbae37d3b0d823553a73d8060d3ac0e07e575dd0676e19e54ea1143b4a",
+      "worker_response_sha256": "492cc3fb0f179b3426c8e6fde28a34897b0e3796a8a45468ca5a0e896d0c3e27"
+    },
+    "19": {
+      "candidate_zmx_sha256": "d86097c0bd6136a01e8a88faa0fe37c45cfa8f0dfecbc06f1561b201edb8c5fc",
+      "conversion_request_sha256": "699ad2db57f99e54ccadb3488e4e3f5c338b71cac8ca88c68546f4955b7bcde0",
+      "item_id": "US-20250231379-A1:e19",
+      "prescription_fingerprint": "e9ad55890ddaa8dd",
+      "receipt_semantic_sha256": "7867ae2853c246f3c0af7f0e165d3ca0aaa95f112b846ca635ba9b88790430e5",
+      "receipt_sha256_by_result_attempt": {
+        "2": "0dae65018984d79c869346fb34bb15f50900eccd909314f3108e0c4639d94311",
+        "3": "1f686613fb274790a27aa50b6d26fbd2e44f8b18bd936670e4ef26ae7aa56cd9"
+      },
+      "request_sha256": "8b39592fa8541842ebd06a7fd6b5ed30bd539f7557d1efb828a5a117366116eb",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e19.zmx",
+      "staging_zmx_sha256": "d86097c0bd6136a01e8a88faa0fe37c45cfa8f0dfecbc06f1561b201edb8c5fc",
+      "worker_response_sha256": "7bc9c4c4941ce3f319a27c7736c0e439ca65e34735c5cf0493825687ccd21f05"
+    },
+    "20": {
+      "candidate_zmx_sha256": "a4fc6d12d67be4e1897bdf77b34c4a9017384a6abb0b9b3c8b8e01b39c602442",
+      "conversion_request_sha256": "5ce08c8a582b06421d054e603600bd411513a2e58bc9d813e42d064b31cdde4d",
+      "item_id": "US-20250231379-A1:e20",
+      "prescription_fingerprint": "1600ab031f0381df",
+      "receipt_semantic_sha256": "923b5d4d9b6c2089b5887bf1ffb49bb817061630314a2b6e4ba9720d911c0cf5",
+      "receipt_sha256_by_result_attempt": {
+        "2": "15852051d0f49dd7a86d2eff99c86e1bb745fe1243a8df48c1e608b83703658e",
+        "3": "5993e09db59839827620dd10e7906b1920e443287624ab171d447e671548b257"
+      },
+      "request_sha256": "0a5dce27a8cdf9da8feda1b9f367db03cbcd77db10868186a4f0853729e47429",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e20.zmx",
+      "staging_zmx_sha256": "a4fc6d12d67be4e1897bdf77b34c4a9017384a6abb0b9b3c8b8e01b39c602442",
+      "worker_response_sha256": "4e83f98e6c32e38304ec8efd550c57618a7b81d192d67c49a5bdf02841c1a840"
+    },
+    "22": {
+      "candidate_zmx_sha256": "172d0c08b389d6228001a4fa61e5d5da33e41632867c282c7c5545835970c81c",
+      "conversion_request_sha256": "cfd4e17bfeca7837e71d53b3073e7631cb0da149b04cd010c446ce5d2d952791",
+      "item_id": "US-20250231379-A1:e22",
+      "prescription_fingerprint": "683699ad5e55f720",
+      "receipt_semantic_sha256": "a559f4adbe8a197e241476585ea49a23ccbb5fb7b3d2b4e9f4060068be75dd8a",
+      "receipt_sha256_by_result_attempt": {
+        "2": "d1c239c71cde4990c7b73b9245b024f99ea93c0dca271c14860fe84fe73b8871",
+        "3": "15b2917bcff146d80f20fe805f85fac0d41db7b5a90a34c76f50beba4d611a76"
+      },
+      "request_sha256": "d81442d4dbaa3359a8ab9a473ba4b14d139c140de62929c784379559c171e184",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e22.zmx",
+      "staging_zmx_sha256": "172d0c08b389d6228001a4fa61e5d5da33e41632867c282c7c5545835970c81c",
+      "worker_response_sha256": "dd594293307b388d1e32ad023857670e64801c8c9a02dcdf51ea36664a19b421"
+    },
+    "3": {
+      "candidate_zmx_sha256": "eaa78c2ed1e1693803c4af324d99c7b1cb247e0f99760b0b05917e0c43c72480",
+      "conversion_request_sha256": "e645ea03b0efa9bab7aba53ef376b69aad42b2d34510f362d390e35e470595fa",
+      "item_id": "US-20250231379-A1:e3",
+      "prescription_fingerprint": "b696f4f517e0a601",
+      "receipt_semantic_sha256": "25d4c040ba8d2a6b4ffe2496334ed6642e53e1714f912ee282ebee5221d4fd3f",
+      "receipt_sha256_by_result_attempt": {
+        "2": "e8c2e4135888f2ea38dfa47750a0e1d41b970c3fe21e5cedf93240fc0b6ba460",
+        "3": "36ad7102957ab4a08bce7d530c837b70d4b3b647815a995d3cb2fc38d9a600cd"
+      },
+      "request_sha256": "d1ca0c8e4a9e2dd7bd7226763d7da9fadf9dee1873e8ace1acb6052da85fcd39",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e3.zmx",
+      "staging_zmx_sha256": "eaa78c2ed1e1693803c4af324d99c7b1cb247e0f99760b0b05917e0c43c72480",
+      "worker_response_sha256": "68cf30fd9114ead50e045f1d54dacc88a77864a2bc32d76bd47d9e50fcf12c39"
+    },
+    "5": {
+      "candidate_zmx_sha256": "f0c495c74354b63da3a2608683196452f5289c209647f2fcc42a9497b4b03871",
+      "conversion_request_sha256": "b6799af898dd49a06741a28dc1c4147b11b1d475fe2280c74b142eb90181e47b",
+      "item_id": "US-20250231379-A1:e5",
+      "prescription_fingerprint": "07f6aca20ad9a44c",
+      "receipt_semantic_sha256": "c0cd133219451dbb951443b790e4eb0858a0a128d579f2cacaf5c28c88d2ef44",
+      "receipt_sha256_by_result_attempt": {
+        "2": "5af142a5abe5cd5cc0d1f3254ce204d4998ae0ffba23fcb195f5034e30a8a5bb",
+        "3": "e3bcd6cc02ec1e70cb4419faff185026166968e494abb4129d87755ce291dd5c"
+      },
+      "request_sha256": "3da48c66bc8db154b8d3c234ab9c7c0adc91ffccd6e8b020a4db5541115ab24b",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e5.zmx",
+      "staging_zmx_sha256": "f0c495c74354b63da3a2608683196452f5289c209647f2fcc42a9497b4b03871",
+      "worker_response_sha256": "34849ca892ed64d11a137221c4bebd0f1a8f7f8071171d3d5ac1a19ac659c03b"
+    },
+    "7": {
+      "candidate_zmx_sha256": "e7a040bc4f21392424ad54ca359e19b95b0da34644323179d314d98c23fce01b",
+      "conversion_request_sha256": "55fb59e9f83e0e0ef64522342c3cd6bab9ead6463c14903295a802a864e22074",
+      "item_id": "US-20250231379-A1:e7",
+      "prescription_fingerprint": "af8680d34f962c96",
+      "receipt_semantic_sha256": "18e1315dc9405d77d2bf3b73416e4e33c659a0814b2c15d3bd4ab2ab540291c7",
+      "receipt_sha256_by_result_attempt": {
+        "2": "e7f4f5f42314d1628effcc2ecd3251eff582fb247282ee6520afe57299d82746",
+        "3": "6bce7967120fbacf23e53e36fbd76f2177f9e57efdf29abdaaf3091e992c57e2"
+      },
+      "request_sha256": "38ffb31843942d4b88a22d5b269caed86e61671b27d03a54df23712fa0a41258",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e7.zmx",
+      "staging_zmx_sha256": "e7a040bc4f21392424ad54ca359e19b95b0da34644323179d314d98c23fce01b",
+      "worker_response_sha256": "bf38387548fb326b220a8ed94e85786c05ab6efdf7a9fe84b14c913e2f41b0a6"
+    },
+    "9": {
+      "candidate_zmx_sha256": "21c516b826dfa049be35d0c4a5a540505d66134f85adc80139ec5bb1b0049fdc",
+      "conversion_request_sha256": "fb2faeafd96735a5fa4a654fca07314c7db20d14eb11961b56407f4cd9052890",
+      "item_id": "US-20250231379-A1:e9",
+      "prescription_fingerprint": "939284887dfbd6ed",
+      "receipt_semantic_sha256": "6d741ac344f481c4feb9c391dad1e9d1eb5e1f358f06aea6e6a7577227701317",
+      "receipt_sha256_by_result_attempt": {
+        "2": "4410ef97c5a20f753e69f5fb3bff826f528662506244b36c29640b414420fe4a",
+        "3": "649fc9de8cbbd0282979ec204e61e2b25fa53962c3c2a6391c0565019432c6a6"
+      },
+      "request_sha256": "ceb3656c4b68e8256c8232d507e96b5e2c9993c815bbf9508e5e7c3908e928d1",
+      "staging_zmx_path": "data/zmx-staging/patent-local-replay/US-20250231379-A1-e9.zmx",
+      "staging_zmx_sha256": "21c516b826dfa049be35d0c4a5a540505d66134f85adc80139ec5bb1b0049fdc",
+      "worker_response_sha256": "d76a70c96907785e0825b6706d04b51e9ca0e449910280125caaaaeee8252b39"
+    }
+  },
+  "publication_id": "US-20250231379-A1",
+  "result_normalization": {
+    "excluded_receipt_fields": [
+      "attempt_id",
+      "candidate_zmx_path",
+      "elapsed_seconds",
+      "receipt_path",
+      "request_path",
+      "response_path",
+      "retry_number",
+      "stderr_path",
+      "stdout_path"
+    ],
+    "excluded_result_fields": [
+      "result_attempt",
+      "items[].conversion_attempt_id",
+      "items[].evidence[patent_conversion_receipt].path",
+      "items[].evidence[patent_conversion_receipt].sha256"
+    ],
+    "outcome_fields_removed": [],
+    "receipt_semantic_replacement_field": "items[].evidence[patent_conversion_receipt].receipt_semantic_sha256"
+  },
+  "root_id": "US-20250231379",
+  "schema_version": 1,
+  "semantic_sha256": "6b3aea918004bfc9ea3a499ef336bcd0fd6e038c1712b925e922d66be0002ea5"
+}

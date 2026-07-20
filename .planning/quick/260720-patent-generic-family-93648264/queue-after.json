@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260720-patent-generic-family-93648264/generic-residual-after-2.json",
+  "result_set_sha256": "4b9cc81951c636135575720182197c0d5c5d994b3bc403baf62a6f225fe1ebc6",
+  "generic_residual_roots": 57,
+  "generic_residual_items": 57,
+  "next_exact_group": {
+    "family_id": "63252479",
+    "root_ids": [
+      "US-20250284086"
+    ],
+    "publication_ids": [
+      "US-20250284086-A1"
+    ],
+    "application_number": "19/218688",
+    "title": "FOLDED CAMERA LENS DESIGNS",
+    "first_inventor": "Shabtay; Gal",
+    "applicant": "Corephotonics Ltd.",
+    "assignee": "Corephotonics Ltd.",
+    "related_us_parent_marker": "parent US continuation 18314866 20230510",
+    "layout_signature": "8f8d0229dc5dfd8dcd00445a0f366acf58c2c04c86ce3cdc58a7e2cddabb2031",
+    "layout_signature_count": 1,
+    "table_count": 8,
+    "marker_counts": {
+      "effective_focal_length": 17,
+      "embodiment_anchor": 3,
+      "example_anchor": 0,
+      "f_number": 10,
+      "full_field": 43,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/67c144ce4c85777e/US-20250284086-A1.html",
+      "sha256": "67c144ce4c85777eb2d938fb609997aa48742fb1247a2e8880321fb47492773d"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

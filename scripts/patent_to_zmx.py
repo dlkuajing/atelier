@@ -403,6 +403,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _parse_largan_five_lens_focus_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_largan_moving_group_macro_attempts(
         raw_text,
         patent_id=patent_id,
@@ -2259,6 +2265,59 @@ _LARGAN_MOVING_GROUP_SOURCE_PROFILES: dict[str, dict[str, str]] = {
             "70233e3a4c941838d0b20a08066a14a88b19cfe2e17c1c16ba47494736723c79"
         ),
     },
+}
+_LARGAN_FIVE_LENS_FOCUS_SOURCE_PROFILES: dict[str, dict[str, str]] = {
+    "US-20250231379-A1": {
+        "raw_document_sha256": (
+            "828212012a1d69a52bc19c066023460def0268ac62b3f5f36c2b358bb3eb3984"
+        ),
+        "normalized_text_sha256": (
+            "f6b4724f51c929476d6daad8ab388c87b083555d94ba98c4616b88141107c9f5"
+        ),
+        "math_id_set_sha256": (
+            "ce20fc8a599fddd53d5e3dad65a5a178861b5c245965238cd42e78da68c61d5f"
+        ),
+    },
+}
+_LARGAN_FIVE_LENS_FOCUS_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+OPTICAL\s+LENS\s+SYSTEM,\s+IMAGE\s+CAPTURING\s+UNIT\s+"
+    r"AND\s+ELECTRONIC\s+DEVICE\b",
+    flags=re.IGNORECASE,
+)
+# PPUBS retains em dashes but flattens table geometry. These highest populated
+# even orders are pinned to the original official PDF rasters on wrapper pages
+# 88, 90-91, 93-94, 96, 99, 101-102, 104-105, 107, 110, 113, and 115-116.
+# Numeric values still come only from PPUBS text.
+_LARGAN_FIVE_LENS_FOCUS_ASPHERE_MAX_ORDERS: dict[int, dict[int, int]] = {
+    1: dict(zip(range(4, 12), (22, 22, 24, 24, 24, 22, 22, 22), strict=True)),
+    2: dict(
+        zip(
+            range(2, 12),
+            (16, 20, 22, 22, 24, 24, 24, 22, 22, 22),
+            strict=True,
+        )
+    ),
+    3: dict(
+        zip(
+            range(2, 12),
+            (20, 20, 22, 22, 24, 24, 24, 22, 22, 22),
+            strict=True,
+        )
+    ),
+    4: dict(zip(range(4, 12), (22, 22, 24, 24, 22, 22, 22, 22), strict=True)),
+    5: dict(
+        zip(
+            range(2, 12),
+            (20, 20, 22, 22, 24, 24, 24, 22, 22, 22),
+            strict=True,
+        )
+    ),
+    6: dict(zip(range(4, 12), (22, 22, 24, 24, 22, 22, 22, 22), strict=True)),
+    7: dict(zip(range(4, 12), (24, 24, 26, 26, 26, 24, 24, 24), strict=True)),
+    8: dict(zip(range(4, 12), (22, 22, 24, 24, 24, 24, 22, 22), strict=True)),
+    9: dict(zip(range(4, 12), (22, 22, 24, 24, 24, 22, 22, 22), strict=True)),
+    10: dict(zip(range(4, 12), (22, 22, 24, 24, 24, 24, 24, 24), strict=True)),
+    11: dict(zip(range(4, 10), (20, 22, 24, 22, 20, 20), strict=True)),
 }
 _LARGAN_FOLDED_PRISM_FIXED_SOURCE_PROFILES: dict[str, dict[str, str]] = {
     "US-20260063876-A1": {
@@ -27664,6 +27723,719 @@ def _parse_large_aperture_scanning_tele_coefficients(
     return coefficients
 
 
+def _parse_largan_five_lens_focus_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Parse the source-locked Largan five-/four-lens movable-focus family."""
+
+    profile = _LARGAN_FIVE_LENS_FOCUS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+    labels = _largan_five_lens_focus_attempt_labels()
+
+    def attempts_for_error(error: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=index,
+                embodiment=label,
+                error=error,
+            )
+            for index, label in enumerate(labels, start=1)
+        ]
+
+    try:
+        raw_sha256 = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_sha256 != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Largan five-lens focus official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_sha256 != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Largan five-lens focus normalized text hash changed for {patent_id}"
+            )
+        _validate_largan_five_lens_focus_document(
+            raw_text,
+            text=text,
+            math_id_set_sha256=profile["math_id_set_sha256"],
+        )
+        blocks = _suffixed_patent_table_blocks(text)
+        expected_blocks = {(1, suffix) for suffix in ("A", "B", "C")} | {
+            (embodiment, suffix)
+            for embodiment in range(2, 12)
+            for suffix in ("A", "B", "C", "D")
+        }
+        if set(blocks) != expected_blocks:
+            raise PatentParseError(
+                "Largan five-lens focus official 43-table inventory changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - preserve all 27 disclosed items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    attempt_number = 0
+    for embodiment in range(1, 12):
+        state_names = (
+            ("first", "second", "third")
+            if embodiment == 9
+            else ("first", "second")
+        )
+        try:
+            states = _parse_largan_five_lens_focus_states(
+                blocks[(embodiment, "B")],
+                embodiment=embodiment,
+            )
+            coefficients = _parse_largan_five_lens_focus_coefficients(
+                blocks[(embodiment, "C")],
+                embodiment=embodiment,
+            )
+        except Exception as exc:  # noqa: BLE001 - preserve every optical state
+            for state_name in state_names:
+                attempt_number += 1
+                attempts.append(
+                    _PrescriptionParseAttempt(
+                        embodiment_number=attempt_number,
+                        embodiment=(
+                            f"Largan movable-focus embodiment {embodiment} "
+                            f"{state_name} state"
+                        ),
+                        error=exc,
+                    )
+                )
+            continue
+
+        for state_name in state_names:
+            attempt_number += 1
+            label = f"Largan movable-focus embodiment {embodiment} {state_name} state"
+            try:
+                state = states[state_name]
+                surfaces = _parse_largan_five_lens_focus_surfaces(
+                    blocks[(embodiment, "A")],
+                    embodiment=embodiment,
+                    state_name=state_name,
+                    gaps=state["gaps"],
+                    coefficients=coefficients,
+                )
+                if state_name == "second":
+                    raise PatentParseError(
+                        "finite-object state is published but unsupported by the "
+                        "infinity-conjugate replay model: object distance "
+                        f"{state['object_distance_mm']:.3f} mm"
+                    )
+                prescription = PatentPrescription(
+                    patent_id=patent_id,
+                    embodiment=label,
+                    focal_length_mm=state["focal_length_mm"],
+                    f_number=state["f_number"],
+                    hfov_deg=state["hfov_deg"],
+                    surfaces=surfaces,
+                )
+                _validate_prescription_materials(prescription)
+            except Exception as exc:  # noqa: BLE001 - retain every disclosed state
+                attempts.append(
+                    _PrescriptionParseAttempt(
+                        embodiment_number=attempt_number,
+                        embodiment=label,
+                        error=exc,
+                    )
+                )
+                continue
+            attempts.append(
+                _PrescriptionParseAttempt(
+                    embodiment_number=attempt_number,
+                    embodiment=label,
+                    prescription=prescription,
+                )
+            )
+
+    wrapper_labels = labels[23:]
+    for label in wrapper_labels:
+        attempt_number += 1
+        image_capturing_unit = attempt_number == 24
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=attempt_number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="confirmed_no_prescription",
+                    reason_code=(
+                        "confirmed_no_prescription.image_capturing_unit_wrapper_only"
+                        if image_capturing_unit
+                        else "confirmed_no_prescription.electronic_device_wrapper_only"
+                    ),
+                    detail=(
+                        "12th embodiment publishes a lens-unit, drive, image-sensor and "
+                        "stabilizer wrapper around a previously disclosed optical system; "
+                        "it adds no optical surface prescription"
+                        if image_capturing_unit
+                        else (
+                            f"{label} publishes only an electronic-device arrangement "
+                            "around previously disclosed image-capturing units; it adds no "
+                            "optical surface prescription"
+                        )
+                    ),
+                ),
+            )
+        )
+    if attempt_number != len(labels):
+        raise AssertionError("Largan five-lens focus attempt denominator changed")
+    return attempts
+
+
+def _largan_five_lens_focus_attempt_labels() -> list[str]:
+    labels = []
+    for embodiment in range(1, 12):
+        states = (
+            ("first", "second", "third")
+            if embodiment == 9
+            else ("first", "second")
+        )
+        labels.extend(
+            f"Largan movable-focus embodiment {embodiment} {state} state"
+            for state in states
+        )
+    labels.extend(
+        [
+            "Largan movable-focus embodiment 12 image capturing unit",
+            "Largan movable-focus embodiment 13 electronic device",
+            "Largan movable-focus embodiment 14 electronic device",
+            "Largan movable-focus embodiment 15 electronic device",
+        ]
+    )
+    return labels
+
+
+def _validate_largan_five_lens_focus_document(
+    raw_text: str,
+    *,
+    text: str,
+    math_id_set_sha256: str,
+) -> None:
+    if _LARGAN_FIVE_LENS_FOCUS_TITLE_PATTERN.search(text) is None:
+        raise PatentParseError("Largan five-lens focus official title binding changed")
+    if text.count("Family ID: 93648264") != 1:
+        raise PatentParseError("Largan five-lens focus Family ID binding changed")
+    if text.count("Appl. No.: 18/651427") != 1:
+        raise PatentParseError("Largan five-lens focus application binding changed")
+
+    paragraph_numbers = tuple(
+        int(match.group(1)) for match in re.finditer(r"\[(\d{4})\]", text)
+    )
+    if paragraph_numbers != tuple(range(1, 376)):
+        raise PatentParseError(
+            "Largan five-lens focus paragraph inventory is not consecutive 1-375"
+        )
+    embodiment_starts = tuple(
+        (int(match.group(1)), int(match.group(2)))
+        for match in re.finditer(
+            r"(?<!\w)((?:[1-9]|1[0-5]))(?:st|nd|rd|th)\s+Embodiment\s+\[(\d{4})\]",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+    expected_starts = (
+        (1, 157),
+        (2, 213),
+        (3, 228),
+        (4, 243),
+        (5, 258),
+        (6, 273),
+        (7, 288),
+        (8, 303),
+        (9, 318),
+        (10, 333),
+        (11, 348),
+        (12, 361),
+        (13, 364),
+        (14, 368),
+        (15, 371),
+    )
+    if embodiment_starts != expected_starts:
+        raise PatentParseError("Largan five-lens focus embodiment denominator changed")
+
+    brief_start = text.find("BRIEF DESCRIPTION OF THE DRAWINGS")
+    detailed_start = text.find("DETAILED DESCRIPTION")
+    claims_start = raw_text.find("<h3>Claims</h3>")
+    if not 0 <= brief_start < detailed_start or claims_start < 0:
+        raise PatentParseError("Largan five-lens focus section ordering changed")
+    brief = text[brief_start:detailed_start]
+    for paragraph, figure in zip(range(20, 65), range(1, 46), strict=True):
+        if re.search(
+            rf"\[{paragraph:04d}\]\s+FIG\.\s+{figure}\b",
+            brief,
+            flags=re.IGNORECASE,
+        ) is None:
+            raise PatentParseError(
+                "Largan five-lens focus FIGS. 1-45 declaration inventory changed"
+            )
+    for paragraph, figure in zip(range(67, 86), range(51, 70), strict=True):
+        if re.search(
+            rf"\[{paragraph:04d}\]\s+FIG\.\s+{figure}\b",
+            brief,
+            flags=re.IGNORECASE,
+        ) is None:
+            raise PatentParseError(
+                "Largan five-lens focus FIGS. 51-69 declaration inventory changed"
+            )
+    if re.search(
+        r"\[0065\]\s+FIG\.\s+46\s+to\s+FIG\.\s+48\b", brief, re.IGNORECASE
+    ) is None:
+        raise PatentParseError("Largan five-lens focus FIGS. 46-48 declaration changed")
+    if re.search(
+        r"\[0066\]\s+FIG\.\s+49\s+and\s+FIG\.\s+50\b", brief, re.IGNORECASE
+    ) is None:
+        raise PatentParseError("Largan five-lens focus FIGS. 49-50 declaration changed")
+
+    claim_numbers = tuple(
+        int(number)
+        for number in re.findall(
+            r"(?:<p>\s*|<br\s*/?>\s*)<b>(\d+)</b>\.",
+            raw_text[claims_start:],
+            flags=re.IGNORECASE,
+        )
+    )
+    if claim_numbers != tuple(range(1, 37)):
+        raise PatentParseError("Largan five-lens focus claim inventory changed")
+
+    math_ids = re.findall(r'id="(MATH-US-[^"]+)"', raw_text, flags=re.IGNORECASE)
+    math_digest = hashlib.sha256(
+        json.dumps(math_ids, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if len(math_ids) != 51 or math_digest != math_id_set_sha256:
+        raise PatentParseError("Largan five-lens focus MathML inventory changed")
+
+
+def _parse_largan_five_lens_focus_states(
+    table_text: str,
+    *,
+    embodiment: int,
+) -> dict[str, dict[str, Any]]:
+    state_suffixes = {"first": "L", "second": "S"}
+    if embodiment == 9:
+        state_suffixes["third"] = "V"
+
+    def required_value(label: str) -> float:
+        match = re.search(
+            rf"\b{re.escape(label)}(?:\s+\[[^\]]+\])?\s+"
+            rf"(?P<value>{NUMBER_PATTERN})\b",
+            table_text,
+            flags=re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} metadata missing {label}"
+            )
+        return _parse_number(match.group("value"))
+
+    object_tokens = re.findall(
+        rf"\bObject\s+Distance\s+\[mm\]\s+(Infinity|{NUMBER_PATTERN})\b",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    state_names = tuple(state_suffixes)
+    if len(object_tokens) != len(state_names):
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} object-state inventory changed"
+        )
+    expected_gap_labels = (
+        ("D1", "D2")
+        if embodiment == 9
+        else (("D1", "D2", "D3") if embodiment == 10 else ("D1",))
+    )
+    gaps_by_state: dict[str, dict[str, float]] = {name: {} for name in state_names}
+    for gap_label in expected_gap_labels:
+        values = [
+            _parse_number(value)
+            for value in re.findall(
+                rf"\b{gap_label}\s+\[mm\]\s+(?P<value>{NUMBER_PATTERN})\b",
+                table_text,
+                flags=re.IGNORECASE,
+            )
+        ]
+        if len(values) != len(state_names):
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} {gap_label} "
+                "state inventory changed"
+            )
+        for state_name, value in zip(state_names, values, strict=True):
+            gaps_by_state[state_name][gap_label] = value
+
+    states: dict[str, dict[str, Any]] = {}
+    for state_name, suffix in state_suffixes.items():
+        f_mm = required_value(f"f{suffix}")
+        f_number = required_value(f"Fno{suffix}")
+        hfov = required_value(f"HFOV{suffix}")
+        if f_mm <= 0.0 or f_number <= 0.0 or not 0.0 < hfov < 90.0:
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} {state_name} "
+                "metadata is invalid"
+            )
+        object_token = object_tokens[state_names.index(state_name)]
+        object_distance = (
+            math.inf
+            if object_token.casefold() == "infinity"
+            else _parse_number(object_token)
+        )
+        if state_name == "second":
+            if not math.isfinite(object_distance) or object_distance <= 0.0:
+                raise PatentParseError(
+                    f"Largan five-lens focus embodiment {embodiment} finite object "
+                    "distance is invalid"
+                )
+        elif not math.isinf(object_distance):
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} {state_name} "
+                "object distance is not infinity"
+            )
+        states[state_name] = {
+            "focal_length_mm": f_mm,
+            "f_number": f_number,
+            "hfov_deg": hfov,
+            "object_distance_mm": object_distance,
+            "gaps": gaps_by_state[state_name],
+        }
+    return states
+
+
+def _parse_largan_five_lens_focus_coefficients(
+    table_text: str,
+    *,
+    embodiment: int,
+) -> dict[int, dict[str, float]]:
+    body = re.split(r"\s\[\d{4}\]\s", table_text, maxsplit=1)[0]
+    expected_orders = _LARGAN_FIVE_LENS_FOCUS_ASPHERE_MAX_ORDERS[embodiment]
+    surface_ids = tuple(expected_orders)
+    expected_groups = tuple(
+        tuple([*surface_ids[offset : offset + 4], *([None] * 4)][:4])
+        for offset in range(0, len(surface_ids), 4)
+    )
+    headers = list(
+        re.finditer(
+            r"\bSurface\s+#\s+"
+            r"(?P<ids>(?:\d+|--)(?:\s+(?:\d+|--)){3})\s+k=",
+            body,
+            flags=re.IGNORECASE,
+        )
+    )
+    observed_groups = tuple(
+        tuple(
+            None if token == "--" else int(token)
+            for token in match.group("ids").split()
+        )
+        for match in headers
+    )
+    if observed_groups != expected_groups:
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} coefficient groups changed"
+        )
+
+    coefficients: dict[int, dict[str, float]] = {}
+    observed_max_orders: dict[int, int] = {}
+    for section_index, header in enumerate(headers):
+        section_end = (
+            headers[section_index + 1].start()
+            if section_index + 1 < len(headers)
+            else len(body)
+        )
+        section = body[header.start() : section_end]
+        group = observed_groups[section_index]
+        row_matches = list(
+            re.finditer(
+                r"(?<!\S)(?P<label>k|A\d+)=", section, flags=re.IGNORECASE
+            )
+        )
+        group_orders = [expected_orders[item] for item in group if item is not None]
+        expected_labels = [
+            "k",
+            *(f"A{order}" for order in range(4, max(group_orders) + 1, 2)),
+        ]
+        if [match.group("label").casefold() for match in row_matches] != [
+            label.casefold() for label in expected_labels
+        ]:
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} coefficient labels changed"
+            )
+        for row_index, row_match in enumerate(row_matches):
+            row_end = (
+                row_matches[row_index + 1].start()
+                if row_index + 1 < len(row_matches)
+                else len(section)
+            )
+            value_tokens = section[row_match.end() : row_end].split()
+            if len(value_tokens) != 4:
+                raise PatentParseError(
+                    f"Largan five-lens focus embodiment {embodiment} "
+                    f"{row_match.group('label')} cell occupancy changed"
+                )
+            label = row_match.group("label")
+            order = None if label.casefold() == "k" else int(label[1:])
+            codev_label = "K" if order is None else ASPHERE_ORDER_TO_CODEV[order]
+            for surface_id, token in zip(group, value_tokens, strict=True):
+                if surface_id is None:
+                    if not _is_empty_value(token):
+                        raise PatentParseError(
+                            f"Largan five-lens focus embodiment {embodiment} padded "
+                            "coefficient cell is populated"
+                        )
+                    continue
+                if _is_empty_value(token):
+                    continue
+                coefficients.setdefault(surface_id, {})[codev_label] = _parse_number(
+                    token
+                )
+                if order is not None:
+                    observed_max_orders[surface_id] = order
+    if set(coefficients) != set(surface_ids) or observed_max_orders != expected_orders:
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} asphere occupancy changed"
+        )
+    return coefficients
+
+
+def _parse_largan_five_lens_focus_surfaces(
+    table_text: str,
+    *,
+    embodiment: int,
+    state_name: str,
+    gaps: dict[str, float],
+    coefficients: dict[int, dict[str, float]],
+) -> list[PatentSurface]:
+    ordinal = _largan_numeric_ordinal(embodiment)
+    header = re.search(
+        rf"\ATABLE-US-\d+\s+TABLE\s+{embodiment}A\s+{ordinal}\s+Embodiment\s+"
+        r"Surface\s+#\s+Curvature\s+Radius\s+Thickness\s+Material\s+Index\s+"
+        r"Abbe\s+#\s+Focal\s+Length\s+",
+        table_text,
+        flags=re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} surface header changed"
+        )
+    remainder = table_text[header.end() :]
+    note_match = re.search(r"\s+Note:\s+", remainder, flags=re.IGNORECASE)
+    if note_match is None:
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} surface note is absent"
+        )
+    tokens = remainder[: note_match.start()].split()
+    note = remainder[note_match.end() :]
+    position = 0
+
+    def take(expected: str | None = None) -> str:
+        nonlocal position
+        if position >= len(tokens):
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} surface table is incomplete"
+            )
+        token = tokens[position]
+        position += 1
+        if expected is not None and token.casefold() != expected.casefold():
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} expected {expected}, "
+                f"found {token}"
+            )
+        return token
+
+    def take_index(expected: int) -> None:
+        actual = take()
+        if actual != str(expected):
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} surface sequence "
+                f"expected {expected}, found {actual}"
+            )
+
+    def thickness() -> float | None:
+        token = take()
+        if token.upper() in gaps:
+            return gaps[token.upper()]
+        if _is_empty_value(token):
+            return None
+        return _parse_number(token)
+
+    take_index(0)
+    take("Object")
+    take("Plano")
+    take("D0")
+    lens_count = 4 if embodiment == 11 else 5
+    second_stop = 10 if embodiment == 11 else 12
+    prism_first = second_stop + 1
+    filter_first = prism_first + 2
+    image_index = filter_first + 2
+    rows: list[_LarganMovingGroupSurfaceRow] = []
+    for surface_index in range(1, image_index + 1):
+        if surface_index == 1 or surface_index == second_stop:
+            take_index(surface_index)
+            take("Stop")
+            take("Plano")
+            stop_number = 1 if surface_index == 1 else 2
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    f"Stop S{stop_number}",
+                    0.0,
+                    thickness(),
+                )
+            )
+            continue
+        lens_surface_end = lens_count * 2 + 1
+        if 2 <= surface_index <= lens_surface_end:
+            take_index(surface_index)
+            lens_number = surface_index // 2
+            first_side = surface_index % 2 == 0
+            if first_side:
+                take("Lens")
+                take(str(lens_number))
+            radius = _parse_number(take())
+            surface_marker = take().upper()
+            if surface_marker not in {"(ASP)", "(SPH)"}:
+                raise PatentParseError(
+                    f"Largan five-lens focus embodiment {embodiment} surface "
+                    f"{surface_index} type changed"
+                )
+            distance = thickness()
+            material = None
+            nd = None
+            vd = None
+            if first_side:
+                material = take()
+                nd = _parse_number(take())
+                vd = _parse_number(take())
+                _parse_number(take())
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    f"L{lens_number} S{1 if first_side else 2}",
+                    radius,
+                    distance,
+                    material,
+                    nd,
+                    vd,
+                    "ASP" if surface_marker == "(ASP)" else None,
+                )
+            )
+            continue
+        if surface_index == prism_first:
+            take_index(surface_index)
+            take("Prism")
+            take("Plano")
+            distance = thickness()
+            material = take()
+            nd = _parse_number(take())
+            vd = _parse_number(take())
+            if position < len(tokens) and _is_empty_value(tokens[position]):
+                position += 1
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    "Prism S1",
+                    0.0,
+                    distance,
+                    material,
+                    nd,
+                    vd,
+                )
+            )
+            continue
+        if surface_index == prism_first + 1:
+            take_index(surface_index)
+            take("Plano")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    "Prism S2",
+                    0.0,
+                    thickness(),
+                )
+            )
+            continue
+        if surface_index == filter_first:
+            take_index(surface_index)
+            take("Filter")
+            take("Plano")
+            distance = thickness()
+            material = take()
+            nd = _parse_number(take())
+            vd = _parse_number(take())
+            if position < len(tokens) and _is_empty_value(tokens[position]):
+                position += 1
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    "Filter S1",
+                    0.0,
+                    distance,
+                    material,
+                    nd,
+                    vd,
+                )
+            )
+            continue
+        if surface_index == filter_first + 1:
+            take_index(surface_index)
+            take("Plano")
+            rows.append(
+                _LarganMovingGroupSurfaceRow(
+                    surface_index,
+                    "Filter S2",
+                    0.0,
+                    thickness(),
+                )
+            )
+            continue
+        if surface_index == image_index:
+            take_index(surface_index)
+            take("Image")
+            take("Plano")
+            if position < len(tokens) and _is_empty_value(tokens[position]):
+                position += 1
+            rows.append(
+                _LarganMovingGroupSurfaceRow(surface_index, "Image", 0.0, None)
+            )
+            continue
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} has no row schema for "
+            f"surface {surface_index}"
+        )
+    if position != len(tokens):
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} surface table has "
+            "unconsumed cells"
+        )
+
+    for stop_number, surface_index in ((1, 1), (2, second_stop)):
+        match = re.search(
+            rf"\bAn\s+effective\s+radius\s+of\s+the\s+stop\s+S{stop_number}\s+"
+            rf"\(Surface\s+{surface_index}\)\s+is\s+(?P<radius>{NUMBER_PATTERN})\s+mm",
+            note,
+            flags=re.IGNORECASE,
+        )
+        if match is None or _parse_number(match.group("radius")) <= 0.0:
+            raise PatentParseError(
+                f"Largan five-lens focus embodiment {embodiment} stop S{stop_number} "
+                "radius binding changed"
+            )
+    if re.search(
+        r"\bReference\s+wavelength\s+is\s+587\.6\s+nm\s+\(d-line\)\.",
+        note,
+        flags=re.IGNORECASE,
+    ) is None:
+        raise PatentParseError(
+            f"Largan five-lens focus embodiment {embodiment} wavelength binding changed"
+        )
+
+    return _reorder_largan_moving_group_surfaces(
+        rows,
+        coefficients=coefficients,
+        embodiment=embodiment,
+        context=f"Largan five-lens focus embodiment {embodiment} {state_name} state",
+        allow_coincident_stop_surface=(embodiment == 9 and state_name == "third"),
+    )
+
+
 def _parse_largan_moving_group_macro_attempts(
     raw_text: str,
     *,
@@ -28205,6 +28977,7 @@ def _reorder_largan_moving_group_surfaces(
     coefficients: dict[int, dict[str, float]],
     embodiment: int,
     context: str | None = None,
+    allow_coincident_stop_surface: bool = False,
 ) -> list[PatentSurface]:
     error_context = context or f"Largan moving-group embodiment {embodiment}"
     positioned: list[tuple[float, _LarganMovingGroupSurfaceRow]] = []
@@ -28230,8 +29003,16 @@ def _reorder_largan_moving_group_surfaces(
         z_mm += row.thickness_mm
 
     ordered = sorted(positioned, key=lambda item: item[0])
-    for (first_z, _first), (second_z, _second) in zip(ordered, ordered[1:], strict=False):
-        if second_z - first_z <= 1e-12:
+    for (first_z, first), (second_z, second) in zip(
+        ordered, ordered[1:], strict=False
+    ):
+        separation = second_z - first_z
+        coincident_stop_pair = allow_coincident_stop_surface and (
+            first.label.startswith("Stop S") or second.label.startswith("Stop S")
+        )
+        if separation < -1e-12 or (
+            separation <= 1e-12 and not coincident_stop_pair
+        ):
             raise PatentParseError(f"{error_context} axial coordinates overlap")
     if ordered[-1][1].label != "Image":
         raise PatentParseError(f"{error_context} image is not the final surface")
