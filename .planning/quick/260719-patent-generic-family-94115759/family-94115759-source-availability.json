@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "publication_id": "US-12560789-B2",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/bf9bd6013b3118d1/US-12560789-B2.html",
+    "bytes": 115279,
+    "sha256": "bf9bd6013b3118d153420f9942f11d057cb2bdcfce65550683fdf5680b9aa561",
+    "text_characters": 113559
+  },
+  "official_pdf_fetches": [
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94115759/source-review/US-12560789-B2-official-1.pdf",
+      "bytes": 1935543,
+      "sha256": "963a8b2b2b7fd1bca1091e70f338a1ded494731f0ca9db139df0dcaa6aaec12f",
+      "pages": 38,
+      "single_raster_pages": 38,
+      "text_layer_characters": 0
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94115759/source-review/US-12560789-B2-official-2.pdf",
+      "bytes": 1935543,
+      "sha256": "963a8b2b2b7fd1bca1091e70f338a1ded494731f0ca9db139df0dcaa6aaec12f",
+      "pages": 38,
+      "single_raster_pages": 38,
+      "text_layer_characters": 0
+    }
+  ],
+  "official_pdf_fetches_byte_identical": true,
+  "canonical_page_records_identical": true,
+  "canonical_page_record_set_sha256": "03ffd47be36e5461a6ea591f5bae8cbdf7ee20b83455771550c1068e7a4d14d9",
+  "source_policy": {
+    "html_bibliography_authority": true,
+    "html_exact_table_text_authority": true,
+    "pdf_printed_layout_corroboration_only": true,
+    "numeric_raster_transcription_permitted": false,
+    "image_enhancement_permitted": false,
+    "drawing_measurement_permitted": false,
+    "cross_publication_numeric_borrowing_permitted": false,
+    "system_f_number_derivation_from_f_and_epd_permitted": false,
+    "image_height_derivation_from_f_and_fov_permitted": false,
+    "multipass_path_flattening_permitted": false
+  }
+}

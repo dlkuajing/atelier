@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-94115759/generic-residual-after-2.json",
+  "result_set_sha256": "c1ed3deebabe22e2768dbef4800a7a67ef6e9e46ca2c443d8c86480473d99432",
+  "generic_residual_roots": 59,
+  "generic_residual_items": 59,
+  "next_exact_group": {
+    "family_id": "97232688",
+    "root_ids": [
+      "US-20250314947"
+    ],
+    "publication_ids": [
+      "US-20250314947-A1"
+    ],
+    "application_number": "19/239600",
+    "title": "MOUNTING SYSTEMS FOR MULTI-CAMERA IMAGERS",
+    "first_inventor": "Bidwell; Thomas",
+    "applicant": "Bidwell; Thomas et al.",
+    "assignee": "Circle Optics, Inc.",
+    "related_us_parent_marker": "parent US continuation 17908158 20220830 parent-grant-document US 12332549",
+    "layout_signature": "8ac3d3f8c0f9b7ff14eba1ce2bc77bae6e988322297d1b09ce8c07b9724c6115",
+    "layout_signature_count": 1,
+    "table_count": 0,
+    "marker_counts": {
+      "effective_focal_length": 2,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 3,
+      "full_field": 190,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/650093e2071264d9/US-20250314947-A1.html",
+      "sha256": "650093e2071264d9eaf88d76aa8518c033095250c2f73321c019d0656d29a546"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

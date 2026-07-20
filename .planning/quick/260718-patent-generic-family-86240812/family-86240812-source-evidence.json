@@ -182,16 +182,16 @@
     "corrupt_results": 0,
     "missing_results": 0,
     "report": {
-      "bytes": 50125,
+      "bytes": 50202,
       "path": ".planning/loop/patent-local-replay-report.md",
-      "sha256": "557ed656ae9f3922c942c88d5a8bd09024be075061df1e9adeca0df66cf91643"
+      "sha256": "fbd2644c67b66d6c21be189f2a43fff19758ced08a7a2a3dcb18444a370e6071"
     },
     "result_set_sha256": "2fd10d202f3eff06d47e99656510d7eb0035c61a0afd161b788247a450a649a4",
     "strict_roots_with_results": 619,
     "summary": {
-      "bytes": 48333,
+      "bytes": 48407,
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "sha256": "835546d66a57e7b857f685949b7a740545b91423384a46d4d472f2930b6fcce1"
+      "sha256": "e469a1992a34a89f951906c2615a819c3946edc1b47ef530d4662876ff600652"
     }
   },
   "next_exact_group": {

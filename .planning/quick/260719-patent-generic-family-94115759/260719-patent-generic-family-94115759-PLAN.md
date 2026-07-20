@@ -1,6 +1,6 @@
 # Quick Plan: Patent generic family 94115759
 
-**Status:** Active — entry snapshot frozen; parent saturation remains incomplete
+**Status:** Complete shovel — parent saturation remains incomplete
 **Date:** 2026-07-19
 **Parent:** Global patent saturation ledger (incomplete)
 
@@ -46,26 +46,26 @@ evidence while preserving every global saturation invariant.
   exact completed entry snapshot.
 - [x] Copy the current 60-family generic residual census byte-for-byte and record the
   single selected root.
-- [ ] Reconcile bibliography, application/family lineage, section/paragraph/claim
+- [x] Reconcile bibliography, application/family lineage, section/paragraph/claim
   denominators, declared figures, every table/formula object and every source item.
-- [ ] Establish the complete document/page/figure/table/embodiment/item denominator
+- [x] Establish the complete document/page/figure/table/embodiment/item denominator
   independently of recognized prescriptions and marker counts.
-- [ ] Bind surfaces, spacings, materials, aspheres and system metadata only to the
+- [x] Bind surfaces, spacings, materials, aspheres and system metadata only to the
   directly publishing item; never infer missing values from drawings, ratios, related
   publications, titles or generic lens terminology.
-- [ ] Inspect official PDF/original raster evidence only where necessary for layout or
+- [x] Inspect official PDF/original raster evidence only where necessary for layout or
   printed-token ambiguity; never enhance or measure drawings or invent numeric cells.
-- [ ] Add the narrowest exact parser/classifier support and focused tests only after
+- [x] Add the narrowest exact parser/classifier support and focused tests only after
   source reconciliation; do not alter generic heuristics, scoring or redline criteria.
-- [ ] Replay twice under the frozen 180-second worker / 1,500-second patent budgets,
+- [x] Replay twice under the frozen 180-second worker / 1,500-second patent budgets,
   compare only explicitly normalized business semantics, audit all 619 roots and
   rebuild the after census twice.
-- [ ] Refresh only live shared-ledger pointers required by deterministic tests while
+- [x] Refresh only live shared-ledger pointers required by deterministic tests while
   preserving historical snapshots.
-- [ ] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
+- [x] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
   contamination audits, strict corruption audit, CODE V inventory, primary-repository
   cleanliness and staged diff review.
-- [ ] Update STATE and decisions, mark this quick complete, commit atomically and select
+- [x] Update STATE and decisions, mark this quick complete, commit atomically and select
   the next residual family without claiming global saturation.
 
 ## Constraints
@@ -75,3 +75,53 @@ evidence while preserving every global saturation invariant.
 - Do not run `real_machine` tests or create formal optical cases/ZMX without complete
   source-proven metadata and existing quality gates.
 - Preserve raw source typography; do not repair, derive or cross-borrow numeric values.
+
+## Exact-source result
+
+- The exact B2 binds application `18/465987`, Family ID `94115759`, prior
+  `US-20250013025-A1`, and Taiwanese priority `TW-112124850` without borrowing
+  content from the prior publication.
+- The specification has 158 numbered section occurrences but 149 distinct labels:
+  background 1–4, summary 5–27, and detailed description 19–149. The summary and
+  detailed description intentionally repeat labels 19–27. Eighteen numbered drawing
+  declarations, fourteen claims, 32 flattened tables, one MathML object, eight optical
+  prescriptions and one electronic-device wrapper reconcile with no unmapped item.
+- Items 1–8 are three-physical-lens multipass prescriptions. Every item directly
+  publishes four tables, one ordered stop-bearing surface/material path, aspheres,
+  near/far focal length, EPD, full FOV and the 555 nm reference wavelength. Exact
+  whole-document scans publish neither a direct system F-number nor IMH/ImgH/image
+  height. No `f/EPD`, `f*tan(FOV/2)`, path flattening or numeric repair is used.
+- Item 5's near focal length `21.44 mm` exceeds its far focal length `21.12 mm` in
+  the source; both values remain verbatim and unreordered.
+- Paragraphs 146–149 and FIG. 9 reuse an assembly selected from embodiments 1–8
+  inside a head-mounted device; they disclose no ninth prescription. Claims 2–14
+  all depend on the sole independent claim 1 and do not add a device-claim family.
+- Two independent official PDF fetches are byte-identical at `963a8b2b...12f` and
+  decode to the same 38 original raster pages at `ff0b03a4...44b`: one front page,
+  eighteen drawing sheets, nineteen specification pages, fifteen table pages and two
+  claims pages. Review used no enhancement, drawing measurement, numeric raster
+  transcription or inference.
+- Attempts 2/3 are semantic-equal after removing only `result_attempt` at
+  `3a0f398b...ec33`. Items 1–8 close as
+  `metadata_unpublished.system_f_number_and_image_height_absent`; item 9 closes as
+  `confirmed_no_prescription.electronic_device_wrapper_only`. No worker request,
+  receipt, fingerprint, candidate ZMX, staging ZMX or formal intake is created.
+- Generic residual is 60→59, after censuses are byte-identical at `ec3865af...bd11`,
+  result set is `c1ed3dee...9432`, and strict audit is 619/619 with zero missing or
+  corrupt results. Stable ordering selects Family `97232688`, root/publication
+  `US-20250314947` / `US-20250314947-A1` next; global saturation remains incomplete.
+- The complete patent parser file passes 841/841. The non-overlapping remaining 100
+  test files pass in four stable shards (398 + 1714 + 282 + 355), for complete offline
+  coverage of 3591 passed, one skipped and ten `real_machine` tests deselected: the
+  841-test patent-file sweep and 2749-test remainder sweep were followed by the newly
+  added sealed-evidence test, which passes separately. The
+  initial monolithic remainder invocation hit its 1,204-second outer timeout without a
+  pytest verdict; read-only inventory showed no orphan process, and the four exhaustive
+  shards provide the valid result. Focused/sealed family tests pass 6/6 and explicit
+  CODE V guard tests pass 5/5; Ruff, compile,
+  JSON/evidence/formal-output/contamination/protected-path/diff/primary-repository and
+  strict-ledger audits pass, with CODE V inventory zero.
+- Sixty-three historical evidence manifests refresh shared summary/report records and
+  eleven explicitly live result-set fields; historical census/replay/queue snapshots
+  remain fixed. The next active GSD quick is
+  `260719-patent-generic-family-97232688`.

@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b`
+- result_set_sha256: `c1ed3deebabe22e2768dbef4800a7a67ef6e9e46ca2c443d8c86480473d99432`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 27
-- `terminal`: 187
-- `parser_review_required`: 251
+- `terminal`: 188
+- `parser_review_required`: 250
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 591
-- `terminal`: 1552
-- `parser_review_required`: 1353
+- `terminal`: 1561
+- `parser_review_required`: 1352
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,24 +38,24 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 539
+- `confirmed_no_prescription`: 540
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
-- `metadata_unpublished`: 267
+- `metadata_unpublished`: 275
 - `trace_failed`: 631
 - `trace_timeout`: 115
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 251
-- `terminal.all_disclosed_items_terminal`: 187
+- `parser_review_required.all_disclosed_items_rejected`: 250
+- `terminal.all_disclosed_items_terminal`: 188
 - `mixed_nonterminal.multiple_item_states`: 154
 - `converted_pending_intake.all_disclosed_items_converted`: 27
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1353
+- `parser_review_required.deterministic_parser_rejected`: 1352
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 591
 - `terminal.metadata_unpublished.system_f_number_absent`: 89
@@ -65,8 +65,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.freeform_tir_display_architecture_only`: 27
 - `terminal.confirmed_no_prescription.lens_barrel_absorbing_geometry_only`: 21
 - `terminal.metadata_unpublished.stop_axial_coordinate_absent`: 17
+- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 16
 - `terminal.confirmed_no_prescription.barrel_spacer_geometry_only`: 15
-- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 15
 - `terminal.confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only`: 15
 - `terminal.metadata_unpublished.prescription_specific_f_number_and_angular_field_absent`: 15
 - `terminal.confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only`: 13
@@ -84,6 +84,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.light_blocking_sheet_mechanical_architecture_only`: 8
 - `terminal.confirmed_no_prescription.variable_aperture_camera_module_architecture_only`: 8
 - `terminal.metadata_unpublished.absolute_image_height_absent`: 8
+- `terminal.metadata_unpublished.system_f_number_and_image_height_absent`: 8
 - `terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only`: 7
 - `terminal.confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only`: 7
 - `terminal.confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only`: 7
@@ -355,7 +356,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `asphere_section_missing`: 65
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62
-- `generic_summary_metadata_missing`: 60
+- `generic_summary_metadata_missing`: 59
 - `generic_surface_table_index_break`: 35
 - `other_sunny_s1_row_has_unexpected_extra_values_n_n_n`: 29
 - `other_finite_object_state_is_published_but_unsupported_by_the_infinity_conjugate_replay_model_object_distance_n`: 24

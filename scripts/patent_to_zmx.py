@@ -900,6 +900,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_newmax_three_lens_varifocal_missing_metadata_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _parse_ability_weatherproof_system_attempts(
         raw_text,
         patent_id=patent_id,
@@ -56943,6 +56951,544 @@ def _classify_newmax_varifocal_head_mounted_missing_f_number_attempts(
                     "paragraphs 156-159, FIG. 9, and claims 15-20 place one of "
                     "the eight disclosed optical assemblies inside a head-mounted "
                     "electronic device; they disclose no ninth optical prescription"
+                ),
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=error,
+            )
+        )
+    return attempts
+
+
+_NEWMAX_THREE_LENS_VARIFOCAL_ITEMS = (
+    (
+        1,
+        "NEWMAX three-lens varifocal folded optical assembly first embodiment",
+        (19, 43),
+        (1, 2, 3, 4),
+    ),
+    (
+        2,
+        "NEWMAX three-lens varifocal folded optical assembly second embodiment",
+        (44, 57),
+        (5, 6, 7, 8),
+    ),
+    (
+        3,
+        "NEWMAX three-lens varifocal folded optical assembly third embodiment",
+        (58, 71),
+        (9, 10, 11, 12),
+    ),
+    (
+        4,
+        "NEWMAX three-lens varifocal folded optical assembly fourth embodiment",
+        (72, 85),
+        (13, 14, 15, 16),
+    ),
+    (
+        5,
+        "NEWMAX three-lens varifocal folded optical assembly fifth embodiment",
+        (86, 99),
+        (17, 18, 19, 20),
+    ),
+    (
+        6,
+        "NEWMAX three-lens varifocal folded optical assembly sixth embodiment",
+        (100, 113),
+        (21, 22, 23, 24),
+    ),
+    (
+        7,
+        "NEWMAX three-lens varifocal folded optical assembly seventh embodiment",
+        (114, 127),
+        (25, 26, 27, 28),
+    ),
+    (
+        8,
+        "NEWMAX three-lens varifocal folded optical assembly eighth embodiment",
+        (128, 145),
+        (29, 30, 31, 32),
+    ),
+    (
+        9,
+        "NEWMAX head-mounted electronic-device wrapper",
+        (146, 149),
+        (),
+    ),
+)
+_NEWMAX_THREE_LENS_VARIFOCAL_METADATA_REASON = (
+    "metadata_unpublished.system_f_number_and_image_height_absent"
+)
+_NEWMAX_THREE_LENS_VARIFOCAL_WRAPPER_REASON = (
+    "confirmed_no_prescription.electronic_device_wrapper_only"
+)
+_NEWMAX_THREE_LENS_VARIFOCAL_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12560789-B2": {
+        "raw_document_sha256": (
+            "bf9bd6013b3118d153420f9942f11d057cb2bdcfce65550683fdf5680b9aa561"
+        ),
+        "normalized_text_sha256": (
+            "c85e39ac6d956b39bd51449d43cb25bde8ac73b669662673dc8197216dff52b0"
+        ),
+        "identity_markers": {
+            "Optical lens assembly and electronic device": 2,
+            "Chen; Ping-Yi": 2,
+            "Tsai; Fei-Hsin": 1,
+            "Ge; Cong": 1,
+            "Applicant: NEWMAX TECHNOLOGY CO., LTD.": 1,
+            "Assignee:": 0,
+            "Family ID: 94115759": 1,
+            "Appl. No.: 18/465987": 1,
+            "Filed: September 13, 2023": 1,
+            "Date of Patent February 24, 2026": 1,
+            "US 20250013025 A1 Jan. 09, 2025": 1,
+            "TW 112124850 Jul. 04, 2023": 1,
+        },
+        "section_markers": {
+            "preamble": "US-12560789-B2 - Patent Public Search | USPTO",
+            "abstract": "Abstract An optical lens assembly includes",
+            "background": "Background/Summary BACKGROUND",
+            "summary": "SUMMARY",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "preamble": (
+                "61b03e89836327a49c2734a9f38f685ecaba2af0e9b6d6c6c0e3bef48d75d61d"
+            ),
+            "abstract": (
+                "9081df96f41f23f3fe3b355bd53472b100cd765bf3254c4e94e44baacead52e6"
+            ),
+            "background": (
+                "fc433f9891aa37ecbc2c2748df753b827df75bbcdf4a2094049c8080c751c9ef"
+            ),
+            "summary": (
+                "42ed1ad93cbcb34d1c6765b60a28e3b24193dd62083d54e9e2d0393d2fa6041c"
+            ),
+            "brief": (
+                "d4b31172a50e2eaf8f31c09aea2d3624f148802d7c71fe56321444f299f49766"
+            ),
+            "detailed": (
+                "b33b4f2a43734961fd5e9d9ba418687ae7a188b845a081b840fb2bfd10189f63"
+            ),
+            "claims": (
+                "8e697b8535aaeac7191a516f18bd4320e7846a294b3d7f98205ced49497ee982"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (19, 43): "4d07091c81b68444a9d9b558f8ddd57e32ee09609b03d0b2a7ed7385359592eb",
+            (44, 57): "b1adafbaf5ad4dcaa385204439762aacd2ce1e03364980d25b18e6dcc7aaf6cf",
+            (58, 71): "a1598e5eb8f62f12d83f894fbe19965d7c6e4407a20a6a638c7509f63be01c26",
+            (72, 85): "4d04fcdcdfbb2dcf7646f99f1abec68014815002021be41824e2a9a1719a9226",
+            (86, 99): "104f81fb59f3228550be05755fdfbc69b8fee4b71da509ba244f79d358cff60e",
+            (100, 113): "88b7e0776ff5444b1342ac0f1d022f039eece975cc04e300b4825c0441d3ee76",
+            (114, 127): "3c45b569227e1b3c22414b4c63ed892f3455a0b8b56b02af08cf9799afcb1c80",
+            (128, 145): "acbe593d4d8955b379a3a98b8a358f5e1b7a7298a23d83a9c2731f6d2a67bf55",
+            (146, 149): "e757cd99f3ce5936eb56c70e9d46da025f9453c49ca52e8c2d42ff93c028657c",
+        },
+        "table_payload_sha256": (
+            "0d7946d63dc0172815cfc15d743f3ac5da4d649291fe4ac6d7691ec39cc249d2",
+            "9c47ae69d917c34a3223cf64c654c26d0caa7ecca1f341163fa9c09c5e9bb6d1",
+            "20919d290464fdcdb3d2c5003899c6062a4400a781e2a492a4c0d0d687c229d2",
+            "a52ff94e728183a997564a2d253b055d128920ab72c03b1d2a83cdca499c1d0f",
+            "f00c68d1157d20dd079583d2ff8219e119069329b7375b19f454de34c8948b35",
+            "e9ecdab7c1675df9371586548567eda09d0803e2b7f92b5985c659d12654a637",
+            "75d4ccf3003d688e946c569761d1849e9fd86d71d1ddd58fd946e381750bbe01",
+            "0b97c6c8d3d62f2816b5b0cb3347c3d062d8f0ef9f1dd299218bb12d40f1412f",
+            "1bc5036088a41477453ab2770cc7d59e7eddd1a6899b6e516b7318079f7d8e53",
+            "5025882fb10e4e95eed8237e0f8787f5f2c769bf1e595e31c448d2e287d6e47b",
+            "310e5f9fc5810ed265c698c2f5faebb79c1ff06840861abc2e773a893eae3801",
+            "9191d046a925d91932f00236152d161f71a977a9c5bf80008927a8becd3b2e5a",
+            "7282c51f07ce7f05094b535ce8b2b1a825161738c77080acb1d7a35b10f39e9b",
+            "7ad7e737b6f7e06a4cf4e13ecaa6fb35ffe4b99f298e2576930ec084a92f04b9",
+            "30cae685c3017ba63d876e2703a5a5852e7c07ad03c2e179d1e3c794d254ca8d",
+            "11fb926a64e812f8373bad4cb068f1428bbdc379759fc8d92ecb3d9833254f95",
+            "5220a1ab2e5c2eed2d3175fac819b2952d467ce5f668186911535a59e5582915",
+            "7b9683b5a74ea2f1a8c8a9509e60bbfc9556aa5a5dedab3ef616d295bd0c23fd",
+            "944b1f75d7c7ef229cb9d5770a22215ceff8eb9c00e510810bbbc14454281918",
+            "ff9dbc69c00ca2ebb73c14999d6cbcbf85de880458f559efc257eaff8241b15e",
+            "c1bd6e90e841afce5cd44fc1cca06d72d64d1e35e323a9bac38d98df5e565381",
+            "81b6f2c2d2f0d356e02d8bd290edef8d245917fca4b17976e4c2ac00453fadbd",
+            "b08226432fba0cf8728de04a1cbd42117139b7113665ff17d2014cfc01b2e304",
+            "33dbe7177c556a1838f0cd7cad1adfbd29bb58faef7eb27d1ab46da69a9ec3c8",
+            "dcbf0fc4766ffaadd3a1589cdf5c51bdedc6c9e8cf8dedbaddb9e6b69a56219f",
+            "b466ce87c18f7600eb46fd66747d4cc1cc52c836e9d41343849ad12868d693ea",
+            "7716201476ce7974c81cd618af5236cd5671d8618f90b40cfc7c90ac606ae9b3",
+            "4b60f191ba072fc239eb1a1d1e9a6d8b533779e15d0c95e8e480d5435ab86c27",
+            "26ccc35dde2248a5d8f8b156624d06bd196fd60836d28cdf6599e215a413ba96",
+            "d6a9691a97bdc4592033aee9ff21a961d89fecc66f16d3b6c102b6cc3275d686",
+            "17ff4e85cc696f2bf8502eeb1a8855c3df1a250ee38cc044cb7e20689511d5a3",
+            "3c57ddc52eaf020dacb1e0fd347dd3d705bd7e525414993e16ad982213383ede",
+        ),
+        "surface_table_numbers": (1, 5, 9, 13, 17, 21, 25, 29),
+        "surface_final_indices": (19, 19, 22, 18, 18, 20, 20, 20),
+        "direct_metadata": (
+            ((19.31, 10.00, 50.42), (20.90, 10.00, 52.00)),
+            ((19.93, 10.00, 49.22), (21.18, 10.00, 52.00)),
+            ((18.93, 10.00, 49.51), (20.55, 10.00, 52.00)),
+            ((18.23, 10.00, 50.03), (19.85, 10.00, 54.00)),
+            ((21.44, 10.00, 45.61), (21.12, 10.00, 52.00)),
+            ((18.81, 10.00, 50.80), (20.77, 10.00, 52.00)),
+            ((17.33, 10.00, 51.92), (18.61, 10.00, 56.00)),
+            ((18.79, 10.00, 53.87), (19.77, 10.00, 56.00)),
+        ),
+        "claim_numbers": tuple(range(1, 15)),
+        "claim_one_dependency_count": 13,
+        "ordered_math_id_sha256": (
+            "c8872af95e14c097274ff344b09170e35d18acfe6e4358a3190bcb388781e802"
+        ),
+        "figure_labels": (
+            "1A", "1B", "1C", "2A", "2B", "3A", "3B", "4A", "4B",
+            "5A", "5B", "6A", "6B", "7A", "7B", "8A", "8B", "9",
+        ),
+        "figref_tag_count": 44,
+        "reference_wavelength_nm": 555,
+    }
+}
+
+
+def _classify_newmax_three_lens_varifocal_missing_metadata_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain eight exact multipass prescriptions without deriving metadata."""
+
+    profile = _NEWMAX_THREE_LENS_VARIFOCAL_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _tables in (
+                _NEWMAX_THREE_LENS_VARIFOCAL_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal normalized text hash changed "
+                f"for {patent_id}"
+            )
+
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal "
+                    f"{section_name} section changed"
+                )
+
+        section_paragraph_numbers = {
+            name: tuple(
+                int(number)
+                for number in re.findall(r"\((\d{1,3})\)", sections[name])
+            )
+            for name in ("background", "summary", "brief", "detailed")
+        }
+        expected_section_paragraph_numbers = {
+            "background": tuple(range(1, 5)),
+            "summary": tuple(range(5, 28)),
+            "brief": tuple(range(1, 19)),
+            "detailed": tuple(range(19, 150)),
+        }
+        if section_paragraph_numbers != expected_section_paragraph_numbers:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal section paragraph/declaration "
+                "denominator changed"
+            )
+
+        detailed_matches = list(
+            re.finditer(r"\((\d{1,3})\)", sections["detailed"])
+        )
+        detailed_numbers = tuple(
+            int(match.group(1)) for match in detailed_matches
+        )
+        paragraphs = {
+            number: sections["detailed"][
+                match.start() : (
+                    detailed_matches[index + 1].start()
+                    if index + 1 < len(detailed_matches)
+                    else len(sections["detailed"])
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(detailed_numbers, detailed_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal paragraph span "
+                    f"{bounds} changed"
+                )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != tuple(range(1, 33)):
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal 32-table denominator changed"
+            )
+        table_payloads = tuple(
+            re.split(
+                r"\s(?:\(\d+\)|Claims\s+1\s*\.)\s",
+                block.text,
+                maxsplit=1,
+            )[0].strip()
+            for block in table_blocks
+        )
+        table_digests = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        )
+        if table_digests != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal table payload digest changed"
+            )
+
+        metadata_pattern = re.compile(
+            rf"(?P<point>Near|Far)\s+point:\s+f_(?P<label>[NF])\s*=\s*"
+            rf"(?P<f>{NUMBER_PATTERN})\s*mm,\s*EPD\s*=\s*"
+            rf"(?P<epd>{NUMBER_PATTERN})\s*mm,\s*FOV_(?P<fov_label>[NF])\s*=\s*"
+            rf"(?P<fov>{NUMBER_PATTERN})°",
+            re.IGNORECASE,
+        )
+        row_label_pattern = (
+            r"(?:Stop|First\s+absorptive|Reflective\s+polarizer|First\s+phase|"
+            r"First\s+lens|Second\s+lens|Third\s+lens|Partial-reflective|"
+            r"Second\s+phase|Second\s+absorptive|Image\s+source|Infinity|"
+            r"[−-]?\d+(?:\.\d+)?)"
+        )
+        for embodiment_number, table_number in enumerate(
+            profile["surface_table_numbers"], start=1
+        ):
+            payload = table_payloads[table_number - 1]
+            headers = list(metadata_pattern.finditer(payload))
+            if len(headers) != 2:
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal embodiment "
+                    f"{embodiment_number} direct metadata denominator changed"
+                )
+            observed_headers = tuple(
+                (
+                    match.group("point").lower(),
+                    match.group("label").upper(),
+                    _parse_number(match.group("f")),
+                    _parse_number(match.group("epd")),
+                    match.group("fov_label").upper(),
+                    _parse_number(match.group("fov")),
+                )
+                for match in headers
+            )
+            expected_near, expected_far = profile["direct_metadata"][
+                embodiment_number - 1
+            ]
+            expected_headers = (
+                ("near", "N", *expected_near[:2], "N", expected_near[2]),
+                ("far", "F", *expected_far[:2], "F", expected_far[2]),
+            )
+            if observed_headers != expected_headers:
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal embodiment "
+                    f"{embodiment_number} direct metadata changed"
+                )
+            surface_rows = tuple(
+                int(row)
+                for row in re.findall(
+                    rf"(?:^|\s)(\d{{1,2}})\s+(?={row_label_pattern})",
+                    payload,
+                )
+            )
+            final_index = profile["surface_final_indices"][embodiment_number - 1]
+            if (
+                surface_rows != tuple(range(final_index + 1))
+                or len(re.findall(r"\b0\s+Stop\b", payload)) != 1
+                or payload.count(
+                    "The reference wavelength is "
+                    f"{profile['reference_wavelength_nm']} nm."
+                )
+                != 1
+            ):
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal embodiment "
+                    f"{embodiment_number} folded surface structure changed"
+                )
+
+        for pattern in (
+            r"\bF\s*[- ]?number\b",
+            r"\bFNO\b",
+            r"\bF\s*/\s*(?:#|No\.?|Number|\d)",
+            r"\baperture\s+number\b",
+            r"\bnumerical\s+aperture\b",
+        ):
+            if re.search(pattern, text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal source may now publish "
+                    "a system F-number"
+                )
+        for pattern in (
+            r"\bIMH\b",
+            r"\bImgH\b",
+            r"\bimage\s+height\b",
+        ):
+            if re.search(pattern, text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "NEWMAX three-lens varifocal source may now publish "
+                    "an image height"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal 14-claim denominator changed"
+            )
+        if len(
+            re.findall(
+                r"\bas claimed in claim 1\b",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        ) != profile["claim_one_dependency_count"]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal dependent-claim structure changed"
+            )
+
+        math_ids = tuple(
+            re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw_text, re.IGNORECASE)
+        )
+        if len(math_ids) != 1 or hashlib.sha256(
+            "\n".join(math_ids).encode("utf-8")
+        ).hexdigest() != profile["ordered_math_id_sha256"]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal MathML denominator changed"
+            )
+        if re.search(r"<img\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal retained HTML image denominator changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_tag_count"
+        ]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal FIGREF denominator changed"
+            )
+
+        figure_labels = tuple(
+            re.sub(r"\s+", "", label).upper()
+            for label in re.findall(
+                r"FIG\.\s*(\d+\s*[A-C]?)\s+is",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_labels != profile["figure_labels"]:
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal 18-figure denominator changed"
+            )
+        if (
+            "FIG. 9 shows a head-mounted electronic device" not in paragraphs[146]
+            or "includes an optical lens assembly described in any one of the first "
+            "to eighth embodiments"
+            not in paragraphs[147]
+        ):
+            raise PatentParseError(
+                "NEWMAX three-lens varifocal device-wrapper boundary changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all nine exact-source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, tables in (
+        _NEWMAX_THREE_LENS_VARIFOCAL_ITEMS
+    ):
+        if number <= 8:
+            detail = (
+                f"Tables {tables[0]}-{tables[-1]} publish an exact three-lens "
+                "multipass folded varifocal surface/material/asphere prescription, "
+                "one stop row, and direct near/far focal lengths, entrance-pupil "
+                "diameter, and full FOV; the official HTML and complete original-"
+                "raster audit publish neither a direct system F-number nor image "
+                "height, so f/EPD and f*tan(FOV/2) are not substituted or derived "
+                "and the multipass path is not flattened"
+            )
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_NEWMAX_THREE_LENS_VARIFOCAL_METADATA_REASON,
+                detail=detail,
+            )
+        else:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_NEWMAX_THREE_LENS_VARIFOCAL_WRAPPER_REASON,
+                detail=(
+                    "paragraphs 146-149 and FIG. 9 place an optical lens assembly "
+                    "selected from the first through eighth embodiments inside a "
+                    "head-mounted electronic device; they disclose no ninth optical "
+                    "prescription"
                 ),
             )
         attempts.append(
