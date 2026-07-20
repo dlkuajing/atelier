@@ -19634,6 +19634,7 @@ _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE = (
 )
 _GENIUS_SEVEN_LENS_SEVEN_PROFILE = "genius_seven_lens_seven_example_census_v1"
 _GENIUS_FOUR_LENS_NINE_PROFILE = "genius_four_lens_nine_embodiment_census_v1"
+_GENIUS_FOUR_LENS_EIGHT_PROFILE = "genius_four_lens_eight_embodiment_census_v1"
 _GENIUS_SIX_LENS_FIVE_PROFILE = "genius_six_lens_five_embodiment_census_v1"
 _GENIUS_SIX_LENS_NINE_PROFILE = "genius_six_lens_nine_embodiment_census_v1"
 _GENIUS_SIX_LENS_TEN_DUAL_FOCUS_PROFILE = (
@@ -23765,6 +23766,200 @@ def _parse_genius_four_lens_nine_attempts(
     return attempts
 
 
+def _genius_four_lens_eight_optical_census_error(
+    page: dict[str, Any],
+) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("EFL", "HFOV", "TTL", "Fno", "ImgH"):
+        error = _genius_six_metadata_label_error(tokens, label)
+        if error is not None:
+            return error
+    for label, expected_count in (
+        ("No", 2),
+        ("Ape. Stop", 2),
+        ("Radius of", 1),
+        ("Curvature", 1),
+        ("Distance", 1),
+        ("Thickness", 1),
+        ("Air Gap", 1),
+        ("nd", 1),
+        ("Refractive", 1),
+        ("Index", 1),
+        ("Vd Abbe", 1),
+        ("Focal", 1),
+        ("Length", 1),
+    ):
+        error = _genius_six_exact_label_error(
+            tokens,
+            label,
+            context="four-lens eight-embodiment optical table",
+            expected_count=expected_count,
+        )
+        if error is not None:
+            return error
+    return None
+
+
+def _genius_four_lens_eight_asphere_census_error(
+    page: dict[str, Any],
+) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label, expected_count in (
+        ("No", 2),
+        ("K", 1),
+        ("a4", 1),
+        ("a6", 1),
+        ("a8", 1),
+        ("a10", 1),
+        ("a12", 1),
+        ("a14", 1),
+        ("a16", 1),
+        ("a18", 1),
+        ("a20", 1),
+    ):
+        error = _genius_six_exact_label_error(
+            tokens,
+            label,
+            context="four-lens eight-embodiment asphere table",
+            expected_count=expected_count,
+        )
+        if error is not None:
+            return error
+    return None
+
+
+def _genius_four_lens_eight_comparison_census_error(
+    page: dict[str, Any],
+) -> str | None:
+    tokens = list(page.get("rapidocr_tokens") or [])
+    for label in ("Embodiment", "HFOV/TL", "FIG. 38"):
+        error = _genius_six_exact_label_error(
+            tokens,
+            label,
+            context="four-lens eight-embodiment comparison table",
+        )
+        if error is not None:
+            return error
+    return None
+
+
+def _parse_genius_four_lens_eight_attempts(
+    payload: dict[str, Any],
+) -> list[_PrescriptionParseAttempt]:
+    if payload.get("page_count") != 41:
+        raise PatentParseError("Genius four-lens eight-embodiment PDF page count is not 41")
+    pages = payload.get("pages")
+    if not isinstance(pages, list) or len(pages) != 17:
+        raise PatentParseError(
+            "Genius four-lens eight-embodiment PDF must retain 17 key pages"
+        )
+    facts = payload.get("source_facts")
+    if not isinstance(facts, dict):
+        raise PatentParseError(
+            "Genius four-lens eight-embodiment input lacks official source facts"
+        )
+    expected_figure_counts = {f"FIG. {figure}": 1 for figure in range(22, 38)}
+    expected_math_ids = [
+        "MATH-US-00001",
+        *(f"MATH-US-00001-{index}" for index in range(2, 18)),
+        "MATH-US-00002",
+    ]
+    expected_source_facts = {
+        "primary_html_sha256": (
+            "0ec8d06ad327d41be5573d8b69fa6597d94c9f239eda657c5a050f3c121e61a3"
+        ),
+        "normalized_text_sha256": (
+            "236225514d4ae4f8c39602a177210b96d4f9da01fce6b58c18f78d90823677ce"
+        ),
+        "application_number": "19/034574",
+        "family_id": "94801574",
+        "paragraph_count": 142,
+        "paragraph_numbers_continuous": True,
+        "claim_numbers": list(range(1, 21)),
+        "figure_reference_tag_count": 149,
+        "brief_figure_declaration_count": 59,
+        "declared_figure_panel_count": 63,
+        "figure_binding_counts": expected_figure_counts,
+        "comparison_binding_count": 1,
+        "system_metadata_binding_counts": {
+            str(index): 1 for index in range(1, 9)
+        },
+        "table_object_ids": ["TABLE-US-00001", "TABLE-US-00002"],
+        "math_object_ids": expected_math_ids,
+        "genius_applicant_assignee_count": 2,
+        "primary_wavelength_marker_count": 1,
+        "a2_omission_marker_count": 1,
+    }
+    if facts != expected_source_facts:
+        raise PatentParseError(
+            "Genius four-lens eight-embodiment official source bindings changed"
+        )
+
+    comparison_page = _ability_page(payload, "genius_four_eight_comparison")
+    comparison_errors = [
+        error
+        for error in (
+            _genius_six_page_binding_error(
+                comparison_page,
+                page_number=29,
+                sheet_number=28,
+                sheet_count=28,
+                role="genius_four_eight_comparison",
+            ),
+            _genius_four_lens_eight_comparison_census_error(comparison_page),
+        )
+        if error is not None
+    ]
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for embodiment_number in range(1, 9):
+        optical_page_number = 13 + (embodiment_number - 1) * 2
+        asphere_page_number = optical_page_number + 1
+        optical_page = _ability_page(
+            payload,
+            f"genius_four_eight_optical_{embodiment_number}",
+        )
+        asphere_page = _ability_page(
+            payload,
+            f"genius_four_eight_asphere_{embodiment_number}",
+        )
+        errors = [
+            error
+            for error in (
+                _genius_six_page_binding_error(
+                    optical_page,
+                    page_number=optical_page_number,
+                    sheet_number=optical_page_number - 1,
+                    sheet_count=28,
+                    role=f"genius_four_eight_optical_{embodiment_number}",
+                ),
+                _genius_four_lens_eight_optical_census_error(optical_page),
+                _genius_six_page_binding_error(
+                    asphere_page,
+                    page_number=asphere_page_number,
+                    sheet_number=asphere_page_number - 1,
+                    sheet_count=28,
+                    role=f"genius_four_eight_asphere_{embodiment_number}",
+                ),
+                _genius_four_lens_eight_asphere_census_error(asphere_page),
+                *comparison_errors,
+            )
+            if error is not None
+        ]
+        if not errors:
+            errors.append(
+                "Genius four-lens eight-embodiment census passed; numeric parser remains"
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=f"Genius four-lens embodiment {embodiment_number}",
+                error=PatentParseError(" | ".join(errors)),
+            )
+        )
+    return attempts
+
+
 def _ability_eight_lens_terminal_attempt(
     payload: dict[str, Any],
 ) -> _PrescriptionParseAttempt:
@@ -25321,6 +25516,8 @@ def _parse_ability_pdf_ocr_attempts(
         return _parse_genius_seven_lens_seven_attempts(payload)
     if profile == _GENIUS_FOUR_LENS_NINE_PROFILE:
         return _parse_genius_four_lens_nine_attempts(payload)
+    if profile == _GENIUS_FOUR_LENS_EIGHT_PROFILE:
+        return _parse_genius_four_lens_eight_attempts(payload)
     if profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
         return _parse_genius_six_lens_five_attempts(payload)
     if profile == _GENIUS_SIX_LENS_NINE_PROFILE:

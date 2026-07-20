@@ -1,0 +1,254 @@
+{
+    "schema_version":  1,
+    "family_id":  "94801574",
+    "root_id":  "US-20260169265",
+    "publication_id":  "US-20260169265-A1",
+    "denominator":  {
+                        "frozen_cohort_roots":  1,
+                        "retained_primary_publications":  1,
+                        "background_summary_numbered_paragraphs":  10,
+                        "brief_description_numbered_paragraphs":  59,
+                        "detailed_description_numbered_paragraphs":  73,
+                        "total_numbered_paragraphs":  142,
+                        "claims":  20,
+                        "independent_claims":  3,
+                        "figure_declaration_entries":  59,
+                        "declared_figure_panels":  63,
+                        "numbered_figures":  38,
+                        "total_html_figure_references":  149,
+                        "official_pdf_pages_per_container":  41,
+                        "official_pdf_drawing_pages":  28,
+                        "official_pdf_specification_pages":  12,
+                        "official_pdf_prescription_pages":  16,
+                        "official_pdf_comparison_pages":  1,
+                        "official_pdf_claim_pages":  2,
+                        "flattened_table_us_objects":  2,
+                        "flattened_prescription_table_us_objects":  0,
+                        "mathml_objects":  18,
+                        "source_disclosed_prescription_pairs":  8,
+                        "machine_verified_complete_prescriptions":  0,
+                        "machine_verified_ordered_optical_surface_rows":  0,
+                        "machine_verified_asphere_coefficient_rows":  0,
+                        "replayed_ledger_items":  8,
+                        "parser_review_required_items":  8,
+                        "metadata_unpublished_items":  0,
+                        "confirmed_no_prescription_items":  0,
+                        "conversion_requests":  0,
+                        "conversion_receipts":  0,
+                        "prescription_fingerprints":  0,
+                        "candidate_zmx":  0,
+                        "staging_zmx":  0,
+                        "formal_intake_items":  0,
+                        "corroborating_pdf_containers":  3,
+                        "distinct_decoded_page_rasters":  41,
+                        "unmapped_numbered_paragraphs":  0,
+                        "unmapped_claims":  0,
+                        "unmapped_declared_figure_panels":  0,
+                        "unmapped_tables":  0,
+                        "unmapped_mathml_objects":  0,
+                        "unmapped_source_items":  0
+                    },
+    "items":  [
+                  {
+                      "number":  1,
+                      "label":  "Genius four-lens embodiment 1",
+                      "paragraph_range":  [
+                                              95,
+                                              108
+                                          ],
+                      "metadata_paragraph":  108,
+                      "optical_figure":  22,
+                      "asphere_figure":  23,
+                      "official_pdf_pages":  [
+                                                 13,
+                                                 14
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: optical metadata label EFL has 0 exact OCR prefixes | four-lens eight-embodiment asphere table label \u0027a4\u0027 confidence 0.711214 is below 0.950000"
+                  },
+                  {
+                      "number":  2,
+                      "label":  "Genius four-lens embodiment 2",
+                      "paragraph_range":  [
+                                              109,
+                                              110
+                                          ],
+                      "metadata_paragraph":  110,
+                      "optical_figure":  24,
+                      "asphere_figure":  25,
+                      "official_pdf_pages":  [
+                                                 15,
+                                                 16
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: four-lens eight-embodiment optical table label \u0027Vd Abbe\u0027 confidence 0.948769 is below 0.950000 | four-lens eight-embodiment asphere table label \u0027a4\u0027 has 0 exact OCR tokens; expected 1"
+                  },
+                  {
+                      "number":  3,
+                      "label":  "Genius four-lens embodiment 3",
+                      "paragraph_range":  [
+                                              111,
+                                              112
+                                          ],
+                      "metadata_paragraph":  112,
+                      "optical_figure":  26,
+                      "asphere_figure":  27,
+                      "official_pdf_pages":  [
+                                                 17,
+                                                 18
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: optical metadata label EFL has 0 exact OCR prefixes | four-lens eight-embodiment asphere table label \u0027a4\u0027 has 0 exact OCR tokens; expected 1"
+                  },
+                  {
+                      "number":  4,
+                      "label":  "Genius four-lens embodiment 4",
+                      "paragraph_range":  [
+                                              113,
+                                              114
+                                          ],
+                      "metadata_paragraph":  114,
+                      "optical_figure":  28,
+                      "asphere_figure":  29,
+                      "official_pdf_pages":  [
+                                                 19,
+                                                 20
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: optical metadata label HFOV has 0 exact OCR prefixes | four-lens eight-embodiment asphere table label \u0027a4\u0027 confidence 0.872499 is below 0.950000"
+                  },
+                  {
+                      "number":  5,
+                      "label":  "Genius four-lens embodiment 5",
+                      "paragraph_range":  [
+                                              115,
+                                              116
+                                          ],
+                      "metadata_paragraph":  116,
+                      "optical_figure":  30,
+                      "asphere_figure":  31,
+                      "official_pdf_pages":  [
+                                                 21,
+                                                 22
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: four-lens eight-embodiment asphere table label \u0027a4\u0027 has 0 exact OCR tokens; expected 1"
+                  },
+                  {
+                      "number":  6,
+                      "label":  "Genius four-lens embodiment 6",
+                      "paragraph_range":  [
+                                              117,
+                                              118
+                                          ],
+                      "metadata_paragraph":  118,
+                      "optical_figure":  32,
+                      "asphere_figure":  33,
+                      "official_pdf_pages":  [
+                                                 23,
+                                                 24
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: four-lens eight-embodiment asphere table label \u0027a4\u0027 confidence 0.539815 is below 0.950000"
+                  },
+                  {
+                      "number":  7,
+                      "label":  "Genius four-lens embodiment 7",
+                      "paragraph_range":  [
+                                              119,
+                                              120
+                                          ],
+                      "metadata_paragraph":  120,
+                      "optical_figure":  34,
+                      "asphere_figure":  35,
+                      "official_pdf_pages":  [
+                                                 25,
+                                                 26
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: optical metadata label HFOV has 0 exact OCR prefixes | four-lens eight-embodiment asphere table label \u0027a4\u0027 has 0 exact OCR tokens; expected 1"
+                  },
+                  {
+                      "number":  8,
+                      "label":  "Genius four-lens embodiment 8",
+                      "paragraph_range":  [
+                                              121,
+                                              122
+                                          ],
+                      "metadata_paragraph":  122,
+                      "optical_figure":  36,
+                      "asphere_figure":  37,
+                      "official_pdf_pages":  [
+                                                 27,
+                                                 28
+                                             ],
+                      "state":  "parser_review_required",
+                      "reason_code":  "parser_review_required.deterministic_parser_rejected",
+                      "parser_detail":  "PatentParseError: optical metadata label HFOV has 0 exact OCR prefixes | four-lens eight-embodiment asphere table label \u0027a4\u0027 confidence 0.833555 is below 0.950000"
+                  }
+              ],
+    "shared_context":  [
+                           {
+                               "role":  "background_summary",
+                               "paragraphs":  [
+                                                  1,
+                                                  10
+                                              ]
+                           },
+                           {
+                               "role":  "brief_drawing_declarations",
+                               "paragraphs":  [
+                                                  11,
+                                                  69
+                                              ]
+                           },
+                           {
+                               "role":  "generic_four_lens_architecture",
+                               "paragraphs":  [
+                                                  70,
+                                                  94
+                                              ]
+                           },
+                           {
+                               "role":  "prescription_items",
+                               "paragraphs":  [
+                                                  95,
+                                                  122
+                                              ]
+                           },
+                           {
+                               "role":  "comparison_and_conditions",
+                               "paragraphs":  [
+                                                  123,
+                                                  142
+                                              ]
+                           }
+                       ],
+    "prescription_boundary":  {
+                                  "printed_optical_and_asphere_table_pairs":  8,
+                                  "html_flattened_prescription_tables":  0,
+                                  "canonical_ocr_key_pages":  17,
+                                  "parser_acceptance_threshold":  0.95,
+                                  "parser_accepted_items":  0,
+                                  "parser_review_required_items":  8,
+                                  "drawing_measurement_used":  false,
+                                  "raster_numeric_transcription_used":  false,
+                                  "ocr_value_repair_used":  false,
+                                  "source_typography_repair_used":  false,
+                                  "related_family_numeric_borrowing_used":  false,
+                                  "conversion_requested":  false
+                              },
+    "formal_outputs":  {
+                           "case_index_entries":  0,
+                           "case_json":  0,
+                           "intake_manifests":  0,
+                           "expert_backed_items":  0
+                       }
+}

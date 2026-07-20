@@ -886,6 +886,56 @@ _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS = (
     "of the optical imaging lenses of the sixth to ninth embodiments of the disclosure",
 )
 _GENIUS_FOUR_LENS_NINE_PROFILE = "genius_four_lens_nine_embodiment_census_v1"
+_GENIUS_FOUR_LENS_EIGHT_ORDINALS = (
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+)
+_GENIUS_FOUR_LENS_EIGHT_OPTICAL_FIGURES = tuple(range(22, 38, 2))
+_GENIUS_FOUR_LENS_EIGHT_ASPHERE_FIGURES = tuple(range(23, 38, 2))
+_GENIUS_FOUR_LENS_EIGHT_REQUIRED_FIGURE_TEXT = tuple(
+    marker
+    for ordinal, optical_figure, asphere_figure in zip(
+        _GENIUS_FOUR_LENS_EIGHT_ORDINALS,
+        _GENIUS_FOUR_LENS_EIGHT_OPTICAL_FIGURES,
+        _GENIUS_FOUR_LENS_EIGHT_ASPHERE_FIGURES,
+        strict=True,
+    )
+    for marker in (
+        f"FIG. {optical_figure} shows the optical data of the {ordinal} embodiment "
+        "of the optical imaging lens.",
+        f"FIG. {asphere_figure} shows the aspheric surface data of the {ordinal} "
+        "embodiment.",
+    )
+)
+_GENIUS_FOUR_LENS_EIGHT_COMPARISON_MARKER = (
+    "FIG. 38 shows some important ratios in the embodiments."
+)
+_GENIUS_FOUR_LENS_EIGHT_SYSTEM_METADATA = (
+    "EFL=17.619 mm; HFOV=11.161 degrees; TTL=21.995 mm; Fno=2.800; ImgH=3.528 mm.",
+    "EFL=14.929 mm; HFOV=13.283 degrees; TTL=19.055 mm; Fno=2.800; ImgH=3.528 mm.",
+    "EFL=14.625 mm; HFOV=13.486 degrees; TTL=19.966 mm; Fno=2.800; ImgH=3.528 mm.",
+    "EFL=13.689 mm; HFOV=14.303 degrees; TTL=18.709 mm; Fno=2.800; ImgH=3.528 mm.",
+    "EFL=14.238 mm; HFOV=13.708 degrees; TTL=19.025 mm; Fno=2.800; ImgH=3.525 mm.",
+    "EFL=17.619 mm; HFOV=13.552 degrees; TTL=18.948 mm; Fno=2.800; ImgH-3.528 mm.",
+    "EFL=11.763 mm; HFOV=16.199 degrees; TTL=14.935 mm; Fno=2.800; ImgH=3.528 mm.",
+    "EFL=13.975 mm; HFOV=14.009 degrees; TTL=17.792 mm; Fno=2.800; ImgH=3.528 mm.",
+)
+_GENIUS_FOUR_LENS_EIGHT_PROFILE = "genius_four_lens_eight_embodiment_census_v1"
+_GENIUS_FOUR_LENS_EIGHT_SOURCE_LAYOUTS: dict[str, dict[str, Any]] = {
+    "0ec8d06ad327d41be5573d8b69fa6597d94c9f239eda657c5a050f3c121e61a3": {
+        "normalized_text_sha256": (
+            "236225514d4ae4f8c39602a177210b96d4f9da01fce6b58c18f78d90823677ce"
+        ),
+        "application_number": "19/034574",
+        "family_id": "94801574",
+    },
+}
 _GENIUS_SIX_LENS_FIVE_OPTICAL_FIGURES = (9, 13, 17, 21, 25)
 _GENIUS_SIX_LENS_FIVE_ASPHERE_FIGURES = (10, 14, 18, 22, 26)
 _GENIUS_SIX_LENS_FIVE_ORDINALS = ("first", "second", "third", "fourth", "fifth")
@@ -1058,6 +1108,7 @@ _GENIUS_OFFICIAL_ONLY_PROFILES = frozenset(
         _GENIUS_SIX_LENS_NINE_THREE_COMPARISON_PROFILE,
         _GENIUS_SIX_LENS_NINE_FOUR_COMPARISON_PROFILE,
         _GENIUS_FOUR_LENS_NINE_PROFILE,
+        _GENIUS_FOUR_LENS_EIGHT_PROFILE,
         _GENIUS_NINE_LENS_ELEVEN_PROFILE,
         _GENIUS_EIGHT_LENS_FOURTEEN_PROFILE,
         _GENIUS_SEVEN_LENS_SEVEN_PROFILE,
@@ -1187,6 +1238,13 @@ def _ability_layout_profile(raw_html: str) -> str | None:
         marker in text for marker in _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
     ):
         return _GENIUS_FOUR_LENS_NINE_PROFILE
+    if (
+        digest in _GENIUS_FOUR_LENS_EIGHT_SOURCE_LAYOUTS
+        and all(marker in text for marker in _GENIUS_FOUR_LENS_EIGHT_REQUIRED_FIGURE_TEXT)
+        and _GENIUS_FOUR_LENS_EIGHT_COMPARISON_MARKER in text
+        and all(marker in text for marker in _GENIUS_FOUR_LENS_EIGHT_SYSTEM_METADATA)
+    ):
+        return _GENIUS_FOUR_LENS_EIGHT_PROFILE
     if all(marker in text for marker in _GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT) and (
         _GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER in text
     ):
@@ -1925,6 +1983,76 @@ def _genius_four_lens_nine_source_facts(raw_html: str) -> dict[str, Any]:
             marker.split(" show", maxsplit=1)[0]: text.count(marker)
             for marker in _GENIUS_FOUR_LENS_NINE_COMPARISON_MARKERS
         },
+    }
+
+
+def _genius_four_lens_eight_source_facts(raw_html: str) -> dict[str, Any]:
+    """Bind the exact eight four-lens drawing-table denominator."""
+
+    text = _normalized_html_text(raw_html)
+    primary_digest = hashlib.sha256(raw_html.encode("utf-8")).hexdigest()
+    layout = _GENIUS_FOUR_LENS_EIGHT_SOURCE_LAYOUTS.get(primary_digest)
+    if layout is None:
+        raise PatentPdfRecoveryError(
+            "Genius four-lens eight-embodiment official HTML is not source-locked"
+        )
+    normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if normalized_digest != layout["normalized_text_sha256"]:
+        raise PatentPdfRecoveryError(
+            "Genius four-lens eight-embodiment normalized HTML changed"
+        )
+    paragraph_numbers = tuple(int(value) for value in re.findall(r"\[(\d{4})\]", raw_html))
+    claim_numbers = tuple(
+        int(value)
+        for value in re.findall(
+            r"(?:^|\s)((?:[1-9]|1\d|20))\s+\.\s+(?:An|The) optical imaging lens",
+            text,
+        )
+    )
+    table_object_ids = tuple(dict.fromkeys(re.findall(r"TABLE-US-[0-9]+", raw_html)))
+    math_object_ids = tuple(
+        re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw_html, flags=re.IGNORECASE)
+    )
+    brief_drawings = raw_html[
+        raw_html.index("BRIEF DESCRIPTION OF THE DRAWINGS") : raw_html.index(
+            "DETAILED DESCRIPTION"
+        )
+    ]
+    return {
+        "primary_html_sha256": primary_digest,
+        "normalized_text_sha256": normalized_digest,
+        "application_number": layout["application_number"],
+        "family_id": layout["family_id"],
+        "paragraph_count": len(paragraph_numbers),
+        "paragraph_numbers_continuous": paragraph_numbers == tuple(range(1, 143)),
+        "claim_numbers": list(claim_numbers),
+        "figure_reference_tag_count": raw_html.count('<figref idref="DRAWINGS">'),
+        "brief_figure_declaration_count": brief_drawings.count(
+            '<figref idref="DRAWINGS">'
+        ),
+        "declared_figure_panel_count": 63,
+        "figure_binding_counts": {
+            marker.split(" shows", maxsplit=1)[0]: text.count(marker)
+            for marker in _GENIUS_FOUR_LENS_EIGHT_REQUIRED_FIGURE_TEXT
+        },
+        "comparison_binding_count": text.count(
+            _GENIUS_FOUR_LENS_EIGHT_COMPARISON_MARKER
+        ),
+        "system_metadata_binding_counts": {
+            str(index): text.count(marker)
+            for index, marker in enumerate(_GENIUS_FOUR_LENS_EIGHT_SYSTEM_METADATA, start=1)
+        },
+        "table_object_ids": list(table_object_ids),
+        "math_object_ids": list(math_object_ids),
+        "genius_applicant_assignee_count": text.count(
+            "Genius Electronic Optical (Xiamen) Co., Ltd."
+        ),
+        "primary_wavelength_marker_count": text.count(
+            "primary wavelength of the embodiment of the invention is 555 nm"
+        ),
+        "a2_omission_marker_count": text.count(
+            "a.sub.2 coefficients of each example are 0"
+        ),
     }
 
 
@@ -3244,6 +3372,19 @@ async def recover_ability_official_pdf_ocr(
             role_pages[f"genius_four_nine_comparison_{comparison}"] = 29 + comparison
         parser_profile = profile
         source_facts = _genius_four_lens_nine_source_facts(primary_html)
+    elif profile == _GENIUS_FOUR_LENS_EIGHT_PROFILE:
+        if page_count != 41:
+            raise PatentPdfRecoveryError(
+                "Genius four-lens eight-embodiment PDF page count is not 41"
+            )
+        role_pages = {}
+        for embodiment in range(1, 9):
+            optical_page_index = 12 + (embodiment - 1) * 2
+            role_pages[f"genius_four_eight_optical_{embodiment}"] = optical_page_index
+            role_pages[f"genius_four_eight_asphere_{embodiment}"] = optical_page_index + 1
+        role_pages["genius_four_eight_comparison"] = 28
+        parser_profile = profile
+        source_facts = _genius_four_lens_eight_source_facts(primary_html)
     elif profile == _GENIUS_SIX_LENS_FIVE_PROFILE:
         if page_count != 34:
             raise PatentPdfRecoveryError("Genius five-embodiment PDF page count is not 34")

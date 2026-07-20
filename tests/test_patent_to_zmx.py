@@ -3983,6 +3983,119 @@ def _genius_four_lens_nine_pdf_ocr_parser_input() -> bytes:
     return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
 
 
+def _genius_four_lens_eight_pdf_ocr_parser_input() -> bytes:
+    root = Path(__file__).resolve().parents[1]
+    source = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "0ec8d06ad327d41b"
+        / "US-20260169265-A1.html"
+    ).read_text(encoding="utf-8")
+    pages = []
+    for embodiment_number in range(1, 9):
+        optical_page_number = 13 + (embodiment_number - 1) * 2
+        asphere_page_number = optical_page_number + 1
+        optical_tokens = [
+            _ability_ocr_token(
+                f"Sheet {optical_page_number - 1} of 28",
+                700.0,
+                50.0,
+            ),
+            _ability_ocr_token(
+                "EFL=1; HFOV=2; TTL=3; Fno=4; ImgH=5",
+                100.0,
+                100.0,
+            ),
+        ]
+        for index, (label, count) in enumerate(
+            (
+                ("No.", 2),
+                ("Ape. Stop", 2),
+                ("Radius of", 1),
+                ("Curvature", 1),
+                ("Distance", 1),
+                ("Thickness", 1),
+                ("Air Gap", 1),
+                ("nd", 1),
+                ("Refractive", 1),
+                ("Index", 1),
+                ("Vd Abbe", 1),
+                ("Focal", 1),
+                ("Length", 1),
+            )
+        ):
+            for occurrence in range(count):
+                optical_tokens.append(
+                    _ability_ocr_token(
+                        label,
+                        100.0 + index * 50.0,
+                        150.0 + occurrence * 40.0,
+                    )
+                )
+        pages.append(
+            {
+                "page_number": optical_page_number,
+                "role": f"genius_four_eight_optical_{embodiment_number}",
+                "official_image_sha256": format(optical_page_number % 16, "x") * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": optical_tokens,
+            }
+        )
+        asphere_tokens = [
+            _ability_ocr_token(
+                f"Sheet {asphere_page_number - 1} of 28",
+                700.0,
+                50.0,
+            ),
+            _ability_ocr_token("No.", 100.0, 100.0),
+            _ability_ocr_token("No.", 100.0, 500.0),
+            *(
+                _ability_ocr_token(label, 150.0 + index * 50.0, 100.0)
+                for index, label in enumerate(
+                    ("K", "a4", "a6", "a8", "a10", "a12", "a14", "a16", "a18", "a20")
+                )
+            ),
+        ]
+        pages.append(
+            {
+                "page_number": asphere_page_number,
+                "role": f"genius_four_eight_asphere_{embodiment_number}",
+                "official_image_sha256": format(asphere_page_number % 16, "x") * 64,
+                "mirror_text": "",
+                "rapidocr_tokens": asphere_tokens,
+            }
+        )
+    pages.append(
+        {
+            "page_number": 29,
+            "role": "genius_four_eight_comparison",
+            "official_image_sha256": "d" * 64,
+            "mirror_text": "",
+            "rapidocr_tokens": [
+                _ability_ocr_token("Sheet 28 of 28", 700.0, 50.0),
+                _ability_ocr_token("Embodiment", 100.0, 100.0),
+                _ability_ocr_token("HFOV/TL", 200.0, 100.0),
+                _ability_ocr_token("FIG. 38", 300.0, 100.0),
+            ],
+        }
+    )
+    payload = {
+        "schema_version": 1,
+        "parser_family": "ability_official_pdf_ocr_v1",
+        "profile": "genius_four_lens_eight_embodiment_census_v1",
+        "publication_id": "US-20260169265-A1",
+        "page_count": 41,
+        "source_facts": patent_pdf_recovery._genius_four_lens_eight_source_facts(
+            source
+        ),
+        "pages": pages,
+    }
+    return (json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
 def _genius_six_lens_nine_pdf_ocr_parser_input() -> bytes:
     pages = []
     for embodiment_number in range(1, 10):
@@ -5126,6 +5239,72 @@ def test_genius_four_lens_nine_source_facts_bind_every_figure() -> None:
     assert set(facts["comparison_binding_counts"].values()) == {1}
 
 
+def test_genius_four_lens_eight_source_facts_bind_exact_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "0ec8d06ad327d41b"
+        / "US-20260169265-A1.html"
+    )
+    source = source_path.read_text(encoding="utf-8")
+
+    assert patent_pdf_recovery.ability_drawing_tables_declared(source)
+    assert patent_pdf_recovery._ability_layout_profile(source) == (
+        "genius_four_lens_eight_embodiment_census_v1"
+    )
+    facts = patent_pdf_recovery._genius_four_lens_eight_source_facts(source)
+    assert facts["primary_html_sha256"] == (
+        "0ec8d06ad327d41be5573d8b69fa6597d94c9f239eda657c5a050f3c121e61a3"
+    )
+    assert facts["normalized_text_sha256"] == (
+        "236225514d4ae4f8c39602a177210b96d4f9da01fce6b58c18f78d90823677ce"
+    )
+    assert facts["application_number"] == "19/034574"
+    assert facts["family_id"] == "94801574"
+    assert facts["paragraph_count"] == 142
+    assert facts["paragraph_numbers_continuous"] is True
+    assert facts["claim_numbers"] == list(range(1, 21))
+    assert facts["figure_reference_tag_count"] == 149
+    assert facts["brief_figure_declaration_count"] == 59
+    assert facts["declared_figure_panel_count"] == 63
+    assert facts["figure_binding_counts"] == {
+        f"FIG. {figure}": 1 for figure in range(22, 38)
+    }
+    assert facts["comparison_binding_count"] == 1
+    assert facts["system_metadata_binding_counts"] == {
+        str(index): 1 for index in range(1, 9)
+    }
+    assert facts["table_object_ids"] == ["TABLE-US-00001", "TABLE-US-00002"]
+    assert len(facts["math_object_ids"]) == 18
+    assert facts["genius_applicant_assignee_count"] == 2
+    assert facts["primary_wavelength_marker_count"] == 1
+    assert facts["a2_omission_marker_count"] == 1
+
+
+def test_genius_four_lens_eight_source_drift_fails_closed() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "US-PGPUB"
+        / "0ec8d06ad327d41b"
+        / "US-20260169265-A1.html"
+    ).read_text(encoding="utf-8")
+    changed = source.replace("June 18, 2026", "June 19, 2026", 1)
+
+    assert patent_pdf_recovery._ability_layout_profile(changed) is None
+    with pytest.raises(
+        patent_pdf_recovery.PatentPdfRecoveryError,
+        match="official HTML is not source-locked",
+    ):
+        patent_pdf_recovery._genius_four_lens_eight_source_facts(changed)
+
+
 def test_genius_six_lens_five_source_facts_bind_every_figure() -> None:
     markers = patent_pdf_recovery._GENIUS_SIX_LENS_FIVE_REQUIRED_FIGURE_TEXT
     comparison = patent_pdf_recovery._GENIUS_SIX_LENS_FIVE_COMPARISON_MARKER
@@ -5891,6 +6070,405 @@ def test_genius_four_lens_nine_profile_retains_every_embodiment() -> None:
         in str(attempt.error)
         for attempt in attempts
     )
+
+
+def test_genius_four_lens_eight_profile_retains_every_embodiment() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        _genius_four_lens_eight_pdf_ocr_parser_input().decode(),
+        patent_id="US-20260169265-A1",
+    )
+
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 9))
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert all(
+        "four-lens eight-embodiment census passed; numeric parser remains"
+        in str(attempt.error)
+        for attempt in attempts
+    )
+
+
+def test_genius_four_lens_eight_profile_rejects_source_fact_drift() -> None:
+    payload = json.loads(_genius_four_lens_eight_pdf_ocr_parser_input())
+    payload["source_facts"]["declared_figure_panel_count"] = 62
+
+    with pytest.raises(PatentParseError, match="official source bindings changed"):
+        patent_to_zmx._parse_prescription_attempts(
+            json.dumps(payload),
+            patent_id="US-20260169265-A1",
+        )
+
+
+def test_genius_four_lens_eight_retained_ocr_expands_exact_items() -> None:
+    root = Path(__file__).resolve().parents[1]
+    parser_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPTO-PDF-OCR-JSON"
+        / "7419d744e863625c"
+        / "US-20260169265-A1.json"
+    )
+    parser_bytes = parser_path.read_bytes()
+    assert hashlib.sha256(parser_bytes).hexdigest() == (
+        "7419d744e863625c5e87668ad9b809ecc0e173fe7d949cb5067ebd93ebbc916a"
+    )
+    payload = json.loads(parser_bytes)
+    assert payload["page_count"] == 41
+    assert payload["profile"] == "genius_four_lens_eight_embodiment_census_v1"
+    assert [page["page_number"] for page in payload["pages"]] == list(range(13, 30))
+    assert [page["role"] for page in payload["pages"]] == [
+        *(
+            role
+            for embodiment in range(1, 9)
+            for role in (
+                f"genius_four_eight_optical_{embodiment}",
+                f"genius_four_eight_asphere_{embodiment}",
+            )
+        ),
+        "genius_four_eight_comparison",
+    ]
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        parser_bytes.decode("utf-8"),
+        patent_id="US-20260169265-A1",
+    )
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 9))
+    assert [str(attempt.error) for attempt in attempts] == [
+        "optical metadata label EFL has 0 exact OCR prefixes | four-lens "
+        "eight-embodiment asphere table label 'a4' confidence 0.711214 is below "
+        "0.950000",
+        "four-lens eight-embodiment optical table label 'Vd Abbe' confidence "
+        "0.948769 is below 0.950000 | four-lens eight-embodiment asphere table "
+        "label 'a4' has 0 exact OCR tokens; expected 1",
+        "optical metadata label EFL has 0 exact OCR prefixes | four-lens "
+        "eight-embodiment asphere table label 'a4' has 0 exact OCR tokens; expected 1",
+        "optical metadata label HFOV has 0 exact OCR prefixes | four-lens "
+        "eight-embodiment asphere table label 'a4' confidence 0.872499 is below "
+        "0.950000",
+        "four-lens eight-embodiment asphere table label 'a4' has 0 exact OCR "
+        "tokens; expected 1",
+        "four-lens eight-embodiment asphere table label 'a4' confidence 0.539815 "
+        "is below 0.950000",
+        "optical metadata label HFOV has 0 exact OCR prefixes | four-lens "
+        "eight-embodiment asphere table label 'a4' has 0 exact OCR tokens; expected 1",
+        "optical metadata label HFOV has 0 exact OCR prefixes | four-lens "
+        "eight-embodiment asphere table label 'a4' confidence 0.833555 is below "
+        "0.950000",
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+
+
+def test_genius_four_lens_eight_retained_pdf_provenance_rehashes() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260719-patent-generic-family-94801574"
+    )
+    derived = json.loads(
+        (quick / "source-review" / "derived-pdf-profile.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    pin_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPTO-PDF-OCR-SOURCE-PIN"
+        / "US-20260169265-A1.json"
+    )
+    pin_bytes = pin_path.read_bytes()
+    assert hashlib.sha256(pin_bytes).hexdigest() == (
+        "f3facbbb6d3ca78eb14401b3fb6ea7f79b6b47677441de6f97148cdb5b142365"
+    )
+    pin = json.loads(pin_bytes)
+    formal_pdf = root / pin["official_pdf"]["path"]
+    containers = [
+        *(root / record["path"] for record in derived["containers"]),
+        formal_pdf,
+    ]
+    container_hashes = []
+    raster_sets = []
+    for pdf_path in containers:
+        pdf_bytes = pdf_path.read_bytes()
+        container_hashes.append(hashlib.sha256(pdf_bytes).hexdigest())
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        assert len(reader.pages) == 41
+        assert sum(len(page.extract_text() or "") for page in reader.pages) == 0
+        raster_sets.append(
+            [
+                patent_pdf_recovery._canonical_raster_sha256(page.images[0].data)
+                for page in reader.pages
+            ]
+        )
+    assert len(set(container_hashes)) == 3
+    assert raster_sets[0] == raster_sets[1] == raster_sets[2]
+    assert hashlib.sha256(("\n".join(raster_sets[0]) + "\n").encode()).hexdigest() == (
+        "e8a582b3f9dd6d554ccb7ac51d55f43dcfa50ee34987e0d71c48253c4981d24e"
+    )
+    assert pin["official_pdf"]["sha256"] == container_hashes[2]
+
+    manifest_path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "fulltext-recovery"
+        / "3da5375a20193126"
+        / "US-20260169265-A1--official-pdf-ocr.json"
+    )
+    manifest_bytes = manifest_path.read_bytes()
+    assert hashlib.sha256(manifest_bytes).hexdigest() == (
+        "3da5375a201931261a5792def87fbabc22f049e9d7fc4ca568d6cb8282ce7abe"
+    )
+    manifest = json.loads(manifest_bytes)
+    assert all(manifest["checks"].values())
+    assert manifest["page_count"] == 41
+    assert manifest["official_page_image_sha256"] == raster_sets[2]
+    assert manifest["parser_input"]["key_page_numbers"] == list(range(13, 30))
+    assert "mirror_pdf" not in manifest
+
+
+def test_genius_four_lens_eight_replay_and_generic_census_are_stable() -> None:
+    root = Path(__file__).resolve().parents[1]
+    replay_root = root / "data" / "patent-ledger" / "replay" / "local-uncovered"
+    result_root = replay_root / "results" / "US-20260169265"
+    semantic_hashes = []
+    for attempt_number in (2, 3):
+        result_path = result_root / f"attempt-{attempt_number:04d}" / "result.json"
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        assert result.pop("result_attempt") == attempt_number
+        assert result["root_state"] == "parser_review_required"
+        assert len(result["items"]) == 8
+        assert all(item["embodiment_number"] in range(1, 9) for item in result["items"])
+        semantic_hashes.append(
+            hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        )
+    assert semantic_hashes == [
+        "1f21d93fec12dcddd1cf7b865fbd6972be6fafa60822cd7859eed8bdf96f5a19"
+    ] * 2
+
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260719-patent-generic-family-94801574"
+    )
+    before = json.loads((quick / "generic-residual-before-61.json").read_text())
+    after_1_path = quick / "generic-residual-after-1.json"
+    after_2_path = quick / "generic-residual-after-2.json"
+    assert after_1_path.read_bytes() == after_2_path.read_bytes()
+    after = json.loads(after_1_path.read_text())
+    assert before["affected_roots"] == before["affected_items"] == 61
+    assert after["affected_roots"] == after["affected_items"] == 60
+    assert after["result_set_sha256"] == (
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
+    )
+    assert all(item["root_id"] != "US-20260169265" for item in after["items"])
+
+
+def test_genius_four_lens_eight_source_artifacts_close_exact_denominator() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260719-patent-generic-family-94801574"
+    )
+    profile = json.loads(
+        (quick / "source-review" / "derived-source-profile.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    facts = json.loads(
+        (quick / "family-94801574-source-facts.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-94801574-denominator.json").read_text(encoding="utf-8")
+    )
+    availability = json.loads(
+        (quick / "family-94801574-source-availability.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert facts["content_authorities"]["bibliography_and_narrative"] == profile[
+        "source"
+    ]
+    assert facts["paragraph_denominator"] == profile["paragraph_denominator"]
+    assert facts["claims"] == profile["claims"]
+    assert facts["figures"] == profile["figures"]
+    assert facts["tables"] == profile["tables"]
+    assert facts["mathml"] == profile["mathml"]
+    assert facts["optical_disclosure"] == profile["optical_disclosure"]
+    counts = denominator["denominator"]
+    assert counts["total_numbered_paragraphs"] == 142
+    assert counts["claims"] == 20
+    assert counts["independent_claims"] == 3
+    assert counts["figure_declaration_entries"] == 59
+    assert counts["declared_figure_panels"] == 63
+    assert counts["total_html_figure_references"] == 149
+    assert counts["flattened_table_us_objects"] == 2
+    assert counts["flattened_prescription_table_us_objects"] == 0
+    assert counts["mathml_objects"] == 18
+    assert counts["source_disclosed_prescription_pairs"] == 8
+    assert counts["replayed_ledger_items"] == 8
+    assert counts["parser_review_required_items"] == 8
+    assert counts["machine_verified_complete_prescriptions"] == 0
+    assert all(counts[name] == 0 for name in counts if name.startswith("unmapped_"))
+    assert [item["state"] for item in denominator["items"]] == [
+        "parser_review_required"
+    ] * 8
+    assert denominator["prescription_boundary"]["parser_acceptance_threshold"] == (
+        pytest.approx(0.95)
+    )
+    assert denominator["prescription_boundary"]["ocr_value_repair_used"] is False
+    assert not any(denominator["formal_outputs"].values())
+
+    html = availability["retained_official_html"]
+    html_bytes = (root / html["path"]).read_bytes()
+    assert len(html_bytes) == html["bytes"] == 98_300
+    assert hashlib.sha256(html_bytes).hexdigest() == html["sha256"]
+    assert html["normalized_sha256"] == (
+        "236225514d4ae4f8c39602a177210b96d4f9da01fce6b58c18f78d90823677ce"
+    )
+    assert len(availability["retained_official_pdf_fetches"]) == 3
+    assert availability["source_policy"]["ocr_is_attempted_transcription_only"] is True
+    assert availability["source_policy"]["ocr_numeric_repair_permitted"] is False
+
+
+def test_genius_four_lens_eight_raster_audit_rehashes_all_originals() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260719-patent-generic-family-94801574"
+    )
+    audit = json.loads(
+        (quick / "family-94801574-raster-audit.json").read_text(encoding="utf-8")
+    )
+
+    assert len(audit["containers"]) == 3
+    assert len({record["sha256"] for record in audit["containers"]}) == 3
+    for record in audit["containers"]:
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"] == 2_413_976
+        assert hashlib.sha256(raw).hexdigest() == record["sha256"]
+        assert record["page_count"] == 41
+        assert record["text_layer_characters"] == 0
+    assert audit["wrapper_comparison"]["decoded_page_records_equal"] is True
+    assert audit["page_roles"]["drawing_pages"] == list(range(2, 30))
+    assert audit["page_roles"]["prescription_optical_pages"] == list(
+        range(13, 29, 2)
+    )
+    assert audit["page_roles"]["prescription_asphere_pages"] == list(
+        range(14, 30, 2)
+    )
+    assert audit["detailed_reviewed_original_pages"] == list(range(13, 30))
+    assert len(audit["page_records"]) == len(audit["retained_page_pngs"]) == 41
+    for expected_page, (page, retained) in enumerate(
+        zip(audit["page_records"], audit["retained_page_pngs"], strict=True),
+        start=1,
+    ):
+        assert page["page"] == retained["page"] == expected_page
+        png = (root / retained["path"]).read_bytes()
+        assert len(png) == retained["bytes"]
+        assert hashlib.sha256(png).hexdigest() == retained["sha256"]
+        assert patent_pdf_recovery._canonical_raster_sha256(png) == page[
+            "raster_sha256"
+        ] == retained["raster_sha256"]
+    for contact in audit["contact_sheets"]:
+        raw = (root / contact["path"]).read_bytes()
+        assert len(raw) == contact["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == contact["sha256"]
+    assert audit["review_conclusions"]["original_raster_only"] is True
+    assert audit["review_conclusions"]["manual_numeric_transcription_used"] is False
+    assert audit["review_conclusions"]["ocr_numeric_repair_used"] is False
+
+
+def test_genius_four_lens_eight_replay_queue_and_evidence_rehash() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = (
+        root
+        / ".planning"
+        / "quick"
+        / "260719-patent-generic-family-94801574"
+    )
+    replay = json.loads(
+        (quick / "family-94801574-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    semantic_hashes = []
+    for record in replay["attempts"]:
+        raw = (root / record["path"]).read_bytes()
+        assert len(raw) == record["bytes"]
+        assert hashlib.sha256(raw).hexdigest() == record["file_sha256"]
+        result = json.loads(raw)
+        assert result.pop("result_attempt") == record["result_attempt"]
+        semantic_hashes.append(
+            hashlib.sha256(canonical_json_bytes(result)).hexdigest()
+        )
+    assert semantic_hashes == [replay["semantic_sha256"]] * 2
+    assert replay["normalization"] == {
+        "removed_fields": ["result_attempt"],
+        "outcome_fields_removed": [],
+        "request_fields_removed": [],
+        "runtime_paths_normalized": False,
+    }
+    assert replay["final_state"]["item_state_counts"] == {
+        "parser_review_required": 8
+    }
+    assert replay["strict_replay"]["roots_with_results"] == 619
+    assert replay["strict_replay"]["missing_results"] == 0
+    assert replay["strict_replay"]["corrupt_results"] == 0
+    assert replay["codev_calls"] == 0
+
+    after = json.loads(
+        (quick / "generic-residual-after-2.json").read_text(encoding="utf-8")
+    )
+    queue = json.loads((quick / "queue-after.json").read_text(encoding="utf-8"))
+    assert queue["result_set_sha256"] == after["result_set_sha256"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after["layout_signature_counts"]
+    )
+    assert queue["next_exact_group"]["family_id"] == "94115759"
+    assert queue["next_exact_group"]["root_ids"] == ["US-12560789"]
+    assert queue["saturation_complete"] is False
+
+    evidence = json.loads(
+        (quick / "family-94801574-source-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                raw = (root / str(value["path"])).read_bytes()
+                assert len(raw) == value["bytes"]
+                assert hashlib.sha256(raw).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert records
+    assert evidence["semantic_replay_sha256"] == replay["semantic_sha256"]
+    assert evidence["ledger"]["strict_roots_with_results"] == 619
+    assert evidence["ledger"]["missing"] == 0
+    assert evidence["ledger"]["corrupt"] == 0
+    assert not any(evidence["formal_outputs"].values())
+    assert evidence["next_exact_group"] == queue["next_exact_group"]
+    assert evidence["saturation_complete"] is False
 
 
 def test_genius_six_lens_five_profile_retains_every_embodiment() -> None:
@@ -28965,9 +29543,10 @@ def test_sekonix_small_lens_qcon_a1_replay_queue_and_evidence_are_stable() -> No
 
     assert canonical_json_bytes(after_1) == canonical_json_bytes(after_2)
     assert after_1["affected_roots"] == after_1["affected_items"] == 61
-    assert after_1["result_set_sha256"] == queue["result_set_sha256"] == evidence[
-        "ledger"
-    ]["result_set_sha256"]
+    assert after_1["result_set_sha256"] == queue["result_set_sha256"]
+    assert evidence["ledger"]["result_set_sha256"] == (
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
+    )
     minimum_signature = min(after_1["layout_signature_counts"])
     selected = [
         item
@@ -39832,7 +40411,7 @@ def test_aac_family_66534470_source_evidence_rehashes_every_reference() -> None:
         "result_set_sha256"
     ]
     assert evidence["ledger"]["result_set_sha256"] == (
-        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -40739,7 +41318,7 @@ def test_corephotonics_family_88793298_source_evidence_rehashes_every_reference(
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -41138,7 +41717,7 @@ def test_corephotonics_family_100208972_source_evidence_rehashes_every_reference
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -41560,7 +42139,7 @@ def test_largan_family_99635674_source_evidence_rehashes_every_reference() -> No
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -41881,7 +42460,7 @@ def test_aac_family_66532282_source_evidence_rehashes_every_reference() -> None:
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -42228,7 +42807,7 @@ def test_newmax_family_84189606_source_evidence_rehashes_every_reference() -> No
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "33105c108e24cb17fd5a0850c82f514417728c83f68b248477e17a37c06e07b5"
+        "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {

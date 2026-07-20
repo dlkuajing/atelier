@@ -82,13 +82,13 @@
     "result_set_sha256": "5a9124d16b675ebd135d3b26c1ec9986d8727315d17d2087af1ea63ad507615e",
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 47363,
-      "sha256": "f6af427e6e92cab5f06883f31d1540d1d954386b03ed25f32d45e3a0804d01b4"
+      "bytes": 48333,
+      "sha256": "835546d66a57e7b857f685949b7a740545b91423384a46d4d472f2930b6fcce1"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 49131,
-      "sha256": "a9cde9d15270dd0e52a4354468166ca0176116bf918cdc4380f0aa835babb632"
+      "bytes": 50125,
+      "sha256": "557ed656ae9f3922c942c88d5a8bd09024be075061df1e9adeca0df66cf91643"
     }
   },
   "census": {

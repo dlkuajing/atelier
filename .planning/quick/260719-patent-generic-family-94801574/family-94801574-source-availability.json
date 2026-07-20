@@ -1,0 +1,110 @@
+{
+    "schema_version":  1,
+    "family_id":  "94801574",
+    "root_id":  "US-20260169265",
+    "publication_id":  "US-20260169265-A1",
+    "application_number":  "19/034574",
+    "retained_official_html":  {
+                                   "path":  "data/patent-lake/uspto-ppubs-html/US-PGPUB/0ec8d06ad327d41b/US-20260169265-A1.html",
+                                   "bytes":  98300,
+                                   "sha256":  "0ec8d06ad327d41be5573d8b69fa6597d94c9f239eda657c5a050f3c121e61a3",
+                                   "characters":  97799,
+                                   "normalized_characters":  76905,
+                                   "normalized_sha256":  "236225514d4ae4f8c39602a177210b96d4f9da01fce6b58c18f78d90823677ce",
+                                   "flattened_table_us_objects":  2,
+                                   "mathml_objects":  18,
+                                   "content_authority":  "bibliography_and_narrative"
+                               },
+    "retained_official_pdf_fetches":  [
+                                          {
+                                              "path":  ".planning\\quick\\260719-patent-generic-family-94801574\\source-review\\US-20260169265-A1-official-1.pdf",
+                                              "bytes":  2413976,
+                                              "sha256":  "4dfc1734ff286b7aa82cf914d0302a6c69b254efd37462cd19999d72105daca8",
+                                              "page_count":  41,
+                                              "text_layer_characters":  0,
+                                              "raster_set_sha256":  "e8a582b3f9dd6d554ccb7ac51d55f43dcfa50ee34987e0d71c48253c4981d24e"
+                                          },
+                                          {
+                                              "path":  ".planning\\quick\\260719-patent-generic-family-94801574\\source-review\\US-20260169265-A1-official-2.pdf",
+                                              "bytes":  2413976,
+                                              "sha256":  "4bb0528fa82c439275c0092865bdf024bb910c33aace679d01b5ee0b00915ec4",
+                                              "page_count":  41,
+                                              "text_layer_characters":  0,
+                                              "raster_set_sha256":  "e8a582b3f9dd6d554ccb7ac51d55f43dcfa50ee34987e0d71c48253c4981d24e"
+                                          },
+                                          {
+                                              "path":  "data/patent-lake/uspto-ppubs-html/USPTO-PDF/0f2707681b50f0fd/US-20260169265-A1.pdf",
+                                              "bytes":  2413976,
+                                              "sha256":  "0f2707681b50f0fd1ead578d95ec678a01200d1b9681e2dbfe2639fc10e3c67d",
+                                              "page_count":  41,
+                                              "text_layer_characters":  0,
+                                              "raster_set_sha256":  "e8a582b3f9dd6d554ccb7ac51d55f43dcfa50ee34987e0d71c48253c4981d24e"
+                                          }
+                                      ],
+    "pdf_reconciliation":  {
+                               "page_count":  41,
+                               "single_raster_pages":  41,
+                               "text_layer_characters":  0,
+                               "container_sha256_equal":  false,
+                               "container_bytes_equal":  true,
+                               "decoded_page_rasters_equal":  true,
+                               "canonical_raster_set_sha256":  "e8a582b3f9dd6d554ccb7ac51d55f43dcfa50ee34987e0d71c48253c4981d24e",
+                               "content_authority":  "printed_prescription_tables_only"
+                           },
+    "derived_records":  {
+                            "source_profile":  {
+                                                   "path":  ".planning\\quick\\260719-patent-generic-family-94801574\\source-review\\derived-source-profile.json",
+                                                   "bytes":  29104,
+                                                   "sha256":  "087eec79690503c8e57bd1fc38293145d535a554f7d7de795595d3ce9fba431d"
+                                               },
+                            "pdf_profile":  {
+                                                "path":  ".planning\\quick\\260719-patent-generic-family-94801574\\source-review\\derived-pdf-profile.json",
+                                                "bytes":  39223,
+                                                "sha256":  "3357a109a389bbee9aaa91e19f6b9afa425e92241ac20ee0c0f047a60535bea1"
+                                            },
+                            "ocr_json":  {
+                                             "path":  "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-JSON/7419d744e863625c/US-20260169265-A1.json",
+                                             "bytes":  219250,
+                                             "sha256":  "7419d744e863625c5e87668ad9b809ecc0e173fe7d949cb5067ebd93ebbc916a"
+                                         },
+                            "source_pin":  {
+                                               "path":  "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-SOURCE-PIN/US-20260169265-A1.json",
+                                               "bytes":  363,
+                                               "sha256":  "f3facbbb6d3ca78eb14401b3fb6ea7f79b6b47677441de6f97148cdb5b142365"
+                                           },
+                            "recovery_manifest":  {
+                                                      "path":  "data/patent-lake/uspto-ppubs-html/fulltext-recovery/3da5375a20193126/US-20260169265-A1--official-pdf-ocr.json",
+                                                      "bytes":  4277,
+                                                      "sha256":  "3da5375a201931261a5792def87fbabc22f049e9d7fc4ca568d6cb8282ce7abe"
+                                                  }
+                        },
+    "bibliography":  {
+                         "title":  "OPTICAL IMAGING LENS",
+                         "inventors":  [
+                                           "Lin; Hai",
+                                           "Yang; Song Lin",
+                                           "Huang; Songchao",
+                                           "Hsieh; Hung-Chien"
+                                       ],
+                         "applicant":  "Genius Electronic Optical (Xiamen) Co., Ltd.",
+                         "assignee":  "Genius Electronic Optical (Xiamen) Co., Ltd.",
+                         "filed":  "January 23, 2025",
+                         "publication_date":  "June 18, 2026",
+                         "foreign_priority":  {
+                                                  "country":  "CN",
+                                                  "application":  "202411871179.8",
+                                                  "date":  "Dec. 18, 2024"
+                                              }
+                     },
+    "source_policy":  {
+                          "official_html_is_bibliography_and_narrative_authority":  true,
+                          "official_original_pdf_is_printed_prescription_authority":  true,
+                          "ocr_is_attempted_transcription_only":  true,
+                          "image_enhancement_permitted":  false,
+                          "drawing_geometry_measurement_permitted":  false,
+                          "raster_numeric_transcription_permitted":  false,
+                          "ocr_numeric_repair_permitted":  false,
+                          "source_typography_repair_permitted":  false,
+                          "related_family_numeric_borrowing_permitted":  false
+                      }
+}
