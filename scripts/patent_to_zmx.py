@@ -962,6 +962,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_largan_dual_molded_lens_architecture_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_four_lens_f_number_unpublished_attempts(
         raw_text,
         patent_id=patent_id,
@@ -62891,6 +62899,573 @@ def _classify_largan_light_blocking_compensation_architecture_only_attempts(
             ),
         )
         for number, label, _paragraphs in _LARGAN_LIGHT_BLOCKING_COMPENSATION_ITEMS
+    ]
+
+
+_LARGAN_DUAL_MOLDED_LENS_ITEMS = (
+    (
+        1,
+        "Largan first dual-molded light-absorbing lens embodiment",
+        "1st Embodiment (21)",
+        (21, 49),
+        ("1A", "1B", "1C", "1D", "1E", "1F", "1G"),
+        (1,),
+    ),
+    (
+        2,
+        "Largan second dual-molded light-absorbing lens embodiment",
+        "2nd Embodiment (50)",
+        (50, 61),
+        ("2A", "2B", "2C", "2D", "2E"),
+        (2,),
+    ),
+    (
+        3,
+        "Largan third dual-molded light-absorbing lens embodiment",
+        "3rd Embodiment (62)",
+        (62, 73),
+        ("3A", "3B", "3C", "3D", "3E"),
+        (3,),
+    ),
+    (
+        4,
+        "Largan smartphone electronic-device embodiment",
+        "4th Embodiment (74)",
+        (74, 74),
+        ("4",),
+        (),
+    ),
+    (
+        5,
+        "Largan tablet electronic-device embodiment",
+        "5th Embodiment (75)",
+        (75, 75),
+        ("5",),
+        (),
+    ),
+    (
+        6,
+        "Largan wearable electronic-device embodiment",
+        "6th Embodiment (76)",
+        (76, 76),
+        ("6",),
+        (),
+    ),
+)
+_LARGAN_DUAL_MOLDED_LENS_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Imaging\s+lens\s+assembly\s+and\s+electronic\s+device\s*</h2>",
+    re.IGNORECASE,
+)
+_LARGAN_DUAL_MOLDED_LENS_FIGURE_PANELS = (
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "1E",
+    "1F",
+    "1G",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "2E",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "3E",
+    "4",
+    "5",
+    "6",
+)
+_LARGAN_DUAL_MOLDED_LENS_ARCHITECTURE_REASON = (
+    "confirmed_no_prescription."
+    "dual_molded_lens_light_absorbing_architecture_only"
+)
+_LARGAN_DUAL_MOLDED_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11086108-B2": {
+        "family_id": "60048601",
+        "application_number": "16/748874",
+        "raw_document_sha256": (
+            "783b3621e11c5f081cc9fc317921f18b75d2841b2711af260ffba363080a2f42"
+        ),
+        "normalized_text_sha256": (
+            "e1cbb30deffaba7272f02a78b62960ee88f1b52e97a81cfac634001fa7e8b8b6"
+        ),
+        "identity_markers": {
+            "United States Patent 11086108 Kind Code B2": 1,
+            "Date of Patent August 10, 2021": 1,
+            "Inventor(s) Lin; Cheng-Feng et al.": 1,
+            "Imaging lens assembly and electronic device Abstract": 1,
+            "Applicant: LARGAN PRECISION CO., LTD.": 1,
+            "Family ID: 60048601": 1,
+            "Assignee: LARGAN PRECISION CO., LTD.": 1,
+            "Appl. No.: 16/748874": 1,
+            "Filed: January 22, 2020": 1,
+            "US 20200158996 A1 May. 21, 2020": 1,
+            "TW 105114303 May. 09, 2016": 1,
+            "parent-doc US 16251320 20190118 US 10578839": 1,
+            "parent-doc US 15201668 20160705 US 10234658": 1,
+        },
+        "section_markers": {
+            "preamble": "US-11086108-B2 - Patent Public Search | USPTO",
+            "abstract": (
+                "Abstract An imaging lens assembly includes a plurality of lens elements"
+            ),
+            "background": "BACKGROUND Technical Field (1)",
+            "summary": "SUMMARY (5)",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION 1st Embodiment (21)",
+            "claims": (
+                "Claims 1. An imaging lens assembly, comprising a plurality of lens "
+                "elements"
+            ),
+        },
+        "section_sha256": {
+            "preamble": (
+                "1659e3462898c934083a8559f8259cdbc60801c82b086a9d9ed4cf2a8c349aa4"
+            ),
+            "abstract": (
+                "6f59d1a4ffa9438cd00adadd50ede55347a222756a66d8338b92ee333067d744"
+            ),
+            "background": (
+                "2f96244a82bd51326750304243a99b0b4c764fe7a77942265064d700c197c9c1"
+            ),
+            "summary": (
+                "ffd24807d416e9927161ffa3e7bc55e9b51e009e0b0c61b13bbce17cd9d62db3"
+            ),
+            "brief": (
+                "57fd5602e6a2abe19be69f1c714d7b288997ba70e0b52062996b8e5a3813c40e"
+            ),
+            "detailed": (
+                "5fe1ed825f21fbcfae3374c50c770a4792dcbee017d3c957ebc670541381d267"
+            ),
+            "claims": (
+                "e7ae3378027bfb012df402347f9502b42c8070989872403d929d1b55130e47ed"
+            ),
+        },
+        "paragraph_numbers": {
+            "background": tuple(range(1, 5)),
+            "summary": tuple(range(5, 9)),
+            "brief": tuple(range(1, 21)),
+            "detailed": tuple(range(21, 78)),
+        },
+        "paragraph_payload_sha256": {
+            "background": (
+                "a9b69e866c3afe1245332954ba8902a40b233bcebfc9936fe9c80a45b9283f9c"
+            ),
+            "summary": (
+                "6a62892e506b3c316d457dbdb8728fde4c55c04e77e000e7635ff0b43cad2d06"
+            ),
+            "brief": (
+                "ae3ea97ccb97eb6a19017ee5d3609686d060517c4292de1c92ab1e5003ff8fc2"
+            ),
+            "detailed": (
+                "9631d9fe61796bb4814274f81a112d7844e2461c6c803fb13eeab72cfd5ca6c9"
+            ),
+        },
+        "item_span_sha256": (
+            "888238526798cf99e52db967597ad02a4dc6d7d0ba906b8521a72c5223e436f4",
+            "13221d058e8dc674719e2f61adf358edac5ccf2d914589cb8dde900b5068c601",
+            "a2c6cee941802f780a3e74bf1ec3f28b7e581eefaf37fe303effa8944b03c06e",
+            "de60d178bd41afae8cc7f06652b15513d7b618f72b9d7429b0dd9a606e85de32",
+            "6ae4496cef39b1c7562060f6eff9277601deb701472a299f7ce294dcba9ba360",
+            "46d8c6f7f39b879d9555111a535c80204ebf1f12f7752a55e542745da9a9c8d0",
+        ),
+        "closing_paragraph_sha256": (
+            "5a766eca8bf1eea1825b3044329e5b01b9cf3647cbd7425fd5205439dccb435c"
+        ),
+        "table_block_sha256": (
+            "2e87fa196ff11073e067dc74d6651bde73188f1fa5700af9c06ad7cc4c9d81d2",
+            "850af22f3ebd5e0b0889698c3a036fc9c4d5283d12bf8d35c1598b848c1b1036",
+            "515c2669f73c3f8bc9100d831ac108c6db0aeb56fd1fc23da875bed66de793d0",
+        ),
+        "formal_table_sha256": (
+            "2ebb06fbff61f362914ca8f9d13837ab05639a7cccc912ea755bdf2383fbe55c",
+            "b9a612bca670145e017966288c1f2be12c9b34e0bc1703eba5f4b6a18ec72184",
+            "428463ca1b0f789c3c078c4c1e66e5faad9d854f39420e638ff4c3a6f8e36e53",
+        ),
+        "claim_numbers": tuple(range(1, 7)),
+        "independent_claim_numbers": (1, 6),
+        "figure_panels": _LARGAN_DUAL_MOLDED_LENS_FIGURE_PANELS,
+        "figref_count": 90,
+        "math_object_count": 0,
+        "phrase_counts": {
+            "aspheric with any curvature": 1,
+            "dual molded lens element": 90,
+            "electronic device": 19,
+        },
+        "pdf_audit": {
+            "path": (
+                ".planning/quick/260721-patent-generic-family-60048601/"
+                "source-review/US-11086108-B2-official-live-1.pdf"
+            ),
+            "bytes": 1_279_888,
+            "container_sha256": (
+                "55d46981b136d8adfcc8b504f66a4226bd5a2db887e3ca41f7110971acd01134"
+            ),
+            "page_count": 28,
+            "raster_dimensions": (2560, 3300),
+            "raster_set_sha256": (
+                "72c3232c42cff9d1f0e088493cfc6b0529d45018cab90f6252613c522407c4d3"
+            ),
+            "critical_page_raster_sha256": {
+                3: "32da9b278429350424480f75a57f646018f4ce3ab41155862fb94476f92084e3",
+                22: "8214c79387fb5f88d865e6d6da37a98febe6237e5c61b6e663ae16b4b94ecfae",
+                26: "9511de9cbcfe1f886901d3d8d7d43c02b03e6d265826ce2282cc61db1ae99a6a",
+                27: "ce6cfd19a591922c5c251f62d5592cc9ae660b6172edece0daec29ad0a62f7a9",
+                28: "3b6c15d38d824e16f18b87a0ab52a1ce62d4727982c0e2006373533edd8e8a27",
+            },
+            "drawing_page_numbers": tuple(range(3, 23)),
+            "table_page_numbers": (26, 27),
+            "claims_page_numbers": (28,),
+        },
+    }
+}
+
+
+def _classify_largan_dual_molded_lens_architecture_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the six exact Family 60048601 architecture-only source items."""
+
+    profile = _LARGAN_DUAL_MOLDED_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _marker, _paragraphs, _figures, _tables in (
+                _LARGAN_DUAL_MOLDED_LENS_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                "Largan dual-molded lens official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                "Largan dual-molded lens normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_LARGAN_DUAL_MOLDED_LENS_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Largan dual-molded lens title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan dual-molded lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan dual-molded lens section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Largan dual-molded lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan dual-molded lens {section_name} section changed"
+                )
+
+        paragraphs_by_section: dict[str, dict[int, str]] = {}
+        for section_name in ("background", "summary", "brief", "detailed"):
+            section = sections[section_name]
+            matches = list(re.finditer(r"(?<!\w)\((\d+)\)\s", section))
+            numbers = tuple(int(match.group(1)) for match in matches)
+            if numbers != profile["paragraph_numbers"][section_name]:
+                raise PatentParseError(
+                    f"Largan dual-molded lens {section_name} paragraph denominator "
+                    "changed"
+                )
+            paragraphs = {
+                number: section[
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(section)
+                    )
+                ].strip()
+                for index, (number, match) in enumerate(
+                    zip(numbers, matches, strict=True)
+                )
+            }
+            paragraphs_by_section[section_name] = paragraphs
+            payload = "".join(paragraphs[number] for number in numbers)
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != profile[
+                "paragraph_payload_sha256"
+            ][section_name]:
+                raise PatentParseError(
+                    f"Largan dual-molded lens {section_name} paragraph payload changed"
+                )
+
+        detailed = sections["detailed"]
+        item_markers = tuple(item[2] for item in _LARGAN_DUAL_MOLDED_LENS_ITEMS)
+        closing_marker = "(77) Although the present disclosure has been described"
+        try:
+            item_starts = tuple(detailed.index(marker) for marker in item_markers)
+            closing_start = detailed.index(closing_marker)
+        except ValueError as exc:
+            raise PatentParseError(
+                "Largan dual-molded lens embodiment binding changed"
+            ) from exc
+        if item_starts != tuple(sorted(item_starts)) or item_starts[-1] >= closing_start:
+            raise PatentParseError(
+                "Largan dual-molded lens embodiment ordering changed"
+            )
+        item_spans = tuple(
+            detailed[
+                item_starts[index] : (
+                    item_starts[index + 1]
+                    if index + 1 < len(item_starts)
+                    else closing_start
+                )
+            ].strip()
+            for index in range(len(item_starts))
+        )
+        if tuple(
+            hashlib.sha256(span.encode("utf-8")).hexdigest() for span in item_spans
+        ) != profile["item_span_sha256"]:
+            raise PatentParseError("Largan dual-molded lens item span changed")
+        closing = detailed[closing_start:].strip()
+        if hashlib.sha256(closing.encode("utf-8")).hexdigest() != profile[
+            "closing_paragraph_sha256"
+        ]:
+            raise PatentParseError(
+                "Largan dual-molded lens closing paragraph changed"
+            )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != (1, 2, 3):
+            raise PatentParseError(
+                "Largan dual-molded lens three-table denominator changed"
+            )
+        if tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in table_blocks
+        ) != profile["table_block_sha256"]:
+            raise PatentParseError("Largan dual-molded lens table block changed")
+        next_paragraphs = (50, 62, 74)
+        formal_tables = []
+        for block, next_paragraph in zip(
+            table_blocks,
+            next_paragraphs,
+            strict=True,
+        ):
+            payload = re.split(
+                rf"\s+\({next_paragraph}\)\s+",
+                block.text,
+                maxsplit=1,
+            )[0].strip()
+            payload = re.sub(
+                r"\s+(?:2nd|3rd|4th)\s+Embodiment\s*\Z",
+                "",
+                payload,
+                flags=re.IGNORECASE,
+            ).strip()
+            formal_tables.append(payload)
+        if tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        ) != profile["formal_table_sha256"]:
+            raise PatentParseError("Largan dual-molded lens formal table changed")
+
+        declared_figures = tuple(
+            match.group(1).upper()
+            for match in re.finditer(
+                r"FIG\.\s*(\d+[A-G]?)\s+(?:is|shows)\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != profile["figure_panels"]:
+            raise PatentParseError(
+                "Largan dual-molded lens figure-panel denominator changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError("Largan dual-molded lens figref denominator changed")
+        if len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)) != profile[
+            "math_object_count"
+        ]:
+            raise PatentParseError("Largan dual-molded lens MathML denominator changed")
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan dual-molded lens claim denominator changed"
+            )
+        independent_claims = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\.\s*(?:An\s+imaging\s+lens\s+assembly|"
+                r"An\s+electronic\s+device),",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Largan dual-molded lens independent claims changed"
+            )
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan dual-molded lens phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        absent_prescription_markers = (
+            "F-number",
+            "FNO",
+            "effective focal length",
+            "focal length",
+            "image height",
+            "radius of curvature",
+            "curvature radius",
+            "aspheric coefficient",
+            "aspherical coefficient",
+            "refractive index",
+            "Abbe",
+            "aperture stop",
+            "surface prescription",
+        )
+        for marker in absent_prescription_markers:
+            if re.search(re.escape(marker), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "Largan dual-molded lens source unexpectedly publishes "
+                    f"{marker!r}"
+                )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("Largan dual-molded lens official PDF size changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError("Largan dual-molded lens official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Largan dual-molded lens official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Largan dual-molded lens PDF page {page_number} contains "
+                    f"{len(images)} rasters; expected one"
+                )
+            if images[0].image.size != pdf_profile["raster_dimensions"]:
+                raise PatentParseError(
+                    f"Largan dual-molded lens PDF page {page_number} dimensions changed"
+                )
+            raster_digest = _canonical_raster_sha256(images[0].data)
+            page_raster_hashes.append(raster_digest)
+            expected_critical = pdf_profile["critical_page_raster_sha256"].get(
+                page_number
+            )
+            if expected_critical is not None and raster_digest != expected_critical:
+                raise PatentParseError(
+                    f"Largan dual-molded lens critical PDF page {page_number} changed"
+                )
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Largan dual-molded lens official PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Largan dual-molded lens official PDF gained a text layer"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all six source items
+        return attempts_for_error(exc)
+
+    architecture_detail = (
+        "the exact {ordinal} embodiment publishes {lens_count} lens elements plus "
+        "a dual-shot light-transmitting/light-absorbing lens element and mechanical "
+        "opening, diameter, recess, and light-blocking geometry, but no ordered "
+        "radii, axial spacings, optical materials, asphere coefficients, stop, focal "
+        "length, image height, or F-number"
+    )
+    details = (
+        architecture_detail.format(ordinal="first", lens_count="six"),
+        architecture_detail.format(ordinal="second", lens_count="five"),
+        architecture_detail.format(ordinal="third", lens_count="six"),
+        "the exact fourth embodiment is a smartphone wrapper around an unspecified "
+        "imaging lens assembly and publishes no independent optical prescription",
+        "the exact fifth embodiment is a tablet wrapper around an unspecified imaging "
+        "lens assembly and publishes no independent optical prescription",
+        "the exact sixth embodiment is a wearable-device wrapper around an unspecified "
+        "imaging lens assembly and publishes no independent optical prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=(
+                    _LARGAN_DUAL_MOLDED_LENS_ARCHITECTURE_REASON
+                    if number <= 3
+                    else "confirmed_no_prescription.electronic_device_wrapper_only"
+                ),
+                detail=details[number - 1],
+            ),
+        )
+        for number, label, _marker, _paragraphs, _figures, _tables in (
+            _LARGAN_DUAL_MOLDED_LENS_ITEMS
+        )
     ]
 
 
