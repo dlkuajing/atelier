@@ -963,6 +963,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_golden_gate_range_correcting_radiometric_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_light_blocking_compensation_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -63078,6 +63086,464 @@ def _classify_samsung_undefined_high_order_asphere_attempts(
         for number, label, _paragraphs, tables, _figures in (
             _SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_ITEMS
         )
+    ]
+
+_GOLDEN_GATE_RANGE_CORRECTING_RADIOMETRIC_ITEMS = (
+    (
+        1,
+        "Golden Gate claimed range-compensating lens assembly",
+        "confirmed_no_prescription.range_compensating_lens_assembly_architecture_only",
+        (
+            "claims 1-9 define the first/second lens, central pass-through region, "
+            "mounting member and dependent material/coating variants, but publish no "
+            "ordered optical surface prescription"
+        ),
+    ),
+    (
+        2,
+        "Golden Gate claimed range-finding system",
+        "confirmed_no_prescription.range_finding_system_architecture_only",
+        (
+            "claims 10-15 and paragraph (77) define a source, lens assembly, detector, "
+            "processor and array variants, but publish no ordered optical surface "
+            "prescription"
+        ),
+    ),
+    (
+        3,
+        "Golden Gate range-compensating lens design method",
+        "confirmed_no_prescription.range_compensating_lens_design_method_only",
+        (
+            "paragraphs (13)-(39) and (62)-(66), TABLE 1, Equations 1-20 and claims "
+            "16-20 publish first-order radiometric and iterative design methods whose "
+            "output would be a lens design, not an independent numerical prescription"
+        ),
+    ),
+    (
+        4,
+        "Golden Gate on-axis dual-power lens embodiment (FIGS. 1-2)",
+        "confirmed_no_prescription.on_axis_dual_power_lens_schematic_only",
+        (
+            "paragraphs (40)-(46) and FIGS. 1-2 publish an on-axis outer annular lens, "
+            "inner lens, mounting member and detector schematic without surface radii, "
+            "center thicknesses, materials or an ordered surface sequence"
+        ),
+    ),
+    (
+        5,
+        "Golden Gate off-axis non-imaging dual-power lens embodiment (FIG. 3)",
+        "confirmed_no_prescription.off_axis_nonimaging_dual_power_lens_schematic_only",
+        (
+            "paragraphs (47)-(54) and FIG. 3 publish off-axis and non-imaging states of "
+            "the dual-power assembly without a numerical optical prescription"
+        ),
+    ),
+    (
+        6,
+        "Golden Gate neutral-density range-compensating lens embodiment (FIG. 4)",
+        "confirmed_no_prescription.neutral_density_range_compensating_lens_schematic_only",
+        (
+            "paragraphs (55)-(57) and FIG. 4 publish a simple lens, neutral-density "
+            "region, opaque mounting ring and detector architecture without an ordered "
+            "surface prescription"
+        ),
+    ),
+    (
+        7,
+        "Golden Gate GRIN range-compensating lens embodiment (FIG. 5)",
+        "confirmed_no_prescription.grin_metamaterial_polarimetric_lens_architecture_only",
+        (
+            "paragraphs (58)-(61) and FIG. 5 publish qualitative GRIN profiles plus "
+            "metamaterial and polarimetric variants, but no numerical index profile, "
+            "surface prescription or material dispersion"
+        ),
+    ),
+    (
+        8,
+        "Golden Gate short-range first-order radiometric example (FIGS. 7-8)",
+        "confirmed_no_prescription.short_range_first_order_radiometric_parameters_only",
+        (
+            "paragraphs (67)-(71) publish fi/Di/fo/Do/t and detector size for the "
+            "short-range Gaussian example, while no surface radii, center thicknesses, "
+            "materials or ordered surface sequence are supplied"
+        ),
+    ),
+    (
+        9,
+        "Golden Gate long-range first-order radiometric example (FIGS. 9-10)",
+        "confirmed_no_prescription.long_range_first_order_radiometric_parameters_only",
+        (
+            "paragraphs (72)-(73) publish first-order long-range parameters only; "
+            "paragraph (72) prints fo=0.6 m while paragraph (74) says the FIGS. 9-10 "
+            "value changes from 0.5 m to 0.6 m for FIG. 11, and neither value is bound "
+            "to an ordered surface prescription"
+        ),
+    ),
+    (
+        10,
+        "Golden Gate relaxed long-range first-order variant (FIG. 11)",
+        "confirmed_no_prescription.relaxed_long_range_first_order_radiometric_variant_only",
+        (
+            "paragraph (74) and FIG. 11 publish a relaxed first-order focal-length "
+            "variant and radiometric performance only, with the same 0.5/0.6 m source "
+            "conflict and no ordered surface prescription"
+        ),
+    ),
+    (
+        11,
+        "Golden Gate neutral-density long-range first-order example (FIG. 12)",
+        "confirmed_no_prescription.neutral_density_long_range_first_order_parameters_only",
+        (
+            "paragraphs (75)-(76) and FIG. 12 publish focal length 1.2 m and ND OD "
+            "0.83 only, not the lens surfaces, thicknesses, material or aperture "
+            "coordinates required for an optical prescription"
+        ),
+    ),
+)
+
+_GOLDEN_GATE_RANGE_CORRECTING_RADIOMETRIC_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-11874478-B1": {
+        "raw_document_sha256": ("7a46e890a5a2713a0cb2ab07a112563e4239cdf3d9848abe43b08e2f08786340"),
+        "normalized_text_sha256": (
+            "63076754a04f37d98317f754ab6a1081660143c0e205b99a0c99b1425e978eb1"
+        ),
+        "identity_markers": {
+            "United States Patent 11874478 Kind Code B1": 1,
+            (
+                "Range correcting radiometric lens, method of optical design, and "
+                "range finding system using same"
+            ): 2,
+            "Mudge; Jason D": 2,
+            "Applicant: Golden Gate Light Optimization LLC": 1,
+            "Assignee: Golden Gate Light Optimization LLC": 1,
+            "Family ID: 89511297": 1,
+            "Appl. No.: 16/990939": 1,
+            "US 63048548 20200706": 1,
+        },
+        "section_markers": {
+            "preamble": "US-11874478-B1 - Patent Public Search | USPTO",
+            "abstract": "Abstract The present invention",
+            "background": ("Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS"),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1. A lens assembly comprising:",
+        },
+        "section_sha256": {
+            "preamble": ("d1396506e0916c531bb2093e0d734265c3e49a74a9b93960c379bc806aa039e7"),
+            "abstract": ("23ba77487f49000cd0c9f957780ea403fb96ab5f1f45cbcb4ef2b053a6031418"),
+            "background": ("bc81cacc2b088c0d13f975a948b015a75b16acff3da8a4dce1f366546344dcae"),
+            "description": ("5a52dd9347838cf06cf8199b020d8ed75feb05c736a9f4d749db5d7dfa193fe4"),
+            "claims": ("9344cfde8a69b1dec874386d21c00bca354e88fde99f1526e1f35e5c5a740a14"),
+        },
+        "description_span_sha256": {
+            (1, 12): "9862951937accd93cffb81762e4ad34a3075213462fc91c78177273a159fecb1",
+            (13, 39): "deb8c57720304c52f0d14c067c8655b175f17077bfae2230b962032d335e2db5",
+            (40, 46): "c36211caa514da4cc235acc562f91424d99341e7c79f4c2a80d84a5886a9a9b3",
+            (47, 54): "08499547a51804e2aaedb4af1b66adbf45bc1672c1395cd6b720b599a1ac5a58",
+            (55, 57): "9cda3a19cf8832c9ab39ba789a8276bdb1144d6fa522806a987893e3c8972caa",
+            (58, 61): "e4dc7ac2f682942e0b119c6c294b44134308a40a4eed37c9399825390c51d65a",
+            (62, 66): "a57e3f9bb8d5a35e950ee51bea169c615fe4721eab39cb50f135c8b90665ced3",
+            (67, 71): "3f70b9ab1c16c40c00aefe9451b071a77a2020486cec9daa296a30be8f00e0a0",
+            (72, 73): "c438c40289646f858590693339d9bee7e1e4787fa33c18124ddd94f713931b77",
+            (74, 74): "295d25bd78590ef0351bbba7201b1771cd29c9aeaadf0bd8e7e055ab4dfad247",
+            (75, 76): "7f72ea18216ead15d8f691948be71ff4d3d604d2d821367065cdf1dda79d3bd7",
+            (77, 79): "5a8dc559cda1e89a4ecb1f549773a65998235268616a1cbec7dfa6ec45e6dc48",
+        },
+        "claim_group_sha256": {
+            (1, 9): "c40a0fb842d520ed8583e0b9967495c5a4f53cb9f948caddc1a6d4a883d4da2c",
+            (10, 15): "ac31c1517422a26681c6574778f9ee3209cd1f2b792a6400595d9c81615b5149",
+            (16, 20): "eac89e550f251d7565640beed4deb76cd2bb1d6bbbc83f07081c5edb13f0591d",
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 10, 16),
+        "figure_labels": tuple(range(1, 13)),
+        "table_1_payload_sha256": (
+            "3b617dc03b949b6e6fde4757f86bca73d07df94c0a3d71ce8f717d42a4dd816f"
+        ),
+        "ordered_math_id_sha256": (
+            "82114cc3fe7c23ef7a7b8779d03aea62e37a7b3920ba929d3e172b380cfcc29d"
+        ),
+        "numeric_markers": {
+            ("f.sub.i=33 mm, D.sub.i=3.1 mm, f.sub.o=14 mm, D.sub.o=11 mm, and t=2.1 mm"): 1,
+            ("f.sub.i=1.2 m, D.sub.i=0.13 m, f.sub.o=0.6 m, D.sub.o=0.375 m, and t=90 mm"): 1,
+            "change in the outer focal length from 0.5 to 0.6 m": 1,
+            "focal length of 1.2 m, and an ND of OD 0.83": 1,
+        },
+        "official_pdf": {
+            "path": ("data/patent-lake/uspto-ppubs-pdf/58a4fd0105934704/US-11874478-B1.pdf"),
+            "bytes": 1_466_086,
+            "container_sha256": (
+                "58a4fd010593470413fb63f611d61c50999005b6aa51193ce300545688faa64f"
+            ),
+            "page_count": 24,
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "narrow_raster_page_numbers": (15, 16, 17, 19),
+            "critical_page_raster_sha256": {
+                7: "b8d2fa5a15406aa8a1d9e8a237322559bd72fac01285877234c3d70e44816633",
+                9: "b43a3a48d3b30bb9cadf701c7946a4016f7c2f9c2fdf22996b110d2384620bb4",
+                10: "10c609edbc6a4c3fc6c771df3a1ec88e0ec69b1a87e78f479ae74d38594cb6eb",
+                11: "c95f9a107f8967143c33023be35868906ee361be244b1dcfb47028182363bb09",
+                12: "d74cb34a9b51e7011212b6e94b52b52b1b6236a99373f423e04472a399e78ef4",
+                22: "0d0905897ea73e5f38dd4960870f495696a8d43ef9205c4c67f1cb93850b0240",
+            },
+            "raster_set_sha256": (
+                "a8205b2aff3b203f189141ceed21519357b6e15439bf9c1993e6a433c94bd3e6"
+            ),
+        },
+    }
+}
+
+
+def _classify_golden_gate_range_correcting_radiometric_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain every exact source item that publishes no optical prescription."""
+
+    profile = _GOLDEN_GATE_RANGE_CORRECTING_RADIOMETRIC_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _reason_code, _detail in (
+                _GOLDEN_GATE_RANGE_CORRECTING_RADIOMETRIC_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Golden Gate range-correcting official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Golden Gate range-correcting normalized text hash changed for {patent_id}"
+            )
+
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {name: text.index(marker) for name, marker in section_markers.items()}
+        except ValueError as exc:
+            raise PatentParseError("Golden Gate range-correcting section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Golden Gate range-correcting section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting {section_name} section changed"
+                )
+
+        description_start_match = re.search(
+            r"<h3\b[^>]*>\s*Description\s*</h3>", raw_text, re.IGNORECASE
+        )
+        claims_start_match = re.search(r"<h3\b[^>]*>\s*Claims\s*</h3>", raw_text, re.IGNORECASE)
+        if description_start_match is None or claims_start_match is None:
+            raise PatentParseError("Golden Gate range-correcting raw description boundary changed")
+        description_html = raw_text[description_start_match.end() : claims_start_match.start()]
+        paragraph_matches = list(
+            re.finditer(
+                r"<br\s*/?>\((\d{1,3})\)\s*",
+                description_html,
+                re.IGNORECASE,
+            )
+        )
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 80)):
+            raise PatentParseError(
+                "Golden Gate range-correcting 79-paragraph description denominator changed"
+            )
+        paragraphs = {
+            number: normalize_patent_text(
+                description_html[
+                    match.start() : (
+                        paragraph_matches[index + 1].start()
+                        if index + 1 < len(paragraph_matches)
+                        else len(description_html)
+                    )
+                ]
+            )
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["description_span_sha256"].items():
+            payload = "".join(paragraphs[number] for number in range(bounds[0], bounds[1] + 1))
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting description span {bounds} changed"
+                )
+
+        figure_labels: list[int] = []
+        for number in range(1, 13):
+            match = re.search(r"FIG\.\s*(\d+)\s+is\b", paragraphs[number], re.IGNORECASE)
+            if match is None:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting FIG. {number} declaration changed"
+                )
+            figure_labels.append(int(match.group(1)))
+        if tuple(figure_labels) != profile["figure_labels"]:
+            raise PatentParseError("Golden Gate range-correcting FIGS. 1-12 denominator changed")
+
+        table_tokens = tuple(re.findall(r"TABLE-US-\d+", raw_text, re.IGNORECASE))
+        if table_tokens != ("TABLE-US-00001",):
+            raise PatentParseError("Golden Gate range-correcting TABLE 1 denominator changed")
+        if (
+            hashlib.sha256(paragraphs[25].encode("utf-8")).hexdigest()
+            != profile["table_1_payload_sha256"]
+        ):
+            raise PatentParseError("Golden Gate range-correcting TABLE 1 symbol dictionary changed")
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Golden Gate range-correcting 20-claim denominator changed")
+        claims = {
+            number: sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, (number, match) in enumerate(zip(claim_numbers, claim_matches, strict=True))
+        }
+        for bounds, expected_digest in profile["claim_group_sha256"].items():
+            payload = "".join(claims[number] for number in range(bounds[0], bounds[1] + 1))
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(f"Golden Gate range-correcting claim group {bounds} changed")
+        independent_claims = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?:"
+                r"A\s+lens\s+assembly\s+comprising:|"
+                r"A\s+range\s+finding\s+system\s+comprising:|"
+                r"A\s+method\s+for\s+designing\s+a\s+lens\s+assembly\b)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError("Golden Gate range-correcting independent claims changed")
+
+        math_ids = tuple(re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw_text, re.IGNORECASE))
+        if (
+            len(math_ids) != 22
+            or hashlib.sha256(("\n".join(math_ids) + "\n").encode("utf-8")).hexdigest()
+            != profile["ordered_math_id_sha256"]
+        ):
+            raise PatentParseError("Golden Gate range-correcting MathML denominator changed")
+
+        for marker, expected in profile["numeric_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting numeric marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+        if re.search(r"<img\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Golden Gate range-correcting retained HTML image denominator changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("Golden Gate range-correcting official PDF size changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError("Golden Gate range-correcting official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError("Golden Gate range-correcting official PDF page count changed")
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = set(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting PDF page {page_number} contains "
+                    f"{len(images)} rasters; expected one"
+                )
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if images[0].image.size != expected_dimensions:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting PDF page {page_number} dimensions changed"
+                )
+            raster_digest = _canonical_raster_sha256(images[0].data)
+            page_raster_hashes.append(raster_digest)
+            expected_critical = pdf_profile["critical_page_raster_sha256"].get(page_number)
+            if expected_critical is not None and raster_digest != expected_critical:
+                raise PatentParseError(
+                    f"Golden Gate range-correcting critical PDF page {page_number} changed"
+                )
+            text_layer_characters += len(page.extract_text() or "")
+        if (
+            hashlib.sha256(("\n".join(page_raster_hashes) + "\n").encode("utf-8")).hexdigest()
+            != pdf_profile["raster_set_sha256"]
+        ):
+            raise PatentParseError("Golden Gate range-correcting official PDF raster set changed")
+        if text_layer_characters != 0:
+            raise PatentParseError("Golden Gate range-correcting official PDF gained a text layer")
+    except Exception as exc:  # noqa: BLE001 - retain all eleven exact source items
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=(
+                    detail + "; the exact B1 denominator is 19 Background/Summary numbered "
+                    "payloads, 79 Description paragraphs, 20 claims, one symbol "
+                    "dictionary table, 22 MathML objects, 12 figures and 10 drawing "
+                    "sheets; official page rasters add no printed prescription values; "
+                    "no drawing measurement, numeric repair, worker launch or ZMX "
+                    "conversion is permitted"
+                ),
+            ),
+        )
+        for number, label, reason_code, detail in (_GOLDEN_GATE_RANGE_CORRECTING_RADIOMETRIC_ITEMS)
     ]
 
 

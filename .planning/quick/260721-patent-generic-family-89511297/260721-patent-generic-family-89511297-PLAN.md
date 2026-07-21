@@ -1,6 +1,6 @@
 # Quick Plan: Patent generic family 89511297
 
-**Status:** Active - parent saturation remains incomplete
+**Status:** Complete shovel - parent saturation remains incomplete
 **Date:** 2026-07-21
 **Parent:** Global patent saturation ledger (incomplete)
 
@@ -46,23 +46,57 @@ replay without weakening any saturation invariant.
   the exact completed entry snapshot.
 - [x] Copy the current 48-family generic residual census byte-for-byte and record the
   single selected root.
-- [ ] Reconcile bibliography, application/family/priority lineage, all section,
+- [x] Reconcile bibliography, application/family/priority lineage, all section,
   paragraph, claim, figure, equation and table denominators.
-- [ ] Establish every source item independently of recognized prescriptions, generic
+- [x] Establish every source item independently of recognized prescriptions, generic
   optical terminology, queue marker counts and title wording.
-- [ ] Bind ordered surfaces, spacings, materials, aspheres and required system metadata
+- [x] Bind ordered surfaces, spacings, materials, aspheres and required system metadata
   only to the exact item and publication that directly provide them.
-- [ ] Inspect official PDF/original rasters only where exact text does not settle layout
+- [x] Inspect official PDF/original rasters only where exact text does not settle layout
   or printed-token boundaries; never enhance, measure or infer values.
-- [ ] Add the narrowest exact parser/classifier support only after source reconciliation;
+- [x] Add the narrowest exact parser/classifier support only after source reconciliation;
   do not modify generic heuristics, scoring, physical gates or protected redlines.
-- [ ] Replay twice under the frozen worker/patent budgets, compare normalized business
+- [x] Replay twice under the frozen worker/patent budgets, compare normalized business
   semantics, audit all 619 roots and rebuild census twice.
-- [ ] Refresh only live shared-ledger pointers while preserving historical snapshots.
-- [ ] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
+- [x] Refresh only live shared-ledger pointers while preserving historical snapshots.
+- [x] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
   contamination/protected-path/diff/primary-repository audits and CODE V inventory.
-- [ ] Update STATE and decisions, mark this quick complete, commit atomically and select
+- [x] Update STATE and decisions, mark this quick complete, commit atomically and select
   the next residual family without claiming global saturation.
+
+## Completed outcome
+
+- The exact B1 denominator is nineteen numbered Background/Summary payloads,
+  seventy-nine Description paragraphs, twenty claims with claims 1/10/16
+  independent, one symbol-dictionary table, twenty-two MathML objects, twenty
+  unique equations, seventy-eight figure references, FIGS. 1-12/ten drawing sheets
+  and exactly eleven lens/system/method/structural/numerical source items.
+- TABLE 1 and paragraphs 67/72/74/76 publish only first-order radiometric variables
+  and selected values. No item publishes an ordered surface sequence, radii,
+  thicknesses, numerical glass/index/dispersion, stop coordinate or surface-by-surface
+  prescription. Paragraphs 72/74 retain their printed `0.6 m` versus `0.5 m` FIGS.
+  9-10 conflict; no value is selected, repaired or derived. All eleven items close as
+  exact-source `confirmed_no_prescription` terminals without worker/request/receipt/
+  fingerprint/ZMX/formal intake or CODE V use.
+- Two distinct 1,466,086-byte official PDF wrappers decode to the same twenty-four
+  original raster pages at `a8205b2a...d3e6`; all pages are image-only. Review used
+  no enhancement, OCR repair, drawing measurement, plot sampling, numeric
+  transcription, raster inference or related-publication borrowing.
+- Attempts 2/3 are semantic-equal after removing only result attempt at
+  `a741efa6...9893`; strict replay is 619/619, missing=0, corrupt=0. Generic residual
+  is 48 to 47 at result set `f80cfdb8...1489`; byte-equal census is
+  `543c911c...5fb2`, shared summary is `8f76c2b3...8205`, report is
+  `8a7f3f65...0359`, and source evidence is `99e12d0b...679a`.
+- Complete segmented offline coverage is 3,675 passed, 1 skipped and 10
+  `real_machine` deselected: patent coverage is 926/926 and non-patent coverage is
+  2,749 passed/1 skipped/10 deselected. Focused 8/8, guard 5/5, Ruff/compile, 88
+  changed JSON and 105-manifest/1,727-reference/1,554-triple evidence checks pass.
+- Formal-output, contamination, protected-path, diff, primary-repository and process
+  audits pass. Seventy-five historical manifests refresh shared summary/report
+  pointers, eighteen source-manifest live result-set fields and one explicit replay
+  pointer align while frozen census/result-set snapshots remain fixed.
+- Stable ordering selects Family 97520644 / `US-20260086330-A1` next. Its entry quick
+  and 47-root before census are frozen; global patent saturation remains incomplete.
 
 ## Constraints
 

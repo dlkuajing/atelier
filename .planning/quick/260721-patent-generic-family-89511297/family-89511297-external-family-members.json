@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "family_id": "89511297",
+  "classification_publication": "US-11874478-B1",
+  "members_directly_listed_by_exact_b1": [
+    {
+      "relationship": "provisional_priority",
+      "application_number": "63/048548",
+      "filing_date": "2020-07-06"
+    }
+  ],
+  "parent_applications_listed": [],
+  "pregrant_publications_listed": [],
+  "classification_authority": "retained official USPTO PPUBS US-11874478-B1 HTML and decoded official B1 rasters",
+  "external_numeric_borrowing": false,
+  "note": "The exact B1 and its Related U.S. Application Data list only provisional 63/048548. Absence here means not listed by the retained B1; it is not a claim that no foreign or unlisted family record exists."
+}
