@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260721-patent-generic-family-61278233/generic-residual-after-2.json",
+  "result_set_sha256": "a999a5fa618dbff3fab16c4fce75b9b4a36ff6e735431450d0e5ac668434ac6c",
+  "generic_residual_roots": 50,
+  "generic_residual_items": 50,
+  "next_exact_group": {
+    "family_id": "60048601",
+    "root_ids": [
+      "US-11086108"
+    ],
+    "publication_ids": [
+      "US-11086108-B2"
+    ],
+    "application_number": "16/748874",
+    "title": "Imaging lens assembly and electronic device",
+    "first_inventor": "Lin; Cheng-Feng",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": "LARGAN PRECISION CO., LTD.",
+    "layout_signature": "dcf8f98f51279578636cb09cf68ce453538d07a7b8bb8369eaa2640c423fa9b3",
+    "layout_signature_count": 1,
+    "table_count": 3,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 67,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/783b3621e11c5f08/US-11086108-B2.html",
+      "sha256": "783b3621e11c5f081cc9fc317921f18b75d2841b2711af260ffba363080a2f42"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout-signature frequency, then stable root/publication order",
+  "saturation_complete": false
+}

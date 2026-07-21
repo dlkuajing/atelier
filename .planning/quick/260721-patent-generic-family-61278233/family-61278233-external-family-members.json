@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "family_id": "61278233",
+  "current_frozen_cohort_roots": [
+    "US-10642002"
+  ],
+  "same_application_publications": [
+    {
+      "publication_id": "US-20190154989-A1",
+      "application_number": "16/101650",
+      "disposition": "audited_same_root_cross_check_only"
+    },
+    {
+      "publication_id": "US-10642002-B2",
+      "application_number": "16/101650",
+      "disposition": "current_frozen_cohort_root_publication"
+    }
+  ],
+  "provider_grouping_note": "The retained official B2 reports Family ID 61278233. Same-application and external-family evidence remains publication-specific, and no numeric value is borrowed from any related publication.",
+  "external_family_members": [
+    {
+      "publication_id": "CN107765403A",
+      "application_number": "CN201711144123.2A",
+      "relationship": "priority-family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP6501957B1",
+      "application_number": "JP2018139614A",
+      "relationship": "priority-family grant",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP2019095764A",
+      "application_number": "JP2018139614A",
+      "relationship": "priority-family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "cross_check_sources": [
+    {
+      "url": "https://patents.google.com/patent/US10642002B2/en",
+      "observed_fields": [
+        "US application 16/101650 with publications US20190154989A1 and US10642002B2",
+        "Family ID 61278233 country-family representatives CN107765403A and JP6501957B1"
+      ]
+    },
+    {
+      "url": "https://patents.google.com/patent/CN107765403A/en",
+      "observed_fields": [
+        "priority application CN201711144123.2A",
+        "publication CN107765403A"
+      ]
+    },
+    {
+      "url": "https://patents.google.com/patent/JP6501957B1/en",
+      "observed_fields": [
+        "application JP2018139614A",
+        "publications JP6501957B1 and JP2019095764A"
+      ]
+    }
+  ]
+}

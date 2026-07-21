@@ -5108,6 +5108,104 @@ _AAC_FIVE_LENS_F_NUMBER_BOUND_PHRASE_COUNTS = {
     "vision field angle in the diagonal direction is": 2,
 }
 _AAC_FIVE_LENS_F_NUMBER_BOUND_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-10642002-B2": {
+        "raw_document_sha256": (
+            "7217efb177dceaedc27238a4fbdd92619cfe1e6580959c2114322f98063dc26f"
+        ),
+        "normalized_text_sha256": (
+            "2426cfd4e2ec7191d5bd8914894f44ffe517f8029f89cf9b32fc7821f9239791"
+        ),
+        "section_markers": {
+            "background": "FIELD OF THE PRESENT DISCLOSURE (1)",
+            "brief": "BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+            "detailed": "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS (10)",
+            "claims": "Claims 1. A camera optical lens comprising,",
+        },
+        "section_sha256": {
+            "background": (
+                "9c499f7d9390ab532fdcf0b39ef11c5ad90383a0e2d1b402bbb83ea5810bb0f5"
+            ),
+            "brief": (
+                "f1c9edad0f0ac6aa74182f85197c49b2771711b43861d5432114a454960f7785"
+            ),
+            "detailed": (
+                "ef95df03d107a1ee554d42665a3e0bd1a701672a873266a6652b30f2322a39ec"
+            ),
+            "claims": (
+                "e47b5aa3cb89d4a300c1eb9b319055a094728e66fadc1a89c51851c6329d2b85"
+            ),
+        },
+        "paragraph_pattern": r"\((\d+)\)",
+        "paragraph_ranges": {
+            "background": (1, 2),
+            "brief": (1, 9),
+            "detailed": (10, 116),
+        },
+        "claim_count": 10,
+        "identity_markers": {
+            "Family ID: 61278233": 1,
+            "Appl. No.: 16/101650": 1,
+            "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 2,
+            "US 20190154989 A1 May. 23, 2019": 1,
+            "CN 2017 1 1144123 Nov. 17, 2017": 1,
+        },
+        "table_block_sha256": (
+            "a5921669f923094d512bd273c2951470dd840032393903ca56a9a16d2931af56",
+            "56a2262981869d8046ff08514a9f76c5e2a117f44833c953a30d525dd512f490",
+            "7ae11352a38ce20d1b4c2e83dae7750494258cca10561b3a2143d373f5138e2e",
+            "ff737e7d614e471fc90fe967133128caac42b5b80a3cd0b1a348dfde004ba981",
+            "42bb1b5b46104528acd6eb1fdcda830d145a79ddfa3a26871612956f8388818c",
+            "7d280603262237d6ad331c25cf8a8101208d16e36b1f322139ab5726ce2b3db8",
+            "10098f60a1410a5522fda2d5ed83e21439c0d0b8dbf9e69f5f8da93d042e43df",
+            "5fb60771adc28d846889e1bac426349dc78864645d11ed2eeab3c3ef435bfdd9",
+            "a2259c6dc618ea18b062ffd69ef3078186100ff29179b080f183e4175fbecf67",
+            "05cb01f4014c4b0eb703c452c619550dafeb9559d093b4c238f83a1f181f7076",
+            "5dcb8eefe6e157ca0c18aee5fef8ee058e41cbb5f9ef281ba1838e38215f75ae",
+            "d4d87e4538b66f921d1f534f26d2f4aafc9ebded8a6843037c69036ae0248c6c",
+        ),
+        "formal_table_sha256": (
+            "6e7bbc38044b35edb58b20057ae0bb26e8a2b58195a122b5490c31bbf26e723b",
+            "7bc2b191f183b5ddda20321a454945bb6d4c00bae6869c5e08bd3cb040998b21",
+            "583246e8181a9e0364973b9254302b1b49e017a5517d1358d0c8305549b91776",
+            "e33f643b94f42943ce8e24480d2411ed4598b9f8e81782c329f0e7ebdb3b672f",
+            "d395feb5674104a0ff3f77b159aa7ee09d046b004c2f523b0d572908cbcd994a",
+            "a9ed20f9c8b42f5efb6b8899de07e16fac8a2ccf3ecb66bab1f0e3e17d7306d3",
+            "436996e0c6cde2b39eee5214573c7eb629c8e0db5ecf1d5c2a25e0c47256e6f7",
+            "9be7ebbc831115eeaefbbfa17fcfe32aa130f564c2a0607d4c5a5dc427656ec8",
+            "ef565a5ceccacf3271d5b9a772d87eab1b026fa4e833d276ef4763554eef3d63",
+            "ef3efd2d3c83d22fdc7ac0cdd3ed67cfe96749dfcc8558f0ce758bf68c21c73f",
+            "548f11bb4815dadf4e795c7635e981d4c7690aeac96fcc6395547b2ff3f0b4c6",
+            "d4b64f56036a9f102723db1eb0e74c705d82dfe2623bb58294c9abff60b1b0b5",
+        ),
+        "focal_rows": (
+            "TABLE-US-00001 TABLE 1 focal length (mm) f 3.294 f1 2.993 "
+            "f2 -10.236 f3 -30.577 f4 2.094 f5 -1.845",
+            "TABLE-US-00007 TABLE 7 focal length (mm) f 3.290 f1 2.989 "
+            "f2 -10.197 f3 -29.264 f4 2.090 f5 -1.844",
+        ),
+        "system_metadata": (
+            ("1.83", "2.9335", "81.43"),
+            ("1.83", "2.9335", "81.52"),
+        ),
+        "phrase_counts": {
+            (
+                "the Object distance of the camera optical lens of the present "
+                "invention is 35 cm"
+            ): 1,
+            (
+                "the total optical length TTL of the camera optical lens 10 is "
+                "less than or equal to 4.14 mm"
+            ): 1,
+            (
+                "the aperture F number of the camera optical lens is less than "
+                "or equal to 1.8"
+            ): 2,
+            "pupil entering diameter of the camera optical lens is": 2,
+            "full vision field image height is": 2,
+            "vision field angle in the diagonal direction is": 2,
+        },
+        "f_number_upper_bound": "1.8",
+    },
     "US-10739564-B2": {
         "raw_document_sha256": (
             "b8aafd0ef41e2c015ed9d5a2335ea891e1c8c5b87a652f7703da2f7cb5585941"
