@@ -1,0 +1,185 @@
+{
+  "schema_version": "patent-family-source-denominator/v1",
+  "family_id": "95563451",
+  "root_id": "US-20250264785",
+  "publication_id": "US-20250264785-A1",
+  "application_number": "19/049057",
+  "source_bound_lineage": {
+    "family_id_printed": "95563451",
+    "application_number_printed": "19/049057",
+    "filing_date_printed": "February 10, 2025",
+    "priority": [
+      {
+        "relationship": "claims_priority_to",
+        "jurisdiction": "US",
+        "application_number": "63/555469",
+        "filing_date": "2024-02-20",
+        "direct_sources": [
+          "Related U.S. Application Data",
+          "paragraph [0001]"
+        ]
+      }
+    ],
+    "related_publication_numeric_borrowing_used": false
+  },
+  "denominator": {
+    "background_summary_paragraphs": 8,
+    "brief_drawing_paragraphs": 29,
+    "detailed_description_paragraphs": 72,
+    "description_paragraphs_total": 101,
+    "numbered_paragraphs_total": 109,
+    "claims": 27,
+    "independent_claims": 3,
+    "source_tables": 6,
+    "mathml_objects": 12,
+    "figref_tags": 161,
+    "declared_figure_panels": 28,
+    "drawing_sheets": 28,
+    "source_items": 10,
+    "ordered_optical_prescriptions": 0
+  },
+  "claims": {
+    "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
+    "independent_numbers": [1, 14, 22],
+    "dependent_electronic_device_claims": [13, 27],
+    "mathml_object_count": 12,
+    "mathml_roles": "mechanical inequality conditions for H, Dim, Lf, Le, Ls and S; no optical surface equation"
+  },
+  "figures": {
+    "panels": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "2", "3", "4", "5", "6", "7A", "7B", "7C", "7D", "7E", "8A", "8B", "8C", "8D", "8E", "9", "10A", "10B", "10C"],
+    "official_pdf_pages": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+  },
+  "mechanical_dimension_columns_mm": ["H", "Dim", "Lf", "Le", "Ls", "S"],
+  "mechanical_dimension_rows_mm": [
+    [2.7, 1.61, 0.492, 3.12, 2.0, 8.291],
+    [4.753, 1.53, 0.433, 2.8, 1.825, 8.291],
+    [6.093, 1.05, 1.955, 0.199, 0.224, 7.009],
+    [6.412, 1.75, 0.955, 2.194, 1.303, 8.33],
+    [4.593, 2.18, 2.498, 5.874, 4.99, 8.047],
+    [2.724, 1.95, 0.648, 2.582, 1.531, 11.894]
+  ],
+  "source_items": [
+    {
+      "number": 1,
+      "label": "1st embodiment / 1st example",
+      "paragraph_range": [66, 77],
+      "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I"],
+      "tables": [1],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_folded_camera_mechanical_dimensions_only"
+    },
+    {
+      "number": 2,
+      "label": "1st embodiment / 2nd example",
+      "paragraph_range": [78, 79],
+      "figures": ["2"],
+      "tables": [2],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_folded_camera_mechanical_dimensions_only"
+    },
+    {
+      "number": 3,
+      "label": "1st embodiment / 3rd example",
+      "paragraph_range": [80, 81],
+      "figures": ["3"],
+      "tables": [3],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_folded_camera_mechanical_dimensions_only"
+    },
+    {
+      "number": 4,
+      "label": "1st embodiment / 4th example",
+      "paragraph_range": [82, 83],
+      "figures": ["4"],
+      "tables": [4],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_folded_camera_mechanical_dimensions_only"
+    },
+    {
+      "number": 5,
+      "label": "1st embodiment / 5th example",
+      "paragraph_range": [84, 85],
+      "figures": ["5"],
+      "tables": [5],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_folded_camera_mechanical_dimensions_only"
+    },
+    {
+      "number": 6,
+      "label": "1st embodiment / 6th example",
+      "paragraph_range": [86, 87],
+      "figures": ["6"],
+      "tables": [6],
+      "source_typography_note": "paragraph [0087] says 5th example, while paragraph [0086], FIG. 6 and TABLE 6 say 6th example; retained without repair",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_folded_camera_mechanical_dimensions_only"
+    },
+    {
+      "number": 7,
+      "label": "2nd embodiment / light-folded camera module",
+      "paragraph_range": [88, 91],
+      "figures": ["7A", "7B", "7C", "7D", "7E"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_folded_camera_module_architecture_only"
+    },
+    {
+      "number": 8,
+      "label": "3rd embodiment / smartphone wrapper",
+      "paragraph_range": [92, 100],
+      "figures": ["8A", "8B", "8C", "8D", "8E"],
+      "tables": [],
+      "source_note": "paragraph [0100] says various focal lengths qualitatively and publishes no numeric focal length",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 9,
+      "label": "4th embodiment / smartphone wrapper",
+      "paragraph_range": [101, 104],
+      "figures": ["9"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 10,
+      "label": "5th embodiment / vehicle-camera wrapper",
+      "paragraph_range": [105, 108],
+      "figures": ["10A", "10B", "10C"],
+      "tables": [],
+      "source_note": "paragraph [0106] publishes 40 degrees < theta < 90 degrees as vehicle coverage visual angle, not field metadata for a constituent lens prescription",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_camera_coverage_wrapper_only"
+    }
+  ],
+  "published_only": {
+    "first_embodiment_first_lens_element_count": 2,
+    "first_embodiment_first_lens_material_categories": ["glass", "plastic"],
+    "mechanical_dimension_symbols": ["H", "Dim", "Lf", "Le", "Ls", "S"],
+    "qualitative_focal_length_phrase_count": 1,
+    "vehicle_coverage_visual_angle_mentions": 3
+  },
+  "not_published": [
+    "ordered optical surface sequence",
+    "surface radii",
+    "axial optical spacings",
+    "numerical refractive indices or Abbe numbers",
+    "asphere coefficients",
+    "aperture-stop coordinate",
+    "numeric focal length",
+    "image height",
+    "F-number",
+    "lens field-of-view metadata"
+  ],
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}
