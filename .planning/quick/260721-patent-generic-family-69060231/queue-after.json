@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260721-patent-generic-family-69060231/generic-residual-after-2.json",
+  "result_set_sha256": "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660",
+  "generic_residual_roots": 43,
+  "generic_residual_items": 43,
+  "next_exact_group": {
+    "family_id": "40641507",
+    "root_ids": ["US-8134609"],
+    "publication_ids": ["US-8134609-B2"],
+    "application_number": "12/270586",
+    "title": "Imaging system, imaging apparatus, portable terminal apparatus, onboard apparatus, medical apparatus and method of manufacturing the imaging system",
+    "inventors": ["Yoneyama; Kazuya"],
+    "applicant": null,
+    "assignee": "Fujinon Corporation",
+    "layout_signature": "acbd2e6bb34ba246f2968d59bdc8bb71b07920e6454f799aa0065bf75cf41e90",
+    "layout_signature_count": 1,
+    "table_count": 9,
+    "marker_counts": {
+      "effective_focal_length": 6,
+      "embodiment_anchor": 1,
+      "example_anchor": 41,
+      "f_number": 9,
+      "full_field": 0,
+      "half_field": 1
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/80cac521fccd012f/US-8134609-B2.html",
+      "bytes": 178194,
+      "sha256": "80cac521fccd012f58f16b3081c61c203021dd6a6c6e77e58ef2cc0b83e2c22f"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

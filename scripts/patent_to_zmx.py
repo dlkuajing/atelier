@@ -595,6 +595,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_corephotonics_scanning_opfe_architecture_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_samsung_multi_reflection_five_example_missing_metadata_attempts(
             raw_text,
             patent_id=patent_id,
@@ -76771,6 +76779,541 @@ def _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
             )
         )
     return attempts
+
+
+_COREPHOTONICS_SCANNING_OPFE_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*CAMERAS\s+WITH\s+SCANNING\s+OPTICAL\s+PATH\s+FOLDING\s+"
+    r"ELEMENTS\s+FOR\s+AUTOMOTIVE\s+OR\s+SURVEILLANCE\s+APPLICATIONS\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_COREPHOTONICS_SCANNING_OPFE_FIGURE_DECLARATIONS = (
+    (35, "1A"),
+    (36, "1B"),
+    (37, "2"),
+    (38, "3"),
+    (39, "4A"),
+    (40, "4B"),
+    (41, "5"),
+    (42, "6A"),
+    (43, "6B"),
+    (44, "6C"),
+    (45, "7A"),
+    (46, "7B"),
+    (47, "8"),
+    (48, "9A"),
+    (49, "9B"),
+    (50, "10A"),
+    (51, "10B"),
+    (52, "10C"),
+)
+_COREPHOTONICS_SCANNING_OPFE_ITEMS = (
+    (
+        1,
+        "Corephotonics vehicle dual-camera scanning system 100",
+        "100",
+        (53, 66),
+        ("1A", "1B", "2", "3"),
+        "confirmed_no_prescription.vehicle_dual_camera_scanning_opfe_architecture_only",
+        (
+            "Paragraphs 53-66 and FIGS. 1A-3 publish a vehicle system with Wide "
+            "camera 106, Tele camera 104, scanning OPFE 126 and processing unit 108. "
+            "Paragraphs 54-55 publish only generic Wide/Tele lens identities and FOV "
+            "ranges; they publish no ordered radii, optical spacings, materials or "
+            "asphere coefficients"
+        ),
+    ),
+    (
+        2,
+        "Corephotonics single-Tele steering scanning system 400",
+        "400",
+        (67, 68),
+        ("4A", "5", "6A", "6B", "6C"),
+        "confirmed_no_prescription.single_tele_steering_scanning_architecture_only",
+        (
+            "Paragraphs 67-68 and FIGS. 4A/5/6A-6C publish a vehicle system with "
+            "Tele camera 404, processing unit 408 and steering/road-curve scanning "
+            "behaviour, but no ordered optical prescription"
+        ),
+    ),
+    (
+        3,
+        "Corephotonics dual-camera steering scanning system 400-prime",
+        "400 prime",
+        (68, 68),
+        ("4B", "5", "6A", "6B", "6C"),
+        "confirmed_no_prescription.dual_camera_steering_scanning_architecture_only",
+        (
+            "Paragraph 68 and FIGS. 4B/5/6A-6C publish the 400-prime Wide-plus-Tele "
+            "variant and shared steering/road-curve scanning behaviour, but no "
+            "ordered optical prescription"
+        ),
+    ),
+    (
+        4,
+        "Corephotonics cabin single-Tele scanning system 700",
+        "700",
+        (69, 72),
+        ("7A", "8", "9A"),
+        "confirmed_no_prescription.cabin_single_tele_scanning_architecture_only",
+        (
+            "Paragraphs 69-72 and FIGS. 7A/8/9A publish an in-cabin Tele-camera "
+            "scanning and occupant-hazard workflow, but no ordered optical prescription"
+        ),
+    ),
+    (
+        5,
+        "Corephotonics cabin dual-camera scanning system 700-prime",
+        "700 prime",
+        (70, 72),
+        ("7B", "8", "9B"),
+        "confirmed_no_prescription.cabin_dual_camera_scanning_architecture_only",
+        (
+            "Paragraphs 70-72 and FIGS. 7B/8/9B publish the in-cabin Wide-plus-Tele "
+            "variant and its OOI workflow, but no ordered optical prescription"
+        ),
+    ),
+    (
+        6,
+        "Corephotonics surveillance scanning system 1000",
+        "1000",
+        (73, 75),
+        ("10A", "10B", "10C"),
+        "confirmed_no_prescription.surveillance_scanning_and_fusion_architecture_only",
+        (
+            "Paragraphs 73-75 and FIGS. 10A-10C publish a surveillance Wide/Tele "
+            "camera, directed scanning, digital-versus-optical zoom illustration and "
+            "image-fusion workflow, but no ordered optical prescription"
+        ),
+    ),
+)
+_COREPHOTONICS_SCANNING_OPFE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260089289-A1": {
+        "family_id": "69060231",
+        "application_number": "19/207416",
+        "raw_document_sha256": (
+            "a5cb54fb94394f679b0c38f7903206a4b43fd962affa0ff4e9f333c4fcf0c733"
+        ),
+        "normalized_text_sha256": (
+            "357acaba20f13cea344b9921d1c0a60004673ed98114038d9cfca6fe748e6e04"
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication 20260089289 Kind Code A1": 1,
+            "Publication Date March 26, 2026": 1,
+            "Family ID: 69060231": 1,
+            "Applicant: Corephotonics Ltd.": 1,
+            "Appl. No.: 19/207416": 1,
+            "parent US continuation 16978690": 1,
+            "parent-grant-document US 12328523": 1,
+            "PCT/IB2019/055734": 2,
+            "US 62693951 20180704": 1,
+            "Shabtay; Gal": 2,
+            "Briman; Eran": 1,
+            "Fridman; Roy": 1,
+            "Cohen; Noy": 1,
+            "Goldenberg; Ephraim": 1,
+            "Bachar; Gil": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260089289-A1",
+            "abstract": (
+                "Abstract Systems including dual-aperture zoom digital cameras"
+            ),
+            "background": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS [0001]"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0034]",
+            "detailed": "DETAILED DESCRIPTION [0053]",
+            "claims": "Claims 1 . A system, comprising:",
+        },
+        "section_sha256": dict(
+            zip(
+                ("preamble", "abstract", "background", "brief", "detailed", "claims"),
+                _samsung_zoom_sha256_lines("""
+                1700774cd0b92c537314a662a96e6239a85b4ebf6664bda5572cca005a053a3c
+                45b66daa2a32ac4fb1173d6b4722fb8d9eb47388dc5c09f02ef5e9a4c5d7e79c
+                2982e7d27e520227cc7f3fdccfbc33934fe298f7db79a846aa989e4433448392
+                9ca82d6b25666b229b994ba1aceb2a6aca02732999a6c06d5c08cb008c05e478
+                b3072ac816cb77bfe16a7f28d3c6cbe820d9ca068a7191df14045916c4097be2
+                827d1da8026e1249160d09da1af44ff2210a1fd88aefa02491722ce56a8e6f31
+                """),
+                strict=True,
+            )
+        ),
+        "paragraph_ranges": {
+            "background": (1, 33),
+            "brief": (34, 52),
+            "detailed": (53, 76),
+        },
+        "paragraph_span_sha256": dict(
+            zip(
+                ((1, 33), (34, 52), (53, 66), (67, 68), (69, 72), (73, 75), (76, 76)),
+                _samsung_zoom_sha256_lines("""
+                db4c8cafa2d015ee7a6a4979e171d6aa9e12d53f635907730ec262e984a00712
+                99a4660982c0a70b2ef553b8437601b56dcf7b0dd30eee561c9ad6156c585d5e
+                26aec926db2a2f82dc416bab5cc156e93f3cde6fd12ca2558b7b6a0f10aff083
+                a84f5987a689a0c82e2a97dcbd57c6987861d4d8eb1ea3ff69b74cd00da24a61
+                ae9a3856f83c9ddc4e44e11fb8d88d347d5118aaf3acf5b32ff7a77edfc647fb
+                818333356ac622ff91b07aeef627f4235df681513fa0752fe8e9bf211a743a2e
+                9659f8043bcb13a48344cbe151b66910d9857ecfe3ede2cbe29d47c44a85cab3
+                """),
+                strict=True,
+            )
+        ),
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 20),
+        "claim_sha256": _samsung_zoom_sha256_lines("""
+            b0eee084881aa4a3e160ded752b38a3e7d3919481c4afdc4da64f27d2e4dbb07
+            1154e4ce3e59bf5df45c897d16b31ad005036091953347b04a24c1b3744a3087
+            2053ef75b013e7dfad22043576db5f2150b5079cab352bb2210b0619d5d1e5a5
+            9ca5b19e652fa0cbdac8987e5a032615b969668738d0ce302a40f1baaa8ca2ee
+            f87a0616a68ee949516f0fa43982fb0f1ccf630f21f866cd4108fb0b684f0e16
+            8f363ab1195e15ac8ab15d209565846631819dd00942644a6ef6c42d726ebe4f
+            f8b0e0ffcbbef71c3dcd6f6097c26639a03fac585f60cbb486fcd02412268a32
+            c0a7014dcb115b7902f664587db8bb2c80a4277827c4a2e6f550412e8e4c3ec0
+            e3802f965b34bf19e2f2d300dbc5ea0bdd79bcfe0c47213b655eeb13551aaa50
+            b99207e21eea4c834a202082ff21d470a5df81b4b5973f61e16905ed1344509e
+            5241f7c42b4b64c9e6d1cadd1924630550e59a298791efab48004ba8ac1f60c6
+            da1e203e24e783f0ba2fc2e5c87e22fefb6ae7e2747a2ff33e80f785b592bc00
+            7ecc7efcbde75e8348636890f10ceb17a0a77b751a13d1035afc4356d0a15601
+            59a957c220bc5bbf2ad318b7bbdd2aeed5af1cc870f8eae1982d6b0f1bcc2f57
+            30f77f1de5ed6f29e28874bf972ef5f2840eadaa11f3bd4361c734df2cbc2a44
+            4ce551c22dcc9a559de6dbfae9f9e14251f9cb87f34649bf8c6029c5b2d6ffc6
+            b540afee4d55cbcde3866c43549dd95a3fdcd72694a7ce7efdf23cb330b5488e
+            016ceca9669974f720b3efe280736aac73922c19358b499c1dc2f82a8e5446e2
+            9de3f719ceb089b140450ce7a098d3487167358e6d403cd8522d494e95e7133a
+            07b999bc52d1b123bd27cb40dc72b5e251ac49fdbd4a0002f527229019a4f1ff
+        """),
+        "figref_count": 55,
+        "figref_payload_sha256": (
+            "4d0ea9959c4321993d7b231d9c666f42801f24f554f676d37642bc51766ce612"
+        ),
+        "phrase_counts": {
+            "Wide lens 134": 5,
+            "Tele lens 124": 4,
+            "OPFE 126": 3,
+            "FOV.sub.W": 23,
+            "FOV.sub.T": 30,
+            "EFL": 11,
+            "focal length": 5,
+            "TABLE-US-": 0,
+            "Surface No.": 0,
+            "Radius of curvature": 0,
+            "aspheric": 0,
+            "F number": 0,
+        },
+        "pdf_audit": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/1e3802c78050672f/"
+                "US-20260089289-A1.pdf"
+            ),
+            "bytes": 788_225,
+            "container_sha256": (
+                "1e3802c78050672f66227ce4a002f54a9de02aab6f76ba837482dd67c483242d"
+            ),
+            "page_count": 15,
+            "raster_dimensions": (2560, 3300),
+            "page_raster_sha256": _samsung_zoom_sha256_lines("""
+                f995390f725a543fd77d780832d71315d1ed88e3096a2026ba0fa3b0ccf1e7ec
+                f2b0a620f962d496ba5ca2062fd2479046c80af042f6ab5fc85538c79c5283d7
+                48b5109bf65075f4a35e4bf77a245e0d772385aee2c70602c6129a29c9c7e156
+                ba05a125ae9a026e54d566853e87afcbdfc48f1d37b84569c74823232e497b40
+                38847a722ceb1d67f24891f20eb8fd2106e52c41fbc52bc0ab069902956bbb0d
+                35c088cc08ecc57a6112724a206bfdf9092b77c22890873fbd8399e5d3fc1307
+                6f6169e0060f0ae2a159795a3c00bcc55186551ac9433de4acebca544c2a10fe
+                72d75c4e496dea45ca4cb76d9cdc01049f049fbd5c7d805eb41e2fefda3c6364
+                7b4dd19223916e66180bc4e781b26c95c12efc9fb0ecb1ff8eb4cf8d2be8cb32
+                fd35c27371a8442f1c10b8233b6a5ea9a3f2752263cb8af244988a7c995d304f
+                c6fec2e74edfc1af7fb3047b4ca466375f6f86372cf01de2eee011e89a1acddc
+                60c918e4eba7dc0391548e0812c62c7bd858fd1aef7cf96e213700ae5a8d3e73
+                96332e10bdf61fb103d91368bcab7c453bc6540271aaae2bed7b2c0673030c40
+                cbcf156a4c5097a12ee67689f2bd5c9c82b02e6a69c940a3f8ca2918da66843c
+                c995500f687ad53548a6b734842eaae7fa4593ebca3b1258f2378854085803bc
+            """),
+            "raster_set_sha256": (
+                "4a3e02c6d399a0f30daf9554c1722a549b597023a7aea0eb7493c71a071bd8ee"
+            ),
+            "drawing_page_numbers": tuple(range(1, 11)),
+            "specification_page_numbers": tuple(range(11, 16)),
+            "claims_page_numbers": (15,),
+        },
+    }
+}
+
+
+def _classify_corephotonics_scanning_opfe_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 69060231 architecture without related-case borrowing."""
+
+    profile = _COREPHOTONICS_SCANNING_OPFE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _system, _paragraphs, _figures, _reason, _detail in (
+                _COREPHOTONICS_SCANNING_OPFE_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Corephotonics scanning-OPFE official raw text hash changed for {patent_id}"
+            )
+        if len(_COREPHOTONICS_SCANNING_OPFE_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Corephotonics scanning-OPFE title binding changed")
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Corephotonics scanning-OPFE normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Corephotonics scanning-OPFE section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 77)):
+            raise PatentParseError("Corephotonics scanning-OPFE paragraphs 1-76 changed")
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE {section_name} paragraph range changed"
+                )
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE paragraph span {bounds} changed"
+                )
+
+        declared_figures: list[str] = []
+        for paragraph_number, expected_label in (
+            _COREPHOTONICS_SCANNING_OPFE_FIGURE_DECLARATIONS
+        ):
+            match = re.match(
+                r"\[\d{4}\]\s+FIG\.\s+(\d+)(?:\s+([A-Z]))?\s+",
+                paragraphs[paragraph_number],
+                re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Corephotonics scanning-OPFE figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            observed_label = match.group(1) + (match.group(2) or "").upper()
+            if observed_label != expected_label:
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE FIG. {expected_label} changed"
+                )
+            declared_figures.append(observed_label)
+        mapped_figures = {
+            figure
+            for _number, _label, _system, _paragraphs, figures, _reason, _detail in (
+                _COREPHOTONICS_SCANNING_OPFE_ITEMS
+            )
+            for figure in figures
+        }
+        if mapped_figures != set(declared_figures):
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE item-to-figure coverage changed"
+            )
+        figrefs = re.findall(r"<figref\b.*?</figref>", raw_text, re.I | re.S)
+        if len(figrefs) != profile["figref_count"]:
+            raise PatentParseError("Corephotonics scanning-OPFE FIGREF denominator changed")
+        if hashlib.sha256("".join(figrefs).encode("utf-8")).hexdigest() != profile[
+            "figref_payload_sha256"
+        ]:
+            raise PatentParseError("Corephotonics scanning-OPFE FIGREF payload changed")
+
+        if re.search(r"<(?:table|maths)\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE source gained table or MathML content"
+            )
+        claim_matches = list(
+            re.finditer(
+                r"(?<!\S)(\d+)\s*\.\s+(?=(?:A|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Corephotonics scanning-OPFE claims 1-20 changed")
+        independent_claims = tuple(
+            number
+            for number, match in zip(claim_numbers, claim_matches, strict=True)
+            if re.match(
+                r"\s*A\s+system\s*,\s*comprising\b",
+                sections["claims"][match.end() :],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE independent claims changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(
+                sections["claims"][
+                    match.start() : (
+                        claim_matches[index + 1].start()
+                        if index + 1 < len(claim_matches)
+                        else len(sections["claims"])
+                    )
+                ]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for index, match in enumerate(claim_matches)
+        )
+        if claim_hashes != profile["claim_sha256"]:
+            raise PatentParseError("Corephotonics scanning-OPFE claim payloads changed")
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("Corephotonics scanning-OPFE official PDF bytes changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError("Corephotonics scanning-OPFE official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE PDF page {page_number} contains "
+                    f"{len(images)} rasters; expected one"
+                )
+            image = images[0].image
+            if image.size != pdf_profile["raster_dimensions"] or image.mode != "1":
+                raise PatentParseError(
+                    f"Corephotonics scanning-OPFE PDF page {page_number} raster changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if tuple(page_raster_hashes) != pdf_profile["page_raster_sha256"]:
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE PDF page raster payload changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError("Corephotonics scanning-OPFE PDF raster set changed")
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE official PDF gained a text layer"
+            )
+        if not (
+            pdf_profile["drawing_page_numbers"] == tuple(range(1, 11))
+            and pdf_profile["specification_page_numbers"] == tuple(range(11, 16))
+            and pdf_profile["claims_page_numbers"] == (15,)
+        ):
+            raise PatentParseError(
+                "Corephotonics scanning-OPFE PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all six source-bound items
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=(
+                    f"Corephotonics Family 69060231 system {system}; {detail}. "
+                    "Independent claims 1 and 20 add functional system/fusion "
+                    "constraints but no separate ordered lens prescription. No "
+                    "surface data are borrowed from parent application 16/978,690, "
+                    "PCT/IB2019/055734 or any cited camera"
+                ),
+            ),
+        )
+        for number, label, system, _paragraphs, _figures, reason_code, detail in (
+            _COREPHOTONICS_SCANNING_OPFE_ITEMS
+        )
+    ]
 
 
 def _surface_semi_diameter_for_readout(

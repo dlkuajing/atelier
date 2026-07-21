@@ -1,0 +1,44 @@
+{
+  "schema_version": "patent-family-lineage-audit/v1",
+  "family_id": "69060231",
+  "classification_primary": {
+    "publication_id": "US-20260089289-A1",
+    "application_number": "19/207416",
+    "filing_date": "2025-05-14",
+    "relationship_evidence": [
+      "retained USPTO A1 header",
+      "Related U.S. Application Data",
+      "paragraph [0001]"
+    ]
+  },
+  "direct_relationships": [
+    {
+      "publication_id": "US-12328523-B2",
+      "application_number": "16/978690",
+      "relationship": "continuation parent",
+      "printed_header_token": "parent US continuation 16978690 parent-grant-document US 12328523",
+      "printed_paragraph_token": "continuation of U.S. patent application Ser. No. 16/978,690"
+    },
+    {
+      "publication_id": null,
+      "application_number": "PCT/IB2019/055734",
+      "filing_date": "2019-07-04",
+      "relationship": "parent international application",
+      "printed_header_token": "WO continuation PCT/IB2019/055734 20190704",
+      "printed_paragraph_token": "371 application from international application No. PCT/IB2019/055734 filed Jul. 4, 2019"
+    },
+    {
+      "publication_id": null,
+      "application_number": "62/693951",
+      "filing_date": "2018-07-04",
+      "relationship": "U.S. provisional priority",
+      "printed_header_token": "us-provisional-application US 62693951 20180704",
+      "printed_paragraph_token": "US Provisional Patent No. 62/693,951 filed Jul. 4, 2018"
+    }
+  ],
+  "scope_note": "Only relationships directly printed by the retained official A1 are classified. No unprinted continuation, counterpart or related-case optical number is inferred.",
+  "classification_source": "US-20260089289-A1 only",
+  "related_publication_numeric_borrowing_used": false,
+  "parent_application_numeric_borrowing_used": false,
+  "pct_numeric_borrowing_used": false
+}
