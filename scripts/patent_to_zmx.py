@@ -971,6 +971,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_samsung_five_lens_finite_object_fov_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_light_blocking_compensation_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -63545,6 +63553,810 @@ def _classify_golden_gate_range_correcting_radiometric_attempts(
         )
         for number, label, reason_code, detail in (_GOLDEN_GATE_RANGE_CORRECTING_RADIOMETRIC_ITEMS)
     ]
+
+
+_SAMSUNG_FIVE_LENS_FINITE_OBJECT_FOV_ITEMS = (
+    (
+        1,
+        "Samsung finite-object five-lens embodiment 1",
+        (70, 74),
+        (1, 2),
+        (1, 2),
+        "metadata_unpublished.angular_field_half_full_semantics_absent",
+    ),
+    (
+        2,
+        "Samsung finite-object five-lens embodiment 2",
+        (75, 79),
+        (3, 4),
+        (3, 4),
+        "metadata_unpublished.angular_field_half_full_semantics_absent",
+    ),
+    (
+        3,
+        "Samsung finite-object five-lens embodiment 3",
+        (80, 84),
+        (5, 6),
+        (5, 6),
+        (
+            "metadata_unpublished.angular_field_half_full_semantics_and_exact_"
+            "stop_coordinate_absent"
+        ),
+    ),
+    (
+        4,
+        "Samsung finite-object five-lens embodiment 4",
+        (85, 89),
+        (7, 8),
+        (7, 8),
+        "metadata_unpublished.angular_field_half_full_semantics_absent",
+    ),
+    (
+        5,
+        "Samsung finite-object five-lens embodiment 5",
+        (90, 95),
+        (9, 10),
+        (9, 10),
+        "metadata_unpublished.angular_field_half_full_semantics_absent",
+    ),
+)
+
+_SAMSUNG_FIVE_LENS_FINITE_OBJECT_FOV_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20260086330-A1": {
+        "raw_document_sha256": (
+            "f75c482ad2f0af84f8b2c744a1261bdce9790723188a0b17ad762fea0db05e40"
+        ),
+        "normalized_text_sha256": (
+            "d7462ed9f68cc4a762e829a58bad5566ebebceaae7527b9104a11e8614b8829a"
+        ),
+        "identity_markers": {
+            (
+                "United States Patent Application Publication 20260086330 "
+                "Kind Code A1"
+            ): 1,
+            "Publication Date March 26, 2026": 1,
+            "JO; Ju Yeon": 2,
+            "SON; Ju Hwa": 1,
+            "Applicant: Samsung Electro-Mechanics Co., Ltd.": 1,
+            "Assignee: Samsung Electro-Mechanics Co., Ltd.": 1,
+            "Family ID: 97520644": 1,
+            "Appl. No.: 19/091567": 1,
+            "Filed: March 26, 2025": 1,
+            "KR 10-2024-0128342 Sep. 23, 2024": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260086330-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract An imaging lens system includes",
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF DRAWINGS",
+            "claims": "Claims 1 . An imaging lens system comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "7ee62aa6276a41727cbe3666eb8052d0b7936520e3461f83839b70eecf73271c"
+            ),
+            "abstract": (
+                "6a4ecb5dd73b67f55d37f8518fcca2aad33095eb48a463b08d795d854af9aaf0"
+            ),
+            "background": (
+                "7de2c4aa0b3de69200e616347d16ab6bb34ba134e70e9eeaf4aac1fe328e1abc"
+            ),
+            "description": (
+                "a42c1fcd0c48a53faab0bf8e9cfde7d4800080ee66187a3a5bdfaf7c28d93c20"
+            ),
+            "claims": (
+                "dab12e00068e39a07927b5a51da450ec771c391cd06ec709c03dce8282bfe696"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 26): "676d666ceb4e18cef1ad41429b07d4b856c812cb3b44e9fea380404e97d18c12",
+            (27, 37): "46ea6d855945b95b3e26c70874cd5cd6bb036953e66e35c567d1febdae1c3e09",
+            (38, 69): "35ff1a3dc82008fc8dc6996f4e866b3ff1eb0f0eb403bdefe153dd1ef638d68f",
+            (70, 74): "09792a83a8464e3ded8db21296107d1c72cb89b08a26539eaef51db988473809",
+            (75, 79): "dd78b7023b277dc1b5982a987d10230aa1063aed032898d0bf2ac3c0a9aa04f5",
+            (80, 84): "2e75ea98ce2b7f0684d13c54d19099c636b39c0bc833346e00a620d41e0a5e24",
+            (85, 89): "e0654c16d74c3ae1dc443963f73eeff655702023d8ba431281b3aff12a85eca8",
+            (90, 95): "9c1c5d991912dbd25ed8123c4a2dab8ac237d3250f8bed9baa99bb012cac011b",
+            (96, 96): "b5891ad286938d09e0afdc9f66376f5e2a6df9736e23b6cd6323255760d5eb18",
+        },
+        "claim_group_sha256": {
+            (1, 9): "6bc3b7ad2a8e6f02fa4aa53439256e0eb3715daee76a29caafeedf53f2c134f4",
+            (10, 20): "51be39a9b20e0d4292f3211a0fac60581856306064e2e6814c4b2c3681151d4d",
+        },
+        "formal_table_sha256": (
+            "94707c3e43f0438ea526ac8e4a6fbde3a8d4576fce0c904d404a410177bad0f9",
+            "a02f40f58b01ebd1c12f8796ce711e3621e950f44473c15bd6703c9743bc625c",
+            "066005949c17420c6bcb6ab893af7f41063acb3b7903ba344ff211823fd24e8e",
+            "83cb0289b64217c0f0ac57bff4e5a847a3ebe55d8ad136e3b92f0ee7f81fb285",
+            "835b20bf59ee0452fd8d12ac84d03c151dd62925a1ce0217e44698fcf457ce05",
+            "1d01a1f1f3befd48960f30e413c70bed1384abf7329255a7958c4a0a77718f53",
+            "6ffad226b2985da991a24a8ce330920076ccc15779c1897c69ea44aaec11b585",
+            "23b4096920ae98cd4d5afe7a3975ae6a1c337dc42cff1ee67950a9fd7c5a7976",
+            "08cc2c1c522a9bdbf84d7d77a16813edc957ae726123c42975c612c9d9214dc3",
+            "05c1679e0db19508e760fc8474a81e43459e3accf06cc8d62a5b4fe558f32149",
+            "e8cc83a312fbe500e17d3aa2f5adc49ac792a85b2c832ab346c66a556789b654",
+            "31fc86265dab5688aa10c7c357134d1bee4b100c99f1c6f431af49c5bb2f44ce",
+        ),
+        "ordered_math_object_sha256": (
+            "8d514541b1234817085f4fe65bd23c75806ba5fa8adde87d45194f5f6332167f"
+        ),
+        "equation_1_sha256": (
+            "a22f5c8556f89f9affd9f9b8d5cc08bd42f03a7c9350feb8a24d5e6e62e04867"
+        ),
+        "object_distance_mm": (580.0, 580.0, 600.0, 580.0, 600.0),
+        "asphere_surface_indices": (
+            (1, 2, 6, 7, 8, 9, 10, 11),
+            (1, 2, 6, 7, 8, 9, 10, 11),
+            (1, 2, 5, 6, 7, 8, 9, 10),
+            (1, 2, 6, 7, 8, 9, 10, 11),
+            (1, 2, 6, 7, 8, 9, 10, 11),
+        ),
+        "metadata": {
+            "f": (4.4485, 4.4398, 4.3612, 4.4336, 4.4760),
+            "TTL": (7.7138, 7.7500, 7.4912, 7.7500, 7.7500),
+            "f-number": (2.0, 2.0, 2.0, 2.0, 2.0),
+            "IMGHT": (2.3000, 2.2640, 2.3000, 2.3000, 2.3000),
+            "FOV": (57.5000, 56.6000, 57.6000, 57.5000, 57.4000),
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/66cc1a4fb61eb887/"
+                "US-20260086330-A1.pdf"
+            ),
+            "bytes": 968_559,
+            "container_sha256": (
+                "66cc1a4fb61eb887bb9cba02d60352fdec76f9ea3fc751bce415dd5e194449ac"
+            ),
+            "page_count": 21,
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "narrow_raster_page_numbers": (14, 15, 20, 21),
+            "critical_page_raster_sha256": {
+                1: "5fd3c850713efa51818a63adb0c6977ed397c0bf2d186ff903ad1d7357c99db9",
+                15: "4293196f266ee2020f5306947fc453ab01000c83284e417f05b0f3319b31d313",
+                16: "183d335d4528c909db81a4ce9ef01d2804a490460f2f5d21a5380afb809446f6",
+                17: "0bdf07daba4005d5deac74a77aa54cdc47d63bfeee6a2252494df6d9702d34f9",
+                18: "d266e4df4e98b22032817e8ac31c8aa05a722a6852d26ec54d6d04d793958923",
+                19: "89fe732ed99d2a2feae17f4b193aa7b716d92acf2923ea405a5dd2827ebf9205",
+                20: "7e894daf379d2f4b1af54fb1afa89b0de6650b39e4083c94141e0931b5f27359",
+                21: "4fd5ba94c4a072a549a8148cdfc8a3c3e1362d9d5c2d53c0751200fe5370c4a5",
+            },
+            "raster_set_sha256": (
+                "99e11db3aaeb7740f5d4023eab505030d024c8aa7c1d7da0bf4b6e8a5989654f"
+            ),
+        },
+    }
+}
+
+
+def _samsung_five_lens_finite_object_formal_tables(
+    text: str,
+) -> tuple[str, ...]:
+    blocks = _patent_table_blocks(text)
+    if tuple(block.number for block in blocks) != tuple(range(1, 13)):
+        raise PatentParseError(
+            "Samsung finite-object five-lens TABLES 1-12 denominator changed"
+        )
+    return tuple(
+        re.split(r"\s+\[\d{4}\]\s+", block.text, maxsplit=1)[0].strip()
+        for block in blocks
+    )
+
+
+def _validate_samsung_five_lens_finite_object_surface_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+    object_distance_mm: float,
+) -> tuple[int, ...]:
+    starts = list(
+        re.finditer(r"(?<!\S)S(?P<index>\d+)\s+", table_text, re.IGNORECASE)
+    )
+    final_index = 15 if embodiment_number == 3 else 16
+    observed_indices = tuple(int(match.group("index")) for match in starts)
+    if observed_indices != tuple(range(0, final_index + 1)):
+        raise PatentParseError(
+            f"Samsung finite-object embodiment {embodiment_number} surface "
+            f"sequence is {observed_indices}; expected S0-S{final_index}"
+        )
+
+    if embodiment_number == 3:
+        label_tokens = {
+            0: ("Object",),
+            1: ("1st", "Lens"),
+            3: ("2nd", "Lens"),
+            5: ("3rd", "Lens"),
+            7: ("4th", "Lens"),
+            9: ("5th", "Lens"),
+            11: ("Filter",),
+            13: ("Cover",),
+            14: ("Glass",),
+            15: ("Imaging", "Plane"),
+        }
+        material_surfaces = {1, 3, 5, 7, 9, 11, 13}
+    else:
+        label_tokens = {
+            0: ("Object",),
+            1: ("1st", "Lens"),
+            3: ("Stop",),
+            4: ("2nd", "Lens"),
+            6: ("3rd", "Lens"),
+            8: ("4th", "Lens"),
+            10: ("5th", "Lens"),
+            12: ("Filter",),
+            14: ("Cover",),
+            15: ("Glass",),
+            16: ("Imaging", "Plane"),
+        }
+        material_surfaces = {1, 4, 6, 8, 10, 12, 14}
+
+    stop_indices: list[int] = []
+    for row_number, match in enumerate(starts):
+        surface_index = int(match.group("index"))
+        end = (
+            starts[row_number + 1].start()
+            if row_number + 1 < len(starts)
+            else len(table_text)
+        )
+        tokens = table_text[match.end() : end].split()
+        values = [
+            token
+            for token in tokens
+            if token.upper() == "INFINITY"
+            or re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE)
+        ]
+        residue = tuple(
+            token.lower()
+            for token in tokens
+            if token.upper() != "INFINITY"
+            and re.fullmatch(NUMBER_PATTERN, token, re.IGNORECASE) is None
+        )
+        expected_residue = tuple(
+            token.lower() for token in label_tokens.get(surface_index, ())
+        )
+        if residue != expected_residue:
+            raise PatentParseError(
+                f"Samsung finite-object embodiment {embodiment_number} S{surface_index} "
+                f"label is {residue}; expected {expected_residue}"
+            )
+        expected_values = (
+            2
+            if surface_index == 0
+            else 5
+            if surface_index in material_surfaces
+            else 3
+        )
+        if len(values) != expected_values:
+            raise PatentParseError(
+                f"Samsung finite-object embodiment {embodiment_number} S{surface_index} "
+                f"has {len(values)} numeric cells; expected {expected_values}"
+            )
+        if surface_index == 0:
+            if values[0].upper() != "INFINITY" or not math.isclose(
+                _parse_number(values[1]),
+                object_distance_mm,
+                rel_tol=0.0,
+                abs_tol=1e-12,
+            ):
+                raise PatentParseError(
+                    f"Samsung finite-object embodiment {embodiment_number} S0 object "
+                    "distance changed"
+                )
+            continue
+        _distance_value(
+            values[0],
+            field_name=(
+                f"Samsung finite-object embodiment {embodiment_number} "
+                f"S{surface_index} radius"
+            ),
+        )
+        thickness = _parse_number(values[1])
+        if thickness < 0.0:
+            raise PatentParseError(
+                f"Samsung finite-object embodiment {embodiment_number} "
+                f"S{surface_index} thickness is negative"
+            )
+        effective_radius = _parse_number(values[2])
+        if effective_radius <= 0.0:
+            raise PatentParseError(
+                f"Samsung finite-object embodiment {embodiment_number} "
+                f"S{surface_index} effective radius must be positive"
+            )
+        if surface_index in material_surfaces:
+            _validate_material_indices(
+                surface_index=surface_index,
+                nd=_parse_number(values[3]),
+                vd=_parse_number(values[4]),
+            )
+        if residue == ("stop",):
+            if values[0].upper() != "INFINITY":
+                raise PatentParseError(
+                    f"Samsung finite-object embodiment {embodiment_number} "
+                    "stop curvature changed"
+                )
+            stop_indices.append(surface_index)
+    return tuple(stop_indices)
+
+
+def _validate_samsung_five_lens_finite_object_asphere_table(
+    table_text: str,
+    *,
+    embodiment_number: int,
+    expected_surface_indices: tuple[int, ...],
+) -> None:
+    headers = list(
+        re.finditer(
+            r"Surface\s+No\.\s+(?P<surfaces>(?:S\d+\s+){3}S\d+)\s+",
+            table_text,
+            re.IGNORECASE,
+        )
+    )
+    if len(headers) != 2:
+        raise PatentParseError(
+            f"Samsung finite-object embodiment {embodiment_number} asphere "
+            "table must contain two four-surface blocks"
+        )
+    observed_surfaces: list[int] = []
+    expected_labels = ("K", "A", "B", "C", "D", "E", "F", "G", "H", "J")
+    for header_number, header in enumerate(headers):
+        surface_indices = tuple(
+            int(value) for value in re.findall(r"S(\d+)", header.group("surfaces"))
+        )
+        observed_surfaces.extend(surface_indices)
+        end = (
+            headers[header_number + 1].start()
+            if header_number + 1 < len(headers)
+            else len(table_text)
+        )
+        tokens = table_text[header.end() : end].split()
+        position = 0
+        for label in expected_labels:
+            if position >= len(tokens) or tokens[position].upper() != label:
+                raise PatentParseError(
+                    f"Samsung finite-object embodiment {embodiment_number} "
+                    f"asphere row {label} is missing or out of order"
+                )
+            position += 1
+            values = tokens[position : position + 4]
+            if len(values) != 4 or any(
+                re.fullmatch(NUMBER_PATTERN, value, re.IGNORECASE) is None
+                for value in values
+            ):
+                raise PatentParseError(
+                    f"Samsung finite-object embodiment {embodiment_number} "
+                    f"asphere row {label} is incomplete"
+                )
+            tuple(_parse_number(value) for value in values)
+            position += 4
+        if position != len(tokens):
+            raise PatentParseError(
+                f"Samsung finite-object embodiment {embodiment_number} "
+                "asphere table has extra cells"
+            )
+    if tuple(observed_surfaces) != expected_surface_indices:
+        raise PatentParseError(
+            f"Samsung finite-object embodiment {embodiment_number} asphere surfaces "
+            f"are {tuple(observed_surfaces)}; expected {expected_surface_indices}"
+        )
+
+
+def _samsung_five_lens_finite_object_metadata_row(
+    table_text: str,
+    label: str,
+) -> tuple[float, ...]:
+    matches = list(
+        re.finditer(
+            rf"(?<!\S){re.escape(label)}(?!\S)\s+"
+            rf"(?P<values>(?:{NUMBER_PATTERN}\s+){{4}}{NUMBER_PATTERN})(?!\S)",
+            table_text,
+            re.IGNORECASE,
+        )
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Samsung finite-object TABLE 11 row {label!r} is missing or ambiguous"
+        )
+    return tuple(
+        _parse_number(value) for value in matches[0].group("values").split()
+    )
+
+
+def _classify_samsung_five_lens_finite_object_fov_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain five exact prescriptions whose angular-field semantics are absent."""
+
+    profile = _SAMSUNG_FIVE_LENS_FINITE_OBJECT_FOV_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _tables, _figures, _reason_code in (
+                _SAMSUNG_FIVE_LENS_FINITE_OBJECT_FOV_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                "Samsung finite-object five-lens official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                "Samsung finite-object five-lens normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if (
+            len(
+                re.findall(
+                    r"<h2\b[^>]*>\s*IMAGING\s+LENS\s+SYSTEM\s*</h2>",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError(
+                "Samsung finite-object five-lens title binding changed"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung finite-object identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Samsung finite-object five-lens section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(
+            sorted(section_starts.values())
+        ):
+            raise PatentParseError(
+                "Samsung finite-object five-lens section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Samsung finite-object five-lens {section_name} section changed"
+                )
+
+        paragraph_text = sections["background"] + sections["description"]
+        paragraph_matches = list(
+            re.finditer(r"\[(\d{4})\]\s+", paragraph_text)
+        )
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 97)):
+            raise PatentParseError(
+                "Samsung finite-object five-lens paragraphs [0001]-[0096] changed"
+            )
+        paragraphs = {
+            number: paragraph_text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else len(paragraph_text)
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Samsung finite-object paragraph span {bounds} changed"
+                )
+
+        brief_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"\bFIG\.\s*(\d+)\s+(?=is|illustrates)",
+                "".join(paragraphs[number] for number in range(27, 38)),
+                re.IGNORECASE,
+            )
+        )
+        detailed_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"\bFIG\.\s*(\d+)\s+(?=is|illustrates)",
+                "".join(paragraphs[number] for number in (70, 75, 80, 85, 90)),
+                re.IGNORECASE,
+            )
+        )
+        if brief_figures != tuple(range(1, 11)) or detailed_figures != tuple(
+            range(1, 11)
+        ):
+            raise PatentParseError(
+                "Samsung finite-object FIGS. 1-10 denominator changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != 35:
+            raise PatentParseError(
+                "Samsung finite-object 35-figref denominator changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?<!\S)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 21)):
+            raise PatentParseError(
+                "Samsung finite-object claims 1-20 denominator changed"
+            )
+        claims = {
+            number: sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(claim_numbers, claim_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["claim_group_sha256"].items():
+            payload = "".join(
+                claims[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Samsung finite-object claim group {bounds} changed"
+                )
+        independent_claims = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?<!\S)(\d+)\s*\.\s*An\s+imaging\s+lens\s+system\s+"
+                r"comprising:",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != (1, 10):
+            raise PatentParseError(
+                "Samsung finite-object independent claims changed"
+            )
+
+        math_objects = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        ordered_math_digest = hashlib.sha256(
+            (
+                "\n".join(
+                    hashlib.sha256(value.encode("utf-8")).hexdigest()
+                    for value in math_objects
+                )
+                + "\n"
+            ).encode("utf-8")
+        ).hexdigest()
+        if (
+            len(math_objects) != 19
+            or ordered_math_digest != profile["ordered_math_object_sha256"]
+        ):
+            raise PatentParseError(
+                "Samsung finite-object 19-MathML denominator changed"
+            )
+        equation_matches = [
+            value for value in math_objects if 'id="MATH-US-00003"' in value
+        ]
+        if (
+            len(equation_matches) != 1
+            or hashlib.sha256(equation_matches[0].encode("utf-8")).hexdigest()
+            != profile["equation_1_sha256"]
+        ):
+            raise PatentParseError(
+                "Samsung finite-object A-H/J r4-r20 Equation 1 changed"
+            )
+
+        formal_tables = _samsung_five_lens_finite_object_formal_tables(text)
+        if tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        ) != profile["formal_table_sha256"]:
+            raise PatentParseError(
+                "Samsung finite-object formal table payload changed"
+            )
+        stop_inventory: list[tuple[int, ...]] = []
+        for embodiment_number in range(1, 6):
+            stop_inventory.append(
+                _validate_samsung_five_lens_finite_object_surface_table(
+                    formal_tables[(embodiment_number - 1) * 2],
+                    embodiment_number=embodiment_number,
+                    object_distance_mm=profile["object_distance_mm"][
+                        embodiment_number - 1
+                    ],
+                )
+            )
+            _validate_samsung_five_lens_finite_object_asphere_table(
+                formal_tables[(embodiment_number - 1) * 2 + 1],
+                embodiment_number=embodiment_number,
+                expected_surface_indices=profile["asphere_surface_indices"][
+                    embodiment_number - 1
+                ],
+            )
+        if tuple(stop_inventory) != ((3,), (3,), (), (3,), (3,)):
+            raise PatentParseError(
+                "Samsung finite-object published stop-row inventory changed"
+            )
+
+        metadata = {
+            label: _samsung_five_lens_finite_object_metadata_row(
+                formal_tables[10], label
+            )
+            for label in ("f", "TTL", "f-number", "IMGHT", "FOV")
+        }
+        if metadata != profile["metadata"]:
+            raise PatentParseError(
+                "Samsung finite-object TABLE 11 direct metadata changed"
+            )
+        if text.count(
+            "FOV (a field of view of an imaging lens system) is expressed in degrees."
+        ) != 1:
+            raise PatentParseError(
+                "Samsung finite-object FOV definition wording changed"
+            )
+        explicit_field_semantics = re.search(
+            r"\b(?:HFOV|half[- ]?FOV|semi[- ]?FOV|full[- ]?FOV|"
+            r"half\s+(?:field|view\s+angle)|full\s+(?:field|view\s+angle))\b",
+            text,
+            re.IGNORECASE,
+        )
+        if explicit_field_semantics is not None:
+            raise PatentParseError(
+                "Samsung finite-object source gained explicit FOV half/full semantics"
+            )
+        if "The stop ST may be disposed on an object side of the first lens 310" not in (
+            paragraphs[83]
+        ):
+            raise PatentParseError(
+                "Samsung finite-object embodiment 3 qualitative stop placement changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Samsung finite-object official PDF size changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError(
+                "Samsung finite-object official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Samsung finite-object official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = set(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Samsung finite-object PDF page {page_number} contains "
+                    f"{len(images)} rasters; expected one"
+                )
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if images[0].image.size != expected_dimensions:
+                raise PatentParseError(
+                    f"Samsung finite-object PDF page {page_number} dimensions changed"
+                )
+            raster_digest = _canonical_raster_sha256(images[0].data)
+            page_raster_hashes.append(raster_digest)
+            expected_critical = pdf_profile["critical_page_raster_sha256"].get(
+                page_number
+            )
+            if expected_critical is not None and raster_digest != expected_critical:
+                raise PatentParseError(
+                    f"Samsung finite-object critical PDF page {page_number} changed"
+                )
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Samsung finite-object official PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Samsung finite-object official PDF gained a text layer"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all five exact prescriptions
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, tables, _figures, reason_code in (
+        _SAMSUNG_FIVE_LENS_FINITE_OBJECT_FOV_ITEMS
+    ):
+        object_distance = profile["object_distance_mm"][number - 1]
+        detail = (
+            f"Tables {tables[0]} and {tables[1]} publish the complete ordered "
+            f"five-lens prescription, A-H/J r4-r20 coefficients, S0 Object distance "
+            f"{object_distance:g} mm and TABLE 11 f/F-number/IMGHT/FOV/TTL values, "
+            "but the exact A1 defines FOV only as a field of view and never states "
+            "whether it is a half or full angular field"
+        )
+        if number == 3:
+            detail += (
+                "; TABLE 5 contains no stop row and paragraph [0083] places the "
+                "stop only somewhere on the object side of the first lens without "
+                "an axial coordinate"
+            )
+        detail += (
+            "; no FOV division, f/IMGHT angular derivation, finite-object-to-infinity "
+            "substitution, stop synthesis, raster numeric transcription, worker "
+            "launch or ZMX conversion is permitted"
+        )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code=reason_code,
+                    detail=detail,
+                ),
+            )
+        )
+    return attempts
 
 
 _LARGAN_LIGHT_BLOCKING_COMPENSATION_ITEMS = (

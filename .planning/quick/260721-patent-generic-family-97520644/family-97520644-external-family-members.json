@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "family_id": "97520644",
+  "classification_publication": "US-20260086330-A1",
+  "members_directly_listed_by_exact_a1": [
+    {
+      "relationship": "foreign_priority",
+      "country": "KR",
+      "application_number": "10-2024-0128342",
+      "filing_date": "2024-09-23"
+    }
+  ],
+  "parent_applications_listed": [],
+  "other_pregrant_publications_listed": [],
+  "classification_authority": "retained official USPTO PPUBS US-20260086330-A1 HTML and decoded official A1 rasters",
+  "external_numeric_borrowing": false,
+  "note": "The exact A1 Cross-Reference to Related Application lists only Korean application 10-2024-0128342. Absence here means not listed by the retained A1; it is not a claim that no foreign or unlisted family record exists."
+}
