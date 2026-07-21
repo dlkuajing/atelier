@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "family_id": "53214261",
+  "root_id": "US-9618727",
+  "publication_id": "US-9618727-B2",
+  "application_number": "14/832479",
+  "title": "Imaging lens assembly",
+  "identity": {
+    "first_inventor": "Jang; Issac",
+    "co_inventor": "Park; Jay",
+    "assignee": "AAC TECHNOLOGIES PTE. LTD.",
+    "prior_us_publication": "US-20160161708-A1",
+    "priority_application": "KR10-2014-0174423",
+    "priority_date": "2014-12-05"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/db0e5d448f3107df/US-9618727-B2.html",
+    "bytes": 31181,
+    "sha256": "db0e5d448f3107df967d4c6b637fd035971b62dadfb78f27de889b9d5a0ab6a6",
+    "normalized_characters": 17989,
+    "normalized_sha256": "aa6d8cdbc0784e7c42022f8cf1d6d3526e25a3e9e0f928abb610b76fccf2d4d6",
+    "content_authority": "exact retained official USPTO PPUBS B2 HTML"
+  },
+  "denominator": {
+    "background_summary_paragraphs": 4,
+    "brief_drawing_paragraphs": 6,
+    "detailed_description_paragraphs": 36,
+    "claims": 7,
+    "source_tables": 5,
+    "mathml_objects": 9,
+    "figref_tags": 19,
+    "figure_panels": 5,
+    "drawing_sheets": 4,
+    "optical_items": 2,
+    "surface_rows_per_embodiment": 10,
+    "anonymous_asphere_rows_per_embodiment": 7,
+    "published_asphere_cells_per_embodiment": 54,
+    "blank_a16_cells_per_embodiment": 2
+  },
+  "sections": {
+    "background_summary": {
+      "paragraph_range": [1, 4],
+      "normalized_sha256": "c715da0391f76255c8a2b883c46c324f44fc190569503d117cec0a66f62df8b8",
+      "raw_sha256": "c98cae319ac320a35f3cc8d64f95e00be45d249c841472464f04bd41135bc21b"
+    },
+    "brief": {
+      "paragraph_range": [1, 6],
+      "normalized_sha256": "2a549df0411bfc7367855eeb788d90ef66bc9a809bf43fc3eb0921ccab46b0ef",
+      "raw_sha256": "52613db66fca19cbf4c77a926469b70c16fff41a2df69eba5a39d06fa82ead0f"
+    },
+    "detailed": {
+      "paragraph_range": [7, 42],
+      "normalized_sha256": "fbbf0f164c513e9dc625ba9bf9948e4a55e3cf930caf6521e6a9a54ac3fc4dcd",
+      "raw_sha256": "ba149920d172ca016bd50c2e6586388a7b3340dd05df453241e00a26889d952a"
+    },
+    "claims": {
+      "claim_range": [1, 7],
+      "normalized_sha256": "bb0c9d5a5947d0d8d2105758a402d70b797355dc7eb218f78094afb2a04243e3",
+      "raw_sha256": "8e0a78b23a16359293743c0fc11c0a0ad07a2452df4b8e7374ebbf413521dacf"
+    }
+  },
+  "tables": [
+    {
+      "number": 1,
+      "role": "Embodiment 1 ordered surface table with direct f, Fno and source-labeled DOF",
+      "block_sha256": "77f16174d7269d415d70c59a8db2fbcefd85a774f6b256a88ad6176067832d46",
+      "formal_table_sha256": "a94094b554a8109797f0b5ef0be26fb0fcbf1452f22cb02f4bab77828bb143aa"
+    },
+    {
+      "number": 2,
+      "role": "Embodiment 1 seven anonymous asphere rows, 54 populated cells and no surface column",
+      "block_sha256": "4b7c20655a5526b629f2044ca72fb94153039a5bb9576c6c37f619799d9f747a",
+      "formal_table_sha256": "f789186510b3410827a591964ebd0848d79fee04101da9baf135da1422b8f2b5"
+    },
+    {
+      "number": 3,
+      "role": "Embodiment 2 ordered surface table with direct f, Fno and source-labeled DOF",
+      "block_sha256": "282581dc0b493907b1a64bd72160f48de301adab82eb87e53f87e7ec932b4a30",
+      "formal_table_sha256": "c1dc5bb448800e2611260b03ed14227fa82fab3246fc6665afa609f064c2be17"
+    },
+    {
+      "number": 4,
+      "role": "Embodiment 2 seven anonymous asphere rows, 54 populated cells and no surface column",
+      "block_sha256": "2b068ecf48759d8e943d0711a7c2fa1b8207239fbb1f428025d68c5bd054a570",
+      "formal_table_sha256": "a8569a4c8e4ae5d890f70d69d6cef86e768d63dd2ed1300445f32b2d111bbbd5"
+    },
+    {
+      "number": 5,
+      "role": "rounded condition ratios including TTL/2y, without absolute y",
+      "block_sha256": "790996edd82e1bc6c92cb87ed18e02535f323d622f27a573b4d4a382366c322e",
+      "formal_table_sha256": "61fd090dff4cbeb97883399d1954df3499d8347da35b525094a79ef1e1dd33d0"
+    }
+  ],
+  "mathml_sha256": [
+    "c115d34a9e7c52c128c4abb98fee00293ff232ad34ae9c4a9a7806f2914a9eb3",
+    "ed690b506098ca7344245f9e92bc77982cf4dcf4db5214605b50ab351fdd3811",
+    "ec4b3c28a63897e2e07549272baf86a716ee4fe02a7f83619e8d5b60a41f921b",
+    "e057e24a23eecbff073550a3e234f50e97eda442d886c674837ca3323c0a8cd0",
+    "cafb9de984b04eb0264e9b8fc9f64ef8f4c55016f24312ed6024d2bd88a7eed4",
+    "2fe879395a4ffdbe9e1739f3583dc6bdcf09059238c3eff0566e7679b8feda7b",
+    "bf974340e46bd6b32e85efdb86599f845c3a5e67b9c449b6feb8194a8b54f841",
+    "b232ac0dc61aa61e28ec07c9fd2c4ad6aa845aa56fe1e4f8d0c9ef1e30f2286d",
+    "cd7f171e3e33172504db89b1a5779d74d861ba7c69d2547591b9d285cac0c5cd"
+  ],
+  "figure_sequence": [1, 2, 3, 1, 4, 2, 5, 1, 1, 2, 1, 2, 5, 1, 3, 1, 2, 4, 2],
+  "source_scope_phrase_counts": {
+    "Embodiment 1": 3,
+    "Embodiment 2": 3,
+    "Fno": 2,
+    "DOF": 4,
+    "depth of field": 1,
+    "field of view": 0,
+    "FOV": 0,
+    "half field": 0,
+    "maximum image height": 4,
+    "image height": 4,
+    "TTL": 3,
+    "Yc1": 1,
+    "aspherical coefficient": 3,
+    "Surface numbers 2-11": 1,
+    "surface number": 1,
+    "asphere": 14,
+    "radius": 9,
+    "curvature": 9,
+    "Abbe": 9
+  },
+  "terminal_items": [
+    {
+      "embodiment_number": 1,
+      "embodiment_label": "Imaging-lens assembly Embodiment 1",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.unlabeled_asphere_surface_binding_and_absolute_image_height_and_angular_field_absent"
+    },
+    {
+      "embodiment_number": 2,
+      "embodiment_label": "Imaging-lens assembly Embodiment 2",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.unlabeled_asphere_surface_binding_and_absolute_image_height_and_angular_field_absent"
+    }
+  ],
+  "replay_state": {
+    "attempts": [
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-9618727/attempt-0002/result.json",
+        "bytes": 2637,
+        "sha256": "2e840854384cfb6cab82bf18b3944afc3a6fd3059f5231e286e5fe702f4c861c"
+      },
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-9618727/attempt-0003/result.json",
+        "bytes": 2637,
+        "sha256": "42798bad8a30a141cbc4113f003e914e865c258be1042fa941df5a9f38438021"
+      }
+    ],
+    "semantic_sha256": "2b6ac60a7b9644d0757ca920837156a7ecaf40a7fda4305040b84fa2691ed409",
+    "strict_roots_with_results": 619,
+    "strict_expected_roots": 619,
+    "strict_missing_results": 0,
+    "strict_corrupt_results": 0
+  },
+  "generic_census": {
+    "before": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/generic-residual-before-52.json",
+      "bytes": 32319,
+      "sha256": "ee50167ffd8e352edffe09bfd260203202bd2c1bc4c72da1cffc140a861033f9"
+    },
+    "after_1": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/generic-residual-after-1.json",
+      "bytes": 31700,
+      "sha256": "ddd633492240b4bb7677c01109d7dd2213c552a5147ea1fb6c0d4a8c46f0c9c5"
+    },
+    "after_2": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/generic-residual-after-2.json",
+      "bytes": 31700,
+      "sha256": "ddd633492240b4bb7677c01109d7dd2213c552a5147ea1fb6c0d4a8c46f0c9c5"
+    },
+    "before_roots": 52,
+    "after_roots": 51,
+    "result_set_sha256": "4eb8175e3193322e3fad631000679be6848293b3fefbe46bdbf53af13d168947"
+  },
+  "shared_outputs": {
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 49529,
+      "sha256": "14b6050e7aaa16a4cd3aef446078d2b31890127f979154fcf53111bd0333f4bd"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 51363,
+      "sha256": "58b0290097f2c95278b10c26068767979fd7a3b86d03b2e4cfd813863388beed"
+    }
+  },
+  "audit_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/family-53214261-source-audit.md",
+      "bytes": 4044,
+      "sha256": "31883f806200dd12cb84b21683d6a0129f0383f79bdd2a1a71c78e3f08cb62b0"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/family-53214261-raster-audit.json",
+      "bytes": 7880,
+      "sha256": "24c1dad0d04b87ed1be08a18c3d5a6917e0c2626aa7e24008b5e70e85d2a5d52"
+    },
+    "external_family_members": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/family-53214261-external-family-members.json",
+      "bytes": 2157,
+      "sha256": "e06ef3ac4548b1cd723dc9d80d4ac320001ab9a9b820023e27e91248cce7ea7b"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/family-53214261-replay-determinism.json",
+      "bytes": 1588,
+      "sha256": "c799562325f97c4b88b6c42c2a100a68178fd008e2cc61ecee821a65525affb8"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/queue-after.json",
+      "bytes": 1423,
+      "sha256": "442c2f0937b8ded5815ca307481324c0ec5473a13353255f14271f7261d80235"
+    },
+    "roots": {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/roots.txt",
+      "bytes": 11,
+      "sha256": "9cce9e0dc622fc3023c212116601ada7eab8c50f9870c685d2b644207a7732bc"
+    }
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "formal_outputs": {
+    "optical_case_created": false,
+    "zmx_created": false,
+    "formal_intake_changed": false
+  },
+  "next_exact_group": {
+    "family_id": "61278233",
+    "root_ids": ["US-10642002"],
+    "publication_ids": ["US-10642002-B2"]
+  },
+  "saturation_complete": false
+}

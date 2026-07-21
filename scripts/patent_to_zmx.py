@@ -1094,6 +1094,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_aac_four_lens_unlabeled_asphere_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_folded_image_sensor_filter_architecture_only_attempts(
             raw_text,
@@ -4070,6 +4076,106 @@ _FUJIFILM_CURABLE_OPTICAL_FILTER_SOURCE_PROFILES: dict[
             "refractive index": 1,
             "lens": 11,
             "microlens": 5,
+        },
+    },
+}
+_AAC_FOUR_LENS_UNLABELED_ASPHERE_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY\b",
+    flags=re.IGNORECASE,
+)
+_AAC_FOUR_LENS_UNLABELED_ASPHERE_ITEMS = (
+    (1, "Imaging-lens assembly Embodiment 1"),
+    (2, "Imaging-lens assembly Embodiment 2"),
+)
+_AAC_FOUR_LENS_UNLABELED_ASPHERE_REASON = (
+    "metadata_unpublished.unlabeled_asphere_surface_binding_and_absolute_"
+    "image_height_and_angular_field_absent"
+)
+_AAC_FOUR_LENS_UNLABELED_ASPHERE_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-9618727-B2": {
+        "raw_document_sha256": (
+            "db0e5d448f3107df967d4c6b637fd035971b62dadfb78f27de889b9d5a0ab6a6"
+        ),
+        "normalized_text_sha256": (
+            "aa6d8cdbc0784e7c42022f8cf1d6d3526e25a3e9e0f928abb610b76fccf2d4d6"
+        ),
+        "family_id": "53214261",
+        "application_number": "14/832479",
+        "section_sha256": {
+            "background_summary": (
+                "c715da0391f76255c8a2b883c46c324f44fc190569503d117cec0a66f62df8b8"
+            ),
+            "brief": (
+                "2a549df0411bfc7367855eeb788d90ef66bc9a809bf43fc3eb0921ccab46b0ef"
+            ),
+            "detailed": (
+                "fbbf0f164c513e9dc625ba9bf9948e4a55e3cf930caf6521e6a9a54ac3fc4dcd"
+            ),
+            "claims": (
+                "bb0c9d5a5947d0d8d2105758a402d70b797355dc7eb218f78094afb2a04243e3"
+            ),
+        },
+        "raw_section_sha256": {
+            "background_summary": (
+                "c98cae319ac320a35f3cc8d64f95e00be45d249c841472464f04bd41135bc21b"
+            ),
+            "brief": (
+                "52613db66fca19cbf4c77a926469b70c16fff41a2df69eba5a39d06fa82ead0f"
+            ),
+            "detailed": (
+                "ba149920d172ca016bd50c2e6586388a7b3340dd05df453241e00a26889d952a"
+            ),
+            "claims": (
+                "8e0a78b23a16359293743c0fc11c0a0ad07a2452df4b8e7374ebbf413521dacf"
+            ),
+        },
+        "table_block_sha256": (
+            "77f16174d7269d415d70c59a8db2fbcefd85a774f6b256a88ad6176067832d46",
+            "4b7c20655a5526b629f2044ca72fb94153039a5bb9576c6c37f619799d9f747a",
+            "282581dc0b493907b1a64bd72160f48de301adab82eb87e53f87e7ec932b4a30",
+            "2b068ecf48759d8e943d0711a7c2fa1b8207239fbb1f428025d68c5bd054a570",
+            "790996edd82e1bc6c92cb87ed18e02535f323d622f27a573b4d4a382366c322e",
+        ),
+        "formal_table_sha256": (
+            "a94094b554a8109797f0b5ef0be26fb0fcbf1452f22cb02f4bab77828bb143aa",
+            "f789186510b3410827a591964ebd0848d79fee04101da9baf135da1422b8f2b5",
+            "c1dc5bb448800e2611260b03ed14227fa82fab3246fc6665afa609f064c2be17",
+            "a8569a4c8e4ae5d890f70d69d6cef86e768d63dd2ed1300445f32b2d111bbbd5",
+            "61fd090dff4cbeb97883399d1954df3499d8347da35b525094a79ef1e1dd33d0",
+        ),
+        "mathml_sha256": (
+            "c115d34a9e7c52c128c4abb98fee00293ff232ad34ae9c4a9a7806f2914a9eb3",
+            "ed690b506098ca7344245f9e92bc77982cf4dcf4db5214605b50ab351fdd3811",
+            "ec4b3c28a63897e2e07549272baf86a716ee4fe02a7f83619e8d5b60a41f921b",
+            "e057e24a23eecbff073550a3e234f50e97eda442d886c674837ca3323c0a8cd0",
+            "cafb9de984b04eb0264e9b8fc9f64ef8f4c55016f24312ed6024d2bd88a7eed4",
+            "2fe879395a4ffdbe9e1739f3583dc6bdcf09059238c3eff0566e7679b8feda7b",
+            "bf974340e46bd6b32e85efdb86599f845c3a5e67b9c449b6feb8194a8b54f841",
+            "b232ac0dc61aa61e28ec07c9fd2c4ad6aa845aa56fe1e4f8d0c9ef1e30f2286d",
+            "cd7f171e3e33172504db89b1a5779d74d861ba7c69d2547591b9d285cac0c5cd",
+        ),
+        "source_scope_phrase_counts": {
+            "Embodiment 1": 3,
+            "Embodiment 2": 3,
+            "Fno": 2,
+            "DOF": 4,
+            "depth of field": 1,
+            "field of view": 0,
+            "FOV": 0,
+            "half field": 0,
+            "maximum image height": 4,
+            "image height": 4,
+            "TTL": 3,
+            "Yc1": 1,
+            "aspherical coefficient": 3,
+            "Surface numbers 2-11": 1,
+            "surface number": 1,
+            "asphere": 14,
+            "radius": 9,
+            "curvature": 9,
+            "Abbe": 9,
         },
     },
 }
@@ -36217,6 +36323,326 @@ def _classify_fujifilm_curable_optical_filter_materials_only_attempts(
                     "figure, but no ordered optical surface prescription"
                 ),
             ),
+        )
+    ]
+
+
+def _classify_aac_four_lens_unlabeled_asphere_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Fail closed on exact Family 53214261's incomplete two embodiments."""
+
+    profile = _AAC_FOUR_LENS_UNLABELED_ASPHERE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "AAC four-lens official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "AAC four-lens normalized text hash changed "
+                f"for {patent_id}"
+            )
+        if _AAC_FOUR_LENS_UNLABELED_ASPHERE_TITLE_PATTERN.search(text) is None:
+            raise PatentParseError("AAC four-lens title binding changed")
+
+        identity_markers = {
+            f"Family ID: {profile['family_id']}": 1,
+            f"Appl. No.: {profile['application_number']}": 1,
+            "Jang; Issac": 3,
+            "Park; Jay": 2,
+            "AAC TECHNOLOGIES PTE. LTD.": 1,
+            "US 20160161708 A1": 1,
+            "Jun. 09, 2016": 1,
+            "10-2014-0174423": 1,
+            "Dec. 05, 2014": 1,
+        }
+        for marker, expected in identity_markers.items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC four-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = (
+            (
+                "background_summary",
+                "Background/Summary FIELD OF THE INVENTION (1)",
+            ),
+            ("brief", "Description BRIEF DESCRIPTION OF THE DRAWINGS (1)"),
+            (
+                "detailed",
+                "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS (7)",
+            ),
+            ("claims", "Claims 1. An imaging lens assembly"),
+        )
+        try:
+            starts = {name: text.index(marker) for name, marker in section_markers}
+        except ValueError as exc:
+            raise PatentParseError(
+                "AAC four-lens normalized section boundary changed"
+            ) from exc
+        if tuple(starts.values()) != tuple(sorted(starts.values())):
+            raise PatentParseError(
+                "AAC four-lens normalized section ordering changed"
+            )
+        ordered_names = tuple(name for name, _marker in section_markers)
+        sections = {
+            name: text[
+                starts[name] : (
+                    starts[ordered_names[index + 1]]
+                    if index + 1 < len(ordered_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(ordered_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"AAC four-lens {section_name} section changed"
+                )
+
+        raw_section_markers = (
+            ("background_summary", "<h3>Background/Summary</h3>"),
+            ("brief", "<h3>Description</h3>"),
+            ("detailed", "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS"),
+            ("claims", "<h3>Claims</h3>"),
+        )
+        try:
+            raw_starts = {
+                name: raw_text.index(marker)
+                for name, marker in raw_section_markers
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "AAC four-lens raw section boundary changed"
+            ) from exc
+        if tuple(raw_starts.values()) != tuple(sorted(raw_starts.values())):
+            raise PatentParseError("AAC four-lens raw section ordering changed")
+        raw_ordered_names = tuple(name for name, _marker in raw_section_markers)
+        raw_sections = {
+            name: raw_text[
+                raw_starts[name] : (
+                    raw_starts[raw_ordered_names[index + 1]]
+                    if index + 1 < len(raw_ordered_names)
+                    else len(raw_text)
+                )
+            ]
+            for index, name in enumerate(raw_ordered_names)
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_sha256"
+        ].items():
+            observed_digest = hashlib.sha256(
+                raw_sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"AAC four-lens raw {section_name} section changed"
+                )
+
+        structural_paragraph_pattern = re.compile(
+            r"(?:<p>|<br\s*/?>|\n)\s*\((\d+)\)",
+            re.IGNORECASE,
+        )
+        expected_paragraphs = {
+            "background_summary": tuple(range(1, 5)),
+            "brief": tuple(range(1, 7)),
+            "detailed": tuple(range(7, 43)),
+        }
+        for section_name, expected in expected_paragraphs.items():
+            observed = tuple(
+                int(value)
+                for value in structural_paragraph_pattern.findall(
+                    raw_sections[section_name]
+                )
+            )
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC four-lens {section_name} paragraph denominator changed"
+                )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != tuple(range(1, 8)):
+            raise PatentParseError("AAC four-lens claims 1-7 denominator changed")
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 6)):
+            raise PatentParseError("AAC four-lens TABLE 1-5 denominator changed")
+        table_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_digests != profile["table_block_sha256"]:
+            raise PatentParseError("AAC four-lens PPUBS table block changed")
+
+        table_end_markers = ("(33)", "(34)", "(38)", "(39)", "(42)")
+        formal_tables: list[str] = []
+        for block, end_marker in zip(blocks, table_end_markers, strict=True):
+            if end_marker not in block.text:
+                raise PatentParseError(
+                    f"AAC four-lens TABLE {block.number} end changed"
+                )
+            formal_tables.append(block.text.split(end_marker, 1)[0])
+        formal_table_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_table_digests != profile["formal_table_sha256"]:
+            raise PatentParseError("AAC four-lens formal table content changed")
+
+        expected_surface_rows = (
+            ("2", "asphere"),
+            ("3", "asphere"),
+            ("4", "asphere"),
+            ("5", "asphere"),
+            ("6", "asphere"),
+            ("7", "sphere"),
+            ("8", "asphere"),
+            ("9", "asphere"),
+            ("10", "sphere"),
+            ("11", "sphere"),
+        )
+        for table_index in (0, 2):
+            observed_rows = tuple(
+                re.findall(
+                    r"(?<![\d.])(\d+)\s+(asphere|sphere)\s",
+                    formal_tables[table_index],
+                    re.IGNORECASE,
+                )
+            )
+            if observed_rows != expected_surface_rows:
+                raise PatentParseError(
+                    "AAC four-lens surface-table row sequence changed"
+                )
+
+        scientific_cell_pattern = re.compile(
+            r"[-+]?\d+(?:\.\d+)?E[-+]\d+",
+            re.IGNORECASE,
+        )
+        for table_index in (1, 3):
+            coefficient_table = formal_tables[table_index]
+            if len(scientific_cell_pattern.findall(coefficient_table)) != 54:
+                raise PatentParseError(
+                    "AAC four-lens anonymous coefficient-cell denominator changed"
+                )
+            if len(re.findall(r"\bsurface\b", coefficient_table, re.IGNORECASE)):
+                raise PatentParseError(
+                    "AAC four-lens coefficient table gained a surface binding"
+                )
+            if coefficient_table.count("a16 (G)") != 1:
+                raise PatentParseError(
+                    "AAC four-lens coefficient-table header changed"
+                )
+
+        table_five_marker = (
+            "TABLE 5 Condition Embodiment1 Embodimet2 "
+            "2.4 < |R6/R7| < 2.6 2.329 2.496 "
+            "0.65 < Yc1/y < 0.75 0.675 0.674 "
+            "0.80 < TTL/2y < 0.95 0.82 0.82"
+        )
+        if table_five_marker not in formal_tables[4]:
+            raise PatentParseError("AAC four-lens TABLE 5 ratios changed")
+
+        figure_numbers = tuple(
+            re.findall(r"\bFIG\.\s*(\d+)", raw_text, re.IGNORECASE)
+        )
+        if figure_numbers != (
+            "1",
+            "2",
+            "3",
+            "1",
+            "4",
+            "2",
+            "5",
+            "1",
+            "1",
+            "2",
+            "1",
+            "2",
+            "5",
+            "1",
+            "3",
+            "1",
+            "2",
+            "4",
+            "2",
+        ):
+            raise PatentParseError("AAC four-lens figure sequence changed")
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != 19:
+            raise PatentParseError("AAC four-lens figref denominator changed")
+
+        mathml_blocks = tuple(
+            re.findall(r"<math\b.*?</math>", raw_text, re.IGNORECASE | re.DOTALL)
+        )
+        mathml_digests = tuple(
+            hashlib.sha256(block.encode("utf-8")).hexdigest()
+            for block in mathml_blocks
+        )
+        if mathml_digests != profile["mathml_sha256"]:
+            raise PatentParseError("AAC four-lens MathML denominator changed")
+
+        for phrase, expected in profile["source_scope_phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"AAC four-lens phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+    except Exception as exc:  # noqa: BLE001 - retain both exact source items
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                error=exc,
+            )
+            for embodiment_number, embodiment in (
+                _AAC_FOUR_LENS_UNLABELED_ASPHERE_ITEMS
+            )
+        ]
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_AAC_FOUR_LENS_UNLABELED_ASPHERE_REASON,
+                detail=(
+                    "the exact retained source publishes a complete surface table "
+                    "and 54 populated values in seven anonymous asphere rows for "
+                    "this embodiment, with the first two a16 cells blank; it does "
+                    "not bind those rows to surface numbers, publish absolute "
+                    "maximum image height, or publish angular field, and its DOF "
+                    "label is explicitly depth of field"
+                ),
+            ),
+        )
+        for embodiment_number, embodiment in (
+            _AAC_FOUR_LENS_UNLABELED_ASPHERE_ITEMS
         )
     ]
 
