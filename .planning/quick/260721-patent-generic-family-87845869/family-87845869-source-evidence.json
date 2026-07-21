@@ -1,0 +1,189 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "87845869",
+  "root_id": "US-20260086440",
+  "publication_id": "US-20260086440-A1",
+  "application_number": "19/408546",
+  "title": "LIGHT PATH FOLDING ELEMENT, CAMERA MODULE AND ELECTRONIC DEVICE",
+  "bibliography": {
+    "inventors": ["LIU; Ssu-Hsin", "TUNG; Wei-Che", "CHANG; Lin-An", "CHOU; Ming-Ta"],
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "filing_date": "2025-12-04",
+    "continuation_parent_application": "18/454995",
+    "continuation_parent_filing_date": "2023-08-24",
+    "parent_grant_document": "US-12523923",
+    "foreign_priority_application": "TW 112123543",
+    "foreign_priority_date": "2023-06-21",
+    "provisional_priority_application": "US 63/373557",
+    "provisional_priority_date": "2022-08-26"
+  },
+  "source": {
+    "evidence_type": "uspto_ppubs_parser_input_html",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a6a2c63f2323dcaa/US-20260086440-A1.html",
+    "bytes": 95585,
+    "sha256": "a6a2c63f2323dcaae2fba1555d3e73d16649ca6de8c2292928c2627c582be01a",
+    "characters": 95427,
+    "normalized_characters": 77889,
+    "normalized_sha256": "3c095893a1656ef96c3d7b039f4291e0f320363d9ddf6e8c81b953308c9e1893"
+  },
+  "sections": {
+    "preamble": {"normalized_start": 0, "normalized_sha256": "dbf951323f5a0cd6190dfce3c6ad91d1c233876aec3d991db84dcc6972ea298e"},
+    "abstract": {"normalized_start": 310, "normalized_sha256": "0a4ba85e3474c68c0c5eff4d276e39f4f67b279aaf3652ef9a3388a8ce10aff4"},
+    "related": {"normalized_start": 1559, "normalized_sha256": "7691d5ff25907dc0ea8c5ec80cbfc23ca1a938f74ae4c7ffd82659d981f9986d"},
+    "classification": {"normalized_start": 1730, "normalized_sha256": "11b4b50fcfb4acee83b89d1e841b4170a7ca08e4c62ad858bba9f6a05b97a7eb"},
+    "background": {"normalized_start": 1868, "normalized_sha256": "c136652242a92376436ee9ddbee105b76b687a989c6c6dcb2d9f9b9f2ef1f742"},
+    "brief": {"normalized_start": 9661, "normalized_sha256": "64c14a71bd427c1332f0d47525a0fa41577e3f3964c4b02f750a133b8c419c72"},
+    "detailed": {"normalized_start": 13003, "normalized_sha256": "d026800381ea86384be0768720834ab015676c0880bb7778ad901803c3e61d76"},
+    "claims": {"normalized_start": 69883, "normalized_sha256": "0d8e96059013e2f69d57e4d04390c994adb22a18be28e922bf3937b7f6b4d124"}
+  },
+  "paragraph_spans": [
+    {"role": "background_summary", "paragraph_range": [1, 9], "paragraph_count": 9, "payload_sha256": "a519b56bd6869b244f797308f8d3a8a2de1fcac875f43d303e9197d2baa62b2f"},
+    {"role": "brief_drawings", "paragraph_range": [10, 33], "paragraph_count": 24, "payload_sha256": "46d509e30fa8d749198ca0f9215df1b0f31bc7998a35f720d2c970a4df94039f"},
+    {"role": "detailed_description", "paragraph_range": [34, 113], "paragraph_count": 80, "payload_sha256": "14c1545381fe9ab19294f2c402a76c051536572341c6de275bda35cf7313b3b3"},
+    {"role": "general_detailed_disclosure", "paragraph_range": [34, 65], "payload_sha256": "46df5c5afd45e695c3e9b31df2e1e15eb30c810ed8ce83675abf7837596d610d"},
+    {"role": "source_item_1", "paragraph_range": [66, 72], "payload_sha256": "867adeacbd4f457b1c937f9965cd9d61878cb60c813b484dc68cfadd0789db61"},
+    {"role": "source_item_2", "paragraph_range": [73, 78], "payload_sha256": "67d158bc2ae1b44737f8aa007086f048837dbe3a0dd0a9ef9cc016e0069a1fda"},
+    {"role": "source_item_3", "paragraph_range": [79, 83], "payload_sha256": "e66550bd7fc922555b7c006bc617debbaa89b8ec476d0d493b5922f1b281c7fa"},
+    {"role": "source_item_4", "paragraph_range": [84, 89], "payload_sha256": "543058ab7b414f32510401f4dd15224d8942d75046b7e94a235234ff7c792f4b"},
+    {"role": "source_item_5", "paragraph_range": [90, 95], "payload_sha256": "403985b1ba4139750ee7256de2bb3c3d7ecf68b21351a9b7c85ebf7acf7282da"},
+    {"role": "source_item_6", "paragraph_range": [96, 104], "payload_sha256": "7adc04c1cde57409d460398615ee5915db30e5b4679fe1ba16085004768da7bf"},
+    {"role": "source_item_7", "paragraph_range": [105, 108], "payload_sha256": "1cd36aa699c40267edd495f39072366b916ab93506553d51523d2289c41f0686"},
+    {"role": "source_item_8", "paragraph_range": [109, 112], "payload_sha256": "1d1a0abc36a8eb1d0d2fdf78d96fd542ab850d51231079f830b081f85e60da08"},
+    {"role": "closing", "paragraph_range": [113, 113], "payload_sha256": "2e6334cdddb72e7c8008f3d0264a80653e2b6ce0c7f1a318d69966027f392282"}
+  ],
+  "denominator": {
+    "background_summary_paragraphs": 9,
+    "brief_drawing_paragraphs": 24,
+    "detailed_description_paragraphs": 80,
+    "description_paragraphs_total": 104,
+    "numbered_paragraphs_total": 113,
+    "claims": 24,
+    "independent_claims": 3,
+    "source_tables": 5,
+    "mathml_objects": 13,
+    "figref_tags": 118,
+    "declared_figure_panels": 23,
+    "drawing_sheets": 23,
+    "source_items": 8,
+    "ordered_optical_prescriptions": 0
+  },
+  "claims": {
+    "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    "independent_numbers": [1, 8, 15],
+    "dependent_camera_module_claim": 23,
+    "dependent_electronic_device_claim": 24,
+    "source_typography_repaired": false
+  },
+  "figures": {
+    "panels": ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "6D", "6E", "7", "8A", "8B", "8C"],
+    "pdf_page_range": [2, 24]
+  },
+  "tables_and_math": {
+    "table_numbers": [1, 2, 3, 4, 5],
+    "table_block_sha256": [
+      "2f337354e829c4b9e0feaf7ede2a54f3305f630ae84ba701b76073051d626c99",
+      "dcc243315c3b2798b54b20a1e1afb0d2ecb7fe39e387ce66580039c187b5c690",
+      "f4339e9f96f301c91449768ce5f3a1da6ba58cf8715466498607144f23b7db51",
+      "0f434a427f88301a3f9de455e985d7158f21ccea0740f0847bead7822b4d345d",
+      "eced4c937897ae1c38ccc27915e1650353b85c68674e8d55f43bbdf7d832d4d5"
+    ],
+    "formal_table_sha256": [
+      "f0ed38fd3b746a1ab98e50f45c954ca382527c653cd7e7879bd18e75f1923c41",
+      "de3ca320b46feb8029d28d2f93234fe6ff4b7b54472af582f5c272e9bfa9ae5f",
+      "35e8ddf3226f88b9bf5d646e36fdf2c8d9276da58887a598fbd22e0992527260",
+      "731c304913f137d43d3ae9a7b65e4ab2c6252bb6df207eb4862884563aed612b",
+      "a6f5b4935726ffdbc5725b1e7300543608101d62068c588c1016fd526ecee19f"
+    ],
+    "ordered_math_object_sha256": [
+      "0586246fe64a2635dc3fd5f1ec9ee639f7bf6b57e1e95368ec34077f22e3669a",
+      "7f34905fe8e4a9a20b0de6569f9fd1c43a320830c57c34a1e9a2987b3ee73749",
+      "ff51df64e72e8039e9b43dd3b2f31e7e6bdaf46ccd14c7c011f04968a8ba292d",
+      "55dda04d4d2858db823ab873266d6b8698766d7b702f3185dde14a4963ca4ca9",
+      "48f8759b744701083a2ee81999c99842c3dde0e8ff00691a53fcb89d591e427b",
+      "dbf09f9410018dd05a195d29b576c6ba43b9e67e7b486a65e4e2e74338a67cbd",
+      "c3d3392863ae4dbbe02d14334b8aa9e2e51a78f04902a5a799242f6eaa2557d5",
+      "655425f8bdc46f7063a7688f5e86ce3f560758794d1fc4e33de3648a93409bf9",
+      "ea9674067d15449b85f6208a991569e8321abe27a72e70d5985b1f1462a11367",
+      "8844fa85bd5e58a888e6edcc7b6b112c7f12fd4efea460aa6c0bbed180dd3251",
+      "e42f402e2b9b79d5949ae4a9336c38186f496f363c95dcba55a707e04523e3da",
+      "196ba0e4d30d3715c55bcf23c26be713ab922d0ab47bf3e25f74464a6cfa77cf",
+      "fdd4eeb4057c2de84f942bd424838d76491498f62dd4bc4a9757019b45a91db2"
+    ],
+    "mechanical_only": true,
+    "optical_surface_rows": 0,
+    "optical_asphere_coefficient_cells": 0
+  },
+  "source_items": [
+    {"number": 1, "paragraph_range": [66, 72], "figures": ["1A", "1B", "1C"], "tables": [1], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"},
+    {"number": 2, "paragraph_range": [73, 78], "figures": ["2A", "2B", "2C"], "tables": [2], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"},
+    {"number": 3, "paragraph_range": [79, 83], "figures": ["3A", "3B"], "tables": [3], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"},
+    {"number": 4, "paragraph_range": [84, 89], "figures": ["4A", "4B", "4C"], "tables": [4], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"},
+    {"number": 5, "paragraph_range": [90, 95], "figures": ["5A", "5B", "5C"], "tables": [5], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"},
+    {"number": 6, "paragraph_range": [96, 104], "figures": ["6A", "6B", "6C", "6D", "6E"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"},
+    {"number": 7, "paragraph_range": [105, 108], "figures": ["7"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"},
+    {"number": 8, "paragraph_range": [109, 112], "figures": ["8A", "8B", "8C"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.vehicle_camera_coverage_wrapper_only"}
+  ],
+  "official_pdf": {
+    "download_1": {"path": ".planning/quick/260721-patent-generic-family-87845869/source-review/US-20260086440-A1-official-1.pdf", "bytes": 1824963, "sha256": "d42d77e2510ba673440fb613142d96b74d703ce3d97478028d867cbcaecdaf28"},
+    "download_2": {"path": ".planning/quick/260721-patent-generic-family-87845869/source-review/US-20260086440-A1-official-2.pdf", "bytes": 1824963, "sha256": "bdde83fa62ea9676ae7a2bf6634b232deb8bf76258cb9225ef15c3be6097b80b"},
+    "pinned_download_1": {"path": "data/patent-lake/uspto-ppubs-pdf/d42d77e2510ba673/US-20260086440-A1.pdf", "bytes": 1824963, "sha256": "d42d77e2510ba673440fb613142d96b74d703ce3d97478028d867cbcaecdaf28"},
+    "page_count": 36,
+    "text_layer_characters": 0,
+    "embedded_page_mode": "1-bit",
+    "narrow_raster_page_numbers": [35, 36],
+    "raster_set_sha256": "04551deae8306e25a265b7e8ebe07b8963e1d409635ac2e4892a4c1e110b7d13"
+  },
+  "replay": {
+    "attempt_2": {"path": "data/patent-ledger/replay/local-uncovered/results/US-20260086440/attempt-0002/result.json", "bytes": 11551, "sha256": "31745889a120235c6ba80ce3e4ca1ed278d00e9839e0eb54aad958da5197c1e4"},
+    "attempt_3": {"path": "data/patent-ledger/replay/local-uncovered/results/US-20260086440/attempt-0003/result.json", "bytes": 11551, "sha256": "712928423c73304417a13a7bfead9b57a3f26b0be928d1188c691270451f4e06"},
+    "semantic_equal": true,
+    "semantic_sha256": "07fcd0265679bb553d3495ef28a0c2d62de464b8eab0760e015fab72b4cb2bab",
+    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 52278, "sha256": "870f3e8dc9df1d983827474e6dc8f0631d4c9262b042326254559bc17075d86f"},
+    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 54208, "sha256": "26ffe1fdb0dfd1e988d58e5f4ffc32122bd781196af8bae5ce79fa47e4e840b0"},
+    "strict_audit": {"roots_with_results": 619, "expected_roots": 619, "missing_results": 0, "corrupt_results": 0}
+  },
+  "census": {
+    "before": {"path": ".planning/quick/260721-patent-generic-family-87845869/generic-residual-before-42.json", "bytes": 26010, "sha256": "2dc05a2f4e05a97db9157e7ab7aa2531972a800490e8ed28c2ab1b7d61b12145"},
+    "after_1": {"path": ".planning/quick/260721-patent-generic-family-87845869/generic-residual-after-1.json", "bytes": 25371, "sha256": "3152b8408136095f48e76ae8f3804685856792871008f9468387724944dadfdd"},
+    "after_2": {"path": ".planning/quick/260721-patent-generic-family-87845869/generic-residual-after-2.json", "bytes": 25371, "sha256": "3152b8408136095f48e76ae8f3804685856792871008f9468387724944dadfdd"},
+    "before_roots": 42,
+    "after_roots": 41,
+    "result_set_sha256": "e2a1e5960a20d5cbdc26597ed1bc42d8689f1266f9f99f15e1803b25f8c0da64"
+  },
+  "supporting_artifacts": {
+    "source_audit": {"path": ".planning/quick/260721-patent-generic-family-87845869/family-87845869-source-audit.md", "bytes": 4541, "sha256": "9857fff1e383542f3b4c6c944e2f510717dedc1f493441d6440155e8c419e8fb"},
+    "raster_audit": {"path": ".planning/quick/260721-patent-generic-family-87845869/family-87845869-raster-audit.json", "bytes": 11969, "sha256": "3eac849369a9f4d58a7030b8e53262695eb98071b26dc315fe87f6e57c1b5157"},
+    "source_lineage": {"path": ".planning/quick/260721-patent-generic-family-87845869/family-87845869-external-family-members.json", "bytes": 2530, "sha256": "f24ad3fcda2cbd378493a35e3bc2c5a2e7265e6e30e4ee33b84640c4b71e07f5"},
+    "denominator": {"path": ".planning/quick/260721-patent-generic-family-87845869/family-87845869-denominator.json", "bytes": 8272, "sha256": "97a2ff5538d5e8cbd4b986ed0f6567a8a975b74bab232bcbe906be74ba92f80e"},
+    "replay_determinism": {"path": ".planning/quick/260721-patent-generic-family-87845869/family-87845869-replay-determinism.json", "bytes": 1549, "sha256": "bb02fa2413f94cf15409264b0179fe29f2f13cae04d1f81d581e5d25192437a6"},
+    "queue_after": {"path": ".planning/quick/260721-patent-generic-family-87845869/queue-after.json", "bytes": 1343, "sha256": "e636714789cc5810d4c27b4ca19652f6ba626b1d8587f03bc8cda27a686f0824"},
+    "roots": {"path": ".planning/quick/260721-patent-generic-family-87845869/roots.txt", "bytes": 15, "sha256": "a7e05f17929131c672c123ff6328fad7d9bec15d7e00759f21c5f625fe80326a"}
+  },
+  "review_policy": {
+    "source_typography_repaired": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "image_enhancement_used": false,
+    "drawing_geometry_measured": false,
+    "numeric_transcription_from_raster": false,
+    "ocr_repair_used": false,
+    "raster_inference_used": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "next_exact_group": {
+    "family_id": "95825866",
+    "root_ids": ["US-20260079328"],
+    "publication_ids": ["US-20260079328-A1"]
+  },
+  "saturation_complete": false
+}

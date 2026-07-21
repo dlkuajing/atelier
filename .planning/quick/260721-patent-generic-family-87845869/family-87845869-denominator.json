@@ -1,0 +1,211 @@
+{
+  "schema_version": "patent-family-source-denominator/v1",
+  "family_id": "87845869",
+  "root_id": "US-20260086440",
+  "publication_id": "US-20260086440-A1",
+  "application_number": "19/408546",
+  "source_bound_lineage": {
+    "family_id_printed": "87845869",
+    "application_number_printed": "19/408546",
+    "filing_date_printed": "December 04, 2025",
+    "relationships": [
+      {
+        "relationship": "continuation_of",
+        "application_number": "18/454995",
+        "filing_date": "August 24, 2023",
+        "parent_grant_document": "US-12523923",
+        "direct_sources": ["Related U.S. Application Data", "paragraph [0001]"]
+      },
+      {
+        "relationship": "claims_priority_to",
+        "jurisdiction": "TW",
+        "application_number": "112123543",
+        "filing_date": "June 21, 2023",
+        "direct_sources": ["Foreign Application Priority Data", "paragraph [0001]"]
+      },
+      {
+        "relationship": "claims_priority_to",
+        "jurisdiction": "US",
+        "application_number": "63/373557",
+        "filing_date": "August 26, 2022",
+        "direct_sources": ["Related U.S. Application Data", "paragraph [0001]"]
+      }
+    ],
+    "related_publication_numeric_borrowing_used": false
+  },
+  "denominator": {
+    "background_summary_paragraphs": 9,
+    "brief_drawing_paragraphs": 24,
+    "detailed_description_paragraphs": 80,
+    "description_paragraphs_total": 104,
+    "numbered_paragraphs_total": 113,
+    "claims": 24,
+    "independent_claims": 3,
+    "source_tables": 5,
+    "mathml_objects": 13,
+    "figref_tags": 118,
+    "declared_figure_panels": 23,
+    "drawing_sheets": 23,
+    "source_items": 8,
+    "ordered_optical_prescriptions": 0
+  },
+  "claims": {
+    "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    "independent_numbers": [1, 8, 15],
+    "dependent_wrapper_claims": {
+      "23": "camera module containing the light path folding element of claim 15",
+      "24": "electronic device containing the camera module of claim 23"
+    },
+    "claim_only_source_items": 0,
+    "source_typography_notes": [
+      "Official PDF page 36 prints claim 17 as 145 < N ≤ 1.78 with the decimal omitted; it is retained without repair and is not used as lens material data.",
+      "Claim 10 prose names the acute angle a while its printed formula uses alpha; neither token is repaired or converted."
+    ]
+  },
+  "figures": {
+    "panels": ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "6D", "6E", "7", "8A", "8B", "8C"],
+    "official_pdf_pages": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+  },
+  "tables": [
+    {
+      "number": 1,
+      "embodiment": 1,
+      "role": "light-path-folding-element mechanical dimensions and ratios",
+      "symbols": ["H", "h1/H", "h1", "h2/H", "h2", "alpha", "Ls", "D3", "tan theta", "T", "W", "T/W"],
+      "formal_payload_sha256": "f0ed38fd3b746a1ab98e50f45c954ca382527c653cd7e7879bd18e75f1923c41"
+    },
+    {
+      "number": 2,
+      "embodiment": 2,
+      "role": "light-path-folding-element mechanical dimensions and ratios",
+      "symbols": ["H", "h1/H", "h1", "h2/H", "h2", "alpha", "Ls", "D3", "tan theta"],
+      "formal_payload_sha256": "de3ca320b46feb8029d28d2f93234fe6ff4b7b54472af582f5c272e9bfa9ae5f"
+    },
+    {
+      "number": 3,
+      "embodiment": 3,
+      "role": "light-path-folding-element mechanical dimensions and ratios",
+      "symbols": ["H", "h/H", "h", "alpha", "T", "W", "T/W"],
+      "formal_payload_sha256": "35e8ddf3226f88b9bf5d646e36fdf2c8d9276da58887a598fbd22e0992527260"
+    },
+    {
+      "number": 4,
+      "embodiment": 4,
+      "role": "light-path-folding-element mechanical dimensions and ratios",
+      "symbols": ["H", "h1/H", "h1", "h2/H", "h2", "alpha", "Ls", "D3", "tan theta"],
+      "formal_payload_sha256": "731c304913f137d43d3ae9a7b65e4ab2c6252bb6df207eb4862884563aed612b"
+    },
+    {
+      "number": 5,
+      "embodiment": 5,
+      "role": "light-path-folding-element mechanical dimensions and ratios",
+      "symbols": ["H", "tan theta", "h1", "h1/H", "h2", "h2/H", "Ls", "alpha", "T1", "W1", "T1/W1", "T2", "W2", "T2/W2"],
+      "formal_payload_sha256": "a6f5b4935726ffdbc5725b1e7300543608101d62068c588c1016fd526ecee19f"
+    }
+  ],
+  "source_items": [
+    {
+      "number": 1,
+      "label": "light-path-folding camera-module 1st embodiment",
+      "paragraph_range": [66, 72],
+      "figures": ["1A", "1B", "1C"],
+      "tables": [1],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"
+    },
+    {
+      "number": 2,
+      "label": "light-path-folding camera-module 2nd embodiment",
+      "paragraph_range": [73, 78],
+      "figures": ["2A", "2B", "2C"],
+      "tables": [2],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"
+    },
+    {
+      "number": 3,
+      "label": "light-path-folding camera-module 3rd embodiment",
+      "paragraph_range": [79, 83],
+      "figures": ["3A", "3B"],
+      "tables": [3],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"
+    },
+    {
+      "number": 4,
+      "label": "light-path-folding camera-module 4th embodiment",
+      "paragraph_range": [84, 89],
+      "figures": ["4A", "4B", "4C"],
+      "tables": [4],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"
+    },
+    {
+      "number": 5,
+      "label": "light-path-folding camera-module 5th embodiment",
+      "paragraph_range": [90, 95],
+      "figures": ["5A", "5B", "5C"],
+      "tables": [5],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"
+    },
+    {
+      "number": 6,
+      "label": "multi-camera electronic-device 6th embodiment",
+      "paragraph_range": [96, 104],
+      "figures": ["6A", "6B", "6C", "6D", "6E"],
+      "tables": [],
+      "source_note": "Paragraph [0104] uses various focal lengths qualitatively and publishes no numeric focal length.",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 7,
+      "label": "multi-camera electronic-device 7th embodiment",
+      "paragraph_range": [105, 108],
+      "figures": ["7"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 8,
+      "label": "vehicle-camera 8th embodiment",
+      "paragraph_range": [109, 112],
+      "figures": ["8A", "8B", "8C"],
+      "tables": [],
+      "source_note": "Paragraph [0110] publishes 40 degrees < theta < 90 degrees as vehicle coverage geometry, not field metadata bound to a constituent lens prescription.",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_camera_coverage_wrapper_only"
+    }
+  ],
+  "published_only": {
+    "mechanical_dimension_symbols": ["H", "h", "h1", "h2", "Ls", "D3", "alpha", "theta", "T", "W"],
+    "light_path_folding_element_refractive_index_phrase_count": 17,
+    "qualitative_focal_length_phrase_count": 1,
+    "vehicle_coverage_visual_angle_phrase_count": 3,
+    "generic_imaging_lens_assembly_phrase_count": 46
+  },
+  "not_published": [
+    "ordered optical surface sequence",
+    "surface radii",
+    "axial optical spacings",
+    "lens-by-lens material sequence or Abbe numbers",
+    "asphere coefficients",
+    "aperture-stop coordinate",
+    "numeric focal length",
+    "image height",
+    "F-number",
+    "lens field-of-view metadata"
+  ],
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}

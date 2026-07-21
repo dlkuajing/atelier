@@ -608,6 +608,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_largan_light_path_folding_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_multi_reflection_five_example_missing_metadata_attempts(
             raw_text,
@@ -78177,6 +78183,741 @@ def _classify_fujinon_restoration_imaging_attempts(
             ),
         )
         for item in _FUJINON_RESTORATION_ITEMS
+    ]
+
+
+_LARGAN_LIGHT_PATH_FOLDING_TITLE_PATTERN = re.compile(
+    r"LIGHT\s+PATH\s+FOLDING\s+ELEMENT,\s*CAMERA\s+MODULE\s+AND\s+"
+    r"ELECTRONIC\s+DEVICE",
+    re.IGNORECASE,
+)
+_LARGAN_LIGHT_PATH_FOLDING_MECHANICAL_REASON = (
+    "confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only"
+)
+_LARGAN_LIGHT_PATH_FOLDING_DEVICE_REASON = (
+    "confirmed_no_prescription.electronic_device_wrapper_only"
+)
+_LARGAN_LIGHT_PATH_FOLDING_VEHICLE_REASON = (
+    "confirmed_no_prescription.vehicle_camera_coverage_wrapper_only"
+)
+_LARGAN_LIGHT_PATH_FOLDING_FIGURE_PANELS = (
+    "1A",
+    "1B",
+    "1C",
+    "2A",
+    "2B",
+    "2C",
+    "3A",
+    "3B",
+    "4A",
+    "4B",
+    "4C",
+    "5A",
+    "5B",
+    "5C",
+    "6A",
+    "6B",
+    "6C",
+    "6D",
+    "6E",
+    "7",
+    "8A",
+    "8B",
+    "8C",
+)
+_LARGAN_LIGHT_PATH_FOLDING_ITEMS = (
+    {
+        "number": 1,
+        "label": "Largan light-path-folding camera-module 1st embodiment",
+        "marker": "1st Embodiment [0066]",
+        "paragraph_range": (66, 72),
+        "figures": ("1A", "1B", "1C"),
+        "tables": (1,),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_MECHANICAL_REASON,
+    },
+    {
+        "number": 2,
+        "label": "Largan light-path-folding camera-module 2nd embodiment",
+        "marker": "2nd Embodiment [0073]",
+        "paragraph_range": (73, 78),
+        "figures": ("2A", "2B", "2C"),
+        "tables": (2,),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_MECHANICAL_REASON,
+    },
+    {
+        "number": 3,
+        "label": "Largan light-path-folding camera-module 3rd embodiment",
+        "marker": "3rd Embodiment [0079]",
+        "paragraph_range": (79, 83),
+        "figures": ("3A", "3B"),
+        "tables": (3,),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_MECHANICAL_REASON,
+    },
+    {
+        "number": 4,
+        "label": "Largan light-path-folding camera-module 4th embodiment",
+        "marker": "4th Embodiment [0084]",
+        "paragraph_range": (84, 89),
+        "figures": ("4A", "4B", "4C"),
+        "tables": (4,),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_MECHANICAL_REASON,
+    },
+    {
+        "number": 5,
+        "label": "Largan light-path-folding camera-module 5th embodiment",
+        "marker": "5th Embodiment [0090]",
+        "paragraph_range": (90, 95),
+        "figures": ("5A", "5B", "5C"),
+        "tables": (5,),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_MECHANICAL_REASON,
+    },
+    {
+        "number": 6,
+        "label": "Largan multi-camera electronic-device 6th embodiment",
+        "marker": "6th Embodiment [0096]",
+        "paragraph_range": (96, 104),
+        "figures": ("6A", "6B", "6C", "6D", "6E"),
+        "tables": (),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_DEVICE_REASON,
+    },
+    {
+        "number": 7,
+        "label": "Largan multi-camera electronic-device 7th embodiment",
+        "marker": "7th Embodiment [0105]",
+        "paragraph_range": (105, 108),
+        "figures": ("7",),
+        "tables": (),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_DEVICE_REASON,
+    },
+    {
+        "number": 8,
+        "label": "Largan vehicle-camera 8th embodiment",
+        "marker": "8th Embodiment [0109]",
+        "paragraph_range": (109, 112),
+        "figures": ("8A", "8B", "8C"),
+        "tables": (),
+        "reason_code": _LARGAN_LIGHT_PATH_FOLDING_VEHICLE_REASON,
+    },
+)
+_LARGAN_LIGHT_PATH_FOLDING_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260086440-A1": {
+        "family_id": "87845869",
+        "application_number": "19/408546",
+        "raw_document_sha256": ("a6a2c63f2323dcaae2fba1555d3e73d16649ca6de8c2292928c2627c582be01a"),
+        "normalized_text_sha256": (
+            "3c095893a1656ef96c3d7b039f4291e0f320363d9ddf6e8c81b953308c9e1893"
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication 20260086440 Kind Code A1": 1,
+            "Publication Date March 26, 2026": 1,
+            (
+                "Inventors: LIU; Ssu-Hsin (Taichung City, TW), TUNG; Wei-Che "
+                "(Taichung City, TW), CHANG; Lin-An (Taichung City, TW), CHOU; "
+                "Ming-Ta (Taichung City, TW)"
+            ): 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 87845869": 1,
+            "Appl. No.: 19/408546": 1,
+            "Filed: December 04, 2025": 1,
+            "TW 112123543 Jun. 21, 2023": 1,
+            "parent US continuation 18454995 20230824": 1,
+            "parent-grant-document US 12523923": 1,
+            "us-provisional-application US 63373557 20220826": 1,
+            (
+                "This application is a continuation of U.S. application Ser. No. "
+                "18/454,995, filed Aug. 24, 2023"
+            ): 1,
+            "Taiwan Application Serial Number 112123543, filed Jun. 21, 2023": 1,
+            "Provisional Application Ser. No. 63/373,557, filed Aug. 26, 2022": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260086440-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract A light path folding element includes",
+            "related": ("Related U.S. Application Data parent US continuation 18454995"),
+            "classification": "Publication Classification Int. Cl.: G03B17/17",
+            "background": "Background/Summary RELATED APPLICATIONS [0001]",
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0010]",
+            "detailed": "DETAILED DESCRIPTION [0034]",
+            "claims": "Claims 1 . A light path folding element, comprising:",
+        },
+        "section_sha256": {
+            "preamble": "dbf951323f5a0cd6190dfce3c6ad91d1c233876aec3d991db84dcc6972ea298e",
+            "abstract": "0a4ba85e3474c68c0c5eff4d276e39f4f67b279aaf3652ef9a3388a8ce10aff4",
+            "related": "7691d5ff25907dc0ea8c5ec80cbfc23ca1a938f74ae4c7ffd82659d981f9986d",
+            "classification": "11b4b50fcfb4acee83b89d1e841b4170a7ca08e4c62ad858bba9f6a05b97a7eb",
+            "background": "c136652242a92376436ee9ddbee105b76b687a989c6c6dcb2d9f9b9f2ef1f742",
+            "brief": "64c14a71bd427c1332f0d47525a0fa41577e3f3964c4b02f750a133b8c419c72",
+            "detailed": "d026800381ea86384be0768720834ab015676c0880bb7778ad901803c3e61d76",
+            "claims": "0d8e96059013e2f69d57e4d04390c994adb22a18be28e922bf3937b7f6b4d124",
+        },
+        "paragraph_numbers": {
+            "background": tuple(range(1, 10)),
+            "brief": tuple(range(10, 34)),
+            "detailed": tuple(range(34, 114)),
+        },
+        "paragraph_payload_sha256": {
+            "background": "a519b56bd6869b244f797308f8d3a8a2de1fcac875f43d303e9197d2baa62b2f",
+            "brief": "46d509e30fa8d749198ca0f9215df1b0f31bc7998a35f720d2c970a4df94039f",
+            "detailed": "14c1545381fe9ab19294f2c402a76c051536572341c6de275bda35cf7313b3b3",
+        },
+        "general_detailed_sha256": (
+            "46df5c5afd45e695c3e9b31df2e1e15eb30c810ed8ce83675abf7837596d610d"
+        ),
+        "item_span_sha256": _samsung_zoom_sha256_lines("""
+            867adeacbd4f457b1c937f9965cd9d61878cb60c813b484dc68cfadd0789db61
+            67d158bc2ae1b44737f8aa007086f048837dbe3a0dd0a9ef9cc016e0069a1fda
+            e66550bd7fc922555b7c006bc617debbaa89b8ec476d0d493b5922f1b281c7fa
+            543058ab7b414f32510401f4dd15224d8942d75046b7e94a235234ff7c792f4b
+            403985b1ba4139750ee7256de2bb3c3d7ecf68b21351a9b7c85ebf7acf7282da
+            7adc04c1cde57409d460398615ee5915db30e5b4679fe1ba16085004768da7bf
+            1cd36aa699c40267edd495f39072366b916ab93506553d51523d2289c41f0686
+            1d1a0abc36a8eb1d0d2fdf78d96fd542ab850d51231079f830b081f85e60da08
+        """),
+        "closing_sha256": ("2e6334cdddb72e7c8008f3d0264a80653e2b6ce0c7f1a318d69966027f392282"),
+        "table_block_sha256": _samsung_zoom_sha256_lines("""
+            2f337354e829c4b9e0feaf7ede2a54f3305f630ae84ba701b76073051d626c99
+            dcc243315c3b2798b54b20a1e1afb0d2ecb7fe39e387ce66580039c187b5c690
+            f4339e9f96f301c91449768ce5f3a1da6ba58cf8715466498607144f23b7db51
+            0f434a427f88301a3f9de455e985d7158f21ccea0740f0847bead7822b4d345d
+            eced4c937897ae1c38ccc27915e1650353b85c68674e8d55f43bbdf7d832d4d5
+        """),
+        "formal_table_sha256": _samsung_zoom_sha256_lines("""
+            f0ed38fd3b746a1ab98e50f45c954ca382527c653cd7e7879bd18e75f1923c41
+            de3ca320b46feb8029d28d2f93234fe6ff4b7b54472af582f5c272e9bfa9ae5f
+            35e8ddf3226f88b9bf5d646e36fdf2c8d9276da58887a598fbd22e0992527260
+            731c304913f137d43d3ae9a7b65e4ab2c6252bb6df207eb4862884563aed612b
+            a6f5b4935726ffdbc5725b1e7300543608101d62068c588c1016fd526ecee19f
+        """),
+        "formal_table_word_counts": (37, 29, 24, 29, 42),
+        "ordered_math_object_sha256": _samsung_zoom_sha256_lines("""
+            0586246fe64a2635dc3fd5f1ec9ee639f7bf6b57e1e95368ec34077f22e3669a
+            7f34905fe8e4a9a20b0de6569f9fd1c43a320830c57c34a1e9a2987b3ee73749
+            ff51df64e72e8039e9b43dd3b2f31e7e6bdaf46ccd14c7c011f04968a8ba292d
+            55dda04d4d2858db823ab873266d6b8698766d7b702f3185dde14a4963ca4ca9
+            48f8759b744701083a2ee81999c99842c3dde0e8ff00691a53fcb89d591e427b
+            dbf09f9410018dd05a195d29b576c6ba43b9e67e7b486a65e4e2e74338a67cbd
+            c3d3392863ae4dbbe02d14334b8aa9e2e51a78f04902a5a799242f6eaa2557d5
+            655425f8bdc46f7063a7688f5e86ce3f560758794d1fc4e33de3648a93409bf9
+            ea9674067d15449b85f6208a991569e8321abe27a72e70d5985b1f1462a11367
+            8844fa85bd5e58a888e6edcc7b6b112c7f12fd4efea460aa6c0bbed180dd3251
+            e42f402e2b9b79d5949ae4a9336c38186f496f363c95dcba55a707e04523e3da
+            196ba0e4d30d3715c55bcf23c26be713ab922d0ab47bf3e25f74464a6cfa77cf
+            fdd4eeb4057c2de84f942bd424838d76491498f62dd4bc4a9757019b45a91db2
+        """),
+        "claim_numbers": tuple(range(1, 25)),
+        "independent_claim_numbers": (1, 8, 15),
+        "claim_sha256": _samsung_zoom_sha256_lines("""
+            abc538070f4d20c56c2b3a7dd5c763f45fa02dfd8ed9ef7f18efb2461db1d38a
+            9ef7432bb540f1e3b09f4b45bb47aaa07b75244ed250b917e14cd8167974901e
+            d221b89cf1d2967eac3b5b17fd02e5e563ed272fdc4178ae03c56a6819f5f256
+            7eb6900e4a14c9aa74148b652285a5f594512b4b0c19952e7eedbde03ab541a2
+            1e8413a8fb0bcef934d267f50006bfa121f9f0bbf3871e6d9eacd4ba528b7bfc
+            da55451d60128eadb68cd9324e3dad184ddb556ea38974c57d0807f66d62c345
+            f56b4cfa478352b1ddf367e541b824c749c0c322b65adf911120c551e4430962
+            0299a659c7a31879ba8ee15329c84f26c7c5af1774588b378e865ed47e694786
+            f2d34c40355c4514271f9ceedf88502919625be26ecaceb95e49a9bab9282e3d
+            d85050910155145c2f1772fc419e70f4a851e368b3175cfd1b97f7e87bab219f
+            7e1f1571a478155959146572195250b77535a03e4cb36cb3443fe3aa64ddc7a9
+            2b26f239f4a8536fefb7e57eff5708cd81c3edb772ea47c44c4f84e8afab568f
+            428f223293e45e6e33f9dc4afa9aeb59ebe692ddc1791ec374040518b05cf930
+            d7da0696f7cc5abea82ca8fcbb7e0d7ac19e5c6be0d5d8a19df6e7c04ab1b06f
+            0543d21f13d8affcf9a4726079006b3d984537ba2893e59af2d33279144b2923
+            2225998bc38575f53a209b3aa1965f2e2204c4f3db1ba06c49a3c1a0d6cfc474
+            db3cd87fd0546dba9f98a946925055fc59deb8c6d66c8a6d858eec9548ba1086
+            8819d3940791bded05f2e26981f2680e05f3c8346b50dde90cb983a714093ae4
+            a3f13354359fc20fc4d1121b3e433bbfdbb9def853f5ed1ca70d5c5e447c8774
+            cfc9e186f6159b90ec5cd7dc12618a27ee5be53238d29f676e99501fcc59a790
+            9ee0e96e48ff0fa9eadcb69516e6c6d45af58ebbd3bc7da82e61086e181b2645
+            5bdd80fe3e5f6596ca77aa8bca62fe17a707482b1e243c4d90ecf44f225913c1
+            2c5246df76447ebe48ce4648c8fbc79652c926bae923ef7d9f54e3619dbf206c
+            dfea49355e43265dc2a9c35425773ccb16648e6c6f01eba4a3b25591796d430f
+        """),
+        "figure_panels": _LARGAN_LIGHT_PATH_FOLDING_FIGURE_PANELS,
+        "figref_count": 118,
+        "phrase_counts": {
+            "focal length": 1,
+            "various focal lengths": 1,
+            "visual angle": 3,
+            "refractive index": 17,
+            "lens element": 5,
+            "optical element": 16,
+            "imaging lens assembly": 46,
+            "camera module": 70,
+            "light path folding element": 223,
+        },
+        "official_pdf_captures": (
+            {
+                "path": ("data/patent-lake/uspto-ppubs-pdf/d42d77e2510ba673/US-20260086440-A1.pdf"),
+                "bytes": 1_824_963,
+                "container_sha256": (
+                    "d42d77e2510ba673440fb613142d96b74d703ce3d97478028d867cbcaecdaf28"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260721-patent-generic-family-87845869/"
+                    "source-review/US-20260086440-A1-official-2.pdf"
+                ),
+                "bytes": 1_824_963,
+                "container_sha256": (
+                    "bdde83fa62ea9676ae7a2bf6634b232deb8bf76258cb9225ef15c3be6097b80b"
+                ),
+            },
+        ),
+        "pdf_page_count": 36,
+        "pdf_common_raster_dimensions": (2560, 3300),
+        "pdf_narrow_raster_dimensions": (2550, 3300),
+        "pdf_narrow_raster_page_numbers": (35, 36),
+        "pdf_page_raster_sha256": _samsung_zoom_sha256_lines("""
+            4d1f9b0db65ffcb069a39f7b6170bd1b7597735a3f24dce87942dd48fd5ef9a7
+            20ee3690e71c31fbe2e64ed41bec547d13f75c57af83f8851de3133791cc63c5
+            3b858a14c5150da01a4b78dc10139b68644d60d570687053a29c6f6f51082849
+            f3150af050fc5a4331d37349d5b5b064cd69ec2dec66aa61554caa865d5ad678
+            a99306fb99456d2c2bbbd504788139718fac4f768b2a598d346bd0ad11c095b9
+            ae1b895e92f2fe84448c7414c34f4be03c4b44f4475a33e80aeb89df6f09ee66
+            965723510cbc3790725058e54561a152451c92c32051bdd5b7c87ea1b6a52ade
+            56e1f08197620779bd7de7de2b64df22086451ab2b1d24df3db2d44c81b515f9
+            dd2e832f7ab629a63347da2a8045d40ac5384255578e292799624ff689bb8ac8
+            d4e4e96aed186daf41e716b6843e32a4be6bb1677ef46c3d99f8b3f83ad216eb
+            fccb2feccb5c7965c17074dc36271a19e7b089c6f0ef7dd03a523de31b8ec907
+            d0b6fada68e273c4df9958f60c236d0260f1d629ccff63deebfc29d73decb715
+            58f15fdbc7473507e83ee2b83003c1c7128f2ee7b7984d9b7e4e510efdf77bb1
+            93acc561773683670e7feba4f21420eeeab1393976bab777897db8946afcf05f
+            44f6f5194e9dd6f6def35cc2778d3440b56e743b7d447bfc3cab6cee6a23646d
+            9012abc457b63fefa5f4719501cded78bd28dcf2d9b7c245b43a7fa044065f36
+            ee2936e6c8e515eaa29c3ff90cbbf1f226fa91f6fd80733e684205360b641889
+            6b1ceb5c2c664e7a0c08df9e236b3cc66d0e4201010d62acf506a555c02685cc
+            071d62ded305f749a1eb20f68f91dfd011f8b87b056c4623b475e26befe24cfd
+            68057b94dcccd6f6ad1b5e4ccf5c2038c9a4cf680da63b326ba77e901d81f09c
+            087724754f068294b43d2a6621d15f32379c8c8f63634eb2377d6f094c3184f9
+            c0e42d1a63f9eda578e53276b808044167ee18c2646b622199e6fa81741cdde5
+            6964bc749a988bf0dfca2d1486cdfc6ab804f4ae071090ce9ebfdf54d6cd41ce
+            c1bda07d51000dc578d904958c42d3d587679d7fd6a20afb9fb93db863f96949
+            c67ed609d0cdb75b0a0f3cea87244f45993e94d6faa3721e4db5bc4038561598
+            3b3147b4eed83e87bd046c2f63aa0dbf984bd40f0f678d90b2f6e10d0afbb9e9
+            e81c93a91f80543cb58cc6e5cafd44d605cb00f22fdc16243b6dff55b0ed8208
+            7402ef892b7031ee087866caa48997aa78442c6f1432dca6b152753a0e83fec3
+            1a72d41801d5042ccb49054c81543a78d793350903272891a93ee410cb3c5b54
+            a8cb9812520311afe48061e951d927695739ec84abbd079d4588e2be2daaecdf
+            8c80318fbe012bb7ce8e37762cb76666a75098915fba39f20980645904f09029
+            52dba0796bc3283a8c95171e879918bff155c5a98a075219f89ec5b0e4f9465c
+            586939e2634a4d02c5ad97d6322449743f73aa597fa18684455ca6373f1a6503
+            357c42212b7f84f4f8cebce60dcc7a155198a853d0008005cc4626d0bcd12b01
+            0758b1308d5e8e7705de85f51dd6071dfd33b5cb5123f1cfbb8e6e6774e157cc
+            e0615e7c5caf70e6ddb9f5f7c312bdc5ffea8f4b143b78cd6409357c944a7ff6
+        """),
+        "pdf_raster_set_sha256": (
+            "04551deae8306e25a265b7e8ebe07b8963e1d409635ac2e4892a4c1e110b7d13"
+        ),
+        "drawing_page_numbers": tuple(range(2, 25)),
+        "table_page_numbers": (29, 30, 31, 32, 33),
+        "specification_page_numbers": tuple(range(25, 37)),
+        "claims_page_numbers": (35, 36),
+    }
+}
+
+
+def _largan_light_path_folding_formal_tables(text: str) -> tuple[str, ...]:
+    blocks = _patent_table_blocks(text)
+    if tuple(block.number for block in blocks) != tuple(range(1, 6)):
+        raise PatentParseError("Largan light-path-folding TABLES 1-5 denominator changed")
+    tables = []
+    for block, next_paragraph in zip(blocks, (72, 78, 84, 89, 95), strict=True):
+        table = re.split(
+            rf"\s+\[{next_paragraph:04d}\]\s+",
+            block.text,
+            maxsplit=1,
+        )[0].strip()
+        table = re.sub(
+            r"\s+4th\s+Embodiment\s*\Z",
+            "",
+            table,
+            flags=re.IGNORECASE,
+        ).strip()
+        tables.append(table)
+    return tuple(tables)
+
+
+def _classify_largan_light_path_folding_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify the eight exact Family 87845869 architecture-only items."""
+
+    profile = _LARGAN_LIGHT_PATH_FOLDING_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _LARGAN_LIGHT_PATH_FOLDING_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                f"Largan light-path-folding official raw text hash changed for {patent_id}"
+            )
+        if len(_LARGAN_LIGHT_PATH_FOLDING_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Largan light-path-folding title binding changed")
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                f"Largan light-path-folding normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan light-path-folding identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {name: text.index(marker) for name, marker in section_markers.items()}
+        except ValueError as exc:
+            raise PatentParseError("Largan light-path-folding section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Largan light-path-folding section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(f"Largan light-path-folding {section_name} section changed")
+
+        paragraphs_by_section: dict[str, dict[int, str]] = {}
+        for section_name in ("background", "brief", "detailed"):
+            section = sections[section_name]
+            matches = list(re.finditer(r"(?<!\w)\[(\d{4})\]\s", section))
+            numbers = tuple(int(match.group(1)) for match in matches)
+            if numbers != profile["paragraph_numbers"][section_name]:
+                raise PatentParseError(
+                    f"Largan light-path-folding {section_name} paragraph denominator changed"
+                )
+            paragraphs = {
+                number: section[
+                    match.start() : (
+                        matches[index + 1].start() if index + 1 < len(matches) else len(section)
+                    )
+                ].strip()
+                for index, (number, match) in enumerate(zip(numbers, matches, strict=True))
+            }
+            paragraphs_by_section[section_name] = paragraphs
+            payload = "".join(paragraphs[number] for number in numbers)
+            if (
+                hashlib.sha256(payload.encode("utf-8")).hexdigest()
+                != profile["paragraph_payload_sha256"][section_name]
+            ):
+                raise PatentParseError(
+                    f"Largan light-path-folding {section_name} paragraph payload changed"
+                )
+
+        detailed = sections["detailed"]
+        item_markers = tuple(str(item["marker"]) for item in _LARGAN_LIGHT_PATH_FOLDING_ITEMS)
+        closing_marker = "[0113] The foregoing description"
+        try:
+            item_starts = tuple(detailed.index(marker) for marker in item_markers)
+            closing_start = detailed.index(closing_marker)
+        except ValueError as exc:
+            raise PatentParseError("Largan light-path-folding source-item binding changed") from exc
+        if item_starts != tuple(sorted(item_starts)) or item_starts[-1] >= closing_start:
+            raise PatentParseError("Largan light-path-folding source-item ordering changed")
+        general_detailed = detailed[: item_starts[0]].strip()
+        if (
+            hashlib.sha256(general_detailed.encode("utf-8")).hexdigest()
+            != profile["general_detailed_sha256"]
+        ):
+            raise PatentParseError("Largan light-path-folding general detailed disclosure changed")
+        item_spans = tuple(
+            detailed[
+                item_starts[index] : (
+                    item_starts[index + 1] if index + 1 < len(item_starts) else closing_start
+                )
+            ].strip()
+            for index in range(len(item_starts))
+        )
+        if (
+            tuple(hashlib.sha256(span.encode("utf-8")).hexdigest() for span in item_spans)
+            != profile["item_span_sha256"]
+        ):
+            raise PatentParseError("Largan light-path-folding source-item spans changed")
+        closing = detailed[closing_start:].strip()
+        if hashlib.sha256(closing.encode("utf-8")).hexdigest() != profile["closing_sha256"]:
+            raise PatentParseError("Largan light-path-folding closing paragraph changed")
+        covered_item_paragraphs = {
+            paragraph
+            for item in _LARGAN_LIGHT_PATH_FOLDING_ITEMS
+            for paragraph in range(
+                int(item["paragraph_range"][0]),
+                int(item["paragraph_range"][1]) + 1,
+            )
+        }
+        if covered_item_paragraphs != set(range(66, 113)):
+            raise PatentParseError("Largan light-path-folding item paragraph coverage changed")
+
+        table_blocks = _patent_table_blocks(text)
+        if (
+            tuple(hashlib.sha256(block.text.encode("utf-8")).hexdigest() for block in table_blocks)
+            != profile["table_block_sha256"]
+        ):
+            raise PatentParseError("Largan light-path-folding table blocks changed")
+        formal_tables = _largan_light_path_folding_formal_tables(text)
+        if (
+            tuple(hashlib.sha256(table.encode("utf-8")).hexdigest() for table in formal_tables)
+            != profile["formal_table_sha256"]
+        ):
+            raise PatentParseError("Largan light-path-folding formal tables changed")
+        if (
+            tuple(len(table.split()) for table in formal_tables)
+            != profile["formal_table_word_counts"]
+        ):
+            raise PatentParseError("Largan light-path-folding formal table token counts changed")
+        mapped_tables = {
+            int(table) for item in _LARGAN_LIGHT_PATH_FOLDING_ITEMS for table in item["tables"]
+        }
+        if mapped_tables != set(range(1, 6)):
+            raise PatentParseError("Largan light-path-folding item-to-table coverage changed")
+        table_prescription_markers = (
+            "surface number",
+            "radius of curvature",
+            "curvature radius",
+            "aspheric",
+            "asphere",
+            "Abbe",
+            "focal length",
+            "F-number",
+            "FNO",
+            "image height",
+        )
+        if any(
+            re.search(re.escape(marker), table, re.IGNORECASE) is not None
+            for table in formal_tables
+            for marker in table_prescription_markers
+        ):
+            raise PatentParseError(
+                "Largan light-path-folding mechanical table gained prescription data"
+            )
+
+        declared_figures = tuple(
+            (match.group(1) + match.group(2)).upper()
+            for match in re.finditer(
+                r"FIG\.\s*(\d+)\s*([A-Z]?)\s+(?:is|shows)\b",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != profile["figure_panels"]:
+            raise PatentParseError("Largan light-path-folding figure-panel denominator changed")
+        mapped_figures = {
+            str(figure) for item in _LARGAN_LIGHT_PATH_FOLDING_ITEMS for figure in item["figures"]
+        }
+        if mapped_figures != set(profile["figure_panels"]):
+            raise PatentParseError("Largan light-path-folding item-to-figure coverage changed")
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile["figref_count"]:
+            raise PatentParseError("Largan light-path-folding figref denominator changed")
+        math_objects = tuple(
+            match.group(0)
+            for match in re.finditer(
+                r"<maths\b[^>]*>.*?</maths>",
+                raw_text,
+                re.IGNORECASE | re.DOTALL,
+            )
+        )
+        if (
+            tuple(hashlib.sha256(obj.encode("utf-8")).hexdigest() for obj in math_objects)
+            != profile["ordered_math_object_sha256"]
+        ):
+            raise PatentParseError("Largan light-path-folding ordered MathML objects changed")
+
+        claims = sections["claims"]
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s+\.\s+(?=(?:A|An|The)\s)",
+                claims,
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Largan light-path-folding claim denominator changed")
+        claim_texts = tuple(
+            claims[
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(claims)
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent_claims = tuple(
+            number
+            for number, claim_text in zip(claim_numbers, claim_texts, strict=True)
+            if re.search(r"\bof claim\s+\d+\b", claim_text[:500], re.IGNORECASE) is None
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError("Largan light-path-folding independent claims changed")
+        if (
+            tuple(
+                hashlib.sha256(claim_text.encode("utf-8")).hexdigest() for claim_text in claim_texts
+            )
+            != profile["claim_sha256"]
+        ):
+            raise PatentParseError("Largan light-path-folding individual claim payloads changed")
+        if not (
+            "camera module" in claim_texts[22].lower()
+            and "of claim 15" in claim_texts[22].lower()
+            and "electronic device" in claim_texts[23].lower()
+            and "of claim 23" in claim_texts[23].lower()
+        ):
+            raise PatentParseError("Largan light-path-folding dependent wrapper claims changed")
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan light-path-folding source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        absent_prescription_markers = (
+            "F-number",
+            "FNO",
+            "F/#",
+            "field of view",
+            "FOV",
+            "HFOV",
+            "image height",
+            "radius of curvature",
+            "curvature radius",
+            "aspheric",
+            "asphere",
+            "Abbe",
+            "aperture stop",
+            "surface prescription",
+            "surface number",
+        )
+        for marker in absent_prescription_markers:
+            if re.search(re.escape(marker), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    f"Largan light-path-folding source unexpectedly publishes {marker!r}"
+                )
+
+        narrow_pages = set(profile["pdf_narrow_raster_page_numbers"])
+        for capture in profile["official_pdf_captures"]:
+            pdf_bytes = (ROOT / capture["path"]).read_bytes()
+            if len(pdf_bytes) != capture["bytes"]:
+                raise PatentParseError("Largan light-path-folding official PDF size changed")
+            if hashlib.sha256(pdf_bytes).hexdigest() != capture["container_sha256"]:
+                raise PatentParseError("Largan light-path-folding official PDF hash changed")
+            reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError("Largan light-path-folding official PDF page count changed")
+            page_raster_hashes: list[str] = []
+            text_layer_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Largan light-path-folding PDF page {page_number} contains "
+                        f"{len(images)} rasters; expected one"
+                    )
+                expected_dimensions = (
+                    profile["pdf_narrow_raster_dimensions"]
+                    if page_number in narrow_pages
+                    else profile["pdf_common_raster_dimensions"]
+                )
+                if images[0].image.size != expected_dimensions:
+                    raise PatentParseError(
+                        f"Largan light-path-folding PDF page {page_number} dimensions changed"
+                    )
+                if images[0].image.mode != "1":
+                    raise PatentParseError(
+                        f"Largan light-path-folding PDF page {page_number} "
+                        "is no longer a 1-bit raster"
+                    )
+                page_raster_hashes.append(_canonical_raster_sha256(images[0].data))
+                text_layer_characters += len(page.extract_text() or "")
+            if tuple(page_raster_hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError(
+                    "Largan light-path-folding official PDF page rasters changed"
+                )
+            raster_set_digest = hashlib.sha256(
+                ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+            ).hexdigest()
+            if raster_set_digest != profile["pdf_raster_set_sha256"]:
+                raise PatentParseError("Largan light-path-folding official PDF raster set changed")
+            if text_layer_characters != 0:
+                raise PatentParseError("Largan light-path-folding official PDF gained a text layer")
+        if not (
+            profile["drawing_page_numbers"] == tuple(range(2, 25))
+            and profile["table_page_numbers"] == (29, 30, 31, 32, 33)
+            and profile["specification_page_numbers"] == tuple(range(25, 37))
+            and profile["claims_page_numbers"] == (35, 36)
+        ):
+            raise PatentParseError("Largan light-path-folding official PDF page roles changed")
+    except Exception as exc:  # noqa: BLE001 - retain all eight source items
+        return attempts_for_error(exc)
+
+    mechanical_detail = (
+        "the exact {ordinal} embodiment publishes a camera module, a generic imaging "
+        "lens assembly, light-path-folding-element light-blocking geometry and TABLE "
+        "{table} mechanical dimensions/ratios, but no ordered surface radii, optical "
+        "axial spacings, lens material sequence, asphere coefficients, aperture-stop "
+        "coordinate, numeric focal length, image height, F-number or lens field metadata"
+    )
+    details = (
+        mechanical_detail.format(ordinal="first", table=1),
+        mechanical_detail.format(ordinal="second", table=2),
+        mechanical_detail.format(ordinal="third", table=3),
+        mechanical_detail.format(ordinal="fourth", table=4),
+        mechanical_detail.format(ordinal="fifth", table=5),
+        "the exact sixth embodiment is a smartphone multi-camera wrapper; paragraph "
+        "104's various focal lengths are qualitative and supply neither numeric focal "
+        "lengths nor an ordered optical prescription",
+        "the exact seventh embodiment is a smartphone multi-camera wrapper whose "
+        "telephoto modules fold light but publish no independent ordered optical "
+        "prescription or numeric focal, aperture, image-height or field metadata",
+        "the exact eighth embodiment is a six-camera vehicle wrapper; paragraph 110's "
+        "40-to-90-degree visual angle is vehicle coverage geometry, not field metadata "
+        "bound to a constituent ordered lens prescription, and no such prescription "
+        "is published",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Largan Family 87845869 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. Claims 1-24, including "
+                    "dependent camera-module claim 23 and electronic-device claim 24, "
+                    "add no separate ordered lens prescription. The printed claim 17 "
+                    "token 145<N is retained unrepaired from the original official "
+                    "raster; no raster value is transcribed, derived or substituted and "
+                    "no value is borrowed from the parent, priority or foreign family"
+                ),
+            ),
+        )
+        for item in _LARGAN_LIGHT_PATH_FOLDING_ITEMS
     ]
 
 

@@ -1,0 +1,58 @@
+{
+  "schema_version": "patent-family-external-lineage/v1",
+  "family_id": "87845869",
+  "classification_primary": {
+    "publication_id": "US-20260086440-A1",
+    "application_number": "19/408546",
+    "source_path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a6a2c63f2323dcaa/US-20260086440-A1.html",
+    "source_bytes": 95585,
+    "source_sha256": "a6a2c63f2323dcaae2fba1555d3e73d16649ca6de8c2292928c2627c582be01a",
+    "role": "sole source for classification and all textual numeric evidence"
+  },
+  "printed_members_and_priorities": [
+    {
+      "application_number": "18/454995",
+      "relationship": "continuation_parent_application",
+      "filing_date_printed": "August 24, 2023",
+      "parent_grant_document_printed": "US-12523923",
+      "sources": ["Related U.S. Application Data", "paragraph [0001]"],
+      "downloaded_or_parsed_for_numeric_evidence": false
+    },
+    {
+      "application_number": "TW-112123543",
+      "relationship": "foreign_priority",
+      "filing_date_printed": "June 21, 2023",
+      "sources": ["Foreign Application Priority Data", "paragraph [0001]"],
+      "downloaded_or_parsed_for_numeric_evidence": false
+    },
+    {
+      "application_number": "US-63/373557",
+      "relationship": "US_provisional_priority",
+      "filing_date_printed": "August 26, 2022",
+      "sources": ["Related U.S. Application Data", "paragraph [0001]"],
+      "downloaded_or_parsed_for_numeric_evidence": false
+    }
+  ],
+  "separately_indexed_parent_publication": {
+    "publication_id": "US-20240069416-A1",
+    "application_number": "18/454995",
+    "relationship": "publication_of_printed_parent_application",
+    "publication_date": "February 29, 2024",
+    "index_sources": [
+      "https://patents.google.com/patent/US20240069416A1/en",
+      "https://patents.justia.com/patent/20240069416"
+    ],
+    "downloaded_or_parsed_for_numeric_evidence": false,
+    "classification_scope": false
+  },
+  "scope_note": "The classification is confined to the retained official US-20260086440-A1. The separately indexed parent publication is recorded only to close the printed continuation identity; foreign counterparts not directly reconciled to this retained source are not asserted here.",
+  "numeric_evidence_policy": {
+    "parent_application_borrowing": false,
+    "parent_publication_borrowing": false,
+    "parent_grant_borrowing": false,
+    "foreign_priority_borrowing": false,
+    "provisional_borrowing": false,
+    "raster_numeric_transcription": false,
+    "source_conflict_repair": false
+  }
+}
