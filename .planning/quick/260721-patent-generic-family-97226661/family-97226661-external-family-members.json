@@ -1,0 +1,29 @@
+{
+  "schema_version": "patent-family-lineage-audit/v1",
+  "family_id": "97226661",
+  "classification_primary": {
+    "publication_id": "US-20260043988-A1",
+    "application_number": "19/046138",
+    "filing_date": "2025-02-05",
+    "relationship_evidence": [
+      "retained USPTO A1 header",
+      "Foreign Application Priority Data",
+      "paragraph [0001]"
+    ]
+  },
+  "direct_priority_relationships": [
+    {
+      "publication_id": null,
+      "application_number": "KR 10-2024-0105343",
+      "filing_date": "2024-08-07",
+      "relationship": "Korean priority",
+      "printed_header_token": "KR 10-2024-0105343 Aug. 07, 2024",
+      "printed_paragraph_token": "Korean Patent Application No. 10-2024-0105343 filed on Aug. 7, 2024"
+    }
+  ],
+  "related_us_application_data_printed": false,
+  "scope_note": "This audit records only relationships directly printed by the retained official A1; it does not infer unprinted continuations or foreign counterparts.",
+  "classification_source": "US-20260043988-A1 only",
+  "related_publication_numeric_borrowing_used": false,
+  "foreign_priority_numeric_borrowing_used": false
+}
