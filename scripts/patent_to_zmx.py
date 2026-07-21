@@ -955,6 +955,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_samsung_undefined_high_order_asphere_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_light_blocking_compensation_architecture_only_attempts(
             raw_text,
             patent_id=patent_id,
@@ -62497,6 +62505,580 @@ def _parse_samsung_thermal_eight_lens_attempts(
             )
         )
     return attempts
+
+
+_SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_ITEMS = (
+    (1, "Samsung seven-lens first example", (67, 71), (1, 2), (1, 2)),
+    (2, "Samsung seven-lens second example", (72, 76), (3, 4), (3, 4)),
+    (3, "Samsung seven-lens third example", (77, 81), (5, 6), (5, 6)),
+    (4, "Samsung seven-lens fourth example", (82, 86), (7, 8), (7, 8)),
+    (5, "Samsung seven-lens fifth example", (87, 91), (9, 10), (9, 10)),
+    (6, "Samsung seven-lens sixth example", (92, 96), (11, 12), (11, 12)),
+    (7, "Samsung seven-lens seventh example", (97, 101), (13, 14), (13, 14)),
+)
+_SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_REASON = (
+    "metadata_unpublished.asphere_high_order_coefficient_semantics_absent"
+)
+_SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20260086334-A1": {
+        "raw_document_sha256": (
+            "a105d7ac7697b802df58d94dd93fd1902e0409c3577bbfbdc5e6e09d7fd21883"
+        ),
+        "normalized_text_sha256": (
+            "b9698b1824790c4399985b245474e3bad480423eb2eb5ca791dabcc05286f010"
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication 20260086334 Kind Code A1": 1,
+            "IMAGING LENS SYSTEM Abstract": 1,
+            "JUNG; Jin Hwa": 2,
+            "SEO; In Do": 1,
+            "JANG; Sang Hyun": 1,
+            "LEE; Jong Gi": 1,
+            "Applicant: SAMSUNG ELECTRO-MECHANICS CO., LTD.": 1,
+            "Assignee: SAMSUNG ELECTRO-MECHANICS CO., LTD.": 1,
+            "Family ID: 84563102": 1,
+            "Appl. No.: 19/409065": 1,
+            "KR 10-2022-0038054 Mar. 28, 2022": 1,
+            "parent US continuation 17866683 20220718": 1,
+            "parent-grant-document US 12535660": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260086334-A1 - Patent Public Search | USPTO",
+            "abstract": "Abstract An imaging lens system is provided.",
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATIONS [0001]"
+            ),
+            "summary": "SUMMARY [0005]",
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS [0023]",
+            "detailed": "DETAILED DESCRIPTION [0038]",
+            "claims": "Claims 1 . An imaging lens system, comprising:",
+        },
+        "section_sha256": {
+            "preamble": (
+                "3d83f9b29efd51cb8f81a7c50be983a0dd0f18d1166194ec43b01e1fe4e82ba6"
+            ),
+            "abstract": (
+                "8aefb9ad21f575ca296666875a0f5c6875b3af859feecea25133795c86afad23"
+            ),
+            "background": (
+                "4fc1ed10cf1f9d49d1eb9841aab98b805fa1b5101cf2cdbb7bc9ca90bc7e1a07"
+            ),
+            "summary": (
+                "1441932b6a857f3e35b2707b26ed587b998ea8713666ecb7201b57d8d1d305b1"
+            ),
+            "brief": (
+                "935c883ca10d638be3420a3b62bc3998dd1e61db6d1dd1ee0a4637b040b06347"
+            ),
+            "detailed": (
+                "a7fccdfbe5ad739e5c48088c475d8971d0d115b1f1ca17ff1fbb664b2ce4bc63"
+            ),
+            "claims": (
+                "a0cfd6a41989c2986e1bbd756ce33042a3091584648d3e2d9df6b6d4ab46c2f9"
+            ),
+        },
+        "paragraph_span_sha256": {
+            (1, 4): "3b013ca5cfbc90d50f6652af50b302579ce4c77c89314474083918c1d265e416",
+            (5, 22): "8b08568ba167b85d7e8820972770eef3452fbcb91e49c478ddfec1537dd1f0f2",
+            (23, 37): "e0f6007b7d527117462443665e3530d9e4c97592aac8f97850998e1e64d052fb",
+            (38, 66): "4ee4af9ba5310a7e373159a5ac16ce94064d7ffed7e97653c2d3ad71d98f74a8",
+            (67, 71): "c096fe407ee83c16df83fccf3ae8d5c87ab18f0fb84e3e0434f21bc197064f82",
+            (72, 76): "e6be58941b3e66acd3e2208b52129a842eef9300ff3f42939a877feab63624d9",
+            (77, 81): "e8e76b6f92e893c73ea4addb08e0bde63d3ea66726c67f99acc246be97e3b846",
+            (82, 86): "c1dc1693b2adc21d77921aa39131de8667673dc508ad6f507b0d4a736f939e2a",
+            (87, 91): "35f6f286ca3d3b260d474c101eb3f6951b4b5611cb103d575d3da206af157986",
+            (92, 96): "2aa85672b62b26e87ff85e7a9d721a08ce7804d9af8f2bf66b6265cb1208243d",
+            (97, 101): "8a2b72417298fcd8de60c1ed3099841ed751c2ffa1b95547abe2eb1e96fcffc5",
+            (102, 105): "d4595b8cad26c1a0bc65a34d988fdc1da248d5a8336d518c8910ff64c6f39a24",
+        },
+        "table_payload_sha256": (
+            "5df115cb75246f2c1133777f8d7907f1e516c67e42570e89c0f7c6b075310ae5",
+            "976a7a57b396f1fe6f290e9200f6c145f7ee1760e9d9d44d5e77fcb84e5239b9",
+            "89e238974e30d7135d2633608faab9d8da9a9030bae1b3430ff36af4de812403",
+            "c66163adc72f6a8f48c2fb4c5b4cefc7d76250f3bfb0b9f57040ba46a00a2c43",
+            "c5555fcb572e5469cdeb5bd779973542fc4af56348bb7f04e86dad50bee44fcc",
+            "fe2f2d070db558ded36bcaa24c81c8dc325eacb797700803e8ee8e455b9052c5",
+            "1d8efb4539f1c734e81f8b4a44e6d446955a4f334e045a68ae8edec72260167d",
+            "5d829ac6a1379e61bba59527f8e895e13200ffb834d1b7ae808501e6bfff1a3c",
+            "970c7839f53276331a1677f27c4eba4a1071ef13ca2388707baa3eed10fc9341",
+            "c109a5f581a0c51c986628a470bf9722a6dab6cf9cf61e6a1c6200177ee27b10",
+            "9f61ed8f988fdcd6be1009e8015321e5ab76b579067043f83dbeb9beec64b8f7",
+            "3496ccd1f8bd267d979c6114754c8c37dd881a343c43401e5437b0da984c60e1",
+            "59709b6567ad07b6c6537aca51ce09e707340748b6a0c8739897be89b1e871c3",
+            "7e37857da800a9ad711017e436cab572e409d3d640f2952b8ba966dc9cb20cdc",
+            "1b2cc30743a7915b729a398c896299ad9be152e97d0fc881bf81c7f3ff4400b4",
+            "d3a174b452e99459d305dedec1982fb5fe97e08f26ebe5b52d981a31d81e3842",
+        ),
+        "metadata": {
+            "f": (3.6642, 3.5884, 3.7058, 3.8625, 3.1441, 3.5434, 2.8995),
+            "f number": (1.9696,) * 7,
+            "ImgHT": (5.1200,) * 7,
+            "FOV": (113.8000, 113.8000, 114.0800, 112.0000, 121.2000, 111.8000, 121.9600),
+            "TTL": (7.2719, 7.1900, 7.1290, 7.1290, 7.1290, 7.1290, 7.1700),
+            "BFL": (1.4085, 1.4342, 1.1066, 1.2642, 1.0723, 1.1888, 1.3081),
+        },
+        "claim_numbers": tuple(range(1, 15)),
+        "independent_claim_numbers": (1, 8),
+        "figure_labels": tuple(range(1, 15)),
+        "math_object_sha256": (
+            "492aef415552a8c2512753a50b164c43af6461cb3ec1689cdb5dfa073330150f",
+            "8a18c9f04e1455032d35138a1ba9e38a31bf61db19d42937feb6d58125813b3c",
+            "a81867b86439820a3539421ab182a99bc9f9a3f47de10cdbffe8c51bb671a4cb",
+        ),
+        "ordered_math_id_sha256": (
+            "60a3453e10398e22807bb4aa42a57c22f3e6afed0943c5a161114127d3cb6667"
+        ),
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/ae77bf64d6cf46ce/"
+                "US-20260086334-A1.pdf"
+            ),
+            "bytes": 1_309_921,
+            "container_sha256": (
+                "ae77bf64d6cf46ceec3a7b231aac3ac7858c6fd3b0f7655186174f1950ee3c20"
+            ),
+            "page_count": 30,
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "narrow_raster_page_numbers": (18, 19, 20),
+            "critical_page_raster_sha256": {
+                20: "9a1d2ded228fa14f9961fe01dde90cfe63ec313bb3bd86fe6856c21fcc461847",
+                21: "ad0cfdde98b2927a686dd088be9da067d793812ed7063edc46eba76d3c6cfb51",
+                27: "21cd39992320011524a5ab9c81f4eb2a7638919ecab93d398e15010d1e6a0bfc",
+                29: "edfb70be7d5b04e41c150e0b511010be0c0c4350c8b773596a8ab64412d10aa0",
+            },
+            "raster_set_sha256": (
+                "deae0c787f687c0087fe667c5c039f13e687c23a0f7eb547502c486bb071ced1"
+            ),
+        },
+    }
+}
+
+
+def _classify_samsung_undefined_high_order_asphere_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Retain seven prescriptions whose high-order asphere semantics are absent."""
+
+    profile = _SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _tables, _figures in (
+                _SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_ITEMS
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order official raw text hash changed "
+                f"for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order normalized text hash changed "
+                f"for {patent_id}"
+            )
+
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Samsung undefined-high-order section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Samsung undefined-high-order section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order {section_name} section changed"
+                )
+
+        paragraph_matches = list(
+            re.finditer(r"\[(\d{4})\]", text[: section_starts["claims"]])
+        )
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 106)):
+            raise PatentParseError(
+                "Samsung undefined-high-order numbered-paragraph denominator changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order paragraph span {bounds} changed"
+                )
+
+        table_blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in table_blocks) != tuple(range(1, 17)):
+            raise PatentParseError(
+                "Samsung undefined-high-order 16-table denominator changed"
+            )
+        table_payloads = tuple(
+            re.split(
+                r"\s(?:\[\d{4}\]|Claims\s+1\s*\.)\s",
+                block.text,
+                maxsplit=1,
+            )[0].strip()
+            for block in table_blocks
+        )
+        if tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in table_payloads
+        ) != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order table payload digest changed"
+            )
+
+        for number, _label, paragraph_bounds, table_numbers, figure_numbers in (
+            _SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_ITEMS
+        ):
+            if (
+                f"Tables {table_numbers[0]} and {table_numbers[1]}"
+                not in paragraphs[paragraph_bounds[1]]
+                or f"imaging lens system {number * 100}"
+                not in paragraphs[paragraph_bounds[1]]
+            ):
+                raise PatentParseError(
+                    f"Samsung undefined-high-order example {number} table binding changed"
+                )
+            if (
+                f"FIG. {figure_numbers[0]}" not in paragraphs[paragraph_bounds[0]]
+                or f"FIG. {figure_numbers[1]}"
+                not in paragraphs[paragraph_bounds[1]]
+            ):
+                raise PatentParseError(
+                    f"Samsung undefined-high-order example {number} figure binding changed"
+                )
+            surface_payload = table_payloads[table_numbers[0] - 1]
+            if tuple(
+                int(value)
+                for value in re.findall(r"(?<!\S)S(\d+)\s+", surface_payload)
+            ) != tuple(range(1, 19)):
+                raise PatentParseError(
+                    f"Samsung undefined-high-order example {number} surface sequence changed"
+                )
+            if " S5 Stop Infinity " not in surface_payload:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order example {number} stop row changed"
+                )
+
+        figure_labels = tuple(
+            int(value)
+            for value in re.findall(
+                r"FIG\.\s*(\d+)\s+illustrates\b",
+                "".join(paragraphs[number] for number in range(23, 37)),
+                re.IGNORECASE,
+            )
+        )
+        if figure_labels != profile["figure_labels"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order FIGS. 1-14 denominator changed"
+            )
+
+        claim_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order 14-claim denominator changed"
+            )
+        independent_claims = tuple(
+            int(value)
+            for value in re.findall(
+                r"(?:^|\s)(\d+)\s*\.\s*An\s+imaging\s+lens\s+system,\s+comprising:",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order independent claims changed"
+            )
+
+        math_objects = tuple(
+            re.findall(r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL)
+        )
+        if tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        ) != profile["math_object_sha256"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order MathML denominator changed"
+            )
+        math_ids = tuple(
+            re.findall(r'<maths\b[^>]*\bid="([^"]+)"', raw_text, re.IGNORECASE)
+        )
+        if hashlib.sha256(
+            ("\n".join(math_ids) + "\n").encode("utf-8")
+        ).hexdigest() != profile["ordered_math_id_sha256"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order ordered MathML IDs changed"
+            )
+        equation_terms = tuple(
+            (label, int(order))
+            for label, order in re.findall(
+                r"<msup>\s*<mi>([A-Z])r</mi>\s*<mn>(\d+)</mn>\s*</msup>",
+                math_objects[2],
+            )
+        )
+        if equation_terms != (
+            ("A", 4),
+            ("B", 6),
+            ("C", 8),
+            ("D", 10),
+            ("E", 12),
+            ("F", 14),
+            ("G", 16),
+            ("H", 18),
+            ("J", 20),
+        ):
+            raise PatentParseError(
+                "Samsung undefined-high-order Equation 1 coefficient terms changed"
+            )
+        if paragraphs[64].count("A to J are aspherical surface constants") != 1:
+            raise PatentParseError(
+                "Samsung undefined-high-order paragraph 64 coefficient definition changed"
+            )
+        if re.search(r"<img\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Samsung undefined-high-order retained HTML image denominator changed"
+            )
+
+        expected_row_labels = (
+            "K",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "J",
+            "I",
+            "M",
+            "N",
+            "O",
+            "P",
+        ) * 2
+        undefined_labels = frozenset({"I", "M", "N", "O", "P"})
+        for table_number in (2, 4, 6, 8, 10, 12, 14):
+            payload = table_payloads[table_number - 1]
+            if (
+                payload.count("Surface No. S1 S2 S3 S4 S6 S7 S8") != 1
+                or payload.count("Surface No. S9 S10 S11 S12 S13 S14 S15")
+                != 1
+            ):
+                raise PatentParseError(
+                    f"Samsung undefined-high-order TABLE {table_number} headers changed"
+                )
+            row_matches = list(
+                re.finditer(
+                    r"(?<!\S)(K|A|B|C|D|E|F|G|H|J|I|M|N|O|P)\s+"
+                    r"(?=[-+]?\d)",
+                    payload,
+                    re.IGNORECASE,
+                )
+            )
+            observed_labels = tuple(
+                match.group(1).upper() for match in row_matches
+            )
+            if observed_labels != expected_row_labels:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order TABLE {table_number} row labels changed"
+                )
+            row_value_counts: list[int] = []
+            nonzero_undefined_labels: set[str] = set()
+            for index, match in enumerate(row_matches):
+                row_end = (
+                    row_matches[index + 1].start()
+                    if index + 1 < len(row_matches)
+                    else len(payload)
+                )
+                row_payload = payload[match.end() : row_end].split(
+                    " Surface No.", 1
+                )[0]
+                values = tuple(
+                    _parse_number(value)
+                    for value in re.findall(NUMBER_PATTERN, row_payload, re.IGNORECASE)
+                )
+                row_value_counts.append(len(values))
+                if match.group(1).upper() in undefined_labels and any(values):
+                    nonzero_undefined_labels.add(match.group(1).upper())
+            expected_counts = (
+                (7,) * 25 + (6,) * 5
+                if table_number == 12
+                else (7,) * 30
+            )
+            if tuple(row_value_counts) != expected_counts:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order TABLE {table_number} cell denominator changed"
+                )
+            if nonzero_undefined_labels != undefined_labels:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order TABLE {table_number} undefined "
+                    "nonzero coefficient labels changed"
+                )
+
+        metadata = {
+            label: _samsung_thermal_exact_seven_value_row(table_payloads[14], label)
+            for label in ("f", "f number", "ImgHT", "FOV", "TTL", "BFL")
+        }
+        if metadata != profile["metadata"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order TABLE 15 metadata changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order official PDF size changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = set(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order PDF page {page_number} contains "
+                    f"{len(images)} rasters; expected one"
+                )
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if images[0].image.size != expected_dimensions:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order PDF page {page_number} dimensions changed"
+                )
+            raster_digest = _canonical_raster_sha256(images[0].data)
+            page_raster_hashes.append(raster_digest)
+            expected_critical = pdf_profile["critical_page_raster_sha256"].get(
+                page_number
+            )
+            if expected_critical is not None and raster_digest != expected_critical:
+                raise PatentParseError(
+                    f"Samsung undefined-high-order critical PDF page {page_number} changed"
+                )
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Samsung undefined-high-order official PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Samsung undefined-high-order official PDF gained a text layer"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all seven exact source items
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=number,
+            embodiment=label,
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_REASON,
+                detail=(
+                    f"Tables {tables[0]} and {tables[1]} publish the ordered "
+                    "S1-S18 prescription and direct system f/F-number/ImgHT/FOV/TTL "
+                    "metadata, but Equation 1 and paragraph [0064] define only "
+                    "A-J through r^20 while the asphere table also publishes nonzero "
+                    "I/M/N/O/P rows without their powers or ordering"
+                    + (
+                        "; TABLE 12 additionally leaves the S15 cells blank for all "
+                        "five undefined rows"
+                        if number == 6
+                        else ""
+                    )
+                    + "; no coefficient inference, raster transcription, related-family "
+                    "repair, worker launch, or ZMX conversion is permitted"
+                ),
+            ),
+        )
+        for number, label, _paragraphs, tables, _figures in (
+            _SAMSUNG_UNDEFINED_HIGH_ORDER_ASPHERE_ITEMS
+        )
+    ]
 
 
 _LARGAN_LIGHT_BLOCKING_COMPENSATION_ITEMS = (

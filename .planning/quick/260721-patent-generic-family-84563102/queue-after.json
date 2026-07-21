@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260721-patent-generic-family-84563102/generic-residual-after-2.json",
+  "result_set_sha256": "6e403ced49d927787de4a89519ae4bef7d412778c7c4e670d56e895ceb88c161",
+  "generic_residual_roots": 48,
+  "generic_residual_items": 48,
+  "next_exact_group": {
+    "family_id": "89511297",
+    "root_ids": ["US-11874478"],
+    "publication_ids": ["US-11874478-B1"],
+    "application_number": "16/990939",
+    "title": "Range correcting radiometric lens, method of optical design, and range finding system using same",
+    "first_inventor": "Mudge; Jason D",
+    "applicant": "Golden Gate Light Optimization LLC",
+    "assignee": "Golden Gate Light Optimization LLC",
+    "layout_signature": "9c74b4b7b56401906799ad08c302b37ea5bd6640462f82a114eb16e54dde594f",
+    "layout_signature_count": 1,
+    "table_count": 1,
+    "marker_counts": {
+      "effective_focal_length": 2,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 6,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/7a46e890a5a2713a/US-11874478-B1.html",
+      "sha256": "7a46e890a5a2713a0cb2ab07a112563e4239cdf3d9848abe43b08e2f08786340"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

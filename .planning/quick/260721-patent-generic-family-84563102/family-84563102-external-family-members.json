@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "family_id": "84563102",
+  "purpose": "lineage and source-conflict cross-check only; never a numeric repair authority",
+  "checked_on": "2026-07-21",
+  "primary_external_page": "https://patents.google.com/patent/US20260086334A1/en",
+  "classification_primary": {
+    "application_number": "19/409065",
+    "publication_id": "US-20260086334-A1",
+    "filing_date": "2025-12-04",
+    "priority_date": "2022-03-28"
+  },
+  "parent_application": {
+    "application_number": "17/866683",
+    "publication_id": "US-20230305271-A1",
+    "grant_id": "US-12535660",
+    "filing_date": "2022-07-18",
+    "relationship_to_primary": "parent continuation",
+    "external_page": "https://patents.google.com/patent/US20230305271A1/en",
+    "cross_check": "the parent publication repeats the same A-J equation definition and I/M/N/O/P table-row conflict"
+  },
+  "foreign_priority": {
+    "application_number": "KR 10-2022-0038054",
+    "priority_date": "2022-03-28"
+  },
+  "boundaries": {
+    "classification_authority": "retained official USPTO PPUBS US-20260086334-A1 HTML and decoded official A1 rasters",
+    "external_family_numeric_values_imported": false,
+    "external_family_conclusions_imported": false,
+    "parent_coefficient_semantics_substituted": false,
+    "related_family_numeric_repair_attempted": false
+  }
+}
