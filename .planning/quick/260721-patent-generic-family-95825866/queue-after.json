@@ -1,0 +1,33 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260721-patent-generic-family-95825866/generic-residual-after-1.json",
+  "affected_roots": 40,
+  "affected_items": 40,
+  "result_set_sha256": "9eb5c733f33af1c398c79ee7a037d49329292765c079bb6a68d844cd866e790d",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then exact family grouping",
+    "layout_signature": "b96bce77d33d185b1d49d5e62cc730dc62d878c938f0e71ace739abc05b3468b",
+    "layout_signature_count": 1,
+    "family_id": "45593888",
+    "root_ids": ["US-8218254"],
+    "publication_ids": ["US-8218254-B2"],
+    "application_numbers": ["12/861419"],
+    "title": "SOLID IMAGING OBJECTIVE AND ASSEMBLY TECHNIQUE FOR SMALL SCALE SENSOR APPLICATIONS",
+    "assignee": "Gyrus ACMI, Inc.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/a56aad055aba203f/US-8218254-B2.html",
+      "bytes": 43375,
+      "sha256": "a56aad055aba203f8b949688304cb62ce7a4e394b46866fe5e5376d7c55057f6"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 1,
+      "example_anchor": 1,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 0
+  },
+  "saturation_complete": false
+}

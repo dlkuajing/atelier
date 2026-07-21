@@ -777,14 +777,16 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | `260721-patent-generic-family-87845869` | complete-shovel-saturation-incomplete | Exact US-20260086440-A1 binds application 19/408546, Family ID 87845869, Liu Ssu-Hsin/Tung Wei-Che/Chang Lin-An/Chou Ming-Ta and Largan Precision. The source denominator is nine Background/Summary, 24 brief-drawing and 80 detailed-description paragraphs (113 numbered total), claims 1-24 with claims 1/8/15 independent, five mechanical tables, thirteen MathML objects, 118 figure references, 23 declared panels/drawing sheets and exactly eight items. Items 1-5 are five light-path-folding-element embodiments whose TABLES 1-5 publish only mechanical dimensions, ratios and folding-element refractive-index constraints; items 6-7 are electronic-device/multi-camera wrappers and item 8 is a vehicle camera-coverage wrapper. No item publishes an ordered optical surface/radius/spacing/material/asphere prescription, stop, numeric focal length, image height, F-number or constituent-lens angular field. All eight therefore close as precise `confirmed_no_prescription` terminals without derivation, numeric repair, drawing measurement, family borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Claim 17's printed `145 < N <= 1.78` and claim 10's prose/formula symbol mismatch remain unrepaired. Two distinct official 36-page image-only containers and the pinned first copy decode to the same original 1-bit raster set at `04551de...d13`; 36 retained RGB pages are exact channel expansions without enhancement, OCR repair, measurement, numeric transcription or raster inference. Attempts 2/3 are semantic-equal excluding only result attempt at `07fcd026...bab`; generic 42 to 41, result set `e2a1e596...da64`, census `3152b840...fdd`, summary `870f3e8d...d86f`, report `26ffe1fd...40b0`, evidence `d85e6520...2299`; strict audit 619/619 corrupt=0. Complete segmented offline coverage passes 3,724 tests/1 skipped/10 real-machine deselected; focused 9/9, patent 975/975, guard 5/5, Ruff/compile, 105 changed JSON and 111-manifest/1,870-reference/1,664-triple evidence checks pass. The pointer audit refreshes 92 prior source manifests through exactly 368 allowed leaf changes, ten live result-set assertions and four flat summary/report assertions while preserving frozen census/queue history; formal-output, contamination, protected-path, diff, primary-repository and process audits pass. CODE V/patent-worker inventories are zero. Family 95825866 / US-20260079328-A1 is next; parent saturation remains incomplete. |
 
+| `260721-patent-generic-family-95825866` | complete-shovel-saturation-incomplete | Exact US-20260079328-A1 binds application 19/402617, Family ID 95825866, Tatsuya Nakatsuji, Guangdong OPPO Mobile Telecommunications and its printed PCT parent. The exact denominator is ten Background, 31 Brief Description and 129 Detailed Description paragraphs (170 numbered total), claims 1-20 with claims 1/16/19 independent, fifteen tables, seventeen MathML objects, 104 figure references, 30 declared panels, 28 drawing sheets and seven source items. Four numerical examples publish system/asphere table structures, but official filing payloads contain 99 custom-character image tags: 95 missing numerical payload markers plus four legend glyphs. Their ordered surface values are therefore unavailable as filed and the four examples close as `metadata_unpublished.ordered_surface_numeric_characters_missing_or_illegible_when_filed`; the generic architecture, camera-module wrapper and imaging-device wrapper close as three precise `confirmed_no_prescription` terminals. Two distinct 2,649,658-byte official PDF containers decode to the same 48-page original 1-bit raster set at `f8c13c41...`; retained single-channel `L` PNGs are exact pixel copies without enhancement, OCR repair, measurement, numeric transcription, raster inference or family borrowing. Attempts 2/3 are semantic-equal at `a730f2f6...a48f`; generic 41 to 40; result set `9eb5c733...790d`; census `e0429418...614`; summary `3f4b992d...ca84`; report `4f386c9e...1693`; evidence `897ce9d8...b93`; strict audit 619/619 corrupt=0. Complete segmented offline coverage passes 3,733 tests/1 skipped/10 real-machine deselected; focused 9/9, patent 984/984, guard 5/5, Ruff/compile, JSON and 112-manifest/1,854-reference/1,681-triple evidence checks pass. The pointer audit refreshes 82 tracked source-evidence files through exactly 343 allowed live-pointer leaf changes while preserving frozen history. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/patent-worker inventories are zero. Family 45593888 / US-8218254-B2 is next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, continue active GSD quick
-`.planning/quick/260721-patent-generic-family-95825866/260721-patent-generic-family-95825866-PLAN.md`
-for deterministic Family `95825866`, root/publication `US-20260079328` /
-`US-20260079328-A1`, while preserving completed Family 87845869, Family 40641507, Family 69060231, Family 97226661,
+`.planning/quick/260721-patent-generic-family-45593888/260721-patent-generic-family-45593888-PLAN.md`
+for deterministic Family `45593888`, root/publication `US-8218254` /
+`US-8218254-B2`, while preserving completed Family 95825866, Family 87845869, Family 40641507, Family 69060231, Family 97226661,
 Family 95563451, Family 97520644, Family 89511297, Family 84563102,
 Family 60048601, Family 61278233, Family 53214261,
 Family 59685373, Family 89536570,
@@ -795,10 +797,10 @@ the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen inp
 replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
 from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-generic residual contains 41 roots/items at result set
-`e2a1e5960a20d5cbdc26597ed1bc42d8689f1266f9f99f15e1803b25f8c0da64`.
+generic residual contains 40 roots/items at result set
+`9eb5c733f33af1c398c79ee7a037d49329292765c079bb6a68d844cd866e790d`.
 The next family has layout
-`b579d0dd84a806c3b07e843983bc699f1c95a5ce431a1d2b3108093e15831cb4`.
+`b96bce77d33d185b1d49d5e62cc730dc62d878c938f0e71ace739abc05b3468b`.
 Use the same strict before/after census, source-proven layout, append-only targeted replay,
 and full-pool audit contract. Remeasure after every shovel; parent saturation remains
 incomplete.

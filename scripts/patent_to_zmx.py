@@ -614,6 +614,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_oppo_missing_character_prescription_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_multi_reflection_five_example_missing_metadata_attempts(
             raw_text,
@@ -78918,6 +78924,641 @@ def _classify_largan_light_path_folding_attempts(
             ),
         )
         for item in _LARGAN_LIGHT_PATH_FOLDING_ITEMS
+    ]
+
+
+_OPPO_MISSING_CHARACTER_TITLE_PATTERN = re.compile(
+    r"\bIMAGING\s+LENS\s+ASSEMBLY,\s+CAMERA\s+MODULE,\s+AND\s+IMAGING\s+DEVICE\b",
+    re.IGNORECASE,
+)
+_OPPO_MISSING_CHARACTER_FIGURE_PANELS = (
+    "1A",
+    "1B",
+    "2A",
+    "2B",
+    "3",
+    "4",
+    "5A",
+    "5B",
+    "5C",
+    "6A",
+    "6B",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+)
+_OPPO_MISSING_CHARACTER_REASON = (
+    "metadata_unpublished.ordered_surface_numeric_characters_missing_or_"
+    "illegible_when_filed"
+)
+_OPPO_MISSING_CHARACTER_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "OPPO general folded imaging-lens-assembly architecture",
+        "paragraph_ranges": ((42, 94),),
+        "figures": _OPPO_MISSING_CHARACTER_FIGURE_PANELS[:11],
+        "tables": (),
+        "claims": tuple(range(1, 16)),
+        "status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription."
+            "generic_folded_imaging_lens_assembly_architecture_only"
+        ),
+    },
+    {
+        "number": 2,
+        "label": "OPPO folded seven-lens zoom first example",
+        "paragraph_ranges": ((99, 112),),
+        "figures": ("7", "8", "9", "10"),
+        "tables": (1, 2, 3),
+        "claims": (),
+        "status": "metadata_unpublished",
+        "reason_code": _OPPO_MISSING_CHARACTER_REASON,
+    },
+    {
+        "number": 3,
+        "label": "OPPO folded seven-lens zoom second example",
+        "paragraph_ranges": ((113, 124),),
+        "figures": ("11", "12", "13", "14", "15"),
+        "tables": (4, 5, 6, 7),
+        "claims": (),
+        "status": "metadata_unpublished",
+        "reason_code": _OPPO_MISSING_CHARACTER_REASON,
+    },
+    {
+        "number": 4,
+        "label": "OPPO dual-prism zoom third example",
+        "paragraph_ranges": ((125, 143),),
+        "figures": ("16", "17", "18", "19", "20"),
+        "tables": (8, 9, 10, 11),
+        "claims": (),
+        "status": "metadata_unpublished",
+        "reason_code": _OPPO_MISSING_CHARACTER_REASON,
+    },
+    {
+        "number": 5,
+        "label": "OPPO curved-prism eight-lens zoom fourth example",
+        "paragraph_ranges": ((144, 157),),
+        "figures": ("21", "22", "23", "24", "25"),
+        "tables": (12, 13, 14, 15),
+        "claims": (),
+        "status": "metadata_unpublished",
+        "reason_code": _OPPO_MISSING_CHARACTER_REASON,
+    },
+    {
+        "number": 6,
+        "label": "OPPO camera-module wrapper",
+        "paragraph_ranges": ((158, 162),),
+        "figures": (),
+        "tables": (),
+        "claims": (16, 17, 18),
+        "status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.camera_module_wrapper_only",
+    },
+    {
+        "number": 7,
+        "label": "OPPO imaging-device wrapper",
+        "paragraph_ranges": ((163, 170),),
+        "figures": ("5A", "5B", "5C", "6A", "6B"),
+        "tables": (),
+        "claims": (19, 20),
+        "status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.imaging_device_wrapper_only",
+    },
+)
+_OPPO_MISSING_CHARACTER_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260079328-A1": {
+        "family_id": "95825866",
+        "application_number": "19/402617",
+        "raw_document_sha256": (
+            "ae961898207c571c21ff8d7db6e6c2350fcebe5b8f7e7e431c954a19ee8a344b"
+        ),
+        "normalized_text_sha256": (
+            "0d74ec9ab99ffb799830e2d3de3d8a5d7ecf60fc5ac351959b33064871e63428"
+        ),
+        "section_markers": {
+            "background": (
+                "Background/Summary CROSS REFERENCE TO RELATED APPLICATIONS"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "detailed": "DETAILED DESCRIPTION [0042]",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "background": (
+                "0d48358b2ffdd080aa1cb85de5cf9227b90c56da54bbda8fd3aea27b05315749"
+            ),
+            "brief": (
+                "1b5d4fc04a82633c8609b09f881e0469d04df0244891a778a3869d21d8a9bbf5"
+            ),
+            "detailed": (
+                "f87467a560dcc5b31fd3251078cb3a83be1ccac8a59bb87de25452719fd6cd2b"
+            ),
+            "claims": (
+                "79fd143e810bffad036b3d74f9515f0a1ec8541400416c606de9d9bb55d6c8ba"
+            ),
+        },
+        "paragraph_numbers": {
+            "background": tuple(range(1, 11)),
+            "brief": tuple(range(11, 42)),
+            "detailed": tuple(range(42, 171)),
+        },
+        "paragraph_payload_sha256": {
+            "background": (
+                "1785f3ddc4000ad5b4b5312dd60d01583bcbc31758ac4145092d50f4da6062e6"
+            ),
+            "brief": (
+                "082284c3a20720cefb036175054c970e3eb015cb9372cc84fecf9700b8acc18b"
+            ),
+            "detailed": (
+                "47d4e1d2ece9ddaf0a1e2bb81791cf90f6d22409eba6fda07efefd271574300f"
+            ),
+        },
+        "detailed_span_sha256": {
+            "general_42_94": (
+                "bf64b5b3dbaa61b76d8213434d69d9b096e2e9ded61bd78a00a8bcbcee2e3d6b"
+            ),
+            "shared_95_98": (
+                "698772008639adf3ef46161a78f0418394389ffef13a278ec8f3103299a8e89b"
+            ),
+            "example1_99_112": (
+                "8fd305cb2dadfd9a1659cbce7fb841b1dc4057042d201fb2c49765f538415412"
+            ),
+            "example2_113_124": (
+                "b281ab7c1613a8649c9ee3ec1378c043dd722f84dbafc3d08a83f68fedb715bc"
+            ),
+            "example3_125_143": (
+                "188b4b537250619165719641c276e176fc683a9a8cf878d8dc2b7ec0a056df3e"
+            ),
+            "example4_144_157": (
+                "af74059bf414b9c36f1038cc45df4f30ff46c2eb3f9226d0bbcb18f7020d7b8e"
+            ),
+            "closing_158_170": (
+                "c9ab54a173ddc933b09663405f4fb74e4edbada097c51c3950bb3cbd8573870c"
+            ),
+        },
+        "formal_table_sha256": _samsung_zoom_sha256_lines("""
+            7ce0aa0b61e7447060a9a04ead56d3e48e44c3dafbdb8a0e47f17e5e4b0a37f3
+            fac868d8031b80bc2aee788c47bbc7533cfd2ef13942b4e5ba8d15a09623c1e1
+            ca8eafc258a3ee92776e2ee318a6e40b6b04f2ac637dbf9821edf10daca79466
+            ded750485d00c2fae02e734bb07cafb64c050dc79bdac80e9817e61e73288b3a
+            5f5a6d85ff67fa16762038bfd6106b2f70d9ceb3d49a3c186a72db3b82f37167
+            253364d8fcf0e8875e249c51607b6a430350bd2cb7b2f9008c97be1ab53a4383
+            c3ab6352426bb2f8a4ebbd6bea41fdb9912effb057a987c7728e9708c574ee2f
+            d1c7be9b2b651f8837e308c37ff4e10e73041eb403c7219a207fd154d36f2e65
+            2a849eda9452a53a1d42ad13283d19283fce132b24d0c0b6b2baaad4eded5755
+            96262b61498255164d4fbea90b01421b9c2cd1c9276618fa88de0febbf4f8f4a
+            acdd1a227bc30eba7accc83f137fc53e08dd2c252c57a6e8f6b39d438a338a22
+            80077d6517f58cc3d31c1ce39e36e3074e40e12656310763d85d861f7fde2370
+            382f184bc584a411723507d6280ed2c9609cde947affd2c356cb56b20fa53b9e
+            dc76f8b19a6e279c3ca2da0da5dca4128d70beae7d43150c030ed195d1250356
+            0cf9888e7af9b6f00656bbca36c6b486b0127bb4a01ad6b181c01263331ce9c6
+        """),
+        "formal_table_custom_marker_counts": (
+            8, 0, 0, 19, 0, 0, 0, 36, 0, 0, 0, 36, 0, 0, 0
+        ),
+        "surface_table_numbers": (1, 4, 8, 12),
+        "surface_data_custom_marker_counts": (7, 18, 35, 35),
+        "surface_table_footnote_marker_ids": (8, 27, 63, 99),
+        "surface_table_affected_rows": (
+            (6, 7, 12, 14, 16),
+            (5, 7, 9, 11, 13, 15, 17, 18, 19),
+            (2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 17, 18, 19, 20, 21, 23),
+            (2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24),
+        ),
+        "custom_tag_count": 99,
+        "custom_tag_sequence_sha256": (
+            "5f832a39088b3465f1082b0ca00b4e6aaef052c23ba4d387f69aba02b4785c74"
+        ),
+        "ordered_math_object_sha256": _samsung_zoom_sha256_lines("""
+            98a7407596e88f68843afcdfb6b8f9f6694f45a94fb52e57ed1866fb98b77a3c
+            1358f7c5398bd6bd8baf5f415fc59978fc0747f062d725e16ba9813596fb5c1e
+            42493cd611233ae07e5396843af66f7f93bd14448b9b4948ad1e23b5d153c4fe
+            95504a26fe02dbcdde7fa343fd97cb04917e6e07085677c503520d20e77b1f3e
+            421c4bc6d163b7760f8d6271f269d8378e77a7fadf101c1834128c96cc187342
+            023ad74d91afd62083ae115e23d4cbc493fd89a310a5fe5c2b55e78c2ddbdd0c
+            f9d5f2fb3abd871f233e68b5eb03b3b6564819f64ae2c248b3d0a776a3a691f1
+            78a4294e059be24356117a4eef00a307a2ab3e91d252c8ed3c47183dba3f9c3f
+            b9f18b40ed1321267655cffe6ea4083f0f2f2a3f71d2ee921ffbf01137ef9cae
+            f11336dc4a18d5d66a53bf838f37f9001164784e0ff769009bc0bd72060c2055
+            176fca9a330cfbe5ce60daa6b92d710361c2b5bb6e552168f58b9257e4e45ae9
+            d33babd7d7afe73ab410a90aaded01292d0a675cf1ad9271d7d0b13039040990
+            546bc73c2ecf2d8415e652586100d2a08bb35f36e3b7277be76bdcb46120ab08
+            911e72d7af9945380ed18d67ff9d30cf688c8005c7a4cf63afe474c95d5ad588
+            bd00345897b38cd82ab68c168a701caee73d1401c3327571ef39666d97ba58a0
+            e3d2b7cc0892c56675edbf6c5377709d2ec9c11786cddafb82d1e2c9a7cb73d3
+            f16dee7a4f959631a182980049d6f6e55cc5cf292e96d9ad13fcaa994527042c
+        """),
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 16, 19),
+        "figure_panels": _OPPO_MISSING_CHARACTER_FIGURE_PANELS,
+        "figref_count": 104,
+        "official_pdf_captures": (
+            {
+                "path": (
+                    "data/patent-lake/uspto-ppubs-pdf/3cc62464ef6c5f0f/"
+                    "US-20260079328-A1.pdf"
+                ),
+                "bytes": 2_649_658,
+                "container_sha256": (
+                    "3cc62464ef6c5f0f71d359ada5f6c4b5bb9a20eecd3a8b932a922e825dd2b4dc"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260721-patent-generic-family-95825866/"
+                    "source-review/US-20260079328-A1-official-2.pdf"
+                ),
+                "bytes": 2_649_658,
+                "container_sha256": (
+                    "65b2039cc75614f07aaf1606544187c4f715c000bf4c91fff3cc026a4973c49c"
+                ),
+            },
+        ),
+        "pdf_page_count": 48,
+        "pdf_common_raster_dimensions": (2560, 3300),
+        "pdf_narrow_raster_dimensions": (2550, 3300),
+        "pdf_narrow_raster_page_numbers": (33, 34, 46, 47, 48),
+        "pdf_page_raster_sha256": _samsung_zoom_sha256_lines("""
+            bf00e91e1adc539384ba4613435d22856673c096d92af97b1cc4075244b4a312
+            6590040a715f468af8284e091e9a4debd8f32f3447cc8b3e655952322e2c3fc2
+            5498f42b96200b08d20dbc50e9c56ec75fc67b4f940ca17e1a7c6bb204b94f8f
+            a3c6b49bd0f6574a8a7cc6fd24c4309eb037b71c0520e6a355e5fc9df25d4db4
+            3d8ca9bcb1c18ffb6527c8c11a960d827edab24ff190eeee3fc54333af7e3fe4
+            900611945edf0c8c279404f090f0818b81792beb717b6d234afec72a84a44a58
+            e6200351c6f4f4c5da16999d8317e40ca6665d3d8b5f16de15e84cc4b017c7f8
+            c9ef454eb0802acab13fbf0e9f2357251ee6d4d72fe22f96ace8fb332bbf5db0
+            fd3384a31a33a1b6890b84415bf91b20ad59dfa30ba7e4d44ba777e5a3da0b30
+            ae2b4a8c219e683ed1f71ea2b049ed7c9abccc7c2bb10da4ec144f180329a5f5
+            16a17338132c631cf5c9612b1f0d0176ab85114a5cd6f44ba6fe9eaac80aa432
+            f28a2afddd34fa8a56a10317cdb81676ff93e0b3e967443d41a5da74e6fd9095
+            02550a448c587d7baeb8240a6a50cf39dae431161ed03cdee460986481f9d84e
+            0f8220dc48e0c42e51e9bf9d7b00e912a0a0a346ea37370bcd33dd0fcac84d25
+            55b7e2d07ba972ce2678d7df06dce3b668e708c3440c686a2a66ba894ed0fd95
+            83696953030fda0dbc33ee41b93500ca09b0db08d0415a9bbab827fa1a0e7264
+            da867b58de0a96784ebde3a9668157c384658948607cc3e82c206d5d87ad94d9
+            b3e878ad5d18ad0ccadcfffd91fa4e97c32efbc5a434f695098a3916b4171107
+            41a276283e739d89db0a7433c0bfab1867cd4462aec6b68dc971bc1ecbcb348f
+            e0468883b7ca5f80f096045c8080f5db1762a0e6bd4a8b6cd4c58d27d60eb28d
+            efef832198b4c33703141f99de378ffc05247c2600d8ca4b6b7810448c27245f
+            b1752f46566199e55ac726cc4bae173866020de7cb578a874afba3014a4009f6
+            c8958e93182a06d5bca6e48450756b28d12b66220d66062809d69a9dada6d3c1
+            005f35ab080fcee28914a7bfb121bd21ed1c440d67969c23aff3f6e460119f2c
+            6346350b8491a96ea7a976497928fd2223cf383505714e7c7adac76aebe63bf0
+            abf5544e1e80ab37391d7526477478b139fe6078e7095b37018852c4a0ffe060
+            77ba5a4529e649252e710a37a802a5a38b97ec03f1a73c369bd0debcc224bdc2
+            634cf3e6c622b5b4203fbd3bfdcb53382c91625029fe2141e3e6ca9833e43c4b
+            36964d55ffa4f6ad787f304ea4609d98d21e820900c17c0a92d7c13e58e98ed5
+            2434de357cf404e3c194640829190a5acf34e60f1e4090845f4aadb768d68968
+            3aa1daf7f6c84aef8bf20bc81929df6a221097248ef070affac6367189e8c7ed
+            20b74303f4e9fb6aa645914d32c3b91af5ebcd8c7da2c2f7109f2d0b10efd50f
+            ccbf88e4c9b7483e05b11a1a208b95356b636d62478c595bc01683d86ea610da
+            d93585e2699c0debbc373fce8f1855107a9e9c131037d8b2d5de559f71ccb943
+            b53614787b81cd90c5a2caeb5d3243cc4a842ba6e169bbbd1a2b011db3ef7a74
+            8126b58526b25787d25854abf8baa2d3e4f98421450996807102564d6002882e
+            4ccaa1b8fde1e9ccd1e6e409ca3d45d4375bee5e68ca48a7aa3a4b31cb335cd9
+            6afdc7e73566f93f450bae5a73bd71fe29224fdf339cc8117ce52301c4dc0901
+            3cd34b33bd7f6341ed9898b7537d2800fd97a004fe9a7eb112e4f262693a0e30
+            14217b1accbf90dfba0cb9ef46bbd3c0e8243272e946692f9467735d5ab1f5f6
+            70f3fc1bc4872d870634186182bb60e7cc91d7e91f58e87f111d7c5e2c58ac27
+            800cf6e219b479d07eae36d6afab0de692f26e3ed094f8b1f93b20395aa0d486
+            a8a0bd3ae818e51718de48dd2af58cd13ff346b2b92a42069d3a749baf320894
+            70df85316600ef4ea60d298827aadb71ce93f79ae410039e75290e1443559283
+            848db1dd2e00deb858f4353f9b0b30c6cf7907a66182e4c46c2874616989f30b
+            2d55c0562d7da245a06f1749fffc6d43732583b3616d7dc2fea9c7e111289892
+            35ec2def6185e7158bd7297f5626bf54dd0ff2ed20836df989d27deec8d4941e
+            d7837fde6c087c8a2b107b446913a2b316a278f441acb93565ede4ce5a946044
+        """),
+        "pdf_raster_set_sha256": (
+            "f8c13c416e61516cadb82d3fefd4e6bcb9cff254ac7c5db5262a1116dbebd353"
+        ),
+    }
+}
+
+
+def _oppo_missing_character_formal_tables(raw_text: str) -> tuple[str, ...]:
+    """Return all formal tables while retaining exact custom-character IDs."""
+
+    def retain_custom_id(match: re.Match[str]) -> str:
+        identifier = re.search(
+            r'id="CUSTOM-CHARACTER-(\d{5})"', match.group(0), re.IGNORECASE
+        )
+        if identifier is None:
+            raise PatentParseError("OPPO custom-character identifier is absent")
+        return f" CUSTOM-CHARACTER-{identifier.group(1)} "
+
+    marked_raw = re.sub(
+        r"<img\b[^>]*>",
+        retain_custom_id,
+        raw_text,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    blocks = _patent_table_blocks(normalize_patent_text(marked_raw))
+    if tuple(block.number for block in blocks) != tuple(range(1, 16)):
+        raise PatentParseError("OPPO TABLES 1-15 denominator changed")
+    terminal_next_paragraph = {3: 104, 7: 116, 11: 138, 15: 154}
+    tables: list[str] = []
+    for block in blocks:
+        table = block.text
+        next_paragraph = terminal_next_paragraph.get(block.number)
+        if next_paragraph is not None:
+            table = re.split(
+                rf"\s+\[{next_paragraph:04d}\]\s+", table, maxsplit=1
+            )[0]
+        tables.append(table.strip())
+    return tuple(tables)
+
+
+def _classify_oppo_missing_character_prescription_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify seven exact Family 95825866 items without repairing glyphs."""
+
+    profile = _OPPO_MISSING_CHARACTER_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def failed(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _OPPO_MISSING_CHARACTER_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"OPPO missing-character official raw text hash changed for {patent_id}"
+            )
+        if len(_OPPO_MISSING_CHARACTER_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("OPPO missing-character title binding changed")
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"OPPO missing-character normalized text hash changed for {patent_id}"
+            )
+
+        markers = profile["section_markers"]
+        names = tuple(markers)
+        starts = {name: text.index(marker) for name, marker in markers.items()}
+        if tuple(starts.values()) != tuple(sorted(starts.values())):
+            raise PatentParseError("OPPO missing-character section ordering changed")
+        sections = {
+            name: text[
+                starts[name] : (
+                    starts[names[index + 1]] if index + 1 < len(names) else len(text)
+                )
+            ]
+            for index, name in enumerate(names)
+        }
+        for name, digest in profile["section_sha256"].items():
+            if hashlib.sha256(sections[name].encode("utf-8")).hexdigest() != digest:
+                raise PatentParseError(f"OPPO missing-character {name} section changed")
+
+        paragraphs: dict[str, dict[int, str]] = {}
+        for name in ("background", "brief", "detailed"):
+            matches = list(re.finditer(r"(?<!\w)\[(\d{4})\]\s", sections[name]))
+            numbers = tuple(int(match.group(1)) for match in matches)
+            if numbers != profile["paragraph_numbers"][name]:
+                raise PatentParseError(
+                    f"OPPO missing-character {name} paragraph denominator changed"
+                )
+            parsed = {
+                number: sections[name][
+                    match.start() : (
+                        matches[index + 1].start()
+                        if index + 1 < len(matches)
+                        else len(sections[name])
+                    )
+                ].strip()
+                for index, (number, match) in enumerate(
+                    zip(numbers, matches, strict=True)
+                )
+            }
+            paragraphs[name] = parsed
+            payload = "".join(parsed[number] for number in numbers)
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != profile[
+                "paragraph_payload_sha256"
+            ][name]:
+                raise PatentParseError(
+                    f"OPPO missing-character {name} paragraph payload changed"
+                )
+        spans = (
+            ("general_42_94", 42, 94),
+            ("shared_95_98", 95, 98),
+            ("example1_99_112", 99, 112),
+            ("example2_113_124", 113, 124),
+            ("example3_125_143", 125, 143),
+            ("example4_144_157", 144, 157),
+            ("closing_158_170", 158, 170),
+        )
+        for name, first, last in spans:
+            payload = "".join(paragraphs["detailed"][n] for n in range(first, last + 1))
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != profile[
+                "detailed_span_sha256"
+            ][name]:
+                raise PatentParseError(
+                    f"OPPO missing-character detailed span {name} changed"
+                )
+
+        tables = _oppo_missing_character_formal_tables(raw_text)
+        if tuple(hashlib.sha256(table.encode()).hexdigest() for table in tables) != profile[
+            "formal_table_sha256"
+        ]:
+            raise PatentParseError("OPPO missing-character formal table changed")
+        counts = tuple(
+            len(re.findall(r"CUSTOM-CHARACTER-\d{5}", table)) for table in tables
+        )
+        if counts != profile["formal_table_custom_marker_counts"]:
+            raise PatentParseError("OPPO missing-character table marker distribution changed")
+        for table_number, footnote_id, data_count in zip(
+            profile["surface_table_numbers"],
+            profile["surface_table_footnote_marker_ids"],
+            profile["surface_data_custom_marker_counts"],
+            strict=True,
+        ):
+            table = tables[table_number - 1]
+            if len(re.findall(r"CUSTOM-CHARACTER-\d{5}", table)) - 1 != data_count:
+                raise PatentParseError(
+                    f"OPPO surface TABLE {table_number} data-marker count changed"
+                )
+            if re.search(
+                rf"CUSTOM-CHARACTER-{footnote_id:05d}\s+indicates\s+data\s+"
+                r"missing\s+or\s+illegible\s+when\s+filed\Z",
+                table,
+                re.IGNORECASE,
+            ) is None:
+                raise PatentParseError(
+                    f"OPPO surface TABLE {table_number} footnote binding changed"
+                )
+
+        tags = tuple(re.findall(r"<img\b[^>]*>", raw_text, re.IGNORECASE))
+        if len(tags) != profile["custom_tag_count"]:
+            raise PatentParseError("OPPO custom-character denominator changed")
+        if hashlib.sha256("".join(tags).encode()).hexdigest() != profile[
+            "custom_tag_sequence_sha256"
+        ]:
+            raise PatentParseError("OPPO custom-character tag sequence changed")
+        custom_ids = tuple(
+            int(match.group(1))
+            for tag in tags
+            if (
+                match := re.search(
+                    r'alt="text missing or illegible when filed".*?'
+                    r'id="CUSTOM-CHARACTER-(\d{5})"',
+                    tag,
+                    re.IGNORECASE,
+                )
+            )
+            is not None
+        )
+        if custom_ids != tuple(range(1, 100)):
+            raise PatentParseError("OPPO custom-character identifiers changed")
+
+        figures = tuple(
+            (match.group(1) + match.group(2)).upper()
+            for match in re.finditer(
+                r"FIG\.\s*(\d+)\s*([A-C]?)\s+is\b", sections["brief"], re.IGNORECASE
+            )
+        )
+        if figures != profile["figure_panels"]:
+            raise PatentParseError("OPPO missing-character figure-panel denominator changed")
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError("OPPO missing-character figref denominator changed")
+        math_objects = tuple(
+            match.group(0)
+            for match in re.finditer(
+                r"<maths\b[^>]*>.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+            )
+        )
+        if tuple(hashlib.sha256(obj.encode()).hexdigest() for obj in math_objects) != profile[
+            "ordered_math_object_sha256"
+        ]:
+            raise PatentParseError("OPPO missing-character ordered MathML objects changed")
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s+\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("OPPO missing-character claim denominator changed")
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent = tuple(
+            number
+            for number, claim in zip(claim_numbers, claim_texts, strict=True)
+            if re.search(
+                r"\b(?:according to|of)\s+claim\s+\d+", claim[:300], re.IGNORECASE
+            )
+            is None
+        )
+        if independent != profile["independent_claim_numbers"]:
+            raise PatentParseError("OPPO missing-character independent claims changed")
+
+        narrow_pages = set(profile["pdf_narrow_raster_page_numbers"])
+        for capture in profile["official_pdf_captures"]:
+            payload = (ROOT / capture["path"]).read_bytes()
+            if len(payload) != capture["bytes"]:
+                raise PatentParseError("OPPO official PDF size changed")
+            if hashlib.sha256(payload).hexdigest() != capture["container_sha256"]:
+                raise PatentParseError("OPPO official PDF hash changed")
+            reader = pypdf.PdfReader(io.BytesIO(payload))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError("OPPO official PDF page count changed")
+            hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"OPPO PDF page {page_number} raster count changed"
+                    )
+                expected_dimensions = (
+                    profile["pdf_narrow_raster_dimensions"]
+                    if page_number in narrow_pages
+                    else profile["pdf_common_raster_dimensions"]
+                )
+                if images[0].image.size != expected_dimensions or images[0].image.mode != "1":
+                    raise PatentParseError(
+                        f"OPPO PDF page {page_number} raster contract changed"
+                    )
+                hashes.append(_canonical_raster_sha256(images[0].data))
+                text_characters += len(page.extract_text() or "")
+            if tuple(hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError("OPPO official PDF page rasters changed")
+            digest = hashlib.sha256(("\n".join(hashes) + "\n").encode()).hexdigest()
+            if digest != profile["pdf_raster_set_sha256"] or text_characters != 0:
+                raise PatentParseError("OPPO official PDF raster set changed")
+    except Exception as exc:  # noqa: BLE001 - fail all seven exact items closed
+        return failed(exc)
+
+    details = (
+        "paragraphs 42-94 publish architecture but no independent ordered prescription",
+        "TABLE 1 has seven missing-or-illegible numeric surface characters",
+        "TABLE 4 has eighteen missing-or-illegible numeric surface characters",
+        "TABLE 8 has thirty-five missing-or-illegible numeric surface characters",
+        "TABLE 12 has thirty-five missing-or-illegible numeric surface characters",
+        "claims 16-18 wrap the assembly without a separate ordered prescription",
+        "claims 19-20 wrap the assembly without a separate ordered prescription",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status=str(item["status"]),
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"OPPO Family 95825866 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. The exact HTML supplies 99 "
+                    "custom-character tags: 95 occur inside numeric surface-table "
+                    "payloads and four are legend glyphs. Two official PDF containers "
+                    "decode to the same 48 original rasters. No glyph is guessed, "
+                    "repaired, transcribed from raster, derived, or borrowed from the "
+                    "PCT or any related publication"
+                ),
+            ),
+        )
+        for item in _OPPO_MISSING_CHARACTER_ITEMS
     ]
 
 
