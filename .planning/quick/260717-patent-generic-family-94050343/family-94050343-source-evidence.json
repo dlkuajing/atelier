@@ -1,12 +1,16 @@
 {
   "schema_version": 1,
   "family_id": "94050343",
-  "root_ids": ["US-20260072245"],
+  "root_ids": [
+    "US-20260072245"
+  ],
   "publication_id": "US-20260072245-A1",
   "application_number": "19/023962",
   "title": "OPTICAL LENS, CAMERA MODULE, AND TERMINAL DEVICE",
   "applicant": "Jiangxi OFILM Optical Co.,Ltd.",
-  "inventors": ["Takashi Sugiyama"],
+  "inventors": [
+    "Takashi Sugiyama"
+  ],
   "priority_date": "2024-09-12",
   "filing_date": "2025-01-16",
   "publication_date": "2026-03-12",
@@ -61,12 +65,27 @@
       "claims": "87ec1a6e594125dc18e4d5d8bbd66350f420717b89f81f4cb4fd6e515b521da5"
     },
     "paragraph_ranges": {
-      "background_summary": [1, 9],
-      "brief": [10, 28],
-      "detailed": [29, 131]
+      "background_summary": [
+        1,
+        9
+      ],
+      "brief": [
+        10,
+        28
+      ],
+      "detailed": [
+        29,
+        131
+      ]
     },
-    "claim_range": [1, 20],
-    "figure_range": [1, 18],
+    "claim_range": [
+      1,
+      20
+    ],
+    "figure_range": [
+      1,
+      18
+    ],
     "tagged_table_block_sha256": {
       "TABLE-US-00001": "72a8bcf4074d3604aa4d54404e6c70f6fb679c5986af6e2ed6c2d4eae11d5444",
       "TABLE-US-00002": "140090b23aede15bd1e1d7ecd3624a9b2f39b06b04953438f30def909b1a83eb",
@@ -91,9 +110,19 @@
     "published_prescriptions": 8,
     "published_numbered_surface_rows_per_prescription": 14,
     "published_asphere_surfaces_per_prescription": 6,
-    "published_nonzero_odd_terms": ["A3", "A5", "A7"],
-    "published_nonzero_odd_term_surfaces": [8, 9],
-    "first_embodiment_missing_radius_surfaces": [6, 7],
+    "published_nonzero_odd_terms": [
+      "A3",
+      "A5",
+      "A7"
+    ],
+    "published_nonzero_odd_term_surfaces": [
+      8,
+      9
+    ],
+    "first_embodiment_missing_radius_surfaces": [
+      6,
+      7
+    ],
     "converter_supports_odd_powers": false,
     "convertible_prescriptions": 0,
     "drawing_geometry_used_for_numeric_derivation": false,
@@ -112,8 +141,8 @@
   },
   "replay_state": {
     "result_set_sha256": "473b2a42b1efa8b19278a62d501b00e40436c9b89ba8393ff71bb98d50bebfec",
-    "summary_sha256": "e9cad3a628c847c5f1997236952a718baf53600877a4bd59e9b13c00ea4494d6",
-    "report_sha256": "8a26e150ebe7490293ad66bc35e165bcd1a5b0a2fae0a7b80ecc13b0dddfc542",
+    "summary_sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2",
+    "report_sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0",
     "strict_roots_with_results": 619,
     "strict_cohort_roots": 619,
     "missing_results": 0,

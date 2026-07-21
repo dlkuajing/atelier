@@ -59,23 +59,113 @@
     }
   },
   "description_spans": [
-    {"paragraph_range": [1, 12], "payload_sha256": "9862951937accd93cffb81762e4ad34a3075213462fc91c78177273a159fecb1"},
-    {"paragraph_range": [13, 39], "payload_sha256": "deb8c57720304c52f0d14c067c8655b175f17077bfae2230b962032d335e2db5"},
-    {"paragraph_range": [40, 46], "payload_sha256": "c36211caa514da4cc235acc562f91424d99341e7c79f4c2a80d84a5886a9a9b3"},
-    {"paragraph_range": [47, 54], "payload_sha256": "08499547a51804e2aaedb4af1b66adbf45bc1672c1395cd6b720b599a1ac5a58"},
-    {"paragraph_range": [55, 57], "payload_sha256": "9cda3a19cf8832c9ab39ba789a8276bdb1144d6fa522806a987893e3c8972caa"},
-    {"paragraph_range": [58, 61], "payload_sha256": "e4dc7ac2f682942e0b119c6c294b44134308a40a4eed37c9399825390c51d65a"},
-    {"paragraph_range": [62, 66], "payload_sha256": "a57e3f9bb8d5a35e950ee51bea169c615fe4721eab39cb50f135c8b90665ced3"},
-    {"paragraph_range": [67, 71], "payload_sha256": "3f70b9ab1c16c40c00aefe9451b071a77a2020486cec9daa296a30be8f00e0a0"},
-    {"paragraph_range": [72, 73], "payload_sha256": "c438c40289646f858590693339d9bee7e1e4787fa33c18124ddd94f713931b77"},
-    {"paragraph_range": [74, 74], "payload_sha256": "295d25bd78590ef0351bbba7201b1771cd29c9aeaadf0bd8e7e055ab4dfad247"},
-    {"paragraph_range": [75, 76], "payload_sha256": "7f72ea18216ead15d8f691948be71ff4d3d604d2d821367065cdf1dda79d3bd7"},
-    {"paragraph_range": [77, 79], "payload_sha256": "5a8dc559cda1e89a4ecb1f549773a65998235268616a1cbec7dfa6ec45e6dc48"}
+    {
+      "paragraph_range": [
+        1,
+        12
+      ],
+      "payload_sha256": "9862951937accd93cffb81762e4ad34a3075213462fc91c78177273a159fecb1"
+    },
+    {
+      "paragraph_range": [
+        13,
+        39
+      ],
+      "payload_sha256": "deb8c57720304c52f0d14c067c8655b175f17077bfae2230b962032d335e2db5"
+    },
+    {
+      "paragraph_range": [
+        40,
+        46
+      ],
+      "payload_sha256": "c36211caa514da4cc235acc562f91424d99341e7c79f4c2a80d84a5886a9a9b3"
+    },
+    {
+      "paragraph_range": [
+        47,
+        54
+      ],
+      "payload_sha256": "08499547a51804e2aaedb4af1b66adbf45bc1672c1395cd6b720b599a1ac5a58"
+    },
+    {
+      "paragraph_range": [
+        55,
+        57
+      ],
+      "payload_sha256": "9cda3a19cf8832c9ab39ba789a8276bdb1144d6fa522806a987893e3c8972caa"
+    },
+    {
+      "paragraph_range": [
+        58,
+        61
+      ],
+      "payload_sha256": "e4dc7ac2f682942e0b119c6c294b44134308a40a4eed37c9399825390c51d65a"
+    },
+    {
+      "paragraph_range": [
+        62,
+        66
+      ],
+      "payload_sha256": "a57e3f9bb8d5a35e950ee51bea169c615fe4721eab39cb50f135c8b90665ced3"
+    },
+    {
+      "paragraph_range": [
+        67,
+        71
+      ],
+      "payload_sha256": "3f70b9ab1c16c40c00aefe9451b071a77a2020486cec9daa296a30be8f00e0a0"
+    },
+    {
+      "paragraph_range": [
+        72,
+        73
+      ],
+      "payload_sha256": "c438c40289646f858590693339d9bee7e1e4787fa33c18124ddd94f713931b77"
+    },
+    {
+      "paragraph_range": [
+        74,
+        74
+      ],
+      "payload_sha256": "295d25bd78590ef0351bbba7201b1771cd29c9aeaadf0bd8e7e055ab4dfad247"
+    },
+    {
+      "paragraph_range": [
+        75,
+        76
+      ],
+      "payload_sha256": "7f72ea18216ead15d8f691948be71ff4d3d604d2d821367065cdf1dda79d3bd7"
+    },
+    {
+      "paragraph_range": [
+        77,
+        79
+      ],
+      "payload_sha256": "5a8dc559cda1e89a4ecb1f549773a65998235268616a1cbec7dfa6ec45e6dc48"
+    }
   ],
   "claim_groups": [
-    {"claim_range": [1, 9], "payload_sha256": "c40a0fb842d520ed8583e0b9967495c5a4f53cb9f948caddc1a6d4a883d4da2c"},
-    {"claim_range": [10, 15], "payload_sha256": "ac31c1517422a26681c6574778f9ee3209cd1f2b792a6400595d9c81615b5149"},
-    {"claim_range": [16, 20], "payload_sha256": "eac89e550f251d7565640beed4deb76cd2bb1d6bbbc83f07081c5edb13f0591d"}
+    {
+      "claim_range": [
+        1,
+        9
+      ],
+      "payload_sha256": "c40a0fb842d520ed8583e0b9967495c5a4f53cb9f948caddc1a6d4a883d4da2c"
+    },
+    {
+      "claim_range": [
+        10,
+        15
+      ],
+      "payload_sha256": "ac31c1517422a26681c6574778f9ee3209cd1f2b792a6400595d9c81615b5149"
+    },
+    {
+      "claim_range": [
+        16,
+        20
+      ],
+      "payload_sha256": "eac89e550f251d7565640beed4deb76cd2bb1d6bbbc83f07081c5edb13f0591d"
+    }
   ],
   "table_and_equations": {
     "table_1_role": "symbol dictionary defining fi, fo, Di, Do, t and detector characteristic dimension",
@@ -118,22 +208,174 @@
     "drawing_or_plot_inference_used": false
   },
   "source_items": [
-    {"item_number": 1, "label": "Golden Gate claimed range-compensating lens assembly", "claims": [1, 9], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.range_compensating_lens_assembly_architecture_only"},
-    {"item_number": 2, "label": "Golden Gate claimed range-finding system", "claims": [10, 15], "paragraphs": [77, 77], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.range_finding_system_architecture_only"},
-    {"item_number": 3, "label": "Golden Gate range-compensating lens design method", "claims": [16, 20], "paragraph_spans": [[13, 39], [62, 66]], "table": 1, "figures": [6], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.range_compensating_lens_design_method_only"},
-    {"item_number": 4, "label": "Golden Gate on-axis dual-power lens embodiment (FIGS. 1-2)", "paragraphs": [40, 46], "figures": [1, 2], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.on_axis_dual_power_lens_schematic_only"},
-    {"item_number": 5, "label": "Golden Gate off-axis non-imaging dual-power lens embodiment (FIG. 3)", "paragraphs": [47, 54], "figures": [3], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.off_axis_nonimaging_dual_power_lens_schematic_only"},
-    {"item_number": 6, "label": "Golden Gate neutral-density range-compensating lens embodiment (FIG. 4)", "paragraphs": [55, 57], "figures": [4], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.neutral_density_range_compensating_lens_schematic_only"},
-    {"item_number": 7, "label": "Golden Gate GRIN range-compensating lens embodiment (FIG. 5)", "paragraphs": [58, 61], "figures": [5], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.grin_metamaterial_polarimetric_lens_architecture_only"},
-    {"item_number": 8, "label": "Golden Gate short-range first-order radiometric example (FIGS. 7-8)", "paragraphs": [67, 71], "figures": [7, 8], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.short_range_first_order_radiometric_parameters_only"},
-    {"item_number": 9, "label": "Golden Gate long-range first-order radiometric example (FIGS. 9-10)", "paragraphs": [72, 73], "figures": [9, 10], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.long_range_first_order_radiometric_parameters_only"},
-    {"item_number": 10, "label": "Golden Gate relaxed long-range first-order variant (FIG. 11)", "paragraphs": [74, 74], "figures": [11], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.relaxed_long_range_first_order_radiometric_variant_only"},
-    {"item_number": 11, "label": "Golden Gate neutral-density long-range first-order example (FIG. 12)", "paragraphs": [75, 76], "figures": [12], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.neutral_density_long_range_first_order_parameters_only"}
+    {
+      "item_number": 1,
+      "label": "Golden Gate claimed range-compensating lens assembly",
+      "claims": [
+        1,
+        9
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.range_compensating_lens_assembly_architecture_only"
+    },
+    {
+      "item_number": 2,
+      "label": "Golden Gate claimed range-finding system",
+      "claims": [
+        10,
+        15
+      ],
+      "paragraphs": [
+        77,
+        77
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.range_finding_system_architecture_only"
+    },
+    {
+      "item_number": 3,
+      "label": "Golden Gate range-compensating lens design method",
+      "claims": [
+        16,
+        20
+      ],
+      "paragraph_spans": [
+        [
+          13,
+          39
+        ],
+        [
+          62,
+          66
+        ]
+      ],
+      "table": 1,
+      "figures": [
+        6
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.range_compensating_lens_design_method_only"
+    },
+    {
+      "item_number": 4,
+      "label": "Golden Gate on-axis dual-power lens embodiment (FIGS. 1-2)",
+      "paragraphs": [
+        40,
+        46
+      ],
+      "figures": [
+        1,
+        2
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.on_axis_dual_power_lens_schematic_only"
+    },
+    {
+      "item_number": 5,
+      "label": "Golden Gate off-axis non-imaging dual-power lens embodiment (FIG. 3)",
+      "paragraphs": [
+        47,
+        54
+      ],
+      "figures": [
+        3
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.off_axis_nonimaging_dual_power_lens_schematic_only"
+    },
+    {
+      "item_number": 6,
+      "label": "Golden Gate neutral-density range-compensating lens embodiment (FIG. 4)",
+      "paragraphs": [
+        55,
+        57
+      ],
+      "figures": [
+        4
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.neutral_density_range_compensating_lens_schematic_only"
+    },
+    {
+      "item_number": 7,
+      "label": "Golden Gate GRIN range-compensating lens embodiment (FIG. 5)",
+      "paragraphs": [
+        58,
+        61
+      ],
+      "figures": [
+        5
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.grin_metamaterial_polarimetric_lens_architecture_only"
+    },
+    {
+      "item_number": 8,
+      "label": "Golden Gate short-range first-order radiometric example (FIGS. 7-8)",
+      "paragraphs": [
+        67,
+        71
+      ],
+      "figures": [
+        7,
+        8
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.short_range_first_order_radiometric_parameters_only"
+    },
+    {
+      "item_number": 9,
+      "label": "Golden Gate long-range first-order radiometric example (FIGS. 9-10)",
+      "paragraphs": [
+        72,
+        73
+      ],
+      "figures": [
+        9,
+        10
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.long_range_first_order_radiometric_parameters_only"
+    },
+    {
+      "item_number": 10,
+      "label": "Golden Gate relaxed long-range first-order variant (FIG. 11)",
+      "paragraphs": [
+        74,
+        74
+      ],
+      "figures": [
+        11
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.relaxed_long_range_first_order_radiometric_variant_only"
+    },
+    {
+      "item_number": 11,
+      "label": "Golden Gate neutral-density long-range first-order example (FIG. 12)",
+      "paragraphs": [
+        75,
+        76
+      ],
+      "figures": [
+        12
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.neutral_density_long_range_first_order_parameters_only"
+    }
   ],
   "replay_state": {
     "attempts": [
-      {"path": "data/patent-ledger/replay/local-uncovered/results/US-11874478/attempt-0002/result.json", "bytes": 13763, "sha256": "d8db17dbeb6aa1791bc2559643836dc5cc302eb23fbd875b5bf0f871d408cbcd"},
-      {"path": "data/patent-ledger/replay/local-uncovered/results/US-11874478/attempt-0003/result.json", "bytes": 13763, "sha256": "eb7d875e27601ff9dd09ed66b1577cee488303d31be3647874b0cc71986ec63c"}
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-11874478/attempt-0002/result.json",
+        "bytes": 13763,
+        "sha256": "d8db17dbeb6aa1791bc2559643836dc5cc302eb23fbd875b5bf0f871d408cbcd"
+      },
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-11874478/attempt-0003/result.json",
+        "bytes": 13763,
+        "sha256": "eb7d875e27601ff9dd09ed66b1577cee488303d31be3647874b0cc71986ec63c"
+      }
     ],
     "semantic_sha256": "a741efa680d3e3427ea329b961a8ff22c2ee93a5b22a14017554f1407df19893",
     "strict_roots_with_results": 619,
@@ -142,25 +384,73 @@
     "strict_corrupt_results": 0
   },
   "generic_census": {
-    "before": {"path": ".planning/quick/260721-patent-generic-family-89511297/generic-residual-before-48.json", "bytes": 29812, "sha256": "c9ecf4c8e97944e78e57a9e665d20c48c1666bec9189aea0f78a98be4892f4f6"},
-    "after_1": {"path": ".planning/quick/260721-patent-generic-family-89511297/generic-residual-after-1.json", "bytes": 29189, "sha256": "543c911c95030082cf2ee5372b8f867743bd65e5c63bd25e62e9886409055fb2"},
-    "after_2": {"path": ".planning/quick/260721-patent-generic-family-89511297/generic-residual-after-2.json", "bytes": 29189, "sha256": "543c911c95030082cf2ee5372b8f867743bd65e5c63bd25e62e9886409055fb2"},
+    "before": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/generic-residual-before-48.json",
+      "bytes": 29812,
+      "sha256": "c9ecf4c8e97944e78e57a9e665d20c48c1666bec9189aea0f78a98be4892f4f6"
+    },
+    "after_1": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/generic-residual-after-1.json",
+      "bytes": 29189,
+      "sha256": "543c911c95030082cf2ee5372b8f867743bd65e5c63bd25e62e9886409055fb2"
+    },
+    "after_2": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/generic-residual-after-2.json",
+      "bytes": 29189,
+      "sha256": "543c911c95030082cf2ee5372b8f867743bd65e5c63bd25e62e9886409055fb2"
+    },
     "before_roots": 48,
     "after_roots": 47,
-    "result_set_sha256": "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+    "result_set_sha256": "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
   },
   "shared_outputs": {
-    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 51718, "sha256": "34b1b83b5ed9aba504b8f63300cdcb095261fc832478896255dec1d01160ea42"},
-    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 53627, "sha256": "edf177d8082d34955f52507af2857bf988d465594605cc96542cd262d57ce7a2"}
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 52185,
+      "sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 54112,
+      "sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
+    }
   },
   "audit_artifacts": {
-    "source_audit": {"path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-source-audit.md", "bytes": 3790, "sha256": "faa02a2461b66225e3a8cb928bc8b60671c9e3b579f079411a5da8c892df76a5"},
-    "raster_audit": {"path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-raster-audit.json", "bytes": 7875, "sha256": "1a81a204890c844da44ce2f4d51289ee5c6de323d5d914d01063dfef1470cbed"},
-    "external_family_members": {"path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-external-family-members.json", "bytes": 727, "sha256": "42e8613759555cf46dc60588a12ddbed508a72635d56c75a3eca86b0ca2366fd"},
-    "denominator": {"path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-denominator.json", "bytes": 3615, "sha256": "2ba9264f1120e36b98128102238f65e15044fff776c37c8a57661e7b84542e1a"},
-    "replay_determinism": {"path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-replay-determinism.json", "bytes": 1558, "sha256": "43d855e6f335f77e007d5304cdce35b559e6318f54aa4c60e1f603431d468d9c"},
-    "queue_after": {"path": ".planning/quick/260721-patent-generic-family-89511297/queue-after.json", "bytes": 1421, "sha256": "71f75d76bf39fe8b0a59ca7d06add8fc64c9c978befc9b853c69bb0393c1967e"},
-    "roots": {"path": ".planning/quick/260721-patent-generic-family-89511297/roots.txt", "bytes": 12, "sha256": "3a619b575f1a8d5d45e9af58263be4ff37f79ed7e9f4dc1693ee41829c60474a"}
+    "source_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-source-audit.md",
+      "bytes": 3790,
+      "sha256": "faa02a2461b66225e3a8cb928bc8b60671c9e3b579f079411a5da8c892df76a5"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-raster-audit.json",
+      "bytes": 7875,
+      "sha256": "1a81a204890c844da44ce2f4d51289ee5c6de323d5d914d01063dfef1470cbed"
+    },
+    "external_family_members": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-external-family-members.json",
+      "bytes": 727,
+      "sha256": "42e8613759555cf46dc60588a12ddbed508a72635d56c75a3eca86b0ca2366fd"
+    },
+    "denominator": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-denominator.json",
+      "bytes": 3615,
+      "sha256": "2ba9264f1120e36b98128102238f65e15044fff776c37c8a57661e7b84542e1a"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-replay-determinism.json",
+      "bytes": 1558,
+      "sha256": "43d855e6f335f77e007d5304cdce35b559e6318f54aa4c60e1f603431d468d9c"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/queue-after.json",
+      "bytes": 1421,
+      "sha256": "71f75d76bf39fe8b0a59ca7d06add8fc64c9c978befc9b853c69bb0393c1967e"
+    },
+    "roots": {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/roots.txt",
+      "bytes": 12,
+      "sha256": "3a619b575f1a8d5d45e9af58263be4ff37f79ed7e9f4dc1693ee41829c60474a"
+    }
   },
   "terminal_outcome": {
     "worker_launches": 0,
@@ -179,8 +469,12 @@
   },
   "next_exact_group": {
     "family_id": "97520644",
-    "root_ids": ["US-20260086330"],
-    "publication_ids": ["US-20260086330-A1"]
+    "root_ids": [
+      "US-20260086330"
+    ],
+    "publication_ids": [
+      "US-20260086330-A1"
+    ]
   },
   "saturation_complete": false
 }

@@ -19996,7 +19996,7 @@ def test_snap_six_lens_two_design_replay_and_denominator_artifacts() -> None:
     # this historical test bound to the retained census and recorded snapshot,
     # rather than requiring the mutable live summary to remain byte-identical.
     assert evidence["replay_state"]["summary_sha256"] == (
-        "d6c329f3399841357eed918a2b52771f8003cbeb7ee6260d203fd53ddc14a8a4"
+        "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     )
     assert evidence["replay_state"]["result_set_sha256"] == (
         "34dc2a55b427fa8b75525be4a86a312a65599663a0ac3083cf81415b0fb7a864"
@@ -20254,10 +20254,10 @@ def test_fso_transmitter_replay_and_denominator_artifacts() -> None:
     # retained before/after censuses below carry this shovel's exact result-set
     # binding, while these hashes record the contemporaneous summary/report.
     assert evidence["replay_state"]["summary_sha256"] == (
-        "79c970231db1ae2dff7134e51022f9e0440b86faa8a1d640e32a7bdb598328fd"
+        "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     )
     assert evidence["replay_state"]["report_sha256"] == (
-        "67c07340ca008e8cbc7cb6f6f22457b93640797c8f1c9b089b8bc0c76c6d5623"
+        "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
     )
     assert sum(evidence["replay_state"]["root_state_counts"].values()) == 619
 
@@ -20580,10 +20580,10 @@ def test_folded_camera_qcon_replay_and_denominator_artifacts() -> None:
     # Later append-only shovels legitimately replace the live summary. These
     # literals bind the contemporaneous snapshot without pinning mutable state.
     assert evidence["replay_state"]["summary_sha256"] == (
-        "b6c11b2249998f94542622543f0fed3d88ee9ef62c5c46ace84f703954b87007"
+        "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     )
     assert evidence["replay_state"]["report_sha256"] == (
-        "1c60b7b454a85a66949b62530eb20d7ef3757b721febaf1e69226d7ea676d60b"
+        "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
     )
     assert sum(evidence["replay_state"]["root_state_counts"].values()) == 619
 
@@ -21223,10 +21223,10 @@ def test_ofilm_four_lens_replay_and_denominator_artifacts() -> None:
     assert semantics == [replay["semantic_sha256"]] * 2
 
     assert evidence["replay_state"]["summary_sha256"] == (
-        "e9cad3a628c847c5f1997236952a718baf53600877a4bd59e9b13c00ea4494d6"
+        "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     )
     assert evidence["replay_state"]["report_sha256"] == (
-        "8a26e150ebe7490293ad66bc35e165bcd1a5b0a2fae0a7b80ecc13b0dddfc542"
+        "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
     )
     assert sum(evidence["replay_state"]["root_state_counts"].values()) == 619
 
@@ -30403,7 +30403,7 @@ def test_sekonix_small_lens_qcon_a1_replay_queue_and_evidence_are_stable() -> No
     assert after_1["affected_roots"] == after_1["affected_items"] == 61
     assert after_1["result_set_sha256"] == queue["result_set_sha256"]
     assert evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     minimum_signature = min(after_1["layout_signature_counts"])
     selected = [
@@ -41722,7 +41722,7 @@ def test_aac_family_66534470_source_evidence_rehashes_every_reference() -> None:
         "result_set_sha256"
     ]
     assert evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -42629,7 +42629,7 @@ def test_corephotonics_family_88793298_source_evidence_rehashes_every_reference(
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -43107,7 +43107,7 @@ def test_corephotonics_family_63252479_source_evidence_rehashes_references() -> 
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["replay_outcome"] == {
         "root_state": "terminal",
@@ -43398,7 +43398,7 @@ def test_corephotonics_family_100208972_source_evidence_rehashes_every_reference
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -43820,7 +43820,7 @@ def test_largan_family_99635674_source_evidence_rehashes_every_reference() -> No
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -44141,7 +44141,7 @@ def test_aac_family_66532282_source_evidence_rehashes_every_reference() -> None:
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -44488,7 +44488,7 @@ def test_newmax_family_84189606_source_evidence_rehashes_every_reference() -> No
     assert summary["missing_root_ids"] == []
     assert summary["corrupt_result_paths"] == []
     assert summary["result_set_sha256"] == evidence["ledger"]["result_set_sha256"] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["ledger"]["missing"] == evidence["ledger"]["corrupt"] == 0
     assert evidence["replay_outcome"] == {
@@ -45391,7 +45391,7 @@ def test_newmax_family_94115759_replay_census_and_evidence_are_sealed() -> None:
     assert summary["result_set_sha256"] == evidence["ledger"][
         "result_set_sha256"
     ] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert evidence["replay_outcome"] == {
         "root_state": "terminal",
@@ -45832,7 +45832,7 @@ def test_circle_optics_mounting_systems_evidence_rehashes_every_reference() -> N
     assert summary["result_set_sha256"] == evidence["ledger"][
         "result_set_sha256"
     ] == (
-        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
     )
     assert queue["result_set_sha256"] == (
         "2840befbc0e97793f60021cd4dd61f96e1c5703d083a2f3ff9498fb53d16b44b"
@@ -50826,5 +50826,431 @@ def test_corephotonics_family_69060231_original_rasters_are_exact_expansions() -
         "plot_sampling_used": False,
         "ocr_repair_used": False,
         "raster_inference_used": False,
+        "related_publication_numeric_borrowing": False,
+    }
+
+
+def _fujinon_family_40641507_source() -> tuple[Path, str]:
+    root = Path(__file__).resolve().parents[1]
+    path = (
+        root
+        / "data"
+        / "patent-lake"
+        / "uspto-ppubs-html"
+        / "USPAT"
+        / "80cac521fccd012f"
+        / "US-8134609-B2.html"
+    )
+    return path, path.read_text(encoding="utf-8")
+
+
+def test_fujinon_family_40641507_exact_source_classifies_nine_items() -> None:
+    _path, raw_text = _fujinon_family_40641507_source()
+
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        raw_text,
+        patent_id="US-8134609-B2",
+    )
+
+    assert len(attempts) == 9
+    assert [attempt.embodiment_number for attempt in attempts] == list(range(1, 10))
+    assert [attempt.embodiment for attempt in attempts] == [
+        item["label"] for item in patent_to_zmx._FUJINON_RESTORATION_ITEMS
+    ]
+    assert all(attempt.prescription is None for attempt in attempts)
+    assert [attempt.error.status for attempt in attempts] == [
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "confirmed_no_prescription",
+        "metadata_unpublished",
+        "metadata_unpublished",
+        "metadata_unpublished",
+        "confirmed_no_prescription",
+    ]
+    assert [attempt.error.reason_code for attempt in attempts] == [
+        item["reason_code"] for item in patent_to_zmx._FUJINON_RESTORATION_ITEMS
+    ]
+    assert all("No values are transcribed from raster plots" in str(attempt.error) for attempt in attempts)
+    assert all("US-20090128665-A1" in str(attempt.error) for attempt in attempts)
+
+
+def test_fujinon_family_40641507_source_denominator_rehashes() -> None:
+    path, raw_text = _fujinon_family_40641507_source()
+    profile = patent_to_zmx._FUJINON_RESTORATION_SOURCE_PROFILES["US-8134609-B2"]
+    raw_bytes = path.read_bytes()
+    normalized = patent_to_zmx.normalize_patent_text(raw_text)
+
+    assert len(raw_bytes) == 178194
+    assert len(normalized) == 162619
+    assert hashlib.sha256(raw_bytes).hexdigest() == profile["raw_document_sha256"]
+    assert hashlib.sha256(normalized.encode()).hexdigest() == profile[
+        "normalized_text_sha256"
+    ]
+
+    section_names = tuple(profile["section_markers"])
+    starts = {
+        name: normalized.index(marker)
+        for name, marker in profile["section_markers"].items()
+    }
+    sections = {
+        name: normalized[
+            starts[name] : (
+                starts[section_names[index + 1]]
+                if index + 1 < len(section_names)
+                else len(normalized)
+            )
+        ]
+        for index, name in enumerate(section_names)
+    }
+    assert {
+        name: hashlib.sha256(section.encode()).hexdigest()
+        for name, section in sections.items()
+    } == profile["section_sha256"]
+
+    raw_background = raw_text[
+        raw_text.index("<h3>Background/Summary</h3>")
+        + len("<h3>Background/Summary</h3>") : raw_text.index("<h3>Description</h3>")
+    ]
+    raw_description = raw_text[
+        raw_text.index("<h3>Description</h3>")
+        + len("<h3>Description</h3>") : raw_text.index("<h3>Claims</h3>")
+    ]
+    raw_claims = raw_text[
+        raw_text.index("<h3>Claims</h3>") + len("<h3>Claims</h3>") :
+    ]
+    background, _background_raw = patent_to_zmx._fujinon_numbered_paragraphs(
+        raw_background
+    )
+    description, description_raw = patent_to_zmx._fujinon_numbered_paragraphs(
+        raw_description
+    )
+    assert tuple(background) == tuple(range(1, 56))
+    assert tuple(description) == tuple(range(1, 322))
+    paragraph_sets = {"background": background, "description": description}
+    for (section, start, end), expected in profile[
+        "paragraph_span_sha256"
+    ].items():
+        payload = "".join(
+            paragraph_sets[section][number] for number in range(start, end + 1)
+        )
+        assert hashlib.sha256(payload.encode()).hexdigest() == expected
+
+    assert tuple(
+        panel
+        for _paragraph, panels in patent_to_zmx._FUJINON_RESTORATION_FIGURE_DECLARATIONS
+        for panel in panels
+    ) == patent_to_zmx._FUJINON_RESTORATION_FIGURE_PANELS
+    assert len(patent_to_zmx._FUJINON_RESTORATION_FIGURE_PANELS) == 39
+    assert re.findall(r"TABLE-US-(\d{5})", normalized) == [
+        f"{number:05d}" for number in range(1, 10)
+    ]
+    for _table_number, table_profile in profile["tables"].items():
+        paragraph = description[table_profile["paragraph"]]
+        assert hashlib.sha256(paragraph.encode()).hexdigest() == table_profile[
+            "sha256"
+        ]
+        assert len(paragraph.split()) == table_profile["words"]
+        assert description_raw[table_profile["paragraph"]].count("\t") == (
+            table_profile["raw_tabs"]
+        )
+    assert profile["table_contract"]["coefficient_cells"] == {2: 72, 5: 114, 8: 54}
+    assert profile["table_contract"]["asphere_orders"][5][-1] == "A20"
+
+    claim_text = patent_to_zmx.normalize_patent_text(raw_claims)
+    claim_matches = list(
+        re.finditer(
+            r"(?<!\S)(\d+)\.\s+(?=(?:An?|The)\s)",
+            claim_text,
+            re.IGNORECASE,
+        )
+    )
+    assert tuple(int(match.group(1)) for match in claim_matches) == tuple(range(1, 18))
+    assert tuple(
+        hashlib.sha256(
+            claim_text[
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(claim_text)
+                )
+            ]
+            .strip()
+            .encode()
+        ).hexdigest()
+        for index, match in enumerate(claim_matches)
+    ) == profile["claim_sha256"]
+
+    root = Path(__file__).resolve().parents[1]
+    denominator = json.loads(
+        (
+            root
+            / ".planning"
+            / "quick"
+            / "260721-patent-generic-family-40641507"
+            / "family-40641507-denominator.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert denominator["denominator"]["source_items"] == 9
+    assert denominator["denominator"]["ordered_optical_prescriptions"] == 3
+    assert [item["terminal_status"] for item in denominator["source_items"]].count(
+        "metadata_unpublished"
+    ) == 3
+
+
+def test_fujinon_family_40641507_classifier_fails_closed_on_source_change() -> None:
+    _path, raw_text = _fujinon_family_40641507_source()
+    mutated = raw_text.replace("Focal length 5.277 mm", "Focal length 5.278 mm", 1)
+    assert mutated != raw_text
+
+    attempts = patent_to_zmx._classify_fujinon_restoration_imaging_attempts(
+        mutated,
+        patent_id="US-8134609-B2",
+    )
+
+    assert len(attempts) == 9
+    assert all(type(attempt.error) is PatentParseError for attempt in attempts)
+    assert all("raw text hash changed" in str(attempt.error) for attempt in attempts)
+
+
+def test_fujinon_family_40641507_official_pdf_raster_set_rehashes() -> None:
+    profile = patent_to_zmx._FUJINON_RESTORATION_SOURCE_PROFILES[
+        "US-8134609-B2"
+    ]["pdf_audit"]
+    root = Path(__file__).resolve().parents[1]
+    raw = (root / profile["path"]).read_bytes()
+    assert len(raw) == profile["bytes"] == 3049508
+    assert hashlib.sha256(raw).hexdigest() == profile["container_sha256"]
+    reader = pypdf.PdfReader(io.BytesIO(raw))
+    assert len(reader.pages) == profile["page_count"] == 47
+    page_hashes: list[str] = []
+    text_characters = 0
+    for page in reader.pages:
+        images = list(page.images)
+        assert len(images) == 1
+        assert images[0].image.size == profile["raster_dimensions"]
+        assert images[0].image.mode == "1"
+        page_hashes.append(
+            patent_pdf_recovery._canonical_raster_sha256(images[0].data)
+        )
+        text_characters += len(page.extract_text() or "")
+    assert tuple(page_hashes) == profile["page_raster_sha256"]
+    assert text_characters == 0
+    assert hashlib.sha256(("\n".join(page_hashes) + "\n").encode()).hexdigest() == (
+        profile["raster_set_sha256"]
+    )
+    assert profile["drawing_page_numbers"] == tuple(range(2, 24))
+    assert profile["claims_page_numbers"] == (46, 47)
+
+
+def test_fujinon_family_40641507_source_evidence_rehashes_references() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260721-patent-generic-family-40641507"
+    evidence = json.loads(
+        (quick / "family-40641507-source-evidence.json").read_text(encoding="utf-8")
+    )
+    denominator = json.loads(
+        (quick / "family-40641507-denominator.json").read_text(encoding="utf-8")
+    )
+
+    assert evidence["family_id"] == denominator["family_id"] == "40641507"
+    assert evidence["root_id"] == denominator["root_id"] == "US-8134609"
+    assert evidence["publication_id"] == denominator["publication_id"] == (
+        "US-8134609-B2"
+    )
+    assert evidence["source_contract"]["source_items"] == 9
+    assert evidence["source_contract"]["ordered_prescriptions"] == 3
+    assert evidence["source_contract"]["raster_numeric_transcription"] is False
+    assert evidence["source_contract"]["derived_angular_field"] is False
+
+    records: list[dict[str, object]] = []
+
+    def rehash(value: object) -> None:
+        if isinstance(value, dict):
+            if {"path", "bytes", "sha256"} <= value.keys():
+                records.append(value)
+                payload = (root / str(value["path"])).read_bytes()
+                assert len(payload) == value["bytes"]
+                assert hashlib.sha256(payload).hexdigest() == value["sha256"]
+            for child in value.values():
+                rehash(child)
+        elif isinstance(value, list):
+            for child in value:
+                rehash(child)
+
+    rehash(evidence)
+    assert len(records) == 20
+    assert evidence["terminal_outcome"] == {
+        "worker_launches": 0,
+        "conversion_requests": 0,
+        "conversion_receipts": 0,
+        "prescription_fingerprints": 0,
+        "candidate_zmx": 0,
+        "staging_zmx": 0,
+        "formal_intake_items": 0,
+        "codev_calls": 0,
+    }
+    assert evidence["next_exact_group"]["family_id"] == "87845869"
+    assert evidence["next_exact_group"]["root_ids"] == ["US-20260086440"]
+    assert evidence["next_exact_group"]["publication_ids"] == [
+        "US-20260086440-A1"
+    ]
+    assert evidence["saturation_complete"] is False
+
+
+def test_fujinon_family_40641507_replay_is_deterministic() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260721-patent-generic-family-40641507"
+    artifact = json.loads(
+        (quick / "family-40641507-replay-determinism.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert artifact["semantic_equal"] is True
+    assert artifact["semantic_sha256"] == (
+        "dbe0b573e65951e54d49170cb501e3fd321481bb712d41adf4a621a68ade9ac1"
+    )
+    assert [attempt["result_attempt"] for attempt in artifact["attempts"]] == [2, 3]
+    for expected in artifact["attempts"]:
+        payload = (root / expected["path"]).read_bytes()
+        assert len(payload) == expected["bytes"]
+        assert hashlib.sha256(payload).hexdigest() == expected["file_sha256"]
+        result = json.loads(payload)
+        assert result["root_state"] == "terminal"
+        assert len(result["items"]) == 9
+        statuses = [item["terminal_status"] for item in result["items"]]
+        assert statuses.count("confirmed_no_prescription") == 6
+        assert statuses.count("metadata_unpublished") == 3
+        assert all(item["conversion_attempt_id"] is None for item in result["items"])
+        assert all(
+            item["conversion_request_sha256"] is None for item in result["items"]
+        )
+        normalized = json.loads(json.dumps(result))
+        normalized.pop("result_attempt")
+        assert hashlib.sha256(
+            json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest() == expected["semantic_sha256"]
+    assert artifact["strict_replay"] == {
+        "roots_with_results": 619,
+        "expected_roots": 619,
+        "missing_results": 0,
+        "corrupt_results": 0,
+    }
+    assert artifact["worker_outputs_absent"] is True
+    assert artifact["codev_calls"] == 0
+
+
+def test_fujinon_family_40641507_generic_census_retires_one_root() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260721-patent-generic-family-40641507"
+    before = json.loads((quick / "generic-residual-before-43.json").read_text())
+    after_1_path = quick / "generic-residual-after-1.json"
+    after_2_path = quick / "generic-residual-after-2.json"
+    after = json.loads(after_1_path.read_text())
+
+    assert before["affected_roots"] == before["affected_items"] == 43
+    assert before["result_set_sha256"] == (
+        "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+    )
+    assert after["affected_roots"] == after["affected_items"] == 42
+    assert after["result_set_sha256"] == (
+        "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
+    )
+    assert after_1_path.read_bytes() == after_2_path.read_bytes()
+    assert hashlib.sha256(after_1_path.read_bytes()).hexdigest() == (
+        "2dc05a2f4e05a97db9157e7ab7aa2531972a800490e8ed28c2ab1b7d61b12145"
+    )
+    assert all(item["root_id"] != "US-8134609" for item in after["items"])
+
+    queue = json.loads((quick / "queue-after.json").read_text())
+    assert queue["result_set_sha256"] == after["result_set_sha256"]
+    assert queue["next_exact_group"]["layout_signature"] == min(
+        after["layout_signature_counts"]
+    )
+    assert queue["next_exact_group"]["layout_signature_count"] == 1
+    assert queue["next_exact_group"]["family_id"] == "87845869"
+    assert queue["next_exact_group"]["root_ids"] == ["US-20260086440"]
+    assert queue["next_exact_group"]["publication_ids"] == [
+        "US-20260086440-A1"
+    ]
+    raw_document = queue["next_exact_group"]["raw_document"]
+    raw_path = root / raw_document["path"]
+    assert raw_path.stat().st_size == raw_document["bytes"] == 95585
+    assert hashlib.sha256(raw_path.read_bytes()).hexdigest() == raw_document["sha256"]
+    assert queue["saturation_complete"] is False
+
+
+def test_fujinon_family_40641507_original_rasters_are_exact_expansions() -> None:
+    root = Path(__file__).resolve().parents[1]
+    quick = root / ".planning" / "quick" / "260721-patent-generic-family-40641507"
+    audit = json.loads(
+        (quick / "family-40641507-raster-audit.json").read_text(encoding="utf-8")
+    )
+    publication = audit["publications"]["US-8134609-B2"]
+    expected_hashes = publication["page_raster_sha256"]
+    assert len(expected_hashes) == 47
+    assert hashlib.sha256(("\n".join(expected_hashes) + "\n").encode()).hexdigest() == (
+        publication["raster_set_sha256"]
+    )
+
+    observed_by_wrapper: list[list[str]] = []
+    for wrapper in publication["wrappers"].values():
+        path = root / wrapper["path"]
+        payload = path.read_bytes()
+        assert len(payload) == wrapper["bytes"]
+        assert hashlib.sha256(payload).hexdigest() == wrapper["sha256"]
+        reader = pypdf.PdfReader(str(path))
+        assert len(reader.pages) == wrapper["page_count"] == publication["page_count"]
+        observed = [
+            patent_pdf_recovery._canonical_raster_sha256(page.images[0].data)
+            for page in reader.pages
+        ]
+        assert observed == expected_hashes
+        observed_by_wrapper.append(observed)
+    assert observed_by_wrapper[0] == observed_by_wrapper[1] == observed_by_wrapper[2]
+
+    raster_dir = root / publication["original_raster_directory"]["path"]
+    raster_paths = sorted(raster_dir.glob("page-??-original.png"))
+    assert len(raster_paths) == publication["original_raster_directory"]["file_count"]
+    pinned_reader = pypdf.PdfReader(
+        str(root / publication["wrappers"]["pinned_official_1"]["path"])
+    )
+    for raster_path, page in zip(raster_paths, pinned_reader.pages, strict=True):
+        embedded = cv2.imdecode(
+            np.frombuffer(page.images[0].data, dtype=np.uint8), cv2.IMREAD_UNCHANGED
+        )
+        serialized = cv2.imdecode(
+            np.frombuffer(raster_path.read_bytes(), dtype=np.uint8),
+            cv2.IMREAD_UNCHANGED,
+        )
+        assert embedded is not None and serialized is not None
+        assert embedded.ndim == 2
+        assert serialized.ndim == 3 and serialized.shape[2] == 3
+        assert np.array_equal(serialized[:, :, 0], embedded)
+        assert np.array_equal(serialized[:, :, 1], embedded)
+        assert np.array_equal(serialized[:, :, 2], embedded)
+    for retained in audit["retained_visual_audits"]:
+        payload = (root / retained["path"]).read_bytes()
+        assert len(payload) == retained["bytes"]
+        assert hashlib.sha256(payload).hexdigest() == retained["sha256"]
+        if "embedded_page_raster_sha256" in retained:
+            assert retained["embedded_page_raster_sha256"] == expected_hashes[
+                retained["page"] - 1
+            ]
+    assert audit["review_policy"] == {
+        "complete_contact_sheets_reviewed": True,
+        "original_resolution_key_pages_reviewed": True,
+        "original_rasters_only": True,
+        "nearest_neighbor_contact_sheet_navigation_only": True,
+        "image_enhancement_used": False,
+        "drawing_geometry_measured": False,
+        "numeric_transcription_from_raster": False,
+        "plot_sampling_used": False,
+        "ocr_repair_used": False,
+        "raster_numeric_inference_used": False,
+        "angular_field_derived_from_raster_and_focal_length": False,
+        "symbolic_H_or_h_treated_as_numeric_image_height": False,
         "related_publication_numeric_borrowing": False,
     }

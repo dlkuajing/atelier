@@ -1,0 +1,201 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "40641507",
+  "root_id": "US-8134609",
+  "publication_id": "US-8134609-B2",
+  "identity": {
+    "application_number": "12/270586",
+    "title": "Imaging system, imaging apparatus, portable terminal apparatus, onboard apparatus, medical apparatus and method of manufacturing the imaging system",
+    "inventors": [
+      "Yoneyama; Kazuya"
+    ],
+    "assignee": "Fujinon Corporation",
+    "prior_publication": "US-20090128665-A1",
+    "foreign_priority": "JP-P2007-298146"
+  },
+  "official_text_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/80cac521fccd012f/US-8134609-B2.html",
+    "bytes": 178194,
+    "sha256": "80cac521fccd012f58f16b3081c61c203021dd6a6c6e77e58ef2cc0b83e2c22f"
+  },
+  "official_pdf_wrappers": {
+    "download_1": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/source-review/US-8134609-B2-official-1.pdf",
+      "bytes": 3049508,
+      "sha256": "0eebde401bd4019636a75c75dcc8fd1fa53fe177b13f8c2c28a9ae5f22129e0d"
+    },
+    "download_2": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/source-review/US-8134609-B2-official-2.pdf",
+      "bytes": 3049508,
+      "sha256": "023f5a2abbf8ca6d317f32ac985fbafd888c115fea7dc398f533e48e03cd0555"
+    },
+    "pinned_download_1": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/0eebde401bd40196/US-8134609-B2.pdf",
+      "bytes": 3049508,
+      "sha256": "0eebde401bd4019636a75c75dcc8fd1fa53fe177b13f8c2c28a9ae5f22129e0d"
+    }
+  },
+  "retained_visual_navigation": {
+    "path": ".planning/quick/260721-patent-generic-family-40641507/pdf-review/contact-sheet-pages-01-47.png",
+    "bytes": 353454,
+    "sha256": "de8e65b65bda257b14ddf4d7dd250ab325e6cca1d0933859a43feb2e8fe7d863"
+  },
+  "replay_results": {
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-8134609/attempt-0002/result.json",
+      "bytes": 11418,
+      "sha256": "47afbee53445d18e5054a81b0d52b1ec9089584c628df2acd0606dab2bb88559"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-8134609/attempt-0003/result.json",
+      "bytes": 11418,
+      "sha256": "11b8f004bbbefbe7d73fd24d2ea2e954d9909fc66889db1123c3f9e351b044fb"
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/generic-residual-before-43.json",
+      "bytes": 26630,
+      "sha256": "f93aa674fa4467315e133b3d701f298e59e0dd7cb180c6c71a8acd5cc169e1ea"
+    },
+    "after_1": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/generic-residual-after-1.json",
+      "bytes": 26010,
+      "sha256": "2dc05a2f4e05a97db9157e7ab7aa2531972a800490e8ed28c2ab1b7d61b12145"
+    },
+    "after_2": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/generic-residual-after-2.json",
+      "bytes": 26010,
+      "sha256": "2dc05a2f4e05a97db9157e7ab7aa2531972a800490e8ed28c2ab1b7d61b12145"
+    }
+  },
+  "family_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/family-40641507-source-audit.md",
+      "bytes": 4748,
+      "sha256": "c29d8f93f0276ce8d42fb2281cafd6297d81163b6868541f66c8eb1eea02240c"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/family-40641507-raster-audit.json",
+      "bytes": 13909,
+      "sha256": "4075c79055ac7e8d876f367ad002fc11704e49cc013f63239d8761992b701886"
+    },
+    "source_lineage": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/family-40641507-external-family-members.json",
+      "bytes": 1380,
+      "sha256": "74013a961c872ee58f0736a374b4d754ee6ee87e186ae8ab2df0462bc241dcf6"
+    },
+    "denominator": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/family-40641507-denominator.json",
+      "bytes": 10182,
+      "sha256": "864e36fc63e589c22da28fda275038bcd0f817e1b3422b954f7715534f05b15d"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/family-40641507-replay-determinism.json",
+      "bytes": 1683,
+      "sha256": "55460e1f93a0237e9ab3269e87907a21b362d0330f471a5965a939a146665e29"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/queue-after.json",
+      "bytes": 1396,
+      "sha256": "7c7e92cc324a081c2ae0c1beef326db0e7607ddf7ba770053dc13061143ccbd8"
+    },
+    "roots": {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/roots.txt",
+      "bytes": 11,
+      "sha256": "9e8c70443844221f904e15db2e802b895f44cfb0baeeed86ee702f50c6756d87"
+    }
+  },
+  "live_shared_outputs": {
+    "replay_summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 52185,
+      "sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
+    },
+    "replay_report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 54112,
+      "sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
+    }
+  },
+  "source_contract": {
+    "background_summary_paragraphs": 55,
+    "description_paragraphs": 321,
+    "brief_drawing_paragraphs": 26,
+    "claims": 17,
+    "independent_claims": [
+      1,
+      8,
+      13
+    ],
+    "inline_tables": 9,
+    "declared_figure_panels": 39,
+    "drawing_sheets": 22,
+    "source_items": 9,
+    "ordered_prescriptions": 3,
+    "confirmed_no_prescription_items": 6,
+    "metadata_unpublished_items": 3,
+    "related_source_numeric_borrowing": false,
+    "raster_numeric_transcription": false,
+    "derived_angular_field": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "replay": {
+    "attempts": [
+      2,
+      3
+    ],
+    "semantic_equal": true,
+    "semantic_sha256": "dbe0b573e65951e54d49170cb501e3fd321481bb712d41adf4a621a68ade9ac1",
+    "roots_with_results": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "residual": {
+    "before_roots": 43,
+    "after_roots": 42,
+    "after_result_set_sha256": "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a",
+    "after_files_identical": true
+  },
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then exact family grouping",
+    "layout_signature": "b42ffd6f0e3fa9ab4b2d944d8377e5ce883cfa0c16f6dedc9f3557c09ddc21df",
+    "layout_signature_count": 1,
+    "family_id": "87845869",
+    "root_ids": [
+      "US-20260086440"
+    ],
+    "publication_ids": [
+      "US-20260086440-A1"
+    ],
+    "application_numbers": [
+      "19/408546"
+    ],
+    "title": "LIGHT PATH FOLDING ELEMENT, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a6a2c63f2323dcaa/US-20260086440-A1.html",
+      "bytes": 95585,
+      "sha256": "a6a2c63f2323dcaae2fba1555d3e73d16649ca6de8c2292928c2627c582be01a"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 86,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 5
+  },
+  "saturation_complete": false
+}

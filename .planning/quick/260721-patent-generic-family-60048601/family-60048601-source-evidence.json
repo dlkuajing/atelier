@@ -6,7 +6,11 @@
   "application_number": "16/748874",
   "title": "Imaging lens assembly and electronic device",
   "identity": {
-    "inventors": ["Lin; Cheng-Feng", "Lai; I-Wei", "Chou; Ming-Ta"],
+    "inventors": [
+      "Lin; Cheng-Feng",
+      "Lai; I-Wei",
+      "Chou; Ming-Ta"
+    ],
     "applicant": "LARGAN PRECISION CO., LTD.",
     "assignee": "LARGAN PRECISION CO., LTD.",
     "same_application_publication": "US-20200158996-A1",
@@ -51,28 +55,46 @@
       "normalized_sha256": "6f59d1a4ffa9438cd00adadd50ede55347a222756a66d8338b92ee333067d744"
     },
     "background": {
-      "paragraph_range": [1, 4],
+      "paragraph_range": [
+        1,
+        4
+      ],
       "normalized_sha256": "2f96244a82bd51326750304243a99b0b4c764fe7a77942265064d700c197c9c1",
       "paragraph_payload_sha256": "a9b69e866c3afe1245332954ba8902a40b233bcebfc9936fe9c80a45b9283f9c"
     },
     "summary": {
-      "paragraph_range": [5, 8],
+      "paragraph_range": [
+        5,
+        8
+      ],
       "normalized_sha256": "ffd24807d416e9927161ffa3e7bc55e9b51e009e0b0c61b13bbce17cd9d62db3",
       "paragraph_payload_sha256": "6a62892e506b3c316d457dbdb8728fde4c55c04e77e000e7635ff0b43cad2d06"
     },
     "brief": {
-      "paragraph_range": [1, 20],
+      "paragraph_range": [
+        1,
+        20
+      ],
       "normalized_sha256": "57fd5602e6a2abe19be69f1c714d7b288997ba70e0b52062996b8e5a3813c40e",
       "paragraph_payload_sha256": "ae3ea97ccb97eb6a19017ee5d3609686d060517c4292de1c92ab1e5003ff8fc2"
     },
     "detailed": {
-      "paragraph_range": [21, 77],
+      "paragraph_range": [
+        21,
+        77
+      ],
       "normalized_sha256": "5fe1ed825f21fbcfae3374c50c770a4792dcbee017d3c957ebc670541381d267",
       "paragraph_payload_sha256": "9631d9fe61796bb4814274f81a112d7844e2461c6c803fb13eeab72cfd5ca6c9"
     },
     "claims": {
-      "claim_range": [1, 6],
-      "independent_claim_numbers": [1, 6],
+      "claim_range": [
+        1,
+        6
+      ],
+      "independent_claim_numbers": [
+        1,
+        6
+      ],
       "normalized_sha256": "e7ae3378027bfb012df402347f9502b42c8070989872403d929d1b55130e47ed"
     }
   },
@@ -80,9 +102,22 @@
     {
       "embodiment_number": 1,
       "embodiment_label": "Largan first dual-molded light-absorbing lens embodiment",
-      "paragraph_range": [21, 49],
-      "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G"],
-      "tables": [1],
+      "paragraph_range": [
+        21,
+        49
+      ],
+      "figures": [
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E",
+        "1F",
+        "1G"
+      ],
+      "tables": [
+        1
+      ],
       "item_span_sha256": "888238526798cf99e52db967597ad02a4dc6d7d0ba906b8521a72c5223e436f4",
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.dual_molded_lens_light_absorbing_architecture_only"
@@ -90,9 +125,20 @@
     {
       "embodiment_number": 2,
       "embodiment_label": "Largan second dual-molded light-absorbing lens embodiment",
-      "paragraph_range": [50, 61],
-      "figures": ["2A", "2B", "2C", "2D", "2E"],
-      "tables": [2],
+      "paragraph_range": [
+        50,
+        61
+      ],
+      "figures": [
+        "2A",
+        "2B",
+        "2C",
+        "2D",
+        "2E"
+      ],
+      "tables": [
+        2
+      ],
       "item_span_sha256": "13221d058e8dc674719e2f61adf358edac5ccf2d914589cb8dde900b5068c601",
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.dual_molded_lens_light_absorbing_architecture_only"
@@ -100,9 +146,20 @@
     {
       "embodiment_number": 3,
       "embodiment_label": "Largan third dual-molded light-absorbing lens embodiment",
-      "paragraph_range": [62, 73],
-      "figures": ["3A", "3B", "3C", "3D", "3E"],
-      "tables": [3],
+      "paragraph_range": [
+        62,
+        73
+      ],
+      "figures": [
+        "3A",
+        "3B",
+        "3C",
+        "3D",
+        "3E"
+      ],
+      "tables": [
+        3
+      ],
       "item_span_sha256": "a2c6cee941802f780a3e74bf1ec3f28b7e581eefaf37fe303effa8944b03c06e",
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.dual_molded_lens_light_absorbing_architecture_only"
@@ -110,8 +167,13 @@
     {
       "embodiment_number": 4,
       "embodiment_label": "Largan smartphone electronic-device embodiment",
-      "paragraph_range": [74, 74],
-      "figures": ["4"],
+      "paragraph_range": [
+        74,
+        74
+      ],
+      "figures": [
+        "4"
+      ],
       "tables": [],
       "item_span_sha256": "de60d178bd41afae8cc7f06652b15513d7b618f72b9d7429b0dd9a606e85de32",
       "terminal_status": "confirmed_no_prescription",
@@ -120,8 +182,13 @@
     {
       "embodiment_number": 5,
       "embodiment_label": "Largan tablet electronic-device embodiment",
-      "paragraph_range": [75, 75],
-      "figures": ["5"],
+      "paragraph_range": [
+        75,
+        75
+      ],
+      "figures": [
+        "5"
+      ],
       "tables": [],
       "item_span_sha256": "6ae4496cef39b1c7562060f6eff9277601deb701472a299f7ce294dcba9ba360",
       "terminal_status": "confirmed_no_prescription",
@@ -130,8 +197,13 @@
     {
       "embodiment_number": 6,
       "embodiment_label": "Largan wearable electronic-device embodiment",
-      "paragraph_range": [76, 76],
-      "figures": ["6"],
+      "paragraph_range": [
+        76,
+        76
+      ],
+      "figures": [
+        "6"
+      ],
       "tables": [],
       "item_span_sha256": "46d8c6f7f39b879d9555111a535c80204ebf1f12f7752a55e542745da9a9c8d0",
       "terminal_status": "confirmed_no_prescription",
@@ -218,13 +290,13 @@
   "shared_outputs": {
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 51718,
-      "sha256": "34b1b83b5ed9aba504b8f63300cdcb095261fc832478896255dec1d01160ea42"
+      "bytes": 52185,
+      "sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 53627,
-      "sha256": "edf177d8082d34955f52507af2857bf988d465594605cc96542cd262d57ce7a2"
+      "bytes": 54112,
+      "sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
     }
   },
   "audit_artifacts": {
@@ -281,8 +353,12 @@
   },
   "next_exact_group": {
     "family_id": "84563102",
-    "root_ids": ["US-20260086334"],
-    "publication_ids": ["US-20260086334-A1"]
+    "root_ids": [
+      "US-20260086334"
+    ],
+    "publication_ids": [
+      "US-20260086334-A1"
+    ]
   },
   "saturation_complete": false
 }

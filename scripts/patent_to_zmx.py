@@ -602,6 +602,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_fujinon_restoration_imaging_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_multi_reflection_five_example_missing_metadata_attempts(
             raw_text,
@@ -77313,6 +77319,864 @@ def _classify_corephotonics_scanning_opfe_architecture_attempts(
         for number, label, system, _paragraphs, _figures, reason_code, detail in (
             _COREPHOTONICS_SCANNING_OPFE_ITEMS
         )
+    ]
+
+
+_FUJINON_RESTORATION_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*Imaging\s+system,\s+imaging\s+apparatus,\s+portable\s+"
+    r"terminal\s+apparatus,\s+onboard\s+apparatus,\s+medical\s+apparatus\s+"
+    r"and\s+method\s+of\s+manufacturing\s+the\s+imaging\s+system\s*</h2>",
+    flags=re.IGNORECASE,
+)
+_FUJINON_RESTORATION_FIGURE_PANELS = (
+    "1",
+    "2A",
+    "2B",
+    "3A",
+    "3B",
+    "4A",
+    "4B",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12A",
+    "12B",
+    "12C",
+    "12D",
+    "13",
+    "14A",
+    "14B",
+    "14C",
+    "14D",
+    "15",
+    "16A",
+    "16B",
+    "16C",
+    "16D",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21A",
+    "21B",
+    "21C",
+    "21D",
+    "22",
+    "23",
+    "24",
+)
+_FUJINON_RESTORATION_FIGURE_DECLARATIONS = (
+    (3, ("1",)),
+    (4, ("2A", "2B")),
+    (5, ("3A", "3B")),
+    (6, ("4A", "4B")),
+    (7, ("5",)),
+    (8, ("6",)),
+    (9, ("7",)),
+    (10, ("8",)),
+    (11, ("9",)),
+    (12, ("10",)),
+    (13, ("11",)),
+    (14, ("12A", "12B", "12C", "12D")),
+    (15, ("13",)),
+    (16, ("14A", "14B", "14C", "14D")),
+    (17, ("15",)),
+    (18, ("16A", "16B", "16C", "16D")),
+    (19, ("17",)),
+    (20, ("18",)),
+    (21, ("19",)),
+    (22, ("20",)),
+    (23, ("21A", "21B", "21C", "21D")),
+    (24, ("22",)),
+    (25, ("23",)),
+    (26, ("24",)),
+)
+_FUJINON_RESTORATION_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Fujinon restoration imaging-system and manufacturing architecture",
+        "paragraph_ranges": ((27, 154), (163, 167), (321, 321)),
+        "figures": (
+            "1",
+            "2A",
+            "2B",
+            "3A",
+            "3B",
+            "4A",
+            "4B",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+        ),
+        "tables": (),
+        "status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.restoration_imaging_and_manufacturing_"
+            "architecture_only"
+        ),
+        "detail": (
+            "Description paragraphs 27-154, 163-167 and 321 and FIGS. 1-10 "
+            "publish imaging systems 100/100-prime/100-double-prime, restoration "
+            "coefficient acquisition apparatus variants 70A-70C and their "
+            "manufacturing methods, but no ordered optical prescription for a "
+            "separate lens"
+        ),
+    },
+    {
+        "number": 2,
+        "label": "Fujinon generic imaging-apparatus wrapper",
+        "paragraph_ranges": ((155, 155), (162, 162)),
+        "figures": (),
+        "tables": (),
+        "status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.generic_imaging_apparatus_wrapper_only",
+        "detail": (
+            "Description paragraphs 155 and 162 and claim 14 publish a generic "
+            "imaging-apparatus wrapper that reuses the disclosed imaging system "
+            "without a separate ordered optical prescription"
+        ),
+    },
+    {
+        "number": 3,
+        "label": "Fujinon onboard-apparatus wrapper",
+        "paragraph_ranges": ((155, 157), (162, 162)),
+        "figures": ("22",),
+        "tables": (),
+        "status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.onboard_apparatus_wrapper_only",
+        "detail": (
+            "Description paragraphs 155-157 and 162, FIG. 22 and claim 16 publish "
+            "automobile camera placements that reuse the imaging system without a "
+            "separate ordered optical prescription; paragraph 157's printed FIG. "
+            "11 reference is retained unrepaired"
+        ),
+    },
+    {
+        "number": 4,
+        "label": "Fujinon portable-terminal-apparatus wrapper",
+        "paragraph_ranges": ((155, 155), (158, 159), (162, 162)),
+        "figures": ("23",),
+        "tables": (),
+        "status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.portable_terminal_apparatus_wrapper_only"
+        ),
+        "detail": (
+            "Description paragraphs 155, 158-159 and 162, FIG. 23 and claim 15 "
+            "publish a cellular-phone wrapper that reuses the imaging system "
+            "without a separate ordered optical prescription"
+        ),
+    },
+    {
+        "number": 5,
+        "label": "Fujinon medical-apparatus wrapper",
+        "paragraph_ranges": ((155, 155), (160, 162)),
+        "figures": ("24",),
+        "tables": (),
+        "status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.medical_apparatus_wrapper_only",
+        "detail": (
+            "Description paragraphs 155 and 160-162, FIG. 24 and claim 17 publish "
+            "an endoscope wrapper that reuses the imaging system without a "
+            "separate ordered optical prescription"
+        ),
+    },
+    {
+        "number": 6,
+        "label": "Fujinon imaging lens 10A Example 1",
+        "paragraph_ranges": ((168, 230), (301, 303)),
+        "figures": ("11", "12A", "12B", "12C", "12D", "17"),
+        "tables": (1, 2, 3),
+        "status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+        "detail": (
+            "Description paragraphs 168-230 and 301-303 and Tables 1-3 publish "
+            "the ordered four-lens prescription, stop, focal length 5.277 mm and "
+            "F-number 2.8. The source publishes only qualitative maximum-angle and "
+            "symbolic half-angle language, not a prescription-specific numeric "
+            "angular field. Numeric aberration-axis labels in the original raster "
+            "are intentionally not transcribed, measured or used to derive a field"
+        ),
+    },
+    {
+        "number": 7,
+        "label": "Fujinon imaging lens 10B Example 2",
+        "paragraph_ranges": ((168, 170), (231, 266), (301, 303)),
+        "figures": ("13", "14A", "14B", "14C", "14D", "18"),
+        "tables": (4, 5, 6),
+        "status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+        "detail": (
+            "Description paragraphs 168-170, 231-266 and 301-303 and Tables 4-6 "
+            "publish the ordered three-lens prescription, stop, focal length "
+            "3.312 mm, F-number 2.7 and Table 5 coefficients through A20. The "
+            "source publishes no prescription-specific numeric angular field; "
+            "raster plot labels are not transcribed or used for derivation"
+        ),
+    },
+    {
+        "number": 8,
+        "label": "Fujinon imaging lens 10C Example 3",
+        "paragraph_ranges": ((168, 170), (267, 303)),
+        "figures": ("15", "16A", "16B", "16C", "16D", "19"),
+        "tables": (7, 8, 9),
+        "status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+        "detail": (
+            "Description paragraphs 168-170 and 267-303 and Tables 7-9 publish "
+            "the ordered three-lens prescription, stop, focal length 4.043 mm and "
+            "F-number 3.5. The source publishes no prescription-specific numeric "
+            "angular field; raster plot labels are not transcribed or used for "
+            "derivation"
+        ),
+    },
+    {
+        "number": 9,
+        "label": "Fujinon comparative imaging lens 10H",
+        "paragraph_ranges": ((304, 320),),
+        "figures": ("20", "21A", "21B", "21C", "21D"),
+        "tables": (),
+        "status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.comparative_lens_architecture_only",
+        "detail": (
+            "Description paragraphs 304-320 and FIGS. 20/21A-21D publish a "
+            "qualitative four-lens comparative architecture and MTF behaviour but "
+            "no ordered radii, spacings, materials or asphere coefficients"
+        ),
+    },
+)
+
+
+_FUJINON_RESTORATION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-8134609-B2": {
+        "family_id": "40641507",
+        "application_number": "12/270586",
+        "raw_document_sha256": (
+            "80cac521fccd012f58f16b3081c61c203021dd6a6c6e77e58ef2cc0b83e2c22f"
+        ),
+        "normalized_text_sha256": (
+            "bad86e90c4970f2174acb5b65863be103db9615eb5c8e859ecc01e1ee03fc3be"
+        ),
+        "identity_markers": {
+            "United States Patent 8134609 Kind Code B2": 1,
+            "Date of Patent March 13, 2012": 1,
+            "Yoneyama; Kazuya": 2,
+            "Family ID: 40641507": 1,
+            "Assignee: Fujinon Corporation": 1,
+            "Appl. No.: 12/270586": 1,
+            "US 20090128665 A1 May. 21, 2009": 1,
+            "JP P2007-298146 Nov. 16, 2007": 1,
+        },
+        "section_markers": {
+            "preamble": "US-8134609-B2",
+            "abstract": "Abstract An imaging system",
+            "background": "Background/Summary (1)",
+            "description": "Description (1) BRIEF",
+            "claims": "Claims 1. An imaging system",
+        },
+        "section_sha256": dict(
+            zip(
+                ("preamble", "abstract", "background", "description", "claims"),
+                _samsung_zoom_sha256_lines("""
+                d46b5f2c6d26c6ccfc416f938ace39f5556bad89c70bb8826e70c894ae37b6ff
+                c0a32888c72c7a591f9ad6daae2ea8e7c12de9f2755e8160e1fdc1e9db2ba736
+                b72a9f6064301cb2ac0980fd43947e9509b04f9753bb296592741622f62eb689
+                dd36735a6afdbe11cc69eaee18ea293ffc8f843113f2aabb20d65d4a7c88fb77
+                f8c97bb589bbeba62c471f174395a8bd81409c38cd2b4ac0d666e7cd51917ea5
+                """),
+                strict=True,
+            )
+        ),
+        "raw_section_normalized_sha256": {
+            "background": (
+                "2b767d04fe1083b773f4a5a260e167f37b1a2f7c8645dc7b0136c7a057112e90"
+            ),
+            "description": (
+                "b08f90b0bb0975757d2a4cdea0d0bfe133e4f3e992e6cb451e9c2f0fb981cd13"
+            ),
+            "claims": (
+                "fe1cb0bdac73c5fc1256f41f6fd28838897d6597ddd74056df418b993021b8d4"
+            ),
+        },
+        "paragraph_span_sha256": {
+            ("background", 1, 55): (
+                "b45f5cec913826d3b2ed65593e1797291fea3da45a8484bbd4b42512898dfb80"
+            ),
+            ("description", 1, 26): (
+                "e39e1af2acbf4fd91ea829278a8ba60e44f3141a12c277b35348ed14b9f7e8a6"
+            ),
+            ("description", 27, 46): (
+                "05d0d0f3e81b51280162a64948417b03f75191e0723e8398391629cf0f6a9adc"
+            ),
+            ("description", 47, 57): (
+                "88210d8e55362c016f82fe450ba621635ab8d863da0b5d802ef5993b760ac4bd"
+            ),
+            ("description", 58, 67): (
+                "f9f9df6aa2920714c211f7be7936af90264886b1ed2b4fd23c16121c07434974"
+            ),
+            ("description", 68, 84): (
+                "181861097d6206887c49ae5a5635fceb30db72f43fff627c8dbd9a09009828d2"
+            ),
+            ("description", 85, 98): (
+                "2b8bf73f4be450d3a421af9d66c6c8fb9b1c503e04786243a94da45421983bc6"
+            ),
+            ("description", 99, 111): (
+                "a6a8e8fa75cb9dda1740499af919217ca61020f8347dec03f29689c77a2d76d3"
+            ),
+            ("description", 112, 119): (
+                "738fd4973359f8346c6b927af7e2b1104736dd901f95bf8df8e6ede78c848c1d"
+            ),
+            ("description", 120, 138): (
+                "767349a0045f0ef3857cf4a03c813f1321b7a0886a074b54567b700bf569ecd9"
+            ),
+            ("description", 139, 144): (
+                "77edaacfbe26373b0ab3789ecbdce849e1a89ade06782208c8d0821f037efe99"
+            ),
+            ("description", 145, 150): (
+                "769fd8c15d6efb18cce8e2b1c398447825a30d485a2af095c8060af07df34bc2"
+            ),
+            ("description", 151, 167): (
+                "76e7f5ecf59196fbd9032967539e245bc627781aea828d8c8c066c9d16ac29d8"
+            ),
+            ("description", 168, 170): (
+                "059dc2020203ae360ffe1f566f1b877b70bfbde2e71925b2cca1d5106e0b7dbe"
+            ),
+            ("description", 171, 230): (
+                "9a0cec7594cfefcf6545da36f20aa65d05fd5285b3748850cb3b5a0e116e1625"
+            ),
+            ("description", 231, 266): (
+                "5c678a0dd622d6cbb842c8f7783178f16e433f0edc5a33accd4b86ae369a3884"
+            ),
+            ("description", 267, 300): (
+                "4d7750feb5e289d8a7e4a5ee8eb3970279c385a6fc9c6a9431a315279fa045b8"
+            ),
+            ("description", 301, 303): (
+                "84560b5e7232e0a42e0651fd6abe98026bb13ab93bb6dcccb433926121c141e5"
+            ),
+            ("description", 304, 320): (
+                "266e5a574e0dc4108845ad27190781d78cbcc5f18dae25734ee398f84af5f849"
+            ),
+            ("description", 321, 321): (
+                "00f80e847e1c96473be79b20e3d63441af2eebe98a6688d98939ec1dc5ca6efc"
+            ),
+        },
+        "claim_numbers": tuple(range(1, 18)),
+        "independent_claim_numbers": (1, 8, 13),
+        "claim_sha256": _samsung_zoom_sha256_lines("""
+            8a7434045e1033e14700956496517735a2b57abb9d5aa711770d5a4dee1fdb6e
+            b0082df6af433c8155f5108247b7bdade8ccb4c8d9e8e1a677ff154a8cd8d617
+            23b19f97829a36785264d6d940291f8ff32ce9ad9c698a7c1735475516194ed3
+            00f0a7bcc355ca5c9cedbf531078208e9c1710fb6f681027e54e030f045c3c44
+            f4e9555d19c37e64fa6a68a1ae252bdce0dd82fb638895eb3c3717424b15a3d4
+            af02eef36014c828cf685d2f61a34e56643d0d070cbcd2809cbfee59630011c0
+            a22f441102bc54438791c254b38335ce696996b9e3241578dd83c94ce4bac989
+            02b866e0aa080e7031dba85277a03719b7afbd63dc8541e0188644aa22be65e4
+            d8f63adb7bffdd65b8f2c1f4ae99812be247cf75153848076d1ccf761f8b43b0
+            7d93be2be87d344b77663e06bd6a8e6e39bfb1e1b46fbd606a32a77f5720a034
+            b0b32d8cfa3f016934b31f545aa3964f86bb8c582bd62c12460811f2e01283de
+            f9a5101a76b8c20c75c2646056869657f415e273ea9ccc51535cc3d7b2cebf5f
+            586ecccd795331af40b0fb77874e9fa7585b9ec72d1b6e28553d35b838a2e60a
+            b8bb03721f1951f7411f829b885f0f9147faee0aa7846bdba0441e71f1c5a024
+            9142dbe5c02a91abade1551afd9d9e5058c1d6112df3d6c49ac492927c21f033
+            a7df727ffdfc55a14c671a8c1325b361f76ed0e7a1a82d3de4b1e9f29406f5ff
+            a8d8014f32f5588ad026c1872c05a2d8c40e1ae8bb3534692ddd5c2dcf68a600
+        """),
+        "tables": {
+            1: {"paragraph": 188, "sha256": "880cf0bbef21e9279833a2bea294c480eb321f9f2a6c2d5e1ee4eafa3aa5ed03", "words": 62, "raw_tabs": 38},
+            2: {"paragraph": 191, "sha256": "9617fd36ce19490583aba656097a029cd2db6f9283ace2ad8a36db1bed846b2f", "words": 109, "raw_tabs": 81},
+            3: {"paragraph": 192, "sha256": "5158191c8fa00761184ca57a770c3d29f81e4670f04c373bb0e641e9693954a4", "words": 99, "raw_tabs": 34},
+            4: {"paragraph": 244, "sha256": "4fc3610bb4ba1de4e0b0daca2f67ae374cbb648bad3d2f20ca0974d381ed737c", "words": 54, "raw_tabs": 32},
+            5: {"paragraph": 247, "sha256": "0b0b66e10db6ac345942cc2617720d20f12116da275a10236a7ab2fd66fd7dfe", "words": 173, "raw_tabs": 133},
+            6: {"paragraph": 248, "sha256": "edb8757c9166f586bb6fed969b1c98c7be18a3ada735d61faac68e9382f2b4cf", "words": 93, "raw_tabs": 29},
+            7: {"paragraph": 280, "sha256": "9cd336c15109d9884bfea6be3ed6526856317850e3d96271b4d41ca202adeffc", "words": 54, "raw_tabs": 32},
+            8: {"paragraph": 283, "sha256": "14a5095719de3480a603b3561dc1c812ac424c1a00cb823086d52ffc591fc7b6", "words": 87, "raw_tabs": 63},
+            9: {"paragraph": 284, "sha256": "e0189303b8cb38b67ea86bc5eb3a1fa06e071ed958af1bc8128c0f6a1847a59e", "words": 92, "raw_tabs": 28},
+        },
+        "table_contract": {
+            "surface_rows": {1: 12, 4: 10, 7: 10},
+            "asphere_surface_numbers": {
+                2: tuple(range(1, 9)),
+                5: tuple(range(3, 9)),
+                8: tuple(range(1, 7)),
+            },
+            "asphere_orders": {
+                2: ("K", *tuple(f"A{value}" for value in range(3, 11))),
+                5: ("K", *tuple(f"A{value}" for value in range(3, 21))),
+                8: ("K", *tuple(f"A{value}" for value in range(3, 11))),
+            },
+            "coefficient_cells": {2: 72, 5: 114, 8: 54},
+            "direct_metadata": {
+                3: ("F number 2.8", "Focal length 5.277 mm"),
+                6: ("F number 2.7", "Focal length 3.312 mm"),
+                9: ("F number 3.5", "Focal length 4.043"),
+            },
+        },
+        "phrase_counts": {
+            "TABLE-US-": 9,
+            "F number": 9,
+            "Focal length": 14,
+            "Surface number": 15,
+            "angle of view": 5,
+            "maximum angle of view": 4,
+            "image height": 11,
+            "half angle": 1,
+            "half field": 0,
+            "full field": 0,
+            "field angle": 0,
+            "restoration coefficient acquisition apparatus 70A": 11,
+            "restoration coefficient acquisition apparatus 70B": 8,
+            "restoration coefficient acquisition apparatus 70C": 8,
+        },
+        "pdf_audit": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/0eebde401bd40196/"
+                "US-8134609-B2.pdf"
+            ),
+            "bytes": 3_049_508,
+            "container_sha256": (
+                "0eebde401bd4019636a75c75dcc8fd1fa53fe177b13f8c2c28a9ae5f22129e0d"
+            ),
+            "page_count": 47,
+            "raster_dimensions": (2560, 3300),
+            "page_raster_sha256": _samsung_zoom_sha256_lines("""
+                e8be701e8345b9d1ac2454eb0eb63c049c59758a61b3c605bda3f6e0da0d3126
+                9334e1684b91dd9e65ccb4aa33fee74fa2a54ef027395d890d2d3605b5d4716b
+                ee75b45459dabce58305258573a4c2c7169924f37f16c5bd71bf78ccf4b86c68
+                5acd5e6d8b62d7e2cf03160f0d298e044956ec91468287a43e66d0ca240618f9
+                f6534d3824f12b261b4ec054c201c9f71de0369d824dbdc56a70f3bb52a3ee6e
+                6cca49ceff79249e0d2a4fb6179f547edf4d6cf0d2145c3502e0717e1bc67c82
+                98b1182a972d47c1c5b131e531a7d83c870ebde7199acdf5ce90b735990b3783
+                a177cd1065312688d9c75ea451647a1bfd98cb8211b30cb8e1debd1e43e33af1
+                b93304da3536fe35cf81f51c97484b32870aecb84c57e7ca66151727a8dc9721
+                2fd00ceb348247800ad7ef405a6b043985158d92446feaab13244c9a1071b074
+                834b7019641bb962a838197fee28889aed5b340aed0408153be69395cd87f4c7
+                db96f84824ff3e7a2f9c60c6b03f4ef4b1ae3072a9369be1b738c1ef1fa29703
+                3c615df12d0e45ab2da730255335d89ef6ec7da097a452e2ce569349188a9a2a
+                2584a69a4c805a574f7fe449d6c99aeee761e08d96a5ddc773bfca47104bb258
+                85702eb23a11115b4b57904ef9bb2dd02a4a6d0735ee2deebb56f94a33d84408
+                8e6b704b675a0adeeaea6eff2d65cdd444c55eb2438fb956ffa72d433799ed0a
+                6aa54c0f44a8f5bd46dbfd70969d53236d5c7440ada3cc0e5e68f75dd4c7afef
+                5d9d350774c55907ab365c04771bb8c3ac74dbb23cbfcd9beee37af1f747d1a8
+                4fd2208856cb39f8d558b3968eb999beedc0f77a14c4fa7524a0ce818ee4a5c2
+                3fa3ec18a66b1b153b4a94d8314223260196942213dfcd9dd8572de5b9937c21
+                4559bd6d235707741343f77f1f573318e7b69c4e0622014fb069a3f46a9375a7
+                ff490401f8af885ef87247ab420c26eae726d9740b76ec1dae4b687a7744f7fa
+                12a525077af18a4c4fe045bf40f77969857627621c4ec3231b6d23665bb06d3a
+                e737217be860101364528298f3f93712c2e776ae70efe8c0eb87d3e745462530
+                a4854bca13dc51399f4066c5a52de669898451a303b0ac18215ccb64b308fe70
+                6157c5227b6e9a94dc11a78b0d8419237dade5ef550cf982db00e1af2ff5ad3c
+                efe69293cc69443480c99621cc5c7c0676deefc7ea2672f7547d8013c82c6b72
+                7f2f38c6ef6da283c16562c516711c0000953567678c2b9c8297f2de25ed311a
+                d66fe0200f2c98703bc721a6e00390a4426594fcb793aaeebcfd65d74dc2c81f
+                4e905aa983ade92e8bb79cc7ce0b3cdaa833781d50fb430c591b1ff80eb2f8d8
+                dc4cc3163dd94ead763463ef28488a8bd8a74d0d85717447711b44925d453419
+                1ea71ce37ce404a4225dc6b66a3f7051a40752460ae731b8a26f1a80403f3e58
+                2a2c4554980811789ec927307ff587dfb9dd7bf2c5db3b38a15e1235378d1062
+                1869f9996e30162516597a845352ee7b1b415326e3cf4240cbe600bdd2f8758b
+                a7f12f2b72c02e43280d7ed1a9a50203a48e8637fb23255ca77cc2a038311d5b
+                d5dd1205fb1e4e575b749171ef2a55e465a3c891cac67fcdb412bc4fc0fdc459
+                7ee6c5af35988bc194e7b30ac4bce8929cabb6df74bdea7e5d02b1797477d090
+                c87cedb0533a3e257746f58c8a41874a0cf531b8dc77c4ff59c6d0d4324003e2
+                4e89344eb24f565c4b8c488f3fd5803d64a4b9d8ed114e8c1b496d2cc2e5b4cf
+                c1a74dd37306526bd6f8d17a10b9fc1bbfb0c9b1c5c835b0db305ac20ab330ec
+                6417d5ca7d0cff680a2769bb2b0262a1a400ff3f818c6656851338e47cbf7b86
+                471a5c71800ef4d143a41fb75b08a2e54364401be6f6ba465c66bba8ab952bca
+                9ca4bb394fd2bb6cd0ea6e85c8f4084d07a10dd412d84f7d3ce9cc60a85e93de
+                00fbd19dba4a649de0ee896959661edc18ddb730f5ca8abf386c0262413f0fe7
+                aa2e74eff9a196d45c3e0068b341ed51aa6dfd4a12ed63dbac2c4de10c35694c
+                2f2d0f342630cdd8dfe6026393cbca1c1a721edaa5119496c84f1abcae400105
+                0b9066b235c18218a34b3d183bf93876d7dab124a9d5c1548de69b20030f538c
+            """),
+            "raster_set_sha256": (
+                "a161b949c457b8f7a0fce2a20dc172a7991a7740cc4e79059c26103f1f6e3206"
+            ),
+            "cover_page_numbers": (1,),
+            "drawing_page_numbers": tuple(range(2, 24)),
+            "specification_page_numbers": tuple(range(24, 48)),
+            "claims_page_numbers": (46, 47),
+        },
+    }
+}
+
+
+def _fujinon_numbered_paragraphs(
+    raw_section: str,
+) -> tuple[dict[int, str], dict[int, str]]:
+    matches = list(re.finditer(r"(?:<p>|<br />)\((\d+)\)\s*", raw_section))
+    normalized: dict[int, str] = {}
+    raw_bodies: dict[int, str] = {}
+    for index, match in enumerate(matches):
+        number = int(match.group(1))
+        body = raw_section[
+            match.end() : (
+                matches[index + 1].start() if index + 1 < len(matches) else len(raw_section)
+            )
+        ]
+        raw_bodies[number] = body
+        normalized[number] = f"({number}) {normalize_patent_text(body)}"
+    return normalized, raw_bodies
+
+
+def _classify_fujinon_restoration_imaging_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Fujinon Family 40641507 without raster transcription."""
+
+    profile = _FUJINON_RESTORATION_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _FUJINON_RESTORATION_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Fujinon restoration-imaging official raw text hash changed for {patent_id}"
+            )
+        if len(_FUJINON_RESTORATION_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Fujinon restoration-imaging title binding changed")
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Fujinon restoration-imaging normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Fujinon restoration-imaging section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Fujinon restoration-imaging section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging {section_name} section changed"
+                )
+
+        raw_section_markers = {
+            "background": ("<h3>Background/Summary</h3>", "<h3>Description</h3>"),
+            "description": ("<h3>Description</h3>", "<h3>Claims</h3>"),
+            "claims": ("<h3>Claims</h3>", None),
+        }
+        raw_sections: dict[str, str] = {}
+        for section_name, (start_marker, end_marker) in raw_section_markers.items():
+            start = raw_text.index(start_marker) + len(start_marker)
+            end = raw_text.index(end_marker, start) if end_marker is not None else len(raw_text)
+            raw_sections[section_name] = raw_text[start:end]
+            observed_digest = hashlib.sha256(
+                normalize_patent_text(raw_sections[section_name]).encode("utf-8")
+            ).hexdigest()
+            if observed_digest != profile["raw_section_normalized_sha256"][section_name]:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging raw {section_name} section changed"
+                )
+
+        background, _background_raw = _fujinon_numbered_paragraphs(
+            raw_sections["background"]
+        )
+        description, description_raw = _fujinon_numbered_paragraphs(
+            raw_sections["description"]
+        )
+        if tuple(background) != tuple(range(1, 56)):
+            raise PatentParseError(
+                "Fujinon restoration-imaging Background/Summary paragraphs 1-55 changed"
+            )
+        if tuple(description) != tuple(range(1, 322)):
+            raise PatentParseError(
+                "Fujinon restoration-imaging Description paragraphs 1-321 changed"
+            )
+        paragraph_sets = {"background": background, "description": description}
+        for (section_name, start, end), expected_digest in profile[
+            "paragraph_span_sha256"
+        ].items():
+            payload = "".join(
+                paragraph_sets[section_name][number]
+                for number in range(start, end + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging {section_name} paragraph span "
+                    f"{start}-{end} changed"
+                )
+
+        declared_panels: list[str] = []
+        for paragraph_number, panels in _FUJINON_RESTORATION_FIGURE_DECLARATIONS:
+            paragraph = description[paragraph_number]
+            for panel in panels:
+                if re.search(
+                    rf"\bFIGS?\.\s+{re.escape(panel)}\b",
+                    paragraph,
+                    re.IGNORECASE,
+                ) is None:
+                    raise PatentParseError(
+                        f"Fujinon restoration-imaging FIG. {panel} declaration changed"
+                    )
+                declared_panels.append(panel)
+        if tuple(declared_panels) != _FUJINON_RESTORATION_FIGURE_PANELS:
+            raise PatentParseError(
+                "Fujinon restoration-imaging declared figure panel denominator changed"
+            )
+        mapped_panels = {
+            panel for item in _FUJINON_RESTORATION_ITEMS for panel in item["figures"]
+        }
+        if mapped_panels != set(_FUJINON_RESTORATION_FIGURE_PANELS):
+            raise PatentParseError(
+                "Fujinon restoration-imaging item-to-figure coverage changed"
+            )
+        covered_detailed_paragraphs = {
+            number
+            for item in _FUJINON_RESTORATION_ITEMS
+            for start, end in item["paragraph_ranges"]
+            for number in range(start, end + 1)
+        }
+        if covered_detailed_paragraphs != set(range(27, 322)):
+            raise PatentParseError(
+                "Fujinon restoration-imaging item paragraph coverage changed"
+            )
+
+        table_markers = tuple(
+            int(value) for value in re.findall(r"TABLE-US-(\d{5})", text)
+        )
+        if table_markers != tuple(range(1, 10)):
+            raise PatentParseError("Fujinon restoration-imaging TABLE sequence changed")
+        mapped_tables = {
+            table for item in _FUJINON_RESTORATION_ITEMS for table in item["tables"]
+        }
+        if mapped_tables != set(range(1, 10)):
+            raise PatentParseError(
+                "Fujinon restoration-imaging item-to-table coverage changed"
+            )
+        for table_number, table_profile in profile["tables"].items():
+            paragraph_number = table_profile["paragraph"]
+            paragraph = description[paragraph_number]
+            if hashlib.sha256(paragraph.encode("utf-8")).hexdigest() != table_profile[
+                "sha256"
+            ]:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging TABLE {table_number} changed"
+                )
+            if len(paragraph.split()) != table_profile["words"]:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging TABLE {table_number} token count changed"
+                )
+            if description_raw[paragraph_number].count("\t") != table_profile["raw_tabs"]:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging TABLE {table_number} tab layout changed"
+                )
+
+        table_contract = profile["table_contract"]
+        if table_contract["surface_rows"] != {1: 12, 4: 10, 7: 10}:
+            raise PatentParseError(
+                "Fujinon restoration-imaging surface-row denominator changed"
+            )
+        if table_contract["coefficient_cells"] != {2: 72, 5: 114, 8: 54}:
+            raise PatentParseError(
+                "Fujinon restoration-imaging coefficient-cell denominator changed"
+            )
+        for table_number, orders in table_contract["asphere_orders"].items():
+            paragraph = description[profile["tables"][table_number]["paragraph"]]
+            for order in orders:
+                if len(re.findall(rf"(?<!\w){re.escape(order)}(?!\w)", paragraph)) < 1:
+                    raise PatentParseError(
+                        f"Fujinon restoration-imaging TABLE {table_number} "
+                        f"coefficient {order} changed"
+                    )
+        for table_number, metadata_markers in table_contract["direct_metadata"].items():
+            paragraph = description[profile["tables"][table_number]["paragraph"]]
+            if any(marker not in paragraph for marker in metadata_markers):
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging TABLE {table_number} direct "
+                    "metadata changed"
+                )
+
+        claim_text = normalize_patent_text(raw_sections["claims"])
+        claim_matches = list(
+            re.finditer(
+                r"(?<!\S)(\d+)\.\s+(?=(?:An?|The)\s)",
+                claim_text,
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Fujinon restoration-imaging claims 1-17 changed")
+        independent_claims = tuple(
+            number
+            for number, match in zip(claim_numbers, claim_matches, strict=True)
+            if re.match(
+                r"\s*An\s+imaging\s+system\s+comprising\b",
+                claim_text[match.end() :],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Fujinon restoration-imaging independent claims changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(
+                claim_text[
+                    match.start() : (
+                        claim_matches[index + 1].start()
+                        if index + 1 < len(claim_matches)
+                        else len(claim_text)
+                    )
+                ]
+                .strip()
+                .encode("utf-8")
+            ).hexdigest()
+            for index, match in enumerate(claim_matches)
+        )
+        if claim_hashes != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Fujinon restoration-imaging individual claim payloads changed"
+            )
+        wrapper_claims = tuple(claim_numbers[-4:])
+        if wrapper_claims != (14, 15, 16, 17):
+            raise PatentParseError(
+                "Fujinon restoration-imaging apparatus wrapper claims changed"
+            )
+
+        if re.search(r"<(?:table|maths|figref)\b", raw_text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Fujinon restoration-imaging retained HTML tag layout changed"
+            )
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if re.search(
+            r"\b\d+(?:\.\d+)?\s*(?:degrees?|deg\.?)(?:\s+of)?\s+"
+            r"(?:half|full|maximum)?\s*(?:field|angle\s+of\s+view)",
+            text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "Fujinon restoration-imaging source gained a numeric angular field"
+            )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("Fujinon restoration-imaging official PDF bytes changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError("Fujinon restoration-imaging official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Fujinon restoration-imaging official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging PDF page {page_number} contains "
+                    f"{len(images)} rasters; expected one"
+                )
+            image = images[0].image
+            if image.size != pdf_profile["raster_dimensions"] or image.mode != "1":
+                raise PatentParseError(
+                    f"Fujinon restoration-imaging PDF page {page_number} raster changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if tuple(page_raster_hashes) != pdf_profile["page_raster_sha256"]:
+            raise PatentParseError(
+                "Fujinon restoration-imaging PDF page raster payload changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Fujinon restoration-imaging PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Fujinon restoration-imaging official PDF gained a text layer"
+            )
+        if not (
+            pdf_profile["cover_page_numbers"] == (1,)
+            and pdf_profile["drawing_page_numbers"] == tuple(range(2, 24))
+            and pdf_profile["specification_page_numbers"] == tuple(range(24, 48))
+            and pdf_profile["claims_page_numbers"] == (46, 47)
+        ):
+            raise PatentParseError(
+                "Fujinon restoration-imaging PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all source-bound items
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status=str(item["status"]),
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Fujinon Family 40641507 item {item['number']}; "
+                    f"{item['detail']}. Independent claims 1, 8 and 13 and wrapper "
+                    "claims 14-17 add no separate ordered prescription or numeric "
+                    "angular field. No values are transcribed from raster plots, "
+                    "derived from H/h, or borrowed from prior publication "
+                    "US-20090128665-A1 or Japanese priority application 2007-298146"
+                ),
+            ),
+        )
+        for item in _FUJINON_RESTORATION_ITEMS
     ]
 
 

@@ -40,19 +40,31 @@
   },
   "sections": {
     "background": {
-      "paragraph_range": [1, 2],
+      "paragraph_range": [
+        1,
+        2
+      ],
       "normalized_sha256": "9c499f7d9390ab532fdcf0b39ef11c5ad90383a0e2d1b402bbb83ea5810bb0f5"
     },
     "brief": {
-      "paragraph_range": [1, 9],
+      "paragraph_range": [
+        1,
+        9
+      ],
       "normalized_sha256": "f1c9edad0f0ac6aa74182f85197c49b2771711b43861d5432114a454960f7785"
     },
     "detailed": {
-      "paragraph_range": [10, 116],
+      "paragraph_range": [
+        10,
+        116
+      ],
       "normalized_sha256": "ef95df03d107a1ee554d42665a3e0bd1a701672a873266a6652b30f2322a39ec"
     },
     "claims": {
-      "claim_range": [1, 10],
+      "claim_range": [
+        1,
+        10
+      ],
       "normalized_sha256": "e47b5aa3cb89d4a300c1eb9b319055a094728e66fadc1a89c51851c6329d2b85"
     }
   },
@@ -211,13 +223,13 @@
   "shared_outputs": {
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 51718,
-      "sha256": "34b1b83b5ed9aba504b8f63300cdcb095261fc832478896255dec1d01160ea42"
+      "bytes": 52185,
+      "sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 53627,
-      "sha256": "edf177d8082d34955f52507af2857bf988d465594605cc96542cd262d57ce7a2"
+      "bytes": 54112,
+      "sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
     }
   },
   "audit_artifacts": {
@@ -269,8 +281,12 @@
   },
   "next_exact_group": {
     "family_id": "60048601",
-    "root_ids": ["US-11086108"],
-    "publication_ids": ["US-11086108-B2"]
+    "root_ids": [
+      "US-11086108"
+    ],
+    "publication_ids": [
+      "US-11086108-B2"
+    ]
   },
   "saturation_complete": false
 }

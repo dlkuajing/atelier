@@ -200,8 +200,8 @@
   },
   "replay_state": {
     "result_set_sha256": "5523856b03f9ca42d312e2f0a80dfb55357564f4aafb9708450e21d91f64164f",
-    "summary_sha256": "bad71bc0945e9a09de76237f676e8649c4397773566eb4505883459354d89899",
-    "report_sha256": "988f5e368c6617aada975a0047ad6b3c15577de7254adacfb4a3deb3bba47a57",
+    "summary_sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2",
+    "report_sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0",
     "strict_roots_with_results": 619,
     "strict_cohort_roots": 619,
     "corrupt_results": 0,

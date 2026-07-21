@@ -76,9 +76,18 @@
       "claims": "80c9075dd8f50eeca82e00afb53b296b0fab14b49f05d25b00ea23e1d2d26e2d"
     },
     "paragraph_ranges": {
-      "background": [1, 8],
-      "brief": [9, 30],
-      "detailed": [31, 126]
+      "background": [
+        1,
+        8
+      ],
+      "brief": [
+        9,
+        30
+      ],
+      "detailed": [
+        31,
+        126
+      ]
     },
     "paragraph_span_sha256": {
       "1-8": "e6a734bca75650936aeee298b55f549a3c29c741d2a619e412e4de5425e5da94",
@@ -141,78 +150,242 @@
     {
       "item_id": "US-20260029620-A1:e1",
       "label": "Maxell cemented six-lens Example 1",
-      "paragraph_range": [53, 75],
-      "figures": ["1", "2A", "2B", "2C", "2D"],
-      "tables": [1, 2],
-      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "paragraph_range": [
+        53,
+        75
+      ],
+      "figures": [
+        "1",
+        "2A",
+        "2B",
+        "2C",
+        "2D"
+      ],
+      "tables": [
+        1,
+        2
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
       "terminal_status": "metadata_unpublished"
     },
     {
       "item_id": "US-20260029620-A1:e2",
       "label": "Maxell cemented six-lens Example 2",
-      "paragraph_range": [76, 79],
-      "figures": ["3", "4A", "4B", "4C", "4D"],
-      "tables": [3, 4],
-      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "paragraph_range": [
+        76,
+        79
+      ],
+      "figures": [
+        "3",
+        "4A",
+        "4B",
+        "4C",
+        "4D"
+      ],
+      "tables": [
+        3,
+        4
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
       "terminal_status": "metadata_unpublished"
     },
     {
       "item_id": "US-20260029620-A1:e3",
       "label": "Maxell cemented six-lens Example 3",
-      "paragraph_range": [80, 83],
-      "figures": ["5", "6A", "6B", "6C", "6D"],
-      "tables": [5, 6],
-      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "paragraph_range": [
+        80,
+        83
+      ],
+      "figures": [
+        "5",
+        "6A",
+        "6B",
+        "6C",
+        "6D"
+      ],
+      "tables": [
+        5,
+        6
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
       "terminal_status": "metadata_unpublished"
     },
     {
       "item_id": "US-20260029620-A1:e4",
       "label": "Maxell cemented six-lens Example 4",
-      "paragraph_range": [84, 95],
-      "figures": ["7", "8A", "8B", "8C", "8D"],
-      "tables": [7, 8],
-      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "paragraph_range": [
+        84,
+        95
+      ],
+      "figures": [
+        "7",
+        "8A",
+        "8B",
+        "8C",
+        "8D"
+      ],
+      "tables": [
+        7,
+        8
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
       "terminal_status": "metadata_unpublished"
     },
     {
       "item_id": "US-20260029620-A1:e5",
       "label": "Maxell camera-module wrapper",
-      "paragraphs": [52, 96],
-      "claims": [12],
+      "paragraphs": [
+        52,
+        96
+      ],
+      "claims": [
+        12
+      ],
       "terminal_status": "confirmed_no_prescription"
     },
     {
       "item_id": "US-20260029620-A1:e6",
       "label": "Maxell in-vehicle-system wrapper",
-      "paragraph_range": [97, 104],
-      "figures": ["9", "10"],
-      "claims": [13],
+      "paragraph_range": [
+        97,
+        104
+      ],
+      "figures": [
+        "9",
+        "10"
+      ],
+      "claims": [
+        13
+      ],
       "terminal_status": "confirmed_no_prescription"
     },
     {
       "item_id": "US-20260029620-A1:e7",
       "label": "Maxell vehicle wrapper",
-      "paragraph_range": [97, 98],
-      "figures": ["9"],
-      "claims": [14],
+      "paragraph_range": [
+        97,
+        98
+      ],
+      "figures": [
+        "9"
+      ],
+      "claims": [
+        14
+      ],
       "terminal_status": "confirmed_no_prescription"
     }
   ],
   "direct_system_metadata": {
     "reference_wavelength_nm": 550,
-    "f_number": [2.0, 2.05, 2.05, 2.03],
-    "whole_angle_of_view_deg": [214.2, 216.4, 217.6, 216.6],
-    "focal_length_mm": [0.919, 0.966, 0.944, 0.85]
+    "f_number": [
+      2.0,
+      2.05,
+      2.05,
+      2.03
+    ],
+    "whole_angle_of_view_deg": [
+      214.2,
+      216.4,
+      217.6,
+      216.6
+    ],
+    "focal_length_mm": [
+      0.919,
+      0.966,
+      0.944,
+      0.85
+    ]
   },
   "prescription_boundary": {
     "source_surface_numbers": "S1-S18",
     "model_only_image_surface": "S19",
     "stop_surface": "S7",
-    "asphere_surface_numbers": [3, 4, 5, 6, 11, 12, 13, 14],
-    "asphere_orders": ["K", "A4", "A6", "A8", "A10", "A12", "A14", "A16"],
-    "material_surface_numbers": [1, 3, 5, 9, 11, 13, 15, 17],
-    "cemented_elements": ["L5", "L6"],
-    "cement_contact_surfaces": [12, 13],
+    "asphere_surface_numbers": [
+      3,
+      4,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ],
+    "asphere_orders": [
+      "K",
+      "A4",
+      "A6",
+      "A8",
+      "A10",
+      "A12",
+      "A14",
+      "A16"
+    ],
+    "material_surface_numbers": [
+      1,
+      3,
+      5,
+      9,
+      11,
+      13,
+      15,
+      17
+    ],
+    "cemented_elements": [
+      "L5",
+      "L6"
+    ],
+    "cement_contact_surfaces": [
+      12,
+      13
+    ],
     "cement_thickness_mm": 0.02,
     "cement_refractive_index_published": false,
     "cement_dispersion_published": false,
@@ -249,8 +422,8 @@
   },
   "replay_determinism": {
     "path": ".planning/quick/260720-patent-generic-family-89536570/family-89536570-replay-determinism.json",
-    "bytes": 2704,
-    "sha256": "2c1f94e03b5cfa1ce5110782834221fa615d855747f9d937b18bb0ea3933aa00"
+    "bytes": 2790,
+    "sha256": "3605bf9efccc69b3ff73436f5469440e60bda37897528846be0f24007c323210"
   },
   "source_audit": {
     "path": ".planning/quick/260720-patent-generic-family-89536570/family-89536570-source-audit.md",
@@ -284,23 +457,27 @@
     "strict_roots_with_results": 619,
     "missing": 0,
     "corrupt": 0,
-    "result_set_sha256": "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660",
+    "result_set_sha256": "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a",
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 51718,
-      "sha256": "34b1b83b5ed9aba504b8f63300cdcb095261fc832478896255dec1d01160ea42"
+      "bytes": 52185,
+      "sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 53627,
-      "sha256": "edf177d8082d34955f52507af2857bf988d465594605cc96542cd262d57ce7a2"
+      "bytes": 54112,
+      "sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
     }
   },
   "semantic_replay_sha256": "26a53a80faa621cfb03e7f889e3363f69f500409dd3e0d8817ad9101ccc95bee",
   "next_exact_group": {
     "family_id": "59685373",
-    "root_ids": ["US-11236215"],
-    "publication_ids": ["US-11236215-B2"]
+    "root_ids": [
+      "US-11236215"
+    ],
+    "publication_ids": [
+      "US-11236215-B2"
+    ]
   },
   "saturation_boundary": "This frozen root is an exact seven-item terminal result, but the 53-root generic bucket, all other parser buckets, formal intake, external-family queue and global patent/source exhaustion remain open.",
   "saturation_complete": false

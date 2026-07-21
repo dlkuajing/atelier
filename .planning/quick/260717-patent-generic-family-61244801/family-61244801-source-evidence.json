@@ -1,13 +1,17 @@
 {
   "schema_version": 1,
   "family_id": "61244801",
-  "root_ids": ["US-11287601"],
+  "root_ids": [
+    "US-11287601"
+  ],
   "publication_id": "US-11287601-B2",
   "application_number": "16/483973",
   "title": "Imaging lens assembly",
   "applicant": "Snap Inc.",
   "assignee": "Snap Inc.",
-  "inventors": ["Robert Matthew Bates"],
+  "inventors": [
+    "Robert Matthew Bates"
+  ],
   "priority_and_relationship_records": {
     "filed": "2018-02-07",
     "pct_application": "PCT/US2018/017252",
@@ -65,11 +69,36 @@
   "prescription_boundary": {
     "sample_design_1": {
       "lens_element_count": 5,
-      "source_figures": [4, 5],
-      "surface_number_range": [1, 15],
+      "source_figures": [
+        4,
+        5
+      ],
+      "surface_number_range": [
+        1,
+        15
+      ],
       "filter_present": true,
-      "asphere_surfaces": [1, 2, 6, 7, 8, 9, 10, 11, 12, 13],
-      "coefficient_terms": ["k", "A4", "A6", "A8", "A10", "A12", "A14"],
+      "asphere_surfaces": [
+        1,
+        2,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "coefficient_terms": [
+        "k",
+        "A4",
+        "A6",
+        "A8",
+        "A10",
+        "A12",
+        "A14"
+      ],
       "expected_exponent_coefficient_cells": 60,
       "google_text_exponent_markers": 51,
       "rapidocr_exponent_markers": 51,
@@ -79,11 +108,24 @@
     },
     "sample_design_2": {
       "lens_element_count": 6,
-      "source_figures": [6, 7],
-      "surface_number_range": [1, 15],
+      "source_figures": [
+        6,
+        7
+      ],
+      "surface_number_range": [
+        1,
+        15
+      ],
       "filter_present": true,
       "asphere_surface_count": 10,
-      "coefficient_terms": ["k", "A4", "A6", "A8", "A10", "A12"],
+      "coefficient_terms": [
+        "k",
+        "A4",
+        "A6",
+        "A8",
+        "A10",
+        "A12"
+      ],
       "expected_exponent_coefficient_cells": 50,
       "google_text_exponent_markers": 48,
       "rapidocr_exponent_markers": 33,
@@ -170,8 +212,8 @@
   },
   "replay_state": {
     "result_set_sha256": "34dc2a55b427fa8b75525be4a86a312a65599663a0ac3083cf81415b0fb7a864",
-    "summary_sha256": "d6c329f3399841357eed918a2b52771f8003cbeb7ee6260d203fd53ddc14a8a4",
-    "report_sha256": "21530397ed8fe691b0628ecf0d155214ce1fea675af5c666b5d55833d8767c38",
+    "summary_sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2",
+    "report_sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0",
     "strict_roots_with_results": 619,
     "strict_cohort_roots": 619,
     "missing_results": 0,

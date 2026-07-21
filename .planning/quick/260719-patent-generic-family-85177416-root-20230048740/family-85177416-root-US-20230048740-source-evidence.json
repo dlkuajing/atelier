@@ -2,8 +2,12 @@
   "schema_version": 1,
   "family_id": "85177416",
   "application_number": "17/813265",
-  "root_ids": ["US-20230048740"],
-  "publication_ids": ["US-20230048740-A1"],
+  "root_ids": [
+    "US-20230048740"
+  ],
+  "publication_ids": [
+    "US-20230048740-A1"
+  ],
   "title": "SMALL LENS SYSTEM",
   "source": {
     "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/048729a45c619311/US-20230048740-A1.html",
@@ -83,30 +87,66 @@
   "ledger": {
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 51718,
-      "sha256": "34b1b83b5ed9aba504b8f63300cdcb095261fc832478896255dec1d01160ea42"
+      "bytes": 52185,
+      "sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 53627,
-      "sha256": "edf177d8082d34955f52507af2857bf988d465594605cc96542cd262d57ce7a2"
+      "bytes": 54112,
+      "sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0"
     },
-    "result_set_sha256": "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660",
+    "result_set_sha256": "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a",
     "strict_roots_with_results": 619,
     "strict_roots_total": 619,
     "missing": 0,
     "corrupt": 0
   },
   "artifacts": [
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-denominator.json", "bytes": 2219, "sha256": "209a9621492fcfde8728031438151afb3632dce9d244b828f2c8d851f32374ba"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-raster-audit.json", "bytes": 2739, "sha256": "de25fa37201a10e0a240abd409813c7e4697915fcc37b9b2920149ad2b6c89bc"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-replay-determinism.json", "bytes": 1494, "sha256": "0aa129afe948fe2c140ba9979d8bffbaf46f97dd24d1db64812f606ea8b5338f"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-source-audit.md", "bytes": 2677, "sha256": "b70635964d2e2b44781f1401d8acd52bb92de6c59b2ef126f90a75562eebdfcc"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-source-availability.json", "bytes": 2319, "sha256": "a451b1eb3bd477b3a42ce29e95fde51374c68987d367526690be85c25ba04600"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-source-facts.json", "bytes": 4270, "sha256": "8dba8358258047264fa6317a12f60b4aa7b429b307f9aadb05fcda03b9b03872"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/queue-after.json", "bytes": 1447, "sha256": "659e4d41508c1d359fcf5632d30abdb6596c0a1bdb457655870ebbb50fc308c7"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/source-review/derived-source-profile.json", "bytes": 9073, "sha256": "76f35b6277bfab82c5ca4feb7fb6d5f1b649105c7134f702cd785d9eae3f6c55"},
-    {"path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/source-review/derived-pdf-profile.json", "bytes": 23611, "sha256": "f59016591210143f027c997f3c12bc3cf728a07ee1fe38cc6534c33d0ef8df84"}
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-denominator.json",
+      "bytes": 2219,
+      "sha256": "209a9621492fcfde8728031438151afb3632dce9d244b828f2c8d851f32374ba"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-raster-audit.json",
+      "bytes": 2739,
+      "sha256": "de25fa37201a10e0a240abd409813c7e4697915fcc37b9b2920149ad2b6c89bc"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-replay-determinism.json",
+      "bytes": 1494,
+      "sha256": "0aa129afe948fe2c140ba9979d8bffbaf46f97dd24d1db64812f606ea8b5338f"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-source-audit.md",
+      "bytes": 2677,
+      "sha256": "b70635964d2e2b44781f1401d8acd52bb92de6c59b2ef126f90a75562eebdfcc"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-source-availability.json",
+      "bytes": 2319,
+      "sha256": "a451b1eb3bd477b3a42ce29e95fde51374c68987d367526690be85c25ba04600"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-source-facts.json",
+      "bytes": 4270,
+      "sha256": "8dba8358258047264fa6317a12f60b4aa7b429b307f9aadb05fcda03b9b03872"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/queue-after.json",
+      "bytes": 1447,
+      "sha256": "659e4d41508c1d359fcf5632d30abdb6596c0a1bdb457655870ebbb50fc308c7"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/source-review/derived-source-profile.json",
+      "bytes": 9073,
+      "sha256": "76f35b6277bfab82c5ca4feb7fb6d5f1b649105c7134f702cd785d9eae3f6c55"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/source-review/derived-pdf-profile.json",
+      "bytes": 23611,
+      "sha256": "f59016591210143f027c997f3c12bc3cf728a07ee1fe38cc6534c33d0ef8df84"
+    }
   ],
   "formal_outputs": {
     "worker_requests": 0,
@@ -119,8 +159,12 @@
   },
   "next_exact_group": {
     "family_id": "94801574",
-    "root_ids": ["US-20260169265"],
-    "publication_ids": ["US-20260169265-A1"],
+    "root_ids": [
+      "US-20260169265"
+    ],
+    "publication_ids": [
+      "US-20260169265-A1"
+    ],
     "application_number": "19/034574",
     "title": "OPTICAL IMAGING LENS",
     "applicant": "Genius Electronic Optical (Xiamen) Co., Ltd.",

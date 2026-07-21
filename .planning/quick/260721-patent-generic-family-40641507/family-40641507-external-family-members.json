@@ -1,0 +1,35 @@
+{
+  "schema_version": "patent-family-external-lineage/v1",
+  "family_id": "40641507",
+  "classification_primary": {
+    "publication_id": "US-8134609-B2",
+    "application_number": "12/270586",
+    "source_path": "data/patent-lake/uspto-ppubs-html/USPAT/80cac521fccd012f/US-8134609-B2.html",
+    "source_bytes": 178194,
+    "source_sha256": "80cac521fccd012f58f16b3081c61c203021dd6a6c6e77e58ef2cc0b83e2c22f",
+    "role": "sole source for classification and all textual numeric evidence"
+  },
+  "printed_members_and_priorities": [
+    {
+      "publication_id": "US-20090128665-A1",
+      "relationship": "prior_publication_same_application",
+      "publication_date_printed": "May 21, 2009",
+      "source": "US-8134609-B2 Prior Publication Data",
+      "downloaded_or_parsed_for_numeric_evidence": false
+    },
+    {
+      "application_number": "JP-P2007-298146",
+      "relationship": "foreign_priority",
+      "filing_date_printed": "November 16, 2007",
+      "sources": ["US-8134609-B2 Foreign Application Priority Data", "Background/Summary paragraph 1"],
+      "downloaded_or_parsed_for_numeric_evidence": false
+    }
+  ],
+  "numeric_evidence_policy": {
+    "same_application_prior_publication_borrowing": false,
+    "foreign_priority_borrowing": false,
+    "raster_numeric_transcription": false,
+    "derived_angular_field": false,
+    "source_conflict_repair": false
+  }
+}

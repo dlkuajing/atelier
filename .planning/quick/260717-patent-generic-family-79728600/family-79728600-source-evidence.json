@@ -21,7 +21,10 @@
     "international_parent": "PCT/IB2021/056357",
     "provisional_priority": "US-63/054862",
     "same_application_later_grant": "US-12050308-B2",
-    "continuation_child_grants": ["US-12392999-B2", "US-12571999-B2"]
+    "continuation_child_grants": [
+      "US-12392999-B2",
+      "US-12571999-B2"
+    ]
   },
   "denominator": {
     "frozen_cohort_roots": 1,
@@ -74,14 +77,38 @@
       "claims": "2134fcdf0150e5008b6e15284f7ee95047bd86f0224918495fd121f78b6e9f5a"
     },
     "paragraph_ranges": {
-      "background_summary": [1, 31],
-      "brief": [32, 46],
-      "detailed": [47, 138]
+      "background_summary": [
+        1,
+        31
+      ],
+      "brief": [
+        32,
+        46
+      ],
+      "detailed": [
+        47,
+        138
+      ]
     },
-    "claim_range": [1, 36],
+    "claim_range": [
+      1,
+      36
+    ],
     "figure_panels": [
-      "1A", "1B", "1C", "2A", "2B", "2C", "2D", "2E", "3A", "3B",
-      "4", "5", "6", "7"
+      "1A",
+      "1B",
+      "1C",
+      "2A",
+      "2B",
+      "2C",
+      "2D",
+      "2E",
+      "3A",
+      "3B",
+      "4",
+      "5",
+      "6",
+      "7"
     ],
     "tagged_table_block_sha256": {
       "TABLE-US-00001": "5e1d6a8b29e5f672bc4a178d16ef3cdedb428dfadbf5a299f76c28cbf76160f8",
@@ -95,7 +122,11 @@
     "published_lens_surface_rows": 16,
     "published_qt1_coefficient_max": "A8",
     "published_q_definition_max": "Q5",
-    "missing_q_definitions": ["Q6", "Q7", "Q8"],
+    "missing_q_definitions": [
+      "Q6",
+      "Q7",
+      "Q8"
+    ],
     "published_surface_conic_values": 0,
     "referenced_logical_table_3_present": false,
     "unique_optical_variants": 3,
@@ -117,8 +148,8 @@
   },
   "replay_state": {
     "result_set_sha256": "dbbdf20c8ab4beb1c30abd1aeb8ea6b4752e32ce7f740404fad21f6aa16f834d",
-    "summary_sha256": "b6c11b2249998f94542622543f0fed3d88ee9ef62c5c46ace84f703954b87007",
-    "report_sha256": "1c60b7b454a85a66949b62530eb20d7ef3757b721febaf1e69226d7ea676d60b",
+    "summary_sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2",
+    "report_sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0",
     "strict_roots_with_results": 619,
     "strict_cohort_roots": 619,
     "missing_results": 0,

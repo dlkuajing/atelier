@@ -79,7 +79,7 @@
       "trace_failed": 631,
       "trace_timeout": 115
     },
-    "result_set_sha256": "efebb1af3b08abecac57f321e6574a807abc08141f99dfe546ec3225aa8ac660"
+    "result_set_sha256": "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a"
   },
   "worker_outputs_absent": true,
   "codev_calls": 0

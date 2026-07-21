@@ -1,0 +1,257 @@
+{
+  "schema_version": "patent-family-source-denominator/v1",
+  "family_id": "40641507",
+  "root_id": "US-8134609",
+  "publication_id": "US-8134609-B2",
+  "application_number": "12/270586",
+  "source_bound_lineage": {
+    "family_id_printed": "40641507",
+    "application_number_printed": "12/270586",
+    "filing_date_printed": "November 13, 2008",
+    "relationships": [
+      {
+        "relationship": "prior_publication",
+        "publication_id": "US-20090128665-A1",
+        "publication_date": "May 21, 2009",
+        "direct_source": "Prior Publication Data"
+      },
+      {
+        "relationship": "claims_priority_to",
+        "application_number": "JP-P2007-298146",
+        "filing_date": "November 16, 2007",
+        "direct_sources": ["Foreign Application Priority Data", "Background/Summary paragraph 1"]
+      }
+    ],
+    "related_publication_numeric_borrowing_used": false
+  },
+  "denominator": {
+    "background_summary_paragraphs": 55,
+    "brief_drawing_paragraphs": 26,
+    "detailed_description_paragraphs": 295,
+    "description_paragraphs_total": 321,
+    "claims": 17,
+    "independent_claims": 3,
+    "inline_source_tables": 9,
+    "html_table_tags": 0,
+    "mathml_objects": 0,
+    "figref_tags": 0,
+    "declared_figure_panels": 39,
+    "drawing_sheets": 22,
+    "official_pdf_pages": 47,
+    "source_items": 9,
+    "ordered_optical_prescriptions": 3,
+    "metadata_unpublished_items": 3,
+    "confirmed_no_prescription_items": 6
+  },
+  "claims": {
+    "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+    "independent_numbers": [1, 8, 13],
+    "wrapper_claim_mapping": {
+      "14": "generic imaging apparatus",
+      "15": "portable terminal apparatus",
+      "16": "onboard apparatus",
+      "17": "medical apparatus"
+    },
+    "claim_only_source_items": 0,
+    "source_note": "Independent claims 1, 8 and 13 constrain the disclosed restoration imaging system and lens-group architecture; claims 14-17 wrap claim 1. None adds a separate ordered prescription or a prescription-specific numeric angular field."
+  },
+  "figures": {
+    "panels": ["1", "2A", "2B", "3A", "3B", "4A", "4B", "5", "6", "7", "8", "9", "10", "11", "12A", "12B", "12C", "12D", "13", "14A", "14B", "14C", "14D", "15", "16A", "16B", "16C", "16D", "17", "18", "19", "20", "21A", "21B", "21C", "21D", "22", "23", "24"],
+    "official_drawing_sheets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+    "official_pdf_pages_with_drawing_sheets": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+    "printed_conflict_retained": "Description paragraph 157 says FIG. 11 for the onboard apparatus although paragraphs 156 and the brief drawing declaration bind the automobile to FIG. 22; no repair was made."
+  },
+  "tables": [
+    {
+      "number": 1,
+      "paragraph": 188,
+      "example": 1,
+      "role": "ordered surface data",
+      "printed_rows_including_aperture_and_image": 12,
+      "ordered_nonimage_surface_labels": ["1*", "2*", "3*", "4*", "5*", "6*", "7*", "8*", "9", "10"]
+    },
+    {
+      "number": 2,
+      "paragraph": 191,
+      "example": 1,
+      "role": "asphere coefficients",
+      "surface_labels": [1, 2, 3, 4, 5, 6, 7, 8],
+      "coefficient_labels": ["K", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10"],
+      "numeric_coefficient_cells": 72
+    },
+    {
+      "number": 3,
+      "paragraph": 192,
+      "example": 1,
+      "role": "system and restoration-performance metadata",
+      "direct_system_metadata": {"f_number": 2.8, "focal_length_mm": 5.277},
+      "numeric_angular_field_published": false
+    },
+    {
+      "number": 4,
+      "paragraph": 244,
+      "example": 2,
+      "role": "ordered surface data",
+      "printed_rows_including_aperture_and_image": 10,
+      "ordered_nonimage_surface_labels": ["1*", "2*", "3*", "4*", "5*", "6*", "7", "8"]
+    },
+    {
+      "number": 5,
+      "paragraph": 247,
+      "example": 2,
+      "role": "asphere coefficients",
+      "surface_labels_as_printed": [3, 4, 5, 6, 7, 8],
+      "coefficient_labels": ["K", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19", "A20"],
+      "numeric_coefficient_cells": 114,
+      "repair_or_reindex_used": false
+    },
+    {
+      "number": 6,
+      "paragraph": 248,
+      "example": 2,
+      "role": "system and restoration-performance metadata",
+      "direct_system_metadata": {"f_number": 2.7, "focal_length_mm": 3.312},
+      "numeric_angular_field_published": false
+    },
+    {
+      "number": 7,
+      "paragraph": 280,
+      "example": 3,
+      "role": "ordered surface data",
+      "printed_rows_including_aperture_and_image": 10,
+      "ordered_nonimage_surface_labels": ["1*", "2*", "3*", "4*", "5*", "6*", "7", "8"]
+    },
+    {
+      "number": 8,
+      "paragraph": 283,
+      "example": 3,
+      "role": "asphere coefficients",
+      "surface_labels": [1, 2, 3, 4, 5, 6],
+      "coefficient_labels": ["K", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10"],
+      "numeric_coefficient_cells": 54
+    },
+    {
+      "number": 9,
+      "paragraph": 284,
+      "example": 3,
+      "role": "system and restoration-performance metadata",
+      "direct_system_metadata": {"f_number": 3.5, "focal_length_mm": 4.043},
+      "numeric_angular_field_published": false
+    }
+  ],
+  "source_items": [
+    {
+      "number": 1,
+      "label": "restoration imaging-system and manufacturing architecture",
+      "paragraph_ranges": [[27, 154], [163, 167], [321, 321]],
+      "figures": ["1", "2A", "2B", "3A", "3B", "4A", "4B", "5", "6", "7", "8", "9", "10"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.restoration_imaging_and_manufacturing_architecture_only",
+      "included_variants": ["imaging system 100", "imaging system 100-prime", "imaging system 100-double-prime", "restoration coefficient acquisition apparatus 70A", "restoration coefficient acquisition apparatus 70B", "restoration coefficient acquisition apparatus 70C", "corresponding manufacturing methods"]
+    },
+    {
+      "number": 2,
+      "label": "generic imaging-apparatus wrapper",
+      "paragraph_ranges": [[155, 155], [162, 162]],
+      "figures": [],
+      "tables": [],
+      "claim": 14,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.generic_imaging_apparatus_wrapper_only"
+    },
+    {
+      "number": 3,
+      "label": "onboard-apparatus wrapper",
+      "paragraph_ranges": [[155, 157], [162, 162]],
+      "figures": ["22"],
+      "tables": [],
+      "claim": 16,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.onboard_apparatus_wrapper_only"
+    },
+    {
+      "number": 4,
+      "label": "portable-terminal-apparatus wrapper",
+      "paragraph_ranges": [[155, 155], [158, 159], [162, 162]],
+      "figures": ["23"],
+      "tables": [],
+      "claim": 15,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.portable_terminal_apparatus_wrapper_only"
+    },
+    {
+      "number": 5,
+      "label": "medical-apparatus wrapper",
+      "paragraph_ranges": [[155, 155], [160, 162]],
+      "figures": ["24"],
+      "tables": [],
+      "claim": 17,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.medical_apparatus_wrapper_only"
+    },
+    {
+      "number": 6,
+      "label": "imaging lens 10A Example 1",
+      "paragraph_ranges": [[168, 230], [301, 303]],
+      "figures": ["11", "12A", "12B", "12C", "12D", "17"],
+      "tables": [1, 2, 3],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"
+    },
+    {
+      "number": 7,
+      "label": "imaging lens 10B Example 2",
+      "paragraph_ranges": [[168, 170], [231, 266], [301, 303]],
+      "figures": ["13", "14A", "14B", "14C", "14D", "18"],
+      "tables": [4, 5, 6],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"
+    },
+    {
+      "number": 8,
+      "label": "imaging lens 10C Example 3",
+      "paragraph_ranges": [[168, 170], [267, 303]],
+      "figures": ["15", "16A", "16B", "16C", "16D", "19"],
+      "tables": [7, 8, 9],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"
+    },
+    {
+      "number": 9,
+      "label": "comparative imaging lens 10H",
+      "paragraph_ranges": [[304, 320]],
+      "figures": ["20", "21A", "21B", "21C", "21D"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.comparative_lens_architecture_only"
+    }
+  ],
+  "published_only": {
+    "ordered_prescription_examples": [1, 2, 3],
+    "prescription_fields": ["ordered radii", "ordered axial spacings", "refractive index", "Abbe number", "asphere coefficients", "aperture-diaphragm row", "focal length", "F-number"],
+    "qualitative_field_language": ["maximum angle of view", "half angle of view theta", "0<=theta<=omega"],
+    "raster_observation": "Aberration sheets contain numeric axis labels. They were reviewed only at original resolution and were not transcribed, measured, sampled or used for any derived system field."
+  },
+  "required_metadata_not_published_directly": [
+    "prescription-specific numeric half field of view",
+    "prescription-specific numeric full field of view",
+    "prescription-specific numeric angular field"
+  ],
+  "prohibited_derivations_not_used": [
+    "derive field from raster axis labels and focal length",
+    "treat symbolic H or h as a numeric image height",
+    "transcribe or sample raster plot coordinates",
+    "borrow values from US-20090128665-A1 or JP-P2007-298146"
+  ],
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}

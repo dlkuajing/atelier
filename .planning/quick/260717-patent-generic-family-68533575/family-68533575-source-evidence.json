@@ -71,17 +71,54 @@
       "claims": "7a48d881f890e0083d848e9fddb40b3bff653a3799be39ba1195f13be38cc976"
     },
     "paragraph_ranges": {
-      "background_summary": [1, 10],
-      "brief": [11, 25],
-      "detailed": [26, 77]
+      "background_summary": [
+        1,
+        10
+      ],
+      "brief": [
+        11,
+        25
+      ],
+      "detailed": [
+        26,
+        77
+      ]
     },
-    "cancelled_claim_range": [1, 20],
-    "active_claim_range": [21, 33],
-    "figure_panels": [
-      "1", "2", "3A", "3B", "3C", "4", "5", "6", "7", "8", "9",
-      "10A", "10B", "11", "12", "13A", "13B", "13C", "14A", "14B"
+    "cancelled_claim_range": [
+      1,
+      20
     ],
-    "math_ids": ["MATH-US-00001", "MATH-US-00001-2", "MATH-US-00001-3"]
+    "active_claim_range": [
+      21,
+      33
+    ],
+    "figure_panels": [
+      "1",
+      "2",
+      "3A",
+      "3B",
+      "3C",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10A",
+      "10B",
+      "11",
+      "12",
+      "13A",
+      "13B",
+      "13C",
+      "14A",
+      "14B"
+    ],
+    "math_ids": [
+      "MATH-US-00001",
+      "MATH-US-00001-2",
+      "MATH-US-00001-3"
+    ]
   },
   "prescription_boundary": {
     "ordered_surface_prescriptions_published": 0,
@@ -102,7 +139,10 @@
     "zemax_fisheye_database_identity_recoverable": false,
     "drawing_geometry_used_for_numeric_derivation": false,
     "coordinate_values_synthesized": 0,
-    "source_anomalies_preserved": ["1000 FOV", "EFL=0.732-50 mm"]
+    "source_anomalies_preserved": [
+      "1000 FOV",
+      "EFL=0.732-50 mm"
+    ]
   },
   "terminal_outcome": {
     "root_state": "terminal",
@@ -116,8 +156,8 @@
   },
   "replay_state": {
     "result_set_sha256": "7da144baddc8b5dade06f31fd89e0dac674ac7f2f16ba16a71c0005185152187",
-    "summary_sha256": "79c970231db1ae2dff7134e51022f9e0440b86faa8a1d640e32a7bdb598328fd",
-    "report_sha256": "67c07340ca008e8cbc7cb6f6f22457b93640797c8f1c9b089b8bc0c76c6d5623",
+    "summary_sha256": "487c4cfee8ea323392c01cc16af66cb8a91d09aa2db1c3dc53753bb91db3d7b2",
+    "report_sha256": "044558c140abffa47dd35e55a20997fcdcac7307404bfedf5d8e7ad141cbfee0",
     "strict_roots_with_results": 619,
     "strict_cohort_roots": 619,
     "corrupt_results": 0,
