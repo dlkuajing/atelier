@@ -620,6 +620,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_gyrus_small_scale_objective_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_multi_reflection_five_example_missing_metadata_attempts(
             raw_text,
@@ -79559,6 +79565,492 @@ def _classify_oppo_missing_character_prescription_attempts(
             ),
         )
         for item in _OPPO_MISSING_CHARACTER_ITEMS
+    ]
+
+
+_GYRUS_SMALL_SCALE_TITLE_PATTERN = re.compile(
+    r"\bSOLID\s+IMAGING\s+OBJECTIVE\s+AND\s+ASSEMBLY\s+TECHNIQUE\s+FOR\s+"
+    r"SMALL\s+SCALE\s+SENSOR\s+APPLICATIONS\b",
+    re.IGNORECASE,
+)
+_GYRUS_SMALL_SCALE_METADATA_REASON = (
+    "metadata_unpublished.prescription_specific_efl_f_number_angular_field_"
+    "and_image_height_absent"
+)
+_GYRUS_SMALL_SCALE_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Gyrus small-scale imaging-optic architecture",
+        "background_paragraphs": (10,),
+        "description_paragraphs": (10,),
+        "claims": tuple(range(4, 13)),
+        "figures": (2, 3, 4),
+        "status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription."
+            "generic_small_scale_imaging_optic_architecture_only"
+        ),
+    },
+    {
+        "number": 2,
+        "label": "Gyrus optical alignment and assembly method",
+        "background_paragraphs": (11,),
+        "description_paragraphs": tuple(range(11, 39)),
+        "claims": (),
+        "figures": (2, 3, 4),
+        "status": "confirmed_no_prescription",
+        "reason_code": (
+            "confirmed_no_prescription.optical_alignment_and_assembly_method_only"
+        ),
+    },
+    {
+        "number": 3,
+        "label": "Gyrus endoscope wrapper",
+        "background_paragraphs": (12,),
+        "description_paragraphs": (36, 37),
+        "claims": (1, 2, 3),
+        "figures": (5,),
+        "status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.endoscope_wrapper_only",
+    },
+    {
+        "number": 4,
+        "label": "Gyrus Example 1 finite-object prescription",
+        "background_paragraphs": (),
+        "description_paragraphs": tuple(range(40, 45)),
+        "claims": (),
+        "figures": (6,),
+        "status": "metadata_unpublished",
+        "reason_code": _GYRUS_SMALL_SCALE_METADATA_REASON,
+    },
+)
+_GYRUS_SMALL_SCALE_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-8218254-B2": {
+        "family_id": "45593888",
+        "application_number": "12/861419",
+        "prior_publication": "US 20120044587 A1",
+        "raw_document_sha256": (
+            "a56aad055aba203f8b949688304cb62ce7a4e394b46866fe5e5376d7c55057f6"
+        ),
+        "normalized_text_sha256": (
+            "6f83fd7401f7d630652508f6293f5d6269b6aeadaf30c35b1ff3b4d232d17ac2"
+        ),
+        "identity_marker_counts": {
+            "Family ID: 45593888": 1,
+            "Assignee: Gyrus ACMI, Inc. (Southborough, MA)": 1,
+            "Appl. No.: 12/861419": 1,
+            "US 20120044587 A1": 1,
+            "Bareau; Jane L.": 2,
+            "Milks; James D.": 1,
+            "Alvez; Nidia A.": 1,
+            "Lupien; Teresa M.": 1,
+            "PCT/US2011/048390": 1,
+        },
+        "related_data_text": (
+            "Prior Publication Data Document Identifier Publication Date "
+            "US 20120044587 A1 Feb. 23, 2012"
+        ),
+        "section_line_counts": {
+            "Background/Summary": 12,
+            "Description": 44,
+            "Claims": 12,
+        },
+        "section_line_payload_sha256": {
+            "Background/Summary": (
+                "d00b19e31d3a8f01462d8ab8a06de55eaba09d27be3ceb7a4cabd2a68eb52965"
+            ),
+            "Description": (
+                "a1cb9fd5cea03ff29dec3ec939425425b6cbddef5028bc59a45d8e2cd77641cd"
+            ),
+            "Claims": (
+                "e03a458d428a4ba31318ab2cdf22afc0fced31da4c7862cf685d7f728a6b8caf"
+            ),
+        },
+        "description_span_sha256": {
+            "brief_1_8": (
+                "8dd62bc42e0f9f17a8090ed85a7a07bf46d1e86b6d8b4d5d71a4b5e77291e9d8"
+            ),
+            "detailed_9_44": (
+                "0220e76b2c2cfea0dcdae2339a1c929064f142dd570aa354815eefb3ce3a6528"
+            ),
+            "method_11_38": (
+                "a637dffbce26e51433a0630d297c6367861d097cca502d0392aa0239a88ba304"
+            ),
+            "example_40_44": (
+                "358bd6f46674c54e367da0a87c38d3486f736bd90eddf468e05a1b3a757eb61a"
+            ),
+        },
+        "claim_numbers": tuple(range(1, 13)),
+        "independent_claim_numbers": (1, 4, 12),
+        "figure_numbers": tuple(range(1, 7)),
+        "figure_reference_count": 17,
+        "inline_table_sha256": (
+            "1a2ea9588bf924b24c9ff9a016a6db9fdf53a350c0b6633efb06a457812b6ae5"
+        ),
+        "surface_row_labels": (
+            "OBJ",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "STO",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "IMA",
+        ),
+        "surface_row_sha256": _samsung_zoom_sha256_lines("""
+            3ebc5a453296c35d99c0b68568f8f978a86660d313fb733c1828f668ee2e875d
+            a715104794c4232ff7cc37a2721a56133beb5f145f949aee8573dcaee232369d
+            8ff1561f4f721e9e1a316c57d3fda651e5328e8c733ce2016cc4c902a2e41f05
+            7d90b7bb0e80c3ea6d4fab4520f669fc30f12e42a9a466f34b6594d2587a9060
+            43c21111f7b1907c15b62702630bd1f7bc0796538db896f8c6671143151ec04d
+            fbc0035624289bfb829bf3da94dc14d42d6b19abf79233878f2797789f8cc44f
+            970329f3e5f5afed525c6eb4132eea34900968fef3a505b3e5ba71a0964d0083
+            8cba6c241e94be3bda24b3d9a5c09069c80e9c7ad6f36eafc78fe08249af38e5
+            744c4aedf8ea8f4319c220f3f2bc0aa6ae787f5bc45de49e214ea7b83ca3efec
+            6cfcb7f6f0ab1daaf1156e11056d16378a8c7d54441ef36431403019d9efe24a
+            4fb80b48c2c58bfba5223fe93426fcf8dfe03ecbf148f20c34c63293acddf0ee
+            e3f5250ea1c9b5ccdd24f39b3e60fc86490535fa89edd233cbd23e23f79c2533
+            5523cb524464e4b9a418819204b0cde48bad14e678c04c19954cce99572f8ac0
+            29a628b8daa4f301ff78df78652a74477d723a1cd557a1ced69b7ce019618f34
+            af4d11015dd306db65bb857cdf47ec5a8c07b228ec99c83f56343ed1743259c4
+            189e50808a466dd649a6e18a06f8250de4f4dd2e0a5792d6dbfc58fbd0cd36bf
+            6611e1aef03272cecbfca04bc68a658c7d0f3d7a84c5fbe44fe4302c3e79c9ae
+            6e5d15b18bbcdeb8a31804389cf98a5c6ef1dca2ef94ce9d189328728ccd3dea
+        """),
+        "absent_system_metadata_patterns": (
+            r"\beffective\s+focal\s+length\b",
+            r"\bfocal\s+length\b",
+            r"\bF[- ]?number\b",
+            r"\bfield\s+of\s+view\b",
+            r"\bangular\s+field\b",
+            r"\bhalf\s+(?:angular\s+)?field\b",
+            r"\bimage\s+height\b",
+            r"\bnumerical\s+aperture\b",
+        ),
+        "official_pdf_captures": (
+            {
+                "path": (
+                    "data/patent-lake/uspto-ppubs-pdf/9c627c32c68c36c1/"
+                    "US-8218254-B2.pdf"
+                ),
+                "bytes": 775_186,
+                "container_sha256": (
+                    "9c627c32c68c36c1ac02e41df5088939c52965201f47e0a1adf038c77b3c30bb"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260721-patent-generic-family-45593888/"
+                    "source-review/US-8218254-B2-official-2.pdf"
+                ),
+                "bytes": 775_186,
+                "container_sha256": (
+                    "68a328c14241baa895847d60ccef6986312249181930a9c03dbb59d472affa8d"
+                ),
+            },
+        ),
+        "pdf_page_count": 12,
+        "pdf_raster_dimensions": (2560, 3300),
+        "pdf_page_raster_sha256": _samsung_zoom_sha256_lines("""
+            0ae15f50e8c986969e294b3816cc70a876392e3fbc821f88b509d95b698361c4
+            aa636279f8eee83b6ad73fb4d94d27e77affb48f0b1c74d795a985a18514aa34
+            a7c9ee3603bdef887888e3c8f6c54526c51888d3b73a3a2f4737fb0824766d36
+            a3f93c2668787478073045d3fd37e38b88c117e470fb6aabdd2819d4c1ad7ad6
+            d26704abbc104114140952647740cfce120dea54a54d5526e2554c607123e0b2
+            6e79432f3838a9ecdf9916923975767a70b2cb6a10991612b744a173e012ef2e
+            77795bdae29e91397ff15d4b6f36b483523af042a65fcacf3648e0c8bc2a6d47
+            1295f187ca4d31ebd2c82e01f3fda940d89ab679db6570765e8f432dace787c8
+            54dd8c23bfc3c3326b6516be0157c0c82d94e14a0b4cb1d7cfbef830c002f4f5
+            a2e56fd64f0ba77c964bbbef7de61d65a019f38448e86951f79d1a7882943038
+            4dfbf76d2da654ebc4f6d3d4bb53a288a7b901b007dd4081c6f0528f8d15dbcd
+            d9ef4714d9bb724abafce150af038438658763fd8831b0f7265c13145a1d06f2
+        """),
+        "pdf_raster_set_sha256": (
+            "2de83d8f97132a3699cea6678e1993500b56b52ed1e94134b9dd448ce9195330"
+        ),
+        "drawing_sheet_page_numbers": tuple(range(2, 8)),
+    }
+}
+
+
+def _gyrus_small_scale_section_lines(raw_text: str, heading: str) -> tuple[str, ...]:
+    section_match = re.search(
+        rf"<h3[^>]*>\s*{re.escape(heading)}\s*</h3>(.*?)(?:</section>)",
+        raw_text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if section_match is None:
+        raise PatentParseError(f"Gyrus {heading} section is absent")
+    paragraphs = [
+        block
+        for block in re.findall(
+            r"<p[^>]*>(.*?)</p>",
+            section_match.group(1),
+            re.IGNORECASE | re.DOTALL,
+        )
+        if normalize_patent_text(block)
+    ]
+    if len(paragraphs) != 1:
+        raise PatentParseError(f"Gyrus {heading} payload boundary changed")
+    return tuple(
+        text
+        for block in re.split(r"<br\s*/?>", paragraphs[0], flags=re.IGNORECASE)
+        if (text := normalize_patent_text(block))
+    )
+
+
+def _classify_gyrus_small_scale_objective_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify four exact Family 45593888 items without deriving system metadata."""
+
+    profile = _GYRUS_SMALL_SCALE_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def failed(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _GYRUS_SMALL_SCALE_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Gyrus small-scale official raw text hash changed for {patent_id}"
+            )
+        if len(_GYRUS_SMALL_SCALE_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError("Gyrus small-scale title binding changed")
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode()).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Gyrus small-scale normalized text hash changed for {patent_id}"
+            )
+        for marker, expected in profile["identity_marker_counts"].items():
+            observed = text.count(marker)
+            if observed != expected:
+                raise PatentParseError(
+                    f"Gyrus small-scale identity marker {marker!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+
+        related = re.search(
+            r'<section[^>]*id="relatedData"[^>]*>(.*?)</section>',
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if related is None or normalize_patent_text(related.group(1)) != profile[
+            "related_data_text"
+        ]:
+            raise PatentParseError("Gyrus prior-publication lineage block changed")
+
+        sections = {
+            name: _gyrus_small_scale_section_lines(raw_text, name)
+            for name in profile["section_line_counts"]
+        }
+        for name, lines in sections.items():
+            if len(lines) != profile["section_line_counts"][name]:
+                raise PatentParseError(f"Gyrus {name} line denominator changed")
+            digest = hashlib.sha256(("\n".join(lines) + "\n").encode()).hexdigest()
+            if digest != profile["section_line_payload_sha256"][name]:
+                raise PatentParseError(f"Gyrus {name} line payload changed")
+
+        background = sections["Background/Summary"]
+        description = sections["Description"]
+        claims = sections["Claims"]
+        background_numbers = tuple(
+            int(match.group(1))
+            for line in background
+            if (match := re.match(r"^\((\d+)\)\s+", line)) is not None
+        )
+        description_numbers = tuple(
+            int(match.group(1))
+            for line in description
+            if (match := re.match(r"^\((\d+)\)\s+", line)) is not None
+        )
+        claim_numbers = tuple(
+            int(match.group(1))
+            for line in claims
+            if (match := re.match(r"^(\d+)\.\s+", line)) is not None
+        )
+        if background_numbers != tuple(range(1, 13)):
+            raise PatentParseError("Gyrus Background/Summary numbering changed")
+        if description_numbers != tuple(range(1, 45)):
+            raise PatentParseError("Gyrus Description numbering changed")
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Gyrus claim denominator changed")
+
+        spans = {
+            "brief_1_8": description[:8],
+            "detailed_9_44": description[8:],
+            "method_11_38": description[10:38],
+            "example_40_44": description[39:44],
+        }
+        for name, lines in spans.items():
+            digest = hashlib.sha256(("\n".join(lines) + "\n").encode()).hexdigest()
+            if digest != profile["description_span_sha256"][name]:
+                raise PatentParseError(f"Gyrus Description span {name} changed")
+        if (
+            description[0] != "(1) BRIEF DESCRIPTION OF THE DRAWINGS"
+            or description[8] != "(9) DETAILED DESCRIPTION OF THE INVENTION"
+            or description[39] != "(40) Example 1"
+        ):
+            raise PatentParseError("Gyrus section or example heading changed")
+
+        independent = tuple(
+            number
+            for number, claim in zip(claim_numbers, claims, strict=True)
+            if re.search(r"\bclaim\s+\d+", claim[:300], re.IGNORECASE) is None
+        )
+        if independent != profile["independent_claim_numbers"]:
+            raise PatentParseError("Gyrus independent-claim binding changed")
+
+        declared_figures = tuple(
+            int(match.group(1))
+            for line in description[2:8]
+            if (
+                match := re.match(r"^\(\d+\)\s+FIG\.\s*(\d+)\s+is\b", line)
+            )
+            is not None
+        )
+        if declared_figures != profile["figure_numbers"]:
+            raise PatentParseError("Gyrus figure denominator changed")
+        if len(re.findall(r"\bFIG\.\s*\d+\b", text)) != profile[
+            "figure_reference_count"
+        ]:
+            raise PatentParseError("Gyrus figure-reference denominator changed")
+
+        table_match = re.match(r"^\(42\)\s+(TABLE-US-00001.*)$", description[41])
+        if table_match is None:
+            raise PatentParseError("Gyrus inline prescription table is absent")
+        table = table_match.group(1)
+        if hashlib.sha256(table.encode()).hexdigest() != profile["inline_table_sha256"]:
+            raise PatentParseError("Gyrus inline prescription table changed")
+        row_matches = list(
+            re.finditer(
+                r"(?<!\S)(OBJ|STO|IMA|(?:[1-9]|1[0-6]))\s+"
+                r"(?=Infinity|-?\d+\.\d+)",
+                table,
+            )
+        )
+        row_labels = tuple(match.group(1) for match in row_matches)
+        if row_labels != profile["surface_row_labels"]:
+            raise PatentParseError("Gyrus inline surface-row denominator changed")
+        rows = tuple(
+            table[
+                match.start() : (
+                    row_matches[index + 1].start()
+                    if index + 1 < len(row_matches)
+                    else len(table)
+                )
+            ].strip()
+            for index, match in enumerate(row_matches)
+        )
+        if tuple(hashlib.sha256(row.encode()).hexdigest() for row in rows) != profile[
+            "surface_row_sha256"
+        ]:
+            raise PatentParseError("Gyrus inline surface rows changed")
+        if (
+            raw_text.count("TABLE-US-00001") != 1
+            or re.search(r"<table\b|<maths\b|<img\b", raw_text, re.IGNORECASE)
+            is not None
+        ):
+            raise PatentParseError("Gyrus inline-data container denominator changed")
+        for pattern in profile["absent_system_metadata_patterns"]:
+            if re.search(pattern, text, re.IGNORECASE):
+                raise PatentParseError(
+                    f"Gyrus source-published system metadata changed: {pattern}"
+                )
+
+        for capture in profile["official_pdf_captures"]:
+            payload = (ROOT / capture["path"]).read_bytes()
+            if len(payload) != capture["bytes"]:
+                raise PatentParseError("Gyrus official PDF size changed")
+            if hashlib.sha256(payload).hexdigest() != capture["container_sha256"]:
+                raise PatentParseError("Gyrus official PDF hash changed")
+            reader = pypdf.PdfReader(io.BytesIO(payload))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError("Gyrus official PDF page count changed")
+            page_hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Gyrus PDF page {page_number} raster count changed"
+                    )
+                image = images[0].image
+                if (
+                    image.size != profile["pdf_raster_dimensions"]
+                    or image.mode != "1"
+                ):
+                    raise PatentParseError(
+                        f"Gyrus PDF page {page_number} raster contract changed"
+                    )
+                page_hashes.append(_canonical_raster_sha256(images[0].data))
+                text_characters += len(page.extract_text() or "")
+            if tuple(page_hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError("Gyrus official PDF page rasters changed")
+            digest = hashlib.sha256(("\n".join(page_hashes) + "\n").encode()).hexdigest()
+            if digest != profile["pdf_raster_set_sha256"] or text_characters != 0:
+                raise PatentParseError("Gyrus official PDF raster set changed")
+    except Exception as exc:  # noqa: BLE001 - fail all four exact items closed
+        return failed(exc)
+
+    details = (
+        "Background/Summary paragraph 10, Description paragraph 10 and claims 4-12 "
+        "publish combination elements, an aperture, optional filter and alignment "
+        "tolerances but no independent ordered optical prescription",
+        "Background/Summary paragraph 11 and Description paragraphs 11-38 publish "
+        "reflective and transmissive alignment variants plus manual or robotic "
+        "assembly operations but no independent optical design",
+        "Background/Summary paragraph 12, Description paragraphs 36-37 and claims "
+        "1-3 wrap the disclosed imaging optic in an endoscope without a separate "
+        "ordered prescription",
+        "Description paragraphs 40-44 and FIG. 6 publish one complete eighteen-row "
+        "finite-object spherical/plane prescription with an explicit STO row, but "
+        "no focal length, F-number, angular field or image height. The printed IMA "
+        "diameter 0.714 is retained as a diameter and is not converted into image "
+        "height",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status=str(item["status"]),
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Gyrus Family 45593888 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. Two official PDF containers "
+                    "decode to the same twelve original 1-bit page rasters. No table "
+                    "value is repaired or transcribed from raster, no diameter is "
+                    "halved, no system metadata is derived, and no value is borrowed "
+                    "from the prior A1 or the cited PCT report"
+                ),
+            ),
+        )
+        for item in _GYRUS_SMALL_SCALE_ITEMS
     ]
 
 

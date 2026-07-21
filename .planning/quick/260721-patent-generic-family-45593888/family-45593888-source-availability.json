@@ -1,0 +1,62 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "45593888",
+  "root_id": "US-8218254",
+  "publication_id": "US-8218254-B2",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/a56aad055aba203f/US-8218254-B2.html",
+    "bytes": 43375,
+    "sha256": "a56aad055aba203f8b949688304cb62ce7a4e394b46866fe5e5376d7c55057f6"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "12/861419",
+    "filed": "2010-08-23",
+    "prior_publication": "US-20120044587-A1",
+    "prior_publication_date": "2012-02-23",
+    "related_application_data": null,
+    "priority_claim": null,
+    "cited_pct_report_only": "PCT/US2011/048390"
+  },
+  "ordered_prescriptions": [
+    {
+      "source_item": 4,
+      "label": "Example 1",
+      "description_paragraphs": [40, 41, 42, 43, 44],
+      "inline_table": "TABLE-US-00001",
+      "row_count": 18,
+      "row_labels": ["OBJ", "1", "2", "3", "4", "5", "6", "STO", "8", "9", "10", "11", "12", "13", "14", "15", "16", "IMA"],
+      "directly_published": ["ordered surface labels", "radius", "sequential thickness", "glass names", "diameter", "finite object row", "explicit STO row"],
+      "required_but_unpublished": ["effective focal length", "F-number", "numeric angular field", "numeric image height"],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent"
+    }
+  ],
+  "not_source_available": [
+    "a directly published effective focal length for Example 1",
+    "a directly published F-number for Example 1",
+    "a directly published numeric full, half or semi angular field for Example 1",
+    "a directly published numeric image height for Example 1",
+    "a source statement equating the IMA-row diameter to image height or authorizing its halving",
+    "an independent ordered prescription for the generic architecture, assembly method or endoscope wrapper"
+  ],
+  "repair_policy": {
+    "image_diameter_reinterpreted_or_halved": false,
+    "focal_length_derived": false,
+    "f_number_derived": false,
+    "angular_field_derived": false,
+    "image_height_derived": false,
+    "finite_object_to_infinity_substitution_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 4,
+    "ordered_prescriptions": 1,
+    "complete_source_bound_prescriptions": 0,
+    "metadata_unpublished_items": 1,
+    "confirmed_no_prescription_items": 3,
+    "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent"
+  }
+}

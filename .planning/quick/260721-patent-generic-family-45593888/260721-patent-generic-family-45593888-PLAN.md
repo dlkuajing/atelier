@@ -1,6 +1,6 @@
 # Quick Plan: Patent generic family 45593888
 
-**Status:** Active - parent saturation remains incomplete
+**Status:** Complete shovel - parent saturation remains incomplete
 **Date:** 2026-07-21
 **Parent:** Global patent saturation ledger (incomplete)
 
@@ -47,22 +47,22 @@ without weakening any saturation invariant.
   the exact completed entry snapshot.
 - [x] Copy the current 40-family generic residual census byte-for-byte and record the
   single selected root.
-- [ ] Reconcile bibliography, application/family/priority lineage, all section,
+- [x] Reconcile bibliography, application/family/priority lineage, all section,
   paragraph, claim, figure, equation and inline-data denominators.
-- [ ] Establish every source item independently of recognized prescriptions, generic
+- [x] Establish every source item independently of recognized prescriptions, generic
   optical terminology, queue marker counts and title wording.
-- [ ] Bind ordered surfaces, spacings, materials, aspheres and required system metadata
+- [x] Bind ordered surfaces, spacings, materials, aspheres and required system metadata
   only to the exact item and publication that directly provide them.
-- [ ] Inspect official PDF/original rasters only where exact text does not settle layout
+- [x] Inspect official PDF/original rasters only where exact text does not settle layout
   or printed-token boundaries; never enhance, measure or infer values.
-- [ ] Add the narrowest exact parser/classifier support only after source reconciliation;
+- [x] Add the narrowest exact parser/classifier support only after source reconciliation;
   do not modify generic heuristics, scoring, physical gates or protected redlines.
-- [ ] Replay twice under the frozen worker/patent budgets, compare normalized business
+- [x] Replay twice under the frozen worker/patent budgets, compare normalized business
   semantics, audit all 619 roots and rebuild census twice.
-- [ ] Refresh only live shared-ledger pointers while preserving historical snapshots.
-- [ ] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
+- [x] Refresh only live shared-ledger pointers while preserving historical snapshots.
+- [x] Run focused/full offline tests, guards, compile/Ruff, JSON/evidence/output/
   contamination/protected-path/diff/primary-repository audits and CODE V inventory.
-- [ ] Update STATE and decisions, mark this quick complete, commit atomically and select
+- [x] Update STATE and decisions, mark this quick complete, commit atomically and select
   the next residual family without claiming global saturation.
 
 ## Constraints

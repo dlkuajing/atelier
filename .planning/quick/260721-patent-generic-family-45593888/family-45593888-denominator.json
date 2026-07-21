@@ -1,0 +1,123 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "45593888",
+  "root_id": "US-8218254",
+  "publication_id": "US-8218254-B2",
+  "application_number": "12/861419",
+  "title": "SOLID IMAGING OBJECTIVE AND ASSEMBLY TECHNIQUE FOR SMALL SCALE SENSOR APPLICATIONS",
+  "lineage": {
+    "prior_publication": "US-20120044587-A1",
+    "prior_publication_date": "2012-02-23",
+    "same_application": true,
+    "related_application_data_printed": false,
+    "priority_claim_printed": false,
+    "cited_pct_report": "PCT/US2011/048390",
+    "cited_pct_is_not_treated_as_application_lineage": true
+  },
+  "denominator": {
+    "background_summary_numbered_lines": 12,
+    "description_numbered_lines": 44,
+    "brief_drawing_lines_1_8": 8,
+    "detailed_description_lines_9_44": 36,
+    "total_numbered_specification_lines": 56,
+    "claims": 12,
+    "independent_claims": [1, 4, 12],
+    "html_table_tags": 0,
+    "flattened_inline_prescription_tables": 1,
+    "mathml_objects": 0,
+    "figure_reference_occurrences": 17,
+    "declared_figures": 6,
+    "drawing_sheets": 6,
+    "official_pdf_pages": 12,
+    "source_items": 4,
+    "ordered_optical_prescriptions": 1,
+    "ordered_prescription_rows_including_object_stop_and_image": 18,
+    "source_items_unmapped": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Gyrus small-scale imaging-optic architecture",
+      "source_bindings": {
+        "background_summary": [10],
+        "description": [10],
+        "claims": [4, 5, 6, 7, 8, 9, 10, 11, 12],
+        "figures": [2, 3, 4]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.generic_small_scale_imaging_optic_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Gyrus optical alignment and assembly method",
+      "source_bindings": {
+        "background_summary": [11],
+        "description_range": [11, 38],
+        "subvariants": ["reflected-beam alignment", "transmitted-beam/reference-surface alignment", "manual assembly", "robotic assembly"],
+        "figures": [2, 3, 4]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_alignment_and_assembly_method_only"
+    },
+    {
+      "number": 3,
+      "label": "Gyrus endoscope wrapper",
+      "source_bindings": {
+        "background_summary": [12],
+        "description": [36, 37],
+        "claims": [1, 2, 3],
+        "figures": [5]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.endoscope_wrapper_only"
+    },
+    {
+      "number": 4,
+      "label": "Gyrus Example 1 finite-object prescription",
+      "source_bindings": {
+        "description_range": [40, 44],
+        "inline_table_paragraph": 42,
+        "figure": 6
+      },
+      "published_prescription": {
+        "row_labels": ["OBJ", "1", "2", "3", "4", "5", "6", "STO", "8", "9", "10", "11", "12", "13", "14", "15", "16", "IMA"],
+        "columns": ["Surface", "Radius", "Thickness", "Glass", "Diameter"],
+        "explicit_stop_row": "STO",
+        "object_row_thickness_mm": 3.9,
+        "object_row_diameter_mm": 5.37,
+        "image_row_diameter_mm": 0.714,
+        "asphere_rows": 0,
+        "units_statement": "thickness and diameter are millimeters"
+      },
+      "directly_unpublished_required_metadata": ["effective focal length", "F-number", "numeric angular field", "numeric image height"],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent"
+    }
+  ],
+  "excluded_context": [
+    {
+      "source": "FIG. 1 and Background/Summary paragraphs 4-8",
+      "reason": "contextual prior-art lens cell, not a disclosed inventive source item"
+    }
+  ],
+  "binding_policy": {
+    "image_row_diameter_treated_as_image_height": false,
+    "diameter_halving_used": false,
+    "paraxial_metadata_derivation_used": false,
+    "finite_object_to_infinity_substitution_used": false,
+    "numeric_repair_used": false,
+    "drawing_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  }
+}
