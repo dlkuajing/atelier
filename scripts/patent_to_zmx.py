@@ -586,6 +586,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_maxell_bright_six_lens_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
             raw_text,
@@ -76010,6 +76016,808 @@ def _classify_maxell_cemented_wide_angle_attempts(
                 reason_code=_MAXELL_CEMENTED_VEHICLE_WRAPPER_REASON,
                 detail=(
                     "FIG. 9, paragraphs 97-98 and independent claim 14 place the "
+                    "above in-vehicle system and an output apparatus on a vehicle; "
+                    "they publish no additional ordered optical prescription"
+                ),
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=error,
+            )
+        )
+    return attempts
+
+
+_MAXELL_BRIGHT_SIX_LENS_ITEMS = (
+    (
+        1,
+        "Maxell bright six-lens Example 1",
+        (75, 96),
+        ("1", "2A", "2B", "2C", "2D"),
+        (1, 2),
+        tuple(range(1, 9)),
+    ),
+    (
+        2,
+        "Maxell bright six-lens Example 2",
+        (97, 100),
+        ("3", "4A", "4B", "4C", "4D"),
+        (3, 4),
+        tuple(range(1, 9)),
+    ),
+    (
+        3,
+        "Maxell bright six-lens Example 3",
+        (101, 104),
+        ("5", "6A", "6B", "6C", "6D"),
+        (5, 6),
+        tuple(range(1, 9)),
+    ),
+    (
+        4,
+        "Maxell bright six-lens Example 4",
+        (105, 109),
+        ("7", "8A", "8B", "8C", "8D"),
+        (7, 8),
+        tuple(range(1, 9)),
+    ),
+    (
+        5,
+        "Maxell bright six-lens Example 5",
+        (110, 113),
+        ("9", "10A", "10B", "10C", "10D"),
+        (9, 10),
+        tuple(range(1, 9)),
+    ),
+    (
+        6,
+        "Maxell bright six-lens Example 6",
+        (114, 118),
+        ("11", "12A", "12B", "12C", "12D"),
+        (11, 12),
+        tuple(range(1, 9)),
+    ),
+    (7, "Maxell camera-module wrapper", (73, 130), (), (), (9,)),
+    (
+        8,
+        "Maxell in-vehicle-system wrapper",
+        (131, 139),
+        ("13", "14"),
+        (),
+        (10,),
+    ),
+    (9, "Maxell vehicle wrapper", (131, 132), ("13",), (), (11,)),
+)
+_MAXELL_BRIGHT_MISSING_METADATA_REASON = (
+    "metadata_unpublished.prescription_specific_stop_surface_and_absolute_"
+    "image_height_absent"
+)
+_MAXELL_BRIGHT_CAMERA_WRAPPER_REASON = (
+    "confirmed_no_prescription.camera_module_wrapper_only"
+)
+_MAXELL_BRIGHT_IN_VEHICLE_WRAPPER_REASON = (
+    "confirmed_no_prescription.in_vehicle_system_wrapper_only"
+)
+_MAXELL_BRIGHT_VEHICLE_WRAPPER_REASON = (
+    "confirmed_no_prescription.vehicle_wrapper_only"
+)
+_MAXELL_BRIGHT_SIX_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20250155675-A1": {
+        "family_id": "87279038",
+        "application_number": "18/728486",
+        "pct_application_number": "PCT/JP2023/000159",
+        "priority_application": "JP 2022-004493",
+        "title_text": (
+            "IMAGING LENS SYSTEM, CAMERA MODULE, IN-VEHICLE SYSTEM, AND VEHICLE"
+        ),
+        "raw_document_sha256": (
+            "3ee42e192dfcd1f207594337705a223136d2fd9781918c42eff4d4d32bd6206a"
+        ),
+        "normalized_text_sha256": (
+            "2d35e3ce1eb9707018ae477ade94cd9443e50b9f653abdb5e23253056cf8b87b"
+        ),
+        "section_markers": {
+            "background": "Background/Summary TECHNICAL FIELD",
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS",
+            "detailed": "DESCRIPTION OF EMBODIMENTS",
+            "claims": "Claims 1 .",
+        },
+        "section_sha256": {
+            "background": (
+                "b2a7b52ca233163d2ba4a39c3a94a86a9516313b7d2955a0a3c406973d5449b9"
+            ),
+            "brief": (
+                "ebcb1d193c0630d94fb1aa5cda153293cfef109eb0b156b8fcdac03574fa1148"
+            ),
+            "detailed": (
+                "8ae44dc236eb5aaf24fb6d4015f380c71a6b96df5df853a568f88aa391ad4ca0"
+            ),
+            "claims": (
+                "838a48d7a6658c71968f3cbda53820934f32e72239e1a1267ccfab56fe33f05c"
+            ),
+        },
+        "paragraph_ranges": {
+            "background": (1, 13),
+            "brief": (14, 45),
+            "detailed": (46, 161),
+        },
+        "paragraph_span_sha256": {
+            (1, 13): "5d70df21727dca962df0fe48b63478319e00fc42bcb1702dc7dc997c4f643448",
+            (14, 45): "d26203a675e2df6c5a1bc9369d8f7283b632ad8511f5ca0594844199d081294e",
+            (46, 72): "a78159d3d440f5a78b895e1f8ab83d8345fb04db8b2dd1124385ce9632e45181",
+            (73, 74): "fd6c86f5da4f9d9d2dc53f169fc79402700e2293301c2f34f4fa06875ecce488",
+            (75, 96): "7be7b78ab246c594db0769ad78fb1d011f48dc6a0900616a54dc9b08d711d6a6",
+            (97, 100): "27e5bfc20c9e18f39cef6c4bf7e5b5fadd936573f486699106cbe17e56aeb7e7",
+            (101, 104): "90d264f068914e14734828f0c1b759ef22261fe998783e94ea9cfa12346e7f09",
+            (105, 109): "b187603b4349e426669b9435b58fca105336db55dfbf35f96e59f64aa61cb631",
+            (110, 113): "d2ef3758da59d51d1309548004b96e4853192f755abbb60c99ebfd27ba8680bb",
+            (114, 118): "4a4c4cc521a672daf01b80b112f4acabc19131780fb9784a1c38bb6570259401",
+            (119, 130): "4fde9bd41e47550a071d96d4af33b17e7dd07d2f2088fb7b234ef66e5ff65b97",
+            (73, 130): "33521c8532ce85e76dc8103e7493c1127551931ac4fa8bda5e518c224f37d4f6",
+            (131, 139): "1a53e0d7ce372f13c4918ed88c0536d59d0ea69097c836219ae78ec2aba1ec32",
+            (131, 132): "26516e2c5617e7bf8b0f1a1205df336f57fc78480cfeaa8eed4aa75ef910374e",
+            (140, 142): "61e777dd8217b6af6bce2b8f6665d168bfe949f4f730a6ebdd25e56a9a3e5b7f",
+            (143, 161): "458d64106731eaa8c9015faf69446eaf9beebbed371d65383820235ae3110469",
+        },
+        "claim_numbers": tuple(range(1, 12)),
+        "independent_claim_numbers": (1, 9, 10, 11),
+        "figure_panels": (
+            "1",
+            "2A",
+            "2B",
+            "2C",
+            "2D",
+            "3",
+            "4A",
+            "4B",
+            "4C",
+            "4D",
+            "5",
+            "6A",
+            "6B",
+            "6C",
+            "6D",
+            "7",
+            "8A",
+            "8B",
+            "8C",
+            "8D",
+            "9",
+            "10A",
+            "10B",
+            "10C",
+            "10D",
+            "11",
+            "12A",
+            "12B",
+            "12C",
+            "12D",
+            "13",
+            "14",
+        ),
+        "figref_count": 179,
+        "identity_markers": {
+            "Family ID: 87279038": 1,
+            "Appl. No.: 18/728486": 1,
+            "PCT/JP2023/000159": 1,
+            "JP 2022-004493": 1,
+            "January 06, 2023": 1,
+            "Jan. 14, 2022": 2,
+            "SHIMOEDA; Yukihiro": 2,
+            "Maxell, Ltd.": 2,
+        },
+        "table_block_sha256": (
+            "eed0988c3626307e555438317260f8038f957d76b7a729029f3a0014b49bde2b",
+            "a53b7feba41b612adff74266ce9a75d5f102067d6fc52ddf0f72b1d0f65e7f0a",
+            "1d6af441d96af6efa3d439494aafa7809bdfe278039e64ce1df63bb08ed2dc3b",
+            "b820cbe093fd671f3fb9c5847017bdcff4dff86c38460d6c6a659aced2caea82",
+            "7bcee0683e9aa6a1e548d3abc93965cbd06ea6b0d27d1d1b4507a1a701855bb4",
+            "030027d16e451a8542981b428fb573bf2ff7a84b835dee4c6d88d8ce0cac5ba8",
+            "b7156a363c9edfab50351ec3c7e34033c79872bf331c14bd724d81a0fba65b33",
+            "d4d60e1aef829fbbc392ba496eca35dc36056fd6fa9ba4911eb695d1c67a4291",
+            "c15659f4d0cae744e039c13435098bbd1d95bf984610f6d9d178af2133baaa14",
+            "b1b02524ffd7f8309e975f78cbca3cb5a34ed2775a225ef971df722192fd35c5",
+            "f6552d9a52b2988b84d301014d8deba13e57b93f7d3149af2830a2416442527c",
+            "e6cebdafae49a1b2e4cafcee97f368238a96970c3e6b26d3d783c8e02c72c527",
+            "f23682fcf947a5e24953b8a60f98356775704a284d4ea1cac5bcd401065959ab",
+            "dd2fc321dbd28426b507b04c1cbd12f7ecfb24e2a61cbca2b1d227c14f825060",
+        ),
+        "formal_table_sha256": (
+            "d965c4587350906b91323c1832d9f4bcced2ff66ceb0cb1df463ce280e456cc8",
+            "7eb2d0063eed1955b1481f9333c07177c278d45897cad18757c5db49646eb324",
+            "18b2981a719a4e3b04c09c337a50e79c0c3035a366cf007793e35149a787a945",
+            "63ccd7ed24339c4c06a5fad8eeb1c5f63f682c23ce5c951a18c5647e512cec8e",
+            "8cda10ff8edac10e3108cb00b75cb8a2e44d371b5cd405c7a48fc52ddca7c777",
+            "3e03932bd92d3756ec426e890fb366ac234b81c7fef80a57c1c62efb8c8749e9",
+            "7bfc7605da54513c07e0b6e51cb1925c1198923907a2c3d6b54bfccd5db8f713",
+            "14299bc6cea10d938ef272169843342d81bb78e04b65b9236a9e08e850ae1e49",
+            "581c3c3a729f8c4a135ef6e1b66d059c2e3f1828ecd992a6f2c7ffd2cbc9afe1",
+            "47691be192c50c51605f9e6a08c55ce117d6f4eb12f816eb01a471350488cc36",
+            "93bf493feb9f7eef5d6b404e7826f0cffe403d470f9e0c6eb62b1514b29ed508",
+            "af45f630acbd71a7b904015c9536452ffd4e19f5fabcffdaab58d4ef92a29b2c",
+            "284ed32aae7806b80f6fe55c7625b49fb5e6e19f5fdd8df28443fd8bb724d312",
+            "cea08645508ff765be3a064da42e46c549ce3fabcf8732c006a8242793784696",
+        ),
+        "maths_object_sha256": (
+            "78716d00c0b546c5e83e92686d74225bf4eeaa1ecb514348afd37022bd8db11c",
+        ),
+        "inline_formula_lead_count": 17,
+        "system_values": {
+            "F Number": (1.56, 1.58, 1.56, 1.57, 1.60, 1.55),
+            "Whole angle of view": (37.6, 38.8, 37.5, 38.4, 38.6, 38.2),
+            "Total track length": (38.00, 37.83, 38.20, 38.30, 38.34, 38.40),
+            "f": (13.47, 13.10, 13.51, 13.10, 13.15, 13.40),
+            "Half angle of view": (18.8, 19.4, 18.8, 19.2, 19.3, 19.1),
+        },
+        "pdf_audit": {
+            "path": (
+                ".planning/quick/260721-patent-generic-family-87279038/"
+                "source-review/US-20250155675-A1-official-1.pdf"
+            ),
+            "bytes": 3148777,
+            "container_sha256": (
+                "57b60ea757148fdbf93f5c38b5402f3b4bff2fd7092330950bd0e13559d49af9"
+            ),
+            "page_count": 45,
+            "narrow_raster_page_numbers": (38,),
+            "narrow_raster_dimensions": (2550, 3300),
+            "common_raster_dimensions": (2560, 3300),
+            "drawing_page_numbers": tuple(range(2, 34)),
+            "table_page_numbers": tuple(range(37, 44)),
+            "claims_page_numbers": (45,),
+            "critical_page_raster_sha256": {
+                1: "236df36bbfbc47e708858d0df636e9306bf4e9046e99e6deaf6d22f511798399",
+                37: "c30b6c5e9500267bb548c386f1ac2a10e450c138f887d2d9407869da2ea35daf",
+                38: "ae6da7adb68b098900df0357311e83055f6a64520996ccbf197ff5f8cf0ac16e",
+                42: "d2196094636bbeb0db955002e0c85cf54ea42931bf11d1e99358decfb1a2f862",
+                43: "827ab6d9b26d2c5a1abb9168ec74202d83ed43a15832d8c53c47102328b094c9",
+                45: "baf6e892e20d2769c5e8e832e12506389dd1aaeb9f5ee3858c19a237bac2d1b0",
+            },
+            "raster_set_sha256": (
+                "9aac966c8cdc3cd27d947e0e1fb652e34990256b2d27e2ada42b3c0717dbb00e"
+            ),
+        },
+    }
+}
+
+
+def _maxell_bright_formal_table(block: str) -> str:
+    """Return the exact flattened table, excluding its following paragraph."""
+
+    return re.split(r"\s+\[\d{4}\]\s+", block, maxsplit=1)[0]
+
+
+def _parse_maxell_bright_surface_table(
+    table: str,
+    *,
+    table_number: int,
+) -> tuple[tuple[int, str, bool, str, str, str | None, str | None], ...]:
+    """Validate the published S1-S16 rows without choosing either iris boundary."""
+
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"Curvature\s+Radius\s+Thickness\s+Surface\s+Number\s+"
+        r"\(mm\)\s+\(mm\)\s+Nd\s+\S*d\s+",
+        table,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Maxell bright TABLE {table_number} surface header changed"
+        )
+    roles = {
+        **dict.fromkeys((*range(1, 7), *range(9, 15)), "Lens"),
+        7: "Iris",
+        8: "Iris",
+        15: "IRCF",
+        16: "IMG",
+    }
+    asphere_surfaces = frozenset({5, 6, 13, 14})
+    material_surfaces = frozenset({1, 3, 5, 9, 10, 11, 13, 15})
+    body = table[header.end() :]
+    position = 0
+    rows: list[tuple[int, str, bool, str, str, str | None, str | None]] = []
+    for surface_number in range(1, 17):
+        role = roles[surface_number]
+        match = re.match(
+            rf"\s*{role}\s+Surface\s+S{surface_number}\s+"
+            r"(?P<asphere>\*\s+)?"
+            rf"(?P<radius>INF|{NUMBER_PATTERN})\s+"
+            rf"(?P<thickness>{NUMBER_PATTERN})"
+            rf"(?:\s+(?P<nd>{NUMBER_PATTERN})\s+(?P<vd>{NUMBER_PATTERN}))?"
+            rf"(?=\s+(?:Lens|Iris|IRCF|IMG)\s+Surface\s+S{surface_number + 1}\s+|\Z)",
+            body[position:],
+            re.IGNORECASE,
+        )
+        if match is None:
+            raise PatentParseError(
+                f"Maxell bright TABLE {table_number} S{surface_number} row changed "
+                f"near {body[position : position + 100]!r}"
+            )
+        is_asphere = bool(match.group("asphere"))
+        if is_asphere != (surface_number in asphere_surfaces):
+            raise PatentParseError(
+                f"Maxell bright TABLE {table_number} S{surface_number} asphere "
+                "marker changed"
+            )
+        nd = match.group("nd")
+        vd = match.group("vd")
+        if (surface_number in material_surfaces) != (nd is not None and vd is not None):
+            raise PatentParseError(
+                f"Maxell bright TABLE {table_number} S{surface_number} material "
+                "occupancy changed"
+            )
+        rows.append(
+            (
+                surface_number,
+                role,
+                is_asphere,
+                match.group("radius"),
+                match.group("thickness"),
+                nd,
+                vd,
+            )
+        )
+        position += match.end()
+    if body[position:].strip():
+        raise PatentParseError(
+            f"Maxell bright TABLE {table_number} has trailing surface tokens: "
+            f"{body[position:]!r}"
+        )
+    return tuple(rows)
+
+
+def _parse_maxell_bright_asphere_table(
+    table: str,
+    *,
+    table_number: int,
+) -> dict[int, dict[str, float]]:
+    """Validate K and A4-A16 on S5/S6/S13/S14."""
+
+    prefix = rf"TABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+    match = re.match(prefix, table, re.IGNORECASE)
+    if match is None:
+        raise PatentParseError(
+            f"Maxell bright TABLE {table_number} asphere prefix changed"
+        )
+    body = table[match.end() :]
+    header = re.match(
+        r"Lens\s+Lens\s+Lens\s+Lens\s+"
+        r"Surface\s+S5\s+Surface\s+S6\s+Surface\s+S13\s+Surface\s+S14\s+",
+        body,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Maxell bright TABLE {table_number} asphere header changed"
+        )
+    position = header.end()
+    coefficients: dict[int, dict[str, float]] = {}
+    for order in (0, 4, 6, 8, 10, 12, 14, 16):
+        label_pattern = "k" if order == 0 else rf"\S*{order}"
+        row = re.match(
+            rf"{label_pattern}\s+"
+            rf"(?P<one>{NUMBER_PATTERN})\s+"
+            rf"(?P<two>{NUMBER_PATTERN})\s+"
+            rf"(?P<three>{NUMBER_PATTERN})\s+"
+            rf"(?P<four>{NUMBER_PATTERN})(?:\s+|\Z)",
+            body[position:],
+            re.IGNORECASE,
+        )
+        if row is None:
+            raise PatentParseError(
+                f"Maxell bright TABLE {table_number} coefficient row "
+                f"{order or 'K'} changed near {body[position : position + 100]!r}"
+            )
+        coefficient = "K" if order == 0 else f"A{order}"
+        for surface_number, group_name in zip(
+            (5, 6, 13, 14),
+            ("one", "two", "three", "four"),
+            strict=True,
+        ):
+            coefficients.setdefault(surface_number, {})[coefficient] = _parse_number(
+                row.group(group_name)
+            )
+        position += row.end()
+    if body[position:].strip():
+        raise PatentParseError(
+            f"Maxell bright TABLE {table_number} has trailing asphere tokens: "
+            f"{body[position:]!r}"
+        )
+    return coefficients
+
+
+def _classify_maxell_bright_six_lens_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 87279038 without choosing a stop or deriving height."""
+
+    profile = _MAXELL_BRIGHT_SIX_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _tables, _claims in (
+                _MAXELL_BRIGHT_SIX_LENS_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Maxell bright official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Maxell bright normalized text hash changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Maxell bright title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Maxell bright identity marker {marker!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError("Maxell bright section boundary changed") from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Maxell bright section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Maxell bright {section_name} section changed"
+                )
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"Maxell bright {section_name} paragraph denominator changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 162)):
+            raise PatentParseError("Maxell bright paragraphs 1-161 changed")
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Maxell bright paragraph span {bounds} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Maxell bright claims 1-11 changed")
+        independent_claims = tuple(
+            number
+            for number, match in zip(claim_numbers, claim_matches, strict=True)
+            if re.match(
+                r"\s*(?:An imaging lens system|A camera module|"
+                r"An in-vehicle system|A vehicle)\b",
+                sections["claims"][match.end() :],
+                re.IGNORECASE,
+            )
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError("Maxell bright independent claims changed")
+
+        figure_panels = tuple(
+            f"{number}{suffix.upper()}"
+            for number, suffix in re.findall(
+                r"\[\d{4}\]\s+FIG\.\s*(\d+)\s*([A-D]?)\s+is\s+",
+                sections["brief"],
+                re.IGNORECASE,
+            )
+        )
+        if figure_panels != profile["figure_panels"]:
+            raise PatentParseError("Maxell bright 32-panel figure denominator changed")
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError("Maxell bright FIGREF denominator changed")
+
+        blocks = _patent_table_blocks(text)
+        if tuple(block.number for block in blocks) != tuple(range(1, 15)):
+            raise PatentParseError("Maxell bright TABLES 1-14 denominator changed")
+        table_block_digests = tuple(
+            hashlib.sha256(block.text.encode("utf-8")).hexdigest()
+            for block in blocks
+        )
+        if table_block_digests != profile["table_block_sha256"]:
+            raise PatentParseError("Maxell bright PPUBS table block changed")
+        formal_tables = tuple(
+            _maxell_bright_formal_table(block.text) for block in blocks
+        )
+        formal_table_digests = tuple(
+            hashlib.sha256(table.encode("utf-8")).hexdigest()
+            for table in formal_tables
+        )
+        if formal_table_digests != profile["formal_table_sha256"]:
+            raise PatentParseError("Maxell bright formal table content changed")
+
+        for example_number, surface_table_number in enumerate(
+            (1, 3, 5, 7, 9, 11),
+            start=1,
+        ):
+            rows = _parse_maxell_bright_surface_table(
+                formal_tables[surface_table_number - 1],
+                table_number=surface_table_number,
+            )
+            if tuple(row[0] for row in rows) != tuple(range(1, 17)):
+                raise PatentParseError(
+                    f"Maxell bright Example {example_number} surface denominator changed"
+                )
+            if tuple(row[1] for row in rows[6:8]) != ("Iris", "Iris"):
+                raise PatentParseError(
+                    f"Maxell bright Example {example_number} iris rows changed"
+                )
+            material_rows = tuple(row[0] for row in rows if row[5] is not None)
+            if material_rows != (1, 3, 5, 9, 10, 11, 13, 15):
+                raise PatentParseError(
+                    f"Maxell bright Example {example_number} material rows changed"
+                )
+            coefficients = _parse_maxell_bright_asphere_table(
+                formal_tables[surface_table_number],
+                table_number=surface_table_number + 1,
+            )
+            if tuple(coefficients) != (5, 6, 13, 14):
+                raise PatentParseError(
+                    f"Maxell bright Example {example_number} asphere surfaces changed"
+                )
+            if any(
+                tuple(values) != (
+                    "K",
+                    "A4",
+                    "A6",
+                    "A8",
+                    "A10",
+                    "A12",
+                    "A14",
+                    "A16",
+                )
+                for values in coefficients.values()
+            ):
+                raise PatentParseError(
+                    f"Maxell bright Example {example_number} K/A4-A16 coverage changed"
+                )
+
+        maths_objects = re.findall(
+            r"<maths(?:\s|>).*?</maths>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        maths_hashes = tuple(
+            hashlib.sha256(value.encode("utf-8")).hexdigest()
+            for value in maths_objects
+        )
+        if maths_hashes != profile["maths_object_sha256"]:
+            raise PatentParseError("Maxell bright MathML denominator changed")
+        inline_formula_leads = len(
+            re.findall(
+                r'<\?in-line-formulae description="In-line Formulae" end="lead"\?>',
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        if inline_formula_leads != profile["inline_formula_lead_count"]:
+            raise PatentParseError("Maxell bright inline-formula denominator changed")
+        for phrase, expected in {
+            "Iris Surface S7": 6,
+            "Iris Surface S8": 6,
+            "(STOP)": 1,
+            "image heights (angle of view)": 3,
+            "half angle of view": 6,
+            "wavelength ray of 550 nm": 1,
+        }.items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Maxell bright source phrase {phrase!r} occurs {observed}; "
+                    f"expected {expected}"
+                )
+        direct_stop_patterns = (
+            r"\bS\s*7\s*\(STOP\)",
+            r"\bS\s*8\s*\(STOP\)",
+            r"\b(?:stop|aperture)\s+surface\s+S\s*[78]\b",
+            r"\bS\s*[78]\s+(?:is|as)\s+the\s+(?:stop|aperture)\b",
+        )
+        if any(
+            re.search(pattern, text, re.IGNORECASE) is not None
+            for pattern in direct_stop_patterns
+        ):
+            raise PatentParseError(
+                "Maxell bright source may now bind a numbered stop surface"
+            )
+        direct_image_height_patterns = (
+            rf"\bImgH\s*=\s*{NUMBER_PATTERN}\s*mm\b",
+            rf"\bIMGHT\s+{NUMBER_PATTERN}\b",
+            rf"\bimage\s+(?:semi-?)?height\s+(?:is|=)\s*"
+            rf"{NUMBER_PATTERN}\s*mm\b",
+            rf"\b(?:sensor|capturing\s+element|imaging\s+surface)\s+"
+            rf"(?:size|height|diagonal)\s*(?:is|=)?\s*{NUMBER_PATTERN}\s*mm\b",
+        )
+        if any(
+            re.search(pattern, text, re.IGNORECASE) is not None
+            for pattern in direct_image_height_patterns
+        ):
+            raise PatentParseError(
+                "Maxell bright source may now publish absolute image height"
+            )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_path = ROOT / pdf_profile["path"]
+        pdf_bytes = pdf_path.read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError("Maxell bright official PDF byte count changed")
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError("Maxell bright official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError("Maxell bright official PDF page count changed")
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        narrow_pages = frozenset(pdf_profile["narrow_raster_page_numbers"])
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    f"Maxell bright PDF page {page_number} contains {len(images)} "
+                    "rasters; expected one"
+                )
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if images[0].image.size != expected_dimensions:
+                raise PatentParseError(
+                    f"Maxell bright PDF page {page_number} dimensions changed"
+                )
+            raster_digest = _canonical_raster_sha256(images[0].data)
+            page_raster_hashes.append(raster_digest)
+            expected_critical = pdf_profile["critical_page_raster_sha256"].get(
+                page_number
+            )
+            if expected_critical is not None and raster_digest != expected_critical:
+                raise PatentParseError(
+                    f"Maxell bright critical PDF page {page_number} changed"
+                )
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError("Maxell bright official PDF raster set changed")
+        if text_layer_characters != 0:
+            raise PatentParseError("Maxell bright official PDF gained a text layer")
+        if not (
+            pdf_profile["drawing_page_numbers"] == tuple(range(2, 34))
+            and pdf_profile["table_page_numbers"] == tuple(range(37, 44))
+            and pdf_profile["claims_page_numbers"] == (45,)
+        ):
+            raise PatentParseError("Maxell bright official PDF page roles changed")
+    except Exception as exc:  # noqa: BLE001 - retain all nine exact source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, _figures, tables, _claims in (
+        _MAXELL_BRIGHT_SIX_LENS_ITEMS
+    ):
+        if number <= 6:
+            surface_table, asphere_table = tables
+            focal_length = profile["system_values"]["f"][number - 1]
+            f_number = profile["system_values"]["F Number"][number - 1]
+            full_fov = profile["system_values"]["Whole angle of view"][number - 1]
+            total_track = profile["system_values"]["Total track length"][number - 1]
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_MAXELL_BRIGHT_MISSING_METADATA_REASON,
+                detail=(
+                    f"Family 87279038 Example {number} TABLES {surface_table}/"
+                    f"{asphere_table} publish S1-S16, two separate physical iris "
+                    "boundaries S7/S8, eight nd-vd rows, and four complete "
+                    "K/A4-A16 aspheres. TABLE 13 directly publishes "
+                    f"f={focal_length:g} mm, F/{f_number:g}, whole field "
+                    f"{full_fov:g} degrees and total track {total_track:g} mm; "
+                    "focal length and total track use a 550 nm ray. The official "
+                    "source does not bind either S7 or S8 as the stop coordinate "
+                    "and publishes no absolute image height. No iris boundary is "
+                    "selected, no height is derived from focal length/field, no "
+                    "plot is measured, and no family member is borrowed"
+                ),
+            )
+        elif number == 7:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_MAXELL_BRIGHT_CAMERA_WRAPPER_REASON,
+                detail=(
+                    "paragraphs 73-130 and independent claim 9 place a capturing "
+                    "element behind the six already enumerated imaging-lens "
+                    "examples; they publish no seventh ordered optical prescription"
+                ),
+            )
+        elif number == 8:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_MAXELL_BRIGHT_IN_VEHICLE_WRAPPER_REASON,
+                detail=(
+                    "paragraphs 131-139, FIGS. 13-14 and independent claim 10 add "
+                    "capture, controller, memory and information-processing "
+                    "architecture around the above camera module; they publish no "
+                    "additional ordered optical prescription"
+                ),
+            )
+        else:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_MAXELL_BRIGHT_VEHICLE_WRAPPER_REASON,
+                detail=(
+                    "FIG. 13, paragraphs 131-132 and independent claim 11 place the "
                     "above in-vehicle system and an output apparatus on a vehicle; "
                     "they publish no additional ordered optical prescription"
                 ),

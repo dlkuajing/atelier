@@ -1,0 +1,49 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "87279038",
+  "root_id": "US-20250155675",
+  "publication_id": "US-20250155675-A1",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250155675/attempt-0002/result.json",
+      "bytes": 10314,
+      "file_sha256": "0c3d947f441e98651e46a98b1c83e371d81ed80c72a2ff25f2617eb46c1e5122",
+      "semantic_sha256": "cc9d44698bf5aac67f87efc006a23ae0a6b15f42865ac539f03f86c408dac25f"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250155675/attempt-0003/result.json",
+      "bytes": 10314,
+      "file_sha256": "fb2c3f36f6c6349a8f298bc0b820e3d3b0c28c87e406163a5a2d0f1f5bebb024",
+      "semantic_sha256": "cc9d44698bf5aac67f87efc006a23ae0a6b15f42865ac539f03f86c408dac25f"
+    }
+  ],
+  "semantic_normalization": "remove only result_attempt; JSON sort_keys with compact separators",
+  "semantic_equal": true,
+  "semantic_sha256": "cc9d44698bf5aac67f87efc006a23ae0a6b15f42865ac539f03f86c408dac25f",
+  "terminal_statuses": [
+    "metadata_unpublished",
+    "metadata_unpublished",
+    "metadata_unpublished",
+    "metadata_unpublished",
+    "metadata_unpublished",
+    "metadata_unpublished",
+    "confirmed_no_prescription",
+    "confirmed_no_prescription",
+    "confirmed_no_prescription"
+  ],
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "conversion_receipts_absent": true,
+  "prescription_fingerprints_absent": true,
+  "candidate_and_staging_zmx_absent": true,
+  "formal_intake_absent": true,
+  "codev_used": false
+}

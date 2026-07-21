@@ -781,15 +781,17 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | `260721-patent-generic-family-45593888` | complete-shovel-saturation-incomplete | Exact US-8218254-B2 binds application 12/861419, Family ID 45593888, Bareau/Milks/Alvez/Lupien inventors and Gyrus ACMI. The source denominator is twelve Background/Summary paragraphs, 44 Description paragraphs (eight brief plus 36 detailed), claims 1-12 with claims 1/4/12 independent, seventeen figure references, FIGS.1-6/six drawing sheets, zero tagged tables, one flattened `TABLE-US-00001`, zero MathML objects and exactly four items. Generic imaging architecture, reflected/transmitted-beam alignment assembly and the endoscope wrapper close as three precise `confirmed_no_prescription` terminals. Example 1 publishes an eighteen-row finite-object surface table with explicit STO, but no direct EFL, F-number, numeric angular field or image height; its printed IMA `0.714` is a diameter and is not halved or renamed, so the prescription closes as `metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent`. Two distinct official 12-page image-only wrappers decode to the same original 1-bit raster set; no enhancement, OCR repair, measurement, numeric raster transcription, derivation or family borrowing occurs. Attempts 2/3 are semantic-equal at `c7cdd8ae...95eab`; generic 40 to 39; result set `dd52fecc...4bc7c0`; census `dc9bd290...3fdd5`; summary `11663442...475c`; report `2938717b...ecf3`; evidence `39344115...3585`; strict audit 619/619 corrupt=0. Complete segmented offline coverage passes 3,742 tests/1 skipped/10 real-machine deselected; focused 9/9, patent 993/993, guard 5/5, Ruff/compile, 7,740 JSON and 113-manifest/1,698-triple evidence checks pass. Eighty-three historical manifests contain exactly 347 allowed live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest inventories are zero. Stable ordering selects Family 87279038 / US-20250155675-A1 next; parent saturation remains incomplete. |
 
+| `260721-patent-generic-family-87279038` | complete-shovel-saturation-incomplete | Exact US-20250155675-A1 binds application 18/728486, PCT/JP2023/000159, Japanese priority JP2022-004493, Family ID 87279038, Yukihiro Shimoeda and Maxell. The source denominator is 161 consecutive specification paragraphs, claims 1-11 with claims 1/9/10/11 independent, 32 declared panels/drawing sheets, 179 figure-reference tags, fourteen flattened tables, one MathML object, seventeen inline-formula leads and exactly nine items. Six numerical examples each publish S1-S16, two distinct physical iris boundaries S7/S8, eight nd-vd rows, four K/A4-A16 aspheres, focal length, F-number, whole field and total track; no source token binds either iris boundary as the prescription stop coordinate and no absolute image height is published. The six examples therefore close as `metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent` without stop selection or height derivation; camera-module, in-vehicle-system and vehicle wrappers close as three precise `confirmed_no_prescription` terminals. Two distinct official 45-page image-only wrappers decode to the same original 1-bit raster set at `9aac966c...b00e`; no enhancement, OCR repair, measurement, numeric raster transcription, derivation or family borrowing occurs. Attempts 2/3 are semantic-equal at `cc9d4469...ac25f`; generic 39 to 38; result set `6364774e...568cd`; census `6754d468...ecdfc`; summary `29a24312...20c9d`; report `a318efe4...6459c`; evidence `85a3c934...4e09f`; strict audit twice 619/619 corrupt=0. Complete segmented offline coverage passes 3,750 tests/1 skipped/10 real-machine deselected; focused 8/8, final patent 1001/1001, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 96 changed-JSON checks pass. All 114 source-evidence manifests, 1,888 references and 1,715 complete triples rehash; 84 historical manifests contain exactly 351 allowed live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/patent-worker inventories are zero. Stable ordering selects Family 50551137 / US-9217844-B2 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, preserve completed GSD quick
-`.planning/quick/260721-patent-generic-family-45593888/260721-patent-generic-family-45593888-PLAN.md`
+`.planning/quick/260721-patent-generic-family-87279038/260721-patent-generic-family-87279038-PLAN.md`
 as the latest completed shovel. Before detailed source work, open a new GSD quick for
-deterministic Family `87279038`, root/publication `US-20250155675` /
-`US-20250155675-A1`, while preserving completed Family 45593888, Family 95825866,
+deterministic Family `50551137`, root/publication `US-9217844` / `US-9217844-B2`,
+while preserving completed Family 87279038, Family 45593888, Family 95825866,
 Family 87845869, Family 40641507, Family 69060231, Family 97226661,
 Family 95563451, Family 97520644, Family 89511297, Family 84563102,
 Family 60048601, Family 61278233, Family 53214261,
@@ -801,10 +803,10 @@ the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen inp
 replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
 from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-generic residual contains 39 roots/items at result set
-`dd52fecc4dc1b51a85b8680fbe96b50abc8f7195c9401c8d3551dd71cd4bc7c0`.
+generic residual contains 38 roots/items at result set
+`6364774e01e1fa393369426b8372a88c8f5a7921bef1257f57729bf3678568cd`.
 The next family has layout
-`ba0eebe2bf6869af6594b480f6059bad42582863b96360cc021689239954e04e`.
+`be2aab62a91ba0385f8b7e0fddb87ae0c806a7883d2f94aa3fae1277b2e8cc9b`.
 Use the same strict before/after census, source-proven layout, append-only targeted replay,
 and full-pool audit contract. Remeasure after every shovel; parent saturation remains
 incomplete.
